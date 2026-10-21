@@ -1,0 +1,160 @@
+{
+  "id": "mossling",
+  "kind": "familiar",
+  "template": "familiar",
+  "heightWorld": 12,
+  "cell": "familiar",
+  "design": "A, tuft-back mochi",
+  "families": ["leaf_warm", "leaf_cool", "grass_warm", "plaster", "berry_warm", "leaf"],
+  "glows": ["glowflora"],
+  "signature": "a green mochi ball with moss tufts and the curled leaf on its crown",
+  "parts": [
+    {
+      "name": "far foot",
+      "families": ["leaf"],
+      "joint": "foot",
+      "layer": {
+        "S": 1,
+        "E": 1,
+        "W": 1,
+        "N": 1
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "splay on crouch and land, tuck in the air",
+      "painter": false
+    },
+    {
+      "name": "near foot",
+      "families": ["leaf_warm"],
+      "joint": "foot",
+      "layer": {
+        "S": 2,
+        "E": 2,
+        "W": 2,
+        "N": 2
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "splay on crouch and land, tuck in the air",
+      "painter": false
+    },
+    {
+      "name": "body ball and cheek step",
+      "families": ["leaf_warm"],
+      "joint": "hip",
+      "layer": {
+        "S": 3,
+        "E": 3,
+        "W": 3,
+        "N": 3
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "cheek bump leads in E/W; breath squashes 1 px",
+      "painter": false
+    },
+    {
+      "name": "pale belly",
+      "families": ["plaster"],
+      "joint": "hip",
+      "layer": {
+        "S": 4,
+        "E": 4,
+        "W": 4,
+        "N": 0
+      },
+      "facings": ["S", "E", "W"],
+      "motion": "S centre, E/W forward 4 px off the front edge",
+      "painter": false
+    },
+    {
+      "name": "moss clumps",
+      "families": ["leaf_cool"],
+      "joint": "hip",
+      "layer": {
+        "S": 5,
+        "E": 5,
+        "W": 5,
+        "N": 4
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "fixed per facing, ride the squash",
+      "painter": false
+    },
+    {
+      "name": "face block",
+      "families": ["plaster", "berry_warm"],
+      "joint": "head",
+      "layer": {
+        "S": 6,
+        "E": 6,
+        "W": 6,
+        "N": 5
+      },
+      "facings": ["S", "E", "W"],
+      "motion": "eyes lid, open, wide, closed, happy, tight; blush; mouth",
+      "painter": true
+    },
+    {
+      "name": "head-top growth",
+      "families": ["grass_warm"],
+      "joint": "head",
+      "layer": {
+        "S": 7,
+        "E": 7,
+        "W": 7,
+        "N": 6
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "curled leaf; flat in crouch, land, cling; up in rise, react, cheer; blanket in nap; shield in special",
+      "painter": false
+    },
+    {
+      "name": "special effect",
+      "families": [],
+      "joint": "hip",
+      "layer": {
+        "S": 8,
+        "E": 8,
+        "W": 8,
+        "N": 7
+      },
+      "facings": ["S", "E", "W"],
+      "motion": "glowflora motes inside the silhouette; finite, none under reduced motion",
+      "painter": false
+    }
+  ],
+  "anchors": {
+    "holdOn": {
+      "E perch": [12, 22],
+      "E cling": [12, 22],
+      "E cheer": [12, 22],
+      "E special": [12, 22],
+      "W perch": [12, 22],
+      "W cling": [12, 22],
+      "W cheer": [12, 22],
+      "W special": [12, 22]
+    },
+    "growth": {
+      "S idle": [16, 12],
+      "E idle": [15, 12],
+      "W idle": [16, 12],
+      "hop 1": [16, 14],
+      "hop 2": [16, 10],
+      "hop 3": [16, 10],
+      "hop 4": [16, 14],
+      "S react": [16, 11],
+      "S nap": [14, 15],
+      "E perch": [9, 11],
+      "E cling": [9, 12],
+      "E cheer": [9, 10],
+      "E special": [9, 11],
+      "W perch": [14, 11],
+      "W cling": [14, 12],
+      "W cheer": [14, 10],
+      "W special": [14, 11]
+    }
+  },
+  "notes": [
+    "Open: cling and special sit at 14 px; react is 26 px with the leaf raised.",
+    "Growth stages: 1 curled leaf, 2 a second smaller leaf, 3 a bud at the curl; the joint never moves."
+  ]
+}

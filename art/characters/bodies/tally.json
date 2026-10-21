@@ -1,0 +1,155 @@
+{
+  "id": "tally",
+  "kind": "folk",
+  "template": "biped",
+  "heightWorld": 20,
+  "cell": "folk",
+  "design": "B, collar-bell puffball",
+  "families": ["snow", "slate", "berry", "timber", "brass"],
+  "glows": [],
+  "signature": "black-faced lamb in a round berry cardigan, tally stick behind the ear, collar bell",
+  "parts": [
+    {
+      "name": "familiar perch",
+      "families": [],
+      "joint": "chest",
+      "layer": {
+        "S": 0,
+        "E": 0,
+        "W": 0,
+        "N": 6
+      },
+      "facings": ["E", "W"],
+      "motion": "back shoulder (E: x smaller, W: x larger), behind the head",
+      "painter": false
+    },
+    {
+      "name": "far leg",
+      "families": ["slate"],
+      "joint": "hip",
+      "layer": {
+        "S": 1,
+        "E": 1,
+        "W": 1,
+        "N": 1
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "a tone back",
+      "painter": false
+    },
+    {
+      "name": "far sleeve",
+      "families": ["berry"],
+      "joint": "chest",
+      "layer": {
+        "S": 1,
+        "E": 1,
+        "W": 1,
+        "N": 1
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "a tone back",
+      "painter": false
+    },
+    {
+      "name": "near leg",
+      "families": ["slate"],
+      "joint": "hip",
+      "layer": {
+        "S": 2,
+        "E": 2,
+        "W": 2,
+        "N": 2
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "6-frame trot, tucked in hop and nap, forward in sit",
+      "painter": false
+    },
+    {
+      "name": "cardigan body over fleece belly",
+      "families": ["berry", "brass", "snow"],
+      "joint": "hip",
+      "layer": {
+        "S": 3,
+        "E": 3,
+        "W": 3,
+        "N": 3
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "breath 1 px, squash 1 px on hop; the opening moves to the front edge in E/W",
+      "painter": false
+    },
+    {
+      "name": "head",
+      "families": ["slate", "berry", "snow"],
+      "joint": "chest",
+      "layer": {
+        "S": 4,
+        "E": 4,
+        "W": 4,
+        "N": 4
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "leads the strike (a headbutt), tilts in the fidget, ears lift on hit and cheer",
+      "painter": true
+    },
+    {
+      "name": "tally stick",
+      "families": ["timber"],
+      "joint": "head",
+      "layer": {
+        "S": 3.5,
+        "E": 3.5,
+        "W": 3.5,
+        "N": 7
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "behind the left ear; to the near hoof in fidget and cast",
+      "painter": false
+    },
+    {
+      "name": "collar bell",
+      "families": ["brass", "timber"],
+      "joint": "chest",
+      "layer": {
+        "S": 5,
+        "E": 5,
+        "W": 5,
+        "N": 0
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "a free pendulum a frame behind the body; rings in fidget and cast",
+      "painter": false
+    },
+    {
+      "name": "near sleeve",
+      "families": ["berry", "slate"],
+      "joint": "chest",
+      "layer": {
+        "S": 6,
+        "E": 6,
+        "W": 6,
+        "N": 5
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "swing, guard, reach, raise",
+      "painter": false
+    }
+  ],
+  "anchors": {
+    "perch": {
+      "E ready": [27, 45],
+      "E strike": [30, 45],
+      "E cast": [27, 44],
+      "E hit": [24, 44],
+      "E sit": [27, 50],
+      "E cheer": [27, 40],
+      "W ready": [37, 45],
+      "W strike": [34, 45]
+    }
+  },
+  "notes": [
+    "Open: whether the stick should also come to the hoof for strike.",
+    "Open: the bell's ring effect frames."
+  ]
+}

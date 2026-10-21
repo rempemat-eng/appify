@@ -1,0 +1,185 @@
+{
+  "id": "mirra",
+  "kind": "folk",
+  "template": "biped",
+  "heightWorld": 22,
+  "cell": "folk",
+  "design": "B, cone-hat pilgrim",
+  "families": ["sand", "adobe", "bleached", "timber", "water"],
+  "glows": [],
+  "signature": "the cone hat and the big blue flask on a sand gecko in an adobe wrap",
+  "parts": [
+    {
+      "name": "familiar perch",
+      "families": [],
+      "joint": "chest",
+      "layer": {
+        "S": 0,
+        "E": 0,
+        "W": 0,
+        "N": 8
+      },
+      "facings": ["E", "W"],
+      "motion": "back shoulder (E: x smaller, W: x larger), behind her and the cone",
+      "painter": false
+    },
+    {
+      "name": "tail",
+      "families": ["sand"],
+      "joint": "hip",
+      "layer": {
+        "S": 1,
+        "E": 1,
+        "W": 1,
+        "N": 9
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "curled at the heel; tip flicks on react and cheer, wraps the front in nap",
+      "painter": false
+    },
+    {
+      "name": "far leg",
+      "families": ["sand"],
+      "joint": "hip",
+      "layer": {
+        "S": 2,
+        "E": 2,
+        "W": 2,
+        "N": 1
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "a tone back",
+      "painter": false
+    },
+    {
+      "name": "far arm",
+      "families": ["sand"],
+      "joint": "chest",
+      "layer": {
+        "S": 2,
+        "E": 2,
+        "W": 2,
+        "N": 1
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "a tone back",
+      "painter": false
+    },
+    {
+      "name": "right hand prop (twig or Y-rod)",
+      "families": ["timber"],
+      "joint": "hand",
+      "layer": {
+        "S": 8.5,
+        "E": 2.5,
+        "W": 8.5,
+        "N": 7
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "her right hand in every facing; twig in idle, walk, ready, hit, sit, cheer; Y-rod in strike and cast",
+      "painter": false
+    },
+    {
+      "name": "near leg",
+      "families": ["sand"],
+      "joint": "hip",
+      "layer": {
+        "S": 3,
+        "E": 3,
+        "W": 3,
+        "N": 2
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "6-frame walk, tuck in hop, forward in sit",
+      "painter": false
+    },
+    {
+      "name": "wrap",
+      "families": ["adobe", "bleached"],
+      "joint": "hip",
+      "layer": {
+        "S": 4,
+        "E": 4,
+        "W": 4,
+        "N": 3
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "breath 1 px, hem sways a frame late",
+      "painter": false
+    },
+    {
+      "name": "flask strap and flask",
+      "families": ["timber", "water"],
+      "joint": "hip",
+      "layer": {
+        "S": 5,
+        "E": 5,
+        "W": 5,
+        "N": 0
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "front in every facing; lifted to sip in fidget, tipped to pour in cast",
+      "painter": false
+    },
+    {
+      "name": "head",
+      "families": ["sand"],
+      "joint": "chest",
+      "layer": {
+        "S": 6,
+        "E": 6,
+        "W": 6,
+        "N": 4
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "tips back to sip, droops in nap",
+      "painter": true
+    },
+    {
+      "name": "cone hat",
+      "families": ["bleached", "timber"],
+      "joint": "head",
+      "layer": {
+        "S": 7,
+        "E": 7,
+        "W": 7,
+        "N": 5
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "bobs on hop, tips over her eyes in nap",
+      "painter": false
+    },
+    {
+      "name": "near arm",
+      "families": ["sand"],
+      "joint": "chest",
+      "layer": {
+        "S": 8,
+        "E": 8,
+        "W": 8,
+        "N": 6
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "swing, guard, reach",
+      "painter": false
+    }
+  ],
+  "anchors": {
+    "perch": {
+      "E ready": [25, 45],
+      "E strike": [28, 45],
+      "E cast": [25, 44],
+      "E hit": [22, 44],
+      "E sit": [25, 50],
+      "E cheer": [25, 40],
+      "W ready": [39, 45],
+      "W strike": [36, 45]
+    },
+    "hand": "right"
+  },
+  "notes": [
+    "Risk: the twig is small at 2 device px; the dowsing read leans on the Y-rod.",
+    "Open: end the cast with the flask poured (a water arc) or the rod drops alone.",
+    "Open: whether the twig should be drawn longer in walk frames."
+  ]
+}

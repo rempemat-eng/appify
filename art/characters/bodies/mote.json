@@ -1,0 +1,168 @@
+{
+  "id": "mote",
+  "kind": "folk",
+  "template": "flyer",
+  "heightWorld": 15,
+  "cell": "folkSmall",
+  "design": "A, plump star",
+  "families": ["plaster", "slate", "snow", "berry", "leaf"],
+  "glows": ["lamp"],
+  "signature": "a plump glowing star with a lamp core, a striped comet cap and a dust wisp",
+  "parts": [
+    {
+      "name": "cap",
+      "families": ["slate", "snow"],
+      "joint": "head",
+      "layer": {
+        "S": 6,
+        "E": 6,
+        "W": 6,
+        "N": 6
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "front flop in S, comet tail in E/W idle, short in fights, flung on hit, droops over the eyes in yawn and nap",
+      "painter": false
+    },
+    {
+      "name": "pompom",
+      "families": ["snow"],
+      "joint": "head",
+      "layer": {
+        "S": 6,
+        "E": 6,
+        "W": 6,
+        "N": 6
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "swings a frame late in walk, hop and strike",
+      "painter": false
+    },
+    {
+      "name": "far arm point",
+      "families": ["plaster"],
+      "joint": "float",
+      "layer": {
+        "S": 1,
+        "E": 1,
+        "W": 1,
+        "N": 1
+      },
+      "facings": ["E", "W"],
+      "motion": "reaches forward in ready, thrusts in strike, up in cast and cheer",
+      "painter": false
+    },
+    {
+      "name": "far foot point",
+      "families": ["plaster"],
+      "joint": "float",
+      "layer": {
+        "S": 1,
+        "E": 1,
+        "W": 1,
+        "N": 1
+      },
+      "facings": ["E", "W"],
+      "motion": "trails in strike, forward in sit",
+      "painter": false
+    },
+    {
+      "name": "dust wisp",
+      "families": ["plaster"],
+      "joint": "float",
+      "layer": {
+        "S": 2,
+        "E": 2,
+        "W": 2,
+        "N": 2
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "sways back in walk and strike, curls under in sit, absent in nap",
+      "painter": false
+    },
+    {
+      "name": "star body with top point and near foot",
+      "families": ["plaster"],
+      "joint": "float",
+      "layer": {
+        "S": 3,
+        "E": 3,
+        "W": 3,
+        "N": 3
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "bobs 1 px a beat; leans with the pose",
+      "painter": false
+    },
+    {
+      "name": "core glow",
+      "families": [],
+      "joint": "float",
+      "layer": {
+        "S": 4,
+        "E": 4,
+        "W": 4,
+        "N": 4
+      },
+      "facings": ["S", "E", "W"],
+      "motion": "lamp: normal, dim (hit, nap), flare (cast)",
+      "painter": false
+    },
+    {
+      "name": "near arm point",
+      "families": ["plaster"],
+      "joint": "float",
+      "layer": {
+        "S": 5,
+        "E": 5,
+        "W": 5,
+        "N": 5
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "swings back in strike, up in cast and cheer",
+      "painter": false
+    },
+    {
+      "name": "face",
+      "families": ["berry"],
+      "joint": "float",
+      "layer": {
+        "S": 5,
+        "E": 5,
+        "W": 5,
+        "N": 5
+      },
+      "facings": ["S", "E", "W"],
+      "motion": "sleepy, open, fierce, shut, happy, wince",
+      "painter": true
+    },
+    {
+      "name": "familiar",
+      "families": [],
+      "joint": "float",
+      "layer": {
+        "S": 0,
+        "E": 0,
+        "W": 0,
+        "N": 0
+      },
+      "facings": ["S", "E", "W"],
+      "motion": "floats beside Mote at head height on the side away from the foe; curled against Mote in nap",
+      "painter": false
+    }
+  ],
+  "anchors": {
+    "perch": {
+      "E ready": [9, 36],
+      "E strike": [9, 36],
+      "E cast": [9, 35],
+      "E hit": [9, 36],
+      "E sit": [9, 39],
+      "E cheer": [9, 34],
+      "W ready": [46, 36],
+      "W strike": [46, 36]
+    }
+  },
+  "notes": [
+    "Open: the 16 px familiar floats beside Mote (no shoulder); the fight layout needs this anchor per frame."
+  ]
+}

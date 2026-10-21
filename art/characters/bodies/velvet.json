@@ -1,0 +1,231 @@
+{
+  "id": "velvet",
+  "kind": "folk",
+  "template": "biped",
+  "heightWorld": 23,
+  "cell": "folk",
+  "design": "C, ruff and swallowtail coat",
+  "families": [
+    "dusk",
+    "snow",
+    "plaster",
+    "iron",
+    "brass",
+    "dusk_warm",
+    "plaster_cool",
+    "snow_cool"
+  ],
+  "glows": ["lamp"],
+  "signature": "deep-dusk swallowtail coat with a snow ruff and the lamp at her right hip",
+  "parts": [
+    {
+      "name": "feet",
+      "families": ["iron"],
+      "joint": "foot",
+      "layer": {
+        "S": 1,
+        "E": 1,
+        "W": 1,
+        "N": 1
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "thrust forward in sit",
+      "painter": false
+    },
+    {
+      "name": "back swallowtail with faint eye-spot",
+      "families": ["dusk_warm", "plaster_cool"],
+      "joint": "hip",
+      "layer": {
+        "S": 2,
+        "E": 2,
+        "W": 2,
+        "N": 8
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "flares 2 px in hit and cheer",
+      "painter": false
+    },
+    {
+      "name": "lamp",
+      "families": ["iron", "brass"],
+      "joint": "hip",
+      "layer": {
+        "S": 9,
+        "E": 9,
+        "W": 3,
+        "N": 5
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "on her right hip (far side in W); lamp glow 2 px at most; to the hand only for cast and the fidget",
+      "painter": false
+    },
+    {
+      "name": "back wing flare",
+      "families": ["dusk_warm"],
+      "joint": "back",
+      "layer": {
+        "S": 4,
+        "E": 4,
+        "W": 4,
+        "N": 9
+      },
+      "facings": ["E", "W"],
+      "motion": "cast, cheer",
+      "painter": false
+    },
+    {
+      "name": "far arm-sleeve",
+      "families": ["dusk", "plaster"],
+      "joint": "hand",
+      "layer": {
+        "S": 5,
+        "E": 5,
+        "W": 5,
+        "N": 2
+      },
+      "facings": ["E", "W"],
+      "motion": "cheer",
+      "painter": false
+    },
+    {
+      "name": "coat",
+      "families": ["dusk", "dusk_warm", "brass"],
+      "joint": "chest",
+      "layer": {
+        "S": 6,
+        "E": 6,
+        "W": 6,
+        "N": 3
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "closed forewings with a brass belt and front swallowtail; moves with chest and hip",
+      "painter": false
+    },
+    {
+      "name": "collar back",
+      "families": ["snow_cool"],
+      "joint": "chest",
+      "layer": {
+        "S": 7,
+        "E": 7,
+        "W": 7,
+        "N": 10
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "behind the head",
+      "painter": false
+    },
+    {
+      "name": "familiar perch",
+      "families": [],
+      "joint": "chest",
+      "layer": {
+        "S": 7.5,
+        "E": 7.5,
+        "W": 7.5,
+        "N": 11
+      },
+      "facings": ["E", "W"],
+      "motion": "on the collar shelf, shoulder away from the foe; behind the head",
+      "painter": false
+    },
+    {
+      "name": "far antenna",
+      "families": ["plaster_cool"],
+      "joint": "head",
+      "layer": {
+        "S": 8,
+        "E": 8,
+        "W": 8,
+        "N": 4
+      },
+      "facings": ["E", "W"],
+      "motion": "with the head",
+      "painter": false
+    },
+    {
+      "name": "head",
+      "families": ["plaster"],
+      "joint": "head",
+      "layer": {
+        "S": 8,
+        "E": 8,
+        "W": 8,
+        "N": 4
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "eyes anchor for blink and sleep",
+      "painter": true
+    },
+    {
+      "name": "near antennae",
+      "families": ["plaster"],
+      "joint": "head",
+      "layer": {
+        "S": 9,
+        "E": 9,
+        "W": 9,
+        "N": 5
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "combed and swept back; laid back in nap, flung back in hit",
+      "painter": false
+    },
+    {
+      "name": "ruff front",
+      "families": ["snow"],
+      "joint": "chest",
+      "layer": {
+        "S": 10,
+        "E": 10,
+        "W": 10,
+        "N": 0
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "downward fur strokes; chin shadow in every facing",
+      "painter": false
+    },
+    {
+      "name": "front wing flare",
+      "families": ["dusk_warm"],
+      "joint": "chest",
+      "layer": {
+        "S": 11,
+        "E": 11,
+        "W": 11,
+        "N": 6
+      },
+      "facings": ["E", "W"],
+      "motion": "strike: the wing buffet at full reach",
+      "painter": false
+    },
+    {
+      "name": "near arm-sleeve and paw",
+      "families": ["dusk", "plaster"],
+      "joint": "hand",
+      "layer": {
+        "S": 12,
+        "E": 12,
+        "W": 12,
+        "N": 7
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "swing and reach",
+      "painter": false
+    }
+  ],
+  "anchors": {
+    "perch": {
+      "E ready": [21, 39],
+      "E strike": [22, 39],
+      "E cast": [20, 38],
+      "E hit": [18, 39],
+      "E sit": [20, 45],
+      "E cheer": [20, 37],
+      "W ready": [43, 39],
+      "W strike": [42, 39]
+    }
+  },
+  "notes": ["Lamp fixed to her right hip: S screen-left, E near side, W far side behind the coat."]
+}

@@ -1,0 +1,182 @@
+{
+  "id": "cairn",
+  "kind": "folk",
+  "template": "largeBiped",
+  "heightWorld": 29,
+  "cell": "folkLarge",
+  "design": "C, moss-mantled giant",
+  "families": ["stone", "leaf", "grass", "earth", "path", "stone_cool", "stone_warm"],
+  "glows": ["glowflora"],
+  "signature": "tall grey boulder giant with a moss mantle, capstone brow and the glowing ring on his chest",
+  "parts": [
+    {
+      "name": "familiar perch",
+      "families": [],
+      "joint": "chest",
+      "layer": {
+        "S": 0.5,
+        "E": 0.5,
+        "W": 0.5,
+        "N": 9
+      },
+      "facings": ["E", "W"],
+      "motion": "the back shoulder on the moss mantle (E: x smaller, W: x larger)",
+      "painter": false
+    },
+    {
+      "name": "far arm",
+      "families": ["stone"],
+      "joint": "chest",
+      "layer": {
+        "S": 0,
+        "E": 0,
+        "W": 0,
+        "N": 0
+      },
+      "facings": ["E", "W"],
+      "motion": "upper, fore and hand slabs a tone back; fight poses",
+      "painter": false
+    },
+    {
+      "name": "far leg",
+      "families": ["stone_cool"],
+      "joint": "hip",
+      "layer": {
+        "S": 1,
+        "E": 1,
+        "W": 1,
+        "N": 1
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "pillar with a boulder foot, a tone back",
+      "painter": false
+    },
+    {
+      "name": "near leg",
+      "families": ["stone"],
+      "joint": "hip",
+      "layer": {
+        "S": 2,
+        "E": 2,
+        "W": 2,
+        "N": 2
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "short 6-frame stomp, forward in sit, lifted 2 px in hop",
+      "painter": false
+    },
+    {
+      "name": "body boulder with ring rune",
+      "families": ["stone"],
+      "joint": "hip",
+      "layer": {
+        "S": 3,
+        "E": 3,
+        "W": 3,
+        "N": 3
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "breath 1 px, leans up to 3 px in strike and hit; glowflora ring groove",
+      "painter": true
+    },
+    {
+      "name": "fern",
+      "families": ["grass"],
+      "joint": "head",
+      "layer": {
+        "S": 3.5,
+        "E": 3.5,
+        "W": 5.5,
+        "N": 10
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "behind his left ear",
+      "painter": false
+    },
+    {
+      "name": "head",
+      "families": ["stone_warm"],
+      "joint": "chest",
+      "layer": {
+        "S": 4,
+        "E": 4,
+        "W": 4,
+        "N": 4
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "glowflora eyes: blink = glow off 140 ms, looks by moving the glow",
+      "painter": true
+    },
+    {
+      "name": "capstone",
+      "families": ["stone_cool", "leaf"],
+      "joint": "head",
+      "layer": {
+        "S": 4.5,
+        "E": 4.5,
+        "W": 4.5,
+        "N": 5
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "stays level in every pose",
+      "painter": false
+    },
+    {
+      "name": "moss mantle",
+      "families": ["leaf"],
+      "joint": "chest",
+      "layer": {
+        "S": 5,
+        "E": 5,
+        "W": 5,
+        "N": 6
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "shifts with the body (no lag frames)",
+      "painter": false
+    },
+    {
+      "name": "near arm",
+      "families": ["stone"],
+      "joint": "chest",
+      "layer": {
+        "S": 6,
+        "E": 6,
+        "W": 6,
+        "N": 7
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "swing, guard (hand slab up), strike at full reach, cast raised, cheer both up",
+      "painter": false
+    },
+    {
+      "name": "wren",
+      "families": ["earth", "path"],
+      "joint": "hand",
+      "layer": {
+        "S": 6.5,
+        "E": 6.5,
+        "W": 6.5,
+        "N": 8
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "fidget prop only, on the near hand slab",
+      "painter": false
+    }
+  ],
+  "anchors": {
+    "perch": {
+      "E ready": [32, 32],
+      "E strike": [34, 32],
+      "E cast": [31, 31],
+      "E hit": [28, 31],
+      "E sit": [31, 39],
+      "E cheer": [31, 29],
+      "W ready": [48, 32],
+      "W strike": [46, 32]
+    }
+  },
+  "notes": [
+    "Open: the capstone is the natural perch, but a 24 px familiar there would leave the 80 px cell; back shoulder until the familiar size is settled."
+  ]
+}

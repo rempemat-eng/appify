@@ -1,0 +1,180 @@
+{
+  "id": "puffcap",
+  "kind": "folk",
+  "template": "smallBiped",
+  "heightWorld": 17,
+  "cell": "folkSmallTall",
+  "design": "C, mat cap",
+  "families": [
+    "dusk",
+    "plaster",
+    "earth",
+    "berry",
+    "plaster_warm",
+    "plaster_cool",
+    "dusk_cool",
+    "dusk_warm"
+  ],
+  "glows": ["glowflora"],
+  "signature": "the light-dusk quilted mat cap, flat on top, with the familiar riding it",
+  "parts": [
+    {
+      "name": "feet",
+      "families": ["earth"],
+      "joint": "foot",
+      "layer": {
+        "S": 1,
+        "E": 1,
+        "W": 1,
+        "N": 0
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "S side by side, E/W far foot a px higher; sit: both forward",
+      "painter": false
+    },
+    {
+      "name": "far arm",
+      "families": ["plaster_warm"],
+      "joint": "chest",
+      "layer": {
+        "S": 2,
+        "E": 2,
+        "W": 2,
+        "N": 1
+      },
+      "facings": ["E", "W"],
+      "motion": "behind the stem",
+      "painter": false
+    },
+    {
+      "name": "stem body and fibres",
+      "families": ["plaster", "plaster_cool"],
+      "joint": "hip",
+      "layer": {
+        "S": 3,
+        "E": 3,
+        "W": 3,
+        "N": 2
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "breath squashes 1 px",
+      "painter": false
+    },
+    {
+      "name": "cheek and muzzle step",
+      "families": ["plaster"],
+      "joint": "head",
+      "layer": {
+        "S": 4,
+        "E": 4,
+        "W": 4,
+        "N": 3
+      },
+      "facings": ["E", "W"],
+      "motion": "on the facing side",
+      "painter": false
+    },
+    {
+      "name": "near arm",
+      "families": ["plaster_warm"],
+      "joint": "chest",
+      "layer": {
+        "S": 5,
+        "E": 5,
+        "W": 5,
+        "N": 4
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "S: both arms; cheer: in front of the brim",
+      "painter": false
+    },
+    {
+      "name": "face",
+      "families": ["berry"],
+      "joint": "head",
+      "layer": {
+        "S": 6,
+        "E": 6,
+        "W": 6,
+        "N": 5
+      },
+      "facings": ["S", "E", "W"],
+      "motion": "eyes, lid, brow, berry cheeks, mouth; none in N",
+      "painter": true
+    },
+    {
+      "name": "gill fringe and neck",
+      "families": ["dusk_cool"],
+      "joint": "head",
+      "layer": {
+        "S": 7,
+        "E": 7,
+        "W": 7,
+        "N": 6
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "rides the cap",
+      "painter": false
+    },
+    {
+      "name": "mat cap",
+      "families": ["dusk_warm", "dusk", "dusk_cool", "plaster_warm"],
+      "joint": "head",
+      "layer": {
+        "S": 8,
+        "E": 8,
+        "W": 8,
+        "N": 7
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "one rigid part: tilts (strike forward, hit back), sinks (nod, sit); pulled over as a blanket in nap",
+      "painter": false
+    },
+    {
+      "name": "familiar perch",
+      "families": [],
+      "joint": "head",
+      "layer": {
+        "S": 9,
+        "E": 9,
+        "W": 9,
+        "N": 8
+      },
+      "facings": ["S", "E", "W"],
+      "motion": "on the cap top at its back half (E: x smaller, W: x larger); rides the cap",
+      "painter": false
+    },
+    {
+      "name": "spores",
+      "families": [],
+      "joint": "head",
+      "layer": {
+        "S": 10,
+        "E": 10,
+        "W": 10,
+        "N": 9
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "glowflora effect in fidget, cast and strike impact; finite, none under reduced motion",
+      "painter": false
+    }
+  ],
+  "anchors": {
+    "perch": {
+      "nap S": [37, 53],
+      "E ready": [23, 37],
+      "E strike": [29, 37],
+      "E cast": [23, 36],
+      "E hit": [17, 36],
+      "E sit": [23, 43],
+      "E cheer": [23, 32],
+      "W ready": [33, 37],
+      "W strike": [27, 37]
+    }
+  },
+  "notes": [
+    "Cell needs 56 x 72 (foot 28, 66): the familiar sits on the flat cap top, 34 px above the foot.",
+    "Risk: raised arms meet the brim; cast keeps the hands under it, cheer draws the arms in front.",
+    "Open: check the cap against Velvet (deep dusk) side by side on the select screen."
+  ]
+}

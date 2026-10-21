@@ -1,0 +1,205 @@
+{
+  "id": "tam",
+  "kind": "folk",
+  "template": "biped",
+  "heightWorld": 19,
+  "cell": "folk",
+  "design": "C, Bothy Keeper",
+  "families": [
+    "path",
+    "plaster",
+    "leaf",
+    "iron",
+    "timber",
+    "path_cool",
+    "plaster_cool",
+    "path_warm"
+  ],
+  "glows": [],
+  "signature": "leaf-green knit beanie with ear flaps and scarf, kettle at the hip, mat on the back",
+  "parts": [
+    {
+      "name": "familiar perch",
+      "families": [],
+      "joint": "chest",
+      "layer": {
+        "S": 0,
+        "E": 0,
+        "W": 0,
+        "N": 9
+      },
+      "facings": ["E", "W"],
+      "motion": "fight poses, on the shoulder away from the foe; curls at her belly in nap",
+      "painter": false
+    },
+    {
+      "name": "kettle",
+      "families": ["iron"],
+      "joint": "hip",
+      "layer": {
+        "S": 3,
+        "E": 1,
+        "W": 9,
+        "N": 1
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "hangs from the belt at her left hip; lies against her far hip in nap",
+      "painter": false
+    },
+    {
+      "name": "far arm",
+      "families": ["path_cool"],
+      "joint": "chest",
+      "layer": {
+        "S": 2,
+        "E": 2,
+        "W": 2,
+        "N": 0
+      },
+      "facings": ["E", "W"],
+      "motion": "fight poses only",
+      "painter": false
+    },
+    {
+      "name": "tail",
+      "families": ["path_cool"],
+      "joint": "hip",
+      "layer": {
+        "S": 3,
+        "E": 3,
+        "W": 3,
+        "N": 10
+      },
+      "facings": ["E", "W"],
+      "motion": "wraps in nap",
+      "painter": false
+    },
+    {
+      "name": "legs",
+      "families": ["path_cool"],
+      "joint": "foot",
+      "layer": {
+        "S": 4,
+        "E": 4,
+        "W": 4,
+        "N": 2
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "sit pushes them forward",
+      "painter": false
+    },
+    {
+      "name": "mat",
+      "families": ["plaster_cool", "timber"],
+      "joint": "back",
+      "layer": {
+        "S": 0,
+        "E": 6,
+        "W": 6,
+        "N": 9
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "end disc on her back in E/W; unrolls as her pillow in nap",
+      "painter": false
+    },
+    {
+      "name": "torso and belly",
+      "families": ["path", "path_warm"],
+      "joint": "hip",
+      "layer": {
+        "S": 5,
+        "E": 5,
+        "W": 5,
+        "N": 3
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "breath 1 px",
+      "painter": false
+    },
+    {
+      "name": "belt",
+      "families": ["timber"],
+      "joint": "hip",
+      "layer": {
+        "S": 7,
+        "E": 7,
+        "W": 7,
+        "N": 4
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "the kettle hangs from it",
+      "painter": false
+    },
+    {
+      "name": "scarf collar and tail",
+      "families": ["leaf"],
+      "joint": "chest",
+      "layer": {
+        "S": 8,
+        "E": 8,
+        "W": 8,
+        "N": 5
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "tail at her right chest (S viewer left, E front, W hidden); sways in strike and hit",
+      "painter": false
+    },
+    {
+      "name": "head, cheek, snout and brow",
+      "families": ["path", "plaster"],
+      "joint": "head",
+      "layer": {
+        "S": 10,
+        "E": 10,
+        "W": 10,
+        "N": 6
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "blink, shut, happy, squeeze eyes",
+      "painter": true
+    },
+    {
+      "name": "beanie",
+      "families": ["leaf", "plaster"],
+      "joint": "head",
+      "layer": {
+        "S": 11,
+        "E": 11,
+        "W": 11,
+        "N": 7
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "dome, cuff, ear flaps and bobble; bobble lags 1 px in hop",
+      "painter": false
+    },
+    {
+      "name": "near arm",
+      "families": ["path", "path_cool"],
+      "joint": "chest",
+      "layer": {
+        "S": 12,
+        "E": 12,
+        "W": 12,
+        "N": 8
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "ready, strike reach, cast, hit, cheer",
+      "painter": false
+    }
+  ],
+  "anchors": {
+    "perch": {
+      "E ready": [23, 49],
+      "E strike": [25, 49],
+      "E cast": [23, 48],
+      "E hit": [21, 48],
+      "E sit": [23, 51],
+      "E cheer": [23, 46],
+      "W ready": [40, 49],
+      "W strike": [38, 49]
+    }
+  },
+  "notes": [
+    "Risk: the 24 px Mossling is large on a 38 px folk; it sits behind her head on the back shoulder."
+  ]
+}

@@ -1,0 +1,179 @@
+{
+  "id": "tuff",
+  "kind": "folk",
+  "template": "wideBiped",
+  "heightWorld": 22,
+  "cell": "folkLarge",
+  "design": "A, causeway block",
+  "families": [
+    "basalt",
+    "berry",
+    "leaf",
+    "lagoon",
+    "sand",
+    "basalt_warm",
+    "basalt_cool",
+    "lagoon_cool"
+  ],
+  "glows": ["lava"],
+  "signature": "a low, wide block of glossy basalt hex columns with a boulder head and a turtle on top",
+  "parts": [
+    {
+      "name": "far leg",
+      "families": ["basalt"],
+      "joint": "foot",
+      "layer": {
+        "S": 0,
+        "E": 0,
+        "W": 0,
+        "N": 0
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "6-frame shuffle, a stump lifts 2 px",
+      "painter": false
+    },
+    {
+      "name": "near leg",
+      "families": ["basalt_warm"],
+      "joint": "foot",
+      "layer": {
+        "S": 3,
+        "E": 3,
+        "W": 3,
+        "N": 3
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "6-frame shuffle, a stump lifts 2 px",
+      "painter": false
+    },
+    {
+      "name": "back shoulder",
+      "families": ["basalt", "basalt_cool"],
+      "joint": "chest",
+      "layer": {
+        "S": 1,
+        "E": 1,
+        "W": 1,
+        "N": 7
+      },
+      "facings": ["E", "W"],
+      "motion": "flat hex top is the familiar perch; swaps sides in E/W; breath 1 px late",
+      "painter": false
+    },
+    {
+      "name": "flank column",
+      "families": ["basalt"],
+      "joint": "hip",
+      "layer": {
+        "S": 1,
+        "E": 1,
+        "W": 1,
+        "N": 1
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "rigid with the body",
+      "painter": false
+    },
+    {
+      "name": "turtle column",
+      "families": ["basalt_warm"],
+      "joint": "hip",
+      "layer": {
+        "S": 2,
+        "E": 2,
+        "W": 2,
+        "N": 2
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "breath 1 px",
+      "painter": false
+    },
+    {
+      "name": "head",
+      "families": ["basalt_warm"],
+      "joint": "chest",
+      "layer": {
+        "S": 4,
+        "E": 4,
+        "W": 4,
+        "N": 4
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "lava ember eyes; pokes forward 2 px in strike",
+      "painter": true
+    },
+    {
+      "name": "near arm",
+      "families": ["basalt"],
+      "joint": "chest",
+      "layer": {
+        "S": 6,
+        "E": 6,
+        "W": 6,
+        "N": 6
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "hangs, thrusts as a lying column in ready and strike, up in cast and cheer, back in hit",
+      "painter": false
+    },
+    {
+      "name": "thrift tufts",
+      "families": ["berry", "leaf"],
+      "joint": "foot",
+      "layer": {
+        "S": 5,
+        "E": 5,
+        "W": 5,
+        "N": 5
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "Overgrow adds a layer per still turn; a hit throws the top one off",
+      "painter": false
+    },
+    {
+      "name": "turtle",
+      "families": ["lagoon_cool", "sand"],
+      "joint": "back",
+      "layer": {
+        "S": 5,
+        "E": 5,
+        "W": 5,
+        "N": 5
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "sleeps; wakes in fidget, cast and cheer; tucks in on hit",
+      "painter": false
+    },
+    {
+      "name": "familiar perch",
+      "families": [],
+      "joint": "chest",
+      "layer": {
+        "S": 1.5,
+        "E": 1.5,
+        "W": 1.5,
+        "N": 8
+      },
+      "facings": ["E", "W"],
+      "motion": "back shoulder top; fight poses only",
+      "painter": false
+    }
+  ],
+  "anchors": {
+    "perch": {
+      "E idle": [16, 46],
+      "W idle": [64, 46],
+      "E ready": [17, 47],
+      "E strike": [19, 47],
+      "E cast": [16, 46],
+      "E hit": [14, 46],
+      "E sit": [16, 51],
+      "E cheer": [16, 43],
+      "W ready": [63, 47],
+      "W strike": [61, 47]
+    }
+  },
+  "notes": [
+    "E/W span about 60 px; the back shoulder runs about 27 px behind the foot, a little over the 24 px follower margin."
+  ]
+}

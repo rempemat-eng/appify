@@ -122,7 +122,19 @@ Claude L's fight content (`lib/fight-content.ts`, #195) names the moments the ba
 
 The wind-up is 100 ms rather than fights.md's 150: the impact frame must show within `game-battle`'s 200 ms step, and the game's timeline leads.
 
-## 7. Open
+## 7. Body plans
+
+Each folk and familiar has a body plan in `art/characters/bodies/<id>.json` (see the [README](../../../art/characters/bodies/README.md)). The plans are drawn from the chosen design sheets and are checked by `lib/character-bodies.test.ts`. A body plan holds:
+
+- the rig template
+- height and cell
+- families
+- every part, with its joint, its layer for each facing, its motion, and whether it is hand-painted
+- the anchors
+
+Per rules-system.md section 6, a new character is a body plan plus a face painter.
+
+## 8. Open
 
 - **Density:** 2x is pending Matt's verdict on the pilot. Everything here is in world px, so a 1.5x verdict changes only the sheets.
 - **One design across densities:** Matt's style study (21 Oct 14:21) makes the 1x design the master, with one design per object at every density. The folk design sheets (folk-batch-1.md, folk-batch-2.md) are drawn at 2x and get 1x masters before production.

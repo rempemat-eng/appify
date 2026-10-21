@@ -1,0 +1,222 @@
+{
+  "id": "puddle",
+  "kind": "folk",
+  "template": "smallBiped",
+  "heightWorld": 18,
+  "cell": "folkSmall",
+  "design": "B, short smock and net",
+  "families": ["leaf", "plaster", "brass", "berry", "path"],
+  "glows": [],
+  "signature": "brass oilskin smock with berry wellies, a pushed-back sou'wester and the net coil",
+  "parts": [
+    {
+      "name": "net coil",
+      "families": ["path"],
+      "joint": "back",
+      "layer": {
+        "S": 0,
+        "E": 0,
+        "W": 0,
+        "N": 8
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "the same in all facings; peeks past her left shoulder in S",
+      "painter": false
+    },
+    {
+      "name": "sou'wester",
+      "families": ["brass"],
+      "joint": "head",
+      "layer": {
+        "S": 1,
+        "E": 1,
+        "W": 1,
+        "N": 9
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "hangs at the back of the head on a chin cord; S: brim either side, E/W: edge-on disc behind",
+      "painter": false
+    },
+    {
+      "name": "left leg",
+      "families": ["leaf"],
+      "joint": "hip",
+      "layer": {
+        "S": 2,
+        "E": 2,
+        "W": 2,
+        "N": 1
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "walk swing; a tone down as the far leg in profile; forward in sit",
+      "painter": false
+    },
+    {
+      "name": "right leg",
+      "families": ["leaf"],
+      "joint": "hip",
+      "layer": {
+        "S": 2,
+        "E": 2,
+        "W": 2,
+        "N": 1
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "walk swing; a tone down as the far leg in profile; forward in sit",
+      "painter": false
+    },
+    {
+      "name": "left welly",
+      "families": ["berry"],
+      "joint": "foot",
+      "layer": {
+        "S": 2,
+        "E": 2,
+        "W": 2,
+        "N": 1
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "open top shows when sitting",
+      "painter": false
+    },
+    {
+      "name": "right welly",
+      "families": ["berry"],
+      "joint": "foot",
+      "layer": {
+        "S": 2,
+        "E": 2,
+        "W": 2,
+        "N": 1
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "open top shows when sitting",
+      "painter": false
+    },
+    {
+      "name": "far arm and hand",
+      "families": ["leaf"],
+      "joint": "chest",
+      "layer": {
+        "S": 3,
+        "E": 3,
+        "W": 3,
+        "N": 2
+      },
+      "facings": ["E", "W"],
+      "motion": "a tone down, behind the smock",
+      "painter": false
+    },
+    {
+      "name": "familiar perch",
+      "families": [],
+      "joint": "chest",
+      "layer": {
+        "S": 4,
+        "E": 4,
+        "W": 4,
+        "N": 10
+      },
+      "facings": ["E", "W"],
+      "motion": "back shoulder (E: x smaller, W: x larger), behind the head",
+      "painter": false
+    },
+    {
+      "name": "smock",
+      "families": ["brass"],
+      "joint": "hip",
+      "layer": {
+        "S": 5,
+        "E": 5,
+        "W": 5,
+        "N": 3
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "stiff hem and creases; leans with the strike",
+      "painter": false
+    },
+    {
+      "name": "braces and buttons",
+      "families": ["berry", "brass"],
+      "joint": "chest",
+      "layer": {
+        "S": 6,
+        "E": 6,
+        "W": 6,
+        "N": 0
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "S two straps, E/W the near strap",
+      "painter": false
+    },
+    {
+      "name": "near arm, stiff sleeve and hand",
+      "families": ["leaf", "brass"],
+      "joint": "chest",
+      "layer": {
+        "S": 7,
+        "E": 7,
+        "W": 7,
+        "N": 4
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "walk, ready, strike, cast, hit, cheer",
+      "painter": false
+    },
+    {
+      "name": "head",
+      "families": ["leaf", "plaster"],
+      "joint": "head",
+      "layer": {
+        "S": 8,
+        "E": 8,
+        "W": 8,
+        "N": 5
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "brow, cheek, snout step, pale jaw",
+      "painter": false
+    },
+    {
+      "name": "eye bumps",
+      "families": ["leaf", "plaster"],
+      "joint": "head",
+      "layer": {
+        "S": 9,
+        "E": 9,
+        "W": 9,
+        "N": 6
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "blink, look, squeeze (hit), happy (cheer), half lid (sit)",
+      "painter": true
+    },
+    {
+      "name": "mouth and tongue",
+      "families": ["leaf", "berry"],
+      "joint": "head",
+      "layer": {
+        "S": 10,
+        "E": 10,
+        "W": 10,
+        "N": 7
+      },
+      "facings": ["S", "E", "W"],
+      "motion": "smile, open, tongue (fidget, strike), ouch",
+      "painter": true
+    }
+  ],
+  "anchors": {
+    "perch": {
+      "E ready": [18, 35],
+      "E strike": [20, 35],
+      "E cast": [18, 34],
+      "E hit": [16, 34],
+      "E sit": [18, 40],
+      "E cheer": [18, 31],
+      "W ready": [38, 35],
+      "W strike": [36, 35]
+    }
+  },
+  "notes": ["The familiar sits behind the head so the eye bump stays the top of the silhouette."]
+}
