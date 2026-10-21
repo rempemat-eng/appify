@@ -19,6 +19,11 @@ never single-pixel noise), so the bar cannot be met with speckle:
 - isolated  the share of pixels whose colour differs from all four neighbours
 - cluster   the mean size in px of the patch's one-colour regions
 
+Ground is judged for cleanliness instead (CLEAN_KINDS, 21 Oct): Matt found our grounds "visually
+too noisy" beside Eastward, and shapes and dressing reward speckle. A ground passes when its
+visible edges, lone pixels, two-main-colour share and colour count are as clean as Eastward's
+lawns and yards at our scale (clean_counts; baselines' "clean"), with tones at GROUND_TONES.
+
 A surface passes when tones, shapes and dressing each reach TOLERANCE of the reference's
 mean for the same kind of surface (face, rim, side, corner, stair, foot, ground), its
 isolated share is at most the reference's plus ISOLATED_MARGIN, and its mean cluster is
@@ -100,6 +105,26 @@ STEP = 16           # quantisation step a channel (16 levels)
 TOLERANCE = 0.9     # ours must reach 90 % of the reference on every count
 ISOLATED_MARGIN = 0.02   # and be no noisier: at most 2 points more isolated pixels
 CLUSTER_SHARE = 0.9      # and clusters at least 90 % as large
+# Cleanliness (Matt, 21 Oct 10:52: "your current renders are visually too noisy. compare with
+# eastward. i want it to be cleaner, like eastward"). Measured on the colours as the eye sees them
+# at our scale: the reference is brought to our adult height by area averaging (which also
+# washes out JPEG noise), ours is taken as drawn. Per PATCH x PATCH square:
+#   edges    the share of neighbouring pixel pairs (right and down) that differ visibly
+#            (RGB distance over CLEAN_DIST): how busy a fill is
+#   lone     the share of pixels that differ visibly from all four neighbours: speckle
+#   top2     the share of the square covered by its two most common colours
+#   colours  how many colours it uses (RGB in steps of CLEAN_STEP)
+# For the kinds in CLEAN_KINDS these replace the shapes and dressing minimums, which reward
+# noise, and the tones minimum drops to GROUND_TONES of the reference: variety comes from a few
+# large soft blotches and clumped tufts, not from speckle.
+CLEAN_DIST = 20.0
+CLEAN_STEP = 24
+CLEAN_KINDS = ('ground',)
+GROUND_TONES = 0.5
+CLEAN_EDGES = 0.04       # ours: edges at most the reference's plus 4 points
+CLEAN_LONE = 0.01        # lone pixels at most the reference's plus 1 point
+CLEAN_TOP2 = 0.9         # the two main colours cover at least 90 % of the reference's share
+CLEAN_COLOURS = 1.25     # and at most 25 % more colours (plus one)
 KINDS = ('face', 'rim', 'side', 'corner', 'stair', 'foot', 'ground', 'water', 'stream', 'wood-front',
          'stone-wall', 'machinery', 'roof', 'facade', 'hedge', 'tree', 'paving')
 
@@ -176,6 +201,41 @@ def counts(key: np.ndarray) -> dict:
             'cluster': round(float(np.mean(cl)), 2), 'patches': len(t)}
 
 
+def clean_counts(img: Image.Image) -> dict:
+    """Cleanliness per PATCH x PATCH square of an image already at our scale (see CLEAN_*)."""
+    a = np.asarray(img.convert('RGB'), dtype=np.float64)
+    h, w, _ = a.shape
+    if h < PATCH or w < PATCH:
+        raise ValueError(f'detail_bar: the box is smaller than one {PATCH} px patch at our scale')
+    pad = np.pad(a, ((1, 1), (1, 1), (0, 0)), mode='edge')
+
+    def far(b):
+        return np.sqrt(((a - b) ** 2).sum(-1)) > CLEAN_DIST
+    up, dn, lf, rt = far(pad[:-2, 1:-1]), far(pad[2:, 1:-1]), far(pad[1:-1, :-2]), far(pad[1:-1, 2:])
+    lone = up & dn & lf & rt
+    q = (a // CLEAN_STEP).astype(np.int64)
+    key = q[..., 0] * 4096 + q[..., 1] * 64 + q[..., 2]
+    e, lo, t2, co = [], [], [], []
+    for y in range(0, h - PATCH + 1, PATCH):
+        for x in range(0, w - PATCH + 1, PATCH):
+            sl = (slice(y, y + PATCH), slice(x, x + PATCH))
+            # pairs inside the square: each pixel's right and down neighbour
+            e.append(float((rt[sl][:, :-1].sum() + dn[sl][:-1, :].sum()) / (2 * PATCH * (PATCH - 1))))
+            lo.append(float(lone[sl].mean()))
+            _v, c = np.unique(key[sl], return_counts=True)
+            c = np.sort(c)[::-1]
+            t2.append(float(c[:2].sum() / (PATCH * PATCH)))
+            co.append(len(c))
+    return {'edges': round(float(np.mean(e)), 3), 'lone': round(float(np.mean(lo)), 3),
+            'top2': round(float(np.mean(t2)), 3), 'colours': round(float(np.mean(co)), 2)}
+
+
+def ref_scale(img: Image.Image, adult: float) -> Image.Image:
+    """A reference crop at our scale for cleanliness: area-averaged to an adult of ADULT px."""
+    f = ADULT / adult
+    return img.convert('RGB').resize((max(1, round(img.width * f)), max(1, round(img.height * f))), Image.BOX)
+
+
 def jpeg_quality(img: Image.Image) -> int | None:
     """The libjpeg quality whose luminance table matches the image's, or None (not a JPEG)."""
     q = getattr(img, 'quantization', None)
@@ -207,11 +267,14 @@ def through_jpeg(img: Image.Image, adult: float, quality: int | None) -> Image.I
     return Image.open(b).convert('RGB')
 
 
-def measure(path: str, box, adult: float) -> dict:
+def measure(path: str, box, adult: float, kind: str | None = None) -> dict:
     src = Image.open(path)
     q = jpeg_quality(src)
     img = src.convert('RGB').crop(tuple(box))
-    return {**counts(to_scale(img, adult)), 'jpeg_quality': q}
+    out = {**counts(to_scale(img, adult)), 'jpeg_quality': q}
+    if kind in CLEAN_KINDS:
+        out['clean'] = clean_counts(ref_scale(img, adult))
+    return out
 
 
 def load() -> dict:
@@ -228,6 +291,9 @@ def bar(kind: str, base: dict | None = None) -> dict:
         raise KeyError(f'detail_bar: no baseline for {kind}')
     out = {m: round(float(np.mean([b[m] for b in rows])), 3) for m in ('tones', 'shapes', 'dressing', 'isolated', 'cluster')}
     out['adult_px'] = float(np.mean([b['adult_px'] for b in rows]))
+    cl = [b['clean'] for b in rows if 'clean' in b]
+    if cl:
+        out['clean'] = {m: round(float(np.mean([c[m] for c in cl])), 3) for m in ('edges', 'lone', 'top2', 'colours')}
     qs = [b.get('jpeg_quality') for b in rows if b.get('jpeg_quality')]
     out['jpeg_quality'] = int(round(np.mean(qs))) if qs else None
     return out
@@ -235,10 +301,24 @@ def bar(kind: str, base: dict | None = None) -> dict:
 
 def judge(ours: dict, ref: dict) -> tuple[bool, list]:
     lines, ok = [], True
+    clean = 'clean' in ref and 'clean' in ours
     for m in ('tones', 'shapes', 'dressing'):
-        good = ours[m] >= TOLERANCE * ref[m]
+        if clean and m != 'tones':           # cleanliness replaces these minimums (CLEAN_KINDS)
+            lines.append(f'{m} {ours[m]:5.1f} / {ref[m]:5.1f} (not a minimum)')
+            continue
+        share = GROUND_TONES if clean else TOLERANCE
+        good = ours[m] >= share * ref[m]
         ok &= good
         lines.append(f'{m} {ours[m]:5.1f} / {ref[m]:5.1f} {"ok" if good else "LOW"}')
+    if clean:
+        o, r = ours['clean'], ref['clean']
+        for m, good, word in (('edges', o['edges'] <= r['edges'] + CLEAN_EDGES, 'BUSY'),
+                              ('lone', o['lone'] <= r['lone'] + CLEAN_LONE, 'NOISY'),
+                              ('top2', o['top2'] >= CLEAN_TOP2 * r['top2'], 'BUSY'),
+                              ('colours', o['colours'] <= CLEAN_COLOURS * r['colours'] + 1, 'BUSY')):
+            ok &= good
+            lines.append(f'{m} {o[m]:.3f} / {r[m]:.3f} {"ok" if good else word}')
+        return ok, lines
     good = ours['isolated'] <= ref['isolated'] + ISOLATED_MARGIN
     ok &= good
     lines.append(f'isolated {ours["isolated"]:.3f} / {ref["isolated"]:.3f} {"ok" if good else "NOISY"}')
@@ -256,6 +336,8 @@ def check_image(img: Image.Image, box, kind: str, adult: float = ADULT, base=Non
         crop = crop.resize((round(crop.width * ADULT / adult), round(crop.height * ADULT / adult)), Image.NEAREST)
     shot = through_jpeg(crop, ref['adult_px'], ref['jpeg_quality'])
     ours = counts(to_scale(shot, ref['adult_px']))
+    if kind in CLEAN_KINDS and 'clean' in ref:
+        ours['clean'] = clean_counts(crop)        # ours as drawn, at our scale
     ok, lines = judge(ours, ref)
     return ok, ours, lines
 
@@ -265,7 +347,9 @@ def main(argv):
         for k, b in load()['baselines'].items():
             print(f'{k:28s} {b["kind"]:7s} tones {b["tones"]:5.1f} shapes {b["shapes"]:5.1f} '
                   f'dressing {b["dressing"]:5.1f} isolated {b.get("isolated", 0):.3f} '
-                  f'cluster {b.get("cluster", 0):4.1f}  {b["url"]}')
+                  f'cluster {b.get("cluster", 0):4.1f}'
+                  + (f'  clean: edges {b["clean"]["edges"]:.3f} lone {b["clean"]["lone"]:.3f} top2 {b["clean"]["top2"]:.2f} '
+                     f'colours {b["clean"]["colours"]:.1f}' if 'clean' in b else '') + f'  {b["url"]}')
         return 0
     box = [int(v) for v in argv[argv.index('--box') + 1:argv.index('--box') + 5]]
     adult = float(argv[argv.index('--adult') + 1]) if '--adult' in argv else ADULT
@@ -275,7 +359,7 @@ def main(argv):
         key = argv[argv.index('--key') + 1]
         url = argv[argv.index('--url') + 1]
         game = argv[argv.index('--game') + 1] if '--game' in argv else 'Eastward'
-        c = measure(path, box, adult)
+        c = measure(path, box, adult, kind)
         base = load() if os.path.exists(BASELINES) else {'about': __doc__.split('\n')[0], 'baselines': {}}
         base['baselines'][key] = {'game': game, 'url': url, 'box': box, 'adult_px': adult, 'kind': kind, **c}
         with open(BASELINES, 'w') as f:
