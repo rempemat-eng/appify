@@ -20,6 +20,12 @@ only on south edges (32 px a tier); every tier change on the paths is a stair 40
 ramps, eastward-edges 6.3). Outlines are on the grid in straight runs along x or y with a
 jog of 8 px at most every 96 px (to-all-grid-2x; benchmark 8).
 
+Beyond F's schema the plan carries, for the lanes that read it: `areas` (F's screens, #194),
+`set_pieces` (the cliff core's library in the coast biome, the isle's landmarks proposed),
+`clusters` and `cluster_slots` (Claude B's recipes, #188), `rest_spots`, `story` and `ring`
+(Claude K's handoffs, #197: the naturalist's story, the quiet place with no ring), and the
+`coast` it checks itself against (isle_faults), since F's check has no coast yet.
+
     python3 scripts/art/regions/tidebloom_plan.py           # write art/regions/tidebloom.json
     python3 scripts/art/region_plan.py --check              # hold it to the rules
 """
@@ -155,10 +161,25 @@ def coast():
 
 
 # --- the tiers (screen space: a raised top as seen, its south face hanging under its rim) ---------
-NORTH_BODY = (6624, 6136, 7136, 6248)     # the rainforest across the north body
-EAST_BODY = (6976, 6200, 7224, 6440)      # and down the east body to Black-sand Cove
-HEADWATERS = (7008, 6176, 7192, 6360)
-CRATER_RIM = (7056, 6184, 7168, 6248)
+# Masses with depth (to-all-volume, Matt 21 Oct 13:37): each tier is a union of blocks whose
+# south rims sit at different rows, so its face steps forward in outcrops and back in recesses
+# by whole cells (16 px, two grid cells at 1x, one cell at 2x), never one even band. A block
+# is (x0, y0, x1, y1), its y1 the south rim. Stairs, falls and paths keep to the rims they meet.
+RAINFOREST = [
+    (6624, 6136, 6688, 6232),             # the west end, stepped back (a recess over the landing)
+    (6688, 6136, 6800, 6248),             # the lagoon stair and the lower fall's lip
+    (6800, 6136, 6896, 6232),             # a recess under the giant tree's canopy
+    (6896, 6136, 7136, 6248),
+    (6976, 6200, 7064, 6440),             # down the east body: the cove stair's face
+    (7064, 6200, 7152, 6456),             # an outcrop of basalt over the cove
+    (7152, 6200, 7224, 6440),             # the stream's fall into the cove
+]
+HEADWATERS = [
+    (7008, 6176, 7056, 6360),
+    (7056, 6176, 7136, 6368),             # a shallow outcrop between the two stairs
+    (7136, 6176, 7192, 6360),
+]
+CRATER_RIM = [(7056, 6184, 7168, 6248)]
 
 # --- the paths (axis runs, as the grid ruling wants them) -------------------------------------
 SHELL_BAR = [[7000, 5792], [6968, 5792], [6936, 5792], [6904, 5792], [6896, 5792], [6896, 5824], [6896, 5856],
@@ -186,11 +207,11 @@ TRODS = [
      'width': 24, 'dead_end': 'story', 'points': [[6944, 6488], [6944, 6568], [6888, 6568], [6888, 6664]]},
 ]
 STAIRS = [
-    {'id': 'cove_stair', 'on': 'isle_loop', 'at': [7024, 6456], 'from_tier': 0, 'to_tier': 1, 'width': 40, 'kind': 'basalt'},
-    {'id': 'headwaters_stair', 'on': 'isle_loop', 'at': [7024, 6376], 'from_tier': 1, 'to_tier': 2, 'width': 40, 'kind': 'basalt'},
-    {'id': 'rim_stair', 'on': 'crater_spur', 'at': [7104, 6264], 'from_tier': 2, 'to_tier': 3, 'width': 40, 'kind': 'basalt'},
-    {'id': 'fern_stair', 'on': 'isle_loop', 'at': [7168, 6376], 'from_tier': 2, 'to_tier': 1, 'width': 40, 'kind': 'timber'},
-    {'id': 'lagoon_stair', 'on': 'isle_loop', 'at': [6736, 6264], 'from_tier': 1, 'to_tier': 0, 'width': 40, 'kind': 'timber'},
+    {'id': 'cove_stair', 'on': 'isle_loop', 'at': [7024, 6456], 'from_tier': 0, 'to_tier': 1, 'width': 48, 'kind': 'basalt'},
+    {'id': 'headwaters_stair', 'on': 'isle_loop', 'at': [7024, 6376], 'from_tier': 1, 'to_tier': 2, 'width': 48, 'kind': 'basalt'},
+    {'id': 'rim_stair', 'on': 'crater_spur', 'at': [7104, 6264], 'from_tier': 2, 'to_tier': 3, 'width': 48, 'kind': 'basalt'},
+    {'id': 'fern_stair', 'on': 'isle_loop', 'at': [7168, 6376], 'from_tier': 2, 'to_tier': 1, 'width': 48, 'kind': 'timber'},
+    {'id': 'lagoon_stair', 'on': 'isle_loop', 'at': [6736, 6264], 'from_tier': 1, 'to_tier': 0, 'width': 48, 'kind': 'timber'},
 ]
 WATER = [
     {'id': 'crater_pool', 'kind': 'pool', 'closed': True, 'tier': 3,
@@ -228,6 +249,9 @@ PLACES = [   # the decided island's places, by walk time from the pier (brief 5)
     {'id': 'crater_pool', 'kind': 'pool', 'at': [7136, 6212], 'walk_s': 28},
     {'id': 'black_sand_cove', 'kind': 'cove', 'at': [7040, 6520], 'why': 'basalt from the crater weathered to black sand, the basalt arm and the sea stack'},
     {'id': 'sea_stack', 'kind': 'landmark', 'at': [7232, 6640], 'why': 'a basalt column the sea cut off the arm'},
+    {'id': 'old_volcano', 'kind': 'landmark', 'at': [7112, 6216],
+     'why': "the isle is an old volcano of the arc, long cold: its crater rim (T3) holds the pool, its breached "
+            "caldera is the lagoon, its basalt makes the cove's black sand (the live volcano is the fire country's)"},
     {'id': 'shell_bar_islet', 'kind': 'islet', 'at': [6880, 5904], 'why': 'the Shell Bar runs over it: tide pools, terns nesting'},
 ]
 POCKETS = [
@@ -246,8 +270,183 @@ MARKERS = [   # brief 5 (the block-out's slots); moved to fit the ground by regi
     ('A', 'terns', (6951, 5828)), ('I', 'door', (6856, 5848)), ('S', 'cold fire ring', (6871, 5894)),
     ('S', 'marker stone', (6826, 5927)), ('I', 'bench', (6827, 6023)), ('S', 'cart with a broken wheel', (6790, 6056)),
     ('A', 'terns', (6696, 6033)),
+    ('A', 'turtles', (6388, 6640)), ('A', 'turtle hatchlings at dusk', (6344, 6624)),
 ]
 MOVED_BY_HAND = {('door', (6856, 5848)): (6906, 5855)}   # off the wreck's egg spot
+
+# --- the screens (Claude F's `areas`, #194): whole 32 px audit cells of the box over the walked
+# land, three 384 px columns by three rows; a screen with no path in it is drawn, never walked
+AREA_COLS = (6320, 6704, 7088)
+AREA_ROWS = ((5792, 352), (6144, 384), (6528, 384))
+# dressing the screens up to 2 interactables and 3 story props each (check 1), in the isles' own
+# things rather than the moor's cairns: the rule is F's `dress`, the kinds are ours
+# (by tier: the shore's things at sea level, the forest's on the raised ground)
+DRESS_I = {0: ('driftwood bench', 'water butt', 'signpost'), 1: ('log bench', 'water butt', 'signpost')}
+DRESS_S = {0: ('shell cairn', 'glass float', 'lobster pot', 'beached canoe'),
+           1: ('carved post', 'mossy stone', 'fallen frond heap', 'old rope swing')}
+
+# --- the cliff core's pieces (library: stair, ledge, path, spring, pond, snow_corner, boulders,
+# scree, ivy), in the coast biome; the isle's own landmarks are proposed for the library
+SET_PIECES = [
+    {'piece': 'spring', 'at': [6784, 6152], 'why': "the rainforest stream's source under the canopy"},
+    {'piece': 'pond', 'at': [7136, 6208], 'why': "the crater pool in the old volcano's cup"},
+    {'piece': 'boulders', 'at': [7112, 6528], 'why': "basalt boulders at the foot of the east body's outcrop"},
+    {'piece': 'boulders', 'at': [6312, 6680], 'why': "the turtle beach's west end: rocks the turtles haul past"},
+    {'piece': 'scree', 'at': [7080, 6296], 'why': 'ash and basalt grit at the foot of the crater rim'},
+    {'piece': 'ledge', 'at': [7216, 6464], 'why': 'a wet basalt ledge beside the cove fall'},
+    {'piece': 'sea_stack', 'at': [7232, 6640], 'proposed': True, 'why': 'a basalt column the sea cut off the arm'},
+    {'piece': 'sea_cave', 'at': [6880, 6680], 'proposed': True, 'why': "the cave mouth in the basalt arm's south face"},
+    {'piece': 'basalt_columns', 'at': [6984, 6584], 'proposed': True, 'why': "the basalt arm's columns over Black-sand Cove"},
+    {'piece': 'giant_tree', 'at': [6904, 6144], 'proposed': True, 'why': "the rainforest's oldest tree, its buttress roots over the path"},
+    {'piece': 'crater_lip', 'at': [7112, 6192], 'proposed': True, 'why': "the old volcano's rim: a ring of weathered basalt round the pool"},
+]
+
+# --- where Claude B's prop clusters go (#188, scripts/art/prop_clusters.json). `shore` is the one
+# recipe built for the coast today; the others are slots asking for an isle recipe (proposed)
+CLUSTER_SLOTS = [
+    {'recipe': 'shore', 'near': [6440, 6312], 'why': "the landing's beach by the pier: a boat drawn up, nets drying"},
+    {'recipe': 'shore', 'near': [6976, 6520], 'why': "Black-sand Cove's head: a fisher's corner on the black sand"},
+    {'recipe': 'turtle_beach', 'proposed': True, 'near': [6400, 6640],
+     'why': "the turtle beach kept clear above the tideline: a ring of shells round a nest, a warden's tally post, no boat"},
+    {'recipe': 'lagoon_hamlet', 'proposed': True, 'near': [6528, 6200],
+     'why': "Lagoon Landing's yard: the packing shed's door, crates of fruit, a hammock between two palms"},
+    {'recipe': 'rainforest_clearing', 'proposed': True, 'near': [6872, 6184],
+     'why': "under the giant tree: a mossy log, tree ferns, a naturalist's specimen table"},
+    {'recipe': 'headwaters_shelter', 'proposed': True, 'near': [7064, 6320],
+     'why': 'the rain shelter: a thatched roof on four posts, a rail, a bench, a water butt under the eave'},
+]
+# the placements B's placer gave for the two shore slots (prop_clusters.py --place tidebloom shore
+# --near X,Y, seed 0, on #188 @30e4763): the shape `--check` holds every plan's clusters to
+CLUSTERS = [
+    {'recipe': 'shore', 'at': [6376, 6224], 'orient': 's', 'mirror': False, 'seed': 0, 'slot': [6440, 6312]},
+    {'recipe': 'shore', 'at': [6808, 6496], 'orient': 's', 'mirror': False, 'seed': 0, 'slot': [6976, 6520]},
+]
+
+# --- rest spots and the story (Claude K's handoffs, #197: the naturalist, "an inch a year",
+# apprentice Tuff). Each spot is open, reachable ground beside a path with a stand where the
+# folk lies down; the chapter changes are reserved here and not drawn until Matt says yes
+REST_SPOTS = [
+    {'id': 'landing_hammock', 'what': 'a hammock at Lagoon Landing', 'at': [6536, 6216], 'stand': [6548, 6232],
+     'night': True, 'chapter': 1, 'outing': 'A DAY ON THE ISLE'},
+    {'id': 'rain_shelter', 'what': 'the rain shelter at the headwaters', 'at': [7064, 6312], 'stand': [7076, 6320],
+     'chapter': 2},
+    {'id': 'cove_sand', 'what': 'the black sand of the cove', 'at': [7048, 6528], 'stand': [7040, 6520], 'chapter': 3},
+]
+STORY = {
+    'resident': 'naturalist', 'story': 'an inch a year', 'apprentice': 'Tuff', 'source': 'docs/story/handoffs.md (#197)',
+    'chapters': [
+        {'n': 1, 'at': 'landing_hammock', 'change': None},
+        {'n': 2, 'at': 'rain_shelter', 'change': "the naturalist's notebook hangs open to dry on the shelter's rail, pages fanned",
+         'reserve': [7056, 6304]},
+        {'n': 3, 'at': 'cove_sand', 'change': 'the naturalist lies on the black sand by a smooth dent where the boulder '
+                                             'used to sit, notebook shut, pencil behind her ear', 'reserve': [7060, 6536]},
+    ],
+    'draw': False,
+}
+RING = {'none': True, 'why': 'the Tidebloom Isles stay the quiet place with no ring (cast.md; no fight here, no rival)'}
+
+
+def areas() -> list:
+    """The screens over the walked land (F's `areas`), walkable when a path runs through them."""
+    paths = SHELL_BAR_PATHS()
+    out = []
+    for r, (y, h) in enumerate(AREA_ROWS):
+        for c, x in enumerate(AREA_COLS):
+            walked = any(x <= px < x + 384 and y <= py < y + h for q in paths for px, py, _ in rp.sample(q, 8))
+            a = {'id': f'tidebloom-{r}{c}', 'rect': [x, y, 384, h]}
+            if not walked:
+                a['walkable'] = False
+            out.append(a)
+    return out
+
+
+def SHELL_BAR_PATHS():
+    return [[tuple(p[:2]) for p in SHELL_BAR]] + [[tuple(p) for p in t['points']] for t in TRODS]
+
+
+def count(p, rect, t):
+    x, y, w, h = rect
+    return sum(1 for m in p['markers'] if m['t'] == t and x <= m['at'][0] < x + w and y <= m['at'][1] < y + h)
+
+
+def dress(p) -> list:
+    """F's dressing rule (#194 `dress`) in the isles' own things: each walkable screen gets up to
+    2 interactables and 3 story props, spread along its paths and set off to their side."""
+    paths = p['routes'] + p['trods']
+    G = rp.Ground(p)
+    added, k = [], 0
+    for a in p['areas']:
+        if a.get('walkable') is False:
+            continue
+        x, y, w, h = a['rect']
+        pts = [(px, py, q) for q in paths for px, py, _ in rp.sample(q["points"], 8)
+               if x + 16 <= px < x + w - 16 and y + 16 <= py < y + h - 16]
+        need = [('I', DRESS_I)] * max(0, 2 - count(p, a['rect'], 'I')) + \
+               [('S', DRESS_S)] * max(0, 3 - count(p, a['rect'], 'S'))
+        for j, (t, kinds) in enumerate(need):
+            if not pts:
+                break
+            px, py, q = pts[int((j + 0.5) * len(pts) / len(need))]
+            side = 1 if (j + k) % 2 else -1
+            at = [int(px + side * (q['width'] / 2 + 16)) // 4 * 4, int(py) // 4 * 4]
+            tier = G.at(*at)[0] or 0
+            what = kinds[min(tier, 1)][k % len(kinds[min(tier, 1)])]
+            p['markers'].append({'t': t, 'what': what, 'at': at, 'dress': True})
+            added.append((a['id'], what, tuple(at)))
+            k += 1
+    return added
+
+
+def inside_poly(pt, poly) -> bool:
+    x, y = pt
+    c = False
+    for (x0, y0), (x1, y1) in zip(poly, poly[1:] + poly[:1]):
+        if (y0 > y) != (y1 > y) and x < x0 + (y - y0) * (x1 - x0) / (y1 - y0):
+            c = not c
+    return c
+
+
+def isle_faults(p) -> list:
+    """What Claude F's check cannot see yet (the schema has no coast): the isle's tiers, trods,
+    stairs, rest spots and stands lie on the main isle's land, and every rest spot is open
+    ground beside a path (#197: reachable, not in a pocket), on its tier, off the path itself.
+    Also every screen with a path has its 2 interactables and 3 story props (check 1)."""
+    land = p['coast']['main_isle']
+    out = []
+    G = rp.Ground(p)
+    for t in p['tiers']:
+        for q in t['outline']:
+            if not inside_poly(q, land):
+                out.append(f"tier {t['id']} point {tuple(q)} is in the sea")
+    for tr in p['trods']:
+        for q in (v[:2] for v in rp.sample(tr["points"], 8)):
+            if not inside_poly(q, land):
+                out.append(f"trod {tr['id']} runs into the sea at {tuple(int(v) for v in q)}")
+                break
+    for st in p['stairs']:
+        if not inside_poly(st['at'], land):
+            out.append(f"stair {st['id']} is in the sea")
+    paths = p['routes'] + p['trods']
+    for r in p['rest_spots']:
+        for key in ('at', 'stand'):
+            q = r[key]
+            if not inside_poly(q, land):
+                out.append(f"rest spot {r['id']} {key} is in the sea")
+            tier, face = G.at(*q)
+            if tier is None or face:
+                out.append(f"rest spot {r['id']} {key} {tuple(q)} is not on walkable ground")
+        d = [(rp.dist_to_line(r['stand'], q['points']), q) for q in paths]
+        dd, q = min(d, key=lambda v: v[0])
+        if dd < q['width'] / 2 + 4:
+            out.append(f"rest spot {r['id']}'s stand is on the path {q['id']}")
+        if dd > rp.BESIDE + 16:
+            out.append(f"rest spot {r['id']}'s stand is {dd:.0f} px from any path (not beside one)")
+        if any(pk.get('trod') == q['id'] for pk in p['pockets']):
+            out.append(f"rest spot {r['id']} is in a pocket ({q['id']})")
+    for a in p['areas']:
+        if a.get('walkable') is not False and (count(p, a['rect'], 'I') < 2 or count(p, a['rect'], 'S') < 3):
+            out.append(f"screen {a['id']}: {count(p, a['rect'], 'I')} interactables, {count(p, a['rect'], 'S')} story props")
+    return out
 
 
 def plan() -> dict:
@@ -261,8 +460,10 @@ def plan() -> dict:
                    'on it by walk time from the pier. Claude A to confirm in the geography chunk (P1).'),
         'id': 'tidebloom',
         'owner': 'claude-c',
-        'biome': 'tropical',
+        'biome': 'coast',
         'biomes': ['coast'],
+        'biome_variant': "isles (scripts/art/biomes/coast.json, variants.isles): white and black sand, palms, "
+                         'rainforest on ash; its tier faces are the proposed coast_isle edge set',
         'box': BOX,
         'base_tier': {'value': 0, 'provisional': True,
                       'from': "lane G's Shell Bar at tier 0 (lib/world-routes.ts); sea level, so the isle's beaches are 0"},
@@ -271,16 +472,18 @@ def plan() -> dict:
                             'sheltered water for the ferry'},
         'tiers': [
             {'id': 'rainforest', 'tier': 1, 'why': "the crater ring's north and east bodies: rainforest on the old ash",
-             'outline': union_outline([NORTH_BODY, EAST_BODY], 1)},
+             'outline': union_outline(RAINFOREST, 1)},
             {'id': 'headwaters', 'tier': 2, 'why': 'the east body rises to the headwaters under the crater rim',
-             'outline': union_outline([HEADWATERS], 2)},
-            {'id': 'crater_rim', 'tier': 3, 'why': "the old crater's rim, the isle's top, its pool held in the cup",
-             'outline': union_outline([CRATER_RIM], 3)},
+             'outline': union_outline(HEADWATERS, 2)},
+            {'id': 'crater_rim', 'tier': 3, 'why': "the old volcano's crater rim, the isle's top, its pool held in the cup",
+             'outline': union_outline(CRATER_RIM, 3)},
         ],
         'faces': {'_about': "Coast biome faces (to-all-reuse-rule): the isle's own basalt and ash banks under turf and "
                             'rainforest, 32 px a tier, south faces only; sea cliffs where a tier meets the sea, on the '
                             'cliff core when it lands (to-all-kit-freeze).',
-                  'between_tiers': {'height': 32, 'material': 'ash and basalt under rainforest'},
+                  'between_tiers': {'height': 32, 'material': 'ash and basalt under rainforest', 'edge_set': 'coast_isle (proposed)'},
+                  'corners': 'rounded by the kit (the outline turns at cell corners; eastward-edges 1.6)',
+                  'masses': 'each tier is a union of blocks whose south rims step 16 px in or out (to-all-volume 1)',
                   'sea_cliffs': {'height': '32 to 96', 'material': 'basalt', 'kit': 'cliff_core'}},
         'water': WATER,
         'crossings': CROSSINGS,
@@ -298,7 +501,17 @@ def plan() -> dict:
                          **({'moved_from': list(MOVED_BY_HAND[(w, a)])} if (w, a) in MOVED_BY_HAND else {}))
                     for (t, w, a) in MARKERS],
         'obstacles': [],
-        'set_pieces': [],
+        'set_pieces': [dict({'piece': sp['piece'], 'biome': 'coast', 'at': sp['at'], 'seed': i + 1},
+                            **({'proposed': True} if sp.get('proposed') else {}), why=sp['why'])
+                       for i, sp in enumerate(SET_PIECES)]
+                     + [{'piece': 'stair', 'biome': 'coast', 'at': [st['at'][0] // GRID * GRID, st['at'][1] // GRID * GRID],
+                         'seed': 20 + i, 'stair': st['id']} for i, st in enumerate(STAIRS)],
+        'areas': areas(),
+        'clusters': CLUSTERS,
+        'cluster_slots': CLUSTER_SLOTS,
+        'rest_spots': REST_SPOTS,
+        'story': STORY,
+        'ring': RING,
         'edges': [{'side': 'all round', 'layers': 'none: the sea is the edge, surf on every shore; rocks and driftwood on '
                                                  'the beaches; past the box, the open sea is lane G\'s (g-to-all-edges 4)',
                    'beyond': 'the seven other isles on the horizon, drawn and never walked: about (5250, 6250), '
@@ -311,7 +524,9 @@ def plan() -> dict:
                                       'terns nesting on the islet'], 'radiates_from': 'the sea'}],
         'residents': [{'who': 'ferryman', 'at': [6520, 6296], 'note': 'at the pier'},
                       {'who': 'boatwoman', 'at': [6664, 6312], 'note': 'at the boathouse'},
-                      {'who': 'naturalist', 'at': [6856, 6152], 'note': 'under the giant tree'},
+                      {'who': 'naturalist', 'at': [6856, 6152], 'note': "under the giant tree; the isles' resident "
+                                                                      '(the story "an inch a year")', 'resident': True},
+                      {'who': 'turtles', 'at': [6388, 6640], 'note': 'come ashore on the turtle beach to lay; hatchlings run for the sea at dusk'},
                       {'who': 'beachcomber', 'at': [6336, 6704], 'note': 'on the turtle beach'},
                       {'who': 'cocklers', 'at': [6864, 5944], 'note': 'on the Shell Bar at low tide'}],
         'ground': {'_about': "Ground kinds by place, for the painter (the isles' own palette: lagoon teal, white and "
@@ -329,13 +544,16 @@ def plan() -> dict:
 
 def main(argv) -> int:
     p = plan()
-    for what, a, b in rp.fix(p):
-        print(f'moved {what} from {a} to {b}')
+    for _ in range(4):        # dress, settle, and dress again where settling moved a thing off its screen
+        for area, what, at in dress(p):
+            print(f'dressed {area} with a {what} at {at}')
+        for what, a, b in rp.fix(p):
+            print(f'moved {what} from {a} to {b}')
     path = os.path.join(ROOT, 'art', 'regions', 'tidebloom.json')
     with open(path, 'w') as fh:
         json.dump(p, fh, indent=1, default=int)
         fh.write('\n')
-    faults = rp.check(p)
+    faults = rp.check(p) + isle_faults(p)
     print(rp.summary(p))
     for f in faults:
         print('FAULT', f)

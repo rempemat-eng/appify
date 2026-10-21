@@ -2,10 +2,11 @@
  "_about": "The Tidebloom Isles and the Shell Bar as a plan (Claude C, lane C, 21 Oct), in Claude F's schema (docs/vision/region-plans.md), written by scripts/art/regions/tidebloom_plan.py. From the brief docs/vision/regions/tidebloom-isles.md (PR #96, v5.3) and the block-out (#187). World px on the 11264 x 6912 canvas; tier outlines in SCREEN space. Open: the brief's decided island of 704 x 1152 cannot stand in this box (1112 tall); this plan keeps the block-out's ring round the lagoon, where the Shell Bar route, the ferry and the coast already meet it, and lays the decided island's places on it by walk time from the pier. Claude A to confirm in the geography chunk (P1).",
  "id": "tidebloom",
  "owner": "claude-c",
- "biome": "tropical",
+ "biome": "coast",
  "biomes": [
   "coast"
  ],
+ "biome_variant": "isles (scripts/art/biomes/coast.json, variants.isles): white and black sand, palms, rainforest on ash; its tier faces are the proposed coast_isle edge set",
  "box": [
   3696,
   5792,
@@ -1034,6 +1035,22 @@
      6440
     ],
     [
+     7152,
+     6440
+    ],
+    [
+     7152,
+     6456
+    ],
+    [
+     7064,
+     6456
+    ],
+    [
+     7064,
+     6440
+    ],
+    [
      6976,
      6440
     ],
@@ -1058,8 +1075,32 @@
      6248
     ],
     [
-     6624,
+     6896,
      6248
+    ],
+    [
+     6896,
+     6232
+    ],
+    [
+     6800,
+     6232
+    ],
+    [
+     6800,
+     6248
+    ],
+    [
+     6688,
+     6248
+    ],
+    [
+     6688,
+     6232
+    ],
+    [
+     6624,
+     6232
     ]
    ]
   },
@@ -1097,6 +1138,22 @@
      6360
     ],
     [
+     7136,
+     6360
+    ],
+    [
+     7136,
+     6368
+    ],
+    [
+     7056,
+     6368
+    ],
+    [
+     7056,
+     6360
+    ],
+    [
      7008,
      6360
     ],
@@ -1121,7 +1178,7 @@
   {
    "id": "crater_rim",
    "tier": 3,
-   "why": "the old crater's rim, the isle's top, its pool held in the cup",
+   "why": "the old volcano's crater rim, the isle's top, its pool held in the cup",
    "outline": [
     [
      7056,
@@ -1146,8 +1203,11 @@
   "_about": "Coast biome faces (to-all-reuse-rule): the isle's own basalt and ash banks under turf and rainforest, 32 px a tier, south faces only; sea cliffs where a tier meets the sea, on the cliff core when it lands (to-all-kit-freeze).",
   "between_tiers": {
    "height": 32,
-   "material": "ash and basalt under rainforest"
+   "material": "ash and basalt under rainforest",
+   "edge_set": "coast_isle (proposed)"
   },
+  "corners": "rounded by the kit (the outline turns at cell corners; eastward-edges 1.6)",
+  "masses": "each tier is a union of blocks whose south rims step 16 px in or out (to-all-volume 1)",
   "sea_cliffs": {
    "height": "32 to 96",
    "material": "basalt",
@@ -1699,7 +1759,7 @@
    ],
    "from_tier": 0,
    "to_tier": 1,
-   "width": 40,
+   "width": 48,
    "kind": "basalt"
   },
   {
@@ -1711,7 +1771,7 @@
    ],
    "from_tier": 1,
    "to_tier": 2,
-   "width": 40,
+   "width": 48,
    "kind": "basalt"
   },
   {
@@ -1723,7 +1783,7 @@
    ],
    "from_tier": 2,
    "to_tier": 3,
-   "width": 40,
+   "width": 48,
    "kind": "basalt"
   },
   {
@@ -1735,7 +1795,7 @@
    ],
    "from_tier": 2,
    "to_tier": 1,
-   "width": 40,
+   "width": 48,
    "kind": "timber"
   },
   {
@@ -1747,7 +1807,7 @@
    ],
    "from_tier": 1,
    "to_tier": 0,
-   "width": 40,
+   "width": 48,
    "kind": "timber"
   }
  ],
@@ -1866,6 +1926,15 @@
     6640
    ],
    "why": "a basalt column the sea cut off the arm"
+  },
+  {
+   "id": "old_volcano",
+   "kind": "landmark",
+   "at": [
+    7112,
+    6216
+   ],
+   "why": "the isle is an old volcano of the arc, long cold: its crater rim (T3) holds the pool, its breached caldera is the lagoon, its basalt makes the cove's black sand (the live volcano is the fire country's)"
   },
   {
    "id": "shell_bar_islet",
@@ -2060,7 +2129,7 @@
    "what": "door",
    "at": [
     6672,
-    6248
+    6268
    ],
    "moved_from": [
     6672,
@@ -2166,10 +2235,716 @@
     6696,
     6033
    ]
+  },
+  {
+   "t": "A",
+   "what": "turtles",
+   "at": [
+    6388,
+    6648
+   ],
+   "moved_from": [
+    6388,
+    6640
+   ]
+  },
+  {
+   "t": "A",
+   "what": "turtle hatchlings at dusk",
+   "at": [
+    6344,
+    6624
+   ]
+  },
+  {
+   "t": "I",
+   "what": "driftwood bench",
+   "at": [
+    6568,
+    6080
+   ],
+   "dress": true,
+   "moved_from": [
+    6584,
+    6080
+   ]
+  },
+  {
+   "t": "I",
+   "what": "water butt",
+   "at": [
+    6884,
+    6276
+   ],
+   "dress": true,
+   "moved_from": [
+    6884,
+    6296
+   ]
+  },
+  {
+   "t": "I",
+   "what": "signpost",
+   "at": [
+    6972,
+    6468
+   ],
+   "dress": true,
+   "moved_from": [
+    6972,
+    6480
+   ]
+  },
+  {
+   "t": "S",
+   "what": "old rope swing",
+   "at": [
+    7076,
+    6404
+   ],
+   "dress": true,
+   "moved_from": [
+    7076,
+    6424
+   ]
+  },
+  {
+   "t": "S",
+   "what": "carved post",
+   "at": [
+    7012,
+    6200
+   ],
+   "dress": true
+  },
+  {
+   "t": "S",
+   "what": "mossy stone",
+   "at": [
+    6764,
+    6196
+   ],
+   "dress": true,
+   "moved_from": [
+    6764,
+    6192
+   ]
+  },
+  {
+   "t": "I",
+   "what": "log bench",
+   "at": [
+    7100,
+    6364
+   ],
+   "dress": true,
+   "moved_from": [
+    7100,
+    6344
+   ]
+  },
+  {
+   "t": "I",
+   "what": "water butt",
+   "at": [
+    7136,
+    6364
+   ],
+   "dress": true,
+   "moved_from": [
+    7140,
+    6360
+   ]
+  },
+  {
+   "t": "S",
+   "what": "carved post",
+   "at": [
+    7140,
+    6404
+   ],
+   "dress": true,
+   "moved_from": [
+    7140,
+    6424
+   ]
+  },
+  {
+   "t": "S",
+   "what": "mossy stone",
+   "at": [
+    7084,
+    6444
+   ],
+   "dress": true,
+   "moved_from": [
+    7084,
+    6424
+   ]
+  },
+  {
+   "t": "S",
+   "what": "fallen frond heap",
+   "at": [
+    7076,
+    6304
+   ],
+   "dress": true
+  },
+  {
+   "t": "I",
+   "what": "signpost",
+   "at": [
+    6428,
+    6552
+   ],
+   "dress": true
+  },
+  {
+   "t": "I",
+   "what": "driftwood bench",
+   "at": [
+    6428,
+    6584
+   ],
+   "dress": true
+  },
+  {
+   "t": "S",
+   "what": "glass float",
+   "at": [
+    6420,
+    6600
+   ],
+   "dress": true
+  },
+  {
+   "t": "S",
+   "what": "lobster pot",
+   "at": [
+    6412,
+    6616
+   ],
+   "dress": true,
+   "moved_from": [
+    6396,
+    6600
+   ]
+  },
+  {
+   "t": "S",
+   "what": "beached canoe",
+   "at": [
+    6396,
+    6632
+   ],
+   "dress": true
+  },
+  {
+   "t": "I",
+   "what": "water butt",
+   "at": [
+    6916,
+    6548
+   ],
+   "dress": true,
+   "moved_from": [
+    6916,
+    6560
+   ]
+  },
+  {
+   "t": "I",
+   "what": "signpost",
+   "at": [
+    6892,
+    6548
+   ],
+   "dress": true,
+   "moved_from": [
+    6892,
+    6568
+   ]
+  },
+  {
+   "t": "S",
+   "what": "lobster pot",
+   "at": [
+    6860,
+    6576
+   ],
+   "dress": true
+  },
+  {
+   "t": "S",
+   "what": "beached canoe",
+   "at": [
+    6860,
+    6616
+   ],
+   "dress": true
+  },
+  {
+   "t": "S",
+   "what": "shell cairn",
+   "at": [
+    6860,
+    6648
+   ],
+   "dress": true
+  },
+  {
+   "t": "I",
+   "what": "driftwood bench",
+   "at": [
+    6580,
+    6068
+   ],
+   "dress": true,
+   "moved_from": [
+    6584,
+    6080
+   ]
+  },
+  {
+   "t": "S",
+   "what": "mossy stone",
+   "at": [
+    7196,
+    6352
+   ],
+   "dress": true
+  },
+  {
+   "t": "S",
+   "what": "fallen frond heap",
+   "at": [
+    7132,
+    6324
+   ],
+   "dress": true,
+   "moved_from": [
+    7132,
+    6344
+   ]
   }
  ],
  "obstacles": [],
- "set_pieces": [],
+ "set_pieces": [
+  {
+   "piece": "spring",
+   "biome": "coast",
+   "at": [
+    6784,
+    6152
+   ],
+   "seed": 1,
+   "why": "the rainforest stream's source under the canopy"
+  },
+  {
+   "piece": "pond",
+   "biome": "coast",
+   "at": [
+    7136,
+    6208
+   ],
+   "seed": 2,
+   "why": "the crater pool in the old volcano's cup"
+  },
+  {
+   "piece": "boulders",
+   "biome": "coast",
+   "at": [
+    7112,
+    6528
+   ],
+   "seed": 3,
+   "why": "basalt boulders at the foot of the east body's outcrop"
+  },
+  {
+   "piece": "boulders",
+   "biome": "coast",
+   "at": [
+    6312,
+    6680
+   ],
+   "seed": 4,
+   "why": "the turtle beach's west end: rocks the turtles haul past"
+  },
+  {
+   "piece": "scree",
+   "biome": "coast",
+   "at": [
+    7080,
+    6296
+   ],
+   "seed": 5,
+   "why": "ash and basalt grit at the foot of the crater rim"
+  },
+  {
+   "piece": "ledge",
+   "biome": "coast",
+   "at": [
+    7216,
+    6464
+   ],
+   "seed": 6,
+   "why": "a wet basalt ledge beside the cove fall"
+  },
+  {
+   "piece": "sea_stack",
+   "biome": "coast",
+   "at": [
+    7232,
+    6640
+   ],
+   "seed": 7,
+   "proposed": true,
+   "why": "a basalt column the sea cut off the arm"
+  },
+  {
+   "piece": "sea_cave",
+   "biome": "coast",
+   "at": [
+    6880,
+    6680
+   ],
+   "seed": 8,
+   "proposed": true,
+   "why": "the cave mouth in the basalt arm's south face"
+  },
+  {
+   "piece": "basalt_columns",
+   "biome": "coast",
+   "at": [
+    6984,
+    6584
+   ],
+   "seed": 9,
+   "proposed": true,
+   "why": "the basalt arm's columns over Black-sand Cove"
+  },
+  {
+   "piece": "giant_tree",
+   "biome": "coast",
+   "at": [
+    6904,
+    6144
+   ],
+   "seed": 10,
+   "proposed": true,
+   "why": "the rainforest's oldest tree, its buttress roots over the path"
+  },
+  {
+   "piece": "crater_lip",
+   "biome": "coast",
+   "at": [
+    7112,
+    6192
+   ],
+   "seed": 11,
+   "proposed": true,
+   "why": "the old volcano's rim: a ring of weathered basalt round the pool"
+  },
+  {
+   "piece": "stair",
+   "biome": "coast",
+   "at": [
+    7024,
+    6456
+   ],
+   "seed": 20,
+   "stair": "cove_stair"
+  },
+  {
+   "piece": "stair",
+   "biome": "coast",
+   "at": [
+    7024,
+    6376
+   ],
+   "seed": 21,
+   "stair": "headwaters_stair"
+  },
+  {
+   "piece": "stair",
+   "biome": "coast",
+   "at": [
+    7104,
+    6264
+   ],
+   "seed": 22,
+   "stair": "rim_stair"
+  },
+  {
+   "piece": "stair",
+   "biome": "coast",
+   "at": [
+    7168,
+    6376
+   ],
+   "seed": 23,
+   "stair": "fern_stair"
+  },
+  {
+   "piece": "stair",
+   "biome": "coast",
+   "at": [
+    6736,
+    6264
+   ],
+   "seed": 24,
+   "stair": "lagoon_stair"
+  }
+ ],
+ "areas": [
+  {
+   "id": "tidebloom-00",
+   "rect": [
+    6320,
+    5792,
+    384,
+    352
+   ]
+  },
+  {
+   "id": "tidebloom-01",
+   "rect": [
+    6704,
+    5792,
+    384,
+    352
+   ]
+  },
+  {
+   "id": "tidebloom-02",
+   "rect": [
+    7088,
+    5792,
+    384,
+    352
+   ],
+   "walkable": false
+  },
+  {
+   "id": "tidebloom-10",
+   "rect": [
+    6320,
+    6144,
+    384,
+    384
+   ]
+  },
+  {
+   "id": "tidebloom-11",
+   "rect": [
+    6704,
+    6144,
+    384,
+    384
+   ]
+  },
+  {
+   "id": "tidebloom-12",
+   "rect": [
+    7088,
+    6144,
+    384,
+    384
+   ]
+  },
+  {
+   "id": "tidebloom-20",
+   "rect": [
+    6320,
+    6528,
+    384,
+    384
+   ]
+  },
+  {
+   "id": "tidebloom-21",
+   "rect": [
+    6704,
+    6528,
+    384,
+    384
+   ]
+  },
+  {
+   "id": "tidebloom-22",
+   "rect": [
+    7088,
+    6528,
+    384,
+    384
+   ],
+   "walkable": false
+  }
+ ],
+ "clusters": [
+  {
+   "recipe": "shore",
+   "at": [
+    6376,
+    6224
+   ],
+   "orient": "s",
+   "mirror": false,
+   "seed": 0,
+   "slot": [
+    6440,
+    6312
+   ]
+  },
+  {
+   "recipe": "shore",
+   "at": [
+    6808,
+    6496
+   ],
+   "orient": "s",
+   "mirror": false,
+   "seed": 0,
+   "slot": [
+    6976,
+    6520
+   ]
+  }
+ ],
+ "cluster_slots": [
+  {
+   "recipe": "shore",
+   "near": [
+    6440,
+    6312
+   ],
+   "why": "the landing's beach by the pier: a boat drawn up, nets drying"
+  },
+  {
+   "recipe": "shore",
+   "near": [
+    6976,
+    6520
+   ],
+   "why": "Black-sand Cove's head: a fisher's corner on the black sand"
+  },
+  {
+   "recipe": "turtle_beach",
+   "proposed": true,
+   "near": [
+    6400,
+    6640
+   ],
+   "why": "the turtle beach kept clear above the tideline: a ring of shells round a nest, a warden's tally post, no boat"
+  },
+  {
+   "recipe": "lagoon_hamlet",
+   "proposed": true,
+   "near": [
+    6528,
+    6200
+   ],
+   "why": "Lagoon Landing's yard: the packing shed's door, crates of fruit, a hammock between two palms"
+  },
+  {
+   "recipe": "rainforest_clearing",
+   "proposed": true,
+   "near": [
+    6872,
+    6184
+   ],
+   "why": "under the giant tree: a mossy log, tree ferns, a naturalist's specimen table"
+  },
+  {
+   "recipe": "headwaters_shelter",
+   "proposed": true,
+   "near": [
+    7064,
+    6320
+   ],
+   "why": "the rain shelter: a thatched roof on four posts, a rail, a bench, a water butt under the eave"
+  }
+ ],
+ "rest_spots": [
+  {
+   "id": "landing_hammock",
+   "what": "a hammock at Lagoon Landing",
+   "at": [
+    6536,
+    6216
+   ],
+   "stand": [
+    6548,
+    6232
+   ],
+   "night": true,
+   "chapter": 1,
+   "outing": "A DAY ON THE ISLE"
+  },
+  {
+   "id": "rain_shelter",
+   "what": "the rain shelter at the headwaters",
+   "at": [
+    7064,
+    6312
+   ],
+   "stand": [
+    7076,
+    6320
+   ],
+   "chapter": 2
+  },
+  {
+   "id": "cove_sand",
+   "what": "the black sand of the cove",
+   "at": [
+    7048,
+    6528
+   ],
+   "stand": [
+    7040,
+    6520
+   ],
+   "chapter": 3
+  }
+ ],
+ "story": {
+  "resident": "naturalist",
+  "story": "an inch a year",
+  "apprentice": "Tuff",
+  "source": "docs/story/handoffs.md (#197)",
+  "chapters": [
+   {
+    "n": 1,
+    "at": "landing_hammock",
+    "change": null
+   },
+   {
+    "n": 2,
+    "at": "rain_shelter",
+    "change": "the naturalist's notebook hangs open to dry on the shelter's rail, pages fanned",
+    "reserve": [
+     7056,
+     6304
+    ]
+   },
+   {
+    "n": 3,
+    "at": "cove_sand",
+    "change": "the naturalist lies on the black sand by a smooth dent where the boulder used to sit, notebook shut, pencil behind her ear",
+    "reserve": [
+     7060,
+     6536
+    ]
+   }
+  ],
+  "draw": false
+ },
+ "ring": {
+  "none": true,
+  "why": "the Tidebloom Isles stay the quiet place with no ring (cast.md; no fight here, no rival)"
+ },
  "edges": [
   {
    "side": "all round",
@@ -2228,7 +3003,16 @@
     6856,
     6152
    ],
-   "note": "under the giant tree"
+   "note": "under the giant tree; the isles' resident (the story \"an inch a year\")",
+   "resident": true
+  },
+  {
+   "who": "turtles",
+   "at": [
+    6388,
+    6640
+   ],
+   "note": "come ashore on the turtle beach to lay; hatchlings run for the sea at dusk"
   },
   {
    "who": "beachcomber",
