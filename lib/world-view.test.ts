@@ -18,7 +18,7 @@ import type { ArtDensity } from './art-density';
 // Load the real generated image map with bundled imports represented by their paths.
 // Checking existence keeps a missing import from masquerading as a painted boundary.
 const source = readFileSync(new URL('./zone-assets.ts', import.meta.url), 'utf8');
-const imageModule = { exports: {} };
+const imageModule: { exports: unknown } = { exports: {} };
 runInNewContext(
   ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText,
   {
@@ -31,7 +31,7 @@ runInNewContext(
     },
   },
 );
-const pictures = imageModule.exports as {
+type Pictures = {
   zoneBeyond: string;
   zoneBeyondByRegion: Readonly<Record<string, string>>;
   zoneBeyondAsh: string;
@@ -39,15 +39,32 @@ const pictures = imageModule.exports as {
   zoneBeyondRegolith: string;
   zoneScenery: Readonly<Record<string, string>>;
 };
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
+const isImageMap = (value: unknown): value is Record<string, string> =>
+  isRecord(value) && Object.values(value).every((image) => typeof image === 'string');
+const isPictures = (value: unknown): value is Pictures =>
+  isRecord(value) &&
+  typeof value.zoneBeyond === 'string' &&
+  typeof value.zoneBeyondAsh === 'string' &&
+  typeof value.zoneBeyondPeaks === 'string' &&
+  typeof value.zoneBeyondRegolith === 'string' &&
+  isImageMap(value.zoneBeyondByRegion) &&
+  isImageMap(value.zoneScenery);
+assert.ok(isPictures(imageModule.exports), 'generated picture exports have the expected shape');
+const pictures = imageModule.exports;
 const { zoneBeyondByRegion: beyondByRegion, zoneScenery: scenery } = pictures;
 const renderer = readFileSync(new URL('../components/atlas-walk.tsx', import.meta.url), 'utf8');
 const beyondStart = renderer.indexOf('function beyondAt(');
 assert.ok(beyondStart >= 0, 'the renderer still supplies beyondAt');
 const beyondEnd = renderer.indexOf('\n}', beyondStart) + 2;
-const beyondAt = runInNewContext(
+const beyondImplementation: unknown = runInNewContext(
   ts.transpileModule(renderer.slice(beyondStart, beyondEnd), {}).outputText + '\nbeyondAt;',
   pictures,
-) as (region: RegionId, col: number, row: number) => string | undefined;
+);
+assert.ok(typeof beyondImplementation === 'function');
+const beyondAt = (region: RegionId, col: number, row: number): unknown =>
+  Reflect.apply(beyondImplementation, undefined, [region, col, row]);
 assert.match(
   renderer,
   /const opensOut = regionOpensOut\(region, zoneBeyondByRegion, zoneScenery\)/,
@@ -165,13 +182,27 @@ for (const region of regions) {
       );
       const roomAbove = region === 'valley' || Object.hasOwn(beyondByRegion, region) ? 96 : 0;
       const top = Math.max(-roomAbove, land.y0 - roomAbove);
-      const cameraAt = runInNewContext(cameraSource + '\ncameraAt;', {
+      const cameraImplementation: unknown = runInNewContext(cameraSource + '\ncameraAt;', {
         land,
         top,
         width,
         height,
         u,
-      }) as (x: number, y: number, focus: number, bottom: number) => { x: number; y: number };
+      });
+      assert.ok(typeof cameraImplementation === 'function');
+      const cameraAt = (x: number, y: number, focus: number, bottom: number) => {
+        const value: unknown = Reflect.apply(cameraImplementation, undefined, [
+          x,
+          y,
+          focus,
+          bottom,
+        ]);
+        assert.ok(
+          isRecord(value) && typeof value.x === 'number' && typeof value.y === 'number',
+          'camera returns numeric coordinates',
+        );
+        return { x: value.x, y: value.y };
+      };
       for (const x of [land.x0, (land.x0 + land.x1) / 2, land.x1]) {
         for (const y of [land.y0, (land.y0 + land.y1) / 2, land.y1]) {
           const camera = cameraAt(x / u, y / u, 0.55, 0);
