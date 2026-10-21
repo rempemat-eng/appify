@@ -35,9 +35,23 @@ jobs:
         with:
           node-version: '24.19.0'
           cache: npm
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.12'
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm ci
+          python -m pip install 'Pillow==12.3.0' 'numpy==2.5.3'
       - name: Verify source and web export
+        env:
+          # CI needs the complete audit and gate, but not throwaway preview images.
+          WORLD_AUDIT_NO_IMAGES: '1'
         run: npm run verify
+      - name: Report current asset-ledger inventory
+        if: always()
+        continue-on-error: true
+        run: npm run check:assets -- --summary
       - name: Report imported PNG decoded memory
+        if: always()
         run: npm run check:images
