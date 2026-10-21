@@ -1,5 +1,7 @@
 # Short visits, meaningful time away
 
+> **Superseded 21 Oct by [vision/game-design.md](vision/game-design.md).** The game no longer rewards time away; this page is kept as a record.
+
 NapAttack's intended loop is choose → leave → return → remember. The garden should make a short visit pleasant and give the player an understandable reason to put their phone aside. More taps, longer visits or more reward claims would not establish that this works.
 
 ## Current experience

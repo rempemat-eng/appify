@@ -1,5 +1,7 @@
 # Interface
 
+> **Superseded 21 Oct by [game-design.md](game-design.md)** in the hotbar, the nap sheet and break ideas (its section 11); the frames, type and accessibility rules still stand.
+
 ## Layout: the world is the screen
 
 ```

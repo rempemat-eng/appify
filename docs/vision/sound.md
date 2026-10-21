@@ -1,5 +1,7 @@
 # Sound
 
+> **Superseded 21 Oct by [game-design.md](game-design.md)** in the `nap` and `wake` cues; combat sounds are to come (its section 14).
+
 Sound is part of "one game, not an app with a game in it", but it stays decoration: it never gates a rule, a reward or a choice, and every cue is short and kind.
 
 ## The palette

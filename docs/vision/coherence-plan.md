@@ -128,7 +128,9 @@ The work runs in five streams. Streams hand each other data rather than editing 
 4. **Gameplay mechanics** (Claude L with the Codex chats): fight content (Pokémon-style, on its own screen), the currency, and recognising rest away from the phone.
 5. **Mobile, interface and play-testing** (Claude M): the HUD, touch, native builds, performance and sound (moved from lane B). Lane R play-tests at phone size twice a day and reviews the world.
 
-Claude A stays across all five for art direction, the rules and merges. **Spin-off** (Matt, 21 Oct: "i do want to make a spin off game for the computer using some of the assets, so keep some of the stuff that doesnt conform perfectly to mobile, but mobile should be the focus"): desktop-only work is tagged spin-off and kept, as the real-time fight prototype is in `prototypes/`, not deleted. Mobile stays the focus.
+**Changed 21 Oct 21:16 (Matt's pivot to an action RPG and village life sim):** the streams keep their owners, but their work now follows [game-design.md](game-design.md), section 14: J the combat animation sets, K the story and quests without rest, L real-time combat, loot and levelling with a playable prototype in the woodland, M touch controls and the combat HUD, lanes B to I camps, dungeons, boss arenas and cover in every region plan, Codex the data tables, formulas, loot tables and the save migration. Where the stream list above says naps, Dream Dust, Pokémon-style fights or rest away from the phone, read game-design.md.
+
+Claude A stays across all five for art direction, the rules and merges. **Spin-off** (Matt, 21 Oct: "i do want to make a spin off game for the computer using some of the assets, so keep some of the stuff that doesnt conform perfectly to mobile, but mobile should be the focus"): desktop-only work is tagged spin-off and kept, as the real-time fight prototype is in `prototypes/`, not deleted. Mobile stays the focus. **Superseded 21 Oct 22:09** (Matt: "desktop first, mobile second"): the spin-off folds into the game; see [game-design.md](game-design.md) 11.9.
 
 ## Who does what (Matt, 18 Oct 20:39: "coordinate with the other claude chat and codex")
 

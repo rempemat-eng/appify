@@ -1,5 +1,7 @@
 # The home hub: one screen for the garden and the world
 
+> **Superseded 21 Oct by [game-design.md](game-design.md)** wherever this page mentions the nap or the nap screen; the one walk screen still stands.
+
 Matt, 19 Oct: "you need to fix the popping in and out of the main house hub. think of a better way to implement the main house hub."
 
 The home garden is a place in the one world. You walk out of the gate into Crossroads Town and back in again on one screen, with one camera, one companion and one HUD. This file says what popped and why, the options, the design we chose and its phases.
