@@ -17,6 +17,7 @@ All points are world px on the v5.3 canvas (11264 x 6912), on the 8 px grid for 
 | `named`, `pockets`, `markers`, `egg_spots`, `obstacles` | the brief's section 5 and 7, moved to fit the ground where needed (`moved_from` keeps the brief's point)                                                                                          |
 | `set_pieces`                                            | the cliff core's pieces as `{piece, biome, at, seed}`, the shape of C36's placement file; a biome uses only its own pieces (to-all-reuse-rule)                                                    |
 | `areas`                                                 | the region's screens (about 320 x 544, whole 32 px audit cells of the box): the places the world audit counts density in; `walkable: false` marks drawn land never walked (the massif's front)    |
+| `areas`                                                 | the region's screens (about 320 x 544, whole 32 px audit cells of the box), where the world audit counts density; `walkable: false` marks land drawn but never walked (the massif's front)        |
 | `edges`, `thresholds`, `residents`, `ground`            | the layered borders, the thresholds' sides and bands, who lives or crosses where, and the ground kinds by place                                                                                   |
 
 ## The check
@@ -30,4 +31,4 @@ It does not judge art: the painted chunk is held to the world audit (`npm run ch
 - `brackens.json`: the low heather ridge west of the valley, its two spurs, the Drover's Road through the gap between two gritstone bluffs, the drove well, the sheepfolds and the shepherd's hut, two pockets, the stone ring's egg spot, the loop with the valley by the east trod, and the flank trod north to a view over the Heather spur.
 - `frostline.json`: the cirque above the valley: the Col Path's four switchback legs up the step to W2 at the lip, Snowmelt Lake, the Sleepwater over the lip into Fir Hollow and over its escarpment, the rock rib and the gully trail, the cabin meadow, the High Fells' bench to the Snow Saddle's bothy, the crevasse viewpoint, the spur stair to the High Lookout, and the cliff core's set pieces.
 
-Open: absolute tiers wait for the geography chunk; the Col Path and the High Fells, and the Drover's Road through the Brackens, are Claude G's routes, so their lines here are proposals for G to take or move; the two glacier pieces are proposed for the cliff core's library.
+Open: the Col Path, the High Fells and the Drover's Road are Claude G's routes; G took these lines into #175 and set the absolute tiers; the two glacier pieces are proposed for the cliff core's library.
