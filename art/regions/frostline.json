@@ -517,9 +517,10 @@
     {
       "thing": "ibex rocks",
       "kind": "wild",
-      "at": [6136, 1949],
+      "at": [6132, 1952],
       "route": "Col Path",
-      "where": "beside the path"
+      "where": "beside the path",
+      "moved_from": [6136, 1949]
     },
     {
       "thing": "cairn",
@@ -539,7 +540,7 @@
     {
       "thing": "herders' shieling",
       "kind": "camp",
-      "at": [6676, 1672],
+      "at": [6668, 1672],
       "route": "High Fells",
       "where": "beside the path",
       "moved_from": [6672, 1696]
@@ -565,18 +566,19 @@
     {
       "t": "S",
       "what": "cart with a broken wheel",
-      "at": [6212, 2300],
+      "at": [6192, 2300],
       "moved_from": [6213, 2282]
     },
     {
       "t": "I",
       "what": "noticeboard",
-      "at": [6248, 2205]
+      "at": [6236, 2204],
+      "moved_from": [6248, 2205]
     },
     {
       "t": "S",
       "what": "tracks",
-      "at": [6208, 2168],
+      "at": [6208, 2172],
       "moved_from": [6210, 2141]
     },
     {
@@ -599,13 +601,13 @@
     {
       "t": "S",
       "what": "marker stone",
-      "at": [6152, 1956],
+      "at": [6152, 1960],
       "moved_from": [6166, 1948]
     },
     {
       "t": "I",
       "what": "bench",
-      "at": [6312, 1704],
+      "at": [6308, 1704],
       "moved_from": [6328, 1706]
     },
     {
@@ -617,7 +619,7 @@
     {
       "t": "S",
       "what": "tracks",
-      "at": [6416, 1644],
+      "at": [6416, 1640],
       "moved_from": [6409, 1663]
     },
     {
@@ -635,7 +637,8 @@
     {
       "t": "S",
       "what": "cold fire ring",
-      "at": [6587, 1651]
+      "at": [6584, 1656],
+      "moved_from": [6587, 1651]
     },
     {
       "t": "S",
@@ -652,7 +655,7 @@
     {
       "t": "S",
       "what": "cart with a broken wheel",
-      "at": [6780, 1596],
+      "at": [6796, 1596],
       "moved_from": [6755, 1605]
     }
   ],

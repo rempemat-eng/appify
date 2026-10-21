@@ -22,11 +22,14 @@ docs/vision/regions/*.md section 8, research/world-benchmark.md, eastward-edges.
 - things: named things, pockets and markers stand on walkable ground (a tier top, not a face),
   'beside the path' within 48 px of a path, 'a short way off' within 160; a pocket at the end
   of its trod; egg spots clear of every marker and named thing;
+- things stand beside their path, not on it or on a stair;
 - check 1: the markers give each screen of route 2 interactables and 3 story props;
 - obstacles at least 800 px apart (brief 7); set pieces of this biome only, on the 8 px grid.
 
 Run:
     python3 scripts/art/region_plan.py --check            (every plan; exits non-zero on a fault)
+    python3 scripts/art/region_plan.py --fix [ids..]      (moves things that break a placement rule
+                                                          to the nearest point that keeps them)
     python3 scripts/art/region_plan.py [OUT_DIR] [ids..]  (draws each plan, 1 px a world px / 4,
                                                           to OUT_DIR, default napattack-region-plans
                                                           in the system's temp folder)
@@ -236,9 +239,19 @@ def check(plan: dict) -> list:
         if t is not None and f:
             out.append(f'{pid}: {what} at {tuple(p)} stands on a face')
 
+    def clear_of_ways(p, what):
+        for pth in paths.values():
+            d = dist_to_line(p, pth['points'])
+            if d < pth['width'] / 2 + 4:
+                out.append(f'{pid}: {what} at {tuple(p)} stands on {pth["id"]} ({d:.0f} px from its line)')
+        for st in stairs:
+            if seg_len(p, st['at']) < st['width'] / 2 + 8:
+                out.append(f'{pid}: {what} at {tuple(p)} stands on the stair {st["id"]}')
+
     for n in plan.get('named', []):
         inside(n['at'], n['thing'])
         on_ground(n['at'], n['thing'])
+        clear_of_ways(n['at'], n['thing'])
         lim = BESIDE if n['where'] == 'beside the path' else OFF
         d = near_path(n['at'])
         if d > lim:
@@ -255,6 +268,7 @@ def check(plan: dict) -> list:
         if not m.get('outside_box'):
             inside(m['at'], f'marker {m["what"]}')
             on_ground(m['at'], f'marker {m["what"]}')
+            clear_of_ways(m['at'], f'marker {m["what"]}')
         if near_path(m['at']) > BESIDE:
             out.append(f'{pid}: marker {m["what"]} at {tuple(m["at"])} is {near_path(m["at"]):.0f} px from a path')
     for e in plan.get('egg_spots', []):
@@ -283,6 +297,46 @@ def check(plan: dict) -> list:
             out.append(f'{pid}: set piece {sp["piece"]} at {tuple(sp["at"])} off the grid')
         inside(sp['at'], f'set piece {sp["piece"]}')
     return out
+
+
+def fix(plan: dict) -> list:
+    """Move each marker, named thing and pocket that breaks a placement rule to the nearest
+    point that keeps them all (walkable ground, beside its path but off it, off stairs, 16 px
+    from the next thing), searching 4 px steps up to 96 px away. The brief's point is kept as
+    moved_from. Returns what moved."""
+    G = Ground(plan)
+    paths = plan.get('routes', []) + plan.get('trods', [])
+    stairs = plan.get('stairs', [])
+    things = [('named', n) for n in plan.get('named', [])] + \
+        [('marker', m) for m in plan.get('markers', []) if not m.get('outside_box')]
+    moved = []
+
+    def ok(x, y, lim, me):
+        t, f = G.at(x, y)
+        if t is None or f:
+            return False
+        ds = [(dist_to_line((x, y), q['points']), q['width']) for q in paths]
+        if any(d < w / 2 + 6 for d, w in ds) or min(d for d, _ in ds) > lim:
+            return False
+        if any(seg_len((x, y), st['at']) < st['width'] / 2 + 10 for st in stairs):
+            return False
+        return all(o is me or seg_len((x, y), o['at']) >= 16 for _, o in things)
+    for kind, th in things:
+        lim = BESIDE if kind == 'marker' or th.get('where') == 'beside the path' else OFF
+        x0, y0 = th['at']
+        if ok(x0, y0, lim, th):
+            continue
+        best = None
+        for dx in range(-96, 97, 4):
+            for dy in range(-96, 97, 4):
+                d = math.hypot(dx, dy)
+                if (best is None or d < best[0]) and ok(x0 + dx - x0 % 4, y0 + dy - y0 % 4, lim, th):
+                    best = (d, [x0 + dx - x0 % 4, y0 + dy - y0 % 4])
+        if best:
+            th.setdefault('moved_from', [x0, y0])
+            th['at'] = best[1]
+            moved.append((th.get('what') or th.get('thing'), (x0, y0), tuple(best[1])))
+    return moved
 
 
 def summary(plan: dict) -> str:
@@ -348,6 +402,15 @@ def draw(plan: dict, scale: int = 4) -> Image.Image:
 
 
 def main(argv) -> int:
+    if '--fix' in argv:
+        for pid in [a for a in argv if a in plan_ids()] or plan_ids():
+            p = load(pid)
+            for what, a, b in fix(p):
+                print(f'{pid}: moved {what} from {a} to {b}')
+            with open(os.path.join(PLANS, f'{pid}.json'), 'w') as fh:
+                json.dump(p, fh, indent=1)
+                fh.write('\n')
+        return 0
     if '--check' in argv:
         faults = []
         for pid in plan_ids():

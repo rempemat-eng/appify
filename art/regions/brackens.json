@@ -103,14 +103,14 @@
       "tier": 2,
       "why": "the gap's north bluff (landmark of the threshold, seen from the halt): gritstone on the ridge's south end",
       "outline": [
-        [5104, 3560],
-        [5216, 3552],
-        [5256, 3584],
-        [5248, 3640],
-        [5200, 3672],
-        [5136, 3680],
-        [5088, 3648],
-        [5080, 3600]
+        [5104, 3536],
+        [5216, 3528],
+        [5256, 3560],
+        [5240, 3600],
+        [5200, 3624],
+        [5136, 3632],
+        [5096, 3608],
+        [5080, 3568]
       ],
       "face": "rock"
     },
@@ -354,9 +354,10 @@
     {
       "thing": "drove well",
       "kind": "well",
-      "at": [5086, 3328],
+      "at": [5064, 3328],
       "route": "Drover's Road",
-      "where": "a short way off the path"
+      "where": "a short way off the path",
+      "moved_from": [5086, 3328]
     },
     {
       "thing": "a broken sheepfold",
@@ -368,16 +369,18 @@
     {
       "thing": "shepherd's hut",
       "kind": "npc",
-      "at": [5168, 3808],
+      "at": [5172, 3812],
       "route": "Drover's Road",
-      "where": "beside the path"
+      "where": "beside the path",
+      "moved_from": [5168, 3808]
     },
     {
       "thing": "sheepfold",
       "kind": "landmark",
-      "at": [5447, 3882],
+      "at": [5456, 3880],
       "route": "Drover's Road",
-      "where": "beside the path"
+      "where": "beside the path",
+      "moved_from": [5447, 3882]
     }
   ],
   "pockets": [
@@ -408,7 +411,8 @@
     {
       "t": "S",
       "what": "cart with a broken wheel",
-      "at": [5343, 3886]
+      "at": [5328, 3904],
+      "moved_from": [5343, 3886]
     },
     {
       "t": "A",
@@ -419,7 +423,8 @@
     {
       "t": "I",
       "what": "noticeboard",
-      "at": [5273, 3830]
+      "at": [5280, 3816],
+      "moved_from": [5273, 3830]
     },
     {
       "t": "S",
@@ -435,13 +440,14 @@
     {
       "t": "A",
       "what": "sheep",
-      "at": [5150, 3744],
+      "at": [5152, 3736],
       "moved_from": [5150, 3704]
     },
     {
       "t": "I",
       "what": "bench",
-      "at": [5054, 3714]
+      "at": [5060, 3700],
+      "moved_from": [5054, 3714]
     },
     {
       "t": "S",
@@ -452,12 +458,14 @@
     {
       "t": "S",
       "what": "cart with a broken wheel",
-      "at": [4991, 3620]
+      "at": [5008, 3620],
+      "moved_from": [4991, 3620]
     },
     {
       "t": "I",
       "what": "noticeboard",
-      "at": [4986, 3526]
+      "at": [4980, 3524],
+      "moved_from": [4986, 3526]
     },
     {
       "t": "S",
@@ -467,12 +475,14 @@
     {
       "t": "A",
       "what": "sheep",
-      "at": [4851, 3525]
+      "at": [4848, 3516],
+      "moved_from": [4851, 3525]
     },
     {
       "t": "S",
       "what": "cold fire ring",
-      "at": [5515, 3928]
+      "at": [5508, 3944],
+      "moved_from": [5515, 3928]
     },
     {
       "t": "S",
