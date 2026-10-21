@@ -11,10 +11,15 @@ shape Codex's C36 placement library takes). Coordinates are world px (world plan
 What `check()` holds a plan to (the brief's rules that can be checked before any art exists;
 docs/vision/regions/*.md section 8, research/world-benchmark.md, eastward-edges.md):
 - structure on the 8 px grid: every outline vertex, stair and route width (eastward 1.1, 1.2);
+  tier outlines run along x or y only, turning at cell corners (Matt, 21 Oct 11:44: the grid
+  shape, to-all-grid-2x), with no tab or notch of 1 to 2 cells; corners are rounded by the kit
+  unless a tier is marked "corners": "square" (a built edge); a note (not a fault) where an
+  east-west edge runs a screen width without stepping in or out (a-to-f-grid, to-all-volume);
 - inside the box: every outline, route, place, named thing, pocket and marker, unless it is
   marked outside_box (a marker the brief lists just past the line);
-- paths: widths 24 to 64 (check 17); no straight run longer than 240 px and a bend at least
-  every 300 px along routes (check 16); dead ends of 80 px or more end in a view, a resident, a
+- paths: widths 24 to 64 (check 17); every segment along x or y, turning at cell corners (the
+  grid shape, Matt 21 Oct 11:44, which replaces benchmark 16's bend every 240 to 300 px);
+  bridges and causeways are on their own deck tier, so the tier rule does not read them; dead ends of 80 px or more end in a view, a resident, a
   bench or a story detail (check 20);
 - tiers: a path that crosses from one tier to another does so on a stair at least 34 px wide
   within 24 px of the crossing (checks 19, 21; eastward 6.3: no ramps), and never walks along a
@@ -23,13 +28,18 @@ docs/vision/regions/*.md section 8, research/world-benchmark.md, eastward-edges.
   'beside the path' within 48 px of a path, 'a short way off' within 160; a pocket at the end
   of its trod; egg spots clear of every marker and named thing;
 - things stand beside their path, not on it or on a stair;
-- check 1: the markers give each screen of route 2 interactables and 3 story props;
+- check 1: the markers give each screen of route, and each screen area, 2 interactables and 3
+  story props;
+- set pieces from the cliff core's library, or marked proposed;
 - obstacles at least 800 px apart (brief 7); set pieces of this biome only, on the 8 px grid.
 
 Run:
     python3 scripts/art/region_plan.py --check            (every plan; exits non-zero on a fault)
     python3 scripts/art/region_plan.py --fix [ids..]      (moves things that break a placement rule
                                                           to the nearest point that keeps them)
+    python3 scripts/art/region_plan.py --dress [ids..]    (adds dressing slots so every screen area
+                                                          has 2 interactables and 3 story props, then
+                                                          fixes)
     python3 scripts/art/region_plan.py [OUT_DIR] [ids..]  (draws each plan, 1 px a world px / 4,
                                                           to OUT_DIR, default napattack-region-plans
                                                           in the system's temp folder)
@@ -54,12 +64,16 @@ STAIR_MIN = 34
 NEAR_STAIR = 24
 BESIDE = 48
 OFF = 160
-STRAIGHT_MAX = 240
-BEND_EVERY = 300
-BEND_DEG = 12
 DEAD_MIN = 80
 OBSTACLE_GAP = 800
 DEAD_ENDS = {'view', 'resident', 'bench', 'story'}
+SPANS = {'bridge', 'causeway'}
+# the cliff core's set pieces (claude-a/cliff-core, PR #165: Plan's pieces); a plan may name one
+# not in it only as 'proposed'
+LIBRARY = {'stair', 'ledge', 'path', 'spring', 'pond', 'snow_corner', 'boulders', 'scree', 'ivy'}
+# what counts on a screen (world_audit's density, benchmark check 1): interactables, and story
+# props (the markers' S slots); named things that are places to use count as interactables
+NAMED_INTERACT = {'well', 'npc', 'landmark', 'camp', 'view', 'shrine'}
 
 
 def load(pid: str) -> dict:
@@ -106,22 +120,6 @@ def dist_to_line(p, pts) -> float:
     return best
 
 
-def straight_runs(pts) -> list:
-    """Lengths of the runs between bends of BEND_DEG or more."""
-    runs, cur = [], 0.0
-    for i in range(len(pts) - 1):
-        cur += seg_len(pts[i], pts[i + 1])
-        if i + 2 < len(pts):
-            a = math.atan2(pts[i + 1][1] - pts[i][1], pts[i + 1][0] - pts[i][0])
-            b = math.atan2(pts[i + 2][1] - pts[i + 1][1], pts[i + 2][0] - pts[i + 1][0])
-            d = abs((math.degrees(b - a) + 180) % 360 - 180)
-            if d >= BEND_DEG:
-                runs.append(cur)
-                cur = 0.0
-    runs.append(cur)
-    return runs
-
-
 class Ground:
     """The plan's screen tier map at 4 px, with each tier's south face (FACE px under its
     south rim, carved from the ground below) marked as face."""
@@ -154,6 +152,97 @@ class Ground:
 
 # --- the checks ----------------------------------------------------------------------------
 
+TAB_MAX = 16                      # a tab or notch: an end edge of 1 to 2 cells between two like turns
+CORNERS = ('rounded', 'square')   # outline corners: rounded by the kit (cliff_core.grid_mask), or
+#                                   square for a built edge (a quay, a wall); rounded when unmarked
+VARIETY_RUN = 320                 # a face that runs a screen width without stepping (advisory)
+
+
+def tabs(outline) -> list:
+    """The tabs and notches of an outline along x or y: an edge of at most TAB_MAX px whose two
+    ends turn the same way, so it caps a 1 to 2 cell finger poking out or a slot cut in. (A
+    step, whose ends turn opposite ways, is a jog of the mass and is fine.)"""
+    o = [tuple(v) for v in outline]
+    n = len(o)
+    if n <= 4:
+        return []                                        # a rectangle has no finger to cut
+    area = sum(o[i][0] * o[(i + 1) % n][1] - o[(i + 1) % n][0] * o[i][1] for i in range(n))
+
+    def turn(a, b, c):
+        return (b[0] - a[0]) * (c[1] - b[1]) - (b[1] - a[1]) * (c[0] - b[0])
+    out = []
+    for i in range(n):
+        a, b, c, d = o[i - 1], o[i], o[(i + 1) % n], o[(i + 2) % n]
+        if a[0] != b[0] and a[1] != b[1]:
+            continue                                     # not yet on the grid: the edge rule speaks
+        ln = abs(c[0] - b[0]) + abs(c[1] - b[1])
+        t1, t2 = turn(a, b, c), turn(b, c, d)
+        if 0 < ln <= TAB_MAX and t1 and t2 and (t1 > 0) == (t2 > 0):
+            out.append((b, 'tab' if (t1 > 0) == (area > 0) else 'notch'))
+    return out
+
+
+def tidy(o) -> list:
+    """An outline without repeated vertices or vertices in the middle of a straight run."""
+    o = [list(v) for v in o]
+    changed = True
+    while changed and len(o) > 4:
+        changed = False
+        for i in range(len(o)):
+            a, b, c = o[i - 1], o[i], o[(i + 1) % len(o)]
+            if b == a or (a[0] == b[0] == c[0]) or (a[1] == b[1] == c[1]):
+                del o[i]
+                changed = True
+                break
+    return o
+
+
+def _area(o) -> float:
+    n = len(o)
+    return abs(sum(o[i][0] * o[(i + 1) % n][1] - o[(i + 1) % n][0] * o[i][1] for i in range(n))) / 2
+
+
+def detab(outline) -> list:
+    """The outline with its tabs and notches (see tabs) closed: the finger's two sides are cut
+    back to the shorter one, so the tip lands on the line it stood out from. A tab whose closing
+    would take more than a tenth of the shape (a tier only a cell or two wide) is left for a
+    person: the check still reports it."""
+    o = tidy(outline)
+    skip = set()
+    for _ in range(4 * len(o) + 8):
+        found = [f for f in tabs(o) if f[0] not in skip]
+        if not found:
+            break
+        n = len(o)
+        i = next(k for k in range(n) if tuple(o[k]) == found[0][0])
+        a, b, c, d = o[i - 1], o[i], o[(i + 1) % n], o[(i + 2) % n]
+        ab, cd = abs(b[0] - a[0]) + abs(b[1] - a[1]), abs(d[0] - c[0]) + abs(d[1] - c[1])
+        v = (a[0] - b[0], a[1] - b[1]) if ab <= cd else (d[0] - c[0], d[1] - c[1])
+        new = [list(q) for q in o]
+        new[i] = [b[0] + v[0], b[1] + v[1]]
+        new[(i + 1) % n] = [c[0] + v[0], c[1] + v[1]]
+        new = tidy(new)
+        if len(new) < 4 or abs(_area(new) - _area(o)) > 0.1 * _area(o):
+            skip.add(found[0][0])
+            continue
+        o = new
+    return o
+
+
+def variety(plan: dict) -> list:
+    """Advisory (a-to-f-grid): a tier's east-west edge that runs more than a screen width without
+    stepping in or out. Volume comes from masses that step (to-all-volume)."""
+    out = []
+    y0, y1 = plan['box'][1], plan['box'][1] + plan['box'][3]
+    for t in plan.get('tiers', []):
+        o = t['outline']
+        for a, b in zip(o, o[1:] + o[:1]):
+            if a[1] == b[1] and a[1] not in (y0, y1) and abs(b[0] - a[0]) > VARIETY_RUN:
+                out.append(f'{plan["id"]}: tier {t["id"]} runs {abs(b[0] - a[0])} px flat at y {a[1]} '
+                           f'from x {min(a[0], b[0])} (a step in or out every screen width)')
+    return out
+
+
 def check(plan: dict) -> list:
     out = []
     pid = plan['id']
@@ -170,7 +259,24 @@ def check(plan: dict) -> list:
     for v in (w, h):
         if v % 32:
             out.append(f'{pid}: box {plan["box"]} is not whole 32 px audit cells')
+    for a in plan.get('areas', []):
+        ax, ay, aw, ah = a['rect']
+        if (ax - x0) % 32 or (ay - y0) % 32 or aw % 32 or ah % 32:
+            out.append(f'{pid}: area {a["id"]} {a["rect"]} is not whole 32 px audit cells of the box')
     for t in plan.get('tiers', []):
+        o = t['outline']
+        for a, b in zip(o, o[1:] + o[:1]):
+            if a[0] != b[0] and a[1] != b[1]:
+                out.append(f'{pid}: tier {t["id"]} edge {tuple(a)} to {tuple(b)} is not along x or y '
+                           f'(the grid shape, to-all-grid-2x)')
+                break
+        for i, (u, why) in enumerate(tabs(o)):
+            out.append(f'{pid}: tier {t["id"]} has a {why} {tuple(u)} (a 1 to 2 cell {why}; masses step in '
+                       f'and out by more, to-all-grid-2x)')
+            if i == 2:
+                break
+        if t.get('corners', 'rounded') not in CORNERS:
+            out.append(f'{pid}: tier {t["id"]} corners {t["corners"]!r} (one of {", ".join(CORNERS)})')
         for p in t['outline']:
             if p[0] % GRID or p[1] % GRID:
                 out.append(f'{pid}: tier {t["id"]} vertex {tuple(p)} off the {GRID} px grid')
@@ -178,6 +284,10 @@ def check(plan: dict) -> list:
 
     paths = {r['id']: r for r in plan.get('routes', []) + plan.get('trods', [])}
     stairs = plan.get('stairs', [])
+    for wtr in plan.get('water', []):
+        pts = wtr['points'] + (wtr['points'][:1] if wtr.get('closed') else [])
+        if any(a[0] != b[0] and a[1] != b[1] for a, b in zip(pts, pts[1:])):
+            out.append(f'{pid}: water {wtr["id"]} has an edge not along x or y (the grid shape)')
     for st in stairs:
         if st['width'] < STAIR_MIN:
             out.append(f'{pid}: stair {st["id"]} is {st["width"]} px wide (at least {STAIR_MIN})')
@@ -192,11 +302,14 @@ def check(plan: dict) -> list:
                 out.append(f'{pid}: {pth["id"]} width {wd} (24 to 64, whole cells)')
         for p in pts:
             inside(p, f'{pth["id"]} point')
-        runs = straight_runs(pts)
-        if max(runs) > STRAIGHT_MAX:
-            out.append(f'{pid}: {pth["id"]} runs straight for {max(runs):.0f} px (at most {STRAIGHT_MAX})')
-        if kind == 'route' and length(pts) > BEND_EVERY and max(runs) > BEND_EVERY:
-            out.append(f'{pid}: {pth["id"]} has no bend for {max(runs):.0f} px')
+        # the grid shape (Matt, 21 Oct 11:44, to-all-grid-2x): a path runs straight along x or y
+        # and turns only at cell corners; this replaces benchmark 16's bend every 240 to 300 px
+        for a, b in zip(pts, pts[1:]):
+            if a[0] != b[0] and a[1] != b[1]:
+                out.append(f'{pid}: {pth["id"]} segment {tuple(a)} to {tuple(b)} is not along x or y')
+                break
+        if pth.get('kind') in SPANS:      # a bridge or causeway: on its own deck tier
+            continue
         if pth.get('dead_end'):
             if pth['dead_end'] not in DEAD_ENDS:
                 out.append(f'{pid}: {pth["id"]} ends in {pth["dead_end"]} (not a view, resident, bench or story)')
@@ -227,12 +340,26 @@ def check(plan: dict) -> list:
             last_xy = (x, y)
     for st in stairs:
         p = paths.get(st['on'])
+        if p:
+            # a stair cuts a south face, so it sits on a leg that runs north and south (eastward 6.1)
+            legs = [(a, b) for a, b in zip(p['points'], p['points'][1:]) if dist_to_line(st['at'], [a, b]) <= 8]
+            if legs and not any(a[0] == b[0] for a, b in legs):
+                out.append(f'{pid}: stair {st["id"]} at {tuple(st["at"])} is on an east-west leg of {st["on"]}')
         if p and dist_to_line(st['at'], p['points']) > 8:
             out.append(f'{pid}: stair {st["id"]} at {tuple(st["at"])} is not on {st["on"]}')
         if st['at'][0] % 4 or st['at'][1] % 4:
             out.append(f'{pid}: stair {st["id"]} at {tuple(st["at"])} off the 4 px cells')
 
     all_lines = [p['points'] for p in paths.values()]
+    # every trod joins the ways: it touches another path somewhere (an end on it, or a crossing),
+    # or one of its ends lies on the box's edge
+    for t in plan.get('trods', []):
+        others = [q['points'] for q in paths.values() if q is not t]
+        ends = (t['points'][0], t['points'][-1])
+        on_edge = any(e[0] in (x0, x0 + w) or e[1] in (y0, y0 + h) for e in ends)
+        touches = any(dist_to_line((x, y), ln) <= 8 for x, y, _ in sample(t['points'], 8) for ln in others)
+        if not (on_edge or touches):
+            out.append(f'{pid}: trod {t["id"]} touches no other path')
 
     def near_path(p):
         return min((dist_to_line(p, ln) for ln in all_lines), default=1e9)
@@ -286,6 +413,13 @@ def check(plan: dict) -> list:
         if have < math.floor(per * screens):
             out.append(f'{pid}: {have} {"interactables" if t == "I" else "story props"} for {screens:.1f} screens '
                        f'of route (at least {per} a screen)')
+    # per screen (an area of the plan): 2 interactables and 3 story props (check 1)
+    for a in plan.get('areas', []):
+        if a.get('walkable') is False:
+            continue
+        i_, s_ = area_counts(plan, a['rect'])
+        if i_ < 2 or s_ < 3:
+            out.append(f'{pid}: area {a["id"]} has {i_} interactables and {s_} story props (2 and 3 a screen)')
     obs = plan.get('obstacles', [])
     for i, a in enumerate(obs):
         if a.get('passed_by') and a['passed_by'] not in paths:
@@ -296,10 +430,153 @@ def check(plan: dict) -> list:
     for sp in plan.get('set_pieces', []):
         if sp['biome'] != plan['biome'] and sp['biome'] not in plan.get('biomes', []):
             out.append(f'{pid}: set piece {sp["piece"]} of biome {sp["biome"]} (this plan: {plan["biome"]})')
+        if sp['piece'] not in LIBRARY and not sp.get('proposed'):
+            out.append(f'{pid}: set piece {sp["piece"]} is not in the cliff core library (mark it proposed)')
         if sp['at'][0] % GRID or sp['at'][1] % GRID:
             out.append(f'{pid}: set piece {sp["piece"]} at {tuple(sp["at"])} off the grid')
         inside(sp['at'], f'set piece {sp["piece"]}')
     return out
+
+
+def area_counts(plan: dict, rect) -> tuple:
+    x, y, w, h = rect
+
+    def inside(p):
+        return x <= p[0] < x + w and y <= p[1] < y + h
+    i_ = sum(1 for m in plan.get('markers', []) if m['t'] == 'I' and not m.get('outside_box') and inside(m['at']))
+    i_ += sum(1 for n in plan.get('named', []) if n['kind'] in NAMED_INTERACT and inside(n['at']))
+    s_ = sum(1 for m in plan.get('markers', []) if m['t'] == 'S' and not m.get('outside_box') and inside(m['at']))
+    return i_, s_
+
+
+DRESS_I = ('bench', 'signpost', 'water trough')
+DRESS_S = ('cairn', 'standing stone', 'cairn', 'offering stone')
+
+
+def dress(plan: dict) -> list:
+    """Add dressing markers (`dress: true`) so each walkable area has 2 interactables and 3 story
+    props, spread along the paths inside it and set off to their side; `fix` then settles them.
+    Returns what was added."""
+    paths = plan.get('routes', []) + plan.get('trods', [])
+    added = []
+    k = len(plan.get('markers', []))
+    for a in plan.get('areas', []):
+        if a.get('walkable') is False:
+            continue
+        x, y, w, h = a['rect']
+        i_, s_ = area_counts(plan, a['rect'])
+        pts = [(px, py, q) for q in paths for px, py, _ in sample(q['points'], 8)
+               if x + 16 <= px < x + w - 16 and y + 16 <= py < y + h - 16]
+        need = [('I', DRESS_I)] * max(0, 2 - i_) + [('S', DRESS_S)] * max(0, 3 - s_)
+        if not pts or not need:
+            continue
+        for j, (t, kinds) in enumerate(need):
+            px, py, q = pts[int((j + 0.5) * len(pts) / len(need))]
+            side = 1 if (j + k) % 2 else -1
+            at = [int(px + side * (q['width'] / 2 + 16)) // 4 * 4, int(py) // 4 * 4]
+            m = {'t': t, 'what': kinds[(k + j) % len(kinds)], 'at': at, 'dress': True}
+            plan['markers'].append(m)
+            added.append((a['id'], m['what'], tuple(at)))
+            k += 1
+    return added
+
+
+def grid_shape(outline, seed=0) -> list:
+    """An outline turned into runs along x or y (each slanted edge becomes a step: along x then
+    y, or y then x, whichever keeps the corner outside the shape more often), without repeats
+    or points in the middle of a run."""
+    out = []
+    n = len(outline)
+    for i in range(n):
+        a, b = outline[i], outline[(i + 1) % n]
+        out.append(list(a))
+        if a[0] != b[0] and a[1] != b[1]:
+            out.append([b[0], a[1]] if (i + seed) % 2 == 0 else [a[0], b[1]])
+    keep = []
+    for i, q in enumerate(out):
+        a, c = out[i - 1], out[(i + 1) % len(out)]
+        if q == a or (a[0] == q[0] == c[0]) or (a[1] == q[1] == c[1]):
+            continue
+        keep.append(q)
+    return keep
+
+
+def simplify(pts, tol):
+    """Douglas-Peucker: the fewest points within tol px of the line."""
+    if len(pts) < 3:
+        return list(pts)
+    a, b = pts[0], pts[-1]
+    best, idx = 0.0, 0
+    for i in range(1, len(pts) - 1):
+        d = dist_to_line(pts[i], [a, b])
+        if d > best:
+            best, idx = d, i
+    if best <= tol:
+        return [a, b]
+    return simplify(pts[:idx + 1], tol)[:-1] + simplify(pts[idx:], tol)
+
+
+def grid_path(pts, tol=20) -> list:
+    """A path turned into long runs along x or y: simplified to within tol px, each slanted
+    segment then becomes a step (along its longer axis first), points snapped to the 8 px
+    grid, repeats and mid-run points dropped."""
+    pts = simplify([list(p) for p in pts], tol) if any(a[0] != b[0] and a[1] != b[1] for a, b in zip(pts, pts[1:])) else pts
+    q = [[int(round(x / GRID)) * GRID, int(round(y / GRID)) * GRID] for x, y in pts]
+    out = [q[0]]
+    for a, b in zip(q, q[1:]):
+        if a[0] != b[0] and a[1] != b[1]:
+            out.append([b[0], a[1]] if abs(b[0] - a[0]) >= abs(b[1] - a[1]) else [a[0], b[1]])
+        out.append(b)
+    keep = [out[0]]
+    for i in range(1, len(out) - 1):
+        a, b, c = keep[-1], out[i], out[i + 1]
+        if b == a or (a[0] == b[0] == c[0]) or (a[1] == b[1] == c[1]):
+            continue
+        keep.append(b)
+    if out[-1] != keep[-1]:
+        keep.append(out[-1])
+    return keep
+
+
+def crossings(plan: dict, G: 'Ground', pth: dict) -> list:
+    """Where a path crosses a face: (x, y, tier before, tier after) at the middle of each run of
+    face samples along it."""
+    out, prev, run = [], None, []
+    for x, y, _ in sample(pth['points']):
+        t, f = G.at(x, y)
+        if t is None:
+            continue
+        if f:
+            run.append((x, y))
+            continue
+        if run and prev is not None and t != prev:
+            mx, my = run[len(run) // 2]
+            out.append((int(mx) // 4 * 4, int(my) // 4 * 4, prev, t))
+        run = []
+        prev = t
+    return out
+
+
+def seat_stairs(plan: dict) -> list:
+    """Move each stair to the nearest crossing of its path between its two tiers. Returns what
+    moved."""
+    G = Ground(plan)
+    paths = {r['id']: r for r in plan.get('routes', []) + plan.get('trods', [])}
+    moved, used = [], set()
+    for st in plan.get('stairs', []):
+        pth = paths.get(st['on'])
+        if not pth:
+            continue
+        want = {st['from_tier'], st['to_tier']}
+        cands = [c for c in crossings(plan, G, pth) if {c[2], c[3]} == want and (pth['id'], c[0], c[1]) not in used]
+        if not cands:
+            continue
+        c = min(cands, key=lambda c: seg_len(c[:2], st['at']))
+        used.add((pth['id'], c[0], c[1]))
+        if [c[0], c[1]] != list(st['at']):
+            moved.append((st['id'], tuple(st['at']), (c[0], c[1])))
+            st['at'] = [c[0], c[1]]
+    return moved
 
 
 def fix(plan: dict) -> list:
@@ -405,9 +682,21 @@ def draw(plan: dict, scale: int = 4) -> Image.Image:
 
 
 def main(argv) -> int:
-    if '--fix' in argv:
+    if '--fix' in argv or '--dress' in argv or '--grid' in argv:
         for pid in [a for a in argv if a in plan_ids()] or plan_ids():
             p = load(pid)
+            if '--grid' in argv:
+                for t in p.get('tiers', []):
+                    t['outline'] = detab(grid_shape(t['outline']))
+                for r in p.get('routes', []) + p.get('trods', []):
+                    r['points'] = grid_path(r['points'])
+                for wtr in p.get('water', []):
+                    wtr['points'] = grid_shape(wtr['points']) if wtr.get('closed') else grid_path(wtr['points'])
+            if '--dress' in argv:
+                for area, what, at in dress(p):
+                    print(f'{pid}: dressed {area} with a {what} at {at}')
+            for sid, a, b in seat_stairs(p):
+                print(f'{pid}: seated stair {sid} from {a} at {b}')
             for what, a, b in fix(p):
                 print(f'{pid}: moved {what} from {a} to {b}')
             with open(os.path.join(PLANS, f'{pid}.json'), 'w') as fh:
@@ -420,6 +709,8 @@ def main(argv) -> int:
             p = load(pid)
             faults += check(p)
             print(summary(p))
+            for nt in variety(p):
+                print('note', nt)
         for f in faults:
             print('FAULT', f)
         print(f'{"ok" if not faults else "FAIL"} region plans: {len(plan_ids())} plans, {len(faults)} faults')

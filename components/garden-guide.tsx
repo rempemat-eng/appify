@@ -243,6 +243,7 @@ export function MotionSetting() {
 export function SoundSettings() {
   const effects = useSoundPreference((s) => s.effects);
   const ambience = useSoundPreference((s) => s.ambience);
+  const gentle = useSoundPreference((s) => s.gentle);
   const [saving, setSaving] = useState(false);
   const save = (write: Promise<void>) => {
     setSaving(true);
@@ -276,9 +277,20 @@ export function SoundSettings() {
           onValueChange={(value) => save(useSoundPreference.getState().setAmbience(value))}
         />
       </View>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <BodyText style={{ flex: 1, fontFamily: 'PixelifySans_700Bold' }}>
+          Gentle sound · {gentle ? 'ON' : 'OFF'}
+        </BodyText>
+        <PixelSwitch
+          accessibilityLabel="Gentle sound: fewer, calmer effects"
+          value={gentle}
+          disabled={saving || !effects}
+          onValueChange={(value) => save(useSoundPreference.getState().setGentle(value))}
+        />
+      </View>
       <BodyText style={{ fontFamily: 'PixelifySans_500Medium' }}>
-        Soft taps, chimes and birdsong in the garden. Sounds play alongside your own music, and on
-        iPhone the silent switch mutes them.
+        Soft taps, chimes and birdsong in the garden. Gentle sound keeps only the taps and the big
+        moments. Sounds play alongside your own music, and on iPhone the silent switch mutes them.
       </BodyText>
     </View>
   );

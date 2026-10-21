@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ScrollView, View, useWindowDimensions } from 'react-native';
+import { PixelRatio, ScrollView, View, useWindowDimensions } from 'react-native';
 import { router, useIsFocused, useLocalSearchParams, useNavigation } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { FadeIn } from 'react-native-reanimated';
@@ -7,6 +7,7 @@ import { useReducedMotion } from '@/lib/motion';
 import { AtlasWalk, type WalkSpot } from '@/components/atlas-walk';
 import { Journey } from '@/components/journey';
 import { usePixelUnit, PixelFrame } from '@/components/pixel-frame';
+import { pixelScale } from '@/lib/pixel-scale';
 import { PixelButton } from '@/components/game-ui';
 import { BodyText } from '@/components/pixel-feedback';
 import { feedback, missions, useGame } from '@/lib/game';
@@ -110,7 +111,9 @@ function World() {
   }>();
   const { width, height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
+  // the interface's unit for frames, the world's for the journey's art (lib/pixel-scale.ts)
   const u = usePixelUnit();
+  const worldUnit = pixelScale(width, PixelRatio.get());
   const navigation = useNavigation();
   const appActive = useAppActive();
   const player = useGame((s) => s.player);
@@ -566,7 +569,7 @@ function World() {
             )}
             width={width}
             height={viewH}
-            u={u}
+            u={worldUnit}
             onArrive={legDone}
             onSkip={arrive}
             insetTop={hudTop}

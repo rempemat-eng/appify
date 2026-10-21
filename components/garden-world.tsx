@@ -1259,6 +1259,22 @@ export function GardenWorld({
     };
   });
 
+  // The companion's tap target: at least 44 px (AGENTS.md), centred on the drawn sprite,
+  // which is petPx scaled by depth about its feet (transformOrigin 50% 93.75%). It does
+  // not scale with depth itself, so a companion at the back of the garden keeps a full
+  // target (lane R review 21 Oct 16:29: 43 px at 402@3, 32 px at 375@2).
+  const petHitStyle = useAnimatedStyle(() => {
+    const s = project(proj, px.value, py.value);
+    const box = Math.max(44, petPx * s.f);
+    const cy = s.sy - petPx * s.f * (30 / 32 - 0.5);
+    return {
+      width: box,
+      height: box,
+      transform: [{ translateX: Math.round(s.sx - box / 2) }, { translateY: Math.round(cy - box / 2) }],
+      zIndex: Math.round(py.value) + (napping ? 1 : 0),
+    };
+  });
+
   // Speech follows the companion; it flips below when the pet is near the top.
   // One speech style (coherence plan, step 3): a paper frame on the interface grid with
   // a tail pointing at whoever speaks, and one bubble at a time.
@@ -2039,6 +2055,10 @@ export function GardenWorld({
               })}
             {companions.map((v, i) => {
               const spot = project(proj, companionSpots[i].x, companionSpots[i].y);
+              // the drawn visitor can be under 44 px (32 art px at a small scale): its target
+              // grows to 44, centred on the drawing (lane R review 21 Oct 16:29, AGENTS.md)
+              const hit = Math.max(44, companionPx);
+              const grow = (hit - companionPx) / 2;
               return (
                 <Pressable
                   key={`visitor-${v.id}`}
@@ -2058,27 +2078,22 @@ export function GardenWorld({
                   }}
                   style={{
                     position: 'absolute',
-                    left: Math.round(spot.sx - companionPx / 2),
-                    top: Math.round(spot.sy - companionPx * (30 / 32)),
-                    width: companionPx,
-                    height: companionPx,
+                    left: Math.round(spot.sx - companionPx / 2 - grow),
+                    top: Math.round(spot.sy - companionPx * (30 / 32) - grow),
+                    width: Math.ceil(hit),
+                    height: Math.ceil(hit),
                     zIndex: companionSpots[i].y,
                   }}
                 />
               );
             })}
-            <Animated.View
-              style={[
-                { position: 'absolute', left: 0, top: 0, width: petPx, height: petPx },
-                petStyle,
-              ]}
-            >
+            <Animated.View style={[{ position: 'absolute', left: 0, top: 0 }, petHitStyle]}>
               <Pressable
                 accessibilityRole="button"
                 accessibilityLabel={`Greet ${guardian.pet_name}`}
                 disabled={!active}
                 onPress={patGuardian}
-                style={{ width: petPx, height: petPx }}
+                style={{ width: '100%', height: '100%' }}
               />
             </Animated.View>
           </>

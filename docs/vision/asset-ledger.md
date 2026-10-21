@@ -16,6 +16,8 @@ Status: built by Claude A on 20 Oct, main at 74dea48. The check runs on its own 
 
 When in doubt the grade is REWORK: a check that cannot be measured counts only if someone has checked it by eye (section 6), never by default.
 
+**Spin-off tag (Claude M, 21 Oct).** Matt: "i do want to make a spin off game for the computer using some of the assets, so keep some of the stuff that doesnt conform perfectly to mobile". An entry with `spin_off` (why) keeps its grade for the phone game, so a RETIRE picture still never goes into a rebuilt region, but it is **not deleted** when it retires: a cleanup keeps it, or moves it to `prototypes/` with the spin-off. Today: the woodland ground and the 16 props it places, which the real-time fight prototype (`prototypes/realtime-combat`) is built on (`spin_off_files()` in `scripts/art/asset_ledger.py`). Add more there, with a reason, rather than by hand.
+
 ## 2. What is measured on a sprite
 
 Every sprite (props, buildings, residents, garden and decor sprites, growth stages, journey vehicles, mission props) is brought back to its native pixel grid (the PNGs are saved at 4x) and measured with the tools of the newest standard, all of which this branch carries (section 8):

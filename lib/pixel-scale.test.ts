@@ -13,10 +13,12 @@ import {
   WORLD_ACROSS,
   assetUnit,
   crispOn,
+  interfaceGrid,
   pixelGrid,
   pixelScale,
   snapToDevice,
 } from './pixel-scale';
+import { hotbarSlot } from './ui-tokens';
 
 const whole = (value: number) => Math.abs(value - Math.round(value)) < 1e-9;
 
@@ -183,7 +185,52 @@ for (const [name, width, dpr] of devices) {
   }
 }
 
-if (process.argv.includes('--table')) console.log(table.join('\n'));
+// ---- the interface's grid (Claude M): the same size at every density -----------------------
+// The HUD, hotbar, frames and icons keep the density-1 unit, so they are the same physical
+// size at 1, 1.5 and 2 (they no longer shrink on a 2x phone at density 2), and draw finer
+// art only where an interface pixel splits into whole device pixels.
+for (let width = 240; width <= 2000; width += 7)
+  for (const dpr of [1, 1.25, 1.5, 2, 2.25, 2.625, 3, 3.5, 4]) {
+    const old = before(width, dpr);
+    for (const density of ART_DENSITIES) {
+      const ui = interfaceGrid(width, dpr, density);
+      assert.equal(ui.unit, old, `${width}/${dpr} at ${density}: interface unit unchanged`);
+      assert.ok(ui.density === 1 || ui.density === density, 'only 1x or the game density');
+      assert.ok(Number.isInteger(ui.deviceTexel) && ui.deviceTexel >= 1);
+      assert.ok(whole(ui.texel * dpr), `${width}/${dpr}: interface texel on device pixels`);
+      assert.ok(Math.abs(ui.texel * ui.density - ui.unit) < 1e-9);
+    }
+    assert.equal(interfaceGrid(width, dpr, 1).density, 1, 'density 1: 1x interface art');
+  }
+const uiTable: string[] = [];
+for (const [name, width, dpr] of devices) {
+  const ui = interfaceGrid(width, dpr, 2);
+  const world = pixelGrid(width, dpr, 2);
+  const deviceUnit = Math.round(ui.unit * dpr);
+  assert.equal(ui.density, deviceUnit % 2 === 0 ? 2 : 1, `${name}: 2x where it splits evenly`);
+  // where the interface draws 2x, its texel is the world's texel: one pixel size on screen
+  if (ui.density === 2)
+    assert.equal(ui.deviceTexel, world.deviceTexel, `${name}: interface texel = world texel`);
+  uiTable.push(
+    `${name.padEnd(18)} interface ${String(deviceUnit).padStart(2)} dev px, draws ${ui.density}x ` +
+      `(texel ${ui.deviceTexel} dev px), world texel ${world.deviceTexel} dev px`,
+  );
+}
+// every current phone draws the 2x interface; the 2x SE and the S25 Ultra at QHD+ keep 1x
+for (const [name, width, dpr] of current)
+  if (name !== 'S25 Ultra QHD+') assert.equal(interfaceGrid(width, dpr, 2).density, 2, name);
+assert.equal(interfaceGrid(375, 2, 2).density, 1, 'iPhone SE: 3 device px, 1x interface');
+assert.equal(interfaceGrid(375, 2, 2).unit, 1.5, 'iPhone SE: interface as big as today');
+assert.equal(interfaceGrid(412, 3.5, 2).density, 1, 'S25 Ultra QHD+: 5 device px, 1x');
+assert.equal(interfaceGrid(402, 3, 2).texel, 2 / 3, '3x phone: 2 device px an interface texel');
+// touch targets come from the unit, so they are the same at every density
+for (const [, width, dpr] of devices)
+  assert.equal(
+    hotbarSlot(interfaceGrid(width, dpr, 2).unit),
+    hotbarSlot(pixelScale(width, dpr, 1)),
+  );
+
+if (process.argv.includes('--table')) console.log(table.join('\n') + '\n\n' + uiTable.join('\n'));
 console.log(
   'PASS: the pixel grid keeps whole device pixels per texel at densities 1, 1.5 and 2 (2 device ' +
     'px a texel on every current phone at 2, 3 at 1.5), about 300 world px across, and density 1 ' +
