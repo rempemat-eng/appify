@@ -219,7 +219,8 @@ def brick_wall(p: Plot, R: Relief, m, seed=0, ramps=BRICK, pilaster=56):
     c = (p.x + off) % 8
     fam = np.array([IDX[x] for x in ramps])[(hash01(bi, ci, seed) * len(ramps)).astype(int)]
     hb0 = hash01(bi, ci, seed + 11)
-    t = np.where(r == 0, np.where(hb0 < 0.3, 4, 3), np.where(r == 3, 1, np.where(hb0 > 0.8, 3, 2)))
+    t = np.where(r == 0, np.where(hb0 < 0.3, 4, 3), np.where(r == 3, np.where(hb0 < 0.15, 0, 1),
+                 np.where(hb0 > 0.8, 3, np.where(hb0 < 0.3, 3, 2))))
     t = np.where((c == 7), 1, t)
     t = np.where((c == 0) & (r < 3), 3, t)
     t = np.where((c == 6) & (r == 2), 1, t)
@@ -229,6 +230,7 @@ def brick_wall(p: Plot, R: Relief, m, seed=0, ramps=BRICK, pilaster=56):
     hb = hash01(bi, ci, seed + 1)
     brick = fc & (c < 7) & (r < 3)
     p.put(brick & (hb > 0.94) & (r == 0), 'clay_warm', 3)              # hotter fired
+    p.put(brick & (hb > 0.88) & (hb <= 0.94) & (r < 2), 'clay_cool', 1)  # a dark header
     p.put(brick & (hb > 0.94) & (r > 0), 'clay_warm', 2)
     soot = brick & (hb < 0.04 + 0.14 * (d < 10))
     p.put(soot & (r == 0), 'soot', 3)
@@ -461,7 +463,7 @@ def corner(seed=1):
     for x in (40, 150, 260, 360, 500):
         tree_pit(p, x, 330 if x < 300 else 340, seed + x)
     # --- the quay ---------------------------------------------------------------------------
-    flags(p, quay & ~river, seed + 8, course=10, ramps=('bleached', 'sand_cool', 'ashlar_warm', 'bleached_warm'))
+    flags(p, quay & ~river, seed + 8, course=8, ramps=('bleached', 'sand_cool', 'ashlar_warm', 'bleached_warm', 'stone_warm'))
     harbour(p, ria, seed + 9)
     # --- the walls ----------------------------------------------------------------------------
     wall3 = R.face & (R.kf == 3)
