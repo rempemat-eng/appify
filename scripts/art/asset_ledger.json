@@ -1,6 +1,6 @@
 {
  "_about": "The asset ledger (docs/vision/asset-ledger.md). Every picture under assets/ with its grade: KEEP may go into a kit or region build, REWORK must be redone first, RETIRE has no place in the new world. Written by scripts/art/asset_ledger.py --build; `eye` verdicts are written by hand and survive a rebuild. Checked by scripts/check-assets.cjs (npm run check:assets).",
- "main": "b6d1f8c",
+ "main": "490ee60",
  "grades": {
   "KEEP": "fits the newest standard on every check",
   "REWORK": "the subject stays; redo the art first",
@@ -11488,33 +11488,34 @@
    "owner": "C",
    "grade": "REWORK",
    "fix": "redraw",
-   "why": "re-check: changed since the audit (ADJUST: door about 20); foot line 61 px: not whole 8 px cells (kind foot 10 x 8); bar tones LOW, shapes LOW, dressing LOW as wood-front",
+   "why": "re-check: changed since the audit (ADJUST: door about 20); 116 x 86 px (over) against boathouse 80-112 x 64-112; style: palette, outline-double",
    "fails": [
     "logic",
-    "grid",
-    "bar"
+    "size",
+    "palette",
+    "outline-double"
    ],
    "measured": {
     "scale": 4,
-    "h": 90,
-    "w": 74,
+    "h": 116,
+    "w": 86,
     "style": {
-     "colours": 27,
-     "on_house": 0.965,
-     "on_today": 0.939,
-     "palette": "house",
+     "colours": 108,
+     "on_house": 0.819,
+     "on_today": 0.398,
+     "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.028,
-     "west_east": 3.586,
-     "isolated": 0.041,
+     "double": 0.104,
+     "west_east": 2.013,
+     "isolated": 0.045,
      "checker": 0.0
     },
     "grid": {
-     "foot_px": 61,
-     "cells": 7.62,
+     "foot_px": 34,
+     "cells": 4.25,
      "kind_foot": "10 x 8",
-     "ok": false
+     "ok": true
     },
     "size": {
      "kind": "boathouse",
@@ -11526,12 +11527,12 @@
       64,
       112
      ],
-     "status": "ok"
+     "status": "over"
     },
     "last_change": {
-     "sha": "9ce45c3",
-     "date": "2026-10-20T00:56",
-     "subject": "Scale pass for the city, Cogsworth and the isles: storeys, doors and shopfronts to the scale table"
+     "sha": "c0e43ea",
+     "date": "2026-10-20T15:34",
+     "subject": "Tidebloom Isles: the boathouse at the lagoon's edge, its boat doors over the water, a slipway into the lagoon"
     },
     "audit": {
      "grade": "ADJUST",
@@ -11540,47 +11541,42 @@
     },
     "logic": "re-check: changed since the audit (ADJUST: door about 20)",
     "bar": {
-     "status": "fail",
+     "status": "pass",
      "kind": "wood-front",
      "box": [
-      8,
-      20,
-      65,
-      77
+      11,
+      19,
+      71,
+      79
      ],
      "patches": 9,
-     "tones_at": 0.85,
+     "tones_at": 0.9,
      "tones": [
-      10.0,
+      22.33,
       24.0
      ],
      "shapes": [
-      24.11,
+      41.0,
       36.34
      ],
      "dressing": [
-      16.56,
+      33.44,
       30.54
      ],
      "isolated": [
-      0.088,
+      0.148,
       0.17
      ],
      "cluster": [
-      10.67,
+      3.22,
       3.4
-     ],
-     "low": [
-      "tones",
-      "shapes",
-      "dressing"
      ]
     }
    },
    "placed": {
     "landing": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/bollard": {
    "files": [
