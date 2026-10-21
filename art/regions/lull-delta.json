@@ -888,6 +888,7 @@
       "width": 32,
       "owner_note": "lane G's line, width and tier (lib/world-routes.ts on claude-g/blockout (#189) 395bf4d); Claude I paints it",
       "points": [
+        [8480, 3296],
         [8480, 3304],
         [8480, 4080],
         [8536, 4080],
@@ -910,10 +911,18 @@
         [8616, 4224, 40]
       ],
       "tiers_world": [
-        5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-        3, 3, 3, 3, 3, 3
+        5, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+        3, 3, 3, 3, 3, 3, 3
       ],
-      "crossings": []
+      "crossings": [],
+      "meets": [
+        {
+          "at": [8480, 3296],
+          "tier": 5,
+          "width": 32,
+          "from": "lane G's meeting cell (route-meets.md, #189)"
+        }
+      ]
     },
     {
       "id": "lull_road",
@@ -921,6 +930,7 @@
       "width": 40,
       "owner_note": "lane G's line, width and tier (lib/world-routes.ts on claude-g/blockout (#189) 395bf4d); Claude I paints it",
       "points": [
+        [8304, 4144],
         [8328, 4144],
         [8400, 4144],
         [8400, 4192],
@@ -956,8 +966,8 @@
         [9280, 4360, 48]
       ],
       "tiers_world": [
-        4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-        3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3
+        4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+        3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3
       ],
       "crossings": [
         {
@@ -968,6 +978,14 @@
           "s": 2752,
           "span": 192
         }
+      ],
+      "meets": [
+        {
+          "at": [8304, 4144],
+          "tier": 4,
+          "width": 40,
+          "from": "lane G's meeting cell (route-meets.md, #189)"
+        }
       ]
     },
     {
@@ -976,6 +994,7 @@
       "width": 40,
       "owner_note": "lane G's line, width and tier (lib/world-routes.ts on claude-g/blockout (#189) 395bf4d); Claude I paints it",
       "points": [
+        [8304, 4624],
         [8320, 4624],
         [8360, 4624],
         [8360, 4560],
@@ -993,8 +1012,16 @@
         [8544, 4464, 32],
         [8640, 4328, 32]
       ],
-      "tiers_world": [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-      "crossings": []
+      "tiers_world": [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+      "crossings": [],
+      "meets": [
+        {
+          "at": [8304, 4624],
+          "tier": 3,
+          "width": 40,
+          "from": "lane G's meeting cell (route-meets.md, #189)"
+        }
+      ]
     },
     {
       "id": "delta_road",
