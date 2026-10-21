@@ -184,6 +184,10 @@ def check(plan: dict) -> list:
 
     paths = {r['id']: r for r in plan.get('routes', []) + plan.get('trods', [])}
     stairs = plan.get('stairs', [])
+    for wtr in plan.get('water', []):
+        pts = wtr['points'] + (wtr['points'][:1] if wtr.get('closed') else [])
+        if any(a[0] != b[0] and a[1] != b[1] for a, b in zip(pts, pts[1:])):
+            out.append(f'{pid}: water {wtr["id"]} has an edge not along x or y (the grid shape)')
     for st in stairs:
         if st['width'] < STAIR_MIN:
             out.append(f'{pid}: stair {st["id"]} is {st["width"]} px wide (at least {STAIR_MIN})')
@@ -236,12 +240,27 @@ def check(plan: dict) -> list:
             last_xy = (x, y)
     for st in stairs:
         p = paths.get(st['on'])
+        if p:
+            # a stair cuts a south face, so it sits on a leg that runs north and south (eastward 6.1)
+            legs = [(a, b) for a, b in zip(p['points'], p['points'][1:]) if dist_to_line(st['at'], [a, b]) <= 8]
+            if legs and not any(a[0] == b[0] for a, b in legs):
+                out.append(f'{pid}: stair {st["id"]} at {tuple(st["at"])} is on an east-west leg of {st["on"]}')
         if p and dist_to_line(st['at'], p['points']) > 8:
             out.append(f'{pid}: stair {st["id"]} at {tuple(st["at"])} is not on {st["on"]}')
         if st['at'][0] % 4 or st['at'][1] % 4:
             out.append(f'{pid}: stair {st["id"]} at {tuple(st["at"])} off the 4 px cells')
 
     all_lines = [p['points'] for p in paths.values()]
+    # every trod joins the ways: one of its ends lies on another path (or the box's edge)
+    for t in plan.get('trods', []):
+        ends = (t['points'][0], t['points'][-1])
+        others = [q['points'] for q in paths.values() if q is not t]
+
+        def joined(e):
+            on_edge = e[0] in (x0, x0 + w) or e[1] in (y0, y0 + h)
+            return on_edge or any(dist_to_line(e, ln) <= 8 for ln in others)
+        if not any(joined(e) for e in ends):
+            out.append(f'{pid}: trod {t["id"]} joins no other path at either end')
 
     def near_path(p):
         return min((dist_to_line(p, ln) for ln in all_lines), default=1e9)
@@ -383,9 +402,26 @@ def grid_shape(outline, seed=0) -> list:
     return keep
 
 
-def grid_path(pts, seed=0) -> list:
-    """A path turned into runs along x or y: each slanted segment becomes a step (along its
-    longer axis first), points snapped to the 8 px grid, repeats and mid-run points dropped."""
+def simplify(pts, tol):
+    """Douglas-Peucker: the fewest points within tol px of the line."""
+    if len(pts) < 3:
+        return list(pts)
+    a, b = pts[0], pts[-1]
+    best, idx = 0.0, 0
+    for i in range(1, len(pts) - 1):
+        d = dist_to_line(pts[i], [a, b])
+        if d > best:
+            best, idx = d, i
+    if best <= tol:
+        return [a, b]
+    return simplify(pts[:idx + 1], tol)[:-1] + simplify(pts[idx:], tol)
+
+
+def grid_path(pts, tol=20) -> list:
+    """A path turned into long runs along x or y: simplified to within tol px, each slanted
+    segment then becomes a step (along its longer axis first), points snapped to the 8 px
+    grid, repeats and mid-run points dropped."""
+    pts = simplify([list(p) for p in pts], tol) if any(a[0] != b[0] and a[1] != b[1] for a, b in zip(pts, pts[1:])) else pts
     q = [[int(round(x / GRID)) * GRID, int(round(y / GRID)) * GRID] for x, y in pts]
     out = [q[0]]
     for a, b in zip(q, q[1:]):
@@ -401,6 +437,47 @@ def grid_path(pts, seed=0) -> list:
     if out[-1] != keep[-1]:
         keep.append(out[-1])
     return keep
+
+
+def crossings(plan: dict, G: 'Ground', pth: dict) -> list:
+    """Where a path crosses a face: (x, y, tier before, tier after) at the middle of each run of
+    face samples along it."""
+    out, prev, run = [], None, []
+    for x, y, _ in sample(pth['points']):
+        t, f = G.at(x, y)
+        if t is None:
+            continue
+        if f:
+            run.append((x, y))
+            continue
+        if run and prev is not None and t != prev:
+            mx, my = run[len(run) // 2]
+            out.append((int(mx) // 4 * 4, int(my) // 4 * 4, prev, t))
+        run = []
+        prev = t
+    return out
+
+
+def seat_stairs(plan: dict) -> list:
+    """Move each stair to the nearest crossing of its path between its two tiers. Returns what
+    moved."""
+    G = Ground(plan)
+    paths = {r['id']: r for r in plan.get('routes', []) + plan.get('trods', [])}
+    moved, used = [], set()
+    for st in plan.get('stairs', []):
+        pth = paths.get(st['on'])
+        if not pth:
+            continue
+        want = {st['from_tier'], st['to_tier']}
+        cands = [c for c in crossings(plan, G, pth) if {c[2], c[3]} == want and (pth['id'], c[0], c[1]) not in used]
+        if not cands:
+            continue
+        c = min(cands, key=lambda c: seg_len(c[:2], st['at']))
+        used.add((pth['id'], c[0], c[1]))
+        if [c[0], c[1]] != list(st['at']):
+            moved.append((st['id'], tuple(st['at']), (c[0], c[1])))
+            st['at'] = [c[0], c[1]]
+    return moved
 
 
 def fix(plan: dict) -> list:
@@ -514,9 +591,13 @@ def main(argv) -> int:
                     t['outline'] = grid_shape(t['outline'])
                 for r in p.get('routes', []) + p.get('trods', []):
                     r['points'] = grid_path(r['points'])
+                for wtr in p.get('water', []):
+                    wtr['points'] = grid_shape(wtr['points']) if wtr.get('closed') else grid_path(wtr['points'])
             if '--dress' in argv:
                 for area, what, at in dress(p):
                     print(f'{pid}: dressed {area} with a {what} at {at}')
+            for sid, a, b in seat_stairs(p):
+                print(f'{pid}: seated stair {sid} from {a} at {b}')
             for what, a, b in fix(p):
                 print(f'{pid}: moved {what} from {a} to {b}')
             with open(os.path.join(PLANS, f'{pid}.json'), 'w') as fh:
