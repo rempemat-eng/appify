@@ -186,8 +186,8 @@ for (const name of ['attack', 'cast']) {
 }
 assert.equal(
   walkFrameMs(6, ANIMATION.walk.speedWorldPerSec),
-  100,
-  'six frames over a 24 px stride at 40 px/s',
+  110,
+  'six frames over a 26.4 px stride at 40 px/s: the rig timing',
 );
 
 // 9. The state machine.

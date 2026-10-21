@@ -29,8 +29,8 @@
   ],
   "walk": {
     "speedWorldPerSec": 40,
-    "strideWorld": 24,
-    "note": "One walk cycle (two steps, six frames) covers 24 world px, so at the companion's 40 px/s a frame lasts 100 ms. Faster or slower walks scale the frame time (frameMs = 1000 x strideWorld / (speed x frames)) so the feet never slide."
+    "strideWorld": 26.4,
+    "note": "One walk cycle (two steps, six frames) covers 26.4 world px, so at the companion's 40 px/s a frame lasts 110 ms, the perfected scene's rig timing (scripts/art/native/rig.py reads it from here). Faster or slower walks scale the frame time (frameMs = 1000 x strideWorld / (speed x frames)) so the feet never slide."
   },
   "cells": {
     "folk": {
@@ -161,12 +161,22 @@
             "frames": [
               {
                 "pose": "idle_a",
-                "ms": 900,
+                "ms": 420,
                 "phase": "hold"
               },
               {
                 "pose": "idle_b",
-                "ms": 700,
+                "ms": 260,
+                "phase": "hold"
+              },
+              {
+                "pose": "idle_b",
+                "ms": 420,
+                "phase": "hold"
+              },
+              {
+                "pose": "idle_a",
+                "ms": 260,
                 "phase": "hold"
               }
             ],
@@ -242,34 +252,34 @@
             "frames": [
               {
                 "pose": "walk_1",
-                "ms": 100,
+                "ms": 110,
                 "phase": "act"
               },
               {
                 "pose": "walk_2",
-                "ms": 100,
+                "ms": 110,
                 "phase": "act",
                 "effect": "step_dust"
               },
               {
                 "pose": "walk_3",
-                "ms": 100,
+                "ms": 110,
                 "phase": "act"
               },
               {
                 "pose": "walk_4",
-                "ms": 100,
+                "ms": 110,
                 "phase": "act"
               },
               {
                 "pose": "walk_5",
-                "ms": 100,
+                "ms": 110,
                 "phase": "act",
                 "effect": "step_dust"
               },
               {
                 "pose": "walk_6",
-                "ms": 100,
+                "ms": 110,
                 "phase": "act"
               }
             ],
@@ -695,12 +705,22 @@
             "frames": [
               {
                 "pose": "idle_a",
-                "ms": 1000,
+                "ms": 420,
                 "phase": "hold"
               },
               {
                 "pose": "idle_b",
-                "ms": 800,
+                "ms": 260,
+                "phase": "hold"
+              },
+              {
+                "pose": "idle_b",
+                "ms": 420,
+                "phase": "hold"
+              },
+              {
+                "pose": "idle_a",
+                "ms": 260,
                 "phase": "hold"
               }
             ],
@@ -729,25 +749,37 @@
             "frames": [
               {
                 "pose": "hop_1",
-                "ms": 100,
+                "ms": 110,
                 "phase": "anticipate"
               },
               {
                 "pose": "hop_2",
-                "ms": 100,
+                "ms": 110,
                 "phase": "act",
                 "dy": -2
               },
               {
                 "pose": "hop_3",
-                "ms": 100,
+                "ms": 110,
                 "phase": "act",
                 "dy": -4
               },
               {
-                "pose": "hop_4",
-                "ms": 100,
+                "pose": "hop_1",
+                "ms": 110,
                 "phase": "settle"
+              },
+              {
+                "pose": "hop_2",
+                "ms": 110,
+                "phase": "act",
+                "dy": -2
+              },
+              {
+                "pose": "hop_3",
+                "ms": 110,
+                "phase": "act",
+                "dy": -4
               }
             ],
             "reduced": {
@@ -1598,5 +1630,8 @@
     "bow": {
       "state": "bow"
     }
+  },
+  "rigTiming": {
+    "note": "scripts/art/native/rig.py builds its TIMING table from kinds.folk.sets.world idle and walk: this file is the single source (Claude A ruling, 21 Oct 14:40)."
   }
 }

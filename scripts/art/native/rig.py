@@ -17,7 +17,9 @@ back, profile) that hangs its parts on the Pose's joints.
 """
 from __future__ import annotations
 
+import json
 import math
+import os
 from dataclasses import dataclass, field
 
 import numpy as np
@@ -26,12 +28,21 @@ from PIL import Image
 from . import raster as pk
 
 FACINGS = ('S', 'N', 'E', 'W')
-# frame timing shared by every folk and familiar (anticipate, act, settle: the idle breath
-# lingers at rest; the walk is an even six-step cycle at the zones' walking speed)
-TIMING = {
-    'idle': {'frames': 4, 'ms': [420, 260, 420, 260]},
-    'walk': {'frames': 6, 'ms': [110] * 6},
-}
+# frame timing shared by every folk and familiar, read from the one animation spec
+# (art/characters/animation-spec.json, Claude J; the single source, Claude A 21 Oct 14:40):
+# the idle breath lingers at rest; the walk is an even six-step cycle at the zones' walking speed
+SPEC = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..', 'art', 'characters',
+                    'animation-spec.json')
+
+
+def _timing() -> dict:
+    with open(SPEC) as fh:
+        world = json.load(fh)['kinds']['folk']['sets']['world']
+    return {a: {'frames': len(world[a]['frames']), 'ms': [f['ms'] for f in world[a]['frames']]}
+            for a in ('idle', 'walk')}
+
+
+TIMING = _timing()
 
 
 @dataclass
