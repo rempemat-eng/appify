@@ -1,0 +1,10 @@
+{
+  "_about": "Proposed palette accents the kit draws with until Claude A folds them into art/house-palette.json. Each family is made by the house rule (scripts/art/house_palette.py) from one body colour, with its warm and cool siblings and its edge tone. 'crag' here is the perfected scene's warm cliff rock (#8A5048); main's palette has a highland 'crag' from the cliff bake-off (#8A5546, PR #165), so the kit's value replaces it while drawing: one of the two must win. 'edges' overrides an edge tone: wood closes in the 1x sprites' dark brown, not near-black.",
+  "families": {
+    "fox": "#C8703A",
+    "crag": "#8A5048"
+  },
+  "edges": {
+    "timber": "#4D2220"
+  }
+}
