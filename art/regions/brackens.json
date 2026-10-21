@@ -3,10 +3,11 @@
   "id": "brackens",
   "owner": "claude-f",
   "biome": "moor",
-  "box": [4800, 1296, 800, 2704],
+  "box": [4800, 1280, 800, 2720],
   "base_tier": {
-    "value": 3,
-    "provisional": true
+    "value": 4,
+    "provisional": false,
+    "from": "Claude G, g-to-f-plans 21 Oct 10:40: lib/world-routes.ts (#175)"
   },
   "tiers": [
     {
@@ -14,8 +15,8 @@
       "tier": 1,
       "why": "the Brackens' body: a low heather ridge, the massif's south-western spur, two spurs pushing the Rift west",
       "outline": [
-        [4800, 1296],
-        [5560, 1296],
+        [4800, 1280],
+        [5560, 1280],
         [5568, 1480],
         [5544, 1640],
         [5560, 1800],
@@ -49,8 +50,8 @@
       "tier": 2,
       "why": "the crest: heather and grey gritstone, seen from the valley; no route climbs it",
       "outline": [
-        [4880, 1296],
-        [5400, 1296],
+        [4880, 1280],
+        [5400, 1280],
         [5408, 1440],
         [5384, 1600],
         [5400, 1760],
@@ -87,8 +88,8 @@
       "tier": 3,
       "why": "where the ridge rises into the massif's front: boulders and scree thickening north (the north edge's fade)",
       "outline": [
-        [4960, 1296],
-        [5336, 1296],
+        [4960, 1280],
+        [5336, 1280],
         [5344, 1408],
         [5312, 1512],
         [5256, 1560],
@@ -256,9 +257,8 @@
     },
     {
       "id": "flank_trod",
-      "why": "north along the ridge's east flank to a viewpoint over the Heather spur and the Rift",
+      "why": "north along the ridge's east flank, up onto the crest by the flank stair, to the viewpoint over the Heather spur and the Rift",
       "width": 24,
-      "dead_end": "view",
       "points": [
         [5440, 3304],
         [5456, 3232],
@@ -283,6 +283,31 @@
         [5136, 1968],
         [5072, 1976],
         [5008, 1968]
+      ]
+    },
+    {
+      "id": "crest_trod",
+      "width": 24,
+      "why": "a sheep trod down the crest from the Heather spur's viewpoint to the drove well: with the flank trod and the east trod it makes the moor's loop",
+      "points": [
+        [5008, 1968],
+        [5016, 2040],
+        [5056, 2112],
+        [5072, 2200],
+        [5104, 2280],
+        [5088, 2376],
+        [5120, 2456],
+        [5104, 2552],
+        [5136, 2640],
+        [5120, 2736],
+        [5152, 2824],
+        [5136, 2920],
+        [5168, 3008],
+        [5144, 3096],
+        [5152, 3176],
+        [5152, 3248],
+        [5168, 3296],
+        [5160, 3344]
       ]
     }
   ],
@@ -322,6 +347,15 @@
       "to_tier": 1,
       "width": 40,
       "kind": "stone"
+    },
+    {
+      "id": "crest_stair",
+      "on": "crest_trod",
+      "at": [5152, 3224],
+      "from_tier": 2,
+      "to_tier": 1,
+      "width": 40,
+      "kind": "stone"
     }
   ],
   "places": [
@@ -348,6 +382,12 @@
       "kind": "spur",
       "at": [4990, 1960],
       "why": "the ridge's northern spur over the Heather burn"
+    },
+    {
+      "id": "heather_spur_view",
+      "kind": "view",
+      "at": [5008, 1968],
+      "why": "where the flank and crest trods meet: the Heather spur, the Rift and the steppe beyond, hazier"
     }
   ],
   "named": [
@@ -495,6 +535,214 @@
       "what": "butterflies",
       "at": [5622, 3929],
       "outside_box": true
+    },
+    {
+      "t": "I",
+      "what": "bench",
+      "at": [5084, 1956],
+      "dress": true,
+      "moved_from": [5092, 1968]
+    },
+    {
+      "t": "I",
+      "what": "water trough",
+      "at": [4980, 1968],
+      "dress": true
+    },
+    {
+      "t": "S",
+      "what": "cairn",
+      "at": [5004, 2068],
+      "dress": true
+    },
+    {
+      "t": "S",
+      "what": "cairn",
+      "at": [5036, 2176],
+      "dress": true
+    },
+    {
+      "t": "S",
+      "what": "cairn",
+      "at": [5072, 2288],
+      "dress": true
+    },
+    {
+      "t": "I",
+      "what": "water trough",
+      "at": [5452, 2296],
+      "dress": true
+    },
+    {
+      "t": "I",
+      "what": "signpost",
+      "at": [5420, 2192],
+      "dress": true
+    },
+    {
+      "t": "S",
+      "what": "standing stone",
+      "at": [5424, 2088],
+      "dress": true
+    },
+    {
+      "t": "S",
+      "what": "offering stone",
+      "at": [5380, 2016],
+      "dress": true,
+      "moved_from": [5372, 2016]
+    },
+    {
+      "t": "S",
+      "what": "standing stone",
+      "at": [5292, 1952],
+      "dress": true,
+      "moved_from": [5292, 1968]
+    },
+    {
+      "t": "I",
+      "what": "signpost",
+      "at": [5080, 2432],
+      "dress": true
+    },
+    {
+      "t": "I",
+      "what": "bench",
+      "at": [5076, 2536],
+      "dress": true
+    },
+    {
+      "t": "S",
+      "what": "cairn",
+      "at": [5108, 2640],
+      "dress": true
+    },
+    {
+      "t": "S",
+      "what": "cairn",
+      "at": [5092, 2736],
+      "dress": true
+    },
+    {
+      "t": "S",
+      "what": "cairn",
+      "at": [5120, 2840],
+      "dress": true
+    },
+    {
+      "t": "I",
+      "what": "bench",
+      "at": [5464, 2840],
+      "dress": true
+    },
+    {
+      "t": "I",
+      "what": "water trough",
+      "at": [5452, 2736],
+      "dress": true
+    },
+    {
+      "t": "S",
+      "what": "offering stone",
+      "at": [5452, 2632],
+      "dress": true
+    },
+    {
+      "t": "S",
+      "what": "standing stone",
+      "at": [5448, 2536],
+      "dress": true
+    },
+    {
+      "t": "S",
+      "what": "offering stone",
+      "at": [5440, 2432],
+      "dress": true
+    },
+    {
+      "t": "I",
+      "what": "water trough",
+      "at": [5028, 3400],
+      "dress": true
+    },
+    {
+      "t": "S",
+      "what": "cairn",
+      "at": [5012, 3232],
+      "dress": true
+    },
+    {
+      "t": "S",
+      "what": "cairn",
+      "at": [5136, 3000],
+      "dress": true
+    },
+    {
+      "t": "S",
+      "what": "cairn",
+      "at": [5120, 3232],
+      "dress": true,
+      "moved_from": [5124, 3232]
+    },
+    {
+      "t": "I",
+      "what": "bench",
+      "at": [5480, 3280],
+      "dress": true,
+      "moved_from": [5480, 3284]
+    },
+    {
+      "t": "I",
+      "what": "water trough",
+      "at": [5348, 3312],
+      "dress": true,
+      "moved_from": [5332, 3332]
+    },
+    {
+      "t": "S",
+      "what": "cairn",
+      "at": [5412, 3296],
+      "dress": true,
+      "moved_from": [5412, 3304]
+    },
+    {
+      "t": "S",
+      "what": "cairn",
+      "at": [5404, 3152],
+      "dress": true
+    },
+    {
+      "t": "S",
+      "what": "cairn",
+      "at": [5412, 3000],
+      "dress": true
+    },
+    {
+      "t": "S",
+      "what": "standing stone",
+      "at": [5112, 3724],
+      "dress": true,
+      "moved_from": [5112, 3736]
+    },
+    {
+      "t": "S",
+      "what": "offering stone",
+      "at": [4972, 3564],
+      "dress": true,
+      "moved_from": [4972, 3568]
+    },
+    {
+      "t": "S",
+      "what": "standing stone",
+      "at": [5024, 3568],
+      "dress": true,
+      "moved_from": [5028, 3568]
+    },
+    {
+      "t": "S",
+      "what": "cairn",
+      "at": [5508, 3888],
+      "dress": true
     }
   ],
   "obstacles": [
@@ -510,7 +758,7 @@
       "side": "west",
       "layers": "heather and gorse clumps thickening into gorse and thicket (64 to 180 px deep), thinning again beyond; the steppe and the Rift country beyond, hazier",
       "along": [
-        [4800, 1296],
+        [4800, 1280],
         [4800, 3360]
       ],
       "note": "the spurs leave the box westward: their land beyond x 4800 is Claude D's (the Rift and the steppe)"
@@ -519,8 +767,8 @@
       "side": "north",
       "layers": "scree and boulders thickening into crags and the massif's front",
       "along": [
-        [4800, 1296],
-        [5600, 1296]
+        [4800, 1280],
+        [5600, 1280]
       ]
     }
   ],
@@ -570,5 +818,48 @@
     "flanks": "heather and bracken, gorse in clumps, birches and a few Scots pines in the gills",
     "foot": "short sheep-grazed turf with heather drifts, rushes in wet flushes, drystone walls",
     "gap": "short yellowing turf, the road worn into a hollow way, the first sheepfolds"
-  }
+  },
+  "north_beyond": {
+    "to_y": 1824,
+    "why": "the ridge's north end rises into the massif's front: crags, scree and boulders, drawn and never walked (the north edge's wall and beyond)"
+  },
+  "areas": [
+    {
+      "id": "brackens-north",
+      "rect": [4800, 1280, 800, 544],
+      "walkable": false
+    },
+    {
+      "id": "brackens-00",
+      "rect": [4800, 1824, 384, 544]
+    },
+    {
+      "id": "brackens-01",
+      "rect": [5184, 1824, 416, 544]
+    },
+    {
+      "id": "brackens-10",
+      "rect": [4800, 2368, 384, 544]
+    },
+    {
+      "id": "brackens-11",
+      "rect": [5184, 2368, 416, 544]
+    },
+    {
+      "id": "brackens-20",
+      "rect": [4800, 2912, 384, 544]
+    },
+    {
+      "id": "brackens-21",
+      "rect": [5184, 2912, 416, 544]
+    },
+    {
+      "id": "brackens-30",
+      "rect": [4800, 3456, 384, 544]
+    },
+    {
+      "id": "brackens-31",
+      "rect": [5184, 3456, 416, 544]
+    }
+  ]
 }

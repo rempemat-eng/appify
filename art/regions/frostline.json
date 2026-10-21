@@ -4,10 +4,11 @@
   "owner": "claude-f",
   "biome": "highland",
   "biomes": ["highland", "snow"],
-  "box": [5696, 1296, 1104, 1008],
+  "box": [5680, 1280, 1120, 1024],
   "base_tier": {
-    "value": 5,
-    "provisional": true
+    "value": 7,
+    "provisional": false,
+    "from": "Claude G, g-to-f-plans 21 Oct 10:40: lib/world-routes.ts (#175)"
   },
   "tiers": [
     {
@@ -15,8 +16,8 @@
       "tier": 1,
       "why": "the step's lower benches: the cabin meadow east of the Col Path (the old Ridge zone, kept and placed)",
       "outline": [
-        [5696, 1296],
-        [6800, 1296],
+        [5680, 1280],
+        [6800, 1280],
         [6800, 2216],
         [6752, 2232],
         [6688, 2224],
@@ -28,7 +29,7 @@
         [6320, 2240],
         [6248, 2240],
         [6176, 2240],
-        [5696, 2240]
+        [5680, 2240]
       ]
     },
     {
@@ -36,8 +37,8 @@
       "tier": 2,
       "why": "the step's middle: Fir Hollow behind the rock rib (west, the old Hollow zone), and the Col Path's third leg",
       "outline": [
-        [5696, 1296],
-        [6800, 1296],
+        [5680, 1280],
+        [6800, 1280],
         [6800, 2064],
         [6736, 2080],
         [6656, 2072],
@@ -57,7 +58,7 @@
         [5904, 2232],
         [5840, 2240],
         [5768, 2232],
-        [5696, 2240]
+        [5680, 2240]
       ]
     },
     {
@@ -94,8 +95,8 @@
       "tier": 4,
       "why": "the cirque floor: Snowmelt Lake (the tarn, the Sleepwater's source), ibex rocks, the lip (W2) over the step",
       "outline": [
-        [5696, 1296],
-        [6800, 1296],
+        [5680, 1280],
+        [6800, 1280],
         [6800, 1952],
         [6720, 1968],
         [6640, 1960],
@@ -112,7 +113,7 @@
         [5872, 1992],
         [5800, 2000],
         [5744, 1984],
-        [5696, 1992]
+        [5680, 1992]
       ],
       "face": "rock"
     },
@@ -121,8 +122,8 @@
       "tier": 5,
       "why": "the massif's shoulder: the High Fells' bench east to the Snow Saddle, the glacier's snout above the tarn, the spur's foot",
       "outline": [
-        [5696, 1296],
-        [6800, 1296],
+        [5680, 1280],
+        [6800, 1280],
         [6800, 1720],
         [6752, 1704],
         [6688, 1720],
@@ -141,7 +142,7 @@
         [5904, 1736],
         [5840, 1752],
         [5776, 1744],
-        [5696, 1752]
+        [5680, 1752]
       ],
       "face": "rock"
     },
@@ -150,8 +151,8 @@
       "tier": 6,
       "why": "the glacier and the crags behind the cirque; the High Lookout's spur reaches down west of the tarn",
       "outline": [
-        [5696, 1296],
-        [6800, 1296],
+        [5680, 1280],
+        [6800, 1280],
         [6800, 1560],
         [6736, 1560],
         [6672, 1560],
@@ -171,7 +172,7 @@
         [5912, 1608],
         [5840, 1584],
         [5768, 1600],
-        [5696, 1600]
+        [5680, 1600]
       ],
       "face": "rock",
       "ground": "snow"
@@ -181,8 +182,8 @@
       "tier": 7,
       "why": "the massif's front and the High Lookout's spur top (the old Summit zone, up the spur stair)",
       "outline": [
-        [5696, 1296],
-        [6800, 1296],
+        [5680, 1280],
+        [6800, 1280],
         [6800, 1440],
         [6720, 1440],
         [6640, 1456],
@@ -200,7 +201,7 @@
         [5928, 1432],
         [5840, 1456],
         [5760, 1480],
-        [5696, 1456]
+        [5680, 1456]
       ],
       "face": "rock",
       "ground": "snow"
@@ -829,8 +830,8 @@
       "layers": "scree and boulders thickening into crags and the headwall (64 to 180 px deep), thinning beyond",
       "beyond": "the massif's peaks and glaciers to the top edge",
       "along": [
-        [5696, 1296],
-        [6800, 1296]
+        [5680, 1280],
+        [6800, 1280]
       ]
     }
   ],
