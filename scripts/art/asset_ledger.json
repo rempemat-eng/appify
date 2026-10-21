@@ -1,6 +1,6 @@
 {
  "_about": "The asset ledger (docs/vision/asset-ledger.md). Every picture under assets/ with its grade: KEEP may go into a kit or region build, REWORK must be redone first, RETIRE has no place in the new world. Written by scripts/art/asset_ledger.py --build; `eye` verdicts are written by hand and survive a rebuild. Checked by scripts/check-assets.cjs (npm run check:assets).",
- "main": "dc1d5ae",
+ "main": "6a264fb",
  "grades": {
   "KEEP": "fits the newest standard on every check",
   "REWORK": "the subject stays; redo the art first",
@@ -23801,35 +23801,31 @@
    "module": "caldera_props",
    "generator": "scripts/art/caldera_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "foot line 28 px: not whole 8 px cells (kind foot 3 x 3); detail not measurable and not checked by eye since the bar; style: speckle",
-   "fails": [
-    "grid",
-    "detail unverified",
-    "speckle"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 50,
-    "w": 30,
+    "h": 44,
+    "w": 27,
     "style": {
-     "colours": 45,
-     "on_house": 0.947,
-     "on_today": 0.847,
+     "colours": 43,
+     "on_house": 0.996,
+     "on_today": 0.0,
      "palette": "house",
-     "outline_dark": 0.977,
+     "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.015,
-     "west_east": 5.466,
-     "isolated": 0.12,
+     "double": 0.025,
+     "west_east": 3.319,
+     "isolated": 0.006,
      "checker": 0.0
     },
     "grid": {
-     "foot_px": 28,
-     "cells": 3.5,
+     "foot_px": 25,
+     "cells": 3.12,
      "kind_foot": "3 x 3",
-     "ok": false
+     "ok": true
     },
     "size": {
      "kind": "shrine",
@@ -23844,9 +23840,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "20deab5",
-     "date": "2026-10-20T14:08",
-     "subject": "Lumen hub and dome, ember shrine (Claude A's to-d-1210)"
+     "sha": "6a264fb",
+     "date": "2026-10-21T01:34",
+     "subject": "Sunstone redraws batch 3: sandstone outcrop, both lizard rocks, the ember shrine and both palms on the house ramps"
     },
     "audit": {
      "grade": "KEEP",
@@ -23855,16 +23851,42 @@
     },
     "logic": "ok (KEEP in the audit)",
     "bar": {
-     "status": "n/a",
+     "status": "pass",
      "kind": "stone-wall",
-     "square": 17,
-     "why": "no solid 18 px square (largest 17): too small for a 16 px patch"
+     "box": [
+      2,
+      24,
+      20,
+      42
+     ],
+     "patches": 1,
+     "tones_at": 0.85,
+     "tones": [
+      17.0,
+      18.56
+     ],
+     "shapes": [
+      34.0,
+      28.23
+     ],
+     "dressing": [
+      25.0,
+      22.36
+     ],
+     "isolated": [
+      0.051,
+      0.17
+     ],
+     "cluster": [
+      5.45,
+      3.63
+     ]
     }
    },
    "placed": {
     "caldera": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/engine_tank": {
    "files": [
@@ -30037,27 +30059,24 @@
    "module": "western_props",
    "generator": "scripts/art/western_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "bar isolated NOISY, cluster NOISY as stone-wall; style: speckle",
-   "fails": [
-    "bar",
-    "speckle"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 23,
-    "w": 40,
+    "h": 25,
+    "w": 41,
     "style": {
-     "colours": 22,
-     "on_house": 0.919,
-     "on_today": 0.736,
+     "colours": 34,
+     "on_house": 0.943,
+     "on_today": 0.0,
      "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.0,
-     "west_east": 4.974,
-     "isolated": 0.067,
+     "double": 0.065,
+     "west_east": 7.165,
+     "isolated": 0.027,
      "checker": 0.0
     },
     "grid": "free",
@@ -30074,9 +30093,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "62e1d1b",
-     "date": "2026-10-19T17:25",
-     "subject": "Review fixes after #62 and #63 (D8): Lumen's ice rig is remote, the gangway docks to the shuttle, a collar joins the air"
+     "sha": "6a264fb",
+     "date": "2026-10-21T01:34",
+     "subject": "Sunstone redraws batch 3: sandstone outcrop, both lizard rocks, the ember shrine and both palms on the house ramps"
     },
     "audit": {
      "grade": "KEEP",
@@ -30085,46 +30104,42 @@
     },
     "logic": "ok (KEEP in the audit)",
     "bar": {
-     "status": "fail",
+     "status": "pass",
      "kind": "stone-wall",
      "box": [
       5,
-      2,
-      25,
-      22
+      4,
+      24,
+      23
      ],
      "patches": 1,
      "tones_at": 0.85,
      "tones": [
-      16.0,
+      27.0,
       18.56
      ],
      "shapes": [
-      41.0,
+      34.0,
       28.23
      ],
      "dressing": [
-      36.0,
+      32.0,
       22.36
      ],
      "isolated": [
-      0.199,
+      0.066,
       0.17
      ],
      "cluster": [
-      2.56,
+      4.27,
       3.63
-     ],
-     "noisy": [
-      "isolated",
-      "cluster"
      ]
     }
    },
    "placed": {
     "gulch": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/lizard_rock_b": {
    "files": [
@@ -30136,27 +30151,24 @@
    "module": "western_props",
    "generator": "scripts/art/western_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "bar isolated NOISY, cluster NOISY as stone-wall; style: speckle",
-   "fails": [
-    "bar",
-    "speckle"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 23,
-    "w": 40,
+    "h": 25,
+    "w": 42,
     "style": {
-     "colours": 22,
-     "on_house": 0.919,
-     "on_today": 0.736,
+     "colours": 37,
+     "on_house": 0.936,
+     "on_today": 0.0,
      "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.0,
-     "west_east": 5.358,
-     "isolated": 0.068,
+     "double": 0.086,
+     "west_east": 4.333,
+     "isolated": 0.026,
      "checker": 0.0
     },
     "grid": "free",
@@ -30173,9 +30185,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "62e1d1b",
-     "date": "2026-10-19T17:25",
-     "subject": "Review fixes after #62 and #63 (D8): Lumen's ice rig is remote, the gangway docks to the shuttle, a collar joins the air"
+     "sha": "6a264fb",
+     "date": "2026-10-21T01:34",
+     "subject": "Sunstone redraws batch 3: sandstone outcrop, both lizard rocks, the ember shrine and both palms on the house ramps"
     },
     "audit": {
      "grade": "KEEP",
@@ -30184,46 +30196,20 @@
     },
     "logic": "ok (KEEP in the audit)",
     "bar": {
-     "status": "fail",
+     "status": "n/a",
      "kind": "stone-wall",
-     "box": [
-      5,
-      2,
-      25,
-      22
-     ],
-     "patches": 1,
-     "tones_at": 0.85,
-     "tones": [
-      16.0,
-      18.56
-     ],
-     "shapes": [
-      45.0,
-      28.23
-     ],
-     "dressing": [
-      38.0,
-      22.36
-     ],
-     "isolated": [
-      0.195,
-      0.17
-     ],
-     "cluster": [
-      2.51,
-      3.63
-     ],
-     "noisy": [
-      "isolated",
-      "cluster"
-     ]
+     "square": 17,
+     "why": "no solid 18 px square (largest 17): too small for a 16 px patch",
+     "eye": "ok: rounded blocks of bedded sandstone (lit upper lips, undercuts, a seam where one block stands before another, varnish streaks, lichen in the shade, sand drifted in the lee) with a banded chuckwalla on top; its largest solid square is 17 px, so it was compared by eye at 3x and 1x beside Eastward's barn-front yard at an adult of 25 px, day and night tint (claude-d, 21 Oct)"
     }
    },
    "placed": {
     "oasis": 1
    },
-   "checked": "2026-10-20"
+   "eye": {
+    "bar": "ok: rounded blocks of bedded sandstone (lit upper lips, undercuts, a seam where one block stands before another, varnish streaks, lichen in the shade, sand drifted in the lee) with a banded chuckwalla on top; its largest solid square is 17 px, so it was compared by eye at 3x and 1x beside Eastward's barn-front yard at an adult of 25 px, day and night tint (claude-d, 21 Oct)"
+   },
+   "checked": "2026-10-21"
   },
   "prop/lobster_pots": {
    "files": [
@@ -32433,29 +32419,25 @@
    "module": "western_props",
    "generator": "scripts/art/western_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "style: speckle, dither, palette",
-   "fails": [
-    "speckle",
-    "dither",
-    "palette"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 69,
-    "w": 56,
+    "h": 79,
+    "w": 46,
     "style": {
-     "colours": 15,
-     "on_house": 0.845,
-     "on_today": 0.699,
-     "palette": "off",
+     "colours": 49,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.068,
-     "west_east": 0.772,
-     "isolated": 0.251,
-     "checker": 0.006
+     "double": 0.019,
+     "west_east": 12.559,
+     "isolated": 0.004,
+     "checker": 0.0
     },
     "grid": "free",
     "size": {
@@ -32471,9 +32453,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "d4fa939",
-     "date": "2026-10-18T00:11",
-     "subject": "Draw the Desert Oasis west of Dust Gulch as its own place"
+     "sha": "6a264fb",
+     "date": "2026-10-21T01:34",
+     "subject": "Sunstone redraws batch 3: sandstone outcrop, both lizard rocks, the ember shrine and both palms on the house ramps"
     },
     "audit": {
      "grade": "KEEP",
@@ -32482,11 +32464,36 @@
     },
     "logic": "ok (KEEP in the audit)",
     "bar": {
-     "status": "n/a",
+     "status": "pass",
      "kind": "tree",
-     "square": 10,
-     "why": "no solid 18 px square (largest 10): too small for a 16 px patch",
-     "eye": "KEEP by eye in the prop audit, unchanged since"
+     "box": [
+      12,
+      4,
+      30,
+      22
+     ],
+     "patches": 1,
+     "tones_at": 0.85,
+     "tones": [
+      25.0,
+      20.38
+     ],
+     "shapes": [
+      49.0,
+      35.75
+     ],
+     "dressing": [
+      41.0,
+      29.34
+     ],
+     "isolated": [
+      0.129,
+      0.27
+     ],
+     "cluster": [
+      2.84,
+      2.29
+     ]
     }
    },
    "placed": {
@@ -32494,7 +32501,7 @@
     "landing": 3,
     "oasis": 4
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/palm_small": {
    "files": [
@@ -32506,29 +32513,25 @@
    "module": "western_props",
    "generator": "scripts/art/western_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "style: speckle, dither, palette",
-   "fails": [
-    "speckle",
-    "dither",
-    "palette"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 50,
-    "w": 45,
+    "h": 46,
+    "w": 31,
     "style": {
-     "colours": 15,
-     "on_house": 0.834,
-     "on_today": 0.695,
-     "palette": "off",
-     "outline_dark": 0.98,
+     "colours": 35,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.08,
-     "west_east": 2.894,
-     "isolated": 0.229,
-     "checker": 0.007
+     "double": 0.015,
+     "west_east": 11.891,
+     "isolated": 0.006,
+     "checker": 0.0
     },
     "grid": "free",
     "size": {
@@ -32544,9 +32547,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "d4fa939",
-     "date": "2026-10-18T00:11",
-     "subject": "Draw the Desert Oasis west of Dust Gulch as its own place"
+     "sha": "6a264fb",
+     "date": "2026-10-21T01:34",
+     "subject": "Sunstone redraws batch 3: sandstone outcrop, both lizard rocks, the ember shrine and both palms on the house ramps"
     },
     "audit": {
      "grade": "KEEP",
@@ -32557,15 +32560,18 @@
     "bar": {
      "status": "n/a",
      "kind": "tree",
-     "square": 9,
-     "why": "no solid 18 px square (largest 9): too small for a 16 px patch",
-     "eye": "KEEP by eye in the prop audit, unchanged since"
+     "square": 13,
+     "why": "no solid 18 px square (largest 13): too small for a 16 px patch",
+     "eye": "ok: the dry and fire kit's small palm (#137): trunk of offset leaf bases lit on the west, feathered fronds radiating and drooping, back ones in shade, a dead-frond skirt; compared at 3x and 1x beside Eastward's pine (eastward-13-pine) at an adult of 25 px, day and night tint (claude-d, 21 Oct)"
     }
    },
    "placed": {
     "oasis": 3
    },
-   "checked": "2026-10-20"
+   "eye": {
+    "bar": "ok: the dry and fire kit's small palm (#137): trunk of offset leaf bases lit on the west, feathered fronds radiating and drooping, back ones in shade, a dead-frond skirt; compared at 3x and 1x beside Eastward's pine (eastward-13-pine) at an adult of 25 px, day and night tint (claude-d, 21 Oct)"
+   },
+   "checked": "2026-10-21"
   },
   "prop/pandanus": {
    "files": [
@@ -34737,26 +34743,24 @@
    "module": "western_props",
    "generator": "scripts/art/western_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "bar tones LOW, shapes LOW, dressing LOW as stone-wall",
-   "fails": [
-    "bar"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 23,
-    "w": 40,
+    "h": 25,
+    "w": 41,
     "style": {
-     "colours": 14,
-     "on_house": 0.92,
-     "on_today": 0.814,
+     "colours": 31,
+     "on_house": 0.943,
+     "on_today": 0.0,
      "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.0,
-     "west_east": 7.267,
-     "isolated": 0.031,
+     "double": 0.065,
+     "west_east": 7.384,
+     "isolated": 0.027,
      "checker": 0.0
     },
     "grid": "free",
@@ -34773,9 +34777,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "deafdc7",
-     "date": "2026-10-18T07:54",
-     "subject": "Detail in the open ground: cooled lava flows, scree and burnt snags in the fire country, a lander and a rock arch on Lum"
+     "sha": "6a264fb",
+     "date": "2026-10-21T01:34",
+     "subject": "Sunstone redraws batch 3: sandstone outcrop, both lizard rocks, the ember shrine and both palms on the house ramps"
     },
     "audit": {
      "grade": "KEEP",
@@ -34784,47 +34788,42 @@
     },
     "logic": "ok (KEEP in the audit)",
     "bar": {
-     "status": "fail",
+     "status": "pass",
      "kind": "stone-wall",
      "box": [
       5,
-      2,
-      25,
-      22
+      4,
+      24,
+      23
      ],
      "patches": 1,
      "tones_at": 0.85,
      "tones": [
-      10.0,
+      24.0,
       18.56
      ],
      "shapes": [
-      23.0,
+      29.0,
       28.23
      ],
      "dressing": [
-      15.0,
+      25.0,
       22.36
      ],
      "isolated": [
-      0.121,
+      0.035,
       0.17
      ],
      "cluster": [
-      4.34,
+      5.69,
       3.63
-     ],
-     "low": [
-      "tones",
-      "shapes",
-      "dressing"
      ]
     }
    },
    "placed": {
     "oasis": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/sapling": {
    "files": [
