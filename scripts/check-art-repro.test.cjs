@@ -55,6 +55,7 @@ try {
     'rocket',
     'residents',
     'decor',
+    'cliff_core',
   ]);
   checks++;
   for (const file of atlasModules) check(generatedTypescript.includes(file), 'formats ' + file);
