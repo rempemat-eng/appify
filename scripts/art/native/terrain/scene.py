@@ -736,16 +736,16 @@ def bank_run(cv, x0, y0, x1, y1, n, nx, ny, seed):
     H, W = cv.shape
     rng = np.random.default_rng(seed)
     for k in range(n):
-        f = (k + rng.uniform(-0.3, 0.3)) / max(1, n - 1)   # r8: uneven spacing
-        big = k % 3 == 0                                   # r8: one large, two small
-        jit = (1.6 if k % 2 else -0.9) + rng.uniform(-0.5, 0.5)   # r8: staggered in and out (2 to 4 px)
+        f = (k + rng.uniform(-0.2, 0.2)) / max(1, n - 1)   # r9: close spacing, so the stones overlap
+        big = k % 3 == 0                                   # one large, two small
+        jit = (0.9 if k % 2 else -0.5) + rng.uniform(-0.3, 0.3)   # staggered in and out, still touching
         cx = x0 + (x1 - x0) * f + jit * nx + rng.uniform(-0.4, 0.4) * ny
         cy = y0 + (y1 - y0) * f + jit * ny + rng.uniform(-0.6, 0.6)
-        rx, ry = (rng.uniform(2.6, 3.8), rng.uniform(2.0, 2.8)) if big else (rng.uniform(1.6, 2.2), rng.uniform(1.3, 1.8))
+        rx, ry = (rng.uniform(3.2, 4.2), rng.uniform(2.5, 3.1)) if big else (rng.uniform(2.3, 2.9), rng.uniform(1.9, 2.4))   # r9: big enough to overlap
         dec = DC.lump_px(max(3, P(2 * rx)), max(3, P(2 * ry)), seed + k, fams=('stone', 'stone_warm', 'stone'),
                          outline=('stone_cool', 0))
         X0, Y0 = P(cx - rx, 0), P(cy - ry, 0)
-        wl = rng.uniform(0.05, 0.3)                        # the water level on the stone (share of ry)
+        wl = rng.uniform(0.25, 0.45)                       # r9: the water level on the stone (share of ry), lower on it
         for yy_ in range(dec.shape[0]):
             for xx_ in range(dec.shape[1]):
                 c = dec[yy_, xx_]
@@ -995,6 +995,42 @@ def tidy_edge(cv, box):
     cv[y0:y1, x0:x1] = out
 
 
+def relight_east(cv):
+    """r9: a rock lump that reads as lit from the east (its east half brighter than its west,
+    where a band or a wet strip darkened its west side) has its tones mirrored row by row
+    inside its own outline, so its upper left is lit; outlines and crevices stay."""
+    if not (FIX and DEN > 1):
+        return
+    from ..palette import FAMS, rgb
+    rf = [FI[n] for n in ('crag', 'crag_warm', 'crag_cool')]
+    m = np.isin(cv // 8, rf) & (cv % 8 >= 1) & (cv % 8 <= 5)
+    lab, n = ndi.label(m)
+    lut = {}
+
+    def luma(c):
+        if c not in lut:
+            r, g, b = rgb(FAMS[c // 8], c % 8)
+            lut[c] = 0.299 * r + 0.587 * g + 0.114 * b
+        return lut[c]
+    for i, sl in enumerate(ndi.find_objects(lab), 1):
+        if sl is None:
+            continue
+        mm = lab[sl] == i
+        h_, w_ = mm.shape
+        if mm.sum() < 150 or w_ > 70 or h_ > 60:
+            continue
+        sub = cv[sl]
+        ys, xs = np.nonzero(mm)
+        L = np.array([luma(int(c)) for c in sub[ys, xs]])
+        cx = xs.mean()
+        if L[xs < cx].mean() - L[xs >= cx].mean() >= -2:
+            continue
+        for y in np.unique(ys):
+            row = xs[ys == y]
+            sub[y, row] = sub[y, row][::-1]
+        cv[sl] = sub
+
+
 def place_decals(cv):
     """Hand-placed story pieces, then hashed dressing."""
     Hc, Wc = cv.shape
@@ -1043,7 +1079,19 @@ def place_decals(cv):
                     cv[P(gy_, 0), P(gx_, 0) + k] = C('water', 5)
             if isw(P(gy_ + 1.0, 0), P(gx_ + 3.0, 0)):
                 cv[P(gy_ + 1.0, 0), P(gx_ + 3.0, 0)] = C('water', 5)
-        for (x0_, y0_, x1_, y1_, n_, nx_, ny_, sd_) in (_W.get('bank_runs', []) if DEN > 1 else []):
+        runs_ = _W.get('bank_runs', []) if DEN > 1 else []
+        for ra, rb in zip(runs_, runs_[1:]):
+            if ra[5:7] == rb[5:7] and 0 < rb[1] - ra[3] < 10:
+                # r9: the gap between two runs on one shore shows damp earth at the waterline
+                gx, gy0, gy1 = (ra[2] + rb[0]) / 2, ra[3] + 1.0, rb[1] - 1.0
+                for Y in range(P(gy0, 0), P(gy1, 0) + 1):
+                    for X in range(P(gx - 1.5, 0), P(gx + 2.0, 0) + 1):
+                        if 0 <= Y < Hc and 0 <= X < Wc and cv[Y, X] // 8 in (FI['crag'], FI['crag_warm'], FI['crag_cool'], FI['water'], FI['water_cool']):
+                            wet_ = cv[Y, X] // 8 in (FI['water'], FI['water_cool'])
+                            if wet_ and (X / DEN - gx) * ra[5] > 0.6:
+                                continue
+                            cv[Y, X] = C('earth_cool', 2) if ((X + Y) // max(1, P(1.5))) % 3 else C('earth', 1)
+        for (x0_, y0_, x1_, y1_, n_, nx_, ny_, sd_) in runs_:
             bank_run(cv, x0_, y0_, x1_, y1_, n_, nx_, ny_, sd_)
         for k_, (bx, by, brx, bry) in enumerate(_W['bank_stones'] if not (DEN > 1 and 'bank_runs' in _W) else []):
             bank_stone(cv, bx, by, brx, bry, 'stone_warm' if k_ % 2 else 'stone', seed=300 + k_)

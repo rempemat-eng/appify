@@ -541,6 +541,8 @@ def boulder4(d, w=21, h=13, seed=31, fam='stone'):
     for ci in range(len(chunks)):
         front = own == ci
         ring = ndi.binary_dilation(front) & ~front & allm & (own < ci)
+        if front.any():
+            ring &= yy < np.nonzero(front)[0].mean()       # r9: an arc over the front chunk, never a ring round it
         t[ring] = 0
     # small pits on the sides
     sy_, sx_ = np.nonzero(allm & (t >= 2) & (t <= 3) & ~ndi.binary_dilation(crack, iterations=3))

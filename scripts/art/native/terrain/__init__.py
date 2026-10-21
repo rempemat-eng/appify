@@ -45,6 +45,7 @@ def canvas():
     plant items; lone pixels take their most common neighbour (outlines, water and snow
     sparkles excepted)."""
     cv, hp_, occ = SC.render()
+    SC.relight_east(cv)      # r9: no rock lump lit from the east
     base, now_items = items_now(cv)
     cv_now = cv
     SC.PLANTS.clear()

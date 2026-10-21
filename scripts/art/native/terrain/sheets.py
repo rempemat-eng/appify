@@ -22,6 +22,8 @@ SHEET_TUFTS = []     # r4: world positions of the lawn's tuft clumps (for object
 FAMSIB = {'crag': 'crag_cool', 'crag_cool': 'crag', 'crag_warm': 'crag', 'stone': 'stone_cool',
           'stone_cool': 'stone', 'stone_warm': 'stone'}   # r8: a stone's sibling hue for its shade
 STONE_TEX = dict(_SS.get('texture', dict(bulge=22, pit=14, chip=36, lichen=45)))    # r7: world px² of stone per texture mark
+STONE_MOTTLE = _SS.get('mottle', 0.35)      # r9: share of shade and body under a sibling-hue mottle
+JOINT_W = int(_SS.get('joint_px', 2))       # r9: art px of the joint between two whole boulders
 STONE_SPLIT = _SS.get('split', 6.0)      # r8: boulders wider than this (world px radius) may split into overlapping lumps
 SHEET_TUFTS = []     # r4: world positions of the lawn's tuft clumps (for objects.json)
 BUSY = ctx.BIOME.get('lawn', {}).get('busy', 0.8)      # lawn mottle share in the busy half
@@ -274,6 +276,15 @@ def stone_paint(code, m, U, V, fam, rng, big=True, glint=True):
         if dt > 0:
             lo = edge_b & (Y_ > y + rb * 0.4)
             code[lo] = f * 8 + np.clip(code[lo] % 8 - 1, 1, 5)
+    # r9: soft mottles of the sibling hue over the shade and the body (no new lines, no new
+    # tones), so no one colour covers a big field
+    if STONE_MOTTLE > 0:
+        mot = ndi.gaussian_filter(rng.random((H, W)), 1.3 * D)
+        sel_ = m & (code // 8 == f) & np.isin(code % 8, (1, 2, 3))
+        if sel_.any():
+            q_ = np.quantile(mot[sel_], 1 - STONE_MOTTLE)
+            sw = sel_ & (mot > q_)
+            code[sw] = FI[FAMSIB.get(FAMS_[f], FAMS_[f])] * 8 + code[sw] % 8
     # pits: a dark pair over a lit pixel, on the body and the lit side
     for _ in range(int(area / STONE_TEX['pit'])):
         k = int(rng.integers(0, len(ys)))
@@ -333,7 +344,7 @@ def split_boulder(code, m, U, V, fam, rr, rx, ry, k=2, theta=0.0):
         ox, oy, rf, ph = subs[j]
         uu, vv = (U - ox) / rf, (V - oy) / (rf * 0.9)
         th = np.arctan2(vv, uu)
-        wob = 1.0 + 0.06 * np.sin(3 * th + ph) + 0.04 * np.sin(5 * th + 2 * ph)
+        wob = 1.0 + 0.025 * np.sin(2 * th + ph)              # r9: near-convex (S-shaped gaps read as pillows)
         mj = m & (uu * uu + vv * vv <= (1.08 * wob) ** 2)
         own[mj] = j
         masks[j] = mj
@@ -420,12 +431,35 @@ def face_sheet_px(W, H, seed, rmin, rmax):
     up, left = np.roll(bid, 1, 0), np.roll(bid, 1, 1)
     down, right = np.roll(bid, -1, 0), np.roll(bid, -1, 1)
     crev = (bid >= 0) & ((bid != up) | (bid != left))
+    if JOINT_W > 1:
+        # r9: the joint between two whole boulders lies on the boulder behind, 2 px wide with a
+        # tone-1 shade beyond it; about a third of the pairs simply overlap (shade only, no line)
+        rank = np.zeros(n + 1, int)
+        for r_, i_ in enumerate(order):
+            rank[i_] = r_ + 1
+        rk = np.where(bid >= 0, rank[np.maximum(bid, 0)], 0)
+        dmin = np.full((H, W), 99)
+        pair = np.full((H, W), -1)
+        for k_ in range(1, JOINT_W + 2):
+            for ax_, sg in ((0, 1), (0, -1), (1, 1), (1, -1)):
+                nb_ = np.roll(bid, sg * k_, ax_)
+                nr_ = np.roll(rk, sg * k_, ax_)
+                hit = (bid >= 0) & (nb_ >= 0) & (nb_ != bid) & (nr_ > rk) & (dmin == 99)
+                dmin[hit] = k_
+                pair[hit] = (np.minimum(bid, nb_) * 131 + np.maximum(bid, nb_))[hit]
+        overlap_only = (((pair * 2654435761) >> 9) % 3 == 0) & (pair >= 0)
+        jcore = (dmin <= JOINT_W) & ~overlap_only
+        jshade = (dmin == JOINT_W + 1) | ((dmin <= JOINT_W) & overlap_only)
+        crev = ((bid >= 0) & ((up < 0) | (left < 0))) | jcore
     under = (bid >= 0) & ((bid != down) | (bid != right)) & ~crev
     code[under] = np.where(code[under] % 8 > 1, code[under] // 8 * 8 + 1, code[under])
     # the underside a second px dark at 2x, so each lump sits on the one below
     under2 = np.roll(under, -1, 0) & (bid >= 0) & ~crev & ~under & (bid == np.roll(bid, -1, 0))
     code[under2] = np.where(code[under2] % 8 > 2, code[under2] - 1, code[under2])
     code[crev] = C('crag', 0)
+    if JOINT_W > 1:
+        js_ = jshade & ~crev
+        code[js_] = np.where(code[js_] % 8 > 1, code[js_] - 1, code[js_])
     code[sub_crev & ~crev] = C('crag', 0)
     sh_ = sub_shade & ~crev & ~sub_crev
     code[sh_] = np.where(code[sh_] % 8 > 1, code[sh_] // 8 * 8 + 1, code[sh_])   # the gap's shade on the lump behind
