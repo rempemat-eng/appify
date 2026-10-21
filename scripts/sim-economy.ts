@@ -7,19 +7,21 @@ import { renderEconomyChart, renderEconomyReport } from './economy-report';
 
 async function main() {
   const root = new URL('../', import.meta.url);
-  const simulations = economyInputs.scenarios.flatMap((scenario) =>
-    economyInputs.players.map((player) => simulate(player, scenario)),
+  const input = structuredClone(economyInputs);
+  if (process.argv.includes('--incoming-raids')) input.incomingRaids.enabled = true;
+  const simulations = input.scenarios.flatMap((scenario) =>
+    input.players.map((player) => simulate(player, scenario, input)),
   );
   const config: FormatConfig = JSON.parse(readFileSync(new URL('.oxfmtrc.json', root), 'utf8'));
   const report = await format(
     'docs/codex/economy-sim.md',
-    renderEconomyReport(economyInputs, simulations),
+    renderEconomyReport(input, simulations),
     config,
   );
   assert.equal(report.errors.length, 0, 'the generated report formats cleanly');
   const outputs = [
     ['docs/codex/economy-sim.md', report.code],
-    ['docs/codex/economy-sim.svg', renderEconomyChart(economyInputs, simulations)],
+    ['docs/codex/economy-sim.svg', renderEconomyChart(input, simulations)],
   ] as const;
   if (process.argv.includes('--check')) {
     for (const [path, content] of outputs)

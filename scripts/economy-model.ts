@@ -5,6 +5,7 @@ import {
   type PlayerPolicy,
   type Scenario,
 } from './economy-inputs';
+import { restRecognitionRules } from '../lib/rest-recognition';
 
 export type Sources = {
   naps: number;
@@ -12,6 +13,7 @@ export type Sources = {
   nights: number;
   spars: number;
   wellKept: number;
+  incomingDefense: number;
 };
 export type Spending = { feeding: number; levels: number; hats: number };
 export type DayResult = {
@@ -22,6 +24,7 @@ export type DayResult = {
   balance: number;
   level: number;
   hats: number;
+  lostToRaids: number;
 };
 export type Simulation = {
   player: string;
@@ -41,11 +44,89 @@ export type Simulation = {
   cards: number;
   feeds: number;
   visits: number;
+  lostToRaids: number;
+  incomingAttempts: number;
+  defendedRaids: number;
+  levelDays: Record<5 | 8 | 12, number | null>;
+  rejectedForegroundMinutes: number;
+  rejectedCapMinutes: number;
 };
 export const total = (record: Sources | Spending) =>
   Object.values(record).reduce((a, b) => a + b, 0);
-const emptySources = (): Sources => ({ naps: 0, outings: 0, nights: 0, spars: 0, wellKept: 0 });
+const emptySources = (): Sources => ({
+  naps: 0,
+  outings: 0,
+  nights: 0,
+  spars: 0,
+  wellKept: 0,
+  incomingDefense: 0,
+});
 const emptySpending = (): Spending => ({ feeding: 0, levels: 0, hats: 0 });
+
+/** Mulberry32, with stable per-player streams and no host randomness. */
+export function seededRandom(seed: number, playerId: string) {
+  let state = seed >>> 0;
+  for (const char of playerId) state = Math.imul(state ^ char.charCodeAt(0), 16777619) >>> 0;
+  return () => {
+    state = (state + 0x6d2b79f5) >>> 0;
+    let value = state;
+    value = Math.imul(value ^ (value >>> 15), value | 1);
+    value ^= value + Math.imul(value ^ (value >>> 7), value | 61);
+    return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/** Real-minute scenario adapter, not the prototype's demo-second recogniser.
+ * Only its proposed limits are imported. Missions never call this adapter. */
+export function realNapCredits(
+  start: number,
+  end: number,
+  foregroundMinutes: number,
+  creditedDays: readonly number[],
+  minutesPerDay: number,
+) {
+  const byDay = [...creditedDays];
+  const credits: { at: number; minutes: number }[] = [];
+  let nap = 0;
+  let rejectedForeground = 0;
+  let rejectedCap = 0;
+  const foregroundEnd = start + foregroundMinutes;
+  const graceEnd = start + restRecognitionRules.foregroundGraceMs / 60_000;
+  slices(start, end, (at, minutes) => {
+    const foreground = Math.max(0, Math.min(at + minutes, foregroundEnd) - Math.max(at, graceEnd));
+    const eligible = minutes - foreground;
+    const day = Math.floor(at / minutesPerDay);
+    const accepted = Math.max(
+      0,
+      Math.min(
+        eligible,
+        restRecognitionRules.maxNapMinutes - nap,
+        restRecognitionRules.maxDayMinutes - (byDay[day] ?? 0),
+      ),
+    );
+    nap += accepted;
+    byDay[day] = (byDay[day] ?? 0) + accepted;
+    rejectedForeground += foreground;
+    rejectedCap += eligible - accepted;
+    if (accepted > 0) credits.push({ at, minutes: accepted });
+  });
+  return { credits, byDay, minutes: nap, rejectedForeground, rejectedCap };
+}
+
+export function incomingRaidOutcome(balance: number, attackerWon: boolean, input = economyInputs) {
+  return attackerWon
+    ? {
+        gain: 0,
+        loss: Math.min(
+          balance,
+          Math.max(
+            input.incomingRaids.minimumLoss,
+            Math.floor(balance * input.incomingRaids.lossShare),
+          ),
+        ),
+      }
+    : { gain: input.incomingRaids.defendedReward, loss: 0 };
+}
 
 function inWindow(minute: number, start: number, end: number) {
   return start < end ? minute >= start && minute < end : minute >= start || minute < end;
@@ -108,6 +189,14 @@ function validateSchedule(player: PlayerPolicy, input: EconomyInputs) {
       if (!session.days.includes(day % 7)) continue;
       if (session.minutes <= 0 || session.at < 0 || session.at >= input.minutesPerDay)
         throw new Error('sessions need a valid start and positive duration');
+      if (
+        !Number.isFinite(session.minutes) ||
+        !Number.isFinite(session.at) ||
+        !Number.isFinite(session.foregroundMinutes ?? 0) ||
+        (session.foregroundMinutes ?? 0) < 0 ||
+        (session.foregroundMinutes ?? 0) > session.minutes
+      )
+        throw new Error('foreground duration must lie within a finite session');
       if (session.mission && !input.missions.some((mission) => mission.id === session.mission))
         throw new Error('unknown outing');
       const start = day * input.minutesPerDay + session.at;
@@ -141,6 +230,7 @@ export function simulate(
     balance: 0,
     level: input.initial.level,
     hats: 0,
+    lostToRaids: 0,
   }));
   const result: Simulation = {
     player: player.name,
@@ -160,8 +250,21 @@ export function simulate(
     cards: 0,
     feeds: 0,
     visits: 0,
+    lostToRaids: 0,
+    incomingAttempts: 0,
+    defendedRaids: 0,
+    levelDays: {
+      5: input.initial.level >= 5 ? 0 : null,
+      8: input.initial.level >= 8 ? 0 : null,
+      12: input.initial.level >= 12 ? 0 : null,
+    },
+    rejectedForegroundMinutes: 0,
+    rejectedCapMinutes: 0,
   };
   const owned = new Set<string>();
+  const hatRandom = seededRandom(input.seeds.mountainHats, player.id);
+  const raidRandom = seededRandom(input.seeds.incomingRaids, player.id);
+  let creditedDays = Array.from({ length: count }, () => 0);
   let mood = input.initial.mood;
   const nightGifts = new Map<number, number>();
   type Event = { at: number; priority?: number; run: () => void };
@@ -216,7 +319,23 @@ export function simulate(
             at: end,
             priority: 0, // settle before a spending visit at the exact return time
             run: () => {
-              const elapsed = (end - start) * scenario.creditedMinutesPerRealMinute;
+              const realNap =
+                scenario.tier0 && !outing
+                  ? realNapCredits(
+                      start,
+                      end,
+                      session.foregroundMinutes ?? 0,
+                      creditedDays,
+                      input.minutesPerDay,
+                    )
+                  : undefined;
+              if (realNap) {
+                creditedDays = realNap.byDay;
+                result.rejectedForegroundMinutes += realNap.rejectedForeground;
+                result.rejectedCapMinutes += realNap.rejectedCap;
+              }
+              const elapsed =
+                realNap?.minutes ?? (end - start) * scenario.creditedMinutesPerRealMinute;
               const before = result.creditedMinutes;
               result.creditedMinutes += elapsed;
               result.cards +=
@@ -233,7 +352,10 @@ export function simulate(
                 result.cards++;
                 let reward = outing.reward;
                 if (outing.id === 'mountain') {
-                  const hat = input.hats.find((item) => !owned.has(item.id));
+                  const unowned = input.hats.filter((item) => !owned.has(item.id));
+                  const hat = unowned.length
+                    ? unowned[Math.floor(hatRandom() * unowned.length)]
+                    : undefined;
                   if (hat) {
                     owned.add(hat.id);
                     result.freeHats.push(hat.id);
@@ -254,6 +376,9 @@ export function simulate(
                   credit(endDay, 'nights', scenario.nightGift);
                   nightGifts.set(endDay, gifts + 1);
                 }
+              } else if (realNap) {
+                for (const { at, minutes } of realNap.credits)
+                  daytime(dayAt(at), 'naps', minutes * input.rules.napPerMinute * multiplier(at));
               } else {
                 slices(start, end, (at, minutes) =>
                   daytime(
@@ -271,9 +396,31 @@ export function simulate(
         },
       });
     }
-    if (player.visitDays.includes(day % 7))
+    if (player.visitDays.includes(day % 7)) {
+      if (input.incomingRaids.enabled) {
+        for (let attempt = 0; attempt < input.incomingRaids.attemptsPerVisit; attempt++) {
+          const seconds = attempt * input.incomingRaids.recoverySeconds;
+          if (seconds >= player.activeSeconds) break;
+          events.push({
+            at: day * input.minutesPerDay + player.visitAt + seconds / 60,
+            priority: 1,
+            run: () => {
+              const attackerWon = raidRandom() < input.incomingRaids.attackerWinProbability;
+              const outcome = incomingRaidOutcome(result.balance, attackerWon, input);
+              result.incomingAttempts++;
+              if (!attackerWon) result.defendedRaids++;
+              if (attackerWon) mood = Math.max(0, mood - input.incomingRaids.moodLoss);
+              credit(day, 'incomingDefense', outcome.gain);
+              result.balance -= outcome.loss;
+              result.lostToRaids += outcome.loss;
+              days[day].lostToRaids += outcome.loss;
+            },
+          });
+        }
+      }
       events.push({
         at: day * input.minutesPerDay + player.visitAt,
+        priority: 2,
         run: () => {
           result.visits++;
           mood = Math.max(
@@ -300,6 +447,9 @@ export function simulate(
             spend(day, 'levels', input.rules.levelCostFactor * result.level)
           ) {
             result.level++;
+            for (const level of [5, 8, 12] as const)
+              if (result.level >= level && result.levelDays[level] === null)
+                result.levelDays[level] = day + 1;
             if (result.level === 3) result.cards++;
           }
           const hat = input.hats.find((item) => !owned.has(item.id));
@@ -310,6 +460,7 @@ export function simulate(
           }
         },
       });
+    }
     events.push({
       at: (day + 1) * input.minutesPerDay - 1e-5,
       run: () => {
@@ -324,7 +475,7 @@ export function simulate(
   }
   let balance = input.initial.dust;
   for (const day of days) {
-    balance += total(day.earned) - total(day.spent);
+    balance += total(day.earned) - total(day.spent) - day.lostToRaids;
     day.balance = balance;
   }
   return result;

@@ -1,7 +1,14 @@
-/** C33 only. These snapshots/assumptions are never imported by the game. */
+/** C33/C40 only. These snapshots/assumptions are never imported by the game. */
 export type MissionId = 'park' | 'book' | 'mountain';
 export type Period = 'rest' | 'focus' | 'own';
-export type Session = { days: readonly number[]; at: number; minutes: number; mission?: MissionId };
+export type Session = {
+  days: readonly number[];
+  at: number;
+  minutes: number;
+  mission?: MissionId;
+  /** Initial foreground time, then the phone is put away; real minutes. */
+  foregroundMinutes?: number;
+};
 export type PlayerPolicy = {
   id: string;
   name: string;
@@ -14,7 +21,7 @@ export type PlayerPolicy = {
   targetLevel: number;
 };
 export type Scenario = {
-  id: 'today' | 'l2' | 'g10';
+  id: 'today' | 'l2' | 'g10' | 'tier0';
   name: string;
   creditedMinutesPerRealMinute: number;
   restMultiplier: number;
@@ -23,6 +30,7 @@ export type Scenario = {
   ceiling: number | null;
   excessRate: number;
   wellKeptGift: number;
+  tier0?: boolean;
 };
 
 const weekdays = [0, 1, 2, 3, 4]; // Monday = 0. Fixed civil days, no host clock/DST.
@@ -32,8 +40,21 @@ export const economyInputs = {
   daysPerWeek: 7,
   minutesPerDay: 1440,
   source: {
-    main: '81070e190846f51930ead7f99cb955b14d5f5600',
+    main: '162d88e4eb1450e1e54e3c72a492ff5da24c0cdc',
     proposal: '0aa6661319a204d997fcb0ef558966521377422f',
+    mechanics: '43582c31097874ccd0274d6e67b2381fa500f70f',
+  },
+  // Independent random streams: toggling raids cannot change the hat draws.
+  seeds: { mountainHats: 73421, incomingRaids: 91283 },
+  incomingRaids: {
+    enabled: false,
+    attemptsPerVisit: 1,
+    recoverySeconds: 60,
+    attackerWinProbability: 0.5,
+    defendedReward: 20,
+    minimumLoss: 10,
+    lossShare: 0.3,
+    moodLoss: 20,
   },
   initial: { dust: 20, level: 1, mood: 80 },
   rules: {
@@ -104,6 +125,18 @@ export const economyInputs = {
       ceiling: 240,
       excessRate: 0.25,
       wellKeptGift: 0,
+    },
+    {
+      id: 'tier0',
+      name: 'Real rate + tier 0 (assumption)',
+      creditedMinutesPerRealMinute: 1,
+      restMultiplier: 1,
+      focusMultiplier: 1,
+      nightGift: null,
+      ceiling: null,
+      excessRate: 1,
+      wellKeptGift: 0,
+      tier0: true,
     },
   ] satisfies Scenario[],
   players: [
