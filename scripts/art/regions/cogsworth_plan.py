@@ -399,6 +399,26 @@ TOWN_SLOTS = [
 ]
 
 
+LANDMARK_IDS = {'station', 'clock-tower', 'gasholder', 'airship-mast', 'foundry', 'terminus', 'lock-gates', 'humpback-bridge'}
+
+
+def placements() -> list:
+    """The town's buildings and set pieces as placement data in world px (Claude A, a-to-h-
+    chunks: buildings are baked into the chunk's ground, and this list is what the audit reads
+    for density and landmarks): kind, box (x0, y0, x1, y1), foot (x, y) and whether it is a
+    landmark."""
+    ox, oy = TOWN_ORIGIN
+    out = []
+    for bid, env, kind, (x0, top, x1, foot), side, doors in BUILDINGS:
+        out.append({'id': bid, 'kind': kind, 'box': [x0 + ox, top + oy, x1 + ox, foot + oy],
+                    'foot': [(x0 + x1) // 2 + ox, foot + oy], 'doors': [[dx + ox, dy + oy] for dx, dy in doors],
+                    'landmark': bid in LANDMARK_IDS})
+    for lid, sprite, (x0, y0, x1, y1), why in LANDMARKS:
+        out.append({'id': lid, 'kind': sprite, 'box': [x0 + ox, y0 + oy, x1 + ox, y1 + oy],
+                    'foot': [(x0 + x1) // 2 + ox, y1 + oy], 'landmark': lid in LANDMARK_IDS, 'why': why})
+    return out
+
+
 # --- rasterizing ----------------------------------------------------------------------------
 KIND_IDS = {}
 

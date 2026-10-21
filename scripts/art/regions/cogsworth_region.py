@@ -38,6 +38,9 @@ gorge's water continuous from the footprint's north edge to the confluence, Fern
 doors on its road, the town's gates on the tiers G gives them. `preview()` draws it.
 
     python3 scripts/art/regions/cogsworth_region.py --check
+    python3 scripts/art/regions/cogsworth_region.py --export   (writes art/regions/cogsworth.json, the plan
+                                                               in Claude F's schema, which npm run
+                                                               check:region-plans holds to its rules)
     python3 scripts/art/regions/cogsworth_region.py [OUT_DIR]
 """
 from __future__ import annotations
@@ -65,13 +68,13 @@ TOWN_TIER = {0: 6, 1: 6, 2: 7, 3: 8}      # the town plan's local tiers on the w
 BASE_TIER = 5
 TIERS = [
     # the Cog's valley and everything above the confluence's lowland
-    (6, [(7000, 1696, 9304, 3008), (7000, 3008, 8480, 3304)]),
+    (6, [(7000, 1696, 9304, 3008), (7000, 3008, 8432, 3304)]),
     # the plain's shelf west of the confluence and the hills' foot
     (7, [(7000, 1696, 9304, 2920), (7000, 2920, 8432, 3304)]),
     # the massif's foot across the north, the coal hills east of the town, the forest interior
     # between the Foothill Road and the High Fells, the Fern hills' shoulder
-    (8, [(7000, 1696, 9304, 2008), (8336, 2008, 9304, 2808), (7000, 2008, 7616, 2768), (7104, 2768, 7592, 3304)]),
-    (9, [(7000, 1696, 7608, 1920), (7000, 1696, 9304, 1784), (7232, 2904, 7504, 3112), (8400, 2008, 9304, 2752)]),
+    (8, [(7000, 1696, 9304, 2008), (8336, 2008, 9304, 2776), (7000, 2008, 7616, 2768), (7104, 2768, 7592, 3304)]),
+    (9, [(7000, 1696, 7608, 1920), (7000, 1696, 9304, 1784), (7232, 2904, 7504, 3112), (8400, 2008, 9304, 2720)]),
     (10, [(7000, 1696, 7480, 1864), (7000, 1696, 9304, 1736), (8560, 2072, 9304, 2688)]),
     (11, [(7000, 1696, 7408, 1816)]),
     (12, [(7000, 1696, 7360, 1760)]),
@@ -149,7 +152,7 @@ SET_PIECES = [
     ('cairn', 'cairn', 'cairn (B, REWORK)', (7984, 1912, 8008, 1936)),
     ('crow-roost', 'a crow roost in a dead pine', 'a dead pine (forest kit) with crows', (7848, 1896, 7880, 1928)),
     ('rail-ruin', 'rail ruin', 'rails, sleepers, a tipped wagon (B queue)', (8448, 2720, 8512, 2752)),
-    ('tram-tipple', 'tram tipple', 'tram_tipple (B #163)', (8344, 2768, 8392, 2808)),
+    ('tram-tipple', 'tram tipple', 'tram_tipple (B #163)', (8344, 2808, 8392, 2816)),
     ('narrows-lookout', 'lookout over the Narrows', 'narrows_lookout (B #163)', (8536, 2960, 8568, 2992)),
     # spoil heaps (brief 2), one with the loop round it above the town
     ('spoil-1', 'spoil heap', 'a heap of shale and coal waste, its foot spread', (7512, 2232, 7608, 2296)),
@@ -239,10 +242,23 @@ def land():
         water |= m
     routes, crossings, source = load_routes()
     route = np.full((ROWS, COLS), '', object)
+    # each route is cut into or built up on the land at its own tier (a terrace for the path,
+    # a bridge's deck over the water at its crossings); the change between two tiers falls on
+    # the leg where G puts its stair or round-end
     for name, pts in routes.items():
+        cross = crossings.get(name, [])
         for (ax, ay, aw, at), (bx, by, bw, bt) in zip(pts[:-1], pts[1:]):
             m = _course([(ax, ay), (bx, by)], max(aw, bw)) & ~town
             route[m & (route == '')] = name
+            if at == bt:
+                tier[m] = at
+            mid = ((ax + bx) / 2, (ay + by) / 2)
+            if any(abs(mid[0] - cx) + abs(mid[1] - cy) <= span for cx, cy, span in cross):
+                water[m] = False
+    for name, trods in _pocket_trods().items():
+        for pts, t in trods:
+            m = _course(pts, 24) & ~town & ~water & (route == '')
+            tier[m] = t
     return dict(tier=tier, water=water, town=town, route=route, routes=routes, crossings=crossings, source=source)
 
 
@@ -327,6 +343,13 @@ def check(L=None, verbose=True) -> list:
         got = tier[min(r, ROWS - 1), min(c, COLS - 1)]
         if got != want:
             faults.append(f'the {g} gate at {(wx, wy)} is on tier {got} (G gives {want})')
+    # the plan file in F's schema is this module's output, never edited by hand
+    if os.path.exists(PLAN_PATH):
+        with open(PLAN_PATH) as fh:
+            if json.load(fh) != json.loads(json.dumps(export_plan(L))):
+                faults.append(f'{os.path.relpath(PLAN_PATH, ROOT)} is stale: run cogsworth_region.py --export')
+    else:
+        faults.append(f'{os.path.relpath(PLAN_PATH, ROOT)} is missing: run cogsworth_region.py --export')
     if verbose:
         print(f'cogsworth region: {COLS} x {ROWS} cells; routes from {L["source"]}; '
               f'{len(SET_PIECES)} set pieces; tiers {tier.min()} to {tier.max()}')
@@ -336,6 +359,166 @@ def check(L=None, verbose=True) -> list:
             print('  FAULT:', f)
         print('cogsworth region:', 'ok' if not faults else f'{len(faults)} fault(s)')
     return faults
+
+
+# --- the plan in F's schema (art/regions/<id>.json, region_plan.py) -------------------------
+PLAN_PATH = os.path.join(ROOT, 'art', 'regions', 'cogsworth.json')
+BASE = 4                                   # the plan's tier 0 is world tier 4 (the Lull)
+BOX = [X0, Y0, W, 1600]                    # whole 32 px audit cells (y 1696 to 3296)
+
+
+def _rects(mask):
+    """A mask of cells as rectangles: runs along each row, merged down while they repeat."""
+    out, open_ = [], {}
+    for r in range(mask.shape[0] + 1):
+        runs = set()
+        if r < mask.shape[0]:
+            row = mask[r]
+            c = 0
+            while c < len(row):
+                if row[c]:
+                    c1 = c
+                    while c1 < len(row) and row[c1]:
+                        c1 += 1
+                    runs.add((c, c1))
+                    c = c1
+                else:
+                    c += 1
+        for key in list(open_):
+            if key not in runs:
+                r0 = open_.pop(key)
+                out.append((key[0], r0, key[1], r))
+        for key in runs:
+            open_.setdefault(key, r)
+    return out
+
+
+def export_plan(L=None) -> dict:
+    """The region (and the town's tiers) as a plan in Claude F's schema, so region_plan.py's
+    checks and every reader of art/regions/ see Cogsworth the same way as the Brackens."""
+    L = L or land()
+    plan_box_rows = BOX[3] // CELL
+    t = L['tier'][:plan_box_rows]
+    tiers = []
+    for k in range(int(t.min()), int(t.max()) + 1):
+        if k - BASE <= 0:
+            continue
+        for i, (c0, r0, c1, r1) in enumerate(_rects(t == k)):
+            x0, y0, x1, y1 = X0 + c0 * CELL, Y0 + r0 * CELL, X0 + c1 * CELL, Y0 + r1 * CELL
+            tiers.append({'id': f't{k}_{i}', 'tier': k - BASE, 'outline': [[x0, y0], [x1, y0], [x1, y1], [x0, y1]]})
+    routes_raw = _routes_full()
+    rid = {'High Fells': 'high_fells', 'Foothill Road': 'foothill_road', 'Towpath': 'towpath'}
+
+    def clip(pts):
+        x0, y0, w, h = BOX
+        return [[p[0], p[1]] for p in pts if x0 <= p[0] <= x0 + w and y0 <= p[1] <= y0 + h]
+    routes, trods, stairs, pockets, town_pockets = [], [], [], [], []
+    tx, ty = plan.TOWN_ORIGIN
+    for r in routes_raw:
+        if r['name'] not in rid:
+            continue
+        pts = clip(r['points'])
+        if len(pts) < 2:
+            continue
+        routes.append({'id': rid[r['name']], 'kind': r['kind'], 'width': max(24, min(64, min(p[2] for p in r['points']))),
+                       'owner_note': "Claude G's route (#175, lib/world-routes.ts); drawn here to its line, width and tier",
+                       'points': pts})
+        for ch in r['changes']:
+            x, y = ch['at']
+            if BOX[0] <= x <= BOX[0] + BOX[2] and BOX[1] <= y <= BOX[1] + BOX[3]:
+                stairs.append({'id': f"{rid[r['name']]}_{ch['kind']}_{x}_{y}", 'on': rid[r['name']], 'at': [x - x % 4, y - y % 4],
+                               'from_tier': ch['from'] - BASE, 'to_tier': ch['to'] - BASE, 'width': 40, 'kind': ch['kind']})
+        for i, pk in enumerate(r['pockets']):
+            cx, cy = pk['clearing']
+            in_town = tx <= cx < tx + plan.TOWN_W and ty <= cy < ty + plan.TOWN_H
+            if in_town:
+                town_pockets.append({'holds': pk['holds'], 'at': [cx, cy], 'route': r['name'],
+                                     'note': "inside the town box: laid by the town's plan (asked G to end it on the riverside quay)"})
+            elif BOX[0] <= cx <= BOX[0] + BOX[2] and BOX[1] <= cy <= BOX[1] + BOX[3]:
+                tid = f"{rid[r['name']]}_pocket_{i}"
+                trods.append({'id': tid, 'why': f"Claude G's dead end to a secret pocket: {pk['holds']}", 'width': pk['width'],
+                              'points': clip(pk['points']) + [[cx, cy]], 'dead_end': 'view' if 'view' in pk['holds'] else 'story' if 'story' in pk['holds'] else 'resident'})
+                pockets.append({'holds': pk['holds'], 'at': [cx, cy], 'trod': tid})
+    named = [{'thing': {'burners-camp': "charcoal burners' camp"}.get(n[0], n[0].replace('-', ' ')), 'kind': n[1], 'at': list(n[2]),
+              'route': n[3], 'where': n[4], 'piece': n[5]} for n in plan.NAMED]
+    markers = [{'t': k, 'what': what, 'at': list(at)} for route, pts in plan.MARKERS.items() for k, what, at in pts
+               if not (plan.TOWN_ORIGIN[0] <= at[0] < plan.TOWN_ORIGIN[0] + plan.TOWN_W and plan.TOWN_ORIGIN[1] <= at[1] < plan.TOWN_ORIGIN[1] + plan.TOWN_H)
+               and BOX[0] <= at[0] <= BOX[0] + BOX[2] and BOX[1] <= at[1] <= BOX[1] + BOX[3]]
+    water = [{'id': wid, 'kind': 'stream' if width < 64 else 'river', 'width': width, 'tier': wt - BASE,
+              'points': [list(p) for p in pts]} for wid, wt, pts, width in WATER]
+    set_pieces = [{'piece': pid, 'biome': 'coal-hills', 'at': [x0, y0], 'size': [x1 - x0, y1 - y0], 'what': what, 'kit': piece, 'seed': i + 1}
+                  for i, (pid, what, piece, (x0, y0, x1, y1)) in enumerate(SET_PIECES)]
+    tx, ty = plan.TOWN_ORIGIN
+    out = {
+        '_about': ("Cogsworth, the coal hills, the Narrows and Fernhollow as a plan (Claude H, lane H, 21 Oct), in Claude F's "
+                   "schema (docs/vision/region-plans.md). Written by scripts/art/regions/cogsworth_region.py --export from "
+                   "cogsworth_region.py and cogsworth_plan.py (the town); do not edit by hand. World px on the 11264 x 6912 "
+                   "canvas; tiers are this plan's (world tier = tier + base_tier)."),
+        'id': 'cogsworth', 'owner': 'claude-h', 'biome': 'coal-hills', 'biomes': ['city', 'gorge', 'forest'],
+        'box': BOX,
+        'base_tier': {'value': BASE, 'provisional': False, 'from': "Claude G's tiers (lib/world-routes.ts, #175): the town's street 7, the Lull 4"},
+        'tiers': tiers,
+        'routes': routes, 'trods': trods, 'stairs': stairs, 'water': water,
+        'places': [{'id': p_['id'], 'kind': p_['kind'], 'at': list(p_['box'][:2]) if 'box' in p_ else list(p_['at']), 'why': p_['why']}
+                   for p_ in plan.PLACES],
+        'town': {'origin': [tx, ty], 'size': [plan.TOWN_W, plan.TOWN_H], 'plan': 'scripts/art/regions/cogsworth_plan.py',
+                 'placements': plan.placements()},
+        'named': named, 'pockets': pockets, 'pockets_in_town': town_pockets,
+        'egg_spots': [{'what': w, 'at': list(at), 'keep_clear_r': 32} for w, at in plan.RESERVED],
+        'markers': markers,
+        'obstacles': [],
+        'set_pieces': set_pieces,
+        'edges': [{'side': kind, 'what': what, 'rect': list(rect)} for kind, what, rect in COVER],
+        'thresholds': [{'id': t_['id'], 'at': list(t_['at']), 'route': t_['route'], 'sides': list(t_['sides']), 'band': list(t_['band']),
+                        'landmark': t_['landmark'], 'residents': t_['residents']} for t_ in plan.THRESHOLDS],
+        'residents': [{'who': 'woodcutter', 'at': [7240, 3060], 'note': 'Fernhollow'}, {'who': 'charcoal burner', 'at': [7496, 2824], 'note': "the burners' camp"},
+                      {'who': 'bargee', 'at': [8528, 3064], 'note': 'the Cog foot (threshold)'}],
+        'ground': {'_about': "Ground kinds by place; the coal hills' own colour is dark green and black spoil (world plan 5.3).",
+                   'coal hills': 'rough sooty grass, heather out of flower, shale and spoil, dark conifers',
+                   'the Narrows': 'gritstone walls, white water, ferns in the spray',
+                   'Fernhollow': 'wet woodland floor, ferns, sawdust and log stores, a cottage garden each',
+                   'the town': "cogsworth_plan.py's ground kinds"},
+    }
+    # the markers and named things moved to the nearest point beside their path, off it and off
+    # its stairs, by F's own placer (region_plan.fix), so the plan passes region_plan's checks
+    sys.path.insert(0, os.path.dirname(HERE))
+    import region_plan
+    for m in out['markers']:
+        m.setdefault('moved_from', list(m['at']))
+    region_plan.fix(out)
+    for m in out['markers']:
+        if m.get('moved_from') == m['at']:
+            m.pop('moved_from')
+    return out
+
+
+def _pocket_trods():
+    """G's dead-end trods to the secret pockets on this land, each at the tier of the route
+    where it leaves."""
+    out = {}
+    for r in _routes_full():
+        for pk in r.get('pockets', []):
+            lx, ly = pk['leaves']
+            t = min(r['points'], key=lambda p: abs(p[0] - lx) + abs(p[1] - ly))[3]
+            out.setdefault(r['name'], []).append(([tuple(p) for p in pk['points']] + [tuple(pk['clearing'])], t))
+    return out
+
+
+def _routes_full():
+    """G's whole route records when lib/world-routes.ts is readable, else the copies."""
+    path = os.path.join(ROOT, 'lib', 'world-routes.ts')
+    try:
+        import subprocess
+        code = ("const m = await import('file://' + process.argv[1]); const d = m.worldRoutes ?? m.default?.worldRoutes;"
+                "process.stdout.write(JSON.stringify(d));")
+        r = subprocess.run(['node', '--import', 'tsx', '--input-type=module', '-e', code, path],
+                           cwd=ROOT, capture_output=True, text=True, timeout=60)
+        if r.returncode == 0 and r.stdout:
+            return json.loads(r.stdout)
+    except Exception:  # noqa: BLE001
+        pass
+    return [{'name': n, 'kind': 'path', 'points': [list(p) for p in pts], 'changes': [], 'pockets': []}
+            for n, pts in ROUTES_FALLBACK.items()]
 
 
 def preview(L=None, scale=0.5):
@@ -376,6 +559,17 @@ def preview(L=None, scale=0.5):
 def main(argv):
     if '--check' in argv:
         sys.exit(1 if check() else 0)
+    if '--export' in argv:
+        with open(PLAN_PATH, 'w') as fh:
+            json.dump(export_plan(), fh, indent=1)
+            fh.write('\n')
+        try:   # the repository's formatter, as every other JSON under art/ is written
+            import subprocess
+            subprocess.run(['npx', 'oxfmt', '--write', PLAN_PATH], cwd=ROOT, capture_output=True, timeout=120)
+        except Exception:  # noqa: BLE001 (the check compares the data, not its layout)
+            pass
+        print('wrote', PLAN_PATH)
+        return
     out = argv[0] if argv else os.path.join(tempfile.gettempdir(), 'napattack-cogsworth-region')
     os.makedirs(out, exist_ok=True)
     L = land()
