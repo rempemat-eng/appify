@@ -1,17 +1,17 @@
 {
  "about": "The whole-world audit (scripts/art/world_audit.py, docs/vision/world-audit.md): every 32 px cell of the world against the standards; a cell is green when every check measured there passes, amber on a soft finding (judged by eye, or pending a decision), red when it fails the standard. Regenerate with python3 scripts/art/world_audit.py.",
  "source": "zones",
- "ledger": "origin/claude-a/asset-ledger@2994ac2:scripts/art/asset_ledger.json",
+ "ledger": "scripts/art/asset_ledger.json",
  "world": {
-  "cells": 18900,
+  "cells": 20700,
   "green": 0,
   "amber": 0,
-  "red": 18900,
+  "red": 20700,
   "compliant_pct": 0.0,
   "red_pct": 100.0,
-  "drawn_compliant_pct": 0.1,
-  "drawn_red_pct": 92.8,
-  "drawn_amber": 1346
+  "drawn_compliant_pct": 2.1,
+  "drawn_red_pct": 90.5,
+  "drawn_amber": 1542
  },
  "regions": {
   "valley": {
@@ -21,22 +21,22 @@
    "red": 7200,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.1,
-   "drawn_red_pct": 82.7,
+   "drawn_compliant_pct": 2.5,
+   "drawn_red_pct": 79.2,
    "status": "old",
    "plane": "continent",
    "tier_map": false,
    "notes": []
   },
   "steam": {
-   "cells": 360,
+   "cells": 2160,
    "green": 0,
    "amber": 0,
-   "red": 360,
+   "red": 2160,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 1.1,
-   "drawn_red_pct": 96.4,
+   "drawn_compliant_pct": 2.1,
+   "drawn_red_pct": 92.4,
    "status": "old",
    "plane": "continent",
    "tier_map": false,
@@ -49,8 +49,8 @@
    "red": 5400,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.1,
-   "drawn_red_pct": 99.5,
+   "drawn_compliant_pct": 3.7,
+   "drawn_red_pct": 95.4,
    "status": "old",
    "plane": "continent",
    "tier_map": false,
@@ -78,7 +78,7 @@
    "compliant_pct": 0.0,
    "red_pct": 100.0,
    "drawn_compliant_pct": 0.0,
-   "drawn_red_pct": 96.6,
+   "drawn_red_pct": 97.5,
    "status": "old",
    "plane": "continent",
    "tier_map": false,
@@ -105,8 +105,8 @@
    "red": 1080,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
-   "drawn_red_pct": 99.7,
+   "drawn_compliant_pct": 0.3,
+   "drawn_red_pct": 99.6,
    "status": "old",
    "plane": "moon",
    "tier_map": false,
@@ -119,8 +119,8 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
-   "drawn_red_pct": 98.3,
+   "drawn_compliant_pct": 1.1,
+   "drawn_red_pct": 95.0,
    "status": "old",
    "plane": "hut",
    "tier_map": false,
@@ -136,17 +136,17 @@
    "compliant_pct": 0.0,
    "red_pct": 100.0,
    "drawn_compliant_pct": 0.0,
-   "drawn_red_pct": 90.0
+   "drawn_red_pct": 90.4
   },
   "A scenery": {
-   "cells": 12240,
+   "cells": 14040,
    "green": 0,
    "amber": 0,
-   "red": 12240,
+   "red": 14040,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
-   "drawn_red_pct": 90.8
+   "drawn_compliant_pct": 2.9,
+   "drawn_red_pct": 87.7
   },
   "B": {
    "cells": 360,
@@ -156,7 +156,7 @@
    "compliant_pct": 0.0,
    "red_pct": 100.0,
    "drawn_compliant_pct": 0.6,
-   "drawn_red_pct": 98.3
+   "drawn_red_pct": 97.5
   },
   "C": {
    "cells": 2700,
@@ -165,8 +165,8 @@
    "red": 2700,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.1,
-   "drawn_red_pct": 97.5
+   "drawn_compliant_pct": 0.4,
+   "drawn_red_pct": 97.7
   },
   "D": {
    "cells": 1440,
@@ -175,8 +175,8 @@
    "red": 1440,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.3,
-   "drawn_red_pct": 97.0
+   "drawn_compliant_pct": 0.7,
+   "drawn_red_pct": 95.4
   },
   "E": {
    "cells": 1440,
@@ -185,17 +185,17 @@
    "red": 1440,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.3,
-   "drawn_red_pct": 97.2
+   "drawn_compliant_pct": 0.2,
+   "drawn_red_pct": 97.4
   }
  },
  "prop_lanes": {
   "B": {
    "sprites": 107,
-   "green": 3,
+   "green": 8,
    "amber": 0,
-   "red": 104,
-   "compliant_pct": 2.8
+   "red": 99,
+   "compliant_pct": 7.5
   },
   "A": {
    "sprites": 10,
@@ -206,16 +206,16 @@
   },
   "D": {
    "sprites": 121,
-   "green": 6,
+   "green": 31,
    "amber": 0,
-   "red": 115,
-   "compliant_pct": 5.0
+   "red": 90,
+   "compliant_pct": 25.6
   },
   "?": {
-   "sprites": 11,
+   "sprites": 12,
    "green": 0,
    "amber": 1,
-   "red": 10,
+   "red": 11,
    "compliant_pct": 0.0
   },
   "C": {
@@ -230,30 +230,30 @@
   "detail": {
    "family": "a detail",
    "rule": "detail_bar by kind, cleanliness included (house rulings)",
-   "measured": 18900,
-   "amber": 1740,
-   "red": 16463
+   "measured": 20700,
+   "amber": 1748,
+   "red": 17172
   },
   "grid-edges": {
    "family": "b soft grid",
    "rule": "structure boundaries in straight runs of 16 px or more (80 % a cell)",
-   "measured": 18900,
+   "measured": 20700,
    "amber": 0,
-   "red": 1364
+   "red": 2170
   },
   "rim-on-grid": {
    "family": "b soft grid",
    "rule": "straight runs of 24 px or more on multiples of 8 px",
-   "measured": 18900,
+   "measured": 20700,
    "amber": 0,
-   "red": 1127
+   "red": 1202
   },
   "face-height": {
    "family": "b soft grid",
    "rule": "faces 12, 16, 32 or 40 px tall",
-   "measured": 18540,
+   "measured": 20340,
    "amber": 0,
-   "red": 378
+   "red": 383
   },
   "tier-step": {
    "family": "b soft grid",
@@ -279,58 +279,58 @@
   "straight-run": {
    "family": "c hard edges",
    "rule": "no straight boundary over 96 px (paths 240) without an 8 px jog",
-   "measured": 18540,
+   "measured": 20340,
    "amber": 0,
-   "red": 171
+   "red": 165
   },
   "ruler-edge": {
    "family": "c hard edges",
    "rule": "no pixel-straight contrast edge over 96 px",
    "measured": 16560,
    "amber": 0,
-   "red": 39
+   "red": 8
   },
   "seam": {
    "family": "c hard edges",
    "rule": "no cut, tone or terrain seam where zones, areas, scenery cells or chunks meet",
-   "measured": 18900,
+   "measured": 20700,
    "amber": 0,
-   "red": 1252
+   "red": 979
   },
   "palette": {
    "family": "d style",
    "rule": "on the house palette (90 %); pending Matt, so amber",
-   "measured": 18900,
-   "amber": 8355,
+   "measured": 20700,
+   "amber": 9719,
    "red": 0
   },
   "dither": {
    "family": "d style",
    "rule": "no checker dither on walkable ground",
-   "measured": 4793,
+   "measured": 4788,
    "amber": 0,
-   "red": 1061
+   "red": 1060
   },
   "sprite-style": {
    "family": "d style",
    "rule": "style_lint on every placed sprite",
-   "measured": 2494,
-   "amber": 998,
-   "red": 1154
+   "measured": 2505,
+   "amber": 926,
+   "red": 1117
   },
   "size": {
    "family": "e size",
    "rule": "size_check range for every placed sprite",
-   "measured": 2388,
-   "amber": 31,
-   "red": 575
+   "measured": 2400,
+   "amber": 36,
+   "red": 565
   },
   "ledger": {
    "family": "f ledger",
    "rule": "asset ledger KEEP for every placed asset",
-   "measured": 18900,
+   "measured": 20700,
    "amber": 0,
-   "red": 18900
+   "red": 20700
   },
   "density": {
    "family": "g benchmark",
@@ -342,14 +342,14 @@
   "empty-path": {
    "family": "g benchmark",
    "rule": "no 200 px of path without something to notice (check 2)",
-   "measured": 500,
+   "measured": 498,
    "amber": 0,
    "red": 0
   },
   "identical": {
    "family": "g benchmark",
    "rule": "no more than 3 identical props in a row (check 9)",
-   "measured": 18540,
+   "measured": 20340,
    "amber": 37,
    "red": 0
   },
@@ -441,7 +441,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 1.1,
+   "drawn_compliant_pct": 0.0,
    "kind": "garden",
    "lane": "B",
    "module": "garden"
@@ -453,7 +453,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
+   "drawn_compliant_pct": 1.1,
    "kind": "zone",
    "lane": "E",
    "module": "valley_zones"
@@ -477,7 +477,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 1.1,
+   "drawn_compliant_pct": 0.0,
    "kind": "zone",
    "lane": "E",
    "module": "valley_zones"
@@ -489,7 +489,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 1.1,
+   "drawn_compliant_pct": 0.0,
    "kind": "zone",
    "lane": "E",
    "module": "valley_zones"
@@ -501,7 +501,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
+   "drawn_compliant_pct": 0.6,
    "kind": "zone",
    "lane": "E",
    "module": "valley_zones"
@@ -525,7 +525,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
+   "drawn_compliant_pct": 9.4,
    "kind": "scenery",
    "lane": "A",
    "module": "scenery"
@@ -537,7 +537,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
+   "drawn_compliant_pct": 7.8,
    "kind": "scenery",
    "lane": "A",
    "module": "scenery"
@@ -549,7 +549,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
+   "drawn_compliant_pct": 9.4,
    "kind": "scenery",
    "lane": "A",
    "module": "scenery"
@@ -561,7 +561,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
+   "drawn_compliant_pct": 11.7,
    "kind": "scenery",
    "lane": "A",
    "module": "scenery"
@@ -573,7 +573,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
+   "drawn_compliant_pct": 6.7,
    "kind": "scenery",
    "lane": "A",
    "module": "scenery"
@@ -585,7 +585,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
+   "drawn_compliant_pct": 10.0,
    "kind": "scenery",
    "lane": "A",
    "module": "scenery"
@@ -597,7 +597,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
+   "drawn_compliant_pct": 10.0,
    "kind": "scenery",
    "lane": "A",
    "module": "scenery"
@@ -609,7 +609,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
+   "drawn_compliant_pct": 2.8,
    "kind": "scenery",
    "lane": "A",
    "module": "scenery"
@@ -621,7 +621,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
+   "drawn_compliant_pct": 9.4,
    "kind": "scenery",
    "lane": "A",
    "module": "scenery"
@@ -633,7 +633,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
+   "drawn_compliant_pct": 8.9,
    "kind": "scenery",
    "lane": "A",
    "module": "scenery"
@@ -645,7 +645,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
+   "drawn_compliant_pct": 2.2,
    "kind": "scenery",
    "lane": "A",
    "module": "scenery"
@@ -657,7 +657,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
+   "drawn_compliant_pct": 5.6,
    "kind": "scenery",
    "lane": "A",
    "module": "scenery"
@@ -669,7 +669,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
+   "drawn_compliant_pct": 0.6,
    "kind": "scenery",
    "lane": "A",
    "module": "scenery"
@@ -681,7 +681,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
+   "drawn_compliant_pct": 0.6,
    "kind": "scenery",
    "lane": "A",
    "module": "scenery"
@@ -693,7 +693,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
+   "drawn_compliant_pct": 1.7,
    "kind": "scenery",
    "lane": "A",
    "module": "scenery"
@@ -849,7 +849,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 1.1,
+   "drawn_compliant_pct": 1.7,
    "kind": "zone",
    "lane": "C",
    "module": "city_zones"
@@ -861,10 +861,130 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 1.1,
+   "drawn_compliant_pct": 4.4,
    "kind": "zone",
    "lane": "C",
    "module": "city_zones"
+  },
+  "steam/steam:-1,-1": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 3.9,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "steam/steam:0,-1": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 4.4,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "steam/steam:1,-1": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 2.8,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "steam/steam:-1,0": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 3.9,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "steam/steam:1,0": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 1.7,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "steam/steam:-1,1": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 1.7,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "steam/steam:1,1": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.6,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "steam/steam:-1,2": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "steam/steam:0,2": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "steam/steam:1,2": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
   },
   "west/caldera": {
    "cells": 180,
@@ -885,7 +1005,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
+   "drawn_compliant_pct": 4.4,
    "kind": "zone",
    "lane": "D",
    "module": "sunstone_zones"
@@ -921,7 +1041,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 2.8,
+   "drawn_compliant_pct": 1.1,
    "kind": "zone",
    "lane": "D",
    "module": "sunstone_zones"
@@ -945,7 +1065,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
+   "drawn_compliant_pct": 11.7,
    "kind": "scenery",
    "lane": "A",
    "module": "scenery"
@@ -957,7 +1077,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
+   "drawn_compliant_pct": 3.3,
    "kind": "scenery",
    "lane": "A",
    "module": "scenery"
@@ -969,7 +1089,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
+   "drawn_compliant_pct": 3.3,
    "kind": "scenery",
    "lane": "A",
    "module": "scenery"
@@ -981,7 +1101,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
+   "drawn_compliant_pct": 2.2,
    "kind": "scenery",
    "lane": "A",
    "module": "scenery"
@@ -993,7 +1113,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
+   "drawn_compliant_pct": 5.0,
    "kind": "scenery",
    "lane": "A",
    "module": "scenery"
@@ -1005,7 +1125,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
+   "drawn_compliant_pct": 3.9,
    "kind": "scenery",
    "lane": "A",
    "module": "scenery"
@@ -1017,7 +1137,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
+   "drawn_compliant_pct": 4.4,
    "kind": "scenery",
    "lane": "A",
    "module": "scenery"
@@ -1029,7 +1149,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
+   "drawn_compliant_pct": 5.6,
    "kind": "scenery",
    "lane": "A",
    "module": "scenery"
@@ -1041,7 +1161,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
+   "drawn_compliant_pct": 2.2,
    "kind": "scenery",
    "lane": "A",
    "module": "scenery"
@@ -1053,7 +1173,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
+   "drawn_compliant_pct": 2.8,
    "kind": "scenery",
    "lane": "A",
    "module": "scenery"
@@ -1065,7 +1185,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
+   "drawn_compliant_pct": 1.7,
    "kind": "scenery",
    "lane": "A",
    "module": "scenery"
@@ -1077,7 +1197,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
+   "drawn_compliant_pct": 1.7,
    "kind": "scenery",
    "lane": "A",
    "module": "scenery"
@@ -1089,7 +1209,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
+   "drawn_compliant_pct": 1.7,
    "kind": "scenery",
    "lane": "A",
    "module": "scenery"
@@ -1101,7 +1221,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
+   "drawn_compliant_pct": 3.9,
    "kind": "scenery",
    "lane": "A",
    "module": "scenery"
@@ -1113,7 +1233,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
+   "drawn_compliant_pct": 2.8,
    "kind": "scenery",
    "lane": "A",
    "module": "scenery"
@@ -1137,7 +1257,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
+   "drawn_compliant_pct": 4.4,
    "kind": "scenery",
    "lane": "A",
    "module": "scenery"
@@ -1149,7 +1269,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
+   "drawn_compliant_pct": 13.3,
    "kind": "scenery",
    "lane": "A",
    "module": "scenery"
@@ -1161,7 +1281,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
+   "drawn_compliant_pct": 0.6,
    "kind": "scenery",
    "lane": "A",
    "module": "scenery"
@@ -1173,7 +1293,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
+   "drawn_compliant_pct": 0.6,
    "kind": "scenery",
    "lane": "A",
    "module": "scenery"
@@ -1185,7 +1305,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
+   "drawn_compliant_pct": 1.1,
    "kind": "scenery",
    "lane": "A",
    "module": "scenery"
@@ -1197,7 +1317,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
+   "drawn_compliant_pct": 3.9,
    "kind": "scenery",
    "lane": "A",
    "module": "scenery"
@@ -1209,7 +1329,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
+   "drawn_compliant_pct": 12.2,
    "kind": "scenery",
    "lane": "A",
    "module": "scenery"
@@ -1221,7 +1341,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
+   "drawn_compliant_pct": 14.4,
    "kind": "scenery",
    "lane": "A",
    "module": "scenery"
@@ -1569,7 +1689,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
+   "drawn_compliant_pct": 0.6,
    "kind": "scenery",
    "lane": "A",
    "module": "scenery"
@@ -1593,7 +1713,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
+   "drawn_compliant_pct": 1.1,
    "kind": "scenery",
    "lane": "A",
    "module": "scenery"
@@ -1617,7 +1737,7 @@
    "red": 180,
    "compliant_pct": 0.0,
    "red_pct": 100.0,
-   "drawn_compliant_pct": 0.0,
+   "drawn_compliant_pct": 1.1,
    "kind": "zone",
    "lane": "B",
    "module": "home_zones"
@@ -1757,16 +1877,56 @@
   "valley:2,15": 0.0,
   "valley:3,15": 0.0,
   "valley:4,15": 0.0,
+  "steam:-2,-3": 0.0,
+  "steam:-1,-3": 0.0,
+  "steam:0,-3": 0.0,
+  "steam:1,-3": 0.0,
+  "steam:2,-3": 0.0,
+  "steam:-2,-2": 0.0,
+  "steam:-1,-2": 0.0,
+  "steam:0,-2": 0.0,
+  "steam:1,-2": 0.0,
+  "steam:2,-2": 0.0,
+  "steam:-2,-1": 0.0,
+  "steam:-1,-1": 0.0,
+  "steam:0,-1": 0.0,
+  "steam:1,-1": 0.0,
+  "steam:2,-1": 0.0,
+  "steam:-2,0": 0.0,
+  "steam:-1,0": 0.0,
   "steam:0,0": 0.0,
   "steam:1,0": 0.0,
+  "steam:2,0": 0.0,
+  "steam:-2,1": 0.0,
+  "steam:-1,1": 0.0,
   "steam:0,1": 0.0,
   "steam:1,1": 0.0,
+  "steam:2,1": 0.0,
+  "steam:-2,2": 0.0,
+  "steam:-1,2": 0.0,
   "steam:0,2": 0.0,
   "steam:1,2": 0.0,
+  "steam:2,2": 0.0,
+  "steam:-2,3": 0.0,
+  "steam:-1,3": 0.0,
   "steam:0,3": 0.0,
   "steam:1,3": 0.0,
+  "steam:2,3": 0.0,
+  "steam:-2,4": 0.0,
+  "steam:-1,4": 0.0,
   "steam:0,4": 0.0,
   "steam:1,4": 0.0,
+  "steam:2,4": 0.0,
+  "steam:-2,5": 0.0,
+  "steam:-1,5": 0.0,
+  "steam:0,5": 0.0,
+  "steam:1,5": 0.0,
+  "steam:2,5": 0.0,
+  "steam:-2,6": 0.0,
+  "steam:-1,6": 0.0,
+  "steam:0,6": 0.0,
+  "steam:1,6": 0.0,
+  "steam:2,6": 0.0,
   "west:-2,-3": 0.0,
   "west:-1,-3": 0.0,
   "west:0,-3": 0.0,
@@ -2027,23 +2187,23 @@
     0
    ],
    "why": [
-    "ground: shapes 12.8/31.9 LOW; dressing 10.2/24.1 LOW (2)",
-    "ground: shapes 22.0/31.9 LOW; dressing 17.8/24.1 LOW (2)",
-    "ground: shapes 11.8/31.9 LOW; dressing 9.5/24.1 LOW (2)"
+    "ground: lone 0.050 / 0.014 NOISY (2)",
+    "water: tones 10.2/13.4 LOW; shapes 11.2/21.3 LOW; dressing 7.8/16.8 LOW (1)",
+    "water: tones 4.5/13.4 LOW; shapes 5.5/21.3 LOW; dressing 2.2/16.8 LOW (1)"
    ],
-   "reds_per_cell": 2.57
+   "reds_per_cell": 2.56
   },
   {
-   "region": "neon",
-   "place": "point",
-   "lane": "C",
+   "region": "valley",
+   "place": "headland",
+   "lane": "E",
    "scenery": false,
    "check": "detail",
    "severity": "red",
    "cells": 180,
    "box_region_px": [
     640,
-    1152,
+    2880,
     320,
     576
    ],
@@ -2055,14 +2215,14 @@
    ],
    "tile": [
     2,
-    4
+    11
    ],
    "why": [
-    "paving: tones 3.0/14.6 LOW; shapes 4.0/31.9 LOW; dressing 1.0/23.7 LOW (3)",
-    "water: tones 5.2/13.4 LOW; shapes 10.8/21.3 LOW; dressing 6.8/16.8 LOW (2)",
-    "paving: tones 3.2/14.6 LOW; shapes 4.0/31.9 LOW; dressing 1.0/23.7 LOW (2)"
+    "ground: edges 0.228 / 0.148 BUSY; lone 0.082 / 0.014 NOISY (1)",
+    "stream: tones 8.8/13.2 LOW; shapes 14.8/25.1 LOW; dressing 9.0/18.3 LOW (1)",
+    "ground: tones   6.0 /  12.6 LOW; edges 0.239 / 0.148 BUSY; lone 0.100 / 0.014 NOISY (1)"
    ],
-   "reds_per_cell": 1.32
+   "reds_per_cell": 1.82
   },
   {
    "region": "neon",
@@ -2093,7 +2253,38 @@
     "city_b0: city_building: h 265 over 84 to 232, w 102 over 32 to 96 (26)",
     "city_b1: city_building: h 263 over 84 to 232 (21)"
    ],
-   "reds_per_cell": 2.02
+   "reds_per_cell": 2.2
+  },
+  {
+   "region": "neon",
+   "place": "downtown",
+   "lane": "C",
+   "scenery": false,
+   "check": "sprite-style",
+   "severity": "red",
+   "cells": 104,
+   "box_region_px": [
+    320,
+    576,
+    320,
+    544
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    544
+   ],
+   "tile": [
+    1,
+    2
+   ],
+   "why": [
+    "city_b14: light-west, colours, palette (23)",
+    "city_street_tree_b: speckle (16)",
+    "city_b20: speckle, colours, palette (14)"
+   ],
+   "reds_per_cell": 2.37
   },
   {
    "region": "west",
@@ -2124,7 +2315,7 @@
     "2.1 % checker dither on walkable ground (4)",
     "1.5 % checker dither on walkable ground (3)"
    ],
-   "reds_per_cell": 2.35
+   "reds_per_cell": 2.11
   },
   {
    "region": "west",
@@ -2155,7 +2346,7 @@
     "0 % of 13 boundary samples in straight runs of 16 px (3)",
     "0 % of 17 boundary samples in straight runs of 16 px (3)"
    ],
-   "reds_per_cell": 2.61
+   "reds_per_cell": 2.56
   },
   {
    "region": "isles",
@@ -2186,38 +2377,7 @@
     "0 % of 9 boundary samples in straight runs of 16 px (3)",
     "48 % of 23 boundary samples in straight runs of 16 px (3)"
    ],
-   "reds_per_cell": 3.3
-  },
-  {
-   "region": "neon",
-   "place": "downtown",
-   "lane": "C",
-   "scenery": false,
-   "check": "sprite-style",
-   "severity": "red",
-   "cells": 73,
-   "box_region_px": [
-    448,
-    576,
-    192,
-    544
-   ],
-   "box_place_px": [
-    128,
-    0,
-    192,
-    544
-   ],
-   "tile": [
-    1,
-    2
-   ],
-   "why": [
-    "city_b14: light-west, colours, palette (23)",
-    "city_street_tree_b: speckle (16)",
-    "city_b22: light-west, speckle, colours, palette (14)"
-   ],
-   "reds_per_cell": 2.51
+   "reds_per_cell": 3.29
   },
   {
    "region": "isles",
@@ -2245,10 +2405,41 @@
    ],
    "why": [
     "4.3 % checker dither on walkable ground (2)",
-    "4.7 % checker dither on walkable ground (2)",
+    "2.8 % checker dither on walkable ground (2)",
     "2.1 % checker dither on walkable ground (2)"
    ],
-   "reds_per_cell": 2.93
+   "reds_per_cell": 2.99
+  },
+  {
+   "region": "neon",
+   "place": "market",
+   "lane": "C",
+   "scenery": false,
+   "check": "sprite-style",
+   "severity": "red",
+   "cells": 67,
+   "box_region_px": [
+    96,
+    576,
+    224,
+    576
+   ],
+   "box_place_px": [
+    96,
+    0,
+    224,
+    576
+   ],
+   "tile": [
+    0,
+    2
+   ],
+   "why": [
+    "city_b18: light-west, colours, palette (21)",
+    "city_street_tree_b: speckle (16)",
+    "city_street_tree: outline-double, speckle (14)"
+   ],
+   "reds_per_cell": 2.6
   },
   {
    "region": "space",
@@ -2279,37 +2470,6 @@
     "2 samples of straight runs off the 8 px lines (4)"
    ],
    "reds_per_cell": 2.19
-  },
-  {
-   "region": "moon",
-   "place": "lumen",
-   "lane": "D",
-   "scenery": false,
-   "check": "sprite-style",
-   "severity": "red",
-   "cells": 30,
-   "box_region_px": [
-    32,
-    128,
-    224,
-    288
-   ],
-   "box_place_px": [
-    32,
-    128,
-    224,
-    288
-   ],
-   "tile": [
-    0,
-    0
-   ],
-   "why": [
-    "hab_hub: speckle, colours, palette (13)",
-    "pressure_tube_dock: speckle, colours, palette (5)",
-    "pressure_tube: speckle, colours, palette (4)"
-   ],
-   "reds_per_cell": 2.4
   }
  ],
  "top_failures": [
@@ -2338,11 +2498,11 @@
     0
    ],
    "why": [
-    "ground: shapes 12.8/31.9 LOW; dressing 10.2/24.1 LOW (2)",
-    "ground: shapes 22.0/31.9 LOW; dressing 17.8/24.1 LOW (2)",
-    "ground: shapes 11.8/31.9 LOW; dressing 9.5/24.1 LOW (2)"
+    "ground: lone 0.050 / 0.014 NOISY (2)",
+    "water: tones 10.2/13.4 LOW; shapes 11.2/21.3 LOW; dressing 7.8/16.8 LOW (1)",
+    "water: tones 4.5/13.4 LOW; shapes 5.5/21.3 LOW; dressing 2.2/16.8 LOW (1)"
    ],
-   "reds_per_cell": 2.57
+   "reds_per_cell": 2.56
   },
   {
    "region": "isles",
@@ -2371,7 +2531,7 @@
    "why": [
     "assets/zones/rainforest/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
    ],
-   "reds_per_cell": 2.57
+   "reds_per_cell": 2.56
   },
   {
    "region": "isles",
@@ -2404,35 +2564,6 @@
   },
   {
    "region": "isles",
-   "place": "cove",
-   "lane": "C",
-   "scenery": false,
-   "check": "ledger",
-   "severity": "red",
-   "cells": 180,
-   "box_region_px": [
-    320,
-    576,
-    320,
-    576
-   ],
-   "box_place_px": [
-    0,
-    0,
-    320,
-    576
-   ],
-   "tile": [
-    1,
-    2
-   ],
-   "why": [
-    "assets/zones/cove/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
-   ],
-   "reds_per_cell": 2.48
-  },
-  {
-   "region": "isles",
    "place": "landing",
    "lane": "C",
    "scenery": false,
@@ -2458,7 +2589,36 @@
    "why": [
     "assets/zones/landing/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
    ],
-   "reds_per_cell": 2.37
+   "reds_per_cell": 2.45
+  },
+  {
+   "region": "isles",
+   "place": "cove",
+   "lane": "C",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    320,
+    576,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    1,
+    2
+   ],
+   "why": [
+    "assets/zones/cove/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 2.41
   },
   {
    "region": "valley",
@@ -2487,152 +2647,7 @@
    "why": [
     "assets/zones/harbour/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
    ],
-   "reds_per_cell": 2.09
-  },
-  {
-   "region": "west",
-   "place": "gulch",
-   "lane": "D",
-   "scenery": false,
-   "check": "ledger",
-   "severity": "red",
-   "cells": 180,
-   "box_region_px": [
-    320,
-    1152,
-    320,
-    576
-   ],
-   "box_place_px": [
-    0,
-    0,
-    320,
-    576
-   ],
-   "tile": [
-    1,
-    4
-   ],
-   "why": [
-    "assets/zones/gulch/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
-   ],
-   "reds_per_cell": 2.05
-  },
-  {
-   "region": "west",
-   "place": "springs",
-   "lane": "D",
-   "scenery": false,
-   "check": "ledger",
-   "severity": "red",
-   "cells": 180,
-   "box_region_px": [
-    960,
-    0,
-    320,
-    576
-   ],
-   "box_place_px": [
-    0,
-    0,
-    320,
-    576
-   ],
-   "tile": [
-    3,
-    0
-   ],
-   "why": [
-    "assets/zones/springs/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
-   ],
    "reds_per_cell": 2.04
-  },
-  {
-   "region": "valley",
-   "place": "riverside",
-   "lane": "E",
-   "scenery": false,
-   "check": "ledger",
-   "severity": "red",
-   "cells": 180,
-   "box_region_px": [
-    640,
-    1728,
-    320,
-    576
-   ],
-   "box_place_px": [
-    0,
-    0,
-    320,
-    576
-   ],
-   "tile": [
-    2,
-    6
-   ],
-   "why": [
-    "assets/zones/riverside/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
-   ],
-   "reds_per_cell": 2.02
-  },
-  {
-   "region": "valley",
-   "place": "halt",
-   "lane": "E",
-   "scenery": false,
-   "check": "ledger",
-   "severity": "red",
-   "cells": 180,
-   "box_region_px": [
-    0,
-    2304,
-    320,
-    576
-   ],
-   "box_place_px": [
-    0,
-    0,
-    320,
-    576
-   ],
-   "tile": [
-    0,
-    9
-   ],
-   "why": [
-    "assets/zones/halt/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
-   ],
-   "reds_per_cell": 2.02
-  },
-  {
-   "region": "neon",
-   "place": "heights",
-   "lane": "C",
-   "scenery": false,
-   "check": "ledger",
-   "severity": "red",
-   "cells": 180,
-   "box_region_px": [
-    0,
-    0,
-    320,
-    576
-   ],
-   "box_place_px": [
-    0,
-    0,
-    320,
-    576
-   ],
-   "tile": [
-    0,
-    0
-   ],
-   "why": [
-    "assets/zones/heights/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
-   ],
-   "reds_per_cell": 1.94
   },
   {
    "region": "neon",
@@ -2661,19 +2676,19 @@
    "why": [
     "assets/zones/downtown/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
    ],
-   "reds_per_cell": 1.91
+   "reds_per_cell": 1.99
   },
   {
-   "region": "west",
-   "place": "hearthold",
-   "lane": "D",
+   "region": "neon",
+   "place": "heights",
+   "lane": "C",
    "scenery": false,
    "check": "ledger",
    "severity": "red",
    "cells": 180,
    "box_region_px": [
-    640,
-    576,
+    0,
+    0,
     320,
     576
    ],
@@ -2684,46 +2699,17 @@
     576
    ],
    "tile": [
-    2,
-    2
+    0,
+    0
    ],
    "why": [
-    "assets/zones/hearthold/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+    "assets/zones/heights/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
    ],
-   "reds_per_cell": 1.88
-  },
-  {
-   "region": "west",
-   "place": "scorch",
-   "lane": "D",
-   "scenery": false,
-   "check": "ledger",
-   "severity": "red",
-   "cells": 180,
-   "box_region_px": [
-    640,
-    1152,
-    320,
-    576
-   ],
-   "box_place_px": [
-    0,
-    0,
-    320,
-    576
-   ],
-   "tile": [
-    2,
-    4
-   ],
-   "why": [
-    "assets/zones/scorch/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
-   ],
-   "reds_per_cell": 1.88
+   "reds_per_cell": 1.98
   },
   {
    "region": "valley",
-   "place": "headland",
+   "place": "riverside",
    "lane": "E",
    "scenery": false,
    "check": "ledger",
@@ -2731,7 +2717,7 @@
    "cells": 180,
    "box_region_px": [
     640,
-    2880,
+    1728,
     320,
     576
    ],
@@ -2743,12 +2729,12 @@
    ],
    "tile": [
     2,
-    11
+    6
    ],
    "why": [
-    "assets/zones/headland/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+    "assets/zones/riverside/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
    ],
-   "reds_per_cell": 1.83
+   "reds_per_cell": 1.94
   },
   {
    "region": "neon",
@@ -2777,19 +2763,19 @@
    "why": [
     "assets/zones/plaza/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
    ],
-   "reds_per_cell": 1.8
+   "reds_per_cell": 1.93
   },
   {
-   "region": "west",
-   "place": "oasis",
-   "lane": "D",
+   "region": "valley",
+   "place": "halt",
+   "lane": "E",
    "scenery": false,
    "check": "ledger",
    "severity": "red",
    "cells": 180,
    "box_region_px": [
     0,
-    1152,
+    2304,
     320,
     576
    ],
@@ -2801,10 +2787,128 @@
    ],
    "tile": [
     0,
+    9
+   ],
+   "why": [
+    "assets/zones/halt/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 1.92
+  },
+  {
+   "region": "west",
+   "place": "gulch",
+   "lane": "D",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    320,
+    1152,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    1,
     4
    ],
    "why": [
-    "assets/zones/oasis/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+    "assets/zones/gulch/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 1.91
+  },
+  {
+   "region": "valley",
+   "place": "headland",
+   "lane": "E",
+   "scenery": false,
+   "check": "detail",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    640,
+    2880,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    2,
+    11
+   ],
+   "why": [
+    "ground: edges 0.228 / 0.148 BUSY; lone 0.082 / 0.014 NOISY (1)",
+    "stream: tones 8.8/13.2 LOW; shapes 14.8/25.1 LOW; dressing 9.0/18.3 LOW (1)",
+    "ground: tones   6.0 /  12.6 LOW; edges 0.239 / 0.148 BUSY; lone 0.100 / 0.014 NOISY (1)"
+   ],
+   "reds_per_cell": 1.82
+  },
+  {
+   "region": "valley",
+   "place": "headland",
+   "lane": "E",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    640,
+    2880,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    2,
+    11
+   ],
+   "why": [
+    "assets/zones/headland/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 1.82
+  },
+  {
+   "region": "west",
+   "place": "hearthold",
+   "lane": "D",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    640,
+    576,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    2,
+    2
+   ],
+   "why": [
+    "assets/zones/hearthold/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
    ],
    "reds_per_cell": 1.79
   },
@@ -2835,11 +2939,11 @@
    "why": [
     "assets/zones/snowmelt/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
    ],
-   "reds_per_cell": 1.77
+   "reds_per_cell": 1.78
   },
   {
    "region": "west",
-   "place": "caldera",
+   "place": "scorch",
    "lane": "D",
    "scenery": false,
    "check": "ledger",
@@ -2847,64 +2951,6 @@
    "cells": 180,
    "box_region_px": [
     640,
-    0,
-    320,
-    576
-   ],
-   "box_place_px": [
-    0,
-    0,
-    320,
-    576
-   ],
-   "tile": [
-    2,
-    0
-   ],
-   "why": [
-    "assets/zones/caldera/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
-   ],
-   "reds_per_cell": 1.72
-  },
-  {
-   "region": "steam",
-   "place": "canal",
-   "lane": "C",
-   "scenery": false,
-   "check": "ledger",
-   "severity": "red",
-   "cells": 180,
-   "box_region_px": [
-    0,
-    576,
-    320,
-    576
-   ],
-   "box_place_px": [
-    0,
-    0,
-    320,
-    576
-   ],
-   "tile": [
-    0,
-    2
-   ],
-   "why": [
-    "assets/zones/canal/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
-   ],
-   "reds_per_cell": 1.71
-  },
-  {
-   "region": "valley",
-   "place": "ridge",
-   "lane": "E",
-   "scenery": false,
-   "check": "ledger",
-   "severity": "red",
-   "cells": 180,
-   "box_region_px": [
-    320,
     1152,
     320,
     576
@@ -2916,71 +2962,13 @@
     576
    ],
    "tile": [
-    1,
+    2,
     4
    ],
    "why": [
-    "assets/zones/ridge/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+    "assets/zones/scorch/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
    ],
-   "reds_per_cell": 1.7
-  },
-  {
-   "region": "valley",
-   "place": "woodland",
-   "lane": "E",
-   "scenery": false,
-   "check": "ledger",
-   "severity": "red",
-   "cells": 180,
-   "box_region_px": [
-    0,
-    1728,
-    320,
-    576
-   ],
-   "box_place_px": [
-    0,
-    0,
-    320,
-    576
-   ],
-   "tile": [
-    0,
-    6
-   ],
-   "why": [
-    "assets/zones/woodland/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
-   ],
-   "reds_per_cell": 1.68
-  },
-  {
-   "region": "moon",
-   "place": "lumen",
-   "lane": "D",
-   "scenery": false,
-   "check": "ledger",
-   "severity": "red",
-   "cells": 180,
-   "box_region_px": [
-    0,
-    0,
-    320,
-    576
-   ],
-   "box_place_px": [
-    0,
-    0,
-    320,
-    576
-   ],
-   "tile": [
-    0,
-    0
-   ],
-   "why": [
-    "assets/zones/lumen/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
-   ],
-   "reds_per_cell": 1.67
+   "reds_per_cell": 1.76
   },
   {
    "region": "neon",
@@ -3009,19 +2997,19 @@
    "why": [
     "assets/zones/market/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
    ],
-   "reds_per_cell": 1.66
+   "reds_per_cell": 1.75
   },
   {
-   "region": "valley",
-   "place": "hollow",
-   "lane": "A",
+   "region": "moon",
+   "place": "lumen",
+   "lane": "D",
    "scenery": false,
    "check": "ledger",
    "severity": "red",
    "cells": 180,
    "box_region_px": [
     0,
-    1152,
+    0,
     320,
     576
    ],
@@ -3033,12 +3021,99 @@
    ],
    "tile": [
     0,
-    4
+    0
    ],
    "why": [
-    "assets/zones/hollow/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+    "assets/zones/lumen/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
    ],
-   "reds_per_cell": 1.63
+   "reds_per_cell": 1.72
+  },
+  {
+   "region": "west",
+   "place": "springs",
+   "lane": "D",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    960,
+    0,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    3,
+    0
+   ],
+   "why": [
+    "assets/zones/springs/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 1.72
+  },
+  {
+   "region": "valley",
+   "place": "woodland",
+   "lane": "E",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    0,
+    1728,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    0,
+    6
+   ],
+   "why": [
+    "assets/zones/woodland/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 1.71
+  },
+  {
+   "region": "steam",
+   "place": "canal",
+   "lane": "C",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    0,
+    576,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    0,
+    2
+   ],
+   "why": [
+    "assets/zones/canal/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 1.64
   },
   {
    "region": "valley",
@@ -3067,7 +3142,123 @@
    "why": [
     "assets/garden/ground.png: REWORK: the home hub stays (its size, place, geometry and harness: home-valley brief 10), but its ground is not on the soft grid (180)"
    ],
-   "reds_per_cell": 1.6
+   "reds_per_cell": 1.64
+  },
+  {
+   "region": "west",
+   "place": "oasis",
+   "lane": "D",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    0,
+    1152,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    0,
+    4
+   ],
+   "why": [
+    "assets/zones/oasis/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 1.64
+  },
+  {
+   "region": "west",
+   "place": "caldera",
+   "lane": "D",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    640,
+    0,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    2,
+    0
+   ],
+   "why": [
+    "assets/zones/caldera/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 1.63
+  },
+  {
+   "region": "valley",
+   "place": "ridge",
+   "lane": "E",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    320,
+    1152,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    1,
+    4
+   ],
+   "why": [
+    "assets/zones/ridge/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 1.61
+  },
+  {
+   "region": "valley",
+   "place": "hollow",
+   "lane": "A",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    0,
+    1152,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    0,
+    4
+   ],
+   "why": [
+    "assets/zones/hollow/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 1.57
   },
   {
    "region": "neon",
@@ -3154,7 +3345,36 @@
    "why": [
     "assets/zones/neon/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
    ],
-   "reds_per_cell": 1.45
+   "reds_per_cell": 1.48
+  },
+  {
+   "region": "valley",
+   "place": "town",
+   "lane": "E",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    320,
+    2304,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    1,
+    9
+   ],
+   "why": [
+    "assets/zones/town/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 1.48
   },
   {
    "region": "space",
@@ -3187,15 +3407,15 @@
   },
   {
    "region": "valley",
-   "place": "town",
-   "lane": "E",
+   "place": "summit",
+   "lane": "A",
    "scenery": false,
    "check": "ledger",
    "severity": "red",
    "cells": 180,
    "box_region_px": [
     320,
-    2304,
+    0,
     320,
     576
    ],
@@ -3207,10 +3427,10 @@
    ],
    "tile": [
     1,
-    9
+    0
    ],
    "why": [
-    "assets/zones/town/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+    "assets/zones/summit/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
    ],
    "reds_per_cell": 1.43
   },
@@ -3241,36 +3461,7 @@
    "why": [
     "assets/zones/docks/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
    ],
-   "reds_per_cell": 1.4
-  },
-  {
-   "region": "valley",
-   "place": "summit",
-   "lane": "A",
-   "scenery": false,
-   "check": "ledger",
-   "severity": "red",
-   "cells": 180,
-   "box_region_px": [
-    320,
-    0,
-    320,
-    576
-   ],
-   "box_place_px": [
-    0,
-    0,
-    320,
-    576
-   ],
-   "tile": [
-    1,
-    0
-   ],
-   "why": [
-    "assets/zones/summit/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
-   ],
-   "reds_per_cell": 1.35
+   "reds_per_cell": 1.39
   },
   {
    "region": "valley",
@@ -3299,36 +3490,7 @@
    "why": [
     "assets/zones/saddle/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
    ],
-   "reds_per_cell": 1.34
-  },
-  {
-   "region": "home",
-   "place": "home",
-   "lane": "B",
-   "scenery": false,
-   "check": "ledger",
-   "severity": "red",
-   "cells": 180,
-   "box_region_px": [
-    0,
-    0,
-    320,
-    576
-   ],
-   "box_place_px": [
-    0,
-    0,
-    320,
-    576
-   ],
-   "tile": [
-    0,
-    0
-   ],
-   "why": [
-    "assets/zones/home/ground.png: REWORK: the hut inside stays; its furniture is being redrawn to the size guide (PR #136) and the rooms have no indoor baseline f (180)"
-   ],
-   "reds_per_cell": 1.33
+   "reds_per_cell": 1.37
   },
   {
    "region": "valley",
@@ -3356,6 +3518,35 @@
    ],
    "why": [
     "assets/zones/park/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 1.34
+  },
+  {
+   "region": "steam",
+   "place": "junction",
+   "lane": "C",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    0,
+    0
+   ],
+   "why": [
+    "assets/zones/junction/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
    ],
    "reds_per_cell": 1.33
   },
@@ -3420,9 +3611,9 @@
    "reds_per_cell": 1.32
   },
   {
-   "region": "steam",
-   "place": "junction",
-   "lane": "C",
+   "region": "home",
+   "place": "home",
+   "lane": "B",
    "scenery": false,
    "check": "ledger",
    "severity": "red",
@@ -3444,9 +3635,71 @@
     0
    ],
    "why": [
-    "assets/zones/junction/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+    "assets/zones/home/ground.png: REWORK: the hut inside stays; its furniture is being redrawn to the size guide (PR #136) and the rooms have no indoor baseline f (180)"
    ],
    "reds_per_cell": 1.24
+  },
+  {
+   "region": "isles",
+   "place": "headwaters",
+   "lane": "C",
+   "scenery": false,
+   "check": "detail",
+   "severity": "red",
+   "cells": 179,
+   "box_region_px": [
+    320,
+    0,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    1,
+    0
+   ],
+   "why": [
+    "tree: tones 7.8/20.4 LOW; shapes 9.5/35.8 LOW; dressing 5.5/29.3 LOW (1)",
+    "tree: tones 8.2/20.4 LOW; shapes 9.5/35.8 LOW; dressing 6.2/29.3 LOW (1)",
+    "tree: tones 7.8/20.4 LOW; shapes 9.0/35.8 LOW; dressing 5.8/29.3 LOW (1)"
+   ],
+   "reds_per_cell": 2.55
+  },
+  {
+   "region": "valley",
+   "place": "park",
+   "lane": "E",
+   "scenery": false,
+   "check": "detail",
+   "severity": "red",
+   "cells": 178,
+   "box_region_px": [
+    640,
+    2304,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    2,
+    9
+   ],
+   "why": [
+    "ground: edges 0.225 / 0.148 BUSY; lone 0.101 / 0.014 NOISY (1)",
+    "ground: edges 0.267 / 0.148 BUSY; lone 0.140 / 0.014 NOISY (1)",
+    "ground: tones   6.0 /  12.6 LOW; edges 0.210 / 0.148 BUSY; lone 0.085 / 0.014 NOISY (1)"
+   ],
+   "reds_per_cell": 1.35
   },
   {
    "region": "isles",
@@ -3455,7 +3708,7 @@
    "scenery": false,
    "check": "detail",
    "severity": "red",
-   "cells": 178,
+   "cells": 177,
    "box_region_px": [
     320,
     576,
@@ -3474,22 +3727,22 @@
    ],
    "why": [
     "water: tones 7.5/13.4 LOW; shapes 12.8/21.3 LOW; dressing 9.5/16.8 LOW (2)",
-    "ground: shapes 18.5/31.9 LOW; dressing 15.2/24.1 LOW (2)",
-    "water: tones 3.2/13.4 LOW; shapes 4.8/21.3 LOW; dressing 2.2/16.8 LOW (2)"
+    "water: tones 3.2/13.4 LOW; shapes 4.8/21.3 LOW; dressing 2.2/16.8 LOW (2)",
+    "ground: edges 0.584 / 0.148 BUSY; lone 0.223 / 0.014 NOISY; top2 0.475 / 0.682 BUSY (1)"
    ],
-   "reds_per_cell": 2.47
+   "reds_per_cell": 2.43
   },
   {
-   "region": "isles",
-   "place": "headwaters",
-   "lane": "C",
+   "region": "valley",
+   "place": "woodland",
+   "lane": "E",
    "scenery": false,
    "check": "detail",
    "severity": "red",
    "cells": 177,
    "box_region_px": [
-    320,
     0,
+    1728,
     320,
     576
    ],
@@ -3500,15 +3753,15 @@
     576
    ],
    "tile": [
-    1,
-    0
+    0,
+    6
    ],
    "why": [
-    "ground: shapes 21.0/31.9 LOW; dressing 16.2/24.1 LOW (2)",
-    "ground: shapes 10.2/31.9 LOW; dressing 7.5/24.1 LOW (2)",
-    "tree: tones 7.8/20.4 LOW; shapes 9.5/35.8 LOW; dressing 5.5/29.3 LOW (1)"
+    "tree: tones 10.2/20.4 LOW; shapes 20.2/35.8 LOW; dressing 13.8/29.3 LOW (1)",
+    "tree: tones 13.2/20.4 LOW; shapes 22.8/35.8 LOW; dressing 18.0/29.3 LOW (1)",
+    "ground: edges 0.444 / 0.148 BUSY; lone 0.118 / 0.014 NOISY; top2 0.419 / 0.682 BUSY; colours 17.000 / 10.400 BUSY (1)"
    ],
-   "reds_per_cell": 2.56
+   "reds_per_cell": 1.71
   },
   {
    "region": "isles",
@@ -3535,104 +3788,11 @@
     2
    ],
    "why": [
-    "ground: shapes 16.0/31.9 LOW; dressing 12.0/24.1 LOW (2)",
-    "ground: shapes 21.0/31.9 LOW; dressing 17.8/24.1 LOW (2)",
+    "ground: lone 0.051 / 0.014 NOISY (2)",
+    "ground: lone 0.058 / 0.014 NOISY (2)",
     "water: tones 5.5/13.4 LOW; shapes 8.5/21.3 LOW; dressing 5.2/16.8 LOW (1)"
    ],
-   "reds_per_cell": 2.37
-  },
-  {
-   "region": "west",
-   "place": "springs",
-   "lane": "D",
-   "scenery": false,
-   "check": "detail",
-   "severity": "red",
-   "cells": 175,
-   "box_region_px": [
-    960,
-    0,
-    320,
-    576
-   ],
-   "box_place_px": [
-    0,
-    0,
-    320,
-    576
-   ],
-   "tile": [
-    3,
-    0
-   ],
-   "why": [
-    "ground: tones 5.2/12.6 LOW; shapes 8.5/31.9 LOW; dressing 7.5/24.1 LOW (2)",
-    "ground: tones 5.5/12.6 LOW; shapes 10.2/31.9 LOW; dressing 8.8/24.1 LOW (2)",
-    "ground: tones 2.8/12.6 LOW; shapes 5.5/31.9 LOW; dressing 4.5/24.1 LOW (1)"
-   ],
-   "reds_per_cell": 2.05
-  },
-  {
-   "region": "valley",
-   "place": "headland",
-   "lane": "E",
-   "scenery": false,
-   "check": "detail",
-   "severity": "red",
-   "cells": 175,
-   "box_region_px": [
-    640,
-    2880,
-    320,
-    576
-   ],
-   "box_place_px": [
-    0,
-    0,
-    320,
-    576
-   ],
-   "tile": [
-    2,
-    11
-   ],
-   "why": [
-    "ground: shapes 19.0/31.9 LOW; dressing 15.8/24.1 LOW (2)",
-    "ground: shapes 13.5/31.9 LOW; dressing 9.5/24.1 LOW (2)",
-    "ground: shapes 20.2/31.9 LOW; dressing 16.0/24.1 LOW (2)"
-   ],
-   "reds_per_cell": 1.83
-  },
-  {
-   "region": "valley",
-   "place": "park",
-   "lane": "E",
-   "scenery": false,
-   "check": "detail",
-   "severity": "red",
-   "cells": 175,
-   "box_region_px": [
-    640,
-    2304,
-    320,
-    576
-   ],
-   "box_place_px": [
-    0,
-    0,
-    320,
-    576
-   ],
-   "tile": [
-    2,
-    9
-   ],
-   "why": [
-    "ground: tones 6.8/12.6 LOW; shapes 7.0/31.9 LOW; dressing 5.2/24.1 LOW (1)",
-    "ground: tones 7.8/12.6 LOW; shapes 8.8/31.9 LOW; dressing 5.5/24.1 LOW (1)",
-    "ground: tones 5.8/12.6 LOW; shapes 6.8/31.9 LOW; dressing 4.0/24.1 LOW (1)"
-   ],
-   "reds_per_cell": 1.37
+   "reds_per_cell": 2.45
   },
   {
    "region": "valley",
@@ -3641,7 +3801,7 @@
    "scenery": false,
    "check": "detail",
    "severity": "red",
-   "cells": 174,
+   "cells": 172,
    "box_region_px": [
     640,
     1728,
@@ -3659,22 +3819,22 @@
     6
    ],
    "why": [
-    "ground: shapes 15.8/31.9 LOW; dressing 12.5/24.1 LOW (2)",
-    "ground: shapes 16.0/31.9 LOW; dressing 9.8/24.1 LOW (1)",
-    "ground: tones 6.8/12.6 LOW; shapes 6.8/31.9 LOW; dressing 4.5/24.1 LOW (1)"
+    "ground: edges 0.280 / 0.148 BUSY; lone 0.075 / 0.014 NOISY (1)",
+    "ground: edges 0.290 / 0.148 BUSY; lone 0.133 / 0.014 NOISY (1)",
+    "ground: tones   5.2 /  12.6 LOW; edges 0.243 / 0.148 BUSY; lone 0.105 / 0.014 NOISY (1)"
    ],
-   "reds_per_cell": 2.01
+   "reds_per_cell": 1.95
   },
   {
    "region": "valley",
-   "place": "woodland",
-   "lane": "E",
+   "place": "garden",
+   "lane": "B",
    "scenery": false,
    "check": "detail",
    "severity": "red",
-   "cells": 172,
+   "cells": 170,
    "box_region_px": [
-    0,
+    320,
     1728,
     320,
     576
@@ -3686,26 +3846,26 @@
     576
    ],
    "tile": [
-    0,
+    1,
     6
    ],
    "why": [
-    "ground: shapes 15.8/31.9 LOW; dressing 11.8/24.1 LOW (2)",
-    "ground: shapes 17.5/31.9 LOW; dressing 14.5/24.1 LOW (2)",
-    "ground: shapes 16.0/31.9 LOW; dressing 13.2/24.1 LOW (2)"
+    "ground: edges 0.393 / 0.148 BUSY; lone 0.115 / 0.014 NOISY; top2 0.573 / 0.682 BUSY; colours 14.500 / 10.400 BUSY (1)",
+    "ground: edges 0.383 / 0.148 BUSY; lone 0.104 / 0.014 NOISY; top2 0.558 / 0.682 BUSY; colours 14.250 / 10.400 BUSY (1)",
+    "ground: edges 0.470 / 0.148 BUSY; lone 0.154 / 0.014 NOISY; top2 0.496 / 0.682 BUSY; colours 16.000 / 10.400 BUSY (1)"
    ],
-   "reds_per_cell": 1.67
+   "reds_per_cell": 1.64
   },
   {
    "region": "west",
-   "place": "oasis",
+   "place": "gulch",
    "lane": "D",
    "scenery": false,
    "check": "detail",
    "severity": "red",
    "cells": 169,
    "box_region_px": [
-    0,
+    320,
     1152,
     320,
     576
@@ -3717,15 +3877,108 @@
     576
    ],
    "tile": [
-    0,
+    1,
     4
    ],
    "why": [
-    "ground: shapes 18.8/31.9 LOW; dressing 13.5/24.1 LOW (2)",
-    "face: tones 9.5/18.2 LOW; shapes 20.8/36.8 LOW; dressing 15.5/30.2 LOW (1)",
-    "face: tones 8.5/18.2 LOW; shapes 21.0/36.8 LOW; dressing 14.0/30.2 LOW (1)"
+    "wood-front: tones 19.5/24.0 LOW (2)",
+    "face: tones 9.2/18.2 LOW; shapes 22.2/36.8 LOW; dressing 15.0/30.2 LOW (1)",
+    "face: tones 8.0/18.2 LOW; shapes 11.2/36.8 LOW; dressing 7.5/30.2 LOW (1)"
    ],
-   "reds_per_cell": 1.83
+   "reds_per_cell": 1.98
+  },
+  {
+   "region": "moon",
+   "place": "lumen",
+   "lane": "D",
+   "scenery": false,
+   "check": "detail",
+   "severity": "red",
+   "cells": 169,
+   "box_region_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    0,
+    0
+   ],
+   "why": [
+    "face: tones 2.2/18.2 LOW; shapes 3.5/36.8 LOW; dressing 2.0/30.2 LOW (2)",
+    "face: tones 2.2/18.2 LOW; shapes 4.0/36.8 LOW; dressing 2.8/30.2 LOW (1)",
+    "face: tones 2.8/18.2 LOW; shapes 4.2/36.8 LOW; dressing 2.8/30.2 LOW (1)"
+   ],
+   "reds_per_cell": 1.75
+  },
+  {
+   "region": "valley",
+   "place": "town",
+   "lane": "E",
+   "scenery": false,
+   "check": "detail",
+   "severity": "red",
+   "cells": 169,
+   "box_region_px": [
+    320,
+    2304,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    1,
+    9
+   ],
+   "why": [
+    "ground: edges 0.299 / 0.148 BUSY; lone 0.073 / 0.014 NOISY (1)",
+    "ground: edges 0.293 / 0.148 BUSY; lone 0.099 / 0.014 NOISY (1)",
+    "tree: tones 9.2/20.4 LOW; shapes 12.2/35.8 LOW; dressing 8.5/29.3 LOW (1)"
+   ],
+   "reds_per_cell": 1.54
+  },
+  {
+   "region": "valley",
+   "place": "summit",
+   "lane": "A",
+   "scenery": false,
+   "check": "detail",
+   "severity": "red",
+   "cells": 168,
+   "box_region_px": [
+    320,
+    0,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    1,
+    0
+   ],
+   "why": [
+    "face: tones 5.2/18.2 LOW; shapes 5.5/36.8 LOW; dressing 3.0/30.2 LOW (2)",
+    "face: tones 3.8/18.2 LOW; shapes 3.2/36.8 LOW; dressing 1.2/30.2 LOW (2)",
+    "face: tones 5.8/18.2 LOW; shapes 6.8/36.8 LOW; dressing 3.5/30.2 LOW (2)"
+   ],
+   "reds_per_cell": 1.38
   },
   {
    "region": "valley",
@@ -3734,7 +3987,7 @@
    "scenery": false,
    "check": "detail",
    "severity": "red",
-   "cells": 166,
+   "cells": 167,
    "box_region_px": [
     0,
     2304,
@@ -3752,42 +4005,11 @@
     9
    ],
    "why": [
-    "ground: shapes 27.0/31.9 LOW (4)",
-    "ground: tones 8.8/12.6 LOW; shapes 10.2/31.9 LOW; dressing 6.5/24.1 LOW (2)",
-    "ground: shapes 19.2/31.9 LOW; dressing 13.5/24.1 LOW (1)"
+    "ground: edges 0.345 / 0.148 BUSY; lone 0.088 / 0.014 NOISY (1)",
+    "ground: edges 0.248 / 0.148 BUSY; lone 0.120 / 0.014 NOISY (1)",
+    "ground: edges 0.308 / 0.148 BUSY; lone 0.112 / 0.014 NOISY (1)"
    ],
-   "reds_per_cell": 2.07
-  },
-  {
-   "region": "west",
-   "place": "scorch",
-   "lane": "D",
-   "scenery": false,
-   "check": "detail",
-   "severity": "red",
-   "cells": 165,
-   "box_region_px": [
-    640,
-    1152,
-    320,
-    576
-   ],
-   "box_place_px": [
-    0,
-    0,
-    320,
-    576
-   ],
-   "tile": [
-    2,
-    4
-   ],
-   "why": [
-    "ground: tones 4.0/12.6 LOW; shapes 9.8/31.9 LOW; dressing 8.8/24.1 LOW (2)",
-    "ground: tones 3.0/12.6 LOW; shapes 6.2/31.9 LOW; dressing 5.2/24.1 LOW (2)",
-    "ground: tones 6.2/12.6 LOW; shapes 10.8/31.9 LOW; dressing 6.8/24.1 LOW (2)"
-   ],
-   "reds_per_cell": 1.9
+   "reds_per_cell": 2.02
   },
   {
    "region": "neon",
@@ -3822,15 +4044,46 @@
   },
   {
    "region": "west",
-   "place": "gulch",
+   "place": "springs",
    "lane": "D",
+   "scenery": false,
+   "check": "detail",
+   "severity": "red",
+   "cells": 164,
+   "box_region_px": [
+    960,
+    0,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    3,
+    0
+   ],
+   "why": [
+    "ground: tones   4.2 /  12.6 LOW (6)",
+    "ground: tones   4.5 /  12.6 LOW (5)",
+    "ground: tones   5.2 /  12.6 LOW (4)"
+   ],
+   "reds_per_cell": 1.81
+  },
+  {
+   "region": "valley",
+   "place": "harbour",
+   "lane": "E",
    "scenery": false,
    "check": "detail",
    "severity": "red",
    "cells": 163,
    "box_region_px": [
     320,
-    1152,
+    2880,
     320,
     576
    ],
@@ -3842,14 +4095,14 @@
    ],
    "tile": [
     1,
-    4
+    11
    ],
    "why": [
-    "wood-front: cluster 2.7/3.4 NOISY (3)",
-    "ground: cluster 2.7/3.1 NOISY (2)",
-    "ground: shapes 27.5/31.9 LOW (2)"
+    "water: cluster 6.1/7.8 NOISY (2)",
+    "ground: edges 0.478 / 0.148 BUSY; lone 0.133 / 0.014 NOISY; top2 0.541 / 0.682 BUSY; colours 17.000 / 10.400 BUSY (1)",
+    "ground: edges 0.251 / 0.148 BUSY; lone 0.075 / 0.014 NOISY (1)"
    ],
-   "reds_per_cell": 2.13
+   "reds_per_cell": 2.15
   },
   {
    "region": "home",
@@ -3858,7 +4111,7 @@
    "scenery": false,
    "check": "detail",
    "severity": "red",
-   "cells": 163,
+   "cells": 162,
    "box_region_px": [
     0,
     0,
@@ -3877,84 +4130,22 @@
    ],
    "why": [
     "paving: tones 3.0/14.6 LOW; shapes 3.0/31.9 LOW; dressing 0.0/23.7 LOW (3)",
-    "paving: tones 7.2/14.6 LOW; shapes 11.0/31.9 LOW; dressing 4.2/23.7 LOW (2)",
-    "paving: tones 3.5/14.6 LOW; shapes 3.2/31.9 LOW; dressing 0.2/23.7 LOW (2)"
+    "paving: tones 3.5/14.6 LOW; shapes 3.2/31.9 LOW; dressing 0.2/23.7 LOW (2)",
+    "face: tones 7.5/18.2 LOW; shapes 12.8/36.8 LOW; dressing 7.5/30.2 LOW (1)"
    ],
-   "reds_per_cell": 1.34
+   "reds_per_cell": 1.31
   },
   {
-   "region": "valley",
-   "place": "garden",
-   "lane": "B",
-   "scenery": false,
-   "check": "detail",
-   "severity": "red",
-   "cells": 162,
-   "box_region_px": [
-    320,
-    1728,
-    320,
-    576
-   ],
-   "box_place_px": [
-    0,
-    0,
-    320,
-    576
-   ],
-   "tile": [
-    1,
-    6
-   ],
-   "why": [
-    "ground: shapes 17.2/31.9 LOW; dressing 11.5/24.1 LOW (1)",
-    "ground: shapes 25.0/31.9 LOW; dressing 19.8/24.1 LOW (1)",
-    "ground: isolated 0.273/0.224 NOISY; cluster 2.6/3.1 NOISY (1)"
-   ],
-   "reds_per_cell": 1.64
-  },
-  {
-   "region": "steam",
-   "place": "canal",
-   "lane": "C",
-   "scenery": false,
-   "check": "detail",
-   "severity": "red",
-   "cells": 160,
-   "box_region_px": [
-    0,
-    576,
-    320,
-    576
-   ],
-   "box_place_px": [
-    0,
-    0,
-    320,
-    576
-   ],
-   "tile": [
-    0,
-    2
-   ],
-   "why": [
-    "facade: tones 14.2/25.6 LOW (3)",
-    "paving: tones 9.5/14.6 LOW (3)",
-    "paving: tones 8.0/14.6 LOW (3)"
-   ],
-   "reds_per_cell": 1.74
-  },
-  {
-   "region": "moon",
-   "place": "lumen",
+   "region": "west",
+   "place": "scorch",
    "lane": "D",
    "scenery": false,
    "check": "detail",
    "severity": "red",
-   "cells": 160,
+   "cells": 159,
    "box_region_px": [
-    0,
-    0,
+    640,
+    1152,
     320,
     576
    ],
@@ -3965,58 +4156,27 @@
     576
    ],
    "tile": [
-    0,
-    0
+    2,
+    4
    ],
    "why": [
-    "face: tones 2.2/18.2 LOW; shapes 3.5/36.8 LOW; dressing 2.0/30.2 LOW (2)",
-    "face: tones 2.2/18.2 LOW; shapes 4.0/36.8 LOW; dressing 2.8/30.2 LOW (1)",
-    "face: tones 2.8/18.2 LOW; shapes 4.2/36.8 LOW; dressing 2.8/30.2 LOW (1)"
+    "ground: tones   4.0 /  12.6 LOW (7)",
+    "ground: tones   4.8 /  12.6 LOW (6)",
+    "ground: tones   5.8 /  12.6 LOW (4)"
    ],
-   "reds_per_cell": 1.73
+   "reds_per_cell": 1.87
   },
   {
-   "region": "valley",
-   "place": "town",
-   "lane": "E",
+   "region": "west",
+   "place": "oasis",
+   "lane": "D",
    "scenery": false,
    "check": "detail",
    "severity": "red",
-   "cells": 160,
-   "box_region_px": [
-    320,
-    2304,
-    320,
-    576
-   ],
-   "box_place_px": [
-    0,
-    0,
-    320,
-    576
-   ],
-   "tile": [
-    1,
-    9
-   ],
-   "why": [
-    "ground: shapes 20.0/31.9 LOW; dressing 15.5/24.1 LOW (2)",
-    "ground: shapes 26.0/31.9 LOW (2)",
-    "facade: tones 16.8/25.6 LOW (2)"
-   ],
-   "reds_per_cell": 1.54
-  },
-  {
-   "region": "steam",
-   "place": "junction",
-   "lane": "C",
-   "scenery": false,
-   "check": "detail",
-   "severity": "red",
-   "cells": 160,
+   "cells": 158,
    "box_region_px": [
     0,
-    0,
+    1152,
     320,
     576
    ],
@@ -4028,14 +4188,14 @@
    ],
    "tile": [
     0,
-    0
+    4
    ],
    "why": [
-    "facade: tones 13.5/25.6 LOW (3)",
-    "facade: tones 15.2/25.6 LOW (2)",
-    "facade: tones 14.2/25.6 LOW (2)"
+    "ground: tones   4.2 /  12.6 LOW (9)",
+    "ground: tones   5.2 /  12.6 LOW (6)",
+    "ground: tones   5.0 /  12.6 LOW (5)"
    ],
-   "reds_per_cell": 1.3
+   "reds_per_cell": 1.8
   },
   {
    "region": "neon",
@@ -4044,7 +4204,7 @@
    "scenery": false,
    "check": "detail",
    "severity": "red",
-   "cells": 159,
+   "cells": 157,
    "box_region_px": [
     640,
     576,
@@ -4069,15 +4229,15 @@
    "reds_per_cell": 1.5
   },
   {
-   "region": "valley",
-   "place": "summit",
-   "lane": "A",
+   "region": "steam",
+   "place": "junction",
+   "lane": "C",
    "scenery": false,
    "check": "detail",
    "severity": "red",
-   "cells": 154,
+   "cells": 157,
    "box_region_px": [
-    320,
+    0,
     0,
     320,
     576
@@ -4089,15 +4249,15 @@
     576
    ],
    "tile": [
-    1,
+    0,
     0
    ],
    "why": [
-    "face: tones 8.8/18.2 LOW; shapes 22.5/36.8 LOW; dressing 12.5/30.2 LOW; isolated 0.231/0.205 NOISY (1)",
-    "face: tones 6.8/18.2 LOW; shapes 18.8/36.8 LOW; dressing 6.5/30.2 LOW; isolated 0.308/0.205 NOISY (1)",
-    "face: tones 8.2/18.2 LOW; shapes 21.5/36.8 LOW; dressing 10.0/30.2 LOW; isolated 0.252/0.205 NOISY (1)"
+    "facade: tones 13.5/25.6 LOW (3)",
+    "facade: tones 15.5/25.6 LOW (2)",
+    "facade: tones 15.2/25.6 LOW (2)"
    ],
-   "reds_per_cell": 1.34
+   "reds_per_cell": 1.39
   }
  ],
  "sprites_failing": {
@@ -4134,8 +4294,8 @@
    "kind": "mast",
    "placed": 1,
    "style": "palette",
-   "size": "ok",
-   "ledger": "REWORK: fault (ADJUST: side-on envelope (fault 18)); foot line 27 px: not whole 8 px cells (kind foot 8 x 8); bar tones LOW, sha"
+   "size": "mast: w 157 over 64 to 120",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: side-on envelope (fault 18)); foot line 51 px: not whole 8 px cells (kind foo"
   },
   "anchor": {
    "lane": "B",
@@ -4161,8 +4321,8 @@
    "kind": "armchair",
    "placed": 2,
    "style": "palette",
-   "size": "armchair: h 35 over 18 to 24, w 34 over 16 to 26",
-   "ledger": "REWORK: fault (ADJUST: 35 tall (about 20)); 35 x 34 px (over) against armchair 18-24 x 16-26; bar tones LOW, shapes LOW, dressin"
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: 35 tall (about 20)); bar tones LOW, cluster NOISY as wood-front; style: palet"
   },
   "atmos_car": {
    "lane": "C",
@@ -4170,8 +4330,8 @@
    "kind": "railcar",
    "placed": 1,
    "style": "palette",
-   "size": "railcar: h 22 under 36 to 56, w 60 under 64 to 128",
-   "ledger": "REWORK: fault (REDRAW: a flat side-on capsule); foot line 54 px: not whole 8 px cells (kind foot 12 x 4); 22 x 60 px (under) aga"
+   "size": "railcar: h 20 under 36 to 56, w 46 under 64 to 128",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: a flat side-on capsule); foot line 46 px: not whole 8 px cells (kind foot 12 "
   },
   "automaton": {
    "lane": "C",
@@ -4236,78 +4396,6 @@
    "size": "ok",
    "ledger": "REWORK: the same drawing as prop/barrel: re-check: changed since the audit (ADJUST: staves and hoops good; 19 tall (14)); foot l"
   },
-  "basalt_columns": {
-   "lane": "D",
-   "module": "caldera_props",
-   "kind": "crag",
-   "placed": 1,
-   "style": "ok",
-   "size": "ok",
-   "ledger": "REWORK: bar tones LOW, shapes LOW, dressing LOW as stone-wall"
-  },
-  "basalt_columns_b": {
-   "lane": "D",
-   "module": "caldera_props",
-   "kind": "crag",
-   "placed": 1,
-   "style": "ok",
-   "size": "ok",
-   "ledger": "REWORK: bar tones LOW, shapes LOW, dressing LOW as stone-wall"
-  },
-  "basalt_columns_low": {
-   "lane": "D",
-   "module": "caldera_props",
-   "kind": "crag",
-   "placed": 1,
-   "style": "ok",
-   "size": "ok",
-   "ledger": "REWORK: bar tones LOW, shapes LOW, dressing LOW as stone-wall"
-  },
-  "basalt_fallen": {
-   "lane": "D",
-   "module": "caldera_props",
-   "kind": "log",
-   "placed": 2,
-   "style": "ok",
-   "size": "ok",
-   "ledger": "REWORK: fault (ADJUST: a flat log of blocks); detail not measurable and not checked by eye since the bar"
-  },
-  "basalt_stack": {
-   "lane": "D",
-   "module": "caldera_props",
-   "kind": "crag",
-   "placed": 2,
-   "style": "ok",
-   "size": "ok",
-   "ledger": "REWORK: bar tones LOW, dressing LOW as stone-wall"
-  },
-  "basalt_steps": {
-   "lane": "D",
-   "module": "caldera_props",
-   "kind": "crag",
-   "placed": 1,
-   "style": "ok",
-   "size": "ok",
-   "ledger": "REWORK: bar tones LOW, dressing LOW as stone-wall"
-  },
-  "basalt_stumps": {
-   "lane": "D",
-   "module": "caldera_props",
-   "kind": "boulder",
-   "placed": 2,
-   "style": "speckle",
-   "size": "ok",
-   "ledger": "REWORK: style: speckle"
-  },
-  "bathhouse": {
-   "lane": "D",
-   "module": "caldera_props",
-   "kind": "smithy",
-   "placed": 1,
-   "style": "light-west, palette",
-   "size": "ok",
-   "ledger": "REWORK: fault (ADJUST: door 28); foot line 102 px: not whole 8 px cells (kind foot 11 x 7); bar tones LOW, shapes LOW, dressing "
-  },
   "bed": {
    "lane": "B",
    "module": "home_props",
@@ -4343,15 +4431,6 @@
    "style": "speckle, palette",
    "size": "beehive: h 25 over 13 to 22",
    "ledger": "REWORK: not audited; 25 x 12 px (over) against beehive 13-22 x 10-16; detail not measurable and not checked by eye since the bar"
-  },
-  "bell_tower": {
-   "lane": "D",
-   "module": "castle_props",
-   "kind": "tower",
-   "placed": 1,
-   "style": "ok",
-   "size": "ok",
-   "ledger": "REWORK: re-check: changed since the audit (ADJUST: doors about 22); foot line 38 px: not whole 8 px cells (kind foot 6 x 6); bar"
   },
   "bench": {
    "lane": "B",
@@ -4407,32 +4486,14 @@
    "size": "ok",
    "ledger": "REWORK: fault (REDRAW: dark blobs with no facets); detail not measurable and not checked by eye since the bar"
   },
-  "boat_blue": {
-   "lane": "B",
-   "module": "harbour_props",
-   "kind": "rowing_boat",
-   "placed": 2,
-   "style": "light-west",
-   "size": "ok",
-   "ledger": "REWORK: fault (ADJUST: plank hulls good; no hull side, no mooring); bar tones LOW, shapes LOW, dressing LOW as wood-front; style"
-  },
-  "boat_red": {
-   "lane": "B",
-   "module": "harbour_props",
-   "kind": "rowing_boat",
-   "placed": 1,
-   "style": "light-west",
-   "size": "ok",
-   "ledger": "REWORK: fault (ADJUST: plank hulls good; no hull side, no mooring); foot line 43 px: not whole 8 px cells (kind foot 7 x 2); bar"
-  },
   "boathouse": {
    "lane": "C",
    "module": "isle_props",
    "kind": "boathouse",
    "placed": 1,
-   "style": "ok",
-   "size": "ok",
-   "ledger": "REWORK: re-check: changed since the audit (ADJUST: door about 20); foot line 61 px: not whole 8 px cells (kind foot 10 x 8); bar"
+   "style": "outline-double, palette",
+   "size": "boathouse: h 116 over 80 to 112",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: door about 20); 116 x 86 px (over) against boathouse 80-112 x 64-112; style: "
   },
   "bollard": {
    "lane": "B",
@@ -4448,9 +4509,9 @@
    "module": "home_props",
    "kind": "cupboard",
    "placed": 1,
-   "style": "light-west",
-   "size": "cupboard: h 52 over 28 to 38",
-   "ledger": "REWORK: fault (ADJUST: 52 tall (about 32)); foot line 37 px: not whole 8 px cells (kind foot 4 x 2); 52 x 38 px (over) against c"
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: 52 tall (about 32)); bar tones LOW as wood-front; style: palette"
   },
   "bookshelf": {
    "lane": "D",
@@ -4565,9 +4626,9 @@
    "module": "western_props",
    "kind": null,
    "placed": 1,
-   "style": "palette",
+   "style": "light-west, speckle, palette",
    "size": "-",
-   "ledger": "REWORK: fault (ADJUST: good forms; static); detail not measurable and not checked by eye since the bar; style: palette"
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: good forms; static); detail not measurable and not checked by eye since the b"
   },
   "campfire": {
    "lane": "B",
@@ -4583,9 +4644,9 @@
    "module": "steampunk_props",
    "kind": "crane",
    "placed": 1,
-   "style": "light-west, palette",
-   "size": "ok",
-   "ledger": "REWORK: style: light-west, palette"
+   "style": "speckle, palette",
+   "size": "crane: h 81 over 40 to 72",
+   "ledger": "REWORK: foot line 11 px: not whole 8 px cells (kind foot 4 x 4); 81 x 42 px (over) against crane 40-72 x 24-64; detail not measu"
   },
   "canoe": {
    "lane": "C",
@@ -4619,8 +4680,8 @@
    "module": "zones",
    "kind": "small_animal",
    "placed": 1,
-   "style": "palette",
-   "size": "ok",
+   "style": "light-west, speckle, palette",
+   "size": "small_animal: h 17 over 5 to 12",
    "ledger": "REWORK: fault (ADJUST: flat orange shape, no frames (A9)); detail not measurable and not checked by eye since the bar; style: pa"
   },
   "charred_snag": {
@@ -4709,9 +4770,9 @@
    "module": "cyber_props",
    "kind": "city_building",
    "placed": 1,
-   "style": "colours, palette",
+   "style": "speckle, colours, palette",
    "size": "ok",
-   "ledger": "REWORK: re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); style: colours, p"
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); style: speckle, c"
   },
   "city_b17": {
    "lane": "C",
@@ -4754,7 +4815,7 @@
    "module": "cyber_props",
    "kind": "city_building",
    "placed": 1,
-   "style": "colours, palette",
+   "style": "speckle, colours, palette",
    "size": "ok",
    "ledger": "REWORK: re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); bar tones LOW as "
   },
@@ -4799,7 +4860,7 @@
    "module": "cyber_props",
    "kind": "city_building",
    "placed": 1,
-   "style": "colours, palette",
+   "style": "speckle, colours, palette",
    "size": "ok",
    "ledger": "REWORK: re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); foot line 54 px: "
   },
@@ -4844,7 +4905,7 @@
    "module": "cyber_props",
    "kind": "city_building",
    "placed": 1,
-   "style": "colours, palette",
+   "style": "speckle, colours, palette",
    "size": "city_building: h 268 over 84 to 232",
    "ledger": "REWORK: re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); foot line 62 px: "
   },
@@ -5222,7 +5283,7 @@
    "module": "steampunk_props",
    "kind": "landmark_tower",
    "placed": 1,
-   "style": "palette",
+   "style": "ok",
    "size": "ok",
    "ledger": "REWORK: re-check: changed since the audit (ADJUST: door 25, front only (fault 21)); bar tones LOW, shapes LOW, dressing LOW as f"
   },
@@ -5429,9 +5490,9 @@
    "module": "home_props",
    "kind": "furniture_table",
    "placed": 1,
-   "style": "palette",
+   "style": "speckle, palette",
    "size": "ok",
-   "ledger": "REWORK: fault (REDRAW: a flat brown box 34 tall); foot line 14 px: not whole 8 px cells (kind foot 5 x 3); bar tones LOW, shapes"
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: a flat brown box 34 tall); bar cluster NOISY as wood-front; style: speckle, p"
   },
   "dining_table": {
    "lane": "B",
@@ -5473,7 +5534,7 @@
    "lane": "B",
    "module": "harbour_props",
    "kind": "log",
-   "placed": 2,
+   "placed": 1,
    "style": "outline-double, light-west, palette",
    "size": "ok",
    "ledger": "REWORK: re-check: changed since the audit (ADJUST: a thin flat stick); detail not measurable and not checked by eye since the ba"
@@ -5523,21 +5584,12 @@
    "size": "ok",
    "ledger": "REWORK: re-check: changed since the audit (ADJUST: 20 tall (13)); detail not measurable and not checked by eye since the bar"
   },
-  "ember_shrine": {
-   "lane": "D",
-   "module": "caldera_props",
-   "kind": "shrine",
-   "placed": 1,
-   "style": "speckle",
-   "size": "ok",
-   "ledger": "REWORK: foot line 28 px: not whole 8 px cells (kind foot 3 x 3); detail not measurable and not checked by eye since the bar; sty"
-  },
   "engine_tank": {
    "lane": "C",
    "module": "steampunk_props",
    "kind": "water_tower",
    "placed": 1,
-   "style": "outline-double, palette",
+   "style": "outline-double",
    "size": "ok",
    "ledger": "REWORK: foot line 43 px: not whole 8 px cells (kind foot 6 x 6); bar tones LOW, shapes LOW, dressing LOW as machinery; style: ou"
   },
@@ -5586,41 +5638,14 @@
    "size": "ok",
    "ledger": "REWORK: not audited; detail not measurable and not checked by eye since the bar; style: speckle, palette"
   },
-  "fire_pit": {
-   "lane": "D",
-   "module": "western_props",
-   "kind": "campfire",
-   "placed": 1,
-   "style": "speckle, dither",
-   "size": "ok",
-   "ledger": "REWORK: style: speckle, dither"
-  },
   "fireplace": {
    "lane": "B",
    "module": "home_props",
    "kind": "fireplace",
    "placed": 1,
-   "style": "palette",
-   "size": "fireplace: h 57 over 30 to 48",
-   "ledger": "REWORK: fault (ADJUST: good stone; 57 tall); 57 x 66 px (over) against fireplace 30-48 x 40-72; bar tones LOW as stone-wall; sty"
-  },
-  "fireweed": {
-   "lane": "D",
-   "module": "caldera_props",
-   "kind": "tall_plant",
-   "placed": 6,
-   "style": "light-west, speckle, palette",
+   "style": "light-west, palette",
    "size": "ok",
-   "ledger": "REWORK: style: speckle, light-west, palette"
-  },
-  "fireweed_small": {
-   "lane": "D",
-   "module": "caldera_props",
-   "kind": "tall_plant",
-   "placed": 6,
-   "style": "speckle, palette",
-   "size": "ok",
-   "ledger": "REWORK: style: speckle, palette"
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: good stone; 57 tall); bar tones LOW as stone-wall; style: light-west, palette"
   },
   "fish_stall": {
    "lane": "B",
@@ -5969,8 +5994,8 @@
    "module": "frost_props",
    "kind": "ibex",
    "placed": 3,
-   "style": "ok",
-   "size": "ibex: h 36 over 18 to 26, w 36 over 20 to 30",
+   "style": "speckle",
+   "size": "ibex: h 34 over 18 to 26, w 36 over 20 to 30",
    "ledger": "REWORK: fault (ADJUST: stands on a grey disc; static); 36 x 36 px (over) against ibex 18-26 x 20-30; detail not measurable and n"
   },
   "ice_cream_cart": {
@@ -6033,8 +6058,8 @@
    "kind": "chest",
    "placed": 1,
    "style": "palette",
-   "size": "chest: w 34 over 16 to 28",
-   "ledger": "REWORK: fault (ADJUST: 22 tall (16)); 22 x 34 px (over) against chest 13-20 x 16-28; bar tones LOW, shapes LOW, dressing LOW as "
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: 22 tall (16)); detail not measurable and not checked by eye since the bar; st"
   },
   "kitchen": {
    "lane": "B",
@@ -6043,7 +6068,7 @@
    "placed": 1,
    "style": "palette",
    "size": "-",
-   "ledger": "REWORK: fault (REDRAW: flat counter 30 tall, empty); detail not measurable and not checked by eye since the bar; style: palette"
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: flat counter 30 tall, empty); detail not measurable and not checked by eye si"
   },
   "lamb_left": {
    "lane": "B",
@@ -6090,24 +6115,6 @@
    "size": "ok",
    "ledger": "REWORK: fault (ADJUST: good tower; door about 12); bar tones LOW, shapes LOW, dressing LOW as facade; style: palette"
   },
-  "lizard_rock": {
-   "lane": "D",
-   "module": "western_props",
-   "kind": "boulder",
-   "placed": 1,
-   "style": "speckle",
-   "size": "ok",
-   "ledger": "REWORK: bar isolated NOISY, cluster NOISY as stone-wall; style: speckle"
-  },
-  "lizard_rock_b": {
-   "lane": "D",
-   "module": "western_props",
-   "kind": "boulder",
-   "placed": 1,
-   "style": "speckle",
-   "size": "ok",
-   "ledger": "REWORK: bar isolated NOISY, cluster NOISY as stone-wall; style: speckle"
-  },
   "lobster_pots": {
    "lane": "B",
    "module": "harbour_props",
@@ -6116,6 +6123,15 @@
    "style": "speckle, palette",
    "size": "ok",
    "ledger": "REWORK: re-check: changed since the audit (ADJUST: one block of pots); detail not measurable and not checked by eye since the ba"
+  },
+  "lock_hut": {
+   "lane": "?",
+   "module": null,
+   "kind": null,
+   "placed": 1,
+   "style": "outline-double, light-west, speckle, colours, palette",
+   "size": "no kind in the size guide",
+   "ledger": "REWORK: not audited; detail not measurable and not checked by eye since the bar; style: speckle, light-west, colours, palette, o"
   },
   "lockers": {
    "lane": "D",
@@ -6266,9 +6282,9 @@
    "module": "steampunk_props",
    "kind": "narrowboat",
    "placed": 1,
-   "style": "light-west, speckle, dither, palette",
+   "style": "light-west, palette",
    "size": "ok",
-   "ledger": "REWORK: bar tones LOW, shapes LOW, dressing LOW as wood-front; style: speckle, dither, light-west, palette"
+   "ledger": "REWORK: bar tones LOW, shapes LOW, dressing LOW as wood-front; style: light-west, palette"
   },
   "net_rack": {
    "lane": "B",
@@ -6285,8 +6301,8 @@
    "kind": "furniture_low",
    "placed": 2,
    "style": "palette",
-   "size": "furniture_low: h 28 over 10 to 22",
-   "ledger": "REWORK: fault (ADJUST: 28 tall (about 14)); foot line 19 px: not whole 8 px cells (kind foot 2 x 2); 28 x 20 px (over) against f"
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: 28 tall (about 14)); detail not measurable and not checked by eye since the b"
   },
   "noodle_stall": {
    "lane": "C",
@@ -6351,29 +6367,11 @@
    "size": "ok",
    "ledger": "REWORK: foot line 19 px: not whole 8 px cells (kind foot 3 x 2); style: speckle"
   },
-  "palm": {
-   "lane": "D",
-   "module": "western_props",
-   "kind": "palm",
-   "placed": 13,
-   "style": "speckle, dither, palette",
-   "size": "ok",
-   "ledger": "REWORK: style: speckle, dither, palette"
-  },
-  "palm_small": {
-   "lane": "D",
-   "module": "western_props",
-   "kind": "small_palm",
-   "placed": 3,
-   "style": "speckle, dither, palette",
-   "size": "ok",
-   "ledger": "REWORK: style: speckle, dither, palette"
-  },
   "pandanus": {
    "lane": "C",
    "module": "isle_props",
    "kind": "small_palm",
-   "placed": 9,
+   "placed": 8,
    "style": "outline-light, speckle, palette",
    "size": "ok",
    "ledger": "REWORK: style: speckle, palette, outline-light"
@@ -6450,15 +6448,6 @@
    "size": "ok",
    "ledger": "REWORK: bar tones LOW, shapes LOW, dressing LOW as tree; style: palette"
   },
-  "poster_board": {
-   "lane": "D",
-   "module": "western_props",
-   "kind": "sign",
-   "placed": 1,
-   "style": "ok",
-   "size": "ok",
-   "ledger": "REWORK: bar tones LOW, shapes LOW, dressing LOW as wood-front"
-  },
   "postern": {
    "lane": "D",
    "module": "castle_props",
@@ -6518,9 +6507,9 @@
    "module": "isle_props",
    "kind": "shelter",
    "placed": 1,
-   "style": "speckle, palette",
+   "style": "palette",
    "size": "ok",
-   "ledger": "REWORK: bar tones LOW, shapes LOW, dressing LOW as facade; style: speckle, palette"
+   "ledger": "REWORK: bar tones LOW, shapes LOW, dressing LOW as facade; style: palette"
   },
   "reading_nook": {
    "lane": "?",
@@ -6612,24 +6601,6 @@
    "size": "ok",
    "ledger": "REWORK: style: palette"
   },
-  "sailboat": {
-   "lane": "B",
-   "module": "harbour_props",
-   "kind": "sailboat",
-   "placed": 1,
-   "style": "palette",
-   "size": "ok",
-   "ledger": "REWORK: re-check: changed since the audit (REDRAW: a flat side-on sail); foot line 53 px: not whole 8 px cells (kind foot 8 x 3)"
-  },
-  "saloon": {
-   "lane": "D",
-   "module": "western_props",
-   "kind": "false_front",
-   "placed": 1,
-   "style": "speckle, colours",
-   "size": "ok",
-   "ledger": "REWORK: re-check: changed since the audit (ADJUST: storeys right; doors 25); style: speckle, colours"
-  },
   "sandstone_arch": {
    "lane": "D",
    "module": "western_props",
@@ -6638,15 +6609,6 @@
    "style": "palette",
    "size": "-",
    "ledger": "REWORK: style: palette"
-  },
-  "sandstone_outcrop": {
-   "lane": "D",
-   "module": "western_props",
-   "kind": "boulder",
-   "placed": 1,
-   "style": "ok",
-   "size": "ok",
-   "ledger": "REWORK: bar tones LOW, shapes LOW, dressing LOW as stone-wall"
   },
   "sapling": {
    "lane": "B",
@@ -7008,15 +6970,6 @@
    "size": "ok",
    "ledger": "REWORK: style: outline-double"
   },
-  "store": {
-   "lane": "D",
-   "module": "western_props",
-   "kind": "false_front",
-   "placed": 1,
-   "style": "speckle, colours, palette",
-   "size": "ok",
-   "ledger": "REWORK: re-check: changed since the audit (ADJUST: storeys right; doors 25); style: speckle, colours, palette"
-  },
   "street_light": {
    "lane": "C",
    "module": "cyber_props",
@@ -7061,15 +7014,6 @@
    "style": "palette",
    "size": "telescope: h 33 over 18 to 26",
    "ledger": "REWORK: foot line 14 px: not whole 8 px cells (kind foot 2 x 1); 33 x 21 px (over) against telescope 18-26 x 10-24; style: palet"
-  },
-  "tent": {
-   "lane": "D",
-   "module": "western_props",
-   "kind": "tent",
-   "placed": 1,
-   "style": "speckle, colours, palette",
-   "size": "ok",
-   "ledger": "REWORK: re-check: changed since the audit (REDRAW: reads as two grey rocks); detail not measurable and not checked by eye since "
   },
   "tether": {
    "lane": "C",
@@ -7148,9 +7092,9 @@
    "module": "steampunk_props",
    "kind": "station_building",
    "placed": 1,
-   "style": "palette",
-   "size": "station_building: h 85 under 88 to 128",
-   "ledger": "REWORK: re-check: changed since the audit (ADJUST: door about 18); 85 x 74 px (under) against station_building 88-128 x 64-128; "
+   "style": "outline-double, palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: door about 18); foot line 67 px: not whole 8 px cells (kind foot 11 x 6); bar"
   },
   "tumbleweed": {
    "lane": "D",
@@ -7188,15 +7132,6 @@
    "size": "-",
    "ledger": "REWORK: style: palette"
   },
-  "wagon": {
-   "lane": "D",
-   "module": "western_props",
-   "kind": "wagon",
-   "placed": 1,
-   "style": "palette",
-   "size": "ok",
-   "ledger": "REWORK: fault (ADJUST: side view, spoked wheels flat); foot line 53 px: not whole 8 px cells (kind foot 8 x 3); bar tones LOW, s"
-  },
   "wall_run": {
    "lane": "D",
    "module": "castle_props",
@@ -7211,9 +7146,9 @@
    "module": "home_props",
    "kind": "cupboard",
    "placed": 1,
-   "style": "ok",
-   "size": "cupboard: h 58 over 28 to 38",
-   "ledger": "REWORK: fault (REDRAW: a flat slab 58 tall); foot line 37 px: not whole 8 px cells (kind foot 4 x 2); 58 x 38 px (over) against "
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: a flat slab 58 tall); bar tones LOW as wood-front; style: palette"
   },
   "warehouse": {
    "lane": "C",
@@ -7251,24 +7186,6 @@
    "size": "ok",
    "ledger": "REWORK: foot line 12 px: not whole 8 px cells (kind foot 1 x 1); style: palette"
   },
-  "water_mill": {
-   "lane": "B",
-   "module": "valley_props",
-   "kind": "water_mill",
-   "placed": 1,
-   "style": "outline-double, speckle",
-   "size": "water_mill: h 88 under 104 to 144",
-   "ledger": "REWORK: re-check: changed since the audit (ADJUST: detailed, wheel turns; door about 24); foot line 86 px: not whole 8 px cells "
-  },
-  "water_tower": {
-   "lane": "D",
-   "module": "western_props",
-   "kind": "water_tower",
-   "placed": 1,
-   "style": "ok",
-   "size": "ok",
-   "ledger": "REWORK: foot line 37 px: not whole 8 px cells (kind foot 6 x 6); bar tones LOW, dressing LOW as machinery"
-  },
   "watering_can": {
    "lane": "B",
    "module": "home_props",
@@ -7305,15 +7222,6 @@
    "size": "ok",
    "ledger": "REWORK: bar tones LOW, shapes LOW, dressing LOW as tree; style: palette"
   },
-  "windmill": {
-   "lane": "B",
-   "module": "valley_props",
-   "kind": "windmill",
-   "placed": 1,
-   "style": "speckle, palette",
-   "size": "ok",
-   "ledger": "REWORK: re-check: changed since the audit (ADJUST: elliptical plinth (B6), small door); foot line 61 px: not whole 8 px cells (k"
-  },
   "window_seat": {
    "lane": "B",
    "module": "home_props",
@@ -7322,15 +7230,6 @@
    "style": "palette",
    "size": "-",
    "ledger": "REWORK: fault (ADJUST: a flat box); detail not measurable and not checked by eye since the bar; style: palette"
-  },
-  "windpump": {
-   "lane": "D",
-   "module": "western_props",
-   "kind": "windpump",
-   "placed": 1,
-   "style": "speckle, palette",
-   "size": "ok",
-   "ledger": "REWORK: foot line 28 px: not whole 8 px cells (kind foot 4 x 4); style: speckle, palette"
   },
   "windsock": {
    "lane": "A",
@@ -7355,7 +7254,7 @@
    "module": "steampunk_props",
    "kind": "workshop",
    "placed": 1,
-   "style": "speckle, palette",
+   "style": "speckle",
    "size": "ok",
    "ledger": "REWORK: re-check: changed since the audit (ADJUST: doors about 22; near twins); bar tones LOW as facade; style: speckle"
   },
@@ -7364,7 +7263,7 @@
    "module": "steampunk_props",
    "kind": "workshop",
    "placed": 1,
-   "style": "speckle, palette",
+   "style": "speckle",
    "size": "ok",
    "ledger": "REWORK: re-check: changed since the audit (ADJUST: doors about 22; near twins); bar tones LOW as facade; style: speckle"
   }
@@ -7375,16 +7274,16 @@
  },
  "exempted_cells": 0,
  "seconds": {
-  "load": 11.7,
-  "compose": 1.3,
-  "kinds": 9.5,
-  "detail": 149.2,
+  "load": 4.0,
+  "compose": 2.1,
+  "kinds": 14.0,
+  "detail": 143.6,
   "soft grid": 0.1,
   "straight runs": 0.1,
-  "ruler edges": 4.7,
-  "seams": 0.9,
-  "style": 8.7,
-  "sprites": 13.2,
+  "ruler edges": 3.3,
+  "seams": 0.6,
+  "style": 9.4,
+  "sprites": 10.6,
   "benchmark": 0.1
  }
 }
