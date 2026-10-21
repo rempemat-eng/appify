@@ -1029,33 +1029,17 @@ def corral_side() -> Canvas:
 
 
 def palm(tall: bool = True) -> Canvas:
-    """A date palm, 56 x 84 (or 48 x 64): a ringed, gently curved trunk lit on the left,
-    a crown of long arching fronds lit on their upper faces, and a cluster of dates."""
+    """A date palm, 56 x 84 (or 48 x 64) (asset ledger 20 Oct: redrawn as the dry and fire
+    kit's palm, so a prop palm and a kit palm are one drawing on the house ramps): a leaning
+    trunk patterned by old leaf bases in offset rows, lit on the west; a crown of feathered
+    fronds radiating and drooping, the back ones in shade, the front ones lit on their upper
+    side; a skirt of dead fronds; dates hanging under the crown (the tall one). Its foot
+    stands where the old palm's did."""
+    import dry_kit as dk
     w, h = (56, 84) if tall else (48, 64)
-    cv = Canvas(w, h, pad=PAD)
-    cx = w // 2
-    top = 22 if tall else 18
-    for y in range(top, h - 1):
-        bend = int(math.sin((y - top) / (h - top) * 2.2) * 3)
-        for dx in range(-3, 3):
-            x = cx + bend + dx
-            c = WOOD[3] if dx < -1 else WOOD[2] if dx < 1 else WOOD[1]
-            if (y - top) % 4 == 0:
-                c = WOOD[1] if dx > -2 else WOOD[2]  # the rings
-            cv.set(x, y, c)
-    for k in range(12):  # fronds arching out and down from the crown
-        a = math.pi * (-0.05 + 1.1 * k / 11)
-        length = (24 if tall else 19) + (k % 2) * 3
-        for t in range(length):
-            x = cx + math.cos(a) * t * (1 if k % 2 else 0.95)
-            y = top + 6 - math.sin(a) * t * 0.85 + (t / length) ** 2 * 12
-            for side in (-1, 1):  # leaflets either side of the rib
-                lx, ly = int(x + side * 0.5), int(y + side * 1.2 + (1 if t % 3 == 0 else 0))
-                cv.set(lx, ly, CACTUS[3] if side < 0 else CACTUS[1])
-            cv.set(int(x), int(y), CACTUS[4] if t < length * 0.6 else CACTUS[2])
-    for (x, y) in disc(cx + 3, top + 4, 2.5):
-        cv.set(x, y, '#8A4A2A' if (x + y) % 2 else '#B8693F')
-    return cv
+    sp, _shadow = dk.palm(0 if tall else 1, seed=3 if tall else 5)
+    cv = rh.kit_sprite(sp, w, h, (w // 2 + 1, h - 2))
+    return rh.finish(cv)
 
 
 def sandstone_arch() -> Canvas:
@@ -1490,22 +1474,65 @@ def desert_scrub(seed: int = 0) -> Canvas:
 
 
 def sandstone_outcrop(seed: int = 0) -> Canvas:
-    """Weathered sandstone blocks breaking out of the dune, 40 x 24: layered beds in
-    adobe tones (lit tops, shaded right flanks; style.facet_stone), sand piled at the foot."""
-    import style
+    """Weathered sandstone breaking out of the sand, 40 x 24 (asset ledger 20 Oct: redrawn
+    on the house ramps). Three rounded blocks of bedded sandstone, wind-worn into soft
+    lumps, never boxes: each bed is a band across its block with a lit upper lip and a dark
+    undercut where the softer layer under it wore back, the beds' edges wavering as they
+    weather; a crack or two splits the block, desert varnish streaks down from the crown,
+    orange lichen sits in the shade, and sand is blown up against the foot."""
     w, h = 40, 24
     cv = Canvas(w, h, pad=PAD)
-    for k, (cx, cy, rx, ry) in enumerate(((16, 12, 13, 9), (30, 15, 9, 7), (8, 18, 6, 4))):
-        pts = {(x, y) for y in range(cy - ry, cy + ry + 1) for x in range(cx - rx, cx + rx + 1)
-               if max(abs(x - cx) / rx, abs(y - cy) / ry) * 0.7 + math.hypot((x - cx) / rx, (y - cy) / ry) * 0.3 <= 1}
-        style.facet_stone(cv, pts, ADOBE, seed=seed + k)
-        for (x, y) in pts:  # the beds
-            if (y - cy + 40) % 4 == 0 and (x, y - 1) in pts and (x, y + 1) in pts:
-                cv.set(x, y, ADOBE[1] if x > cx else ADOBE[2])
-    for (x, y) in oval(20, h - 2, 18, 2.5):
-        if y >= h - 3:
-            cv.set(x, y, DESERT[4] if x < 20 else DESERT[3])
-    return cv
+    blocks = ((14, 11, 12, 8.5), (29, 14, 8, 6.5), (6, 17, 5.5, 4)) if seed % 2 == 0 else \
+             ((11, 13, 9, 7), (26, 11, 11, 8.5), (35, 17, 4.5, 3.5))
+    fams = ('adobe', 'adobe_warm', 'sand_warm', 'adobe_cool')
+    drawn = set()
+    for k, (cx, cy, rx, ry) in sorted(enumerate(blocks), key=lambda kb: kb[1][1] - kb[1][3]):
+        mask = set()
+        for y in range(int(cy - ry) - 1, int(cy + ry) + 2):
+            for x in range(int(cx - rx) - 2, int(cx + rx) + 2):
+                dx, dy = (x + 0.5 - cx) / rx, (y + 0.5 - cy) / ry
+                wob = 0.12 * (smooth_noise(x, y, 3, seed + 610 + k) - 0.5)
+                if (abs(dx) ** 3 + abs(dy) ** 3) ** (1 / 3) <= 1 + wob and y < h - 1:
+                    mask.add((x, y))
+        if not mask:
+            continue
+        ytop = min(y for _, y in mask)
+        for (x, y) in mask:
+            col_top = min(yy for (xx, yy) in mask if xx == x)
+            bed = int((y - ytop + 2 * smooth_noise(x, 0, 6, seed + 620 + k)) // 4)
+            r = (y - ytop + 2 * smooth_noise(x, 0, 6, seed + 620 + k)) % 4
+            fam = fams[(k + bed) % len(fams)]
+            u = (x + 0.5 - (cx - rx)) / (2 * rx)
+            kk = 4 if y == col_top else 3 if r < 2.6 else 2
+            if r >= 3.2:
+                kk = 1                                           # the undercut under each bed
+            if u > 0.78:
+                kk -= 1 if u < 0.92 else 2                       # the east flank in shade
+            elif u < 0.2 and kk < 4:
+                kk += 1                                          # the west flank to the light
+            cv.set(x, y, T(fam, max(1, min(5, kk))))
+        for (x, y) in mask:                              # where this block stands in front of another, its edge
+            if any((x + dx, y + dy) in drawn and (x + dx, y + dy) not in mask for dx, dy in ((1, 0), (-1, 0), (0, -1))):
+                cv.set(x, y, rh.ss.EDGES['adobe'])
+        drawn |= mask
+        for vx in range(int(cx - rx) + 3, int(cx + rx) - 2, 5):  # desert varnish down from the crown
+            if noise2(k, vx, seed + 604) < 0.4:
+                tops = [yy for (xx, yy) in mask if xx == vx]
+                if tops:
+                    for yy in range(min(tops) + 1, min(tops) + 2 + int(noise2(vx, k, seed + 605) * 4)):
+                        if (vx, yy) in mask:
+                            cv.set(vx, yy, T('earth_cool', 2))
+        for (x, y) in ((int(cx + rx * 0.55), int(cy + ry * 0.45)), (int(cx + rx * 0.55) + 1, int(cy + ry * 0.45))):
+            if (x, y) in mask:
+                cv.set(x, y, T('clay', 3))                       # lichen in the shade
+    xs = [x for (x, y) in drawn]
+    lo, hi = min(xs) - 2, max(xs) + 2
+    for x in range(max(0, lo), min(w, hi + 1)):                 # sand drifted against the foot, deepest in the lee
+        edge = min(x - lo, hi - x)
+        depth = min(3, 1 + edge // 3) - (1 if smooth_noise(x, 0, 4, seed + 606) > 0.6 else 0)
+        for y in range(h - depth, h):
+            cv.set(x, y, T('sand', 4 if y == h - depth else 3))
+    return rh.finish(cv)
 
 
 def horse() -> Canvas:
@@ -1630,41 +1657,45 @@ def prickly_pear() -> Canvas:
 # to ride); a string of laden camels stands tethered nose to tail at the caravan camp.
 def _lizard(cv: Canvas, x: int, y: int, facing: int = 1):
     """A desert lizard basking flat on a rock, 14 x 6 (review 19 Oct: the first one read as
-    moss): pale sand above with dark brown cross-bands, a dark outline so it reads on the
-    sandstone, its tail tapering behind it in a curve, four splayed legs with toes, the head
-    raised toward the sun with a dark eye, and its own small shadow on the rock below and to
-    the right."""
-    SKIN = ['#3A2618', '#6A4A2A', '#A8804E', '#D2B07A', '#ECD6A4']
-    ROCK_SH = ADOBE[1]
-    body = [(x + facing * t, y + (1 if 3 < t < 7 else 0)) for t in range(10)]
-    for i, (bx, by) in enumerate(body):  # its shadow first, one row down and to the right
-        cv.set(bx + 1, by + 2, ROCK_SH)
-    for t in range(5):  # the tail: thin, curving down and back
-        tx, ty = x - facing * (t + 1), y + 1 + t // 2
-        cv.set(tx, ty, SKIN[2] if t < 3 else SKIN[1]); cv.set(tx + 1, ty + 1, ROCK_SH)
-    for i, (bx, by) in enumerate(body):  # the body: two pixels deep, its back lit
-        band = i in (3, 6)
-        cv.set(bx, by - 1, SKIN[0])  # the outline along its back
-        cv.set(bx, by, SKIN[1] if band else SKIN[4] if i < 6 else SKIN[3])
-        cv.set(bx, by + 1, SKIN[1] if band else SKIN[2])
-        cv.set(bx, by + 2, SKIN[0])  # and along its belly
-    hx = x + facing * 10
-    for (dx, dy, c) in ((0, -2, SKIN[0]), (0, -1, SKIN[3]), (1, -2, SKIN[3]), (1, -3, SKIN[0]), (2, -2, SKIN[0]),
-                        (1, -1, SKIN[2]), (0, 0, SKIN[2])):
-        cv.set(hx + facing * dx, y + dy, c)  # the raised head
-    cv.set(hx + facing, y - 2, '#1A1210')  # its eye
-    for lx in (1, 7):  # four splayed legs, the toes spread on the warm rock
-        for side in (-1, 1):
-            fx, fy = x + facing * lx, y + (3 if side > 0 else -2)
-            cv.set(fx, fy, SKIN[1]); cv.set(fx - facing, fy + side, SKIN[0]); cv.set(fx + facing, fy + side, SKIN[0])
+    moss), on the house ramps: pale sand above with dark cross-bands, a dark rim so it reads
+    on the sandstone, the tail tapering behind it, four splayed legs, the head raised to the
+    sun with a dark eye, and its small shadow on the rock below and to the right."""
+    sil = set()
+    for t in range(12):                                 # head, body and tail along a gentle S
+        px = x + facing * t
+        py = y + (0 if t > 8 else 1 if t > 2 else 2)
+        sil.add((px, py))
+        if 3 <= t <= 9:
+            sil.add((px, py + 1))                       # the body two pixels deep
+    legs = [(x + facing * 4, y + 3), (x + facing * 8, y + 2), (x + facing * 3, y), (x + facing * 9, y - 1)]   # four short legs, splayed
+    for (bx, by) in sil | set(legs):                    # its shadow on the rock, down and right
+        if (bx + 1, by + 1) not in sil:
+            rh.step(cv, bx + 1, by + 1, -2, 1)
+    for (bx, by) in sorted(sil):                        # a dark chuckwalla, its back lit, pale bands across it
+        t = (bx - x) * facing
+        lower = (bx, by - 1) in sil
+        band = t in (4, 6, 8)
+        if lower:
+            cv.set(bx, by, T('earth', 1))
+        else:
+            cv.set(bx, by, T('sand', 4) if band else T('earth', 3 if t < 9 else 4))
+        if t < 3:
+            cv.set(bx, by, T('earth', 2))              # the tail, thinning
+    for (lx, ly) in legs:
+        cv.set(lx, ly, T('earth', 1))
+    cv.set(x + facing * 11, y - 1, T('earth', 4))      # the head raised to the sun
+    cv.set(x + facing * 10, y - 1, rh.ss.INK)          # its eye
 
 
 def lizard_rock(seed: int = 0) -> Canvas:
-    """A sandstone outcrop with a lizard basking on its sunlit top, 40 x 26."""
+    """A sandstone outcrop with a lizard basking on its sunlit top, 40 x 26 (the brief's
+    lizard rocks; redrawn with the outcrop on the house ramps)."""
     base = sandstone_outcrop(seed)
     cv = Canvas(40, 26, pad=PAD)
     cv.paste(base, 0, 2)
-    _lizard(cv, 9, 7, 1)
+    top = min(y for y in range(cv.h) for x in range(8, 22) if cv.get(x, y)[3]) + 2
+    _lizard(cv, 9, top + 1, 1)
+    rh.tidy(cv, keep=[(20, top - 1)])
     return cv
 
 
