@@ -173,8 +173,10 @@ def parse_brief() -> dict:
             markers.append({'t': t, 'what': what.strip(), 'at': [int(x), int(y)], 'place': place})
     eggs = []
     sec = text.split('**Easter-egg spots')[1].split('## 6')[0]
-    for m in re.finditer(r'([a-z ]+?) \((\d+), (\d+)\)', sec.split(':', 1)[1]):
-        eggs.append({'what': m.group(1).strip(), 'at': [int(m.group(2)), int(m.group(3))]})
+    for item in sec.split(':', 1)[1].split(';'):
+        m = re.search(r'([A-Za-z ]+?) \((\d+), (\d+)\)', item)
+        if m:
+            eggs.append({'what': m.group(1).strip(), 'at': [int(m.group(2)), int(m.group(3))]})
     return {'named': named, 'pockets': pockets, 'markers': markers, 'eggs': eggs}
 
 
@@ -281,6 +283,12 @@ WILLOW_LOWER = [[3456, 2696], [3392, 2776], [3320, 2880], [3176, 2968], [3040, 3
 PALM_POOL = [[3424, 2640], [3512, 2640], [3512, 2696], [3424, 2696]]
 SALT_LAKE = [[2672, 3696], [2800, 3672], [3024, 3664], [3216, 3696], [3296, 3768], [3280, 3880], [3160, 3952],
              [2944, 3968], [2752, 3944], [2656, 3864], [2640, 3768]]
+
+FISHING_POOL = [[2104, 3720], [2168, 3720], [2168, 3752], [2104, 3752]]
+PALM_CHANNELS = [[3512, 2696], [3600, 2696], [3600, 2840]]
+GULCH_CHANNELS = [[2456, 2224], [2560, 2224], [2560, 2280]]
+HOT_POOL_W = [[2160, 5488], [2208, 5488], [2208, 5512], [2160, 5512]]
+HOT_POOL_E = [[2232, 5496], [2272, 5496], [2272, 5512], [2232, 5512]]
 
 # Mount Ember. The crater (a lava lake in a crag rim) and the upper cone are never walked; the
 # forge stands on the caldera's south lip; Hearthold on its rock below, between the flows.
@@ -647,7 +655,7 @@ def corridors(T, ways, changes):
     claimed = np.zeros((NY, NX), bool)     # cells a way has set, its shoulders included
     for w in ways:
         pts = w['points']
-        half = w['width'] / 2 + 8
+        half = w['width'] / 2 + (24 if w.get('route') else 16)   # a flat verge to stand things on
         dd = dist_field(pts)
         idx = np.argwhere(dd <= half)
         if w.get('changes') is not None:
@@ -986,15 +994,18 @@ STREETS = [
      'from the Lode Track down past the street to the canyon head'],
     ['gulch_platform_lane', 32, [[2832, 2368], [2904, 2368], [2904, 2344]], "to the desert line's platform"],
     ['gulch_drove_lane', 32, [[2864, 2472], [2864, 2416]], "the Drover's Road's end onto the street"],
-    ['gulch_orchard_lane', 24, [[2512, 2416], [2512, 2200], [2632, 2200]], 'up the orchards along the Amber'],
+    ['gulch_orchard_lane', 24, [[2592, 2424], [2592, 2200], [2712, 2200]], 'up the orchards along the Amber'],
+    ['dune_track', 24, [[2560, 2424], [2560, 2616], [1216, 2616], [1216, 2848]],
+     "a caravan track west from Dust Gulch over the Amber's ford to the dune sea's edge, where the lone palm "
+     'stands (the egg spot) and the far caravan route shows on the dunes'],
     ['palm_orchard_lane', 32, [[3480, 2864], [3480, 2760], [3600, 2760]],
      "from the road past the pool to the water-seller's awning"],
     ['lode_yard', 32, [[2936, 1696], [3040, 1696], [3168, 1696]], 'the mine yard along the face'],
     ['hearthold_high_street', 40, [[2328, 5352], [2328, 5296], [2472, 5296], [2472, 5040]],
      "from the gate square up the town's steps to the forge stair's foot"],
-    ['hearthold_keep_street', 32, [[2472, 5112], [2616, 5112], [2616, 5024]], 'up to the keep in the upper town'],
+    ['hearthold_keep_street', 32, [[2472, 5040], [2616, 5040]], "along the upper town to the keep's gate"],
     ['hearthold_market_row', 32, [[2472, 5200], [2640, 5200], [2640, 5288]], 'the market row and the east wall walk'],
-    ['forge_yard', 32, [[2392, 4896], [2464, 4896], [2560, 4896]], 'the forge yard on the caldera lip'],
+    ['forge_yard', 32, [[2392, 4864], [2472, 4864], [2560, 4864]], 'the forge yard on the caldera lip'],
     ['springs_walk', 32, [[2328, 5464], [2152, 5464]], 'along the pools'],
     ['cinderwick_lane', 32, [[2704, 5616], [2784, 5616], [2784, 5664], [2904, 5664]],
      "the hamlet's lane above the black sand, from the Ember Way to the Ash Coast's end"],
@@ -1034,6 +1045,7 @@ ROUTE_PLAN = {
     },
     'forge-stair': {
         'start': 11,
+        'points': [[2472, 5040, 48], [2472, 4864, 48]],
         'changes': [((2472, 5008), 11, 12, 'stair'), ((2472, 4968), 12, 13, 'stair'), ((2472, 4928), 13, 14, 'stair')],
     },
     'ember-way': {
@@ -1149,6 +1161,8 @@ class Ground:
         self.bb = [(min(p[0] for p in w['points']) - 200, min(p[1] for p in w['points']) - 200,
                     max(p[0] for p in w['points']) + 200, max(p[1] for p in w['points']) + 200) for w in ways]
         self.taken = []
+        self.reach = None       # per box: what F's reach check finds walkable from the routes
+        self.eggs = []          # the egg spots, kept 40 px clear
 
     def cell(self, x, y):
         c, r = int(x // C), int(y // C)
@@ -1162,6 +1176,12 @@ class Ground:
             return False
         if box and not (box[0] + 8 <= x <= box[0] + box[2] - 8 and box[1] + 8 <= y <= box[1] + box[3] - 8):
             return False
+        if self.reach is not None:
+            pid = next((k for k, b in BOXES.items() if box and list(b) == list(box)), None) or \
+                ('sunstone' if (y < SPLIT_Y and x <= 4800) else 'fire-country')
+            rm = self.reach[pid]
+            if not (0 <= int(y // 4) < rm.shape[0] and 0 <= int(x // 4) < rm.shape[1]) or not rm[int(y // 4), int(x // 4)]:
+                return False
         # also clear of faces a few px away (the thing's base must sit on the top, not the lip)
         for dx, dy in ((0, 0), (0, 8), (8, 0), (-8, 0), (0, -8), (4, 4), (-4, -4), (4, -4), (-4, 4)):
             q = self.cell(x + dx, y + dy)
@@ -1185,6 +1205,8 @@ class Ground:
             if dn > lim or dn < lo:
                 return False
         elif dmin > lim:
+            return False
+        if any(math.hypot(x - e[0], y - e[1]) < 40 for e in self.eggs):
             return False
         return all(math.hypot(x - a, y - b) >= clear for a, b in self.taken)
 
@@ -1286,8 +1308,13 @@ def build(R, brief):
             t['changes'], t['tier'] = changes, ts
             trod_ways.append(dict(width=t['width'], points=[[p[0], p[1], ts] for p in t['points']], changes=changes))
         else:
-            # lane D's streets keep the ground they are laid on: the terraces give their stairs
-            trod_ways.append(dict(width=t['width'], points=[[p[0], p[1], 0] for p in t['points']], terrain=True))
+            # lane D's streets keep the ground they are laid on (the terraces give their stairs),
+            # their east-west legs level
+            pts = t['points']
+            legs = [int(T[min(NY - 1, int((a[1] + b[1]) / 2 // C)), min(NX - 1, int((a[0] + b[0]) / 2 // C))])
+                    for a, b in zip(pts, pts[1:])]
+            trod_ways.append(dict(width=t['width'], points=[[p[0], p[1], 0] for p in pts], terrain=True,
+                                  ew_level=True, leg_tiers=legs))
     route_ways = [dict(width=max(p[3] for p in r['points']), points=[p[:3] for p in r['points']], route=True,
                        changes=r['changes']) for r in routes]
     T2, own2 = corridors(T, trod_ways, changes)
@@ -1318,7 +1345,6 @@ AREAS = [
     ['scrub', 'the scrub and the mesas', 'route', None, [3040, 2464, 928, 704]],
     ['canyon', 'the Amber canyon', 'route', None, [2368, 2592, 640, 1024]],
     ['salt-lake', 'the salt lake', 'route', None, [2560, 3616, 768, 416]],
-    ['dunes', 'the dune sea edge', 'edge', None, [640, 1504, 640, 2816]],
     ['scorch', 'the ash fields and the Cinder Rise', 'route', 'scorch', [1888, 3616, 640, 704]],
     ['flank', "the volcano's west flank", 'route', None, [1888, 4320, 448, 576]],
     ['caldera', 'the Ember forge and the cart bay', 'place', 'caldera', [2336, 4768, 256, 160]],
@@ -1333,37 +1359,73 @@ AREAS = [
 # Prop clusters (Claude B's library, a-to-b-clusters: recipes per biome; lane D names the
 # places and the recipe each needs). [recipe, near (x, y), members by prop key, light, why]
 CLUSTERS = [
-    ['steppe camp', (4060, 3560), ['tent', 'cold fire ring', 'saddle', 'water skins', 'bunchgrass'], 'fire glow at dusk',
+    ['steppe_camp', (4060, 3560), ['tent', 'cold fire ring', 'saddle', 'water skins', 'bunchgrass'], 'fire glow at dusk',
      'the caravan camp a short way off the Drover\'s Road'],
-    ['sheepfold corner', (4440, 3480), ['drystone fold', 'hurdle', 'trough', 'sheep', 'bunchgrass'], None,
+    ['sheepfold_corner', (4440, 3480), ['drystone fold', 'hurdle', 'trough', 'sheep', 'bunchgrass'], None,
      'the far folds the flock goes on to over the bridge'],
-    ['windpump stop', (4078, 3159), ['wind pump', 'stone trough', 'bench', 'sage'], None, 'the wind pump on the road'],
-    ['oasis nook', (3500, 2720), ['date palms', 'bench', 'water-seller\'s awning', 'jars', 'reeds'], 'shade pool under the palms',
+    ['windpump_stop', (4078, 3159), ['wind pump', 'stone trough', 'bench', 'sage'], None, 'the wind pump on the road'],
+    ['oasis_nook', (3500, 2720), ['date palms', 'bench', 'water-seller\'s awning', 'jars', 'reeds'], 'shade pool under the palms',
      "Palm Spring's pool"],
-    ['orchard edge', (3600, 2800), ['fruit trees', 'channel', 'ladder', 'baskets'], None, "Palm Spring's orchards on their channels"],
-    ['frontier street corner', (2800, 2392), ['false front', 'boardwalk', 'barrels', 'hitching rail', 'lantern'],
+    ['orchard_edge', (3600, 2800), ['fruit trees', 'channel', 'ladder', 'baskets'], None, "Palm Spring's orchards on their channels"],
+    ['frontier_street_corner', (2800, 2392), ['false front', 'boardwalk', 'barrels', 'hitching rail', 'lantern'],
      'lantern at night', "Dust Gulch's street"],
-    ['platform yard', (2930, 2360), ['water crane', 'buffer', 'crates', 'signal'], 'signal lamp', 'the desert line\'s terminus'],
-    ['mine yard', (3080, 1660), ['ore tubs', 'rail stub', 'timber props', 'lamp', 'rubble'], 'lamp at the mine mouth', 'the Lode\'s yard'],
-    ['canyon shade', (2660, 2930), ['rock arch', 'boulders', 'bench', 'creosote'], 'shade under the arch',
+    ['platform_yard', (2930, 2360), ['water crane', 'buffer', 'crates', 'signal'], 'signal lamp', 'the desert line\'s terminus'],
+    ['mine_yard', (3080, 1660), ['ore tubs', 'rail stub', 'timber props', 'lamp', 'rubble'], 'lamp at the mine mouth', 'the Lode\'s yard'],
+    ['canyon_shade', (2660, 2930), ['rock arch', 'boulders', 'bench', 'creosote'], 'shade under the arch',
      'the rock arch at the canyon floor'],
-    ['salt shore', (2640, 3660), ['salt crust', 'bleached snag', 'cairn', 'tracks'], None, "the salt lake's west shore"],
-    ['ash field', (2240, 3940), ['ash drift', 'fireweed', 'basalt stumps', 'lizard rock'], None, 'the Cinder Rise'],
-    ['fumarole field', (2207, 4185), ['fumarole', 'steam', 'sulphur crust', 'sample bags'], 'steam lit by low sun',
+    ['salt_shore', (2640, 3660), ['salt crust', 'bleached snag', 'cairn', 'tracks'], None, "the salt lake's west shore"],
+    ['ash_field', (2240, 3940), ['ash drift', 'fireweed', 'basalt stumps', 'lizard rock'], None, 'the Cinder Rise'],
+    ['fumarole_field', (2207, 4185), ['fumarole', 'steam', 'sulphur crust', 'sample bags'], 'steam lit by low sun',
      "the sulphur-gatherer's camp"],
-    ['forge yard', (2430, 4850), ['anvil', 'quench trough', 'ore cart', 'coal heap', 'bench'], 'forge glow', 'the Ember forge'],
-    ['castle street', (2560, 5150), ['market stall', 'banner', 'barrels', 'bench', 'lantern'], 'lanterns', "Hearthold's market row"],
-    ['springs bath', (2200, 5420), ['stone pool rim', 'towels on a rail', 'bench', 'steam'], 'steam', 'Cinder Springs'],
-    ['black-sand shore', (2820, 5690), ['upturned boat', 'nets on poles', 'charcoal sacks', 'driftwood'], None, "Cinderwick's cove"],
-    ['dead-forest glade', (3500, 5480), ['charred snags', 'fireweed', 'goats', 'black sand'], None,
+    ['forge_yard', (2430, 4850), ['anvil', 'quench trough', 'ore cart', 'coal heap', 'bench'], 'forge glow', 'the Ember forge'],
+    ['castle_street', (2560, 5150), ['market stall', 'banner', 'barrels', 'bench', 'lantern'], 'lanterns', "Hearthold's market row"],
+    ['springs_bath', (2200, 5420), ['stone pool rim', 'towels on a rail', 'bench', 'steam'], 'steam', 'Cinder Springs'],
+    ['black_sand_shore', (2820, 5690), ['upturned boat', 'nets on poles', 'charcoal sacks', 'driftwood'], None, "Cinderwick's cove"],
+    ['dead_forest_glade', (3500, 5480), ['charred snags', 'fireweed', 'goats', 'black sand'], None,
      'the dead forest the young flow ran through'],
-    ['ferry landing', (4220, 5200), ['landing stage', 'rope post', 'bench', 'ferryman\'s hut'], 'lamp on the post', 'the Rift ferry'],
-    ['coast meadow', (5000, 4700), ['lone tree', 'sheep', 'stile', 'flowers'], None, "the Ash Coast's green shelf"],
+    ['ferry_landing', (4220, 5200), ['landing stage', 'rope post', 'bench', 'ferryman\'s hut'], 'lamp on the post', 'the Rift ferry'],
+    ['coast_meadow', (5000, 4700), ['lone tree', 'sheep', 'stile', 'flowers'], None, "the Ash Coast's green shelf"],
 ]
 
 
-# drawn but never walked: the dune sea's fade and wall, the salt pan seen from the road
-NOT_WALKED = {'dunes', 'salt-lake'}
+# Claude K's handoffs (docs/story/handoffs.md, #197): the story's rest spots and rings in lane
+# D's land. [name, near (x, y), kind, extra]
+STORY_SPOTS = [
+    ['the palm shade at Palm Spring', (3352, 2704), 'rest', {'resident': 'the oasis trader', 'chapter': 1}],
+    ['the caravan camp under the stars', (4040, 3448), 'rest', {'resident': 'the oasis trader', 'chapter': 2, 'night': True}],
+    ["the saloon's porch", (2672, 2448), 'rest', {'resident': 'the oasis trader', 'chapter': 3,
+                                                 'change': "a thin creek runs again down the gulch's old dry bed past the saloon"}],
+    ['the dusty corral in Dust Gulch', (2960, 2504), 'ring', {'rival': 'the cowhand', 'proposed': True}],
+    ['the bathhouse at Cinder Springs', (2232, 5432), 'rest', {'resident': 'the smith', 'chapter': 1, 'night': True}],
+    ["Hearthold's herb garden", (2400, 5184), 'rest', {'resident': 'the smith', 'chapter': 2}],
+    ["Cinderwick's sand", (2700, 5688), 'rest', {'resident': 'the smith', 'chapter': 3}],
+]
+
+# drawn but never walked: the salt pan, seen from the road
+NOT_WALKED = {'salt-lake'}
+
+
+# Claude B's placer (scripts/art/prop_clusters.py --place, #203 @eabd39c) run on these plans:
+# {recipe: (at, orient, mirror)}. A place not listed is still a note (no orient).
+CLUSTER_PLACED = {
+    'ash_field': ([2224, 3944], 'n', True),
+    'black_sand_shore': ([2960, 5680], 's', True),
+    'canyon_shade': ([2632, 2976], 'e', True),
+    'coast_meadow': ([5232, 4720], 's', False),
+    'dead_forest_glade': ([3464, 5432], 's', True),
+    'ferry_landing': ([4216, 5128], 's', False),
+    'frontier_street_corner': ([2728, 2432], 'n', True),
+    'fumarole_field': ([2144, 4048], 'w', True),
+    'mine_yard': ([3032, 1712], 'w', True),
+    'oasis_nook': ([3304, 2664], 's', False),
+    'orchard_edge': ([3560, 2776], 'w', True),
+    'platform_yard': ([2872, 2312], 's', False),
+    'salt_shore': ([2584, 3568], 'w', True),
+    'sheepfold_corner': ([4400, 3392], 's', False),
+    'springs_bath': ([2200, 5624], 's', True),
+    'steppe_camp': ([4000, 3400], 's', True),
+    'windpump_stop': ([3896, 3024], 's', True),
+}
 
 
 def biome_at(x, y):
@@ -1396,6 +1458,11 @@ def blocked_mask(T):
     b |= (T >= 16) & ~rect_mask(fx, fy, fw, fh)
     b |= T <= 0
     b |= (dist_field(DESERT_LINE) < 16) | (dist_field(MINE_CART) < 16)
+    for wid, pts, closed, wd in water_geometry():
+        if closed:
+            b |= poly_mask(pts)
+        elif wid != 'sea':
+            b |= dist_field(pts) < wd / 2 + 10
     wy = np.array([wall_y(x) for x in range(0, W_ALL, C)])[None, :].repeat(NY, 0)
     b |= YS < wy
     wx = np.array([wall_x(y) for y in range(0, H_ALL, C)])[:, None].repeat(NX, 1)
@@ -1435,6 +1502,13 @@ def auto_stairs(tier4, face4, way):
                 sx, sy = face_from if face_from else (prev[0], prev[1])
                 mx, my = snap((x + sx) / 2, 4), snap((y + sy) / 2, 4)
                 ew = abs(b[0] - a[0]) > abs(b[1] - a[1])
+                if ew:
+                    # near a corner with a north-south leg, the stair sits at the corner, on that leg
+                    for v, nb in ((a, pts[pts.index(a) - 1] if pts.index(a) > 0 else None),
+                                  (b, pts[pts.index(b) + 1] if pts.index(b) + 1 < len(pts) else None)):
+                        if nb is not None and nb[0] == v[0] and math.hypot(mx - v[0], my - v[1]) <= 32:
+                            mx, my, ew = v[0], v[1], False
+                            break
                 out.append({'id': f"{way['id']}_stair_{len(out) + 1}", 'on': way['id'], 'at': [mx, my],
                             'from_tier': prev[2], 'to_tier': t, 'width': max(40, way['width'] + 8),
                             'kind': 'round-end' if ew else 'stair'})
@@ -1446,6 +1520,111 @@ def auto_stairs(tier4, face4, way):
 def leg_of(pts, at):
     d, i, q, (dx, dy) = nearest_on(at, pts)
     return 'ew' if abs(dx) > abs(dy) else 'ns'
+
+
+# where the routes cross water: Drover's bridge over the Rift, the Rift ferry (a deck for
+# walking purposes), and fords elsewhere (lane D's routes cross a stream only there)
+WATER_BRIDGES = {'rift': [{'at': [4320, 3440], 'span': 128, 'kind': 'bridge', 'name': "Drover's bridge"},
+                          {'at': [4176, 5240], 'span': 96, 'kind': 'ferry', 'name': 'the Rift ferry'}]}
+WATER_ENDS = {
+    'rift': ("the massif: out of its gorge at the basin's north edge", "the sea at the Rift's mouth (4256, 5560)"),
+    'amber': ("the massif: out of its gorge above Dust Gulch", 'salt_lake'),
+    'willow_run_upper': ("the massif: out of its gorge east of the Lode", 'sinks into its gravel fan (3568, 2120)'),
+    'willow_run_lower': ('palm_pool', 'amber'),
+    'heather_burn': ("the Brackens' Heather spur (lane F)", 'rift'),
+    'brackens_beck': ('the Brackens (lane F)', 'rift'),
+    'sedgeburn': ('the piedmont west of the Rift', 'rift'),
+    'palm_pool': ('the Willow Run rising out of its gravel', 'willow_run_lower'),
+    'salt_lake': ('amber', 'none: a terminal pan, the water evaporates'),
+    'palm_channels': ('palm_pool', 'the orchards (it soaks away)'),
+    'gulch_channels': ('amber', 'the orchards (it soaks away)'),
+    'fishing_pool': ('a spring in the ledge', 'seeps into the ash'),
+    'hot_pools': ('the warm flank (the sea seeping in)', 'hot_pools_lower'),
+    'hot_pools_lower': ('hot_pools', 'the sea through the black sand'),
+}
+
+
+def water_geometry():
+    """Every water body as (id, points, closed, width), the same shapes the plans write."""
+    out = [('rift', RIFT_G, False, 40), ('amber', AMBER_G, False, 24), ('willow_run_upper', WILLOW_UPPER_G, False, 16),
+           ('willow_run_lower', WILLOW_LOWER_G, False, 16)]
+    out += [(t['id'], ortho(t['points'], 48), False, WATER_W[t['id']]) for t in TRIBS]
+    out += [('palm_pool', PALM_POOL, True, 0), ('salt_lake', ortho(SALT_LAKE + SALT_LAKE[:1], 48), True, 0),
+            ('fishing_pool', FISHING_POOL, True, 0), ('palm_channels', PALM_CHANNELS, False, 8),
+            ('gulch_channels', GULCH_CHANNELS, False, 8), ('hot_pools', HOT_POOL_W, True, 0),
+            ('hot_pools_lower', HOT_POOL_E, True, 0), ('sea', ortho(COAST, 64), False, 8)]
+    return out
+
+
+def reach_maps(tier4, face4, routes, stairs, fords):
+    """What F's reach check (#206) will find walkable from the routes' ends, per box, at 4 px:
+    tier tops (not faces), not water, not land marked walkable: false; tier changes only on a
+    stair; water crossed only on a bridge, the ferry or a ford."""
+    from collections import deque
+    H4, W4 = tier4.shape
+    wet = Image.new('L', (W4, H4), 0)
+    dr = ImageDraw.Draw(wet)
+    for wid, pts, closed, wd in water_geometry():
+        if closed:
+            dr.polygon([(x / 4, y / 4) for x, y in pts], fill=1)
+        else:
+            dr.line([(x / 4, y / 4) for x, y in pts], fill=1, width=max(1, int(wd / 4)))
+    for a in AREAS:
+        if a[0] in NOT_WALKED:
+            ax, ay, aw, ah = a[4]
+            dr.rectangle([ax / 4, ay / 4, (ax + aw) / 4, (ay + ah) / 4], fill=1)
+    wet = np.asarray(wet).astype(bool)
+    deck = Image.new('L', (W4, H4), 0)
+    dd = ImageDraw.Draw(deck)
+    for b in WATER_BRIDGES['rift']:
+        dd.rectangle([(b['at'][0] - b['span'] / 2) / 4, (b['at'][1] - 16) / 4, (b['at'][0] + b['span'] / 2) / 4,
+                      (b['at'][1] + 16) / 4], fill=1)
+    for f in fords:
+        dd.rectangle([(f[0] - 16) / 4, (f[1] - 16) / 4, (f[0] + 16) / 4, (f[1] + 16) / 4], fill=1)
+    deck = np.asarray(deck).astype(bool)
+    yy, xx = np.mgrid[0:H4, 0:W4]
+    stair = np.zeros((H4, W4), bool)
+    for st in stairs:
+        stair |= (np.abs(xx - st['at'][0] / 4) <= (st['width'] / 2 + 8) / 4) & (np.abs(yy - st['at'][1] / 4) <= (FACE + 16) / 4)
+    walk = (~wet & ~face4) | deck | stair
+    maps = {}
+    for pid, box in BOXES.items():
+        x0, y0, w, h = box
+        r0, c0, r1, c1 = y0 // 4, x0 // 4, (y0 + h) // 4, (x0 + w) // 4
+        seen = np.zeros((H4, W4), bool)
+        q = deque()
+        for r in routes:
+            for part in clip_route(r['points'], box):
+                for p in (part[0], part[-1]):
+                    cy, cx = min(max(int(p[1] // 4), r0), r1 - 1), min(max(int(p[0] // 4), c0), c1 - 1)
+                    if walk[cy, cx] and not seen[cy, cx]:
+                        seen[cy, cx] = True
+                        q.append((cy, cx))
+        while q:
+            r, k = q.popleft()
+            for d1, d2 in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                r2, k2 = r + d1, k + d2
+                if not (r0 <= r2 < r1 and c0 <= k2 < c1) or seen[r2, k2] or not walk[r2, k2]:
+                    continue
+                if tier4[r2, k2] != tier4[r, k] and not (stair[r2, k2] or stair[r, k] or deck[r2, k2] or deck[r, k]):
+                    continue
+                seen[r2, k2] = True
+                q.append((r2, k2))
+        maps[pid] = seen
+    return maps
+
+
+def route_fords(routes):
+    """Where a route or trod crosses a stream or river other than at a bridge: a ford."""
+    out = []
+    for wid, pts, closed, wd in water_geometry():
+        if closed or wid in ('sea',):
+            continue
+        for r in routes:
+            for x in crossings([p[:2] for p in r['points']], pts):
+                if not any(math.hypot(x[0] - b['at'][0], x[1] - b['at'][1]) < 80 for b in WATER_BRIDGES['rift']):
+                    out.append((wid, r['id'], x))
+    return out
 
 
 def make_plans(T, routes, trods, R, brief):
@@ -1479,9 +1658,28 @@ def make_plans(T, routes, trods, R, brief):
         else:
             stairs += auto_stairs(tier4, face4, t)
     STAIRS_AT.extend((s['at'][0], s['at'][1], s['width']) for s in stairs)
-    eggs = [{'what': e['what'], 'at': e['at'], 'keep_clear_r': 32} for e in brief['eggs']]
-    for e in eggs:
-        G.taken += [(e['at'][0] + dx, e['at'][1] + dy) for dx in (-24, 0, 24) for dy in (-24, 0, 24)]
+    fords = route_fords(routes + [dict(id=t['id'], points=t['points']) for t in trods])
+    G.reach = reach_maps(tier4, face4, routes, stairs, [f[2] for f in fords])
+    # the egg spots: kept clear and reachable (brief 5), moved to the nearest reachable ground
+    # (the nearest cell F's reach finds walkable, at least 24 px from any path)
+    eggs = []
+    for e in brief['eggs']:
+        pid = 'sunstone' if (e['at'][1] < SPLIT_Y and e['at'][0] <= 4800) else 'fire-country'
+        rm = G.reach[pid]
+        ys, xs = np.nonzero(rm)
+        order = np.argsort((xs * 4 + 2 - e['at'][0]) ** 2 + (ys * 4 + 2 - e['at'][1]) ** 2)
+        at = None
+        for k in order[:20000]:
+            x, y = int(xs[k]) * 4, int(ys[k]) * 4
+            if G.ok(x, y, None, 100000, clear=48, box=BOXES[pid]) and \
+                    all(line_dist((x, y), w['points']) >= w['width'] / 2 + 24 for w in all_ways):
+                at = [x, y]
+                break
+        item = {'what': e['what'], 'at': at or e['at'], 'keep_clear_r': 32}
+        if at and at != e['at']:
+            item['moved_from'] = e['at']
+        eggs.append(item)
+        G.eggs.append(tuple(item['at']))
     route_line = {r['id']: [p[:2] for p in r['points']] for r in routes}
 
     def which_box(p):
@@ -1529,15 +1727,31 @@ def make_plans(T, routes, trods, R, brief):
         markers.append(item)
     clusters = []
     for k, (recipe, near, members, light, why) in enumerate(CLUSTERS):
+        if recipe in CLUSTER_PLACED:
+            pat, orient, mirror = CLUSTER_PLACED[recipe]
+            c = {'recipe': recipe, 'at': pat, 'orient': orient, 'mirror': mirror, 'seed': 1000 + k, 'members': members,
+                 'why': why, 'plan': which_box(near)}
+            if light:
+                c['light'] = light
+            clusters.append(c)
+            continue
         at = G.place(list(near), None, lim=120, clear=24)
-        c = {'recipe': recipe, 'at': at or list(near), 'members': members, 'seed': 1000 + k, 'why': why}
+        c = {'recipe': recipe, 'at': at or list(near), 'members': members, 'seed': 1000 + k, 'why': why,
+             'plan': which_box(near)}
         if light:
             c['light'] = light
         if at is None:
             c['unplaced'] = True
         clusters.append(c)
+    # the story's rest spots and rings (Claude K, docs/story/handoffs.md on #197): open, reachable
+    # ground with a stand beside a path, not in a pocket; proposals pending Matt, reserved here
+    story = []
+    for name, near, kind, extra in STORY_SPOTS:
+        at = G.place(list(near), None, lim=40, clear=24)
+        story.append(dict({'name': name, 'kind': kind, 'at': at or list(near), 'plan': which_box(near)}, **extra,
+                          **({} if at else {'unplaced': True})))
     return dict(stairs=stairs, asks=asks, eggs=eggs, named=named, pockets=pockets, markers=markers,
-                clusters=clusters, G=G, which_box=which_box, outlines=outlines)
+                clusters=clusters, G=G, which_box=which_box, outlines=outlines, fords=fords, story=story)
 
 
 # The desert line: in from the halt south of the road, over the Rift on its viaduct, north up
@@ -1662,23 +1876,33 @@ def emit(T, routes, trods, R, P):
                 {'id': 'salt_lake', 'kind': 'salt pan', 'closed': True, 'points': ortho(SALT_LAKE + SALT_LAKE[:1], 48),
                  'why': 'where the Amber ends at the arc\'s foot: a white pan, wet only after a storm'},
                 {'id': 'fishing_pool', 'kind': 'pool', 'closed': True,
-                 'points': [[2104, 3720], [2168, 3720], [2168, 3752], [2104, 3752]],
+                 'points': FISHING_POOL,
                  'why': "a spring-fed pool on a ledge below the Cinder Rise: the pocket's resident fishes it"},
                 {'id': 'palm_channels', 'kind': 'channel', 'width': 8,
-                 'points': [[3512, 2696], [3600, 2696], [3600, 2840]], 'why': 'orchard channels, a step across'},
+                 'points': PALM_CHANNELS, 'why': 'orchard channels, a step across'},
                 {'id': 'gulch_channels', 'kind': 'channel', 'width': 8,
-                 'points': [[2456, 2224], [2560, 2224], [2560, 2280]], 'why': 'orchard channels off the Amber'},
+                 'points': GULCH_CHANNELS, 'why': 'orchard channels off the Amber'},
             ]
             water[3]['why'] = 'sinks into its gravel fan here'
         else:
             water += [
-                {'id': 'hot_pools', 'kind': 'pools', 'closed': True, 'points': [[2160, 5488], [2208, 5488], [2208, 5512], [2160, 5512]],
+                {'id': 'hot_pools', 'kind': 'pools', 'closed': True, 'points': HOT_POOL_W,
                  'why': 'the west pool'},
-                {'id': 'hot_pools_lower', 'kind': 'pools', 'closed': True, 'points': [[2232, 5496], [2272, 5496], [2272, 5512], [2232, 5512]],
+                {'id': 'hot_pools_lower', 'kind': 'pools', 'closed': True, 'points': HOT_POOL_E,
                  'why': 'the east pool'},
                 {'id': 'sea', 'kind': 'sea', 'points': ortho(COAST, 64),
                  'why': 'the shore line; lane G draws the open sea past it (g-to-all-edges 4)'},
             ]
+        for wt in water:
+            if wt['id'] == 'sea':
+                wt['declared_closed'] = True
+            elif wt['id'] in WATER_ENDS:
+                wt['source'], wt['outlet'] = WATER_ENDS[wt['id']]
+            if wt['id'] in WATER_BRIDGES:
+                wt['bridges'] = [b for b in WATER_BRIDGES[wt['id']] if in_box(b['at'], box)]
+            fds = [f[2] for f in P['fords'] if f[0] == wt['id'] and in_box(f[2], box)]
+            if fds:
+                wt['fords'] = fds
         lava = []
         if pid == 'fire-country':
             lava = [
@@ -1710,7 +1934,7 @@ def emit(T, routes, trods, R, P):
         pockets = [pk for pk in P['pockets'] if pk['trod'] in trod_ids]
         markers = [m for m in P['markers'] if own(m.get('moved_from', m['at'])) and in_box(m['at'], box)
                    and not m.get('unplaced')]
-        eggs = [e for e in P['eggs'] if own(e['at'])]
+        eggs = [e for e in P['eggs'] if own(e.get('moved_from', e['at']))]
         obstacles = [{'kind': t['obstacle'], 'at': t['obstacle_at'], 'passed_by': t['id'],
                       'why': "brief 7: a side path off the road at a Y, round the far side, back at a Y (lane G)"}
                      for t in trods if t.get('obstacle') and t['id'] in trod_ids]
@@ -1787,12 +2011,17 @@ def emit(T, routes, trods, R, P):
             if m['place'] in PLACE_OF and m['what'] == 'bench' and m['place'] not in seen:
                 seen.add(m['place'])
                 rest.append({'at': m['at'], 'kind': 'bench', 'why': f"a bench in {m['place']}"})
+        for sp in P['story']:
+            if sp['plan'] == pid and sp['kind'] == 'rest':
+                rest.append(dict({'at': sp['at'], 'kind': 'story', 'stand': True, 'why': sp['name']},
+                                 **{k: v for k, v in sp.items() if k in ('resident', 'chapter', 'night', 'change', 'unplaced')}))
         for k, r in enumerate(rest):
             r['id'] = f'rest_{k + 1}'
         rings, stops, rails = [], [], []
         if pid == 'fire-country':
             at = G.place([2520, 4840], None, lim=48, clear=24, rect=PLACES['ember-forge']['rect'])
-            rings.append({'id': 'caldera-ring', 'zone': 'caldera', 'at': at, 'backdrop': 'lava',
+            rings.append({'id': 'caldera-ring', 'name': 'the basalt ring by the lava', 'zone': 'caldera', 'at': at,
+                          'backdrop': 'lava', 'rival': 'the smith',
                           'why': "today's sparring ring in the caldera (lib/world-places.ts rings) moves to the forge "
                                  'yard on the lip; the game reads it once the area replaces the zone'})
             stops.append({'id': 'lava', 'name': 'the forge cart bay', 'at': [2472, 4904], 'zone': 'caldera',
@@ -1802,6 +2031,11 @@ def emit(T, routes, trods, R, P):
             rails.append({'id': 'mine_cart', 'kind': 'mine cart', 'points': [[2896, 4000]] + [p for p in rail_mine if p[1] > 4000],
                           'opens': 'after W6', 'why': 'the Lode down past the salt lake to the tunnel portal on the north flank'})
         else:
+            for sp in P['story']:
+                if sp['kind'] == 'ring':
+                    rings.append({'id': 'gulch-corral', 'name': sp['name'], 'zone': 'gulch', 'at': sp['at'],
+                                  'rival': sp['rival'], 'proposed': True,
+                                  'why': "Claude K's handoffs (#197): a ring for the cowhand; not in the game yet"})
             stops.append({'id': 'west', 'name': 'Dust Gulch platform', 'at': [2904, 2336], 'zone': 'gulch',
                           'stand': 'platform', 'why': "the desert line's terminus, with a water crane and a buffer"})
             stops.append({'id': 'lode-mine-mouth', 'name': 'the Lode mine mouth', 'at': [3040, 1648],
@@ -1818,14 +2052,15 @@ def emit(T, routes, trods, R, P):
         residents = []
         for t in thresholds:
             for who in t['residents']:
-                residents.append({'who': who, 'near': t['id'], 'at': t['at']})
+                at = G.place(list(t['at']), None, lim=160, box=box, clear=16)
+                residents.append({'who': who, 'near': t['id'], 'at': at or t['at']})
         for pk in pockets:
             if pk['holds'] in ('a resident fishing', 'a hermit at a fire'):
                 residents.append({'who': pk['holds'][2:], 'at': pk['at'], 'note': 'the pocket\'s resident'})
         for m in markers:
             if m['what'] == 'resident':
                 residents.append({'who': f"a resident of {m['place']}", 'at': m['at']})
-        clusters = [c for c in P['clusters'] if own(c['at']) and in_box(c['at'], box)]
+        clusters = [{k: v for k, v in c.items() if k != 'plan'} for c in P['clusters'] if c['plan'] == pid]
         plan = {
             '_about': ("Sunstone Reach (the steppe west of the Brackens gap, the Rift, the Sunstone basin)"
                        if pid == 'sunstone' else "The fire country (Mount Ember, Hearthold, the forge, Cinder Springs, "
