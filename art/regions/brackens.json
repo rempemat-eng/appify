@@ -856,5 +856,10 @@
       "id": "brackens-31",
       "rect": [5184, 3456, 416, 544]
     }
+  ],
+  "clusters": [
+    {"recipe": "sheepfold_corner", "at": [5408, 3832], "orient": "n", "mirror": false, "seed": 0, "replaces": [5456, 3872]},
+    {"recipe": "sheepfold_corner", "at": [4808, 3552], "orient": "n", "mirror": true, "seed": 0, "replaces": [4856, 3584]},
+    {"recipe": "moor_wayside", "at": [5120, 2632], "orient": "w", "mirror": true, "seed": 0}
   ]
 }
