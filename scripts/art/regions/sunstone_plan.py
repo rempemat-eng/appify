@@ -7,9 +7,9 @@ Cinder Springs, Cinderwick and the Ash Coast: box x 0-5600, y 4000-5856). The br
 docs/vision/regions/sunstone-basin-fire-country.md (world plan v5.3, PR #96); its named things,
 pockets, markers and egg spots are read from it here, not copied by hand.
 
-Routes are Claude G's (lib/world-routes.ts, PR #175): their lines, widths, tiers and tier
-changes, side paths and pockets, read from lib/world-routes.ts when it is on the branch and
-otherwise from the snapshot taken at #175 @ef8824f (sunstone_routes.json beside this file).
+Routes start from Claude G's (#175 @ef8824f, the snapshot sunstone_routes.json beside this
+file); inside lane D's boxes the plan draws them (g-to-all-region-rule, ROUTE_PLAN below), so
+lib/world-routes.ts is read only for the meeting cells at the box edges.
 Tiers are G's absolute world tiers (base_tier 0): a tier is a 32 px south face; the plan's
 outlines are in screen space, as F's schema has them.
 
@@ -132,22 +132,24 @@ def _ts_export(src: str, name: str):
 
 
 def load_routes() -> dict:
-    """G's routes on lane D's land, thresholds and meeting cells: from lib/world-routes.ts when
-    present, else the snapshot. Refreshes the snapshot when the TS is there."""
+    """Lane G's routes on lane D's land as the plans were drawn from them: the snapshot taken
+    at #175 @ef8824f (sunstone_routes.json). Inside lane D's boxes the plan draws the routes
+    (g-to-all-region-rule), so later changes to lane G's lines there do not move them; only
+    the meeting cells at the box edges are lane G's, and when lib/world-routes.ts is present
+    they are compared with the snapshot's (a moved cell is printed, to settle with lane G)."""
+    with open(ROUTES_SNAPSHOT) as fh:
+        data = json.load(fh)
     if os.path.exists(ROUTES_TS):
         src = open(ROUTES_TS).read()
-        routes = [r for r in _ts_export(src, 'worldRoutes') if r['id'] in MY_ROUTES]
-        th = [t for t in _ts_export(src, 'worldThresholds') if 'claude-d' in t['sides']]
         meets = [m for m in _ts_export(src, 'worldRouteMeets') if 'claude-d' in (m['from'], m['to'])]
-        stops = _ts_export(src, 'routeStops')
-        data = {'source': 'lib/world-routes.ts', 'routes': routes, 'thresholds': th, 'meets': meets,
-                'stops': {k: v for k, v in stops.items() if v['at'][0] < 5600 and v['at'][1] < 6000}}
-        with open(ROUTES_SNAPSHOT, 'w') as fh:
-            json.dump(data, fh, indent=1)
-            fh.write('\n')
-        return data
-    with open(ROUTES_SNAPSHOT) as fh:
-        return json.load(fh)
+        for m in meets:
+            if m['from'] == m['to']:
+                continue
+            old = [o for o in data['meets'] if o['route'] == m['route'] and o['from'] == m['from']]
+            if old and (old[0]['at'] != m['at'] or old[0]['tier'] != m['tier']):
+                print(f"note: lane G's meeting cell for {m['route']} is now {tuple(m['at'])} tier {m['tier']} "
+                      f"(the plans were drawn to {tuple(old[0]['at'])} tier {old[0]['tier']})")
+    return data
 
 
 def parse_brief() -> dict:
