@@ -1,0 +1,1355 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#2F4A2A">
+<title>NapAttack Field Fights</title>
+<style>
+@font-face { font-family: 'Pixelify'; font-weight: 700; src: url(/*FONT_BOLD*/) format('truetype'); }
+@font-face { font-family: 'Pixelify'; font-weight: 500; src: url(/*FONT_MEDIUM*/) format('truetype'); }
+:root {
+  --ink: #2F251F; --outline: #1E1917;
+  --paper: #FBF4E4; --paper-l: #FFFDF5; --paper-d: #E1D2B6; --paper-b: #B8A586;
+  --parch: #F3E6C8; --parch-l: #FFF7E2; --parch-d: #DCC9A2; --parch-b: #B39A70;
+  --gold: #E6BC5C; --gold-l: #F8DD8F; --gold-d: #BF8F36; --gold-b: #7F5B1E; --gold-o: #3B2A14;
+  --night: #3C4168; --night-l: #5A608F; --night-d: #2B2F50; --night-b: #191B30; --night-o: #0F1020;
+  --leaf: #6FB35E; --leaf-l: #A5D77F; --leaf-d: #4F8D45;
+  --danger: #D47A5C;
+  --sat: env(safe-area-inset-top, 0px); --sab: env(safe-area-inset-bottom, 0px);
+  --sal: env(safe-area-inset-left, 0px); --sar: env(safe-area-inset-right, 0px);
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; height: 100%; background: #2F4A2A; overflow: hidden; touch-action: none;
+  -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+body { font-family: 'Pixelify', ui-monospace, monospace; font-weight: 700; color: var(--ink); }
+canvas#world { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; image-rendering: pixelated; touch-action: none; }
+.px { image-rendering: pixelated; image-rendering: crisp-edges; }
+/* pixel frames: square, a 2px outline, lit top-left, shaded bottom-right, a raised base */
+.frame { background: var(--paper); border: 2px solid var(--outline);
+  box-shadow: inset 2px 2px 0 var(--paper-l), inset -2px -2px 0 var(--paper-d), 0 3px 0 var(--paper-b), 0 5px 0 var(--outline); }
+.frame.parch { background: var(--parch); box-shadow: inset 2px 2px 0 var(--parch-l), inset -2px -2px 0 var(--parch-d), 0 3px 0 var(--parch-b), 0 5px 0 var(--outline); }
+.frame.gold { background: var(--gold); border-color: var(--gold-o); box-shadow: inset 2px 2px 0 var(--gold-l), inset -2px -2px 0 var(--gold-d), 0 4px 0 var(--gold-b), 0 6px 0 var(--gold-o); }
+.frame.night { background: var(--night); color: #F3F6FF; border-color: var(--night-o); box-shadow: inset 2px 2px 0 var(--night-l), inset -2px -2px 0 var(--night-d), 0 3px 0 var(--night-b), 0 5px 0 var(--night-o); }
+button { font: inherit; color: inherit; cursor: pointer; padding: 0; touch-action: none; }
+button:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+
+#hud { position: fixed; inset: 0; pointer-events: none; }
+#who { position: absolute; left: calc(12px + var(--sal)); top: calc(10px + var(--sat)); display: flex; align-items: center; gap: 8px; padding: 6px 10px 6px 6px; min-width: 196px; }
+#who img { width: 40px; height: 40px; border: 2px solid var(--outline); background: #86AAD0; }
+#who .name { font-size: 13px; letter-spacing: .5px; }
+.hp { display: flex; align-items: center; gap: 6px; margin-top: 3px; font-size: 11px; }
+.hp .bar { width: 104px; height: 10px; border: 2px solid var(--outline); background: #D9D1BF; position: relative; }
+.hp .bar i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--leaf); box-shadow: inset 0 2px 0 var(--leaf-l); transition: width .25s steps(6); }
+.hp .bar i.low { background: var(--danger); box-shadow: inset 0 2px 0 #F0A688; }
+#chip { position: absolute; left: calc(12px + var(--sal)); top: calc(72px + var(--sat)); padding: 6px 10px; font-size: 11px; letter-spacing: .4px; max-width: calc(100vw - 92px - var(--sal) - var(--sar)); }
+#chip small { display: block; font-weight: 500; font-size: 10px; opacity: .8; margin-top: 1px; }
+#pause { position: absolute; right: calc(12px + var(--sar)); top: calc(10px + var(--sat)); width: 48px; height: 48px; pointer-events: auto; display: grid; place-items: center; }
+#pause img { width: 32px; height: 32px; }
+#boss { position: absolute; left: 50%; transform: translateX(-50%); top: calc(118px + var(--sat)); padding: 6px 10px 8px; min-width: 220px; text-align: center; font-size: 12px; letter-spacing: .6px; display: none; }
+#boss.on { display: block; }
+#boss .phase { font-weight: 500; font-size: 10px; opacity: .85; }
+#boss .segs { display: flex; gap: 3px; justify-content: center; margin-top: 5px; }
+#boss .segs i { width: 16px; height: 9px; background: #62BCE6; box-shadow: inset 0 2px 0 #DDF3FD; border: 2px solid var(--night-o); }
+#boss .segs i.off { background: #2B2F50; box-shadow: none; }
+#boss .segs i.shield { background: #9F8CD3; box-shadow: inset 0 2px 0 #CBBDF0; }
+
+#controls { position: fixed; right: calc(16px + var(--sar)); bottom: calc(22px + var(--sab)); width: 168px; height: 160px; pointer-events: none; transition: transform .35s cubic-bezier(.3,1.4,.5,1), opacity .25s; }
+#controls.sunk { transform: translateY(150%); opacity: 0; }
+#controls.sunk button { pointer-events: none; }
+#controls button { position: absolute; pointer-events: auto; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
+#loose { right: 0; bottom: 0; width: 88px; height: 88px; font-size: 14px; }
+#loose img { width: 48px; height: 48px; }
+#dodge { right: 100px; bottom: 0; width: 66px; height: 58px; font-size: 11px; }
+#dodge img { width: 32px; height: 32px; }
+#dodge .veil { position: absolute; left: 2px; right: 2px; bottom: 2px; height: 0; background: rgba(40,34,30,.45); }
+#loose:active, #dodge:active, #loose.pressed, #dodge.pressed { transform: translateY(3px); }
+
+#stickhint { position: fixed; left: calc(24px + var(--sal)); bottom: calc(40px + var(--sab)); width: 108px; height: 108px; pointer-events: none; transition: opacity .3s; }
+#stickhint .ring { position: absolute; inset: 0; border-radius: 50%; border: 3px solid rgba(255,253,245,.55); box-shadow: 0 0 0 2px rgba(30,25,23,.45), inset 0 0 0 2px rgba(30,25,23,.35); }
+#stickhint .knob { position: absolute; left: 50%; top: 50%; width: 40px; height: 40px; margin: -20px; border-radius: 50%; background: #FBF4E4; border: 3px solid var(--outline); box-shadow: inset 3px 3px 0 #FFFDF5, inset -3px -3px 0 #E1D2B6; }
+#stickhint .lbl { position: absolute; top: 112px; left: -20px; right: -40px; text-align: left; font-size: 10px; color: #FFFDF5; text-shadow: -1px 0 #1E1917, 1px 0 #1E1917, 0 -1px #1E1917, 0 1px #1E1917, 1px 1px #1E1917; white-space: nowrap; }
+#stick { position: fixed; width: 108px; height: 108px; margin: -54px; pointer-events: none; display: none; }
+#stick .ring { position: absolute; inset: 0; border-radius: 50%; border: 3px solid rgba(255,253,245,.7); box-shadow: 0 0 0 2px rgba(30,25,23,.5); }
+#stick .knob { position: absolute; left: 50%; top: 50%; width: 40px; height: 40px; margin: -20px; border-radius: 50%; background: #FBF4E4; border: 3px solid var(--outline); box-shadow: inset 3px 3px 0 #FFFDF5, inset -3px -3px 0 #E1D2B6; }
+#stick.on { display: block; }
+
+#toast { position: fixed; left: 50%; bottom: calc(200px + var(--sab)); transform: translateX(-50%); padding: 8px 14px; text-align: center; font-size: 13px; min-width: 240px; max-width: calc(100vw - 32px); pointer-events: none; opacity: 0; transition: opacity .3s; }
+#toast small { display: block; font-weight: 500; font-size: 11px; margin-top: 2px; }
+#toast.on { opacity: 1; }
+
+.overlay { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(23, 26, 44, .55); padding: calc(16px + var(--sat)) calc(16px + var(--sar)) calc(16px + var(--sab)) calc(16px + var(--sal)); z-index: 10; }
+.overlay.on { display: flex; }
+.card { width: min(360px, 100%); max-height: 100%; overflow: auto; padding: 16px 16px 18px; }
+.card h2 { margin: 0 0 4px; font-size: 18px; letter-spacing: .5px; }
+.card p { margin: 8px 0; font-weight: 500; font-size: 13px; line-height: 1.35; }
+.card .row { display: flex; gap: 10px; align-items: flex-start; margin: 10px 0; font-weight: 500; font-size: 13px; line-height: 1.3; }
+.card .row b { display: inline-block; min-width: 64px; font-weight: 700; }
+.card .btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.card .btns button, .card .opt { min-height: 48px; padding: 8px 14px; font-size: 14px; flex: 1 1 auto; }
+.opt { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-top: 10px; }
+.opt span:last-child { font-size: 12px; padding: 3px 8px; border: 2px solid var(--outline); background: #D9D1BF; }
+.opt[aria-pressed="true"] span:last-child { background: var(--leaf-l); }
+#fps { position: fixed; right: calc(70px + var(--sar)); top: calc(12px + var(--sat)); font-size: 11px; color: #fff; text-shadow: 0 1px #000; display: none; pointer-events: none; }
+
+/* the down and win cards sit low so the scene stays in view */
+.overlay.low { align-items: flex-end; padding-bottom: calc(150px + var(--sab)); }
+body.land .overlay.low { padding-bottom: calc(10px + var(--sab)); }
+body.land .overlay.low .card { width: min(380px, 100%); padding: 10px 14px 12px; }
+body.land .overlay.low .card p { margin: 4px 0; }
+body.land .overlay.low .card .btns { margin-top: 8px; }
+/* landscape: two thumbs, HUD in the top corners */
+body.land #who { min-width: 0; padding: 4px 8px 4px 4px; }
+body.land #who img { width: 32px; height: 32px; }
+body.land #chip { left: auto; right: calc(72px + var(--sar)); top: calc(10px + var(--sat)); max-width: 300px; text-align: right; }
+body.land #boss { top: calc(8px + var(--sat)); }
+body.land #controls { right: calc(18px + var(--sar)); bottom: calc(16px + var(--sab)); }
+body.land #controls #dodge { right: 0; bottom: 100px; }
+body.land #controls #loose { right: 0; bottom: 0; }
+body.land #controls { width: 100px; height: 168px; }
+body.land #stickhint { left: calc(28px + var(--sal)); bottom: calc(28px + var(--sab)); }
+body.land #stickhint .lbl { top: auto; bottom: 116px; }
+body.land #toast { bottom: auto; top: calc(64px + var(--sat)); }
+</style>
+</head>
+<body>
+<canvas id="world" aria-label="NapAttack woodland: Bramble on the path"></canvas>
+<div id="hud">
+  <div id="who" class="frame"><img id="portrait" class="px" alt=""><div><div class="name">BRAMBLE</div>
+    <div class="hp"><span>HP</span><span class="bar"><i id="hpbar" style="width:100%"></i></span><span id="hpnum">80</span></div></div></div>
+  <div id="chip" class="frame parch">THE WOODLAND<small>walk the path south</small></div>
+  <button id="pause" class="frame" aria-label="Pause"><img id="pauseicon" class="px" alt=""></button>
+  <div id="boss" class="frame night" aria-live="polite"><div id="bossname">THE STATIC STORM</div><div class="phase" id="bossphase">WOUND TIGHT</div><div class="segs" id="bosssegs"></div></div>
+</div>
+<div id="stickhint"><div class="ring"></div><div class="knob"></div><div class="lbl">DRAG ANYWHERE TO WALK</div></div>
+<div id="stick"><div class="ring"></div><div class="knob" id="knob"></div></div>
+<div id="controls" class="sunk">
+  <button id="dodge" class="frame" aria-label="Dodge"><img id="dodgeicon" class="px" alt=""><span>DODGE</span><span class="veil" id="dodgeveil"></span></button>
+  <button id="loose" class="frame gold" aria-label="Loose an arrow"><img id="looseicon" class="px" alt=""><span>LOOSE</span></button>
+</div>
+<div id="toast" class="frame parch" role="status"></div>
+<div id="fps"></div>
+
+<div id="howto" class="overlay on" role="dialog" aria-modal="true" aria-labelledby="howtoh">
+  <div class="card frame">
+    <h2 id="howtoh">You are Bramble</h2>
+    <p>Glares, wisps of screen light, drift into the woods. Calm them; nobody gets hurt.</p>
+    <div class="row"><b>WALK</b><span>Drag anywhere (or the stick). Arrow keys or WASD.</span></div>
+    <div class="row"><b>LOOSE</b><span>Tap a Glare, or press LOOSE (Space). Stand still a moment to draw a stronger arrow.</span></div>
+    <div class="row"><b>DODGE</b><span>Flick, or press DODGE (Shift). Step out of the pale lanes and rings on the ground before they fill.</span></div>
+    <p>Then follow the path south to the stone ring, where something bigger waits.</p>
+    <div class="btns"><button id="start" class="frame gold">Start</button></div>
+  </div>
+</div>
+<div id="pausemenu" class="overlay" role="dialog" aria-modal="true" aria-labelledby="pauseh">
+  <div class="card frame">
+    <h2 id="pauseh">Paused</h2>
+    <button class="opt frame" id="optreduced" aria-pressed="false"><span>Reduced motion</span><span>OFF</span></button>
+    <button class="opt frame" id="optgentle" aria-pressed="false"><span>Gentle pace</span><span>OFF</span></button>
+    <button class="opt frame" id="optsound" aria-pressed="true"><span>Sound</span><span>ON</span></button>
+    <div class="btns"><button id="help" class="frame">How to play</button><button id="restart" class="frame">Start over</button></div>
+    <div class="btns"><button id="leave" class="frame" style="display:none">Leave the ring</button><button id="resume" class="frame gold">Resume</button></div>
+  </div>
+</div>
+<div id="downcard" class="overlay low" role="dialog" aria-modal="true" aria-labelledby="downh" style="background:rgba(23,26,44,.2)">
+  <div class="card frame parch">
+    <h2 id="downh">Bramble sits down, tired</h2>
+    <p id="downtext">The Glares drift off. Nothing is lost; have a breather and try again.</p>
+    <div class="btns"><button id="getup" class="frame gold">Get up</button></div>
+  </div>
+</div>
+<div id="wincard" class="overlay low" role="dialog" aria-modal="true" aria-labelledby="winh" style="background:rgba(23,26,44,.12)">
+  <div class="card frame parch">
+    <h2 id="winh">The ring is quiet</h2>
+    <p>The storm unwinds into fireflies. The Mossling is very pleased with you.</p>
+    <div class="btns"><button id="again" class="frame">Spar again</button><button id="walkon" class="frame gold">Walk on</button></div>
+  </div>
+</div>
+
+<script>
+'use strict';
+const ASSETS = /*ASSETS*/;
+(async function main() {
+const ZW = 320, ZH = 576, CELL = 4;
+const $ = (id) => document.getElementById(id);
+const canvas = $('world');
+const ctx = canvas.getContext('2d');
+const qs = new URLSearchParams(location.search);
+
+// ------------------------------------------------------------------ settings (per viewer, optional storage)
+const store = {
+  get(k, d) { try { const v = localStorage.getItem('napattack-action-' + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem('napattack-action-' + k, JSON.stringify(v)); } catch (e) {} },
+};
+let prefersRM = false;
+try { prefersRM = matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+const settings = { reduced: store.get('reduced', prefersRM), gentle: store.get('gentle', false), sound: store.get('sound', true) };
+
+// ------------------------------------------------------------------ images
+function loadImg(src) { return new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = rej; im.src = src; }); }
+const IMG = {};
+IMG.ground = await loadImg(ASSETS.ground);
+IMG.bramble = await loadImg(ASSETS.bramble.atlas);
+IMG.moss = await loadImg(ASSETS.moss.atlas);
+IMG.glare = await loadImg(ASSETS.glare.atlas);
+IMG.storm = await loadImg(ASSETS.storm.atlas);
+IMG.sign = await loadImg(ASSETS.sign);
+IMG.props = {};
+for (const k in ASSETS.props) IMG.props[k] = await loadImg(ASSETS.props[k]);
+$('portrait').src = ASSETS.portrait;
+$('pauseicon').src = ASSETS.icons.pause;
+$('looseicon').src = ASSETS.icons.bow;
+$('dodgeicon').src = ASSETS.icons.dodge;
+try { await document.fonts.load('700 12px Pixelify'); await document.fonts.load('500 12px Pixelify'); } catch (e) {}
+
+// ------------------------------------------------------------------ the zone
+const SIGN = { x: 136, y: 384 }; // foot point of the forester's signpost at the fork
+const PROPS = ASSETS.objects.map(([k, x, y, w, h]) => ({ k, x, y, w, h, foot: y + h }));
+const WALK = ASSETS.walk;
+function walkable(x, y) {
+  const cx = Math.floor(x / CELL), cy = Math.floor(y / CELL);
+  if (cx < 0 || cy < 0 || cy >= WALK.length || cx >= WALK[0].length) return false;
+  return WALK[cy][cx] === '.';
+}
+const ARENA = { x: 82, y: 410, rx: 56, ry: 33, trx: 44, try_: 25 };
+function inEllipse(x, y, cx, cy, rx, ry) { const dx = (x - cx) / rx, dy = (y - cy) / ry; return dx * dx + dy * dy <= 1; }
+function canStand(x, y) {
+  if (!walkable(x, y) || !walkable(x - 5, y) || !walkable(x + 5, y) || !walkable(x, y - 3)) return false;
+  if (S.arena.state === 'fight' && !inEllipse(x, y, ARENA.x, ARENA.y, ARENA.rx - 4, ARENA.ry - 3)) return false;
+  return true;
+}
+
+// ------------------------------------------------------------------ sound (tiny synth, after the first gesture)
+let AC = null;
+function audioOn() { if (!AC) { try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (AC && AC.state === 'suspended') AC.resume(); }
+function tone(f0, f1, dur, type = 'sine', vol = 0.08, delay = 0) {
+  if (!settings.sound || !AC) return;
+  const t = AC.currentTime + delay, o = AC.createOscillator(), g = AC.createGain();
+  o.type = type; o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(Math.max(30, f1), t + dur);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g); g.connect(AC.destination); o.start(t); o.stop(t + dur + 0.02);
+}
+const SFX = {
+  loose: () => { tone(520, 260, 0.09, 'triangle', 0.07); },
+  hit: () => { tone(1500, 900, 0.06, 'square', 0.03); },
+  tink: () => { tone(2200, 2000, 0.05, 'sine', 0.05); },
+  ow: () => { tone(300, 160, 0.14, 'triangle', 0.08); },
+  calm: () => { tone(660, 660, 0.25, 'sine', 0.06); tone(990, 990, 0.35, 'sine', 0.05, 0.09); },
+  chime: () => { tone(880, 880, 0.18, 'sine', 0.05); tone(1320, 1320, 0.3, 'sine', 0.04, 0.12); },
+  pop: () => { tone(380, 120, 0.1, 'square', 0.025); },
+  dodge: () => { tone(240, 420, 0.08, 'triangle', 0.04); },
+  win: () => { [523, 659, 784, 1047].forEach((f, i) => tone(f, f, 0.3, 'triangle', 0.05, i * 0.12)); },
+};
+
+// ------------------------------------------------------------------ state
+const BR = ASSETS.bramble;
+const HPMAX = 80; // 60 + 10 a level, shared level 2
+let S;
+function freshState() {
+  return {
+    t: 0,
+    br: { x: 122, y: 150, facing: 'S', hf: 'E', st: 'free', anim: 'idle_S', at: 0, hp: HPMAX, inv: 0, aim: 0, still: 0, vx: 0, vy: 0,
+      dodgeT: 0, dodgeDir: [0, 1], dodgeCd: 0, kb: [0, 0], kbT: 0, shootTarget: null, released: false, queued: false, lift: 0, ghosts: [], moving: false, regen: 0 },
+    moss: { x: 110, y: 148, hf: 'E', at: 0, moving: false, hop: 0, st: 'follow' },
+    trail: [],
+    foes: [], arrows: [], parts: [], sparks: [], texts: [], tels: [],
+    telGap: 1.2,
+    field: { state: 'idle', calmed: 0, total: 3, cx: 0, cy: 0, cool: 0, left: [3, 3, 2], spawnQ: [] },
+    arena: { state: 'idle', storm: null, intro: 0, outro: 0 },
+    hitStop: 0, shake: 0, cam: null, events: [], zoomBoost: 0, paused: true, toastT: 0, winT: 0,
+  };
+}
+S = freshState();
+// the storm waits in the ring from the start
+function makeStorm() {
+  return { kind: 'storm', x: ARENA.x, y: ARENA.y - 2, hover: 12, bars: 6, maxBars: 6, phase: 0, st: 'wait', t: 0, hitT: 0, ft: 0,
+    shield: false, orbit: 0, nextAtk: 0, atkCycle: 0, home: { x: ARENA.x, y: ARENA.y - 2 } };
+}
+S.arena.storm = makeStorm();
+
+// ------------------------------------------------------------------ view and scale
+let dpr = 1, cssW = 0, cssH = 0, land = false, baseScale = 2, K = 2;
+const off = document.createElement('canvas');
+const octx = off.getContext('2d');
+const fxc = document.createElement('canvas');
+const fxctx = fxc.getContext('2d');
+let fxData = null, fxBuf = null;
+function resize() {
+  dpr = Math.max(1, window.devicePixelRatio || 1);
+  cssW = window.innerWidth; cssH = window.innerHeight;
+  canvas.width = Math.round(cssW * dpr); canvas.height = Math.round(cssH * dpr);
+  land = cssW > cssH;
+  document.body.classList.toggle('land', land);
+  // portrait: 2 CSS px per art px; landscape one step in (3). Never wider than the zone.
+  baseScale = Math.max(land ? 3 : 2, Math.ceil(cssW / ZW), Math.ceil(cssH / ZH));
+}
+window.addEventListener('resize', resize);
+resize();
+function viewInfo() {
+  const cssScale = baseScale + S.zoomBoost;
+  K = Math.max(1, Math.round(cssScale * dpr));
+  const vw = canvas.width / K, vh = canvas.height / K;
+  return { vw, vh };
+}
+
+// ------------------------------------------------------------------ input
+const input = { stick: null, keys: new Set(), loose: false, dodge: false, tapTarget: null, flick: null };
+const stickEl = $('stick'), knobEl = $('knob');
+const STICK_R = 42;
+function cssToWorld(cx, cy) { const v = S.view; return { x: v.x + cx * dpr / K, y: v.y + cy * dpr / K }; }
+function worldToCss(x, y) { const v = S.view; return { x: (x - v.x) * K / dpr, y: (y - v.y) * K / dpr }; }
+canvas.addEventListener('pointerdown', (e) => {
+  audioOn();
+  if (S.paused) return;
+  e.preventDefault();
+  try { canvas.setPointerCapture(e.pointerId); } catch (err) {}
+  if (input.stick) return; // one walking thumb at a time
+  // the resting stick: a touch inside it starts from its centre
+  const hint = $('stickhint').getBoundingClientRect();
+  let ox = e.clientX, oy = e.clientY;
+  const hx = hint.left + hint.width / 2, hy = hint.top + hint.height / 2;
+  if (Math.hypot(e.clientX - hx, e.clientY - hy) < hint.width / 2 + 8) { ox = hx; oy = hy; }
+  input.stick = { id: e.pointerId, ox, oy, x: e.clientX, y: e.clientY, sx: e.clientX, sy: e.clientY, t0: performance.now(), engaged: ox !== e.clientX || oy !== e.clientY, moved: 0 };
+  if (input.stick.engaged) showStick();
+});
+canvas.addEventListener('pointermove', (e) => {
+  const s = input.stick; if (!s || s.id !== e.pointerId) return;
+  e.preventDefault();
+  s.x = e.clientX; s.y = e.clientY;
+  s.moved = Math.max(s.moved, Math.hypot(s.x - s.sx, s.y - s.sy));
+  if (!s.engaged && s.moved > 10) { s.engaged = true; showStick(); }
+  if (s.engaged) updateKnob();
+});
+function endPointer(e) {
+  const s = input.stick; if (!s || s.id !== e.pointerId) return;
+  const dt = performance.now() - s.t0;
+  const dx = s.x - s.sx, dy = s.y - s.sy, d = Math.hypot(dx, dy);
+  if (d < 12 && dt < 350) {
+    // a tap: on a Glare, shoot it
+    const tgt = foeAtCss(s.sx, s.sy);
+    if (tgt) input.tapTarget = tgt;
+  } else if (d > 34 && dt < 200) {
+    input.flick = [dx / d, dy / d]; // a flick rolls
+  }
+  input.stick = null; stickEl.classList.remove('on');
+}
+canvas.addEventListener('pointerup', endPointer);
+canvas.addEventListener('pointercancel', endPointer);
+function showStick() { const s = input.stick; stickEl.style.left = s.ox + 'px'; stickEl.style.top = s.oy + 'px'; stickEl.classList.add('on'); updateKnob(); }
+function updateKnob() {
+  const s = input.stick; let dx = s.x - s.ox, dy = s.y - s.oy; const d = Math.hypot(dx, dy);
+  if (d > STICK_R) { dx *= STICK_R / d; dy *= STICK_R / d; }
+  knobEl.style.transform = `translate(${dx}px, ${dy}px)`;
+}
+function stickVector() {
+  let vx = 0, vy = 0, mag = 0;
+  const s = input.stick;
+  if (s && s.engaged) {
+    const dx = s.x - s.ox, dy = s.y - s.oy, d = Math.hypot(dx, dy);
+    if (d > 6) { vx = dx / d; vy = dy / d; mag = Math.min(1, (d - 6) / (STICK_R - 10)); }
+  }
+  const k = input.keys;
+  const kx = (k.has('ArrowRight') || k.has('KeyD') ? 1 : 0) - (k.has('ArrowLeft') || k.has('KeyA') ? 1 : 0);
+  const ky = (k.has('ArrowDown') || k.has('KeyS') ? 1 : 0) - (k.has('ArrowUp') || k.has('KeyW') ? 1 : 0);
+  if (kx || ky) { const d = Math.hypot(kx, ky); vx = kx / d; vy = ky / d; mag = 1; }
+  return { vx, vy, mag };
+}
+function bindButton(el, fn) {
+  el.addEventListener('pointerdown', (e) => { e.preventDefault(); e.stopPropagation(); audioOn(); if (!S.paused) fn(); el.classList.add('pressed'); });
+  const up = () => el.classList.remove('pressed');
+  el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up); el.addEventListener('pointerleave', up);
+  el.addEventListener('click', (e) => { if (e.detail === 0 && !S.paused) fn(); }); // keyboard activation
+}
+bindButton($('loose'), () => { input.loose = true; });
+bindButton($('dodge'), () => { input.dodge = true; });
+window.addEventListener('keydown', (e) => {
+  audioOn();
+  if (e.code === 'Escape' || e.code === 'KeyP') { togglePause(); return; }
+  if (S.paused) return;
+  if (['Space', 'KeyJ', 'Enter'].includes(e.code)) { input.loose = true; e.preventDefault(); return; }
+  if (['ShiftLeft', 'ShiftRight', 'KeyK', 'KeyL'].includes(e.code)) { input.dodge = true; e.preventDefault(); return; }
+  input.keys.add(e.code);
+  if (e.code.startsWith('Arrow')) e.preventDefault();
+});
+window.addEventListener('keyup', (e) => input.keys.delete(e.code));
+window.addEventListener('blur', () => { input.keys.clear(); if (!S.paused && started) togglePause(true); });
+document.addEventListener('visibilitychange', () => { if (document.hidden && !S.paused && started) togglePause(true); });
+
+function hostileFoes() { return S.foes.filter((f) => f.st !== 'calming' && f.st !== 'gone' && f.st !== 'leave' && f.st !== 'wait'); }
+function foeCentre(f) { return f.kind === 'storm' ? { x: f.x, y: f.y - f.hover - 16 } : { x: f.x, y: f.y - f.hover - 10 }; }
+function foeAtCss(cx, cy) {
+  let best = null, bd = 1e9;
+  for (const f of hostileFoes()) {
+    const c = foeCentre(f), p = worldToCss(c.x, c.y);
+    const d = Math.hypot(p.x - cx, p.y - cy);
+    const r = Math.max(30, (f.kind === 'storm' ? 20 : 11) * K / dpr);
+    if (d < r && d < bd) { bd = d; best = f; }
+  }
+  return best;
+}
+
+// ------------------------------------------------------------------ helpers
+const rnd = (a, b) => a + Math.random() * (b - a);
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const pace = () => (settings.gentle ? 1.5 : 1);
+function say(x, y, text, col = '#FFFDF5', life = 1.1) { S.texts.push({ x, y, text, col, t: 0, life }); }
+function toast(title, sub, secs = 2.6) { const el = $('toast'); el.innerHTML = title + (sub ? `<small>${sub}</small>` : ''); el.classList.add('on'); S.toastT = secs; }
+function setChip(title, sub) { $('chip').innerHTML = title + (sub ? `<small>${sub}</small>` : ''); }
+function burst(x, y, n, cols, spd = 40, life = 0.45) {
+  if (settings.reduced) n = Math.ceil(n / 2);
+  for (let i = 0; i < n; i++) {
+    const a = rnd(0, Math.PI * 2), v = rnd(spd * 0.4, spd);
+    S.parts.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v * 0.8 - 10, t: 0, life: rnd(life * 0.6, life), col: cols[i % cols.length], g: 60 });
+  }
+}
+function shake(a) { if (!settings.reduced) S.shake = Math.max(S.shake, a); }
+function hitStop(s) { S.hitStop = Math.max(S.hitStop, s); }
+
+// ------------------------------------------------------------------ Bramble
+function setAnim(name, restart = false) { const b = S.br; if (b.anim !== name || restart) { b.anim = name; b.at = 0; } }
+function animFrame(name, at, frozenAt) {
+  const a = BR.anims[name]; let t = at * 1000, i = 0;
+  if (frozenAt !== undefined) return a.f[frozenAt];
+  const total = a.ms.reduce((p, c) => p + c, 0);
+  if (a.loop) t = t % total; else if (t >= total) return a.f[a.f.length - 1];
+  while (i < a.ms.length - 1 && t >= a.ms[i]) { t -= a.ms[i]; i++; }
+  return a.f[i];
+}
+function animIndex(name, at) { const a = BR.anims[name]; let t = at * 1000, i = 0; while (i < a.ms.length && t >= a.ms[i]) { t -= a.ms[i]; i++; } return i; }
+function animDone(name, at) { const a = BR.anims[name]; return at * 1000 >= a.ms.reduce((p, c) => p + c, 0); }
+function nearestFoe(x, y, range = 170) {
+  let best = null, bd = range;
+  for (const f of hostileFoes()) { const d = Math.hypot(f.x - x, f.y - y); if (d < bd) { bd = d; best = f; } }
+  return best;
+}
+function inFight() { return S.field.state === 'fight' || S.arena.state === 'fight'; }
+
+function startShot(target) {
+  const b = S.br;
+  if (b.st === 'shoot' && !b.released) return;
+  if (b.st === 'shoot' && b.released) { b.queued = true; b.queuedTarget = target; return; }
+  if (b.st !== 'free') return;
+  b.shootTarget = target || nearestFoe(b.x, b.y);
+  if (b.shootTarget) b.hf = b.shootTarget.x < b.x ? 'W' : 'E';
+  // a drawn bow (Aim) skips the draw: stillness pays
+  b.st = 'shoot'; b.released = false; b.queued = false;
+  setAnim('attack_' + b.hf, true);
+  b.shotAim = b.aim;
+  if (b.aim >= 1) b.at = 0.35; // jump to the full draw
+}
+function releaseArrow() {
+  const b = S.br; b.released = true;
+  const dir = b.hf === 'E' ? 1 : -1;
+  const sx = b.x + 9 * dir, sy = b.y - 14;
+  let tx, ty;
+  const tgt = b.shootTarget && b.shootTarget.st !== 'gone' ? b.shootTarget : nearestFoe(b.x, b.y);
+  if (tgt) { const c = foeCentre(tgt); tx = c.x; ty = c.y; } else { tx = sx + dir * 100; ty = sy; }
+  const d = Math.hypot(tx - sx, ty - sy) || 1;
+  const strong = (b.shotAim || 0) >= 3;
+  S.arrows.push({ x: sx, y: sy, vx: (tx - sx) / d, vy: (ty - sy) / d, sp: strong ? 260 : 210, t: 0, life: 0.9, target: tgt, dmg: strong ? 2 : 1, strong, trail: [] });
+  b.aim = 0; b.still = 0; b.shotAim = 0;
+  SFX.loose();
+}
+function startDodge(dir) {
+  const b = S.br;
+  if (b.dodgeCd > 0 || b.st === 'down' || b.st === 'victory' || b.st === 'dodge' || (b.st === 'hurt' && b.at < 0.15)) return;
+  if (!dir) {
+    const sv = stickVector();
+    if (sv.mag > 0.1) dir = [sv.vx, sv.vy];
+    else {
+      // away from the threat on the ground, else the way he faces
+      const t = S.tels[0];
+      if (t) { const c = telCentre(t); const dx = b.x - c.x, dy = b.y - c.y, d = Math.hypot(dx, dy) || 1; dir = [dx / d, dy / d]; if (t.type === 'lane' || t.type === 'sweep') { const n = laneNormal(t, b.x, b.y); dir = n; } }
+      else dir = { E: [1, 0], W: [-1, 0], N: [0, -1], S: [0, 1] }[b.facing];
+    }
+  }
+  // never roll into a wall: turn the roll up to 90 degrees towards open ground
+  for (const rot of [0, 0.6, -0.6, 1.2, -1.2, 1.57, -1.57]) {
+    const c = Math.cos(rot), sn = Math.sin(rot), d2 = [dir[0] * c - dir[1] * sn, dir[0] * sn + dir[1] * c];
+    if (canStand(b.x + d2[0] * 14, b.y + d2[1] * 14) && canStand(b.x + d2[0] * 24, b.y + d2[1] * 24)) { dir = d2; break; }
+  }
+  S.events.push(['dodge', Math.round(S.t * 10) / 10, dir.map((v) => Math.round(v * 100) / 100)]);
+  b.st = 'dodge'; b.dodgeT = 0; b.dodgeDir = dir; b.dodgeCd = 0.55; b.inv = Math.max(b.inv, 0.34);
+  b.aim = 0; b.still = 0;
+  if (Math.abs(dir[0]) > 0.2) b.hf = dir[0] < 0 ? 'W' : 'E';
+  b.facing = Math.abs(dir[0]) > Math.abs(dir[1]) ? (dir[0] < 0 ? 'W' : 'E') : (dir[1] < 0 ? 'N' : 'S');
+  setAnim('run_' + b.facing, true);
+  burst(b.x, b.y - 1, 5, ['#E8D9B5', '#CDB892', '#FFFDF5'], 26, 0.35);
+  SFX.dodge();
+}
+function hurtBramble(dmg, fromX, fromY) {
+  const b = S.br;
+  if (b.inv > 0 || b.st === 'down' || b.st === 'victory') return false;
+  b.hp = Math.max(0, b.hp - dmg);
+  hitStop(0.07); shake(2); SFX.ow();
+  burst(b.x, b.y - 14, 6, ['#FFFDF5', '#DDF3FD', '#A9E2F6'], 40);
+  const dx = b.x - fromX, dy = b.y - fromY, d = Math.hypot(dx, dy) || 1;
+  b.kb = [dx / d * 50, dy / d * 50]; b.kbT = 0.14;
+  b.hf = dx > 0 ? 'W' : 'E'; // he faces what hit him
+  b.aim = 0; b.still = 0;
+  if (b.hp <= 0) { goDown(); return true; }
+  b.st = 'hurt'; b.inv = 1.0; setAnim('hit_' + b.hf, true);
+  return true;
+}
+function goDown() {
+  const b = S.br; b.st = 'down'; setAnim('faint_' + b.hf, true); b.inv = 99;
+  S.tels = [];
+  for (const f of S.foes) if (f.kind === 'glare' && f.st !== 'calming') { f.st = 'leave'; f.t = 0; }
+  if (S.arena.state === 'fight') { S.arena.state = 'resting'; }
+  if (S.field.state === 'fight') { S.field.state = 'idle'; S.field.cool = 6; }
+  setTimeout(() => { if (S.br.st === 'down') { $('downcard').classList.add('on'); $('getup').focus(); } }, 1500);
+  setControls(false);
+}
+$('getup').addEventListener('click', () => {
+  $('downcard').classList.remove('on');
+  const b = S.br; b.hp = HPMAX; b.st = 'free'; b.inv = 1.2; setAnim('idle_S', true); b.facing = 'S';
+  if (S.arena.state === 'resting') resetArena(true);
+  S.moss.st = 'follow';
+});
+
+// ------------------------------------------------------------------ foes
+function spawnGlare(x, y, postX, postY, bars, home, opts = {}) {
+  const g = { kind: 'glare', x, y, hover: 7, bars, maxBars: bars, st: 'enter', t: 0, hitT: 0, ft: Math.random() * 2,
+    post: { x: postX, y: postY }, home, lastAtk: -9, leash: opts.leash || 90, arena: !!opts.arena, orbit: opts.orbit };
+  S.foes.push(g); return g;
+}
+function startField() {
+  const b = S.br, F = S.field;
+  F.state = 'fight'; F.cx = clamp(b.x, 120, 220); F.cy = clamp(b.y + 12, 196, 250);
+  const v = S.view || { x: b.x - 100, y: b.y - 200, vw: 200, vh: 400 };
+  const edges = [
+    [v.x + v.vw + 12, F.cy - 30, F.cx + 50, F.cy - 22],
+    [F.cx + 40, v.y - 10, F.cx + 20, F.cy - 55],
+    [v.x - 12, F.cy + 30, F.cx - 50, F.cy + 25],
+  ];
+  F.spawnQ = [];
+  let k = 0;
+  F.left.forEach((bars, i) => { if (bars > 0) { F.spawnQ.push({ at: k * 2.2, e: edges[i], bars, i }); k++; } });
+  F.t = 0;
+  say(b.x, b.y - 34, '!', '#F8DD8F', 1.0);
+  SFX.chime();
+  setChip('A GLARE DRIFTS IN', 'calm it: tap it or press LOOSE');
+  setControls(true);
+  S.telGap = 1.6 * pace();
+}
+function updateField(dt) {
+  const F = S.field, b = S.br;
+  if (F.cool > 0) F.cool -= dt;
+  if (F.state === 'idle' && F.calmed < F.total && F.cool <= 0 && S.arena.state !== 'fight' && b.st === 'free') {
+    if (b.x > 95 && b.x < 270 && b.y > 186 && b.y < 285) startField();
+  }
+  if (F.state !== 'fight') return;
+  F.t += dt;
+  for (let i = F.spawnQ.length - 1; i >= 0; i--) {
+    const q = F.spawnQ[i];
+    if (F.t >= q.at) {
+      const g = spawnGlare(q.e[0], q.e[1], q.e[2], q.e[3], q.bars, { x: F.cx, y: F.cy });
+      g.slot = q.i; F.spawnQ.splice(i, 1);
+    }
+  }
+  const live = S.foes.filter((f) => f.kind === 'glare' && !f.arena && f.st !== 'gone' && f.st !== 'calming');
+  setChip(`GLARES · ${F.calmed} OF ${F.total} CALMED`, live.length ? 'stand still to draw a stronger arrow' : '');
+  // walk far enough away and they lose interest (they never chase far)
+  if (Math.hypot(b.x - F.cx, b.y - F.cy) > 140) {
+    for (const g of live) { g.st = 'leave'; g.t = 0; }
+    S.tels = S.tels.filter((t) => t.owner.arena);
+    F.state = 'idle'; F.cool = 4;
+    toast('The Glares lose interest', 'they drift back the way they came');
+    setChip('THE WOODLAND', 'they will drift back if you return');
+    setControls(false);
+  }
+}
+function fieldGlareCalmed(g) {
+  const F = S.field; F.calmed++; F.left[g.slot] = 0;
+  if (F.calmed >= F.total) {
+    F.state = 'done';
+    setTimeout(() => { toast('The path is quiet again', 'three sparks drift into the trees'); setChip('THE WOODLAND', 'follow the path south to the stone ring'); setControls(false); }, 900);
+  }
+}
+
+function startArena() {
+  const A = S.arena; A.state = 'intro'; A.intro = 0;
+  const st = A.storm; st.st = 'intro'; st.t = 0;
+  S.foes = S.foes.filter((f) => f !== st); S.foes.push(st);
+  S.tels = [];
+  S.zoomBoost = 0; // the camera locks on the ring; at this scale the ring and both actors read best
+  SFX.chime();
+  setChip('THE STONE RING', 'the stones hum; the knot wakes');
+  setControls(true);
+  updateBoss();
+  $('boss').classList.add('on');
+}
+function resetArena(afterRest) {
+  const A = S.arena;
+  S.foes = S.foes.filter((f) => !(f.kind === 'glare' && f.arena) && f.kind !== 'storm');
+  A.storm = makeStorm(); S.foes.push(A.storm);
+  A.state = 'idle'; S.zoomBoost = 0; S.tels = [];
+  $('boss').classList.remove('on');
+  setControls(false);
+  if (afterRest) { S.br.x = 142; S.br.y = 394; S.br.facing = 'W'; S.br.hf = 'W'; setChip('THE STONE RING', 'the knot wound itself up again; step in when ready'); }
+}
+function updateBoss() {
+  const st = S.arena.storm; if (!st) return;
+  const names = ['WOUND TIGHT', 'WOUND TIGHT', 'SPLIT · SHIELDED', 'LAST GUST'];
+  $('bossphase').textContent = st.phase === 2 ? 'SPLIT · calm the three to drop its shield' : names[st.phase] || '';
+  const segs = $('bosssegs'); let h = '';
+  if (st.phase === 2) {
+    const minis = S.foes.filter((f) => f.kind === 'glare' && f.arena);
+    for (const m of minis) for (let i = 0; i < m.maxBars; i++) h += `<i class="${i < Math.max(0, m.bars) && m.st !== 'calming' && m.st !== 'gone' ? 'shield' : 'off'}"></i>`;
+  } else for (let i = 0; i < st.maxBars; i++) h += `<i class="${i < st.bars ? '' : 'off'}"></i>`;
+  segs.innerHTML = h;
+}
+function updateArena(dt) {
+  const A = S.arena, b = S.br, st = A.storm;
+  if (A.state === 'idle' && st && b.st === 'free' && S.field.state !== 'fight') {
+    if (inEllipse(b.x, b.y, ARENA.x, ARENA.y, ARENA.trx, ARENA.try_)) startArena();
+    // near the post: say what waits
+    const near = Math.hypot(b.x - SIGN.x, b.y - SIGN.y) < 46;
+    if (near && !A.signSaid) { A.signSaid = true; setChip('THE STONE RING', 'a restless knot waits inside. Step in to spar.'); }
+  }
+  if (A.state === 'intro') {
+    A.intro += dt;
+    if (A.intro > 1.4) { A.state = 'fight'; st.st = 'hover'; st.phase = 1; st.t = 0; st.nextAtk = 0.8; updateBoss(); say(st.x, st.y - 46, 'THE STATIC STORM', '#DDF3FD', 1.6); }
+  }
+  if (A.state === 'outro') {
+    A.outro += dt;
+    if (A.outro > 2.6 && !A.winShown) { A.winShown = true; $('wincard').classList.add('on'); }
+  }
+}
+function stormAttack(st) {
+  const b = S.br;
+  st.atkCycle++;
+  const cool = st.phase === 3 ? 0.95 : 1.3;
+  if (st.phase === 1) {
+    if (st.atkCycle % 2) {
+      const dx = b.x - st.x, dy = b.y - st.y, d = Math.hypot(dx, dy) || 1;
+      addTel({ type: 'lane', owner: st, x0: st.x, y0: st.y, x1: st.x + dx / d * 120, y1: st.y + dy / d * 120, w: 15, dur: 1.25 * pace(), dmg: 12 });
+      say(st.x, st.y - 44, 'SWEEP!', '#DDF3FD');
+    } else {
+      const off = (b.x > ARENA.x ? -1 : 1) * 38;
+      addTel({ type: 'ping', owner: st, cx: b.x, cy: b.y, r: 16, dur: 1.35 * pace(), dmg: 10 });
+      addTel({ type: 'ping', owner: st, cx: clamp(b.x + off, ARENA.x - 44, ARENA.x + 44), cy: clamp(b.y + rnd(-6, 6), ARENA.y - 22, ARENA.y + 22), r: 15, dur: 1.35 * pace(), dmg: 10 });
+      say(st.x, st.y - 44, 'PING PING', '#DDF3FD');
+    }
+  } else if (st.phase === 3) {
+    if (st.atkCycle % 2) {
+      const a = Math.atan2((b.y - st.y) / 0.72, b.x - st.x);
+      addTel({ type: 'sweep', owner: st, cx: st.x, cy: st.y, a, half: 0.62, R: 72, dur: 1.45 * pace(), dmg: 14 });
+      say(st.x, st.y - 44, 'LAST GUST!', '#DDF3FD');
+    } else {
+      addTel({ type: 'ping', owner: st, cx: b.x, cy: b.y, r: 18, dur: 1.25 * pace(), dmg: 10 });
+      say(st.x, st.y - 44, 'PING!', '#DDF3FD');
+    }
+  }
+  st.st = 'windup'; st.t = 0;
+  return cool;
+}
+function splitStorm(st) {
+  st.phase = 2; st.shield = true; st.st = 'split'; st.t = 0; S.tels = [];
+  hitStop(0.12); shake(3);
+  say(st.x, st.y - 46, 'IT SPLITS!', '#F8DD8F', 1.4);
+  SFX.pop();
+  const home = { x: ARENA.x, y: ARENA.y };
+  const posts = [[-34, -8], [30, -12], [4, 20]];
+  posts.forEach((p, i) => {
+    const g = spawnGlare(st.x, st.y, ARENA.x + p[0], ARENA.y + p[1], 2, home, { arena: true, leash: 40 });
+    g.st = 'enter'; g.y = st.y; g.x = st.x + (i - 1) * 8;
+  });
+  S.telGap = 1.6 * pace();
+  updateBoss();
+}
+function stormCalmed(st) {
+  st.st = 'calming'; st.t = 0; S.tels = [];
+  hitStop(0.16); shake(3);
+  SFX.calm();
+  say(st.x, st.y - 46, 'CALMED', '#F8DD8F', 1.6);
+  const A = S.arena; A.state = 'outro'; A.outro = 0; A.winShown = false;
+  $('boss').classList.remove('on');
+  const b = S.br; b.st = 'victory'; setAnim('victory_S', true); b.facing = 'S'; b.inv = 99;
+  S.moss.hop = 2.4;
+  setTimeout(SFX.win, 500);
+  setControls(false);
+  setChip('THE STONE RING', 'quiet now');
+}
+
+// telegraphs: one actor at a time; drawn on the ground first, solid fills, never strobing
+function addTel(t) { t.t = 0; t.beat = 0; S.tels.push(t); }
+function telCentre(t) { if (t.type === 'ping') return { x: t.cx, y: t.cy }; if (t.type === 'sweep') return { x: t.cx, y: t.cy }; return { x: (t.x0 + t.x1) / 2, y: (t.y0 + t.y1) / 2 }; }
+function laneNormal(t, x, y) {
+  if (t.type === 'sweep') { const dx = x - t.cx, dy = y - t.cy, d = Math.hypot(dx, dy) || 1; const a = Math.atan2(dy / 0.72, dx); const s = Math.sign(Math.sin(a - t.a)) || 1; return [-Math.sin(t.a) * s, Math.cos(t.a) * s]; }
+  const ux = t.x1 - t.x0, uy = t.y1 - t.y0, L = Math.hypot(ux, uy) || 1; const nx = -uy / L, ny = ux / L;
+  const side = (x - t.x0) * nx + (y - t.y0) * ny; return side >= 0 ? [nx, ny] : [-nx, -ny];
+}
+function insideTel(t, x, y) {
+  if (t.type === 'ping') return inEllipse(x, y, t.cx, t.cy, t.r + 2, (t.r + 2) * 0.72);
+  if (t.type === 'sweep') {
+    const dx = x - t.cx, dy = (y - t.cy) / 0.72, d = Math.hypot(dx, dy);
+    if (d > t.R + 2) return false;
+    let da = Math.atan2(dy, dx) - t.a; da = Math.atan2(Math.sin(da), Math.cos(da));
+    return Math.abs(da) <= t.half + 0.06 || d < 8;
+  }
+  const ux = t.x1 - t.x0, uy = t.y1 - t.y0, L = Math.hypot(ux, uy) || 1;
+  const tt = ((x - t.x0) * ux + (y - t.y0) * uy) / L, dd = Math.abs((x - t.x0) * -uy / L + (y - t.y0) * ux / L);
+  return tt >= -3 && tt <= L + 3 && dd <= t.w / 2 + 2;
+}
+function updateTels(dt) {
+  for (const t of S.tels) {
+    t.t += dt;
+    if (!t.fired && t.t >= t.dur) {
+      t.fired = true; t.beat = 0;
+      const b = S.br;
+      if (insideTel(t, b.x, b.y)) {
+        if (b.inv > 0 && b.st === 'dodge') say(b.x, b.y - 32, 'MISSED YOU', '#FFFDF5');
+        else { const c = t.type === 'lane' ? { x: t.x0, y: t.y0 } : telCentre(t); hurtBramble(t.dmg, c.x, c.y); S.events.push(['hurt', t.type, Math.round(S.t * 10) / 10, b.st, Math.round(b.x), Math.round(b.y)]); }
+      } else if (Math.hypot(b.x - telCentre(t).x, b.y - telCentre(t).y) < 40) say(b.x, b.y - 32, 'MISSED YOU', '#FFFDF5');
+      SFX.pop();
+    }
+    if (t.fired) t.beat += dt;
+  }
+  S.tels = S.tels.filter((t) => !(t.fired && t.beat > 0.32));
+}
+
+function updateFoes(dt) {
+  const b = S.br;
+  // a director: one Glare winds up at a time
+  S.telGap -= dt;
+  const winding = S.tels.length > 0 || S.foes.some((f) => f.st === 'windup' || f.st === 'act');
+  if (!winding && S.telGap <= 0 && b.st !== 'down' && b.st !== 'victory') {
+    const cand = S.foes.filter((f) => f.kind === 'glare' && f.st === 'hover' && Math.hypot(f.x - b.x, f.y - b.y) < 125 && (f.arena ? S.arena.state === 'fight' : S.field.state === 'fight'));
+    const st = S.arena.storm;
+    if (S.arena.state === 'fight' && st && st.st === 'hover' && st.phase !== 2) {
+      S.telGap = stormAttack(st) * pace() + 0.2;
+    } else if (cand.length) {
+      cand.sort((a, c) => a.lastAtk - c.lastAtk);
+      const g = cand[0];
+      g.st = 'windup'; g.t = 0; g.lastAtk = S.t;
+      const usePing = Math.random() < 0.4;
+      if (usePing) addTel({ type: 'ping', owner: g, cx: b.x, cy: b.y, r: 17, dur: 1.3 * pace(), dmg: 8 });
+      else {
+        const dx = b.x - g.x, dy = b.y - g.y, d = Math.hypot(dx, dy) || 1, L = clamp(d + 20, 40, 120);
+        addTel({ type: 'lane', owner: g, x0: g.x, y0: g.y, x1: g.x + dx / d * L, y1: g.y + dy / d * L, w: 13, dur: 1.15 * pace(), dmg: 10 });
+      }
+      say(g.x, g.y - g.hover - 26, usePing ? 'PING!' : 'FLASH!', '#DDF3FD', 1.3 * pace());
+      S.telGap = (g.arena ? 1.2 : 1.3) * pace();
+    }
+  }
+  for (const f of S.foes) {
+    f.t += dt; f.ft += dt; if (f.hitT > 0) f.hitT -= dt;
+    if (f.kind === 'storm') { updateStorm(f, dt); continue; }
+    const spd = (settings.gentle ? 8 : 12);
+    if (f.st === 'enter') {
+      const dx = f.post.x - f.x, dy = f.post.y - f.y, d = Math.hypot(dx, dy);
+      if (d < 2) { f.st = 'hover'; f.t = 0; f.wander = rnd(2, 3.5); }
+      else { const v = Math.min(d, 26 * dt); f.x += dx / d * v; f.y += dy / d * v; }
+    } else if (f.st === 'hover') {
+      f.wander -= dt;
+      if (f.wander <= 0) {
+        // a new post near Bramble, but never far from where it came in
+        const a = rnd(0, Math.PI * 2), r = rnd(42, 66);
+        let px = b.x + Math.cos(a) * r, py = b.y + Math.sin(a) * r * 0.7;
+        const hx = px - f.home.x, hy = py - f.home.y, hd = Math.hypot(hx, hy);
+        if (hd > f.leash) { px = f.home.x + hx / hd * f.leash; py = f.home.y + hy / hd * f.leash; }
+        if (f.arena) { px = clamp(px, ARENA.x - 44, ARENA.x + 44); py = clamp(py, ARENA.y - 24, ARENA.y + 22); }
+        f.post = { x: clamp(px, 12, ZW - 12), y: clamp(py, 30, ZH - 10) };
+        f.wander = rnd(2.2, 3.8);
+      }
+      const dx = f.post.x - f.x, dy = f.post.y - f.y, d = Math.hypot(dx, dy);
+      if (d > 1) { const v = Math.min(d, spd * dt); f.x += dx / d * v; f.y += dy / d * v; }
+    } else if (f.st === 'windup') {
+      const t = S.tels.find((tt) => tt.owner === f);
+      if (!t) { f.st = 'recover'; f.t = 0; }
+      else if (t.fired) { f.st = 'act'; f.t = 0; }
+    } else if (f.st === 'act') { if (f.t > 0.3) { f.st = 'recover'; f.t = 0; } }
+    else if (f.st === 'recover') { if (f.t > 0.5) { f.st = 'hover'; f.t = 0; f.wander = 0.5; } }
+    else if (f.st === 'calming') {
+      if (f.t > 1.0) {
+        f.st = 'gone';
+        const away = f.arena ? [rnd(-1, 1), -1] : [f.x < 160 ? -0.6 : 0.6, -1];
+        S.sparks.push({ x: f.x, y: f.y - f.hover - 6, vx: away[0] * 10, vy: away[1] * 9, t: 0, life: 2.8, ox: f.x });
+      }
+    } else if (f.st === 'leave') {
+      const dx = f.x - b.x, dy = f.y - b.y, d = Math.hypot(dx, dy) || 1;
+      f.x += dx / d * 30 * dt; f.y += dy / d * 30 * dt;
+      if (f.t > 2.5) f.st = 'gone';
+    }
+  }
+  S.foes = S.foes.filter((f) => f.st !== 'gone');
+}
+function updateStorm(st, dt) {
+  const b = S.br;
+  if (st.st === 'wait' || st.st === 'intro') { st.x = st.home.x + Math.round(Math.sin(S.t * 0.6) * 2); return; }
+  if (st.st === 'calming') {
+    if (st.t > 1.7 && !st.burst) {
+      st.burst = true;
+      for (let i = 0; i < 9; i++) S.sparks.push({ x: st.x + rnd(-8, 8), y: st.y - st.hover - rnd(6, 22), vx: rnd(-14, 14), vy: rnd(-16, -6), t: -i * 0.06, life: 3.2, ox: st.x });
+      if (!settings.reduced) for (let i = 0; i < 26; i++) S.parts.push({ x: st.x + rnd(-30, 30), y: st.y - rnd(40, 70), vx: rnd(-8, 8), vy: rnd(4, 14), t: 0, life: rnd(1.6, 2.4), col: ['#F8DD8F', '#F0A688', '#A5D77F', '#FFFDF5', '#9F8CD3'][i % 5], g: 0, petal: true });
+    }
+    if (st.t > 1.9) st.st = 'gone';
+    return;
+  }
+  if (st.st === 'split') { if (st.t > 1.0) { st.st = 'hover'; st.t = 0; } return; }
+  // drift on a small orbit in the ring
+  st.orbit += dt * (st.phase === 3 ? 0.7 : 0.45);
+  const tx = ARENA.x + Math.cos(st.orbit) * 14, ty = ARENA.y - 6 + Math.sin(st.orbit) * 6;
+  if (st.st !== 'windup') { st.x += (tx - st.x) * Math.min(1, dt * 1.5); st.y += (ty - st.y) * Math.min(1, dt * 1.5); }
+  if (st.st === 'windup') { if (!S.tels.some((t) => t.owner === st)) { st.st = 'hover'; st.t = 0; } }
+  if (st.phase === 2) {
+    const minis = S.foes.filter((f) => f.kind === 'glare' && f.arena && f.st !== 'gone');
+    if (minis.length === 0 && !st.unshielding) {
+      st.unshielding = true;
+      setTimeout(() => {
+        st.shield = false; st.phase = 3; st.bars = 5; st.maxBars = 5; st.unshielding = false; st.st = 'hover';
+        say(st.x, st.y - 46, 'THE SHIELD DROPS', '#F8DD8F', 1.4); SFX.chime(); S.telGap = 1.2; updateBoss();
+      }, 700);
+    }
+  }
+}
+function hitFoe(f, a) {
+  if (f.kind === 'storm' && f.shield) {
+    SFX.tink(); burst(a.x, a.y, 4, ['#CBBDF0', '#FFFDF5'], 30, 0.3);
+    if (!f.saidShield || S.t - f.saidShield > 1.5) { f.saidShield = S.t; say(f.x, f.y - 50, 'SHIELDED', '#CBBDF0'); }
+    return;
+  }
+  if (f.st === 'calming' || f.st === 'wait' || f.st === 'intro' || f.st === 'split') return;
+  f.bars -= a.dmg; f.hitT = 0.11;
+  hitStop(a.strong ? 0.09 : 0.05); shake(a.strong ? 2 : 1);
+  SFX.hit();
+  burst(a.x, a.y, a.strong ? 9 : 5, ['#FFFDF5', '#DDF3FD', '#F8DD8F'], a.strong ? 55 : 40);
+  if (a.strong) say(f.x, f.y - (f.kind === 'storm' ? 52 : 34), 'STEADY!', '#F8DD8F', 0.8);
+  // a strong (drawn) arrow staggers a wind-up: stillness becomes strength
+  if (a.strong && f.kind === 'glare' && f.st === 'windup') { S.tels = S.tels.filter((t) => t.owner !== f); f.st = 'recover'; f.t = 0; say(f.x, f.y - 26, 'FIZZLED', '#FFFDF5', 0.8); }
+  if (f.kind === 'glare') { const dx = f.x - S.br.x, d = Math.abs(dx) || 1; f.x += dx / d * 3; }
+  if (f.bars <= 0) {
+    if (f.kind === 'storm') {
+      if (f.phase === 1) { f.bars = 0; splitStorm(f); }
+      else stormCalmed(f);
+    } else {
+      f.bars = 0; f.st = 'calming'; f.t = 0;
+      S.tels = S.tels.filter((t) => t.owner !== f);
+      say(f.x, f.y - 30, 'CALMED', '#F8DD8F', 1.2);
+      SFX.calm();
+      if (!f.arena) fieldGlareCalmed(f);
+    }
+  }
+  if (f.kind === 'storm' || f.arena) updateBoss();
+}
+
+// ------------------------------------------------------------------ the step
+let started = false;
+function step(dt) {
+  S.t += dt;
+  const b = S.br;
+  if (b.inv > 0 && b.inv < 50) b.inv -= dt;
+  if (b.dodgeCd > 0) b.dodgeCd -= dt;
+  b.at += dt;
+
+  // inputs
+  const sv = stickVector();
+  if (input.flick) { startDodge(input.flick); input.flick = null; }
+  if (input.dodge) { startDodge(null); input.dodge = false; }
+  if (input.tapTarget) { if (input.tapTarget.st !== 'gone') startShot(input.tapTarget); input.tapTarget = null; }
+  if (input.loose) { startShot(null); input.loose = false; }
+
+  let mvx = 0, mvy = 0, speed = 0;
+  if (b.st === 'free') {
+    if (sv.mag > 0.05) {
+      speed = sv.mag > 0.55 ? 50 : 20 + (50 - 20) * Math.max(0, (sv.mag - 0.2) / 0.35) * 0; // walk 20 or run 50 px/s (data.json)
+      speed = sv.mag > 0.55 ? 50 : 20;
+      mvx = sv.vx; mvy = sv.vy;
+      b.facing = Math.abs(mvx) > Math.abs(mvy) * 0.9 ? (mvx < 0 ? 'W' : 'E') : (mvy < 0 ? 'N' : 'S');
+      if (Math.abs(mvx) > 0.25) b.hf = mvx < 0 ? 'W' : 'E';
+      setAnim((speed > 30 ? 'run_' : 'walk_') + b.facing);
+      b.still = 0; b.aim = 0; b.moving = true;
+    } else {
+      b.moving = false;
+      // stillness becomes strength: in a fight, standing still draws the bow
+      const tgt = inFight() ? nearestFoe(b.x, b.y) : null;
+      if (tgt) {
+        b.still += dt;
+        const na = b.still < 0.3 ? 0 : Math.min(3, 1 + Math.floor((b.still - 0.3) / 0.45));
+        if (na > b.aim) { b.aim = na; if (na === 3) { SFX.tink(); burst(b.x + (b.hf === 'E' ? 9 : -9), b.y - 15, 4, ['#F8DD8F', '#FFFDF5'], 18, 0.3); } }
+        b.hf = tgt.x < b.x ? 'W' : 'E';
+        b.anim = 'attack_' + b.hf; // held draw frames, chosen in draw()
+      } else {
+        b.still = 0; b.aim = 0;
+        setAnim('idle_' + b.facing);
+      }
+      // a breather out of a fight
+      if (!inFight() && b.hp < HPMAX) { b.regen += dt; if (b.regen > 0.25) { b.regen = 0; b.hp = Math.min(HPMAX, b.hp + 1); } }
+    }
+  } else if (b.st === 'shoot') {
+    const idx = animIndex(b.anim, b.at);
+    if (!b.released && idx >= 4) releaseArrow();
+    if (b.released && sv.mag > 0.3 && idx >= 5) { b.st = 'free'; }
+    else if (animDone(b.anim, b.at)) { b.st = 'free'; setAnim('idle_' + b.facing); }
+    if (b.released && b.queued && idx >= 5) { b.st = 'free'; const qt = b.queuedTarget; b.queued = false; startShot(qt); }
+  } else if (b.st === 'dodge') {
+    b.dodgeT += dt;
+    const D = 0.3, p = b.dodgeT / D;
+    const v = settings.reduced ? 70 : 115 * (1 - p * 0.6);
+    mvx = b.dodgeDir[0]; mvy = b.dodgeDir[1]; speed = v;
+    b.lift = settings.reduced ? 0 : Math.round(Math.sin(Math.min(1, p) * Math.PI) * 3);
+    if (!settings.reduced && Math.floor(b.dodgeT / 0.05) !== b.lastGhost) { b.lastGhost = Math.floor(b.dodgeT / 0.05); b.ghosts.push({ x: b.x, y: b.y, lift: b.lift, f: animFrame(b.anim, b.at), t: 0 }); }
+    if (p >= 1) { b.st = 'free'; b.lift = 0; burst(b.x, b.y - 1, 3, ['#E8D9B5', '#CDB892'], 18, 0.3); }
+  } else if (b.st === 'hurt') {
+    if (animDone(b.anim, b.at)) { b.st = 'free'; }
+    else if (b.at > 0.22 && sv.mag > 0.3) { b.st = 'free'; }
+  } else if (b.st === 'down') {
+    if (animDone(b.anim, b.at) && !b.anim.startsWith('sleep')) setAnim('sleep_' + b.hf, true);
+  } else if (b.st === 'victory') {
+    if (animDone(b.anim, b.at)) setAnim(b.anim === 'victory_S' ? 'happy_S' : 'victory_S', true);
+  }
+  if (b.kbT > 0) { b.kbT -= dt; moveBramble(b.kb[0] * dt, b.kb[1] * dt); }
+  if (speed > 0) moveBramble(mvx * speed * dt, mvy * speed * dt);
+  for (const g of b.ghosts) g.t += dt;
+  b.ghosts = b.ghosts.filter((g) => g.t < 0.18);
+
+  // the trail the Mossling follows, a step behind
+  const last = S.trail[S.trail.length - 1];
+  if (!last || Math.hypot(last.x - b.x, last.y - b.y) > 1) S.trail.push({ x: b.x, y: b.y });
+  if (S.trail.length > 80) S.trail.shift();
+  updateMoss(dt);
+
+  updateField(dt);
+  updateArena(dt);
+  updateFoes(dt);
+  updateTels(dt);
+  updateArrows(dt);
+  for (const p of S.parts) { p.t += dt; p.x += p.vx * dt; p.y += p.vy * dt; p.vy += (p.g || 0) * dt; if (p.petal) p.x += Math.sin(p.t * 5 + p.y) * 0.3; }
+  S.parts = S.parts.filter((p) => p.t < p.life);
+  for (const s of S.sparks) { s.t += dt; if (s.t > 0 && !settings.reduced) { s.x += s.vx * dt + Math.sin(s.t * 3) * 0.25; s.y += s.vy * dt; } }
+  S.sparks = S.sparks.filter((s) => s.t < s.life);
+  for (const t of S.texts) t.t += dt;
+  S.texts = S.texts.filter((t) => t.t < t.life);
+  if (S.toastT > 0) { S.toastT -= dt; if (S.toastT <= 0) $('toast').classList.remove('on'); }
+  if (S.shake > 0) S.shake = Math.max(0, S.shake - dt * 14);
+}
+function moveBramble(dx, dy) {
+  const b = S.br;
+  // slide along walls: try both axes, then each alone
+  const nx = b.x + dx, ny = b.y + dy;
+  if (canStand(nx, ny)) { b.x = nx; b.y = ny; return; }
+  if (dx && canStand(nx, b.y)) { b.x = nx; return; }
+  if (dy && canStand(b.x, ny)) { b.y = ny; }
+}
+function updateMoss(dt) {
+  const m = S.moss, b = S.br;
+  let tx, ty;
+  if (b.st === 'down') { tx = b.x + (b.hf === 'E' ? -16 : 16); ty = b.y + 2; }
+  else {
+    // the point about 14 px back along Bramble's own path
+    let dist = 0, i = S.trail.length - 1; tx = b.x; ty = b.y;
+    while (i > 0 && dist < 14) { dist += Math.hypot(S.trail[i].x - S.trail[i - 1].x, S.trail[i].y - S.trail[i - 1].y); i--; }
+    if (i >= 0 && S.trail[i]) { tx = S.trail[i].x; ty = S.trail[i].y; }
+    const side = b.hf === 'E' ? -1 : 1;
+    tx += side * 9; ty += 2;
+    // never tucked in behind his head: keep to his side, level with his feet
+    if (Math.abs(tx - b.x) < 14 && ty < b.y + 5 && ty > b.y - 22) { tx = b.x + side * 14; ty = b.y + 1; }
+    if (!walkable(tx, ty)) { tx = m.x; ty = m.y; }
+  }
+  const dx = tx - m.x, dy = ty - m.y, d = Math.hypot(dx, dy);
+  m.moving = d > 1.2;
+  if (m.moving) { const v = Math.min(d, (d > 30 ? 90 : 55) * dt); m.x += dx / d * v; m.y += dy / d * v; if (Math.abs(dx) > 0.5) m.hf = dx < 0 ? 'W' : 'E'; m.at += dt; }
+  else if (b.st !== 'down') m.hf = b.hf;
+  if (m.hop > 0) m.hop -= dt;
+}
+function updateArrows(dt) {
+  for (const a of S.arrows) {
+    a.t += dt;
+    if (a.target && a.target.st !== 'gone' && a.target.st !== 'calming') {
+      // a gentle home, so a tapped Glare is reliably met
+      const c = foeCentre(a.target); const dx = c.x - a.x, dy = c.y - a.y, d = Math.hypot(dx, dy) || 1;
+      const k = Math.min(1, dt * 7); a.vx += (dx / d - a.vx) * k; a.vy += (dy / d - a.vy) * k; const n = Math.hypot(a.vx, a.vy); a.vx /= n; a.vy /= n;
+    }
+    a.trail.push({ x: a.x, y: a.y }); if (a.trail.length > 4) a.trail.shift();
+    a.x += a.vx * a.sp * dt; a.y += a.vy * a.sp * dt;
+    for (const f of S.foes) {
+      if (f.st === 'gone' || f.st === 'calming' || f.st === 'wait' || f.st === 'leave') continue;
+      const c = foeCentre(f), r = f.kind === 'storm' ? 15 : 8;
+      if (Math.hypot(c.x - a.x, c.y - a.y) < r) { hitFoe(f, a); a.dead = true; break; }
+    }
+  }
+  S.arrows = S.arrows.filter((a) => !a.dead && a.t < a.life);
+}
+
+// ------------------------------------------------------------------ drawing
+const GL = ASSETS.glare, STM = ASSETS.storm;
+function fxInit(w, h) {
+  if (fxc.width !== w || fxc.height !== h) { fxc.width = w; fxc.height = h; fxData = fxctx.createImageData(w, h); fxBuf = fxData.data; }
+  fxBuf.fill(0);
+}
+let FX_OX = 0, FX_OY = 0;
+function fxPx(x, y, r, g, b, a) {
+  x = Math.round(x) - FX_OX; y = Math.round(y) - FX_OY;
+  if (x < 0 || y < 0 || x >= fxc.width || y >= fxc.height) return;
+  const i = (y * fxc.width + x) * 4, A0 = fxBuf[i + 3] / 255, A1 = a;
+  const out = A1 + A0 * (1 - A1);
+  if (out <= 0) return;
+  fxBuf[i] = (r * A1 + fxBuf[i] * A0 * (1 - A1)) / out; fxBuf[i + 1] = (g * A1 + fxBuf[i + 1] * A0 * (1 - A1)) / out; fxBuf[i + 2] = (b * A1 + fxBuf[i + 2] * A0 * (1 - A1)) / out; fxBuf[i + 3] = out * 255;
+}
+function fxEllipse(cx, cy, rx, ry, fn) {
+  for (let y = Math.floor(-ry); y <= Math.ceil(ry); y++) for (let x = Math.floor(-rx); x <= Math.ceil(rx); x++) {
+    const d = (x / rx) ** 2 + (y / ry) ** 2; if (d <= 1) fn(Math.round(cx) + x, Math.round(cy) + y, d, x, y);
+  }
+}
+function drawShadow(cx, cy, rx, ry, a) { fxEllipse(cx, cy, rx, ry, (x, y) => fxPx(x, y, 20, 30, 18, a)); }
+function drawGlow(cx, cy, warm, s = 1) {
+  const c = warm ? [255, 233, 168] : [201, 240, 255];
+  fxEllipse(cx, cy, 17 * s, 9 * s, (x, y, d) => { if ((x + y) % 2 === 0) fxPx(x, y, c[0], c[1], c[2], 0.3 * (1 - d)); });
+}
+function drawTel(t) {
+  const p = Math.min(1, t.t / t.dur), beat = t.fired ? Math.max(0, 1 - t.beat / 0.32) : 0;
+  const pale = [221, 243, 253], rim = [59, 124, 194], white = [255, 255, 255];
+  if (t.type === 'lane') {
+    const ux = t.x1 - t.x0, uy = t.y1 - t.y0, L = Math.hypot(ux, uy), dx = ux / L, dy = uy / L, nx = -dy, ny = dx, hw = t.w / 2;
+    const xs = [t.x0 + nx * hw, t.x0 - nx * hw, t.x1 + nx * hw, t.x1 - nx * hw], ys = [t.y0 + ny * hw, t.y0 - ny * hw, t.y1 + ny * hw, t.y1 - ny * hw];
+    const x0 = Math.floor(Math.min(...xs)), x1 = Math.ceil(Math.max(...xs)), y0 = Math.floor(Math.min(...ys)), y1 = Math.ceil(Math.max(...ys));
+    for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) {
+      const tt = (x - t.x0) * dx + (y - t.y0) * dy, dd = (x - t.x0) * nx + (y - t.y0) * ny;
+      if (tt < 0 || tt > L || Math.abs(dd) > hw) continue;
+      if (beat > 0) { fxPx(x, y, 255, 255, 255, 0.25 + 0.5 * beat); continue; }
+      const edge = Math.abs(dd) > hw - 1;
+      if (edge) { if ((Math.floor(tt) % 4) < 2) fxPx(x, y, rim[0], rim[1], rim[2], 0.9); continue; }
+      const filled = tt <= p * L;
+      fxPx(x, y, pale[0], pale[1], pale[2], filled ? 0.5 : 0.14);
+      // chevrons pointing along the lane
+      const ct = (tt - Math.abs(dd) * 0.7) % 9;
+      if (filled && ct > 0 && ct < 1.2) fxPx(x, y, white[0], white[1], white[2], 0.85);
+    }
+  } else if (t.type === 'ping') {
+    const r = t.r, ry = r * 0.72, inner = r * (1 - p);
+    fxEllipse(t.cx, t.cy, r + 0.5, ry + 0.5, (x, y, d, lx, ly) => {
+      if (beat > 0) { fxPx(x, y, 255, 255, 255, 0.25 + 0.5 * beat); return; }
+      const e = Math.sqrt(d);
+      if (e > 1 - 1.3 / r) { const a = Math.atan2(ly / 0.72, lx); if (Math.floor((a + Math.PI) * 5) % 2 === 0) fxPx(x, y, rim[0], rim[1], rim[2], 0.9); return; }
+      fxPx(x, y, pale[0], pale[1], pale[2], 0.12 + 0.25 * p);
+      const ie = e * r; if (Math.abs(ie - inner) < 0.9) fxPx(x, y, 255, 255, 255, 0.9);
+    });
+  } else if (t.type === 'sweep') {
+    const R = t.R;
+    fxEllipse(t.cx, t.cy, R + 0.5, R * 0.72 + 0.5, (x, y, d, lx, ly) => {
+      const ld = Math.hypot(lx, ly / 0.72); let da = Math.atan2(ly / 0.72, lx) - t.a; da = Math.atan2(Math.sin(da), Math.cos(da));
+      if (Math.abs(da) > t.half) return;
+      if (beat > 0) { fxPx(x, y, 255, 255, 255, 0.25 + 0.5 * beat); return; }
+      const edge = Math.abs(da) > t.half - 1.2 / Math.max(6, ld) || ld > R - 1;
+      if (edge) { if (Math.floor(ld) % 4 < 2 || ld > R - 1) fxPx(x, y, rim[0], rim[1], rim[2], 0.9); return; }
+      const filled = ld <= p * R;
+      fxPx(x, y, pale[0], pale[1], pale[2], filled ? 0.48 : 0.12);
+      if (filled && Math.abs((ld % 10) - 5) < 0.6) fxPx(x, y, 255, 255, 255, 0.8);
+    });
+  }
+}
+function drawArenaRing(alpha) {
+  // the stones hum: a dotted ring of pale light marks the ring's edge
+  const n = 140;
+  for (let i = 0; i < n; i++) {
+    if (i % 3 === 2) continue;
+    const a = (i / n) * Math.PI * 2 + (settings.reduced ? 0 : S.t * 0.12);
+    fxPx(ARENA.x + Math.cos(a) * ARENA.rx, ARENA.y + Math.sin(a) * ARENA.ry, 248, 221, 143, 0.85 * alpha);
+  }
+}
+function drawAimRing(b) {
+  const prog = b.aim >= 3 ? 1 : (b.aim + Math.max(0, ((b.still - 0.3) % 0.45) / 0.45) * (b.still > 0.3 ? 1 : 0)) / 3;
+  const n = 40;
+  for (let i = 0; i < n; i++) {
+    const f = i / n, a = -Math.PI / 2 + f * Math.PI * 2;
+    const x = b.x + Math.cos(a) * 10, y = b.y + Math.sin(a) * 4.5;
+    if (Math.floor(f * 3 * 5) % 5 === 4) continue; // three arcs
+    if (f <= prog) fxPx(x, y, 248, 221, 143, 0.95); else fxPx(x, y, 30, 25, 23, 0.35);
+  }
+}
+function blit(img, sx, sy, sw, sh, dx, dy, alpha = 1) {
+  if (alpha < 1) { octx.globalAlpha = alpha; }
+  octx.drawImage(img, sx, sy, sw, sh, Math.round(dx) - FX_OX, Math.round(dy) - FX_OY, sw, sh);
+  if (alpha < 1) octx.globalAlpha = 1;
+}
+function bramFrame() {
+  const b = S.br;
+  if (b.st === 'free' && !b.moving && b.anim.startsWith('attack')) {
+    // the visible draw: aim 0 to 3 holds the draw frames
+    const a = BR.anims[b.anim]; return a.f[[0, 1, 2, 3][b.aim]];
+  }
+  return animFrame(b.anim, b.at);
+}
+function drawBramble(f, x, y, lift, alpha = 1) {
+  const c = BR.cell, col = f % BR.cols, row = Math.floor(f / BR.cols);
+  blit(IMG.bramble, col * c, row * c, c, c, Math.round(x) - 24, Math.round(y) - 44 - lift, alpha);
+}
+function drawGlare(g) {
+  let name;
+  if (g.st === 'calming') name = g.t < 0.6 ? 'calm' : 'fold';
+  else if (g.hitT > 0 && !settings.reduced) name = 'hit';
+  else { const fl = settings.reduced ? 0 : Math.floor(g.ft * 3) % 2; name = (g.st === 'windup' ? 'wind' : 'cross') + fl; }
+  const r = GL.frames[name];
+  const bob = settings.reduced ? 0 : Math.round(Math.sin(g.ft * 2.2) * 1);
+  const yy = g.y - g.hover + bob;
+  blit(IMG.glare, r[0], r[1], r[2], r[3], g.x - 8, yy - 20, g.st === 'leave' ? Math.max(0, 1 - g.t / 2.5) : 1);
+  if (g.hitT > 0 && settings.reduced) outlineBox(g.x - 8, yy - 20, 17, 20);
+}
+function outlineBox(x, y, w, h) { octx.fillStyle = '#FFFDF5'; const X = Math.round(x) - FX_OX, Y = Math.round(y) - FX_OY; octx.fillRect(X, Y, w, 1); octx.fillRect(X, Y + h - 1, w, 1); octx.fillRect(X, Y, 1, h); octx.fillRect(X + w - 1, Y, 1, h); }
+function drawStorm(st) {
+  let name;
+  if (st.st === 'calming') name = st.t < 0.8 ? 'calm' : (st.t < 1.25 ? 'fold0' : 'fold1');
+  else {
+    const fl = settings.reduced ? 0 : Math.floor(st.ft * 3) % 2;
+    const core = st.phase >= 2;
+    if (st.hitT > 0 && !settings.reduced) name = core ? 'corehit' : 'hit';
+    else if (st.st === 'windup') name = core ? 'corewind' : 'wind' + fl;
+    else name = core ? 'core' + fl : 'cross' + fl;
+  }
+  const r = STM.frames[name];
+  let jx = 0;
+  if (st.st === 'split' && !settings.reduced) jx = Math.round(Math.sin(st.t * 40) * 1);
+  const bob = settings.reduced ? 0 : Math.round(Math.sin(st.ft * 1.6) * 1);
+  const yy = st.y - st.hover + bob;
+  blit(IMG.storm, r[0], r[1], r[2], r[3], st.x - 20 + jx, yy - 34, st.st === 'wait' ? 0.9 : 1);
+  if (st.hitT > 0 && settings.reduced) outlineBox(st.x - 20, yy - 34, 41, 34);
+  if (st.shield) {
+    // a dotted shell of violet light
+    octx.fillStyle = '#CBBDF0';
+    const n = 56;
+    for (let i = 0; i < n; i++) {
+      if ((i + (settings.reduced ? 0 : Math.floor(S.t * 6))) % 4 === 0) continue;
+      const a = i / n * Math.PI * 2;
+      octx.fillRect(Math.round(st.x + Math.cos(a) * 15) - FX_OX, Math.round(yy - 14 + Math.sin(a) * 15) - FX_OY, 1, 1);
+    }
+  }
+}
+function drawBars(x, top, n, of, warm) {
+  const seg = 4, gap = 1, w = of * seg + (of - 1) * gap + 4, x0 = Math.round(x - w / 2) - FX_OX, y0 = Math.round(top) - FX_OY;
+  octx.fillStyle = '#0F1020'; octx.fillRect(x0, y0, w, 6);
+  octx.fillStyle = '#3C4168'; octx.fillRect(x0 + 1, y0 + 1, w - 2, 4);
+  for (let k = 0; k < of; k++) {
+    const sx = x0 + 2 + k * (seg + gap);
+    octx.fillStyle = k < n ? (warm ? '#E6BC5C' : '#62BCE6') : '#2B2F50'; octx.fillRect(sx, y0 + 2, seg, 2);
+    if (k < n) { octx.fillStyle = warm ? '#FFF0C2' : '#DDF3FD'; octx.fillRect(sx, y0 + 2, seg, 1); }
+  }
+}
+function drawPips(x, top, n) {
+  const x0 = Math.round(x - 7) - FX_OX, y0 = Math.round(top) - FX_OY;
+  for (let k = 0; k < 3; k++) {
+    octx.fillStyle = '#1E1917'; octx.fillRect(x0 + k * 5, y0, 4, 4);
+    octx.fillStyle = k < n ? '#E6BC5C' : '#5E544A'; octx.fillRect(x0 + k * 5 + 1, y0 + 1, 2, 2);
+  }
+}
+function drawArrow(a) {
+  // a blunt hush-arrow: shaft, a soft felt head, fletching; drawn on the art grid
+  const len = 7;
+  for (const [i, p] of a.trail.entries()) { octx.fillStyle = a.strong ? 'rgba(248,221,143,' + (0.25 + i * 0.15) + ')' : 'rgba(255,253,245,' + (0.15 + i * 0.12) + ')'; octx.fillRect(Math.round(p.x) - FX_OX, Math.round(p.y) - FX_OY, 1, 1); }
+  for (let i = 0; i <= len; i++) {
+    const x = Math.round(a.x - a.vx * i) - FX_OX, y = Math.round(a.y - a.vy * i) - FX_OY;
+    octx.fillStyle = i <= 1 ? (a.strong ? '#F8DD8F' : '#E9D3A4') : i >= len - 1 ? '#FFFDF5' : '#8F6A3E';
+    octx.fillRect(x, y, 1, 1);
+  }
+}
+
+let lastFrameMs = 0;
+function render() {
+  const { vw, vh } = viewInfo();
+  const b = S.br;
+  // camera: Bramble a little above the middle (the thumbs live below); the arena frames the ring
+  let tx = b.x, ty = b.y + (land ? 4 : vh * 0.06);
+  if (S.arena.state === 'intro' || S.arena.state === 'fight' || S.arena.state === 'outro') {
+    tx = ARENA.x; ty = ARENA.y - 10 + (land ? 0 : vh * 0.08);
+  }
+  let cx = clamp(tx - vw / 2, 0, Math.max(0, ZW - vw)), cy = clamp(ty - vh / 2, 0, Math.max(0, ZH - vh));
+  if (vw > ZW) cx = (ZW - vw) / 2;
+  if (!S.cam || S.camK !== K) S.cam = { x: cx, y: cy };
+  else { const k = settings.reduced ? 1 : 0.14; S.cam.x += (cx - S.cam.x) * k; S.cam.y += (cy - S.cam.y) * k; }
+  S.camK = K;
+  // snap the view to whole device pixels so every art pixel stays a crisp K x K block
+  const vx = Math.round(S.cam.x * K) / K, vy = Math.round(S.cam.y * K) / K;
+  S.view = { x: vx, y: vy, vw, vh };
+  const ox = Math.floor(vx), oy = Math.floor(vy);
+  const ow = Math.ceil(vw) + 2, oh = Math.ceil(vh) + 2;
+  if (off.width !== ow || off.height !== oh) { off.width = ow; off.height = oh; }
+  FX_OX = ox; FX_OY = oy;
+  octx.imageSmoothingEnabled = false;
+  octx.fillStyle = '#2F4A2A'; octx.fillRect(0, 0, ow, oh);
+  octx.drawImage(IMG.ground, -ox, -oy);
+  // ground layer: shadows, glows, telegraphs (one ImageData pass)
+  fxInit(ow, oh);
+  const A = S.arena;
+  if (A.state === 'fight' || A.state === 'intro') drawArenaRing(A.state === 'intro' ? Math.min(1, A.intro / 1.0) : 1);
+  for (const f of S.foes) {
+    if (f.kind === 'storm') { drawGlow(f.x, f.y, f.st === 'calming', 1.4); drawShadow(f.x, f.y, 9, 2, 0.35); }
+    else { drawGlow(f.x, f.y, f.st === 'calming'); drawShadow(f.x, f.y, 5, 1.5, 0.35); }
+  }
+  for (const t of S.tels) drawTel(t);
+  drawShadow(b.x, b.y, 7, 1.8, 0.3);
+  drawShadow(S.moss.x, S.moss.y, 5, 1.3, 0.28);
+  if (b.st === 'free' && !b.moving && inFight() && (b.aim > 0 || b.still > 0.3)) drawAimRing(b);
+  fxctx.putImageData(fxData, 0, 0);
+  octx.drawImage(fxc, 0, 0);
+
+  // sprites in painter's order by foot y
+  const items = [];
+  for (const p of PROPS) if (p.x + p.w >= ox - 2 && p.x <= ox + ow + 2 && p.y + p.h >= oy - 2 && p.y <= oy + oh + 2) items.push([p.foot, () => blit(IMG.props[p.k], 0, 0, p.w, p.h, p.x, p.y)]);
+  items.push([SIGN.y, () => blit(IMG.sign, 0, 0, 16, 18, SIGN.x - 8, SIGN.y - 18)]);
+  for (const g of b.ghosts) items.push([g.y - 0.1, () => drawBramble(g.f, g.x, g.y, g.lift, 0.35 * (1 - g.t / 0.18))]);
+  items.push([b.y, () => drawBramble(bramFrame(), b.x, b.y, b.lift, b.inv > 0 && b.inv < 50 && b.st !== 'dodge' ? 0.6 : 1)]);
+  const m = S.moss;
+  items.push([m.y, () => {
+    const MA = ASSETS.moss; let idx;
+    if (b.st === 'down' && !m.moving) idx = MA.anims['curl_' + m.hf][settings.reduced ? 0 : Math.floor(S.t * 1.2) % 2];
+    else if (m.moving) idx = MA.anims['walk_' + m.hf][Math.floor(m.at * 10) % 6];
+    else idx = MA.anims['perch_idle_' + m.hf][settings.reduced ? 0 : Math.floor(S.t * 3) % 4];
+    const hop = m.hop > 0 && !settings.reduced ? Math.round(Math.abs(Math.sin(m.hop * 9)) * 4) : 0;
+    blit(IMG.moss, idx * 24, 0, 24, 24, m.x - 12, m.y - 22 - hop);
+  }]);
+  for (const f of S.foes) items.push([f.y, () => (f.kind === 'storm' ? drawStorm(f) : drawGlare(f))]);
+  items.sort((p, q) => p[0] - q[0]);
+  for (const it of items) it[1]();
+
+  // in the air: arrows, sparks, bits
+  for (const a of S.arrows) drawArrow(a);
+  for (const s of S.sparks) {
+    if (s.t < 0) continue;
+    const r = GL.frames[Math.floor(s.t * 4) % 2 ? 'spark1' : 'spark0'];
+    const al = settings.reduced ? Math.max(0, 1 - s.t / s.life) : Math.min(1, (s.life - s.t) / 1.2);
+    blit(IMG.glare, r[0] + 5, r[1] + 13, 7, 7, s.x - 3, s.y - 3, Math.max(0, al));
+  }
+  for (const p of S.parts) { octx.globalAlpha = Math.max(0, 1 - p.t / p.life); octx.fillStyle = p.col; octx.fillRect(Math.round(p.x) - ox, Math.round(p.y) - oy, p.petal ? 2 : 1, 1); }
+  octx.globalAlpha = 1;
+  // overheads: restless bars, Aim pips
+  for (const f of S.foes) {
+    if (f.st === 'gone' || f.st === 'wait' || f.st === 'intro' || f.st === 'leave') continue;
+    if (f.kind === 'glare') drawBars(f.x, f.y - f.hover - 27, f.st === 'calming' ? 0 : f.bars, f.maxBars, f.st === 'calming');
+  }
+  if (b.st === 'free' && !b.moving && inFight() && b.aim > 0) drawPips(b.x, b.y - 33, b.aim);
+
+  // to the screen at an integer scale
+  ctx.imageSmoothingEnabled = false;
+  ctx.fillStyle = '#2F4A2A'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+  let shx = 0, shy = 0;
+  if (S.shake > 0 && !settings.reduced) { shx = Math.round(rnd(-1, 1) * S.shake) * Math.max(1, Math.round(K / 3)); shy = Math.round(rnd(-1, 1) * S.shake) * Math.max(1, Math.round(K / 3)); }
+  const dx = Math.round((ox - vx) * K) + shx, dy = Math.round((oy - vy) * K) + shy;
+  ctx.drawImage(off, 0, 0, ow, oh, dx, dy, ow * K, oh * K);
+
+  // words over the world (device pixels, the game's pixel font)
+  const fs = Math.round(11 * dpr);
+  ctx.font = `700 ${fs}px Pixelify, monospace`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round';
+  for (const t of S.texts) {
+    const rise = settings.reduced ? 0 : t.t * 10;
+    const sx = (t.x - vx) * K + shx, sy = (t.y - rise - vy) * K + shy;
+    const a = Math.min(1, (t.life - t.t) / 0.3);
+    ctx.globalAlpha = Math.max(0, a);
+    ctx.lineWidth = Math.max(2, Math.round(3 * dpr)); ctx.strokeStyle = '#1E1917'; ctx.strokeText(t.text, sx, sy);
+    ctx.fillStyle = t.col; ctx.fillText(t.text, sx, sy);
+  }
+  ctx.globalAlpha = 1;
+  // the post at the fork says where it points
+  if (S.arena.state === 'idle' && Math.hypot(b.x - SIGN.x, b.y - SIGN.y) < 60) {
+    const sx = (SIGN.x - 14 - vx) * K, sy = (SIGN.y - 34 - vy) * K;
+    ctx.lineWidth = Math.max(2, Math.round(3 * dpr)); ctx.strokeStyle = '#1E1917'; ctx.fillStyle = '#F8DD8F';
+    ctx.strokeText('< THE STONE RING', sx, sy); ctx.fillText('< THE STONE RING', sx, sy);
+  }
+  // a pointer to the next thing when it is off screen
+  drawGoalPointer(vx, vy, vw, vh);
+}
+function drawGoalPointer(vx, vy, vw, vh) {
+  let g = null;
+  if (S.field.state === 'idle' && S.field.calmed < S.field.total && S.br.y < 178) g = { x: 175, y: 215 };
+  else if (S.arena.state === 'idle' && (S.field.state === 'done' || S.br.y > 290)) g = { x: ARENA.x, y: ARENA.y };
+  if (!g || S.paused) return;
+  const inView = g.x > vx + 10 && g.x < vx + vw - 10 && g.y > vy + 20 && g.y < vy + vh * 0.7;
+  if (inView) return;
+  // a gold chevron at the screen's edge, pointing the way (four directions, on the pixel grid)
+  const cxs = canvas.width / 2, cys = canvas.height / 2;
+  const gx = (g.x - vx) * K, gy = (g.y - vy) * K, dxp = gx - cxs, dyp = gy - cys;
+  const inset = 64 * dpr, hx = cxs - inset, hy = cys - inset - (land ? 0 : 60 * dpr);
+  const sc = Math.min(hx / Math.max(1, Math.abs(dxp)), hy / Math.max(1, Math.abs(dyp)));
+  const px = cxs + dxp * sc, py = cys + dyp * sc;
+  const quarter = Math.abs(dxp) * hy > Math.abs(dyp) * hx ? (dxp > 0 ? 0 : 2) : (dyp > 0 ? 1 : 3);
+  const u = Math.max(2, Math.round(2.5 * dpr));
+  ctx.save(); ctx.translate(Math.round(px), Math.round(py)); ctx.rotate(quarter * Math.PI / 2);
+  const CH = ['oo......', 'ogo.....', 'oggo....', 'ogggo...', 'oggggo..', 'ogggggo.', 'oggggo..', 'ogggo...', 'oggo....', 'ogo.....', 'oo......'];
+  for (let y = 0; y < CH.length; y++) for (let x = 0; x < 8; x++) { const c = CH[y][x]; if (c === '.') continue; ctx.fillStyle = c === 'o' ? '#1E1917' : '#F8DD8F'; ctx.fillRect((x - 3) * u, (y - 5) * u, u, u); }
+  ctx.restore();
+}
+
+// ------------------------------------------------------------------ HUD
+let controlsUp = false;
+function setControls(up) { controlsUp = up; $('controls').classList.toggle('sunk', !up); }
+function hud() {
+  const b = S.br, pct = Math.round(b.hp / HPMAX * 100);
+  const bar = $('hpbar'); bar.style.width = pct + '%'; bar.classList.toggle('low', pct <= 30);
+  $('hpnum').textContent = b.hp;
+  $('dodgeveil').style.height = (Math.max(0, b.dodgeCd) / 0.55 * 100) + '%';
+  $('stickhint').style.opacity = input.stick && input.stick.engaged ? '0' : '1';
+}
+
+// ------------------------------------------------------------------ pause and settings
+function syncOpts() {
+  const set = (id, on) => { const el = $(id); el.setAttribute('aria-pressed', on ? 'true' : 'false'); el.lastElementChild.textContent = on ? 'ON' : 'OFF'; };
+  set('optreduced', settings.reduced); set('optgentle', settings.gentle); set('optsound', settings.sound);
+  $('leave').style.display = S.arena.state === 'fight' ? '' : 'none';
+}
+function togglePause(force) {
+  if (!started) return;
+  const on = force === true ? true : !S.paused;
+  if (!on && ($('downcard').classList.contains('on') || $('wincard').classList.contains('on'))) { $('pausemenu').classList.remove('on'); S.paused = false; return; }
+  S.paused = on; syncOpts();
+  $('pausemenu').classList.toggle('on', on);
+  input.stick = null; stickEl.classList.remove('on'); input.keys.clear();
+  if (on) $('resume').focus();
+}
+$('pause').addEventListener('click', () => togglePause());
+$('resume').addEventListener('click', () => togglePause(false));
+$('optreduced').addEventListener('click', () => { settings.reduced = !settings.reduced; store.set('reduced', settings.reduced); syncOpts(); });
+$('optgentle').addEventListener('click', () => { settings.gentle = !settings.gentle; store.set('gentle', settings.gentle); syncOpts(); });
+$('optsound').addEventListener('click', () => { settings.sound = !settings.sound; store.set('sound', settings.sound); syncOpts(); });
+$('help').addEventListener('click', () => { $('pausemenu').classList.remove('on'); $('howto').classList.add('on'); });
+$('restart').addEventListener('click', () => { S = freshState(); S.arena.storm = makeStorm(); S.foes.push(S.arena.storm); $('pausemenu').classList.remove('on'); $('boss').classList.remove('on'); $('downcard').classList.remove('on'); $('wincard').classList.remove('on'); setControls(false); setChip('THE WOODLAND', 'walk the path south'); S.paused = false; });
+$('leave').addEventListener('click', () => { resetArena(true); $('pausemenu').classList.remove('on'); S.paused = false; });
+$('start').addEventListener('click', () => { audioOn(); $('howto').classList.remove('on'); started = true; S.paused = false; store.set('seen', true); });
+$('again').addEventListener('click', () => { $('wincard').classList.remove('on'); resetArena(true); });
+$('walkon').addEventListener('click', () => {
+  $('wincard').classList.remove('on'); const A = S.arena; A.state = 'done'; S.zoomBoost = 0; A.storm = null;
+  S.br.st = 'free'; S.br.inv = 0; setAnim('idle_S', true);
+  setChip('THE WOODLAND', 'all quiet. That is the whole prototype; Start over from pause.');
+});
+S.foes.push(S.arena.storm);
+if (store.get('seen', false) || qs.has('skiphowto')) { $('howto').classList.remove('on'); started = true; S.paused = false; }
+if (qs.has('fps')) $('fps').style.display = 'block';
+
+// ------------------------------------------------------------------ loop
+let acc = 0, prev = performance.now(), fpsN = 0, fpsT = 0, fps = 0;
+const frameTimes = [];
+function loop(now) {
+  const dtReal = Math.min(0.1, (now - prev) / 1000); prev = now;
+  frameTimes.push(now); while (frameTimes.length && now - frameTimes[0] > 2000) frameTimes.shift();
+  fpsN++; fpsT += dtReal; if (fpsT >= 0.5) { fps = Math.round(fpsN / fpsT); fpsN = 0; fpsT = 0; $('fps').textContent = fps + ' fps'; }
+  if (!S.paused) {
+    if (S.hitStop > 0) S.hitStop -= dtReal; // a few frames of held breath on a hit
+    else {
+      acc += dtReal; const h = 1 / 60; let n = 0;
+      while (acc >= h && n < 5) { step(h); acc -= h; n++; }
+    }
+  } else acc = 0;
+  render();
+  hud();
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+// a window for tests: read-only state and screen positions
+window.__game = {
+  get S() { return S; }, K: () => K, dpr: () => dpr,
+  fps: () => (frameTimes.length > 1 ? Math.round((frameTimes.length - 1) / ((frameTimes[frameTimes.length - 1] - frameTimes[0]) / 1000)) : 0),
+  toCss: (x, y) => worldToCss(x, y), centreOf: (f) => foeCentre(f), hostile: () => hostileFoes(),
+  info() {
+    const b = S.br, st = S.arena.storm;
+    return {
+      b: { x: b.x, y: b.y, st: b.st, aim: b.aim, hp: b.hp, inv: b.inv, css: worldToCss(b.x, b.y - 12), dodgeCd: b.dodgeCd },
+      foes: hostileFoes().map((f) => { const c = foeCentre(f); return { kind: f.kind, st: f.st, x: f.x, y: f.y, bars: f.bars, css: worldToCss(c.x, c.y), shield: !!f.shield }; }),
+      tels: S.tels.filter((t) => !t.fired).map((t) => ({ type: t.type, inside: insideTel(t, b.x, b.y), remain: t.dur - t.t, esc: laneNormal(t, b.x, b.y), c: telCentre(t) })),
+      t: Math.round(S.t * 100) / 100, events: S.events.slice(-40), field: S.field.state, calmed: S.field.calmed, arena: S.arena.state, phase: st ? st.phase : -1, paused: S.paused,
+      down: $('downcard').classList.contains('on'), win: $('wincard').classList.contains('on'), K, dpr, land,
+    };
+  },
+};
+})();
+</script>
+</body>
+</html>

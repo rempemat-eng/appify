@@ -25,16 +25,18 @@ Two checks enforce it:
 
 The 11264 x 6912 px canvas is covered without gaps:
 
-| Part of the world                                                                                                                                                                                                             | Owner    | Brief                                                     |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | --------------------------------------------------------- |
-| The home valley, the garden's surroundings, Fernhollow's approach, the Frostline and its cirque, the Col path, the Brackens to the gap                                                                                        | Claude E | `regions/home-valley-frostline-brackens.md`               |
-| Cogsworth, the coal hills, the Narrows gorge and viaduct, Fernhollow                                                                                                                                                          | Claude C | `regions/cogsworth-coal-hills-narrows.md`                 |
-| Neon Harbour, the Heights, the docks, the delta, the Lull belt, Lullford, Gullwick, the Skyport, the Cape Road                                                                                                                | Claude C | `regions/neon-harbour-delta.md`                           |
-| The Tidebloom Isles and the Shell Bar                                                                                                                                                                                         | Claude C | `regions/tidebloom-isles.md`                              |
-| The Sunstone basin, the Rift, the steppe beyond the Brackens gap, the fire country, the Ash Coast, the Launch Cape pad                                                                                                        | Claude D | `regions/sunstone-basin-fire-country.md`                  |
-| The routes, the thresholds, the plain's countryside between regions, the world's edges (the massif and its glaciers, the dune sea, the fens and the old forest, the southern sea), the land beyond the edges, the in-game map | Claude A | `regions/routes-thresholds-edges.md`                      |
-| Every prop in every region                                                                                                                                                                                                    | Claude B | `regions/props.md`                                        |
-| The garden and the hut                                                                                                                                                                                                        | Claude B | the garden stays its own scene, held to the same standard |
+| Part of the world                                                                                                                                                                                                                    | Owner    | Brief                                                     |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------- | --------------------------------------------------------- |
+| The home valley, the garden's surroundings, Fernhollow's approach                                                                                                                                                                    | Claude E | `regions/home-valley-frostline-brackens.md`               |
+| The Frostline and its cirque, the massif, the Col path's land, the Brackens to the gap (from Claude E, 21 Oct)                                                                                                                       | Claude F | `regions/home-valley-frostline-brackens.md`               |
+| Cogsworth, the coal hills, the Narrows gorge and viaduct, Fernhollow (from Claude C, 21 Oct)                                                                                                                                         | Claude H | `regions/cogsworth-coal-hills-narrows.md`                 |
+| Neon Harbour, the Heights, the docks, the delta, the Lull belt, Lullford, Gullwick, the Skyport, the Cape Road (from Claude C, 21 Oct)                                                                                               | Claude I | `regions/neon-harbour-delta.md`                           |
+| The Tidebloom Isles and the Shell Bar                                                                                                                                                                                                | Claude C | `regions/tidebloom-isles.md`                              |
+| The Sunstone basin, the Rift, the steppe beyond the Brackens gap, the fire country, the Ash Coast, the Launch Cape pad                                                                                                               | Claude D | `regions/sunstone-basin-fire-country.md`                  |
+| The routes, the thresholds, the plain's countryside between regions, the world's edges (the massif and its glaciers, the dune sea, the fens and the old forest, the southern sea), the land beyond the edges (from Claude A, 21 Oct) | Claude G | `regions/routes-thresholds-edges.md`                      |
+| The in-game map                                                                                                                                                                                                                      | Claude A | `regions/routes-thresholds-edges.md`                      |
+| Every prop in every region                                                                                                                                                                                                           | Claude B | `regions/props.md`                                        |
+| The garden and the hut                                                                                                                                                                                                               | Claude B | the garden stays its own scene, held to the same standard |
 
 ## 3. The kits
 
@@ -70,10 +72,14 @@ Kits share one core (plots, clusters, outline, shadow, blending) once #90 and #1
 
 **Wave 2, everything else in parallel by lane,** each region from its brief, each done only when it is 100 % green and Matt has seen it:
 
-- Claude C: Cogsworth and the coal hills, then Neon Harbour and the delta, then the isles.
+- Claude C: the isles and the Shell Bar, and the coast and city kits for H and I.
+- Claude H: Cogsworth, the coal hills, the Narrows and Fernhollow (from Claude C, 21 Oct).
+- Claude I: Neon Harbour and the delta, the Lull belt, Lullford, Gullwick, the Skyport and the Cape Road (from Claude C, 21 Oct).
 - Claude D: the Sunstone basin, then the fire country.
-- Claude E: the Frostline and the Brackens after the valley.
-- Claude A: the routes and thresholds between them, the world's edges and the land beyond, the in-game map.
+- Claude E: the valley.
+- Claude F: the Frostline, the massif and the Brackens (from Claude E, 21 Oct).
+- Claude G: the routes and thresholds between them, the world's edges and the land beyond (from Claude A, 21 Oct).
+- Claude A: the in-game map, integration and merging, the cliff core.
 - Claude B: the props each region's brief lists, redrawn where the ledger says REWORK, in the order the regions need them.
 
 **Wave 3, the switch.** When every region is green, the world canvas becomes the default, Codex migrates saves to world points, and the old zones and their generators are retired.
