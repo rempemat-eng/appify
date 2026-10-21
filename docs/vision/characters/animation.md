@@ -12,27 +12,29 @@ Claude J, 21 Oct (stream 1, characters and animation). **Status: proposal.** The
 
 ## 2. The states
 
-| Set   | State            | Facings | Frames (ms)                                                                 | Reduced motion                            |
-| ----- | ---------------- | ------- | --------------------------------------------------------------------------- | ----------------------------------------- |
-| world | idle             | S N E W | breath out 900, breath in 700, looped                                       | held on breath out                        |
-| world | blink (overlay)  | S E W   | 140, every 3 to 5 s                                                         | none                                      |
-| world | fidget           | S       | anticipate 220, act 260 + 300, settle 220, every 10 to 15 s                 | none                                      |
-| world | walk_start       | S N E W | anticipate 80 (a lean, 1 rig px down)                                       | skipped                                   |
-| world | walk             | S N E W | six frames, 100 each at 40 px/s, timed to the speed so the feet never slide | a standing still, facing the way          |
-| world | walk_stop        | S N E W | settle 70 + 90, with a puff of dust                                         | skipped                                   |
-| world | react (tap, pat) | S       | anticipate 110, act 90 + 160 (up 6 rig px, a heart), settle 180             | the happy frame held 400, the heart still |
-| world | nap_down         | S       | yawn 180, sit 140, curl 160 (480 ms, inside the game's 500 ms delay)        | cut                                       |
-| world | nap              | S       | breath 1400 + 1400, Zs while on screen                                      | held, one still Z                         |
-| world | nap_up           | S       | stir 260, sit up 140, stretch 300                                           | cut                                       |
-| fight | ready            | E W     | 520 + 480, looped                                                           | held                                      |
-| fight | attack           | E W     | wind-up 100, strike 60, impact 200, recover 160; the impact frame at 160 ms | wind-up still, then the impact still 300  |
-| fight | cast             | E W     | gather 140, release 260 (the card's effect), recover 160                    | two stills                                |
-| fight | guard            | E W     | 80, braced 360, 120                                                         | the braced still 300                      |
-| fight | hit              | E W     | knocked back 220 (a spark), recover 140                                     | the hit still 300, no flash, no knockback |
-| fight | faint            | E W     | hit 180, then sits down for a breather, held                                | sitting                                   |
-| fight | victory          | E W     | crouch 120, cheer 160 + 220 + 160, twice                                    | the cheer held 600                        |
+| Set   | State                              | Facings | Frames (ms)                                                                 | Reduced motion                            |
+| ----- | ---------------------------------- | ------- | --------------------------------------------------------------------------- | ----------------------------------------- |
+| world | idle                               | S N E W | breath out 900, breath in 700, looped                                       | held on breath out                        |
+| world | blink (overlay)                    | S E W   | 140, every 3 to 5 s                                                         | none                                      |
+| world | fidget                             | S       | anticipate 220, act 260 + 300, settle 220, every 10 to 15 s                 | none                                      |
+| world | walk_start                         | S N E W | anticipate 80 (a lean, 1 rig px down)                                       | skipped                                   |
+| world | walk                               | S N E W | six frames, 100 each at 40 px/s, timed to the speed so the feet never slide | a standing still, facing the way          |
+| world | walk_stop                          | S N E W | settle 70 + 90, with a puff of dust                                         | skipped                                   |
+| world | react (tap, pat)                   | S       | anticipate 110, act 90 + 160 (up 6 rig px, a heart), settle 180             | the happy frame held 400, the heart still |
+| world | nap_down                           | S       | yawn 180, sit 140, curl 160 (480 ms, inside the game's 500 ms delay)        | cut                                       |
+| world | nap                                | S       | breath 1400 + 1400, Zs while on screen                                      | held, one still Z                         |
+| world | nap_up                             | S       | stir 260, sit up 140, stretch 300                                           | cut                                       |
+| fight | ready                              | E W     | 520 + 480, looped                                                           | held                                      |
+| fight | attack                             | E W     | wind-up 100, strike 60, impact 200, recover 160; the impact frame at 160 ms | wind-up still, then the impact still 300  |
+| fight | cast                               | E W     | gather 140, release 260 (the card's effect), recover 160                    | two stills                                |
+| fight | guard                              | E W     | 80, braced 360, 120                                                         | the braced still 300                      |
+| fight | hit                                | E W     | knocked back 220 (a spark), recover 140                                     | the hit still 300, no flash, no knockback |
+| fight | faint                              | E W     | hit 180, then sits down for a breather, held                                | sitting                                   |
+| fight | victory                            | E W     | crouch 120, cheer 160 + 220 + 160, twice                                    | the cheer held 600                        |
+| fight | still (a still turn banks a stack) | E W     | breath in 200, the pip flies 300, settle 100                                | the still held 300, the pip still         |
+| fight | bow (GOOD MATCH)                   | E W     | 120, bow 500, 200                                                           | the bow held 500                          |
 
-A folk draws **75 frames** (51 world, 24 fight) and about 14 effect frames for its four cards. cast.md planned about 110; the saving comes from keeping fight poses off the world set. A familiar draws 41 (follow, hop, curl, react, and six perched poses a side). A visitor uses the familiar's spec. A resident draws 26 (idle, four-frame walk, talk). A rival draws 38: a resident plus the fight set facing west.
+A folk draws **77 frames** (51 world, 26 fight: fights.md's twelve a facing plus the bow) and about 14 effect frames for its four cards. cast.md planned about 110; the saving comes from keeping fight poses off the world set. A familiar draws 41 (follow, hop, curl, react, and six perched poses a side). In fights it is a separate, smaller perch sprite, 16 art px at 2x (the `familiarPerch` cell), on the folk's perch anchor and the shoulder away from the foe, until Matt decides the size (Claude A, 21 Oct 14:40). A visitor uses the familiar's spec. A resident draws 26 (idle, four-frame walk, talk). A rival draws 39: a resident plus the fight set facing west.
 
 **West is drawn, never mirrored:** the light comes from the upper left in every facing, and a mirrored east would light the wrong side. The test fails if a state draws east without west.
 
@@ -58,7 +60,7 @@ A folk draws **75 frames** (51 world, 24 fight) and about 14 effect frames for i
    - Every sheet fits within 2048 px at 1x, 1.5x and 2x.
    - Every cell lands on whole pixels at 1.5x.
    - A world screen (your folk, your familiar and six residents) decodes to 3.25 MB at 2x, against a budget of 4.
-   - A fight screen decodes to 1.30 MB, against a budget of 3.
+   - A fight screen decodes to 1.63 MB, against a budget of 3.
 
 ## 4. Sheets, density and memory
 
@@ -73,7 +75,7 @@ A folk draws **75 frames** (51 world, 24 fight) and about 14 effect frames for i
   - its foot anchor
   - head (hat), eyes (blink, sleep) and hand (effect spawn) anchors
   - in the fight set, the perch anchor where the familiar sits
-- **Shadows** are not baked into the sheets. The renderer throws each frame's silhouette down and to the right and steps the ground two tones down under it (house-style 6), plus the contact line. Open question for Claude A: should the sheet carry a 1-bit mask per frame, or should it be computed at load?
+- **Shadows** are not stored in the sheets. They are computed at load from each frame's silhouette by the same rule as the world's cast shadows: thrown east and down, the ground stepped two ramp tones under it, and a contact line (house-style 6; Claude A, 21 Oct 14:40).
 - **Only what is on screen is loaded:** your folk's world set and your familiar's current growth stage, while walking; both fight sets, while fighting.
 
 ## 5. Wiring, without changing a rule
@@ -103,8 +105,25 @@ Steps, each a small PR behind a flag that is off by default (`FOLK_SPRITES`):
 
 The save change (folk plus familiar) is Codex's (cast.md 2). Until it lands, the flag shows Bramble for every save, and nothing is written.
 
-## 6. Open
+## 6. Fight beats
+
+Claude L's fight content (`lib/fight-content.ts`, #195) names the moments the battle screen keys on. `fightBeats` in the spec maps each one onto a state, a frame or an effect, and the test checks every mapping:
+
+| Beat                    | Here                                                   |
+| ----------------------- | ------------------------------------------------------ |
+| ready, cast, guard, hit | the states of the same names                           |
+| windup, strike, impact  | the attack's frames 0, 1 and 2 (2 is the impact frame) |
+| heal                    | cast, with the card's effect                           |
+| stack                   | still, with the stack pip                              |
+| special                 | the familiar's special (the folk stays ready)          |
+| doze                    | the doze glyph over the foe                            |
+| bell                    | Ashe's cast, with the bell ring                        |
+| sitDown, cheer, bow     | faint, victory, bow                                    |
+
+The wind-up is 100 ms rather than fights.md's 150: the impact frame must show within `game-battle`'s 200 ms step, and the game's timeline leads.
+
+## 7. Open
 
 - **Density:** 2x is pending Matt's verdict on the pilot. Everything here is in world px, so a 1.5x verdict changes only the sheets.
-- **Shadow masks:** see section 4.
-- **Rig parts and painters:** these come from Claude A's first-screen PR (`scripts/art/native/`). When it lands, its timing tables are merged into this spec, never forked from it.
+- **One design across densities:** Matt's style study (21 Oct 14:21) makes the 1x design the master, with one design per object at every density. The folk design sheets (folk-batch-1.md, folk-batch-2.md) are drawn at 2x and get 1x masters before production.
+- **Rig parts and painters:** these come from Claude A's first-screen PR (`scripts/art/native/`). When it lands, its timing tables are merged into this spec, which is the single source (Claude A, 21 Oct 14:40).

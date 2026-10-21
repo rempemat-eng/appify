@@ -124,14 +124,14 @@ for (const kind of KINDS) {
   if (planned !== undefined)
     assert.equal(frameCount(kind), planned, `${kind}: ${frameCount(kind)} frames`);
 }
-assert.equal(frameCount('folk'), 75);
+assert.equal(frameCount('folk'), 77);
 assert.equal(
   drawnFrames('folk', 'fight').length,
-  24,
-  'folk fight set: 12 a facing, E and W (fights.md 6)',
+  26,
+  'folk fight set: 12 a facing plus the bow, E and W (fights.md 6)',
 );
 assert.equal(drawnFrames('familiar', 'fight').length, 12, 'familiar on the shoulder: 6 a facing');
-assert.equal(drawnFrames('rival', 'fight').length, 12, 'a rival fights facing west only');
+assert.equal(drawnFrames('rival', 'fight').length, 13, 'a rival fights facing west only');
 assert.ok(drawnFrames('rival', 'fight').every((f) => f.facing === 'W'));
 
 // 6. Sheets fit a texture at every density, cells land on whole pixels.
@@ -166,7 +166,9 @@ const world =
 assert.ok(world <= ANIMATION.memoryBudgetBytes.worldScreen, `world screen ${world} bytes`);
 const fight =
   2 * sheetSize('folk', 'fight', 'folkLarge', d2).bytes +
-  2 * sheetSize('familiar', 'fight', 'familiar', d2).bytes;
+  2 * sheetSize('familiar', 'fight', kindSpec('familiar').setCells?.fight ?? 'familiar', d2).bytes;
+assert.equal(kindSpec('familiar').setCells?.fight, 'familiarPerch', 'the familiar perches small');
+assert.equal(kindSpec('visitor').setCells?.fight, 'familiarPerch', 'so does a befriended visitor');
 assert.ok(fight <= ANIMATION.memoryBudgetBytes.fightScreen, `fight screen ${fight} bytes`);
 
 // 8. Timings fit the game's own timeline (the game leads, never the animation).
@@ -232,7 +234,16 @@ assert.equal(
   f = onEvent('folk', f, 'KNOCKED_OUT', 800);
   assert.equal(frameAt('folk', f, 5000).pose, 'sit', 'the faint ends sitting, held');
   assert.equal(onEvent('folk', f, 'WIN', 5100).state, 'faint', 'no cheering after sitting down');
+  assert.equal(onEvent('folk', f, 'BOW', 5200).state, 'bow', 'the loser stands for the bow');
   assert.equal(onEvent('folk', f, 'FIGHT_EXIT', 6000).state, 'idle');
+  const still = onEvent(
+    'folk',
+    onEvent('folk', initialAnim('E', 0), 'FIGHT_ENTER', 0),
+    'STILL_TURN',
+    10,
+  );
+  assert.equal(still.state, 'still');
+  assert.equal(frameAt('folk', still, 900).state, 'ready', 'a still turn settles back to ready');
 
   // The familiar maps folk-only states to its own.
   const fam = onEvent('familiar', initialAnim('S', 0), 'NAP_START', 0);
@@ -250,7 +261,43 @@ assert.equal(
   );
 }
 
-// 10. Every transition's target exists somewhere; the cast matches cast.md.
+// 10. Claude L's fight beats (lib/fight-content.ts) all map onto this spec.
+for (const beat of [
+  'ready',
+  'windup',
+  'strike',
+  'impact',
+  'cast',
+  'guard',
+  'hit',
+  'heal',
+  'stack',
+  'special',
+  'doze',
+  'bell',
+  'sitDown',
+  'cheer',
+  'bow',
+]) {
+  const b = ANIMATION.fightBeats[beat];
+  assert.ok(b && typeof b === 'object', `beat ${beat} is mapped`);
+  if (b.state) assert.ok(stateOf('folk', b.state), `beat ${beat}: state ${b.state}`);
+  if (b.familiarState)
+    assert.ok(stateOf('familiar', b.familiarState), `beat ${beat}: familiar ${b.familiarState}`);
+  if (b.effect && b.effect !== 'signature')
+    assert.ok(ANIMATION.effects[b.effect], `beat ${beat}: effect ${b.effect}`);
+  if (b.frame !== undefined)
+    assert.ok(stateOf('folk', b.state!)!.spec.frames[b.frame], `beat ${beat}: frame ${b.frame}`);
+}
+const impactBeat = ANIMATION.fightBeats.impact;
+assert.ok(
+  typeof impactBeat === 'object' &&
+    impactBeat.frame !== undefined &&
+    stateOf('folk', 'attack')!.spec.frames[impactBeat.frame].impact,
+  'the impact beat is the impact frame of the attack',
+);
+
+// 11. Every transition's target exists somewhere; the cast matches cast.md.
 const special = new Set(['same', 'paused', 'resumed']);
 for (const t of ANIMATION.machine.transitions) {
   if (t.to === null || special.has(t.to)) continue;

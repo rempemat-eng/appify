@@ -49,6 +49,8 @@ export type StateSpec = {
 
 export type KindSpec = {
   sets: Partial<Record<SetId, Record<string, StateSpec>>>;
+  /** A cell per set when they differ (the familiar's small perch sprite in fights). */
+  setCells?: Partial<Record<SetId, string>>;
   framesPlanned?: number;
   effectsPlanned?: number;
 };
@@ -80,6 +82,8 @@ export type GameEvent =
   | 'KNOCKED_OUT'
   | 'WIN'
   | 'FIGHT_EXIT'
+  | 'STILL_TURN'
+  | 'BOW'
   | 'SCREEN_INACTIVE'
   | 'SCREEN_ACTIVE';
 
@@ -114,6 +118,19 @@ type Raw = {
     transitions: Transition[];
     familiarMap: Record<string, string>;
   };
+  fightBeats: Record<
+    string,
+    | {
+        state?: string;
+        folkState?: string;
+        familiarState?: string;
+        frame?: number;
+        effect?: string;
+        onFoe?: boolean;
+        folk?: string;
+      }
+    | string
+  >;
   cast: {
     folk: {
       id: string;
@@ -170,7 +187,12 @@ export function kindSpec(kind: KindId): KindSpec {
     const own = raw.sets?.[setId];
     if (own) sets[setId] = { ...sets[setId], ...own };
   }
-  return { sets, framesPlanned: raw.framesPlanned, effectsPlanned: raw.effectsPlanned };
+  return {
+    sets,
+    setCells: raw.setCells ?? ANIMATION.kinds[raw.inherit?.[0]?.kind ?? kind].setCells,
+    framesPlanned: raw.framesPlanned,
+    effectsPlanned: raw.effectsPlanned,
+  };
 }
 
 export function stateOf(kind: KindId, name: string): { set: SetId; spec: StateSpec } | null {
