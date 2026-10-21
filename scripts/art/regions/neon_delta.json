@@ -1,4642 +1,2237 @@
 {
- "_about": "Claude I's region plan for Neon Harbour, the delta, the Lull belt, Lullford and Gullwick, as data (docs/vision/regions/neon-harbour-delta.md, world plan v5.3). World px on the 11264 x 6912 continent. 'brief' items are copied from the brief; 'derived' geometry is Claude I's reading of the brief's own coordinates until Claude A's v5.3 block-out (P1) is published as data, then it moves to fit that. Painters: scripts/art/regions/lull_delta.py (the belt, Lullford and the delta). Move a thing to fit the ground, not the ground to fit the number.",
- "version": 2,
- "source": {
-  "brief": "docs/vision/regions/neon-harbour-delta.md (PR #96, claude-a/world-plan 3b39519)",
-  "blockout": "not yet published as data; geometry below is derived"
- },
- "cell": 8,
- "boxes": {
-  "lull-belt-delta": {
-   "box": [
-    8704,
-    3296,
-    752,
-    2608
-   ],
-   "from": "brief 1: x 8700-9450, y 3300-5900"
+  "_about": "Claude I's region plan for Neon Harbour, the delta, the Lull belt, Lullford and Gullwick, as data (docs/vision/regions/neon-harbour-delta.md, world plan v5.3). World px on the 11264 x 6912 continent. 'brief' items are copied from the brief; 'derived' geometry is Claude I's reading of the brief's own coordinates until Claude A's v5.3 block-out (P1) is published as data, then it moves to fit that. Painters: scripts/art/regions/lull_delta.py (the belt, Lullford and the delta). Move a thing to fit the ground, not the ground to fit the number.",
+  "version": 2,
+  "source": {
+    "brief": "docs/vision/regions/neon-harbour-delta.md (PR #96, claude-a/world-plan 3b39519)",
+    "blockout": "not yet published as data; geometry below is derived"
   },
-  "neon": {
-   "box": [
-    9456,
-    3904,
-    1808,
-    2000
-   ],
-   "from": "brief 1: x 9450-11264, y 3900-5900"
+  "cell": 8,
+  "boxes": {
+    "lull-belt-delta": {
+      "box": [8704, 3296, 752, 2608],
+      "from": "brief 1: x 8700-9450, y 3300-5900"
+    },
+    "neon": {
+      "box": [9456, 3904, 1808, 2000],
+      "from": "brief 1: x 9450-11264, y 3900-5900"
+    },
+    "lullford": {
+      "box": [8304, 3952, 400, 696],
+      "from": "brief 1: x 8300-8700, y 3950-4650"
+    },
+    "gullwick": {
+      "box": [7648, 4848, 656, 600],
+      "from": "brief 1: x 7650-8300, y 4850-5450"
+    }
+  },
+  "chunks": {
+    "lull-delta": {
+      "box": [8304, 3296, 1152, 2592],
+      "margin": 0,
+      "plane": "continent",
+      "why": "the belt, Lullford and the delta painted as one chunk: the Lull runs through all three, so one canvas keeps the river, its banks and the bridge seamless. Covers the Lullford box, the belt and delta box, and the land between them west of the delta down to the coast."
+    }
+  },
+  "tiers": {
+    "note": "brief 4: the belt and delta walk tiers 2 to 5, flat, crossed on boardwalks and the canal embankment; Lullford on a gravel terrace one tier up. v1 paints the floodplain on tier 2 and keeps every height change inside the water pieces (cut banks, canal coping); the terrace under Lullford waits for the cliff core (#165) for its face.",
+    "floodplain": 2,
+    "lullford_terrace": 3,
+    "sea": 0
+  },
+  "water": {
+    "lull": {
+      "kind": "river",
+      "derived": true,
+      "why": "six unequal bends (radii 115 to 285, width 110 to 130, plan 4.3) from the braided reach to Lullford Bridge at (8960, 4310), then the delta apex",
+      "points": [
+        [9064, 3296],
+        [9150, 3372],
+        [9290, 3452],
+        [9330, 3560],
+        [9228, 3650],
+        [9070, 3712],
+        [9010, 3812],
+        [9080, 3900],
+        [9250, 3950],
+        [9318, 4040],
+        [9246, 4126],
+        [9090, 4170],
+        [8990, 4236],
+        [8962, 4320],
+        [8975, 4420],
+        [8992, 4488]
+      ],
+      "width": 116
+    },
+    "fresh_oxbow": {
+      "kind": "oxbow",
+      "derived": true,
+      "why": "hard by the outer bend at (9330, 3560); the bell in the oxbow is reserved at (9450, 3900) on its far side",
+      "points": [
+        [9384, 3760],
+        [9436, 3830],
+        [9440, 3920],
+        [9396, 3990],
+        [9340, 4000]
+      ],
+      "width": 52
+    },
+    "silted_oxbow": {
+      "kind": "reed-oxbow",
+      "derived": true,
+      "why": "older, further out on the west side, silted to reeds",
+      "points": [
+        [8930, 3500],
+        [8860, 3560],
+        [8840, 3650],
+        [8876, 3730],
+        [8948, 3760]
+      ],
+      "width": 44
+    },
+    "delta_arms": {
+      "kind": "distributaries",
+      "derived": true,
+      "why": "plan 4.3: eight reaches from one apex below Lullford, the widest about 70 px; reed beds between, mudflats in front, a sandbar at each mouth, a lobed front",
+      "arms": [
+        {
+          "id": "west",
+          "width": 64,
+          "points": [
+            [8992, 4488],
+            [8936, 4600],
+            [8840, 4740],
+            [8772, 4900],
+            [8740, 5080],
+            [8720, 5260],
+            [8700, 5400]
+          ]
+        },
+        {
+          "id": "middle",
+          "width": 70,
+          "points": [
+            [8992, 4488],
+            [9024, 4640],
+            [8996, 4820],
+            [9032, 5000],
+            [9010, 5180],
+            [9044, 5340],
+            [9060, 5460]
+          ]
+        },
+        {
+          "id": "east",
+          "width": 52,
+          "points": [
+            [9008, 4560],
+            [9100, 4700],
+            [9168, 4880],
+            [9240, 5060],
+            [9290, 5240],
+            [9310, 5420]
+          ]
+        },
+        {
+          "id": "west-2",
+          "width": 34,
+          "points": [
+            [8840, 4740],
+            [8720, 4840],
+            [8640, 4980],
+            [8590, 5160]
+          ]
+        },
+        {
+          "id": "middle-2",
+          "width": 30,
+          "points": [
+            [9032, 5000],
+            [8930, 5110],
+            [8880, 5260],
+            [8860, 5410]
+          ]
+        },
+        {
+          "id": "east-2",
+          "width": 30,
+          "points": [
+            [9240, 5060],
+            [9340, 5150],
+            [9400, 5300],
+            [9420, 5420]
+          ]
+        }
+      ]
+    },
+    "lull_cut": {
+      "kind": "canal",
+      "derived": true,
+      "towpath": "north-east (the Delta Road, lane G line)",
+      "why": "plan 4.3: from Lullford's east bank to the canal basin under the Heights, clear of the delta's silt; it runs 48 px south-west of the Delta Road, which is its towpath",
+      "points": [
+        [9072, 4392],
+        [9176, 4432],
+        [9216, 4472],
+        [9256, 4512],
+        [9312, 4544],
+        [9360, 4624],
+        [9392, 4688],
+        [9456, 4752]
+      ],
+      "width": 40
+    },
+    "sea": {
+      "kind": "sea",
+      "derived": true,
+      "why": "the delta builds a lobed front into the sea; west of it the coast turns north-west to Gullwick",
+      "front": [
+        [8304, 5232],
+        [8420, 5300],
+        [8540, 5390],
+        [8640, 5470],
+        [8760, 5440],
+        [8880, 5500],
+        [9000, 5520],
+        [9120, 5490],
+        [9240, 5510],
+        [9360, 5480],
+        [9456, 5470]
+      ],
+      "mudflats": 72
+    }
   },
   "lullford": {
-   "box": [
-    8304,
-    3952,
-    400,
-    696
-   ],
-   "from": "brief 1: x 8300-8700, y 3950-4650"
+    "derived": true,
+    "town": {
+      "rect": [8480, 4112, 440, 384],
+      "why": "brief 2: on the west bank, the lowest bridging point"
+    },
+    "bridge": {
+      "from": [8880, 4312],
+      "to": [9072, 4312],
+      "deck": 24,
+      "island": [8952, 4272, 56, 88],
+      "why": "old stone arches from both banks to the island with the toll house, an iron swing span over the navigation channel on the east (W7, the swing span stuck open; the way is not this PR)",
+      "from_lane_g": "Lullford Bridge, centre (8976, 4312), 192 px of span, tier 3"
+    }
   },
-  "gullwick": {
-   "box": [
-    7648,
-    4848,
-    656,
-    600
-   ],
-   "from": "brief 1: x 7650-8300, y 4850-5450"
-  }
- },
- "chunks": {
-  "lull-delta": {
-   "box": [
-    8304,
-    3296,
-    1152,
-    2592
-   ],
-   "margin": 0,
-   "plane": "continent",
-   "why": "the belt, Lullford and the delta painted as one chunk: the Lull runs through all three, so one canvas keeps the river, its banks and the bridge seamless. Covers the Lullford box, the belt and delta box, and the land between them west of the delta down to the coast."
-  }
- },
- "tiers": {
-  "note": "brief 4: the belt and delta walk tiers 2 to 5, flat, crossed on boardwalks and the canal embankment; Lullford on a gravel terrace one tier up. v1 paints the floodplain on tier 2 and keeps every height change inside the water pieces (cut banks, canal coping); the terrace under Lullford waits for the cliff core (#165) for its face.",
-  "floodplain": 2,
-  "lullford_terrace": 3,
-  "sea": 0
- },
- "water": {
-  "lull": {
-   "kind": "river",
-   "derived": true,
-   "why": "six unequal bends (radii 115 to 285, width 110 to 130, plan 4.3) from the braided reach to Lullford Bridge at (8960, 4310), then the delta apex",
-   "points": [
-    [
-     9064,
-     3296
-    ],
-    [
-     9150,
-     3372
-    ],
-    [
-     9290,
-     3452
-    ],
-    [
-     9330,
-     3560
-    ],
-    [
-     9228,
-     3650
-    ],
-    [
-     9070,
-     3712
-    ],
-    [
-     9010,
-     3812
-    ],
-    [
-     9080,
-     3900
-    ],
-    [
-     9250,
-     3950
-    ],
-    [
-     9318,
-     4040
-    ],
-    [
-     9246,
-     4126
-    ],
-    [
-     9090,
-     4170
-    ],
-    [
-     8990,
-     4236
-    ],
-    [
-     8962,
-     4320
-    ],
-    [
-     8975,
-     4420
-    ],
-    [
-     8992,
-     4488
-    ]
-   ],
-   "width": 116
-  },
-  "fresh_oxbow": {
-   "kind": "oxbow",
-   "derived": true,
-   "why": "hard by the outer bend at (9330, 3560); the bell in the oxbow is reserved at (9450, 3900) on its far side",
-   "points": [
-    [
-     9384,
-     3760
-    ],
-    [
-     9436,
-     3830
-    ],
-    [
-     9440,
-     3920
-    ],
-    [
-     9396,
-     3990
-    ],
-    [
-     9340,
-     4000
-    ]
-   ],
-   "width": 52
-  },
-  "silted_oxbow": {
-   "kind": "reed-oxbow",
-   "derived": true,
-   "why": "older, further out on the west side, silted to reeds",
-   "points": [
-    [
-     8930,
-     3500
-    ],
-    [
-     8860,
-     3560
-    ],
-    [
-     8840,
-     3650
-    ],
-    [
-     8876,
-     3730
-    ],
-    [
-     8948,
-     3760
-    ]
-   ],
-   "width": 44
-  },
-  "delta_arms": {
-   "kind": "distributaries",
-   "derived": true,
-   "why": "plan 4.3: eight reaches from one apex below Lullford, the widest about 70 px; reed beds between, mudflats in front, a sandbar at each mouth, a lobed front",
-   "arms": [
-    {
-     "id": "west",
-     "width": 64,
-     "points": [
-      [
-       8992,
-       4488
+  "routes": {
+    "_about": "Inside the chunk Claude I paints these routes to lane G's line, width and tier (lib/world-routes.ts, #175; g-to-i-cells 21 Oct): 'points' are G's vertices inside the box, with 'widths' and 'tiers' per vertex; 'exits' are the cells where they leave the box. The boardwalk is Claude I's own.",
+    "lull_road": {
+      "from_lane_g": "lib/world-routes.ts on claude-g/routes (#175) b398b19, route 'lull-road', the vertices inside the chunk box",
+      "points": [
+        [8304, 4176],
+        [8312, 4176],
+        [8320, 4184],
+        [8336, 4184],
+        [8344, 4192],
+        [8376, 4192],
+        [8408, 4192],
+        [8432, 4192],
+        [8440, 4200],
+        [8472, 4200],
+        [8480, 4200],
+        [8488, 4208],
+        [8504, 4208],
+        [8504, 4216],
+        [8520, 4216],
+        [8528, 4224],
+        [8536, 4224],
+        [8544, 4232],
+        [8560, 4232],
+        [8568, 4240],
+        [8592, 4240],
+        [8600, 4248],
+        [8632, 4248],
+        [8648, 4248],
+        [8648, 4256],
+        [8672, 4256],
+        [8680, 4264],
+        [8688, 4264],
+        [8696, 4272],
+        [8712, 4272],
+        [8720, 4280],
+        [8736, 4280],
+        [8744, 4288],
+        [8776, 4288],
+        [8800, 4288],
+        [8808, 4280],
+        [8840, 4280],
+        [8872, 4280],
+        [8880, 4288],
+        [8896, 4288],
+        [8904, 4296],
+        [8920, 4296],
+        [8928, 4304],
+        [8944, 4304],
+        [8952, 4312],
+        [8976, 4312],
+        [8984, 4320],
+        [9016, 4320],
+        [9024, 4320],
+        [9032, 4328],
+        [9064, 4328],
+        [9072, 4328],
+        [9080, 4320],
+        [9112, 4320],
+        [9128, 4320],
+        [9136, 4328],
+        [9168, 4328],
+        [9200, 4328],
+        [9224, 4328],
+        [9232, 4336],
+        [9248, 4336],
+        [9264, 4352],
+        [9272, 4352],
+        [9272, 4360],
+        [9280, 4368],
+        [9288, 4368],
+        [9296, 4376],
+        [9304, 4376],
+        [9312, 4384],
+        [9312, 4392],
+        [9328, 4392],
+        [9336, 4400],
+        [9344, 4400],
+        [9352, 4392],
+        [9360, 4400],
+        [9392, 4400],
+        [9424, 4400],
+        [9440, 4400],
+        [9448, 4392]
       ],
-      [
-       8936,
-       4600
+      "widths": [
+        48, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40,
+        40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 48, 40, 40, 40, 40, 40, 40, 40, 40, 40, 56, 56, 56,
+        56, 56, 40, 48, 48, 40, 48, 48, 40, 40, 40, 40, 40, 40, 40, 40, 48, 40, 48, 40, 40, 48, 40,
+        48, 40, 48, 48, 48, 40, 40, 40, 40, 40
       ],
-      [
-       8840,
-       4740
+      "tiers": [
+        4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+        3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+        3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3
       ],
-      [
-       8772,
-       4900
+      "width": 40,
+      "changes": [
+        {
+          "at": [8464, 4200],
+          "s": 1949,
+          "kind": "round-end",
+          "from": 4,
+          "to": 3,
+          "run": 64
+        }
       ],
-      [
-       8740,
-       5080
+      "crossings": [
+        {
+          "kind": "bridge",
+          "name": "Lullford Bridge and its swing span",
+          "way": "W7",
+          "at": [8976, 4312],
+          "s": 2518,
+          "span": 192
+        }
       ],
-      [
-       8720,
-       5260
+      "sidePaths": [
+        {
+          "obstacle": "marshy pool",
+          "at": [9388, 4288],
+          "leaves": [9096, 4320],
+          "rejoins": [9632, 4352],
+          "points": [
+            [9096, 4320],
+            [9136, 4296],
+            [9176, 4264],
+            [9216, 4240],
+            [9256, 4216],
+            [9304, 4192],
+            [9352, 4184],
+            [9400, 4192],
+            [9448, 4192],
+            [9496, 4200],
+            [9544, 4216],
+            [9576, 4264],
+            [9600, 4304],
+            [9632, 4352]
+          ],
+          "width": 24
+        }
       ],
-      [
-       8700,
-       5400
+      "exits": [
+        {
+          "at": [8304, 4176],
+          "tier": 4,
+          "width": 48,
+          "to": "the land between"
+        },
+        {
+          "at": [9456, 4392],
+          "tier": 3,
+          "width": 40,
+          "to": "Neon Harbour"
+        }
       ]
-     ]
+    },
+    "delta_road": {
+      "from_lane_g": "lib/world-routes.ts on claude-g/routes (#175) b398b19, route 'delta-road', the vertices inside the chunk box",
+      "points": [
+        [9152, 4320],
+        [9168, 4336],
+        [9168, 4352],
+        [9176, 4360],
+        [9176, 4368],
+        [9184, 4368],
+        [9184, 4376],
+        [9192, 4384],
+        [9200, 4384],
+        [9200, 4392],
+        [9208, 4400],
+        [9216, 4400],
+        [9216, 4408],
+        [9224, 4408],
+        [9232, 4416],
+        [9232, 4424],
+        [9240, 4424],
+        [9240, 4432],
+        [9248, 4440],
+        [9256, 4440],
+        [9256, 4448],
+        [9264, 4456],
+        [9272, 4456],
+        [9272, 4464],
+        [9280, 4464],
+        [9288, 4472],
+        [9296, 4472],
+        [9296, 4480],
+        [9304, 4480],
+        [9312, 4488],
+        [9328, 4488],
+        [9328, 4496],
+        [9336, 4496],
+        [9352, 4512],
+        [9360, 4520],
+        [9360, 4528],
+        [9368, 4528],
+        [9368, 4536],
+        [9376, 4544],
+        [9376, 4568],
+        [9384, 4576],
+        [9384, 4592],
+        [9392, 4600],
+        [9392, 4608],
+        [9400, 4616],
+        [9400, 4624],
+        [9408, 4632],
+        [9416, 4632],
+        [9416, 4640],
+        [9424, 4648],
+        [9424, 4656],
+        [9432, 4656],
+        [9432, 4664],
+        [9440, 4672],
+        [9440, 4680],
+        [9456, 4696],
+        [9456, 4704]
+      ],
+      "widths": [
+        48, 48, 48, 40, 32, 32, 32, 32, 40, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 40, 32, 32, 32,
+        32, 32, 32, 32, 32, 40, 32, 40, 32, 32, 40, 32, 32, 32, 40, 32, 32, 32, 32, 32, 32, 32, 40,
+        32, 40, 32, 48, 48, 48, 48, 48, 48, 48, 48
+      ],
+      "tiers": [
+        3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+        3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4
+      ],
+      "width": 32,
+      "changes": [
+        {
+          "at": [9376, 4568],
+          "s": 405,
+          "kind": "round-end",
+          "from": 3,
+          "to": 4,
+          "run": 64
+        }
+      ],
+      "pockets": [
+        {
+          "holds": "a resident fishing",
+          "clearing": [9188, 4572],
+          "leaves": [9272, 4464],
+          "points": [
+            [9272, 4464],
+            [9256, 4472],
+            [9248, 4480],
+            [9232, 4488],
+            [9216, 4496],
+            [9208, 4512],
+            [9200, 4520],
+            [9200, 4536],
+            [9192, 4552],
+            [9192, 4568],
+            [9184, 4576]
+          ],
+          "length": 155,
+          "width": 24,
+          "clearingRadius": 40
+        }
+      ],
+      "exits": [
+        {
+          "at": [9456, 4696],
+          "tier": 4,
+          "width": 48,
+          "to": "Neon Harbour"
+        }
+      ]
+    },
+    "towpath": {
+      "from_lane_g": "lib/world-routes.ts on claude-g/routes (#175) b398b19, route 'towpath', the vertices inside the chunk box",
+      "points": [
+        [8472, 3304],
+        [8472, 3320],
+        [8464, 3328],
+        [8464, 3360],
+        [8464, 3392],
+        [8464, 3424],
+        [8472, 3432],
+        [8472, 3464],
+        [8480, 3472],
+        [8480, 3504],
+        [8480, 3536],
+        [8480, 3544],
+        [8472, 3552],
+        [8472, 3568],
+        [8464, 3576],
+        [8464, 3600],
+        [8456, 3608],
+        [8456, 3640],
+        [8464, 3648],
+        [8464, 3664],
+        [8472, 3672],
+        [8472, 3704],
+        [8472, 3736],
+        [8472, 3760],
+        [8464, 3768],
+        [8464, 3800],
+        [8464, 3832],
+        [8464, 3840],
+        [8472, 3848],
+        [8472, 3880],
+        [8472, 3904],
+        [8464, 3912],
+        [8464, 3944],
+        [8464, 3960],
+        [8472, 3968],
+        [8472, 4000],
+        [8488, 4016],
+        [8488, 4024],
+        [8496, 4032],
+        [8496, 4040],
+        [8512, 4056],
+        [8520, 4064],
+        [8520, 4072],
+        [8528, 4080],
+        [8528, 4088],
+        [8544, 4104],
+        [8544, 4120],
+        [8552, 4128],
+        [8552, 4136],
+        [8560, 4136],
+        [8560, 4144],
+        [8576, 4160],
+        [8592, 4176],
+        [8600, 4176],
+        [8600, 4184],
+        [8608, 4192],
+        [8616, 4192],
+        [8632, 4208],
+        [8648, 4224]
+      ],
+      "widths": [
+        40, 32, 32, 32, 32, 32, 32, 32, 32, 32, 40, 32, 32, 32, 32, 32, 40, 40, 32, 32, 32, 32, 32,
+        32, 32, 32, 40, 32, 40, 40, 32, 32, 40, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32,
+        32, 40, 32, 32, 32, 32, 32, 40, 32, 40, 48, 48, 48
+      ],
+      "tiers": [
+        5, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3,
+        3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3
+      ],
+      "width": 32,
+      "changes": [
+        {
+          "at": [8464, 3408],
+          "s": 693,
+          "kind": "round-end",
+          "from": 5,
+          "to": 4,
+          "run": 64
+        },
+        {
+          "at": [8464, 3792],
+          "s": 1100,
+          "kind": "round-end",
+          "from": 4,
+          "to": 3,
+          "run": 64
+        }
+      ],
+      "sidePaths": [
+        {
+          "obstacle": "fallen tree",
+          "at": [8384, 3465],
+          "leaves": [8480, 3184],
+          "rejoins": [8472, 3744],
+          "points": [
+            [8480, 3184],
+            [8440, 3216],
+            [8400, 3256],
+            [8360, 3296],
+            [8328, 3352],
+            [8312, 3408],
+            [8312, 3464],
+            [8304, 3520],
+            [8304, 3576],
+            [8344, 3632],
+            [8384, 3664],
+            [8432, 3712],
+            [8472, 3744]
+          ],
+          "width": 24
+        }
+      ],
+      "exits": [
+        {
+          "at": [8472, 3296],
+          "tier": 5,
+          "width": 40,
+          "to": "Cogsworth and the coal hills"
+        }
+      ]
+    },
+    "coast_path": {
+      "from_lane_g": "lib/world-routes.ts on claude-g/routes (#175) b398b19, route 'coast-path', the vertices inside the chunk box",
+      "points": [
+        [8304, 4632],
+        [8304, 4624],
+        [8312, 4616],
+        [8312, 4608],
+        [8320, 4600],
+        [8320, 4592],
+        [8328, 4592],
+        [8344, 4576],
+        [8360, 4576],
+        [8368, 4568],
+        [8376, 4568],
+        [8384, 4560],
+        [8392, 4560],
+        [8392, 4552],
+        [8400, 4552],
+        [8408, 4544],
+        [8416, 4544],
+        [8424, 4536],
+        [8432, 4536],
+        [8432, 4528],
+        [8440, 4528],
+        [8448, 4520],
+        [8456, 4520],
+        [8472, 4504],
+        [8480, 4504],
+        [8496, 4488],
+        [8504, 4488],
+        [8512, 4480],
+        [8520, 4480],
+        [8528, 4472],
+        [8536, 4472],
+        [8544, 4464],
+        [8552, 4464],
+        [8568, 4448],
+        [8576, 4440],
+        [8576, 4432],
+        [8584, 4432],
+        [8592, 4424],
+        [8592, 4408],
+        [8600, 4400],
+        [8600, 4392],
+        [8608, 4384],
+        [8608, 4376],
+        [8616, 4376],
+        [8616, 4368],
+        [8624, 4360],
+        [8624, 4352],
+        [8632, 4344],
+        [8632, 4336],
+        [8640, 4328]
+      ],
+      "widths": [
+        32, 32, 32, 32, 32, 40, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32,
+        32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 40, 32, 40, 40, 40, 32, 32, 32, 32, 32, 32, 32, 48,
+        48, 48, 48, 48
+      ],
+      "tiers": [
+        2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+        2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2
+      ],
+      "width": 32,
+      "exits": [
+        {
+          "at": [8304, 4632],
+          "tier": 2,
+          "width": 32,
+          "to": "the land between"
+        }
+      ]
+    },
+    "boardwalk": {
+      "width": 16,
+      "points": [
+        [9064, 4560],
+        [9030, 4700],
+        [8960, 4800],
+        [8900, 4940],
+        [8860, 5060]
+      ],
+      "why": "brief 4: the delta is crossed on boardwalks; a dead end to the reed hide over the channels"
+    }
+  },
+  "thresholds": [
+    {
+      "name": "the Cog foot",
+      "at": [8530, 3060],
+      "route": "Towpath",
+      "sides": "Claude H / Claude I",
+      "band": "broadleaf, garden, meadow -> meadow, watermeadow, broadleaf",
+      "landmark": "the Narrows gorge (8960, 2750)"
     },
     {
-     "id": "middle",
-     "width": 70,
-     "points": [
-      [
-       8992,
-       4488
-      ],
-      [
-       9024,
-       4640
-      ],
-      [
-       8996,
-       4820
-      ],
-      [
-       9032,
-       5000
-      ],
-      [
-       9010,
-       5180
-      ],
-      [
-       9044,
-       5340
-      ],
-      [
-       9060,
-       5460
-      ]
-     ]
+      "name": "Lullford Bridge",
+      "at": [8960, 4310],
+      "route": "Lull Road",
+      "sides": "Claude G / Claude I",
+      "band": "meadow, watermeadow, field -> watermeadow, reeds, garden",
+      "landmark": "the swing span (8960, 4310)"
     },
     {
-     "id": "east",
-     "width": 52,
-     "points": [
-      [
-       9008,
-       4560
-      ],
-      [
-       9100,
-       4700
-      ],
-      [
-       9168,
-       4880
-      ],
-      [
-       9240,
-       5060
-      ],
-      [
-       9290,
-       5240
-      ],
-      [
-       9310,
-       5420
-      ]
-     ]
+      "name": "the canal embankment",
+      "at": [9450, 4680],
+      "route": "Delta Road",
+      "sides": "Claude I / Claude I",
+      "band": "watermeadow, broadleaf, carr -> garden, meadow, broadleaf",
+      "landmark": "the falls and the Harbour Bridge (10100, 4600)"
+    }
+  ],
+  "edges": [
+    {
+      "edge": "east, beyond the new town",
+      "fade": "gorse and brambles",
+      "wall": "thicket",
+      "beyond": "the moss fens and the Glint coming out of them"
     },
     {
-     "id": "west-2",
-     "width": 34,
-     "points": [
-      [
-       8840,
-       4740
-      ],
-      [
-       8720,
-       4840
-      ],
-      [
-       8640,
-       4980
-      ],
-      [
-       8590,
-       5160
-      ]
-     ]
+      "edge": "south, the coast and the ria mouth",
+      "fade": null,
+      "wall": "the sea, with surf; cliffs at the Heights and the cape",
+      "beyond": "the sea and far islands"
     },
     {
-     "id": "middle-2",
-     "width": 30,
-     "points": [
-      [
-       9032,
-       5000
-      ],
-      [
-       8930,
-       5110
-      ],
-      [
-       8880,
-       5260
-      ],
-      [
-       8860,
-       5410
-      ]
-     ]
+      "edge": "north of the belt",
+      "fade": "willow carr and fallen trees",
+      "wall": "thicket",
+      "beyond": "the floodplain woods, then the old forest"
+    }
+  ],
+  "obstacles": [
+    {
+      "kind": "pool",
+      "at": [9388, 4288],
+      "route": "Lull Road",
+      "passed": "a side path round the far side, back at a Y"
     },
     {
-     "id": "east-2",
-     "width": 30,
-     "points": [
-      [
-       9240,
-       5060
-      ],
-      [
-       9340,
-       5150
-      ],
-      [
-       9400,
-       5300
-      ],
-      [
-       9420,
-       5420
-      ]
-     ]
+      "kind": "thicket",
+      "at": [7910, 4971],
+      "route": "Coast Path",
+      "passed": "a side path round the far side, back at a Y"
     }
-   ]
-  },
-  "lull_cut": {
-   "kind": "canal",
-   "derived": true,
-   "towpath": "north-east (the Delta Road, lane G line)",
-   "why": "plan 4.3: from Lullford's east bank to the canal basin under the Heights, clear of the delta's silt; it runs 48 px south-west of the Delta Road, which is its towpath",
-   "points": [
-    [
-     9072,
-     4392
-    ],
-    [
-     9176,
-     4432
-    ],
-    [
-     9216,
-     4472
-    ],
-    [
-     9256,
-     4512
-    ],
-    [
-     9312,
-     4544
-    ],
-    [
-     9360,
-     4624
-    ],
-    [
-     9392,
-     4688
-    ],
-    [
-     9456,
-     4752
-    ]
-   ],
-   "width": 40
-  },
-  "sea": {
-   "kind": "sea",
-   "derived": true,
-   "why": "the delta builds a lobed front into the sea; west of it the coast turns north-west to Gullwick",
-   "front": [
-    [
-     8304,
-     5232
-    ],
-    [
-     8420,
-     5300
-    ],
-    [
-     8540,
-     5390
-    ],
-    [
-     8640,
-     5470
-    ],
-    [
-     8760,
-     5440
-    ],
-    [
-     8880,
-     5500
-    ],
-    [
-     9000,
-     5520
-    ],
-    [
-     9120,
-     5490
-    ],
-    [
-     9240,
-     5510
-    ],
-    [
-     9360,
-     5480
-    ],
-    [
-     9456,
-     5470
-    ]
-   ],
-   "mudflats": 72
-  }
- },
- "lullford": {
-  "derived": true,
-  "town": {
-   "rect": [
-    8480,
-    4112,
-    440,
-    384
-   ],
-   "why": "brief 2: on the west bank, the lowest bridging point"
-  },
-  "bridge": {
-   "from": [
-    8880,
-    4312
-   ],
-   "to": [
-    9072,
-    4312
-   ],
-   "deck": 24,
-   "island": [
-    8952,
-    4272,
-    56,
-    88
-   ],
-   "why": "old stone arches from both banks to the island with the toll house, an iron swing span over the navigation channel on the east (W7, the swing span stuck open; the way is not this PR)",
-   "from_lane_g": "Lullford Bridge, centre (8976, 4312), 192 px of span, tier 3"
-  }
- },
- "routes": {
-  "_about": "Inside the chunk Claude I paints these routes to lane G's line, width and tier (lib/world-routes.ts, #175; g-to-i-cells 21 Oct): 'points' are G's vertices inside the box, with 'widths' and 'tiers' per vertex; 'exits' are the cells where they leave the box. The boardwalk is Claude I's own.",
-  "lull_road": {
-   "from_lane_g": "lib/world-routes.ts on claude-g/routes (#175) b398b19, route 'lull-road', the vertices inside the chunk box",
-   "points": [
-    [
-     8304,
-     4176
-    ],
-    [
-     8312,
-     4176
-    ],
-    [
-     8320,
-     4184
-    ],
-    [
-     8336,
-     4184
-    ],
-    [
-     8344,
-     4192
-    ],
-    [
-     8376,
-     4192
-    ],
-    [
-     8408,
-     4192
-    ],
-    [
-     8432,
-     4192
-    ],
-    [
-     8440,
-     4200
-    ],
-    [
-     8472,
-     4200
-    ],
-    [
-     8480,
-     4200
-    ],
-    [
-     8488,
-     4208
-    ],
-    [
-     8504,
-     4208
-    ],
-    [
-     8504,
-     4216
-    ],
-    [
-     8520,
-     4216
-    ],
-    [
-     8528,
-     4224
-    ],
-    [
-     8536,
-     4224
-    ],
-    [
-     8544,
-     4232
-    ],
-    [
-     8560,
-     4232
-    ],
-    [
-     8568,
-     4240
-    ],
-    [
-     8592,
-     4240
-    ],
-    [
-     8600,
-     4248
-    ],
-    [
-     8632,
-     4248
-    ],
-    [
-     8648,
-     4248
-    ],
-    [
-     8648,
-     4256
-    ],
-    [
-     8672,
-     4256
-    ],
-    [
-     8680,
-     4264
-    ],
-    [
-     8688,
-     4264
-    ],
-    [
-     8696,
-     4272
-    ],
-    [
-     8712,
-     4272
-    ],
-    [
-     8720,
-     4280
-    ],
-    [
-     8736,
-     4280
-    ],
-    [
-     8744,
-     4288
-    ],
-    [
-     8776,
-     4288
-    ],
-    [
-     8800,
-     4288
-    ],
-    [
-     8808,
-     4280
-    ],
-    [
-     8840,
-     4280
-    ],
-    [
-     8872,
-     4280
-    ],
-    [
-     8880,
-     4288
-    ],
-    [
-     8896,
-     4288
-    ],
-    [
-     8904,
-     4296
-    ],
-    [
-     8920,
-     4296
-    ],
-    [
-     8928,
-     4304
-    ],
-    [
-     8944,
-     4304
-    ],
-    [
-     8952,
-     4312
-    ],
-    [
-     8976,
-     4312
-    ],
-    [
-     8984,
-     4320
-    ],
-    [
-     9016,
-     4320
-    ],
-    [
-     9024,
-     4320
-    ],
-    [
-     9032,
-     4328
-    ],
-    [
-     9064,
-     4328
-    ],
-    [
-     9072,
-     4328
-    ],
-    [
-     9080,
-     4320
-    ],
-    [
-     9112,
-     4320
-    ],
-    [
-     9128,
-     4320
-    ],
-    [
-     9136,
-     4328
-    ],
-    [
-     9168,
-     4328
-    ],
-    [
-     9200,
-     4328
-    ],
-    [
-     9224,
-     4328
-    ],
-    [
-     9232,
-     4336
-    ],
-    [
-     9248,
-     4336
-    ],
-    [
-     9264,
-     4352
-    ],
-    [
-     9272,
-     4352
-    ],
-    [
-     9272,
-     4360
-    ],
-    [
-     9280,
-     4368
-    ],
-    [
-     9288,
-     4368
-    ],
-    [
-     9296,
-     4376
-    ],
-    [
-     9304,
-     4376
-    ],
-    [
-     9312,
-     4384
-    ],
-    [
-     9312,
-     4392
-    ],
-    [
-     9328,
-     4392
-    ],
-    [
-     9336,
-     4400
-    ],
-    [
-     9344,
-     4400
-    ],
-    [
-     9352,
-     4392
-    ],
-    [
-     9360,
-     4400
-    ],
-    [
-     9392,
-     4400
-    ],
-    [
-     9424,
-     4400
-    ],
-    [
-     9440,
-     4400
-    ],
-    [
-     9448,
-     4392
-    ]
-   ],
-   "widths": [
-    48,
-    40,
-    40,
-    40,
-    40,
-    40,
-    40,
-    40,
-    40,
-    40,
-    40,
-    40,
-    40,
-    40,
-    40,
-    40,
-    40,
-    40,
-    40,
-    40,
-    40,
-    40,
-    40,
-    40,
-    40,
-    40,
-    40,
-    40,
-    40,
-    40,
-    40,
-    40,
-    40,
-    48,
-    40,
-    40,
-    40,
-    40,
-    40,
-    40,
-    40,
-    40,
-    40,
-    56,
-    56,
-    56,
-    56,
-    56,
-    40,
-    48,
-    48,
-    40,
-    48,
-    48,
-    40,
-    40,
-    40,
-    40,
-    40,
-    40,
-    40,
-    40,
-    48,
-    40,
-    48,
-    40,
-    40,
-    48,
-    40,
-    48,
-    40,
-    48,
-    48,
-    48,
-    40,
-    40,
-    40,
-    40,
-    40
-   ],
-   "tiers": [
-    4,
-    4,
-    4,
-    4,
-    4,
-    4,
-    4,
-    4,
-    4,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3
-   ],
-   "width": 40,
-   "changes": [
+  ],
+  "named": [
     {
-     "at": [
-      8464,
-      4200
-     ],
-     "s": 1949,
-     "kind": "round-end",
-     "from": 4,
-     "to": 3,
-     "run": 64
-    }
-   ],
-   "crossings": [
-    {
-     "kind": "bridge",
-     "name": "Lullford Bridge and its swing span",
-     "way": "W7",
-     "at": [
-      8976,
-      4312
-     ],
-     "s": 2518,
-     "span": 192
-    }
-   ],
-   "sidePaths": [
-    {
-     "obstacle": "marshy pool",
-     "at": [
-      9388,
-      4288
-     ],
-     "leaves": [
-      9096,
-      4320
-     ],
-     "rejoins": [
-      9632,
-      4352
-     ],
-     "points": [
-      [
-       9096,
-       4320
-      ],
-      [
-       9136,
-       4296
-      ],
-      [
-       9176,
-       4264
-      ],
-      [
-       9216,
-       4240
-      ],
-      [
-       9256,
-       4216
-      ],
-      [
-       9304,
-       4192
-      ],
-      [
-       9352,
-       4184
-      ],
-      [
-       9400,
-       4192
-      ],
-      [
-       9448,
-       4192
-      ],
-      [
-       9496,
-       4200
-      ],
-      [
-       9544,
-       4216
-      ],
-      [
-       9576,
-       4264
-      ],
-      [
-       9600,
-       4304
-      ],
-      [
-       9632,
-       4352
-      ]
-     ],
-     "width": 24
-    }
-   ],
-   "exits": [
-    {
-     "at": [
-      8304,
-      4176
-     ],
-     "tier": 4,
-     "width": 48,
-     "to": "the land between"
+      "name": "funicular station",
+      "kind": "landmark",
+      "at": [10839, 4866],
+      "route": "Cape Road",
+      "where": "a short way off the path"
     },
     {
-     "at": [
-      9456,
-      4392
-     ],
-     "tier": 3,
-     "width": 40,
-     "to": "Neon Harbour"
-    }
-   ]
-  },
-  "delta_road": {
-   "from_lane_g": "lib/world-routes.ts on claude-g/routes (#175) b398b19, route 'delta-road', the vertices inside the chunk box",
-   "points": [
-    [
-     9152,
-     4320
-    ],
-    [
-     9168,
-     4336
-    ],
-    [
-     9168,
-     4352
-    ],
-    [
-     9176,
-     4360
-    ],
-    [
-     9176,
-     4368
-    ],
-    [
-     9184,
-     4368
-    ],
-    [
-     9184,
-     4376
-    ],
-    [
-     9192,
-     4384
-    ],
-    [
-     9200,
-     4384
-    ],
-    [
-     9200,
-     4392
-    ],
-    [
-     9208,
-     4400
-    ],
-    [
-     9216,
-     4400
-    ],
-    [
-     9216,
-     4408
-    ],
-    [
-     9224,
-     4408
-    ],
-    [
-     9232,
-     4416
-    ],
-    [
-     9232,
-     4424
-    ],
-    [
-     9240,
-     4424
-    ],
-    [
-     9240,
-     4432
-    ],
-    [
-     9248,
-     4440
-    ],
-    [
-     9256,
-     4440
-    ],
-    [
-     9256,
-     4448
-    ],
-    [
-     9264,
-     4456
-    ],
-    [
-     9272,
-     4456
-    ],
-    [
-     9272,
-     4464
-    ],
-    [
-     9280,
-     4464
-    ],
-    [
-     9288,
-     4472
-    ],
-    [
-     9296,
-     4472
-    ],
-    [
-     9296,
-     4480
-    ],
-    [
-     9304,
-     4480
-    ],
-    [
-     9312,
-     4488
-    ],
-    [
-     9328,
-     4488
-    ],
-    [
-     9328,
-     4496
-    ],
-    [
-     9336,
-     4496
-    ],
-    [
-     9352,
-     4512
-    ],
-    [
-     9360,
-     4520
-    ],
-    [
-     9360,
-     4528
-    ],
-    [
-     9368,
-     4528
-    ],
-    [
-     9368,
-     4536
-    ],
-    [
-     9376,
-     4544
-    ],
-    [
-     9376,
-     4568
-    ],
-    [
-     9384,
-     4576
-    ],
-    [
-     9384,
-     4592
-    ],
-    [
-     9392,
-     4600
-    ],
-    [
-     9392,
-     4608
-    ],
-    [
-     9400,
-     4616
-    ],
-    [
-     9400,
-     4624
-    ],
-    [
-     9408,
-     4632
-    ],
-    [
-     9416,
-     4632
-    ],
-    [
-     9416,
-     4640
-    ],
-    [
-     9424,
-     4648
-    ],
-    [
-     9424,
-     4656
-    ],
-    [
-     9432,
-     4656
-    ],
-    [
-     9432,
-     4664
-    ],
-    [
-     9440,
-     4672
-    ],
-    [
-     9440,
-     4680
-    ],
-    [
-     9456,
-     4696
-    ],
-    [
-     9456,
-     4704
-    ]
-   ],
-   "widths": [
-    48,
-    48,
-    48,
-    40,
-    32,
-    32,
-    32,
-    32,
-    40,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    40,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    40,
-    32,
-    40,
-    32,
-    32,
-    40,
-    32,
-    32,
-    32,
-    40,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    40,
-    32,
-    40,
-    32,
-    48,
-    48,
-    48,
-    48,
-    48,
-    48,
-    48,
-    48
-   ],
-   "tiers": [
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    4,
-    4,
-    4,
-    4,
-    4,
-    4,
-    4,
-    4,
-    4,
-    4,
-    4,
-    4,
-    4,
-    4,
-    4,
-    4,
-    4,
-    4
-   ],
-   "width": 32,
-   "changes": [
-    {
-     "at": [
-      9376,
-      4568
-     ],
-     "s": 405,
-     "kind": "round-end",
-     "from": 3,
-     "to": 4,
-     "run": 64
-    }
-   ],
-   "pockets": [
-    {
-     "holds": "a resident fishing",
-     "clearing": [
-      9188,
-      4572
-     ],
-     "leaves": [
-      9272,
-      4464
-     ],
-     "points": [
-      [
-       9272,
-       4464
-      ],
-      [
-       9256,
-       4472
-      ],
-      [
-       9248,
-       4480
-      ],
-      [
-       9232,
-       4488
-      ],
-      [
-       9216,
-       4496
-      ],
-      [
-       9208,
-       4512
-      ],
-      [
-       9200,
-       4520
-      ],
-      [
-       9200,
-       4536
-      ],
-      [
-       9192,
-       4552
-      ],
-      [
-       9192,
-       4568
-      ],
-      [
-       9184,
-       4576
-      ]
-     ],
-     "length": 155,
-     "width": 24,
-     "clearingRadius": 40
-    }
-   ],
-   "exits": [
-    {
-     "at": [
-      9456,
-      4696
-     ],
-     "tier": 4,
-     "width": 48,
-     "to": "Neon Harbour"
-    }
-   ]
-  },
-  "towpath": {
-   "from_lane_g": "lib/world-routes.ts on claude-g/routes (#175) b398b19, route 'towpath', the vertices inside the chunk box",
-   "points": [
-    [
-     8472,
-     3304
-    ],
-    [
-     8472,
-     3320
-    ],
-    [
-     8464,
-     3328
-    ],
-    [
-     8464,
-     3360
-    ],
-    [
-     8464,
-     3392
-    ],
-    [
-     8464,
-     3424
-    ],
-    [
-     8472,
-     3432
-    ],
-    [
-     8472,
-     3464
-    ],
-    [
-     8480,
-     3472
-    ],
-    [
-     8480,
-     3504
-    ],
-    [
-     8480,
-     3536
-    ],
-    [
-     8480,
-     3544
-    ],
-    [
-     8472,
-     3552
-    ],
-    [
-     8472,
-     3568
-    ],
-    [
-     8464,
-     3576
-    ],
-    [
-     8464,
-     3600
-    ],
-    [
-     8456,
-     3608
-    ],
-    [
-     8456,
-     3640
-    ],
-    [
-     8464,
-     3648
-    ],
-    [
-     8464,
-     3664
-    ],
-    [
-     8472,
-     3672
-    ],
-    [
-     8472,
-     3704
-    ],
-    [
-     8472,
-     3736
-    ],
-    [
-     8472,
-     3760
-    ],
-    [
-     8464,
-     3768
-    ],
-    [
-     8464,
-     3800
-    ],
-    [
-     8464,
-     3832
-    ],
-    [
-     8464,
-     3840
-    ],
-    [
-     8472,
-     3848
-    ],
-    [
-     8472,
-     3880
-    ],
-    [
-     8472,
-     3904
-    ],
-    [
-     8464,
-     3912
-    ],
-    [
-     8464,
-     3944
-    ],
-    [
-     8464,
-     3960
-    ],
-    [
-     8472,
-     3968
-    ],
-    [
-     8472,
-     4000
-    ],
-    [
-     8488,
-     4016
-    ],
-    [
-     8488,
-     4024
-    ],
-    [
-     8496,
-     4032
-    ],
-    [
-     8496,
-     4040
-    ],
-    [
-     8512,
-     4056
-    ],
-    [
-     8520,
-     4064
-    ],
-    [
-     8520,
-     4072
-    ],
-    [
-     8528,
-     4080
-    ],
-    [
-     8528,
-     4088
-    ],
-    [
-     8544,
-     4104
-    ],
-    [
-     8544,
-     4120
-    ],
-    [
-     8552,
-     4128
-    ],
-    [
-     8552,
-     4136
-    ],
-    [
-     8560,
-     4136
-    ],
-    [
-     8560,
-     4144
-    ],
-    [
-     8576,
-     4160
-    ],
-    [
-     8592,
-     4176
-    ],
-    [
-     8600,
-     4176
-    ],
-    [
-     8600,
-     4184
-    ],
-    [
-     8608,
-     4192
-    ],
-    [
-     8616,
-     4192
-    ],
-    [
-     8632,
-     4208
-    ],
-    [
-     8648,
-     4224
-    ]
-   ],
-   "widths": [
-    40,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    40,
-    32,
-    32,
-    32,
-    32,
-    32,
-    40,
-    40,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    40,
-    32,
-    40,
-    40,
-    32,
-    32,
-    40,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    40,
-    32,
-    32,
-    32,
-    32,
-    32,
-    40,
-    32,
-    40,
-    48,
-    48,
-    48
-   ],
-   "tiers": [
-    5,
-    5,
-    5,
-    5,
-    5,
-    4,
-    4,
-    4,
-    4,
-    4,
-    4,
-    4,
-    4,
-    4,
-    4,
-    4,
-    4,
-    4,
-    4,
-    4,
-    4,
-    4,
-    4,
-    4,
-    4,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3,
-    3
-   ],
-   "width": 32,
-   "changes": [
-    {
-     "at": [
-      8464,
-      3408
-     ],
-     "s": 693,
-     "kind": "round-end",
-     "from": 5,
-     "to": 4,
-     "run": 64
+      "name": "street shrine",
+      "kind": "shrine",
+      "at": [10806, 5322],
+      "route": "Cape Road",
+      "where": "beside the path"
     },
     {
-     "at": [
-      8464,
-      3792
-     ],
-     "s": 1100,
-     "kind": "round-end",
-     "from": 4,
-     "to": 3,
-     "run": 64
-    }
-   ],
-   "sidePaths": [
+      "name": "hay barn",
+      "kind": "landmark",
+      "at": [8590, 4281],
+      "route": "Coast Path",
+      "where": "beside the path"
+    },
     {
-     "obstacle": "fallen tree",
-     "at": [
-      8384,
-      3465
-     ],
-     "leaves": [
-      8480,
-      3184
-     ],
-     "rejoins": [
-      8472,
-      3744
-     ],
-     "points": [
-      [
-       8480,
-       3184
-      ],
-      [
-       8440,
-       3216
-      ],
-      [
-       8400,
-       3256
-      ],
-      [
-       8360,
-       3296
-      ],
-      [
-       8328,
-       3352
-      ],
-      [
-       8312,
-       3408
-      ],
-      [
-       8312,
-       3464
-      ],
-      [
-       8304,
-       3520
-      ],
-      [
-       8304,
-       3576
-      ],
-      [
-       8344,
-       3632
-      ],
-      [
-       8384,
-       3664
-      ],
-      [
-       8432,
-       3712
-      ],
-      [
-       8472,
-       3744
-      ]
-     ],
-     "width": 24
-    }
-   ],
-   "exits": [
+      "name": "fishing stage",
+      "kind": "landmark",
+      "at": [8477, 4607],
+      "route": "Coast Path",
+      "where": "beside the path"
+    },
     {
-     "at": [
-      8472,
-      3296
-     ],
-     "tier": 5,
-     "width": 40,
-     "to": "Cogsworth and the coal hills"
-    }
-   ]
-  },
-  "coast_path": {
-   "from_lane_g": "lib/world-routes.ts on claude-g/routes (#175) b398b19, route 'coast-path', the vertices inside the chunk box",
-   "points": [
-    [
-     8304,
-     4632
-    ],
-    [
-     8304,
-     4624
-    ],
-    [
-     8312,
-     4616
-    ],
-    [
-     8312,
-     4608
-    ],
-    [
-     8320,
-     4600
-    ],
-    [
-     8320,
-     4592
-    ],
-    [
-     8328,
-     4592
-    ],
-    [
-     8344,
-     4576
-    ],
-    [
-     8360,
-     4576
-    ],
-    [
-     8368,
-     4568
-    ],
-    [
-     8376,
-     4568
-    ],
-    [
-     8384,
-     4560
-    ],
-    [
-     8392,
-     4560
-    ],
-    [
-     8392,
-     4552
-    ],
-    [
-     8400,
-     4552
-    ],
-    [
-     8408,
-     4544
-    ],
-    [
-     8416,
-     4544
-    ],
-    [
-     8424,
-     4536
-    ],
-    [
-     8432,
-     4536
-    ],
-    [
-     8432,
-     4528
-    ],
-    [
-     8440,
-     4528
-    ],
-    [
-     8448,
-     4520
-    ],
-    [
-     8456,
-     4520
-    ],
-    [
-     8472,
-     4504
-    ],
-    [
-     8480,
-     4504
-    ],
-    [
-     8496,
-     4488
-    ],
-    [
-     8504,
-     4488
-    ],
-    [
-     8512,
-     4480
-    ],
-    [
-     8520,
-     4480
-    ],
-    [
-     8528,
-     4472
-    ],
-    [
-     8536,
-     4472
-    ],
-    [
-     8544,
-     4464
-    ],
-    [
-     8552,
-     4464
-    ],
-    [
-     8568,
-     4448
-    ],
-    [
-     8576,
-     4440
-    ],
-    [
-     8576,
-     4432
-    ],
-    [
-     8584,
-     4432
-    ],
-    [
-     8592,
-     4424
-    ],
-    [
-     8592,
-     4408
-    ],
-    [
-     8600,
-     4400
-    ],
-    [
-     8600,
-     4392
-    ],
-    [
-     8608,
-     4384
-    ],
-    [
-     8608,
-     4376
-    ],
-    [
-     8616,
-     4376
-    ],
-    [
-     8616,
-     4368
-    ],
-    [
-     8624,
-     4360
-    ],
-    [
-     8624,
-     4352
-    ],
-    [
-     8632,
-     4344
-    ],
-    [
-     8632,
-     4336
-    ],
-    [
-     8640,
-     4328
-    ]
-   ],
-   "widths": [
-    32,
-    32,
-    32,
-    32,
-    32,
-    40,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    40,
-    32,
-    40,
-    40,
-    40,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    32,
-    48,
-    48,
-    48,
-    48,
-    48
-   ],
-   "tiers": [
-    2,
-    2,
-    2,
-    2,
-    2,
-    2,
-    2,
-    2,
-    2,
-    2,
-    2,
-    2,
-    2,
-    2,
-    2,
-    2,
-    2,
-    2,
-    2,
-    2,
-    2,
-    2,
-    2,
-    2,
-    2,
-    2,
-    2,
-    2,
-    2,
-    2,
-    2,
-    2,
-    2,
-    2,
-    2,
-    2,
-    2,
-    2,
-    2,
-    2,
-    2,
-    2,
-    2,
-    2,
-    2,
-    2,
-    2,
-    2,
-    2,
-    2
-   ],
-   "width": 32,
-   "exits": [
+      "name": "heron pools",
+      "kind": "wild",
+      "at": [8129, 4982],
+      "route": "Coast Path",
+      "where": "beside the path"
+    },
     {
-     "at": [
-      8304,
-      4632
-     ],
-     "tier": 2,
-     "width": 32,
-     "to": "the land between"
+      "name": "ferryman's hut",
+      "kind": "npc",
+      "at": [9422, 4256],
+      "route": "Delta Road",
+      "where": "a short way off the path"
+    },
+    {
+      "name": "wreck in the reeds",
+      "kind": "wreck",
+      "at": [9364, 4688],
+      "route": "Delta Road",
+      "where": "beside the path"
+    },
+    {
+      "name": "harbour master",
+      "kind": "npc",
+      "at": [9690, 4793],
+      "route": "Delta Road",
+      "where": "beside the path"
+    },
+    {
+      "name": "fishing stage",
+      "kind": "landmark",
+      "at": [8573, 3953],
+      "route": "Lull Road",
+      "where": "a short way off the path"
+    },
+    {
+      "name": "stilt hut",
+      "kind": "npc",
+      "at": [9027, 4282],
+      "route": "Lull Road",
+      "where": "beside the path"
+    },
+    {
+      "name": "fish market",
+      "kind": "npc",
+      "at": [9529, 4287],
+      "route": "Lull Road",
+      "where": "beside the path"
+    },
+    {
+      "name": "reed hide",
+      "kind": "wild",
+      "at": [8768, 4352],
+      "route": "Lull Road",
+      "where": "beside the path"
+    },
+    {
+      "name": "a reed hide over the channels",
+      "kind": "view",
+      "at": [8795, 4355],
+      "route": "Lull Road",
+      "where": "beside the path"
+    },
+    {
+      "name": "a gull rock",
+      "kind": "wild",
+      "at": [9510, 4385],
+      "route": "Lull Road",
+      "where": "beside the path"
+    },
+    {
+      "name": "a stair-top view over the ria",
+      "kind": "view",
+      "at": [9530, 4446],
+      "route": "Lull Road",
+      "where": "beside the path"
+    },
+    {
+      "name": "rope walk",
+      "kind": "landmark",
+      "at": [9857, 4454],
+      "route": "Lull Road",
+      "where": "beside the path"
+    },
+    {
+      "name": "an old harbour crane",
+      "kind": "ruin",
+      "at": [9492, 4498],
+      "route": "Lull Road",
+      "where": "beside the path"
+    },
+    {
+      "name": "eel traps",
+      "kind": "prop",
+      "at": [9133, 4567],
+      "route": "Lull Road",
+      "where": "a short way off the path"
     }
-   ]
-  },
-  "boardwalk": {
-   "width": 16,
-   "points": [
-    [
-     9064,
-     4560
-    ],
-    [
-     9030,
-     4700
-    ],
-    [
-     8960,
-     4800
-    ],
-    [
-     8900,
-     4940
-    ],
-    [
-     8860,
-     5060
-    ]
-   ],
-   "why": "brief 4: the delta is crossed on boardwalks; a dead end to the reed hide over the channels"
-  }
- },
- "thresholds": [
-  {
-   "name": "the Cog foot",
-   "at": [
-    8530,
-    3060
-   ],
-   "route": "Towpath",
-   "sides": "Claude H / Claude I",
-   "band": "broadleaf, garden, meadow -> meadow, watermeadow, broadleaf",
-   "landmark": "the Narrows gorge (8960, 2750)"
-  },
-  {
-   "name": "Lullford Bridge",
-   "at": [
-    8960,
-    4310
-   ],
-   "route": "Lull Road",
-   "sides": "Claude G / Claude I",
-   "band": "meadow, watermeadow, field -> watermeadow, reeds, garden",
-   "landmark": "the swing span (8960, 4310)"
-  },
-  {
-   "name": "the canal embankment",
-   "at": [
-    9450,
-    4680
-   ],
-   "route": "Delta Road",
-   "sides": "Claude I / Claude I",
-   "band": "watermeadow, broadleaf, carr -> garden, meadow, broadleaf",
-   "landmark": "the falls and the Harbour Bridge (10100, 4600)"
-  }
- ],
- "edges": [
-  {
-   "edge": "east, beyond the new town",
-   "fade": "gorse and brambles",
-   "wall": "thicket",
-   "beyond": "the moss fens and the Glint coming out of them"
-  },
-  {
-   "edge": "south, the coast and the ria mouth",
-   "fade": null,
-   "wall": "the sea, with surf; cliffs at the Heights and the cape",
-   "beyond": "the sea and far islands"
-  },
-  {
-   "edge": "north of the belt",
-   "fade": "willow carr and fallen trees",
-   "wall": "thicket",
-   "beyond": "the floodplain woods, then the old forest"
-  }
- ],
- "obstacles": [
-  {
-   "kind": "pool",
-   "at": [
-    9388,
-    4288
-   ],
-   "route": "Lull Road",
-   "passed": "a side path round the far side, back at a Y"
-  },
-  {
-   "kind": "thicket",
-   "at": [
-    7910,
-    4971
-   ],
-   "route": "Coast Path",
-   "passed": "a side path round the far side, back at a Y"
-  }
- ],
- "named": [
-  {
-   "name": "funicular station",
-   "kind": "landmark",
-   "at": [
-    10839,
-    4866
-   ],
-   "route": "Cape Road",
-   "where": "a short way off the path"
-  },
-  {
-   "name": "street shrine",
-   "kind": "shrine",
-   "at": [
-    10806,
-    5322
-   ],
-   "route": "Cape Road",
-   "where": "beside the path"
-  },
-  {
-   "name": "hay barn",
-   "kind": "landmark",
-   "at": [
-    8590,
-    4281
-   ],
-   "route": "Coast Path",
-   "where": "beside the path"
-  },
-  {
-   "name": "fishing stage",
-   "kind": "landmark",
-   "at": [
-    8477,
-    4607
-   ],
-   "route": "Coast Path",
-   "where": "beside the path"
-  },
-  {
-   "name": "heron pools",
-   "kind": "wild",
-   "at": [
-    8129,
-    4982
-   ],
-   "route": "Coast Path",
-   "where": "beside the path"
-  },
-  {
-   "name": "ferryman's hut",
-   "kind": "npc",
-   "at": [
-    9422,
-    4256
-   ],
-   "route": "Delta Road",
-   "where": "a short way off the path"
-  },
-  {
-   "name": "wreck in the reeds",
-   "kind": "wreck",
-   "at": [
-    9364,
-    4688
-   ],
-   "route": "Delta Road",
-   "where": "beside the path"
-  },
-  {
-   "name": "harbour master",
-   "kind": "npc",
-   "at": [
-    9690,
-    4793
-   ],
-   "route": "Delta Road",
-   "where": "beside the path"
-  },
-  {
-   "name": "fishing stage",
-   "kind": "landmark",
-   "at": [
-    8573,
-    3953
-   ],
-   "route": "Lull Road",
-   "where": "a short way off the path"
-  },
-  {
-   "name": "stilt hut",
-   "kind": "npc",
-   "at": [
-    9027,
-    4282
-   ],
-   "route": "Lull Road",
-   "where": "beside the path"
-  },
-  {
-   "name": "fish market",
-   "kind": "npc",
-   "at": [
-    9529,
-    4287
-   ],
-   "route": "Lull Road",
-   "where": "beside the path"
-  },
-  {
-   "name": "reed hide",
-   "kind": "wild",
-   "at": [
-    8768,
-    4352
-   ],
-   "route": "Lull Road",
-   "where": "beside the path"
-  },
-  {
-   "name": "a reed hide over the channels",
-   "kind": "view",
-   "at": [
-    8795,
-    4355
-   ],
-   "route": "Lull Road",
-   "where": "beside the path"
-  },
-  {
-   "name": "a gull rock",
-   "kind": "wild",
-   "at": [
-    9510,
-    4385
-   ],
-   "route": "Lull Road",
-   "where": "beside the path"
-  },
-  {
-   "name": "a stair-top view over the ria",
-   "kind": "view",
-   "at": [
-    9530,
-    4446
-   ],
-   "route": "Lull Road",
-   "where": "beside the path"
-  },
-  {
-   "name": "rope walk",
-   "kind": "landmark",
-   "at": [
-    9857,
-    4454
-   ],
-   "route": "Lull Road",
-   "where": "beside the path"
-  },
-  {
-   "name": "an old harbour crane",
-   "kind": "ruin",
-   "at": [
-    9492,
-    4498
-   ],
-   "route": "Lull Road",
-   "where": "beside the path"
-  },
-  {
-   "name": "eel traps",
-   "kind": "prop",
-   "at": [
-    9133,
-    4567
-   ],
-   "route": "Lull Road",
-   "where": "a short way off the path"
-  }
- ],
- "pockets": [
-  {
-   "holds": "a view over the land",
-   "at": [
-    8283,
-    5072
-   ],
-   "off": "Coast Path"
-  },
-  {
-   "holds": "a story detail: an old grave",
-   "at": [
-    9799,
-    4170
-   ],
-   "off": "Lull Road"
-  },
-  {
-   "holds": "a resident fishing",
-   "at": [
-    9188,
-    4572
-   ],
-   "off": "Delta Road"
-  },
-  {
-   "holds": "a story detail: initials cut in a stone",
-   "at": [
-    9092,
-    3436
-   ],
-   "off": "Towpath"
-  },
-  {
-   "holds": "a view over the land",
-   "at": [
-    9340,
-    3908
-   ],
-   "off": "Lull Road"
-  },
-  {
-   "holds": "a bench under a tree",
-   "at": [
-    10652,
-    5548
-   ],
-   "off": "Quay Street"
-  },
-  {
-   "holds": "a story detail: an old grave",
-   "at": [
-    10740,
-    4980
-   ],
-   "off": "Cape Road"
-  }
- ],
- "eggs": [
-  {
-   "name": "bell in the oxbow",
-   "at": [
-    9450,
-    3900
-   ]
-  },
-  {
-   "name": "lighthouse keeper's door",
-   "at": [
-    10050,
-    5440
-   ]
-  }
- ],
- "markers": [
-  {
-   "type": "interactable",
-   "name": "bench",
-   "at": [
-    10655,
-    4960
-   ],
-   "route": "Cape Road"
-  },
-  {
-   "type": "story",
-   "name": "cairn",
-   "at": [
-    10617,
-    5058
-   ],
-   "route": "Cape Road"
-  },
-  {
-   "type": "story",
-   "name": "tracks",
-   "at": [
-    10711,
-    5044
-   ],
-   "route": "Cape Road"
-  },
-  {
-   "type": "ambient",
-   "name": "cats",
-   "at": [
-    10755,
-    5072
-   ],
-   "route": "Cape Road"
-  },
-  {
-   "type": "interactable",
-   "name": "door",
-   "at": [
-    10811,
-    5114
-   ],
-   "route": "Cape Road"
-  },
-  {
-   "type": "story",
-   "name": "cold fire ring",
-   "at": [
-    10785,
-    5210
-   ],
-   "route": "Cape Road"
-  },
-  {
-   "type": "story",
-   "name": "marker stone",
-   "at": [
-    10881,
-    5221
-   ],
-   "route": "Cape Road"
-  },
-  {
-   "type": "interactable",
-   "name": "bench",
-   "at": [
-    10832,
-    5307
-   ],
-   "route": "Cape Road"
-  },
-  {
-   "type": "story",
-   "name": "cart with a broken wheel",
-   "at": [
-    10934,
-    5316
-   ],
-   "route": "Cape Road"
-  },
-  {
-   "type": "ambient",
-   "name": "cats",
-   "at": [
-    10903,
-    5408
-   ],
-   "route": "Cape Road"
-  },
-  {
-   "type": "interactable",
-   "name": "noticeboard",
-   "at": [
-    10997,
-    5417
-   ],
-   "route": "Cape Road"
-  },
-  {
-   "type": "story",
-   "name": "mended fence",
-   "at": [
-    10935,
-    5494
-   ],
-   "route": "Cape Road"
-  },
-  {
-   "type": "ambient",
-   "name": "hares",
-   "at": [
-    7696,
-    5078
-   ],
-   "route": "Coast Path"
-  },
-  {
-   "type": "interactable",
-   "name": "gate",
-   "at": [
-    7758,
-    5002
-   ],
-   "route": "Coast Path"
-  },
-  {
-   "type": "story",
-   "name": "cold fire ring",
-   "at": [
-    7789,
-    5092
-   ],
-   "route": "Coast Path"
-  },
-  {
-   "type": "story",
-   "name": "marker stone",
-   "at": [
-    7849,
-    5111
-   ],
-   "route": "Coast Path"
-  },
-  {
-   "type": "ambient",
-   "name": "hares",
-   "at": [
-    7911,
-    5121
-   ],
-   "route": "Coast Path"
-  },
-  {
-   "type": "interactable",
-   "name": "noticeboard",
-   "at": [
-    7954,
-    5032
-   ],
-   "route": "Coast Path"
-  },
-  {
-   "type": "story",
-   "name": "cairn",
-   "at": [
-    8049,
-    5053
-   ],
-   "route": "Coast Path"
-  },
-  {
-   "type": "story",
-   "name": "tracks",
-   "at": [
-    8011,
-    4963
-   ],
-   "route": "Coast Path"
-  },
-  {
-   "type": "interactable",
-   "name": "gate",
-   "at": [
-    8112,
-    4956
-   ],
-   "route": "Coast Path"
-  },
-  {
-   "type": "story",
-   "name": "old boot",
-   "at": [
-    8097,
-    4860
-   ],
-   "route": "Coast Path"
-  },
-  {
-   "type": "ambient",
-   "name": "hares",
-   "at": [
-    8190,
-    4894
-   ],
-   "route": "Coast Path"
-  },
-  {
-   "type": "story",
-   "name": "mended fence",
-   "at": [
-    8370,
-    4621
-   ],
-   "route": "Coast Path"
-  },
-  {
-   "type": "story",
-   "name": "old boot",
-   "at": [
-    8393,
-    4523
-   ],
-   "route": "Coast Path"
-  },
-  {
-   "type": "interactable",
-   "name": "resident",
-   "at": [
-    8475,
-    4575
-   ],
-   "route": "Coast Path"
-  },
-  {
-   "type": "story",
-   "name": "marker stone",
-   "at": [
-    8484,
-    4476
-   ],
-   "route": "Coast Path"
-  },
-  {
-   "type": "ambient",
-   "name": "hares",
-   "at": [
-    8578,
-    4491
-   ],
-   "route": "Coast Path"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
-   "at": [
-    8541,
-    4399
-   ],
-   "route": "Coast Path"
-  },
-  {
-   "type": "story",
-   "name": "cairn",
-   "at": [
-    8638,
-    4391
-   ],
-   "route": "Coast Path"
-  },
-  {
-   "type": "interactable",
-   "name": "bench",
-   "at": [
-    9209,
-    4329
-   ],
-   "route": "Delta Road"
-  },
-  {
-   "type": "story",
-   "name": "cairn",
-   "at": [
-    9172,
-    4417
-   ],
-   "route": "Delta Road"
-  },
-  {
-   "type": "story",
-   "name": "tracks",
-   "at": [
-    9272,
-    4416
-   ],
-   "route": "Delta Road"
-  },
-  {
-   "type": "ambient",
-   "name": "egrets",
-   "at": [
-    9263,
-    4510
-   ],
-   "route": "Delta Road"
-  },
-  {
-   "type": "interactable",
-   "name": "door",
-   "at": [
-    9375,
-    4470
-   ],
-   "route": "Delta Road"
-  },
-  {
-   "type": "story",
-   "name": "cold fire ring",
-   "at": [
-    9342,
-    4578
-   ],
-   "route": "Delta Road"
-  },
-  {
-   "type": "story",
-   "name": "marker stone",
-   "at": [
-    9440,
-    4589
-   ],
-   "route": "Delta Road"
-  },
-  {
-   "type": "interactable",
-   "name": "bench",
-   "at": [
-    9391,
-    4674
-   ],
-   "route": "Delta Road"
-  },
-  {
-   "type": "story",
-   "name": "cart with a broken wheel",
-   "at": [
-    9492,
-    4683
-   ],
-   "route": "Delta Road"
-  },
-  {
-   "type": "ambient",
-   "name": "cats",
-   "at": [
-    9477,
-    4777
-   ],
-   "route": "Delta Road"
-  },
-  {
-   "type": "interactable",
-   "name": "noticeboard",
-   "at": [
-    9559,
-    4751
-   ],
-   "route": "Delta Road"
-  },
-  {
-   "type": "story",
-   "name": "mended fence",
-   "at": [
-    9572,
-    4838
-   ],
-   "route": "Delta Road"
-  },
-  {
-   "type": "story",
-   "name": "old boot",
-   "at": [
-    9668,
-    4814
-   ],
-   "route": "Delta Road"
-  },
-  {
-   "type": "ambient",
-   "name": "cats",
-   "at": [
-    9628,
-    4921
-   ],
-   "route": "Delta Road"
-  },
-  {
-   "type": "interactable",
-   "name": "bench",
-   "at": [
-    9742,
-    4904
-   ],
-   "route": "Delta Road"
-  },
-  {
-   "type": "story",
-   "name": "lost hat",
-   "at": [
-    9778,
-    4928
-   ],
-   "route": "Delta Road"
-  },
-  {
-   "type": "story",
-   "name": "cold fire ring",
-   "at": [
-    8024,
-    4976
-   ],
-   "route": "Gullwick"
-  },
-  {
-   "type": "story",
-   "name": "mended fence",
-   "at": [
-    7920,
-    5048
-   ],
-   "route": "Gullwick"
-  },
-  {
-   "type": "interactable",
-   "name": "door",
-   "at": [
-    7856,
-    5064
-   ],
-   "route": "Gullwick"
-  },
-  {
-   "type": "interactable",
-   "name": "gate",
-   "at": [
-    7952,
-    5080
-   ],
-   "route": "Gullwick"
-  },
-  {
-   "type": "interactable",
-   "name": "gate",
-   "at": [
-    8008,
-    5080
-   ],
-   "route": "Gullwick"
-  },
-  {
-   "type": "interactable",
-   "name": "door",
-   "at": [
-    8104,
-    5080
-   ],
-   "route": "Gullwick"
-  },
-  {
-   "type": "story",
-   "name": "tracks",
-   "at": [
-    7912,
-    5088
-   ],
-   "route": "Gullwick"
-  },
-  {
-   "type": "story",
-   "name": "old boot",
-   "at": [
-    7928,
-    5088
-   ],
-   "route": "Gullwick"
-  },
-  {
-   "type": "interactable",
-   "name": "bench",
-   "at": [
-    8088,
-    5096
-   ],
-   "route": "Gullwick"
-  },
-  {
-   "type": "story",
-   "name": "old boot",
-   "at": [
-    7824,
-    5112
-   ],
-   "route": "Gullwick"
-  },
-  {
-   "type": "story",
-   "name": "marker stone",
-   "at": [
-    7824,
-    5120
-   ],
-   "route": "Gullwick"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "at": [
-    8096,
-    5128
-   ],
-   "route": "Gullwick"
-  },
-  {
-   "type": "story",
-   "name": "tracks",
-   "at": [
-    7952,
-    5168
-   ],
-   "route": "Gullwick"
-  },
-  {
-   "type": "story",
-   "name": "marker stone",
-   "at": [
-    8104,
-    5176
-   ],
-   "route": "Gullwick"
-  },
-  {
-   "type": "interactable",
-   "name": "noticeboard",
-   "at": [
-    8024,
-    5184
-   ],
-   "route": "Gullwick"
-  },
-  {
-   "type": "interactable",
-   "name": "resident",
-   "at": [
-    7832,
-    5200
-   ],
-   "route": "Gullwick"
-  },
-  {
-   "type": "story",
-   "name": "lost hat",
-   "at": [
-    11048,
-    5424
-   ],
-   "route": "Launch Cape"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "at": [
-    10848,
-    5456
-   ],
-   "route": "Launch Cape"
-  },
-  {
-   "type": "story",
-   "name": "mended fence",
-   "at": [
-    10888,
-    5464
-   ],
-   "route": "Launch Cape"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "at": [
-    10840,
-    5472
-   ],
-   "route": "Launch Cape"
-  },
-  {
-   "type": "interactable",
-   "name": "noticeboard",
-   "at": [
-    10920,
-    5480
-   ],
-   "route": "Launch Cape"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "at": [
-    10960,
-    5480
-   ],
-   "route": "Launch Cape"
-  },
-  {
-   "type": "story",
-   "name": "old boot",
-   "at": [
-    10832,
-    5496
-   ],
-   "route": "Launch Cape"
-  },
-  {
-   "type": "story",
-   "name": "lost hat",
-   "at": [
-    11040,
-    5544
-   ],
-   "route": "Launch Cape"
-  },
-  {
-   "type": "interactable",
-   "name": "door",
-   "at": [
-    10928,
-    5560
-   ],
-   "route": "Launch Cape"
-  },
-  {
-   "type": "story",
-   "name": "cairn",
-   "at": [
-    10960,
-    5592
-   ],
-   "route": "Launch Cape"
-  },
-  {
-   "type": "story",
-   "name": "marker stone",
-   "at": [
-    11128,
-    5592
-   ],
-   "route": "Launch Cape"
-  },
-  {
-   "type": "interactable",
-   "name": "bench",
-   "at": [
-    10872,
-    5616
-   ],
-   "route": "Launch Cape"
-  },
-  {
-   "type": "story",
-   "name": "lost hat",
-   "at": [
-    11088,
-    5640
-   ],
-   "route": "Launch Cape"
-  },
-  {
-   "type": "interactable",
-   "name": "gate",
-   "at": [
-    10936,
-    5656
-   ],
-   "route": "Launch Cape"
-  },
-  {
-   "type": "story",
-   "name": "marker stone",
-   "at": [
-    11072,
-    5672
-   ],
-   "route": "Launch Cape"
-  },
-  {
-   "type": "interactable",
-   "name": "gate",
-   "at": [
-    10912,
-    5712
-   ],
-   "route": "Launch Cape"
-  },
-  {
-   "type": "ambient",
-   "name": "hares",
-   "at": [
-    8327,
-    4215
-   ],
-   "route": "Lull Road"
-  },
-  {
-   "type": "interactable",
-   "name": "resident",
-   "at": [
-    8392,
-    4142
-   ],
-   "route": "Lull Road"
-  },
-  {
-   "type": "story",
-   "name": "lost hat",
-   "at": [
-    8439,
-    4229
-   ],
-   "route": "Lull Road"
-  },
-  {
-   "type": "story",
-   "name": "cart with a broken wheel",
-   "at": [
-    8514,
-    4166
-   ],
-   "route": "Lull Road"
-  },
-  {
-   "type": "ambient",
-   "name": "hares",
-   "at": [
-    8519,
-    4262
-   ],
-   "route": "Lull Road"
-  },
-  {
-   "type": "interactable",
-   "name": "gate",
-   "at": [
-    8620,
-    4245
-   ],
-   "route": "Lull Road"
-  },
-  {
-   "type": "story",
-   "name": "mended fence",
-   "at": [
-    8622,
-    4339
-   ],
-   "route": "Lull Road"
-  },
-  {
-   "type": "story",
-   "name": "old boot",
-   "at": [
-    8685,
-    4266
-   ],
-   "route": "Lull Road"
-  },
-  {
-   "type": "interactable",
-   "name": "resident",
-   "at": [
-    8767,
-    4320
-   ],
-   "route": "Lull Road"
-  },
-  {
-   "type": "story",
-   "name": "marker stone",
-   "at": [
-    8795,
-    4227
-   ],
-   "route": "Lull Road"
-  },
-  {
-   "type": "ambient",
-   "name": "egrets",
-   "at": [
-    8877,
-    4231
-   ],
-   "route": "Lull Road"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
-   "at": [
-    8891,
-    4328
-   ],
-   "route": "Lull Road"
-  },
-  {
-   "type": "story",
-   "name": "cairn",
-   "at": [
-    8980,
-    4292
-   ],
-   "route": "Lull Road"
-  },
-  {
-   "type": "story",
-   "name": "tracks",
-   "at": [
-    9020,
-    4311
-   ],
-   "route": "Lull Road"
-  },
-  {
-   "type": "ambient",
-   "name": "egrets",
-   "at": [
-    9084,
-    4385
-   ],
-   "route": "Lull Road"
-  },
-  {
-   "type": "interactable",
-   "name": "resident",
-   "at": [
-    9102,
-    4292
-   ],
-   "route": "Lull Road"
-  },
-  {
-   "type": "story",
-   "name": "cold fire ring",
-   "at": [
-    9178,
-    4352
-   ],
-   "route": "Lull Road"
-  },
-  {
-   "type": "story",
-   "name": "marker stone",
-   "at": [
-    9246,
-    4285
-   ],
-   "route": "Lull Road"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
-   "at": [
-    9258,
-    4386
-   ],
-   "route": "Lull Road"
-  },
-  {
-   "type": "story",
-   "name": "cart with a broken wheel",
-   "at": [
-    9350,
-    4348
-   ],
-   "route": "Lull Road"
-  },
-  {
-   "type": "ambient",
-   "name": "egrets",
-   "at": [
-    9389,
-    4459
-   ],
-   "route": "Lull Road"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "at": [
-    9433,
-    4352
-   ],
-   "route": "Lull Road"
-  },
-  {
-   "type": "story",
-   "name": "mended fence",
-   "at": [
-    9510,
-    4409
-   ],
-   "route": "Lull Road"
-  },
-  {
-   "type": "story",
-   "name": "old boot",
-   "at": [
-    9548,
-    4314
-   ],
-   "route": "Lull Road"
-  },
-  {
-   "type": "ambient",
-   "name": "cats",
-   "at": [
-    9605,
-    4392
-   ],
-   "route": "Lull Road"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
-   "at": [
-    9675,
-    4332
-   ],
-   "route": "Lull Road"
-  },
-  {
-   "type": "story",
-   "name": "lost hat",
-   "at": [
-    9701,
-    4432
-   ],
-   "route": "Lull Road"
-  },
-  {
-   "type": "story",
-   "name": "cart with a broken wheel",
-   "at": [
-    9773,
-    4366
-   ],
-   "route": "Lull Road"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "at": [
-    9852,
-    4445
-   ],
-   "route": "Lull Road"
-  },
-  {
-   "type": "story",
-   "name": "tracks",
-   "at": [
-    9855,
-    4308
-   ],
-   "route": "Lull Road"
-  },
-  {
-   "type": "ambient",
-   "name": "cats",
-   "at": [
-    9929,
-    4396
-   ],
-   "route": "Lull Road"
-  },
-  {
-   "type": "story",
-   "name": "cold fire ring",
-   "at": [
-    8688,
-    4104
-   ],
-   "route": "Lullford"
-  },
-  {
-   "type": "interactable",
-   "name": "noticeboard",
-   "at": [
-    8576,
-    4112
-   ],
-   "route": "Lullford"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
-   "at": [
-    8608,
-    4120
-   ],
-   "route": "Lullford"
-  },
-  {
-   "type": "story",
-   "name": "marker stone",
-   "at": [
-    8784,
-    4144
-   ],
-   "route": "Lullford"
-  },
-  {
-   "type": "story",
-   "name": "lost hat",
-   "at": [
-    8616,
-    4184
-   ],
-   "route": "Lullford"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "at": [
-    8640,
-    4200
-   ],
-   "route": "Lullford"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
-   "at": [
-    8560,
-    4208
-   ],
-   "route": "Lullford"
-  },
-  {
-   "type": "interactable",
-   "name": "bench",
-   "at": [
-    8800,
-    4216
-   ],
-   "route": "Lullford"
-  },
-  {
-   "type": "interactable",
-   "name": "door",
-   "at": [
-    8784,
-    4232
-   ],
-   "route": "Lullford"
-  },
-  {
-   "type": "story",
-   "name": "lost hat",
-   "at": [
-    8720,
-    4264
-   ],
-   "route": "Lullford"
-  },
-  {
-   "type": "story",
-   "name": "cairn",
-   "at": [
-    8632,
-    4288
-   ],
-   "route": "Lullford"
-  },
-  {
-   "type": "story",
-   "name": "lost hat",
-   "at": [
-    8808,
-    4288
-   ],
-   "route": "Lullford"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
-   "at": [
-    8896,
-    4352
-   ],
-   "route": "Lullford"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
-   "at": [
-    8832,
-    4392
-   ],
-   "route": "Lullford"
-  },
-  {
-   "type": "story",
-   "name": "old boot",
-   "at": [
-    8640,
-    4424
-   ],
-   "route": "Lullford"
-  },
-  {
-   "type": "story",
-   "name": "cold fire ring",
-   "at": [
-    8656,
-    4512
-   ],
-   "route": "Lullford"
-  },
-  {
-   "type": "story",
-   "name": "marker stone",
-   "at": [
-    10360,
-    3920
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "marker stone",
-   "at": [
-    10744,
-    3936
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "door",
-   "at": [
-    10496,
-    3952
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "resident",
-   "at": [
-    10536,
-    3952
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "old boot",
-   "at": [
-    10456,
-    3968
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "mended fence",
-   "at": [
-    10728,
-    3968
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "old boot",
-   "at": [
-    10176,
-    3976
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "cairn",
-   "at": [
-    10160,
-    3992
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "bench",
-   "at": [
-    10808,
-    4000
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "marker stone",
-   "at": [
-    9976,
-    4016
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "old boot",
-   "at": [
-    10696,
-    4016
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "gate",
-   "at": [
-    10088,
-    4032
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
-   "at": [
-    10192,
-    4032
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "gate",
-   "at": [
-    10512,
-    4048
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "mended fence",
-   "at": [
-    10464,
-    4080
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "noticeboard",
-   "at": [
-    10768,
-    4104
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "cart with a broken wheel",
-   "at": [
-    9904,
-    4112
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "door",
-   "at": [
-    10744,
-    4128
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "bench",
-   "at": [
-    10728,
-    4136
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "at": [
-    10736,
-    4136
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "cairn",
-   "at": [
-    10080,
-    4152
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "at": [
-    10672,
-    4152
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
-   "at": [
-    10040,
-    4160
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
-   "at": [
-    10672,
-    4160
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
-   "at": [
-    9888,
-    4176
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "gate",
-   "at": [
-    9832,
-    4184
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "mended fence",
-   "at": [
-    10816,
-    4184
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "cairn",
-   "at": [
-    9864,
-    4216
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "mended fence",
-   "at": [
-    10008,
-    4216
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
-   "at": [
-    10400,
-    4232
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "cart with a broken wheel",
-   "at": [
-    9888,
-    4240
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "door",
-   "at": [
-    10576,
-    4240
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "resident",
-   "at": [
-    9856,
-    4256
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "cart with a broken wheel",
-   "at": [
-    10104,
-    4256
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "door",
-   "at": [
-    10984,
-    4272
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "at": [
-    10896,
-    4280
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "door",
-   "at": [
-    10712,
-    4288
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "cart with a broken wheel",
-   "at": [
-    10480,
-    4328
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
-   "at": [
-    11000,
-    4328
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "gate",
-   "at": [
-    11024,
-    4360
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "resident",
-   "at": [
-    9864,
-    4368
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "resident",
-   "at": [
-    10768,
-    4368
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "old boot",
-   "at": [
-    9864,
-    4376
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "old boot",
-   "at": [
-    10064,
-    4392
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "gate",
-   "at": [
-    10640,
-    4424
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "resident",
-   "at": [
-    10752,
-    4424
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "gate",
-   "at": [
-    10144,
-    4432
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "lost hat",
-   "at": [
-    10944,
-    4480
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "resident",
-   "at": [
-    10256,
-    4488
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "mended fence",
-   "at": [
-    10344,
-    4504
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "noticeboard",
-   "at": [
-    10336,
-    4512
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "cairn",
-   "at": [
-    9944,
-    4520
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "mended fence",
-   "at": [
-    10992,
-    4520
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "lost hat",
-   "at": [
-    10568,
-    4528
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
-   "at": [
-    10576,
-    4552
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "cart with a broken wheel",
-   "at": [
-    10904,
-    4576
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "water trough",
-   "at": [
-    10976,
-    4584
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "tracks",
-   "at": [
-    11096,
-    4600
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "mended fence",
-   "at": [
-    10384,
-    4648
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "cart with a broken wheel",
-   "at": [
-    10712,
-    4648
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "lost hat",
-   "at": [
-    11024,
-    4680
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "at": [
-    10992,
-    4688
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "old boot",
-   "at": [
-    10576,
-    4696
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "tracks",
-   "at": [
-    10248,
-    4704
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "at": [
-    10392,
-    4704
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "marker stone",
-   "at": [
-    10848,
-    4704
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "noticeboard",
-   "at": [
-    10936,
-    4712
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "noticeboard",
-   "at": [
-    10888,
-    4736
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "door",
-   "at": [
-    9944,
-    4792
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "bench",
-   "at": [
-    10320,
-    4800
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "mended fence",
-   "at": [
-    10624,
-    4944
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "cold fire ring",
-   "at": [
-    10264,
-    4952
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "gate",
-   "at": [
-    10600,
-    4952
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "cairn",
-   "at": [
-    10936,
-    4952
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "marker stone",
-   "at": [
-    10440,
-    4960
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "at": [
-    10648,
-    4976
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "bench",
-   "at": [
-    10264,
-    4992
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "cart with a broken wheel",
-   "at": [
-    10368,
-    4992
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "lost hat",
-   "at": [
-    10288,
-    5000
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "resident",
-   "at": [
-    10632,
-    5008
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "mended fence",
-   "at": [
-    10648,
-    5008
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "cairn",
-   "at": [
-    10856,
-    5008
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "cairn",
-   "at": [
-    10648,
-    5064
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "tracks",
-   "at": [
-    10656,
-    5064
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "story",
-   "name": "mended fence",
-   "at": [
-    10832,
-    5072
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "interactable",
-   "name": "signpost",
-   "at": [
-    10840,
-    5088
-   ],
-   "route": "Neon Harbour"
-  },
-  {
-   "type": "ambient",
-   "name": "hares",
-   "at": [
-    8416,
-    3962
-   ],
-   "route": "Towpath"
-  },
-  {
-   "type": "interactable",
-   "name": "resident",
-   "at": [
-    8495,
-    4018
-   ],
-   "route": "Towpath"
-  },
-  {
-   "type": "story",
-   "name": "lost hat",
-   "at": [
-    8459,
-    4108
-   ],
-   "route": "Towpath"
-  },
-  {
-   "type": "story",
-   "name": "cart with a broken wheel",
-   "at": [
-    8549,
-    4079
-   ],
-   "route": "Towpath"
-  },
-  {
-   "type": "ambient",
-   "name": "hares",
-   "at": [
-    8551,
-    4178
-   ],
-   "route": "Towpath"
-  },
-  {
-   "type": "interactable",
-   "name": "gate",
-   "at": [
-    8588,
-    4218
-   ],
-   "route": "Towpath"
-  }
- ]
+  ],
+  "pockets": [
+    {
+      "holds": "a view over the land",
+      "at": [8283, 5072],
+      "off": "Coast Path"
+    },
+    {
+      "holds": "a story detail: an old grave",
+      "at": [9799, 4170],
+      "off": "Lull Road"
+    },
+    {
+      "holds": "a resident fishing",
+      "at": [9188, 4572],
+      "off": "Delta Road"
+    },
+    {
+      "holds": "a story detail: initials cut in a stone",
+      "at": [9092, 3436],
+      "off": "Towpath"
+    },
+    {
+      "holds": "a view over the land",
+      "at": [9340, 3908],
+      "off": "Lull Road"
+    },
+    {
+      "holds": "a bench under a tree",
+      "at": [10652, 5548],
+      "off": "Quay Street"
+    },
+    {
+      "holds": "a story detail: an old grave",
+      "at": [10740, 4980],
+      "off": "Cape Road"
+    }
+  ],
+  "eggs": [
+    {
+      "name": "bell in the oxbow",
+      "at": [9450, 3900]
+    },
+    {
+      "name": "lighthouse keeper's door",
+      "at": [10050, 5440]
+    }
+  ],
+  "markers": [
+    {
+      "type": "interactable",
+      "name": "bench",
+      "at": [10655, 4960],
+      "route": "Cape Road"
+    },
+    {
+      "type": "story",
+      "name": "cairn",
+      "at": [10617, 5058],
+      "route": "Cape Road"
+    },
+    {
+      "type": "story",
+      "name": "tracks",
+      "at": [10711, 5044],
+      "route": "Cape Road"
+    },
+    {
+      "type": "ambient",
+      "name": "cats",
+      "at": [10755, 5072],
+      "route": "Cape Road"
+    },
+    {
+      "type": "interactable",
+      "name": "door",
+      "at": [10811, 5114],
+      "route": "Cape Road"
+    },
+    {
+      "type": "story",
+      "name": "cold fire ring",
+      "at": [10785, 5210],
+      "route": "Cape Road"
+    },
+    {
+      "type": "story",
+      "name": "marker stone",
+      "at": [10881, 5221],
+      "route": "Cape Road"
+    },
+    {
+      "type": "interactable",
+      "name": "bench",
+      "at": [10832, 5307],
+      "route": "Cape Road"
+    },
+    {
+      "type": "story",
+      "name": "cart with a broken wheel",
+      "at": [10934, 5316],
+      "route": "Cape Road"
+    },
+    {
+      "type": "ambient",
+      "name": "cats",
+      "at": [10903, 5408],
+      "route": "Cape Road"
+    },
+    {
+      "type": "interactable",
+      "name": "noticeboard",
+      "at": [10997, 5417],
+      "route": "Cape Road"
+    },
+    {
+      "type": "story",
+      "name": "mended fence",
+      "at": [10935, 5494],
+      "route": "Cape Road"
+    },
+    {
+      "type": "ambient",
+      "name": "hares",
+      "at": [7696, 5078],
+      "route": "Coast Path"
+    },
+    {
+      "type": "interactable",
+      "name": "gate",
+      "at": [7758, 5002],
+      "route": "Coast Path"
+    },
+    {
+      "type": "story",
+      "name": "cold fire ring",
+      "at": [7789, 5092],
+      "route": "Coast Path"
+    },
+    {
+      "type": "story",
+      "name": "marker stone",
+      "at": [7849, 5111],
+      "route": "Coast Path"
+    },
+    {
+      "type": "ambient",
+      "name": "hares",
+      "at": [7911, 5121],
+      "route": "Coast Path"
+    },
+    {
+      "type": "interactable",
+      "name": "noticeboard",
+      "at": [7954, 5032],
+      "route": "Coast Path"
+    },
+    {
+      "type": "story",
+      "name": "cairn",
+      "at": [8049, 5053],
+      "route": "Coast Path"
+    },
+    {
+      "type": "story",
+      "name": "tracks",
+      "at": [8011, 4963],
+      "route": "Coast Path"
+    },
+    {
+      "type": "interactable",
+      "name": "gate",
+      "at": [8112, 4956],
+      "route": "Coast Path"
+    },
+    {
+      "type": "story",
+      "name": "old boot",
+      "at": [8097, 4860],
+      "route": "Coast Path"
+    },
+    {
+      "type": "ambient",
+      "name": "hares",
+      "at": [8190, 4894],
+      "route": "Coast Path"
+    },
+    {
+      "type": "story",
+      "name": "mended fence",
+      "at": [8370, 4621],
+      "route": "Coast Path"
+    },
+    {
+      "type": "story",
+      "name": "old boot",
+      "at": [8393, 4523],
+      "route": "Coast Path"
+    },
+    {
+      "type": "interactable",
+      "name": "resident",
+      "at": [8475, 4575],
+      "route": "Coast Path"
+    },
+    {
+      "type": "story",
+      "name": "marker stone",
+      "at": [8484, 4476],
+      "route": "Coast Path"
+    },
+    {
+      "type": "ambient",
+      "name": "hares",
+      "at": [8578, 4491],
+      "route": "Coast Path"
+    },
+    {
+      "type": "interactable",
+      "name": "water trough",
+      "at": [8541, 4399],
+      "route": "Coast Path"
+    },
+    {
+      "type": "story",
+      "name": "cairn",
+      "at": [8638, 4391],
+      "route": "Coast Path"
+    },
+    {
+      "type": "interactable",
+      "name": "bench",
+      "at": [9209, 4329],
+      "route": "Delta Road"
+    },
+    {
+      "type": "story",
+      "name": "cairn",
+      "at": [9172, 4417],
+      "route": "Delta Road"
+    },
+    {
+      "type": "story",
+      "name": "tracks",
+      "at": [9272, 4416],
+      "route": "Delta Road"
+    },
+    {
+      "type": "ambient",
+      "name": "egrets",
+      "at": [9263, 4510],
+      "route": "Delta Road"
+    },
+    {
+      "type": "interactable",
+      "name": "door",
+      "at": [9375, 4470],
+      "route": "Delta Road"
+    },
+    {
+      "type": "story",
+      "name": "cold fire ring",
+      "at": [9342, 4578],
+      "route": "Delta Road"
+    },
+    {
+      "type": "story",
+      "name": "marker stone",
+      "at": [9440, 4589],
+      "route": "Delta Road"
+    },
+    {
+      "type": "interactable",
+      "name": "bench",
+      "at": [9391, 4674],
+      "route": "Delta Road"
+    },
+    {
+      "type": "story",
+      "name": "cart with a broken wheel",
+      "at": [9492, 4683],
+      "route": "Delta Road"
+    },
+    {
+      "type": "ambient",
+      "name": "cats",
+      "at": [9477, 4777],
+      "route": "Delta Road"
+    },
+    {
+      "type": "interactable",
+      "name": "noticeboard",
+      "at": [9559, 4751],
+      "route": "Delta Road"
+    },
+    {
+      "type": "story",
+      "name": "mended fence",
+      "at": [9572, 4838],
+      "route": "Delta Road"
+    },
+    {
+      "type": "story",
+      "name": "old boot",
+      "at": [9668, 4814],
+      "route": "Delta Road"
+    },
+    {
+      "type": "ambient",
+      "name": "cats",
+      "at": [9628, 4921],
+      "route": "Delta Road"
+    },
+    {
+      "type": "interactable",
+      "name": "bench",
+      "at": [9742, 4904],
+      "route": "Delta Road"
+    },
+    {
+      "type": "story",
+      "name": "lost hat",
+      "at": [9778, 4928],
+      "route": "Delta Road"
+    },
+    {
+      "type": "story",
+      "name": "cold fire ring",
+      "at": [8024, 4976],
+      "route": "Gullwick"
+    },
+    {
+      "type": "story",
+      "name": "mended fence",
+      "at": [7920, 5048],
+      "route": "Gullwick"
+    },
+    {
+      "type": "interactable",
+      "name": "door",
+      "at": [7856, 5064],
+      "route": "Gullwick"
+    },
+    {
+      "type": "interactable",
+      "name": "gate",
+      "at": [7952, 5080],
+      "route": "Gullwick"
+    },
+    {
+      "type": "interactable",
+      "name": "gate",
+      "at": [8008, 5080],
+      "route": "Gullwick"
+    },
+    {
+      "type": "interactable",
+      "name": "door",
+      "at": [8104, 5080],
+      "route": "Gullwick"
+    },
+    {
+      "type": "story",
+      "name": "tracks",
+      "at": [7912, 5088],
+      "route": "Gullwick"
+    },
+    {
+      "type": "story",
+      "name": "old boot",
+      "at": [7928, 5088],
+      "route": "Gullwick"
+    },
+    {
+      "type": "interactable",
+      "name": "bench",
+      "at": [8088, 5096],
+      "route": "Gullwick"
+    },
+    {
+      "type": "story",
+      "name": "old boot",
+      "at": [7824, 5112],
+      "route": "Gullwick"
+    },
+    {
+      "type": "story",
+      "name": "marker stone",
+      "at": [7824, 5120],
+      "route": "Gullwick"
+    },
+    {
+      "type": "interactable",
+      "name": "signpost",
+      "at": [8096, 5128],
+      "route": "Gullwick"
+    },
+    {
+      "type": "story",
+      "name": "tracks",
+      "at": [7952, 5168],
+      "route": "Gullwick"
+    },
+    {
+      "type": "story",
+      "name": "marker stone",
+      "at": [8104, 5176],
+      "route": "Gullwick"
+    },
+    {
+      "type": "interactable",
+      "name": "noticeboard",
+      "at": [8024, 5184],
+      "route": "Gullwick"
+    },
+    {
+      "type": "interactable",
+      "name": "resident",
+      "at": [7832, 5200],
+      "route": "Gullwick"
+    },
+    {
+      "type": "story",
+      "name": "lost hat",
+      "at": [11048, 5424],
+      "route": "Launch Cape"
+    },
+    {
+      "type": "interactable",
+      "name": "signpost",
+      "at": [10848, 5456],
+      "route": "Launch Cape"
+    },
+    {
+      "type": "story",
+      "name": "mended fence",
+      "at": [10888, 5464],
+      "route": "Launch Cape"
+    },
+    {
+      "type": "interactable",
+      "name": "signpost",
+      "at": [10840, 5472],
+      "route": "Launch Cape"
+    },
+    {
+      "type": "interactable",
+      "name": "noticeboard",
+      "at": [10920, 5480],
+      "route": "Launch Cape"
+    },
+    {
+      "type": "interactable",
+      "name": "signpost",
+      "at": [10960, 5480],
+      "route": "Launch Cape"
+    },
+    {
+      "type": "story",
+      "name": "old boot",
+      "at": [10832, 5496],
+      "route": "Launch Cape"
+    },
+    {
+      "type": "story",
+      "name": "lost hat",
+      "at": [11040, 5544],
+      "route": "Launch Cape"
+    },
+    {
+      "type": "interactable",
+      "name": "door",
+      "at": [10928, 5560],
+      "route": "Launch Cape"
+    },
+    {
+      "type": "story",
+      "name": "cairn",
+      "at": [10960, 5592],
+      "route": "Launch Cape"
+    },
+    {
+      "type": "story",
+      "name": "marker stone",
+      "at": [11128, 5592],
+      "route": "Launch Cape"
+    },
+    {
+      "type": "interactable",
+      "name": "bench",
+      "at": [10872, 5616],
+      "route": "Launch Cape"
+    },
+    {
+      "type": "story",
+      "name": "lost hat",
+      "at": [11088, 5640],
+      "route": "Launch Cape"
+    },
+    {
+      "type": "interactable",
+      "name": "gate",
+      "at": [10936, 5656],
+      "route": "Launch Cape"
+    },
+    {
+      "type": "story",
+      "name": "marker stone",
+      "at": [11072, 5672],
+      "route": "Launch Cape"
+    },
+    {
+      "type": "interactable",
+      "name": "gate",
+      "at": [10912, 5712],
+      "route": "Launch Cape"
+    },
+    {
+      "type": "ambient",
+      "name": "hares",
+      "at": [8327, 4215],
+      "route": "Lull Road"
+    },
+    {
+      "type": "interactable",
+      "name": "resident",
+      "at": [8392, 4142],
+      "route": "Lull Road"
+    },
+    {
+      "type": "story",
+      "name": "lost hat",
+      "at": [8439, 4229],
+      "route": "Lull Road"
+    },
+    {
+      "type": "story",
+      "name": "cart with a broken wheel",
+      "at": [8514, 4166],
+      "route": "Lull Road"
+    },
+    {
+      "type": "ambient",
+      "name": "hares",
+      "at": [8519, 4262],
+      "route": "Lull Road"
+    },
+    {
+      "type": "interactable",
+      "name": "gate",
+      "at": [8620, 4245],
+      "route": "Lull Road"
+    },
+    {
+      "type": "story",
+      "name": "mended fence",
+      "at": [8622, 4339],
+      "route": "Lull Road"
+    },
+    {
+      "type": "story",
+      "name": "old boot",
+      "at": [8685, 4266],
+      "route": "Lull Road"
+    },
+    {
+      "type": "interactable",
+      "name": "resident",
+      "at": [8767, 4320],
+      "route": "Lull Road"
+    },
+    {
+      "type": "story",
+      "name": "marker stone",
+      "at": [8795, 4227],
+      "route": "Lull Road"
+    },
+    {
+      "type": "ambient",
+      "name": "egrets",
+      "at": [8877, 4231],
+      "route": "Lull Road"
+    },
+    {
+      "type": "interactable",
+      "name": "water trough",
+      "at": [8891, 4328],
+      "route": "Lull Road"
+    },
+    {
+      "type": "story",
+      "name": "cairn",
+      "at": [8980, 4292],
+      "route": "Lull Road"
+    },
+    {
+      "type": "story",
+      "name": "tracks",
+      "at": [9020, 4311],
+      "route": "Lull Road"
+    },
+    {
+      "type": "ambient",
+      "name": "egrets",
+      "at": [9084, 4385],
+      "route": "Lull Road"
+    },
+    {
+      "type": "interactable",
+      "name": "resident",
+      "at": [9102, 4292],
+      "route": "Lull Road"
+    },
+    {
+      "type": "story",
+      "name": "cold fire ring",
+      "at": [9178, 4352],
+      "route": "Lull Road"
+    },
+    {
+      "type": "story",
+      "name": "marker stone",
+      "at": [9246, 4285],
+      "route": "Lull Road"
+    },
+    {
+      "type": "interactable",
+      "name": "water trough",
+      "at": [9258, 4386],
+      "route": "Lull Road"
+    },
+    {
+      "type": "story",
+      "name": "cart with a broken wheel",
+      "at": [9350, 4348],
+      "route": "Lull Road"
+    },
+    {
+      "type": "ambient",
+      "name": "egrets",
+      "at": [9389, 4459],
+      "route": "Lull Road"
+    },
+    {
+      "type": "interactable",
+      "name": "signpost",
+      "at": [9433, 4352],
+      "route": "Lull Road"
+    },
+    {
+      "type": "story",
+      "name": "mended fence",
+      "at": [9510, 4409],
+      "route": "Lull Road"
+    },
+    {
+      "type": "story",
+      "name": "old boot",
+      "at": [9548, 4314],
+      "route": "Lull Road"
+    },
+    {
+      "type": "ambient",
+      "name": "cats",
+      "at": [9605, 4392],
+      "route": "Lull Road"
+    },
+    {
+      "type": "interactable",
+      "name": "water trough",
+      "at": [9675, 4332],
+      "route": "Lull Road"
+    },
+    {
+      "type": "story",
+      "name": "lost hat",
+      "at": [9701, 4432],
+      "route": "Lull Road"
+    },
+    {
+      "type": "story",
+      "name": "cart with a broken wheel",
+      "at": [9773, 4366],
+      "route": "Lull Road"
+    },
+    {
+      "type": "interactable",
+      "name": "signpost",
+      "at": [9852, 4445],
+      "route": "Lull Road"
+    },
+    {
+      "type": "story",
+      "name": "tracks",
+      "at": [9855, 4308],
+      "route": "Lull Road"
+    },
+    {
+      "type": "ambient",
+      "name": "cats",
+      "at": [9929, 4396],
+      "route": "Lull Road"
+    },
+    {
+      "type": "story",
+      "name": "cold fire ring",
+      "at": [8688, 4104],
+      "route": "Lullford"
+    },
+    {
+      "type": "interactable",
+      "name": "noticeboard",
+      "at": [8576, 4112],
+      "route": "Lullford"
+    },
+    {
+      "type": "interactable",
+      "name": "water trough",
+      "at": [8608, 4120],
+      "route": "Lullford"
+    },
+    {
+      "type": "story",
+      "name": "marker stone",
+      "at": [8784, 4144],
+      "route": "Lullford"
+    },
+    {
+      "type": "story",
+      "name": "lost hat",
+      "at": [8616, 4184],
+      "route": "Lullford"
+    },
+    {
+      "type": "interactable",
+      "name": "signpost",
+      "at": [8640, 4200],
+      "route": "Lullford"
+    },
+    {
+      "type": "interactable",
+      "name": "water trough",
+      "at": [8560, 4208],
+      "route": "Lullford"
+    },
+    {
+      "type": "interactable",
+      "name": "bench",
+      "at": [8800, 4216],
+      "route": "Lullford"
+    },
+    {
+      "type": "interactable",
+      "name": "door",
+      "at": [8784, 4232],
+      "route": "Lullford"
+    },
+    {
+      "type": "story",
+      "name": "lost hat",
+      "at": [8720, 4264],
+      "route": "Lullford"
+    },
+    {
+      "type": "story",
+      "name": "cairn",
+      "at": [8632, 4288],
+      "route": "Lullford"
+    },
+    {
+      "type": "story",
+      "name": "lost hat",
+      "at": [8808, 4288],
+      "route": "Lullford"
+    },
+    {
+      "type": "interactable",
+      "name": "water trough",
+      "at": [8896, 4352],
+      "route": "Lullford"
+    },
+    {
+      "type": "interactable",
+      "name": "water trough",
+      "at": [8832, 4392],
+      "route": "Lullford"
+    },
+    {
+      "type": "story",
+      "name": "old boot",
+      "at": [8640, 4424],
+      "route": "Lullford"
+    },
+    {
+      "type": "story",
+      "name": "cold fire ring",
+      "at": [8656, 4512],
+      "route": "Lullford"
+    },
+    {
+      "type": "story",
+      "name": "marker stone",
+      "at": [10360, 3920],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "story",
+      "name": "marker stone",
+      "at": [10744, 3936],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "interactable",
+      "name": "door",
+      "at": [10496, 3952],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "interactable",
+      "name": "resident",
+      "at": [10536, 3952],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "story",
+      "name": "old boot",
+      "at": [10456, 3968],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "story",
+      "name": "mended fence",
+      "at": [10728, 3968],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "story",
+      "name": "old boot",
+      "at": [10176, 3976],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "story",
+      "name": "cairn",
+      "at": [10160, 3992],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "interactable",
+      "name": "bench",
+      "at": [10808, 4000],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "story",
+      "name": "marker stone",
+      "at": [9976, 4016],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "story",
+      "name": "old boot",
+      "at": [10696, 4016],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "interactable",
+      "name": "gate",
+      "at": [10088, 4032],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "interactable",
+      "name": "water trough",
+      "at": [10192, 4032],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "interactable",
+      "name": "gate",
+      "at": [10512, 4048],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "story",
+      "name": "mended fence",
+      "at": [10464, 4080],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "interactable",
+      "name": "noticeboard",
+      "at": [10768, 4104],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "story",
+      "name": "cart with a broken wheel",
+      "at": [9904, 4112],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "interactable",
+      "name": "door",
+      "at": [10744, 4128],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "interactable",
+      "name": "bench",
+      "at": [10728, 4136],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "interactable",
+      "name": "signpost",
+      "at": [10736, 4136],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "story",
+      "name": "cairn",
+      "at": [10080, 4152],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "interactable",
+      "name": "signpost",
+      "at": [10672, 4152],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "interactable",
+      "name": "water trough",
+      "at": [10040, 4160],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "interactable",
+      "name": "water trough",
+      "at": [10672, 4160],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "interactable",
+      "name": "water trough",
+      "at": [9888, 4176],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "interactable",
+      "name": "gate",
+      "at": [9832, 4184],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "story",
+      "name": "mended fence",
+      "at": [10816, 4184],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "story",
+      "name": "cairn",
+      "at": [9864, 4216],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "story",
+      "name": "mended fence",
+      "at": [10008, 4216],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "interactable",
+      "name": "water trough",
+      "at": [10400, 4232],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "story",
+      "name": "cart with a broken wheel",
+      "at": [9888, 4240],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "interactable",
+      "name": "door",
+      "at": [10576, 4240],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "interactable",
+      "name": "resident",
+      "at": [9856, 4256],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "story",
+      "name": "cart with a broken wheel",
+      "at": [10104, 4256],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "interactable",
+      "name": "door",
+      "at": [10984, 4272],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "interactable",
+      "name": "signpost",
+      "at": [10896, 4280],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "interactable",
+      "name": "door",
+      "at": [10712, 4288],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "story",
+      "name": "cart with a broken wheel",
+      "at": [10480, 4328],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "interactable",
+      "name": "water trough",
+      "at": [11000, 4328],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "interactable",
+      "name": "gate",
+      "at": [11024, 4360],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "interactable",
+      "name": "resident",
+      "at": [9864, 4368],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "interactable",
+      "name": "resident",
+      "at": [10768, 4368],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "story",
+      "name": "old boot",
+      "at": [9864, 4376],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "story",
+      "name": "old boot",
+      "at": [10064, 4392],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "interactable",
+      "name": "gate",
+      "at": [10640, 4424],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "interactable",
+      "name": "resident",
+      "at": [10752, 4424],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "interactable",
+      "name": "gate",
+      "at": [10144, 4432],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "story",
+      "name": "lost hat",
+      "at": [10944, 4480],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "interactable",
+      "name": "resident",
+      "at": [10256, 4488],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "story",
+      "name": "mended fence",
+      "at": [10344, 4504],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "interactable",
+      "name": "noticeboard",
+      "at": [10336, 4512],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "story",
+      "name": "cairn",
+      "at": [9944, 4520],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "story",
+      "name": "mended fence",
+      "at": [10992, 4520],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "story",
+      "name": "lost hat",
+      "at": [10568, 4528],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "interactable",
+      "name": "water trough",
+      "at": [10576, 4552],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "story",
+      "name": "cart with a broken wheel",
+      "at": [10904, 4576],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "interactable",
+      "name": "water trough",
+      "at": [10976, 4584],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "story",
+      "name": "tracks",
+      "at": [11096, 4600],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "story",
+      "name": "mended fence",
+      "at": [10384, 4648],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "story",
+      "name": "cart with a broken wheel",
+      "at": [10712, 4648],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "story",
+      "name": "lost hat",
+      "at": [11024, 4680],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "interactable",
+      "name": "signpost",
+      "at": [10992, 4688],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "story",
+      "name": "old boot",
+      "at": [10576, 4696],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "story",
+      "name": "tracks",
+      "at": [10248, 4704],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "interactable",
+      "name": "signpost",
+      "at": [10392, 4704],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "story",
+      "name": "marker stone",
+      "at": [10848, 4704],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "interactable",
+      "name": "noticeboard",
+      "at": [10936, 4712],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "interactable",
+      "name": "noticeboard",
+      "at": [10888, 4736],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "interactable",
+      "name": "door",
+      "at": [9944, 4792],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "interactable",
+      "name": "bench",
+      "at": [10320, 4800],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "story",
+      "name": "mended fence",
+      "at": [10624, 4944],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "story",
+      "name": "cold fire ring",
+      "at": [10264, 4952],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "interactable",
+      "name": "gate",
+      "at": [10600, 4952],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "story",
+      "name": "cairn",
+      "at": [10936, 4952],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "story",
+      "name": "marker stone",
+      "at": [10440, 4960],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "interactable",
+      "name": "signpost",
+      "at": [10648, 4976],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "interactable",
+      "name": "bench",
+      "at": [10264, 4992],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "story",
+      "name": "cart with a broken wheel",
+      "at": [10368, 4992],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "story",
+      "name": "lost hat",
+      "at": [10288, 5000],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "interactable",
+      "name": "resident",
+      "at": [10632, 5008],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "story",
+      "name": "mended fence",
+      "at": [10648, 5008],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "story",
+      "name": "cairn",
+      "at": [10856, 5008],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "story",
+      "name": "cairn",
+      "at": [10648, 5064],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "story",
+      "name": "tracks",
+      "at": [10656, 5064],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "story",
+      "name": "mended fence",
+      "at": [10832, 5072],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "interactable",
+      "name": "signpost",
+      "at": [10840, 5088],
+      "route": "Neon Harbour"
+    },
+    {
+      "type": "ambient",
+      "name": "hares",
+      "at": [8416, 3962],
+      "route": "Towpath"
+    },
+    {
+      "type": "interactable",
+      "name": "resident",
+      "at": [8495, 4018],
+      "route": "Towpath"
+    },
+    {
+      "type": "story",
+      "name": "lost hat",
+      "at": [8459, 4108],
+      "route": "Towpath"
+    },
+    {
+      "type": "story",
+      "name": "cart with a broken wheel",
+      "at": [8549, 4079],
+      "route": "Towpath"
+    },
+    {
+      "type": "ambient",
+      "name": "hares",
+      "at": [8551, 4178],
+      "route": "Towpath"
+    },
+    {
+      "type": "interactable",
+      "name": "gate",
+      "at": [8588, 4218],
+      "route": "Towpath"
+    }
+  ]
 }
