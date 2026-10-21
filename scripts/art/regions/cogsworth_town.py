@@ -781,7 +781,7 @@ def cell_maps(p: Plot, parts):
     """The town in 4 px walk cells: walk (bool), terrain (world_lint's codes: '~' water,
     '=' path, '.' ground, '^' wall or cliff), the tier digits (the chunk's tiers) and the
     tier map in the audit's code ('f' face, 'b' side band, 's' stair or ramp)."""
-    R, kind, ways = parts['R'], parts['kind'], parts['ways']
+    R, kind = parts['R'], parts['kind']
     c = 4
     rows, cols = H // c, W // c
 
