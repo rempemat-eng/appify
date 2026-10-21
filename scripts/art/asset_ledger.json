@@ -10500,7 +10500,8 @@
    "placed": {
     "woodland": 5
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-20",
+   "spin_off": "kept for the desktop spin-off: the real-time fight prototype (prototypes/realtime-combat) is built on the woodland zone; retire it from the phone game, but do not delete it"
   },
   "prop/beehive": {
    "files": [
@@ -10990,7 +10991,8 @@
    "placed": {
     "woodland": 8
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-20",
+   "spin_off": "kept for the desktop spin-off: the real-time fight prototype (prototypes/realtime-combat) is built on the woodland zone; retire it from the phone game, but do not delete it"
   },
   "prop/bird_of_paradise": {
    "files": [
@@ -12160,7 +12162,8 @@
    "placed": {
     "woodland": 8
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-20",
+   "spin_off": "kept for the desktop spin-off: the real-time fight prototype (prototypes/realtime-combat) is built on the woodland zone; retire it from the phone game, but do not delete it"
   },
   "prop/buoy": {
    "files": [
@@ -12310,7 +12313,8 @@
     "town": 4,
     "woodland": 3
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-20",
+   "spin_off": "kept for the desktop spin-off: the real-time fight prototype (prototypes/realtime-combat) is built on the woodland zone; retire it from the phone game, but do not delete it"
   },
   "prop/cabin": {
    "files": [
@@ -24862,7 +24866,8 @@
     "summit": 1,
     "woodland": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-20",
+   "spin_off": "kept for the desktop spin-off: the real-time fight prototype (prototypes/realtime-combat) is built on the woodland zone; retire it from the phone game, but do not delete it"
   },
   "prop/forge": {
    "files": [
@@ -27254,7 +27259,8 @@
    "placed": {
     "woodland": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-20",
+   "spin_off": "kept for the desktop spin-off: the real-time fight prototype (prototypes/realtime-combat) is built on the woodland zone; retire it from the phone game, but do not delete it"
   },
   "prop/holly": {
    "files": [
@@ -27320,7 +27326,8 @@
    "placed": {
     "woodland": 6
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-20",
+   "spin_off": "kept for the desktop spin-off: the real-time fight prototype (prototypes/realtime-combat) is built on the woodland zone; retire it from the phone game, but do not delete it"
   },
   "prop/holo_map": {
    "files": [
@@ -31514,7 +31521,8 @@
     "rainforest": 1,
     "woodland": 2
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-20",
+   "spin_off": "kept for the desktop spin-off: the real-time fight prototype (prototypes/realtime-combat) is built on the woodland zone; retire it from the phone game, but do not delete it"
   },
   "prop/mushroom_ring": {
    "files": [
@@ -32077,7 +32085,8 @@
    "placed": {
     "woodland": 14
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-20",
+   "spin_off": "kept for the desktop spin-off: the real-time fight prototype (prototypes/realtime-combat) is built on the woodland zone; retire it from the phone game, but do not delete it"
   },
   "prop/obsidian": {
    "files": [
@@ -32992,7 +33001,8 @@
     "town": 4,
     "woodland": 12
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-20",
+   "spin_off": "kept for the desktop spin-off: the real-time fight prototype (prototypes/realtime-combat) is built on the woodland zone; retire it from the phone game, but do not delete it"
   },
   "prop/pipe_run": {
    "files": [
@@ -34818,7 +34828,8 @@
    "placed": {
     "woodland": 6
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-20",
+   "spin_off": "kept for the desktop spin-off: the real-time fight prototype (prototypes/realtime-combat) is built on the woodland zone; retire it from the phone game, but do not delete it"
   },
   "prop/scarecrow": {
    "files": [
@@ -37974,7 +37985,8 @@
    "placed": {
     "woodland": 2
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-20",
+   "spin_off": "kept for the desktop spin-off: the real-time fight prototype (prototypes/realtime-combat) is built on the woodland zone; retire it from the phone game, but do not delete it"
   },
   "prop/standing_stone_b": {
    "files": [
@@ -38043,7 +38055,8 @@
    "placed": {
     "woodland": 2
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-20",
+   "spin_off": "kept for the desktop spin-off: the real-time fight prototype (prototypes/realtime-combat) is built on the woodland zone; retire it from the phone game, but do not delete it"
   },
   "prop/standing_stone_low": {
    "files": [
@@ -38112,7 +38125,8 @@
    "placed": {
     "woodland": 3
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-20",
+   "spin_off": "kept for the desktop spin-off: the real-time fight prototype (prototypes/realtime-combat) is built on the woodland zone; retire it from the phone game, but do not delete it"
   },
   "prop/station_house": {
    "files": [
@@ -38808,7 +38822,8 @@
     "hollow": 1,
     "woodland": 6
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-20",
+   "spin_off": "kept for the desktop spin-off: the real-time fight prototype (prototypes/realtime-combat) is built on the woodland zone; retire it from the phone game, but do not delete it"
   },
   "prop/tea_dispenser": {
    "files": [
@@ -41389,7 +41404,8 @@
     "riverside": 2,
     "woodland": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-20",
+   "spin_off": "kept for the desktop spin-off: the real-time fight prototype (prototypes/realtime-combat) is built on the woodland zone; retire it from the phone game, but do not delete it"
   },
   "prop/windmill": {
    "files": [
@@ -48756,12 +48772,13 @@
     "w": 320,
     "measured_file": "assets/zones/woodland/ground.png",
     "px": 184320,
-    "colours": 850,
+    "colours": 845,
     "on_today": 0.149,
-    "isolated": 0.131,
+    "isolated": 0.13,
     "checker": 0.0021
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21",
+   "spin_off": "kept for the desktop spin-off: the real-time fight prototype (prototypes/realtime-combat) is built on the woodland zone; retire it from the phone game, but do not delete it"
   }
  }
 }

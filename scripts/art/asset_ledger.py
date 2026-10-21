@@ -831,7 +831,7 @@ def build(audit_path: str | None, date: str, only: set | None = None) -> dict:
         if e['module'] in UNASSIGNED:
             e['owner_note'] = 'generator not in the lane table: Claude A by default'
         keep = ('files', 'cls', 'name', 'kind', 'module', 'generator', 'owner', 'owner_note', 'place', 'grade', 'fix',
-                'why', 'fails', 'measured', 'placed', 'eye', 'checked', 'same_as')
+                'why', 'fails', 'measured', 'placed', 'eye', 'checked', 'same_as', 'spin_off')
         out[e['id']] = {k: e[k] for k in keep if k in e and e[k] is not None}
     # a garden or mission copy that is the same drawing as a zone sprite takes its verdict
     for eid, e in out.items():
@@ -850,6 +850,34 @@ def build(audit_path: str | None, date: str, only: set | None = None) -> dict:
             e['why'] = f'the same drawing as {twin}: ' + t.get('why', '')
             e['same_as'] = twin
             e['checked'] = t['checked']
+    # pictures kept for the desktop spin-off: the grade still says what the phone game may use,
+    # the tag says the picture is not deleted when it retires (Matt, 21 Oct)
+    tags = spin_off_files()
+    for e in out.values():
+        why = next((tags[f] for f in e['files'] if f in tags), None)
+        if why:
+            e['spin_off'] = why
+        else:
+            e.pop('spin_off', None)
+    return out
+
+
+def spin_off_files() -> dict:
+    """Files kept for the desktop spin-off (Matt, 21 Oct: "i do want to make a spin off game for
+    the computer using some of the assets, so keep some of the stuff that doesnt conform
+    perfectly to mobile"), with why. Today: the woodland zone the real-time fight prototype is
+    built on (prototypes/realtime-combat, build/build_assets.py packs its ground and the props
+    it places), read from lib/zone-maps.ts the same way."""
+    why = ('kept for the desktop spin-off: the real-time fight prototype (prototypes/realtime-combat) is built on '
+           'the woodland zone; retire it from the phone game, but do not delete it')
+    out = {'assets/zones/woodland/ground.png': why}
+    src = open(os.path.join(ROOT, 'lib', 'zone-maps.ts')).read()
+    i = src.find('\n  woodland: {\n    objects: [')
+    if i < 0:
+        return out
+    end = src.index('\n    ],', i)
+    for kind in re.findall(r"\['[^']+', '([^']+)', -?\d+, -?\d+, \d+, \d+", src[i:end]):
+        out[f'assets/zones/props/{kind}.png'] = why
     return out
 
 

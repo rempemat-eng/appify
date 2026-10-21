@@ -678,6 +678,8 @@ export function GardenWorld({
   const lifetimeMinutes = player.offline_seconds;
   // Characters are drawn on the same grid as the world: 32 art pixels.
   const petPx = 32 * scale;
+  // the companion's tap target is at least 44 px, centred on its drawing
+  const petGrow = Math.max(0, Math.ceil((44 - petPx) / 2));
   const companionPx = 32 * scale;
   const home = napping ? BED : START;
   const px = useSharedValue(home.x);
@@ -2024,6 +2026,8 @@ export function GardenWorld({
               })}
             {companions.map((v, i) => {
               const spot = project(proj, companionSpots[i].x, companionSpots[i].y);
+              // at least a 44 px target, centred on the drawing (smaller on a wide view)
+              const grow = Math.max(0, Math.ceil((44 - companionPx) / 2));
               return (
                 <Pressable
                   key={`visitor-${v.id}`}
@@ -2043,10 +2047,10 @@ export function GardenWorld({
                   }}
                   style={{
                     position: 'absolute',
-                    left: Math.round(spot.sx - companionPx / 2),
-                    top: Math.round(spot.sy - companionPx * (30 / 32)),
-                    width: companionPx,
-                    height: companionPx,
+                    left: Math.round(spot.sx - companionPx / 2) - grow,
+                    top: Math.round(spot.sy - companionPx * (30 / 32)) - grow,
+                    width: companionPx + 2 * grow,
+                    height: companionPx + 2 * grow,
                     zIndex: companionSpots[i].y,
                   }}
                 />
@@ -2063,7 +2067,13 @@ export function GardenWorld({
                 accessibilityLabel={`Greet ${guardian.pet_name}`}
                 disabled={!active}
                 onPress={patGuardian}
-                style={{ width: petPx, height: petPx }}
+                style={{
+                  position: 'absolute',
+                  left: -petGrow,
+                  top: -petGrow,
+                  width: petPx + 2 * petGrow,
+                  height: petPx + 2 * petGrow,
+                }}
               />
             </Animated.View>
           </>
