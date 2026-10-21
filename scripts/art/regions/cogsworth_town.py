@@ -714,6 +714,7 @@ def town(seed=1):
             stepped_tread(p, tr, 'east', seed + 61)
             ways |= tr
     # the bridges: decks of setts between parapets over the water
+    bridge_face = np.zeros(p.f.shape, bool)
     for bid, (x0, y0, x1, y1), t in plan.BRIDGES:
         deck = (p.x >= x0) & (p.x < x1) & (p.y >= y0) & (p.y < y1)
         setts(p, deck, seed + 70 + x0, ramps=('stone', 'stone_warm', 'ashlar'), course=4)
@@ -730,6 +731,25 @@ def town(seed=1):
         p.wet &= ~deck
         p.hazard &= ~deck
         p.walk |= deck & ~p.solid
+        # where the deck ends over water, its south face shows: dressed stone down to the water
+        # with the dark of the arch under it (as tall as the deck stands over the water)
+        below = (p.x >= x0) & (p.x < x1) & (p.y >= y1) & wet
+        if below.any():
+            drop = E_TOWN[t] - E_TOWN[int(R.seen()[y1 + 1, (x0 + x1) // 2]) if y1 + 1 < H else 0]
+            arch = below & (p.y < y1 + max(0, drop))
+            mid, half = (x0 + x1) / 2.0, (x1 - x0) / 2.0 - 4
+            u = np.abs(p.x + 0.5 - mid) / max(1.0, half)
+            hole = arch & (u < 1) & (p.y - y1 >= drop * (0.35 + 0.4 * u * u))
+            p.put(arch, 'ashlar', 3)
+            p.put(arch & (p.y == y1), 'ashlar_warm', 4)
+            p.put(arch & (((p.x - x0) % 9) == 0), 'ashlar_cool', 2)
+            p.put(arch & ((p.y - y1) % 5 == 4), 'ashlar_cool', 2)
+            p.put(hole, 'water_cool', 0)
+            p.put(hole & (p.y == p.y[hole].max() if hole.any() else hole), 'water_cool', 1)
+            p.wet &= ~arch
+            p.walk &= ~arch
+            p.solid |= arch
+            bridge_face |= arch
         cast(p, shift(deck, 4, 1, False) & ~deck & wet, 1)
     girder_bridge(p, 0, 84, 72, 104, seed + 75)
     for rid, (x0, y0, x1, y1) in plan.RAILINGS:
@@ -751,7 +771,7 @@ def town(seed=1):
     ring(p, *{l[0]: l for l in plan.LANDMARKS}['ring'][2], seed=seed + 97)
     trees(p, seed + 98)
     placed = props(p, seed + 95)
-    return p, dict(R=R, T=T, C=C, kind=kind, ways=ways, built=built, props=placed)
+    return p, dict(R=R, T=T, C=C, kind=kind, ways=ways, built=built, props=placed, bridge_face=bridge_face)
 
 
 PATHS = ('setts', 'flags', 'platform', 'towpath', 'quay')
@@ -780,7 +800,8 @@ def cell_maps(p: Plot, parts):
     path8 = frac(np.isin(kind, PATHS) & p.walk, 8) >= 0.5
     t8 = np.full((H // 8, W // 8), '.', object)
     t8[path8] = '='
-    t8[(face8 | solid8) & ~(frac(p.walk, 8) >= 0.5)] = '^'
+    rails8 = frac(kind == 'rails', 8) >= 0.5
+    t8[(face8 | solid8 | rails8) & ~(frac(p.walk, 8) >= 0.5)] = '^'
     t8[wet8] = '~'
     terrain = up(t8)
     face = frac(R.face) >= 0.5
@@ -789,7 +810,22 @@ def cell_maps(p: Plot, parts):
     for k in range(int(R.T.max()) + 1):
         tier[frac((seen == k)) >= 0.5] = k
     tier[face] = np.maximum(tier[face], 0)
-    st = frac(ways) >= 0.4
+    # bridge decks stand at their own tier over the water
+    for bid, (x0, y0, x1, y1), t in plan.BRIDGES:
+        tier[y0 // c:y1 // c, x0 // c:x1 // c] = t
+        face[y0 // c:y1 // c, x0 // c:x1 // c] = False
+    bf = frac(parts['bridge_face']) >= 0.5
+    face = face | bf
+    # a stair is the face cells across its whole width (the plan's rect), cheeks included
+    st = np.zeros((rows, cols), bool)
+    for sid, sk, (x0, y0, x1, y1), lo, hi in plan.STAIRS:
+        win = np.zeros((rows, cols), bool)
+        win[max(0, (y0 - 8) // c):(y1 + 8) // c, x0 // c:x1 // c] = True
+        cut = win & face
+        full = cut.sum(1) >= 8                      # rows where the flight is its whole width
+        cut[~full] = False
+        cut[full] = win[full]
+        st |= cut
     code = np.array([[str(v) for v in r] for r in tier], object)
     code[face] = 'f'
     for y in range(rows):
@@ -799,6 +835,7 @@ def cell_maps(p: Plot, parts):
                 hi = x if a > b else x + 1
                 code[y, hi] = 'b'
     code[st] = 's'
+    walk = walk | st
     return dict(walk=walk, terrain=[''.join(r) for r in terrain], digits=[''.join(str(v) for v in r) for r in tier],
                 audit_tiers=[''.join(r) for r in code])
 
