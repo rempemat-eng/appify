@@ -163,6 +163,7 @@
     "stump": {"group": "nature", "h": [8, 16], "w": [12, 22], "foot": "1 x 1", "reason": "a stump, knee high"},
     "log": {"group": "nature", "h": [8, 18], "w": [30, 64], "foot": "5 x 1", "reason": "a fallen log or column, lying"},
     "bush": {"group": "nature", "h": [12, 28], "w": [16, 42], "foot": "free", "reason": "a shrub 0.8 to 1.8 m"},
+    "hedge": {"group": "nature", "h": [16, 24], "w": [16, 96], "foot": "n x 2", "reason": "a clipped or laid hedge 1.1 to 1.6 m, n x 2 cells"},
     "fern": {"group": "nature", "h": [8, 16], "w": [12, 28], "foot": "free", "reason": "a fern or low leafy plant, knee high"},
     "tall_plant": {"group": "nature", "h": [14, 32], "w": [10, 44], "foot": "free", "reason": "a tall herb, reeds, papyrus, a flowering shrub: hip to shoulder"},
     "flowers": {"group": "nature", "h": [6, 18], "w": [6, 24], "foot": "free", "reason": "flowers, cotton grass, mushrooms: ankle to knee"},
