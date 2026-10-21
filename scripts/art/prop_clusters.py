@@ -375,7 +375,7 @@ def check_recipes() -> list:
 
 
 # kinds a recipe uses that the size guide does not have yet (asked of Claude A on the board)
-NEW_KINDS = {'hedge': 'a clipped or laid hedge, n x 2 cells, 16 to 24 tall'}
+NEW_KINDS: dict = {}  # kinds a recipe uses before they reach size_guide.json (hedge is there now)
 
 
 # --- cell geometry ---------------------------------------------------------------------
