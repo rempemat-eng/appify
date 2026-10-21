@@ -417,11 +417,11 @@ function CompanionPage({ player: p, unit: u }: { player: Player; unit: number })
         />
         <StatRow
           unit={u}
-          icon="grass"
+          icon="dreamDust"
           label={`GROWTH TO LEVEL ${next.next}`}
           value={p.grass}
           max={next.cost}
-          text={`${Math.min(p.grass, next.cost)}/${next.cost} GRASS`}
+          text={`${Math.min(p.grass, next.cost)}/${next.cost} DREAM DUST`}
           color={c.positive}
         />
         <StatRow
@@ -449,7 +449,9 @@ function CompanionPage({ player: p, unit: u }: { player: Player; unit: number })
         </View>
         <View style={{ flex: 1 }}>
           <PixelButton
-            label="FEED · 5 GRASS"
+            label="FEED · 5"
+            icon="dreamDust"
+            spokenLabel="FEED · 5 Dream Dust"
             small
             disabled={!canFeed}
             onPress={() => {
@@ -465,8 +467,8 @@ function CompanionPage({ player: p, unit: u }: { player: Player; unit: number })
           : p.mood >= 100
             ? `${guardian.pet_name} is full of good feelings.`
             : p.grass < 5
-              ? 'Feeding needs 5 GRASS and lifts mood.'
-              : 'Feeding uses 5 GRASS and lifts mood.'}
+              ? 'Feeding needs 5 Dream Dust and lifts mood.'
+              : 'Feeding uses 5 Dream Dust and lifts mood.'}
       </Text>
     </>
   );
@@ -605,7 +607,7 @@ function GardenPage({ player: p, unit: u }: { player: Player; unit: number }) {
         </Text>
         <Text style={[type.body, { color: c.ink }]}>
           Next common card in {15 - (p.offline_seconds % 15)} simulated MIN. Level {next.next} costs{' '}
-          {next.cost} GRASS: {next.unlock}.
+          {next.cost} Dream Dust: {next.unlock}.
         </Text>
       </Section>
       <GardenStreak />

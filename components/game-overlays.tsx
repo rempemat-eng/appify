@@ -23,7 +23,7 @@ import { DeckPanel } from '@/components/habit-cards';
 import { GardenRecap } from '@/components/offline-garden';
 import { BattleScreen } from '@/components/game-battle';
 import { Pet, PixelButton, PixelText } from '@/components/game-ui';
-import { SeedPacket, Planting, PetalFall, GrassFlight } from '@/components/grassling-feedback';
+import { SeedPacket, Planting, PetalFall, DreamDustFlight } from '@/components/grassling-feedback';
 import { grasslings, growthStage } from '@/lib/grasslings';
 import { GardenWorld } from '@/components/garden-world';
 import { WorldScene } from '@/components/world-scene';
@@ -247,7 +247,7 @@ function ScreenOff({
   const p = useGame((s) => s.player)!;
   const now = useGame((s) => s.now);
   const offStart = useGame((s) => s.offStart);
-  const offGrass = useGame((s) => s.offGrass);
+  const offDreamDust = useGame((s) => s.offGrass);
   const breakContext = useGame((s) => s.activeBreakContext);
   const memories = useGame((s) => s.companionMemories);
   const togetherId = useGame((s) => s.togetherId);
@@ -444,7 +444,7 @@ function ScreenOff({
               >
                 {session?.status === 'failed'
                   ? 'TOGETHER ENDED EARLY · ORDINARY REWARDS KEPT'
-                  : '+50% GRASS IF BOTH COMPLETE 10 SIMULATED MIN'}
+                  : '+50% DREAM DUST IF BOTH COMPLETE 10 SIMULATED MIN'}
               </PixelText>
             </View>
           )}
@@ -518,7 +518,7 @@ function ScreenOff({
               <View style={{ paddingVertical: 10, paddingHorizontal: 14 }}>
                 <FrameFill tone="lantern" depth={1} />
                 <PixelText style={{ color: c.paper, textAlign: 'center', lineHeight: 22 }}>
-                  {`NAPPED ${p.offline_seconds - offStart} SIMULATED MIN\n+${p.grass - offGrass} GRASS`}
+                  {`NAPPED ${p.offline_seconds - offStart} SIMULATED MIN\n+${p.grass - offDreamDust} DREAM DUST`}
                 </PixelText>
               </View>
             </View>
@@ -526,7 +526,7 @@ function ScreenOff({
           {m ? (
             <>
               <BodyText style={{ color: c.paper, fontFamily: 'PixelifySans_500Medium' }}>
-                {m.duration} simulated offline MIN · {m.reward} GRASS on completion
+                {m.duration} simulated offline MIN · {m.reward} Dream Dust on completion
               </BodyText>
             </>
           ) : null}
@@ -538,7 +538,7 @@ function ScreenOff({
         >
           {m
             ? 'EARLY RETURN · NO COMPLETION REWARD · CARDS STAY'
-            : '+1 GRASS / SIMULATED OFFLINE MIN'}
+            : '+1 DREAM DUST / SIMULATED OFFLINE MIN'}
         </PixelText>
         {togetherId && message && (
           <BodyText style={{ color: c.paper, textAlign: 'center' }}>{message}</BodyText>
@@ -548,8 +548,8 @@ function ScreenOff({
             <FrameFill tone="lantern" depth={1} />
             <PixelText style={{ color: c.paper, textAlign: 'center' }}>RETURN EARLY?</PixelText>
             <BodyText style={{ color: c.paper, textAlign: 'center', fontSize: 13 }}>
-              No mission completion rewards, including the {m.reward} GRASS bonus. Cards already
-              earned stay yours.
+              No mission completion rewards, including the {m.reward} Dream Dust bonus. Cards
+              already earned stay yours.
             </BodyText>
             <PixelButton label="KEEP EXPLORING" onPress={onKeepExploring} />
             <PixelButton label="RETURN EARLY" small light onPress={onReturnEarly} />
@@ -622,12 +622,12 @@ function DefenderAlert() {
           slumped={slumped && item.raid.attacker_won}
           size={120}
         />
-        {item.raid.attacker_won && <GrassFlight toLeft={false} />}
+        {item.raid.attacker_won && <DreamDustFlight toLeft={false} />}
         <Dialogue
           text={
             item.raid.attacker_won
-              ? `i wilted. they stole ${item.raid.grass_amount} grass`
-              : 'raid repelled! +20 grass'
+              ? `i wilted. they stole ${item.raid.grass_amount} dream dust`
+              : 'raid repelled! +20 dream dust'
           }
           style={{ alignSelf: 'stretch' }}
         />
@@ -846,7 +846,7 @@ export function GameOverlays() {
           entering={reduced ? undefined : FadeIn.duration(100)}
           style={{
             position: 'absolute',
-            // under the HUD, never over its menu, GRASS and timers
+            // under the HUD, never over its menu, Dream Dust and timers
             top: hudClearance(insets.top),
             left: sideInset,
             right: sideInset,

@@ -52,6 +52,7 @@ try {
     'mission_map',
     'zones',
     'journey',
+    'rocket',
     'residents',
     'decor',
   ]);

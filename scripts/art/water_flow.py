@@ -7,6 +7,10 @@ nothing but the pixels that change: light streaks that drift downstream along a 
 a race, slow glints that come and go on open water (the sea, a lake, a pond), a little foam
 that laps along the banks, and on lava slow bright veins that creep with the flow.
 
+Still water (a canal's pounds, a millpond, a tarn) has no current however channel-like its
+shape: the zone declares it (zones.py, STILL_WATER), and it gets only the glints and the
+lapping at its edges, never drifting streaks.
+
 How the flow is found: from the water's own shape. The mask is blurred and its structure
 tensor taken; along a channel the water runs across the strongest gradient, and where the
 tensor has no dominant direction (wide open water) there is no current, only glints. The
@@ -91,8 +95,9 @@ def _hash(*v: np.ndarray) -> np.ndarray:
     return h
 
 
-def sheet(ground: Image.Image, water: set, lava: set):
-    """The overlay frames for one zone: (PIL image FRAMES boxes tall, (x, y, w, h)) or None."""
+def sheet(ground: Image.Image, water: set, lava: set, still=frozenset()):
+    """The overlay frames for one zone: (PIL image FRAMES boxes tall, (x, y, w, h)) or None.
+    `still`: the pixels of water that lies still (no current, only glints and lapping)."""
     w, h = ground.size
     base = np.asarray(ground.convert('RGBA'), dtype=np.float32)
     wm = np.zeros((h, w), dtype=bool)
@@ -103,6 +108,10 @@ def sheet(ground: Image.Image, water: set, lava: set):
     for (x, y) in lava:
         if 0 <= x < w and 0 <= y < h:
             lm[y, x] = True
+    sm = np.zeros((h, w), dtype=bool)
+    for (x, y) in still:
+        if 0 <= x < w and 0 <= y < h:
+            sm[y, x] = True
     if wm.sum() < 60 and lm.sum() < 60:
         return None
     ys, xs = np.mgrid[0:h, 0:w]
@@ -131,7 +140,7 @@ def sheet(ground: Image.Image, water: set, lava: set):
             widest[:, 1:] = np.maximum(widest[:, 1:], widest[:, :-1])
             widest[:, :-1] = np.maximum(widest[:, :-1], widest[:, 1:])
         narrow = widest <= 20  # a stream or river up to ~40 px wide; wider is a lake or the sea
-        channel = mask & narrow & (coh > 500) & (depth >= 1)
+        channel = mask & narrow & (coh > 500) & (depth >= 1) & ~sm  # (still water has no current)
         open_w = mask & ~channel & (depth >= 2)
         gh = _hash(xs // 5, ys // 3, np.zeros_like(xs) + 11)
         glint = open_w & ((gh % 41) == 0)

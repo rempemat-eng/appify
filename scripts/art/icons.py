@@ -189,9 +189,42 @@ def blade_of_grass(x, base_y, height, lean):
 
 
 def grass(cv):
+    """Blades of grass, flung by PixelBurst on hits, level-ups and crumbs (not the currency)."""
     part(cv, blade_of_grass(3, 13, 8, -2), GRASS, 2)
     part(cv, blade_of_grass(11, 13, 9, 3), GRASS, 2)
     part(cv, blade_of_grass(7, 13, 12, 1), GRASS, 3)
+
+
+# the dust's surface per column: a low heap, highest just left of the middle
+DUST_TOP = {2: 12, 3: 11, 4: 11, 5: 10, 6: 10, 7: 10, 8: 11, 9: 11, 10: 12}
+
+
+def dream_dust(cv):
+    """The currency (renamed from GRASS on 20 Oct): a stoppered vial of glowing dream dust.
+
+    Violet glass for the dusk shade, the dust in candle gold heaped inside it, lit from
+    the upper left, specks of dust afloat in the glass and a few motes drifting up and to
+    the right out of the stopper. Motes are three pixels or fewer and carry no outline;
+    the one sparkle is a small part with its own gold edge.
+    """
+    bulb = clip(disc(6.5, 10.4, 4.4))
+    part(cv, bulb, NAP, 3)
+    part(cv, R(5, 4, 3, 3), NAP, 3, highlight=False)  # neck
+    part(cv, R(4, 3, 5, 1), NAP, 4, highlight=False)  # lip
+    part(cv, R(5, 1, 3, 2), WOOD, 3, highlight=False)  # cork
+    dust = {(x, y) for (x, y) in bulb if y >= DUST_TOP.get(x, SIZE)}
+    for (x, y) in sorted(dust):
+        top = (x, y - 1) not in dust
+        left = (x - 1, y) not in dust
+        low = (x, y + 1) not in dust or (x + 1, y) not in dust
+        tone = 4 if top else 2 if low and not left else 3
+        cv.set(x, y, GOLD[tone])
+    dots(cv, {(5, 11), (8, 12), (6, 13)}, CREAM[3])  # sparks in the heap
+    dots(cv, {(4, 8)}, CREAM[3])  # glint on the glass
+    dots(cv, {(7, 8), (5, 7)}, GOLD[4])  # dust afloat in the glass
+    part(cv, {(12, 4), (11, 5), (12, 5), (13, 5), (12, 6)}, GOLD, 4, highlight=False)
+    dots(cv, {(12, 5)}, CREAM[3])
+    dots(cv, {(10, 1), (14, 9)}, GOLD[3])
 
 
 def time(cv):
@@ -388,6 +421,7 @@ ICONS = {
     'chevronUp': chevron_up, 'friends': friends, 'arrowUp': arrow_up,
     'arrowDown': arrow_down, 'energy': energy, 'check': check, 'eye': eye, 'lock': lock,
     'tree': tree, 'flower': flower, 'signpost': signpost, 'bowl': bowl,
+    'dreamDust': dream_dust,
 }
 
 KEYS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'

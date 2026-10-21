@@ -82,7 +82,7 @@ export function Dialogue({
     </Pressable>
   );
 }
-export function GrassRoll({
+export function DreamDustRoll({
   value,
   from = value,
   skip = false,
@@ -130,11 +130,13 @@ export function GrassRoll({
       >
         {reduced || skip ? value : roll.display}
       </Text>
-      {!reduced && !skip && roll.delta !== 0 && <GrassDelta key={roll.id} amount={roll.delta} />}
+      {!reduced && !skip && roll.delta !== 0 && (
+        <DreamDustDelta key={roll.id} amount={roll.delta} />
+      )}
     </View>
   );
 }
-function GrassDelta({ amount }: { amount: number }) {
+function DreamDustDelta({ amount }: { amount: number }) {
   const reduced = useReducedMotion();
   const y = useSharedValue(8);
   const opacity = useSharedValue(1);
@@ -167,7 +169,7 @@ function GrassDelta({ amount }: { amount: number }) {
         {amount > 0 ? '+' : ''}
         {amount}
       </BodyText>
-      <PixelIcon name="grass" size={16} />
+      <PixelIcon name="dreamDust" size={16} />
     </Animated.View>
   );
 }

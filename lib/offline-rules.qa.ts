@@ -76,7 +76,7 @@ export async function runOfflineRuleChecks(
   check(
     sparringReward({ ...emptyDay(), sparringWins: 2 }, true) === 5 &&
       sparringReward({ ...emptyDay(), sparringWins: 3 }, true) === 0,
-    'Only first three sparring wins pay GRASS',
+    'Only first three sparring wins pay Dream Dust',
   );
   const pa: Player = {
     id: '00000000-0000-4000-8000-000000000001',
@@ -168,7 +168,7 @@ export async function runOfflineRuleChecks(
     }
     check(
       gameStore.getState().player!.grass === pa.grass + 15,
-      'Four simulated wins pay exactly 15 GRASS',
+      'Four simulated wins pay exactly 15 Dream Dust',
     );
     check(gameStore.getState().rules.days[dayKey()].raids === 0, 'Sparring never spends raids');
     gameStore.setState({ player: pa, rules: baseline, cardReward: null, battle: null });

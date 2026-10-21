@@ -712,7 +712,9 @@ def build(name: str, fn, start: str):
                         wet_px.add((x, y))
                     elif ch == '!' and world_lint._lava(*px):
                         hot_px.add((x, y))
-    flow = water_flow.sheet(cv.img, wet_px, hot_px)
+    still = {(x, y) for (x, y) in wet_px
+             if any(a <= x < c and b <= y < d for (a, b, c, d) in STILL_WATER.get(name, ()))}
+    flow = water_flow.sheet(cv.img, wet_px, hot_px, still)
     flow_path = os.path.join(out, 'flow.png')
     if flow:
         flow[0].save(flow_path, optimize=True)  # native scale: the renderer draws it pixelated
@@ -847,8 +849,23 @@ def rle(row: str) -> str:
 # Water a zone declares outright (world-rules.md, section 1: the semantic layer), for
 # zones whose night palettes the lint cannot read by colour; others are read by colour.
 WATER_MASKS: dict[str, set] = {}
+# Still water (water_flow.py): water that lies still gets glints and lapping at its edges,
+# never drifting streaks (a canal reads as a channel by its shape, but it has no current).
+# Boxes in zone px (x0, y0, x1, y1); build() passes the zone's water inside them to
+# water_flow.sheet. A zone's own module may declare more: STILL_WATER.setdefault(zone, []).
+STILL_WATER: dict[str, list] = {
+    'canal': [(0, 170, W, 250)],                               # Cogsworth's canal and its lock's pounds (city_zones.canal)
+    'ridge': [(188, 384, 278, 426)],                           # the alpine tarn under the terrace (valley_zones.ridge)
+    'riverside': [(212, 192, 260, 220), (266, 66, 298, 86)],   # the millpond and the spring's pool (valley_zones.riverside)
+}
 
 BEYOND_SPILL = 20  # how far the forest's crowns spill over the zones beside it
+# The land past the walkable world (scenery.py) is saved at 2x, not the zones' 4x: each cell
+# is 360 x 616 art px, 13.5 MiB decoded at 4x and 3.4 MiB at 2x, and a region's edge mounts
+# several. Scaled by nearest neighbour (the camera's data-pixel view on the web), every art
+# pixel is a block of identical source pixels at either scale, so the picture on screen is
+# the same; only the decoded memory changes.
+SCENERY_SCALE = 2
 
 
 @functools.lru_cache(maxsize=1)
@@ -989,7 +1006,7 @@ def export(built: dict):
     for region in LAYOUT:
         for (c, r), cv in sorted(scenery.cells(LAYOUT[region], region).items()):
             name = f'{region}_{c}_{r}'.replace('-', 'm')
-            cv.save(os.path.join(scen_dir, f'{name}.png'), worlds.SCALE)
+            cv.save(os.path.join(scen_dir, f'{name}.png'), SCENERY_SCALE)
             scenery_keys.append((f'{region}:{c}:{r}', name))
     used = {}
     for z in built.values():

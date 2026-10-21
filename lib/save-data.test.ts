@@ -186,6 +186,38 @@ async function main() {
       );
     }
 
+    // GRASS was renamed Dream Dust on 20 Oct. Only the words and the icon changed: a save
+    // written before the rename keeps its balance under the same `grass` fields, loads as
+    // the same Dream Dust balance and is written back under those names, so an older build
+    // still reads it.
+    const beforeRename = currentSaveFixture();
+    const savedPlayer = record(beforeRename.player);
+    const savedDay = record(record(record(beforeRename.rules).days)['2026-10-17']);
+    await load(JSON.stringify(beforeRename));
+    const renamed = gameStore.getState();
+    assert.equal(savedPlayer.grass, 437);
+    assert.equal(renamed.player?.grass, savedPlayer.grass, 'the Dream Dust balance');
+    assert.equal(renamed.offGrass, beforeRename.offGrass, 'Dream Dust when the nap began');
+    assert.equal(renamed.rules.days['2026-10-17'].grass, savedDay.grass, 'Dream Dust earned today');
+    assert.equal(
+      renamed.recentBreaks?.[0].grass,
+      records(beforeRename.recentBreaks)[0].grass,
+      'Dream Dust on the break receipt',
+    );
+    assert.equal(
+      record(renamed.cardReward).grass,
+      record(beforeRename.cardReward).grass,
+      'Dream Dust on the welcome-back reward',
+    );
+    const rewritten = disk();
+    assert.equal(record(rewritten.player).grass, savedPlayer.grass);
+    assert.equal(rewritten.offGrass, beforeRename.offGrass);
+    assert.equal(record(record(record(rewritten.rules).days)['2026-10-17']).grass, savedDay.grass);
+    assert.ok(!/dream.?dust/i.test(JSON.stringify(rewritten)), 'the save keeps its field names');
+    console.log(
+      'PASS: a save from before the Dream Dust rename loads the same balance and keeps its fields',
+    );
+
     const extra = currentSaveFixture();
     const p = record(extra.player);
     const rules = record(extra.rules);

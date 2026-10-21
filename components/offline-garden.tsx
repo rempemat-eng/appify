@@ -169,8 +169,9 @@ export function RecentBreaks() {
             })}
           </BodyText>
           <BodyText style={{ fontSize: 12 }}>
-            {entry.minutes.toLocaleString()} simulated MIN · {entry.grass.toLocaleString()} GRASS ·{' '}
-            {entry.cards} {entry.cards === 1 ? 'card' : 'cards'}
+            {entry.minutes.toLocaleString()} simulated MIN ·{' '}
+            {`${entry.grass.toLocaleString()} Dream Dust`} · {entry.cards}{' '}
+            {entry.cards === 1 ? 'card' : 'cards'}
           </BodyText>
         </Animated.View>
       ))}
@@ -254,7 +255,7 @@ export function GardenRecap() {
           {[
             [`${day.offline} simulated MIN`, 'OFFLINE'],
             [String(day.cards), 'CARDS EARNED'],
-            [String(Math.floor(day.grass)), 'GRASS EARNED'],
+            [String(Math.floor(day.grass)), 'DREAM DUST EARNED'],
             [String(day.blocked), 'RAIDS BLOCKED OFFLINE'],
           ].map(([value, label]) => (
             <View key={label} style={{ gap: 7 }}>
