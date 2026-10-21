@@ -1,44 +1,47 @@
-"""Cliff core: one rock system for every cliff (docs/vision/cliff-core.md).
+"""Cliff core: one terrain system, many biomes (docs/vision/cliff-core.md).
 
-The cliff bake-off (20 to 21 Oct) graded three swatches. The look grader chose organic rock
-masses (Sea of Stars' warm, dark, rounded crags); the method grader chose a hybrid. This is
-that hybrid, built on the terrace toolkit's soft grid (terrace.py: 8 px grid, 32 px tiers,
-5 px side bands, 8 px cast shadows):
+Edges and the soft grid follow Eastward only (Matt, 21 Oct 09:23; docs/vision/eastward-edges.md):
+its geometry and value structure, never its colours. The look is the house look Matt chose from
+the bake-off's tile swatch (21 Oct 09:31): rounded boulder faces, clean turf lips, warm house
+ramps. The structure:
 
-- Structure (strata). The input is a world height field in plan space. Every rim is a contour
-  of that field at a tier height, traced as a closed polyline with arc length (not a column
-  per x). Every face pixel carries its arc along the rim, its depth below the rim and its
-  absolute height z. Rock bands are fixed in absolute height (a STRATA table per setting), so
-  one band runs through every face of a region whatever its outline.
-- Noise. Every random choice is a hash of world coordinates (or of a contour's arc and z),
-  numpy-vectorised, so any window of the world renders the same pixels: two adjacent 256 px
-  tiles meet with no seam (`--check` tests it).
-- Look (masses). Inside the bands, the rock is a row of large crag forms split by vertical
-  fissures, each shaded as one rounded lump lit from the upper left (the bake-off's
-  `shade_mass`), then split into quiet rounded plates; the bands show as partings inside each
-  mass, so neighbouring masses read as one layered crag, not a pile of boulders.
-- Kit (dressing by rule). Grass fringes, ivy and cascading greenery hang from rims, plants sit
-  in fissures, scree and boulders gather at feet, falls leave spring lines in bays and drop into
-  plunge pools, snow lies on the high tops with drifts against the cliff foot. Nothing is placed
-  by a coordinate: each piece is a rule over the contours and the height field.
+- Engine (crosses biomes). A world height field in plan space, its rims put on the soft grid
+  (16 px along a rim, 8 across, corners rounded to radius 3) and traced as contours with arc
+  length; strata fixed in absolute height; every random choice a hash of world coordinates, so
+  any window renders the same pixels (`--check` tests a 512 px world against its four tiles);
+  dressing placed by rule; walk masks and attach points.
+- Grammar (shared by every biome, checked on every biome's output): the 8 px grid, the tier
+  heights 12, 16, 32 and 40, the rim's 1 px wobble, light from the upper left, the lit lip, the
+  dark line and shade under it, the foot band, the house palette and outline, the detail bar and
+  the lint.
+- Biomes (own, never recoloured): BIOMES tables and their EDGE_SETS: the face (boulders, slabs,
+  an earthy bank, dressed courses), the lip (turf, sod, crumble, coping, the snow cornice), the
+  foot, the stair (rock steps, timber steps), the bank of its water, its dressing and the set
+  pieces it owns (Matt, 21 Oct 10:08 and 10:09).
+- Pieces (Plan): a stair through a face, a ledge path, a spring with its brook, falls and
+  plunge pools, a hollow with a pool, a snow-capped corner, boulder clusters, a scree foot, ivy
+  over a lip, a footpath. Each edits the plan and leaves its dressing to the painter, adapts to
+  where it lands and takes its variant from a hash of where it stands.
 
-Every pixel is a (family, tone) cell of the house palette (art/house-palette.json), so a shadow
-is a step along the pixel's own ramp. The one new family is `crag` (accent:highland).
+Every pixel is a (family, tone) cell of the house palette (art/house-palette.json). The one new
+family is `crag` (accent:highland).
 
-HOWTO (a lane): build a plan height field (or rims as curves, `from_rims`), pick a table, render.
+HOWTO (a lane): build a Plan, place pieces, render.
     import cliff_core as cc
-    world = cc.World(Z, table='highland', path=PATH_MASK, water=STREAM_MASK, stairs=[...])
-    img = cc.render(world).image()                # or render(world, box=(x0, y0, x1, y1))
-    tiers = cc.walk_tiers(world)                  # terrace.from_plan's screen tier map, 8 px cells
-The four demos below (`demo_highland`, `demo_coast`, `demo_canyon`, `demo_city`) are one screen
-each and are meant to be copied.
+    plan = cc.Plan(512, 512, 'highland', seed=4)
+    plan.tier(64, [(-20, 196), (200, 188), (540, 206)])        # a rim drawn as a screen curve
+    st = plan.stair(208, 64, width=40)                          # through the face nearest x 208
+    plan.path([st.attach['foot'], (226, 330), (220, 520)], z=0)
+    img = cc.render(plan.world()).image()                       # or render(world, box=...)
+    tiers = cc.walk_tiers(plan.world())                         # terrace.from_plan's tier map
 
 Run:
-    python3 scripts/art/cliff_core.py            # write the demos and proofs (art-repro runs this)
-    python3 scripts/art/cliff_core.py --check    # seam test, detail bar and lint on three random
-                                                 # outlines; exits non-zero on a fault
-    python3 scripts/art/cliff_core.py --compare REFDIR OUT.png   # the highland demo beside the
-                                                 # official references (local screenshots only)
+    python3 scripts/art/cliff_core.py            # write the demos, the area, the proofs and the
+                                                 # module, reuse and edge sheets (art-repro)
+    python3 scripts/art/cliff_core.py --check    # seam test, biome ownership, and the grammar
+                                                 # on every biome's output; non-zero on a fault
+    python3 scripts/art/cliff_core.py --compare REFDIR OUT.png   # beside Eastward (local
+                                                 # official screenshots; keep OUT outside the repo)
 """
 from __future__ import annotations
 
@@ -53,7 +56,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, '..', '..'))
 sys.path.insert(0, HERE)
 import house_palette as hp  # noqa: E402
-from terrace import FACE, GRID, SHADOW, STRIP, from_plan  # noqa: E402
+from terrace import FACE, GRID, from_plan  # noqa: E402
 
 OUT_DIR = os.path.join(ROOT, 'docs', 'vision', 'cliff-core')
 
@@ -141,47 +144,125 @@ def fbm2(x, y, scale: float, seed, octaves: int = 3) -> np.ndarray:
     return out / tot
 
 
-# ---- the settings: STRATA tables -------------------------------------------------------------
-# Bands are (thickness px, rock family, texture) from z = 0 upward, repeating, so any height has
-# a band. A band's family is the bias of its plates among the family's siblings. `spring` is
-# the z of a spring line (the top of an impermeable band), where falls leave the face.
-STRATA = {
+# ---- the biomes: one table each, each with its own edges ------------------------------------
+# Matt, 21 Oct 10:08: "do consider what can and cannot be reused. the edge of the grass biome
+# should look different from an edge in the mountain. you can safely reuse parts in the same
+# biome, in other biomes you have to be careful." So a biome is not a recolour: it owns its
+# EDGE SET (the shapes of its faces, lips, feet, stair cuts and water banks, eastward-edges.md
+# 2 to 6) and its set pieces (PIECES), and only the engine crosses biomes: the height field,
+# the contour tracing, strata at absolute heights, the seamless hash noise, the placement
+# rules, walk masks and attach points, plus the NEUTRAL parts listed below. A loose stone that
+# crosses is drawn in the target biome's own rock (`loose`). `--check` fails if a biome draws
+# with another biome's edge set or places a piece it does not own.
+#
+# A biome table: tier height, the rock (lump families in bands fixed in absolute height, so one
+# band runs through every face of a region), the ground on its tops, the edge set's name, the
+# dressing and the pieces it allows. Every colour is a house ramp (house-style.md 1).
+EDGE_SETS = {
+    # the highland cliff: rounded boulder faces (the house look, 21 Oct 09:31) under a clean
+    # turf lip, a stony foot with scree, steps cut from the rock between boulder cheeks,
+    # brooks in a small earth bank
     'highland': dict(
-        face=FACE, rock='crag', built=False,
-        bands=[(9, 'crag_cool', 'plain'), (7, 'crag', 'lamina'), (11, 'crag_warm', 'plain'),
-               (5, 'crag_cool', 'pebble'), (9, 'crag', 'plain'), (6, 'crag_warm', 'lamina'),
-               (10, 'crag', 'flute'), (7, 'crag_cool', 'plain')],
-        spring=52, mass_w=(18, 46), split64=0.7, split32=0.1, plate=(9.0, 7.0), inset=0.35,
-        top='grass', top_sibs=(0.24, 0.02, 0.74), warm_lit=0.15, fringe='grass', fringe_len=(1, 5),
-        ivy=0.14, cascade=0.12, crack_plants=0.5, scree=0.55, boulders=0.22, ferns=0.7,
-        shrubs=0.006, trees=0.0015, flowers=0.05, snow_z=96, falls=0.5, tint=0),
+        biome='highland',
+        face=dict(style='boulders', lump=dict(cw=19, ch=13, rx=(9.0, 14.0), ry=(6.6, 9.6), p=2.4,
+                                               fill=dict(cw=8, ch=6, rx=(3.0, 4.6), ry=(2.4, 3.4))), moss_caps=0.07),
+        lip=dict(kind='turf', over=(0, 1), scale=3.2, lit_row=0.65, under=(1, 0), shade=(2, 3), streaks=(2, 4)),
+        foot=dict(band=3, pebbles=0.18, tufts=0.75), stair='rock', bank=dict(rows=2, reeds=0.0)),
+    # the meadow bank: a low earthy turf edge, soil in thin layers with clods, pale roots
+    # hanging from a soft sod overhang, grass grown thick over its foot, timber steps with
+    # posts, banks with reeds
+    'meadow': dict(
+        biome='meadow',
+        face=dict(style='earth', lump=dict(cw=9, ch=6, rx=(3.2, 5.4), ry=(2.4, 3.6), p=2.2), roots=0.09),
+        lip=dict(kind='sod', over=(1, 2), scale=6.5, lit_row=0.5, under=(0, 0), shade=(0, 0), streaks=(0, 0)),
+        foot=dict(band=2, pebbles=0.05, tufts=1.0), stair='timber', bank=dict(rows=2, reeds=0.5)),
+    # the sea cliff: pale bedded sandstone slabs on a dark basalt foot under a thin turf lip
     'coast': dict(
-        face=FACE, rock='sand', built=False,
-        bands=[(6, 'basalt', 'plain'), (8, 'basalt_cool', 'pebble'), (10, 'sand_cool', 'lamina'),
-               (7, 'sand', 'plain'), (5, 'bleached', 'lamina'), (9, 'sand_warm', 'flute'),
-               (6, 'sand_cool', 'plain'), (8, 'sand', 'lamina')],
-        spring=None, mass_w=(20, 52), split64=0.6, split32=0.15, plate=(10.5, 6.0), inset=0.3,
-        top='grass', floor={0: 'sand'}, top_sibs=(0.45, 0.25, 0.30), fringe='grass', fringe_len=(1, 4),
-        ivy=0.0, cascade=0.04, crack_plants=0.3, scree=0.4, boulders=0.3, ferns=0.0,
-        shrubs=0.01, trees=0.0, flowers=0.08, snow_z=None, falls=0.0, tint=0),
+        biome='coast',
+        face=dict(style='slabs', lump=dict(cw=24, ch=9, rx=(10.0, 17.0), ry=(3.8, 5.6), p=3.2), moss_caps=0.0),
+        lip=dict(kind='turf', over=(0, 1), scale=2.4, lit_row=0.8, under=(1, 0), shade=(1, 2), streaks=(1, 2)),
+        foot=dict(band=2, pebbles=0.3, tufts=0.3), stair='rock', bank=dict(rows=1, reeds=0.0)),
+    # the canyon wall: red and buff slabs, a crumbling dry lip, a gritty foot
     'canyon': dict(
-        face=40, rock='adobe', built=False,
-        bands=[(7, 'clay_cool', 'plain'), (5, 'adobe', 'lamina'), (9, 'clay', 'plain'),
-               (4, 'bleached', 'pebble'), (8, 'adobe_warm', 'flute'), (6, 'clay_warm', 'lamina'),
-               (10, 'adobe', 'plain'), (5, 'bleached_warm', 'lamina')],
-        spring=None, mass_w=(22, 56), split64=0.55, split32=0.2, plate=(13.0, 7.0), inset=0.25,
-        top='sand', shrub='cactus', top_sibs=(0.45, 0.30, 0.25), fringe='crumble', fringe_len=(0, 3),
-        ivy=0.0, cascade=0.0, crack_plants=0.12, scree=0.75, boulders=0.35, ferns=0.0,
-        shrubs=0.006, trees=0.0, flowers=0.0, snow_z=None, falls=0.0, tint=0),
+        biome='canyon',
+        face=dict(style='slabs', lump=dict(cw=28, ch=8, rx=(12.0, 20.0), ry=(3.4, 4.8), p=3.6), moss_caps=0.0),
+        lip=dict(kind='crumble', over=(0, 1), scale=2.0, lit_row=0.9, under=(1, 0), shade=(2, 2), streaks=(2, 4)),
+        foot=dict(band=3, pebbles=0.35, tufts=0.0), stair='rock', bank=dict(rows=1, reeds=0.0)),
+    # the city's retaining wall: dressed courses under a coping
     'city': dict(
-        face=40, rock='ashlar', built=True,
+        biome='city',
+        face=dict(style='courses', lump=None, moss_caps=0.0),
+        lip=dict(kind='coping', over=(3, 3), scale=1.0, lit_row=0.0, under=(1, 0), shade=(1, 1), streaks=(0, 0)),
+        foot=dict(band=1, pebbles=0.0, tufts=0.0), stair='rock', bank=dict(rows=1, reeds=0.0)),
+}
+# what may cross biomes besides the engine: the figure for scale, falls and plunge pools as
+# water (their banks are the biome's), cast shadows, despeckle, and the hand-drawn stamp shapes
+# (tufts, pebbles, ferns), always drawn in the target biome's own families
+NEUTRAL = ('figure', 'fall', 'shadow', 'despeckle', 'stamps')
+_PIECES_HIGHLAND = ('stair', 'spring', 'ledge', 'snow_corner', 'boulders', 'ivy', 'path', 'pond', 'scree')
+BIOMES = {
+    'highland': dict(
+        face=FACE, rock='crag', loose='crag', built=False, edges='highland',
+        bands=[(14, 'crag_cool', 'plain'), (11, 'crag', 'plain'), (16, 'crag_warm', 'plain'),
+               (9, 'crag', 'pebble'), (14, 'crag_cool', 'plain'), (12, 'crag_warm', 'plain')],
+        spring=None, top='grass', top_sibs=(0.36, 0.22, 0.42), warm_lit=0.3, ledge='path',
+        ivy=0.03, cascade=0.0, crack_plants=0.5, scree=0.45, boulders=0.2, ferns=0.6,
+        shrubs=0.006, trees=0.0015, flowers=0.07, flower_fams=('plaster', 'brass', 'dusk', 'berry', 'sky'),
+        snow_z=None, falls=0.0, pieces=_PIECES_HIGHLAND),
+    'meadow': dict(
+        face=16, rock='earth', loose='stone', built=False, edges='meadow',
+        bands=[(4, 'earth_warm', 'plain'), (3, 'earth', 'plain'), (5, 'earth_cool', 'plain'), (3, 'earth', 'pebble')],
+        spring=None, top='grass', top_sibs=(0.40, 0.30, 0.30), warm_lit=0.5, ledge='path',
+        ivy=0.0, cascade=0.0, crack_plants=0.0, scree=0.0, boulders=0.05, ferns=0.3,
+        shrubs=0.008, trees=0.002, flowers=0.09, flower_fams=('plaster', 'brass', 'berry', 'sky'),
+        snow_z=None, falls=0.0, pieces=('stair', 'path', 'pond', 'boulders', 'spring')),
+    'coast': dict(
+        face=FACE, rock='sand', loose='basalt', built=False, edges='coast',
+        bands=[(8, 'basalt', 'plain'), (6, 'basalt_cool', 'pebble'), (10, 'sand_cool', 'plain'),
+               (8, 'sand', 'plain'), (6, 'bleached', 'plain'), (9, 'sand_warm', 'plain'), (10, 'sand', 'plain'),
+               (7, 'bleached_cool', 'plain'), (9, 'sand_cool', 'plain')],
+        spring=None, top='grass', floor={0: 'sand'}, top_sibs=(0.45, 0.25, 0.30), ledge='path',
+        ivy=0.0, cascade=0.0, crack_plants=0.3, scree=0.4, boulders=0.3, ferns=0.0,
+        shrubs=0.01, trees=0.0, flowers=0.08, flower_fams=('plaster', 'brass', 'berry'),
+        snow_z=None, falls=0.0, pieces=('stair', 'ledge', 'boulders', 'path', 'scree')),
+    'canyon': dict(
+        face=40, rock='adobe', loose='clay', built=False, edges='canyon',
+        bands=[(7, 'clay_cool', 'plain'), (5, 'adobe', 'plain'), (9, 'clay', 'plain'),
+               (4, 'bleached', 'pebble'), (8, 'adobe_warm', 'plain'), (6, 'clay_warm', 'plain')],
+        spring=None, top='sand', shrub='cactus', top_sibs=(0.45, 0.30, 0.25), ledge='path',
+        ivy=0.0, cascade=0.0, crack_plants=0.12, scree=0.75, boulders=0.35, ferns=0.0,
+        shrubs=0.006, trees=0.0, flowers=0.0, flower_fams=(), snow_z=None, falls=0.0,
+        pieces=('stair', 'ledge', 'boulders', 'path', 'scree')),
+    'city': dict(
+        face=40, rock='ashlar', loose='ashlar', built=True, edges='city',
         bands=[(7, 'ashlar', 'course'), (6, 'ashlar_warm', 'course'), (7, 'ashlar_cool', 'course'),
                (6, 'ashlar', 'course'), (7, 'ashlar_warm', 'course'), (7, 'ashlar_cool', 'course')],
-        spring=None, mass_w=(8, 15), split64=0.0, split32=0.0, plate=(12.0, 7.0), inset=0.0,
-        top='stone', top_sibs=(0.45, 0.30, 0.25), fringe='coping', fringe_len=(3, 3),
+        mass_w=(8, 15), spring=None, top='stone', top_sibs=(0.45, 0.30, 0.25), ledge='path',
         ivy=0.12, cascade=0.0, crack_plants=0.25, scree=0.0, boulders=0.0, ferns=0.0,
-        shrubs=0.0, trees=0.0, flowers=0.0, snow_z=None, falls=0.0, tint=0),
+        shrubs=0.0, trees=0.0, flowers=0.0, flower_fams=(), snow_z=None, falls=0.0,
+        pieces=('stair', 'ledge', 'path')),
 }
+STRATA = BIOMES       # the earlier name of the tables
+
+
+def check_biomes() -> list:
+    """The reuse rule as a check: every biome draws with its own edge set, no two edge sets are
+    the same shapes in another colour, and every piece a biome allows is one the engine has."""
+    faults = []
+    for b, T in BIOMES.items():
+        E = EDGE_SETS.get(T['edges'])
+        if E is None or E['biome'] != b:
+            faults.append(f'{b}: draws with edge set {T["edges"]!r}, which belongs to {E and E["biome"]}')
+        for p in T['pieces']:
+            if p not in PIECES:
+                faults.append(f'{b}: allows an unknown piece {p!r}')
+    keys = {}
+    for name, E in EDGE_SETS.items():
+        shape = repr((E['face'], E['lip'], E['foot'], E['stair'], E['bank']))
+        if shape in keys:
+            faults.append(f'edge sets {keys[shape]!r} and {name!r} are the same shapes')
+        keys[shape] = name
+    return faults
 
 
 def band_table(table: dict):
@@ -196,17 +277,43 @@ def band_table(table: dict):
 # ---- the world --------------------------------------------------------------------------------
 @dataclass
 class Stair:
-    """A stair cut through a face, in plan coordinates: open width x0..x1, the plan row of its
-    foot `py` (the first row of the lower ground in front), from `z_low` up to `z_high`.
-    Risers are 4 px, treads 3 px (terrace.RISER; size-guide 7); cheeks come from the side
-    bands of the notch."""
+    """A stair cut through a face (eastward-edges.md 6.1), in plan coordinates: open width
+    x0..x1, `py` the plan row of the lower ground its bottom step lands on, from `z_low` up to
+    `z_high`. The flight is cut back into the upper tier as far as it rises (Eastward's farm
+    stair: 4 steps of 6 + 6 for a 24 px face): steps of `tread` plan rows, risers of about 3
+    px, so a 32 px rise is 11 steps and 33 rows. Its top step is flush with the upper floor
+    (a landing of `landing` rows of that floor behind it), its bottom step lands on the lower
+    ground at `py` (a landing in front), and the face runs on unbroken for `cheek` px either
+    side, where rock cheeks close the notch."""
     x0: int
     x1: int
     py: int
     z_low: int
     z_high: int
     tread: int = 3
-    riser: int = 4
+    riser: float = 3.0
+    landing: int = 8
+    cheek: int = 5
+
+    @property
+    def n(self) -> int:
+        return max(1, int(round((self.z_high - self.z_low) / self.riser)))
+
+    @property
+    def top_row(self) -> int:
+        """The plan row of the back of the top step."""
+        return self.py - self.n * self.tread
+
+    def z_step(self, k: int) -> int:
+        """The height of step k (0 the lowest)."""
+        return int(round(self.z_low + (self.z_high - self.z_low) * (k + 1) / self.n))
+
+    def attach(self, top: int) -> dict:
+        """Where paths join it, in screen px: the foot (the first row of lower ground in front
+        of the bottom step) and the head (the upper floor just behind the top step)."""
+        cx = (self.x0 + self.x1) // 2
+        return {'foot': (cx, self.py - top - self.z_low), 'head': (cx, self.top_row - 1 - top - self.z_high),
+                'width': self.x1 - self.x0}
 
 
 @dataclass
@@ -223,6 +330,8 @@ class World:
     water: np.ndarray | None = None
     snow: np.ndarray | None = None
     stairs: list = field(default_factory=list)
+    decals: list = field(default_factory=list)      # dressing placed by set pieces (PIECES)
+    snap: bool = True                               # rims on the soft grid (eastward-edges.md 1)
     _geo: dict | None = None
 
     def __post_init__(self):
@@ -239,11 +348,40 @@ class World:
             if m is not None:
                 m = np.asarray(m, bool)
                 setattr(self, name, np.concatenate([m, np.repeat(m[-1:], extra, 0)], 0))
-        self.T = STRATA[self.table]
-        self._step_steep()
+        self.T = BIOMES[self.table]
+        self.E = EDGE_SETS[self.T['edges']]
+        if self.snap:
+            self._snap()
+        else:
+            self._step_steep()
         self.flag = np.zeros(self.Z.shape, np.int8)       # 1 a stair
         for st in self.stairs:
             self._carve(st)
+
+    def _snap(self, cw: int = 2 * GRID, ch: int = GRID, r: int = 3, r_in: int = 2):
+        """Put every rim on the soft grid (eastward-edges.md 1.2 to 1.5; world-rules 2.3): each
+        tier's plan outline is taken cell by cell (16 px along a rim, 8 px across it, by
+        majority), so a rim runs straight for two cells or more and a diagonal becomes a
+        staircase of whole cells; then its corners are rounded (outer radius 3, inner 2), the
+        pixel-circle corners Eastward draws. Tiers stay nested. The 1 px wobble of a rim is
+        the lip's (lip_overhang), not the plan's."""
+        import terrace
+        Z = self.Z
+        R, C = Z.shape
+        face = self.T['face']
+        Rp, Cp = -(-R // ch) * ch, -(-C // cw) * cw
+        out = np.zeros_like(Z)
+        prev = None
+        for k in range(face, int(Z.max()) + 1, face):
+            M = np.pad(Z >= k, ((0, Rp - R), (0, Cp - C)), mode='edge')
+            cells = M.reshape(Rp // ch, ch, Cp // cw, cw).mean(axis=(1, 3)) >= 0.5
+            S = np.repeat(np.repeat(cells, ch, 0), cw, 1)[:R, :C]
+            S = terrace.rounded(S, r, r_in)
+            if prev is not None:
+                S &= prev
+            out[S] = k
+            prev = S
+        self.Z = out
 
     def _step_steep(self, chunk: int = 2 * GRID, steep: float = 1.3):
         """Where a rim runs steeply (more than `steep` rows a column, about 52 degrees from
@@ -310,32 +448,25 @@ class World:
         return self._h
 
     def _carve(self, st: Stair):
-        """Cut the stair into the field: steps falling south, the notch's back corners rounded
-        (a 4 px radius, so the notch is not a box)."""
-        n = (st.z_high - st.z_low) // st.riser
-        top_row = st.py - n * st.tread
-        # the rim runs straight across the stair and a cheek's width either side (a buttress),
-        # so every step meets the face square
-        for x in range(max(0, st.x0 - 6), min(self.Z.shape[1], st.x1 + 6)):
-            for r in range(max(0, top_row - 4), min(self.Z.shape[0], st.py + 48)):
-                if r < st.py and self.Z[r, x] == st.z_low:
-                    self.Z[r, x] = st.z_high
-                elif r >= st.py and self.Z[r, x] == st.z_high:
-                    self.Z[r, x] = st.z_low
-        for k in range(n):
-            z = st.z_high - st.riser * (k + 1)
-            r0 = top_row + k * st.tread
-            for r in range(r0, r0 + st.tread):
-                for x in range(st.x0, st.x1):
-                    if 0 <= r < self.Z.shape[0] and 0 <= x < self.Z.shape[1]:
-                        # round the notch's two back corners
-                        dr = r - top_row
-                        cx = min(x - st.x0, st.x1 - 1 - x)
-                        if dr < 4 and cx < 4 and (4 - cx) ** 2 + (4 - dr) ** 2 > 17:
-                            continue
-                        if st.z_low < self.Z[r, x] <= st.z_high:
-                            self.Z[r, x] = min(self.Z[r, x], z)
-                            self.flag[r, x] = 1
+        """Cut the stair into the field. The upper floor is made good behind the top step (a
+        landing, cut back into a higher tier if one stands there), the lower ground in front of
+        the bottom step, and the face either side of the notch runs straight for the cheeks, so
+        the stair meets the face square and both sides stay one face."""
+        R, C = self.Z.shape
+        top_row = st.top_row
+        r_back = max(0, top_row - st.landing)
+        r_front = min(R, st.py + st.landing)
+        x_a, x_b = max(0, st.x0 - st.cheek), min(C, st.x1 + st.cheek)
+        self.Z[r_back:st.py, x_a:x_b] = st.z_high
+        front = self.Z[st.py:r_front, x_a:x_b]
+        self.Z[st.py:r_front, x_a:x_b] = np.minimum(front, st.z_low)
+        for k in range(st.n):
+            z = st.z_step(k)
+            r1 = st.py - k * st.tread
+            for r in range(max(0, r1 - st.tread), min(R, r1)):
+                for x in range(max(0, st.x0), min(C, st.x1)):
+                    self.Z[r, x] = z
+                    self.flag[r, x] = 1
 
     # ---- the contours: every rim as a closed polyline with arc length -------------------------
     def geometry(self) -> dict:
@@ -479,7 +610,7 @@ class Frame:
 
 
 TAG = dict(ground=1, rock=2, recess=3, leaf=4, water=5, snow=6, path=7, stair=8, side=9, fringe=10,
-           scree=11, figure=12, foam=13, wet=14, tree=15)
+           scree=11, figure=12, foam=13, wet=14, tree=15, soil=16)
 
 
 def project(world: World, x0, y0, x1, y1) -> dict:
@@ -619,18 +750,52 @@ def paint_ground(fr: Frame, P: dict, world: World):
             _setts(fr, gm, fams, seed)
         else:
             _grains(fr, gm, fams, fi, hashu(seed, 16))
-    # trodden path
+    # trodden path: calm patches of its siblings, a few stones; no line at its edge
     p = top & (mat == MAT_PATH)
-    pf = sibs('path')
+    pf = sibs(T.get('ledge', 'path'))
     n2 = vnoise2(X, Y, 9.0, hashu(seed, 13))
     fr.F[p] = pf[np.where(n2 < 0.3, 2, np.where(n2 > 0.75, 1, 0))[p]]
     fr.T[p] = 3
     fr.tag[p] = TAG['path']
-    edge_p = p & ~(nb(p, 0, 1) & nb(p, 0, -1) & nb(p, 1, 0) & nb(p, -1, 0))
-    fr.T[edge_p] = 2
-    peb = p & ~edge_p & (h01(hashu(seed, 14), X // 3, Y // 2) < 0.06) & ((X % 3) < 2)
+    peb = p & (h01(hashu(seed, 14), X // 3, Y // 2) < 0.05) & ((X % 3) < 2)
     fr.T[peb] = 4
     fr.T[peb & (h01(hashu(seed, 15), X, Y) < 0.3)] = 2
+    fray_path(fr, world, p, g)
+
+
+def fray_path(fr: Frame, world: World, p: np.ndarray, g: np.ndarray):
+    """Grass meets a path in a frayed band (eastward-edges.md 5.1): the grass reaches 0 to 2 px
+    over the path's edge in 1 px steps, dark crumbs of the path lie along it, and about every
+    16 px a tuft leans over the path or the path bites into the grass. No line, no dither."""
+    T, seed = world.T, world.seed
+    if not p.any():
+        return
+    X, Y = fr.X, fr.Y
+    grass = g & ~p
+    dist = np.zeros(fr.shape, np.int32)
+    reach = grass.copy()
+    for k in range(1, 4):
+        reach = near(reach, 1)
+        dist = np.where(p & reach & (dist == 0), k, dist)
+    k = np.floor(2.7 * vnoise2(X, Y, 3.0, hashu(seed, 17))).astype(np.int32)
+    over = p & (dist > 0) & (dist <= k)
+    gid = sibs(T['top'])
+    fr.F[over] = gid[(h01(hashu(seed, 18), X // 2, Y // 2) * 3).astype(np.int64) % 3][over]
+    fr.T[over] = 3
+    fr.tag[over] = TAG['ground']
+    fr.mat[over] = MAT_GROUND
+    p2 = p & ~over
+    crumb = p2 & (dist > 0) & (dist <= k + 2) & (h01(hashu(seed, 19), X // 2, Y) < 0.10) & (np.mod(X, 2) == 0)
+    crumb = crumb | (nb(crumb, 0, -1) & p2)
+    fr.T[crumb] = 1
+    edge = p2 & (dist == k + 1)
+    if T['top'] == 'grass':
+        for x, y, hh in zip(*candidates(fr, 16, hashu(seed, 105), np.where(edge, 0.9, 0.0))):
+            if h01(hh, 6) < 0.6:
+                put_stamp(fr, TUFTS[int(hh % np.uint32(len(TUFTS)))], x, y, int(gid[int(hashu(hh, 4) % np.uint32(3))]),
+                          allow=p | g, anchor=(2, 3))
+            else:
+                put_stamp(fr, BITE, x, y, int(sibs(T.get('ledge', 'path'))[2]), allow=g | p, anchor=(2, 1))
 
 
 def _blades(fr, mask, fams, fi, seed, density=0.5, warm_lit=0.5):
@@ -652,14 +817,14 @@ def _blades(fr, mask, fams, fi, seed, density=0.5, warm_lit=0.5):
     dens = density * (0.45 + 0.7 * vnoise2(X, Y, 13.0, hashu(seed, 9)))
     on = mask & (hh < dens) & inside
     kind = h01(seed, cx, cy, 3)
-    swap = on & (kind < 0.45)
+    swap = on & (kind < 0.5)
     alt = (fi + 1 + (hashu(seed, cx, cy, 4) & np.uint32(1)).astype(np.int64)) % 3
     fr.F[swap] = fams[alt[swap]]
-    up = on & (kind >= 0.45) & (kind < 0.66)
+    up = on & (kind >= 0.5) & (kind < 0.68)
     fr.T[up] = np.minimum(4, fr.T[up] + 1)
     fr.F[up & (h01(seed, cx, cy, 6) < warm_lit)] = fams[1]
     fr.F[up & (h01(seed, cx, cy, 6) >= 0.6)] = fams[2]
-    down = on & (kind >= 0.66) & (kind < 0.86)
+    down = on & (kind >= 0.68) & (kind < 0.86)
     fr.T[down] = np.maximum(1, fr.T[down] - 1)
     fr.F[down & (h01(seed, cx, cy, 7) < 0.5)] = fams[2]
     leaf = on & (kind >= 0.86)
@@ -710,48 +875,93 @@ def _setts(fr, mask, fams, seed):
     fr.T[mask] = t[mask]
 
 
-# ---- the faces: crag masses on absolute-height strata ----------------------------------------
-def _breaks(world, lid, course, length):
-    cache = world.__dict__.setdefault('_breaks', {})
-    key = (int(lid), course)
-    if key not in cache:
-        T, seed = world.T, world.seed
-        lo, hi = T['mass_w']
-        if lid < 0:
-            length = world.width + 2 * hi
-        n = int(length / lo) + 4
-        k = np.arange(n)
-        wv = lo + (hi - lo) * h01(seed, lid, k, course, 31) ** 1.15
-        start = -hi * h01(seed, lid, course, 32)
-        cache[key] = np.concatenate([[start], start + np.cumsum(wv)])
-    return cache[key]
+# ---- the faces: rounded lumps on absolute-height strata (the house look) ---------------------
+L3 = np.array([-0.55, -0.62, 0.56])
+L3 = L3 / np.sqrt((L3 ** 2).sum())
 
 
-def _segment(world, lid, s, z, course, length):
-    """The crag form a pixel belongs to along its rim: breaks in arc length (widths from the
-    table, hashed per loop), each break wandering 1.5 px with height, so fissures are not ruled.
-    Returns the segment index and its left and right edge at this pixel's height."""
-    seed = world.seed
-    k = np.zeros(s.shape, np.int64)
-    bl = np.zeros(s.shape)
-    br = np.zeros(s.shape)
-    for L in np.unique(lid):
-        m = lid == L
-        B = _breaks(world, L, course, length.get(int(L), world.width))
-        ss, zz = s[m], z[m]
-        i0 = np.clip(np.searchsorted(B, ss, 'right') - 1, 1, len(B) - 3)
+def _lamb(u, v):
+    """Light on a dome at (u, v) inside a lump (u right, v down, 1 at the rim), upper left."""
+    r2 = np.clip(u * u + v * v, 0, 0.98)
+    return u * L3[0] + v * L3[1] + np.sqrt(1 - r2) * L3[2]
 
-        def edge(i):
-            return B[i] + 1.5 * (2 * vnoise1(zz, 6.0, hashu(seed, L, i, course, 33)) - 1)
-        i = i0 - (ss < edge(i0)) + (ss >= edge(i0 + 1))
-        k[m], bl[m], br[m] = i, edge(i), edge(i + 1)
-    return k, bl, br
+
+def lump_field(world: World, X, V, lid=None):
+    """Which lump covers each face point, in world coordinates: X the world column, V = -z
+    (the absolute height, downwards). Lumps sit on a staggered lattice (each row of cells
+    shifted half a cell, so they pack like a dry-built crag), each with its own centre and
+    radii by hash; where several cover a point, the lowest wins (its round crown stands in
+    front of the underside of the lump above). Returns the lump id (-1: a gap), its centre and
+    radii and the point's (u, v) in it. Pure function of world coordinates: seamless."""
+    T, seed = world.T, world.seed
+    L = world.E['face']['lump']
+    cw, ch, p = L['cw'], L['ch'], L['p']
+    X = np.asarray(X, np.float64)
+    V = np.asarray(V, np.float64)
+    j0 = np.floor(V / ch).astype(np.int64)
+    best = np.full(X.shape, -1e9)
+    out = dict(id=np.full(X.shape, -1, np.int64), cx=np.zeros(X.shape), cv=np.zeros(X.shape),
+               rx=np.ones(X.shape), ry=np.ones(X.shape), u=np.zeros(X.shape), v=np.zeros(X.shape))
+    wob = 0.07 * (vnoise2(X, V, 2.5, hashu(seed, 501)) - 0.5)
+    for dj in (-1, 0, 1):
+        j = j0 + dj
+        shift = 0.5 * (j % 2)
+        i0 = np.floor(X / cw - shift).astype(np.int64)
+        for di in (-1, 0, 1, 2):
+            i = i0 + di - 1
+            hh = hashu(seed, i, j, 502)
+            cx = (i + shift + 0.12 + 0.76 * h01(hh, 1)) * cw
+            cv = (j + 0.15 + 0.7 * h01(hh, 2)) * ch
+            rx = L['rx'][0] + (L['rx'][1] - L['rx'][0]) * h01(hh, 3)
+            ry = L['ry'][0] + (L['ry'][1] - L['ry'][0]) * h01(hh, 4)
+            u = (X + 0.5 - cx) / rx
+            v = (V + 0.5 - cv) / ry
+            dd = (np.abs(u) ** p + np.abs(v) ** p) ** (1.0 / p) + wob
+            take = (dd <= 1.0) & (cv > best)
+            best = np.where(take, cv, best)
+            lid_ = hashu(hh, 7).astype(np.int64)
+            for k, val in (('id', lid_), ('cx', cx), ('cv', cv), ('rx', rx), ('ry', ry), ('u', u), ('v', v)):
+                out[k] = np.where(take, val, out[k])
+    # small stones wedged in the gaps the big ones leave (a dry-built crag is packed)
+    fill = L.get('fill')
+    if fill:
+        fw, fh = fill['cw'], fill['ch']
+        gapm = out['id'] < 0
+        fbest = np.full(X.shape, -1e9)
+        fj0 = np.floor(V / fh).astype(np.int64)
+        for dj in (-1, 0, 1):
+            j = fj0 + dj
+            i0 = np.floor(X / fw).astype(np.int64)
+            for di in (-1, 0, 1):
+                i = i0 + di
+                hh = hashu(seed, i, j, 503)
+                cx = (i + 0.2 + 0.6 * h01(hh, 1)) * fw
+                cv = (j + 0.2 + 0.6 * h01(hh, 2)) * fh
+                rx = fill['rx'][0] + (fill['rx'][1] - fill['rx'][0]) * h01(hh, 3)
+                ry = fill['ry'][0] + (fill['ry'][1] - fill['ry'][0]) * h01(hh, 4)
+                u = (X + 0.5 - cx) / rx
+                v = (V + 0.5 - cv) / ry
+                dd = (np.abs(u) ** p + np.abs(v) ** p) ** (1.0 / p) + wob
+                take = gapm & (dd <= 1.0) & (cv > fbest)
+                fbest = np.where(take, cv, fbest)
+                lid_ = hashu(hh, 8).astype(np.int64)
+                for k, val in (('id', lid_), ('cx', cx), ('cv', cv), ('rx', rx), ('ry', ry), ('u', u), ('v', v)):
+                    out[k] = np.where(take, val, out[k])
+    return out
 
 
 def paint_faces(fr: Frame, P: dict, world: World):
+    """A natural face (eastward-edges.md 2): rounded lumps (or flat slabs) in the rock's ramp,
+    each shaded as a dome lit from the upper left with hard steps, cut into a few facets, a
+    crevice (tone 0) on its upper left where it meets the lump behind and an underside (tone 1)
+    on its lower right; gaps between lumps are deep recesses; sibling clusters, lichen on lit
+    crowns, moss caps now and then. The under-lip line and shade, the horizontal streaks under
+    it and the dark foot are the rim's and the foot's (paint_rims, foot_band)."""
     T, seed = world.T, world.seed
     if T['built']:
         return paint_courses(fr, P, world)
+    if world.E['face']['style'] == 'earth':
+        return paint_earth(fr, P, world)
     G = world.geometry()
     K = P['kind']
     sel = (K == FACEK) & (P['ST'] == 0)
@@ -769,168 +979,191 @@ def paint_faces(fr: Frame, P: dict, world: World):
     bad = np.isnan(s)
     s[bad] = X[bad]
     lid[bad] = -1
-    lengths = {i: L['length'] for i, L in enumerate(G['loops'])}
-    zc = h - d + 0.5                                  # absolute height of the pixel
-    # courses: the upper crag (from the rim) and, where it splits, a lower one with its own
-    # breaks, so fissures never line up from course to course
-    ku, blu, bru = _segment(world, lid, s, zc, 0, lengths)
-    sp = h01(seed, lid, ku, 34)
-    split = np.where(Hf >= 48, sp < T['split64'], sp < T['split32'])
-    ds = np.round(Hf * (0.36 + 0.28 * h01(seed, lid, ku, 35)))
-    lower = split & (d > ds)
-    kl, bll, brl = _segment(world, lid, s, zc, 1, lengths)
-    k = np.where(lower, kl, ku)
-    bl = np.where(lower, bll, blu)
-    br = np.where(lower, brl, bru)
-    course = lower.astype(np.int64)
-    mass = hashu(seed, lid, k, course, 36)
-    # each crag stands upright: its bands and plates are level, measured from the rim at its
-    # middle (so a crag on a sloping rim steps instead of shearing) and only clipped by the rim
-    yrim = (fr.Y[yy, xx] - d).astype(np.float64)
-    yref = yrim.copy()
-    sc = (bl + br) / 2
-    for L in np.unique(lid):
-        if L < 0:
-            continue
-        m = lid == L
-        lp = G['loops'][L]
-        rows = np.interp(sc[m], lp['arc'], lp['row'], period=lp['length'])
-        yref[m] = rows - 1 - world.top - h[m]
-    yref = np.where(np.abs(yref - yrim) > 24, yrim, yref)
-    zc = h - (fr.Y[yy, xx] - yref) + 0.5
-    inset = np.where(h01(mass, 1) < T['inset'], 1 + np.floor(6 * h01(mass, 2) ** 1.5), 0)
-    dtop = np.where(lower, ds + 1, 1 + inset)
-    dbot = np.where(split & ~lower, ds, Hf)
-    Wm = br - bl
-    ce = np.minimum(s - bl, br - s)
-    R = np.clip(0.42 * Wm, 3, 9)
-    lift = np.where(ce < R, R - np.sqrt(np.maximum(0, R * R - (R - ce) ** 2)), 0) * (0.5 + h01(seed, lid, k, course, 49))
-    Rb = np.where(split & ~lower, 3.0, 2.0)
-    liftb = np.where(ce < Rb, Rb - np.sqrt(np.maximum(0, Rb * Rb - (Rb - ce) ** 2)), 0)
-    dte, dbe = dtop + lift, dbot - liftb
-    # a fissure runs down from the rim only part of the way: below it the two crags are one
-    # rock (no line between them, house-style: joints only where they make sense)
-    fdep = dtop + (dbot - dtop) * np.where(h01(seed, lid, k, course, 47) < 0.55, 1.0, 0.35 + 0.5 * h01(seed, lid, k, course, 48))
-    open_f = d <= fdep
-    inside = (d >= dte) & (d <= dbe) & ((ce >= 0.9) | ~open_f)
-    ce_d = np.where(open_f, ce, ce + 3.0)
-    dist = np.minimum(np.minimum(ce_d, d - dte), dbe - d) + 0.5
-    Hm = np.maximum(1.0, dbe - dte + 1)
-    Dd = np.maximum(2.0, np.minimum(Wm, Hm) * 0.5)
-    zz = np.sqrt(np.clip(1 - (1 - np.minimum(dist, Dd) / Dd) ** 2, 0, 1))
-    # to the screen grid, for the normals
-    shp = fr.shape
-    MID = np.full(shp, -1, np.int64)
-    MID[yy, xx] = np.where(inside, mass.astype(np.int64), -1)
-    ZZ = np.zeros(shp)
-    ZZ[yy, xx] = zz
-    same_r, same_l = nb(MID, 0, 1) == MID, nb(MID, 0, -1) == MID
-    same_d, same_u = nb(MID, 1, 0) == MID, nb(MID, -1, 0) == MID
-    gx = (np.where(same_r, nb(ZZ, 0, 1), ZZ) - np.where(same_l, nb(ZZ, 0, -1), ZZ)) / 2
-    gy = (np.where(same_d, nb(ZZ, 1, 0), ZZ) - np.where(same_u, nb(ZZ, -1, 0), ZZ)) / 2
-    gx, gy = gx[yy, xx], gy[yy, xx]
-    Kf = Dd * 0.9
-    vx, vy = -gx * Kf, gy * Kf
-    nn = np.sqrt(vx * vx + vy * vy + 1.0)
-    I = (vx * LIGHT[0] + vy * LIGHT[1] + LIGHT[2]) / nn
-    vrel = (d - dte) / Hm
-    lean = np.clip(-nx * 2.5, -2, 1)
-    I = I + 0.34 * (0.42 - vrel) + 0.07 * lean
-    deep = h01(mass, 3) < 0.16
-    I = I - np.where(deep, 0.3, 0)
-    t = np.where(I > 0.82, 4, np.where(I > 0.5, 3, np.where(I > 0.14, 2, 1)))
-    t = np.where((dist <= 2) & (I > 0.97), 5, t)
-    t = np.where(d >= dbe - 0.01, np.minimum(t, 1), np.where(d >= dbe - 1, np.minimum(t, 2), t))
-    # the band (absolute height, a slow wobble along the rim) and its family
-    bounds, bfams, btex = band_table(T)
-    period = bounds[-1]
-    wob = 1.4 * (2 * vnoise1(s, 21.0, hashu(seed, lid, 37)) - 1)
-    zb = np.mod(zc + wob, period)
-    band = np.clip(np.searchsorted(bounds, zb, 'right') - 1, 0, len(bfams) - 1)
-    # plates: rounded cells in (arc, z), each a sibling, the odd one set back
-    Ps, Pz = T['plate']
-    gs, gz = s / Ps, zc / Pz
-    i0, j0 = np.floor(gs).astype(np.int64), np.floor(gz).astype(np.int64)
-    best = np.full(s.shape, 1e9)
-    pi, pj = i0.copy(), j0.copy()
-    sxs = np.zeros(s.shape)
-    szs = np.zeros(s.shape)
+    zc = h - d + 0.5
+    V = -zc
+    F = lump_field(world, X, V)
+    mid, u, v = F['id'], F['u'], F['v']
+    rr = np.sqrt(u * u + v * v)
+    # facets: the nearest of a jittered 5 px lattice in world coordinates, toned by the light
+    # at the facet's own centre, so a lump reads as broken rock, its rim kept round
+    fi, fj = np.floor(X / 3.5).astype(np.int64), np.floor(V / 3.5).astype(np.int64)
+    fbest = np.full(X.shape, 1e9)
+    fid = np.zeros(X.shape, np.int64)
+    fx = np.zeros(X.shape)
+    fv = np.zeros(X.shape)
     for di in (-1, 0, 1):
         for dj in (-1, 0, 1):
-            ci, cj = i0 + di, j0 + dj
-            jx = ci + 0.05 + 0.9 * h01(seed, lid, ci, cj, 38)
-            jz = cj + 0.05 + 0.9 * h01(seed, lid, ci, cj, 39)
-            dd = (gs - jx) ** 2 + (gz - jz) ** 2 + 0.18 * h01(seed, lid, ci, cj, 46)
-            b = dd < best
-            best = np.where(b, dd, best)
-            pi, pj = np.where(b, ci, pi), np.where(b, cj, pj)
-            sxs, szs = np.where(b, jx * Ps, sxs), np.where(b, jz * Pz, szs)
-    pid = hashu(seed, lid, pi, pj, 40)
-    PID = np.full(shp, -1, np.int64)
-    PID[yy, xx] = pid.astype(np.int64)
-    BND = np.full(shp, -1, np.int64)
-    BND[yy, xx] = band
-    rock = MID >= 0
-    sm = lambda dy, dx: (nb(MID, dy, dx) == MID) & rock  # noqa: E731
-    jr = (sm(0, 1) & (nb(PID, 0, 1) != PID)) | (sm(1, 0) & (nb(PID, 1, 0) != PID)) \
-        | (sm(1, 1) & (nb(PID, 1, 1) != PID))
-    lip = (sm(-1, 0) & (nb(PID, -1, 0) != PID)) | (sm(0, -1) & (nb(PID, 0, -1) != PID))
-    groove = sm(1, 0) & (nb(BND, 1, 0) != BND)
-    blip = sm(-1, 0) & (nb(BND, -1, 0) != BND)
-    jr, lip, groove, blip = jr[yy, xx], lip[yy, xx], groove[yy, xx], blip[yy, xx]
-    u = (s - bl) / np.maximum(1, Wm)
-    t = np.where(h01(pid, 4) < 0.1, t - 1, t)
-    t = np.where(lip & ~jr & (t >= 1), t + 1, t)
-    t = np.where(blip & (u < 0.7), t + 1, t)
-    t = np.where(jr | groove, t - 1, t)
-    shade_join = jr & (t <= 0) & (h01(pid, 12) < 0.5)
-    # textures of the bands
-    tex = np.array(btex)[band]
-    lam = (tex == 'lamina') & (np.abs(np.mod(zb - bounds[band], 1e9) - (bounds[band + 1] - bounds[band]) * 0.5) < 0.5) \
-        & (vnoise1(s, 6.0, hashu(seed, 41)) > 0.42)
-    t = np.where(lam, t - 1, t)
-    peb = (tex == 'pebble') & (h01(seed, lid, np.floor(s / 2).astype(np.int64), np.floor(zc / 2).astype(np.int64), 42) < 0.09)
-    t = np.where(peb & (t < 4), t + 1, t)
-    flute = (tex == 'flute') & (vnoise1(s, 2.5, hashu(seed, lid, 43)) > 0.74)
-    # grain: short dashes along the plates, lit on a plate's upper half, shaded on its lower
-    gcell = h01(seed, lid, np.floor((s + 7 * pj) / 3).astype(np.int64), np.floor(zc).astype(np.int64), 44)
-    dash = gcell < 0.03
-    t = np.where(dash, np.where(zc > szs, t + 1, t - 1), t)
-    # vertical fissures in the wide crags (the Sea of Stars columns)
-    uc = 0.3 + 0.4 * h01(mass, 5)
-    fd = 0.45 + 0.5 * h01(mass, 6)
-    scr = bl + uc * Wm + 1.2 * (2 * vnoise1(zc, 5.0, hashu(mass, 7)) - 1)
-    has = (Wm > 30) & (h01(mass, 10) < 0.6) & ((d - dte) < fd * Hm)
-    crack = has & (np.abs(s - scr) < 0.55)
-    wall = has & (s - scr >= 0.55) & (s - scr < 1.6)
-    t = np.where(wall, t + 1, t)
+            a, b = fi + di, fj + dj
+            px = (a + 0.1 + 0.8 * h01(seed, a, b, 511)) * 3.5
+            pv = (b + 0.1 + 0.8 * h01(seed, a, b, 512)) * 3.5
+            dd = (X + 0.5 - px) ** 2 + 1.4 * (V + 0.5 - pv) ** 2
+            bt = dd < fbest
+            fbest = np.where(bt, dd, fbest)
+            fid = np.where(bt, hashu(seed, a, b, 513).astype(np.int64), fid)
+            fx, fv = np.where(bt, px, fx), np.where(bt, pv, fv)
+    lam_px = _lamb(u, v)
+    lf = _lamb((fx - F['cx']) / F['rx'] * 1.15, (fv - F['cv']) / F['ry'] * 1.15)
+    lam = np.where(rr > 0.86, lam_px, 0.8 * lf + 0.2 * lam_px)
+    lam = lam + 0.06 * np.clip(-nx * 2.5, -2, 1)
+    t = np.where(lam > 0.74, 4, np.where(lam < 0.24, 1, np.where(lam < 0.5, 2, 3)))
+    big = np.minimum(F['rx'], F['ry']) > 5.5
+    t = np.where(big & (lam > 0.93) & (rr > 0.5), 5, t)
+    t = np.where(h01(mid, 21) < 0.1, t - 1, t)                   # the odd lump set back
+    # the screen grid, for neighbours
+    shp = fr.shape
+    MID = np.full(shp, -2, np.int64)
+    MID[yy, xx] = mid
+    FID_ = np.full(shp, -2, np.int64)
+    FID_[yy, xx] = fid
+    gap = mid < 0
+    up_d = (nb(MID, -1, 0) != MID)[yy, xx]
+    lf_d = (nb(MID, 0, -1) != MID)[yy, xx]
+    dn_d = (nb(MID, 1, 0) != MID)[yy, xx]
+    rt_d = (nb(MID, 0, 1) != MID)[yy, xx]
+    crev = ~gap & up_d
+    under = ~gap & ~crev & (dn_d | rt_d)
+    # facet joints: a crack on the lower-right side of a joint, a lit lip over it
+    fj_ = ~gap & ~crev & (((nb(FID_, -1, 0) != FID_) & (nb(MID, -1, 0) == MID)) |
+                          ((nb(FID_, 0, -1) != FID_) & (nb(MID, 0, -1) == MID)))[yy, xx]
+    crack = fj_ & (vnoise2(X, V, 2.0, hashu(seed, 514)) > 0.22)
+    CR = np.zeros(shp, bool)
+    CR[yy, xx] = crack
+    lipc = (nb(CR, 1, 0)[yy, xx]) & ~crack & ~gap & (lam > 0.55)
+    t = np.where(crack, t - 1, t)
+    t = np.where(lipc, t + 1, t)
+    # skin: sibling swaps in dominoes, a few lit flecks and pits
+    cell = hashu(seed, np.floor(X / 2).astype(np.int64), np.floor(V).astype(np.int64), 515)
+    kind = h01(cell, 1)
+    edge_any = up_d | lf_d | dn_d | rt_d
+    swap = ~gap & ~edge_any & (kind < 0.22)
+    fleck = ~gap & ~edge_any & (kind >= 0.22) & (kind < 0.28) & (lam > 0.6)
+    pit = ~gap & ~edge_any & (kind >= 0.28) & (kind < 0.34) & (lam < 0.8)
+    t = np.where(fleck, t + 1, np.where(pit, t - 1, t))
     t = np.clip(t, 1, 5)
-    t = np.where(crack | shade_join, 0, t)
-    t = np.where(d >= Hf - 1, np.maximum(0, t - 1), t)     # damp foot
-    # families: the band's bias among the rock's siblings, per plate; swaps in clusters
+    t = np.where(under & (t > 2), t - 1, t)
+    t = np.where(crev | gap, 0, t)
+    # families: the band at the lump's centre (absolute height), a sibling per lump
+    bounds, bfams, _btex = band_table(T)
+    period = bounds[-1]
+    zb = np.mod(-F['cv'], period)
+    band = np.clip(np.searchsorted(bounds, zb, 'right') - 1, 0, len(bfams) - 1)
     base_ids, bias = [], []
     for name in bfams:
-        b, p = _sib_of(name)
-        base_ids.append(sibs(b))
-        bias.append(np.cumsum(p))
+        b_, p_ = _sib_of(name)
+        base_ids.append(sibs(b_))
+        bias.append(np.cumsum(p_))
     base_ids, bias = np.array(base_ids), np.array(bias)
-    r = h01(pid, 8)
+    r = h01(mid, 22)
     si = (r > bias[band, 0]).astype(np.int64) + (r > bias[band, 1]).astype(np.int64)
-    swap = (h01(seed, lid, np.floor(s / 2).astype(np.int64), np.floor(zc / 2).astype(np.int64), 45) < 0.08) | flute
-    si = np.where(swap, (si + 1 + (h01(pid, 9) < 0.5)) % 3, si)
+    si = np.where(swap, (si + 1 + (h01(cell, 2) < 0.5)) % 3, si)
     fam = base_ids[band, si]
-    # recesses: whatever of the face no crag covers (notches between rounded shoulders, insets
-    # under the rim, the fissures between crags): deep shade of the band's cool sibling
-    rec = ~inside
-    fam = np.where(rec, base_ids[band, 2], fam)
-    t = np.where(rec, 0, t)
+    fam = np.where(crev | gap, base_ids[band, 2], fam)
+    # lichen crusts on lit crowns, damp stains on the shaded undersides (clusters)
+    lich = ~gap & ~edge_any & (lam > 0.72) & (h01(seed, np.floor(X / 3).astype(np.int64), np.floor(V / 2).astype(np.int64), 516) < 0.065)
+    fam = np.where(lich, np.where(h01(cell, 3) < 0.5, FID['grass_cool'], FID['earth_warm']), fam)
+    t = np.where(lich, np.clip(t, 2, 4), t)
+    # damp stains on the shaded undersides (clusters of the earth's cool sibling)
+    damp = ~gap & ~crev & (lam < 0.45) & (v > 0.2) & (h01(seed, np.floor(X / 2).astype(np.int64), np.floor(V / 2).astype(np.int64), 517) < 0.11)
+    fam = np.where(damp, FID['earth_cool'], fam)
+    t = np.where(damp, np.clip(t, 1, 3), t)
+    # moss caps on the crowns of a few lumps
+    if T['top'] == 'grass':
+        cap = ~gap & ~crev & (h01(mid, 23) < world.E['face'].get('moss_caps', 0.0)) & (v < -0.6 - 0.12 * (h01(cell, 4) > 0.5)) & (np.abs(u) < 0.62)
+        fam = np.where(cap, FID['leaf'], fam)
+        t = np.where(cap, np.where(lam > 0.78, 4, 3), t)
     fr.F[yy, xx] = fam
     fr.T[yy, xx] = t
-    fr.tag[yy, xx] = np.where(rec, TAG['recess'], TAG['rock'])
-    # keep what the dressing and the checks need
-    fr.MID = MID
-    fr.face = dict(yy=yy, xx=xx, s=s, lid=lid, d=d, Hf=Hf, h=h, zc=zc, u=u, rec=rec, mass=mass, k=k,
-                   crack=crack, ce=ce, Wm=Wm, nx=nx)
+    fr.tag[yy, xx] = np.where(gap | crev, TAG['recess'], TAG['rock'])
+    MIDs = np.full(shp, -1, np.int64)
+    MIDs[yy, xx] = np.where(gap, -1, mid)
+    fr.MID = MIDs
+    ce = (1 - np.minimum(rr, 1)) * np.minimum(F['rx'], F['ry'])
+    fr.face = dict(yy=yy, xx=xx, s=s, lid=lid, d=d, Hf=Hf, h=h, zc=zc, u=(u + 1) / 2, rec=gap | crev, mass=mid,
+                   k=np.where(gap, -1, mid), crack=crack, ce=ce, Wm=2 * F['rx'], nx=nx)
+
+
+def paint_earth(fr: Frame, P: dict, world: World):
+    """The meadow's own face: a low earthy turf bank (the meadow edge set). Soil in thin layers
+    fixed in absolute height (each layer's top row a tone down, so the layers read), small
+    rounded clods lit on their top left with a soft underside (no deep crevices: soil is not
+    rock), the odd field stone, and pale roots hanging from the sod, each with its shadow."""
+    T, seed = world.T, world.seed
+    K = P['kind']
+    sel = (K == FACEK) & (P['ST'] == 0)
+    yy, xx = np.nonzero(sel)
+    if not len(yy):
+        return
+    G = world.geometry()
+    X = fr.X[yy, xx]
+    xw = np.clip(X, 0, world.width - 1)
+    py = P['PY'][yy, xx]
+    h, h2, d = P['ZH'][yy, xx], P['Z2'][yy, xx], P['D'][yy, xx].astype(np.float64)
+    Hf = (h - h2).astype(np.float64)
+    s = G['arc'][py, xw].copy()
+    lid = G['loop'][py, xw].copy()
+    s[np.isnan(s)] = X[np.isnan(s)]
+    zc = h - d + 0.5
+    V = -zc
+    bounds, bfams, btex = band_table(T)
+    zb = np.mod(zc + 0.8 * (2 * vnoise1(X, 11.0, hashu(seed, 601)) - 1), bounds[-1])
+    band = np.clip(np.searchsorted(bounds, zb, 'right') - 1, 0, len(bfams) - 1)
+    ids = np.array([sibs(hp.family(n)) for n in bfams])
+    sib = np.array([{'': 0, '_warm': 1, '_cool': 2}[n[len(hp.family(n)):]] for n in bfams])
+    fam = ids[band, sib[band]]
+    t = np.full(X.shape, 3)
+    parting = (zb - bounds[band] > bounds[band + 1] - bounds[band] - 1.0) & (vnoise1(X, 5.0, hashu(seed, 602)) > 0.3)
+    t = np.where(parting, 2, t)
+    F = lump_field(world, X, V)
+    mid, u, v = F['id'], F['u'], F['v']
+    inl = mid >= 0
+    lam = _lamb(u, v)
+    ct = np.where(lam > 0.66, 4, np.where(lam < 0.36, 2, 3))
+    t = np.where(inl & (h01(mid, 31) < 0.8), ct, t)
+    fam = np.where(inl & (lam > 0.66), ids[band, 1], fam)
+    shp = fr.shape
+    MID = np.full(shp, -2, np.int64)
+    MID[yy, xx] = mid
+    upl = ((nb(MID, -1, 0) != MID) | (nb(MID, 0, -1) != MID))[yy, xx] & inl
+    dnr = ((nb(MID, 1, 0) != MID) | (nb(MID, 0, 1) != MID))[yy, xx] & inl & ~upl
+    t = np.where(upl, np.minimum(t, 2), t)
+    t = np.where(dnr & (h01(mid, 31) < 0.7), 2, t)
+    sw = inl & (h01(mid, 32) < 0.35)
+    fam = np.where(sw, ids[band, (sib[band] + 1 + (h01(mid, 33) < 0.5)) % 3], fam)
+    # the odd field stone, 3 x 2, lit on its top left
+    gx, gz = np.floor(X / 5).astype(np.int64), np.floor(zc / 4).astype(np.int64)
+    stn = h01(seed, gx, gz, 603) < 0.05
+    ox = (h01(seed, gx, gz, 604) * 2).astype(np.int64)
+    sx_ = X - gx * 5 - ox
+    sz_ = zc - gz * 4
+    st_m = stn & (sx_ >= 0) & (sx_ < 3) & (sz_ >= 1) & (sz_ < 3)
+    fam = np.where(st_m, FID[T['loose']], fam)
+    t = np.where(st_m, np.where((sx_ == 0) & (sz_ >= 2), 4, np.where(sz_ < 2, 2, 3)), t)
+    # roots: pale threads hanging 2 to 8 px from the sod, wandering a pixel, a shadow to the right
+    root = np.zeros(X.shape, bool)
+    rsh = np.zeros(X.shape, bool)
+    for dx in range(-2, 3):
+        cx = X - dx
+        on = h01(seed, cx, 605) < world.E['face']['roots']
+        Lr = 3 + 4 * h01(seed, cx, 606)
+        wig = np.round(1.1 * np.sin(d / 2.4 + 6.28 * h01(seed, cx, 607))).astype(np.int64)
+        hit = on & (d >= 2) & (d <= Lr) & (dx == wig)
+        root |= hit
+        rsh |= on & (d >= 2) & (d <= Lr) & (dx == wig + 1)
+    rsh &= ~root
+    fam = np.where(root, FID['earth_warm'], fam)
+    t = np.where(root, 5, np.where(rsh, np.maximum(1, t - 1), t))
+    # the lower part of a bank is damp: a tone down in its last third
+    t = np.where(d > Hf * 0.7, np.maximum(1, t - 1), t)
+    t = np.clip(t, 1, 5)
+    fr.F[yy, xx] = fam
+    fr.T[yy, xx] = t
+    fr.tag[yy, xx] = np.where(root, TAG['leaf'], TAG['soil'])
+    MIDs = np.full(shp, -1, np.int64)
+    MIDs[yy, xx] = np.where(inl, mid, -1)
+    fr.MID = MIDs
+    fr.face = dict(yy=yy, xx=xx, s=s, lid=lid, d=d, Hf=Hf, h=h, zc=zc, u=(u + 1) / 2, rec=np.zeros(X.shape, bool),
+                   mass=mid, k=np.where(inl, mid, -1), crack=np.zeros(X.shape, bool), ce=np.zeros(X.shape),
+                   Wm=2 * F['rx'], nx=G['nx'][py, xw])
 
 
 LIGHT = np.array([-0.74, 0.56, 0.44])
@@ -1018,35 +1251,41 @@ def paint_courses(fr: Frame, P: dict, world: World):
     fr.F[yy, xx] = fam
     fr.T[yy, xx] = t
     fr.tag[yy, xx] = np.where(joint, TAG['recess'], TAG['rock'])
+    MIDs = np.full(fr.shape, -1, np.int64)
+    MIDs[yy, xx] = np.where(joint, -1, blk.astype(np.int64))
+    fr.MID = MIDs
     fr.face = dict(yy=yy, xx=xx, s=s, lid=lid, d=d, Hf=Hf, h=h, zc=zc, u=u, rec=joint, mass=blk, k=bk,
                    crack=joint & (zr >= 1.0), ce=ce, Wm=br - bl, nx=G['nx'][py, xw])
 
 
-# ---- side bands: the 5 px rock strip where a top's edge runs north-south ---------------------
+# ---- side bands: the narrow rock strip where a top's edge runs north-south --------------------
+SIDE = 3        # eastward-edges.md 3.3: a 3 px band at our scale
+
+
 def side_maps(world: World):
-    """Per plan pixel: how far (1..STRIP) the nearest lower ground lies to the west and to the
+    """Per plan pixel: how far (1..SIDE) the nearest lower ground lies to the west and to the
     east in the same plan row, and whether the ground just south is not lower (so the edge
     there runs north-south and a side band shows, rather than a south face)."""
     if getattr(world, '_side', None) is None:
         Z = world.Z
         R, C = Z.shape
-        big = np.pad(Z, ((0, 3), (STRIP, STRIP)), mode='edge')
+        big = np.pad(Z, ((0, 3), (SIDE, SIDE)), mode='edge')
         dw = np.zeros(Z.shape, np.int8)
         de = np.zeros(Z.shape, np.int8)
-        for k in range(STRIP, 0, -1):
-            dw = np.where(big[:R, STRIP - k:STRIP - k + C] < Z, k, dw)
-            de = np.where(big[:R, STRIP + k:STRIP + k + C] < Z, k, de)
+        for k in range(SIDE, 0, -1):
+            dw = np.where(big[:R, SIDE - k:SIDE - k + C] < Z, k, dw)
+            de = np.where(big[:R, SIDE + k:SIDE + k + C] < Z, k, de)
         south_ok = np.ones(Z.shape, bool)
         for k in (1, 2):
-            south_ok &= big[k:R + k, STRIP:STRIP + C] >= Z
+            south_ok &= big[k:R + k, SIDE:SIDE + C] >= Z
         world._side = (dw, de, south_ok)
     return world._side
 
 
 def paint_sides(fr: Frame, P: dict, world: World):
-    """Side bands (terrace.py's rule): a west-facing band lit (3 to 4), an east-facing one in
-    the dark tones (1 to 2), each a column of small lumps in the rock's own ramp, closed by the
-    rock's edge tone where it meets the lower ground."""
+    """Side bands (eastward-edges.md 3.3): two px of rock on the outside, lit (4, 3) facing
+    west and dark (2, 1) facing east, then the darkest line in the picture between the band and
+    the top (the rock's edge tone, broken every few px), and the top's lip row darker beside it."""
     T, seed = world.T, world.seed
     dw, de, south_ok = side_maps(world)
     K = P['kind']
@@ -1057,145 +1296,160 @@ def paint_sides(fr: Frame, P: dict, world: World):
     so = south_ok[py, xw]
     west = top & (a > 0) & so & (fr.mat != MAT_WATER)
     east = top & (b > 0) & so & ~west & (fr.mat != MAT_WATER)
+    bounds, bfams, _ = band_table(T)
+    ids = np.array([sibs(hp.family(n)) for n in bfams])
     for m, dist, lit in ((west, a, True), (east, b, False)):
         if not m.any():
             continue
-        bounds, bfams, _ = band_table(T)
         z = P['ZH'] - 2 * dist
         band = np.clip(np.searchsorted(bounds, np.mod(z, bounds[-1]), 'right') - 1, 0, len(bfams) - 1)
-        ids = np.array([sibs(hp.family(n)) for n in bfams])
-        lump = np.floor((py + 3 * (h01(seed, xw, 61) > 0.5)) / 5).astype(np.int64)
+        lump = np.floor((fr.Y + 3 * (h01(seed, xw, 61) > 0.5)) / 5).astype(np.int64)
         lh = hashu(seed, xw // 3, lump, 62)
-        si = (h01(lh, 1) * 3).astype(np.int64)
-        fam = ids[band, np.minimum(si, 2)]
-        rowin = np.mod(py, 5)
+        fam = ids[band, np.minimum((h01(lh, 1) * 3).astype(np.int64), 2)]
+        rowin = np.mod(fr.Y + (h01(seed, xw // 3, 63) * 5).astype(np.int64), 5)
         if lit:
-            t = np.where(rowin == 0, 4, np.where(rowin == 4, 2, 3))
-            t = np.where(dist >= STRIP, np.minimum(t, 3), t)
+            t = np.where(dist == 1, np.where(rowin == 4, 3, 4), np.where(rowin == 4, 2, 3))
         else:
-            t = np.where(rowin == 0, 2, 1)
-            t = np.where(dist <= 1, 1, t)
-        t = np.where(dist == 1, EDGE, t)
+            t = np.where(dist == 1, np.where(rowin == 0, 2, 1), 1)
+        line = dist == SIDE
+        brk = h01(hashu(seed, 64), fr.X, fr.Y // 3) < 0.22
+        t = np.where(line, np.where(brk, 1, EDGE), t)
         fr.F[m] = fam[m]
         fr.T[m] = t[m]
         fr.tag[m] = TAG['side']
     fr.side_w, fr.side_e = west, east
+    # the top's lip row runs down the side too: a darker row of the top's own ground
+    beside = top & ~(west | east) & (nb(west | east, 0, -1) | nb(west | east, 0, 1)) & (fr.mat == MAT_GROUND)
+    fr.T[beside] = np.minimum(fr.T[beside], 2)
 
 
-# ---- rims: the lip of a top, the fringe hanging over the face, the overhang's shade ----------
-def fringe_len(world: World, lid, s, kind: str):
-    lo, hi = world.T['fringe_len']
-    cw = 6.0
-    ph = h01(world.seed, lid, 71) * cw
-    c = np.floor((s + ph) / cw).astype(np.int64)
-    u = (s + ph) / cw - c
-    Lc = lo + (hi - lo + 0.999) * h01(world.seed, lid, c, 72)
-    if kind == 'snow':
-        # a wind-blown cornice: lobes 9 px long, 2 to 5 px deep, built out by the west wind so
-        # each lobe hangs deepest towards its east end
-        cw = 9.0
-        ph = h01(world.seed, lid, 74) * cw
-        c = np.floor((s + ph) / cw).astype(np.int64)
-        u = (s + ph) / cw - c
-        Lc = 2 + 3.999 * h01(world.seed, lid, c, 73)
-        prof = Lc * np.sqrt(np.clip(1 - (2 * u - 1) ** 2, 0, 1)) * (0.55 + 0.45 * u) + 0.5
-        return np.floor(prof), u
-    prof = Lc * np.sqrt(np.clip(1 - (2 * u - 1) ** 2, 0, 1)) + 0.35
-    return np.floor(prof), u
+# ---- rims: the lip, the dark line and shade under it, the streaks, the foot ----------------------
+def lip_overhang(world: World, X, kind: str):
+    """How far the lip hangs over the face at each world column (eastward-edges.md 3.1, the
+    shared rule: a 1 px wobble in runs of 1 to 10): the biome's turf or crumble 0 or 1 px, the
+    meadow's sod 1 or 2 in longer soft runs, a snow cornice 1 or 2 (a low lobe now and then), a
+    built coping 3. The run length is the edge set's own (its `scale`)."""
+    L = world.E['lip']
+    if kind == 'coping':
+        return np.full(np.shape(X), 3)
+    w = vnoise1(X, L['scale'] if kind != 'cornice' else 3.2, hashu(world.seed, 71)) > 0.55
+    if kind == 'cornice':
+        lobe = vnoise1(X, 7.0, hashu(world.seed, 72)) > 0.62
+        return 1 + (w | lobe).astype(np.int64)
+    lo = L['over'][0]
+    return lo + w.astype(np.int64) * (L['over'][1] - lo)
 
 
 def paint_rims(fr: Frame, P: dict, world: World):
+    """The rim in Eastward's value structure (eastward-edges.md 2.2 and 3.1), in the biome's
+    own ramps: on the top, a row of its ground a step darker at the edge with a broken lit row
+    two rows behind; over the face, the lip hanging 0 or 1 px (no teeth, no blades); then the
+    rim line (tone 1), the darkest line (0), a shade of two or three rows stepping back up, a
+    zone of short horizontal streaks, and at the bottom a dark foot band with a pebble or two."""
     T, seed = world.T, world.seed
     K = P['kind']
     face = (K == FACEK) & (P['ST'] == 0)
     top = (K == TOP)
-    # the lip: the last row of a top over a face is lit, with blades standing up along it
-    lip = top & nb(face, 1, 0) & (fr.tag != TAG['side'])
-    g = lip & (fr.mat == MAT_GROUND)
-    fr.T[g] = 4
-    above = nb(g, 1, 0) & top & (fr.mat == MAT_GROUND) & (fr.tag != TAG['side'])
-    bl = above & (h01(hashu(seed, 81), fr.X // 2, fr.Y) < 0.45)
-    fr.T[bl] = 4
-    sn = lip & (fr.mat == MAT_SNOW)
+    edge_row = top & nb(face, 1, 0) & (fr.tag != TAG['side'])
+    E_ = world.E
+    lit_row = top & nb(edge_row, 2, 0) & ~edge_row & (fr.tag != TAG['side']) & (vnoise1(fr.X, 4.0, hashu(seed, 81)) < E_['lip']['lit_row'])
+    for m, mat_ok in ((lit_row, (fr.mat == MAT_GROUND) | (fr.mat == MAT_PATH)),):
+        mm = m & mat_ok
+        fr.T[mm] = np.maximum(fr.T[mm], 4)
+    sn = edge_row & (fr.mat == MAT_SNOW)
     fr.T[sn] = 5
     if not hasattr(fr, 'face'):
         return
     f = fr.face
     yy, xx = f['yy'], f['xx']
-    # what the top above each face column is made of (the rim pixel's own material)
     py = P['PY'][yy, xx]
-    xw = np.clip(fr.X[yy, xx], 0, world.width - 1)
+    X = fr.X[yy, xx]
+    xw = np.clip(X, 0, world.width - 1)
     mat = top_material(world, py, xw, f['h'])
-    kind = T['fringe']
-    L, u = fringe_len(world, f['lid'], f['s'], 'grass')
-    Ls, _ = fringe_len(world, f['lid'], f['s'], 'snow')
-    L = np.where(mat == MAT_SNOW, Ls, L)
+    lipk = E_['lip']['kind']
+    L = np.where(mat == MAT_SNOW, lip_overhang(world, X, 'cornice'), lip_overhang(world, X, lipk))
     L = np.where(mat == MAT_WATER, 0, L)
-    L = np.where(mat == MAT_PATH, np.minimum(L, 2), L)
     d = f['d']
+    # the edge row of the top, where nothing hangs over
+    E = np.zeros(fr.shape, bool)
+    E[yy[(d == 1) & (L == 0)], xx[(d == 1) & (L == 0)]] = True
+    E = nb(E, 1, 0) & edge_row & ((fr.mat == MAT_GROUND) | (fr.mat == MAT_PATH))
+    fr.T[E] = np.minimum(fr.T[E], 2)
+    # the overhang
     on = d <= L
-    if kind == 'coping':
-        on = d <= 3
-    gf = sibs(T['top']) if kind != 'grass' else sibs('grass')
-    fam = np.where(mat == MAT_SNOW, FID['snow'], np.where(mat == MAT_PATH, FID['earth'], gf[(h01(seed, f['lid'], np.floor(f['s'] / 6).astype(np.int64), 74) * 3).astype(np.int64) % 3]))
-    if kind == 'crumble':
-        fam = np.where(mat == MAT_SNOW, FID['snow'], sibs(T['top'])[0])
-    if kind == 'coping':
+    topf = sibs(T['top'])
+    lip_fam = np.where(mat == MAT_SNOW, FID['snow'],
+                       np.where(mat == MAT_PATH, sibs(T.get('ledge', 'path'))[0], topf[(h01(seed, np.floor(X / 7).astype(np.int64), 74) * 3).astype(np.int64) % 3]))
+    if lipk == 'coping':
         ids = sibs(T['rock'])
-        jt = np.mod(f['s'] + 5 * h01(seed, f['lid'], 75), 13.0) < 1.0
-        tc = np.where(d == 1, 4, np.where(d == 2, 3, 1))
-        tc = np.where(jt & (d > 1), 1, tc)
-        t = tc
-        fam = ids[(h01(seed, f['lid'], np.floor((f['s'] + 5) / 13).astype(np.int64), 76) * 3).astype(np.int64) % 3]
+        jt = np.mod(X + 5 * h01(seed, f['lid'], 75), 13.0) < 1.0
+        tl = np.where(d == 1, 4, np.where(d == 2, 3, 1))
+        tl = np.where(jt & (d > 1), 1, tl)
+        lip_fam = ids[(h01(seed, f['lid'], np.floor((X + 5) / 13).astype(np.int64), 76) * 3).astype(np.int64) % 3]
+    elif lipk == 'sod':
+        # a soft sod overhang: grass at body tone, its underside a dark row of the cool sibling
+        tl = np.where(mat == MAT_SNOW, np.where(d == 1, 4, 3), np.where(d >= L, 1, 3))
+        lip_fam = np.where((d >= L) & (mat == MAT_GROUND), topf[2], lip_fam)
     else:
-        last = d >= L
-        t = np.where(last, 2, 3)
-        t = np.where((d == 1) & (u < 0.45), 4, t)
-        t = np.where(last & (L >= 3), 1, t)
-        t = np.where((mat == MAT_SNOW), np.where(d == 1, 4, np.where(last, 2, 3)), t)
-    fam = np.broadcast_to(fam, on.shape)
-    fr.F[yy[on], xx[on]] = fam[on]
-    fr.T[yy[on], xx[on]] = t[on]
+        tl = np.where(mat == MAT_SNOW, np.where(d == 1, 4, 3), 2)
+    lip_fam = np.broadcast_to(lip_fam, on.shape)
+    fr.F[yy[on], xx[on]] = lip_fam[on]
+    fr.T[yy[on], xx[on]] = tl[on] if np.ndim(tl) else tl
     fr.tag[yy[on], xx[on]] = TAG['fringe']
-    # the overhang's shade on the rock under it: two tones down, then one, a row deeper east
-    Lr = np.where(kind == 'coping', 3, L)
-    under = ~on & (d - Lr <= 1 + (u > 0.6)) & (mat != MAT_WATER)
-    r1 = under & (d - Lr <= 1)
-    idx = (yy[r1], xx[r1])
-    fr.T[idx] = np.maximum(0, np.where(fr.T[idx] == EDGE, EDGE, fr.T[idx] - 2))
-    r2 = under & ~r1
-    idx = (yy[r2], xx[r2])
-    fr.T[idx] = np.where(fr.T[idx] == EDGE, EDGE, np.maximum(0, fr.T[idx] - 1))
+    rock = ~on & np.isin(fr.tag[yy, xx], (TAG['rock'], TAG['recess'], TAG['soil']))
+    q = d - L                                        # rows below the lip
+    big = f['Hf'] >= 48
+    sh = np.where(big, E_['lip']['shade'][1], E_['lip']['shade'][0])
+    zs = np.where(big, E_['lip']['streaks'][1], E_['lip']['streaks'][0])
+    cur = fr.T[yy, xx]
+    t = cur.copy()
+    ul = E_['lip']['under'][0] > 0
+    t = np.where(rock & (q == 1) & ul, np.minimum(cur, 1), t)                    # rim line
+    t = np.where(rock & (q == 2) & ul, 0, t)                                     # darkest line
+    t = np.where(rock & (q <= 2) & ~ul, np.maximum(0, cur - 3 + q), t)          # under a sod: its shade, 2 then 1
+    t = np.where(rock & (q >= 3) & (q < 3 + sh), np.maximum(0, cur - np.where(q < 3 + sh - 1, 2, 1)), t)
+    # the streak zone: short horizontal dashes (4 px) a tone down, a lit pixel row over some
+    qz = q - 3 - sh
+    off = (h01(seed, np.floor(f['zc']).astype(np.int64), 77) * 5).astype(np.int64)
+    qx = X + off
+    dash = rock & (qz >= 0) & (qz < zs) & (h01(seed, qx // 5, np.floor(f['zc']).astype(np.int64), 78) < 0.34) & (np.mod(qx, 5) < 4)
+    t = np.where(dash, np.maximum(1, cur - 1), t)
+    # the foot band (3.2): the last rows dark, the very last darkest, a pebble now and then
+    Hf = f['Hf']
+    foot = rock & (d > Hf - E_['foot']['band'])
+    t = np.where(foot & (d >= Hf), np.minimum(t, 1), np.where(foot, np.maximum(0, t - 1), t))
+    peb = foot & (d < Hf) & (h01(seed, X // 3, np.floor(f['zc']).astype(np.int64), 79) < E_['foot']['pebbles']) & (np.mod(X, 3) < 2)
+    t = np.where(peb, 3, t)
+    nonedge = t != EDGE
+    fr.T[yy[nonedge], xx[nonedge]] = t[nonedge]
+    pb = peb & nonedge
+    fr.F[yy[pb], xx[pb]] = sibs(T['loose'])[1]
     fr.fringeL = L
     fr.rim_mat = mat
 
 
 # ---- cast shadows on the lower ground ------------------------------------------------------
 def paint_shadows(fr: Frame, P: dict, world: World, steps: int = 2):
-    """A face throws its shadow down onto the ground at its foot (two tones down to a wavy
-    hard edge 2 to 4 px out, then one tone down to SHADOW px); an east-facing side band throws
-    one east. On the ground's own ramp (house-style 6)."""
+    """Under a face the foot band is the shadow (eastward-edges.md 7.2): the ground's first row
+    one tone down, the next one broken. An east-facing side band throws its shadow east: the
+    core two tones down for 2 or 3 px, its rim one tone down for 2 more (the nearest the ramp
+    comes to Eastward's soft edge). On the ground's own ramp (house-style 6)."""
     K = P['kind']
     ground = (K == TOP) & np.isin(fr.tag, (TAG['ground'], TAG['path'], TAG['snow']))
-    caster = (K == FACEK) | (fr.tag == TAG['side'])
-    dist = np.zeros(fr.shape, np.int32)
-    for k in range(SHADOW, 0, -1):
-        dist = np.where(nb(caster, -k, 0), k, dist)
-    w1 = 2 + np.floor(3 * vnoise1(fr.X, 5.0, hashu(world.seed, 91))).astype(np.int32)
-    w2 = SHADOW - 1 - np.floor(3 * vnoise1(fr.X, 7.0, hashu(world.seed, 92))).astype(np.int32)
-    s2 = ground & (dist > 0) & (dist <= w1)
-    s1 = ground & (dist > w1) & (dist <= w2)
+    face = (K == FACEK) & (P['ST'] == 0)
+    c1 = ground & nb(face, -1, 0)
+    c2 = ground & nb(c1, -1, 0) & ~c1 & (vnoise1(fr.X, 3.0, hashu(world.seed, 93)) > 0.45)
+    fr.T[c1] = np.maximum(0, fr.T[c1] - 1)
+    fr.T[c2] = np.maximum(0, fr.T[c2] - 1)
     east = getattr(fr, 'side_e', np.zeros(fr.shape, bool))
     de = np.zeros(fr.shape, np.int32)
-    for k in range(SHADOW, 0, -1):
+    for k in range(6, 0, -1):
         de = np.where(nb(east, 0, -k), k, de)
-    s2 |= ground & (de > 0) & (de <= 3)
-    s1 |= ground & (de > 3) & (de <= SHADOW - 2)
+    w1 = 2 + (vnoise1(fr.Y, 5.0, hashu(world.seed, 91)) > 0.5)
+    s2 = ground & (de > 0) & (de <= w1)
+    s1 = ground & (de > w1) & (de <= w1 + 2)
     fr.T[s2] = np.maximum(0, fr.T[s2] - steps)
-    fr.T[s1 & ~s2] = np.maximum(0, fr.T[s1 & ~s2] - 1)
-    # contact line: the first ground row under a face
-    c = ground & nb(K == FACEK, -1, 0)
-    fr.T[c] = np.minimum(fr.T[c], 1)
+    fr.T[s1] = np.maximum(0, fr.T[s1] - 1)
 
 
 # ---- no speckle -------------------------------------------------------------------------------
@@ -1255,6 +1509,7 @@ def render(world: World, box=None, dress: bool = True) -> Render:
     if dress:
         dress_faces(fr, world)
         dress_feet(fr, world)
+        paint_decals(fr, world)
     despeckle(fr)
     return Render(fr, (x0 - fx0, y0 - fy0, x1 - fx0, y1 - fy0))
 
@@ -1311,6 +1566,8 @@ CLOVER = [stamp(['.44.', '4433', '.32.']), stamp(['44', '32']), stamp(['.44', '4
 FLOWER = [stamp(['55', '43']), stamp(['.5.', '554', '.3.']), stamp(['55.', '453', '.3.'])]
 MOUND = [stamp(['..4444..', '.444433.', '43333322', '32222221', '.111111.']),
          stamp(['.4443.', '443332', '322221', '.1111.'])]
+BITE = stamp(['.33.', '3333', '.22.'])
+REED = [stamp(['4..', '4.4', '343', '343', '232', '22.']), stamp(['.4.', '34.', '344', '233', '22.']), stamp(['4.', '43', '34', '23', '22'])]
 PEBBLE = [stamp(['45', '32']), stamp(['.44.', '4332', '.22.']), stamp(['44', '43', '22']), stamp(['54', '31'])]
 
 
@@ -1362,7 +1619,7 @@ def dress_ground(fr: Frame, world: World):
         return dress_dry(fr, world)
     g = (fr.tag == TAG['ground']) & np.isin(fr.F, sibs('grass'))
     edge = near(~g & (fr.P['kind'] > 0), 5) & g
-    p = np.where(edge, 0.75, 0.6)
+    p = np.where(edge, 0.75, 0.55)
     gid = sibs('grass')
     for x, y, hh in zip(*candidates(fr, 6, hashu(seed, 101), p)):
         st = TUFTS[int(hh % np.uint32(len(TUFTS)))]
@@ -1403,11 +1660,11 @@ def dress_dry(fr: Frame, world: World):
 
 # ---- snow ---------------------------------------------------------------------------------------
 def paint_snow(fr: Frame, world: World):
-    """House snow, no grit: a calm plane (3) laid in large drifts. Each drift is a tone up on
-    its windward west and north, its crest lit, and soft blue-violet shade (the cool sibling,
-    tone 2) on its east and south sides and in its lee. Where the snow ends on lower ground a
-    crisp edge: a lit lip (5) over the snow's shaded south face (2, then 1), the ground below
-    two tones down. At a rim the fringe draws one wind-blown cornice (no doubled line)."""
+    """House snow, no grit and no contour lines: a calm plane (3) laid in broad drifts a tone
+    up, each drift's crest lit (5) along its windward north-west edge and a single cool row (2)
+    on its south edge only. Where the snow ends on the same ground it is a thin layer with a
+    height: a lit lip (5) over a shaded south face of two rows (2, then 1), the ground under it
+    a tone down; its west and east ends lit and shaded. At a rim the lip draws the cornice."""
     seed = world.seed
     K = fr.P['kind']
     sn = (K == TOP) & (fr.mat == MAT_SNOW) & (fr.P['ST'] == 0)
@@ -1418,19 +1675,18 @@ def paint_snow(fr: Frame, world: World):
     fr.F[sn] = sf[0]
     fr.T[sn] = 3
     fr.tag[sn] = TAG['snow']
-    n = fbm2(X, Y * 1.7, 38.0, hashu(seed, 123), 2)
+    n = fbm2(X, Y * 1.6, 34.0, hashu(seed, 123), 2)
     D = sn & (n > 0.56)
     fr.T[D] = 4
-    crest = D & (~nb(D, -1, 0) | ~nb(D, 0, -1)) & (n > 0.6)
+    crest = D & (~nb(D, -1, 0) | ~nb(D, 0, -1)) & (n > 0.6) & nb(D, 1, 0)
     fr.T[crest] = 5
-    shade = D & (~nb(D, 0, 1) | ~nb(D, 0, 2) | ~nb(D, 0, 3) | ~nb(D, 1, 0) | ~nb(D, 2, 0))
-    fr.F[shade] = sf[2]
-    fr.T[shade] = 2
-    lee = sn & ~D & (nb(D, 0, -1) | nb(D, 0, -2) | nb(D, -1, 0) | nb(D, -1, -1))
-    fr.F[lee] = sf[2]
-    fr.T[lee] = 2
-    calm = sn & ~D & ~lee & (vnoise2(X, Y * 1.5, 30.0, hashu(seed, 124)) < 0.3)
-    fr.F[calm] = sf[2]
+    # a drift's lee: its south edge a broken row of the cool sibling at the plane's tone, only
+    # where the drift is thick (no drawn contour lines)
+    south = D & ~nb(D, 1, 0) & nb(D, -2, 0) & (vnoise1(X, 5.0, hashu(seed, 125)) > 0.45)
+    fr.F[south] = sf[2]
+    fr.T[south] = 3
+    cool = sn & ~D & (vnoise2(X, Y * 1.5, 26.0, hashu(seed, 124)) < 0.28)
+    fr.F[cool] = sf[2]
     ground_below = nb((K == TOP) & ~sn & (fr.tag != TAG['side']), 1, 0)
     s1 = sn & ground_below
     s2 = sn & nb(s1, 1, 0) & ~s1
@@ -1444,8 +1700,8 @@ def paint_snow(fr: Frame, world: World):
     east = sn & ~nb(sn, 0, 1) & ~s1 & ~s2 & ~s3
     fr.F[east] = sf[2]
     fr.T[east] = 2
-    below = (K == TOP) & ~sn & (nb(s1, -1, 0) | nb(s1, -2, 0)) & (fr.tag == TAG['ground'])
-    fr.T[below] = np.maximum(0, fr.T[below] - 2)
+    below = (K == TOP) & ~sn & nb(s1, -1, 0) & (fr.tag == TAG['ground'])
+    fr.T[below] = np.maximum(0, fr.T[below] - 1)
 
 
 def snow_extras(fr: Frame, world: World):
@@ -1454,7 +1710,7 @@ def snow_extras(fr: Frame, world: World):
     snowy."""
     seed = world.seed
     sn = fr.tag == TAG['snow']
-    for x, y, hh in zip(*candidates(fr, 30, hashu(seed, 131), np.where(sn & ~near(~sn, 7), 0.5, 0.0))):
+    for x, y, hh in zip(*candidates(fr, 30, hashu(seed, 131), np.where(sn & ~near(~sn, 9), 0.3, 0.0))):
         _snow_rock(fr, x, y, hh, sn, world.T['rock'])
     # drifts at the foot of a face with snow on its top
     if not hasattr(fr, 'face') or not hasattr(fr, 'rim_mat'):
@@ -1493,7 +1749,7 @@ def snow_extras(fr: Frame, world: World):
     fr.T[sh] = np.maximum(0, fr.T[sh] - 2)
 
 
-SNOW_ROCKS = [(3.6, 1.3, -0.45), (7.5, 0.45, 0.0), (2.8, 0.85, 0.15), (5.0, 0.95, 0.45)]   # (rx, ry / rx, lean)
+SNOW_ROCKS = [(4.6, 1.1, -0.4), (7.5, 0.55, 0.0), (4.0, 0.85, 0.15), (5.5, 0.9, 0.4)]   # (rx, ry / rx, lean)
 
 
 def _snow_rock(fr: Frame, x, y, hh, sn, rock):
@@ -1541,6 +1797,33 @@ def _snow_rock(fr: Frame, x, y, hh, sn, rock):
 
 
 # ---- stairs ---------------------------------------------------------------------------------------
+def _timber_steps(fr, world, st, tread, riser, nose, under, a, b):
+    """The meadow's own stair (Eastward's farm stair): a plank laid along each step, lit at
+    its front edge and worn pale in the middle, its riser in shade with a dark row under the
+    nosing and short posts holding the plank at both ends and every 12 to 16 px."""
+    seed = world.seed
+    X, Y = fr.X, fr.Y
+    tf = sibs('timber')
+    fam = np.full(fr.shape, tf[0])
+    t = np.where(tread, 3, 1)
+    t = np.where(nose, 4, t)
+    t = np.where(tread & nb(tread, -1, 0) & ~nb(tread, -2, 0) & ~nose, 4, t)     # the plank's back edge
+    width = a + b
+    u = a / np.maximum(1, width)
+    worn = tread & ~nose & (np.abs(u - 0.5) < 0.18)
+    fam = np.where(worn, tf[1], fam)
+    gr = tread & (h01(hashu(seed, 147), X // 4, Y) < 0.2) & (np.mod(X, 4) < 3) & ~nose
+    t = np.where(gr, 2, t)
+    pitch = 12 + (hashu(seed, 148) % np.uint32(5)).astype(np.int64)
+    post = riser & ((a <= 2) | (b <= 2) | (np.mod(a - 3, pitch) < 2)) & ~under
+    fam = np.where(post, tf[2], fam)
+    t = np.where(post, np.where(np.mod(a - 3, pitch) == 0, 3, 2), t)
+    t = np.where(under, 0, t)
+    fr.F[st] = fam[st]
+    fr.T[st] = t[st]
+    fr.tag[st] = TAG['stair']
+
+
 def paint_stairs(fr: Frame, world: World):
     """Steps cut from the crag itself, not laid like boards: each step is a row of stones 4 to
     10 px long in the rock's own ramp (one sibling a stone), each with a lit top-left and a
@@ -1576,8 +1859,10 @@ def paint_stairs(fr: Frame, world: World):
     riser = st & (K == FACEK)
     nose = tread & nb(riser, 1, 0)
     under = riser & nb(nose, -1, 0)
+    if world.E['stair'] == 'timber':
+        return _timber_steps(fr, world, st, tread, riser, nose, under, a, b)
     # stones along the step, their joints wandering
-    Ls = 6 + (hashu(stp, 8) % np.uint32(4)).astype(np.int64)
+    Ls = 11 + (hashu(stp, 8) % np.uint32(8)).astype(np.int64)
     off = (hashu(stp, 2) % np.uint32(9)).astype(np.int64)
     q = X + off
     k0 = q // Ls
@@ -1619,19 +1904,19 @@ def paint_stairs(fr: Frame, world: World):
     fr.tag[st] = TAG['stair']
     # cheek stones overlap the stair's sides, so its edges are ragged and it sits in the rock
     allow = st | np.isin(fr.tag, (TAG['side'], TAG['rock'], TAG['recess']))
-    for k, sr in enumerate(world.stairs):
-        n = (sr.z_high - sr.z_low) // sr.riser
-        y_top = sr.py - n * sr.tread - world.top - sr.z_high
+    for k, sr in enumerate(world.stairs if world.E['stair'] == 'rock' else []):
+        y_top = sr.top_row - world.top - sr.z_high
         y_bot = sr.py - world.top - sr.z_low
         for side, xe in ((0, sr.x0), (1, sr.x1)):
-            yy = y_top + 2
+            yy = y_top + 1
             j = 0
-            while yy < y_bot:
-                hh = hashu(seed, k, side, j, 142)
-                rx = 3.0 + 2.0 * h01(hh, 1)
-                ry = 3.0 + 1.8 * h01(hh, 2)
-                cx = xe + (-1.5 if side == 0 else 0.5) + (h01(hh, 3) - 0.5) * 2
-                boulder(fr, cx, yy + ry, rx, ry, hh, allow, world.T['rock'], moss=0.35, tag=TAG['side'])
+            while yy < y_bot - 1:
+                hh = hashu(seed, sr.x0, sr.py, side, j, 142)
+                rx = 2.6 + 1.6 * h01(hh, 1)
+                ry = 2.4 + 1.4 * h01(hh, 2)
+                cx = xe + (-1.0 if side == 0 else 0.0) + (h01(hh, 3) - 0.5) * 1.5
+                boulder(fr, cx, yy + ry, rx, ry, hh, allow, world.T['loose'], moss=0.3 if world.T['top'] == 'grass' else 0.0,
+                        tag=TAG['side'])
                 yy += int(2 * ry + 1 + 2 * h01(hh, 4))
                 j += 1
 
@@ -1699,167 +1984,188 @@ def fall_width(drop: int) -> int:
 
 
 def paint_water(fr: Frame, world: World):
+    """Still and running water on the tops (eastward-edges.md 5.3): water lies a little below
+    its banks, so the north bank shows a small face (2 px of earth under a darker lip row of
+    the grass), the water's top row is a broken light waterline (tone 5), and under it a dark
+    band (two to four rows on a pond, one on a stream) steps back to the body. Side and south
+    banks meet the water directly. Broad water (a lake, the sea) has depth bands, a foam line
+    at the shore and swells. Current streaks lie with the flow."""
     seed = world.seed
     P = fr.P
     K = P['kind']
     X, Y = fr.X, fr.Y
     wf = sibs('water')
-    # streams and ponds on the tops
     wt = (K == TOP) & (fr.mat == MAT_WATER)
     if wt.any():
-        up_bank = wt & ~nb(wt, -1, 0)
-        lo_bank = wt & ~nb(wt, 1, 0)
-        side = wt & (~nb(wt, 0, -1) | ~nb(wt, 0, 1))
-        t = np.full(fr.shape, 2)
-        t = np.where(side, 3, t)
-        t = np.where(lo_bank, 3, t)
-        t = np.where(up_bank, 1, t)
-        st = wt & ~up_bank & ~side & (h01(hashu(seed, 161), X, Y // 4) < 0.18) & (np.mod(Y, 4) < 3)
+        # how far each water pixel lies below the north bank, and how wide the water is there
+        dn = np.zeros(fr.shape, np.int32)
+        cur = wt & ~nb(wt, -1, 0)
+        for k in range(1, 8):
+            dn = np.where(cur & (dn == 0), k, dn)
+            cur = wt & nb(cur, -1, 0)
+        dn = np.where(wt & (dn == 0), 8, dn)
+        wide = wt & near(wt & nb(wt, 0, 3) & nb(wt, 0, -3) & nb(wt, 3, 0), 3)
+        band = np.where(wide, 2 + (vnoise1(X, 6.0, hashu(seed, 167)) > 0.5) + (vnoise1(X, 13.0, hashu(seed, 168)) > 0.6), 1)
+        t = np.full(fr.shape, 3)
+        t = np.where((dn >= 2) & (dn < 2 + band), np.where(dn == 2, 1, 2), t)
+        line = (dn == 1) & (vnoise1(X, 2.5, hashu(seed, 169)) > 0.3)
+        t = np.where(dn == 1, np.where(line, 5, 2), t)
+        # current: 3 to 5 px lit streaks over their own shadow, glints in pairs
+        st = wt & (dn > 1 + band) & (h01(hashu(seed, 161), X // 4, Y // 3) < 0.16) & (np.mod(X, 4) < 3) & (np.mod(Y, 3) == 0)
         t = np.where(st, 4, t)
-        sh = wt & nb(st, 0, -1) & ~st & ~up_bank
-        t = np.where(sh, 1, t)
-        fr.F[wt] = wf[np.where(vnoise2(X, Y, 7.0, hashu(seed, 162)) > 0.6, 2, 0)[wt]]
-        # broad water (a lake, the sea): depth in bands by the distance from the shore, the
-        # shore's foam line, swells as long lit streaks over their shadow lying with the waves
+        sh = wt & nb(st, -1, 0) & ~st & (dn > 1 + band)
+        t = np.where(sh, 2, t)
+        fr.F[wt] = wf[np.where(vnoise2(X, Y, 9.0, hashu(seed, 162)) > 0.62, 2, 0)[wt]]
+        # broad water: depth by the distance from the shore, foam at the shore, swells
         sd = np.zeros(fr.shape, np.int32)
         shore = ~wt
-        for k in range(1, 15):
+        for k in range(1, 23):
             shore = near(shore, 1)
-            sd = np.where(wt & ~shore & (sd == 0), 0, sd)
             sd = np.where(wt & shore & (sd == 0), k, sd)
-        sd = np.where(wt & (sd == 0), 15, sd)
-        broad = wt & near(sd >= 5, 5)
-        tb = np.where(sd <= 1, 5, np.where(sd <= 2, 4, np.where(sd <= 5, 3, np.where(sd <= 10, 2, 1))))
+        sd = np.where(wt & (sd == 0), 23, sd)
+        broad = wt & near(sd >= 22, 22)      # a lake or the sea: wider than three adults
+        tb = np.where(sd <= 2, 4, np.where(sd <= 6, 3, np.where(sd <= 11, 2, 1)))
         foam = broad & (sd <= 1 + (vnoise1(X, 5.0, hashu(seed, 165)) > 0.55))
-        wave = broad & (sd > 3) & (h01(hashu(seed, 166), X // 5, Y // 2) < 0.16) & (np.mod(X, 5) < 4) & (np.mod(Y, 2) == 0)
+        wave = broad & (sd > 3) & (h01(hashu(seed, 166), X // 5, Y // 2) < 0.14) & (np.mod(X, 5) < 4) & (np.mod(Y, 2) == 0)
         tb = np.where(wave, np.minimum(4, tb + 1), tb)
         tb = np.where(broad & nb(wave, -1, 0) & ~wave & (sd > 3), np.maximum(1, tb - 1), tb)
         t = np.where(broad, tb, t)
         fr.F[foam] = FID['snow']
         fr.T[wt] = t[wt]
         fr.tag[wt] = TAG['water']
-        bank = (K == TOP) & ~wt & near(wt & ~broad, 1) & ~near(broad, 2) & np.isin(fr.tag, (TAG['ground'], TAG['snow'], TAG['path']))
+        # the north bank's small face: two rows of earth over the water, the lip row darker
+        gnd = (K == TOP) & ~wt & np.isin(fr.tag, (TAG['ground'], TAG['path'], TAG['snow'], TAG['side']))
+        b1 = gnd & nb(wt & ~broad, 1, 0)
+        b2 = gnd & nb(b1, 1, 0) & ~b1 & (world.E['bank']['rows'] >= 2)
         ef = sibs('earth')
-        fr.F[bank & (fr.tag != TAG['snow'])] = ef[2]
-        fr.T[bank] = np.where(nb(wt, 1, 0)[bank] | nb(wt, 0, 1)[bank], 2, 3)
-        moss = (K == TOP) & ~wt & ~bank & near(bank, 1) & (fr.tag == TAG['ground']) & (h01(hashu(seed, 163), X // 2, Y // 2) < 0.4) \
-            & (fr.F == fr.F) & np.isin(fr.F, sibs('grass'))
-        fr.F[moss] = FID['leaf']
-        fr.T[moss] = np.where(h01(hashu(seed, 164), X, Y)[moss] < 0.5, 3, 2)
-    # falls
+        fr.F[b1 | b2] = ef[2]
+        fr.T[b1] = 1
+        fr.T[b2] = 2
+        fr.tag[b1 | b2] = TAG['path']
+        lipr = gnd & nb(b2, 1, 0) & ~b1 & ~b2
+        fr.T[lipr] = np.minimum(fr.T[lipr], 2)
+        # side banks: one px of damp earth where the water meets the grass east or west
+        sb = gnd & ~b1 & ~b2 & (nb(wt & ~broad, 0, 1) | nb(wt & ~broad, 0, -1))
+        fr.F[sb] = ef[2]
+        fr.T[sb] = 2
+        # the meadow's banks grow reeds: upright blades of leaf at the water's edge
+        if world.E['bank']['reeds'] > 0:
+            edge_g = gnd & near(wt & ~broad, 2) & ~b1
+            lf = sibs('leaf')
+            for x, y, hh in zip(*candidates(fr, 5, hashu(seed, 170), np.where(edge_g, world.E['bank']['reeds'], 0.0), inset=4)):
+                put_stamp(fr, REED[int(hh % np.uint32(len(REED)))], x, y, int(lf[int(hashu(hh, 4) % np.uint32(3))]), allow=gnd | wt, tag=TAG['leaf'], anchor=(1, 5))
     for f in falls(world):
         _fall(fr, world, f)
 
 
 def _fall(fr: Frame, world: World, f: dict):
+    """A fall over a rim: its width set by the drop (fall_width) and changing all the way down
+    (narrower at the lip, spreading as it falls, swelling and pinching by noise), a lit west
+    edge, sheets and gaps, white water rolling over the lip, wet rock darker either side, mist
+    where it lands, and a plunge pool on the ground under it."""
     P = fr.P
     K = P['kind']
     rim_row = f['py'] - world.top - f['h']
     top_row = rim_row + (f['h'] - f['ztop']) + 1
     foot_row = rim_row + (f['h'] - f['h2'])
-    if foot_row < fr.y0 - 4 or top_row > fr.y1 + 20 or f['x1'] < fr.x0 - 20 or f['x0'] > fr.x1 + 20:
-        f['_foot'] = foot_row
+    if foot_row < fr.y0 - 4 or top_row > fr.y1 + 24 or f['x1'] < fr.x0 - 24 or f['x0'] > fr.x1 + 24:
         return
     wf = sibs('water')
     X, Y = fr.X, fr.Y
     w0 = f['x1'] - f['x0']
-    # the course swells and narrows down the face
-    dl = np.round(1.2 * (2 * vnoise1(Y, 9.0, hashu(f['id'], 1)) - 1) - 0.4 * (Y > top_row + 3)).astype(np.int64)
-    dr = np.round(1.2 * (2 * vnoise1(Y, 11.0, hashu(f['id'], 2)) - 1)).astype(np.int64)
-    fx0, fx1 = f['x0'] + dl, f['x1'] + dr
+    c = (f['x0'] + f['x1']) / 2.0
+    prog = np.clip((Y - top_row) / max(1.0, foot_row - top_row), 0, 1)
+    half = (w0 / 2.0) * (0.7 + 0.45 * prog) + 0.9 * (2 * vnoise1(Y, 6.0, hashu(f['id'], 1)) - 1) \
+        + 0.5 * (2 * vnoise1(Y, 2.5, hashu(f['id'], 8)) - 1)
+    half = np.maximum(1.0, half)
+    cx = c + 0.8 * (2 * vnoise1(Y, 13.0, hashu(f['id'], 2)) - 1)
+    fx0 = np.floor(cx - half).astype(np.int64)
+    fx1 = np.ceil(cx + half).astype(np.int64)
     onface = (K == FACEK) & np.isin(P['PY'], f.get('rows', [f['py']])) & (Y >= top_row) & (Y <= foot_row + 2)
     fall = onface & (X >= fx0) & (X < fx1)
     wet = onface & ~fall & (X >= fx0 - 3) & (X < fx1 + 3)
-    # the frame: wet rock darker and cooler either side, a dark recess right beside the water
     fr.T[wet] = np.where(fr.T[wet] == EDGE, EDGE, np.maximum(0, fr.T[wet] - 1))
     beside = wet & ((X == fx0 - 1) | (X == fx1))
     fr.T[beside] = 0
     fr.tag[wet] = TAG['wet']
     rel = (X + 0.5 - fx0) / np.maximum(1, fx1 - fx0)
-    # a lit west edge (5 then 4), the body in sheets (3 with 4 streaks), the shaded east edge
-    t = np.where(rel < 0.2, 4, np.where(rel > 0.8, 2, 3))
+    t = np.where(rel < 0.25, 4, np.where(rel > 0.78, 2, 3))
     t = np.where(X == fx0, 5, t)
-    streak = fall & (rel > 0.15) & (rel < 0.85) & (h01(hashu(f['id'], 3), X, Y // 6) < 0.45) & (np.mod(Y + X * 3, 6) < 4)
+    streak = fall & (rel > 0.2) & (rel < 0.8) & (h01(hashu(f['id'], 3), X, Y // 5) < 0.45) & (np.mod(Y + X * 3, 5) < 3)
     t = np.where(streak, np.minimum(5, t + 1), t)
-    gap = fall & (rel > 0.25) & (rel < 0.8) & (h01(hashu(f['id'], 5), X, Y // 4) < 0.12) & ~streak
+    gap = fall & (rel > 0.3) & (rel < 0.75) & (h01(hashu(f['id'], 5), X, Y // 4) < 0.1) & ~streak
     t = np.where(gap, 2, t)
     fr.F[fall] = wf[0]
     fr.T[fall] = t[fall]
     fr.tag[fall] = TAG['water']
-    # foam at the lip: the water rolls over white
-    lip = fall & (Y <= top_row + 2)
+    lip = fall & (Y <= top_row + 1)
     fr.F[lip] = np.where((h01(hashu(f['id'], 6), X, Y) < 0.6)[lip], FID['snow'], wf[0])
     fr.T[lip] = np.where(Y[lip] == top_row, 5, 4)
-    # mist where it lands: pale clusters rising over the rock and the pool's edge
-    cx = (f['x0'] + f['x1']) / 2
-    mq = ((X + 0.5 - cx) / (w0 / 2 + 7.0)) ** 2 + ((Y + 0.5 - foot_row) / 9.0) ** 2
-    mist = (mq <= 1.0) & ~fall & (Y <= foot_row + 3) & (h01(hashu(f["id"], 7), X // 2, Y // 2) < 0.65 * (1.2 - mq)) \
-        & np.isin(fr.tag, (TAG['rock'], TAG['recess'], TAG['wet'], TAG['ground'], TAG['leaf']))
-    fr.F[mist] = np.where(mq[mist] < 0.45, FID['snow'], FID['water'])
-    fr.T[mist] = np.where(mq[mist] < 0.45, 3, 5)
+    mq = ((X + 0.5 - c) / (w0 / 2 + 6.0)) ** 2 + ((Y + 0.5 - foot_row) / 6.0) ** 2
+    mist = (mq <= 1.0) & ~fall & (Y <= foot_row + 2) & (h01(hashu(f['id'], 7), X // 2, Y // 2) < 0.55 * (1.2 - mq)) \
+        & np.isin(fr.tag, (TAG['rock'], TAG['recess'], TAG['wet']))
+    fr.F[mist] = FID['snow']
+    fr.T[mist] = 3
     fr.tag[mist] = TAG['foam']
-    # the spring: a seep of moss and leaves at the head of a spring fall
     if f['kind'] == 'spring':
-        seep = (K == FACEK) & (P['PY'] == f['py']) & (np.abs(Y - top_row + 1) <= 1) & (X >= fx0 - 3) & (X < fx1 + 3) & ~fall
+        seep = (K == FACEK) & (P['PY'] == f['py']) & (np.abs(Y - top_row + 1) <= 1) & (X >= fx0.min() - 3) & (X < fx1.max() + 3) & ~fall
         lf = sibs('leaf')
         fr.F[seep] = lf[(h01(hashu(f['id'], 4), X, Y) * 3).astype(np.int64)[seep]]
         fr.T[seep] = np.where(Y[seep] < top_row, 4, 2)
         fr.tag[seep] = TAG['leaf']
-    _pool(fr, world, f, foot_row, (f['x0'] + f['x1']) / 2, w0)
+    _pool(fr, world, f, foot_row, c, w0)
 
 
 def _pool(fr: Frame, world: World, f: dict, foot_row: int, cx: float, w0: int):
-    """A plunge pool on the ground under the fall: the fall's width plus about 8 each side
-    (size-guide 7), dark under the cliff, depth in bands, ripple arcs round the landing over
-    their own shadow, foam at the landing, glints in pairs, a bank of earth and stones."""
+    """A plunge pool under a fall (eastward-edges.md 5.3): a rounded rectangle on the ground
+    at the foot, a little wider than the fall each side, its top edge the face's foot; a light
+    waterline under the foot, a dark band stepping back to the body, small broken ripples and
+    foam where the fall lands, glints in pairs, a bank of damp earth on the south and a rim of
+    stones round its near side."""
     P = fr.P
     K = P['kind']
     X, Y = fr.X, fr.Y
     hh = f['id']
-    rx = w0 / 2 + 11 + 4 * h01(hh, 11)
-    ry = 8.0 + 3.0 * h01(hh, 12)
-    cy = foot_row + ry * 0.75
-    q = ((X + 0.5 - cx) / rx) ** 2 + ((Y + 0.5 - cy) / ry) ** 2
-    q = q + 0.14 * (2 * vnoise2(X, Y, 5.0, hashu(hh, 13)) - 1)
+    rx = w0 / 2 + 8 + 3 * h01(hh, 11)
+    ry = 5.0 + 2.0 * h01(hh, 12)
+    cy = foot_row + ry - 0.5
+    ex = 4.0
+    q = (np.abs((X + 0.5 - cx) / rx) ** ex + np.abs((Y + 0.5 - cy) / ry) ** ex) ** (1 / ex)
+    q = q + 0.05 * (2 * vnoise2(X, Y, 4.0, hashu(hh, 13)) - 1)
     ground = (K == TOP) & (P['ZH'] == f['h2']) & (P['ST'] == 0)
     pool = ground & (q <= 1.0) & (Y > foot_row)
     if not pool.any():
         return
     wf = sibs('water')
-    t = np.where(q < 0.3, 1, np.where(q < 0.65, 2, 3))
-    t = np.where(Y <= foot_row + 2, 1, t)
-    lx, ly = cx, foot_row + 1.5
-    rr = np.sqrt(((X + 0.5 - lx) / 2.0) ** 2 + (Y + 0.5 - ly) ** 2)
-    for i, r0 in enumerate((4.0, 7.5)):
-        broken = vnoise1((X + 0.5 - lx) + 40 * i, 3.0, hashu(hh, 19, i)) > 0.3
-        ring = (rr >= r0) & (rr < r0 + 1.0) & (Y > ly + 1) & broken
-        t = np.where(ring, 4, t)
-        t = np.where((rr >= r0 + 1.0) & (rr < r0 + 2.0) & (Y > ly + 1) & broken & ~ring, np.maximum(1, t - 1), t)
-    # foam where the fall lands: white clumps in pairs, thinning outwards
-    fq = ((X + 0.5 - lx) / (w0 / 2 + 3.0)) ** 2 + ((Y + 0.5 - ly) / 3.5) ** 2
+    dn = Y - foot_row
+    t = np.where(dn == 1, np.where(vnoise1(X, 2.5, hashu(hh, 18)) > 0.3, 5, 2), np.where(dn <= 3, 1, np.where(dn <= 4, 2, 3)))
+    lx, ly = cx, foot_row + 2.5
+    rr = np.sqrt(((X + 0.5 - lx) / 2.2) ** 2 + (Y + 0.5 - ly) ** 2)
+    ring = (rr >= 3.5) & (rr < 4.5) & (Y > ly) & (vnoise1(X, 3.0, hashu(hh, 19)) > 0.35)
+    t = np.where(ring, 4, t)
+    fq = ((X + 0.5 - lx) / (w0 / 2 + 2.5)) ** 2 + ((Y + 0.5 - ly) / 2.2) ** 2
     foam = (fq <= 1.0) & (h01(hashu(hh, 14), X // 2, Y) < 0.85 - 0.5 * fq)
     t = np.where(foam, np.where(fq < 0.5, 5, 4), t)
-    gl = (h01(hashu(hh, 15), X // 2, Y) < 0.05) & (q < 0.8) & (q > 0.4) & ~foam
-    t = np.where(gl, 5, t)
+    gl = (h01(hashu(hh, 15), X // 2, Y) < 0.05) & (dn > 4) & ~foam & (np.mod(X, 2) == 0)
+    gl = gl | (nb(gl, 0, -1) & (dn > 4))
+    t = np.where(gl & (q < 0.85), 4, t)
     fr.F[pool] = np.where(foam[pool], FID['snow'], wf[0])
     fr.T[pool] = t[pool]
     fr.tag[pool] = TAG['water']
-    bank = ground & ~pool & (q <= 1.5) & (Y > foot_row)
+    bank = ground & ~pool & (q <= 1.22) & (Y > foot_row)
     ef = sibs('earth')
     fr.F[bank] = ef[2]
-    fr.T[bank] = np.where(q[bank] < 1.2, 2, 3)
+    fr.T[bank] = np.where(q[bank] < 1.1, 2, 3)
     fr.tag[bank] = TAG['path']
-    # a rim of stones round the pool's near side, each a small boulder
     rim_ok = ground | (fr.tag == TAG['path'])
-    n = int(6 + rx / 2)
+    n = int(4 + rx / 3)
     for i in range(n):
-        u = (i + 0.5 + 0.4 * (h01(hh, 20, i) - 0.5)) / n
-        ang = np.pi * (0.05 + 0.9 * u)
-        sx = cx + np.cos(ang) * rx * 1.08
-        sy = cy + np.sin(ang) * ry * 1.08
-        if sy <= foot_row + 1:
+        u = (i + 0.5 + 0.5 * (h01(hh, 20, i) - 0.5)) / n
+        sx = cx - rx + 2 * rx * u
+        sy = cy + ry * (0.95 + 0.25 * h01(hh, 23, i)) * (1 - 0.35 * (2 * u - 1) ** 4)
+        if h01(hh, 24, i) < 0.35:
             continue
-        r0 = 1.8 + 1.2 * h01(hh, 21, i)
+        r0 = 1.8 + 1.4 * h01(hh, 21, i)
         boulder(fr, sx, sy, r0, r0 * 0.75, hashu(hh, 22, i), rim_ok, 'stone', moss=0.25)
     fr.pools = getattr(fr, 'pools', []) + [(cx, cy, rx, ry, f['h2'])]
 
@@ -2072,7 +2378,7 @@ def dress_faces(fr: Frame, world: World):
         return
     # moss cushions on the crowns of the lower crags (damp, under the overhang of the upper)
     m = f['mass']
-    crown = (f['k'] >= 0) & ~f['rec'] & (h01(m, 51) < 0.55)
+    crown = (f['k'] >= 0) & ~f['rec'] & (h01(m, 51) < 0.1) & (d > Hf * 0.4)
     MID = np.full(fr.shape, -1, np.int64)
     MID[yy, xx] = np.where(~f['rec'], m.astype(np.int64), -1)
     topm = (nb(MID, -1, 0) != MID)[yy, xx] & crown & (d > 6)
@@ -2083,19 +2389,15 @@ def dress_faces(fr: Frame, world: World):
         fr.F[M] = lf[(h01(hashu(seed, 53), fr.X // 4, fr.Y) * 3).astype(np.int64) % 3][M]
         fr.T[M] = tt
         fr.tag[M] = TAG['leaf']
-    # plants in the fissures: a cushion or a fern where a crag's west fissure has room
+    # plants in the crevices: a fern or a cushion here and there, at world candidates (so every
+    # window of the world places the same ones)
     allow = np.isin(fr.tag, (TAG['rock'], TAG['recess']))
-    sel = f['rec'] & (f['ce'] < 1.2) & (f['ce'] >= 0) & (np.abs(d - np.round(Hf * (0.3 + 0.4 * h01(m, 54)))) < 0.5) \
-        & (h01(m, 55) < T['crack_plants']) & (s - (s - f['ce']) < 1.2)
-    done = set()
-    for i in np.nonzero(sel)[0]:
-        key = int(m[i])
-        if key in done:
-            continue
-        done.add(key)
-        st = FERN[int(hashu(m[i], 56) % np.uint32(3))]
-        put_stamp(fr, st, int(fr.X[yy[i], xx[i]]), int(fr.Y[yy[i], xx[i]]),
-                  lambda t, k=key: int(lf[int(hashu(k, t, 57) % np.uint32(3))]), allow=allow, tag=TAG['leaf'], anchor=(2, 1))
+    REC = np.zeros(fr.shape, bool)
+    REC[yy[f['rec']], xx[f['rec']]] = True
+    REC &= nb(allow, 0, 1) & nb(allow, 1, 0) & nb(allow, -1, 0)
+    for x, y, hh in zip(*candidates(fr, 14, hashu(seed, 58), np.where(REC, T['crack_plants'] * 0.6, 0.0), inset=8)):
+        st = FERN[int(hh % np.uint32(3))]
+        put_stamp(fr, st, int(x), int(y), lambda t, k=int(hh): int(lf[int(hashu(k, t, 57) % np.uint32(3))]), allow=allow, tag=TAG['leaf'], anchor=(2, 1))
 
 
 def dress_feet(fr: Frame, world: World):
@@ -2122,7 +2424,7 @@ def dress_feet(fr: Frame, world: World):
         foot = okg & (dist >= 1) & (dist <= 2)
         allow = (ground | face) & ~(fr.tag == TAG['water'])
         gid = sibs('grass')
-        for x, y, hh in zip(*candidates(fr, 5, hashu(seed, 211), np.where(foot, 0.75, 0.0))):
+        for x, y, hh in zip(*candidates(fr, 5, hashu(seed, 211), np.where(foot, world.E['foot']['tufts'], 0.0))):
             put_stamp(fr, TUFTS[int(hh % np.uint32(len(TUFTS)))], x, y, int(gid[int(hashu(hh, 4) % np.uint32(3))]),
                       allow=allow, anchor=(2, 3))
     # scree
@@ -2170,6 +2472,399 @@ def dress_feet(fr: Frame, world: World):
             foliage(fr, x + 0.5, y - 9 - rx * 0.7, rx, rx * 0.85, hh, (fr.P['kind'] > 0) & (fr.tag != TAG['figure']), base='leaf')
 
 
+# ---- set pieces: the polished swatch as parts any region can place -----------------------------
+# Matt, 21 Oct 09:51 and 09:52: "consider how you can reuse assets like the screenshot i just
+# attached once it's polished in other places of the same biome. should help speed up terrain
+# building". A piece is not a picture: it is a rule that edits a region's plan (its height
+# field, masks, stairs) and leaves dressing for the painter, so it adapts to the face height and
+# the outline where it lands, takes its colours from the biome's table, and picks its variant
+# (boulder order, plants, lip runs) by a hash of where it stands, so two copies never match.
+# Nothing is mirrored: the light stays upper left. Every piece returns a Placed record: its
+# footprint on the 8 px grid, its attach points (where paths, streams and ledges join it) and
+# its kind; walk_mask() gives what can be walked.
+@dataclass
+class Placed:
+    """A placed piece: footprint (screen px, on the 8 px grid), attach points (name -> screen
+    (x, y)), the tier it stands on and its variant hash."""
+    kind: str
+    box: tuple
+    attach: dict
+    z: int = 0
+    variant: int = 0
+
+
+def _g8(v: float) -> int:
+    return int(round(v / GRID)) * GRID
+
+
+class Plan:
+    """A region being built: a plan height field and its masks, in the biome's table. Pieces
+    are placed in screen coordinates (x, y of the ground they stand on) with the tier z they
+    stand on; the plan row is y + top + z. `world()` makes the World the painter renders.
+
+        plan = Plan(512, 512, 'highland', seed=4)
+        plan.tier(32, [(-20, 300), (200, 292), (540, 310)])     # a rim drawn as a screen curve
+        st = plan.stair(240, 32, z_low=0, width=40)            # through the face nearest x 240
+        plan.path([st.attach['foot'], (230, 420), (180, 512)], z=0)
+        img = render(plan.world()).image()
+    """
+
+    def __init__(self, width: int, height: int, biome: str = 'highland', seed: int = 1, top: int = 96):
+        self.W, self.H, self.biome, self.seed, self.top = width, height, biome, seed, top
+        self.T = BIOMES[biome]
+        self.Z = np.zeros((height + top, width), np.int32)
+        self.path_m = np.zeros(self.Z.shape, bool)
+        self.water_m = np.zeros(self.Z.shape, bool)
+        self.snow_m = np.zeros(self.Z.shape, bool)
+        self.stairs, self.decals, self.placed = [], [], []
+        self._snapped = False
+
+    # -- terrain ---------------------------------------------------------------------------------
+    def tier(self, z: int, rim, x0: int = None, x1: int = None):
+        """Raise ground to z north of a rim: `rim` is a list of (x, screen row) control points
+        (a Catmull-Rom curve) or an array of screen rows per column (nan where absent)."""
+        rim = curve(rim, self.W) if isinstance(rim, (list, tuple)) else np.asarray(rim, float)
+        cols = np.arange(self.W)
+        ok = ~np.isnan(rim)
+        if x0 is not None:
+            ok &= cols >= x0
+        if x1 is not None:
+            ok &= cols < x1
+        py = np.arange(self.Z.shape[0])[:, None]
+        m = py <= np.where(ok, np.round(rim), -10 ** 6)[None, :] + self.top + z
+        self.Z = np.where(m, np.maximum(self.Z, z), self.Z)
+        self._snapped = False
+
+    def mound(self, z: int, x0: int, y0: int, x1: int, y1: int):
+        """A raised block whose top, seen on screen, covers x0..x1, y0..y1 (a plateau, an
+        outcrop, the far side of a hollow): plan rows y + top + z."""
+        r0, r1 = y0 + self.top + z, y1 + self.top + z
+        sub = self.Z[max(0, r0):max(0, r1), max(0, x0):x1]
+        self.Z[max(0, r0):max(0, r1), max(0, x0):x1] = np.maximum(sub, z)
+        self._snapped = False
+
+    def snap(self):
+        """Put the outline on the soft grid now (World._snap), so pieces that look for a face
+        find the one that will be drawn."""
+        if not self._snapped:
+            w = World(self.Z, self.biome, seed=self.seed, top=self.top)
+            self.Z = w.Z[:self.Z.shape[0]].copy()
+            self._snapped = True
+
+    def z_at(self, x: int, y: int) -> int:
+        """The height of the ground seen at screen (x, y) (the painter's walk: the nearest)."""
+        self.snap()
+        best = 0
+        for z in sorted({int(v) for v in np.unique(self.Z)}):
+            r = y + self.top + z
+            if 0 <= r < self.Z.shape[0] and self.Z[r, x] == z:
+                best = z
+        return best
+
+    def rim_row(self, x: int, z_high: int, near_y: int = None) -> int:
+        """The plan row of the last row of tier z_high above a drop at column x (its face),
+        nearest the screen row near_y if given."""
+        self.snap()
+        col = self.Z[:, x]
+        rows = np.nonzero((col[:-1] >= z_high) & (col[1:] < z_high))[0]
+        if not len(rows):
+            raise ValueError(f'no face below tier {z_high} at x {x}')
+        if near_y is None:
+            return int(rows[-1])
+        return int(rows[np.argmin(np.abs(rows - (near_y + self.top + z_high)))])
+
+    def world(self) -> World:
+        self.snap()
+        w = World(self.Z, self.biome, seed=self.seed, top=self.top, path=self.path_m, water=self.water_m,
+                  snow=self.snow_m if self.snow_m.any() else None, stairs=list(self.stairs), decals=list(self.decals),
+                  snap=False)
+        w.placed = list(self.placed)
+        return w
+
+    def _place(self, kind, box, attach, z, variant):
+        x0, y0, x1, y1 = box
+        p = Placed(kind, (_g8(x0) if x0 % GRID else x0, _g8(y0) if y0 % GRID else y0,
+                          _g8(x1) if x1 % GRID else x1, _g8(y1) if y1 % GRID else y1), attach, z, int(variant))
+        self.placed.append(p)
+        return p
+
+    def _var(self, kind, x, y):
+        if kind not in self.T['pieces']:
+            raise ValueError(f'the {self.biome} biome does not own a {kind!r} piece (BIOMES[...]["pieces"])')
+        return int(hashu(self.seed, x, y, sum(map(ord, kind))))
+
+    # -- pieces ----------------------------------------------------------------------------------
+    def stair(self, x: int, z_high: int, z_low: int = None, width: int = 40, near_y: int = None) -> Placed:
+        """A stair through the face below tier z_high at column x (its west edge, on the grid):
+        any face height, any width (a multiple of 8, 24 or more). Its foot lands on the lower
+        ground, its head on the upper floor (eastward-edges.md 6.1)."""
+        x = _g8(x)
+        width = max(24, _g8(width))
+        r = self.rim_row(x + width // 2, z_high, near_y)
+        if z_low is None:
+            z_low = int(self.Z[r + 1, x + width // 2])
+        st = Stair(x, x + width, r + 1, z_low, z_high)
+        self.stairs.append(st)
+        a = st.attach(self.top)
+        box = (x - st.cheek, a['head'][1] - st.landing, x + width + st.cheek, a['foot'][1] + st.landing)
+        return self._place('stair', box, {'foot': a['foot'], 'head': a['head']}, z_low, self._var('stair', x, r))
+
+    def ledge(self, x0: int, x1: int, z_high: int, z: int = None, depth: int = 24, near_y: int = None) -> Placed:
+        """A ledge path along the face below tier z_high, from x0 to x1: a shelf `depth` px deep
+        at height z (half the face by default, on the tier grid) cut into the face, its floor a
+        trodden path, its ends rounded by the soft grid."""
+        self.snap()
+        z = z if z is not None else z_high - self.T['face']
+        cols = range(max(0, x0), min(self.W, x1))
+        rows = []
+        for x in cols:
+            r = self.rim_row(x, z_high, near_y)
+            lo = int(self.Z[r + 1, x])
+            if lo >= z:
+                continue
+            # the shelf: the ground in front of the face raised to z for `depth` rows
+            self.Z[r + 1:r + 1 + depth, x] = np.maximum(self.Z[r + 1:r + 1 + depth, x], z)
+            self.path_m[r + 1:r + 1 + depth, x] = True
+            rows.append(r)
+        self._snapped = False
+        self.snap()
+        self.path_m &= (self.Z == z) | ~np.isin(np.arange(self.W)[None, :], list(cols))
+        if not rows:
+            raise ValueError('ledge: no face to cut it into')
+        ym = int(np.median(rows)) + 1 + depth // 2 - self.top - z
+        box = (x0, int(min(rows)) + 1 - self.top - z, x1, int(max(rows)) + 1 + depth - self.top - z)
+        return self._place('ledge', box, {'west': (x0 + 6, ym), 'east': (x1 - 6, ym)}, z, self._var('ledge', x0, ym))
+
+    def path(self, pts, z: int, width: int = 12) -> Placed:
+        """A footpath on tier z through screen points (a smooth curve), `width` px (12 a
+        footpath, 16 to 24 a lane); its edges fray where it meets grass (fray_path)."""
+        pts = [(float(a), float(b)) for a, b in pts]
+        seg = []
+        for (ax, ay), (bx, by) in zip(pts[:-1], pts[1:]):
+            n = int(max(abs(bx - ax), abs(by - ay))) + 1
+            for i in range(n):
+                u = i / max(1, n - 1)
+                seg.append((ax + (bx - ax) * u, ay + (by - ay) * u))
+        seg = np.array(seg)
+        # smooth the polyline (a moving average), so a bend is a curve
+        for _ in range(3):
+            k = 9
+            pad = np.concatenate([np.repeat(seg[:1], k, 0), seg, np.repeat(seg[-1:], k, 0)])
+            seg = np.array([pad[i:i + 2 * k + 1].mean(0) for i in range(len(seg))])
+        yy, xx = np.mgrid[0:self.Z.shape[0], 0:self.W]
+        sy = yy - self.top - z
+        m = np.zeros(self.Z.shape, bool)
+        r = width / 2.0
+        for cx, cy in seg[::2]:
+            x0, x1 = int(cx - r - 1), int(cx + r + 2)
+            y0, y1 = int(cy + self.top + z - r - 1), int(cy + self.top + z + r + 2)
+            sub = (slice(max(0, y0), max(0, y1)), slice(max(0, x0), max(0, x1)))
+            m[sub] |= (xx[sub] - cx) ** 2 + (sy[sub] - cy) ** 2 <= r * r
+        m &= self.Z == z
+        self.path_m |= m
+        xs, ys = seg[:, 0], seg[:, 1]
+        box = (int(xs.min() - r), int(ys.min() - r), int(xs.max() + r), int(ys.max() + r))
+        return self._place('path', box, {'start': pts[0], 'end': pts[-1]}, z, self._var('path', int(xs[0]), int(ys[0])))
+
+    def spring(self, x: int, y: int, z: int) -> Placed:
+        """A spring on tier z at screen (x, y): a small stone-rimmed pool, and the brook it feeds
+        running south across every lower tier until it falls the last face into a plunge pool
+        (falls are found by rule, sized by their drop). The brook swells and narrows."""
+        self.snap()
+        v = self._var('spring', x, y)
+        py0 = y + self.top + z
+        R = self.Z.shape[0]
+        ph = h01(v, 1) * 50
+        xs = []
+        base = int(self.Z.min())
+        for py in range(py0, R):
+            xc = x + 4.0 * np.sin((py + ph) / 14.0) + 1.5 * np.sin((py + ph) / 5.0)
+            col = int(round(xc))
+            if not (0 <= col < self.W):
+                break
+            if self.Z[py, col] <= base:
+                break
+            w = 1.4 + 1.0 * (0.5 + 0.5 * np.sin((py + ph) / 9.0))
+            lo, hi = int(np.floor(xc - w)), int(np.ceil(xc + w))
+            self.water_m[py, max(0, lo):min(self.W, hi)] = True
+            xs.append((xc, py))
+        # the spring's pool: a rounded rectangle 12 x 7 round its head
+        yy, xx = np.mgrid[0:R, 0:self.W]
+        q = np.abs((xx + 0.5 - x) / 6.5) ** 4 + np.abs((yy + 0.5 - py0 - 1) / 3.5) ** 4
+        pool = (q <= 1.0) & (self.Z == z)
+        self.water_m |= pool
+        self.decals.append(dict(kind='spring', x=x, y=y, z=z, v=v))
+        foot = xs[-1] if xs else (x, py0)
+        return self._place('spring', (x - 12, y - 8, x + 12, foot[1] - self.top + 16), {'source': (x, y), 'outflow': (int(foot[0]), int(foot[1] - self.top))},
+                           z, v)
+
+    def pond(self, x0: int, y0: int, x1: int, y1: int, z: int = None) -> Placed:
+        """A hollow with a pool: a rounded rectangle of still water on the ground at screen box
+        x0..x1, y0..y1, with its north bank's small face, a light waterline, a dark band, and
+        stones round its south and east banks."""
+        z = self.z_at((x0 + x1) // 2, (y0 + y1) // 2) if z is None else z
+        R = self.Z.shape[0]
+        yy, xx = np.mgrid[0:R, 0:self.W]
+        cx, cy = (x0 + x1) / 2.0, (y0 + y1) / 2.0 + self.top + z
+        q = np.abs((xx + 0.5 - cx) / ((x1 - x0) / 2.0)) ** 4 + np.abs((yy + 0.5 - cy) / ((y1 - y0) / 2.0)) ** 4
+        self.water_m |= (q <= 1.0) & (self.Z == z)
+        v = self._var('pond', x0, y0)
+        self.decals.append(dict(kind='pond_rim', x0=x0, y0=y0, x1=x1, y1=y1, z=z, v=v))
+        return self._place('pond', (x0 - 4, y0 - 4, x1 + 4, y1 + 4), {'inlet': ((x0 + x1) // 2, y0), 'outlet': ((x0 + x1) // 2, y1)}, z, v)
+
+    def snow_corner(self, x0: int, y0: int, x1: int, y1: int, z: int) -> Placed:
+        """A snow-capped corner of tier z (screen box): a drifted snow field with a soft
+        scalloped margin (no single-pixel teeth), a cornice wherever it reaches a rim, drifts
+        against the foot under it and half-buried rocks."""
+        R = self.Z.shape[0]
+        yy, xx = np.mgrid[0:R, 0:self.W]
+        sy = yy - self.top - z
+        v = self._var('snow_corner', x0, y0)
+        cx, cy = (x0 + x1) / 2.0, (y0 + y1) / 2.0
+        q = np.abs((xx + 0.5 - cx) / ((x1 - x0) / 2.0)) ** 3 + np.abs((sy + 0.5 - cy) / ((y1 - y0) / 2.0)) ** 3
+        q = q + 0.22 * (2 * vnoise2(xx, sy, 9.0, hashu(v, 1)) - 1) + 0.06 * (2 * vnoise2(xx, sy, 3.5, hashu(v, 2)) - 1)
+        self.snow_m |= (q <= 1.0) & (self.Z >= z)
+        return self._place('snow_corner', (x0, y0, x1, y1), {}, z, v)
+
+    def boulders(self, x: int, y: int, size: str = 'm') -> Placed:
+        """A rock outcrop or boulder cluster on the ground at screen (x, y): 's' one or two
+        stones, 'm' three or four, 'l' five to seven with a large one; mossy where the biome is
+        green. Blocks walking under its stones."""
+        v = self._var('boulders', x, y)
+        n = {'s': 2, 'm': 4, 'l': 7}[size]
+        r = {'s': 5, 'm': 9, 'l': 14}[size]
+        self.decals.append(dict(kind='boulders', x=x, y=y, n=n, r=r, v=v))
+        return self._place('boulders', (x - r - 4, y - r - 2, x + r + 4, y + r // 2 + 4), {}, self.z_at(x, y), v)
+
+    def scree(self, x0: int, x1: int, z_high: int, near_y: int = None) -> Placed:
+        """A scree foot under the face below tier z_high from x0 to x1: stones thickest against
+        the face, a few larger ones, thinning out over 10 to 14 px of ground."""
+        r = self.rim_row((x0 + x1) // 2, z_high, near_y)
+        z_low = int(self.Z[r + 1, (x0 + x1) // 2])
+        y = r + 1 - self.top - z_low
+        v = self._var('scree', x0, y)
+        self.decals.append(dict(kind='scree', x0=x0, x1=x1, z_high=z_high, v=v))
+        return self._place('scree', (x0, y - 4, x1, y + 16), {}, z_low, v)
+
+    def ivy(self, x: int, z_high: int, width: int = 16, near_y: int = None) -> Placed:
+        """A grass-lip overhang with ivy: a mat of leaves 10 to 24 px wide hanging from the lip
+        of the face below tier z_high at column x, longest in the middle, lit on its left, with
+        stringy strands under it and its shadow on the rock to its right."""
+        r = self.rim_row(x, z_high, near_y)
+        y = r - self.top - z_high
+        v = self._var('ivy', x, y)
+        self.decals.append(dict(kind='ivy', x=x, w=width, z_high=z_high, row=r, v=v))
+        return self._place('ivy', (x - width // 2, y, x + width // 2, y + 24), {}, z_high, v)
+
+
+PIECES = ('stair', 'ledge', 'path', 'spring', 'pond', 'snow_corner', 'boulders', 'scree', 'ivy')
+
+
+def paint_decals(fr: Frame, world: World):
+    """The dressing the pieces left: each drawn from its own hash, adapted to what lies under
+    it (only on ground, only on rock, only along the face it belongs to)."""
+    P = fr.P
+    K = P['kind']
+    T = world.T
+    ground = (K == TOP) & np.isin(fr.tag, (TAG['ground'], TAG['path'], TAG['scree'], TAG['snow'])) & (P['ST'] == 0)
+    rock = T['loose']
+    green = T['top'] == 'grass'
+    for dc in world.decals:
+        v = dc['v']
+        if dc['kind'] == 'boulders':
+            x, y, n, r = dc['x'], dc['y'], dc['n'], dc['r']
+            pts = []
+            for i in range(n):
+                big = i == 0 and n >= 4
+                rx = (r * 0.55 if big else 2.2 + 2.6 * h01(v, i, 1) * (r / 9.0) ** 0.5)
+                ang = 2 * np.pi * h01(v, i, 2)
+                dd = 0 if i == 0 else r * (0.35 + 0.55 * h01(v, i, 3))
+                pts.append((y + dd * np.sin(ang) * 0.5, x + dd * np.cos(ang), rx, i))
+            for cy, cx, rx, i in sorted(pts):          # the nearer (lower) stones drawn last
+                boulder(fr, cx, cy, rx, rx * (0.66 + 0.14 * h01(v, i, 4)), hashu(v, i, 5), ground | (fr.tag == TAG['scree']), rock,
+                        moss=0.5 if green else 0.0)
+        elif dc['kind'] == 'scree':
+            face = (K == FACEK) & (P['ZH'] == dc['z_high'])
+            dist = np.zeros(fr.shape, np.int32)
+            for k in range(14, 0, -1):
+                dist = np.where(nb(face, -k, 0), k, dist)
+            inx = (fr.X >= dc['x0']) & (fr.X < dc['x1'])
+            pv = np.where(ground & inx & (dist > 0), 0.85 * np.clip(1.2 - dist / 12.0, 0, 1), 0.0)
+            rid = sibs(rock)
+            for x, y, hh in zip(*candidates(fr, 3, hashu(v, 1), pv, inset=4)):
+                if h01(hh, 5) < 0.75:
+                    put_stamp(fr, PEBBLE[int(hh % np.uint32(4))], x, y, int(rid[int(hashu(hh, 4) % np.uint32(3))]), allow=ground, tag=TAG['scree'])
+                else:
+                    boulder(fr, x, y, 1.8 + 1.8 * h01(hh, 6), 1.4 + 1.1 * h01(hh, 7), hh, ground | (fr.tag == TAG['scree']), rock)
+        elif dc['kind'] == 'spring':
+            x, y = dc['x'], dc['y']
+            for i in range(7):
+                ang = np.pi * (-0.1 + 1.2 * i / 6.0)
+                sx = x + np.cos(ang) * 7.5
+                sy = y + 1 + np.sin(ang) * 4.5
+                if h01(v, i, 1) < 0.2:
+                    continue
+                boulder(fr, sx, sy, 1.6 + 1.1 * h01(v, i, 2), 1.3 + 0.8 * h01(v, i, 3), hashu(v, i, 4), ground, 'stone', moss=0.5 if green else 0.0)
+            if green:
+                for i in range(2):
+                    fern(fr, x - 8 + 16 * i + int(3 * h01(v, i, 6)), y - 2, hashu(v, i, 5), ground, 0.9)
+        elif dc['kind'] == 'pond_rim':
+            x0, y0, x1, y1 = dc['x0'], dc['y0'], dc['x1'], dc['y1']
+            cx, cy, rx, ry = (x0 + x1) / 2.0, (y0 + y1) / 2.0, (x1 - x0) / 2.0, (y1 - y0) / 2.0
+            n = int(6 + rx / 2.5)
+            for i in range(n):
+                u = (i + 0.5) / n
+                ang = np.pi * (-0.15 + 1.3 * u)
+                if h01(v, i, 1) < 0.3:
+                    continue
+                sx = cx + np.cos(ang) * (rx + 1.5)
+                sy = cy + np.sin(ang) * (ry + 1.5)
+                boulder(fr, sx, sy, 1.8 + 1.4 * h01(v, i, 2), 1.4 + 1.0 * h01(v, i, 3), hashu(v, i, 4), ground, 'stone', moss=0.35 if green else 0.0)
+            if green:
+                fern(fr, int(x1 - 2), int(cy - 1), hashu(v, 9), ground, 1.0)
+        elif dc['kind'] == 'ivy' and hasattr(fr, 'face'):
+            f = fr.face
+            yy, xx, d, Hf = f['yy'], f['xx'], f['d'], f['Hf']
+            X = fr.X[yy, xx]
+            dx = X + 0.5 - dc['x']
+            half0 = dc['w'] / 2.0
+            on = (P['PY'][yy, xx] == dc['row']) | (np.abs(P['PY'][yy, xx] - dc['row']) <= 2)
+            Lv = Hf * (0.3 + 0.22 * h01(v, 1))
+            u = np.clip(1 - (2 * dx / dc['w']) ** 2, 0, 1)
+            ln = Lv * (0.35 + 0.65 * np.sqrt(u)) + 5 * (vnoise1(X, 2.5, hashu(v, 2)) - 0.5)
+            half = half0 * np.sqrt(np.clip(1 - (d / np.maximum(1, ln)) ** 3, 0, 1)) + 1.6 * (vnoise1(d + 50 * (dx > 0), 3.0, hashu(v, 3)) - 0.5)
+            inside = on & (np.abs(dx) < half) & (d <= ln)
+            if not inside.any():
+                continue
+            MAT = np.zeros(fr.shape, bool)
+            MAT[yy[inside], xx[inside]] = True
+            LI = np.zeros(fr.shape)
+            LI[yy[inside], xx[inside]] = (-dx / np.maximum(1, half) * 0.55 - d / np.maximum(1, ln) * 0.6 + 0.35)[inside]
+            shade = (nb(MAT, 0, -1) | nb(MAT, 0, -2)) & ~MAT & np.isin(fr.tag, (TAG['rock'], TAG['recess']))
+            fr.T[shade] = np.where(fr.T[shade] == EDGE, EDGE, np.maximum(0, fr.T[shade] - 1))
+            whole = (slice(0, fr.shape[0]), slice(0, fr.shape[1]))
+            shade_leaves(fr, whole, MAT, LI, hashu(v, 4), 'leaf', TAG['leaf'],
+                         np.isin(fr.tag, (TAG['rock'], TAG['recess'], TAG['leaf'], TAG['fringe'])), outline=False)
+            strand = on & (np.abs(dx) < half * 0.8) & (d > ln) & (d <= ln + 2 + 6 * h01(v, np.floor(X).astype(np.int64), 7)) \
+                & (h01(v, np.floor(X).astype(np.int64), 8) < 0.3) & ~inside
+            ST_ = np.zeros(fr.shape, bool)
+            ST_[yy[strand], xx[strand]] = True
+            lf = sibs('leaf')
+            fr.F[ST_] = lf[2]
+            fr.T[ST_] = np.where(np.mod(fr.Y[ST_], 3) == 0, 3, 2)
+            fr.tag[ST_] = TAG['leaf']
+
+
+def walk_mask(r: 'Render') -> np.ndarray:
+    """What can be walked in a render (screen px): the tops that are not water, not a stone or
+    a plant that blocks, and every stair. For a piece, crop it to the piece's box."""
+    fr = r.fr
+    x0, y0, x1, y1 = r.crop
+    K = fr.P['kind']
+    ok = ((K == TOP) & ~np.isin(fr.tag, (TAG['water'], TAG['scree'], TAG['tree'], TAG['side'], TAG['foam']))) | (fr.P['ST'] == 1)
+    return ok[y0:y1, x0:x1]
+
+
 # ---- the figure for scale ---------------------------------------------------------------------
 def figure(fr: Frame, name: str, foot_x: int, foot_y: int):
     """A resident (an adult, 25 px) standing with its feet at (foot_x, foot_y), with a contact
@@ -2201,76 +2896,258 @@ def _plan_rows(top):
 
 
 def demo_highland(seed: int = 3) -> tuple:
-    """The bake-off brief as rules over a height field: a meadow (z 0); a 64 px cliff to the
-    upper tier (64) with a ledge (32) along it; a 32 px step to the top (96), whose broad
-    field takes snow by the table's rule; a stream from the snow to the upper rim, so it falls
-    the 64 px face into a plunge pool; stairs cut from the meadow to the ledge and from the
-    ledge to the upper tier; a trodden path on the ledge and up the meadow to the stair."""
-    W = W_DEMO
-    R2 = curve([(-20, 30), (30, 38), (62, 60), (84, 80), (104, 92), (128, 96), (152, 98), (176, 106), (200, 112),
-                (222, 108), (248, 100), (276, 94), (300, 96), (340, 98)], W)
-    R1 = curve([(-20, 176), (0, 178), (26, 184), (56, 192), (82, 189), (102, 188), (118, 198), (134, 196),
-                (150, 186), (170, 190), (190, 196), (212, 188), (232, 174), (250, 168), (266, 174), (286, 190),
-                (304, 200), (340, 196)], W)
-    tread = curve([(-20, -8), (6, -6), (18, 2), (30, 12), (60, 13), (90, 12), (120, 14), (138, 26), (152, 40),
-                   (170, 44), (186, 40), (198, 14), (208, -4), (230, -10), (340, -10)], W)
-    RL = np.where(tread > 0, R1 + 32 + tread, np.nan)
-    Z, top = from_rims(W, H_DEMO, [(96, R2), (64, R1), (32, RL)])
-    py, px = _plan_rows(top)
-    xc = 252 + 6 * np.sin(py / 13.0) + 2 * np.sin(py / 5.0)
-    ww = 2.0 + 1.6 * (0.5 + 0.5 * np.sin(py / 7.0 + 1)) + 0.8 * (0.5 + 0.5 * np.sin(py / 3.1))
-    water = (np.abs(px - xc) <= ww) & (Z == 64)
-    ledge = Z == 32
-    m = (np.abs(px - (168 + 18 * np.sin((py - top) / 40.0) - 0.15 * (py - top - 300))) <= 4 + (py - top - 280) * 0.02) & (Z == 0) \
-        & (py - top > 250)
-    path = ledge | m
-    stairs = [Stair(150, 186, int(np.round(R1[168] + 32 + tread[168])) + top + 32 + 1, 0, 32, tread=4),
-              Stair(30, 66, int(np.round(R1[48])) + top + 64 + 1, 32, 64, tread=4)]
-    w = World(Z, 'highland', seed=seed, top=top, water=water, path=path, stairs=stairs)
-    return w, ('hiker', 112, int(np.round(R1[112] + 32 + tread[112] * 0.6)))
+    """The polished swatch, built only from the kit and the pieces (one screen, to copy): a
+    meadow (z 0) under a 64 px cliff to the upper tier (64) with a ledge path (32) cut along
+    its west half, a stair from the meadow up through the ledge's face, the footpath from the
+    stair's foot, a spring on the upper tier whose brook falls the cliff into a plunge pool,
+    a 32 px step to the summit (96) with a snow-capped corner, ivy over two lips, scree and
+    boulders at the feet."""
+    plan = Plan(W_DEMO, H_DEMO, 'highland', seed=seed)
+    plan.tier(64, [(-20, 186), (60, 182), (120, 190), (180, 196), (240, 188), (300, 196), (340, 192)])
+    plan.tier(96, [(150, 64), (200, 70), (260, 62), (340, 70)], x0=168)
+    led = plan.ledge(0, 176, 64, depth=40, near_y=190)
+    st = plan.stair(80, 32, width=40)
+    plan.path([st.attach['foot'], (100, 300), (124, 340), (118, H_DEMO + 8)], z=0)
+    plan.spring(236, 132, 64)
+    plan.snow_corner(226, -16, 350, 76, 96)
+    plan.ivy(30, 64, 18, near_y=190)
+    plan.ivy(292, 64, 16)
+    plan.ivy(206, 96, 12)
+    plan.scree(176, 320, 64)
+    plan.boulders(36, 312, 'l')
+    plan.boulders(284, 300, 'm')
+    plan.boulders(184, 282, 's')
+    w = plan.world()
+    hx = 132
+    return w, ('hiker', hx, led.attach['west'][1] + 6)
+
+
+def demo_meadow(seed: int = 6) -> tuple:
+    """The meadow, the second biome, from its own pieces: low earthy turf banks of 16 (soil
+    layers, roots under a soft sod), timber steps through each bank, a footpath, a hollow with
+    a reed-fringed pool, a spring on the top whose brook drops both banks, field stones."""
+    plan = Plan(W_DEMO, H_DEMO, 'meadow', seed=seed)
+    plan.tier(16, [(-20, 214), (80, 206), (160, 222), (240, 210), (340, 218)])
+    plan.tier(32, [(100, 104), (180, 96), (260, 110), (340, 100)], x0=120)
+    s1 = plan.stair(88, 16, width=32)
+    s2 = plan.stair(184, 32, width=32)
+    plan.path([s1.attach['foot'], (100, 290), (86, 340), (96, H_DEMO + 8)], z=0)
+    plan.path([s1.attach['head'], (120, 170), (190, 150), s2.attach['foot']], z=16)
+    plan.path([s2.attach['head'], (204, 60), (230, -8)], z=32)
+    plan.pond(28, 276, 92, 312)
+    plan.spring(272, 40, 32)
+    plan.boulders(250, 300, 's')
+    plan.boulders(36, 150, 'm')
+    w = plan.world()
+    return w, ('hiker', 150, 300)
 
 
 def demo_coast(seed: int = 5) -> tuple:
-    """A headland: a grass top (64) over a 64 px cliff of pale sandstone bands on a dark
-    basalt foot, a lower grass shelf (32) at the west, a beach (0) and the sea."""
-    W = W_DEMO
-    R1 = curve([(-20, 120), (40, 128), (80, 150), (120, 162), (160, 156), (200, 150), (240, 162), (280, 176), (340, 170)], W)
-    RS = curve([(-20, 236), (30, 240), (60, 232), (90, 220), (110, 214), (130, 260)], W)
-    RS = np.where(np.arange(W) < 118, RS, np.nan)
-    Z, top = from_rims(W, H_DEMO, [(64, R1), (32, RS)])
-    py, px = _plan_rows(top)
-    sea = (py - top > 300 + 14 * np.sin(px / 37.0) + 6 * np.sin(px / 11.0)) & (Z == 0)
-    w = World(Z, 'coast', seed=seed, top=top, water=sea)
-    return w, ('beachcomber', 200, 268)
+    """A headland in the coast's own edge set: a grass top (64) over a 64 px cliff of pale
+    sandstone slabs on a dark basalt foot, a lower shelf (32) at the west, a beach (0), the
+    sea, a stair from the beach to the shelf."""
+    plan = Plan(W_DEMO, H_DEMO, 'coast', seed=seed)
+    plan.tier(64, [(-20, 120), (40, 128), (80, 150), (120, 162), (160, 156), (200, 150), (240, 162), (280, 176), (340, 170)])
+    plan.tier(32, [(-20, 236), (30, 240), (60, 232), (90, 222), (110, 216), (124, 216)], x1=124)
+    st = plan.stair(40, 32, width=32)
+    py, px = np.mgrid[0:plan.Z.shape[0], 0:plan.W]
+    plan.water_m |= (py - plan.top > 300 + 14 * np.sin(px / 37.0) + 6 * np.sin(px / 11.0)) & (plan.Z == 0)
+    plan.path([st.attach['foot'], (64, 280), (90, 296)], z=0, width=10)
+    plan.scree(130, 300, 64)
+    plan.boulders(250, 260, 'm')
+    return plan.world(), ('beachcomber', 200, 268)
 
 
 def demo_canyon(seed: int = 7) -> tuple:
-    """A canyon wall in the Reach: a mesa top (80), a bench (40) and the canyon floor (0),
-    40 px faces of red and buff bands, a dry wash along the floor, a stair cut from the floor
-    to the bench."""
-    W = W_DEMO
-    R2 = curve([(-20, 60), (40, 70), (90, 96), (130, 104), (170, 92), (220, 78), (270, 84), (340, 96)], W)
-    R1 = curve([(-20, 190), (30, 196), (70, 214), (120, 222), (160, 206), (200, 196), (250, 210), (300, 230), (340, 226)], W)
-    Z, top = from_rims(W, H_DEMO, [(80, R2), (40, R1)])
-    py, px = _plan_rows(top)
-    wash = (np.abs(py - top - (318 + 10 * np.sin(px / 29.0))) <= 5 + 2 * np.sin(px / 13.0)) & (Z == 0)
-    stairs = [Stair(206, 246, int(np.round(R1[226])) + top + 40 + 1, 0, 40)]
-    w = World(Z, 'canyon', seed=seed, top=top, path=wash, stairs=stairs)
-    return w, ('prospector', 140, 300)
+    """A canyon wall in the Reach in the canyon's own edge set: a mesa top (80), a bench (40)
+    and the floor (0), 40 px faces of red and buff slabs, a dry wash, a stair to the bench."""
+    plan = Plan(W_DEMO, H_DEMO, 'canyon', seed=seed)
+    plan.tier(80, [(-20, 60), (40, 70), (90, 96), (130, 104), (170, 92), (220, 78), (270, 84), (340, 96)])
+    plan.tier(40, [(-20, 190), (30, 196), (70, 214), (120, 222), (160, 206), (200, 196), (250, 210), (300, 230), (340, 226)])
+    st = plan.stair(208, 40, width=40)
+    plan.path([st.attach['foot'], (240, 300), (300, 330), (340, 336)], z=0, width=12)
+    plan.scree(0, 190, 40)
+    plan.boulders(90, 300, 'l')
+    return plan.world(), ('prospector', 140, 300)
 
 
 def demo_city(seed: int = 9) -> tuple:
-    """A city retaining wall: an upper street (40) behind a 40 px wall of dressed stone with a
-    coping, the lower street (0) at its foot, a stair with cheeks between them."""
-    W = W_DEMO
-    R1 = curve([(-20, 168), (60, 168), (100, 172), (140, 180), (180, 180), (220, 172), (260, 168), (340, 168)], W)
-    Z, top = from_rims(W, H_DEMO, [(40, R1)])
-    stairs = [Stair(140, 180, int(np.round(R1[160])) + top + 40 + 1, 0, 40)]
-    w = World(Z, 'city', seed=seed, top=top, stairs=stairs)
-    return w, ('porter', 90, 290)
+    """A city retaining wall in the city's own edge set: an upper street (40) behind a 40 px
+    wall of dressed stone with a coping, the lower street (0), a stair between them."""
+    plan = Plan(W_DEMO, H_DEMO, 'city', seed=seed)
+    plan.tier(40, [(-20, 168), (60, 168), (100, 172), (140, 180), (180, 180), (220, 172), (260, 168), (340, 168)])
+    plan.stair(136, 40, width=40)
+    return plan.world(), ('porter', 90, 290)
 
 
-DEMOS = {'highland': demo_highland, 'coast': demo_coast, 'canyon': demo_canyon, 'city': demo_city}
+# ---- a region from the pieces: what a lane writes -----------------------------------------------
+def demo_area(seed: int = 21) -> tuple:
+    """A 512 x 512 highland area built only from the kit and the pieces, the way a lane would
+    build one (about twenty lines): a summit (96) in the north-east with snow on its corner, an
+    upper tier (64) across the north, a ledge path along part of its cliff, the meadow (0) in
+    the south with a hollow and its pool, a spring on the upper tier whose brook falls into a
+    plunge pool, stairs where the paths meet the faces, boulders and scree at the feet."""
+    plan = Plan(512, 512, 'highland', seed=seed)
+    plan.tier(64, [(-20, 196), (80, 188), (170, 204), (260, 214), (360, 200), (450, 214), (540, 206)])
+    plan.tier(96, [(300, 92), (380, 84), (460, 100), (540, 92)], x0=320)
+    plan.tier(32, [(-20, 360), (60, 352), (120, 366), (150, 368)], x1=152)     # a low shelf in the south-west
+    led = plan.ledge(168, 330, 64, depth=40)
+    s1 = plan.stair(208, 32, width=40)                       # meadow up to the ledge
+    s2 = plan.stair(296, 64, width=32, near_y=200)           # ledge up to the upper tier
+    s3 = plan.stair(400, 96, width=32)                       # upper tier up to the summit
+    s4 = plan.stair(64, 32, width=40)                        # meadow up to the south-west shelf
+    plan.path([s1.attach['foot'], (226, 330), (190, 420), (220, 520)], z=0)
+    plan.path([s4.attach['foot'], (90, 440), (150, 470), (196, 440)], z=0)
+    plan.path([s2.attach['head'], (330, 150), (400, 160), s3.attach['foot']], z=64)
+    plan.path([led.attach['west'], s1.attach['head']], z=32, width=10)
+    plan.spring(120, 120, 64)
+    plan.pond(360, 380, 440, 424)
+    plan.snow_corner(420, -12, 524, 50, 96)
+    plan.ivy(60, 64, 18)
+    plan.ivy(470, 96, 14)
+    plan.scree(330, 500, 64)
+    plan.scree(10, 150, 32)
+    for x, y, size in ((40, 470, 'l'), (300, 300, 'm'), (470, 330, 'm'), (140, 300, 's'), (330, 470, 's')):
+        plan.boulders(x, y, size)
+    return plan.world(), ('hiker', 250, 300)
+
+
+# ---- module, reuse and biome sheets -------------------------------------------------------------
+def _host(biome: str, seed: int, w: int = 160, h: int = 160, face: int = None) -> Plan:
+    """A small piece of ground to show a module on: the meadow (0) under one tier."""
+    plan = Plan(w, h, biome, seed=seed)
+    f = face or BIOMES[biome]['face']
+    plan.tier(f, [(-20, 70 + 4 * (seed % 3)), (w // 2, 66 + 6 * (seed % 2)), (w + 20, 72)])
+    return plan
+
+
+def modules(seed: int = 31) -> list:
+    """Each highland module alone on a small piece of ground: (title, plan, placed)."""
+    out = []
+
+    def add(title, fn, biome='highland', face=None):
+        p = _host(biome, seed + len(out), face=face)
+        pl = fn(p)
+        out.append((title, p, pl if isinstance(pl, list) else [pl]))
+    add('stair through a face (1 tier)', lambda p: p.stair(56, 32, width=40))
+    def two(p):
+        p.tier(64, [(-20, 44), (180, 40)])
+        return p.stair(64, 64, width=32)
+    add('stair through a face (2 tiers)', two)
+    def ledge(p):
+        p.tier(64, [(-20, 40), (180, 38)])
+        return p.ledge(10, 150, 64, depth=24)
+    add('ledge path', ledge)
+    add('spring, fall and plunge pool', lambda p: p.spring(90, 30, 32))
+    add('snow-capped corner', lambda p: p.snow_corner(60, -10, 170, 50, 32))
+    add('boulder cluster s, m, l', lambda p: [p.boulders(30, 120, 's'), p.boulders(76, 124, 'm'), p.boulders(126, 128, 'l')])
+    add('grass lip with ivy', lambda p: p.ivy(80, 32, 20))
+    add('footpath bend', lambda p: p.path([(20, 160), (40, 110), (110, 120), (140, 80), (150, 20)], z=0))
+    add('hollow with a pool', lambda p: p.pond(40, 100, 120, 140))
+    add('scree foot', lambda p: p.scree(10, 150, 32))
+    return out
+
+
+def _marks(img: Image.Image, placed, scale: int, crop=(0, 0)):
+    """Draw each piece's footprint (on the 8 px grid) and its attach points over a render."""
+    from PIL import ImageDraw
+    d = ImageDraw.Draw(img)
+    for p in placed:
+        x0, y0, x1, y1 = p.box
+        d.rectangle([x0 * scale, y0 * scale, x1 * scale - 1, y1 * scale - 1], outline=(255, 236, 120))
+        for name, (ax, ay) in p.attach.items():
+            ax, ay = int(ax) * scale, int(ay) * scale
+            d.line([ax - 4, ay, ax + 4, ay], fill=(255, 80, 200), width=2)
+            d.line([ax, ay - 4, ax, ay + 4], fill=(255, 80, 200), width=2)
+            d.text((ax + 5, ay - 10), name, fill=(255, 220, 245))
+
+
+def module_sheet(seed: int = 31) -> Image.Image:
+    """Every highland module at 2x with its footprint, attach points and walk mask."""
+    from PIL import ImageDraw
+    S = 2
+    mods = modules(seed)
+    cw, chh = 160 * S * 2 + 12, 160 * S + 26
+    cols = 2
+    rows = -(-len(mods) // cols)
+    sheet = Image.new('RGB', (cols * (cw + 16) + 16, rows * (chh + 12) + 40), (34, 28, 36))
+    d = ImageDraw.Draw(sheet)
+    d.text((16, 12), 'Highland modules: each piece alone, 2x; yellow its footprint on the 8 px grid, pink its attach points; right, its walk mask (light: walkable)',
+           fill=(240, 234, 222))
+    for i, (title, plan, placed) in enumerate(mods):
+        w = plan.world()
+        r = render(w)
+        im = r.image()
+        big = im.resize((im.width * S, im.height * S), Image.NEAREST)
+        _marks(big, placed, S)
+        wm = walk_mask(r)
+        wim = Image.fromarray(np.where(wm, 214, 60).astype(np.uint8)).convert('RGB').resize(big.size, Image.NEAREST)
+        x = 16 + (i % cols) * (cw + 16)
+        y = 40 + (i // cols) * (chh + 12)
+        sheet.paste(big, (x, y + 18))
+        sheet.paste(wim, (x + big.width + 12, y + 18))
+        d.text((x, y + 2), title, fill=(240, 234, 222))
+    return sheet
+
+
+def reuse_sheet() -> Image.Image:
+    """The same set of highland pieces (a stair, a spring with its fall, a boulder cluster, ivy
+    and scree) placed in three spots of three different highland outlines: the same parts,
+    never the same picture (each takes its variant from where it stands)."""
+    from PIL import ImageDraw
+    S = 2
+    shots = []
+    for k, (seed, rim, sx) in enumerate(((41, [(-20, 112), (60, 104), (120, 136), (200, 140), (300, 118)], 48),
+                                          (42, [(-20, 140), (70, 120), (150, 100), (220, 124), (300, 112)], 120),
+                                          (43, [(-20, 100), (90, 132), (170, 136), (240, 104), (300, 110)], 176))):
+        plan = Plan(256, 256, 'highland', seed=seed)
+        plan.tier(32, rim)
+        st = plan.stair(sx, 32, width=40)
+        plan.path([st.attach['foot'], (sx + 30, 220), (sx + 10, 270)], z=0)
+        plan.spring((sx + 120) % 230 + 10, 40, 32)
+        plan.boulders((sx + 80) % 220 + 18, 216, 'm')
+        plan.ivy((sx + 170) % 230 + 12, 32, 16)
+        plan.scree((sx + 60) % 200, (sx + 60) % 200 + 56, 32)
+        shots.append(render(plan.world()).image())
+    sheet = Image.new('RGB', (3 * (256 * S + 16) + 16, 256 * S + 60), (34, 28, 36))
+    d = ImageDraw.Draw(sheet)
+    d.text((16, 12), 'Reuse in one biome: the same five highland pieces in three spots of three outlines, 2x. Variants come from a hash of where each stands.',
+           fill=(240, 234, 222))
+    for i, im in enumerate(shots):
+        sheet.paste(im.resize((im.width * S, im.height * S), Image.NEAREST), (16 + i * (256 * S + 16), 40))
+    return sheet
+
+
+def edges_sheet() -> Image.Image:
+    """Highland and meadow side by side on the same outline: one grammar (the soft grid, the
+    rim wobble and corners, the lit lip, the dark under-lip and foot, light from the upper left,
+    the house palette), two edge sets (boulder cliff under a clean turf lip and rock steps;
+    earthy turf bank with roots under a soft sod and timber steps). 3x."""
+    from PIL import ImageDraw
+    S = 3
+    shots = []
+    for biome in ('highland', 'meadow'):
+        f = BIOMES[biome]['face']
+        plan = Plan(192, 160, biome, seed=51)
+        plan.tier(2 * f, [(-20, 40), (100, 34), (220, 44)], x0=96)
+        plan.tier(f, [(-20, 92), (60, 86), (140, 98), (220, 92)])
+        st = plan.stair(40, f, width=32)
+        plan.path([st.attach['foot'], (60, 150), (50, 170)], z=0)
+        plan.spring(150, 10, 2 * f)
+        plan.boulders(150, 140, 's')
+        shots.append((biome, render(plan.world()).image()))
+    sheet = Image.new('RGB', (2 * (192 * S + 16) + 16, 160 * S + 66), (34, 28, 36))
+    d = ImageDraw.Draw(sheet)
+    d.text((16, 12), 'One grammar, two edge sets (3x): highland (left: boulder cliff, turf lip, rock steps) and meadow (right: earthy turf bank, sod and roots, timber steps)',
+           fill=(240, 234, 222))
+    for i, (b, im) in enumerate(shots):
+        x = 16 + i * (192 * S + 16)
+        sheet.paste(im.resize((im.width * S, im.height * S), Image.NEAREST), (x, 40))
+        d.text((x, 40 + 160 * S + 6), b, fill=(240, 234, 222))
+    return sheet
+
+
+DEMOS = {'highland': demo_highland, 'meadow': demo_meadow, 'coast': demo_coast, 'canyon': demo_canyon, 'city': demo_city}
 
 
 def random_world(seed: int, width: int = W_DEMO, height: int = H_DEMO, table: str = 'highland') -> World:
@@ -2359,12 +3236,12 @@ def crag_light(r: 'Render') -> float:
     vals = []
     for m in np.unique(MID[MID >= 0]):
         ys, xs = np.nonzero(MID == m)
-        if len(ys) < 60:
+        if len(ys) < 14:
             continue
         we = []
         for y in np.unique(ys):
             row = np.sort(xs[ys == y])
-            if len(row) >= 8:
+            if len(row) >= 4:
                 q = max(1, len(row) // 4)
                 we.append(L[y, row[:q]].mean() - L[y, row[-q:]].mean())
         if we:
@@ -2375,7 +3252,7 @@ def crag_light(r: 'Render') -> float:
 def proof(img: Image.Image, tag: np.ndarray) -> dict:
     """The detail bar on the barest rock (stone-wall and face) and the most open ground of a
     render, and the lint on the whole of it."""
-    rock_box, rf = best_box(np.isin(tag, (TAG['rock'], TAG['recess'])), 50, 34)
+    rock_box, rf = best_box(np.isin(tag, (TAG['rock'], TAG['recess'], TAG['soil'])), 50, 34)
     ground_box, gf = best_box(tag == TAG['ground'], 66, 50)
     out = {'rock_box': rock_box, 'rock_share': rf, 'ground_box': ground_box, 'ground_share': gf}
     for kind, box in (('stone-wall', rock_box), ('face', rock_box), ('ground', ground_box)):
@@ -2403,33 +3280,118 @@ def seam_test(seed: int = 11, size: int = 512, tile: int = 256) -> dict:
     return {'diff_px': diffs, 'seam_px': seam}
 
 
+GRAMMAR_HEIGHTS = (12, 16, 32, 40)     # world-rules 3.2: the only face heights between tiers
+
+
+def rim_steps(r: 'Render') -> tuple:
+    """The shared rim rule, measured on a render (eastward-edges.md 1.4): along every face, the
+    row where the face starts moves between neighbouring columns by 0 or 1 px (the lip's
+    wobble) or by a whole number of 8 px cells (a step of the soft grid, give or take the
+    wobble). Returns (steps measured, steps that break the rule)."""
+    fr = r.fr
+    f = getattr(fr, 'face', None)
+    if f is None:
+        return 0, 0
+    first = f['d'] == 1
+    X = fr.X[f['yy'][first], f['xx'][first]]
+    Y = fr.Y[f['yy'][first], f['xx'][first]] - getattr(fr, 'fringeL', np.zeros(len(f['d'])))[first] * 0
+    lid = f['lid'][first]
+    n = bad = 0
+    for L in np.unique(lid):
+        m = lid == L
+        order = np.argsort(X[m], kind='stable')
+        xs, ys = X[m][order], Y[m][order]
+        dyall = np.diff(ys)
+        adj = np.diff(xs) == 1
+        # segments of change, split where the rim runs flat for 3 columns or more (or breaks):
+        # each must add up to whole cells, give or take the 1 px wobble (a corner, rounded,
+        # spreads a step of the grid over a few columns)
+        seg = []
+        flat = 0
+        for k in range(len(dyall) + 1):
+            end = k == len(dyall) or not adj[k]
+            dy = 0 if end else int(dyall[k])
+            if end or dy == 0:
+                flat += 1
+            else:
+                flat = 0
+                seg.append(dy)
+            if (end or flat >= 3) and seg:
+                n += 1
+                tot = sum(seg)
+                if (abs(tot) % GRID) not in (0, 1, GRID - 1):
+                    bad += 1
+                seg = []
+            if end:
+                flat = 0
+    return n, bad
+
+
+def grammar(name: str, r: 'Render', world: World) -> tuple:
+    """The shared grammar on one render (Matt, 21 Oct 10:09: "make sure everything has the same
+    sort of soft grid and the visual art style is consistent"): the detail bar and the lint
+    (palette, lone pixels, dither), light from the west on every rock form, the rim steps, the
+    lip and the foot within the shared widths, the tier heights. Prints a line per test."""
+    ok = True
+    img = r.image()
+    _f, _t, tag = r.arrays()
+    T, E = world.T, world.E
+    low = T['face'] <= 16
+    rock_tags = (TAG['rock'], TAG['recess'], TAG['soil'])
+    if low:      # a low bank is judged with its lip and foot, as Eastward's farm ledge ('rim')
+        near_face = near(np.isin(tag, rock_tags), 6)
+        rock_box, rf = best_box(near_face & ~np.isin(tag, (TAG['water'], TAG['figure'])), 50, 34)
+        kinds = ['rim']
+    else:
+        rock_box, rf = best_box(np.isin(tag, rock_tags), 50, 34)
+        kinds = ['stone-wall', 'face']
+    ground_box, gf = best_box(np.isin(tag, (TAG['ground'],)), 66, 50)
+    print(f'{name}: rock box {rock_box} ({100 * rf:.0f} %), ground box {ground_box} ({100 * gf:.0f} %)')
+    for kind, box in [(k, rock_box) for k in kinds] + [('ground', ground_box)]:
+        if kind == 'ground' and gf < 0.85:
+            print(f'  {kind:10s} skipped: no open ground of 66 x 50 in this picture')
+            continue
+        house, strict, ours, ref = bar_check(img, box, kind)
+        print(f'  {kind:10s} tones {ours["tones"]:5.1f}/{ref["tones"]:5.1f} shapes {ours["shapes"]:5.1f}/{ref["shapes"]:5.1f} '
+              f'dressing {ours["dressing"]:5.1f}/{ref["dressing"]:5.1f} isolated {ours["isolated"]:.3f}/{ref["isolated"]:.3f} '
+              f'cluster {ours["cluster"]:4.2f}/{ref["cluster"]:4.2f}  {"PASS" if house else "FAIL"}'
+              f'{"" if strict == house else " (90 % tones: " + ("PASS" if strict else "FAIL") + ")"}')
+        ok &= house
+    m = lint(img)
+    light = crag_light(r)
+    bad = [x for x in m['misses'] if x in ('palette', 'speckle', 'dither')]
+    bad += ['light-west'] if light <= 0 else []
+    n, rb = rim_steps(r)
+    bad += [f'rim-steps {rb}/{n}'] if rb > max(3, n // 20) else []
+    fl = getattr(r.fr, 'fringeL', np.zeros(1))
+    lip_max = int(fl.max()) if len(fl) else 0
+    bad += [f'lip {lip_max}'] if lip_max > (3 if E['lip']['kind'] == 'coping' else 2) else []
+    bad += [f'foot {E["foot"]["band"]}'] if E['foot']['band'] > 3 else []
+    bad += [f'tier {T["face"]}'] if T['face'] not in GRAMMAR_HEIGHTS else []
+    print(f'  grammar    {m["colours"]} colours, {100 * m["on_house"]:.1f} % house palette, {100 * m["isolated"]:.1f} % lone px, '
+          f'{100 * m["checker"]:.2f} % dither, west minus east {light:+.1f} on each rock form, rim steps {n - rb}/{n} on the rule, '
+          f'lip <= {lip_max} px, foot {E["foot"]["band"]} px, side {SIDE} px, tier {T["face"]}  {"PASS" if not bad else "FAIL " + " ".join(bad)}')
+    return ok and not bad
+
+
 def run_check() -> int:
     ok = True
     t = seam_test()
     print(f"seam: tiles differ from the whole by {t['diff_px']} px; the seam between two adjacent tiles: {t['seam_px']} px")
     ok &= t['seam_px'] == 0 and not any(t['diff_px'].values())
+    faults = check_biomes()
+    print('biomes: every biome draws with its own edge set and owns its pieces:', 'PASS' if not faults else 'FAIL ' + '; '.join(faults))
+    ok &= not faults
     for seed in PROOF_SEEDS:
-        r = render(random_world(seed))
-        img = r.image()
-        _f, _t, tag = r.arrays()
-        p = proof(img, tag)
-        p['crag_light'] = crag_light(r)
-        print(f'random outline {seed}: rock box {p["rock_box"]} ({100 * p["rock_share"]:.0f} % rock), '
-              f'ground box {p["ground_box"]} ({100 * p["ground_share"]:.0f} % ground)')
-        for kind in ('stone-wall', 'face', 'ground'):
-            house, strict, ours, ref = p[kind]
-            print(f'  {kind:10s} tones {ours["tones"]:5.1f}/{ref["tones"]:5.1f} shapes {ours["shapes"]:5.1f}/{ref["shapes"]:5.1f} '
-                  f'dressing {ours["dressing"]:5.1f}/{ref["dressing"]:5.1f} isolated {ours["isolated"]:.3f}/{ref["isolated"]:.3f} '
-                  f'cluster {ours["cluster"]:4.2f}/{ref["cluster"]:4.2f}  {"PASS" if house else "FAIL"}'
-                  f'{"" if strict == house else " (90 % tones: " + ("PASS" if strict else "FAIL") + ")"}')
-            ok &= house
-        m = p['lint']
-        bad = [x for x in m['misses'] if x in ('palette', 'speckle', 'dither')]
-        bad += ['light-west (crags)'] if p['crag_light'] <= 0 else []
-        print(f'  lint       {m["colours"]} colours, {100 * m["on_house"]:.1f} % on the house palette, '
-              f'{100 * m["isolated"]:.1f} % lone px, {100 * m["checker"]:.2f} % dither; west minus east {p["crag_light"]:+.1f} '
-              f'on the crags (whole picture {m["west_east"]:+.1f})  {"PASS" if not bad else "FAIL " + " ".join(bad)}')
-        ok &= not bad
+        w = random_world(seed)
+        ok &= grammar(f'random outline {seed} (highland)', render(w), w)
+    for name, fn in DEMOS.items():
+        w, _fig = fn()
+        ok &= grammar(f'demo {name}', render(w), w)
+        foreign = [p.kind for p in getattr(w, 'placed', []) if p.kind not in w.T['pieces']]
+        if foreign:
+            print(f'  pieces     {name} places pieces it does not own: {foreign}  FAIL')
+            ok = False
     print('cliff core check:', 'PASS' if ok else 'FAIL')
     return 0 if ok else 1
 
@@ -2438,23 +3400,33 @@ PROOF_SEEDS = (1, 2, 3)
 
 
 def outputs() -> dict:
-    """Everything the generator writes (art-repro reproduces these bytes): the four demos and
-    the three random-outline proofs, each at 1x and 3x."""
+    """Everything the generator writes (art-repro reproduces these bytes): name -> (picture,
+    whether a 3x copy is written too). The five biome demos, the 512 px highland area, the
+    three random-outline proofs, and the module, reuse and edge sheets (already enlarged)."""
     out = {}
     for name, fn in DEMOS.items():
         w, fig = fn()
         r = render(w)
         figure(r.fr, *fig)
-        out[name] = r.image()
+        out[name] = (r.image(), True)
+    w, fig = demo_area()
+    r = render(w)
+    figure(r.fr, *fig)
+    out['area'] = (r.image(), True)
     for seed in PROOF_SEEDS:
-        out[f'proof-{seed}'] = render(random_world(seed)).image()
+        out[f'proof-{seed}'] = (render(random_world(seed)).image(), True)
+    out['modules'] = (module_sheet(), False)
+    out['reuse'] = (reuse_sheet(), False)
+    out['edges'] = (edges_sheet(), False)
     return out
 
 
 def compare(refdir: str, path: str):
-    """The highland demo at 3x beside the Sea of Stars ledge path and cliff top and the
-    Eastward Octopia crops, all brought to an adult of 25 px (detail_bar.to_scale). The
-    screenshots are official and stay out of the repository: pass a local folder."""
+    """Ours beside Eastward only (eastward-edges.md; Matt, 21 Oct 09:23), every image at an
+    adult of 25 px (detail_bar.to_scale), 3x: the highland demo and the meadow demo beside
+    Eastward's rock cliff with a grass top (Octopia, 12), its grass ledges and stair (13) and
+    its pond (37, Octopia-7, shown at the game's 3.3 zoom). The screenshots are official and
+    stay out of the repository, and so does this picture: write it to a scratch folder."""
     import detail_bar as db
     from PIL import ImageDraw
 
@@ -2466,37 +3438,33 @@ def compare(refdir: str, path: str):
 
     S = 3
     up = lambda im: im.resize((im.width * S, im.height * S), Image.NEAREST)  # noqa: E731
-    w, fig = demo_highland()
-    r = render(w)
-    figure(r.fr, *fig)
-    ours = up(r.image())
-    shots = [(ref('seaofstars/33.png', (0, 0, 1920, 1080), 150.0), 'Sea of Stars: the ledge path (press kit, Traversal-4)'),
-             (ref('seaofstars/19.jpg', (0, 0, 960, 1080), 150.0), 'Sea of Stars: a cliff top over the void'),
-             (ref('eastward/12.jpg', (0, 0, 960, 1080), 162.0), 'Eastward Octopia: rock cliff with grass top'),
-             (ref('eastward/13.jpg', (0, 600, 1300, 1000), 162.0), 'Eastward Octopia: grass ledges and a stair')]
+    ours = []
+    for name in ('highland', 'meadow'):
+        w, fig = DEMOS[name]()
+        r = render(w)
+        figure(r.fr, *fig)
+        ours.append((up(r.image()), f'ours: {name} (cliff_core.demo_{name})'))
+    shots = [(up(ref('eastward/12.jpg', (0, 0, 960, 700), 162.0)), 'Eastward Octopia: rock cliff with a grass top'),
+             (up(ref('eastward/13.jpg', (0, 600, 1300, 1000), 162.0)), 'Eastward Octopia: grass ledges, a stair, a canal bank'),
+             (up(ref('eastward/37.jpg', (0, 120, 700, 900), 178.0)), 'Eastward Octopia: a pond rimmed with stones')]
     g = 14
-    r1 = up(shots[0][0])
-    r2a, r2b = up(shots[1][0]), up(shots[2][0])
-    r3 = up(shots[3][0])
-    right_w = max(r1.width, r2a.width + g + r2b.width, r3.width)
-    W_ = g + ours.width + g + right_w + g
-    H_ = 34 + max(ours.height + 26, r1.height + 22 + max(r2a.height, r2b.height) + 22 + r3.height + 26)
+    left_w = sum(o.width for o, _ in ours) + g
+    right_w = max(im.width for im, _ in shots)
+    W_ = g + left_w + g + right_w + g
+    H_ = 34 + max(max(o.height for o, _ in ours) + 26, sum(im.height + 26 for im, _ in shots))
     out = Image.new('RGB', (W_, H_), (34, 28, 36))
     d = ImageDraw.Draw(out)
-    d.text((g, 10), 'Cliff core, highland demo at 3x (left) beside the references, every image at an adult of 25 px', fill=(240, 234, 222))
-    out.paste(ours, (g, 34))
-    d.text((g, 34 + ours.height + 6), 'ours: cliff_core.py demo_highland (the hiker on the ledge is 24 px)', fill=(240, 234, 222))
-    x2, y = g + ours.width + g, 34
-    out.paste(r1, (x2, y))
-    d.text((x2, y + r1.height + 4), shots[0][1], fill=(240, 234, 222))
-    y += r1.height + 22
-    out.paste(r2a, (x2, y))
-    out.paste(r2b, (x2 + r2a.width + g, y))
-    d.text((x2, y + r2a.height + 4), shots[1][1], fill=(240, 234, 222))
-    d.text((x2 + r2a.width + g, y + r2b.height + 4), shots[2][1], fill=(240, 234, 222))
-    y += max(r2a.height, r2b.height) + 22
-    out.paste(r3, (x2, y))
-    d.text((x2, y + r3.height + 4), shots[3][1], fill=(240, 234, 222))
+    d.text((g, 10), 'Edges and the soft grid beside Eastward only, every image at an adult of 25 px, 3x', fill=(240, 234, 222))
+    x = g
+    for o, t in ours:
+        out.paste(o, (x, 34))
+        d.text((x, 34 + o.height + 6), t, fill=(240, 234, 222))
+        x += o.width + g
+    y = 34
+    for im, t in shots:
+        out.paste(im, (g + left_w + g, y))
+        d.text((g + left_w + g, y + im.height + 4), t, fill=(240, 234, 222))
+        y += im.height + 26
     out.save(path)
 
 
@@ -2509,10 +3477,12 @@ def main(argv) -> int:
         return 0
     out_dir = argv[0] if argv and not argv[0].startswith('--') else OUT_DIR
     os.makedirs(out_dir, exist_ok=True)
-    for name, img in outputs().items():
+    pics = outputs()
+    for name, (img, triple) in pics.items():
         img.save(os.path.join(out_dir, f'{name}.png'), optimize=False)
-        img.resize((img.width * 3, img.height * 3), Image.NEAREST).save(os.path.join(out_dir, f'{name}-3x.png'), optimize=False)
-    print('cliff core: wrote', len(DEMOS) + len(PROOF_SEEDS), 'pictures at 1x and 3x to', os.path.relpath(out_dir, ROOT))
+        if triple:
+            img.resize((img.width * 3, img.height * 3), Image.NEAREST).save(os.path.join(out_dir, f'{name}-3x.png'), optimize=False)
+    print('cliff core: wrote', len(pics), 'pictures to', os.path.relpath(out_dir, ROOT))
     return 0
 
 
