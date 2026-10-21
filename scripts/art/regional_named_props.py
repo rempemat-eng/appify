@@ -358,16 +358,16 @@ def tram_tipple() -> Canvas:
         x = 60 + k // 3
         y = top + 4 + k
         cv.hline(x, y, 8, T('iron', 3 if k % 4 else 2))
-        cv.set(x + 2 + (k % 3), y, T('soot', 1))
+        cv.hline(x + 2 + (k % 3), y, 3, T('soot', 1 if k % 2 else 2))  # coal sliding in the chute
     # the wagon on the siding below, half loaded, and the spill on the ground
     part(cv, 54, foot - 14, 18, 9, 'timber_cool', 3)
     for x in range(55, 71):
-        cv.set(x, foot - 15, T('soot', 2 if x % 3 else 4))
+        cv.set(x, foot - 15, T('soot', 2 if (x // 2) % 3 else 4))
     for wx in (56, 66):
         for (x, y) in oval(wx + 1, foot - 4, 2.5, 2.5):
             cv.set(x, y, T('iron', 4 if x <= wx else 2))
     for (x, y) in oval(46, foot - 1, 7, 2):
-        cv.set(x, y, T('soot', 2 if (x + y) % 4 else 4))
+        cv.set(x, y, T('soot', 2 if (x // 2 + y) % 3 else 4))
     shadow(cv, 0, w - 2, foot)
     return finish(clean(cv))
 
@@ -406,10 +406,19 @@ def lookout() -> Canvas:
         beam(cv, (px, plat - 12), (px, plat - 3), 2, 'timber', 3)
     beam(cv, (4, plat - 12), (40, plat - 12), 2, 'timber', 4)
     beam(cv, (4, plat - 8), (40, plat - 8), 1, 'timber', 3)
+    for (a, b) in ((6, 13), (24, 31)):  # diagonal braces in two of the rail's bays
+        beam(cv, (a, plat - 4), (b, plat - 11), 1, 'timber', 2)
     part(cv, 8, plat - 7, 8, 3, 'timber', 4)  # a bench along the platform's west rail
     beam(cv, (30, plat - 4), (28, plat - 11), 1, 'iron', 3)  # the spotting telescope on its stand
     beam(cv, (30, plat - 4), (32, plat - 11), 1, 'iron', 2)
     part(cv, 27, plat - 14, 9, 3, 'brass', 4)
+    for (x, y) in oval(36, plat - 16, 2.6, 3):  # the warning bell hung under the east eaves, and its rope
+        cv.set(x, y, T('brass', 5 if x < 36 and y < plat - 16 else 4 if x < 37 else 2))
+    cv.vline(36, plat - 13, 6, T('sand_cool', 3))
+    part(cv, 6, plat - 17, 4, 5, 'lamp', 4)  # a storm lantern on the west post
+    cv.hline(6, plat - 18, 4, T('iron', 3))
+    for (x, y) in oval(16, plat - 5, 3, 1.6):  # a coil of rope on the platform
+        cv.set(x, y, T('sand_cool', 4 if (x + y) % 2 else 2))
     # the pyramid roof of shingles over the platform, its finial and flag
     for y in range(4, plat - 13):
         half = 3 + (y - 4) * 19 // (plat - 17)
