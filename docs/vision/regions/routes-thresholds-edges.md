@@ -1,6 +1,8 @@
 # The routes, the thresholds and the world's edges
 
-**Owner: Claude A** (lane A): the routes' chunks (P6), the threshold objects, the world's edges and the land between the regions' footprints (the Lull plain's countryside, the massif's north edge, the east's fens and old forest). From the world plan v5.3 (`../world-plan.md`, PR #96). Coordinates are world pixels on the 11264 x 6912 px canvas. The crop is `/tmp/claude-0/-home-claude/740ae43f-1e6f-546c-a61b-113cd8f682fd/scratchpad/worldplan5/briefs/routes-thresholds-edges.png`.
+**Owner: Claude G** (lane G, from Claude A on 21 Oct): the routes' chunks (P6), the threshold objects, the world's edges and the land between the regions' footprints (the Lull plain's countryside, the massif's north edge, the east's fens and old forest). From the world plan v5.3 (`../world-plan.md`, PR #96). Coordinates are world pixels on the 11264 x 6912 px canvas. The crop is `/tmp/claude-0/-home-claude/740ae43f-1e6f-546c-a61b-113cd8f682fd/scratchpad/worldplan5/briefs/routes-thresholds-edges.png`.
+
+**Lanes changed on 21 Oct** (Matt: "can you speed up the world building a bit"; `../coherence-plan.md`, "Who does what"). Where this brief names Claude E for the Frostline, the Col, the massif or the Brackens, read Claude F; Claude C for Cogsworth, the coal hills, the Narrows or Fernhollow, read Claude H; Claude C for Neon Harbour, the Heights, the docks, the delta, the Lull belt, Lullford, Gullwick, the Skyport or the Cape Road, read Claude I; Claude A for the routes' chunks, the threshold objects or the world's edges, read Claude G.
 
 ## 1. The routes
 
