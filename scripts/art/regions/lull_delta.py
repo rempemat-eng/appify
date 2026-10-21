@@ -935,9 +935,11 @@ def placement(P: dict) -> list:
             continue
         for w in P.get('water', []):
             if w.get('closed'):
-                if _in_poly(at, w['points']):
+                if _in_poly(at, w['points']) and not any(_in_poly(at, i['outline']) for i in w.get('islands', [])):
                     bad.append(f'{what} at {tuple(at)} stands in the {w["id"]}')
             elif min(_seg_d(at, a, b) for a, b in zip(w['points'], w['points'][1:])) < w['width'] / 2 + 6:
+                if any(abs(at[0] - b['at'][0]) <= b['span'] / 2 and abs(at[1] - b['at'][1]) <= 16 for b in w.get('bridges', [])):
+                    continue
                 if what.startswith('marker egrets') or what in ('eel traps', 'stilt hut', 'fishing stage'):
                     continue   # they stand in the shallows or on stilts over the water by design
                 bad.append(f'{what} at {tuple(at)} stands in the {w["id"]}')

@@ -1,0 +1,1404 @@
+{
+ "_about": "Gullwick as a plan (Claude I, lane I, 21 Oct), Claude F's region-plan schema (#174): a fishing cove on the open coast west of the delta (brief 2: a cove for fish, and a beach to haul boats). Lane G's Coast Path (#175) crosses it; its side path round the thicket and its pocket to the view are G's. World px; tiers in screen space; local 0 = world 1 (the beach). Derived from the brief until the block-out is data.",
+ "id": "gullwick",
+ "owner": "claude-i",
+ "biome": "coast",
+ "biomes": [
+  "coast",
+  "river"
+ ],
+ "box": [
+  7648,
+  4848,
+  640,
+  608
+ ],
+ "base_tier": {
+  "value": 1,
+  "provisional": false,
+  "from": "Claude G, #175: the Coast Path at world tier 2 through Gullwick"
+ },
+ "tiers": [
+  {
+   "id": "village",
+   "tier": 1,
+   "why": "the coast's grassy shelf (world 2) with the Coast Path along it and the village at the top of the cove",
+   "outline": [
+    [
+     7648,
+     4848
+    ],
+    [
+     8288,
+     4848
+    ],
+    [
+     8288,
+     5224
+    ],
+    [
+     8216,
+     5232
+    ],
+    [
+     8168,
+     5200
+    ],
+    [
+     8080,
+     5184
+    ],
+    [
+     7960,
+     5176
+    ],
+    [
+     7840,
+     5184
+    ],
+    [
+     7752,
+     5208
+    ],
+    [
+     7704,
+     5240
+    ],
+    [
+     7648,
+     5248
+    ]
+   ]
+  },
+  {
+   "id": "west_head",
+   "tier": 2,
+   "why": "the cove's western horn, a low headland of turf over rock (world 3)",
+   "outline": [
+    [
+     7648,
+     5184
+    ],
+    [
+     7720,
+     5184
+    ],
+    [
+     7752,
+     5216
+    ],
+    [
+     7712,
+     5248
+    ],
+    [
+     7720,
+     5296
+    ],
+    [
+     7704,
+     5360
+    ],
+    [
+     7648,
+     5400
+    ]
+   ]
+  },
+  {
+   "id": "east_head",
+   "tier": 2,
+   "why": "the cove's eastern horn (world 3); the view over the land is on it",
+   "outline": [
+    [
+     8216,
+     5232
+    ],
+    [
+     8288,
+     5200
+    ],
+    [
+     8288,
+     5400
+    ],
+    [
+     8240,
+     5376
+    ],
+    [
+     8208,
+     5296
+    ]
+   ]
+  },
+  {
+   "id": "beach",
+   "tier": 0,
+   "why": "the shingle beach where the boats are hauled up (world 1)",
+   "outline": [
+    [
+     7704,
+     5248
+    ],
+    [
+     7752,
+     5216
+    ],
+    [
+     7840,
+     5192
+    ],
+    [
+     7960,
+     5184
+    ],
+    [
+     8080,
+     5192
+    ],
+    [
+     8168,
+     5208
+    ],
+    [
+     8208,
+     5240
+    ],
+    [
+     8208,
+     5304
+    ],
+    [
+     8104,
+     5320
+    ],
+    [
+     7960,
+     5328
+    ],
+    [
+     7824,
+     5320
+    ],
+    [
+     7720,
+     5304
+    ]
+   ]
+  }
+ ],
+ "faces": {
+  "_about": "the coast kit (#162): sea cliffs under the two horns, a shingle bank under the village",
+  "between_tiers": {
+   "height": 32,
+   "material": "turf over slate (the horns), a shingle bank (the village)"
+  }
+ },
+ "water": [
+  {
+   "id": "sea",
+   "kind": "sea",
+   "closed": true,
+   "why": "the cove opens south; lane G draws the open sea past the box",
+   "points": [
+    [
+     7648,
+     5400
+    ],
+    [
+     7704,
+     5360
+    ],
+    [
+     7720,
+     5304
+    ],
+    [
+     7824,
+     5320
+    ],
+    [
+     7960,
+     5328
+    ],
+    [
+     8104,
+     5320
+    ],
+    [
+     8208,
+     5304
+    ],
+    [
+     8240,
+     5376
+    ],
+    [
+     8288,
+     5400
+    ],
+    [
+     8288,
+     5456
+    ],
+    [
+     7648,
+     5456
+    ]
+   ],
+   "bridges": [
+    {
+     "what": "jetty",
+     "on": "jetty",
+     "at": [
+      8044,
+      5380
+     ],
+     "span": 24
+    }
+   ]
+  },
+  {
+   "id": "heron_pools",
+   "kind": "pools",
+   "closed": true,
+   "why": "shallow pools in a wet hollow behind the coast, herons fishing",
+   "points": [
+    [
+     8064,
+     5000
+    ],
+    [
+     8120,
+     4984
+    ],
+    [
+     8160,
+     4992
+    ],
+    [
+     8168,
+     5024
+    ],
+    [
+     8128,
+     5040
+    ],
+    [
+     8072,
+     5032
+    ]
+   ]
+  }
+ ],
+ "routes": [
+  {
+   "id": "coast_path",
+   "kind": "path",
+   "width": 32,
+   "owner_note": "lane G's line, width and tier (lib/world-routes.ts, #175); Claude I paints it",
+   "points": [
+    [
+     7672,
+     5072
+    ],
+    [
+     7704,
+     5072
+    ],
+    [
+     7712,
+     5064
+    ],
+    [
+     7728,
+     5064
+    ],
+    [
+     7736,
+     5056
+    ],
+    [
+     7768,
+     5056
+    ],
+    [
+     7800,
+     5056
+    ],
+    [
+     7816,
+     5056
+    ],
+    [
+     7824,
+     5064
+    ],
+    [
+     7856,
+     5064
+    ],
+    [
+     7872,
+     5064
+    ],
+    [
+     7880,
+     5056
+    ],
+    [
+     7896,
+     5056
+    ],
+    [
+     7896,
+     5048
+    ],
+    [
+     7904,
+     5048
+    ],
+    [
+     7912,
+     5040
+    ],
+    [
+     7920,
+     5040
+    ],
+    [
+     7920,
+     5032
+    ],
+    [
+     7928,
+     5032
+    ],
+    [
+     7936,
+     5024
+    ],
+    [
+     7944,
+     5024
+    ],
+    [
+     7944,
+     5016
+    ],
+    [
+     7952,
+     5016
+    ],
+    [
+     7960,
+     5008
+    ],
+    [
+     7976,
+     5008
+    ],
+    [
+     7984,
+     5000
+    ],
+    [
+     8000,
+     5000
+    ],
+    [
+     8008,
+     4992
+    ],
+    [
+     8024,
+     4992
+    ],
+    [
+     8040,
+     4976
+    ],
+    [
+     8048,
+     4968
+    ],
+    [
+     8056,
+     4968
+    ],
+    [
+     8064,
+     4960
+    ],
+    [
+     8064,
+     4952
+    ],
+    [
+     8072,
+     4944
+    ],
+    [
+     8080,
+     4944
+    ],
+    [
+     8096,
+     4928
+    ],
+    [
+     8104,
+     4928
+    ],
+    [
+     8112,
+     4920
+    ],
+    [
+     8120,
+     4920
+    ],
+    [
+     8128,
+     4912
+    ],
+    [
+     8136,
+     4912
+    ],
+    [
+     8144,
+     4904
+    ],
+    [
+     8152,
+     4904
+    ],
+    [
+     8152,
+     4896
+    ],
+    [
+     8160,
+     4888
+    ],
+    [
+     8168,
+     4888
+    ],
+    [
+     8176,
+     4880
+    ],
+    [
+     8176,
+     4872
+    ],
+    [
+     8184,
+     4864
+    ],
+    [
+     8192,
+     4864
+    ],
+    [
+     8192,
+     4856
+    ],
+    [
+     8200,
+     4848
+    ]
+   ],
+   "widths": [
+    [
+     7856,
+     5064,
+     40
+    ],
+    [
+     7896,
+     5056,
+     40
+    ],
+    [
+     7952,
+     5016,
+     40
+    ],
+    [
+     8024,
+     4992,
+     40
+    ],
+    [
+     8056,
+     4968,
+     40
+    ],
+    [
+     8064,
+     4960,
+     40
+    ],
+    [
+     8064,
+     4952,
+     40
+    ],
+    [
+     8072,
+     4944,
+     40
+    ],
+    [
+     8152,
+     4904,
+     40
+    ],
+    [
+     8160,
+     4888,
+     40
+    ],
+    [
+     8168,
+     4888,
+     40
+    ],
+    [
+     8176,
+     4880,
+     40
+    ],
+    [
+     8176,
+     4872,
+     40
+    ],
+    [
+     8192,
+     4864,
+     40
+    ]
+   ],
+   "tiers_world": [
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2
+   ]
+  }
+ ],
+ "trods": [
+  {
+   "id": "thicket_round",
+   "width": 24,
+   "from_lane_g": true,
+   "why": "lane G's side path round the thicket (brief 7)",
+   "points": [
+    [
+     7688,
+     5072
+    ],
+    [
+     7712,
+     5040
+    ],
+    [
+     7736,
+     5008
+    ],
+    [
+     7768,
+     4984
+    ],
+    [
+     7800,
+     4960
+    ],
+    [
+     7840,
+     4936
+    ],
+    [
+     7872,
+     4912
+    ],
+    [
+     7912,
+     4896
+    ],
+    [
+     7944,
+     4872
+    ],
+    [
+     7984,
+     4864
+    ],
+    [
+     8024,
+     4864
+    ],
+    [
+     8064,
+     4864
+    ],
+    [
+     8104,
+     4872
+    ],
+    [
+     8144,
+     4872
+    ],
+    [
+     8176,
+     4880
+    ]
+   ]
+  },
+  {
+   "id": "view_pocket",
+   "width": 24,
+   "dead_end": "view",
+   "from_lane_g": true,
+   "points": [
+    [
+     8152,
+     4904
+    ],
+    [
+     8168,
+     4920
+    ],
+    [
+     8192,
+     4928
+    ],
+    [
+     8208,
+     4944
+    ],
+    [
+     8232,
+     4960
+    ],
+    [
+     8248,
+     4976
+    ],
+    [
+     8256,
+     5000
+    ],
+    [
+     8264,
+     5024
+    ],
+    [
+     8272,
+     5048
+    ],
+    [
+     8280,
+     5064
+    ],
+    [
+     8280,
+     5072
+    ]
+   ]
+  },
+  {
+   "id": "harbour_lane",
+   "width": 24,
+   "why": "from the Coast Path down into the village",
+   "points": [
+    [
+     7880,
+     5064
+    ],
+    [
+     7896,
+     5096
+    ],
+    [
+     7912,
+     5120
+    ],
+    [
+     7920,
+     5144
+    ]
+   ]
+  },
+  {
+   "id": "harbour_street",
+   "width": 32,
+   "why": "the village's one street, along the top of the cove, the cottages facing the boats",
+   "points": [
+    [
+     7728,
+     5168
+    ],
+    [
+     7800,
+     5160
+    ],
+    [
+     7856,
+     5144
+    ],
+    [
+     7928,
+     5152
+    ],
+    [
+     8000,
+     5144
+    ],
+    [
+     8064,
+     5160
+    ],
+    [
+     8136,
+     5168
+    ],
+    [
+     8184,
+     5184
+    ]
+   ]
+  },
+  {
+   "id": "slipway",
+   "width": 32,
+   "why": "down the shingle to the boats",
+   "points": [
+    [
+     7968,
+     5152
+    ],
+    [
+     7968,
+     5200
+    ],
+    [
+     7976,
+     5248
+    ],
+    [
+     7968,
+     5288
+    ]
+   ]
+  },
+  {
+   "id": "jetty",
+   "width": 24,
+   "why": "a short stone jetty out from the beach, the boats' landing at high water",
+   "points": [
+    [
+     8040,
+     5296
+    ],
+    [
+     8048,
+     5328
+    ],
+    [
+     8040,
+     5360
+    ],
+    [
+     8048,
+     5392
+    ]
+   ]
+  }
+ ],
+ "stairs": [
+  {
+   "id": "harbour_steps",
+   "on": "slipway",
+   "at": [
+    7968,
+    5188
+   ],
+   "from_tier": 1,
+   "to_tier": 0,
+   "width": 40,
+   "kind": "stone",
+   "why": "the slipway goes down the shingle bank in a flight of steps beside the ramp"
+  }
+ ],
+ "buildings": [
+  {
+   "id": "cottage_1",
+   "kind": "cottage",
+   "kit": "valley",
+   "foot": [
+    7744,
+    5128
+   ],
+   "w": 64,
+   "faces": "south",
+   "why": "fishermen's cottages facing the cove"
+  },
+  {
+   "id": "cottage_2",
+   "kind": "cottage",
+   "kit": "valley",
+   "foot": [
+    7808,
+    5128
+   ],
+   "w": 64,
+   "faces": "south",
+   "why": "fishermen's cottages facing the cove"
+  },
+  {
+   "id": "cottage_3",
+   "kind": "cottage",
+   "kit": "valley",
+   "foot": [
+    8008,
+    5128
+   ],
+   "w": 64,
+   "faces": "south",
+   "why": "fishermen's cottages facing the cove"
+  },
+  {
+   "id": "cottage_4",
+   "kind": "cottage",
+   "kit": "valley",
+   "foot": [
+    8072,
+    5128
+   ],
+   "w": 64,
+   "faces": "south",
+   "why": "fishermen's cottages facing the cove"
+  },
+  {
+   "id": "net_loft",
+   "kind": "shed",
+   "kit": "valley",
+   "foot": [
+    8136,
+    5144
+   ],
+   "w": 56,
+   "faces": "south"
+  },
+  {
+   "id": "smokehouse",
+   "kind": "shed",
+   "kit": "valley",
+   "foot": [
+    7680,
+    5152
+   ],
+   "w": 48,
+   "faces": "south"
+  }
+ ],
+ "places": [
+  {
+   "id": "gullwick",
+   "kind": "harbour",
+   "at": [
+    7952,
+    5160
+   ],
+   "rect": [
+    7680,
+    5080,
+    528,
+    240
+   ],
+   "why": "a cove on the open coast west of the delta: fish, and a beach to haul boats"
+  }
+ ],
+ "named": [
+  {
+   "thing": "heron pools",
+   "kind": "wild",
+   "at": [
+    8112,
+    4972
+   ],
+   "route": "Coast Path",
+   "where": "beside the path",
+   "why": "the pools in the hollow just south of the path",
+   "moved_from": [
+    8129,
+    4982
+   ]
+  }
+ ],
+ "pockets": [
+  {
+   "holds": "a view over the land",
+   "at": [
+    8280,
+    5072
+   ],
+   "trod": "view_pocket",
+   "from_lane_g": true
+  }
+ ],
+ "egg_spots": [],
+ "markers": [
+  {
+   "t": "A",
+   "what": "hares",
+   "at": [
+    7672,
+    5096
+   ],
+   "route": "Coast Path",
+   "moved_from": [
+    7696,
+    5078
+   ]
+  },
+  {
+   "t": "I",
+   "what": "gate",
+   "at": [
+    7764,
+    5012
+   ],
+   "route": "Coast Path",
+   "moved_from": [
+    7758,
+    5002
+   ]
+  },
+  {
+   "t": "S",
+   "what": "cold fire ring",
+   "at": [
+    7788,
+    5136
+   ],
+   "route": "Coast Path",
+   "moved_from": [
+    7789,
+    5092
+   ]
+  },
+  {
+   "t": "S",
+   "what": "marker stone",
+   "at": [
+    7880,
+    5108
+   ],
+   "route": "Coast Path",
+   "moved_from": [
+    7849,
+    5111
+   ]
+  },
+  {
+   "t": "A",
+   "what": "hares",
+   "at": [
+    7892,
+    5124
+   ],
+   "route": "Coast Path",
+   "moved_from": [
+    7911,
+    5121
+   ]
+  },
+  {
+   "t": "I",
+   "what": "noticeboard",
+   "at": [
+    7960,
+    5040
+   ],
+   "route": "Coast Path",
+   "moved_from": [
+    7954,
+    5032
+   ]
+  },
+  {
+   "t": "S",
+   "what": "cairn",
+   "at": [
+    8040,
+    5036
+   ],
+   "route": "Coast Path",
+   "moved_from": [
+    8049,
+    5053
+   ]
+  },
+  {
+   "t": "S",
+   "what": "tracks",
+   "at": [
+    8011,
+    4963
+   ],
+   "route": "Coast Path"
+  },
+  {
+   "t": "I",
+   "what": "gate",
+   "at": [
+    8112,
+    4956
+   ],
+   "route": "Coast Path"
+  },
+  {
+   "t": "S",
+   "what": "old boot",
+   "at": [
+    8096,
+    4852
+   ],
+   "route": "Coast Path",
+   "moved_from": [
+    8097,
+    4860
+   ]
+  },
+  {
+   "t": "A",
+   "what": "hares",
+   "at": [
+    8192,
+    4896
+   ],
+   "route": "Coast Path",
+   "moved_from": [
+    8190,
+    4894
+   ]
+  },
+  {
+   "t": "S",
+   "what": "cold fire ring",
+   "at": [
+    8028,
+    4956
+   ],
+   "route": "Gullwick",
+   "moved_from": [
+    8024,
+    4976
+   ]
+  },
+  {
+   "t": "S",
+   "what": "mended fence",
+   "at": [
+    7920,
+    5064
+   ],
+   "route": "Gullwick",
+   "moved_from": [
+    7920,
+    5048
+   ]
+  },
+  {
+   "t": "I",
+   "what": "door",
+   "at": [
+    7856,
+    5040
+   ],
+   "route": "Gullwick",
+   "moved_from": [
+    7856,
+    5064
+   ]
+  },
+  {
+   "t": "I",
+   "what": "gate",
+   "at": [
+    7948,
+    5076
+   ],
+   "route": "Gullwick",
+   "moved_from": [
+    7952,
+    5080
+   ]
+  },
+  {
+   "t": "I",
+   "what": "gate",
+   "at": [
+    8000,
+    5096
+   ],
+   "route": "Gullwick",
+   "moved_from": [
+    8008,
+    5080
+   ]
+  },
+  {
+   "t": "I",
+   "what": "door",
+   "at": [
+    8112,
+    5120
+   ],
+   "route": "Gullwick",
+   "moved_from": [
+    8104,
+    5080
+   ]
+  },
+  {
+   "t": "S",
+   "what": "tracks",
+   "at": [
+    7912,
+    5084
+   ],
+   "route": "Gullwick",
+   "moved_from": [
+    7912,
+    5088
+   ]
+  },
+  {
+   "t": "S",
+   "what": "old boot",
+   "at": [
+    7928,
+    5088
+   ],
+   "route": "Gullwick"
+  },
+  {
+   "t": "I",
+   "what": "bench",
+   "at": [
+    8080,
+    5136
+   ],
+   "route": "Gullwick",
+   "moved_from": [
+    8088,
+    5096
+   ]
+  },
+  {
+   "t": "S",
+   "what": "old boot",
+   "at": [
+    7772,
+    5136
+   ],
+   "route": "Gullwick",
+   "moved_from": [
+    7824,
+    5112
+   ]
+  },
+  {
+   "t": "S",
+   "what": "marker stone",
+   "at": [
+    7840,
+    5172
+   ],
+   "route": "Gullwick",
+   "moved_from": [
+    7824,
+    5120
+   ]
+  },
+  {
+   "t": "I",
+   "what": "signpost",
+   "at": [
+    8096,
+    5136
+   ],
+   "route": "Gullwick",
+   "moved_from": [
+    8096,
+    5128
+   ]
+  },
+  {
+   "t": "S",
+   "what": "tracks",
+   "at": [
+    7940,
+    5176
+   ],
+   "route": "Gullwick",
+   "moved_from": [
+    7952,
+    5168
+   ]
+  },
+  {
+   "t": "S",
+   "what": "marker stone",
+   "at": [
+    8104,
+    5188
+   ],
+   "route": "Gullwick",
+   "moved_from": [
+    8104,
+    5176
+   ]
+  },
+  {
+   "t": "I",
+   "what": "noticeboard",
+   "at": [
+    8024,
+    5180
+   ],
+   "route": "Gullwick",
+   "moved_from": [
+    8024,
+    5184
+   ]
+  },
+  {
+   "t": "I",
+   "what": "resident",
+   "at": [
+    7824,
+    5188
+   ],
+   "route": "Gullwick",
+   "moved_from": [
+    7832,
+    5200
+   ]
+  }
+ ],
+ "obstacles": [
+  {
+   "kind": "thicket",
+   "at": [
+    7910,
+    4971
+   ],
+   "passed_by": "thicket_round",
+   "why": "brief 7 (lane G)"
+  }
+ ],
+ "edges": [
+  {
+   "side": "south",
+   "layers": "the sea is the edge, with surf; low cliffs under the two horns",
+   "along": [
+    [
+     7648,
+     5400
+    ],
+    [
+     8288,
+     5400
+    ]
+   ]
+  }
+ ],
+ "thresholds": [],
+ "residents": [
+  {
+   "who": "a fisher mending nets",
+   "at": [
+    7968,
+    5232
+   ],
+   "note": "on the beach by the boats"
+  },
+  {
+   "who": "a heron",
+   "at": [
+    8140,
+    4988
+   ],
+   "note": "in the pools",
+   "moved_from": [
+    8136,
+    5008
+   ]
+  }
+ ],
+ "ground": {
+  "_about": "for the painter",
+  "shelf": "short sea-turf with thrift and sea campion, gorse",
+  "beach": "shingle and sand, boats hauled up, nets drying",
+  "village": "cobbles and slate steps, lobster pots, a slipway of setts"
+ }
+}
