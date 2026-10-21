@@ -1,0 +1,156 @@
+{
+ "open: none": {
+  "leaks": [],
+  "missing": []
+ },
+ "open: W1": {
+  "leaks": [],
+  "missing": []
+ },
+ "open: W1,W2": {
+  "leaks": [],
+  "missing": []
+ },
+ "open: W1,W2,W3": {
+  "leaks": [],
+  "missing": []
+ },
+ "open: W1,W2,W3,W4": {
+  "leaks": [],
+  "missing": []
+ },
+ "open: W1,W2,W3,W4,W5": {
+  "leaks": [],
+  "missing": []
+ },
+ "open: W1,W2,W3,W4,W5,W6": {
+  "leaks": [],
+  "missing": []
+ },
+ "open: W1,W2,W3,W4,W5,W6,W7": {
+  "leaks": [],
+  "missing": []
+ },
+ "crossings without a way": [],
+ "crossings": [
+  {
+   "route": "Col Path",
+   "barrier": "rim",
+   "way": "W2",
+   "x": 6229,
+   "y": 2033
+  },
+  {
+   "route": "High Fells",
+   "barrier": "rim",
+   "way": "W2",
+   "x": 6412,
+   "y": 1712
+  },
+  {
+   "route": "High Fells",
+   "barrier": "the Cog",
+   "way": "W3",
+   "x": 7823,
+   "y": 2314
+  },
+  {
+   "route": "Foothill Road",
+   "barrier": "the Cog",
+   "way": "W3",
+   "x": 7861,
+   "y": 2504
+  },
+  {
+   "route": "Towpath",
+   "barrier": "the Cog",
+   "way": "W3",
+   "x": 8362,
+   "y": 2967
+  },
+  {
+   "route": "Towpath",
+   "barrier": "the Cog",
+   "way": "W3",
+   "x": 8524,
+   "y": 3059
+  },
+  {
+   "route": "Lull Road",
+   "barrier": "the Lull",
+   "way": "W7",
+   "x": 8962,
+   "y": 4324
+  },
+  {
+   "route": "Headland Lane",
+   "barrier": "wall",
+   "way": "W1",
+   "x": 7005,
+   "y": 5300
+  },
+  {
+   "route": "Shell Bar",
+   "barrier": "sea",
+   "way": "W4",
+   "x": 6986,
+   "y": 5797
+  },
+  {
+   "route": "Shell Bar",
+   "barrier": "sea",
+   "way": "W4",
+   "x": 6803,
+   "y": 5992
+  },
+  {
+   "route": "Drover's Road",
+   "barrier": "the Rift",
+   "way": "W5",
+   "x": 4297,
+   "y": 3480
+  },
+  {
+   "route": "Canyon Road",
+   "barrier": "fire",
+   "way": "W6",
+   "x": 2143,
+   "y": 4875
+  },
+  {
+   "route": "Ash Coast",
+   "barrier": "fire",
+   "way": "W6",
+   "x": 3247,
+   "y": 5564
+  },
+  {
+   "route": "Ash Coast",
+   "barrier": "the Rift",
+   "way": "W5",
+   "x": 4191,
+   "y": 5242
+  },
+  {
+   "route": "Harbour Bridge",
+   "barrier": "sea",
+   "way": "open",
+   "x": 9989,
+   "y": 4988
+  },
+  {
+   "route": "Harbour Bridge",
+   "barrier": "sea",
+   "way": "open",
+   "x": 10273,
+   "y": 4989
+  },
+  {
+   "route": "Beacon Causeway",
+   "barrier": "sea",
+   "way": "open",
+   "x": 10321,
+   "y": 5383
+  }
+ ]
+}

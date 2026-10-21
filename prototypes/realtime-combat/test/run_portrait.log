@@ -1,0 +1,22 @@
+shot shots/p-01-walk.png
+shot shots/p-02-glare-drifts-in.png
+shot shots/p-field-drawn.png
+shot shots/p-field-telegraph.png
+field: done calmed=3 hp=80
+shot shots/p-04-calmed-sparks.png
+shot shots/p-05-path-quiet.png
+shot shots/p-06-signpost.png
+shot shots/p-07-arena-intro.png
+shot shots/p-arena-telegraph.png
+shot shots/p-arena-split-shield.png
+shot shots/p-arena-last-gust.png
+events [["dodge", 12.9, [0.61, 0.79]], ["hurt", "lane", 28.7, "hurt", 121, 402], ["dodge", 30.3, [0.14, 0.99]], ["hurt", "lane", 32, "hurt", 130, 416], ["dodge", 47.9, [-0.87, 0.49]], ["dodge", 50.9, [0.95, 0.31]], ["dodge", 53.8, [-0.94, 0.34]], ["hurt", "lane", 55.4, "hurt", 111, 422], ["dodge", 60.2, [0.74, -0.68]], ["hurt", "lane", 61.3, "hurt", 111, 385], ["dodge", 70.3, [0.01, 1]], ["hurt", "lane", 76.2, "hurt", 62, 428], ["dodge", 77.8, [0.94, 0.33]], ["hurt", "sweep", 84.6, "hurt", 61, 419], ["dodge", 85.1, [0.26, -0.97]]]
+arena: outro phase=3 hp=12 down=False
+shot shots/p-08-arena-calmed.png
+shot shots/p-09-victory.png
+win card: True
+shot shots/p-10-walk-on.png
+shot shots/p-11-pause.png
+fps samples [31, 48, 59, 43, 60, 47, 40, 31, 57, 49, 50, 59, 49, 52]
+flicks=9 dodges=18 taps=12 looses=12
+errors: []

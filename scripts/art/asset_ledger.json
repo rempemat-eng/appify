@@ -1,6 +1,6 @@
 {
  "_about": "The asset ledger (docs/vision/asset-ledger.md). Every picture under assets/ with its grade: KEEP may go into a kit or region build, REWORK must be redone first, RETIRE has no place in the new world. Written by scripts/art/asset_ledger.py --build; `eye` verdicts are written by hand and survive a rebuild. Checked by scripts/check-assets.cjs (npm run check:assets).",
- "main": "d53734c",
+ "main": "0b24017",
  "grades": {
   "KEEP": "fits the newest standard on every check",
   "REWORK": "the subject stays; redo the art first",
@@ -4533,20 +4533,21 @@
    "fix": "redraw",
    "why": "a journey picture: the journeys stay as shortcuts beside the routes (routes brief 9), but this layer was painted in the older style before the house style and the bar; redraw it in the house style at the bar (judged by eye: side views have no baseline)",
    "fails": [
-    "house style"
+    "house style",
+    "palette"
    ],
    "measured": {
     "scale": 4,
     "h": 240,
     "w": 320,
     "measured_file": "assets/journeys/lava-near.png",
-    "px": 31879,
-    "colours": 34,
-    "on_today": 0.975,
+    "px": 31649,
+    "colours": 70,
+    "on_today": 0.897,
     "isolated": 0.047,
     "checker": 0.0045
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "journey/lava-sky": {
    "files": [
@@ -4592,20 +4593,21 @@
    "fix": "redraw",
    "why": "a journey picture: the journeys stay as shortcuts beside the routes (routes brief 9), but this layer was painted in the older style before the house style and the bar; redraw it in the house style at the bar (judged by eye: side views have no baseline)",
    "fails": [
-    "house style"
+    "house style",
+    "palette"
    ],
    "measured": {
     "scale": 4,
     "h": 240,
     "w": 320,
     "measured_file": "assets/journeys/lava-yard.png",
-    "px": 19079,
-    "colours": 27,
-    "on_today": 0.959,
-    "isolated": 0.013,
+    "px": 18849,
+    "colours": 62,
+    "on_today": 0.828,
+    "isolated": 0.012,
     "checker": 0.0004
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "journey/lumen-pad": {
    "files": [
@@ -5949,13 +5951,13 @@
     "h": 240,
     "w": 320,
     "measured_file": "assets/journeys/valley-far.png",
-    "px": 30123,
-    "colours": 131,
+    "px": 30192,
+    "colours": 164,
     "on_today": 0.0,
-    "isolated": 0.072,
+    "isolated": 0.075,
     "checker": 0.0164
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "journey/valley-near": {
    "files": [
@@ -9533,26 +9535,24 @@
    "module": "caldera_props",
    "generator": "scripts/art/caldera_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "bar tones LOW, shapes LOW, dressing LOW as stone-wall",
-   "fails": [
-    "bar"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 55,
-    "w": 38,
+    "h": 53,
+    "w": 33,
     "style": {
-     "colours": 6,
+     "colours": 41,
      "on_house": 1.0,
-     "on_today": 0.984,
+     "on_today": 0.0,
      "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.035,
-     "west_east": 9.027,
-     "isolated": 0.017,
+     "double": 0.012,
+     "west_east": 10.953,
+     "isolated": 0.0,
      "checker": 0.0
     },
     "grid": "free",
@@ -9569,9 +9569,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "4a37250",
-     "date": "2026-10-19T11:15",
-     "subject": "Sunstone's logic, second pass (review 19 Oct 08:04 finding 4 and the merged-review notes)"
+     "sha": "33fdf81",
+     "date": "2026-10-21T08:51",
+     "subject": "Lane D basalt family redrawn on the house ramps: columns, columns_b, columns_low, stack, steps, stumps, stumps_b, fallen"
     },
     "audit": {
      "grade": "KEEP",
@@ -9580,47 +9580,42 @@
     },
     "logic": "ok (KEEP in the audit)",
     "bar": {
-     "status": "fail",
+     "status": "pass",
      "kind": "stone-wall",
      "box": [
-      2,
-      10,
-      37,
-      45
+      6,
+      28,
+      28,
+      50
      ],
-     "patches": 4,
+     "patches": 1,
      "tones_at": 0.85,
      "tones": [
-      5.75,
+      18.0,
       18.56
      ],
      "shapes": [
-      20.5,
+      47.0,
       28.23
      ],
      "dressing": [
-      15.5,
+      42.0,
       22.36
      ],
      "isolated": [
-      0.026,
+      0.055,
       0.17
      ],
      "cluster": [
-      8.14,
+      3.94,
       3.63
-     ],
-     "low": [
-      "tones",
-      "shapes",
-      "dressing"
      ]
     }
    },
    "placed": {
     "caldera": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/basalt_columns_b": {
    "files": [
@@ -9632,125 +9627,24 @@
    "module": "caldera_props",
    "generator": "scripts/art/caldera_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "bar tones LOW, shapes LOW, dressing LOW as stone-wall",
-   "fails": [
-    "bar"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 49,
-    "w": 50,
+    "h": 40,
+    "w": 35,
     "style": {
-     "colours": 6,
+     "colours": 37,
      "on_house": 1.0,
-     "on_today": 0.982,
+     "on_today": 0.0,
      "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.0,
-     "west_east": 2.696,
-     "isolated": 0.019,
-     "checker": 0.001
-    },
-    "grid": "free",
-    "size": {
-     "kind": "crag",
-     "h_range": [
-      40,
-      96
-     ],
-     "w_range": [
-      32,
-      80
-     ],
-     "status": "ok"
-    },
-    "last_change": {
-     "sha": "4a37250",
-     "date": "2026-10-19T11:15",
-     "subject": "Sunstone's logic, second pass (review 19 Oct 08:04 finding 4 and the merged-review notes)"
-    },
-    "audit": {
-     "grade": "KEEP",
-     "why": "lit hexagon tops, material shading",
-     "fix": "none"
-    },
-    "logic": "ok (KEEP in the audit)",
-    "bar": {
-     "status": "fail",
-     "kind": "stone-wall",
-     "box": [
-      15,
-      12,
-      48,
-      45
-     ],
-     "patches": 4,
-     "tones_at": 0.85,
-     "tones": [
-      5.25,
-      18.56
-     ],
-     "shapes": [
-      25.25,
-      28.23
-     ],
-     "dressing": [
-      17.75,
-      22.36
-     ],
-     "isolated": [
-      0.016,
-      0.17
-     ],
-     "cluster": [
-      7.98,
-      3.63
-     ],
-     "low": [
-      "tones",
-      "shapes",
-      "dressing"
-     ]
-    }
-   },
-   "placed": {
-    "caldera": 1
-   },
-   "checked": "2026-10-20"
-  },
-  "prop/basalt_columns_low": {
-   "files": [
-    "assets/zones/props/basalt_columns_low.png"
-   ],
-   "cls": "sprite",
-   "name": "basalt_columns_low",
-   "kind": "crag",
-   "module": "caldera_props",
-   "generator": "scripts/art/caldera_props.py",
-   "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "bar tones LOW, shapes LOW, dressing LOW as stone-wall",
-   "fails": [
-    "bar"
-   ],
-   "measured": {
-    "scale": 4,
-    "h": 47,
-    "w": 53,
-    "style": {
-     "colours": 6,
-     "on_house": 1.0,
-     "on_today": 0.981,
-     "palette": "house",
-     "outline_dark": 1.0,
-     "flat_ink": 0.0,
-     "double": 0.006,
-     "west_east": 4.992,
-     "isolated": 0.012,
+     "double": 0.007,
+     "west_east": 10.338,
+     "isolated": 0.0,
      "checker": 0.0
     },
     "grid": "free",
@@ -9767,9 +9661,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "4a37250",
-     "date": "2026-10-19T11:15",
-     "subject": "Sunstone's logic, second pass (review 19 Oct 08:04 finding 4 and the merged-review notes)"
+     "sha": "33fdf81",
+     "date": "2026-10-21T08:51",
+     "subject": "Lane D basalt family redrawn on the house ramps: columns, columns_b, columns_low, stack, steps, stumps, stumps_b, fallen"
     },
     "audit": {
      "grade": "KEEP",
@@ -9778,47 +9672,134 @@
     },
     "logic": "ok (KEEP in the audit)",
     "bar": {
-     "status": "fail",
+     "status": "pass",
+     "kind": "stone-wall",
+     "box": [
+      1,
+      3,
+      24,
+      26
+     ],
+     "patches": 1,
+     "tones_at": 0.85,
+     "tones": [
+      20.0,
+      18.56
+     ],
+     "shapes": [
+      51.0,
+      28.23
+     ],
+     "dressing": [
+      46.0,
+      22.36
+     ],
+     "isolated": [
+      0.07,
+      0.17
+     ],
+     "cluster": [
+      3.46,
+      3.63
+     ]
+    }
+   },
+   "placed": {
+    "caldera": 1
+   },
+   "checked": "2026-10-21"
+  },
+  "prop/basalt_columns_low": {
+   "files": [
+    "assets/zones/props/basalt_columns_low.png"
+   ],
+   "cls": "sprite",
+   "name": "basalt_columns_low",
+   "kind": "crag",
+   "module": "caldera_props",
+   "generator": "scripts/art/caldera_props.py",
+   "owner": "D",
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
+   "measured": {
+    "scale": 4,
+    "h": 40,
+    "w": 37,
+    "style": {
+     "colours": 39,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 1.0,
+     "flat_ink": 0.0,
+     "double": 0.007,
+     "west_east": 9.054,
+     "isolated": 0.0,
+     "checker": 0.0
+    },
+    "grid": "free",
+    "size": {
+     "kind": "crag",
+     "h_range": [
+      40,
+      96
+     ],
+     "w_range": [
+      32,
+      80
+     ],
+     "status": "ok"
+    },
+    "last_change": {
+     "sha": "33fdf81",
+     "date": "2026-10-21T08:51",
+     "subject": "Lane D basalt family redrawn on the house ramps: columns, columns_b, columns_low, stack, steps, stumps, stumps_b, fallen"
+    },
+    "audit": {
+     "grade": "KEEP",
+     "why": "lit hexagon tops, material shading",
+     "fix": "none"
+    },
+    "logic": "ok (KEEP in the audit)",
+    "bar": {
+     "status": "pass",
      "kind": "stone-wall",
      "box": [
       2,
-      9,
-      31,
+      16,
+      24,
       38
      ],
      "patches": 1,
      "tones_at": 0.85,
      "tones": [
-      5.0,
+      17.0,
       18.56
      ],
      "shapes": [
-      23.0,
+      50.0,
       28.23
      ],
      "dressing": [
-      16.0,
+      39.0,
       22.36
      ],
      "isolated": [
-      0.008,
+      0.051,
       0.17
      ],
      "cluster": [
-      10.24,
+      3.76,
       3.63
-     ],
-     "low": [
-      "tones",
-      "shapes",
-      "dressing"
      ]
     }
    },
    "placed": {
     "scorch": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/basalt_fallen": {
    "files": [
@@ -9830,27 +9811,24 @@
    "module": "caldera_props",
    "generator": "scripts/art/caldera_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "fault (ADJUST: a flat log of blocks); detail not measurable and not checked by eye since the bar",
-   "fails": [
-    "logic",
-    "detail unverified"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 17,
-    "w": 49,
+    "h": 13,
+    "w": 46,
     "style": {
-     "colours": 10,
+     "colours": 24,
      "on_house": 1.0,
-     "on_today": 0.824,
+     "on_today": 0.0,
      "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.006,
-     "west_east": 2.032,
-     "isolated": 0.01,
+     "double": 0.01,
+     "west_east": 9.383,
+     "isolated": 0.002,
      "checker": 0.0
     },
     "grid": "free",
@@ -9867,28 +9845,33 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "4a37250",
-     "date": "2026-10-19T11:15",
-     "subject": "Sunstone's logic, second pass (review 19 Oct 08:04 finding 4 and the merged-review notes)"
+     "sha": "33fdf81",
+     "date": "2026-10-21T08:51",
+     "subject": "Lane D basalt family redrawn on the house ramps: columns, columns_b, columns_low, stack, steps, stumps, stumps_b, fallen"
     },
     "audit": {
      "grade": "ADJUST",
      "why": "a flat log of blocks",
      "fix": "hexagonal end faces, broken ends"
     },
-    "logic": "fault (ADJUST: a flat log of blocks)",
+    "logic": "fixed by eye: fixed: reads as a basalt column lying where it fell, not a flat log of blocks: a hexagonal prism on its side (lit upper facet, mid front facet, shaded lower facet, a hexagonal west end to the light), broken at its joints into drums settled a little apart and askew, the east end a fresh stepped break, ash drifted against it in lobes (claude-d, 21 Oct)",
     "bar": {
      "status": "n/a",
      "kind": "wood-front",
-     "square": 13,
-     "why": "no solid 18 px square (largest 13): too small for a 16 px patch"
+     "square": 11,
+     "why": "no solid 18 px square (largest 11): too small for a 16 px patch",
+     "eye": "ok: drums on their own sibling ramps with recessed joints, stains a tone off in clusters, lichen on the lit facet, a crack, ash lobes and a dry tuft; its largest solid square is 12 px, so it was compared at 3x and 1x beside Eastward Octopia's boulders (eastward-17), rock wall (eastward-12) and pillars (eastward-37) at an adult of 25 px, day and night tint (claude-d, 21 Oct)"
     }
    },
    "placed": {
     "scorch": 1,
     "springs": 1
    },
-   "checked": "2026-10-20"
+   "eye": {
+    "logic": "fixed: reads as a basalt column lying where it fell, not a flat log of blocks: a hexagonal prism on its side (lit upper facet, mid front facet, shaded lower facet, a hexagonal west end to the light), broken at its joints into drums settled a little apart and askew, the east end a fresh stepped break, ash drifted against it in lobes (claude-d, 21 Oct)",
+    "bar": "ok: drums on their own sibling ramps with recessed joints, stains a tone off in clusters, lichen on the lit facet, a crack, ash lobes and a dry tuft; its largest solid square is 12 px, so it was compared at 3x and 1x beside Eastward Octopia's boulders (eastward-17), rock wall (eastward-12) and pillars (eastward-37) at an adult of 25 px, day and night tint (claude-d, 21 Oct)"
+   },
+   "checked": "2026-10-21"
   },
   "prop/basalt_stack": {
    "files": [
@@ -9900,26 +9883,24 @@
    "module": "caldera_props",
    "generator": "scripts/art/caldera_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "bar tones LOW, dressing LOW as stone-wall",
-   "fails": [
-    "bar"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 83,
-    "w": 36,
+    "h": 76,
+    "w": 35,
     "style": {
-     "colours": 6,
+     "colours": 42,
      "on_house": 1.0,
-     "on_today": 0.988,
+     "on_today": 0.0,
      "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.018,
-     "west_east": 6.161,
-     "isolated": 0.02,
+     "double": 0.004,
+     "west_east": 10.589,
+     "isolated": 0.0,
      "checker": 0.0
     },
     "grid": "free",
@@ -9936,9 +9917,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "4a37250",
-     "date": "2026-10-19T11:15",
-     "subject": "Sunstone's logic, second pass (review 19 Oct 08:04 finding 4 and the merged-review notes)"
+     "sha": "33fdf81",
+     "date": "2026-10-21T08:51",
+     "subject": "Lane D basalt family redrawn on the house ramps: columns, columns_b, columns_low, stack, steps, stumps, stumps_b, fallen"
     },
     "audit": {
      "grade": "KEEP",
@@ -9947,39 +9928,35 @@
     },
     "logic": "ok (KEEP in the audit)",
     "bar": {
-     "status": "fail",
+     "status": "pass",
      "kind": "stone-wall",
      "box": [
-      2,
-      23,
-      35,
-      56
+      1,
+      21,
+      28,
+      48
      ],
-     "patches": 4,
+     "patches": 1,
      "tones_at": 0.85,
      "tones": [
-      6.0,
+      17.0,
       18.56
      ],
      "shapes": [
-      27.0,
+      48.0,
       28.23
      ],
      "dressing": [
-      18.25,
+      41.0,
       22.36
      ],
      "isolated": [
-      0.039,
+      0.051,
       0.17
      ],
      "cluster": [
-      6.86,
+      4.13,
       3.63
-     ],
-     "low": [
-      "tones",
-      "dressing"
      ]
     }
    },
@@ -9987,7 +9964,7 @@
     "caldera": 1,
     "springs": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/basalt_steps": {
    "files": [
@@ -9999,26 +9976,24 @@
    "module": "caldera_props",
    "generator": "scripts/art/caldera_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "bar tones LOW, dressing LOW as stone-wall",
-   "fails": [
-    "bar"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 55,
-    "w": 77,
+    "h": 52,
+    "w": 66,
     "style": {
-     "colours": 6,
+     "colours": 41,
      "on_house": 1.0,
-     "on_today": 0.978,
+     "on_today": 0.0,
      "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.023,
-     "west_east": 9.112,
-     "isolated": 0.025,
+     "double": 0.028,
+     "west_east": 12.738,
+     "isolated": 0.0,
      "checker": 0.0
     },
     "grid": "free",
@@ -10035,9 +10010,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "4a37250",
-     "date": "2026-10-19T11:15",
-     "subject": "Sunstone's logic, second pass (review 19 Oct 08:04 finding 4 and the merged-review notes)"
+     "sha": "33fdf81",
+     "date": "2026-10-21T08:51",
+     "subject": "Lane D basalt family redrawn on the house ramps: columns, columns_b, columns_low, stack, steps, stumps, stumps_b, fallen"
     },
     "audit": {
      "grade": "KEEP",
@@ -10046,26 +10021,26 @@
     },
     "logic": "ok (KEEP in the audit)",
     "bar": {
-     "status": "fail",
+     "status": "pass",
      "kind": "stone-wall",
      "box": [
-      39,
-      16,
-      68,
-      45
+      30,
+      18,
+      56,
+      44
      ],
      "patches": 1,
      "tones_at": 0.85,
      "tones": [
-      6.0,
+      18.0,
       18.56
      ],
      "shapes": [
-      28.0,
+      47.0,
       28.23
      ],
      "dressing": [
-      20.0,
+      42.0,
       22.36
      ],
      "isolated": [
@@ -10073,19 +10048,15 @@
       0.17
      ],
      "cluster": [
-      5.95,
+      3.61,
       3.63
-     ],
-     "low": [
-      "tones",
-      "dressing"
      ]
     }
    },
    "placed": {
     "caldera": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/basalt_stumps": {
    "files": [
@@ -10097,27 +10068,25 @@
    "module": "caldera_props",
    "generator": "scripts/art/caldera_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "style: speckle",
-   "fails": [
-    "speckle"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 24,
-    "w": 45,
+    "h": 22,
+    "w": 40,
     "style": {
-     "colours": 6,
+     "colours": 38,
      "on_house": 1.0,
-     "on_today": 0.944,
+     "on_today": 0.0,
      "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
      "double": 0.0,
-     "west_east": 10.394,
-     "isolated": 0.073,
-     "checker": 0.002
+     "west_east": 13.793,
+     "isolated": 0.0,
+     "checker": 0.0
     },
     "grid": "free",
     "size": {
@@ -10133,9 +10102,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "4a37250",
-     "date": "2026-10-19T11:15",
-     "subject": "Sunstone's logic, second pass (review 19 Oct 08:04 finding 4 and the merged-review notes)"
+     "sha": "33fdf81",
+     "date": "2026-10-21T08:51",
+     "subject": "Lane D basalt family redrawn on the house ramps: columns, columns_b, columns_low, stack, steps, stumps, stumps_b, fallen"
     },
     "audit": {
      "grade": "KEEP",
@@ -10146,16 +10115,19 @@
     "bar": {
      "status": "n/a",
      "kind": "stone-wall",
-     "square": 12,
-     "why": "no solid 18 px square (largest 12): too small for a 16 px patch",
-     "eye": "KEEP by eye in the prop audit, unchanged since"
+     "square": 10,
+     "why": "no solid 18 px square (largest 10): too small for a 16 px patch",
+     "eye": "ok: short basalt prisms broken at the top in stepped fresh fractures (darker than the weathered grey tops, lit on their lips), drums on sibling ramps with recessed joints and lit lips, stains, varnish, spalls and lichen, drums and chips fallen at the foot; its largest solid square is under 18 px, so it was compared at 3x and 1x beside Eastward Octopia's boulders (eastward-17), rock wall (eastward-12) and pillars (eastward-37) at an adult of 25 px, day and night tint (claude-d, 21 Oct)"
     }
    },
    "placed": {
     "caldera": 1,
     "springs": 1
    },
-   "checked": "2026-10-20"
+   "eye": {
+    "bar": "ok: short basalt prisms broken at the top in stepped fresh fractures (darker than the weathered grey tops, lit on their lips), drums on sibling ramps with recessed joints and lit lips, stains, varnish, spalls and lichen, drums and chips fallen at the foot; its largest solid square is under 18 px, so it was compared at 3x and 1x beside Eastward Octopia's boulders (eastward-17), rock wall (eastward-12) and pillars (eastward-37) at an adult of 25 px, day and night tint (claude-d, 21 Oct)"
+   },
+   "checked": "2026-10-21"
   },
   "prop/basalt_stumps_b": {
    "files": [
@@ -10173,18 +10145,18 @@
    "fails": [],
    "measured": {
     "scale": 4,
-    "h": 26,
-    "w": 45,
+    "h": 19,
+    "w": 44,
     "style": {
-     "colours": 6,
+     "colours": 29,
      "on_house": 1.0,
-     "on_today": 0.963,
+     "on_today": 0.0,
      "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.015,
-     "west_east": 3.576,
-     "isolated": 0.052,
+     "double": 0.0,
+     "west_east": 8.129,
+     "isolated": 0.0,
      "checker": 0.0
     },
     "grid": "free",
@@ -10201,9 +10173,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "4a37250",
-     "date": "2026-10-19T11:15",
-     "subject": "Sunstone's logic, second pass (review 19 Oct 08:04 finding 4 and the merged-review notes)"
+     "sha": "33fdf81",
+     "date": "2026-10-21T08:51",
+     "subject": "Lane D basalt family redrawn on the house ramps: columns, columns_b, columns_low, stack, steps, stumps, stumps_b, fallen"
     },
     "audit": {
      "grade": "KEEP",
@@ -10214,15 +10186,18 @@
     "bar": {
      "status": "n/a",
      "kind": "stone-wall",
-     "square": 17,
-     "why": "no solid 18 px square (largest 17): too small for a 16 px patch",
-     "eye": "KEEP by eye in the prop audit, unchanged since"
+     "square": 11,
+     "why": "no solid 18 px square (largest 11): too small for a 16 px patch",
+     "eye": "ok: short basalt prisms broken at the top in stepped fresh fractures (darker than the weathered grey tops, lit on their lips), drums on sibling ramps with recessed joints and lit lips, stains, varnish, spalls and lichen, drums and chips fallen at the foot; its largest solid square is under 18 px, so it was compared at 3x and 1x beside Eastward Octopia's boulders (eastward-17), rock wall (eastward-12) and pillars (eastward-37) at an adult of 25 px, day and night tint (claude-d, 21 Oct)"
     }
    },
    "placed": {
     "springs": 1
    },
-   "checked": "2026-10-20"
+   "eye": {
+    "bar": "ok: short basalt prisms broken at the top in stepped fresh fractures (darker than the weathered grey tops, lit on their lips), drums on sibling ramps with recessed joints and lit lips, stains, varnish, spalls and lichen, drums and chips fallen at the foot; its largest solid square is under 18 px, so it was compared at 3x and 1x beside Eastward Octopia's boulders (eastward-17), rock wall (eastward-12) and pillars (eastward-37) at an adult of 25 px, day and night tint (claude-d, 21 Oct)"
+   },
+   "checked": "2026-10-21"
   },
   "prop/bathhouse": {
    "files": [
@@ -11269,33 +11244,29 @@
    "module": "harbour_props",
    "generator": "scripts/art/harbour_props.py",
    "owner": "B",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "fault (ADJUST: plank hulls good; no hull side, no mooring); bar tones LOW, shapes LOW, dressing LOW as wood-front; style: light-west",
-   "fails": [
-    "logic",
-    "bar",
-    "light-west"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 24,
-    "w": 62,
+    "h": 21,
+    "w": 66,
     "style": {
-     "colours": 15,
-     "on_house": 0.939,
-     "on_today": 0.877,
+     "colours": 43,
+     "on_house": 1.0,
+     "on_today": 0.0,
      "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.0,
-     "west_east": -2.95,
-     "isolated": 0.014,
+     "double": 0.007,
+     "west_east": 4.808,
+     "isolated": 0.018,
      "checker": 0.0
     },
     "grid": {
-     "foot_px": 50,
-     "cells": 6.25,
+     "foot_px": 64,
+     "cells": 8.0,
      "kind_foot": "7 x 2",
      "ok": true
     },
@@ -11312,58 +11283,56 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "418e8b8",
-     "date": "2026-10-17T22:06",
-     "subject": "W1 prototype: walk the valley with no cuts between zones (/atlas)"
+     "sha": "55ae2f0",
+     "date": "2026-10-21T09:02",
+     "subject": "Named things batch 2 and wave 2: windmills, rowing boats and the dinghy redrawn new; burners' hut, lookout and tipple up"
     },
     "audit": {
      "grade": "ADJUST",
      "why": "plank hulls good; no hull side, no mooring",
      "fix": "lit gunwale over a dark hull side, thwarts, oars, a painter rope"
     },
-    "logic": "fault (ADJUST: plank hulls good; no hull side, no mooring)",
+    "logic": "fixed by eye: fixed: redrawn new in boat_props.py (wave 2): a clinker rowing boat in three-quarter view, its lit gunwale over the painted hull side, two thwarts with rowlocks, oars shipped along the sides, the anchor line coiled with its grapnel, rainwater aft, the painter from the stem ring to the water (claude-b, 21 Oct)",
     "bar": {
-     "status": "fail",
+     "status": "pass",
      "kind": "wood-front",
      "box": [
-      8,
-      1,
-      30,
-      23
+      16,
+      2,
+      34,
+      20
      ],
      "patches": 1,
      "tones_at": 0.85,
      "tones": [
-      9.0,
+      21.0,
       24.0
      ],
      "shapes": [
-      24.0,
+      44.0,
       36.34
      ],
      "dressing": [
-      14.0,
+      36.0,
       30.54
      ],
      "isolated": [
-      0.078,
+      0.105,
       0.17
      ],
      "cluster": [
-      5.02,
+      3.51,
       3.4
-     ],
-     "low": [
-      "tones",
-      "shapes",
-      "dressing"
      ]
     }
    },
    "placed": {
     "harbour": 2
    },
-   "checked": "2026-10-20"
+   "eye": {
+    "logic": "fixed: redrawn new in boat_props.py (wave 2): a clinker rowing boat in three-quarter view, its lit gunwale over the painted hull side, two thwarts with rowlocks, oars shipped along the sides, the anchor line coiled with its grapnel, rainwater aft, the painter from the stem ring to the water (claude-b, 21 Oct)"
+   },
+   "checked": "2026-10-21"
   },
   "prop/boat_red": {
    "files": [
@@ -11375,36 +11344,31 @@
    "module": "harbour_props",
    "generator": "scripts/art/harbour_props.py",
    "owner": "B",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "fault (ADJUST: plank hulls good; no hull side, no mooring); foot line 43 px: not whole 8 px cells (kind foot 7 x 2); bar tones LOW, shapes LOW, dressing LOW as wood-front; style: light-west",
-   "fails": [
-    "logic",
-    "grid",
-    "bar",
-    "light-west"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 24,
-    "w": 54,
+    "h": 21,
+    "w": 57,
     "style": {
-     "colours": 13,
-     "on_house": 0.924,
-     "on_today": 0.872,
+     "colours": 40,
+     "on_house": 1.0,
+     "on_today": 0.0,
      "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.0,
-     "west_east": -2.55,
-     "isolated": 0.021,
+     "double": 0.008,
+     "west_east": 3.787,
+     "isolated": 0.027,
      "checker": 0.0
     },
     "grid": {
-     "foot_px": 43,
-     "cells": 5.38,
+     "foot_px": 56,
+     "cells": 7.0,
      "kind_foot": "7 x 2",
-     "ok": false
+     "ok": true
     },
     "size": {
      "kind": "rowing_boat",
@@ -11419,58 +11383,56 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "418e8b8",
-     "date": "2026-10-17T22:06",
-     "subject": "W1 prototype: walk the valley with no cuts between zones (/atlas)"
+     "sha": "55ae2f0",
+     "date": "2026-10-21T09:02",
+     "subject": "Named things batch 2 and wave 2: windmills, rowing boats and the dinghy redrawn new; burners' hut, lookout and tipple up"
     },
     "audit": {
      "grade": "ADJUST",
      "why": "plank hulls good; no hull side, no mooring",
      "fix": "lit gunwale over a dark hull side, thwarts, oars, a painter rope"
     },
-    "logic": "fault (ADJUST: plank hulls good; no hull side, no mooring)",
+    "logic": "fixed by eye: fixed: redrawn new in boat_props.py (wave 2): a clinker rowing boat in three-quarter view, its lit gunwale over the painted hull side, two thwarts with rowlocks, oars shipped along the sides, the anchor line coiled with its grapnel, rainwater aft, the painter from the stem ring to the water (claude-b, 21 Oct)",
     "bar": {
-     "status": "fail",
+     "status": "pass",
      "kind": "wood-front",
      "box": [
-      7,
-      1,
-      29,
-      23
+      15,
+      2,
+      33,
+      20
      ],
      "patches": 1,
      "tones_at": 0.85,
      "tones": [
-      11.0,
+      24.0,
       24.0
      ],
      "shapes": [
-      22.0,
+      49.0,
       36.34
      ],
      "dressing": [
-      14.0,
+      39.0,
       30.54
      ],
      "isolated": [
-      0.07,
+      0.129,
       0.17
      ],
      "cluster": [
-      5.57,
+      3.12,
       3.4
-     ],
-     "low": [
-      "tones",
-      "shapes",
-      "dressing"
      ]
     }
    },
    "placed": {
     "harbour": 1
    },
-   "checked": "2026-10-20"
+   "eye": {
+    "logic": "fixed: redrawn new in boat_props.py (wave 2): a clinker rowing boat in three-quarter view, its lit gunwale over the painted hull side, two thwarts with rowlocks, oars shipped along the sides, the anchor line coiled with its grapnel, rainwater aft, the painter from the stem ring to the water (claude-b, 21 Oct)"
+   },
+   "checked": "2026-10-21"
   },
   "prop/boathouse": {
    "files": [
@@ -34477,36 +34439,31 @@
    "module": "harbour_props",
    "generator": "scripts/art/harbour_props.py",
    "owner": "B",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "re-check: changed since the audit (REDRAW: a flat side-on sail); foot line 53 px: not whole 8 px cells (kind foot 8 x 3); bar tones LOW, shapes LOW, dressing LOW as wood-front; style: palette",
-   "fails": [
-    "logic",
-    "grid",
-    "bar",
-    "palette"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 72,
-    "w": 53,
+    "h": 74,
+    "w": 65,
     "style": {
-     "colours": 38,
-     "on_house": 0.725,
-     "on_today": 0.835,
-     "palette": "off",
+     "colours": 61,
+     "on_house": 0.999,
+     "on_today": 0.0,
+     "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.048,
-     "west_east": 3.344,
-     "isolated": 0.018,
+     "double": 0.06,
+     "west_east": 0.979,
+     "isolated": 0.033,
      "checker": 0.0
     },
     "grid": {
-     "foot_px": 53,
-     "cells": 6.62,
+     "foot_px": 65,
+     "cells": 8.12,
      "kind_foot": "8 x 3",
-     "ok": false
+     "ok": true
     },
     "size": {
      "kind": "sailboat",
@@ -34521,58 +34478,32 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "ca96683",
-     "date": "2026-10-20T15:43",
-     "subject": "Sailboat to Claude A's list (to-b-1500): the mainsail's belly lit and its leech in shade, folds up from the clew, stitch"
+     "sha": "55ae2f0",
+     "date": "2026-10-21T09:02",
+     "subject": "Named things batch 2 and wave 2: windmills, rowing boats and the dinghy redrawn new; burners' hut, lookout and tipple up"
     },
     "audit": {
      "grade": "REDRAW",
      "why": "a flat side-on sail",
      "fix": "hull in three-quarter view with deck; sail furled when moored"
     },
-    "logic": "re-check: changed since the audit (REDRAW: a flat side-on sail)",
+    "logic": "fixed by eye: fixed: redrawn new in boat_props.py (wave 2): a clinker dinghy in three-quarter view with its varnished foredeck and open cockpit, the mainsail furled on the boom in its crutch, the jib rolled on the forestay, rudder and tiller lashed, moored to its buoy (claude-b, 21 Oct)",
     "bar": {
-     "status": "fail",
+     "status": "n/a",
      "kind": "wood-front",
-     "box": [
-      13,
-      28,
-      35,
-      50
-     ],
-     "patches": 1,
-     "tones_at": 0.9,
-     "tones": [
-      6.0,
-      24.0
-     ],
-     "shapes": [
-      25.0,
-      36.34
-     ],
-     "dressing": [
-      11.0,
-      30.54
-     ],
-     "isolated": [
-      0.02,
-      0.17
-     ],
-     "cluster": [
-      6.24,
-      3.4
-     ],
-     "low": [
-      "tones",
-      "shapes",
-      "dressing"
-     ]
+     "square": 17,
+     "why": "no solid 18 px square (largest 17): too small for a 16 px patch",
+     "eye": "ok: no solid 18 px square (hull 17 tall); hull checked against the wood-front recipe (strakes lapped with a lit lip, frames, rails lit) and the furled cloth against the cloth ruling (ties, lit top, shaded lee), compared with eastward-37 (the bus camp props) at the same character height, 3x and 1x (claude-b, 21 Oct)"
     }
    },
    "placed": {
     "harbour": 1
    },
-   "checked": "2026-10-20"
+   "eye": {
+    "logic": "fixed: redrawn new in boat_props.py (wave 2): a clinker dinghy in three-quarter view with its varnished foredeck and open cockpit, the mainsail furled on the boom in its crutch, the jib rolled on the forestay, rudder and tiller lashed, moored to its buoy (claude-b, 21 Oct)",
+    "bar": "ok: no solid 18 px square (hull 17 tall); hull checked against the wood-front recipe (strakes lapped with a lit lip, frames, rails lit) and the furled cloth against the cloth ruling (ties, lit top, shaded lee), compared with eastward-37 (the bus camp props) at the same character height, 3x and 1x (claude-b, 21 Oct)"
+   },
+   "checked": "2026-10-21"
   },
   "prop/saloon": {
    "files": [
@@ -41472,38 +41403,31 @@
    "module": "valley_props",
    "generator": "scripts/art/valley_props.py",
    "owner": "B",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "re-check: changed since the audit (ADJUST: elliptical plinth (B6), small door); foot line 61 px: not whole 8 px cells (kind foot 7 x 7); 156 x 83 px (over) against windmill 112-160 x 56-128; bar tones LOW as facade; style: speckle, palette",
-   "fails": [
-    "logic",
-    "size",
-    "grid",
-    "bar",
-    "speckle",
-    "palette"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 156,
-    "w": 83,
+    "h": 151,
+    "w": 84,
     "style": {
-     "colours": 87,
-     "on_house": 0.858,
-     "on_today": 0.749,
-     "palette": "off",
+     "colours": 108,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.018,
-     "west_east": 15.042,
-     "isolated": 0.062,
+     "double": 0.077,
+     "west_east": 7.188,
+     "isolated": 0.024,
      "checker": 0.0
     },
     "grid": {
-     "foot_px": 61,
-     "cells": 7.62,
+     "foot_px": 64,
+     "cells": 8.0,
      "kind_foot": "7 x 7",
-     "ok": false
+     "ok": true
     },
     "size": {
      "kind": "windmill",
@@ -41515,59 +41439,59 @@
       56,
       128
      ],
-     "status": "over"
+     "status": "ok"
     },
     "last_change": {
-     "sha": "347296d",
-     "date": "2026-10-20T15:32",
-     "subject": "Windmill to Claude A's list (to-b-1500): crazing in the limewash, the sails' shadow on the tower, a cast-iron poll end w"
+     "sha": "55ae2f0",
+     "date": "2026-10-21T09:02",
+     "subject": "Named things batch 2 and wave 2: windmills, rowing boats and the dinghy redrawn new; burners' hut, lookout and tipple up"
     },
     "audit": {
      "grade": "ADJUST",
      "why": "elliptical plinth (B6), small door",
      "fix": "octagonal base in courses, door 32 with a step"
     },
-    "logic": "re-check: changed since the audit (ADJUST: elliptical plinth (B6), small door)",
+    "logic": "fixed by eye: fixed: redrawn new in windmill_props.py (wave 2): a drystone tower mill of three 32 px storeys on a footing course in whole cells, door 32 x 14 with its step, one window a storey, the stage on braces, a shingled cap turned by its fantail, four clothed sails on the poll end, the scoop wheel in its boarded hood lifting the drains into the outfall; compared by eye with eastward-12 (the village houses) at the same character height, 3x and 1x (claude-b, 21 Oct)",
     "bar": {
-     "status": "fail",
+     "status": "pass",
      "kind": "facade",
      "box": [
-      22,
-      97,
-      61,
-      136
+      23,
+      107,
+      63,
+      147
      ],
      "patches": 4,
-     "tones_at": 0.9,
+     "tones_at": 0.85,
      "tones": [
-      19.5,
+      26.5,
       25.57
      ],
      "shapes": [
-      43.75,
+      39.5,
       33.87
      ],
      "dressing": [
-      35.75,
+      33.25,
       28.56
      ],
      "isolated": [
-      0.148,
+      0.092,
       0.25
      ],
      "cluster": [
-      3.1,
+      3.66,
       2.62
-     ],
-     "low": [
-      "tones"
      ]
     }
    },
    "placed": {
     "halt": 1
    },
-   "checked": "2026-10-20"
+   "eye": {
+    "logic": "fixed: redrawn new in windmill_props.py (wave 2): a drystone tower mill of three 32 px storeys on a footing course in whole cells, door 32 x 14 with its step, one window a storey, the stage on braces, a shingled cap turned by its fantail, four clothed sails on the poll end, the scoop wheel in its boarded hood lifting the drains into the outfall; compared by eye with eastward-12 (the village houses) at the same character height, 3x and 1x (claude-b, 21 Oct)"
+   },
+   "checked": "2026-10-21"
   },
   "prop/window_seat": {
    "files": [
@@ -47684,12 +47608,12 @@
     "w": 320,
     "measured_file": "assets/zones/caldera/ground.png",
     "px": 184320,
-    "colours": 186,
-    "on_today": 0.876,
+    "colours": 185,
+    "on_today": 0.877,
     "isolated": 0.062,
     "checker": 0.0075
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "zone/canal": {
    "files": [
@@ -48571,11 +48495,11 @@
     "measured_file": "assets/zones/scorch/ground.png",
     "px": 184320,
     "colours": 174,
-    "on_today": 0.897,
+    "on_today": 0.898,
     "isolated": 0.057,
     "checker": 0.0067
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "zone/skyport": {
    "files": [
@@ -48669,12 +48593,12 @@
     "w": 320,
     "measured_file": "assets/zones/springs/ground.png",
     "px": 184320,
-    "colours": 95,
-    "on_today": 0.797,
+    "colours": 100,
+    "on_today": 0.798,
     "isolated": 0.063,
-    "checker": 0.0104
+    "checker": 0.0105
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "zone/station": {
    "files": [

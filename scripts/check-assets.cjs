@@ -57,7 +57,7 @@ const HELPERS = new Set([
 function walk(
   dir,
   out = [],
-  skip = new Set(['node_modules', '.git', '.expo', 'dist', 'web-build']),
+  skip = new Set(['node_modules', '.git', '.expo', 'dist', 'web-build', 'prototypes']),
 ) {
   let entries;
   try {
