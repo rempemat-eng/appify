@@ -1,6 +1,6 @@
 {
  "_about": "The asset ledger (docs/vision/asset-ledger.md). Every picture under assets/ with its grade: KEEP may go into a kit or region build, REWORK must be redone first, RETIRE has no place in the new world. Written by scripts/art/asset_ledger.py --build; `eye` verdicts are written by hand and survive a rebuild. Checked by scripts/check-assets.cjs (npm run check:assets).",
- "main": "0b24017",
+ "main": "13f42b3",
  "grades": {
   "KEEP": "fits the newest standard on every check",
   "REWORK": "the subject stays; redo the art first",
@@ -8206,6 +8206,35 @@
    "checked": "2026-10-20",
    "same_as": "prop/tree_small"
   },
+  "other/characters/folk": {
+   "files": [
+    "assets/characters/folk/bramble.png",
+    "assets/characters/folk/mossling.png"
+   ],
+   "cls": "picture",
+   "name": "bramble",
+   "module": "?",
+   "generator": "?",
+   "owner": "?",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "unclassified picture: graded by hand before it is used",
+   "fails": [
+    "palette"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 480,
+    "w": 384,
+    "measured_file": "assets/characters/folk/bramble.png",
+    "px": 44023,
+    "colours": 52,
+    "on_today": 0.0,
+    "isolated": 0.01,
+    "checker": 0.0
+   },
+   "checked": "2026-10-21"
+  },
   "prop/acacia": {
    "files": [
     "assets/zones/props/acacia.png"
@@ -10406,102 +10435,6 @@
    },
    "checked": "2026-10-20"
   },
-  "prop/beech": {
-   "files": [
-    "assets/zones/props/beech.png"
-   ],
-   "cls": "sprite",
-   "name": "beech",
-   "kind": "broadleaf",
-   "module": "valley_props",
-   "generator": "scripts/art/valley_props.py",
-   "owner": "B",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "not audited; bar tones LOW, shapes LOW, dressing LOW as tree; style: palette",
-   "fails": [
-    "logic",
-    "bar",
-    "palette"
-   ],
-   "measured": {
-    "scale": 4,
-    "h": 81,
-    "w": 52,
-    "style": {
-     "colours": 18,
-     "on_house": 0.693,
-     "on_today": 0.0,
-     "palette": "off",
-     "outline_dark": 1.0,
-     "flat_ink": 0.0,
-     "double": 0.043,
-     "west_east": 14.303,
-     "isolated": 0.039,
-     "checker": 0.0
-    },
-    "grid": "free",
-    "size": {
-     "kind": "broadleaf",
-     "h_range": [
-      78,
-      125
-     ],
-     "w_range": [
-      48,
-      80
-     ],
-     "status": "ok"
-    },
-    "last_change": {
-     "sha": "706247c",
-     "date": "2026-10-20T03:52",
-     "subject": "The Woodland's trees in Claude B's wild broadleaves (#108): oaks and beeches round the edges, birches among them, saplin"
-    },
-    "logic": "not audited",
-    "bar": {
-     "status": "fail",
-     "kind": "tree",
-     "box": [
-      8,
-      17,
-      44,
-      53
-     ],
-     "patches": 4,
-     "tones_at": 0.9,
-     "tones": [
-      6.0,
-      20.38
-     ],
-     "shapes": [
-      14.5,
-      35.75
-     ],
-     "dressing": [
-      8.5,
-      29.34
-     ],
-     "isolated": [
-      0.068,
-      0.27
-     ],
-     "cluster": [
-      7.11,
-      2.29
-     ],
-     "low": [
-      "tones",
-      "shapes",
-      "dressing"
-     ]
-    }
-   },
-   "placed": {
-    "woodland": 5
-   },
-   "checked": "2026-10-20"
-  },
   "prop/beehive": {
    "files": [
     "assets/zones/props/beehive.png",
@@ -10892,103 +10825,6 @@
    "placed": {
     "riverside": 1,
     "town": 1
-   },
-   "checked": "2026-10-20"
-  },
-  "prop/birch": {
-   "files": [
-    "assets/zones/props/birch.png"
-   ],
-   "cls": "sprite",
-   "name": "birch",
-   "kind": "birch",
-   "module": "valley_props",
-   "generator": "scripts/art/valley_props.py",
-   "owner": "B",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "not audited; bar tones LOW, shapes LOW, dressing LOW as tree; style: speckle, palette",
-   "fails": [
-    "logic",
-    "bar",
-    "speckle",
-    "palette"
-   ],
-   "measured": {
-    "scale": 4,
-    "h": 65,
-    "w": 30,
-    "style": {
-     "colours": 17,
-     "on_house": 0.577,
-     "on_today": 0.023,
-     "palette": "off",
-     "outline_dark": 1.0,
-     "flat_ink": 0.0,
-     "double": 0.088,
-     "west_east": 14.979,
-     "isolated": 0.071,
-     "checker": 0.0
-    },
-    "grid": "free",
-    "size": {
-     "kind": "birch",
-     "h_range": [
-      64,
-      104
-     ],
-     "w_range": [
-      24,
-      48
-     ],
-     "status": "ok"
-    },
-    "last_change": {
-     "sha": "706247c",
-     "date": "2026-10-20T03:52",
-     "subject": "The Woodland's trees in Claude B's wild broadleaves (#108): oaks and beeches round the edges, birches among them, saplin"
-    },
-    "logic": "not audited",
-    "bar": {
-     "status": "fail",
-     "kind": "tree",
-     "box": [
-      6,
-      11,
-      25,
-      30
-     ],
-     "patches": 1,
-     "tones_at": 0.9,
-     "tones": [
-      7.0,
-      20.38
-     ],
-     "shapes": [
-      26.0,
-      35.75
-     ],
-     "dressing": [
-      18.0,
-      29.34
-     ],
-     "isolated": [
-      0.109,
-      0.27
-     ],
-     "cluster": [
-      3.88,
-      2.29
-     ],
-     "low": [
-      "tones",
-      "shapes",
-      "dressing"
-     ]
-    }
-   },
-   "placed": {
-    "woodland": 8
    },
    "checked": "2026-10-20"
   },
@@ -12093,72 +11929,6 @@
     "ridge": 1,
     "saddle": 1,
     "snowmelt": 2
-   },
-   "checked": "2026-10-20"
-  },
-  "prop/bramble": {
-   "files": [
-    "assets/zones/props/bramble.png"
-   ],
-   "cls": "sprite",
-   "name": "bramble",
-   "kind": "bush",
-   "module": "valley_props",
-   "generator": "scripts/art/valley_props.py",
-   "owner": "B",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "not audited; detail not measurable and not checked by eye since the bar; style: speckle, palette",
-   "fails": [
-    "logic",
-    "detail unverified",
-    "speckle",
-    "palette"
-   ],
-   "measured": {
-    "scale": 4,
-    "h": 20,
-    "w": 36,
-    "style": {
-     "colours": 17,
-     "on_house": 0.887,
-     "on_today": 0.0,
-     "palette": "off",
-     "outline_dark": 1.0,
-     "flat_ink": 0.0,
-     "double": 0.058,
-     "west_east": 1.222,
-     "isolated": 0.158,
-     "checker": 0.0
-    },
-    "grid": "free",
-    "size": {
-     "kind": "bush",
-     "h_range": [
-      12,
-      28
-     ],
-     "w_range": [
-      16,
-      42
-     ],
-     "status": "ok"
-    },
-    "last_change": {
-     "sha": "706247c",
-     "date": "2026-10-20T03:52",
-     "subject": "The Woodland's trees in Claude B's wild broadleaves (#108): oaks and beeches round the edges, birches among them, saplin"
-    },
-    "logic": "not audited",
-    "bar": {
-     "status": "n/a",
-     "kind": "tree",
-     "square": 11,
-     "why": "no solid 18 px square (largest 11): too small for a 16 px patch"
-    }
-   },
-   "placed": {
-    "woodland": 8
    },
    "checked": "2026-10-20"
   },
@@ -27156,172 +26926,6 @@
    },
    "checked": "2026-10-20"
   },
-  "prop/hollow_tree": {
-   "files": [
-    "assets/zones/props/hollow_tree.png"
-   ],
-   "cls": "sprite",
-   "name": "hollow_tree",
-   "kind": "veteran_tree",
-   "module": "valley_props",
-   "generator": "scripts/art/valley_props.py",
-   "owner": "B",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "bar tones LOW, shapes LOW, dressing LOW as tree; style: palette",
-   "fails": [
-    "bar",
-    "palette"
-   ],
-   "measured": {
-    "scale": 4,
-    "h": 100,
-    "w": 71,
-    "style": {
-     "colours": 17,
-     "on_house": 0.646,
-     "on_today": 0.594,
-     "palette": "off",
-     "outline_dark": 1.0,
-     "flat_ink": 0.0,
-     "double": 0.031,
-     "west_east": 15.502,
-     "isolated": 0.03,
-     "checker": 0.0
-    },
-    "grid": "free",
-    "size": {
-     "kind": "veteran_tree",
-     "h_range": [
-      88,
-      160
-     ],
-     "w_range": [
-      64,
-      128
-     ],
-     "status": "ok"
-    },
-    "last_change": {
-     "sha": "500605d",
-     "date": "2026-10-18T17:13",
-     "subject": "Detail pass, step one (art-style.md, detail target): broadleaf crowns are built of smaller leaf clusters, each lit from "
-    },
-    "audit": {
-     "grade": "KEEP",
-     "why": "material shading, on scale",
-     "fix": "none"
-    },
-    "logic": "ok (KEEP in the audit)",
-    "bar": {
-     "status": "fail",
-     "kind": "tree",
-     "box": [
-      16,
-      9,
-      51,
-      44
-     ],
-     "patches": 4,
-     "tones_at": 0.9,
-     "tones": [
-      7.25,
-      20.38
-     ],
-     "shapes": [
-      12.5,
-      35.75
-     ],
-     "dressing": [
-      8.5,
-      29.34
-     ],
-     "isolated": [
-      0.097,
-      0.27
-     ],
-     "cluster": [
-      6.92,
-      2.29
-     ],
-     "low": [
-      "tones",
-      "shapes",
-      "dressing"
-     ]
-    }
-   },
-   "placed": {
-    "woodland": 1
-   },
-   "checked": "2026-10-20"
-  },
-  "prop/holly": {
-   "files": [
-    "assets/zones/props/holly.png"
-   ],
-   "cls": "sprite",
-   "name": "holly",
-   "kind": "bush",
-   "module": "valley_props",
-   "generator": "scripts/art/valley_props.py",
-   "owner": "B",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "not audited; detail not measurable and not checked by eye since the bar; style: speckle, palette",
-   "fails": [
-    "logic",
-    "detail unverified",
-    "speckle",
-    "palette"
-   ],
-   "measured": {
-    "scale": 4,
-    "h": 25,
-    "w": 27,
-    "style": {
-     "colours": 11,
-     "on_house": 0.572,
-     "on_today": 0.025,
-     "palette": "off",
-     "outline_dark": 1.0,
-     "flat_ink": 0.0,
-     "double": 0.013,
-     "west_east": 11.793,
-     "isolated": 0.08,
-     "checker": 0.0
-    },
-    "grid": "free",
-    "size": {
-     "kind": "bush",
-     "h_range": [
-      12,
-      28
-     ],
-     "w_range": [
-      16,
-      42
-     ],
-     "status": "ok"
-    },
-    "last_change": {
-     "sha": "706247c",
-     "date": "2026-10-20T03:52",
-     "subject": "The Woodland's trees in Claude B's wild broadleaves (#108): oaks and beeches round the edges, birches among them, saplin"
-    },
-    "logic": "not audited",
-    "bar": {
-     "status": "n/a",
-     "kind": "tree",
-     "square": 15,
-     "why": "no solid 18 px square (largest 15): too small for a 16 px patch"
-    }
-   },
-   "placed": {
-    "woodland": 6
-   },
-   "checked": "2026-10-20"
-  },
   "prop/holo_map": {
    "files": [
     "assets/zones/props/holo_map.png"
@@ -31984,101 +31588,6 @@
    },
    "checked": "2026-10-20"
   },
-  "prop/oak": {
-   "files": [
-    "assets/zones/props/oak.png"
-   ],
-   "cls": "sprite",
-   "name": "oak",
-   "kind": "broadleaf",
-   "module": "valley_props",
-   "generator": "scripts/art/valley_props.py",
-   "owner": "B",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "not audited; bar tones LOW, shapes LOW, dressing LOW as tree",
-   "fails": [
-    "logic",
-    "bar"
-   ],
-   "measured": {
-    "scale": 4,
-    "h": 78,
-    "w": 65,
-    "style": {
-     "colours": 16,
-     "on_house": 0.905,
-     "on_today": 0.104,
-     "palette": "house",
-     "outline_dark": 1.0,
-     "flat_ink": 0.0,
-     "double": 0.042,
-     "west_east": 13.956,
-     "isolated": 0.041,
-     "checker": 0.0
-    },
-    "grid": "free",
-    "size": {
-     "kind": "broadleaf",
-     "h_range": [
-      78,
-      125
-     ],
-     "w_range": [
-      48,
-      80
-     ],
-     "status": "ok"
-    },
-    "last_change": {
-     "sha": "706247c",
-     "date": "2026-10-20T03:52",
-     "subject": "The Woodland's trees in Claude B's wild broadleaves (#108): oaks and beeches round the edges, birches among them, saplin"
-    },
-    "logic": "not audited",
-    "bar": {
-     "status": "fail",
-     "kind": "tree",
-     "box": [
-      15,
-      9,
-      54,
-      48
-     ],
-     "patches": 4,
-     "tones_at": 0.85,
-     "tones": [
-      7.25,
-      20.38
-     ],
-     "shapes": [
-      14.5,
-      35.75
-     ],
-     "dressing": [
-      7.0,
-      29.34
-     ],
-     "isolated": [
-      0.094,
-      0.27
-     ],
-     "cluster": [
-      6.0,
-      2.29
-     ],
-     "low": [
-      "tones",
-      "shapes",
-      "dressing"
-     ]
-    }
-   },
-   "placed": {
-    "woodland": 14
-   },
-   "checked": "2026-10-20"
-  },
   "prop/obsidian": {
    "files": [
     "assets/zones/props/obsidian.png"
@@ -34754,71 +34263,6 @@
     "oasis": 1
    },
    "checked": "2026-10-21"
-  },
-  "prop/sapling": {
-   "files": [
-    "assets/zones/props/sapling.png"
-   ],
-   "cls": "sprite",
-   "name": "sapling",
-   "kind": "sapling",
-   "module": "valley_props",
-   "generator": "scripts/art/valley_props.py",
-   "owner": "B",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "not audited; detail not measurable and not checked by eye since the bar; style: palette",
-   "fails": [
-    "logic",
-    "detail unverified",
-    "palette"
-   ],
-   "measured": {
-    "scale": 4,
-    "h": 27,
-    "w": 19,
-    "style": {
-     "colours": 17,
-     "on_house": 0.693,
-     "on_today": 0.115,
-     "palette": "off",
-     "outline_dark": 0.973,
-     "flat_ink": 0.0,
-     "double": 0.027,
-     "west_east": 15.548,
-     "isolated": 0.046,
-     "checker": 0.0
-    },
-    "grid": "free",
-    "size": {
-     "kind": "sapling",
-     "h_range": [
-      20,
-      40
-     ],
-     "w_range": [
-      10,
-      24
-     ],
-     "status": "ok"
-    },
-    "last_change": {
-     "sha": "706247c",
-     "date": "2026-10-20T03:52",
-     "subject": "The Woodland's trees in Claude B's wild broadleaves (#108): oaks and beeches round the edges, birches among them, saplin"
-    },
-    "logic": "not audited",
-    "bar": {
-     "status": "n/a",
-     "kind": "tree",
-     "square": 10,
-     "why": "no solid 18 px square (largest 10): too small for a 16 px patch"
-    }
-   },
-   "placed": {
-    "woodland": 6
-   },
-   "checked": "2026-10-20"
   },
   "prop/scarecrow": {
    "files": [
@@ -37907,213 +37351,6 @@
    },
    "checked": "2026-10-20"
   },
-  "prop/standing_stone": {
-   "files": [
-    "assets/zones/props/standing_stone.png"
-   ],
-   "cls": "sprite",
-   "name": "standing_stone",
-   "kind": "standing_stone",
-   "module": "valley_props",
-   "generator": "scripts/art/valley_props.py",
-   "owner": "B",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "detail not measurable and not checked by eye since the bar; style: speckle",
-   "fails": [
-    "detail unverified",
-    "speckle"
-   ],
-   "measured": {
-    "scale": 4,
-    "h": 29,
-    "w": 16,
-    "style": {
-     "colours": 24,
-     "on_house": 0.94,
-     "on_today": 0.083,
-     "palette": "house",
-     "outline_dark": 1.0,
-     "flat_ink": 0.0,
-     "double": 0.07,
-     "west_east": 19.189,
-     "isolated": 0.083,
-     "checker": 0.0
-    },
-    "grid": "free",
-    "size": {
-     "kind": "standing_stone",
-     "h_range": [
-      20,
-      36
-     ],
-     "w_range": [
-      8,
-      20
-     ],
-     "status": "ok"
-    },
-    "last_change": {
-     "sha": "6241cfd",
-     "date": "2026-10-20T14:12",
-     "subject": "Props batch 2 (Matt's World Logic answers): drainage windmill to the size guide, the woodland circle's stones, the saddl"
-    },
-    "audit": {
-     "grade": "KEEP",
-     "why": "material shading, on scale",
-     "fix": "none"
-    },
-    "logic": "ok (KEEP in the audit)",
-    "bar": {
-     "status": "n/a",
-     "kind": "stone-wall",
-     "square": 10,
-     "why": "no solid 18 px square (largest 10): too small for a 16 px patch"
-    }
-   },
-   "placed": {
-    "woodland": 2
-   },
-   "checked": "2026-10-20"
-  },
-  "prop/standing_stone_b": {
-   "files": [
-    "assets/zones/props/standing_stone_b.png"
-   ],
-   "cls": "sprite",
-   "name": "standing_stone_b",
-   "kind": "standing_stone",
-   "module": "valley_props",
-   "generator": "scripts/art/valley_props.py",
-   "owner": "B",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "detail not measurable and not checked by eye since the bar; style: speckle",
-   "fails": [
-    "detail unverified",
-    "speckle"
-   ],
-   "measured": {
-    "scale": 4,
-    "h": 29,
-    "w": 17,
-    "style": {
-     "colours": 24,
-     "on_house": 0.947,
-     "on_today": 0.086,
-     "palette": "house",
-     "outline_dark": 1.0,
-     "flat_ink": 0.0,
-     "double": 0.055,
-     "west_east": 20.716,
-     "isolated": 0.084,
-     "checker": 0.0
-    },
-    "grid": "free",
-    "size": {
-     "kind": "standing_stone",
-     "h_range": [
-      20,
-      36
-     ],
-     "w_range": [
-      8,
-      20
-     ],
-     "status": "ok"
-    },
-    "last_change": {
-     "sha": "6241cfd",
-     "date": "2026-10-20T14:12",
-     "subject": "Props batch 2 (Matt's World Logic answers): drainage windmill to the size guide, the woodland circle's stones, the saddl"
-    },
-    "audit": {
-     "grade": "KEEP",
-     "why": "material shading, on scale",
-     "fix": "none"
-    },
-    "logic": "ok (KEEP in the audit)",
-    "bar": {
-     "status": "n/a",
-     "kind": "stone-wall",
-     "square": 11,
-     "why": "no solid 18 px square (largest 11): too small for a 16 px patch"
-    }
-   },
-   "placed": {
-    "woodland": 2
-   },
-   "checked": "2026-10-20"
-  },
-  "prop/standing_stone_low": {
-   "files": [
-    "assets/zones/props/standing_stone_low.png"
-   ],
-   "cls": "sprite",
-   "name": "standing_stone_low",
-   "kind": "standing_stone",
-   "module": "valley_props",
-   "generator": "scripts/art/valley_props.py",
-   "owner": "B",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "detail not measurable and not checked by eye since the bar; style: speckle",
-   "fails": [
-    "detail unverified",
-    "speckle"
-   ],
-   "measured": {
-    "scale": 4,
-    "h": 21,
-    "w": 15,
-    "style": {
-     "colours": 24,
-     "on_house": 0.916,
-     "on_today": 0.124,
-     "palette": "house",
-     "outline_dark": 1.0,
-     "flat_ink": 0.0,
-     "double": 0.071,
-     "west_east": 19.932,
-     "isolated": 0.13,
-     "checker": 0.0
-    },
-    "grid": "free",
-    "size": {
-     "kind": "standing_stone",
-     "h_range": [
-      20,
-      36
-     ],
-     "w_range": [
-      8,
-      20
-     ],
-     "status": "ok"
-    },
-    "last_change": {
-     "sha": "6241cfd",
-     "date": "2026-10-20T14:12",
-     "subject": "Props batch 2 (Matt's World Logic answers): drainage windmill to the size guide, the woodland circle's stones, the saddl"
-    },
-    "audit": {
-     "grade": "KEEP",
-     "why": "material shading, on scale",
-     "fix": "none"
-    },
-    "logic": "ok (KEEP in the audit)",
-    "bar": {
-     "status": "n/a",
-     "kind": "stone-wall",
-     "square": 8,
-     "why": "no solid 18 px square (largest 8): too small for a 16 px patch"
-    }
-   },
-   "placed": {
-    "woodland": 3
-   },
-   "checked": "2026-10-20"
-  },
   "prop/station_house": {
    "files": [
     "assets/zones/props/station_house.png"
@@ -41138,6 +40375,1287 @@
     "home": 1
    },
    "checked": "2026-10-20"
+  },
+  "prop/wd_block": {
+   "files": [
+    "assets/zones/props/wd_block.png"
+   ],
+   "cls": "sprite",
+   "name": "wd_block",
+   "module": "?",
+   "generator": "?",
+   "owner": "?",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar",
+   "fails": [
+    "logic",
+    "detail unverified"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 38,
+    "w": 32,
+    "style": {
+     "colours": 17,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 1.0,
+     "flat_ink": 0.0,
+     "double": 0.009,
+     "west_east": 21.357,
+     "isolated": 0.004,
+     "checker": 0.0
+    },
+    "grid": "n/a (no kind)",
+    "size": {
+     "status": "no kind"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "placed": {
+    "woodland": 1
+   },
+   "checked": "2026-10-21"
+  },
+  "prop/wd_bridge": {
+   "files": [
+    "assets/zones/props/wd_bridge.png"
+   ],
+   "cls": "sprite",
+   "name": "wd_bridge",
+   "module": "?",
+   "generator": "?",
+   "owner": "?",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar",
+   "fails": [
+    "logic",
+    "detail unverified"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 66,
+    "w": 44,
+    "style": {
+     "colours": 14,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 1.0,
+     "flat_ink": 0.0,
+     "double": 0.013,
+     "west_east": 0.63,
+     "isolated": 0.014,
+     "checker": 0.0
+    },
+    "grid": "n/a (no kind)",
+    "size": {
+     "status": "no kind"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "placed": {
+    "woodland": 1
+   },
+   "checked": "2026-10-21"
+  },
+  "prop/wd_canopy1": {
+   "files": [
+    "assets/zones/props/wd_canopy1.png"
+   ],
+   "cls": "sprite",
+   "name": "wd_canopy1",
+   "module": "?",
+   "generator": "?",
+   "owner": "?",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar; style: outline-light",
+   "fails": [
+    "logic",
+    "detail unverified",
+    "outline-light"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 12,
+    "w": 128,
+    "style": {
+     "colours": 16,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 0.127,
+     "flat_ink": 0.0,
+     "double": 0.0,
+     "west_east": 1.373,
+     "isolated": 0.004,
+     "checker": 0.0
+    },
+    "grid": "n/a (no kind)",
+    "size": {
+     "status": "no kind"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "placed": {
+    "woodland": 1
+   },
+   "checked": "2026-10-21"
+  },
+  "prop/wd_canopy10": {
+   "files": [
+    "assets/zones/props/wd_canopy10.png"
+   ],
+   "cls": "sprite",
+   "name": "wd_canopy10",
+   "module": "?",
+   "generator": "?",
+   "owner": "?",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar; style: outline-light",
+   "fails": [
+    "logic",
+    "detail unverified",
+    "outline-light"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 312,
+    "w": 284,
+    "style": {
+     "colours": 38,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 0.434,
+     "flat_ink": 0.0,
+     "double": 0.012,
+     "west_east": 7.337,
+     "isolated": 0.017,
+     "checker": 0.0
+    },
+    "grid": "n/a (no kind)",
+    "size": {
+     "status": "no kind"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "placed": {
+    "woodland": 1
+   },
+   "checked": "2026-10-21"
+  },
+  "prop/wd_canopy11": {
+   "files": [
+    "assets/zones/props/wd_canopy11.png"
+   ],
+   "cls": "sprite",
+   "name": "wd_canopy11",
+   "module": "?",
+   "generator": "?",
+   "owner": "?",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar; style: outline-light",
+   "fails": [
+    "logic",
+    "detail unverified",
+    "outline-light"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 180,
+    "w": 228,
+    "style": {
+     "colours": 49,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 0.345,
+     "flat_ink": 0.0,
+     "double": 0.002,
+     "west_east": 6.922,
+     "isolated": 0.016,
+     "checker": 0.0
+    },
+    "grid": "n/a (no kind)",
+    "size": {
+     "status": "no kind"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "placed": {
+    "woodland": 1
+   },
+   "checked": "2026-10-21"
+  },
+  "prop/wd_canopy2": {
+   "files": [
+    "assets/zones/props/wd_canopy2.png"
+   ],
+   "cls": "sprite",
+   "name": "wd_canopy2",
+   "module": "?",
+   "generator": "?",
+   "owner": "?",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar; style: outline-light",
+   "fails": [
+    "logic",
+    "detail unverified",
+    "outline-light"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 384,
+    "w": 324,
+    "style": {
+     "colours": 32,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 0.154,
+     "flat_ink": 0.0,
+     "double": 0.005,
+     "west_east": 1.932,
+     "isolated": 0.018,
+     "checker": 0.0
+    },
+    "grid": "n/a (no kind)",
+    "size": {
+     "status": "no kind"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "placed": {
+    "woodland": 1
+   },
+   "checked": "2026-10-21"
+  },
+  "prop/wd_canopy3": {
+   "files": [
+    "assets/zones/props/wd_canopy3.png"
+   ],
+   "cls": "sprite",
+   "name": "wd_canopy3",
+   "module": "?",
+   "generator": "?",
+   "owner": "?",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar; style: outline-light",
+   "fails": [
+    "logic",
+    "detail unverified",
+    "outline-light"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 378,
+    "w": 59,
+    "style": {
+     "colours": 36,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 0.509,
+     "flat_ink": 0.0,
+     "double": 0.025,
+     "west_east": 11.655,
+     "isolated": 0.024,
+     "checker": 0.0
+    },
+    "grid": "n/a (no kind)",
+    "size": {
+     "status": "no kind"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "placed": {
+    "woodland": 1
+   },
+   "checked": "2026-10-21"
+  },
+  "prop/wd_canopy4": {
+   "files": [
+    "assets/zones/props/wd_canopy4.png"
+   ],
+   "cls": "sprite",
+   "name": "wd_canopy4",
+   "module": "?",
+   "generator": "?",
+   "owner": "?",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar; style: outline-light",
+   "fails": [
+    "logic",
+    "detail unverified",
+    "outline-light"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 76,
+    "w": 56,
+    "style": {
+     "colours": 25,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 0.027,
+     "flat_ink": 0.0,
+     "double": 0.004,
+     "west_east": 0.747,
+     "isolated": 0.019,
+     "checker": 0.0
+    },
+    "grid": "n/a (no kind)",
+    "size": {
+     "status": "no kind"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "placed": {
+    "woodland": 1
+   },
+   "checked": "2026-10-21"
+  },
+  "prop/wd_canopy5": {
+   "files": [
+    "assets/zones/props/wd_canopy5.png"
+   ],
+   "cls": "sprite",
+   "name": "wd_canopy5",
+   "module": "?",
+   "generator": "?",
+   "owner": "?",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar; style: outline-light",
+   "fails": [
+    "logic",
+    "detail unverified",
+    "outline-light"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 22,
+    "w": 9,
+    "style": {
+     "colours": 6,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 0.632,
+     "flat_ink": 0.0,
+     "double": 0.0,
+     "west_east": 0.0,
+     "isolated": 0.0,
+     "checker": 0.0
+    },
+    "grid": "n/a (no kind)",
+    "size": {
+     "status": "no kind"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "placed": {
+    "woodland": 1
+   },
+   "checked": "2026-10-21"
+  },
+  "prop/wd_canopy6": {
+   "files": [
+    "assets/zones/props/wd_canopy6.png"
+   ],
+   "cls": "sprite",
+   "name": "wd_canopy6",
+   "module": "?",
+   "generator": "?",
+   "owner": "?",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar; style: outline-light",
+   "fails": [
+    "logic",
+    "detail unverified",
+    "outline-light"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 24,
+    "w": 9,
+    "style": {
+     "colours": 6,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 0.393,
+     "flat_ink": 0.0,
+     "double": 0.0,
+     "west_east": 0.0,
+     "isolated": 0.0,
+     "checker": 0.0
+    },
+    "grid": "n/a (no kind)",
+    "size": {
+     "status": "no kind"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "placed": {
+    "woodland": 1
+   },
+   "checked": "2026-10-21"
+  },
+  "prop/wd_canopy7": {
+   "files": [
+    "assets/zones/props/wd_canopy7.png"
+   ],
+   "cls": "sprite",
+   "name": "wd_canopy7",
+   "module": "?",
+   "generator": "?",
+   "owner": "?",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar; style: outline-light",
+   "fails": [
+    "logic",
+    "detail unverified",
+    "outline-light"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 24,
+    "w": 17,
+    "style": {
+     "colours": 6,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 0.87,
+     "flat_ink": 0.0,
+     "double": 0.013,
+     "west_east": 25.877,
+     "isolated": 0.0,
+     "checker": 0.0
+    },
+    "grid": "n/a (no kind)",
+    "size": {
+     "status": "no kind"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "placed": {
+    "woodland": 1
+   },
+   "checked": "2026-10-21"
+  },
+  "prop/wd_canopy8": {
+   "files": [
+    "assets/zones/props/wd_canopy8.png"
+   ],
+   "cls": "sprite",
+   "name": "wd_canopy8",
+   "module": "?",
+   "generator": "?",
+   "owner": "?",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar; style: outline-light",
+   "fails": [
+    "logic",
+    "detail unverified",
+    "outline-light"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 188,
+    "w": 94,
+    "style": {
+     "colours": 32,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 0.522,
+     "flat_ink": 0.0,
+     "double": 0.024,
+     "west_east": 8.411,
+     "isolated": 0.013,
+     "checker": 0.0
+    },
+    "grid": "n/a (no kind)",
+    "size": {
+     "status": "no kind"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "placed": {
+    "woodland": 1
+   },
+   "checked": "2026-10-21"
+  },
+  "prop/wd_canopy9": {
+   "files": [
+    "assets/zones/props/wd_canopy9.png"
+   ],
+   "cls": "sprite",
+   "name": "wd_canopy9",
+   "module": "?",
+   "generator": "?",
+   "owner": "?",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar; style: outline-light",
+   "fails": [
+    "logic",
+    "detail unverified",
+    "outline-light"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 174,
+    "w": 316,
+    "style": {
+     "colours": 31,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 0.311,
+     "flat_ink": 0.0,
+     "double": 0.004,
+     "west_east": 4.745,
+     "isolated": 0.017,
+     "checker": 0.0
+    },
+    "grid": "n/a (no kind)",
+    "size": {
+     "status": "no kind"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "placed": {
+    "woodland": 1
+   },
+   "checked": "2026-10-21"
+  },
+  "prop/wd_lantern": {
+   "files": [
+    "assets/zones/props/wd_lantern.png"
+   ],
+   "cls": "sprite",
+   "name": "wd_lantern",
+   "module": "?",
+   "generator": "?",
+   "owner": "?",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar",
+   "fails": [
+    "logic",
+    "detail unverified"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 75,
+    "w": 25,
+    "style": {
+     "colours": 15,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 1.0,
+     "flat_ink": 0.0,
+     "double": 0.064,
+     "west_east": 12.508,
+     "isolated": 0.0,
+     "checker": 0.0
+    },
+    "grid": "n/a (no kind)",
+    "size": {
+     "status": "no kind"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "placed": {
+    "woodland": 1
+   },
+   "checked": "2026-10-21"
+  },
+  "prop/wd_log_1": {
+   "files": [
+    "assets/zones/props/wd_log_1.png"
+   ],
+   "cls": "sprite",
+   "name": "wd_log_1",
+   "module": "?",
+   "generator": "?",
+   "owner": "?",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar",
+   "fails": [
+    "logic",
+    "detail unverified"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 18,
+    "w": 92,
+    "style": {
+     "colours": 14,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 1.0,
+     "flat_ink": 0.0,
+     "double": 0.0,
+     "west_east": 14.26,
+     "isolated": 0.0,
+     "checker": 0.0
+    },
+    "grid": "n/a (no kind)",
+    "size": {
+     "status": "no kind"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "placed": {
+    "woodland": 1
+   },
+   "checked": "2026-10-21"
+  },
+  "prop/wd_oak": {
+   "files": [
+    "assets/zones/props/wd_oak.png"
+   ],
+   "cls": "sprite",
+   "name": "wd_oak",
+   "module": "?",
+   "generator": "?",
+   "owner": "?",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar; style: outline-light",
+   "fails": [
+    "logic",
+    "detail unverified",
+    "outline-light"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 225,
+    "w": 204,
+    "style": {
+     "colours": 27,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 0.942,
+     "flat_ink": 0.0,
+     "double": 0.007,
+     "west_east": 16.868,
+     "isolated": 0.004,
+     "checker": 0.0
+    },
+    "grid": "n/a (no kind)",
+    "size": {
+     "status": "no kind"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "placed": {
+    "woodland": 1
+   },
+   "checked": "2026-10-21"
+  },
+  "prop/wd_seat": {
+   "files": [
+    "assets/zones/props/wd_seat.png"
+   ],
+   "cls": "sprite",
+   "name": "wd_seat",
+   "module": "?",
+   "generator": "?",
+   "owner": "?",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar",
+   "fails": [
+    "logic",
+    "detail unverified"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 26,
+    "w": 63,
+    "style": {
+     "colours": 12,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 1.0,
+     "flat_ink": 0.0,
+     "double": 0.033,
+     "west_east": 6.121,
+     "isolated": 0.0,
+     "checker": 0.0
+    },
+    "grid": "n/a (no kind)",
+    "size": {
+     "status": "no kind"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "placed": {
+    "woodland": 1
+   },
+   "checked": "2026-10-21"
+  },
+  "prop/wd_stone_1": {
+   "files": [
+    "assets/zones/props/wd_stone_1.png"
+   ],
+   "cls": "sprite",
+   "name": "wd_stone_1",
+   "module": "?",
+   "generator": "?",
+   "owner": "?",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar",
+   "fails": [
+    "logic",
+    "detail unverified"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 61,
+    "w": 34,
+    "style": {
+     "colours": 11,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 1.0,
+     "flat_ink": 0.0,
+     "double": 0.0,
+     "west_east": 20.951,
+     "isolated": 0.0,
+     "checker": 0.0
+    },
+    "grid": "n/a (no kind)",
+    "size": {
+     "status": "no kind"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "placed": {
+    "woodland": 1
+   },
+   "checked": "2026-10-21"
+  },
+  "prop/wd_stone_2": {
+   "files": [
+    "assets/zones/props/wd_stone_2.png"
+   ],
+   "cls": "sprite",
+   "name": "wd_stone_2",
+   "module": "?",
+   "generator": "?",
+   "owner": "?",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar",
+   "fails": [
+    "logic",
+    "detail unverified"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 53,
+    "w": 31,
+    "style": {
+     "colours": 12,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 1.0,
+     "flat_ink": 0.0,
+     "double": 0.0,
+     "west_east": 21.399,
+     "isolated": 0.0,
+     "checker": 0.0
+    },
+    "grid": "n/a (no kind)",
+    "size": {
+     "status": "no kind"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "placed": {
+    "woodland": 1
+   },
+   "checked": "2026-10-21"
+  },
+  "prop/wd_stone_3": {
+   "files": [
+    "assets/zones/props/wd_stone_3.png"
+   ],
+   "cls": "sprite",
+   "name": "wd_stone_3",
+   "module": "?",
+   "generator": "?",
+   "owner": "?",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar",
+   "fails": [
+    "logic",
+    "detail unverified"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 41,
+    "w": 29,
+    "style": {
+     "colours": 11,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 1.0,
+     "flat_ink": 0.0,
+     "double": 0.0,
+     "west_east": 20.971,
+     "isolated": 0.0,
+     "checker": 0.0
+    },
+    "grid": "n/a (no kind)",
+    "size": {
+     "status": "no kind"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "placed": {
+    "woodland": 1
+   },
+   "checked": "2026-10-21"
+  },
+  "prop/wd_stone_4": {
+   "files": [
+    "assets/zones/props/wd_stone_4.png"
+   ],
+   "cls": "sprite",
+   "name": "wd_stone_4",
+   "module": "?",
+   "generator": "?",
+   "owner": "?",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar",
+   "fails": [
+    "logic",
+    "detail unverified"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 57,
+    "w": 33,
+    "style": {
+     "colours": 11,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 1.0,
+     "flat_ink": 0.0,
+     "double": 0.0,
+     "west_east": 20.872,
+     "isolated": 0.0,
+     "checker": 0.0
+    },
+    "grid": "n/a (no kind)",
+    "size": {
+     "status": "no kind"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "placed": {
+    "woodland": 1
+   },
+   "checked": "2026-10-21"
+  },
+  "prop/wd_stone_5": {
+   "files": [
+    "assets/zones/props/wd_stone_5.png"
+   ],
+   "cls": "sprite",
+   "name": "wd_stone_5",
+   "module": "?",
+   "generator": "?",
+   "owner": "?",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar",
+   "fails": [
+    "logic",
+    "detail unverified"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 61,
+    "w": 33,
+    "style": {
+     "colours": 12,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 1.0,
+     "flat_ink": 0.0,
+     "double": 0.0,
+     "west_east": 21.293,
+     "isolated": 0.0,
+     "checker": 0.0
+    },
+    "grid": "n/a (no kind)",
+    "size": {
+     "status": "no kind"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "placed": {
+    "woodland": 1
+   },
+   "checked": "2026-10-21"
+  },
+  "prop/wd_stone_6": {
+   "files": [
+    "assets/zones/props/wd_stone_6.png"
+   ],
+   "cls": "sprite",
+   "name": "wd_stone_6",
+   "module": "?",
+   "generator": "?",
+   "owner": "?",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar",
+   "fails": [
+    "logic",
+    "detail unverified"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 41,
+    "w": 29,
+    "style": {
+     "colours": 11,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 1.0,
+     "flat_ink": 0.0,
+     "double": 0.0,
+     "west_east": 21.163,
+     "isolated": 0.0,
+     "checker": 0.0
+    },
+    "grid": "n/a (no kind)",
+    "size": {
+     "status": "no kind"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "placed": {
+    "woodland": 1
+   },
+   "checked": "2026-10-21"
+  },
+  "prop/wd_stone_7": {
+   "files": [
+    "assets/zones/props/wd_stone_7.png"
+   ],
+   "cls": "sprite",
+   "name": "wd_stone_7",
+   "module": "?",
+   "generator": "?",
+   "owner": "?",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar",
+   "fails": [
+    "logic",
+    "detail unverified"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 45,
+    "w": 30,
+    "style": {
+     "colours": 11,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 1.0,
+     "flat_ink": 0.0,
+     "double": 0.0,
+     "west_east": 20.868,
+     "isolated": 0.0,
+     "checker": 0.0
+    },
+    "grid": "n/a (no kind)",
+    "size": {
+     "status": "no kind"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "placed": {
+    "woodland": 1
+   },
+   "checked": "2026-10-21"
+  },
+  "prop/wd_stone_p": {
+   "files": [
+    "assets/zones/props/wd_stone_p.png"
+   ],
+   "cls": "sprite",
+   "name": "wd_stone_p",
+   "module": "?",
+   "generator": "?",
+   "owner": "?",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar",
+   "fails": [
+    "logic",
+    "detail unverified"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 17,
+    "w": 26,
+    "style": {
+     "colours": 11,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 1.0,
+     "flat_ink": 0.0,
+     "double": 0.0,
+     "west_east": 5.147,
+     "isolated": 0.0,
+     "checker": 0.0
+    },
+    "grid": "n/a (no kind)",
+    "size": {
+     "status": "no kind"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "placed": {
+    "woodland": 1
+   },
+   "checked": "2026-10-21"
+  },
+  "prop/wd_stump_1": {
+   "files": [
+    "assets/zones/props/wd_stump_1.png"
+   ],
+   "cls": "sprite",
+   "name": "wd_stump_1",
+   "module": "?",
+   "generator": "?",
+   "owner": "?",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar",
+   "fails": [
+    "logic",
+    "detail unverified"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 26,
+    "w": 36,
+    "style": {
+     "colours": 14,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 1.0,
+     "flat_ink": 0.0,
+     "double": 0.01,
+     "west_east": 17.062,
+     "isolated": 0.0,
+     "checker": 0.0
+    },
+    "grid": "n/a (no kind)",
+    "size": {
+     "status": "no kind"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "placed": {
+    "woodland": 1
+   },
+   "checked": "2026-10-21"
+  },
+  "prop/wd_woodpile": {
+   "files": [
+    "assets/zones/props/wd_woodpile.png"
+   ],
+   "cls": "sprite",
+   "name": "wd_woodpile",
+   "module": "?",
+   "generator": "?",
+   "owner": "?",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar",
+   "fails": [
+    "logic",
+    "detail unverified"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 54,
+    "w": 92,
+    "style": {
+     "colours": 16,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 1.0,
+     "flat_ink": 0.0,
+     "double": 0.071,
+     "west_east": 0.337,
+     "isolated": 0.009,
+     "checker": 0.0
+    },
+    "grid": "n/a (no kind)",
+    "size": {
+     "status": "no kind"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "placed": {
+    "woodland": 1
+   },
+   "checked": "2026-10-21"
   },
   "prop/weapon_rack": {
    "files": [
@@ -48734,7 +49252,8 @@
    "files": [
     "assets/zones/woodland/flow.png",
     "assets/zones/woodland/ground.png",
-    "assets/zones/woodland/map.png"
+    "assets/zones/woodland/map.png",
+    "assets/zones/woodland/night.png"
    ],
    "cls": "zone",
    "name": "woodland",
@@ -48747,21 +49266,20 @@
    "why": "by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); the regions are rebuilt on the soft grid from docs/vision/regions/ with the kits. The place: kept, redrawn",
    "fails": [
     "soft grid",
-    "speckle",
     "palette"
    ],
    "measured": {
-    "scale": 4,
-    "h": 576,
-    "w": 320,
+    "scale": 2,
+    "h": 1152,
+    "w": 640,
     "measured_file": "assets/zones/woodland/ground.png",
-    "px": 184320,
-    "colours": 850,
-    "on_today": 0.149,
-    "isolated": 0.131,
-    "checker": 0.0021
+    "px": 737280,
+    "colours": 153,
+    "on_today": 0.0,
+    "isolated": 0.015,
+    "checker": 0.0
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   }
  }
 }

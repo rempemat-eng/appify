@@ -67,8 +67,11 @@ import {
   FLOW_FRAMES,
   FLOW_FRAME_MS,
   zoneDecks,
+  zoneDensity,
   zoneFlow,
+  zoneFlowGrid,
   zoneFrames,
+  zoneNight,
   zoneMaps,
   zoneOverhead,
   zoneTone,
@@ -84,10 +87,14 @@ import {
   zoneDeckArt,
   zoneFlowArt,
   zoneGrounds,
+  zoneNightArt,
   zoneProps,
   zoneScenery,
 } from '@/lib/zone-assets';
 import { GuardianPet } from '@/components/guardian-pet';
+import { FolkFamiliar, FolkWalker } from '@/components/folk-walker';
+import { ART_DENSITY } from '@/lib/art-density-setting';
+import { daylight, hourOf } from '@/lib/daylight';
 import { ZoneLife, ZoneResidents } from '@/components/atlas-life';
 import { Animal, isAnimal } from '@/components/atlas-animals';
 import { Pet } from '@/components/game-ui';
@@ -341,10 +348,17 @@ function FlowLayer({
 }) {
   const rect = zone === 'garden' ? undefined : zoneFlow[zone];
   const art = zone === 'garden' ? undefined : zoneFlowArt[zone];
+  // a native zone packs its frames in a grid `cols` wide, row by row (zone-maps.ts zoneFlowGrid)
+  const cols = zone === 'garden' ? 1 : (zoneFlowGrid[zone] ?? 1);
+  const rows = Math.ceil(FLOW_FRAMES / cols);
   const bh = rect ? snap(rect[3] * u) : 0;
-  const style = useAnimatedStyle(() => ({
-    transform: [{ translateY: -(Math.floor(clock.value / FLOW_FRAME_MS) % FLOW_FRAMES) * bh }],
-  }));
+  const bw = rect ? snap(rect[2] * u) : 0;
+  const style = useAnimatedStyle(() => {
+    const f = Math.floor(clock.value / FLOW_FRAME_MS) % FLOW_FRAMES;
+    return {
+      transform: [{ translateX: -(f % cols) * bw }, { translateY: -Math.floor(f / cols) * bh }],
+    };
+  });
   if (!rect || !art) return null;
   const [x, y, w] = rect;
   return (
@@ -363,7 +377,7 @@ function FlowLayer({
         source={art}
         resizeMode="stretch"
         style={[
-          { position: 'absolute', left: 0, top: 0, width: snap(w * u), height: bh * FLOW_FRAMES },
+          { position: 'absolute', left: 0, top: 0, width: snap(w * u) * cols, height: bh * rows },
           style,
         ]}
       />
@@ -963,17 +977,14 @@ export function AtlasWalk({
   const active = appActive && shown;
   const player = useGame((s) => s.player);
   const hutLook = useGame((s) => s.hutLook);
-  const hour = new Date(useGame((s) => s.now)).getHours();
+  const now = useGame((s) => s.now);
+  const hour = new Date(now).getHours();
   const night = hour < 6 || hour >= 21;
-  // the light of the hour (as on the garden screen): blue at night, warm at dusk, a
-  // soft gold at dawn; places that make their own light keep it
-  const tint = night
-    ? 'rgba(22,28,66,0.42)'
-    : hour >= 17
-      ? 'rgba(240,128,70,0.16)'
-      : hour < 9
-        ? 'rgba(255,200,150,0.12)'
-        : null;
+  // the light of the hour (lib/daylight.ts): dawn, day, dusk and night blended over real time
+  // (warm at dusk, cool at dawn, the lanterns fading in), stepped with reduced motion; places
+  // that make their own light keep it
+  const light = daylight(hourOf(now), reduced);
+  const tint = light.tint;
   const screen = useWindowDimensions();
   const dpr = PixelRatio.get();
   const u = pixelScale(screen.width, dpr);
@@ -1602,8 +1613,21 @@ export function AtlasWalk({
     walkTo(fromScreen(used ? used : at));
   };
 
+  // where a zone is drawn at the game's art density 2, the walker is the rig's folk with its
+  // familiar a step behind (components/folk-walker.tsx); everywhere else it stays as before
+  const folkHere = ART_DENSITY === 2 && here !== 'garden' && zoneDensity[here] === 2;
   const pet = (shadow: boolean) =>
-    player ? (
+    folkHere ? (
+      <FolkWalker
+        px={px}
+        py={py}
+        u={u}
+        walking={walking && active}
+        active={active}
+        reduced={reduced}
+        ghost={!shadow}
+      />
+    ) : player ? (
       <GuardianPet
         player={player}
         size={petPx}
@@ -1804,6 +1828,33 @@ export function AtlasWalk({
                   />
                 ),
               )}
+          {light.lamps > 0 &&
+            // a native zone's lanterns lit and their pools, over the tint, fading in with dusk
+            near.map((t) => {
+              const zid = t.id;
+              if (zid === 'garden') return null;
+              const box = zoneNight[zid];
+              const art = zoneNightArt[zid];
+              if (!box || !art) return null;
+              const o = tileOrigin(region, t);
+              const [nx, ny, nw, nh] = box;
+              return (
+                <Image
+                  key={`night-${zid}`}
+                  source={art}
+                  resizeMode="stretch"
+                  style={{
+                    position: 'absolute',
+                    left: snap((o.x + nx) * u),
+                    top: snap((o.y + ny) * u),
+                    width: snap(nw * u),
+                    height: snap(nh * u),
+                    opacity: light.lamps,
+                    zIndex: 150001,
+                  }}
+                />
+              );
+            })}
           {night &&
             // lamplight in the windows (panes recorded by the generator, zoneWindows): a pane
             // with nothing in front glows above the night tint; one that a nearer thing overlaps
@@ -1899,6 +1950,18 @@ export function AtlasWalk({
             )}
             <Animated.View style={landStyle}>{pet(true)}</Animated.View>
           </Animated.View>
+          {folkHere && (
+            <FolkFamiliar
+              px={px}
+              py={py}
+              ox={ox}
+              oy={oy}
+              u={u}
+              walking={walking && active}
+              active={active}
+              reduced={reduced}
+            />
+          )}
           {preview && (
             // a keepsake about to be set down: its footprint lit green (it may stand
             // there) or red (not), the thing itself faint above it

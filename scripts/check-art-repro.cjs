@@ -39,6 +39,8 @@ const generatedTypescript = [
   'lib/resident-assets.ts',
   'lib/decor-assets.ts',
   'lib/decor-sizes.ts',
+  // the character rig's sheets (scripts/art/native, written by zones.py)
+  'lib/folk-sprites.ts',
   // the world canvas (scripts/art/world_canvas.py), written at the end of zones.py's run
   'lib/world-canvas.ts',
   'lib/world-canvas-assets.ts',

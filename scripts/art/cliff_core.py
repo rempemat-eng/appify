@@ -179,6 +179,15 @@ EDGE_SETS = {
         face=dict(style='earth', lump=dict(cw=12, ch=7, rx=(4.6, 7.4), ry=(3.0, 4.6), p=2.2), roots=0.09),
         lip=dict(kind='sod', over=(0, 6), scale=5.5, lit_row=0.5, under=(0, 0), shade=(0, 0), streaks=(0, 0)),
         foot=dict(band=4, pebbles=0.05, tufts=1.0), stair='timber', bank=dict(rows=2, reeds=0.5)),
+    # the woodland bank (the first finished screen, 21 Oct): packed rounded cobbles of mossy
+    # grey stone (Matt liked the highland cobbles) with many moss caps, under a clean
+    # forest-floor turf lip; a damp mossy foot with ferns; brooks in a reedy bank
+    'woodland': dict(
+        biome='woodland',
+        face=dict(style='cobbles', shade='stone', world_lumps=True, big=0.11, big_f=1.8, aspect=0.25,
+                  lump=dict(cw=5.2, ch=4.2, rx=(2.4, 3.5), ry=(2.0, 3.0), p=2.2), moss_caps=0.16),
+        lip=dict(kind='turf', over=(0, 2), scale=2.8, lit_row=0.55, under=(1, 0), shade=(4, 6), streaks=(3, 7)),
+        foot=dict(band=5, pebbles=0.12, tufts=0.9), stair='rock', bank=dict(rows=2, reeds=0.3)),
     # the sea cliff: pale bedded sandstone slabs on a dark basalt foot under a thin turf lip
     'coast': dict(
         biome='coast',
@@ -219,6 +228,13 @@ BIOMES = {
         ivy=0.0, cascade=0.0, crack_plants=0.0, scree=0.0, boulders=0.05, ferns=0.3,
         shrubs=0.008, trees=0.002, flowers=0.09, flower_fams=('plaster', 'brass', 'berry', 'sky'),
         snow_z=None, falls=0.0, pieces=('stair', 'path', 'pond', 'boulders', 'spring')),
+    'woodland': dict(
+        face=32, rock='stone', loose='stone', built=False, edges='woodland', dress=False,
+        bands=[(9, 'stone_cool', 'plain'), (8, 'stone', 'plain'), (11, 'stone_warm', 'plain'), (7, 'stone', 'pebble')],
+        spring=None, top='moss', top_sibs=(0.45, 0.25, 0.30), warm_lit=0.3, ledge='path',
+        ivy=0.0, cascade=0.0, crack_plants=0.6, scree=0.2, boulders=0.1, ferns=0.8,
+        shrubs=0.0, trees=0.0, flowers=0.0, flower_fams=(), snow_z=None, falls=0.0,
+        pieces=('path', 'pond', 'boulders', 'spring', 'ivy', 'scree')),
     'coast': dict(
         face=FACE, rock='sand', loose='basalt', built=False, edges='coast',
         bands=[(8, 'basalt', 'plain'), (6, 'basalt_cool', 'pebble'), (10, 'sand_cool', 'plain'),
@@ -246,6 +262,7 @@ BIOMES = {
         pieces=('stair', 'ledge', 'path')),
 }
 STRATA = BIOMES       # the earlier name of the tables
+GREEN = ('grass', 'moss')    # tops drawn as a clean lawn (the meadow's grass, the woodland's moss)
 
 
 # Eastward's edge measures in its own native px at an adult of 54 (eastward-edges.md), which
@@ -859,7 +876,7 @@ def paint_ground(fr: Frame, P: dict, world: World):
         fr.F[gm] = fams[fi[gm]]
         fr.T[gm] = 3
         fr.tag[gm] = TAG['ground']
-        if fam_name == 'grass':
+        if fam_name in GREEN:
             _lawn(fr, gm, fams, hashu(seed, 12))
         elif fam_name == 'stone':
             _setts(fr, gm, fams, seed)
@@ -904,7 +921,7 @@ def fray_path(fr: Frame, world: World, p: np.ndarray, g: np.ndarray):
     crumb = crumb | (nb(crumb, 0, -1) & p2)
     fr.T[crumb] = 1
     edge = p2 & (dist == k + 1)
-    if T['top'] == 'grass':
+    if T['top'] in GREEN:
         for x, y, hh in zip(*candidates(fr, int(16 * world.s), hashu(seed, 105), np.where(edge, 0.9, 0.0))):
             if h01(hh, 6) < 0.6:
                 put_stamp(fr, TUFTS[int(hh % np.uint32(len(TUFTS)))], x, y, int(gid[int(hashu(hh, 4) % np.uint32(3))]),
@@ -1212,7 +1229,7 @@ def paint_faces(fr: Frame, P: dict, world: World):
     fam = np.where(damp, FID['earth_cool'], fam)
     t = np.where(damp, np.clip(t, 1, 3), t)
     # moss caps on the crowns of a few lumps
-    if T['top'] == 'grass':
+    if T['top'] in GREEN:
         cap = ~gap & ~crev & (h01(mid, 23) < world.E['face'].get('moss_caps', 0.0)) & (v < -0.6 - 0.12 * (h01(cell, 4) > 0.5)) & (np.abs(u) < 0.62)
         fam = np.where(cap, FID['leaf'], fam)
         t = np.where(cap, np.where(lam > 0.78, 4, 3), t)
@@ -1274,7 +1291,7 @@ def paint_cobbles(fr: Frame, P: dict, world: World):
     fam = np.where(t >= 4, rid[1], np.where(t == 3, rid[np.where(h01(mid, 22) < 0.6, 2, 0)], np.where(t == 2, shf[0], shf[2])))
     fam = np.where(rec, shf[2], fam)
     t = np.where((t == 2) & ~rec, 1, t)      # the violet-grey shade a value below the crag's body (stone 1 is darker than crag 3)
-    if T['top'] == 'grass':
+    if T['top'] in GREEN:
         cap = ~rec & (h01(mid, 23) < world.E['face'].get('moss_caps', 0.0)) & (v < -0.62) & (np.abs(u) < 0.6)
         fam = np.where(cap, FID['leaf'], fam)
         t = np.where(cap, np.where(lam > 0.7, 4, 3), t)
@@ -1842,11 +1859,13 @@ def dress_ground(fr: Frame, world: World):
     """Tufts and long grass gathered at edges (rims, feet, paths, water), clover and the odd
     grass mound in the open, flowers in small clusters: the house ground recipe's dressing."""
     T, seed = world.T, world.seed
-    if T['top'] != 'grass':
+    if T['top'] not in GREEN:
         return dress_dry(fr, world)
-    g = (fr.tag == TAG['ground']) & np.isin(fr.F, sibs('grass'))
+    if not T.get('dress', True):
+        return      # the screen dresses its own ground (scripts/art/native: the biome's plant set)
+    g = (fr.tag == TAG['ground']) & np.isin(fr.F, sibs(T['top']))
     edge = near(~g & (fr.P['kind'] > 0), 5) & g
-    gid = sibs('grass')
+    gid = sibs(T['top'])
     # clumps of grass, 5 to 9 px, sparse in the open and a little thicker at edges
     for x, y, hh in zip(*candidates(fr, int(11 * world.s), hashu(seed, 101), np.where(edge, 0.62, 0.5))):
         st = CLUMPS[int(hh % np.uint32(len(CLUMPS)))]
@@ -2187,7 +2206,7 @@ def paint_stairs(fr: Frame, world: World):
                 ry = (3.0 + 1.4 * h01(hh, 2)) * world.s * sz
                 cx = xe + (-1 if side == 0 else 1) * (0.25 + 0.35 * h01(hh, 3)) * rx
                 cy = y_face + fy * (y_bot - y_face) - (1.0 - fy) * 2 * world.s
-                boulder(fr, cx, cy, rx, ry, hh, allow, world.T['loose'], moss=0.3 if world.T['top'] == 'grass' else 0.0,
+                boulder(fr, cx, cy, rx, ry, hh, allow, world.T['loose'], moss=0.3 if world.T['top'] in GREEN else 0.0,
                         tag=TAG['side'])
 
 
@@ -2757,10 +2776,10 @@ def dress_feet(fr: Frame, world: World):
     rid = sibs(rock)
     okg = ground & ~stair_near
     # tufts over the foot
-    if T['top'] == 'grass':
+    if T['top'] in GREEN:
         foot = okg & (dist >= 1) & (dist <= 2)
         allow = (ground | face) & ~(fr.tag == TAG['water'])
-        gid = sibs('grass')
+        gid = sibs(T['top'])
         for x, y, hh in zip(*candidates(fr, int(5 * S_), hashu(seed, 211), np.where(foot, world.E['foot']['tufts'], 0.0))):
             put_stamp(fr, TUFTS[int(hh % np.uint32(len(TUFTS)))], x, y, int(gid[int(hashu(hh, 4) % np.uint32(3))]),
                       allow=allow, anchor=(2, 3))
@@ -3128,7 +3147,7 @@ def paint_decals(fr: Frame, world: World):
     ground = (K == TOP) & np.isin(fr.tag, (TAG['ground'], TAG['path'], TAG['scree'], TAG['snow'])) & (P['ST'] == 0)
     ground &= ~near(fr.tag == TAG['water'], 2)
     rock = T['loose']
-    green = T['top'] == 'grass'
+    green = T['top'] in GREEN
     for dc in world.decals:
         v = dc['v']
         if dc['kind'] == 'boulders':

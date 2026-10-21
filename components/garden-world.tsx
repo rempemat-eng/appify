@@ -33,6 +33,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import { cozy as c } from '@/lib/cozy';
 import { useReducedMotion } from '@/lib/motion';
+import { daylight, hourOf } from '@/lib/daylight';
 import { useAppActive } from '@/lib/app-active';
 import { playSound } from '@/lib/sound';
 import type { BreakIntention, CompanionMemory } from '@/lib/companion-memories';
@@ -683,8 +684,10 @@ export function GardenWorld({
   const px = useSharedValue(home.x);
   const py = useSharedValue(home.y);
   const pos = useRef<Point>({ ...home });
-  const hour = new Date(useGame((s) => s.now)).getHours();
+  const now = useGame((s) => s.now);
+  const hour = new Date(now).getHours();
   const night = napping || hour < 6 || hour >= 21;
+  // the light of the hour, blended over real time (lib/daylight.ts), the same as the valley's
   const dusk = !night && hour >= 17;
   const dawn = !night && hour < 9;
   const [walking, setWalking] = useState(false);
@@ -2819,7 +2822,7 @@ export function GardenWorld({
             signature={reaction.signature}
           />
         )}
-        {(night || dusk || dawn) && (
+        {(night || dusk || dawn) && (napping || daylight(hourOf(now), reduced).tint) && (
           <View
             pointerEvents="none"
             style={{
@@ -2829,11 +2832,9 @@ export function GardenWorld({
               width: worldWidth,
               height: height + (camera ? topBand : 0),
               zIndex: 900,
-              backgroundColor: night
-                ? 'rgba(22,28,66,0.42)'
-                : dusk
-                  ? 'rgba(240,128,70,0.16)'
-                  : 'rgba(255,200,150,0.12)',
+              backgroundColor: napping
+                ? (daylight(0).tint ?? undefined)
+                : (daylight(hourOf(now), reduced).tint ?? undefined),
             }}
           />
         )}

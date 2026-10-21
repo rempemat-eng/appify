@@ -266,10 +266,19 @@ def derive_flow(ch: Chunk, terrain: list[str]):
     return None if not sheet else unstack(*sheet, ch.w, ch.h)
 
 
-def unstack(img: Image.Image, rect, w: int, h: int) -> np.ndarray:
-    """A water_flow sheet (frames stacked in a box) as full-size frames."""
+def unstack(img: Image.Image, rect, w: int, h: int, cols: int = 1) -> np.ndarray:
+    """A water_flow sheet (frames stacked in a box, or a native zone's frames packed `cols`
+    wide at its finer density) as full-size frames at one image px a world px."""
     x0, y0, bw, bh = rect
-    a = np.asarray(img.convert('RGBA'))
+    img = img.convert('RGBA')
+    if cols > 1:            # a native zone's grid: each frame sampled down to world px (nearest)
+        rows = -(-water_flow.FRAMES // cols)
+        fw, fh = img.width // cols, img.height // rows
+        frames = [img.crop(((f % cols) * fw, (f // cols) * fh, (f % cols + 1) * fw, (f // cols + 1) * fh)).resize((bw, bh), Image.NEAREST)
+                  for f in range(water_flow.FRAMES)]
+        a = np.concatenate([np.asarray(fr) for fr in frames], 0)
+    else:
+        a = np.asarray(img)
     out = np.zeros((water_flow.FRAMES, h, w, 4), dtype=np.uint8)
     for f in range(water_flow.FRAMES):
         out[f, y0:y0 + bh, x0:x0 + bw] = a[f * bh:(f + 1) * bh]
@@ -397,7 +406,7 @@ def from_zones(region: str, built: dict) -> Chunk:
                     getattr(ch, attr).paste(art.resize((W, H), Image.NEAREST), (ox, oy))
             if z in zones.FLOW_RECT:
                 sheet = Image.open(os.path.join(worlds.ROOT, 'assets', 'zones', z, 'flow.png'))
-                frames = unstack(sheet, zones.FLOW_RECT[z], W, H)
+                frames = unstack(sheet, zones.FLOW_RECT[z], W, H, zones.FLOW_GRID.get(z, 1))
                 if flow is None:
                     flow = np.zeros((water_flow.FRAMES, ch.h, ch.w, 4), dtype=np.uint8)
                 flow[:, oy:oy + H, ox:ox + W] = frames

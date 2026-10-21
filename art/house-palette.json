@@ -156,6 +156,18 @@
       "kind": "accent:station,moon",
       "body": "#2A2C44"
     },
+    "crag": {
+      "kind": "accent:highland",
+      "body": "#8A5546"
+    },
+    "moss": {
+      "kind": "accent:woodland",
+      "body": "#729A52"
+    },
+    "fox": {
+      "kind": "accent:folk",
+      "body": "#C8703A"
+    },
     "lamp": {
       "kind": "glow",
       "body": "#F0B050"
@@ -175,10 +187,6 @@
     "glowflora": {
       "kind": "glow",
       "body": "#36D0B0"
-    },
-    "crag": {
-      "kind": "accent:highland",
-      "body": "#8A5546"
     }
   },
   "ramps": {
@@ -278,14 +286,20 @@
     "void": ["#1B1033", "#20193B", "#252340", "#2A2C44", "#454253", "#5F565B"],
     "void_warm": ["#1D0D35", "#26193F", "#2D2448", "#34304E", "#4F465D", "#695B64"],
     "void_cool": ["#1D0F33", "#201637", "#231C3A", "#26233B", "#403849", "#594C52"],
+    "crag": ["#300516", "#501F26", "#6E3936", "#8A5546", "#A46F54", "#B78967"],
+    "crag_warm": ["#32040F", "#54201E", "#753E2F", "#945C41", "#AE7650", "#BF9166"],
+    "crag_cool": ["#30051A", "#4C1C29", "#683337", "#814C45", "#9B6553", "#AE7F63"],
+    "moss": ["#0E3A1F", "#2F5A2E", "#507A3F", "#729A52", "#99B161", "#BDC57B"],
+    "moss_warm": ["#204018", "#416024", "#628033", "#85A046", "#ABB758", "#CECB77"],
+    "moss_cool": ["#003222", "#195332", "#3C7344", "#5E9357", "#86AA65", "#ADBD7B"],
+    "fox": ["#5A0C10", "#812E1B", "#A64E28", "#C8703A", "#E18E4A", "#EFAC6A"],
+    "fox_warm": ["#631502", "#8B3500", "#B0570D", "#D17924", "#E9973A", "#F6B664"],
+    "fox_cool": ["#4F0115", "#772322", "#9C4432", "#BE6543", "#D88251", "#E6A06B"],
     "lamp": ["#67450A", "#9B6912", "#CB8D26", "#F0B050", "#F5D49C", "#FFF6E6"],
     "neon_pink": ["#50052E", "#8D0A56", "#C81C7D", "#F04A9E", "#FDA6C1", "#FFF4F6"],
     "neon_cyan": ["#014751", "#0F7180", "#159BB0", "#2CC0D8", "#96DEE7", "#E3FDFE"],
     "lava": ["#532000", "#8B3B01", "#C3570A", "#F27222", "#FCB68A", "#FFF5ED"],
-    "glowflora": ["#015243", "#077F69", "#21AA8F", "#36D0B0", "#9FE6CC", "#E6FEF2"],
-    "crag": ["#300516", "#501F26", "#6E3936", "#8A5546", "#A46F54", "#B78967"],
-    "crag_warm": ["#32040F", "#54201E", "#753E2F", "#945C41", "#AE7650", "#BF9166"],
-    "crag_cool": ["#30051A", "#4C1C29", "#683337", "#814C45", "#9B6553", "#AE7F63"]
+    "glowflora": ["#015243", "#077F69", "#21AA8F", "#36D0B0", "#9FE6CC", "#E6FEF2"]
   },
   "edges": {
     "grass": "#242924",
@@ -320,7 +334,9 @@
     "panel": "#231E2E",
     "regolith": "#1A1518",
     "void": "#1E1729",
-    "crag": "#28141D"
+    "crag": "#28141D",
+    "moss": "#1E2622",
+    "fox": "#37191D"
   },
   "kinds": {
     "grass": "core",
@@ -419,14 +435,20 @@
     "void": "accent:station,moon",
     "void_warm": "sibling:void",
     "void_cool": "sibling:void",
+    "crag": "accent:highland",
+    "crag_warm": "sibling:crag",
+    "crag_cool": "sibling:crag",
+    "moss": "accent:woodland",
+    "moss_warm": "sibling:moss",
+    "moss_cool": "sibling:moss",
+    "fox": "accent:folk",
+    "fox_warm": "sibling:fox",
+    "fox_cool": "sibling:fox",
     "lamp": "glow",
     "neon_pink": "glow",
     "neon_cyan": "glow",
     "lava": "glow",
-    "glowflora": "glow",
-    "crag": "accent:highland",
-    "crag_warm": "sibling:crag",
-    "crag_cool": "sibling:crag"
+    "glowflora": "glow"
   },
   "from_materials": {
     "grass": {
@@ -621,8 +643,8 @@
     },
     "regolith": {
       "to": "regolith",
-      "tones": [1, 1, 2, 3, 4, 5],
-      "drift": 0.071
+      "tones": [0, 1, 1, 2, 3, 5],
+      "drift": 0.035
     },
     "glowflora": {
       "to": "glowflora",

@@ -88,6 +88,8 @@ BASES = {
     'regolith':  ('accent:moon', '#8E877E'),        # grey to brown-grey (Matt, 20 Oct)
     'void':      ('accent:station,moon', '#2A2C44'),  # space seen through glass, the sky past the moon
     'crag':      ('accent:highland', '#8A5546'),    # warm dark highland rock (cliff_core.py, from the cliff bake-off)
+    'moss':      ('accent:woodland', '#729A52'),
+    'fox':       ('accent:folk', '#C8703A'),        # russet fur (Bramble and the fox-folk; the character rig, 21 Oct)    # the woodland floor: a mossier, deeper green than the meadow (first finished screen, 21 Oct)
     # glows: light sources, a deep colour up to a near-white core
     'lamp':      ('glow', '#F0B050'),
     'neon_pink': ('glow', '#F04A9E'),
