@@ -214,13 +214,13 @@ export function HomeScreen() {
           }}
         />
         <View
-          pointerEvents="box-none"
           style={{
             position: 'absolute',
             left: 0,
             right: 0,
             bottom: hotbarClearance(insets.bottom),
             height: 140,
+            pointerEvents: 'box-none',
           }}
         >
           <GardenVisitor active={gardenActive} />
@@ -386,23 +386,25 @@ export function ShopScreen() {
                 borderColor: equipped ? c.moss : undefined,
               }}
             >
-              {owned && (
-                <BodyText
-                  style={{
-                    position: 'absolute',
-                    top: 8,
-                    right: 8,
-                    fontSize: 10,
-                    paddingHorizontal: 6,
-                    borderRadius: 0,
-                    overflow: 'hidden',
-                    backgroundColor: equipped ? c.moss : c.body,
-                    color: equipped ? c.paper : c.ink,
-                  }}
-                >
-                  {equipped ? 'WEARING' : 'OWNED'}
-                </BodyText>
-              )}
+              {/* the badge has its own row above the companion, so it never covers an ear
+                  or a hat; every card keeps the row, so the companions line up */}
+              <View style={{ alignSelf: 'stretch', height: 16, alignItems: 'flex-end' }}>
+                {owned && (
+                  <BodyText
+                    style={{
+                      fontSize: 10,
+                      lineHeight: 16,
+                      paddingHorizontal: 6,
+                      borderRadius: 0,
+                      overflow: 'hidden',
+                      backgroundColor: equipped ? c.moss : c.body,
+                      color: equipped ? c.paper : c.ink,
+                    }}
+                  >
+                    {equipped ? 'WEARING' : 'OWNED'}
+                  </BodyText>
+                )}
+              </View>
               <GuardianPet player={p} hat={h.id} size={80} bob={false} decorative />
               <BodyText
                 style={{

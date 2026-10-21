@@ -1,4 +1,4 @@
-import { Pressable, Text, View, useWindowDimensions } from 'react-native';
+import { Platform, Pressable, Text, View, useWindowDimensions } from 'react-native';
 import type { ComponentProps, ReactNode } from 'react';
 import type { Tabs } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -141,13 +141,13 @@ export function GameHud() {
   const control = barControl(u);
   return (
     <View
-      pointerEvents="box-none"
       style={{
         position: 'absolute',
         top: insets.top + hudLayout.gap,
         left: side,
         right: side,
         zIndex: 40,
+        pointerEvents: 'box-none',
       }}
     >
       <PixelFrame
@@ -293,6 +293,9 @@ export function GameHotbar({ state, navigation }: BottomTabBarProps) {
   const { width } = useWindowDimensions();
   const u = usePixelUnit();
   const awake = useGame((s) => s.player?.mode === 'awake');
+  // behind onboarding (no player yet) the hotbar is out of reach for touch, keyboard and
+  // screen readers: nothing it opens exists yet (C25, #141)
+  const away = useGame((s) => !s.player);
   const side = gameSideInset(width) - 8;
   const slotHeight = hotbarSlot(u);
   const slot = (index: number) => {
@@ -346,12 +349,16 @@ export function GameHotbar({ state, navigation }: BottomTabBarProps) {
   };
   return (
     <View
-      pointerEvents="box-none"
+      {...(Platform.OS === 'web' ? { inert: away } : {})}
+      aria-hidden={away}
+      accessibilityElementsHidden={away}
+      importantForAccessibility={away ? 'no-hide-descendants' : 'auto'}
       style={{
         position: 'absolute',
         left: side,
         right: side,
         bottom: insets.bottom + hudLayout.gap,
+        pointerEvents: away ? 'none' : 'box-none',
       }}
     >
       <PixelFrame

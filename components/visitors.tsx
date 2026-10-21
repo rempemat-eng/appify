@@ -71,8 +71,14 @@ export function GardenVisitor({ active = true }: { active?: boolean }) {
   if (!waiting)
     return celebration.show ? (
       <View
-        pointerEvents="none"
-        style={{ position: 'absolute', right: 40, bottom: 60, width: 64, height: 64 }}
+        style={{
+          position: 'absolute',
+          right: 40,
+          bottom: 60,
+          width: 64,
+          height: 64,
+          pointerEvents: 'none',
+        }}
       >
         <PixelBurst hearts />
       </View>
@@ -123,13 +129,12 @@ export function PostcardArt({ postcard }: { postcard: Postcard }) {
     <View style={{ padding: 12, gap: 8 }}>
       <FrameFill depth={1} />
       <View
-        pointerEvents="none"
         aria-hidden
         accessibilityElementsHidden
         importantForAccessibility="no-hide-descendants"
         // @ts-expect-error dataSet is a react-native-web prop (nearest-neighbour pixels).
         dataSet={{ pixel: 'true' }}
-        style={{ alignItems: 'center', padding: 6 }}
+        style={{ alignItems: 'center', padding: 6, pointerEvents: 'none' }}
       >
         <FrameFill fill={c.body} inset />
         <Image
@@ -220,7 +225,6 @@ export function WelcomeBack() {
       style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: c.paper }}
     >
       <View
-        pointerEvents="none"
         onLayout={(event) => {
           const { width: sceneWidth, height: sceneHeight } = event.nativeEvent.layout;
           setSceneBounds((previous) =>
@@ -229,7 +233,7 @@ export function WelcomeBack() {
               : { width: sceneWidth, height: sceneHeight },
           );
         }}
-        style={{ flex: 1, minHeight: 0, overflow: 'hidden' }}
+        style={{ flex: 1, minHeight: 0, overflow: 'hidden', pointerEvents: 'none' }}
       >
         <PixelScene
           sunrise

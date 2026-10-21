@@ -64,7 +64,6 @@ export function PixelIcon({
   // beneath absolutely positioned siblings such as pixel frames.
   return (
     <View
-      pointerEvents="none"
       {...(label
         ? { accessible: true, accessibilityRole: 'image' as const, accessibilityLabel: label }
         : {
@@ -72,7 +71,11 @@ export function PixelIcon({
             accessibilityElementsHidden: true,
             importantForAccessibility: 'no-hide-descendants' as const,
           })}
-      style={[{ width: size, height: size, opacity: muted ? 0.45 : 1 }, style]}
+      style={[
+        { width: size, height: size, opacity: muted ? 0.45 : 1 },
+        style,
+        { pointerEvents: 'none' },
+      ]}
     >
       <Svg width={size} height={size} viewBox={`0 0 ${grid} ${grid}`}>
         {runsOf(name, fine).map((run) => (

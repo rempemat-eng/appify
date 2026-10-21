@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 import { feedback } from '@/lib/game';
-import { useMotionPreference, useReducedMotion } from '@/lib/motion';
+import { useMotionPreference } from '@/lib/motion';
 import { PixelIcon } from '@/components/pixel-icon';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { gardenTips, type GardenTipId } from '@/lib/first-session';
@@ -193,10 +193,20 @@ export function GardenGuide({ onClose }: { onClose: () => void }) {
   );
 }
 
+/** What the reduce-motion row says: both the app's switch and the device's setting, since
+ *  either one reduces motion and the app can never turn the device's off (C25, #141). */
+export function motionNote(app: boolean, device: boolean) {
+  if (device && app) return 'Reduced by this switch and by your device setting.';
+  if (device)
+    return 'Reduced by your device setting (Reduce Motion), so this switch cannot turn it back on.';
+  if (app) return 'Reduced by this switch. Your device setting is off.';
+  return 'Normal decorative motion and text delays are on. Your device setting is off.';
+}
+
 /** The reduce-motion switch, shared by the guide and the menu's Settings page. */
 export function MotionSetting() {
   const preference = useMotionPreference((s) => s.reduced);
-  const reduced = useReducedMotion();
+  const system = useMotionPreference((s) => s.system);
   const [saving, setSaving] = useState(false);
   return (
     <View style={{ minHeight: 52, padding: 12, gap: 6 }}>
@@ -223,9 +233,7 @@ export function MotionSetting() {
         />
       </View>
       <BodyText style={{ fontFamily: 'PixelifySans_500Medium' }}>
-        {reduced
-          ? 'Motion reduced. Your device setting is also respected.'
-          : 'Normal decorative motion and text delays are on.'}
+        {motionNote(preference, system)}
       </BodyText>
     </View>
   );
