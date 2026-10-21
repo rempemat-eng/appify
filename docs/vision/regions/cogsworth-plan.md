@@ -21,21 +21,34 @@ Nothing in the game reads it yet.
 
 ## What the check holds
 
-On the grid and inside the boxes; no edge of ground over 96 px without a jog (rails, platform edges, streets and the riverside are reported as notes, since kerbs and fronts break them in the art); faces 12, 16, 32 or 40 px; the audit's tier rules (`world_audit.py` `tier_checks`: no walkable cells on two tiers meeting without a stair, no north faces, every drop south a face, every west or east end a side band, stairs 32 px or wider); stairs at least 34 px open (no ramps); every stand, door and gate reached from the platform; nothing more than 30 % farther from the platform than the brief's walk times (nearer is no fault); the benchmark's density; the brief's counts (14 named things, 5 pockets, 91 markers); no named thing or spoil heap inside the town.
+On the grid and inside the boxes (long straight runs along the grid are right: Matt, 21 Oct 11:44, to-all-grid-2x withdrew the rule against them); faces 12, 16, 32 or 40 px; the audit's tier rules (`world_audit.py` `tier_checks`: no walkable cells on two tiers meeting without a stair, no north faces, every drop south a face, every west or east end a side band, stairs 32 px or wider); stairs at least 34 px open (no ramps); every stand, door and gate reached from the platform; nothing more than 30 % farther from the platform than the brief's walk times (nearer is no fault); the benchmark's density; the brief's counts (14 named things, 5 pockets, 91 markers); no named thing or spoil heap inside the town.
 
 Walk times from the platform (brief, then plan): clock tower 7.8 / 6.9 s, gasholder 10.3 / 12.3, airship mast 13.2 / 13.4, lock 18.1 / 13.6, foundry 21.8 / 20.7, allotments 22.7 / 21.2, pump house 26.0 / 21.4, terminus 29.5 / 22.7. The plan's town is denser than the block-out's, so the south side is a few seconds nearer.
 
+## The region round the town
+
+`scripts/art/regions/cogsworth_region.py` lays the rest of the footprint as data on the world's 8 px cells, independent of the art's density (crew board to-all-density: until Matt picks the density, the lanes work on layout, routes, walk masks and set-piece placement):
+
+- **Tiers** as rectangles on the grid in straight runs (to-all-grid-2x), lowest first, in Claude G's tier numbers (the town's street is 7): the massif's benches stepping down south-east where the High Fells come down (13 to 8), the Fern hills' shoulder carrying the Foothill Road over tier 9, the coal hills rising east of the town to the Narrows' rims (9, 10), the Cog's valley and the confluence low (6, 5) and the Lull at 4.
+- **Water**: the Cog above the town and below it to the confluence, the Lull through the Narrows and on south-east to Claude I's chunk, the eel pond at Fernhollow.
+- **Routes**: Claude G's lines, read from `lib/world-routes.ts` when it is on main, a copy of their vertices on this land until then (#175 @ef8824f).
+- **Set pieces** with the prop or kit piece each needs: the 14 named things, five spoil heaps (one with the loop), the viaduct's three piers, Fernhollow's three cottages, sawpit and log stores.
+- **Cover in layers** (brief 6): the massif's wall and fade, the old forest's wall and fade, the coal forest's woods.
+
+`--check` holds it to what a layout can show: every route vertex on land of its own tier (within 64 px of a tier change), no route on water except at its crossings, no set piece on a route, on water, in the town or on another, each named thing beside or a short way off its route, Fernhollow's doors onto the road, the Lull running from the north edge to the confluence, the town's gates on G's tiers, no wall across a route. Asked of G (h-to-g-1115): the five stairs on east-west legs, the High Fells' bridge over the Cog (W3), and the Towpath south of the Cog foot, where G and Claude I differ.
+
 ## Moved from the brief
 
-The brief's coordinates come from a smaller, coarser block-out town; things are moved to fit the decided 704 x 960 town (`MOVED` lists each with its reason):
+The brief's coordinates come from a smaller, coarser block-out town and the block-out's routes; things are moved to fit the decided 704 x 960 town and Claude G's route lines (`MOVED` lists each with its reason):
 
 - the platform stop to the town's north edge (the brief's point was the block-out town's centre);
-- the spoil heap with the loop to the bench above the town; the crow roost, the cairn and the echo cave up the High Fells to the bench and its face; the charcoal burners' camp to the Cog's west bank before the Millrace bridge; the rail ruin a short way off the Towpath east of the town; two spoil heaps to the Cog's west bank and one below the riverside;
+- the named things beside or a short way off G's line for their route, off the road, out of the water and out of the town: the crow roost, the cairn and the echo cave up on the bench and its face where the High Fells come down; the burners' camp and the collapsed adit beside the Foothill Road on the Fern hills' shoulder; the rail ruin and the tram tipple on the coal hills' foot by the Towpath; the lookout above the Cog foot;
+- the five spoil heaps out of the town and the Cog onto the hills round it, one above the town with the loop;
 - the routes' ends to the town's gates; the 23 route markers that fell inside the town box are laid as town slots of the same kinds.
 
 ## Waiting on
 
-- **Claude G** (routes): the exact cells where the High Fells, the Foothill Road and the Towpath meet the town's gates, and the W3 object at the Millrace bridge.
+- **Claude G** (routes): the gates are agreed (north 8, west 7, east 7); open are the five stairs on east-west legs, the High Fells' bridge over the Cog, and the Towpath south of the Cog foot (h-to-g-1115).
 - **The cliff core** (#165): the gorge walls and the coal hills' benches. Their tiers wait for the geography chunk (P1); until then the gorge is a course and a width, not a tier map.
 - **The city kit** (Claude C, #169, stacked on the coast kit #162): setts, flags, kerbs, brick retaining walls and quays for the town's ground.
 - **Claude B**: the eel-catcher's camp, the fallen climber's camp and the rail ruin (to draw); the Millrace wheel; the tram tipple, pit head, lookout, charcoal clamp and burners' hut are drawn (#163), the windmill is on #172.
