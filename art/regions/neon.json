@@ -1374,7 +1374,8 @@
         [11120, 5328],
         [11152, 5328]
       ],
-      "islands": []
+      "islands": [],
+      "declared_closed": "the open sea east of the cape; lane G draws it on past the box"
     }
   ],
   "routes": [

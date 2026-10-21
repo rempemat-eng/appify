@@ -1517,7 +1517,8 @@
       "t": "A",
       "what": "egrets",
       "at": [9263, 4510],
-      "route": "Delta Road"
+      "route": "Delta Road",
+      "in_water": true
     },
     {
       "t": "I",
@@ -1617,7 +1618,8 @@
       "t": "A",
       "what": "egrets",
       "at": [8877, 4231],
-      "route": "Lull Road"
+      "route": "Lull Road",
+      "in_water": true
     },
     {
       "t": "I",
@@ -1645,7 +1647,8 @@
       "what": "egrets",
       "at": [9088, 4384],
       "route": "Lull Road",
-      "moved_from": [9084, 4385]
+      "moved_from": [9084, 4385],
+      "in_water": true
     },
     {
       "t": "I",
@@ -1686,7 +1689,8 @@
       "what": "egrets",
       "at": [9368, 4452],
       "route": "Lull Road",
-      "moved_from": [9389, 4459]
+      "moved_from": [9389, 4459],
+      "in_water": true
     },
     {
       "t": "I",
