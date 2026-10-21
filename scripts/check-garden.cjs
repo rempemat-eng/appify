@@ -336,6 +336,13 @@ for (const name of [
   deps[`@/lib/${name}`] = domainModule.exports;
 }
 deps['@/lib/layout'] = { gameLayout: { maxWidth: 640 }, hudClearance: (top) => top + 60 };
+// the art density (lib/art-density.ts): the native default, as the app reads it
+const densityModule = { exports: {} };
+evaluate('lib/art-density.ts', densityModule);
+deps['./art-density'] = densityModule.exports;
+const densitySettingModule = { exports: {} };
+evaluate('lib/art-density-setting.ts', densitySettingModule);
+deps['@/lib/art-density-setting'] = densitySettingModule.exports;
 const scaleModule = { exports: {} };
 evaluate('lib/pixel-scale.ts', scaleModule);
 deps['@/lib/pixel-scale'] = scaleModule.exports;

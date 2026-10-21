@@ -1,0 +1,10347 @@
+{
+ "world_px": [
+  11264,
+  6912
+ ],
+ "walkable_zone_areas": 141.2,
+ "routes_s": {
+  "Col Path": 27.5,
+  "High Fells": 49.1,
+  "Foothill Road": 37.9,
+  "Towpath": 47.7,
+  "Lull Road": 86.6,
+  "Coast Path": 55.8,
+  "Headland Lane": 14.5,
+  "Shell Bar": 14.7,
+  "Drover's Road": 90.1,
+  "Lode Track": 18.0,
+  "Canyon Road": 75.1,
+  "Forge Stair": 3.6,
+  "Ember Way": 17.6,
+  "Ash Coast": 91.2,
+  "Delta Road": 56.1,
+  "Old Bridges": 9.4,
+  "Quay Street": 24.5,
+  "Cape Road": 18.3
+ },
+ "home_to": {
+  "Home valley": {
+   "on_foot_s": 1.6,
+   "with_shortcuts_s": 1.6
+  },
+  "Driftwood": {
+   "on_foot_s": 40.2,
+   "with_shortcuts_s": 40.2
+  },
+  "Fernhollow": {
+   "on_foot_s": 25.6,
+   "with_shortcuts_s": 25.6
+  },
+  "Cogsworth": {
+   "on_foot_s": 52.3,
+   "with_shortcuts_s": 25.1
+  },
+  "Lullford": {
+   "on_foot_s": 69.1,
+   "with_shortcuts_s": 69.1
+  },
+  "Gullwick": {
+   "on_foot_s": 60.2,
+   "with_shortcuts_s": 60.2
+  },
+  "Neon Harbour": {
+   "on_foot_s": 115.4,
+   "with_shortcuts_s": 53.2
+  },
+  "Launch Cape": {
+   "on_foot_s": 146.2,
+   "with_shortcuts_s": 67.7
+  },
+  "Palm Spring": {
+   "on_foot_s": 77.8,
+   "with_shortcuts_s": 43.9
+  },
+  "Dust Gulch": {
+   "on_foot_s": 100.7,
+   "with_shortcuts_s": 30.1
+  },
+  "the Lode": {
+   "on_foot_s": 107.9,
+   "with_shortcuts_s": 42.5
+  },
+  "Hearthold": {
+   "on_foot_s": 130.3,
+   "with_shortcuts_s": 50.9
+  },
+  "Ember forge": {
+   "on_foot_s": 127.7,
+   "with_shortcuts_s": 45.2
+  },
+  "Cinder Springs": {
+   "on_foot_s": 126.8,
+   "with_shortcuts_s": 60.5
+  },
+  "Cinderwick": {
+   "on_foot_s": 111.4,
+   "with_shortcuts_s": 67.4
+  },
+  "Lagoon Landing": {
+   "on_foot_s": 81.3,
+   "with_shortcuts_s": 47.9
+  },
+  "the Frostline": {
+   "on_foot_s": 39.9,
+   "with_shortcuts_s": 39.9
+  }
+ },
+ "why_here": {
+  "Home valley": "a sheltered basin where the Sleepwater leaves the uplands: water, a mill head, flat ground, hills on three sides",
+  "the Frostline": "a glacier's cirque above the valley: the Sleepwater's source, a tarn, snow late into summer",
+  "Driftwood": "the cove at the Sleepwater's mouth, sheltered by the Headland: the valley's landing place",
+  "Fernhollow": "timber in the wet woods of the Fern hills, the valley's east wall",
+  "Cogsworth": "coal and iron in the coal hills, the fast Cog for power (the Millrace), and the valley floor for a railway out",
+  "Lullford": "the lowest place the Lull can be bridged: gravel terraces narrow the floodplain and an island takes the piers",
+  "Gullwick": "a cove on the open coast west of the delta: fish, and a beach to haul boats",
+  "Neon Harbour": "a deep, sheltered ria clear of the Lull's silt; the falls gave the first crossing, the head of navigation and mill power",
+  "Launch Cape": "an exposed headland past the city: rockets go up over open sea, away from people",
+  "Palm Spring": "the Willow Run sinks into the gravel and comes up again here: the first water in the dry country",
+  "Dust Gulch": "where the Amber leaves the mountains: water, the mine above, the railhead",
+  "the Lode": "iron and copper in the massif foothills, reached by a mule track",
+  "Hearthold": "a rock between two lava flows below the crater: the only defensible ground on the volcano's seaward side",
+  "Ember forge": "the crater's heat at the caldera lip; ore comes down from the Lode by cart",
+  "Cinder Springs": "hot springs where the sea seeps into the volcano's warm flank",
+  "Cinderwick": "a black-sand cove between the flows: charcoal and fish",
+  "Lagoon Landing": "the main isle's lagoon: a drowned crater of the old arc, sheltered water"
+ },
+ "bridges": {
+  "Lullford Bridge": [
+   8960,
+   4310,
+   "old stone arches resting on a river island, with an iron swing span for the barges (W7)"
+  ],
+  "Narrows Viaduct": [
+   9030,
+   2330,
+   "the railway (now the maglev) on tall piers over the gorge"
+  ],
+  "Harbour Bridge": [
+   10300,
+   4990,
+   "two high arches across the ria, resting on Chapel Islet; tall enough for masts"
+  ]
+ },
+ "easter_egg_spots_later": {
+  "stone ring on the Brackens": [
+   5000,
+   3150
+  ],
+  "wreck on the Shell Bar": [
+   6930,
+   5870
+  ],
+  "bell in the oxbow": [
+   9450,
+   3900
+  ],
+  "fossil in the Amber canyon": [
+   2560,
+   3200
+  ],
+  "hermit's tarn": [
+   7050,
+   1720
+  ],
+  "lone palm in the dune sea": [
+   1050,
+   2900
+  ],
+  "steam cave on Ember": [
+   2800,
+   4300
+  ],
+  "lighthouse keeper's door": [
+   10050,
+   5440
+  ]
+ },
+ "ways": {
+  "W1": "the Headland stile",
+  "W2": "the ridge col (rim crossings)",
+  "W3": "the Millrace landslip (the Cog crossings)",
+  "W4": "the Shell Bar and the ferry",
+  "W5": "the Rift: Drover's bridge, the mouth ferry, the desert line viaduct",
+  "W6": "the chasm bridge and the crust crossing",
+  "W7": "Lullford's swing bridge and the maglev",
+  "W8": "the rocket",
+  "W9": "the lander"
+ },
+ "oxbows": [
+  [
+   "fresh",
+   9078,
+   3212
+  ],
+  [
+   "old",
+   9522,
+   4307
+  ]
+ ],
+ "delta_arms": 8,
+ "vertical": {
+  "the massif (north edge)": {
+   "tiers_walked": [
+    7,
+    29
+   ],
+   "tier_range_all": [
+    4,
+    35
+   ],
+   "face_px_typical": 32,
+   "face_px_max": 32,
+   "stairs": 0,
+   "ramps": 0,
+   "switchback_steps": 0
+  },
+  "the Frostline": {
+   "tiers_walked": [
+    5,
+    31
+   ],
+   "tier_range_all": [
+    5,
+    31
+   ],
+   "face_px_typical": 32,
+   "face_px_max": 64,
+   "stairs": 0,
+   "ramps": 19,
+   "switchback_steps": 3
+  },
+  "the home valley": {
+   "tiers_walked": [
+    2,
+    12
+   ],
+   "tier_range_all": [
+    2,
+    12
+   ],
+   "face_px_typical": 32,
+   "face_px_max": 96,
+   "stairs": 4,
+   "ramps": 12,
+   "switchback_steps": 4
+  },
+  "the coal hills and the Narrows": {
+   "tiers_walked": [
+    3,
+    18
+   ],
+   "tier_range_all": [
+    3,
+    18
+   ],
+   "face_px_typical": 32,
+   "face_px_max": 32,
+   "stairs": 12,
+   "ramps": 10,
+   "switchback_steps": 0
+  },
+  "the Lull plain": {
+   "tiers_walked": [
+    2,
+    11
+   ],
+   "tier_range_all": [
+    2,
+    11
+   ],
+   "face_px_typical": 32,
+   "face_px_max": 32,
+   "stairs": 4,
+   "ramps": 11,
+   "switchback_steps": 0
+  },
+  "the Lull belt and delta": {
+   "tiers_walked": [
+    2,
+    5
+   ],
+   "tier_range_all": [
+    2,
+    5
+   ],
+   "face_px_typical": 32,
+   "face_px_max": 96,
+   "stairs": 2,
+   "ramps": 2,
+   "switchback_steps": 0
+  },
+  "Neon Harbour": {
+   "tiers_walked": [
+    2,
+    10
+   ],
+   "tier_range_all": [
+    2,
+    10
+   ],
+   "face_px_typical": 32,
+   "face_px_max": 288,
+   "stairs": 12,
+   "ramps": 11,
+   "switchback_steps": 0
+  },
+  "the Sunstone basin": {
+   "tiers_walked": [
+    4,
+    11
+   ],
+   "tier_range_all": [
+    4,
+    11
+   ],
+   "face_px_typical": 32,
+   "face_px_max": 32,
+   "stairs": 9,
+   "ramps": 5,
+   "switchback_steps": 2
+  },
+  "the Rift": {
+   "tiers_walked": [
+    2,
+    8
+   ],
+   "tier_range_all": [
+    2,
+    8
+   ],
+   "face_px_typical": 32,
+   "face_px_max": 160,
+   "stairs": 1,
+   "ramps": 8,
+   "switchback_steps": 0
+  },
+  "the fire country": {
+   "tiers_walked": [
+    6,
+    29
+   ],
+   "tier_range_all": [
+    6,
+    29
+   ],
+   "face_px_typical": 32,
+   "face_px_max": 224,
+   "stairs": 24,
+   "ramps": 7,
+   "switchback_steps": 0
+  },
+  "the coast and the isles": {
+   "tiers_walked": [
+    2,
+    5
+   ],
+   "tier_range_all": [
+    2,
+    5
+   ],
+   "face_px_typical": 96,
+   "face_px_max": 192,
+   "stairs": 0,
+   "ramps": 3,
+   "switchback_steps": 0
+  }
+ },
+ "route_tier_changes": {
+  "Col Path": 7,
+  "High Fells": 35,
+  "Foothill Road": 17,
+  "Towpath": 9,
+  "Lull Road": 13,
+  "Coast Path": 1,
+  "Headland Lane": 0,
+  "Shell Bar": 0,
+  "Drover's Road": 22,
+  "Lode Track": 2,
+  "Canyon Road": 28,
+  "Forge Stair": 3,
+  "Ember Way": 9,
+  "Ash Coast": 7,
+  "Delta Road": 11,
+  "Harbour Bridge": 3,
+  "Old Bridges": 0,
+  "Quay Street": 6,
+  "Beacon Causeway": 0,
+  "Cape Road": 3,
+  "Valley lane east": 3,
+  "Valley lane south": 1,
+  "Valley lane west": 0,
+  "Valley lane to the Lull Road": 4,
+  "Valley lane north": 0
+ },
+ "thresholds": {
+  "the Col hut": [
+   6290,
+   2350
+  ],
+  "the Frostline lip": [
+   6230,
+   2040
+  ],
+  "the Brackens gap": [
+   5200,
+   3760
+  ],
+  "Drover's bridge": [
+   4330,
+   3440
+  ],
+  "the Rift ferry": [
+   4180,
+   5240
+  ],
+  "the Amber canyon head": [
+   2770,
+   2650
+  ],
+  "the Cinder Rise": [
+   2270,
+   3860
+  ],
+  "the chasm bridge": [
+   2170,
+   4920
+  ],
+  "the crust causeway": [
+   3300,
+   5560
+  ],
+  "the Millrace cutting": [
+   7650,
+   2740
+  ],
+  "the Cog foot": [
+   8530,
+   3060
+  ],
+  "Lullford Bridge": [
+   8960,
+   4310
+  ],
+  "the canal embankment": [
+   9450,
+   4680
+  ],
+  "the Headland stile": [
+   6990,
+   5300
+  ],
+  "the Shell Bar": [
+   6900,
+   5900
+  ]
+ },
+ "content_per_biome": {
+  "the home valley": {
+   "items": 8,
+   "route_px": 2432,
+   "per_screen": 1.89
+  },
+  "the massif and the Frostline": {
+   "items": 7,
+   "route_px": 2362,
+   "per_screen": 1.71
+  },
+  "the coal hills": {
+   "items": 6,
+   "route_px": 1878,
+   "per_screen": 1.84
+  },
+  "the Lull plain": {
+   "items": 18,
+   "route_px": 5549,
+   "per_screen": 1.87
+  },
+  "the river belt and delta": {
+   "items": 5,
+   "route_px": 1296,
+   "per_screen": 2.22
+  },
+  "Neon Harbour": {
+   "items": 5,
+   "route_px": 1729,
+   "per_screen": 1.67
+  },
+  "the steppe and the Brackens": {
+   "items": 11,
+   "route_px": 3119,
+   "per_screen": 2.03
+  },
+  "the Sunstone basin": {
+   "items": 15,
+   "route_px": 4549,
+   "per_screen": 1.9
+  },
+  "the fire country": {
+   "items": 13,
+   "route_px": 4107,
+   "per_screen": 1.82
+  },
+  "the coast and the isles": {
+   "items": 2,
+   "route_px": 1025,
+   "per_screen": 1.12
+  }
+ },
+ "content": [
+  {
+   "name": "wayside shrine",
+   "cat": "shrine",
+   "biome": "the home valley",
+   "x": 6031,
+   "y": 2887,
+   "route": "Col Path",
+   "off_path": true
+  },
+  {
+   "name": "well",
+   "cat": "well",
+   "biome": "the home valley",
+   "x": 6357,
+   "y": 2549,
+   "route": "Col Path",
+   "off_path": false
+  },
+  {
+   "name": "beehives",
+   "cat": "prop",
+   "biome": "the home valley",
+   "x": 6262,
+   "y": 2451,
+   "route": "Col Path",
+   "off_path": false
+  },
+  {
+   "name": "cairn",
+   "cat": "landmark",
+   "biome": "the massif and the Frostline",
+   "x": 6464,
+   "y": 2152,
+   "route": "Col Path",
+   "off_path": true
+  },
+  {
+   "name": "ibex rocks",
+   "cat": "wild",
+   "biome": "the massif and the Frostline",
+   "x": 6136,
+   "y": 1949,
+   "route": "Col Path",
+   "off_path": false
+  },
+  {
+   "name": "crevasse viewpoint",
+   "cat": "view",
+   "biome": "the massif and the Frostline",
+   "x": 6329,
+   "y": 1579,
+   "route": "High Fells",
+   "off_path": true
+  },
+  {
+   "name": "herders' shieling",
+   "cat": "camp",
+   "biome": "the massif and the Frostline",
+   "x": 6673,
+   "y": 1699,
+   "route": "High Fells",
+   "off_path": false
+  },
+  {
+   "name": "fallen climber's camp",
+   "cat": "camp",
+   "biome": "the massif and the Frostline",
+   "x": 7207,
+   "y": 1989,
+   "route": "High Fells",
+   "off_path": true
+  },
+  {
+   "name": "echo cave",
+   "cat": "cave",
+   "biome": "the massif and the Frostline",
+   "x": 7645,
+   "y": 2078,
+   "route": "High Fells",
+   "off_path": false
+  },
+  {
+   "name": "cairn",
+   "cat": "landmark",
+   "biome": "the massif and the Frostline",
+   "x": 7957,
+   "y": 2094,
+   "route": "High Fells",
+   "off_path": true
+  },
+  {
+   "name": "picnic viewpoint",
+   "cat": "view",
+   "biome": "the home valley",
+   "x": 6671,
+   "y": 3134,
+   "route": "Foothill Road",
+   "off_path": true
+  },
+  {
+   "name": "windmill",
+   "cat": "landmark",
+   "biome": "the Lull plain",
+   "x": 7107,
+   "y": 3208,
+   "route": "Foothill Road",
+   "off_path": false
+  },
+  {
+   "name": "pit head",
+   "cat": "landmark",
+   "biome": "the coal hills",
+   "x": 7295,
+   "y": 2970,
+   "route": "Foothill Road",
+   "off_path": false
+  },
+  {
+   "name": "collapsed adit",
+   "cat": "cave",
+   "biome": "the coal hills",
+   "x": 7805,
+   "y": 2948,
+   "route": "Foothill Road",
+   "off_path": true
+  },
+  {
+   "name": "charcoal burners' camp",
+   "cat": "camp",
+   "biome": "the coal hills",
+   "x": 7687,
+   "y": 2585,
+   "route": "Foothill Road",
+   "off_path": false
+  },
+  {
+   "name": "rail ruin",
+   "cat": "ruin",
+   "biome": "the coal hills",
+   "x": 8279,
+   "y": 2482,
+   "route": "Towpath",
+   "off_path": true
+  },
+  {
+   "name": "tram tipple",
+   "cat": "landmark",
+   "biome": "the coal hills",
+   "x": 8228,
+   "y": 2932,
+   "route": "Towpath",
+   "off_path": false
+  },
+  {
+   "name": "lookout over the Narrows",
+   "cat": "view",
+   "biome": "the coal hills",
+   "x": 8588,
+   "y": 3007,
+   "route": "Towpath",
+   "off_path": false
+  },
+  {
+   "name": "standing stones",
+   "cat": "landmark",
+   "biome": "the Lull plain",
+   "x": 8311,
+   "y": 3336,
+   "route": "Towpath",
+   "off_path": true
+  },
+  {
+   "name": "heron pools",
+   "cat": "wild",
+   "biome": "the Lull plain",
+   "x": 8512,
+   "y": 3614,
+   "route": "Towpath",
+   "off_path": false
+  },
+  {
+   "name": "ruined chapel",
+   "cat": "ruin",
+   "biome": "the Lull plain",
+   "x": 8421,
+   "y": 3844,
+   "route": "Towpath",
+   "off_path": false
+  },
+  {
+   "name": "fishing stage",
+   "cat": "landmark",
+   "biome": "the Lull plain",
+   "x": 8674,
+   "y": 3898,
+   "route": "Towpath",
+   "off_path": true
+  },
+  {
+   "name": "scarecrow",
+   "cat": "landmark",
+   "biome": "the home valley",
+   "x": 6904,
+   "y": 3652,
+   "route": "Lull Road",
+   "off_path": true
+  },
+  {
+   "name": "hay barn",
+   "cat": "landmark",
+   "biome": "the Lull plain",
+   "x": 7139,
+   "y": 3972,
+   "route": "Lull Road",
+   "off_path": false
+  },
+  {
+   "name": "windmill",
+   "cat": "landmark",
+   "biome": "the Lull plain",
+   "x": 7465,
+   "y": 3821,
+   "route": "Lull Road",
+   "off_path": false
+  },
+  {
+   "name": "standing stones",
+   "cat": "landmark",
+   "biome": "the Lull plain",
+   "x": 7745,
+   "y": 4168,
+   "route": "Lull Road",
+   "off_path": true
+  },
+  {
+   "name": "heron pools",
+   "cat": "wild",
+   "biome": "the Lull plain",
+   "x": 7975,
+   "y": 3940,
+   "route": "Lull Road",
+   "off_path": false
+  },
+  {
+   "name": "ruined chapel",
+   "cat": "ruin",
+   "biome": "the Lull plain",
+   "x": 8173,
+   "y": 4183,
+   "route": "Lull Road",
+   "off_path": false
+  },
+  {
+   "name": "fishing stage",
+   "cat": "landmark",
+   "biome": "the Lull plain",
+   "x": 8573,
+   "y": 3953,
+   "route": "Lull Road",
+   "off_path": true
+  },
+  {
+   "name": "reed hide",
+   "cat": "wild",
+   "biome": "the river belt and delta",
+   "x": 8768,
+   "y": 4352,
+   "route": "Lull Road",
+   "off_path": false
+  },
+  {
+   "name": "stilt hut",
+   "cat": "npc",
+   "biome": "the river belt and delta",
+   "x": 9027,
+   "y": 4282,
+   "route": "Lull Road",
+   "off_path": false
+  },
+  {
+   "name": "eel traps",
+   "cat": "prop",
+   "biome": "the river belt and delta",
+   "x": 9133,
+   "y": 4567,
+   "route": "Lull Road",
+   "off_path": true
+  },
+  {
+   "name": "fish market",
+   "cat": "npc",
+   "biome": "Neon Harbour",
+   "x": 9529,
+   "y": 4287,
+   "route": "Lull Road",
+   "off_path": false
+  },
+  {
+   "name": "rope walk",
+   "cat": "landmark",
+   "biome": "Neon Harbour",
+   "x": 9857,
+   "y": 4454,
+   "route": "Lull Road",
+   "off_path": false
+  },
+  {
+   "name": "old oak",
+   "cat": "landmark",
+   "biome": "the home valley",
+   "x": 6865,
+   "y": 4820,
+   "route": "Coast Path",
+   "off_path": true
+  },
+  {
+   "name": "hay barn",
+   "cat": "landmark",
+   "biome": "the Lull plain",
+   "x": 7020,
+   "y": 5151,
+   "route": "Coast Path",
+   "off_path": false
+  },
+  {
+   "name": "windmill",
+   "cat": "landmark",
+   "biome": "the Lull plain",
+   "x": 7280,
+   "y": 4940,
+   "route": "Coast Path",
+   "off_path": false
+  },
+  {
+   "name": "standing stones",
+   "cat": "landmark",
+   "biome": "the Lull plain",
+   "x": 7597,
+   "y": 5215,
+   "route": "Coast Path",
+   "off_path": true
+  },
+  {
+   "name": "heron pools",
+   "cat": "wild",
+   "biome": "the Lull plain",
+   "x": 8129,
+   "y": 4982,
+   "route": "Coast Path",
+   "off_path": false
+  },
+  {
+   "name": "ruined chapel",
+   "cat": "ruin",
+   "biome": "the Lull plain",
+   "x": 8008,
+   "y": 4668,
+   "route": "Coast Path",
+   "off_path": true
+  },
+  {
+   "name": "fishing stage",
+   "cat": "landmark",
+   "biome": "the Lull plain",
+   "x": 8477,
+   "y": 4607,
+   "route": "Coast Path",
+   "off_path": false
+  },
+  {
+   "name": "hay barn",
+   "cat": "landmark",
+   "biome": "the Lull plain",
+   "x": 8590,
+   "y": 4281,
+   "route": "Coast Path",
+   "off_path": false
+  },
+  {
+   "name": "tide pools",
+   "cat": "wild",
+   "biome": "the coast and the isles",
+   "x": 7206,
+   "y": 5115,
+   "route": "Headland Lane",
+   "off_path": true
+  },
+  {
+   "name": "seal rocks",
+   "cat": "wild",
+   "biome": "the coast and the isles",
+   "x": 6965,
+   "y": 5522,
+   "route": "Headland Lane",
+   "off_path": false
+  },
+  {
+   "name": "stile and bench",
+   "cat": "landmark",
+   "biome": "the home valley",
+   "x": 5642,
+   "y": 4227,
+   "route": "Drover's Road",
+   "off_path": true
+  },
+  {
+   "name": "sheepfold",
+   "cat": "landmark",
+   "biome": "the steppe and the Brackens",
+   "x": 5447,
+   "y": 3882,
+   "route": "Drover's Road",
+   "off_path": false
+  },
+  {
+   "name": "shepherd's hut",
+   "cat": "npc",
+   "biome": "the steppe and the Brackens",
+   "x": 5151,
+   "y": 3828,
+   "route": "Drover's Road",
+   "off_path": false
+  },
+  {
+   "name": "drove well",
+   "cat": "well",
+   "biome": "the steppe and the Brackens",
+   "x": 5086,
+   "y": 3328,
+   "route": "Drover's Road",
+   "off_path": true
+  },
+  {
+   "name": "hare warren",
+   "cat": "wild",
+   "biome": "the steppe and the Brackens",
+   "x": 4663,
+   "y": 3573,
+   "route": "Drover's Road",
+   "off_path": false
+  },
+  {
+   "name": "barrow mound",
+   "cat": "landmark",
+   "biome": "the steppe and the Brackens",
+   "x": 4424,
+   "y": 3450,
+   "route": "Drover's Road",
+   "off_path": false
+  },
+  {
+   "name": "caravan camp",
+   "cat": "camp",
+   "biome": "the Sunstone basin",
+   "x": 4047,
+   "y": 3582,
+   "route": "Drover's Road",
+   "off_path": true
+  },
+  {
+   "name": "wind pump",
+   "cat": "well",
+   "biome": "the Sunstone basin",
+   "x": 4078,
+   "y": 3159,
+   "route": "Drover's Road",
+   "off_path": false
+  },
+  {
+   "name": "wagon wreck",
+   "cat": "wreck",
+   "biome": "the Sunstone basin",
+   "x": 3761,
+   "y": 3094,
+   "route": "Drover's Road",
+   "off_path": false
+  },
+  {
+   "name": "rock arch",
+   "cat": "landmark",
+   "biome": "the Sunstone basin",
+   "x": 3553,
+   "y": 2619,
+   "route": "Drover's Road",
+   "off_path": true
+  },
+  {
+   "name": "cliff shrine",
+   "cat": "shrine",
+   "biome": "the Sunstone basin",
+   "x": 3287,
+   "y": 2787,
+   "route": "Drover's Road",
+   "off_path": false
+  },
+  {
+   "name": "bone yard",
+   "cat": "landmark",
+   "biome": "the Sunstone basin",
+   "x": 3147,
+   "y": 2575,
+   "route": "Drover's Road",
+   "off_path": false
+  },
+  {
+   "name": "lizard rocks",
+   "cat": "wild",
+   "biome": "the Sunstone basin",
+   "x": 2791,
+   "y": 2721,
+   "route": "Drover's Road",
+   "off_path": true
+  },
+  {
+   "name": "mirage viewpoint",
+   "cat": "view",
+   "biome": "the Sunstone basin",
+   "x": 2688,
+   "y": 2064,
+   "route": "Lode Track",
+   "off_path": true
+  },
+  {
+   "name": "caravan camp",
+   "cat": "camp",
+   "biome": "the Sunstone basin",
+   "x": 3001,
+   "y": 1988,
+   "route": "Lode Track",
+   "off_path": false
+  },
+  {
+   "name": "wind pump",
+   "cat": "well",
+   "biome": "the Sunstone basin",
+   "x": 2949,
+   "y": 1931,
+   "route": "Lode Track",
+   "off_path": false
+  },
+  {
+   "name": "wagon wreck",
+   "cat": "wreck",
+   "biome": "the Sunstone basin",
+   "x": 3038,
+   "y": 2653,
+   "route": "Canyon Road",
+   "off_path": true
+  },
+  {
+   "name": "rock arch",
+   "cat": "landmark",
+   "biome": "the Sunstone basin",
+   "x": 2677,
+   "y": 2920,
+   "route": "Canyon Road",
+   "off_path": false
+  },
+  {
+   "name": "cliff shrine",
+   "cat": "shrine",
+   "biome": "the Sunstone basin",
+   "x": 2706,
+   "y": 3281,
+   "route": "Canyon Road",
+   "off_path": false
+  },
+  {
+   "name": "bone yard",
+   "cat": "landmark",
+   "biome": "the Sunstone basin",
+   "x": 2461,
+   "y": 3757,
+   "route": "Canyon Road",
+   "off_path": false
+  },
+  {
+   "name": "lizard rocks",
+   "cat": "wild",
+   "biome": "the Sunstone basin",
+   "x": 2212,
+   "y": 3872,
+   "route": "Canyon Road",
+   "off_path": false
+  },
+  {
+   "name": "fumarole field",
+   "cat": "landmark",
+   "biome": "the fire country",
+   "x": 2207,
+   "y": 4185,
+   "route": "Canyon Road",
+   "off_path": true
+  },
+  {
+   "name": "obsidian scree",
+   "cat": "landmark",
+   "biome": "the fire country",
+   "x": 2024,
+   "y": 4645,
+   "route": "Canyon Road",
+   "off_path": false
+  },
+  {
+   "name": "lava tube mouth",
+   "cat": "cave",
+   "biome": "the fire country",
+   "x": 1992,
+   "y": 5074,
+   "route": "Canyon Road",
+   "off_path": true
+  },
+  {
+   "name": "ruined watchtower",
+   "cat": "ruin",
+   "biome": "the fire country",
+   "x": 2327,
+   "y": 4980,
+   "route": "Canyon Road",
+   "off_path": false
+  },
+  {
+   "name": "steam pools",
+   "cat": "wild",
+   "biome": "the fire country",
+   "x": 2526,
+   "y": 5399,
+   "route": "Ember Way",
+   "off_path": true
+  },
+  {
+   "name": "cinder shrine",
+   "cat": "shrine",
+   "biome": "the fire country",
+   "x": 2151,
+   "y": 5475,
+   "route": "Ember Way",
+   "off_path": false
+  },
+  {
+   "name": "fumarole field",
+   "cat": "landmark",
+   "biome": "the fire country",
+   "x": 2457,
+   "y": 5500,
+   "route": "Ember Way",
+   "off_path": false
+  },
+  {
+   "name": "wayside shrine",
+   "cat": "shrine",
+   "biome": "the home valley",
+   "x": 5884,
+   "y": 4357,
+   "route": "Ash Coast",
+   "off_path": true
+  },
+  {
+   "name": "lone pine viewpoint",
+   "cat": "view",
+   "biome": "the steppe and the Brackens",
+   "x": 5497,
+   "y": 4411,
+   "route": "Ash Coast",
+   "off_path": false
+  },
+  {
+   "name": "sheepfold",
+   "cat": "landmark",
+   "biome": "the steppe and the Brackens",
+   "x": 5368,
+   "y": 4677,
+   "route": "Ash Coast",
+   "off_path": false
+  },
+  {
+   "name": "shepherd's hut",
+   "cat": "npc",
+   "biome": "the steppe and the Brackens",
+   "x": 4892,
+   "y": 4527,
+   "route": "Ash Coast",
+   "off_path": true
+  },
+  {
+   "name": "drove well",
+   "cat": "well",
+   "biome": "the steppe and the Brackens",
+   "x": 4888,
+   "y": 4996,
+   "route": "Ash Coast",
+   "off_path": false
+  },
+  {
+   "name": "hare warren",
+   "cat": "wild",
+   "biome": "the steppe and the Brackens",
+   "x": 4586,
+   "y": 5053,
+   "route": "Ash Coast",
+   "off_path": false
+  },
+  {
+   "name": "barrow mound",
+   "cat": "landmark",
+   "biome": "the steppe and the Brackens",
+   "x": 4372,
+   "y": 5230,
+   "route": "Ash Coast",
+   "off_path": false
+  },
+  {
+   "name": "obsidian scree",
+   "cat": "landmark",
+   "biome": "the fire country",
+   "x": 4118,
+   "y": 5163,
+   "route": "Ash Coast",
+   "off_path": false
+  },
+  {
+   "name": "lava tube mouth",
+   "cat": "cave",
+   "biome": "the fire country",
+   "x": 3904,
+   "y": 5363,
+   "route": "Ash Coast",
+   "off_path": false
+  },
+  {
+   "name": "ruined watchtower",
+   "cat": "ruin",
+   "biome": "the fire country",
+   "x": 3404,
+   "y": 5250,
+   "route": "Ash Coast",
+   "off_path": true
+  },
+  {
+   "name": "steam pools",
+   "cat": "wild",
+   "biome": "the fire country",
+   "x": 3353,
+   "y": 5609,
+   "route": "Ash Coast",
+   "off_path": false
+  },
+  {
+   "name": "cinder shrine",
+   "cat": "shrine",
+   "biome": "the fire country",
+   "x": 3075,
+   "y": 5562,
+   "route": "Ash Coast",
+   "off_path": false
+  },
+  {
+   "name": "fumarole field",
+   "cat": "landmark",
+   "biome": "the fire country",
+   "x": 2836,
+   "y": 5685,
+   "route": "Ash Coast",
+   "off_path": false
+  },
+  {
+   "name": "ferryman's hut",
+   "cat": "npc",
+   "biome": "the river belt and delta",
+   "x": 9422,
+   "y": 4256,
+   "route": "Delta Road",
+   "off_path": true
+  },
+  {
+   "name": "wreck in the reeds",
+   "cat": "wreck",
+   "biome": "the river belt and delta",
+   "x": 9364,
+   "y": 4688,
+   "route": "Delta Road",
+   "off_path": false
+  },
+  {
+   "name": "harbour master",
+   "cat": "npc",
+   "biome": "Neon Harbour",
+   "x": 9690,
+   "y": 4793,
+   "route": "Delta Road",
+   "off_path": false
+  },
+  {
+   "name": "funicular station",
+   "cat": "landmark",
+   "biome": "Neon Harbour",
+   "x": 10839,
+   "y": 4866,
+   "route": "Cape Road",
+   "off_path": true
+  },
+  {
+   "name": "street shrine",
+   "cat": "shrine",
+   "biome": "Neon Harbour",
+   "x": 10806,
+   "y": 5322,
+   "route": "Cape Road",
+   "off_path": false
+  },
+  {
+   "name": "a resident's camp",
+   "cat": "camp",
+   "biome": "the home valley",
+   "x": 6340,
+   "y": 2589,
+   "route": "Col Path",
+   "off_path": false
+  },
+  {
+   "name": "a ruin",
+   "cat": "ruin",
+   "biome": "the home valley",
+   "x": 6340,
+   "y": 2589,
+   "route": "Col Path",
+   "off_path": false
+  },
+  {
+   "name": "a wildlife spot",
+   "cat": "wild",
+   "biome": "the home valley",
+   "x": 6340,
+   "y": 2589,
+   "route": "Col Path",
+   "off_path": false
+  },
+  {
+   "name": "a ruin",
+   "cat": "ruin",
+   "biome": "the massif and the Frostline",
+   "x": 6295,
+   "y": 2306,
+   "route": "Col Path",
+   "off_path": false
+  },
+  {
+   "name": "a wildlife spot",
+   "cat": "wild",
+   "biome": "the coal hills",
+   "x": 7915,
+   "y": 2392,
+   "route": "High Fells",
+   "off_path": false
+  },
+  {
+   "name": "a viewpoint",
+   "cat": "view",
+   "biome": "the Lull plain",
+   "x": 7244,
+   "y": 3222,
+   "route": "Foothill Road",
+   "off_path": false
+  },
+  {
+   "name": "a resident's camp",
+   "cat": "camp",
+   "biome": "the Lull plain",
+   "x": 7244,
+   "y": 3222,
+   "route": "Foothill Road",
+   "off_path": false
+  },
+  {
+   "name": "a viewpoint",
+   "cat": "view",
+   "biome": "the river belt and delta",
+   "x": 8795,
+   "y": 4355,
+   "route": "Lull Road",
+   "off_path": false
+  },
+  {
+   "name": "a viewpoint",
+   "cat": "view",
+   "biome": "Neon Harbour",
+   "x": 9530,
+   "y": 4446,
+   "route": "Lull Road",
+   "off_path": false
+  },
+  {
+   "name": "a ruin",
+   "cat": "ruin",
+   "biome": "Neon Harbour",
+   "x": 9530,
+   "y": 4446,
+   "route": "Lull Road",
+   "off_path": false
+  },
+  {
+   "name": "a wildlife spot",
+   "cat": "wild",
+   "biome": "Neon Harbour",
+   "x": 9530,
+   "y": 4446,
+   "route": "Lull Road",
+   "off_path": false
+  },
+  {
+   "name": "a ruin",
+   "cat": "ruin",
+   "biome": "the steppe and the Brackens",
+   "x": 4855,
+   "y": 3627,
+   "route": "Drover's Road",
+   "off_path": false
+  },
+  {
+   "name": "a viewpoint",
+   "cat": "view",
+   "biome": "the fire country",
+   "x": 2175,
+   "y": 4068,
+   "route": "Canyon Road",
+   "off_path": false
+  },
+  {
+   "name": "a resident's camp",
+   "cat": "camp",
+   "biome": "the fire country",
+   "x": 2175,
+   "y": 4068,
+   "route": "Canyon Road",
+   "off_path": false
+  },
+  {
+   "name": "a viewpoint",
+   "cat": "view",
+   "biome": "the coast and the isles",
+   "x": 6930,
+   "y": 5205,
+   "route": "Headland Lane",
+   "off_path": false
+  },
+  {
+   "name": "a resident's camp",
+   "cat": "camp",
+   "biome": "the coast and the isles",
+   "x": 6930,
+   "y": 5205,
+   "route": "Headland Lane",
+   "off_path": false
+  },
+  {
+   "name": "a ruin",
+   "cat": "ruin",
+   "biome": "the coast and the isles",
+   "x": 6930,
+   "y": 5205,
+   "route": "Headland Lane",
+   "off_path": false
+  },
+  {
+   "name": "a tor",
+   "cat": "landmark",
+   "biome": "the massif and the Frostline",
+   "x": 7079,
+   "y": 1793,
+   "route": "High Fells",
+   "off_path": false
+  },
+  {
+   "name": "a lone tree",
+   "cat": "landmark",
+   "biome": "the steppe and the Brackens",
+   "x": 4825,
+   "y": 4828,
+   "route": "Ash Coast",
+   "off_path": false
+  }
+ ],
+ "obstacles": [
+  {
+   "route": "High Fells",
+   "obstacle": "thicket",
+   "x": 6729,
+   "y": 1527,
+   "side_path": true,
+   "along": 450.0
+  },
+  {
+   "route": "Foothill Road",
+   "obstacle": "thicket",
+   "x": 7120,
+   "y": 3276,
+   "side_path": true,
+   "along": 450.0
+  },
+  {
+   "route": "Lull Road",
+   "obstacle": "pool",
+   "x": 9388,
+   "y": 4288,
+   "side_path": true,
+   "along": 2850.0
+  },
+  {
+   "route": "Drover's Road",
+   "obstacle": "thicket",
+   "x": 5491,
+   "y": 3829,
+   "side_path": true,
+   "along": 450.0
+  },
+  {
+   "route": "Drover's Road",
+   "obstacle": "ravine",
+   "x": 3890,
+   "y": 3184,
+   "side_path": true,
+   "along": 2250.0
+  },
+  {
+   "route": "Canyon Road",
+   "obstacle": "ravine",
+   "x": 2003,
+   "y": 4419,
+   "side_path": true,
+   "along": 2250.0
+  },
+  {
+   "route": "High Fells",
+   "obstacle": "thicket",
+   "x": 7404,
+   "y": 1969,
+   "side_path": true,
+   "along": 1350.0
+  },
+  {
+   "route": "Towpath",
+   "obstacle": "felltree",
+   "x": 8384,
+   "y": 3465,
+   "side_path": true,
+   "along": 1200.0
+  },
+  {
+   "route": "Lull Road",
+   "obstacle": "thicket",
+   "x": 7407,
+   "y": 3994,
+   "side_path": true,
+   "along": 750.0
+  },
+  {
+   "route": "Coast Path",
+   "obstacle": "thicket",
+   "x": 7053,
+   "y": 4974,
+   "side_path": true,
+   "along": 450.0
+  },
+  {
+   "route": "Coast Path",
+   "obstacle": "thicket",
+   "x": 7910,
+   "y": 4971,
+   "side_path": true,
+   "along": 1350.0
+  },
+  {
+   "route": "Ash Coast",
+   "obstacle": "boulders",
+   "x": 5165,
+   "y": 4817,
+   "side_path": true,
+   "along": 900.0
+  },
+  {
+   "route": "ring",
+   "obstacle": "a spoil heap",
+   "x": 8150,
+   "y": 2350,
+   "side_path": true,
+   "along": 0.0
+  },
+  {
+   "route": "ring",
+   "obstacle": "the Headland's rocks",
+   "x": 7050,
+   "y": 5560,
+   "side_path": true,
+   "along": 0.0
+  },
+  {
+   "route": "ring",
+   "obstacle": "a willow thicket",
+   "x": 9350,
+   "y": 3250,
+   "side_path": true,
+   "along": 0.0
+  },
+  {
+   "route": "ring",
+   "obstacle": "a dew pond",
+   "x": 6680,
+   "y": 4350,
+   "side_path": true,
+   "along": 0.0
+  },
+  {
+   "route": "the Sleepwater",
+   "obstacle": "collapsed bridge",
+   "x": 6200,
+   "y": 1848,
+   "side_path": false
+  },
+  {
+   "route": "the Sleepwater",
+   "obstacle": "collapsed bridge",
+   "x": 6208,
+   "y": 1872,
+   "side_path": false
+  },
+  {
+   "route": "the Amber",
+   "obstacle": "collapsed bridge",
+   "x": 2680,
+   "y": 2976,
+   "side_path": false
+  },
+  {
+   "route": "the Amber",
+   "obstacle": "collapsed bridge",
+   "x": 2672,
+   "y": 3008,
+   "side_path": false
+  },
+  {
+   "route": "the Willow Run",
+   "obstacle": "collapsed bridge",
+   "x": 3408,
+   "y": 2776,
+   "side_path": false
+  },
+  {
+   "route": "the Willow Run",
+   "obstacle": "collapsed bridge",
+   "x": 3400,
+   "y": 2784,
+   "side_path": false
+  }
+ ],
+ "pockets": [
+  {
+   "biome": "the home valley",
+   "x": 6416,
+   "y": 2465,
+   "holds": "a view over the land",
+   "route": "Col Path"
+  },
+  {
+   "biome": "the home valley",
+   "x": 6488,
+   "y": 2679,
+   "holds": "a bench under a tree",
+   "route": "Col Path"
+  },
+  {
+   "biome": "the home valley",
+   "x": 7093,
+   "y": 3405,
+   "holds": "a story detail: an old grave",
+   "route": "Foothill Road"
+  },
+  {
+   "biome": "the massif and the Frostline",
+   "x": 6890,
+   "y": 1886,
+   "holds": "a hermit at a fire",
+   "route": "High Fells"
+  },
+  {
+   "biome": "the massif and the Frostline",
+   "x": 7634,
+   "y": 1792,
+   "holds": "a story detail: a buried bell",
+   "route": "High Fells"
+  },
+  {
+   "biome": "the massif and the Frostline",
+   "x": 7172,
+   "y": 1964,
+   "holds": "a view down a gorge",
+   "route": "High Fells"
+  },
+  {
+   "biome": "the coal hills",
+   "x": 7708,
+   "y": 3083,
+   "holds": "a resident fishing",
+   "route": "Foothill Road"
+  },
+  {
+   "biome": "the Lull plain",
+   "x": 7712,
+   "y": 4158,
+   "holds": "a story detail: initials cut in a stone",
+   "route": "Lull Road"
+  },
+  {
+   "biome": "the Lull plain",
+   "x": 8283,
+   "y": 5072,
+   "holds": "a view over the land",
+   "route": "Coast Path"
+  },
+  {
+   "biome": "the Lull plain",
+   "x": 7556,
+   "y": 4823,
+   "holds": "a bench under a tree",
+   "route": "Coast Path"
+  },
+  {
+   "biome": "Neon Harbour",
+   "x": 9799,
+   "y": 4170,
+   "holds": "a story detail: an old grave",
+   "route": "Lull Road"
+  },
+  {
+   "biome": "the steppe and the Brackens",
+   "x": 5183,
+   "y": 3416,
+   "holds": "a hermit at a fire",
+   "route": "Drover's Road"
+  },
+  {
+   "biome": "the steppe and the Brackens",
+   "x": 5444,
+   "y": 3604,
+   "holds": "a story detail: a buried bell",
+   "route": "Drover's Road"
+  },
+  {
+   "biome": "the steppe and the Brackens",
+   "x": 4759,
+   "y": 3270,
+   "holds": "a view down a gorge",
+   "route": "Drover's Road"
+  },
+  {
+   "biome": "the Sunstone basin",
+   "x": 2126,
+   "y": 3694,
+   "holds": "a resident fishing",
+   "route": "Canyon Road"
+  },
+  {
+   "biome": "the Sunstone basin",
+   "x": 3088,
+   "y": 2026,
+   "holds": "a story detail: initials cut in a stone",
+   "route": "Lode Track"
+  },
+  {
+   "biome": "the Sunstone basin",
+   "x": 3927,
+   "y": 2838,
+   "holds": "a view over the land",
+   "route": "Drover's Road"
+  },
+  {
+   "biome": "the fire country",
+   "x": 3387,
+   "y": 5321,
+   "holds": "a bench under a tree",
+   "route": "Ash Coast"
+  },
+  {
+   "biome": "the fire country",
+   "x": 2212,
+   "y": 5762,
+   "holds": "a story detail: an old grave",
+   "route": "Ember Way"
+  },
+  {
+   "biome": "the fire country",
+   "x": 2500,
+   "y": 5402,
+   "holds": "a hermit at a fire",
+   "route": "Ember Way"
+  },
+  {
+   "biome": "the coal hills",
+   "x": 7212,
+   "y": 2780,
+   "holds": "a story detail: a buried bell",
+   "route": null
+  },
+  {
+   "biome": "the coal hills",
+   "x": 8012,
+   "y": 2908,
+   "holds": "a view down a gorge",
+   "route": null
+  },
+  {
+   "biome": "the river belt and delta",
+   "x": 9188,
+   "y": 4572,
+   "holds": "a resident fishing",
+   "route": null
+  },
+  {
+   "biome": "the river belt and delta",
+   "x": 9092,
+   "y": 3436,
+   "holds": "a story detail: initials cut in a stone",
+   "route": null
+  },
+  {
+   "biome": "the river belt and delta",
+   "x": 9340,
+   "y": 3908,
+   "holds": "a view over the land",
+   "route": null
+  },
+  {
+   "biome": "Neon Harbour",
+   "x": 10652,
+   "y": 5548,
+   "holds": "a bench under a tree",
+   "route": null
+  },
+  {
+   "biome": "Neon Harbour",
+   "x": 10740,
+   "y": 4980,
+   "holds": "a story detail: an old grave",
+   "route": null
+  },
+  {
+   "biome": "the coast and the isles",
+   "x": 6876,
+   "y": 5636,
+   "holds": "a hermit at a fire",
+   "route": null
+  },
+  {
+   "biome": "the coast and the isles",
+   "x": 6444,
+   "y": 6412,
+   "holds": "a story detail: a buried bell",
+   "route": null
+  },
+  {
+   "biome": "the coast and the isles",
+   "x": 6924,
+   "y": 6372,
+   "holds": "a view down a gorge",
+   "route": null
+  }
+ ],
+ "markers": [
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the home valley",
+   "x": 6236,
+   "y": 2914,
+   "route": "Col Path",
+   "along": 40
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the home valley",
+   "x": 6323,
+   "y": 2869,
+   "route": "Col Path",
+   "along": 98
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the home valley",
+   "x": 6240,
+   "y": 2818,
+   "route": "Col Path",
+   "along": 155
+  },
+  {
+   "type": "ambient",
+   "name": "butterflies",
+   "biome": "the home valley",
+   "x": 6296,
+   "y": 2737,
+   "route": "Col Path",
+   "along": 213
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the home valley",
+   "x": 6203,
+   "y": 2701,
+   "route": "Col Path",
+   "along": 270
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the home valley",
+   "x": 6278,
+   "y": 2636,
+   "route": "Col Path",
+   "along": 328
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the home valley",
+   "x": 6230,
+   "y": 2559,
+   "route": "Col Path",
+   "along": 386
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the home valley",
+   "x": 6327,
+   "y": 2551,
+   "route": "Col Path",
+   "along": 443
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the home valley",
+   "x": 6227,
+   "y": 2529,
+   "route": "Col Path",
+   "along": 501
+  },
+  {
+   "type": "ambient",
+   "name": "butterflies",
+   "biome": "the home valley",
+   "x": 6287,
+   "y": 2501,
+   "route": "Col Path",
+   "along": 558
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the home valley",
+   "x": 6286,
+   "y": 2400,
+   "route": "Col Path",
+   "along": 616
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the home valley",
+   "x": 6334,
+   "y": 2352,
+   "route": "Col Path",
+   "along": 674
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the home valley",
+   "x": 6264,
+   "y": 2421,
+   "route": "Col Path",
+   "along": 731
+  },
+  {
+   "type": "ambient",
+   "name": "butterflies",
+   "biome": "the home valley",
+   "x": 6221,
+   "y": 2338,
+   "route": "Col Path",
+   "along": 789
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the home valley",
+   "x": 6183,
+   "y": 2309,
+   "route": "Col Path",
+   "along": 846
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the massif and the Frostline",
+   "x": 6276,
+   "y": 2323,
+   "route": "Col Path",
+   "along": 904
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the massif and the Frostline",
+   "x": 6213,
+   "y": 2282,
+   "route": "Col Path",
+   "along": 962
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the massif and the Frostline",
+   "x": 6248,
+   "y": 2205,
+   "route": "Col Path",
+   "along": 1019
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the massif and the Frostline",
+   "x": 6210,
+   "y": 2141,
+   "route": "Col Path",
+   "along": 1077
+  },
+  {
+   "type": "ambient",
+   "name": "choughs",
+   "biome": "the massif and the Frostline",
+   "x": 6293,
+   "y": 2106,
+   "route": "Col Path",
+   "along": 1134
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the massif and the Frostline",
+   "x": 6203,
+   "y": 2067,
+   "route": "Col Path",
+   "along": 1192
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the massif and the Frostline",
+   "x": 6254,
+   "y": 1990,
+   "route": "Col Path",
+   "along": 1250
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the massif and the Frostline",
+   "x": 6166,
+   "y": 1948,
+   "route": "Col Path",
+   "along": 1307
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the massif and the Frostline",
+   "x": 6328,
+   "y": 1706,
+   "route": "High Fells",
+   "along": 40
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the massif and the Frostline",
+   "x": 6404,
+   "y": 1764,
+   "route": "High Fells",
+   "along": 98
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the massif and the Frostline",
+   "x": 6409,
+   "y": 1663,
+   "route": "High Fells",
+   "along": 155
+  },
+  {
+   "type": "ambient",
+   "name": "choughs",
+   "biome": "the massif and the Frostline",
+   "x": 6504,
+   "y": 1682,
+   "route": "High Fells",
+   "along": 213
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the massif and the Frostline",
+   "x": 6519,
+   "y": 1583,
+   "route": "High Fells",
+   "along": 270
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the massif and the Frostline",
+   "x": 6587,
+   "y": 1651,
+   "route": "High Fells",
+   "along": 328
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the massif and the Frostline",
+   "x": 6653,
+   "y": 1580,
+   "route": "High Fells",
+   "along": 386
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the massif and the Frostline",
+   "x": 6687,
+   "y": 1692,
+   "route": "High Fells",
+   "along": 443
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the massif and the Frostline",
+   "x": 6755,
+   "y": 1605,
+   "route": "High Fells",
+   "along": 501
+  },
+  {
+   "type": "ambient",
+   "name": "choughs",
+   "biome": "the massif and the Frostline",
+   "x": 6815,
+   "y": 1690,
+   "route": "High Fells",
+   "along": 558
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the massif and the Frostline",
+   "x": 6876,
+   "y": 1685,
+   "route": "High Fells",
+   "along": 616
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the massif and the Frostline",
+   "x": 6914,
+   "y": 1595,
+   "route": "High Fells",
+   "along": 674
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the massif and the Frostline",
+   "x": 6978,
+   "y": 1608,
+   "route": "High Fells",
+   "along": 731
+  },
+  {
+   "type": "ambient",
+   "name": "choughs",
+   "biome": "the massif and the Frostline",
+   "x": 7059,
+   "y": 1555,
+   "route": "High Fells",
+   "along": 789
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the massif and the Frostline",
+   "x": 7126,
+   "y": 1611,
+   "route": "High Fells",
+   "along": 846
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the massif and the Frostline",
+   "x": 7125,
+   "y": 1710,
+   "route": "High Fells",
+   "along": 904
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the massif and the Frostline",
+   "x": 7213,
+   "y": 1615,
+   "route": "High Fells",
+   "along": 962
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the massif and the Frostline",
+   "x": 7238,
+   "y": 1771,
+   "route": "High Fells",
+   "along": 1019
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the massif and the Frostline",
+   "x": 7309,
+   "y": 1698,
+   "route": "High Fells",
+   "along": 1077
+  },
+  {
+   "type": "ambient",
+   "name": "choughs",
+   "biome": "the massif and the Frostline",
+   "x": 7344,
+   "y": 1788,
+   "route": "High Fells",
+   "along": 1134
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the massif and the Frostline",
+   "x": 7429,
+   "y": 1744,
+   "route": "High Fells",
+   "along": 1192
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the massif and the Frostline",
+   "x": 7412,
+   "y": 1843,
+   "route": "High Fells",
+   "along": 1250
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the massif and the Frostline",
+   "x": 7457,
+   "y": 1877,
+   "route": "High Fells",
+   "along": 1307
+  },
+  {
+   "type": "ambient",
+   "name": "choughs",
+   "biome": "the massif and the Frostline",
+   "x": 7533,
+   "y": 1889,
+   "route": "High Fells",
+   "along": 1365
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the massif and the Frostline",
+   "x": 7579,
+   "y": 1898,
+   "route": "High Fells",
+   "along": 1422
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the massif and the Frostline",
+   "x": 7599,
+   "y": 1972,
+   "route": "High Fells",
+   "along": 1480
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the massif and the Frostline",
+   "x": 7664,
+   "y": 1985,
+   "route": "High Fells",
+   "along": 1538
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the massif and the Frostline",
+   "x": 7668,
+   "y": 2059,
+   "route": "High Fells",
+   "along": 1595
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the massif and the Frostline",
+   "x": 7685,
+   "y": 2094,
+   "route": "High Fells",
+   "along": 1653
+  },
+  {
+   "type": "ambient",
+   "name": "choughs",
+   "biome": "the massif and the Frostline",
+   "x": 7772,
+   "y": 2133,
+   "route": "High Fells",
+   "along": 1710
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the massif and the Frostline",
+   "x": 7778,
+   "y": 2187,
+   "route": "High Fells",
+   "along": 1768
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the massif and the Frostline",
+   "x": 7792,
+   "y": 2234,
+   "route": "High Fells",
+   "along": 1826
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the massif and the Frostline",
+   "x": 7829,
+   "y": 2248,
+   "route": "High Fells",
+   "along": 1883
+  },
+  {
+   "type": "ambient",
+   "name": "moths",
+   "biome": "the coal hills",
+   "x": 7818,
+   "y": 2379,
+   "route": "High Fells",
+   "along": 1941
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the coal hills",
+   "x": 7918,
+   "y": 2328,
+   "route": "High Fells",
+   "along": 1998
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the home valley",
+   "x": 6755,
+   "y": 3345,
+   "route": "Foothill Road",
+   "along": 40
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the home valley",
+   "x": 6860,
+   "y": 3367,
+   "route": "Foothill Road",
+   "along": 98
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the home valley",
+   "x": 6844,
+   "y": 3271,
+   "route": "Foothill Road",
+   "along": 155
+  },
+  {
+   "type": "ambient",
+   "name": "butterflies",
+   "biome": "the home valley",
+   "x": 6942,
+   "y": 3272,
+   "route": "Foothill Road",
+   "along": 213
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the home valley",
+   "x": 6921,
+   "y": 3174,
+   "route": "Foothill Road",
+   "along": 270
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the home valley",
+   "x": 7005,
+   "y": 3203,
+   "route": "Foothill Road",
+   "along": 328
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the Lull plain",
+   "x": 7052,
+   "y": 3139,
+   "route": "Foothill Road",
+   "along": 386
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the Lull plain",
+   "x": 7107,
+   "y": 3206,
+   "route": "Foothill Road",
+   "along": 443
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the Lull plain",
+   "x": 7162,
+   "y": 3122,
+   "route": "Foothill Road",
+   "along": 501
+  },
+  {
+   "type": "ambient",
+   "name": "hares",
+   "biome": "the Lull plain",
+   "x": 7242,
+   "y": 3173,
+   "route": "Foothill Road",
+   "along": 558
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the coal hills",
+   "x": 7230,
+   "y": 3072,
+   "route": "Foothill Road",
+   "along": 616
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the coal hills",
+   "x": 7326,
+   "y": 3086,
+   "route": "Foothill Road",
+   "along": 674
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the coal hills",
+   "x": 7321,
+   "y": 2988,
+   "route": "Foothill Road",
+   "along": 731
+  },
+  {
+   "type": "ambient",
+   "name": "moths",
+   "biome": "the coal hills",
+   "x": 7409,
+   "y": 3031,
+   "route": "Foothill Road",
+   "along": 789
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the coal hills",
+   "x": 7437,
+   "y": 2937,
+   "route": "Foothill Road",
+   "along": 846
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the coal hills",
+   "x": 7525,
+   "y": 2982,
+   "route": "Foothill Road",
+   "along": 904
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the coal hills",
+   "x": 7503,
+   "y": 2890,
+   "route": "Foothill Road",
+   "along": 962
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the coal hills",
+   "x": 7598,
+   "y": 2872,
+   "route": "Foothill Road",
+   "along": 1019
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the coal hills",
+   "x": 7551,
+   "y": 2793,
+   "route": "Foothill Road",
+   "along": 1077
+  },
+  {
+   "type": "ambient",
+   "name": "moths",
+   "biome": "the coal hills",
+   "x": 7631,
+   "y": 2770,
+   "route": "Foothill Road",
+   "along": 1134
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the coal hills",
+   "x": 7616,
+   "y": 2672,
+   "route": "Foothill Road",
+   "along": 1192
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the coal hills",
+   "x": 7713,
+   "y": 2702,
+   "route": "Foothill Road",
+   "along": 1250
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the coal hills",
+   "x": 7702,
+   "y": 2587,
+   "route": "Foothill Road",
+   "along": 1307
+  },
+  {
+   "type": "ambient",
+   "name": "moths",
+   "biome": "the coal hills",
+   "x": 7816,
+   "y": 2651,
+   "route": "Foothill Road",
+   "along": 1365
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the coal hills",
+   "x": 7776,
+   "y": 2541,
+   "route": "Foothill Road",
+   "along": 1422
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the coal hills",
+   "x": 7817,
+   "y": 2487,
+   "route": "Foothill Road",
+   "along": 1480
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the coal hills",
+   "x": 7881,
+   "y": 2445,
+   "route": "Foothill Road",
+   "along": 1538
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the coal hills",
+   "x": 8080,
+   "y": 2585,
+   "route": "Towpath",
+   "along": 40
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the coal hills",
+   "x": 8162,
+   "y": 2616,
+   "route": "Towpath",
+   "along": 98
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the coal hills",
+   "x": 8145,
+   "y": 2656,
+   "route": "Towpath",
+   "along": 155
+  },
+  {
+   "type": "ambient",
+   "name": "moths",
+   "biome": "the coal hills",
+   "x": 8196,
+   "y": 2686,
+   "route": "Towpath",
+   "along": 213
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the coal hills",
+   "x": 8246,
+   "y": 2722,
+   "route": "Towpath",
+   "along": 270
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the coal hills",
+   "x": 8196,
+   "y": 2825,
+   "route": "Towpath",
+   "along": 328
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the coal hills",
+   "x": 8234,
+   "y": 2867,
+   "route": "Towpath",
+   "along": 386
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the coal hills",
+   "x": 8237,
+   "y": 2928,
+   "route": "Towpath",
+   "along": 443
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the coal hills",
+   "x": 8352,
+   "y": 2923,
+   "route": "Towpath",
+   "along": 501
+  },
+  {
+   "type": "ambient",
+   "name": "moths",
+   "biome": "the coal hills",
+   "x": 8363,
+   "y": 3020,
+   "route": "Towpath",
+   "along": 558
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the coal hills",
+   "x": 8433,
+   "y": 2952,
+   "route": "Towpath",
+   "along": 616
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the coal hills",
+   "x": 8504,
+   "y": 2962,
+   "route": "Towpath",
+   "along": 674
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the coal hills",
+   "x": 8585,
+   "y": 3032,
+   "route": "Towpath",
+   "along": 731
+  },
+  {
+   "type": "ambient",
+   "name": "moths",
+   "biome": "the coal hills",
+   "x": 8481,
+   "y": 3082,
+   "route": "Towpath",
+   "along": 789
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the Lull plain",
+   "x": 8528,
+   "y": 3164,
+   "route": "Towpath",
+   "along": 846
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the Lull plain",
+   "x": 8432,
+   "y": 3189,
+   "route": "Towpath",
+   "along": 904
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the Lull plain",
+   "x": 8501,
+   "y": 3261,
+   "route": "Towpath",
+   "along": 962
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the Lull plain",
+   "x": 8425,
+   "y": 3317,
+   "route": "Towpath",
+   "along": 1019
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the Lull plain",
+   "x": 8518,
+   "y": 3364,
+   "route": "Towpath",
+   "along": 1077
+  },
+  {
+   "type": "ambient",
+   "name": "hares",
+   "biome": "the Lull plain",
+   "x": 8452,
+   "y": 3431,
+   "route": "Towpath",
+   "along": 1134
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the Lull plain",
+   "x": 8532,
+   "y": 3488,
+   "route": "Towpath",
+   "along": 1192
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the Lull plain",
+   "x": 8439,
+   "y": 3518,
+   "route": "Towpath",
+   "along": 1250
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the Lull plain",
+   "x": 8482,
+   "y": 3608,
+   "route": "Towpath",
+   "along": 1307
+  },
+  {
+   "type": "ambient",
+   "name": "hares",
+   "biome": "the Lull plain",
+   "x": 8390,
+   "y": 3645,
+   "route": "Towpath",
+   "along": 1365
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the Lull plain",
+   "x": 8477,
+   "y": 3689,
+   "route": "Towpath",
+   "along": 1422
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the Lull plain",
+   "x": 8431,
+   "y": 3774,
+   "route": "Towpath",
+   "along": 1480
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the Lull plain",
+   "x": 8525,
+   "y": 3791,
+   "route": "Towpath",
+   "along": 1538
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the Lull plain",
+   "x": 8449,
+   "y": 3856,
+   "route": "Towpath",
+   "along": 1595
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the Lull plain",
+   "x": 8509,
+   "y": 3932,
+   "route": "Towpath",
+   "along": 1653
+  },
+  {
+   "type": "ambient",
+   "name": "hares",
+   "biome": "the Lull plain",
+   "x": 8416,
+   "y": 3962,
+   "route": "Towpath",
+   "along": 1710
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the Lull plain",
+   "x": 8495,
+   "y": 4018,
+   "route": "Towpath",
+   "along": 1768
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the Lull plain",
+   "x": 8459,
+   "y": 4108,
+   "route": "Towpath",
+   "along": 1826
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the Lull plain",
+   "x": 8549,
+   "y": 4079,
+   "route": "Towpath",
+   "along": 1883
+  },
+  {
+   "type": "ambient",
+   "name": "hares",
+   "biome": "the Lull plain",
+   "x": 8551,
+   "y": 4178,
+   "route": "Towpath",
+   "along": 1941
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the Lull plain",
+   "x": 8588,
+   "y": 4218,
+   "route": "Towpath",
+   "along": 1998
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the home valley",
+   "x": 6817,
+   "y": 3731,
+   "route": "Lull Road",
+   "along": 40
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the home valley",
+   "x": 6833,
+   "y": 3830,
+   "route": "Lull Road",
+   "along": 98
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the home valley",
+   "x": 6909,
+   "y": 3768,
+   "route": "Lull Road",
+   "along": 155
+  },
+  {
+   "type": "ambient",
+   "name": "butterflies",
+   "biome": "the home valley",
+   "x": 6959,
+   "y": 3850,
+   "route": "Lull Road",
+   "along": 213
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the Lull plain",
+   "x": 6990,
+   "y": 3895,
+   "route": "Lull Road",
+   "along": 270
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the Lull plain",
+   "x": 7093,
+   "y": 3814,
+   "route": "Lull Road",
+   "along": 328
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the Lull plain",
+   "x": 7140,
+   "y": 3847,
+   "route": "Lull Road",
+   "along": 386
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the Lull plain",
+   "x": 7150,
+   "y": 3944,
+   "route": "Lull Road",
+   "along": 443
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the Lull plain",
+   "x": 7224,
+   "y": 3875,
+   "route": "Lull Road",
+   "along": 501
+  },
+  {
+   "type": "ambient",
+   "name": "hares",
+   "biome": "the Lull plain",
+   "x": 7291,
+   "y": 3941,
+   "route": "Lull Road",
+   "along": 558
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the Lull plain",
+   "x": 7321,
+   "y": 3845,
+   "route": "Lull Road",
+   "along": 616
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the Lull plain",
+   "x": 7389,
+   "y": 3913,
+   "route": "Lull Road",
+   "along": 674
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the Lull plain",
+   "x": 7463,
+   "y": 3854,
+   "route": "Lull Road",
+   "along": 731
+  },
+  {
+   "type": "ambient",
+   "name": "hares",
+   "biome": "the Lull plain",
+   "x": 7476,
+   "y": 3954,
+   "route": "Lull Road",
+   "along": 789
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the Lull plain",
+   "x": 7555,
+   "y": 3900,
+   "route": "Lull Road",
+   "along": 846
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the Lull plain",
+   "x": 7610,
+   "y": 3978,
+   "route": "Lull Road",
+   "along": 904
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the Lull plain",
+   "x": 7648,
+   "y": 3884,
+   "route": "Lull Road",
+   "along": 962
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the Lull plain",
+   "x": 7720,
+   "y": 3949,
+   "route": "Lull Road",
+   "along": 1019
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the Lull plain",
+   "x": 7784,
+   "y": 3880,
+   "route": "Lull Road",
+   "along": 1077
+  },
+  {
+   "type": "ambient",
+   "name": "hares",
+   "biome": "the Lull plain",
+   "x": 7796,
+   "y": 3980,
+   "route": "Lull Road",
+   "along": 1134
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the Lull plain",
+   "x": 7889,
+   "y": 3948,
+   "route": "Lull Road",
+   "along": 1192
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the Lull plain",
+   "x": 7913,
+   "y": 4046,
+   "route": "Lull Road",
+   "along": 1250
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the Lull plain",
+   "x": 7976,
+   "y": 3970,
+   "route": "Lull Road",
+   "along": 1307
+  },
+  {
+   "type": "ambient",
+   "name": "hares",
+   "biome": "the Lull plain",
+   "x": 8032,
+   "y": 4049,
+   "route": "Lull Road",
+   "along": 1365
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the Lull plain",
+   "x": 8106,
+   "y": 3986,
+   "route": "Lull Road",
+   "along": 1422
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the Lull plain",
+   "x": 8111,
+   "y": 4085,
+   "route": "Lull Road",
+   "along": 1480
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the Lull plain",
+   "x": 8206,
+   "y": 4065,
+   "route": "Lull Road",
+   "along": 1538
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the Lull plain",
+   "x": 8202,
+   "y": 4168,
+   "route": "Lull Road",
+   "along": 1595
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the Lull plain",
+   "x": 8287,
+   "y": 4124,
+   "route": "Lull Road",
+   "along": 1653
+  },
+  {
+   "type": "ambient",
+   "name": "hares",
+   "biome": "the Lull plain",
+   "x": 8327,
+   "y": 4215,
+   "route": "Lull Road",
+   "along": 1710
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the Lull plain",
+   "x": 8392,
+   "y": 4142,
+   "route": "Lull Road",
+   "along": 1768
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the Lull plain",
+   "x": 8439,
+   "y": 4229,
+   "route": "Lull Road",
+   "along": 1826
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the Lull plain",
+   "x": 8514,
+   "y": 4166,
+   "route": "Lull Road",
+   "along": 1883
+  },
+  {
+   "type": "ambient",
+   "name": "hares",
+   "biome": "the Lull plain",
+   "x": 8519,
+   "y": 4262,
+   "route": "Lull Road",
+   "along": 1941
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the Lull plain",
+   "x": 8620,
+   "y": 4245,
+   "route": "Lull Road",
+   "along": 1998
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the Lull plain",
+   "x": 8622,
+   "y": 4339,
+   "route": "Lull Road",
+   "along": 2056
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the Lull plain",
+   "x": 8685,
+   "y": 4266,
+   "route": "Lull Road",
+   "along": 2114
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the river belt and delta",
+   "x": 8767,
+   "y": 4320,
+   "route": "Lull Road",
+   "along": 2171
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the river belt and delta",
+   "x": 8795,
+   "y": 4227,
+   "route": "Lull Road",
+   "along": 2229
+  },
+  {
+   "type": "ambient",
+   "name": "egrets",
+   "biome": "the river belt and delta",
+   "x": 8877,
+   "y": 4231,
+   "route": "Lull Road",
+   "along": 2286
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the river belt and delta",
+   "x": 8891,
+   "y": 4328,
+   "route": "Lull Road",
+   "along": 2344
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the river belt and delta",
+   "x": 8980,
+   "y": 4292,
+   "route": "Lull Road",
+   "along": 2402
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the river belt and delta",
+   "x": 9020,
+   "y": 4311,
+   "route": "Lull Road",
+   "along": 2459
+  },
+  {
+   "type": "ambient",
+   "name": "egrets",
+   "biome": "the river belt and delta",
+   "x": 9084,
+   "y": 4385,
+   "route": "Lull Road",
+   "along": 2517
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the river belt and delta",
+   "x": 9102,
+   "y": 4292,
+   "route": "Lull Road",
+   "along": 2574
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the river belt and delta",
+   "x": 9178,
+   "y": 4352,
+   "route": "Lull Road",
+   "along": 2632
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the river belt and delta",
+   "x": 9246,
+   "y": 4285,
+   "route": "Lull Road",
+   "along": 2690
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the river belt and delta",
+   "x": 9258,
+   "y": 4386,
+   "route": "Lull Road",
+   "along": 2747
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the river belt and delta",
+   "x": 9350,
+   "y": 4348,
+   "route": "Lull Road",
+   "along": 2805
+  },
+  {
+   "type": "ambient",
+   "name": "egrets",
+   "biome": "the river belt and delta",
+   "x": 9389,
+   "y": 4459,
+   "route": "Lull Road",
+   "along": 2862
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
+   "biome": "the river belt and delta",
+   "x": 9433,
+   "y": 4352,
+   "route": "Lull Road",
+   "along": 2920
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "Neon Harbour",
+   "x": 9510,
+   "y": 4409,
+   "route": "Lull Road",
+   "along": 2978
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "Neon Harbour",
+   "x": 9548,
+   "y": 4314,
+   "route": "Lull Road",
+   "along": 3035
+  },
+  {
+   "type": "ambient",
+   "name": "cats",
+   "biome": "Neon Harbour",
+   "x": 9605,
+   "y": 4392,
+   "route": "Lull Road",
+   "along": 3093
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "Neon Harbour",
+   "x": 9675,
+   "y": 4332,
+   "route": "Lull Road",
+   "along": 3150
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "Neon Harbour",
+   "x": 9701,
+   "y": 4432,
+   "route": "Lull Road",
+   "along": 3208
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "Neon Harbour",
+   "x": 9773,
+   "y": 4366,
+   "route": "Lull Road",
+   "along": 3266
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
+   "biome": "Neon Harbour",
+   "x": 9852,
+   "y": 4445,
+   "route": "Lull Road",
+   "along": 3323
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "Neon Harbour",
+   "x": 9855,
+   "y": 4308,
+   "route": "Lull Road",
+   "along": 3381
+  },
+  {
+   "type": "ambient",
+   "name": "cats",
+   "biome": "Neon Harbour",
+   "x": 9929,
+   "y": 4396,
+   "route": "Lull Road",
+   "along": 3438
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the home valley",
+   "x": 6715,
+   "y": 4937,
+   "route": "Coast Path",
+   "along": 40
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the home valley",
+   "x": 6677,
+   "y": 5036,
+   "route": "Coast Path",
+   "along": 98
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the home valley",
+   "x": 6766,
+   "y": 5017,
+   "route": "Coast Path",
+   "along": 155
+  },
+  {
+   "type": "ambient",
+   "name": "butterflies",
+   "biome": "the home valley",
+   "x": 6798,
+   "y": 5113,
+   "route": "Coast Path",
+   "along": 213
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the home valley",
+   "x": 6863,
+   "y": 5042,
+   "route": "Coast Path",
+   "along": 270
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the home valley",
+   "x": 6924,
+   "y": 5118,
+   "route": "Coast Path",
+   "along": 328
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the home valley",
+   "x": 6974,
+   "y": 5036,
+   "route": "Coast Path",
+   "along": 386
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the Lull plain",
+   "x": 7023,
+   "y": 5121,
+   "route": "Coast Path",
+   "along": 443
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the Lull plain",
+   "x": 7090,
+   "y": 5047,
+   "route": "Coast Path",
+   "along": 501
+  },
+  {
+   "type": "ambient",
+   "name": "hares",
+   "biome": "the Lull plain",
+   "x": 7153,
+   "y": 5120,
+   "route": "Coast Path",
+   "along": 558
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the Lull plain",
+   "x": 7184,
+   "y": 5021,
+   "route": "Coast Path",
+   "along": 616
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the Lull plain",
+   "x": 7267,
+   "y": 5066,
+   "route": "Coast Path",
+   "along": 674
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the Lull plain",
+   "x": 7288,
+   "y": 4969,
+   "route": "Coast Path",
+   "along": 731
+  },
+  {
+   "type": "ambient",
+   "name": "hares",
+   "biome": "the Lull plain",
+   "x": 7357,
+   "y": 5041,
+   "route": "Coast Path",
+   "along": 789
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the Lull plain",
+   "x": 7427,
+   "y": 4980,
+   "route": "Coast Path",
+   "along": 846
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the Lull plain",
+   "x": 7453,
+   "y": 5081,
+   "route": "Coast Path",
+   "along": 904
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the Lull plain",
+   "x": 7524,
+   "y": 5021,
+   "route": "Coast Path",
+   "along": 962
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the Lull plain",
+   "x": 7581,
+   "y": 5100,
+   "route": "Coast Path",
+   "along": 1019
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the Lull plain",
+   "x": 7625,
+   "y": 5009,
+   "route": "Coast Path",
+   "along": 1077
+  },
+  {
+   "type": "ambient",
+   "name": "hares",
+   "biome": "the Lull plain",
+   "x": 7696,
+   "y": 5078,
+   "route": "Coast Path",
+   "along": 1134
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the Lull plain",
+   "x": 7758,
+   "y": 5002,
+   "route": "Coast Path",
+   "along": 1192
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the Lull plain",
+   "x": 7789,
+   "y": 5092,
+   "route": "Coast Path",
+   "along": 1250
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the Lull plain",
+   "x": 7849,
+   "y": 5111,
+   "route": "Coast Path",
+   "along": 1307
+  },
+  {
+   "type": "ambient",
+   "name": "hares",
+   "biome": "the Lull plain",
+   "x": 7911,
+   "y": 5121,
+   "route": "Coast Path",
+   "along": 1365
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the Lull plain",
+   "x": 7954,
+   "y": 5032,
+   "route": "Coast Path",
+   "along": 1422
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the Lull plain",
+   "x": 8049,
+   "y": 5053,
+   "route": "Coast Path",
+   "along": 1480
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the Lull plain",
+   "x": 8011,
+   "y": 4963,
+   "route": "Coast Path",
+   "along": 1538
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the Lull plain",
+   "x": 8112,
+   "y": 4956,
+   "route": "Coast Path",
+   "along": 1595
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the Lull plain",
+   "x": 8097,
+   "y": 4860,
+   "route": "Coast Path",
+   "along": 1653
+  },
+  {
+   "type": "ambient",
+   "name": "hares",
+   "biome": "the Lull plain",
+   "x": 8190,
+   "y": 4894,
+   "route": "Coast Path",
+   "along": 1710
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the Lull plain",
+   "x": 8183,
+   "y": 4800,
+   "route": "Coast Path",
+   "along": 1768
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the Lull plain",
+   "x": 8282,
+   "y": 4795,
+   "route": "Coast Path",
+   "along": 1826
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the Lull plain",
+   "x": 8222,
+   "y": 4717,
+   "route": "Coast Path",
+   "along": 1883
+  },
+  {
+   "type": "ambient",
+   "name": "hares",
+   "biome": "the Lull plain",
+   "x": 8313,
+   "y": 4686,
+   "route": "Coast Path",
+   "along": 1941
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the Lull plain",
+   "x": 8274,
+   "y": 4596,
+   "route": "Coast Path",
+   "along": 1998
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the Lull plain",
+   "x": 8370,
+   "y": 4621,
+   "route": "Coast Path",
+   "along": 2056
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the Lull plain",
+   "x": 8393,
+   "y": 4523,
+   "route": "Coast Path",
+   "along": 2114
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the Lull plain",
+   "x": 8475,
+   "y": 4575,
+   "route": "Coast Path",
+   "along": 2171
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the Lull plain",
+   "x": 8484,
+   "y": 4476,
+   "route": "Coast Path",
+   "along": 2229
+  },
+  {
+   "type": "ambient",
+   "name": "hares",
+   "biome": "the Lull plain",
+   "x": 8578,
+   "y": 4491,
+   "route": "Coast Path",
+   "along": 2286
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the Lull plain",
+   "x": 8541,
+   "y": 4399,
+   "route": "Coast Path",
+   "along": 2344
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the Lull plain",
+   "x": 8638,
+   "y": 4391,
+   "route": "Coast Path",
+   "along": 2402
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the Lull plain",
+   "x": 6957,
+   "y": 5125,
+   "route": "Headland Lane",
+   "along": 40
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the Lull plain",
+   "x": 6918,
+   "y": 5216,
+   "route": "Headland Lane",
+   "along": 98
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the coast and the isles",
+   "x": 7013,
+   "y": 5221,
+   "route": "Headland Lane",
+   "along": 155
+  },
+  {
+   "type": "ambient",
+   "name": "terns",
+   "biome": "the coast and the isles",
+   "x": 6948,
+   "y": 5316,
+   "route": "Headland Lane",
+   "along": 213
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the coast and the isles",
+   "x": 6981,
+   "y": 5357,
+   "route": "Headland Lane",
+   "along": 270
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the coast and the isles",
+   "x": 6989,
+   "y": 5412,
+   "route": "Headland Lane",
+   "along": 328
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the coast and the isles",
+   "x": 7073,
+   "y": 5465,
+   "route": "Headland Lane",
+   "along": 386
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the coast and the isles",
+   "x": 6997,
+   "y": 5530,
+   "route": "Headland Lane",
+   "along": 443
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the coast and the isles",
+   "x": 7107,
+   "y": 5564,
+   "route": "Headland Lane",
+   "along": 501
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the coast and the isles",
+   "x": 7080,
+   "y": 5693,
+   "route": "Shell Bar",
+   "along": 40
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the coast and the isles",
+   "x": 6979,
+   "y": 5713,
+   "route": "Shell Bar",
+   "along": 98
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the coast and the isles",
+   "x": 7008,
+   "y": 5783,
+   "route": "Shell Bar",
+   "along": 155
+  },
+  {
+   "type": "ambient",
+   "name": "terns",
+   "biome": "the coast and the isles",
+   "x": 6951,
+   "y": 5828,
+   "route": "Shell Bar",
+   "along": 213
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the coast and the isles",
+   "x": 6906,
+   "y": 5855,
+   "route": "Shell Bar",
+   "along": 270
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the coast and the isles",
+   "x": 6871,
+   "y": 5894,
+   "route": "Shell Bar",
+   "along": 328
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the coast and the isles",
+   "x": 6826,
+   "y": 5927,
+   "route": "Shell Bar",
+   "along": 386
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the coast and the isles",
+   "x": 6827,
+   "y": 6023,
+   "route": "Shell Bar",
+   "along": 443
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the coast and the isles",
+   "x": 6790,
+   "y": 6056,
+   "route": "Shell Bar",
+   "along": 501
+  },
+  {
+   "type": "ambient",
+   "name": "terns",
+   "biome": "the coast and the isles",
+   "x": 6696,
+   "y": 6033,
+   "route": "Shell Bar",
+   "along": 558
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the home valley",
+   "x": 5740,
+   "y": 4060,
+   "route": "Drover's Road",
+   "along": 40
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the home valley",
+   "x": 5752,
+   "y": 3959,
+   "route": "Drover's Road",
+   "along": 98
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the home valley",
+   "x": 5670,
+   "y": 4009,
+   "route": "Drover's Road",
+   "along": 155
+  },
+  {
+   "type": "ambient",
+   "name": "butterflies",
+   "biome": "the home valley",
+   "x": 5622,
+   "y": 3929,
+   "route": "Drover's Road",
+   "along": 213
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the steppe and the Brackens",
+   "x": 5563,
+   "y": 4012,
+   "route": "Drover's Road",
+   "along": 270
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the steppe and the Brackens",
+   "x": 5515,
+   "y": 3928,
+   "route": "Drover's Road",
+   "along": 328
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the steppe and the Brackens",
+   "x": 5433,
+   "y": 3978,
+   "route": "Drover's Road",
+   "along": 386
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the steppe and the Brackens",
+   "x": 5438,
+   "y": 3876,
+   "route": "Drover's Road",
+   "along": 443
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the steppe and the Brackens",
+   "x": 5343,
+   "y": 3886,
+   "route": "Drover's Road",
+   "along": 501
+  },
+  {
+   "type": "ambient",
+   "name": "sheep",
+   "biome": "the steppe and the Brackens",
+   "x": 5361,
+   "y": 3790,
+   "route": "Drover's Road",
+   "along": 558
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the steppe and the Brackens",
+   "x": 5273,
+   "y": 3830,
+   "route": "Drover's Road",
+   "along": 616
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the steppe and the Brackens",
+   "x": 5240,
+   "y": 3738,
+   "route": "Drover's Road",
+   "along": 674
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the steppe and the Brackens",
+   "x": 5161,
+   "y": 3800,
+   "route": "Drover's Road",
+   "along": 731
+  },
+  {
+   "type": "ambient",
+   "name": "sheep",
+   "biome": "the steppe and the Brackens",
+   "x": 5150,
+   "y": 3704,
+   "route": "Drover's Road",
+   "along": 789
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the steppe and the Brackens",
+   "x": 5054,
+   "y": 3714,
+   "route": "Drover's Road",
+   "along": 846
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the steppe and the Brackens",
+   "x": 5091,
+   "y": 3621,
+   "route": "Drover's Road",
+   "along": 904
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the steppe and the Brackens",
+   "x": 4991,
+   "y": 3620,
+   "route": "Drover's Road",
+   "along": 962
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the steppe and the Brackens",
+   "x": 4986,
+   "y": 3526,
+   "route": "Drover's Road",
+   "along": 1019
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the steppe and the Brackens",
+   "x": 4923,
+   "y": 3597,
+   "route": "Drover's Road",
+   "along": 1077
+  },
+  {
+   "type": "ambient",
+   "name": "sheep",
+   "biome": "the steppe and the Brackens",
+   "x": 4851,
+   "y": 3525,
+   "route": "Drover's Road",
+   "along": 1134
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the steppe and the Brackens",
+   "x": 4797,
+   "y": 3605,
+   "route": "Drover's Road",
+   "along": 1192
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the steppe and the Brackens",
+   "x": 4766,
+   "y": 3511,
+   "route": "Drover's Road",
+   "along": 1250
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the steppe and the Brackens",
+   "x": 4681,
+   "y": 3549,
+   "route": "Drover's Road",
+   "along": 1307
+  },
+  {
+   "type": "ambient",
+   "name": "sheep",
+   "biome": "the steppe and the Brackens",
+   "x": 4663,
+   "y": 3446,
+   "route": "Drover's Road",
+   "along": 1365
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the steppe and the Brackens",
+   "x": 4599,
+   "y": 3516,
+   "route": "Drover's Road",
+   "along": 1422
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the steppe and the Brackens",
+   "x": 4524,
+   "y": 3449,
+   "route": "Drover's Road",
+   "along": 1480
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the steppe and the Brackens",
+   "x": 4494,
+   "y": 3544,
+   "route": "Drover's Road",
+   "along": 1538
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the steppe and the Brackens",
+   "x": 4421,
+   "y": 3480,
+   "route": "Drover's Road",
+   "along": 1595
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the steppe and the Brackens",
+   "x": 4363,
+   "y": 3558,
+   "route": "Drover's Road",
+   "along": 1653
+  },
+  {
+   "type": "ambient",
+   "name": "sheep",
+   "biome": "the steppe and the Brackens",
+   "x": 4340,
+   "y": 3463,
+   "route": "Drover's Road",
+   "along": 1710
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the Sunstone basin",
+   "x": 4246,
+   "y": 3487,
+   "route": "Drover's Road",
+   "along": 1768
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the Sunstone basin",
+   "x": 4275,
+   "y": 3394,
+   "route": "Drover's Road",
+   "along": 1826
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the Sunstone basin",
+   "x": 4181,
+   "y": 3407,
+   "route": "Drover's Road",
+   "along": 1883
+  },
+  {
+   "type": "ambient",
+   "name": "vultures",
+   "biome": "the Sunstone basin",
+   "x": 4162,
+   "y": 3308,
+   "route": "Drover's Road",
+   "along": 1941
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the Sunstone basin",
+   "x": 4076,
+   "y": 3358,
+   "route": "Drover's Road",
+   "along": 1998
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the Sunstone basin",
+   "x": 4088,
+   "y": 3266,
+   "route": "Drover's Road",
+   "along": 2056
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the Sunstone basin",
+   "x": 3990,
+   "y": 3243,
+   "route": "Drover's Road",
+   "along": 2114
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the Sunstone basin",
+   "x": 4049,
+   "y": 3170,
+   "route": "Drover's Road",
+   "along": 2171
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the Sunstone basin",
+   "x": 3951,
+   "y": 3149,
+   "route": "Drover's Road",
+   "along": 2229
+  },
+  {
+   "type": "ambient",
+   "name": "vultures",
+   "biome": "the Sunstone basin",
+   "x": 3971,
+   "y": 3058,
+   "route": "Drover's Road",
+   "along": 2286
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the Sunstone basin",
+   "x": 3881,
+   "y": 3102,
+   "route": "Drover's Road",
+   "along": 2344
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the Sunstone basin",
+   "x": 3853,
+   "y": 3011,
+   "route": "Drover's Road",
+   "along": 2402
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the Sunstone basin",
+   "x": 3764,
+   "y": 3062,
+   "route": "Drover's Road",
+   "along": 2459
+  },
+  {
+   "type": "ambient",
+   "name": "vultures",
+   "biome": "the Sunstone basin",
+   "x": 3771,
+   "y": 2962,
+   "route": "Drover's Road",
+   "along": 2517
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the Sunstone basin",
+   "x": 3676,
+   "y": 2967,
+   "route": "Drover's Road",
+   "along": 2574
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the Sunstone basin",
+   "x": 3698,
+   "y": 2871,
+   "route": "Drover's Road",
+   "along": 2632
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the Sunstone basin",
+   "x": 3614,
+   "y": 2919,
+   "route": "Drover's Road",
+   "along": 2690
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the Sunstone basin",
+   "x": 3553,
+   "y": 2840,
+   "route": "Drover's Road",
+   "along": 2747
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the Sunstone basin",
+   "x": 3498,
+   "y": 2922,
+   "route": "Drover's Road",
+   "along": 2805
+  },
+  {
+   "type": "ambient",
+   "name": "vultures",
+   "biome": "the Sunstone basin",
+   "x": 3462,
+   "y": 2831,
+   "route": "Drover's Road",
+   "along": 2862
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
+   "biome": "the Sunstone basin",
+   "x": 3373,
+   "y": 2858,
+   "route": "Drover's Road",
+   "along": 2920
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the Sunstone basin",
+   "x": 3402,
+   "y": 2758,
+   "route": "Drover's Road",
+   "along": 2978
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the Sunstone basin",
+   "x": 3309,
+   "y": 2766,
+   "route": "Drover's Road",
+   "along": 3035
+  },
+  {
+   "type": "ambient",
+   "name": "vultures",
+   "biome": "the Sunstone basin",
+   "x": 3306,
+   "y": 2668,
+   "route": "Drover's Road",
+   "along": 3093
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the Sunstone basin",
+   "x": 3222,
+   "y": 2726,
+   "route": "Drover's Road",
+   "along": 3150
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the Sunstone basin",
+   "x": 3189,
+   "y": 2636,
+   "route": "Drover's Road",
+   "along": 3208
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the Sunstone basin",
+   "x": 3103,
+   "y": 2684,
+   "route": "Drover's Road",
+   "along": 3266
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
+   "biome": "the Sunstone basin",
+   "x": 3118,
+   "y": 2587,
+   "route": "Drover's Road",
+   "along": 3323
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the Sunstone basin",
+   "x": 3020,
+   "y": 2582,
+   "route": "Drover's Road",
+   "along": 3381
+  },
+  {
+   "type": "ambient",
+   "name": "vultures",
+   "biome": "the Sunstone basin",
+   "x": 3052,
+   "y": 2486,
+   "route": "Drover's Road",
+   "along": 3438
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the Sunstone basin",
+   "x": 2969,
+   "y": 2520,
+   "route": "Drover's Road",
+   "along": 3496
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the Sunstone basin",
+   "x": 2922,
+   "y": 2440,
+   "route": "Drover's Road",
+   "along": 3554
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the Sunstone basin",
+   "x": 2848,
+   "y": 2508,
+   "route": "Drover's Road",
+   "along": 3611
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the Sunstone basin",
+   "x": 2807,
+   "y": 2282,
+   "route": "Lode Track",
+   "along": 40
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the Sunstone basin",
+   "x": 2902,
+   "y": 2263,
+   "route": "Lode Track",
+   "along": 98
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the Sunstone basin",
+   "x": 2872,
+   "y": 2194,
+   "route": "Lode Track",
+   "along": 155
+  },
+  {
+   "type": "ambient",
+   "name": "vultures",
+   "biome": "the Sunstone basin",
+   "x": 2915,
+   "y": 2130,
+   "route": "Lode Track",
+   "along": 213
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the Sunstone basin",
+   "x": 2786,
+   "y": 2092,
+   "route": "Lode Track",
+   "along": 270
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the Sunstone basin",
+   "x": 2904,
+   "y": 2128,
+   "route": "Lode Track",
+   "along": 328
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the Sunstone basin",
+   "x": 2933,
+   "y": 2039,
+   "route": "Lode Track",
+   "along": 386
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the Sunstone basin",
+   "x": 2978,
+   "y": 2008,
+   "route": "Lode Track",
+   "along": 443
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the Sunstone basin",
+   "x": 2875,
+   "y": 2004,
+   "route": "Lode Track",
+   "along": 501
+  },
+  {
+   "type": "ambient",
+   "name": "vultures",
+   "biome": "the Sunstone basin",
+   "x": 2911,
+   "y": 1984,
+   "route": "Lode Track",
+   "along": 558
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the Sunstone basin",
+   "x": 2961,
+   "y": 1905,
+   "route": "Lode Track",
+   "along": 616
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the Sunstone basin",
+   "x": 3046,
+   "y": 1964,
+   "route": "Lode Track",
+   "along": 674
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the Sunstone basin",
+   "x": 2968,
+   "y": 1907,
+   "route": "Lode Track",
+   "along": 731
+  },
+  {
+   "type": "ambient",
+   "name": "vultures",
+   "biome": "the Sunstone basin",
+   "x": 3011,
+   "y": 1839,
+   "route": "Lode Track",
+   "along": 789
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the Sunstone basin",
+   "x": 2969,
+   "y": 1777,
+   "route": "Lode Track",
+   "along": 846
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the Sunstone basin",
+   "x": 3059,
+   "y": 1751,
+   "route": "Lode Track",
+   "along": 904
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the Sunstone basin",
+   "x": 2833,
+   "y": 2610,
+   "route": "Canyon Road",
+   "along": 40
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the Sunstone basin",
+   "x": 2741,
+   "y": 2649,
+   "route": "Canyon Road",
+   "along": 98
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the Sunstone basin",
+   "x": 2823,
+   "y": 2702,
+   "route": "Canyon Road",
+   "along": 155
+  },
+  {
+   "type": "ambient",
+   "name": "vultures",
+   "biome": "the Sunstone basin",
+   "x": 2761,
+   "y": 2777,
+   "route": "Canyon Road",
+   "along": 213
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the Sunstone basin",
+   "x": 2849,
+   "y": 2824,
+   "route": "Canyon Road",
+   "along": 270
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the Sunstone basin",
+   "x": 2759,
+   "y": 2865,
+   "route": "Canyon Road",
+   "along": 328
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the Sunstone basin",
+   "x": 2797,
+   "y": 2950,
+   "route": "Canyon Road",
+   "along": 386
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the Sunstone basin",
+   "x": 2692,
+   "y": 2949,
+   "route": "Canyon Road",
+   "along": 443
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the Sunstone basin",
+   "x": 2735,
+   "y": 3031,
+   "route": "Canyon Road",
+   "along": 501
+  },
+  {
+   "type": "ambient",
+   "name": "vultures",
+   "biome": "the Sunstone basin",
+   "x": 2650,
+   "y": 3078,
+   "route": "Canyon Road",
+   "along": 558
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the Sunstone basin",
+   "x": 2754,
+   "y": 3137,
+   "route": "Canyon Road",
+   "along": 616
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the Sunstone basin",
+   "x": 2647,
+   "y": 3177,
+   "route": "Canyon Road",
+   "along": 674
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the Sunstone basin",
+   "x": 2676,
+   "y": 3269,
+   "route": "Canyon Road",
+   "along": 731
+  },
+  {
+   "type": "ambient",
+   "name": "vultures",
+   "biome": "the Sunstone basin",
+   "x": 2582,
+   "y": 3246,
+   "route": "Canyon Road",
+   "along": 789
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the Sunstone basin",
+   "x": 2537,
+   "y": 3298,
+   "route": "Canyon Road",
+   "along": 846
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the Sunstone basin",
+   "x": 2509,
+   "y": 3363,
+   "route": "Canyon Road",
+   "along": 904
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the Sunstone basin",
+   "x": 2599,
+   "y": 3440,
+   "route": "Canyon Road",
+   "along": 962
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the Sunstone basin",
+   "x": 2571,
+   "y": 3496,
+   "route": "Canyon Road",
+   "along": 1019
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the Sunstone basin",
+   "x": 2514,
+   "y": 3542,
+   "route": "Canyon Road",
+   "along": 1077
+  },
+  {
+   "type": "ambient",
+   "name": "vultures",
+   "biome": "the Sunstone basin",
+   "x": 2472,
+   "y": 3578,
+   "route": "Canyon Road",
+   "along": 1134
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the Sunstone basin",
+   "x": 2457,
+   "y": 3639,
+   "route": "Canyon Road",
+   "along": 1192
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the Sunstone basin",
+   "x": 2394,
+   "y": 3657,
+   "route": "Canyon Road",
+   "along": 1250
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the Sunstone basin",
+   "x": 2424,
+   "y": 3746,
+   "route": "Canyon Road",
+   "along": 1307
+  },
+  {
+   "type": "ambient",
+   "name": "vultures",
+   "biome": "the Sunstone basin",
+   "x": 2314,
+   "y": 3769,
+   "route": "Canyon Road",
+   "along": 1365
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the Sunstone basin",
+   "x": 2385,
+   "y": 3836,
+   "route": "Canyon Road",
+   "along": 1422
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the Sunstone basin",
+   "x": 2292,
+   "y": 3861,
+   "route": "Canyon Road",
+   "along": 1480
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the Sunstone basin",
+   "x": 2301,
+   "y": 3955,
+   "route": "Canyon Road",
+   "along": 1538
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the Sunstone basin",
+   "x": 2237,
+   "y": 3979,
+   "route": "Canyon Road",
+   "along": 1595
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the Sunstone basin",
+   "x": 2192,
+   "y": 3996,
+   "route": "Canyon Road",
+   "along": 1653
+  },
+  {
+   "type": "ambient",
+   "name": "vultures",
+   "biome": "the Sunstone basin",
+   "x": 2099,
+   "y": 3962,
+   "route": "Canyon Road",
+   "along": 1710
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the fire country",
+   "x": 2127,
+   "y": 4056,
+   "route": "Canyon Road",
+   "along": 1768
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the fire country",
+   "x": 2109,
+   "y": 4103,
+   "route": "Canyon Road",
+   "along": 1826
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the fire country",
+   "x": 2093,
+   "y": 4161,
+   "route": "Canyon Road",
+   "along": 1883
+  },
+  {
+   "type": "ambient",
+   "name": "steam",
+   "biome": "the fire country",
+   "x": 2065,
+   "y": 4221,
+   "route": "Canyon Road",
+   "along": 1941
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the fire country",
+   "x": 2020,
+   "y": 4273,
+   "route": "Canyon Road",
+   "along": 1998
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the fire country",
+   "x": 1979,
+   "y": 4307,
+   "route": "Canyon Road",
+   "along": 2056
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the fire country",
+   "x": 1947,
+   "y": 4343,
+   "route": "Canyon Road",
+   "along": 2114
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the fire country",
+   "x": 1929,
+   "y": 4383,
+   "route": "Canyon Road",
+   "along": 2171
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the fire country",
+   "x": 1931,
+   "y": 4424,
+   "route": "Canyon Road",
+   "along": 2229
+  },
+  {
+   "type": "ambient",
+   "name": "steam",
+   "biome": "the fire country",
+   "x": 1946,
+   "y": 4468,
+   "route": "Canyon Road",
+   "along": 2286
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the fire country",
+   "x": 1970,
+   "y": 4531,
+   "route": "Canyon Road",
+   "along": 2344
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the fire country",
+   "x": 1986,
+   "y": 4584,
+   "route": "Canyon Road",
+   "along": 2402
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the fire country",
+   "x": 1994,
+   "y": 4648,
+   "route": "Canyon Road",
+   "along": 2459
+  },
+  {
+   "type": "ambient",
+   "name": "steam",
+   "biome": "the fire country",
+   "x": 2002,
+   "y": 4706,
+   "route": "Canyon Road",
+   "along": 2517
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the fire country",
+   "x": 2015,
+   "y": 4742,
+   "route": "Canyon Road",
+   "along": 2574
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the fire country",
+   "x": 2000,
+   "y": 4836,
+   "route": "Canyon Road",
+   "along": 2632
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the fire country",
+   "x": 2086,
+   "y": 4789,
+   "route": "Canyon Road",
+   "along": 2690
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the fire country",
+   "x": 2121,
+   "y": 4868,
+   "route": "Canyon Road",
+   "along": 2747
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the fire country",
+   "x": 2201,
+   "y": 4877,
+   "route": "Canyon Road",
+   "along": 2805
+  },
+  {
+   "type": "ambient",
+   "name": "steam",
+   "biome": "the fire country",
+   "x": 2227,
+   "y": 4925,
+   "route": "Canyon Road",
+   "along": 2862
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
+   "biome": "the fire country",
+   "x": 2257,
+   "y": 4973,
+   "route": "Canyon Road",
+   "along": 2920
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the fire country",
+   "x": 2249,
+   "y": 5068,
+   "route": "Canyon Road",
+   "along": 2978
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the fire country",
+   "x": 2330,
+   "y": 5011,
+   "route": "Canyon Road",
+   "along": 3035
+  },
+  {
+   "type": "ambient",
+   "name": "steam",
+   "biome": "the fire country",
+   "x": 2373,
+   "y": 5071,
+   "route": "Canyon Road",
+   "along": 3093
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the fire country",
+   "x": 2449,
+   "y": 5040,
+   "route": "Canyon Road",
+   "along": 3150
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the fire country",
+   "x": 2462,
+   "y": 5182,
+   "route": "Ember Way",
+   "along": 40
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the fire country",
+   "x": 2362,
+   "y": 5128,
+   "route": "Ember Way",
+   "along": 98
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the fire country",
+   "x": 2374,
+   "y": 5240,
+   "route": "Ember Way",
+   "along": 155
+  },
+  {
+   "type": "ambient",
+   "name": "steam",
+   "biome": "the fire country",
+   "x": 2274,
+   "y": 5236,
+   "route": "Ember Way",
+   "along": 213
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the fire country",
+   "x": 2308,
+   "y": 5324,
+   "route": "Ember Way",
+   "along": 270
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the fire country",
+   "x": 2210,
+   "y": 5321,
+   "route": "Ember Way",
+   "along": 328
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the fire country",
+   "x": 2172,
+   "y": 5385,
+   "route": "Ember Way",
+   "along": 386
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the fire country",
+   "x": 2184,
+   "y": 5475,
+   "route": "Ember Way",
+   "along": 443
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the fire country",
+   "x": 2278,
+   "y": 5471,
+   "route": "Ember Way",
+   "along": 501
+  },
+  {
+   "type": "ambient",
+   "name": "steam",
+   "biome": "the fire country",
+   "x": 2275,
+   "y": 5570,
+   "route": "Ember Way",
+   "along": 558
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the fire country",
+   "x": 2356,
+   "y": 5519,
+   "route": "Ember Way",
+   "along": 616
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the fire country",
+   "x": 2405,
+   "y": 5608,
+   "route": "Ember Way",
+   "along": 674
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the fire country",
+   "x": 2467,
+   "y": 5530,
+   "route": "Ember Way",
+   "along": 731
+  },
+  {
+   "type": "ambient",
+   "name": "steam",
+   "biome": "the fire country",
+   "x": 2513,
+   "y": 5615,
+   "route": "Ember Way",
+   "along": 789
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the fire country",
+   "x": 2590,
+   "y": 5557,
+   "route": "Ember Way",
+   "along": 846
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the fire country",
+   "x": 2614,
+   "y": 5649,
+   "route": "Ember Way",
+   "along": 904
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the fire country",
+   "x": 2687,
+   "y": 5579,
+   "route": "Ember Way",
+   "along": 962
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the home valley",
+   "x": 5775,
+   "y": 4203,
+   "route": "Ash Coast",
+   "along": 40
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the home valley",
+   "x": 5690,
+   "y": 4148,
+   "route": "Ash Coast",
+   "along": 98
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the home valley",
+   "x": 5700,
+   "y": 4236,
+   "route": "Ash Coast",
+   "along": 155
+  },
+  {
+   "type": "ambient",
+   "name": "butterflies",
+   "biome": "the home valley",
+   "x": 5603,
+   "y": 4255,
+   "route": "Ash Coast",
+   "along": 213
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the home valley",
+   "x": 5661,
+   "y": 4339,
+   "route": "Ash Coast",
+   "along": 270
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the home valley",
+   "x": 5569,
+   "y": 4360,
+   "route": "Ash Coast",
+   "along": 328
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the steppe and the Brackens",
+   "x": 5611,
+   "y": 4449,
+   "route": "Ash Coast",
+   "along": 386
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the steppe and the Brackens",
+   "x": 5509,
+   "y": 4439,
+   "route": "Ash Coast",
+   "along": 443
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the steppe and the Brackens",
+   "x": 5507,
+   "y": 4532,
+   "route": "Ash Coast",
+   "along": 501
+  },
+  {
+   "type": "ambient",
+   "name": "sheep",
+   "biome": "the steppe and the Brackens",
+   "x": 5411,
+   "y": 4487,
+   "route": "Ash Coast",
+   "along": 558
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the steppe and the Brackens",
+   "x": 5406,
+   "y": 4582,
+   "route": "Ash Coast",
+   "along": 616
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the steppe and the Brackens",
+   "x": 5312,
+   "y": 4566,
+   "route": "Ash Coast",
+   "along": 674
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the steppe and the Brackens",
+   "x": 5344,
+   "y": 4659,
+   "route": "Ash Coast",
+   "along": 731
+  },
+  {
+   "type": "ambient",
+   "name": "sheep",
+   "biome": "the steppe and the Brackens",
+   "x": 5245,
+   "y": 4649,
+   "route": "Ash Coast",
+   "along": 789
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the steppe and the Brackens",
+   "x": 5222,
+   "y": 4741,
+   "route": "Ash Coast",
+   "along": 846
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the steppe and the Brackens",
+   "x": 5158,
+   "y": 4667,
+   "route": "Ash Coast",
+   "along": 904
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the steppe and the Brackens",
+   "x": 5109,
+   "y": 4751,
+   "route": "Ash Coast",
+   "along": 962
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the steppe and the Brackens",
+   "x": 5026,
+   "y": 4701,
+   "route": "Ash Coast",
+   "along": 1019
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the steppe and the Brackens",
+   "x": 5051,
+   "y": 4794,
+   "route": "Ash Coast",
+   "along": 1077
+  },
+  {
+   "type": "ambient",
+   "name": "sheep",
+   "biome": "the steppe and the Brackens",
+   "x": 4955,
+   "y": 4808,
+   "route": "Ash Coast",
+   "along": 1134
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the steppe and the Brackens",
+   "x": 4985,
+   "y": 4903,
+   "route": "Ash Coast",
+   "along": 1192
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the steppe and the Brackens",
+   "x": 4892,
+   "y": 4874,
+   "route": "Ash Coast",
+   "along": 1250
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the steppe and the Brackens",
+   "x": 4867,
+   "y": 4972,
+   "route": "Ash Coast",
+   "along": 1307
+  },
+  {
+   "type": "ambient",
+   "name": "sheep",
+   "biome": "the steppe and the Brackens",
+   "x": 4786,
+   "y": 4917,
+   "route": "Ash Coast",
+   "along": 1365
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the steppe and the Brackens",
+   "x": 4776,
+   "y": 5012,
+   "route": "Ash Coast",
+   "along": 1422
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the steppe and the Brackens",
+   "x": 4683,
+   "y": 4985,
+   "route": "Ash Coast",
+   "along": 1480
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the steppe and the Brackens",
+   "x": 4699,
+   "y": 5089,
+   "route": "Ash Coast",
+   "along": 1538
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the steppe and the Brackens",
+   "x": 4602,
+   "y": 5080,
+   "route": "Ash Coast",
+   "along": 1595
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the steppe and the Brackens",
+   "x": 4612,
+   "y": 5177,
+   "route": "Ash Coast",
+   "along": 1653
+  },
+  {
+   "type": "ambient",
+   "name": "sheep",
+   "biome": "the steppe and the Brackens",
+   "x": 4525,
+   "y": 5132,
+   "route": "Ash Coast",
+   "along": 1710
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the steppe and the Brackens",
+   "x": 4492,
+   "y": 5220,
+   "route": "Ash Coast",
+   "along": 1768
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the steppe and the Brackens",
+   "x": 4424,
+   "y": 5143,
+   "route": "Ash Coast",
+   "along": 1826
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the steppe and the Brackens",
+   "x": 4364,
+   "y": 5220,
+   "route": "Ash Coast",
+   "along": 1883
+  },
+  {
+   "type": "ambient",
+   "name": "sheep",
+   "biome": "the steppe and the Brackens",
+   "x": 4299,
+   "y": 5148,
+   "route": "Ash Coast",
+   "along": 1941
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the fire country",
+   "x": 4279,
+   "y": 5247,
+   "route": "Ash Coast",
+   "along": 1998
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the fire country",
+   "x": 4189,
+   "y": 5180,
+   "route": "Ash Coast",
+   "along": 2056
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the fire country",
+   "x": 4143,
+   "y": 5282,
+   "route": "Ash Coast",
+   "along": 2114
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the fire country",
+   "x": 4109,
+   "y": 5192,
+   "route": "Ash Coast",
+   "along": 2171
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the fire country",
+   "x": 4030,
+   "y": 5253,
+   "route": "Ash Coast",
+   "along": 2229
+  },
+  {
+   "type": "ambient",
+   "name": "steam",
+   "biome": "the fire country",
+   "x": 3979,
+   "y": 5174,
+   "route": "Ash Coast",
+   "along": 2286
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the fire country",
+   "x": 3956,
+   "y": 5272,
+   "route": "Ash Coast",
+   "along": 2344
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the fire country",
+   "x": 3861,
+   "y": 5250,
+   "route": "Ash Coast",
+   "along": 2402
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the fire country",
+   "x": 3877,
+   "y": 5348,
+   "route": "Ash Coast",
+   "along": 2459
+  },
+  {
+   "type": "ambient",
+   "name": "steam",
+   "biome": "the fire country",
+   "x": 3784,
+   "y": 5319,
+   "route": "Ash Coast",
+   "along": 2517
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the fire country",
+   "x": 3747,
+   "y": 5409,
+   "route": "Ash Coast",
+   "along": 2574
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the fire country",
+   "x": 3686,
+   "y": 5335,
+   "route": "Ash Coast",
+   "along": 2632
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the fire country",
+   "x": 3655,
+   "y": 5427,
+   "route": "Ash Coast",
+   "along": 2690
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the fire country",
+   "x": 3560,
+   "y": 5406,
+   "route": "Ash Coast",
+   "along": 2747
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the fire country",
+   "x": 3590,
+   "y": 5500,
+   "route": "Ash Coast",
+   "along": 2805
+  },
+  {
+   "type": "ambient",
+   "name": "steam",
+   "biome": "the fire country",
+   "x": 3495,
+   "y": 5487,
+   "route": "Ash Coast",
+   "along": 2862
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
+   "biome": "the fire country",
+   "x": 3480,
+   "y": 5582,
+   "route": "Ash Coast",
+   "along": 2920
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the fire country",
+   "x": 3410,
+   "y": 5505,
+   "route": "Ash Coast",
+   "along": 2978
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the fire country",
+   "x": 3344,
+   "y": 5598,
+   "route": "Ash Coast",
+   "along": 3035
+  },
+  {
+   "type": "ambient",
+   "name": "steam",
+   "biome": "the fire country",
+   "x": 3305,
+   "y": 5618,
+   "route": "Ash Coast",
+   "along": 3093
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the fire country",
+   "x": 3245,
+   "y": 5570,
+   "route": "Ash Coast",
+   "along": 3150
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the fire country",
+   "x": 3179,
+   "y": 5572,
+   "route": "Ash Coast",
+   "along": 3208
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the fire country",
+   "x": 3151,
+   "y": 5625,
+   "route": "Ash Coast",
+   "along": 3266
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
+   "biome": "the fire country",
+   "x": 3081,
+   "y": 5591,
+   "route": "Ash Coast",
+   "along": 3323
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the fire country",
+   "x": 3030,
+   "y": 5674,
+   "route": "Ash Coast",
+   "along": 3381
+  },
+  {
+   "type": "ambient",
+   "name": "steam",
+   "biome": "the fire country",
+   "x": 2981,
+   "y": 5585,
+   "route": "Ash Coast",
+   "along": 3438
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the fire country",
+   "x": 2912,
+   "y": 5650,
+   "route": "Ash Coast",
+   "along": 3496
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the fire country",
+   "x": 2847,
+   "y": 5581,
+   "route": "Ash Coast",
+   "along": 3554
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the fire country",
+   "x": 2819,
+   "y": 5680,
+   "route": "Ash Coast",
+   "along": 3611
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the river belt and delta",
+   "x": 9209,
+   "y": 4329,
+   "route": "Delta Road",
+   "along": 40
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the river belt and delta",
+   "x": 9172,
+   "y": 4417,
+   "route": "Delta Road",
+   "along": 98
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the river belt and delta",
+   "x": 9272,
+   "y": 4416,
+   "route": "Delta Road",
+   "along": 155
+  },
+  {
+   "type": "ambient",
+   "name": "egrets",
+   "biome": "the river belt and delta",
+   "x": 9263,
+   "y": 4510,
+   "route": "Delta Road",
+   "along": 213
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the river belt and delta",
+   "x": 9375,
+   "y": 4470,
+   "route": "Delta Road",
+   "along": 270
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the river belt and delta",
+   "x": 9342,
+   "y": 4578,
+   "route": "Delta Road",
+   "along": 328
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the river belt and delta",
+   "x": 9440,
+   "y": 4589,
+   "route": "Delta Road",
+   "along": 386
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the river belt and delta",
+   "x": 9391,
+   "y": 4674,
+   "route": "Delta Road",
+   "along": 443
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "Neon Harbour",
+   "x": 9492,
+   "y": 4683,
+   "route": "Delta Road",
+   "along": 501
+  },
+  {
+   "type": "ambient",
+   "name": "cats",
+   "biome": "Neon Harbour",
+   "x": 9477,
+   "y": 4777,
+   "route": "Delta Road",
+   "along": 558
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "Neon Harbour",
+   "x": 9559,
+   "y": 4751,
+   "route": "Delta Road",
+   "along": 616
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "Neon Harbour",
+   "x": 9572,
+   "y": 4838,
+   "route": "Delta Road",
+   "along": 674
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "Neon Harbour",
+   "x": 9668,
+   "y": 4814,
+   "route": "Delta Road",
+   "along": 731
+  },
+  {
+   "type": "ambient",
+   "name": "cats",
+   "biome": "Neon Harbour",
+   "x": 9628,
+   "y": 4921,
+   "route": "Delta Road",
+   "along": 789
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "Neon Harbour",
+   "x": 9742,
+   "y": 4904,
+   "route": "Delta Road",
+   "along": 846
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "Neon Harbour",
+   "x": 9778,
+   "y": 4928,
+   "route": "Delta Road",
+   "along": 904
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "Neon Harbour",
+   "x": 10655,
+   "y": 4960,
+   "route": "Cape Road",
+   "along": 40
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "Neon Harbour",
+   "x": 10617,
+   "y": 5058,
+   "route": "Cape Road",
+   "along": 98
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "Neon Harbour",
+   "x": 10711,
+   "y": 5044,
+   "route": "Cape Road",
+   "along": 155
+  },
+  {
+   "type": "ambient",
+   "name": "cats",
+   "biome": "Neon Harbour",
+   "x": 10755,
+   "y": 5072,
+   "route": "Cape Road",
+   "along": 213
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "Neon Harbour",
+   "x": 10811,
+   "y": 5114,
+   "route": "Cape Road",
+   "along": 270
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "Neon Harbour",
+   "x": 10785,
+   "y": 5210,
+   "route": "Cape Road",
+   "along": 328
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "Neon Harbour",
+   "x": 10881,
+   "y": 5221,
+   "route": "Cape Road",
+   "along": 386
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "Neon Harbour",
+   "x": 10832,
+   "y": 5307,
+   "route": "Cape Road",
+   "along": 443
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "Neon Harbour",
+   "x": 10934,
+   "y": 5316,
+   "route": "Cape Road",
+   "along": 501
+  },
+  {
+   "type": "ambient",
+   "name": "cats",
+   "biome": "Neon Harbour",
+   "x": 10903,
+   "y": 5408,
+   "route": "Cape Road",
+   "along": 558
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "Neon Harbour",
+   "x": 10997,
+   "y": 5417,
+   "route": "Cape Road",
+   "along": 616
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "Neon Harbour",
+   "x": 10935,
+   "y": 5494,
+   "route": "Cape Road",
+   "along": 674
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the home valley",
+   "x": 6136,
+   "y": 3248,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the home valley",
+   "x": 6648,
+   "y": 3896,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the home valley",
+   "x": 6368,
+   "y": 3256,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the home valley",
+   "x": 6464,
+   "y": 3168,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the home valley",
+   "x": 6568,
+   "y": 3616,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the home valley",
+   "x": 5800,
+   "y": 3704,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the home valley",
+   "x": 6088,
+   "y": 3184,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the home valley",
+   "x": 6304,
+   "y": 3368,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the home valley",
+   "x": 6584,
+   "y": 3568,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
+   "biome": "the home valley",
+   "x": 6816,
+   "y": 3368,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the home valley",
+   "x": 5976,
+   "y": 3864,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
+   "biome": "the home valley",
+   "x": 6136,
+   "y": 3064,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the home valley",
+   "x": 5960,
+   "y": 3296,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
+   "biome": "the home valley",
+   "x": 6512,
+   "y": 3448,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the home valley",
+   "x": 5896,
+   "y": 3776,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the home valley",
+   "x": 5792,
+   "y": 3480,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the home valley",
+   "x": 6536,
+   "y": 3536,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the home valley",
+   "x": 6184,
+   "y": 3272,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the home valley",
+   "x": 6312,
+   "y": 2992,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the home valley",
+   "x": 6120,
+   "y": 3616,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the home valley",
+   "x": 6224,
+   "y": 3712,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the home valley",
+   "x": 6184,
+   "y": 3432,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the home valley",
+   "x": 6080,
+   "y": 3920,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the home valley",
+   "x": 6128,
+   "y": 3072,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the home valley",
+   "x": 6592,
+   "y": 3656,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the home valley",
+   "x": 6256,
+   "y": 3120,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the home valley",
+   "x": 6344,
+   "y": 3136,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
+   "biome": "the home valley",
+   "x": 6256,
+   "y": 2944,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the home valley",
+   "x": 6304,
+   "y": 3208,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the home valley",
+   "x": 6216,
+   "y": 3488,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the home valley",
+   "x": 6008,
+   "y": 3704,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the home valley",
+   "x": 6184,
+   "y": 4024,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the home valley",
+   "x": 5864,
+   "y": 3304,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the home valley",
+   "x": 6240,
+   "y": 3776,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the home valley",
+   "x": 6200,
+   "y": 3488,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the home valley",
+   "x": 6288,
+   "y": 3808,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
+   "biome": "the home valley",
+   "x": 5776,
+   "y": 3304,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the home valley",
+   "x": 6024,
+   "y": 3896,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the home valley",
+   "x": 6088,
+   "y": 3312,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the home valley",
+   "x": 6720,
+   "y": 3216,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the home valley",
+   "x": 6032,
+   "y": 3480,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the home valley",
+   "x": 6064,
+   "y": 3224,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the home valley",
+   "x": 6528,
+   "y": 3400,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the home valley",
+   "x": 6576,
+   "y": 3480,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the home valley",
+   "x": 5880,
+   "y": 3504,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the home valley",
+   "x": 5824,
+   "y": 3608,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the home valley",
+   "x": 5776,
+   "y": 3464,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the home valley",
+   "x": 5840,
+   "y": 3176,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the home valley",
+   "x": 6648,
+   "y": 3816,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the home valley",
+   "x": 6616,
+   "y": 3272,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the home valley",
+   "x": 6392,
+   "y": 3952,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the home valley",
+   "x": 5912,
+   "y": 3816,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the home valley",
+   "x": 6336,
+   "y": 3784,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the home valley",
+   "x": 6176,
+   "y": 3320,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the home valley",
+   "x": 6264,
+   "y": 3888,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the home valley",
+   "x": 6144,
+   "y": 3448,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the home valley",
+   "x": 6544,
+   "y": 3304,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the home valley",
+   "x": 6136,
+   "y": 3656,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the home valley",
+   "x": 6600,
+   "y": 3760,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the home valley",
+   "x": 5912,
+   "y": 3416,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the home valley",
+   "x": 6144,
+   "y": 3328,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the home valley",
+   "x": 6712,
+   "y": 3632,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the home valley",
+   "x": 6384,
+   "y": 3264,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the home valley",
+   "x": 6008,
+   "y": 3696,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the home valley",
+   "x": 6616,
+   "y": 3376,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the home valley",
+   "x": 5840,
+   "y": 3432,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the home valley",
+   "x": 6808,
+   "y": 3336,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the home valley",
+   "x": 6424,
+   "y": 3456,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the home valley",
+   "x": 6312,
+   "y": 3136,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the home valley",
+   "x": 6336,
+   "y": 3272,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the home valley",
+   "x": 6080,
+   "y": 3688,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the home valley",
+   "x": 6272,
+   "y": 3464,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the home valley",
+   "x": 6400,
+   "y": 3152,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the home valley",
+   "x": 5856,
+   "y": 3488,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the home valley",
+   "x": 6048,
+   "y": 2976,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the home valley",
+   "x": 6504,
+   "y": 3584,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the home valley",
+   "x": 5992,
+   "y": 3320,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the home valley",
+   "x": 6296,
+   "y": 3656,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the home valley",
+   "x": 6576,
+   "y": 3904,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the home valley",
+   "x": 6336,
+   "y": 3000,
+   "route": null,
+   "settlement": "Home valley"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the home valley",
+   "x": 6600,
+   "y": 4864,
+   "route": null,
+   "settlement": "Driftwood"
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
+   "biome": "the home valley",
+   "x": 6312,
+   "y": 4840,
+   "route": null,
+   "settlement": "Driftwood"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the home valley",
+   "x": 6544,
+   "y": 4872,
+   "route": null,
+   "settlement": "Driftwood"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the home valley",
+   "x": 6360,
+   "y": 4896,
+   "route": null,
+   "settlement": "Driftwood"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the home valley",
+   "x": 6544,
+   "y": 4896,
+   "route": null,
+   "settlement": "Driftwood"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the home valley",
+   "x": 6328,
+   "y": 4992,
+   "route": null,
+   "settlement": "Driftwood"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the home valley",
+   "x": 6376,
+   "y": 4784,
+   "route": null,
+   "settlement": "Driftwood"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the home valley",
+   "x": 6472,
+   "y": 4840,
+   "route": null,
+   "settlement": "Driftwood"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the home valley",
+   "x": 6496,
+   "y": 4840,
+   "route": null,
+   "settlement": "Driftwood"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the home valley",
+   "x": 6624,
+   "y": 4976,
+   "route": null,
+   "settlement": "Driftwood"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the home valley",
+   "x": 6424,
+   "y": 4736,
+   "route": null,
+   "settlement": "Driftwood"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the home valley",
+   "x": 6368,
+   "y": 4800,
+   "route": null,
+   "settlement": "Driftwood"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the home valley",
+   "x": 6208,
+   "y": 4912,
+   "route": null,
+   "settlement": "Driftwood"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the home valley",
+   "x": 6328,
+   "y": 4872,
+   "route": null,
+   "settlement": "Driftwood"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the home valley",
+   "x": 6232,
+   "y": 4912,
+   "route": null,
+   "settlement": "Driftwood"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the home valley",
+   "x": 6408,
+   "y": 4944,
+   "route": null,
+   "settlement": "Driftwood"
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
+   "biome": "the coal hills",
+   "x": 7208,
+   "y": 2976,
+   "route": null,
+   "settlement": "Fernhollow"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the coal hills",
+   "x": 7184,
+   "y": 2912,
+   "route": null,
+   "settlement": "Fernhollow"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the coal hills",
+   "x": 7240,
+   "y": 3072,
+   "route": null,
+   "settlement": "Fernhollow"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the coal hills",
+   "x": 7200,
+   "y": 3088,
+   "route": null,
+   "settlement": "Fernhollow"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the Lull plain",
+   "x": 7032,
+   "y": 3176,
+   "route": null,
+   "settlement": "Fernhollow"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the Lull plain",
+   "x": 7288,
+   "y": 3112,
+   "route": null,
+   "settlement": "Fernhollow"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the coal hills",
+   "x": 7184,
+   "y": 3040,
+   "route": null,
+   "settlement": "Fernhollow"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the coal hills",
+   "x": 7232,
+   "y": 3000,
+   "route": null,
+   "settlement": "Fernhollow"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the Lull plain",
+   "x": 7200,
+   "y": 3168,
+   "route": null,
+   "settlement": "Fernhollow"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the coal hills",
+   "x": 7304,
+   "y": 3048,
+   "route": null,
+   "settlement": "Fernhollow"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the coal hills",
+   "x": 7224,
+   "y": 3000,
+   "route": null,
+   "settlement": "Fernhollow"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the coal hills",
+   "x": 7248,
+   "y": 3048,
+   "route": null,
+   "settlement": "Fernhollow"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the coal hills",
+   "x": 7224,
+   "y": 3088,
+   "route": null,
+   "settlement": "Fernhollow"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the coal hills",
+   "x": 7304,
+   "y": 3032,
+   "route": null,
+   "settlement": "Fernhollow"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the coal hills",
+   "x": 7216,
+   "y": 2944,
+   "route": null,
+   "settlement": "Fernhollow"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the coal hills",
+   "x": 7168,
+   "y": 2920,
+   "route": null,
+   "settlement": "Fernhollow"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the coal hills",
+   "x": 7856,
+   "y": 2720,
+   "route": null,
+   "settlement": "Cogsworth"
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
+   "biome": "the coal hills",
+   "x": 8304,
+   "y": 2416,
+   "route": null,
+   "settlement": "Cogsworth"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the massif and the Frostline",
+   "x": 7736,
+   "y": 2264,
+   "route": null,
+   "settlement": "Cogsworth"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the coal hills",
+   "x": 7904,
+   "y": 2344,
+   "route": null,
+   "settlement": "Cogsworth"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the coal hills",
+   "x": 7840,
+   "y": 2640,
+   "route": null,
+   "settlement": "Cogsworth"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the coal hills",
+   "x": 8208,
+   "y": 2328,
+   "route": null,
+   "settlement": "Cogsworth"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the massif and the Frostline",
+   "x": 7976,
+   "y": 2200,
+   "route": null,
+   "settlement": "Cogsworth"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the coal hills",
+   "x": 8040,
+   "y": 2344,
+   "route": null,
+   "settlement": "Cogsworth"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the massif and the Frostline",
+   "x": 8160,
+   "y": 2232,
+   "route": null,
+   "settlement": "Cogsworth"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the massif and the Frostline",
+   "x": 8160,
+   "y": 2232,
+   "route": null,
+   "settlement": "Cogsworth"
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the coal hills",
+   "x": 8056,
+   "y": 2392,
+   "route": null,
+   "settlement": "Cogsworth"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the coal hills",
+   "x": 8272,
+   "y": 2392,
+   "route": null,
+   "settlement": "Cogsworth"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the massif and the Frostline",
+   "x": 7736,
+   "y": 2232,
+   "route": null,
+   "settlement": "Cogsworth"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the coal hills",
+   "x": 7832,
+   "y": 2640,
+   "route": null,
+   "settlement": "Cogsworth"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the coal hills",
+   "x": 8264,
+   "y": 2584,
+   "route": null,
+   "settlement": "Cogsworth"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the coal hills",
+   "x": 8056,
+   "y": 2312,
+   "route": null,
+   "settlement": "Cogsworth"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the coal hills",
+   "x": 7920,
+   "y": 2336,
+   "route": null,
+   "settlement": "Cogsworth"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the massif and the Frostline",
+   "x": 8096,
+   "y": 2272,
+   "route": null,
+   "settlement": "Cogsworth"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the Lull plain",
+   "x": 8608,
+   "y": 4120,
+   "route": null,
+   "settlement": "Lullford"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the river belt and delta",
+   "x": 8896,
+   "y": 4352,
+   "route": null,
+   "settlement": "Lullford"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the river belt and delta",
+   "x": 8800,
+   "y": 4216,
+   "route": null,
+   "settlement": "Lullford"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the river belt and delta",
+   "x": 8784,
+   "y": 4232,
+   "route": null,
+   "settlement": "Lullford"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the Lull plain",
+   "x": 8576,
+   "y": 4112,
+   "route": null,
+   "settlement": "Lullford"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the Lull plain",
+   "x": 8560,
+   "y": 4208,
+   "route": null,
+   "settlement": "Lullford"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the river belt and delta",
+   "x": 8832,
+   "y": 4392,
+   "route": null,
+   "settlement": "Lullford"
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
+   "biome": "the Lull plain",
+   "x": 8640,
+   "y": 4200,
+   "route": null,
+   "settlement": "Lullford"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the Lull plain",
+   "x": 8656,
+   "y": 4512,
+   "route": null,
+   "settlement": "Lullford"
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the Lull plain",
+   "x": 8640,
+   "y": 4424,
+   "route": null,
+   "settlement": "Lullford"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the river belt and delta",
+   "x": 8720,
+   "y": 4264,
+   "route": null,
+   "settlement": "Lullford"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the Lull plain",
+   "x": 8632,
+   "y": 4288,
+   "route": null,
+   "settlement": "Lullford"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the Lull plain",
+   "x": 8616,
+   "y": 4184,
+   "route": null,
+   "settlement": "Lullford"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the river belt and delta",
+   "x": 8784,
+   "y": 4144,
+   "route": null,
+   "settlement": "Lullford"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the river belt and delta",
+   "x": 8808,
+   "y": 4288,
+   "route": null,
+   "settlement": "Lullford"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the Lull plain",
+   "x": 8688,
+   "y": 4104,
+   "route": null,
+   "settlement": "Lullford"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the Lull plain",
+   "x": 7856,
+   "y": 5064,
+   "route": null,
+   "settlement": "Gullwick"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the coast and the isles",
+   "x": 7832,
+   "y": 5200,
+   "route": null,
+   "settlement": "Gullwick"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the Lull plain",
+   "x": 7952,
+   "y": 5080,
+   "route": null,
+   "settlement": "Gullwick"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the Lull plain",
+   "x": 8024,
+   "y": 5184,
+   "route": null,
+   "settlement": "Gullwick"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the Lull plain",
+   "x": 8088,
+   "y": 5096,
+   "route": null,
+   "settlement": "Gullwick"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the Lull plain",
+   "x": 8008,
+   "y": 5080,
+   "route": null,
+   "settlement": "Gullwick"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the Lull plain",
+   "x": 8104,
+   "y": 5080,
+   "route": null,
+   "settlement": "Gullwick"
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
+   "biome": "the Lull plain",
+   "x": 8096,
+   "y": 5128,
+   "route": null,
+   "settlement": "Gullwick"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the Lull plain",
+   "x": 8104,
+   "y": 5176,
+   "route": null,
+   "settlement": "Gullwick"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the Lull plain",
+   "x": 8024,
+   "y": 4976,
+   "route": null,
+   "settlement": "Gullwick"
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the Lull plain",
+   "x": 7824,
+   "y": 5112,
+   "route": null,
+   "settlement": "Gullwick"
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the Lull plain",
+   "x": 7928,
+   "y": 5088,
+   "route": null,
+   "settlement": "Gullwick"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the Lull plain",
+   "x": 7824,
+   "y": 5120,
+   "route": null,
+   "settlement": "Gullwick"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the Lull plain",
+   "x": 7952,
+   "y": 5168,
+   "route": null,
+   "settlement": "Gullwick"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the Lull plain",
+   "x": 7912,
+   "y": 5088,
+   "route": null,
+   "settlement": "Gullwick"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the Lull plain",
+   "x": 7920,
+   "y": 5048,
+   "route": null,
+   "settlement": "Gullwick"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "",
+   "x": 10808,
+   "y": 4000,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "",
+   "x": 10768,
+   "y": 4104,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "Neon Harbour",
+   "x": 10768,
+   "y": 4368,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
+   "biome": "Neon Harbour",
+   "x": 10992,
+   "y": 4688,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "Neon Harbour",
+   "x": 10712,
+   "y": 4288,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "Neon Harbour",
+   "x": 9856,
+   "y": 4256,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "Neon Harbour",
+   "x": 10752,
+   "y": 4424,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "Neon Harbour",
+   "x": 10888,
+   "y": 4736,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "Neon Harbour",
+   "x": 9944,
+   "y": 4792,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "Neon Harbour",
+   "x": 10672,
+   "y": 4160,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "Neon Harbour",
+   "x": 10040,
+   "y": 4160,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "Neon Harbour",
+   "x": 10984,
+   "y": 4272,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "Neon Harbour",
+   "x": 10144,
+   "y": 4432,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "Neon Harbour",
+   "x": 10936,
+   "y": 4712,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "Neon Harbour",
+   "x": 10976,
+   "y": 4584,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "Neon Harbour",
+   "x": 10576,
+   "y": 4240,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "Neon Harbour",
+   "x": 10632,
+   "y": 5008,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "Neon Harbour",
+   "x": 10640,
+   "y": 4424,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "Neon Harbour",
+   "x": 10600,
+   "y": 4952,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "",
+   "x": 10496,
+   "y": 3952,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "Neon Harbour",
+   "x": 10256,
+   "y": 4488,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
+   "biome": "Neon Harbour",
+   "x": 10392,
+   "y": 4704,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
+   "biome": "",
+   "x": 10736,
+   "y": 4136,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "Neon Harbour",
+   "x": 9888,
+   "y": 4176,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "",
+   "x": 10088,
+   "y": 4032,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
+   "biome": "Neon Harbour",
+   "x": 10648,
+   "y": 4976,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "",
+   "x": 10512,
+   "y": 4048,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "",
+   "x": 10744,
+   "y": 4128,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "",
+   "x": 10472,
+   "y": 3832,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "Neon Harbour",
+   "x": 11000,
+   "y": 4328,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "Neon Harbour",
+   "x": 9832,
+   "y": 4184,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "Neon Harbour",
+   "x": 10320,
+   "y": 4800,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
+   "biome": "Neon Harbour",
+   "x": 10896,
+   "y": 4280,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "Neon Harbour",
+   "x": 10264,
+   "y": 4992,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "Neon Harbour",
+   "x": 10576,
+   "y": 4552,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "Neon Harbour",
+   "x": 11024,
+   "y": 4360,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "Neon Harbour",
+   "x": 10400,
+   "y": 4232,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "Neon Harbour",
+   "x": 10336,
+   "y": 4512,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "",
+   "x": 10728,
+   "y": 4136,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "",
+   "x": 10536,
+   "y": 3952,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
+   "biome": "Neon Harbour",
+   "x": 10672,
+   "y": 4152,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
+   "biome": "Neon Harbour",
+   "x": 10840,
+   "y": 5088,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "",
+   "x": 10192,
+   "y": 4032,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "Neon Harbour",
+   "x": 9864,
+   "y": 4368,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "Neon Harbour",
+   "x": 10656,
+   "y": 5064,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "Neon Harbour",
+   "x": 10944,
+   "y": 4480,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "Neon Harbour",
+   "x": 10248,
+   "y": 4704,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "Neon Harbour",
+   "x": 10568,
+   "y": 4528,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "Neon Harbour",
+   "x": 9864,
+   "y": 4376,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "Neon Harbour",
+   "x": 9864,
+   "y": 4216,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "Neon Harbour",
+   "x": 10648,
+   "y": 5008,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "Neon Harbour",
+   "x": 10440,
+   "y": 4960,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "Neon Harbour",
+   "x": 10384,
+   "y": 4648,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "Neon Harbour",
+   "x": 10904,
+   "y": 4576,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "Neon Harbour",
+   "x": 10080,
+   "y": 4152,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "Neon Harbour",
+   "x": 10104,
+   "y": 4256,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "",
+   "x": 10160,
+   "y": 3992,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "Neon Harbour",
+   "x": 10264,
+   "y": 4952,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "",
+   "x": 10360,
+   "y": 3920,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "",
+   "x": 10464,
+   "y": 4080,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "Neon Harbour",
+   "x": 10856,
+   "y": 5008,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "",
+   "x": 10176,
+   "y": 3976,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "",
+   "x": 9904,
+   "y": 4112,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "",
+   "x": 9976,
+   "y": 4016,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "Neon Harbour",
+   "x": 10344,
+   "y": 4504,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "Neon Harbour",
+   "x": 10288,
+   "y": 5000,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "Neon Harbour",
+   "x": 10576,
+   "y": 4696,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "",
+   "x": 10464,
+   "y": 3856,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "Neon Harbour",
+   "x": 9888,
+   "y": 4240,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "Neon Harbour",
+   "x": 10936,
+   "y": 4952,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "",
+   "x": 10456,
+   "y": 3968,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "",
+   "x": 10728,
+   "y": 3968,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "Neon Harbour",
+   "x": 10816,
+   "y": 4184,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "Neon Harbour",
+   "x": 11024,
+   "y": 4680,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "Neon Harbour",
+   "x": 10008,
+   "y": 4216,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "Neon Harbour",
+   "x": 10480,
+   "y": 4328,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "Neon Harbour",
+   "x": 10648,
+   "y": 5064,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "",
+   "x": 10696,
+   "y": 4016,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "Neon Harbour",
+   "x": 11096,
+   "y": 4600,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "Neon Harbour",
+   "x": 10368,
+   "y": 4992,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "Neon Harbour",
+   "x": 9944,
+   "y": 4520,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "Neon Harbour",
+   "x": 10712,
+   "y": 4648,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "",
+   "x": 10744,
+   "y": 3936,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "Neon Harbour",
+   "x": 10064,
+   "y": 4392,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "Neon Harbour",
+   "x": 10848,
+   "y": 4704,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "Neon Harbour",
+   "x": 10992,
+   "y": 4520,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "Neon Harbour",
+   "x": 10832,
+   "y": 5072,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "Neon Harbour",
+   "x": 10624,
+   "y": 4944,
+   "route": null,
+   "settlement": "Neon Harbour"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "Neon Harbour",
+   "x": 10936,
+   "y": 5656,
+   "route": null,
+   "settlement": "Launch Cape"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "Neon Harbour",
+   "x": 10920,
+   "y": 5480,
+   "route": null,
+   "settlement": "Launch Cape"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "",
+   "x": 10912,
+   "y": 5712,
+   "route": null,
+   "settlement": "Launch Cape"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "Neon Harbour",
+   "x": 10928,
+   "y": 5560,
+   "route": null,
+   "settlement": "Launch Cape"
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
+   "biome": "Neon Harbour",
+   "x": 10960,
+   "y": 5480,
+   "route": null,
+   "settlement": "Launch Cape"
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
+   "biome": "Neon Harbour",
+   "x": 10848,
+   "y": 5456,
+   "route": null,
+   "settlement": "Launch Cape"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "Neon Harbour",
+   "x": 10872,
+   "y": 5616,
+   "route": null,
+   "settlement": "Launch Cape"
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
+   "biome": "Neon Harbour",
+   "x": 10840,
+   "y": 5472,
+   "route": null,
+   "settlement": "Launch Cape"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "Neon Harbour",
+   "x": 10960,
+   "y": 5592,
+   "route": null,
+   "settlement": "Launch Cape"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "Neon Harbour",
+   "x": 11040,
+   "y": 5544,
+   "route": null,
+   "settlement": "Launch Cape"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "Neon Harbour",
+   "x": 11088,
+   "y": 5640,
+   "route": null,
+   "settlement": "Launch Cape"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "Neon Harbour",
+   "x": 11128,
+   "y": 5592,
+   "route": null,
+   "settlement": "Launch Cape"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "Neon Harbour",
+   "x": 11048,
+   "y": 5424,
+   "route": null,
+   "settlement": "Launch Cape"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "Neon Harbour",
+   "x": 11072,
+   "y": 5672,
+   "route": null,
+   "settlement": "Launch Cape"
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "Neon Harbour",
+   "x": 10832,
+   "y": 5496,
+   "route": null,
+   "settlement": "Launch Cape"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "Neon Harbour",
+   "x": 10888,
+   "y": 5464,
+   "route": null,
+   "settlement": "Launch Cape"
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
+   "biome": "the Sunstone basin",
+   "x": 3488,
+   "y": 2656,
+   "route": null,
+   "settlement": "Palm Spring"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the Sunstone basin",
+   "x": 3328,
+   "y": 2872,
+   "route": null,
+   "settlement": "Palm Spring"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the Sunstone basin",
+   "x": 3416,
+   "y": 2808,
+   "route": null,
+   "settlement": "Palm Spring"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the Sunstone basin",
+   "x": 3560,
+   "y": 2728,
+   "route": null,
+   "settlement": "Palm Spring"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the Sunstone basin",
+   "x": 3512,
+   "y": 2824,
+   "route": null,
+   "settlement": "Palm Spring"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the Sunstone basin",
+   "x": 3440,
+   "y": 2640,
+   "route": null,
+   "settlement": "Palm Spring"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the Sunstone basin",
+   "x": 3416,
+   "y": 2792,
+   "route": null,
+   "settlement": "Palm Spring"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the Sunstone basin",
+   "x": 3600,
+   "y": 2712,
+   "route": null,
+   "settlement": "Palm Spring"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the Sunstone basin",
+   "x": 3472,
+   "y": 2760,
+   "route": null,
+   "settlement": "Palm Spring"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the Sunstone basin",
+   "x": 3424,
+   "y": 2808,
+   "route": null,
+   "settlement": "Palm Spring"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the Sunstone basin",
+   "x": 3368,
+   "y": 2888,
+   "route": null,
+   "settlement": "Palm Spring"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the Sunstone basin",
+   "x": 3344,
+   "y": 2832,
+   "route": null,
+   "settlement": "Palm Spring"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the Sunstone basin",
+   "x": 3448,
+   "y": 2928,
+   "route": null,
+   "settlement": "Palm Spring"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the Sunstone basin",
+   "x": 3432,
+   "y": 2880,
+   "route": null,
+   "settlement": "Palm Spring"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the Sunstone basin",
+   "x": 3512,
+   "y": 2648,
+   "route": null,
+   "settlement": "Palm Spring"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the Sunstone basin",
+   "x": 3568,
+   "y": 2912,
+   "route": null,
+   "settlement": "Palm Spring"
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
+   "biome": "the Sunstone basin",
+   "x": 2680,
+   "y": 2168,
+   "route": null,
+   "settlement": "Dust Gulch"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the Sunstone basin",
+   "x": 2624,
+   "y": 2544,
+   "route": null,
+   "settlement": "Dust Gulch"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the Sunstone basin",
+   "x": 2952,
+   "y": 2256,
+   "route": null,
+   "settlement": "Dust Gulch"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the Sunstone basin",
+   "x": 2776,
+   "y": 2208,
+   "route": null,
+   "settlement": "Dust Gulch"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the Sunstone basin",
+   "x": 2736,
+   "y": 2272,
+   "route": null,
+   "settlement": "Dust Gulch"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the Sunstone basin",
+   "x": 2768,
+   "y": 2368,
+   "route": null,
+   "settlement": "Dust Gulch"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the Sunstone basin",
+   "x": 2680,
+   "y": 2624,
+   "route": null,
+   "settlement": "Dust Gulch"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the Sunstone basin",
+   "x": 2576,
+   "y": 2240,
+   "route": null,
+   "settlement": "Dust Gulch"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the Sunstone basin",
+   "x": 2920,
+   "y": 2464,
+   "route": null,
+   "settlement": "Dust Gulch"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the Sunstone basin",
+   "x": 2840,
+   "y": 2168,
+   "route": null,
+   "settlement": "Dust Gulch"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the Sunstone basin",
+   "x": 2568,
+   "y": 2320,
+   "route": null,
+   "settlement": "Dust Gulch"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the Sunstone basin",
+   "x": 2688,
+   "y": 2400,
+   "route": null,
+   "settlement": "Dust Gulch"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the Sunstone basin",
+   "x": 2616,
+   "y": 2512,
+   "route": null,
+   "settlement": "Dust Gulch"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the Sunstone basin",
+   "x": 2648,
+   "y": 2472,
+   "route": null,
+   "settlement": "Dust Gulch"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the Sunstone basin",
+   "x": 2752,
+   "y": 2552,
+   "route": null,
+   "settlement": "Dust Gulch"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the Sunstone basin",
+   "x": 2928,
+   "y": 2248,
+   "route": null,
+   "settlement": "Dust Gulch"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the Sunstone basin",
+   "x": 2808,
+   "y": 2472,
+   "route": null,
+   "settlement": "Dust Gulch"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the Sunstone basin",
+   "x": 2728,
+   "y": 2288,
+   "route": null,
+   "settlement": "Dust Gulch"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the Sunstone basin",
+   "x": 2896,
+   "y": 2304,
+   "route": null,
+   "settlement": "Dust Gulch"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the Sunstone basin",
+   "x": 2704,
+   "y": 2288,
+   "route": null,
+   "settlement": "Dust Gulch"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the Sunstone basin",
+   "x": 3008,
+   "y": 1648,
+   "route": null,
+   "settlement": "the Lode"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the Sunstone basin",
+   "x": 2984,
+   "y": 1624,
+   "route": null,
+   "settlement": "the Lode"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the Sunstone basin",
+   "x": 3088,
+   "y": 1640,
+   "route": null,
+   "settlement": "the Lode"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the Sunstone basin",
+   "x": 2944,
+   "y": 1688,
+   "route": null,
+   "settlement": "the Lode"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the Sunstone basin",
+   "x": 3088,
+   "y": 1744,
+   "route": null,
+   "settlement": "the Lode"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the Sunstone basin",
+   "x": 3104,
+   "y": 1664,
+   "route": null,
+   "settlement": "the Lode"
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
+   "biome": "the Sunstone basin",
+   "x": 3128,
+   "y": 1696,
+   "route": null,
+   "settlement": "the Lode"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the Sunstone basin",
+   "x": 3024,
+   "y": 1672,
+   "route": null,
+   "settlement": "the Lode"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the Sunstone basin",
+   "x": 3008,
+   "y": 1592,
+   "route": null,
+   "settlement": "the Lode"
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the Sunstone basin",
+   "x": 3136,
+   "y": 1576,
+   "route": null,
+   "settlement": "the Lode"
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the Sunstone basin",
+   "x": 3144,
+   "y": 1616,
+   "route": null,
+   "settlement": "the Lode"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the Sunstone basin",
+   "x": 3144,
+   "y": 1568,
+   "route": null,
+   "settlement": "the Lode"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the Sunstone basin",
+   "x": 3064,
+   "y": 1528,
+   "route": null,
+   "settlement": "the Lode"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the Sunstone basin",
+   "x": 2976,
+   "y": 1680,
+   "route": null,
+   "settlement": "the Lode"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the Sunstone basin",
+   "x": 3128,
+   "y": 1616,
+   "route": null,
+   "settlement": "the Lode"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the Sunstone basin",
+   "x": 2992,
+   "y": 1648,
+   "route": null,
+   "settlement": "the Lode"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the fire country",
+   "x": 2352,
+   "y": 5032,
+   "route": null,
+   "settlement": "Hearthold"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the fire country",
+   "x": 2304,
+   "y": 5208,
+   "route": null,
+   "settlement": "Hearthold"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the fire country",
+   "x": 2520,
+   "y": 5264,
+   "route": null,
+   "settlement": "Hearthold"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the fire country",
+   "x": 2536,
+   "y": 5056,
+   "route": null,
+   "settlement": "Hearthold"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the fire country",
+   "x": 2400,
+   "y": 5056,
+   "route": null,
+   "settlement": "Hearthold"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the fire country",
+   "x": 2496,
+   "y": 5056,
+   "route": null,
+   "settlement": "Hearthold"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the fire country",
+   "x": 2520,
+   "y": 5296,
+   "route": null,
+   "settlement": "Hearthold"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the fire country",
+   "x": 2600,
+   "y": 5136,
+   "route": null,
+   "settlement": "Hearthold"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the fire country",
+   "x": 2648,
+   "y": 5216,
+   "route": null,
+   "settlement": "Hearthold"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the fire country",
+   "x": 2392,
+   "y": 5176,
+   "route": null,
+   "settlement": "Hearthold"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the fire country",
+   "x": 2480,
+   "y": 5304,
+   "route": null,
+   "settlement": "Hearthold"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the fire country",
+   "x": 2672,
+   "y": 5144,
+   "route": null,
+   "settlement": "Hearthold"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the fire country",
+   "x": 2616,
+   "y": 5000,
+   "route": null,
+   "settlement": "Hearthold"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the fire country",
+   "x": 2408,
+   "y": 4968,
+   "route": null,
+   "settlement": "Hearthold"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the fire country",
+   "x": 2480,
+   "y": 5176,
+   "route": null,
+   "settlement": "Hearthold"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the fire country",
+   "x": 2632,
+   "y": 5032,
+   "route": null,
+   "settlement": "Hearthold"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the fire country",
+   "x": 2536,
+   "y": 4928,
+   "route": null,
+   "settlement": "Ember forge"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the fire country",
+   "x": 2560,
+   "y": 4880,
+   "route": null,
+   "settlement": "Ember forge"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the fire country",
+   "x": 2376,
+   "y": 4808,
+   "route": null,
+   "settlement": "Ember forge"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the fire country",
+   "x": 2440,
+   "y": 4816,
+   "route": null,
+   "settlement": "Ember forge"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the fire country",
+   "x": 2464,
+   "y": 4784,
+   "route": null,
+   "settlement": "Ember forge"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the fire country",
+   "x": 2560,
+   "y": 4824,
+   "route": null,
+   "settlement": "Ember forge"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the fire country",
+   "x": 2416,
+   "y": 4864,
+   "route": null,
+   "settlement": "Ember forge"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the fire country",
+   "x": 2504,
+   "y": 4880,
+   "route": null,
+   "settlement": "Ember forge"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the fire country",
+   "x": 2400,
+   "y": 4824,
+   "route": null,
+   "settlement": "Ember forge"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the fire country",
+   "x": 2384,
+   "y": 4912,
+   "route": null,
+   "settlement": "Ember forge"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the fire country",
+   "x": 2416,
+   "y": 4776,
+   "route": null,
+   "settlement": "Ember forge"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the fire country",
+   "x": 2456,
+   "y": 4936,
+   "route": null,
+   "settlement": "Ember forge"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the fire country",
+   "x": 2504,
+   "y": 4936,
+   "route": null,
+   "settlement": "Ember forge"
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the fire country",
+   "x": 2464,
+   "y": 4960,
+   "route": null,
+   "settlement": "Ember forge"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the fire country",
+   "x": 2560,
+   "y": 4856,
+   "route": null,
+   "settlement": "Ember forge"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the fire country",
+   "x": 2408,
+   "y": 4880,
+   "route": null,
+   "settlement": "Ember forge"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the fire country",
+   "x": 2272,
+   "y": 5496,
+   "route": null,
+   "settlement": "Cinder Springs"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the fire country",
+   "x": 2096,
+   "y": 5416,
+   "route": null,
+   "settlement": "Cinder Springs"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the fire country",
+   "x": 2216,
+   "y": 5408,
+   "route": null,
+   "settlement": "Cinder Springs"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the fire country",
+   "x": 2208,
+   "y": 5312,
+   "route": null,
+   "settlement": "Cinder Springs"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the fire country",
+   "x": 2184,
+   "y": 5360,
+   "route": null,
+   "settlement": "Cinder Springs"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the fire country",
+   "x": 2136,
+   "y": 5472,
+   "route": null,
+   "settlement": "Cinder Springs"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the fire country",
+   "x": 2128,
+   "y": 5504,
+   "route": null,
+   "settlement": "Cinder Springs"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the fire country",
+   "x": 2144,
+   "y": 5464,
+   "route": null,
+   "settlement": "Cinder Springs"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the fire country",
+   "x": 2224,
+   "y": 5360,
+   "route": null,
+   "settlement": "Cinder Springs"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the fire country",
+   "x": 2272,
+   "y": 5320,
+   "route": null,
+   "settlement": "Cinder Springs"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the fire country",
+   "x": 2216,
+   "y": 5328,
+   "route": null,
+   "settlement": "Cinder Springs"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the fire country",
+   "x": 2152,
+   "y": 5512,
+   "route": null,
+   "settlement": "Cinder Springs"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the fire country",
+   "x": 2224,
+   "y": 5480,
+   "route": null,
+   "settlement": "Cinder Springs"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the fire country",
+   "x": 2320,
+   "y": 5432,
+   "route": null,
+   "settlement": "Cinder Springs"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the fire country",
+   "x": 2184,
+   "y": 5368,
+   "route": null,
+   "settlement": "Cinder Springs"
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the fire country",
+   "x": 2176,
+   "y": 5416,
+   "route": null,
+   "settlement": "Cinder Springs"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the fire country",
+   "x": 2800,
+   "y": 5624,
+   "route": null,
+   "settlement": "Cinderwick"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the fire country",
+   "x": 2672,
+   "y": 5656,
+   "route": null,
+   "settlement": "Cinderwick"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the fire country",
+   "x": 2760,
+   "y": 5544,
+   "route": null,
+   "settlement": "Cinderwick"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the fire country",
+   "x": 2656,
+   "y": 5624,
+   "route": null,
+   "settlement": "Cinderwick"
+  },
+  {
+   "type": "interactable",
+   "name": "gate",
+   "biome": "the fire country",
+   "x": 2712,
+   "y": 5600,
+   "route": null,
+   "settlement": "Cinderwick"
+  },
+  {
+   "type": "interactable",
+   "name": "signpost",
+   "biome": "the fire country",
+   "x": 2712,
+   "y": 5632,
+   "route": null,
+   "settlement": "Cinderwick"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the fire country",
+   "x": 2800,
+   "y": 5552,
+   "route": null,
+   "settlement": "Cinderwick"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the fire country",
+   "x": 2760,
+   "y": 5664,
+   "route": null,
+   "settlement": "Cinderwick"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the fire country",
+   "x": 2848,
+   "y": 5584,
+   "route": null,
+   "settlement": "Cinderwick"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the fire country",
+   "x": 2712,
+   "y": 5568,
+   "route": null,
+   "settlement": "Cinderwick"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the fire country",
+   "x": 2872,
+   "y": 5624,
+   "route": null,
+   "settlement": "Cinderwick"
+  },
+  {
+   "type": "story",
+   "name": "cart with a broken wheel",
+   "biome": "the fire country",
+   "x": 2848,
+   "y": 5624,
+   "route": null,
+   "settlement": "Cinderwick"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the fire country",
+   "x": 2640,
+   "y": 5696,
+   "route": null,
+   "settlement": "Cinderwick"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the fire country",
+   "x": 2768,
+   "y": 5608,
+   "route": null,
+   "settlement": "Cinderwick"
+  },
+  {
+   "type": "story",
+   "name": "tracks",
+   "biome": "the fire country",
+   "x": 2840,
+   "y": 5552,
+   "route": null,
+   "settlement": "Cinderwick"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the fire country",
+   "x": 2808,
+   "y": 5648,
+   "route": null,
+   "settlement": "Cinderwick"
+  },
+  {
+   "type": "interactable",
+   "name": "bench",
+   "biome": "the coast and the isles",
+   "x": 6456,
+   "y": 6176,
+   "route": null,
+   "settlement": "Lagoon Landing"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the coast and the isles",
+   "x": 6568,
+   "y": 6264,
+   "route": null,
+   "settlement": "Lagoon Landing"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the coast and the isles",
+   "x": 6512,
+   "y": 6144,
+   "route": null,
+   "settlement": "Lagoon Landing"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the coast and the isles",
+   "x": 6488,
+   "y": 6120,
+   "route": null,
+   "settlement": "Lagoon Landing"
+  },
+  {
+   "type": "interactable",
+   "name": "water trough",
+   "biome": "the coast and the isles",
+   "x": 6680,
+   "y": 6208,
+   "route": null,
+   "settlement": "Lagoon Landing"
+  },
+  {
+   "type": "interactable",
+   "name": "door",
+   "biome": "the coast and the isles",
+   "x": 6672,
+   "y": 6264,
+   "route": null,
+   "settlement": "Lagoon Landing"
+  },
+  {
+   "type": "interactable",
+   "name": "resident",
+   "biome": "the coast and the isles",
+   "x": 6552,
+   "y": 6232,
+   "route": null,
+   "settlement": "Lagoon Landing"
+  },
+  {
+   "type": "interactable",
+   "name": "noticeboard",
+   "biome": "the coast and the isles",
+   "x": 6696,
+   "y": 6216,
+   "route": null,
+   "settlement": "Lagoon Landing"
+  },
+  {
+   "type": "story",
+   "name": "lost hat",
+   "biome": "the coast and the isles",
+   "x": 6544,
+   "y": 6120,
+   "route": null,
+   "settlement": "Lagoon Landing"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the coast and the isles",
+   "x": 6584,
+   "y": 6104,
+   "route": null,
+   "settlement": "Lagoon Landing"
+  },
+  {
+   "type": "story",
+   "name": "marker stone",
+   "biome": "the coast and the isles",
+   "x": 6552,
+   "y": 6160,
+   "route": null,
+   "settlement": "Lagoon Landing"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the coast and the isles",
+   "x": 6440,
+   "y": 6208,
+   "route": null,
+   "settlement": "Lagoon Landing"
+  },
+  {
+   "type": "story",
+   "name": "cold fire ring",
+   "biome": "the coast and the isles",
+   "x": 6648,
+   "y": 6128,
+   "route": null,
+   "settlement": "Lagoon Landing"
+  },
+  {
+   "type": "story",
+   "name": "mended fence",
+   "biome": "the coast and the isles",
+   "x": 6480,
+   "y": 6280,
+   "route": null,
+   "settlement": "Lagoon Landing"
+  },
+  {
+   "type": "story",
+   "name": "old boot",
+   "biome": "the coast and the isles",
+   "x": 6472,
+   "y": 6096,
+   "route": null,
+   "settlement": "Lagoon Landing"
+  },
+  {
+   "type": "story",
+   "name": "cairn",
+   "biome": "the coast and the isles",
+   "x": 6464,
+   "y": 6280,
+   "route": null,
+   "settlement": "Lagoon Landing"
+  }
+ ],
+ "settlement_density": [
+  {
+   "settlement": "Home valley",
+   "screens": 4.96,
+   "per_screen_each": 8.1
+  },
+  {
+   "settlement": "Driftwood",
+   "screens": 0.56,
+   "per_screen_each": 8.0
+  },
+  {
+   "settlement": "Fernhollow",
+   "screens": 0.35,
+   "per_screen_each": 8.0
+  },
+  {
+   "settlement": "Cogsworth",
+   "screens": 1.11,
+   "per_screen_each": 8.1
+  },
+  {
+   "settlement": "Lullford",
+   "screens": 0.91,
+   "per_screen_each": 8.0
+  },
+  {
+   "settlement": "Gullwick",
+   "screens": 0.33,
+   "per_screen_each": 8.0
+  },
+  {
+   "settlement": "Neon Harbour",
+   "screens": 5.44,
+   "per_screen_each": 8.1
+  },
+  {
+   "settlement": "Launch Cape",
+   "screens": 0.45,
+   "per_screen_each": 8.0
+  },
+  {
+   "settlement": "Palm Spring",
+   "screens": 0.47,
+   "per_screen_each": 8.0
+  },
+  {
+   "settlement": "Dust Gulch",
+   "screens": 1.2,
+   "per_screen_each": 8.3
+  },
+  {
+   "settlement": "the Lode",
+   "screens": 0.23,
+   "per_screen_each": 8.0
+  },
+  {
+   "settlement": "Hearthold",
+   "screens": 0.44,
+   "per_screen_each": 8.0
+  },
+  {
+   "settlement": "Ember forge",
+   "screens": 0.15,
+   "per_screen_each": 8.0
+  },
+  {
+   "settlement": "Cinder Springs",
+   "screens": 0.24,
+   "per_screen_each": 8.0
+  },
+  {
+   "settlement": "Cinderwick",
+   "screens": 0.29,
+   "per_screen_each": 8.0
+  },
+  {
+   "settlement": "Lagoon Landing",
+   "screens": 0.37,
+   "per_screen_each": 8.0
+  }
+ ],
+ "mixing": {
+  "the Col hut": {
+   "route": "Col Path",
+   "side_A": [
+    "meadow",
+    "broadleaf",
+    "garden"
+   ],
+   "side_B": [
+    "alpine",
+    "meadow",
+    "broadleaf"
+   ]
+  },
+  "the Frostline lip": {
+   "route": "Col Path",
+   "side_A": [
+    "meadow",
+    "broadleaf",
+    "alpine"
+   ],
+   "side_B": [
+    "alpine",
+    "snow",
+    "meadow"
+   ]
+  },
+  "the Brackens gap": {
+   "route": "Drover's Road",
+   "side_A": [
+    "meadow",
+    "field",
+    "field2"
+   ],
+   "side_B": [
+    "steppe",
+    "meadow",
+    "broadleaf"
+   ]
+  },
+  "Drover's bridge": {
+   "route": "Drover's Road",
+   "side_A": [
+    "steppe",
+    "meadow",
+    "broadleaf"
+   ],
+   "side_B": [
+    "scrub",
+    "meadow",
+    "steppe"
+   ]
+  },
+  "the Rift ferry": {
+   "route": "Ash Coast",
+   "side_A": [
+    "meadow",
+    "broadleaf",
+    "sand"
+   ],
+   "side_B": [
+    "deadwood",
+    "meadow",
+    "blacksand"
+   ]
+  },
+  "the Amber canyon head": {
+   "route": "Canyon Road",
+   "side_A": [
+    "desert",
+    "garden",
+    "meadow"
+   ],
+   "side_B": [
+    "ash",
+    "desert",
+    "badland"
+   ]
+  },
+  "the Cinder Rise": {
+   "route": "Canyon Road",
+   "side_A": [
+    "ash",
+    "desert",
+    "badland"
+   ],
+   "side_B": [
+    "ash",
+    "desert",
+    "lavastone"
+   ]
+  },
+  "the chasm bridge": {
+   "route": "Canyon Road",
+   "side_A": [
+    "ash",
+    "desert",
+    "lavastone"
+   ],
+   "side_B": [
+    "steppe",
+    "ash",
+    "scrub"
+   ]
+  },
+  "the crust causeway": {
+   "route": "Ash Coast",
+   "side_A": [
+    "deadwood",
+    "meadow",
+    "blacksand"
+   ],
+   "side_B": [
+    "meadow",
+    "deadwood",
+    "blacksand"
+   ]
+  },
+  "the Millrace cutting": {
+   "route": "Foothill Road",
+   "side_A": [
+    "broadleaf",
+    "garden",
+    "meadow"
+   ],
+   "side_B": [
+    "garden",
+    "meadow",
+    "broadleaf"
+   ]
+  },
+  "the Cog foot": {
+   "route": "Towpath",
+   "side_A": [
+    "broadleaf",
+    "garden",
+    "meadow"
+   ],
+   "side_B": [
+    "meadow",
+    "watermeadow",
+    "broadleaf"
+   ]
+  },
+  "Lullford Bridge": {
+   "route": "Lull Road",
+   "side_A": [
+    "meadow",
+    "watermeadow",
+    "field"
+   ],
+   "side_B": [
+    "watermeadow",
+    "reeds",
+    "garden"
+   ]
+  },
+  "the canal embankment": {
+   "route": "Delta Road",
+   "side_A": [
+    "watermeadow",
+    "broadleaf",
+    "carr"
+   ],
+   "side_B": [
+    "garden",
+    "meadow",
+    "broadleaf"
+   ]
+  },
+  "the Headland stile": {
+   "route": "Headland Lane",
+   "side_A": [
+    "meadow",
+    "sand",
+    "field"
+   ],
+   "side_B": [
+    "sand",
+    "meadow"
+   ]
+  },
+  "the Shell Bar": {
+   "route": "Shell Bar",
+   "side_A": [
+    "sand",
+    "meadow",
+    "field"
+   ],
+   "side_B": [
+    "meadow",
+    "sand",
+    "field2"
+   ]
+  }
+ },
+ "benchmark": [
+  {
+   "n": 1,
+   "check": "interactables and story props per screen: routes (min over routes); settlements (min)",
+   "measured": "routes 2.9 and 4.8; settlements 8.0 each",
+   "target": "routes 2-3 and 3-5; settlements 6-10 each",
+   "pass": true,
+   "note": ""
+  },
+  {
+   "n": 2,
+   "check": "longest stretch of path with nothing to notice",
+   "measured": "170 px (Lode Track)",
+   "target": "200 px or less",
+   "pass": true,
+   "note": ""
+  },
+  {
+   "n": 3,
+   "check": "landmark spacing along routes; seen from the screen before (within 900 px)",
+   "measured": "longest gap 767 px (High Fells); 82/82 seen",
+   "target": "every 576-1152 px; all seen",
+   "pass": true,
+   "note": ""
+  },
+  {
+   "n": 4,
+   "check": "each biome: named places, secret pockets, viewpoint, camp, ruin, 2 wildlife, water",
+   "measured": "10/10 biomes pass",
+   "target": "all biomes",
+   "pass": true,
+   "note": ""
+  },
+  {
+   "n": 5,
+   "check": "no secret or decoration gives a reward, cost or chore",
+   "measured": "by design: markers and pockets carry no items",
+   "target": "none",
+   "pass": true,
+   "note": ""
+  },
+  {
+   "n": 6,
+   "check": "invisible walls: frame cells touching the walk that are drawn as passable ground",
+   "measured": 0,
+   "target": "0",
+   "pass": true,
+   "note": ""
+  },
+  {
+   "n": 7,
+   "check": "border depth: share of frame within 64 px of the walk that is drawn as a blocker (two strata)",
+   "measured": "100.0 %",
+   "target": "100 % (2-3 strata)",
+   "pass": true,
+   "note": ""
+  },
+  {
+   "n": 8,
+   "check": "longest straight run of the walk-to-border edge",
+   "measured": "64 px",
+   "target": "96 px or less",
+   "pass": true,
+   "note": ""
+  },
+  {
+   "n": 9,
+   "check": "identical border material in a row (one prop = 3 cells)",
+   "measured": "3 props",
+   "target": "3 or fewer",
+   "pass": true,
+   "note": "block-out materials stand in for props"
+  },
+  {
+   "n": 10,
+   "check": "outer border edge with something seen beyond within 900 px",
+   "measured": "100.0 %",
+   "target": "100 %",
+   "pass": true,
+   "note": ""
+  },
+  {
+   "n": 11,
+   "check": "each region shows a place seen but not yet reached, reached later",
+   "measured": "10/10 regions listed; all ways reach their places",
+   "target": "all regions",
+   "pass": true,
+   "note": "the crater rim is the one promise kept by sight only"
+  },
+  {
+   "n": 12,
+   "check": "mixing band 1400 px long at each threshold; ground kinds crossing each way",
+   "measured": "15/15 pass",
+   "target": "band 576 px or more; 3 elements each way (ground kinds here, plus the props and residents in 5.2)",
+   "pass": true,
+   "note": "where both sides share ground (sea crossings), the elements are props and residents"
+  },
+  {
+   "n": 13,
+   "check": "next region's landmark seen from the threshold (within 1200 px), hidden before it",
+   "measured": "15/15",
+   "target": "all",
+   "pass": true,
+   "note": ""
+  },
+  {
+   "n": 14,
+   "check": "ambience cross-fade at each threshold",
+   "measured": "160 px (4 s)",
+   "target": "120 px (3 s) or more",
+   "pass": true,
+   "note": "specified for the sound pass"
+  },
+  {
+   "n": 15,
+   "check": "each change radiates from a source",
+   "measured": "15/15",
+   "target": "all",
+   "pass": true,
+   "note": ""
+  },
+  {
+   "n": 16,
+   "check": "route bends or meets an obstacle every 200-300 px; longest straight run",
+   "measured": "longest gap 282 px (Foothill Road); straight 128 px (Shell Bar)",
+   "target": "gap 300 px or less; straight 240 px or less",
+   "pass": true,
+   "note": ""
+  },
+  {
+   "n": 17,
+   "check": "path width range; side paths per two screens of route",
+   "measured": "24-64 px; 1.89 per 2 screens",
+   "target": "24-64 px; 1 or more",
+   "pass": true,
+   "note": ""
+  },
+  {
+   "n": 18,
+   "check": "at least one loop in every region",
+   "measured": "10/10",
+   "target": "all",
+   "pass": true,
+   "note": ""
+  },
+  {
+   "n": 19,
+   "check": "dead ends end in a view, resident, bench or story detail",
+   "measured": "0 bare dead ends",
+   "target": "0",
+   "pass": true,
+   "note": ""
+  },
+  {
+   "n": 20,
+   "check": "no one-way drops",
+   "measured": "every tier change on a route is a stair, ramp or switchback (5.4)",
+   "target": "none",
+   "pass": true,
+   "note": ""
+  },
+  {
+   "n": 21,
+   "check": "every tier change uses a stair or ramp; obstacles 110 px or more from the path",
+   "measured": "184 tier changes, all stairs, ramps or switchbacks",
+   "target": "all",
+   "pass": true,
+   "note": ""
+  }
+ ],
+ "biome_detail": {
+  "the home valley": {
+   "screens": 3.5,
+   "named": 14,
+   "pockets": 3,
+   "view": true,
+   "camp_or_hut": true,
+   "ruin_or_story": true,
+   "wildlife_kinds": 2,
+   "water": true
+  },
+  "the massif and the Frostline": {
+   "screens": 3.2,
+   "named": 11,
+   "pockets": 3,
+   "view": true,
+   "camp_or_hut": true,
+   "ruin_or_story": true,
+   "wildlife_kinds": 2,
+   "water": true
+  },
+  "the coal hills": {
+   "screens": 2.6,
+   "named": 11,
+   "pockets": 3,
+   "view": true,
+   "camp_or_hut": true,
+   "ruin_or_story": true,
+   "wildlife_kinds": 2,
+   "water": true
+  },
+  "the Lull plain": {
+   "screens": 7.7,
+   "named": 21,
+   "pockets": 3,
+   "view": true,
+   "camp_or_hut": true,
+   "ruin_or_story": true,
+   "wildlife_kinds": 2,
+   "water": true
+  },
+  "the river belt and delta": {
+   "screens": 1.8,
+   "named": 8,
+   "pockets": 3,
+   "view": true,
+   "camp_or_hut": true,
+   "ruin_or_story": true,
+   "wildlife_kinds": 2,
+   "water": true
+  },
+  "Neon Harbour": {
+   "screens": 2.3,
+   "named": 11,
+   "pockets": 3,
+   "view": true,
+   "camp_or_hut": true,
+   "ruin_or_story": true,
+   "wildlife_kinds": 2,
+   "water": true
+  },
+  "the steppe and the Brackens": {
+   "screens": 4.1,
+   "named": 15,
+   "pockets": 3,
+   "view": true,
+   "camp_or_hut": true,
+   "ruin_or_story": true,
+   "wildlife_kinds": 2,
+   "water": true
+  },
+  "the Sunstone basin": {
+   "screens": 6.3,
+   "named": 20,
+   "pockets": 3,
+   "view": true,
+   "camp_or_hut": true,
+   "ruin_or_story": true,
+   "wildlife_kinds": 2,
+   "water": true
+  },
+  "the fire country": {
+   "screens": 5.6,
+   "named": 22,
+   "pockets": 3,
+   "view": true,
+   "camp_or_hut": true,
+   "ruin_or_story": true,
+   "wildlife_kinds": 2,
+   "water": true
+  },
+  "the coast and the isles": {
+   "screens": 1.4,
+   "named": 8,
+   "pockets": 3,
+   "view": true,
+   "camp_or_hut": true,
+   "ruin_or_story": true,
+   "wildlife_kinds": 3,
+   "water": true
+  }
+ }
+}
