@@ -46,7 +46,15 @@ NapAttack runs as a web app today. Matt wants it to become an iPhone and Android
 | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
 | `npm run check:native` | No unreviewed browser objects, no static web-only imports, every `.web.tsx` has a native sibling. Reads source only.              | part of `npm run check`                                                       |
 | `npm run export:ios`   | The whole app bundles and compiles (Hermes) for iOS: imports resolve and nothing is web-only at bundle time. It takes about 15 s. | part of `npm run verify`                                                      |
-| Native readiness (CI)  | `expo-doctor` passes and `expo prebuild` generates the iOS and Android projects.                                                  | `.github/workflows/native-readiness.yml`, on native config or package changes |
+| Native readiness (CI)  | No new or changed doctor findings relative to the PR's merge base; `expo prebuild` generates the iOS and Android projects.        | `.github/workflows/native-readiness.yml`, on native config or package changes |
+
+### CI health checks
+
+Native readiness keeps drafts idle. When a PR is ready, it installs the PR head and its actual Git merge base independently and runs the same pinned `expo-doctor@1.21.5 --verbose` on both. An unchanged finding is inherited, and a finding present only on the base is fixed. Both produce a warning rather than blocking the PR. This includes Expo publishing a newer SDK patch after the base was committed. New or changed finding details fail, including a new issue under an already failing check name. The full reports stay in the job log and their counts in the Actions summary.
+
+Missing summaries/details, install failures, unexpected exits, timeouts and doctor infrastructure errors fail the job. They are not evidence of a healthy baseline. The workflow runs comparison controls before invoking doctor. The iOS/Android generation and clean tracked-source check still run on PRs and manual runs.
+
+A daily **06:27 UTC** run on `main` checks doctor strictly, with no baseline exemptions. It skips prebuild and has a hard three-minute job timeout, including checkout, dependency installation and doctor. A failure is visible in Actions; Claude A owns the resulting `npx expo install` dependency update. Manual runs are also strict. These checks do not install or run the app on a device.
 
 None of these runs the app on a phone. Now and then (Matt asked for this), check the content on a phone:
 
