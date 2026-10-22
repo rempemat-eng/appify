@@ -705,14 +705,34 @@ function allElements(node) {
   return [node, ...[node.props?.children].flat(Infinity).flatMap(allElements)];
 }
 const geometryStart = count;
+// The existing widths stay covered at the live default. The two smaller phones
+// also run both grids; only the density setting changes, not the renderer/stubs.
+const geometryDensity = densitySettingModule.exports.ART_DENSITY;
+const geometryPlatform = deps['react-native'].Platform.OS;
+const geometryDpr = screen.dpr;
+const targetPhones = [
+  { width: 320, height: 568, dpr: 2 },
+  { width: 375, height: 667, dpr: 2 },
+];
+const geometryCases = [
+  ...[320, 390, 430, 640].map((width) => ({ width, density: geometryDensity })),
+  ...targetPhones.flatMap((phone) => [1, 2].map((density) => ({ ...phone, density }))),
+];
 for (const viewMode of ['flat', 'tilt']) {
   for (const platform of ['web', 'ios']) {
     deps['react-native'].Platform.OS = platform;
-    for (const width of [320, 390, 430, 640]) {
+    for (const { width, density, height: phoneHeight, dpr = geometryDpr } of geometryCases) {
+      densitySettingModule.exports.ART_DENSITY = density;
+      screen.dpr = dpr;
+      const context = `${viewMode}/${platform}/${width}${phoneHeight ? `x${phoneHeight}` : ''}@${screen.dpr}/density${density}`;
       worldTree = setup(false, { width, view: viewMode });
       const elements = allElements(worldTree);
       const height = worldTree.props.style.height;
       const scale = pixelScale(width, screen.dpr);
+      check(
+        scale === pixelScale(width, screen.dpr, density),
+        `${context}: real renderer reads the requested density`,
+      );
       const worldWidth = worldWidthAt(width);
       const expectedProjection = projectionModule.exports.makeProjection(
         viewMode,
@@ -724,7 +744,7 @@ for (const viewMode of ['flat', 'tilt']) {
         const target = elements.find(
           (element) => element.key === object.id && element.type === 'Pressable',
         );
-        assert.ok(target, `${platform}/${width}: ${object.id} target exists`);
+        assert.ok(target, `${context}: ${object.id} target exists`);
         const box = target.props.style;
         const art = elements.find(
           (element) => element.type === 'Image' && element.key === `${object.id}-image`,
@@ -739,14 +759,14 @@ for (const viewMode of ['flat', 'tilt']) {
         );
         check(
           box.width >= 44 && box.height >= 44,
-          `${platform}/${width}/${object.id}: target is at least 44x44`,
+          `${context}/${object.id}: target is at least 44x44`,
         );
         check(
           box.left >= 0 &&
             box.top >= 0 &&
             box.left + box.width <= worldWidth &&
             box.top + box.height <= height,
-          `${platform}/${width}/${object.id}: target stays in scene`,
+          `${context}/${object.id}: target stays in scene`,
         );
         check(
           Math.abs(
@@ -759,14 +779,14 @@ for (const viewMode of ['flat', 'tilt']) {
             ) < 1e-9 &&
             art.width === snap(viewMode === 'flat' ? object.w * scale : expectedArt.width) &&
             art.height === snap(viewMode === 'flat' ? object.h * scale : expectedArt.height),
-          `${viewMode}/${platform}/${width}/${object.id}: art follows its actual projection, preserving flat identity`,
+          `${context}/${object.id}: art follows its actual projection, preserving flat identity`,
         );
         if (split)
           check(
             box.zIndex > map.GARDEN.fenceY - 4 &&
               pointerEventsOf(elements.find((element) => element.key === `${object.id}-art`)) ===
                 'none',
-            `${platform}/${width}/${object.id}: hit area is above guardian while art stays passive`,
+            `${context}/${object.id}: hit area is above guardian while art stays passive`,
           );
       }
       const pond = find(worldTree, 'Look into the pond').props.style;
@@ -777,11 +797,179 @@ for (const viewMode of ['flat', 'tilt']) {
           pond.top >= 0 &&
           pond.left + pond.width <= worldWidth &&
           pond.top + pond.height <= height,
-        `${viewMode}/${platform}/${width}/pond: target meets size and bounds`,
+        `${context}/pond: target meets size and bounds`,
       );
     }
   }
 }
+// Render the actual optional interactions as well. The general render helper
+// intentionally has no keepsake callback/decor mode; keep those fixtures local
+// to this audit rather than broadening the harness's shared stubs.
+const targetMemories = ['rest', 'read', 'move', 'create'].map((intention) => ({
+  id: `target-${intention}`,
+  intention,
+  companion: { key: 'starter', name: 'FERN', species: 'BLOB' },
+  completedAt: 100,
+  recordedAt: 101,
+  minutes: 5,
+  mission: null,
+  early: false,
+  source: 'self-reported',
+}));
+function renderTargetExtras(width, view, decorate) {
+  setup(false, { width, view });
+  let tree;
+  let attempts = 0;
+  do {
+    dirty = false;
+    index = 0;
+    effects = [];
+    tree = mod.exports.GardenWorld({
+      width,
+      player: game.player,
+      grumpy: false,
+      sleepy: false,
+      napping: false,
+      active: true,
+      view,
+      memories: targetMemories,
+      onFeed() {},
+      onKeepsakePress() {},
+      decorate: decorate ? { onTap: () => true, preview: null } : null,
+    });
+    if (!dirty) effects.forEach((fn) => fn());
+    if (++attempts > 5) throw new Error('Target render did not settle');
+  } while (dirty);
+  return tree;
+}
+const targetSizes = new Map();
+for (const { width, height, dpr } of targetPhones) {
+  screen.dpr = dpr;
+  for (const density of [1, 2]) {
+    densitySettingModule.exports.ART_DENSITY = density;
+    for (const view of ['flat', 'tilt']) {
+      for (const platform of ['web', 'ios']) {
+        deps['react-native'].Platform.OS = platform;
+        const context = `${view}/${platform}/${width}x${height}@${dpr}/density${density}`;
+        const tree = renderTargetExtras(width, view, false);
+        const keepsakes = allElements(tree).filter((node) =>
+          node.props?.testID?.startsWith('garden-keepsake-'),
+        );
+        check(keepsakes.length === 4, `${context}: all four tappable keepsakes exist`);
+        for (const node of keepsakes) {
+          check(node.type === 'Pressable', `${context}/${node.key}: actual target`);
+          const box = flatStyle(node.props.style);
+          // RN web 0.21 does not implement hitSlop; native emits it as a planned
+          // extension. This is source geometry, not proof of native hit testing.
+          const slop = platform === 'ios' ? (node.props.hitSlop ?? 0) : 0;
+          assert.equal(typeof slop, 'number', `${context}/${node.key}: numeric hitSlop`);
+          targetSizes.set(`${context}/${node.key}`, [box.width + 2 * slop, box.height + 2 * slop]);
+        }
+        const editor = find(renderTargetExtras(width, view, true), 'Tap where the keepsake goes');
+        assert.ok(editor, `${context}: decoration editing surface exists`);
+        const box = flatStyle(editor.props.style);
+        targetSizes.set(`${context}/decor-editor`, [box.width, box.height]);
+      }
+    }
+  }
+}
+// Exact observations, not a blanket keepsake exemption. A size change, new
+// undersized target, or repaired target left in this list must fail. Claude B
+// owns the fixes; see docs/codex/touch-density-2.md for the source-only limits.
+const knownTargetFindings = {
+  'flat/web/320x568@2/density1/keepsake-rest': [16, 16],
+  'flat/web/320x568@2/density1/keepsake-read': [16, 16],
+  'flat/web/320x568@2/density1/keepsake-move': [16, 16],
+  'flat/web/320x568@2/density1/keepsake-create': [16, 16],
+  'tilt/web/320x568@2/density1/keepsake-rest': [12.5, 12.5],
+  'tilt/web/320x568@2/density1/keepsake-read': [12, 12],
+  'tilt/web/320x568@2/density1/keepsake-move': [13, 13],
+  'tilt/web/320x568@2/density1/keepsake-create': [12.5, 12.5],
+  'flat/web/320x568@2/density2/keepsake-rest': [16, 16],
+  'flat/web/320x568@2/density2/keepsake-read': [16, 16],
+  'flat/web/320x568@2/density2/keepsake-move': [16, 16],
+  'flat/web/320x568@2/density2/keepsake-create': [16, 16],
+  'tilt/web/320x568@2/density2/keepsake-rest': [12.5, 12.5],
+  'tilt/web/320x568@2/density2/keepsake-read': [12, 12],
+  'tilt/web/320x568@2/density2/keepsake-move': [13, 13],
+  'tilt/web/320x568@2/density2/keepsake-create': [12.5, 12.5],
+  'flat/web/375x667@2/density1/keepsake-rest': [24, 24],
+  'flat/web/375x667@2/density1/keepsake-read': [24, 24],
+  'flat/web/375x667@2/density1/keepsake-move': [24, 24],
+  'flat/web/375x667@2/density1/keepsake-create': [24, 24],
+  'tilt/web/375x667@2/density1/keepsake-rest': [18.5, 18.5],
+  'tilt/web/375x667@2/density1/keepsake-read': [18, 18],
+  'tilt/web/375x667@2/density1/keepsake-move': [19.5, 19.5],
+  'tilt/web/375x667@2/density1/keepsake-create': [19, 19],
+  'flat/web/375x667@2/density2/keepsake-rest': [16, 16],
+  'flat/web/375x667@2/density2/keepsake-read': [16, 16],
+  'flat/web/375x667@2/density2/keepsake-move': [16, 16],
+  'flat/web/375x667@2/density2/keepsake-create': [16, 16],
+  'tilt/web/375x667@2/density2/keepsake-rest': [12.5, 12.5],
+  'tilt/web/375x667@2/density2/keepsake-read': [12, 12],
+  'tilt/web/375x667@2/density2/keepsake-move': [13, 13],
+  'tilt/web/375x667@2/density2/keepsake-create': [12.5, 12.5],
+};
+function assertTargetFindings(sizes, known) {
+  const failures = new Map();
+  for (const [id, size] of sizes) {
+    assert.ok(
+      size.length === 2 && size.every((n) => Number.isFinite(n) && n > 0),
+      `${id}: valid size`,
+    );
+    if (size.every((n) => n >= 44)) continue;
+    failures.set(id, size);
+    assert.ok(Object.hasOwn(known, id), `Unregistered undersized target: ${id} ${size.join('x')}`);
+    assert.deepEqual(size, known[id], `Known target size changed: ${id}`);
+  }
+  for (const id of Object.keys(known)) {
+    assert.ok(failures.has(id), `Stale target finding (fixed or missing): ${id}`);
+  }
+}
+assertTargetFindings(targetSizes, knownTargetFindings);
+// Exercise the real validator with measured failures: deleting an entry cannot
+// turn this into a green audit. Neither new failures nor stale baselines pass.
+// Once all findings are fixed, retain validator controls with a synthetic case
+// rather than requiring an obsolete entry in the live registry.
+const firstFinding = Object.keys(knownTargetFindings)[0] ?? 'control-target';
+const controlSizes = Object.keys(knownTargetFindings).length
+  ? targetSizes
+  : new Map([[firstFinding, [16, 16]]]);
+const controlFindings = Object.keys(knownTargetFindings).length
+  ? knownTargetFindings
+  : { [firstFinding]: [16, 16] };
+const missingFinding = { ...controlFindings };
+delete missingFinding[firstFinding];
+assert.throws(
+  () => assertTargetFindings(controlSizes, missingFinding),
+  /Unregistered undersized target/,
+);
+assert.throws(
+  () =>
+    assertTargetFindings(new Map([...targetSizes, ['new-target', [43, 44]]]), knownTargetFindings),
+  /Unregistered undersized target: new-target/,
+);
+assert.throws(
+  () => assertTargetFindings(new Map([...controlSizes, [firstFinding, [44, 44]]]), controlFindings),
+  /Stale target finding/,
+);
+assert.throws(
+  () =>
+    assertTargetFindings(
+      new Map([
+        ...controlSizes,
+        [firstFinding, [controlFindings[firstFinding][0] + 0.5, controlFindings[firstFinding][1]]],
+      ]),
+      controlFindings,
+    ),
+  /Known target size changed/,
+);
+console.log(
+  `Touch audit: ${targetSizes.size} optional target cases, ${Object.keys(knownTargetFindings).length} exact known web findings; registry controls passed.`,
+);
+densitySettingModule.exports.ART_DENSITY = geometryDensity;
+deps['react-native'].Platform.OS = geometryPlatform;
+screen.dpr = geometryDpr;
 const geometryChecks = count - geometryStart;
 
 // Independent BFS over the actual generated map, using the same no-corner rule.
