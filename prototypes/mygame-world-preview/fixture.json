@@ -1,0 +1,267 @@
+{
+  "plane": "continent",
+  "origin": [
+    144,
+    1500
+  ],
+  "size": [
+    480,
+    270
+  ],
+  "background": "world/ground.png",
+  "props": [
+    {
+      "id": "hollow:fir-10",
+      "asset": "world/pine.png",
+      "x": 280,
+      "y": 1451,
+      "w": 36,
+      "h": 77
+    },
+    {
+      "id": "hollow:log",
+      "asset": "world/mossy_log.png",
+      "x": 117,
+      "y": 1547,
+      "w": 54,
+      "h": 16
+    },
+    {
+      "id": "hollow:stump",
+      "asset": "world/stump.png",
+      "x": 182,
+      "y": 1550,
+      "w": 21,
+      "h": 16
+    },
+    {
+      "id": "hollow:mush",
+      "asset": "world/mushroom_ring.png",
+      "x": 133,
+      "y": 1572,
+      "w": 41,
+      "h": 20
+    },
+    {
+      "id": "hollow:fir-3",
+      "asset": "world/pine.png",
+      "x": 212,
+      "y": 1581,
+      "w": 36,
+      "h": 77
+    },
+    {
+      "id": "hollow:fir-9",
+      "asset": "world/pine.png",
+      "x": 152,
+      "y": 1601,
+      "w": 36,
+      "h": 77
+    },
+    {
+      "id": "woodland:pine-7",
+      "asset": "world/pine.png",
+      "x": 110,
+      "y": 1683,
+      "w": 36,
+      "h": 77
+    },
+    {
+      "id": "woodland:bush-3",
+      "asset": "world/bush.png",
+      "x": 160,
+      "y": 1766,
+      "w": 32,
+      "h": 25
+    },
+    {
+      "id": "woodland:tree-2",
+      "asset": "world/oak.png",
+      "x": 199,
+      "y": 1713,
+      "w": 65,
+      "h": 78
+    },
+    {
+      "id": "ridge:cairn-1",
+      "asset": "world/cairn.png",
+      "x": 420,
+      "y": 1513,
+      "w": 20,
+      "h": 32
+    },
+    {
+      "id": "ridge:boulder-1",
+      "asset": "world/boulder.png",
+      "x": 340,
+      "y": 1583,
+      "w": 36,
+      "h": 25
+    },
+    {
+      "id": "ridge:pine-m1",
+      "asset": "world/pine.png",
+      "x": 334,
+      "y": 1543,
+      "w": 36,
+      "h": 77
+    },
+    {
+      "id": "hollow:fir-8",
+      "asset": "world/pine.png",
+      "x": 262,
+      "y": 1571,
+      "w": 36,
+      "h": 77
+    },
+    {
+      "id": "ridge:pine-b7",
+      "asset": "world/pine.png",
+      "x": 338,
+      "y": 1587,
+      "w": 36,
+      "h": 77
+    },
+    {
+      "id": "hollow:fir-4",
+      "asset": "world/pine.png",
+      "x": 262,
+      "y": 1591,
+      "w": 36,
+      "h": 77
+    },
+    {
+      "id": "ridge:pine-b3",
+      "asset": "world/pine.png",
+      "x": 390,
+      "y": 1615,
+      "w": 36,
+      "h": 77
+    },
+    {
+      "id": "ridge:pine-b1",
+      "asset": "world/pine.png",
+      "x": 320,
+      "y": 1631,
+      "w": 36,
+      "h": 77
+    },
+    {
+      "id": "ridge:pine-b2",
+      "asset": "world/pine.png",
+      "x": 354,
+      "y": 1645,
+      "w": 36,
+      "h": 77
+    },
+    {
+      "id": "woodland:pine-2",
+      "asset": "world/pine.png",
+      "x": 250,
+      "y": 1691,
+      "w": 36,
+      "h": 77
+    },
+    {
+      "id": "ridge:cotton-1",
+      "asset": "world/cotton_grass.png",
+      "x": 517,
+      "y": 1531,
+      "w": 11,
+      "h": 16
+    },
+    {
+      "id": "ridge:cotton-2",
+      "asset": "world/cotton_grass.png",
+      "x": 591,
+      "y": 1549,
+      "w": 11,
+      "h": 16
+    },
+    {
+      "id": "ridge:cotton-3",
+      "asset": "world/cotton_grass.png",
+      "x": 531,
+      "y": 1569,
+      "w": 11,
+      "h": 16
+    },
+    {
+      "id": "ridge:stone-1",
+      "asset": "world/stone.png",
+      "x": 599,
+      "y": 1623,
+      "w": 21,
+      "h": 13
+    },
+    {
+      "id": "ridge:pine-b8",
+      "asset": "world/pine.png",
+      "x": 572,
+      "y": 1567,
+      "w": 36,
+      "h": 77
+    },
+    {
+      "id": "ridge:marmot",
+      "asset": "world/marmot_rock.png",
+      "x": 541,
+      "y": 1621,
+      "w": 26,
+      "h": 26
+    },
+    {
+      "id": "ridge:pine-b6",
+      "asset": "world/pine.png",
+      "x": 604,
+      "y": 1577,
+      "w": 36,
+      "h": 77
+    },
+    {
+      "id": "ridge:pine-m2",
+      "asset": "world/pine.png",
+      "x": 590,
+      "y": 1591,
+      "w": 36,
+      "h": 77
+    },
+    {
+      "id": "ridge:pine-b5",
+      "asset": "world/pine.png",
+      "x": 590,
+      "y": 1619,
+      "w": 36,
+      "h": 77
+    },
+    {
+      "id": "ridge:pine-b4",
+      "asset": "world/pine.png",
+      "x": 558,
+      "y": 1639,
+      "w": 36,
+      "h": 77
+    },
+    {
+      "id": "woodland:wood-4",
+      "asset": "world/oak.png",
+      "x": 174,
+      "y": 1747,
+      "w": 65,
+      "h": 78
+    },
+    {
+      "id": "woodland:oak",
+      "asset": "world/hollow_tree.png",
+      "x": 74,
+      "y": 1759,
+      "w": 71,
+      "h": 100
+    }
+  ],
+  "logicalTexels": [
+    960,
+    540
+  ],
+  "assetPixelsPerWorldPixel": 2
+}

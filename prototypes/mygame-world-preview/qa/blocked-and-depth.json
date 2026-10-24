@@ -1,0 +1,29 @@
+{
+  "errors": [],
+  "blockedAttempt": {
+    "before": {
+      "x": 378,
+      "y": 1602
+    },
+    "stopped": {
+      "x": 376,
+      "y": 1602
+    },
+    "continuedInput": {
+      "x": 376,
+      "y": 1602
+    },
+    "currentWalkable": true,
+    "nextWestCandidateWalkable": false
+  },
+  "depthCrossover": {
+    "north": {
+      "x": 378,
+      "y": 1602
+    },
+    "south": {
+      "x": 378,
+      "y": 1681.9959999999928
+    }
+  }
+}

@@ -1,0 +1,223 @@
+{
+  "worldSourceRevision": "716c4be83ec6c96b03a546a4e3408daf05772bb5",
+  "worldSourceSha256": "e47a487e99be5596b725e54be32c903fe99a5e320d8b5f1c4afa7992c9736efe",
+  "manifests": [
+    {
+      "path": "assets/animated/ashe/manifest.json",
+      "sha256": "581edcf1f8e8f5864931e7fe7b9e4197995ccfbf7665ed085e25a2299417a55b"
+    },
+    {
+      "path": "assets/animated/bramble/e/manifest.json",
+      "sha256": "e502699865974fc02ef7a43e48b3145a33168f07910c6ebef003edafd0f65e05"
+    },
+    {
+      "path": "assets/animated/brine/e/manifest.json",
+      "sha256": "cf56b0e696ede3d6939cdac879bec52ca203d812cec31c05a9a6a28b175a439c"
+    },
+    {
+      "path": "assets/animated/cairn/e/manifest.json",
+      "sha256": "303aad1d794c86ab2e7602a3fe2ccfc15f58f5f7baf453081f51ada8e48c5e0a"
+    },
+    {
+      "path": "assets/animated/clack/e/manifest.json",
+      "sha256": "81e60bcb29f4eae1aa9a583dc39f009502b892e55f2b7d047646e76d34fd659f"
+    },
+    {
+      "path": "assets/animated/iona/e/manifest.json",
+      "sha256": "003b7698b8d9205e12045ee7b2432e9b0270c6e3cf55558b6fea6ca6e18d1fe2"
+    },
+    {
+      "path": "assets/animated/mirra/e/manifest.json",
+      "sha256": "96c734e4c03635dcaf056912dbfe48976cfaf441a692b1847204cdd7a0e86b8e"
+    },
+    {
+      "path": "assets/animated/morel/e/manifest.json",
+      "sha256": "01f66caa55608c9c261e278cafe4889655a6630b3caa032eb45b8a9b28e6dcfd"
+    },
+    {
+      "path": "assets/animated/mote/e/manifest.json",
+      "sha256": "4af799f0601f0975580b58de506b958eadec346bf14e74813e93fc9b4d2fb500"
+    },
+    {
+      "path": "assets/animated/nix/e/manifest.json",
+      "sha256": "e75c19fb69844f66c83a9fb355d3e50c0c1f7f2901fb1b1f55b36743b611c97d"
+    },
+    {
+      "path": "assets/animated/pendle/e/manifest.json",
+      "sha256": "e7fe0884a3727c3b2d1d78f8fc1fcce77ac20b967f6bd7861b8f3c4daa4b090f"
+    },
+    {
+      "path": "assets/animated/rook/e/manifest.json",
+      "sha256": "540dcc33e316f50b383c6134b8a49a6098e0bf506cabc5964760414ff80973e1"
+    },
+    {
+      "path": "assets/animated/tam/e/manifest.json",
+      "sha256": "5076c15dd7663047f1e027386fa93f602e61375a5080483e7ac56285d4acf49b"
+    },
+    {
+      "path": "assets/animated/velvet/e/manifest.json",
+      "sha256": "feffa09a11b8b3bbfbd3393b3a6356c27b5eb957b90521b972e3e34158ea29b8"
+    }
+  ],
+  "selectedViews": [
+    {
+      "id": "ashe",
+      "view": "E",
+      "path": "assets/animated/ashe/manifest.json",
+      "policy": "legacy root E fallback"
+    },
+    {
+      "id": "bramble",
+      "view": "E",
+      "path": "assets/animated/bramble/e/manifest.json",
+      "policy": "v4 drawn view",
+      "status": "partial",
+      "missingClips": [
+        "powered_hit",
+        "powered_defeat",
+        "powered_dodge"
+      ]
+    },
+    {
+      "id": "brine",
+      "view": "E",
+      "path": "assets/animated/brine/e/manifest.json",
+      "policy": "v4 drawn view",
+      "status": "partial",
+      "missingClips": [
+        "secondary_empty",
+        "powered_secondary_empty"
+      ]
+    },
+    {
+      "id": "cairn",
+      "view": "E",
+      "path": "assets/animated/cairn/e/manifest.json",
+      "policy": "v4 drawn view",
+      "status": "partial",
+      "missingClips": [
+        "powered_defeat"
+      ]
+    },
+    {
+      "id": "clack",
+      "view": "E",
+      "path": "assets/animated/clack/e/manifest.json",
+      "policy": "v4 drawn view",
+      "status": "anchor_review_pending",
+      "missingClips": []
+    },
+    {
+      "id": "iona",
+      "view": "E",
+      "path": "assets/animated/iona/e/manifest.json",
+      "policy": "v4 drawn view",
+      "status": "partial",
+      "missingClips": [
+        "powered_secondary",
+        "powered_hit",
+        "powered_defeat",
+        "powered_jump",
+        "powered_stair_up",
+        "powered_stair_down",
+        "powered_dodge"
+      ]
+    },
+    {
+      "id": "mirra",
+      "view": "E",
+      "path": "assets/animated/mirra/e/manifest.json",
+      "policy": "v4 drawn view",
+      "status": "partial",
+      "missingClips": [
+        "powered_secondary",
+        "powered_hit",
+        "powered_defeat",
+        "powered_jump",
+        "powered_stair_up",
+        "powered_stair_down",
+        "powered_dodge"
+      ]
+    },
+    {
+      "id": "morel",
+      "view": "E",
+      "path": "assets/animated/morel/e/manifest.json",
+      "policy": "v4 drawn view",
+      "status": "anchor_review_pending",
+      "missingClips": []
+    },
+    {
+      "id": "mote",
+      "view": "E",
+      "path": "assets/animated/mote/e/manifest.json",
+      "policy": "v4 drawn view",
+      "status": "anchor_review_pending",
+      "missingClips": []
+    },
+    {
+      "id": "nix",
+      "view": "E",
+      "path": "assets/animated/nix/e/manifest.json",
+      "policy": "v4 drawn view",
+      "status": "partial",
+      "missingClips": [
+        "powered_secondary"
+      ]
+    },
+    {
+      "id": "pendle",
+      "view": "E",
+      "path": "assets/animated/pendle/e/manifest.json",
+      "policy": "v4 drawn view",
+      "status": "partial",
+      "missingClips": [
+        "powered_secondary",
+        "powered_hit",
+        "powered_defeat",
+        "powered_jump",
+        "powered_stair_up",
+        "powered_stair_down",
+        "powered_dodge"
+      ]
+    },
+    {
+      "id": "rook",
+      "view": "E",
+      "path": "assets/animated/rook/e/manifest.json",
+      "policy": "v4 drawn view",
+      "status": "partial",
+      "missingClips": [
+        "air_primary",
+        "powered_air_primary"
+      ]
+    },
+    {
+      "id": "tam",
+      "view": "E",
+      "path": "assets/animated/tam/e/manifest.json",
+      "policy": "v4 drawn view",
+      "status": "anchor_review_pending",
+      "missingClips": []
+    },
+    {
+      "id": "velvet",
+      "view": "E",
+      "path": "assets/animated/velvet/e/manifest.json",
+      "policy": "v4 drawn view",
+      "status": "partial",
+      "missingClips": [
+        "powered_counter"
+      ]
+    }
+  ],
+  "studioRoster": {
+    "file": "studio-roster.json",
+    "sha256": "529a5ac521ca0e7c562676a4c72a233f181c636b77b1996c3c6dddb09cba6921",
+    "policy": "Original view status and missing_clips retained verbatim"
+  },
+  "characters": 14,
+  "atlases": 304,
+  "directionPolicy": "Only drawn views; no mirroring or relabelled facings",
+  "worldIntegration": "Existing-map render fixture and AtlasWalk scene node; production actor API not connected"
+}
