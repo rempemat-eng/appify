@@ -1,0 +1,63 @@
+{
+  "coordinate_space": "logical sprite pixels relative to foot_pivot, ynegativeabovefoot; visually measured on final packed PNG, tolerance about3pixels",
+  "anchors": {
+    "morel": {
+      "primary": {
+        "release_frame": 8,
+        "release_anchor": [
+          34,
+          -87
+        ],
+        "evidence": "primary-08.png openpalmcentre(130,85), projectile leaves same visible nearhand overhead"
+      },
+      "secondary": {
+        "release_frame": 4,
+        "release_anchor": [
+          48,
+          -64
+        ],
+        "evidence": "secondary-04.png blue nozzle mouth(144,108)"
+      },
+      "powered_primary": {
+        "release_frame": 4,
+        "release_anchor": [
+          33,
+          -86
+        ],
+        "evidence": "powered_primary-04.png masked throw openpalmcentre(129,86)"
+      }
+    },
+    "velvet": {
+      "primary": {
+        "release_frame": 8,
+        "release_anchor": [
+          86,
+          -65
+        ],
+        "contact_reach": 86,
+        "evidence": "primary-08.png grey sabre tip(182,107), one blade and lantern, RGBA metal pixels measured."
+      },
+      "secondary": {
+        "release_frame": 4,
+        "release_anchor": [
+          -40,
+          -73
+        ],
+        "evidence": "secondary-04.png raised black lantern pane centre(56,99), screenleft of foot."
+      },
+      "powered_primary": {
+        "release_frame": 4,
+        "release_anchor": [
+          73,
+          -64
+        ],
+        "contact_reach": 73,
+        "evidence": "powered_primary-04.png selected third-arm-free repair, grey tip(169,108)."
+      }
+    }
+  },
+  "counts": {
+    "morel": 152,
+    "velvet": 151
+  }
+}

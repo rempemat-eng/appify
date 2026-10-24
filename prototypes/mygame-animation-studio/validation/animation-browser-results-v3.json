@@ -1,0 +1,3894 @@
+{
+  "mode": "full",
+  "pckSha256": "5678a71d372b47ea46527696e4d4238d3d56045e705db67ee4d65c93e7ab130a",
+  "passed": 274,
+  "checks": [
+    "all fourteen resources load",
+    "initial camera is unrotated and has no offset",
+    "actual canvas blur suspends without drift",
+    "refocus clears held movement",
+    "focus preserves camera",
+    "pause freezes drawing and position",
+    "paused frame controls step both ways",
+    "playback speed toggles and returns",
+    "inspector opens and closes",
+    "canvas loop control repeats and stops clip",
+    "review controls preserve camera",
+    "bramble resource selects",
+    "bramble / idle plays",
+    "bramble / walk plays",
+    "bramble / primary plays and completes",
+    "bramble / secondary plays and completes",
+    "bramble / special plays and completes",
+    "bramble / guard plays and completes",
+    "bramble / hit plays and completes",
+    "bramble / defeat plays and completes",
+    "bramble / jump plays and completes",
+    "bramble / stair_up plays",
+    "bramble / stair_down plays",
+    "bramble / dodge plays and completes",
+    "bramble / powered_idle plays",
+    "bramble / powered_walk plays",
+    "bramble / powered_primary plays and completes",
+    "bramble / powered_guard plays and completes",
+    "bramble / powered_exit plays and completes",
+    "morel resource selects",
+    "morel / idle plays",
+    "morel / walk plays",
+    "morel / primary plays and completes",
+    "morel / secondary plays and completes",
+    "morel / special plays and completes",
+    "morel / guard plays and completes",
+    "morel / hit plays and completes",
+    "morel / defeat plays and completes",
+    "morel / jump plays and completes",
+    "morel / stair_up plays",
+    "morel / stair_down plays",
+    "morel / dodge plays and completes",
+    "morel / powered_idle plays",
+    "morel / powered_walk plays",
+    "morel / powered_primary plays and completes",
+    "morel / powered_guard plays and completes",
+    "morel / powered_exit plays and completes",
+    "velvet resource selects",
+    "velvet / idle plays",
+    "velvet / walk plays",
+    "velvet / primary plays and completes",
+    "velvet / secondary plays and completes",
+    "velvet / special plays and completes",
+    "velvet / guard plays and completes",
+    "velvet / hit plays and completes",
+    "velvet / defeat plays and completes",
+    "velvet / jump plays and completes",
+    "velvet / stair_up plays",
+    "velvet / stair_down plays",
+    "velvet / dodge plays and completes",
+    "velvet / powered_idle plays",
+    "velvet / powered_walk plays",
+    "velvet / powered_primary plays and completes",
+    "velvet / powered_guard plays and completes",
+    "velvet / powered_exit plays and completes",
+    "cairn resource selects",
+    "cairn / idle plays",
+    "cairn / walk plays",
+    "cairn / primary plays and completes",
+    "cairn / secondary plays and completes",
+    "cairn / special plays and completes",
+    "cairn / guard plays and completes",
+    "cairn / hit plays and completes",
+    "cairn / defeat plays and completes",
+    "cairn / jump plays and completes",
+    "cairn / stair_up plays",
+    "cairn / stair_down plays",
+    "cairn / dodge plays and completes",
+    "cairn / powered_idle plays",
+    "cairn / powered_walk plays",
+    "cairn / powered_primary plays and completes",
+    "cairn / powered_guard plays and completes",
+    "cairn / powered_exit plays and completes",
+    "iona resource selects",
+    "iona / idle plays",
+    "iona / walk plays",
+    "iona / primary plays and completes",
+    "iona / secondary plays and completes",
+    "iona / special plays and completes",
+    "iona / guard plays and completes",
+    "iona / hit plays and completes",
+    "iona / defeat plays and completes",
+    "iona / jump plays and completes",
+    "iona / stair_up plays",
+    "iona / stair_down plays",
+    "iona / dodge plays and completes",
+    "iona / powered_idle plays",
+    "iona / powered_walk plays",
+    "iona / powered_primary plays and completes",
+    "iona / powered_guard plays and completes",
+    "iona / powered_exit plays and completes",
+    "tam resource selects",
+    "tam / idle plays",
+    "tam / walk plays",
+    "tam / primary plays and completes",
+    "tam / secondary plays and completes",
+    "tam / special plays and completes",
+    "tam / guard plays and completes",
+    "tam / hit plays and completes",
+    "tam / defeat plays and completes",
+    "tam / jump plays and completes",
+    "tam / stair_up plays",
+    "tam / stair_down plays",
+    "tam / dodge plays and completes",
+    "tam / powered_idle plays",
+    "tam / powered_walk plays",
+    "tam / powered_primary plays and completes",
+    "tam / powered_guard plays and completes",
+    "tam / powered_exit plays and completes",
+    "brine resource selects",
+    "brine / idle plays",
+    "brine / walk plays",
+    "brine / primary plays and completes",
+    "brine / secondary plays and completes",
+    "brine / special plays and completes",
+    "brine / guard plays and completes",
+    "brine / hit plays and completes",
+    "brine / defeat plays and completes",
+    "brine / jump plays and completes",
+    "brine / stair_up plays",
+    "brine / stair_down plays",
+    "brine / dodge plays and completes",
+    "brine / powered_idle plays",
+    "brine / powered_walk plays",
+    "brine / powered_primary plays and completes",
+    "brine / powered_guard plays and completes",
+    "brine / powered_exit plays and completes",
+    "pendle resource selects",
+    "pendle / idle plays",
+    "pendle / walk plays",
+    "pendle / primary plays and completes",
+    "pendle / secondary plays and completes",
+    "pendle / special plays and completes",
+    "pendle / guard plays and completes",
+    "pendle / hit plays and completes",
+    "pendle / defeat plays and completes",
+    "pendle / jump plays and completes",
+    "pendle / stair_up plays",
+    "pendle / stair_down plays",
+    "pendle / dodge plays and completes",
+    "pendle / powered_idle plays",
+    "pendle / powered_walk plays",
+    "pendle / powered_primary plays and completes",
+    "pendle / powered_guard plays and completes",
+    "pendle / powered_exit plays and completes",
+    "pendle / reload plays and completes",
+    "mirra resource selects",
+    "mirra / idle plays",
+    "mirra / walk plays",
+    "mirra / primary plays and completes",
+    "mirra / secondary plays and completes",
+    "mirra / special plays and completes",
+    "mirra / guard plays and completes",
+    "mirra / hit plays and completes",
+    "mirra / defeat plays and completes",
+    "mirra / jump plays and completes",
+    "mirra / stair_up plays",
+    "mirra / stair_down plays",
+    "mirra / dodge plays and completes",
+    "mirra / powered_idle plays",
+    "mirra / powered_walk plays",
+    "mirra / powered_primary plays and completes",
+    "mirra / powered_guard plays and completes",
+    "mirra / powered_exit plays and completes",
+    "ashe resource selects",
+    "ashe / idle plays",
+    "ashe / walk plays",
+    "ashe / primary plays and completes",
+    "ashe / secondary plays and completes",
+    "ashe / special plays and completes",
+    "ashe / guard plays and completes",
+    "ashe / hit plays and completes",
+    "ashe / defeat plays and completes",
+    "ashe / jump plays and completes",
+    "ashe / stair_up plays",
+    "ashe / stair_down plays",
+    "ashe / dodge plays and completes",
+    "ashe / powered_idle plays",
+    "ashe / powered_walk plays",
+    "ashe / powered_primary plays and completes",
+    "ashe / powered_guard plays and completes",
+    "ashe / powered_exit plays and completes",
+    "clack resource selects",
+    "clack / idle plays",
+    "clack / walk plays",
+    "clack / primary plays and completes",
+    "clack / secondary plays and completes",
+    "clack / special plays and completes",
+    "clack / guard plays and completes",
+    "clack / hit plays and completes",
+    "clack / defeat plays and completes",
+    "clack / jump plays and completes",
+    "clack / stair_up plays",
+    "clack / stair_down plays",
+    "clack / dodge plays and completes",
+    "clack / powered_idle plays",
+    "clack / powered_walk plays",
+    "clack / powered_primary plays and completes",
+    "clack / powered_guard plays and completes",
+    "clack / powered_exit plays and completes",
+    "nix resource selects",
+    "nix / idle plays",
+    "nix / walk plays",
+    "nix / primary plays and completes",
+    "nix / secondary plays and completes",
+    "nix / special plays and completes",
+    "nix / guard plays and completes",
+    "nix / hit plays and completes",
+    "nix / defeat plays and completes",
+    "nix / jump plays and completes",
+    "nix / stair_up plays",
+    "nix / stair_down plays",
+    "nix / dodge plays and completes",
+    "nix / powered_idle plays",
+    "nix / powered_walk plays",
+    "nix / powered_primary plays and completes",
+    "nix / powered_guard plays and completes",
+    "nix / powered_exit plays and completes",
+    "rook resource selects",
+    "rook / idle plays",
+    "rook / walk plays",
+    "rook / primary plays and completes",
+    "rook / secondary plays and completes",
+    "rook / special plays and completes",
+    "rook / guard plays and completes",
+    "rook / hit plays and completes",
+    "rook / defeat plays and completes",
+    "rook / jump plays and completes",
+    "rook / stair_up plays",
+    "rook / stair_down plays",
+    "rook / dodge plays and completes",
+    "rook / powered_idle plays",
+    "rook / powered_walk plays",
+    "rook / powered_primary plays and completes",
+    "rook / powered_guard plays and completes",
+    "rook / powered_exit plays and completes",
+    "mote resource selects",
+    "mote / idle plays",
+    "mote / walk plays",
+    "mote / primary plays and completes",
+    "mote / secondary plays and completes",
+    "mote / special plays and completes",
+    "mote / guard plays and completes",
+    "mote / hit plays and completes",
+    "mote / defeat plays and completes",
+    "mote / jump plays and completes",
+    "mote / stair_up plays",
+    "mote / stair_down plays",
+    "mote / dodge plays and completes",
+    "mote / powered_idle plays",
+    "mote / powered_walk plays",
+    "mote / powered_primary plays and completes",
+    "mote / powered_guard plays and completes",
+    "mote / powered_exit plays and completes",
+    "all239 character/clip combinations exercised",
+    "all roster clips preserve camera",
+    "Nix primary releases once and hits actual first target",
+    "Afterimage captures activation origin and stays there",
+    "Cairn releases once and strikes reachable target",
+    "held guard enters and releases cleanly",
+    "practice combat preserves camera",
+    "demonstration advances and returns control",
+    "all sampled camera transforms are fixed",
+    "no browser or Godot runtime errors"
+  ],
+  "coverage": [
+    {
+      "id": "bramble",
+      "clip": "idle",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.233333333333333,
+      "completedOneShot": false,
+      "observedFrames": [
+        2,
+        0,
+        1,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "bramble",
+      "clip": "walk",
+      "frameCount": 16,
+      "reachedFrame": 1,
+      "clock": 0.05,
+      "completedOneShot": false,
+      "observedFrames": [
+        1,
+        4,
+        5,
+        8,
+        10,
+        11,
+        3,
+        6,
+        9,
+        12,
+        14,
+        0,
+        2,
+        7
+      ]
+    },
+    {
+      "id": "bramble",
+      "clip": "primary",
+      "frameCount": 16,
+      "reachedFrame": 15,
+      "clock": 0.633333333333334,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        4,
+        6,
+        8,
+        12,
+        14,
+        3,
+        15
+      ]
+    },
+    {
+      "id": "bramble",
+      "clip": "secondary",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.516666666666667,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        5,
+        7
+      ]
+    },
+    {
+      "id": "bramble",
+      "clip": "special",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.666666666666667,
+      "completedOneShot": true,
+      "observedFrames": [
+        0,
+        1,
+        3,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "bramble",
+      "clip": "guard",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.666666666666667,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "bramble",
+      "clip": "hit",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.766666666666667,
+      "completedOneShot": true,
+      "observedFrames": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "bramble",
+      "clip": "defeat",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 1.03333333333333,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "bramble",
+      "clip": "jump",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.65,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "bramble",
+      "clip": "stair_up",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.1,
+      "completedOneShot": false,
+      "observedFrames": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": "bramble",
+      "clip": "stair_down",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.133333333333333,
+      "completedOneShot": false,
+      "observedFrames": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "bramble",
+      "clip": "dodge",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.495000001043081,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        3,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "bramble",
+      "clip": "powered_idle",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.283333333333333,
+      "completedOneShot": false,
+      "observedFrames": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "bramble",
+      "clip": "powered_walk",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.1,
+      "completedOneShot": false,
+      "observedFrames": [
+        1
+      ]
+    },
+    {
+      "id": "bramble",
+      "clip": "powered_primary",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.533333333333333,
+      "completedOneShot": true,
+      "observedFrames": [
+        0,
+        2,
+        3,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "bramble",
+      "clip": "powered_guard",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.666666666666667,
+      "completedOneShot": true,
+      "observedFrames": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "bramble",
+      "clip": "powered_exit",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.733333333333334,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "morel",
+      "clip": "idle",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.3,
+      "completedOneShot": false,
+      "observedFrames": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "morel",
+      "clip": "walk",
+      "frameCount": 16,
+      "reachedFrame": 1,
+      "clock": 0.0833333333333333,
+      "completedOneShot": false,
+      "observedFrames": [
+        1,
+        4,
+        2,
+        6
+      ]
+    },
+    {
+      "id": "morel",
+      "clip": "primary",
+      "frameCount": 16,
+      "reachedFrame": 15,
+      "clock": 0.640000000596046,
+      "completedOneShot": true,
+      "observedFrames": [
+        2,
+        5,
+        7,
+        10,
+        13,
+        14,
+        15
+      ]
+    },
+    {
+      "id": "morel",
+      "clip": "secondary",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.55,
+      "completedOneShot": true,
+      "observedFrames": [
+        0,
+        2,
+        3,
+        4,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "morel",
+      "clip": "special",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.700000000000001,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "morel",
+      "clip": "guard",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.666666666666667,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "morel",
+      "clip": "hit",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.800000000000001,
+      "completedOneShot": true,
+      "observedFrames": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "morel",
+      "clip": "defeat",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 1.01666666666667,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "morel",
+      "clip": "jump",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.633333333333334,
+      "completedOneShot": true,
+      "observedFrames": [
+        0,
+        1,
+        3,
+        4,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "morel",
+      "clip": "stair_up",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.15,
+      "completedOneShot": false,
+      "observedFrames": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "morel",
+      "clip": "stair_down",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.133333333333333,
+      "completedOneShot": false,
+      "observedFrames": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": "morel",
+      "clip": "dodge",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.416666666666667,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        4,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "morel",
+      "clip": "powered_idle",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.283333333333333,
+      "completedOneShot": false,
+      "observedFrames": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "morel",
+      "clip": "powered_walk",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.1,
+      "completedOneShot": false,
+      "observedFrames": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": "morel",
+      "clip": "powered_primary",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.533333333333333,
+      "completedOneShot": true,
+      "observedFrames": [
+        0,
+        2,
+        3,
+        4,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "morel",
+      "clip": "powered_guard",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.583333333333333,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "morel",
+      "clip": "powered_exit",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.800000000000001,
+      "completedOneShot": true,
+      "observedFrames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "velvet",
+      "clip": "idle",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.266666666666667,
+      "completedOneShot": false,
+      "observedFrames": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "velvet",
+      "clip": "walk",
+      "frameCount": 16,
+      "reachedFrame": 2,
+      "clock": 0.1,
+      "completedOneShot": false,
+      "observedFrames": [
+        2,
+        4,
+        5,
+        8
+      ]
+    },
+    {
+      "id": "velvet",
+      "clip": "primary",
+      "frameCount": 16,
+      "reachedFrame": 15,
+      "clock": 0.616666666666667,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        4,
+        6,
+        8,
+        12,
+        14,
+        15
+      ]
+    },
+    {
+      "id": "velvet",
+      "clip": "secondary",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.6,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "velvet",
+      "clip": "special",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.716666666666667,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "velvet",
+      "clip": "guard",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.583333333333333,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "velvet",
+      "clip": "hit",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.783333333333334,
+      "completedOneShot": true,
+      "observedFrames": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "velvet",
+      "clip": "defeat",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 1.01666666666667,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "velvet",
+      "clip": "jump",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.6,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        7
+      ]
+    },
+    {
+      "id": "velvet",
+      "clip": "stair_up",
+      "frameCount": 8,
+      "reachedFrame": 2,
+      "clock": 0.183333333333333,
+      "completedOneShot": false,
+      "observedFrames": [
+        0,
+        2,
+        3
+      ]
+    },
+    {
+      "id": "velvet",
+      "clip": "stair_down",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.116666666666667,
+      "completedOneShot": false,
+      "observedFrames": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": "velvet",
+      "clip": "dodge",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.466666666666667,
+      "completedOneShot": true,
+      "observedFrames": [
+        0,
+        3,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "velvet",
+      "clip": "powered_idle",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.216666666666667,
+      "completedOneShot": false,
+      "observedFrames": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "velvet",
+      "clip": "powered_walk",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.1,
+      "completedOneShot": false,
+      "observedFrames": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": "velvet",
+      "clip": "powered_primary",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.55,
+      "completedOneShot": true,
+      "observedFrames": [
+        0,
+        2,
+        3,
+        4,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "velvet",
+      "clip": "powered_guard",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.583333333333333,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "velvet",
+      "clip": "powered_exit",
+      "frameCount": 7,
+      "reachedFrame": 6,
+      "clock": 0.716666666666667,
+      "completedOneShot": true,
+      "observedFrames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ]
+    },
+    {
+      "id": "cairn",
+      "clip": "idle",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.316666666666667,
+      "completedOneShot": false,
+      "observedFrames": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "cairn",
+      "clip": "walk",
+      "frameCount": 16,
+      "reachedFrame": 2,
+      "clock": 0.15,
+      "completedOneShot": false,
+      "observedFrames": [
+        0,
+        2,
+        3,
+        1,
+        5,
+        6
+      ]
+    },
+    {
+      "id": "cairn",
+      "clip": "primary",
+      "frameCount": 16,
+      "reachedFrame": 15,
+      "clock": 1.13333333333333,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        3,
+        4,
+        6,
+        7,
+        8,
+        11,
+        12,
+        13,
+        14,
+        15,
+        2,
+        5,
+        9
+      ]
+    },
+    {
+      "id": "cairn",
+      "clip": "secondary",
+      "frameCount": 16,
+      "reachedFrame": 15,
+      "clock": 1.08333333333333,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        3,
+        5,
+        6,
+        7,
+        10,
+        11,
+        13,
+        14,
+        15
+      ]
+    },
+    {
+      "id": "cairn",
+      "clip": "special",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.65,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "cairn",
+      "clip": "guard",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.65,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "cairn",
+      "clip": "hit",
+      "frameCount": 4,
+      "reachedFrame": 3,
+      "clock": 0.333333333333333,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "id": "cairn",
+      "clip": "defeat",
+      "frameCount": 4,
+      "reachedFrame": 3,
+      "clock": 0.533333333333333,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "id": "cairn",
+      "clip": "jump",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.683333333333334,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "cairn",
+      "clip": "stair_up",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.183333333333333,
+      "completedOneShot": false,
+      "observedFrames": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "cairn",
+      "clip": "stair_down",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.183333333333333,
+      "completedOneShot": false,
+      "observedFrames": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "cairn",
+      "clip": "dodge",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.4,
+      "completedOneShot": true,
+      "observedFrames": [
+        2,
+        4,
+        5,
+        7
+      ]
+    },
+    {
+      "id": "cairn",
+      "clip": "powered_idle",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.3,
+      "completedOneShot": false,
+      "observedFrames": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "cairn",
+      "clip": "powered_walk",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.183333333333333,
+      "completedOneShot": false,
+      "observedFrames": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "cairn",
+      "clip": "powered_primary",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.783333333333334,
+      "completedOneShot": true,
+      "observedFrames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "cairn",
+      "clip": "powered_guard",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.583333333333333,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "cairn",
+      "clip": "powered_exit",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.766666666666667,
+      "completedOneShot": true,
+      "observedFrames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "iona",
+      "clip": "idle",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.216666666666667,
+      "completedOneShot": false,
+      "observedFrames": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "iona",
+      "clip": "walk",
+      "frameCount": 16,
+      "reachedFrame": 2,
+      "clock": 0.116666666666667,
+      "completedOneShot": false,
+      "observedFrames": [
+        2,
+        5,
+        4,
+        7
+      ]
+    },
+    {
+      "id": "iona",
+      "clip": "primary",
+      "frameCount": 16,
+      "reachedFrame": 15,
+      "clock": 0.640000000596046,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        4,
+        6,
+        8,
+        12,
+        14,
+        15
+      ]
+    },
+    {
+      "id": "iona",
+      "clip": "secondary",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.516666666666667,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "iona",
+      "clip": "special",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.65,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        4,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "iona",
+      "clip": "guard",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.633333333333334,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "iona",
+      "clip": "hit",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.750000000000001,
+      "completedOneShot": true,
+      "observedFrames": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "iona",
+      "clip": "defeat",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 1.06666666666667,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "iona",
+      "clip": "jump",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.633333333333334,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "iona",
+      "clip": "stair_up",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.116666666666667,
+      "completedOneShot": false,
+      "observedFrames": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "iona",
+      "clip": "stair_down",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.1,
+      "completedOneShot": false,
+      "observedFrames": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": "iona",
+      "clip": "dodge",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.45,
+      "completedOneShot": true,
+      "observedFrames": [
+        0,
+        3,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "iona",
+      "clip": "powered_idle",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.316666666666667,
+      "completedOneShot": false,
+      "observedFrames": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "iona",
+      "clip": "powered_walk",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.1,
+      "completedOneShot": false,
+      "observedFrames": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": "iona",
+      "clip": "powered_primary",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.533333333333333,
+      "completedOneShot": true,
+      "observedFrames": [
+        0,
+        2,
+        3,
+        4,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "iona",
+      "clip": "powered_guard",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.583333333333333,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "iona",
+      "clip": "powered_exit",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.766666666666667,
+      "completedOneShot": true,
+      "observedFrames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "tam",
+      "clip": "idle",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.233333333333333,
+      "completedOneShot": false,
+      "observedFrames": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "tam",
+      "clip": "walk",
+      "frameCount": 16,
+      "reachedFrame": 2,
+      "clock": 0.116666666666667,
+      "completedOneShot": false,
+      "observedFrames": [
+        2,
+        4,
+        6
+      ]
+    },
+    {
+      "id": "tam",
+      "clip": "primary",
+      "frameCount": 16,
+      "reachedFrame": 15,
+      "clock": 0.633333333333334,
+      "completedOneShot": true,
+      "observedFrames": [
+        2,
+        5,
+        8,
+        12,
+        14,
+        15
+      ]
+    },
+    {
+      "id": "tam",
+      "clip": "secondary",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.6,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "tam",
+      "clip": "special",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.683333333333334,
+      "completedOneShot": true,
+      "observedFrames": [
+        0,
+        2,
+        3,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "tam",
+      "clip": "guard",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.616666666666667,
+      "completedOneShot": true,
+      "observedFrames": [
+        2,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "tam",
+      "clip": "hit",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.800000000000001,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "tam",
+      "clip": "defeat",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 1.08333333333333,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "tam",
+      "clip": "jump",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.699999995529652,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "tam",
+      "clip": "stair_up",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.15,
+      "completedOneShot": false,
+      "observedFrames": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "tam",
+      "clip": "stair_down",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.1,
+      "completedOneShot": false,
+      "observedFrames": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": "tam",
+      "clip": "dodge",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.433333333333333,
+      "completedOneShot": true,
+      "observedFrames": [
+        0,
+        3,
+        4,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "tam",
+      "clip": "powered_idle",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.3,
+      "completedOneShot": false,
+      "observedFrames": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "tam",
+      "clip": "powered_walk",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.1,
+      "completedOneShot": false,
+      "observedFrames": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": "tam",
+      "clip": "powered_primary",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.533333333333333,
+      "completedOneShot": true,
+      "observedFrames": [
+        0,
+        1,
+        3,
+        4,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "tam",
+      "clip": "powered_guard",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.65,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        3,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "tam",
+      "clip": "powered_exit",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.716666666666667,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "brine",
+      "clip": "idle",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.216666666666667,
+      "completedOneShot": false,
+      "observedFrames": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "brine",
+      "clip": "walk",
+      "frameCount": 16,
+      "reachedFrame": 1,
+      "clock": 0.0833333333333333,
+      "completedOneShot": false,
+      "observedFrames": [
+        1,
+        4,
+        2,
+        5,
+        7
+      ]
+    },
+    {
+      "id": "brine",
+      "clip": "primary",
+      "frameCount": 16,
+      "reachedFrame": 15,
+      "clock": 0.616666666666667,
+      "completedOneShot": true,
+      "observedFrames": [
+        2,
+        5,
+        7,
+        12,
+        14,
+        15
+      ]
+    },
+    {
+      "id": "brine",
+      "clip": "secondary",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.6,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "brine",
+      "clip": "special",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.700000000000001,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "brine",
+      "clip": "guard",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.65,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        3,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "brine",
+      "clip": "hit",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.783333333333334,
+      "completedOneShot": true,
+      "observedFrames": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "brine",
+      "clip": "defeat",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 1,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "brine",
+      "clip": "jump",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.6,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        3,
+        4,
+        5,
+        7
+      ]
+    },
+    {
+      "id": "brine",
+      "clip": "stair_up",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.1,
+      "completedOneShot": false,
+      "observedFrames": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": "brine",
+      "clip": "stair_down",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.15,
+      "completedOneShot": false,
+      "observedFrames": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "brine",
+      "clip": "dodge",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.433333333333333,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        3,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "brine",
+      "clip": "powered_idle",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.216666666666667,
+      "completedOneShot": false,
+      "observedFrames": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "brine",
+      "clip": "powered_walk",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.1,
+      "completedOneShot": false,
+      "observedFrames": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": "brine",
+      "clip": "powered_primary",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.566666666666667,
+      "completedOneShot": true,
+      "observedFrames": [
+        0,
+        1,
+        2,
+        3,
+        5,
+        7
+      ]
+    },
+    {
+      "id": "brine",
+      "clip": "powered_guard",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.616666666666667,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "brine",
+      "clip": "powered_exit",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.766666666666667,
+      "completedOneShot": true,
+      "observedFrames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "pendle",
+      "clip": "idle",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.25,
+      "completedOneShot": false,
+      "observedFrames": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "pendle",
+      "clip": "walk",
+      "frameCount": 16,
+      "reachedFrame": 2,
+      "clock": 0.1,
+      "completedOneShot": false,
+      "observedFrames": [
+        2,
+        4,
+        1,
+        6
+      ]
+    },
+    {
+      "id": "pendle",
+      "clip": "primary",
+      "frameCount": 16,
+      "reachedFrame": 15,
+      "clock": 0.640000000596046,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        3,
+        6,
+        8,
+        12,
+        14,
+        15
+      ]
+    },
+    {
+      "id": "pendle",
+      "clip": "secondary",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.55,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        4,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "pendle",
+      "clip": "special",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.65,
+      "completedOneShot": true,
+      "observedFrames": [
+        0,
+        1,
+        2,
+        3,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "pendle",
+      "clip": "guard",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.6,
+      "completedOneShot": true,
+      "observedFrames": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "pendle",
+      "clip": "hit",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.800000000000001,
+      "completedOneShot": true,
+      "observedFrames": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "pendle",
+      "clip": "defeat",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.983333333333335,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "pendle",
+      "clip": "jump",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.616666666666667,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        7
+      ]
+    },
+    {
+      "id": "pendle",
+      "clip": "stair_up",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.116666666666667,
+      "completedOneShot": false,
+      "observedFrames": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": "pendle",
+      "clip": "stair_down",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.15,
+      "completedOneShot": false,
+      "observedFrames": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "pendle",
+      "clip": "dodge",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.466666666666667,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        3,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "pendle",
+      "clip": "powered_idle",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.316666666666667,
+      "completedOneShot": false,
+      "observedFrames": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "pendle",
+      "clip": "powered_walk",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.1,
+      "completedOneShot": false,
+      "observedFrames": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": "pendle",
+      "clip": "powered_primary",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.583333333333333,
+      "completedOneShot": true,
+      "observedFrames": [
+        0,
+        2,
+        3,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "pendle",
+      "clip": "powered_guard",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.583333333333333,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "pendle",
+      "clip": "powered_exit",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.750000000000001,
+      "completedOneShot": true,
+      "observedFrames": [
+        0,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "pendle",
+      "clip": "reload",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 1.1,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "mirra",
+      "clip": "idle",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.3,
+      "completedOneShot": false,
+      "observedFrames": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "mirra",
+      "clip": "walk",
+      "frameCount": 16,
+      "reachedFrame": 2,
+      "clock": 0.1,
+      "completedOneShot": false,
+      "observedFrames": [
+        2,
+        4,
+        6,
+        8
+      ]
+    },
+    {
+      "id": "mirra",
+      "clip": "primary",
+      "frameCount": 16,
+      "reachedFrame": 15,
+      "clock": 0.6,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        4,
+        6,
+        8,
+        11,
+        14,
+        15
+      ]
+    },
+    {
+      "id": "mirra",
+      "clip": "secondary",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.616666666666667,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "mirra",
+      "clip": "special",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.65,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        4,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "mirra",
+      "clip": "guard",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.65,
+      "completedOneShot": true,
+      "observedFrames": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "mirra",
+      "clip": "hit",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.816666666666668,
+      "completedOneShot": true,
+      "observedFrames": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "mirra",
+      "clip": "defeat",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 1.06666666666667,
+      "completedOneShot": true,
+      "observedFrames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "mirra",
+      "clip": "jump",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.666666666666667,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "mirra",
+      "clip": "stair_up",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.1,
+      "completedOneShot": false,
+      "observedFrames": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": "mirra",
+      "clip": "stair_down",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.15,
+      "completedOneShot": false,
+      "observedFrames": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "mirra",
+      "clip": "dodge",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.4,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        4,
+        5,
+        7
+      ]
+    },
+    {
+      "id": "mirra",
+      "clip": "powered_idle",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.283333333333333,
+      "completedOneShot": false,
+      "observedFrames": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "mirra",
+      "clip": "powered_walk",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.1,
+      "completedOneShot": false,
+      "observedFrames": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": "mirra",
+      "clip": "powered_primary",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.55,
+      "completedOneShot": true,
+      "observedFrames": [
+        0,
+        2,
+        3,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "mirra",
+      "clip": "powered_guard",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.583333333333333,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "mirra",
+      "clip": "powered_exit",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.716666666666667,
+      "completedOneShot": true,
+      "observedFrames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "ashe",
+      "clip": "idle",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.233333333333333,
+      "completedOneShot": false,
+      "observedFrames": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "ashe",
+      "clip": "walk",
+      "frameCount": 16,
+      "reachedFrame": 1,
+      "clock": 0.0833333333333333,
+      "completedOneShot": false,
+      "observedFrames": [
+        1,
+        4,
+        6,
+        2,
+        8
+      ]
+    },
+    {
+      "id": "ashe",
+      "clip": "primary",
+      "frameCount": 16,
+      "reachedFrame": 15,
+      "clock": 0.633333333333334,
+      "completedOneShot": true,
+      "observedFrames": [
+        2,
+        4,
+        6,
+        9,
+        13,
+        15
+      ]
+    },
+    {
+      "id": "ashe",
+      "clip": "secondary",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.533333333333333,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        3,
+        4,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "ashe",
+      "clip": "special",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.700000000000001,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "ashe",
+      "clip": "guard",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.583333333333333,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "ashe",
+      "clip": "hit",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.800000000000001,
+      "completedOneShot": true,
+      "observedFrames": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "ashe",
+      "clip": "defeat",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 1.03333333333333,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "ashe",
+      "clip": "jump",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.65,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        3,
+        4,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "ashe",
+      "clip": "stair_up",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.1,
+      "completedOneShot": false,
+      "observedFrames": [
+        1
+      ]
+    },
+    {
+      "id": "ashe",
+      "clip": "stair_down",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.1,
+      "completedOneShot": false,
+      "observedFrames": [
+        1
+      ]
+    },
+    {
+      "id": "ashe",
+      "clip": "dodge",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.433333333333333,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        4,
+        5,
+        7
+      ]
+    },
+    {
+      "id": "ashe",
+      "clip": "powered_idle",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.283333333333333,
+      "completedOneShot": false,
+      "observedFrames": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "ashe",
+      "clip": "powered_walk",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.1,
+      "completedOneShot": false,
+      "observedFrames": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": "ashe",
+      "clip": "powered_primary",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.566666666666667,
+      "completedOneShot": true,
+      "observedFrames": [
+        0,
+        2,
+        3,
+        4,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "ashe",
+      "clip": "powered_guard",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.583333333333333,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "ashe",
+      "clip": "powered_exit",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.716666666666667,
+      "completedOneShot": true,
+      "observedFrames": [
+        0,
+        1,
+        2,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "clack",
+      "clip": "idle",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.266666666666667,
+      "completedOneShot": false,
+      "observedFrames": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "clack",
+      "clip": "walk",
+      "frameCount": 16,
+      "reachedFrame": 1,
+      "clock": 0.0833333333333333,
+      "completedOneShot": false,
+      "observedFrames": [
+        1,
+        4,
+        2,
+        6
+      ]
+    },
+    {
+      "id": "clack",
+      "clip": "primary",
+      "frameCount": 16,
+      "reachedFrame": 15,
+      "clock": 0.616666666666667,
+      "completedOneShot": true,
+      "observedFrames": [
+        2,
+        4,
+        7,
+        10,
+        13,
+        15
+      ]
+    },
+    {
+      "id": "clack",
+      "clip": "secondary",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.583333333333333,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "clack",
+      "clip": "special",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.683333333333334,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "clack",
+      "clip": "guard",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.6,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "clack",
+      "clip": "hit",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.766666666666667,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "clack",
+      "clip": "defeat",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.983333333333335,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "clack",
+      "clip": "jump",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.683333333333334,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "clack",
+      "clip": "stair_up",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.166666666666667,
+      "completedOneShot": false,
+      "observedFrames": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "clack",
+      "clip": "stair_down",
+      "frameCount": 8,
+      "reachedFrame": 2,
+      "clock": 0.183333333333333,
+      "completedOneShot": false,
+      "observedFrames": [
+        0,
+        2,
+        3
+      ]
+    },
+    {
+      "id": "clack",
+      "clip": "dodge",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.4,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        4,
+        5,
+        7
+      ]
+    },
+    {
+      "id": "clack",
+      "clip": "powered_idle",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.283333333333333,
+      "completedOneShot": false,
+      "observedFrames": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "clack",
+      "clip": "powered_walk",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.116666666666667,
+      "completedOneShot": false,
+      "observedFrames": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": "clack",
+      "clip": "powered_primary",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.566666666666667,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "clack",
+      "clip": "powered_guard",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.583333333333333,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "clack",
+      "clip": "powered_exit",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.783333333333334,
+      "completedOneShot": true,
+      "observedFrames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "nix",
+      "clip": "idle",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.3,
+      "completedOneShot": false,
+      "observedFrames": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "nix",
+      "clip": "walk",
+      "frameCount": 16,
+      "reachedFrame": 2,
+      "clock": 0.1,
+      "completedOneShot": false,
+      "observedFrames": [
+        2,
+        4,
+        1,
+        5,
+        3
+      ]
+    },
+    {
+      "id": "nix",
+      "clip": "primary",
+      "frameCount": 16,
+      "reachedFrame": 15,
+      "clock": 0.640000000596046,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        4,
+        6,
+        8,
+        12,
+        14,
+        15,
+        2,
+        7,
+        10,
+        13
+      ]
+    },
+    {
+      "id": "nix",
+      "clip": "secondary",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.533333333333333,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        3,
+        4,
+        6,
+        7,
+        0,
+        2
+      ]
+    },
+    {
+      "id": "nix",
+      "clip": "special",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.683333333333334,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "nix",
+      "clip": "guard",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.6,
+      "completedOneShot": true,
+      "observedFrames": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "nix",
+      "clip": "hit",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.783333333333334,
+      "completedOneShot": true,
+      "observedFrames": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "nix",
+      "clip": "defeat",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 1.06666666666667,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "nix",
+      "clip": "jump",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.633333333333334,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        3,
+        4,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "nix",
+      "clip": "stair_up",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.1,
+      "completedOneShot": false,
+      "observedFrames": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": "nix",
+      "clip": "stair_down",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.1,
+      "completedOneShot": false,
+      "observedFrames": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": "nix",
+      "clip": "dodge",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.483333333333333,
+      "completedOneShot": true,
+      "observedFrames": [
+        0,
+        3,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "nix",
+      "clip": "powered_idle",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.233333333333333,
+      "completedOneShot": false,
+      "observedFrames": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "nix",
+      "clip": "powered_walk",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.1,
+      "completedOneShot": false,
+      "observedFrames": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": "nix",
+      "clip": "powered_primary",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.516666666666667,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        3,
+        4,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "nix",
+      "clip": "powered_guard",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.683333333333334,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "nix",
+      "clip": "powered_exit",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.733333333333334,
+      "completedOneShot": true,
+      "observedFrames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "rook",
+      "clip": "idle",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.233333333333333,
+      "completedOneShot": false,
+      "observedFrames": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "rook",
+      "clip": "walk",
+      "frameCount": 16,
+      "reachedFrame": 1,
+      "clock": 0.0833333333333333,
+      "completedOneShot": false,
+      "observedFrames": [
+        1,
+        4,
+        2,
+        7
+      ]
+    },
+    {
+      "id": "rook",
+      "clip": "primary",
+      "frameCount": 16,
+      "reachedFrame": 15,
+      "clock": 0.616666666666667,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        3,
+        5,
+        8,
+        12,
+        14,
+        15
+      ]
+    },
+    {
+      "id": "rook",
+      "clip": "secondary",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.566666666666667,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        3,
+        4,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "rook",
+      "clip": "special",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.683333333333334,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "rook",
+      "clip": "guard",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.616666666666667,
+      "completedOneShot": true,
+      "observedFrames": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "rook",
+      "clip": "hit",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.766666666666667,
+      "completedOneShot": true,
+      "observedFrames": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "rook",
+      "clip": "defeat",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 1.01666666666667,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "rook",
+      "clip": "jump",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.65,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        4,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "rook",
+      "clip": "stair_up",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.15,
+      "completedOneShot": false,
+      "observedFrames": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "id": "rook",
+      "clip": "stair_down",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.133333333333333,
+      "completedOneShot": false,
+      "observedFrames": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": "rook",
+      "clip": "dodge",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.4,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        4,
+        5,
+        7
+      ]
+    },
+    {
+      "id": "rook",
+      "clip": "powered_idle",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.283333333333333,
+      "completedOneShot": false,
+      "observedFrames": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "rook",
+      "clip": "powered_walk",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.1,
+      "completedOneShot": false,
+      "observedFrames": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": "rook",
+      "clip": "powered_primary",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.533333333333333,
+      "completedOneShot": true,
+      "observedFrames": [
+        0,
+        1,
+        3,
+        4,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "rook",
+      "clip": "powered_guard",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.633333333333334,
+      "completedOneShot": true,
+      "observedFrames": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "rook",
+      "clip": "powered_exit",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.733333333333334,
+      "completedOneShot": true,
+      "observedFrames": [
+        0,
+        1,
+        2,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "mote",
+      "clip": "idle",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.283333333333333,
+      "completedOneShot": false,
+      "observedFrames": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "mote",
+      "clip": "walk",
+      "frameCount": 16,
+      "reachedFrame": 1,
+      "clock": 0.0833333333333333,
+      "completedOneShot": false,
+      "observedFrames": [
+        1,
+        4,
+        5,
+        7
+      ]
+    },
+    {
+      "id": "mote",
+      "clip": "primary",
+      "frameCount": 16,
+      "reachedFrame": 15,
+      "clock": 0.640000000596046,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        3,
+        6,
+        8,
+        11,
+        14,
+        15
+      ]
+    },
+    {
+      "id": "mote",
+      "clip": "secondary",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.583333333333333,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "mote",
+      "clip": "special",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.666666666666667,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "mote",
+      "clip": "guard",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.6,
+      "completedOneShot": true,
+      "observedFrames": [
+        0,
+        2,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "mote",
+      "clip": "hit",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.783333333333334,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "mote",
+      "clip": "defeat",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 1,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "mote",
+      "clip": "jump",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.65,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "mote",
+      "clip": "stair_up",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.1,
+      "completedOneShot": false,
+      "observedFrames": [
+        1
+      ]
+    },
+    {
+      "id": "mote",
+      "clip": "stair_down",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.1,
+      "completedOneShot": false,
+      "observedFrames": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": "mote",
+      "clip": "dodge",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.483333333333333,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "mote",
+      "clip": "powered_idle",
+      "frameCount": 8,
+      "reachedFrame": 1,
+      "clock": 0.233333333333333,
+      "completedOneShot": false,
+      "observedFrames": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "mote",
+      "clip": "powered_walk",
+      "frameCount": 8,
+      "reachedFrame": 2,
+      "clock": 0.183333333333333,
+      "completedOneShot": false,
+      "observedFrames": [
+        0,
+        2,
+        3
+      ]
+    },
+    {
+      "id": "mote",
+      "clip": "powered_primary",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.516666666666667,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        2,
+        4,
+        5,
+        7
+      ]
+    },
+    {
+      "id": "mote",
+      "clip": "powered_guard",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.616666666666667,
+      "completedOneShot": true,
+      "observedFrames": [
+        1,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "mote",
+      "clip": "powered_exit",
+      "frameCount": 8,
+      "reachedFrame": 7,
+      "clock": 0.800000000000001,
+      "completedOneShot": true,
+      "observedFrames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    }
+  ],
+  "runtimeErrors": [],
+  "sampleCount": 3848,
+  "baseline": {
+    "camera_offset": [
+      0,
+      0
+    ],
+    "camera_rotation": 0,
+    "camera_x": 480,
+    "camera_y": 270,
+    "camera_zoom": [
+      1,
+      1
+    ]
+  },
+  "focus_method": "real canvas blur()/focus()",
+  "uninterrupted_run": true,
+  "completed": true
+}

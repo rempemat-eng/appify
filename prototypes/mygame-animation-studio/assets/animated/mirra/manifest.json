@@ -1,0 +1,4069 @@
+{
+  "id": "mirra",
+  "name": "Mirra",
+  "view": "E",
+  "frame_size": [
+    192,
+    192
+  ],
+  "foot_pivot": [
+    96,
+    172
+  ],
+  "body_height_target": 96,
+  "fit_factor": 1.0,
+  "sources": [
+    {
+      "width": 1254,
+      "height": 1254,
+      "columns": 8,
+      "rows": 8,
+      "column_cuts": [
+        0,
+        167,
+        319,
+        476,
+        637,
+        786,
+        953,
+        1095,
+        1254
+      ],
+      "row_cuts": [
+        0,
+        180,
+        346,
+        516,
+        690,
+        858,
+        1019,
+        1167,
+        1254
+      ],
+      "baselines": {
+        "0": 176.0,
+        "3": 678.0,
+        "5": 1015.0
+      },
+      "body_height": 157.0,
+      "body_min_area": 3279,
+      "path": "art-source/animated/mirra-64.png",
+      "base_scale": 0.6114649681528662
+    },
+    {
+      "width": 2048,
+      "height": 768,
+      "columns": 8,
+      "rows": 3,
+      "column_cuts": [
+        0,
+        249,
+        511,
+        782,
+        1027,
+        1275,
+        1534,
+        1744,
+        2048
+      ],
+      "row_cuts": [
+        0,
+        305,
+        553,
+        768
+      ],
+      "baselines": {
+        "0": 290.0,
+        "1": 544.25,
+        "2": 753.25
+      },
+      "body_height": 219.5,
+      "body_min_area": 7096,
+      "path": "art-source/animated/mirra-repair24.png",
+      "base_scale": 0.43735763097949887
+    },
+    {
+      "width": 1254,
+      "height": 1254,
+      "columns": 8,
+      "rows": 8,
+      "column_cuts": [
+        0,
+        171,
+        315,
+        486,
+        641,
+        797,
+        951,
+        1104,
+        1254
+      ],
+      "row_cuts": [
+        0,
+        163,
+        319,
+        476,
+        630,
+        789,
+        944,
+        1103,
+        1254
+      ],
+      "baselines": {
+        "0": 154.25,
+        "1": 310.25,
+        "2": 467.0,
+        "3": 624.0,
+        "4": 783.0,
+        "5": 938.0,
+        "6": 1093.0,
+        "7": 1247.0
+      },
+      "body_height": 137.25,
+      "body_min_area": 2495,
+      "path": "art-source/animated/v3/mirra-extension64.png",
+      "base_scale": 0.6994535519125683
+    },
+    {
+      "width": 1536,
+      "height": 1024,
+      "columns": 8,
+      "rows": 5,
+      "column_cuts": [
+        0,
+        213,
+        401,
+        593,
+        779,
+        961,
+        1154,
+        1340,
+        1536
+      ],
+      "row_cuts": [
+        0,
+        210,
+        409,
+        609,
+        807,
+        1024
+      ],
+      "baselines": {
+        "0": 192.25,
+        "1": 395.0,
+        "2": 594.0,
+        "3": 793.0,
+        "4": 991.0
+      },
+      "body_height": 161.25,
+      "body_min_area": 4256,
+      "path": "art-source/animated/v3/mirra-powered40.png",
+      "base_scale": 0.5953488372093023
+    }
+  ],
+  "anchor_sources": [
+    {
+      "path": "art-source/animated/v3/elements-anchors.json",
+      "sha256": "8f75cadd5510d51a47fd3996f9595aebb72bfb3f3e284814346d058a844b8da2"
+    }
+  ],
+  "clips": {
+    "idle": {
+      "frame_count": 8,
+      "durations": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ],
+      "duration": 1.6,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/mirra/idle-00.png",
+          "source": "art-source/animated/mirra-64.png",
+          "slot": 0,
+          "source_bounds": [
+            47,
+            18,
+            142,
+            176
+          ],
+          "source_origin": [
+            83.5,
+            176.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            74,
+            75,
+            132,
+            172
+          ],
+          "sha256": "eeb830b3bf335886f14478e42d49627ad2d18ada4b7c68c620ca5f1b92d1596a"
+        },
+        {
+          "path": "res://assets/animated/mirra/idle-01.png",
+          "source": "art-source/animated/mirra-64.png",
+          "slot": 1,
+          "source_bounds": [
+            204,
+            19,
+            304,
+            176
+          ],
+          "source_origin": [
+            243.0,
+            176.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            72,
+            76,
+            133,
+            172
+          ],
+          "sha256": "1fc0f1de99266e2f146f76ee235521aa3f678291b1ea6ed687a2dda2c7f475b0"
+        },
+        {
+          "path": "res://assets/animated/mirra/idle-02.png",
+          "source": "art-source/animated/mirra-64.png",
+          "slot": 2,
+          "source_bounds": [
+            356,
+            18,
+            450,
+            176
+          ],
+          "source_origin": [
+            397.5,
+            176.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            71,
+            75,
+            128,
+            172
+          ],
+          "sha256": "b660a51118edaee3d921823b2cc297166279ac6e961c226f0f559af9de24757b"
+        },
+        {
+          "path": "res://assets/animated/mirra/idle-03.png",
+          "source": "art-source/animated/mirra-64.png",
+          "slot": 3,
+          "source_bounds": [
+            509,
+            18,
+            613,
+            176
+          ],
+          "source_origin": [
+            556.5,
+            176.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            67,
+            75,
+            131,
+            172
+          ],
+          "sha256": "d06b88dfdf52c84cd1688b22c7bc0651851e68a8934427eae7c91c75063523ed"
+        },
+        {
+          "path": "res://assets/animated/mirra/idle-04.png",
+          "source": "art-source/animated/mirra-64.png",
+          "slot": 4,
+          "source_bounds": [
+            666,
+            18,
+            773,
+            176
+          ],
+          "source_origin": [
+            711.5,
+            176.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            68,
+            75,
+            133,
+            172
+          ],
+          "sha256": "26816b61aa0da60080330004b63b05233b4f8156cd8afc63f4721495584939d6"
+        },
+        {
+          "path": "res://assets/animated/mirra/idle-05.png",
+          "source": "art-source/animated/mirra-64.png",
+          "slot": 5,
+          "source_bounds": [
+            818,
+            18,
+            925,
+            176
+          ],
+          "source_origin": [
+            869.5,
+            176.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            65,
+            75,
+            130,
+            172
+          ],
+          "sha256": "9023b60d0cc79f3ee0bb78bfd6efafccf49e4fbb4bf3cff114c0ec57c9760fd3"
+        },
+        {
+          "path": "res://assets/animated/mirra/idle-06.png",
+          "source": "art-source/animated/mirra-64.png",
+          "slot": 6,
+          "source_bounds": [
+            970,
+            18,
+            1073,
+            176
+          ],
+          "source_origin": [
+            1024.0,
+            176.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            63,
+            75,
+            126,
+            172
+          ],
+          "sha256": "4382b026758a1366fdbfa9e6c68847b36d9c9d218e5ddcdf058dd3f5b2949da1"
+        },
+        {
+          "path": "res://assets/animated/mirra/idle-07.png",
+          "source": "art-source/animated/mirra-64.png",
+          "slot": 7,
+          "source_bounds": [
+            1113,
+            19,
+            1226,
+            176
+          ],
+          "source_origin": [
+            1174.5,
+            176.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            58,
+            76,
+            127,
+            172
+          ],
+          "sha256": "19c4b8d60a48ea2b179901ff184cffab3af5431109f42ebcb6b0eaee7ad21cf3"
+        }
+      ]
+    },
+    "walk": {
+      "frame_count": 16,
+      "durations": [
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/mirra/walk-00.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 0,
+          "source_bounds": [
+            42,
+            17,
+            143,
+            155
+          ],
+          "source_origin": [
+            85.5,
+            154.25
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            66,
+            76,
+            137,
+            173
+          ],
+          "sha256": "2ac559549b67202848cf79d4d7c8d363e683efaaef12d2a32505ab2db2031921"
+        },
+        {
+          "path": "res://assets/animated/mirra/walk-01.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 1,
+          "source_bounds": [
+            201,
+            19,
+            298,
+            154
+          ],
+          "source_origin": [
+            243.0,
+            154.25
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            67,
+            77,
+            135,
+            171
+          ],
+          "sha256": "81703e161143cfc76500678b2b463d2cbc3e9e95cc3f538e9a48abf37f311cc1"
+        },
+        {
+          "path": "res://assets/animated/mirra/walk-02.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 2,
+          "source_bounds": [
+            356,
+            15,
+            459,
+            155
+          ],
+          "source_origin": [
+            400.5,
+            154.25
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            65,
+            75,
+            137,
+            173
+          ],
+          "sha256": "913bf35f2e5a94d530773e0073cce1815fdeea30abca4287d7300ab7c65be58f"
+        },
+        {
+          "path": "res://assets/animated/mirra/walk-03.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 3,
+          "source_bounds": [
+            521,
+            13,
+            620,
+            154
+          ],
+          "source_origin": [
+            563.5,
+            154.25
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            66,
+            73,
+            135,
+            172
+          ],
+          "sha256": "28ba92c00be64cc65f5b5102c2319a02c5d0b0ebbfcbfbdf91804cc126bc9686"
+        },
+        {
+          "path": "res://assets/animated/mirra/walk-04.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 4,
+          "source_bounds": [
+            674,
+            11,
+            765,
+            154
+          ],
+          "source_origin": [
+            719.0,
+            154.25
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            65,
+            72,
+            129,
+            172
+          ],
+          "sha256": "75926b1891c196125e3873114a64e3a608c607738c38252a23d2458419cb0074"
+        },
+        {
+          "path": "res://assets/animated/mirra/walk-05.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 5,
+          "source_bounds": [
+            830,
+            16,
+            923,
+            154
+          ],
+          "source_origin": [
+            874.0,
+            154.25
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            65,
+            75,
+            130,
+            172
+          ],
+          "sha256": "e183b176a7f265f2a196e4f5a8ff29db4e01fbc3b747e3d1f1a9f27b74c3bcbe"
+        },
+        {
+          "path": "res://assets/animated/mirra/walk-06.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 6,
+          "source_bounds": [
+            982,
+            17,
+            1079,
+            154
+          ],
+          "source_origin": [
+            1027.5,
+            154.25
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            64,
+            76,
+            132,
+            172
+          ],
+          "sha256": "962d1624072f1440225988c49262fcdb10951882bcf898075ec6e3876371a884"
+        },
+        {
+          "path": "res://assets/animated/mirra/walk-07.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 7,
+          "source_bounds": [
+            1138,
+            17,
+            1237,
+            154
+          ],
+          "source_origin": [
+            1179.0,
+            154.25
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            67,
+            76,
+            136,
+            172
+          ],
+          "sha256": "75ab0fd4fafcc5cd2bda01323d66d87df686b30cbbea503b34ca759d96cf8add"
+        },
+        {
+          "path": "res://assets/animated/mirra/walk-08.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 8,
+          "source_bounds": [
+            40,
+            170,
+            143,
+            310
+          ],
+          "source_origin": [
+            85.5,
+            310.25
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            64,
+            74,
+            136,
+            172
+          ],
+          "sha256": "36db7535c503e886f15410f0b1a18977b8d7d9dad0ab22e7ecce5b00999473c5"
+        },
+        {
+          "path": "res://assets/animated/mirra/walk-09.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 9,
+          "source_bounds": [
+            200,
+            172,
+            298,
+            311
+          ],
+          "source_origin": [
+            243.0,
+            310.25
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            66,
+            75,
+            135,
+            172
+          ],
+          "sha256": "d2a6dc2c34ae7061ec7cc355a0a5ea057827930b7197f9da6eed70cff2070429"
+        },
+        {
+          "path": "res://assets/animated/mirra/walk-10.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 10,
+          "source_bounds": [
+            358,
+            172,
+            456,
+            310
+          ],
+          "source_origin": [
+            400.5,
+            310.25
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            66,
+            75,
+            135,
+            172
+          ],
+          "sha256": "8a88b02918f2e8cb1491ee8aed51bc30be8dfda22ddf54fb82528a42b27a7966"
+        },
+        {
+          "path": "res://assets/animated/mirra/walk-11.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 11,
+          "source_bounds": [
+            514,
+            172,
+            610,
+            310
+          ],
+          "source_origin": [
+            563.5,
+            310.25
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            61,
+            75,
+            128,
+            172
+          ],
+          "sha256": "596a487e074a3951333e8efab3e1eba7057741055bb55e3aa92a0ff925eddab8"
+        },
+        {
+          "path": "res://assets/animated/mirra/walk-12.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 12,
+          "source_bounds": [
+            667,
+            171,
+            761,
+            310
+          ],
+          "source_origin": [
+            719.0,
+            310.25
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            60,
+            75,
+            126,
+            172
+          ],
+          "sha256": "30d240e6c8be7accea543c38c30517348c67dfd084b460ce53d480fdf7c9220c"
+        },
+        {
+          "path": "res://assets/animated/mirra/walk-13.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 13,
+          "source_bounds": [
+            825,
+            172,
+            924,
+            310
+          ],
+          "source_origin": [
+            874.0,
+            310.25
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            62,
+            75,
+            131,
+            172
+          ],
+          "sha256": "a3b9b1e42ef60e044643c35a3a2af2f79626f55ff2311a35def3b29e20382718"
+        },
+        {
+          "path": "res://assets/animated/mirra/walk-14.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 14,
+          "source_bounds": [
+            984,
+            174,
+            1083,
+            310
+          ],
+          "source_origin": [
+            1027.5,
+            310.25
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            66,
+            77,
+            135,
+            172
+          ],
+          "sha256": "b7be1d7c69ec38f217721a6650b46ad0685539edcb2218d9acc570f4e26277c5"
+        },
+        {
+          "path": "res://assets/animated/mirra/walk-15.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 15,
+          "source_bounds": [
+            1140,
+            171,
+            1238,
+            311
+          ],
+          "source_origin": [
+            1179.0,
+            310.25
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            69,
+            75,
+            138,
+            173
+          ],
+          "sha256": "7c855e374e28ff4fdabb03ef43fe156f89440f6ab9b0175a55727359b9d8ac0a"
+        }
+      ]
+    },
+    "primary": {
+      "frame_count": 16,
+      "durations": [
+        0.0385,
+        0.0315,
+        0.0385,
+        0.0315,
+        0.044,
+        0.036,
+        0.0605,
+        0.049499999999999995,
+        0.022,
+        0.018,
+        0.030249999999999996,
+        0.024749999999999998,
+        0.04675,
+        0.03825,
+        0.0715,
+        0.058499999999999996
+      ],
+      "duration": 0.64,
+      "loop": false,
+      "release_frame": 8,
+      "release_time": 0.32999999999999996,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/mirra/primary-00.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 16,
+          "source_bounds": [
+            43,
+            327,
+            136,
+            467
+          ],
+          "source_origin": [
+            85.5,
+            467.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            66,
+            74,
+            131,
+            172
+          ],
+          "sha256": "9d99cbd53800de2e23071078a778cf466cf3e601ca4d8a3967972ccb922079c5"
+        },
+        {
+          "path": "res://assets/animated/mirra/primary-01.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 17,
+          "source_bounds": [
+            203,
+            329,
+            298,
+            467
+          ],
+          "source_origin": [
+            243.0,
+            467.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            68,
+            75,
+            134,
+            172
+          ],
+          "sha256": "0f64b21d841f2a424085a32fbf8d4db507a0cccaf89aeb72b89d9a65445eaed5"
+        },
+        {
+          "path": "res://assets/animated/mirra/primary-02.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 18,
+          "source_bounds": [
+            356,
+            330,
+            460,
+            467
+          ],
+          "source_origin": [
+            400.5,
+            467.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            65,
+            76,
+            138,
+            172
+          ],
+          "sha256": "84ba2c0132152c331e7d48e7aa3f684fd8cf8fd0cd581d3dd27e0b932fad4fb2"
+        },
+        {
+          "path": "res://assets/animated/mirra/primary-03.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 19,
+          "source_bounds": [
+            513,
+            327,
+            621,
+            467
+          ],
+          "source_origin": [
+            563.5,
+            467.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            61,
+            74,
+            137,
+            172
+          ],
+          "sha256": "92086aa02760c81f90f8b875c849a29da5dd021d7ae7b1fc602191c095c37352"
+        },
+        {
+          "path": "res://assets/animated/mirra/primary-04.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 20,
+          "source_bounds": [
+            664,
+            326,
+            777,
+            467
+          ],
+          "source_origin": [
+            719.0,
+            467.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            58,
+            73,
+            137,
+            172
+          ],
+          "sha256": "bf2e5caca3713a042d4ae885998bb76b5e4abe41d265f389d300a3b60dab0c35"
+        },
+        {
+          "path": "res://assets/animated/mirra/primary-05.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 21,
+          "source_bounds": [
+            812,
+            330,
+            935,
+            467
+          ],
+          "source_origin": [
+            874.0,
+            467.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            53,
+            76,
+            139,
+            172
+          ],
+          "sha256": "dafaaace29f163f8ea7b92cdcef4b1308fcf390fb5305e8861cd6acd6886dc7f"
+        },
+        {
+          "path": "res://assets/animated/mirra/primary-06.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 22,
+          "source_bounds": [
+            968,
+            329,
+            1088,
+            467
+          ],
+          "source_origin": [
+            1027.5,
+            467.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            54,
+            75,
+            138,
+            172
+          ],
+          "sha256": "1f4f9c095230599f503463abcefe877f8bdc30f3e5849627e0033d84c4ac271d"
+        },
+        {
+          "path": "res://assets/animated/mirra/primary-07.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 23,
+          "source_bounds": [
+            1118,
+            328,
+            1244,
+            467
+          ],
+          "source_origin": [
+            1179.0,
+            467.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            53,
+            75,
+            141,
+            172
+          ],
+          "sha256": "d93b785d8627fc09300672cb6d223539e335e30115aee117807a9d507ba03d0d"
+        },
+        {
+          "path": "res://assets/animated/mirra/primary-08.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 24,
+          "source_bounds": [
+            28,
+            483,
+            167,
+            624
+          ],
+          "source_origin": [
+            85.5,
+            624.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            56,
+            73,
+            153,
+            172
+          ],
+          "sha256": "c179effabfbd185e735e6546df22531bea210219a6ff81bae875e7762520099c"
+        },
+        {
+          "path": "res://assets/animated/mirra/primary-09.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 25,
+          "source_bounds": [
+            193,
+            483,
+            334,
+            624
+          ],
+          "source_origin": [
+            243.0,
+            624.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            61,
+            73,
+            160,
+            172
+          ],
+          "sha256": "099191192be8d7b255d0f4df83cc9e9aa4d6ae5944d7a1b2de70fa18cb41282c"
+        },
+        {
+          "path": "res://assets/animated/mirra/primary-10.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 26,
+          "source_bounds": [
+            359,
+            482,
+            463,
+            624
+          ],
+          "source_origin": [
+            400.5,
+            624.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            67,
+            73,
+            140,
+            172
+          ],
+          "sha256": "f049cb418667546eeadb1e9ff983973937e7cbd472832df0a5f837d14e4b107b"
+        },
+        {
+          "path": "res://assets/animated/mirra/primary-11.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 27,
+          "source_bounds": [
+            512,
+            479,
+            617,
+            623
+          ],
+          "source_origin": [
+            563.5,
+            624.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            60,
+            71,
+            133,
+            172
+          ],
+          "sha256": "dca3da32e7ba4e10d471e965a4e63218e2cf056bf7f0bc0a0087c1be0f86613c"
+        },
+        {
+          "path": "res://assets/animated/mirra/primary-12.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 28,
+          "source_bounds": [
+            663,
+            483,
+            770,
+            624
+          ],
+          "source_origin": [
+            719.0,
+            624.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            57,
+            73,
+            132,
+            172
+          ],
+          "sha256": "f75ee0444ca0eb5fd4b64d4b988c628ad25992b3c50b6661372c39cc4f6ea594"
+        },
+        {
+          "path": "res://assets/animated/mirra/primary-13.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 29,
+          "source_bounds": [
+            826,
+            481,
+            918,
+            624
+          ],
+          "source_origin": [
+            874.0,
+            624.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            62,
+            72,
+            126,
+            172
+          ],
+          "sha256": "ea0505c755517b37e8fd95080c4a323ba56ba9a5db91d93b69ed35aa484d95f0"
+        },
+        {
+          "path": "res://assets/animated/mirra/primary-14.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 30,
+          "source_bounds": [
+            985,
+            485,
+            1073,
+            624
+          ],
+          "source_origin": [
+            1027.5,
+            624.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            66,
+            75,
+            128,
+            172
+          ],
+          "sha256": "4fc4524588c39b3b038c95889c96117fe7207c1ea5d9fc278506b74c47b685b7"
+        },
+        {
+          "path": "res://assets/animated/mirra/primary-15.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 31,
+          "source_bounds": [
+            1136,
+            484,
+            1223,
+            624
+          ],
+          "source_origin": [
+            1179.0,
+            624.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            66,
+            74,
+            127,
+            172
+          ],
+          "sha256": "0d56c67a6c676024af135aec75e3e42050adfc9849b16f3c24aa2945ecfb4460"
+        }
+      ],
+      "release_anchor": [
+        56,
+        -79
+      ]
+    },
+    "secondary": {
+      "frame_count": 8,
+      "durations": [
+        0.07,
+        0.07,
+        0.08,
+        0.11,
+        0.04,
+        0.055,
+        0.085,
+        0.13
+      ],
+      "duration": 0.64,
+      "loop": false,
+      "release_frame": 4,
+      "release_time": 0.33,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/mirra/secondary-00.png",
+          "source": "art-source/animated/mirra-64.png",
+          "slot": 24,
+          "source_bounds": [
+            31,
+            525,
+            131,
+            678
+          ],
+          "source_origin": [
+            83.5,
+            678.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            64,
+            78,
+            125,
+            172
+          ],
+          "sha256": "f1a67241aca4bedfa670414820fb93aff486c14a57ba9dd98825e434a8edd0a1"
+        },
+        {
+          "path": "res://assets/animated/mirra/secondary-01.png",
+          "source": "art-source/animated/mirra-64.png",
+          "slot": 25,
+          "source_bounds": [
+            181,
+            541,
+            314,
+            678
+          ],
+          "source_origin": [
+            243.0,
+            678.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            58,
+            88,
+            139,
+            172
+          ],
+          "sha256": "d232c2649152cea81242468b1bc448462f774c846816caa6861f399af712d8c7"
+        },
+        {
+          "path": "res://assets/animated/mirra/secondary-02.png",
+          "source": "art-source/animated/mirra-64.png",
+          "slot": 26,
+          "source_bounds": [
+            349,
+            531,
+            487,
+            678
+          ],
+          "source_origin": [
+            397.5,
+            678.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            66,
+            82,
+            150,
+            172
+          ],
+          "sha256": "4e2223292030d23ba0a89c95bb05ea93a0025872179619a769847b1dc7beb66c"
+        },
+        {
+          "path": "res://assets/animated/mirra/secondary-03.png",
+          "source": "art-source/animated/mirra-64.png",
+          "slot": 27,
+          "source_bounds": [
+            497,
+            526,
+            644,
+            678
+          ],
+          "source_origin": [
+            556.5,
+            678.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            60,
+            79,
+            150,
+            172
+          ],
+          "sha256": "d67c0cd201e92758fd3747a6c8bb7e5a86c425f7fcec455d4b4607c6f2a7da5c"
+        },
+        {
+          "path": "res://assets/animated/mirra/secondary-04.png",
+          "source": "art-source/animated/mirra-64.png",
+          "slot": 28,
+          "source_bounds": [
+            652,
+            547,
+            805,
+            678
+          ],
+          "source_origin": [
+            711.5,
+            678.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            60,
+            92,
+            154,
+            172
+          ],
+          "sha256": "5d4c0e9a10d39e50f2b519377a8af1f3b33541c2b602f9610310abdf53580f86"
+        },
+        {
+          "path": "res://assets/animated/mirra/secondary-05.png",
+          "source": "art-source/animated/mirra-64.png",
+          "slot": 29,
+          "source_bounds": [
+            815,
+            547,
+            959,
+            678
+          ],
+          "source_origin": [
+            869.5,
+            678.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            63,
+            92,
+            151,
+            172
+          ],
+          "sha256": "6791e567a10da610907a9db23065218e1c1591ea309ff4cdbca573ee14215f02"
+        },
+        {
+          "path": "res://assets/animated/mirra/secondary-06.png",
+          "source": "art-source/animated/mirra-64.png",
+          "slot": 30,
+          "source_bounds": [
+            972,
+            522,
+            1093,
+            678
+          ],
+          "source_origin": [
+            1024.0,
+            678.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            64,
+            77,
+            138,
+            172
+          ],
+          "sha256": "0fee59af654265cf4bf55de9981a7229b6ec23ffb26115559924edcb2bd85a4a"
+        },
+        {
+          "path": "res://assets/animated/mirra/secondary-07.png",
+          "source": "art-source/animated/mirra-64.png",
+          "slot": 31,
+          "source_bounds": [
+            1129,
+            523,
+            1224,
+            678
+          ],
+          "source_origin": [
+            1174.5,
+            678.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            68,
+            77,
+            126,
+            172
+          ],
+          "sha256": "fd794cd2a372aec9b0d019c266795b65064f089cbe803d645f2a64070f3a6d79"
+        }
+      ],
+      "release_anchor": [
+        55,
+        -31
+      ]
+    },
+    "special": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.08,
+        0.09,
+        0.12,
+        0.06,
+        0.08,
+        0.12,
+        0.18
+      ],
+      "duration": 0.82,
+      "loop": false,
+      "release_frame": 4,
+      "release_time": 0.38,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/mirra/special-00.png",
+          "source": "art-source/animated/mirra-repair24.png",
+          "slot": 0,
+          "source_bounds": [
+            55,
+            55,
+            209,
+            285
+          ],
+          "source_origin": [
+            124.5,
+            290.0
+          ],
+          "scale": 0.43735763097949887,
+          "packed_bounds": [
+            66,
+            69,
+            133,
+            170
+          ],
+          "sha256": "ecbbbeea26eeaed486d00a93807c930b40b1be4ec9c3efa9ea921bc4db7a5570"
+        },
+        {
+          "path": "res://assets/animated/mirra/special-01.png",
+          "source": "art-source/animated/mirra-repair24.png",
+          "slot": 1,
+          "source_bounds": [
+            273,
+            66,
+            466,
+            287
+          ],
+          "source_origin": [
+            380.0,
+            290.0
+          ],
+          "scale": 0.43735763097949887,
+          "packed_bounds": [
+            49,
+            74,
+            133,
+            171
+          ],
+          "sha256": "3917845ff39ff874a954f582ce87b3ee1669282feebfdf3592ae2d1945e10a81"
+        },
+        {
+          "path": "res://assets/animated/mirra/special-02.png",
+          "source": "art-source/animated/mirra-repair24.png",
+          "slot": 2,
+          "source_bounds": [
+            523,
+            71,
+            782,
+            288
+          ],
+          "source_origin": [
+            646.5,
+            290.0
+          ],
+          "scale": 0.43735763097949887,
+          "packed_bounds": [
+            42,
+            76,
+            155,
+            171
+          ],
+          "sha256": "43dc97305c0fcf79162c3a73deb7ca71893e431b591b3328e917f1b9a6b58906"
+        },
+        {
+          "path": "res://assets/animated/mirra/special-03.png",
+          "source": "art-source/animated/mirra-repair24.png",
+          "slot": 3,
+          "source_bounds": [
+            806,
+            47,
+            1000,
+            288
+          ],
+          "source_origin": [
+            904.5,
+            290.0
+          ],
+          "scale": 0.43735763097949887,
+          "packed_bounds": [
+            53,
+            66,
+            138,
+            171
+          ],
+          "sha256": "17ba239be787d72a20c59e68bba2397e15a2974ede6eb1e90192ddc8148ee049"
+        },
+        {
+          "path": "res://assets/animated/mirra/special-04.png",
+          "source": "art-source/animated/mirra-repair24.png",
+          "slot": 4,
+          "source_bounds": [
+            1043,
+            33,
+            1253,
+            290
+          ],
+          "source_origin": [
+            1151.0,
+            290.0
+          ],
+          "scale": 0.43735763097949887,
+          "packed_bounds": [
+            49,
+            60,
+            141,
+            172
+          ],
+          "sha256": "ad1757fa20cd3a020967bfd8fe40496519199cf8a97ef3aa8e9d5f9427f6a46e"
+        },
+        {
+          "path": "res://assets/animated/mirra/special-05.png",
+          "source": "art-source/animated/mirra-repair24.png",
+          "slot": 5,
+          "source_bounds": [
+            1294,
+            94,
+            1540,
+            290
+          ],
+          "source_origin": [
+            1404.5,
+            290.0
+          ],
+          "scale": 0.43735763097949887,
+          "packed_bounds": [
+            48,
+            86,
+            156,
+            172
+          ],
+          "sha256": "f7c3df6a35b9f43fc8994a13ae3fd9b97bd2acfece2527f39c81d5229d5b793e"
+        },
+        {
+          "path": "res://assets/animated/mirra/special-06.png",
+          "source": "art-source/animated/mirra-repair24.png",
+          "slot": 6,
+          "source_bounds": [
+            1570,
+            49,
+            1808,
+            290
+          ],
+          "source_origin": [
+            1639.0,
+            290.0
+          ],
+          "scale": 0.43735763097949887,
+          "packed_bounds": [
+            66,
+            67,
+            170,
+            172
+          ],
+          "sha256": "e456811a3e3b701784eb6d23976da2e652b3d01e2dd4d7feb187f6078cc51be2"
+        },
+        {
+          "path": "res://assets/animated/mirra/special-07.png",
+          "source": "art-source/animated/mirra-repair24.png",
+          "slot": 7,
+          "source_bounds": [
+            1819,
+            84,
+            2031,
+            290
+          ],
+          "source_origin": [
+            1896.0,
+            290.0
+          ],
+          "scale": 0.43735763097949887,
+          "packed_bounds": [
+            62,
+            82,
+            155,
+            172
+          ],
+          "sha256": "a257150b0af9c9c0c89d97ef999a23bba7d1a835d57599e0675faee98e7e65fe"
+        }
+      ]
+    },
+    "guard": {
+      "frame_count": 8,
+      "durations": [
+        0.055,
+        0.055,
+        0.055,
+        0.055,
+        0.12,
+        0.12,
+        0.12,
+        0.12
+      ],
+      "duration": 0.7,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": 4,
+      "frames": [
+        {
+          "path": "res://assets/animated/mirra/guard-00.png",
+          "source": "art-source/animated/mirra-64.png",
+          "slot": 40,
+          "source_bounds": [
+            30,
+            862,
+            135,
+            1013
+          ],
+          "source_origin": [
+            83.5,
+            1015.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            63,
+            78,
+            127,
+            170
+          ],
+          "sha256": "aa2a95f3925efce4e5c23b69ad29a5f0348dc40d028069e3f411082f380b1898"
+        },
+        {
+          "path": "res://assets/animated/mirra/guard-01.png",
+          "source": "art-source/animated/mirra-64.png",
+          "slot": 41,
+          "source_bounds": [
+            186,
+            881,
+            312,
+            1014
+          ],
+          "source_origin": [
+            243.0,
+            1015.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            61,
+            90,
+            138,
+            171
+          ],
+          "sha256": "8274ed3fa0531b90f55f7778493f6e071b95dff413fbd1f4181d85d946888197"
+        },
+        {
+          "path": "res://assets/animated/mirra/guard-02.png",
+          "source": "art-source/animated/mirra-64.png",
+          "slot": 42,
+          "source_bounds": [
+            354,
+            865,
+            470,
+            1015
+          ],
+          "source_origin": [
+            397.5,
+            1015.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            69,
+            80,
+            140,
+            172
+          ],
+          "sha256": "6e55ee920ef09a49b971c82e0331db9757045e1473447b6cac48a8754f194a53"
+        },
+        {
+          "path": "res://assets/animated/mirra/guard-03.png",
+          "source": "art-source/animated/mirra-64.png",
+          "slot": 43,
+          "source_bounds": [
+            493,
+            866,
+            622,
+            1015
+          ],
+          "source_origin": [
+            556.5,
+            1015.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            57,
+            81,
+            136,
+            172
+          ],
+          "sha256": "1be05a2157f02c2b4f9332a8f808d4271b4cf59b23d30abacdfcd09bc155ad77"
+        },
+        {
+          "path": "res://assets/animated/mirra/guard-04.png",
+          "source": "art-source/animated/mirra-64.png",
+          "slot": 44,
+          "source_bounds": [
+            647,
+            866,
+            782,
+            1015
+          ],
+          "source_origin": [
+            711.5,
+            1015.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            57,
+            81,
+            140,
+            172
+          ],
+          "sha256": "4bd763381da39ce63f49569d192782875a5b4e43d62f48c421c27f999130bc98"
+        },
+        {
+          "path": "res://assets/animated/mirra/guard-05.png",
+          "source": "art-source/animated/mirra-64.png",
+          "slot": 45,
+          "source_bounds": [
+            798,
+            864,
+            929,
+            1015
+          ],
+          "source_origin": [
+            869.5,
+            1015.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            52,
+            80,
+            132,
+            172
+          ],
+          "sha256": "2a8547e458c51ef9a1aa9bcfd01068fa2695c328a04f0e8c2b7f9b059d732da0"
+        },
+        {
+          "path": "res://assets/animated/mirra/guard-06.png",
+          "source": "art-source/animated/mirra-64.png",
+          "slot": 46,
+          "source_bounds": [
+            960,
+            870,
+            1079,
+            1015
+          ],
+          "source_origin": [
+            1024.0,
+            1015.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            57,
+            83,
+            130,
+            172
+          ],
+          "sha256": "ed28a8f62c47d60f39e3073e48e5aa4d6e03c4901a0e7219882129f3426db7e2"
+        },
+        {
+          "path": "res://assets/animated/mirra/guard-07.png",
+          "source": "art-source/animated/mirra-64.png",
+          "slot": 47,
+          "source_bounds": [
+            1120,
+            864,
+            1223,
+            1015
+          ],
+          "source_origin": [
+            1174.5,
+            1015.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            63,
+            80,
+            126,
+            172
+          ],
+          "sha256": "baf06d6de73c2de5a21b4983c4b3466ddd6bd2c4fce147e580aa4997f0fc9942"
+        }
+      ]
+    },
+    "hit": {
+      "frame_count": 8,
+      "durations": [
+        0.035,
+        0.065,
+        0.09,
+        0.12,
+        0.13,
+        0.15,
+        0.16,
+        0.18
+      ],
+      "duration": 0.9299999999999999,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/mirra/hit-00.png",
+          "source": "art-source/animated/mirra-repair24.png",
+          "slot": 8,
+          "source_bounds": [
+            48,
+            322,
+            206,
+            537
+          ],
+          "source_origin": [
+            124.5,
+            544.25
+          ],
+          "scale": 0.43735763097949887,
+          "packed_bounds": [
+            63,
+            75,
+            132,
+            169
+          ],
+          "sha256": "21dd491a35281afab3e5c99b3a69a0f3d28747e224f64897b833f16ae4fdf524"
+        },
+        {
+          "path": "res://assets/animated/mirra/hit-01.png",
+          "source": "art-source/animated/mirra-repair24.png",
+          "slot": 9,
+          "source_bounds": [
+            273,
+            328,
+            476,
+            544
+          ],
+          "source_origin": [
+            380.0,
+            544.25
+          ],
+          "scale": 0.43735763097949887,
+          "packed_bounds": [
+            49,
+            77,
+            138,
+            171
+          ],
+          "sha256": "645f05f666e275e0edd0ee4576b76717ea4c913d51f42a4f319ebe2ee7432ac8"
+        },
+        {
+          "path": "res://assets/animated/mirra/hit-02.png",
+          "source": "art-source/animated/mirra-repair24.png",
+          "slot": 10,
+          "source_bounds": [
+            544,
+            351,
+            757,
+            544
+          ],
+          "source_origin": [
+            646.5,
+            544.25
+          ],
+          "scale": 0.43735763097949887,
+          "packed_bounds": [
+            51,
+            87,
+            144,
+            171
+          ],
+          "sha256": "a2724d74be37413cb5da6ad0825d50ce901b573ae723892db0c6e14aef09090e"
+        },
+        {
+          "path": "res://assets/animated/mirra/hit-03.png",
+          "source": "art-source/animated/mirra-repair24.png",
+          "slot": 11,
+          "source_bounds": [
+            813,
+            366,
+            998,
+            543
+          ],
+          "source_origin": [
+            904.5,
+            544.25
+          ],
+          "scale": 0.43735763097949887,
+          "packed_bounds": [
+            56,
+            94,
+            137,
+            171
+          ],
+          "sha256": "b9022123e92ce916c1af77c18cc536a19b60134e9742baf128d62438169d668a"
+        },
+        {
+          "path": "res://assets/animated/mirra/hit-04.png",
+          "source": "art-source/animated/mirra-repair24.png",
+          "slot": 12,
+          "source_bounds": [
+            1057,
+            353,
+            1256,
+            544
+          ],
+          "source_origin": [
+            1151.0,
+            544.25
+          ],
+          "scale": 0.43735763097949887,
+          "packed_bounds": [
+            55,
+            88,
+            142,
+            172
+          ],
+          "sha256": "87ad08f1816e1be16751bab6a12584293b97aad0b3ee140f8b144eeda204b7cc"
+        },
+        {
+          "path": "res://assets/animated/mirra/hit-05.png",
+          "source": "art-source/animated/mirra-repair24.png",
+          "slot": 13,
+          "source_bounds": [
+            1297,
+            331,
+            1500,
+            546
+          ],
+          "source_origin": [
+            1404.5,
+            544.25
+          ],
+          "scale": 0.43735763097949887,
+          "packed_bounds": [
+            49,
+            79,
+            138,
+            173
+          ],
+          "sha256": "0bd76160d72ae271888a06ca6058231e905ce35f2b170f24b1f053ff1c6e8059"
+        },
+        {
+          "path": "res://assets/animated/mirra/hit-06.png",
+          "source": "art-source/animated/mirra-repair24.png",
+          "slot": 14,
+          "source_bounds": [
+            1573,
+            324,
+            1741,
+            545
+          ],
+          "source_origin": [
+            1639.0,
+            544.25
+          ],
+          "scale": 0.43735763097949887,
+          "packed_bounds": [
+            67,
+            76,
+            140,
+            173
+          ],
+          "sha256": "ce0ac5e1b8673cad4531b19b85963cad28678d039ea930477c3070e70daf9703"
+        },
+        {
+          "path": "res://assets/animated/mirra/hit-07.png",
+          "source": "art-source/animated/mirra-repair24.png",
+          "slot": 15,
+          "source_bounds": [
+            1848,
+            318,
+            1994,
+            544
+          ],
+          "source_origin": [
+            1896.0,
+            544.25
+          ],
+          "scale": 0.43735763097949887,
+          "packed_bounds": [
+            75,
+            73,
+            139,
+            172
+          ],
+          "sha256": "3a6d467fea49a61a2fcc4f814bc9b7c27cf8f5e4fa6b4db7ae9e064a2e6fa7cb"
+        }
+      ]
+    },
+    "defeat": {
+      "frame_count": 8,
+      "durations": [
+        0.08,
+        0.1,
+        0.1,
+        0.12,
+        0.15,
+        0.18,
+        0.24,
+        0.3
+      ],
+      "duration": 1.27,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/mirra/defeat-00.png",
+          "source": "art-source/animated/mirra-repair24.png",
+          "slot": 16,
+          "source_bounds": [
+            50,
+            554,
+            192,
+            754
+          ],
+          "source_origin": [
+            124.5,
+            753.25
+          ],
+          "scale": 0.43735763097949887,
+          "packed_bounds": [
+            63,
+            85,
+            125,
+            172
+          ],
+          "sha256": "6ee6d9bfd16d1b824df2a626e824582ae5c23836feb847c7792b161ffedb0b75"
+        },
+        {
+          "path": "res://assets/animated/mirra/defeat-01.png",
+          "source": "art-source/animated/mirra-repair24.png",
+          "slot": 17,
+          "source_bounds": [
+            296,
+            589,
+            446,
+            754
+          ],
+          "source_origin": [
+            380.0,
+            753.25
+          ],
+          "scale": 0.43735763097949887,
+          "packed_bounds": [
+            59,
+            100,
+            125,
+            172
+          ],
+          "sha256": "9e8c050d9695a68578813f89a12194a6e917e0ed7a6f62b7d4eeddce54520901"
+        },
+        {
+          "path": "res://assets/animated/mirra/defeat-02.png",
+          "source": "art-source/animated/mirra-repair24.png",
+          "slot": 18,
+          "source_bounds": [
+            519,
+            619,
+            718,
+            753
+          ],
+          "source_origin": [
+            646.5,
+            753.25
+          ],
+          "scale": 0.43735763097949887,
+          "packed_bounds": [
+            40,
+            113,
+            127,
+            172
+          ],
+          "sha256": "5355432251f291fe5a8e5f2916e36dc39268c8d00ea40efb04a0026ab568f147"
+        },
+        {
+          "path": "res://assets/animated/mirra/defeat-03.png",
+          "source": "art-source/animated/mirra-repair24.png",
+          "slot": 19,
+          "source_bounds": [
+            780,
+            632,
+            976,
+            752
+          ],
+          "source_origin": [
+            904.5,
+            753.25
+          ],
+          "scale": 0.43735763097949887,
+          "packed_bounds": [
+            42,
+            119,
+            128,
+            171
+          ],
+          "sha256": "efd54b67349447af3017b8c1b1a9e745b7053beed1163fdeaa61c9196df7b0a2"
+        },
+        {
+          "path": "res://assets/animated/mirra/defeat-04.png",
+          "source": "art-source/animated/mirra-repair24.png",
+          "slot": 20,
+          "source_bounds": [
+            1035,
+            622,
+            1267,
+            750
+          ],
+          "source_origin": [
+            1151.0,
+            753.25
+          ],
+          "scale": 0.43735763097949887,
+          "packed_bounds": [
+            45,
+            115,
+            146,
+            171
+          ],
+          "sha256": "5dd5db955f44f221cb60b1aaed9dc5650b7dc3dbb3ff7a326a0c21902051ecac"
+        },
+        {
+          "path": "res://assets/animated/mirra/defeat-05.png",
+          "source": "art-source/animated/mirra-repair24.png",
+          "slot": 21,
+          "source_bounds": [
+            1283,
+            683,
+            1516,
+            750
+          ],
+          "source_origin": [
+            1404.5,
+            753.25
+          ],
+          "scale": 0.43735763097949887,
+          "packed_bounds": [
+            43,
+            141,
+            145,
+            170
+          ],
+          "sha256": "fc7733b7bac09ebc81e98daf0acec372c31c933e3cecd34dfc93f3c9a6d1f274"
+        },
+        {
+          "path": "res://assets/animated/mirra/defeat-06.png",
+          "source": "art-source/animated/mirra-repair24.png",
+          "slot": 22,
+          "source_bounds": [
+            1535,
+            660,
+            1728,
+            751
+          ],
+          "source_origin": [
+            1639.0,
+            753.25
+          ],
+          "scale": 0.43735763097949887,
+          "packed_bounds": [
+            51,
+            131,
+            135,
+            171
+          ],
+          "sha256": "c7d607272aa45b87df58a5daa1ec7113fefc8e368d1badee755612aa98f8dd07"
+        },
+        {
+          "path": "res://assets/animated/mirra/defeat-07.png",
+          "source": "art-source/animated/mirra-repair24.png",
+          "slot": 23,
+          "source_bounds": [
+            1747,
+            667,
+            2027,
+            750
+          ],
+          "source_origin": [
+            1896.0,
+            753.25
+          ],
+          "scale": 0.43735763097949887,
+          "packed_bounds": [
+            31,
+            134,
+            153,
+            170
+          ],
+          "sha256": "4f69c2d6c64e1fa371c5b570d071dbb7c5f04d217ffea95899d0cf9af996e1b8"
+        }
+      ]
+    },
+    "jump": {
+      "frame_count": 8,
+      "durations": [
+        0.08,
+        0.055,
+        0.08,
+        0.11,
+        0.11,
+        0.08,
+        0.07,
+        0.115
+      ],
+      "duration": 0.7000000000000001,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/mirra/jump-00.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 32,
+          "source_bounds": [
+            45,
+            645,
+            139,
+            783
+          ],
+          "source_origin": [
+            85.5,
+            783.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            68,
+            75,
+            134,
+            172
+          ],
+          "sha256": "bb26115c165cb2023d0a9aec97892c071edb85a80e4a6f696f99b162de4f9c13",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mirra/jump-01.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 33,
+          "source_bounds": [
+            204,
+            669,
+            306,
+            783
+          ],
+          "source_origin": [
+            243.0,
+            783.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            69,
+            92,
+            140,
+            172
+          ],
+          "sha256": "3dc0e2a7d67c4460a0ebace3c0ce41ec96d5c36af8bf7181d0ed20a2d911349e",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mirra/jump-02.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 34,
+          "source_bounds": [
+            356,
+            655,
+            462,
+            783
+          ],
+          "source_origin": [
+            400.5,
+            783.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            65,
+            82,
+            139,
+            172
+          ],
+          "sha256": "d4bfeabbd27d93153a7d65d43126e0ac165e2a9efac78f1747488d04838d3628",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mirra/jump-03.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 35,
+          "source_bounds": [
+            506,
+            642,
+            610,
+            774
+          ],
+          "source_origin": [
+            563.5,
+            774.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            56,
+            80,
+            129,
+            172
+          ],
+          "sha256": "87bc4740e0046fadb7c446532f46065b4a629922f50b858139c3a388f183d22a",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mirra/jump-04.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 36,
+          "source_bounds": [
+            650,
+            631,
+            776,
+            744
+          ],
+          "source_origin": [
+            719.0,
+            744.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            48,
+            93,
+            136,
+            172
+          ],
+          "sha256": "1c91a8b80157de999631a3209a2c5ca15a51a21ad49f474c871d708703255d41",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mirra/jump-05.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 37,
+          "source_bounds": [
+            813,
+            652,
+            926,
+            782
+          ],
+          "source_origin": [
+            874.0,
+            782.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            53,
+            81,
+            132,
+            172
+          ],
+          "sha256": "85a5639bcd4c6d6b69be7375372d668af5bc54fbe0064aa028f8e6057f8c9915",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mirra/jump-06.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 38,
+          "source_bounds": [
+            968,
+            679,
+            1087,
+            783
+          ],
+          "source_origin": [
+            1027.5,
+            783.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            54,
+            99,
+            137,
+            172
+          ],
+          "sha256": "7c6ede03d169fb2cd387ed3bf19283adb96b992e640ef2cf2f08f45e453124d0",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mirra/jump-07.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 39,
+          "source_bounds": [
+            1134,
+            645,
+            1223,
+            783
+          ],
+          "source_origin": [
+            1179.0,
+            783.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            65,
+            75,
+            127,
+            172
+          ],
+          "sha256": "623a46992b524f9fa13053b87ba4a95e634702bd85a1c72be49bdeb052c9d091",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "stair_up": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/mirra/stair_up-00.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 40,
+          "source_bounds": [
+            47,
+            791,
+            143,
+            938
+          ],
+          "source_origin": [
+            85.5,
+            938.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            69,
+            69,
+            136,
+            172
+          ],
+          "sha256": "5b913d7f37acd656543c3856bc8396fb05158662eded16ba1cf86e10727938dc",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mirra/stair_up-01.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 41,
+          "source_bounds": [
+            204,
+            790,
+            306,
+            938
+          ],
+          "source_origin": [
+            243.0,
+            938.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            69,
+            68,
+            140,
+            172
+          ],
+          "sha256": "fc0ac73ddfffe8133f229db81c493755158ef7e6f41b0b2eb48f73c1855c6f67",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mirra/stair_up-02.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 42,
+          "source_bounds": [
+            360,
+            792,
+            456,
+            938
+          ],
+          "source_origin": [
+            400.5,
+            938.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            68,
+            70,
+            135,
+            172
+          ],
+          "sha256": "b6b6d7679b452963a42ceff59959980f8b5648e1c874042844f7320d8d4197a5",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mirra/stair_up-03.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 43,
+          "source_bounds": [
+            509,
+            792,
+            614,
+            938
+          ],
+          "source_origin": [
+            563.5,
+            938.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            59,
+            70,
+            131,
+            172
+          ],
+          "sha256": "762763f566b6c219bf339f94d3aa094c07d51ac192b1e71f6ab96e5d8abe649d",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mirra/stair_up-04.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 44,
+          "source_bounds": [
+            664,
+            791,
+            771,
+            938
+          ],
+          "source_origin": [
+            719.0,
+            938.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            58,
+            69,
+            133,
+            172
+          ],
+          "sha256": "ec9eedba485c5ebdac6523dc0aca969b7aef7ac3472c30351a5ec452e71ce0e8",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mirra/stair_up-05.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 45,
+          "source_bounds": [
+            824,
+            791,
+            922,
+            938
+          ],
+          "source_origin": [
+            874.0,
+            938.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            61,
+            69,
+            130,
+            172
+          ],
+          "sha256": "5c7108908d8926fb7acf299945c04bf6953d77b35683d11734f3a706878387f1",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mirra/stair_up-06.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 46,
+          "source_bounds": [
+            980,
+            792,
+            1078,
+            938
+          ],
+          "source_origin": [
+            1027.5,
+            938.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            63,
+            70,
+            132,
+            172
+          ],
+          "sha256": "d95bb0e1b147aabc072fa54c87f5aaf4963f82b99fb82be1014af500dde076df",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mirra/stair_up-07.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 47,
+          "source_bounds": [
+            1135,
+            792,
+            1224,
+            938
+          ],
+          "source_origin": [
+            1179.0,
+            938.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            65,
+            70,
+            127,
+            172
+          ],
+          "sha256": "2cb5a570d5410225fae88a1774da4eba5034b4e712b2fe730966ed7a162bfee1",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "stair_down": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/mirra/stair_down-00.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 48,
+          "source_bounds": [
+            41,
+            949,
+            146,
+            1092
+          ],
+          "source_origin": [
+            85.5,
+            1092.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            65,
+            72,
+            138,
+            172
+          ],
+          "sha256": "58717eafbaf9043a64319fbb60739754719ab5b72c2d2ca2307a7857ec9bead9",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mirra/stair_down-01.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 49,
+          "source_bounds": [
+            194,
+            948,
+            301,
+            1092
+          ],
+          "source_origin": [
+            243.0,
+            1092.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            62,
+            71,
+            137,
+            172
+          ],
+          "sha256": "183a8d5e71baf12e05d223fcfa794bb8ce75ba3e76cefbf69ef0a177deedec8c",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mirra/stair_down-02.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 50,
+          "source_bounds": [
+            351,
+            955,
+            460,
+            1093
+          ],
+          "source_origin": [
+            400.5,
+            1093.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            61,
+            75,
+            137,
+            172
+          ],
+          "sha256": "4f73266c8971f21c1f2eed7dddf945435a00a1c3a1abccf6a655cd8d713c1216",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mirra/stair_down-03.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 51,
+          "source_bounds": [
+            509,
+            959,
+            621,
+            1092
+          ],
+          "source_origin": [
+            563.5,
+            1092.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            58,
+            79,
+            136,
+            172
+          ],
+          "sha256": "4e467e085f2be18924936d2f8795d51fbae7953232df9a71f4320545c354ebd1",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mirra/stair_down-04.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 52,
+          "source_bounds": [
+            659,
+            955,
+            769,
+            1092
+          ],
+          "source_origin": [
+            719.0,
+            1092.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            54,
+            76,
+            131,
+            172
+          ],
+          "sha256": "29252ad4bfe28c2ddd5b036a17ffb7a60221345ffc7b699e41f0d5f8ad51d6e1",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mirra/stair_down-05.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 53,
+          "source_bounds": [
+            812,
+            957,
+            931,
+            1093
+          ],
+          "source_origin": [
+            874.0,
+            1093.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            53,
+            77,
+            136,
+            172
+          ],
+          "sha256": "8c92f9555120d73a13e389b724524e158b4a525a64a1fff6903c3effe8b3777d",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mirra/stair_down-06.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 54,
+          "source_bounds": [
+            975,
+            954,
+            1088,
+            1093
+          ],
+          "source_origin": [
+            1027.5,
+            1093.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            59,
+            75,
+            138,
+            172
+          ],
+          "sha256": "2c8dbb59984ed38a7ed513b1b5f80a1e983b9f1b51eb9121d64bfa6736db4ace",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mirra/stair_down-07.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 55,
+          "source_bounds": [
+            1131,
+            948,
+            1223,
+            1093
+          ],
+          "source_origin": [
+            1179.0,
+            1093.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            62,
+            71,
+            126,
+            172
+          ],
+          "sha256": "28b290910f19f262564cba7d70913fe58de79f49347bd85bbd71a240a5f54b1b",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "dodge": {
+      "frame_count": 8,
+      "durations": [
+        0.055,
+        0.045,
+        0.04,
+        0.045,
+        0.06,
+        0.07,
+        0.08,
+        0.1
+      ],
+      "duration": 0.495,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/mirra/dodge-00.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 56,
+          "source_bounds": [
+            45,
+            1105,
+            136,
+            1247
+          ],
+          "source_origin": [
+            85.5,
+            1247.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            68,
+            73,
+            132,
+            172
+          ],
+          "sha256": "7823ec9afe5bd8a4d7ba31d862efb214e0b6fb897e50df2134dafb29c611e0a3",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mirra/dodge-01.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 57,
+          "source_bounds": [
+            191,
+            1123,
+            301,
+            1244
+          ],
+          "source_origin": [
+            243.0,
+            1244.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            60,
+            87,
+            137,
+            172
+          ],
+          "sha256": "e6895baff17953e64ed7e73945d3bfb92224163643a989cc136d8908ff85bee3",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mirra/dodge-02.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 58,
+          "source_bounds": [
+            328,
+            1142,
+            480,
+            1244
+          ],
+          "source_origin": [
+            400.5,
+            1244.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            45,
+            101,
+            151,
+            172
+          ],
+          "sha256": "a85dc9da29237a16f405834914ca15faaab5cbee1d2d4466bf916f0f5c97744c",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mirra/dodge-03.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 59,
+          "source_bounds": [
+            514,
+            1141,
+            619,
+            1243
+          ],
+          "source_origin": [
+            563.5,
+            1243.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            61,
+            101,
+            134,
+            172
+          ],
+          "sha256": "cce40cff85002eda1bae2af5cbbe5a797951598c5502448afd10ba1b1c9f4b8a",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mirra/dodge-04.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 60,
+          "source_bounds": [
+            648,
+            1145,
+            797,
+            1244
+          ],
+          "source_origin": [
+            719.0,
+            1244.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            46,
+            103,
+            150,
+            172
+          ],
+          "sha256": "f1c2110142910d581757d2904c01dddd8f0368310f29a03f6174fede592f3a3d",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mirra/dodge-05.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 61,
+          "source_bounds": [
+            820,
+            1118,
+            935,
+            1243
+          ],
+          "source_origin": [
+            874.0,
+            1243.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            58,
+            85,
+            138,
+            172
+          ],
+          "sha256": "74170a1d0e8c90d83494455528eec978ecc420c491e3270e62e3dc2bdb84eb77",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mirra/dodge-06.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 62,
+          "source_bounds": [
+            972,
+            1107,
+            1073,
+            1247
+          ],
+          "source_origin": [
+            1027.5,
+            1247.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            57,
+            74,
+            128,
+            172
+          ],
+          "sha256": "5634a96d42c8f290225ab87bcc5a13cb8f5dc0327e4a16768b8e126436b7939f",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mirra/dodge-07.png",
+          "source": "art-source/animated/v3/mirra-extension64.png",
+          "slot": 63,
+          "source_bounds": [
+            1135,
+            1107,
+            1224,
+            1247
+          ],
+          "source_origin": [
+            1179.0,
+            1247.0
+          ],
+          "scale": 0.6994535519125683,
+          "packed_bounds": [
+            65,
+            74,
+            127,
+            172
+          ],
+          "sha256": "971d4b1c66d9de163d48f8877d448df9a269be3a76bfa2a67d3a53173be69956",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "powered_idle": {
+      "frame_count": 8,
+      "durations": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ],
+      "duration": 1.6,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/mirra/powered_idle-00.png",
+          "source": "art-source/animated/v3/mirra-powered40.png",
+          "slot": 0,
+          "source_bounds": [
+            40,
+            28,
+            195,
+            192
+          ],
+          "source_origin": [
+            106.5,
+            192.25
+          ],
+          "scale": 0.5953488372093023,
+          "packed_bounds": [
+            56,
+            74,
+            148,
+            172
+          ],
+          "sha256": "964c0a42722328da80746dd170a2ab5b8b6c6432c7a061159a90c0d11e7a001d"
+        },
+        {
+          "path": "res://assets/animated/mirra/powered_idle-01.png",
+          "source": "art-source/animated/v3/mirra-powered40.png",
+          "slot": 1,
+          "source_bounds": [
+            232,
+            32,
+            382,
+            192
+          ],
+          "source_origin": [
+            307.0,
+            192.25
+          ],
+          "scale": 0.5953488372093023,
+          "packed_bounds": [
+            51,
+            77,
+            140,
+            172
+          ],
+          "sha256": "74116f882feeec485c1c4139c392dfebbf9a2dad610d433ee888011b0a71bac6"
+        },
+        {
+          "path": "res://assets/animated/mirra/powered_idle-02.png",
+          "source": "art-source/animated/v3/mirra-powered40.png",
+          "slot": 2,
+          "source_bounds": [
+            419,
+            30,
+            569,
+            192
+          ],
+          "source_origin": [
+            497.0,
+            192.25
+          ],
+          "scale": 0.5953488372093023,
+          "packed_bounds": [
+            50,
+            75,
+            139,
+            171
+          ],
+          "sha256": "d32a27078cc9cc299c6d0ca9c51f97c255bcd732797428fe7dd16ae1dc5872f3"
+        },
+        {
+          "path": "res://assets/animated/mirra/powered_idle-03.png",
+          "source": "art-source/animated/v3/mirra-powered40.png",
+          "slot": 3,
+          "source_bounds": [
+            607,
+            29,
+            754,
+            192
+          ],
+          "source_origin": [
+            686.0,
+            192.25
+          ],
+          "scale": 0.5953488372093023,
+          "packed_bounds": [
+            50,
+            75,
+            137,
+            172
+          ],
+          "sha256": "76d0eb3df79fc2c7528566e78071d81fb2c52abc52174ef5f66b7131e53a9965"
+        },
+        {
+          "path": "res://assets/animated/mirra/powered_idle-04.png",
+          "source": "art-source/animated/v3/mirra-powered40.png",
+          "slot": 4,
+          "source_bounds": [
+            792,
+            33,
+            947,
+            192
+          ],
+          "source_origin": [
+            870.0,
+            192.25
+          ],
+          "scale": 0.5953488372093023,
+          "packed_bounds": [
+            51,
+            77,
+            142,
+            172
+          ],
+          "sha256": "79180d292d4f6d43563b8a56f4d6d97c3dc3a926265124a152d78720d506f2af"
+        },
+        {
+          "path": "res://assets/animated/mirra/powered_idle-05.png",
+          "source": "art-source/animated/v3/mirra-powered40.png",
+          "slot": 5,
+          "source_bounds": [
+            984,
+            30,
+            1130,
+            193
+          ],
+          "source_origin": [
+            1057.5,
+            192.25
+          ],
+          "scale": 0.5953488372093023,
+          "packed_bounds": [
+            52,
+            75,
+            139,
+            172
+          ],
+          "sha256": "b61ae8fca444dc6683b33bb81cf930a3e2dc2e4562762c39584810d7a2c82f5a"
+        },
+        {
+          "path": "res://assets/animated/mirra/powered_idle-06.png",
+          "source": "art-source/animated/v3/mirra-powered40.png",
+          "slot": 6,
+          "source_bounds": [
+            1172,
+            32,
+            1311,
+            193
+          ],
+          "source_origin": [
+            1247.0,
+            192.25
+          ],
+          "scale": 0.5953488372093023,
+          "packed_bounds": [
+            51,
+            77,
+            134,
+            173
+          ],
+          "sha256": "e2bc37461ccd46940287030c8e40755ba81a20fa718c6005598ac9f32208a9a7"
+        },
+        {
+          "path": "res://assets/animated/mirra/powered_idle-07.png",
+          "source": "art-source/animated/v3/mirra-powered40.png",
+          "slot": 7,
+          "source_bounds": [
+            1356,
+            28,
+            1502,
+            192
+          ],
+          "source_origin": [
+            1438.0,
+            192.25
+          ],
+          "scale": 0.5953488372093023,
+          "packed_bounds": [
+            47,
+            74,
+            134,
+            172
+          ],
+          "sha256": "8ad862195d86725956b52a43fa5d4e2e89833bb4eeef4383aa7cfb2ce4899e3f"
+        }
+      ]
+    },
+    "powered_walk": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/mirra/powered_walk-00.png",
+          "source": "art-source/animated/v3/mirra-powered40.png",
+          "slot": 8,
+          "source_bounds": [
+            39,
+            224,
+            196,
+            392
+          ],
+          "source_origin": [
+            106.5,
+            395.0
+          ],
+          "scale": 0.5953488372093023,
+          "packed_bounds": [
+            56,
+            70,
+            149,
+            170
+          ],
+          "sha256": "7cb7e1c2e1adeb41a22c77c5510dfd061ef7ba8d6f059ab42adcf951329504a9"
+        },
+        {
+          "path": "res://assets/animated/mirra/powered_walk-01.png",
+          "source": "art-source/animated/v3/mirra-powered40.png",
+          "slot": 9,
+          "source_bounds": [
+            231,
+            222,
+            387,
+            395
+          ],
+          "source_origin": [
+            307.0,
+            395.0
+          ],
+          "scale": 0.5953488372093023,
+          "packed_bounds": [
+            51,
+            69,
+            144,
+            172
+          ],
+          "sha256": "dcbc1ecd518732f8e44862ee2ff47e271f9eb2c86f5b564b267eeef05393f1cc"
+        },
+        {
+          "path": "res://assets/animated/mirra/powered_walk-02.png",
+          "source": "art-source/animated/v3/mirra-powered40.png",
+          "slot": 10,
+          "source_bounds": [
+            422,
+            221,
+            567,
+            395
+          ],
+          "source_origin": [
+            497.0,
+            395.0
+          ],
+          "scale": 0.5953488372093023,
+          "packed_bounds": [
+            51,
+            68,
+            137,
+            172
+          ],
+          "sha256": "f7c4996e21e26971ee78aa071b82640ccb3ec0a261a83dc9e822aa4dc3ed965b"
+        },
+        {
+          "path": "res://assets/animated/mirra/powered_walk-03.png",
+          "source": "art-source/animated/v3/mirra-powered40.png",
+          "slot": 11,
+          "source_bounds": [
+            598,
+            221,
+            751,
+            395
+          ],
+          "source_origin": [
+            686.0,
+            395.0
+          ],
+          "scale": 0.5953488372093023,
+          "packed_bounds": [
+            44,
+            68,
+            135,
+            172
+          ],
+          "sha256": "e6d4ae747cbab6bde65ba74fd3f0f0f630cda11de12fd5e657390fbd7a7d09a3"
+        },
+        {
+          "path": "res://assets/animated/mirra/powered_walk-04.png",
+          "source": "art-source/animated/v3/mirra-powered40.png",
+          "slot": 12,
+          "source_bounds": [
+            780,
+            221,
+            930,
+            395
+          ],
+          "source_origin": [
+            870.0,
+            395.0
+          ],
+          "scale": 0.5953488372093023,
+          "packed_bounds": [
+            42,
+            68,
+            131,
+            172
+          ],
+          "sha256": "424716488a37a64ddc443ed915a54200f447ae57d88cf5d57881276cb9260ce3"
+        },
+        {
+          "path": "res://assets/animated/mirra/powered_walk-05.png",
+          "source": "art-source/animated/v3/mirra-powered40.png",
+          "slot": 13,
+          "source_bounds": [
+            968,
+            224,
+            1116,
+            395
+          ],
+          "source_origin": [
+            1057.5,
+            395.0
+          ],
+          "scale": 0.5953488372093023,
+          "packed_bounds": [
+            43,
+            70,
+            131,
+            172
+          ],
+          "sha256": "37dcb7620ebb76646d57cd262d5cc8ee03d84e253cf29f1a04aec1e32de74964"
+        },
+        {
+          "path": "res://assets/animated/mirra/powered_walk-06.png",
+          "source": "art-source/animated/v3/mirra-powered40.png",
+          "slot": 14,
+          "source_bounds": [
+            1160,
+            223,
+            1305,
+            395
+          ],
+          "source_origin": [
+            1247.0,
+            395.0
+          ],
+          "scale": 0.5953488372093023,
+          "packed_bounds": [
+            44,
+            70,
+            130,
+            172
+          ],
+          "sha256": "d15aa1531902821347d4e62da9674e3b3b443c454289280a38c8c8c73ccc2f9e"
+        },
+        {
+          "path": "res://assets/animated/mirra/powered_walk-07.png",
+          "source": "art-source/animated/v3/mirra-powered40.png",
+          "slot": 15,
+          "source_bounds": [
+            1362,
+            225,
+            1502,
+            392
+          ],
+          "source_origin": [
+            1438.0,
+            395.0
+          ],
+          "scale": 0.5953488372093023,
+          "packed_bounds": [
+            51,
+            71,
+            134,
+            170
+          ],
+          "sha256": "6237c14fc38dad69fe560d83de0ad235a8dc6f73939bca0da74d60d15c955b95"
+        }
+      ]
+    },
+    "powered_primary": {
+      "frame_count": 8,
+      "durations": [
+        0.06243243243243244,
+        0.06243243243243244,
+        0.07135135135135136,
+        0.0981081081081081,
+        0.03567567567567568,
+        0.06314814814814815,
+        0.09759259259259259,
+        0.14925925925925926
+      ],
+      "duration": 0.64,
+      "loop": false,
+      "release_frame": 5,
+      "release_time": 0.33,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/mirra/powered_primary-00.png",
+          "source": "art-source/animated/v3/mirra-powered40.png",
+          "slot": 16,
+          "source_bounds": [
+            39,
+            424,
+            197,
+            592
+          ],
+          "source_origin": [
+            106.5,
+            594.0
+          ],
+          "scale": 0.5953488372093023,
+          "packed_bounds": [
+            56,
+            71,
+            150,
+            171
+          ],
+          "sha256": "c7a8a1b5a39d40c66e4e17da2d7488d350c722932050130a809e8a70734bb124"
+        },
+        {
+          "path": "res://assets/animated/mirra/powered_primary-01.png",
+          "source": "art-source/animated/v3/mirra-powered40.png",
+          "slot": 21,
+          "source_bounds": [
+            991,
+            429,
+            1153,
+            593
+          ],
+          "source_origin": [
+            1057.5,
+            594.0
+          ],
+          "scale": 0.5953488372093023,
+          "packed_bounds": [
+            56,
+            74,
+            151,
+            172
+          ],
+          "sha256": "5980702a0e41d2d127991f7c45c28b0b4dbbae87d347a8686008fe73ca05a58b"
+        },
+        {
+          "path": "res://assets/animated/mirra/powered_primary-02.png",
+          "source": "art-source/animated/v3/mirra-powered40.png",
+          "slot": 19,
+          "source_bounds": [
+            614,
+            431,
+            809,
+            594
+          ],
+          "source_origin": [
+            686.0,
+            594.0
+          ],
+          "scale": 0.5953488372093023,
+          "packed_bounds": [
+            53,
+            75,
+            169,
+            172
+          ],
+          "sha256": "64afe563f8bc631cba16d78fa0b205c137e026cd7512d523dc10f99f4ebf3752"
+        },
+        {
+          "path": "res://assets/animated/mirra/powered_primary-03.png",
+          "source": "art-source/animated/v3/mirra-powered40.png",
+          "slot": 17,
+          "source_bounds": [
+            217,
+            426,
+            390,
+            593
+          ],
+          "source_origin": [
+            307.0,
+            594.0
+          ],
+          "scale": 0.5953488372093023,
+          "packed_bounds": [
+            42,
+            72,
+            145,
+            171
+          ],
+          "sha256": "df41fe9868b31b415ea2f499a1229cd998ee3c16662150cc2b3c6044c754fa3f"
+        },
+        {
+          "path": "res://assets/animated/mirra/powered_primary-04.png",
+          "source": "art-source/animated/v3/mirra-powered40.png",
+          "slot": 18,
+          "source_bounds": [
+            421,
+            428,
+            593,
+            594
+          ],
+          "source_origin": [
+            497.0,
+            594.0
+          ],
+          "scale": 0.5953488372093023,
+          "packed_bounds": [
+            51,
+            73,
+            153,
+            172
+          ],
+          "sha256": "c97642d7ed51947a93bacbd63cc3210ba473e056a36b23be708492aa2d8bd20d"
+        },
+        {
+          "path": "res://assets/animated/mirra/powered_primary-05.png",
+          "source": "art-source/animated/v3/mirra-powered40.png",
+          "slot": 20,
+          "source_bounds": [
+            801,
+            429,
+            985,
+            594
+          ],
+          "source_origin": [
+            870.0,
+            594.0
+          ],
+          "scale": 0.5953488372093023,
+          "packed_bounds": [
+            55,
+            74,
+            165,
+            172
+          ],
+          "sha256": "04127ec0d3aec719274e705c35aded99522946d7e83199d97a3d373772163fd8"
+        },
+        {
+          "path": "res://assets/animated/mirra/powered_primary-06.png",
+          "source": "art-source/animated/v3/mirra-powered40.png",
+          "slot": 22,
+          "source_bounds": [
+            1171,
+            427,
+            1325,
+            593
+          ],
+          "source_origin": [
+            1247.0,
+            594.0
+          ],
+          "scale": 0.5953488372093023,
+          "packed_bounds": [
+            51,
+            73,
+            143,
+            172
+          ],
+          "sha256": "0d673234712f6361c96de819ed9540b1d79bbc1c05d6db7e12a9175a79d7ec9d"
+        },
+        {
+          "path": "res://assets/animated/mirra/powered_primary-07.png",
+          "source": "art-source/animated/v3/mirra-powered40.png",
+          "slot": 23,
+          "source_bounds": [
+            1358,
+            424,
+            1508,
+            593
+          ],
+          "source_origin": [
+            1438.0,
+            594.0
+          ],
+          "scale": 0.5953488372093023,
+          "packed_bounds": [
+            48,
+            71,
+            137,
+            172
+          ],
+          "sha256": "67b6dbcb9d8e68337936bcd04b8dc5826417ae49de2f9ad9b2b5b29717ebf5e0"
+        }
+      ],
+      "release_anchor": [
+        68,
+        -73
+      ]
+    },
+    "powered_guard": {
+      "frame_count": 8,
+      "durations": [
+        0.055,
+        0.055,
+        0.055,
+        0.055,
+        0.12,
+        0.12,
+        0.12,
+        0.12
+      ],
+      "duration": 0.7,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": 4,
+      "frames": [
+        {
+          "path": "res://assets/animated/mirra/powered_guard-00.png",
+          "source": "art-source/animated/v3/mirra-powered40.png",
+          "slot": 24,
+          "source_bounds": [
+            40,
+            623,
+            196,
+            791
+          ],
+          "source_origin": [
+            106.5,
+            793.0
+          ],
+          "scale": 0.5953488372093023,
+          "packed_bounds": [
+            56,
+            71,
+            149,
+            171
+          ],
+          "sha256": "68cfe7d522670f2416e145ede940af8e5ad47aa90b8bc19430b2e75578998cb1"
+        },
+        {
+          "path": "res://assets/animated/mirra/powered_guard-01.png",
+          "source": "art-source/animated/v3/mirra-powered40.png",
+          "slot": 25,
+          "source_bounds": [
+            230,
+            622,
+            386,
+            790
+          ],
+          "source_origin": [
+            307.0,
+            793.0
+          ],
+          "scale": 0.5953488372093023,
+          "packed_bounds": [
+            50,
+            70,
+            143,
+            170
+          ],
+          "sha256": "25c7b8849849f5806d6aa8613cb001b2dd7342673373e9e5d13af60d7cf20307"
+        },
+        {
+          "path": "res://assets/animated/mirra/powered_guard-02.png",
+          "source": "art-source/animated/v3/mirra-powered40.png",
+          "slot": 26,
+          "source_bounds": [
+            405,
+            624,
+            572,
+            791
+          ],
+          "source_origin": [
+            497.0,
+            793.0
+          ],
+          "scale": 0.5953488372093023,
+          "packed_bounds": [
+            41,
+            71,
+            140,
+            170
+          ],
+          "sha256": "9b8f558da519a3994884d97d8c9c2b3323daf9cf684a3af328066a25983e795e"
+        },
+        {
+          "path": "res://assets/animated/mirra/powered_guard-03.png",
+          "source": "art-source/animated/v3/mirra-powered40.png",
+          "slot": 27,
+          "source_bounds": [
+            591,
+            625,
+            761,
+            791
+          ],
+          "source_origin": [
+            686.0,
+            793.0
+          ],
+          "scale": 0.5953488372093023,
+          "packed_bounds": [
+            39,
+            72,
+            140,
+            171
+          ],
+          "sha256": "a62703b7363216dfff07fa485124da96d35dd198a76d4c0622c6931e3491936d"
+        },
+        {
+          "path": "res://assets/animated/mirra/powered_guard-04.png",
+          "source": "art-source/animated/v3/mirra-powered40.png",
+          "slot": 28,
+          "source_bounds": [
+            783,
+            627,
+            959,
+            793
+          ],
+          "source_origin": [
+            870.0,
+            793.0
+          ],
+          "scale": 0.5953488372093023,
+          "packed_bounds": [
+            44,
+            73,
+            149,
+            172
+          ],
+          "sha256": "9f5fea91d625389e783d663734456afc8126207057e83898a3ee4a5cf9074ef6"
+        },
+        {
+          "path": "res://assets/animated/mirra/powered_guard-05.png",
+          "source": "art-source/animated/v3/mirra-powered40.png",
+          "slot": 29,
+          "source_bounds": [
+            988,
+            630,
+            1149,
+            793
+          ],
+          "source_origin": [
+            1057.5,
+            793.0
+          ],
+          "scale": 0.5953488372093023,
+          "packed_bounds": [
+            55,
+            75,
+            150,
+            172
+          ],
+          "sha256": "0ab3123d511554112f83f14dc2380fab94c4086e88ca9bf2f46002b0f2893dc0"
+        },
+        {
+          "path": "res://assets/animated/mirra/powered_guard-06.png",
+          "source": "art-source/animated/v3/mirra-powered40.png",
+          "slot": 30,
+          "source_bounds": [
+            1184,
+            625,
+            1337,
+            792
+          ],
+          "source_origin": [
+            1247.0,
+            793.0
+          ],
+          "scale": 0.5953488372093023,
+          "packed_bounds": [
+            58,
+            72,
+            149,
+            171
+          ],
+          "sha256": "e1eda2eeb3c199da340739f175f4b6e1ac1e4c9e3a674c3c8e3e5453f43d7771"
+        },
+        {
+          "path": "res://assets/animated/mirra/powered_guard-07.png",
+          "source": "art-source/animated/v3/mirra-powered40.png",
+          "slot": 31,
+          "source_bounds": [
+            1370,
+            623,
+            1491,
+            794
+          ],
+          "source_origin": [
+            1438.0,
+            793.0
+          ],
+          "scale": 0.5953488372093023,
+          "packed_bounds": [
+            56,
+            71,
+            128,
+            173
+          ],
+          "sha256": "e63113b22d0e499fd5ebfd95aa66afb67624506788b64df6a3ec0e1e47497ff1"
+        }
+      ]
+    },
+    "powered_exit": {
+      "frame_count": 8,
+      "durations": [
+        0.11,
+        0.1,
+        0.1,
+        0.09,
+        0.09,
+        0.1,
+        0.12,
+        0.15
+      ],
+      "duration": 0.86,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/mirra/powered_exit-00.png",
+          "source": "art-source/animated/v3/mirra-powered40.png",
+          "slot": 32,
+          "source_bounds": [
+            37,
+            819,
+            210,
+            991
+          ],
+          "source_origin": [
+            106.5,
+            991.0
+          ],
+          "scale": 0.5953488372093023,
+          "packed_bounds": [
+            55,
+            70,
+            158,
+            172
+          ],
+          "sha256": "27a3b926f26999bfd0164a37c414e7792ba4fc5998441860ed94dad588d4ebbe"
+        },
+        {
+          "path": "res://assets/animated/mirra/powered_exit-01.png",
+          "source": "art-source/animated/v3/mirra-powered40.png",
+          "slot": 33,
+          "source_bounds": [
+            236,
+            821,
+            390,
+            991
+          ],
+          "source_origin": [
+            307.0,
+            991.0
+          ],
+          "scale": 0.5953488372093023,
+          "packed_bounds": [
+            54,
+            71,
+            146,
+            172
+          ],
+          "sha256": "97ac5534c766dd1ffeb68f5f7f9ee9c98a35235be6a2e99c6f903ab288aaaf54"
+        },
+        {
+          "path": "res://assets/animated/mirra/powered_exit-02.png",
+          "source": "art-source/animated/v3/mirra-powered40.png",
+          "slot": 34,
+          "source_bounds": [
+            427,
+            818,
+            576,
+            991
+          ],
+          "source_origin": [
+            497.0,
+            991.0
+          ],
+          "scale": 0.5953488372093023,
+          "packed_bounds": [
+            54,
+            69,
+            143,
+            172
+          ],
+          "sha256": "12b60fc5f5af644bb50d02f5e45a9c9d0419c9f20df2cb4f697991a88abad966"
+        },
+        {
+          "path": "res://assets/animated/mirra/powered_exit-03.png",
+          "source": "art-source/animated/v3/mirra-powered40.png",
+          "slot": 35,
+          "source_bounds": [
+            622,
+            820,
+            763,
+            991
+          ],
+          "source_origin": [
+            686.0,
+            991.0
+          ],
+          "scale": 0.5953488372093023,
+          "packed_bounds": [
+            58,
+            70,
+            142,
+            172
+          ],
+          "sha256": "7d8d5510c151ce14e27bba69ab8bc6c50e70f2e6f8825b559d27f3925f46431d"
+        },
+        {
+          "path": "res://assets/animated/mirra/powered_exit-04.png",
+          "source": "art-source/animated/v3/mirra-powered40.png",
+          "slot": 36,
+          "source_bounds": [
+            809,
+            819,
+            946,
+            991
+          ],
+          "source_origin": [
+            870.0,
+            991.0
+          ],
+          "scale": 0.5953488372093023,
+          "packed_bounds": [
+            60,
+            70,
+            142,
+            172
+          ],
+          "sha256": "9660bd55bc80f76f442c7f33577d76b7403195372356e9bfdc32889916411d3c"
+        },
+        {
+          "path": "res://assets/animated/mirra/powered_exit-05.png",
+          "source": "art-source/animated/v3/mirra-powered40.png",
+          "slot": 37,
+          "source_bounds": [
+            1001,
+            816,
+            1118,
+            991
+          ],
+          "source_origin": [
+            1057.5,
+            991.0
+          ],
+          "scale": 0.5953488372093023,
+          "packed_bounds": [
+            62,
+            68,
+            132,
+            172
+          ],
+          "sha256": "1df891845ec44c8236ca69d38623668329970420f2accd8a44e42b6dd982745f"
+        },
+        {
+          "path": "res://assets/animated/mirra/powered_exit-06.png",
+          "source": "art-source/animated/v3/mirra-powered40.png",
+          "slot": 38,
+          "source_bounds": [
+            1196,
+            816,
+            1306,
+            991
+          ],
+          "source_origin": [
+            1247.0,
+            991.0
+          ],
+          "scale": 0.5953488372093023,
+          "packed_bounds": [
+            66,
+            68,
+            131,
+            172
+          ],
+          "sha256": "f511a01166948ab3f2be4e1e1d2292bbf80d124eda549cab27d22584a8670357"
+        },
+        {
+          "path": "res://assets/animated/mirra/powered_exit-07.png",
+          "source": "art-source/animated/v3/mirra-powered40.png",
+          "slot": 39,
+          "source_bounds": [
+            1382,
+            821,
+            1482,
+            991
+          ],
+          "source_origin": [
+            1438.0,
+            991.0
+          ],
+          "scale": 0.5953488372093023,
+          "packed_bounds": [
+            63,
+            71,
+            123,
+            172
+          ],
+          "sha256": "a69121a87c6e075cee5a1893ec672b63be4a5ba64a5a5dd59cbbd217cba3d9e3"
+        }
+      ]
+    }
+  },
+  "pose_count": 152
+}

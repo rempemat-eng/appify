@@ -1,0 +1,4102 @@
+{
+  "id": "ashe",
+  "name": "Ashe",
+  "view": "E",
+  "frame_size": [
+    256,
+    192
+  ],
+  "foot_pivot": [
+    132,
+    172
+  ],
+  "body_height_target": 96,
+  "fit_factor": 1.0,
+  "sources": [
+    {
+      "width": 1254,
+      "height": 1254,
+      "columns": 8,
+      "rows": 8,
+      "column_cuts": [
+        0,
+        152,
+        306,
+        464,
+        629,
+        790,
+        949,
+        1107,
+        1254
+      ],
+      "row_cuts": [
+        0,
+        170,
+        329,
+        488,
+        641,
+        803,
+        960,
+        1107,
+        1254
+      ],
+      "baselines": {
+        "0": 166.0,
+        "4": 799.0,
+        "5": 959.0,
+        "6": 1105.0
+      },
+      "body_height": 147.0,
+      "body_min_area": 3376,
+      "path": "art-source/animated/ashe-64.png",
+      "base_scale": 0.6530612244897959
+    },
+    {
+      "width": 2048,
+      "height": 768,
+      "columns": 8,
+      "rows": 3,
+      "column_cuts": [
+        0,
+        233,
+        456,
+        734,
+        989,
+        1285,
+        1545,
+        1799,
+        2048
+      ],
+      "row_cuts": [
+        0,
+        292,
+        527,
+        768
+      ],
+      "baselines": {
+        "0": 273.0,
+        "1": 512.0,
+        "2": 742.0
+      },
+      "body_height": 194.5,
+      "body_min_area": 6364,
+      "path": "art-source/animated/ashe-repair24.png",
+      "base_scale": 0.493573264781491
+    },
+    {
+      "width": 1448,
+      "height": 1086,
+      "columns": 8,
+      "rows": 8,
+      "column_cuts": [
+        0,
+        205,
+        375,
+        550,
+        740,
+        930,
+        1098,
+        1283,
+        1448
+      ],
+      "row_cuts": [
+        0,
+        150,
+        276,
+        421,
+        551,
+        693,
+        821,
+        952,
+        1086
+      ],
+      "baselines": {
+        "0": 136.25,
+        "1": 261.0,
+        "4": 681.25,
+        "5": 805.0,
+        "7": 1059.25
+      },
+      "body_height": 95.0,
+      "body_min_area": 1651,
+      "path": "art-source/animated/v3/ashe-extension64.png",
+      "base_scale": 1.0105263157894737
+    },
+    {
+      "width": 1586,
+      "height": 992,
+      "columns": 8,
+      "rows": 5,
+      "column_cuts": [
+        0,
+        197,
+        392,
+        591,
+        791,
+        996,
+        1203,
+        1392,
+        1586
+      ],
+      "row_cuts": [
+        0,
+        213,
+        402,
+        607,
+        803,
+        992
+      ],
+      "baselines": {
+        "0": 188.0,
+        "1": 374.0,
+        "2": 585.0,
+        "3": 781.0,
+        "4": 976.0
+      },
+      "body_height": 133.0,
+      "body_min_area": 3235,
+      "path": "art-source/animated/v3/ashe-powered40.png",
+      "base_scale": 0.7218045112781954
+    },
+    {
+      "width": 2048,
+      "height": 768,
+      "columns": 8,
+      "rows": 3,
+      "column_cuts": [
+        0,
+        278,
+        545,
+        782,
+        1030,
+        1281,
+        1537,
+        1794,
+        2048
+      ],
+      "row_cuts": [
+        0,
+        313,
+        539,
+        768
+      ],
+      "baselines": {
+        "0": 275.0,
+        "1": 506.0,
+        "2": 724.0
+      },
+      "body_height": 162.0,
+      "body_min_area": 4249,
+      "path": "art-source/animated/v3/ashe-repair24.png",
+      "base_scale": 0.5925925925925926
+    }
+  ],
+  "anchor_sources": [
+    {
+      "path": "art-source/animated/v3/tech-anchors.json",
+      "sha256": "f683926becea8faa182506366a618ca5a0b3a3ba280349f3cdbfdc70468948e6"
+    }
+  ],
+  "clips": {
+    "idle": {
+      "frame_count": 8,
+      "durations": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ],
+      "duration": 1.6,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/ashe/idle-00.png",
+          "source": "art-source/animated/ashe-64.png",
+          "slot": 0,
+          "source_bounds": [
+            20,
+            16,
+            145,
+            166
+          ],
+          "source_origin": [
+            76.0,
+            166.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            95,
+            74,
+            177,
+            172
+          ],
+          "sha256": "e7f7d8773c7b176f10aceec6515006f982d956669ba3c59da91241d773e5191c"
+        },
+        {
+          "path": "res://assets/animated/ashe/idle-01.png",
+          "source": "art-source/animated/ashe-64.png",
+          "slot": 1,
+          "source_bounds": [
+            177,
+            18,
+            302,
+            166
+          ],
+          "source_origin": [
+            229.0,
+            166.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            98,
+            75,
+            180,
+            172
+          ],
+          "sha256": "34f8dd25310c8dd9c198060b35ec766dd98b0c6ed41f3eb9fd26d1cd9197ce67"
+        },
+        {
+          "path": "res://assets/animated/ashe/idle-02.png",
+          "source": "art-source/animated/ashe-64.png",
+          "slot": 2,
+          "source_bounds": [
+            334,
+            17,
+            460,
+            166
+          ],
+          "source_origin": [
+            385.0,
+            166.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            99,
+            75,
+            181,
+            172
+          ],
+          "sha256": "4dc95f6be39eed2f85087897b745294a8964048c199bbf448e73ffb3e359ca07"
+        },
+        {
+          "path": "res://assets/animated/ashe/idle-03.png",
+          "source": "art-source/animated/ashe-64.png",
+          "slot": 3,
+          "source_bounds": [
+            495,
+            18,
+            617,
+            166
+          ],
+          "source_origin": [
+            546.5,
+            166.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            98,
+            75,
+            178,
+            172
+          ],
+          "sha256": "a6626cf18ce159eae296e214b5dceb454819a10fa970e93b1b22ca7f37e0d2d7"
+        },
+        {
+          "path": "res://assets/animated/ashe/idle-04.png",
+          "source": "art-source/animated/ashe-64.png",
+          "slot": 4,
+          "source_bounds": [
+            653,
+            16,
+            761,
+            166
+          ],
+          "source_origin": [
+            709.5,
+            166.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            95,
+            74,
+            166,
+            172
+          ],
+          "sha256": "ea0afb91b8ad39a568ea610a59b432e82b860644999cfc03fcb26d59c52c2c30"
+        },
+        {
+          "path": "res://assets/animated/ashe/idle-05.png",
+          "source": "art-source/animated/ashe-64.png",
+          "slot": 5,
+          "source_bounds": [
+            807,
+            17,
+            949,
+            166
+          ],
+          "source_origin": [
+            869.5,
+            166.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            91,
+            75,
+            184,
+            172
+          ],
+          "sha256": "449dc9a85a8006d24fb00b5273c3b3807f981ed0d13e17d232abc836d6ea4830"
+        },
+        {
+          "path": "res://assets/animated/ashe/idle-06.png",
+          "source": "art-source/animated/ashe-64.png",
+          "slot": 6,
+          "source_bounds": [
+            979,
+            18,
+            1107,
+            166
+          ],
+          "source_origin": [
+            1028.0,
+            166.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            100,
+            75,
+            184,
+            172
+          ],
+          "sha256": "847e5ba4306a25e950fd0e04027601f6c697ea0e24cc454749dafe8ca3280c26"
+        },
+        {
+          "path": "res://assets/animated/ashe/idle-07.png",
+          "source": "art-source/animated/ashe-64.png",
+          "slot": 7,
+          "source_bounds": [
+            1134,
+            18,
+            1253,
+            166
+          ],
+          "source_origin": [
+            1180.5,
+            166.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            102,
+            75,
+            180,
+            172
+          ],
+          "sha256": "3dcb8fe3531e4ce88a6795c64921419dfe2fe717f5e2f493f524c92c90ec883d"
+        }
+      ]
+    },
+    "walk": {
+      "frame_count": 16,
+      "durations": [
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/ashe/walk-00.png",
+          "source": "art-source/animated/v3/ashe-extension64.png",
+          "slot": 0,
+          "source_bounds": [
+            55,
+            38,
+            150,
+            136
+          ],
+          "source_origin": [
+            102.5,
+            136.25
+          ],
+          "scale": 1.0105263157894737,
+          "packed_bounds": [
+            84,
+            73,
+            180,
+            172
+          ],
+          "sha256": "0eb55d18e972ba25ee686eb12d6876f99919122e90d3f03dd4b59c5879bb6cc5"
+        },
+        {
+          "path": "res://assets/animated/ashe/walk-01.png",
+          "source": "art-source/animated/v3/ashe-extension64.png",
+          "slot": 1,
+          "source_bounds": [
+            215,
+            40,
+            338,
+            136
+          ],
+          "source_origin": [
+            290.0,
+            136.25
+          ],
+          "scale": 1.0105263157894737,
+          "packed_bounds": [
+            56,
+            75,
+            180,
+            172
+          ],
+          "sha256": "d7177eb131039f06fbd39ad9bb230bcc7eef880760b0255f981096ac694f8807"
+        },
+        {
+          "path": "res://assets/animated/ashe/walk-02.png",
+          "source": "art-source/animated/v3/ashe-extension64.png",
+          "slot": 2,
+          "source_bounds": [
+            405,
+            39,
+            533,
+            136
+          ],
+          "source_origin": [
+            462.5,
+            136.25
+          ],
+          "scale": 1.0105263157894737,
+          "packed_bounds": [
+            74,
+            74,
+            203,
+            172
+          ],
+          "sha256": "272086efd34d69a2e0c80fe3441cc98088844575a59c7bb83d5b4f201cb8b132"
+        },
+        {
+          "path": "res://assets/animated/ashe/walk-03.png",
+          "source": "art-source/animated/v3/ashe-extension64.png",
+          "slot": 3,
+          "source_bounds": [
+            611,
+            38,
+            700,
+            136
+          ],
+          "source_origin": [
+            645.0,
+            136.25
+          ],
+          "scale": 1.0105263157894737,
+          "packed_bounds": [
+            98,
+            73,
+            188,
+            172
+          ],
+          "sha256": "de1e8e644f1df6266806496e3f1ac7e83f17d108b748dc44ef787f3eb54b7c00"
+        },
+        {
+          "path": "res://assets/animated/ashe/walk-04.png",
+          "source": "art-source/animated/v3/ashe-extension64.png",
+          "slot": 4,
+          "source_bounds": [
+            776,
+            36,
+            871,
+            136
+          ],
+          "source_origin": [
+            835.0,
+            136.25
+          ],
+          "scale": 1.0105263157894737,
+          "packed_bounds": [
+            72,
+            71,
+            168,
+            172
+          ],
+          "sha256": "2e8eded9d4beb4852ee07b140a53ccd0fd65d298e0d4cfda3d29327ad9042328"
+        },
+        {
+          "path": "res://assets/animated/ashe/walk-05.png",
+          "source": "art-source/animated/v3/ashe-extension64.png",
+          "slot": 5,
+          "source_bounds": [
+            954,
+            38,
+            1075,
+            136
+          ],
+          "source_origin": [
+            1014.0,
+            136.25
+          ],
+          "scale": 1.0105263157894737,
+          "packed_bounds": [
+            71,
+            73,
+            193,
+            172
+          ],
+          "sha256": "53546be235b072a4c38aae24ea86e580297d3acff0c08edfe0145b38114dbec2"
+        },
+        {
+          "path": "res://assets/animated/ashe/walk-06.png",
+          "source": "art-source/animated/v3/ashe-extension64.png",
+          "slot": 6,
+          "source_bounds": [
+            1129,
+            38,
+            1249,
+            137
+          ],
+          "source_origin": [
+            1190.5,
+            136.25
+          ],
+          "scale": 1.0105263157894737,
+          "packed_bounds": [
+            70,
+            73,
+            191,
+            173
+          ],
+          "sha256": "338f564d8c6dc957792d47e83c5a549c6d3687dbc5d5845e130c58f99800b3f5"
+        },
+        {
+          "path": "res://assets/animated/ashe/walk-07.png",
+          "source": "art-source/animated/v3/ashe-extension64.png",
+          "slot": 7,
+          "source_bounds": [
+            1320,
+            37,
+            1424,
+            137
+          ],
+          "source_origin": [
+            1365.5,
+            136.25
+          ],
+          "scale": 1.0105263157894737,
+          "packed_bounds": [
+            86,
+            72,
+            191,
+            173
+          ],
+          "sha256": "268c4ef7d8ce8ac4b85916c30c9250a90c5133471fb296b7f7ad47e9df10dd23"
+        },
+        {
+          "path": "res://assets/animated/ashe/walk-08.png",
+          "source": "art-source/animated/v3/ashe-extension64.png",
+          "slot": 8,
+          "source_bounds": [
+            42,
+            165,
+            151,
+            261
+          ],
+          "source_origin": [
+            102.5,
+            261.0
+          ],
+          "scale": 1.0105263157894737,
+          "packed_bounds": [
+            71,
+            75,
+            181,
+            172
+          ],
+          "sha256": "423fd904dd6c22af63d5974b13851f1314ceb4cb606167905098307d5145afdd"
+        },
+        {
+          "path": "res://assets/animated/ashe/walk-09.png",
+          "source": "art-source/animated/v3/ashe-extension64.png",
+          "slot": 9,
+          "source_bounds": [
+            221,
+            165,
+            340,
+            261
+          ],
+          "source_origin": [
+            290.0,
+            261.0
+          ],
+          "scale": 1.0105263157894737,
+          "packed_bounds": [
+            62,
+            75,
+            182,
+            172
+          ],
+          "sha256": "b9a64a69d7570fd23a5628f3ea7d433c924f688b18c0a87245cf6abdd2e68d47"
+        },
+        {
+          "path": "res://assets/animated/ashe/walk-10.png",
+          "source": "art-source/animated/v3/ashe-extension64.png",
+          "slot": 10,
+          "source_bounds": [
+            407,
+            165,
+            530,
+            261
+          ],
+          "source_origin": [
+            462.5,
+            261.0
+          ],
+          "scale": 1.0105263157894737,
+          "packed_bounds": [
+            76,
+            75,
+            200,
+            172
+          ],
+          "sha256": "bb0a31761e0733a8d2658c89c2ebd98539de20fa07af228d117cfa90e5ed926b"
+        },
+        {
+          "path": "res://assets/animated/ashe/walk-11.png",
+          "source": "art-source/animated/v3/ashe-extension64.png",
+          "slot": 11,
+          "source_bounds": [
+            593,
+            164,
+            709,
+            261
+          ],
+          "source_origin": [
+            645.0,
+            261.0
+          ],
+          "scale": 1.0105263157894737,
+          "packed_bounds": [
+            79,
+            74,
+            196,
+            172
+          ],
+          "sha256": "dbdfafa9050995801bd64e2670fa5794f5d99052ae1dabb02944ce860eef9c4a"
+        },
+        {
+          "path": "res://assets/animated/ashe/walk-12.png",
+          "source": "art-source/animated/v3/ashe-extension64.png",
+          "slot": 12,
+          "source_bounds": [
+            771,
+            164,
+            892,
+            261
+          ],
+          "source_origin": [
+            835.0,
+            261.0
+          ],
+          "scale": 1.0105263157894737,
+          "packed_bounds": [
+            67,
+            74,
+            189,
+            172
+          ],
+          "sha256": "2549a12679c101a5d98b1bb0ea9847433bfc26caa5c9d758d19f07f066924491"
+        },
+        {
+          "path": "res://assets/animated/ashe/walk-13.png",
+          "source": "art-source/animated/v3/ashe-extension64.png",
+          "slot": 13,
+          "source_bounds": [
+            950,
+            165,
+            1067,
+            261
+          ],
+          "source_origin": [
+            1014.0,
+            261.0
+          ],
+          "scale": 1.0105263157894737,
+          "packed_bounds": [
+            67,
+            75,
+            185,
+            172
+          ],
+          "sha256": "e65ea1a4a50f79a2dc2a990038071e04fc3530f1b3cd85a28217b36ac228f572"
+        },
+        {
+          "path": "res://assets/animated/ashe/walk-14.png",
+          "source": "art-source/animated/v3/ashe-extension64.png",
+          "slot": 14,
+          "source_bounds": [
+            1131,
+            164,
+            1250,
+            261
+          ],
+          "source_origin": [
+            1190.5,
+            261.0
+          ],
+          "scale": 1.0105263157894737,
+          "packed_bounds": [
+            72,
+            74,
+            192,
+            172
+          ],
+          "sha256": "0ef5288edf82c442b3aa29af2c1be6d4e5b5a722df3ca23d5f6e98ecdfc72b1e"
+        },
+        {
+          "path": "res://assets/animated/ashe/walk-15.png",
+          "source": "art-source/animated/v3/ashe-extension64.png",
+          "slot": 15,
+          "source_bounds": [
+            1311,
+            164,
+            1426,
+            261
+          ],
+          "source_origin": [
+            1365.5,
+            261.0
+          ],
+          "scale": 1.0105263157894737,
+          "packed_bounds": [
+            77,
+            74,
+            193,
+            172
+          ],
+          "sha256": "5e3bff4aa2126bdb2cb560f03ba7d3f55e8a8ee395f0e4dd46a542c7171cfebc"
+        }
+      ]
+    },
+    "primary": {
+      "frame_count": 16,
+      "durations": [
+        0.04529411764705883,
+        0.037058823529411776,
+        0.04529411764705883,
+        0.037058823529411776,
+        0.05176470588235294,
+        0.04235294117647059,
+        0.0711764705882353,
+        0.042684283727399165,
+        0.01897079276773296,
+        0.015521557719054242,
+        0.026084840055632823,
+        0.021342141863699583,
+        0.04031293463143255,
+        0.03298331015299027,
+        0.061655076495132126,
+        0.050445062586926284
+      ],
+      "duration": 0.64,
+      "loop": false,
+      "release_frame": 7,
+      "release_time": 0.33000000000000007,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/ashe/primary-00.png",
+          "source": "art-source/animated/v3/ashe-repair24.png",
+          "slot": 0,
+          "source_bounds": [
+            58,
+            112,
+            222,
+            275
+          ],
+          "source_origin": [
+            139.0,
+            275.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            84,
+            75,
+            181,
+            172
+          ],
+          "sha256": "277f18d40fedba840d717ebac41f1fb138b3f87399c1ef6fb2b9647e0002e2a9"
+        },
+        {
+          "path": "res://assets/animated/ashe/primary-01.png",
+          "source": "art-source/animated/v3/ashe-repair24.png",
+          "slot": 1,
+          "source_bounds": [
+            304,
+            131,
+            478,
+            275
+          ],
+          "source_origin": [
+            411.5,
+            275.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            68,
+            87,
+            171,
+            172
+          ],
+          "sha256": "259e727d134302ee6e4cff8e86a95967caa273a9115ebbcb862d7991e24ebdd1"
+        },
+        {
+          "path": "res://assets/animated/ashe/primary-02.png",
+          "source": "art-source/animated/v3/ashe-repair24.png",
+          "slot": 2,
+          "source_bounds": [
+            561,
+            144,
+            732,
+            275
+          ],
+          "source_origin": [
+            663.5,
+            275.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            71,
+            94,
+            172,
+            172
+          ],
+          "sha256": "903fc565752f1abae010a3edd629cff5685f295c00129e9e3e55666afad32a2d"
+        },
+        {
+          "path": "res://assets/animated/ashe/primary-03.png",
+          "source": "art-source/animated/v3/ashe-repair24.png",
+          "slot": 3,
+          "source_bounds": [
+            820,
+            118,
+            980,
+            275
+          ],
+          "source_origin": [
+            906.0,
+            275.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            81,
+            79,
+            176,
+            172
+          ],
+          "sha256": "4a76dc41679ffec88c68c3c991d9c7ce41c89305003754294a72da8e885758d2"
+        },
+        {
+          "path": "res://assets/animated/ashe/primary-04.png",
+          "source": "art-source/animated/v3/ashe-repair24.png",
+          "slot": 4,
+          "source_bounds": [
+            1065,
+            106,
+            1242,
+            275
+          ],
+          "source_origin": [
+            1155.5,
+            275.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            78,
+            72,
+            183,
+            172
+          ],
+          "sha256": "55f4ef29b1bd4fd86bad2eb38ebf950fef86703240fb786391837ceaa38423b0"
+        },
+        {
+          "path": "res://assets/animated/ashe/primary-05.png",
+          "source": "art-source/animated/v3/ashe-repair24.png",
+          "slot": 5,
+          "source_bounds": [
+            1327,
+            56,
+            1490,
+            275
+          ],
+          "source_origin": [
+            1409.0,
+            275.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            83,
+            42,
+            180,
+            172
+          ],
+          "sha256": "a64f76081c0cd846bf16de8b6b3a1bbd763c77488e2b9d7596860b021f26a34e"
+        },
+        {
+          "path": "res://assets/animated/ashe/primary-06.png",
+          "source": "art-source/animated/v3/ashe-repair24.png",
+          "slot": 6,
+          "source_bounds": [
+            1580,
+            78,
+            1750,
+            275
+          ],
+          "source_origin": [
+            1665.5,
+            275.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            81,
+            55,
+            182,
+            172
+          ],
+          "sha256": "18df2e5c242a5468fd795ff03ac3bb80eefb7c7387d4ae1ab3505b3027c12b61"
+        },
+        {
+          "path": "res://assets/animated/ashe/primary-07.png",
+          "source": "art-source/animated/v3/ashe-repair24.png",
+          "slot": 8,
+          "source_bounds": [
+            50,
+            361,
+            317,
+            503
+          ],
+          "source_origin": [
+            139.0,
+            506.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            79,
+            86,
+            237,
+            170
+          ],
+          "sha256": "74b42c0dcc65082efbc78c8030a67496831f40be6cbcac910e46487cc98e7805"
+        },
+        {
+          "path": "res://assets/animated/ashe/primary-08.png",
+          "source": "art-source/animated/v3/ashe-repair24.png",
+          "slot": 9,
+          "source_bounds": [
+            322,
+            364,
+            552,
+            505
+          ],
+          "source_origin": [
+            411.5,
+            506.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            79,
+            88,
+            215,
+            172
+          ],
+          "sha256": "4608641809e5a6be87ab32161790fb4f21776b688a50ec7267293f60a8910cdb"
+        },
+        {
+          "path": "res://assets/animated/ashe/primary-09.png",
+          "source": "art-source/animated/v3/ashe-repair24.png",
+          "slot": 10,
+          "source_bounds": [
+            572,
+            362,
+            782,
+            505
+          ],
+          "source_origin": [
+            663.5,
+            506.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            78,
+            87,
+            202,
+            172
+          ],
+          "sha256": "2572364fac2c8307f8c722d244d6cae82ff1b2e7a4b39d6fe19dbb1d986eccef"
+        },
+        {
+          "path": "res://assets/animated/ashe/primary-10.png",
+          "source": "art-source/animated/v3/ashe-repair24.png",
+          "slot": 11,
+          "source_bounds": [
+            828,
+            378,
+            1015,
+            505
+          ],
+          "source_origin": [
+            906.0,
+            506.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            86,
+            96,
+            197,
+            171
+          ],
+          "sha256": "176b2d385c9c9ac5bb0c23c888f60ba6b3381a5a261badb9fc57ed89b83d32b2"
+        },
+        {
+          "path": "res://assets/animated/ashe/primary-11.png",
+          "source": "art-source/animated/v3/ashe-repair24.png",
+          "slot": 12,
+          "source_bounds": [
+            1071,
+            364,
+            1267,
+            506
+          ],
+          "source_origin": [
+            1155.5,
+            506.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            82,
+            88,
+            198,
+            172
+          ],
+          "sha256": "bf3f75ad69993b2e6c424c4211ef0a121dcba3aab8ce48be28ca00441e57a7e9"
+        },
+        {
+          "path": "res://assets/animated/ashe/primary-12.png",
+          "source": "art-source/animated/v3/ashe-repair24.png",
+          "slot": 13,
+          "source_bounds": [
+            1327,
+            360,
+            1486,
+            506
+          ],
+          "source_origin": [
+            1409.0,
+            506.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            83,
+            85,
+            177,
+            172
+          ],
+          "sha256": "d85389180035da3a2da40f5d62357bd5dd579923cab51426d86f3406e530abf9"
+        },
+        {
+          "path": "res://assets/animated/ashe/primary-13.png",
+          "source": "art-source/animated/v3/ashe-repair24.png",
+          "slot": 14,
+          "source_bounds": [
+            1584,
+            362,
+            1778,
+            506
+          ],
+          "source_origin": [
+            1665.5,
+            506.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            84,
+            87,
+            199,
+            172
+          ],
+          "sha256": "f0c11fbd50915ca55c48448bbefe4d5752aa7fd9721dc556fc39f82b726d4270"
+        },
+        {
+          "path": "res://assets/animated/ashe/primary-14.png",
+          "source": "art-source/animated/v3/ashe-repair24.png",
+          "slot": 15,
+          "source_bounds": [
+            1846,
+            361,
+            2003,
+            506
+          ],
+          "source_origin": [
+            1921.0,
+            506.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            88,
+            86,
+            181,
+            172
+          ],
+          "sha256": "fb4f6f73f5b17af1178916ef092f40863c387a553ee779f65aaf7f4475f350ea"
+        },
+        {
+          "path": "res://assets/animated/ashe/primary-15.png",
+          "source": "art-source/animated/v3/ashe-repair24.png",
+          "slot": 7,
+          "source_bounds": [
+            1846,
+            109,
+            2002,
+            275
+          ],
+          "source_origin": [
+            1921.0,
+            275.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            88,
+            74,
+            180,
+            172
+          ],
+          "sha256": "8162476fc4f21e4e1420fc81bc6e5c3fb50bae6ee2a9183de24a42618a096b9d"
+        }
+      ],
+      "release_anchor": [
+        104,
+        -63
+      ],
+      "contact_reach": 104
+    },
+    "secondary": {
+      "frame_count": 8,
+      "durations": [
+        0.07,
+        0.07,
+        0.08,
+        0.11,
+        0.04,
+        0.055,
+        0.085,
+        0.13
+      ],
+      "duration": 0.64,
+      "loop": false,
+      "release_frame": 4,
+      "release_time": 0.33,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/ashe/secondary-00.png",
+          "source": "art-source/animated/ashe-repair24.png",
+          "slot": 8,
+          "source_bounds": [
+            18,
+            301,
+            218,
+            507
+          ],
+          "source_origin": [
+            116.5,
+            512.0
+          ],
+          "scale": 0.493573264781491,
+          "packed_bounds": [
+            83,
+            68,
+            182,
+            170
+          ],
+          "sha256": "c03e1a34d8f8ff1c99f5f3555ecd8f167fc560aee990d04869245e992cec85c9"
+        },
+        {
+          "path": "res://assets/animated/ashe/secondary-01.png",
+          "source": "art-source/animated/ashe-repair24.png",
+          "slot": 9,
+          "source_bounds": [
+            255,
+            314,
+            466,
+            510
+          ],
+          "source_origin": [
+            344.5,
+            512.0
+          ],
+          "scale": 0.493573264781491,
+          "packed_bounds": [
+            88,
+            74,
+            192,
+            171
+          ],
+          "sha256": "5e6cac8a2922ad463de745720edfd9b132f90e5a3b699c84cbf2b61efcfa5596"
+        },
+        {
+          "path": "res://assets/animated/ashe/secondary-02.png",
+          "source": "art-source/animated/ashe-repair24.png",
+          "slot": 10,
+          "source_bounds": [
+            512,
+            315,
+            730,
+            510
+          ],
+          "source_origin": [
+            595.0,
+            512.0
+          ],
+          "scale": 0.493573264781491,
+          "packed_bounds": [
+            91,
+            75,
+            199,
+            171
+          ],
+          "sha256": "d1945ede79417d98f20249b06de8ebd590740c0d18446284e2725b10898ffb13"
+        },
+        {
+          "path": "res://assets/animated/ashe/secondary-03.png",
+          "source": "art-source/animated/ashe-repair24.png",
+          "slot": 11,
+          "source_bounds": [
+            757,
+            322,
+            1021,
+            512
+          ],
+          "source_origin": [
+            861.5,
+            512.0
+          ],
+          "scale": 0.493573264781491,
+          "packed_bounds": [
+            80,
+            78,
+            210,
+            172
+          ],
+          "sha256": "852ebf2dcaf213848a66bfee6ae01dd33d2f95929ab8751d2801a03baf3f2e28"
+        },
+        {
+          "path": "res://assets/animated/ashe/secondary-04.png",
+          "source": "art-source/animated/ashe-repair24.png",
+          "slot": 12,
+          "source_bounds": [
+            992,
+            339,
+            1330,
+            512
+          ],
+          "source_origin": [
+            1137.0,
+            512.0
+          ],
+          "scale": 0.493573264781491,
+          "packed_bounds": [
+            60,
+            87,
+            227,
+            172
+          ],
+          "sha256": "6b4e0546b8423e9f3d530ddfd55e2c15e2ce457677ec877f78d6ef5e8a428e13"
+        },
+        {
+          "path": "res://assets/animated/ashe/secondary-05.png",
+          "source": "art-source/animated/ashe-repair24.png",
+          "slot": 13,
+          "source_bounds": [
+            1293,
+            335,
+            1616,
+            512
+          ],
+          "source_origin": [
+            1415.0,
+            512.0
+          ],
+          "scale": 0.493573264781491,
+          "packed_bounds": [
+            72,
+            85,
+            231,
+            172
+          ],
+          "sha256": "99b552b0973198df2f6b7c13ba65ca0ab84c32a69dddc24a5e96055bbc08ad19"
+        },
+        {
+          "path": "res://assets/animated/ashe/secondary-06.png",
+          "source": "art-source/animated/ashe-repair24.png",
+          "slot": 14,
+          "source_bounds": [
+            1588,
+            323,
+            1798,
+            512
+          ],
+          "source_origin": [
+            1672.0,
+            512.0
+          ],
+          "scale": 0.493573264781491,
+          "packed_bounds": [
+            91,
+            79,
+            195,
+            172
+          ],
+          "sha256": "041d9700ae065c7e2aa278f4927b0a7c10277e8a7261ed80d46f92de281bfb13"
+        },
+        {
+          "path": "res://assets/animated/ashe/secondary-07.png",
+          "source": "art-source/animated/ashe-repair24.png",
+          "slot": 15,
+          "source_bounds": [
+            1837,
+            301,
+            2023,
+            507
+          ],
+          "source_origin": [
+            1923.5,
+            512.0
+          ],
+          "scale": 0.493573264781491,
+          "packed_bounds": [
+            89,
+            68,
+            181,
+            170
+          ],
+          "sha256": "1c002871a1fb9016c670d62beb948d0cdbf5c734ed2194455c1f8fd98ae29376"
+        }
+      ],
+      "release_anchor": [
+        94,
+        -62
+      ],
+      "contact_reach": 94
+    },
+    "special": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.08,
+        0.09,
+        0.12,
+        0.06,
+        0.08,
+        0.12,
+        0.18
+      ],
+      "duration": 0.82,
+      "loop": false,
+      "release_frame": 4,
+      "release_time": 0.38,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/ashe/special-00.png",
+          "source": "art-source/animated/ashe-64.png",
+          "slot": 32,
+          "source_bounds": [
+            20,
+            654,
+            151,
+            799
+          ],
+          "source_origin": [
+            76.0,
+            799.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            95,
+            77,
+            181,
+            172
+          ],
+          "sha256": "0f3478985b7e24e0934717a71f4ec1dadb30d43698f3222fdabb730f6c4cf30f"
+        },
+        {
+          "path": "res://assets/animated/ashe/special-01.png",
+          "source": "art-source/animated/ashe-64.png",
+          "slot": 33,
+          "source_bounds": [
+            162,
+            658,
+            287,
+            799
+          ],
+          "source_origin": [
+            229.0,
+            799.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            88,
+            80,
+            170,
+            172
+          ],
+          "sha256": "f5692d8d9c94bbb93e633ea622604a40ce363bfd970ce5aa7c5b4eaa600283ac"
+        },
+        {
+          "path": "res://assets/animated/ashe/special-02.png",
+          "source": "art-source/animated/ashe-64.png",
+          "slot": 34,
+          "source_bounds": [
+            320,
+            654,
+            450,
+            799
+          ],
+          "source_origin": [
+            385.0,
+            799.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            90,
+            77,
+            175,
+            172
+          ],
+          "sha256": "fcac89e68f9496440a05ca67f3b134ac0be39d62316c883bbf56498834d49a01"
+        },
+        {
+          "path": "res://assets/animated/ashe/special-03.png",
+          "source": "art-source/animated/ashe-64.png",
+          "slot": 35,
+          "source_bounds": [
+            475,
+            642,
+            601,
+            800
+          ],
+          "source_origin": [
+            546.5,
+            799.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            85,
+            70,
+            167,
+            172
+          ],
+          "sha256": "dfe4cf6aab5c142dfdfed802bb971f22ca67a1ac1897ca3cabdc98f30246d5c3"
+        },
+        {
+          "path": "res://assets/animated/ashe/special-04.png",
+          "source": "art-source/animated/ashe-64.png",
+          "slot": 36,
+          "source_bounds": [
+            636,
+            661,
+            787,
+            799
+          ],
+          "source_origin": [
+            709.5,
+            799.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            84,
+            82,
+            183,
+            172
+          ],
+          "sha256": "f6d7f118dff4159c7ff1b16d4c841a4828a6c74deff677ec053947b99b437096"
+        },
+        {
+          "path": "res://assets/animated/ashe/special-05.png",
+          "source": "art-source/animated/ashe-64.png",
+          "slot": 37,
+          "source_bounds": [
+            793,
+            662,
+            947,
+            799
+          ],
+          "source_origin": [
+            869.5,
+            799.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            82,
+            83,
+            183,
+            172
+          ],
+          "sha256": "c61021ce42f35b45120c7ce339b9b9a13d0e4138f069116d04593edee3746fd5"
+        },
+        {
+          "path": "res://assets/animated/ashe/special-06.png",
+          "source": "art-source/animated/ashe-64.png",
+          "slot": 38,
+          "source_bounds": [
+            956,
+            663,
+            1094,
+            799
+          ],
+          "source_origin": [
+            1028.0,
+            799.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            85,
+            83,
+            175,
+            172
+          ],
+          "sha256": "ab20081da18fce26dc151271410d838b8a62003d7137dccd18b9aaf77c27145c"
+        },
+        {
+          "path": "res://assets/animated/ashe/special-07.png",
+          "source": "art-source/animated/ashe-64.png",
+          "slot": 39,
+          "source_bounds": [
+            1108,
+            661,
+            1254,
+            799
+          ],
+          "source_origin": [
+            1180.5,
+            799.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            85,
+            82,
+            180,
+            172
+          ],
+          "sha256": "238cb8a51f5039aa50f0a921df83a760c57c33a03c8865119f10ec75d05f16c8"
+        }
+      ]
+    },
+    "guard": {
+      "frame_count": 8,
+      "durations": [
+        0.055,
+        0.055,
+        0.055,
+        0.055,
+        0.12,
+        0.12,
+        0.12,
+        0.12
+      ],
+      "duration": 0.7,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": 4,
+      "frames": [
+        {
+          "path": "res://assets/animated/ashe/guard-00.png",
+          "source": "art-source/animated/ashe-64.png",
+          "slot": 40,
+          "source_bounds": [
+            9,
+            818,
+            157,
+            958
+          ],
+          "source_origin": [
+            76.0,
+            959.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            88,
+            80,
+            185,
+            171
+          ],
+          "sha256": "1073b546cd047faed8c7811e0d33e08006ffb492f598bd356cbc0691a3d76dec"
+        },
+        {
+          "path": "res://assets/animated/ashe/guard-01.png",
+          "source": "art-source/animated/ashe-64.png",
+          "slot": 41,
+          "source_bounds": [
+            161,
+            805,
+            303,
+            958
+          ],
+          "source_origin": [
+            229.0,
+            959.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            88,
+            71,
+            181,
+            171
+          ],
+          "sha256": "426c2e18bf34da7ba03ef6b250098ff55da817b1375bf7aba40b3dc522846560"
+        },
+        {
+          "path": "res://assets/animated/ashe/guard-02.png",
+          "source": "art-source/animated/ashe-64.png",
+          "slot": 42,
+          "source_bounds": [
+            319,
+            805,
+            461,
+            959
+          ],
+          "source_origin": [
+            385.0,
+            959.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            89,
+            71,
+            182,
+            172
+          ],
+          "sha256": "122b17c0b83803854c8a2530278bd70603cf0dacf73b94d06739e29d8670bfc5"
+        },
+        {
+          "path": "res://assets/animated/ashe/guard-03.png",
+          "source": "art-source/animated/ashe-64.png",
+          "slot": 43,
+          "source_bounds": [
+            478,
+            805,
+            617,
+            959
+          ],
+          "source_origin": [
+            546.5,
+            959.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            87,
+            71,
+            178,
+            172
+          ],
+          "sha256": "84e3c248dab1400adec8330d84c251ae470016cd4f7df5bfe39e320e8002836a"
+        },
+        {
+          "path": "res://assets/animated/ashe/guard-04.png",
+          "source": "art-source/animated/ashe-64.png",
+          "slot": 44,
+          "source_bounds": [
+            633,
+            805,
+            776,
+            959
+          ],
+          "source_origin": [
+            709.5,
+            959.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            82,
+            71,
+            175,
+            172
+          ],
+          "sha256": "cf13cb2bb989f282b2f3731810de093acac4edbabc3becfa76c0c53c2dedf3d1"
+        },
+        {
+          "path": "res://assets/animated/ashe/guard-05.png",
+          "source": "art-source/animated/ashe-64.png",
+          "slot": 45,
+          "source_bounds": [
+            793,
+            806,
+            928,
+            959
+          ],
+          "source_origin": [
+            869.5,
+            959.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            82,
+            72,
+            170,
+            172
+          ],
+          "sha256": "dba7f51cf5cb66bfbef01b12ffd4e3d50d18309a4de47fd7708fd98ee6fdbce7"
+        },
+        {
+          "path": "res://assets/animated/ashe/guard-06.png",
+          "source": "art-source/animated/ashe-64.png",
+          "slot": 46,
+          "source_bounds": [
+            950,
+            807,
+            1108,
+            959
+          ],
+          "source_origin": [
+            1028.0,
+            959.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            81,
+            73,
+            184,
+            172
+          ],
+          "sha256": "a9fe95d4b2bbb54731e7b77cb9a5f1f145f6fb9f7dd7631d246fc89bc48231af"
+        },
+        {
+          "path": "res://assets/animated/ashe/guard-07.png",
+          "source": "art-source/animated/ashe-64.png",
+          "slot": 47,
+          "source_bounds": [
+            1112,
+            804,
+            1234,
+            959
+          ],
+          "source_origin": [
+            1180.5,
+            959.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            87,
+            71,
+            167,
+            172
+          ],
+          "sha256": "27fcf58aad6266d5639c85d28faa2f1ef745ce240853e427398c11cb3b07b03f"
+        }
+      ]
+    },
+    "hit": {
+      "frame_count": 8,
+      "durations": [
+        0.035,
+        0.065,
+        0.09,
+        0.12,
+        0.13,
+        0.15,
+        0.16,
+        0.18
+      ],
+      "duration": 0.9299999999999999,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/ashe/hit-00.png",
+          "source": "art-source/animated/ashe-64.png",
+          "slot": 48,
+          "source_bounds": [
+            15,
+            967,
+            175,
+            1101
+          ],
+          "source_origin": [
+            76.0,
+            1105.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            92,
+            82,
+            196,
+            170
+          ],
+          "sha256": "1ad3fb207c56f0662fa8e42e2c88eeb4144b2ce3cfdf120c66ee38687ca56f60"
+        },
+        {
+          "path": "res://assets/animated/ashe/hit-01.png",
+          "source": "art-source/animated/ashe-64.png",
+          "slot": 49,
+          "source_bounds": [
+            196,
+            968,
+            306,
+            1101
+          ],
+          "source_origin": [
+            229.0,
+            1105.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            110,
+            83,
+            182,
+            170
+          ],
+          "sha256": "4bcdf3610ee14281744e681e9c15a9ce101a468294fd45e215bcb978bb2a9e43"
+        },
+        {
+          "path": "res://assets/animated/ashe/hit-02.png",
+          "source": "art-source/animated/ashe-64.png",
+          "slot": 50,
+          "source_bounds": [
+            352,
+            971,
+            464,
+            1103
+          ],
+          "source_origin": [
+            385.0,
+            1105.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            110,
+            84,
+            183,
+            170
+          ],
+          "sha256": "8b5a525cd2c2241eb44f77f14515cbcb5ac15fa7e7905bc2693021780cc6f9ef"
+        },
+        {
+          "path": "res://assets/animated/ashe/hit-03.png",
+          "source": "art-source/animated/ashe-64.png",
+          "slot": 51,
+          "source_bounds": [
+            475,
+            980,
+            602,
+            1104
+          ],
+          "source_origin": [
+            546.5,
+            1105.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            85,
+            90,
+            168,
+            171
+          ],
+          "sha256": "bb1978b32f256237d46c3eec4c93050a67e3c39960fff388ce2df37a5cc71d6b"
+        },
+        {
+          "path": "res://assets/animated/ashe/hit-04.png",
+          "source": "art-source/animated/ashe-64.png",
+          "slot": 52,
+          "source_bounds": [
+            639,
+            972,
+            762,
+            1104
+          ],
+          "source_origin": [
+            709.5,
+            1105.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            86,
+            85,
+            166,
+            171
+          ],
+          "sha256": "08b7fa41e15a017df090a9dbb7fe3fe67a005cb3b06d5c910cdf0993ba468a5a"
+        },
+        {
+          "path": "res://assets/animated/ashe/hit-05.png",
+          "source": "art-source/animated/ashe-64.png",
+          "slot": 53,
+          "source_bounds": [
+            809,
+            974,
+            924,
+            1105
+          ],
+          "source_origin": [
+            869.5,
+            1105.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            92,
+            86,
+            167,
+            172
+          ],
+          "sha256": "bd132cc8e337c127f0b0c7ad3624b70c562775445d15b0622a1714fb25c5a9bf"
+        },
+        {
+          "path": "res://assets/animated/ashe/hit-06.png",
+          "source": "art-source/animated/ashe-64.png",
+          "slot": 54,
+          "source_bounds": [
+            963,
+            971,
+            1107,
+            1105
+          ],
+          "source_origin": [
+            1028.0,
+            1105.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            90,
+            84,
+            184,
+            172
+          ],
+          "sha256": "3165bdccb1815d062615e2d8fea72654af2ee39513fb076a8aed9caf346e268d"
+        },
+        {
+          "path": "res://assets/animated/ashe/hit-07.png",
+          "source": "art-source/animated/ashe-64.png",
+          "slot": 55,
+          "source_bounds": [
+            1133,
+            969,
+            1254,
+            1105
+          ],
+          "source_origin": [
+            1180.5,
+            1105.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            101,
+            83,
+            180,
+            172
+          ],
+          "sha256": "f04d6e1e08169986185797a790507011d860f815d5f557b902e88c35ef05e06b"
+        }
+      ]
+    },
+    "defeat": {
+      "frame_count": 8,
+      "durations": [
+        0.08,
+        0.1,
+        0.1,
+        0.12,
+        0.15,
+        0.18,
+        0.24,
+        0.3
+      ],
+      "duration": 1.27,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/ashe/defeat-00.png",
+          "source": "art-source/animated/ashe-repair24.png",
+          "slot": 16,
+          "source_bounds": [
+            18,
+            528,
+            205,
+            732
+          ],
+          "source_origin": [
+            116.5,
+            742.0
+          ],
+          "scale": 0.493573264781491,
+          "packed_bounds": [
+            83,
+            66,
+            175,
+            167
+          ],
+          "sha256": "8b542c6efccc79aa37c1079ed58055cdb78e47d763f44eb4f530735bac3def5d"
+        },
+        {
+          "path": "res://assets/animated/ashe/defeat-01.png",
+          "source": "art-source/animated/ashe-repair24.png",
+          "slot": 17,
+          "source_bounds": [
+            234,
+            563,
+            402,
+            735
+          ],
+          "source_origin": [
+            344.5,
+            742.0
+          ],
+          "scale": 0.493573264781491,
+          "packed_bounds": [
+            77,
+            84,
+            160,
+            169
+          ],
+          "sha256": "134409dcdfd51402ec7392c31de4ac6b176b00e93744fe14dcfb270d769a17c5"
+        },
+        {
+          "path": "res://assets/animated/ashe/defeat-02.png",
+          "source": "art-source/animated/ashe-repair24.png",
+          "slot": 18,
+          "source_bounds": [
+            457,
+            562,
+            650,
+            736
+          ],
+          "source_origin": [
+            595.0,
+            742.0
+          ],
+          "scale": 0.493573264781491,
+          "packed_bounds": [
+            64,
+            83,
+            159,
+            169
+          ],
+          "sha256": "109f95cb571d4874b66ab9cdc32aef5292e3c098f5430bdfd20390465e68cfb3"
+        },
+        {
+          "path": "res://assets/animated/ashe/defeat-03.png",
+          "source": "art-source/animated/ashe-repair24.png",
+          "slot": 19,
+          "source_bounds": [
+            681,
+            584,
+            890,
+            735
+          ],
+          "source_origin": [
+            861.5,
+            742.0
+          ],
+          "scale": 0.493573264781491,
+          "packed_bounds": [
+            43,
+            94,
+            146,
+            169
+          ],
+          "sha256": "fdbe013e8ad849d5383d0285c2c5dfa699d38e313f1c662a02c89a59807afbc8"
+        },
+        {
+          "path": "res://assets/animated/ashe/defeat-04.png",
+          "source": "art-source/animated/ashe-repair24.png",
+          "slot": 20,
+          "source_bounds": [
+            898,
+            623,
+            1135,
+            736
+          ],
+          "source_origin": [
+            1137.0,
+            742.0
+          ],
+          "scale": 0.493573264781491,
+          "packed_bounds": [
+            14,
+            113,
+            131,
+            169
+          ],
+          "sha256": "c8d363cde782b296b76744394926a8757516b8ae96bd54dbb825a629c2d105a8"
+        },
+        {
+          "path": "res://assets/animated/ashe/defeat-05.png",
+          "source": "art-source/animated/ashe-repair24.png",
+          "slot": 21,
+          "source_bounds": [
+            1153,
+            660,
+            1433,
+            742
+          ],
+          "source_origin": [
+            1415.0,
+            742.0
+          ],
+          "scale": 0.493573264781491,
+          "packed_bounds": [
+            3,
+            132,
+            141,
+            172
+          ],
+          "sha256": "2cd302fe02c3e79ce4befb34081759a36337d078ceced18e6df89bd29f552b1a"
+        },
+        {
+          "path": "res://assets/animated/ashe/defeat-06.png",
+          "source": "art-source/animated/ashe-repair24.png",
+          "slot": 22,
+          "source_bounds": [
+            1456,
+            665,
+            1734,
+            742
+          ],
+          "source_origin": [
+            1672.0,
+            742.0
+          ],
+          "scale": 0.493573264781491,
+          "packed_bounds": [
+            25,
+            134,
+            162,
+            172
+          ],
+          "sha256": "dfdfb34262bc07090bd80ba2901a2a6397e38a7ea9158e3ff69f96b0cbd1144d"
+        },
+        {
+          "path": "res://assets/animated/ashe/defeat-07.png",
+          "source": "art-source/animated/ashe-repair24.png",
+          "slot": 23,
+          "source_bounds": [
+            1748,
+            667,
+            2036,
+            747
+          ],
+          "source_origin": [
+            1923.5,
+            742.0
+          ],
+          "scale": 0.493573264781491,
+          "packed_bounds": [
+            45,
+            135,
+            187,
+            174
+          ],
+          "sha256": "a255e0c230466cef4122d8e618ed5fe6e0394d94299b6ebabb0631ab502de29a"
+        }
+      ]
+    },
+    "jump": {
+      "frame_count": 8,
+      "durations": [
+        0.08,
+        0.055,
+        0.08,
+        0.11,
+        0.11,
+        0.08,
+        0.07,
+        0.115
+      ],
+      "duration": 0.7000000000000001,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/ashe/jump-00.png",
+          "source": "art-source/animated/v3/ashe-extension64.png",
+          "slot": 32,
+          "source_bounds": [
+            39,
+            590,
+            156,
+            681
+          ],
+          "source_origin": [
+            102.5,
+            681.0
+          ],
+          "scale": 1.0105263157894737,
+          "packed_bounds": [
+            68,
+            80,
+            186,
+            172
+          ],
+          "sha256": "2496dba212751e449f7ca9739cfd40213f032a327b67505c4f8fc57996af673f",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/ashe/jump-01.png",
+          "source": "art-source/animated/v3/ashe-extension64.png",
+          "slot": 33,
+          "source_bounds": [
+            215,
+            573,
+            336,
+            682
+          ],
+          "source_origin": [
+            290.0,
+            682.0
+          ],
+          "scale": 1.0105263157894737,
+          "packed_bounds": [
+            56,
+            62,
+            178,
+            172
+          ],
+          "sha256": "f8f2d349bdfbab058fd4bfd483bb249ba24e0b27dd6307287a2a29f3aa1d3477",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/ashe/jump-02.png",
+          "source": "art-source/animated/v3/ashe-extension64.png",
+          "slot": 34,
+          "source_bounds": [
+            395,
+            552,
+            532,
+            665
+          ],
+          "source_origin": [
+            462.5,
+            665.0
+          ],
+          "scale": 1.0105263157894737,
+          "packed_bounds": [
+            64,
+            58,
+            202,
+            172
+          ],
+          "sha256": "6c0aa1d6df65a5a77ba0b30fae9d9ad741648d6dca43c86a3a61547a9bb931ca",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/ashe/jump-03.png",
+          "source": "art-source/animated/v3/ashe-extension64.png",
+          "slot": 35,
+          "source_bounds": [
+            581,
+            570,
+            694,
+            676
+          ],
+          "source_origin": [
+            645.0,
+            676.0
+          ],
+          "scale": 1.0105263157894737,
+          "packed_bounds": [
+            67,
+            65,
+            181,
+            172
+          ],
+          "sha256": "10f0c809e6d3b68fb26dbddf4c8327339d5c8f9b4d22cf0b59e54c39c8f9f94d",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/ashe/jump-04.png",
+          "source": "art-source/animated/v3/ashe-extension64.png",
+          "slot": 36,
+          "source_bounds": [
+            766,
+            571,
+            898,
+            680
+          ],
+          "source_origin": [
+            835.0,
+            680.0
+          ],
+          "scale": 1.0105263157894737,
+          "packed_bounds": [
+            62,
+            62,
+            195,
+            172
+          ],
+          "sha256": "8e2bda36de482195a648a9c86a59f4603de9391e73525b0707a595f8ebb5af10",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/ashe/jump-05.png",
+          "source": "art-source/animated/v3/ashe-extension64.png",
+          "slot": 37,
+          "source_bounds": [
+            945,
+            594,
+            1072,
+            681
+          ],
+          "source_origin": [
+            1014.0,
+            681.0
+          ],
+          "scale": 1.0105263157894737,
+          "packed_bounds": [
+            62,
+            84,
+            190,
+            172
+          ],
+          "sha256": "f07540b73c6564a411b1a3f94e16a239417f74397a27e28f225df48043b9a0ab",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/ashe/jump-06.png",
+          "source": "art-source/animated/v3/ashe-extension64.png",
+          "slot": 38,
+          "source_bounds": [
+            1133,
+            604,
+            1261,
+            681
+          ],
+          "source_origin": [
+            1190.5,
+            681.0
+          ],
+          "scale": 1.0105263157894737,
+          "packed_bounds": [
+            74,
+            94,
+            203,
+            172
+          ],
+          "sha256": "09415d6f3b1d16f16386c384150353ccfdea3c177f752f33038ad51c358940ef",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/ashe/jump-07.png",
+          "source": "art-source/animated/v3/ashe-extension64.png",
+          "slot": 39,
+          "source_bounds": [
+            1315,
+            588,
+            1426,
+            682
+          ],
+          "source_origin": [
+            1365.5,
+            682.0
+          ],
+          "scale": 1.0105263157894737,
+          "packed_bounds": [
+            81,
+            77,
+            193,
+            172
+          ],
+          "sha256": "a552e277529890e527e0c2f28d3a21352f6d793cd147d1198e8d5dca849545f5",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "stair_up": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/ashe/stair_up-00.png",
+          "source": "art-source/animated/v3/ashe-extension64.png",
+          "slot": 40,
+          "source_bounds": [
+            40,
+            710,
+            152,
+            805
+          ],
+          "source_origin": [
+            102.5,
+            805.0
+          ],
+          "scale": 1.0105263157894737,
+          "packed_bounds": [
+            69,
+            76,
+            182,
+            172
+          ],
+          "sha256": "ef3d77c6568a8a4ee1b180cd3b77d0f57497520759165ed9d0616363ffe2ab5b",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/ashe/stair_up-01.png",
+          "source": "art-source/animated/v3/ashe-extension64.png",
+          "slot": 41,
+          "source_bounds": [
+            220,
+            711,
+            324,
+            807
+          ],
+          "source_origin": [
+            290.0,
+            807.0
+          ],
+          "scale": 1.0105263157894737,
+          "packed_bounds": [
+            61,
+            75,
+            166,
+            172
+          ],
+          "sha256": "68a5acdeab5e97d71b53ff39a1b73e5bbb95aa21fcd821e4299de9bf54f58b15",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/ashe/stair_up-02.png",
+          "source": "art-source/animated/v3/ashe-extension64.png",
+          "slot": 42,
+          "source_bounds": [
+            411,
+            708,
+            511,
+            805
+          ],
+          "source_origin": [
+            462.5,
+            805.0
+          ],
+          "scale": 1.0105263157894737,
+          "packed_bounds": [
+            80,
+            74,
+            181,
+            172
+          ],
+          "sha256": "d4fc695920847a186c56259d099f5163f902e4794efd74d9efac3a54001b518c",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/ashe/stair_up-03.png",
+          "source": "art-source/animated/v3/ashe-extension64.png",
+          "slot": 43,
+          "source_bounds": [
+            596,
+            701,
+            696,
+            805
+          ],
+          "source_origin": [
+            645.0,
+            805.0
+          ],
+          "scale": 1.0105263157894737,
+          "packed_bounds": [
+            82,
+            67,
+            183,
+            172
+          ],
+          "sha256": "e5a075e83bfc5fba0c1d356965975695d3cdfc9936ef818db37bfacfcc49a4b5",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/ashe/stair_up-04.png",
+          "source": "art-source/animated/v3/ashe-extension64.png",
+          "slot": 44,
+          "source_bounds": [
+            768,
+            701,
+            868,
+            805
+          ],
+          "source_origin": [
+            835.0,
+            805.0
+          ],
+          "scale": 1.0105263157894737,
+          "packed_bounds": [
+            64,
+            67,
+            165,
+            172
+          ],
+          "sha256": "71de6f353a0d2b5a93981e84272ea691f73d6182094df3725849b5d53ccf4a33",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/ashe/stair_up-05.png",
+          "source": "art-source/animated/v3/ashe-extension64.png",
+          "slot": 45,
+          "source_bounds": [
+            950,
+            705,
+            1050,
+            805
+          ],
+          "source_origin": [
+            1014.0,
+            805.0
+          ],
+          "scale": 1.0105263157894737,
+          "packed_bounds": [
+            67,
+            71,
+            168,
+            172
+          ],
+          "sha256": "09eaea4e3f5c1af2699d1970c76e0add5b8786237993055fc1de9a17b2ded1b3",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/ashe/stair_up-06.png",
+          "source": "art-source/animated/v3/ashe-extension64.png",
+          "slot": 46,
+          "source_bounds": [
+            1132,
+            713,
+            1259,
+            805
+          ],
+          "source_origin": [
+            1190.5,
+            805.0
+          ],
+          "scale": 1.0105263157894737,
+          "packed_bounds": [
+            73,
+            79,
+            201,
+            172
+          ],
+          "sha256": "ac231030e70c56a53a8f587e37b5c2c21bf972d58bc2dfc698283aaf1588f774",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/ashe/stair_up-07.png",
+          "source": "art-source/animated/v3/ashe-extension64.png",
+          "slot": 47,
+          "source_bounds": [
+            1316,
+            705,
+            1408,
+            805
+          ],
+          "source_origin": [
+            1365.5,
+            805.0
+          ],
+          "scale": 1.0105263157894737,
+          "packed_bounds": [
+            82,
+            71,
+            175,
+            172
+          ],
+          "sha256": "b58f6d4052b54ed2dde8180f2cc43cee59be46e5e272d83b57901bb7b4c4d51f",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "stair_down": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/ashe/stair_down-00.png",
+          "source": "art-source/animated/v3/ashe-repair24.png",
+          "slot": 16,
+          "source_bounds": [
+            50,
+            551,
+            215,
+            716
+          ],
+          "source_origin": [
+            139.0,
+            716.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            79,
+            74,
+            177,
+            172
+          ],
+          "sha256": "8caff2c0bd3c44f24bfe3f72451c83df51dcd766e712c70c0d7dc3e86eb0e5f7",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/ashe/stair_down-01.png",
+          "source": "art-source/animated/v3/ashe-repair24.png",
+          "slot": 17,
+          "source_bounds": [
+            299,
+            559,
+            472,
+            728
+          ],
+          "source_origin": [
+            411.5,
+            728.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            65,
+            72,
+            168,
+            172
+          ],
+          "sha256": "1df817fdaa2a534d1f5ad4758f68173b89857590d45eb6d1f48a14b90b6e8a55",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/ashe/stair_down-02.png",
+          "source": "art-source/animated/v3/ashe-repair24.png",
+          "slot": 18,
+          "source_bounds": [
+            546,
+            562,
+            731,
+            724
+          ],
+          "source_origin": [
+            663.5,
+            724.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            62,
+            76,
+            172,
+            172
+          ],
+          "sha256": "6935da438a7bf0907510123fc7bef6e8f1add837a6d36566e86ca97383b89d86",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/ashe/stair_down-03.png",
+          "source": "art-source/animated/v3/ashe-repair24.png",
+          "slot": 19,
+          "source_bounds": [
+            822,
+            562,
+            990,
+            724
+          ],
+          "source_origin": [
+            906.0,
+            724.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            82,
+            76,
+            182,
+            172
+          ],
+          "sha256": "27b1260b1c11eb016000884a981427d14a8e789f626458b043473f86706243e8",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/ashe/stair_down-04.png",
+          "source": "art-source/animated/v3/ashe-repair24.png",
+          "slot": 20,
+          "source_bounds": [
+            1064,
+            568,
+            1211,
+            724
+          ],
+          "source_origin": [
+            1155.5,
+            724.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            78,
+            80,
+            165,
+            172
+          ],
+          "sha256": "892f27513057c445686193a10378823d4b77ee45c79cff61ab015d58136b2838",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/ashe/stair_down-05.png",
+          "source": "art-source/animated/v3/ashe-repair24.png",
+          "slot": 21,
+          "source_bounds": [
+            1322,
+            565,
+            1503,
+            724
+          ],
+          "source_origin": [
+            1409.0,
+            724.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            80,
+            78,
+            187,
+            172
+          ],
+          "sha256": "5665f8963e9d89bef1f92200b95fc899b4efbba7642ddf854f0b5e1c92115561",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/ashe/stair_down-06.png",
+          "source": "art-source/animated/v3/ashe-repair24.png",
+          "slot": 22,
+          "source_bounds": [
+            1576,
+            573,
+            1751,
+            724
+          ],
+          "source_origin": [
+            1665.5,
+            724.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            79,
+            83,
+            183,
+            172
+          ],
+          "sha256": "77c0687f550645787417af6aec4ec6b6f70d50b4154764179862d90afb0a1e92",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/ashe/stair_down-07.png",
+          "source": "art-source/animated/v3/ashe-repair24.png",
+          "slot": 23,
+          "source_bounds": [
+            1846,
+            573,
+            2002,
+            724
+          ],
+          "source_origin": [
+            1921.0,
+            724.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            88,
+            83,
+            180,
+            172
+          ],
+          "sha256": "8ff80cf70a7b178cf636ee47f3e67aaa2ff69e689de8c408a98b502de054c594",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "dodge": {
+      "frame_count": 8,
+      "durations": [
+        0.055,
+        0.045,
+        0.04,
+        0.045,
+        0.06,
+        0.07,
+        0.08,
+        0.1
+      ],
+      "duration": 0.495,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/ashe/dodge-00.png",
+          "source": "art-source/animated/v3/ashe-extension64.png",
+          "slot": 56,
+          "source_bounds": [
+            46,
+            965,
+            165,
+            1059
+          ],
+          "source_origin": [
+            102.5,
+            1059.0
+          ],
+          "scale": 1.0105263157894737,
+          "packed_bounds": [
+            75,
+            77,
+            195,
+            172
+          ],
+          "sha256": "1454a8c88c6ef29d2a72cb676cd680ffbc1ed373ba22719e393bdad3dbc5fbe2",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/ashe/dodge-01.png",
+          "source": "art-source/animated/v3/ashe-extension64.png",
+          "slot": 57,
+          "source_bounds": [
+            206,
+            970,
+            325,
+            1056
+          ],
+          "source_origin": [
+            290.0,
+            1056.0
+          ],
+          "scale": 1.0105263157894737,
+          "packed_bounds": [
+            47,
+            85,
+            167,
+            172
+          ],
+          "sha256": "d4b67a32d8740ee5411702af5bc57c56825b9a73876e6c5fb14691be1c0a50ea",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/ashe/dodge-02.png",
+          "source": "art-source/animated/v3/ashe-extension64.png",
+          "slot": 58,
+          "source_bounds": [
+            390,
+            971,
+            526,
+            1058
+          ],
+          "source_origin": [
+            462.5,
+            1058.0
+          ],
+          "scale": 1.0105263157894737,
+          "packed_bounds": [
+            59,
+            84,
+            196,
+            172
+          ],
+          "sha256": "4eadb0d4e1c7e938fe2e8537e4843a2e45853257a14f8ce331e33a95ea49f5ee",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/ashe/dodge-03.png",
+          "source": "art-source/animated/v3/ashe-extension64.png",
+          "slot": 59,
+          "source_bounds": [
+            551,
+            975,
+            715,
+            1055
+          ],
+          "source_origin": [
+            645.0,
+            1055.0
+          ],
+          "scale": 1.0105263157894737,
+          "packed_bounds": [
+            37,
+            91,
+            203,
+            172
+          ],
+          "sha256": "1d098b9e648cec8d926c07031a28a95e16673593a5d1356d69a80a0f3de40a91",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/ashe/dodge-04.png",
+          "source": "art-source/animated/v3/ashe-extension64.png",
+          "slot": 60,
+          "source_bounds": [
+            741,
+            982,
+            891,
+            1058
+          ],
+          "source_origin": [
+            835.0,
+            1058.0
+          ],
+          "scale": 1.0105263157894737,
+          "packed_bounds": [
+            37,
+            95,
+            189,
+            172
+          ],
+          "sha256": "890fa72a7fe437279d32a611b29a18cb7efe2c10de7d2ec58d0573b6026cfbfb",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/ashe/dodge-05.png",
+          "source": "art-source/animated/v3/ashe-extension64.png",
+          "slot": 61,
+          "source_bounds": [
+            933,
+            992,
+            1065,
+            1060
+          ],
+          "source_origin": [
+            1014.0,
+            1060.0
+          ],
+          "scale": 1.0105263157894737,
+          "packed_bounds": [
+            50,
+            103,
+            183,
+            172
+          ],
+          "sha256": "75755eb7de722396807f043ac770f3b81f7127daa77698fc053ab0d206e314ee",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/ashe/dodge-06.png",
+          "source": "art-source/animated/v3/ashe-extension64.png",
+          "slot": 62,
+          "source_bounds": [
+            1117,
+            984,
+            1254,
+            1060
+          ],
+          "source_origin": [
+            1190.5,
+            1060.0
+          ],
+          "scale": 1.0105263157894737,
+          "packed_bounds": [
+            58,
+            95,
+            196,
+            172
+          ],
+          "sha256": "82b29a64856c6bcf53958cfd8b142894dc6838b39b3de0fd9c2e15d8b6160766",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/ashe/dodge-07.png",
+          "source": "art-source/animated/v3/ashe-extension64.png",
+          "slot": 63,
+          "source_bounds": [
+            1320,
+            979,
+            1429,
+            1059
+          ],
+          "source_origin": [
+            1365.5,
+            1059.0
+          ],
+          "scale": 1.0105263157894737,
+          "packed_bounds": [
+            86,
+            91,
+            196,
+            172
+          ],
+          "sha256": "5133b5eea99bd2fe7a1afdf0122afcd9e39f5989b5ac23c4f788ac41297ecdd5",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "powered_idle": {
+      "frame_count": 8,
+      "durations": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ],
+      "duration": 1.6,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/ashe/powered_idle-00.png",
+          "source": "art-source/animated/v3/ashe-powered40.png",
+          "slot": 0,
+          "source_bounds": [
+            32,
+            52,
+            178,
+            188
+          ],
+          "source_origin": [
+            98.5,
+            188.0
+          ],
+          "scale": 0.7218045112781954,
+          "packed_bounds": [
+            84,
+            74,
+            189,
+            172
+          ],
+          "sha256": "d10bbcda0964d4225eb538caa9cb0642d6237e4ec4787ae0c2db571fb9adfd0d"
+        },
+        {
+          "path": "res://assets/animated/ashe/powered_idle-01.png",
+          "source": "art-source/animated/v3/ashe-powered40.png",
+          "slot": 1,
+          "source_bounds": [
+            233,
+            53,
+            377,
+            188
+          ],
+          "source_origin": [
+            294.5,
+            188.0
+          ],
+          "scale": 0.7218045112781954,
+          "packed_bounds": [
+            88,
+            75,
+            192,
+            172
+          ],
+          "sha256": "6671f5d92d50189426b02d452f596428c62eb2b0c289f479edf01c181d26ade7"
+        },
+        {
+          "path": "res://assets/animated/ashe/powered_idle-02.png",
+          "source": "art-source/animated/v3/ashe-powered40.png",
+          "slot": 2,
+          "source_bounds": [
+            431,
+            51,
+            577,
+            188
+          ],
+          "source_origin": [
+            491.5,
+            188.0
+          ],
+          "scale": 0.7218045112781954,
+          "packed_bounds": [
+            88,
+            73,
+            193,
+            172
+          ],
+          "sha256": "08144d5d341e40149ae84936ee6f73e7325ca508c47e3bbda9e875d79bfa8100"
+        },
+        {
+          "path": "res://assets/animated/ashe/powered_idle-03.png",
+          "source": "art-source/animated/v3/ashe-powered40.png",
+          "slot": 3,
+          "source_bounds": [
+            635,
+            51,
+            776,
+            188
+          ],
+          "source_origin": [
+            691.0,
+            188.0
+          ],
+          "scale": 0.7218045112781954,
+          "packed_bounds": [
+            92,
+            73,
+            194,
+            172
+          ],
+          "sha256": "f22d3b5e3bde3730154a419c216d069be38f45e8f91147b81c09fc8a05d2dfb1"
+        },
+        {
+          "path": "res://assets/animated/ashe/powered_idle-04.png",
+          "source": "art-source/animated/v3/ashe-powered40.png",
+          "slot": 4,
+          "source_bounds": [
+            827,
+            50,
+            973,
+            188
+          ],
+          "source_origin": [
+            893.5,
+            188.0
+          ],
+          "scale": 0.7218045112781954,
+          "packed_bounds": [
+            84,
+            72,
+            189,
+            172
+          ],
+          "sha256": "0989f3e942d0cc5748a598d50cae3afe053009df7ee3420f02f1ae8dccaa9b08"
+        },
+        {
+          "path": "res://assets/animated/ashe/powered_idle-05.png",
+          "source": "art-source/animated/v3/ashe-powered40.png",
+          "slot": 5,
+          "source_bounds": [
+            1026,
+            50,
+            1172,
+            188
+          ],
+          "source_origin": [
+            1099.5,
+            188.0
+          ],
+          "scale": 0.7218045112781954,
+          "packed_bounds": [
+            79,
+            72,
+            184,
+            172
+          ],
+          "sha256": "7684d52ad58e1b97314d490db994ac0095834f51fcb23c061278097e05a78692"
+        },
+        {
+          "path": "res://assets/animated/ashe/powered_idle-06.png",
+          "source": "art-source/animated/v3/ashe-powered40.png",
+          "slot": 6,
+          "source_bounds": [
+            1224,
+            51,
+            1371,
+            188
+          ],
+          "source_origin": [
+            1297.5,
+            188.0
+          ],
+          "scale": 0.7218045112781954,
+          "packed_bounds": [
+            79,
+            73,
+            185,
+            172
+          ],
+          "sha256": "988980aa1efa309e8491b7f8d257ec669e89de4a877fcf76be46bfad253bc491"
+        },
+        {
+          "path": "res://assets/animated/ashe/powered_idle-07.png",
+          "source": "art-source/animated/v3/ashe-powered40.png",
+          "slot": 7,
+          "source_bounds": [
+            1426,
+            50,
+            1566,
+            188
+          ],
+          "source_origin": [
+            1489.0,
+            188.0
+          ],
+          "scale": 0.7218045112781954,
+          "packed_bounds": [
+            87,
+            72,
+            188,
+            172
+          ],
+          "sha256": "084a17369449b02bfe0ac4d81a66dbd31ee329bd39f4f5203b14bbf897ab0490"
+        }
+      ]
+    },
+    "powered_walk": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/ashe/powered_walk-00.png",
+          "source": "art-source/animated/v3/ashe-powered40.png",
+          "slot": 8,
+          "source_bounds": [
+            25,
+            240,
+            176,
+            372
+          ],
+          "source_origin": [
+            98.5,
+            374.0
+          ],
+          "scale": 0.7218045112781954,
+          "packed_bounds": [
+            79,
+            75,
+            188,
+            170
+          ],
+          "sha256": "824a83c77d77993ae0bdb36b8686dea44f549e0e07ab22d35188b923a8e589c2"
+        },
+        {
+          "path": "res://assets/animated/ashe/powered_walk-01.png",
+          "source": "art-source/animated/v3/ashe-powered40.png",
+          "slot": 9,
+          "source_bounds": [
+            226,
+            242,
+            371,
+            374
+          ],
+          "source_origin": [
+            294.5,
+            374.0
+          ],
+          "scale": 0.7218045112781954,
+          "packed_bounds": [
+            83,
+            77,
+            188,
+            172
+          ],
+          "sha256": "d3e689ac1ad09ffff26fdf972c1ec8ad7ad9056a9ed06e30cafe8d8065bce147"
+        },
+        {
+          "path": "res://assets/animated/ashe/powered_walk-02.png",
+          "source": "art-source/animated/v3/ashe-powered40.png",
+          "slot": 10,
+          "source_bounds": [
+            416,
+            242,
+            564,
+            373
+          ],
+          "source_origin": [
+            491.5,
+            374.0
+          ],
+          "scale": 0.7218045112781954,
+          "packed_bounds": [
+            78,
+            77,
+            185,
+            172
+          ],
+          "sha256": "2dfd350870f97027436fdfa7dec8008eb3614383a9d077f573568d89d351759c"
+        },
+        {
+          "path": "res://assets/animated/ashe/powered_walk-03.png",
+          "source": "art-source/animated/v3/ashe-powered40.png",
+          "slot": 11,
+          "source_bounds": [
+            616,
+            242,
+            771,
+            374
+          ],
+          "source_origin": [
+            691.0,
+            374.0
+          ],
+          "scale": 0.7218045112781954,
+          "packed_bounds": [
+            78,
+            77,
+            190,
+            172
+          ],
+          "sha256": "337517e1f51c886ca0883de2cfaec31b909de56173c125829de04f300336259a"
+        },
+        {
+          "path": "res://assets/animated/ashe/powered_walk-04.png",
+          "source": "art-source/animated/v3/ashe-powered40.png",
+          "slot": 12,
+          "source_bounds": [
+            816,
+            244,
+            968,
+            374
+          ],
+          "source_origin": [
+            893.5,
+            374.0
+          ],
+          "scale": 0.7218045112781954,
+          "packed_bounds": [
+            76,
+            78,
+            186,
+            172
+          ],
+          "sha256": "8570a5deff5bbe057a15d36905b8077a5f0daa4de5014c9e9a575af906a6b261"
+        },
+        {
+          "path": "res://assets/animated/ashe/powered_walk-05.png",
+          "source": "art-source/animated/v3/ashe-powered40.png",
+          "slot": 13,
+          "source_bounds": [
+            1018,
+            241,
+            1167,
+            373
+          ],
+          "source_origin": [
+            1099.5,
+            374.0
+          ],
+          "scale": 0.7218045112781954,
+          "packed_bounds": [
+            73,
+            76,
+            181,
+            171
+          ],
+          "sha256": "228ced92c54a9ec6508e099c17a23967fdcfdccbf3959ea020f5f041c3822df8"
+        },
+        {
+          "path": "res://assets/animated/ashe/powered_walk-06.png",
+          "source": "art-source/animated/v3/ashe-powered40.png",
+          "slot": 14,
+          "source_bounds": [
+            1218,
+            241,
+            1366,
+            373
+          ],
+          "source_origin": [
+            1297.5,
+            374.0
+          ],
+          "scale": 0.7218045112781954,
+          "packed_bounds": [
+            75,
+            76,
+            182,
+            171
+          ],
+          "sha256": "001c17924ab139cdaa6d5a3c7d6bc478280e369d1e73ef58686acd9e0283237e"
+        },
+        {
+          "path": "res://assets/animated/ashe/powered_walk-07.png",
+          "source": "art-source/animated/v3/ashe-powered40.png",
+          "slot": 15,
+          "source_bounds": [
+            1419,
+            240,
+            1563,
+            374
+          ],
+          "source_origin": [
+            1489.0,
+            374.0
+          ],
+          "scale": 0.7218045112781954,
+          "packed_bounds": [
+            81,
+            75,
+            185,
+            172
+          ],
+          "sha256": "976ec4bd5fb3cc6b3d804eebf52360f80a3fc84c6d5afefe699fd6c5e4246609"
+        }
+      ]
+    },
+    "powered_primary": {
+      "frame_count": 8,
+      "durations": [
+        0.07,
+        0.07,
+        0.08,
+        0.11,
+        0.04,
+        0.055,
+        0.085,
+        0.13
+      ],
+      "duration": 0.64,
+      "loop": false,
+      "release_frame": 4,
+      "release_time": 0.33,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/ashe/powered_primary-00.png",
+          "source": "art-source/animated/v3/ashe-powered40.png",
+          "slot": 16,
+          "source_bounds": [
+            32,
+            436,
+            182,
+            584
+          ],
+          "source_origin": [
+            98.5,
+            585.0
+          ],
+          "scale": 0.7218045112781954,
+          "packed_bounds": [
+            84,
+            64,
+            192,
+            171
+          ],
+          "sha256": "79b86bc69b7a5c90a975f5b79ad8d13b5f4e7be91d58153daed50846b4ccd488"
+        },
+        {
+          "path": "res://assets/animated/ashe/powered_primary-01.png",
+          "source": "art-source/animated/v3/ashe-powered40.png",
+          "slot": 17,
+          "source_bounds": [
+            219,
+            437,
+            368,
+            585
+          ],
+          "source_origin": [
+            294.5,
+            585.0
+          ],
+          "scale": 0.7218045112781954,
+          "packed_bounds": [
+            78,
+            65,
+            186,
+            172
+          ],
+          "sha256": "8e0aa8bbdb6703350c76ecb1b7edba22b651cba3487ff00ba45f2030d9f42097"
+        },
+        {
+          "path": "res://assets/animated/ashe/powered_primary-02.png",
+          "source": "art-source/animated/v3/ashe-powered40.png",
+          "slot": 18,
+          "source_bounds": [
+            430,
+            403,
+            563,
+            584
+          ],
+          "source_origin": [
+            491.5,
+            585.0
+          ],
+          "scale": 0.7218045112781954,
+          "packed_bounds": [
+            88,
+            41,
+            184,
+            172
+          ],
+          "sha256": "c6a98090461e45d8fb859f105399def02f4ee604b85395522588370488b36a93"
+        },
+        {
+          "path": "res://assets/animated/ashe/powered_primary-03.png",
+          "source": "art-source/animated/v3/ashe-powered40.png",
+          "slot": 19,
+          "source_bounds": [
+            619,
+            425,
+            757,
+            585
+          ],
+          "source_origin": [
+            691.0,
+            585.0
+          ],
+          "scale": 0.7218045112781954,
+          "packed_bounds": [
+            80,
+            57,
+            180,
+            172
+          ],
+          "sha256": "b0d878b7b1be13a72e3a418edcdaa7b2d04b0b97722f2945386a6902f24bfc9d"
+        },
+        {
+          "path": "res://assets/animated/ashe/powered_primary-04.png",
+          "source": "art-source/animated/v3/ashe-powered40.png",
+          "slot": 20,
+          "source_bounds": [
+            813,
+            444,
+            1049,
+            585
+          ],
+          "source_origin": [
+            893.5,
+            585.0
+          ],
+          "scale": 0.7218045112781954,
+          "packed_bounds": [
+            74,
+            70,
+            243,
+            172
+          ],
+          "sha256": "0cab4447043fd344ec322627c6c258a16c5c74073e4ec03d5ebac668da682c88"
+        },
+        {
+          "path": "res://assets/animated/ashe/powered_primary-05.png",
+          "source": "art-source/animated/v3/ashe-powered40.png",
+          "slot": 21,
+          "source_bounds": [
+            1017,
+            457,
+            1203,
+            585
+          ],
+          "source_origin": [
+            1099.5,
+            585.0
+          ],
+          "scale": 0.7218045112781954,
+          "packed_bounds": [
+            72,
+            80,
+            206,
+            172
+          ],
+          "sha256": "c1f809a373bd4741964e72038fe2b903847914e13aaca8838bf05b1f0867759d"
+        },
+        {
+          "path": "res://assets/animated/ashe/powered_primary-06.png",
+          "source": "art-source/animated/v3/ashe-powered40.png",
+          "slot": 22,
+          "source_bounds": [
+            1227,
+            439,
+            1387,
+            585
+          ],
+          "source_origin": [
+            1297.5,
+            585.0
+          ],
+          "scale": 0.7218045112781954,
+          "packed_bounds": [
+            81,
+            67,
+            196,
+            172
+          ],
+          "sha256": "e147d0ac05aa14ec1cbe51ee88d90841f070795aadfd547f9c34e96a430cf10a"
+        },
+        {
+          "path": "res://assets/animated/ashe/powered_primary-07.png",
+          "source": "art-source/animated/v3/ashe-powered40.png",
+          "slot": 23,
+          "source_bounds": [
+            1426,
+            439,
+            1565,
+            580
+          ],
+          "source_origin": [
+            1489.0,
+            585.0
+          ],
+          "scale": 0.7218045112781954,
+          "packed_bounds": [
+            87,
+            67,
+            187,
+            169
+          ],
+          "sha256": "ea755be8ca85325989efd2475281cd95af6671720dd73f7fcb985e5ac703b2fc"
+        }
+      ],
+      "release_anchor": [
+        110,
+        -81
+      ],
+      "contact_reach": 110
+    },
+    "powered_guard": {
+      "frame_count": 8,
+      "durations": [
+        0.055,
+        0.055,
+        0.055,
+        0.055,
+        0.12,
+        0.12,
+        0.12,
+        0.12
+      ],
+      "duration": 0.7,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": 4,
+      "frames": [
+        {
+          "path": "res://assets/animated/ashe/powered_guard-00.png",
+          "source": "art-source/animated/v3/ashe-powered40.png",
+          "slot": 24,
+          "source_bounds": [
+            32,
+            634,
+            156,
+            781
+          ],
+          "source_origin": [
+            98.5,
+            781.0
+          ],
+          "scale": 0.7218045112781954,
+          "packed_bounds": [
+            84,
+            66,
+            174,
+            172
+          ],
+          "sha256": "66418e68af360f944c44d0a76ed36c2a68e6ec34fc25adba8ddebecc8cae08ef"
+        },
+        {
+          "path": "res://assets/animated/ashe/powered_guard-01.png",
+          "source": "art-source/animated/v3/ashe-powered40.png",
+          "slot": 25,
+          "source_bounds": [
+            229,
+            624,
+            357,
+            781
+          ],
+          "source_origin": [
+            294.5,
+            781.0
+          ],
+          "scale": 0.7218045112781954,
+          "packed_bounds": [
+            85,
+            59,
+            177,
+            172
+          ],
+          "sha256": "f8d24db4aea5f04b091c736b7a15ae84992d9fe04b19e3b09778ef2fdfe20770"
+        },
+        {
+          "path": "res://assets/animated/ashe/powered_guard-02.png",
+          "source": "art-source/animated/v3/ashe-powered40.png",
+          "slot": 26,
+          "source_bounds": [
+            425,
+            624,
+            556,
+            781
+          ],
+          "source_origin": [
+            491.5,
+            781.0
+          ],
+          "scale": 0.7218045112781954,
+          "packed_bounds": [
+            84,
+            59,
+            179,
+            172
+          ],
+          "sha256": "88364479060db941151cf1ac80c25ad0c77a022a0159c3cb68bd28d91de5b42e"
+        },
+        {
+          "path": "res://assets/animated/ashe/powered_guard-03.png",
+          "source": "art-source/animated/v3/ashe-powered40.png",
+          "slot": 27,
+          "source_bounds": [
+            626,
+            624,
+            756,
+            781
+          ],
+          "source_origin": [
+            691.0,
+            781.0
+          ],
+          "scale": 0.7218045112781954,
+          "packed_bounds": [
+            85,
+            59,
+            179,
+            172
+          ],
+          "sha256": "678c59c331a7dd022801f41c88e588c51c66c8792ac5f75d4c3034364b202323"
+        },
+        {
+          "path": "res://assets/animated/ashe/powered_guard-04.png",
+          "source": "art-source/animated/v3/ashe-powered40.png",
+          "slot": 28,
+          "source_bounds": [
+            818,
+            625,
+            952,
+            781
+          ],
+          "source_origin": [
+            893.5,
+            781.0
+          ],
+          "scale": 0.7218045112781954,
+          "packed_bounds": [
+            78,
+            59,
+            175,
+            172
+          ],
+          "sha256": "b8eae80e2ab82b1f1d4bcd99b9fc51eff9cfadaded3e89f24426d00242949d19"
+        },
+        {
+          "path": "res://assets/animated/ashe/powered_guard-05.png",
+          "source": "art-source/animated/v3/ashe-powered40.png",
+          "slot": 29,
+          "source_bounds": [
+            1016,
+            623,
+            1152,
+            781
+          ],
+          "source_origin": [
+            1099.5,
+            781.0
+          ],
+          "scale": 0.7218045112781954,
+          "packed_bounds": [
+            72,
+            58,
+            170,
+            172
+          ],
+          "sha256": "b694e6ae96afa05b187545156a86e7939f6ceb974791a4f19b6bcfc532756a8b"
+        },
+        {
+          "path": "res://assets/animated/ashe/powered_guard-06.png",
+          "source": "art-source/animated/v3/ashe-powered40.png",
+          "slot": 30,
+          "source_bounds": [
+            1219,
+            627,
+            1350,
+            781
+          ],
+          "source_origin": [
+            1297.5,
+            781.0
+          ],
+          "scale": 0.7218045112781954,
+          "packed_bounds": [
+            75,
+            61,
+            170,
+            172
+          ],
+          "sha256": "6d7dee3cad670320c97ebc6c7f8097586472bdc655d5f88697dec50791f8d248"
+        },
+        {
+          "path": "res://assets/animated/ashe/powered_guard-07.png",
+          "source": "art-source/animated/v3/ashe-powered40.png",
+          "slot": 31,
+          "source_bounds": [
+            1417,
+            627,
+            1547,
+            781
+          ],
+          "source_origin": [
+            1489.0,
+            781.0
+          ],
+          "scale": 0.7218045112781954,
+          "packed_bounds": [
+            80,
+            61,
+            174,
+            172
+          ],
+          "sha256": "0dfa4f4104a3cf04c8385b1f0159fb61b9437ec8c02e5661423a156974b2b41d"
+        }
+      ]
+    },
+    "powered_exit": {
+      "frame_count": 8,
+      "durations": [
+        0.11,
+        0.1,
+        0.1,
+        0.09,
+        0.09,
+        0.1,
+        0.12,
+        0.15
+      ],
+      "duration": 0.86,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/ashe/powered_exit-00.png",
+          "source": "art-source/animated/v3/ashe-powered40.png",
+          "slot": 32,
+          "source_bounds": [
+            24,
+            829,
+            175,
+            976
+          ],
+          "source_origin": [
+            98.5,
+            976.0
+          ],
+          "scale": 0.7218045112781954,
+          "packed_bounds": [
+            78,
+            66,
+            187,
+            172
+          ],
+          "sha256": "6f627a3c40851eec5a6183841596cac98db792dfd835206d884e1e5cae7c53b0"
+        },
+        {
+          "path": "res://assets/animated/ashe/powered_exit-01.png",
+          "source": "art-source/animated/v3/ashe-powered40.png",
+          "slot": 33,
+          "source_bounds": [
+            226,
+            832,
+            355,
+            976
+          ],
+          "source_origin": [
+            294.5,
+            976.0
+          ],
+          "scale": 0.7218045112781954,
+          "packed_bounds": [
+            83,
+            68,
+            176,
+            172
+          ],
+          "sha256": "d1a07d1eb32cbb709fb8f9001c2e7e9f70b185f2644f4864a690a230d1ea9366"
+        },
+        {
+          "path": "res://assets/animated/ashe/powered_exit-02.png",
+          "source": "art-source/animated/v3/ashe-powered40.png",
+          "slot": 34,
+          "source_bounds": [
+            424,
+            818,
+            555,
+            976
+          ],
+          "source_origin": [
+            491.5,
+            976.0
+          ],
+          "scale": 0.7218045112781954,
+          "packed_bounds": [
+            83,
+            58,
+            178,
+            172
+          ],
+          "sha256": "f6d64e99de64141485c84bfa469f1209f51a66301c858fcbf69507719d80fc62"
+        },
+        {
+          "path": "res://assets/animated/ashe/powered_exit-03.png",
+          "source": "art-source/animated/v3/ashe-powered40.png",
+          "slot": 35,
+          "source_bounds": [
+            615,
+            832,
+            747,
+            976
+          ],
+          "source_origin": [
+            691.0,
+            976.0
+          ],
+          "scale": 0.7218045112781954,
+          "packed_bounds": [
+            77,
+            68,
+            172,
+            172
+          ],
+          "sha256": "dd3d91ab5580fe6e9565a1142a3f1302860ae2503e134bfa581d29f5daa07de5"
+        },
+        {
+          "path": "res://assets/animated/ashe/powered_exit-04.png",
+          "source": "art-source/animated/v3/ashe-powered40.png",
+          "slot": 36,
+          "source_bounds": [
+            814,
+            832,
+            968,
+            976
+          ],
+          "source_origin": [
+            893.5,
+            976.0
+          ],
+          "scale": 0.7218045112781954,
+          "packed_bounds": [
+            75,
+            68,
+            186,
+            172
+          ],
+          "sha256": "4e5da15107259a8b3e44ab4b3b1bc6165221969e7aff5a038f3db6ac9a21083a"
+        },
+        {
+          "path": "res://assets/animated/ashe/powered_exit-05.png",
+          "source": "art-source/animated/v3/ashe-powered40.png",
+          "slot": 37,
+          "source_bounds": [
+            1024,
+            832,
+            1165,
+            976
+          ],
+          "source_origin": [
+            1099.5,
+            976.0
+          ],
+          "scale": 0.7218045112781954,
+          "packed_bounds": [
+            78,
+            68,
+            180,
+            172
+          ],
+          "sha256": "37aa3e69393905733eeeea85c4b14b4e5ec63052ee780bfb94cf3432ea7bb648"
+        },
+        {
+          "path": "res://assets/animated/ashe/powered_exit-06.png",
+          "source": "art-source/animated/v3/ashe-powered40.png",
+          "slot": 38,
+          "source_bounds": [
+            1223,
+            832,
+            1361,
+            976
+          ],
+          "source_origin": [
+            1297.5,
+            976.0
+          ],
+          "scale": 0.7218045112781954,
+          "packed_bounds": [
+            78,
+            68,
+            178,
+            172
+          ],
+          "sha256": "551dfff5e1ccc2b8eb7a44c45b5ec104017cb00611bdba5c5d99709d6f9eb074"
+        },
+        {
+          "path": "res://assets/animated/ashe/powered_exit-07.png",
+          "source": "art-source/animated/v3/ashe-powered40.png",
+          "slot": 39,
+          "source_bounds": [
+            1422,
+            832,
+            1562,
+            976
+          ],
+          "source_origin": [
+            1489.0,
+            976.0
+          ],
+          "scale": 0.7218045112781954,
+          "packed_bounds": [
+            84,
+            68,
+            185,
+            172
+          ],
+          "sha256": "56948be730651420debb0174f8c79ad2baaa143067a732c193b4012d380c0082"
+        }
+      ]
+    }
+  },
+  "pose_count": 152
+}

@@ -1,0 +1,4639 @@
+{
+  "id": "brine",
+  "name": "Brine",
+  "view": "E",
+  "frame_size": [
+    192,
+    192
+  ],
+  "foot_pivot": [
+    96,
+    172
+  ],
+  "body_height_target": 96,
+  "fit_factor": 1.0,
+  "sources": [
+    {
+      "width": 1254,
+      "height": 1254,
+      "columns": 8,
+      "rows": 8,
+      "column_cuts": [
+        0,
+        164,
+        322,
+        470,
+        620,
+        780,
+        941,
+        1100,
+        1254
+      ],
+      "row_cuts": [
+        0,
+        164,
+        321,
+        478,
+        635,
+        792,
+        949,
+        1108,
+        1254
+      ],
+      "baselines": {
+        "0": 156.0,
+        "4": 783.0,
+        "5": 940.0,
+        "6": 1095.0,
+        "7": 1239.0
+      },
+      "body_height": 140.5,
+      "body_min_area": 2974,
+      "path": "art-source/animated/brine-64.png",
+      "base_scale": 0.6832740213523132
+    },
+    {
+      "width": 1254,
+      "height": 1254,
+      "columns": 8,
+      "rows": 8,
+      "column_cuts": [
+        0,
+        182,
+        337,
+        501,
+        661,
+        825,
+        974,
+        1122,
+        1254
+      ],
+      "row_cuts": [
+        0,
+        158,
+        314,
+        471,
+        627,
+        783,
+        939,
+        1097,
+        1254
+      ],
+      "baselines": {
+        "0": 148.0,
+        "1": 303.0,
+        "2": 462.0,
+        "3": 617.0,
+        "4": 773.25,
+        "5": 931.0,
+        "6": 1086.0,
+        "7": 1240.0
+      },
+      "body_height": 134.0,
+      "body_min_area": 2664,
+      "path": "art-source/animated/v3/brine-extension64.png",
+      "base_scale": 0.7164179104477612
+    },
+    {
+      "width": 1536,
+      "height": 1024,
+      "columns": 8,
+      "rows": 5,
+      "column_cuts": [
+        0,
+        212,
+        399,
+        586,
+        782,
+        965,
+        1153,
+        1342,
+        1536
+      ],
+      "row_cuts": [
+        0,
+        210,
+        410,
+        612,
+        813,
+        1024
+      ],
+      "baselines": {
+        "0": 199.0,
+        "1": 396.0,
+        "2": 598.0,
+        "3": 798.25,
+        "4": 1001.0
+      },
+      "body_height": 171.5,
+      "body_min_area": 4582,
+      "path": "art-source/animated/v3/brine-powered40.png",
+      "base_scale": 0.5597667638483965
+    },
+    {
+      "width": 1536,
+      "height": 1024,
+      "columns": 4,
+      "rows": 2,
+      "column_cuts": [
+        0,
+        412,
+        797,
+        1176,
+        1536
+      ],
+      "row_cuts": [
+        0,
+        544,
+        1024
+      ],
+      "baselines": {
+        "0": 477.0,
+        "1": 957.0
+      },
+      "body_height": 341.0,
+      "body_min_area": 18299,
+      "path": "art-source/animated/v3/brine-secondary8.png",
+      "base_scale": 0.28152492668621704
+    }
+  ],
+  "anchor_sources": [
+    {
+      "path": "art-source/animated/v3/elements-anchors.json",
+      "sha256": "8f75cadd5510d51a47fd3996f9595aebb72bfb3f3e284814346d058a844b8da2"
+    }
+  ],
+  "clips": {
+    "idle": {
+      "frame_count": 8,
+      "durations": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ],
+      "duration": 1.6,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/brine/idle-00.png",
+          "source": "art-source/animated/brine-64.png",
+          "slot": 0,
+          "source_bounds": [
+            39,
+            14,
+            144,
+            156
+          ],
+          "source_origin": [
+            82.0,
+            156.0
+          ],
+          "scale": 0.6832740213523132,
+          "packed_bounds": [
+            67,
+            75,
+            139,
+            172
+          ],
+          "sha256": "5c3df00eaa8a6714a185cc20ee3628a425f0293f4d85a9eab081ce5dca9280bc"
+        },
+        {
+          "path": "res://assets/animated/brine/idle-01.png",
+          "source": "art-source/animated/brine-64.png",
+          "slot": 1,
+          "source_bounds": [
+            193,
+            14,
+            298,
+            156
+          ],
+          "source_origin": [
+            243.0,
+            156.0
+          ],
+          "scale": 0.6832740213523132,
+          "packed_bounds": [
+            62,
+            75,
+            134,
+            172
+          ],
+          "sha256": "842c3c60ed3cc2818149cede5a9335086f81999e6c5deccfa1279586c1234908"
+        },
+        {
+          "path": "res://assets/animated/brine/idle-02.png",
+          "source": "art-source/animated/brine-64.png",
+          "slot": 2,
+          "source_bounds": [
+            348,
+            14,
+            440,
+            156
+          ],
+          "source_origin": [
+            396.0,
+            156.0
+          ],
+          "scale": 0.6832740213523132,
+          "packed_bounds": [
+            63,
+            75,
+            126,
+            172
+          ],
+          "sha256": "74a084f25fbcf49085f32cc832e295d6343a2a5ea2c2e67800eaa579a0d78b49"
+        },
+        {
+          "path": "res://assets/animated/brine/idle-03.png",
+          "source": "art-source/animated/brine-64.png",
+          "slot": 3,
+          "source_bounds": [
+            503,
+            17,
+            606,
+            156
+          ],
+          "source_origin": [
+            545.0,
+            156.0
+          ],
+          "scale": 0.6832740213523132,
+          "packed_bounds": [
+            67,
+            77,
+            137,
+            172
+          ],
+          "sha256": "17c53f1073183d59b476bc3ddeed7cb3bde76eaf45fda10e79f52fe5c06e705e"
+        },
+        {
+          "path": "res://assets/animated/brine/idle-04.png",
+          "source": "art-source/animated/brine-64.png",
+          "slot": 4,
+          "source_bounds": [
+            657,
+            15,
+            766,
+            156
+          ],
+          "source_origin": [
+            700.0,
+            156.0
+          ],
+          "scale": 0.6832740213523132,
+          "packed_bounds": [
+            67,
+            76,
+            141,
+            172
+          ],
+          "sha256": "21c6589e33172c9ab493994a64b1b7e7090ed684c1619cda972fb8b5dedb0eb5"
+        },
+        {
+          "path": "res://assets/animated/brine/idle-05.png",
+          "source": "art-source/animated/brine-64.png",
+          "slot": 5,
+          "source_bounds": [
+            812,
+            14,
+            928,
+            156
+          ],
+          "source_origin": [
+            860.5,
+            156.0
+          ],
+          "scale": 0.6832740213523132,
+          "packed_bounds": [
+            63,
+            75,
+            142,
+            172
+          ],
+          "sha256": "ed810dbd934b90288c229baf6ebb0d3a856e56da0b928f7d49932dbcef676365"
+        },
+        {
+          "path": "res://assets/animated/brine/idle-06.png",
+          "source": "art-source/animated/brine-64.png",
+          "slot": 6,
+          "source_bounds": [
+            967,
+            16,
+            1078,
+            156
+          ],
+          "source_origin": [
+            1020.5,
+            156.0
+          ],
+          "scale": 0.6832740213523132,
+          "packed_bounds": [
+            59,
+            76,
+            135,
+            172
+          ],
+          "sha256": "e960a7c3db267840768fdf615a97f2ad4420808b34967c74b64b34c8bc0ac470"
+        },
+        {
+          "path": "res://assets/animated/brine/idle-07.png",
+          "source": "art-source/animated/brine-64.png",
+          "slot": 7,
+          "source_bounds": [
+            1122,
+            14,
+            1230,
+            156
+          ],
+          "source_origin": [
+            1177.0,
+            156.0
+          ],
+          "scale": 0.6832740213523132,
+          "packed_bounds": [
+            58,
+            75,
+            132,
+            172
+          ],
+          "sha256": "daef77c26b22fd447bcdc903130c605359e1bdc6c4046fde477c845b0009dd93"
+        }
+      ],
+      "hand_anchors": [
+        [
+          42,
+          -42
+        ],
+        [
+          37,
+          -40
+        ],
+        [
+          29,
+          -54
+        ],
+        [
+          40,
+          -39
+        ],
+        [
+          44,
+          -40
+        ],
+        [
+          45,
+          -50
+        ],
+        [
+          38,
+          -44
+        ],
+        [
+          35,
+          -41
+        ]
+      ]
+    },
+    "walk": {
+      "frame_count": 16,
+      "durations": [
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/brine/walk-00.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 0,
+          "source_bounds": [
+            59,
+            15,
+            168,
+            148
+          ],
+          "source_origin": [
+            91.0,
+            148.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            73,
+            77,
+            151,
+            172
+          ],
+          "sha256": "ae073c3cc5835617e7ee084e9ba2d7afad40d4cbcc6d732a2c98d942a31d9063"
+        },
+        {
+          "path": "res://assets/animated/brine/walk-01.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 1,
+          "source_bounds": [
+            214,
+            15,
+            328,
+            148
+          ],
+          "source_origin": [
+            259.5,
+            148.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            63,
+            77,
+            145,
+            172
+          ],
+          "sha256": "0f6bbdea316f8583f41b4c5335eccd4701b37f54ef1382063ae292e9e9232674"
+        },
+        {
+          "path": "res://assets/animated/brine/walk-02.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 2,
+          "source_bounds": [
+            371,
+            14,
+            495,
+            148
+          ],
+          "source_origin": [
+            419.0,
+            148.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            62,
+            76,
+            151,
+            172
+          ],
+          "sha256": "ca581533989cf88bb43203d5fff05609ef15b11120efb4d6c9ac6122acacba83"
+        },
+        {
+          "path": "res://assets/animated/brine/walk-03.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 3,
+          "source_bounds": [
+            529,
+            14,
+            649,
+            148
+          ],
+          "source_origin": [
+            581.0,
+            148.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            59,
+            76,
+            145,
+            172
+          ],
+          "sha256": "43ecb08ef2d9aa1b915fd08fd3f372ffb5dc8d241685bf5ea79ae6d0be8a8a48"
+        },
+        {
+          "path": "res://assets/animated/brine/walk-04.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 4,
+          "source_bounds": [
+            679,
+            14,
+            798,
+            148
+          ],
+          "source_origin": [
+            743.0,
+            148.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            50,
+            76,
+            135,
+            172
+          ],
+          "sha256": "b30b7572961d5b679702e70bcbba00a955380289fbbaf0096f8fa5a062bef3f2"
+        },
+        {
+          "path": "res://assets/animated/brine/walk-05.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 5,
+          "source_bounds": [
+            838,
+            15,
+            957,
+            148
+          ],
+          "source_origin": [
+            899.5,
+            148.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            52,
+            77,
+            137,
+            172
+          ],
+          "sha256": "e7a776d2ad6dffa5451a389bd10f4cd0b9dd39b4d1c52dd8ca773d877016ad6b"
+        },
+        {
+          "path": "res://assets/animated/brine/walk-06.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 6,
+          "source_bounds": [
+            997,
+            15,
+            1113,
+            148
+          ],
+          "source_origin": [
+            1048.0,
+            148.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            59,
+            77,
+            142,
+            172
+          ],
+          "sha256": "df50387d44a105bdcd39cef094a097ce27491d498f5c5881a923946b13f74456"
+        },
+        {
+          "path": "res://assets/animated/brine/walk-07.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 7,
+          "source_bounds": [
+            1152,
+            14,
+            1251,
+            148
+          ],
+          "source_origin": [
+            1188.0,
+            148.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            70,
+            76,
+            141,
+            172
+          ],
+          "sha256": "9dd2810c54e68c33c578beed60e09da9b1c4fc46e631342ba0b260e927498a01"
+        },
+        {
+          "path": "res://assets/animated/brine/walk-08.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 8,
+          "source_bounds": [
+            49,
+            166,
+            168,
+            303
+          ],
+          "source_origin": [
+            91.0,
+            303.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            66,
+            74,
+            151,
+            172
+          ],
+          "sha256": "307e6f2e62ceb917539c3f13df8d7871f313e80eb8271b8375577b85b80247da"
+        },
+        {
+          "path": "res://assets/animated/brine/walk-09.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 9,
+          "source_bounds": [
+            212,
+            167,
+            324,
+            303
+          ],
+          "source_origin": [
+            259.5,
+            303.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            62,
+            75,
+            142,
+            172
+          ],
+          "sha256": "6ef917ab662c1f57f7283f57d22ff676564544131410f5ae4ef87856e43905ad"
+        },
+        {
+          "path": "res://assets/animated/brine/walk-10.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 10,
+          "source_bounds": [
+            366,
+            167,
+            489,
+            303
+          ],
+          "source_origin": [
+            419.0,
+            303.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            58,
+            75,
+            146,
+            172
+          ],
+          "sha256": "ca596ef34d7793e54e87bb9c6dc53a9f5c79a9cefc04df54ec346f0f6c2bcecc"
+        },
+        {
+          "path": "res://assets/animated/brine/walk-11.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 11,
+          "source_bounds": [
+            530,
+            167,
+            642,
+            303
+          ],
+          "source_origin": [
+            581.0,
+            303.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            59,
+            75,
+            139,
+            172
+          ],
+          "sha256": "e20ea40a175f67578bed92a24304f21464a845a292298cfa7ee42c2a9db0937b"
+        },
+        {
+          "path": "res://assets/animated/brine/walk-12.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 12,
+          "source_bounds": [
+            681,
+            167,
+            800,
+            303
+          ],
+          "source_origin": [
+            743.0,
+            303.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            52,
+            75,
+            137,
+            172
+          ],
+          "sha256": "6192a12237902a6d264aa2005d3e72d5b81f779f74f350781257b33585b5da00"
+        },
+        {
+          "path": "res://assets/animated/brine/walk-13.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 13,
+          "source_bounds": [
+            841,
+            167,
+            957,
+            303
+          ],
+          "source_origin": [
+            899.5,
+            303.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            54,
+            75,
+            137,
+            172
+          ],
+          "sha256": "d55029f4c157048b690eb9c4482feb10834b0c610f46ea98661105769b8093e4"
+        },
+        {
+          "path": "res://assets/animated/brine/walk-14.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 14,
+          "source_bounds": [
+            999,
+            166,
+            1113,
+            303
+          ],
+          "source_origin": [
+            1048.0,
+            303.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            61,
+            74,
+            143,
+            172
+          ],
+          "sha256": "b606575006e23849f78c0835576b8acbcb8888f377cd3843d2532b7e2b76e988"
+        },
+        {
+          "path": "res://assets/animated/brine/walk-15.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 15,
+          "source_bounds": [
+            1151,
+            166,
+            1251,
+            302
+          ],
+          "source_origin": [
+            1188.0,
+            303.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            69,
+            74,
+            141,
+            171
+          ],
+          "sha256": "d85a31dee9e99601ea06d235a392dcdfe19d8357a048ee88d5939cd49329b6da"
+        }
+      ],
+      "hand_anchors": [
+        [
+          54,
+          -44
+        ],
+        [
+          48,
+          -43
+        ],
+        [
+          54,
+          -40
+        ],
+        [
+          48,
+          -40
+        ],
+        [
+          38,
+          -40
+        ],
+        [
+          40,
+          -46
+        ],
+        [
+          45,
+          -40
+        ],
+        [
+          44,
+          -42
+        ],
+        [
+          54,
+          -44
+        ],
+        [
+          45,
+          -42
+        ],
+        [
+          49,
+          -40
+        ],
+        [
+          42,
+          -44
+        ],
+        [
+          40,
+          -44
+        ],
+        [
+          40,
+          -42
+        ],
+        [
+          46,
+          -50
+        ],
+        [
+          44,
+          -44
+        ]
+      ]
+    },
+    "primary": {
+      "frame_count": 16,
+      "durations": [
+        0.0385,
+        0.0315,
+        0.0385,
+        0.0315,
+        0.044,
+        0.036,
+        0.0605,
+        0.049499999999999995,
+        0.022,
+        0.018,
+        0.030249999999999996,
+        0.024749999999999998,
+        0.04675,
+        0.03825,
+        0.0715,
+        0.058499999999999996
+      ],
+      "duration": 0.64,
+      "loop": false,
+      "release_frame": 8,
+      "release_time": 0.32999999999999996,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/brine/primary-00.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 16,
+          "source_bounds": [
+            38,
+            324,
+            150,
+            462
+          ],
+          "source_origin": [
+            91.0,
+            462.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            58,
+            73,
+            138,
+            172
+          ],
+          "sha256": "9b1598aabbba91b1f435297bd91e74ac69ca4d3703e35c7afff7cfea49d76daa"
+        },
+        {
+          "path": "res://assets/animated/brine/primary-01.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 17,
+          "source_bounds": [
+            201,
+            325,
+            311,
+            462
+          ],
+          "source_origin": [
+            259.5,
+            462.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            54,
+            74,
+            133,
+            172
+          ],
+          "sha256": "ffde5af7639bdfa1bb52cae012c4a9c25efd8929f5203f692cb8794eb81a7bd6"
+        },
+        {
+          "path": "res://assets/animated/brine/primary-02.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 18,
+          "source_bounds": [
+            362,
+            324,
+            478,
+            461
+          ],
+          "source_origin": [
+            419.0,
+            462.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            55,
+            73,
+            138,
+            171
+          ],
+          "sha256": "20f2442bd6202e0eaff902839f7530d8326f5881e5de3e4f2a7db6173d36f748"
+        },
+        {
+          "path": "res://assets/animated/brine/primary-03.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 19,
+          "source_bounds": [
+            515,
+            324,
+            643,
+            462
+          ],
+          "source_origin": [
+            581.0,
+            462.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            49,
+            73,
+            141,
+            172
+          ],
+          "sha256": "0463d178995d2d16168000ee4962c3afc598a95e923b0674f7df54a216c5c279"
+        },
+        {
+          "path": "res://assets/animated/brine/primary-04.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 20,
+          "source_bounds": [
+            677,
+            329,
+            815,
+            462
+          ],
+          "source_origin": [
+            743.0,
+            462.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            49,
+            77,
+            148,
+            172
+          ],
+          "sha256": "5a307460dda6f692260e1d8ef94cef386e4e49d3aae594aa7d731314289d60ca"
+        },
+        {
+          "path": "res://assets/animated/brine/primary-05.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 21,
+          "source_bounds": [
+            841,
+            322,
+            968,
+            462
+          ],
+          "source_origin": [
+            899.5,
+            462.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            54,
+            72,
+            145,
+            172
+          ],
+          "sha256": "a063715bf2c2b1210a7eccd3a1b7c9a7e5e0b5d4ec30a8041b338883696570c2"
+        },
+        {
+          "path": "res://assets/animated/brine/primary-06.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 22,
+          "source_bounds": [
+            990,
+            325,
+            1114,
+            461
+          ],
+          "source_origin": [
+            1048.0,
+            462.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            54,
+            74,
+            143,
+            171
+          ],
+          "sha256": "3a90abd99989bdeb78c37b6a2da6e8cc22d3e61a21ed2f21e0c5930f2109b524"
+        },
+        {
+          "path": "res://assets/animated/brine/primary-07.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 23,
+          "source_bounds": [
+            1138,
+            324,
+            1252,
+            461
+          ],
+          "source_origin": [
+            1188.0,
+            462.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            60,
+            73,
+            142,
+            171
+          ],
+          "sha256": "6a7cff2f5093cf3fe8d943daf756fef78bfbce26c6220b0e9adf116bcd1ff09c"
+        },
+        {
+          "path": "res://assets/animated/brine/primary-08.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 24,
+          "source_bounds": [
+            28,
+            480,
+            179,
+            616
+          ],
+          "source_origin": [
+            91.0,
+            617.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            51,
+            74,
+            159,
+            171
+          ],
+          "sha256": "b0c69cc68fea2a2dcfec7670a470d14ea17cbb0bcb4d186fddd700149635647d"
+        },
+        {
+          "path": "res://assets/animated/brine/primary-09.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 25,
+          "source_bounds": [
+            193,
+            480,
+            336,
+            616
+          ],
+          "source_origin": [
+            259.5,
+            617.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            48,
+            74,
+            150,
+            171
+          ],
+          "sha256": "dd311a6c58d25e6a554fa271c36836c321c44662e6099a0b15635353e1470835"
+        },
+        {
+          "path": "res://assets/animated/brine/primary-10.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 26,
+          "source_bounds": [
+            369,
+            477,
+            499,
+            617
+          ],
+          "source_origin": [
+            419.0,
+            617.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            60,
+            72,
+            153,
+            172
+          ],
+          "sha256": "e9ec4390b6f931d67fc4bcb86da76dae2c2c9a2879eea5ebf9d8e7a33983281e"
+        },
+        {
+          "path": "res://assets/animated/brine/primary-11.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 27,
+          "source_bounds": [
+            528,
+            481,
+            656,
+            617
+          ],
+          "source_origin": [
+            581.0,
+            617.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            58,
+            75,
+            150,
+            172
+          ],
+          "sha256": "51f83cb216a05d5c50b9e1c0b2c8989982e6475568be6d51765f2fbb30e8850c"
+        },
+        {
+          "path": "res://assets/animated/brine/primary-12.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 28,
+          "source_bounds": [
+            682,
+            481,
+            802,
+            617
+          ],
+          "source_origin": [
+            743.0,
+            617.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            52,
+            75,
+            138,
+            172
+          ],
+          "sha256": "2776dbc487f4894f5274409ff480fd780ec6dd47a919b7bbd18f84c8b48483b9"
+        },
+        {
+          "path": "res://assets/animated/brine/primary-13.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 29,
+          "source_bounds": [
+            839,
+            487,
+            959,
+            617
+          ],
+          "source_origin": [
+            899.5,
+            617.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            53,
+            79,
+            139,
+            172
+          ],
+          "sha256": "27252c92158e13fe3dba2ba336c878cde90684a81df34be30cce2d25d406f2ee"
+        },
+        {
+          "path": "res://assets/animated/brine/primary-14.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 30,
+          "source_bounds": [
+            992,
+            482,
+            1107,
+            617
+          ],
+          "source_origin": [
+            1048.0,
+            617.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            56,
+            75,
+            138,
+            172
+          ],
+          "sha256": "6659b1f77e0609408f5dd74ed1e0c6051c5a1158a4c1510a121d3f1334571fc7"
+        },
+        {
+          "path": "res://assets/animated/brine/primary-15.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 31,
+          "source_bounds": [
+            1133,
+            480,
+            1243,
+            616
+          ],
+          "source_origin": [
+            1188.0,
+            617.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            57,
+            74,
+            136,
+            171
+          ],
+          "sha256": "55936322463ce0be78d1a6ed5aebc7ac42c97c0d7d31ef35023f8bf4a9ff5077"
+        }
+      ],
+      "hand_anchors": [
+        [
+          41,
+          -42
+        ],
+        [
+          36,
+          -44
+        ],
+        [
+          41,
+          -52
+        ],
+        [
+          44,
+          -60
+        ],
+        [
+          51,
+          -60
+        ],
+        [
+          48,
+          -74
+        ],
+        [
+          46,
+          -73
+        ],
+        [
+          45,
+          -73
+        ],
+        [
+          62,
+          -70
+        ],
+        [
+          53,
+          -66
+        ],
+        [
+          56,
+          -62
+        ],
+        [
+          53,
+          -52
+        ],
+        [
+          41,
+          -48
+        ],
+        [
+          42,
+          -38
+        ],
+        [
+          41,
+          -44
+        ],
+        [
+          39,
+          -42
+        ]
+      ],
+      "release_anchor": [
+        62,
+        -70
+      ]
+    },
+    "secondary": {
+      "frame_count": 8,
+      "durations": [
+        0.07,
+        0.07,
+        0.08,
+        0.11,
+        0.04,
+        0.055,
+        0.085,
+        0.13
+      ],
+      "duration": 0.64,
+      "loop": false,
+      "release_frame": 4,
+      "release_time": 0.33,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/brine/secondary-00.png",
+          "source": "art-source/animated/v3/brine-secondary8.png",
+          "slot": 0,
+          "source_bounds": [
+            58,
+            111,
+            367,
+            476
+          ],
+          "source_origin": [
+            206.0,
+            477.0
+          ],
+          "scale": 0.28152492668621704,
+          "packed_bounds": [
+            54,
+            69,
+            141,
+            172
+          ],
+          "sha256": "6d67f9a6b5b395ec5aaa967dec7f7379717479a4a964a9578b1611a2387b5b30"
+        },
+        {
+          "path": "res://assets/animated/brine/secondary-01.png",
+          "source": "art-source/animated/v3/brine-secondary8.png",
+          "slot": 1,
+          "source_bounds": [
+            452,
+            134,
+            752,
+            477
+          ],
+          "source_origin": [
+            604.5,
+            477.0
+          ],
+          "scale": 0.28152492668621704,
+          "packed_bounds": [
+            53,
+            75,
+            137,
+            172
+          ],
+          "sha256": "6b472adb65491cb616456147f99f926f4a32d243522745f110a5eb5b84761892"
+        },
+        {
+          "path": "res://assets/animated/brine/secondary-02.png",
+          "source": "art-source/animated/v3/brine-secondary8.png",
+          "slot": 2,
+          "source_bounds": [
+            827,
+            134,
+            1136,
+            477
+          ],
+          "source_origin": [
+            986.5,
+            477.0
+          ],
+          "scale": 0.28152492668621704,
+          "packed_bounds": [
+            51,
+            75,
+            138,
+            172
+          ],
+          "sha256": "07c1c4fa4b1fef2ee2afa951915124c696d9222d4f6093f005c0e57afc1ea48f"
+        },
+        {
+          "path": "res://assets/animated/brine/secondary-03.png",
+          "source": "art-source/animated/v3/brine-secondary8.png",
+          "slot": 3,
+          "source_bounds": [
+            1219,
+            134,
+            1520,
+            477
+          ],
+          "source_origin": [
+            1356.0,
+            477.0
+          ],
+          "scale": 0.28152492668621704,
+          "packed_bounds": [
+            57,
+            75,
+            142,
+            172
+          ],
+          "sha256": "448e218223650625a507735ec0b0656651c8a9104e885a2785a55dfde7341d3d"
+        },
+        {
+          "path": "res://assets/animated/brine/secondary-04.png",
+          "source": "art-source/animated/v3/brine-secondary8.png",
+          "slot": 4,
+          "source_bounds": [
+            50,
+            605,
+            384,
+            957
+          ],
+          "source_origin": [
+            206.0,
+            957.0
+          ],
+          "scale": 0.28152492668621704,
+          "packed_bounds": [
+            52,
+            73,
+            146,
+            172
+          ],
+          "sha256": "7911c6794b391d2a0fa335cecbeb5b9e52e8f95f30bbd17d15f95e81b2fb79e2"
+        },
+        {
+          "path": "res://assets/animated/brine/secondary-05.png",
+          "source": "art-source/animated/v3/brine-secondary8.png",
+          "slot": 5,
+          "source_bounds": [
+            457,
+            613,
+            776,
+            956
+          ],
+          "source_origin": [
+            604.5,
+            957.0
+          ],
+          "scale": 0.28152492668621704,
+          "packed_bounds": [
+            54,
+            75,
+            144,
+            172
+          ],
+          "sha256": "0edd6dcbb2f48956f1f6f8d5f42cf4157ab99dfc242e86a91962e03c9e24b717"
+        },
+        {
+          "path": "res://assets/animated/brine/secondary-06.png",
+          "source": "art-source/animated/v3/brine-secondary8.png",
+          "slot": 6,
+          "source_bounds": [
+            835,
+            613,
+            1145,
+            957
+          ],
+          "source_origin": [
+            986.5,
+            957.0
+          ],
+          "scale": 0.28152492668621704,
+          "packed_bounds": [
+            53,
+            75,
+            140,
+            172
+          ],
+          "sha256": "f39f79a115211b9a5d369214b0be12eabaee610e63d2213d0d76e8b3eb1c85b4"
+        },
+        {
+          "path": "res://assets/animated/brine/secondary-07.png",
+          "source": "art-source/animated/v3/brine-secondary8.png",
+          "slot": 7,
+          "source_bounds": [
+            1210,
+            590,
+            1520,
+            957
+          ],
+          "source_origin": [
+            1356.0,
+            957.0
+          ],
+          "scale": 0.28152492668621704,
+          "packed_bounds": [
+            55,
+            69,
+            142,
+            172
+          ],
+          "sha256": "a6ecd2a8cd11a60518e1e7fdbcaca1a63a99500b19c4917ece9934a2b77fe968"
+        }
+      ],
+      "hand_anchors": [
+        [
+          44,
+          -46
+        ],
+        [
+          40,
+          -41
+        ],
+        [
+          41,
+          -38
+        ],
+        [
+          45,
+          -40
+        ],
+        [
+          49,
+          -46
+        ],
+        [
+          47,
+          -41
+        ],
+        [
+          43,
+          -40
+        ],
+        [
+          45,
+          -46
+        ]
+      ],
+      "release_anchor": [
+        49,
+        -46
+      ]
+    },
+    "special": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.08,
+        0.09,
+        0.12,
+        0.06,
+        0.08,
+        0.12,
+        0.18
+      ],
+      "duration": 0.82,
+      "loop": false,
+      "release_frame": 4,
+      "release_time": 0.38,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/brine/special-00.png",
+          "source": "art-source/animated/brine-64.png",
+          "slot": 32,
+          "source_bounds": [
+            31,
+            644,
+            142,
+            783
+          ],
+          "source_origin": [
+            82.0,
+            783.0
+          ],
+          "scale": 0.6832740213523132,
+          "packed_bounds": [
+            61,
+            77,
+            137,
+            172
+          ],
+          "sha256": "e44bde669ca96891f7997e2d71369a6989ea769120a17fb4f02c1750ea6d8dfb"
+        },
+        {
+          "path": "res://assets/animated/brine/special-01.png",
+          "source": "art-source/animated/brine-64.png",
+          "slot": 33,
+          "source_bounds": [
+            187,
+            642,
+            298,
+            783
+          ],
+          "source_origin": [
+            243.0,
+            783.0
+          ],
+          "scale": 0.6832740213523132,
+          "packed_bounds": [
+            58,
+            76,
+            134,
+            172
+          ],
+          "sha256": "2639f282e3c4542c8da20ba5e76748fdcf8d4d7cd97f2316ea2750dd95412ea1"
+        },
+        {
+          "path": "res://assets/animated/brine/special-02.png",
+          "source": "art-source/animated/brine-64.png",
+          "slot": 34,
+          "source_bounds": [
+            344,
+            643,
+            459,
+            783
+          ],
+          "source_origin": [
+            396.0,
+            783.0
+          ],
+          "scale": 0.6832740213523132,
+          "packed_bounds": [
+            60,
+            76,
+            139,
+            172
+          ],
+          "sha256": "aa570eb9f773a2860c7b8ae786547af88241529323ba8bfb2ebc2fa73464dd1d"
+        },
+        {
+          "path": "res://assets/animated/brine/special-03.png",
+          "source": "art-source/animated/brine-64.png",
+          "slot": 35,
+          "source_bounds": [
+            500,
+            642,
+            605,
+            783
+          ],
+          "source_origin": [
+            545.0,
+            783.0
+          ],
+          "scale": 0.6832740213523132,
+          "packed_bounds": [
+            65,
+            76,
+            137,
+            172
+          ],
+          "sha256": "651f9bcc0fb6f5ca8a89d79779a0c4809e3bf62444667b7fa72c4fd811ff7092"
+        },
+        {
+          "path": "res://assets/animated/brine/special-04.png",
+          "source": "art-source/animated/brine-64.png",
+          "slot": 36,
+          "source_bounds": [
+            656,
+            643,
+            769,
+            783
+          ],
+          "source_origin": [
+            700.0,
+            783.0
+          ],
+          "scale": 0.6832740213523132,
+          "packed_bounds": [
+            66,
+            76,
+            143,
+            172
+          ],
+          "sha256": "73f5ddb6789d13126344719a0c9f553cdd756c5f8d9b16e25b99dd22651d352a"
+        },
+        {
+          "path": "res://assets/animated/brine/special-05.png",
+          "source": "art-source/animated/brine-64.png",
+          "slot": 37,
+          "source_bounds": [
+            804,
+            643,
+            916,
+            783
+          ],
+          "source_origin": [
+            860.5,
+            783.0
+          ],
+          "scale": 0.6832740213523132,
+          "packed_bounds": [
+            57,
+            76,
+            134,
+            172
+          ],
+          "sha256": "d0693363fb00e4ca039891a6622e796def69712dc438f79332b41605f9e6bfcf"
+        },
+        {
+          "path": "res://assets/animated/brine/special-06.png",
+          "source": "art-source/animated/brine-64.png",
+          "slot": 38,
+          "source_bounds": [
+            963,
+            644,
+            1076,
+            783
+          ],
+          "source_origin": [
+            1020.5,
+            783.0
+          ],
+          "scale": 0.6832740213523132,
+          "packed_bounds": [
+            57,
+            77,
+            134,
+            172
+          ],
+          "sha256": "6e6644812bd6a50b3d8add3a973fc3895eacac62a9da47df9eb8676b87b8d156"
+        },
+        {
+          "path": "res://assets/animated/brine/special-07.png",
+          "source": "art-source/animated/brine-64.png",
+          "slot": 39,
+          "source_bounds": [
+            1120,
+            642,
+            1234,
+            783
+          ],
+          "source_origin": [
+            1177.0,
+            783.0
+          ],
+          "scale": 0.6832740213523132,
+          "packed_bounds": [
+            57,
+            76,
+            135,
+            172
+          ],
+          "sha256": "d63c97a43a2930661a1970341e62be6f1c5b8c6eb4aa7c63ef5280596f9f37e0"
+        }
+      ],
+      "hand_anchors": [
+        [
+          40,
+          -40
+        ],
+        [
+          37,
+          -40
+        ],
+        [
+          42,
+          -38
+        ],
+        [
+          40,
+          -54
+        ],
+        [
+          46,
+          -38
+        ],
+        [
+          37,
+          -54
+        ],
+        [
+          37,
+          -54
+        ],
+        [
+          38,
+          -40
+        ]
+      ]
+    },
+    "guard": {
+      "frame_count": 8,
+      "durations": [
+        0.055,
+        0.055,
+        0.055,
+        0.055,
+        0.12,
+        0.12,
+        0.12,
+        0.12
+      ],
+      "duration": 0.7,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": 4,
+      "frames": [
+        {
+          "path": "res://assets/animated/brine/guard-00.png",
+          "source": "art-source/animated/brine-64.png",
+          "slot": 40,
+          "source_bounds": [
+            31,
+            800,
+            138,
+            940
+          ],
+          "source_origin": [
+            82.0,
+            940.0
+          ],
+          "scale": 0.6832740213523132,
+          "packed_bounds": [
+            61,
+            76,
+            134,
+            172
+          ],
+          "sha256": "d5d5e425c042acb4139e5e2b57f9927b8bd22c86415c42c66277114878aebbc7"
+        },
+        {
+          "path": "res://assets/animated/brine/guard-01.png",
+          "source": "art-source/animated/brine-64.png",
+          "slot": 41,
+          "source_bounds": [
+            184,
+            798,
+            299,
+            940
+          ],
+          "source_origin": [
+            243.0,
+            940.0
+          ],
+          "scale": 0.6832740213523132,
+          "packed_bounds": [
+            56,
+            75,
+            135,
+            172
+          ],
+          "sha256": "7b4e9bb97e21de20e9469d8a41f533a0c9a69c23eb73320059e872fab396689c"
+        },
+        {
+          "path": "res://assets/animated/brine/guard-02.png",
+          "source": "art-source/animated/brine-64.png",
+          "slot": 42,
+          "source_bounds": [
+            339,
+            803,
+            451,
+            940
+          ],
+          "source_origin": [
+            396.0,
+            940.0
+          ],
+          "scale": 0.6832740213523132,
+          "packed_bounds": [
+            57,
+            78,
+            134,
+            172
+          ],
+          "sha256": "a8b8d1cf4ff593301a9ada5ae91d5a6c1879853e954b9a8c05edcbf1d9225436"
+        },
+        {
+          "path": "res://assets/animated/brine/guard-03.png",
+          "source": "art-source/animated/brine-64.png",
+          "slot": 43,
+          "source_bounds": [
+            498,
+            800,
+            619,
+            940
+          ],
+          "source_origin": [
+            545.0,
+            940.0
+          ],
+          "scale": 0.6832740213523132,
+          "packed_bounds": [
+            64,
+            76,
+            147,
+            172
+          ],
+          "sha256": "1c599d09a9de3fa94f1d8b94a7886ef367738c127e5d51eba220bcd39a0a2ddb"
+        },
+        {
+          "path": "res://assets/animated/brine/guard-04.png",
+          "source": "art-source/animated/brine-64.png",
+          "slot": 44,
+          "source_bounds": [
+            650,
+            798,
+            773,
+            940
+          ],
+          "source_origin": [
+            700.0,
+            940.0
+          ],
+          "scale": 0.6832740213523132,
+          "packed_bounds": [
+            62,
+            75,
+            146,
+            172
+          ],
+          "sha256": "f71e841a3a5865552811d278160c48fab45ac7b6dbde30f8b8419b5b2cbb276a"
+        },
+        {
+          "path": "res://assets/animated/brine/guard-05.png",
+          "source": "art-source/animated/brine-64.png",
+          "slot": 45,
+          "source_bounds": [
+            804,
+            803,
+            920,
+            940
+          ],
+          "source_origin": [
+            860.5,
+            940.0
+          ],
+          "scale": 0.6832740213523132,
+          "packed_bounds": [
+            57,
+            78,
+            136,
+            172
+          ],
+          "sha256": "b1812f15d60b1d5c34215a78eeb3d1dd28df581272ff962dc263509d10dc83c6"
+        },
+        {
+          "path": "res://assets/animated/brine/guard-06.png",
+          "source": "art-source/animated/brine-64.png",
+          "slot": 46,
+          "source_bounds": [
+            962,
+            802,
+            1085,
+            940
+          ],
+          "source_origin": [
+            1020.5,
+            940.0
+          ],
+          "scale": 0.6832740213523132,
+          "packed_bounds": [
+            56,
+            78,
+            140,
+            172
+          ],
+          "sha256": "6461ef044569f269b20da29f106503bd8445d304671eb0ac91586e6403a1af9e"
+        },
+        {
+          "path": "res://assets/animated/brine/guard-07.png",
+          "source": "art-source/animated/brine-64.png",
+          "slot": 47,
+          "source_bounds": [
+            1120,
+            802,
+            1236,
+            940
+          ],
+          "source_origin": [
+            1177.0,
+            940.0
+          ],
+          "scale": 0.6832740213523132,
+          "packed_bounds": [
+            57,
+            78,
+            136,
+            172
+          ],
+          "sha256": "a38b3d3f8d7cb658c3070de4e634eff0d8a41366c6c9ac688c46b879ff233feb"
+        }
+      ],
+      "hand_anchors": [
+        [
+          37,
+          -50
+        ],
+        [
+          38,
+          -42
+        ],
+        [
+          37,
+          -38
+        ],
+        [
+          50,
+          -56
+        ],
+        [
+          49,
+          -56
+        ],
+        [
+          39,
+          -54
+        ],
+        [
+          43,
+          -57
+        ],
+        [
+          39,
+          -56
+        ]
+      ]
+    },
+    "hit": {
+      "frame_count": 8,
+      "durations": [
+        0.035,
+        0.065,
+        0.09,
+        0.12,
+        0.13,
+        0.15,
+        0.16,
+        0.18
+      ],
+      "duration": 0.9299999999999999,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/brine/hit-00.png",
+          "source": "art-source/animated/brine-64.png",
+          "slot": 48,
+          "source_bounds": [
+            26,
+            959,
+            141,
+            1095
+          ],
+          "source_origin": [
+            82.0,
+            1095.0
+          ],
+          "scale": 0.6832740213523132,
+          "packed_bounds": [
+            58,
+            79,
+            137,
+            172
+          ],
+          "sha256": "e1d211e34045fb774f0d234a95d9409739b93c4c7d6c22b8726ae1bf208e88e9"
+        },
+        {
+          "path": "res://assets/animated/brine/hit-01.png",
+          "source": "art-source/animated/brine-64.png",
+          "slot": 49,
+          "source_bounds": [
+            177,
+            962,
+            301,
+            1096
+          ],
+          "source_origin": [
+            243.0,
+            1095.0
+          ],
+          "scale": 0.6832740213523132,
+          "packed_bounds": [
+            51,
+            81,
+            136,
+            173
+          ],
+          "sha256": "46c4a866e97e4e3f61a7c13397d0e04abbddecd0191444ca1153e2ac5bb3c0aa"
+        },
+        {
+          "path": "res://assets/animated/brine/hit-02.png",
+          "source": "art-source/animated/brine-64.png",
+          "slot": 50,
+          "source_bounds": [
+            347,
+            953,
+            462,
+            1095
+          ],
+          "source_origin": [
+            396.0,
+            1095.0
+          ],
+          "scale": 0.6832740213523132,
+          "packed_bounds": [
+            63,
+            75,
+            142,
+            172
+          ],
+          "sha256": "cf832bd14692a363455514b1f1c43e0d90a6c6f762314c8b5288897be369f0c9"
+        },
+        {
+          "path": "res://assets/animated/brine/hit-03.png",
+          "source": "art-source/animated/brine-64.png",
+          "slot": 51,
+          "source_bounds": [
+            493,
+            972,
+            615,
+            1095
+          ],
+          "source_origin": [
+            545.0,
+            1095.0
+          ],
+          "scale": 0.6832740213523132,
+          "packed_bounds": [
+            60,
+            88,
+            143,
+            172
+          ],
+          "sha256": "2de6deb54685953f7967bde775cc8596fa91a3817ece6258f70e98a45840d967"
+        },
+        {
+          "path": "res://assets/animated/brine/hit-04.png",
+          "source": "art-source/animated/brine-64.png",
+          "slot": 52,
+          "source_bounds": [
+            637,
+            991,
+            762,
+            1095
+          ],
+          "source_origin": [
+            700.0,
+            1095.0
+          ],
+          "scale": 0.6832740213523132,
+          "packed_bounds": [
+            53,
+            101,
+            138,
+            172
+          ],
+          "sha256": "246be027fb11aa33330bb0de478b1575b7e7d0a592800934cd01478a2d13aeb9"
+        },
+        {
+          "path": "res://assets/animated/brine/hit-05.png",
+          "source": "art-source/animated/brine-64.png",
+          "slot": 53,
+          "source_bounds": [
+            794,
+            963,
+            906,
+            1095
+          ],
+          "source_origin": [
+            860.5,
+            1095.0
+          ],
+          "scale": 0.6832740213523132,
+          "packed_bounds": [
+            51,
+            82,
+            128,
+            172
+          ],
+          "sha256": "06283bde039b0eb1a6bada3fdecf4ecba5a6c6f36ab27defbe2fcd3a5105c04f"
+        },
+        {
+          "path": "res://assets/animated/brine/hit-06.png",
+          "source": "art-source/animated/brine-64.png",
+          "slot": 54,
+          "source_bounds": [
+            965,
+            961,
+            1059,
+            1095
+          ],
+          "source_origin": [
+            1020.5,
+            1095.0
+          ],
+          "scale": 0.6832740213523132,
+          "packed_bounds": [
+            58,
+            80,
+            122,
+            172
+          ],
+          "sha256": "cb87cd2469bf23f853c16374795b53bea8dc6cefc35992e5ba74d9f478900484"
+        },
+        {
+          "path": "res://assets/animated/brine/hit-07.png",
+          "source": "art-source/animated/brine-64.png",
+          "slot": 55,
+          "source_bounds": [
+            1117,
+            958,
+            1230,
+            1095
+          ],
+          "source_origin": [
+            1177.0,
+            1095.0
+          ],
+          "scale": 0.6832740213523132,
+          "packed_bounds": [
+            55,
+            78,
+            132,
+            172
+          ],
+          "sha256": "794a54c16fc312b8158edd675cb93e877656f37dee22bad1720f176b2731b0ed"
+        }
+      ]
+    },
+    "defeat": {
+      "frame_count": 8,
+      "durations": [
+        0.08,
+        0.1,
+        0.1,
+        0.12,
+        0.15,
+        0.18,
+        0.24,
+        0.3
+      ],
+      "duration": 1.27,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/brine/defeat-00.png",
+          "source": "art-source/animated/brine-64.png",
+          "slot": 56,
+          "source_bounds": [
+            32,
+            1116,
+            132,
+            1238
+          ],
+          "source_origin": [
+            82.0,
+            1239.0
+          ],
+          "scale": 0.6832740213523132,
+          "packed_bounds": [
+            62,
+            88,
+            130,
+            171
+          ],
+          "sha256": "02bc347447e60a840d56af5da26667cabc17db29431b7e29b7ee750812abbf32"
+        },
+        {
+          "path": "res://assets/animated/brine/defeat-01.png",
+          "source": "art-source/animated/brine-64.png",
+          "slot": 57,
+          "source_bounds": [
+            185,
+            1116,
+            284,
+            1237
+          ],
+          "source_origin": [
+            243.0,
+            1239.0
+          ],
+          "scale": 0.6832740213523132,
+          "packed_bounds": [
+            56,
+            88,
+            124,
+            171
+          ],
+          "sha256": "77c0c1619822fbdc3cc6d6661420aa715e628c0ced204eb7dd104097ba5cfa97"
+        },
+        {
+          "path": "res://assets/animated/brine/defeat-02.png",
+          "source": "art-source/animated/brine-64.png",
+          "slot": 58,
+          "source_bounds": [
+            326,
+            1132,
+            443,
+            1238
+          ],
+          "source_origin": [
+            396.0,
+            1239.0
+          ],
+          "scale": 0.6832740213523132,
+          "packed_bounds": [
+            48,
+            99,
+            128,
+            171
+          ],
+          "sha256": "7ea12aa3376f659d15704d19e3dc7c11946b38427ba3b838435e459f39f3a096"
+        },
+        {
+          "path": "res://assets/animated/brine/defeat-03.png",
+          "source": "art-source/animated/brine-64.png",
+          "slot": 59,
+          "source_bounds": [
+            471,
+            1133,
+            598,
+            1239
+          ],
+          "source_origin": [
+            545.0,
+            1239.0
+          ],
+          "scale": 0.6832740213523132,
+          "packed_bounds": [
+            45,
+            100,
+            132,
+            172
+          ],
+          "sha256": "dffe268528dd409e63adedec9d3171e70569a1eb4dd5b5f067ddbe9b0029066b"
+        },
+        {
+          "path": "res://assets/animated/brine/defeat-04.png",
+          "source": "art-source/animated/brine-64.png",
+          "slot": 63,
+          "source_bounds": [
+            1111,
+            1148,
+            1232,
+            1239
+          ],
+          "source_origin": [
+            1177.0,
+            1239.0
+          ],
+          "scale": 0.6832740213523132,
+          "packed_bounds": [
+            51,
+            110,
+            134,
+            172
+          ],
+          "sha256": "3da3ba0dc767099977df83908f667d6a6386547d9fd2696af1c8de955910fcc5"
+        },
+        {
+          "path": "res://assets/animated/brine/defeat-05.png",
+          "source": "art-source/animated/brine-64.png",
+          "slot": 60,
+          "source_bounds": [
+            610,
+            1146,
+            769,
+            1239
+          ],
+          "source_origin": [
+            700.0,
+            1239.0
+          ],
+          "scale": 0.6832740213523132,
+          "packed_bounds": [
+            35,
+            108,
+            144,
+            172
+          ],
+          "sha256": "7fcb72de33b95bdc47fc62b69b031840e6320c4fd9fd71cbebb13a3adebbf4f5"
+        },
+        {
+          "path": "res://assets/animated/brine/defeat-06.png",
+          "source": "art-source/animated/brine-64.png",
+          "slot": 61,
+          "source_bounds": [
+            781,
+            1140,
+            932,
+            1238
+          ],
+          "source_origin": [
+            860.5,
+            1239.0
+          ],
+          "scale": 0.6832740213523132,
+          "packed_bounds": [
+            42,
+            104,
+            145,
+            171
+          ],
+          "sha256": "5b230aca69596c19a057c2be10c82f8190440c7bc50fb2cb2598a4eaa793a432"
+        },
+        {
+          "path": "res://assets/animated/brine/defeat-07.png",
+          "source": "art-source/animated/brine-64.png",
+          "slot": 62,
+          "source_bounds": [
+            942,
+            1160,
+            1096,
+            1238
+          ],
+          "source_origin": [
+            1020.5,
+            1239.0
+          ],
+          "scale": 0.6832740213523132,
+          "packed_bounds": [
+            42,
+            118,
+            147,
+            171
+          ],
+          "sha256": "fc955253239f3ef63f73f1498081223ad160eeb11d015e73a2e1680ad435e029"
+        }
+      ]
+    },
+    "jump": {
+      "frame_count": 8,
+      "durations": [
+        0.08,
+        0.055,
+        0.08,
+        0.11,
+        0.11,
+        0.08,
+        0.07,
+        0.115
+      ],
+      "duration": 0.7000000000000001,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/brine/jump-00.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 32,
+          "source_bounds": [
+            52,
+            641,
+            162,
+            773
+          ],
+          "source_origin": [
+            91.0,
+            773.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            68,
+            77,
+            147,
+            172
+          ],
+          "sha256": "f2404e05616e5a065ce06b0a924b67834f5c0e4945f905ccd6f3c293e832ad60",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/brine/jump-01.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 33,
+          "source_bounds": [
+            200,
+            658,
+            320,
+            773
+          ],
+          "source_origin": [
+            259.5,
+            773.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            53,
+            90,
+            139,
+            172
+          ],
+          "sha256": "95b8bb9fe7b3e98285a8076e106cc36869c1436fdfb7fc80401dde2f4588c22c",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/brine/jump-02.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 34,
+          "source_bounds": [
+            358,
+            641,
+            472,
+            773
+          ],
+          "source_origin": [
+            419.0,
+            773.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            52,
+            77,
+            134,
+            172
+          ],
+          "sha256": "477f4e068aa711892e42c7db83446c0519c2aaafc35cf7740224c80e6a5f7854",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/brine/jump-03.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 35,
+          "source_bounds": [
+            518,
+            631,
+            636,
+            761
+          ],
+          "source_origin": [
+            581.0,
+            761.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            51,
+            79,
+            136,
+            172
+          ],
+          "sha256": "189d6bf81b8c4dd59a85293480f159e82cf079f1704d7496094ce686a6254e9a",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/brine/jump-04.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 36,
+          "source_bounds": [
+            676,
+            630,
+            788,
+            746
+          ],
+          "source_origin": [
+            743.0,
+            746.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            48,
+            89,
+            128,
+            172
+          ],
+          "sha256": "28b53a3a891323eb9bd8a80adda5b33f3879c89cce192cb8d9a80c33aa89f2d6",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/brine/jump-05.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 37,
+          "source_bounds": [
+            827,
+            637,
+            941,
+            774
+          ],
+          "source_origin": [
+            899.5,
+            774.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            44,
+            74,
+            126,
+            172
+          ],
+          "sha256": "480bb13bfa87a188c613842067303a6a81f281e04f5a67497758ecebf2ae97d4",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/brine/jump-06.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 38,
+          "source_bounds": [
+            982,
+            655,
+            1098,
+            775
+          ],
+          "source_origin": [
+            1048.0,
+            775.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            49,
+            86,
+            132,
+            172
+          ],
+          "sha256": "fdcc31047858d53d92a9b86bde64e11e3dc51bbc47e3722872e2f358a589c499",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/brine/jump-07.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 39,
+          "source_bounds": [
+            1138,
+            637,
+            1247,
+            773
+          ],
+          "source_origin": [
+            1188.0,
+            773.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            60,
+            75,
+            138,
+            172
+          ],
+          "sha256": "27861647956847fd86cc9026e32043fb609372d642aeadcfb25b1408ea21322d",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ],
+      "hand_anchors": [
+        [
+          50,
+          -43
+        ],
+        [
+          42,
+          -38
+        ],
+        [
+          37,
+          -52
+        ],
+        [
+          39,
+          -45
+        ],
+        [
+          31,
+          -34
+        ],
+        [
+          29,
+          -48
+        ],
+        [
+          35,
+          -39
+        ],
+        [
+          41,
+          -44
+        ]
+      ]
+    },
+    "stair_up": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/brine/stair_up-00.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 40,
+          "source_bounds": [
+            49,
+            788,
+            162,
+            930
+          ],
+          "source_origin": [
+            91.0,
+            930.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            66,
+            70,
+            147,
+            172
+          ],
+          "sha256": "a5ed586752aed959a581df1ef09dec796023046709254ca2062ae7d69fa29931",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/brine/stair_up-01.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 41,
+          "source_bounds": [
+            201,
+            793,
+            320,
+            931
+          ],
+          "source_origin": [
+            259.5,
+            931.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            54,
+            73,
+            139,
+            172
+          ],
+          "sha256": "9c41b05f96ff0600d74a1a4fdfb4aff819ddd53314acaf03394b2fa158fe2b6a",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/brine/stair_up-02.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 42,
+          "source_bounds": [
+            361,
+            790,
+            478,
+            931
+          ],
+          "source_origin": [
+            419.0,
+            931.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            54,
+            71,
+            138,
+            172
+          ],
+          "sha256": "f6e14c256278e97fee847fdcc4a4303ea0f0c5e27f37b918a812a255e244dbdf",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/brine/stair_up-03.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 43,
+          "source_bounds": [
+            517,
+            788,
+            631,
+            931
+          ],
+          "source_origin": [
+            581.0,
+            931.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            50,
+            70,
+            132,
+            172
+          ],
+          "sha256": "7c95e713633778f6d982e777db9254cd4e6d5f503962163d18607ab2519bcb04",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/brine/stair_up-04.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 44,
+          "source_bounds": [
+            674,
+            791,
+            788,
+            931
+          ],
+          "source_origin": [
+            743.0,
+            931.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            47,
+            72,
+            129,
+            172
+          ],
+          "sha256": "1b1d74724e9e1f6b85abda0a462e0f8bfe45891ae15996b68606ad3ef040651b",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/brine/stair_up-05.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 45,
+          "source_bounds": [
+            833,
+            791,
+            949,
+            931
+          ],
+          "source_origin": [
+            899.5,
+            931.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            48,
+            72,
+            131,
+            172
+          ],
+          "sha256": "a38f57243acfc518809f8c82ee8aac6c4a0cf3b8381768f10939847ecdb38063",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/brine/stair_up-06.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 46,
+          "source_bounds": [
+            991,
+            789,
+            1101,
+            931
+          ],
+          "source_origin": [
+            1048.0,
+            931.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            55,
+            70,
+            134,
+            172
+          ],
+          "sha256": "bcd68053a6fdb4256c9bec4ad51cfa5c29a6716c9aa30c9a1d2b8b19454d3dfb",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/brine/stair_up-07.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 47,
+          "source_bounds": [
+            1138,
+            788,
+            1246,
+            931
+          ],
+          "source_origin": [
+            1188.0,
+            931.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            60,
+            70,
+            137,
+            172
+          ],
+          "sha256": "13b4fb35bda876bbc237c9b7705783ababa5cf9a659be7e851a6b8a0abd0870f",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ],
+      "hand_anchors": [
+        [
+          50,
+          -69
+        ],
+        [
+          42,
+          -58
+        ],
+        [
+          41,
+          -66
+        ],
+        [
+          35,
+          -68
+        ],
+        [
+          32,
+          -54
+        ],
+        [
+          34,
+          -54
+        ],
+        [
+          37,
+          -65
+        ],
+        [
+          40,
+          -60
+        ]
+      ]
+    },
+    "stair_down": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/brine/stair_down-00.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 48,
+          "source_bounds": [
+            36,
+            946,
+            147,
+            1084
+          ],
+          "source_origin": [
+            91.0,
+            1084.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            57,
+            73,
+            137,
+            172
+          ],
+          "sha256": "c1e85568b01e90d5fe0b7c6f147e8fcc2c0b5552990c0cc14787315be180d670",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/brine/stair_down-01.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 49,
+          "source_bounds": [
+            193,
+            945,
+            310,
+            1084
+          ],
+          "source_origin": [
+            259.5,
+            1084.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            48,
+            72,
+            132,
+            172
+          ],
+          "sha256": "1bfbc4747d1a0c780097e24e70d3e517c0302a76dc2ae3ea85a1db142550b112",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/brine/stair_down-02.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 50,
+          "source_bounds": [
+            357,
+            951,
+            470,
+            1086
+          ],
+          "source_origin": [
+            419.0,
+            1086.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            52,
+            75,
+            133,
+            172
+          ],
+          "sha256": "02a4d4f71fe9b568496eac7d409591ac1bcb7e51b9d5f251c522be70041a7199",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/brine/stair_down-03.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 51,
+          "source_bounds": [
+            508,
+            952,
+            622,
+            1087
+          ],
+          "source_origin": [
+            581.0,
+            1087.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            44,
+            75,
+            126,
+            172
+          ],
+          "sha256": "24455389f27632db7a19925f90c826aef397c15f5e0bd3721ca5a832843755a4",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/brine/stair_down-04.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 52,
+          "source_bounds": [
+            665,
+            951,
+            778,
+            1086
+          ],
+          "source_origin": [
+            743.0,
+            1086.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            40,
+            75,
+            121,
+            172
+          ],
+          "sha256": "40edfbd9fbf3b9e9450228e09aa86d82639a82c86b797b2eeb1e4df7b4440814",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/brine/stair_down-05.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 53,
+          "source_bounds": [
+            826,
+            952,
+            942,
+            1086
+          ],
+          "source_origin": [
+            899.5,
+            1086.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            43,
+            76,
+            126,
+            172
+          ],
+          "sha256": "4a0d6aedda82778c12d17e65895d0784e9aa53ee023e1eaf0061ddfaf5e3d303",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/brine/stair_down-06.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 54,
+          "source_bounds": [
+            988,
+            949,
+            1098,
+            1086
+          ],
+          "source_origin": [
+            1048.0,
+            1086.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            53,
+            74,
+            132,
+            172
+          ],
+          "sha256": "f99a8d51101b53576ed5f4653647d8af3bd65861e73a3db053087379c51cca3f",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/brine/stair_down-07.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 55,
+          "source_bounds": [
+            1144,
+            948,
+            1250,
+            1086
+          ],
+          "source_origin": [
+            1188.0,
+            1086.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            64,
+            73,
+            140,
+            172
+          ],
+          "sha256": "687ed2f62ddb053c8a0e133b6a6b67c4ee61389a09b74245793bc21413758c18",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ],
+      "hand_anchors": [
+        [
+          40,
+          -43
+        ],
+        [
+          35,
+          -49
+        ],
+        [
+          36,
+          -42
+        ],
+        [
+          29,
+          -37
+        ],
+        [
+          24,
+          -38
+        ],
+        [
+          29,
+          -46
+        ],
+        [
+          35,
+          -46
+        ],
+        [
+          43,
+          -52
+        ]
+      ]
+    },
+    "dodge": {
+      "frame_count": 8,
+      "durations": [
+        0.055,
+        0.045,
+        0.04,
+        0.045,
+        0.06,
+        0.07,
+        0.08,
+        0.1
+      ],
+      "duration": 0.495,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/brine/dodge-00.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 56,
+          "source_bounds": [
+            32,
+            1103,
+            140,
+            1240
+          ],
+          "source_origin": [
+            91.0,
+            1240.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            54,
+            74,
+            131,
+            172
+          ],
+          "sha256": "d66097464518fc99a4e9faeb23bee06c31affa052835cde6530a45d20567b5ae",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/brine/dodge-01.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 57,
+          "source_bounds": [
+            192,
+            1107,
+            314,
+            1240
+          ],
+          "source_origin": [
+            259.5,
+            1240.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            48,
+            77,
+            135,
+            172
+          ],
+          "sha256": "1659e1a90ff98cc94069999a85e4d6d9011cc75efbeee42a2490716122c95a91",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/brine/dodge-02.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 58,
+          "source_bounds": [
+            338,
+            1119,
+            494,
+            1237
+          ],
+          "source_origin": [
+            419.0,
+            1237.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            38,
+            87,
+            150,
+            172
+          ],
+          "sha256": "56f52770d5cfa768148c26cf06c3a9581672caa1896c29dc3a61f848baf51e47",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/brine/dodge-03.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 59,
+          "source_bounds": [
+            512,
+            1133,
+            672,
+            1238
+          ],
+          "source_origin": [
+            581.0,
+            1238.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            47,
+            97,
+            162,
+            172
+          ],
+          "sha256": "02056ccd0c6d5a027fd475ffb476e10f762bf0ac5ea4244ba5dfe5a4372ce2f8",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/brine/dodge-04.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 60,
+          "source_bounds": [
+            708,
+            1132,
+            830,
+            1240
+          ],
+          "source_origin": [
+            743.0,
+            1240.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            71,
+            96,
+            158,
+            172
+          ],
+          "sha256": "ab25ec174517be28c7c3cd3f7f15c8586cc77ef8231930b3a8fce9e7c9db6ab5",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/brine/dodge-05.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 61,
+          "source_bounds": [
+            851,
+            1117,
+            964,
+            1240
+          ],
+          "source_origin": [
+            899.5,
+            1240.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            61,
+            84,
+            142,
+            172
+          ],
+          "sha256": "fd75bebff1b9be86de728971665f4c761cb8d8185c88d7ca09ea1288e3f4f1f6",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/brine/dodge-06.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 62,
+          "source_bounds": [
+            997,
+            1102,
+            1108,
+            1240
+          ],
+          "source_origin": [
+            1048.0,
+            1240.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            59,
+            73,
+            139,
+            172
+          ],
+          "sha256": "220e43cd31755430afcc0d24bd1f80996700fc7417fb3fe974f7a70709915c52",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/brine/dodge-07.png",
+          "source": "art-source/animated/v3/brine-extension64.png",
+          "slot": 63,
+          "source_bounds": [
+            1136,
+            1104,
+            1245,
+            1240
+          ],
+          "source_origin": [
+            1188.0,
+            1240.0
+          ],
+          "scale": 0.7164179104477612,
+          "packed_bounds": [
+            59,
+            75,
+            137,
+            172
+          ],
+          "sha256": "b538c1c6fd3c0653754a7c975ddc7ba0792e10faa59be6cea6904d89e5d7584a",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ],
+      "hand_anchors": [
+        [
+          34,
+          -48
+        ],
+        [
+          38,
+          -48
+        ],
+        [
+          53,
+          -45
+        ],
+        [
+          65,
+          -42
+        ],
+        [
+          61,
+          -34
+        ],
+        [
+          45,
+          -44
+        ],
+        [
+          42,
+          -45
+        ],
+        [
+          40,
+          -46
+        ]
+      ]
+    },
+    "powered_idle": {
+      "frame_count": 8,
+      "durations": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ],
+      "duration": 1.6,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/brine/powered_idle-00.png",
+          "source": "art-source/animated/v3/brine-powered40.png",
+          "slot": 0,
+          "source_bounds": [
+            49,
+            25,
+            189,
+            199
+          ],
+          "source_origin": [
+            106.0,
+            199.0
+          ],
+          "scale": 0.5597667638483965,
+          "packed_bounds": [
+            64,
+            75,
+            142,
+            172
+          ],
+          "sha256": "b165a9bd5e019e21f83142e79d7e50e705331d3d5171a45851a851b4932903fa"
+        },
+        {
+          "path": "res://assets/animated/brine/powered_idle-01.png",
+          "source": "art-source/animated/v3/brine-powered40.png",
+          "slot": 1,
+          "source_bounds": [
+            240,
+            25,
+            381,
+            199
+          ],
+          "source_origin": [
+            305.5,
+            199.0
+          ],
+          "scale": 0.5597667638483965,
+          "packed_bounds": [
+            59,
+            75,
+            138,
+            172
+          ],
+          "sha256": "5d025dafd5fa9c71474209a9b94a88c9926c9eab5893ef8f13c58bb2e34b0382"
+        },
+        {
+          "path": "res://assets/animated/brine/powered_idle-02.png",
+          "source": "art-source/animated/v3/brine-powered40.png",
+          "slot": 2,
+          "source_bounds": [
+            431,
+            26,
+            570,
+            199
+          ],
+          "source_origin": [
+            492.5,
+            199.0
+          ],
+          "scale": 0.5597667638483965,
+          "packed_bounds": [
+            62,
+            75,
+            140,
+            172
+          ],
+          "sha256": "94bc5ecd26174bbe5f88b82c6efa1641f08e85b71f2e17cc5e7d81b658cd8564"
+        },
+        {
+          "path": "res://assets/animated/brine/powered_idle-03.png",
+          "source": "art-source/animated/v3/brine-powered40.png",
+          "slot": 3,
+          "source_bounds": [
+            610,
+            26,
+            749,
+            199
+          ],
+          "source_origin": [
+            684.0,
+            199.0
+          ],
+          "scale": 0.5597667638483965,
+          "packed_bounds": [
+            55,
+            75,
+            133,
+            172
+          ],
+          "sha256": "ceaac9aee929753d0014945e0ac92184c91055211c60298fc4a0549f8669fd5e"
+        },
+        {
+          "path": "res://assets/animated/brine/powered_idle-04.png",
+          "source": "art-source/animated/v3/brine-powered40.png",
+          "slot": 4,
+          "source_bounds": [
+            798,
+            26,
+            938,
+            199
+          ],
+          "source_origin": [
+            873.5,
+            199.0
+          ],
+          "scale": 0.5597667638483965,
+          "packed_bounds": [
+            54,
+            75,
+            132,
+            172
+          ],
+          "sha256": "d65cd3ca5f3fcc396fda7ab334555fa892ba77048da83b2381598d23693b19dc"
+        },
+        {
+          "path": "res://assets/animated/brine/powered_idle-05.png",
+          "source": "art-source/animated/v3/brine-powered40.png",
+          "slot": 5,
+          "source_bounds": [
+            988,
+            25,
+            1128,
+            199
+          ],
+          "source_origin": [
+            1059.0,
+            199.0
+          ],
+          "scale": 0.5597667638483965,
+          "packed_bounds": [
+            56,
+            75,
+            134,
+            172
+          ],
+          "sha256": "53d7b6caae08911beb367cfebd67cd5bc2d7b8ec2fbf22fdedcfdfafd194151e"
+        },
+        {
+          "path": "res://assets/animated/brine/powered_idle-06.png",
+          "source": "art-source/animated/v3/brine-powered40.png",
+          "slot": 6,
+          "source_bounds": [
+            1178,
+            25,
+            1318,
+            199
+          ],
+          "source_origin": [
+            1247.5,
+            199.0
+          ],
+          "scale": 0.5597667638483965,
+          "packed_bounds": [
+            57,
+            75,
+            135,
+            172
+          ],
+          "sha256": "284cf21c080f5ff6fd82632c1a968ed910b7876878830d2cafacd680e734b77c"
+        },
+        {
+          "path": "res://assets/animated/brine/powered_idle-07.png",
+          "source": "art-source/animated/v3/brine-powered40.png",
+          "slot": 7,
+          "source_bounds": [
+            1368,
+            26,
+            1508,
+            199
+          ],
+          "source_origin": [
+            1439.0,
+            199.0
+          ],
+          "scale": 0.5597667638483965,
+          "packed_bounds": [
+            56,
+            75,
+            134,
+            172
+          ],
+          "sha256": "b24f5af77794d038bf5e764de4052212bd715fe476484326c7ee67323928f3bf"
+        }
+      ],
+      "hand_anchors": [
+        [
+          45,
+          -42
+        ],
+        [
+          41,
+          -42
+        ],
+        [
+          43,
+          -40
+        ],
+        [
+          36,
+          -40
+        ],
+        [
+          35,
+          -40
+        ],
+        [
+          37,
+          -40
+        ],
+        [
+          38,
+          -42
+        ],
+        [
+          37,
+          -40
+        ]
+      ]
+    },
+    "powered_walk": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/brine/powered_walk-00.png",
+          "source": "art-source/animated/v3/brine-powered40.png",
+          "slot": 8,
+          "source_bounds": [
+            47,
+            218,
+            195,
+            396
+          ],
+          "source_origin": [
+            106.0,
+            396.0
+          ],
+          "scale": 0.5597667638483965,
+          "packed_bounds": [
+            63,
+            72,
+            146,
+            171
+          ],
+          "sha256": "38e3c340f164cd7b71b7be83f8e009fe646eb02673339867a4a6002899ed1cfa"
+        },
+        {
+          "path": "res://assets/animated/brine/powered_walk-01.png",
+          "source": "art-source/animated/v3/brine-powered40.png",
+          "slot": 9,
+          "source_bounds": [
+            232,
+            221,
+            385,
+            396
+          ],
+          "source_origin": [
+            305.5,
+            396.0
+          ],
+          "scale": 0.5597667638483965,
+          "packed_bounds": [
+            55,
+            74,
+            141,
+            172
+          ],
+          "sha256": "2befe3b7466b791dd49103c252e1fb81982afb40cd89fa0990ee7e79c84f5420"
+        },
+        {
+          "path": "res://assets/animated/brine/powered_walk-02.png",
+          "source": "art-source/animated/v3/brine-powered40.png",
+          "slot": 10,
+          "source_bounds": [
+            426,
+            222,
+            574,
+            396
+          ],
+          "source_origin": [
+            492.5,
+            396.0
+          ],
+          "scale": 0.5597667638483965,
+          "packed_bounds": [
+            59,
+            75,
+            142,
+            172
+          ],
+          "sha256": "d264b89f4d34651f686af575dee9cd0a7fcbb0dc2705b92e02bc6b26d8c791f7"
+        },
+        {
+          "path": "res://assets/animated/brine/powered_walk-03.png",
+          "source": "art-source/animated/v3/brine-powered40.png",
+          "slot": 11,
+          "source_bounds": [
+            608,
+            222,
+            764,
+            396
+          ],
+          "source_origin": [
+            684.0,
+            396.0
+          ],
+          "scale": 0.5597667638483965,
+          "packed_bounds": [
+            53,
+            75,
+            140,
+            172
+          ],
+          "sha256": "c594b4926a3179467065d2ab78dff7702cba80e76560e4074c37fdcae7ab01ee"
+        },
+        {
+          "path": "res://assets/animated/brine/powered_walk-04.png",
+          "source": "art-source/animated/v3/brine-powered40.png",
+          "slot": 12,
+          "source_bounds": [
+            800,
+            221,
+            948,
+            396
+          ],
+          "source_origin": [
+            873.5,
+            396.0
+          ],
+          "scale": 0.5597667638483965,
+          "packed_bounds": [
+            55,
+            74,
+            138,
+            172
+          ],
+          "sha256": "cba7b56601e608bf9bd0b0c3fa8f988d294439a82d3711edc8a18e1644ed9fb2"
+        },
+        {
+          "path": "res://assets/animated/brine/powered_walk-05.png",
+          "source": "art-source/animated/v3/brine-powered40.png",
+          "slot": 13,
+          "source_bounds": [
+            982,
+            218,
+            1131,
+            396
+          ],
+          "source_origin": [
+            1059.0,
+            396.0
+          ],
+          "scale": 0.5597667638483965,
+          "packed_bounds": [
+            53,
+            72,
+            136,
+            172
+          ],
+          "sha256": "18eebf283d297963488a15962ff0e317b357c01c0a57ea62e1f75705d10ea4c5"
+        },
+        {
+          "path": "res://assets/animated/brine/powered_walk-06.png",
+          "source": "art-source/animated/v3/brine-powered40.png",
+          "slot": 14,
+          "source_bounds": [
+            1172,
+            216,
+            1317,
+            395
+          ],
+          "source_origin": [
+            1247.5,
+            396.0
+          ],
+          "scale": 0.5597667638483965,
+          "packed_bounds": [
+            54,
+            71,
+            135,
+            171
+          ],
+          "sha256": "96bc18811d720e0b3483d0e4d83b379580db287bd00671b66ccfacfe8e378734"
+        },
+        {
+          "path": "res://assets/animated/brine/powered_walk-07.png",
+          "source": "art-source/animated/v3/brine-powered40.png",
+          "slot": 15,
+          "source_bounds": [
+            1360,
+            220,
+            1501,
+            396
+          ],
+          "source_origin": [
+            1439.0,
+            396.0
+          ],
+          "scale": 0.5597667638483965,
+          "packed_bounds": [
+            52,
+            73,
+            131,
+            172
+          ],
+          "sha256": "56e5bc5d8e8e20d040638f9414f4833f96f814f7163ef94002df699c94684b86"
+        }
+      ],
+      "hand_anchors": [
+        [
+          49,
+          -44
+        ],
+        [
+          44,
+          -38
+        ],
+        [
+          45,
+          -38
+        ],
+        [
+          43,
+          -40
+        ],
+        [
+          41,
+          -44
+        ],
+        [
+          39,
+          -44
+        ],
+        [
+          38,
+          -45
+        ],
+        [
+          34,
+          -41
+        ]
+      ]
+    },
+    "powered_primary": {
+      "frame_count": 8,
+      "durations": [
+        0.105,
+        0.105,
+        0.12,
+        0.08119047619047617,
+        0.02952380952380952,
+        0.04059523809523809,
+        0.06273809523809523,
+        0.09595238095238096
+      ],
+      "duration": 0.6399999999999999,
+      "loop": false,
+      "release_frame": 3,
+      "release_time": 0.32999999999999996,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/brine/powered_primary-00.png",
+          "source": "art-source/animated/v3/brine-powered40.png",
+          "slot": 16,
+          "source_bounds": [
+            44,
+            420,
+            186,
+            598
+          ],
+          "source_origin": [
+            106.0,
+            598.0
+          ],
+          "scale": 0.5597667638483965,
+          "packed_bounds": [
+            61,
+            72,
+            140,
+            172
+          ],
+          "sha256": "e05178c515860a5fc010b63c63f3cbf04caac74bbe2f73bd27ded629ce090c85"
+        },
+        {
+          "path": "res://assets/animated/brine/powered_primary-01.png",
+          "source": "art-source/animated/v3/brine-powered40.png",
+          "slot": 17,
+          "source_bounds": [
+            227,
+            423,
+            373,
+            598
+          ],
+          "source_origin": [
+            305.5,
+            598.0
+          ],
+          "scale": 0.5597667638483965,
+          "packed_bounds": [
+            52,
+            74,
+            134,
+            172
+          ],
+          "sha256": "727bf998ced4ebd1f8c1ff0a1c0efd7ec813f5cc3efce21783e08dafc0a1539d"
+        },
+        {
+          "path": "res://assets/animated/brine/powered_primary-02.png",
+          "source": "art-source/animated/v3/brine-powered40.png",
+          "slot": 18,
+          "source_bounds": [
+            407,
+            426,
+            573,
+            598
+          ],
+          "source_origin": [
+            492.5,
+            598.0
+          ],
+          "scale": 0.5597667638483965,
+          "packed_bounds": [
+            48,
+            76,
+            141,
+            172
+          ],
+          "sha256": "bc48dd2109e811acbf83038ecd88cfaa58668b3dbee0155fe0193678bacedba2"
+        },
+        {
+          "path": "res://assets/animated/brine/powered_primary-03.png",
+          "source": "art-source/animated/v3/brine-powered40.png",
+          "slot": 19,
+          "source_bounds": [
+            591,
+            428,
+            784,
+            598
+          ],
+          "source_origin": [
+            684.0,
+            598.0
+          ],
+          "scale": 0.5597667638483965,
+          "packed_bounds": [
+            44,
+            77,
+            152,
+            172
+          ],
+          "sha256": "70653a9ee2573b9f99a45e00197d7cca842512eb47ed060f9a29ec1b2af67550"
+        },
+        {
+          "path": "res://assets/animated/brine/powered_primary-04.png",
+          "source": "art-source/animated/v3/brine-powered40.png",
+          "slot": 20,
+          "source_bounds": [
+            784,
+            433,
+            965,
+            598
+          ],
+          "source_origin": [
+            873.5,
+            598.0
+          ],
+          "scale": 0.5597667638483965,
+          "packed_bounds": [
+            46,
+            80,
+            147,
+            172
+          ],
+          "sha256": "89185ddde06cdde819e66ebc1b65a7ba0565fcfb71e8541226a960b0aca518cc"
+        },
+        {
+          "path": "res://assets/animated/brine/powered_primary-05.png",
+          "source": "art-source/animated/v3/brine-powered40.png",
+          "slot": 21,
+          "source_bounds": [
+            985,
+            431,
+            1143,
+            598
+          ],
+          "source_origin": [
+            1059.0,
+            598.0
+          ],
+          "scale": 0.5597667638483965,
+          "packed_bounds": [
+            55,
+            79,
+            143,
+            172
+          ],
+          "sha256": "1116ffea25c654ba9ebcda2fad352c80a16690beefdd5b2c790b23f514f89113"
+        },
+        {
+          "path": "res://assets/animated/brine/powered_primary-06.png",
+          "source": "art-source/animated/v3/brine-powered40.png",
+          "slot": 22,
+          "source_bounds": [
+            1174,
+            426,
+            1329,
+            598
+          ],
+          "source_origin": [
+            1247.5,
+            598.0
+          ],
+          "scale": 0.5597667638483965,
+          "packed_bounds": [
+            55,
+            76,
+            142,
+            172
+          ],
+          "sha256": "a655bb047604c8f620f3dfd85828f3630c81f0667ea413131c379db44afb8b2b"
+        },
+        {
+          "path": "res://assets/animated/brine/powered_primary-07.png",
+          "source": "art-source/animated/v3/brine-powered40.png",
+          "slot": 23,
+          "source_bounds": [
+            1366,
+            424,
+            1507,
+            598
+          ],
+          "source_origin": [
+            1439.0,
+            598.0
+          ],
+          "scale": 0.5597667638483965,
+          "packed_bounds": [
+            55,
+            75,
+            134,
+            172
+          ],
+          "sha256": "e015b81f1d00b779ee20b1f92e09e126897e7b12a81757aa2417c1b3cffbffa6"
+        }
+      ],
+      "hand_anchors": [
+        [
+          43,
+          -43
+        ],
+        [
+          37,
+          -42
+        ],
+        [
+          44,
+          -68
+        ],
+        [
+          55,
+          -64
+        ],
+        [
+          50,
+          -52
+        ],
+        [
+          46,
+          -64
+        ],
+        [
+          45,
+          -47
+        ],
+        [
+          37,
+          -42
+        ]
+      ],
+      "release_anchor": [
+        55,
+        -64
+      ]
+    },
+    "powered_guard": {
+      "frame_count": 8,
+      "durations": [
+        0.055,
+        0.055,
+        0.055,
+        0.055,
+        0.12,
+        0.12,
+        0.12,
+        0.12
+      ],
+      "duration": 0.7,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": 4,
+      "frames": [
+        {
+          "path": "res://assets/animated/brine/powered_guard-00.png",
+          "source": "art-source/animated/v3/brine-powered40.png",
+          "slot": 24,
+          "source_bounds": [
+            43,
+            629,
+            185,
+            798
+          ],
+          "source_origin": [
+            106.0,
+            798.25
+          ],
+          "scale": 0.5597667638483965,
+          "packed_bounds": [
+            61,
+            77,
+            140,
+            172
+          ],
+          "sha256": "6d53e58f40886ba54f75c305491d0e21d10d6bec6d2c8772754f12d2694684df"
+        },
+        {
+          "path": "res://assets/animated/brine/powered_guard-01.png",
+          "source": "art-source/animated/v3/brine-powered40.png",
+          "slot": 25,
+          "source_bounds": [
+            234,
+            625,
+            372,
+            798
+          ],
+          "source_origin": [
+            305.5,
+            798.25
+          ],
+          "scale": 0.5597667638483965,
+          "packed_bounds": [
+            56,
+            75,
+            133,
+            172
+          ],
+          "sha256": "00ebcca60543c5e473622af4e61ab4006622e36e9f2b14166a7835023a2d626a"
+        },
+        {
+          "path": "res://assets/animated/brine/powered_guard-02.png",
+          "source": "art-source/animated/v3/brine-powered40.png",
+          "slot": 26,
+          "source_bounds": [
+            415,
+            633,
+            553,
+            798
+          ],
+          "source_origin": [
+            492.5,
+            798.25
+          ],
+          "scale": 0.5597667638483965,
+          "packed_bounds": [
+            53,
+            79,
+            130,
+            171
+          ],
+          "sha256": "4ea0881a9ab0c58db9576b1ea71696dae4d03cef189b63365eb809e4bf5e3e80"
+        },
+        {
+          "path": "res://assets/animated/brine/powered_guard-03.png",
+          "source": "art-source/animated/v3/brine-powered40.png",
+          "slot": 27,
+          "source_bounds": [
+            607,
+            629,
+            741,
+            798
+          ],
+          "source_origin": [
+            684.0,
+            798.25
+          ],
+          "scale": 0.5597667638483965,
+          "packed_bounds": [
+            53,
+            77,
+            128,
+            172
+          ],
+          "sha256": "06032a6eeef1cbf75f25affc77891dfea082152cb792169b8bb51f72309e44c4"
+        },
+        {
+          "path": "res://assets/animated/brine/powered_guard-04.png",
+          "source": "art-source/animated/v3/brine-powered40.png",
+          "slot": 28,
+          "source_bounds": [
+            800,
+            625,
+            940,
+            798
+          ],
+          "source_origin": [
+            873.5,
+            798.25
+          ],
+          "scale": 0.5597667638483965,
+          "packed_bounds": [
+            55,
+            75,
+            133,
+            172
+          ],
+          "sha256": "f1368cfa66ad1188ec27554e060184651155ad9bdbe2bf686974c69085b9b499"
+        },
+        {
+          "path": "res://assets/animated/brine/powered_guard-05.png",
+          "source": "art-source/animated/v3/brine-powered40.png",
+          "slot": 29,
+          "source_bounds": [
+            989,
+            629,
+            1131,
+            798
+          ],
+          "source_origin": [
+            1059.0,
+            798.25
+          ],
+          "scale": 0.5597667638483965,
+          "packed_bounds": [
+            57,
+            77,
+            136,
+            172
+          ],
+          "sha256": "ca2585fd68b717f125cbf03ade85cf754139dc861df765f9c0ed5cf454e34718"
+        },
+        {
+          "path": "res://assets/animated/brine/powered_guard-06.png",
+          "source": "art-source/animated/v3/brine-powered40.png",
+          "slot": 30,
+          "source_bounds": [
+            1180,
+            626,
+            1321,
+            799
+          ],
+          "source_origin": [
+            1247.5,
+            798.25
+          ],
+          "scale": 0.5597667638483965,
+          "packed_bounds": [
+            58,
+            76,
+            137,
+            173
+          ],
+          "sha256": "3abcb3a0886d6dc059b6ef90378633db92f11f36e4378618ecdcb16e9c7a3b60"
+        },
+        {
+          "path": "res://assets/animated/brine/powered_guard-07.png",
+          "source": "art-source/animated/v3/brine-powered40.png",
+          "slot": 31,
+          "source_bounds": [
+            1367,
+            626,
+            1508,
+            799
+          ],
+          "source_origin": [
+            1439.0,
+            798.25
+          ],
+          "scale": 0.5597667638483965,
+          "packed_bounds": [
+            56,
+            76,
+            135,
+            173
+          ],
+          "sha256": "e267b2bb57e05ef3584827589e11aae3e6dc8c7d5b33f425598f8713b0cb7eed"
+        }
+      ],
+      "hand_anchors": [
+        [
+          43,
+          -42
+        ],
+        [
+          36,
+          -40
+        ],
+        [
+          33,
+          -70
+        ],
+        [
+          31,
+          -70
+        ],
+        [
+          36,
+          -66
+        ],
+        [
+          39,
+          -42
+        ],
+        [
+          40,
+          -38
+        ],
+        [
+          38,
+          -40
+        ]
+      ]
+    },
+    "powered_exit": {
+      "frame_count": 8,
+      "durations": [
+        0.11,
+        0.1,
+        0.1,
+        0.09,
+        0.09,
+        0.1,
+        0.12,
+        0.15
+      ],
+      "duration": 0.86,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/brine/powered_exit-00.png",
+          "source": "art-source/animated/v3/brine-powered40.png",
+          "slot": 32,
+          "source_bounds": [
+            43,
+            828,
+            194,
+            1001
+          ],
+          "source_origin": [
+            106.0,
+            1001.0
+          ],
+          "scale": 0.5597667638483965,
+          "packed_bounds": [
+            61,
+            75,
+            146,
+            172
+          ],
+          "sha256": "6e73cd693555a711a67f205dcafe9b42c45c88e1e0c5a7c13ff53c5369ab1256"
+        },
+        {
+          "path": "res://assets/animated/brine/powered_exit-01.png",
+          "source": "art-source/animated/v3/brine-powered40.png",
+          "slot": 33,
+          "source_bounds": [
+            233,
+            828,
+            377,
+            1001
+          ],
+          "source_origin": [
+            305.5,
+            1001.0
+          ],
+          "scale": 0.5597667638483965,
+          "packed_bounds": [
+            55,
+            75,
+            136,
+            172
+          ],
+          "sha256": "a01ea68ff370901ab2eefb8d036d807730c06edebcc04536ee82a2fb4e1547e1"
+        },
+        {
+          "path": "res://assets/animated/brine/powered_exit-02.png",
+          "source": "art-source/animated/v3/brine-powered40.png",
+          "slot": 34,
+          "source_bounds": [
+            419,
+            827,
+            566,
+            1001
+          ],
+          "source_origin": [
+            492.5,
+            1001.0
+          ],
+          "scale": 0.5597667638483965,
+          "packed_bounds": [
+            55,
+            75,
+            137,
+            172
+          ],
+          "sha256": "fb75f25762d392a0a17bf85aaab105323f206e8c375eb248cb105ada523bfc2e"
+        },
+        {
+          "path": "res://assets/animated/brine/powered_exit-03.png",
+          "source": "art-source/animated/v3/brine-powered40.png",
+          "slot": 35,
+          "source_bounds": [
+            607,
+            825,
+            751,
+            1001
+          ],
+          "source_origin": [
+            684.0,
+            1001.0
+          ],
+          "scale": 0.5597667638483965,
+          "packed_bounds": [
+            53,
+            73,
+            134,
+            172
+          ],
+          "sha256": "4ee5a26c806a40d64e1583190b8cf5f36b8fa06bf9a26012a5b4dcf8fd6acbe8"
+        },
+        {
+          "path": "res://assets/animated/brine/powered_exit-04.png",
+          "source": "art-source/animated/v3/brine-powered40.png",
+          "slot": 36,
+          "source_bounds": [
+            799,
+            824,
+            941,
+            1001
+          ],
+          "source_origin": [
+            873.5,
+            1001.0
+          ],
+          "scale": 0.5597667638483965,
+          "packed_bounds": [
+            54,
+            73,
+            133,
+            172
+          ],
+          "sha256": "d829b88f5cfc58baab3013f94a2d1c316cdefa875fc373d83d30414e8c273802"
+        },
+        {
+          "path": "res://assets/animated/brine/powered_exit-05.png",
+          "source": "art-source/animated/v3/brine-powered40.png",
+          "slot": 37,
+          "source_bounds": [
+            986,
+            825,
+            1126,
+            1001
+          ],
+          "source_origin": [
+            1059.0,
+            1001.0
+          ],
+          "scale": 0.5597667638483965,
+          "packed_bounds": [
+            55,
+            73,
+            133,
+            172
+          ],
+          "sha256": "9b75706e364b0ee973ebb92fa5373d39623899ab35bea1142d4c7fa334c0bc6d"
+        },
+        {
+          "path": "res://assets/animated/brine/powered_exit-06.png",
+          "source": "art-source/animated/v3/brine-powered40.png",
+          "slot": 38,
+          "source_bounds": [
+            1174,
+            827,
+            1315,
+            1002
+          ],
+          "source_origin": [
+            1247.5,
+            1001.0
+          ],
+          "scale": 0.5597667638483965,
+          "packed_bounds": [
+            55,
+            75,
+            134,
+            173
+          ],
+          "sha256": "8e34a6518a38d0b19f0f25b1b1f7107641ea697cfa288550a5f429386af1323b"
+        },
+        {
+          "path": "res://assets/animated/brine/powered_exit-07.png",
+          "source": "art-source/animated/v3/brine-powered40.png",
+          "slot": 39,
+          "source_bounds": [
+            1358,
+            827,
+            1498,
+            1001
+          ],
+          "source_origin": [
+            1439.0,
+            1001.0
+          ],
+          "scale": 0.5597667638483965,
+          "packed_bounds": [
+            51,
+            75,
+            129,
+            172
+          ],
+          "sha256": "357a5f83d3ddef47189ea8079626b60e1f839f43ae67525b93467171c4fdd4b0"
+        }
+      ],
+      "hand_anchors": [
+        [
+          49,
+          -42
+        ],
+        [
+          39,
+          -40
+        ],
+        [
+          40,
+          -41
+        ],
+        [
+          37,
+          -42
+        ],
+        [
+          36,
+          -38
+        ],
+        [
+          36,
+          -38
+        ],
+        [
+          37,
+          -38
+        ],
+        [
+          32,
+          -39
+        ]
+      ]
+    }
+  },
+  "pose_count": 152
+}

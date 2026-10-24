@@ -1,0 +1,4096 @@
+{
+  "id": "iona",
+  "name": "Iona",
+  "view": "E",
+  "frame_size": [
+    224,
+    192
+  ],
+  "foot_pivot": [
+    96,
+    172
+  ],
+  "body_height_target": 96,
+  "fit_factor": 1.0,
+  "sources": [
+    {
+      "width": 1774,
+      "height": 1774,
+      "columns": 8,
+      "rows": 8,
+      "column_cuts": [
+        0,
+        220,
+        444,
+        667,
+        897,
+        1134,
+        1347,
+        1570,
+        1774
+      ],
+      "row_cuts": [
+        0,
+        251,
+        470,
+        683,
+        894,
+        1154,
+        1386,
+        1592,
+        1774
+      ],
+      "baselines": {
+        "0": 248.0,
+        "3": 874.0,
+        "4": 1147.0,
+        "5": 1379.0,
+        "6": 1590.0,
+        "7": 1766.25
+      },
+      "body_height": 198.0,
+      "body_min_area": 5740,
+      "path": "art-source/animated/iona-64.png",
+      "base_scale": 0.48484848484848486
+    },
+    {
+      "width": 1254,
+      "height": 1254,
+      "columns": 8,
+      "rows": 8,
+      "column_cuts": [
+        0,
+        165,
+        337,
+        472,
+        624,
+        784,
+        945,
+        1084,
+        1254
+      ],
+      "row_cuts": [
+        0,
+        162,
+        324,
+        481,
+        634,
+        788,
+        942,
+        1102,
+        1254
+      ],
+      "baselines": {
+        "0": 150.25,
+        "1": 306.25,
+        "4": 777.0,
+        "5": 934.0,
+        "6": 1087.0,
+        "7": 1238.0
+      },
+      "body_height": 121.25,
+      "body_min_area": 2028,
+      "path": "art-source/animated/v3/iona-extension64.png",
+      "base_scale": 0.7917525773195876
+    },
+    {
+      "width": 1536,
+      "height": 1024,
+      "columns": 8,
+      "rows": 5,
+      "column_cuts": [
+        0,
+        206,
+        385,
+        568,
+        776,
+        970,
+        1156,
+        1343,
+        1536
+      ],
+      "row_cuts": [
+        0,
+        230,
+        429,
+        623,
+        821,
+        1024
+      ],
+      "baselines": {
+        "0": 212.0,
+        "1": 413.25,
+        "3": 802.0,
+        "4": 1000.75
+      },
+      "body_height": 152.5,
+      "body_min_area": 3949,
+      "path": "art-source/animated/v3/iona-powered40.png",
+      "base_scale": 0.6295081967213115
+    },
+    {
+      "width": 1254,
+      "height": 1254,
+      "columns": 4,
+      "rows": 4,
+      "column_cuts": [
+        0,
+        338,
+        648,
+        958,
+        1254
+      ],
+      "row_cuts": [
+        0,
+        397,
+        703,
+        993,
+        1254
+      ],
+      "baselines": {
+        "0": 309.0,
+        "1": 620.0,
+        "2": 920.0,
+        "3": 1213.0
+      },
+      "body_height": 135.5,
+      "body_min_area": 3862,
+      "path": "art-source/animated/v3/iona-primary16.png",
+      "base_scale": 0.7084870848708487
+    },
+    {
+      "width": 1774,
+      "height": 887,
+      "columns": 4,
+      "rows": 2,
+      "column_cuts": [
+        0,
+        461,
+        901,
+        1335,
+        1774
+      ],
+      "row_cuts": [
+        0,
+        536,
+        887
+      ],
+      "baselines": {
+        "0": 433.0,
+        "1": 839.0
+      },
+      "body_height": 194.5,
+      "body_min_area": 8215,
+      "path": "art-source/animated/v3/iona-powered-primary8.png",
+      "base_scale": 0.493573264781491
+    }
+  ],
+  "anchor_sources": [
+    {
+      "path": "art-source/animated/v3/elements-anchors.json",
+      "sha256": "8f75cadd5510d51a47fd3996f9595aebb72bfb3f3e284814346d058a844b8da2"
+    }
+  ],
+  "clips": {
+    "idle": {
+      "frame_count": 8,
+      "durations": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ],
+      "duration": 1.6,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/iona/idle-00.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 0,
+          "source_bounds": [
+            30,
+            42,
+            185,
+            248
+          ],
+          "source_origin": [
+            110.0,
+            248.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            57,
+            72,
+            132,
+            172
+          ],
+          "sha256": "e64b3172d63d5e5ecf79782d1d810f39f2af09f8bba4b5339f81d83f9ea777e2"
+        },
+        {
+          "path": "res://assets/animated/iona/idle-01.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 1,
+          "source_bounds": [
+            247,
+            45,
+            417,
+            248
+          ],
+          "source_origin": [
+            332.0,
+            248.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            55,
+            74,
+            137,
+            172
+          ],
+          "sha256": "a985b7aa47f3bdab885d5ce48e07a2ebfbc30eb82fe44ae9ddfa403871973712"
+        },
+        {
+          "path": "res://assets/animated/iona/idle-02.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 2,
+          "source_bounds": [
+            467,
+            45,
+            645,
+            248
+          ],
+          "source_origin": [
+            555.5,
+            248.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            53,
+            74,
+            139,
+            172
+          ],
+          "sha256": "b27e040c18f5d1a408ab3b56d87a40b45cbb425a656d82a63be32a2d00c85a42"
+        },
+        {
+          "path": "res://assets/animated/iona/idle-03.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 3,
+          "source_bounds": [
+            701,
+            22,
+            864,
+            248
+          ],
+          "source_origin": [
+            782.0,
+            248.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            57,
+            62,
+            136,
+            172
+          ],
+          "sha256": "93f4b12acf9e0e6fd56c8e64fc6972d45e36c0dfb83f71dbd366fce951552547"
+        },
+        {
+          "path": "res://assets/animated/iona/idle-04.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 4,
+          "source_bounds": [
+            920,
+            17,
+            1087,
+            248
+          ],
+          "source_origin": [
+            1015.5,
+            248.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            50,
+            60,
+            131,
+            172
+          ],
+          "sha256": "7dcff36ba0326dd446836d2c506dcb8aaa30fbb4de45dc220ea54cf8b35fe0f7"
+        },
+        {
+          "path": "res://assets/animated/iona/idle-05.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 5,
+          "source_bounds": [
+            1139,
+            24,
+            1307,
+            248
+          ],
+          "source_origin": [
+            1240.5,
+            248.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            47,
+            63,
+            128,
+            172
+          ],
+          "sha256": "48eadf0260539c73ab4b03129393d1f3afcc2d97ffedc123991b535c4529ef20"
+        },
+        {
+          "path": "res://assets/animated/iona/idle-06.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 6,
+          "source_bounds": [
+            1351,
+            27,
+            1530,
+            248
+          ],
+          "source_origin": [
+            1458.5,
+            248.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            44,
+            65,
+            131,
+            172
+          ],
+          "sha256": "aaee466896416599f3585451afd2332678fc0f5170aacec9921803ee05ae1649"
+        },
+        {
+          "path": "res://assets/animated/iona/idle-07.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 7,
+          "source_bounds": [
+            1585,
+            28,
+            1752,
+            248
+          ],
+          "source_origin": [
+            1672.0,
+            248.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            54,
+            65,
+            135,
+            172
+          ],
+          "sha256": "1cbf0342aa7bd05c526d963a38ee5ea9d65ee67491d5c8dc3b03ae76e40c3976"
+        }
+      ]
+    },
+    "walk": {
+      "frame_count": 16,
+      "durations": [
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/iona/walk-00.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 0,
+          "source_bounds": [
+            30,
+            16,
+            135,
+            150
+          ],
+          "source_origin": [
+            82.5,
+            150.25
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            54,
+            66,
+            137,
+            172
+          ],
+          "sha256": "9dee010b1219b2bc524c3ebc0c4a71dd354032fa9d85c077ad67f90d2bb61f39"
+        },
+        {
+          "path": "res://assets/animated/iona/walk-01.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 1,
+          "source_bounds": [
+            187,
+            16,
+            291,
+            150
+          ],
+          "source_origin": [
+            251.0,
+            150.25
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            45,
+            66,
+            127,
+            172
+          ],
+          "sha256": "aaafc8dd00a78dc1df0e0aa0b23950598d9df496e1d9ee3126cc2cd079253153"
+        },
+        {
+          "path": "res://assets/animated/iona/walk-02.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 2,
+          "source_bounds": [
+            343,
+            16,
+            448,
+            150
+          ],
+          "source_origin": [
+            404.5,
+            150.25
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            47,
+            66,
+            130,
+            172
+          ],
+          "sha256": "30e8c6887438f041efa3ee02ca085fab5c4863b6172069a51831a3f9d2d1f5c9"
+        },
+        {
+          "path": "res://assets/animated/iona/walk-03.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 3,
+          "source_bounds": [
+            496,
+            15,
+            607,
+            151
+          ],
+          "source_origin": [
+            548.0,
+            150.25
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            55,
+            65,
+            143,
+            173
+          ],
+          "sha256": "7d29c593e8e186cb1e1c430782ec271bc429917a326529da9c90b0fd5cd678e8"
+        },
+        {
+          "path": "res://assets/animated/iona/walk-04.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 4,
+          "source_bounds": [
+            655,
+            16,
+            762,
+            151
+          ],
+          "source_origin": [
+            704.0,
+            150.25
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            57,
+            66,
+            142,
+            173
+          ],
+          "sha256": "f26f432a401e4dd54fd1125d14c51ae58ab2d87a6b4b07bb239b10b605eae5b8"
+        },
+        {
+          "path": "res://assets/animated/iona/walk-05.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 5,
+          "source_bounds": [
+            810,
+            16,
+            917,
+            150
+          ],
+          "source_origin": [
+            864.5,
+            150.25
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            53,
+            66,
+            138,
+            172
+          ],
+          "sha256": "a2671cae621c11d59685e7817fe493e7260fc8aeff86638515b5d43c13e52fbe"
+        },
+        {
+          "path": "res://assets/animated/iona/walk-06.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 6,
+          "source_bounds": [
+            965,
+            17,
+            1073,
+            150
+          ],
+          "source_origin": [
+            1014.5,
+            150.25
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            57,
+            66,
+            143,
+            171
+          ],
+          "sha256": "f2326e7ec0d77ac23383359b5439841b04d32299e3830860037d590ba8f6f38d"
+        },
+        {
+          "path": "res://assets/animated/iona/walk-07.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 7,
+          "source_bounds": [
+            1121,
+            17,
+            1231,
+            150
+          ],
+          "source_origin": [
+            1169.0,
+            150.25
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            58,
+            66,
+            145,
+            171
+          ],
+          "sha256": "00b50ffa654f54944780b784edd4c454ac2bf079a743c670897ab61881a6bde2"
+        },
+        {
+          "path": "res://assets/animated/iona/walk-08.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 8,
+          "source_bounds": [
+            25,
+            176,
+            137,
+            306
+          ],
+          "source_origin": [
+            82.5,
+            306.25
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            50,
+            69,
+            139,
+            172
+          ],
+          "sha256": "449297dae380bd56862b40edcdc7043fe2a13d1fd9d2c2c64de92be75500198f"
+        },
+        {
+          "path": "res://assets/animated/iona/walk-09.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 9,
+          "source_bounds": [
+            177,
+            173,
+            289,
+            306
+          ],
+          "source_origin": [
+            251.0,
+            306.25
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            37,
+            66,
+            126,
+            171
+          ],
+          "sha256": "414ad47f74b46bac5d29dffd39ff5243242612d19e87bb8034c749fc9d5c3650"
+        },
+        {
+          "path": "res://assets/animated/iona/walk-10.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 10,
+          "source_bounds": [
+            338,
+            176,
+            447,
+            306
+          ],
+          "source_origin": [
+            404.5,
+            306.25
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            43,
+            69,
+            129,
+            172
+          ],
+          "sha256": "f9a8475e906a97e291e6d407db958e197e01caaa4aa0adc680e87bda218b89e8"
+        },
+        {
+          "path": "res://assets/animated/iona/walk-11.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 11,
+          "source_bounds": [
+            495,
+            178,
+            605,
+            306
+          ],
+          "source_origin": [
+            548.0,
+            306.25
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            54,
+            70,
+            141,
+            171
+          ],
+          "sha256": "d723997fdc318626e5b8a0cd457b90419cae381a768ca06c992895d1c2c9128a"
+        },
+        {
+          "path": "res://assets/animated/iona/walk-12.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 12,
+          "source_bounds": [
+            653,
+            179,
+            762,
+            307
+          ],
+          "source_origin": [
+            704.0,
+            306.25
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            56,
+            71,
+            142,
+            172
+          ],
+          "sha256": "dcde27a312f1722edb0baf70ae1db873e435658adb5f493669cd5f5c806178c4"
+        },
+        {
+          "path": "res://assets/animated/iona/walk-13.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 13,
+          "source_bounds": [
+            812,
+            177,
+            917,
+            306
+          ],
+          "source_origin": [
+            864.5,
+            306.25
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            54,
+            70,
+            137,
+            172
+          ],
+          "sha256": "50b35b2d8aa5fc864a17be273b2f4b29fdfaeda17909c2dad9381a44b418538d"
+        },
+        {
+          "path": "res://assets/animated/iona/walk-14.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 14,
+          "source_bounds": [
+            964,
+            175,
+            1077,
+            306
+          ],
+          "source_origin": [
+            1014.5,
+            306.25
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            56,
+            68,
+            145,
+            172
+          ],
+          "sha256": "75c9dfbfbae31d68ac8ad018d47fde1a0ad56ea6ebfcfeae30f88e7457b0f8e4"
+        },
+        {
+          "path": "res://assets/animated/iona/walk-15.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 15,
+          "source_bounds": [
+            1119,
+            179,
+            1235,
+            307
+          ],
+          "source_origin": [
+            1169.0,
+            306.25
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            56,
+            71,
+            148,
+            172
+          ],
+          "sha256": "008c3e804c278cd8096c61b3a72fd4cb7b23abdae663c12a70ade370d72a31a2"
+        }
+      ]
+    },
+    "primary": {
+      "frame_count": 16,
+      "durations": [
+        0.0385,
+        0.0315,
+        0.0385,
+        0.0315,
+        0.044,
+        0.036,
+        0.0605,
+        0.049499999999999995,
+        0.022,
+        0.018,
+        0.030249999999999996,
+        0.024749999999999998,
+        0.04675,
+        0.03825,
+        0.0715,
+        0.058499999999999996
+      ],
+      "duration": 0.64,
+      "loop": false,
+      "release_frame": 8,
+      "release_time": 0.32999999999999996,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/iona/primary-00.png",
+          "source": "art-source/animated/v3/iona-primary16.png",
+          "slot": 0,
+          "source_bounds": [
+            95,
+            152,
+            243,
+            309
+          ],
+          "source_origin": [
+            169.0,
+            309.0
+          ],
+          "scale": 0.7084870848708487,
+          "packed_bounds": [
+            44,
+            61,
+            149,
+            172
+          ],
+          "sha256": "5e1563ac554f2946491e257622cdf9f2c5f63f72a5699b8d4b29103e173a2f61"
+        },
+        {
+          "path": "res://assets/animated/iona/primary-01.png",
+          "source": "art-source/animated/v3/iona-primary16.png",
+          "slot": 1,
+          "source_bounds": [
+            387,
+            171,
+            588,
+            309
+          ],
+          "source_origin": [
+            493.0,
+            309.0
+          ],
+          "scale": 0.7084870848708487,
+          "packed_bounds": [
+            21,
+            74,
+            162,
+            172
+          ],
+          "sha256": "310fc96b7a1e979e6369541e85ef4534695147e127d45be008638cee16f1b7d8"
+        },
+        {
+          "path": "res://assets/animated/iona/primary-02.png",
+          "source": "art-source/animated/v3/iona-primary16.png",
+          "slot": 2,
+          "source_bounds": [
+            694,
+            179,
+            898,
+            309
+          ],
+          "source_origin": [
+            803.0,
+            309.0
+          ],
+          "scale": 0.7084870848708487,
+          "packed_bounds": [
+            19,
+            80,
+            164,
+            172
+          ],
+          "sha256": "6669f18eddad83c904a881ff3cd7217c594aeb6003f55e70855a4af5c759fb5f"
+        },
+        {
+          "path": "res://assets/animated/iona/primary-03.png",
+          "source": "art-source/animated/v3/iona-primary16.png",
+          "slot": 3,
+          "source_bounds": [
+            996,
+            174,
+            1227,
+            309
+          ],
+          "source_origin": [
+            1106.0,
+            309.0
+          ],
+          "scale": 0.7084870848708487,
+          "packed_bounds": [
+            18,
+            76,
+            182,
+            172
+          ],
+          "sha256": "6e5e9f4faa315866c53e4bafa9f3a91e7b4586434092e1feda950f054e4b0cd2"
+        },
+        {
+          "path": "res://assets/animated/iona/primary-04.png",
+          "source": "art-source/animated/v3/iona-primary16.png",
+          "slot": 4,
+          "source_bounds": [
+            66,
+            486,
+            308,
+            620
+          ],
+          "source_origin": [
+            169.0,
+            620.0
+          ],
+          "scale": 0.7084870848708487,
+          "packed_bounds": [
+            23,
+            77,
+            194,
+            172
+          ],
+          "sha256": "32c5035c33a42e30a35bfc70c933d624a53c0931e45884d6a84ee778f9130ef5"
+        },
+        {
+          "path": "res://assets/animated/iona/primary-05.png",
+          "source": "art-source/animated/v3/iona-primary16.png",
+          "slot": 5,
+          "source_bounds": [
+            375,
+            485,
+            610,
+            620
+          ],
+          "source_origin": [
+            493.0,
+            620.0
+          ],
+          "scale": 0.7084870848708487,
+          "packed_bounds": [
+            12,
+            76,
+            178,
+            172
+          ],
+          "sha256": "dbc181c005e46b3836a570b117d0f8d37b36ac618adb96f7802a1ba890eb463f"
+        },
+        {
+          "path": "res://assets/animated/iona/primary-06.png",
+          "source": "art-source/animated/v3/iona-primary16.png",
+          "slot": 6,
+          "source_bounds": [
+            687,
+            485,
+            919,
+            620
+          ],
+          "source_origin": [
+            803.0,
+            620.0
+          ],
+          "scale": 0.7084870848708487,
+          "packed_bounds": [
+            14,
+            76,
+            178,
+            172
+          ],
+          "sha256": "110ee6e716ebd2556861e3996ef0c6bf4e50a5064ba4a58a4e61dcd4077ab5b7"
+        },
+        {
+          "path": "res://assets/animated/iona/primary-07.png",
+          "source": "art-source/animated/v3/iona-primary16.png",
+          "slot": 7,
+          "source_bounds": [
+            997,
+            489,
+            1237,
+            620
+          ],
+          "source_origin": [
+            1106.0,
+            620.0
+          ],
+          "scale": 0.7084870848708487,
+          "packed_bounds": [
+            19,
+            79,
+            189,
+            172
+          ],
+          "sha256": "55a80571e3603a1f9de8f0cfbd3d9eda15eb0256ea123f1c20e892d4b02d97f7"
+        },
+        {
+          "path": "res://assets/animated/iona/primary-08.png",
+          "source": "art-source/animated/v3/iona-primary16.png",
+          "slot": 8,
+          "source_bounds": [
+            69,
+            788,
+            313,
+            920
+          ],
+          "source_origin": [
+            169.0,
+            920.0
+          ],
+          "scale": 0.7084870848708487,
+          "packed_bounds": [
+            25,
+            78,
+            198,
+            172
+          ],
+          "sha256": "9e5b28bb6dc83ff3b456994a66d7475e06810dcc892335eb392963f7fc1ecb6f"
+        },
+        {
+          "path": "res://assets/animated/iona/primary-09.png",
+          "source": "art-source/animated/v3/iona-primary16.png",
+          "slot": 9,
+          "source_bounds": [
+            384,
+            788,
+            611,
+            920
+          ],
+          "source_origin": [
+            493.0,
+            920.0
+          ],
+          "scale": 0.7084870848708487,
+          "packed_bounds": [
+            19,
+            78,
+            180,
+            172
+          ],
+          "sha256": "57b456d7410bca2245510b537ae87f1f632053e5d852ad6076a681ae0c93c49d"
+        },
+        {
+          "path": "res://assets/animated/iona/primary-10.png",
+          "source": "art-source/animated/v3/iona-primary16.png",
+          "slot": 10,
+          "source_bounds": [
+            702,
+            789,
+            920,
+            920
+          ],
+          "source_origin": [
+            803.0,
+            920.0
+          ],
+          "scale": 0.7084870848708487,
+          "packed_bounds": [
+            24,
+            79,
+            178,
+            172
+          ],
+          "sha256": "78cbc752c2417e523aa78250dbbc89a75ca4ee04b578ab71143dbaa49d25391f"
+        },
+        {
+          "path": "res://assets/animated/iona/primary-11.png",
+          "source": "art-source/animated/v3/iona-primary16.png",
+          "slot": 11,
+          "source_bounds": [
+            1012,
+            772,
+            1219,
+            920
+          ],
+          "source_origin": [
+            1106.0,
+            920.0
+          ],
+          "scale": 0.7084870848708487,
+          "packed_bounds": [
+            29,
+            67,
+            176,
+            172
+          ],
+          "sha256": "e44737baea17ae82c30186899e53d81367dfe8ff9f65699ad867b7ba55e865f6"
+        },
+        {
+          "path": "res://assets/animated/iona/primary-12.png",
+          "source": "art-source/animated/v3/iona-primary16.png",
+          "slot": 12,
+          "source_bounds": [
+            83,
+            1052,
+            277,
+            1213
+          ],
+          "source_origin": [
+            169.0,
+            1213.0
+          ],
+          "scale": 0.7084870848708487,
+          "packed_bounds": [
+            35,
+            58,
+            172,
+            172
+          ],
+          "sha256": "5465d49faf1b374c29f89e57fc94b9ac806bc3572418a352cd54cb220d3116bf"
+        },
+        {
+          "path": "res://assets/animated/iona/primary-13.png",
+          "source": "art-source/animated/v3/iona-primary16.png",
+          "slot": 13,
+          "source_bounds": [
+            400,
+            1047,
+            589,
+            1213
+          ],
+          "source_origin": [
+            493.0,
+            1213.0
+          ],
+          "scale": 0.7084870848708487,
+          "packed_bounds": [
+            30,
+            54,
+            164,
+            172
+          ],
+          "sha256": "71fc8102bc4c0cf0765369f2ab5a9a8217c7b0bbc0804e919a1392db889ae4db"
+        },
+        {
+          "path": "res://assets/animated/iona/primary-14.png",
+          "source": "art-source/animated/v3/iona-primary16.png",
+          "slot": 14,
+          "source_bounds": [
+            706,
+            1057,
+            900,
+            1212
+          ],
+          "source_origin": [
+            803.0,
+            1213.0
+          ],
+          "scale": 0.7084870848708487,
+          "packed_bounds": [
+            27,
+            61,
+            163,
+            171
+          ],
+          "sha256": "5fb64894647bd34ce5f9982529f91f2bb60fa0829d01954559acacfd06f3953c"
+        },
+        {
+          "path": "res://assets/animated/iona/primary-15.png",
+          "source": "art-source/animated/v3/iona-primary16.png",
+          "slot": 15,
+          "source_bounds": [
+            1022,
+            1051,
+            1169,
+            1212
+          ],
+          "source_origin": [
+            1106.0,
+            1213.0
+          ],
+          "scale": 0.7084870848708487,
+          "packed_bounds": [
+            36,
+            57,
+            140,
+            171
+          ],
+          "sha256": "ceaddb34cf1a889881fde8510a53dab239ad8298cd037c93b8787fad3c40ba4c"
+        }
+      ],
+      "release_anchor": [
+        101,
+        -74
+      ],
+      "contact_reach": 101
+    },
+    "secondary": {
+      "frame_count": 8,
+      "durations": [
+        0.07,
+        0.07,
+        0.08,
+        0.11,
+        0.04,
+        0.055,
+        0.085,
+        0.13
+      ],
+      "duration": 0.64,
+      "loop": false,
+      "release_frame": 4,
+      "release_time": 0.33,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/iona/secondary-00.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 24,
+          "source_bounds": [
+            18,
+            684,
+            189,
+            874
+          ],
+          "source_origin": [
+            110.0,
+            874.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            51,
+            80,
+            134,
+            172
+          ],
+          "sha256": "f73d99f6a05c49852b4132395690eb9942f5c78ed44f8d02160d66c90ca85758"
+        },
+        {
+          "path": "res://assets/animated/iona/secondary-01.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 25,
+          "source_bounds": [
+            221,
+            713,
+            430,
+            878
+          ],
+          "source_origin": [
+            332.0,
+            874.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            42,
+            94,
+            143,
+            174
+          ],
+          "sha256": "ffd00e5abeee65fcde8128e3c276437889c18d89921a8282de619376dbe0597c"
+        },
+        {
+          "path": "res://assets/animated/iona/secondary-02.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 26,
+          "source_bounds": [
+            446,
+            704,
+            632,
+            874
+          ],
+          "source_origin": [
+            555.5,
+            874.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            43,
+            90,
+            133,
+            172
+          ],
+          "sha256": "d9b3bd6829774a5411df3a029d2004b0c31a0e3d662870521238803f2e7c522f"
+        },
+        {
+          "path": "res://assets/animated/iona/secondary-03.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 27,
+          "source_bounds": [
+            654,
+            726,
+            895,
+            874
+          ],
+          "source_origin": [
+            782.0,
+            874.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            34,
+            100,
+            151,
+            172
+          ],
+          "sha256": "8fc2d89d912f3290b78522ec24ad8f4deb53dcceae07229cda9c05ebc4703eb0"
+        },
+        {
+          "path": "res://assets/animated/iona/secondary-04.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 28,
+          "source_bounds": [
+            877,
+            752,
+            1197,
+            874
+          ],
+          "source_origin": [
+            1015.5,
+            874.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            29,
+            113,
+            184,
+            172
+          ],
+          "sha256": "3146d88e5d0c07f8a4586d5061edbf8f3a3b7121d157484fe72d7dfd664d282e"
+        },
+        {
+          "path": "res://assets/animated/iona/secondary-05.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 29,
+          "source_bounds": [
+            1161,
+            737,
+            1385,
+            874
+          ],
+          "source_origin": [
+            1240.5,
+            874.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            57,
+            106,
+            166,
+            172
+          ],
+          "sha256": "b48b4063718c1e0da1daccefeda1e070fa2affa9f0682bada5402ef76e3a0280"
+        },
+        {
+          "path": "res://assets/animated/iona/secondary-06.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 30,
+          "source_bounds": [
+            1387,
+            693,
+            1560,
+            874
+          ],
+          "source_origin": [
+            1458.5,
+            874.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            61,
+            84,
+            145,
+            172
+          ],
+          "sha256": "d13f90029f4b65a3cb5bdc0086e07e02d88ac5b87a0755a2cdf92efed2b16901"
+        },
+        {
+          "path": "res://assets/animated/iona/secondary-07.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 31,
+          "source_bounds": [
+            1585,
+            684,
+            1758,
+            874
+          ],
+          "source_origin": [
+            1672.0,
+            874.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            54,
+            80,
+            138,
+            172
+          ],
+          "sha256": "be203e1447ad64089adbcff542f2c48b78a2c8693c7f1ac02c01d56493fc516e"
+        }
+      ],
+      "release_anchor": [
+        87,
+        -42
+      ],
+      "contact_reach": 87
+    },
+    "special": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.08,
+        0.09,
+        0.12,
+        0.06,
+        0.08,
+        0.12,
+        0.18
+      ],
+      "duration": 0.82,
+      "loop": false,
+      "release_frame": 4,
+      "release_time": 0.38,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/iona/special-00.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 32,
+          "source_bounds": [
+            20,
+            926,
+            191,
+            1145
+          ],
+          "source_origin": [
+            110.0,
+            1147.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            52,
+            65,
+            135,
+            171
+          ],
+          "sha256": "7015cf8de36d21b874843ce3840bce707d3523720af78b0fc874b7c9e0d8d3aa"
+        },
+        {
+          "path": "res://assets/animated/iona/special-01.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 33,
+          "source_bounds": [
+            238,
+            927,
+            424,
+            1146
+          ],
+          "source_origin": [
+            332.0,
+            1147.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            50,
+            65,
+            140,
+            171
+          ],
+          "sha256": "1506c51365efb354dd6b41bcd16307d5ea520e693f7b7eb3903999b866d9727c"
+        },
+        {
+          "path": "res://assets/animated/iona/special-02.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 34,
+          "source_bounds": [
+            469,
+            944,
+            669,
+            1147
+          ],
+          "source_origin": [
+            555.5,
+            1147.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            54,
+            74,
+            151,
+            172
+          ],
+          "sha256": "fe1523157b9ed7019e0dc64ac3c507e8ad211a08efb62bf005939de3fdaba5b0"
+        },
+        {
+          "path": "res://assets/animated/iona/special-03.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 35,
+          "source_bounds": [
+            686,
+            895,
+            897,
+            1147
+          ],
+          "source_origin": [
+            782.0,
+            1147.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            49,
+            50,
+            151,
+            172
+          ],
+          "sha256": "3d97cf17aa0449d6bf1b1d114ce59d5a91ada2a84f0ed362a79050de59898a31"
+        },
+        {
+          "path": "res://assets/animated/iona/special-04.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 36,
+          "source_bounds": [
+            914,
+            902,
+            1151,
+            1150
+          ],
+          "source_origin": [
+            1015.5,
+            1147.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            47,
+            53,
+            162,
+            173
+          ],
+          "sha256": "920ce72f973671252f1ae31dafccda7a0f5d702ff96674231a43a89ea711d239"
+        },
+        {
+          "path": "res://assets/animated/iona/special-05.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 37,
+          "source_bounds": [
+            1138,
+            901,
+            1329,
+            1147
+          ],
+          "source_origin": [
+            1240.5,
+            1147.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            46,
+            53,
+            139,
+            172
+          ],
+          "sha256": "814a712530f13118438efb87a43913ed694e85def7d2f543c4154873d480e112"
+        },
+        {
+          "path": "res://assets/animated/iona/special-06.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 38,
+          "source_bounds": [
+            1345,
+            923,
+            1544,
+            1147
+          ],
+          "source_origin": [
+            1458.5,
+            1147.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            41,
+            63,
+            137,
+            172
+          ],
+          "sha256": "544e2806914d0a65846c024c354593701f8e2c967b7709ab24961714df8ca6dc"
+        },
+        {
+          "path": "res://assets/animated/iona/special-07.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 39,
+          "source_bounds": [
+            1563,
+            923,
+            1761,
+            1147
+          ],
+          "source_origin": [
+            1672.0,
+            1147.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            43,
+            63,
+            139,
+            172
+          ],
+          "sha256": "bb4cc8565c216e801986fc069b906e1768a0f14a0278b4dbbb02bdc12da16ac6"
+        }
+      ]
+    },
+    "guard": {
+      "frame_count": 8,
+      "durations": [
+        0.055,
+        0.055,
+        0.055,
+        0.055,
+        0.12,
+        0.12,
+        0.12,
+        0.12
+      ],
+      "duration": 0.7,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": 4,
+      "frames": [
+        {
+          "path": "res://assets/animated/iona/guard-00.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 40,
+          "source_bounds": [
+            23,
+            1167,
+            201,
+            1377
+          ],
+          "source_origin": [
+            110.0,
+            1379.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            54,
+            69,
+            140,
+            171
+          ],
+          "sha256": "f442ecd0073a57a14a7b0104ea64233e346080f95bbe567e130e4ccdeb8e738a"
+        },
+        {
+          "path": "res://assets/animated/iona/guard-01.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 41,
+          "source_bounds": [
+            247,
+            1170,
+            438,
+            1377
+          ],
+          "source_origin": [
+            332.0,
+            1379.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            55,
+            71,
+            148,
+            171
+          ],
+          "sha256": "4af1e14441b857c881cbc7df72b69edf2bdc6f80b4c1084f181f40f49e555972"
+        },
+        {
+          "path": "res://assets/animated/iona/guard-02.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 42,
+          "source_bounds": [
+            474,
+            1165,
+            659,
+            1378
+          ],
+          "source_origin": [
+            555.5,
+            1379.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            56,
+            68,
+            146,
+            171
+          ],
+          "sha256": "af3daba5b3e27518c71a682178560f1edfd770032dc5064e634e02741b817bb0"
+        },
+        {
+          "path": "res://assets/animated/iona/guard-03.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 43,
+          "source_bounds": [
+            688,
+            1162,
+            888,
+            1378
+          ],
+          "source_origin": [
+            782.0,
+            1379.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            50,
+            67,
+            147,
+            172
+          ],
+          "sha256": "6277f35821037e899593a846fc367b941197425864ad12c244e4db40fed335a7"
+        },
+        {
+          "path": "res://assets/animated/iona/guard-04.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 44,
+          "source_bounds": [
+            930,
+            1167,
+            1126,
+            1380
+          ],
+          "source_origin": [
+            1015.5,
+            1379.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            55,
+            69,
+            150,
+            172
+          ],
+          "sha256": "a78edf43e482a1da038fac756ced70816b59579c21a28951e45af9f1c0d81c9f"
+        },
+        {
+          "path": "res://assets/animated/iona/guard-05.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 45,
+          "source_bounds": [
+            1158,
+            1172,
+            1333,
+            1379
+          ],
+          "source_origin": [
+            1240.5,
+            1379.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            56,
+            72,
+            141,
+            172
+          ],
+          "sha256": "796e7e1ffa1a43c8110c49af6621ebbba6f27a590cf6cc2d206805935af02be9"
+        },
+        {
+          "path": "res://assets/animated/iona/guard-06.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 46,
+          "source_bounds": [
+            1358,
+            1169,
+            1550,
+            1379
+          ],
+          "source_origin": [
+            1458.5,
+            1379.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            47,
+            70,
+            140,
+            172
+          ],
+          "sha256": "fa058937f5667576cb2502c82357a2c03cc7001dda830cee6f1cdd80c712a9c3"
+        },
+        {
+          "path": "res://assets/animated/iona/guard-07.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 47,
+          "source_bounds": [
+            1579,
+            1167,
+            1763,
+            1379
+          ],
+          "source_origin": [
+            1672.0,
+            1379.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            51,
+            69,
+            140,
+            172
+          ],
+          "sha256": "457d05da2eb0b77bcb8e788a0a9dab66adddac46fe0d7bf95b7e684fcbc2953a"
+        }
+      ]
+    },
+    "hit": {
+      "frame_count": 8,
+      "durations": [
+        0.035,
+        0.065,
+        0.09,
+        0.12,
+        0.13,
+        0.15,
+        0.16,
+        0.18
+      ],
+      "duration": 0.9299999999999999,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/iona/hit-00.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 48,
+          "source_bounds": [
+            27,
+            1391,
+            210,
+            1589
+          ],
+          "source_origin": [
+            110.0,
+            1590.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            56,
+            76,
+            145,
+            172
+          ],
+          "sha256": "7171e1ea21e28467aa026261e1d766a55dc8bfe40c9848a61aafe0169eb7a8be"
+        },
+        {
+          "path": "res://assets/animated/iona/hit-01.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 49,
+          "source_bounds": [
+            233,
+            1408,
+            441,
+            1590
+          ],
+          "source_origin": [
+            332.0,
+            1590.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            48,
+            84,
+            149,
+            172
+          ],
+          "sha256": "f7cbacc0e240328900c6d91edb32bfb0f5481dc75fd25d06095d793ea2a2d132"
+        },
+        {
+          "path": "res://assets/animated/iona/hit-02.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 50,
+          "source_bounds": [
+            435,
+            1417,
+            660,
+            1590
+          ],
+          "source_origin": [
+            555.5,
+            1590.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            38,
+            88,
+            147,
+            172
+          ],
+          "sha256": "c4dc5c0b5bad3326f86626ae7ecdb9e4850679d1c66109c565e8b82c9a3172b8"
+        },
+        {
+          "path": "res://assets/animated/iona/hit-03.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 51,
+          "source_bounds": [
+            668,
+            1406,
+            904,
+            1590
+          ],
+          "source_origin": [
+            782.0,
+            1590.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            41,
+            83,
+            155,
+            172
+          ],
+          "sha256": "4f41ee0c45a3b1b9ce6e75aa0fceec0ed85e82ca868d9dcdfbd50d018d9dc9c9"
+        },
+        {
+          "path": "res://assets/animated/iona/hit-04.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 52,
+          "source_bounds": [
+            917,
+            1438,
+            1149,
+            1590
+          ],
+          "source_origin": [
+            1015.5,
+            1590.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            48,
+            98,
+            160,
+            172
+          ],
+          "sha256": "54c19ff1bf4d1f4f8725101c613c68c6172fd1d65b4bc88eb9ad82d1b6103155"
+        },
+        {
+          "path": "res://assets/animated/iona/hit-05.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 53,
+          "source_bounds": [
+            1146,
+            1414,
+            1364,
+            1590
+          ],
+          "source_origin": [
+            1240.5,
+            1590.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            50,
+            87,
+            156,
+            172
+          ],
+          "sha256": "7fbbfdaf93e537d1abc95b7923da22fed8f1f8af53d46dc68a1136dafdcceb0d"
+        },
+        {
+          "path": "res://assets/animated/iona/hit-06.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 54,
+          "source_bounds": [
+            1368,
+            1396,
+            1584,
+            1589
+          ],
+          "source_origin": [
+            1458.5,
+            1590.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            52,
+            78,
+            157,
+            172
+          ],
+          "sha256": "78973b91e8f1f725c37815b42cc544baf831c270ab72ed846289fd5b46da23eb"
+        },
+        {
+          "path": "res://assets/animated/iona/hit-07.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 55,
+          "source_bounds": [
+            1588,
+            1394,
+            1755,
+            1590
+          ],
+          "source_origin": [
+            1672.0,
+            1590.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            55,
+            77,
+            136,
+            172
+          ],
+          "sha256": "237bccb299e48e40c91afdd6669b06f9d73f9de6b8ba7336544c0fac9f06670c"
+        }
+      ]
+    },
+    "defeat": {
+      "frame_count": 8,
+      "durations": [
+        0.08,
+        0.1,
+        0.1,
+        0.12,
+        0.15,
+        0.18,
+        0.24,
+        0.3
+      ],
+      "duration": 1.27,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/iona/defeat-00.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 56,
+          "source_bounds": [
+            27,
+            1600,
+            211,
+            1766
+          ],
+          "source_origin": [
+            110.0,
+            1766.25
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            56,
+            91,
+            145,
+            171
+          ],
+          "sha256": "315e78c60c0dc7e4cba5d9da84d87c9e363f41e4cf8aeafe687a457ad4d2a0e9"
+        },
+        {
+          "path": "res://assets/animated/iona/defeat-01.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 57,
+          "source_bounds": [
+            248,
+            1607,
+            451,
+            1766
+          ],
+          "source_origin": [
+            332.0,
+            1766.25
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            55,
+            95,
+            153,
+            172
+          ],
+          "sha256": "0ac6bb6c2333a03ea0254cbcefd42f06749ea1a4e92d97d37c232487a3f8b420"
+        },
+        {
+          "path": "res://assets/animated/iona/defeat-02.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 58,
+          "source_bounds": [
+            465,
+            1603,
+            652,
+            1767
+          ],
+          "source_origin": [
+            555.5,
+            1766.25
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            52,
+            93,
+            143,
+            173
+          ],
+          "sha256": "02b8208fca3ecbb1af92c142b1da3ba374ed41651a848b3788e7d10403603654"
+        },
+        {
+          "path": "res://assets/animated/iona/defeat-03.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 59,
+          "source_bounds": [
+            684,
+            1595,
+            879,
+            1766
+          ],
+          "source_origin": [
+            782.0,
+            1766.25
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            48,
+            89,
+            143,
+            172
+          ],
+          "sha256": "313b567d960e626bd25769186f453d8e77889d3e9f3cc71bb8a2f2c9e13812b9"
+        },
+        {
+          "path": "res://assets/animated/iona/defeat-04.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 60,
+          "source_bounds": [
+            905,
+            1603,
+            1116,
+            1767
+          ],
+          "source_origin": [
+            1015.5,
+            1766.25
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            42,
+            93,
+            144,
+            173
+          ],
+          "sha256": "791b020d3a85656fa50e0f07df5705c648fce794bd85d6d89551580b8cac487e"
+        },
+        {
+          "path": "res://assets/animated/iona/defeat-05.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 61,
+          "source_bounds": [
+            1137,
+            1612,
+            1344,
+            1766
+          ],
+          "source_origin": [
+            1240.5,
+            1766.25
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            46,
+            97,
+            146,
+            172
+          ],
+          "sha256": "77db3ced94980586e5609b52968d576d35f035eeda46865cbff59847df929578"
+        },
+        {
+          "path": "res://assets/animated/iona/defeat-06.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 62,
+          "source_bounds": [
+            1334,
+            1610,
+            1540,
+            1766
+          ],
+          "source_origin": [
+            1458.5,
+            1766.25
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            36,
+            96,
+            136,
+            172
+          ],
+          "sha256": "8dead5df2aac818d331aedbd9ab9a7a9e668b1aef344e3cb4972089d8568cd78"
+        },
+        {
+          "path": "res://assets/animated/iona/defeat-07.png",
+          "source": "art-source/animated/iona-64.png",
+          "slot": 63,
+          "source_bounds": [
+            1542,
+            1673,
+            1770,
+            1765
+          ],
+          "source_origin": [
+            1672.0,
+            1766.25
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            33,
+            127,
+            144,
+            172
+          ],
+          "sha256": "237881cc5edb5222f7c49925d131c36363d25ee2b3ec787fbdaa29b2b7750b39"
+        }
+      ]
+    },
+    "jump": {
+      "frame_count": 8,
+      "durations": [
+        0.08,
+        0.055,
+        0.08,
+        0.11,
+        0.11,
+        0.08,
+        0.07,
+        0.115
+      ],
+      "duration": 0.7000000000000001,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/iona/jump-00.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 32,
+          "source_bounds": [
+            27,
+            646,
+            137,
+            776
+          ],
+          "source_origin": [
+            82.5,
+            776.0
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            52,
+            69,
+            139,
+            172
+          ],
+          "sha256": "dcdff6f936f4d01053ec71f338ba080e76141cceb9f6f421859088468330fb93",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/iona/jump-01.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 33,
+          "source_bounds": [
+            187,
+            660,
+            305,
+            777
+          ],
+          "source_origin": [
+            251.0,
+            777.0
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            45,
+            79,
+            138,
+            172
+          ],
+          "sha256": "37f65d41d101eef3596de77c8221fbdf643837ad929fa9a46e54c6373cc72993",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/iona/jump-02.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 34,
+          "source_bounds": [
+            344,
+            644,
+            456,
+            777
+          ],
+          "source_origin": [
+            404.5,
+            777.0
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            48,
+            67,
+            137,
+            172
+          ],
+          "sha256": "23f9fedbf7da52050a9de7483726944d6c0c65eb8c2c439cccb62c5387fedfe4",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/iona/jump-03.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 35,
+          "source_bounds": [
+            490,
+            642,
+            614,
+            755
+          ],
+          "source_origin": [
+            548.0,
+            755.0
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            50,
+            83,
+            148,
+            172
+          ],
+          "sha256": "f968ccf8091128c59b4841f4dacc73d7ec24b5602ea33f8918c3dc987e70391a",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/iona/jump-04.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 36,
+          "source_bounds": [
+            644,
+            651,
+            763,
+            770
+          ],
+          "source_origin": [
+            704.0,
+            770.0
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            48,
+            78,
+            142,
+            172
+          ],
+          "sha256": "af536337ce3c13c9a6bc51bd985c7c9144009e66a45ab08569be745deb16c463",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/iona/jump-05.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 37,
+          "source_bounds": [
+            809,
+            652,
+            918,
+            777
+          ],
+          "source_origin": [
+            864.5,
+            777.0
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            52,
+            73,
+            138,
+            172
+          ],
+          "sha256": "6f36ce8433d54e03adb113fa101f755cbead608a44006cd050ca37ddcfacd2ed",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/iona/jump-06.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 38,
+          "source_bounds": [
+            964,
+            662,
+            1078,
+            778
+          ],
+          "source_origin": [
+            1014.5,
+            778.0
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            56,
+            80,
+            146,
+            172
+          ],
+          "sha256": "305815e2fd02dff7499919232260ed3824b3637f160bc91c04a19fe3b860edf0",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/iona/jump-07.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 39,
+          "source_bounds": [
+            1121,
+            653,
+            1232,
+            777
+          ],
+          "source_origin": [
+            1169.0,
+            777.0
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            58,
+            74,
+            146,
+            172
+          ],
+          "sha256": "07bb2633c92847aa3754e4471d1e39fd9d5c461408e32212b86d01f54ba433a9",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "stair_up": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/iona/stair_up-00.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 40,
+          "source_bounds": [
+            30,
+            796,
+            140,
+            934
+          ],
+          "source_origin": [
+            82.5,
+            934.0
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            54,
+            63,
+            141,
+            172
+          ],
+          "sha256": "d246406082194f816be5075d4350a8c34ea72e38d8d3e2c7fb1069e2e436b736",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/iona/stair_up-01.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 41,
+          "source_bounds": [
+            186,
+            797,
+            296,
+            933
+          ],
+          "source_origin": [
+            251.0,
+            933.0
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            45,
+            64,
+            132,
+            172
+          ],
+          "sha256": "1f1b1ac539c66bf58662fe9c677e3e9050c954873ecd80adf3cd5683dc988df5",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/iona/stair_up-02.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 42,
+          "source_bounds": [
+            340,
+            789,
+            451,
+            934
+          ],
+          "source_origin": [
+            404.5,
+            934.0
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            45,
+            57,
+            133,
+            172
+          ],
+          "sha256": "41e01be2654a484a95941f1b773ad26c66292a15b1e267a66aafb47f886280f6",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/iona/stair_up-03.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 43,
+          "source_bounds": [
+            501,
+            789,
+            605,
+            934
+          ],
+          "source_origin": [
+            548.0,
+            934.0
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            59,
+            57,
+            141,
+            172
+          ],
+          "sha256": "259ea90fc1eca60b807e642e49c86b28db6508cb70f8a1d6f4e620c17ace8598",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/iona/stair_up-04.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 44,
+          "source_bounds": [
+            657,
+            796,
+            764,
+            934
+          ],
+          "source_origin": [
+            704.0,
+            934.0
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            59,
+            63,
+            144,
+            172
+          ],
+          "sha256": "b102a119f786c68f49cb56a3a46513afa2310cdfee4165e611c5714728c28328",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/iona/stair_up-05.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 45,
+          "source_bounds": [
+            815,
+            793,
+            922,
+            934
+          ],
+          "source_origin": [
+            864.5,
+            934.0
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            57,
+            60,
+            142,
+            172
+          ],
+          "sha256": "abc771931ae591c2f827d0ef14d01ca4d7845a6c060c0f62624809b4f82d3787",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/iona/stair_up-06.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 46,
+          "source_bounds": [
+            970,
+            789,
+            1077,
+            934
+          ],
+          "source_origin": [
+            1014.5,
+            934.0
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            61,
+            57,
+            146,
+            172
+          ],
+          "sha256": "d44d4c58ab820b90255a77a54b3ea3b364e4da50d117a53fbbdf0a43dc7bf9d6",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/iona/stair_up-07.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 47,
+          "source_bounds": [
+            1126,
+            790,
+            1236,
+            934
+          ],
+          "source_origin": [
+            1169.0,
+            934.0
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            62,
+            58,
+            149,
+            172
+          ],
+          "sha256": "f436ef2a61af53b201b43cba9e46ef6132600b487d89346045385f165803bf03",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "stair_down": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/iona/stair_down-00.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 48,
+          "source_bounds": [
+            39,
+            943,
+            145,
+            1087
+          ],
+          "source_origin": [
+            82.5,
+            1087.0
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            62,
+            58,
+            146,
+            172
+          ],
+          "sha256": "0d26cad3cf970fc9f295c7d80c8afa46d1b6d827ddbda0f5d8efc61f2896b998",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/iona/stair_down-01.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 49,
+          "source_bounds": [
+            193,
+            955,
+            302,
+            1087
+          ],
+          "source_origin": [
+            251.0,
+            1087.0
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            50,
+            67,
+            136,
+            172
+          ],
+          "sha256": "0c98e0f4d25f06ad5e2f97db9855b5d37628ccf6656945d7009ef89d65c27679",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/iona/stair_down-02.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 50,
+          "source_bounds": [
+            340,
+            958,
+            459,
+            1087
+          ],
+          "source_origin": [
+            404.5,
+            1087.0
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            45,
+            70,
+            139,
+            172
+          ],
+          "sha256": "6f2b3486682afbcdcb8abbafc79b8ee0f5860fc406836c58b5de960a8586bb3d",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/iona/stair_down-03.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 51,
+          "source_bounds": [
+            497,
+            958,
+            612,
+            1087
+          ],
+          "source_origin": [
+            548.0,
+            1087.0
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            56,
+            70,
+            147,
+            172
+          ],
+          "sha256": "a9c0712c9bd5b847952d6534e7711ff9738537db1419d7630c2669c0e7c1c58b",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/iona/stair_down-04.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 52,
+          "source_bounds": [
+            647,
+            952,
+            772,
+            1087
+          ],
+          "source_origin": [
+            704.0,
+            1087.0
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            51,
+            65,
+            150,
+            172
+          ],
+          "sha256": "13aead6348a407f5b079f0f7cd0190290e22b141aa9d5e14447a5e172c441448",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/iona/stair_down-05.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 53,
+          "source_bounds": [
+            803,
+            959,
+            928,
+            1087
+          ],
+          "source_origin": [
+            864.5,
+            1087.0
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            47,
+            71,
+            146,
+            172
+          ],
+          "sha256": "692776120a9a1871fcca3421d2aca84651bc26a14e2546fac4494ebca61d75be",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/iona/stair_down-06.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 54,
+          "source_bounds": [
+            963,
+            961,
+            1082,
+            1087
+          ],
+          "source_origin": [
+            1014.5,
+            1087.0
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            55,
+            72,
+            149,
+            172
+          ],
+          "sha256": "b69ebb8c81003925ebc5dffceedc45e09cbad688d65935ba06fbc93f3b6d7b6b",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/iona/stair_down-07.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 55,
+          "source_bounds": [
+            1116,
+            968,
+            1232,
+            1087
+          ],
+          "source_origin": [
+            1169.0,
+            1087.0
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            54,
+            78,
+            146,
+            172
+          ],
+          "sha256": "7c5962092f339936f76af67821a9dfbb19047775339ecce9369f9faa1c895424",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "dodge": {
+      "frame_count": 8,
+      "durations": [
+        0.055,
+        0.045,
+        0.04,
+        0.045,
+        0.06,
+        0.07,
+        0.08,
+        0.1
+      ],
+      "duration": 0.495,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/iona/dodge-00.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 56,
+          "source_bounds": [
+            28,
+            1107,
+            137,
+            1238
+          ],
+          "source_origin": [
+            82.5,
+            1238.0
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            53,
+            68,
+            139,
+            172
+          ],
+          "sha256": "73f5cf57c51c439879e6210404d5ba0d17438714bd9eb9a11d84b36bde180eb1",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/iona/dodge-01.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 57,
+          "source_bounds": [
+            180,
+            1123,
+            294,
+            1238
+          ],
+          "source_origin": [
+            251.0,
+            1238.0
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            40,
+            81,
+            130,
+            172
+          ],
+          "sha256": "f2e60942816c0ecddf7490e8ce2cf29debc772a7385cd022ef71e39e8d6235fe",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/iona/dodge-02.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 58,
+          "source_bounds": [
+            319,
+            1132,
+            456,
+            1236
+          ],
+          "source_origin": [
+            404.5,
+            1236.0
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            28,
+            90,
+            136,
+            172
+          ],
+          "sha256": "8f8ee4d51cde7cd559384798445e2c7007e2299bafe6e8e040b4bcea6c24ed1d",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/iona/dodge-03.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 59,
+          "source_bounds": [
+            475,
+            1133,
+            618,
+            1235
+          ],
+          "source_origin": [
+            548.0,
+            1235.0
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            38,
+            91,
+            151,
+            172
+          ],
+          "sha256": "659e9ffa622c5d8aa75fc656d3635e5b2e0df75753793ee2605c03aab8891e12",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/iona/dodge-04.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 60,
+          "source_bounds": [
+            638,
+            1135,
+            784,
+            1235
+          ],
+          "source_origin": [
+            704.0,
+            1235.0
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            44,
+            93,
+            160,
+            172
+          ],
+          "sha256": "b0cea0d10bde427c02e74fd18b04458615f9c7580494b98912c8fc1db931ba87",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/iona/dodge-05.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 61,
+          "source_bounds": [
+            809,
+            1136,
+            949,
+            1235
+          ],
+          "source_origin": [
+            864.5,
+            1235.0
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            52,
+            94,
+            163,
+            172
+          ],
+          "sha256": "37bd7c107a254dae93fdfc0cfe1de343fbc31e42b0bb7dd507231e09b626f254",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/iona/dodge-06.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 62,
+          "source_bounds": [
+            964,
+            1111,
+            1080,
+            1239
+          ],
+          "source_origin": [
+            1014.5,
+            1239.0
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            56,
+            71,
+            148,
+            172
+          ],
+          "sha256": "d3e1fa59d26a0817ab016b18e46032e77c94d08470164e0d57c5e82b8e40e4f8",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/iona/dodge-07.png",
+          "source": "art-source/animated/v3/iona-extension64.png",
+          "slot": 63,
+          "source_bounds": [
+            1120,
+            1108,
+            1229,
+            1238
+          ],
+          "source_origin": [
+            1169.0,
+            1238.0
+          ],
+          "scale": 0.7917525773195876,
+          "packed_bounds": [
+            57,
+            69,
+            143,
+            172
+          ],
+          "sha256": "864a8eaedb041cec7b518004a9e035c6a8a7ea7974518913c805aec0df7ae78c",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "powered_idle": {
+      "frame_count": 8,
+      "durations": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ],
+      "duration": 1.6,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/iona/powered_idle-00.png",
+          "source": "art-source/animated/v3/iona-powered40.png",
+          "slot": 0,
+          "source_bounds": [
+            25,
+            47,
+            185,
+            211
+          ],
+          "source_origin": [
+            103.0,
+            212.0
+          ],
+          "scale": 0.6295081967213115,
+          "packed_bounds": [
+            47,
+            68,
+            148,
+            171
+          ],
+          "sha256": "bf79c549fafa6fc1fccbcc1a46e651b4f84315f43b3ead1715b61a708a65eaee"
+        },
+        {
+          "path": "res://assets/animated/iona/powered_idle-01.png",
+          "source": "art-source/animated/v3/iona-powered40.png",
+          "slot": 1,
+          "source_bounds": [
+            214,
+            47,
+            377,
+            211
+          ],
+          "source_origin": [
+            295.5,
+            212.0
+          ],
+          "scale": 0.6295081967213115,
+          "packed_bounds": [
+            45,
+            68,
+            148,
+            171
+          ],
+          "sha256": "6f47cf75cdf384f2be487136c84d845281fa20a80293aefa14c167e9e780520e"
+        },
+        {
+          "path": "res://assets/animated/iona/powered_idle-02.png",
+          "source": "art-source/animated/v3/iona-powered40.png",
+          "slot": 2,
+          "source_bounds": [
+            406,
+            47,
+            568,
+            212
+          ],
+          "source_origin": [
+            476.5,
+            212.0
+          ],
+          "scale": 0.6295081967213115,
+          "packed_bounds": [
+            52,
+            68,
+            154,
+            172
+          ],
+          "sha256": "c9a1503e12d5a602b34b33443165a23963dfbe478dce26b1f653ec823f273f6c"
+        },
+        {
+          "path": "res://assets/animated/iona/powered_idle-03.png",
+          "source": "art-source/animated/v3/iona-powered40.png",
+          "slot": 3,
+          "source_bounds": [
+            599,
+            45,
+            757,
+            211
+          ],
+          "source_origin": [
+            672.0,
+            212.0
+          ],
+          "scale": 0.6295081967213115,
+          "packed_bounds": [
+            50,
+            67,
+            149,
+            171
+          ],
+          "sha256": "40e5d32df8fd7cca5c329f94b188fd05eab847b6791c8473a3fc4b91af9733c6"
+        },
+        {
+          "path": "res://assets/animated/iona/powered_idle-04.png",
+          "source": "art-source/animated/v3/iona-powered40.png",
+          "slot": 4,
+          "source_bounds": [
+            787,
+            45,
+            943,
+            212
+          ],
+          "source_origin": [
+            873.0,
+            212.0
+          ],
+          "scale": 0.6295081967213115,
+          "packed_bounds": [
+            42,
+            67,
+            140,
+            172
+          ],
+          "sha256": "728405425c8eab10ab7a900d0fed00988963d53224fc50588baef17c037824f2"
+        },
+        {
+          "path": "res://assets/animated/iona/powered_idle-05.png",
+          "source": "art-source/animated/v3/iona-powered40.png",
+          "slot": 5,
+          "source_bounds": [
+            975,
+            44,
+            1135,
+            212
+          ],
+          "source_origin": [
+            1063.0,
+            212.0
+          ],
+          "scale": 0.6295081967213115,
+          "packed_bounds": [
+            41,
+            67,
+            142,
+            172
+          ],
+          "sha256": "2459741a6f2a392bea880302128846990a8317686ab4bf7c17ea5a51078c33f5"
+        },
+        {
+          "path": "res://assets/animated/iona/powered_idle-06.png",
+          "source": "art-source/animated/v3/iona-powered40.png",
+          "slot": 6,
+          "source_bounds": [
+            1165,
+            41,
+            1322,
+            212
+          ],
+          "source_origin": [
+            1249.5,
+            212.0
+          ],
+          "scale": 0.6295081967213115,
+          "packed_bounds": [
+            43,
+            64,
+            142,
+            172
+          ],
+          "sha256": "d8b7625da7b8e5adfba998ff2099aa71d513e4f5a35c5f1e3c2246352bdaefae"
+        },
+        {
+          "path": "res://assets/animated/iona/powered_idle-07.png",
+          "source": "art-source/animated/v3/iona-powered40.png",
+          "slot": 7,
+          "source_bounds": [
+            1356,
+            40,
+            1514,
+            212
+          ],
+          "source_origin": [
+            1439.5,
+            212.0
+          ],
+          "scale": 0.6295081967213115,
+          "packed_bounds": [
+            43,
+            64,
+            142,
+            172
+          ],
+          "sha256": "f53f20a3ee52a4f9dc0e11fe86309d09e9c655e70029f4c99f04fe6383c52f7c"
+        }
+      ]
+    },
+    "powered_walk": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/iona/powered_walk-00.png",
+          "source": "art-source/animated/v3/iona-powered40.png",
+          "slot": 8,
+          "source_bounds": [
+            23,
+            251,
+            206,
+            412
+          ],
+          "source_origin": [
+            103.0,
+            413.25
+          ],
+          "scale": 0.6295081967213115,
+          "packed_bounds": [
+            46,
+            70,
+            161,
+            171
+          ],
+          "sha256": "dd9f39b156823c75c905ece34ca6cc570c5b1b69acdd3a19b2488e3997069fbf"
+        },
+        {
+          "path": "res://assets/animated/iona/powered_walk-01.png",
+          "source": "art-source/animated/v3/iona-powered40.png",
+          "slot": 9,
+          "source_bounds": [
+            217,
+            251,
+            402,
+            412
+          ],
+          "source_origin": [
+            295.5,
+            413.25
+          ],
+          "scale": 0.6295081967213115,
+          "packed_bounds": [
+            47,
+            70,
+            163,
+            171
+          ],
+          "sha256": "51f8fd1e06fdadf379740922ad22b1e41c176b2d546afcef11f4604f2a355b04"
+        },
+        {
+          "path": "res://assets/animated/iona/powered_walk-02.png",
+          "source": "art-source/animated/v3/iona-powered40.png",
+          "slot": 10,
+          "source_bounds": [
+            408,
+            251,
+            591,
+            413
+          ],
+          "source_origin": [
+            476.5,
+            413.25
+          ],
+          "scale": 0.6295081967213115,
+          "packed_bounds": [
+            53,
+            70,
+            168,
+            172
+          ],
+          "sha256": "42629afc339b5158e45ad3ac3cd548536969044ddc5760773ccae18b98febb1f"
+        },
+        {
+          "path": "res://assets/animated/iona/powered_walk-03.png",
+          "source": "art-source/animated/v3/iona-powered40.png",
+          "slot": 11,
+          "source_bounds": [
+            599,
+            253,
+            781,
+            413
+          ],
+          "source_origin": [
+            672.0,
+            413.25
+          ],
+          "scale": 0.6295081967213115,
+          "packed_bounds": [
+            50,
+            71,
+            165,
+            172
+          ],
+          "sha256": "1817b63d419d45884a98580864f662b9dec8148a722c2a6d60b53e03b35d0e4c"
+        },
+        {
+          "path": "res://assets/animated/iona/powered_walk-04.png",
+          "source": "art-source/animated/v3/iona-powered40.png",
+          "slot": 12,
+          "source_bounds": [
+            785,
+            253,
+            967,
+            413
+          ],
+          "source_origin": [
+            873.0,
+            413.25
+          ],
+          "scale": 0.6295081967213115,
+          "packed_bounds": [
+            41,
+            71,
+            156,
+            172
+          ],
+          "sha256": "d2b39015e795219a54212467300fa299ec3375d55a983e229a39dbdf9d23217e"
+        },
+        {
+          "path": "res://assets/animated/iona/powered_walk-05.png",
+          "source": "art-source/animated/v3/iona-powered40.png",
+          "slot": 13,
+          "source_bounds": [
+            971,
+            253,
+            1161,
+            413
+          ],
+          "source_origin": [
+            1063.0,
+            413.25
+          ],
+          "scale": 0.6295081967213115,
+          "packed_bounds": [
+            38,
+            71,
+            158,
+            172
+          ],
+          "sha256": "7e269f94be9753af97ff57528ad2b6070c8ecd14446e537c343af250829a178c"
+        },
+        {
+          "path": "res://assets/animated/iona/powered_walk-06.png",
+          "source": "art-source/animated/v3/iona-powered40.png",
+          "slot": 14,
+          "source_bounds": [
+            1157,
+            251,
+            1339,
+            414
+          ],
+          "source_origin": [
+            1249.5,
+            413.25
+          ],
+          "scale": 0.6295081967213115,
+          "packed_bounds": [
+            38,
+            70,
+            153,
+            173
+          ],
+          "sha256": "128e6a2ab98720773dbb6353bb3022e2636ae7272acf6a6b96abcb9a882f7d8d"
+        },
+        {
+          "path": "res://assets/animated/iona/powered_walk-07.png",
+          "source": "art-source/animated/v3/iona-powered40.png",
+          "slot": 15,
+          "source_bounds": [
+            1354,
+            254,
+            1528,
+            414
+          ],
+          "source_origin": [
+            1439.5,
+            413.25
+          ],
+          "scale": 0.6295081967213115,
+          "packed_bounds": [
+            42,
+            72,
+            152,
+            173
+          ],
+          "sha256": "8143581cb70564e1fb77288e0d4480c2c650c34880f07d215b2f3ff502dab62d"
+        }
+      ]
+    },
+    "powered_primary": {
+      "frame_count": 8,
+      "durations": [
+        0.07,
+        0.07,
+        0.08,
+        0.11,
+        0.04,
+        0.055,
+        0.085,
+        0.13
+      ],
+      "duration": 0.64,
+      "loop": false,
+      "release_frame": 4,
+      "release_time": 0.33,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/iona/powered_primary-00.png",
+          "source": "art-source/animated/v3/iona-powered-primary8.png",
+          "slot": 0,
+          "source_bounds": [
+            80,
+            171,
+            306,
+            433
+          ],
+          "source_origin": [
+            230.5,
+            433.0
+          ],
+          "scale": 0.493573264781491,
+          "packed_bounds": [
+            22,
+            43,
+            134,
+            172
+          ],
+          "sha256": "8bca0a258b5b9f92be683f10ca25d89078240faa49fe1d2beae712f08d19ecf6"
+        },
+        {
+          "path": "res://assets/animated/iona/powered_primary-01.png",
+          "source": "art-source/animated/v3/iona-powered-primary8.png",
+          "slot": 1,
+          "source_bounds": [
+            530,
+            236,
+            816,
+            433
+          ],
+          "source_origin": [
+            681.0,
+            433.0
+          ],
+          "scale": 0.493573264781491,
+          "packed_bounds": [
+            21,
+            75,
+            162,
+            172
+          ],
+          "sha256": "bdcc0eeed566b6192125160e8a38acf7232a55c658f627eb99ffe61a446f704f"
+        },
+        {
+          "path": "res://assets/animated/iona/powered_primary-02.png",
+          "source": "art-source/animated/v3/iona-powered-primary8.png",
+          "slot": 2,
+          "source_bounds": [
+            962,
+            233,
+            1257,
+            433
+          ],
+          "source_origin": [
+            1118.0,
+            433.0
+          ],
+          "scale": 0.493573264781491,
+          "packed_bounds": [
+            19,
+            73,
+            165,
+            172
+          ],
+          "sha256": "3a24b3d1267b136e6c30b2d18e9447c26b0e38a3ecc4b472d749fb78a0e05da2"
+        },
+        {
+          "path": "res://assets/animated/iona/powered_primary-03.png",
+          "source": "art-source/animated/v3/iona-powered-primary8.png",
+          "slot": 3,
+          "source_bounds": [
+            1412,
+            238,
+            1748,
+            432
+          ],
+          "source_origin": [
+            1554.5,
+            433.0
+          ],
+          "scale": 0.493573264781491,
+          "packed_bounds": [
+            26,
+            76,
+            192,
+            172
+          ],
+          "sha256": "ad054e250e8cd270567451e9cbb25e96875d37c317f69fea37dbdbbb8ac1182c"
+        },
+        {
+          "path": "res://assets/animated/iona/powered_primary-04.png",
+          "source": "art-source/animated/v3/iona-powered-primary8.png",
+          "slot": 4,
+          "source_bounds": [
+            76,
+            660,
+            461,
+            839
+          ],
+          "source_origin": [
+            230.5,
+            839.0
+          ],
+          "scale": 0.493573264781491,
+          "packed_bounds": [
+            20,
+            84,
+            210,
+            172
+          ],
+          "sha256": "0584d1cd7d7f223d5197fd1696775d46944d9f14b200fd3499fbd28b791e9803"
+        },
+        {
+          "path": "res://assets/animated/iona/powered_primary-05.png",
+          "source": "art-source/animated/v3/iona-powered-primary8.png",
+          "slot": 5,
+          "source_bounds": [
+            524,
+            643,
+            862,
+            839
+          ],
+          "source_origin": [
+            681.0,
+            839.0
+          ],
+          "scale": 0.493573264781491,
+          "packed_bounds": [
+            19,
+            75,
+            186,
+            172
+          ],
+          "sha256": "745dff1f483982887541fc097f0ea971429efce92f09a961584a8c79ccaa909e"
+        },
+        {
+          "path": "res://assets/animated/iona/powered_primary-06.png",
+          "source": "art-source/animated/v3/iona-powered-primary8.png",
+          "slot": 6,
+          "source_bounds": [
+            982,
+            635,
+            1272,
+            839
+          ],
+          "source_origin": [
+            1118.0,
+            839.0
+          ],
+          "scale": 0.493573264781491,
+          "packed_bounds": [
+            29,
+            71,
+            172,
+            172
+          ],
+          "sha256": "9007198e3cb5eb0e737476f9fda16018f25ddc9ac5b396ca94b6440c7eb500fb"
+        },
+        {
+          "path": "res://assets/animated/iona/powered_primary-07.png",
+          "source": "art-source/animated/v3/iona-powered-primary8.png",
+          "slot": 7,
+          "source_bounds": [
+            1409,
+            576,
+            1636,
+            839
+          ],
+          "source_origin": [
+            1554.5,
+            839.0
+          ],
+          "scale": 0.493573264781491,
+          "packed_bounds": [
+            24,
+            42,
+            136,
+            172
+          ],
+          "sha256": "6beb73a58ed3fff43813943d08de0aa2d75d1b39975783b7b66fa166bb449bf2"
+        }
+      ],
+      "release_anchor": [
+        113,
+        -68
+      ],
+      "contact_reach": 113
+    },
+    "powered_guard": {
+      "frame_count": 8,
+      "durations": [
+        0.055,
+        0.055,
+        0.055,
+        0.055,
+        0.12,
+        0.12,
+        0.12,
+        0.12
+      ],
+      "duration": 0.7,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": 4,
+      "frames": [
+        {
+          "path": "res://assets/animated/iona/powered_guard-00.png",
+          "source": "art-source/animated/v3/iona-powered40.png",
+          "slot": 24,
+          "source_bounds": [
+            26,
+            646,
+            181,
+            801
+          ],
+          "source_origin": [
+            103.0,
+            802.0
+          ],
+          "scale": 0.6295081967213115,
+          "packed_bounds": [
+            48,
+            74,
+            146,
+            172
+          ],
+          "sha256": "3b8b0a07eb12a4e2b81236ea393bd7037dbbed0aed0c8f17d925d4026d9d3fc9"
+        },
+        {
+          "path": "res://assets/animated/iona/powered_guard-01.png",
+          "source": "art-source/animated/v3/iona-powered40.png",
+          "slot": 25,
+          "source_bounds": [
+            214,
+            626,
+            362,
+            802
+          ],
+          "source_origin": [
+            295.5,
+            802.0
+          ],
+          "scale": 0.6295081967213115,
+          "packed_bounds": [
+            45,
+            61,
+            138,
+            172
+          ],
+          "sha256": "512aecba0f639c20058ffcd97399dea60c92cb2f9743c574ccafcd8d81fd6244"
+        },
+        {
+          "path": "res://assets/animated/iona/powered_guard-02.png",
+          "source": "art-source/animated/v3/iona-powered40.png",
+          "slot": 26,
+          "source_bounds": [
+            395,
+            630,
+            563,
+            801
+          ],
+          "source_origin": [
+            476.5,
+            802.0
+          ],
+          "scale": 0.6295081967213115,
+          "packed_bounds": [
+            45,
+            64,
+            151,
+            172
+          ],
+          "sha256": "3e4271b2477a6c6cbef734826bc689e1fbd8b588d2fec08808063e5be3fe5559"
+        },
+        {
+          "path": "res://assets/animated/iona/powered_guard-03.png",
+          "source": "art-source/animated/v3/iona-powered40.png",
+          "slot": 27,
+          "source_bounds": [
+            587,
+            644,
+            770,
+            801
+          ],
+          "source_origin": [
+            672.0,
+            802.0
+          ],
+          "scale": 0.6295081967213115,
+          "packed_bounds": [
+            42,
+            73,
+            157,
+            172
+          ],
+          "sha256": "a68f982728a5d273676b52524511e9475b407ee5eacadd665f397203aafe9cd2"
+        },
+        {
+          "path": "res://assets/animated/iona/powered_guard-04.png",
+          "source": "art-source/animated/v3/iona-powered40.png",
+          "slot": 28,
+          "source_bounds": [
+            777,
+            642,
+            959,
+            801
+          ],
+          "source_origin": [
+            873.0,
+            802.0
+          ],
+          "scale": 0.6295081967213115,
+          "packed_bounds": [
+            36,
+            71,
+            151,
+            171
+          ],
+          "sha256": "730ec09f99d49a4e65e577eed900decc122ba8913fd1cb734306be85baaa4224"
+        },
+        {
+          "path": "res://assets/animated/iona/powered_guard-05.png",
+          "source": "art-source/animated/v3/iona-powered40.png",
+          "slot": 29,
+          "source_bounds": [
+            973,
+            639,
+            1141,
+            802
+          ],
+          "source_origin": [
+            1063.0,
+            802.0
+          ],
+          "scale": 0.6295081967213115,
+          "packed_bounds": [
+            39,
+            70,
+            144,
+            172
+          ],
+          "sha256": "3ebe9f892fc27b7cda3b56705827a38aacd53b8db6a6f8480e82e32b086cb982"
+        },
+        {
+          "path": "res://assets/animated/iona/powered_guard-06.png",
+          "source": "art-source/animated/v3/iona-powered40.png",
+          "slot": 30,
+          "source_bounds": [
+            1166,
+            635,
+            1329,
+            801
+          ],
+          "source_origin": [
+            1249.5,
+            802.0
+          ],
+          "scale": 0.6295081967213115,
+          "packed_bounds": [
+            43,
+            67,
+            146,
+            171
+          ],
+          "sha256": "517166122ff8ba9e1a5c870762aa07d9f2573f57e7339d100677aa42246e7d86"
+        },
+        {
+          "path": "res://assets/animated/iona/powered_guard-07.png",
+          "source": "art-source/animated/v3/iona-powered40.png",
+          "slot": 31,
+          "source_bounds": [
+            1358,
+            647,
+            1520,
+            804
+          ],
+          "source_origin": [
+            1439.5,
+            802.0
+          ],
+          "scale": 0.6295081967213115,
+          "packed_bounds": [
+            45,
+            74,
+            147,
+            173
+          ],
+          "sha256": "84ca643d3890df29d7e72e5511b39b24db4151f56bfd5cac6e3848272bd55bd6"
+        }
+      ]
+    },
+    "powered_exit": {
+      "frame_count": 8,
+      "durations": [
+        0.11,
+        0.1,
+        0.1,
+        0.09,
+        0.09,
+        0.1,
+        0.12,
+        0.15
+      ],
+      "duration": 0.86,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/iona/powered_exit-00.png",
+          "source": "art-source/animated/v3/iona-powered40.png",
+          "slot": 32,
+          "source_bounds": [
+            25,
+            843,
+            192,
+            1000
+          ],
+          "source_origin": [
+            103.0,
+            1000.75
+          ],
+          "scale": 0.6295081967213115,
+          "packed_bounds": [
+            47,
+            73,
+            152,
+            172
+          ],
+          "sha256": "44e6574cc55da79e832fddc44266678954deeb883446c449a0c79fecc525c0a5"
+        },
+        {
+          "path": "res://assets/animated/iona/powered_exit-01.png",
+          "source": "art-source/animated/v3/iona-powered40.png",
+          "slot": 33,
+          "source_bounds": [
+            214,
+            843,
+            389,
+            1000
+          ],
+          "source_origin": [
+            295.5,
+            1000.75
+          ],
+          "scale": 0.6295081967213115,
+          "packed_bounds": [
+            45,
+            73,
+            154,
+            172
+          ],
+          "sha256": "d75fd22d02822d40c5f42958ad1acc0ccb14f05046754deb52a095b61b20b371"
+        },
+        {
+          "path": "res://assets/animated/iona/powered_exit-02.png",
+          "source": "art-source/animated/v3/iona-powered40.png",
+          "slot": 34,
+          "source_bounds": [
+            394,
+            843,
+            580,
+            1000
+          ],
+          "source_origin": [
+            476.5,
+            1000.75
+          ],
+          "scale": 0.6295081967213115,
+          "packed_bounds": [
+            44,
+            73,
+            161,
+            172
+          ],
+          "sha256": "3e66adfdb601fdc29d99695c17807946c9b2c490d020b766ce26fa24b418371d"
+        },
+        {
+          "path": "res://assets/animated/iona/powered_exit-03.png",
+          "source": "art-source/animated/v3/iona-powered40.png",
+          "slot": 35,
+          "source_bounds": [
+            585,
+            843,
+            777,
+            1000
+          ],
+          "source_origin": [
+            672.0,
+            1000.75
+          ],
+          "scale": 0.6295081967213115,
+          "packed_bounds": [
+            41,
+            73,
+            162,
+            172
+          ],
+          "sha256": "2198eede6ffcf8c5fa842a6f39db005d513f4d5cfbb4d603f1aa64354f067542"
+        },
+        {
+          "path": "res://assets/animated/iona/powered_exit-04.png",
+          "source": "art-source/animated/v3/iona-powered40.png",
+          "slot": 36,
+          "source_bounds": [
+            786,
+            843,
+            973,
+            1000
+          ],
+          "source_origin": [
+            873.0,
+            1000.75
+          ],
+          "scale": 0.6295081967213115,
+          "packed_bounds": [
+            41,
+            73,
+            159,
+            172
+          ],
+          "sha256": "e2a81d04ac2e6b8663983708574ccb29660fb786f9dc9c0eb5d5eee4cba01bac"
+        },
+        {
+          "path": "res://assets/animated/iona/powered_exit-05.png",
+          "source": "art-source/animated/v3/iona-powered40.png",
+          "slot": 37,
+          "source_bounds": [
+            979,
+            843,
+            1154,
+            1000
+          ],
+          "source_origin": [
+            1063.0,
+            1000.75
+          ],
+          "scale": 0.6295081967213115,
+          "packed_bounds": [
+            43,
+            73,
+            153,
+            172
+          ],
+          "sha256": "d9862942b34d5b379a9021f35d29b01053f71cb8e42c3b340189909bb014bb5b"
+        },
+        {
+          "path": "res://assets/animated/iona/powered_exit-06.png",
+          "source": "art-source/animated/v3/iona-powered40.png",
+          "slot": 38,
+          "source_bounds": [
+            1171,
+            843,
+            1310,
+            1003
+          ],
+          "source_origin": [
+            1249.5,
+            1000.75
+          ],
+          "scale": 0.6295081967213115,
+          "packed_bounds": [
+            47,
+            73,
+            135,
+            174
+          ],
+          "sha256": "5bdfb3fd015f6d79c64ef0192957ca70db735b5c22e117eeccb1c29581dfac9a"
+        },
+        {
+          "path": "res://assets/animated/iona/powered_exit-07.png",
+          "source": "art-source/animated/v3/iona-powered40.png",
+          "slot": 39,
+          "source_bounds": [
+            1360,
+            843,
+            1491,
+            1003
+          ],
+          "source_origin": [
+            1439.5,
+            1000.75
+          ],
+          "scale": 0.6295081967213115,
+          "packed_bounds": [
+            46,
+            73,
+            128,
+            174
+          ],
+          "sha256": "ea257a37042600ff11d230399b87066f8a41d764ef30510509750b740734c6f6"
+        }
+      ]
+    }
+  },
+  "pose_count": 152
+}

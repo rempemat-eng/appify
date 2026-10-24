@@ -1,0 +1,57 @@
+{
+  "bramble": {
+    "primary": {
+      "release_frame": 8,
+      "release_anchor": [
+        55,
+        -52
+      ],
+      "note": "Bow exit at packed pixel (151,120); arrow has left the hand in the release drawing."
+    },
+    "secondary": {
+      "release_frame": 4,
+      "release_anchor": [
+        65,
+        -52
+      ],
+      "contact_reach": 66,
+      "note": "Billhook leading tip around packed pixel (161,120); no invisible 92-pixel extension."
+    },
+    "powered_primary": {
+      "release_frame": 5,
+      "release_anchor": [
+        53,
+        -68
+      ],
+      "note": "Briarshot bow/arrow exit at packed pixel (149,104), with one retained bow."
+    }
+  },
+  "cairn": {
+    "primary": {
+      "release_frame": 8,
+      "release_anchor": [
+        74,
+        -6
+      ],
+      "contact_reach": 78,
+      "note": "Forward stone fist ground contact around packed pixel (170,166)."
+    },
+    "secondary": {
+      "release_frame": 8,
+      "release_anchor": [
+        88,
+        -68
+      ],
+      "note": "Forward throwing hand exit at packed pixel (184,104); separate boulder starts at the hand, not the rear shoulder."
+    },
+    "powered_primary": {
+      "release_frame": 5,
+      "release_anchor": [
+        56,
+        -6
+      ],
+      "contact_reach": 59,
+      "note": "Old Growth slam contact at packed pixel (152,166). This authored crouch has less forward reach than the base slam; use correct review target spacing rather than an invisible reach extension."
+    }
+  }
+}

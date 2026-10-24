@@ -1,0 +1,4119 @@
+{
+  "id": "nix",
+  "name": "Nix",
+  "view": "E",
+  "frame_size": [
+    192,
+    192
+  ],
+  "foot_pivot": [
+    96,
+    172
+  ],
+  "body_height_target": 96,
+  "fit_factor": 1.0,
+  "sources": [
+    {
+      "width": 1254,
+      "height": 1254,
+      "columns": 8,
+      "rows": 7,
+      "column_cuts": [
+        0,
+        173,
+        321,
+        474,
+        637,
+        782,
+        929,
+        1085,
+        1254
+      ],
+      "row_cuts": [
+        0,
+        189,
+        359,
+        528,
+        696,
+        867,
+        1046,
+        1254
+      ],
+      "baselines": {
+        "0": 186.0,
+        "3": 690.0,
+        "4": 858.0,
+        "5": 1029.0
+      },
+      "body_height": 163.5,
+      "body_min_area": 2928,
+      "path": "art-source/animated/nix-64.png",
+      "base_scale": 0.5871559633027523
+    },
+    {
+      "width": 1983,
+      "height": 793,
+      "columns": 8,
+      "rows": 3,
+      "column_cuts": [
+        0,
+        264,
+        498,
+        733,
+        953,
+        1210,
+        1438,
+        1682,
+        1983
+      ],
+      "row_cuts": [
+        0,
+        325,
+        585,
+        793
+      ],
+      "baselines": {
+        "0": 305.0,
+        "1": 573.25,
+        "2": 777.0
+      },
+      "body_height": 232.5,
+      "body_min_area": 6452,
+      "path": "art-source/animated/nix-repair24.png",
+      "base_scale": 0.4129032258064516
+    },
+    {
+      "width": 1774,
+      "height": 887,
+      "columns": 8,
+      "rows": 4,
+      "column_cuts": [
+        0,
+        227,
+        450,
+        670,
+        891,
+        1114,
+        1335,
+        1556,
+        1774
+      ],
+      "row_cuts": [
+        0,
+        287,
+        520,
+        717,
+        887
+      ],
+      "baselines": {
+        "0": 242.0,
+        "1": 500.0,
+        "2": 700.0,
+        "3": 884.0
+      },
+      "body_height": 167.0,
+      "body_min_area": 3024,
+      "path": "art-source/animated/v3/nix-cycles32.png",
+      "base_scale": 0.5748502994011976
+    },
+    {
+      "width": 1448,
+      "height": 1086,
+      "columns": 8,
+      "rows": 6,
+      "column_cuts": [
+        0,
+        198,
+        378,
+        559,
+        743,
+        917,
+        1100,
+        1277,
+        1448
+      ],
+      "row_cuts": [
+        0,
+        219,
+        392,
+        605,
+        781,
+        946,
+        1086
+      ],
+      "baselines": {
+        "0": 206.0,
+        "2": 600.25,
+        "3": 770.0,
+        "4": 946.0,
+        "5": 1076.0
+      },
+      "body_height": 159.0,
+      "body_min_area": 2663,
+      "path": "art-source/animated/v3/nix-extension48.png",
+      "base_scale": 0.6037735849056604
+    },
+    {
+      "width": 1254,
+      "height": 1254,
+      "columns": 8,
+      "rows": 5,
+      "column_cuts": [
+        0,
+        164,
+        316,
+        474,
+        629,
+        798,
+        944,
+        1099,
+        1254
+      ],
+      "row_cuts": [
+        0,
+        320,
+        577,
+        826,
+        1057,
+        1254
+      ],
+      "baselines": {
+        "0": 291.0,
+        "1": 546.0,
+        "2": 801.0,
+        "3": 1040.0,
+        "4": 1250.0
+      },
+      "body_height": 198.0,
+      "body_min_area": 4181,
+      "path": "art-source/animated/v3/nix-powered40.png",
+      "base_scale": 0.48484848484848486
+    },
+    {
+      "width": 1254,
+      "height": 1254,
+      "columns": 1,
+      "rows": 1,
+      "column_cuts": [
+        0,
+        1254
+      ],
+      "row_cuts": [
+        0,
+        1254
+      ],
+      "baselines": {
+        "0": 1065.0
+      },
+      "body_height": 674.0,
+      "body_min_area": 52363,
+      "path": "art-source/animated/v3/nix-primary03-fix.png",
+      "base_scale": 0.142433234421365
+    }
+  ],
+  "anchor_sources": [
+    {
+      "path": "art-source/animated/v3/tech-anchors.json",
+      "sha256": "f683926becea8faa182506366a618ca5a0b3a3ba280349f3cdbfdc70468948e6"
+    }
+  ],
+  "clips": {
+    "idle": {
+      "frame_count": 8,
+      "durations": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ],
+      "duration": 1.6,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/nix/idle-00.png",
+          "source": "art-source/animated/nix-64.png",
+          "slot": 0,
+          "source_bounds": [
+            54,
+            21,
+            152,
+            186
+          ],
+          "source_origin": [
+            86.5,
+            186.0
+          ],
+          "scale": 0.5871559633027523,
+          "packed_bounds": [
+            77,
+            75,
+            135,
+            172
+          ],
+          "sha256": "cb72f636c9fbff74ea119f1cb68acc7d5cbe0c9bce747eab21143bf5349b3cf2"
+        },
+        {
+          "path": "res://assets/animated/nix/idle-01.png",
+          "source": "art-source/animated/nix-64.png",
+          "slot": 1,
+          "source_bounds": [
+            204,
+            21,
+            300,
+            186
+          ],
+          "source_origin": [
+            247.0,
+            186.0
+          ],
+          "scale": 0.5871559633027523,
+          "packed_bounds": [
+            71,
+            75,
+            127,
+            172
+          ],
+          "sha256": "a4367d749a32e811de197c62bfb3053adc9991fa574b3ddfeebb7c21fa32d7b6"
+        },
+        {
+          "path": "res://assets/animated/nix/idle-02.png",
+          "source": "art-source/animated/nix-64.png",
+          "slot": 2,
+          "source_bounds": [
+            351,
+            21,
+            447,
+            186
+          ],
+          "source_origin": [
+            397.5,
+            186.0
+          ],
+          "scale": 0.5871559633027523,
+          "packed_bounds": [
+            69,
+            75,
+            125,
+            172
+          ],
+          "sha256": "620cdf019c619ec38c742cf6804f5f9d981cac5bdedd18f89226e5c3b05fa18c"
+        },
+        {
+          "path": "res://assets/animated/nix/idle-03.png",
+          "source": "art-source/animated/nix-64.png",
+          "slot": 3,
+          "source_bounds": [
+            500,
+            20,
+            596,
+            186
+          ],
+          "source_origin": [
+            555.5,
+            186.0
+          ],
+          "scale": 0.5871559633027523,
+          "packed_bounds": [
+            63,
+            75,
+            119,
+            172
+          ],
+          "sha256": "87d5108c36971e7ecab4e8abf8e0d9395a5f2d5699b3e47e2314c2cdcf126e4c"
+        },
+        {
+          "path": "res://assets/animated/nix/idle-04.png",
+          "source": "art-source/animated/nix-64.png",
+          "slot": 4,
+          "source_bounds": [
+            649,
+            20,
+            745,
+            186
+          ],
+          "source_origin": [
+            709.5,
+            186.0
+          ],
+          "scale": 0.5871559633027523,
+          "packed_bounds": [
+            60,
+            75,
+            116,
+            172
+          ],
+          "sha256": "482678717532c3b9051cc8b3b8a46b850c853230c27ac20cb879192466236a0e"
+        },
+        {
+          "path": "res://assets/animated/nix/idle-05.png",
+          "source": "art-source/animated/nix-64.png",
+          "slot": 5,
+          "source_bounds": [
+            797,
+            23,
+            897,
+            186
+          ],
+          "source_origin": [
+            855.5,
+            186.0
+          ],
+          "scale": 0.5871559633027523,
+          "packed_bounds": [
+            62,
+            76,
+            121,
+            172
+          ],
+          "sha256": "b067d6a2682d11e7ad1e91177fb3dbe9177f295e643a19a6480b4b01c9aff06a"
+        },
+        {
+          "path": "res://assets/animated/nix/idle-06.png",
+          "source": "art-source/animated/nix-64.png",
+          "slot": 6,
+          "source_bounds": [
+            955,
+            23,
+            1051,
+            186
+          ],
+          "source_origin": [
+            1007.0,
+            186.0
+          ],
+          "scale": 0.5871559633027523,
+          "packed_bounds": [
+            65,
+            76,
+            121,
+            172
+          ],
+          "sha256": "9f45aece246133642edc0c86c6aa1ba3fffb68969b663004ec0030f5b6969568"
+        },
+        {
+          "path": "res://assets/animated/nix/idle-07.png",
+          "source": "art-source/animated/nix-64.png",
+          "slot": 7,
+          "source_bounds": [
+            1108,
+            23,
+            1203,
+            186
+          ],
+          "source_origin": [
+            1169.5,
+            186.0
+          ],
+          "scale": 0.5871559633027523,
+          "packed_bounds": [
+            60,
+            76,
+            116,
+            172
+          ],
+          "sha256": "d072793d6849564f2da36df5587b8324852a1b2dccba34f06e9b821d0c1e34f3"
+        }
+      ]
+    },
+    "walk": {
+      "frame_count": 16,
+      "durations": [
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/nix/walk-00.png",
+          "source": "art-source/animated/v3/nix-cycles32.png",
+          "slot": 0,
+          "source_bounds": [
+            63,
+            75,
+            167,
+            242
+          ],
+          "source_origin": [
+            113.5,
+            242.0
+          ],
+          "scale": 0.5748502994011976,
+          "packed_bounds": [
+            67,
+            76,
+            127,
+            172
+          ],
+          "sha256": "9a521a4193fc4f8a4d55695b1a57670a51b8a14aeb164f2d858060000e74d5c9"
+        },
+        {
+          "path": "res://assets/animated/nix/walk-01.png",
+          "source": "art-source/animated/v3/nix-cycles32.png",
+          "slot": 1,
+          "source_bounds": [
+            296,
+            77,
+            386,
+            242
+          ],
+          "source_origin": [
+            338.5,
+            242.0
+          ],
+          "scale": 0.5748502994011976,
+          "packed_bounds": [
+            72,
+            77,
+            124,
+            172
+          ],
+          "sha256": "10982c8d37c9d4872c7c9a3c12057f9b522fb3a2b0446c7d5fa474ad5204c520"
+        },
+        {
+          "path": "res://assets/animated/nix/walk-02.png",
+          "source": "art-source/animated/v3/nix-cycles32.png",
+          "slot": 2,
+          "source_bounds": [
+            518,
+            75,
+            605,
+            242
+          ],
+          "source_origin": [
+            560.0,
+            242.0
+          ],
+          "scale": 0.5748502994011976,
+          "packed_bounds": [
+            72,
+            76,
+            122,
+            172
+          ],
+          "sha256": "c4f722703b98b8d9243546f2fb7b3fdfbbbd520e388c153cdc6e089f9ba8bfae"
+        },
+        {
+          "path": "res://assets/animated/nix/walk-03.png",
+          "source": "art-source/animated/v3/nix-cycles32.png",
+          "slot": 3,
+          "source_bounds": [
+            734,
+            72,
+            826,
+            242
+          ],
+          "source_origin": [
+            780.5,
+            242.0
+          ],
+          "scale": 0.5748502994011976,
+          "packed_bounds": [
+            69,
+            74,
+            122,
+            172
+          ],
+          "sha256": "6178f49566ef881aaecc64e9b60a7d1a259745f0181b14fa9c91d88dbfaa8e13"
+        },
+        {
+          "path": "res://assets/animated/nix/walk-04.png",
+          "source": "art-source/animated/v3/nix-cycles32.png",
+          "slot": 4,
+          "source_bounds": [
+            950,
+            75,
+            1054,
+            242
+          ],
+          "source_origin": [
+            1002.5,
+            242.0
+          ],
+          "scale": 0.5748502994011976,
+          "packed_bounds": [
+            66,
+            76,
+            126,
+            172
+          ],
+          "sha256": "dd709107e506179da5fa84f9d634873b67cff1dbd146546a50594239f19aedff"
+        },
+        {
+          "path": "res://assets/animated/nix/walk-05.png",
+          "source": "art-source/animated/v3/nix-cycles32.png",
+          "slot": 5,
+          "source_bounds": [
+            1182,
+            75,
+            1272,
+            242
+          ],
+          "source_origin": [
+            1224.5,
+            242.0
+          ],
+          "scale": 0.5748502994011976,
+          "packed_bounds": [
+            72,
+            76,
+            124,
+            172
+          ],
+          "sha256": "b7c1094cfde3e4d7fc0e8dd94a4aa9dd70a448e58b3acde7680bb1ae264af3fa"
+        },
+        {
+          "path": "res://assets/animated/nix/walk-06.png",
+          "source": "art-source/animated/v3/nix-cycles32.png",
+          "slot": 6,
+          "source_bounds": [
+            1403,
+            75,
+            1489,
+            242
+          ],
+          "source_origin": [
+            1445.5,
+            242.0
+          ],
+          "scale": 0.5748502994011976,
+          "packed_bounds": [
+            72,
+            76,
+            121,
+            172
+          ],
+          "sha256": "97ba9bc3be5d81d18690380398b1b6f9ff526f72d72b65fd5114a50e0fe532ca"
+        },
+        {
+          "path": "res://assets/animated/nix/walk-07.png",
+          "source": "art-source/animated/v3/nix-cycles32.png",
+          "slot": 7,
+          "source_bounds": [
+            1619,
+            70,
+            1713,
+            242
+          ],
+          "source_origin": [
+            1665.0,
+            242.0
+          ],
+          "scale": 0.5748502994011976,
+          "packed_bounds": [
+            70,
+            73,
+            124,
+            172
+          ],
+          "sha256": "33746dfd33f88357bcd9e776ae6ec2ad852282bd629d8b25085190622b21fd20"
+        },
+        {
+          "path": "res://assets/animated/nix/walk-08.png",
+          "source": "art-source/animated/v3/nix-cycles32.png",
+          "slot": 8,
+          "source_bounds": [
+            59,
+            332,
+            167,
+            500
+          ],
+          "source_origin": [
+            113.5,
+            500.0
+          ],
+          "scale": 0.5748502994011976,
+          "packed_bounds": [
+            65,
+            75,
+            127,
+            172
+          ],
+          "sha256": "333dfe259c9ef1f6532924a3db24d29464a064244d4cdfbcc32ed50c72c09b15"
+        },
+        {
+          "path": "res://assets/animated/nix/walk-09.png",
+          "source": "art-source/animated/v3/nix-cycles32.png",
+          "slot": 9,
+          "source_bounds": [
+            288,
+            333,
+            390,
+            500
+          ],
+          "source_origin": [
+            338.5,
+            500.0
+          ],
+          "scale": 0.5748502994011976,
+          "packed_bounds": [
+            67,
+            76,
+            126,
+            172
+          ],
+          "sha256": "14cb3dc7e47b51a7109ad74975c7e6599bf9856758e71134d4327dfc2d583fb5"
+        },
+        {
+          "path": "res://assets/animated/nix/walk-10.png",
+          "source": "art-source/animated/v3/nix-cycles32.png",
+          "slot": 10,
+          "source_bounds": [
+            506,
+            332,
+            600,
+            500
+          ],
+          "source_origin": [
+            560.0,
+            500.0
+          ],
+          "scale": 0.5748502994011976,
+          "packed_bounds": [
+            65,
+            75,
+            119,
+            172
+          ],
+          "sha256": "55e5569822372e661ce617b419bdea023f70cf7b3ca8553467b4d4ebeee67198"
+        },
+        {
+          "path": "res://assets/animated/nix/walk-11.png",
+          "source": "art-source/animated/v3/nix-cycles32.png",
+          "slot": 11,
+          "source_bounds": [
+            730,
+            322,
+            830,
+            500
+          ],
+          "source_origin": [
+            780.5,
+            500.0
+          ],
+          "scale": 0.5748502994011976,
+          "packed_bounds": [
+            67,
+            70,
+            124,
+            172
+          ],
+          "sha256": "efea7e6319b2995f2e00e54bb481c487bf6fa81a3e0ce33f7204ac4b8741afb2"
+        },
+        {
+          "path": "res://assets/animated/nix/walk-12.png",
+          "source": "art-source/animated/v3/nix-cycles32.png",
+          "slot": 12,
+          "source_bounds": [
+            949,
+            333,
+            1054,
+            500
+          ],
+          "source_origin": [
+            1002.5,
+            500.0
+          ],
+          "scale": 0.5748502994011976,
+          "packed_bounds": [
+            65,
+            76,
+            125,
+            172
+          ],
+          "sha256": "bd27d87f517578fa63e261c70ab6792c10117bd5f48d66a41b93722f58ac700a"
+        },
+        {
+          "path": "res://assets/animated/nix/walk-13.png",
+          "source": "art-source/animated/v3/nix-cycles32.png",
+          "slot": 13,
+          "source_bounds": [
+            1171,
+            333,
+            1274,
+            500
+          ],
+          "source_origin": [
+            1224.5,
+            500.0
+          ],
+          "scale": 0.5748502994011976,
+          "packed_bounds": [
+            65,
+            76,
+            124,
+            172
+          ],
+          "sha256": "3399fb531c54c6001ea6c77bd6e7c04eb46f17fabb9e2231ae55a5a6eb79dba8"
+        },
+        {
+          "path": "res://assets/animated/nix/walk-14.png",
+          "source": "art-source/animated/v3/nix-cycles32.png",
+          "slot": 14,
+          "source_bounds": [
+            1393,
+            333,
+            1494,
+            500
+          ],
+          "source_origin": [
+            1445.5,
+            500.0
+          ],
+          "scale": 0.5748502994011976,
+          "packed_bounds": [
+            66,
+            76,
+            124,
+            172
+          ],
+          "sha256": "c16439d773273b88b8dd007662f50ae1900afc2f1db06a399aca16b26e4a2912"
+        },
+        {
+          "path": "res://assets/animated/nix/walk-15.png",
+          "source": "art-source/animated/v3/nix-cycles32.png",
+          "slot": 15,
+          "source_bounds": [
+            1619,
+            329,
+            1718,
+            500
+          ],
+          "source_origin": [
+            1665.0,
+            500.0
+          ],
+          "scale": 0.5748502994011976,
+          "packed_bounds": [
+            70,
+            74,
+            127,
+            172
+          ],
+          "sha256": "1c0760f17b5158c18d5af4717b8ec445bfdd91e53c88a56ffb1e7905ff12a924"
+        }
+      ]
+    },
+    "primary": {
+      "frame_count": 16,
+      "durations": [
+        0.0385,
+        0.0315,
+        0.0385,
+        0.0315,
+        0.044,
+        0.036,
+        0.0605,
+        0.049499999999999995,
+        0.022,
+        0.018,
+        0.030249999999999996,
+        0.024749999999999998,
+        0.04675,
+        0.03825,
+        0.0715,
+        0.058499999999999996
+      ],
+      "duration": 0.64,
+      "loop": false,
+      "release_frame": 8,
+      "release_time": 0.32999999999999996,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/nix/primary-00.png",
+          "source": "art-source/animated/v3/nix-cycles32.png",
+          "slot": 16,
+          "source_bounds": [
+            63,
+            547,
+            165,
+            700
+          ],
+          "source_origin": [
+            113.5,
+            700.0
+          ],
+          "scale": 0.5748502994011976,
+          "packed_bounds": [
+            67,
+            84,
+            126,
+            172
+          ],
+          "sha256": "b864553047f8d1549d77bfbdc60f0e7938627df8075edf30707be43fb24fbdbe"
+        },
+        {
+          "path": "res://assets/animated/nix/primary-01.png",
+          "source": "art-source/animated/v3/nix-cycles32.png",
+          "slot": 17,
+          "source_bounds": [
+            280,
+            547,
+            391,
+            700
+          ],
+          "source_origin": [
+            338.5,
+            700.0
+          ],
+          "scale": 0.5748502994011976,
+          "packed_bounds": [
+            62,
+            84,
+            126,
+            172
+          ],
+          "sha256": "29152155e43fbda4210ce821db6b6615f5c45a3bc1fc58d5e80343d7791331e9"
+        },
+        {
+          "path": "res://assets/animated/nix/primary-02.png",
+          "source": "art-source/animated/v3/nix-cycles32.png",
+          "slot": 18,
+          "source_bounds": [
+            498,
+            547,
+            636,
+            700
+          ],
+          "source_origin": [
+            560.0,
+            700.0
+          ],
+          "scale": 0.5748502994011976,
+          "packed_bounds": [
+            60,
+            84,
+            139,
+            172
+          ],
+          "sha256": "97e5f05bbab9894584548461ff56de5c22ea2531180f119ca97a583e7b47323d"
+        },
+        {
+          "path": "res://assets/animated/nix/primary-03.png",
+          "source": "art-source/animated/v3/nix-primary03-fix.png",
+          "slot": 0,
+          "source_bounds": [
+            355,
+            391,
+            987,
+            1065
+          ],
+          "source_origin": [
+            627.0,
+            1065.0
+          ],
+          "scale": 0.142433234421365,
+          "packed_bounds": [
+            57,
+            76,
+            147,
+            172
+          ],
+          "sha256": "c8e3d8b701c4a8a176c122a011f21725e20b548e6519cfdbfad3afc37b979417"
+        },
+        {
+          "path": "res://assets/animated/nix/primary-04.png",
+          "source": "art-source/animated/v3/nix-cycles32.png",
+          "slot": 20,
+          "source_bounds": [
+            929,
+            549,
+            1080,
+            700
+          ],
+          "source_origin": [
+            1002.5,
+            700.0
+          ],
+          "scale": 0.5748502994011976,
+          "packed_bounds": [
+            54,
+            85,
+            141,
+            172
+          ],
+          "sha256": "f0c79a116f5ac8fab5a7c9b991cc19aff06545a9d9bc1ecc52e4d2f94610c2a6"
+        },
+        {
+          "path": "res://assets/animated/nix/primary-05.png",
+          "source": "art-source/animated/v3/nix-cycles32.png",
+          "slot": 21,
+          "source_bounds": [
+            1156,
+            552,
+            1308,
+            700
+          ],
+          "source_origin": [
+            1224.5,
+            700.0
+          ],
+          "scale": 0.5748502994011976,
+          "packed_bounds": [
+            57,
+            87,
+            144,
+            172
+          ],
+          "sha256": "95f5bea52e5b89006a7d616052914238c2822ddbbeefa313a79a32bbfbdacb3e"
+        },
+        {
+          "path": "res://assets/animated/nix/primary-06.png",
+          "source": "art-source/animated/v3/nix-cycles32.png",
+          "slot": 22,
+          "source_bounds": [
+            1381,
+            554,
+            1534,
+            700
+          ],
+          "source_origin": [
+            1445.5,
+            700.0
+          ],
+          "scale": 0.5748502994011976,
+          "packed_bounds": [
+            59,
+            88,
+            147,
+            172
+          ],
+          "sha256": "251b5f0cd4b54cf9f80d6605a79ffbda560aabf1e456a276f5c4bea275b8c8b9"
+        },
+        {
+          "path": "res://assets/animated/nix/primary-07.png",
+          "source": "art-source/animated/v3/nix-cycles32.png",
+          "slot": 23,
+          "source_bounds": [
+            1603,
+            552,
+            1756,
+            700
+          ],
+          "source_origin": [
+            1665.0,
+            700.0
+          ],
+          "scale": 0.5748502994011976,
+          "packed_bounds": [
+            60,
+            87,
+            148,
+            172
+          ],
+          "sha256": "cfad1eee426a44d369d5d5ba51bf6fb60abf9444f22b256fc1c058e974534234"
+        },
+        {
+          "path": "res://assets/animated/nix/primary-08.png",
+          "source": "art-source/animated/v3/nix-cycles32.png",
+          "slot": 24,
+          "source_bounds": [
+            53,
+            737,
+            201,
+            884
+          ],
+          "source_origin": [
+            113.5,
+            884.0
+          ],
+          "scale": 0.5748502994011976,
+          "packed_bounds": [
+            61,
+            87,
+            146,
+            172
+          ],
+          "sha256": "302054f7bc7c123abdc3e7f8d063110791f9613a51d1524a868cc141489a65e4"
+        },
+        {
+          "path": "res://assets/animated/nix/primary-09.png",
+          "source": "art-source/animated/v3/nix-cycles32.png",
+          "slot": 25,
+          "source_bounds": [
+            279,
+            733,
+            400,
+            884
+          ],
+          "source_origin": [
+            338.5,
+            884.0
+          ],
+          "scale": 0.5748502994011976,
+          "packed_bounds": [
+            62,
+            85,
+            132,
+            172
+          ],
+          "sha256": "0a319d5eb751c2fdcab020004c9d07c4415d192304e2efb298f20a8a7fd2a52b"
+        },
+        {
+          "path": "res://assets/animated/nix/primary-10.png",
+          "source": "art-source/animated/v3/nix-cycles32.png",
+          "slot": 26,
+          "source_bounds": [
+            498,
+            735,
+            619,
+            884
+          ],
+          "source_origin": [
+            560.0,
+            884.0
+          ],
+          "scale": 0.5748502994011976,
+          "packed_bounds": [
+            60,
+            86,
+            130,
+            172
+          ],
+          "sha256": "991bb8d19fe1666763897d9c8b1e756c8d700580f1ac15f075c79c110e982a1f"
+        },
+        {
+          "path": "res://assets/animated/nix/primary-11.png",
+          "source": "art-source/animated/v3/nix-cycles32.png",
+          "slot": 27,
+          "source_bounds": [
+            721,
+            733,
+            836,
+            884
+          ],
+          "source_origin": [
+            780.5,
+            884.0
+          ],
+          "scale": 0.5748502994011976,
+          "packed_bounds": [
+            62,
+            85,
+            128,
+            172
+          ],
+          "sha256": "42a5d1d421c2616644557079f990822505b8c867a95d995066c0bb4c589607f9"
+        },
+        {
+          "path": "res://assets/animated/nix/primary-12.png",
+          "source": "art-source/animated/v3/nix-cycles32.png",
+          "slot": 28,
+          "source_bounds": [
+            942,
+            735,
+            1061,
+            884
+          ],
+          "source_origin": [
+            1002.5,
+            884.0
+          ],
+          "scale": 0.5748502994011976,
+          "packed_bounds": [
+            61,
+            86,
+            129,
+            172
+          ],
+          "sha256": "ffce07f06c17f6f36d4588abca5160e1a942aee89e92ec71e7fa263039dc696b"
+        },
+        {
+          "path": "res://assets/animated/nix/primary-13.png",
+          "source": "art-source/animated/v3/nix-cycles32.png",
+          "slot": 29,
+          "source_bounds": [
+            1164,
+            737,
+            1284,
+            884
+          ],
+          "source_origin": [
+            1224.5,
+            884.0
+          ],
+          "scale": 0.5748502994011976,
+          "packed_bounds": [
+            61,
+            87,
+            130,
+            172
+          ],
+          "sha256": "bb933ced07f65df7fc23565d8efefd5eb66366319f800543ef0b65a3bf9c3843"
+        },
+        {
+          "path": "res://assets/animated/nix/primary-14.png",
+          "source": "art-source/animated/v3/nix-cycles32.png",
+          "slot": 30,
+          "source_bounds": [
+            1385,
+            735,
+            1501,
+            884
+          ],
+          "source_origin": [
+            1445.5,
+            884.0
+          ],
+          "scale": 0.5748502994011976,
+          "packed_bounds": [
+            61,
+            86,
+            128,
+            172
+          ],
+          "sha256": "99a6831f2b8b52820ac34777374617aaa694f2bd3d093c25ddb6b80bf4448a5d"
+        },
+        {
+          "path": "res://assets/animated/nix/primary-15.png",
+          "source": "art-source/animated/v3/nix-cycles32.png",
+          "slot": 31,
+          "source_bounds": [
+            1613,
+            731,
+            1712,
+            884
+          ],
+          "source_origin": [
+            1665.0,
+            884.0
+          ],
+          "scale": 0.5748502994011976,
+          "packed_bounds": [
+            66,
+            84,
+            123,
+            172
+          ],
+          "sha256": "22a69bc149aebf026c62c984baaadecc4e719c468ba44f5e6af344e446560e2f"
+        }
+      ],
+      "release_anchor": [
+        49,
+        -62
+      ]
+    },
+    "secondary": {
+      "frame_count": 8,
+      "durations": [
+        0.07,
+        0.07,
+        0.08,
+        0.11,
+        0.04,
+        0.055,
+        0.085,
+        0.13
+      ],
+      "duration": 0.64,
+      "loop": false,
+      "release_frame": 4,
+      "release_time": 0.33,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/nix/secondary-00.png",
+          "source": "art-source/animated/nix-repair24.png",
+          "slot": 0,
+          "source_bounds": [
+            72,
+            60,
+            224,
+            305
+          ],
+          "source_origin": [
+            132.0,
+            305.0
+          ],
+          "scale": 0.4129032258064516,
+          "packed_bounds": [
+            71,
+            71,
+            134,
+            172
+          ],
+          "sha256": "33adc4e0c57a325fcf449fe73178d5f080edd0fad9ccbc060676a59a51fff273"
+        },
+        {
+          "path": "res://assets/animated/nix/secondary-01.png",
+          "source": "art-source/animated/nix-repair24.png",
+          "slot": 1,
+          "source_bounds": [
+            305,
+            72,
+            453,
+            305
+          ],
+          "source_origin": [
+            381.0,
+            305.0
+          ],
+          "scale": 0.4129032258064516,
+          "packed_bounds": [
+            65,
+            76,
+            126,
+            172
+          ],
+          "sha256": "4aa75ddaee903951ff94c8a53a43ba99ba24f0fa71110315caa8f9a4e72d444a"
+        },
+        {
+          "path": "res://assets/animated/nix/secondary-02.png",
+          "source": "art-source/animated/nix-repair24.png",
+          "slot": 2,
+          "source_bounds": [
+            520,
+            72,
+            712,
+            305
+          ],
+          "source_origin": [
+            615.5,
+            305.0
+          ],
+          "scale": 0.4129032258064516,
+          "packed_bounds": [
+            57,
+            76,
+            136,
+            172
+          ],
+          "sha256": "8a7be06de017678f16c20f0605f74de02ffe7fd6f8cf8d1eb67de8eed67f2522"
+        },
+        {
+          "path": "res://assets/animated/nix/secondary-03.png",
+          "source": "art-source/animated/nix-repair24.png",
+          "slot": 3,
+          "source_bounds": [
+            768,
+            72,
+            960,
+            305
+          ],
+          "source_origin": [
+            843.0,
+            305.0
+          ],
+          "scale": 0.4129032258064516,
+          "packed_bounds": [
+            65,
+            76,
+            144,
+            172
+          ],
+          "sha256": "6c1c48e2a9da4790da3d2f53779f22d6c228bee1765f2d5b0c5c0a15e3d55a0a"
+        },
+        {
+          "path": "res://assets/animated/nix/secondary-04.png",
+          "source": "art-source/animated/nix-64.png",
+          "slot": 28,
+          "source_bounds": [
+            643,
+            533,
+            782,
+            690
+          ],
+          "source_origin": [
+            709.5,
+            690.0
+          ],
+          "scale": 0.5871559633027523,
+          "packed_bounds": [
+            57,
+            80,
+            139,
+            172
+          ],
+          "sha256": "c178f5b36047a4a1aaa334221cb8abb828a30082b6ed03831916a357c715870f"
+        },
+        {
+          "path": "res://assets/animated/nix/secondary-05.png",
+          "source": "art-source/animated/nix-64.png",
+          "slot": 29,
+          "source_bounds": [
+            792,
+            535,
+            917,
+            690
+          ],
+          "source_origin": [
+            855.5,
+            690.0
+          ],
+          "scale": 0.5871559633027523,
+          "packed_bounds": [
+            59,
+            81,
+            132,
+            172
+          ],
+          "sha256": "6a24b4c824cc1b0c2575ebae623f918e2e121c8cb233a1b4cbc2a37e15a04f30"
+        },
+        {
+          "path": "res://assets/animated/nix/secondary-06.png",
+          "source": "art-source/animated/nix-repair24.png",
+          "slot": 6,
+          "source_bounds": [
+            1512,
+            71,
+            1666,
+            305
+          ],
+          "source_origin": [
+            1560.0,
+            305.0
+          ],
+          "scale": 0.4129032258064516,
+          "packed_bounds": [
+            76,
+            75,
+            140,
+            172
+          ],
+          "sha256": "565a88c555272172caeb0686cef71fca30ad0b83185098b3b070df8eb47a9a58"
+        },
+        {
+          "path": "res://assets/animated/nix/secondary-07.png",
+          "source": "art-source/animated/nix-repair24.png",
+          "slot": 7,
+          "source_bounds": [
+            1756,
+            70,
+            1908,
+            305
+          ],
+          "source_origin": [
+            1832.5,
+            305.0
+          ],
+          "scale": 0.4129032258064516,
+          "packed_bounds": [
+            64,
+            75,
+            127,
+            172
+          ],
+          "sha256": "1dd05bd387be942a1831c00063ab64a41511bbc7b37553e648e306f66db4c4cd"
+        }
+      ],
+      "release_anchor": [
+        42,
+        -58
+      ]
+    },
+    "special": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.08,
+        0.09,
+        0.12,
+        0.06,
+        0.08,
+        0.12,
+        0.18
+      ],
+      "duration": 0.82,
+      "loop": false,
+      "release_frame": 4,
+      "release_time": 0.38,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/nix/special-00.png",
+          "source": "art-source/animated/nix-64.png",
+          "slot": 32,
+          "source_bounds": [
+            45,
+            704,
+            161,
+            858
+          ],
+          "source_origin": [
+            86.5,
+            858.0
+          ],
+          "scale": 0.5871559633027523,
+          "packed_bounds": [
+            72,
+            82,
+            140,
+            172
+          ],
+          "sha256": "b3270f34cbedf82ed5d0f1aae2c5527d81ba4e220eb00f9ef43e27357831baab"
+        },
+        {
+          "path": "res://assets/animated/nix/special-01.png",
+          "source": "art-source/animated/nix-64.png",
+          "slot": 33,
+          "source_bounds": [
+            192,
+            704,
+            299,
+            858
+          ],
+          "source_origin": [
+            247.0,
+            858.0
+          ],
+          "scale": 0.5871559633027523,
+          "packed_bounds": [
+            64,
+            82,
+            127,
+            172
+          ],
+          "sha256": "a1595752809cc4c170d5cb4b689eabfd10c401bee1f98a937fa2464fc1152cd7"
+        },
+        {
+          "path": "res://assets/animated/nix/special-02.png",
+          "source": "art-source/animated/nix-64.png",
+          "slot": 34,
+          "source_bounds": [
+            331,
+            707,
+            454,
+            858
+          ],
+          "source_origin": [
+            397.5,
+            858.0
+          ],
+          "scale": 0.5871559633027523,
+          "packed_bounds": [
+            57,
+            83,
+            129,
+            172
+          ],
+          "sha256": "7e830bbcd12416488c16d81d5db038e7f1130ffa9416e4793f12c289e0c50576"
+        },
+        {
+          "path": "res://assets/animated/nix/special-03.png",
+          "source": "art-source/animated/nix-64.png",
+          "slot": 35,
+          "source_bounds": [
+            484,
+            705,
+            618,
+            858
+          ],
+          "source_origin": [
+            555.5,
+            858.0
+          ],
+          "scale": 0.5871559633027523,
+          "packed_bounds": [
+            54,
+            82,
+            133,
+            172
+          ],
+          "sha256": "eaf3f5eb7f341eab17da9a2215073fedc868dcaabd3d210a4c230352933a58cb"
+        },
+        {
+          "path": "res://assets/animated/nix/special-04.png",
+          "source": "art-source/animated/nix-64.png",
+          "slot": 36,
+          "source_bounds": [
+            641,
+            699,
+            767,
+            858
+          ],
+          "source_origin": [
+            709.5,
+            858.0
+          ],
+          "scale": 0.5871559633027523,
+          "packed_bounds": [
+            56,
+            79,
+            130,
+            172
+          ],
+          "sha256": "a30e9fe7ef4748308ddfa66dd7627255a1c1e1fc5a0ddb78e7134e7f4310bb1d"
+        },
+        {
+          "path": "res://assets/animated/nix/special-05.png",
+          "source": "art-source/animated/nix-64.png",
+          "slot": 37,
+          "source_bounds": [
+            784,
+            708,
+            929,
+            858
+          ],
+          "source_origin": [
+            855.5,
+            858.0
+          ],
+          "scale": 0.5871559633027523,
+          "packed_bounds": [
+            54,
+            84,
+            139,
+            172
+          ],
+          "sha256": "e35a06a7e074f7183921624aa0fc5d197318e2aaa1c4c3e780bd77105907bb7c"
+        },
+        {
+          "path": "res://assets/animated/nix/special-06.png",
+          "source": "art-source/animated/nix-64.png",
+          "slot": 38,
+          "source_bounds": [
+            950,
+            702,
+            1085,
+            858
+          ],
+          "source_origin": [
+            1007.0,
+            858.0
+          ],
+          "scale": 0.5871559633027523,
+          "packed_bounds": [
+            63,
+            80,
+            142,
+            172
+          ],
+          "sha256": "e40f28afefacc516243d122295dd9267d026e1cdea7b69842252f1357310a892"
+        },
+        {
+          "path": "res://assets/animated/nix/special-07.png",
+          "source": "art-source/animated/nix-64.png",
+          "slot": 39,
+          "source_bounds": [
+            1101,
+            703,
+            1224,
+            858
+          ],
+          "source_origin": [
+            1169.5,
+            858.0
+          ],
+          "scale": 0.5871559633027523,
+          "packed_bounds": [
+            56,
+            81,
+            128,
+            172
+          ],
+          "sha256": "0fa40391302ea7ed2582af538abe6abf7069522c0808c4c9ae575e88ab500b9f"
+        }
+      ]
+    },
+    "guard": {
+      "frame_count": 8,
+      "durations": [
+        0.055,
+        0.055,
+        0.055,
+        0.055,
+        0.12,
+        0.12,
+        0.12,
+        0.12
+      ],
+      "duration": 0.7,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": 4,
+      "frames": [
+        {
+          "path": "res://assets/animated/nix/guard-00.png",
+          "source": "art-source/animated/nix-repair24.png",
+          "slot": 8,
+          "source_bounds": [
+            70,
+            334,
+            224,
+            571
+          ],
+          "source_origin": [
+            132.0,
+            573.25
+          ],
+          "scale": 0.4129032258064516,
+          "packed_bounds": [
+            70,
+            73,
+            134,
+            171
+          ],
+          "sha256": "69605c2810dde0c9f1d81ab471d3793385ee4e829ef637b6ed58b335928f0a9b"
+        },
+        {
+          "path": "res://assets/animated/nix/guard-01.png",
+          "source": "art-source/animated/nix-repair24.png",
+          "slot": 9,
+          "source_bounds": [
+            291,
+            348,
+            486,
+            573
+          ],
+          "source_origin": [
+            381.0,
+            573.25
+          ],
+          "scale": 0.4129032258064516,
+          "packed_bounds": [
+            59,
+            79,
+            140,
+            172
+          ],
+          "sha256": "ae074e3891694a661ed5731b27f7b91a03818aaeaec54f52bd0af5300558ba9f"
+        },
+        {
+          "path": "res://assets/animated/nix/guard-02.png",
+          "source": "art-source/animated/nix-repair24.png",
+          "slot": 10,
+          "source_bounds": [
+            521,
+            348,
+            712,
+            572
+          ],
+          "source_origin": [
+            615.5,
+            573.25
+          ],
+          "scale": 0.4129032258064516,
+          "packed_bounds": [
+            57,
+            79,
+            136,
+            171
+          ],
+          "sha256": "4185091ea00c68fc97e4b8940f5cda07c3bdb8c4644bead5da1872f93b5a58e0"
+        },
+        {
+          "path": "res://assets/animated/nix/guard-03.png",
+          "source": "art-source/animated/nix-repair24.png",
+          "slot": 11,
+          "source_bounds": [
+            750,
+            348,
+            952,
+            573
+          ],
+          "source_origin": [
+            843.0,
+            573.25
+          ],
+          "scale": 0.4129032258064516,
+          "packed_bounds": [
+            58,
+            79,
+            141,
+            172
+          ],
+          "sha256": "54fc1c3792377be83d965a49070b3ce7896573b1f0c93d1cdcecb29771f11007"
+        },
+        {
+          "path": "res://assets/animated/nix/guard-04.png",
+          "source": "art-source/animated/nix-repair24.png",
+          "slot": 12,
+          "source_bounds": [
+            1001,
+            358,
+            1203,
+            573
+          ],
+          "source_origin": [
+            1081.5,
+            573.25
+          ],
+          "scale": 0.4129032258064516,
+          "packed_bounds": [
+            63,
+            83,
+            146,
+            172
+          ],
+          "sha256": "e905c24061744f2c05dfffb0c6603024cf896e33cc27eea27dbe855b5c8adccc"
+        },
+        {
+          "path": "res://assets/animated/nix/guard-05.png",
+          "source": "art-source/animated/nix-repair24.png",
+          "slot": 13,
+          "source_bounds": [
+            1244,
+            358,
+            1438,
+            573
+          ],
+          "source_origin": [
+            1324.0,
+            573.25
+          ],
+          "scale": 0.4129032258064516,
+          "packed_bounds": [
+            63,
+            83,
+            143,
+            172
+          ],
+          "sha256": "b56b1c6270a17c17ef23d234e1335f9c1927b12b9d8df929adf094495a91729c"
+        },
+        {
+          "path": "res://assets/animated/nix/guard-06.png",
+          "source": "art-source/animated/nix-repair24.png",
+          "slot": 14,
+          "source_bounds": [
+            1487,
+            350,
+            1677,
+            574
+          ],
+          "source_origin": [
+            1560.0,
+            573.25
+          ],
+          "scale": 0.4129032258064516,
+          "packed_bounds": [
+            66,
+            80,
+            144,
+            172
+          ],
+          "sha256": "82d05e7b909566075ca3a65556d6cb2b7866411365725abe4e19500306ef0e27"
+        },
+        {
+          "path": "res://assets/animated/nix/guard-07.png",
+          "source": "art-source/animated/nix-repair24.png",
+          "slot": 15,
+          "source_bounds": [
+            1741,
+            349,
+            1920,
+            574
+          ],
+          "source_origin": [
+            1832.5,
+            573.25
+          ],
+          "scale": 0.4129032258064516,
+          "packed_bounds": [
+            58,
+            79,
+            132,
+            172
+          ],
+          "sha256": "e85090938c22c6e5873653185b87377d1cff2f511f385766b69170506144e1b0"
+        }
+      ]
+    },
+    "hit": {
+      "frame_count": 8,
+      "durations": [
+        0.035,
+        0.065,
+        0.09,
+        0.12,
+        0.13,
+        0.15,
+        0.16,
+        0.18
+      ],
+      "duration": 0.9299999999999999,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/nix/hit-00.png",
+          "source": "art-source/animated/nix-64.png",
+          "slot": 40,
+          "source_bounds": [
+            47,
+            877,
+            152,
+            1029
+          ],
+          "source_origin": [
+            86.5,
+            1029.0
+          ],
+          "scale": 0.5871559633027523,
+          "packed_bounds": [
+            73,
+            83,
+            135,
+            172
+          ],
+          "sha256": "90c458d78e4be97ccb6b3d3fd24156dbcac6b37ae9274fc3d9bbcc94b45462f9"
+        },
+        {
+          "path": "res://assets/animated/nix/hit-01.png",
+          "source": "art-source/animated/nix-64.png",
+          "slot": 41,
+          "source_bounds": [
+            195,
+            890,
+            302,
+            1029
+          ],
+          "source_origin": [
+            247.0,
+            1029.0
+          ],
+          "scale": 0.5871559633027523,
+          "packed_bounds": [
+            65,
+            90,
+            128,
+            172
+          ],
+          "sha256": "64e4a713b1d776e12688ab89c8d9695b3352e2679685e7fd36cd031bb5377223"
+        },
+        {
+          "path": "res://assets/animated/nix/hit-02.png",
+          "source": "art-source/animated/nix-64.png",
+          "slot": 42,
+          "source_bounds": [
+            340,
+            889,
+            449,
+            1029
+          ],
+          "source_origin": [
+            397.5,
+            1029.0
+          ],
+          "scale": 0.5871559633027523,
+          "packed_bounds": [
+            62,
+            90,
+            126,
+            172
+          ],
+          "sha256": "5656d39a9fcdf32e3803719462f3ce935962218bbe9caabc9862768dc2ab7daa"
+        },
+        {
+          "path": "res://assets/animated/nix/hit-03.png",
+          "source": "art-source/animated/nix-64.png",
+          "slot": 43,
+          "source_bounds": [
+            497,
+            888,
+            595,
+            1029
+          ],
+          "source_origin": [
+            555.5,
+            1029.0
+          ],
+          "scale": 0.5871559633027523,
+          "packed_bounds": [
+            62,
+            89,
+            120,
+            172
+          ],
+          "sha256": "9edc4b077edd8e93f89aac0ecb8064324f2344dc0c10297614eeb78e211c8eb7"
+        },
+        {
+          "path": "res://assets/animated/nix/hit-04.png",
+          "source": "art-source/animated/nix-64.png",
+          "slot": 44,
+          "source_bounds": [
+            646,
+            885,
+            753,
+            1029
+          ],
+          "source_origin": [
+            709.5,
+            1029.0
+          ],
+          "scale": 0.5871559633027523,
+          "packed_bounds": [
+            59,
+            87,
+            122,
+            172
+          ],
+          "sha256": "4ab432f3e48bcfb531e49157e0285246634ff2c9e969c55bede91e2bbd193b56"
+        },
+        {
+          "path": "res://assets/animated/nix/hit-05.png",
+          "source": "art-source/animated/nix-64.png",
+          "slot": 45,
+          "source_bounds": [
+            793,
+            877,
+            903,
+            1029
+          ],
+          "source_origin": [
+            855.5,
+            1029.0
+          ],
+          "scale": 0.5871559633027523,
+          "packed_bounds": [
+            59,
+            83,
+            124,
+            172
+          ],
+          "sha256": "7c3425d8a8c32e196ee3f7d1354ca51c07f8b53373044274b978de1e70325c2e"
+        },
+        {
+          "path": "res://assets/animated/nix/hit-06.png",
+          "source": "art-source/animated/nix-64.png",
+          "slot": 46,
+          "source_bounds": [
+            944,
+            877,
+            1062,
+            1029
+          ],
+          "source_origin": [
+            1007.0,
+            1029.0
+          ],
+          "scale": 0.5871559633027523,
+          "packed_bounds": [
+            59,
+            83,
+            128,
+            172
+          ],
+          "sha256": "b1d9d1a34737f76e5fcca1d25b092d7683b8a90a782becac02e4db8a3ce143d8"
+        },
+        {
+          "path": "res://assets/animated/nix/hit-07.png",
+          "source": "art-source/animated/nix-64.png",
+          "slot": 47,
+          "source_bounds": [
+            1108,
+            868,
+            1205,
+            1029
+          ],
+          "source_origin": [
+            1169.5,
+            1029.0
+          ],
+          "scale": 0.5871559633027523,
+          "packed_bounds": [
+            60,
+            77,
+            117,
+            172
+          ],
+          "sha256": "91dfabe9163696478a7a166ea1d83b7b0e53de764a76c6e59b8ae5992c3b6fa9"
+        }
+      ]
+    },
+    "defeat": {
+      "frame_count": 8,
+      "durations": [
+        0.08,
+        0.1,
+        0.1,
+        0.12,
+        0.15,
+        0.18,
+        0.24,
+        0.3
+      ],
+      "duration": 1.27,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/nix/defeat-00.png",
+          "source": "art-source/animated/nix-repair24.png",
+          "slot": 16,
+          "source_bounds": [
+            59,
+            586,
+            222,
+            777
+          ],
+          "source_origin": [
+            132.0,
+            777.0
+          ],
+          "scale": 0.4129032258064516,
+          "packed_bounds": [
+            66,
+            93,
+            133,
+            172
+          ],
+          "sha256": "5cd601660ec3f77ebc4ed69cbce53e5f2e77569141db6c452b2f6524903d0ef7"
+        },
+        {
+          "path": "res://assets/animated/nix/defeat-01.png",
+          "source": "art-source/animated/nix-repair24.png",
+          "slot": 17,
+          "source_bounds": [
+            293,
+            607,
+            469,
+            777
+          ],
+          "source_origin": [
+            381.0,
+            777.0
+          ],
+          "scale": 0.4129032258064516,
+          "packed_bounds": [
+            60,
+            102,
+            133,
+            172
+          ],
+          "sha256": "b89e3c2e2a3dab9cdc71b3389b4e036c01dd8cf910820278fb77db342e5c6a79"
+        },
+        {
+          "path": "res://assets/animated/nix/defeat-02.png",
+          "source": "art-source/animated/nix-repair24.png",
+          "slot": 18,
+          "source_bounds": [
+            534,
+            627,
+            685,
+            777
+          ],
+          "source_origin": [
+            615.5,
+            777.0
+          ],
+          "scale": 0.4129032258064516,
+          "packed_bounds": [
+            62,
+            110,
+            124,
+            172
+          ],
+          "sha256": "e6707a8232ebc3707581ca25872289688354b1fab969ccd20493796a31383324"
+        },
+        {
+          "path": "res://assets/animated/nix/defeat-03.png",
+          "source": "art-source/animated/nix-repair24.png",
+          "slot": 19,
+          "source_bounds": [
+            749,
+            647,
+            915,
+            777
+          ],
+          "source_origin": [
+            843.0,
+            777.0
+          ],
+          "scale": 0.4129032258064516,
+          "packed_bounds": [
+            57,
+            118,
+            126,
+            172
+          ],
+          "sha256": "17aeeda8bc5206cf8e125af23a56f5cae283ad676fcae80b33cb5decfd1f2ab9"
+        },
+        {
+          "path": "res://assets/animated/nix/defeat-04.png",
+          "source": "art-source/animated/nix-repair24.png",
+          "slot": 20,
+          "source_bounds": [
+            954,
+            676,
+            1141,
+            775
+          ],
+          "source_origin": [
+            1081.5,
+            777.0
+          ],
+          "scale": 0.4129032258064516,
+          "packed_bounds": [
+            43,
+            130,
+            120,
+            171
+          ],
+          "sha256": "c853627183f60f49927fb19d5410f255e15525c09c45930d29591cb8d7440293"
+        },
+        {
+          "path": "res://assets/animated/nix/defeat-05.png",
+          "source": "art-source/animated/nix-repair24.png",
+          "slot": 21,
+          "source_bounds": [
+            1169,
+            695,
+            1423,
+            775
+          ],
+          "source_origin": [
+            1324.0,
+            777.0
+          ],
+          "scale": 0.4129032258064516,
+          "packed_bounds": [
+            32,
+            138,
+            137,
+            171
+          ],
+          "sha256": "98dbbe4d2804ec8a1bf2ea01ec3cfd2008518965830e91eb6e4531d222ca229a"
+        },
+        {
+          "path": "res://assets/animated/nix/defeat-06.png",
+          "source": "art-source/animated/nix-repair24.png",
+          "slot": 22,
+          "source_bounds": [
+            1444,
+            699,
+            1663,
+            773
+          ],
+          "source_origin": [
+            1560.0,
+            777.0
+          ],
+          "scale": 0.4129032258064516,
+          "packed_bounds": [
+            48,
+            140,
+            138,
+            171
+          ],
+          "sha256": "39857bb38fc2297ebecf864e9e378594376555ecacedc132ffd0ad588e169829"
+        },
+        {
+          "path": "res://assets/animated/nix/defeat-07.png",
+          "source": "art-source/animated/nix-repair24.png",
+          "slot": 23,
+          "source_bounds": [
+            1683,
+            705,
+            1960,
+            770
+          ],
+          "source_origin": [
+            1832.5,
+            777.0
+          ],
+          "scale": 0.4129032258064516,
+          "packed_bounds": [
+            34,
+            142,
+            148,
+            169
+          ],
+          "sha256": "d47188600a92d09b46af8ec6c6d291048400a7661844054f92be9cf6d02baaf9"
+        }
+      ]
+    },
+    "jump": {
+      "frame_count": 8,
+      "durations": [
+        0.08,
+        0.055,
+        0.08,
+        0.11,
+        0.11,
+        0.08,
+        0.07,
+        0.115
+      ],
+      "duration": 0.7000000000000001,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/nix/jump-00.png",
+          "source": "art-source/animated/v3/nix-extension48.png",
+          "slot": 16,
+          "source_bounds": [
+            54,
+            477,
+            160,
+            600
+          ],
+          "source_origin": [
+            99.0,
+            600.0
+          ],
+          "scale": 0.6037735849056604,
+          "packed_bounds": [
+            69,
+            98,
+            133,
+            172
+          ],
+          "sha256": "10390cb32453bdb1e8a19835e7d5f5cb8b034e15f2f73f37d980b2ee90075b08",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/nix/jump-01.png",
+          "source": "art-source/animated/v3/nix-extension48.png",
+          "slot": 17,
+          "source_bounds": [
+            231,
+            418,
+            350,
+            589
+          ],
+          "source_origin": [
+            288.0,
+            589.0
+          ],
+          "scale": 0.6037735849056604,
+          "packed_bounds": [
+            62,
+            69,
+            134,
+            172
+          ],
+          "sha256": "c981d11bf14d5a79d8f1812ca55c4d6aa6cc1e800ec9cd94b78fb70a378d4dc4",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/nix/jump-02.png",
+          "source": "art-source/animated/v3/nix-extension48.png",
+          "slot": 18,
+          "source_bounds": [
+            406,
+            410,
+            530,
+            569
+          ],
+          "source_origin": [
+            468.5,
+            569.0
+          ],
+          "scale": 0.6037735849056604,
+          "packed_bounds": [
+            58,
+            76,
+            133,
+            172
+          ],
+          "sha256": "cc6186567e970d66c001a6a35cbe27f3370f5587b163025b1403f4079f10ab00",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/nix/jump-03.png",
+          "source": "art-source/animated/v3/nix-extension48.png",
+          "slot": 19,
+          "source_bounds": [
+            589,
+            393,
+            709,
+            542
+          ],
+          "source_origin": [
+            651.0,
+            542.0
+          ],
+          "scale": 0.6037735849056604,
+          "packed_bounds": [
+            59,
+            82,
+            131,
+            172
+          ],
+          "sha256": "1a6aa1ec6a6e3946a8ae236c0e35d81c5f88060a35123f1c7afaec51c9bdb72d",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/nix/jump-04.png",
+          "source": "art-source/animated/v3/nix-extension48.png",
+          "slot": 20,
+          "source_bounds": [
+            745,
+            414,
+            900,
+            555
+          ],
+          "source_origin": [
+            830.0,
+            555.0
+          ],
+          "scale": 0.6037735849056604,
+          "packed_bounds": [
+            45,
+            87,
+            139,
+            172
+          ],
+          "sha256": "b138488ccac98f2d9c8ce1b5240a68554d43f282d5ed49fff8c84dcca7081fdf",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/nix/jump-05.png",
+          "source": "art-source/animated/v3/nix-extension48.png",
+          "slot": 21,
+          "source_bounds": [
+            931,
+            471,
+            1084,
+            601
+          ],
+          "source_origin": [
+            1008.5,
+            601.0
+          ],
+          "scale": 0.6037735849056604,
+          "packed_bounds": [
+            49,
+            94,
+            141,
+            172
+          ],
+          "sha256": "2cfbe8a8fa3abc9e2fed2d4b715d2dce2b55a870625e117064f0e0f99f3f4fe0",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/nix/jump-06.png",
+          "source": "art-source/animated/v3/nix-extension48.png",
+          "slot": 22,
+          "source_bounds": [
+            1127,
+            481,
+            1258,
+            600
+          ],
+          "source_origin": [
+            1188.5,
+            600.0
+          ],
+          "scale": 0.6037735849056604,
+          "packed_bounds": [
+            59,
+            100,
+            138,
+            172
+          ],
+          "sha256": "53258a56cd37257be516f9d189a5ee49f9f4ae7b5a7bb6ea8a4a0d37508aa98d",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/nix/jump-07.png",
+          "source": "art-source/animated/v3/nix-extension48.png",
+          "slot": 23,
+          "source_bounds": [
+            1315,
+            452,
+            1416,
+            601
+          ],
+          "source_origin": [
+            1362.5,
+            601.0
+          ],
+          "scale": 0.6037735849056604,
+          "packed_bounds": [
+            67,
+            82,
+            128,
+            172
+          ],
+          "sha256": "c9ad39dc054232f732e5274ea6bb231e7a18a272100b0ee93727a3c64ca352b5",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "stair_up": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/nix/stair_up-00.png",
+          "source": "art-source/animated/v3/nix-extension48.png",
+          "slot": 24,
+          "source_bounds": [
+            54,
+            624,
+            157,
+            770
+          ],
+          "source_origin": [
+            99.0,
+            770.0
+          ],
+          "scale": 0.6037735849056604,
+          "packed_bounds": [
+            69,
+            84,
+            131,
+            172
+          ],
+          "sha256": "3ef3f2b1618efaf69945675ff4a8fe24bfb7a101654906973f58dc70ad25adc1",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/nix/stair_up-01.png",
+          "source": "art-source/animated/v3/nix-extension48.png",
+          "slot": 25,
+          "source_bounds": [
+            231,
+            617,
+            345,
+            766
+          ],
+          "source_origin": [
+            288.0,
+            766.0
+          ],
+          "scale": 0.6037735849056604,
+          "packed_bounds": [
+            62,
+            82,
+            131,
+            172
+          ],
+          "sha256": "0d2889c55d20f99345df4894e02cb8fff53bf1c4b546aa21d2ec8c665a600f6c",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/nix/stair_up-02.png",
+          "source": "art-source/animated/v3/nix-extension48.png",
+          "slot": 26,
+          "source_bounds": [
+            415,
+            614,
+            518,
+            757
+          ],
+          "source_origin": [
+            468.5,
+            757.0
+          ],
+          "scale": 0.6037735849056604,
+          "packed_bounds": [
+            64,
+            86,
+            126,
+            172
+          ],
+          "sha256": "71babfb109eae3c16ae2da8c9a643827d7833e4d46d448e77d6b0c661731ca34",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/nix/stair_up-03.png",
+          "source": "art-source/animated/v3/nix-extension48.png",
+          "slot": 27,
+          "source_bounds": [
+            595,
+            613,
+            686,
+            770
+          ],
+          "source_origin": [
+            651.0,
+            770.0
+          ],
+          "scale": 0.6037735849056604,
+          "packed_bounds": [
+            62,
+            77,
+            117,
+            172
+          ],
+          "sha256": "26f76e72ce624d93ddb0a044980eaac46fd4e896d3324a3be2873ac3f66ba33d",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/nix/stair_up-04.png",
+          "source": "art-source/animated/v3/nix-extension48.png",
+          "slot": 28,
+          "source_bounds": [
+            777,
+            614,
+            872,
+            770
+          ],
+          "source_origin": [
+            830.0,
+            770.0
+          ],
+          "scale": 0.6037735849056604,
+          "packed_bounds": [
+            64,
+            78,
+            121,
+            172
+          ],
+          "sha256": "01ba73bc39ac44c3be9c5e07bd82b6738aba76ecd334de946b999fa06b418968",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/nix/stair_up-05.png",
+          "source": "art-source/animated/v3/nix-extension48.png",
+          "slot": 29,
+          "source_bounds": [
+            941,
+            624,
+            1052,
+            770
+          ],
+          "source_origin": [
+            1008.5,
+            770.0
+          ],
+          "scale": 0.6037735849056604,
+          "packed_bounds": [
+            55,
+            84,
+            122,
+            172
+          ],
+          "sha256": "4787c9abdaf91f700db28f51751585c7323cd49e4128169272d56d6d3f17607f",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/nix/stair_up-06.png",
+          "source": "art-source/animated/v3/nix-extension48.png",
+          "slot": 30,
+          "source_bounds": [
+            1140,
+            627,
+            1248,
+            770
+          ],
+          "source_origin": [
+            1188.5,
+            770.0
+          ],
+          "scale": 0.6037735849056604,
+          "packed_bounds": [
+            67,
+            86,
+            132,
+            172
+          ],
+          "sha256": "e3c9c4009ac296cd7b598cfbfba21a8dc9be4863a187f4f11ec184cc94ceab06",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/nix/stair_up-07.png",
+          "source": "art-source/animated/v3/nix-extension48.png",
+          "slot": 31,
+          "source_bounds": [
+            1306,
+            624,
+            1411,
+            770
+          ],
+          "source_origin": [
+            1362.5,
+            770.0
+          ],
+          "scale": 0.6037735849056604,
+          "packed_bounds": [
+            62,
+            84,
+            125,
+            172
+          ],
+          "sha256": "fce705497152bf4c718133ac08598bba709e41178e94117bc9c6208dfba48eb9",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "stair_down": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/nix/stair_down-00.png",
+          "source": "art-source/animated/v3/nix-extension48.png",
+          "slot": 32,
+          "source_bounds": [
+            58,
+            792,
+            160,
+            944
+          ],
+          "source_origin": [
+            99.0,
+            944.0
+          ],
+          "scale": 0.6037735849056604,
+          "packed_bounds": [
+            71,
+            80,
+            133,
+            172
+          ],
+          "sha256": "0ab4803d3862f3ac5a85a47df5bffb3c5a6b9e96f83cc47510cc39d163eaebe8",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/nix/stair_down-01.png",
+          "source": "art-source/animated/v3/nix-extension48.png",
+          "slot": 33,
+          "source_bounds": [
+            242,
+            787,
+            351,
+            945
+          ],
+          "source_origin": [
+            288.0,
+            945.0
+          ],
+          "scale": 0.6037735849056604,
+          "packed_bounds": [
+            68,
+            77,
+            134,
+            172
+          ],
+          "sha256": "79f667732fc5f3566310d44a510196db9a84bf66b36dced6550ff26187227597",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/nix/stair_down-02.png",
+          "source": "art-source/animated/v3/nix-extension48.png",
+          "slot": 34,
+          "source_bounds": [
+            410,
+            782,
+            518,
+            946
+          ],
+          "source_origin": [
+            468.5,
+            946.0
+          ],
+          "scale": 0.6037735849056604,
+          "packed_bounds": [
+            61,
+            73,
+            126,
+            172
+          ],
+          "sha256": "d4e13e411864f428678c9a6bd16fb852836e92bbbc32e928abc15dfa270c215a",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/nix/stair_down-03.png",
+          "source": "art-source/animated/v3/nix-extension48.png",
+          "slot": 35,
+          "source_bounds": [
+            581,
+            795,
+            684,
+            946
+          ],
+          "source_origin": [
+            651.0,
+            946.0
+          ],
+          "scale": 0.6037735849056604,
+          "packed_bounds": [
+            54,
+            81,
+            116,
+            172
+          ],
+          "sha256": "7d730278dfca6507aa24e65558db0c62c8da3798c6d214a3af0ee088dad59a0d",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/nix/stair_down-04.png",
+          "source": "art-source/animated/v3/nix-extension48.png",
+          "slot": 36,
+          "source_bounds": [
+            772,
+            793,
+            877,
+            946
+          ],
+          "source_origin": [
+            830.0,
+            946.0
+          ],
+          "scale": 0.6037735849056604,
+          "packed_bounds": [
+            61,
+            80,
+            124,
+            172
+          ],
+          "sha256": "68538f6b542ea94983bda66cd8c55439af992cbda4dc9023e4278a3bddacbae6",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/nix/stair_down-05.png",
+          "source": "art-source/animated/v3/nix-extension48.png",
+          "slot": 37,
+          "source_bounds": [
+            954,
+            792,
+            1062,
+            946
+          ],
+          "source_origin": [
+            1008.5,
+            946.0
+          ],
+          "scale": 0.6037735849056604,
+          "packed_bounds": [
+            63,
+            79,
+            128,
+            172
+          ],
+          "sha256": "1af10ba7f381ec4b338b6100bbed7eaa2f1524828b9f9c886e73eaa4f5c5d540",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/nix/stair_down-06.png",
+          "source": "art-source/animated/v3/nix-extension48.png",
+          "slot": 38,
+          "source_bounds": [
+            1142,
+            793,
+            1244,
+            944
+          ],
+          "source_origin": [
+            1188.5,
+            944.0
+          ],
+          "scale": 0.6037735849056604,
+          "packed_bounds": [
+            68,
+            81,
+            130,
+            172
+          ],
+          "sha256": "dd44c2fc28a5be3ddd50fae4f656af518f1c17534a89f6134bb6051afee019a0",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/nix/stair_down-07.png",
+          "source": "art-source/animated/v3/nix-extension48.png",
+          "slot": 39,
+          "source_bounds": [
+            1311,
+            793,
+            1411,
+            944
+          ],
+          "source_origin": [
+            1362.5,
+            944.0
+          ],
+          "scale": 0.6037735849056604,
+          "packed_bounds": [
+            65,
+            81,
+            125,
+            172
+          ],
+          "sha256": "67ce4bcff4321571cfa737de04c3e5dfa58b414b9d03298c8238e42c35289973",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "dodge": {
+      "frame_count": 8,
+      "durations": [
+        0.055,
+        0.045,
+        0.04,
+        0.045,
+        0.06,
+        0.07,
+        0.08,
+        0.1
+      ],
+      "duration": 0.495,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/nix/dodge-00.png",
+          "source": "art-source/animated/v3/nix-extension48.png",
+          "slot": 40,
+          "source_bounds": [
+            37,
+            963,
+            156,
+            1076
+          ],
+          "source_origin": [
+            99.0,
+            1076.0
+          ],
+          "scale": 0.6037735849056604,
+          "packed_bounds": [
+            59,
+            104,
+            131,
+            172
+          ],
+          "sha256": "6328b4950adccdf639ee68c6eeffa52605b4d638ba257d2fe3c54c7d42592b30",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/nix/dodge-01.png",
+          "source": "art-source/animated/v3/nix-extension48.png",
+          "slot": 41,
+          "source_bounds": [
+            212,
+            974,
+            342,
+            1076
+          ],
+          "source_origin": [
+            288.0,
+            1076.0
+          ],
+          "scale": 0.6037735849056604,
+          "packed_bounds": [
+            50,
+            110,
+            128,
+            172
+          ],
+          "sha256": "88f9d244ca270c0a0c57c9cc5ec8a3f7c6543a80a03adb2283781d7bc0f4f953",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/nix/dodge-02.png",
+          "source": "art-source/animated/v3/nix-extension48.png",
+          "slot": 42,
+          "source_bounds": [
+            391,
+            972,
+            532,
+            1076
+          ],
+          "source_origin": [
+            468.5,
+            1076.0
+          ],
+          "scale": 0.6037735849056604,
+          "packed_bounds": [
+            49,
+            109,
+            134,
+            172
+          ],
+          "sha256": "c29c5734ade2755b6cdf30e22c25c938eeb05b350ed5931d239186268a608bf1",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/nix/dodge-03.png",
+          "source": "art-source/animated/v3/nix-extension48.png",
+          "slot": 43,
+          "source_bounds": [
+            587,
+            982,
+            743,
+            1076
+          ],
+          "source_origin": [
+            651.0,
+            1076.0
+          ],
+          "scale": 0.6037735849056604,
+          "packed_bounds": [
+            57,
+            115,
+            151,
+            172
+          ],
+          "sha256": "128838811b8cbdb731328ea27797a43f49de6b9d99b9c74df1a7f3f290eda4a0",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/nix/dodge-04.png",
+          "source": "art-source/animated/v3/nix-extension48.png",
+          "slot": 44,
+          "source_bounds": [
+            773,
+            979,
+            901,
+            1076
+          ],
+          "source_origin": [
+            830.0,
+            1076.0
+          ],
+          "scale": 0.6037735849056604,
+          "packed_bounds": [
+            62,
+            113,
+            139,
+            172
+          ],
+          "sha256": "ae8dca232ed26dd0dbde766ed9c1ef828a374a2862d4d7c42a305b92fef5d08b",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/nix/dodge-05.png",
+          "source": "art-source/animated/v3/nix-extension48.png",
+          "slot": 45,
+          "source_bounds": [
+            955,
+            973,
+            1076,
+            1076
+          ],
+          "source_origin": [
+            1008.5,
+            1076.0
+          ],
+          "scale": 0.6037735849056604,
+          "packed_bounds": [
+            64,
+            110,
+            137,
+            172
+          ],
+          "sha256": "f6b94325225a6566af348c66e54b83123b562a34d641deaf3a1a0ed1459661ac",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/nix/dodge-06.png",
+          "source": "art-source/animated/v3/nix-extension48.png",
+          "slot": 46,
+          "source_bounds": [
+            1114,
+            963,
+            1238,
+            1076
+          ],
+          "source_origin": [
+            1188.5,
+            1076.0
+          ],
+          "scale": 0.6037735849056604,
+          "packed_bounds": [
+            51,
+            104,
+            126,
+            172
+          ],
+          "sha256": "84f60ff799335eff0f4754c2d1300b307d3d14728075c271ffcbcf207a0e0011",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/nix/dodge-07.png",
+          "source": "art-source/animated/v3/nix-extension48.png",
+          "slot": 47,
+          "source_bounds": [
+            1306,
+            958,
+            1415,
+            1076
+          ],
+          "source_origin": [
+            1362.5,
+            1076.0
+          ],
+          "scale": 0.6037735849056604,
+          "packed_bounds": [
+            62,
+            101,
+            127,
+            172
+          ],
+          "sha256": "5c69c351a263669faedaca265ddc3a44bed89f3aa228f186c3fa2610b7de8d85",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "powered_idle": {
+      "frame_count": 8,
+      "durations": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ],
+      "duration": 1.6,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/nix/powered_idle-00.png",
+          "source": "art-source/animated/v3/nix-powered40.png",
+          "slot": 0,
+          "source_bounds": [
+            24,
+            91,
+            151,
+            291
+          ],
+          "source_origin": [
+            82.0,
+            291.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            68,
+            75,
+            130,
+            172
+          ],
+          "sha256": "781d670c8379de05ab4155260d95902ca3897af57b1b0bd1095af4bb64861500"
+        },
+        {
+          "path": "res://assets/animated/nix/powered_idle-01.png",
+          "source": "art-source/animated/v3/nix-powered40.png",
+          "slot": 1,
+          "source_bounds": [
+            179,
+            92,
+            304,
+            291
+          ],
+          "source_origin": [
+            240.0,
+            291.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            66,
+            76,
+            127,
+            172
+          ],
+          "sha256": "251ba5dda75511ef794832fcb8d593d5192871e5162e0b7aaa01fe9c24afbc65"
+        },
+        {
+          "path": "res://assets/animated/nix/powered_idle-02.png",
+          "source": "art-source/animated/v3/nix-powered40.png",
+          "slot": 2,
+          "source_bounds": [
+            337,
+            92,
+            459,
+            291
+          ],
+          "source_origin": [
+            395.0,
+            291.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            68,
+            76,
+            127,
+            172
+          ],
+          "sha256": "ae9910f6cf7ae385404dc5af31fce6bc23836e0d81e1d1504da972c7a43ca46d"
+        },
+        {
+          "path": "res://assets/animated/nix/powered_idle-03.png",
+          "source": "art-source/animated/v3/nix-powered40.png",
+          "slot": 3,
+          "source_bounds": [
+            490,
+            92,
+            616,
+            291
+          ],
+          "source_origin": [
+            551.5,
+            291.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            66,
+            76,
+            127,
+            172
+          ],
+          "sha256": "d52ac70a5cf029cd815d102cf0ea33d8c463cde87452f0ab052f28bf91eeebb5"
+        },
+        {
+          "path": "res://assets/animated/nix/powered_idle-04.png",
+          "source": "art-source/animated/v3/nix-powered40.png",
+          "slot": 4,
+          "source_bounds": [
+            642,
+            91,
+            768,
+            291
+          ],
+          "source_origin": [
+            713.5,
+            291.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            61,
+            75,
+            122,
+            172
+          ],
+          "sha256": "922e1d701d56c7f6b3753a7cb91278a862c1d82219b8c05bceb4469ad27ff426"
+        },
+        {
+          "path": "res://assets/animated/nix/powered_idle-05.png",
+          "source": "art-source/animated/v3/nix-powered40.png",
+          "slot": 5,
+          "source_bounds": [
+            803,
+            92,
+            925,
+            291
+          ],
+          "source_origin": [
+            871.0,
+            291.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            63,
+            76,
+            122,
+            172
+          ],
+          "sha256": "e54c6f20c244af35f067baf750d69c1b94cb6cc8067be8fce04d7f3b2f91e95e"
+        },
+        {
+          "path": "res://assets/animated/nix/powered_idle-06.png",
+          "source": "art-source/animated/v3/nix-powered40.png",
+          "slot": 6,
+          "source_bounds": [
+            960,
+            92,
+            1081,
+            291
+          ],
+          "source_origin": [
+            1021.5,
+            291.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            66,
+            76,
+            125,
+            172
+          ],
+          "sha256": "897e4cc9ce8fca56d9bc31e9c5246cc67c17ceadd2b95aba2f5d7f9196266a27"
+        },
+        {
+          "path": "res://assets/animated/nix/powered_idle-07.png",
+          "source": "art-source/animated/v3/nix-powered40.png",
+          "slot": 7,
+          "source_bounds": [
+            1115,
+            92,
+            1238,
+            291
+          ],
+          "source_origin": [
+            1176.5,
+            291.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            66,
+            76,
+            126,
+            172
+          ],
+          "sha256": "d2c294133333e0c9083638c3c3e8daf985907c80b7176668690f4e03ca33f0b3"
+        }
+      ]
+    },
+    "powered_walk": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/nix/powered_walk-00.png",
+          "source": "art-source/animated/v3/nix-powered40.png",
+          "slot": 8,
+          "source_bounds": [
+            23,
+            353,
+            155,
+            546
+          ],
+          "source_origin": [
+            82.0,
+            546.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            67,
+            78,
+            131,
+            172
+          ],
+          "sha256": "87f57c997726f23cecaec5860379d18fa311e7f8ed1ad0d5296bb4cc329f364a"
+        },
+        {
+          "path": "res://assets/animated/nix/powered_walk-01.png",
+          "source": "art-source/animated/v3/nix-powered40.png",
+          "slot": 9,
+          "source_bounds": [
+            185,
+            353,
+            309,
+            546
+          ],
+          "source_origin": [
+            240.0,
+            546.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            69,
+            78,
+            129,
+            172
+          ],
+          "sha256": "ed134a8ed6879fc7467bc489a027d3c52d8ecc62a6f69a04cc9adf817871a642"
+        },
+        {
+          "path": "res://assets/animated/nix/powered_walk-02.png",
+          "source": "art-source/animated/v3/nix-powered40.png",
+          "slot": 10,
+          "source_bounds": [
+            343,
+            353,
+            470,
+            546
+          ],
+          "source_origin": [
+            395.0,
+            546.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            71,
+            78,
+            133,
+            172
+          ],
+          "sha256": "f1579b6c55c7bfa7bad40f9795abe11d086736c9b92e76d12a32ae38b7e5522d"
+        },
+        {
+          "path": "res://assets/animated/nix/powered_walk-03.png",
+          "source": "art-source/animated/v3/nix-powered40.png",
+          "slot": 11,
+          "source_bounds": [
+            496,
+            352,
+            618,
+            546
+          ],
+          "source_origin": [
+            551.5,
+            546.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            69,
+            78,
+            128,
+            172
+          ],
+          "sha256": "455ac8f1c12ca77c1274bb00426445602b80e45f5fcf92bd93737cfe24f346b6"
+        },
+        {
+          "path": "res://assets/animated/nix/powered_walk-04.png",
+          "source": "art-source/animated/v3/nix-powered40.png",
+          "slot": 12,
+          "source_bounds": [
+            657,
+            353,
+            781,
+            546
+          ],
+          "source_origin": [
+            713.5,
+            546.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            69,
+            78,
+            129,
+            172
+          ],
+          "sha256": "9fc063555341b39b4a966421bd9315a904a84a66da7ce723ef11910e43ca3a5a"
+        },
+        {
+          "path": "res://assets/animated/nix/powered_walk-05.png",
+          "source": "art-source/animated/v3/nix-powered40.png",
+          "slot": 13,
+          "source_bounds": [
+            803,
+            353,
+            933,
+            546
+          ],
+          "source_origin": [
+            871.0,
+            546.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            63,
+            78,
+            126,
+            172
+          ],
+          "sha256": "cd38c190577c44890c7140d5fa7927388af26acb3a4c40662eccb6cce4d4b338"
+        },
+        {
+          "path": "res://assets/animated/nix/powered_walk-06.png",
+          "source": "art-source/animated/v3/nix-powered40.png",
+          "slot": 14,
+          "source_bounds": [
+            964,
+            353,
+            1093,
+            546
+          ],
+          "source_origin": [
+            1021.5,
+            546.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            68,
+            78,
+            131,
+            172
+          ],
+          "sha256": "b8544f9f009d55e51b39b2f4ded4db03c65f5952083d26d5214715c0925d0291"
+        },
+        {
+          "path": "res://assets/animated/nix/powered_walk-07.png",
+          "source": "art-source/animated/v3/nix-powered40.png",
+          "slot": 15,
+          "source_bounds": [
+            1120,
+            352,
+            1244,
+            546
+          ],
+          "source_origin": [
+            1176.5,
+            546.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            69,
+            78,
+            129,
+            172
+          ],
+          "sha256": "1e8537504a5860b4b515313e136ad701ba7758d0062bb437303bded02823859c"
+        }
+      ]
+    },
+    "powered_primary": {
+      "frame_count": 8,
+      "durations": [
+        0.06243243243243244,
+        0.06243243243243244,
+        0.07135135135135136,
+        0.0981081081081081,
+        0.03567567567567568,
+        0.06314814814814815,
+        0.09759259259259259,
+        0.14925925925925926
+      ],
+      "duration": 0.64,
+      "loop": false,
+      "release_frame": 5,
+      "release_time": 0.33,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/nix/powered_primary-00.png",
+          "source": "art-source/animated/v3/nix-powered40.png",
+          "slot": 16,
+          "source_bounds": [
+            21,
+            607,
+            150,
+            801
+          ],
+          "source_origin": [
+            82.0,
+            801.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            66,
+            78,
+            129,
+            172
+          ],
+          "sha256": "7db4eedfc80b02e6dcae94065fb46865b049e0ab15fc48f6cd6c81dfd3737135"
+        },
+        {
+          "path": "res://assets/animated/nix/powered_primary-01.png",
+          "source": "art-source/animated/v3/nix-powered40.png",
+          "slot": 17,
+          "source_bounds": [
+            167,
+            608,
+            313,
+            801
+          ],
+          "source_origin": [
+            240.0,
+            801.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            61,
+            78,
+            132,
+            172
+          ],
+          "sha256": "1ce0b6a9d8602b26ed9d775ba3e98cac68dbc13f423af51c7e7bbe711b540875"
+        },
+        {
+          "path": "res://assets/animated/nix/powered_primary-02.png",
+          "source": "art-source/animated/v3/nix-powered40.png",
+          "slot": 18,
+          "source_bounds": [
+            317,
+            608,
+            474,
+            801
+          ],
+          "source_origin": [
+            395.0,
+            801.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            58,
+            78,
+            134,
+            172
+          ],
+          "sha256": "1d86b20ccbce169b86a645a56a9769615de966c4a1b1bb2540a42087af719604"
+        },
+        {
+          "path": "res://assets/animated/nix/powered_primary-03.png",
+          "source": "art-source/animated/v3/nix-powered40.png",
+          "slot": 19,
+          "source_bounds": [
+            470,
+            607,
+            626,
+            801
+          ],
+          "source_origin": [
+            551.5,
+            801.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            56,
+            78,
+            132,
+            172
+          ],
+          "sha256": "78df5e6b9b2264c965c2757916fbc596e6bbdca46c3e921799306ca90a50181e"
+        },
+        {
+          "path": "res://assets/animated/nix/powered_primary-04.png",
+          "source": "art-source/animated/v3/nix-powered40.png",
+          "slot": 22,
+          "source_bounds": [
+            951,
+            609,
+            1093,
+            801
+          ],
+          "source_origin": [
+            1021.5,
+            801.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            62,
+            79,
+            131,
+            172
+          ],
+          "sha256": "2f1781f1dc8e4ba1d18da5678b7e45f21f800550a28a220dc4465b78a736bc91"
+        },
+        {
+          "path": "res://assets/animated/nix/powered_primary-05.png",
+          "source": "art-source/animated/v3/nix-powered40.png",
+          "slot": 20,
+          "source_bounds": [
+            634,
+            608,
+            798,
+            801
+          ],
+          "source_origin": [
+            713.5,
+            801.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            57,
+            78,
+            137,
+            172
+          ],
+          "sha256": "3ca5e7ed44eacfa3efbb214f3f02e23fa877c3a641d4cfd1966d4902ce7e184b"
+        },
+        {
+          "path": "res://assets/animated/nix/powered_primary-06.png",
+          "source": "art-source/animated/v3/nix-powered40.png",
+          "slot": 21,
+          "source_bounds": [
+            801,
+            609,
+            942,
+            801
+          ],
+          "source_origin": [
+            871.0,
+            801.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            62,
+            79,
+            130,
+            172
+          ],
+          "sha256": "d41e6d8c327811220185c0c50bc3d55154059b60068e8ef94cd8347a5918a0ef"
+        },
+        {
+          "path": "res://assets/animated/nix/powered_primary-07.png",
+          "source": "art-source/animated/v3/nix-powered40.png",
+          "slot": 23,
+          "source_bounds": [
+            1117,
+            607,
+            1244,
+            801
+          ],
+          "source_origin": [
+            1176.5,
+            801.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            67,
+            78,
+            129,
+            172
+          ],
+          "sha256": "c22951d95d56191aee8b69903e0760250aceb1d1d6aa1e3366671acc7485921b"
+        }
+      ],
+      "release_anchor": [
+        40,
+        -67
+      ]
+    },
+    "powered_guard": {
+      "frame_count": 8,
+      "durations": [
+        0.055,
+        0.055,
+        0.055,
+        0.055,
+        0.12,
+        0.12,
+        0.12,
+        0.12
+      ],
+      "duration": 0.7,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": 4,
+      "frames": [
+        {
+          "path": "res://assets/animated/nix/powered_guard-00.png",
+          "source": "art-source/animated/v3/nix-powered40.png",
+          "slot": 24,
+          "source_bounds": [
+            13,
+            857,
+            156,
+            1040
+          ],
+          "source_origin": [
+            82.0,
+            1040.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            63,
+            83,
+            132,
+            172
+          ],
+          "sha256": "6668eb736af9061c23fb6c71609297792e75216a114902342987620d10b8d69a"
+        },
+        {
+          "path": "res://assets/animated/nix/powered_guard-01.png",
+          "source": "art-source/animated/v3/nix-powered40.png",
+          "slot": 25,
+          "source_bounds": [
+            172,
+            859,
+            311,
+            1040
+          ],
+          "source_origin": [
+            240.0,
+            1040.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            63,
+            84,
+            130,
+            172
+          ],
+          "sha256": "a65f2b8e74281d82a81192427f656b2e7d17dc73768e36bcf2de9772923ea410"
+        },
+        {
+          "path": "res://assets/animated/nix/powered_guard-02.png",
+          "source": "art-source/animated/v3/nix-powered40.png",
+          "slot": 26,
+          "source_bounds": [
+            326,
+            857,
+            467,
+            1040
+          ],
+          "source_origin": [
+            395.0,
+            1040.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            63,
+            83,
+            131,
+            172
+          ],
+          "sha256": "d7f9fe540b09d7f2e3fc6e9719b3ad8d102c7e93e399768e1afe8caa058b009e"
+        },
+        {
+          "path": "res://assets/animated/nix/powered_guard-03.png",
+          "source": "art-source/animated/v3/nix-powered40.png",
+          "slot": 27,
+          "source_bounds": [
+            482,
+            859,
+            619,
+            1040
+          ],
+          "source_origin": [
+            551.5,
+            1040.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            62,
+            84,
+            128,
+            172
+          ],
+          "sha256": "5ea76fac38469ca9239cf7402d29137e504add3c3a7671c13b5e475119f541ed"
+        },
+        {
+          "path": "res://assets/animated/nix/powered_guard-04.png",
+          "source": "art-source/animated/v3/nix-powered40.png",
+          "slot": 28,
+          "source_bounds": [
+            635,
+            856,
+            773,
+            1040
+          ],
+          "source_origin": [
+            713.5,
+            1040.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            58,
+            83,
+            125,
+            172
+          ],
+          "sha256": "1dbe2c9bb8f1d8430b142db89078cf124fd56f0120686bd93c712246b85c92b4"
+        },
+        {
+          "path": "res://assets/animated/nix/powered_guard-05.png",
+          "source": "art-source/animated/v3/nix-powered40.png",
+          "slot": 29,
+          "source_bounds": [
+            793,
+            857,
+            926,
+            1040
+          ],
+          "source_origin": [
+            871.0,
+            1040.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            58,
+            83,
+            122,
+            172
+          ],
+          "sha256": "726c0932f1d6fbc320969e0fdf9f676f52eddec5744aba17f3095102b1329c58"
+        },
+        {
+          "path": "res://assets/animated/nix/powered_guard-06.png",
+          "source": "art-source/animated/v3/nix-powered40.png",
+          "slot": 30,
+          "source_bounds": [
+            950,
+            857,
+            1083,
+            1040
+          ],
+          "source_origin": [
+            1021.5,
+            1040.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            61,
+            83,
+            125,
+            172
+          ],
+          "sha256": "23e4c0eb0b20a2304149671ed16b125c560619e7333ce134e12661e2f77baedf"
+        },
+        {
+          "path": "res://assets/animated/nix/powered_guard-07.png",
+          "source": "art-source/animated/v3/nix-powered40.png",
+          "slot": 31,
+          "source_bounds": [
+            1113,
+            857,
+            1235,
+            1040
+          ],
+          "source_origin": [
+            1176.5,
+            1040.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            65,
+            83,
+            124,
+            172
+          ],
+          "sha256": "1120aebf379ea64289a4bec1e5c98f30f29277b241fbda6b719513c7d35ea890"
+        }
+      ]
+    },
+    "powered_exit": {
+      "frame_count": 8,
+      "durations": [
+        0.11,
+        0.1,
+        0.1,
+        0.09,
+        0.09,
+        0.1,
+        0.12,
+        0.15
+      ],
+      "duration": 0.86,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/nix/powered_exit-00.png",
+          "source": "art-source/animated/v3/nix-powered40.png",
+          "slot": 32,
+          "source_bounds": [
+            30,
+            1082,
+            149,
+            1249
+          ],
+          "source_origin": [
+            82.0,
+            1250.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            71,
+            91,
+            129,
+            172
+          ],
+          "sha256": "360933227557dcf96d868e6d43e03abf7269d263972cf2885636f0e995b8d371"
+        },
+        {
+          "path": "res://assets/animated/nix/powered_exit-01.png",
+          "source": "art-source/animated/v3/nix-powered40.png",
+          "slot": 33,
+          "source_bounds": [
+            180,
+            1082,
+            302,
+            1250
+          ],
+          "source_origin": [
+            240.0,
+            1250.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            67,
+            91,
+            126,
+            172
+          ],
+          "sha256": "7c42e2bbb63558855f21ef13cab38fc5b9544ee1eaf25ddc00f9c36c73a47b18"
+        },
+        {
+          "path": "res://assets/animated/nix/powered_exit-02.png",
+          "source": "art-source/animated/v3/nix-powered40.png",
+          "slot": 34,
+          "source_bounds": [
+            337,
+            1082,
+            458,
+            1249
+          ],
+          "source_origin": [
+            395.0,
+            1250.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            68,
+            91,
+            127,
+            172
+          ],
+          "sha256": "4c8995937c05e8262ee96cfd6ce33d6466edbf9068920030c15c9facf26cce51"
+        },
+        {
+          "path": "res://assets/animated/nix/powered_exit-03.png",
+          "source": "art-source/animated/v3/nix-powered40.png",
+          "slot": 35,
+          "source_bounds": [
+            491,
+            1082,
+            609,
+            1250
+          ],
+          "source_origin": [
+            551.5,
+            1250.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            67,
+            91,
+            124,
+            172
+          ],
+          "sha256": "660ca5bc68680ea4cb04d1d5e65492bd59c07f321c075ff4200211ef1ae11c11"
+        },
+        {
+          "path": "res://assets/animated/nix/powered_exit-04.png",
+          "source": "art-source/animated/v3/nix-powered40.png",
+          "slot": 36,
+          "source_bounds": [
+            653,
+            1082,
+            762,
+            1249
+          ],
+          "source_origin": [
+            713.5,
+            1250.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            67,
+            91,
+            120,
+            172
+          ],
+          "sha256": "c2b28e1aa7342a1563fe592cd9b16e285ed8944a556af96b2d669ff4970be5e7"
+        },
+        {
+          "path": "res://assets/animated/nix/powered_exit-05.png",
+          "source": "art-source/animated/v3/nix-powered40.png",
+          "slot": 37,
+          "source_bounds": [
+            814,
+            1083,
+            920,
+            1250
+          ],
+          "source_origin": [
+            871.0,
+            1250.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            68,
+            91,
+            119,
+            172
+          ],
+          "sha256": "3cf24b04de8c922fd93ac095d50ccc1403709711e2f073eefc50a9bb6a8739c8"
+        },
+        {
+          "path": "res://assets/animated/nix/powered_exit-06.png",
+          "source": "art-source/animated/v3/nix-powered40.png",
+          "slot": 38,
+          "source_bounds": [
+            971,
+            1083,
+            1076,
+            1249
+          ],
+          "source_origin": [
+            1021.5,
+            1250.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            72,
+            91,
+            123,
+            171
+          ],
+          "sha256": "d3d92c9c7079ff9ccdb1eb7d4cf5754d186c0fd4a66aae2adf46cde138c12be2"
+        },
+        {
+          "path": "res://assets/animated/nix/powered_exit-07.png",
+          "source": "art-source/animated/v3/nix-powered40.png",
+          "slot": 39,
+          "source_bounds": [
+            1122,
+            1082,
+            1226,
+            1249
+          ],
+          "source_origin": [
+            1176.5,
+            1250.0
+          ],
+          "scale": 0.48484848484848486,
+          "packed_bounds": [
+            70,
+            91,
+            120,
+            172
+          ],
+          "sha256": "484e01b3af882ce4df5fba3037a30a1d5c77b95692f7d0e26f912b47fa4a0faa"
+        }
+      ]
+    }
+  },
+  "pose_count": 152
+}

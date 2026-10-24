@@ -1,0 +1,4042 @@
+{
+  "id": "tam",
+  "name": "Tam",
+  "view": "E",
+  "frame_size": [
+    192,
+    192
+  ],
+  "foot_pivot": [
+    96,
+    172
+  ],
+  "body_height_target": 96,
+  "fit_factor": 1.0,
+  "sources": [
+    {
+      "width": 1254,
+      "height": 1254,
+      "columns": 8,
+      "rows": 8,
+      "column_cuts": [
+        0,
+        165,
+        320,
+        471,
+        629,
+        790,
+        944,
+        1098,
+        1254
+      ],
+      "row_cuts": [
+        0,
+        172,
+        336,
+        500,
+        665,
+        832,
+        996,
+        1148,
+        1254
+      ],
+      "baselines": {
+        "0": 169.0,
+        "3": 657.0,
+        "4": 828.0,
+        "5": 990.0,
+        "6": 1146.5,
+        "7": 1243.25
+      },
+      "body_height": 157.0,
+      "body_min_area": 2850,
+      "path": "art-source/animated/tam-64.png",
+      "base_scale": 0.6114649681528662
+    },
+    {
+      "width": 1254,
+      "height": 1254,
+      "columns": 8,
+      "rows": 8,
+      "column_cuts": [
+        0,
+        193,
+        340,
+        484,
+        629,
+        771,
+        921,
+        1082,
+        1254
+      ],
+      "row_cuts": [
+        0,
+        164,
+        321,
+        480,
+        633,
+        793,
+        947,
+        1101,
+        1254
+      ],
+      "baselines": {
+        "0": 159.0,
+        "1": 316.0,
+        "2": 472.0,
+        "3": 632.0,
+        "4": 793.0,
+        "5": 944.0,
+        "6": 1097.0,
+        "7": 1244.0
+      },
+      "body_height": 144.5,
+      "body_min_area": 2437,
+      "path": "art-source/animated/v3/tam-extension64.png",
+      "base_scale": 0.6643598615916955
+    },
+    {
+      "width": 1536,
+      "height": 1024,
+      "columns": 8,
+      "rows": 5,
+      "column_cuts": [
+        0,
+        204,
+        394,
+        584,
+        766,
+        962,
+        1149,
+        1339,
+        1536
+      ],
+      "row_cuts": [
+        0,
+        208,
+        413,
+        620,
+        820,
+        1024
+      ],
+      "baselines": {
+        "0": 202.0,
+        "1": 405.0,
+        "2": 610.0,
+        "3": 813.0,
+        "4": 1010.0
+      },
+      "body_height": 187.0,
+      "body_min_area": 4182,
+      "path": "art-source/animated/v3/tam-powered40.png",
+      "base_scale": 0.5133689839572193
+    }
+  ],
+  "anchor_sources": [
+    {
+      "path": "art-source/animated/v3/elements-anchors.json",
+      "sha256": "8f75cadd5510d51a47fd3996f9595aebb72bfb3f3e284814346d058a844b8da2"
+    }
+  ],
+  "clips": {
+    "idle": {
+      "frame_count": 8,
+      "durations": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ],
+      "duration": 1.6,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/tam/idle-00.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 0,
+          "source_bounds": [
+            50,
+            10,
+            132,
+            169
+          ],
+          "source_origin": [
+            82.5,
+            169.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            76,
+            75,
+            126,
+            172
+          ],
+          "sha256": "b2d6fb9fd4e5e8b4eb1ab6d6bf493a200d354e1c822739e060815a8203067cff"
+        },
+        {
+          "path": "res://assets/animated/tam/idle-01.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 1,
+          "source_bounds": [
+            200,
+            10,
+            286,
+            169
+          ],
+          "source_origin": [
+            242.5,
+            169.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            70,
+            75,
+            123,
+            172
+          ],
+          "sha256": "bd8fd0df9370953e558d0e3b7d312b031b703cf6e05140010deed0408d397a00"
+        },
+        {
+          "path": "res://assets/animated/tam/idle-02.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 2,
+          "source_bounds": [
+            349,
+            9,
+            434,
+            169
+          ],
+          "source_origin": [
+            395.5,
+            169.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            68,
+            74,
+            120,
+            172
+          ],
+          "sha256": "fbb84042d8f414d11c8a1612ae57c8f9220e798d8c631befa632e51d2a2b8e25"
+        },
+        {
+          "path": "res://assets/animated/tam/idle-03.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 3,
+          "source_bounds": [
+            501,
+            8,
+            588,
+            169
+          ],
+          "source_origin": [
+            550.0,
+            169.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            66,
+            74,
+            119,
+            172
+          ],
+          "sha256": "bc1f6801a0d5440f7edbc6dc0f8a872cfa337fdc6bade284badf5332bd74dc22"
+        },
+        {
+          "path": "res://assets/animated/tam/idle-04.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 4,
+          "source_bounds": [
+            660,
+            9,
+            746,
+            169
+          ],
+          "source_origin": [
+            709.5,
+            169.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            66,
+            74,
+            119,
+            172
+          ],
+          "sha256": "e1c5235342e32097acbd1e380ff5a747fa98828b996b32e987f489d1c06e357b"
+        },
+        {
+          "path": "res://assets/animated/tam/idle-05.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 5,
+          "source_bounds": [
+            819,
+            9,
+            907,
+            169
+          ],
+          "source_origin": [
+            867.0,
+            169.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            67,
+            74,
+            121,
+            172
+          ],
+          "sha256": "a1ef6e1803bae233df08fa482d8158eae7afc3faf5751061a27c30b83b01d32c"
+        },
+        {
+          "path": "res://assets/animated/tam/idle-06.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 6,
+          "source_bounds": [
+            976,
+            9,
+            1062,
+            169
+          ],
+          "source_origin": [
+            1021.0,
+            169.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            68,
+            74,
+            121,
+            172
+          ],
+          "sha256": "2cf2f02e5637d1f13e5571b7d8875e71b18a3b83f8e599e10bd99725cf505063"
+        },
+        {
+          "path": "res://assets/animated/tam/idle-07.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 7,
+          "source_bounds": [
+            1132,
+            10,
+            1215,
+            169
+          ],
+          "source_origin": [
+            1176.0,
+            169.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            69,
+            75,
+            120,
+            172
+          ],
+          "sha256": "60b6b99a204eda05e0ecc4280ca5a5f88f121ac1ff8ebc07c79a94838c8776ba"
+        }
+      ]
+    },
+    "walk": {
+      "frame_count": 16,
+      "durations": [
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/tam/walk-00.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 0,
+          "source_bounds": [
+            74,
+            13,
+            167,
+            159
+          ],
+          "source_origin": [
+            96.5,
+            159.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            82,
+            75,
+            143,
+            172
+          ],
+          "sha256": "bfea44f2b2387baf8a456f526a54eb4ed3609318fde2bebb5984ad88410f2ef6"
+        },
+        {
+          "path": "res://assets/animated/tam/walk-01.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 1,
+          "source_bounds": [
+            218,
+            14,
+            312,
+            159
+          ],
+          "source_origin": [
+            266.5,
+            159.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            64,
+            76,
+            126,
+            172
+          ],
+          "sha256": "19e0e7866300f32f3b4d543d02507e985ea26877cbee1762c493825e395f1f32"
+        },
+        {
+          "path": "res://assets/animated/tam/walk-02.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 2,
+          "source_bounds": [
+            367,
+            16,
+            455,
+            159
+          ],
+          "source_origin": [
+            412.0,
+            159.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            66,
+            77,
+            124,
+            172
+          ],
+          "sha256": "b323faa03e2e36ba9027387077423d2f9d068e9a0601b604f1d821f612291b5c"
+        },
+        {
+          "path": "res://assets/animated/tam/walk-03.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 3,
+          "source_bounds": [
+            516,
+            14,
+            594,
+            159
+          ],
+          "source_origin": [
+            556.5,
+            159.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            69,
+            76,
+            121,
+            172
+          ],
+          "sha256": "92591ee30187b971401743e570a734620caab1ecb95449858407e6802ff5db50"
+        },
+        {
+          "path": "res://assets/animated/tam/walk-04.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 4,
+          "source_bounds": [
+            659,
+            10,
+            744,
+            159
+          ],
+          "source_origin": [
+            700.0,
+            159.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            69,
+            73,
+            125,
+            172
+          ],
+          "sha256": "28944d2d6027a867838836d4eae1e399aff1aefdb57af6763ff7f60520540a6f"
+        },
+        {
+          "path": "res://assets/animated/tam/walk-05.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 5,
+          "source_bounds": [
+            800,
+            14,
+            892,
+            159
+          ],
+          "source_origin": [
+            846.0,
+            159.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            65,
+            76,
+            126,
+            172
+          ],
+          "sha256": "84cf48947ddd703d2d8c005a20ea251bbb52e0a9b342d82084136999291bbf88"
+        },
+        {
+          "path": "res://assets/animated/tam/walk-06.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 6,
+          "source_bounds": [
+            949,
+            10,
+            1042,
+            159
+          ],
+          "source_origin": [
+            1001.5,
+            159.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            61,
+            73,
+            123,
+            172
+          ],
+          "sha256": "ef83214a7334726f13d342f5e3df6562747105e3c21d70b7d8663badd31d88c3"
+        },
+        {
+          "path": "res://assets/animated/tam/walk-07.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 7,
+          "source_bounds": [
+            1096,
+            14,
+            1188,
+            159
+          ],
+          "source_origin": [
+            1168.0,
+            159.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            48,
+            76,
+            109,
+            172
+          ],
+          "sha256": "96388b6123a5c2c576c57f5bd3043fbeac1844ac80aa1759c2af496b651caf1c"
+        },
+        {
+          "path": "res://assets/animated/tam/walk-08.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 8,
+          "source_bounds": [
+            75,
+            168,
+            166,
+            315
+          ],
+          "source_origin": [
+            96.5,
+            316.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            82,
+            74,
+            142,
+            172
+          ],
+          "sha256": "66b97b56de5758cebf654727b364aaa09526286e83257a8fe959a49a0d05633e"
+        },
+        {
+          "path": "res://assets/animated/tam/walk-09.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 9,
+          "source_bounds": [
+            223,
+            169,
+            312,
+            316
+          ],
+          "source_origin": [
+            266.5,
+            316.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            67,
+            74,
+            126,
+            172
+          ],
+          "sha256": "337dd9a040ab5e2e36ea50df27bbaa8655b7aed2e4b067946992b4b724a2bb59"
+        },
+        {
+          "path": "res://assets/animated/tam/walk-10.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 10,
+          "source_bounds": [
+            364,
+            169,
+            460,
+            316
+          ],
+          "source_origin": [
+            412.0,
+            316.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            64,
+            74,
+            128,
+            172
+          ],
+          "sha256": "ffff1923bbd3c214231e41198b25f54c67b5de9496e47e03e15a52eb2343997b"
+        },
+        {
+          "path": "res://assets/animated/tam/walk-11.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 11,
+          "source_bounds": [
+            513,
+            168,
+            605,
+            316
+          ],
+          "source_origin": [
+            556.5,
+            316.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            67,
+            74,
+            128,
+            172
+          ],
+          "sha256": "a7ea21c328c184b0fc89dafa617f3fbea18a5049975fc0bcdab06079a6c86505"
+        },
+        {
+          "path": "res://assets/animated/tam/walk-12.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 12,
+          "source_bounds": [
+            655,
+            165,
+            748,
+            315
+          ],
+          "source_origin": [
+            700.0,
+            316.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            66,
+            72,
+            128,
+            172
+          ],
+          "sha256": "cacb41188517f66f20739e787fead45783cbec048a34c751a8dee2205b394399"
+        },
+        {
+          "path": "res://assets/animated/tam/walk-13.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 13,
+          "source_bounds": [
+            796,
+            174,
+            898,
+            316
+          ],
+          "source_origin": [
+            846.0,
+            316.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            63,
+            78,
+            131,
+            172
+          ],
+          "sha256": "0b8eedbe19f02fd1c93ce36896d76f5f7479033c57e8b48a843224f0f98d756c"
+        },
+        {
+          "path": "res://assets/animated/tam/walk-14.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 14,
+          "source_bounds": [
+            941,
+            174,
+            1042,
+            315
+          ],
+          "source_origin": [
+            1001.5,
+            316.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            56,
+            78,
+            123,
+            172
+          ],
+          "sha256": "d2a829825372ea73a824d556fe238b62c8a53753399c5d97fadc4c24976848ba"
+        },
+        {
+          "path": "res://assets/animated/tam/walk-15.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 15,
+          "source_bounds": [
+            1099,
+            169,
+            1189,
+            315
+          ],
+          "source_origin": [
+            1168.0,
+            316.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            50,
+            74,
+            110,
+            171
+          ],
+          "sha256": "8b9145e67430a71d9050966c04e28fcd1ddb0f3fdba48aaa78dac6af800111e8"
+        }
+      ]
+    },
+    "primary": {
+      "frame_count": 16,
+      "durations": [
+        0.0385,
+        0.0315,
+        0.0385,
+        0.0315,
+        0.044,
+        0.036,
+        0.0605,
+        0.049499999999999995,
+        0.022,
+        0.018,
+        0.030249999999999996,
+        0.024749999999999998,
+        0.04675,
+        0.03825,
+        0.0715,
+        0.058499999999999996
+      ],
+      "duration": 0.64,
+      "loop": false,
+      "release_frame": 8,
+      "release_time": 0.32999999999999996,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/tam/primary-00.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 16,
+          "source_bounds": [
+            64,
+            327,
+            154,
+            471
+          ],
+          "source_origin": [
+            96.5,
+            472.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            74,
+            76,
+            134,
+            172
+          ],
+          "sha256": "4abaf7edc4a88c3d42130ad816b0061470e7b5261dacc588aafaa4ddef930611"
+        },
+        {
+          "path": "res://assets/animated/tam/primary-01.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 17,
+          "source_bounds": [
+            216,
+            330,
+            324,
+            471
+          ],
+          "source_origin": [
+            266.5,
+            472.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            62,
+            78,
+            134,
+            172
+          ],
+          "sha256": "cc2d5ca9030e0eecf1cf8434a0cc1cfd9fbef88e29ce38fc228c1746812deaa9"
+        },
+        {
+          "path": "res://assets/animated/tam/primary-02.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 18,
+          "source_bounds": [
+            363,
+            330,
+            468,
+            471
+          ],
+          "source_origin": [
+            412.0,
+            472.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            63,
+            78,
+            133,
+            172
+          ],
+          "sha256": "22164913a0f388b0b1ae1aa6d54d7ac68d30ebce500f741815f9424b797616e8"
+        },
+        {
+          "path": "res://assets/animated/tam/primary-03.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 20,
+          "source_bounds": [
+            650,
+            326,
+            763,
+            471
+          ],
+          "source_origin": [
+            700.0,
+            472.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            63,
+            75,
+            138,
+            171
+          ],
+          "sha256": "145b4b941040c8cb1f5188c495c77049fddb7097b1c9e380163344fddbcea65b"
+        },
+        {
+          "path": "res://assets/animated/tam/primary-04.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 21,
+          "source_bounds": [
+            790,
+            328,
+            911,
+            472
+          ],
+          "source_origin": [
+            846.0,
+            472.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            59,
+            76,
+            139,
+            172
+          ],
+          "sha256": "274cec642f0434bd99da53b320401d74203f33419cd0535668ae4b94ec69d20e"
+        },
+        {
+          "path": "res://assets/animated/tam/primary-05.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 22,
+          "source_bounds": [
+            942,
+            327,
+            1085,
+            472
+          ],
+          "source_origin": [
+            1001.5,
+            472.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            56,
+            76,
+            151,
+            172
+          ],
+          "sha256": "857d899fb4bdd950552682b3d6adca7b5e916fcacba7660342b7d61be2ae34a4"
+        },
+        {
+          "path": "res://assets/animated/tam/primary-06.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 19,
+          "source_bounds": [
+            506,
+            327,
+            607,
+            471
+          ],
+          "source_origin": [
+            556.5,
+            472.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            62,
+            76,
+            129,
+            172
+          ],
+          "sha256": "3571d308128aa5ad06e7b7240d7cd201c2aa16f6c2768b79c91761488639b87e"
+        },
+        {
+          "path": "res://assets/animated/tam/primary-07.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 23,
+          "source_bounds": [
+            1083,
+            332,
+            1217,
+            472
+          ],
+          "source_origin": [
+            1168.0,
+            472.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            40,
+            79,
+            129,
+            172
+          ],
+          "sha256": "2e73bed3d6a21e4cf161ff498b6b0e9897a59f1af672bef3209e55fae9166ca9"
+        },
+        {
+          "path": "res://assets/animated/tam/primary-08.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 24,
+          "source_bounds": [
+            48,
+            489,
+            187,
+            632
+          ],
+          "source_origin": [
+            96.5,
+            632.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            64,
+            77,
+            156,
+            172
+          ],
+          "sha256": "4358fd82160dc75e17de8668a67dc98137f9be6ef5f04a8d3e7aacb7468fdc4e"
+        },
+        {
+          "path": "res://assets/animated/tam/primary-09.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 25,
+          "source_bounds": [
+            210,
+            489,
+            331,
+            632
+          ],
+          "source_origin": [
+            266.5,
+            632.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            58,
+            77,
+            138,
+            172
+          ],
+          "sha256": "69b3b2efa472b6fc9d716e5b5102e2544a64d443418609305df924ec964a2e6f"
+        },
+        {
+          "path": "res://assets/animated/tam/primary-10.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 26,
+          "source_bounds": [
+            359,
+            489,
+            478,
+            632
+          ],
+          "source_origin": [
+            412.0,
+            632.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            61,
+            77,
+            140,
+            172
+          ],
+          "sha256": "4a7f3076e792bad4a2069dedd54d866b4171099d8100958b02f91ccee02f128f"
+        },
+        {
+          "path": "res://assets/animated/tam/primary-11.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 27,
+          "source_bounds": [
+            505,
+            487,
+            615,
+            632
+          ],
+          "source_origin": [
+            556.5,
+            632.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            62,
+            76,
+            135,
+            172
+          ],
+          "sha256": "fdb5afa75b9b632af06618e30422f5f2555b71f8cb341ce4a2660b0696540112"
+        },
+        {
+          "path": "res://assets/animated/tam/primary-12.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 28,
+          "source_bounds": [
+            641,
+            490,
+            757,
+            631
+          ],
+          "source_origin": [
+            700.0,
+            632.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            57,
+            78,
+            134,
+            172
+          ],
+          "sha256": "40f6afcb08a65127b7766b1ff6a760310bba43dad794eb0564d43fcb8d4ee722"
+        },
+        {
+          "path": "res://assets/animated/tam/primary-13.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 29,
+          "source_bounds": [
+            791,
+            487,
+            893,
+            632
+          ],
+          "source_origin": [
+            846.0,
+            632.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            59,
+            76,
+            127,
+            172
+          ],
+          "sha256": "087fc7f308c8acf052c07acad9bb4c1ec59be2ef1f5c8d12f8d5c45ceab31751"
+        },
+        {
+          "path": "res://assets/animated/tam/primary-14.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 30,
+          "source_bounds": [
+            942,
+            488,
+            1046,
+            632
+          ],
+          "source_origin": [
+            1001.5,
+            632.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            56,
+            76,
+            125,
+            172
+          ],
+          "sha256": "ce5e8ea7215895ba9523a2c21e36ebfcc5221b066d0cc41a88a60aa8a968181e"
+        },
+        {
+          "path": "res://assets/animated/tam/primary-15.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 31,
+          "source_bounds": [
+            1091,
+            489,
+            1182,
+            633
+          ],
+          "source_origin": [
+            1168.0,
+            632.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            45,
+            77,
+            105,
+            173
+          ],
+          "sha256": "303c9cb19cdbb3c6c72fc5d4c85953037514eb682382c418b2e1723907bb4fbd"
+        }
+      ],
+      "release_anchor": [
+        59,
+        -69
+      ],
+      "contact_reach": 59
+    },
+    "secondary": {
+      "frame_count": 8,
+      "durations": [
+        0.07,
+        0.07,
+        0.08,
+        0.11,
+        0.04,
+        0.055,
+        0.085,
+        0.13
+      ],
+      "duration": 0.64,
+      "loop": false,
+      "release_frame": 4,
+      "release_time": 0.33,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/tam/secondary-00.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 24,
+          "source_bounds": [
+            35,
+            504,
+            130,
+            657
+          ],
+          "source_origin": [
+            82.5,
+            657.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            67,
+            78,
+            125,
+            172
+          ],
+          "sha256": "e931b2eb867ea1bdd02f443221e8bd1093e89deda0c15c5cb48efcfcdc3cef65"
+        },
+        {
+          "path": "res://assets/animated/tam/secondary-01.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 25,
+          "source_bounds": [
+            172,
+            509,
+            313,
+            657
+          ],
+          "source_origin": [
+            242.5,
+            657.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            53,
+            82,
+            139,
+            172
+          ],
+          "sha256": "71de25b190867a1d8a59a6237e0da5092be5369836c3755d84fb2c36590b455e"
+        },
+        {
+          "path": "res://assets/animated/tam/secondary-02.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 26,
+          "source_bounds": [
+            332,
+            509,
+            475,
+            656
+          ],
+          "source_origin": [
+            395.5,
+            657.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            57,
+            82,
+            144,
+            172
+          ],
+          "sha256": "767358ed4281d213b20e4639ee83d85b3d3c2ded750f50f2c3417e418712720e"
+        },
+        {
+          "path": "res://assets/animated/tam/secondary-03.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 27,
+          "source_bounds": [
+            488,
+            519,
+            630,
+            656
+          ],
+          "source_origin": [
+            550.0,
+            657.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            58,
+            88,
+            145,
+            172
+          ],
+          "sha256": "b3986559eca488add0466a1bfabeeab0fe162a99998238de6aa565a3855e04fa"
+        },
+        {
+          "path": "res://assets/animated/tam/secondary-04.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 28,
+          "source_bounds": [
+            640,
+            517,
+            780,
+            657
+          ],
+          "source_origin": [
+            709.5,
+            657.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            54,
+            86,
+            140,
+            172
+          ],
+          "sha256": "5830a0f09c812673d2761bca080292abc4c37864130752260e1fe6a058a81f0f"
+        },
+        {
+          "path": "res://assets/animated/tam/secondary-05.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 29,
+          "source_bounds": [
+            795,
+            511,
+            939,
+            657
+          ],
+          "source_origin": [
+            867.0,
+            657.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            52,
+            83,
+            140,
+            172
+          ],
+          "sha256": "be555f987d42b762285e5d276587eb59be350748e56dac18ff7cc5199f0ab72c"
+        },
+        {
+          "path": "res://assets/animated/tam/secondary-06.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 30,
+          "source_bounds": [
+            964,
+            506,
+            1081,
+            657
+          ],
+          "source_origin": [
+            1021.0,
+            657.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            61,
+            80,
+            133,
+            172
+          ],
+          "sha256": "3be2d4606e237043860adfb5cb44b347e4cf5496df1e8c80a54afe5b224bf4f8"
+        },
+        {
+          "path": "res://assets/animated/tam/secondary-07.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 31,
+          "source_bounds": [
+            1125,
+            507,
+            1224,
+            658
+          ],
+          "source_origin": [
+            1176.0,
+            657.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            65,
+            80,
+            126,
+            172
+          ],
+          "sha256": "115751d59404a0cb5825523ab4995445b7b0db54ff8f54c5bcfad6339c9db60d"
+        }
+      ],
+      "release_anchor": [
+        12,
+        -27
+      ]
+    },
+    "special": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.08,
+        0.09,
+        0.12,
+        0.06,
+        0.08,
+        0.12,
+        0.18
+      ],
+      "duration": 0.82,
+      "loop": false,
+      "release_frame": 4,
+      "release_time": 0.38,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/tam/special-00.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 32,
+          "source_bounds": [
+            40,
+            667,
+            133,
+            828
+          ],
+          "source_origin": [
+            82.5,
+            828.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            70,
+            74,
+            127,
+            172
+          ],
+          "sha256": "39e97f84930297709988fca10e4fc1c094c53f57dbecdd70c0c06b4312d9ea6b"
+        },
+        {
+          "path": "res://assets/animated/tam/special-01.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 33,
+          "source_bounds": [
+            186,
+            667,
+            296,
+            828
+          ],
+          "source_origin": [
+            242.5,
+            828.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            61,
+            74,
+            128,
+            172
+          ],
+          "sha256": "392db7c75c4fa8493d19dfc98453b4ee76e58f103c53f88d69810489738d0041"
+        },
+        {
+          "path": "res://assets/animated/tam/special-02.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 34,
+          "source_bounds": [
+            330,
+            666,
+            450,
+            828
+          ],
+          "source_origin": [
+            395.5,
+            828.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            56,
+            73,
+            129,
+            172
+          ],
+          "sha256": "f759dc5144b8812426b5f7a15271671c99b0002e8a54015351fa93cd5956ade9"
+        },
+        {
+          "path": "res://assets/animated/tam/special-03.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 35,
+          "source_bounds": [
+            488,
+            666,
+            614,
+            828
+          ],
+          "source_origin": [
+            550.0,
+            828.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            58,
+            73,
+            135,
+            172
+          ],
+          "sha256": "1938e9923b986b78f5da9a91e0290c75b61b1c94ce9c49ac9322efa1a48f2cb3"
+        },
+        {
+          "path": "res://assets/animated/tam/special-04.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 36,
+          "source_bounds": [
+            648,
+            667,
+            769,
+            828
+          ],
+          "source_origin": [
+            709.5,
+            828.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            58,
+            74,
+            132,
+            172
+          ],
+          "sha256": "1415343a1638fdef758de2f4536929d60c48be6dc6031b65103eb94752cbb746"
+        },
+        {
+          "path": "res://assets/animated/tam/special-05.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 37,
+          "source_bounds": [
+            809,
+            666,
+            927,
+            828
+          ],
+          "source_origin": [
+            867.0,
+            828.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            61,
+            73,
+            133,
+            172
+          ],
+          "sha256": "4f1575cb9801cfe1a8e2df984318c95b89e3ae3bc620d00d8da1c05009778366"
+        },
+        {
+          "path": "res://assets/animated/tam/special-06.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 38,
+          "source_bounds": [
+            965,
+            666,
+            1081,
+            828
+          ],
+          "source_origin": [
+            1021.0,
+            828.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            62,
+            73,
+            133,
+            172
+          ],
+          "sha256": "2507ad9828e1fd8114fd880f557ebb225a131744936b85703feef66dc52a9e23"
+        },
+        {
+          "path": "res://assets/animated/tam/special-07.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 39,
+          "source_bounds": [
+            1122,
+            667,
+            1225,
+            829
+          ],
+          "source_origin": [
+            1176.0,
+            828.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            63,
+            74,
+            126,
+            173
+          ],
+          "sha256": "2c35f8d07a86fdc05b88d35c71eb96a943ea11309d826c8a9c065b670ee35a30"
+        }
+      ]
+    },
+    "guard": {
+      "frame_count": 8,
+      "durations": [
+        0.055,
+        0.055,
+        0.055,
+        0.055,
+        0.12,
+        0.12,
+        0.12,
+        0.12
+      ],
+      "duration": 0.7,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": 4,
+      "frames": [
+        {
+          "path": "res://assets/animated/tam/guard-00.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 40,
+          "source_bounds": [
+            36,
+            840,
+            139,
+            990
+          ],
+          "source_origin": [
+            82.5,
+            990.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            68,
+            80,
+            131,
+            172
+          ],
+          "sha256": "89987a0f3bc5bc0a56c505778f370b20ba087e3d7208035c145d046af67f5083"
+        },
+        {
+          "path": "res://assets/animated/tam/guard-01.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 41,
+          "source_bounds": [
+            196,
+            843,
+            307,
+            990
+          ],
+          "source_origin": [
+            242.5,
+            990.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            68,
+            82,
+            136,
+            172
+          ],
+          "sha256": "89246671568bd5f9945eb8a346c14244c662de90e8ba942659f52e9607a6d07b"
+        },
+        {
+          "path": "res://assets/animated/tam/guard-02.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 42,
+          "source_bounds": [
+            351,
+            850,
+            470,
+            990
+          ],
+          "source_origin": [
+            395.5,
+            990.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            69,
+            86,
+            142,
+            172
+          ],
+          "sha256": "24e133c2c14a123f650e8f50dfd7e0a9d253ba69031d8d1c63f3c0e5b75f2743"
+        },
+        {
+          "path": "res://assets/animated/tam/guard-03.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 43,
+          "source_bounds": [
+            506,
+            843,
+            618,
+            990
+          ],
+          "source_origin": [
+            550.0,
+            990.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            69,
+            82,
+            137,
+            172
+          ],
+          "sha256": "ad8b950437685650a9955fd1c56134d54d582a83e8d8fda9d77adad78c611d4c"
+        },
+        {
+          "path": "res://assets/animated/tam/guard-04.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 44,
+          "source_bounds": [
+            651,
+            850,
+            776,
+            990
+          ],
+          "source_origin": [
+            709.5,
+            990.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            60,
+            86,
+            136,
+            172
+          ],
+          "sha256": "b7167739d23b38316fc430c0f5c17553b5c7945e6e24d7cf7ace5e34645de18b"
+        },
+        {
+          "path": "res://assets/animated/tam/guard-05.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 45,
+          "source_bounds": [
+            802,
+            849,
+            933,
+            990
+          ],
+          "source_origin": [
+            867.0,
+            990.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            56,
+            86,
+            136,
+            172
+          ],
+          "sha256": "3b937cf40f9982e9cf87c580f0eb13a161ad206ae8e270fe2fc4dfcf2866ef22"
+        },
+        {
+          "path": "res://assets/animated/tam/guard-06.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 46,
+          "source_bounds": [
+            970,
+            843,
+            1079,
+            990
+          ],
+          "source_origin": [
+            1021.0,
+            990.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            65,
+            82,
+            132,
+            172
+          ],
+          "sha256": "db97874c99eda9a5eb540754c5bbd7f0806e14b7b994f49428f9e7ac36d4c9b5"
+        },
+        {
+          "path": "res://assets/animated/tam/guard-07.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 47,
+          "source_bounds": [
+            1125,
+            843,
+            1230,
+            990
+          ],
+          "source_origin": [
+            1176.0,
+            990.0
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            65,
+            82,
+            129,
+            172
+          ],
+          "sha256": "a19104e0091fe20c7f2945cdc2a0cc58a88c43e78deaae8d06ab5b2b1d38eaac"
+        }
+      ]
+    },
+    "hit": {
+      "frame_count": 8,
+      "durations": [
+        0.035,
+        0.065,
+        0.09,
+        0.12,
+        0.13,
+        0.15,
+        0.16,
+        0.18
+      ],
+      "duration": 0.9299999999999999,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/tam/hit-00.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 48,
+          "source_bounds": [
+            35,
+            1005,
+            140,
+            1146
+          ],
+          "source_origin": [
+            82.5,
+            1146.5
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            67,
+            85,
+            131,
+            171
+          ],
+          "sha256": "f7c091119af8e3313d97230373494fd4d92a2c473a583df32e18e7ded3312245"
+        },
+        {
+          "path": "res://assets/animated/tam/hit-01.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 49,
+          "source_bounds": [
+            194,
+            1001,
+            306,
+            1146
+          ],
+          "source_origin": [
+            242.5,
+            1146.5
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            66,
+            83,
+            134,
+            172
+          ],
+          "sha256": "0b727bf750e531e133bc12513fe578fdd52cf4e7043aba890f1ef3fb4a355395"
+        },
+        {
+          "path": "res://assets/animated/tam/hit-02.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 50,
+          "source_bounds": [
+            339,
+            1006,
+            464,
+            1146
+          ],
+          "source_origin": [
+            395.5,
+            1146.5
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            61,
+            86,
+            137,
+            172
+          ],
+          "sha256": "ed6cf86a17066869ccc123a003046015254626efbd9a45e865c0794baaa0434a"
+        },
+        {
+          "path": "res://assets/animated/tam/hit-03.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 51,
+          "source_bounds": [
+            493,
+            1006,
+            612,
+            1145
+          ],
+          "source_origin": [
+            550.0,
+            1146.5
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            61,
+            86,
+            134,
+            171
+          ],
+          "sha256": "2d99ef1e67e02ef689a1413d2082c3c12a205b0c7beaa4df7d20c60632f3f1b8"
+        },
+        {
+          "path": "res://assets/animated/tam/hit-04.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 52,
+          "source_bounds": [
+            644,
+            1017,
+            774,
+            1145
+          ],
+          "source_origin": [
+            709.5,
+            1146.5
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            56,
+            93,
+            135,
+            171
+          ],
+          "sha256": "3a6cafbd725b8e8b4f778b284c27d48222001d1632340b6b9134b205f55b2bec"
+        },
+        {
+          "path": "res://assets/animated/tam/hit-05.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 53,
+          "source_bounds": [
+            822,
+            1011,
+            923,
+            1145
+          ],
+          "source_origin": [
+            867.0,
+            1146.5
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            68,
+            89,
+            130,
+            171
+          ],
+          "sha256": "2c4f51c749b547ca5d43b290876a66eaa1993880c1a88b3309bd0d378023ef98"
+        },
+        {
+          "path": "res://assets/animated/tam/hit-06.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 54,
+          "source_bounds": [
+            988,
+            1004,
+            1068,
+            1148
+          ],
+          "source_origin": [
+            1021.0,
+            1146.5
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            76,
+            85,
+            125,
+            173
+          ],
+          "sha256": "a36fb8f1af4ea826f12c783ef0190ad47e06a208668e7fa07e2337f2324244ad"
+        },
+        {
+          "path": "res://assets/animated/tam/hit-07.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 55,
+          "source_bounds": [
+            1133,
+            1004,
+            1216,
+            1148
+          ],
+          "source_origin": [
+            1176.0,
+            1146.5
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            70,
+            85,
+            121,
+            173
+          ],
+          "sha256": "f8027c3fe8a080b50659016f2cd6762bbdccb4f29eb16c8c73421a1bd441c9f3"
+        }
+      ]
+    },
+    "defeat": {
+      "frame_count": 8,
+      "durations": [
+        0.08,
+        0.1,
+        0.1,
+        0.12,
+        0.15,
+        0.18,
+        0.24,
+        0.3
+      ],
+      "duration": 1.27,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/tam/defeat-00.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 56,
+          "source_bounds": [
+            31,
+            1152,
+            127,
+            1242
+          ],
+          "source_origin": [
+            82.5,
+            1243.25
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            65,
+            116,
+            124,
+            171
+          ],
+          "sha256": "0ddad35facb22f82560d078111f466f8dbd91043e222c9ef2c0a671787fbb911"
+        },
+        {
+          "path": "res://assets/animated/tam/defeat-01.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 57,
+          "source_bounds": [
+            189,
+            1159,
+            294,
+            1242
+          ],
+          "source_origin": [
+            242.5,
+            1243.25
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            63,
+            120,
+            127,
+            171
+          ],
+          "sha256": "aa42691f9274355fcae765042d2e56069158f8bea1bc8dfd0a1842f82ce520c7"
+        },
+        {
+          "path": "res://assets/animated/tam/defeat-02.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 58,
+          "source_bounds": [
+            341,
+            1162,
+            458,
+            1243
+          ],
+          "source_origin": [
+            395.5,
+            1243.25
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            63,
+            122,
+            135,
+            172
+          ],
+          "sha256": "abb132609d6197e61dd0752430192b7f2190f5e857277848ebf75663531f4b34"
+        },
+        {
+          "path": "res://assets/animated/tam/defeat-03.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 59,
+          "source_bounds": [
+            493,
+            1147,
+            616,
+            1244
+          ],
+          "source_origin": [
+            550.0,
+            1243.25
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            61,
+            113,
+            136,
+            172
+          ],
+          "sha256": "c2439b1d120acf7a267fdb8a4ba7e4b721d66571adb17e49503df5ec882fa251"
+        },
+        {
+          "path": "res://assets/animated/tam/defeat-04.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 60,
+          "source_bounds": [
+            645,
+            1155,
+            763,
+            1244
+          ],
+          "source_origin": [
+            709.5,
+            1243.25
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            57,
+            118,
+            129,
+            172
+          ],
+          "sha256": "476e734a2eec3b9e452901719b10a1939af8f9b6c9263603e6670d2dd635fc75"
+        },
+        {
+          "path": "res://assets/animated/tam/defeat-05.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 61,
+          "source_bounds": [
+            793,
+            1171,
+            934,
+            1243
+          ],
+          "source_origin": [
+            867.0,
+            1243.25
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            51,
+            128,
+            137,
+            172
+          ],
+          "sha256": "e6c51e0331115f46c0a0397b78428ddc00112c04723e125e169c27ff77ef07a9"
+        },
+        {
+          "path": "res://assets/animated/tam/defeat-06.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 63,
+          "source_bounds": [
+            1114,
+            1158,
+            1236,
+            1243
+          ],
+          "source_origin": [
+            1176.0,
+            1243.25
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            58,
+            120,
+            133,
+            172
+          ],
+          "sha256": "77f0ba5be2dead02a89d67c9cc02bf978be2849128c4c43407f330ae27cd1ff3"
+        },
+        {
+          "path": "res://assets/animated/tam/defeat-07.png",
+          "source": "art-source/animated/tam-64.png",
+          "slot": 62,
+          "source_bounds": [
+            957,
+            1174,
+            1087,
+            1243
+          ],
+          "source_origin": [
+            1021.0,
+            1243.25
+          ],
+          "scale": 0.6114649681528662,
+          "packed_bounds": [
+            57,
+            130,
+            136,
+            172
+          ],
+          "sha256": "f95a490e7e28dbd3b82bdb6447b4ce23ae79dd88889efaaf58467c68df5a24dc"
+        }
+      ]
+    },
+    "jump": {
+      "frame_count": 8,
+      "durations": [
+        0.08,
+        0.055,
+        0.08,
+        0.11,
+        0.11,
+        0.08,
+        0.07,
+        0.115
+      ],
+      "duration": 0.7000000000000001,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/tam/jump-00.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 32,
+          "source_bounds": [
+            70,
+            654,
+            167,
+            793
+          ],
+          "source_origin": [
+            96.5,
+            793.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            78,
+            80,
+            142,
+            172
+          ],
+          "sha256": "e88000546934880af97ea743560d4b486b171a92dad405cbb657a74fb9cd49af",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/tam/jump-01.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 33,
+          "source_bounds": [
+            219,
+            675,
+            321,
+            793
+          ],
+          "source_origin": [
+            266.5,
+            793.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            64,
+            94,
+            132,
+            172
+          ],
+          "sha256": "9133347aa7ee9028046910ef4047cbada7ff375e6b48c3ba556942b86cb89e46",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/tam/jump-02.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 34,
+          "source_bounds": [
+            370,
+            650,
+            462,
+            793
+          ],
+          "source_origin": [
+            412.0,
+            793.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            68,
+            77,
+            129,
+            172
+          ],
+          "sha256": "0a61faaa38b7c8e1577838c86798feef40972b98587c3c773e0b741de4942837",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/tam/jump-03.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 35,
+          "source_bounds": [
+            506,
+            634,
+            604,
+            780
+          ],
+          "source_origin": [
+            556.5,
+            780.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            62,
+            75,
+            127,
+            172
+          ],
+          "sha256": "767bf424ac31ea25fa847580cafa155fc9762f6765a60455db2da33308fe3513",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/tam/jump-04.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 36,
+          "source_bounds": [
+            635,
+            638,
+            747,
+            764
+          ],
+          "source_origin": [
+            700.0,
+            764.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            53,
+            88,
+            127,
+            172
+          ],
+          "sha256": "e640b6a7a3ae733daf83e087b45885c5cb4c43c1a82f7c63046b822d62334c70",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/tam/jump-05.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 37,
+          "source_bounds": [
+            771,
+            650,
+            900,
+            793
+          ],
+          "source_origin": [
+            846.0,
+            793.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            47,
+            78,
+            132,
+            172
+          ],
+          "sha256": "4a0b595d404f6ce50b82447b98d8838f473d0ed94217fb14d3ee579f555bcfbe",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/tam/jump-06.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 38,
+          "source_bounds": [
+            930,
+            693,
+            1052,
+            793
+          ],
+          "source_origin": [
+            1001.5,
+            793.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            48,
+            106,
+            129,
+            172
+          ],
+          "sha256": "ce5ab7a8613ef2cf25945cee795d9813ec5416a74e83a207b1099735a36f5b89",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/tam/jump-07.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 39,
+          "source_bounds": [
+            1098,
+            653,
+            1186,
+            793
+          ],
+          "source_origin": [
+            1168.0,
+            793.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            49,
+            79,
+            107,
+            172
+          ],
+          "sha256": "2a9aff410d6f569dadc81845dc56f2a5905ca258b1c83ab431cc96dd5a6172a9",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "stair_up": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/tam/stair_up-00.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 40,
+          "source_bounds": [
+            69,
+            798,
+            164,
+            942
+          ],
+          "source_origin": [
+            96.5,
+            942.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            78,
+            76,
+            141,
+            172
+          ],
+          "sha256": "dec6ebd546e48828e119a7e08fee344a37151175ba8ce26bf18a04033a1ac44f",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/tam/stair_up-01.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 41,
+          "source_bounds": [
+            216,
+            799,
+            318,
+            942
+          ],
+          "source_origin": [
+            266.5,
+            942.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            62,
+            77,
+            130,
+            172
+          ],
+          "sha256": "0c5fe5975bad1e4ad989cece57d8f593d4b80e499e296bd1de1f2b8b0597e236",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/tam/stair_up-02.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 42,
+          "source_bounds": [
+            358,
+            799,
+            464,
+            943
+          ],
+          "source_origin": [
+            412.0,
+            943.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            60,
+            76,
+            130,
+            172
+          ],
+          "sha256": "c93cb0fed201aa7e0dbcca5756b790e0b29c2a2f4d008a6588cbd8ced95bec6e",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/tam/stair_up-03.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 43,
+          "source_bounds": [
+            506,
+            794,
+            600,
+            941
+          ],
+          "source_origin": [
+            556.5,
+            941.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            62,
+            74,
+            124,
+            172
+          ],
+          "sha256": "fc97e631bd1ff5a943d830f43a56976a370571ac5473ff8d4c9e5106eeb11d29",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/tam/stair_up-04.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 44,
+          "source_bounds": [
+            658,
+            794,
+            748,
+            944
+          ],
+          "source_origin": [
+            700.0,
+            944.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            68,
+            72,
+            128,
+            172
+          ],
+          "sha256": "1fed8e48b3885d6b64ed2e4e024e198218e32a7a562bef972c4a01ffac77242e",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/tam/stair_up-05.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 45,
+          "source_bounds": [
+            796,
+            797,
+            887,
+            943
+          ],
+          "source_origin": [
+            846.0,
+            943.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            63,
+            75,
+            123,
+            172
+          ],
+          "sha256": "b22bb51f33c45c03789db54e03db0dd467b7245c403a3d2e345a33c345e05413",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/tam/stair_up-06.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 46,
+          "source_bounds": [
+            950,
+            796,
+            1048,
+            944
+          ],
+          "source_origin": [
+            1001.5,
+            944.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            62,
+            74,
+            127,
+            172
+          ],
+          "sha256": "f89c222d764113d7156336ead98c697c9a5013ff13fd4c7836e24b2a2b461af9",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/tam/stair_up-07.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 47,
+          "source_bounds": [
+            1099,
+            800,
+            1191,
+            944
+          ],
+          "source_origin": [
+            1168.0,
+            944.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            51,
+            76,
+            111,
+            172
+          ],
+          "sha256": "a0d17cf3455ba6893422cb82ecb02d80f1e23d6f37fdb7bc602314df8727967f",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "stair_down": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/tam/stair_down-00.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 48,
+          "source_bounds": [
+            69,
+            953,
+            170,
+            1096
+          ],
+          "source_origin": [
+            96.5,
+            1096.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            78,
+            77,
+            145,
+            172
+          ],
+          "sha256": "c05df6f5396296980133126600d54cced355365139c69cee73f32df584950d54",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/tam/stair_down-01.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 49,
+          "source_bounds": [
+            209,
+            952,
+            313,
+            1095
+          ],
+          "source_origin": [
+            266.5,
+            1095.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            58,
+            78,
+            127,
+            172
+          ],
+          "sha256": "d8c03a78be2b9b71873ccfa3a746633c52d2fa1f7bca575002aee0a15a4c83ca",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/tam/stair_down-02.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 50,
+          "source_bounds": [
+            357,
+            953,
+            462,
+            1097
+          ],
+          "source_origin": [
+            412.0,
+            1097.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            59,
+            76,
+            129,
+            172
+          ],
+          "sha256": "2c9bed3ae5973e62166b75d51b994fb346704629aebf0b2244f8b69defac905a",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/tam/stair_down-03.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 51,
+          "source_bounds": [
+            503,
+            950,
+            604,
+            1091
+          ],
+          "source_origin": [
+            556.5,
+            1091.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            60,
+            78,
+            127,
+            172
+          ],
+          "sha256": "eff0b03cc79a27b23fa8fb1f9c90ffc97b7541dc4defdfe526f534eaa41e65fd",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/tam/stair_down-04.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 52,
+          "source_bounds": [
+            645,
+            951,
+            742,
+            1097
+          ],
+          "source_origin": [
+            700.0,
+            1097.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            59,
+            75,
+            123,
+            172
+          ],
+          "sha256": "693a8222e2efb610270cacec2bd9052a165b3f3f20786bf46d0d5ded874687a0",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/tam/stair_down-05.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 53,
+          "source_bounds": [
+            804,
+            952,
+            899,
+            1095
+          ],
+          "source_origin": [
+            846.0,
+            1095.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            68,
+            77,
+            131,
+            172
+          ],
+          "sha256": "d0acd5ae4cabb52981e2ef5c9c000cb249ec895485a0a37d0c4a2d89632e39d2",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/tam/stair_down-06.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 54,
+          "source_bounds": [
+            947,
+            959,
+            1039,
+            1097
+          ],
+          "source_origin": [
+            1001.5,
+            1097.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            60,
+            80,
+            121,
+            172
+          ],
+          "sha256": "d508cbecf8c9b90ced14b17cd10c7abee7fdd28fadbadfee6595f1fc5a0ca740",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/tam/stair_down-07.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 55,
+          "source_bounds": [
+            1095,
+            952,
+            1188,
+            1095
+          ],
+          "source_origin": [
+            1168.0,
+            1095.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            48,
+            77,
+            110,
+            172
+          ],
+          "sha256": "7b7d8ab0f3a8a68d8aa07818b0c400fb4b12470f063a943aeffbafaac8eeeb62",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "dodge": {
+      "frame_count": 8,
+      "durations": [
+        0.055,
+        0.045,
+        0.04,
+        0.045,
+        0.06,
+        0.07,
+        0.08,
+        0.1
+      ],
+      "duration": 0.495,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/tam/dodge-00.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 56,
+          "source_bounds": [
+            68,
+            1104,
+            157,
+            1244
+          ],
+          "source_origin": [
+            96.5,
+            1244.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            77,
+            79,
+            136,
+            172
+          ],
+          "sha256": "cd823564262fe2e14c9a5f2d09116dcfb094c372fe71efc49406fd90056d78a3",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/tam/dodge-01.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 57,
+          "source_bounds": [
+            215,
+            1110,
+            322,
+            1246
+          ],
+          "source_origin": [
+            266.5,
+            1246.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            62,
+            82,
+            133,
+            172
+          ],
+          "sha256": "ce7103b541bc1f7b82b52c81e06198c281e8af3664dbda4e9b639ddfefd6f55d",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/tam/dodge-02.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 58,
+          "source_bounds": [
+            348,
+            1132,
+            478,
+            1244
+          ],
+          "source_origin": [
+            412.0,
+            1244.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            53,
+            99,
+            139,
+            172
+          ],
+          "sha256": "143b26b50f3a1c9acb56ce8ea90e0ee7fc9561d7360a60ce46a729a109dd08f7",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/tam/dodge-03.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 59,
+          "source_bounds": [
+            506,
+            1123,
+            624,
+            1244
+          ],
+          "source_origin": [
+            556.5,
+            1244.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            62,
+            92,
+            140,
+            172
+          ],
+          "sha256": "b5c88d120b741e1708b474dc1fb30fc87c219d7466c2ed61d750de10d6e12877",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/tam/dodge-04.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 60,
+          "source_bounds": [
+            648,
+            1145,
+            789,
+            1244
+          ],
+          "source_origin": [
+            700.0,
+            1244.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            61,
+            106,
+            155,
+            172
+          ],
+          "sha256": "3b283c9e204780eb487c3722739267cd3ac744c6af33527bd149849995febbc1",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/tam/dodge-05.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 61,
+          "source_bounds": [
+            806,
+            1117,
+            917,
+            1244
+          ],
+          "source_origin": [
+            846.0,
+            1244.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            69,
+            88,
+            143,
+            172
+          ],
+          "sha256": "f19160711cf4933b4554f62bd64f61ebfb64a1cfc51601d7413cb14db1eb47a7",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/tam/dodge-06.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 62,
+          "source_bounds": [
+            956,
+            1109,
+            1056,
+            1244
+          ],
+          "source_origin": [
+            1001.5,
+            1244.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            66,
+            82,
+            132,
+            172
+          ],
+          "sha256": "4cb52e93010549a4afe5543f7f61f68ca4e5a65121476a0b85f408e3fcfa7893",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/tam/dodge-07.png",
+          "source": "art-source/animated/v3/tam-extension64.png",
+          "slot": 63,
+          "source_bounds": [
+            1104,
+            1104,
+            1193,
+            1244
+          ],
+          "source_origin": [
+            1168.0,
+            1244.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            53,
+            79,
+            112,
+            172
+          ],
+          "sha256": "06d7d4ec809531f14008bcf6558b51cdd3881684983601ea9531e103cbb91ec8",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "powered_idle": {
+      "frame_count": 8,
+      "durations": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ],
+      "duration": 1.6,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/tam/powered_idle-00.png",
+          "source": "art-source/animated/v3/tam-powered40.png",
+          "slot": 0,
+          "source_bounds": [
+            44,
+            12,
+            176,
+            201
+          ],
+          "source_origin": [
+            102.0,
+            202.0
+          ],
+          "scale": 0.5133689839572193,
+          "packed_bounds": [
+            66,
+            74,
+            134,
+            171
+          ],
+          "sha256": "b7eb0cca2b90c13895a5385c3251a1c6fe15cf96c9ce2c44768f0cfb66a196de"
+        },
+        {
+          "path": "res://assets/animated/tam/powered_idle-01.png",
+          "source": "art-source/animated/v3/tam-powered40.png",
+          "slot": 1,
+          "source_bounds": [
+            234,
+            12,
+            366,
+            202
+          ],
+          "source_origin": [
+            299.0,
+            202.0
+          ],
+          "scale": 0.5133689839572193,
+          "packed_bounds": [
+            63,
+            74,
+            131,
+            172
+          ],
+          "sha256": "6b33fb26f53e6cb6e8a5cf31423d8d8941d465a6e2d977792030301f76eccc49"
+        },
+        {
+          "path": "res://assets/animated/tam/powered_idle-02.png",
+          "source": "art-source/animated/v3/tam-powered40.png",
+          "slot": 2,
+          "source_bounds": [
+            421,
+            12,
+            554,
+            202
+          ],
+          "source_origin": [
+            489.0,
+            202.0
+          ],
+          "scale": 0.5133689839572193,
+          "packed_bounds": [
+            61,
+            74,
+            129,
+            172
+          ],
+          "sha256": "b9820f1261f0e7a01393176836f0e7396e19ca9b0baaf171003d6848c727fecc"
+        },
+        {
+          "path": "res://assets/animated/tam/powered_idle-03.png",
+          "source": "art-source/animated/v3/tam-powered40.png",
+          "slot": 3,
+          "source_bounds": [
+            608,
+            12,
+            740,
+            202
+          ],
+          "source_origin": [
+            675.0,
+            202.0
+          ],
+          "scale": 0.5133689839572193,
+          "packed_bounds": [
+            62,
+            74,
+            130,
+            172
+          ],
+          "sha256": "5eb1af4208cdfc0e731d1d28314298cb389bc553d28d4c8fb96d345b4e9f0e67"
+        },
+        {
+          "path": "res://assets/animated/tam/powered_idle-04.png",
+          "source": "art-source/animated/v3/tam-powered40.png",
+          "slot": 4,
+          "source_bounds": [
+            797,
+            11,
+            928,
+            202
+          ],
+          "source_origin": [
+            864.0,
+            202.0
+          ],
+          "scale": 0.5133689839572193,
+          "packed_bounds": [
+            62,
+            74,
+            129,
+            172
+          ],
+          "sha256": "aeacdd2b0d3adb8829c1c1d943b5b8aa0b47f8cab5906d46a104ba900868e922"
+        },
+        {
+          "path": "res://assets/animated/tam/powered_idle-05.png",
+          "source": "art-source/animated/v3/tam-powered40.png",
+          "slot": 5,
+          "source_bounds": [
+            984,
+            11,
+            1117,
+            202
+          ],
+          "source_origin": [
+            1055.5,
+            202.0
+          ],
+          "scale": 0.5133689839572193,
+          "packed_bounds": [
+            59,
+            74,
+            127,
+            172
+          ],
+          "sha256": "85a0a864ce766c9669cc5b61227db8f2ec927fb0dac0c7453941af0eed4f57f2"
+        },
+        {
+          "path": "res://assets/animated/tam/powered_idle-06.png",
+          "source": "art-source/animated/v3/tam-powered40.png",
+          "slot": 6,
+          "source_bounds": [
+            1173,
+            12,
+            1306,
+            202
+          ],
+          "source_origin": [
+            1244.0,
+            202.0
+          ],
+          "scale": 0.5133689839572193,
+          "packed_bounds": [
+            60,
+            74,
+            128,
+            172
+          ],
+          "sha256": "2dd4a88c14fd9ca1396ea141468c96a232cf8f5da809bb2894e9ad80d41962b5"
+        },
+        {
+          "path": "res://assets/animated/tam/powered_idle-07.png",
+          "source": "art-source/animated/v3/tam-powered40.png",
+          "slot": 7,
+          "source_bounds": [
+            1362,
+            11,
+            1494,
+            202
+          ],
+          "source_origin": [
+            1437.5,
+            202.0
+          ],
+          "scale": 0.5133689839572193,
+          "packed_bounds": [
+            57,
+            74,
+            125,
+            172
+          ],
+          "sha256": "c2757ab1a7a84f76f227bcdfe8a168feb46ffb443602ae078e6235559c0f3f1f"
+        }
+      ]
+    },
+    "powered_walk": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/tam/powered_walk-00.png",
+          "source": "art-source/animated/v3/tam-powered40.png",
+          "slot": 8,
+          "source_bounds": [
+            38,
+            212,
+            175,
+            402
+          ],
+          "source_origin": [
+            102.0,
+            405.0
+          ],
+          "scale": 0.5133689839572193,
+          "packed_bounds": [
+            63,
+            73,
+            133,
+            171
+          ],
+          "sha256": "cb615894b22e08a5a47eebaecc52592182dac5c080b29e6cefd0305319920126"
+        },
+        {
+          "path": "res://assets/animated/tam/powered_walk-01.png",
+          "source": "art-source/animated/v3/tam-powered40.png",
+          "slot": 9,
+          "source_bounds": [
+            235,
+            213,
+            368,
+            405
+          ],
+          "source_origin": [
+            299.0,
+            405.0
+          ],
+          "scale": 0.5133689839572193,
+          "packed_bounds": [
+            63,
+            73,
+            131,
+            172
+          ],
+          "sha256": "4e5161254ed635ec84e80d2b64b66324dfd3f1dbcf577e4c4b820f781b35eb2e"
+        },
+        {
+          "path": "res://assets/animated/tam/powered_walk-02.png",
+          "source": "art-source/animated/v3/tam-powered40.png",
+          "slot": 10,
+          "source_bounds": [
+            425,
+            212,
+            551,
+            405
+          ],
+          "source_origin": [
+            489.0,
+            405.0
+          ],
+          "scale": 0.5133689839572193,
+          "packed_bounds": [
+            63,
+            73,
+            128,
+            172
+          ],
+          "sha256": "8fada06ef5b005e03f408da82f42912dee0845c992c74aa96299cb52d12d2c13"
+        },
+        {
+          "path": "res://assets/animated/tam/powered_walk-03.png",
+          "source": "art-source/animated/v3/tam-powered40.png",
+          "slot": 11,
+          "source_bounds": [
+            603,
+            213,
+            737,
+            405
+          ],
+          "source_origin": [
+            675.0,
+            405.0
+          ],
+          "scale": 0.5133689839572193,
+          "packed_bounds": [
+            59,
+            73,
+            128,
+            172
+          ],
+          "sha256": "219bcf68998d9f74605831d06bea828eeab0010c1224f817f260a4465a6759f9"
+        },
+        {
+          "path": "res://assets/animated/tam/powered_walk-04.png",
+          "source": "art-source/animated/v3/tam-powered40.png",
+          "slot": 12,
+          "source_bounds": [
+            786,
+            212,
+            925,
+            405
+          ],
+          "source_origin": [
+            864.0,
+            405.0
+          ],
+          "scale": 0.5133689839572193,
+          "packed_bounds": [
+            56,
+            73,
+            127,
+            172
+          ],
+          "sha256": "e2e044b22fb939d5bb50f9f062b98b378b2e9f54dc91f1c9bc974d14ef181526"
+        },
+        {
+          "path": "res://assets/animated/tam/powered_walk-05.png",
+          "source": "art-source/animated/v3/tam-powered40.png",
+          "slot": 13,
+          "source_bounds": [
+            992,
+            212,
+            1113,
+            405
+          ],
+          "source_origin": [
+            1055.5,
+            405.0
+          ],
+          "scale": 0.5133689839572193,
+          "packed_bounds": [
+            63,
+            73,
+            125,
+            172
+          ],
+          "sha256": "ba50583f1e210597373cb6440c49e60d130d990ed775d8055076d9477aa9c225"
+        },
+        {
+          "path": "res://assets/animated/tam/powered_walk-06.png",
+          "source": "art-source/animated/v3/tam-powered40.png",
+          "slot": 14,
+          "source_bounds": [
+            1187,
+            212,
+            1306,
+            405
+          ],
+          "source_origin": [
+            1244.0,
+            405.0
+          ],
+          "scale": 0.5133689839572193,
+          "packed_bounds": [
+            67,
+            73,
+            128,
+            172
+          ],
+          "sha256": "1a01f4e9b8fdb7fad7bf3765c8ce4ce6a3b6b775ec45ce3e9659c891461542fa"
+        },
+        {
+          "path": "res://assets/animated/tam/powered_walk-07.png",
+          "source": "art-source/animated/v3/tam-powered40.png",
+          "slot": 15,
+          "source_bounds": [
+            1369,
+            212,
+            1496,
+            403
+          ],
+          "source_origin": [
+            1437.5,
+            405.0
+          ],
+          "scale": 0.5133689839572193,
+          "packed_bounds": [
+            61,
+            73,
+            126,
+            171
+          ],
+          "sha256": "3c08b14ffeb798edd9a5077cbb769402f05996b65a459d2e8a338d00100119b8"
+        }
+      ]
+    },
+    "powered_primary": {
+      "frame_count": 8,
+      "durations": [
+        0.07,
+        0.07,
+        0.08,
+        0.11,
+        0.04,
+        0.055,
+        0.085,
+        0.13
+      ],
+      "duration": 0.64,
+      "loop": false,
+      "release_frame": 4,
+      "release_time": 0.33,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/tam/powered_primary-00.png",
+          "source": "art-source/animated/v3/tam-powered40.png",
+          "slot": 16,
+          "source_bounds": [
+            35,
+            422,
+            171,
+            610
+          ],
+          "source_origin": [
+            102.0,
+            610.0
+          ],
+          "scale": 0.5133689839572193,
+          "packed_bounds": [
+            62,
+            75,
+            132,
+            172
+          ],
+          "sha256": "baa3f1ec20e26cbad80be080eb92523aa5ff9ab659947c1ab295872ec1071e31"
+        },
+        {
+          "path": "res://assets/animated/tam/powered_primary-01.png",
+          "source": "art-source/animated/v3/tam-powered40.png",
+          "slot": 17,
+          "source_bounds": [
+            221,
+            426,
+            378,
+            610
+          ],
+          "source_origin": [
+            299.0,
+            610.0
+          ],
+          "scale": 0.5133689839572193,
+          "packed_bounds": [
+            56,
+            78,
+            137,
+            172
+          ],
+          "sha256": "0341f5287a2de68fa699ab0bba25db95425605f49d7b5d90f2fd6b86e73abc05"
+        },
+        {
+          "path": "res://assets/animated/tam/powered_primary-02.png",
+          "source": "art-source/animated/v3/tam-powered40.png",
+          "slot": 18,
+          "source_bounds": [
+            404,
+            426,
+            566,
+            609
+          ],
+          "source_origin": [
+            489.0,
+            610.0
+          ],
+          "scale": 0.5133689839572193,
+          "packed_bounds": [
+            53,
+            78,
+            135,
+            172
+          ],
+          "sha256": "1f75513ad8f060468dfbd6327f3421e6a07aa04cac86d4b510ebc29a17298208"
+        },
+        {
+          "path": "res://assets/animated/tam/powered_primary-03.png",
+          "source": "art-source/animated/v3/tam-powered40.png",
+          "slot": 19,
+          "source_bounds": [
+            591,
+            427,
+            792,
+            608
+          ],
+          "source_origin": [
+            675.0,
+            610.0
+          ],
+          "scale": 0.5133689839572193,
+          "packed_bounds": [
+            53,
+            79,
+            156,
+            171
+          ],
+          "sha256": "bcb9ce6684495014ca1c4980ead912a3e44df9b6aba938601fa1889658564496"
+        },
+        {
+          "path": "res://assets/animated/tam/powered_primary-04.png",
+          "source": "art-source/animated/v3/tam-powered40.png",
+          "slot": 20,
+          "source_bounds": [
+            777,
+            426,
+            989,
+            609
+          ],
+          "source_origin": [
+            864.0,
+            610.0
+          ],
+          "scale": 0.5133689839572193,
+          "packed_bounds": [
+            51,
+            78,
+            160,
+            172
+          ],
+          "sha256": "5c23a695ccc1941700f688676810ad6639f5328f950a9ac26b1213114a5ee383"
+        },
+        {
+          "path": "res://assets/animated/tam/powered_primary-05.png",
+          "source": "art-source/animated/v3/tam-powered40.png",
+          "slot": 21,
+          "source_bounds": [
+            970,
+            438,
+            1148,
+            610
+          ],
+          "source_origin": [
+            1055.5,
+            610.0
+          ],
+          "scale": 0.5133689839572193,
+          "packed_bounds": [
+            52,
+            84,
+            143,
+            172
+          ],
+          "sha256": "2e9d0899329fa83fc1f8a0a9c6e24d6828ed94810ed4681ece1274d5cc41d2b2"
+        },
+        {
+          "path": "res://assets/animated/tam/powered_primary-06.png",
+          "source": "art-source/animated/v3/tam-powered40.png",
+          "slot": 22,
+          "source_bounds": [
+            1180,
+            429,
+            1317,
+            610
+          ],
+          "source_origin": [
+            1244.0,
+            610.0
+          ],
+          "scale": 0.5133689839572193,
+          "packed_bounds": [
+            63,
+            79,
+            133,
+            172
+          ],
+          "sha256": "efaab171667b2e8d4e5f204b6d0c2ea474bffe3bc838996f989ef987af277f38"
+        },
+        {
+          "path": "res://assets/animated/tam/powered_primary-07.png",
+          "source": "art-source/animated/v3/tam-powered40.png",
+          "slot": 23,
+          "source_bounds": [
+            1365,
+            422,
+            1497,
+            610
+          ],
+          "source_origin": [
+            1437.5,
+            610.0
+          ],
+          "scale": 0.5133689839572193,
+          "packed_bounds": [
+            59,
+            75,
+            127,
+            172
+          ],
+          "sha256": "985bbed82d194fcfb018ce2e41033eaa7a2ebc703814a717f964d2c01bf015a7"
+        }
+      ],
+      "release_anchor": [
+        63,
+        -77
+      ],
+      "contact_reach": 63
+    },
+    "powered_guard": {
+      "frame_count": 8,
+      "durations": [
+        0.055,
+        0.055,
+        0.055,
+        0.055,
+        0.12,
+        0.12,
+        0.12,
+        0.12
+      ],
+      "duration": 0.7,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": 4,
+      "frames": [
+        {
+          "path": "res://assets/animated/tam/powered_guard-00.png",
+          "source": "art-source/animated/v3/tam-powered40.png",
+          "slot": 24,
+          "source_bounds": [
+            40,
+            628,
+            175,
+            813
+          ],
+          "source_origin": [
+            102.0,
+            813.0
+          ],
+          "scale": 0.5133689839572193,
+          "packed_bounds": [
+            64,
+            77,
+            133,
+            172
+          ],
+          "sha256": "d9831784fb18e5ce0a6fb4b07a08d2b688fbf1173f4fe02ef58ed4ce2a662135"
+        },
+        {
+          "path": "res://assets/animated/tam/powered_guard-01.png",
+          "source": "art-source/animated/v3/tam-powered40.png",
+          "slot": 25,
+          "source_bounds": [
+            227,
+            633,
+            372,
+            813
+          ],
+          "source_origin": [
+            299.0,
+            813.0
+          ],
+          "scale": 0.5133689839572193,
+          "packed_bounds": [
+            60,
+            80,
+            133,
+            172
+          ],
+          "sha256": "222b761cd062075da1b4cee00bec3ed71ea313f75556a4835c6ca2bcad5064c9"
+        },
+        {
+          "path": "res://assets/animated/tam/powered_guard-02.png",
+          "source": "art-source/animated/v3/tam-powered40.png",
+          "slot": 26,
+          "source_bounds": [
+            415,
+            633,
+            563,
+            813
+          ],
+          "source_origin": [
+            489.0,
+            813.0
+          ],
+          "scale": 0.5133689839572193,
+          "packed_bounds": [
+            58,
+            80,
+            134,
+            172
+          ],
+          "sha256": "49c7cbc7b4483dad37d909d1ebb2247104faea804fecffec299a81b9f46fac66"
+        },
+        {
+          "path": "res://assets/animated/tam/powered_guard-03.png",
+          "source": "art-source/animated/v3/tam-powered40.png",
+          "slot": 27,
+          "source_bounds": [
+            609,
+            635,
+            752,
+            813
+          ],
+          "source_origin": [
+            675.0,
+            813.0
+          ],
+          "scale": 0.5133689839572193,
+          "packed_bounds": [
+            62,
+            81,
+            135,
+            172
+          ],
+          "sha256": "090cac61ce8f57d7a9ce7d92ec1ba763de7fbf0a44c3ddc38be13f06b1305039"
+        },
+        {
+          "path": "res://assets/animated/tam/powered_guard-04.png",
+          "source": "art-source/animated/v3/tam-powered40.png",
+          "slot": 28,
+          "source_bounds": [
+            803,
+            633,
+            941,
+            813
+          ],
+          "source_origin": [
+            864.0,
+            813.0
+          ],
+          "scale": 0.5133689839572193,
+          "packed_bounds": [
+            65,
+            80,
+            136,
+            172
+          ],
+          "sha256": "e4b8a5cfa74e0b5adae1f94ae6f7b769a50b66187f91bc6206a649ac0c6eca04"
+        },
+        {
+          "path": "res://assets/animated/tam/powered_guard-05.png",
+          "source": "art-source/animated/v3/tam-powered40.png",
+          "slot": 29,
+          "source_bounds": [
+            984,
+            629,
+            1121,
+            813
+          ],
+          "source_origin": [
+            1055.5,
+            813.0
+          ],
+          "scale": 0.5133689839572193,
+          "packed_bounds": [
+            59,
+            78,
+            129,
+            172
+          ],
+          "sha256": "79db67ec3e95fc1d9e9272cb1e52d9292b854807a14f4a705e20d7cb1751405d"
+        },
+        {
+          "path": "res://assets/animated/tam/powered_guard-06.png",
+          "source": "art-source/animated/v3/tam-powered40.png",
+          "slot": 30,
+          "source_bounds": [
+            1169,
+            630,
+            1312,
+            813
+          ],
+          "source_origin": [
+            1244.0,
+            813.0
+          ],
+          "scale": 0.5133689839572193,
+          "packed_bounds": [
+            57,
+            78,
+            130,
+            172
+          ],
+          "sha256": "ce022455aa988aed7c457dc14708bf534a6014dc0463b79c31d41d1f47dcaf9d"
+        },
+        {
+          "path": "res://assets/animated/tam/powered_guard-07.png",
+          "source": "art-source/animated/v3/tam-powered40.png",
+          "slot": 31,
+          "source_bounds": [
+            1369,
+            627,
+            1497,
+            813
+          ],
+          "source_origin": [
+            1437.5,
+            813.0
+          ],
+          "scale": 0.5133689839572193,
+          "packed_bounds": [
+            61,
+            77,
+            127,
+            172
+          ],
+          "sha256": "38f0f58323b8feecda97f948388e1f8dae1ff0e39903ea6435e06fbe0b966e4c"
+        }
+      ]
+    },
+    "powered_exit": {
+      "frame_count": 8,
+      "durations": [
+        0.11,
+        0.1,
+        0.1,
+        0.09,
+        0.09,
+        0.1,
+        0.12,
+        0.15
+      ],
+      "duration": 0.86,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/tam/powered_exit-00.png",
+          "source": "art-source/animated/v3/tam-powered40.png",
+          "slot": 32,
+          "source_bounds": [
+            41,
+            824,
+            175,
+            1010
+          ],
+          "source_origin": [
+            102.0,
+            1010.0
+          ],
+          "scale": 0.5133689839572193,
+          "packed_bounds": [
+            65,
+            77,
+            134,
+            172
+          ],
+          "sha256": "e66b10c8a94c4e1fd0c09198aa0fe81c2c98a95edb7115cb12757f581a8495f2"
+        },
+        {
+          "path": "res://assets/animated/tam/powered_exit-01.png",
+          "source": "art-source/animated/v3/tam-powered40.png",
+          "slot": 33,
+          "source_bounds": [
+            235,
+            825,
+            368,
+            1010
+          ],
+          "source_origin": [
+            299.0,
+            1010.0
+          ],
+          "scale": 0.5133689839572193,
+          "packed_bounds": [
+            63,
+            77,
+            131,
+            172
+          ],
+          "sha256": "c1cd2fe427f67ffeb4f7c304835c6fbe6e408aeff69639e009c4dd64ed73bb9a"
+        },
+        {
+          "path": "res://assets/animated/tam/powered_exit-02.png",
+          "source": "art-source/animated/v3/tam-powered40.png",
+          "slot": 34,
+          "source_bounds": [
+            431,
+            825,
+            563,
+            1010
+          ],
+          "source_origin": [
+            489.0,
+            1010.0
+          ],
+          "scale": 0.5133689839572193,
+          "packed_bounds": [
+            66,
+            77,
+            134,
+            172
+          ],
+          "sha256": "d9e447f332e56e6312a180d25aa140bb673391cb6894c72081c5ff4ff4055065"
+        },
+        {
+          "path": "res://assets/animated/tam/powered_exit-03.png",
+          "source": "art-source/animated/v3/tam-powered40.png",
+          "slot": 35,
+          "source_bounds": [
+            619,
+            826,
+            751,
+            1010
+          ],
+          "source_origin": [
+            675.0,
+            1010.0
+          ],
+          "scale": 0.5133689839572193,
+          "packed_bounds": [
+            67,
+            78,
+            135,
+            172
+          ],
+          "sha256": "4ae77222a9a58a38f81138a21217eeeacfffe246143756b3c3ac2ed845af9552"
+        },
+        {
+          "path": "res://assets/animated/tam/powered_exit-04.png",
+          "source": "art-source/animated/v3/tam-powered40.png",
+          "slot": 36,
+          "source_bounds": [
+            802,
+            826,
+            942,
+            1010
+          ],
+          "source_origin": [
+            864.0,
+            1010.0
+          ],
+          "scale": 0.5133689839572193,
+          "packed_bounds": [
+            64,
+            78,
+            136,
+            172
+          ],
+          "sha256": "2f199288dca0f404b942634987a5d6bfc151951acdd2adf43231fc21f80e62a8"
+        },
+        {
+          "path": "res://assets/animated/tam/powered_exit-05.png",
+          "source": "art-source/animated/v3/tam-powered40.png",
+          "slot": 37,
+          "source_bounds": [
+            994,
+            826,
+            1126,
+            1010
+          ],
+          "source_origin": [
+            1055.5,
+            1010.0
+          ],
+          "scale": 0.5133689839572193,
+          "packed_bounds": [
+            64,
+            78,
+            132,
+            172
+          ],
+          "sha256": "24550762aadd160b10a88cfb9c656a17c3748c6f7fca14d5ade1a2e1ff8ce10d"
+        },
+        {
+          "path": "res://assets/animated/tam/powered_exit-06.png",
+          "source": "art-source/animated/v3/tam-powered40.png",
+          "slot": 38,
+          "source_bounds": [
+            1196,
+            826,
+            1308,
+            1010
+          ],
+          "source_origin": [
+            1244.0,
+            1010.0
+          ],
+          "scale": 0.5133689839572193,
+          "packed_bounds": [
+            71,
+            78,
+            128,
+            172
+          ],
+          "sha256": "39f1f84e934597f8709bc747f9e0f65dd9c3193896b5e5008976006425dd3982"
+        },
+        {
+          "path": "res://assets/animated/tam/powered_exit-07.png",
+          "source": "art-source/animated/v3/tam-powered40.png",
+          "slot": 39,
+          "source_bounds": [
+            1382,
+            825,
+            1491,
+            1010
+          ],
+          "source_origin": [
+            1437.5,
+            1010.0
+          ],
+          "scale": 0.5133689839572193,
+          "packed_bounds": [
+            68,
+            77,
+            124,
+            172
+          ],
+          "sha256": "99e4756c09cd28c9d795056fcf14be2abee7b49b8ab66b94ebdc5449f06ee601"
+        }
+      ]
+    }
+  },
+  "pose_count": 152
+}

@@ -1,0 +1,194 @@
+[
+  {
+    "file": "nix-extension48.png",
+    "size": [
+      1448,
+      1086
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "sha256": "9ac27bbb03b25899c25dc766f1dd2853f86507ac59cb03428772b9d699e70824"
+  },
+  {
+    "file": "mote-extension64.png",
+    "size": [
+      1254,
+      1254
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "sha256": "1eb8ff7491b035816bf754b6048a935bc3b0eb8c1c2cb19937bb09f5f137fac2"
+  },
+  {
+    "file": "nix-powered40.png",
+    "size": [
+      1254,
+      1254
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "sha256": "82df8d0b153186f5df70fa155dab4a4f66c88c5b9da3c9fcc6c0188c57b194ce"
+  },
+  {
+    "file": "ashe-extension64.png",
+    "size": [
+      1448,
+      1086
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "sha256": "d1b72681440f676df09e62635fe77f63ec31dab8825b725cc5cd3150875f4ade"
+  },
+  {
+    "file": "nix-cycles32.png",
+    "size": [
+      1774,
+      887
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "sha256": "f2837745082881e6a9a60e01bc1267f07f3fb90bd0c1c20d4671cc79b61c12bf"
+  },
+  {
+    "file": "ashe-repair24.png",
+    "size": [
+      2048,
+      768
+    ],
+    "alpha_extrema": [
+      0,
+      254
+    ],
+    "sha256": "8d3e3d4d677ef4ccf04f2ee173d4b852b9572d6db24a0580c79c91cdb46e1fa6"
+  },
+  {
+    "file": "rook-primary16.png",
+    "size": [
+      2172,
+      724
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "sha256": "13eddd2cdb5c9110af60e1a10b2c1ee9b327eac238e00249acf1a313a62a3299"
+  },
+  {
+    "file": "rook-powered_guard8.png",
+    "size": [
+      1774,
+      887
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "sha256": "5aaa741bbf2eb856a79e67ccd8be5ec87f8f3fc514edf4c7b1ea71e90fad6961"
+  },
+  {
+    "file": "rook-powered40-rejected.png",
+    "size": [
+      1254,
+      1254
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "sha256": "ab1fc88a48aa98f496dbc896216074f233a2b99a9bc63bfe4b3742b66268e2d6"
+  },
+  {
+    "file": "clack-powered40.png",
+    "size": [
+      1254,
+      1254
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "sha256": "1b92370bd7ded2bbe71c67a56a14bdcebcdce71e6f8aee258953f610f5e2a8fd"
+  },
+  {
+    "file": "rook-powered40.png",
+    "size": [
+      1254,
+      1254
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "sha256": "f75bac94f68582e6e792bf8afb47caf928389eb790d2cc07ae056f6d3c72f81e"
+  },
+  {
+    "file": "ashe-powered40.png",
+    "size": [
+      1586,
+      992
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "sha256": "cebc4196e45c4502db1d4c5795e68a1f132c51bb8bca7c4dfa22ea8e466fd499"
+  },
+  {
+    "file": "clack-extension64.png",
+    "size": [
+      1254,
+      1254
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "sha256": "748dc9e609a67bc8a6557eff963533e01d8b9c6fd8340f017c3b91df5019018f"
+  },
+  {
+    "file": "rook-extension64.png",
+    "size": [
+      1254,
+      1254
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "sha256": "2692d2e4c2af84a45b354cd7c067b8fa8e06167570ed69d1d84799382616476b"
+  },
+  {
+    "file": "mote-powered40.png",
+    "size": [
+      1254,
+      1254
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "sha256": "a3ba72bf3e58b6d24aa830ef6d52396ef311410bc69b8eb9ae898b75263b641e"
+  },
+  {
+    "file": "nix-primary03-fix.png",
+    "size": [
+      1254,
+      1254
+    ],
+    "alpha_extrema": [
+      0,
+      255
+    ],
+    "sha256": "115060007d61ac06d5518fdd8237cce56842c5106593297bcb4fc3f1c8ff1795"
+  }
+]

@@ -1,0 +1,514 @@
+PASS all fourteen resources load
+PASS initial camera is unrotated and has no offset
+PASS actual canvas blur suspends without drift
+PASS refocus clears held movement
+PASS focus preserves camera
+PASS pause freezes drawing and position
+PASS paused frame controls step both ways
+PASS playback speed toggles and returns
+PASS inspector opens and closes
+PASS canvas loop control repeats and stops clip
+PASS review controls preserve camera
+PASS bramble resource selects
+PLAY bramble / idle
+PASS bramble / idle plays
+PLAY bramble / walk
+PASS bramble / walk plays
+PLAY bramble / primary
+PASS bramble / primary plays and completes
+PLAY bramble / secondary
+PASS bramble / secondary plays and completes
+PLAY bramble / special
+PASS bramble / special plays and completes
+PLAY bramble / guard
+PASS bramble / guard plays and completes
+PLAY bramble / hit
+PASS bramble / hit plays and completes
+PLAY bramble / defeat
+PASS bramble / defeat plays and completes
+PLAY bramble / jump
+PASS bramble / jump plays and completes
+PLAY bramble / stair_up
+PASS bramble / stair_up plays
+PLAY bramble / stair_down
+PASS bramble / stair_down plays
+PLAY bramble / dodge
+PASS bramble / dodge plays and completes
+PLAY bramble / powered_idle
+PASS bramble / powered_idle plays
+PLAY bramble / powered_walk
+PASS bramble / powered_walk plays
+PLAY bramble / powered_primary
+PASS bramble / powered_primary plays and completes
+PLAY bramble / powered_guard
+PASS bramble / powered_guard plays and completes
+PLAY bramble / powered_exit
+PASS bramble / powered_exit plays and completes
+PASS morel resource selects
+PLAY morel / idle
+PASS morel / idle plays
+PLAY morel / walk
+PASS morel / walk plays
+PLAY morel / primary
+PASS morel / primary plays and completes
+PLAY morel / secondary
+PASS morel / secondary plays and completes
+PLAY morel / special
+PASS morel / special plays and completes
+PLAY morel / guard
+PASS morel / guard plays and completes
+PLAY morel / hit
+PASS morel / hit plays and completes
+PLAY morel / defeat
+PASS morel / defeat plays and completes
+PLAY morel / jump
+PASS morel / jump plays and completes
+PLAY morel / stair_up
+PASS morel / stair_up plays
+PLAY morel / stair_down
+PASS morel / stair_down plays
+PLAY morel / dodge
+PASS morel / dodge plays and completes
+PLAY morel / powered_idle
+PASS morel / powered_idle plays
+PLAY morel / powered_walk
+PASS morel / powered_walk plays
+PLAY morel / powered_primary
+PASS morel / powered_primary plays and completes
+PLAY morel / powered_guard
+PASS morel / powered_guard plays and completes
+PLAY morel / powered_exit
+PASS morel / powered_exit plays and completes
+PASS velvet resource selects
+PLAY velvet / idle
+PASS velvet / idle plays
+PLAY velvet / walk
+PASS velvet / walk plays
+PLAY velvet / primary
+PASS velvet / primary plays and completes
+PLAY velvet / secondary
+PASS velvet / secondary plays and completes
+PLAY velvet / special
+PASS velvet / special plays and completes
+PLAY velvet / guard
+PASS velvet / guard plays and completes
+PLAY velvet / hit
+PASS velvet / hit plays and completes
+PLAY velvet / defeat
+PASS velvet / defeat plays and completes
+PLAY velvet / jump
+PASS velvet / jump plays and completes
+PLAY velvet / stair_up
+PASS velvet / stair_up plays
+PLAY velvet / stair_down
+PASS velvet / stair_down plays
+PLAY velvet / dodge
+PASS velvet / dodge plays and completes
+PLAY velvet / powered_idle
+PASS velvet / powered_idle plays
+PLAY velvet / powered_walk
+PASS velvet / powered_walk plays
+PLAY velvet / powered_primary
+PASS velvet / powered_primary plays and completes
+PLAY velvet / powered_guard
+PASS velvet / powered_guard plays and completes
+PLAY velvet / powered_exit
+PASS velvet / powered_exit plays and completes
+PASS cairn resource selects
+PLAY cairn / idle
+PASS cairn / idle plays
+PLAY cairn / walk
+PASS cairn / walk plays
+PLAY cairn / primary
+PASS cairn / primary plays and completes
+PLAY cairn / secondary
+PASS cairn / secondary plays and completes
+PLAY cairn / special
+PASS cairn / special plays and completes
+PLAY cairn / guard
+PASS cairn / guard plays and completes
+PLAY cairn / hit
+PASS cairn / hit plays and completes
+PLAY cairn / defeat
+PASS cairn / defeat plays and completes
+PLAY cairn / jump
+PASS cairn / jump plays and completes
+PLAY cairn / stair_up
+PASS cairn / stair_up plays
+PLAY cairn / stair_down
+PASS cairn / stair_down plays
+PLAY cairn / dodge
+PASS cairn / dodge plays and completes
+PLAY cairn / powered_idle
+PASS cairn / powered_idle plays
+PLAY cairn / powered_walk
+PASS cairn / powered_walk plays
+PLAY cairn / powered_primary
+PASS cairn / powered_primary plays and completes
+PLAY cairn / powered_guard
+PASS cairn / powered_guard plays and completes
+PLAY cairn / powered_exit
+PASS cairn / powered_exit plays and completes
+PASS iona resource selects
+PLAY iona / idle
+PASS iona / idle plays
+PLAY iona / walk
+PASS iona / walk plays
+PLAY iona / primary
+PASS iona / primary plays and completes
+PLAY iona / secondary
+PASS iona / secondary plays and completes
+PLAY iona / special
+PASS iona / special plays and completes
+PLAY iona / guard
+PASS iona / guard plays and completes
+PLAY iona / hit
+PASS iona / hit plays and completes
+PLAY iona / defeat
+PASS iona / defeat plays and completes
+PLAY iona / jump
+PASS iona / jump plays and completes
+PLAY iona / stair_up
+PASS iona / stair_up plays
+PLAY iona / stair_down
+PASS iona / stair_down plays
+PLAY iona / dodge
+PASS iona / dodge plays and completes
+PLAY iona / powered_idle
+PASS iona / powered_idle plays
+PLAY iona / powered_walk
+PASS iona / powered_walk plays
+PLAY iona / powered_primary
+PASS iona / powered_primary plays and completes
+PLAY iona / powered_guard
+PASS iona / powered_guard plays and completes
+PLAY iona / powered_exit
+PASS iona / powered_exit plays and completes
+PASS tam resource selects
+PLAY tam / idle
+PASS tam / idle plays
+PLAY tam / walk
+PASS tam / walk plays
+PLAY tam / primary
+PASS tam / primary plays and completes
+PLAY tam / secondary
+PASS tam / secondary plays and completes
+PLAY tam / special
+PASS tam / special plays and completes
+PLAY tam / guard
+PASS tam / guard plays and completes
+PLAY tam / hit
+PASS tam / hit plays and completes
+PLAY tam / defeat
+PASS tam / defeat plays and completes
+PLAY tam / jump
+PASS tam / jump plays and completes
+PLAY tam / stair_up
+PASS tam / stair_up plays
+PLAY tam / stair_down
+PASS tam / stair_down plays
+PLAY tam / dodge
+PASS tam / dodge plays and completes
+PLAY tam / powered_idle
+PASS tam / powered_idle plays
+PLAY tam / powered_walk
+PASS tam / powered_walk plays
+PLAY tam / powered_primary
+PASS tam / powered_primary plays and completes
+PLAY tam / powered_guard
+PASS tam / powered_guard plays and completes
+PLAY tam / powered_exit
+PASS tam / powered_exit plays and completes
+PASS brine resource selects
+PLAY brine / idle
+PASS brine / idle plays
+PLAY brine / walk
+PASS brine / walk plays
+PLAY brine / primary
+PASS brine / primary plays and completes
+PLAY brine / secondary
+PASS brine / secondary plays and completes
+PLAY brine / special
+PASS brine / special plays and completes
+PLAY brine / guard
+PASS brine / guard plays and completes
+PLAY brine / hit
+PASS brine / hit plays and completes
+PLAY brine / defeat
+PASS brine / defeat plays and completes
+PLAY brine / jump
+PASS brine / jump plays and completes
+PLAY brine / stair_up
+PASS brine / stair_up plays
+PLAY brine / stair_down
+PASS brine / stair_down plays
+PLAY brine / dodge
+PASS brine / dodge plays and completes
+PLAY brine / powered_idle
+PASS brine / powered_idle plays
+PLAY brine / powered_walk
+PASS brine / powered_walk plays
+PLAY brine / powered_primary
+PASS brine / powered_primary plays and completes
+PLAY brine / powered_guard
+PASS brine / powered_guard plays and completes
+PLAY brine / powered_exit
+PASS brine / powered_exit plays and completes
+PASS pendle resource selects
+PLAY pendle / idle
+PASS pendle / idle plays
+PLAY pendle / walk
+PASS pendle / walk plays
+PLAY pendle / primary
+PASS pendle / primary plays and completes
+PLAY pendle / secondary
+PASS pendle / secondary plays and completes
+PLAY pendle / special
+PASS pendle / special plays and completes
+PLAY pendle / guard
+PASS pendle / guard plays and completes
+PLAY pendle / hit
+PASS pendle / hit plays and completes
+PLAY pendle / defeat
+PASS pendle / defeat plays and completes
+PLAY pendle / jump
+PASS pendle / jump plays and completes
+PLAY pendle / stair_up
+PASS pendle / stair_up plays
+PLAY pendle / stair_down
+PASS pendle / stair_down plays
+PLAY pendle / dodge
+PASS pendle / dodge plays and completes
+PLAY pendle / powered_idle
+PASS pendle / powered_idle plays
+PLAY pendle / powered_walk
+PASS pendle / powered_walk plays
+PLAY pendle / powered_primary
+PASS pendle / powered_primary plays and completes
+PLAY pendle / powered_guard
+PASS pendle / powered_guard plays and completes
+PLAY pendle / powered_exit
+PASS pendle / powered_exit plays and completes
+PLAY pendle / reload
+PASS pendle / reload plays and completes
+PASS mirra resource selects
+PLAY mirra / idle
+PASS mirra / idle plays
+PLAY mirra / walk
+PASS mirra / walk plays
+PLAY mirra / primary
+PASS mirra / primary plays and completes
+PLAY mirra / secondary
+PASS mirra / secondary plays and completes
+PLAY mirra / special
+PASS mirra / special plays and completes
+PLAY mirra / guard
+PASS mirra / guard plays and completes
+PLAY mirra / hit
+PASS mirra / hit plays and completes
+PLAY mirra / defeat
+PASS mirra / defeat plays and completes
+PLAY mirra / jump
+PASS mirra / jump plays and completes
+PLAY mirra / stair_up
+PASS mirra / stair_up plays
+PLAY mirra / stair_down
+PASS mirra / stair_down plays
+PLAY mirra / dodge
+PASS mirra / dodge plays and completes
+PLAY mirra / powered_idle
+PASS mirra / powered_idle plays
+PLAY mirra / powered_walk
+PASS mirra / powered_walk plays
+PLAY mirra / powered_primary
+PASS mirra / powered_primary plays and completes
+PLAY mirra / powered_guard
+PASS mirra / powered_guard plays and completes
+PLAY mirra / powered_exit
+PASS mirra / powered_exit plays and completes
+PASS ashe resource selects
+PLAY ashe / idle
+PASS ashe / idle plays
+PLAY ashe / walk
+PASS ashe / walk plays
+PLAY ashe / primary
+PASS ashe / primary plays and completes
+PLAY ashe / secondary
+PASS ashe / secondary plays and completes
+PLAY ashe / special
+PASS ashe / special plays and completes
+PLAY ashe / guard
+PASS ashe / guard plays and completes
+PLAY ashe / hit
+PASS ashe / hit plays and completes
+PLAY ashe / defeat
+PASS ashe / defeat plays and completes
+PLAY ashe / jump
+PASS ashe / jump plays and completes
+PLAY ashe / stair_up
+PASS ashe / stair_up plays
+PLAY ashe / stair_down
+PASS ashe / stair_down plays
+PLAY ashe / dodge
+PASS ashe / dodge plays and completes
+PLAY ashe / powered_idle
+PASS ashe / powered_idle plays
+PLAY ashe / powered_walk
+PASS ashe / powered_walk plays
+PLAY ashe / powered_primary
+PASS ashe / powered_primary plays and completes
+PLAY ashe / powered_guard
+PASS ashe / powered_guard plays and completes
+PLAY ashe / powered_exit
+PASS ashe / powered_exit plays and completes
+PASS clack resource selects
+PLAY clack / idle
+PASS clack / idle plays
+PLAY clack / walk
+PASS clack / walk plays
+PLAY clack / primary
+PASS clack / primary plays and completes
+PLAY clack / secondary
+PASS clack / secondary plays and completes
+PLAY clack / special
+PASS clack / special plays and completes
+PLAY clack / guard
+PASS clack / guard plays and completes
+PLAY clack / hit
+PASS clack / hit plays and completes
+PLAY clack / defeat
+PASS clack / defeat plays and completes
+PLAY clack / jump
+PASS clack / jump plays and completes
+PLAY clack / stair_up
+PASS clack / stair_up plays
+PLAY clack / stair_down
+PASS clack / stair_down plays
+PLAY clack / dodge
+PASS clack / dodge plays and completes
+PLAY clack / powered_idle
+PASS clack / powered_idle plays
+PLAY clack / powered_walk
+PASS clack / powered_walk plays
+PLAY clack / powered_primary
+PASS clack / powered_primary plays and completes
+PLAY clack / powered_guard
+PASS clack / powered_guard plays and completes
+PLAY clack / powered_exit
+PASS clack / powered_exit plays and completes
+PASS nix resource selects
+PLAY nix / idle
+PASS nix / idle plays
+PLAY nix / walk
+PASS nix / walk plays
+PLAY nix / primary
+PASS nix / primary plays and completes
+PLAY nix / secondary
+PASS nix / secondary plays and completes
+PLAY nix / special
+PASS nix / special plays and completes
+PLAY nix / guard
+PASS nix / guard plays and completes
+PLAY nix / hit
+PASS nix / hit plays and completes
+PLAY nix / defeat
+PASS nix / defeat plays and completes
+PLAY nix / jump
+PASS nix / jump plays and completes
+PLAY nix / stair_up
+PASS nix / stair_up plays
+PLAY nix / stair_down
+PASS nix / stair_down plays
+PLAY nix / dodge
+PASS nix / dodge plays and completes
+PLAY nix / powered_idle
+PASS nix / powered_idle plays
+PLAY nix / powered_walk
+PASS nix / powered_walk plays
+PLAY nix / powered_primary
+PASS nix / powered_primary plays and completes
+PLAY nix / powered_guard
+PASS nix / powered_guard plays and completes
+PLAY nix / powered_exit
+PASS nix / powered_exit plays and completes
+PASS rook resource selects
+PLAY rook / idle
+PASS rook / idle plays
+PLAY rook / walk
+PASS rook / walk plays
+PLAY rook / primary
+PASS rook / primary plays and completes
+PLAY rook / secondary
+PASS rook / secondary plays and completes
+PLAY rook / special
+PASS rook / special plays and completes
+PLAY rook / guard
+PASS rook / guard plays and completes
+PLAY rook / hit
+PASS rook / hit plays and completes
+PLAY rook / defeat
+PASS rook / defeat plays and completes
+PLAY rook / jump
+PASS rook / jump plays and completes
+PLAY rook / stair_up
+PASS rook / stair_up plays
+PLAY rook / stair_down
+PASS rook / stair_down plays
+PLAY rook / dodge
+PASS rook / dodge plays and completes
+PLAY rook / powered_idle
+PASS rook / powered_idle plays
+PLAY rook / powered_walk
+PASS rook / powered_walk plays
+PLAY rook / powered_primary
+PASS rook / powered_primary plays and completes
+PLAY rook / powered_guard
+PASS rook / powered_guard plays and completes
+PLAY rook / powered_exit
+PASS rook / powered_exit plays and completes
+PASS mote resource selects
+PLAY mote / idle
+PASS mote / idle plays
+PLAY mote / walk
+PASS mote / walk plays
+PLAY mote / primary
+PASS mote / primary plays and completes
+PLAY mote / secondary
+PASS mote / secondary plays and completes
+PLAY mote / special
+PASS mote / special plays and completes
+PLAY mote / guard
+PASS mote / guard plays and completes
+PLAY mote / hit
+PASS mote / hit plays and completes
+PLAY mote / defeat
+PASS mote / defeat plays and completes
+PLAY mote / jump
+PASS mote / jump plays and completes
+PLAY mote / stair_up
+PASS mote / stair_up plays
+PLAY mote / stair_down
+PASS mote / stair_down plays
+PLAY mote / dodge
+PASS mote / dodge plays and completes
+PLAY mote / powered_idle
+PASS mote / powered_idle plays
+PLAY mote / powered_walk
+PASS mote / powered_walk plays
+PLAY mote / powered_primary
+PASS mote / powered_primary plays and completes
+PLAY mote / powered_guard
+PASS mote / powered_guard plays and completes
+PLAY mote / powered_exit
+PASS mote / powered_exit plays and completes
+PASS all239 character/clip combinations exercised
+PASS all roster clips preserve camera
+PASS Nix primary releases once and hits actual first target
+PASS Afterimage captures activation origin and stays there
+PASS Cairn releases once and strikes reachable target
+PASS held guard enters and releases cleanly
+PASS practice combat preserves camera
+PASS demonstration advances and returns control
+PASS all sampled camera transforms are fixed
+PASS no browser or Godot runtime errors
+{"passed":274,"clipCoverage":239,"sampleCount":3848,"runtimeErrors":[]}

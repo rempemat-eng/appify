@@ -1,0 +1,1685 @@
+Godot Engine v4.5.1.stable.official.f62fdbde1 - https://godotengine.org
+
+PASS fixed camera starts at the room centre without offsets
+PASS camera cannot follow or smooth after movement
+PASS full viewport retains integer presentation scaling
+PASS frame count bramble/idle = 8
+PASS frame count bramble/walk = 16
+PASS frame count bramble/primary = 16
+PASS frame count bramble/secondary = 8
+PASS frame count bramble/special = 8
+PASS frame count bramble/guard = 8
+PASS frame count bramble/hit = 8
+PASS frame count bramble/defeat = 8
+PASS frame count bramble/jump = 8
+PASS frame count bramble/stair_up = 8
+PASS frame count bramble/stair_down = 8
+PASS frame count bramble/dodge = 8
+PASS frame count bramble/powered_idle = 8
+PASS frame count bramble/powered_walk = 8
+PASS frame count bramble/powered_primary = 8
+PASS frame count bramble/powered_guard = 8
+PASS frame count bramble/powered_exit = 8
+PASS all base, traversal and powered clips and total pose count exist: bramble
+PASS each imported pose contains distinct image data: bramble
+PASS fixed canvas and nearest filtering: bramble
+PASS timeline visits every authored frame in order: bramble/idle
+PASS authored drawing advance and final settle: bramble/idle
+PASS pose-only review cannot move or damage: bramble/idle
+PASS timeline visits every authored frame in order: bramble/walk
+PASS authored drawing advance and final settle: bramble/walk
+PASS pose-only review cannot move or damage: bramble/walk
+PASS timeline visits every authored frame in order: bramble/primary
+PASS authored drawing advance and final settle: bramble/primary
+PASS pose-only review cannot move or damage: bramble/primary
+PASS timeline visits every authored frame in order: bramble/secondary
+PASS authored drawing advance and final settle: bramble/secondary
+PASS pose-only review cannot move or damage: bramble/secondary
+PASS timeline visits every authored frame in order: bramble/special
+PASS authored drawing advance and final settle: bramble/special
+PASS pose-only review cannot move or damage: bramble/special
+PASS timeline visits every authored frame in order: bramble/guard
+PASS authored drawing advance and final settle: bramble/guard
+PASS pose-only review cannot move or damage: bramble/guard
+PASS timeline visits every authored frame in order: bramble/hit
+PASS authored drawing advance and final settle: bramble/hit
+PASS pose-only review cannot move or damage: bramble/hit
+PASS timeline visits every authored frame in order: bramble/defeat
+PASS authored drawing advance and final settle: bramble/defeat
+PASS pose-only review cannot move or damage: bramble/defeat
+PASS timeline visits every authored frame in order: bramble/jump
+PASS authored drawing advance and final settle: bramble/jump
+PASS pose-only review cannot move or damage: bramble/jump
+PASS timeline visits every authored frame in order: bramble/stair_up
+PASS authored drawing advance and final settle: bramble/stair_up
+PASS pose-only review cannot move or damage: bramble/stair_up
+PASS timeline visits every authored frame in order: bramble/stair_down
+PASS authored drawing advance and final settle: bramble/stair_down
+PASS pose-only review cannot move or damage: bramble/stair_down
+PASS timeline visits every authored frame in order: bramble/dodge
+PASS authored drawing advance and final settle: bramble/dodge
+PASS pose-only review cannot move or damage: bramble/dodge
+PASS timeline visits every authored frame in order: bramble/powered_idle
+PASS authored drawing advance and final settle: bramble/powered_idle
+PASS pose-only review cannot move or damage: bramble/powered_idle
+PASS timeline visits every authored frame in order: bramble/powered_walk
+PASS authored drawing advance and final settle: bramble/powered_walk
+PASS pose-only review cannot move or damage: bramble/powered_walk
+PASS timeline visits every authored frame in order: bramble/powered_primary
+PASS authored drawing advance and final settle: bramble/powered_primary
+PASS pose-only review cannot move or damage: bramble/powered_primary
+PASS timeline visits every authored frame in order: bramble/powered_guard
+PASS authored drawing advance and final settle: bramble/powered_guard
+PASS pose-only review cannot move or damage: bramble/powered_guard
+PASS timeline visits every authored frame in order: bramble/powered_exit
+PASS authored drawing advance and final settle: bramble/powered_exit
+PASS pose-only review cannot move or damage: bramble/powered_exit
+PASS defeat remains settled rather than restarting: bramble
+PASS manual action starts: bramble/primary
+PASS no event occurs during anticipation: bramble/primary
+PASS single event aligns with committed drawing: bramble/primary
+PASS completed action cannot release twice: bramble/primary
+PASS action effects expire: bramble/primary
+PASS manual action starts: bramble/secondary
+PASS no event occurs during anticipation: bramble/secondary
+PASS single event aligns with committed drawing: bramble/secondary
+PASS completed action cannot release twice: bramble/secondary
+PASS action effects expire: bramble/secondary
+PASS manual action starts: bramble/special
+PASS no event occurs during anticipation: bramble/special
+PASS single event aligns with committed drawing: bramble/special
+PASS completed action cannot release twice: bramble/special
+PASS action effects expire: bramble/special
+PASS special equipment persists after activation recovery: bramble
+PASS E can start the powered return: bramble
+PASS powered equipment props clear after the authored return: bramble
+PASS primary reaches the real forward practice target: bramble
+PASS primary leaves off-lane practice prop untouched: bramble
+PASS solid blocker wins over a target behind it: bramble
+PASS grounded jump starts with authored anticipation: bramble
+PASS airborne action and repeated jump cannot bypass recovery: bramble
+PASS jump changes visual height while retaining the ground footprint: bramble
+PASS jump lands exactly once and finishes recovery: bramble
+PASS traversal poses cannot cause ability releases: bramble
+PASS authored dodge can start grounded: bramble
+PASS dodge moves through collision then settles: bramble
+PASS both stair clips follow a continuous32pixel elevation profile: bramble
+PASS a tall stair side cannot be entered as a walkable tread: bramble
+PASS a16pixel ledge rejects walking through its side: bramble
+PASS ledge jump starts: bramble
+PASS jump can land on an elevated ledge with feet registered: bramble
+PASS walking off a ledge falls and lands instead of snapping down: bramble
+PASS bridge supports the footprint over the gap: bramble
+PASS a missed gap landing returns to the traversal checkpoint: bramble
+PASS surface fixture tags are distinct: bramble
+PASS activation reaches the held powered idle: bramble
+PASS uncovered powered traversal is rejected instead of dropping equipment: bramble
+PASS powered walk moves on the flat without dropping equipment: bramble
+PASS powered guard retains changed equipment at its brace: bramble
+PASS powered primary uses its own authored action: bramble
+PASS powered strike recovers to the same equipment: bramble
+PASS authored powered return restores the base and clears summoned entities: bramble
+PASS all clips and contacts leave camera fixed: bramble
+PASS frame count morel/idle = 8
+PASS frame count morel/walk = 16
+PASS frame count morel/primary = 16
+PASS frame count morel/secondary = 8
+PASS frame count morel/special = 8
+PASS frame count morel/guard = 8
+PASS frame count morel/hit = 8
+PASS frame count morel/defeat = 8
+PASS frame count morel/jump = 8
+PASS frame count morel/stair_up = 8
+PASS frame count morel/stair_down = 8
+PASS frame count morel/dodge = 8
+PASS frame count morel/powered_idle = 8
+PASS frame count morel/powered_walk = 8
+PASS frame count morel/powered_primary = 8
+PASS frame count morel/powered_guard = 8
+PASS frame count morel/powered_exit = 8
+PASS all base, traversal and powered clips and total pose count exist: morel
+PASS each imported pose contains distinct image data: morel
+PASS fixed canvas and nearest filtering: morel
+PASS timeline visits every authored frame in order: morel/idle
+PASS authored drawing advance and final settle: morel/idle
+PASS pose-only review cannot move or damage: morel/idle
+PASS timeline visits every authored frame in order: morel/walk
+PASS authored drawing advance and final settle: morel/walk
+PASS pose-only review cannot move or damage: morel/walk
+PASS timeline visits every authored frame in order: morel/primary
+PASS authored drawing advance and final settle: morel/primary
+PASS pose-only review cannot move or damage: morel/primary
+PASS timeline visits every authored frame in order: morel/secondary
+PASS authored drawing advance and final settle: morel/secondary
+PASS pose-only review cannot move or damage: morel/secondary
+PASS timeline visits every authored frame in order: morel/special
+PASS authored drawing advance and final settle: morel/special
+PASS pose-only review cannot move or damage: morel/special
+PASS timeline visits every authored frame in order: morel/guard
+PASS authored drawing advance and final settle: morel/guard
+PASS pose-only review cannot move or damage: morel/guard
+PASS timeline visits every authored frame in order: morel/hit
+PASS authored drawing advance and final settle: morel/hit
+PASS pose-only review cannot move or damage: morel/hit
+PASS timeline visits every authored frame in order: morel/defeat
+PASS authored drawing advance and final settle: morel/defeat
+PASS pose-only review cannot move or damage: morel/defeat
+PASS timeline visits every authored frame in order: morel/jump
+PASS authored drawing advance and final settle: morel/jump
+PASS pose-only review cannot move or damage: morel/jump
+PASS timeline visits every authored frame in order: morel/stair_up
+PASS authored drawing advance and final settle: morel/stair_up
+PASS pose-only review cannot move or damage: morel/stair_up
+PASS timeline visits every authored frame in order: morel/stair_down
+PASS authored drawing advance and final settle: morel/stair_down
+PASS pose-only review cannot move or damage: morel/stair_down
+PASS timeline visits every authored frame in order: morel/dodge
+PASS authored drawing advance and final settle: morel/dodge
+PASS pose-only review cannot move or damage: morel/dodge
+PASS timeline visits every authored frame in order: morel/powered_idle
+PASS authored drawing advance and final settle: morel/powered_idle
+PASS pose-only review cannot move or damage: morel/powered_idle
+PASS timeline visits every authored frame in order: morel/powered_walk
+PASS authored drawing advance and final settle: morel/powered_walk
+PASS pose-only review cannot move or damage: morel/powered_walk
+PASS timeline visits every authored frame in order: morel/powered_primary
+PASS authored drawing advance and final settle: morel/powered_primary
+PASS pose-only review cannot move or damage: morel/powered_primary
+PASS timeline visits every authored frame in order: morel/powered_guard
+PASS authored drawing advance and final settle: morel/powered_guard
+PASS pose-only review cannot move or damage: morel/powered_guard
+PASS timeline visits every authored frame in order: morel/powered_exit
+PASS authored drawing advance and final settle: morel/powered_exit
+PASS pose-only review cannot move or damage: morel/powered_exit
+PASS defeat remains settled rather than restarting: morel
+PASS manual action starts: morel/primary
+PASS no event occurs during anticipation: morel/primary
+PASS single event aligns with committed drawing: morel/primary
+PASS completed action cannot release twice: morel/primary
+PASS action effects expire: morel/primary
+PASS manual action starts: morel/secondary
+PASS no event occurs during anticipation: morel/secondary
+PASS single event aligns with committed drawing: morel/secondary
+PASS completed action cannot release twice: morel/secondary
+PASS action effects expire: morel/secondary
+PASS manual action starts: morel/special
+PASS no event occurs during anticipation: morel/special
+PASS single event aligns with committed drawing: morel/special
+PASS completed action cannot release twice: morel/special
+PASS action effects expire: morel/special
+PASS special equipment persists after activation recovery: morel
+PASS E can start the powered return: morel
+PASS powered equipment props clear after the authored return: morel
+PASS primary reaches the real forward practice target: morel
+PASS primary leaves off-lane practice prop untouched: morel
+PASS solid blocker wins over a target behind it: morel
+PASS grounded jump starts with authored anticipation: morel
+PASS airborne action and repeated jump cannot bypass recovery: morel
+PASS jump changes visual height while retaining the ground footprint: morel
+PASS jump lands exactly once and finishes recovery: morel
+PASS traversal poses cannot cause ability releases: morel
+PASS authored dodge can start grounded: morel
+PASS dodge moves through collision then settles: morel
+PASS both stair clips follow a continuous32pixel elevation profile: morel
+PASS a tall stair side cannot be entered as a walkable tread: morel
+PASS a16pixel ledge rejects walking through its side: morel
+PASS ledge jump starts: morel
+PASS jump can land on an elevated ledge with feet registered: morel
+PASS walking off a ledge falls and lands instead of snapping down: morel
+PASS bridge supports the footprint over the gap: morel
+PASS a missed gap landing returns to the traversal checkpoint: morel
+PASS surface fixture tags are distinct: morel
+PASS activation reaches the held powered idle: morel
+PASS uncovered powered traversal is rejected instead of dropping equipment: morel
+PASS powered walk moves on the flat without dropping equipment: morel
+PASS powered guard retains changed equipment at its brace: morel
+PASS powered primary uses its own authored action: morel
+PASS powered strike recovers to the same equipment: morel
+PASS authored powered return restores the base and clears summoned entities: morel
+PASS all clips and contacts leave camera fixed: morel
+PASS frame count velvet/idle = 8
+PASS frame count velvet/walk = 16
+PASS frame count velvet/primary = 16
+PASS frame count velvet/secondary = 8
+PASS frame count velvet/special = 8
+PASS frame count velvet/guard = 8
+PASS frame count velvet/hit = 8
+PASS frame count velvet/defeat = 8
+PASS frame count velvet/jump = 8
+PASS frame count velvet/stair_up = 8
+PASS frame count velvet/stair_down = 8
+PASS frame count velvet/dodge = 8
+PASS frame count velvet/powered_idle = 8
+PASS frame count velvet/powered_walk = 8
+PASS frame count velvet/powered_primary = 8
+PASS frame count velvet/powered_guard = 8
+PASS frame count velvet/powered_exit = 7
+PASS all base, traversal and powered clips and total pose count exist: velvet
+PASS each imported pose contains distinct image data: velvet
+PASS fixed canvas and nearest filtering: velvet
+PASS timeline visits every authored frame in order: velvet/idle
+PASS authored drawing advance and final settle: velvet/idle
+PASS pose-only review cannot move or damage: velvet/idle
+PASS timeline visits every authored frame in order: velvet/walk
+PASS authored drawing advance and final settle: velvet/walk
+PASS pose-only review cannot move or damage: velvet/walk
+PASS timeline visits every authored frame in order: velvet/primary
+PASS authored drawing advance and final settle: velvet/primary
+PASS pose-only review cannot move or damage: velvet/primary
+PASS timeline visits every authored frame in order: velvet/secondary
+PASS authored drawing advance and final settle: velvet/secondary
+PASS pose-only review cannot move or damage: velvet/secondary
+PASS timeline visits every authored frame in order: velvet/special
+PASS authored drawing advance and final settle: velvet/special
+PASS pose-only review cannot move or damage: velvet/special
+PASS timeline visits every authored frame in order: velvet/guard
+PASS authored drawing advance and final settle: velvet/guard
+PASS pose-only review cannot move or damage: velvet/guard
+PASS timeline visits every authored frame in order: velvet/hit
+PASS authored drawing advance and final settle: velvet/hit
+PASS pose-only review cannot move or damage: velvet/hit
+PASS timeline visits every authored frame in order: velvet/defeat
+PASS authored drawing advance and final settle: velvet/defeat
+PASS pose-only review cannot move or damage: velvet/defeat
+PASS timeline visits every authored frame in order: velvet/jump
+PASS authored drawing advance and final settle: velvet/jump
+PASS pose-only review cannot move or damage: velvet/jump
+PASS timeline visits every authored frame in order: velvet/stair_up
+PASS authored drawing advance and final settle: velvet/stair_up
+PASS pose-only review cannot move or damage: velvet/stair_up
+PASS timeline visits every authored frame in order: velvet/stair_down
+PASS authored drawing advance and final settle: velvet/stair_down
+PASS pose-only review cannot move or damage: velvet/stair_down
+PASS timeline visits every authored frame in order: velvet/dodge
+PASS authored drawing advance and final settle: velvet/dodge
+PASS pose-only review cannot move or damage: velvet/dodge
+PASS timeline visits every authored frame in order: velvet/powered_idle
+PASS authored drawing advance and final settle: velvet/powered_idle
+PASS pose-only review cannot move or damage: velvet/powered_idle
+PASS timeline visits every authored frame in order: velvet/powered_walk
+PASS authored drawing advance and final settle: velvet/powered_walk
+PASS pose-only review cannot move or damage: velvet/powered_walk
+PASS timeline visits every authored frame in order: velvet/powered_primary
+PASS authored drawing advance and final settle: velvet/powered_primary
+PASS pose-only review cannot move or damage: velvet/powered_primary
+PASS timeline visits every authored frame in order: velvet/powered_guard
+PASS authored drawing advance and final settle: velvet/powered_guard
+PASS pose-only review cannot move or damage: velvet/powered_guard
+PASS timeline visits every authored frame in order: velvet/powered_exit
+PASS authored drawing advance and final settle: velvet/powered_exit
+PASS pose-only review cannot move or damage: velvet/powered_exit
+PASS defeat remains settled rather than restarting: velvet
+PASS manual action starts: velvet/primary
+PASS no event occurs during anticipation: velvet/primary
+PASS single event aligns with committed drawing: velvet/primary
+PASS completed action cannot release twice: velvet/primary
+PASS action effects expire: velvet/primary
+PASS manual action starts: velvet/secondary
+PASS no event occurs during anticipation: velvet/secondary
+PASS single event aligns with committed drawing: velvet/secondary
+PASS completed action cannot release twice: velvet/secondary
+PASS action effects expire: velvet/secondary
+PASS manual action starts: velvet/special
+PASS no event occurs during anticipation: velvet/special
+PASS single event aligns with committed drawing: velvet/special
+PASS completed action cannot release twice: velvet/special
+PASS action effects expire: velvet/special
+PASS special equipment persists after activation recovery: velvet
+PASS E can start the powered return: velvet
+PASS powered equipment props clear after the authored return: velvet
+PASS primary reaches the real forward practice target: velvet
+PASS primary leaves off-lane practice prop untouched: velvet
+PASS solid blocker wins over a target behind it: velvet
+PASS grounded jump starts with authored anticipation: velvet
+PASS airborne action and repeated jump cannot bypass recovery: velvet
+PASS jump changes visual height while retaining the ground footprint: velvet
+PASS jump lands exactly once and finishes recovery: velvet
+PASS traversal poses cannot cause ability releases: velvet
+PASS authored dodge can start grounded: velvet
+PASS dodge moves through collision then settles: velvet
+PASS both stair clips follow a continuous32pixel elevation profile: velvet
+PASS a tall stair side cannot be entered as a walkable tread: velvet
+PASS a16pixel ledge rejects walking through its side: velvet
+PASS ledge jump starts: velvet
+PASS jump can land on an elevated ledge with feet registered: velvet
+PASS walking off a ledge falls and lands instead of snapping down: velvet
+PASS bridge supports the footprint over the gap: velvet
+PASS a missed gap landing returns to the traversal checkpoint: velvet
+PASS surface fixture tags are distinct: velvet
+PASS activation reaches the held powered idle: velvet
+PASS uncovered powered traversal is rejected instead of dropping equipment: velvet
+PASS powered walk moves on the flat without dropping equipment: velvet
+PASS powered guard retains changed equipment at its brace: velvet
+PASS powered primary uses its own authored action: velvet
+PASS powered strike recovers to the same equipment: velvet
+PASS authored powered return restores the base and clears summoned entities: velvet
+PASS all clips and contacts leave camera fixed: velvet
+PASS frame count cairn/idle = 8
+PASS frame count cairn/walk = 16
+PASS frame count cairn/primary = 16
+PASS frame count cairn/secondary = 16
+PASS frame count cairn/special = 8
+PASS frame count cairn/guard = 8
+PASS frame count cairn/hit = 4
+PASS frame count cairn/defeat = 4
+PASS frame count cairn/jump = 8
+PASS frame count cairn/stair_up = 8
+PASS frame count cairn/stair_down = 8
+PASS frame count cairn/dodge = 8
+PASS frame count cairn/powered_idle = 8
+PASS frame count cairn/powered_walk = 8
+PASS frame count cairn/powered_primary = 8
+PASS frame count cairn/powered_guard = 8
+PASS frame count cairn/powered_exit = 8
+PASS all base, traversal and powered clips and total pose count exist: cairn
+PASS each imported pose contains distinct image data: cairn
+PASS fixed canvas and nearest filtering: cairn
+PASS timeline visits every authored frame in order: cairn/idle
+PASS authored drawing advance and final settle: cairn/idle
+PASS pose-only review cannot move or damage: cairn/idle
+PASS timeline visits every authored frame in order: cairn/walk
+PASS authored drawing advance and final settle: cairn/walk
+PASS pose-only review cannot move or damage: cairn/walk
+PASS timeline visits every authored frame in order: cairn/primary
+PASS authored drawing advance and final settle: cairn/primary
+PASS pose-only review cannot move or damage: cairn/primary
+PASS timeline visits every authored frame in order: cairn/secondary
+PASS authored drawing advance and final settle: cairn/secondary
+PASS pose-only review cannot move or damage: cairn/secondary
+PASS timeline visits every authored frame in order: cairn/special
+PASS authored drawing advance and final settle: cairn/special
+PASS pose-only review cannot move or damage: cairn/special
+PASS timeline visits every authored frame in order: cairn/guard
+PASS authored drawing advance and final settle: cairn/guard
+PASS pose-only review cannot move or damage: cairn/guard
+PASS timeline visits every authored frame in order: cairn/hit
+PASS authored drawing advance and final settle: cairn/hit
+PASS pose-only review cannot move or damage: cairn/hit
+PASS timeline visits every authored frame in order: cairn/defeat
+PASS authored drawing advance and final settle: cairn/defeat
+PASS pose-only review cannot move or damage: cairn/defeat
+PASS timeline visits every authored frame in order: cairn/jump
+PASS authored drawing advance and final settle: cairn/jump
+PASS pose-only review cannot move or damage: cairn/jump
+PASS timeline visits every authored frame in order: cairn/stair_up
+PASS authored drawing advance and final settle: cairn/stair_up
+PASS pose-only review cannot move or damage: cairn/stair_up
+PASS timeline visits every authored frame in order: cairn/stair_down
+PASS authored drawing advance and final settle: cairn/stair_down
+PASS pose-only review cannot move or damage: cairn/stair_down
+PASS timeline visits every authored frame in order: cairn/dodge
+PASS authored drawing advance and final settle: cairn/dodge
+PASS pose-only review cannot move or damage: cairn/dodge
+PASS timeline visits every authored frame in order: cairn/powered_idle
+PASS authored drawing advance and final settle: cairn/powered_idle
+PASS pose-only review cannot move or damage: cairn/powered_idle
+PASS timeline visits every authored frame in order: cairn/powered_walk
+PASS authored drawing advance and final settle: cairn/powered_walk
+PASS pose-only review cannot move or damage: cairn/powered_walk
+PASS timeline visits every authored frame in order: cairn/powered_primary
+PASS authored drawing advance and final settle: cairn/powered_primary
+PASS pose-only review cannot move or damage: cairn/powered_primary
+PASS timeline visits every authored frame in order: cairn/powered_guard
+PASS authored drawing advance and final settle: cairn/powered_guard
+PASS pose-only review cannot move or damage: cairn/powered_guard
+PASS timeline visits every authored frame in order: cairn/powered_exit
+PASS authored drawing advance and final settle: cairn/powered_exit
+PASS pose-only review cannot move or damage: cairn/powered_exit
+PASS defeat remains settled rather than restarting: cairn
+PASS manual action starts: cairn/primary
+PASS no event occurs during anticipation: cairn/primary
+PASS single event aligns with committed drawing: cairn/primary
+PASS completed action cannot release twice: cairn/primary
+PASS action effects expire: cairn/primary
+PASS manual action starts: cairn/secondary
+PASS no event occurs during anticipation: cairn/secondary
+PASS single event aligns with committed drawing: cairn/secondary
+PASS completed action cannot release twice: cairn/secondary
+PASS action effects expire: cairn/secondary
+PASS manual action starts: cairn/special
+PASS no event occurs during anticipation: cairn/special
+PASS single event aligns with committed drawing: cairn/special
+PASS completed action cannot release twice: cairn/special
+PASS action effects expire: cairn/special
+PASS special equipment persists after activation recovery: cairn
+PASS E can start the powered return: cairn
+PASS powered equipment props clear after the authored return: cairn
+PASS primary reaches the real forward practice target: cairn
+PASS primary leaves off-lane practice prop untouched: cairn
+PASS solid blocker wins over a target behind it: cairn
+PASS grounded jump starts with authored anticipation: cairn
+PASS airborne action and repeated jump cannot bypass recovery: cairn
+PASS jump changes visual height while retaining the ground footprint: cairn
+PASS jump lands exactly once and finishes recovery: cairn
+PASS traversal poses cannot cause ability releases: cairn
+PASS authored dodge can start grounded: cairn
+PASS dodge moves through collision then settles: cairn
+PASS both stair clips follow a continuous32pixel elevation profile: cairn
+PASS a tall stair side cannot be entered as a walkable tread: cairn
+PASS a16pixel ledge rejects walking through its side: cairn
+PASS ledge jump starts: cairn
+PASS jump can land on an elevated ledge with feet registered: cairn
+PASS walking off a ledge falls and lands instead of snapping down: cairn
+PASS bridge supports the footprint over the gap: cairn
+PASS a missed gap landing returns to the traversal checkpoint: cairn
+PASS surface fixture tags are distinct: cairn
+PASS activation reaches the held powered idle: cairn
+PASS uncovered powered traversal is rejected instead of dropping equipment: cairn
+PASS powered walk moves on the flat without dropping equipment: cairn
+PASS powered guard retains changed equipment at its brace: cairn
+PASS powered primary uses its own authored action: cairn
+PASS powered strike recovers to the same equipment: cairn
+PASS authored powered return restores the base and clears summoned entities: cairn
+PASS all clips and contacts leave camera fixed: cairn
+PASS frame count iona/idle = 8
+PASS frame count iona/walk = 16
+PASS frame count iona/primary = 16
+PASS frame count iona/secondary = 8
+PASS frame count iona/special = 8
+PASS frame count iona/guard = 8
+PASS frame count iona/hit = 8
+PASS frame count iona/defeat = 8
+PASS frame count iona/jump = 8
+PASS frame count iona/stair_up = 8
+PASS frame count iona/stair_down = 8
+PASS frame count iona/dodge = 8
+PASS frame count iona/powered_idle = 8
+PASS frame count iona/powered_walk = 8
+PASS frame count iona/powered_primary = 8
+PASS frame count iona/powered_guard = 8
+PASS frame count iona/powered_exit = 8
+PASS all base, traversal and powered clips and total pose count exist: iona
+PASS each imported pose contains distinct image data: iona
+PASS fixed canvas and nearest filtering: iona
+PASS timeline visits every authored frame in order: iona/idle
+PASS authored drawing advance and final settle: iona/idle
+PASS pose-only review cannot move or damage: iona/idle
+PASS timeline visits every authored frame in order: iona/walk
+PASS authored drawing advance and final settle: iona/walk
+PASS pose-only review cannot move or damage: iona/walk
+PASS timeline visits every authored frame in order: iona/primary
+PASS authored drawing advance and final settle: iona/primary
+PASS pose-only review cannot move or damage: iona/primary
+PASS timeline visits every authored frame in order: iona/secondary
+PASS authored drawing advance and final settle: iona/secondary
+PASS pose-only review cannot move or damage: iona/secondary
+PASS timeline visits every authored frame in order: iona/special
+PASS authored drawing advance and final settle: iona/special
+PASS pose-only review cannot move or damage: iona/special
+PASS timeline visits every authored frame in order: iona/guard
+PASS authored drawing advance and final settle: iona/guard
+PASS pose-only review cannot move or damage: iona/guard
+PASS timeline visits every authored frame in order: iona/hit
+PASS authored drawing advance and final settle: iona/hit
+PASS pose-only review cannot move or damage: iona/hit
+PASS timeline visits every authored frame in order: iona/defeat
+PASS authored drawing advance and final settle: iona/defeat
+PASS pose-only review cannot move or damage: iona/defeat
+PASS timeline visits every authored frame in order: iona/jump
+PASS authored drawing advance and final settle: iona/jump
+PASS pose-only review cannot move or damage: iona/jump
+PASS timeline visits every authored frame in order: iona/stair_up
+PASS authored drawing advance and final settle: iona/stair_up
+PASS pose-only review cannot move or damage: iona/stair_up
+PASS timeline visits every authored frame in order: iona/stair_down
+PASS authored drawing advance and final settle: iona/stair_down
+PASS pose-only review cannot move or damage: iona/stair_down
+PASS timeline visits every authored frame in order: iona/dodge
+PASS authored drawing advance and final settle: iona/dodge
+PASS pose-only review cannot move or damage: iona/dodge
+PASS timeline visits every authored frame in order: iona/powered_idle
+PASS authored drawing advance and final settle: iona/powered_idle
+PASS pose-only review cannot move or damage: iona/powered_idle
+PASS timeline visits every authored frame in order: iona/powered_walk
+PASS authored drawing advance and final settle: iona/powered_walk
+PASS pose-only review cannot move or damage: iona/powered_walk
+PASS timeline visits every authored frame in order: iona/powered_primary
+PASS authored drawing advance and final settle: iona/powered_primary
+PASS pose-only review cannot move or damage: iona/powered_primary
+PASS timeline visits every authored frame in order: iona/powered_guard
+PASS authored drawing advance and final settle: iona/powered_guard
+PASS pose-only review cannot move or damage: iona/powered_guard
+PASS timeline visits every authored frame in order: iona/powered_exit
+PASS authored drawing advance and final settle: iona/powered_exit
+PASS pose-only review cannot move or damage: iona/powered_exit
+PASS defeat remains settled rather than restarting: iona
+PASS manual action starts: iona/primary
+PASS no event occurs during anticipation: iona/primary
+PASS single event aligns with committed drawing: iona/primary
+PASS completed action cannot release twice: iona/primary
+PASS action effects expire: iona/primary
+PASS manual action starts: iona/secondary
+PASS no event occurs during anticipation: iona/secondary
+PASS single event aligns with committed drawing: iona/secondary
+PASS completed action cannot release twice: iona/secondary
+PASS action effects expire: iona/secondary
+PASS manual action starts: iona/special
+PASS no event occurs during anticipation: iona/special
+PASS single event aligns with committed drawing: iona/special
+PASS completed action cannot release twice: iona/special
+PASS action effects expire: iona/special
+PASS special equipment persists after activation recovery: iona
+PASS E can start the powered return: iona
+PASS powered equipment props clear after the authored return: iona
+PASS primary reaches the real forward practice target: iona
+PASS primary leaves off-lane practice prop untouched: iona
+PASS solid blocker wins over a target behind it: iona
+PASS grounded jump starts with authored anticipation: iona
+PASS airborne action and repeated jump cannot bypass recovery: iona
+PASS jump changes visual height while retaining the ground footprint: iona
+PASS jump lands exactly once and finishes recovery: iona
+PASS traversal poses cannot cause ability releases: iona
+PASS authored dodge can start grounded: iona
+PASS dodge moves through collision then settles: iona
+PASS both stair clips follow a continuous32pixel elevation profile: iona
+PASS a tall stair side cannot be entered as a walkable tread: iona
+PASS a16pixel ledge rejects walking through its side: iona
+PASS ledge jump starts: iona
+PASS jump can land on an elevated ledge with feet registered: iona
+PASS walking off a ledge falls and lands instead of snapping down: iona
+PASS bridge supports the footprint over the gap: iona
+PASS a missed gap landing returns to the traversal checkpoint: iona
+PASS surface fixture tags are distinct: iona
+PASS activation reaches the held powered idle: iona
+PASS uncovered powered traversal is rejected instead of dropping equipment: iona
+PASS powered walk moves on the flat without dropping equipment: iona
+PASS powered guard retains changed equipment at its brace: iona
+PASS powered primary uses its own authored action: iona
+PASS powered strike recovers to the same equipment: iona
+PASS authored powered return restores the base and clears summoned entities: iona
+PASS all clips and contacts leave camera fixed: iona
+PASS frame count tam/idle = 8
+PASS frame count tam/walk = 16
+PASS frame count tam/primary = 16
+PASS frame count tam/secondary = 8
+PASS frame count tam/special = 8
+PASS frame count tam/guard = 8
+PASS frame count tam/hit = 8
+PASS frame count tam/defeat = 8
+PASS frame count tam/jump = 8
+PASS frame count tam/stair_up = 8
+PASS frame count tam/stair_down = 8
+PASS frame count tam/dodge = 8
+PASS frame count tam/powered_idle = 8
+PASS frame count tam/powered_walk = 8
+PASS frame count tam/powered_primary = 8
+PASS frame count tam/powered_guard = 8
+PASS frame count tam/powered_exit = 8
+PASS all base, traversal and powered clips and total pose count exist: tam
+PASS each imported pose contains distinct image data: tam
+PASS fixed canvas and nearest filtering: tam
+PASS timeline visits every authored frame in order: tam/idle
+PASS authored drawing advance and final settle: tam/idle
+PASS pose-only review cannot move or damage: tam/idle
+PASS timeline visits every authored frame in order: tam/walk
+PASS authored drawing advance and final settle: tam/walk
+PASS pose-only review cannot move or damage: tam/walk
+PASS timeline visits every authored frame in order: tam/primary
+PASS authored drawing advance and final settle: tam/primary
+PASS pose-only review cannot move or damage: tam/primary
+PASS timeline visits every authored frame in order: tam/secondary
+PASS authored drawing advance and final settle: tam/secondary
+PASS pose-only review cannot move or damage: tam/secondary
+PASS timeline visits every authored frame in order: tam/special
+PASS authored drawing advance and final settle: tam/special
+PASS pose-only review cannot move or damage: tam/special
+PASS timeline visits every authored frame in order: tam/guard
+PASS authored drawing advance and final settle: tam/guard
+PASS pose-only review cannot move or damage: tam/guard
+PASS timeline visits every authored frame in order: tam/hit
+PASS authored drawing advance and final settle: tam/hit
+PASS pose-only review cannot move or damage: tam/hit
+PASS timeline visits every authored frame in order: tam/defeat
+PASS authored drawing advance and final settle: tam/defeat
+PASS pose-only review cannot move or damage: tam/defeat
+PASS timeline visits every authored frame in order: tam/jump
+PASS authored drawing advance and final settle: tam/jump
+PASS pose-only review cannot move or damage: tam/jump
+PASS timeline visits every authored frame in order: tam/stair_up
+PASS authored drawing advance and final settle: tam/stair_up
+PASS pose-only review cannot move or damage: tam/stair_up
+PASS timeline visits every authored frame in order: tam/stair_down
+PASS authored drawing advance and final settle: tam/stair_down
+PASS pose-only review cannot move or damage: tam/stair_down
+PASS timeline visits every authored frame in order: tam/dodge
+PASS authored drawing advance and final settle: tam/dodge
+PASS pose-only review cannot move or damage: tam/dodge
+PASS timeline visits every authored frame in order: tam/powered_idle
+PASS authored drawing advance and final settle: tam/powered_idle
+PASS pose-only review cannot move or damage: tam/powered_idle
+PASS timeline visits every authored frame in order: tam/powered_walk
+PASS authored drawing advance and final settle: tam/powered_walk
+PASS pose-only review cannot move or damage: tam/powered_walk
+PASS timeline visits every authored frame in order: tam/powered_primary
+PASS authored drawing advance and final settle: tam/powered_primary
+PASS pose-only review cannot move or damage: tam/powered_primary
+PASS timeline visits every authored frame in order: tam/powered_guard
+PASS authored drawing advance and final settle: tam/powered_guard
+PASS pose-only review cannot move or damage: tam/powered_guard
+PASS timeline visits every authored frame in order: tam/powered_exit
+PASS authored drawing advance and final settle: tam/powered_exit
+PASS pose-only review cannot move or damage: tam/powered_exit
+PASS defeat remains settled rather than restarting: tam
+PASS manual action starts: tam/primary
+PASS no event occurs during anticipation: tam/primary
+PASS single event aligns with committed drawing: tam/primary
+PASS completed action cannot release twice: tam/primary
+PASS action effects expire: tam/primary
+PASS manual action starts: tam/secondary
+PASS no event occurs during anticipation: tam/secondary
+PASS single event aligns with committed drawing: tam/secondary
+PASS completed action cannot release twice: tam/secondary
+PASS action effects expire: tam/secondary
+PASS manual action starts: tam/special
+PASS no event occurs during anticipation: tam/special
+PASS single event aligns with committed drawing: tam/special
+PASS completed action cannot release twice: tam/special
+PASS action effects expire: tam/special
+PASS special equipment persists after activation recovery: tam
+PASS E can start the powered return: tam
+PASS powered equipment props clear after the authored return: tam
+PASS primary reaches the real forward practice target: tam
+PASS primary leaves off-lane practice prop untouched: tam
+PASS solid blocker wins over a target behind it: tam
+PASS grounded jump starts with authored anticipation: tam
+PASS airborne action and repeated jump cannot bypass recovery: tam
+PASS jump changes visual height while retaining the ground footprint: tam
+PASS jump lands exactly once and finishes recovery: tam
+PASS traversal poses cannot cause ability releases: tam
+PASS authored dodge can start grounded: tam
+PASS dodge moves through collision then settles: tam
+PASS both stair clips follow a continuous32pixel elevation profile: tam
+PASS a tall stair side cannot be entered as a walkable tread: tam
+PASS a16pixel ledge rejects walking through its side: tam
+PASS ledge jump starts: tam
+PASS jump can land on an elevated ledge with feet registered: tam
+PASS walking off a ledge falls and lands instead of snapping down: tam
+PASS bridge supports the footprint over the gap: tam
+PASS a missed gap landing returns to the traversal checkpoint: tam
+PASS surface fixture tags are distinct: tam
+PASS activation reaches the held powered idle: tam
+PASS uncovered powered traversal is rejected instead of dropping equipment: tam
+PASS powered walk moves on the flat without dropping equipment: tam
+PASS powered guard retains changed equipment at its brace: tam
+PASS powered primary uses its own authored action: tam
+PASS powered strike recovers to the same equipment: tam
+PASS authored powered return restores the base and clears summoned entities: tam
+PASS all clips and contacts leave camera fixed: tam
+PASS frame count brine/idle = 8
+PASS frame count brine/walk = 16
+PASS frame count brine/primary = 16
+PASS frame count brine/secondary = 8
+PASS frame count brine/special = 8
+PASS frame count brine/guard = 8
+PASS frame count brine/hit = 8
+PASS frame count brine/defeat = 8
+PASS frame count brine/jump = 8
+PASS frame count brine/stair_up = 8
+PASS frame count brine/stair_down = 8
+PASS frame count brine/dodge = 8
+PASS frame count brine/powered_idle = 8
+PASS frame count brine/powered_walk = 8
+PASS frame count brine/powered_primary = 8
+PASS frame count brine/powered_guard = 8
+PASS frame count brine/powered_exit = 8
+PASS all base, traversal and powered clips and total pose count exist: brine
+PASS each imported pose contains distinct image data: brine
+PASS fixed canvas and nearest filtering: brine
+PASS timeline visits every authored frame in order: brine/idle
+PASS authored drawing advance and final settle: brine/idle
+PASS pose-only review cannot move or damage: brine/idle
+PASS timeline visits every authored frame in order: brine/walk
+PASS authored drawing advance and final settle: brine/walk
+PASS pose-only review cannot move or damage: brine/walk
+PASS timeline visits every authored frame in order: brine/primary
+PASS authored drawing advance and final settle: brine/primary
+PASS pose-only review cannot move or damage: brine/primary
+PASS timeline visits every authored frame in order: brine/secondary
+PASS authored drawing advance and final settle: brine/secondary
+PASS pose-only review cannot move or damage: brine/secondary
+PASS timeline visits every authored frame in order: brine/special
+PASS authored drawing advance and final settle: brine/special
+PASS pose-only review cannot move or damage: brine/special
+PASS timeline visits every authored frame in order: brine/guard
+PASS authored drawing advance and final settle: brine/guard
+PASS pose-only review cannot move or damage: brine/guard
+PASS timeline visits every authored frame in order: brine/hit
+PASS authored drawing advance and final settle: brine/hit
+PASS pose-only review cannot move or damage: brine/hit
+PASS timeline visits every authored frame in order: brine/defeat
+PASS authored drawing advance and final settle: brine/defeat
+PASS pose-only review cannot move or damage: brine/defeat
+PASS timeline visits every authored frame in order: brine/jump
+PASS authored drawing advance and final settle: brine/jump
+PASS pose-only review cannot move or damage: brine/jump
+PASS timeline visits every authored frame in order: brine/stair_up
+PASS authored drawing advance and final settle: brine/stair_up
+PASS pose-only review cannot move or damage: brine/stair_up
+PASS timeline visits every authored frame in order: brine/stair_down
+PASS authored drawing advance and final settle: brine/stair_down
+PASS pose-only review cannot move or damage: brine/stair_down
+PASS timeline visits every authored frame in order: brine/dodge
+PASS authored drawing advance and final settle: brine/dodge
+PASS pose-only review cannot move or damage: brine/dodge
+PASS timeline visits every authored frame in order: brine/powered_idle
+PASS authored drawing advance and final settle: brine/powered_idle
+PASS pose-only review cannot move or damage: brine/powered_idle
+PASS timeline visits every authored frame in order: brine/powered_walk
+PASS authored drawing advance and final settle: brine/powered_walk
+PASS pose-only review cannot move or damage: brine/powered_walk
+PASS timeline visits every authored frame in order: brine/powered_primary
+PASS authored drawing advance and final settle: brine/powered_primary
+PASS pose-only review cannot move or damage: brine/powered_primary
+PASS timeline visits every authored frame in order: brine/powered_guard
+PASS authored drawing advance and final settle: brine/powered_guard
+PASS pose-only review cannot move or damage: brine/powered_guard
+PASS timeline visits every authored frame in order: brine/powered_exit
+PASS authored drawing advance and final settle: brine/powered_exit
+PASS pose-only review cannot move or damage: brine/powered_exit
+PASS defeat remains settled rather than restarting: brine
+PASS manual action starts: brine/primary
+PASS no event occurs during anticipation: brine/primary
+PASS single event aligns with committed drawing: brine/primary
+PASS completed action cannot release twice: brine/primary
+PASS action effects expire: brine/primary
+PASS manual action starts: brine/secondary
+PASS no event occurs during anticipation: brine/secondary
+PASS single event aligns with committed drawing: brine/secondary
+PASS completed action cannot release twice: brine/secondary
+PASS action effects expire: brine/secondary
+PASS manual action starts: brine/special
+PASS no event occurs during anticipation: brine/special
+PASS single event aligns with committed drawing: brine/special
+PASS completed action cannot release twice: brine/special
+PASS action effects expire: brine/special
+PASS special equipment persists after activation recovery: brine
+PASS E can start the powered return: brine
+PASS powered equipment props clear after the authored return: brine
+PASS primary reaches the real forward practice target: brine
+PASS primary leaves off-lane practice prop untouched: brine
+PASS solid blocker wins over a target behind it: brine
+PASS grounded jump starts with authored anticipation: brine
+PASS airborne action and repeated jump cannot bypass recovery: brine
+PASS jump changes visual height while retaining the ground footprint: brine
+PASS jump lands exactly once and finishes recovery: brine
+PASS traversal poses cannot cause ability releases: brine
+PASS authored dodge can start grounded: brine
+PASS dodge moves through collision then settles: brine
+PASS both stair clips follow a continuous32pixel elevation profile: brine
+PASS a tall stair side cannot be entered as a walkable tread: brine
+PASS a16pixel ledge rejects walking through its side: brine
+PASS ledge jump starts: brine
+PASS jump can land on an elevated ledge with feet registered: brine
+PASS walking off a ledge falls and lands instead of snapping down: brine
+PASS bridge supports the footprint over the gap: brine
+PASS a missed gap landing returns to the traversal checkpoint: brine
+PASS surface fixture tags are distinct: brine
+PASS activation reaches the held powered idle: brine
+PASS uncovered powered traversal is rejected instead of dropping equipment: brine
+PASS powered walk moves on the flat without dropping equipment: brine
+PASS powered guard retains changed equipment at its brace: brine
+PASS powered primary uses its own authored action: brine
+PASS powered strike recovers to the same equipment: brine
+PASS authored powered return restores the base and clears summoned entities: brine
+PASS all clips and contacts leave camera fixed: brine
+PASS frame count pendle/idle = 8
+PASS frame count pendle/walk = 16
+PASS frame count pendle/primary = 16
+PASS frame count pendle/secondary = 8
+PASS frame count pendle/special = 8
+PASS frame count pendle/guard = 8
+PASS frame count pendle/hit = 8
+PASS frame count pendle/defeat = 8
+PASS frame count pendle/jump = 8
+PASS frame count pendle/stair_up = 8
+PASS frame count pendle/stair_down = 8
+PASS frame count pendle/dodge = 8
+PASS frame count pendle/powered_idle = 8
+PASS frame count pendle/powered_walk = 8
+PASS frame count pendle/powered_primary = 8
+PASS frame count pendle/powered_guard = 8
+PASS frame count pendle/powered_exit = 8
+PASS frame count pendle/reload = 8
+PASS all base, traversal and powered clips and total pose count exist: pendle
+PASS each imported pose contains distinct image data: pendle
+PASS fixed canvas and nearest filtering: pendle
+PASS timeline visits every authored frame in order: pendle/idle
+PASS authored drawing advance and final settle: pendle/idle
+PASS pose-only review cannot move or damage: pendle/idle
+PASS timeline visits every authored frame in order: pendle/walk
+PASS authored drawing advance and final settle: pendle/walk
+PASS pose-only review cannot move or damage: pendle/walk
+PASS timeline visits every authored frame in order: pendle/primary
+PASS authored drawing advance and final settle: pendle/primary
+PASS pose-only review cannot move or damage: pendle/primary
+PASS timeline visits every authored frame in order: pendle/secondary
+PASS authored drawing advance and final settle: pendle/secondary
+PASS pose-only review cannot move or damage: pendle/secondary
+PASS timeline visits every authored frame in order: pendle/special
+PASS authored drawing advance and final settle: pendle/special
+PASS pose-only review cannot move or damage: pendle/special
+PASS timeline visits every authored frame in order: pendle/guard
+PASS authored drawing advance and final settle: pendle/guard
+PASS pose-only review cannot move or damage: pendle/guard
+PASS timeline visits every authored frame in order: pendle/hit
+PASS authored drawing advance and final settle: pendle/hit
+PASS pose-only review cannot move or damage: pendle/hit
+PASS timeline visits every authored frame in order: pendle/defeat
+PASS authored drawing advance and final settle: pendle/defeat
+PASS pose-only review cannot move or damage: pendle/defeat
+PASS timeline visits every authored frame in order: pendle/jump
+PASS authored drawing advance and final settle: pendle/jump
+PASS pose-only review cannot move or damage: pendle/jump
+PASS timeline visits every authored frame in order: pendle/stair_up
+PASS authored drawing advance and final settle: pendle/stair_up
+PASS pose-only review cannot move or damage: pendle/stair_up
+PASS timeline visits every authored frame in order: pendle/stair_down
+PASS authored drawing advance and final settle: pendle/stair_down
+PASS pose-only review cannot move or damage: pendle/stair_down
+PASS timeline visits every authored frame in order: pendle/dodge
+PASS authored drawing advance and final settle: pendle/dodge
+PASS pose-only review cannot move or damage: pendle/dodge
+PASS timeline visits every authored frame in order: pendle/powered_idle
+PASS authored drawing advance and final settle: pendle/powered_idle
+PASS pose-only review cannot move or damage: pendle/powered_idle
+PASS timeline visits every authored frame in order: pendle/powered_walk
+PASS authored drawing advance and final settle: pendle/powered_walk
+PASS pose-only review cannot move or damage: pendle/powered_walk
+PASS timeline visits every authored frame in order: pendle/powered_primary
+PASS authored drawing advance and final settle: pendle/powered_primary
+PASS pose-only review cannot move or damage: pendle/powered_primary
+PASS timeline visits every authored frame in order: pendle/powered_guard
+PASS authored drawing advance and final settle: pendle/powered_guard
+PASS pose-only review cannot move or damage: pendle/powered_guard
+PASS timeline visits every authored frame in order: pendle/powered_exit
+PASS authored drawing advance and final settle: pendle/powered_exit
+PASS pose-only review cannot move or damage: pendle/powered_exit
+PASS timeline visits every authored frame in order: pendle/reload
+PASS authored drawing advance and final settle: pendle/reload
+PASS pose-only review cannot move or damage: pendle/reload
+PASS defeat remains settled rather than restarting: pendle
+PASS manual action starts: pendle/primary
+PASS no event occurs during anticipation: pendle/primary
+PASS single event aligns with committed drawing: pendle/primary
+PASS completed action cannot release twice: pendle/primary
+PASS action effects expire: pendle/primary
+PASS manual action starts: pendle/secondary
+PASS no event occurs during anticipation: pendle/secondary
+PASS single event aligns with committed drawing: pendle/secondary
+PASS completed action cannot release twice: pendle/secondary
+PASS action effects expire: pendle/secondary
+PASS manual action starts: pendle/special
+PASS no event occurs during anticipation: pendle/special
+PASS single event aligns with committed drawing: pendle/special
+PASS completed action cannot release twice: pendle/special
+PASS action effects expire: pendle/special
+PASS special equipment persists after activation recovery: pendle
+PASS E can start the powered return: pendle
+PASS powered equipment props clear after the authored return: pendle
+PASS primary reaches the real forward practice target: pendle
+PASS primary leaves off-lane practice prop untouched: pendle
+PASS solid blocker wins over a target behind it: pendle
+PASS grounded jump starts with authored anticipation: pendle
+PASS airborne action and repeated jump cannot bypass recovery: pendle
+PASS jump changes visual height while retaining the ground footprint: pendle
+PASS jump lands exactly once and finishes recovery: pendle
+PASS traversal poses cannot cause ability releases: pendle
+PASS authored dodge can start grounded: pendle
+PASS dodge moves through collision then settles: pendle
+PASS both stair clips follow a continuous32pixel elevation profile: pendle
+PASS a tall stair side cannot be entered as a walkable tread: pendle
+PASS a16pixel ledge rejects walking through its side: pendle
+PASS ledge jump starts: pendle
+PASS jump can land on an elevated ledge with feet registered: pendle
+PASS walking off a ledge falls and lands instead of snapping down: pendle
+PASS bridge supports the footprint over the gap: pendle
+PASS a missed gap landing returns to the traversal checkpoint: pendle
+PASS surface fixture tags are distinct: pendle
+PASS activation reaches the held powered idle: pendle
+PASS uncovered powered traversal is rejected instead of dropping equipment: pendle
+PASS powered walk moves on the flat without dropping equipment: pendle
+PASS powered guard retains changed equipment at its brace: pendle
+PASS powered primary uses its own authored action: pendle
+PASS powered strike recovers to the same equipment: pendle
+PASS authored powered return restores the base and clears summoned entities: pendle
+PASS all clips and contacts leave camera fixed: pendle
+PASS frame count mirra/idle = 8
+PASS frame count mirra/walk = 16
+PASS frame count mirra/primary = 16
+PASS frame count mirra/secondary = 8
+PASS frame count mirra/special = 8
+PASS frame count mirra/guard = 8
+PASS frame count mirra/hit = 8
+PASS frame count mirra/defeat = 8
+PASS frame count mirra/jump = 8
+PASS frame count mirra/stair_up = 8
+PASS frame count mirra/stair_down = 8
+PASS frame count mirra/dodge = 8
+PASS frame count mirra/powered_idle = 8
+PASS frame count mirra/powered_walk = 8
+PASS frame count mirra/powered_primary = 8
+PASS frame count mirra/powered_guard = 8
+PASS frame count mirra/powered_exit = 8
+PASS all base, traversal and powered clips and total pose count exist: mirra
+PASS each imported pose contains distinct image data: mirra
+PASS fixed canvas and nearest filtering: mirra
+PASS timeline visits every authored frame in order: mirra/idle
+PASS authored drawing advance and final settle: mirra/idle
+PASS pose-only review cannot move or damage: mirra/idle
+PASS timeline visits every authored frame in order: mirra/walk
+PASS authored drawing advance and final settle: mirra/walk
+PASS pose-only review cannot move or damage: mirra/walk
+PASS timeline visits every authored frame in order: mirra/primary
+PASS authored drawing advance and final settle: mirra/primary
+PASS pose-only review cannot move or damage: mirra/primary
+PASS timeline visits every authored frame in order: mirra/secondary
+PASS authored drawing advance and final settle: mirra/secondary
+PASS pose-only review cannot move or damage: mirra/secondary
+PASS timeline visits every authored frame in order: mirra/special
+PASS authored drawing advance and final settle: mirra/special
+PASS pose-only review cannot move or damage: mirra/special
+PASS timeline visits every authored frame in order: mirra/guard
+PASS authored drawing advance and final settle: mirra/guard
+PASS pose-only review cannot move or damage: mirra/guard
+PASS timeline visits every authored frame in order: mirra/hit
+PASS authored drawing advance and final settle: mirra/hit
+PASS pose-only review cannot move or damage: mirra/hit
+PASS timeline visits every authored frame in order: mirra/defeat
+PASS authored drawing advance and final settle: mirra/defeat
+PASS pose-only review cannot move or damage: mirra/defeat
+PASS timeline visits every authored frame in order: mirra/jump
+PASS authored drawing advance and final settle: mirra/jump
+PASS pose-only review cannot move or damage: mirra/jump
+PASS timeline visits every authored frame in order: mirra/stair_up
+PASS authored drawing advance and final settle: mirra/stair_up
+PASS pose-only review cannot move or damage: mirra/stair_up
+PASS timeline visits every authored frame in order: mirra/stair_down
+PASS authored drawing advance and final settle: mirra/stair_down
+PASS pose-only review cannot move or damage: mirra/stair_down
+PASS timeline visits every authored frame in order: mirra/dodge
+PASS authored drawing advance and final settle: mirra/dodge
+PASS pose-only review cannot move or damage: mirra/dodge
+PASS timeline visits every authored frame in order: mirra/powered_idle
+PASS authored drawing advance and final settle: mirra/powered_idle
+PASS pose-only review cannot move or damage: mirra/powered_idle
+PASS timeline visits every authored frame in order: mirra/powered_walk
+PASS authored drawing advance and final settle: mirra/powered_walk
+PASS pose-only review cannot move or damage: mirra/powered_walk
+PASS timeline visits every authored frame in order: mirra/powered_primary
+PASS authored drawing advance and final settle: mirra/powered_primary
+PASS pose-only review cannot move or damage: mirra/powered_primary
+PASS timeline visits every authored frame in order: mirra/powered_guard
+PASS authored drawing advance and final settle: mirra/powered_guard
+PASS pose-only review cannot move or damage: mirra/powered_guard
+PASS timeline visits every authored frame in order: mirra/powered_exit
+PASS authored drawing advance and final settle: mirra/powered_exit
+PASS pose-only review cannot move or damage: mirra/powered_exit
+PASS defeat remains settled rather than restarting: mirra
+PASS manual action starts: mirra/primary
+PASS no event occurs during anticipation: mirra/primary
+PASS single event aligns with committed drawing: mirra/primary
+PASS completed action cannot release twice: mirra/primary
+PASS action effects expire: mirra/primary
+PASS manual action starts: mirra/secondary
+PASS no event occurs during anticipation: mirra/secondary
+PASS single event aligns with committed drawing: mirra/secondary
+PASS completed action cannot release twice: mirra/secondary
+PASS action effects expire: mirra/secondary
+PASS manual action starts: mirra/special
+PASS no event occurs during anticipation: mirra/special
+PASS single event aligns with committed drawing: mirra/special
+PASS completed action cannot release twice: mirra/special
+PASS action effects expire: mirra/special
+PASS special equipment persists after activation recovery: mirra
+PASS E can start the powered return: mirra
+PASS powered equipment props clear after the authored return: mirra
+PASS primary reaches the real forward practice target: mirra
+PASS primary leaves off-lane practice prop untouched: mirra
+PASS solid blocker wins over a target behind it: mirra
+PASS grounded jump starts with authored anticipation: mirra
+PASS airborne action and repeated jump cannot bypass recovery: mirra
+PASS jump changes visual height while retaining the ground footprint: mirra
+PASS jump lands exactly once and finishes recovery: mirra
+PASS traversal poses cannot cause ability releases: mirra
+PASS authored dodge can start grounded: mirra
+PASS dodge moves through collision then settles: mirra
+PASS both stair clips follow a continuous32pixel elevation profile: mirra
+PASS a tall stair side cannot be entered as a walkable tread: mirra
+PASS a16pixel ledge rejects walking through its side: mirra
+PASS ledge jump starts: mirra
+PASS jump can land on an elevated ledge with feet registered: mirra
+PASS walking off a ledge falls and lands instead of snapping down: mirra
+PASS bridge supports the footprint over the gap: mirra
+PASS a missed gap landing returns to the traversal checkpoint: mirra
+PASS surface fixture tags are distinct: mirra
+PASS activation reaches the held powered idle: mirra
+PASS uncovered powered traversal is rejected instead of dropping equipment: mirra
+PASS powered walk moves on the flat without dropping equipment: mirra
+PASS powered guard retains changed equipment at its brace: mirra
+PASS powered primary uses its own authored action: mirra
+PASS powered strike recovers to the same equipment: mirra
+PASS authored powered return restores the base and clears summoned entities: mirra
+PASS all clips and contacts leave camera fixed: mirra
+PASS frame count ashe/idle = 8
+PASS frame count ashe/walk = 16
+PASS frame count ashe/primary = 16
+PASS frame count ashe/secondary = 8
+PASS frame count ashe/special = 8
+PASS frame count ashe/guard = 8
+PASS frame count ashe/hit = 8
+PASS frame count ashe/defeat = 8
+PASS frame count ashe/jump = 8
+PASS frame count ashe/stair_up = 8
+PASS frame count ashe/stair_down = 8
+PASS frame count ashe/dodge = 8
+PASS frame count ashe/powered_idle = 8
+PASS frame count ashe/powered_walk = 8
+PASS frame count ashe/powered_primary = 8
+PASS frame count ashe/powered_guard = 8
+PASS frame count ashe/powered_exit = 8
+PASS all base, traversal and powered clips and total pose count exist: ashe
+PASS each imported pose contains distinct image data: ashe
+PASS fixed canvas and nearest filtering: ashe
+PASS timeline visits every authored frame in order: ashe/idle
+PASS authored drawing advance and final settle: ashe/idle
+PASS pose-only review cannot move or damage: ashe/idle
+PASS timeline visits every authored frame in order: ashe/walk
+PASS authored drawing advance and final settle: ashe/walk
+PASS pose-only review cannot move or damage: ashe/walk
+PASS timeline visits every authored frame in order: ashe/primary
+PASS authored drawing advance and final settle: ashe/primary
+PASS pose-only review cannot move or damage: ashe/primary
+PASS timeline visits every authored frame in order: ashe/secondary
+PASS authored drawing advance and final settle: ashe/secondary
+PASS pose-only review cannot move or damage: ashe/secondary
+PASS timeline visits every authored frame in order: ashe/special
+PASS authored drawing advance and final settle: ashe/special
+PASS pose-only review cannot move or damage: ashe/special
+PASS timeline visits every authored frame in order: ashe/guard
+PASS authored drawing advance and final settle: ashe/guard
+PASS pose-only review cannot move or damage: ashe/guard
+PASS timeline visits every authored frame in order: ashe/hit
+PASS authored drawing advance and final settle: ashe/hit
+PASS pose-only review cannot move or damage: ashe/hit
+PASS timeline visits every authored frame in order: ashe/defeat
+PASS authored drawing advance and final settle: ashe/defeat
+PASS pose-only review cannot move or damage: ashe/defeat
+PASS timeline visits every authored frame in order: ashe/jump
+PASS authored drawing advance and final settle: ashe/jump
+PASS pose-only review cannot move or damage: ashe/jump
+PASS timeline visits every authored frame in order: ashe/stair_up
+PASS authored drawing advance and final settle: ashe/stair_up
+PASS pose-only review cannot move or damage: ashe/stair_up
+PASS timeline visits every authored frame in order: ashe/stair_down
+PASS authored drawing advance and final settle: ashe/stair_down
+PASS pose-only review cannot move or damage: ashe/stair_down
+PASS timeline visits every authored frame in order: ashe/dodge
+PASS authored drawing advance and final settle: ashe/dodge
+PASS pose-only review cannot move or damage: ashe/dodge
+PASS timeline visits every authored frame in order: ashe/powered_idle
+PASS authored drawing advance and final settle: ashe/powered_idle
+PASS pose-only review cannot move or damage: ashe/powered_idle
+PASS timeline visits every authored frame in order: ashe/powered_walk
+PASS authored drawing advance and final settle: ashe/powered_walk
+PASS pose-only review cannot move or damage: ashe/powered_walk
+PASS timeline visits every authored frame in order: ashe/powered_primary
+PASS authored drawing advance and final settle: ashe/powered_primary
+PASS pose-only review cannot move or damage: ashe/powered_primary
+PASS timeline visits every authored frame in order: ashe/powered_guard
+PASS authored drawing advance and final settle: ashe/powered_guard
+PASS pose-only review cannot move or damage: ashe/powered_guard
+PASS timeline visits every authored frame in order: ashe/powered_exit
+PASS authored drawing advance and final settle: ashe/powered_exit
+PASS pose-only review cannot move or damage: ashe/powered_exit
+PASS defeat remains settled rather than restarting: ashe
+PASS manual action starts: ashe/primary
+PASS no event occurs during anticipation: ashe/primary
+PASS single event aligns with committed drawing: ashe/primary
+PASS completed action cannot release twice: ashe/primary
+PASS action effects expire: ashe/primary
+PASS manual action starts: ashe/secondary
+PASS no event occurs during anticipation: ashe/secondary
+PASS single event aligns with committed drawing: ashe/secondary
+PASS completed action cannot release twice: ashe/secondary
+PASS action effects expire: ashe/secondary
+PASS manual action starts: ashe/special
+PASS no event occurs during anticipation: ashe/special
+PASS single event aligns with committed drawing: ashe/special
+PASS completed action cannot release twice: ashe/special
+PASS action effects expire: ashe/special
+PASS special equipment persists after activation recovery: ashe
+PASS E can start the powered return: ashe
+PASS powered equipment props clear after the authored return: ashe
+PASS primary reaches the real forward practice target: ashe
+PASS primary leaves off-lane practice prop untouched: ashe
+PASS solid blocker wins over a target behind it: ashe
+PASS grounded jump starts with authored anticipation: ashe
+PASS airborne action and repeated jump cannot bypass recovery: ashe
+PASS jump changes visual height while retaining the ground footprint: ashe
+PASS jump lands exactly once and finishes recovery: ashe
+PASS traversal poses cannot cause ability releases: ashe
+PASS authored dodge can start grounded: ashe
+PASS dodge moves through collision then settles: ashe
+PASS both stair clips follow a continuous32pixel elevation profile: ashe
+PASS a tall stair side cannot be entered as a walkable tread: ashe
+PASS a16pixel ledge rejects walking through its side: ashe
+PASS ledge jump starts: ashe
+PASS jump can land on an elevated ledge with feet registered: ashe
+PASS walking off a ledge falls and lands instead of snapping down: ashe
+PASS bridge supports the footprint over the gap: ashe
+PASS a missed gap landing returns to the traversal checkpoint: ashe
+PASS surface fixture tags are distinct: ashe
+PASS activation reaches the held powered idle: ashe
+PASS uncovered powered traversal is rejected instead of dropping equipment: ashe
+PASS powered walk moves on the flat without dropping equipment: ashe
+PASS powered guard retains changed equipment at its brace: ashe
+PASS powered primary uses its own authored action: ashe
+PASS powered strike recovers to the same equipment: ashe
+PASS authored powered return restores the base and clears summoned entities: ashe
+PASS all clips and contacts leave camera fixed: ashe
+PASS frame count clack/idle = 8
+PASS frame count clack/walk = 16
+PASS frame count clack/primary = 16
+PASS frame count clack/secondary = 8
+PASS frame count clack/special = 8
+PASS frame count clack/guard = 8
+PASS frame count clack/hit = 8
+PASS frame count clack/defeat = 8
+PASS frame count clack/jump = 8
+PASS frame count clack/stair_up = 8
+PASS frame count clack/stair_down = 8
+PASS frame count clack/dodge = 8
+PASS frame count clack/powered_idle = 8
+PASS frame count clack/powered_walk = 8
+PASS frame count clack/powered_primary = 8
+PASS frame count clack/powered_guard = 8
+PASS frame count clack/powered_exit = 8
+PASS all base, traversal and powered clips and total pose count exist: clack
+PASS each imported pose contains distinct image data: clack
+PASS fixed canvas and nearest filtering: clack
+PASS timeline visits every authored frame in order: clack/idle
+PASS authored drawing advance and final settle: clack/idle
+PASS pose-only review cannot move or damage: clack/idle
+PASS timeline visits every authored frame in order: clack/walk
+PASS authored drawing advance and final settle: clack/walk
+PASS pose-only review cannot move or damage: clack/walk
+PASS timeline visits every authored frame in order: clack/primary
+PASS authored drawing advance and final settle: clack/primary
+PASS pose-only review cannot move or damage: clack/primary
+PASS timeline visits every authored frame in order: clack/secondary
+PASS authored drawing advance and final settle: clack/secondary
+PASS pose-only review cannot move or damage: clack/secondary
+PASS timeline visits every authored frame in order: clack/special
+PASS authored drawing advance and final settle: clack/special
+PASS pose-only review cannot move or damage: clack/special
+PASS timeline visits every authored frame in order: clack/guard
+PASS authored drawing advance and final settle: clack/guard
+PASS pose-only review cannot move or damage: clack/guard
+PASS timeline visits every authored frame in order: clack/hit
+PASS authored drawing advance and final settle: clack/hit
+PASS pose-only review cannot move or damage: clack/hit
+PASS timeline visits every authored frame in order: clack/defeat
+PASS authored drawing advance and final settle: clack/defeat
+PASS pose-only review cannot move or damage: clack/defeat
+PASS timeline visits every authored frame in order: clack/jump
+PASS authored drawing advance and final settle: clack/jump
+PASS pose-only review cannot move or damage: clack/jump
+PASS timeline visits every authored frame in order: clack/stair_up
+PASS authored drawing advance and final settle: clack/stair_up
+PASS pose-only review cannot move or damage: clack/stair_up
+PASS timeline visits every authored frame in order: clack/stair_down
+PASS authored drawing advance and final settle: clack/stair_down
+PASS pose-only review cannot move or damage: clack/stair_down
+PASS timeline visits every authored frame in order: clack/dodge
+PASS authored drawing advance and final settle: clack/dodge
+PASS pose-only review cannot move or damage: clack/dodge
+PASS timeline visits every authored frame in order: clack/powered_idle
+PASS authored drawing advance and final settle: clack/powered_idle
+PASS pose-only review cannot move or damage: clack/powered_idle
+PASS timeline visits every authored frame in order: clack/powered_walk
+PASS authored drawing advance and final settle: clack/powered_walk
+PASS pose-only review cannot move or damage: clack/powered_walk
+PASS timeline visits every authored frame in order: clack/powered_primary
+PASS authored drawing advance and final settle: clack/powered_primary
+PASS pose-only review cannot move or damage: clack/powered_primary
+PASS timeline visits every authored frame in order: clack/powered_guard
+PASS authored drawing advance and final settle: clack/powered_guard
+PASS pose-only review cannot move or damage: clack/powered_guard
+PASS timeline visits every authored frame in order: clack/powered_exit
+PASS authored drawing advance and final settle: clack/powered_exit
+PASS pose-only review cannot move or damage: clack/powered_exit
+PASS defeat remains settled rather than restarting: clack
+PASS manual action starts: clack/primary
+PASS no event occurs during anticipation: clack/primary
+PASS single event aligns with committed drawing: clack/primary
+PASS completed action cannot release twice: clack/primary
+PASS action effects expire: clack/primary
+PASS manual action starts: clack/secondary
+PASS no event occurs during anticipation: clack/secondary
+PASS single event aligns with committed drawing: clack/secondary
+PASS completed action cannot release twice: clack/secondary
+PASS action effects expire: clack/secondary
+PASS manual action starts: clack/special
+PASS no event occurs during anticipation: clack/special
+PASS single event aligns with committed drawing: clack/special
+PASS completed action cannot release twice: clack/special
+PASS action effects expire: clack/special
+PASS special equipment persists after activation recovery: clack
+PASS E can start the powered return: clack
+PASS powered equipment props clear after the authored return: clack
+PASS primary reaches the real forward practice target: clack
+PASS primary leaves off-lane practice prop untouched: clack
+PASS solid blocker wins over a target behind it: clack
+PASS grounded jump starts with authored anticipation: clack
+PASS airborne action and repeated jump cannot bypass recovery: clack
+PASS jump changes visual height while retaining the ground footprint: clack
+PASS jump lands exactly once and finishes recovery: clack
+PASS traversal poses cannot cause ability releases: clack
+PASS authored dodge can start grounded: clack
+PASS dodge moves through collision then settles: clack
+PASS both stair clips follow a continuous32pixel elevation profile: clack
+PASS a tall stair side cannot be entered as a walkable tread: clack
+PASS a16pixel ledge rejects walking through its side: clack
+PASS ledge jump starts: clack
+PASS jump can land on an elevated ledge with feet registered: clack
+PASS walking off a ledge falls and lands instead of snapping down: clack
+PASS bridge supports the footprint over the gap: clack
+PASS a missed gap landing returns to the traversal checkpoint: clack
+PASS surface fixture tags are distinct: clack
+PASS activation reaches the held powered idle: clack
+PASS uncovered powered traversal is rejected instead of dropping equipment: clack
+PASS powered walk moves on the flat without dropping equipment: clack
+PASS powered guard retains changed equipment at its brace: clack
+PASS powered primary uses its own authored action: clack
+PASS powered strike recovers to the same equipment: clack
+PASS authored powered return restores the base and clears summoned entities: clack
+PASS all clips and contacts leave camera fixed: clack
+PASS frame count nix/idle = 8
+PASS frame count nix/walk = 16
+PASS frame count nix/primary = 16
+PASS frame count nix/secondary = 8
+PASS frame count nix/special = 8
+PASS frame count nix/guard = 8
+PASS frame count nix/hit = 8
+PASS frame count nix/defeat = 8
+PASS frame count nix/jump = 8
+PASS frame count nix/stair_up = 8
+PASS frame count nix/stair_down = 8
+PASS frame count nix/dodge = 8
+PASS frame count nix/powered_idle = 8
+PASS frame count nix/powered_walk = 8
+PASS frame count nix/powered_primary = 8
+PASS frame count nix/powered_guard = 8
+PASS frame count nix/powered_exit = 8
+PASS all base, traversal and powered clips and total pose count exist: nix
+PASS each imported pose contains distinct image data: nix
+PASS fixed canvas and nearest filtering: nix
+PASS timeline visits every authored frame in order: nix/idle
+PASS authored drawing advance and final settle: nix/idle
+PASS pose-only review cannot move or damage: nix/idle
+PASS timeline visits every authored frame in order: nix/walk
+PASS authored drawing advance and final settle: nix/walk
+PASS pose-only review cannot move or damage: nix/walk
+PASS timeline visits every authored frame in order: nix/primary
+PASS authored drawing advance and final settle: nix/primary
+PASS pose-only review cannot move or damage: nix/primary
+PASS timeline visits every authored frame in order: nix/secondary
+PASS authored drawing advance and final settle: nix/secondary
+PASS pose-only review cannot move or damage: nix/secondary
+PASS timeline visits every authored frame in order: nix/special
+PASS authored drawing advance and final settle: nix/special
+PASS pose-only review cannot move or damage: nix/special
+PASS timeline visits every authored frame in order: nix/guard
+PASS authored drawing advance and final settle: nix/guard
+PASS pose-only review cannot move or damage: nix/guard
+PASS timeline visits every authored frame in order: nix/hit
+PASS authored drawing advance and final settle: nix/hit
+PASS pose-only review cannot move or damage: nix/hit
+PASS timeline visits every authored frame in order: nix/defeat
+PASS authored drawing advance and final settle: nix/defeat
+PASS pose-only review cannot move or damage: nix/defeat
+PASS timeline visits every authored frame in order: nix/jump
+PASS authored drawing advance and final settle: nix/jump
+PASS pose-only review cannot move or damage: nix/jump
+PASS timeline visits every authored frame in order: nix/stair_up
+PASS authored drawing advance and final settle: nix/stair_up
+PASS pose-only review cannot move or damage: nix/stair_up
+PASS timeline visits every authored frame in order: nix/stair_down
+PASS authored drawing advance and final settle: nix/stair_down
+PASS pose-only review cannot move or damage: nix/stair_down
+PASS timeline visits every authored frame in order: nix/dodge
+PASS authored drawing advance and final settle: nix/dodge
+PASS pose-only review cannot move or damage: nix/dodge
+PASS timeline visits every authored frame in order: nix/powered_idle
+PASS authored drawing advance and final settle: nix/powered_idle
+PASS pose-only review cannot move or damage: nix/powered_idle
+PASS timeline visits every authored frame in order: nix/powered_walk
+PASS authored drawing advance and final settle: nix/powered_walk
+PASS pose-only review cannot move or damage: nix/powered_walk
+PASS timeline visits every authored frame in order: nix/powered_primary
+PASS authored drawing advance and final settle: nix/powered_primary
+PASS pose-only review cannot move or damage: nix/powered_primary
+PASS timeline visits every authored frame in order: nix/powered_guard
+PASS authored drawing advance and final settle: nix/powered_guard
+PASS pose-only review cannot move or damage: nix/powered_guard
+PASS timeline visits every authored frame in order: nix/powered_exit
+PASS authored drawing advance and final settle: nix/powered_exit
+PASS pose-only review cannot move or damage: nix/powered_exit
+PASS defeat remains settled rather than restarting: nix
+PASS manual action starts: nix/primary
+PASS no event occurs during anticipation: nix/primary
+PASS single event aligns with committed drawing: nix/primary
+PASS completed action cannot release twice: nix/primary
+PASS action effects expire: nix/primary
+PASS manual action starts: nix/secondary
+PASS no event occurs during anticipation: nix/secondary
+PASS single event aligns with committed drawing: nix/secondary
+PASS completed action cannot release twice: nix/secondary
+PASS action effects expire: nix/secondary
+PASS manual action starts: nix/special
+PASS no event occurs during anticipation: nix/special
+PASS single event aligns with committed drawing: nix/special
+PASS completed action cannot release twice: nix/special
+PASS action effects expire: nix/special
+PASS special equipment persists after activation recovery: nix
+PASS E can start the powered return: nix
+PASS powered equipment props clear after the authored return: nix
+PASS primary reaches the real forward practice target: nix
+PASS primary leaves off-lane practice prop untouched: nix
+PASS solid blocker wins over a target behind it: nix
+PASS grounded jump starts with authored anticipation: nix
+PASS airborne action and repeated jump cannot bypass recovery: nix
+PASS jump changes visual height while retaining the ground footprint: nix
+PASS jump lands exactly once and finishes recovery: nix
+PASS traversal poses cannot cause ability releases: nix
+PASS authored dodge can start grounded: nix
+PASS dodge moves through collision then settles: nix
+PASS both stair clips follow a continuous32pixel elevation profile: nix
+PASS a tall stair side cannot be entered as a walkable tread: nix
+PASS a16pixel ledge rejects walking through its side: nix
+PASS ledge jump starts: nix
+PASS jump can land on an elevated ledge with feet registered: nix
+PASS walking off a ledge falls and lands instead of snapping down: nix
+PASS bridge supports the footprint over the gap: nix
+PASS a missed gap landing returns to the traversal checkpoint: nix
+PASS surface fixture tags are distinct: nix
+PASS activation reaches the held powered idle: nix
+PASS uncovered powered traversal is rejected instead of dropping equipment: nix
+PASS powered walk moves on the flat without dropping equipment: nix
+PASS powered guard retains changed equipment at its brace: nix
+PASS powered primary uses its own authored action: nix
+PASS powered strike recovers to the same equipment: nix
+PASS authored powered return restores the base and clears summoned entities: nix
+PASS all clips and contacts leave camera fixed: nix
+PASS frame count rook/idle = 8
+PASS frame count rook/walk = 16
+PASS frame count rook/primary = 16
+PASS frame count rook/secondary = 8
+PASS frame count rook/special = 8
+PASS frame count rook/guard = 8
+PASS frame count rook/hit = 8
+PASS frame count rook/defeat = 8
+PASS frame count rook/jump = 8
+PASS frame count rook/stair_up = 8
+PASS frame count rook/stair_down = 8
+PASS frame count rook/dodge = 8
+PASS frame count rook/powered_idle = 8
+PASS frame count rook/powered_walk = 8
+PASS frame count rook/powered_primary = 8
+PASS frame count rook/powered_guard = 8
+PASS frame count rook/powered_exit = 8
+PASS all base, traversal and powered clips and total pose count exist: rook
+PASS each imported pose contains distinct image data: rook
+PASS fixed canvas and nearest filtering: rook
+PASS timeline visits every authored frame in order: rook/idle
+PASS authored drawing advance and final settle: rook/idle
+PASS pose-only review cannot move or damage: rook/idle
+PASS timeline visits every authored frame in order: rook/walk
+PASS authored drawing advance and final settle: rook/walk
+PASS pose-only review cannot move or damage: rook/walk
+PASS timeline visits every authored frame in order: rook/primary
+PASS authored drawing advance and final settle: rook/primary
+PASS pose-only review cannot move or damage: rook/primary
+PASS timeline visits every authored frame in order: rook/secondary
+PASS authored drawing advance and final settle: rook/secondary
+PASS pose-only review cannot move or damage: rook/secondary
+PASS timeline visits every authored frame in order: rook/special
+PASS authored drawing advance and final settle: rook/special
+PASS pose-only review cannot move or damage: rook/special
+PASS timeline visits every authored frame in order: rook/guard
+PASS authored drawing advance and final settle: rook/guard
+PASS pose-only review cannot move or damage: rook/guard
+PASS timeline visits every authored frame in order: rook/hit
+PASS authored drawing advance and final settle: rook/hit
+PASS pose-only review cannot move or damage: rook/hit
+PASS timeline visits every authored frame in order: rook/defeat
+PASS authored drawing advance and final settle: rook/defeat
+PASS pose-only review cannot move or damage: rook/defeat
+PASS timeline visits every authored frame in order: rook/jump
+PASS authored drawing advance and final settle: rook/jump
+PASS pose-only review cannot move or damage: rook/jump
+PASS timeline visits every authored frame in order: rook/stair_up
+PASS authored drawing advance and final settle: rook/stair_up
+PASS pose-only review cannot move or damage: rook/stair_up
+PASS timeline visits every authored frame in order: rook/stair_down
+PASS authored drawing advance and final settle: rook/stair_down
+PASS pose-only review cannot move or damage: rook/stair_down
+PASS timeline visits every authored frame in order: rook/dodge
+PASS authored drawing advance and final settle: rook/dodge
+PASS pose-only review cannot move or damage: rook/dodge
+PASS timeline visits every authored frame in order: rook/powered_idle
+PASS authored drawing advance and final settle: rook/powered_idle
+PASS pose-only review cannot move or damage: rook/powered_idle
+PASS timeline visits every authored frame in order: rook/powered_walk
+PASS authored drawing advance and final settle: rook/powered_walk
+PASS pose-only review cannot move or damage: rook/powered_walk
+PASS timeline visits every authored frame in order: rook/powered_primary
+PASS authored drawing advance and final settle: rook/powered_primary
+PASS pose-only review cannot move or damage: rook/powered_primary
+PASS timeline visits every authored frame in order: rook/powered_guard
+PASS authored drawing advance and final settle: rook/powered_guard
+PASS pose-only review cannot move or damage: rook/powered_guard
+PASS timeline visits every authored frame in order: rook/powered_exit
+PASS authored drawing advance and final settle: rook/powered_exit
+PASS pose-only review cannot move or damage: rook/powered_exit
+PASS defeat remains settled rather than restarting: rook
+PASS manual action starts: rook/primary
+PASS no event occurs during anticipation: rook/primary
+PASS single event aligns with committed drawing: rook/primary
+PASS completed action cannot release twice: rook/primary
+PASS action effects expire: rook/primary
+PASS manual action starts: rook/secondary
+PASS no event occurs during anticipation: rook/secondary
+PASS single event aligns with committed drawing: rook/secondary
+PASS completed action cannot release twice: rook/secondary
+PASS action effects expire: rook/secondary
+PASS manual action starts: rook/special
+PASS no event occurs during anticipation: rook/special
+PASS single event aligns with committed drawing: rook/special
+PASS completed action cannot release twice: rook/special
+PASS action effects expire: rook/special
+PASS special equipment persists after activation recovery: rook
+PASS E can start the powered return: rook
+PASS powered equipment props clear after the authored return: rook
+PASS primary reaches the real forward practice target: rook
+PASS primary leaves off-lane practice prop untouched: rook
+PASS solid blocker wins over a target behind it: rook
+PASS grounded jump starts with authored anticipation: rook
+PASS airborne action and repeated jump cannot bypass recovery: rook
+PASS jump changes visual height while retaining the ground footprint: rook
+PASS jump lands exactly once and finishes recovery: rook
+PASS traversal poses cannot cause ability releases: rook
+PASS authored dodge can start grounded: rook
+PASS dodge moves through collision then settles: rook
+PASS both stair clips follow a continuous32pixel elevation profile: rook
+PASS a tall stair side cannot be entered as a walkable tread: rook
+PASS a16pixel ledge rejects walking through its side: rook
+PASS ledge jump starts: rook
+PASS jump can land on an elevated ledge with feet registered: rook
+PASS walking off a ledge falls and lands instead of snapping down: rook
+PASS bridge supports the footprint over the gap: rook
+PASS a missed gap landing returns to the traversal checkpoint: rook
+PASS surface fixture tags are distinct: rook
+PASS activation reaches the held powered idle: rook
+PASS uncovered powered traversal is rejected instead of dropping equipment: rook
+PASS powered walk moves on the flat without dropping equipment: rook
+PASS powered guard retains changed equipment at its brace: rook
+PASS powered primary uses its own authored action: rook
+PASS powered strike recovers to the same equipment: rook
+PASS exactly two Rook turret entities persist throughout powered review
+PASS authored powered return restores the base and clears summoned entities: rook
+PASS all clips and contacts leave camera fixed: rook
+PASS frame count mote/idle = 8
+PASS frame count mote/walk = 16
+PASS frame count mote/primary = 16
+PASS frame count mote/secondary = 8
+PASS frame count mote/special = 8
+PASS frame count mote/guard = 8
+PASS frame count mote/hit = 8
+PASS frame count mote/defeat = 8
+PASS frame count mote/jump = 8
+PASS frame count mote/stair_up = 8
+PASS frame count mote/stair_down = 8
+PASS frame count mote/dodge = 8
+PASS frame count mote/powered_idle = 8
+PASS frame count mote/powered_walk = 8
+PASS frame count mote/powered_primary = 8
+PASS frame count mote/powered_guard = 8
+PASS frame count mote/powered_exit = 8
+PASS all base, traversal and powered clips and total pose count exist: mote
+PASS each imported pose contains distinct image data: mote
+PASS fixed canvas and nearest filtering: mote
+PASS timeline visits every authored frame in order: mote/idle
+PASS authored drawing advance and final settle: mote/idle
+PASS pose-only review cannot move or damage: mote/idle
+PASS timeline visits every authored frame in order: mote/walk
+PASS authored drawing advance and final settle: mote/walk
+PASS pose-only review cannot move or damage: mote/walk
+PASS timeline visits every authored frame in order: mote/primary
+PASS authored drawing advance and final settle: mote/primary
+PASS pose-only review cannot move or damage: mote/primary
+PASS timeline visits every authored frame in order: mote/secondary
+PASS authored drawing advance and final settle: mote/secondary
+PASS pose-only review cannot move or damage: mote/secondary
+PASS timeline visits every authored frame in order: mote/special
+PASS authored drawing advance and final settle: mote/special
+PASS pose-only review cannot move or damage: mote/special
+PASS timeline visits every authored frame in order: mote/guard
+PASS authored drawing advance and final settle: mote/guard
+PASS pose-only review cannot move or damage: mote/guard
+PASS timeline visits every authored frame in order: mote/hit
+PASS authored drawing advance and final settle: mote/hit
+PASS pose-only review cannot move or damage: mote/hit
+PASS timeline visits every authored frame in order: mote/defeat
+PASS authored drawing advance and final settle: mote/defeat
+PASS pose-only review cannot move or damage: mote/defeat
+PASS timeline visits every authored frame in order: mote/jump
+PASS authored drawing advance and final settle: mote/jump
+PASS pose-only review cannot move or damage: mote/jump
+PASS timeline visits every authored frame in order: mote/stair_up
+PASS authored drawing advance and final settle: mote/stair_up
+PASS pose-only review cannot move or damage: mote/stair_up
+PASS timeline visits every authored frame in order: mote/stair_down
+PASS authored drawing advance and final settle: mote/stair_down
+PASS pose-only review cannot move or damage: mote/stair_down
+PASS timeline visits every authored frame in order: mote/dodge
+PASS authored drawing advance and final settle: mote/dodge
+PASS pose-only review cannot move or damage: mote/dodge
+PASS timeline visits every authored frame in order: mote/powered_idle
+PASS authored drawing advance and final settle: mote/powered_idle
+PASS pose-only review cannot move or damage: mote/powered_idle
+PASS timeline visits every authored frame in order: mote/powered_walk
+PASS authored drawing advance and final settle: mote/powered_walk
+PASS pose-only review cannot move or damage: mote/powered_walk
+PASS timeline visits every authored frame in order: mote/powered_primary
+PASS authored drawing advance and final settle: mote/powered_primary
+PASS pose-only review cannot move or damage: mote/powered_primary
+PASS timeline visits every authored frame in order: mote/powered_guard
+PASS authored drawing advance and final settle: mote/powered_guard
+PASS pose-only review cannot move or damage: mote/powered_guard
+PASS timeline visits every authored frame in order: mote/powered_exit
+PASS authored drawing advance and final settle: mote/powered_exit
+PASS pose-only review cannot move or damage: mote/powered_exit
+PASS defeat remains settled rather than restarting: mote
+PASS manual action starts: mote/primary
+PASS no event occurs during anticipation: mote/primary
+PASS single event aligns with committed drawing: mote/primary
+PASS completed action cannot release twice: mote/primary
+PASS action effects expire: mote/primary
+PASS manual action starts: mote/secondary
+PASS no event occurs during anticipation: mote/secondary
+PASS single event aligns with committed drawing: mote/secondary
+PASS completed action cannot release twice: mote/secondary
+PASS action effects expire: mote/secondary
+PASS manual action starts: mote/special
+PASS no event occurs during anticipation: mote/special
+PASS single event aligns with committed drawing: mote/special
+PASS completed action cannot release twice: mote/special
+PASS action effects expire: mote/special
+PASS special equipment persists after activation recovery: mote
+PASS E can start the powered return: mote
+PASS powered equipment props clear after the authored return: mote
+PASS primary reaches the real forward practice target: mote
+PASS primary leaves off-lane practice prop untouched: mote
+PASS solid blocker wins over a target behind it: mote
+PASS grounded jump starts with authored anticipation: mote
+PASS airborne action and repeated jump cannot bypass recovery: mote
+PASS jump changes visual height while retaining the ground footprint: mote
+PASS jump lands exactly once and finishes recovery: mote
+PASS traversal poses cannot cause ability releases: mote
+PASS authored dodge can start grounded: mote
+PASS dodge moves through collision then settles: mote
+PASS both stair clips follow a continuous32pixel elevation profile: mote
+PASS a tall stair side cannot be entered as a walkable tread: mote
+PASS a16pixel ledge rejects walking through its side: mote
+PASS ledge jump starts: mote
+PASS jump can land on an elevated ledge with feet registered: mote
+PASS walking off a ledge falls and lands instead of snapping down: mote
+PASS bridge supports the footprint over the gap: mote
+PASS a missed gap landing returns to the traversal checkpoint: mote
+PASS surface fixture tags are distinct: mote
+PASS activation reaches the held powered idle: mote
+PASS uncovered powered traversal is rejected instead of dropping equipment: mote
+PASS powered walk moves on the flat without dropping equipment: mote
+PASS powered guard retains changed equipment at its brace: mote
+PASS powered primary uses its own authored action: mote
+PASS powered strike recovers to the same equipment: mote
+PASS Mote orbit shards are separate bounded visual entities without invented damage
+PASS authored powered return restores the base and clears summoned entities: mote
+PASS all clips and contacts leave camera fixed: mote
+PASS held guard holds the authored brace rather than playing recovery
+PASS held guard rejects an attack
+PASS releasing guard restores idle
+PASS early queued input expires instead of firing long after recovery
+PASS paused pose stepping is exact and emits no gameplay event
+PASS paused pose stepping reverses exactly
+PASS window focus loss suspends movement and clears queued controls
+PASS window focus return cannot restore stale movement
+PASS desktop application-focus pair is also supported
+PASS a fast projectile sweeps through its entire travelled segment
+PASS a continuous sweep selects the wall before a later target
+PASS effects and projectile budgets hold after repeated attacks
+PASS reset restores the actor, counters and practice world
+PASS inspection, focus, sweeps and reset never move the camera
+PASS Afterimage remains at activation even if the actor moved before release
+PASS reel without an attached harpoon creates no invented gun-butt attack
+PASS a harpoon hit records the actual attached target
+PASS firing a new harpoon releases the previous tether
+PASS lunge cannot hit a target beyond the current spear contact at release
+PASS moving lunge hits its reached target once
+PASS guard cancellation stops pending lunge motion and contact
+PASS empty revolver starts an authored reload after shot recovery
+PASS revolver ammo stays empty while the cylinder is being reloaded
+PASS revolver refills only after reload closes
+PASS Longshot fires the drawn rifle without consuming revolver ammunition
+PASS half speed scales displacement and animation by the same simulation time
+PASS Thruster Vault launches the same physical height state while retaining its authored clip
+PASS Thruster Vault rejects attacks and jumps until supported recovery
+PASS Thruster Vault has one physical arc and one landing rather than a baked double lift
+PASS Thruster Vault covers the declared0.5second motion at120pixels persecond
+PASS Thruster Vault lands on the16pixel ledge and holds contact until supported
+PASS a gap wider than Thruster Vault reach causes a real unsupported fall and checkpoint return
+Traversal showcase complete after 61.467 simulation seconds
+PASS the actual-physics showcase completes the course and all fourteen powered reviews
+PASS the entire traversal and powered showcase keeps the camera fixed
+Roster animation integration: 1681 passed, 0 failed; skipped []

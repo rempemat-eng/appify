@@ -1,0 +1,4097 @@
+{
+  "id": "velvet",
+  "name": "Velvet",
+  "view": "E",
+  "frame_size": [
+    192,
+    192
+  ],
+  "foot_pivot": [
+    96,
+    172
+  ],
+  "body_height_target": 96,
+  "fit_factor": 1.0,
+  "sources": [
+    {
+      "width": 1254,
+      "height": 1254,
+      "columns": 8,
+      "rows": 8,
+      "column_cuts": [
+        0,
+        171,
+        328,
+        476,
+        634,
+        789,
+        939,
+        1094,
+        1254
+      ],
+      "row_cuts": [
+        0,
+        166,
+        321,
+        478,
+        635,
+        792,
+        950,
+        1109,
+        1254
+      ],
+      "baselines": {
+        "0": 157.0,
+        "3": 625.0,
+        "4": 783.0,
+        "5": 939.0,
+        "6": 1092.0,
+        "7": 1232.0
+      },
+      "body_height": 136.5,
+      "body_min_area": 2452,
+      "path": "art-source/animated/velvet-64.png",
+      "base_scale": 0.7032967032967034
+    },
+    {
+      "width": 1254,
+      "height": 1254,
+      "columns": 8,
+      "rows": 8,
+      "column_cuts": [
+        0,
+        176,
+        339,
+        501,
+        663,
+        813,
+        973,
+        1131,
+        1254
+      ],
+      "row_cuts": [
+        0,
+        169,
+        323,
+        486,
+        639,
+        809,
+        969,
+        1122,
+        1254
+      ],
+      "baselines": {
+        "0": 163.0,
+        "1": 321.0,
+        "4": 809.0,
+        "5": 968.0,
+        "6": 1121.25,
+        "7": 1245.0
+      },
+      "body_height": 144.5,
+      "body_min_area": 2910,
+      "path": "art-source/animated/v3/velvet-extension64.png",
+      "base_scale": 0.6643598615916955
+    },
+    {
+      "width": 1586,
+      "height": 992,
+      "columns": 8,
+      "rows": 5,
+      "column_cuts": [
+        0,
+        221,
+        417,
+        613,
+        813,
+        1015,
+        1222,
+        1413,
+        1586
+      ],
+      "row_cuts": [
+        0,
+        202,
+        393,
+        588,
+        782,
+        992
+      ],
+      "baselines": {
+        "0": 191.0,
+        "1": 383.25,
+        "2": 576.0,
+        "3": 771.0,
+        "4": 963.0
+      },
+      "body_height": 165.0,
+      "body_min_area": 3937,
+      "path": "art-source/animated/v3/velvet-powered40.png",
+      "base_scale": 0.5818181818181818
+    },
+    {
+      "width": 2172,
+      "height": 724,
+      "columns": 8,
+      "rows": 2,
+      "column_cuts": [
+        0,
+        315,
+        567,
+        842,
+        1087,
+        1357,
+        1635,
+        1916,
+        2172
+      ],
+      "row_cuts": [
+        0,
+        405,
+        724
+      ],
+      "baselines": {
+        "0": 369.0,
+        "1": 693.0
+      },
+      "body_height": 246.5,
+      "body_min_area": 9356,
+      "path": "art-source/animated/v3/velvet-primary16.png",
+      "base_scale": 0.3894523326572008
+    },
+    {
+      "width": 1774,
+      "height": 887,
+      "columns": 8,
+      "rows": 2,
+      "column_cuts": [
+        0,
+        241,
+        457,
+        665,
+        789,
+        896,
+        1135,
+        1557,
+        1774
+      ],
+      "row_cuts": [
+        0,
+        489,
+        887
+      ],
+      "baselines": {
+        "1": 828.0
+      },
+      "body_height": 290.0,
+      "body_min_area": 9249,
+      "path": "art-source/animated/v3/velvet-powered-primary-exit16.png",
+      "base_scale": 0.3310344827586207
+    },
+    {
+      "width": 1534,
+      "height": 1025,
+      "columns": 1,
+      "rows": 1,
+      "column_cuts": [
+        0,
+        1534
+      ],
+      "row_cuts": [
+        0,
+        1025
+      ],
+      "baselines": {
+        "0": 973.0
+      },
+      "body_height": 946.0,
+      "body_min_area": 142399,
+      "path": "art-source/animated/v3/velvet-powered-primary-single-v2.png",
+      "base_scale": 0.1014799154334038
+    }
+  ],
+  "anchor_sources": [
+    {
+      "path": "art-source/animated/v3/ranger-other-anchors.json",
+      "sha256": "d2326173c6aba926ba6a2d6274b1e2e65fc594b70f0b8f18327a275526800c91"
+    }
+  ],
+  "clips": {
+    "idle": {
+      "frame_count": 8,
+      "durations": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ],
+      "duration": 1.6,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/velvet/idle-00.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 0,
+          "source_bounds": [
+            35,
+            19,
+            154,
+            157
+          ],
+          "source_origin": [
+            85.5,
+            157.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            60,
+            75,
+            144,
+            172
+          ],
+          "sha256": "ee544c5c52d39759168a42887ca6300507acadcceea445f60818a9e0eb2cf6eb"
+        },
+        {
+          "path": "res://assets/animated/velvet/idle-01.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 1,
+          "source_bounds": [
+            183,
+            18,
+            307,
+            157
+          ],
+          "source_origin": [
+            249.5,
+            157.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            49,
+            74,
+            136,
+            172
+          ],
+          "sha256": "9d4ac45773a147bf55dc2ab8d45be2fb4ac3e54e8b59e86c8b0671baa837bd7f"
+        },
+        {
+          "path": "res://assets/animated/velvet/idle-02.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 2,
+          "source_bounds": [
+            344,
+            18,
+            464,
+            157
+          ],
+          "source_origin": [
+            402.0,
+            157.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            55,
+            74,
+            139,
+            172
+          ],
+          "sha256": "95be1d10f396f077a05fb49bdef1e2acd210a0e6f754857c16df1ea364854f09"
+        },
+        {
+          "path": "res://assets/animated/velvet/idle-03.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 3,
+          "source_bounds": [
+            500,
+            19,
+            622,
+            157
+          ],
+          "source_origin": [
+            555.0,
+            157.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            57,
+            75,
+            143,
+            172
+          ],
+          "sha256": "7b68b7964e22bae2eea1eee597ef24a96143b7d903f454acb8bb74f0c5e3cd3a"
+        },
+        {
+          "path": "res://assets/animated/velvet/idle-04.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 4,
+          "source_bounds": [
+            660,
+            19,
+            782,
+            157
+          ],
+          "source_origin": [
+            711.5,
+            157.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            60,
+            75,
+            146,
+            172
+          ],
+          "sha256": "478e18c07b4fc1fd5a372bf25b711145dfc39fe9b8a0c44eec8784e93ee8229f"
+        },
+        {
+          "path": "res://assets/animated/velvet/idle-05.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 5,
+          "source_bounds": [
+            811,
+            18,
+            935,
+            157
+          ],
+          "source_origin": [
+            864.0,
+            157.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            59,
+            74,
+            146,
+            172
+          ],
+          "sha256": "78840d00544fd3a6bb0ead1435e27c92376738420c132fe9a62405301eeece31"
+        },
+        {
+          "path": "res://assets/animated/velvet/idle-06.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 6,
+          "source_bounds": [
+            969,
+            17,
+            1085,
+            157
+          ],
+          "source_origin": [
+            1016.5,
+            157.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            63,
+            74,
+            144,
+            172
+          ],
+          "sha256": "d70036bd38d10d277c000adaee25f9d545e96f77c61a7f696eeafd72132ce374"
+        },
+        {
+          "path": "res://assets/animated/velvet/idle-07.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 7,
+          "source_bounds": [
+            1124,
+            19,
+            1247,
+            157
+          ],
+          "source_origin": [
+            1174.0,
+            157.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            61,
+            75,
+            148,
+            172
+          ],
+          "sha256": "ee8b70dd73100be9f3a0df66383005d15ae7208dac9181ceec4001ebf8f0c4c5"
+        }
+      ]
+    },
+    "walk": {
+      "frame_count": 16,
+      "durations": [
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/velvet/walk-00.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 0,
+          "source_bounds": [
+            27,
+            17,
+            167,
+            163
+          ],
+          "source_origin": [
+            88.0,
+            163.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            55,
+            75,
+            148,
+            172
+          ],
+          "sha256": "677c91ea580cb9a7d52018823ea979f76c56c57e099842aec609ccf247b774fa"
+        },
+        {
+          "path": "res://assets/animated/velvet/walk-01.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 1,
+          "source_bounds": [
+            190,
+            16,
+            335,
+            164
+          ],
+          "source_origin": [
+            257.5,
+            163.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            51,
+            74,
+            147,
+            172
+          ],
+          "sha256": "0c2a9eaf2d901e4698077a1fcb616d81deb2c0b30cc58bc694b860196ab93eab"
+        },
+        {
+          "path": "res://assets/animated/velvet/walk-02.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 2,
+          "source_bounds": [
+            358,
+            17,
+            499,
+            162
+          ],
+          "source_origin": [
+            420.0,
+            163.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            55,
+            75,
+            149,
+            171
+          ],
+          "sha256": "365de6b4e24dd405f2eb290a9ab413e5a7d289486e16fb083841d18751e03555"
+        },
+        {
+          "path": "res://assets/animated/velvet/walk-03.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 3,
+          "source_bounds": [
+            526,
+            16,
+            661,
+            163
+          ],
+          "source_origin": [
+            582.0,
+            163.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            59,
+            74,
+            149,
+            172
+          ],
+          "sha256": "5c23d095de48d1d444635b8743d9831ae2e823139922fb65ac98b1d9de79eb71"
+        },
+        {
+          "path": "res://assets/animated/velvet/walk-04.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 4,
+          "source_bounds": [
+            684,
+            17,
+            817,
+            163
+          ],
+          "source_origin": [
+            738.0,
+            163.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            60,
+            75,
+            148,
+            172
+          ],
+          "sha256": "a9f373a29440b775049ac8fc11bce46d0f65af618636564bc4c4397a8c006886"
+        },
+        {
+          "path": "res://assets/animated/velvet/walk-05.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 5,
+          "source_bounds": [
+            835,
+            17,
+            976,
+            163
+          ],
+          "source_origin": [
+            893.0,
+            163.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            57,
+            75,
+            151,
+            172
+          ],
+          "sha256": "c7a5d4028c792c4728414e8d8350f65491bb2a4e95a482e82f9de172bd248172"
+        },
+        {
+          "path": "res://assets/animated/velvet/walk-06.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 6,
+          "source_bounds": [
+            998,
+            15,
+            1125,
+            162
+          ],
+          "source_origin": [
+            1052.0,
+            163.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            60,
+            74,
+            144,
+            172
+          ],
+          "sha256": "0b97dbe06fc73b4c4152741bdc8871085a3dc77ac035d6d9a68363c8d650c304"
+        },
+        {
+          "path": "res://assets/animated/velvet/walk-07.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 7,
+          "source_bounds": [
+            1142,
+            16,
+            1254,
+            163
+          ],
+          "source_origin": [
+            1192.5,
+            163.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            62,
+            74,
+            136,
+            172
+          ],
+          "sha256": "7712a0708d53bc6d382073f5f53d1718fa1c7dc290743012107fd818fd05f27d"
+        },
+        {
+          "path": "res://assets/animated/velvet/walk-08.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 8,
+          "source_bounds": [
+            23,
+            177,
+            164,
+            321
+          ],
+          "source_origin": [
+            88.0,
+            321.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            53,
+            76,
+            147,
+            172
+          ],
+          "sha256": "e84ebfd820eb900a8ca816ae215b52269022d2394df92b5946d8a9cea1bd19e0"
+        },
+        {
+          "path": "res://assets/animated/velvet/walk-09.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 9,
+          "source_bounds": [
+            180,
+            177,
+            331,
+            321
+          ],
+          "source_origin": [
+            257.5,
+            321.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            45,
+            76,
+            145,
+            172
+          ],
+          "sha256": "64f92017344068c8a0e1eda0ea38f03ff47cc8e9049de7ae4f9ea53dec27f4ba"
+        },
+        {
+          "path": "res://assets/animated/velvet/walk-10.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 10,
+          "source_bounds": [
+            356,
+            177,
+            493,
+            321
+          ],
+          "source_origin": [
+            420.0,
+            321.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            53,
+            76,
+            144,
+            172
+          ],
+          "sha256": "5db315eb6df2513d01bc30610b4fb51c522a1682c37e7cbbaecb6b558694adcf"
+        },
+        {
+          "path": "res://assets/animated/velvet/walk-11.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 11,
+          "source_bounds": [
+            514,
+            177,
+            652,
+            321
+          ],
+          "source_origin": [
+            582.0,
+            321.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            51,
+            76,
+            143,
+            172
+          ],
+          "sha256": "c6fb584a4ae5b0b652f37e3dde466284d2b4bf332f7014290cbef23dbcdc1263"
+        },
+        {
+          "path": "res://assets/animated/velvet/walk-12.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 12,
+          "source_bounds": [
+            668,
+            177,
+            808,
+            321
+          ],
+          "source_origin": [
+            738.0,
+            321.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            49,
+            76,
+            142,
+            172
+          ],
+          "sha256": "9e756766daba44369327ca80ad34fc9b4b660597e1e81d5c324b13b88b6cf1ee"
+        },
+        {
+          "path": "res://assets/animated/velvet/walk-13.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 13,
+          "source_bounds": [
+            827,
+            177,
+            969,
+            322
+          ],
+          "source_origin": [
+            893.0,
+            321.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            52,
+            76,
+            146,
+            172
+          ],
+          "sha256": "f359daf402ff5147638365b563465949dd3e3364f5ce2d2510e9fc36c7a94aab"
+        },
+        {
+          "path": "res://assets/animated/velvet/walk-14.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 14,
+          "source_bounds": [
+            983,
+            177,
+            1122,
+            321
+          ],
+          "source_origin": [
+            1052.0,
+            321.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            50,
+            76,
+            142,
+            172
+          ],
+          "sha256": "e2456396edfa167916249f89a7d76ddd18252be442db6b5fb42c5cdc66191956"
+        },
+        {
+          "path": "res://assets/animated/velvet/walk-15.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 15,
+          "source_bounds": [
+            1134,
+            177,
+            1254,
+            321
+          ],
+          "source_origin": [
+            1192.5,
+            321.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            57,
+            76,
+            137,
+            172
+          ],
+          "sha256": "f88be51ecc4aff0dcba46525286866bc2d5df39bfba90a78af5075b9c7d74f27"
+        }
+      ]
+    },
+    "primary": {
+      "frame_count": 16,
+      "durations": [
+        0.0385,
+        0.0315,
+        0.0385,
+        0.0315,
+        0.044,
+        0.036,
+        0.0605,
+        0.049499999999999995,
+        0.022,
+        0.018,
+        0.030249999999999996,
+        0.024749999999999998,
+        0.04675,
+        0.03825,
+        0.0715,
+        0.058499999999999996
+      ],
+      "duration": 0.64,
+      "loop": false,
+      "release_frame": 8,
+      "release_time": 0.32999999999999996,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/velvet/primary-00.png",
+          "source": "art-source/animated/v3/velvet-primary16.png",
+          "slot": 0,
+          "source_bounds": [
+            33,
+            80,
+            282,
+            369
+          ],
+          "source_origin": [
+            157.5,
+            369.0
+          ],
+          "scale": 0.3894523326572008,
+          "packed_bounds": [
+            48,
+            59,
+            145,
+            172
+          ],
+          "sha256": "e982f46aa3e7eae05ee953b74bca86057aac8fb4a860a8461171675efe028119"
+        },
+        {
+          "path": "res://assets/animated/velvet/primary-01.png",
+          "source": "art-source/animated/v3/velvet-primary16.png",
+          "slot": 4,
+          "source_bounds": [
+            1098,
+            125,
+            1356,
+            369
+          ],
+          "source_origin": [
+            1222.0,
+            369.0
+          ],
+          "scale": 0.3894523326572008,
+          "packed_bounds": [
+            48,
+            77,
+            148,
+            172
+          ],
+          "sha256": "5fed5addbd0590a08e0f6a5c00dc82bae193bcc8a05a47ce94610237286d216c"
+        },
+        {
+          "path": "res://assets/animated/velvet/primary-02.png",
+          "source": "art-source/animated/v3/velvet-primary16.png",
+          "slot": 1,
+          "source_bounds": [
+            316,
+            79,
+            512,
+            369
+          ],
+          "source_origin": [
+            441.0,
+            369.0
+          ],
+          "scale": 0.3894523326572008,
+          "packed_bounds": [
+            47,
+            59,
+            123,
+            172
+          ],
+          "sha256": "540b166358a96539aff1172174c2aa37b798d45578b3e2f841a821f9b1322e9b"
+        },
+        {
+          "path": "res://assets/animated/velvet/primary-03.png",
+          "source": "art-source/animated/v3/velvet-primary16.png",
+          "slot": 7,
+          "source_bounds": [
+            1917,
+            170,
+            2153,
+            369
+          ],
+          "source_origin": [
+            2044.0,
+            369.0
+          ],
+          "scale": 0.3894523326572008,
+          "packed_bounds": [
+            47,
+            94,
+            139,
+            172
+          ],
+          "sha256": "cbe560a38f43a0699088e989e4866dbf0b7dfca2c7ba43501264b8ef4831ea63"
+        },
+        {
+          "path": "res://assets/animated/velvet/primary-04.png",
+          "source": "art-source/animated/v3/velvet-primary16.png",
+          "slot": 2,
+          "source_bounds": [
+            568,
+            110,
+            811,
+            369
+          ],
+          "source_origin": [
+            704.5,
+            369.0
+          ],
+          "scale": 0.3894523326572008,
+          "packed_bounds": [
+            43,
+            71,
+            138,
+            172
+          ],
+          "sha256": "fdf89831373f9ca41102d3885658286be34670a7003621720e3299ff790a1b20"
+        },
+        {
+          "path": "res://assets/animated/velvet/primary-05.png",
+          "source": "art-source/animated/v3/velvet-primary16.png",
+          "slot": 3,
+          "source_bounds": [
+            843,
+            119,
+            1084,
+            369
+          ],
+          "source_origin": [
+            964.5,
+            369.0
+          ],
+          "scale": 0.3894523326572008,
+          "packed_bounds": [
+            49,
+            75,
+            143,
+            172
+          ],
+          "sha256": "adf83b68a989ebaa698c0c7d69c95d1ebe498030c43be8e02549ec4fa77336d9"
+        },
+        {
+          "path": "res://assets/animated/velvet/primary-06.png",
+          "source": "art-source/animated/v3/velvet-primary16.png",
+          "slot": 6,
+          "source_bounds": [
+            1643,
+            132,
+            1884,
+            369
+          ],
+          "source_origin": [
+            1775.5,
+            369.0
+          ],
+          "scale": 0.3894523326572008,
+          "packed_bounds": [
+            44,
+            80,
+            138,
+            172
+          ],
+          "sha256": "f8d565dee6340e7d686148f6d40ac203f933131246f0299af8f29558d9b30ff0"
+        },
+        {
+          "path": "res://assets/animated/velvet/primary-07.png",
+          "source": "art-source/animated/v3/velvet-primary16.png",
+          "slot": 5,
+          "source_bounds": [
+            1363,
+            158,
+            1617,
+            369
+          ],
+          "source_origin": [
+            1496.0,
+            369.0
+          ],
+          "scale": 0.3894523326572008,
+          "packed_bounds": [
+            44,
+            90,
+            143,
+            172
+          ],
+          "sha256": "28cf9f532457512a0822bf7d6c72b08a9abaf0e6ae2ff159345eabdd98f2b7c3"
+        },
+        {
+          "path": "res://assets/animated/velvet/primary-08.png",
+          "source": "art-source/animated/v3/velvet-primary16.png",
+          "slot": 8,
+          "source_bounds": [
+            25,
+            437,
+            386,
+            693
+          ],
+          "source_origin": [
+            157.5,
+            693.0
+          ],
+          "scale": 0.3894523326572008,
+          "packed_bounds": [
+            44,
+            72,
+            185,
+            172
+          ],
+          "sha256": "3e6412a0aa2df577715df3df3319d1cb4b71c705c6e6a9ad2673166bf63f43a0"
+        },
+        {
+          "path": "res://assets/animated/velvet/primary-09.png",
+          "source": "art-source/animated/v3/velvet-primary16.png",
+          "slot": 9,
+          "source_bounds": [
+            339,
+            445,
+            643,
+            693
+          ],
+          "source_origin": [
+            441.0,
+            693.0
+          ],
+          "scale": 0.3894523326572008,
+          "packed_bounds": [
+            56,
+            75,
+            174,
+            172
+          ],
+          "sha256": "b97591971c0e30f4be0467006af1ccfd047c823f2fd41ecbd7826cd1e5f78eaa"
+        },
+        {
+          "path": "res://assets/animated/velvet/primary-10.png",
+          "source": "art-source/animated/v3/velvet-primary16.png",
+          "slot": 10,
+          "source_bounds": [
+            631,
+            437,
+            896,
+            693
+          ],
+          "source_origin": [
+            704.5,
+            693.0
+          ],
+          "scale": 0.3894523326572008,
+          "packed_bounds": [
+            67,
+            72,
+            170,
+            172
+          ],
+          "sha256": "f77bf91cf35224a589aafda00f5cfc14fccdf1ee89b9d3241bf7c78bf458f71f"
+        },
+        {
+          "path": "res://assets/animated/velvet/primary-11.png",
+          "source": "art-source/animated/v3/velvet-primary16.png",
+          "slot": 11,
+          "source_bounds": [
+            898,
+            437,
+            1133,
+            693
+          ],
+          "source_origin": [
+            964.5,
+            693.0
+          ],
+          "scale": 0.3894523326572008,
+          "packed_bounds": [
+            70,
+            72,
+            162,
+            172
+          ],
+          "sha256": "47d88e342dd22f9d694150b509d15f01b3ba019c78f7f760c9e2cc0c7072d4a4"
+        },
+        {
+          "path": "res://assets/animated/velvet/primary-12.png",
+          "source": "art-source/animated/v3/velvet-primary16.png",
+          "slot": 12,
+          "source_bounds": [
+            1160,
+            437,
+            1416,
+            693
+          ],
+          "source_origin": [
+            1222.0,
+            693.0
+          ],
+          "scale": 0.3894523326572008,
+          "packed_bounds": [
+            72,
+            72,
+            172,
+            172
+          ],
+          "sha256": "51b1c029664ccb527a3157766a8b789426b45a7ce856d1dc0e6d31d8c0ae512c"
+        },
+        {
+          "path": "res://assets/animated/velvet/primary-13.png",
+          "source": "art-source/animated/v3/velvet-primary16.png",
+          "slot": 13,
+          "source_bounds": [
+            1446,
+            437,
+            1682,
+            693
+          ],
+          "source_origin": [
+            1496.0,
+            693.0
+          ],
+          "scale": 0.3894523326572008,
+          "packed_bounds": [
+            77,
+            72,
+            169,
+            172
+          ],
+          "sha256": "11d8440f49ead3ed4f7f0b885c953e9a3d532e7e753b2d008e51c58b312de092"
+        },
+        {
+          "path": "res://assets/animated/velvet/primary-14.png",
+          "source": "art-source/animated/v3/velvet-primary16.png",
+          "slot": 14,
+          "source_bounds": [
+            1709,
+            431,
+            1939,
+            693
+          ],
+          "source_origin": [
+            1775.5,
+            693.0
+          ],
+          "scale": 0.3894523326572008,
+          "packed_bounds": [
+            70,
+            70,
+            160,
+            172
+          ],
+          "sha256": "2dfc31c6da0b97d5e5a67c498fc2d6da769ef8180c66046532c9a7dfae4f5119"
+        },
+        {
+          "path": "res://assets/animated/velvet/primary-15.png",
+          "source": "art-source/animated/v3/velvet-primary16.png",
+          "slot": 15,
+          "source_bounds": [
+            1955,
+            431,
+            2172,
+            693
+          ],
+          "source_origin": [
+            2044.0,
+            693.0
+          ],
+          "scale": 0.3894523326572008,
+          "packed_bounds": [
+            61,
+            70,
+            146,
+            172
+          ],
+          "sha256": "1c55521b39032f861ee98ee766b9a47708170fd78ea84bea5ddf8e34e2af26bf"
+        }
+      ],
+      "release_anchor": [
+        86,
+        -65
+      ],
+      "contact_reach": 86
+    },
+    "secondary": {
+      "frame_count": 8,
+      "durations": [
+        0.07,
+        0.07,
+        0.08,
+        0.11,
+        0.04,
+        0.055,
+        0.085,
+        0.13
+      ],
+      "duration": 0.64,
+      "loop": false,
+      "release_frame": 4,
+      "release_time": 0.33,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/velvet/secondary-00.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 24,
+          "source_bounds": [
+            29,
+            488,
+            149,
+            625
+          ],
+          "source_origin": [
+            85.5,
+            625.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            56,
+            76,
+            140,
+            172
+          ],
+          "sha256": "6549c8c844b1e57cad17cdfddd0053fc9a7889046116996454eeecb3cd97e896"
+        },
+        {
+          "path": "res://assets/animated/velvet/secondary-01.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 25,
+          "source_bounds": [
+            183,
+            488,
+            307,
+            625
+          ],
+          "source_origin": [
+            249.5,
+            625.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            49,
+            76,
+            136,
+            172
+          ],
+          "sha256": "92c5018b666d3e123f2db3485ec14cbc2b28bb9b9e839ef53826b63a583f4634"
+        },
+        {
+          "path": "res://assets/animated/velvet/secondary-02.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 26,
+          "source_bounds": [
+            332,
+            488,
+            463,
+            625
+          ],
+          "source_origin": [
+            402.0,
+            625.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            47,
+            76,
+            139,
+            172
+          ],
+          "sha256": "0cea7d1b3c1cacac8c7a194a5133af4eb1f8428e2863efd085753900cae3bb66"
+        },
+        {
+          "path": "res://assets/animated/velvet/secondary-03.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 27,
+          "source_bounds": [
+            487,
+            486,
+            620,
+            625
+          ],
+          "source_origin": [
+            555.0,
+            625.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            48,
+            74,
+            142,
+            172
+          ],
+          "sha256": "4a2a51e99d4f0eb851352171ccb5f841b3c1aa0e79327f0f44e3c6649f8ef479"
+        },
+        {
+          "path": "res://assets/animated/velvet/secondary-04.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 28,
+          "source_bounds": [
+            645,
+            492,
+            778,
+            624
+          ],
+          "source_origin": [
+            711.5,
+            625.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            49,
+            78,
+            142,
+            171
+          ],
+          "sha256": "70403360dbf7609bca2603dc9e3cee970abea3fcc3b01922045cb463b7bf775b"
+        },
+        {
+          "path": "res://assets/animated/velvet/secondary-05.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 29,
+          "source_bounds": [
+            802,
+            490,
+            942,
+            624
+          ],
+          "source_origin": [
+            864.0,
+            625.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            52,
+            77,
+            150,
+            171
+          ],
+          "sha256": "df73bc37b29c68a73cbd9918a471ca772384534a18787d70e1b9cb202f26e266"
+        },
+        {
+          "path": "res://assets/animated/velvet/secondary-06.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 30,
+          "source_bounds": [
+            967,
+            488,
+            1092,
+            624
+          ],
+          "source_origin": [
+            1016.5,
+            625.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            61,
+            76,
+            149,
+            172
+          ],
+          "sha256": "a59a1a0c446ca4a3d62bd213072ef96535459e10fd23e01cbe60c02e7d100967"
+        },
+        {
+          "path": "res://assets/animated/velvet/secondary-07.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 31,
+          "source_bounds": [
+            1121,
+            488,
+            1242,
+            625
+          ],
+          "source_origin": [
+            1174.0,
+            625.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            59,
+            76,
+            144,
+            172
+          ],
+          "sha256": "37d73ae5ea678e8920e02095e98a18077dec1be8934af2dac9d1aea2db0761c0"
+        }
+      ],
+      "release_anchor": [
+        -40,
+        -73
+      ]
+    },
+    "special": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.08,
+        0.09,
+        0.12,
+        0.06,
+        0.08,
+        0.12,
+        0.18
+      ],
+      "duration": 0.82,
+      "loop": false,
+      "release_frame": 4,
+      "release_time": 0.38,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/velvet/special-00.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 32,
+          "source_bounds": [
+            30,
+            646,
+            149,
+            782
+          ],
+          "source_origin": [
+            85.5,
+            783.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            57,
+            76,
+            141,
+            172
+          ],
+          "sha256": "0466b4c0895d41ac0d1968f9584634a671e792210a3e10cf5bd9bb0da7c91a21"
+        },
+        {
+          "path": "res://assets/animated/velvet/special-01.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 33,
+          "source_bounds": [
+            188,
+            647,
+            279,
+            782
+          ],
+          "source_origin": [
+            249.5,
+            783.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            53,
+            76,
+            117,
+            171
+          ],
+          "sha256": "4e30abafda90145dd8ca790e43e3c6385278710f59c86d745d66edfbf9c21689"
+        },
+        {
+          "path": "res://assets/animated/velvet/special-02.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 34,
+          "source_bounds": [
+            342,
+            646,
+            450,
+            783
+          ],
+          "source_origin": [
+            402.0,
+            783.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            54,
+            76,
+            130,
+            172
+          ],
+          "sha256": "27a628758177ba2ef0ac5f1f80f24c184ca1a121399a0436c95c3beb35faa8aa"
+        },
+        {
+          "path": "res://assets/animated/velvet/special-03.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 35,
+          "source_bounds": [
+            493,
+            645,
+            598,
+            783
+          ],
+          "source_origin": [
+            555.0,
+            783.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            52,
+            75,
+            126,
+            172
+          ],
+          "sha256": "a1a87650d02ea0b28c2dc1e96ecfea3343107ea02f19c1dafe2a35265d410e42"
+        },
+        {
+          "path": "res://assets/animated/velvet/special-04.png",
+          "source": "art-source/animated/velvet-special04-fix.png",
+          "slot": null,
+          "source_bounds": [
+            392,
+            529,
+            962,
+            1157
+          ],
+          "source_origin": [
+            627.0,
+            1123.375
+          ],
+          "scale": 0.15311004784688995,
+          "packed_bounds": [
+            60,
+            81,
+            147,
+            177
+          ],
+          "sha256": "4667e70e68c498e37754bcf3ee4c90b05e5130d81b19b3cfdbe2510294369be3",
+          "registration": "full_canvas_edit"
+        },
+        {
+          "path": "res://assets/animated/velvet/special-05.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 37,
+          "source_bounds": [
+            804,
+            646,
+            930,
+            783
+          ],
+          "source_origin": [
+            864.0,
+            783.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            54,
+            76,
+            142,
+            172
+          ],
+          "sha256": "7767861d2a8acba4d9a090fe967dd63b9f503e8159acfc6a58c8f7dedb682de9"
+        },
+        {
+          "path": "res://assets/animated/velvet/special-06.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 38,
+          "source_bounds": [
+            962,
+            645,
+            1087,
+            783
+          ],
+          "source_origin": [
+            1016.5,
+            783.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            58,
+            75,
+            146,
+            172
+          ],
+          "sha256": "6ddbcdf7446e40da8c66eb83f3d86daf11bdfb65b80004bdec0abd179acd4790"
+        },
+        {
+          "path": "res://assets/animated/velvet/special-07.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 39,
+          "source_bounds": [
+            1118,
+            644,
+            1241,
+            782
+          ],
+          "source_origin": [
+            1174.0,
+            783.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            57,
+            74,
+            144,
+            171
+          ],
+          "sha256": "b5f68151be71f02fc2b211afec2a8f9ea88fb202bcb8347ed7f32367db019ab1"
+        }
+      ]
+    },
+    "guard": {
+      "frame_count": 8,
+      "durations": [
+        0.055,
+        0.055,
+        0.055,
+        0.055,
+        0.12,
+        0.12,
+        0.12,
+        0.12
+      ],
+      "duration": 0.7,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": 4,
+      "frames": [
+        {
+          "path": "res://assets/animated/velvet/guard-00.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 40,
+          "source_bounds": [
+            27,
+            805,
+            159,
+            939
+          ],
+          "source_origin": [
+            85.5,
+            939.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            55,
+            78,
+            148,
+            172
+          ],
+          "sha256": "faea3073712fa120d11fe788bb66072b2de5ac4c3ee92de97fbb439073712c56"
+        },
+        {
+          "path": "res://assets/animated/velvet/guard-01.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 41,
+          "source_bounds": [
+            185,
+            802,
+            320,
+            938
+          ],
+          "source_origin": [
+            249.5,
+            939.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            51,
+            76,
+            146,
+            172
+          ],
+          "sha256": "f938457a240ac8507eea6fc101cb127c4f8b4855a4ed0ab9e6d33dd8ee1da3eb"
+        },
+        {
+          "path": "res://assets/animated/velvet/guard-02.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 42,
+          "source_bounds": [
+            335,
+            806,
+            471,
+            938
+          ],
+          "source_origin": [
+            402.0,
+            939.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            49,
+            78,
+            145,
+            171
+          ],
+          "sha256": "375668d93e81f05f00575b67fba4a74fa6e13d3f1343c88e70c238ba9913126e"
+        },
+        {
+          "path": "res://assets/animated/velvet/guard-03.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 43,
+          "source_bounds": [
+            497,
+            806,
+            625,
+            939
+          ],
+          "source_origin": [
+            555.0,
+            939.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            55,
+            78,
+            145,
+            172
+          ],
+          "sha256": "bad0a8c8e5df92b32b04dd49bb03a7e74b174807757a27f86f8e4cb8bcd5007b"
+        },
+        {
+          "path": "res://assets/animated/velvet/guard-04.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 44,
+          "source_bounds": [
+            651,
+            793,
+            793,
+            939
+          ],
+          "source_origin": [
+            711.5,
+            939.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            53,
+            69,
+            153,
+            172
+          ],
+          "sha256": "d338e180e9d348eb5554c300be17b7fa910826fd26b620a1a9f74e3168314251"
+        },
+        {
+          "path": "res://assets/animated/velvet/guard-05.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 45,
+          "source_bounds": [
+            809,
+            822,
+            934,
+            939
+          ],
+          "source_origin": [
+            864.0,
+            939.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            57,
+            90,
+            145,
+            172
+          ],
+          "sha256": "667939dd255254402c33172b8c061f7d208f282a398f8ab9db56d2144a850404"
+        },
+        {
+          "path": "res://assets/animated/velvet/guard-06.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 46,
+          "source_bounds": [
+            962,
+            802,
+            1094,
+            939
+          ],
+          "source_origin": [
+            1016.5,
+            939.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            58,
+            76,
+            151,
+            172
+          ],
+          "sha256": "c40fa7ab99abe338689d3f88c203a447bcb33d814016896e01d169cbbdf5e8c3"
+        },
+        {
+          "path": "res://assets/animated/velvet/guard-07.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 47,
+          "source_bounds": [
+            1113,
+            810,
+            1237,
+            939
+          ],
+          "source_origin": [
+            1174.0,
+            939.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            53,
+            81,
+            140,
+            172
+          ],
+          "sha256": "2aeb6465afc5fca267cbdf01047c7b214ff7ff50e91f6953501c5f74da9c8c9f"
+        }
+      ]
+    },
+    "hit": {
+      "frame_count": 8,
+      "durations": [
+        0.035,
+        0.065,
+        0.09,
+        0.12,
+        0.13,
+        0.15,
+        0.16,
+        0.18
+      ],
+      "duration": 0.9299999999999999,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/velvet/hit-00.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 48,
+          "source_bounds": [
+            33,
+            957,
+            164,
+            1092
+          ],
+          "source_origin": [
+            85.5,
+            1092.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            59,
+            77,
+            151,
+            172
+          ],
+          "sha256": "d35a9ec6ace3a490fe2ba66a70cbeb7d69fb14e4c96c01f9731b803918f6c667"
+        },
+        {
+          "path": "res://assets/animated/velvet/hit-01.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 49,
+          "source_bounds": [
+            192,
+            967,
+            335,
+            1092
+          ],
+          "source_origin": [
+            249.5,
+            1092.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            56,
+            84,
+            157,
+            172
+          ],
+          "sha256": "9e4324968f5908cd7e0fb7b104291cd5bfbd2232ba5069ff0a4b9accb0b56c9c"
+        },
+        {
+          "path": "res://assets/animated/velvet/hit-02.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 50,
+          "source_bounds": [
+            348,
+            976,
+            474,
+            1092
+          ],
+          "source_origin": [
+            402.0,
+            1092.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            58,
+            90,
+            147,
+            172
+          ],
+          "sha256": "cce2c3e218e2c34d16bf8751b46684bac3e92b0bdec6c96bd18842dc950e469b"
+        },
+        {
+          "path": "res://assets/animated/velvet/hit-03.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 51,
+          "source_bounds": [
+            503,
+            960,
+            629,
+            1090
+          ],
+          "source_origin": [
+            555.0,
+            1092.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            59,
+            79,
+            148,
+            170
+          ],
+          "sha256": "ef3edf9fb8984e3d23d78997c7114945211be5e6bfbc9a7118a3db5567fb604e"
+        },
+        {
+          "path": "res://assets/animated/velvet/hit-04.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 52,
+          "source_bounds": [
+            656,
+            957,
+            786,
+            1088
+          ],
+          "source_origin": [
+            711.5,
+            1092.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            57,
+            77,
+            148,
+            169
+          ],
+          "sha256": "7b262203fb16fe46d17d2e5ebbbbd5570816a7822735f4344cb8ac9b9bfa7820"
+        },
+        {
+          "path": "res://assets/animated/velvet/hit-05.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 53,
+          "source_bounds": [
+            811,
+            972,
+            940,
+            1092
+          ],
+          "source_origin": [
+            864.0,
+            1092.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            59,
+            88,
+            150,
+            172
+          ],
+          "sha256": "79f5b0911fb2a56dde0df1194d6bb4b41c26b9464fd72d2c13ee0f57c6ce2415"
+        },
+        {
+          "path": "res://assets/animated/velvet/hit-06.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 54,
+          "source_bounds": [
+            963,
+            979,
+            1066,
+            1099
+          ],
+          "source_origin": [
+            1016.5,
+            1092.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            58,
+            93,
+            130,
+            177
+          ],
+          "sha256": "15abf57319e021d213ebae9153d028b4a8f9c096f1b0e7bdeca98253c99f58fb"
+        },
+        {
+          "path": "res://assets/animated/velvet/hit-07.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 55,
+          "source_bounds": [
+            1119,
+            957,
+            1246,
+            1092
+          ],
+          "source_origin": [
+            1174.0,
+            1092.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            57,
+            77,
+            146,
+            172
+          ],
+          "sha256": "4e23cee55ddf2e758b57ce95ddb34c112b50fe3661cbf41b3d9373678573dded"
+        }
+      ]
+    },
+    "defeat": {
+      "frame_count": 8,
+      "durations": [
+        0.08,
+        0.1,
+        0.1,
+        0.12,
+        0.15,
+        0.18,
+        0.24,
+        0.3
+      ],
+      "duration": 1.27,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/velvet/defeat-00.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 56,
+          "source_bounds": [
+            27,
+            1110,
+            162,
+            1236
+          ],
+          "source_origin": [
+            85.5,
+            1232.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            55,
+            86,
+            150,
+            175
+          ],
+          "sha256": "13b9c16990cbc7f5583df86f14f4de9b040b08dd60e6899aec9ec8fa91f750a6"
+        },
+        {
+          "path": "res://assets/animated/velvet/defeat-01.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 57,
+          "source_bounds": [
+            185,
+            1133,
+            317,
+            1226
+          ],
+          "source_origin": [
+            249.5,
+            1232.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            51,
+            102,
+            144,
+            167
+          ],
+          "sha256": "d5a8106988a810e0dfa90dc82156281b2ad72321290a6613cbdf4ac82ce0ed08"
+        },
+        {
+          "path": "res://assets/animated/velvet/defeat-02.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 58,
+          "source_bounds": [
+            343,
+            1136,
+            461,
+            1227
+          ],
+          "source_origin": [
+            402.0,
+            1232.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            55,
+            104,
+            138,
+            168
+          ],
+          "sha256": "d48e282b7e47f513f0f63a59df22c0550b5f33ec427149a3728e9f61e196f47f"
+        },
+        {
+          "path": "res://assets/animated/velvet/defeat-03.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 59,
+          "source_bounds": [
+            491,
+            1158,
+            631,
+            1229
+          ],
+          "source_origin": [
+            555.0,
+            1232.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            51,
+            120,
+            149,
+            170
+          ],
+          "sha256": "b79dee542ce593b561c5a18aae31916a6fcff7d3eb9214655719ca0c51213b36"
+        },
+        {
+          "path": "res://assets/animated/velvet/defeat-04.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 60,
+          "source_bounds": [
+            642,
+            1156,
+            777,
+            1230
+          ],
+          "source_origin": [
+            711.5,
+            1232.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            47,
+            119,
+            142,
+            171
+          ],
+          "sha256": "952badb12310581a565536bc3246c1e0551603f09163080177af94699638153a"
+        },
+        {
+          "path": "res://assets/animated/velvet/defeat-05.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 61,
+          "source_bounds": [
+            778,
+            1179,
+            930,
+            1235
+          ],
+          "source_origin": [
+            864.0,
+            1232.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            36,
+            135,
+            143,
+            174
+          ],
+          "sha256": "8191bbea5bbf34da1823216d3173dd06be0127388666145adc65f5e99a77c8b4"
+        },
+        {
+          "path": "res://assets/animated/velvet/defeat-06.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 62,
+          "source_bounds": [
+            940,
+            1178,
+            1085,
+            1231
+          ],
+          "source_origin": [
+            1016.5,
+            1232.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            42,
+            134,
+            144,
+            171
+          ],
+          "sha256": "b14337f499e9e7e8a02b9a4529c9cc594772895286bc24c7db8176dcfbcd9fe6"
+        },
+        {
+          "path": "res://assets/animated/velvet/defeat-07.png",
+          "source": "art-source/animated/velvet-64.png",
+          "slot": 63,
+          "source_bounds": [
+            1095,
+            1186,
+            1239,
+            1229
+          ],
+          "source_origin": [
+            1174.0,
+            1232.0
+          ],
+          "scale": 0.7032967032967034,
+          "packed_bounds": [
+            40,
+            140,
+            141,
+            170
+          ],
+          "sha256": "5b961aa1afad322fb15cf49ce24246e9e27a6e07791b90d58e05f65cdd9fb9e3"
+        }
+      ]
+    },
+    "jump": {
+      "frame_count": 8,
+      "durations": [
+        0.08,
+        0.055,
+        0.08,
+        0.11,
+        0.11,
+        0.08,
+        0.07,
+        0.115
+      ],
+      "duration": 0.7000000000000001,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/velvet/jump-00.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 32,
+          "source_bounds": [
+            21,
+            671,
+            168,
+            802
+          ],
+          "source_origin": [
+            88.0,
+            802.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            51,
+            85,
+            149,
+            172
+          ],
+          "sha256": "2c9357fc5bcbb75131fc76b25ff71d9740b9b0d63a749043799945115ef2db37",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/velvet/jump-01.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 33,
+          "source_bounds": [
+            187,
+            646,
+            337,
+            802
+          ],
+          "source_origin": [
+            257.5,
+            802.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            49,
+            68,
+            149,
+            172
+          ],
+          "sha256": "a9c0ee70f855d8f6786f4e0cf20718fd0d0699aa8385fb30bebcbbb80ae99439",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/velvet/jump-02.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 34,
+          "source_bounds": [
+            349,
+            640,
+            500,
+            787
+          ],
+          "source_origin": [
+            420.0,
+            787.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            49,
+            74,
+            149,
+            172
+          ],
+          "sha256": "e5c6337e712d96098985d8bdee3320a7c59cd3dc25eab2245d0bdb40a2f3d84c",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/velvet/jump-03.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 35,
+          "source_bounds": [
+            512,
+            645,
+            653,
+            774
+          ],
+          "source_origin": [
+            582.0,
+            774.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            49,
+            86,
+            143,
+            172
+          ],
+          "sha256": "bb962ca4a739f04a16315540948b203ddc57455020f54d62c1f767b4dfba6fa8",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/velvet/jump-04.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 36,
+          "source_bounds": [
+            668,
+            679,
+            814,
+            811
+          ],
+          "source_origin": [
+            738.0,
+            811.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            49,
+            84,
+            146,
+            172
+          ],
+          "sha256": "3e53c98d673c446ea73b62dddc5057bbea9e665b55b05259fe8d7cb37b85d885",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/velvet/jump-05.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 37,
+          "source_bounds": [
+            828,
+            706,
+            980,
+            809
+          ],
+          "source_origin": [
+            893.0,
+            809.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            53,
+            104,
+            154,
+            172
+          ],
+          "sha256": "23157d53f36d1de842bb95dec7a89aecdfb3b0d136e363a8adc6fe236c6c48c3",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/velvet/jump-06.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 38,
+          "source_bounds": [
+            993,
+            684,
+            1129,
+            809
+          ],
+          "source_origin": [
+            1052.0,
+            809.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            58,
+            89,
+            147,
+            172
+          ],
+          "sha256": "1dca8d47335e81116d129315abc35e5a9b41606a7a21c9c50342210bf1993ffa",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/velvet/jump-07.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 39,
+          "source_bounds": [
+            1140,
+            674,
+            1254,
+            809
+          ],
+          "source_origin": [
+            1192.5,
+            809.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            61,
+            82,
+            137,
+            172
+          ],
+          "sha256": "fa665d0f491ff72effe1940733154b80e22cada5a96e540359593eaeb61c74ea",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "stair_up": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/velvet/stair_up-00.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 40,
+          "source_bounds": [
+            24,
+            813,
+            158,
+            960
+          ],
+          "source_origin": [
+            88.0,
+            960.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            53,
+            74,
+            142,
+            172
+          ],
+          "sha256": "063b1a1b2996026d6f2fa5ba89884065546810e30584f8655318b9762a8adb45",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/velvet/stair_up-01.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 41,
+          "source_bounds": [
+            190,
+            813,
+            336,
+            961
+          ],
+          "source_origin": [
+            257.5,
+            961.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            51,
+            74,
+            148,
+            172
+          ],
+          "sha256": "d2b0faee57fe14c8b1fd575b157c58398509f52c4992eea6104af1ab56bb02b7",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/velvet/stair_up-02.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 42,
+          "source_bounds": [
+            361,
+            809,
+            495,
+            961
+          ],
+          "source_origin": [
+            420.0,
+            961.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            57,
+            71,
+            146,
+            172
+          ],
+          "sha256": "87baaa0ac982fc422698859d756539c6cd395f3c2f427f78d3689111071dc7e8",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/velvet/stair_up-03.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 43,
+          "source_bounds": [
+            520,
+            808,
+            651,
+            962
+          ],
+          "source_origin": [
+            582.0,
+            962.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            55,
+            70,
+            142,
+            172
+          ],
+          "sha256": "982c38784c6455a8b418a60ed99d3f6e9c6ae6c740c3bf843a0482d3dc510171",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/velvet/stair_up-04.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 44,
+          "source_bounds": [
+            672,
+            817,
+            806,
+            966
+          ],
+          "source_origin": [
+            738.0,
+            966.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            52,
+            73,
+            141,
+            172
+          ],
+          "sha256": "17dd1fca7a552d0297d54bfae0397b87eff8b6802133e63e9c989d64c267203d",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/velvet/stair_up-05.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 45,
+          "source_bounds": [
+            820,
+            833,
+            968,
+            968
+          ],
+          "source_origin": [
+            893.0,
+            968.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            49,
+            82,
+            146,
+            172
+          ],
+          "sha256": "2501d138c77eeb70d6e32cf0494b5b4e53b670a9d8b8b46535eab9f9a8e0955e",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/velvet/stair_up-06.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 46,
+          "source_bounds": [
+            983,
+            824,
+            1117,
+            968
+          ],
+          "source_origin": [
+            1052.0,
+            968.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            50,
+            76,
+            139,
+            172
+          ],
+          "sha256": "8efd2c7c5109d209e52d7868ab7977a2ff892e31fb17bd12c455787769dcb2e5",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/velvet/stair_up-07.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 47,
+          "source_bounds": [
+            1132,
+            821,
+            1254,
+            968
+          ],
+          "source_origin": [
+            1192.5,
+            968.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            56,
+            74,
+            137,
+            172
+          ],
+          "sha256": "dcdc9008274a06029692f9f6beec5c0d065b2c43ee79a0b5bdd9d1403b5df095",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "stair_down": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/velvet/stair_down-00.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 48,
+          "source_bounds": [
+            14,
+            972,
+            170,
+            1112
+          ],
+          "source_origin": [
+            88.0,
+            1112.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            47,
+            79,
+            151,
+            172
+          ],
+          "sha256": "906e0fe587313d81c2fd3fe629be15ee675a85d2fa0d7e998718acf12d05cd06",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/velvet/stair_down-01.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 49,
+          "source_bounds": [
+            189,
+            974,
+            339,
+            1112
+          ],
+          "source_origin": [
+            257.5,
+            1112.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            50,
+            80,
+            150,
+            172
+          ],
+          "sha256": "a96af6283963871fe7e57f688f9ab56cbad73b2ae999ed8f20867468366f5a27",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/velvet/stair_down-02.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 50,
+          "source_bounds": [
+            354,
+            974,
+            491,
+            1115
+          ],
+          "source_origin": [
+            420.0,
+            1115.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            52,
+            78,
+            143,
+            172
+          ],
+          "sha256": "4b91c43f480b1ecbd896896db0be12d106def2a9cc8878ce479b0d0044176773",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/velvet/stair_down-03.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 51,
+          "source_bounds": [
+            513,
+            979,
+            657,
+            1116
+          ],
+          "source_origin": [
+            582.0,
+            1116.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            50,
+            81,
+            146,
+            172
+          ],
+          "sha256": "2a715a1fd8fac5a29aaf473a22650b5bacf6f4676e388a403f2c728b6022e01f",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/velvet/stair_down-04.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 52,
+          "source_bounds": [
+            669,
+            982,
+            814,
+            1116
+          ],
+          "source_origin": [
+            738.0,
+            1116.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            50,
+            83,
+            146,
+            172
+          ],
+          "sha256": "c59edc9638246157034ba0c4a499ebb481595aa041ce0face336d5befd87541e",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/velvet/stair_down-05.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 53,
+          "source_bounds": [
+            823,
+            999,
+            976,
+            1122
+          ],
+          "source_origin": [
+            893.0,
+            1122.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            49,
+            90,
+            151,
+            172
+          ],
+          "sha256": "a5775fedba49fa1ea19d731449021786162c5260021b68a0fc2c561be24b6f15",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/velvet/stair_down-06.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 54,
+          "source_bounds": [
+            974,
+            993,
+            1108,
+            1121
+          ],
+          "source_origin": [
+            1052.0,
+            1121.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            44,
+            87,
+            133,
+            172
+          ],
+          "sha256": "fb4c71136b81665f81aa95074dfcb421228a361c9a000f3e773ce8a30a865f4a",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/velvet/stair_down-07.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 55,
+          "source_bounds": [
+            1134,
+            982,
+            1254,
+            1122
+          ],
+          "source_origin": [
+            1192.5,
+            1122.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            57,
+            79,
+            137,
+            172
+          ],
+          "sha256": "a5294e82cf697469939677b09e3a7bc2e97e5f3916589d93e8942c10301a5749",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "dodge": {
+      "frame_count": 8,
+      "durations": [
+        0.055,
+        0.045,
+        0.04,
+        0.045,
+        0.06,
+        0.07,
+        0.08,
+        0.1
+      ],
+      "duration": 0.495,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/velvet/dodge-00.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 56,
+          "source_bounds": [
+            21,
+            1125,
+            161,
+            1245
+          ],
+          "source_origin": [
+            88.0,
+            1245.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            51,
+            92,
+            144,
+            172
+          ],
+          "sha256": "e56cad1519880ef266979f1ce749a11ee93c61710bda71e99770a83f3be3e065",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/velvet/dodge-01.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 57,
+          "source_bounds": [
+            177,
+            1136,
+            324,
+            1245
+          ],
+          "source_origin": [
+            257.5,
+            1245.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            43,
+            100,
+            141,
+            172
+          ],
+          "sha256": "c6cd9d69cb107f84fabd2b9cf9c48c6e8d8bd4e3a25ec9d11655a2cb38130580",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/velvet/dodge-02.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 58,
+          "source_bounds": [
+            339,
+            1136,
+            472,
+            1245
+          ],
+          "source_origin": [
+            420.0,
+            1245.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            42,
+            100,
+            130,
+            172
+          ],
+          "sha256": "457a2386894f6e8cbcea363eafd7c4874d200b0d9ba21c2c422de6516063dfd1",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/velvet/dodge-03.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 59,
+          "source_bounds": [
+            482,
+            1145,
+            663,
+            1242
+          ],
+          "source_origin": [
+            582.0,
+            1242.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            30,
+            108,
+            150,
+            172
+          ],
+          "sha256": "392c6b95412cb1a1a96ef003084d475d8edf1e7beca5401822e61e150427f31f",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/velvet/dodge-04.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 60,
+          "source_bounds": [
+            669,
+            1148,
+            804,
+            1242
+          ],
+          "source_origin": [
+            738.0,
+            1242.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            50,
+            110,
+            140,
+            172
+          ],
+          "sha256": "ab712058bccdb107e8b36a2ea52f744471fcd04e533dbd5cdeae28809f28415d",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/velvet/dodge-05.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 61,
+          "source_bounds": [
+            811,
+            1172,
+            968,
+            1244
+          ],
+          "source_origin": [
+            893.0,
+            1244.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            42,
+            124,
+            146,
+            172
+          ],
+          "sha256": "5b489ad5b24c5eebc90de7d8e0c22a7c8416a91035fba94a0d4d5b45bb5eccf0",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/velvet/dodge-06.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 62,
+          "source_bounds": [
+            966,
+            1171,
+            1131,
+            1244
+          ],
+          "source_origin": [
+            1052.0,
+            1244.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            39,
+            124,
+            149,
+            172
+          ],
+          "sha256": "91ec8c833912585004894e5fb1fc00927a37c251694acf38a7fc24deaafd6716",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/velvet/dodge-07.png",
+          "source": "art-source/animated/v3/velvet-extension64.png",
+          "slot": 63,
+          "source_bounds": [
+            1134,
+            1133,
+            1254,
+            1245
+          ],
+          "source_origin": [
+            1192.5,
+            1245.0
+          ],
+          "scale": 0.6643598615916955,
+          "packed_bounds": [
+            57,
+            98,
+            137,
+            172
+          ],
+          "sha256": "e8e680537e04c4198d88e908e6a6a55a661e35c2b03d5984e9d134ba03e658d6",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "powered_idle": {
+      "frame_count": 8,
+      "durations": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ],
+      "duration": 1.6,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/velvet/powered_idle-00.png",
+          "source": "art-source/animated/v3/velvet-powered40.png",
+          "slot": 0,
+          "source_bounds": [
+            55,
+            24,
+            203,
+            191
+          ],
+          "source_origin": [
+            110.5,
+            191.0
+          ],
+          "scale": 0.5818181818181818,
+          "packed_bounds": [
+            64,
+            75,
+            150,
+            172
+          ],
+          "sha256": "4a10f7549b4837fa374923adf484dbde77fb6ef90d9a9be0a9c8e167d9fb9f15"
+        },
+        {
+          "path": "res://assets/animated/velvet/powered_idle-01.png",
+          "source": "art-source/animated/v3/velvet-powered40.png",
+          "slot": 1,
+          "source_bounds": [
+            252,
+            24,
+            401,
+            191
+          ],
+          "source_origin": [
+            319.0,
+            191.0
+          ],
+          "scale": 0.5818181818181818,
+          "packed_bounds": [
+            57,
+            75,
+            144,
+            172
+          ],
+          "sha256": "99564dc2e8910a5c9a164ac156aa66b783b0c3072ae2e5daac4a536351f50d83"
+        },
+        {
+          "path": "res://assets/animated/velvet/powered_idle-02.png",
+          "source": "art-source/animated/v3/velvet-powered40.png",
+          "slot": 2,
+          "source_bounds": [
+            453,
+            24,
+            605,
+            191
+          ],
+          "source_origin": [
+            515.0,
+            191.0
+          ],
+          "scale": 0.5818181818181818,
+          "packed_bounds": [
+            60,
+            75,
+            148,
+            172
+          ],
+          "sha256": "eccc9c09c5da4e3a5828da4e10555b553bd8d7c8c172a88543d18cc67e916498"
+        },
+        {
+          "path": "res://assets/animated/velvet/powered_idle-03.png",
+          "source": "art-source/animated/v3/velvet-powered40.png",
+          "slot": 3,
+          "source_bounds": [
+            650,
+            25,
+            796,
+            191
+          ],
+          "source_origin": [
+            713.0,
+            191.0
+          ],
+          "scale": 0.5818181818181818,
+          "packed_bounds": [
+            59,
+            75,
+            144,
+            172
+          ],
+          "sha256": "99e1f1e583d60941ad7754c4f9c89c7860f30d8755941fa722e2b28e2a6874e8"
+        },
+        {
+          "path": "res://assets/animated/velvet/powered_idle-04.png",
+          "source": "art-source/animated/v3/velvet-powered40.png",
+          "slot": 4,
+          "source_bounds": [
+            847,
+            24,
+            998,
+            191
+          ],
+          "source_origin": [
+            914.0,
+            191.0
+          ],
+          "scale": 0.5818181818181818,
+          "packed_bounds": [
+            57,
+            75,
+            145,
+            172
+          ],
+          "sha256": "c57bd186537cf09193dd14f4693e8977af0e3035bb0959701bc2e4906a5b4617"
+        },
+        {
+          "path": "res://assets/animated/velvet/powered_idle-05.png",
+          "source": "art-source/animated/v3/velvet-powered40.png",
+          "slot": 5,
+          "source_bounds": [
+            1035,
+            24,
+            1193,
+            191
+          ],
+          "source_origin": [
+            1118.5,
+            191.0
+          ],
+          "scale": 0.5818181818181818,
+          "packed_bounds": [
+            47,
+            75,
+            139,
+            172
+          ],
+          "sha256": "4f1f2f26207557404e41dd2259bb55c2854ca8de4b22a9c006922e8119e49a72"
+        },
+        {
+          "path": "res://assets/animated/velvet/powered_idle-06.png",
+          "source": "art-source/animated/v3/velvet-powered40.png",
+          "slot": 6,
+          "source_bounds": [
+            1233,
+            25,
+            1386,
+            191
+          ],
+          "source_origin": [
+            1317.5,
+            191.0
+          ],
+          "scale": 0.5818181818181818,
+          "packed_bounds": [
+            47,
+            75,
+            136,
+            172
+          ],
+          "sha256": "2d6fe4067041bd18ce76cbee98bc30ede60c5ad9f6dd3131907307c75456ef67"
+        },
+        {
+          "path": "res://assets/animated/velvet/powered_idle-07.png",
+          "source": "art-source/animated/v3/velvet-powered40.png",
+          "slot": 7,
+          "source_bounds": [
+            1434,
+            24,
+            1581,
+            189
+          ],
+          "source_origin": [
+            1499.5,
+            191.0
+          ],
+          "scale": 0.5818181818181818,
+          "packed_bounds": [
+            58,
+            75,
+            144,
+            171
+          ],
+          "sha256": "92d981d112f47efdecac69873ae29ab8135185996a81e0de051ca1ada9a4a852"
+        }
+      ]
+    },
+    "powered_walk": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/velvet/powered_walk-00.png",
+          "source": "art-source/animated/v3/velvet-powered40.png",
+          "slot": 8,
+          "source_bounds": [
+            44,
+            209,
+            206,
+            383
+          ],
+          "source_origin": [
+            110.5,
+            383.25
+          ],
+          "scale": 0.5818181818181818,
+          "packed_bounds": [
+            57,
+            71,
+            151,
+            172
+          ],
+          "sha256": "3ba8bd8a66ee3cf8178ceb2a9e13a57884a58db11fcccfba618887049e5231ea"
+        },
+        {
+          "path": "res://assets/animated/velvet/powered_walk-01.png",
+          "source": "art-source/animated/v3/velvet-powered40.png",
+          "slot": 9,
+          "source_bounds": [
+            248,
+            208,
+            402,
+            383
+          ],
+          "source_origin": [
+            319.0,
+            383.25
+          ],
+          "scale": 0.5818181818181818,
+          "packed_bounds": [
+            55,
+            70,
+            145,
+            172
+          ],
+          "sha256": "a23bca28cba3d140bc7c942eb646a2632f1eda7a31de667cf88b1259a5f1bc97"
+        },
+        {
+          "path": "res://assets/animated/velvet/powered_walk-02.png",
+          "source": "art-source/animated/v3/velvet-powered40.png",
+          "slot": 10,
+          "source_bounds": [
+            448,
+            208,
+            600,
+            384
+          ],
+          "source_origin": [
+            515.0,
+            383.25
+          ],
+          "scale": 0.5818181818181818,
+          "packed_bounds": [
+            57,
+            70,
+            145,
+            172
+          ],
+          "sha256": "0f7c8750239a2da1691cdd35d5b52bd8009cc556927b5f14541b38e30ff3e88c"
+        },
+        {
+          "path": "res://assets/animated/velvet/powered_walk-03.png",
+          "source": "art-source/animated/v3/velvet-powered40.png",
+          "slot": 11,
+          "source_bounds": [
+            632,
+            208,
+            787,
+            384
+          ],
+          "source_origin": [
+            713.0,
+            383.25
+          ],
+          "scale": 0.5818181818181818,
+          "packed_bounds": [
+            50,
+            70,
+            139,
+            172
+          ],
+          "sha256": "a15be1ade62c4c80c17653dffceba78fe1066274e3021de6d72b7ab02dc2a586"
+        },
+        {
+          "path": "res://assets/animated/velvet/powered_walk-04.png",
+          "source": "art-source/animated/v3/velvet-powered40.png",
+          "slot": 12,
+          "source_bounds": [
+            837,
+            208,
+            996,
+            383
+          ],
+          "source_origin": [
+            914.0,
+            383.25
+          ],
+          "scale": 0.5818181818181818,
+          "packed_bounds": [
+            51,
+            70,
+            144,
+            172
+          ],
+          "sha256": "60726136ca865be098fd3455bca279f4bb618a01157abaa3f2891e5a1233c947"
+        },
+        {
+          "path": "res://assets/animated/velvet/powered_walk-05.png",
+          "source": "art-source/animated/v3/velvet-powered40.png",
+          "slot": 13,
+          "source_bounds": [
+            1027,
+            208,
+            1189,
+            383
+          ],
+          "source_origin": [
+            1118.5,
+            383.25
+          ],
+          "scale": 0.5818181818181818,
+          "packed_bounds": [
+            43,
+            70,
+            137,
+            172
+          ],
+          "sha256": "b54ca0c2ea8f86f10ae2e8ce00d06519dd062b89032262241647d891b3dbdf87"
+        },
+        {
+          "path": "res://assets/animated/velvet/powered_walk-06.png",
+          "source": "art-source/animated/v3/velvet-powered40.png",
+          "slot": 14,
+          "source_bounds": [
+            1229,
+            209,
+            1376,
+            383
+          ],
+          "source_origin": [
+            1317.5,
+            383.25
+          ],
+          "scale": 0.5818181818181818,
+          "packed_bounds": [
+            45,
+            71,
+            131,
+            172
+          ],
+          "sha256": "d447a56ae8f2e1003b273a718166a8dd2bdf7c02c33db058051040ce3f28f56a"
+        },
+        {
+          "path": "res://assets/animated/velvet/powered_walk-07.png",
+          "source": "art-source/animated/v3/velvet-powered40.png",
+          "slot": 15,
+          "source_bounds": [
+            1424,
+            206,
+            1578,
+            383
+          ],
+          "source_origin": [
+            1499.5,
+            383.25
+          ],
+          "scale": 0.5818181818181818,
+          "packed_bounds": [
+            52,
+            69,
+            142,
+            172
+          ],
+          "sha256": "af1f4c08107234f186eb5a7376b7a2b66f038c268c34d6cbde32e02fc4869e00"
+        }
+      ]
+    },
+    "powered_primary": {
+      "frame_count": 8,
+      "durations": [
+        0.07,
+        0.07,
+        0.08,
+        0.11,
+        0.04,
+        0.055,
+        0.085,
+        0.13
+      ],
+      "duration": 0.64,
+      "loop": false,
+      "release_frame": 4,
+      "release_time": 0.33,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/velvet/powered_primary-00.png",
+          "source": "art-source/animated/v3/velvet-powered40.png",
+          "slot": 16,
+          "source_bounds": [
+            44,
+            404,
+            204,
+            576
+          ],
+          "source_origin": [
+            110.5,
+            576.0
+          ],
+          "scale": 0.5818181818181818,
+          "packed_bounds": [
+            57,
+            72,
+            150,
+            172
+          ],
+          "sha256": "c8b89f18dbf2b51c26d4193702c990324499a6dde4799c3cda50adc1c261f8a5"
+        },
+        {
+          "path": "res://assets/animated/velvet/powered_primary-01.png",
+          "source": "art-source/animated/v3/velvet-powered40.png",
+          "slot": 17,
+          "source_bounds": [
+            227,
+            399,
+            374,
+            576
+          ],
+          "source_origin": [
+            319.0,
+            576.0
+          ],
+          "scale": 0.5818181818181818,
+          "packed_bounds": [
+            42,
+            69,
+            128,
+            172
+          ],
+          "sha256": "d2367b3e4de7b4e1cfbad7f8b79608ef5eb2d61693e3e8a698a583a7ccd5b184"
+        },
+        {
+          "path": "res://assets/animated/velvet/powered_primary-02.png",
+          "source": "art-source/animated/v3/velvet-powered40.png",
+          "slot": 18,
+          "source_bounds": [
+            419,
+            407,
+            613,
+            576
+          ],
+          "source_origin": [
+            515.0,
+            576.0
+          ],
+          "scale": 0.5818181818181818,
+          "packed_bounds": [
+            40,
+            74,
+            153,
+            172
+          ],
+          "sha256": "0c7cb1e1e9ea554b4e8458ab92e6818455930f8ee504f4efc9aef0b91a32956d"
+        },
+        {
+          "path": "res://assets/animated/velvet/powered_primary-03.png",
+          "source": "art-source/animated/v3/velvet-powered40.png",
+          "slot": 19,
+          "source_bounds": [
+            625,
+            406,
+            865,
+            576
+          ],
+          "source_origin": [
+            713.0,
+            576.0
+          ],
+          "scale": 0.5818181818181818,
+          "packed_bounds": [
+            45,
+            73,
+            185,
+            172
+          ],
+          "sha256": "4b6d2ad0919d952305b2c3f7b82c1334b5fbce6000b1cc1634581ab2f4044ed4"
+        },
+        {
+          "path": "res://assets/animated/velvet/powered_primary-04.png",
+          "source": "art-source/animated/v3/velvet-powered-primary-single-v2.png",
+          "slot": 0,
+          "source_bounds": [
+            50,
+            15,
+            1509,
+            973
+          ],
+          "source_origin": [
+            767.0,
+            973.0
+          ],
+          "scale": 0.1014799154334038,
+          "packed_bounds": [
+            23,
+            75,
+            171,
+            172
+          ],
+          "sha256": "ef61c32c289d1ef361e34bfa33024a6222c20034e23fc69a89990720beafeb75"
+        },
+        {
+          "path": "res://assets/animated/velvet/powered_primary-05.png",
+          "source": "art-source/animated/v3/velvet-powered40.png",
+          "slot": 21,
+          "source_bounds": [
+            1027,
+            407,
+            1222,
+            576
+          ],
+          "source_origin": [
+            1118.5,
+            576.0
+          ],
+          "scale": 0.5818181818181818,
+          "packed_bounds": [
+            43,
+            74,
+            156,
+            172
+          ],
+          "sha256": "2c5247e099e04f1c068457a1c9909430f75d668496b6d558f90ba17c408f85f3"
+        },
+        {
+          "path": "res://assets/animated/velvet/powered_primary-06.png",
+          "source": "art-source/animated/v3/velvet-powered40.png",
+          "slot": 22,
+          "source_bounds": [
+            1229,
+            407,
+            1413,
+            576
+          ],
+          "source_origin": [
+            1317.5,
+            576.0
+          ],
+          "scale": 0.5818181818181818,
+          "packed_bounds": [
+            45,
+            74,
+            152,
+            172
+          ],
+          "sha256": "0e512e85232e090bed424bcd73d4da77b629a002057b2f14b3c75f365847f8dd"
+        },
+        {
+          "path": "res://assets/animated/velvet/powered_primary-07.png",
+          "source": "art-source/animated/v3/velvet-powered40.png",
+          "slot": 23,
+          "source_bounds": [
+            1425,
+            405,
+            1578,
+            576
+          ],
+          "source_origin": [
+            1499.5,
+            576.0
+          ],
+          "scale": 0.5818181818181818,
+          "packed_bounds": [
+            53,
+            73,
+            142,
+            172
+          ],
+          "sha256": "974381fe6be9b4f7d0efc0b55dc7a832fb2accca13ec27fc514f1dc72a4c2fad"
+        }
+      ],
+      "release_anchor": [
+        73,
+        -64
+      ],
+      "contact_reach": 73
+    },
+    "powered_guard": {
+      "frame_count": 8,
+      "durations": [
+        0.055,
+        0.055,
+        0.055,
+        0.055,
+        0.12,
+        0.12,
+        0.12,
+        0.12
+      ],
+      "duration": 0.7,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": 4,
+      "frames": [
+        {
+          "path": "res://assets/animated/velvet/powered_guard-00.png",
+          "source": "art-source/animated/v3/velvet-powered40.png",
+          "slot": 24,
+          "source_bounds": [
+            44,
+            597,
+            172,
+            771
+          ],
+          "source_origin": [
+            110.5,
+            771.0
+          ],
+          "scale": 0.5818181818181818,
+          "packed_bounds": [
+            57,
+            71,
+            131,
+            172
+          ],
+          "sha256": "da0041aa862ea213508fb7331efc6a4a0eec65dd53b632af4915dc0b25fa8f7c"
+        },
+        {
+          "path": "res://assets/animated/velvet/powered_guard-01.png",
+          "source": "art-source/animated/v3/velvet-powered40.png",
+          "slot": 25,
+          "source_bounds": [
+            234,
+            611,
+            401,
+            771
+          ],
+          "source_origin": [
+            319.0,
+            771.0
+          ],
+          "scale": 0.5818181818181818,
+          "packed_bounds": [
+            47,
+            79,
+            144,
+            172
+          ],
+          "sha256": "460e78a9793bc2e58274748793c1d8b881826f80752c805627d55764b69f628c"
+        },
+        {
+          "path": "res://assets/animated/velvet/powered_guard-02.png",
+          "source": "art-source/animated/v3/velvet-powered40.png",
+          "slot": 26,
+          "source_bounds": [
+            437,
+            603,
+            593,
+            771
+          ],
+          "source_origin": [
+            515.0,
+            771.0
+          ],
+          "scale": 0.5818181818181818,
+          "packed_bounds": [
+            51,
+            74,
+            142,
+            172
+          ],
+          "sha256": "efc5479c26bcef7567db64cc752aec090906b8a80629ad7a6c55c9f27289a498"
+        },
+        {
+          "path": "res://assets/animated/velvet/powered_guard-03.png",
+          "source": "art-source/animated/v3/velvet-powered40.png",
+          "slot": 27,
+          "source_bounds": [
+            639,
+            599,
+            768,
+            771
+          ],
+          "source_origin": [
+            713.0,
+            771.0
+          ],
+          "scale": 0.5818181818181818,
+          "packed_bounds": [
+            53,
+            72,
+            128,
+            172
+          ],
+          "sha256": "38e0b39bd6dec2636f890a3c590ee6e11dbb937a4bf0a25ba55c5813030cc244"
+        },
+        {
+          "path": "res://assets/animated/velvet/powered_guard-04.png",
+          "source": "art-source/animated/v3/velvet-powered40.png",
+          "slot": 28,
+          "source_bounds": [
+            841,
+            600,
+            976,
+            771
+          ],
+          "source_origin": [
+            914.0,
+            771.0
+          ],
+          "scale": 0.5818181818181818,
+          "packed_bounds": [
+            54,
+            73,
+            133,
+            172
+          ],
+          "sha256": "17cfc6d9f1d400954c4953a41a0adb7ce6bfde4c4286751ebc6bff5a02fc2b16"
+        },
+        {
+          "path": "res://assets/animated/velvet/powered_guard-05.png",
+          "source": "art-source/animated/v3/velvet-powered40.png",
+          "slot": 29,
+          "source_bounds": [
+            1030,
+            602,
+            1215,
+            771
+          ],
+          "source_origin": [
+            1118.5,
+            771.0
+          ],
+          "scale": 0.5818181818181818,
+          "packed_bounds": [
+            45,
+            74,
+            153,
+            172
+          ],
+          "sha256": "a510ec6e01175ef77b6c6a92c3374ff76bd0881730aae063669f1c7f7c36601f"
+        },
+        {
+          "path": "res://assets/animated/velvet/powered_guard-06.png",
+          "source": "art-source/animated/v3/velvet-powered40.png",
+          "slot": 30,
+          "source_bounds": [
+            1232,
+            601,
+            1410,
+            771
+          ],
+          "source_origin": [
+            1317.5,
+            771.0
+          ],
+          "scale": 0.5818181818181818,
+          "packed_bounds": [
+            46,
+            73,
+            150,
+            172
+          ],
+          "sha256": "ee4ac2c021ece774078e45ff6eb72d020856d4586d07b944d9ad4db912f13752"
+        },
+        {
+          "path": "res://assets/animated/velvet/powered_guard-07.png",
+          "source": "art-source/animated/v3/velvet-powered40.png",
+          "slot": 31,
+          "source_bounds": [
+            1430,
+            599,
+            1581,
+            771
+          ],
+          "source_origin": [
+            1499.5,
+            771.0
+          ],
+          "scale": 0.5818181818181818,
+          "packed_bounds": [
+            56,
+            72,
+            144,
+            172
+          ],
+          "sha256": "f555984d8970872a4180dbaca7c54419356838388e742580e3af9964afaf49e0"
+        }
+      ]
+    },
+    "powered_exit": {
+      "frame_count": 7,
+      "durations": [
+        0.11,
+        0.11,
+        0.11,
+        0.11,
+        0.12,
+        0.14,
+        0.16
+      ],
+      "duration": 0.86,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/velvet/powered_exit-00.png",
+          "source": "art-source/animated/v3/velvet-powered-primary-exit16.png",
+          "slot": 8,
+          "source_bounds": [
+            22,
+            536,
+            240,
+            828
+          ],
+          "source_origin": [
+            120.5,
+            828.0
+          ],
+          "scale": 0.3310344827586207,
+          "packed_bounds": [
+            63,
+            75,
+            135,
+            172
+          ],
+          "sha256": "e185b6812055212003ab5dd6c842e217e9e6fa90bac6e49d5ab97f90910ae8d0"
+        },
+        {
+          "path": "res://assets/animated/velvet/powered_exit-01.png",
+          "source": "art-source/animated/v3/velvet-powered-primary-exit16.png",
+          "slot": 9,
+          "source_bounds": [
+            249,
+            536,
+            460,
+            828
+          ],
+          "source_origin": [
+            349.0,
+            828.0
+          ],
+          "scale": 0.3310344827586207,
+          "packed_bounds": [
+            63,
+            75,
+            133,
+            172
+          ],
+          "sha256": "b154f6f845bb7dd1f2efb49407a08ce55e32a029f28f8d2a8ac4f8e1b2c87b37"
+        },
+        {
+          "path": "res://assets/animated/velvet/powered_exit-02.png",
+          "source": "art-source/animated/v3/velvet-powered-primary-exit16.png",
+          "slot": 10,
+          "source_bounds": [
+            467,
+            534,
+            684,
+            828
+          ],
+          "source_origin": [
+            561.0,
+            828.0
+          ],
+          "scale": 0.3310344827586207,
+          "packed_bounds": [
+            65,
+            75,
+            137,
+            172
+          ],
+          "sha256": "ee3cbfac56c1ead2c978a12fe19c038b28864e36f61242b499de3aef69b4ace2"
+        },
+        {
+          "path": "res://assets/animated/velvet/powered_exit-03.png",
+          "source": "art-source/animated/v3/velvet-powered-primary-exit16.png",
+          "slot": 12,
+          "source_bounds": [
+            691,
+            536,
+            904,
+            828
+          ],
+          "source_origin": [
+            842.5,
+            828.0
+          ],
+          "scale": 0.3310344827586207,
+          "packed_bounds": [
+            46,
+            75,
+            117,
+            172
+          ],
+          "sha256": "07e0cc2588be262d0e16be71b1afa991ca04d15f16dd1ad5af3bc0f557164eda"
+        },
+        {
+          "path": "res://assets/animated/velvet/powered_exit-04.png",
+          "source": "art-source/animated/v3/velvet-powered-primary-exit16.png",
+          "slot": 13,
+          "source_bounds": [
+            908,
+            536,
+            1124,
+            828
+          ],
+          "source_origin": [
+            1015.5,
+            828.0
+          ],
+          "scale": 0.3310344827586207,
+          "packed_bounds": [
+            60,
+            75,
+            132,
+            172
+          ],
+          "sha256": "c5fabe7839e3c405219a8d7a45a37cd012ec5e500ab0288e50ebd1ffb54def4c"
+        },
+        {
+          "path": "res://assets/animated/velvet/powered_exit-05.png",
+          "source": "art-source/animated/v3/velvet-powered-primary-exit16.png",
+          "slot": 14,
+          "source_bounds": [
+            1140,
+            536,
+            1356,
+            828
+          ],
+          "source_origin": [
+            1346.0,
+            828.0
+          ],
+          "scale": 0.3310344827586207,
+          "packed_bounds": [
+            28,
+            75,
+            100,
+            172
+          ],
+          "sha256": "8083042541372219349db97596350470f8aa742f32be32b9b5c3d6f64855af9b"
+        },
+        {
+          "path": "res://assets/animated/velvet/powered_exit-06.png",
+          "source": "art-source/animated/v3/velvet-powered40.png",
+          "slot": 39,
+          "source_bounds": [
+            1431,
+            795,
+            1576,
+            963
+          ],
+          "source_origin": [
+            1499.5,
+            963.0
+          ],
+          "scale": 0.5818181818181818,
+          "packed_bounds": [
+            56,
+            74,
+            140,
+            172
+          ],
+          "sha256": "21ad3090dc5d36ad4c19bd60bd58699d57de07340700692851382f638a72dcdd"
+        }
+      ]
+    }
+  },
+  "pose_count": 151
+}

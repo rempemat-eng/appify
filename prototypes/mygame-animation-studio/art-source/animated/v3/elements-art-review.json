@@ -1,0 +1,187 @@
+{
+  "method": "Built-in imagegen, identity-preserving extension from current single idle and special-final frame references; flattened RGBA masters. Whole-atlas layout-copy attempts were rejected before import. No interpolation or shifted duplicate pixels counted as poses.",
+  "accepted_sources": {
+    "iona-extension64.png": {
+      "columns": 8,
+      "rows": 8,
+      "size": [
+        1254,
+        1254
+      ],
+      "sha256": "a4a6ff98e53bb8d09b7607438a4f6c9210c300fbb6efb97ef09bfc381bc003de"
+    },
+    "iona-powered40.png": {
+      "columns": 8,
+      "rows": 5,
+      "size": [
+        1536,
+        1024
+      ],
+      "sha256": "6f77b25c4573e79bb5439e75f9d2ede4eb58351295c905d5251457d5950ed7f7"
+    },
+    "tam-extension64.png": {
+      "columns": 8,
+      "rows": 8,
+      "size": [
+        1254,
+        1254
+      ],
+      "sha256": "e88085e6bc184bc854a3cccc5b9ab4868481184ef3b8bc5beb80de4791813d31"
+    },
+    "tam-powered40.png": {
+      "columns": 8,
+      "rows": 5,
+      "size": [
+        1536,
+        1024
+      ],
+      "sha256": "f514860ddfb66f613cede90a4b460e0657777420f74d6b3e894c6684f973c38d"
+    },
+    "brine-extension64.png": {
+      "columns": 8,
+      "rows": 8,
+      "size": [
+        1254,
+        1254
+      ],
+      "sha256": "13f20828911b6eef794c7f4d37d874e158ec66470a770b900b2a5a0349ecbcd5"
+    },
+    "brine-powered40.png": {
+      "columns": 8,
+      "rows": 5,
+      "size": [
+        1536,
+        1024
+      ],
+      "sha256": "119a57eb5135380d32e5041740658106748c0985dac7b933bd3b9032aee2acc7"
+    },
+    "pendle-extension64.png": {
+      "columns": 8,
+      "rows": 8,
+      "size": [
+        1254,
+        1254
+      ],
+      "sha256": "3606ba4319dfca62aba92460c4a9077ada22e50b0aca5fdc6216598adc680f5c"
+    },
+    "pendle-powered40.png": {
+      "columns": 8,
+      "rows": 5,
+      "size": [
+        1536,
+        1024
+      ],
+      "sha256": "073e4cb062df3d548ea7f580d1d1abc13e446bea77b96145680eeb9bf34faba3"
+    },
+    "mirra-extension64.png": {
+      "columns": 8,
+      "rows": 8,
+      "size": [
+        1254,
+        1254
+      ],
+      "sha256": "e8180c2a98890ef25e48a60ac1c0241025f52ead2b7f8fea9563c2f9fa33e2e9"
+    },
+    "mirra-powered40.png": {
+      "columns": 8,
+      "rows": 5,
+      "size": [
+        1536,
+        1024
+      ],
+      "sha256": "baae84c81ed79cf62d47d4487b9e2d49abe34547a2d134da52e3fb062ad41cab"
+    },
+    "iona-primary16.png": {
+      "columns": 4,
+      "rows": 4,
+      "size": [
+        1254,
+        1254
+      ],
+      "sha256": "6c9e357f92a1a7c541a7f14652daacd712c4d8fac8f3147d9c91d3a1d6aefb71"
+    },
+    "iona-powered-primary8.png": {
+      "columns": 4,
+      "rows": 2,
+      "size": [
+        1774,
+        887
+      ],
+      "sha256": "b32063544ecb1ff98198879614a1c94991366d9ff27206542fbc1be59fa432e4"
+    },
+    "pendle-reload8.png": {
+      "columns": 4,
+      "rows": 2,
+      "size": [
+        1774,
+        887
+      ],
+      "sha256": "10d9cf5d72bbc45cba3eacec804d2195a3b46b6cf17381a654f5f3511c05ef81"
+    },
+    "brine-secondary8.png": {
+      "columns": 4,
+      "rows": 2,
+      "size": [
+        1536,
+        1024
+      ],
+      "sha256": "1597ec2bf9b75feaf6499f311cb8b7ca406c4f16b8f03556545bf963081c7647"
+    }
+  },
+  "prompt_set": {
+    "extension64": "Exactly8x8:16 coherent walk drawings,16 single-primary anticipation/release/follow-through drawings,event8,8jump anticipation/takeoff/rise/apex/fall/land/recover,8stair ascent,8stair descent,8dodge ending standing. East three-quarter, fixed root, consistent equipment and body volume, transparent gutters, upper-left lighting, detailed crisp pixel art. Engine owns jump arc; no stairs or floor painted. Single idle reference preserves exact established character identity.",
+    "powered40": "Exactly8x5:8 powered idle,8 powered walk,8 primary with one event4,8 guard,8 coherent exit to base. Single last-special frame and base-idle references. Maintain physical equipment for complete form and exit; separate effects stay out of body sheets. Do not invent additional weapons or form mechanics.",
+    "iona_primary_repairs": "Wide4x4 primary16 and4x2 powered primary8. Same continuous spear and two hand grips; spearhead points RIGHT in every pose, no overhead flourish or left-pointing preparation. One loaded thrust and return, all bodies and full weapon clear of neighbours. Events8/4.",
+    "pendle_reload8": "4x2 single existing six-chamber revolver opens/ejects, left hand loads, checks, closes and settles; same slung rifle, no duplicate revolver/cylinder, all mechanical anatomy retained.",
+    "brine_secondary8": "4x2 secondary reel: right hand holds same harpoon gun near body, left glove finds and turns integral brass reel, brace backward then settle. One connected breathing line and same airpack/helmet. Tether is separate engine entity. No gun-butt shove."
+  },
+  "identity_constraints": {
+    "iona": "Same mature human lancer, dark violet braid, berry split coat, gold-brown spear and silver head; maintained storm-ready acting, no invented physical form gear.",
+    "tam": "Mature human ice monk, grey knot/wraps, maroon sash/beads; Glacier Form grows blue-white shells around same forearms/shins, palm fingers remain visible at contact; ice recedes on exit.",
+    "brine": "Same sealed copper helmet/blue faceport, cream/olive canvas, one airpack/breathing hose and harpoon with integral reel; maintained braced rig, no swimming or invented gear.",
+    "pendle": "Only robot, western hat/duster/scarf/brass limbs. Longshot holds same rifle in both hands, revolver holstered, no duplicate slung rifle while held; coherent re-sling exit.",
+    "mirra": "Human oasis diviner, ivory headwrap/tunic and turquoise shawl; maintained shaping gestures, no watery replacement body, seals/currents separate."
+  },
+  "approved_orders": {
+    "tam.primary": [
+      0,
+      1,
+      2,
+      4,
+      5,
+      6,
+      3,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "mirra.powered_primary": [
+      0,
+      5,
+      3,
+      1,
+      2,
+      4,
+      6,
+      7
+    ]
+  },
+  "event_overrides": {
+    "brine.powered_primary": 3,
+    "mirra.powered_primary": 5
+  },
+  "limitations": [
+    "These are east-facing base plus powered-form studies, not directional turnarounds or final layered production masters.",
+    "Frame count and uniqueness do not establish artistic quality; contour/body-volume and equipment cleanup still require artist approval.",
+    "Iona long-spear frame canvas must remain wide enough to preserve96px body height without shrinking.",
+    "Pendle base primary frame8 has a baked muzzle flash; runtime must suppress a second muzzle flash for that clip.",
+    "Brine anchors require regeneration when any packed source/frame order or import registration changes.",
+    "Pendle reload staging is visible, but enlarged cylinder face has approximately seven/eight small chamber-like marks. Six-round capacity is enforced by runtime; do not claim six visibly counted rounds. Targeted built-in imagegen correction returned HTTP400 safety rejection (violence), so the accepted strip was not silently repainted or replaced. Artist cleanup remains."
+  ]
+}

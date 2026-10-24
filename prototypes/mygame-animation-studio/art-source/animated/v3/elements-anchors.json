@@ -1,0 +1,1007 @@
+{
+  "brine": {
+    "idle": {
+      "hand_anchors": [
+        [
+          42,
+          -42
+        ],
+        [
+          37,
+          -40
+        ],
+        [
+          29,
+          -54
+        ],
+        [
+          40,
+          -39
+        ],
+        [
+          44,
+          -40
+        ],
+        [
+          45,
+          -50
+        ],
+        [
+          38,
+          -44
+        ],
+        [
+          35,
+          -41
+        ]
+      ]
+    },
+    "walk": {
+      "hand_anchors": [
+        [
+          54,
+          -44
+        ],
+        [
+          48,
+          -43
+        ],
+        [
+          54,
+          -40
+        ],
+        [
+          48,
+          -40
+        ],
+        [
+          38,
+          -40
+        ],
+        [
+          40,
+          -46
+        ],
+        [
+          45,
+          -40
+        ],
+        [
+          44,
+          -42
+        ],
+        [
+          54,
+          -44
+        ],
+        [
+          45,
+          -42
+        ],
+        [
+          49,
+          -40
+        ],
+        [
+          42,
+          -44
+        ],
+        [
+          40,
+          -44
+        ],
+        [
+          40,
+          -42
+        ],
+        [
+          46,
+          -50
+        ],
+        [
+          44,
+          -44
+        ]
+      ]
+    },
+    "primary": {
+      "hand_anchors": [
+        [
+          41,
+          -42
+        ],
+        [
+          36,
+          -44
+        ],
+        [
+          41,
+          -52
+        ],
+        [
+          44,
+          -60
+        ],
+        [
+          51,
+          -60
+        ],
+        [
+          48,
+          -74
+        ],
+        [
+          46,
+          -73
+        ],
+        [
+          45,
+          -73
+        ],
+        [
+          62,
+          -70
+        ],
+        [
+          53,
+          -66
+        ],
+        [
+          56,
+          -62
+        ],
+        [
+          53,
+          -52
+        ],
+        [
+          41,
+          -48
+        ],
+        [
+          42,
+          -38
+        ],
+        [
+          41,
+          -44
+        ],
+        [
+          39,
+          -42
+        ]
+      ],
+      "release_anchor": [
+        62,
+        -70
+      ]
+    },
+    "secondary": {
+      "hand_anchors": [
+        [
+          44,
+          -46
+        ],
+        [
+          40,
+          -41
+        ],
+        [
+          41,
+          -38
+        ],
+        [
+          45,
+          -40
+        ],
+        [
+          49,
+          -46
+        ],
+        [
+          47,
+          -41
+        ],
+        [
+          43,
+          -40
+        ],
+        [
+          45,
+          -46
+        ]
+      ],
+      "release_anchor": [
+        49,
+        -46
+      ]
+    },
+    "special": {
+      "hand_anchors": [
+        [
+          40,
+          -40
+        ],
+        [
+          37,
+          -40
+        ],
+        [
+          42,
+          -38
+        ],
+        [
+          40,
+          -54
+        ],
+        [
+          46,
+          -38
+        ],
+        [
+          37,
+          -54
+        ],
+        [
+          37,
+          -54
+        ],
+        [
+          38,
+          -40
+        ]
+      ]
+    },
+    "guard": {
+      "hand_anchors": [
+        [
+          37,
+          -50
+        ],
+        [
+          38,
+          -42
+        ],
+        [
+          37,
+          -38
+        ],
+        [
+          50,
+          -56
+        ],
+        [
+          49,
+          -56
+        ],
+        [
+          39,
+          -54
+        ],
+        [
+          43,
+          -57
+        ],
+        [
+          39,
+          -56
+        ]
+      ]
+    },
+    "jump": {
+      "hand_anchors": [
+        [
+          50,
+          -43
+        ],
+        [
+          42,
+          -38
+        ],
+        [
+          37,
+          -52
+        ],
+        [
+          39,
+          -45
+        ],
+        [
+          31,
+          -34
+        ],
+        [
+          29,
+          -48
+        ],
+        [
+          35,
+          -39
+        ],
+        [
+          41,
+          -44
+        ]
+      ]
+    },
+    "stair_up": {
+      "hand_anchors": [
+        [
+          50,
+          -69
+        ],
+        [
+          42,
+          -58
+        ],
+        [
+          41,
+          -66
+        ],
+        [
+          35,
+          -68
+        ],
+        [
+          32,
+          -54
+        ],
+        [
+          34,
+          -54
+        ],
+        [
+          37,
+          -65
+        ],
+        [
+          40,
+          -60
+        ]
+      ]
+    },
+    "stair_down": {
+      "hand_anchors": [
+        [
+          40,
+          -43
+        ],
+        [
+          35,
+          -49
+        ],
+        [
+          36,
+          -42
+        ],
+        [
+          29,
+          -37
+        ],
+        [
+          24,
+          -38
+        ],
+        [
+          29,
+          -46
+        ],
+        [
+          35,
+          -46
+        ],
+        [
+          43,
+          -52
+        ]
+      ]
+    },
+    "dodge": {
+      "hand_anchors": [
+        [
+          34,
+          -48
+        ],
+        [
+          38,
+          -48
+        ],
+        [
+          53,
+          -45
+        ],
+        [
+          65,
+          -42
+        ],
+        [
+          61,
+          -34
+        ],
+        [
+          45,
+          -44
+        ],
+        [
+          42,
+          -45
+        ],
+        [
+          40,
+          -46
+        ]
+      ]
+    },
+    "powered_idle": {
+      "hand_anchors": [
+        [
+          45,
+          -42
+        ],
+        [
+          41,
+          -42
+        ],
+        [
+          43,
+          -40
+        ],
+        [
+          36,
+          -40
+        ],
+        [
+          35,
+          -40
+        ],
+        [
+          37,
+          -40
+        ],
+        [
+          38,
+          -42
+        ],
+        [
+          37,
+          -40
+        ]
+      ]
+    },
+    "powered_walk": {
+      "hand_anchors": [
+        [
+          49,
+          -44
+        ],
+        [
+          44,
+          -38
+        ],
+        [
+          45,
+          -38
+        ],
+        [
+          43,
+          -40
+        ],
+        [
+          41,
+          -44
+        ],
+        [
+          39,
+          -44
+        ],
+        [
+          38,
+          -45
+        ],
+        [
+          34,
+          -41
+        ]
+      ]
+    },
+    "powered_primary": {
+      "hand_anchors": [
+        [
+          43,
+          -43
+        ],
+        [
+          37,
+          -42
+        ],
+        [
+          44,
+          -68
+        ],
+        [
+          55,
+          -64
+        ],
+        [
+          50,
+          -52
+        ],
+        [
+          46,
+          -64
+        ],
+        [
+          45,
+          -47
+        ],
+        [
+          37,
+          -42
+        ]
+      ],
+      "release_anchor": [
+        55,
+        -64
+      ]
+    },
+    "powered_guard": {
+      "hand_anchors": [
+        [
+          43,
+          -42
+        ],
+        [
+          36,
+          -40
+        ],
+        [
+          33,
+          -70
+        ],
+        [
+          31,
+          -70
+        ],
+        [
+          36,
+          -66
+        ],
+        [
+          39,
+          -42
+        ],
+        [
+          40,
+          -38
+        ],
+        [
+          38,
+          -40
+        ]
+      ]
+    },
+    "powered_exit": {
+      "hand_anchors": [
+        [
+          49,
+          -42
+        ],
+        [
+          39,
+          -40
+        ],
+        [
+          40,
+          -41
+        ],
+        [
+          37,
+          -42
+        ],
+        [
+          36,
+          -38
+        ],
+        [
+          36,
+          -38
+        ],
+        [
+          37,
+          -38
+        ],
+        [
+          32,
+          -39
+        ]
+      ]
+    },
+    "_provenance": {
+      "coordinate_space": "logical pixels relative to foot pivot (96,172)",
+      "authoring": "Muzzle tip located on actual packed PNGs, then marker contact sheets visually checked for idle/primary/guard/powered_guard and overall frame review for other sequences; not silhouette-centre approximations. All arrays authored separately per frame.",
+      "event_frames": {
+        "primary": 8,
+        "secondary": 4,
+        "powered_primary": 3
+      },
+      "reviewed_frame_sha256": {
+        "idle-00.png": "2215fc895fa0b127de850ed6befb62498c0330b3c81b87ceeaea2795f06f262e",
+        "idle-01.png": "362c42efc6108924b4208d70231443467685f951098f48b91d8ceebc6b70cf4f",
+        "idle-02.png": "f169b390e3ebeb09ec2e0c485a90e4b15aa43a2cf9e72f5a3f6bab615af8eb5e",
+        "idle-03.png": "08d25148034ca101872ff242bf252cca4f442e5067d2a11e40e5333b6a44285d",
+        "idle-04.png": "c015fcddc1023f8e97a5daa553e9160ee46ed3a234a94af7bae99921e53f8a45",
+        "idle-05.png": "7a40eb324ef9818a0e2bd4a18771b8dfd997e4b46ec3cd4755ff6c9b25c4f505",
+        "idle-06.png": "00f02c9b30c28108779e5bed7be19264b794d40b22c9381f38da060f5d74253f",
+        "idle-07.png": "e2216a8c0e5246b498703d042e7427d6a9ac212f645180546c8f1040f468ac01",
+        "walk-00.png": "5772bd3cbf498e901502cb0e1f6fd89974abc07aca7157eb64ca1180f642e019",
+        "walk-01.png": "4a0e4f2654bebfb57e62422dcae5b66bb4720aca154abc3880ceb6452f45ec2b",
+        "walk-02.png": "e72f365654ff97ec290226c4dbefa5c473f87116a29a687932a9afbb385bc6c6",
+        "walk-03.png": "d2cd96cde302aebf463e3d10f976fb9957dc6391fea3230f91270be87788fcae",
+        "walk-04.png": "faa88aee15136fbea3b8f70ae3b01f7f07ac7f156066f3c7d7168edaf0d6348a",
+        "walk-05.png": "283397248075bba8e342a188a570640f1b88961e23964f58c7f072b50fe16541",
+        "walk-06.png": "58f977a5620b8364653ee4e47b84c2117eb409b6c367b9e506626bc969806360",
+        "walk-07.png": "2a202df4f30171f1387318dbb7684ac18602d783aed9a19f3165dbf96b9ad260",
+        "walk-08.png": "f149e377a339e1b3d41f813f45be8d060558e4dfcb87598fff0f205ab62abeec",
+        "walk-09.png": "6f5b2ccbd2945fe938fdab7dca62484cf8a1f23ea914cf8c9516de20412d9c2e",
+        "walk-10.png": "d0f51e718de245113078fbfaf52b65d8083df842ab51afba84e37acd5eb541e0",
+        "walk-11.png": "39455c6db51e30187132d42d8ead30431de4c27b3a9ff220c9bd15bf326a9e79",
+        "walk-12.png": "bdd645fc068768ce09bacba1512290ca751b67005bebe0233bb6866526a87545",
+        "walk-13.png": "dbb53725ee0e801f2fd30a1d9e7009550cdc16aaa0a200c58c9c8ba79a283512",
+        "walk-14.png": "d8b3e633e98aa12146a34b21db3b1be910c601b675b1d56a3ab8e73b6e6b54a3",
+        "walk-15.png": "91fd8c15dbfc9b1ee07dd096c0375f12e8a1297ce1520e0a5112f066f17cad3b",
+        "primary-00.png": "7dd7e11a237a72d0423b1c61a2c4e872df5eb357c3a39b2a901bcf21ee563cb2",
+        "primary-01.png": "4853eba55948a3494dbaf6c441ee53dcc3ed9da03e6d7c837d464c16d85da1b9",
+        "primary-02.png": "2db49f3987acdd570ba32703c587a5b1ebd389f705fe90e77880c97f2e229c2c",
+        "primary-03.png": "b712fa0898f015eca42afeee51f45007b7dc64c6463ea213ad23ec0838f48f67",
+        "primary-04.png": "1560e0178c2c673fa24b201353a48c0fc79f2fbf8aa4a512aeecbc9c6317173d",
+        "primary-05.png": "9c6a68fb3395e21a9c435ca31c5b85ff7e806f7d1ec3cf38290db9a5c6607d80",
+        "primary-06.png": "cf42456f083f4f62248924e3f7031ac195c778d4027d03c2ad3ae8da77446e5a",
+        "primary-07.png": "af60dd385efe65b23d17c42edbc8c0aeba464e0cdd339091a956552ed33441ab",
+        "primary-08.png": "54c580da3d021c5d8647e304fea9d8faf99fd02a0d00e46ef4185e60eb7e94d5",
+        "primary-09.png": "e9e2295b0cc1c2d476575f1e98d6faaca2a8d8d9c8870fe2a7d8130a4ae0ed98",
+        "primary-10.png": "7c9de56fbf98c7a313a8c19b16dd57a077fab1220cb2eed0bb5e483004ad29e9",
+        "primary-11.png": "815b5df7a78a34e48ad71648f9c95e346258ffe61bf6714540aa32dd49831249",
+        "primary-12.png": "6ff9836528ef0b825edf374e711c0f7706ea16238ee4aa0c19eeffc07d4ac631",
+        "primary-13.png": "d813f33620b68137a6f05bbdd6c89a9f649d8daca8703fbbcb3083b8a39ac331",
+        "primary-14.png": "138f996b2bd8a6075dbacd2fb024c09c38720330ea74705ab35b64123684c413",
+        "primary-15.png": "612ba28745e5c324c84ba692faeb822126d13111d88bc2299c5f96f19ad01bb8",
+        "secondary-00.png": "327a16f2353b26b1060c148742afa98d15f47a93c0d8fc2cbf5a386c0a37fc28",
+        "secondary-01.png": "9d34ff15512d64d1a6c6c542054b5bb0b2015329dea4aa3421eec3fbeb803f1c",
+        "secondary-02.png": "dd3c503e5703c96a094a734410e6e9dae4ea8a67eccba5ff52e884e7c79927e2",
+        "secondary-03.png": "a738784574b60ed60c8c1d8dd1f867befc766a2bfde5e380b65878a2a7f72f41",
+        "secondary-04.png": "67397641835cb386f4886916dc6628c1e731d1215b7a0dcabb14b76fdeb52b5d",
+        "secondary-05.png": "1827351dd5a186df27ce1ac0e23f25e7c723cb07d40479765dc305aa5c2d4bb1",
+        "secondary-06.png": "18e8cbd9145bf933230bb29d405879e1c9aa96ff7a428bea8ebfa53a820fb095",
+        "secondary-07.png": "eda9f3b194ce28763e68cc0a169ce6feccf6db0366759c47d6b6f269aeebf401",
+        "special-00.png": "c48ceba9a01104f3801b859e3294a71d300e297a6aea4fb5ad090eed3d6734e0",
+        "special-01.png": "3e6dd3f891207c5d9eb43f246f58d6862e41e145bdd70234044383bf778fd510",
+        "special-02.png": "8a3eb804cc93e79bef43c1ba35dd0e93a437d56ebe29df15644151df922d20df",
+        "special-03.png": "6ecded5492f4e983278df3262f705605aeaf0ff72b3797054fab53197df15521",
+        "special-04.png": "12fe6c979483043248cc61430fcdddc7f08a25239cd1ee62e27de94e21ee24a4",
+        "special-05.png": "ff2a61adc6978cbbb158718265ff262866b60709feafd783cc2de98641210bd0",
+        "special-06.png": "261adfa23058139c31f7984cea2ff6a26e5d1edc5e84c44b0d9b382e0f2e7d59",
+        "special-07.png": "a96fb2534c0de0962d47844e29e7c72a854706c3332232d177041295d3a8a01a",
+        "guard-00.png": "08fd45ddf7e20edee5b01839c3191a4f9b98e82edd503772859b082710099cc9",
+        "guard-01.png": "18ffe674e3251deda046656d928d245113883ea66d65964f883b8ceca6b6d9b0",
+        "guard-02.png": "5afb9e7ff3b402f6e00eae3157527b5c6195ee84c97b41fbaf150612bc5eb1ca",
+        "guard-03.png": "329ce14235fa4136c51dec0524cacc100d1ab9da1a0bc10c138e499743cc4f4c",
+        "guard-04.png": "0f97f1e3ae2495783c6b9a0578e274b99c229bf8346dea6170d77601ac177c2c",
+        "guard-05.png": "3ffab4f2fd0ffe9750c712dfe4378d4de3029f14c5bb5245920b1ee984f7d783",
+        "guard-06.png": "2807a45ab6870b6f7e5a0a7b514d74dc3581491dd64ff6824d786e8dd233efae",
+        "guard-07.png": "d872de0dfce1ee0389847b1ce300c57f920775272af722ea13d1bc64b5feab4f",
+        "jump-00.png": "2a6980ab02ff99507c849da36ab565ed3d1b759090318736fa88509433ac5de7",
+        "jump-01.png": "3a42c2aa7219fadc147f5d3a9e6fc8cfaddcf9831a100d1af8b9247ee8d81c19",
+        "jump-02.png": "3599b725bf84bf68eaec21c73392b9906258ee16099f9a4de3c42777af9b8de4",
+        "jump-03.png": "7192a58bd58b4551ff8157dcc016256c87c89f223de80a1b93c379d75b3b36ea",
+        "jump-04.png": "c5710bb32085c989f223a54c8a4d211eba12af957839d08e848ca827740a0693",
+        "jump-05.png": "2dc77054c36e9ffe556af54c918d2f5706081476126ab9e78e399d13866cedae",
+        "jump-06.png": "0415f21b9916d217ef0bcba4aba878fec3deee327c58ed6f682cf7db855add2c",
+        "jump-07.png": "e48d4953fefadb7f0c8f3841ec392d81f3707f0a8afb47ee76120e119d7fef8c",
+        "stair_up-00.png": "77274aea0f2d4c153a0bea73446a0a00b9f5eb61279c02fa0a99bba9d6aa8c27",
+        "stair_up-01.png": "32912dc7a5ff3fe1e2e6371ec75749baa35a28ced6f3ef6a82b0f9d1ddc797f6",
+        "stair_up-02.png": "2e75bc8c9dff0f22f1842c57a0df9be892e39b1cec8f11fab445864ea878d9e4",
+        "stair_up-03.png": "85296f8438831d864cff7433e1e70f888964c003359ef0805191d7ae964df1a2",
+        "stair_up-04.png": "37abc08d725213deed3b005513854de8a1e98a727ff1915381d668362e464328",
+        "stair_up-05.png": "51210618f76622c3ad5c08eb18070f5aa59d404214241819f20c189af7589557",
+        "stair_up-06.png": "812a5bfdfc4d0482fb48a6748ba08734cf0619ccfaf89f214ad20233e9d2be09",
+        "stair_up-07.png": "63a80759a87d6af17d8b9b67ab7222bfea522ca9e88074066904bd9c8f2ea2cb",
+        "stair_down-00.png": "fa0937ff53a28452a22a2f72d29c5dbbc271d6dc9f939a81f6e06b0a19f9289a",
+        "stair_down-01.png": "77e88ed750c30d45db3d013308832af6156fb121683c2f5428d3953dcc0476d3",
+        "stair_down-02.png": "b8c08addc97428a48c6ea77682fda75a22a32ba3826758a92621b4523a7c022b",
+        "stair_down-03.png": "1ee54f79157ae0eb51a4e54035c1dc1040b39756e6ccd62ddd718f211c655b21",
+        "stair_down-04.png": "4897039c9cb96e3e18013320ca0b8d2ea41258a04ba7559a649a9b89d9add697",
+        "stair_down-05.png": "481ecadc5c702deaaf5a7e1027a5c3b50d1819c4ec27cfcba6b7eba681dbdd20",
+        "stair_down-06.png": "1a03df3a1183c3167b5d6eec695ca8bf5b6751862aa9705a331ccb1211bf1e9d",
+        "stair_down-07.png": "3edb4e1d03893cfa18e889006dc3a3f90123bd0305ec539487f64a235d5dbafd",
+        "dodge-00.png": "676e791e3315cfcddca076f7d2c8d845e52ae0622593a4af1b36efb61f993409",
+        "dodge-01.png": "ad519c9bf0311068c66cc2db8bbe8c3b649543d6cb99a8c1192eb4c338590ccb",
+        "dodge-02.png": "869222856269ab194cc3f31bc7f7ebe598fa03039a601e7e660b8417fe778a20",
+        "dodge-03.png": "e876e7d3d74925dae2fa1527342d34386cdd9ae5ce686bbaa4da46374da93fe6",
+        "dodge-04.png": "6698dd6da3533d602dfecfe0554e2a1aebf02986847ed07e1ccacd84ac731177",
+        "dodge-05.png": "475cf10b7a1389d7d84592e9d8767b2eb1cccbb3eb89d8e97635479d9a8020a6",
+        "dodge-06.png": "58e61c29c603c4bd07d0eb5e3c2ab5aa785d5a6408056f9b805762cd777d390e",
+        "dodge-07.png": "bae7f37a3e382edf9d3bfa7947188d0414f39fc725cc03363a6ea4df9084b770",
+        "powered_idle-00.png": "510ff1f8fad61b55a401f0c993509d063ad40b4b8c2cdf2d9231b6855c7d2435",
+        "powered_idle-01.png": "10c4b44ce7cb3276554ff0b23a21a5999625d6654d64b40d7324fc13cf24cd6d",
+        "powered_idle-02.png": "585f8e219a306643459c83c0dc2deb2db41c08b4b0b3957f8090119c9423f515",
+        "powered_idle-03.png": "c07a4ba3efaab94c0a234efe9433d185da931a0d219978f3821f67fdc47b0845",
+        "powered_idle-04.png": "056d6d871a27ade12e185414b3d0560b4d553dce7548cb0e7c54d4ee7799ede6",
+        "powered_idle-05.png": "198b32d60d6fdf6411d25379550ea2187325475ee2d49ffa0369ba87197ca66f",
+        "powered_idle-06.png": "949b0bb6cecb1c13576b7aef1ac53451ccac1e5e1629901985c67893abb1ea3d",
+        "powered_idle-07.png": "5740faaa8437bae4b3c68d9142fcdbb4a23d25146524d8a7fd473c64240f6b6b",
+        "powered_walk-00.png": "c2e0b69fe9d135841782fb7eea317167abb2d1bf04357f687fc0fe375147e4cd",
+        "powered_walk-01.png": "ba627c0ba03f8e84e074362ab636f78dbae065dad8f1f74bef2b916dd46e5f9b",
+        "powered_walk-02.png": "6b7cf5ff1501fe766e21ce7fa8d2ff3e9dd15fc0b79a353f83aadc1003ebe610",
+        "powered_walk-03.png": "6bca5d569b60e42113e587614f1f3c80f60109285479da57fd45d54afbd6cc08",
+        "powered_walk-04.png": "4775c4c128b82ed00dd47011fe3fdb412b4eec5948f922f0ea8bf0c2e9416cb7",
+        "powered_walk-05.png": "21b95f68230f1e4b2a473ee3156a40c4a40cd408667469165efdefdde0b15958",
+        "powered_walk-06.png": "df83d06072638397ebb6bf66b8d188f1a3ca19380a6af5f7143be9d09ae48416",
+        "powered_walk-07.png": "2337f84b0d5032c011f770bbcf2cfb33bd98555c6088d47a4f3e95795856255d",
+        "powered_primary-00.png": "483dd9cd4fbca4c8911ba2dd213b08711d59a399209f844407b40f8d220c9afc",
+        "powered_primary-01.png": "32c89b6546623598b0e33fa2dde41a9218dc0eaaa8913a828f40d72a458c0fdc",
+        "powered_primary-02.png": "56e1188033177cd69a62d970dcbbd170612caa39e81db1f4d1bb72033e06b296",
+        "powered_primary-03.png": "448b562c6947fcc3334d21071b55a43e1b45aee7a1bc38a0bd0d0afd97f4d161",
+        "powered_primary-04.png": "cbcf893a433638a0d8269aa2c701c3599e15878260138ace8660cd5d60d4027a",
+        "powered_primary-05.png": "4c204eb27ae41524441328ce37b862a0034d72fa1c5f0e5fc0af78d0c5762009",
+        "powered_primary-06.png": "0454a938a7de1dee50ad199b3c9a38b23576c84403b2d80bb85362fad8b2a92c",
+        "powered_primary-07.png": "569cd34daafed5478fb501a2a9ef10d0c3fd3626d202410910f16fec9297615a",
+        "powered_guard-00.png": "6fc8d6da573c1566c1472a771f38450fd415184919457c9766c3bc59d9c229c2",
+        "powered_guard-01.png": "820a96a1326af07a97268cea0b3b1f0a4abbcf6cabba312f95beacad1fb13a8c",
+        "powered_guard-02.png": "90c4f264a82e29a89fd0d79406eed74a1e8382e4ba6935073d0d8d1b43326921",
+        "powered_guard-03.png": "ae16168b5347facfb6295d618f0e89af9c5c0b21059ac450a7c7941d1f82402f",
+        "powered_guard-04.png": "80a438f346d107b9289eec7fbacb035a67fa76e7875e2107cfdb547dc2eb5836",
+        "powered_guard-05.png": "19b0ddb5a058acea48549335bce55c184902eeea1dfac21df19bd5ae5f36ce11",
+        "powered_guard-06.png": "95ca592c24261d14eea3b7aaaa0ab3c0f530a3d299e244215dac26c9e68c7efb",
+        "powered_guard-07.png": "0f721d4508ee32bbfc1a23b7305f110353fc3dca6976dea64a16efab83a55425",
+        "powered_exit-00.png": "12a1d52b6176565b61fa5e1a66c3fe3c76b81929053cec4e602771bbf47ea850",
+        "powered_exit-01.png": "cf4c3abc93a18b2daf091d6497e1db9148894757a5e973e41e50ddc00d27c4d7",
+        "powered_exit-02.png": "3807b8366ebca3bdff439934c9a4dcc3ede70453062b233ee0a815b453d69b79",
+        "powered_exit-03.png": "b9b91c20f06b4d4a1ba311791110784102385d4eedf3bc58343dbb137ceb1aec",
+        "powered_exit-04.png": "a5364817a66c6c3f026656c38d2e09ce12bc574b70597edb25a5425c4d2af09a",
+        "powered_exit-05.png": "7165ef292ac1b441a7d58b1310ba3fbbf1057c591ccc06674681143d8bf8f658",
+        "powered_exit-06.png": "982ceeebbf361e17d99ee6de72e2f0752bda950f47086798205aa45ee2a202b4",
+        "powered_exit-07.png": "dc72d7a2637f98c76abab67536e4633ec9b5a8a75c2a862affe7351c365cc72c"
+      }
+    }
+  },
+  "iona": {
+    "primary": {
+      "release_anchor": [
+        101,
+        -74
+      ],
+      "contact_reach": 101
+    },
+    "secondary": {
+      "release_anchor": [
+        87,
+        -42
+      ],
+      "contact_reach": 87
+    },
+    "powered_primary": {
+      "release_anchor": [
+        113,
+        -68
+      ],
+      "contact_reach": 113
+    },
+    "_provenance": {
+      "coordinate_space": "logical pixels relative to foot pivot (96,172)",
+      "review": "Release source is actual weapon/palm endpoint on final packed frame. Iona spear tip and Tam palm contact reach match the visible endpoint. Pendle primary origin is the grey barrel end before the baked flash, not the flash outer silhouette. Tam secondary is forehand midpoint of palms near floor.",
+      "reviewed_frame_sha256": {
+        "primary-00.png": "a552e9b2309abc5ed3ed1872d94daae27e1d233b7f3cb89c427f818cf626d6a0",
+        "primary-01.png": "588a6d9a962368622ac4e3b2a0d0c44de5aa87382cb9fa363a541519a7cf9594",
+        "primary-02.png": "71db40bda9e755dcb7073fe30c84f5c9483a7447d267d38d83148474dbc9c6c5",
+        "primary-03.png": "d610f89b8deef4321eacf6a48de55bf63a492424fd8296cc8391cc4b26141ffa",
+        "primary-04.png": "4b1eb5f150d88ead9f17f85b3be4459332ee059d8254aca3c36a359815a01670",
+        "primary-05.png": "5ef96db64369edd49bd1db5af251aa08dfc4e1d33a9235335a414116c8f7c23e",
+        "primary-06.png": "f7e4e470dc52c3c7f53de1345a5b6734b811e0697bb50426fc405b771866fb26",
+        "primary-07.png": "e7926ccb8859a7c556b26b318e4bc5b4f18cb06a854bdf60d519df235cdcd226",
+        "primary-08.png": "fbfcc1cae3afbc5c3b10af53afa5d10bbe484a19f91bebc4569850dc106c4d62",
+        "primary-09.png": "a3000380ab74d9ad2f63c2a999678717fe2780e92665db769cf26d7122a75ae9",
+        "primary-10.png": "3edbe664505422be25628b010754b3c345dfb1229824d4a9c654723a871eec73",
+        "primary-11.png": "e82ead3702df8768ac17bb8010346a40294fc8360ba37d453c9dd1e16b2d52fd",
+        "primary-12.png": "2976cd466e3169d503bf508e3e20a05034b35678db135fba6636d9bd69460222",
+        "primary-13.png": "310645fd700212f5b2fcb0d3b6d399ab4534ab1fe0af8cc9eda12b1bdc8c56a9",
+        "primary-14.png": "ae8e2fe86149dcdfde291d7dba5522534bc80a77ac01a06c2627903d8c46ba3b",
+        "primary-15.png": "4520b364ea60b96e9f6184b07c42c50438e52abd87db355fd0cb7f097fb893d5",
+        "secondary-00.png": "23e80da8c4818745d3a95d9309df3d7cfe7dc53de6af517e075cc2b11a61a202",
+        "secondary-01.png": "2c5048b14d8a7e46bd9cd13b590306f62271048a56e06657ebb78e13462d2058",
+        "secondary-02.png": "10c12c0ba9eba6d16b112f205f97ddf1154ca7253401da45e7e396bbb61fcfe8",
+        "secondary-03.png": "e69970b98d98ce81da70d4c499264d4c9a703c49849e3a8ceed88f537a7d8ac2",
+        "secondary-04.png": "9a1b62db23957c57eb7a618282202257a17f3852d674b46fbdee2ced3349c69a",
+        "secondary-05.png": "63221df7c9283b4c8adc84ae8d07037df9c18ccf6265946075e9aa0714d232c6",
+        "secondary-06.png": "f0a0bfaa05998d5cde752c8b57f9825a47732e475d931b55e3681fdb9355e675",
+        "secondary-07.png": "e95f6a7a300d64274eecf1e3fa8b4066118a7fc939b747ad16e504898408a1a3",
+        "powered_primary-00.png": "880083c3f5f8af415e27c4ef46147f30d59e1f47769355da2818452c37157686",
+        "powered_primary-01.png": "3677e8d71f926fb3368fe43cadbeaa606d995cf0397806238ec33654e9c1b98d",
+        "powered_primary-02.png": "bfde3d5b926f8f682ffa56c32c4d73d5df47e0dbd5103304695b69e5c749e04a",
+        "powered_primary-03.png": "8c0f3aad239643fdbfe8e9312a6ed0965de8cb1b2d1f5d11c0d0cd3b23a71154",
+        "powered_primary-04.png": "6bd72f5bf00e776c1c1e86eba2c24839681451b053fe890d4225adec58204d45",
+        "powered_primary-05.png": "398801a1d88981894393ac0727b1eae54f0d37d02a352afdcda7291fa6b80303",
+        "powered_primary-06.png": "9a2ad83c251bf6169cb9251086ba391692ab4a3a76679b5201ca3c8d83db8067",
+        "powered_primary-07.png": "17b3e9d58b33a98da3fef3746a50c749604d4e1b8ac48aeaf80822557d2d0aac"
+      }
+    }
+  },
+  "tam": {
+    "primary": {
+      "release_anchor": [
+        59,
+        -69
+      ],
+      "contact_reach": 59
+    },
+    "secondary": {
+      "release_anchor": [
+        12,
+        -27
+      ]
+    },
+    "powered_primary": {
+      "release_anchor": [
+        63,
+        -77
+      ],
+      "contact_reach": 63
+    },
+    "_provenance": {
+      "coordinate_space": "logical pixels relative to foot pivot (96,172)",
+      "review": "Release source is actual weapon/palm endpoint on final packed frame. Iona spear tip and Tam palm contact reach match the visible endpoint. Pendle primary origin is the grey barrel end before the baked flash, not the flash outer silhouette. Tam secondary is forehand midpoint of palms near floor.",
+      "reviewed_frame_sha256": {
+        "primary-00.png": "599e1c6406dc1a227b45664894baf244baab433367d7b441ede174a73191348b",
+        "primary-01.png": "e7dfda6111b7c24abab559d7cedd66091871c86eb9230d648f52e2536003f607",
+        "primary-02.png": "f20cac1a4da4a240926c0ebbe606772c3bbeb6dd26231a8ac2dcf80f8a04913a",
+        "primary-03.png": "caf3cb2ef940a2bfb12b42a674e9dfac89c78362eb9548acdd783ba269c35eb2",
+        "primary-04.png": "0b20c9e54f0139c655aee0c35a2128dd5c61de473a1c17c4ff39487b2011ccdd",
+        "primary-05.png": "3539da768d5ced8cdba34d962712ac6e00cb47001daf30f7bbc0840a5e61958c",
+        "primary-06.png": "396182fda366ad1fdf651e73ced77eefd02b024bc8f5e156446bffc677707204",
+        "primary-07.png": "10b55ef6a74324c159751f4d27122231f9b8b0a5d9a244ad5cf1f2f94228aa61",
+        "primary-08.png": "a9e353a9c85ed081745c7f5d7cd17a213b36e4c8c30d6ab01727a0eb668a8fc9",
+        "primary-09.png": "e811234dea9963de97c5eadc46dcd70180d2b4ee35324ab272b4e3ed18a3715e",
+        "primary-10.png": "2457bdb84c37e523e16293c7f0f5c91f27866219be972fc33ea936b328037eac",
+        "primary-11.png": "512ee97e771fd83f0527173ffc152eb7325dfde6a480aae103d8093921ed0298",
+        "primary-12.png": "a7182e1731879d2c6d3c96248c4a540f479ef32364c6ccddfaefd70addddd929",
+        "primary-13.png": "1b42fe72a2953e65ca4bfff43426606e785b286b5a6f49e6bd0b1ebd211b48e5",
+        "primary-14.png": "e537b0591bc6cb7091cac52d29401a06651e124407196b7b83c946cae8f113f6",
+        "primary-15.png": "a7a3d9371a9f347fc2192db2c6c05f577656f78e735a240f7e85a400891059f1",
+        "secondary-00.png": "f6ce681bdcf7b5bb277bd9ebbf27e5677683b7754e305ab727a76718c6b8a34b",
+        "secondary-01.png": "b14d5285f7d862086e0318ef515b8a0cbaab0f463c9aecce037065085954e724",
+        "secondary-02.png": "16ebfccae701f871edf28c6f63087ab28950d4ed24bdb58cb0de7299916b91d9",
+        "secondary-03.png": "1de5ce99b60353009b1331a483c7a225b620c7442e607a78ca34dc725317935d",
+        "secondary-04.png": "6e99ae345091949e077cb6521d8e56f08b7c57f2ad8260924f060a2489b920e8",
+        "secondary-05.png": "379778ee808c1e3b4a83cae748d3b3d92e973fd4eae716686e43e4421cdac11c",
+        "secondary-06.png": "3e449aaae75a2b0b185c2037de29d6174b51552d83cdcd9759e9b0600001aa8f",
+        "secondary-07.png": "4868f4bf7d8f1f28d7097a55e3029baa08dc0d5c3196346aff46d17d8c275ad2",
+        "powered_primary-00.png": "811f1d8f3ad6361edd1a69ee9a5d464c0d543ab209247a4006df9f4c84b5252a",
+        "powered_primary-01.png": "970eee2cd8595cbab6b40ee15cceeb25d178f95d9a6196b2000136df68590ddf",
+        "powered_primary-02.png": "0f4acbecf1fcda90afbe91a43594910ff294e4fd07d7303387fc84c6ad7775f2",
+        "powered_primary-03.png": "d1cb8ca1ba94c0c99e120a1218d33b43cb67c7a0f4e0efbb29b4023da029de38",
+        "powered_primary-04.png": "52461356d54f7a672c5fe8237d5254ccfc2d438ac1dec28dbe3cf9f31655c3c1",
+        "powered_primary-05.png": "e2360e69512d06522a05f8e24436c64acc483c8a22afa523bdf26af5298b2686",
+        "powered_primary-06.png": "11a3121a524b82a17a1d04d2cff6d1368b47703ad19b519eca251a62c20ee48e",
+        "powered_primary-07.png": "e92ded5e0e3f0f87a7c7320fa6925fa96cc3768ca5af1d9bf892eb9cef6c5765"
+      }
+    }
+  },
+  "pendle": {
+    "primary": {
+      "release_anchor": [
+        56,
+        -72
+      ],
+      "baked_effects": [
+        "muzzle_flash"
+      ]
+    },
+    "secondary": {
+      "release_anchor": [
+        64,
+        -70
+      ]
+    },
+    "powered_primary": {
+      "release_anchor": [
+        57,
+        -68
+      ]
+    },
+    "_provenance": {
+      "coordinate_space": "logical pixels relative to foot pivot (96,172)",
+      "review": "Release source is actual weapon/palm endpoint on final packed frame. Iona spear tip and Tam palm contact reach match the visible endpoint. Pendle primary origin is the grey barrel end before the baked flash, not the flash outer silhouette. Tam secondary is forehand midpoint of palms near floor.",
+      "reviewed_frame_sha256": {
+        "primary-00.png": "7cf40774a09bcbd76d5712f4d89b001c7e3c4c9d404956548e0343ef9b5333e9",
+        "primary-01.png": "45cb866428e40579c948279e9e2e735ff172357894af6dc97874ae0e8fb535bd",
+        "primary-02.png": "ea113bfe01eb96ca82e0a02f91df954ea562704723a7a4c064512c2d03861d60",
+        "primary-03.png": "566111b68f897357a5dd60aa7c76f00d09f8c375bc767e59c3be6da28b10bd2f",
+        "primary-04.png": "e664ecf84026b7601ba153c93d1f789d716a8794e2edb117b747b0e710308f15",
+        "primary-05.png": "76cf721a71a5674a34c9b0b8f5cdeaf451701066cf0df944128e429526c4f1f7",
+        "primary-06.png": "feeaed9a35edb0ae9dc5beb6c1c5205879b1387a8b08fc890c81e5279fec1958",
+        "primary-07.png": "b407c4b04cf31d66fe243e159910003990a27b3085136757bed014e87ade0a6a",
+        "primary-08.png": "0844a96b4c9e353cc39ca28fcc485765f05fef5ece0eb6c250bf414e805a29de",
+        "primary-09.png": "771ae1b34d1b22abb2f177249cd00ae81d9d503bd53fb13a3e6bb0c40a3d14c8",
+        "primary-10.png": "0e995dd22e264b6caee81585bb990ba001839ec5b17140658550a1c68b7fee94",
+        "primary-11.png": "6b870f3bef4b05d9b24e743afc91fa68fbcd143a0bcee2c42dc8f9a43c4ae200",
+        "primary-12.png": "d70f36c1fcaacd56b6cd464b99d487ca04e2ad3d77596f8796dd550a09e629aa",
+        "primary-13.png": "72a95b7c6683c8f6978b68ca34f20f4031f81f75dd56bb7bf144811cbbbdc52c",
+        "primary-14.png": "faef5304a7edc14612f1b3c40a4f66a3807b7f46901d3fce69f71c00593ce83d",
+        "primary-15.png": "27fe084a2144ac744c09b977b32fecd1289bb93ecf8d4fb06e3fcd2ef00f40c0",
+        "secondary-00.png": "b20127921d55d64d05a785809c851311049fcf33f9fefab005128b4f334644d2",
+        "secondary-01.png": "a0760e24eecf290b796d6bf602028602e1731c1cab9e51f1fe1ea5df42866e94",
+        "secondary-02.png": "8dd8d0386628ba76b9097770a203fd25572703548495d43f8d0b37c93e337a99",
+        "secondary-03.png": "01cdc32d4441c473336e1629d20fa6219d4f6d6e6ddc1bf34f71201d37adb791",
+        "secondary-04.png": "e675d482b12a1122fdca7c2cda563a1ff531376e60c9eecd67178b2c9fe97e86",
+        "secondary-05.png": "67e6141e7e146fdd422bbc67140c3c1f4f96cf74183a30480d58ca8e4667e02c",
+        "secondary-06.png": "ea3100af7900c4abb47f21a4ef93db9ae18d231f4e14cb786c22c9f6934e90bc",
+        "secondary-07.png": "7effd4e29723d1d9bd429719c4b7f94d3a7c5fc057896fa14951cb02098faf1d",
+        "powered_primary-00.png": "d651e90fa850f12c6fa79cea3072af07156b5859798d225cdae2774c62dc71d4",
+        "powered_primary-01.png": "3cce1e1f298b5975433cc099619f99ee0e85febdb24bed5116f352c1b976273a",
+        "powered_primary-02.png": "391c985dab448de28aaef5d01461f74c26afb854442767a8ce0bfc6075ff09ff",
+        "powered_primary-03.png": "ae195bee930f2b0686295923cba68d2396351ee5c8999206553cce4896501927",
+        "powered_primary-04.png": "4ebe022190a52822d94ef03295773a6871880878ab2a5465e95da71f9d25ea30",
+        "powered_primary-05.png": "ddf7a264908252421df60617ad583a18b499230e71ec0a035a352698964994b2",
+        "powered_primary-06.png": "3078a8551972cf15ca6dd33a9542d5574fa70163261d136df89b20279afc609d",
+        "powered_primary-07.png": "6f6a6301e82e60f2648fc9baa4afda240e57505336ef838221e04c242cfdea50"
+      }
+    }
+  },
+  "mirra": {
+    "primary": {
+      "release_anchor": [
+        56,
+        -79
+      ]
+    },
+    "secondary": {
+      "release_anchor": [
+        55,
+        -31
+      ]
+    },
+    "_provenance": {
+      "coordinate_space": "logical pixels relative to foot pivot (96,172)",
+      "review": "Release source is actual weapon/palm endpoint on final packed frame. Iona spear tip and Tam palm contact reach match the visible endpoint. Pendle primary origin is the grey barrel end before the baked flash, not the flash outer silhouette. Tam secondary is forehand midpoint of palms near floor.",
+      "reviewed_frame_sha256": {
+        "primary-00.png": "6bc52b5823a915d79f7dd78ce5c81553ececfa6502a30945c4903f36a69a2d8c",
+        "primary-01.png": "1f1540082611db31e02a2c9daf3c83697cebf139a4c3c88c24e308c51aecb113",
+        "primary-02.png": "edc62d18bb81e420b4a8143029acc82b44c39835ca2951ad7d2f81e6fab1c2d7",
+        "primary-03.png": "d0e1d958bb5c14a190be6af3e9af7d8c22f66c247966baa08b84d8062befe683",
+        "primary-04.png": "5af7390977f5c3fa17c80e0dc4421eced008f0aac63b93171f9d59514c0b1f57",
+        "primary-05.png": "46f6d46706e9095cd99c7f1b07c69ee237b275ad3daad936e32f24cabd6ce93a",
+        "primary-06.png": "5f9e66a4efb90b9ba80647a3e2fd7542c814e409dd11b9061c251ee89d782de5",
+        "primary-07.png": "30fc5501d934d063643cdb4496696284941ebcf0f34b93db86e8728e44155591",
+        "primary-08.png": "47e4616b0a647cbb0310d046a1ddb48d977c7b0ff59e7a439bda914e9a8dfc7a",
+        "primary-09.png": "70cd2718d6024219fdc2df4382106c9884b2cf08f9843958e268f198bd7f1622",
+        "primary-10.png": "00d876edef36a5ef95a8cf56f5c1330f2e64a2f6df0a2d19be5032ad19ad074e",
+        "primary-11.png": "015ef8b569be3bb5494a6c484ece7ca9d32bb9a76236300d8e3ca789a7344cce",
+        "primary-12.png": "8862f86946f9a5792a7ec6bc3382bef885acb8fcaa148cb66b49d04e0f404621",
+        "primary-13.png": "8e614e651cd65210527913eafb711c82aece3ad9c1855b2383a33b3b1cd2f94c",
+        "primary-14.png": "caa5947960ea4ed8ba88ddf6a904ef67f0fcb69fe12d509b6ab19bb568e7d458",
+        "primary-15.png": "b1d7bf469e4aacd93df07dae8afbf8339da6a5f94ae1d6c27b800313147f62a3",
+        "secondary-00.png": "20068e7ff42f0c978d01aa34af448e56f443e29f2f2390c990e4ee823558fddc",
+        "secondary-01.png": "5e4b6235db1c2b56f80d1491d63adcf4ac701601e294fb23d38015b8b64451ad",
+        "secondary-02.png": "fdf863b8abcda66540960babfa30c5274c4c99c21f9da5e61afd6d3c4316d065",
+        "secondary-03.png": "6d80b2d0c3bf5d21f07914aa4d2529ae7a15542d56b72e57c70ccbc902659f11",
+        "secondary-04.png": "3bf5adda2c3af448c1845f197c604fc792ab9d40aef8c8b079f977448b976b26",
+        "secondary-05.png": "92c470900e25e16ed8e444b820953f06dc84a97d5d45ea8ce0ea5524d3b2aeda",
+        "secondary-06.png": "b3faf794a77c8194befa5017750f6546acb0ae5e26b4ae5425c1193f5a87c12e",
+        "secondary-07.png": "fcd7644e60110e62a53181714fb65e66520f003c4e865e369eb1f35c8b78e4e5",
+        "powered_primary-00.png": "d5d28bfa2027f8b38a2fd13879dfe13970dd0a97522c8381bd13a893de7e9684",
+        "powered_primary-01.png": "0cf9de2ce1dc053d97505711cfcf6587470aa149e3939d148e6a02dd06e14f0e",
+        "powered_primary-02.png": "69531f2a5ee094e1284b52c7ca7e4869537b181e78ed66317a6b17255c6e5727",
+        "powered_primary-03.png": "1d406db01205d3000f89feb820543dfe5cafdf959957743c6fbce1904acccd2a",
+        "powered_primary-04.png": "1375d2c242ed2dfd98535ae7811022a46eecf6491c68ed554eaeca37ec01e991",
+        "powered_primary-05.png": "6400188cb0e5be07bfb190b4635b9826475e3cb666697ac40f0c3ee954f20e4c",
+        "powered_primary-06.png": "5b9318a005f3ff02e6aa3340feaa04bf29c4f6c26d91a496e44e2a72b5ed4c2f",
+        "powered_primary-07.png": "96aaa28c753494ac9c5b66a6ee67c87e00a9cbc53e06874ae7e5adee529168b6"
+      }
+    },
+    "powered_primary": {
+      "release_anchor": [
+        68,
+        -73
+      ]
+    }
+  }
+}
