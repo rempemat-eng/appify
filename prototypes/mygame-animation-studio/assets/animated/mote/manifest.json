@@ -1,0 +1,4065 @@
+{
+  "id": "mote",
+  "name": "Mote",
+  "view": "E",
+  "frame_size": [
+    192,
+    192
+  ],
+  "foot_pivot": [
+    96,
+    172
+  ],
+  "body_height_target": 96,
+  "fit_factor": 1.0,
+  "sources": [
+    {
+      "width": 1254,
+      "height": 1254,
+      "columns": 8,
+      "rows": 8,
+      "column_cuts": [
+        0,
+        165,
+        320,
+        477,
+        631,
+        794,
+        944,
+        1095,
+        1254
+      ],
+      "row_cuts": [
+        0,
+        162,
+        317,
+        475,
+        631,
+        787,
+        944,
+        1104,
+        1254
+      ],
+      "baselines": {
+        "0": 157.25,
+        "3": 624.0,
+        "5": 937.0,
+        "6": 1093.25,
+        "7": 1242.25
+      },
+      "body_height": 142.25,
+      "body_min_area": 2647,
+      "path": "art-source/animated/mote-64.png",
+      "base_scale": 0.6748681898066784
+    },
+    {
+      "width": 1774,
+      "height": 887,
+      "columns": 4,
+      "rows": 2,
+      "column_cuts": [
+        0,
+        451,
+        885,
+        1334,
+        1774
+      ],
+      "row_cuts": [
+        0,
+        441,
+        887
+      ],
+      "baselines": {
+        "0": 426.0,
+        "1": 859.0
+      },
+      "body_height": 398.0,
+      "body_min_area": 25335,
+      "path": "art-source/animated/mote-special8.png",
+      "base_scale": 0.24120603015075376
+    },
+    {
+      "width": 1254,
+      "height": 1254,
+      "columns": 8,
+      "rows": 8,
+      "column_cuts": [
+        0,
+        154,
+        311,
+        467,
+        624,
+        782,
+        943,
+        1100,
+        1254
+      ],
+      "row_cuts": [
+        0,
+        189,
+        345,
+        502,
+        657,
+        813,
+        967,
+        1121,
+        1254
+      ],
+      "baselines": {
+        "0": 162.0,
+        "1": 320.0,
+        "2": 475.0,
+        "3": 632.0,
+        "4": 789.5,
+        "5": 942.0,
+        "6": 1096.0,
+        "7": 1237.0
+      },
+      "body_height": 102.0,
+      "body_min_area": 1484,
+      "path": "art-source/animated/v3/mote-extension64.png",
+      "base_scale": 0.9411764705882353
+    },
+    {
+      "width": 1254,
+      "height": 1254,
+      "columns": 8,
+      "rows": 5,
+      "column_cuts": [
+        0,
+        156,
+        310,
+        466,
+        622,
+        790,
+        947,
+        1092,
+        1254
+      ],
+      "row_cuts": [
+        0,
+        311,
+        553,
+        796,
+        1029,
+        1254
+      ],
+      "baselines": {
+        "0": 272.0,
+        "1": 511.0,
+        "2": 755.0,
+        "3": 993.0,
+        "4": 1219.25
+      },
+      "body_height": 155.0,
+      "body_min_area": 3446,
+      "path": "art-source/animated/v3/mote-powered40.png",
+      "base_scale": 0.6193548387096774
+    }
+  ],
+  "anchor_sources": [
+    {
+      "path": "art-source/animated/v3/tech-anchors.json",
+      "sha256": "f683926becea8faa182506366a618ca5a0b3a3ba280349f3cdbfdc70468948e6"
+    }
+  ],
+  "clips": {
+    "idle": {
+      "frame_count": 8,
+      "durations": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ],
+      "duration": 1.6,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/mote/idle-00.png",
+          "source": "art-source/animated/mote-64.png",
+          "slot": 0,
+          "source_bounds": [
+            44,
+            15,
+            132,
+            157
+          ],
+          "source_origin": [
+            82.5,
+            157.25
+          ],
+          "scale": 0.6748681898066784,
+          "packed_bounds": [
+            70,
+            76,
+            129,
+            172
+          ],
+          "sha256": "0fc3cc472ad59c3e477e275a92b6456833738f68cd22833fc429264c29131ce2"
+        },
+        {
+          "path": "res://assets/animated/mote/idle-01.png",
+          "source": "art-source/animated/mote-64.png",
+          "slot": 1,
+          "source_bounds": [
+            199,
+            13,
+            287,
+            157
+          ],
+          "source_origin": [
+            242.5,
+            157.25
+          ],
+          "scale": 0.6748681898066784,
+          "packed_bounds": [
+            67,
+            75,
+            126,
+            172
+          ],
+          "sha256": "ca73fd74b34c7f5091e99d763b8ff50e2671ebaf3b67b411e778718772ed66e0"
+        },
+        {
+          "path": "res://assets/animated/mote/idle-02.png",
+          "source": "art-source/animated/mote-64.png",
+          "slot": 2,
+          "source_bounds": [
+            352,
+            15,
+            446,
+            157
+          ],
+          "source_origin": [
+            398.5,
+            157.25
+          ],
+          "scale": 0.6748681898066784,
+          "packed_bounds": [
+            65,
+            76,
+            128,
+            172
+          ],
+          "sha256": "5b2d5e65f476c57be7ef4139d057f8db16081c196f34dc4f92b1ad65b529160d"
+        },
+        {
+          "path": "res://assets/animated/mote/idle-03.png",
+          "source": "art-source/animated/mote-64.png",
+          "slot": 3,
+          "source_bounds": [
+            510,
+            14,
+            603,
+            157
+          ],
+          "source_origin": [
+            554.0,
+            157.25
+          ],
+          "scale": 0.6748681898066784,
+          "packed_bounds": [
+            66,
+            75,
+            129,
+            172
+          ],
+          "sha256": "9f47a966c2ef55bd9ee836b49304e44607c3751b2624fbd94f2ba705dd383bdf"
+        },
+        {
+          "path": "res://assets/animated/mote/idle-04.png",
+          "source": "art-source/animated/mote-64.png",
+          "slot": 4,
+          "source_bounds": [
+            666,
+            12,
+            759,
+            157
+          ],
+          "source_origin": [
+            712.5,
+            157.25
+          ],
+          "scale": 0.6748681898066784,
+          "packed_bounds": [
+            65,
+            74,
+            128,
+            172
+          ],
+          "sha256": "bc14402670127603ef0372ced4ba10427ce0665bc5ddbdf4e0a2d02512b99302"
+        },
+        {
+          "path": "res://assets/animated/mote/idle-05.png",
+          "source": "art-source/animated/mote-64.png",
+          "slot": 5,
+          "source_bounds": [
+            824,
+            12,
+            915,
+            158
+          ],
+          "source_origin": [
+            869.0,
+            157.25
+          ],
+          "scale": 0.6748681898066784,
+          "packed_bounds": [
+            66,
+            74,
+            127,
+            173
+          ],
+          "sha256": "250af1699bbccbc598426fb64ceffb2a94847a5eb4b08ac83af0c09221bd222a"
+        },
+        {
+          "path": "res://assets/animated/mote/idle-06.png",
+          "source": "art-source/animated/mote-64.png",
+          "slot": 6,
+          "source_bounds": [
+            977,
+            13,
+            1066,
+            158
+          ],
+          "source_origin": [
+            1019.5,
+            157.25
+          ],
+          "scale": 0.6748681898066784,
+          "packed_bounds": [
+            67,
+            75,
+            127,
+            173
+          ],
+          "sha256": "04010e9cbb5744342fe7c2a7a84f6b8debd27d43533ba7ea9354ca0bf08ad202"
+        },
+        {
+          "path": "res://assets/animated/mote/idle-07.png",
+          "source": "art-source/animated/mote-64.png",
+          "slot": 7,
+          "source_bounds": [
+            1125,
+            13,
+            1220,
+            157
+          ],
+          "source_origin": [
+            1174.5,
+            157.25
+          ],
+          "scale": 0.6748681898066784,
+          "packed_bounds": [
+            63,
+            75,
+            127,
+            172
+          ],
+          "sha256": "eafb18b5abba1f3105030ce0682b9aa4b28ac832d9fef0935e2f439d9e36872f"
+        }
+      ]
+    },
+    "walk": {
+      "frame_count": 16,
+      "durations": [
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/mote/walk-00.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 0,
+          "source_bounds": [
+            40,
+            59,
+            104,
+            162
+          ],
+          "source_origin": [
+            77.0,
+            162.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            61,
+            75,
+            121,
+            172
+          ],
+          "sha256": "ed394748e64da874777fc43150fed05d0759b98e36ea3874351c9cf35c0d48cf"
+        },
+        {
+          "path": "res://assets/animated/mote/walk-01.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 1,
+          "source_bounds": [
+            198,
+            59,
+            265,
+            162
+          ],
+          "source_origin": [
+            232.5,
+            162.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            64,
+            75,
+            127,
+            172
+          ],
+          "sha256": "1b167aae9ce71fa575b3b755fa7d7022e52e0feca5ba0806455381b97e357ff6"
+        },
+        {
+          "path": "res://assets/animated/mote/walk-02.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 2,
+          "source_bounds": [
+            355,
+            59,
+            422,
+            161
+          ],
+          "source_origin": [
+            389.0,
+            162.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            64,
+            75,
+            127,
+            171
+          ],
+          "sha256": "8fd25c8644dc04397f3bbd426f35529cd8ea5709acd338c910266d4ab1fd5c04"
+        },
+        {
+          "path": "res://assets/animated/mote/walk-03.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 3,
+          "source_bounds": [
+            509,
+            59,
+            579,
+            161
+          ],
+          "source_origin": [
+            545.5,
+            162.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            62,
+            75,
+            128,
+            171
+          ],
+          "sha256": "3e38790404d26c65b8925e1e39b68705b1628165935b0c0d5d590e3854ffaa5d"
+        },
+        {
+          "path": "res://assets/animated/mote/walk-04.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 4,
+          "source_bounds": [
+            671,
+            59,
+            738,
+            162
+          ],
+          "source_origin": [
+            703.0,
+            162.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            66,
+            75,
+            129,
+            172
+          ],
+          "sha256": "3418d52b6a60bba96480fd104958adb6c2fd1ff51e116de3abca277227dc3038"
+        },
+        {
+          "path": "res://assets/animated/mote/walk-05.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 5,
+          "source_bounds": [
+            826,
+            59,
+            894,
+            162
+          ],
+          "source_origin": [
+            862.5,
+            162.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            62,
+            75,
+            126,
+            172
+          ],
+          "sha256": "19f8b2681b31e144c4f66cd3e609e48031b9d694d8a4e0c9b09bcee7a407b928"
+        },
+        {
+          "path": "res://assets/animated/mote/walk-06.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 6,
+          "source_bounds": [
+            981,
+            59,
+            1050,
+            162
+          ],
+          "source_origin": [
+            1021.5,
+            162.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            58,
+            75,
+            123,
+            172
+          ],
+          "sha256": "0a0914f51d997300b7f89e639ac0e5af4c7b6f7eaf26663ee0b95212710e54ea"
+        },
+        {
+          "path": "res://assets/animated/mote/walk-07.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 7,
+          "source_bounds": [
+            1141,
+            59,
+            1207,
+            161
+          ],
+          "source_origin": [
+            1177.0,
+            162.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            62,
+            75,
+            124,
+            171
+          ],
+          "sha256": "50a52a39e08e554f6f2be057477988657a1558a9a895ca4dde843dd29700b621"
+        },
+        {
+          "path": "res://assets/animated/mote/walk-08.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 8,
+          "source_bounds": [
+            40,
+            216,
+            109,
+            319
+          ],
+          "source_origin": [
+            77.0,
+            320.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            61,
+            74,
+            126,
+            171
+          ],
+          "sha256": "456b97e59136a57f965c5548e918a2567feb4b3740e79b8a61b6abe50d08e861"
+        },
+        {
+          "path": "res://assets/animated/mote/walk-09.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 9,
+          "source_bounds": [
+            186,
+            216,
+            272,
+            320
+          ],
+          "source_origin": [
+            232.5,
+            320.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            52,
+            74,
+            133,
+            172
+          ],
+          "sha256": "715e6e3448bb2ac31608c0b26752e61d7c93f46d1283ecda94255dc95761386c"
+        },
+        {
+          "path": "res://assets/animated/mote/walk-10.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 10,
+          "source_bounds": [
+            353,
+            216,
+            424,
+            319
+          ],
+          "source_origin": [
+            389.0,
+            320.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            62,
+            74,
+            129,
+            171
+          ],
+          "sha256": "8c8f4b35d01ad2503a4f40dab9eea97072a36d6f068e215631b84b5e51bedb1c"
+        },
+        {
+          "path": "res://assets/animated/mote/walk-11.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 11,
+          "source_bounds": [
+            506,
+            216,
+            579,
+            319
+          ],
+          "source_origin": [
+            545.5,
+            320.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            59,
+            74,
+            128,
+            171
+          ],
+          "sha256": "fe0ad2eeeba041c2858956e0f1d350da7a91ffd529deabda5cddc263653090dd"
+        },
+        {
+          "path": "res://assets/animated/mote/walk-12.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 12,
+          "source_bounds": [
+            655,
+            216,
+            740,
+            320
+          ],
+          "source_origin": [
+            703.0,
+            320.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            51,
+            74,
+            131,
+            172
+          ],
+          "sha256": "0a5d7547ce02cb87cf44fcfbdbfb2435ce2867059301dceacdb3db1f955d3ab3"
+        },
+        {
+          "path": "res://assets/animated/mote/walk-13.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 13,
+          "source_bounds": [
+            818,
+            216,
+            898,
+            319
+          ],
+          "source_origin": [
+            862.5,
+            320.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            54,
+            74,
+            129,
+            171
+          ],
+          "sha256": "36618d8ce9167b89871c14b0e483353bab4015684e40a8ef8b4ab2b4080564fa"
+        },
+        {
+          "path": "res://assets/animated/mote/walk-14.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 14,
+          "source_bounds": [
+            977,
+            216,
+            1054,
+            320
+          ],
+          "source_origin": [
+            1021.5,
+            320.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            54,
+            74,
+            126,
+            172
+          ],
+          "sha256": "3c2067ae69f0a8d0e8a702989f343af916910075edf26385ec5ab3c6583fac0f"
+        },
+        {
+          "path": "res://assets/animated/mote/walk-15.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 15,
+          "source_bounds": [
+            1136,
+            216,
+            1208,
+            319
+          ],
+          "source_origin": [
+            1177.0,
+            320.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            57,
+            74,
+            125,
+            171
+          ],
+          "sha256": "af2bf72f024f6f99bce1621c8efac6003bde60f361155a15757b8ba07c3d506f"
+        }
+      ]
+    },
+    "primary": {
+      "frame_count": 16,
+      "durations": [
+        0.0385,
+        0.0315,
+        0.0385,
+        0.0315,
+        0.044,
+        0.036,
+        0.0605,
+        0.049499999999999995,
+        0.022,
+        0.018,
+        0.030249999999999996,
+        0.024749999999999998,
+        0.04675,
+        0.03825,
+        0.0715,
+        0.058499999999999996
+      ],
+      "duration": 0.64,
+      "loop": false,
+      "release_frame": 8,
+      "release_time": 0.32999999999999996,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/mote/primary-00.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 16,
+          "source_bounds": [
+            35,
+            369,
+            106,
+            474
+          ],
+          "source_origin": [
+            77.0,
+            475.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            56,
+            72,
+            123,
+            171
+          ],
+          "sha256": "12f493403a66d0f5c8f094c428323819e49b008b46f25858a47d38cd32971ab9"
+        },
+        {
+          "path": "res://assets/animated/mote/primary-01.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 17,
+          "source_bounds": [
+            193,
+            372,
+            271,
+            475
+          ],
+          "source_origin": [
+            232.5,
+            475.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            59,
+            75,
+            132,
+            172
+          ],
+          "sha256": "6bcf2b6423dbc81f888e8dc2e2e05daff678e3d857e1c97a429d5c579114ebb0"
+        },
+        {
+          "path": "res://assets/animated/mote/primary-02.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 18,
+          "source_bounds": [
+            352,
+            372,
+            428,
+            474
+          ],
+          "source_origin": [
+            389.0,
+            475.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            61,
+            75,
+            133,
+            171
+          ],
+          "sha256": "32ab28e8cee47f681fb661314603905ab9f61bbac9fe56fcb4af27db0e4f5af0"
+        },
+        {
+          "path": "res://assets/animated/mote/primary-03.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 19,
+          "source_bounds": [
+            506,
+            372,
+            585,
+            475
+          ],
+          "source_origin": [
+            545.5,
+            475.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            59,
+            75,
+            133,
+            172
+          ],
+          "sha256": "5e88cecfbaa73d1f0152745205c81aefebdcf40e4aa68d4a7c329676efba51b5"
+        },
+        {
+          "path": "res://assets/animated/mote/primary-04.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 20,
+          "source_bounds": [
+            654,
+            372,
+            744,
+            475
+          ],
+          "source_origin": [
+            703.0,
+            475.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            50,
+            75,
+            135,
+            172
+          ],
+          "sha256": "d3509518b88dcc067d97da67b1bce83ca11368bfe3938866df77fef8da363d2d"
+        },
+        {
+          "path": "res://assets/animated/mote/primary-05.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 21,
+          "source_bounds": [
+            816,
+            372,
+            899,
+            475
+          ],
+          "source_origin": [
+            862.5,
+            475.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            52,
+            75,
+            130,
+            172
+          ],
+          "sha256": "9bbc4a590bf469b58439223268adcae4bf302230f5ca32543b92e60ebe5d42b8"
+        },
+        {
+          "path": "res://assets/animated/mote/primary-06.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 22,
+          "source_bounds": [
+            982,
+            372,
+            1055,
+            475
+          ],
+          "source_origin": [
+            1021.5,
+            475.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            59,
+            75,
+            128,
+            172
+          ],
+          "sha256": "4de0eb07528d56baaf95bab278421fc645db45af7a55912cd51fa38dfe53971b"
+        },
+        {
+          "path": "res://assets/animated/mote/primary-07.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 24,
+          "source_bounds": [
+            32,
+            530,
+            137,
+            632
+          ],
+          "source_origin": [
+            77.0,
+            632.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            54,
+            76,
+            153,
+            172
+          ],
+          "sha256": "561fedab155c8fcb293e18fb6829c2e48b9e11f02616450218989c93ab033cff"
+        },
+        {
+          "path": "res://assets/animated/mote/primary-08.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 25,
+          "source_bounds": [
+            184,
+            527,
+            301,
+            631
+          ],
+          "source_origin": [
+            232.5,
+            632.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            50,
+            73,
+            160,
+            171
+          ],
+          "sha256": "0414d9e4de90a999f20d9bc667c6db480e02e8fa0ba08a0ff1301d2be1669598"
+        },
+        {
+          "path": "res://assets/animated/mote/primary-09.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 26,
+          "source_bounds": [
+            333,
+            530,
+            455,
+            631
+          ],
+          "source_origin": [
+            389.0,
+            632.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            43,
+            76,
+            158,
+            171
+          ],
+          "sha256": "17be9b343d76262ff5a96269498c35f62d41f13051bfb75737b8a4e0d9fd64c4"
+        },
+        {
+          "path": "res://assets/animated/mote/primary-10.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 27,
+          "source_bounds": [
+            489,
+            527,
+            607,
+            630
+          ],
+          "source_origin": [
+            545.5,
+            632.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            43,
+            73,
+            154,
+            170
+          ],
+          "sha256": "46d24a057165027e243fb0512fdc85720db92c2c9f3b3620c75b6eee76ea5cca"
+        },
+        {
+          "path": "res://assets/animated/mote/primary-11.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 28,
+          "source_bounds": [
+            657,
+            531,
+            775,
+            632
+          ],
+          "source_origin": [
+            703.0,
+            632.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            53,
+            77,
+            164,
+            172
+          ],
+          "sha256": "0080a294812d8d1d1c8e3d648e76863353e97709b12ece465f52a7cf391dcefd"
+        },
+        {
+          "path": "res://assets/animated/mote/primary-12.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 29,
+          "source_bounds": [
+            830,
+            540,
+            938,
+            630
+          ],
+          "source_origin": [
+            862.5,
+            632.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            65,
+            85,
+            167,
+            170
+          ],
+          "sha256": "1e12dc792db5c877987062cdb34bff6f78e8640b5ea8300d2b78bc2dcf0da300"
+        },
+        {
+          "path": "res://assets/animated/mote/primary-13.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 30,
+          "source_bounds": [
+            990,
+            529,
+            1065,
+            632
+          ],
+          "source_origin": [
+            1021.5,
+            632.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            66,
+            75,
+            137,
+            172
+          ],
+          "sha256": "abf2c02a1c28ac133da01537542f217de0a10c1157ee43e932658ea48e52fb49"
+        },
+        {
+          "path": "res://assets/animated/mote/primary-14.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 23,
+          "source_bounds": [
+            1141,
+            372,
+            1211,
+            475
+          ],
+          "source_origin": [
+            1177.0,
+            475.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            62,
+            75,
+            128,
+            172
+          ],
+          "sha256": "3f0b3344088365fa296ec7d7b3bc00045a2290c05f4daaaf7a55af4324ba375e"
+        },
+        {
+          "path": "res://assets/animated/mote/primary-15.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 31,
+          "source_bounds": [
+            1141,
+            529,
+            1211,
+            632
+          ],
+          "source_origin": [
+            1177.0,
+            632.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            62,
+            75,
+            128,
+            172
+          ],
+          "sha256": "403aedbc601ba8f2283593c95af8b1fa6fb126f24683b4bd93c997cdc02c4e21"
+        }
+      ],
+      "release_anchor": [
+        61,
+        -81
+      ]
+    },
+    "secondary": {
+      "frame_count": 8,
+      "durations": [
+        0.07,
+        0.07,
+        0.08,
+        0.11,
+        0.04,
+        0.055,
+        0.085,
+        0.13
+      ],
+      "duration": 0.64,
+      "loop": false,
+      "release_frame": 4,
+      "release_time": 0.33,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/mote/secondary-00.png",
+          "source": "art-source/animated/mote-64.png",
+          "slot": 24,
+          "source_bounds": [
+            27,
+            484,
+            160,
+            623
+          ],
+          "source_origin": [
+            82.5,
+            624.0
+          ],
+          "scale": 0.6748681898066784,
+          "packed_bounds": [
+            59,
+            78,
+            149,
+            172
+          ],
+          "sha256": "7e7fef07638d22353fe679ecdf3c70c954d6d5162b6ba949c15c00b5f8dcd6cb"
+        },
+        {
+          "path": "res://assets/animated/mote/secondary-01.png",
+          "source": "art-source/animated/mote-64.png",
+          "slot": 25,
+          "source_bounds": [
+            192,
+            481,
+            320,
+            623
+          ],
+          "source_origin": [
+            242.5,
+            624.0
+          ],
+          "scale": 0.6748681898066784,
+          "packed_bounds": [
+            62,
+            75,
+            148,
+            171
+          ],
+          "sha256": "35d69cb2c18c23cdbb98b280c7bb5691944a7602ae001f9043f8f1243e5f412d"
+        },
+        {
+          "path": "res://assets/animated/mote/secondary-02.png",
+          "source": "art-source/animated/mote-64.png",
+          "slot": 26,
+          "source_bounds": [
+            339,
+            488,
+            469,
+            623
+          ],
+          "source_origin": [
+            398.5,
+            624.0
+          ],
+          "scale": 0.6748681898066784,
+          "packed_bounds": [
+            56,
+            80,
+            144,
+            171
+          ],
+          "sha256": "33d8748aba24c73a3baa0a78fce3e8d60bc1fc6ea639edbc499c0d0e25823f44"
+        },
+        {
+          "path": "res://assets/animated/mote/secondary-03.png",
+          "source": "art-source/animated/mote-64.png",
+          "slot": 27,
+          "source_bounds": [
+            490,
+            493,
+            625,
+            622
+          ],
+          "source_origin": [
+            554.0,
+            624.0
+          ],
+          "scale": 0.6748681898066784,
+          "packed_bounds": [
+            53,
+            84,
+            144,
+            171
+          ],
+          "sha256": "d1e6f72a01a3bcaf47bae3c869e82ae216d756f6a9911df06aebbdac8eaca09b"
+        },
+        {
+          "path": "res://assets/animated/mote/secondary-04.png",
+          "source": "art-source/animated/mote-64.png",
+          "slot": 28,
+          "source_bounds": [
+            646,
+            497,
+            779,
+            623
+          ],
+          "source_origin": [
+            712.5,
+            624.0
+          ],
+          "scale": 0.6748681898066784,
+          "packed_bounds": [
+            51,
+            86,
+            141,
+            171
+          ],
+          "sha256": "cb6b41de4e9dfb7968d82fb83bc1c57acb0a60681f85d5b82a252e72527be5e6"
+        },
+        {
+          "path": "res://assets/animated/mote/secondary-05.png",
+          "source": "art-source/animated/mote-64.png",
+          "slot": 29,
+          "source_bounds": [
+            802,
+            507,
+            937,
+            624
+          ],
+          "source_origin": [
+            869.0,
+            624.0
+          ],
+          "scale": 0.6748681898066784,
+          "packed_bounds": [
+            51,
+            93,
+            142,
+            172
+          ],
+          "sha256": "dda6d48cc89d6cffbf0cada486a16d579f4581ffc9ab237a217ebf279a43c67c"
+        },
+        {
+          "path": "res://assets/animated/mote/secondary-06.png",
+          "source": "art-source/animated/mote-64.png",
+          "slot": 30,
+          "source_bounds": [
+            964,
+            483,
+            1077,
+            624
+          ],
+          "source_origin": [
+            1019.5,
+            624.0
+          ],
+          "scale": 0.6748681898066784,
+          "packed_bounds": [
+            59,
+            77,
+            135,
+            172
+          ],
+          "sha256": "1fb806a136d6f392e09109a1e067d175e2e1567a2dc403af34779fc602fc5a37"
+        },
+        {
+          "path": "res://assets/animated/mote/secondary-07.png",
+          "source": "art-source/animated/mote-64.png",
+          "slot": 31,
+          "source_bounds": [
+            1121,
+            481,
+            1220,
+            624
+          ],
+          "source_origin": [
+            1174.5,
+            624.0
+          ],
+          "scale": 0.6748681898066784,
+          "packed_bounds": [
+            60,
+            75,
+            127,
+            172
+          ],
+          "sha256": "dca5a8c4240a91aa61a2326a31d625141ca729af4442fe2bf85173e67160140c"
+        }
+      ],
+      "release_anchor": [
+        24,
+        -54
+      ]
+    },
+    "special": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.08,
+        0.09,
+        0.12,
+        0.06,
+        0.08,
+        0.12,
+        0.18
+      ],
+      "duration": 0.82,
+      "loop": false,
+      "release_frame": 2,
+      "release_time": 0.16999999999999998,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/mote/special-00.png",
+          "source": "art-source/animated/mote-special8.png",
+          "slot": 0,
+          "source_bounds": [
+            108,
+            24,
+            368,
+            426
+          ],
+          "source_origin": [
+            225.5,
+            426.0
+          ],
+          "scale": 0.24120603015075376,
+          "packed_bounds": [
+            68,
+            75,
+            131,
+            172
+          ],
+          "sha256": "9fb64decd2f20e0aa993a82f508c4472708ef66becd943ef9018ba3d2e8a463e"
+        },
+        {
+          "path": "res://assets/animated/mote/special-01.png",
+          "source": "art-source/animated/mote-special8.png",
+          "slot": 1,
+          "source_bounds": [
+            514,
+            24,
+            795,
+            426
+          ],
+          "source_origin": [
+            668.0,
+            426.0
+          ],
+          "scale": 0.24120603015075376,
+          "packed_bounds": [
+            59,
+            75,
+            127,
+            172
+          ],
+          "sha256": "05b6932d91988e8c21c0b286aa161bc240ffe8b9b809d493db7b35d140cf9eab"
+        },
+        {
+          "path": "res://assets/animated/mote/special-02.png",
+          "source": "art-source/animated/mote-special8.png",
+          "slot": 2,
+          "source_bounds": [
+            935,
+            24,
+            1261,
+            426
+          ],
+          "source_origin": [
+            1109.5,
+            426.0
+          ],
+          "scale": 0.24120603015075376,
+          "packed_bounds": [
+            54,
+            75,
+            133,
+            172
+          ],
+          "sha256": "8fd387b0855649ec688a68df6912295060f2302a3cf0d3883d1dd22cb22e98a0"
+        },
+        {
+          "path": "res://assets/animated/mote/special-03.png",
+          "source": "art-source/animated/mote-special8.png",
+          "slot": 3,
+          "source_bounds": [
+            1370,
+            25,
+            1751,
+            426
+          ],
+          "source_origin": [
+            1554.0,
+            426.0
+          ],
+          "scale": 0.24120603015075376,
+          "packed_bounds": [
+            52,
+            75,
+            144,
+            172
+          ],
+          "sha256": "1992a3deb7726da7ccef55c437e397b70716348fd181f2ee1aefc655fab7601c"
+        },
+        {
+          "path": "res://assets/animated/mote/special-04.png",
+          "source": "art-source/animated/mote-special8.png",
+          "slot": 4,
+          "source_bounds": [
+            35,
+            454,
+            438,
+            859
+          ],
+          "source_origin": [
+            225.5,
+            859.0
+          ],
+          "scale": 0.24120603015075376,
+          "packed_bounds": [
+            50,
+            74,
+            147,
+            172
+          ],
+          "sha256": "35c9bf42d7aa42e991ef1738c1214aa12ff81e9fd2ff3723aae38eb0a26211af"
+        },
+        {
+          "path": "res://assets/animated/mote/special-05.png",
+          "source": "art-source/animated/mote-special8.png",
+          "slot": 5,
+          "source_bounds": [
+            468,
+            454,
+            872,
+            858
+          ],
+          "source_origin": [
+            668.0,
+            859.0
+          ],
+          "scale": 0.24120603015075376,
+          "packed_bounds": [
+            48,
+            74,
+            145,
+            171
+          ],
+          "sha256": "a810ef596f1fa18c4c0a1cfe9f129ae621ce24500517c881c62c1580de2c5a78"
+        },
+        {
+          "path": "res://assets/animated/mote/special-06.png",
+          "source": "art-source/animated/mote-special8.png",
+          "slot": 6,
+          "source_bounds": [
+            935,
+            455,
+            1295,
+            859
+          ],
+          "source_origin": [
+            1109.5,
+            859.0
+          ],
+          "scale": 0.24120603015075376,
+          "packed_bounds": [
+            54,
+            75,
+            141,
+            172
+          ],
+          "sha256": "fd960ddde903116664e3d44c9357b8c9092366160c3adfaa8f216687f13b31a4"
+        },
+        {
+          "path": "res://assets/animated/mote/special-07.png",
+          "source": "art-source/animated/mote-special8.png",
+          "slot": 7,
+          "source_bounds": [
+            1402,
+            455,
+            1724,
+            857
+          ],
+          "source_origin": [
+            1554.0,
+            859.0
+          ],
+          "scale": 0.24120603015075376,
+          "packed_bounds": [
+            59,
+            75,
+            137,
+            172
+          ],
+          "sha256": "e197be34ece8faeee2683cc4d474ec91b0069967f02ef53d15d4380cff783535"
+        }
+      ]
+    },
+    "guard": {
+      "frame_count": 8,
+      "durations": [
+        0.055,
+        0.055,
+        0.055,
+        0.055,
+        0.12,
+        0.12,
+        0.12,
+        0.12
+      ],
+      "duration": 0.7,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": 4,
+      "frames": [
+        {
+          "path": "res://assets/animated/mote/guard-00.png",
+          "source": "art-source/animated/mote-64.png",
+          "slot": 40,
+          "source_bounds": [
+            36,
+            793,
+            153,
+            936
+          ],
+          "source_origin": [
+            82.5,
+            937.0
+          ],
+          "scale": 0.6748681898066784,
+          "packed_bounds": [
+            65,
+            75,
+            144,
+            172
+          ],
+          "sha256": "ea8cd9fca3774e38ea6b3484b54a05fb77dedc0624631467ae23a1cf9572e93c"
+        },
+        {
+          "path": "res://assets/animated/mote/guard-01.png",
+          "source": "art-source/animated/mote-64.png",
+          "slot": 41,
+          "source_bounds": [
+            191,
+            794,
+            306,
+            936
+          ],
+          "source_origin": [
+            242.5,
+            937.0
+          ],
+          "scale": 0.6748681898066784,
+          "packed_bounds": [
+            61,
+            75,
+            139,
+            171
+          ],
+          "sha256": "a789aca60e67bd39861d4ee7eac0f242a092cd5f920e1ce895201548b1330d65"
+        },
+        {
+          "path": "res://assets/animated/mote/guard-02.png",
+          "source": "art-source/animated/mote-64.png",
+          "slot": 42,
+          "source_bounds": [
+            341,
+            796,
+            460,
+            936
+          ],
+          "source_origin": [
+            398.5,
+            937.0
+          ],
+          "scale": 0.6748681898066784,
+          "packed_bounds": [
+            57,
+            77,
+            137,
+            171
+          ],
+          "sha256": "7acc31f6ecd8ee3c5fa1e0fcd97c7c963d98b94021f55ef5a5092a8e562270de"
+        },
+        {
+          "path": "res://assets/animated/mote/guard-03.png",
+          "source": "art-source/animated/mote-64.png",
+          "slot": 43,
+          "source_bounds": [
+            501,
+            796,
+            615,
+            936
+          ],
+          "source_origin": [
+            554.0,
+            937.0
+          ],
+          "scale": 0.6748681898066784,
+          "packed_bounds": [
+            60,
+            77,
+            137,
+            171
+          ],
+          "sha256": "37ff5ef6cc008db01c4bba6c59ababe0f547d2cf9a0b8c6bbf3a3fe76fc5a9ce"
+        },
+        {
+          "path": "res://assets/animated/mote/guard-04.png",
+          "source": "art-source/animated/mote-64.png",
+          "slot": 44,
+          "source_bounds": [
+            659,
+            796,
+            769,
+            937
+          ],
+          "source_origin": [
+            712.5,
+            937.0
+          ],
+          "scale": 0.6748681898066784,
+          "packed_bounds": [
+            60,
+            77,
+            134,
+            172
+          ],
+          "sha256": "c7528c4ccc8dc81eb41bd64a6e6e019ebb576a41142df015df93488135e99b17"
+        },
+        {
+          "path": "res://assets/animated/mote/guard-05.png",
+          "source": "art-source/animated/mote-64.png",
+          "slot": 45,
+          "source_bounds": [
+            812,
+            795,
+            922,
+            937
+          ],
+          "source_origin": [
+            869.0,
+            937.0
+          ],
+          "scale": 0.6748681898066784,
+          "packed_bounds": [
+            58,
+            76,
+            132,
+            172
+          ],
+          "sha256": "f5d2449b38a85298d2e07a28e5dddb46747a325b69adb1a42ed0a8727f8dd74f"
+        },
+        {
+          "path": "res://assets/animated/mote/guard-06.png",
+          "source": "art-source/animated/mote-64.png",
+          "slot": 46,
+          "source_bounds": [
+            964,
+            797,
+            1076,
+            937
+          ],
+          "source_origin": [
+            1019.5,
+            937.0
+          ],
+          "scale": 0.6748681898066784,
+          "packed_bounds": [
+            59,
+            78,
+            135,
+            172
+          ],
+          "sha256": "13f3d59ad9d68252da77769f0ad089eaa65fcd402ec2f920b4c8745f694f5f7f"
+        },
+        {
+          "path": "res://assets/animated/mote/guard-07.png",
+          "source": "art-source/animated/mote-64.png",
+          "slot": 47,
+          "source_bounds": [
+            1118,
+            795,
+            1232,
+            937
+          ],
+          "source_origin": [
+            1174.5,
+            937.0
+          ],
+          "scale": 0.6748681898066784,
+          "packed_bounds": [
+            58,
+            76,
+            135,
+            172
+          ],
+          "sha256": "9f1f4e76aa40453bc5706a9f1c9901060392579c3f5f472ab2ef0acc74900db7"
+        }
+      ]
+    },
+    "hit": {
+      "frame_count": 8,
+      "durations": [
+        0.035,
+        0.065,
+        0.09,
+        0.12,
+        0.13,
+        0.15,
+        0.16,
+        0.18
+      ],
+      "duration": 0.9299999999999999,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/mote/hit-00.png",
+          "source": "art-source/animated/mote-64.png",
+          "slot": 48,
+          "source_bounds": [
+            39,
+            950,
+            139,
+            1093
+          ],
+          "source_origin": [
+            82.5,
+            1093.25
+          ],
+          "scale": 0.6748681898066784,
+          "packed_bounds": [
+            67,
+            75,
+            134,
+            172
+          ],
+          "sha256": "db58638b7c8017a21632e908e9b8f6195aee459289f452890cddda4a37f868e3"
+        },
+        {
+          "path": "res://assets/animated/mote/hit-01.png",
+          "source": "art-source/animated/mote-64.png",
+          "slot": 49,
+          "source_bounds": [
+            199,
+            949,
+            301,
+            1093
+          ],
+          "source_origin": [
+            242.5,
+            1093.25
+          ],
+          "scale": 0.6748681898066784,
+          "packed_bounds": [
+            67,
+            75,
+            136,
+            172
+          ],
+          "sha256": "380c53b97789bbdf7908a55e9c71820988d7b51f072f879c46a73a5354486c3b"
+        },
+        {
+          "path": "res://assets/animated/mote/hit-02.png",
+          "source": "art-source/animated/mote-64.png",
+          "slot": 50,
+          "source_bounds": [
+            344,
+            968,
+            453,
+            1093
+          ],
+          "source_origin": [
+            398.5,
+            1093.25
+          ],
+          "scale": 0.6748681898066784,
+          "packed_bounds": [
+            59,
+            87,
+            133,
+            171
+          ],
+          "sha256": "0fe7c1aa9ccf10fdc3815429c00a9d741ad40feb43c84a8f466f50abfb0f70cc"
+        },
+        {
+          "path": "res://assets/animated/mote/hit-03.png",
+          "source": "art-source/animated/mote-64.png",
+          "slot": 51,
+          "source_bounds": [
+            491,
+            976,
+            607,
+            1093
+          ],
+          "source_origin": [
+            554.0,
+            1093.25
+          ],
+          "scale": 0.6748681898066784,
+          "packed_bounds": [
+            53,
+            93,
+            131,
+            172
+          ],
+          "sha256": "0faaf23736635514a5a31e88c6e2aa3f62dc9f1fe3ff8551700971b241d21523"
+        },
+        {
+          "path": "res://assets/animated/mote/hit-04.png",
+          "source": "art-source/animated/mote-64.png",
+          "slot": 52,
+          "source_bounds": [
+            640,
+            987,
+            778,
+            1093
+          ],
+          "source_origin": [
+            712.5,
+            1093.25
+          ],
+          "scale": 0.6748681898066784,
+          "packed_bounds": [
+            47,
+            100,
+            140,
+            172
+          ],
+          "sha256": "479db9e219f549dcc89e809d84eea92b71e0e3b2c728de628c18470e2d6e2a80"
+        },
+        {
+          "path": "res://assets/animated/mote/hit-05.png",
+          "source": "art-source/animated/mote-64.png",
+          "slot": 53,
+          "source_bounds": [
+            812,
+            953,
+            920,
+            1093
+          ],
+          "source_origin": [
+            869.0,
+            1093.25
+          ],
+          "scale": 0.6748681898066784,
+          "packed_bounds": [
+            58,
+            77,
+            131,
+            171
+          ],
+          "sha256": "25fb8f9aab74f5c615e4aaa0ecf34898acc9e9ac13033b43b5153f3f8f913098"
+        },
+        {
+          "path": "res://assets/animated/mote/hit-06.png",
+          "source": "art-source/animated/mote-64.png",
+          "slot": 54,
+          "source_bounds": [
+            973,
+            951,
+            1067,
+            1094
+          ],
+          "source_origin": [
+            1019.5,
+            1093.25
+          ],
+          "scale": 0.6748681898066784,
+          "packed_bounds": [
+            65,
+            76,
+            128,
+            173
+          ],
+          "sha256": "68047c3abbcb0ebb0ad8108ccac7102bae68444dff969b40b96eb5dd8cfa80f6"
+        },
+        {
+          "path": "res://assets/animated/mote/hit-07.png",
+          "source": "art-source/animated/mote-64.png",
+          "slot": 55,
+          "source_bounds": [
+            1117,
+            951,
+            1218,
+            1094
+          ],
+          "source_origin": [
+            1174.5,
+            1093.25
+          ],
+          "scale": 0.6748681898066784,
+          "packed_bounds": [
+            57,
+            76,
+            125,
+            173
+          ],
+          "sha256": "197d0b7830808277dbd7e5838bcb32bb8c707d2e2d89c1f5a5ae19cd345d372e"
+        }
+      ]
+    },
+    "defeat": {
+      "frame_count": 8,
+      "durations": [
+        0.08,
+        0.1,
+        0.1,
+        0.12,
+        0.15,
+        0.18,
+        0.24,
+        0.3
+      ],
+      "duration": 1.27,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/mote/defeat-00.png",
+          "source": "art-source/animated/mote-64.png",
+          "slot": 56,
+          "source_bounds": [
+            38,
+            1105,
+            139,
+            1243
+          ],
+          "source_origin": [
+            82.5,
+            1242.25
+          ],
+          "scale": 0.6748681898066784,
+          "packed_bounds": [
+            66,
+            79,
+            134,
+            172
+          ],
+          "sha256": "0f7a743ab96e14790258669a6acd2aa136af134184ce7fd211e353573882a451"
+        },
+        {
+          "path": "res://assets/animated/mote/defeat-01.png",
+          "source": "art-source/animated/mote-64.png",
+          "slot": 57,
+          "source_bounds": [
+            191,
+            1109,
+            289,
+            1243
+          ],
+          "source_origin": [
+            242.5,
+            1242.25
+          ],
+          "scale": 0.6748681898066784,
+          "packed_bounds": [
+            61,
+            82,
+            127,
+            172
+          ],
+          "sha256": "a01a5c5e6372ff395a6d15c450fda98f075d18ca412e8f19e36380216ec96dd2"
+        },
+        {
+          "path": "res://assets/animated/mote/defeat-02.png",
+          "source": "art-source/animated/mote-64.png",
+          "slot": 58,
+          "source_bounds": [
+            337,
+            1139,
+            445,
+            1242
+          ],
+          "source_origin": [
+            398.5,
+            1242.25
+          ],
+          "scale": 0.6748681898066784,
+          "packed_bounds": [
+            54,
+            102,
+            127,
+            172
+          ],
+          "sha256": "17a6043348a0658ac4ac765202d31b845907373ee87cfd8376f63cdfa6a3d722"
+        },
+        {
+          "path": "res://assets/animated/mote/defeat-03.png",
+          "source": "art-source/animated/mote-64.png",
+          "slot": 59,
+          "source_bounds": [
+            489,
+            1139,
+            608,
+            1242
+          ],
+          "source_origin": [
+            554.0,
+            1242.25
+          ],
+          "scale": 0.6748681898066784,
+          "packed_bounds": [
+            52,
+            102,
+            132,
+            172
+          ],
+          "sha256": "fa39ce9f5e20a180b3616a2cdd3cd9090dfbc8aca3ef89021cbeaa35af224b92"
+        },
+        {
+          "path": "res://assets/animated/mote/defeat-04.png",
+          "source": "art-source/animated/mote-64.png",
+          "slot": 60,
+          "source_bounds": [
+            632,
+            1153,
+            775,
+            1242
+          ],
+          "source_origin": [
+            712.5,
+            1242.25
+          ],
+          "scale": 0.6748681898066784,
+          "packed_bounds": [
+            42,
+            112,
+            138,
+            172
+          ],
+          "sha256": "2de32922aa266f0e54a3df4071435493b7b4e01ef67f5d5d6fe34df275898858"
+        },
+        {
+          "path": "res://assets/animated/mote/defeat-05.png",
+          "source": "art-source/animated/mote-64.png",
+          "slot": 61,
+          "source_bounds": [
+            795,
+            1155,
+            926,
+            1242
+          ],
+          "source_origin": [
+            869.0,
+            1242.25
+          ],
+          "scale": 0.6748681898066784,
+          "packed_bounds": [
+            46,
+            113,
+            134,
+            172
+          ],
+          "sha256": "f6adf60d9b94bea0f2bd2984459e444b3e8572cf5e447b1f3aff3d0883ffb5b0"
+        },
+        {
+          "path": "res://assets/animated/mote/defeat-06.png",
+          "source": "art-source/animated/mote-64.png",
+          "slot": 62,
+          "source_bounds": [
+            954,
+            1149,
+            1074,
+            1242
+          ],
+          "source_origin": [
+            1019.5,
+            1242.25
+          ],
+          "scale": 0.6748681898066784,
+          "packed_bounds": [
+            52,
+            109,
+            133,
+            172
+          ],
+          "sha256": "ff36321937f7597181951f0306c1709051df28408f0a03121dd8b7173103ce04"
+        },
+        {
+          "path": "res://assets/animated/mote/defeat-07.png",
+          "source": "art-source/animated/mote-64.png",
+          "slot": 63,
+          "source_bounds": [
+            1113,
+            1149,
+            1221,
+            1241
+          ],
+          "source_origin": [
+            1174.5,
+            1242.25
+          ],
+          "scale": 0.6748681898066784,
+          "packed_bounds": [
+            54,
+            109,
+            127,
+            171
+          ],
+          "sha256": "73cf865f011a322d0f575be605e29ff54b2b9756af7ce35736615eb6f6860c33"
+        }
+      ]
+    },
+    "jump": {
+      "frame_count": 8,
+      "durations": [
+        0.08,
+        0.055,
+        0.08,
+        0.11,
+        0.11,
+        0.08,
+        0.07,
+        0.115
+      ],
+      "duration": 0.7000000000000001,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/mote/jump-00.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 32,
+          "source_bounds": [
+            39,
+            703,
+            130,
+            789
+          ],
+          "source_origin": [
+            77.0,
+            789.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            60,
+            91,
+            146,
+            172
+          ],
+          "sha256": "37a659d88a2028ca3d4e40400c15a3327c4506df29293a2e1cb4913ecc5e2918",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mote/jump-01.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 33,
+          "source_bounds": [
+            193,
+            682,
+            286,
+            789
+          ],
+          "source_origin": [
+            232.5,
+            789.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            59,
+            71,
+            147,
+            172
+          ],
+          "sha256": "13a6deb1868f1dddf1a4cfea0ced2dc4968c00b4664d6f7300f9aeaf0fce2e73",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mote/jump-02.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 34,
+          "source_bounds": [
+            343,
+            670,
+            433,
+            791
+          ],
+          "source_origin": [
+            389.0,
+            791.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            53,
+            58,
+            138,
+            172
+          ],
+          "sha256": "f50a1180007d7d7546ffe8dc7c48b973e5e571617c74ac1300a9ccabcdff65d6",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mote/jump-03.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 35,
+          "source_bounds": [
+            502,
+            658,
+            595,
+            759
+          ],
+          "source_origin": [
+            545.5,
+            759.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            55,
+            77,
+            143,
+            172
+          ],
+          "sha256": "16ee965f2cd58267258772848a72d43300caa73504738ed35cb21de07ac698cf",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mote/jump-04.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 36,
+          "source_bounds": [
+            658,
+            668,
+            746,
+            791
+          ],
+          "source_origin": [
+            703.0,
+            791.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            54,
+            56,
+            137,
+            172
+          ],
+          "sha256": "941ea0b43e0e09f5efeca20465573fb55b491dc8bc625c306c1ce00dd5541cf4",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mote/jump-05.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 37,
+          "source_bounds": [
+            818,
+            698,
+            918,
+            788
+          ],
+          "source_origin": [
+            862.5,
+            788.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            54,
+            87,
+            147,
+            172
+          ],
+          "sha256": "46bc69e0ce16111e63ae23ba2a507a563ae4dcf47efc205a80926ec10fdb5895",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mote/jump-06.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 38,
+          "source_bounds": [
+            981,
+            702,
+            1081,
+            788
+          ],
+          "source_origin": [
+            1021.5,
+            788.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            58,
+            91,
+            152,
+            172
+          ],
+          "sha256": "1c3b10a27e751d0dfc245aa6e606d9dbd4b059eabbd862dcf754442ea73b41ff",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mote/jump-07.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 39,
+          "source_bounds": [
+            1141,
+            686,
+            1212,
+            789
+          ],
+          "source_origin": [
+            1177.0,
+            789.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            62,
+            75,
+            129,
+            172
+          ],
+          "sha256": "a8706fd507cd826e9dce1a2d1ed81f34c58f1dfea0d1081e4853e483f9156ea1",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "stair_up": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/mote/stair_up-00.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 40,
+          "source_bounds": [
+            40,
+            838,
+            121,
+            942
+          ],
+          "source_origin": [
+            77.0,
+            942.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            61,
+            74,
+            137,
+            172
+          ],
+          "sha256": "60e02f0a69a1feab4a63fb736f3e92170fde28378ff8c0b4b1ba750e4ea4f63e",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mote/stair_up-01.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 41,
+          "source_bounds": [
+            193,
+            838,
+            279,
+            942
+          ],
+          "source_origin": [
+            232.5,
+            942.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            59,
+            74,
+            140,
+            172
+          ],
+          "sha256": "e29ae4548039ce91ef6097c4adb36356045a123d297ce65f1e51c234057e9c17",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mote/stair_up-02.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 42,
+          "source_bounds": [
+            350,
+            837,
+            435,
+            942
+          ],
+          "source_origin": [
+            389.0,
+            942.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            59,
+            73,
+            139,
+            172
+          ],
+          "sha256": "c3a2380195e918e9f09a18da4fff224ce1caed670574340c1fd02bada66e13e2",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mote/stair_up-03.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 43,
+          "source_bounds": [
+            506,
+            836,
+            587,
+            942
+          ],
+          "source_origin": [
+            545.5,
+            942.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            59,
+            72,
+            135,
+            172
+          ],
+          "sha256": "a5f5f85c88a64415ddb9d78a5897866933d88a64a6c4c859bc276ffdd848abfa",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mote/stair_up-04.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 44,
+          "source_bounds": [
+            667,
+            836,
+            747,
+            942
+          ],
+          "source_origin": [
+            703.0,
+            942.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            62,
+            72,
+            137,
+            172
+          ],
+          "sha256": "c60fadea33e9b982822e468c12f8bc092660512a3185bbd86dd6deaeb50728b2",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mote/stair_up-05.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 45,
+          "source_bounds": [
+            830,
+            833,
+            905,
+            942
+          ],
+          "source_origin": [
+            862.5,
+            942.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            65,
+            69,
+            136,
+            172
+          ],
+          "sha256": "691b8986861f45590b8c59c44a5b8bc8b0af5dfba79a45ab7da164236d61a5c9",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mote/stair_up-06.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 46,
+          "source_bounds": [
+            987,
+            838,
+            1069,
+            942
+          ],
+          "source_origin": [
+            1021.5,
+            942.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            64,
+            74,
+            141,
+            172
+          ],
+          "sha256": "9539ed5d276a03d6e63341ec90fdc70266477106c5d16020bb5dc3cde84c4f29",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mote/stair_up-07.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 47,
+          "source_bounds": [
+            1141,
+            837,
+            1211,
+            942
+          ],
+          "source_origin": [
+            1177.0,
+            942.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            62,
+            73,
+            128,
+            172
+          ],
+          "sha256": "52f95ba873c1ae6c488ed5d14bb0836cf2a922b5850a6484bade0564ae52cb26",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "stair_down": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/mote/stair_down-00.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 48,
+          "source_bounds": [
+            41,
+            993,
+            113,
+            1096
+          ],
+          "source_origin": [
+            77.0,
+            1096.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            62,
+            75,
+            130,
+            172
+          ],
+          "sha256": "5e2b1105dec034390ef7a56a1c75db879df1c92b5901930b5368ecafc36481f6",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mote/stair_down-01.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 49,
+          "source_bounds": [
+            192,
+            996,
+            274,
+            1095
+          ],
+          "source_origin": [
+            232.5,
+            1095.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            58,
+            79,
+            135,
+            172
+          ],
+          "sha256": "2b198b00c97461e8a03adc525c6ea1bd5b5e61b174314911ea048040dd391500",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mote/stair_down-02.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 50,
+          "source_bounds": [
+            348,
+            1003,
+            431,
+            1095
+          ],
+          "source_origin": [
+            389.0,
+            1095.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            57,
+            85,
+            135,
+            172
+          ],
+          "sha256": "dbb8a8709132a20f4c1740b6e6ea32b2b15cda8eebb3274df634cf29cf40e409",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mote/stair_down-03.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 51,
+          "source_bounds": [
+            501,
+            1001,
+            588,
+            1094
+          ],
+          "source_origin": [
+            545.5,
+            1094.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            54,
+            84,
+            136,
+            172
+          ],
+          "sha256": "32becbe57064a0c74918fc43ba53c8fed8b4590fe7065fc1c061acc343cf41d7",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mote/stair_down-04.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 52,
+          "source_bounds": [
+            640,
+            1006,
+            751,
+            1095
+          ],
+          "source_origin": [
+            703.0,
+            1095.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            37,
+            88,
+            141,
+            172
+          ],
+          "sha256": "71a0e9d173e9149add9308478a80c75fac96f540beb628a7109fcc64ebe099b7",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mote/stair_down-05.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 53,
+          "source_bounds": [
+            821,
+            994,
+            896,
+            1096
+          ],
+          "source_origin": [
+            862.5,
+            1096.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            57,
+            76,
+            128,
+            172
+          ],
+          "sha256": "39d50dfae4f969e494c420edad18d507da8e0e07e1627d19d7c8857d50431042",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mote/stair_down-06.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 54,
+          "source_bounds": [
+            989,
+            994,
+            1057,
+            1096
+          ],
+          "source_origin": [
+            1021.5,
+            1096.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            65,
+            76,
+            129,
+            172
+          ],
+          "sha256": "88edeb76e154d2e4d83193f79c778c48c6033928913c91261bea03f5b7fb1faa",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mote/stair_down-07.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 55,
+          "source_bounds": [
+            1140,
+            993,
+            1211,
+            1096
+          ],
+          "source_origin": [
+            1177.0,
+            1096.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            61,
+            75,
+            128,
+            172
+          ],
+          "sha256": "698bb6c88ed9a72fc1dcb4d9cb714fc277981b5b4fa0af6e30f1836e90ac5a46",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "dodge": {
+      "frame_count": 8,
+      "durations": [
+        0.055,
+        0.045,
+        0.04,
+        0.045,
+        0.06,
+        0.07,
+        0.08,
+        0.1
+      ],
+      "duration": 0.495,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/mote/dodge-00.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 56,
+          "source_bounds": [
+            39,
+            1141,
+            113,
+            1237
+          ],
+          "source_origin": [
+            77.0,
+            1237.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            60,
+            82,
+            130,
+            172
+          ],
+          "sha256": "766b19e52a6889adecfaa7fcdc113ca6fb9d1a89fcc39db7eae6a7a9cb385926",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mote/dodge-01.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 57,
+          "source_bounds": [
+            186,
+            1148,
+            266,
+            1237
+          ],
+          "source_origin": [
+            232.5,
+            1237.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            52,
+            88,
+            127,
+            172
+          ],
+          "sha256": "597b46288478b2a2526b4f0bd9b7c9440dd5bd472f58f6cb21aee9d96d9bc96d",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mote/dodge-02.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 58,
+          "source_bounds": [
+            337,
+            1159,
+            434,
+            1236
+          ],
+          "source_origin": [
+            389.0,
+            1236.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            47,
+            100,
+            138,
+            172
+          ],
+          "sha256": "fcf114bba2a0452ac449c49109eb6bb6e0625ce51b22e4c6c1079258ac9c34a2",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mote/dodge-03.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 59,
+          "source_bounds": [
+            491,
+            1160,
+            597,
+            1236
+          ],
+          "source_origin": [
+            545.5,
+            1236.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            45,
+            100,
+            145,
+            172
+          ],
+          "sha256": "52f4a38350033a0989ba9a9094a322a847196cc61074f50b8421fdbc5534b7a9",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mote/dodge-04.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 60,
+          "source_bounds": [
+            641,
+            1166,
+            765,
+            1235
+          ],
+          "source_origin": [
+            703.0,
+            1235.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            38,
+            107,
+            155,
+            172
+          ],
+          "sha256": "ab7e2729d4d30bfefc8f690fd10d65e0f09614612577e7164e5056d421f7c596",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mote/dodge-05.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 61,
+          "source_bounds": [
+            815,
+            1167,
+            914,
+            1236
+          ],
+          "source_origin": [
+            862.5,
+            1236.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            51,
+            107,
+            144,
+            172
+          ],
+          "sha256": "4a3a040c9bd937f9f2c44b9c6400beff05c38ec85da2947a4706ae3a3b621300",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mote/dodge-06.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 62,
+          "source_bounds": [
+            985,
+            1157,
+            1067,
+            1237
+          ],
+          "source_origin": [
+            1021.5,
+            1237.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            62,
+            97,
+            139,
+            172
+          ],
+          "sha256": "3c75c9724fb6d0b34440b2193475b44ac522235d8da278ae1f51f4c83f166dd1",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/mote/dodge-07.png",
+          "source": "art-source/animated/v3/mote-extension64.png",
+          "slot": 63,
+          "source_bounds": [
+            1140,
+            1146,
+            1215,
+            1238
+          ],
+          "source_origin": [
+            1177.0,
+            1238.0
+          ],
+          "scale": 0.9411764705882353,
+          "packed_bounds": [
+            61,
+            85,
+            132,
+            172
+          ],
+          "sha256": "08c323a9726fdf84d189b97e33c35b1f0e78dc27ae67caefd5f482f5676dcee0",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "powered_idle": {
+      "frame_count": 8,
+      "durations": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ],
+      "duration": 1.6,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/mote/powered_idle-00.png",
+          "source": "art-source/animated/v3/mote-powered40.png",
+          "slot": 0,
+          "source_bounds": [
+            27,
+            116,
+            129,
+            272
+          ],
+          "source_origin": [
+            78.0,
+            272.0
+          ],
+          "scale": 0.6193548387096774,
+          "packed_bounds": [
+            64,
+            75,
+            127,
+            172
+          ],
+          "sha256": "3c3342dfb03f63d799eeef173962ea2bebe6a0668066a3894b303232da7244ba"
+        },
+        {
+          "path": "res://assets/animated/mote/powered_idle-01.png",
+          "source": "art-source/animated/v3/mote-powered40.png",
+          "slot": 1,
+          "source_bounds": [
+            183,
+            115,
+            281,
+            272
+          ],
+          "source_origin": [
+            233.0,
+            272.0
+          ],
+          "scale": 0.6193548387096774,
+          "packed_bounds": [
+            65,
+            75,
+            126,
+            172
+          ],
+          "sha256": "c2f195285800d9a5a711bf9544965e335d2bf52e1aa168f70c637d10d101f1ff"
+        },
+        {
+          "path": "res://assets/animated/mote/powered_idle-02.png",
+          "source": "art-source/animated/v3/mote-powered40.png",
+          "slot": 2,
+          "source_bounds": [
+            337,
+            115,
+            439,
+            272
+          ],
+          "source_origin": [
+            388.0,
+            272.0
+          ],
+          "scale": 0.6193548387096774,
+          "packed_bounds": [
+            64,
+            75,
+            127,
+            172
+          ],
+          "sha256": "5a3a1419b5d3c2eeac3db2cfec33a4f39f3a6572b72913dcc596fe39f99a8876"
+        },
+        {
+          "path": "res://assets/animated/mote/powered_idle-03.png",
+          "source": "art-source/animated/v3/mote-powered40.png",
+          "slot": 3,
+          "source_bounds": [
+            493,
+            116,
+            595,
+            272
+          ],
+          "source_origin": [
+            544.0,
+            272.0
+          ],
+          "scale": 0.6193548387096774,
+          "packed_bounds": [
+            64,
+            75,
+            127,
+            172
+          ],
+          "sha256": "d9fe7d65be672fcb88d3f55befa0bd7890f796e6eb4a0f907dc0ee8afcdf47a5"
+        },
+        {
+          "path": "res://assets/animated/mote/powered_idle-04.png",
+          "source": "art-source/animated/v3/mote-powered40.png",
+          "slot": 4,
+          "source_bounds": [
+            649,
+            116,
+            750,
+            272
+          ],
+          "source_origin": [
+            706.0,
+            272.0
+          ],
+          "scale": 0.6193548387096774,
+          "packed_bounds": [
+            61,
+            75,
+            124,
+            172
+          ],
+          "sha256": "2fb57f4bf5739c2ae7bac8514e8008c1cae0d5bd281c84835d9883a3c5d6c7f2"
+        },
+        {
+          "path": "res://assets/animated/mote/powered_idle-05.png",
+          "source": "art-source/animated/v3/mote-powered40.png",
+          "slot": 5,
+          "source_bounds": [
+            808,
+            115,
+            907,
+            272
+          ],
+          "source_origin": [
+            868.5,
+            272.0
+          ],
+          "scale": 0.6193548387096774,
+          "packed_bounds": [
+            59,
+            75,
+            120,
+            172
+          ],
+          "sha256": "ee2e5261404f6abe2d68be5680064b4c41f8865c3e6f7eb9932c0f57bb24b047"
+        },
+        {
+          "path": "res://assets/animated/mote/powered_idle-06.png",
+          "source": "art-source/animated/v3/mote-powered40.png",
+          "slot": 6,
+          "source_bounds": [
+            961,
+            116,
+            1062,
+            272
+          ],
+          "source_origin": [
+            1019.5,
+            272.0
+          ],
+          "scale": 0.6193548387096774,
+          "packed_bounds": [
+            60,
+            75,
+            123,
+            172
+          ],
+          "sha256": "08f2269eabf77951607d8f929031fa1a850c82bd853e647be6470c66b54e41ad"
+        },
+        {
+          "path": "res://assets/animated/mote/powered_idle-07.png",
+          "source": "art-source/animated/v3/mote-powered40.png",
+          "slot": 7,
+          "source_bounds": [
+            1119,
+            116,
+            1221,
+            272
+          ],
+          "source_origin": [
+            1173.0,
+            272.0
+          ],
+          "scale": 0.6193548387096774,
+          "packed_bounds": [
+            63,
+            75,
+            126,
+            172
+          ],
+          "sha256": "d37125fc42986404d73bbf59702207417fc20b4f749b9ecc77ad3f6b7f547305"
+        }
+      ]
+    },
+    "powered_walk": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/mote/powered_walk-00.png",
+          "source": "art-source/animated/v3/mote-powered40.png",
+          "slot": 8,
+          "source_bounds": [
+            27,
+            350,
+            136,
+            511
+          ],
+          "source_origin": [
+            78.0,
+            511.0
+          ],
+          "scale": 0.6193548387096774,
+          "packed_bounds": [
+            64,
+            72,
+            132,
+            172
+          ],
+          "sha256": "4d7c601f64eb829a9722b7a7a219ed577d78c4e515fcc5c998d2bf598851440e"
+        },
+        {
+          "path": "res://assets/animated/mote/powered_walk-01.png",
+          "source": "art-source/animated/v3/mote-powered40.png",
+          "slot": 9,
+          "source_bounds": [
+            181,
+            346,
+            296,
+            511
+          ],
+          "source_origin": [
+            233.0,
+            511.0
+          ],
+          "scale": 0.6193548387096774,
+          "packed_bounds": [
+            64,
+            70,
+            135,
+            172
+          ],
+          "sha256": "7dd004e155eae6109ecd4e30938642e28629b19bbe695d7d888cdf24ac28b628"
+        },
+        {
+          "path": "res://assets/animated/mote/powered_walk-02.png",
+          "source": "art-source/animated/v3/mote-powered40.png",
+          "slot": 10,
+          "source_bounds": [
+            334,
+            346,
+            452,
+            511
+          ],
+          "source_origin": [
+            388.0,
+            511.0
+          ],
+          "scale": 0.6193548387096774,
+          "packed_bounds": [
+            63,
+            70,
+            136,
+            172
+          ],
+          "sha256": "2554415a0e71078c0d59e1818bf65e3f8b2dab25d7ca4b4b1a0df22d47fa4ead"
+        },
+        {
+          "path": "res://assets/animated/mote/powered_walk-03.png",
+          "source": "art-source/animated/v3/mote-powered40.png",
+          "slot": 11,
+          "source_bounds": [
+            496,
+            348,
+            599,
+            511
+          ],
+          "source_origin": [
+            544.0,
+            511.0
+          ],
+          "scale": 0.6193548387096774,
+          "packed_bounds": [
+            66,
+            71,
+            130,
+            172
+          ],
+          "sha256": "a6645c250ba61cd018fe516876213898ae83c3371ee08420ea09c052b0081728"
+        },
+        {
+          "path": "res://assets/animated/mote/powered_walk-04.png",
+          "source": "art-source/animated/v3/mote-powered40.png",
+          "slot": 12,
+          "source_bounds": [
+            646,
+            348,
+            754,
+            511
+          ],
+          "source_origin": [
+            706.0,
+            511.0
+          ],
+          "scale": 0.6193548387096774,
+          "packed_bounds": [
+            59,
+            71,
+            126,
+            172
+          ],
+          "sha256": "346db9436f4c9e87c0edf04abd22d934c746540f28cecf7096e1e3285b6b2559"
+        },
+        {
+          "path": "res://assets/animated/mote/powered_walk-05.png",
+          "source": "art-source/animated/v3/mote-powered40.png",
+          "slot": 13,
+          "source_bounds": [
+            799,
+            347,
+            919,
+            511
+          ],
+          "source_origin": [
+            868.5,
+            511.0
+          ],
+          "scale": 0.6193548387096774,
+          "packed_bounds": [
+            53,
+            70,
+            127,
+            172
+          ],
+          "sha256": "9671b6de46310af058c584925408bbe29b027b1572c594c3c1c0cf14b4ab1bee"
+        },
+        {
+          "path": "res://assets/animated/mote/powered_walk-06.png",
+          "source": "art-source/animated/v3/mote-powered40.png",
+          "slot": 14,
+          "source_bounds": [
+            948,
+            346,
+            1064,
+            511
+          ],
+          "source_origin": [
+            1019.5,
+            511.0
+          ],
+          "scale": 0.6193548387096774,
+          "packed_bounds": [
+            53,
+            70,
+            124,
+            172
+          ],
+          "sha256": "f83ad289be236e0b5c325bf270fca20c127df017a1532942d9bfb9a3b2eb9ee0"
+        },
+        {
+          "path": "res://assets/animated/mote/powered_walk-07.png",
+          "source": "art-source/animated/v3/mote-powered40.png",
+          "slot": 15,
+          "source_bounds": [
+            1109,
+            347,
+            1222,
+            511
+          ],
+          "source_origin": [
+            1173.0,
+            511.0
+          ],
+          "scale": 0.6193548387096774,
+          "packed_bounds": [
+            56,
+            70,
+            126,
+            172
+          ],
+          "sha256": "995664eb8fa99a50f8b9a6a5d4c14c8f2daeec46fa1eba47660759258b17acbd"
+        }
+      ]
+    },
+    "powered_primary": {
+      "frame_count": 8,
+      "durations": [
+        0.07,
+        0.07,
+        0.08,
+        0.11,
+        0.04,
+        0.055,
+        0.085,
+        0.13
+      ],
+      "duration": 0.64,
+      "loop": false,
+      "release_frame": 4,
+      "release_time": 0.33,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/mote/powered_primary-00.png",
+          "source": "art-source/animated/v3/mote-powered40.png",
+          "slot": 16,
+          "source_bounds": [
+            21,
+            597,
+            139,
+            755
+          ],
+          "source_origin": [
+            78.0,
+            755.0
+          ],
+          "scale": 0.6193548387096774,
+          "packed_bounds": [
+            61,
+            74,
+            134,
+            172
+          ],
+          "sha256": "05a1b95be23ff7fdadcdf985f4be2193a8a75deec1e1750a956c687bf2ae7fce"
+        },
+        {
+          "path": "res://assets/animated/mote/powered_primary-01.png",
+          "source": "art-source/animated/v3/mote-powered40.png",
+          "slot": 17,
+          "source_bounds": [
+            173,
+            594,
+            291,
+            755
+          ],
+          "source_origin": [
+            233.0,
+            755.0
+          ],
+          "scale": 0.6193548387096774,
+          "packed_bounds": [
+            59,
+            72,
+            132,
+            172
+          ],
+          "sha256": "7db526c1a25fbb5f68c407ddb5234cf0a8b7ae87684947923980ca8254540fda"
+        },
+        {
+          "path": "res://assets/animated/mote/powered_primary-02.png",
+          "source": "art-source/animated/v3/mote-powered40.png",
+          "slot": 18,
+          "source_bounds": [
+            324,
+            599,
+            449,
+            755
+          ],
+          "source_origin": [
+            388.0,
+            755.0
+          ],
+          "scale": 0.6193548387096774,
+          "packed_bounds": [
+            56,
+            75,
+            133,
+            172
+          ],
+          "sha256": "6ec49db5f223582c9fa60f0efe09e2efd3a628152b1d878c9e1879cd03c0177a"
+        },
+        {
+          "path": "res://assets/animated/mote/powered_primary-03.png",
+          "source": "art-source/animated/v3/mote-powered40.png",
+          "slot": 19,
+          "source_bounds": [
+            475,
+            600,
+            601,
+            755
+          ],
+          "source_origin": [
+            544.0,
+            755.0
+          ],
+          "scale": 0.6193548387096774,
+          "packed_bounds": [
+            53,
+            76,
+            131,
+            172
+          ],
+          "sha256": "00a62aedccd446ad6dd7743ef56ef10fe64a0f1477e90c5febe0f7508a254bb8"
+        },
+        {
+          "path": "res://assets/animated/mote/powered_primary-04.png",
+          "source": "art-source/animated/v3/mote-powered40.png",
+          "slot": 20,
+          "source_bounds": [
+            629,
+            598,
+            790,
+            755
+          ],
+          "source_origin": [
+            706.0,
+            755.0
+          ],
+          "scale": 0.6193548387096774,
+          "packed_bounds": [
+            48,
+            75,
+            148,
+            172
+          ],
+          "sha256": "f3002912f0a297e360c53d2a8f9550620ba7b0487c8c161ae8d309b635fc3c92"
+        },
+        {
+          "path": "res://assets/animated/mote/powered_primary-05.png",
+          "source": "art-source/animated/v3/mote-powered40.png",
+          "slot": 21,
+          "source_bounds": [
+            793,
+            599,
+            947,
+            755
+          ],
+          "source_origin": [
+            868.5,
+            755.0
+          ],
+          "scale": 0.6193548387096774,
+          "packed_bounds": [
+            49,
+            75,
+            144,
+            172
+          ],
+          "sha256": "4eb6e0b9af2c57f7403a8e3330cf9ed590ae883642cc06b9d93567735cbe8aa9"
+        },
+        {
+          "path": "res://assets/animated/mote/powered_primary-06.png",
+          "source": "art-source/animated/v3/mote-powered40.png",
+          "slot": 22,
+          "source_bounds": [
+            958,
+            602,
+            1080,
+            755
+          ],
+          "source_origin": [
+            1019.5,
+            755.0
+          ],
+          "scale": 0.6193548387096774,
+          "packed_bounds": [
+            58,
+            77,
+            134,
+            172
+          ],
+          "sha256": "c36aaf2b9dbac3435b25179d7d163ea3dce167b1f41a7ce22f7a5ce7cb0eeb6d"
+        },
+        {
+          "path": "res://assets/animated/mote/powered_primary-07.png",
+          "source": "art-source/animated/v3/mote-powered40.png",
+          "slot": 23,
+          "source_bounds": [
+            1115,
+            594,
+            1224,
+            755
+          ],
+          "source_origin": [
+            1173.0,
+            755.0
+          ],
+          "scale": 0.6193548387096774,
+          "packed_bounds": [
+            60,
+            72,
+            128,
+            172
+          ],
+          "sha256": "8ed6ed20c9a709675ca8d06dcb46f231806c5d35f1304427f785d9693b5ba6e0"
+        }
+      ],
+      "release_anchor": [
+        51,
+        -68
+      ]
+    },
+    "powered_guard": {
+      "frame_count": 8,
+      "durations": [
+        0.055,
+        0.055,
+        0.055,
+        0.055,
+        0.12,
+        0.12,
+        0.12,
+        0.12
+      ],
+      "duration": 0.7,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": 4,
+      "frames": [
+        {
+          "path": "res://assets/animated/mote/powered_guard-00.png",
+          "source": "art-source/animated/v3/mote-powered40.png",
+          "slot": 24,
+          "source_bounds": [
+            23,
+            838,
+            152,
+            993
+          ],
+          "source_origin": [
+            78.0,
+            993.0
+          ],
+          "scale": 0.6193548387096774,
+          "packed_bounds": [
+            62,
+            76,
+            142,
+            172
+          ],
+          "sha256": "543e5d118d17367fcc5263fd4aa8ea9e7d6482f5b447052c75553789e3aa8990"
+        },
+        {
+          "path": "res://assets/animated/mote/powered_guard-01.png",
+          "source": "art-source/animated/v3/mote-powered40.png",
+          "slot": 25,
+          "source_bounds": [
+            180,
+            836,
+            305,
+            993
+          ],
+          "source_origin": [
+            233.0,
+            993.0
+          ],
+          "scale": 0.6193548387096774,
+          "packed_bounds": [
+            63,
+            75,
+            140,
+            172
+          ],
+          "sha256": "0961991d47e303494b54af43367ce29105686a7f7726726ab0d3af8fa0a9be7f"
+        },
+        {
+          "path": "res://assets/animated/mote/powered_guard-02.png",
+          "source": "art-source/animated/v3/mote-powered40.png",
+          "slot": 26,
+          "source_bounds": [
+            336,
+            836,
+            466,
+            993
+          ],
+          "source_origin": [
+            388.0,
+            993.0
+          ],
+          "scale": 0.6193548387096774,
+          "packed_bounds": [
+            64,
+            75,
+            145,
+            172
+          ],
+          "sha256": "44893e9ca34c4ff051c076b7e8f31fc2d179546a33d9131ab14da83b02c23992"
+        },
+        {
+          "path": "res://assets/animated/mote/powered_guard-03.png",
+          "source": "art-source/animated/v3/mote-powered40.png",
+          "slot": 27,
+          "source_bounds": [
+            494,
+            840,
+            621,
+            993
+          ],
+          "source_origin": [
+            544.0,
+            993.0
+          ],
+          "scale": 0.6193548387096774,
+          "packed_bounds": [
+            65,
+            77,
+            144,
+            172
+          ],
+          "sha256": "713d5cc59887ae45e8157c476234779338c5c2ebe6c2af18f3c6ce00bb1597d9"
+        },
+        {
+          "path": "res://assets/animated/mote/powered_guard-04.png",
+          "source": "art-source/animated/v3/mote-powered40.png",
+          "slot": 28,
+          "source_bounds": [
+            645,
+            836,
+            779,
+            993
+          ],
+          "source_origin": [
+            706.0,
+            993.0
+          ],
+          "scale": 0.6193548387096774,
+          "packed_bounds": [
+            58,
+            75,
+            141,
+            172
+          ],
+          "sha256": "add23286b4864248df4afaab6efd7e680315656d251fe49e64a398a57c4c01b8"
+        },
+        {
+          "path": "res://assets/animated/mote/powered_guard-05.png",
+          "source": "art-source/animated/v3/mote-powered40.png",
+          "slot": 29,
+          "source_bounds": [
+            803,
+            838,
+            935,
+            993
+          ],
+          "source_origin": [
+            868.5,
+            993.0
+          ],
+          "scale": 0.6193548387096774,
+          "packed_bounds": [
+            55,
+            76,
+            137,
+            172
+          ],
+          "sha256": "5e85bd20cc8b081ec082d862871744993a7b6cb91840f07ed89e3ce3d384a49d"
+        },
+        {
+          "path": "res://assets/animated/mote/powered_guard-06.png",
+          "source": "art-source/animated/v3/mote-powered40.png",
+          "slot": 30,
+          "source_bounds": [
+            959,
+            838,
+            1083,
+            993
+          ],
+          "source_origin": [
+            1019.5,
+            993.0
+          ],
+          "scale": 0.6193548387096774,
+          "packed_bounds": [
+            59,
+            76,
+            136,
+            172
+          ],
+          "sha256": "9060f000f1ff3f66b99b62a63cc4632bc53cb118458692f17edd8f69eb39ec57"
+        },
+        {
+          "path": "res://assets/animated/mote/powered_guard-07.png",
+          "source": "art-source/animated/v3/mote-powered40.png",
+          "slot": 31,
+          "source_bounds": [
+            1112,
+            833,
+            1232,
+            993
+          ],
+          "source_origin": [
+            1173.0,
+            993.0
+          ],
+          "scale": 0.6193548387096774,
+          "packed_bounds": [
+            58,
+            73,
+            132,
+            172
+          ],
+          "sha256": "0b8f3796c01f1ce1b3afc907f35a64a044273183041e59dd0d8b25c5a58b9b27"
+        }
+      ]
+    },
+    "powered_exit": {
+      "frame_count": 8,
+      "durations": [
+        0.11,
+        0.1,
+        0.1,
+        0.09,
+        0.09,
+        0.1,
+        0.12,
+        0.15
+      ],
+      "duration": 0.86,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/mote/powered_exit-00.png",
+          "source": "art-source/animated/v3/mote-powered40.png",
+          "slot": 32,
+          "source_bounds": [
+            26,
+            1066,
+            129,
+            1219
+          ],
+          "source_origin": [
+            78.0,
+            1219.25
+          ],
+          "scale": 0.6193548387096774,
+          "packed_bounds": [
+            64,
+            77,
+            128,
+            172
+          ],
+          "sha256": "e21fb8c181c7b326f537921f4556b214b68854b5705e3d5764524cf9462850c5"
+        },
+        {
+          "path": "res://assets/animated/mote/powered_exit-01.png",
+          "source": "art-source/animated/v3/mote-powered40.png",
+          "slot": 33,
+          "source_bounds": [
+            182,
+            1066,
+            283,
+            1219
+          ],
+          "source_origin": [
+            233.0,
+            1219.25
+          ],
+          "scale": 0.6193548387096774,
+          "packed_bounds": [
+            64,
+            77,
+            127,
+            172
+          ],
+          "sha256": "7f6835270aa23e4cb6591ef0647cc33dd3832c657b6115202ae502a681921645"
+        },
+        {
+          "path": "res://assets/animated/mote/powered_exit-02.png",
+          "source": "art-source/animated/v3/mote-powered40.png",
+          "slot": 34,
+          "source_bounds": [
+            336,
+            1066,
+            439,
+            1219
+          ],
+          "source_origin": [
+            388.0,
+            1219.25
+          ],
+          "scale": 0.6193548387096774,
+          "packed_bounds": [
+            64,
+            77,
+            128,
+            172
+          ],
+          "sha256": "74601ca65540e09dcce33e330f521fea05ce70b4a87229a5be393f43007c0833"
+        },
+        {
+          "path": "res://assets/animated/mote/powered_exit-03.png",
+          "source": "art-source/animated/v3/mote-powered40.png",
+          "slot": 35,
+          "source_bounds": [
+            492,
+            1066,
+            594,
+            1219
+          ],
+          "source_origin": [
+            544.0,
+            1219.25
+          ],
+          "scale": 0.6193548387096774,
+          "packed_bounds": [
+            64,
+            77,
+            127,
+            172
+          ],
+          "sha256": "02f17b3c0611f04d000424017e0d8c1a24a4003f009dc7318c20987e61b1196b"
+        },
+        {
+          "path": "res://assets/animated/mote/powered_exit-04.png",
+          "source": "art-source/animated/v3/mote-powered40.png",
+          "slot": 36,
+          "source_bounds": [
+            650,
+            1066,
+            752,
+            1220
+          ],
+          "source_origin": [
+            706.0,
+            1219.25
+          ],
+          "scale": 0.6193548387096774,
+          "packed_bounds": [
+            61,
+            77,
+            124,
+            172
+          ],
+          "sha256": "298440902d4644608fa7ed1863c2f9466d50db5999ea0f22985e5c33609c087b"
+        },
+        {
+          "path": "res://assets/animated/mote/powered_exit-05.png",
+          "source": "art-source/animated/v3/mote-powered40.png",
+          "slot": 37,
+          "source_bounds": [
+            808,
+            1062,
+            906,
+            1220
+          ],
+          "source_origin": [
+            868.5,
+            1219.25
+          ],
+          "scale": 0.6193548387096774,
+          "packed_bounds": [
+            59,
+            75,
+            120,
+            173
+          ],
+          "sha256": "7bafb1bcd7cebaab2c4ba46803ffc787917cb5f564ab029b76a5d751b00e1bfe"
+        },
+        {
+          "path": "res://assets/animated/mote/powered_exit-06.png",
+          "source": "art-source/animated/v3/mote-powered40.png",
+          "slot": 38,
+          "source_bounds": [
+            965,
+            1064,
+            1064,
+            1219
+          ],
+          "source_origin": [
+            1019.5,
+            1219.25
+          ],
+          "scale": 0.6193548387096774,
+          "packed_bounds": [
+            62,
+            76,
+            123,
+            172
+          ],
+          "sha256": "8f0e33e4a8661bd1c0f3dfb198fb5ef700b1d386c0153da5522444b973769a1a"
+        },
+        {
+          "path": "res://assets/animated/mote/powered_exit-07.png",
+          "source": "art-source/animated/v3/mote-powered40.png",
+          "slot": 39,
+          "source_bounds": [
+            1122,
+            1065,
+            1221,
+            1219
+          ],
+          "source_origin": [
+            1173.0,
+            1219.25
+          ],
+          "scale": 0.6193548387096774,
+          "packed_bounds": [
+            64,
+            76,
+            125,
+            171
+          ],
+          "sha256": "7d7729120c35420e13f632bd388cfe6cb64a29d245e06c84e2775edf30486723"
+        }
+      ]
+    }
+  },
+  "pose_count": 152
+}

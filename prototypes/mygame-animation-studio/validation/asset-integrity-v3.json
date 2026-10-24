@@ -1,0 +1,76 @@
+{
+  "characters": 14,
+  "distinct_exported_poses": 2135,
+  "results": [
+    {
+      "id": "bramble",
+      "poses": 152,
+      "status": "passed"
+    },
+    {
+      "id": "morel",
+      "poses": 152,
+      "status": "passed"
+    },
+    {
+      "id": "velvet",
+      "poses": 151,
+      "status": "passed"
+    },
+    {
+      "id": "cairn",
+      "poses": 152,
+      "status": "passed"
+    },
+    {
+      "id": "iona",
+      "poses": 152,
+      "status": "passed"
+    },
+    {
+      "id": "tam",
+      "poses": 152,
+      "status": "passed"
+    },
+    {
+      "id": "brine",
+      "poses": 152,
+      "status": "passed"
+    },
+    {
+      "id": "pendle",
+      "poses": 160,
+      "status": "passed"
+    },
+    {
+      "id": "mirra",
+      "poses": 152,
+      "status": "passed"
+    },
+    {
+      "id": "ashe",
+      "poses": 152,
+      "status": "passed"
+    },
+    {
+      "id": "clack",
+      "poses": 152,
+      "status": "passed"
+    },
+    {
+      "id": "nix",
+      "poses": 152,
+      "status": "passed"
+    },
+    {
+      "id": "rook",
+      "poses": 152,
+      "status": "passed"
+    },
+    {
+      "id": "mote",
+      "poses": 152,
+      "status": "passed"
+    }
+  ]
+}

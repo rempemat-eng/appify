@@ -1,0 +1,225 @@
+{
+  "version": 1,
+  "frame_size": [
+    192,
+    192
+  ],
+  "foot_pivot": [
+    96,
+    172
+  ],
+  "view": "E",
+  "characters": [
+    {
+      "id": "bramble",
+      "name": "Bramble",
+      "manifest": "res://assets/animated/bramble/manifest.json",
+      "frames": "res://assets/animated/bramble/frames.tres",
+      "pose_count": 152,
+      "frame_size": [
+        192,
+        192
+      ],
+      "foot_pivot": [
+        96,
+        172
+      ]
+    },
+    {
+      "id": "morel",
+      "name": "Morel",
+      "manifest": "res://assets/animated/morel/manifest.json",
+      "frames": "res://assets/animated/morel/frames.tres",
+      "pose_count": 152,
+      "frame_size": [
+        192,
+        192
+      ],
+      "foot_pivot": [
+        96,
+        172
+      ]
+    },
+    {
+      "id": "velvet",
+      "name": "Velvet",
+      "manifest": "res://assets/animated/velvet/manifest.json",
+      "frames": "res://assets/animated/velvet/frames.tres",
+      "pose_count": 151,
+      "frame_size": [
+        192,
+        192
+      ],
+      "foot_pivot": [
+        96,
+        172
+      ]
+    },
+    {
+      "id": "cairn",
+      "name": "Cairn",
+      "manifest": "res://assets/animated/cairn/manifest.json",
+      "frames": "res://assets/animated/cairn/frames.tres",
+      "pose_count": 152,
+      "frame_size": [
+        192,
+        192
+      ],
+      "foot_pivot": [
+        96,
+        172
+      ]
+    },
+    {
+      "id": "iona",
+      "name": "Iona",
+      "manifest": "res://assets/animated/iona/manifest.json",
+      "frames": "res://assets/animated/iona/frames.tres",
+      "pose_count": 152,
+      "frame_size": [
+        224,
+        192
+      ],
+      "foot_pivot": [
+        96,
+        172
+      ]
+    },
+    {
+      "id": "tam",
+      "name": "Tam",
+      "manifest": "res://assets/animated/tam/manifest.json",
+      "frames": "res://assets/animated/tam/frames.tres",
+      "pose_count": 152,
+      "frame_size": [
+        192,
+        192
+      ],
+      "foot_pivot": [
+        96,
+        172
+      ]
+    },
+    {
+      "id": "brine",
+      "name": "Brine",
+      "manifest": "res://assets/animated/brine/manifest.json",
+      "frames": "res://assets/animated/brine/frames.tres",
+      "pose_count": 152,
+      "frame_size": [
+        192,
+        192
+      ],
+      "foot_pivot": [
+        96,
+        172
+      ]
+    },
+    {
+      "id": "pendle",
+      "name": "Pendle",
+      "manifest": "res://assets/animated/pendle/manifest.json",
+      "frames": "res://assets/animated/pendle/frames.tres",
+      "pose_count": 160,
+      "frame_size": [
+        192,
+        192
+      ],
+      "foot_pivot": [
+        96,
+        172
+      ]
+    },
+    {
+      "id": "mirra",
+      "name": "Mirra",
+      "manifest": "res://assets/animated/mirra/manifest.json",
+      "frames": "res://assets/animated/mirra/frames.tres",
+      "pose_count": 152,
+      "frame_size": [
+        192,
+        192
+      ],
+      "foot_pivot": [
+        96,
+        172
+      ]
+    },
+    {
+      "id": "ashe",
+      "name": "Ashe",
+      "manifest": "res://assets/animated/ashe/manifest.json",
+      "frames": "res://assets/animated/ashe/frames.tres",
+      "pose_count": 152,
+      "frame_size": [
+        256,
+        192
+      ],
+      "foot_pivot": [
+        132,
+        172
+      ]
+    },
+    {
+      "id": "clack",
+      "name": "Clack",
+      "manifest": "res://assets/animated/clack/manifest.json",
+      "frames": "res://assets/animated/clack/frames.tres",
+      "pose_count": 152,
+      "frame_size": [
+        192,
+        192
+      ],
+      "foot_pivot": [
+        96,
+        172
+      ]
+    },
+    {
+      "id": "nix",
+      "name": "Nix",
+      "manifest": "res://assets/animated/nix/manifest.json",
+      "frames": "res://assets/animated/nix/frames.tres",
+      "pose_count": 152,
+      "frame_size": [
+        192,
+        192
+      ],
+      "foot_pivot": [
+        96,
+        172
+      ]
+    },
+    {
+      "id": "rook",
+      "name": "Rook",
+      "manifest": "res://assets/animated/rook/manifest.json",
+      "frames": "res://assets/animated/rook/frames.tres",
+      "pose_count": 152,
+      "frame_size": [
+        192,
+        192
+      ],
+      "foot_pivot": [
+        96,
+        172
+      ]
+    },
+    {
+      "id": "mote",
+      "name": "Mote",
+      "manifest": "res://assets/animated/mote/manifest.json",
+      "frames": "res://assets/animated/mote/frames.tres",
+      "pose_count": 152,
+      "frame_size": [
+        192,
+        192
+      ],
+      "foot_pivot": [
+        96,
+        172
+      ]
+    }
+  ],
+  "pose_count": 2135
+}

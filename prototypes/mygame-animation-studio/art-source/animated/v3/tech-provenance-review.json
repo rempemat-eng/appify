@@ -1,0 +1,156 @@
+{
+  "date": "2026-10-24",
+  "tool": "built-in image_gen",
+  "owner": "art_tech_v3",
+  "entries": [
+    {
+      "character": "ashe",
+      "file": "ashe-extension64.png",
+      "columns": 8,
+      "rows": 8,
+      "prompt": "Use case: identity-preserve. Asset type: new production pixel-animation extension for exact ASHE model from reference atlas. ASHE the adult ember knight: short red hair, readable uncovered human face, steel plate armour with brass trim, crimson split tabard and long crimson cape, brown boots, ONE straight silver sword held in right hand, ONE steel helmet carried at waist (NEVER worn in this BASE sheet). Armour remains same rigid plates and cape attachment, no extra sword. Preserve exact sprite palette, East-facing3/4 view, source-like pixel clusters, upper-left lighting and standing scale. Create EXACTLY64 FULLY VISIBLE DISTINCT poses, 8 EQUAL columns x8 EQUAL rows. No text/gridlines/ground/shadows/particles/background, genuine transparent RGBA, ample gutters between all cells. Feet use SAME LOCAL BASELINE each cell; runtime controls actor elevation, NEVER whole-body upward/downward trajectory. Row1+row2 = ONE cohesive16-pose walk cycle, alternating contact/down/passing/up for both legs, weight transfer, overlapping cape/gear; every frame is a new joint drawing. Row3+row4 = ONE16-pose PRIMARY attack, single sword slash to east:8 windup/load breakdowns in row3, then8 contact/followthrough/return breakdowns in row4. One clean decisive extended sword contact at row4column1, silhouette balanced, no extra blade or motion effects. Row5 =8 JUMP poses: anticipation/crouch,takeoff leg extension,rise knees,tucked apex,fall extension,first landing,landing absorption,ready. Keep all poses fully visible at baseline even airborne. Row6=8 STAIR ASCENT alternating knee lift, planted push, passing and transfer. Row7=8 STAIR DESCENT alternating reaching foot, supported braking, opposite-leg passing. Draw no stairs. Row8=8 low EASTWARD dodge-step poses: anticipate/load/leading step/glide/trailing catch/brake/settle/ready. Distinct anatomy and garment deformation, NO duplicates, no smear/blur, no direction flips, no new equipment. Match reference EXACT identity/body mass. Whole figure and weapons fit separate cell, generous padding.",
+      "builtin_imagegen": true
+    },
+    {
+      "character": "clack",
+      "file": "clack-extension64.png",
+      "columns": 8,
+      "rows": 8,
+      "prompt": "Use case: identity-preserve. Asset type: new production pixel-animation extension for exact CLACK model from reference atlas. CLACK the older broad HUMAN heavy gunner: bald head and grey moustache, teal workshirt, blue trousers, dark boots, brown supporting shoulder harness with yellow pressure chamber/spare rocket rack. One heavy dark grey shoulder rocket launcher pointing east, two attached grips and both human hands stay connected. Same launcher throughout, no replacement gun/turret, no volcanic rock body. Preserve exact sprite palette, East-facing3/4 view, source-like pixel clusters, upper-left lighting and standing scale. Create EXACTLY64 FULLY VISIBLE DISTINCT poses, 8 EQUAL columns x8 EQUAL rows. No text/gridlines/ground/shadows/particles/background, genuine transparent RGBA, ample gutters between all cells. Feet use SAME LOCAL BASELINE each cell; runtime controls actor elevation, NEVER whole-body upward/downward trajectory. Row1+row2 = ONE cohesive16-pose walk cycle, alternating contact/down/passing/up for both legs, weight transfer, overlapping cape/gear; every frame is a new joint drawing. Row3+row4 = ONE16-pose PRIMARY attack, shoulder rocket launch:8 bracing/aiming/loading breakdowns row3, then8 recoil/followthrough/settle breakdowns row4. Launcher muzzle exactly east at release row4column1; no visible projectile/effects; exhaust opening clear behind him. Row5 =8 JUMP poses: anticipation/crouch,takeoff leg extension,rise knees,tucked apex,fall extension,first landing,landing absorption,ready. Keep all poses fully visible at baseline even airborne. Row6=8 STAIR ASCENT alternating knee lift, planted push, passing and transfer. Row7=8 STAIR DESCENT alternating reaching foot, supported braking, opposite-leg passing. Draw no stairs. Row8=8 low EASTWARD dodge-step poses: anticipate/load/leading step/glide/trailing catch/brake/settle/ready. Distinct anatomy and garment deformation, NO duplicates, no smear/blur, no direction flips, no new equipment. Match reference EXACT identity/body mass. Whole figure and weapons fit separate cell, generous padding.",
+      "builtin_imagegen": true
+    },
+    {
+      "character": "rook",
+      "file": "rook-extension64.png",
+      "columns": 8,
+      "rows": 8,
+      "prompt": "Use case: identity-preserve. New production pixel animation extension of exact ROOK in reference. ROOK the mature human orbital salvager, dark short hair, light stubble, cream-and-orange bulky pressure suit, black gloves and boots, ONE compact orange-and-grey pulse carbine held in both hands, ONE orange-and-black helmet stowed at hip, attached twin-nozzle backpack. Base face uncovered, helmet NEVER on head here, no duplicate helmet or loose pack. Match same EAST3/4 view and sprite palette/body size every cell. EXACTLY64 distinct full-body drawings,8 equal columns x8 equal rows, RGBA transparent background; ample gutter, no text/gridlines/shadows/floor/effects. Row1+row2 =ONE CONTINUOUS16frame WALK cycle, alternating left/right contact,down,passing,up; overlapping cloth/gear and joint articulation. Row3+row4 =ONE CONTINUOUS16frame PRIMARY animation (read across both rows, no restart at second row): pulse carbine shot: frames1-4 from ready into two-hand aim,5-8 small final bracing movements and hold, frame9 FULL RELEASE posture with muzzle straight EAST,frames10-12 recoil then13-16 settling back ready. Exactly ONE shot cycle across both rows, not two8-frame cycles. Row5=JUMP8:deep anticipation/extension takeoff/rise knees/tuck apex/fall leg extension/firstfoot landing/absorb/ready. The body is placed at SAME local FOOT BASELINE per cell; runtime owns the vertical trajectory. Row6=STAIR_UP8 alternating knee lift/support push/passing/transfer; no whole-figure vertical translation. Row7=STAIR_DOWN8 reaching lower foot/braking/support/oppositeleg transfer, torso controlled, not hit reactions. Row8=DODGE8 low eastward sidestep anticipate/load/lead/lowglide/catch/brake/settle/ready, no roll that hides identity. No repeated drawings, no anatomy changes, no flipped sides. Upper-left lighting, crisp low-resolution pixel clusters, no blur/gradient. Weapons fully within own cells. Preserve reference identity and equipment connections.",
+      "builtin_imagegen": true
+    },
+    {
+      "character": "mote",
+      "file": "mote-extension64.png",
+      "columns": 8,
+      "rows": 8,
+      "prompt": "Use case: identity-preserve. New production pixel animation extension of exact MOTE in reference. MOTE the bald genderless humanoid observatory keeper, pale grey face with subtle amber eye, tall slim navy-and-gold fragmented coat, grey hands and feet, gold shoulder accents, ONE CLOSED golden chest core and blue inner tunic. Not a robot/mascot, no hair, glass fragments remain coherent garment tips. Match same EAST3/4 view and sprite palette/body size every cell. EXACTLY64 distinct full-body drawings,8 equal columns x8 equal rows, RGBA transparent background; ample gutter, no text/gridlines/shadows/floor/effects. Row1+row2 =ONE CONTINUOUS16frame WALK cycle, alternating left/right contact,down,passing,up; overlapping cloth/gear and joint articulation. Row3+row4 =ONE CONTINUOUS16frame PRIMARY animation (read across both rows, no restart at second row): glass/gravity primary gesture: frames1-4 lower arms/prepare inward,5-8 draw hands towards closed chest,frame9 decisive both-hand extension to EAST,10-12 followthrough open fingers,13-16 withdraw and settle arms by sides. ONE gesture across16 frames, not two8-frame cycles. No floating shards or particles; effects separate. Row5=JUMP8:deep anticipation/extension takeoff/rise knees/tuck apex/fall leg extension/firstfoot landing/absorb/ready. The body is placed at SAME local FOOT BASELINE per cell; runtime owns the vertical trajectory. Row6=STAIR_UP8 alternating knee lift/support push/passing/transfer; no whole-figure vertical translation. Row7=STAIR_DOWN8 reaching lower foot/braking/support/oppositeleg transfer, torso controlled, not hit reactions. Row8=DODGE8 low eastward sidestep anticipate/load/lead/lowglide/catch/brake/settle/ready, no roll that hides identity. No repeated drawings, no anatomy changes, no flipped sides. Upper-left lighting, crisp low-resolution pixel clusters, no blur/gradient. Weapons fully within own cells. Preserve reference identity and equipment connections.",
+      "builtin_imagegen": true
+    },
+    {
+      "character": "nix",
+      "file": "nix-cycles32.png",
+      "columns": 8,
+      "rows": 4,
+      "prompt": "Use case:identity-preserve. Pixelart new animation PATCH sheet exactly matching reference. NIX mature human cyborg short asymmetric swept dark hair, teal shirt, charcoal trousers, left metal laserarm cyan emitter, natural fleshrightarm. Preserve precise reference identity; no arm side changes or flesh emitter. EAST3/4 rightfacing, nativecrisp pixelclusters, referencepalette upperleftlight. EXACT8 EQUAL columns and4EQUAL rows. Everycell fullbody with amplegutter so no touching, transparent RGBA, NOtext/grid/shadows/floor/effects. Row1+row2 ONE16frame WALK cycle alternating contact/down/pass/up left and right legs,continuous sequence across both rows. Row3+row4 ONE16frame PRIMARY laser action: frames0-7 gradually raise SAME LEFTarm and brace, frame8 release posture FULLY extended left emitter to right,9-11 recoil/followthrough,12-15 retract arm and return ready. Do NOT restart sequence at row4. Stable footbaseline everycell, same modelscale, distinctdrawings with jointmotion no translations as substitute. Keep all weapons fullyvisible.",
+      "builtin_imagegen": true
+    },
+    {
+      "character": "ashe",
+      "file": "ashe-repair24.png",
+      "columns": 8,
+      "rows": 3,
+      "prompt": "Use case:identity-preserve. Pixelart new animation PATCH sheet exactly matching reference. ASHE redhaired adult emberknight steelplate brassedges crimsoncape/tabard ONEsword right hand ONEhelmet stowed at hip uncoveredface. SAME sword and armour throughout. EAST3/4 rightfacing, nativecrisp pixelclusters, referencepalette upperleftlight. EXACT8 EQUAL columns and3EQUAL rows. Everycell fullbody with amplegutter so no touching, transparent RGBA, NOtext/grid/shadows/floor/effects. Rows1+2 ONE SINGLE16frame sword SWING, NO thrusting repeated cycles:frames0-3 increasingly crouchedload blade moving upback,frames4-7 continue raising sword overhead and shoulderwindup,frame8 ONEdecisive extended rightward swordcontact,frames9-11 blade completes ONE downwardsfollowthrough,frames12-15 recover lowready. NOT two8frame actions, no secondwindup or secondcontact. Row3 eight STAIRDESCENT poses: controlled lowered leading foot and rearfoot support, knee softly flexed, opposite leg reach, reverse support, upperbody stable. NOT stagger/hitreactions. Stable footbaseline everycell, same modelscale, distinctdrawings with jointmotion no translations as substitute. Keep all weapons fullyvisible.",
+      "builtin_imagegen": true
+    },
+    {
+      "character": "rook",
+      "file": "rook-primary16.png",
+      "columns": 8,
+      "rows": 2,
+      "prompt": "Use case:identity-preserve. Pixelart new animation PATCH sheet exactly matching reference. ROOK mature human darkhair lightstubble creamorange pressure suit one pulse carbine bothhands attached backpack twinnozzles one helmet at HIP NOT worn. EAST3/4 rightfacing, nativecrisp pixelclusters, referencepalette upperleftlight. EXACT8 EQUAL columns and2EQUAL rows. Everycell fullbody with amplegutter so no touching, transparent RGBA, NOtext/grid/shadows/floor/effects. Rows1+2 ONE SINGLE16frame carbine PRIMARY shot, not2cycles:frames0-3 begin raising carbine,4-7 carefully brace/aim east,frame8 fullreleaseposture muzzleeast,9-11 recoil,12-15 settleweaponready. ABSOLUTELY NO muzzleflash, no projectile, no white or orange fire plume, no sparks. Gun body only at frame8. Stable footbaseline everycell, same modelscale, distinctdrawings with jointmotion no translations as substitute. Keep all weapons fullyvisible.",
+      "builtin_imagegen": true
+    },
+    {
+      "character": "ashe",
+      "file": "ashe-powered40.png",
+      "columns": 8,
+      "rows": 5,
+      "prompt": "Use case: identity-preserve. Asset type: POWERED FORM animation sheet for EXACT character in reference. ASHE adult ember knight with red hair, steel plate armour brass edges and crimson cape/tabard, ONE steel helmet NOW WORN ON HEAD with lit narrow orange eye slit and restrained glowing armour seams. ONE sword, one helmet total. Hip MUST be empty of helmet during all first4 rows. This is same helmet transferred from reference special, same armour construction; no duplicated helmet. Row5 exit removes same helmet into single hand then stows at hip, exposing red hair by last frame. Match native pixel-art style, same EAST-facing three-quarter angle, palette/body shape, upper-left lighting and logical scale throughout. Create EXACT40 separate fullbody drawings, 8 EQUAL columns x5 EQUAL rows. Genuine transparent RGBA, generous cell gutters, no text/gridlines/floor/shadows/particles. Rows0-3 fully powered at every pose, never revert gear mid-row. Row1 (top): POWERED_IDLE8 subtle breathing/balance, helmet/loader remains powered. Row2: POWERED_WALK8 one alternating contact/down/passing/up cycle, same powered equipment attached. Row3: POWERED_PRIMARY8 sword swing: prepare raised blade frames0-3, one decisive eastward extended blade frame4, downwards followthrough5, recover6-7. Helmet remains worn every attack frame. Row4: POWERED_GUARD8 same sword brace with feet planted; visor helmet WORN all8; no extra sword. Row5: POWERED_EXIT8 one coherent transition from powered frame0, begins stowing0-3, completion frame4, settles BASE form5-7. End identity matches original BASE idle without duplicated gear. No activation gestures in first4 rows; already transformed. Every drawing distinct, stable feetbaseline, no whole-body translation; maintain weapons count and anatomy, no flips/mirrors. Clear equipment articulation, NO generic aura replacing construction, no extra summoned bodies.",
+      "builtin_imagegen": true
+    },
+    {
+      "character": "clack",
+      "file": "clack-powered40.png",
+      "columns": 8,
+      "rows": 5,
+      "prompt": "Use case: identity-preserve. Asset type: POWERED FORM animation sheet for EXACT character in reference. CLACK older broad HUMAN gunner bald scalp grey moustache, teal workshirt blue trousers dark boots, same harness/pressure chamber/rocket rack and one heavy shoulder rocket launcher. POWERED state has carried mechanical loader unfolded up from his BACK HARNESS feeding same launcher and attached support brace; integrated personal equipment, NEVER stationary turret, never second gun. Both hands grip same weapon. Row5 exit folds SAME loader/brace into carried harness while launcher remains shoulder mounted. Match native pixel-art style, same EAST-facing three-quarter angle, palette/body shape, upper-left lighting and logical scale throughout. Create EXACT40 separate fullbody drawings, 8 EQUAL columns x5 EQUAL rows. Genuine transparent RGBA, generous cell gutters, no text/gridlines/floor/shadows/particles. Rows0-3 fully powered at every pose, never revert gear mid-row. Row1 (top): POWERED_IDLE8 subtle breathing/balance, helmet/loader remains powered. Row2: POWERED_WALK8 one alternating contact/down/passing/up cycle, same powered equipment attached. Row3: POWERED_PRIMARY8 one launcher shot: brace and aim0-3, full release stance4 with muzzle EAST and rear exhaust clear, recoil5-6, settle7. Loader remains deployed all8. NO missile or fire effects in body art. Row4: POWERED_GUARD8 launcher supported and body braced, unfolded loader remains attached; no detached shield/turret. Row5: POWERED_EXIT8 one coherent transition from powered frame0, begins stowing0-3, completion frame4, settles BASE form5-7. End identity matches original BASE idle without duplicated gear. No activation gestures in first4 rows; already transformed. Every drawing distinct, stable feetbaseline, no whole-body translation; maintain weapons count and anatomy, no flips/mirrors. Clear equipment articulation, NO generic aura replacing construction, no extra summoned bodies.",
+      "builtin_imagegen": true
+    },
+    {
+      "character": "nix",
+      "file": "nix-powered40.png",
+      "columns": 8,
+      "rows": 5,
+      "prompt": "Use case: identity-preserve. Asset: production POWERED FORM pixel animation sheet for exact character in reference. NIX mature human cyborg swept dark asymmetric hair, teal shirt, charcoal trousers, golden belt, anatomical LEFT mechanical laser arm and RIGHT flesh arm. POWERED state opens hinged armour casing panels on SAME left forearm to expose cyan emitter vents, with two restrained open metal panels physically attached. Left hand remains mechanical emitter, no flesh fingers. Right arm always human flesh with hand. No second weapon or second metal arm. Row5 exit folds SAME forearm casing panels shut without moving arms to opposite sides. Exactly40 DISTINCT separate fullbody drawings:8 EQUAL columns x5 EQUAL rows. Genuine transparent RGBA background, ample gutters; no text/gridlines/floor/shadow/effects. Match exact reference style EAST-facing3/4 view, same logical body scale, clear pixel clusters, palette upperleft lighting, no blur, no armour side flips. First4rows FULLY TRANSFORMED on every pose, do NOT repeat activation and do not revert. Toprow POWERED_IDLE8 subtle breathing and balance. Secondrow POWERED_WALK8 alternating contact/down/passing/up legs, attached gear and cloth overlap. Thirdrow POWERED_PRIMARY8: same left laser arm raise0-3, one precise eastward emitter extension release4, recoil5-6,recover7. OPEN casing throughout first4rows, no laser beam/flash drawn. Fourthrow POWERED_GUARD8: left open-casing forearm angled protectively and organic right fist tucked, both arms attached, open panels remain visible. Bottomrow POWERED_EXIT8 from fully powered through physical closing/stowing0-4 into BASE normal ready5-7. Every cell wholebody uncut, same local footbaseline, no wholefigure trajectory/translation substitute. Preserve exact anatomy and gear count at every pose.",
+      "builtin_imagegen": true
+    },
+    {
+      "character": "rook",
+      "file": "rook-powered40.png",
+      "columns": 8,
+      "rows": 5,
+      "prompt": "Use case: identity-preserve. Asset: production POWERED FORM pixel animation sheet for exact character in reference. ROOK mature human orbital salvager in cream-and-orange pressure suit, ONE orange-and-black pressure helmet NOW WORN on head, ONE pulse carbine, attached twin-nozzle backpack. The HIP is EMPTY of helmet throughout first4rows, NO second helmet. Turrets are SEPARATE runtime entities, draw ZERO turrets in body sheet. Row5 exit lifts SAME helmet off head with one hand, exposes short dark hair and stubble, stows SAME helmet at hip by final frames, carbine held safely. Exactly40 DISTINCT separate fullbody drawings:8 EQUAL columns x5 EQUAL rows. Genuine transparent RGBA background, ample gutters; no text/gridlines/floor/shadow/effects. Match exact reference style EAST-facing3/4 view, same logical body scale, clear pixel clusters, palette upperleft lighting, no blur, no armour side flips. First4rows FULLY TRANSFORMED on every pose, do NOT repeat activation and do not revert. Toprow POWERED_IDLE8 subtle breathing and balance. Secondrow POWERED_WALK8 alternating contact/down/passing/up legs, attached gear and cloth overlap. Thirdrow POWERED_PRIMARY8: pulse carbine both-hands raise0-3, eastward aimed release4, recoil5-6,ready7. Helmet worn every frame. NO muzzleflash or projectile. Fourthrow POWERED_GUARD8: two hands support single carbine, helmet worn, backpack attached, stable bracing. Bottomrow POWERED_EXIT8 from fully powered through physical closing/stowing0-4 into BASE normal ready5-7. Every cell wholebody uncut, same local footbaseline, no wholefigure trajectory/translation substitute. Preserve exact anatomy and gear count at every pose.",
+      "builtin_imagegen": true
+    },
+    {
+      "character": "mote",
+      "file": "mote-powered40.png",
+      "columns": 8,
+      "rows": 5,
+      "prompt": "Use case: identity-preserve. Asset: production POWERED FORM pixel animation sheet for exact character in reference. MOTE bald genderless humanoid observatory keeper, pale grey face and amber eye, navy-and-gold fragmented coat, grey hands/feet, gold shoulders. POWERED state SAME chest core physically EXPOSED as ONE open dark round aperture with bright small white-violet core inside, matching reference special chest opening. Same humanoid body; no robot head, no second core, no floating orbit shards painted into sheet. Open core remains clearly open every pose first4rows. Row5 exit closes SAME chest aperture gradually into original small GOLD CLOSED clasp by final frames. Exactly40 DISTINCT separate fullbody drawings:8 EQUAL columns x5 EQUAL rows. Genuine transparent RGBA background, ample gutters; no text/gridlines/floor/shadow/effects. Match exact reference style EAST-facing3/4 view, same logical body scale, clear pixel clusters, palette upperleft lighting, no blur, no armour side flips. First4rows FULLY TRANSFORMED on every pose, do NOT repeat activation and do not revert. Toprow POWERED_IDLE8 subtle breathing and balance. Secondrow POWERED_WALK8 alternating contact/down/passing/up legs, attached gear and cloth overlap. Thirdrow POWERED_PRIMARY8: gravity/glass gesture: load hands toward open chest0-3, decisive both-hand eastward extension4, followthrough5,recover6-7. Exposed core persists; NO projectiles or particles. Fourthrow POWERED_GUARD8: open palms forward, same EXPOSED chest aperture visible, quiet balanced body. Bottomrow POWERED_EXIT8 from fully powered through physical closing/stowing0-4 into BASE normal ready5-7. Every cell wholebody uncut, same local footbaseline, no wholefigure trajectory/translation substitute. Preserve exact anatomy and gear count at every pose.",
+      "builtin_imagegen": true
+    },
+    {
+      "character": "nix",
+      "file": "nix-primary03-fix.png",
+      "columns": 1,
+      "rows": 1,
+      "prompt": "Use case: identity-preserve. Asset type: ONE full-body pixel-art animation pose, transparent RGBA. Match exact NIX cyborg in reference. Mature human face and asymmetric swept black hair, teal short sleeve shirt, charcoal trousers, golden belt, black boots. East-facing three-quarter stance, feet spread and planted. Pose: his anatomical LEFT METAL LASER ARM raised to near-horizontal pointing EAST (image right), one continuous metal upper arm, elbow, segmented forearm, cylindrical cyan laser emitter at end instead of hand. The natural organic RIGHT arm stays bent near chest with FLESH HAND making small fist. Keep exactly two arms. No flesh fingers or palm at the end of the LASER ARM. No beam, flash, particles, aura or shadow. Same standing height and palette as existing reference. Crisp pixel clusters, upper-left lighting, no blur, full body and emitter uncut. Single pose centred with generous transparent margin. NO extra or missing limb.",
+      "builtin_imagegen": true
+    },
+    {
+      "character": "rook",
+      "file": "rook-powered_guard8.png",
+      "columns": 4,
+      "rows": 2,
+      "prompt": "Use case: identity-preserve. Asset type: powered GUARD animation patch, EXACTLY8 separate pixel-art poses in 4 EQUAL columns by2 EQUAL rows, transparent RGBA, generous clear gutters. Use reference ROOK model exactly. Adult male orbital salvager, cream-and-orange armoured pressure suit, ONE orange helmet with black visor WORN ON HEAD in ALL8 drawings, same attached twin-nozzle backpack, ONE pulse carbine supported in BOTH HANDS across chest aimed slightly east. Hips/waist have NO round helmet, NO disc, no large round black/orange object. Both hands stay on CARBINE, never touch or remove helmet. One head helmet only. Guard poses progress left-to-right from ready brace to crouched supported brace with subtle elbow/knee changes then settle to bracedready; all8 distinct joint drawings with helmet ALWAYS ON HEAD. Nothing is stowed or removed. NO extra helmet in hands, no transition or activation, no unhelmeted head. Same EAST-facing3/4 view, pixel clusters, scale and palette as reference, fullbody and weapon entirely inside each cell, no effects/shadows/grid/text.",
+      "builtin_imagegen": true
+    },
+    {
+      "character": "rook",
+      "file": "rook-powered40.png",
+      "columns": 8,
+      "rows": 5,
+      "prompt": "Use case: precise-object-edit. EDIT TARGET: the supplied 8-column by5-row ROOK powered sprite sheet. Critical continuity repair, preserve exactly40 fullbody poses, same cells, palette, scale, EAST-facing 3/4 view, helmet design and gun/backpack. There is exactly ONE orange-and-black helmet per character. In ALL first4rows (32 drawings), character already wears that ONE helmet on HEAD. REMOVE the duplicate round black/orange helmet carried at HIP in every one of those first32 cells; replace its space with normal cream-and-orange suit at waist and upper thigh, small utility belt only. In row4 (guard row, source24..31), ALL8 drawings must keep helmet ON HEAD and have both hands supporting the single pulse carbine protectively. Remove the second helmet being held near head or chest in this row, restore carbine guard hand grip. Do not depict any helmet removal in guard row. Only BOTTOM row (exit8) removes the single head helmet, then stows it at hip: frame0 helmet worn and hip empty, frame1 hand reaches head and hip empty,frame2 same helmet lifted off and hip empty,frame3 same helmet held and hip empty,frames4-7 ONE helmet stowed hip with head uncovered. NO source cell has a worn helmet and carried helmet simultaneously. Preserve all walk/primary poses; no muzzleflash, projectiles or turrets. Transparent RGBA, no shadows or background. This edit changes only duplicate helmet continuity and associated guard hands, keeps total40 distinct character poses.",
+      "builtin_imagegen": true,
+      "reason": "Remove duplicate carried helmet while worn. Guard remains rejected and uses separate patch."
+    }
+  ],
+  "selection": {
+    "ashe": {
+      "base": "extension64 excluding primary16/stair_down8; repair24 primary source[0,1,2,3,4,5,6,8,9,10,11,12,13,14,15,7], event7; stair_down16..23.",
+      "powered": "powered40 row-major, release4"
+    },
+    "clack": {
+      "base": "extension64; dodge source[56,57,58,59,60,63,61,62]",
+      "powered": "powered40 row-major, release4"
+    },
+    "nix": {
+      "base": "extension48 ONLY source16..47 traversal; cycles32 walk0..15 primary16..31; source19 overridden by single primary03-fix",
+      "powered": "powered40: primary local[0,1,2,3,6,4,5,7], event5; other rows row-major."
+    },
+    "rook": {
+      "base": "extension64 excluding primary16; primary16 clean patch source0..15 event8",
+      "powered": "powered40 select idle0..7,walk8..15,primary16..23,exit32..39; powered_guard8 patch4x2 replaces source24..31"
+    },
+    "mote": {
+      "base": "extension64; primary source local[0,1,2,3,4,5,6,8,9,10,11,12,13,14,7,15], event8",
+      "powered": "powered40 row-major, release4"
+    }
+  },
+  "remaining_limitations": [
+    "EAST-facing three-quarter only; no invented other directions.",
+    "Drawn poses need importer registration/scale checks and runtime playback QA; source-sheet review does not prove seamless loops.",
+    "Powered forms cover idle, walk, primary, guard and exit only; base traversal remains separate.",
+    "Fine contour/body-volume/equipment alignment cleanup may remain; exact pose count is not artistic-quality certification."
+  ]
+}

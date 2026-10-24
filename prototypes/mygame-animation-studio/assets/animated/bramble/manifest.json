@@ -1,0 +1,4041 @@
+{
+  "id": "bramble",
+  "name": "Bramble",
+  "view": "E",
+  "frame_size": [
+    192,
+    192
+  ],
+  "foot_pivot": [
+    96,
+    172
+  ],
+  "body_height_target": 96,
+  "fit_factor": 1.0,
+  "sources": [
+    {
+      "width": 1254,
+      "height": 1254,
+      "columns": 8,
+      "rows": 8,
+      "column_cuts": [
+        0,
+        182,
+        332,
+        482,
+        629,
+        791,
+        943,
+        1088,
+        1254
+      ],
+      "row_cuts": [
+        0,
+        190,
+        356,
+        522,
+        685,
+        841,
+        988,
+        1126,
+        1254
+      ],
+      "baselines": {
+        "0": 182.0,
+        "3": 678.0,
+        "4": 835.25,
+        "5": 983.0,
+        "6": 1123.0,
+        "7": 1242.0
+      },
+      "body_height": 147.0,
+      "body_min_area": 2573,
+      "path": "art-source/animated/bramble-64.png",
+      "base_scale": 0.6530612244897959
+    },
+    {
+      "width": 1254,
+      "height": 1254,
+      "columns": 8,
+      "rows": 8,
+      "column_cuts": [
+        0,
+        179,
+        329,
+        489,
+        642,
+        804,
+        957,
+        1104,
+        1254
+      ],
+      "row_cuts": [
+        0,
+        182,
+        350,
+        521,
+        688,
+        845,
+        1003,
+        1146,
+        1254
+      ],
+      "baselines": {
+        "0": 173.0,
+        "1": 344.0,
+        "2": 509.0,
+        "3": 681.0,
+        "4": 844.0,
+        "5": 1000.0,
+        "6": 1146.0,
+        "7": 1246.25
+      },
+      "body_height": 151.5,
+      "body_min_area": 2971,
+      "path": "art-source/animated/v3/bramble-extension64.png",
+      "base_scale": 0.6336633663366337
+    },
+    {
+      "width": 1586,
+      "height": 992,
+      "columns": 8,
+      "rows": 5,
+      "column_cuts": [
+        0,
+        207,
+        404,
+        602,
+        804,
+        1006,
+        1206,
+        1397,
+        1586
+      ],
+      "row_cuts": [
+        0,
+        202,
+        392,
+        589,
+        785,
+        992
+      ],
+      "baselines": {
+        "0": 197.0,
+        "1": 389.25,
+        "2": 582.0,
+        "3": 776.0,
+        "4": 973.0
+      },
+      "body_height": 175.0,
+      "body_min_area": 4946,
+      "path": "art-source/animated/v3/bramble-powered40.png",
+      "base_scale": 0.5485714285714286
+    }
+  ],
+  "anchor_sources": [
+    {
+      "path": "art-source/animated/v3/ranger-anchors.json",
+      "sha256": "fd6a9eba56992a71c7bba0369a2de2b7c390dd7ec157c8f1a525fece46ac5536"
+    }
+  ],
+  "clips": {
+    "idle": {
+      "frame_count": 8,
+      "durations": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ],
+      "duration": 1.6,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/bramble/idle-00.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 0,
+          "source_bounds": [
+            56,
+            31,
+            156,
+            182
+          ],
+          "source_origin": [
+            91.0,
+            182.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            73,
+            73,
+            138,
+            172
+          ],
+          "sha256": "466b94c784857260e60a7bb40d262291a0171a3f74251abfed26a2ca666eadde"
+        },
+        {
+          "path": "res://assets/animated/bramble/idle-01.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 1,
+          "source_bounds": [
+            210,
+            33,
+            307,
+            182
+          ],
+          "source_origin": [
+            257.0,
+            182.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            65,
+            75,
+            128,
+            172
+          ],
+          "sha256": "56d36aaedc360a9220e5f84ef5157427c00a369fa0569d3c96edfc5f614c1084"
+        },
+        {
+          "path": "res://assets/animated/bramble/idle-02.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 2,
+          "source_bounds": [
+            351,
+            33,
+            451,
+            182
+          ],
+          "source_origin": [
+            407.0,
+            182.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            59,
+            75,
+            124,
+            172
+          ],
+          "sha256": "e37d8342929a9ff6700d03e45cfe385085d00a6446f50599ee15c92eaf02a78b"
+        },
+        {
+          "path": "res://assets/animated/bramble/idle-03.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 3,
+          "source_bounds": [
+            504,
+            34,
+            606,
+            182
+          ],
+          "source_origin": [
+            555.5,
+            182.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            62,
+            75,
+            129,
+            172
+          ],
+          "sha256": "048cf41707ec8da1665554aa7d7dd4ca77fd888e34c18a5db0e966c5d8eccf9d"
+        },
+        {
+          "path": "res://assets/animated/bramble/idle-04.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 4,
+          "source_bounds": [
+            657,
+            34,
+            758,
+            182
+          ],
+          "source_origin": [
+            710.0,
+            182.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            61,
+            75,
+            127,
+            172
+          ],
+          "sha256": "8c9cfda7ecf0e838ba1b74123ddecb4bf387781a08e30756319925af5fa0b53f"
+        },
+        {
+          "path": "res://assets/animated/bramble/idle-05.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 5,
+          "source_bounds": [
+            812,
+            34,
+            914,
+            182
+          ],
+          "source_origin": [
+            867.0,
+            182.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            60,
+            75,
+            127,
+            172
+          ],
+          "sha256": "0a2d643fb27be2bd8aa0e434ab07813d76e9f62ebf00e5230abbbc035d1f7cc1"
+        },
+        {
+          "path": "res://assets/animated/bramble/idle-06.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 6,
+          "source_bounds": [
+            965,
+            33,
+            1066,
+            182
+          ],
+          "source_origin": [
+            1015.5,
+            182.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            63,
+            75,
+            129,
+            172
+          ],
+          "sha256": "54acc77dd29efd6d673bad431257cb684ebfdc43639ca289bf84cd855033e73b"
+        },
+        {
+          "path": "res://assets/animated/bramble/idle-07.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 7,
+          "source_bounds": [
+            1119,
+            31,
+            1215,
+            182
+          ],
+          "source_origin": [
+            1171.0,
+            182.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            62,
+            73,
+            125,
+            172
+          ],
+          "sha256": "9f8e0f3801663d8652d026503c3171ae1e9b6af24a43b5dc71a88189956cb589"
+        }
+      ]
+    },
+    "walk": {
+      "frame_count": 16,
+      "durations": [
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/bramble/walk-00.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 0,
+          "source_bounds": [
+            50,
+            25,
+            153,
+            173
+          ],
+          "source_origin": [
+            89.5,
+            173.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            71,
+            78,
+            136,
+            172
+          ],
+          "sha256": "42479a6965be8e23de369ea4b3928a5bd8b1267bf5f47f9e1736aaa44c490737"
+        },
+        {
+          "path": "res://assets/animated/bramble/walk-01.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 1,
+          "source_bounds": [
+            207,
+            25,
+            309,
+            173
+          ],
+          "source_origin": [
+            254.0,
+            173.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            66,
+            78,
+            131,
+            172
+          ],
+          "sha256": "012f8f994eb9a97dc5d14d787556baaaeb0f2c02054753ef45f13a5dc16026f6"
+        },
+        {
+          "path": "res://assets/animated/bramble/walk-02.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 2,
+          "source_bounds": [
+            355,
+            23,
+            462,
+            173
+          ],
+          "source_origin": [
+            409.0,
+            173.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            62,
+            77,
+            130,
+            172
+          ],
+          "sha256": "b82a563435ca708b0b6cc81888e3d75096122fc8efdc3e98d2dca3eca30686fe"
+        },
+        {
+          "path": "res://assets/animated/bramble/walk-03.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 3,
+          "source_bounds": [
+            505,
+            25,
+            619,
+            173
+          ],
+          "source_origin": [
+            565.5,
+            173.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            58,
+            78,
+            130,
+            172
+          ],
+          "sha256": "092c5455dfec89aab6d048546653cf081573c82d73a2a5b1b311030e18faf1d2"
+        },
+        {
+          "path": "res://assets/animated/bramble/walk-04.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 4,
+          "source_bounds": [
+            660,
+            21,
+            775,
+            172
+          ],
+          "source_origin": [
+            723.0,
+            173.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            56,
+            76,
+            129,
+            172
+          ],
+          "sha256": "04d808c194bc531e0256b653e3264021958fe28e37bfac084983db843c07f11e"
+        },
+        {
+          "path": "res://assets/animated/bramble/walk-05.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 5,
+          "source_bounds": [
+            813,
+            25,
+            919,
+            173
+          ],
+          "source_origin": [
+            880.5,
+            173.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            53,
+            78,
+            120,
+            172
+          ],
+          "sha256": "749eef61bfa4fda810115fcc6c7d891f0c77d272354481c56f840d44c47b5143"
+        },
+        {
+          "path": "res://assets/animated/bramble/walk-06.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 6,
+          "source_bounds": [
+            969,
+            19,
+            1077,
+            174
+          ],
+          "source_origin": [
+            1030.5,
+            173.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            57,
+            74,
+            125,
+            172
+          ],
+          "sha256": "e4249b8f782fbdfe82e8a8e953b28444a667ff8b1b2f9725dc91de77795ab0bf"
+        },
+        {
+          "path": "res://assets/animated/bramble/walk-07.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 7,
+          "source_bounds": [
+            1128,
+            20,
+            1234,
+            173
+          ],
+          "source_origin": [
+            1179.0,
+            173.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            64,
+            75,
+            131,
+            172
+          ],
+          "sha256": "70ff8d2906b6497c79fef4db0a0c582a4702def3215c6e047ad7432c09bd3c92"
+        },
+        {
+          "path": "res://assets/animated/bramble/walk-08.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 8,
+          "source_bounds": [
+            36,
+            188,
+            155,
+            344
+          ],
+          "source_origin": [
+            89.5,
+            344.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            62,
+            73,
+            137,
+            172
+          ],
+          "sha256": "7cfed220af5c369ac8f79e9de8095f2c148e3b5c798dc3c96e49bd2956fb784f"
+        },
+        {
+          "path": "res://assets/animated/bramble/walk-09.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 9,
+          "source_bounds": [
+            193,
+            188,
+            307,
+            344
+          ],
+          "source_origin": [
+            254.0,
+            344.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            57,
+            73,
+            129,
+            172
+          ],
+          "sha256": "760ade37b4960bdb450db4299654afe954e1cc8994c5dbbe2892a548c50f17ea"
+        },
+        {
+          "path": "res://assets/animated/bramble/walk-10.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 10,
+          "source_bounds": [
+            349,
+            189,
+            461,
+            344
+          ],
+          "source_origin": [
+            409.0,
+            344.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            58,
+            74,
+            129,
+            172
+          ],
+          "sha256": "fa42fd393cfe649cecb2aec6470876cc865a7b3efa54e46fcc96a11e327f22ff"
+        },
+        {
+          "path": "res://assets/animated/bramble/walk-11.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 11,
+          "source_bounds": [
+            501,
+            189,
+            617,
+            342
+          ],
+          "source_origin": [
+            565.5,
+            344.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            55,
+            74,
+            129,
+            171
+          ],
+          "sha256": "ab7bae671234e1959aa1db69012d269fffa1b05d0e76435a177062e96b18cc95"
+        },
+        {
+          "path": "res://assets/animated/bramble/walk-12.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 12,
+          "source_bounds": [
+            656,
+            191,
+            770,
+            342
+          ],
+          "source_origin": [
+            723.0,
+            344.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            54,
+            75,
+            126,
+            171
+          ],
+          "sha256": "11025aa2f2fb102962feeb649a1548c6d6edd8f0a2262bb1ca1fbe3244168ba4"
+        },
+        {
+          "path": "res://assets/animated/bramble/walk-13.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 13,
+          "source_bounds": [
+            812,
+            190,
+            923,
+            343
+          ],
+          "source_origin": [
+            880.5,
+            344.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            53,
+            74,
+            123,
+            171
+          ],
+          "sha256": "36d41c9936c042cf243411505e078bfeb44da4912d912ac5ddd09a4d9b6d448e"
+        },
+        {
+          "path": "res://assets/animated/bramble/walk-14.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 14,
+          "source_bounds": [
+            966,
+            186,
+            1080,
+            343
+          ],
+          "source_origin": [
+            1030.5,
+            344.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            55,
+            72,
+            127,
+            171
+          ],
+          "sha256": "fcde1789f5b36a711dba49de974013996f0618d63223e357a16f8a00d25380c4"
+        },
+        {
+          "path": "res://assets/animated/bramble/walk-15.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 15,
+          "source_bounds": [
+            1125,
+            188,
+            1235,
+            344
+          ],
+          "source_origin": [
+            1179.0,
+            344.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            62,
+            73,
+            132,
+            172
+          ],
+          "sha256": "dadcf4567bc986d0690a33378455bb8027f5d29326f39dcd4854d9630cb6e7e9"
+        }
+      ]
+    },
+    "primary": {
+      "frame_count": 16,
+      "durations": [
+        0.0385,
+        0.0315,
+        0.0385,
+        0.0315,
+        0.044,
+        0.036,
+        0.0605,
+        0.049499999999999995,
+        0.022,
+        0.018,
+        0.030249999999999996,
+        0.024749999999999998,
+        0.04675,
+        0.03825,
+        0.0715,
+        0.058499999999999996
+      ],
+      "duration": 0.64,
+      "loop": false,
+      "release_frame": 8,
+      "release_time": 0.32999999999999996,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/bramble/primary-00.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 16,
+          "source_bounds": [
+            40,
+            361,
+            169,
+            508
+          ],
+          "source_origin": [
+            89.5,
+            509.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            65,
+            78,
+            147,
+            171
+          ],
+          "sha256": "697183d4892ca2dba17897d150f9025d6dd0d9ed6efa00c9ebcd27b449d74612"
+        },
+        {
+          "path": "res://assets/animated/bramble/primary-01.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 17,
+          "source_bounds": [
+            193,
+            360,
+            330,
+            510
+          ],
+          "source_origin": [
+            254.0,
+            509.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            57,
+            78,
+            144,
+            173
+          ],
+          "sha256": "9a9153eb4a3523073fd4529d148656b8d124a2fb4b432c840771bf14ab4504cc"
+        },
+        {
+          "path": "res://assets/animated/bramble/primary-02.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 18,
+          "source_bounds": [
+            356,
+            356,
+            483,
+            508
+          ],
+          "source_origin": [
+            409.0,
+            509.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            62,
+            75,
+            142,
+            171
+          ],
+          "sha256": "b700bf2cbcfab64dc42c655700837d67575c66f8618a12c25e21c7a5083a0ac9"
+        },
+        {
+          "path": "res://assets/animated/bramble/primary-03.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 19,
+          "source_bounds": [
+            498,
+            356,
+            639,
+            509
+          ],
+          "source_origin": [
+            565.5,
+            509.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            53,
+            75,
+            142,
+            172
+          ],
+          "sha256": "948cf0f83658f4bdf69e49e7e5f724fd1c0acf90c92bb53b5eb0688a85e216b5"
+        },
+        {
+          "path": "res://assets/animated/bramble/primary-04.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 20,
+          "source_bounds": [
+            657,
+            363,
+            799,
+            509
+          ],
+          "source_origin": [
+            723.0,
+            509.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            54,
+            80,
+            144,
+            172
+          ],
+          "sha256": "4d1caf8431c9db7a97a345565af169886dd5dc28af00202dc035089aa97fc603"
+        },
+        {
+          "path": "res://assets/animated/bramble/primary-05.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 21,
+          "source_bounds": [
+            812,
+            356,
+            957,
+            509
+          ],
+          "source_origin": [
+            880.5,
+            509.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            53,
+            75,
+            144,
+            172
+          ],
+          "sha256": "9410ec8cc32afa601c7f46f60eed5c0aa0aca377e1f1a8227c01f1e20df17910"
+        },
+        {
+          "path": "res://assets/animated/bramble/primary-06.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 22,
+          "source_bounds": [
+            961,
+            361,
+            1104,
+            509
+          ],
+          "source_origin": [
+            1030.5,
+            509.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            52,
+            78,
+            143,
+            172
+          ],
+          "sha256": "ae1a155f4f11d3ed42bd8758c92e568aacbabd181509694d61751d82008260f9"
+        },
+        {
+          "path": "res://assets/animated/bramble/primary-07.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 23,
+          "source_bounds": [
+            1119,
+            365,
+            1245,
+            509
+          ],
+          "source_origin": [
+            1179.0,
+            509.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            58,
+            81,
+            137,
+            172
+          ],
+          "sha256": "ee1b45fee93241b9aca4ccea3c926bf63486f0a14c1af5650176ec6cdffed895"
+        },
+        {
+          "path": "res://assets/animated/bramble/primary-08.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 24,
+          "source_bounds": [
+            37,
+            533,
+            178,
+            681
+          ],
+          "source_origin": [
+            89.5,
+            681.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            63,
+            78,
+            152,
+            172
+          ],
+          "sha256": "946f8e0ccc47bee97238ca35af98509da062a3534c5bdecef825085f94500dcb"
+        },
+        {
+          "path": "res://assets/animated/bramble/primary-09.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 25,
+          "source_bounds": [
+            194,
+            532,
+            327,
+            679
+          ],
+          "source_origin": [
+            254.0,
+            681.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            58,
+            78,
+            142,
+            171
+          ],
+          "sha256": "6c47b72f25ab2505429a55b458af6e7722f1813501d6f7036ef34bfcf954b9ce"
+        },
+        {
+          "path": "res://assets/animated/bramble/primary-10.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 26,
+          "source_bounds": [
+            358,
+            533,
+            487,
+            679
+          ],
+          "source_origin": [
+            409.0,
+            681.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            64,
+            78,
+            146,
+            171
+          ],
+          "sha256": "e21fbc5edadae75fb4e81cd0040a074166ec58119a71ecd97824c254d307df07"
+        },
+        {
+          "path": "res://assets/animated/bramble/primary-11.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 27,
+          "source_bounds": [
+            508,
+            534,
+            636,
+            679
+          ],
+          "source_origin": [
+            565.5,
+            681.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            60,
+            79,
+            141,
+            171
+          ],
+          "sha256": "bb4793b2bf7ccce136727b5a0a8510f8f5c483c7ae7625ce23143d79d011ee4e"
+        },
+        {
+          "path": "res://assets/animated/bramble/primary-12.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 28,
+          "source_bounds": [
+            660,
+            537,
+            787,
+            680
+          ],
+          "source_origin": [
+            723.0,
+            681.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            56,
+            81,
+            136,
+            172
+          ],
+          "sha256": "c6ab810978c0d41498c2e3da8ca275613b618de4e5fa08f40fecd0f9b666b7cc"
+        },
+        {
+          "path": "res://assets/animated/bramble/primary-13.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 29,
+          "source_bounds": [
+            811,
+            540,
+            950,
+            681
+          ],
+          "source_origin": [
+            880.5,
+            681.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            52,
+            83,
+            140,
+            172
+          ],
+          "sha256": "caa48992c9bc4279d6153d4e1101f7ac74f2468ecb80068374e79ad6122168f9"
+        },
+        {
+          "path": "res://assets/animated/bramble/primary-14.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 30,
+          "source_bounds": [
+            970,
+            537,
+            1094,
+            681
+          ],
+          "source_origin": [
+            1030.5,
+            681.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            58,
+            81,
+            137,
+            172
+          ],
+          "sha256": "ccfc492917cfee0795e5e1198353a0eff502312dc4918c2cc0e5be3c76efeb87"
+        },
+        {
+          "path": "res://assets/animated/bramble/primary-15.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 31,
+          "source_bounds": [
+            1126,
+            528,
+            1233,
+            681
+          ],
+          "source_origin": [
+            1179.0,
+            681.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            62,
+            75,
+            130,
+            172
+          ],
+          "sha256": "650cec85c994ba20346e1731c4c1adf0438f8f52f71c4ea1157463bf082e88ac"
+        }
+      ],
+      "release_anchor": [
+        55,
+        -52
+      ]
+    },
+    "secondary": {
+      "frame_count": 8,
+      "durations": [
+        0.07,
+        0.07,
+        0.08,
+        0.11,
+        0.04,
+        0.055,
+        0.085,
+        0.13
+      ],
+      "duration": 0.64,
+      "loop": false,
+      "release_frame": 4,
+      "release_time": 0.33,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/bramble/secondary-00.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 24,
+          "source_bounds": [
+            49,
+            532,
+            133,
+            677
+          ],
+          "source_origin": [
+            91.0,
+            678.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            69,
+            77,
+            124,
+            172
+          ],
+          "sha256": "7eb22883ab060d68372730411b28ae68cfa888b5fcdfc20563e9e1d69a31d11c"
+        },
+        {
+          "path": "res://assets/animated/bramble/secondary-01.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 25,
+          "source_bounds": [
+            208,
+            534,
+            324,
+            677
+          ],
+          "source_origin": [
+            257.0,
+            678.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            64,
+            78,
+            140,
+            171
+          ],
+          "sha256": "e6cf7be687b0ed8cf7b72ebfc28925c3f1d1db1ab4452cee3d4766de6417549f"
+        },
+        {
+          "path": "res://assets/animated/bramble/secondary-02.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 26,
+          "source_bounds": [
+            353,
+            535,
+            479,
+            678
+          ],
+          "source_origin": [
+            407.0,
+            678.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            61,
+            79,
+            143,
+            172
+          ],
+          "sha256": "45b45a18b549c98cdad69d09e9e001aa835cb782cd37e8ffddccf9c9f1701ebf"
+        },
+        {
+          "path": "res://assets/animated/bramble/secondary-03.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 27,
+          "source_bounds": [
+            504,
+            525,
+            614,
+            678
+          ],
+          "source_origin": [
+            555.5,
+            678.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            62,
+            72,
+            134,
+            172
+          ],
+          "sha256": "d5643525c09fb0c9f071182230d47c3f7f459a1f109641d0a37f17d651b9f2a0"
+        },
+        {
+          "path": "res://assets/animated/bramble/secondary-04.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 28,
+          "source_bounds": [
+            643,
+            543,
+            811,
+            677
+          ],
+          "source_origin": [
+            710.0,
+            678.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            52,
+            84,
+            162,
+            172
+          ],
+          "sha256": "0c476463c13b7fcf5459f44c502cb5409c1a43e7d2d49fc8892c7f64d1b964b6"
+        },
+        {
+          "path": "res://assets/animated/bramble/secondary-05.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 29,
+          "source_bounds": [
+            808,
+            534,
+            935,
+            678
+          ],
+          "source_origin": [
+            867.0,
+            678.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            57,
+            78,
+            140,
+            172
+          ],
+          "sha256": "bec77d3b35ab1c214c4e261f8ad29605d40dd4ce7c36085ed1cf1f4ec54b6cea"
+        },
+        {
+          "path": "res://assets/animated/bramble/secondary-06.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 30,
+          "source_bounds": [
+            964,
+            535,
+            1076,
+            677
+          ],
+          "source_origin": [
+            1015.5,
+            678.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            62,
+            79,
+            135,
+            172
+          ],
+          "sha256": "e797cc857bdd730cf9f54cb58e0febf8338768bcc1d6cf679b30d7d16ac2fc1a"
+        },
+        {
+          "path": "res://assets/animated/bramble/secondary-07.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 31,
+          "source_bounds": [
+            1115,
+            532,
+            1202,
+            677
+          ],
+          "source_origin": [
+            1171.0,
+            678.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            59,
+            77,
+            116,
+            172
+          ],
+          "sha256": "97bfd77b9adf38409812a376cbe932786bfaa04b420580e4e80009f06f4e6903"
+        }
+      ],
+      "release_anchor": [
+        65,
+        -52
+      ],
+      "contact_reach": 66
+    },
+    "special": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.08,
+        0.09,
+        0.12,
+        0.06,
+        0.08,
+        0.12,
+        0.18
+      ],
+      "duration": 0.82,
+      "loop": false,
+      "release_frame": 4,
+      "release_time": 0.38,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/bramble/special-00.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 32,
+          "source_bounds": [
+            53,
+            695,
+            159,
+            835
+          ],
+          "source_origin": [
+            91.0,
+            835.25
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            71,
+            80,
+            140,
+            171
+          ],
+          "sha256": "5a8b780c84d26ce80a04882be1afbeb4b8911ab5139df47d2dfed25174f2d0f8"
+        },
+        {
+          "path": "res://assets/animated/bramble/special-01.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 33,
+          "source_bounds": [
+            203,
+            695,
+            315,
+            835
+          ],
+          "source_origin": [
+            257.0,
+            835.25
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            61,
+            80,
+            134,
+            171
+          ],
+          "sha256": "9d30f90ad005465eff857addd7336e0b9d803e97a076941bc434af04c1c08dc2"
+        },
+        {
+          "path": "res://assets/animated/bramble/special-02.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 34,
+          "source_bounds": [
+            348,
+            715,
+            463,
+            835
+          ],
+          "source_origin": [
+            407.0,
+            835.25
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            57,
+            93,
+            132,
+            171
+          ],
+          "sha256": "bf700c0ce8db9b29cb2e59c18f166514cb8b1c687972e1f16cedeb1c7b45f046"
+        },
+        {
+          "path": "res://assets/animated/bramble/special-03.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 35,
+          "source_bounds": [
+            502,
+            694,
+            620,
+            835
+          ],
+          "source_origin": [
+            555.5,
+            835.25
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            61,
+            80,
+            138,
+            172
+          ],
+          "sha256": "7a60ac350d0ec27d2d68d48034c78a5da802d865c58ca18f133c29346889f8da"
+        },
+        {
+          "path": "res://assets/animated/bramble/special-04.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 36,
+          "source_bounds": [
+            653,
+            692,
+            771,
+            835
+          ],
+          "source_origin": [
+            710.0,
+            835.25
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            59,
+            78,
+            136,
+            171
+          ],
+          "sha256": "9570d93819e54c0ba6915091362b9aab5a0eb209bd9ca3fd527a22311f0752d2"
+        },
+        {
+          "path": "res://assets/animated/bramble/special-05.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 37,
+          "source_bounds": [
+            797,
+            698,
+            924,
+            835
+          ],
+          "source_origin": [
+            867.0,
+            835.25
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            50,
+            82,
+            133,
+            171
+          ],
+          "sha256": "6e37d988299080a2393f694bbc5f631d51ed58570d8c36f43cb5db44522752ce"
+        },
+        {
+          "path": "res://assets/animated/bramble/special-06.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 38,
+          "source_bounds": [
+            957,
+            701,
+            1067,
+            836
+          ],
+          "source_origin": [
+            1015.5,
+            835.25
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            58,
+            84,
+            130,
+            172
+          ],
+          "sha256": "bea4f0bf2ddb9c15365d8112b502785e5981b1dc8588d21f3957a393eff13843"
+        },
+        {
+          "path": "res://assets/animated/bramble/special-07.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 39,
+          "source_bounds": [
+            1105,
+            689,
+            1223,
+            836
+          ],
+          "source_origin": [
+            1171.0,
+            835.25
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            53,
+            76,
+            130,
+            172
+          ],
+          "sha256": "af2c7da6cb4dee45c7a930b61431545f979c713e9b711438e923924975ec4bc1"
+        }
+      ]
+    },
+    "guard": {
+      "frame_count": 8,
+      "durations": [
+        0.055,
+        0.055,
+        0.055,
+        0.055,
+        0.12,
+        0.12,
+        0.12,
+        0.12
+      ],
+      "duration": 0.7,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": 4,
+      "frames": [
+        {
+          "path": "res://assets/animated/bramble/guard-00.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 40,
+          "source_bounds": [
+            50,
+            848,
+            156,
+            983
+          ],
+          "source_origin": [
+            91.0,
+            983.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            69,
+            84,
+            138,
+            172
+          ],
+          "sha256": "ae6107fd21ce430fd190d07e5d0af9e6a6b8f5cb19eef1431ab1243670903294"
+        },
+        {
+          "path": "res://assets/animated/bramble/guard-01.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 41,
+          "source_bounds": [
+            201,
+            849,
+            298,
+            983
+          ],
+          "source_origin": [
+            257.0,
+            983.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            59,
+            84,
+            122,
+            172
+          ],
+          "sha256": "066f17711c6e14fb101947547e1b5a20f812938c02e66bdacfd68cfc21230440"
+        },
+        {
+          "path": "res://assets/animated/bramble/guard-02.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 42,
+          "source_bounds": [
+            356,
+            848,
+            453,
+            983
+          ],
+          "source_origin": [
+            407.0,
+            983.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            63,
+            84,
+            126,
+            172
+          ],
+          "sha256": "440a0e4d02e958343708e27656c70d5a688ffc72b58c68e246925abe53284156"
+        },
+        {
+          "path": "res://assets/animated/bramble/guard-03.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 43,
+          "source_bounds": [
+            508,
+            848,
+            597,
+            983
+          ],
+          "source_origin": [
+            555.5,
+            983.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            65,
+            84,
+            123,
+            172
+          ],
+          "sha256": "02f22f8afd42fd63de6f02c05a8ebed2820dd0c14cf567c51dad04895d573a18"
+        },
+        {
+          "path": "res://assets/animated/bramble/guard-04.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 44,
+          "source_bounds": [
+            645,
+            856,
+            768,
+            983
+          ],
+          "source_origin": [
+            710.0,
+            983.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            54,
+            89,
+            134,
+            172
+          ],
+          "sha256": "59b01ab7db4be410e729f9f98d7d8dd45a5d867561e1f41e4015528be24da24a"
+        },
+        {
+          "path": "res://assets/animated/bramble/guard-05.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 45,
+          "source_bounds": [
+            812,
+            850,
+            918,
+            983
+          ],
+          "source_origin": [
+            867.0,
+            983.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            60,
+            85,
+            129,
+            172
+          ],
+          "sha256": "dc22d2b88c7a16f810c320ce9d00b134991bdde0a331fb37b7a4b49dada76211"
+        },
+        {
+          "path": "res://assets/animated/bramble/guard-06.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 46,
+          "source_bounds": [
+            963,
+            853,
+            1060,
+            983
+          ],
+          "source_origin": [
+            1015.5,
+            983.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            62,
+            87,
+            125,
+            172
+          ],
+          "sha256": "8a82bdc23c3d83912fff6dc3d6ca69d70a44dc45c081c4c65bda1611d68af3ad"
+        },
+        {
+          "path": "res://assets/animated/bramble/guard-07.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 47,
+          "source_bounds": [
+            1117,
+            853,
+            1211,
+            983
+          ],
+          "source_origin": [
+            1171.0,
+            983.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            61,
+            87,
+            122,
+            172
+          ],
+          "sha256": "ee6b8d60203838055d6c0e42fad8638cc795d6d1c06d6d70586e9365042b8c6e"
+        }
+      ]
+    },
+    "hit": {
+      "frame_count": 8,
+      "durations": [
+        0.035,
+        0.065,
+        0.09,
+        0.12,
+        0.13,
+        0.15,
+        0.16,
+        0.18
+      ],
+      "duration": 0.9299999999999999,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/bramble/hit-00.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 48,
+          "source_bounds": [
+            49,
+            998,
+            156,
+            1123
+          ],
+          "source_origin": [
+            91.0,
+            1123.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            69,
+            90,
+            139,
+            172
+          ],
+          "sha256": "21382779de95fa828028eb239b374e8d085fbbe7198c38bc711d9eb440c893d7"
+        },
+        {
+          "path": "res://assets/animated/bramble/hit-01.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 49,
+          "source_bounds": [
+            209,
+            995,
+            323,
+            1123
+          ],
+          "source_origin": [
+            257.0,
+            1123.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            65,
+            88,
+            139,
+            172
+          ],
+          "sha256": "ee7b8a6c96b743bc126357d0055a0183e59bed122b4f2906a05359911b5297d9"
+        },
+        {
+          "path": "res://assets/animated/bramble/hit-02.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 50,
+          "source_bounds": [
+            369,
+            1007,
+            478,
+            1123
+          ],
+          "source_origin": [
+            407.0,
+            1123.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            71,
+            96,
+            142,
+            172
+          ],
+          "sha256": "f0585ff29d4882bebda7a15c0234b0c3218fba2b4f0e094e6b2021151dae24d1"
+        },
+        {
+          "path": "res://assets/animated/bramble/hit-03.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 51,
+          "source_bounds": [
+            518,
+            1010,
+            614,
+            1123
+          ],
+          "source_origin": [
+            555.5,
+            1123.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            72,
+            98,
+            135,
+            172
+          ],
+          "sha256": "53304c562298f8307131bd02943169340d4d6277014ae8b759c0db45be21eb01"
+        },
+        {
+          "path": "res://assets/animated/bramble/hit-04.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 52,
+          "source_bounds": [
+            661,
+            997,
+            757,
+            1123
+          ],
+          "source_origin": [
+            710.0,
+            1123.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            64,
+            90,
+            127,
+            172
+          ],
+          "sha256": "738d59fc8426f9df8c2f2f3fde3d87ea7e9ed54f53a9dd3852a47ce499e3533d"
+        },
+        {
+          "path": "res://assets/animated/bramble/hit-05.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 53,
+          "source_bounds": [
+            817,
+            995,
+            913,
+            1123
+          ],
+          "source_origin": [
+            867.0,
+            1123.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            63,
+            88,
+            126,
+            172
+          ],
+          "sha256": "6b23086d9d245e554af9fde1fdc10d1ff3500c13385ae9fb4e7906b5a5d2ad5b"
+        },
+        {
+          "path": "res://assets/animated/bramble/hit-06.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 54,
+          "source_bounds": [
+            969,
+            995,
+            1058,
+            1123
+          ],
+          "source_origin": [
+            1015.5,
+            1123.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            66,
+            88,
+            124,
+            172
+          ],
+          "sha256": "affce10cac8f1ec9da6d303c4b88ef2b2d13b52a50d44b20ee8da1e81189e263"
+        },
+        {
+          "path": "res://assets/animated/bramble/hit-07.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 55,
+          "source_bounds": [
+            1127,
+            996,
+            1221,
+            1123
+          ],
+          "source_origin": [
+            1171.0,
+            1123.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            67,
+            89,
+            127,
+            172
+          ],
+          "sha256": "700d710929082f3d538ae0b3a3527e11a26c91c91477d237a926709f26e173a4"
+        }
+      ]
+    },
+    "defeat": {
+      "frame_count": 8,
+      "durations": [
+        0.08,
+        0.1,
+        0.1,
+        0.12,
+        0.15,
+        0.18,
+        0.24,
+        0.3
+      ],
+      "duration": 1.27,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/bramble/defeat-00.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 56,
+          "source_bounds": [
+            52,
+            1127,
+            148,
+            1242
+          ],
+          "source_origin": [
+            91.0,
+            1242.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            71,
+            97,
+            134,
+            172
+          ],
+          "sha256": "9bcbbf1121e6cf5b398f921b444d1301e63524095e3ba1bccdf6eaee628fbc4c"
+        },
+        {
+          "path": "res://assets/animated/bramble/defeat-01.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 57,
+          "source_bounds": [
+            208,
+            1132,
+            310,
+            1242
+          ],
+          "source_origin": [
+            257.0,
+            1242.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            64,
+            100,
+            131,
+            172
+          ],
+          "sha256": "9e94ed0e6df0ce1128a0ad187ef3cb65a891e0507556bef2d0c6a294f3609f53"
+        },
+        {
+          "path": "res://assets/animated/bramble/defeat-02.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 58,
+          "source_bounds": [
+            349,
+            1144,
+            458,
+            1242
+          ],
+          "source_origin": [
+            407.0,
+            1242.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            58,
+            108,
+            129,
+            172
+          ],
+          "sha256": "cb9846ae2f66c4eb97c13ae7ac31fb8a5c235ab838b05dabbe56148223b851f3"
+        },
+        {
+          "path": "res://assets/animated/bramble/defeat-03.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 59,
+          "source_bounds": [
+            491,
+            1159,
+            616,
+            1240
+          ],
+          "source_origin": [
+            555.5,
+            1242.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            54,
+            118,
+            136,
+            171
+          ],
+          "sha256": "1c13172c687ad35bf6faf549b9c0d1bb0c051905b2933852b5be50ec1638268b"
+        },
+        {
+          "path": "res://assets/animated/bramble/defeat-04.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 60,
+          "source_bounds": [
+            630,
+            1169,
+            775,
+            1237
+          ],
+          "source_origin": [
+            710.0,
+            1242.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            44,
+            124,
+            139,
+            168
+          ],
+          "sha256": "980b03309bd84ff5075028b481d8fda73ac2c9aa044fc933be39e317395016b8"
+        },
+        {
+          "path": "res://assets/animated/bramble/defeat-05.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 61,
+          "source_bounds": [
+            793,
+            1173,
+            936,
+            1235
+          ],
+          "source_origin": [
+            867.0,
+            1242.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            48,
+            127,
+            141,
+            167
+          ],
+          "sha256": "1635164863455247ec5f73fc0ec51ad31470219c330e63bac356e6ae687e854d"
+        },
+        {
+          "path": "res://assets/animated/bramble/defeat-06.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 62,
+          "source_bounds": [
+            942,
+            1185,
+            1083,
+            1235
+          ],
+          "source_origin": [
+            1015.5,
+            1242.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            48,
+            135,
+            140,
+            168
+          ],
+          "sha256": "b27e8878f40b62a82453f4bee8148dda62c7335f81d3b752b871612ebcb49f57"
+        },
+        {
+          "path": "res://assets/animated/bramble/defeat-07.png",
+          "source": "art-source/animated/bramble-64.png",
+          "slot": 63,
+          "source_bounds": [
+            1089,
+            1185,
+            1236,
+            1235
+          ],
+          "source_origin": [
+            1171.0,
+            1242.0
+          ],
+          "scale": 0.6530612244897959,
+          "packed_bounds": [
+            42,
+            135,
+            138,
+            168
+          ],
+          "sha256": "9492386e08f6c8bb7511358cead715b8cfe7cc3f093571ff2727583a5419cf27"
+        }
+      ]
+    },
+    "jump": {
+      "frame_count": 8,
+      "durations": [
+        0.08,
+        0.055,
+        0.08,
+        0.11,
+        0.11,
+        0.08,
+        0.07,
+        0.115
+      ],
+      "duration": 0.7000000000000001,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/bramble/jump-00.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 32,
+          "source_bounds": [
+            37,
+            713,
+            163,
+            840
+          ],
+          "source_origin": [
+            89.5,
+            840.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            63,
+            92,
+            143,
+            172
+          ],
+          "sha256": "1d5f49c387b001e1b337d45e5ec6e7b68a518244b0940b07b72d4699714d3d78",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/bramble/jump-01.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 33,
+          "source_bounds": [
+            203,
+            716,
+            325,
+            843
+          ],
+          "source_origin": [
+            254.0,
+            843.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            64,
+            92,
+            141,
+            172
+          ],
+          "sha256": "e6950705b2a9fc839d9d8a46fd8062c1f9a80d847339e589fd9444e85443af03",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/bramble/jump-02.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 34,
+          "source_bounds": [
+            362,
+            695,
+            478,
+            844
+          ],
+          "source_origin": [
+            409.0,
+            844.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            66,
+            78,
+            140,
+            172
+          ],
+          "sha256": "aeda2587dcb2aed6cbb8216b8a05b111eec6a868062ba16cff4476e491edb1f5",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/bramble/jump-03.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 35,
+          "source_bounds": [
+            509,
+            689,
+            627,
+            828
+          ],
+          "source_origin": [
+            565.5,
+            828.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            60,
+            84,
+            135,
+            172
+          ],
+          "sha256": "a456ebc6b5772b79c9521bb6eb1cf97d8f30a4a3cb41ec757548cc59adc4f7cb",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/bramble/jump-04.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 36,
+          "source_bounds": [
+            661,
+            706,
+            785,
+            844
+          ],
+          "source_origin": [
+            723.0,
+            844.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            57,
+            85,
+            136,
+            172
+          ],
+          "sha256": "3a7273d8608f9f8e5a8edd15e56e6b647a604add763caa5d9f3f17c833f5d90a",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/bramble/jump-05.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 37,
+          "source_bounds": [
+            805,
+            727,
+            936,
+            844
+          ],
+          "source_origin": [
+            880.5,
+            844.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            48,
+            98,
+            131,
+            172
+          ],
+          "sha256": "f258068d8042ad7604943089581307f01cbc88d6270f5e828c85f8be2b505194",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/bramble/jump-06.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 38,
+          "source_bounds": [
+            958,
+            726,
+            1091,
+            844
+          ],
+          "source_origin": [
+            1030.5,
+            844.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            50,
+            97,
+            134,
+            172
+          ],
+          "sha256": "074930a7112ba30fdd9029531ac53c0a3d0e5fc6ca0a1093934d5501051c0d9f",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/bramble/jump-07.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 39,
+          "source_bounds": [
+            1121,
+            707,
+            1234,
+            844
+          ],
+          "source_origin": [
+            1179.0,
+            844.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            59,
+            85,
+            131,
+            172
+          ],
+          "sha256": "9be101df4d8035ac4d234c3af9193bb193417cda3f4af8fe5b6535eda6f6575c",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "stair_up": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/bramble/stair_up-00.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 40,
+          "source_bounds": [
+            40,
+            858,
+            158,
+            996
+          ],
+          "source_origin": [
+            89.5,
+            996.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            65,
+            85,
+            140,
+            172
+          ],
+          "sha256": "34214f9d2b76290878329554a7f87545f439a241b9ade0a478d187a78ef6ffb4",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/bramble/stair_up-01.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 41,
+          "source_bounds": [
+            198,
+            856,
+            311,
+            997
+          ],
+          "source_origin": [
+            254.0,
+            997.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            61,
+            83,
+            133,
+            172
+          ],
+          "sha256": "f7e7082c206f32ac1bd84165b33065258ea7ca585eab0d4bcd522bb7ebdfca57",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/bramble/stair_up-02.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 42,
+          "source_bounds": [
+            354,
+            846,
+            466,
+            997
+          ],
+          "source_origin": [
+            409.0,
+            997.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            61,
+            76,
+            132,
+            172
+          ],
+          "sha256": "305e56b6f25035aca4740457bc79c92e4ca3a5a7e8023dc73f89456e1f9c1ffc",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/bramble/stair_up-03.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 43,
+          "source_bounds": [
+            501,
+            848,
+            612,
+            997
+          ],
+          "source_origin": [
+            565.5,
+            997.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            55,
+            78,
+            125,
+            172
+          ],
+          "sha256": "a4d6356246a9fc05003c67414fa707bb59581ec8833c1b4a2d8de74264c8a52e",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/bramble/stair_up-04.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 44,
+          "source_bounds": [
+            670,
+            851,
+            776,
+            1000
+          ],
+          "source_origin": [
+            723.0,
+            1000.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            62,
+            78,
+            129,
+            172
+          ],
+          "sha256": "d5b9a070c6d533dc6287ace80cdcfefc3eedd00ec469503b4f076fc581476f71",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/bramble/stair_up-05.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 45,
+          "source_bounds": [
+            806,
+            856,
+            917,
+            1000
+          ],
+          "source_origin": [
+            880.5,
+            1000.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            49,
+            81,
+            119,
+            172
+          ],
+          "sha256": "01fa43d5720b180641cb401506d012f3b0ec55da7d224b7a24da2a8a7115119c",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/bramble/stair_up-06.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 46,
+          "source_bounds": [
+            965,
+            858,
+            1073,
+            1000
+          ],
+          "source_origin": [
+            1030.5,
+            1000.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            54,
+            82,
+            122,
+            172
+          ],
+          "sha256": "971b1dc00870e8ca88fcf67d8538cbd38bf8501191631b192dbafac68ec76895",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/bramble/stair_up-07.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 47,
+          "source_bounds": [
+            1125,
+            856,
+            1233,
+            999
+          ],
+          "source_origin": [
+            1179.0,
+            999.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            62,
+            81,
+            130,
+            172
+          ],
+          "sha256": "7c6fac43f425cf3cd96dc212c35dd2a3be48fdf5cc16016da98800fa39105f58",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "stair_down": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/bramble/stair_down-00.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 48,
+          "source_bounds": [
+            35,
+            1012,
+            145,
+            1146
+          ],
+          "source_origin": [
+            89.5,
+            1146.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            61,
+            87,
+            131,
+            172
+          ],
+          "sha256": "8616025565c9ac4f6742db77104ed657f95501f209e6a51555babe7b141b0284",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/bramble/stair_down-01.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 49,
+          "source_bounds": [
+            205,
+            1008,
+            318,
+            1145
+          ],
+          "source_origin": [
+            254.0,
+            1145.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            65,
+            85,
+            137,
+            172
+          ],
+          "sha256": "734687541f9e521578a935a2093bbf0d1012611d90e4e56d727e3f3c87662a58",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/bramble/stair_down-02.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 50,
+          "source_bounds": [
+            353,
+            1013,
+            476,
+            1144
+          ],
+          "source_origin": [
+            409.0,
+            1144.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            61,
+            89,
+            139,
+            172
+          ],
+          "sha256": "24e8592ca7d785d47127d9d1ce212e6e5cdc26239ce8a4b14390455eee2f41aa",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/bramble/stair_down-03.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 51,
+          "source_bounds": [
+            505,
+            1012,
+            626,
+            1144
+          ],
+          "source_origin": [
+            565.5,
+            1144.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            58,
+            88,
+            135,
+            172
+          ],
+          "sha256": "d9ea193759f9fe6f3b959c6e59ec8179d1457e16721f3cf949c0770f854a1906",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/bramble/stair_down-04.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 52,
+          "source_bounds": [
+            660,
+            1013,
+            779,
+            1146
+          ],
+          "source_origin": [
+            723.0,
+            1146.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            56,
+            88,
+            131,
+            172
+          ],
+          "sha256": "77f2502608d83521cbcc75b02c1d0f0a8cb04e2e14b1011bcc6a268a96017899",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/bramble/stair_down-05.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 53,
+          "source_bounds": [
+            808,
+            1012,
+            925,
+            1145
+          ],
+          "source_origin": [
+            880.5,
+            1145.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            50,
+            88,
+            124,
+            172
+          ],
+          "sha256": "a5467574a79409f4659e4b717a35357b466abff566fa1f7e09f8af607c7b2313",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/bramble/stair_down-06.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 54,
+          "source_bounds": [
+            964,
+            1012,
+            1082,
+            1145
+          ],
+          "source_origin": [
+            1030.5,
+            1145.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            54,
+            88,
+            129,
+            172
+          ],
+          "sha256": "631f8c5d0c053e83ae0e787a4513cb5d2dcce4d947509f7ea63f4b9de1ffe106",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/bramble/stair_down-07.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 55,
+          "source_bounds": [
+            1124,
+            1008,
+            1238,
+            1146
+          ],
+          "source_origin": [
+            1179.0,
+            1146.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            61,
+            85,
+            133,
+            172
+          ],
+          "sha256": "ca1475fdbd9e7eae5ab9eb1249285cc37cb02efaff6ac4e873c274a81f976f8f",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "dodge": {
+      "frame_count": 8,
+      "durations": [
+        0.055,
+        0.045,
+        0.04,
+        0.045,
+        0.06,
+        0.07,
+        0.08,
+        0.1
+      ],
+      "duration": 0.495,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/bramble/dodge-00.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 56,
+          "source_bounds": [
+            35,
+            1152,
+            151,
+            1246
+          ],
+          "source_origin": [
+            89.5,
+            1246.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            61,
+            112,
+            135,
+            172
+          ],
+          "sha256": "65805fedd2d66513ba07bc15cf2992dbd08d4d7b38f71fbd81e9d16287527255",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/bramble/dodge-01.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 57,
+          "source_bounds": [
+            180,
+            1156,
+            322,
+            1246
+          ],
+          "source_origin": [
+            254.0,
+            1246.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            49,
+            115,
+            139,
+            172
+          ],
+          "sha256": "e16dd29bc2a24eda7e0effdb824544294df2d734e9865dacb2d7e1bbb8819ef9",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/bramble/dodge-02.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 58,
+          "source_bounds": [
+            330,
+            1156,
+            480,
+            1246
+          ],
+          "source_origin": [
+            409.0,
+            1246.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            46,
+            115,
+            141,
+            172
+          ],
+          "sha256": "7cec6f4a6116e3dfcffaa55a05174f6ff6a85582f35aab25395b50d64f2658a4",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/bramble/dodge-03.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 59,
+          "source_bounds": [
+            499,
+            1157,
+            643,
+            1246
+          ],
+          "source_origin": [
+            565.5,
+            1246.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            54,
+            116,
+            145,
+            172
+          ],
+          "sha256": "64ae8a5f248f86a777637e98957c5a1f30c45574f9b723a6d60ceff796a65e5a",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/bramble/dodge-04.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 60,
+          "source_bounds": [
+            643,
+            1157,
+            811,
+            1246
+          ],
+          "source_origin": [
+            723.0,
+            1246.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            45,
+            116,
+            151,
+            172
+          ],
+          "sha256": "4154bc8546ba40f25d8a38ed0c1da3fe358d23b00ff0693bbd2d67ddf9a5ea31",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/bramble/dodge-05.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 61,
+          "source_bounds": [
+            825,
+            1156,
+            950,
+            1246
+          ],
+          "source_origin": [
+            880.5,
+            1246.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            61,
+            115,
+            140,
+            172
+          ],
+          "sha256": "7f865b91789f81659398be497594d4417e0ffee23d7a497d26707a747672f039",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/bramble/dodge-06.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 62,
+          "source_bounds": [
+            969,
+            1153,
+            1092,
+            1247
+          ],
+          "source_origin": [
+            1030.5,
+            1247.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            57,
+            112,
+            135,
+            172
+          ],
+          "sha256": "798aff42852fd04499fb3e2d9a0860541f7d955a6618af2fe48f675d2ca72aee",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/bramble/dodge-07.png",
+          "source": "art-source/animated/v3/bramble-extension64.png",
+          "slot": 63,
+          "source_bounds": [
+            1120,
+            1158,
+            1235,
+            1247
+          ],
+          "source_origin": [
+            1179.0,
+            1247.0
+          ],
+          "scale": 0.6336633663366337,
+          "packed_bounds": [
+            59,
+            116,
+            132,
+            172
+          ],
+          "sha256": "2edd35c577a42f1825a920db8c7bf7c9e44bd6974f5fea4b9ef3d56d80e729da",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "powered_idle": {
+      "frame_count": 8,
+      "durations": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ],
+      "duration": 1.6,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/bramble/powered_idle-00.png",
+          "source": "art-source/animated/v3/bramble-powered40.png",
+          "slot": 0,
+          "source_bounds": [
+            32,
+            20,
+            183,
+            196
+          ],
+          "source_origin": [
+            103.5,
+            197.0
+          ],
+          "scale": 0.5485714285714286,
+          "packed_bounds": [
+            57,
+            75,
+            139,
+            172
+          ],
+          "sha256": "3613766b65373b26b7f81a96534562fea7738b525b0b95916414e06c948990e5"
+        },
+        {
+          "path": "res://assets/animated/bramble/powered_idle-01.png",
+          "source": "art-source/animated/v3/bramble-powered40.png",
+          "slot": 1,
+          "source_bounds": [
+            230,
+            21,
+            379,
+            197
+          ],
+          "source_origin": [
+            305.5,
+            197.0
+          ],
+          "scale": 0.5485714285714286,
+          "packed_bounds": [
+            55,
+            75,
+            137,
+            172
+          ],
+          "sha256": "7562f8dda6bad62b88359cff1c7b30733d1cbc627723070ea174494ff3bc69d8"
+        },
+        {
+          "path": "res://assets/animated/bramble/powered_idle-02.png",
+          "source": "art-source/animated/v3/bramble-powered40.png",
+          "slot": 2,
+          "source_bounds": [
+            427,
+            19,
+            582,
+            196
+          ],
+          "source_origin": [
+            503.0,
+            197.0
+          ],
+          "scale": 0.5485714285714286,
+          "packed_bounds": [
+            54,
+            74,
+            139,
+            171
+          ],
+          "sha256": "597eb2f5de106b7f777225eb6746b0be6f4b7db4b07010d8f433e3a0bcd49e38"
+        },
+        {
+          "path": "res://assets/animated/bramble/powered_idle-03.png",
+          "source": "art-source/animated/v3/bramble-powered40.png",
+          "slot": 3,
+          "source_bounds": [
+            626,
+            21,
+            775,
+            196
+          ],
+          "source_origin": [
+            703.0,
+            197.0
+          ],
+          "scale": 0.5485714285714286,
+          "packed_bounds": [
+            54,
+            75,
+            136,
+            171
+          ],
+          "sha256": "6da8586fbc62c31cfcb109ccc2d66529a990cd3d02e102b479cc19365b600529"
+        },
+        {
+          "path": "res://assets/animated/bramble/powered_idle-04.png",
+          "source": "art-source/animated/v3/bramble-powered40.png",
+          "slot": 4,
+          "source_bounds": [
+            824,
+            20,
+            973,
+            197
+          ],
+          "source_origin": [
+            905.0,
+            197.0
+          ],
+          "scale": 0.5485714285714286,
+          "packed_bounds": [
+            52,
+            75,
+            134,
+            172
+          ],
+          "sha256": "8be81f1675b146291f7cab9b434fc53f014ee9b21323a01c14f3755b65e97bbe"
+        },
+        {
+          "path": "res://assets/animated/bramble/powered_idle-05.png",
+          "source": "art-source/animated/v3/bramble-powered40.png",
+          "slot": 5,
+          "source_bounds": [
+            1019,
+            20,
+            1174,
+            196
+          ],
+          "source_origin": [
+            1106.0,
+            197.0
+          ],
+          "scale": 0.5485714285714286,
+          "packed_bounds": [
+            48,
+            75,
+            133,
+            172
+          ],
+          "sha256": "d9877f2a047667ad97a21e2276aedabd27605312f6e0effc57a0c2eac3eec2c3"
+        },
+        {
+          "path": "res://assets/animated/bramble/powered_idle-06.png",
+          "source": "art-source/animated/v3/bramble-powered40.png",
+          "slot": 6,
+          "source_bounds": [
+            1225,
+            19,
+            1373,
+            197
+          ],
+          "source_origin": [
+            1301.5,
+            197.0
+          ],
+          "scale": 0.5485714285714286,
+          "packed_bounds": [
+            54,
+            74,
+            135,
+            172
+          ],
+          "sha256": "702da5c7bfeebd1545ba41a98d8ecc504a96ae3c1a14f1baaa5fc8142a49b74a"
+        },
+        {
+          "path": "res://assets/animated/bramble/powered_idle-07.png",
+          "source": "art-source/animated/v3/bramble-powered40.png",
+          "slot": 7,
+          "source_bounds": [
+            1421,
+            19,
+            1568,
+            196
+          ],
+          "source_origin": [
+            1491.5,
+            197.0
+          ],
+          "scale": 0.5485714285714286,
+          "packed_bounds": [
+            57,
+            74,
+            138,
+            171
+          ],
+          "sha256": "ebd260b10a3ba90cf7c0d7dbff3565f1a232bf1c195a23f3b2666349ff0aff3f"
+        }
+      ]
+    },
+    "powered_walk": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/bramble/powered_walk-00.png",
+          "source": "art-source/animated/v3/bramble-powered40.png",
+          "slot": 8,
+          "source_bounds": [
+            29,
+            208,
+            183,
+            389
+          ],
+          "source_origin": [
+            103.5,
+            389.25
+          ],
+          "scale": 0.5485714285714286,
+          "packed_bounds": [
+            55,
+            73,
+            139,
+            172
+          ],
+          "sha256": "4564dd63743bd3680d3f0b9c991c4760978ba16be37de1177d8d89ec7d0c4963"
+        },
+        {
+          "path": "res://assets/animated/bramble/powered_walk-01.png",
+          "source": "art-source/animated/v3/bramble-powered40.png",
+          "slot": 9,
+          "source_bounds": [
+            222,
+            206,
+            374,
+            389
+          ],
+          "source_origin": [
+            305.5,
+            389.25
+          ],
+          "scale": 0.5485714285714286,
+          "packed_bounds": [
+            50,
+            71,
+            133,
+            171
+          ],
+          "sha256": "fca333d19c2ef0964aa0cf071a7459986084b9a92499136f9cacb3528e07264a"
+        },
+        {
+          "path": "res://assets/animated/bramble/powered_walk-02.png",
+          "source": "art-source/animated/v3/bramble-powered40.png",
+          "slot": 10,
+          "source_bounds": [
+            426,
+            203,
+            570,
+            390
+          ],
+          "source_origin": [
+            503.0,
+            389.25
+          ],
+          "scale": 0.5485714285714286,
+          "packed_bounds": [
+            54,
+            70,
+            133,
+            173
+          ],
+          "sha256": "baf6c326377fdfdabedcddda21a4f76c22f4e7566e9b8eade4e13dac1685f5b3"
+        },
+        {
+          "path": "res://assets/animated/bramble/powered_walk-03.png",
+          "source": "art-source/animated/v3/bramble-powered40.png",
+          "slot": 11,
+          "source_bounds": [
+            625,
+            205,
+            771,
+            389
+          ],
+          "source_origin": [
+            703.0,
+            389.25
+          ],
+          "scale": 0.5485714285714286,
+          "packed_bounds": [
+            53,
+            71,
+            133,
+            172
+          ],
+          "sha256": "fe11a5ced721d83816f0334d8f8f9a377e96ea8fbcee48661901145064c6766b"
+        },
+        {
+          "path": "res://assets/animated/bramble/powered_walk-04.png",
+          "source": "art-source/animated/v3/bramble-powered40.png",
+          "slot": 12,
+          "source_bounds": [
+            824,
+            205,
+            972,
+            390
+          ],
+          "source_origin": [
+            905.0,
+            389.25
+          ],
+          "scale": 0.5485714285714286,
+          "packed_bounds": [
+            52,
+            71,
+            133,
+            172
+          ],
+          "sha256": "0479277672d9a460fbbd552cbbc4b9da8145963c23b1937fa1e1d77685736e9c"
+        },
+        {
+          "path": "res://assets/animated/bramble/powered_walk-05.png",
+          "source": "art-source/animated/v3/bramble-powered40.png",
+          "slot": 13,
+          "source_bounds": [
+            1016,
+            205,
+            1172,
+            388
+          ],
+          "source_origin": [
+            1106.0,
+            389.25
+          ],
+          "scale": 0.5485714285714286,
+          "packed_bounds": [
+            47,
+            71,
+            133,
+            171
+          ],
+          "sha256": "1bea0806374f1c78a6803f8ff51da2eca097e6ef6b681bde83817f5000e1e13e"
+        },
+        {
+          "path": "res://assets/animated/bramble/powered_walk-06.png",
+          "source": "art-source/animated/v3/bramble-powered40.png",
+          "slot": 14,
+          "source_bounds": [
+            1216,
+            206,
+            1369,
+            389
+          ],
+          "source_origin": [
+            1301.5,
+            389.25
+          ],
+          "scale": 0.5485714285714286,
+          "packed_bounds": [
+            49,
+            71,
+            133,
+            171
+          ],
+          "sha256": "4bd73dc516e4191d719ed6844362cab3c71d766e7e153f968b04dd312c1401de"
+        },
+        {
+          "path": "res://assets/animated/bramble/powered_walk-07.png",
+          "source": "art-source/animated/v3/bramble-powered40.png",
+          "slot": 15,
+          "source_bounds": [
+            1421,
+            206,
+            1571,
+            389
+          ],
+          "source_origin": [
+            1491.5,
+            389.25
+          ],
+          "scale": 0.5485714285714286,
+          "packed_bounds": [
+            57,
+            71,
+            139,
+            171
+          ],
+          "sha256": "ebc92fc158ce5cdd4464c0b6a2d0f6ec3f8155dcf51d704cefa9ead637c815ff"
+        }
+      ]
+    },
+    "powered_primary": {
+      "frame_count": 8,
+      "durations": [
+        0.06243243243243244,
+        0.06243243243243244,
+        0.07135135135135136,
+        0.0981081081081081,
+        0.03567567567567568,
+        0.06314814814814815,
+        0.09759259259259259,
+        0.14925925925925926
+      ],
+      "duration": 0.64,
+      "loop": false,
+      "release_frame": 5,
+      "release_time": 0.33,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/bramble/powered_primary-00.png",
+          "source": "art-source/animated/v3/bramble-powered40.png",
+          "slot": 16,
+          "source_bounds": [
+            32,
+            406,
+            195,
+            582
+          ],
+          "source_origin": [
+            103.5,
+            582.0
+          ],
+          "scale": 0.5485714285714286,
+          "packed_bounds": [
+            57,
+            75,
+            146,
+            172
+          ],
+          "sha256": "8bf1b765ed81329c4547a40f0cb8d68ebeb99ed3d2221f46c3e0a73db0bd999f"
+        },
+        {
+          "path": "res://assets/animated/bramble/powered_primary-01.png",
+          "source": "art-source/animated/v3/bramble-powered40.png",
+          "slot": 17,
+          "source_bounds": [
+            226,
+            406,
+            396,
+            582
+          ],
+          "source_origin": [
+            305.5,
+            582.0
+          ],
+          "scale": 0.5485714285714286,
+          "packed_bounds": [
+            52,
+            75,
+            145,
+            172
+          ],
+          "sha256": "2f857fa5205f955c7df749cc4f2463a1a860263be3571f2fcd23d822084dcd88"
+        },
+        {
+          "path": "res://assets/animated/bramble/powered_primary-02.png",
+          "source": "art-source/animated/v3/bramble-powered40.png",
+          "slot": 18,
+          "source_bounds": [
+            418,
+            395,
+            595,
+            582
+          ],
+          "source_origin": [
+            503.0,
+            582.0
+          ],
+          "scale": 0.5485714285714286,
+          "packed_bounds": [
+            49,
+            69,
+            146,
+            172
+          ],
+          "sha256": "165a84695d969e03e6918fc53dcd0787278d831f7ffe95984bcffa55bb23f069"
+        },
+        {
+          "path": "res://assets/animated/bramble/powered_primary-03.png",
+          "source": "art-source/animated/v3/bramble-powered40.png",
+          "slot": 19,
+          "source_bounds": [
+            616,
+            393,
+            804,
+            581
+          ],
+          "source_origin": [
+            703.0,
+            582.0
+          ],
+          "scale": 0.5485714285714286,
+          "packed_bounds": [
+            48,
+            68,
+            151,
+            171
+          ],
+          "sha256": "6be8bf7acd6cbbcceb1f9c1578afca52f15feb8c710f088d742e1833b0ccbe97"
+        },
+        {
+          "path": "res://assets/animated/bramble/powered_primary-04.png",
+          "source": "art-source/animated/v3/bramble-powered40.png",
+          "slot": 21,
+          "source_bounds": [
+            1023,
+            395,
+            1206,
+            581
+          ],
+          "source_origin": [
+            1106.0,
+            582.0
+          ],
+          "scale": 0.5485714285714286,
+          "packed_bounds": [
+            50,
+            69,
+            150,
+            171
+          ],
+          "sha256": "24ddeea02698480f26682ff6ffe3a907ef2d4030cbc2b7faf9bbcf0d63839198"
+        },
+        {
+          "path": "res://assets/animated/bramble/powered_primary-05.png",
+          "source": "art-source/animated/v3/bramble-powered40.png",
+          "slot": 20,
+          "source_bounds": [
+            823,
+            394,
+            1006,
+            582
+          ],
+          "source_origin": [
+            905.0,
+            582.0
+          ],
+          "scale": 0.5485714285714286,
+          "packed_bounds": [
+            51,
+            69,
+            151,
+            172
+          ],
+          "sha256": "91b6d552121d0bb17ef257da465b92630442d10298a05a320a857c0c0910866d"
+        },
+        {
+          "path": "res://assets/animated/bramble/powered_primary-06.png",
+          "source": "art-source/animated/v3/bramble-powered40.png",
+          "slot": 22,
+          "source_bounds": [
+            1227,
+            408,
+            1382,
+            582
+          ],
+          "source_origin": [
+            1301.5,
+            582.0
+          ],
+          "scale": 0.5485714285714286,
+          "packed_bounds": [
+            55,
+            77,
+            140,
+            172
+          ],
+          "sha256": "ce6e245088f5980a52b6ccd1c89c34324f9919daf3b0812a55e570c44ae5a64f"
+        },
+        {
+          "path": "res://assets/animated/bramble/powered_primary-07.png",
+          "source": "art-source/animated/v3/bramble-powered40.png",
+          "slot": 23,
+          "source_bounds": [
+            1421,
+            409,
+            1570,
+            582
+          ],
+          "source_origin": [
+            1491.5,
+            582.0
+          ],
+          "scale": 0.5485714285714286,
+          "packed_bounds": [
+            57,
+            77,
+            139,
+            172
+          ],
+          "sha256": "571f2a1bddb4f556447f6157cc1bf8df4bdef0d79862c2e963e58c56b6ef95ea"
+        }
+      ],
+      "release_anchor": [
+        53,
+        -68
+      ]
+    },
+    "powered_guard": {
+      "frame_count": 8,
+      "durations": [
+        0.055,
+        0.055,
+        0.055,
+        0.055,
+        0.12,
+        0.12,
+        0.12,
+        0.12
+      ],
+      "duration": 0.7,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": 4,
+      "frames": [
+        {
+          "path": "res://assets/animated/bramble/powered_guard-00.png",
+          "source": "art-source/animated/v3/bramble-powered40.png",
+          "slot": 24,
+          "source_bounds": [
+            32,
+            599,
+            186,
+            776
+          ],
+          "source_origin": [
+            103.5,
+            776.0
+          ],
+          "scale": 0.5485714285714286,
+          "packed_bounds": [
+            57,
+            75,
+            141,
+            172
+          ],
+          "sha256": "64d91c8edbc0c49b74f14b76d55336d28c81a9de10c615d7eb4937e9e0caa6f8"
+        },
+        {
+          "path": "res://assets/animated/bramble/powered_guard-01.png",
+          "source": "art-source/animated/v3/bramble-powered40.png",
+          "slot": 25,
+          "source_bounds": [
+            228,
+            598,
+            371,
+            776
+          ],
+          "source_origin": [
+            305.5,
+            776.0
+          ],
+          "scale": 0.5485714285714286,
+          "packed_bounds": [
+            53,
+            74,
+            131,
+            172
+          ],
+          "sha256": "551c13d2bdd9f29d54ec204c8a70e5e7da175578d399c60a9b4f5c743b553857"
+        },
+        {
+          "path": "res://assets/animated/bramble/powered_guard-02.png",
+          "source": "art-source/animated/v3/bramble-powered40.png",
+          "slot": 26,
+          "source_bounds": [
+            414,
+            600,
+            570,
+            776
+          ],
+          "source_origin": [
+            503.0,
+            776.0
+          ],
+          "scale": 0.5485714285714286,
+          "packed_bounds": [
+            47,
+            75,
+            133,
+            172
+          ],
+          "sha256": "b678aa67ef02d2e6a2984fe5e4f3ffba4db391f79f51b22342b3a51c21926acf"
+        },
+        {
+          "path": "res://assets/animated/bramble/powered_guard-03.png",
+          "source": "art-source/animated/v3/bramble-powered40.png",
+          "slot": 27,
+          "source_bounds": [
+            619,
+            599,
+            780,
+            776
+          ],
+          "source_origin": [
+            703.0,
+            776.0
+          ],
+          "scale": 0.5485714285714286,
+          "packed_bounds": [
+            50,
+            75,
+            138,
+            172
+          ],
+          "sha256": "1a138e2d78f482fe66d17edb85ea21a3c74c2dc89c2357745a88e3879a1d5609"
+        },
+        {
+          "path": "res://assets/animated/bramble/powered_guard-04.png",
+          "source": "art-source/animated/v3/bramble-powered40.png",
+          "slot": 28,
+          "source_bounds": [
+            814,
+            601,
+            991,
+            776
+          ],
+          "source_origin": [
+            905.0,
+            776.0
+          ],
+          "scale": 0.5485714285714286,
+          "packed_bounds": [
+            46,
+            76,
+            143,
+            172
+          ],
+          "sha256": "1b50dffcdf8c58d6e885e35f06ddea0168f59aeb1034597ba1cc4d894203628f"
+        },
+        {
+          "path": "res://assets/animated/bramble/powered_guard-05.png",
+          "source": "art-source/animated/v3/bramble-powered40.png",
+          "slot": 29,
+          "source_bounds": [
+            1018,
+            601,
+            1181,
+            776
+          ],
+          "source_origin": [
+            1106.0,
+            776.0
+          ],
+          "scale": 0.5485714285714286,
+          "packed_bounds": [
+            48,
+            76,
+            137,
+            172
+          ],
+          "sha256": "7d2dc9d3ab5642dd80f28dc6ef63114d8e10a29294de7143a55f5e479df870e6"
+        },
+        {
+          "path": "res://assets/animated/bramble/powered_guard-06.png",
+          "source": "art-source/animated/v3/bramble-powered40.png",
+          "slot": 30,
+          "source_bounds": [
+            1222,
+            599,
+            1377,
+            776
+          ],
+          "source_origin": [
+            1301.5,
+            776.0
+          ],
+          "scale": 0.5485714285714286,
+          "packed_bounds": [
+            52,
+            75,
+            137,
+            172
+          ],
+          "sha256": "5f6f870a8fceb7264e0ad3b762cfe2c78509dd300fc1200893bb1c58f78ee27a"
+        },
+        {
+          "path": "res://assets/animated/bramble/powered_guard-07.png",
+          "source": "art-source/animated/v3/bramble-powered40.png",
+          "slot": 31,
+          "source_bounds": [
+            1423,
+            599,
+            1568,
+            776
+          ],
+          "source_origin": [
+            1491.5,
+            776.0
+          ],
+          "scale": 0.5485714285714286,
+          "packed_bounds": [
+            58,
+            75,
+            138,
+            172
+          ],
+          "sha256": "7c54b95de499545a772f3acc3ed7479088b52f4aef7ca0173ea3c12f8c5354db"
+        }
+      ]
+    },
+    "powered_exit": {
+      "frame_count": 8,
+      "durations": [
+        0.11,
+        0.1,
+        0.1,
+        0.09,
+        0.09,
+        0.1,
+        0.12,
+        0.15
+      ],
+      "duration": 0.86,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/bramble/powered_exit-00.png",
+          "source": "art-source/animated/v3/bramble-powered40.png",
+          "slot": 32,
+          "source_bounds": [
+            30,
+            791,
+            190,
+            973
+          ],
+          "source_origin": [
+            103.5,
+            973.0
+          ],
+          "scale": 0.5485714285714286,
+          "packed_bounds": [
+            56,
+            72,
+            144,
+            172
+          ],
+          "sha256": "eb50bf167d0e11a423b654cda9a5b826cab78957eedebb6591ff4d1cb506fdcb"
+        },
+        {
+          "path": "res://assets/animated/bramble/powered_exit-01.png",
+          "source": "art-source/animated/v3/bramble-powered40.png",
+          "slot": 33,
+          "source_bounds": [
+            234,
+            791,
+            387,
+            973
+          ],
+          "source_origin": [
+            305.5,
+            973.0
+          ],
+          "scale": 0.5485714285714286,
+          "packed_bounds": [
+            57,
+            72,
+            141,
+            172
+          ],
+          "sha256": "dfeca2ed92f7beef57ab6f05105097438d5ec80b952dc5696da41f7a951aff1c"
+        },
+        {
+          "path": "res://assets/animated/bramble/powered_exit-02.png",
+          "source": "art-source/animated/v3/bramble-powered40.png",
+          "slot": 34,
+          "source_bounds": [
+            431,
+            791,
+            587,
+            973
+          ],
+          "source_origin": [
+            503.0,
+            973.0
+          ],
+          "scale": 0.5485714285714286,
+          "packed_bounds": [
+            57,
+            72,
+            143,
+            172
+          ],
+          "sha256": "f8042adda91623403d63ac74a85258747860d3d3075768abe19d0fb59fd4a497"
+        },
+        {
+          "path": "res://assets/animated/bramble/powered_exit-03.png",
+          "source": "art-source/animated/v3/bramble-powered40.png",
+          "slot": 35,
+          "source_bounds": [
+            633,
+            792,
+            778,
+            973
+          ],
+          "source_origin": [
+            703.0,
+            973.0
+          ],
+          "scale": 0.5485714285714286,
+          "packed_bounds": [
+            58,
+            73,
+            138,
+            172
+          ],
+          "sha256": "44e141f679bf3fc21c6c04f09f963ee87ea6164b15c9f63f782f625b425cce1c"
+        },
+        {
+          "path": "res://assets/animated/bramble/powered_exit-04.png",
+          "source": "art-source/animated/v3/bramble-powered40.png",
+          "slot": 36,
+          "source_bounds": [
+            827,
+            792,
+            972,
+            973
+          ],
+          "source_origin": [
+            905.0,
+            973.0
+          ],
+          "scale": 0.5485714285714286,
+          "packed_bounds": [
+            53,
+            73,
+            133,
+            172
+          ],
+          "sha256": "5d2ce309daad5055c13d5a2815d68c8beb94964d787519a7a998cd8039857881"
+        },
+        {
+          "path": "res://assets/animated/bramble/powered_exit-05.png",
+          "source": "art-source/animated/v3/bramble-powered40.png",
+          "slot": 37,
+          "source_bounds": [
+            1027,
+            793,
+            1170,
+            973
+          ],
+          "source_origin": [
+            1106.0,
+            973.0
+          ],
+          "scale": 0.5485714285714286,
+          "packed_bounds": [
+            53,
+            73,
+            131,
+            172
+          ],
+          "sha256": "e621de4990f5ed7e8beb778da00a271fb4218b4557d4d0b4db42a2c7807e453f"
+        },
+        {
+          "path": "res://assets/animated/bramble/powered_exit-06.png",
+          "source": "art-source/animated/v3/bramble-powered40.png",
+          "slot": 38,
+          "source_bounds": [
+            1225,
+            793,
+            1372,
+            973
+          ],
+          "source_origin": [
+            1301.5,
+            973.0
+          ],
+          "scale": 0.5485714285714286,
+          "packed_bounds": [
+            54,
+            73,
+            135,
+            172
+          ],
+          "sha256": "052977c74544760d61111d71ea2b98d49238ea5268c61cb7ceff9528b68e8058"
+        },
+        {
+          "path": "res://assets/animated/bramble/powered_exit-07.png",
+          "source": "art-source/animated/v3/bramble-powered40.png",
+          "slot": 39,
+          "source_bounds": [
+            1421,
+            793,
+            1567,
+            973
+          ],
+          "source_origin": [
+            1491.5,
+            973.0
+          ],
+          "scale": 0.5485714285714286,
+          "packed_bounds": [
+            57,
+            73,
+            137,
+            172
+          ],
+          "sha256": "e79bccf3689b3e6e5966a9b89e67716871f739cd45cc63e2e48f8960d39c6840"
+        }
+      ]
+    }
+  },
+  "pose_count": 152
+}

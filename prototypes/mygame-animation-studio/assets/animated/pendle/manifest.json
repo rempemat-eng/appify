@@ -1,0 +1,4273 @@
+{
+  "id": "pendle",
+  "name": "Pendle",
+  "view": "E",
+  "frame_size": [
+    192,
+    192
+  ],
+  "foot_pivot": [
+    96,
+    172
+  ],
+  "body_height_target": 96,
+  "fit_factor": 1.0,
+  "sources": [
+    {
+      "width": 1254,
+      "height": 1254,
+      "columns": 8,
+      "rows": 8,
+      "column_cuts": [
+        0,
+        169,
+        303,
+        471,
+        626,
+        803,
+        941,
+        1117,
+        1254
+      ],
+      "row_cuts": [
+        0,
+        167,
+        322,
+        479,
+        636,
+        791,
+        943,
+        1105,
+        1254
+      ],
+      "baselines": {
+        "0": 161.0,
+        "3": 626.0,
+        "4": 783.0,
+        "5": 934.0,
+        "6": 1091.0,
+        "7": 1237.25
+      },
+      "body_height": 143.5,
+      "body_min_area": 2504,
+      "path": "art-source/animated/pendle-64.png",
+      "base_scale": 0.6689895470383276
+    },
+    {
+      "width": 1254,
+      "height": 1254,
+      "columns": 8,
+      "rows": 8,
+      "column_cuts": [
+        0,
+        161,
+        315,
+        472,
+        628,
+        799,
+        956,
+        1117,
+        1254
+      ],
+      "row_cuts": [
+        0,
+        162,
+        318,
+        476,
+        631,
+        787,
+        940,
+        1097,
+        1254
+      ],
+      "baselines": {
+        "0": 154.0,
+        "1": 310.0,
+        "2": 466.0,
+        "3": 624.0,
+        "4": 779.0,
+        "5": 934.0,
+        "6": 1089.0,
+        "7": 1240.0
+      },
+      "body_height": 140.0,
+      "body_min_area": 2612,
+      "path": "art-source/animated/v3/pendle-extension64.png",
+      "base_scale": 0.6857142857142857
+    },
+    {
+      "width": 1536,
+      "height": 1024,
+      "columns": 8,
+      "rows": 5,
+      "column_cuts": [
+        0,
+        197,
+        387,
+        578,
+        772,
+        967,
+        1160,
+        1347,
+        1536
+      ],
+      "row_cuts": [
+        0,
+        206,
+        404,
+        602,
+        798,
+        1024
+      ],
+      "baselines": {
+        "0": 187.0,
+        "1": 390.0,
+        "2": 583.0,
+        "3": 780.0,
+        "4": 993.0
+      },
+      "body_height": 162.0,
+      "body_min_area": 3941,
+      "path": "art-source/animated/v3/pendle-powered40.png",
+      "base_scale": 0.5925925925925926
+    },
+    {
+      "width": 1774,
+      "height": 887,
+      "columns": 4,
+      "rows": 2,
+      "column_cuts": [
+        0,
+        461,
+        909,
+        1349,
+        1774
+      ],
+      "row_cuts": [
+        0,
+        442,
+        887
+      ],
+      "baselines": {
+        "0": 424.0,
+        "1": 868.0
+      },
+      "body_height": 405.0,
+      "body_min_area": 20766,
+      "path": "art-source/animated/v3/pendle-reload8.png",
+      "base_scale": 0.23703703703703705
+    }
+  ],
+  "anchor_sources": [
+    {
+      "path": "art-source/animated/v3/elements-anchors.json",
+      "sha256": "8f75cadd5510d51a47fd3996f9595aebb72bfb3f3e284814346d058a844b8da2"
+    }
+  ],
+  "clips": {
+    "idle": {
+      "frame_count": 8,
+      "durations": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ],
+      "duration": 1.6,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/pendle/idle-00.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 0,
+          "source_bounds": [
+            49,
+            16,
+            136,
+            161
+          ],
+          "source_origin": [
+            84.5,
+            161.0
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            72,
+            75,
+            130,
+            172
+          ],
+          "sha256": "c25d95e9c02ec21b661eeff974ea69cd510dec0ad8f0ed38bc35e0075ce46181"
+        },
+        {
+          "path": "res://assets/animated/pendle/idle-01.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 1,
+          "source_bounds": [
+            205,
+            16,
+            290,
+            161
+          ],
+          "source_origin": [
+            236.0,
+            161.0
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            75,
+            75,
+            132,
+            172
+          ],
+          "sha256": "941ab042dfbe15ddc46bb51b48beff70fb8d37a631db97c424dce45aedba429a"
+        },
+        {
+          "path": "res://assets/animated/pendle/idle-02.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 2,
+          "source_bounds": [
+            358,
+            19,
+            444,
+            161
+          ],
+          "source_origin": [
+            387.0,
+            161.0
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            77,
+            77,
+            135,
+            172
+          ],
+          "sha256": "dd9b6233d99afab27a7e24c463efc43c09d11443f50a0aea61fce59ef3bd0e13"
+        },
+        {
+          "path": "res://assets/animated/pendle/idle-03.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 3,
+          "source_bounds": [
+            509,
+            18,
+            599,
+            161
+          ],
+          "source_origin": [
+            548.5,
+            161.0
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            71,
+            76,
+            130,
+            172
+          ],
+          "sha256": "9c5f24344354db4fb27a2836609e163fb9332f2f7cdb5ff296214572adc286ec"
+        },
+        {
+          "path": "res://assets/animated/pendle/idle-04.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 4,
+          "source_bounds": [
+            665,
+            17,
+            751,
+            161
+          ],
+          "source_origin": [
+            714.5,
+            161.0
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            63,
+            76,
+            121,
+            172
+          ],
+          "sha256": "10a69e02b0816daea919f7221888d129e36c4cb0e3742c33e1a1a88d1d7186f0"
+        },
+        {
+          "path": "res://assets/animated/pendle/idle-05.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 5,
+          "source_bounds": [
+            827,
+            18,
+            915,
+            161
+          ],
+          "source_origin": [
+            872.0,
+            161.0
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            66,
+            76,
+            125,
+            172
+          ],
+          "sha256": "3894ff32221d8569582adc6876475da3c8c2d78d91097315d766049ba858712e"
+        },
+        {
+          "path": "res://assets/animated/pendle/idle-06.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 6,
+          "source_bounds": [
+            975,
+            16,
+            1057,
+            161
+          ],
+          "source_origin": [
+            1029.0,
+            161.0
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            60,
+            75,
+            115,
+            172
+          ],
+          "sha256": "6191906ceab12a8dfeb0a28b2d6895b7fc858d7f07b341ec5f6d1ad60d33b89b"
+        },
+        {
+          "path": "res://assets/animated/pendle/idle-07.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 7,
+          "source_bounds": [
+            1130,
+            17,
+            1216,
+            161
+          ],
+          "source_origin": [
+            1185.5,
+            161.0
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            59,
+            76,
+            117,
+            172
+          ],
+          "sha256": "32aaeee1666f9bb2d8510d333fc50aa43f48d70b5e2e5baa9f7b0e021a81beae"
+        }
+      ]
+    },
+    "walk": {
+      "frame_count": 16,
+      "durations": [
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/pendle/walk-00.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 0,
+          "source_bounds": [
+            24,
+            14,
+            134,
+            154
+          ],
+          "source_origin": [
+            80.5,
+            154.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            57,
+            76,
+            132,
+            172
+          ],
+          "sha256": "fea6986a44f8b160033aa98c1149bac09ee8bb78f7fbc399750420e1974d9fca"
+        },
+        {
+          "path": "res://assets/animated/pendle/walk-01.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 1,
+          "source_bounds": [
+            188,
+            14,
+            296,
+            153
+          ],
+          "source_origin": [
+            238.0,
+            154.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            62,
+            76,
+            136,
+            171
+          ],
+          "sha256": "4c94c20ebe0f716ab6a21f4fb98546504c235d493f80a7880108d74aed03feb6"
+        },
+        {
+          "path": "res://assets/animated/pendle/walk-02.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 2,
+          "source_bounds": [
+            345,
+            13,
+            446,
+            154
+          ],
+          "source_origin": [
+            393.5,
+            154.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            63,
+            75,
+            132,
+            172
+          ],
+          "sha256": "1690c19e3c8e0d3ef913d23a75cd8194f742ff18d4cbb3634e523d6891e7694a"
+        },
+        {
+          "path": "res://assets/animated/pendle/walk-03.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 3,
+          "source_bounds": [
+            499,
+            13,
+            600,
+            153
+          ],
+          "source_origin": [
+            550.0,
+            154.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            61,
+            75,
+            130,
+            171
+          ],
+          "sha256": "e20583b1d5dfb0e421c721ce465a80096f59a4e0323da92e3739a0b444a74820"
+        },
+        {
+          "path": "res://assets/animated/pendle/walk-04.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 4,
+          "source_bounds": [
+            659,
+            13,
+            755,
+            153
+          ],
+          "source_origin": [
+            713.5,
+            154.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            59,
+            75,
+            125,
+            171
+          ],
+          "sha256": "99174864ada088649f612337f965867bedbf6639f5acd850d16f419c1715c1e3"
+        },
+        {
+          "path": "res://assets/animated/pendle/walk-05.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 5,
+          "source_bounds": [
+            813,
+            14,
+            909,
+            153
+          ],
+          "source_origin": [
+            877.5,
+            154.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            52,
+            76,
+            118,
+            171
+          ],
+          "sha256": "2735d6cc6a5f54215a61d5deb709d739389d3fb28ed0505ce075735966353d99"
+        },
+        {
+          "path": "res://assets/animated/pendle/walk-06.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 6,
+          "source_bounds": [
+            973,
+            14,
+            1062,
+            154
+          ],
+          "source_origin": [
+            1036.5,
+            154.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            52,
+            76,
+            113,
+            172
+          ],
+          "sha256": "807363d4b8d29615ce767f10ac46c80a4ddeaf8c07cd2785c000b373129495b5"
+        },
+        {
+          "path": "res://assets/animated/pendle/walk-07.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 7,
+          "source_bounds": [
+            1120,
+            14,
+            1219,
+            153
+          ],
+          "source_origin": [
+            1185.5,
+            154.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            51,
+            76,
+            119,
+            171
+          ],
+          "sha256": "c7f27179b7f3729885f1a5eef65269a7881a479aef4835f36241f47a454dc96b"
+        },
+        {
+          "path": "res://assets/animated/pendle/walk-08.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 8,
+          "source_bounds": [
+            29,
+            170,
+            133,
+            310
+          ],
+          "source_origin": [
+            80.5,
+            310.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            61,
+            76,
+            132,
+            172
+          ],
+          "sha256": "da9a6ac0efa0d2ce3664e6d8fca6fa073bacf59e8638688603a3b44018111447"
+        },
+        {
+          "path": "res://assets/animated/pendle/walk-09.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 9,
+          "source_bounds": [
+            188,
+            170,
+            295,
+            310
+          ],
+          "source_origin": [
+            238.0,
+            310.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            62,
+            76,
+            135,
+            172
+          ],
+          "sha256": "2ac1b7e671d997960489b22956884c882683d362b96017daea6b148c3ca09673"
+        },
+        {
+          "path": "res://assets/animated/pendle/walk-10.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 10,
+          "source_bounds": [
+            342,
+            170,
+            449,
+            310
+          ],
+          "source_origin": [
+            393.5,
+            310.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            61,
+            76,
+            134,
+            172
+          ],
+          "sha256": "d25f7b775aabc7902d1f3dbecb8072a5bfc0b55a2a065b831a9939113804c17c"
+        },
+        {
+          "path": "res://assets/animated/pendle/walk-11.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 11,
+          "source_bounds": [
+            500,
+            169,
+            598,
+            309
+          ],
+          "source_origin": [
+            550.0,
+            310.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            62,
+            75,
+            129,
+            171
+          ],
+          "sha256": "b7c1a60080010822aab13d6f8c1b2db55acf3ffd805847ef9ec24e91fbda2772"
+        },
+        {
+          "path": "res://assets/animated/pendle/walk-12.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 12,
+          "source_bounds": [
+            654,
+            169,
+            754,
+            310
+          ],
+          "source_origin": [
+            713.5,
+            310.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            55,
+            75,
+            124,
+            172
+          ],
+          "sha256": "587e9dab7d63e4bd9da7c4ebd9668fdc5b1f7b839d9d11b0570cf581e654a667"
+        },
+        {
+          "path": "res://assets/animated/pendle/walk-13.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 13,
+          "source_bounds": [
+            809,
+            170,
+            914,
+            310
+          ],
+          "source_origin": [
+            877.5,
+            310.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            49,
+            76,
+            121,
+            172
+          ],
+          "sha256": "a18cbbf3eafad3a3a56429c886fa0fca2cca52a2e4e34659969e181539fb3abb"
+        },
+        {
+          "path": "res://assets/animated/pendle/walk-14.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 14,
+          "source_bounds": [
+            964,
+            170,
+            1063,
+            310
+          ],
+          "source_origin": [
+            1036.5,
+            310.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            46,
+            76,
+            114,
+            172
+          ],
+          "sha256": "6ca5864808ded85786cd1d4301419b114941fa499d92c68ff013540904186566"
+        },
+        {
+          "path": "res://assets/animated/pendle/walk-15.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 15,
+          "source_bounds": [
+            1120,
+            170,
+            1221,
+            310
+          ],
+          "source_origin": [
+            1185.5,
+            310.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            51,
+            76,
+            120,
+            172
+          ],
+          "sha256": "13e323f85a923c24af6a633b5eb6877fe6aef4e08fca0cdecf4fbf5a8710c64b"
+        }
+      ]
+    },
+    "primary": {
+      "frame_count": 16,
+      "durations": [
+        0.0385,
+        0.0315,
+        0.0385,
+        0.0315,
+        0.044,
+        0.036,
+        0.0605,
+        0.049499999999999995,
+        0.022,
+        0.018,
+        0.030249999999999996,
+        0.024749999999999998,
+        0.04675,
+        0.03825,
+        0.0715,
+        0.058499999999999996
+      ],
+      "duration": 0.64,
+      "loop": false,
+      "release_frame": 8,
+      "release_time": 0.32999999999999996,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/pendle/primary-00.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 16,
+          "source_bounds": [
+            30,
+            327,
+            129,
+            467
+          ],
+          "source_origin": [
+            80.5,
+            466.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            61,
+            77,
+            129,
+            173
+          ],
+          "sha256": "bcc9889a7d7803f20257a176cdc31b0d7f8a384375e135bbf3082b54f3011fd3"
+        },
+        {
+          "path": "res://assets/animated/pendle/primary-01.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 17,
+          "source_bounds": [
+            186,
+            327,
+            289,
+            466
+          ],
+          "source_origin": [
+            238.0,
+            466.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            60,
+            77,
+            131,
+            172
+          ],
+          "sha256": "f2630268893101bfc474bffae854f9241ada3c9bb3ba34b5d4f51a6a1ac6cce8"
+        },
+        {
+          "path": "res://assets/animated/pendle/primary-02.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 18,
+          "source_bounds": [
+            339,
+            328,
+            440,
+            466
+          ],
+          "source_origin": [
+            393.5,
+            466.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            59,
+            77,
+            128,
+            172
+          ],
+          "sha256": "ff43be11d0fa1f9ea9e8e474a1c7045023756da59f80651d621792a697d96d62"
+        },
+        {
+          "path": "res://assets/animated/pendle/primary-03.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 19,
+          "source_bounds": [
+            494,
+            328,
+            596,
+            466
+          ],
+          "source_origin": [
+            550.0,
+            466.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            59,
+            77,
+            128,
+            172
+          ],
+          "sha256": "cc9139a15b92be2784464381293af2f4b27dad93231f81bea623c9d709b439ac"
+        },
+        {
+          "path": "res://assets/animated/pendle/primary-04.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 20,
+          "source_bounds": [
+            649,
+            328,
+            755,
+            466
+          ],
+          "source_origin": [
+            713.5,
+            466.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            52,
+            77,
+            125,
+            172
+          ],
+          "sha256": "4ce1815cd86c10393ea74a5ecc22293673b2251b6c1731caacf61e2471aaad96"
+        },
+        {
+          "path": "res://assets/animated/pendle/primary-05.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 21,
+          "source_bounds": [
+            804,
+            328,
+            956,
+            466
+          ],
+          "source_origin": [
+            877.5,
+            466.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            46,
+            77,
+            150,
+            172
+          ],
+          "sha256": "577ed0e0781ccd742a92874b56700969ce4f8bb69df1d47e3effb66d2189c217"
+        },
+        {
+          "path": "res://assets/animated/pendle/primary-06.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 22,
+          "source_bounds": [
+            965,
+            328,
+            1117,
+            466
+          ],
+          "source_origin": [
+            1036.5,
+            466.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            47,
+            77,
+            151,
+            172
+          ],
+          "sha256": "8958494bf8466131418bb091f66bf3531fbdbbe33e4a19dd80e97a7a6b17f96d"
+        },
+        {
+          "path": "res://assets/animated/pendle/primary-07.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 23,
+          "source_bounds": [
+            1140,
+            327,
+            1223,
+            466
+          ],
+          "source_origin": [
+            1185.5,
+            466.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            65,
+            77,
+            122,
+            172
+          ],
+          "sha256": "bc2e964e8a4d89a6f3ed26908f374b43dd2b5acec27cb9257f66a7eae48dd046"
+        },
+        {
+          "path": "res://assets/animated/pendle/primary-08.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 24,
+          "source_bounds": [
+            36,
+            488,
+            199,
+            623
+          ],
+          "source_origin": [
+            80.5,
+            624.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            65,
+            79,
+            177,
+            172
+          ],
+          "sha256": "431047c46451d54b411ef837bd3dde84244ab1df6e89589217f36f0e98eacffa"
+        },
+        {
+          "path": "res://assets/animated/pendle/primary-09.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 25,
+          "source_bounds": [
+            205,
+            488,
+            309,
+            624
+          ],
+          "source_origin": [
+            238.0,
+            624.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            73,
+            79,
+            144,
+            172
+          ],
+          "sha256": "4f1e06e61c0a5cf1eb1abde8322a0ae64e83fd43be264f154cafa91a87ec30eb"
+        },
+        {
+          "path": "res://assets/animated/pendle/primary-10.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 26,
+          "source_bounds": [
+            342,
+            490,
+            455,
+            623
+          ],
+          "source_origin": [
+            393.5,
+            624.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            61,
+            80,
+            138,
+            171
+          ],
+          "sha256": "520f46b1267eff290bdc1b61a2d2c81641fc22fe052a1183cfde246d8eeb4076"
+        },
+        {
+          "path": "res://assets/animated/pendle/primary-11.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 27,
+          "source_bounds": [
+            486,
+            489,
+            625,
+            624
+          ],
+          "source_origin": [
+            550.0,
+            624.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            53,
+            79,
+            147,
+            172
+          ],
+          "sha256": "db00d9c939dde935b12be8c6f0bef20d291d12bb0628b021f05e0667683be030"
+        },
+        {
+          "path": "res://assets/animated/pendle/primary-12.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 28,
+          "source_bounds": [
+            642,
+            488,
+            776,
+            623
+          ],
+          "source_origin": [
+            713.5,
+            624.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            47,
+            79,
+            139,
+            172
+          ],
+          "sha256": "19e7e902f4d4f49fbe6005d374f68817e53e7783c1ab2e08fb9dc4589b2dd5d5"
+        },
+        {
+          "path": "res://assets/animated/pendle/primary-13.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 29,
+          "source_bounds": [
+            809,
+            489,
+            916,
+            624
+          ],
+          "source_origin": [
+            877.5,
+            624.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            49,
+            79,
+            122,
+            172
+          ],
+          "sha256": "b8e42b6175b90eb1a9c7034344bdd133f32ddcd33487e47304c83d0581272136"
+        },
+        {
+          "path": "res://assets/animated/pendle/primary-14.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 30,
+          "source_bounds": [
+            966,
+            487,
+            1067,
+            624
+          ],
+          "source_origin": [
+            1036.5,
+            624.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            48,
+            78,
+            117,
+            172
+          ],
+          "sha256": "a09663537f80c5d32a552c514ad292901f66897c2f2f1f4086ba5484c38aec0b"
+        },
+        {
+          "path": "res://assets/animated/pendle/primary-15.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 31,
+          "source_bounds": [
+            1123,
+            485,
+            1219,
+            624
+          ],
+          "source_origin": [
+            1185.5,
+            624.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            53,
+            77,
+            119,
+            172
+          ],
+          "sha256": "0ec4a871daa1ed291b3ed259c8b6019607b134fb9c4f0328ffc2d906891438f4"
+        }
+      ],
+      "baked_effects": [
+        "muzzle_flash"
+      ],
+      "release_anchor": [
+        56,
+        -72
+      ]
+    },
+    "secondary": {
+      "frame_count": 8,
+      "durations": [
+        0.07,
+        0.07,
+        0.08,
+        0.11,
+        0.04,
+        0.055,
+        0.085,
+        0.13
+      ],
+      "duration": 0.64,
+      "loop": false,
+      "release_frame": 4,
+      "release_time": 0.33,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/pendle/secondary-00.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 24,
+          "source_bounds": [
+            44,
+            486,
+            137,
+            626
+          ],
+          "source_origin": [
+            84.5,
+            626.0
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            69,
+            78,
+            131,
+            172
+          ],
+          "sha256": "3682740dca454e096355e778566b6b92e8d2c54a18f49794df977ec9032e10f5"
+        },
+        {
+          "path": "res://assets/animated/pendle/secondary-01.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 25,
+          "source_bounds": [
+            200,
+            489,
+            322,
+            626
+          ],
+          "source_origin": [
+            236.0,
+            626.0
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            72,
+            80,
+            154,
+            172
+          ],
+          "sha256": "6c388ee7aa4f61cd454c191f1beb5cbf472134615bc487550a2fefda213220b2"
+        },
+        {
+          "path": "res://assets/animated/pendle/secondary-02.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 26,
+          "source_bounds": [
+            366,
+            488,
+            450,
+            626
+          ],
+          "source_origin": [
+            387.0,
+            626.0
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            82,
+            80,
+            138,
+            172
+          ],
+          "sha256": "bca649440cae0a5d90a561b618d98c1ed9d179d058a1ea238a1377c858a6647e"
+        },
+        {
+          "path": "res://assets/animated/pendle/secondary-03.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 27,
+          "source_bounds": [
+            502,
+            489,
+            648,
+            626
+          ],
+          "source_origin": [
+            548.5,
+            626.0
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            65,
+            80,
+            163,
+            172
+          ],
+          "sha256": "0c819aa03c8e1ef62edd7f0f7ff4010f306551f5d130c006e0fc75c762f61897"
+        },
+        {
+          "path": "res://assets/animated/pendle/secondary-04.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 28,
+          "source_bounds": [
+            664,
+            490,
+            812,
+            626
+          ],
+          "source_origin": [
+            714.5,
+            626.0
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            62,
+            81,
+            161,
+            172
+          ],
+          "sha256": "f57913df8552d2a1df7ce7b9e47c4fa1adfd00687fa4cce6b4694ff05d8b4773"
+        },
+        {
+          "path": "res://assets/animated/pendle/secondary-05.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 29,
+          "source_bounds": [
+            811,
+            492,
+            960,
+            626
+          ],
+          "source_origin": [
+            872.0,
+            626.0
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            55,
+            82,
+            155,
+            172
+          ],
+          "sha256": "949899ff11e4d470c6f84792d939ac19e2b2c9696cef0e61df99679752169705"
+        },
+        {
+          "path": "res://assets/animated/pendle/secondary-06.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 30,
+          "source_bounds": [
+            955,
+            492,
+            1091,
+            626
+          ],
+          "source_origin": [
+            1029.0,
+            626.0
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            46,
+            82,
+            137,
+            172
+          ],
+          "sha256": "34789dea3229b66b4fd884c245d138ea995eb64a344ef2a6636b422a53161981"
+        },
+        {
+          "path": "res://assets/animated/pendle/secondary-07.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 31,
+          "source_bounds": [
+            1128,
+            489,
+            1206,
+            626
+          ],
+          "source_origin": [
+            1185.5,
+            626.0
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            58,
+            80,
+            110,
+            172
+          ],
+          "sha256": "5cdf1618f3cf7c6769d65fc1d6e5b2d7e8b2f75661bf72b82d9f2d0448cc65ec"
+        }
+      ],
+      "release_anchor": [
+        64,
+        -70
+      ]
+    },
+    "special": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.08,
+        0.09,
+        0.12,
+        0.06,
+        0.08,
+        0.12,
+        0.18
+      ],
+      "duration": 0.82,
+      "loop": false,
+      "release_frame": 4,
+      "release_time": 0.38,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/pendle/special-00.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 32,
+          "source_bounds": [
+            46,
+            644,
+            136,
+            783
+          ],
+          "source_origin": [
+            84.5,
+            783.0
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            70,
+            79,
+            130,
+            172
+          ],
+          "sha256": "69cb482abdb16f4f1530ee33641727490f7fc992179f0897b149168e8a9a2e3c"
+        },
+        {
+          "path": "res://assets/animated/pendle/special-01.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 33,
+          "source_bounds": [
+            204,
+            647,
+            294,
+            783
+          ],
+          "source_origin": [
+            236.0,
+            783.0
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            75,
+            81,
+            135,
+            172
+          ],
+          "sha256": "af8478d0581534c150a3dbb2deed906a72bebf41ded9f5512674821694891794"
+        },
+        {
+          "path": "res://assets/animated/pendle/special-02.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 34,
+          "source_bounds": [
+            359,
+            644,
+            454,
+            783
+          ],
+          "source_origin": [
+            387.0,
+            783.0
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            77,
+            79,
+            141,
+            172
+          ],
+          "sha256": "7b4911035222b1c3237bfb773771e99ce9e44d239c7190a8179c1c059c0ec8c9"
+        },
+        {
+          "path": "res://assets/animated/pendle/special-03.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 35,
+          "source_bounds": [
+            492,
+            639,
+            621,
+            783
+          ],
+          "source_origin": [
+            548.5,
+            783.0
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            58,
+            76,
+            144,
+            172
+          ],
+          "sha256": "6d12a711b595ef1960576abd8f875272a47c28276ca64ce0bce38395bac64f8c"
+        },
+        {
+          "path": "res://assets/animated/pendle/special-04.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 36,
+          "source_bounds": [
+            651,
+            651,
+            803,
+            783
+          ],
+          "source_origin": [
+            714.5,
+            783.0
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            54,
+            84,
+            156,
+            172
+          ],
+          "sha256": "ec92a478f7a24be45199e1bfb424a076585b53a8f6262b64cf8ae67aff0328d4"
+        },
+        {
+          "path": "res://assets/animated/pendle/special-05.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 37,
+          "source_bounds": [
+            819,
+            652,
+            978,
+            783
+          ],
+          "source_origin": [
+            872.0,
+            783.0
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            61,
+            84,
+            167,
+            172
+          ],
+          "sha256": "1612eb95cf8829ac6b8412cfcadc73683faa734e642b7d168a47e33679d13014"
+        },
+        {
+          "path": "res://assets/animated/pendle/special-06.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 38,
+          "source_bounds": [
+            963,
+            647,
+            1117,
+            783
+          ],
+          "source_origin": [
+            1029.0,
+            783.0
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            52,
+            81,
+            155,
+            172
+          ],
+          "sha256": "374cf60c67bc913d545d0d33c2852fca545003756877eedbadfca6f1faa4c1c4"
+        },
+        {
+          "path": "res://assets/animated/pendle/special-07.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 39,
+          "source_bounds": [
+            1116,
+            643,
+            1245,
+            783
+          ],
+          "source_origin": [
+            1185.5,
+            783.0
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            50,
+            78,
+            136,
+            172
+          ],
+          "sha256": "9f15e8043405f8ffa664547659d233ee88a3b9a64f422a1a95151f04500b994a"
+        }
+      ]
+    },
+    "guard": {
+      "frame_count": 8,
+      "durations": [
+        0.055,
+        0.055,
+        0.055,
+        0.055,
+        0.12,
+        0.12,
+        0.12,
+        0.12
+      ],
+      "duration": 0.7,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": 4,
+      "frames": [
+        {
+          "path": "res://assets/animated/pendle/guard-00.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 40,
+          "source_bounds": [
+            43,
+            798,
+            139,
+            934
+          ],
+          "source_origin": [
+            84.5,
+            934.0
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            68,
+            81,
+            132,
+            172
+          ],
+          "sha256": "6d7535a628f400ea875148299302db0152126f54be4456f5e95dac31a9fc361c"
+        },
+        {
+          "path": "res://assets/animated/pendle/guard-01.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 41,
+          "source_bounds": [
+            200,
+            821,
+            303,
+            934
+          ],
+          "source_origin": [
+            236.0,
+            934.0
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            72,
+            96,
+            140,
+            172
+          ],
+          "sha256": "0eb9f78a31282250aa6bf952a6e582af7eaf19d37a863582f8d678054e8e19ad"
+        },
+        {
+          "path": "res://assets/animated/pendle/guard-02.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 42,
+          "source_bounds": [
+            350,
+            798,
+            451,
+            934
+          ],
+          "source_origin": [
+            387.0,
+            934.0
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            71,
+            81,
+            139,
+            172
+          ],
+          "sha256": "bbe01fb6a9276119fc871fd45f03eeb894d1015c46ef8733e634cea47a8d0c6e"
+        },
+        {
+          "path": "res://assets/animated/pendle/guard-03.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 43,
+          "source_bounds": [
+            502,
+            805,
+            626,
+            934
+          ],
+          "source_origin": [
+            548.5,
+            934.0
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            65,
+            86,
+            148,
+            172
+          ],
+          "sha256": "5fc54f6b3666d4854f3a7ee1bfa2251765b20155e5e31c98856368b78c853278"
+        },
+        {
+          "path": "res://assets/animated/pendle/guard-04.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 44,
+          "source_bounds": [
+            660,
+            801,
+            767,
+            934
+          ],
+          "source_origin": [
+            714.5,
+            934.0
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            60,
+            83,
+            132,
+            172
+          ],
+          "sha256": "5d84cf39e80a414cb6cc71001dce05a4c360e67972b6f0fd9886aa89b288581e"
+        },
+        {
+          "path": "res://assets/animated/pendle/guard-05.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 45,
+          "source_bounds": [
+            810,
+            814,
+            916,
+            933
+          ],
+          "source_origin": [
+            872.0,
+            934.0
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            55,
+            92,
+            126,
+            172
+          ],
+          "sha256": "d1e992e0f1fd80920723b5d8017fd368d6ead72a80335e099413e7efd6c88291"
+        },
+        {
+          "path": "res://assets/animated/pendle/guard-06.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 46,
+          "source_bounds": [
+            970,
+            805,
+            1073,
+            933
+          ],
+          "source_origin": [
+            1029.0,
+            934.0
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            57,
+            86,
+            126,
+            172
+          ],
+          "sha256": "fe7bf17ebb8cb6604a0777c41f92315d7da9574a12b0933e1f45cdeb1620b77c"
+        },
+        {
+          "path": "res://assets/animated/pendle/guard-07.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 47,
+          "source_bounds": [
+            1122,
+            798,
+            1215,
+            934
+          ],
+          "source_origin": [
+            1185.5,
+            934.0
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            54,
+            81,
+            116,
+            172
+          ],
+          "sha256": "46e24df8f840b0c6a9ba5d33336633ad1c0e8d6e60fda00947af1a1546b994db"
+        }
+      ]
+    },
+    "hit": {
+      "frame_count": 8,
+      "durations": [
+        0.035,
+        0.065,
+        0.09,
+        0.12,
+        0.13,
+        0.15,
+        0.16,
+        0.18
+      ],
+      "duration": 0.9299999999999999,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/pendle/hit-00.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 48,
+          "source_bounds": [
+            49,
+            955,
+            152,
+            1091
+          ],
+          "source_origin": [
+            84.5,
+            1091.0
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            72,
+            81,
+            141,
+            172
+          ],
+          "sha256": "116ec29090d1d6eed727b91b3a7212e84b492812841d26b3ba918e90482f5a91"
+        },
+        {
+          "path": "res://assets/animated/pendle/hit-01.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 49,
+          "source_bounds": [
+            192,
+            954,
+            293,
+            1091
+          ],
+          "source_origin": [
+            236.0,
+            1091.0
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            67,
+            80,
+            135,
+            172
+          ],
+          "sha256": "e708e64659a63b79cca5b5c082e22ce36a8b91faeab90130a58a4012661a4faf"
+        },
+        {
+          "path": "res://assets/animated/pendle/hit-02.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 50,
+          "source_bounds": [
+            355,
+            957,
+            453,
+            1091
+          ],
+          "source_origin": [
+            387.0,
+            1091.0
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            75,
+            82,
+            141,
+            172
+          ],
+          "sha256": "450c24fcf361d0d022ae27ff0d1b28c3935d374a2a7ce2f07bd5c23b48fd92a2"
+        },
+        {
+          "path": "res://assets/animated/pendle/hit-03.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 51,
+          "source_bounds": [
+            491,
+            978,
+            595,
+            1088
+          ],
+          "source_origin": [
+            548.5,
+            1091.0
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            58,
+            96,
+            128,
+            170
+          ],
+          "sha256": "4e0a9a61418c5148e3228258b9f340a28f34323456e25769ab3683d9eb647773"
+        },
+        {
+          "path": "res://assets/animated/pendle/hit-04.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 52,
+          "source_bounds": [
+            631,
+            981,
+            766,
+            1089
+          ],
+          "source_origin": [
+            714.5,
+            1091.0
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            40,
+            98,
+            130,
+            170
+          ],
+          "sha256": "c029cfd3093820f0bdedff2cc8501c08fe4d2ee74cbe1f16671dd5cf1cf4eecf"
+        },
+        {
+          "path": "res://assets/animated/pendle/hit-05.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 53,
+          "source_bounds": [
+            816,
+            949,
+            911,
+            1091
+          ],
+          "source_origin": [
+            872.0,
+            1091.0
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            59,
+            77,
+            123,
+            172
+          ],
+          "sha256": "02f7c5207be31d28b69b876b423820c95ebdf98cd27a0f9e2940526c53590148"
+        },
+        {
+          "path": "res://assets/animated/pendle/hit-06.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 54,
+          "source_bounds": [
+            965,
+            950,
+            1061,
+            1091
+          ],
+          "source_origin": [
+            1029.0,
+            1091.0
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            53,
+            78,
+            117,
+            172
+          ],
+          "sha256": "2801ce944c53fb79eab0bf07000955cf2b268c3e13e130980fda282cfbfc80db"
+        },
+        {
+          "path": "res://assets/animated/pendle/hit-07.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 55,
+          "source_bounds": [
+            1122,
+            944,
+            1206,
+            1091
+          ],
+          "source_origin": [
+            1185.5,
+            1091.0
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            54,
+            74,
+            110,
+            172
+          ],
+          "sha256": "0e6b50c82b2a9aec04f5e0dd732a49f567c21b5d35bf716600297c87420d42e4"
+        }
+      ]
+    },
+    "defeat": {
+      "frame_count": 8,
+      "durations": [
+        0.08,
+        0.1,
+        0.1,
+        0.12,
+        0.15,
+        0.18,
+        0.24,
+        0.3
+      ],
+      "duration": 1.27,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/pendle/defeat-00.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 56,
+          "source_bounds": [
+            40,
+            1106,
+            146,
+            1239
+          ],
+          "source_origin": [
+            84.5,
+            1237.25
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            66,
+            84,
+            137,
+            173
+          ],
+          "sha256": "992cf96b5ea2e7942d553345dc4bc7c73d033d0c745927c7d84e7f36298f270d"
+        },
+        {
+          "path": "res://assets/animated/pendle/defeat-01.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 57,
+          "source_bounds": [
+            175,
+            1115,
+            285,
+            1238
+          ],
+          "source_origin": [
+            236.0,
+            1237.25
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            55,
+            90,
+            129,
+            172
+          ],
+          "sha256": "c780a7d531d674333c25e30a2a33effd695f99dd291861168412c2dd0e2f7713"
+        },
+        {
+          "path": "res://assets/animated/pendle/defeat-02.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 58,
+          "source_bounds": [
+            304,
+            1155,
+            422,
+            1237
+          ],
+          "source_origin": [
+            387.0,
+            1237.25
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            40,
+            117,
+            119,
+            172
+          ],
+          "sha256": "e5534bc5bb237102377193d5e1b7e0fdfa56b5682649a103f2f829d75d7d8f81"
+        },
+        {
+          "path": "res://assets/animated/pendle/defeat-03.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 59,
+          "source_bounds": [
+            438,
+            1158,
+            587,
+            1234
+          ],
+          "source_origin": [
+            548.5,
+            1237.25
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            22,
+            119,
+            122,
+            170
+          ],
+          "sha256": "b9eb792f172a971cc10ccba3b2a96b7333ef84576b9077963014f4b10244e9cf"
+        },
+        {
+          "path": "res://assets/animated/pendle/defeat-04.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 60,
+          "source_bounds": [
+            594,
+            1169,
+            748,
+            1235
+          ],
+          "source_origin": [
+            714.5,
+            1237.25
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            15,
+            126,
+            117,
+            170
+          ],
+          "sha256": "1edfd206adaf53d98106893fe712c86833f07a74c76c65af147e64518ebbef8f"
+        },
+        {
+          "path": "res://assets/animated/pendle/defeat-05.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 61,
+          "source_bounds": [
+            755,
+            1175,
+            912,
+            1232
+          ],
+          "source_origin": [
+            872.0,
+            1237.25
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            18,
+            130,
+            123,
+            168
+          ],
+          "sha256": "d76e35d1781638898306e614130f1c63f52d4036150e9286338236c070d2c918"
+        },
+        {
+          "path": "res://assets/animated/pendle/defeat-06.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 62,
+          "source_bounds": [
+            921,
+            1181,
+            1077,
+            1231
+          ],
+          "source_origin": [
+            1029.0,
+            1237.25
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            24,
+            134,
+            128,
+            167
+          ],
+          "sha256": "c6305087968b256e64b4d4f6592e717a2db6aee8c339bf93fbae260aeced66f9"
+        },
+        {
+          "path": "res://assets/animated/pendle/defeat-07.png",
+          "source": "art-source/animated/pendle-64.png",
+          "slot": 63,
+          "source_bounds": [
+            1087,
+            1174,
+            1239,
+            1228
+          ],
+          "source_origin": [
+            1185.5,
+            1237.25
+          ],
+          "scale": 0.6689895470383276,
+          "packed_bounds": [
+            30,
+            131,
+            132,
+            166
+          ],
+          "sha256": "02796500e250faf8a802854f876f4dc53d6cfb7666e40a62c6cf7e7df7cad5e3"
+        }
+      ]
+    },
+    "jump": {
+      "frame_count": 8,
+      "durations": [
+        0.08,
+        0.055,
+        0.08,
+        0.11,
+        0.11,
+        0.08,
+        0.07,
+        0.115
+      ],
+      "duration": 0.7000000000000001,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/pendle/jump-00.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 32,
+          "source_bounds": [
+            28,
+            640,
+            126,
+            779
+          ],
+          "source_origin": [
+            80.5,
+            779.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            60,
+            77,
+            127,
+            172
+          ],
+          "sha256": "43462f1741208e881481bd07d9615d139dc11015874f33a261cde76069899364",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/pendle/jump-01.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 33,
+          "source_bounds": [
+            183,
+            656,
+            295,
+            779
+          ],
+          "source_origin": [
+            238.0,
+            779.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            58,
+            88,
+            135,
+            172
+          ],
+          "sha256": "292dcdd23722b7eb386a4732ff23da10748fb2b3d4ee98c0af611b0134620250",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/pendle/jump-02.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 34,
+          "source_bounds": [
+            340,
+            646,
+            450,
+            779
+          ],
+          "source_origin": [
+            393.5,
+            779.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            59,
+            81,
+            134,
+            172
+          ],
+          "sha256": "b632aae7d46b9184d9c121159508afb03cbde6642392919dddfe3c7fe2a0c9b0",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/pendle/jump-03.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 35,
+          "source_bounds": [
+            491,
+            632,
+            602,
+            766
+          ],
+          "source_origin": [
+            550.0,
+            766.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            56,
+            80,
+            132,
+            172
+          ],
+          "sha256": "b8410f3090c48fb78175ff4ef40d3ac49a39c9d891af8575b81f61debcb6d6f6",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/pendle/jump-04.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 36,
+          "source_bounds": [
+            643,
+            645,
+            750,
+            766
+          ],
+          "source_origin": [
+            713.5,
+            766.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            48,
+            89,
+            121,
+            172
+          ],
+          "sha256": "541dba14302bb41e1a6dedae802c3df77b411964a454329710c353fee7d8b27d",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/pendle/jump-05.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 37,
+          "source_bounds": [
+            804,
+            644,
+            915,
+            778
+          ],
+          "source_origin": [
+            877.5,
+            778.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            46,
+            80,
+            122,
+            172
+          ],
+          "sha256": "e9f34dec89e5e9d5b3084998d46f1b4b93403603d35ec17cc29c04163b860372",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/pendle/jump-06.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 38,
+          "source_bounds": [
+            961,
+            667,
+            1080,
+            779
+          ],
+          "source_origin": [
+            1036.5,
+            779.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            44,
+            95,
+            126,
+            172
+          ],
+          "sha256": "9f7557bfd97187e5eb32fc51e500c3b53fd2ae0d6e7ae5e7a73801bd8245fd1e",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/pendle/jump-07.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 39,
+          "source_bounds": [
+            1124,
+            642,
+            1225,
+            779
+          ],
+          "source_origin": [
+            1185.5,
+            779.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            54,
+            78,
+            123,
+            172
+          ],
+          "sha256": "6f8660d9161015984531e86deb9a4c1ca98b950f0917887264e66683cb1d318b",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "stair_up": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/pendle/stair_up-00.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 40,
+          "source_bounds": [
+            32,
+            795,
+            131,
+            934
+          ],
+          "source_origin": [
+            80.5,
+            934.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            63,
+            77,
+            131,
+            172
+          ],
+          "sha256": "6305d9fa82bc7ffabb9ded312af5c8faa6f97150f9c79eb1954ab5ddb298c53b",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/pendle/stair_up-01.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 41,
+          "source_bounds": [
+            186,
+            791,
+            295,
+            934
+          ],
+          "source_origin": [
+            238.0,
+            934.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            60,
+            74,
+            135,
+            172
+          ],
+          "sha256": "4dadbe7b55fd0a28cce0ad83e487288a4296a85ecba2c3a069e8d48759ff8842",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/pendle/stair_up-02.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 42,
+          "source_bounds": [
+            347,
+            789,
+            450,
+            935
+          ],
+          "source_origin": [
+            393.5,
+            935.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            64,
+            72,
+            135,
+            172
+          ],
+          "sha256": "f41eb2f10a384a4d8ed8c32d6232f260a26be3a945a3291fbc464d034c2affec",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/pendle/stair_up-03.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 43,
+          "source_bounds": [
+            508,
+            789,
+            597,
+            934
+          ],
+          "source_origin": [
+            550.0,
+            934.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            67,
+            73,
+            128,
+            172
+          ],
+          "sha256": "07ee7adedbbd770a319cfb51b3da54ec2fc7b9231db498549b050147cc06fba7",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/pendle/stair_up-04.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 44,
+          "source_bounds": [
+            653,
+            791,
+            753,
+            934
+          ],
+          "source_origin": [
+            713.5,
+            934.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            55,
+            74,
+            124,
+            172
+          ],
+          "sha256": "a3e228467ae3b90b527a94c2b548d2c440f47b6ca5da8d1263357a2e999f63c2",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/pendle/stair_up-05.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 45,
+          "source_bounds": [
+            805,
+            791,
+            918,
+            934
+          ],
+          "source_origin": [
+            877.5,
+            934.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            46,
+            74,
+            123,
+            172
+          ],
+          "sha256": "3bb2ef40d8994da84c42ed8ce898cd71cfb08fbf1d2b9e318111b0cc99797e71",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/pendle/stair_up-06.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 46,
+          "source_bounds": [
+            968,
+            791,
+            1070,
+            934
+          ],
+          "source_origin": [
+            1036.5,
+            934.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            49,
+            74,
+            119,
+            172
+          ],
+          "sha256": "3c77393c1bac539d4d60bf7182e92699b93971f689d140604654b26a4d862bd6",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/pendle/stair_up-07.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 47,
+          "source_bounds": [
+            1126,
+            795,
+            1224,
+            934
+          ],
+          "source_origin": [
+            1185.5,
+            934.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            55,
+            77,
+            122,
+            172
+          ],
+          "sha256": "e9fc56bb206bc162498270697eb98c25787246b02f6024040ba0a67d9409047b",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "stair_down": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/pendle/stair_down-00.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 48,
+          "source_bounds": [
+            27,
+            948,
+            131,
+            1089
+          ],
+          "source_origin": [
+            80.5,
+            1089.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            59,
+            75,
+            130,
+            172
+          ],
+          "sha256": "bad9da4fc9467d068d4151c3aa0d1dd28d4cbbc2ccfc3e7f760b8d5d15a3d337",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/pendle/stair_down-01.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 49,
+          "source_bounds": [
+            187,
+            948,
+            289,
+            1089
+          ],
+          "source_origin": [
+            238.0,
+            1089.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            61,
+            75,
+            131,
+            172
+          ],
+          "sha256": "8fb89f5ee75a876ac4ee35c4740acbf8b8f4b24c42e0ed468403cc61d998b387",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/pendle/stair_down-02.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 50,
+          "source_bounds": [
+            341,
+            950,
+            446,
+            1089
+          ],
+          "source_origin": [
+            393.5,
+            1089.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            60,
+            77,
+            132,
+            172
+          ],
+          "sha256": "5424b93a00034e84d61dfddf646061e153a2449fd8a9f1f6195ba6891bd4d455",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/pendle/stair_down-03.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 51,
+          "source_bounds": [
+            494,
+            950,
+            601,
+            1089
+          ],
+          "source_origin": [
+            550.0,
+            1089.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            58,
+            77,
+            131,
+            172
+          ],
+          "sha256": "668847b05230b35f2f9d4c2638b48749b9237efd7a72d5c8d34acbf17ff3c9bb",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/pendle/stair_down-04.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 52,
+          "source_bounds": [
+            651,
+            948,
+            755,
+            1087
+          ],
+          "source_origin": [
+            713.5,
+            1087.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            53,
+            77,
+            124,
+            172
+          ],
+          "sha256": "7696a8268be12ff8babc648e02597a83e97a1a66fd93c3c64ffa168e7946f31d",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/pendle/stair_down-05.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 53,
+          "source_bounds": [
+            810,
+            948,
+            911,
+            1089
+          ],
+          "source_origin": [
+            877.5,
+            1089.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            50,
+            75,
+            119,
+            172
+          ],
+          "sha256": "358aa4c5df0596fc5d39c9f8633adfbb0cd89deb119399ad15e12340887caf04",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/pendle/stair_down-06.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 54,
+          "source_bounds": [
+            968,
+            948,
+            1066,
+            1089
+          ],
+          "source_origin": [
+            1036.5,
+            1089.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            49,
+            75,
+            116,
+            172
+          ],
+          "sha256": "904dd95f5631665792b3b11f09b7373951dbd8688f40739ba091b6cd99b09ef8",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/pendle/stair_down-07.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 55,
+          "source_bounds": [
+            1120,
+            948,
+            1220,
+            1089
+          ],
+          "source_origin": [
+            1185.5,
+            1089.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            51,
+            75,
+            120,
+            172
+          ],
+          "sha256": "4be0f85b9d6a838c97279a2c2e2cbd5ab628c61cd27968a865e4c48327e68612",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "dodge": {
+      "frame_count": 8,
+      "durations": [
+        0.055,
+        0.045,
+        0.04,
+        0.045,
+        0.06,
+        0.07,
+        0.08,
+        0.1
+      ],
+      "duration": 0.495,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/pendle/dodge-00.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 56,
+          "source_bounds": [
+            28,
+            1103,
+            132,
+            1240
+          ],
+          "source_origin": [
+            80.5,
+            1240.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            60,
+            78,
+            131,
+            172
+          ],
+          "sha256": "09a23678364d2ea314b9c5424d45868fc2fddd31b349c0fcf7121ac6909e03ac",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/pendle/dodge-01.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 57,
+          "source_bounds": [
+            176,
+            1114,
+            290,
+            1240
+          ],
+          "source_origin": [
+            238.0,
+            1240.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            53,
+            86,
+            131,
+            172
+          ],
+          "sha256": "777feede2bbed8b360e4e59e9f7c1b64c6d02293ed143567db6c121c6c17459d",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/pendle/dodge-02.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 58,
+          "source_bounds": [
+            316,
+            1125,
+            471,
+            1236
+          ],
+          "source_origin": [
+            393.5,
+            1236.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            43,
+            96,
+            149,
+            172
+          ],
+          "sha256": "5bd7654f7f9e09850a5199bdf3bb22f94adede9cefe6a9cbf11a6ce7348180b3",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/pendle/dodge-03.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 59,
+          "source_bounds": [
+            487,
+            1119,
+            628,
+            1237
+          ],
+          "source_origin": [
+            550.0,
+            1237.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            53,
+            91,
+            150,
+            172
+          ],
+          "sha256": "77e3681d7cfa2bbb1a6aee723c556daa74e919c490ce3aef0194745baee1d0cb",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/pendle/dodge-04.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 60,
+          "source_bounds": [
+            650,
+            1132,
+            799,
+            1238
+          ],
+          "source_origin": [
+            713.5,
+            1238.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            52,
+            99,
+            154,
+            172
+          ],
+          "sha256": "0a1bae0026ee14c3747a5c70b78a0c318694aac0afc9f9f5398ad19585da45e2",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/pendle/dodge-05.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 61,
+          "source_bounds": [
+            824,
+            1111,
+            939,
+            1240
+          ],
+          "source_origin": [
+            877.5,
+            1240.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            59,
+            84,
+            138,
+            172
+          ],
+          "sha256": "3029abf9a11c11a6b1b479c07a0d95992bcbdf5a5e1252a0e5796a5db97f2112",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/pendle/dodge-06.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 62,
+          "source_bounds": [
+            975,
+            1103,
+            1080,
+            1240
+          ],
+          "source_origin": [
+            1036.5,
+            1240.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            54,
+            78,
+            126,
+            172
+          ],
+          "sha256": "8e0c62b1a5dcaf316f093246a807597bf595676bce714368753da3644294a445",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/pendle/dodge-07.png",
+          "source": "art-source/animated/v3/pendle-extension64.png",
+          "slot": 63,
+          "source_bounds": [
+            1120,
+            1103,
+            1220,
+            1240
+          ],
+          "source_origin": [
+            1185.5,
+            1240.0
+          ],
+          "scale": 0.6857142857142857,
+          "packed_bounds": [
+            51,
+            78,
+            120,
+            172
+          ],
+          "sha256": "71df99a1e83a6285493ee7839ff63f694edf7c875433fa117674d6f77fcdf589",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "powered_idle": {
+      "frame_count": 8,
+      "durations": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ],
+      "duration": 1.6,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/pendle/powered_idle-00.png",
+          "source": "art-source/animated/v3/pendle-powered40.png",
+          "slot": 0,
+          "source_bounds": [
+            24,
+            25,
+            183,
+            187
+          ],
+          "source_origin": [
+            98.5,
+            187.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            52,
+            76,
+            146,
+            172
+          ],
+          "sha256": "b766ac51846eb2038ac661f0aaa0359d2b3ffc67c613f9ae7d7c3b7a85bbc797"
+        },
+        {
+          "path": "res://assets/animated/pendle/powered_idle-01.png",
+          "source": "art-source/animated/v3/pendle-powered40.png",
+          "slot": 1,
+          "source_bounds": [
+            216,
+            25,
+            368,
+            187
+          ],
+          "source_origin": [
+            292.0,
+            187.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            51,
+            76,
+            141,
+            172
+          ],
+          "sha256": "059a4ee6cc398f975d5533bb312a3626173d8c0c01ef76911fc75f92dee485b5"
+        },
+        {
+          "path": "res://assets/animated/pendle/powered_idle-02.png",
+          "source": "art-source/animated/v3/pendle-powered40.png",
+          "slot": 2,
+          "source_bounds": [
+            401,
+            24,
+            560,
+            187
+          ],
+          "source_origin": [
+            482.5,
+            187.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            48,
+            75,
+            142,
+            172
+          ],
+          "sha256": "a13e78457d9cf11dd07d4a915d29bcf378071d933e3ec8693b3da6c152056968"
+        },
+        {
+          "path": "res://assets/animated/pendle/powered_idle-03.png",
+          "source": "art-source/animated/v3/pendle-powered40.png",
+          "slot": 3,
+          "source_bounds": [
+            595,
+            25,
+            753,
+            187
+          ],
+          "source_origin": [
+            675.0,
+            187.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            49,
+            76,
+            143,
+            172
+          ],
+          "sha256": "5b9136300b6555d188636b659e54cc87c25ad2ad26096836b241ab73d3145183"
+        },
+        {
+          "path": "res://assets/animated/pendle/powered_idle-04.png",
+          "source": "art-source/animated/v3/pendle-powered40.png",
+          "slot": 4,
+          "source_bounds": [
+            790,
+            25,
+            947,
+            187
+          ],
+          "source_origin": [
+            869.5,
+            187.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            49,
+            76,
+            142,
+            172
+          ],
+          "sha256": "0e0beb5fa0396398d4856f5a975dab8c0b3f322aab9dbf353098a10006afa053"
+        },
+        {
+          "path": "res://assets/animated/pendle/powered_idle-05.png",
+          "source": "art-source/animated/v3/pendle-powered40.png",
+          "slot": 5,
+          "source_bounds": [
+            980,
+            25,
+            1137,
+            187
+          ],
+          "source_origin": [
+            1063.5,
+            187.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            47,
+            76,
+            140,
+            172
+          ],
+          "sha256": "c6a21b721e2538cefc9a44e2d96f161c5bb316e367ff08d863105635c32fed20"
+        },
+        {
+          "path": "res://assets/animated/pendle/powered_idle-06.png",
+          "source": "art-source/animated/v3/pendle-powered40.png",
+          "slot": 6,
+          "source_bounds": [
+            1172,
+            25,
+            1331,
+            187
+          ],
+          "source_origin": [
+            1253.5,
+            187.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            48,
+            76,
+            142,
+            172
+          ],
+          "sha256": "5f33b2fa8ddb2c14c3c58bd6cdb62d4f8ea94ed06fc217765db40e169cb1165b"
+        },
+        {
+          "path": "res://assets/animated/pendle/powered_idle-07.png",
+          "source": "art-source/animated/v3/pendle-powered40.png",
+          "slot": 7,
+          "source_bounds": [
+            1365,
+            25,
+            1521,
+            187
+          ],
+          "source_origin": [
+            1441.5,
+            187.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            51,
+            76,
+            143,
+            172
+          ],
+          "sha256": "8cb63201ae2ca037ded8ce115dd765a4e2dc23e01e5c0a03e96064d1a6bd131a"
+        }
+      ]
+    },
+    "powered_walk": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/pendle/powered_walk-00.png",
+          "source": "art-source/animated/v3/pendle-powered40.png",
+          "slot": 8,
+          "source_bounds": [
+            18,
+            222,
+            183,
+            390
+          ],
+          "source_origin": [
+            98.5,
+            390.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            48,
+            72,
+            146,
+            172
+          ],
+          "sha256": "ecf986195bb54ab20b178638b722b96a015737104dda51694a90e0231244b3e6"
+        },
+        {
+          "path": "res://assets/animated/pendle/powered_walk-01.png",
+          "source": "art-source/animated/v3/pendle-powered40.png",
+          "slot": 9,
+          "source_bounds": [
+            205,
+            221,
+            371,
+            390
+          ],
+          "source_origin": [
+            292.0,
+            390.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            44,
+            72,
+            142,
+            172
+          ],
+          "sha256": "6da1fe9e42558a58d986e665f824d243e22b97ed12530f2fcfea1dbdafb05982"
+        },
+        {
+          "path": "res://assets/animated/pendle/powered_walk-02.png",
+          "source": "art-source/animated/v3/pendle-powered40.png",
+          "slot": 10,
+          "source_bounds": [
+            401,
+            222,
+            563,
+            390
+          ],
+          "source_origin": [
+            482.5,
+            390.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            48,
+            72,
+            144,
+            172
+          ],
+          "sha256": "5253cf3495ad3cb89e727a6d3ca95b01c1f677d5ff266d3b7fc34cea01a7f7cf"
+        },
+        {
+          "path": "res://assets/animated/pendle/powered_walk-03.png",
+          "source": "art-source/animated/v3/pendle-powered40.png",
+          "slot": 11,
+          "source_bounds": [
+            594,
+            223,
+            756,
+            390
+          ],
+          "source_origin": [
+            675.0,
+            390.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            48,
+            73,
+            144,
+            172
+          ],
+          "sha256": "f9a1a238e0b343bd2712aec0c4ab178e903708d2872809ab03a21e4aa17bbc42"
+        },
+        {
+          "path": "res://assets/animated/pendle/powered_walk-04.png",
+          "source": "art-source/animated/v3/pendle-powered40.png",
+          "slot": 12,
+          "source_bounds": [
+            784,
+            223,
+            947,
+            390
+          ],
+          "source_origin": [
+            869.5,
+            390.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            45,
+            73,
+            142,
+            172
+          ],
+          "sha256": "7068063e5ed9cc5f96f6b32c55911360a48511e8ef700df2f871b7d991d0c01a"
+        },
+        {
+          "path": "res://assets/animated/pendle/powered_walk-05.png",
+          "source": "art-source/animated/v3/pendle-powered40.png",
+          "slot": 13,
+          "source_bounds": [
+            977,
+            218,
+            1138,
+            390
+          ],
+          "source_origin": [
+            1063.5,
+            390.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            45,
+            70,
+            140,
+            172
+          ],
+          "sha256": "6c72dee52e5ac241a15ff72cb17c986ea13897e5a80e99c34c75e7f005c052fc"
+        },
+        {
+          "path": "res://assets/animated/pendle/powered_walk-06.png",
+          "source": "art-source/animated/v3/pendle-powered40.png",
+          "slot": 14,
+          "source_bounds": [
+            1166,
+            221,
+            1331,
+            390
+          ],
+          "source_origin": [
+            1253.5,
+            390.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            44,
+            72,
+            142,
+            172
+          ],
+          "sha256": "38120cbbd4589e0a9dbf78adcbf296ef2ce9b2bc617d885acf3878d9f4760961"
+        },
+        {
+          "path": "res://assets/animated/pendle/powered_walk-07.png",
+          "source": "art-source/animated/v3/pendle-powered40.png",
+          "slot": 15,
+          "source_bounds": [
+            1360,
+            223,
+            1521,
+            390
+          ],
+          "source_origin": [
+            1441.5,
+            390.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            48,
+            73,
+            143,
+            172
+          ],
+          "sha256": "da4e8f1c93a6fd72b4217058e247b4548a0c28d876bb7a84fe9b14412317bbd6"
+        }
+      ]
+    },
+    "powered_primary": {
+      "frame_count": 8,
+      "durations": [
+        0.07,
+        0.07,
+        0.08,
+        0.11,
+        0.04,
+        0.055,
+        0.085,
+        0.13
+      ],
+      "duration": 0.64,
+      "loop": false,
+      "release_frame": 4,
+      "release_time": 0.33,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/pendle/powered_primary-00.png",
+          "source": "art-source/animated/v3/pendle-powered40.png",
+          "slot": 16,
+          "source_bounds": [
+            22,
+            421,
+            181,
+            583
+          ],
+          "source_origin": [
+            98.5,
+            583.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            51,
+            76,
+            145,
+            172
+          ],
+          "sha256": "d3161dbcdb8a4f2a6dd659194def194c22662537ac4484f990e841c93c5ca8d0"
+        },
+        {
+          "path": "res://assets/animated/pendle/powered_primary-01.png",
+          "source": "art-source/animated/v3/pendle-powered40.png",
+          "slot": 17,
+          "source_bounds": [
+            211,
+            416,
+            372,
+            583
+          ],
+          "source_origin": [
+            292.0,
+            583.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            48,
+            73,
+            143,
+            172
+          ],
+          "sha256": "d767f09ad41fe15e01cc2f819463d804d3b79840ebb3339e7db9eb9a191c62af"
+        },
+        {
+          "path": "res://assets/animated/pendle/powered_primary-02.png",
+          "source": "art-source/animated/v3/pendle-powered40.png",
+          "slot": 18,
+          "source_bounds": [
+            391,
+            424,
+            576,
+            582
+          ],
+          "source_origin": [
+            482.5,
+            583.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            42,
+            78,
+            152,
+            172
+          ],
+          "sha256": "755a1e5fddd8ba0c81573d0d8fffa7c6dea65b0aecf3c1d2f21d5a4f5c0db4f3"
+        },
+        {
+          "path": "res://assets/animated/pendle/powered_primary-03.png",
+          "source": "art-source/animated/v3/pendle-powered40.png",
+          "slot": 19,
+          "source_bounds": [
+            587,
+            419,
+            764,
+            583
+          ],
+          "source_origin": [
+            675.0,
+            583.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            44,
+            75,
+            149,
+            172
+          ],
+          "sha256": "8fdfb8c1cf0caf785d65941ad3f6263afd905867811511969f5ec8fb5622e1fe"
+        },
+        {
+          "path": "res://assets/animated/pendle/powered_primary-04.png",
+          "source": "art-source/animated/v3/pendle-powered40.png",
+          "slot": 20,
+          "source_bounds": [
+            776,
+            423,
+            967,
+            583
+          ],
+          "source_origin": [
+            869.5,
+            583.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            41,
+            77,
+            154,
+            172
+          ],
+          "sha256": "d8e3309a164bad31e957a2455982f567a3c089da39ff2947e1846b691a866f8b"
+        },
+        {
+          "path": "res://assets/animated/pendle/powered_primary-05.png",
+          "source": "art-source/animated/v3/pendle-powered40.png",
+          "slot": 21,
+          "source_bounds": [
+            992,
+            423,
+            1160,
+            583
+          ],
+          "source_origin": [
+            1063.5,
+            583.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            54,
+            77,
+            154,
+            172
+          ],
+          "sha256": "9f2d1ca9afb8a303f975552c1feb4be88527f3e1891defd72d4ea26184bf901a"
+        },
+        {
+          "path": "res://assets/animated/pendle/powered_primary-06.png",
+          "source": "art-source/animated/v3/pendle-powered40.png",
+          "slot": 22,
+          "source_bounds": [
+            1184,
+            419,
+            1336,
+            583
+          ],
+          "source_origin": [
+            1253.5,
+            583.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            55,
+            75,
+            145,
+            172
+          ],
+          "sha256": "45d601df00b2242bbcf4854bd619849ba87030bcd88c4247121c29a445d1ed8c"
+        },
+        {
+          "path": "res://assets/animated/pendle/powered_primary-07.png",
+          "source": "art-source/animated/v3/pendle-powered40.png",
+          "slot": 23,
+          "source_bounds": [
+            1369,
+            422,
+            1521,
+            583
+          ],
+          "source_origin": [
+            1441.5,
+            583.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            53,
+            77,
+            143,
+            172
+          ],
+          "sha256": "40837e154dd5807d7229023f7c260b6dcd2ed25853e530872f9a023357a1e8f4"
+        }
+      ],
+      "release_anchor": [
+        57,
+        -68
+      ]
+    },
+    "powered_guard": {
+      "frame_count": 8,
+      "durations": [
+        0.055,
+        0.055,
+        0.055,
+        0.055,
+        0.12,
+        0.12,
+        0.12,
+        0.12
+      ],
+      "duration": 0.7,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": 4,
+      "frames": [
+        {
+          "path": "res://assets/animated/pendle/powered_guard-00.png",
+          "source": "art-source/animated/v3/pendle-powered40.png",
+          "slot": 24,
+          "source_bounds": [
+            23,
+            618,
+            182,
+            780
+          ],
+          "source_origin": [
+            98.5,
+            780.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            51,
+            76,
+            145,
+            172
+          ],
+          "sha256": "76d74ec606d8206f98dec7721751a6e5668f1e1890a9f93b43629e4e127d8457"
+        },
+        {
+          "path": "res://assets/animated/pendle/powered_guard-01.png",
+          "source": "art-source/animated/v3/pendle-powered40.png",
+          "slot": 25,
+          "source_bounds": [
+            214,
+            623,
+            378,
+            780
+          ],
+          "source_origin": [
+            292.0,
+            780.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            50,
+            79,
+            147,
+            172
+          ],
+          "sha256": "99f4b15c3744f271a5231522d4ed5bdbb99379532adde58746e4d8804e2959e8"
+        },
+        {
+          "path": "res://assets/animated/pendle/powered_guard-02.png",
+          "source": "art-source/animated/v3/pendle-powered40.png",
+          "slot": 26,
+          "source_bounds": [
+            405,
+            635,
+            570,
+            780
+          ],
+          "source_origin": [
+            482.5,
+            780.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            50,
+            86,
+            148,
+            172
+          ],
+          "sha256": "3e6a565f458a66a592675aedd9c5e8298c160c443e2bd0680f881e3c5352f4fc"
+        },
+        {
+          "path": "res://assets/animated/pendle/powered_guard-03.png",
+          "source": "art-source/animated/v3/pendle-powered40.png",
+          "slot": 27,
+          "source_bounds": [
+            593,
+            637,
+            764,
+            780
+          ],
+          "source_origin": [
+            675.0,
+            780.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            47,
+            87,
+            148,
+            172
+          ],
+          "sha256": "f03c31c43625df22e3d0944614affabf2c12e8a779ad5fd96decacf012442cbf"
+        },
+        {
+          "path": "res://assets/animated/pendle/powered_guard-04.png",
+          "source": "art-source/animated/v3/pendle-powered40.png",
+          "slot": 28,
+          "source_bounds": [
+            800,
+            624,
+            949,
+            780
+          ],
+          "source_origin": [
+            869.5,
+            780.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            55,
+            80,
+            143,
+            172
+          ],
+          "sha256": "9d34a1ec81ea48af53aedbce1c2b051c7888e593457e66400b1c8760676a2cc6"
+        },
+        {
+          "path": "res://assets/animated/pendle/powered_guard-05.png",
+          "source": "art-source/animated/v3/pendle-powered40.png",
+          "slot": 29,
+          "source_bounds": [
+            991,
+            623,
+            1148,
+            780
+          ],
+          "source_origin": [
+            1063.5,
+            780.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            53,
+            79,
+            146,
+            172
+          ],
+          "sha256": "66f7049f02d94d8273e9ea56ed09ccdfcbcc912282cb129767a4d5a89a623692"
+        },
+        {
+          "path": "res://assets/animated/pendle/powered_guard-06.png",
+          "source": "art-source/animated/v3/pendle-powered40.png",
+          "slot": 30,
+          "source_bounds": [
+            1184,
+            624,
+            1335,
+            780
+          ],
+          "source_origin": [
+            1253.5,
+            780.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            55,
+            80,
+            144,
+            172
+          ],
+          "sha256": "33ef623ea4d44a956f97294e45bc806f5efaaeab3b833200546cede51f4db7c5"
+        },
+        {
+          "path": "res://assets/animated/pendle/powered_guard-07.png",
+          "source": "art-source/animated/v3/pendle-powered40.png",
+          "slot": 31,
+          "source_bounds": [
+            1370,
+            618,
+            1521,
+            780
+          ],
+          "source_origin": [
+            1441.5,
+            780.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            54,
+            76,
+            143,
+            172
+          ],
+          "sha256": "6d27e17c796c1594c647debb57e6b427f9fad10461e2a764eb207d604905af8c"
+        }
+      ]
+    },
+    "powered_exit": {
+      "frame_count": 8,
+      "durations": [
+        0.11,
+        0.1,
+        0.1,
+        0.09,
+        0.09,
+        0.1,
+        0.12,
+        0.15
+      ],
+      "duration": 0.86,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/pendle/powered_exit-00.png",
+          "source": "art-source/animated/v3/pendle-powered40.png",
+          "slot": 32,
+          "source_bounds": [
+            22,
+            811,
+            189,
+            993
+          ],
+          "source_origin": [
+            98.5,
+            993.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            51,
+            64,
+            150,
+            172
+          ],
+          "sha256": "51eec5af52c23dade33946d65d2c306b1cb4e7ebe57600b4a0aa55d0074f3205"
+        },
+        {
+          "path": "res://assets/animated/pendle/powered_exit-01.png",
+          "source": "art-source/animated/v3/pendle-powered40.png",
+          "slot": 33,
+          "source_bounds": [
+            210,
+            811,
+            357,
+            993
+          ],
+          "source_origin": [
+            292.0,
+            993.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            47,
+            64,
+            134,
+            172
+          ],
+          "sha256": "738a8af2aa995c2ee5febe5d54279ba3b00bf3a2c132eb704fa56e387bae28c8"
+        },
+        {
+          "path": "res://assets/animated/pendle/powered_exit-02.png",
+          "source": "art-source/animated/v3/pendle-powered40.png",
+          "slot": 34,
+          "source_bounds": [
+            402,
+            804,
+            535,
+            993
+          ],
+          "source_origin": [
+            482.5,
+            993.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            48,
+            60,
+            127,
+            172
+          ],
+          "sha256": "82c261ac795941d81b3be9cc875ea8cd12070965f0b0605253b36c67fa01d6c9"
+        },
+        {
+          "path": "res://assets/animated/pendle/powered_exit-03.png",
+          "source": "art-source/animated/v3/pendle-powered40.png",
+          "slot": 35,
+          "source_bounds": [
+            603,
+            801,
+            731,
+            993
+          ],
+          "source_origin": [
+            675.0,
+            993.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            53,
+            58,
+            129,
+            172
+          ],
+          "sha256": "013a223b83773cbd4d2433dfbfd2909ac74ab0e389bc866b1169dcfad45a2eee"
+        },
+        {
+          "path": "res://assets/animated/pendle/powered_exit-04.png",
+          "source": "art-source/animated/v3/pendle-powered40.png",
+          "slot": 36,
+          "source_bounds": [
+            797,
+            799,
+            922,
+            993
+          ],
+          "source_origin": [
+            869.5,
+            993.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            53,
+            57,
+            127,
+            172
+          ],
+          "sha256": "d1413347d691fef9c951bf9cb9a4dd7f09581c18415da3dba446abb3dc32f5f2"
+        },
+        {
+          "path": "res://assets/animated/pendle/powered_exit-05.png",
+          "source": "art-source/animated/v3/pendle-powered40.png",
+          "slot": 37,
+          "source_bounds": [
+            999,
+            804,
+            1113,
+            993
+          ],
+          "source_origin": [
+            1063.5,
+            993.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            58,
+            60,
+            126,
+            172
+          ],
+          "sha256": "69243ee89463027981581931969210db2fea1d6a4d9bfc20299908199f4d53f0"
+        },
+        {
+          "path": "res://assets/animated/pendle/powered_exit-06.png",
+          "source": "art-source/animated/v3/pendle-powered40.png",
+          "slot": 38,
+          "source_bounds": [
+            1194,
+            806,
+            1306,
+            993
+          ],
+          "source_origin": [
+            1253.5,
+            993.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            61,
+            61,
+            127,
+            172
+          ],
+          "sha256": "bf7b8af4b1c9081871b20e0705d74c012e6b94104c98f75d7e6d87f9df6e00f8"
+        },
+        {
+          "path": "res://assets/animated/pendle/powered_exit-07.png",
+          "source": "art-source/animated/v3/pendle-powered40.png",
+          "slot": 39,
+          "source_bounds": [
+            1375,
+            806,
+            1486,
+            993
+          ],
+          "source_origin": [
+            1441.5,
+            993.0
+          ],
+          "scale": 0.5925925925925926,
+          "packed_bounds": [
+            57,
+            61,
+            123,
+            172
+          ],
+          "sha256": "b47589d58f5a3472f2b842ac750908910dca160302b9cbe987f9c4ac7c567e29"
+        }
+      ]
+    },
+    "reload": {
+      "frame_count": 8,
+      "durations": [
+        0.1,
+        0.12,
+        0.15,
+        0.17,
+        0.19,
+        0.16,
+        0.12,
+        0.1
+      ],
+      "duration": 1.11,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/pendle/reload-00.png",
+          "source": "art-source/animated/v3/pendle-reload8.png",
+          "slot": 0,
+          "source_bounds": [
+            93,
+            17,
+            357,
+            424
+          ],
+          "source_origin": [
+            230.5,
+            424.0
+          ],
+          "scale": 0.23703703703703705,
+          "packed_bounds": [
+            63,
+            76,
+            126,
+            172
+          ],
+          "sha256": "937d355e0b83e865f30213099fe247aa928750f7b63fe4073d0d366a44ffcbb1"
+        },
+        {
+          "path": "res://assets/animated/pendle/reload-01.png",
+          "source": "art-source/animated/v3/pendle-reload8.png",
+          "slot": 1,
+          "source_bounds": [
+            534,
+            17,
+            849,
+            424
+          ],
+          "source_origin": [
+            685.0,
+            424.0
+          ],
+          "scale": 0.23703703703703705,
+          "packed_bounds": [
+            60,
+            76,
+            135,
+            172
+          ],
+          "sha256": "67354f6ac6a4781c0c2f24f3d27346b4fe0dcaa63532ba53d7f9b962eea6a7b7"
+        },
+        {
+          "path": "res://assets/animated/pendle/reload-02.png",
+          "source": "art-source/animated/v3/pendle-reload8.png",
+          "slot": 2,
+          "source_bounds": [
+            978,
+            18,
+            1283,
+            424
+          ],
+          "source_origin": [
+            1129.0,
+            424.0
+          ],
+          "scale": 0.23703703703703705,
+          "packed_bounds": [
+            60,
+            76,
+            132,
+            172
+          ],
+          "sha256": "1c3c2a7a20f2c68ca2634e659c30a5cd22725e756c52f829495f62a06fe9bc86"
+        },
+        {
+          "path": "res://assets/animated/pendle/reload-03.png",
+          "source": "art-source/animated/v3/pendle-reload8.png",
+          "slot": 3,
+          "source_bounds": [
+            1421,
+            17,
+            1723,
+            424
+          ],
+          "source_origin": [
+            1561.5,
+            424.0
+          ],
+          "scale": 0.23703703703703705,
+          "packed_bounds": [
+            63,
+            76,
+            135,
+            172
+          ],
+          "sha256": "a9d005ca7cc8ec8c8b559ca04fa7556bc846bf369cbca02408cb0c87974d80c2"
+        },
+        {
+          "path": "res://assets/animated/pendle/reload-04.png",
+          "source": "art-source/animated/v3/pendle-reload8.png",
+          "slot": 4,
+          "source_bounds": [
+            92,
+            459,
+            397,
+            868
+          ],
+          "source_origin": [
+            230.5,
+            868.0
+          ],
+          "scale": 0.23703703703703705,
+          "packed_bounds": [
+            63,
+            75,
+            135,
+            172
+          ],
+          "sha256": "8375b783b5b32a6a452b752cbe0fb458cb36f2884a97ce49a930c1fafd376559"
+        },
+        {
+          "path": "res://assets/animated/pendle/reload-05.png",
+          "source": "art-source/animated/v3/pendle-reload8.png",
+          "slot": 5,
+          "source_bounds": [
+            529,
+            459,
+            836,
+            868
+          ],
+          "source_origin": [
+            685.0,
+            868.0
+          ],
+          "scale": 0.23703703703703705,
+          "packed_bounds": [
+            59,
+            75,
+            132,
+            172
+          ],
+          "sha256": "3c14e83a9864d771e4f4af503b876adbe9840ffa7bb7920bf9c2fb006f43d72c"
+        },
+        {
+          "path": "res://assets/animated/pendle/reload-06.png",
+          "source": "art-source/animated/v3/pendle-reload8.png",
+          "slot": 6,
+          "source_bounds": [
+            978,
+            459,
+            1282,
+            868
+          ],
+          "source_origin": [
+            1129.0,
+            868.0
+          ],
+          "scale": 0.23703703703703705,
+          "packed_bounds": [
+            60,
+            75,
+            132,
+            172
+          ],
+          "sha256": "34ea79a31b610116b10d57fba1194fe7e2bef4ab338dc55cc194842c24d1d086"
+        },
+        {
+          "path": "res://assets/animated/pendle/reload-07.png",
+          "source": "art-source/animated/v3/pendle-reload8.png",
+          "slot": 7,
+          "source_bounds": [
+            1421,
+            460,
+            1704,
+            868
+          ],
+          "source_origin": [
+            1561.5,
+            868.0
+          ],
+          "scale": 0.23703703703703705,
+          "packed_bounds": [
+            63,
+            75,
+            130,
+            172
+          ],
+          "sha256": "a79b392249bc6c726c0f405a606cc45f994d7604d6ddf76b713e07df1fd543a0"
+        }
+      ]
+    }
+  },
+  "pose_count": 160
+}

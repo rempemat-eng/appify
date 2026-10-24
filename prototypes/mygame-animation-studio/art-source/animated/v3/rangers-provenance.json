@@ -1,0 +1,300 @@
+{
+  "lane": "art_rangers_v3",
+  "generator": "built-in image_gen.imagegen",
+  "transparent_background": true,
+  "date": "2026-10-24",
+  "prompts": {
+    "bramble-extension64.png": "Use case: identity-preserve. NEW coherent motion sheet for SAME Bramble from input1 model; input2 corrected bow reference. Transparent game sprite atlas, EXACTLY EIGHT columns and EIGHT rows =64 DISTINCT full-body poses. 1536x1536 canvas. Every cell same size with clear empty gutters. Full bodies entirely in cell, no touching neighbours. No text, grid, labels, watermark, scenery, floor, shadows, particles or painted platforms. Detailed crisp pixel art with dark contours and upper-left lighting matching reference. Constant3/4 EAST-facing orientation right; no mirroring or turns. Common per-row foot baseline, engine adds actual height, ONLY joint articulation drawn. SAME mature grey-haired bearded ranger, green short mantle cream sleeves brown trousers boots gold buckle attached quiver and billhook. ROWS1\u20132 together ONE sequential16-pose full WALK CYCLE: row1 frames1\u20138 first half stride; row2 frames9\u201316 opposite half stride. Alternating boots contact/down/passing/up/contact, natural opposing arm swing, restrained mantle lag, one wooden bow held safely at side throughout. ROWS3\u20134 together ONE sequential16-pose BOW ATTACK: frames1 ready,2 nock arrow,3 lift bow,4 elbow draws,5 half draw,6 deep draw,7 full draw,8 final tension,9 RELEASE relaxed string (arrow now absent),10 recoil string relax,11 drawing fingers open near cheek,12 bow arm slowly lowers,13 elbow lowers,14 bow angled down,15 relaxed,16 ready. CRITICAL the SAME single curved wooden bow remains visibly clenched in forward hand in ALL16 cells INCLUDING release frame9. Forward hand stays wrapped around centre of bow, NOT empty palm. Do not remove bow at release. Rear drawing hand opens. No projectile painted. ROW5 jump8 load-crouch/toe-push/rise-tuck/apex/fall-extend/landing-crouch/absorb/recover, fixed baseline. ROW6 stair_up8 alternating lifted knees/reach/step-weight-transfer/toe-push, no stairs painted. ROW7 stair_down8 downward-reaching front boot/contact/knee flex/weight transfer/opposite half, cautious torso slightly back. ROW8 dodge8 lowered ready/push/long low stride/compact passing/front boot catch/knee absorb/rise/ready. Same one bow and quiver in every locomotion cell.",
+    "morel-extension64.png": "Use case: identity-preserve. NEW coherent motion sheet for SAME Morel from input reference model. Transparent game sprite atlas, EXACTLY EIGHT columns and EIGHT rows =64 DISTINCT full-body poses. 1536x1536 canvas. Every cell same size with clear empty gutters. Full bodies entirely in cell, no touching neighbours. No text, grid, labels, watermark, scenery, floor, shadows, particles or painted platforms. Detailed crisp pixel art with dark contours and upper-left lighting matching reference. Constant3/4 EAST-facing orientation right; no mirroring or turns. Common per-row foot baseline, engine adds actual height, ONLY joint articulation drawn. Older clean-shaven human alchemist, receding grey hair round dark goggles, rolled cream sleeves, ochre/rust split apron, brown trousers boots, small attached belt reagent flasks, no mushroom anatomy. ROWS1\u20132 together ONE sequential16-pose WALK CYCLE: row1frames1\u20138 first half stride, row2frames9\u201316 opposing half. Grounded contact/down/passing/up/contact with alternate boots and attached apron lag, gear same size. ROWS3\u20134 together ONE16-pose reagent FLASK THROW: frame1 ready,2 reach belt,3 grasp same blue flask,4 unclip,5 raise elbow,6 rotate shoulder back,7 load weight,8 cock arm fully,9 RELEASE empty throwing fingers pointing RIGHT,10 followthrough arm extending RIGHT,11 shoulder turns slightly,12 decelerate,13 lower arm,14 re-centre weight,15 arms relax,16ready. Before release blue flask ONE in throw hand, after release hand empty and no duplicate flask painted flying. Belt retains other flasks; no machinery appearing in primary. ROW5 jump8 load-crouch/toe-push/rise-tuck/apex/fall-extend/landing-crouch/absorb/recover, fixed baseline. ROW6 stair_up8 alternating lifted knees/reach/step-weight-transfer/toe-push, no stairs painted. ROW7 stair_down8 downward-reaching boot/contact/knee flex/weight transfer/opposite half, cautious controlled torso. ROW8 dodge8 lowered ready/push/long low stride/compact passing/front boot catch/knee absorb/rise/ready. Clear anatomy, apron remains attached, NO mask yet in this BASE set.",
+    "velvet-extension64.png": "Use case: identity-preserve. New64-pose8x8 sheet SAME Velvet model reference. Transparent game animation sprite atlas. EXACTLY EIGHT equally spaced columns; no labels/grid/text/watermark. Detailed crisp pixel art dark contours upper-left light matching reference. Complete bodies no touching cells, ample gutters, constant anatomy volume and orientation3/4 EAST facing right. NO scenery, stairs, floor, shadows, particles or painted vertical displacement. Every row common foot baseline, engine applies elevation. Consecutive poses differ through limbs, clothing and weight transfer, not translations. Adult dark-skinned coastal duellist silver/lavender hair, narrow purple/navy naval coat long split tails with cream cuffs brass trim, boots. Exactly ONE SABRE in forward/right sword hand and exactly ONE BLACK LANTERN in opposite lowered hand. Same hands all cells, no second lantern hanging at belt, no equipment swapped, blade length constant. ROWS1\u20132 together16-frame WALK CYCLE, sequential left-right first then other half stride, contact/down/passing/up, subtle boot/toe weight transfer, coat-tail lag. Sword safely angled low, lantern at opposite hip. ROWS3\u20134 together16-frame primary SABRE CUT, frames1ready,2shoulderload,3raiseblade,4uppercock,5elbowcompact,6weightsettle,7maxanticipation,8bladebeginarc,9sharp rightward CUT with sword extended right,10followthrough,11bladepastcontact,12decelerate,13drawelbowback,14lowerblade,15feetsettle,16ready. Lantern remains at left hip ALL16 sword attack poses, one continuous sabre retained. No slash particles. ROW5 jump8 crouchload/toepush/risetuck/apex/fallextend/landingcrouch/absorb/recover. ROW6 stair_up8 alternate knees high reach contact/toepush/transfer, fixedbaseline. ROW7 stair_down8 bootreachingdown/contact/kneeflex/weighttransfer oppositehalf cautiousleanback. ROW8 dodge8 lowanticipation/push/lowstride/passing/catch/absorb/rise/ready. Both items carried in every movement drawing.",
+    "cairn-extension32.png": "Use case: identity-preserve. New32-pose8columns4rows traversal sheet SAME CAIRN model from references. Transparent game animation sprite atlas. EXACTLY EIGHT equally spaced columns; no labels/grid/text/watermark. Detailed crisp pixel art dark contours upper-left light matching reference. Complete bodies no touching cells, ample gutters, constant anatomy volume and orientation3/4 EAST facing right. NO scenery, stairs, floor, shadows, particles or painted vertical displacement. Every row common foot baseline, engine applies elevation. Consecutive poses differ through limbs, clothing and weight transfer, not translations. Sole stone golem irregular broad granite slabs dark jointgaps, squat stone feet, enormous arms and recessed tiny wedgehead, DEEP dark eye sockets with TWO bright amber mineral eyes under broad stone brow, selected eye catchlight single crisp pixel. Green turf/moss on shoulders/back/head seams, no clothing ears lips humanmuscles or belt. Maintain SAME head and eyes, no inflated chest. ROW1 jump8: massive crouch loading knees/extendedtoe-push/bentkneesrise/compactapex/legsextendfall/deeptwofootlanding/absorbweight/recoverbroadstance. Groundfeetbaseline same, engine adds arc; no bodytranslation. ROW2 stair_up8 slow heavy alternate feet: knee lifts toe clears step/forwardfootreach/weighttransfer/rearfootpush/oppositeknee lift/reach/transfer/settle. No extra floating stones or stairs painted. ROW3 stair_down8 cautious compact alternate stonefoot reacheslower/contact/kneeflex/weighttransfer, torso subtly back, arms counterbalance. ROW4 dodge8 low massive load/powerfulpush/shortlowstride/bunchedpassing/leadfootcatch/kneesoften/rise/settle. Readable distinct32poses with joint articulation and preserved golem weight, no smooth humanlike running.",
+    "morel-primary16-v2.png": "Use case: identity-preserve. NEW 16POSE SIMPLE OVERHEAD FLASKTHROW spriteatlas EXACT8columns2rows all16completebodies. SameMORELcharacter reference matureclean-shavenhuman recedinggreyhair darkroundgoggles creamsleeves rustochreapron brownboots attachedbeltflasks. Camera EAST facingRIGHT SIDE-PROFILE during throw so ONLY ONE throwingARM visible in FRONT of body; fararm hidden behind torso throughout. Do NOT draw twofreehands. No alternatearm. All throwingposes same nearshoulder same attached visible arm. Transparent crisp pixelart darkcontours upperleftlight. No textgridfloorbackgroundparticles. Row1 sequential:1ready neararm byhip holding ONEblueflask,2nearelbowbends flaskrisesfrontchest,3flasktofaceheight,4flaskaboveforehead,5nearelbowbends flaskbehindhead,6maxload flaskstillabovebackhead,7startthrow flaskabovehead,8lastheldflask nowoverforehead. Row2:1RELEASE neararmextendedDIAGONALLYUPRIGHT from SAME nearshoulder acrossfronttorso, fingersOPEN EMPTY flaskgone;2neararmfollowsRIGHT emptyhand,3neararmrightatshoulderheight empty,4neararmelbowbendsdown empty,5neararmreturnschest empty,6neararmlowerempty,7nearhandreturns nearsidehip empty,8readyempty nearhand. FARARM stays HIDDEN behind body in EVERYcell, NO secondhandatbelt or swappedarm. Neverpaintflyingflask; noheldflask afterrow2starts. Everycellregisterbodycommongroundbaseline, at least30pixel gutters.16distinct coherentposes. Prior mistake toavoid: different shoulder throwing atrelease.",
+    "velvet-primary16.png": "Use case: identity-preserve. Draw NEW definitive16-pose sabre animation EXACTLY8columns2rows, equal widthcells16completecharacters. Transparent crisp detailed pixelart matching referenceVelvet, darkskin silverhair purple/navynavalcoat creamcuffs brassbuttons boots. SAME3/4EASTrightview; constantanatomy. There must be a COMPLETE independent fullbody in EVERY of16cells, nothing touching othercells. No text grid floor shadows scenery particles. Exactly ONE sabre in swordarm and ONE blacklantern in oppositehand helddown at hip in EVERYcell. No raisedlantern during swordattack. No secondlantern belt. Pose sequence ONE short thrust, NOT multiple swings: row1 cell1readybladepointingdown,2elbowfolds lifting sabre,3hiltnear chest bladepoint right,4bladehorizontalarmbent,5rearfootload,6bodylow anticipation,7sabrepointforward stillarmbent,8fullanticipation. Row2cell1 IMPACT THRUST armextended swordpointsstraightRIGHT; cell2 slightwristfollowthrough,3elbowbeginsbend,4bladehiltreturns chest,5bladeangleddown,6frontkneerelaxes,7weightback,8readyneutral. Keep lanternhandDOWN throughout all16. One continuous blade same length. Clear gutters30pixels minimum, blade NEVER crosses cellboundary.16distinctfullbody poses, eightineachrow.",
+    "bramble-powered40.png": "Use case: identity-preserve. NEW40-pose POWERED FORM sheet SAME BRAMBLE model reference and same special finalpose row5 of reference. EXACT8columns5rows transparent, complete bodies equalcells clear gutters, no text grid scenery floor shadow particles watermark. Crisp detailed pixel art matching greyhairbeard matureface greenmantle creamsleeves browntrousers boots goldbuckle attachedquiver.3/4EASTright always, commonbaseline. Briarshot form: SAMEoneWOODENBOW with integrated leafy thorny vinebrace along bowlimbs. Bowwood staysvisible, no secondbow, no new body or giantplant, no vines coveringface. Small leafclusters on bow SAME everyformcell. ROW1 powered_idle8 full breathingweightshift with vinebracedbow held atside, attached quiver. ROW2 powered_walk8 grounded contactdownpassingup/oppositehalf, bracedbow keptsame. ROW3 powered_primary8: lowerready/nock/draw/fulltension/RELEASE/followthrough/lower/ready. ONEbow remainsclenched forwardhand ALL8 INCLUDING releasecell5; rear drawinghandopens, no flyingarrow painted. ROW4 powered_guard8: bendknees/stowbowONBACK/raise singlefoldingbuckler/brace/absorbbalance/hold/release/lower; vinebow remainsattached back visible no duplicates, onebuckler. ROW5 powered_exit8: samebracedbow atside/nearhandreachesbowbrace/vinecoilsrelax/leafclustersshrink/vineswithdrawalongbowwood/nearlybase/normalwoodenbow/BASEneutral. Eightprogressivelydistinctexitposes, onlybowvinesdisappear logically; samecostume/body.",
+    "morel-powered40.png": "Use case: identity-preserve. Morel POWERED FORM spriteatlas SAMEolder clean-shavenhuman alchemist recedinggreyhair creamrolledsleeves ochre/rustsplitapron browntrousersboots beltflasks. Input1model row5specialfitsmask. Input2correctsamearmthrowreference. EXACT40fullbodyposes, EIGHTcolumnsFIVErows, transparentcanvas, equalcells generousgutter, no touchingcells. Same3/4EASTfacingrightview constantmodel proportions, crisp detailedpixelart darkcontours upperleftlight. No textgridwatermarkfloorbackgroundshadowparticles. Commonfootbaseline, clearanatomicalposes nottranslations. Eachrow8distinctconsecutiveposes. FORM: SAMEsingle fitted brassandcharcoal respiratormask with compactbluegogglelenses strapped ONFACE inALL first4rows; no secondmask inhand/belt, not a robotface, no helmetreplacinghumanhead. ROW1 powered_idle8 subtlebreathingandweightshift maskstaysface. ROW2 powered_walk8 fullcycle alternatingfootcontactdownpassingup, apronlagmaskface. ROW3 powered_primary8 SIMPLE singlevisible NEARARM flaskthrow:1holdoneblueflaskNEARHIP,2nearhandraisesflaskfrontchest,3nearhandcocksflaskbehindhead,4flaskaboveforeheadlastheld,5RELEASE neararmextendsacrossfronttorsoUPRIGHT openEMPTYhandflaskgone,6neararmfollowsRIGHTempty,7neararmdownempty,8neutralemptyhand. FARARM alwayshiddenbehindtorso duringthrow so cannot switchthrowingarm. MaskremainsfaceALL8. No projectilepainted. ROW4 powered_guard8 bring SAMEcompactroundcatalystapparatusfrombelt infront/braceelbows/bendknees/hold/absorb/recover/lower/ready; maskstaysfaceoneapparatus. ROW5 powered_exit8:beginmaskface/bothhandsreachmaskedges/liftstraps/maskpullsforwardfromnose/masklowershandchest/maskreturnsbelthook/handreleasesbelt/BASEunmaskedfacegogglesneutral. ExactlyONEphysicalmask transfer, nosparemaskedface whilemaskinhand.",
+    "velvet-powered40.png": "Use case: identity-preserve. Velvet POWERED FORM spriteatlas SAMEadult darkskinned duellist silveryhair narrowpurple/navynavalcoat creamcuffs brasstrim boots sabreandblacklantern. EXACT40fullbodyposes, EIGHTcolumnsFIVErows, transparentcanvas, equalcells generousgutter, no touchingcells. Same3/4EASTfacingrightview constantmodel proportions, crisp detailedpixelart darkcontours upperleftlight. No textgridwatermarkfloorbackgroundshadowparticles. Commonfootbaseline, clearanatomicalposes nottranslations. Eachrow8distinctconsecutiveposes. FORM: SAMEsingle blacklantern carried oppositeSABREhand has brighterwarmamberpane and fine brasslines; no halo no flames no secondlantern. SABRE inotherhand sameblade inALL40. Rows1\u20134 LANTERN continuouslyLIT. ROW1 powered_idle8 breathingweightshifts, oneLITlanternheldDOWNlefthip andoneSABREright hand. ROW2 powered_walk8 groundedfootcontactdownpassingup/oppositehalf, coattailslag, bothitemssamehands. ROW3 powered_primary8 ONE sabreTHRUST:ready/lifthiltchest/elbowbentbladelevel/loadrearfoot/IMPACTstraightbladeRIGHTarmextends/followthrough/elbowreturn/bladelowready. LanternheldDOWNsamehipALL8 NEVERswapped swordhand. ROW4 powered_guard8 bladesetacrosschest/bendknees/brace/hold/absorb/rebalance/lower/ready, oneLITlanternheldDOWNsamehandALL8. ROW5 powered_exit8 lanternraisedslightly/turnsmalllanternshutter/brighterpanenarrows/amberdimstiny/goldlinesfade/panelnormalwarmdim/lowerslantern/baseidle. SamephysicalLANTERN everypose exactlyone, sameSABRE, no duplicateatbelt.",
+    "cairn-powered40.png": "Use case: identity-preserve. CAIRN OLDGROWTH POWEREDFORM spriteatlas SAMEstonegolem references. EXACT40fullbodyposes, EIGHTcolumnsFIVErows, transparentcanvas, equalcells generousgutter, no touchingcells. Same3/4EASTfacingrightview constantmodel proportions, crisp detailedpixelart darkcontours upperleftlight. No textgridwatermarkfloorbackgroundshadowparticles. Commonfootbaseline, clearanatomicalposes nottranslations. Eachrow8distinctconsecutiveposes. Irregularbroadgraniteslabs darkjointgaps squatsquarestonefeet giantarms, recessedSMALLwedgehead with deep eye sockets TWOAMBERMINERALEYES crisp highlights stonebrows, turfandmossshoulders. No humanmusclesbeltclothingearsormouth. FORMreferencerow2input2: fittedwoodyROOTBRACESgrowalongSAMEexistingarmslegsandtorso, mossexistingmassesricher. No secondbodygianttree rootweapon humanoidarmour. RootsMUSTpersist SAMEpositions inALLfirst4rows. ROW1 powered_idle8 heavysettledweightshifts amberEyesreadable rootbracesfollowlimbs. ROW2 powered_walk8 slowheavycontactkneeload/toepush/passing/oppositehalf, rootbracesbendwithsamejoints no detachable roots. ROW3 powered_primary8 ONEtwofistgroundSLAM:lowbrace/shouldersrise/fistsliftabovehead/fullload/CONTACTbothfistslownearfeet/crunchabsorb/fistswithdraw/recover. Rootbracesremainonarmslegs includingcontact, no groundeffectsorlooserocks. ROW4 powered_guard8 fistsriseinfront/shouldershunch/brace/hold/absorb/settle/fistslower/ready withbraces. ROW5 powered_exit8 startsrootbracesalllimbs/roottipsrelax/rootsuncoilfromwrists/rootswithdrawforearms/rootswithdrawshins/rootswithdrawtorso/onlybasemossslabs/BASEneutralnorootbraces. SameCairnbodyandsize amberEyes remainreadableallposes.",
+    "morel-powered-primary-exit16.png": "Use case: precise-object-edit. Use attached40-pose MOREL POWEREDsheet as exactmodelreference. Draw ONLY NEW replacement16poses8columns2rows transparent matching crisp pixelart fullbody equalcells separated. NO textgridfloorbackgroundshadowparticles. Same maturehuman recedinggreyhair creamrolledsleeves rustyapron browntrousersboots beltflasks. SAMEcompactroundRESPIRATORMASK with goldedged blackfilter overnoseandmouth and twosmallBLUEGOGGLELENSES strapped ONFACE. ROW1 ALL EIGHT POSES MUST WEAR that SAME MASK fully covering NOSE+MOUTH throughout. Do NOT remove mask or return to normal darkgoggles anywhere row1. Row1poweredflaskthrow8:1maskedready neararmholdsoneblueflaskatnearhip;2maskednearhandliftsflaskchest;3maskednearhandcocksflaskabovehead;4maskedlastheldflaskoverforehead;5maskedRELEASE samevisiblearmreachesUPRIGHTacrossfronttorso emptyopenhand;6maskedarmfollowsthroughRIGHTempty;7maskedarmreturnsdownempty;8MASKEDneutral. Fararmhiddenbehindtorso forthrowtoavoidarmswitch, no flyingflaskpainted.\nROW2 EXITMASK8:1MASKONFACE bothhandsdown;2bothhandsreachtheSMALLcompactfaceMASK;3sameMASKpullsforward2inchesfromnosewithstrapsloose, facebecomesvisible;4sameSMALLMASKheldinchesthands withbluegogglelensesandfilter, nofacewearingsecondmask;5sameSMALLMASKlowerstobelt;6sameSMALLMASKclipsontobelt;7handsreleasebeltandreturnside;8UNMASKEDbasefacewithNORMALDARKGOGGLES, tinyMASKcarriedatbelt. CRITICAL maskstaysitsSMALLFACEsize whenheld, MUST NOT turnintoaLARGEbluegoldCIRCULARCATALYSTMACHINE, noapparatusgunwheelorreelANYWHERE. ExactlyONEphysicalMASKonly. Identicalbodyvolumeregistration and precise8fullbodiesineachrow. This corrects missingmaskinpoweredattack and transformingmaskinexit.",
+    "morel-powered-primary-single.png": "Use case: identity-preserve. ONE SINGLE fullbody SPRITE POSE on transparentcanvas, no grid otherfigures textbackgroundfloor. SAME Morel alchemist modelreference: recedinggreyhair matureface creamrolledsleeves rustochresplitapron brownboots samebeltflasks.3/4EASTfacingright detailedpixelart. He MUST wear SAMEcompactRESPIRATOR overNOSEANDMOUTH with TWObrightBLUEgogglelenses. MaskmustbeENTIRELYVISIBLEatface nothidden. ONEblueflask heldinhisNEARhand atshoulderheight justSCREENLEFTofface, nearelbowbentpreparingthrow. FlaskandforearmmustNOTcoverfaceorbluegoggles, handflask staysLEFTsideofhead, maskfullyreadable. Oppositearmrestsbehindtorso soonlyonefreehandvisible. Samebodyproportionsnoscaling. This is maskedthrowwindup BEFOREoverheadcock. Exactlyoneblueflask inhandplusattachedbeltflasks. No additionalmaskatbelt. No extraarm.",
+    "velvet-powered-primary-exit16.png": "Use case: identity-preserve. Targeted16-pose8columns2rows transparent sprite sheet SAMEVelvet adult darkskin silverhair purplelongtailednavalcoat creamcuffs brassdetails boots. Crispdetailedpixelart3/4EASTright constantbodyvolume. EXACT TWOARMS TOTAL and TWOHANDS TOTAL perpose. LEFTarmvisibleSCREENLEFT fromLEFTshoulderDOWN toONEblacklantern atLEFT hip. RIGHTarmvisibleSCREENRIGHT fromRIGHTshoulder toONEsabrehilt heldRIGHTside. NEVERextraARM orfist atoppositeshoulder, NOcrossedarms oroverheadwindup. LanternstaysSAMELEFT HAND DOWNatLEFT HIPinALL16poses; sabrestaysSAMERIGHTHAND inALL16poses no stoworvanish. No textgridlabelsbackgroundfloorparticles. Eightcompletebodydrawingsperrow withamplegutters nooverlap.\nROW1 POWEREDPRIMARY8: lanternwarmbrightamberthroughout. 1bladeangleddownrightready,2rightelbowbendswithsabrehiltatRIGHT chestsidebladepointsRIGHT,3rightforearmdrawsBACKatRIGHTsidebladelevel,4rearfootloadsbladelevel,5THRUSTextendsONLYRIGHTswordarm straightSCREENRIGHT, LEFTlanternarmstillDOWNleftnoextrafist,6rightwristfollowsthrough,7rightelbowreturnstohipswordlow,8basebladeangleddownready. Twoarmsalways, leftlanternarm neverraises.\nROW2 POWEREXIT8: SAMEleftlanternatHIP andRIGHTswordangledDOWN inALL8. Leftthumbsmallshutterturn whileholdinglanternONLY, rightarmNEVERtoucheslantern. Amberpane startsbright/leftthumbshutterstarts/narrowbrighterpane/halfclosedpane/dimwarmamber/normaldimlight/leftarmrelaxes/baseidle. Neverusebothhandsatlant, neverremoveswordorlantern. All16distinctsubtlebodyacting andlanternshutterprogress, nosworddisappearance.",
+    "velvet-powered-primary-single-v2.png": "Use case: precise-object-edit. EDIT attachedsmallpixelart sprite. Preserve EXACTsame character body shape, compact head/body proportions, short limbs, pose, coat, face, hair, boots, lanternandextendedsabre. Make ONLY these corrections: remove the EXTRA thirdarm/fist at his SCREENLEFT SHOULDER beside hair, leaving natural coatsleeve onleftshoulder. Preserve the LEFT arm that goes DOWNleftside holdingblackamberlantern. Preserve the RIGHT arm that extendsFORWARDRIGHT holdingonesabre. ExactlyTWOarms. Also REMOVE partialneighbourblade intruding from imageLEFTedge and partialneighbourcoat atRIGHTedge, so onlyONEcompletecharactercleanisolatedsprite remains. Transparentbackground. Do NOT redrawtaller, morehumanproportioned, realistic, no longlegs, no enlargedhead, no changedhair, no redesign. Keep chibicompactpixelartvolumeEXACTLYinput. Retainrestimageunchanged. Single fullbodysprite, noscenerytextshadowfloor."
+  },
+  "selection": {
+    "bramble-extension64.png": {
+      "grid": [
+        8,
+        8
+      ],
+      "selected": [
+        "walk0:16",
+        "primary16:32",
+        "jump32:40",
+        "stair_up40:48",
+        "stair_down48:56",
+        "dodge56:64"
+      ]
+    },
+    "morel-extension64.png": {
+      "grid": [
+        8,
+        8
+      ],
+      "selected": [
+        "walk0:16",
+        "jump32:40",
+        "stair_up40:48",
+        "stair_down48:56",
+        "dodge56:64"
+      ],
+      "rejected": [
+        "primary16:32"
+      ],
+      "reason": "Throw hand switched before release; replaced by primary16-v2."
+    },
+    "velvet-extension64.png": {
+      "grid": [
+        8,
+        8
+      ],
+      "selected": [
+        "walk0:16",
+        "jump32:40",
+        "stair_up40:48",
+        "stair_down48:56",
+        "dodge56:64"
+      ],
+      "rejected": [
+        "primary16:32"
+      ],
+      "reason": "Only15 independent primary bodies, plus phase discontinuity; replaced."
+    },
+    "cairn-extension32.png": {
+      "grid": [
+        8,
+        4
+      ],
+      "selected": [
+        "jump0:8",
+        "stair_up8:16",
+        "stair_down16:24",
+        "dodge24:32"
+      ]
+    },
+    "morel-primary16-v2.png": {
+      "grid": [
+        8,
+        2
+      ],
+      "selected": "all16",
+      "alias": "morel-primary16.png",
+      "order": [
+        0,
+        1,
+        2,
+        7,
+        6,
+        3,
+        5,
+        4,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "release": 8
+    },
+    "velvet-primary16.png": {
+      "grid": [
+        8,
+        2
+      ],
+      "selected": "all16",
+      "order": [
+        0,
+        4,
+        1,
+        7,
+        2,
+        3,
+        6,
+        5,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "release": 8
+    },
+    "bramble-powered40.png": {
+      "grid": [
+        8,
+        5
+      ],
+      "selected": "all40",
+      "powered_primary_order": [
+        0,
+        1,
+        2,
+        3,
+        5,
+        4,
+        6,
+        7
+      ],
+      "release": 5
+    },
+    "cairn-powered40.png": {
+      "grid": [
+        8,
+        5
+      ],
+      "selected": "all40",
+      "release": 5
+    },
+    "morel-powered40.png": {
+      "grid": [
+        8,
+        5
+      ],
+      "selected": [
+        "powered_idle0:8",
+        "powered_walk8:16",
+        "powered_guard24:32"
+      ],
+      "rejected": [
+        "powered_primary16:24",
+        "powered_exit32:40"
+      ],
+      "reason": "Mask disappeared from several throwing poses and exit changed mask into catalyst apparatus."
+    },
+    "velvet-powered40.png": {
+      "grid": [
+        8,
+        5
+      ],
+      "selected": [
+        "powered_idle0:8",
+        "powered_walk8:16",
+        "powered_primary16:24 except20",
+        "powered_guard24:32",
+        "powered_exit terminal slot39"
+      ],
+      "rejected": [
+        20,
+        "powered_exit32:39"
+      ],
+      "reason": "Third arm in powered_primary4; exit hides sabre without transfer."
+    },
+    "morel-powered-primary-exit16.png": {
+      "grid": [
+        8,
+        2
+      ],
+      "selected": [
+        "powered_primary0:8 except2",
+        "powered_exit8:16"
+      ],
+      "rejected": [
+        2
+      ],
+      "reason": "Windup mask occluded/normal goggles, replaced by explicit masked single."
+    },
+    "morel-powered-primary-single.png": {
+      "grid": [
+        1,
+        1
+      ],
+      "selected": "powered_primary2"
+    },
+    "velvet-powered-primary-exit16.png": {
+      "grid": [
+        8,
+        2
+      ],
+      "selected": {
+        "powered_exit": [
+          8,
+          9,
+          10,
+          12,
+          13,
+          14
+        ]
+      },
+      "rejected": [
+        "powered_primary0:8",
+        15
+      ],
+      "reason": "Primary retake duplicated blades and arms; final two physical exit bodies merge and cannot count as independent drawings. Six independent exits selected in physical left-to-right order; last exit uses original powered40 slot39. Computed column cuts distort slot11, so actual fourth clean body maps to12."
+    },
+    "velvet-powered-primary-single-v2.png": {
+      "grid": [
+        1,
+        1
+      ],
+      "selected": "powered_primary4",
+      "alias": "velvet-powered-primary04-fix.png",
+      "reference": "velvet-powered-primary4-reference.png"
+    },
+    "bramble-extension48-study.png": {
+      "status": "rejected study, never count",
+      "reason": "Superseded interleaving approach and release lost bow."
+    },
+    "morel-primary16-rejected-study.png": {
+      "status": "rejected study, never count",
+      "reason": "Throw switches shoulders."
+    },
+    "velvet-powered-primary-single.png": {
+      "status": "rejected study, never count",
+      "reason": "Two-arm pose but overlong anatomy compared with base."
+    }
+  },
+  "review_notes": [
+    "All source art generated then imported mechanically; no interpolation or repeated translations counted as authored poses.",
+    "Alpha>=128 import removes low-opacity coloured edge fringe; raw previews alone can show red/blue fringe.",
+    "No authored WEST/NORTH/SOUTH views added; never mirror asymmetric equipment.",
+    "Traversal poses are registered to feet; engine owns the vertical jump/stair lift.",
+    "Persistent powered traversal is not drawn by this lane."
+  ],
+  "final_notes": [
+    "Velvet accepted151 total:7 coherent independent exit drawings. No duplicates or padded8th exit. Other three accepted152 each.",
+    "Final6Morel/Velvet attack anchors measured in ranger-other-anchors.json.",
+    "Final runtime/world verification is owned by root; this lane verifies selected art/equipment continuity only."
+  ],
+  "sha256": {
+    "velvet-powered40.png": "851cc640bb4a12a00c04b8793c94a5da0ce8107065af9f722b21658929be3107",
+    "cairn-extension32.png": "11f338aeca7e6389dac8187c1f46b3f2b920ce7b15f6b64bca3ff2fbb6a37913",
+    "velvet-powered-primary4-reference.png": "e889d4830c759e1c036647fcb254dea523bf0ee07e9aa7228ab7136fe1ad2ef9",
+    "morel-powered40.png": "a5a4000c44c0618e1c38b2cce533bfbd6957435d9e07a3caf4fd30ad9798d250",
+    "morel-primary16.png": "8b3670eb8ba662f95cc5c60564b9dc3c2a5c628a7163b140f97afca00627e2e5",
+    "velvet-primary16.png": "0d5f4f80cd28a9ee675dcd0720a7b0d16390dcddb9e1c7170c57fb7c90c45962",
+    "morel-extension64.png": "4398c5bfa1ce7cb30fadd85e4004ca3e5dc57bacf475e043e42ece6134cac8aa",
+    "velvet-powered-primary-single-v2.png": "91539cf58bb65c546ad74f63e7df508ea73cc899292bf3da03e3432b225377c3",
+    "morel-primary16-v2.png": "8b3670eb8ba662f95cc5c60564b9dc3c2a5c628a7163b140f97afca00627e2e5",
+    "velvet-powered-primary-exit16.png": "ab0d06ef39bd3c65d4dd37bf292f02abe80ffae40da9ab819c91b53c1bfcfea5",
+    "bramble-extension64.png": "bf4fe751866d468fa659c903bf5743df0fe777808821af6aaffa2983c7efc3ab",
+    "cairn-powered40.png": "2673d927875438717c24b56e04f6617d30e3078581d84fae9df61fd0b5487505",
+    "morel-powered-primary-exit16.png": "3b7cd5969cd2f54af7d20bd30dd86614fb5f5d7b47f37fa3f40ce5b6d48c7c8a",
+    "morel-powered-primary-single.png": "087ff1c61861def4cc809f92c9e82e3b61423c772340f28bd9a6f06edd448a4b",
+    "morel-primary16-rejected-study.png": "748876cba46fa33dae3a21ef10653e5998d4f79814ece0c05c0f413302dbf3a6",
+    "bramble-extension48-study.png": "fc62ffff31353bf3ca9c899a4c86a624d0fa95d72b6914545f63cf661b6b00e8",
+    "velvet-powered-primary04-fix.png": "91539cf58bb65c546ad74f63e7df508ea73cc899292bf3da03e3432b225377c3",
+    "velvet-powered-primary-single.png": "53fef56d381df1b22d066b0325017766a78d73b2c069ba7f2cc781a0b076ef7a",
+    "bramble-powered40.png": "ce6cfe55960c801ab601eda51c540f4a4ccde5dbe2f7b85c888896a2a8cfe66d",
+    "velvet-extension64.png": "00cec980e54d573a61f4258c6d5298c3d482cd183dfecce5f70c3a1a89056334"
+  },
+  "accepted_manifest_counts": {
+    "bramble": 152,
+    "morel": 152,
+    "velvet": 151,
+    "cairn": 152
+  }
+}

@@ -1,0 +1,4065 @@
+{
+  "id": "clack",
+  "name": "Clack",
+  "view": "E",
+  "frame_size": [
+    192,
+    192
+  ],
+  "foot_pivot": [
+    96,
+    172
+  ],
+  "body_height_target": 96,
+  "fit_factor": 1.0,
+  "sources": [
+    {
+      "width": 1254,
+      "height": 1254,
+      "columns": 8,
+      "rows": 8,
+      "column_cuts": [
+        0,
+        167,
+        327,
+        482,
+        638,
+        790,
+        948,
+        1107,
+        1254
+      ],
+      "row_cuts": [
+        0,
+        160,
+        317,
+        474,
+        634,
+        794,
+        949,
+        1101,
+        1254
+      ],
+      "baselines": {
+        "0": 152.25,
+        "3": 622.0,
+        "4": 787.0,
+        "5": 940.0,
+        "6": 1091.0
+      },
+      "body_height": 139.75,
+      "body_min_area": 3427,
+      "path": "art-source/animated/clack-64.png",
+      "base_scale": 0.6869409660107334
+    },
+    {
+      "width": 1774,
+      "height": 887,
+      "columns": 4,
+      "rows": 2,
+      "column_cuts": [
+        0,
+        448,
+        893,
+        1334,
+        1774
+      ],
+      "row_cuts": [
+        0,
+        569,
+        887
+      ],
+      "baselines": {
+        "0": 484.0,
+        "1": 852.25
+      },
+      "body_height": 244.0,
+      "body_min_area": 12270,
+      "path": "art-source/animated/clack-defeat8.png",
+      "base_scale": 0.39344262295081966
+    },
+    {
+      "width": 1254,
+      "height": 1254,
+      "columns": 8,
+      "rows": 8,
+      "column_cuts": [
+        0,
+        165,
+        322,
+        478,
+        635,
+        792,
+        948,
+        1105,
+        1254
+      ],
+      "row_cuts": [
+        0,
+        182,
+        339,
+        495,
+        643,
+        806,
+        960,
+        1113,
+        1254
+      ],
+      "baselines": {
+        "0": 153.0,
+        "1": 311.0,
+        "2": 467.0,
+        "3": 623.0,
+        "4": 779.0,
+        "5": 934.0,
+        "6": 1090.0,
+        "7": 1232.0
+      },
+      "body_height": 97.0,
+      "body_min_area": 1890,
+      "path": "art-source/animated/v3/clack-extension64.png",
+      "base_scale": 0.9896907216494846
+    },
+    {
+      "width": 1254,
+      "height": 1254,
+      "columns": 8,
+      "rows": 5,
+      "column_cuts": [
+        0,
+        171,
+        328,
+        484,
+        640,
+        798,
+        955,
+        1110,
+        1254
+      ],
+      "row_cuts": [
+        0,
+        293,
+        526,
+        762,
+        1006,
+        1254
+      ],
+      "baselines": {
+        "0": 258.0,
+        "1": 495.0,
+        "2": 727.0,
+        "3": 964.0,
+        "4": 1201.0
+      },
+      "body_height": 161.5,
+      "body_min_area": 3865,
+      "path": "art-source/animated/v3/clack-powered40.png",
+      "base_scale": 0.5944272445820433
+    }
+  ],
+  "anchor_sources": [
+    {
+      "path": "art-source/animated/v3/tech-anchors.json",
+      "sha256": "f683926becea8faa182506366a618ca5a0b3a3ba280349f3cdbfdc70468948e6"
+    }
+  ],
+  "clips": {
+    "idle": {
+      "frame_count": 8,
+      "durations": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ],
+      "duration": 1.6,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/clack/idle-00.png",
+          "source": "art-source/animated/clack-64.png",
+          "slot": 0,
+          "source_bounds": [
+            26,
+            10,
+            154,
+            152
+          ],
+          "source_origin": [
+            83.5,
+            152.25
+          ],
+          "scale": 0.6869409660107334,
+          "packed_bounds": [
+            57,
+            74,
+            145,
+            172
+          ],
+          "sha256": "b84852856d7900bfac184e34e487ca47336bae3171de2403b89967e5fa5e21b8"
+        },
+        {
+          "path": "res://assets/animated/clack/idle-01.png",
+          "source": "art-source/animated/clack-64.png",
+          "slot": 1,
+          "source_bounds": [
+            180,
+            10,
+            309,
+            153
+          ],
+          "source_origin": [
+            247.0,
+            152.25
+          ],
+          "scale": 0.6869409660107334,
+          "packed_bounds": [
+            50,
+            74,
+            139,
+            172
+          ],
+          "sha256": "1dc075fd98650afae240b03e43d87aff7c87ffe4cf1ef73f0a95462164ce482a"
+        },
+        {
+          "path": "res://assets/animated/clack/idle-02.png",
+          "source": "art-source/animated/clack-64.png",
+          "slot": 2,
+          "source_bounds": [
+            336,
+            12,
+            464,
+            152
+          ],
+          "source_origin": [
+            404.5,
+            152.25
+          ],
+          "scale": 0.6869409660107334,
+          "packed_bounds": [
+            49,
+            76,
+            137,
+            172
+          ],
+          "sha256": "ca245a12e3d04401b8369fc58f215caad54cd0860fe7c3b5578b692a8d1fc972"
+        },
+        {
+          "path": "res://assets/animated/clack/idle-03.png",
+          "source": "art-source/animated/clack-64.png",
+          "slot": 3,
+          "source_bounds": [
+            492,
+            10,
+            623,
+            152
+          ],
+          "source_origin": [
+            560.0,
+            152.25
+          ],
+          "scale": 0.6869409660107334,
+          "packed_bounds": [
+            49,
+            74,
+            139,
+            172
+          ],
+          "sha256": "cff13632a949248128383b21d6f41f51255c4e916ea159acce6d8a751c9c1805"
+        },
+        {
+          "path": "res://assets/animated/clack/idle-04.png",
+          "source": "art-source/animated/clack-64.png",
+          "slot": 4,
+          "source_bounds": [
+            648,
+            10,
+            777,
+            152
+          ],
+          "source_origin": [
+            714.0,
+            152.25
+          ],
+          "scale": 0.6869409660107334,
+          "packed_bounds": [
+            51,
+            74,
+            140,
+            172
+          ],
+          "sha256": "a1ad23ee66953fb9e396d4ed104b7b3807a04918f0a3317a89cb95b989c494ff"
+        },
+        {
+          "path": "res://assets/animated/clack/idle-05.png",
+          "source": "art-source/animated/clack-64.png",
+          "slot": 5,
+          "source_bounds": [
+            804,
+            11,
+            935,
+            153
+          ],
+          "source_origin": [
+            869.0,
+            152.25
+          ],
+          "scale": 0.6869409660107334,
+          "packed_bounds": [
+            51,
+            75,
+            141,
+            173
+          ],
+          "sha256": "7fa30eb62f2dba810f0c9957d1abaf5e4ac060c085347fc99cd7a77152037dee"
+        },
+        {
+          "path": "res://assets/animated/clack/idle-06.png",
+          "source": "art-source/animated/clack-64.png",
+          "slot": 6,
+          "source_bounds": [
+            963,
+            12,
+            1092,
+            152
+          ],
+          "source_origin": [
+            1027.5,
+            152.25
+          ],
+          "scale": 0.6869409660107334,
+          "packed_bounds": [
+            52,
+            76,
+            141,
+            172
+          ],
+          "sha256": "10a47b27dd8dda1eca85b977c3ef71fe6962a59c1dc22270d38c0f6133e44db8"
+        },
+        {
+          "path": "res://assets/animated/clack/idle-07.png",
+          "source": "art-source/animated/clack-64.png",
+          "slot": 7,
+          "source_bounds": [
+            1118,
+            10,
+            1246,
+            152
+          ],
+          "source_origin": [
+            1180.5,
+            152.25
+          ],
+          "scale": 0.6869409660107334,
+          "packed_bounds": [
+            53,
+            74,
+            141,
+            172
+          ],
+          "sha256": "9859dd70fb79892439e7a8ac755bc18bdf5693a6946325011bf565d0bf32fc17"
+        }
+      ]
+    },
+    "walk": {
+      "frame_count": 16,
+      "durations": [
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045,
+        0.045
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/clack/walk-00.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 0,
+          "source_bounds": [
+            36,
+            54,
+            135,
+            153
+          ],
+          "source_origin": [
+            82.5,
+            153.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            50,
+            74,
+            148,
+            172
+          ],
+          "sha256": "89888146944d9023ffe534ce1631e733ceceb804108d48770a52f8e7c2047c1b"
+        },
+        {
+          "path": "res://assets/animated/clack/walk-01.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 1,
+          "source_bounds": [
+            193,
+            54,
+            291,
+            153
+          ],
+          "source_origin": [
+            243.5,
+            153.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            46,
+            74,
+            143,
+            172
+          ],
+          "sha256": "13b0d633221ed456bed8f298015eb11199dfa3e12e664cb42d21ba58fe734c12"
+        },
+        {
+          "path": "res://assets/animated/clack/walk-02.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 2,
+          "source_bounds": [
+            349,
+            57,
+            447,
+            153
+          ],
+          "source_origin": [
+            400.0,
+            153.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            46,
+            77,
+            143,
+            172
+          ],
+          "sha256": "2fbd0018d08bebf5506d491f6a8daf78bc12492c3142612f1d3819c10b38c74b"
+        },
+        {
+          "path": "res://assets/animated/clack/walk-03.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 3,
+          "source_bounds": [
+            507,
+            53,
+            607,
+            153
+          ],
+          "source_origin": [
+            556.5,
+            153.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            47,
+            73,
+            146,
+            172
+          ],
+          "sha256": "b95548380f43744f5bab120ae4700f2a0ba79192ab34bd8d970998a1eb5ec4e0"
+        },
+        {
+          "path": "res://assets/animated/clack/walk-04.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 4,
+          "source_bounds": [
+            664,
+            54,
+            763,
+            153
+          ],
+          "source_origin": [
+            713.5,
+            153.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            47,
+            74,
+            145,
+            172
+          ],
+          "sha256": "c3c73e5ce283611aadcce8af81cba2dcd2d15e23d69afd39de07e6736ba6ca3d"
+        },
+        {
+          "path": "res://assets/animated/clack/walk-05.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 5,
+          "source_bounds": [
+            820,
+            55,
+            919,
+            154
+          ],
+          "source_origin": [
+            870.0,
+            153.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            47,
+            75,
+            145,
+            173
+          ],
+          "sha256": "02002c8a546ae1e592b44dce9a0092ce3f44723a1b1d7b4edb68d7d0a99c4568"
+        },
+        {
+          "path": "res://assets/animated/clack/walk-06.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 6,
+          "source_bounds": [
+            978,
+            55,
+            1075,
+            153
+          ],
+          "source_origin": [
+            1026.5,
+            153.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            48,
+            75,
+            144,
+            172
+          ],
+          "sha256": "dc1f82be703cb1eefa43daac536c8769f92dab5b026cbb17776aba27204ef669"
+        },
+        {
+          "path": "res://assets/animated/clack/walk-07.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 7,
+          "source_bounds": [
+            1134,
+            54,
+            1232,
+            153
+          ],
+          "source_origin": [
+            1179.5,
+            153.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            51,
+            74,
+            148,
+            172
+          ],
+          "sha256": "d1a695511e48916d57c681a5822aa974dc887ace5702d6ab32b23c7431be9364"
+        },
+        {
+          "path": "res://assets/animated/clack/walk-08.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 8,
+          "source_bounds": [
+            36,
+            212,
+            136,
+            311
+          ],
+          "source_origin": [
+            82.5,
+            311.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            50,
+            74,
+            149,
+            172
+          ],
+          "sha256": "91832679bb3c47e524bcbb85ec97d439df80f3e89af23756f1b4b3184430db87"
+        },
+        {
+          "path": "res://assets/animated/clack/walk-09.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 9,
+          "source_bounds": [
+            193,
+            211,
+            291,
+            311
+          ],
+          "source_origin": [
+            243.5,
+            311.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            46,
+            73,
+            143,
+            172
+          ],
+          "sha256": "2b188abfd357777c8564f017f23a3ec30071a10399d6ca07f75f09830ec12ffc"
+        },
+        {
+          "path": "res://assets/animated/clack/walk-10.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 10,
+          "source_bounds": [
+            351,
+            210,
+            449,
+            311
+          ],
+          "source_origin": [
+            400.0,
+            311.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            48,
+            72,
+            145,
+            172
+          ],
+          "sha256": "6c623b4f4beed6f8379ade1f43b07b0412ce1398220d93f2475acdbb199a786f"
+        },
+        {
+          "path": "res://assets/animated/clack/walk-11.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 11,
+          "source_bounds": [
+            506,
+            212,
+            607,
+            311
+          ],
+          "source_origin": [
+            556.5,
+            311.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            46,
+            74,
+            146,
+            172
+          ],
+          "sha256": "5840dc1e261dc13436d37891376fa685daf2ef82de8d77f4f5037c9a03f7582d"
+        },
+        {
+          "path": "res://assets/animated/clack/walk-12.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 12,
+          "source_bounds": [
+            664,
+            212,
+            764,
+            311
+          ],
+          "source_origin": [
+            713.5,
+            311.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            47,
+            74,
+            146,
+            172
+          ],
+          "sha256": "9c17eb0a3de7e828dc422b0efe9767e9c14005b93eac206a84cadcae2c45d320"
+        },
+        {
+          "path": "res://assets/animated/clack/walk-13.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 13,
+          "source_bounds": [
+            821,
+            212,
+            920,
+            311
+          ],
+          "source_origin": [
+            870.0,
+            311.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            48,
+            74,
+            146,
+            172
+          ],
+          "sha256": "c3345d20ed3f94f61099a9efd9242e11426221f0b082abd06c20a01af7c50c0c"
+        },
+        {
+          "path": "res://assets/animated/clack/walk-14.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 14,
+          "source_bounds": [
+            978,
+            212,
+            1075,
+            311
+          ],
+          "source_origin": [
+            1026.5,
+            311.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            48,
+            74,
+            144,
+            172
+          ],
+          "sha256": "9f8b7be96347e0b7d1e01dee998f82b9c01a151b981f3c99dfba651125734619"
+        },
+        {
+          "path": "res://assets/animated/clack/walk-15.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 15,
+          "source_bounds": [
+            1134,
+            212,
+            1233,
+            311
+          ],
+          "source_origin": [
+            1179.5,
+            311.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            51,
+            74,
+            149,
+            172
+          ],
+          "sha256": "b54af958c7ed7ff2433198fb9404f241f057d0723f8793a14b7e17959c5e189e"
+        }
+      ]
+    },
+    "primary": {
+      "frame_count": 16,
+      "durations": [
+        0.0385,
+        0.0315,
+        0.0385,
+        0.0315,
+        0.044,
+        0.036,
+        0.0605,
+        0.049499999999999995,
+        0.022,
+        0.018,
+        0.030249999999999996,
+        0.024749999999999998,
+        0.04675,
+        0.03825,
+        0.0715,
+        0.058499999999999996
+      ],
+      "duration": 0.64,
+      "loop": false,
+      "release_frame": 8,
+      "release_time": 0.32999999999999996,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/clack/primary-00.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 16,
+          "source_bounds": [
+            35,
+            368,
+            135,
+            466
+          ],
+          "source_origin": [
+            82.5,
+            467.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            49,
+            74,
+            148,
+            171
+          ],
+          "sha256": "3ff6b445a9db90adabdd840938a01859035cb4b184418ae97549c6a6f0e6758d"
+        },
+        {
+          "path": "res://assets/animated/clack/primary-01.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 17,
+          "source_bounds": [
+            187,
+            368,
+            293,
+            466
+          ],
+          "source_origin": [
+            243.5,
+            467.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            40,
+            74,
+            145,
+            171
+          ],
+          "sha256": "01bd37439818359131a85163e2d419bd587a633425bff16057c7cc1bf5112135"
+        },
+        {
+          "path": "res://assets/animated/clack/primary-02.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 18,
+          "source_bounds": [
+            339,
+            367,
+            459,
+            466
+          ],
+          "source_origin": [
+            400.0,
+            467.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            36,
+            73,
+            155,
+            171
+          ],
+          "sha256": "b76a874bf0c3ba5455b606e75998d1dab2dfd5f8720cef2278ada07370601bec"
+        },
+        {
+          "path": "res://assets/animated/clack/primary-03.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 19,
+          "source_bounds": [
+            500,
+            368,
+            609,
+            466
+          ],
+          "source_origin": [
+            556.5,
+            467.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            40,
+            74,
+            148,
+            171
+          ],
+          "sha256": "7407bff4bd638cbcd709f91e2a749f40569baa3e619294f8d3a706e4377003e3"
+        },
+        {
+          "path": "res://assets/animated/clack/primary-04.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 20,
+          "source_bounds": [
+            661,
+            365,
+            753,
+            467
+          ],
+          "source_origin": [
+            713.5,
+            467.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            44,
+            71,
+            135,
+            172
+          ],
+          "sha256": "d558b96ce58b5bb668f03da6d6378da63d03703649fa62f307fac21f48350275"
+        },
+        {
+          "path": "res://assets/animated/clack/primary-05.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 21,
+          "source_bounds": [
+            810,
+            369,
+            927,
+            467
+          ],
+          "source_origin": [
+            870.0,
+            467.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            37,
+            75,
+            153,
+            172
+          ],
+          "sha256": "5d77fecd26910336e2c823bd7410ef1a348a9a11b27c8b518d558309ec0a257a"
+        },
+        {
+          "path": "res://assets/animated/clack/primary-06.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 22,
+          "source_bounds": [
+            976,
+            368,
+            1078,
+            467
+          ],
+          "source_origin": [
+            1026.5,
+            467.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            46,
+            74,
+            147,
+            172
+          ],
+          "sha256": "c0934dc9e47c1b64e5ac8117ce863b3611509237bcfa479447a2fc91a29b5ac2"
+        },
+        {
+          "path": "res://assets/animated/clack/primary-07.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 23,
+          "source_bounds": [
+            1131,
+            368,
+            1233,
+            467
+          ],
+          "source_origin": [
+            1179.5,
+            467.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            48,
+            74,
+            149,
+            172
+          ],
+          "sha256": "f8b5d0076a580bf6905d848e30fde86ebbd2208242a000123f6909ea12a2dcd2"
+        },
+        {
+          "path": "res://assets/animated/clack/primary-08.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 24,
+          "source_bounds": [
+            35,
+            521,
+            146,
+            623
+          ],
+          "source_origin": [
+            82.5,
+            623.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            49,
+            71,
+            159,
+            172
+          ],
+          "sha256": "9dbdfe6d76c5a33a9fdfd8a3d2d37ec2dd3db3e23e9cc5d2cb5cf5882931a6d3"
+        },
+        {
+          "path": "res://assets/animated/clack/primary-09.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 25,
+          "source_bounds": [
+            193,
+            523,
+            298,
+            623
+          ],
+          "source_origin": [
+            243.5,
+            623.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            46,
+            73,
+            150,
+            172
+          ],
+          "sha256": "a68a4bef4e40ccdae88add69ace575bcf8cc6c5f6c461305ca1152ccb872112e"
+        },
+        {
+          "path": "res://assets/animated/clack/primary-10.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 26,
+          "source_bounds": [
+            346,
+            526,
+            447,
+            623
+          ],
+          "source_origin": [
+            400.0,
+            623.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            43,
+            76,
+            143,
+            172
+          ],
+          "sha256": "b2688785fcf1a8a5bddc080bc0f70cfcf8e9f1c1aabd509abbeaff567fa08656"
+        },
+        {
+          "path": "res://assets/animated/clack/primary-11.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 27,
+          "source_bounds": [
+            504,
+            523,
+            610,
+            623
+          ],
+          "source_origin": [
+            556.5,
+            623.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            44,
+            73,
+            149,
+            172
+          ],
+          "sha256": "8e1a6217303c4ca50986374d8036dbdcb7e1c3bdbe4dab8066b17b91ab5ce354"
+        },
+        {
+          "path": "res://assets/animated/clack/primary-12.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 28,
+          "source_bounds": [
+            659,
+            526,
+            762,
+            623
+          ],
+          "source_origin": [
+            713.5,
+            623.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            42,
+            76,
+            144,
+            172
+          ],
+          "sha256": "212da98f53dbc3cf913343e33582763c52ec0a64d0fa52b061869b5d0f7eb0a4"
+        },
+        {
+          "path": "res://assets/animated/clack/primary-13.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 29,
+          "source_bounds": [
+            817,
+            526,
+            923,
+            623
+          ],
+          "source_origin": [
+            870.0,
+            623.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            44,
+            76,
+            149,
+            172
+          ],
+          "sha256": "74d5f9035b9ef1f089a20718884e3a109383facd2c33d59e208fbc67c94c0dd7"
+        },
+        {
+          "path": "res://assets/animated/clack/primary-14.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 30,
+          "source_bounds": [
+            973,
+            524,
+            1077,
+            623
+          ],
+          "source_origin": [
+            1026.5,
+            623.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            43,
+            74,
+            146,
+            172
+          ],
+          "sha256": "01b959715c5ac0070d349c8ce9e076f4fe5089d0c316ac87a6f1ecfde920d7dc"
+        },
+        {
+          "path": "res://assets/animated/clack/primary-15.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 31,
+          "source_bounds": [
+            1131,
+            524,
+            1233,
+            623
+          ],
+          "source_origin": [
+            1179.5,
+            623.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            48,
+            74,
+            149,
+            172
+          ],
+          "sha256": "dc9b88639bfd8b761642fd151ae8f32db592cb6e0d7f80c0e90421ebcf24e2aa"
+        }
+      ],
+      "release_anchor": [
+        60,
+        -79
+      ]
+    },
+    "secondary": {
+      "frame_count": 8,
+      "durations": [
+        0.07,
+        0.07,
+        0.08,
+        0.11,
+        0.04,
+        0.055,
+        0.085,
+        0.13
+      ],
+      "duration": 0.64,
+      "loop": false,
+      "release_frame": 4,
+      "release_time": 0.33,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/clack/secondary-00.png",
+          "source": "art-source/animated/clack-64.png",
+          "slot": 24,
+          "source_bounds": [
+            20,
+            480,
+            160,
+            622
+          ],
+          "source_origin": [
+            83.5,
+            622.0
+          ],
+          "scale": 0.6869409660107334,
+          "packed_bounds": [
+            52,
+            74,
+            148,
+            172
+          ],
+          "sha256": "169498d9da543e2a09f7acff32bc1986b85b86d0bf3388e2cec5033cf3989827"
+        },
+        {
+          "path": "res://assets/animated/clack/secondary-01.png",
+          "source": "art-source/animated/clack-64.png",
+          "slot": 25,
+          "source_bounds": [
+            182,
+            486,
+            320,
+            622
+          ],
+          "source_origin": [
+            247.0,
+            622.0
+          ],
+          "scale": 0.6869409660107334,
+          "packed_bounds": [
+            51,
+            79,
+            146,
+            172
+          ],
+          "sha256": "ec9b3881b4c9112cca5e6ff16ece850a94450a3ff63db9f193eead315716fdce"
+        },
+        {
+          "path": "res://assets/animated/clack/secondary-02.png",
+          "source": "art-source/animated/clack-64.png",
+          "slot": 26,
+          "source_bounds": [
+            338,
+            484,
+            470,
+            621
+          ],
+          "source_origin": [
+            404.5,
+            622.0
+          ],
+          "scale": 0.6869409660107334,
+          "packed_bounds": [
+            50,
+            77,
+            141,
+            171
+          ],
+          "sha256": "c77490abdf6349fda682979ea97586c52c65c3bffc03972bf30b39231eadf9cc"
+        },
+        {
+          "path": "res://assets/animated/clack/secondary-03.png",
+          "source": "art-source/animated/clack-64.png",
+          "slot": 27,
+          "source_bounds": [
+            488,
+            484,
+            625,
+            622
+          ],
+          "source_origin": [
+            560.0,
+            622.0
+          ],
+          "scale": 0.6869409660107334,
+          "packed_bounds": [
+            47,
+            77,
+            141,
+            172
+          ],
+          "sha256": "2d8ed8927d743e40539554b3cd48a1762ab24f1b3649e98d751a08b73d11570f"
+        },
+        {
+          "path": "res://assets/animated/clack/secondary-04.png",
+          "source": "art-source/animated/clack-64.png",
+          "slot": 28,
+          "source_bounds": [
+            645,
+            486,
+            783,
+            621
+          ],
+          "source_origin": [
+            714.0,
+            622.0
+          ],
+          "scale": 0.6869409660107334,
+          "packed_bounds": [
+            49,
+            79,
+            144,
+            172
+          ],
+          "sha256": "6b984ee31ecfa534dbc3e7ac626a0afc1e33cc8ffde89c896e2d65cf942bad57"
+        },
+        {
+          "path": "res://assets/animated/clack/secondary-05.png",
+          "source": "art-source/animated/clack-64.png",
+          "slot": 29,
+          "source_bounds": [
+            798,
+            484,
+            943,
+            621
+          ],
+          "source_origin": [
+            869.0,
+            622.0
+          ],
+          "scale": 0.6869409660107334,
+          "packed_bounds": [
+            47,
+            77,
+            147,
+            171
+          ],
+          "sha256": "eb69179c1720939296803828fd6ad3d93565e65ec4d365062832758fde16e627"
+        },
+        {
+          "path": "res://assets/animated/clack/secondary-06.png",
+          "source": "art-source/animated/clack-64.png",
+          "slot": 30,
+          "source_bounds": [
+            966,
+            484,
+            1099,
+            621
+          ],
+          "source_origin": [
+            1027.5,
+            622.0
+          ],
+          "scale": 0.6869409660107334,
+          "packed_bounds": [
+            54,
+            77,
+            145,
+            171
+          ],
+          "sha256": "2b2565d3547bee8c82fff141fd150b0dcbbf25a66326491cd138d8a8377eb6ae"
+        },
+        {
+          "path": "res://assets/animated/clack/secondary-07.png",
+          "source": "art-source/animated/clack-64.png",
+          "slot": 31,
+          "source_bounds": [
+            1118,
+            483,
+            1247,
+            621
+          ],
+          "source_origin": [
+            1180.5,
+            622.0
+          ],
+          "scale": 0.6869409660107334,
+          "packed_bounds": [
+            53,
+            77,
+            142,
+            172
+          ],
+          "sha256": "efac435df3d709b6a6e1fbeeeb45e51685dccd1c03ff127f6689b30b40d85b7a"
+        }
+      ],
+      "release_anchor": [
+        27,
+        -59
+      ]
+    },
+    "special": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.08,
+        0.09,
+        0.12,
+        0.06,
+        0.08,
+        0.12,
+        0.18
+      ],
+      "duration": 0.82,
+      "loop": false,
+      "release_frame": 4,
+      "release_time": 0.38,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/clack/special-00.png",
+          "source": "art-source/animated/clack-64.png",
+          "slot": 32,
+          "source_bounds": [
+            19,
+            644,
+            157,
+            787
+          ],
+          "source_origin": [
+            83.5,
+            787.0
+          ],
+          "scale": 0.6869409660107334,
+          "packed_bounds": [
+            52,
+            74,
+            147,
+            172
+          ],
+          "sha256": "c90cb1a8145b3e7c5e848737f6aff4462f6027213b61b96a2396615fb17daef1"
+        },
+        {
+          "path": "res://assets/animated/clack/special-01.png",
+          "source": "art-source/animated/clack-64.png",
+          "slot": 33,
+          "source_bounds": [
+            174,
+            642,
+            309,
+            787
+          ],
+          "source_origin": [
+            247.0,
+            787.0
+          ],
+          "scale": 0.6869409660107334,
+          "packed_bounds": [
+            46,
+            72,
+            139,
+            172
+          ],
+          "sha256": "b09c871b4d4b2bdbb2afbbb816fd9ed4a6fb1a242ac007005523bb5890755212"
+        },
+        {
+          "path": "res://assets/animated/clack/special-02.png",
+          "source": "art-source/animated/clack-64.png",
+          "slot": 34,
+          "source_bounds": [
+            333,
+            638,
+            470,
+            787
+          ],
+          "source_origin": [
+            404.5,
+            787.0
+          ],
+          "scale": 0.6869409660107334,
+          "packed_bounds": [
+            47,
+            70,
+            141,
+            172
+          ],
+          "sha256": "d39eec05974f8b13989c1c85fae1970ac4c63dd2860154b60e207b08999f8726"
+        },
+        {
+          "path": "res://assets/animated/clack/special-03.png",
+          "source": "art-source/animated/clack-64.png",
+          "slot": 35,
+          "source_bounds": [
+            487,
+            644,
+            627,
+            787
+          ],
+          "source_origin": [
+            560.0,
+            787.0
+          ],
+          "scale": 0.6869409660107334,
+          "packed_bounds": [
+            46,
+            74,
+            142,
+            172
+          ],
+          "sha256": "936d14f6194b2f440e3c1190177a8f390157f9065c831be294317ec9b00a96e7"
+        },
+        {
+          "path": "res://assets/animated/clack/special-04.png",
+          "source": "art-source/animated/clack-64.png",
+          "slot": 36,
+          "source_bounds": [
+            641,
+            636,
+            782,
+            787
+          ],
+          "source_origin": [
+            714.0,
+            787.0
+          ],
+          "scale": 0.6869409660107334,
+          "packed_bounds": [
+            46,
+            68,
+            143,
+            172
+          ],
+          "sha256": "890a55d4bee7c7d850ee0b89ed9051864065763d36ec3bf7745ba8474cddd2ab"
+        },
+        {
+          "path": "res://assets/animated/clack/special-05.png",
+          "source": "art-source/animated/clack-64.png",
+          "slot": 37,
+          "source_bounds": [
+            797,
+            636,
+            943,
+            787
+          ],
+          "source_origin": [
+            869.0,
+            787.0
+          ],
+          "scale": 0.6869409660107334,
+          "packed_bounds": [
+            47,
+            68,
+            147,
+            172
+          ],
+          "sha256": "58ea495a7ede015dee4606af1b6175374869d0a87fedae237d718b7dcc79f867"
+        },
+        {
+          "path": "res://assets/animated/clack/special-06.png",
+          "source": "art-source/animated/clack-64.png",
+          "slot": 38,
+          "source_bounds": [
+            959,
+            644,
+            1092,
+            787
+          ],
+          "source_origin": [
+            1027.5,
+            787.0
+          ],
+          "scale": 0.6869409660107334,
+          "packed_bounds": [
+            49,
+            74,
+            140,
+            172
+          ],
+          "sha256": "629bc3e4543d14ab9fdc9c3dea3b19317c184bbaeca6ade6eccf4180003d9ae1"
+        },
+        {
+          "path": "res://assets/animated/clack/special-07.png",
+          "source": "art-source/animated/clack-64.png",
+          "slot": 39,
+          "source_bounds": [
+            1115,
+            644,
+            1246,
+            787
+          ],
+          "source_origin": [
+            1180.5,
+            787.0
+          ],
+          "scale": 0.6869409660107334,
+          "packed_bounds": [
+            51,
+            74,
+            141,
+            172
+          ],
+          "sha256": "566b2851b6997705cf1749b0bf0b440293c67e4a109ac0effc23d7d7776aaac3"
+        }
+      ]
+    },
+    "guard": {
+      "frame_count": 8,
+      "durations": [
+        0.055,
+        0.055,
+        0.055,
+        0.055,
+        0.12,
+        0.12,
+        0.12,
+        0.12
+      ],
+      "duration": 0.7,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": 4,
+      "frames": [
+        {
+          "path": "res://assets/animated/clack/guard-00.png",
+          "source": "art-source/animated/clack-64.png",
+          "slot": 40,
+          "source_bounds": [
+            20,
+            801,
+            153,
+            939
+          ],
+          "source_origin": [
+            83.5,
+            940.0
+          ],
+          "scale": 0.6869409660107334,
+          "packed_bounds": [
+            52,
+            77,
+            143,
+            172
+          ],
+          "sha256": "b4bc4e2df647834e5845bb91067f12cedd48dcbe4db7f41e5e1df53e95d68d4e"
+        },
+        {
+          "path": "res://assets/animated/clack/guard-01.png",
+          "source": "art-source/animated/clack-64.png",
+          "slot": 41,
+          "source_bounds": [
+            179,
+            800,
+            309,
+            940
+          ],
+          "source_origin": [
+            247.0,
+            940.0
+          ],
+          "scale": 0.6869409660107334,
+          "packed_bounds": [
+            49,
+            76,
+            138,
+            172
+          ],
+          "sha256": "3718a94afe880d60a5bbab9c9f45f5c980d891dea524a7673e7b5f2cb10af704"
+        },
+        {
+          "path": "res://assets/animated/clack/guard-02.png",
+          "source": "art-source/animated/clack-64.png",
+          "slot": 42,
+          "source_bounds": [
+            333,
+            806,
+            467,
+            940
+          ],
+          "source_origin": [
+            404.5,
+            940.0
+          ],
+          "scale": 0.6869409660107334,
+          "packed_bounds": [
+            47,
+            80,
+            139,
+            172
+          ],
+          "sha256": "38d106db8e3dd19008d4d4ec2ad6152ef9476e8b5341bc457dd30ca9dfff855f"
+        },
+        {
+          "path": "res://assets/animated/clack/guard-03.png",
+          "source": "art-source/animated/clack-64.png",
+          "slot": 43,
+          "source_bounds": [
+            487,
+            801,
+            623,
+            939
+          ],
+          "source_origin": [
+            560.0,
+            940.0
+          ],
+          "scale": 0.6869409660107334,
+          "packed_bounds": [
+            46,
+            77,
+            139,
+            172
+          ],
+          "sha256": "3ad633461402d858b5061316485770d6fd3f52ec2c3336df078dd897eec09c08"
+        },
+        {
+          "path": "res://assets/animated/clack/guard-04.png",
+          "source": "art-source/animated/clack-64.png",
+          "slot": 44,
+          "source_bounds": [
+            643,
+            806,
+            778,
+            940
+          ],
+          "source_origin": [
+            714.0,
+            940.0
+          ],
+          "scale": 0.6869409660107334,
+          "packed_bounds": [
+            47,
+            80,
+            140,
+            172
+          ],
+          "sha256": "f5ffd41a487d48b85b50988b36b4838fded82e4a4baf8c5c2fc74b44b944ef91"
+        },
+        {
+          "path": "res://assets/animated/clack/guard-05.png",
+          "source": "art-source/animated/clack-64.png",
+          "slot": 45,
+          "source_bounds": [
+            799,
+            804,
+            932,
+            940
+          ],
+          "source_origin": [
+            869.0,
+            940.0
+          ],
+          "scale": 0.6869409660107334,
+          "packed_bounds": [
+            48,
+            79,
+            139,
+            172
+          ],
+          "sha256": "4e7432ab5ba09417982fab291fcb3f97b006275c88682ef2db76f63ce9f0e896"
+        },
+        {
+          "path": "res://assets/animated/clack/guard-06.png",
+          "source": "art-source/animated/clack-64.png",
+          "slot": 46,
+          "source_bounds": [
+            959,
+            808,
+            1090,
+            940
+          ],
+          "source_origin": [
+            1027.5,
+            940.0
+          ],
+          "scale": 0.6869409660107334,
+          "packed_bounds": [
+            49,
+            81,
+            139,
+            172
+          ],
+          "sha256": "bc51bb0a4d9c1e14309cdc8257a147cd7ffb2113183d8d6a13c76e44fbe2a2c0"
+        },
+        {
+          "path": "res://assets/animated/clack/guard-07.png",
+          "source": "art-source/animated/clack-64.png",
+          "slot": 47,
+          "source_bounds": [
+            1116,
+            807,
+            1247,
+            940
+          ],
+          "source_origin": [
+            1180.5,
+            940.0
+          ],
+          "scale": 0.6869409660107334,
+          "packed_bounds": [
+            52,
+            81,
+            142,
+            172
+          ],
+          "sha256": "4c58d9ec4a2d52412df18d53d735d9603a2b863ab0455f9c2a6657ff503ff4b4"
+        }
+      ]
+    },
+    "hit": {
+      "frame_count": 8,
+      "durations": [
+        0.035,
+        0.065,
+        0.09,
+        0.12,
+        0.13,
+        0.15,
+        0.16,
+        0.18
+      ],
+      "duration": 0.9299999999999999,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/clack/hit-00.png",
+          "source": "art-source/animated/clack-64.png",
+          "slot": 48,
+          "source_bounds": [
+            10,
+            953,
+            164,
+            1091
+          ],
+          "source_origin": [
+            83.5,
+            1091.0
+          ],
+          "scale": 0.6869409660107334,
+          "packed_bounds": [
+            46,
+            77,
+            152,
+            172
+          ],
+          "sha256": "1786810d1468c9549f4f3b6d8156fe953bd1eec6a6047d1fa3daed2251313ddf"
+        },
+        {
+          "path": "res://assets/animated/clack/hit-01.png",
+          "source": "art-source/animated/clack-64.png",
+          "slot": 49,
+          "source_bounds": [
+            169,
+            954,
+            327,
+            1091
+          ],
+          "source_origin": [
+            247.0,
+            1091.0
+          ],
+          "scale": 0.6869409660107334,
+          "packed_bounds": [
+            42,
+            78,
+            151,
+            172
+          ],
+          "sha256": "bd09ee0cb74bc7983bdcd1512f3d182158c04010225d0d592aa4f1458b120e70"
+        },
+        {
+          "path": "res://assets/animated/clack/hit-02.png",
+          "source": "art-source/animated/clack-64.png",
+          "slot": 50,
+          "source_bounds": [
+            344,
+            958,
+            480,
+            1091
+          ],
+          "source_origin": [
+            404.5,
+            1091.0
+          ],
+          "scale": 0.6869409660107334,
+          "packed_bounds": [
+            54,
+            81,
+            147,
+            172
+          ],
+          "sha256": "952e1971b4e71e21422fab9fd63e52dc891e2fb8415fc9b981d2c785a4bcdffa"
+        },
+        {
+          "path": "res://assets/animated/clack/hit-03.png",
+          "source": "art-source/animated/clack-64.png",
+          "slot": 51,
+          "source_bounds": [
+            497,
+            971,
+            638,
+            1091
+          ],
+          "source_origin": [
+            560.0,
+            1091.0
+          ],
+          "scale": 0.6869409660107334,
+          "packed_bounds": [
+            53,
+            90,
+            150,
+            172
+          ],
+          "sha256": "810bc0abc7ab98789e5eb6241fc81943214bf556f1559b60c7782c1a2bb46310"
+        },
+        {
+          "path": "res://assets/animated/clack/hit-04.png",
+          "source": "art-source/animated/clack-64.png",
+          "slot": 52,
+          "source_bounds": [
+            648,
+            963,
+            779,
+            1091
+          ],
+          "source_origin": [
+            714.0,
+            1091.0
+          ],
+          "scale": 0.6869409660107334,
+          "packed_bounds": [
+            51,
+            84,
+            141,
+            172
+          ],
+          "sha256": "75a352c03a9020df41099b3a00e04cae14e5e08d8f0ce3023422bb643db596fc"
+        },
+        {
+          "path": "res://assets/animated/clack/hit-05.png",
+          "source": "art-source/animated/clack-64.png",
+          "slot": 53,
+          "source_bounds": [
+            794,
+            967,
+            936,
+            1091
+          ],
+          "source_origin": [
+            869.0,
+            1091.0
+          ],
+          "scale": 0.6869409660107334,
+          "packed_bounds": [
+            44,
+            87,
+            142,
+            172
+          ],
+          "sha256": "4cb6dac98a21f0fcecb4f60c3aa89b6c513c220f9784b9592fddd87358ee2e32"
+        },
+        {
+          "path": "res://assets/animated/clack/hit-06.png",
+          "source": "art-source/animated/clack-64.png",
+          "slot": 54,
+          "source_bounds": [
+            961,
+            959,
+            1092,
+            1091
+          ],
+          "source_origin": [
+            1027.5,
+            1091.0
+          ],
+          "scale": 0.6869409660107334,
+          "packed_bounds": [
+            50,
+            81,
+            140,
+            172
+          ],
+          "sha256": "403cf950936086c15e19aacb4c96073243225294aeb5c2721d2897038bb60aff"
+        },
+        {
+          "path": "res://assets/animated/clack/hit-07.png",
+          "source": "art-source/animated/clack-64.png",
+          "slot": 55,
+          "source_bounds": [
+            1115,
+            954,
+            1243,
+            1090
+          ],
+          "source_origin": [
+            1180.5,
+            1091.0
+          ],
+          "scale": 0.6869409660107334,
+          "packed_bounds": [
+            52,
+            78,
+            139,
+            171
+          ],
+          "sha256": "ed2c76705088ed2a2a9d74c6307e10c489d22f71d70eade2a8caea05f5f4ce22"
+        }
+      ]
+    },
+    "defeat": {
+      "frame_count": 8,
+      "durations": [
+        0.08,
+        0.1,
+        0.1,
+        0.12,
+        0.15,
+        0.18,
+        0.24,
+        0.3
+      ],
+      "duration": 1.27,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/clack/defeat-00.png",
+          "source": "art-source/animated/clack-defeat8.png",
+          "slot": 0,
+          "source_bounds": [
+            106,
+            164,
+            361,
+            479
+          ],
+          "source_origin": [
+            224.0,
+            484.0
+          ],
+          "scale": 0.39344262295081966,
+          "packed_bounds": [
+            50,
+            46,
+            150,
+            170
+          ],
+          "sha256": "7fb21ab1f1ddb8562cd686aec99be7488afa952d339abf4c5de666dcfa380001"
+        },
+        {
+          "path": "res://assets/animated/clack/defeat-01.png",
+          "source": "art-source/animated/clack-defeat8.png",
+          "slot": 1,
+          "source_bounds": [
+            560,
+            202,
+            837,
+            479
+          ],
+          "source_origin": [
+            670.5,
+            484.0
+          ],
+          "scale": 0.39344262295081966,
+          "packed_bounds": [
+            53,
+            61,
+            162,
+            170
+          ],
+          "sha256": "7ec175434c1dbb16739d929a156fb10d4c017798fb31f8b818aba6fffa0f9b56"
+        },
+        {
+          "path": "res://assets/animated/clack/defeat-02.png",
+          "source": "art-source/animated/clack-defeat8.png",
+          "slot": 2,
+          "source_bounds": [
+            965,
+            267,
+            1257,
+            484
+          ],
+          "source_origin": [
+            1113.5,
+            484.0
+          ],
+          "scale": 0.39344262295081966,
+          "packed_bounds": [
+            38,
+            87,
+            153,
+            172
+          ],
+          "sha256": "7ad2a7073fb7f3be43e2dbbdac33ec99d259aa18a5df962ae2fa1068f48912d5"
+        },
+        {
+          "path": "res://assets/animated/clack/defeat-03.png",
+          "source": "art-source/animated/clack-defeat8.png",
+          "slot": 3,
+          "source_bounds": [
+            1413,
+            292,
+            1723,
+            484
+          ],
+          "source_origin": [
+            1554.0,
+            484.0
+          ],
+          "scale": 0.39344262295081966,
+          "packed_bounds": [
+            41,
+            96,
+            163,
+            172
+          ],
+          "sha256": "a899b3752a6bda31c0a468bce452bdf99888992ede6a896abe360139408e7339"
+        },
+        {
+          "path": "res://assets/animated/clack/defeat-04.png",
+          "source": "art-source/animated/clack-defeat8.png",
+          "slot": 4,
+          "source_bounds": [
+            36,
+            641,
+            369,
+            849
+          ],
+          "source_origin": [
+            224.0,
+            852.25
+          ],
+          "scale": 0.39344262295081966,
+          "packed_bounds": [
+            22,
+            89,
+            153,
+            171
+          ],
+          "sha256": "5443ff259d853a52c3d40bbb759a4bc7e4581c88c3a4e1e29bbcd5ecac7f23a2"
+        },
+        {
+          "path": "res://assets/animated/clack/defeat-05.png",
+          "source": "art-source/animated/clack-defeat8.png",
+          "slot": 5,
+          "source_bounds": [
+            466,
+            705,
+            852,
+            850
+          ],
+          "source_origin": [
+            670.5,
+            852.25
+          ],
+          "scale": 0.39344262295081966,
+          "packed_bounds": [
+            16,
+            114,
+            168,
+            171
+          ],
+          "sha256": "4d96560d6bba12c175fb91c21e9facc7b3cb61d875430a86b68c768048e70114"
+        },
+        {
+          "path": "res://assets/animated/clack/defeat-06.png",
+          "source": "art-source/animated/clack-defeat8.png",
+          "slot": 6,
+          "source_bounds": [
+            908,
+            718,
+            1298,
+            849
+          ],
+          "source_origin": [
+            1113.5,
+            852.25
+          ],
+          "scale": 0.39344262295081966,
+          "packed_bounds": [
+            15,
+            119,
+            168,
+            171
+          ],
+          "sha256": "12c533f3a756a645ae8345373fa95a0eb6bed8c7cea8352816c794ae14dc65d3"
+        },
+        {
+          "path": "res://assets/animated/clack/defeat-07.png",
+          "source": "art-source/animated/clack-defeat8.png",
+          "slot": 7,
+          "source_bounds": [
+            1367,
+            743,
+            1738,
+            859
+          ],
+          "source_origin": [
+            1554.0,
+            852.25
+          ],
+          "scale": 0.39344262295081966,
+          "packed_bounds": [
+            22,
+            129,
+            168,
+            175
+          ],
+          "sha256": "b897028a3059eb20080557b8cba3e52534c456e3110569a0225c0ae0f555a9e1"
+        }
+      ]
+    },
+    "jump": {
+      "frame_count": 8,
+      "durations": [
+        0.08,
+        0.055,
+        0.08,
+        0.11,
+        0.11,
+        0.08,
+        0.07,
+        0.115
+      ],
+      "duration": 0.7000000000000001,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/clack/jump-00.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 32,
+          "source_bounds": [
+            37,
+            685,
+            146,
+            779
+          ],
+          "source_origin": [
+            82.5,
+            779.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            51,
+            79,
+            159,
+            172
+          ],
+          "sha256": "aa6a5ef2e7bec31cc0b6226d7df559e8e55c30381412437a84875a272be91ac6",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/clack/jump-01.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 33,
+          "source_bounds": [
+            198,
+            673,
+            311,
+            782
+          ],
+          "source_origin": [
+            243.5,
+            782.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            51,
+            64,
+            163,
+            172
+          ],
+          "sha256": "cad39ad03b58e53a8400fc3e83032f824bb2b55848513384ad2c8a11030fd9e1",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/clack/jump-02.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 34,
+          "source_bounds": [
+            361,
+            652,
+            463,
+            764
+          ],
+          "source_origin": [
+            400.0,
+            764.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            57,
+            61,
+            158,
+            172
+          ],
+          "sha256": "0654456478627856059795e756104163cc343ea1d05da0f280566043fec6e544",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/clack/jump-03.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 35,
+          "source_bounds": [
+            509,
+            644,
+            600,
+            745
+          ],
+          "source_origin": [
+            556.5,
+            745.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            49,
+            72,
+            139,
+            172
+          ],
+          "sha256": "0f50fbe9567cbea95a7313037409dac81430b3c320f24deaab4bd1db884670c8",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/clack/jump-04.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 36,
+          "source_bounds": [
+            659,
+            670,
+            769,
+            778
+          ],
+          "source_origin": [
+            713.5,
+            778.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            42,
+            65,
+            151,
+            172
+          ],
+          "sha256": "ea1a19704aa342a824fdedfd59e211fdc63e1d041322aea88c1b8b6ad28fcd6e",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/clack/jump-05.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 37,
+          "source_bounds": [
+            814,
+            683,
+            924,
+            779
+          ],
+          "source_origin": [
+            870.0,
+            779.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            41,
+            77,
+            150,
+            172
+          ],
+          "sha256": "ccd8f00716c4c0f267836280b8fd1172c0a4b9ccad170868c819e89672ec3911",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/clack/jump-06.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 38,
+          "source_bounds": [
+            977,
+            686,
+            1086,
+            779
+          ],
+          "source_origin": [
+            1026.5,
+            779.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            47,
+            80,
+            155,
+            172
+          ],
+          "sha256": "14534eaf57a2a67f05e1f972cb5049a07df78ddcab2b749a3d129b12dd0c6c55",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/clack/jump-07.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 39,
+          "source_bounds": [
+            1133,
+            680,
+            1233,
+            779
+          ],
+          "source_origin": [
+            1179.5,
+            779.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            50,
+            74,
+            149,
+            172
+          ],
+          "sha256": "a4a40331d35ddde4a1b649f76b2d154792ead8e01b315b54fe0eb93252fd616b",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "stair_up": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/clack/stair_up-00.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 40,
+          "source_bounds": [
+            34,
+            834,
+            134,
+            933
+          ],
+          "source_origin": [
+            82.5,
+            933.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            48,
+            74,
+            147,
+            172
+          ],
+          "sha256": "0319be80b91d5689db536bc988b8a7172a60f8d5c59b79cd89f5932c02f807c8",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/clack/stair_up-01.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 41,
+          "source_bounds": [
+            200,
+            826,
+            296,
+            933
+          ],
+          "source_origin": [
+            243.5,
+            933.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            53,
+            66,
+            148,
+            172
+          ],
+          "sha256": "131c04c5d4fa69af24d170cd24b6322915211310f1a48a965413fc2cc6caadda",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/clack/stair_up-02.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 42,
+          "source_bounds": [
+            349,
+            820,
+            450,
+            934
+          ],
+          "source_origin": [
+            400.0,
+            934.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            46,
+            59,
+            146,
+            172
+          ],
+          "sha256": "9a4cbe90e92458edd759964f2cb9000c7a350112ba1980153b334ed7dedce853",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/clack/stair_up-03.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 43,
+          "source_bounds": [
+            506,
+            821,
+            607,
+            933
+          ],
+          "source_origin": [
+            556.5,
+            933.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            46,
+            61,
+            146,
+            172
+          ],
+          "sha256": "522c9db7137074d91e448c30f4af606d4252c1c867e6fc6a4616821a7e903be4",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/clack/stair_up-04.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 44,
+          "source_bounds": [
+            664,
+            831,
+            767,
+            934
+          ],
+          "source_origin": [
+            713.5,
+            934.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            47,
+            70,
+            149,
+            172
+          ],
+          "sha256": "ea7faafba73a4c9329231c02f45b9b224e5eb2412572fe9675fef1b3bd8f2f8d",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/clack/stair_up-05.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 45,
+          "source_bounds": [
+            820,
+            837,
+            917,
+            934
+          ],
+          "source_origin": [
+            870.0,
+            934.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            47,
+            76,
+            143,
+            172
+          ],
+          "sha256": "5f9843edadbd6d670a3834bcf03faa80c259a5ce09f386650e7cac54fa238629",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/clack/stair_up-06.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 46,
+          "source_bounds": [
+            976,
+            834,
+            1078,
+            934
+          ],
+          "source_origin": [
+            1026.5,
+            934.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            46,
+            73,
+            147,
+            172
+          ],
+          "sha256": "4df7965bea032b86598d199f7da8969a3a100b6057f5e1e18af2155538d752ca",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/clack/stair_up-07.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 47,
+          "source_bounds": [
+            1134,
+            834,
+            1229,
+            934
+          ],
+          "source_origin": [
+            1179.5,
+            934.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            51,
+            73,
+            145,
+            172
+          ],
+          "sha256": "446b119f348f21b950a409108d0eeb5118c6c0a5b3bdce1d9b1ad868ceb5cfff",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "stair_down": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/clack/stair_down-00.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 48,
+          "source_bounds": [
+            31,
+            987,
+            138,
+            1089
+          ],
+          "source_origin": [
+            82.5,
+            1089.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            45,
+            71,
+            151,
+            172
+          ],
+          "sha256": "99025ff3c18564570a7bc453f041c6a1f5c70b577913d5bd21e423c93c07bfe4",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/clack/stair_down-01.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 49,
+          "source_bounds": [
+            192,
+            982,
+            293,
+            1090
+          ],
+          "source_origin": [
+            243.5,
+            1090.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            45,
+            65,
+            145,
+            172
+          ],
+          "sha256": "67f31dce3fb841695eedc1cf4e71fffaf4b880de5fb01d775ff39970c5fda424",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/clack/stair_down-02.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 50,
+          "source_bounds": [
+            350,
+            984,
+            454,
+            1090
+          ],
+          "source_origin": [
+            400.0,
+            1090.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            47,
+            67,
+            150,
+            172
+          ],
+          "sha256": "e018b751edb3a7dfd4d29b1b16f2c299d60b9716c077685a538d9d3d63652b0c",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/clack/stair_down-03.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 51,
+          "source_bounds": [
+            508,
+            994,
+            615,
+            1090
+          ],
+          "source_origin": [
+            556.5,
+            1090.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            48,
+            77,
+            154,
+            172
+          ],
+          "sha256": "a1bc6454ad04490ef9d2b58786349d47f8f94a01d0a361e1ad68927dc04ab97c",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/clack/stair_down-04.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 52,
+          "source_bounds": [
+            665,
+            990,
+            765,
+            1090
+          ],
+          "source_origin": [
+            713.5,
+            1090.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            48,
+            73,
+            147,
+            172
+          ],
+          "sha256": "3c9c7125c28bd2e39a06f3f35416ecd19d1767fedec03af483716397a11a3c76",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/clack/stair_down-05.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 53,
+          "source_bounds": [
+            819,
+            992,
+            925,
+            1090
+          ],
+          "source_origin": [
+            870.0,
+            1090.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            46,
+            75,
+            151,
+            172
+          ],
+          "sha256": "68e8942c3f488ef0553f5e4203a6949a995efc52cf8ed150f2b36fb184c2d863",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/clack/stair_down-06.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 54,
+          "source_bounds": [
+            978,
+            984,
+            1078,
+            1090
+          ],
+          "source_origin": [
+            1026.5,
+            1090.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            48,
+            67,
+            147,
+            172
+          ],
+          "sha256": "e784e75bfcbb987ea4675b44eba4d6ddce92720d04aa08f86b8788feeb74ace3",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/clack/stair_down-07.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 55,
+          "source_bounds": [
+            1133,
+            982,
+            1234,
+            1090
+          ],
+          "source_origin": [
+            1179.5,
+            1090.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            50,
+            65,
+            150,
+            172
+          ],
+          "sha256": "090f14d01f1948f78334cb21d7e06f8f69f54dd3126c4e9d8a8f221cd60f5f5d",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "dodge": {
+      "frame_count": 8,
+      "durations": [
+        0.055,
+        0.045,
+        0.04,
+        0.045,
+        0.06,
+        0.07,
+        0.08,
+        0.1
+      ],
+      "duration": 0.495,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/clack/dodge-00.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 56,
+          "source_bounds": [
+            30,
+            1134,
+            140,
+            1232
+          ],
+          "source_origin": [
+            82.5,
+            1232.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            44,
+            75,
+            153,
+            172
+          ],
+          "sha256": "2bd33911f0b55d704d14bb95782e4abdd39960d0a4cdcfb86ce31d8925f40b30",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/clack/dodge-01.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 57,
+          "source_bounds": [
+            189,
+            1139,
+            307,
+            1232
+          ],
+          "source_origin": [
+            243.5,
+            1232.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            42,
+            80,
+            159,
+            172
+          ],
+          "sha256": "92974d141ff87efe265f22d57456e27bdc408afe7ceb81172d4934568615c650",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/clack/dodge-02.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 58,
+          "source_bounds": [
+            343,
+            1141,
+            466,
+            1232
+          ],
+          "source_origin": [
+            400.0,
+            1232.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            40,
+            82,
+            162,
+            172
+          ],
+          "sha256": "96b881e107ee6191b04f79433814a2a5e02490a05b371fcda9f867056246cb74",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/clack/dodge-03.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 59,
+          "source_bounds": [
+            498,
+            1157,
+            622,
+            1232
+          ],
+          "source_origin": [
+            556.5,
+            1232.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            38,
+            98,
+            161,
+            172
+          ],
+          "sha256": "af0a4a8abd094d4b9faaa23dd43b5789c6ae41242ca99ed384550a35a9a9df42",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/clack/dodge-04.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 60,
+          "source_bounds": [
+            671,
+            1142,
+            789,
+            1234
+          ],
+          "source_origin": [
+            713.5,
+            1234.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            54,
+            81,
+            171,
+            172
+          ],
+          "sha256": "a19ad931d6c23a4f47c3e4517dcff729e808e2e5277274ad124ea85ae08807a7",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/clack/dodge-05.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 63,
+          "source_bounds": [
+            1126,
+            1161,
+            1232,
+            1232
+          ],
+          "source_origin": [
+            1179.5,
+            1232.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            43,
+            102,
+            148,
+            172
+          ],
+          "sha256": "6755f715eab041ed1eb2c15e020cd72c627919f73ca47bf63a6f2a035d8155a3",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/clack/dodge-06.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 61,
+          "source_bounds": [
+            815,
+            1152,
+            929,
+            1232
+          ],
+          "source_origin": [
+            870.0,
+            1232.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            42,
+            93,
+            155,
+            172
+          ],
+          "sha256": "b0a7f476e685d79fe9dbb0f47a41081edff9a79dbf5263e20e51048b6bd49bdf",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        },
+        {
+          "path": "res://assets/animated/clack/dodge-07.png",
+          "source": "art-source/animated/v3/clack-extension64.png",
+          "slot": 62,
+          "source_bounds": [
+            971,
+            1148,
+            1082,
+            1232
+          ],
+          "source_origin": [
+            1026.5,
+            1232.0
+          ],
+          "scale": 0.9896907216494846,
+          "packed_bounds": [
+            41,
+            89,
+            151,
+            172
+          ],
+          "sha256": "0c98ee8496edd3e17b235ff9c33786d6be1ab5bcc2850ebe913d68a692cddf45",
+          "registration": "per_frame_support_bottom; engine_owns_world_height"
+        }
+      ]
+    },
+    "powered_idle": {
+      "frame_count": 8,
+      "durations": [
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2,
+        0.2
+      ],
+      "duration": 1.6,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/clack/powered_idle-00.png",
+          "source": "art-source/animated/v3/clack-powered40.png",
+          "slot": 0,
+          "source_bounds": [
+            26,
+            94,
+            160,
+            258
+          ],
+          "source_origin": [
+            85.5,
+            258.0
+          ],
+          "scale": 0.5944272445820433,
+          "packed_bounds": [
+            61,
+            75,
+            141,
+            172
+          ],
+          "sha256": "9e855346ce1bacf954dc37a5324e28e9f8967e5ec938e3efd354a159a7d1fa11"
+        },
+        {
+          "path": "res://assets/animated/clack/powered_idle-01.png",
+          "source": "art-source/animated/v3/clack-powered40.png",
+          "slot": 1,
+          "source_bounds": [
+            183,
+            94,
+            316,
+            257
+          ],
+          "source_origin": [
+            249.5,
+            258.0
+          ],
+          "scale": 0.5944272445820433,
+          "packed_bounds": [
+            56,
+            75,
+            135,
+            172
+          ],
+          "sha256": "8b8c44a4d955cbd665d97d735317ad5236985e13293323a3df3347a844d037a0"
+        },
+        {
+          "path": "res://assets/animated/clack/powered_idle-02.png",
+          "source": "art-source/animated/v3/clack-powered40.png",
+          "slot": 2,
+          "source_bounds": [
+            340,
+            95,
+            473,
+            258
+          ],
+          "source_origin": [
+            406.0,
+            258.0
+          ],
+          "scale": 0.5944272445820433,
+          "packed_bounds": [
+            57,
+            75,
+            136,
+            172
+          ],
+          "sha256": "2b5fa59f8368f8323484003098d1c3f7ee43628ad76da435b6c4874417b3e143"
+        },
+        {
+          "path": "res://assets/animated/clack/powered_idle-03.png",
+          "source": "art-source/animated/v3/clack-powered40.png",
+          "slot": 3,
+          "source_bounds": [
+            497,
+            94,
+            629,
+            258
+          ],
+          "source_origin": [
+            562.0,
+            258.0
+          ],
+          "scale": 0.5944272445820433,
+          "packed_bounds": [
+            57,
+            75,
+            135,
+            172
+          ],
+          "sha256": "e7f157864465f4bfb1bdc1274f134e160d5a302c921b456001724045dbd47069"
+        },
+        {
+          "path": "res://assets/animated/clack/powered_idle-04.png",
+          "source": "art-source/animated/v3/clack-powered40.png",
+          "slot": 4,
+          "source_bounds": [
+            653,
+            95,
+            786,
+            258
+          ],
+          "source_origin": [
+            719.0,
+            258.0
+          ],
+          "scale": 0.5944272445820433,
+          "packed_bounds": [
+            57,
+            75,
+            136,
+            172
+          ],
+          "sha256": "1f369ba06cedcffa4cda771a243df7e42b461a4dc20e16a0c9378917d787167d"
+        },
+        {
+          "path": "res://assets/animated/clack/powered_idle-05.png",
+          "source": "art-source/animated/v3/clack-powered40.png",
+          "slot": 5,
+          "source_bounds": [
+            810,
+            94,
+            943,
+            258
+          ],
+          "source_origin": [
+            876.5,
+            258.0
+          ],
+          "scale": 0.5944272445820433,
+          "packed_bounds": [
+            56,
+            75,
+            135,
+            172
+          ],
+          "sha256": "21f3a60c968b52bca3000664c2ee1f33fe828a2da0af362c457707e996f9ed42"
+        },
+        {
+          "path": "res://assets/animated/clack/powered_idle-06.png",
+          "source": "art-source/animated/v3/clack-powered40.png",
+          "slot": 6,
+          "source_bounds": [
+            967,
+            94,
+            1099,
+            258
+          ],
+          "source_origin": [
+            1032.5,
+            258.0
+          ],
+          "scale": 0.5944272445820433,
+          "packed_bounds": [
+            57,
+            75,
+            135,
+            172
+          ],
+          "sha256": "f656ee63f7e078348e2355cd9891f625e07a82cadd114595bdda03d4d03265f6"
+        },
+        {
+          "path": "res://assets/animated/clack/powered_idle-07.png",
+          "source": "art-source/animated/v3/clack-powered40.png",
+          "slot": 7,
+          "source_bounds": [
+            1124,
+            95,
+            1254,
+            257
+          ],
+          "source_origin": [
+            1182.0,
+            258.0
+          ],
+          "scale": 0.5944272445820433,
+          "packed_bounds": [
+            62,
+            75,
+            139,
+            171
+          ],
+          "sha256": "5b74749cefde0cfd252343258894ccee296b646401bca16579129108456c2a50"
+        }
+      ]
+    },
+    "powered_walk": {
+      "frame_count": 8,
+      "durations": [
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09,
+        0.09
+      ],
+      "duration": 0.72,
+      "loop": true,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/clack/powered_walk-00.png",
+          "source": "art-source/animated/v3/clack-powered40.png",
+          "slot": 8,
+          "source_bounds": [
+            26,
+            325,
+            159,
+            495
+          ],
+          "source_origin": [
+            85.5,
+            495.0
+          ],
+          "scale": 0.5944272445820433,
+          "packed_bounds": [
+            61,
+            71,
+            140,
+            172
+          ],
+          "sha256": "d6a40855805f5b5597d4fec80799aafa96f20bcaace8156a8561cd857cc8fd3a"
+        },
+        {
+          "path": "res://assets/animated/clack/powered_walk-01.png",
+          "source": "art-source/animated/v3/clack-powered40.png",
+          "slot": 9,
+          "source_bounds": [
+            180,
+            325,
+            315,
+            495
+          ],
+          "source_origin": [
+            249.5,
+            495.0
+          ],
+          "scale": 0.5944272445820433,
+          "packed_bounds": [
+            55,
+            71,
+            135,
+            172
+          ],
+          "sha256": "76827af0807eb32b65c120b013ce8bcd85d1ac93a94332629b16006b6213d120"
+        },
+        {
+          "path": "res://assets/animated/clack/powered_walk-02.png",
+          "source": "art-source/animated/v3/clack-powered40.png",
+          "slot": 10,
+          "source_bounds": [
+            338,
+            324,
+            472,
+            495
+          ],
+          "source_origin": [
+            406.0,
+            495.0
+          ],
+          "scale": 0.5944272445820433,
+          "packed_bounds": [
+            56,
+            70,
+            136,
+            172
+          ],
+          "sha256": "6935f60e86d1a08e96d14ce01c2252460458d7cca789ab6911b5d7509c026ab8"
+        },
+        {
+          "path": "res://assets/animated/clack/powered_walk-03.png",
+          "source": "art-source/animated/v3/clack-powered40.png",
+          "slot": 11,
+          "source_bounds": [
+            495,
+            325,
+            627,
+            494
+          ],
+          "source_origin": [
+            562.0,
+            495.0
+          ],
+          "scale": 0.5944272445820433,
+          "packed_bounds": [
+            56,
+            71,
+            134,
+            171
+          ],
+          "sha256": "fae763f71f044ac4a41601f8167b2051c6a33a0009ab994c726b845100731596"
+        },
+        {
+          "path": "res://assets/animated/clack/powered_walk-04.png",
+          "source": "art-source/animated/v3/clack-powered40.png",
+          "slot": 12,
+          "source_bounds": [
+            649,
+            323,
+            787,
+            495
+          ],
+          "source_origin": [
+            719.0,
+            495.0
+          ],
+          "scale": 0.5944272445820433,
+          "packed_bounds": [
+            54,
+            70,
+            136,
+            172
+          ],
+          "sha256": "8206b9cd36fbfa763bac450a830409ffb092d376330a73f10cf70c450fc2574e"
+        },
+        {
+          "path": "res://assets/animated/clack/powered_walk-05.png",
+          "source": "art-source/animated/v3/clack-powered40.png",
+          "slot": 13,
+          "source_bounds": [
+            810,
+            322,
+            944,
+            495
+          ],
+          "source_origin": [
+            876.5,
+            495.0
+          ],
+          "scale": 0.5944272445820433,
+          "packed_bounds": [
+            56,
+            69,
+            136,
+            172
+          ],
+          "sha256": "30840d6d33458a10d3c933cb8eac875070163c31ae10b8e6fb8e698bc5e1f947"
+        },
+        {
+          "path": "res://assets/animated/clack/powered_walk-06.png",
+          "source": "art-source/animated/v3/clack-powered40.png",
+          "slot": 14,
+          "source_bounds": [
+            962,
+            322,
+            1100,
+            490
+          ],
+          "source_origin": [
+            1032.5,
+            495.0
+          ],
+          "scale": 0.5944272445820433,
+          "packed_bounds": [
+            54,
+            69,
+            136,
+            169
+          ],
+          "sha256": "dc42325b6f64c5bf7891aebb5e036bebbfb2d8db0a66d18d979725bc22a0cfae"
+        },
+        {
+          "path": "res://assets/animated/clack/powered_walk-07.png",
+          "source": "art-source/animated/v3/clack-powered40.png",
+          "slot": 15,
+          "source_bounds": [
+            1120,
+            324,
+            1254,
+            495
+          ],
+          "source_origin": [
+            1182.0,
+            495.0
+          ],
+          "scale": 0.5944272445820433,
+          "packed_bounds": [
+            59,
+            70,
+            139,
+            172
+          ],
+          "sha256": "fe0492de286ab9c7877675a1abf79e0c87499a83ccd486cd3eba70d5e52db2bf"
+        }
+      ]
+    },
+    "powered_primary": {
+      "frame_count": 8,
+      "durations": [
+        0.07,
+        0.07,
+        0.08,
+        0.11,
+        0.04,
+        0.055,
+        0.085,
+        0.13
+      ],
+      "duration": 0.64,
+      "loop": false,
+      "release_frame": 4,
+      "release_time": 0.33,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/clack/powered_primary-00.png",
+          "source": "art-source/animated/v3/clack-powered40.png",
+          "slot": 16,
+          "source_bounds": [
+            22,
+            558,
+            164,
+            727
+          ],
+          "source_origin": [
+            85.5,
+            727.0
+          ],
+          "scale": 0.5944272445820433,
+          "packed_bounds": [
+            58,
+            72,
+            142,
+            172
+          ],
+          "sha256": "fba724badc4ab16ca16cd2380ea6e043e0643e9d894e1f9ec55ddad1dccdcbdc"
+        },
+        {
+          "path": "res://assets/animated/clack/powered_primary-01.png",
+          "source": "art-source/animated/v3/clack-powered40.png",
+          "slot": 17,
+          "source_bounds": [
+            180,
+            557,
+            319,
+            727
+          ],
+          "source_origin": [
+            249.5,
+            727.0
+          ],
+          "scale": 0.5944272445820433,
+          "packed_bounds": [
+            55,
+            71,
+            138,
+            172
+          ],
+          "sha256": "20f5708da98154360634bc0e62709fe1bdcd15e3b9c31a6f08da3887ff5ad462"
+        },
+        {
+          "path": "res://assets/animated/clack/powered_primary-02.png",
+          "source": "art-source/animated/v3/clack-powered40.png",
+          "slot": 18,
+          "source_bounds": [
+            338,
+            557,
+            477,
+            727
+          ],
+          "source_origin": [
+            406.0,
+            727.0
+          ],
+          "scale": 0.5944272445820433,
+          "packed_bounds": [
+            56,
+            71,
+            139,
+            172
+          ],
+          "sha256": "ac4ff911fa3cfd781c223af59e95d80014fb52318d02836b8b080c737592a9d3"
+        },
+        {
+          "path": "res://assets/animated/clack/powered_primary-03.png",
+          "source": "art-source/animated/v3/clack-powered40.png",
+          "slot": 19,
+          "source_bounds": [
+            491,
+            557,
+            632,
+            727
+          ],
+          "source_origin": [
+            562.0,
+            727.0
+          ],
+          "scale": 0.5944272445820433,
+          "packed_bounds": [
+            54,
+            71,
+            138,
+            172
+          ],
+          "sha256": "407653b32f467272395297567a0a800359dab40f806cc34a05d44732b0808b9f"
+        },
+        {
+          "path": "res://assets/animated/clack/powered_primary-04.png",
+          "source": "art-source/animated/v3/clack-powered40.png",
+          "slot": 20,
+          "source_bounds": [
+            648,
+            556,
+            796,
+            725
+          ],
+          "source_origin": [
+            719.0,
+            727.0
+          ],
+          "scale": 0.5944272445820433,
+          "packed_bounds": [
+            54,
+            70,
+            142,
+            170
+          ],
+          "sha256": "c1f7438022e5bda52da5414eb8fcf853ba84de1e47ebf6af4b53ded83c672c24"
+        },
+        {
+          "path": "res://assets/animated/clack/powered_primary-05.png",
+          "source": "art-source/animated/v3/clack-powered40.png",
+          "slot": 21,
+          "source_bounds": [
+            812,
+            560,
+            944,
+            727
+          ],
+          "source_origin": [
+            876.5,
+            727.0
+          ],
+          "scale": 0.5944272445820433,
+          "packed_bounds": [
+            58,
+            73,
+            136,
+            172
+          ],
+          "sha256": "5d3ebfbcee4df1edfa16b931fcae1f2d70e7b281a3432780f2da779581cbba71"
+        },
+        {
+          "path": "res://assets/animated/clack/powered_primary-06.png",
+          "source": "art-source/animated/v3/clack-powered40.png",
+          "slot": 22,
+          "source_bounds": [
+            968,
+            558,
+            1103,
+            727
+          ],
+          "source_origin": [
+            1032.5,
+            727.0
+          ],
+          "scale": 0.5944272445820433,
+          "packed_bounds": [
+            58,
+            72,
+            138,
+            172
+          ],
+          "sha256": "b4222e5e6e47b2e7a00b4eefef504ee9b25c1a930622ca947a88db1c9dd766a4"
+        },
+        {
+          "path": "res://assets/animated/clack/powered_primary-07.png",
+          "source": "art-source/animated/v3/clack-powered40.png",
+          "slot": 23,
+          "source_bounds": [
+            1120,
+            556,
+            1254,
+            727
+          ],
+          "source_origin": [
+            1182.0,
+            727.0
+          ],
+          "scale": 0.5944272445820433,
+          "packed_bounds": [
+            59,
+            70,
+            139,
+            172
+          ],
+          "sha256": "f60b3420b78939c3f8d19dc3db176823fb0239040e5e1d29f91e66bf73ddbc92"
+        }
+      ],
+      "release_anchor": [
+        43,
+        -69
+      ]
+    },
+    "powered_guard": {
+      "frame_count": 8,
+      "durations": [
+        0.055,
+        0.055,
+        0.055,
+        0.055,
+        0.12,
+        0.12,
+        0.12,
+        0.12
+      ],
+      "duration": 0.7,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": 4,
+      "frames": [
+        {
+          "path": "res://assets/animated/clack/powered_guard-00.png",
+          "source": "art-source/animated/v3/clack-powered40.png",
+          "slot": 24,
+          "source_bounds": [
+            20,
+            794,
+            164,
+            964
+          ],
+          "source_origin": [
+            85.5,
+            964.0
+          ],
+          "scale": 0.5944272445820433,
+          "packed_bounds": [
+            57,
+            71,
+            143,
+            172
+          ],
+          "sha256": "1547c2a24d52af646aa019a1306d1f9b8c23f5598b398a62d1e1bb943f215110"
+        },
+        {
+          "path": "res://assets/animated/clack/powered_guard-01.png",
+          "source": "art-source/animated/v3/clack-powered40.png",
+          "slot": 25,
+          "source_bounds": [
+            184,
+            796,
+            317,
+            964
+          ],
+          "source_origin": [
+            249.5,
+            964.0
+          ],
+          "scale": 0.5944272445820433,
+          "packed_bounds": [
+            57,
+            72,
+            136,
+            172
+          ],
+          "sha256": "0b5ff14004a768283e2f1b359b5be86e77667aff05b6d93b34713cd81835d0b1"
+        },
+        {
+          "path": "res://assets/animated/clack/powered_guard-02.png",
+          "source": "art-source/animated/v3/clack-powered40.png",
+          "slot": 26,
+          "source_bounds": [
+            340,
+            795,
+            468,
+            964
+          ],
+          "source_origin": [
+            406.0,
+            964.0
+          ],
+          "scale": 0.5944272445820433,
+          "packed_bounds": [
+            57,
+            72,
+            133,
+            172
+          ],
+          "sha256": "e7571514eb504624f9ffafc9fdac473e3a28422b0e4b42d54f6f356f6ca8b70e"
+        },
+        {
+          "path": "res://assets/animated/clack/powered_guard-03.png",
+          "source": "art-source/animated/v3/clack-powered40.png",
+          "slot": 27,
+          "source_bounds": [
+            498,
+            805,
+            629,
+            964
+          ],
+          "source_origin": [
+            562.0,
+            964.0
+          ],
+          "scale": 0.5944272445820433,
+          "packed_bounds": [
+            58,
+            77,
+            136,
+            172
+          ],
+          "sha256": "1689eee67a97afff86bc143852bd7e2790b05eafc1c4992d890a314e0794d7fc"
+        },
+        {
+          "path": "res://assets/animated/clack/powered_guard-04.png",
+          "source": "art-source/animated/v3/clack-powered40.png",
+          "slot": 28,
+          "source_bounds": [
+            651,
+            805,
+            779,
+            964
+          ],
+          "source_origin": [
+            719.0,
+            964.0
+          ],
+          "scale": 0.5944272445820433,
+          "packed_bounds": [
+            56,
+            77,
+            132,
+            172
+          ],
+          "sha256": "a9ac928d42526ab2d7439539f5529d46cae8f1a9d058e416eb705fd41ba75480"
+        },
+        {
+          "path": "res://assets/animated/clack/powered_guard-05.png",
+          "source": "art-source/animated/v3/clack-powered40.png",
+          "slot": 29,
+          "source_bounds": [
+            807,
+            805,
+            939,
+            964
+          ],
+          "source_origin": [
+            876.5,
+            964.0
+          ],
+          "scale": 0.5944272445820433,
+          "packed_bounds": [
+            55,
+            77,
+            133,
+            172
+          ],
+          "sha256": "b9bb938ad3105bd5c10e098e407c8bb1824ecc26975938808788fa1cb90b7c05"
+        },
+        {
+          "path": "res://assets/animated/clack/powered_guard-06.png",
+          "source": "art-source/animated/v3/clack-powered40.png",
+          "slot": 30,
+          "source_bounds": [
+            966,
+            804,
+            1099,
+            964
+          ],
+          "source_origin": [
+            1032.5,
+            964.0
+          ],
+          "scale": 0.5944272445820433,
+          "packed_bounds": [
+            56,
+            77,
+            135,
+            172
+          ],
+          "sha256": "d6624d6c778240afa449eef7ef1a9ea853bb19a63845e98fb8c8e85c955eefa0"
+        },
+        {
+          "path": "res://assets/animated/clack/powered_guard-07.png",
+          "source": "art-source/animated/v3/clack-powered40.png",
+          "slot": 31,
+          "source_bounds": [
+            1121,
+            794,
+            1254,
+            964
+          ],
+          "source_origin": [
+            1182.0,
+            964.0
+          ],
+          "scale": 0.5944272445820433,
+          "packed_bounds": [
+            60,
+            71,
+            139,
+            172
+          ],
+          "sha256": "9706d8a8072b6e99495ac8a2b8e0ab555d3a47d2aae632062ae7d0141fceb97d"
+        }
+      ]
+    },
+    "powered_exit": {
+      "frame_count": 8,
+      "durations": [
+        0.11,
+        0.1,
+        0.1,
+        0.09,
+        0.09,
+        0.1,
+        0.12,
+        0.15
+      ],
+      "duration": 0.86,
+      "loop": false,
+      "release_frame": null,
+      "release_time": null,
+      "hold_frame": null,
+      "frames": [
+        {
+          "path": "res://assets/animated/clack/powered_exit-00.png",
+          "source": "art-source/animated/v3/clack-powered40.png",
+          "slot": 32,
+          "source_bounds": [
+            24,
+            1026,
+            160,
+            1201
+          ],
+          "source_origin": [
+            85.5,
+            1201.0
+          ],
+          "scale": 0.5944272445820433,
+          "packed_bounds": [
+            59,
+            68,
+            140,
+            172
+          ],
+          "sha256": "980badb844966041940c160ec1326790d2f0888c5a7980da5dafac9c58c5321a"
+        },
+        {
+          "path": "res://assets/animated/clack/powered_exit-01.png",
+          "source": "art-source/animated/v3/clack-powered40.png",
+          "slot": 33,
+          "source_bounds": [
+            185,
+            1034,
+            318,
+            1201
+          ],
+          "source_origin": [
+            249.5,
+            1201.0
+          ],
+          "scale": 0.5944272445820433,
+          "packed_bounds": [
+            58,
+            73,
+            137,
+            172
+          ],
+          "sha256": "6a70108a381773c82cbe0e1e6d5f40ceceeafc825e96cf5f79304357bb8482ec"
+        },
+        {
+          "path": "res://assets/animated/clack/powered_exit-02.png",
+          "source": "art-source/animated/v3/clack-powered40.png",
+          "slot": 34,
+          "source_bounds": [
+            341,
+            1039,
+            473,
+            1201
+          ],
+          "source_origin": [
+            406.0,
+            1201.0
+          ],
+          "scale": 0.5944272445820433,
+          "packed_bounds": [
+            57,
+            76,
+            135,
+            172
+          ],
+          "sha256": "62098f4c668677c38aee23b88b10a647b14711117ba8c88f9ed61b3c445bd594"
+        },
+        {
+          "path": "res://assets/animated/clack/powered_exit-03.png",
+          "source": "art-source/animated/v3/clack-powered40.png",
+          "slot": 35,
+          "source_bounds": [
+            492,
+            1054,
+            623,
+            1201
+          ],
+          "source_origin": [
+            562.0,
+            1201.0
+          ],
+          "scale": 0.5944272445820433,
+          "packed_bounds": [
+            54,
+            85,
+            132,
+            172
+          ],
+          "sha256": "2a3b95ab7adeeae229138afe7e79a7f5b5308c7a1653f1a8588068e201475ded"
+        },
+        {
+          "path": "res://assets/animated/clack/powered_exit-04.png",
+          "source": "art-source/animated/v3/clack-powered40.png",
+          "slot": 36,
+          "source_bounds": [
+            656,
+            1064,
+            783,
+            1201
+          ],
+          "source_origin": [
+            719.0,
+            1201.0
+          ],
+          "scale": 0.5944272445820433,
+          "packed_bounds": [
+            59,
+            91,
+            134,
+            172
+          ],
+          "sha256": "007677aae3d61cfb03450f581f8365c3eb0d8c1218e87ca3836feb3753f76ac2"
+        },
+        {
+          "path": "res://assets/animated/clack/powered_exit-05.png",
+          "source": "art-source/animated/v3/clack-powered40.png",
+          "slot": 37,
+          "source_bounds": [
+            813,
+            1066,
+            941,
+            1201
+          ],
+          "source_origin": [
+            876.5,
+            1201.0
+          ],
+          "scale": 0.5944272445820433,
+          "packed_bounds": [
+            58,
+            92,
+            134,
+            172
+          ],
+          "sha256": "06e8b5dc508444c7b33f8b8e03b93c85e797fd11e15546593c5412325730ffd2"
+        },
+        {
+          "path": "res://assets/animated/clack/powered_exit-06.png",
+          "source": "art-source/animated/v3/clack-powered40.png",
+          "slot": 38,
+          "source_bounds": [
+            970,
+            1064,
+            1098,
+            1201
+          ],
+          "source_origin": [
+            1032.5,
+            1201.0
+          ],
+          "scale": 0.5944272445820433,
+          "packed_bounds": [
+            59,
+            91,
+            135,
+            172
+          ],
+          "sha256": "d2f9299af6133e5df833f9a07331158b404bcd8cb79b13efe416895962e58bc7"
+        },
+        {
+          "path": "res://assets/animated/clack/powered_exit-07.png",
+          "source": "art-source/animated/v3/clack-powered40.png",
+          "slot": 39,
+          "source_bounds": [
+            1126,
+            1064,
+            1254,
+            1201
+          ],
+          "source_origin": [
+            1182.0,
+            1201.0
+          ],
+          "scale": 0.5944272445820433,
+          "packed_bounds": [
+            63,
+            91,
+            139,
+            172
+          ],
+          "sha256": "8d72a0e9fc97383d94e936608491949403b8772268a1c35d68374f1ad4659fea"
+        }
+      ]
+    }
+  },
+  "pose_count": 152
+}

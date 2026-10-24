@@ -1,0 +1,9 @@
+{
+  "status": "passed",
+  "fresh_source_rebuild": true,
+  "files_byte_identical": 2192,
+  "distinct_frames": 2135,
+  "engine_resources": 14,
+  "mismatches": [],
+  "source": "Selected raw masters and source only, no copied generated PNGs"
+}

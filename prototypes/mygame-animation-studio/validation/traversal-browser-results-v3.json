@@ -1,0 +1,422 @@
+{
+  "mode": "full",
+  "pckSha256": "5678a71d372b47ea46527696e4d4238d3d56045e705db67ee4d65c93e7ab130a",
+  "checks": [
+    "new traversal snapshot is available",
+    "bramble base primary and secondary each release once",
+    "bramble special enters a held equipment state",
+    "bramble held state survives activation recovery",
+    "bramble unavailable powered traversal and secondary stay gated",
+    "bramble powered walk moves on flat ground with gear retained",
+    "bramble powered brace returns to held gear",
+    "bramble powered primary releases once then retains gear",
+    "bramble authored exit restores base without a second release",
+    "bramble airborne shadow stays on supporting ground",
+    "bramble jump lands once and restores grounded idle",
+    "morel base primary and secondary each release once",
+    "morel special enters a held equipment state",
+    "morel held state survives activation recovery",
+    "morel unavailable powered traversal and secondary stay gated",
+    "morel powered walk moves on flat ground with gear retained",
+    "morel powered brace returns to held gear",
+    "morel powered primary releases once then retains gear",
+    "morel authored exit restores base without a second release",
+    "morel airborne shadow stays on supporting ground",
+    "morel jump lands once and restores grounded idle",
+    "velvet base primary and secondary each release once",
+    "velvet special enters a held equipment state",
+    "velvet held state survives activation recovery",
+    "velvet unavailable powered traversal and secondary stay gated",
+    "velvet powered walk moves on flat ground with gear retained",
+    "velvet powered brace returns to held gear",
+    "velvet powered primary releases once then retains gear",
+    "velvet authored exit restores base without a second release",
+    "velvet airborne shadow stays on supporting ground",
+    "velvet jump lands once and restores grounded idle",
+    "cairn base primary and secondary each release once",
+    "cairn special enters a held equipment state",
+    "cairn held state survives activation recovery",
+    "cairn unavailable powered traversal and secondary stay gated",
+    "cairn powered walk moves on flat ground with gear retained",
+    "cairn powered brace returns to held gear",
+    "cairn powered primary releases once then retains gear",
+    "cairn authored exit restores base without a second release",
+    "cairn airborne shadow stays on supporting ground",
+    "cairn jump lands once and restores grounded idle",
+    "iona base primary and secondary each release once",
+    "iona special enters a held equipment state",
+    "iona held state survives activation recovery",
+    "iona unavailable powered traversal and secondary stay gated",
+    "iona powered walk moves on flat ground with gear retained",
+    "iona powered brace returns to held gear",
+    "iona powered primary releases once then retains gear",
+    "iona authored exit restores base without a second release",
+    "iona airborne shadow stays on supporting ground",
+    "iona jump lands once and restores grounded idle",
+    "tam base primary and secondary each release once",
+    "tam special enters a held equipment state",
+    "tam held state survives activation recovery",
+    "tam unavailable powered traversal and secondary stay gated",
+    "tam powered walk moves on flat ground with gear retained",
+    "tam powered brace returns to held gear",
+    "tam powered primary releases once then retains gear",
+    "tam authored exit restores base without a second release",
+    "tam airborne shadow stays on supporting ground",
+    "tam jump lands once and restores grounded idle",
+    "brine base primary and secondary each release once",
+    "brine special enters a held equipment state",
+    "brine held state survives activation recovery",
+    "brine unavailable powered traversal and secondary stay gated",
+    "brine powered walk moves on flat ground with gear retained",
+    "brine powered brace returns to held gear",
+    "brine powered primary releases once then retains gear",
+    "brine authored exit restores base without a second release",
+    "brine airborne shadow stays on supporting ground",
+    "brine jump lands once and restores grounded idle",
+    "pendle base primary and secondary each release once",
+    "pendle special enters a held equipment state",
+    "pendle held state survives activation recovery",
+    "pendle unavailable powered traversal and secondary stay gated",
+    "pendle powered walk moves on flat ground with gear retained",
+    "pendle powered brace returns to held gear",
+    "pendle powered primary releases once then retains gear",
+    "pendle authored exit restores base without a second release",
+    "pendle airborne shadow stays on supporting ground",
+    "pendle jump lands once and restores grounded idle",
+    "mirra base primary and secondary each release once",
+    "mirra special enters a held equipment state",
+    "mirra held state survives activation recovery",
+    "mirra unavailable powered traversal and secondary stay gated",
+    "mirra powered walk moves on flat ground with gear retained",
+    "mirra powered brace returns to held gear",
+    "mirra powered primary releases once then retains gear",
+    "mirra authored exit restores base without a second release",
+    "mirra airborne shadow stays on supporting ground",
+    "mirra jump lands once and restores grounded idle",
+    "ashe base primary and secondary each release once",
+    "ashe special enters a held equipment state",
+    "ashe held state survives activation recovery",
+    "ashe unavailable powered traversal and secondary stay gated",
+    "ashe powered walk moves on flat ground with gear retained",
+    "ashe powered brace returns to held gear",
+    "ashe powered primary releases once then retains gear",
+    "ashe authored exit restores base without a second release",
+    "ashe airborne shadow stays on supporting ground",
+    "ashe jump lands once and restores grounded idle",
+    "clack base primary and secondary each release once",
+    "clack special enters a held equipment state",
+    "clack held state survives activation recovery",
+    "clack unavailable powered traversal and secondary stay gated",
+    "clack powered walk moves on flat ground with gear retained",
+    "clack powered brace returns to held gear",
+    "clack powered primary releases once then retains gear",
+    "clack authored exit restores base without a second release",
+    "clack airborne shadow stays on supporting ground",
+    "clack jump lands once and restores grounded idle",
+    "nix base primary and secondary each release once",
+    "nix special enters a held equipment state",
+    "nix held state survives activation recovery",
+    "nix unavailable powered traversal and secondary stay gated",
+    "nix powered walk moves on flat ground with gear retained",
+    "nix powered brace returns to held gear",
+    "nix powered primary releases once then retains gear",
+    "nix authored exit restores base without a second release",
+    "nix airborne shadow stays on supporting ground",
+    "nix jump lands once and restores grounded idle",
+    "rook base primary and secondary each release once",
+    "rook special enters a held equipment state",
+    "rook held state survives activation recovery",
+    "Rook retains exactly two separate turrets",
+    "rook unavailable powered traversal and secondary stay gated",
+    "rook powered walk moves on flat ground with gear retained",
+    "rook powered brace returns to held gear",
+    "rook powered primary releases once then retains gear",
+    "rook authored exit restores base without a second release",
+    "rook airborne shadow stays on supporting ground",
+    "rook jump lands once and restores grounded idle",
+    "mote base primary and secondary each release once",
+    "mote special enters a held equipment state",
+    "mote held state survives activation recovery",
+    "Mote retains three separate nonattacking orbiting shards",
+    "mote unavailable powered traversal and secondary stay gated",
+    "mote powered walk moves on flat ground with gear retained",
+    "mote powered brace returns to held gear",
+    "mote powered primary releases once then retains gear",
+    "mote authored exit restores base without a second release",
+    "mote airborne shadow stays on supporting ground",
+    "mote jump lands once and restores grounded idle",
+    "all fourteen enter use and exit their supplied powered states",
+    "all powered equipment and jumps preserve camera",
+    "pause freezes airborne height and drawing",
+    "airborne attack and repeated jump create no late action",
+    "real canvas blur freezes airborne physics",
+    "reset clears an active jump",
+    "stairs raise support without an airborne jump",
+    "stopping on stairs keeps the same supporting height",
+    "reversing on the same flight selects descent",
+    "upper landing holds the 32-pixel support",
+    "opposite stairs return to ground elevation",
+    "a tall side face rejects ordinary walking",
+    "jump can land on an approved raised ledge",
+    "wood bridge supplies support above the void footprint",
+    "shallow water changes contact surface without granting swimming",
+    "ice remains a declared ground surface",
+    "mud supplies a distinct grounded contact response",
+    "unsupported pit fall returns to the explicit studio checkpoint",
+    "empty reel creates no phantom melee hit",
+    "reel uses the attached target without an extra strike",
+    "Rook vault lifts the real body with a supporting-ground shadow",
+    "Rook vault lands once after actual forward travel",
+    "Pendle fan starts an authored reload before refill",
+    "pausing reload cannot refill ammunition",
+    "six-round refill occurs only after authored reload completion",
+    "terrain contacts and ability edge cases preserve camera",
+    "every sampled camera transform stays fixed",
+    "final traversal export has no runtime errors"
+  ],
+  "passed": 171,
+  "coverage": [
+    {
+      "id": "bramble",
+      "baseActions": [
+        "primary",
+        "secondary"
+      ],
+      "powered": [
+        "special",
+        "powered_idle",
+        "powered_walk",
+        "powered_guard",
+        "powered_primary",
+        "powered_exit"
+      ],
+      "jump": true
+    },
+    {
+      "id": "morel",
+      "baseActions": [
+        "primary",
+        "secondary"
+      ],
+      "powered": [
+        "special",
+        "powered_idle",
+        "powered_walk",
+        "powered_guard",
+        "powered_primary",
+        "powered_exit"
+      ],
+      "jump": true
+    },
+    {
+      "id": "velvet",
+      "baseActions": [
+        "primary",
+        "secondary"
+      ],
+      "powered": [
+        "special",
+        "powered_idle",
+        "powered_walk",
+        "powered_guard",
+        "powered_primary",
+        "powered_exit"
+      ],
+      "jump": true
+    },
+    {
+      "id": "cairn",
+      "baseActions": [
+        "primary",
+        "secondary"
+      ],
+      "powered": [
+        "special",
+        "powered_idle",
+        "powered_walk",
+        "powered_guard",
+        "powered_primary",
+        "powered_exit"
+      ],
+      "jump": true
+    },
+    {
+      "id": "iona",
+      "baseActions": [
+        "primary",
+        "secondary"
+      ],
+      "powered": [
+        "special",
+        "powered_idle",
+        "powered_walk",
+        "powered_guard",
+        "powered_primary",
+        "powered_exit"
+      ],
+      "jump": true
+    },
+    {
+      "id": "tam",
+      "baseActions": [
+        "primary",
+        "secondary"
+      ],
+      "powered": [
+        "special",
+        "powered_idle",
+        "powered_walk",
+        "powered_guard",
+        "powered_primary",
+        "powered_exit"
+      ],
+      "jump": true
+    },
+    {
+      "id": "brine",
+      "baseActions": [
+        "primary",
+        "secondary"
+      ],
+      "powered": [
+        "special",
+        "powered_idle",
+        "powered_walk",
+        "powered_guard",
+        "powered_primary",
+        "powered_exit"
+      ],
+      "jump": true
+    },
+    {
+      "id": "pendle",
+      "baseActions": [
+        "primary",
+        "secondary"
+      ],
+      "powered": [
+        "special",
+        "powered_idle",
+        "powered_walk",
+        "powered_guard",
+        "powered_primary",
+        "powered_exit"
+      ],
+      "jump": true
+    },
+    {
+      "id": "mirra",
+      "baseActions": [
+        "primary",
+        "secondary"
+      ],
+      "powered": [
+        "special",
+        "powered_idle",
+        "powered_walk",
+        "powered_guard",
+        "powered_primary",
+        "powered_exit"
+      ],
+      "jump": true
+    },
+    {
+      "id": "ashe",
+      "baseActions": [
+        "primary",
+        "secondary"
+      ],
+      "powered": [
+        "special",
+        "powered_idle",
+        "powered_walk",
+        "powered_guard",
+        "powered_primary",
+        "powered_exit"
+      ],
+      "jump": true
+    },
+    {
+      "id": "clack",
+      "baseActions": [
+        "primary",
+        "secondary"
+      ],
+      "powered": [
+        "special",
+        "powered_idle",
+        "powered_walk",
+        "powered_guard",
+        "powered_primary",
+        "powered_exit"
+      ],
+      "jump": true
+    },
+    {
+      "id": "nix",
+      "baseActions": [
+        "primary",
+        "secondary"
+      ],
+      "powered": [
+        "special",
+        "powered_idle",
+        "powered_walk",
+        "powered_guard",
+        "powered_primary",
+        "powered_exit"
+      ],
+      "jump": true
+    },
+    {
+      "id": "rook",
+      "baseActions": [
+        "primary",
+        "secondary"
+      ],
+      "powered": [
+        "special",
+        "powered_idle",
+        "powered_walk",
+        "powered_guard",
+        "powered_primary",
+        "powered_exit"
+      ],
+      "jump": true
+    },
+    {
+      "id": "mote",
+      "baseActions": [
+        "primary",
+        "secondary"
+      ],
+      "powered": [
+        "special",
+        "powered_idle",
+        "powered_walk",
+        "powered_guard",
+        "powered_primary",
+        "powered_exit"
+      ],
+      "jump": true
+    }
+  ],
+  "runtimeErrors": [],
+  "uninterrupted_run": true,
+  "input_method": "actual canvas keyboard and focus controls; read-only snapshots",
+  "completed": true,
+  "cameraSamples": 3604,
+  "baseline": {
+    "camera_offset": [
+      0,
+      0
+    ],
+    "camera_rotation": 0,
+    "camera_x": 480,
+    "camera_y": 270,
+    "camera_zoom": [
+      1,
+      1
+    ]
+  }
+}

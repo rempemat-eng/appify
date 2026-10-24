@@ -1,0 +1,172 @@
+PASS new traversal snapshot is available
+PASS bramble base primary and secondary each release once
+PASS bramble special enters a held equipment state
+PASS bramble held state survives activation recovery
+PASS bramble unavailable powered traversal and secondary stay gated
+PASS bramble powered walk moves on flat ground with gear retained
+PASS bramble powered brace returns to held gear
+PASS bramble powered primary releases once then retains gear
+PASS bramble authored exit restores base without a second release
+PASS bramble airborne shadow stays on supporting ground
+PASS bramble jump lands once and restores grounded idle
+PASS morel base primary and secondary each release once
+PASS morel special enters a held equipment state
+PASS morel held state survives activation recovery
+PASS morel unavailable powered traversal and secondary stay gated
+PASS morel powered walk moves on flat ground with gear retained
+PASS morel powered brace returns to held gear
+PASS morel powered primary releases once then retains gear
+PASS morel authored exit restores base without a second release
+PASS morel airborne shadow stays on supporting ground
+PASS morel jump lands once and restores grounded idle
+PASS velvet base primary and secondary each release once
+PASS velvet special enters a held equipment state
+PASS velvet held state survives activation recovery
+PASS velvet unavailable powered traversal and secondary stay gated
+PASS velvet powered walk moves on flat ground with gear retained
+PASS velvet powered brace returns to held gear
+PASS velvet powered primary releases once then retains gear
+PASS velvet authored exit restores base without a second release
+PASS velvet airborne shadow stays on supporting ground
+PASS velvet jump lands once and restores grounded idle
+PASS cairn base primary and secondary each release once
+PASS cairn special enters a held equipment state
+PASS cairn held state survives activation recovery
+PASS cairn unavailable powered traversal and secondary stay gated
+PASS cairn powered walk moves on flat ground with gear retained
+PASS cairn powered brace returns to held gear
+PASS cairn powered primary releases once then retains gear
+PASS cairn authored exit restores base without a second release
+PASS cairn airborne shadow stays on supporting ground
+PASS cairn jump lands once and restores grounded idle
+PASS iona base primary and secondary each release once
+PASS iona special enters a held equipment state
+PASS iona held state survives activation recovery
+PASS iona unavailable powered traversal and secondary stay gated
+PASS iona powered walk moves on flat ground with gear retained
+PASS iona powered brace returns to held gear
+PASS iona powered primary releases once then retains gear
+PASS iona authored exit restores base without a second release
+PASS iona airborne shadow stays on supporting ground
+PASS iona jump lands once and restores grounded idle
+PASS tam base primary and secondary each release once
+PASS tam special enters a held equipment state
+PASS tam held state survives activation recovery
+PASS tam unavailable powered traversal and secondary stay gated
+PASS tam powered walk moves on flat ground with gear retained
+PASS tam powered brace returns to held gear
+PASS tam powered primary releases once then retains gear
+PASS tam authored exit restores base without a second release
+PASS tam airborne shadow stays on supporting ground
+PASS tam jump lands once and restores grounded idle
+PASS brine base primary and secondary each release once
+PASS brine special enters a held equipment state
+PASS brine held state survives activation recovery
+PASS brine unavailable powered traversal and secondary stay gated
+PASS brine powered walk moves on flat ground with gear retained
+PASS brine powered brace returns to held gear
+PASS brine powered primary releases once then retains gear
+PASS brine authored exit restores base without a second release
+PASS brine airborne shadow stays on supporting ground
+PASS brine jump lands once and restores grounded idle
+PASS pendle base primary and secondary each release once
+PASS pendle special enters a held equipment state
+PASS pendle held state survives activation recovery
+PASS pendle unavailable powered traversal and secondary stay gated
+PASS pendle powered walk moves on flat ground with gear retained
+PASS pendle powered brace returns to held gear
+PASS pendle powered primary releases once then retains gear
+PASS pendle authored exit restores base without a second release
+PASS pendle airborne shadow stays on supporting ground
+PASS pendle jump lands once and restores grounded idle
+PASS mirra base primary and secondary each release once
+PASS mirra special enters a held equipment state
+PASS mirra held state survives activation recovery
+PASS mirra unavailable powered traversal and secondary stay gated
+PASS mirra powered walk moves on flat ground with gear retained
+PASS mirra powered brace returns to held gear
+PASS mirra powered primary releases once then retains gear
+PASS mirra authored exit restores base without a second release
+PASS mirra airborne shadow stays on supporting ground
+PASS mirra jump lands once and restores grounded idle
+PASS ashe base primary and secondary each release once
+PASS ashe special enters a held equipment state
+PASS ashe held state survives activation recovery
+PASS ashe unavailable powered traversal and secondary stay gated
+PASS ashe powered walk moves on flat ground with gear retained
+PASS ashe powered brace returns to held gear
+PASS ashe powered primary releases once then retains gear
+PASS ashe authored exit restores base without a second release
+PASS ashe airborne shadow stays on supporting ground
+PASS ashe jump lands once and restores grounded idle
+PASS clack base primary and secondary each release once
+PASS clack special enters a held equipment state
+PASS clack held state survives activation recovery
+PASS clack unavailable powered traversal and secondary stay gated
+PASS clack powered walk moves on flat ground with gear retained
+PASS clack powered brace returns to held gear
+PASS clack powered primary releases once then retains gear
+PASS clack authored exit restores base without a second release
+PASS clack airborne shadow stays on supporting ground
+PASS clack jump lands once and restores grounded idle
+PASS nix base primary and secondary each release once
+PASS nix special enters a held equipment state
+PASS nix held state survives activation recovery
+PASS nix unavailable powered traversal and secondary stay gated
+PASS nix powered walk moves on flat ground with gear retained
+PASS nix powered brace returns to held gear
+PASS nix powered primary releases once then retains gear
+PASS nix authored exit restores base without a second release
+PASS nix airborne shadow stays on supporting ground
+PASS nix jump lands once and restores grounded idle
+PASS rook base primary and secondary each release once
+PASS rook special enters a held equipment state
+PASS rook held state survives activation recovery
+PASS Rook retains exactly two separate turrets
+PASS rook unavailable powered traversal and secondary stay gated
+PASS rook powered walk moves on flat ground with gear retained
+PASS rook powered brace returns to held gear
+PASS rook powered primary releases once then retains gear
+PASS rook authored exit restores base without a second release
+PASS rook airborne shadow stays on supporting ground
+PASS rook jump lands once and restores grounded idle
+PASS mote base primary and secondary each release once
+PASS mote special enters a held equipment state
+PASS mote held state survives activation recovery
+PASS Mote retains three separate nonattacking orbiting shards
+PASS mote unavailable powered traversal and secondary stay gated
+PASS mote powered walk moves on flat ground with gear retained
+PASS mote powered brace returns to held gear
+PASS mote powered primary releases once then retains gear
+PASS mote authored exit restores base without a second release
+PASS mote airborne shadow stays on supporting ground
+PASS mote jump lands once and restores grounded idle
+PASS all fourteen enter use and exit their supplied powered states
+PASS all powered equipment and jumps preserve camera
+PASS pause freezes airborne height and drawing
+PASS airborne attack and repeated jump create no late action
+PASS real canvas blur freezes airborne physics
+PASS reset clears an active jump
+PASS stairs raise support without an airborne jump
+PASS stopping on stairs keeps the same supporting height
+PASS reversing on the same flight selects descent
+PASS upper landing holds the 32-pixel support
+PASS opposite stairs return to ground elevation
+PASS a tall side face rejects ordinary walking
+PASS jump can land on an approved raised ledge
+PASS wood bridge supplies support above the void footprint
+PASS shallow water changes contact surface without granting swimming
+PASS ice remains a declared ground surface
+PASS mud supplies a distinct grounded contact response
+PASS unsupported pit fall returns to the explicit studio checkpoint
+PASS empty reel creates no phantom melee hit
+PASS reel uses the attached target without an extra strike
+PASS Rook vault lifts the real body with a supporting-ground shadow
+PASS Rook vault lands once after actual forward travel
+PASS Pendle fan starts an authored reload before refill
+PASS pausing reload cannot refill ammunition
+PASS six-round refill occurs only after authored reload completion
+PASS terrain contacts and ability edge cases preserve camera
+PASS every sampled camera transform stays fixed
+PASS final traversal export has no runtime errors
+{"passed":171,"characters":14,"cameraSamples":3604,"runtimeErrors":[]}
