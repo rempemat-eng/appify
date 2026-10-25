@@ -2,7 +2,9 @@
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
-const { spawnSync } = require('node:child_process');
+const { spawnSync, fork } = require('node:child_process');
+const { mapLimit, concurrency } = require('./check-runner.cjs');
+const { hashFiles, trackedFiles, fingerprint } = require('./art-repro-cache.cjs');
 
 const generators = [
   'garden',
@@ -53,7 +55,13 @@ const generatedTypescript = [
 ];
 const splitPaths = (value) => value.split('\0').filter(Boolean);
 
-function checkArtReproducibility({ root, run = spawnSync, log = console.log }) {
+function checkArtReproducibility({
+  root,
+  run = spawnSync,
+  log = console.log,
+  selected = generators,
+  sprites = true,
+}) {
   const failures = [];
   const owned = fs.mkdtempSync(path.join(os.tmpdir(), 'napattack-art-repro-'));
   const snapshot = path.join(owned, 'repo');
@@ -62,15 +70,7 @@ function checkArtReproducibility({ root, run = spawnSync, log = console.log }) {
   const gitEnv = { ...process.env };
   // Inherited Git context must not redirect the temporary add/diff operations
   // into a caller's index or object database.
-  for (const key of [
-    'GIT_DIR',
-    'GIT_WORK_TREE',
-    'GIT_INDEX_FILE',
-    'GIT_OBJECT_DIRECTORY',
-    'GIT_ALTERNATE_OBJECT_DIRECTORIES',
-    'GIT_COMMON_DIR',
-  ])
-    delete gitEnv[key];
+  for (const key of Object.keys(gitEnv)) if (key.startsWith('GIT_')) delete gitEnv[key];
   const env = {
     ...gitEnv,
     PYTHONDONTWRITEBYTECODE: '1',
@@ -128,7 +128,7 @@ function checkArtReproducibility({ root, run = spawnSync, log = console.log }) {
     // Atlas generators invoke npx oxfmt themselves. Use the already-installed
     // toolchain, offline, without staging dependencies or downloading packages.
     fs.symlinkSync(path.join(root, 'node_modules'), dependencies, 'dir');
-    for (const name of generators) {
+    for (const name of selected) {
       log(`[art-repro] ${name}.py`);
       command(process.env.PYTHON || 'python3', [`scripts/art/${name}.py`], snapshot, `${name}.py`);
     }
@@ -151,27 +151,175 @@ function checkArtReproducibility({ root, run = spawnSync, log = console.log }) {
     if (untracked.length) failures.push(`Uncommitted generated files: ${untracked.join(', ')}`);
     // Ignore only our intact dependency symlink above, never generated outputs
     // with a similar name or a replacement at that path.
-    log('[art-repro] check regenerated sprite outlines');
-    command(process.execPath, ['scripts/check-sprites.cjs'], snapshot, 'check:sprites');
+    if (sprites) {
+      log('[art-repro] check regenerated sprite outlines');
+      command(process.execPath, ['scripts/check-sprites.cjs'], snapshot, 'check:sprites');
+    }
     for (const failure of failures) log(`FAIL: ${failure}`);
     if (!failures.length)
       log(
-        `PASS: all ${generators.length} art generators reproduce committed bytes; sprite checks pass.`,
+        `PASS: ${selected.length} art generators reproduce committed bytes${sprites ? '; sprite checks pass' : ''}.`,
       );
-    return { ok: failures.length === 0, failures, changed, untracked };
+    return {
+      ok: failures.length === 0,
+      failures,
+      changed,
+      untracked,
+      outputDigest: hashFiles(
+        snapshot,
+        tracked.filter((file) => fs.existsSync(path.join(snapshot, file))),
+      ),
+    };
   } finally {
     // Only the fresh directory owned by this invocation; no user checkout edits.
     fs.rmSync(owned, { recursive: true, force: true });
   }
 }
 
-module.exports = { checkArtReproducibility, generators, generatedTypescript };
-if (require.main === module) {
+// Each group has its own copy and index: even a new/overlapping output cannot race.
+// Keep garden before zones because canvas generation reads its ground and walk data.
+// Derive singleton groups from the canonical manifest so newly integrated
+// generators cannot be omitted by a second hard-coded scheduling list.
+const generatorGroups = generators
+  .filter((name) => !['zones', 'rocket'].includes(name))
+  .map((name) =>
+    name === 'garden' ? ['garden', 'zones'] : name === 'journey' ? ['journey', 'rocket'] : [name],
+  );
+
+function groupWorker(root, selected, sprites, log) {
+  return new Promise((resolve, reject) => {
+    const child = fork(__filename, ['--worker'], {
+      stdio: ['ignore', 'ignore', 'pipe', 'ipc'],
+      env: { ...process.env, ART_REPRO_WORK: JSON.stringify({ root, selected, sprites }) },
+    });
+    let result,
+      error,
+      stderr = '';
+    child.stderr.on('data', (chunk) => {
+      stderr += chunk;
+    });
+    child.on('message', (message) => {
+      if (message.log !== undefined) log(message.log);
+      if (message.result) result = message.result;
+      if (message.error) error = new Error(message.error);
+    });
+    child.on('error', reject);
+    child.on('exit', (code) => {
+      if (error) reject(error);
+      else if (code !== 0 || !result) reject(new Error(`art worker exited ${code}: ${stderr}`));
+      else resolve(result);
+    });
+  });
+}
+async function checkArtParallel({
+  root,
+  jobs = concurrency(process.env.ART_REPRO_JOBS),
+  cold = false,
+  serial = false,
+  log = console.log,
+  worker = groupWorker,
+  tools,
+  fingerprintInputs = fingerprint,
+}) {
+  if (serial) return checkArtReproducibility({ root, log }); // Original full, ordered reference.
+  jobs = concurrency(jobs);
+  // A forced cold run trusts/publishes no certificate and needs no tool-cache scan.
+  const coldFingerprint = () => {
+    const files = trackedFiles(root);
+    return { source: hashFiles(root, files) };
+  };
+  let before;
   try {
-    const result = checkArtReproducibility({ root: path.resolve(__dirname, '..') });
-    process.exitCode = result.ok ? 0 : 1;
+    before = cold ? coldFingerprint() : fingerprintInputs({ root, tools });
   } catch (error) {
-    console.error(error);
-    process.exitCode = 1;
+    // Unreadable tools must never certify a cache hit. Full regeneration still
+    // validates every output and propagates generator/formatter/sprite failures.
+    log(`[art-repro] cache unavailable: ${error.message}; using full cold regeneration`);
+    cold = true;
+    before = coldFingerprint();
+  }
+  const cacheDir = path.join(root, '.cache', 'art-repro');
+  const cacheFile = cold ? null : path.join(cacheDir, `${before.key}.json`);
+  let hit = false;
+  if (!cold) {
+    try {
+      const cert = JSON.parse(fs.readFileSync(cacheFile, 'utf8'));
+      hit = cert.schema === 1 && cert.key === before.key && cert.outputDigest === before.source;
+    } catch {
+      /* Missing or corrupt certificate: full regeneration. */
+    }
+  }
+  log(`[art-repro] ${hit ? 'verified input/tool cache hit' : 'full regeneration'}; jobs=${jobs}`);
+  const results = hit
+    ? []
+    : await mapLimit(generatorGroups, jobs, (selected) => worker(root, selected, false, log));
+  // Formatting and sprite validation ALWAYS execute, including warm checks.
+  const final = await worker(root, [], true, log);
+  const failures = results
+    .flatMap((result) =>
+      result.status === 'fulfilled' ? result.value.failures : [String(result.reason)],
+    )
+    .concat(final.failures);
+  const after = cold ? coldFingerprint() : fingerprintInputs({ root, tools });
+  if (before.source !== after.source || before.key !== after.key)
+    failures.push('Source or installed tools changed during check; rerun');
+  const changed = [
+    ...new Set(results.flatMap((r) => r.value?.changed || []).concat(final.changed)),
+  ].sort((a, b) => a.localeCompare(b));
+  const untracked = [
+    ...new Set(results.flatMap((r) => r.value?.untracked || []).concat(final.untracked)),
+  ].sort((a, b) => a.localeCompare(b));
+  const ok = failures.length === 0;
+  if (ok && !cold) {
+    fs.mkdirSync(cacheDir, { recursive: true });
+    const temp = `${cacheFile}.${process.pid}.tmp`;
+    fs.writeFileSync(
+      temp,
+      JSON.stringify({ schema: 1, key: before.key, outputDigest: final.outputDigest }),
+    );
+    fs.renameSync(temp, cacheFile);
+  } else if (!ok) {
+    if (cacheFile) fs.rmSync(cacheFile, { force: true });
+    for (const failure of failures) log(`FAIL: ${failure}`);
+  }
+  log(`${ok ? 'PASS' : 'FAIL'}: art reproducibility (${hit ? 'warm' : 'cold'}, ${jobs} jobs)`);
+  return { ok, failures, changed, untracked, outputDigest: final.outputDigest, cacheHit: hit };
+}
+module.exports = {
+  checkArtReproducibility,
+  checkArtParallel,
+  generators,
+  generatedTypescript,
+  generatorGroups,
+};
+if (require.main === module) {
+  if (process.argv.includes('--worker')) {
+    try {
+      const result = checkArtReproducibility({
+        ...JSON.parse(process.env.ART_REPRO_WORK),
+        log: (message) => process.send({ log: message }),
+      });
+      process.send({ result }, () => process.disconnect());
+    } catch (error) {
+      process.send({ error: error.stack }, () => process.disconnect());
+    }
+  } else {
+    const args = process.argv.slice(2);
+    if (args.some((arg) => arg !== '--cold' && arg !== '--serial')) {
+      console.error('Usage: node scripts/check-art-repro.cjs [--cold] [--serial]');
+      process.exitCode = 1;
+    } else
+      checkArtParallel({
+        root: path.resolve(__dirname, '..'),
+        cold: args.includes('--cold') || process.env.CI === 'true',
+        serial: args.includes('--serial'),
+      })
+        .then((result) => {
+          process.exitCode = result.ok ? 0 : 1;
+        })
+        .catch((error) => {
+          console.error(error);
+          process.exitCode = 1;
+        });
   }
 }
