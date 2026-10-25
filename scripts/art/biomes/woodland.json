@@ -194,9 +194,9 @@
    "crown": {
     "form": "round",
     "clump": 6.5,
-    "fam": "grass",
-    "lit": "grass",
-    "shade": "grass_cool"
+    "fam": "leaf_warm",
+    "lit": "leaf_warm",
+    "shade": "leaf"
    },
    "bark": "birch",
    "trunk_w": 4

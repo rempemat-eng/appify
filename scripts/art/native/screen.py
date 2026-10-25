@@ -324,8 +324,7 @@ def water_mask_hd(plan: dict, W: int, H: int) -> np.ndarray:
     for X in range(x_a, up.shape[1]):
         xw = X / D
         fade = min(1.0, (xw - x_a / D) / 5.0)
-        hb = ((X * 2654435761) >> 7) & 0xff
-        sh = fade * D * (2.2 * np.sin(xw / 13.0 + 0.8) + 2.0 * np.sin(xw / 6.1 + 2.1)) + (hb % 3 - 1) * 0.4
+        sh = fade * D * (2.2 * np.sin(xw / 13.0 + 0.8) + 2.0 * np.sin(xw / 6.1 + 2.1))
         up[y_a:y_b, X] = ndi.shift(up[y_a:y_b, X], sh, order=1, mode='nearest')
     soft = ndi.gaussian_filter(up, 0.9 * D)
     # a bitten, uneven edge (roots, stones, slumped turf): a small noise on the soft edge so a

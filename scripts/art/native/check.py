@@ -167,7 +167,7 @@ def crowns() -> list:
     import numpy as np
     from PIL import Image
     from scipy import ndimage as ndi
-    CROWN_MIN, OVER_MAX, COLOUR_MIN = 0.4, 0.3, 12.0
+    CROWN_MIN, OVER_MAX, COLOUR_MIN, SLIM_EDGE_MAX = 0.4, 0.3, 12.0, 0.25
     bad = []
     for kp in sorted(glob.glob(os.path.join(ROOT, 'game', 'zones', '*', 'kit.json'))):
         kit = json.load(open(kp))
@@ -243,6 +243,24 @@ def crowns() -> list:
             if t_ > 0.3 and c_ < CROWN_MIN:
                 bad.append(f'{os.path.basename(zdir)}/{oid} ({kind}): its trunk shows ({100 * t_:.0f} %) but only '
                            f'{100 * c_:.0f} % of its crown does')
+            # a slim tree (a birch, a sapling: its trunk under a sixth of its crown's width) must stand
+            # clear of the bigger crowns: when much of its crown's outline runs against another tree's
+            # crown, the two read as one and its pale trunk as a bare pole under someone else's crown
+            ys, xs = np.nonzero(green)
+            gy, gx = ys + Y0, xs + X0
+            ok = (gy >= 0) & (gy < gh) & (gx >= 0) & (gx < gw)
+            mine = np.zeros((gh, gw), bool)
+            mine[gy[ok], gx[ok]] = owner[gy[ok], gx[ok]] == i
+            tcols = np.nonzero(trunk.any(0))[0]
+            gcols = np.nonzero(green.any(0))[0]
+            slim = len(tcols) and len(gcols) and (tcols.max() - tcols.min() + 1) < (gcols.max() - gcols.min() + 1) / 6
+            if slim and t_ > 0.3 and mine.sum() > 50:
+                edge = mine & ~ndi.binary_erosion(mine)
+                other = ndi.binary_dilation(mine, iterations=3) & ~mine & (crown_owner >= 0) & (owner != i)
+                share = (ndi.binary_dilation(other, iterations=1) & edge).sum() / max(1, edge.sum())
+                if share > SLIM_EDGE_MAX:
+                    bad.append(f'{os.path.basename(zdir)}/{oid} ({kind}): a slim tree whose crown runs into another crown along '
+                               f'{100 * share:.0f} % of its outline, so its trunk reads as a bare pole; stand it clear')
     return bad
 
 

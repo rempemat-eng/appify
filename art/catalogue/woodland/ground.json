@@ -1,7 +1,7 @@
 {
  "id": "woodland/ground",
  "file": "game/zones/woodland/art/ground.png",
- "sha256": "c7a8a8e8981d4e00c2e4c4dd913d1ecbe1f20c14d94dda03cac35ab96e03bb77",
+ "sha256": "ab2f2cd4fe4cfdc15ea014c5de53a546d9d95a1b19d9be134755a5c4929deb29",
  "kind": "ground",
  "biome": "woodland",
  "H": 74.0,
@@ -13,7 +13,7 @@
  "status": "fail",
  "counts": {
   "blocker": 0,
-  "fault": 29,
+  "fault": 26,
   "polish": 0
  },
  "detail_bar": null,
@@ -24,22 +24,46 @@
    "box": [
     187,
     267,
-    452,
+    494,
     524
    ],
-   "message": "a flat foliage area of one tone, 22935 px (4.19 H^2)",
+   "message": "a flat foliage area of one tone, 27125 px (4.95 H^2)",
+   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
+  },
+  {
+   "detector": "logic.water_straight",
+   "severity": "fault",
+   "box": [
+    447,
+    892,
+    556,
+    956
+   ],
+   "message": "both banks run ruler-straight and parallel on a diagonal for 104 px (1.4 H): a drawn channel, not a stream",
+   "fix": "a stream follows the land: give it bends, pools and narrows, or lay a man-made channel along x or y with a built edge (world-rules.md 7, art-faults rule 3)"
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    192,
+    1627,
+    335,
+    1724
+   ],
+   "message": "a flat foliage area of one tone, 6135 px (1.12 H^2)",
    "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
   },
   {
    "detector": "detail.flat",
    "severity": "fault",
    "box": [
-    385,
-    390,
-    494,
-    508
+    728,
+    1287,
+    867,
+    1348
    ],
-   "message": "a flat foliage area of one tone, 5668 px (1.04 H^2)",
+   "message": "a flat foliage area of one tone, 5702 px (1.04 H^2)",
    "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
   },
   {
@@ -58,30 +82,6 @@
    "detector": "detail.flat",
    "severity": "fault",
    "box": [
-    4,
-    826,
-    171,
-    902
-   ],
-   "message": "a flat foliage area of one tone, 5366 px (0.98 H^2)",
-   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
-  },
-  {
-   "detector": "detail.flat",
-   "severity": "fault",
-   "box": [
-    728,
-    1287,
-    867,
-    1348
-   ],
-   "message": "a flat foliage area of one tone, 5334 px (0.97 H^2)",
-   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
-  },
-  {
-   "detector": "detail.flat",
-   "severity": "fault",
-   "box": [
     368,
     1334,
     470,
@@ -94,49 +94,37 @@
    "detector": "detail.flat",
    "severity": "fault",
    "box": [
-    18,
-    154,
-    164,
-    219
-   ],
-   "message": "a flat foliage area of one tone, 4650 px (0.85 H^2)",
-   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
-  },
-  {
-   "detector": "detail.flat",
-   "severity": "fault",
-   "box": [
     646,
     1138,
     813,
     1217
    ],
-   "message": "a flat foliage area of one tone, 4544 px (0.83 H^2)",
+   "message": "a flat foliage area of one tone, 5047 px (0.92 H^2)",
    "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
   },
   {
    "detector": "detail.flat",
    "severity": "fault",
    "box": [
-    203,
-    1631,
-    325,
-    1724
+    4,
+    826,
+    171,
+    902
    ],
-   "message": "a flat foliage area of one tone, 4487 px (0.82 H^2)",
+   "message": "a flat foliage area of one tone, 4946 px (0.90 H^2)",
    "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
   },
   {
    "detector": "detail.flat",
    "severity": "fault",
    "box": [
-    525,
-    1077,
-    558,
-    1103
+    18,
+    154,
+    163,
+    219
    ],
-   "message": "a thing drawn flat: 4 tones, two cover 76% (0.07 H^2)",
-   "fix": "give it form and material: a lit top plane, a mid front and a dark side (a cylinder: a highlight band and a core shadow), occlusion where it meets the floor, its texture in clusters"
+   "message": "a flat foliage area of one tone, 4589 px (0.84 H^2)",
+   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
   },
   {
    "detector": "detail.flat",
@@ -144,10 +132,10 @@
    "box": [
     4,
     595,
-    100,
+    117,
     653
    ],
-   "message": "a flat foliage area of one tone, 3116 px (0.57 H^2)",
+   "message": "a flat foliage area of one tone, 3433 px (0.63 H^2)",
    "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
   },
   {
@@ -166,24 +154,24 @@
    "detector": "detail.flat",
    "severity": "fault",
    "box": [
-    769,
-    724,
-    870,
-    782
-   ],
-   "message": "a flat foliage area of one tone, 2515 px (0.46 H^2)",
-   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
-  },
-  {
-   "detector": "detail.flat",
-   "severity": "fault",
-   "box": [
     4,
     985,
     90,
     1043
    ],
    "message": "a flat foliage area of one tone, 2493 px (0.46 H^2)",
+   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    769,
+    724,
+    870,
+    782
+   ],
+   "message": "a flat foliage area of one tone, 2316 px (0.42 H^2)",
    "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
   },
   {
@@ -214,24 +202,24 @@
    "detector": "detail.flat",
    "severity": "fault",
    "box": [
-    819,
-    802,
-    931,
-    835
+    4,
+    415,
+    69,
+    449
    ],
-   "message": "a flat foliage area of one tone, 1503 px (0.27 H^2)",
+   "message": "a flat foliage area of one tone, 1510 px (0.28 H^2)",
    "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
   },
   {
    "detector": "detail.flat",
    "severity": "fault",
    "box": [
-    4,
-    1453,
-    69,
-    1487
+    71,
+    1138,
+    148,
+    1183
    ],
-   "message": "a flat foliage area of one tone, 1483 px (0.27 H^2)",
+   "message": "a flat foliage area of one tone, 1509 px (0.28 H^2)",
    "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
   },
   {
@@ -243,7 +231,7 @@
     82,
     956
    ],
-   "message": "a flat foliage area of one tone, 1474 px (0.27 H^2)",
+   "message": "a flat foliage area of one tone, 1459 px (0.27 H^2)",
    "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
   },
   {
@@ -252,10 +240,22 @@
    "box": [
     4,
     1285,
-    62,
+    64,
     1319
    ],
-   "message": "a flat foliage area of one tone, 1334 px (0.24 H^2)",
+   "message": "a flat foliage area of one tone, 1400 px (0.26 H^2)",
+   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    819,
+    802,
+    931,
+    835
+   ],
+   "message": "a flat foliage area of one tone, 1298 px (0.24 H^2)",
    "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
   },
   {
@@ -263,11 +263,11 @@
    "severity": "fault",
    "box": [
     4,
-    415,
-    69,
-    449
+    1453,
+    70,
+    1487
    ],
-   "message": "a flat foliage area of one tone, 1286 px (0.23 H^2)",
+   "message": "a flat foliage area of one tone, 1289 px (0.24 H^2)",
    "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
   },
   {
@@ -286,24 +286,24 @@
    "detector": "detail.flat",
    "severity": "fault",
    "box": [
-    73,
-    1138,
-    146,
-    1183
+    4,
+    273,
+    60,
+    302
    ],
-   "message": "a flat foliage area of one tone, 1082 px (0.20 H^2)",
+   "message": "a flat foliage area of one tone, 1001 px (0.18 H^2)",
    "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
   },
   {
    "detector": "detail.flat",
    "severity": "fault",
    "box": [
-    4,
-    273,
-    58,
-    302
+    653,
+    1248,
+    702,
+    1297
    ],
-   "message": "a flat foliage area of one tone, 995 px (0.18 H^2)",
+   "message": "a flat foliage area of one tone, 997 px (0.18 H^2)",
    "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
   },
   {
@@ -322,48 +322,12 @@
    "detector": "detail.flat",
    "severity": "fault",
    "box": [
-    42,
-    1323,
-    100,
-    1352
-   ],
-   "message": "a flat foliage area of one tone, 935 px (0.17 H^2)",
-   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
-  },
-  {
-   "detector": "detail.flat",
-   "severity": "fault",
-   "box": [
-    653,
-    1250,
-    702,
-    1297
-   ],
-   "message": "a flat foliage area of one tone, 918 px (0.17 H^2)",
-   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
-  },
-  {
-   "detector": "detail.flat",
-   "severity": "fault",
-   "box": [
     17,
     1392,
-    69,
+    74,
     1421
    ],
-   "message": "a flat foliage area of one tone, 873 px (0.16 H^2)",
-   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
-  },
-  {
-   "detector": "detail.flat",
-   "severity": "fault",
-   "box": [
-    671,
-    1019,
-    722,
-    1057
-   ],
-   "message": "a flat foliage area of one tone, 841 px (0.15 H^2)",
+   "message": "a flat foliage area of one tone, 988 px (0.18 H^2)",
    "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
   }
  ],
