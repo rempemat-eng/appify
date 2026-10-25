@@ -1878,7 +1878,15 @@
         [7664, 1968]
       ],
       "source": "the massif: the Cog off the High Fells, north of the box (Claude G)",
-      "outlet": "the town's Cog (cogsworth_plan.py)"
+      "outlet": "the town's Cog (cogsworth_plan.py)",
+      "bridges": [
+        {
+          "at": [7664, 1944],
+          "span": 64,
+          "kind": "bridge",
+          "name": "the High Fells' footbridge over the Cog (W3), a rockfall on it"
+        }
+      ]
     },
     {
       "id": "cog-lower",
@@ -1894,7 +1902,22 @@
         [8888, 3112]
       ],
       "source": "the town's Cog, leaving its south-east corner",
-      "outlet": "lull-below, at the confluence (8888, 3112)"
+      "outlet": "lull-below, at the confluence (8888, 3112)",
+      "bridges": [
+        {
+          "at": [8496, 3064],
+          "span": 64,
+          "kind": "bridge",
+          "name": "the Cog foot bridge: the Towpath's footbridge to the Lull bank"
+        }
+      ],
+      "falls": [
+        {
+          "at": [8856, 3112],
+          "drop_tiers": 1,
+          "what": "the Cog's last weir, into the Lull at the confluence"
+        }
+      ]
     },
     {
       "id": "lull-narrows",
@@ -1949,13 +1972,13 @@
     {
       "id": "fernhollow",
       "kind": "hamlet",
-      "at": [7000, 2960],
+      "at": [7120, 3192],
       "why": "timber in the wet woods of the Fern hills' western slope, on the Foothill Road"
     },
     {
       "id": "narrows",
       "kind": "gorge",
-      "at": [8520, 2160],
+      "at": [9000, 2400],
       "why": "the Lull's gorge through the coal hills, white with rapids; the Cog joins at its foot"
     },
     {

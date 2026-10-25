@@ -104,6 +104,14 @@ WATER_ENDS = {
     'lull-below': {'source': 'lull-narrows and cog-lower at the confluence', 'outlet': "the Lull belt, south of the box (Claude I's lull-delta)"},
     'eel-pond': {'declared_closed': True, 'note': 'a spring-fed pond at Fernhollow'},
 }
+# the routes' bridges over the streams and the falls where a stream steps down a tier (lane R,
+# 22 and 23 Oct: a path crosses water only on a declared bridge; a stream drops only at a fall)
+WATER_ENDS['cog-upper']['bridges'] = [{'at': [7664, 1944], 'span': 64, 'kind': 'bridge',
+                                       'name': "the High Fells' footbridge over the Cog (W3), a rockfall on it"}]
+WATER_ENDS['cog-lower']['bridges'] = [{'at': [8496, 3064], 'span': 64, 'kind': 'bridge',
+                                       'name': "the Cog foot bridge: the Towpath's footbridge to the Lull bank"}]
+WATER_ENDS['cog-lower']['falls'] = [{'at': [8856, 3112], 'drop_tiers': 1,
+                                     'what': "the Cog's last weir, into the Lull at the confluence"}]
 GORGE_RIM = 2         # tiers of wall each side of the Lull's cut stand at least this high
 
 # --- the routes inside the box: lane H's own lines -------------------------------------------
@@ -534,7 +542,7 @@ def export_plan(L=None) -> dict:
         'base_tier': {'value': BASE, 'provisional': False, 'from': "Claude G's tier numbers (route-meets.md): the town's street 7, the Lull 4"},
         'tiers': tiers,
         'routes': routes, 'trods': trods, 'stairs': stairs, 'water': water,
-        'places': [{'id': p_['id'], 'kind': p_['kind'], 'at': list(p_['box'][:2]) if 'box' in p_ else list(p_['at']), 'why': p_['why']}
+        'places': [{'id': p_['id'], 'kind': p_['kind'], 'at': list(p_['at']) if 'at' in p_ else list(p_['box'][:2]), 'why': p_['why']}
                    for p_ in plan.PLACES],
         'town': {'origin': [tx, ty], 'size': [plan.TOWN_W, plan.TOWN_H], 'plan': 'scripts/art/regions/cogsworth_plan.py',
                  'placements': plan.placements()},
