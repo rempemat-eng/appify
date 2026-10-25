@@ -135,3 +135,25 @@ func test_overlapping_camps_cannot_exceed_the_global_cap() -> void:
 	assert_bool(second.acquire(c)).is_true()
 	second.release(b)
 	second.release(c)
+
+class DamageTarget extends Node2D:
+	var hits := 0
+	func take_damage(_amount: int, _direction: Vector2) -> bool:
+		hits += 1
+		return true
+
+func test_locked_lunge_misses_behind_and_hits_only_once_in_front() -> void:
+	var pool: SliceAttackSlots = auto_free(SliceAttackSlots.new())
+	add_child(pool)
+	var target: DamageTarget = auto_free(DamageTarget.new())
+	add_child(target)
+	target.position = Vector2(20, 0)
+	var enemy := _enemy("rusher", pool, target)
+	enemy.step(enemy.windup_time())
+	target.position = Vector2(-20, 0)
+	enemy.step(0.01)
+	assert_int(target.hits).is_equal(0)
+	target.position = Vector2(20, 0)
+	enemy.step(0.01)
+	enemy.step(0.01)
+	assert_int(target.hits).is_equal(1)

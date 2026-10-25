@@ -119,7 +119,7 @@ func _update_state(delta: float) -> void:
 					hsm.dispatch(&"recover")
 			else:
 				velocity = facing * (125.0 if role != "shield" else 45.0) * DENSITY
-				if not _struck and is_instance_valid(target) and global_position.distance_to(target.global_position) < 28.0 and target.has_method("take_damage"):
+				if not _struck and is_instance_valid(target) and global_position.distance_to(target.global_position) < 28.0 and facing.dot(global_position.direction_to(target.global_position)) >= 0.3 and target.has_method("take_damage"):
 					_struck = true
 					target.take_damage(2 if role == "elite" else 1, facing)
 				if elapsed >= 0.18:
@@ -148,7 +148,7 @@ func _can_commit() -> bool:
 	return get_world_2d().direct_space_state.intersect_ray(query).is_empty()
 
 func take_hit(amount: int, dir: Vector2, _knockback: float = 200.0) -> void:
-	if dead:
+	if dead or amount <= 0:
 		return
 	# Incoming travel direction opposes the shield's facing on a frontal hit.
 	var guarded := role == "shield" and dir.normalized().dot(facing) < -0.5 and state != "recover"
