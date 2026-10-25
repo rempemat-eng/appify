@@ -6,7 +6,8 @@ extends Node2D
 ## Command-line options (after `--`): --fresh (ignore the save), --zone=<id>, --spawn=<name>,
 ## --shot=<png path> (wait, save a 1:1 picture of the window, quit), --demo (a scripted walk in four
 ## directions with a bow shot after each, for screenshots and videos; --quit ends the run after it),
-## --lineup (the whole cast in a row) and --cycle (the player becomes each cast member in turn).
+## --lineup (the whole cast in a row), --cycle (the player becomes each cast member in turn) and
+## --character=<id> (start as that cast member).
 ## See docs/godot.md.
 
 const DENSITY := 3.0
@@ -50,6 +51,8 @@ func _ready() -> void:
 		_demo.call_deferred()
 	if args.has("lineup"):
 		_lineup.call_deferred()
+	if args.has("character"):
+		select_character.call_deferred(String(args.character))
 	if args.has("cycle"):
 		_cycle.call_deferred()
 	_cast_label = Label.new()
