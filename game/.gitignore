@@ -1,0 +1,8 @@
+# Godot's import cache and editor state
+.godot/
+# release-only LimboAI libraries (tools/fetch_limboai_release.sh)
+addons/limboai/bin/*template_release*
+!addons/limboai/bin/liblimboai.web.template_release.wasm32.nothreads.wasm
+# exports and test reports
+build/
+reports/

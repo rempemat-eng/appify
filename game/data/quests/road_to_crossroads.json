@@ -1,0 +1,12 @@
+{
+  "id": "road_to_crossroads",
+  "title": "The road home",
+  "kind": "main",
+  "summary": "Hale the smith, sheltering in the woodland since the storm, walks back with you to what is left of Crossroads.",
+  "start": { "on": "talk:hale" },
+  "steps": [
+    { "id": "go", "text": "Follow the east path to Crossroads", "on": "enter:crossroads", "done_if": { "flags": ["visited:crossroads"] } },
+    { "id": "moss", "text": "Find Moss at the stall on the square", "on": "talk:moss" }
+  ],
+  "rewards": { "glint": 10, "flags": ["met_moss"] }
+}
