@@ -1,7 +1,7 @@
 {
  "id": "boarlet/attack_E_00",
  "file": "art/cast/boarlet/attack_E_00.png",
- "sha256": "a24a8e509ce499ed80006646bb7fce50a409f1ba381842b06d6f4b2d68445e1e",
+ "sha256": "2956b47bda928547351c841eb713fcfec5827e86548ec5ae5cfb02628868fc2b",
  "kind": "attack_E",
  "biome": "woodland",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 3,
-   "tones": 18.333333333333332,
-   "shapes": 34.333333333333336
+   "tones": 18.0,
+   "shapes": 33.333333333333336
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.679,
-  "tones_ratio": 0.679,
-  "shapes_ratio": 0.682,
+  "ratio": 0.662,
+  "tones_ratio": 0.667,
+  "shapes_ratio": 0.662,
   "passed": false,
   "group": "prop"
  },
@@ -42,9 +42,9 @@
     59,
     103,
     121,
-    131
+    133
    ],
-   "message": "boarlet/attack_E_00: the wood is lit from the right (luminance rises 15 L per H to the east)",
+   "message": "boarlet/attack_E_00: the wood is lit from the right (luminance rises 13 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
@@ -56,7 +56,7 @@
     125,
     136
    ],
-   "message": "boarlet/attack_E_00: detail bar 0.68 of Eastward's prop band (18.3 tones, 34.3 shapes a patch against 27.0, 50.36)",
+   "message": "boarlet/attack_E_00: detail bar 0.66 of Eastward's prop band (18.0 tones, 33.3 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

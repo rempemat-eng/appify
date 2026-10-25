@@ -1,7 +1,7 @@
 {
  "id": "boarlet/idle_S_00",
  "file": "art/cast/boarlet/idle_S_00.png",
- "sha256": "0190978eb51dc32ddb10b1d33ed9a3b04118af7a19ea2ffd55cd9623ecb17edc",
+ "sha256": "efb7a3e688eef20634d9e6618d418a6078b8184e79e3f73b1e7016ad8ca3bb55",
  "kind": "idle_S",
  "biome": "woodland",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 2,
-   "tones": 30.0,
-   "shapes": 39.0
+   "tones": 26.5,
+   "shapes": 44.0
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.774,
-  "tones_ratio": 1.111,
-  "shapes_ratio": 0.774,
+  "ratio": 0.874,
+  "tones_ratio": 0.981,
+  "shapes_ratio": 0.874,
   "passed": false,
   "group": "prop"
  },
@@ -44,7 +44,7 @@
     93,
     140
    ],
-   "message": "boarlet/idle_S_00: detail bar 0.77 of Eastward's prop band (30.0 tones, 39.0 shapes a patch against 27.0, 50.36)",
+   "message": "boarlet/idle_S_00: detail bar 0.87 of Eastward's prop band (26.5 tones, 44.0 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

@@ -1,7 +1,7 @@
 {
  "id": "toad/attack_E_00",
  "file": "art/cast/toad/attack_E_00.png",
- "sha256": "433d7c37994438c7816b8d138a52ff84a46fb5fc396f4e3eea3ce4d7183503b9",
+ "sha256": "a3afafebb74cf07766a83fab2aa74428b4c12a7009b456db62c8954dc6d78c33",
  "kind": "attack_E",
  "biome": "woodland",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 2,
-   "tones": 23.0,
-   "shapes": 41.0
+   "tones": 20.0,
+   "shapes": 35.0
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.648,
-  "tones_ratio": 0.83,
-  "shapes_ratio": 0.648,
+  "ratio": 0.553,
+  "tones_ratio": 0.722,
+  "shapes_ratio": 0.553,
   "passed": false,
   "group": "foliage"
  },
@@ -44,7 +44,7 @@
     110,
     136
    ],
-   "message": "toad/attack_E_00: detail bar 0.65 of Eastward's foliage band (23.0 tones, 41.0 shapes a patch against 27.71, 63.32)",
+   "message": "toad/attack_E_00: detail bar 0.55 of Eastward's foliage band (20.0 tones, 35.0 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

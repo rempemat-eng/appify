@@ -1,7 +1,7 @@
 {
  "id": "toad/telegraph_E_07",
  "file": "art/cast/toad/telegraph_E_07.png",
- "sha256": "843667810c56d5a5cd5ccb937eaf922270c7b3186f702d42c7b2d80e42db2fd5",
+ "sha256": "bc2ff90aab61b434795d1c2a48a9b2a7e512270e02980c253b5de2f0a2073613",
  "kind": "telegraph_E",
  "biome": "woodland",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 2,
-   "tones": 22.5,
-   "shapes": 35.5
+   "tones": 22.0,
+   "shapes": 29.5
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.561,
-  "tones_ratio": 0.812,
-  "shapes_ratio": 0.561,
+  "ratio": 0.466,
+  "tones_ratio": 0.794,
+  "shapes_ratio": 0.466,
   "passed": false,
   "group": "foliage"
  },
@@ -44,7 +44,7 @@
     114,
     136
    ],
-   "message": "toad/telegraph_E_07: detail bar 0.56 of Eastward's foliage band (22.5 tones, 35.5 shapes a patch against 27.71, 63.32)",
+   "message": "toad/telegraph_E_07: detail bar 0.47 of Eastward's foliage band (22.0 tones, 29.5 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

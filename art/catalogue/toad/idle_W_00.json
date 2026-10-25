@@ -1,7 +1,7 @@
 {
  "id": "toad/idle_W_00",
  "file": "art/cast/toad/idle_W_00.png",
- "sha256": "9d742bf17fd9252d21ae05e68af5e75ab2b15582aa455f7fe05a36c640e3710f",
+ "sha256": "872d797f05d57de590d99a85138af4485d378f91d9e03527e688741d15cd4de6",
  "kind": "idle_W",
  "biome": "woodland",
  "H": 74.0,
@@ -14,13 +14,13 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 2
+  "polish": 1
  },
  "detail_bar": {
   "ours": {
    "patches": 2,
-   "tones": 21.0,
-   "shapes": 44.5
+   "tones": 20.0,
+   "shapes": 26.0
   },
   "band": {
    "tones": 27.71,
@@ -28,25 +28,13 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.703,
-  "tones_ratio": 0.758,
-  "shapes_ratio": 0.703,
+  "ratio": 0.411,
+  "tones_ratio": 0.722,
+  "shapes_ratio": 0.411,
   "passed": false,
   "group": "foliage"
  },
  "findings": [
-  {
-   "detector": "detail.light",
-   "severity": "polish",
-   "box": [
-    53,
-    105,
-    98,
-    131
-   ],
-   "message": "toad/idle_W_00: the foliage is lit from the right (luminance rises 67 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
   {
    "detector": "detail.bar",
    "severity": "polish",
@@ -56,7 +44,7 @@
     99,
     136
    ],
-   "message": "toad/idle_W_00: detail bar 0.70 of Eastward's foliage band (21.0 tones, 44.5 shapes a patch against 27.71, 63.32)",
+   "message": "toad/idle_W_00: detail bar 0.41 of Eastward's foliage band (20.0 tones, 26.0 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

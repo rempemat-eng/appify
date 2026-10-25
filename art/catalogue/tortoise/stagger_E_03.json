@@ -1,7 +1,7 @@
 {
  "id": "tortoise/stagger_E_03",
  "file": "art/cast/tortoise/stagger_E_03.png",
- "sha256": "ccb0e171b2450436354411b074409f1987708514edea4ec8494cd4fa3859961c",
+ "sha256": "039e41351a5f04aa453439891095fb8686ce5144eb618cc359870c7ab8e84beb",
  "kind": "stagger_E",
  "biome": "woodland",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 3,
-   "tones": 23.0,
-   "shapes": 29.666666666666668
+   "tones": 23.666666666666668,
+   "shapes": 30.333333333333332
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.589,
-  "tones_ratio": 0.852,
-  "shapes_ratio": 0.589,
+  "ratio": 0.602,
+  "tones_ratio": 0.877,
+  "shapes_ratio": 0.602,
   "passed": false,
   "group": "prop"
  },
@@ -44,7 +44,7 @@
     114,
     136
    ],
-   "message": "tortoise/stagger_E_03: detail bar 0.59 of Eastward's prop band (23.0 tones, 29.7 shapes a patch against 27.0, 50.36)",
+   "message": "tortoise/stagger_E_03: detail bar 0.60 of Eastward's prop band (23.7 tones, 30.3 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

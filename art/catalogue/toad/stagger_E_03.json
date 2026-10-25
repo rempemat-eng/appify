@@ -1,7 +1,7 @@
 {
  "id": "toad/stagger_E_03",
  "file": "art/cast/toad/stagger_E_03.png",
- "sha256": "b8a4fc411415f92eb3b6b2400ea032beb42e670d58c0cd6cb67d6fe64ecad621",
+ "sha256": "16f69a652eb74819f3958e6bb85ddd2a660f623e2fd5332701ec46bcbfb98d1c",
  "kind": "stagger_E",
  "biome": "woodland",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 2,
-   "tones": 22.5,
-   "shapes": 43.0
+   "tones": 21.0,
+   "shapes": 35.0
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.679,
-  "tones_ratio": 0.812,
-  "shapes_ratio": 0.679,
+  "ratio": 0.553,
+  "tones_ratio": 0.758,
+  "shapes_ratio": 0.553,
   "passed": false,
   "group": "foliage"
  },
@@ -44,7 +44,7 @@
     108,
     136
    ],
-   "message": "toad/stagger_E_03: detail bar 0.68 of Eastward's foliage band (22.5 tones, 43.0 shapes a patch against 27.71, 63.32)",
+   "message": "toad/stagger_E_03: detail bar 0.55 of Eastward's foliage band (21.0 tones, 35.0 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

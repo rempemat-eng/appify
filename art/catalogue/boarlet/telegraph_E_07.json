@@ -1,7 +1,7 @@
 {
  "id": "boarlet/telegraph_E_07",
  "file": "art/cast/boarlet/telegraph_E_07.png",
- "sha256": "485205602cd3984cd43d23c8304daade5418ea9263416c517c12fdce9dbc8e85",
+ "sha256": "39ac29a0ec79db1fda2d16b82f3fad4e50955182755a1ff918d7ce98645c5018",
  "kind": "telegraph_E",
  "biome": "woodland",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 3,
-   "tones": 18.0,
-   "shapes": 32.666666666666664
+   "tones": 19.666666666666668,
+   "shapes": 31.333333333333332
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.649,
-  "tones_ratio": 0.667,
-  "shapes_ratio": 0.649,
+  "ratio": 0.622,
+  "tones_ratio": 0.728,
+  "shapes_ratio": 0.622,
   "passed": false,
   "group": "prop"
  },
@@ -44,7 +44,7 @@
     122,
     137
    ],
-   "message": "boarlet/telegraph_E_07: detail bar 0.65 of Eastward's prop band (18.0 tones, 32.7 shapes a patch against 27.0, 50.36)",
+   "message": "boarlet/telegraph_E_07: detail bar 0.62 of Eastward's prop band (19.7 tones, 31.3 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

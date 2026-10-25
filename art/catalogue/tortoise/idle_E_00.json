@@ -1,7 +1,7 @@
 {
  "id": "tortoise/idle_E_00",
  "file": "art/cast/tortoise/idle_E_00.png",
- "sha256": "b91597303d2c2d92f6338e10df67b2ea8b89e526c608c09b98ce629b49871682",
+ "sha256": "bacc5ff13700eadf95a87881c2d8314e10b561ad0648d6858341e96672f43731",
  "kind": "idle_E",
  "biome": "woodland",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 3,
-   "tones": 24.0,
-   "shapes": 30.666666666666668
+   "tones": 23.333333333333332,
+   "shapes": 30.333333333333332
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.609,
-  "tones_ratio": 0.889,
-  "shapes_ratio": 0.609,
+  "ratio": 0.602,
+  "tones_ratio": 0.864,
+  "shapes_ratio": 0.602,
   "passed": false,
   "group": "prop"
  },
@@ -44,7 +44,7 @@
     114,
     136
    ],
-   "message": "tortoise/idle_E_00: detail bar 0.61 of Eastward's prop band (24.0 tones, 30.7 shapes a patch against 27.0, 50.36)",
+   "message": "tortoise/idle_E_00: detail bar 0.60 of Eastward's prop band (23.3 tones, 30.3 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

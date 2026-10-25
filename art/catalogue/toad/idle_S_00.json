@@ -1,7 +1,7 @@
 {
  "id": "toad/idle_S_00",
  "file": "art/cast/toad/idle_S_00.png",
- "sha256": "30735030cc088290057ae4d58471254934f707bdb90a736f0c4b03adab9424d1",
+ "sha256": "43dde5b23b8cbe70821e6b816ff5615cee2e2abeeef6d67a42552e5212788fa1",
  "kind": "idle_S",
  "biome": "woodland",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 1,
-   "tones": 26.0,
-   "shapes": 40.0
+   "tones": 27.0,
+   "shapes": 41.0
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.632,
-  "tones_ratio": 0.938,
-  "shapes_ratio": 0.632,
+  "ratio": 0.648,
+  "tones_ratio": 0.974,
+  "shapes_ratio": 0.648,
   "passed": false,
   "group": "foliage"
  },
@@ -44,7 +44,7 @@
     100,
     138
    ],
-   "message": "toad/idle_S_00: detail bar 0.63 of Eastward's foliage band (26.0 tones, 40.0 shapes a patch against 27.71, 63.32)",
+   "message": "toad/idle_S_00: detail bar 0.65 of Eastward's foliage band (27.0 tones, 41.0 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

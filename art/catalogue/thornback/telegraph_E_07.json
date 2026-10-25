@@ -1,7 +1,7 @@
 {
  "id": "thornback/telegraph_E_07",
  "file": "art/cast/thornback/telegraph_E_07.png",
- "sha256": "274fdd24b5e237636ec6542c7975f424b32e8588218ef566aef3486da7b85169",
+ "sha256": "f3d9d101a89013c8c74d41ef116d62de82558e62e54d86fdea625d8c596417c2",
  "kind": "telegraph_E",
  "biome": "woodland",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 6,
-   "tones": 21.833333333333332,
-   "shapes": 39.333333333333336
+   "tones": 20.833333333333332,
+   "shapes": 33.0
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.781,
-  "tones_ratio": 0.809,
-  "shapes_ratio": 0.781,
+  "ratio": 0.655,
+  "tones_ratio": 0.772,
+  "shapes_ratio": 0.655,
   "passed": false,
   "group": "prop"
  },
@@ -44,7 +44,7 @@
     140,
     137
    ],
-   "message": "thornback/telegraph_E_07: detail bar 0.78 of Eastward's prop band (21.8 tones, 39.3 shapes a patch against 27.0, 50.36)",
+   "message": "thornback/telegraph_E_07: detail bar 0.66 of Eastward's prop band (20.8 tones, 33.0 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

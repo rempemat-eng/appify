@@ -1,7 +1,7 @@
 {
  "id": "thornback/idle_E_00",
  "file": "art/cast/thornback/idle_E_00.png",
- "sha256": "7b1feacf608cac593127c62db5656a50b5c5224cd2359c299bcacf304c4d1b66",
+ "sha256": "accd528f15d2a183f10f43b5ad0305e16c28eb2031cdf8a233cc397380442331",
  "kind": "idle_E",
  "biome": "woodland",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 8,
-   "tones": 18.25,
-   "shapes": 34.125
+   "tones": 17.0,
+   "shapes": 36.875
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.676,
-  "tones_ratio": 0.676,
-  "shapes_ratio": 0.678,
+  "ratio": 0.63,
+  "tones_ratio": 0.63,
+  "shapes_ratio": 0.732,
   "passed": false,
   "group": "prop"
  },
@@ -42,9 +42,9 @@
     51,
     89,
     136,
-    118
+    122
    ],
-   "message": "thornback/idle_E_00: the wood is lit from the right (luminance rises 14 L per H to the east)",
+   "message": "thornback/idle_E_00: the wood is lit from the right (luminance rises 12 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
@@ -56,7 +56,7 @@
     137,
     136
    ],
-   "message": "thornback/idle_E_00: detail bar 0.68 of Eastward's prop band (18.2 tones, 34.1 shapes a patch against 27.0, 50.36)",
+   "message": "thornback/idle_E_00: detail bar 0.63 of Eastward's prop band (17.0 tones, 36.9 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

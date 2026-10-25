@@ -98,8 +98,11 @@ func _draw() -> void:
 	if sprite == null or enemy.dead:
 		return
 	var rx: float = SHADOW.get(character, 16.0)
-	draw_set_transform(Vector2.ZERO, 0.0, Vector2(1.0, 0.36))
-	draw_circle(Vector2.ZERO, rx, Color(0.06, 0.08, 0.04, 0.32))
+	# contact shadow: a soft outer pool and a darker core right under the feet, offset a little
+	# east and down (the light is upper left)
+	draw_set_transform(Vector2(2, 1), 0.0, Vector2(1.0, 0.36))
+	draw_circle(Vector2.ZERO, rx, Color(0.06, 0.08, 0.04, 0.24))
+	draw_circle(Vector2.ZERO, rx * 0.7, Color(0.04, 0.05, 0.03, 0.22))
 	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 	if enemy.state == "windup":
 		_draw_tell(clampf(enemy.elapsed / enemy.windup_time(), 0.0, 1.0))

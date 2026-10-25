@@ -1,7 +1,7 @@
 {
  "id": "toad/freed_E_11",
  "file": "art/cast/toad/freed_E_11.png",
- "sha256": "26370aafefc9fabf42cb3f26337260d95bf5af2f2c1f6c33d5a8f5d5a38c6361",
+ "sha256": "592f36428fe65ea8c71927e034c74c981bcf5095b36774df1ae99a2edccc4316",
  "kind": "freed_E",
  "biome": "woodland",
  "H": 74.0,
@@ -20,7 +20,7 @@
   "ours": {
    "patches": 2,
    "tones": 17.5,
-   "shapes": 40.5
+   "shapes": 34.5
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.632,
+  "ratio": 0.545,
   "tones_ratio": 0.632,
-  "shapes_ratio": 0.64,
+  "shapes_ratio": 0.545,
   "passed": false,
   "group": "foliage"
  },
@@ -44,7 +44,7 @@
     108,
     136
    ],
-   "message": "toad/freed_E_11: detail bar 0.63 of Eastward's foliage band (17.5 tones, 40.5 shapes a patch against 27.71, 63.32)",
+   "message": "toad/freed_E_11: detail bar 0.55 of Eastward's foliage band (17.5 tones, 34.5 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

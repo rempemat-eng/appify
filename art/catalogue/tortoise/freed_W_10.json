@@ -1,0 +1,57 @@
+{
+ "id": "tortoise/freed_W_10",
+ "file": "art/cast/tortoise/freed_W_10.png",
+ "sha256": "441e802f4fdacbf8b17fe7fe177d28690780e3166b795b6481ae8dd939a00b03",
+ "kind": "freed_W",
+ "biome": "woodland",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  160,
+  144
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 1
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 2,
+   "tones": 26.0,
+   "shapes": 33.5
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.665,
+  "tones_ratio": 0.963,
+  "shapes_ratio": 0.665,
+  "passed": false,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    45,
+    104,
+    103,
+    136
+   ],
+   "message": "tortoise/freed_W_10: detail bar 0.67 of Eastward's prop band (26.0 tones, 33.5 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  }
+ ],
+ "reviewed": "2026-10-25",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}
