@@ -19,6 +19,11 @@
    "creosote",
    "bunchgrass"
   ],
+  "coal_hills": [
+   "bilberry",
+   "bracken",
+   "coltsfoot"
+  ],
   "coast": [
    "marram",
    "thrift",
@@ -46,6 +51,10 @@
    "tuft",
    "flowers_white",
    "flowers_yellow"
+  ],
+  "mill_town": [
+   "joint_weeds",
+   "moss_joint"
   ],
   "moor": [
    "heather",
@@ -370,8 +379,9 @@
   "canal_side": {
    "biomes": [
     "town",
+    "mill_town",
     "city",
-    "coal-hills",
+    "coal_hills",
     "canal",
     "valley"
    ],
@@ -743,6 +753,7 @@
    "biomes": [
     "castle",
     "town",
+    "mill_town",
     "ash"
    ],
    "clear": [
@@ -1941,7 +1952,8 @@
     "ash",
     "castle",
     "town",
-    "coal-hills"
+    "mill_town",
+    "coal_hills"
    ],
    "clear": [
     {
@@ -2152,7 +2164,8 @@
     "ash",
     "castle",
     "town",
-    "coal-hills",
+    "mill_town",
+    "coal_hills",
     "canyon"
    ],
    "clear": [
@@ -2350,7 +2363,8 @@
     "frontier",
     "desert",
     "canyon",
-    "town"
+    "town",
+    "mill_town"
    ],
    "clear": [
     {
@@ -3316,7 +3330,7 @@
    "biomes": [
     "canyon",
     "highland",
-    "coal-hills"
+    "coal_hills"
    ],
    "clear": [
     {
@@ -3331,6 +3345,9 @@
     }
    ],
    "dressing": "desert",
+   "dressing_by": {
+    "coal_hills": "coal_hills"
+   },
    "members": [
     {
      "at": [
@@ -4145,7 +4162,8 @@
     "canyon",
     "frontier",
     "town",
-    "coal-hills"
+    "mill_town",
+    "coal_hills"
    ],
    "clear": [
     {
@@ -5320,6 +5338,7 @@
    "against": "a wall or a face along the north side",
    "biomes": [
     "town",
+    "mill_town",
     "village",
     "city",
     "valley"
