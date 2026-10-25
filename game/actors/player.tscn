@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://actors/player.gd" id="1"]
-[ext_resource type="Texture2D" path="res://art/placeholder/player.png" id="2"]
+[ext_resource type="Script" path="res://actors/cast_sprite.gd" id="2"]
 
 [sub_resource type="CircleShape2D" id="body"]
 radius = 9.0
@@ -19,11 +19,10 @@ script = ExtResource("1")
 position = Vector2(0, -4)
 shape = SubResource("body")
 
-[node name="Sprite" type="Sprite2D" parent="."]
-texture = ExtResource("2")
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
 centered = false
-offset = Vector2(-18, -54)
-hframes = 4
+offset = Vector2(-80, -136)
+script = ExtResource("2")
 
 [node name="Hitbox" type="Area2D" parent="."]
 collision_layer = 0

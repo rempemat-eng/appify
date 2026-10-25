@@ -77,7 +77,7 @@ Dialogic 2 was evaluated and **not adopted yet**: it adds 11 MB and its own inpu
 ## Systems
 
 - **Input** (`core/inputs.gd`): the 11.5 map in code. WASD or arrows and the left stick move; the mouse or right stick aims; left click or X attacks; right click or right trigger is ranged (bound, not built); Space or A rolls; Q or right bumper special; F or left trigger familiar; R or left bumper tonic; E or Y interact; Esc or Start pauses; M map; Tab gear. Dialogue advances on E, Enter, A or Y, never Space or click.
-- **Player** (`actors/player.gd`): run 50 world px/s; a 0.42 s roll invulnerable for its first 0.26 s, two charges each back after 1.2 s; a three-swing combo with a heavier finisher; hit-stop of 4, 4 and 7 frames (halved under reduced motion); mercy frames after a hit; no naps at 0 HP (the player gets up at the zone's start). Placeholder sprite until the redrawn cast lands: swap `art/placeholder/player.png` and the frame size in `player.tscn`.
+- **Player** (`actors/player.gd`): run 50 world px/s; a 0.42 s roll invulnerable for its first 0.26 s, two charges each back after 1.2 s; a three-swing combo with a heavier finisher; hit-stop of 4, 4 and 7 frames (halved under reduced motion); mercy frames after a hit; no naps at 0 HP (the player gets up at the zone's start). The body is Bramble from the redrawn cast (below): facing from movement or aim, clips by state (idle, walk, the bow shot on left click, dodge for the roll, hit, defeat before getting up), walking at the manifest's `walk_speed`. The melee combo stays in code for the billhook but is not bound.
 - **Enemy** (`actors/enemy.gd`): the evaluation's LimboAI state machine (idle, chase, a 0.5 s telegraphed wind-up, lunge, recover, leash home), now dying at 0 HP and reporting to its camp.
 - **Camera** (`game.gd`): a PhantomCamera2D following the player with damping, pixel snapping, the zone's bounds as limits, aim look-ahead up to 48 world px past a 16 px dead zone (11.2), and a 1 world px shake on hits (off under reduced motion).
 - **Save** (`core/save_game.gd`): one versioned JSON document, `user://save_0.json`, written to a temporary file and renamed. `data` holds zone, spawn, Glint, flags, quests, player and settings. When a field changes shape, bump `VERSION` and add a step to `_migrate`. The game autosaves when a quest moves and when the zone changes.
@@ -87,6 +87,14 @@ Dialogic 2 was evaluated and **not adopted yet**: it adds 11 MB and its own inpu
 - **Camps** (`world/camp.gd`): a node whose child enemies count as one fight; clearing it sets `camp_cleared:<id>` and reports `camp:<id>`; a cleared camp stays empty.
 
 The sample quest, **Thorns by the stones** (`data/quests/woodland_stones.json`): read the sign by the stone circle, clear the three mosslings in the meadow east of it, read the sign again for 40 Glint.
+
+## The cast
+
+The characters are drawn and animated by Claude A's procedural rig outside the repo (the castwork: one pose-driven build per character, renders S, N, E and W from the same pose, 17 clips, timings fitted to Codex's studio). `python3 game/tools/import_cast.py <castwork>/out bramble` copies one character into `game/assets/characters/<id>/`: a strip per clip and facing (`sheets/<clip>_<F>.png`, 160 x 144 cells, foot pivot (80, 136)), `frames.tres` (animations `<clip>_<F>` as AtlasTexture regions) and `manifest.json` (per-drawing durations, release frames and times, anchors such as `arrow_tip` and `hand_R` in pixels from the foot pivot, `walk_speed`). It checks each frame's size and sha256 against the manifest.
+
+`actors/cast_sprite.gd` (`CastSprite`, an AnimatedSprite2D) loads a character and keeps time from the manifest itself, so gameplay can ask which drawing is showing and where its anchors are; `CastSprite.facing_for(v)` picks S, N, E or W (the larger axis wins). The player spawns its arrow (`actors/arrow.gd`) on the primary's `release_frame`, at that drawing's `arrow_tip` (or the drawing before, once the arrow has left the bow), flying along the aim; `test/test_cast.gd` checks the facing choice, the release frame and position in all four facings, the walk speed, the dodge and hit clips and that defeat plays before `downed`.
+
+Scale: the cast is drawn at the 960 x 540 grid's own scale (Bramble 74 texels tall), and its walk speed is in texels a second (Bramble 68, the speed at which his planted foot does not slide). That is slower than the design's 50 world px (150 texels) run; a faster run needs a run cycle with a longer stride, not a faster walk.
 
 ## How lanes add a region (zone)
 

@@ -3,11 +3,17 @@ extends CharacterBody2D
 ## The player (game-design.md 4.2): WASD or the left stick to move, the mouse or right stick to aim,
 ## left click for a three-swing melee combo with hit-stop, Space to roll with invulnerability.
 ## Speeds and reaches are in world px and scaled by DENSITY, so they hold when the art density changes.
-## The sprite is a placeholder sheet (four facings) until the redrawn cast lands.
+## The body is Bramble from the redrawn cast (assets/characters/bramble, actors/cast_sprite.gd): his
+## facing (S, N, E, W) follows movement, or the aim when standing or shooting, and his state picks
+## the clip: idle, walk, primary (left click: the bow shot, the arrow leaves at the drawing's
+## arrow_tip on the manifest's release frame and flies along the aim), dodge (the roll), hit and
+## defeat. He walks at the manifest's walk_speed, the speed that keeps his feet planted.
+## The melee combo (start_swing) stays for the billhook and the tests; it is not bound for now.
 
 signal hit_landed(target: Node, heavy: bool)
 signal hurt(amount: int)
 signal downed
+signal shot_released(arrow: Node, frame: int)
 
 const DENSITY := 3.0                 ## texels per world px (the art grid)
 const RUN_SPEED := 50.0 * DENSITY    ## 4.2: the prototype's run, 50 world px a second
@@ -24,6 +30,8 @@ const SWING_STEP := 30.0 * DENSITY   ## each swing steps a little toward the aim
 const HITSTOP_FRAMES := [4, 4, 7]    ## 4.2: 3 to 8 frames by weight; the finisher holds longest
 const KNOCKBACK := [70.0 * DENSITY, 70.0 * DENSITY, 130.0 * DENSITY]
 const MERCY_TIME := 0.6              ## invulnerable after taking a hit
+const CHARACTER := "bramble"
+const DEFEAT_HOLD := 0.5             ## the last defeat drawing holds this long before getting up
 
 @export var max_hp := 5
 
@@ -43,21 +51,29 @@ var _swing_t := 0.0
 var _since_swing := 99.0
 var _swing_hits := {}
 var _hurt_t := 0.0
-var _facing := 0                     ## 0 S, 1 E, 2 N, 3 W (the sheet's columns)
+var state := &"idle"                 ## idle, walk, primary, dodge, hit, defeat (the clip shown)
+var facing := "S"
+var walk_speed := RUN_SPEED          ## replaced by the manifest's walk_speed in _ready
+var _shot_dir := Vector2.RIGHT
+var _defeat_t := 0.0
 
-@onready var sprite: Sprite2D = $Sprite
+@onready var sprite: CastSprite = $Sprite
 @onready var hitbox: Area2D = $Hitbox
 
 func _ready() -> void:
 	add_to_group("player")
 	hp = max_hp
 	hitbox.monitoring = false
+	if sprite.load_character(CHARACTER) and sprite.walk_speed() > 0.0:
+		walk_speed = sprite.walk_speed()
 
 func reset_motion() -> void:
 	velocity = Vector2.ZERO
 	_roll_t = 0.0
 	_swing_t = 0.0
 	focus = null
+	if state != &"idle":
+		_set_state(&"idle")
 
 func is_invulnerable() -> bool:
 	return _iframe_t > 0.0
@@ -68,9 +84,26 @@ func is_rolling() -> bool:
 func is_swinging() -> bool:
 	return _swing_t > 0.0
 
+func is_shooting() -> bool:
+	return state == &"primary"
+
+func is_defeated() -> bool:
+	return state == &"defeat"
+
+## The bow shot (Bramble's primary) at the aim: the body turns to the aim's facing, draws and
+## looses; the arrow is spawned on the release frame (see _animate).
+func start_shot() -> bool:
+	if is_rolling() or is_shooting() or is_defeated() or not sprite.has_clip("primary"):
+		return false
+	_shot_dir = aim.normalized() if aim.length() > 0.1 else CastSprite.facing_vector(facing)
+	facing = CastSprite.facing_for(_shot_dir, facing)
+	_set_state(&"primary")
+	velocity = Vector2.ZERO
+	return true
+
 ## Rolls toward `dir` (or the aim when standing). Spends a charge; false when none is left.
 func start_roll(dir: Vector2) -> bool:
-	if roll_charges <= 0 or is_rolling():
+	if roll_charges <= 0 or is_rolling() or is_defeated():
 		return false
 	roll_charges -= 1
 	if _recharge_t <= 0.0:
@@ -80,6 +113,8 @@ func start_roll(dir: Vector2) -> bool:
 	_iframe_t = maxf(_iframe_t, ROLL_IFRAMES)
 	_swing_t = 0.0
 	hitbox.set_deferred("monitoring", false)
+	facing = CastSprite.facing_for(_roll_dir, facing)
+	_set_state(&"dodge")
 	return true
 
 ## Swings at the aim; chains into the combo when pressed soon after the last swing.
@@ -105,7 +140,10 @@ func take_damage(amount: int, from_dir: Vector2 = Vector2.ZERO) -> bool:
 	velocity = from_dir * 60.0 * DENSITY
 	hurt.emit(amount)
 	if hp == 0:
-		downed.emit()
+		_set_state(&"defeat")       # downed is emitted once the fall has played (_animate)
+		_defeat_t = 0.0
+	elif not is_rolling():
+		_set_state(&"hit")
 	return true
 
 func heal_full() -> void:
@@ -125,23 +163,25 @@ func _physics_process(delta: float) -> void:
 			_recharge_t = ROLL_RECHARGE if roll_charges < ROLL_CHARGES else 0.0
 
 	var move := Vector2.ZERO
-	if input_enabled and not Dialogue.busy:
+	if input_enabled and not Dialogue.busy and not is_defeated():
 		move = Input.get_vector("move_left", "move_right", "move_up", "move_down")
 		_update_aim()
 		if Input.is_action_just_pressed("dodge"):
 			start_roll(move)
 		if Input.is_action_just_pressed("attack"):
-			start_swing()
+			start_shot()
 		if Input.is_action_just_pressed("interact") and focus != null and is_instance_valid(focus):
 			focus.interact()
 
 	if is_rolling():
 		var ease := 0.55 + 0.45 * (_roll_t / ROLL_TIME)  # fast start, settles at the end
 		velocity = _roll_dir * ROLL_SPEED * ease
-	elif _hurt_t > 0.0 or is_swinging():
+	elif is_defeated():
+		velocity = Vector2.ZERO
+	elif _hurt_t > 0.0 or is_swinging() or is_shooting():
 		velocity = velocity.move_toward(Vector2.ZERO, 900.0 * delta)
 	else:
-		velocity = move * RUN_SPEED
+		velocity = move * walk_speed
 	move_and_slide()
 
 	if is_swinging():
@@ -149,7 +189,7 @@ func _physics_process(delta: float) -> void:
 		_resolve_swing()
 		if _swing_t <= 0.0:
 			hitbox.monitoring = false
-	_animate(move)
+	_animate(move, delta)
 	queue_redraw()
 
 func _update_aim() -> void:
@@ -184,25 +224,64 @@ func _hitstop(frames: int) -> void:
 	await get_tree().create_timer(frames / 60.0, true, false, true).timeout
 	Engine.time_scale = 1.0
 
-func _animate(move: Vector2) -> void:
-	var look := aim if (is_swinging() or move.length() < 0.1) else move
-	if absf(look.x) > absf(look.y):
-		_facing = 1 if look.x > 0 else 3
-	else:
-		_facing = 0 if look.y > 0 else 2
-	sprite.frame = _facing
-	# a two-texel bob while walking stands in for the walk cycle
-	var bob := 0.0
-	if move.length() > 0.1 and not is_rolling():
-		bob = -3.0 if int(Time.get_ticks_msec() / 140) % 2 == 0 else 0.0
-	sprite.position.y = bob
-	sprite.rotation = (TAU * (1.0 - _roll_t / ROLL_TIME)) * signf(_roll_dir.x + 0.01) if is_rolling() else 0.0
-	if is_invulnerable() and not is_rolling():
+func _set_state(st: StringName) -> void:
+	state = st
+	var clip := String(st)
+	if sprite.has_clip(clip):
+		sprite.play_clip(clip, facing, true)
+
+## Picks the facing and clip from the state, advances the drawings and fires the release.
+func _animate(move: Vector2, delta: float) -> void:
+	var moving := move.length() > 0.1
+	match state:
+		&"primary":
+			_advance_action(delta)
+			if sprite.finished:
+				_set_state(&"walk" if moving else &"idle")
+		&"dodge":
+			sprite.advance(delta * sprite.duration("dodge") / ROLL_TIME)
+			if not is_rolling():
+				_set_state(&"walk" if moving else &"idle")
+		&"hit":
+			sprite.advance(delta)
+			if sprite.finished or (moving and _hurt_t <= 0.0):
+				_set_state(&"walk" if moving else &"idle")
+		&"defeat":
+			sprite.advance(delta)
+			if sprite.finished:
+				_defeat_t += delta
+				if _defeat_t >= DEFEAT_HOLD and hp == 0:
+					downed.emit()
+			if hp > 0:              # healed and moved to the zone's start by the game
+				_set_state(&"idle")
+		_:
+			facing = CastSprite.facing_for(move if moving else aim, facing)
+			var want := &"walk" if moving else &"idle"
+			state = want
+			sprite.play_clip(String(want), facing)
+			sprite.advance(delta)
+	if is_invulnerable() and not is_rolling() and not is_defeated():
 		sprite.modulate = Color(1, 1, 1, 0.45 if int(Time.get_ticks_msec() / 70) % 2 == 0 else 1.0)
-	elif is_rolling():
-		sprite.modulate = Color(0.8, 0.92, 1.0, 0.85)
 	else:
 		sprite.modulate = Color(1, 0.6, 0.6) if _hurt_t > 0.0 else Color.WHITE
+
+func _advance_action(delta: float) -> void:
+	var rel := sprite.release_frame()
+	for i in sprite.advance(delta):
+		if i == rel:
+			_release(i)
+
+## The arrow leaves the bow where the drawing's arrow tip is, on the release drawing.
+func _release(frame: int) -> void:
+	var a := sprite.anchor("arrow_tip", frame)
+	if a == Vector2.ZERO:           # the arrow has left: the anchor of the drawing before
+		a = sprite.anchor("arrow_tip", maxi(frame - 1, 0))
+	var arrow := Arrow.new()
+	var host := get_parent() if get_parent() != null else self
+	host.add_child(arrow)
+	arrow.setup(global_position + Vector2(a.x, 0.0), -a.y, _shot_dir)
+	arrow.struck.connect(func(t: Node) -> void: hit_landed.emit(t, false))
+	shot_released.emit(arrow, frame)
 
 func _draw() -> void:
 	if is_swinging():
