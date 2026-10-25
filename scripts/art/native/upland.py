@@ -23,7 +23,7 @@ berry (the flowering tips), bilberry in leaf; bracken in grass_warm and leaf_war
 dead fronds; grit and scree in crag, crag_cool and stone; snow in snow and snow_cool with sky
 for the ice. The biome data is scripts/art/biomes/moor.json and highland.json.
 
-    python3 -m scripts.art.native.upland [OUT_DIR]     the 2x swatch beside the golden
+    python3 -m scripts.art.native.upland [OUT_DIR] [DENSITY]   the swatch (2x beside the golden; 3x alone)
 """
 from __future__ import annotations
 
@@ -203,6 +203,7 @@ def bracken(code, mask, seed=80, dead=0.18, spacing=2.2):
     H, W = code.shape
     rng = _rng(seed)
     Hw, Ww = H / D, W / D
+    thick = 2 if D >= 2.5 else 1         # a frond's stroke: one texel at 2x, two at 3x
     for gy in np.arange(0, Hw, spacing * 0.7):
         for gx in np.arange(0, Ww, spacing):
             yw, xw = gy + rng.random() * spacing * 0.7, gx + rng.random() * spacing
@@ -227,11 +228,13 @@ def bracken(code, mask, seed=80, dead=0.18, spacing=2.2):
                     # 4-connected: step sideways on the old row, then up
                     while px != x:
                         px += 1 if x > px else -1
-                        if 0 <= py < H and 0 <= px < W:
-                            code[py, px] = C(fam, tone)
+                        for k in range(thick):
+                            if 0 <= py < H and 0 <= px + k < W:
+                                code[py, px + k] = C(fam, tone)
                     py = y
-                    if 0 <= y < H and 0 <= x < W:
-                        code[y, x] = C(fam, tone)
+                    for k in range(thick):
+                        if 0 <= y < H and 0 <= x + k < W:
+                            code[y, x + k] = C(fam, tone)
     return code
 
 
@@ -500,14 +503,19 @@ def swatch(out_dir: str, d: float = 2) -> str:
     pic = Image.fromarray(palette.to_rgba(sc), 'RGBA')
     allowed = list(biome['palette']) + [[f, t] for f in UPLAND_PALETTE_FAMS for t in range(6)]
     pic, _moved = palette.restrict(pic, allowed)
+    os.makedirs(out_dir, exist_ok=True)
+    tag = ('%g' % d).replace('.', '_')
+    path_out = os.path.join(out_dir, f'upland_swatch_{tag}x.png')
     root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-    golden = Image.open(os.path.join(root, 'art', 'golden', 'pilot', 'scene_2x.png')).convert('RGBA')
+    gold = os.path.join(root, 'art', 'golden', 'pilot', f'scene_{tag}x.png')
+    if not os.path.exists(gold):        # the golden is frozen at 2x: no beside-it at other densities
+        pic.save(path_out)
+        return path_out
+    golden = Image.open(gold).convert('RGBA')
     gap = 16
     both = Image.new('RGBA', (pic.width + gap + golden.width, max(pic.height, golden.height)), (20, 18, 24, 255))
     both.alpha_composite(pic, (0, 0))
     both.alpha_composite(golden, (pic.width + gap, 0))
-    os.makedirs(out_dir, exist_ok=True)
-    path_out = os.path.join(out_dir, 'upland_swatch_2x.png')
     both.save(path_out)
     return path_out
 
@@ -515,4 +523,4 @@ def swatch(out_dir: str, d: float = 2) -> str:
 if __name__ == '__main__':
     import tempfile
     out = sys.argv[1] if len(sys.argv) > 1 else os.path.join(tempfile.gettempdir(), 'napattack-upland')
-    print(swatch(out))
+    print(swatch(out, float(sys.argv[2]) if len(sys.argv) > 2 else 2))
