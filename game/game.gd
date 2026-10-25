@@ -5,7 +5,8 @@ extends Node2D
 ##
 ## Command-line options (after `--`): --fresh (ignore the save), --zone=<id>, --spawn=<name>,
 ## --shot=<png path> (wait, save a 1:1 picture of the window, quit), --demo (a scripted walk in four
-## directions with a bow shot after each, for screenshots and videos; --quit ends the run after it).
+## directions with a bow shot after each, for screenshots and videos; --quit ends the run after it),
+## --lineup (the whole cast in a row) and --cycle (the player becomes each cast member in turn).
 ## See docs/godot.md.
 
 const DENSITY := 3.0
@@ -16,6 +17,7 @@ var player: Player
 var args := {}
 var _shake := 0.0
 var _look := Vector2.ZERO
+var _cast_label: Label
 
 @onready var zone_root: Node2D = $ZoneRoot
 @onready var pcam: PhantomCamera2D = $PCam
@@ -46,6 +48,15 @@ func _ready() -> void:
 		_shot.call_deferred(args.shot)
 	if args.has("demo"):
 		_demo.call_deferred()
+	if args.has("lineup"):
+		_lineup.call_deferred()
+	if args.has("cycle"):
+		_cycle.call_deferred()
+	_cast_label = Label.new()
+	_cast_label.position = Vector2(8, 520)
+	_cast_label.add_theme_font_size_override("font_size", 8)
+	$UI.add_child(_cast_label)
+	_cast_label.text = "1-0, Shift+1-4: character"
 
 static func parse_args(list: PackedStringArray) -> Dictionary:
 	var out := {}
@@ -92,10 +103,58 @@ func _process(delta: float) -> void:
 	pcam.follow_offset = (_look + Vector2(0, -8.0 * DENSITY)).round() + shake
 
 func _unhandled_input(event: InputEvent) -> void:
+	# debug character select: 1 to 0 pick the first ten of Player.CAST, Shift+1 to 4 the rest
+	if event is InputEventKey and event.pressed and not event.echo:
+		var k: int = event.keycode
+		if k >= KEY_0 and k <= KEY_9:
+			var i := (k - KEY_1) if k != KEY_0 else 9
+			if event.shift_pressed:
+				i += 10
+			if i < Player.CAST.size():
+				select_character(Player.CAST[i])
+				get_viewport().set_input_as_handled()
+				return
 	if event.is_action_pressed("menu"):
 		get_tree().paused = not get_tree().paused
 		paused_label.visible = get_tree().paused
 		get_viewport().set_input_as_handled()
+
+func select_character(id: String) -> void:
+	if player.set_character(id):
+		_cast_label.text = "%s  (1-0, Shift+1-4: character)" % id.capitalize()
+
+## --lineup: the whole cast standing in a row facing the camera, centred under the player.
+func _lineup() -> void:
+	await get_tree().process_frame
+	await get_tree().create_timer(0.5).timeout
+	var host := player.get_parent()
+	var n := Player.CAST.size()
+	var centre := get_viewport().get_camera_2d().get_screen_center_position()
+	for i in n:
+		var s := CastSprite.new()
+		host.add_child(s)
+		s.load_character(Player.CAST[i])
+		s.global_position = Vector2(centre.x + 80.0 + (i - (n - 1) / 2.0) * 54.0, player.global_position.y + 34.0)
+	player.visible = false
+
+## --cycle: the player becomes each cast member in turn, walks a step, shoots and rolls.
+func _cycle() -> void:
+	player.use_mouse_aim = false
+	await get_tree().create_timer(0.6).timeout
+	for id in Player.CAST:
+		select_character(id)
+		player.aim = Vector2.RIGHT
+		Input.action_press("move_right")
+		await get_tree().create_timer(0.7).timeout
+		Input.action_release("move_right")
+		player.start_shot()
+		await get_tree().create_timer(float(player.sprite.duration("primary")) + 0.15).timeout
+		Input.action_press("move_left")
+		await get_tree().create_timer(0.7).timeout
+		Input.action_release("move_left")
+		await get_tree().create_timer(0.2).timeout
+	if args.has("quit"):
+		get_tree().quit()
 
 func _demo() -> void:
 	player.use_mouse_aim = false

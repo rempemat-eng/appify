@@ -91,3 +91,17 @@ func test_defeat_plays_before_downed() -> void:
 	assert_bool(downed[0]).is_false()
 	await get_tree().create_timer(2.0).timeout
 	assert_bool(downed[0]).is_true()
+
+func test_every_cast_member_loads_and_switches() -> void:
+	var p := _player()
+	for id in Player.CAST:
+		assert_bool(p.set_character(id)).is_true()
+		assert_str(p.character).is_equal(id)
+		var f := FileAccess.open("res://assets/characters/%s/manifest.json" % id, FileAccess.READ)
+		var m: Dictionary = JSON.parse_string(f.get_as_text())
+		assert_float(p.walk_speed).is_equal_approx(float(m.walk_speed), 0.001)
+		for clip in ["idle", "walk", "primary", "dodge", "hit", "defeat"]:
+			for fc in CastSprite.FACINGS:
+				assert_bool(p.sprite.sprite_frames.has_animation("%s_%s" % [clip, fc])).is_true()
+	assert_bool(p.set_character("bramble")).is_true()
+	assert_bool(p.start_shot()).is_true()

@@ -31,6 +31,11 @@ const HITSTOP_FRAMES := [4, 4, 7]    ## 4.2: 3 to 8 frames by weight; the finish
 const KNOCKBACK := [70.0 * DENSITY, 70.0 * DENSITY, 130.0 * DENSITY]
 const MERCY_TIME := 0.6              ## invulnerable after taking a hit
 const CHARACTER := "bramble"
+## The redrawn cast in select order (game.gd: keys 1 to 0, then Shift+1 to 4). Bramble has his
+## abilities wired (the arrow); the others play idle, walk, primary, dodge, hit and defeat until
+## the ability runner lands.
+const CAST := ["bramble", "iona", "pendle", "cairn", "morel", "velvet", "tam", "mirra", "brine", "ashe",
+	"clack", "nix", "rook", "mote"]
 const DEFEAT_HOLD := 0.5             ## the last defeat drawing holds this long before getting up
 
 @export var max_hp := 5
@@ -54,6 +59,7 @@ var _hurt_t := 0.0
 var state := &"idle"                 ## idle, walk, primary, dodge, hit, defeat (the clip shown)
 var facing := "S"
 var walk_speed := RUN_SPEED          ## replaced by the manifest's walk_speed in _ready
+var character := CHARACTER
 var _shot_dir := Vector2.RIGHT
 var _defeat_t := 0.0
 
@@ -64,8 +70,17 @@ func _ready() -> void:
 	add_to_group("player")
 	hp = max_hp
 	hitbox.monitoring = false
-	if sprite.load_character(CHARACTER) and sprite.walk_speed() > 0.0:
-		walk_speed = sprite.walk_speed()
+	set_character(character)
+
+## Swaps the body to another cast member (keeps position, HP and facing). False if unknown.
+func set_character(id: String) -> bool:
+	if not sprite.load_character(id):
+		return false
+	character = id
+	walk_speed = sprite.walk_speed() if sprite.walk_speed() > 0.0 else RUN_SPEED
+	state = &"idle"
+	sprite.play_clip("idle", facing, true)
+	return true
 
 func reset_motion() -> void:
 	velocity = Vector2.ZERO
@@ -273,6 +288,9 @@ func _advance_action(delta: float) -> void:
 
 ## The arrow leaves the bow where the drawing's arrow tip is, on the release drawing.
 func _release(frame: int) -> void:
+	if character != "bramble":      # the others' projectiles and effects come with the ability runner
+		shot_released.emit(null, frame)
+		return
 	var a := sprite.anchor("arrow_tip", frame)
 	if a == Vector2.ZERO:           # the arrow has left: the anchor of the drawing before
 		a = sprite.anchor("arrow_tip", maxi(frame - 1, 0))
