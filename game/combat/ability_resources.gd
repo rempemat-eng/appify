@@ -87,3 +87,15 @@ func advance(delta: float, action: String, powered: bool, active: bool = true) -
 		var rules: Dictionary = kit.executed_rules.heat
 		var rate := float(rules.cooling_per_second_during_primary) if action == "primary" else float(rules.cooling_per_second_other_powered_actions if powered else rules.cooling_per_second_other_ordinary_actions)
 		heat = maxf(0.0, heat - delta * rate)
+
+## Next eligibility boundary for a held input. Heat's strict <92 gate is crossed by a tiny
+## numeric margin, not a gameplay tick; this prevents a zero-length boundary at exactly92.
+## Return -1 when there is no resource boundary. Action/form boundaries come from the clock.
+func next_boundary(action: String, powered: bool) -> float:
+	var next := reload_remaining if reload_remaining > 0.00000001 else -1.0
+	if character == "nix" and heat >= float(kit.executed_rules.heat.block_primary_when_at_least):
+		var rules: Dictionary = kit.executed_rules.heat
+		var rate := float(rules.cooling_per_second_during_primary) if action == "primary" else float(rules.cooling_per_second_other_powered_actions if powered else rules.cooling_per_second_other_ordinary_actions)
+		var cooling_time := (heat - float(rules.block_primary_when_at_least) + 0.000001) / rate
+		next = minf(next, cooling_time) if next > 0.0 else cooling_time
+	return next

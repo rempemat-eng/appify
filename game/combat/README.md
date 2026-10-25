@@ -74,3 +74,34 @@ Integration decision needed from A before health application: the canonical atta
 9–49, foundation `Enemy` defaults to3 HP and `SliceEnemy` to4/8/12 HP with integer `take_hit`.
 No adapter or revised HP budget is approved. Keep canonical damage unchanged and obtain one explicit
 health/damage mapping; no guessed divisor, silent one-hit balance or enemy-lane edits.
+
+## Clock/resource binding checkpoint
+
+`AbilityRunner` now connects clock eligibility, synchronous time slices and release commands.
+Time slices run with the interval's old action/form state before clock mutation. Resource reload
+and strict heat eligibility boundaries split coarse advances, allowing held primary to resume
+without depending on frame size. The <92 heat comparison crosses by a 0.000001 heat-point numeric
+margin to avoid a zero-time retry loop; no cooldown, heat rate or resource balance is changed.
+A token produces at most one release command, carrying live `powered_at_release`, historical
+`powered_at_commit` and actual emitted round count. Special resource activation runs at contact,
+before the new powered clock starts. Inactive time freezes both components.
+
+This is a simulation binding, not world effects or a production Player driver. Callers can drain
+clock events and release commands separately; they must not independently consume resources again.
+Future world effects must capture launch state, present contact before dispatch, and preserve all
+stateful rules listed above. The runner does not select facings: forthcoming presentation must use
+manifest-defined available facings and release_anchor (A decision6403878182), without assuming four.
+
+Next executable step: implement finite canonical effect commands/handlers and stateful rules from
+#245, then the granted Player hook and J/A presentation bridge. Do not apply raw damage to world HP
+until Claude A approves the mapping: #275's 1:1 health proposal is not yet that approval. #279's
+progression modifiers remain outside this task; powered-form changes need the canonical owner's
+approval and must not rewrite the base kit. No new dodge, balance or reward rule is adopted here.
+
+Validation includes seven runner integration cases: cancellation across all fourteen kits,
+coarse/fine held fire across reload and overheat, partial fan at exact canonical contact, form
+expiry during preparation, special heat cap/cooling interval order and inactive/reconfigure state.
+The initial partial-fan test mistakenly sampled0.18s, before canonical0.1824s contact; its failure
+was corrected to read the canonical release value, without changing production timing. Final test
+result and exact source tree are recorded on PR #261. Full verify/art/CI/rendered/device testing
+remains pending until the port is complete. Keep DRAFT.

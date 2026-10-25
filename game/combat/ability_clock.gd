@@ -16,6 +16,11 @@ var powered_remaining := 0.0
 var cooldowns := {"primary": 0.0, "secondary": 0.0, "special": 0.0}
 ## Optional runner eligibility gate. A rejection must not spend a cooldown or action token.
 var can_commit := Callable()
+## Synchronous runner boundaries: advance resources using the interval's OLD state, then
+## deliver release before form activation. No callback may recursively advance this clock.
+var time_slice := Callable()
+var next_boundary := Callable()
+var on_release := Callable()
 var _events: Array[Dictionary] = []
 var _queued := ""
 var _queue_remaining := 0.0
@@ -123,9 +128,15 @@ func advance(delta: float, active: bool = true) -> void:
 		for value in cooldowns.values():
 			if value > 0.00000001:
 				step = minf(step, value)
+		if next_boundary.is_valid():
+			var resource_step: float = next_boundary.call(action, is_powered())
+			if resource_step > 0.00000001:
+				step = minf(step, resource_step)
 		# All zero-time boundaries are handled below before the next iteration.
 		step = maxf(step, 0.0)
 		var was_powered := is_powered()
+		if time_slice.is_valid():
+			time_slice.call(step, action, was_powered)
 		if is_busy():
 			elapsed += step
 		for name in cooldowns:
@@ -165,6 +176,9 @@ func drain_events() -> Array[Dictionary]:
 func _release() -> void:
 	released = true
 	_event("release", action)
+	if on_release.is_valid():
+		on_release.call({"action": action, "instance": instance, "elapsed": elapsed,
+			"powered_at_commit": _action_powered, "powered_at_release": is_powered()})
 	if action == "special":
 		powered_remaining = float(kit.powered.duration_seconds)
 		_event("powered_on", action)
