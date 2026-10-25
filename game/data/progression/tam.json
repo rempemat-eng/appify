@@ -14,97 +14,292 @@
       "block": "Ice guard",
       "special": "Glacier Form"
     },
-    "techniques": [
-      {
-        "id": "cold_breath",
-        "name": "Cold Breath",
-        "level": 3,
-        "binding": "hold Ice guard for 1 s",
-        "effect": "The held breath steadies him: the next palm applies two frost instead of one.",
-        "numbers": {
-          "hold_seconds": 1.0,
-          "frost": 2
-        },
-        "art": {
-          "new_clips": [],
-          "fx": [
-            "breath frost (3 drawings, finite)"
+    "skill_tree": {
+      "branches": [
+        {
+          "id": "palm",
+          "name": "Palm",
+          "covers": [
+            "primary"
           ],
-          "reuses": [
-            "guard 4"
+          "nodes": [
+            {
+              "id": "quick_palms",
+              "kind": "passive",
+              "name": "Quick Palms",
+              "effect": "Frost palms recover 5 % faster.",
+              "numbers": {
+                "primary_cooldown_pct": -5
+              },
+              "level": 2,
+              "cost": 1,
+              "requires": [],
+              "touches_canonical": false
+            },
+            {
+              "id": "cold_breath",
+              "name": "Cold Breath",
+              "binding": "hold Ice guard for 1 s",
+              "effect": "The held breath steadies him: the next palm applies two frost instead of one.",
+              "numbers": {
+                "hold_seconds": 1.0,
+                "frost": 2
+              },
+              "art": {
+                "new_clips": [],
+                "fx": [
+                  "breath frost (3 drawings, finite)"
+                ],
+                "reuses": [
+                  "guard 4"
+                ]
+              },
+              "touches_canonical": false,
+              "kind": "technique",
+              "level": 3,
+              "cost": 2,
+              "requires": [
+                "quick_palms"
+              ]
+            },
+            {
+              "id": "deep_cold",
+              "kind": "passive",
+              "name": "Deep Cold",
+              "effect": "Frost on foes lasts 20 % longer.",
+              "numbers": {
+                "frost_duration_pct": 20
+              },
+              "level": 6,
+              "cost": 1,
+              "requires": [
+                "cold_breath"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "cold_breath_2",
+              "kind": "technique upgrade",
+              "name": "Cold Breath II",
+              "effect": "The steadied palm also slows the foe.",
+              "numbers": {
+                "slow_pct": 20,
+                "slow_seconds": 2
+              },
+              "level": 12,
+              "cost": 3,
+              "requires": [
+                "deep_cold"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "hundred_palms",
+              "kind": "keystone",
+              "name": "Hundred Palms",
+              "effect": "Every fifth palm in a row strikes twice.",
+              "numbers": {
+                "every": 5
+              },
+              "level": 22,
+              "cost": 4,
+              "requires": [
+                "cold_breath_2"
+              ],
+              "touches_canonical": false
+            }
           ]
         },
-        "touches_canonical": false,
-        "upgrade": {
-          "level": 12,
-          "id": "cold_breath_2",
-          "name": "Cold Breath II",
-          "effect": "The steadied palm also slows the foe.",
-          "numbers": {
-            "slow_pct": 20,
-            "slow_seconds": 2
-          }
-        }
-      },
-      {
-        "id": "ridge_wall",
-        "name": "Ridge Wall",
-        "level": 9,
-        "binding": "passive on Ice ridge",
-        "effect": "The ridge ends in a low ice wall that stops projectiles for a moment.",
-        "numbers": {
-          "wall_seconds": 2,
-          "width_tiles": 1
-        },
-        "art": {
-          "new_clips": [],
-          "fx": [
-            "ice wall (rise 3, hold 1, crumble 3)"
+        {
+          "id": "ridge",
+          "name": "Ridge",
+          "covers": [
+            "secondary",
+            "special"
           ],
-          "reuses": []
-        },
-        "touches_canonical": false,
-        "upgrade": {
-          "level": 20,
-          "id": "ridge_wall_2",
-          "name": "Ridge Wall II",
-          "effect": "A wall that is hit shatters and chills foes beside it.",
-          "numbers": {
-            "chill_seconds": 1.5
-          }
-        }
-      },
-      {
-        "id": "still_water",
-        "name": "Still Water Step",
-        "level": 16,
-        "binding": "a perfect dodge",
-        "effect": "A frost patch is left where he rolled; foes on it slow.",
-        "numbers": {
-          "slow_pct": 30,
-          "patch_seconds": 2
-        },
-        "art": {
-          "new_clips": [],
-          "fx": [
-            "frost patch"
-          ],
-          "reuses": [
-            "dodge"
+          "nodes": [
+            {
+              "id": "long_ridge",
+              "kind": "passive",
+              "name": "Long Ridge",
+              "effect": "Ice ridge travels 10 % further.",
+              "numbers": {
+                "range_pct": 10
+              },
+              "level": 2,
+              "cost": 1,
+              "requires": [],
+              "touches_canonical": false
+            },
+            {
+              "id": "ridge_wall",
+              "name": "Ridge Wall",
+              "binding": "passive on Ice ridge",
+              "effect": "The ridge ends in a low ice wall that stops projectiles for a moment.",
+              "numbers": {
+                "wall_seconds": 2,
+                "width_tiles": 1
+              },
+              "art": {
+                "new_clips": [],
+                "fx": [
+                  "ice wall (rise 3, hold 1, crumble 3)"
+                ],
+                "reuses": []
+              },
+              "touches_canonical": false,
+              "kind": "technique",
+              "level": 9,
+              "cost": 2,
+              "requires": [
+                "long_ridge"
+              ]
+            },
+            {
+              "id": "glacier_step",
+              "kind": "passive",
+              "name": "Glacier Step",
+              "effect": "Glacier Form's glide +10 % speed.",
+              "numbers": {
+                "glide_pct": 10
+              },
+              "touches_canonical": true,
+              "note": "changes a count in Codex's powered form; needs C60's OK (#149)",
+              "level": 11,
+              "cost": 1,
+              "requires": [
+                "ridge_wall"
+              ]
+            },
+            {
+              "id": "ridge_wall_2",
+              "kind": "technique upgrade",
+              "name": "Ridge Wall II",
+              "effect": "A wall that is hit shatters and chills foes beside it.",
+              "numbers": {
+                "chill_seconds": 1.5
+              },
+              "level": 20,
+              "cost": 3,
+              "requires": [
+                "glacier_step"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "avalanche",
+              "kind": "keystone",
+              "name": "Avalanche",
+              "effect": "A ridge that hits three foes leaves an ice field.",
+              "numbers": {
+                "min_foes": 3
+              },
+              "level": 24,
+              "cost": 4,
+              "requires": [
+                "ridge_wall_2"
+              ],
+              "touches_canonical": false
+            }
           ]
         },
-        "touches_canonical": false,
-        "upgrade": {
-          "level": 26,
-          "id": "still_water_2",
-          "name": "Still Water Step II",
-          "effect": "Palms on a foe standing on the patch add one more frost.",
-          "numbers": {
-            "extra_frost": 1
-          }
+        {
+          "id": "stillness",
+          "name": "Stillness",
+          "covers": [
+            "block"
+          ],
+          "nodes": [
+            {
+              "id": "calm_guard",
+              "kind": "passive",
+              "name": "Calm Guard",
+              "effect": "Ice guard drain -10 %.",
+              "numbers": {
+                "guard_drain_pct": -10
+              },
+              "level": 4,
+              "cost": 1,
+              "requires": [],
+              "touches_canonical": false
+            },
+            {
+              "id": "still_water",
+              "name": "Still Water Step",
+              "binding": "a perfect dodge",
+              "effect": "A frost patch is left where he rolled; foes on it slow.",
+              "numbers": {
+                "slow_pct": 30,
+                "patch_seconds": 2
+              },
+              "art": {
+                "new_clips": [],
+                "fx": [
+                  "frost patch"
+                ],
+                "reuses": [
+                  "dodge"
+                ]
+              },
+              "touches_canonical": false,
+              "kind": "technique",
+              "level": 16,
+              "cost": 2,
+              "requires": [
+                "calm_guard"
+              ]
+            },
+            {
+              "id": "bothy_warmth",
+              "kind": "passive",
+              "name": "Bothy Warmth",
+              "effect": "Chill on you wears off 20 % sooner.",
+              "numbers": {
+                "chill_duration_pct": -20
+              },
+              "level": 18,
+              "cost": 1,
+              "requires": [
+                "still_water"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "still_water_2",
+              "kind": "technique upgrade",
+              "name": "Still Water Step II",
+              "effect": "Palms on a foe standing on the patch add one more frost.",
+              "numbers": {
+                "extra_frost": 1
+              },
+              "level": 26,
+              "cost": 3,
+              "requires": [
+                "bothy_warmth"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "unmoved",
+              "kind": "keystone",
+              "name": "Unmoved",
+              "effect": "Holding guard for 2 s makes the next block cost nothing.",
+              "numbers": {
+                "hold_seconds": 2
+              },
+              "level": 28,
+              "cost": 4,
+              "requires": [
+                "still_water_2"
+              ],
+              "touches_canonical": false
+            }
+          ]
         }
-      }
-    ]
+      ],
+      "points_by_level_30": 29,
+      "tree_cost": 33
+    }
   },
   "weapon": {
     "item": "wraps",
@@ -125,7 +320,8 @@
         "mechanics": {},
         "requires": {
           "level": 1
-        }
+        },
+        "sockets": 1
       },
       {
         "tier": 2,
@@ -146,14 +342,15 @@
         },
         "requires": {
           "level": 8,
-          "forge_tier": 1
+          "forge_open": true
         },
+        "sockets": 2,
         "cost": {
-          "glint": 150,
-          "scrap": 10,
+          "glint": 60,
+          "scrap": 5,
           "home_material": {
             "material": "frost iron",
-            "count": 4
+            "count": 2
           }
         }
       },
@@ -175,14 +372,15 @@
         },
         "requires": {
           "level": 16,
-          "forge_tier": 2
+          "forge_open": true
         },
+        "sockets": 2,
         "cost": {
-          "glint": 600,
-          "scrap": 30,
+          "glint": 150,
+          "scrap": 10,
           "home_material": {
             "material": "frost iron",
-            "count": 10
+            "count": 4
           }
         }
       },
@@ -205,14 +403,15 @@
         },
         "requires": {
           "level": 24,
-          "forge_tier": 3
+          "great_forge": true
         },
+        "sockets": 3,
         "cost": {
-          "glint": 1800,
-          "scrap": 60,
+          "glint": 300,
+          "scrap": 20,
           "home_material": {
             "material": "frost iron",
-            "count": 16
+            "count": 6
           },
           "starshard": 1
         }
@@ -316,9 +515,9 @@
       },
       "perk": {
         "status": "proposal",
-        "text": "Chill on you wears off 20 % sooner",
+        "text": "Your first tonic of each outing refills at the next camp you free",
         "numbers": {
-          "chill_duration_pct": -20
+          "tonic_refills": 1
         }
       }
     }

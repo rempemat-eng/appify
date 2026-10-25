@@ -14,93 +14,288 @@
       "block": "Steel plate",
       "special": "Longshot"
     },
-    "techniques": [
-      {
-        "id": "quick_hands",
-        "name": "Quick Hands",
-        "level": 3,
-        "binding": "a perfect dodge",
-        "effect": "Two rounds slip into the cylinder during the roll.",
-        "numbers": {
-          "rounds": 2
-        },
-        "art": {
-          "new_clips": [],
-          "fx": [],
-          "reuses": [
-            "dodge"
+    "skill_tree": {
+      "branches": [
+        {
+          "id": "revolver",
+          "name": "Revolver",
+          "covers": [
+            "primary"
+          ],
+          "nodes": [
+            {
+              "id": "smooth_action",
+              "kind": "passive",
+              "name": "Smooth Action",
+              "effect": "Revolver cooldown -5 %.",
+              "numbers": {
+                "primary_cooldown_pct": -5
+              },
+              "level": 2,
+              "cost": 1,
+              "requires": [],
+              "touches_canonical": false
+            },
+            {
+              "id": "quick_hands",
+              "name": "Quick Hands",
+              "binding": "a perfect dodge",
+              "effect": "Two rounds slip into the cylinder during the roll.",
+              "numbers": {
+                "rounds": 2
+              },
+              "art": {
+                "new_clips": [],
+                "fx": [],
+                "reuses": [
+                  "dodge"
+                ]
+              },
+              "touches_canonical": false,
+              "kind": "technique",
+              "level": 3,
+              "cost": 2,
+              "requires": [
+                "smooth_action"
+              ]
+            },
+            {
+              "id": "speed_loader",
+              "kind": "passive",
+              "name": "Speed Loader",
+              "effect": "Full reloads 10 % faster.",
+              "numbers": {
+                "reload_pct": -10
+              },
+              "level": 6,
+              "cost": 1,
+              "requires": [
+                "quick_hands"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "quick_hands_2",
+              "kind": "technique upgrade",
+              "name": "Quick Hands II",
+              "effect": "After a full reload from empty, the first shot is a critical hit.",
+              "numbers": {
+                "first_shot_crit": true
+              },
+              "level": 12,
+              "cost": 3,
+              "requires": [
+                "speed_loader"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "high_noon",
+              "kind": "keystone",
+              "name": "High Noon",
+              "effect": "The sixth round of a cylinder knocks back.",
+              "numbers": {
+                "knockback": 16
+              },
+              "level": 22,
+              "cost": 4,
+              "requires": [
+                "quick_hands_2"
+              ],
+              "touches_canonical": false
+            }
           ]
         },
-        "touches_canonical": false,
-        "upgrade": {
-          "level": 12,
-          "id": "quick_hands_2",
-          "name": "Quick Hands II",
-          "effect": "After a full reload from empty, the first shot is a critical hit.",
-          "numbers": {
-            "first_shot_crit": true
-          }
-        }
-      },
-      {
-        "id": "ricochet",
-        "name": "Ricochet",
-        "level": 9,
-        "binding": "passive on Fan fire",
-        "effect": "Fan fire rounds that hit high cover bounce once.",
-        "numbers": {
-          "bounces": 1,
-          "bounce_damage_pct": 60
-        },
-        "art": {
-          "new_clips": [],
-          "fx": [
-            "spark on the bounce"
+        {
+          "id": "fan_fire",
+          "name": "Fan fire",
+          "covers": [
+            "secondary"
           ],
-          "reuses": []
-        },
-        "touches_canonical": false,
-        "upgrade": {
-          "level": 20,
-          "id": "ricochet_2",
-          "name": "Ricochet II",
-          "effect": "A bounced round turns toward the nearest foe within 30 degrees.",
-          "numbers": {
-            "seek_cone_degrees": 30
-          }
-        }
-      },
-      {
-        "id": "dead_eye",
-        "name": "Dead Eye",
-        "level": 16,
-        "binding": "during Longshot, hold still for 0.6 s",
-        "effect": "The foe under the aim shows its weak point (the familiar's glint) for the next shot.",
-        "numbers": {
-          "still_seconds": 0.6
-        },
-        "art": {
-          "new_clips": [],
-          "fx": [
-            "scope glint on the rifle (1 drawing)"
-          ],
-          "reuses": [
-            "powered_idle"
+          "nodes": [
+            {
+              "id": "wrist_flick",
+              "kind": "passive",
+              "name": "Wrist Flick",
+              "effect": "Fan fire cooldown -8 %.",
+              "numbers": {
+                "secondary_cooldown_pct": -8
+              },
+              "level": 2,
+              "cost": 1,
+              "requires": [],
+              "touches_canonical": false
+            },
+            {
+              "id": "ricochet",
+              "name": "Ricochet",
+              "binding": "passive on Fan fire",
+              "effect": "Fan fire rounds that hit high cover bounce once.",
+              "numbers": {
+                "bounces": 1,
+                "bounce_damage_pct": 60
+              },
+              "art": {
+                "new_clips": [],
+                "fx": [
+                  "spark on the bounce"
+                ],
+                "reuses": []
+              },
+              "touches_canonical": false,
+              "kind": "technique",
+              "level": 9,
+              "cost": 2,
+              "requires": [
+                "wrist_flick"
+              ]
+            },
+            {
+              "id": "tight_fan",
+              "kind": "passive",
+              "name": "Tight Fan",
+              "effect": "Fan fire spread -10 %.",
+              "numbers": {
+                "spread_pct": -10
+              },
+              "level": 11,
+              "cost": 1,
+              "requires": [
+                "ricochet"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "ricochet_2",
+              "kind": "technique upgrade",
+              "name": "Ricochet II",
+              "effect": "A bounced round turns toward the nearest foe within 30 degrees.",
+              "numbers": {
+                "seek_cone_degrees": 30
+              },
+              "level": 20,
+              "cost": 3,
+              "requires": [
+                "tight_fan"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "gunsmoke",
+              "kind": "keystone",
+              "name": "Gunsmoke",
+              "effect": "Fan fire leaves smoke that makes shooters miss their next shot.",
+              "numbers": {
+                "seconds": 1.5
+              },
+              "level": 24,
+              "cost": 4,
+              "requires": [
+                "ricochet_2"
+              ],
+              "touches_canonical": false
+            }
           ]
         },
-        "touches_canonical": true,
-        "upgrade": {
-          "level": 26,
-          "id": "dead_eye_2",
-          "name": "Dead Eye II",
-          "effect": "A Longshot weak-point hit gives back 1 s of Longshot.",
-          "numbers": {
-            "form_refund_seconds": 1
-          }
-        },
-        "note": "the upgrade extends Codex's canonical form time; needs C60's OK (#149)"
-      }
-    ]
+        {
+          "id": "marksman",
+          "name": "Marksman",
+          "covers": [
+            "special",
+            "block"
+          ],
+          "nodes": [
+            {
+              "id": "plate_fold",
+              "kind": "passive",
+              "name": "Plate Fold",
+              "effect": "Steel plate raises 15 % faster.",
+              "numbers": {
+                "raise_pct": -15
+              },
+              "level": 4,
+              "cost": 1,
+              "requires": [],
+              "touches_canonical": false
+            },
+            {
+              "id": "dead_eye",
+              "name": "Dead Eye",
+              "binding": "during Longshot, hold still for 0.6 s",
+              "effect": "The foe under the aim shows its weak point (the familiar's glint) for the next shot.",
+              "numbers": {
+                "still_seconds": 0.6
+              },
+              "art": {
+                "new_clips": [],
+                "fx": [
+                  "scope glint on the rifle (1 drawing)"
+                ],
+                "reuses": [
+                  "powered_idle"
+                ]
+              },
+              "touches_canonical": true,
+              "note": "the upgrade extends Codex's canonical form time; needs C60's OK (#149)",
+              "kind": "technique",
+              "level": 16,
+              "cost": 2,
+              "requires": [
+                "plate_fold"
+              ]
+            },
+            {
+              "id": "steady_stock",
+              "kind": "passive",
+              "name": "Steady Stock",
+              "effect": "Longshot shots knock tanks back slightly.",
+              "numbers": {
+                "knockback": 8
+              },
+              "level": 18,
+              "cost": 1,
+              "requires": [
+                "dead_eye"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "dead_eye_2",
+              "kind": "technique upgrade",
+              "name": "Dead Eye II",
+              "effect": "A Longshot weak-point hit gives back 1 s of Longshot.",
+              "numbers": {
+                "form_refund_seconds": 1
+              },
+              "touches_canonical": true,
+              "note": "the upgrade extends Codex's canonical form time; needs C60's OK (#149)",
+              "level": 26,
+              "cost": 3,
+              "requires": [
+                "steady_stock"
+              ]
+            },
+            {
+              "id": "bullseye",
+              "kind": "keystone",
+              "name": "Bullseye",
+              "effect": "Longshot weak-point hits stagger elites.",
+              "numbers": {
+                "stagger_seconds": 0.6
+              },
+              "level": 28,
+              "cost": 4,
+              "requires": [
+                "dead_eye_2"
+              ],
+              "touches_canonical": false
+            }
+          ]
+        }
+      ],
+      "points_by_level_30": 29,
+      "tree_cost": 33
+    }
   },
   "weapon": {
     "item": "revolver",
@@ -122,7 +317,8 @@
         "mechanics": {},
         "requires": {
           "level": 1
-        }
+        },
+        "sockets": 1
       },
       {
         "tier": 2,
@@ -143,14 +339,15 @@
         },
         "requires": {
           "level": 8,
-          "forge_tier": 1
+          "forge_open": true
         },
+        "sockets": 2,
         "cost": {
-          "glint": 150,
-          "scrap": 10,
+          "glint": 60,
+          "scrap": 5,
           "home_material": {
             "material": "sunstone",
-            "count": 4
+            "count": 2
           }
         }
       },
@@ -173,14 +370,15 @@
         },
         "requires": {
           "level": 16,
-          "forge_tier": 2
+          "forge_open": true
         },
+        "sockets": 2,
         "cost": {
-          "glint": 600,
-          "scrap": 30,
+          "glint": 150,
+          "scrap": 10,
           "home_material": {
             "material": "sunstone",
-            "count": 10
+            "count": 4
           }
         }
       },
@@ -204,14 +402,15 @@
         },
         "requires": {
           "level": 24,
-          "forge_tier": 3
+          "great_forge": true
         },
+        "sockets": 3,
         "cost": {
-          "glint": 1800,
-          "scrap": 60,
+          "glint": 300,
+          "scrap": 20,
           "home_material": {
             "material": "sunstone",
-            "count": 16
+            "count": 6
           },
           "starshard": 1
         }

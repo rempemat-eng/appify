@@ -14,103 +14,298 @@
       "block": "Briar buckler",
       "special": "Briarshot"
     },
-    "techniques": [
-      {
-        "id": "steady_aim",
-        "name": "Steady Aim",
-        "level": 3,
-        "binding": "passive: stand still without firing",
-        "effect": "Standing still and not firing builds Aim pips; the next arrow spends them for extra power.",
-        "numbers": {
-          "pip_seconds": 0.5,
-          "max_pips": 3,
-          "power_per_pip_pct": 15
-        },
-        "art": {
-          "new_clips": [],
-          "fx": [
-            "aim pips over the bow hand"
+    "skill_tree": {
+      "branches": [
+        {
+          "id": "bow",
+          "name": "Bow",
+          "covers": [
+            "primary",
+            "special"
           ],
-          "reuses": [
-            "idle"
+          "nodes": [
+            {
+              "id": "fletcher",
+              "kind": "passive",
+              "name": "Fletcher",
+              "effect": "Arrows fly 6 % faster.",
+              "numbers": {
+                "arrow_speed_pct": 6
+              },
+              "level": 2,
+              "cost": 1,
+              "requires": [],
+              "touches_canonical": false
+            },
+            {
+              "id": "steady_aim",
+              "name": "Steady Aim",
+              "binding": "passive: stand still without firing",
+              "effect": "Standing still and not firing builds Aim pips; the next arrow spends them for extra power.",
+              "numbers": {
+                "pip_seconds": 0.5,
+                "max_pips": 3,
+                "power_per_pip_pct": 15
+              },
+              "art": {
+                "new_clips": [],
+                "fx": [
+                  "aim pips over the bow hand"
+                ],
+                "reuses": [
+                  "idle"
+                ]
+              },
+              "touches_canonical": false,
+              "kind": "technique",
+              "level": 3,
+              "cost": 2,
+              "requires": [
+                "fletcher"
+              ]
+            },
+            {
+              "id": "long_eye",
+              "kind": "passive",
+              "name": "Long Eye",
+              "effect": "Aim pips are kept while walking slowly for 0.5 s.",
+              "numbers": {
+                "keep_seconds": 0.5
+              },
+              "level": 6,
+              "cost": 1,
+              "requires": [
+                "steady_aim"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "steady_aim_2",
+              "kind": "technique upgrade",
+              "name": "Steady Aim II",
+              "effect": "Pips build faster, and a full three-pip arrow pierces one foe.",
+              "numbers": {
+                "pip_seconds": 0.35,
+                "full_pip_pierce": 1
+              },
+              "level": 12,
+              "cost": 3,
+              "requires": [
+                "long_eye"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "briar_volley",
+              "kind": "keystone",
+              "name": "Briar Volley",
+              "effect": "Briarshot's first arrow splits into two.",
+              "numbers": {
+                "split": 2
+              },
+              "touches_canonical": true,
+              "note": "changes a count in Codex's powered form; needs C60's OK (#149)",
+              "level": 22,
+              "cost": 4,
+              "requires": [
+                "steady_aim_2"
+              ]
+            }
           ]
         },
-        "touches_canonical": false,
-        "upgrade": {
-          "level": 12,
-          "id": "steady_aim_2",
-          "name": "Steady Aim II",
-          "effect": "Pips build faster, and a full three-pip arrow pierces one foe.",
-          "numbers": {
-            "pip_seconds": 0.35,
-            "full_pip_pierce": 1
-          }
-        }
-      },
-      {
-        "id": "hook_and_loose",
-        "name": "Hook and Loose",
-        "level": 9,
-        "binding": "primary within 0.4 s after the billhook sweep",
-        "effect": "A point-blank arrow follows the sweep and knocks the nearest foe back.",
-        "numbers": {
-          "window_seconds": 0.4,
-          "knockback": 18
-        },
-        "art": {
-          "new_clips": [
-            "secondary_loose (8 drawings: the sweep's settle into a quick draw)"
+        {
+          "id": "blade",
+          "name": "Blade",
+          "covers": [
+            "secondary"
           ],
-          "fx": [],
-          "reuses": [
-            "secondary",
-            "primary"
+          "nodes": [
+            {
+              "id": "keen_hook",
+              "kind": "passive",
+              "name": "Keen Hook",
+              "effect": "Billhook cooldown -8 %.",
+              "numbers": {
+                "secondary_cooldown_pct": -8
+              },
+              "level": 2,
+              "cost": 1,
+              "requires": [],
+              "touches_canonical": false
+            },
+            {
+              "id": "hook_and_loose",
+              "name": "Hook and Loose",
+              "binding": "primary within 0.4 s after the billhook sweep",
+              "effect": "A point-blank arrow follows the sweep and knocks the nearest foe back.",
+              "numbers": {
+                "window_seconds": 0.4,
+                "knockback": 18
+              },
+              "art": {
+                "new_clips": [
+                  "secondary_loose (8 drawings: the sweep's settle into a quick draw)"
+                ],
+                "fx": [],
+                "reuses": [
+                  "secondary",
+                  "primary"
+                ]
+              },
+              "touches_canonical": false,
+              "kind": "technique",
+              "level": 9,
+              "cost": 2,
+              "requires": [
+                "keen_hook"
+              ]
+            },
+            {
+              "id": "wide_sweep",
+              "kind": "passive",
+              "name": "Wide Sweep",
+              "effect": "Billhook arc +10 degrees.",
+              "numbers": {
+                "arc_degrees": 10
+              },
+              "level": 11,
+              "cost": 1,
+              "requires": [
+                "hook_and_loose"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "hook_and_loose_2",
+              "kind": "technique upgrade",
+              "name": "Hook and Loose II",
+              "effect": "The sweep also staggers light foes, so the arrow lands.",
+              "numbers": {
+                "stagger_seconds": 0.5
+              },
+              "level": 20,
+              "cost": 3,
+              "requires": [
+                "wide_sweep"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "hedger",
+              "kind": "keystone",
+              "name": "Hedger",
+              "effect": "A billhook sweep that hits three foes refunds a dodge charge.",
+              "numbers": {
+                "min_foes": 3
+              },
+              "level": 24,
+              "cost": 4,
+              "requires": [
+                "hook_and_loose_2"
+              ],
+              "touches_canonical": false
+            }
           ]
         },
-        "touches_canonical": false,
-        "upgrade": {
-          "level": 20,
-          "id": "hook_and_loose_2",
-          "name": "Hook and Loose II",
-          "effect": "The sweep also staggers light foes, so the arrow lands.",
-          "numbers": {
-            "stagger_seconds": 0.5
-          }
-        }
-      },
-      {
-        "id": "briar_snare",
-        "name": "Briar Snare",
-        "level": 16,
-        "binding": "lower the buckler within 0.5 s after it blocks a hit",
-        "effect": "A briar snare drops at your feet and roots the next ground foe that steps on it.",
-        "numbers": {
-          "window_seconds": 0.5,
-          "root_seconds": 1.2,
-          "max_snares": 1,
-          "snare_lifetime_seconds": 6
-        },
-        "art": {
-          "new_clips": [],
-          "fx": [
-            "snare (3 drawings: drop, set, spring)"
+        {
+          "id": "woodcraft",
+          "name": "Woodcraft",
+          "covers": [
+            "block"
           ],
-          "reuses": [
-            "guard 5 to 7"
+          "nodes": [
+            {
+              "id": "bracer_hide",
+              "kind": "passive",
+              "name": "Bracer Hide",
+              "effect": "Buckler guard cost -8 %.",
+              "numbers": {
+                "guard_cost_pct": -8
+              },
+              "level": 4,
+              "cost": 1,
+              "requires": [],
+              "touches_canonical": false
+            },
+            {
+              "id": "briar_snare",
+              "name": "Briar Snare",
+              "binding": "lower the buckler within 0.5 s after it blocks a hit",
+              "effect": "A briar snare drops at your feet and roots the next ground foe that steps on it.",
+              "numbers": {
+                "window_seconds": 0.5,
+                "root_seconds": 1.2,
+                "max_snares": 1,
+                "snare_lifetime_seconds": 6
+              },
+              "art": {
+                "new_clips": [],
+                "fx": [
+                  "snare (3 drawings: drop, set, spring)"
+                ],
+                "reuses": [
+                  "guard 5 to 7"
+                ]
+              },
+              "touches_canonical": false,
+              "kind": "technique",
+              "level": 16,
+              "cost": 2,
+              "requires": [
+                "bracer_hide"
+              ]
+            },
+            {
+              "id": "forager",
+              "kind": "passive",
+              "name": "Forager",
+              "effect": "Freed woodland foes drop seeds a little more often.",
+              "numbers": {
+                "seed_drop_pct": 10
+              },
+              "level": 18,
+              "cost": 1,
+              "requires": [
+                "briar_snare"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "briar_snare_2",
+              "kind": "technique upgrade",
+              "name": "Briar Snare II",
+              "effect": "Two snares at once; a foe rooted by Briarshot springs the nearest snare too.",
+              "numbers": {
+                "max_snares": 2
+              },
+              "level": 26,
+              "cost": 3,
+              "requires": [
+                "forager"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "old_ranger",
+              "kind": "keystone",
+              "name": "Old Ranger",
+              "effect": "Snares and roots last 25 % longer.",
+              "numbers": {
+                "root_pct": 25
+              },
+              "level": 28,
+              "cost": 4,
+              "requires": [
+                "briar_snare_2"
+              ],
+              "touches_canonical": false
+            }
           ]
-        },
-        "touches_canonical": false,
-        "upgrade": {
-          "level": 26,
-          "id": "briar_snare_2",
-          "name": "Briar Snare II",
-          "effect": "Two snares at once; a foe rooted by Briarshot springs the nearest snare too.",
-          "numbers": {
-            "max_snares": 2
-          }
         }
-      }
-    ]
+      ],
+      "points_by_level_30": 29,
+      "tree_cost": 33
+    }
   },
   "weapon": {
     "item": "bow",
@@ -120,7 +315,7 @@
         "tier": 1,
         "name": "Yew bow",
         "art": {
-          "silhouette": "today's drawing: a plain shallow recurve, 42 px tip to tip, leather grip wrap",
+          "silhouette": "the tier-1 drawing (being redrawn larger in cast v2): a plain shallow recurve with a leather grip wrap",
           "materials": [
             "bow",
             "leather",
@@ -133,20 +328,21 @@
         "mechanics": {},
         "requires": {
           "level": 1
-        }
+        },
+        "sockets": 1
       },
       {
         "tier": 2,
         "name": "Carved recurve",
         "art": {
-          "silhouette": "the limb tips curl back 3 px each into a clear recurve; the grip is wrapped in green cord 6 px long",
+          "silhouette": "the limb tips curl back +3 px each into a clear recurve; the grip is wrapped in green cord over the whole grip",
           "materials": [
             "bow",
             "mantle (grip cord)",
             "string"
           ],
           "glow": "none",
-          "size": "44 px tip to tip",
+          "size": "+2 px per limb over tier 1",
           "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
         },
         "mechanics": {
@@ -154,14 +350,15 @@
         },
         "requires": {
           "level": 8,
-          "forge_tier": 1
+          "forge_open": true
         },
+        "sockets": 2,
         "cost": {
-          "glint": 150,
-          "scrap": 10,
+          "glint": 60,
+          "scrap": 5,
           "home_material": {
             "material": "timber",
-            "count": 4
+            "count": 2
           }
         }
       },
@@ -177,7 +374,7 @@
             "storm (shard)"
           ],
           "glow": "the shard's light tone only; no animation",
-          "size": "44 px",
+          "size": "as tier 2",
           "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
         },
         "mechanics": {
@@ -185,14 +382,15 @@
         },
         "requires": {
           "level": 16,
-          "forge_tier": 2
+          "forge_open": true
         },
+        "sockets": 2,
         "cost": {
-          "glint": 600,
-          "scrap": 30,
+          "glint": 150,
+          "scrap": 10,
           "home_material": {
             "material": "timber",
-            "count": 10
+            "count": 4
           }
         }
       },
@@ -200,14 +398,14 @@
         "tier": 4,
         "name": "Starfall bow",
         "art": {
-          "silhouette": "limbs of dark moonwood that flare into crescent tips (+2 px each end); gold riser; the string is drawn in starlight",
+          "silhouette": "limbs of dark moonwood that flare into crescent tips (+2 px each end over tier 3); gold riser; the string is drawn in starlight",
           "materials": [
             "moonwood (new)",
             "gold",
             "starlight (new)"
           ],
           "glow": "the string's base and light tones glow while drawn; a 2 px sparkle at each tip on release (2 drawings, off under reduced motion)",
-          "size": "46 px tip to tip; still inside the cell",
+          "size": "+4 px per limb over tier 1; must stay inside the cell",
           "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
         },
         "mechanics": {
@@ -216,14 +414,15 @@
         },
         "requires": {
           "level": 24,
-          "forge_tier": 3
+          "great_forge": true
         },
+        "sockets": 3,
         "cost": {
-          "glint": 1800,
-          "scrap": 60,
+          "glint": 300,
+          "scrap": 20,
           "home_material": {
             "material": "timber",
-            "count": 16
+            "count": 6
           },
           "starshard": 1
         }

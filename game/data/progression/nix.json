@@ -14,94 +14,289 @@
       "block": "Arm shield",
       "special": "Limit Release"
     },
-    "techniques": [
-      {
-        "id": "heat_sink",
-        "name": "Heat Sink",
-        "level": 3,
-        "binding": "a perfect dodge",
-        "effect": "The arm vents part of its heat.",
-        "numbers": {
-          "heat_vented_pct": 40
-        },
-        "art": {
-          "new_clips": [],
-          "fx": [
-            "steam vent from the casing (3 drawings)"
+    "skill_tree": {
+      "branches": [
+        {
+          "id": "laser",
+          "name": "Laser",
+          "covers": [
+            "primary"
           ],
-          "reuses": [
-            "dodge"
+          "nodes": [
+            {
+              "id": "heat_spread",
+              "kind": "passive",
+              "name": "Heat Spread",
+              "effect": "Laser pulses add 8 % less heat.",
+              "numbers": {
+                "heat_pct": -8
+              },
+              "level": 2,
+              "cost": 1,
+              "requires": [],
+              "touches_canonical": false
+            },
+            {
+              "id": "heat_sink",
+              "name": "Heat Sink",
+              "binding": "a perfect dodge",
+              "effect": "The arm vents part of its heat.",
+              "numbers": {
+                "heat_vented_pct": 40
+              },
+              "art": {
+                "new_clips": [],
+                "fx": [
+                  "steam vent from the casing (3 drawings)"
+                ],
+                "reuses": [
+                  "dodge"
+                ]
+              },
+              "touches_canonical": false,
+              "kind": "technique",
+              "level": 3,
+              "cost": 2,
+              "requires": [
+                "heat_spread"
+              ]
+            },
+            {
+              "id": "fine_focus",
+              "kind": "passive",
+              "name": "Fine Focus",
+              "effect": "Pulses fly 8 % faster.",
+              "numbers": {
+                "pulse_speed_pct": 8
+              },
+              "level": 6,
+              "cost": 1,
+              "requires": [
+                "heat_sink"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "heat_sink_2",
+              "kind": "technique upgrade",
+              "name": "Heat Sink II",
+              "effect": "The vent releases a small shock ring.",
+              "numbers": {
+                "ring_damage": 8,
+                "ring_radius": 24
+              },
+              "level": 12,
+              "cost": 3,
+              "requires": [
+                "fine_focus"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "overdrive",
+              "kind": "keystone",
+              "name": "Overdrive",
+              "effect": "At over 80 % heat, pulses knock back.",
+              "numbers": {
+                "knockback": 10
+              },
+              "level": 22,
+              "cost": 4,
+              "requires": [
+                "heat_sink_2"
+              ],
+              "touches_canonical": false
+            }
           ]
         },
-        "touches_canonical": false,
-        "upgrade": {
-          "level": 12,
-          "id": "heat_sink_2",
-          "name": "Heat Sink II",
-          "effect": "The vent releases a small shock ring.",
-          "numbers": {
-            "ring_damage": 8,
-            "ring_radius": 24
-          }
-        }
-      },
-      {
-        "id": "flashbreak",
-        "name": "Flashbreak",
-        "level": 9,
-        "binding": "passive when the Afterimage breaks",
-        "effect": "The hologram breaks in a flash that blinds foes beside it.",
-        "numbers": {
-          "blind_seconds": 1.0,
-          "radius": 28
-        },
-        "art": {
-          "new_clips": [],
-          "fx": [
-            "flash (2 drawings)"
+        {
+          "id": "ghost",
+          "name": "Ghost",
+          "covers": [
+            "secondary"
           ],
-          "reuses": []
+          "nodes": [
+            {
+              "id": "quick_image",
+              "kind": "passive",
+              "name": "Quick Image",
+              "effect": "Afterimage cooldown -8 %.",
+              "numbers": {
+                "secondary_cooldown_pct": -8
+              },
+              "level": 2,
+              "cost": 1,
+              "requires": [],
+              "touches_canonical": false
+            },
+            {
+              "id": "flashbreak",
+              "name": "Flashbreak",
+              "binding": "passive when the Afterimage breaks",
+              "effect": "The hologram breaks in a flash that blinds foes beside it.",
+              "numbers": {
+                "blind_seconds": 1.0,
+                "radius": 28
+              },
+              "art": {
+                "new_clips": [],
+                "fx": [
+                  "flash (2 drawings)"
+                ],
+                "reuses": []
+              },
+              "touches_canonical": false,
+              "kind": "technique",
+              "level": 9,
+              "cost": 2,
+              "requires": [
+                "quick_image"
+              ]
+            },
+            {
+              "id": "loud_ghost",
+              "kind": "passive",
+              "name": "Loud Ghost",
+              "effect": "The hologram draws foes from 20 % further.",
+              "numbers": {
+                "draw_range_pct": 20
+              },
+              "level": 11,
+              "cost": 1,
+              "requires": [
+                "flashbreak"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "flashbreak_2",
+              "kind": "technique upgrade",
+              "name": "Flashbreak II",
+              "effect": "The flash also shows elites' weak points for 3 s.",
+              "numbers": {
+                "weak_point_seconds": 3
+              },
+              "level": 20,
+              "cost": 3,
+              "requires": [
+                "loud_ghost"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "double_exposure",
+              "kind": "keystone",
+              "name": "Double Exposure",
+              "effect": "Breaking a hologram cools the arm by 20 %.",
+              "numbers": {
+                "cool_pct": 20
+              },
+              "level": 24,
+              "cost": 4,
+              "requires": [
+                "flashbreak_2"
+              ],
+              "touches_canonical": false
+            }
+          ]
         },
-        "touches_canonical": false,
-        "upgrade": {
-          "level": 20,
-          "id": "flashbreak_2",
-          "name": "Flashbreak II",
-          "effect": "The flash also shows elites' weak points for 3 s.",
-          "numbers": {
-            "weak_point_seconds": 3
-          }
-        }
-      },
-      {
-        "id": "redline",
-        "name": "Redline",
-        "level": 16,
-        "binding": "passive above 80 % heat",
-        "effect": "Pulses chain to one nearby foe.",
-        "numbers": {
-          "heat_threshold_pct": 80,
-          "chain_damage_pct": 40
-        },
-        "art": {
-          "new_clips": [],
-          "fx": [
-            "chain arc"
+        {
+          "id": "shield",
+          "name": "Shield",
+          "covers": [
+            "block",
+            "special"
           ],
-          "reuses": []
-        },
-        "touches_canonical": false,
-        "upgrade": {
-          "level": 26,
-          "id": "redline_2",
-          "name": "Redline II",
-          "effect": "Blocking with the arm shield above 80 % heat turns part of the blocked damage into cooling.",
-          "numbers": {
-            "cooling_per_block": 10
-          }
+          "nodes": [
+            {
+              "id": "capacitor",
+              "kind": "passive",
+              "name": "Capacitor",
+              "effect": "Arm shield cost -8 %.",
+              "numbers": {
+                "guard_cost_pct": -8
+              },
+              "level": 4,
+              "cost": 1,
+              "requires": [],
+              "touches_canonical": false
+            },
+            {
+              "id": "redline",
+              "name": "Redline",
+              "binding": "passive above 80 % heat",
+              "effect": "Pulses chain to one nearby foe.",
+              "numbers": {
+                "heat_threshold_pct": 80,
+                "chain_damage_pct": 40
+              },
+              "art": {
+                "new_clips": [],
+                "fx": [
+                  "chain arc"
+                ],
+                "reuses": []
+              },
+              "touches_canonical": false,
+              "kind": "technique",
+              "level": 16,
+              "cost": 2,
+              "requires": [
+                "capacitor"
+              ]
+            },
+            {
+              "id": "grounded",
+              "kind": "passive",
+              "name": "Grounded",
+              "effect": "Shock on you wears off 20 % sooner.",
+              "numbers": {
+                "shock_duration_pct": -20
+              },
+              "level": 18,
+              "cost": 1,
+              "requires": [
+                "redline"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "redline_2",
+              "kind": "technique upgrade",
+              "name": "Redline II",
+              "effect": "Blocking with the arm shield above 80 % heat turns part of the blocked damage into cooling.",
+              "numbers": {
+                "cooling_per_block": 10
+              },
+              "level": 26,
+              "cost": 3,
+              "requires": [
+                "grounded"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "limitless",
+              "kind": "keystone",
+              "name": "Limitless",
+              "effect": "Limit Release's beams pierce one more foe.",
+              "numbers": {
+                "pierce": 1
+              },
+              "touches_canonical": true,
+              "note": "changes a count in Codex's powered form; needs C60's OK (#149)",
+              "level": 28,
+              "cost": 4,
+              "requires": [
+                "redline_2"
+              ]
+            }
+          ]
         }
-      }
-    ]
+      ],
+      "points_by_level_30": 29,
+      "tree_cost": 33
+    }
   },
   "weapon": {
     "item": "laser arm",
@@ -123,7 +318,8 @@
         "mechanics": {},
         "requires": {
           "level": 1
-        }
+        },
+        "sockets": 1
       },
       {
         "tier": 2,
@@ -144,14 +340,15 @@
         },
         "requires": {
           "level": 8,
-          "forge_tier": 1
+          "forge_open": true
         },
+        "sockets": 2,
         "cost": {
-          "glint": 150,
-          "scrap": 10,
+          "glint": 60,
+          "scrap": 5,
           "home_material": {
             "material": "neon glass",
-            "count": 4
+            "count": 2
           }
         }
       },
@@ -173,14 +370,15 @@
         },
         "requires": {
           "level": 16,
-          "forge_tier": 2
+          "forge_open": true
         },
+        "sockets": 2,
         "cost": {
-          "glint": 600,
-          "scrap": 30,
+          "glint": 150,
+          "scrap": 10,
           "home_material": {
             "material": "neon glass",
-            "count": 10
+            "count": 4
           }
         }
       },
@@ -204,14 +402,15 @@
         },
         "requires": {
           "level": 24,
-          "forge_tier": 3
+          "great_forge": true
         },
+        "sockets": 3,
         "cost": {
-          "glint": 1800,
-          "scrap": 60,
+          "glint": 300,
+          "scrap": 20,
           "home_material": {
             "material": "neon glass",
-            "count": 16
+            "count": 6
           },
           "starshard": 1
         }
@@ -313,9 +512,9 @@
       },
       "perk": {
         "status": "proposal",
-        "text": "Shock on you wears off 20 % sooner",
+        "text": "The map marks Company crates within 6 tiles",
         "numbers": {
-          "shock_duration_pct": -20
+          "crate_hint_tiles": 6
         }
       }
     }

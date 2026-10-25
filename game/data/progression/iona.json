@@ -3,7 +3,7 @@
   "status": "proposal (claude-a/progression, 25 Oct); every number is a placeholder until play-tests and Claude L's harness",
   "id": "iona",
   "name": "Iona",
-  "identity": "grassland storm-lancer; one 92 px spear in the RIGHT hand, the LEFT grips the same shaft for two-handed actions; long braid down the back, magenta scarf",
+  "identity": "grassland storm-lancer; one long spear in the RIGHT hand, the LEFT grips the same shaft for two-handed actions; long braid down the back, magenta scarf",
   "home_region": "brackens",
   "home_region_note": "Claude K's proposal on #149 (25 Oct), not yet decided by Matt; it only sets the tier material",
   "abilities": {
@@ -14,97 +14,293 @@
       "block": "Gust guard",
       "special": "Storm Mantle"
     },
-    "techniques": [
-      {
-        "id": "gale_step",
-        "name": "Gale Step",
-        "level": 3,
-        "binding": "primary within 0.3 s after a dodge",
-        "effect": "The roll flows into a long thrust that reaches further than Spearpoint.",
-        "numbers": {
-          "window_seconds": 0.3,
-          "reach_pct": 30
-        },
-        "art": {
-          "new_clips": [],
-          "fx": [],
-          "reuses": [
-            "dodge",
+    "skill_tree": {
+      "branches": [
+        {
+          "id": "spear",
+          "name": "Spear",
+          "covers": [
             "primary"
-          ]
-        },
-        "touches_canonical": false,
-        "upgrade": {
-          "level": 12,
-          "id": "gale_step_2",
-          "name": "Gale Step II",
-          "effect": "A Gale Step that hits gives back half a dodge charge.",
-          "numbers": {
-            "dodge_refund": 0.5
-          }
-        }
-      },
-      {
-        "id": "static_charge",
-        "name": "Static Charge",
-        "level": 9,
-        "binding": "passive: every third spear hit on the same foe charges it",
-        "effect": "The next Wind lunge into a charged foe discharges one small arc to a second foe. Smaller than Storm Mantle's arcs, and only from a lunge.",
-        "numbers": {
-          "hits_to_charge": 3,
-          "arc_damage_pct": 40,
-          "arc_range": 40
-        },
-        "art": {
-          "new_clips": [],
-          "fx": [
-            "charge mark on the foe (2 drawings)"
           ],
-          "reuses": [
-            "secondary"
+          "nodes": [
+            {
+              "id": "long_haft",
+              "kind": "passive",
+              "name": "Long Haft",
+              "effect": "Spearpoint reach +3.",
+              "numbers": {
+                "primary_reach": 3
+              },
+              "level": 2,
+              "cost": 1,
+              "requires": [],
+              "touches_canonical": false
+            },
+            {
+              "id": "gale_step",
+              "name": "Gale Step",
+              "binding": "primary within 0.3 s after a dodge",
+              "effect": "The roll flows into a long thrust that reaches further than Spearpoint.",
+              "numbers": {
+                "window_seconds": 0.3,
+                "reach_pct": 30
+              },
+              "art": {
+                "new_clips": [],
+                "fx": [],
+                "reuses": [
+                  "dodge",
+                  "primary"
+                ]
+              },
+              "touches_canonical": false,
+              "kind": "technique",
+              "level": 3,
+              "cost": 2,
+              "requires": [
+                "long_haft"
+              ]
+            },
+            {
+              "id": "quick_recovery",
+              "kind": "passive",
+              "name": "Quick Recovery",
+              "effect": "Spearpoint recovers 6 % faster.",
+              "numbers": {
+                "primary_cooldown_pct": -6
+              },
+              "level": 6,
+              "cost": 1,
+              "requires": [
+                "gale_step"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "gale_step_2",
+              "kind": "technique upgrade",
+              "name": "Gale Step II",
+              "effect": "A Gale Step that hits gives back half a dodge charge.",
+              "numbers": {
+                "dodge_refund": 0.5
+              },
+              "level": 12,
+              "cost": 3,
+              "requires": [
+                "quick_recovery"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "thunderhead",
+              "kind": "keystone",
+              "name": "Thunderhead",
+              "effect": "Storm Mantle's arcs reach one tile further.",
+              "numbers": {
+                "arc_range": 16
+              },
+              "touches_canonical": true,
+              "note": "changes a count in Codex's powered form; needs C60's OK (#149)",
+              "level": 22,
+              "cost": 4,
+              "requires": [
+                "gale_step_2"
+              ]
+            }
           ]
         },
-        "touches_canonical": false,
-        "upgrade": {
-          "level": 20,
-          "id": "static_charge_2",
-          "name": "Static Charge II",
-          "effect": "The discharge interrupts a shooter's wind-up, once per foe.",
-          "numbers": {
-            "interrupt_per_foe": 1
-          }
-        }
-      },
-      {
-        "id": "windbreak",
-        "name": "Windbreak",
-        "level": 16,
-        "binding": "raise Gust guard within 0.2 s of a projectile reaching you",
-        "effect": "The projectile is turned back along its path instead of draining guard.",
-        "numbers": {
-          "window_seconds": 0.2
-        },
-        "art": {
-          "new_clips": [],
-          "fx": [
-            "deflect gust (3 drawings)"
+        {
+          "id": "lunge",
+          "name": "Lunge",
+          "covers": [
+            "secondary",
+            "special"
           ],
-          "reuses": [
-            "guard 0 to 4"
+          "nodes": [
+            {
+              "id": "windborne",
+              "kind": "passive",
+              "name": "Windborne",
+              "effect": "Wind lunge cooldown -8 %.",
+              "numbers": {
+                "secondary_cooldown_pct": -8
+              },
+              "level": 2,
+              "cost": 1,
+              "requires": [],
+              "touches_canonical": false
+            },
+            {
+              "id": "static_charge",
+              "name": "Static Charge",
+              "binding": "passive: every third spear hit on the same foe charges it",
+              "effect": "The next Wind lunge into a charged foe discharges one small arc to a second foe. Smaller than Storm Mantle's arcs, and only from a lunge.",
+              "numbers": {
+                "hits_to_charge": 3,
+                "arc_damage_pct": 40,
+                "arc_range": 40
+              },
+              "art": {
+                "new_clips": [],
+                "fx": [
+                  "charge mark on the foe (2 drawings)"
+                ],
+                "reuses": [
+                  "secondary"
+                ]
+              },
+              "touches_canonical": false,
+              "kind": "technique",
+              "level": 9,
+              "cost": 2,
+              "requires": [
+                "windborne"
+              ]
+            },
+            {
+              "id": "follow_through",
+              "kind": "passive",
+              "name": "Follow-through",
+              "effect": "A lunge that hits refreshes Spearpoint at once.",
+              "numbers": {
+                "refresh": true
+              },
+              "level": 11,
+              "cost": 1,
+              "requires": [
+                "static_charge"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "static_charge_2",
+              "kind": "technique upgrade",
+              "name": "Static Charge II",
+              "effect": "The discharge interrupts a shooter's wind-up, once per foe.",
+              "numbers": {
+                "interrupt_per_foe": 1
+              },
+              "level": 20,
+              "cost": 3,
+              "requires": [
+                "follow_through"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "gale_rider",
+              "kind": "keystone",
+              "name": "Gale Rider",
+              "effect": "Two Wind lunges can be chained before the cooldown.",
+              "numbers": {
+                "charges": 2
+              },
+              "touches_canonical": true,
+              "note": "changes a count in Codex's powered form; needs C60's OK (#149)",
+              "level": 24,
+              "cost": 4,
+              "requires": [
+                "static_charge_2"
+              ]
+            }
           ]
         },
-        "touches_canonical": false,
-        "upgrade": {
-          "level": 26,
-          "id": "windbreak_2",
-          "name": "Windbreak II",
-          "effect": "Deflected projectiles carry a storm arc.",
-          "numbers": {
-            "arc_damage_pct": 30
-          }
+        {
+          "id": "gust",
+          "name": "Gust",
+          "covers": [
+            "block"
+          ],
+          "nodes": [
+            {
+              "id": "steady_feet",
+              "kind": "passive",
+              "name": "Steady Feet",
+              "effect": "Gust guard drain -10 %.",
+              "numbers": {
+                "guard_drain_pct": -10
+              },
+              "level": 4,
+              "cost": 1,
+              "requires": [],
+              "touches_canonical": false
+            },
+            {
+              "id": "windbreak",
+              "name": "Windbreak",
+              "binding": "raise Gust guard within 0.2 s of a projectile reaching you",
+              "effect": "The projectile is turned back along its path instead of draining guard.",
+              "numbers": {
+                "window_seconds": 0.2
+              },
+              "art": {
+                "new_clips": [],
+                "fx": [
+                  "deflect gust (3 drawings)"
+                ],
+                "reuses": [
+                  "guard 0 to 4"
+                ]
+              },
+              "touches_canonical": false,
+              "kind": "technique",
+              "level": 16,
+              "cost": 2,
+              "requires": [
+                "steady_feet"
+              ]
+            },
+            {
+              "id": "crosswind",
+              "kind": "passive",
+              "name": "Crosswind",
+              "effect": "Shooters' projectiles slow near your raised guard.",
+              "numbers": {
+                "slow_pct": 20
+              },
+              "level": 18,
+              "cost": 1,
+              "requires": [
+                "windbreak"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "windbreak_2",
+              "kind": "technique upgrade",
+              "name": "Windbreak II",
+              "effect": "Deflected projectiles carry a storm arc.",
+              "numbers": {
+                "arc_damage_pct": 30
+              },
+              "level": 26,
+              "cost": 3,
+              "requires": [
+                "crosswind"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "eye_of_the_storm",
+              "kind": "keystone",
+              "name": "Eye of the Storm",
+              "effect": "While guarding, foes in melee are pushed back once a second.",
+              "numbers": {
+                "push": 10
+              },
+              "level": 28,
+              "cost": 4,
+              "requires": [
+                "windbreak_2"
+              ],
+              "touches_canonical": false
+            }
+          ]
         }
-      }
-    ]
+      ],
+      "points_by_level_30": 29,
+      "tree_cost": 33
+    }
   },
   "weapon": {
     "item": "spear",
@@ -114,7 +310,7 @@
         "tier": 1,
         "name": "Ash spear",
         "art": {
-          "silhouette": "today's drawing: steel leaf blade, gold collar, gold-banded brass shaft, steel butt spike; 92 px",
+          "silhouette": "today's drawing: steel leaf blade, gold collar, gold-banded brass shaft, steel butt spike",
           "materials": [
             "steel",
             "gold",
@@ -127,7 +323,8 @@
         "mechanics": {},
         "requires": {
           "level": 1
-        }
+        },
+        "sockets": 1
       },
       {
         "tier": 2,
@@ -140,7 +337,7 @@
             "scarf (pennon)"
           ],
           "glow": "none",
-          "size": "92 px; the barbs widen the head to 9 px",
+          "size": "length as tier 1; the barbs widen the head by +4 px",
           "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
         },
         "mechanics": {
@@ -148,14 +345,15 @@
         },
         "requires": {
           "level": 8,
-          "forge_tier": 1
+          "forge_open": true
         },
+        "sockets": 2,
         "cost": {
-          "glint": 150,
-          "scrap": 10,
+          "glint": 60,
+          "scrap": 5,
           "home_material": {
             "material": "fleece",
-            "count": 4
+            "count": 2
           }
         }
       },
@@ -170,7 +368,7 @@
             "copper (new)"
           ],
           "glow": "none",
-          "size": "92 px",
+          "size": "length as tier 1",
           "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
         },
         "mechanics": {
@@ -178,14 +376,15 @@
         },
         "requires": {
           "level": 16,
-          "forge_tier": 2
+          "forge_open": true
         },
+        "sockets": 2,
         "cost": {
-          "glint": 600,
-          "scrap": 30,
+          "glint": 150,
+          "scrap": 10,
           "home_material": {
             "material": "fleece",
-            "count": 10
+            "count": 4
           }
         }
       },
@@ -201,7 +400,7 @@
             "starlight (new)"
           ],
           "glow": "the fuller and ribbon glow in their light tone; the ribbon lags one drawing behind the spear",
-          "size": "92 px (length is fixed by the kit's reach)",
+          "size": "length as tier 1 (fixed by the kit's reach)",
           "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
         },
         "mechanics": {
@@ -210,14 +409,15 @@
         },
         "requires": {
           "level": 24,
-          "forge_tier": 3
+          "great_forge": true
         },
+        "sockets": 3,
         "cost": {
-          "glint": 1800,
-          "scrap": 60,
+          "glint": 300,
+          "scrap": 20,
           "home_material": {
             "material": "fleece",
-            "count": 16
+            "count": 6
           },
           "starshard": 1
         }

@@ -14,91 +14,286 @@
       "block": "Dive brace",
       "special": "Abyssal Drive"
     },
-    "techniques": [
-      {
-        "id": "anchor_line",
-        "name": "Anchor Line",
-        "level": 3,
-        "binding": "Reel toward an anchored heavy target",
-        "effect": "He arrives with a gun-butt strike.",
-        "numbers": {
-          "strike_damage_pct": 60
-        },
-        "art": {
-          "new_clips": [],
-          "fx": [],
-          "reuses": [
-            "secondary (the untethered sweep's drawings)"
-          ]
-        },
-        "touches_canonical": false,
-        "upgrade": {
-          "level": 12,
-          "id": "anchor_line_2",
-          "name": "Anchor Line II",
-          "effect": "The arrival strike staggers the target.",
-          "numbers": {
-            "stagger_seconds": 0.6
-          }
-        }
-      },
-      {
-        "id": "barbed_line",
-        "name": "Barbed Line",
-        "level": 9,
-        "binding": "passive while a foe is tethered",
-        "effect": "A tethered foe takes a little damage each second.",
-        "numbers": {
-          "damage_per_second": 3
-        },
-        "art": {
-          "new_clips": [],
-          "fx": [],
-          "reuses": []
-        },
-        "touches_canonical": false,
-        "upgrade": {
-          "level": 20,
-          "id": "barbed_line_2",
-          "name": "Barbed Line II",
-          "effect": "Reeling a light foe into a wall stuns it.",
-          "numbers": {
-            "stun_seconds": 0.8
-          }
-        }
-      },
-      {
-        "id": "pressure_brace",
-        "name": "Pressure Brace",
-        "level": 16,
-        "binding": "hold Dive brace for 1 s",
-        "effect": "Pressure builds in the pack: the next harpoon flies faster and passes through one foe.",
-        "numbers": {
-          "hold_seconds": 1.0,
-          "speed_pct": 30,
-          "pierce": 1
-        },
-        "art": {
-          "new_clips": [],
-          "fx": [
-            "pack gauge needle (2 drawings)"
+    "skill_tree": {
+      "branches": [
+        {
+          "id": "line",
+          "name": "Line",
+          "covers": [
+            "secondary"
           ],
-          "reuses": [
-            "guard 4"
+          "nodes": [
+            {
+              "id": "oiled_reel",
+              "kind": "passive",
+              "name": "Oiled Reel",
+              "effect": "Reel 10 % faster.",
+              "numbers": {
+                "reel_speed_pct": 10
+              },
+              "level": 2,
+              "cost": 1,
+              "requires": [],
+              "touches_canonical": false
+            },
+            {
+              "id": "anchor_line",
+              "name": "Anchor Line",
+              "binding": "Reel toward an anchored heavy target",
+              "effect": "He arrives with a gun-butt strike.",
+              "numbers": {
+                "strike_damage_pct": 60
+              },
+              "art": {
+                "new_clips": [],
+                "fx": [],
+                "reuses": [
+                  "secondary (the untethered sweep's drawings)"
+                ]
+              },
+              "touches_canonical": false,
+              "kind": "technique",
+              "level": 3,
+              "cost": 2,
+              "requires": [
+                "oiled_reel"
+              ]
+            },
+            {
+              "id": "long_line",
+              "kind": "passive",
+              "name": "Long Line",
+              "effect": "Tether length +10 %.",
+              "numbers": {
+                "tether_pct": 10
+              },
+              "level": 6,
+              "cost": 1,
+              "requires": [
+                "anchor_line"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "anchor_line_2",
+              "kind": "technique upgrade",
+              "name": "Anchor Line II",
+              "effect": "The arrival strike staggers the target.",
+              "numbers": {
+                "stagger_seconds": 0.6
+              },
+              "level": 12,
+              "cost": 3,
+              "requires": [
+                "long_line"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "kraken",
+              "kind": "keystone",
+              "name": "Kraken",
+              "effect": "Reeling a heavy foe drags it one step toward you.",
+              "numbers": {
+                "pull": 10
+              },
+              "level": 22,
+              "cost": 4,
+              "requires": [
+                "anchor_line_2"
+              ],
+              "touches_canonical": false
+            }
           ]
         },
-        "touches_canonical": false,
-        "upgrade": {
-          "level": 26,
-          "id": "pressure_brace_2",
-          "name": "Pressure Brace II",
-          "effect": "For its first 0.3 s the brace blocks from every side.",
-          "numbers": {
-            "omni_block_seconds": 0.3
-          }
+        {
+          "id": "harpoon",
+          "name": "Harpoon",
+          "covers": [
+            "primary",
+            "special"
+          ],
+          "nodes": [
+            {
+              "id": "quick_winch",
+              "kind": "passive",
+              "name": "Quick Winch",
+              "effect": "Harpoon reload 8 % faster.",
+              "numbers": {
+                "reload_pct": -8
+              },
+              "level": 2,
+              "cost": 1,
+              "requires": [],
+              "touches_canonical": false
+            },
+            {
+              "id": "barbed_line",
+              "name": "Barbed Line",
+              "binding": "passive while a foe is tethered",
+              "effect": "A tethered foe takes a little damage each second.",
+              "numbers": {
+                "damage_per_second": 3
+              },
+              "art": {
+                "new_clips": [],
+                "fx": [],
+                "reuses": []
+              },
+              "touches_canonical": false,
+              "kind": "technique",
+              "level": 9,
+              "cost": 2,
+              "requires": [
+                "quick_winch"
+              ]
+            },
+            {
+              "id": "heavy_head",
+              "kind": "passive",
+              "name": "Heavy Head",
+              "effect": "Harpoon knockback +15 %.",
+              "numbers": {
+                "knockback_pct": 15
+              },
+              "level": 11,
+              "cost": 1,
+              "requires": [
+                "barbed_line"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "barbed_line_2",
+              "kind": "technique upgrade",
+              "name": "Barbed Line II",
+              "effect": "Reeling a light foe into a wall stuns it.",
+              "numbers": {
+                "stun_seconds": 0.8
+              },
+              "level": 20,
+              "cost": 3,
+              "requires": [
+                "heavy_head"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "leviathan",
+              "kind": "keystone",
+              "name": "Leviathan",
+              "effect": "Abyssal Drive's shots pierce one more foe.",
+              "numbers": {
+                "pierce": 1
+              },
+              "touches_canonical": true,
+              "note": "changes a count in Codex's powered form; needs C60's OK (#149)",
+              "level": 24,
+              "cost": 4,
+              "requires": [
+                "barbed_line_2"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "brace",
+          "name": "Brace",
+          "covers": [
+            "block"
+          ],
+          "nodes": [
+            {
+              "id": "weighted_boots",
+              "kind": "passive",
+              "name": "Weighted Boots",
+              "effect": "Dive brace guard cost -8 %.",
+              "numbers": {
+                "guard_cost_pct": -8
+              },
+              "level": 4,
+              "cost": 1,
+              "requires": [],
+              "touches_canonical": false
+            },
+            {
+              "id": "pressure_brace",
+              "name": "Pressure Brace",
+              "binding": "hold Dive brace for 1 s",
+              "effect": "Pressure builds in the pack: the next harpoon flies faster and passes through one foe.",
+              "numbers": {
+                "hold_seconds": 1.0,
+                "speed_pct": 30,
+                "pierce": 1
+              },
+              "art": {
+                "new_clips": [],
+                "fx": [
+                  "pack gauge needle (2 drawings)"
+                ],
+                "reuses": [
+                  "guard 4"
+                ]
+              },
+              "touches_canonical": false,
+              "kind": "technique",
+              "level": 16,
+              "cost": 2,
+              "requires": [
+                "weighted_boots"
+              ]
+            },
+            {
+              "id": "sea_legs",
+              "kind": "passive",
+              "name": "Sea Legs",
+              "effect": "Knockback on you -20 %.",
+              "numbers": {
+                "knockback_taken_pct": -20
+              },
+              "level": 18,
+              "cost": 1,
+              "requires": [
+                "pressure_brace"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "pressure_brace_2",
+              "kind": "technique upgrade",
+              "name": "Pressure Brace II",
+              "effect": "For its first 0.3 s the brace blocks from every side.",
+              "numbers": {
+                "omni_block_seconds": 0.3
+              },
+              "level": 26,
+              "cost": 3,
+              "requires": [
+                "sea_legs"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "ironclad",
+              "kind": "keystone",
+              "name": "Ironclad",
+              "effect": "Dive brace blocks from both sides.",
+              "numbers": {
+                "arc_degrees": 360
+              },
+              "level": 28,
+              "cost": 4,
+              "requires": [
+                "pressure_brace_2"
+              ],
+              "touches_canonical": false
+            }
+          ]
         }
-      }
-    ]
+      ],
+      "points_by_level_30": 29,
+      "tree_cost": 33
+    }
   },
   "weapon": {
     "item": "harpoon gun",
@@ -121,7 +316,8 @@
         "mechanics": {},
         "requires": {
           "level": 1
-        }
+        },
+        "sockets": 1
       },
       {
         "tier": 2,
@@ -142,14 +338,15 @@
         },
         "requires": {
           "level": 8,
-          "forge_tier": 1
+          "forge_open": true
         },
+        "sockets": 2,
         "cost": {
-          "glint": 150,
-          "scrap": 10,
+          "glint": 60,
+          "scrap": 5,
           "home_material": {
             "material": "basalt",
-            "count": 4
+            "count": 2
           }
         }
       },
@@ -172,14 +369,15 @@
         },
         "requires": {
           "level": 16,
-          "forge_tier": 2
+          "forge_open": true
         },
+        "sockets": 2,
         "cost": {
-          "glint": 600,
-          "scrap": 30,
+          "glint": 150,
+          "scrap": 10,
           "home_material": {
             "material": "basalt",
-            "count": 10
+            "count": 4
           }
         }
       },
@@ -203,14 +401,15 @@
         },
         "requires": {
           "level": 24,
-          "forge_tier": 3
+          "great_forge": true
         },
+        "sockets": 3,
         "cost": {
-          "glint": 1800,
-          "scrap": 60,
+          "glint": 300,
+          "scrap": 20,
           "home_material": {
             "material": "basalt",
-            "count": 16
+            "count": 6
           },
           "starshard": 1
         }

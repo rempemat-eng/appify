@@ -14,95 +14,293 @@
       "block": "Energy guard",
       "special": "Orbital Rig"
     },
-    "techniques": [
-      {
-        "id": "air_shot",
-        "name": "Air Shot",
-        "level": 3,
-        "binding": "carbine bolts fired while airborne in a vault",
-        "effect": "Bolts fired from the air are charged.",
-        "numbers": {
-          "power_pct": 25
-        },
-        "art": {
-          "new_clips": [],
-          "fx": [],
-          "reuses": [
-            "the airborne primary (#257 lists it as missing; it is needed anyway)"
+    "skill_tree": {
+      "branches": [
+        {
+          "id": "thrusters",
+          "name": "Thrusters",
+          "covers": [
+            "secondary"
+          ],
+          "nodes": [
+            {
+              "id": "trimmed_jets",
+              "kind": "passive",
+              "name": "Trimmed Jets",
+              "effect": "Vault cooldown -8 %.",
+              "numbers": {
+                "secondary_cooldown_pct": -8
+              },
+              "level": 2,
+              "cost": 1,
+              "requires": [],
+              "touches_canonical": false
+            },
+            {
+              "id": "air_shot",
+              "name": "Air Shot",
+              "binding": "carbine bolts fired while airborne in a vault",
+              "effect": "Bolts fired from the air are charged.",
+              "numbers": {
+                "power_pct": 25
+              },
+              "art": {
+                "new_clips": [],
+                "fx": [],
+                "reuses": [
+                  "the airborne primary (#257 lists it as missing; it is needed anyway)"
+                ]
+              },
+              "touches_canonical": false,
+              "kind": "technique",
+              "level": 3,
+              "cost": 2,
+              "requires": [
+                "trimmed_jets"
+              ]
+            },
+            {
+              "id": "long_hop",
+              "kind": "passive",
+              "name": "Long Hop",
+              "effect": "Vault distance +10 %.",
+              "numbers": {
+                "distance_pct": 10
+              },
+              "level": 6,
+              "cost": 1,
+              "requires": [
+                "air_shot"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "air_shot_2",
+              "kind": "technique upgrade",
+              "name": "Air Shot II",
+              "effect": "Landing from a vault puffs a dust ring that knocks swarmers back.",
+              "numbers": {
+                "ring_radius": 22,
+                "knockback": 14
+              },
+              "level": 12,
+              "cost": 3,
+              "requires": [
+                "long_hop"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "double_jet",
+              "kind": "keystone",
+              "name": "Double Jet",
+              "effect": "Two vaults can be chained before the cooldown.",
+              "numbers": {
+                "charges": 2
+              },
+              "touches_canonical": true,
+              "note": "changes a count in Codex's powered form; needs C60's OK (#149)",
+              "level": 22,
+              "cost": 4,
+              "requires": [
+                "air_shot_2"
+              ]
+            }
           ]
         },
-        "touches_canonical": false,
-        "upgrade": {
-          "level": 12,
-          "id": "air_shot_2",
-          "name": "Air Shot II",
-          "effect": "Landing from a vault puffs a dust ring that knocks swarmers back.",
-          "numbers": {
-            "ring_radius": 22,
-            "knockback": 14
-          }
-        }
-      },
-      {
-        "id": "thruster_flare",
-        "name": "Thruster Flare",
-        "level": 9,
-        "binding": "passive on Thruster Vault",
-        "effect": "The take-off leaves a short flame at its start that burns foes in it.",
-        "numbers": {
-          "burn_seconds": 1.2,
-          "length": 20
-        },
-        "art": {
-          "new_clips": [],
-          "fx": [
-            "flame patch (4 drawings, finite)"
+        {
+          "id": "carbine",
+          "name": "Carbine",
+          "covers": [
+            "primary",
+            "block"
           ],
-          "reuses": []
+          "nodes": [
+            {
+              "id": "hot_coils",
+              "kind": "passive",
+              "name": "Hot Coils",
+              "effect": "Carbine recovers 5 % faster.",
+              "numbers": {
+                "primary_cooldown_pct": -5
+              },
+              "level": 2,
+              "cost": 1,
+              "requires": [],
+              "touches_canonical": false
+            },
+            {
+              "id": "thruster_flare",
+              "name": "Thruster Flare",
+              "binding": "passive on Thruster Vault",
+              "effect": "The take-off leaves a short flame at its start that burns foes in it.",
+              "numbers": {
+                "burn_seconds": 1.2,
+                "length": 20
+              },
+              "art": {
+                "new_clips": [],
+                "fx": [
+                  "flame patch (4 drawings, finite)"
+                ],
+                "reuses": []
+              },
+              "touches_canonical": false,
+              "kind": "technique",
+              "level": 9,
+              "cost": 2,
+              "requires": [
+                "hot_coils"
+              ]
+            },
+            {
+              "id": "shield_cells",
+              "kind": "passive",
+              "name": "Shield Cells",
+              "effect": "Energy guard cost -8 %.",
+              "numbers": {
+                "guard_cost_pct": -8
+              },
+              "level": 11,
+              "cost": 1,
+              "requires": [
+                "thruster_flare"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "thruster_flare_2",
+              "kind": "technique upgrade",
+              "name": "Thruster Flare II",
+              "effect": "The vault recharges faster.",
+              "numbers": {
+                "cooldown_pct": -20
+              },
+              "level": 20,
+              "cost": 3,
+              "requires": [
+                "shield_cells"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "salvager",
+              "kind": "keystone",
+              "name": "Salvager",
+              "effect": "Freed machines drop a little more scrap.",
+              "numbers": {
+                "scrap_pct": 10
+              },
+              "level": 24,
+              "cost": 4,
+              "requires": [
+                "thruster_flare_2"
+              ],
+              "touches_canonical": false
+            }
+          ]
         },
-        "touches_canonical": false,
-        "upgrade": {
-          "level": 20,
-          "id": "thruster_flare_2",
-          "name": "Thruster Flare II",
-          "effect": "The vault recharges faster.",
-          "numbers": {
-            "cooldown_pct": -20
-          }
-        }
-      },
-      {
-        "id": "scrap_shell",
-        "name": "Scrap Shell",
-        "level": 16,
-        "binding": "block three hits with Energy guard",
-        "effect": "The guard banks a shell; the next vault lands with a burst round him.",
-        "numbers": {
-          "hits": 3,
-          "burst_damage": 14,
-          "burst_radius": 26
-        },
-        "art": {
-          "new_clips": [],
-          "fx": [
-            "shell counter on the guard (3 pips)",
-            "burst (4 drawings)"
+        {
+          "id": "rig",
+          "name": "Rig",
+          "covers": [
+            "special"
           ],
-          "reuses": []
-        },
-        "touches_canonical": true,
-        "upgrade": {
-          "level": 26,
-          "id": "scrap_shell_2",
-          "name": "Scrap Shell II",
-          "effect": "Orbital Rig's turrets start on the nearest foe he has designated.",
-          "numbers": {
-            "turret_initial_target": "nearest_designated"
-          }
-        },
-        "note": "changes Codex's turret target rule at activation; needs C60's OK (#149)"
-      }
-    ]
+          "nodes": [
+            {
+              "id": "quick_deploy",
+              "kind": "passive",
+              "name": "Quick Deploy",
+              "effect": "Turrets fire their first pulse sooner.",
+              "numbers": {
+                "first_shot_seconds": -0.08
+              },
+              "touches_canonical": true,
+              "note": "changes a count in Codex's powered form; needs C60's OK (#149)",
+              "level": 4,
+              "cost": 1,
+              "requires": []
+            },
+            {
+              "id": "scrap_shell",
+              "name": "Scrap Shell",
+              "binding": "block three hits with Energy guard",
+              "effect": "The guard banks a shell; the next vault lands with a burst round him.",
+              "numbers": {
+                "hits": 3,
+                "burst_damage": 14,
+                "burst_radius": 26
+              },
+              "art": {
+                "new_clips": [],
+                "fx": [
+                  "shell counter on the guard (3 pips)",
+                  "burst (4 drawings)"
+                ],
+                "reuses": []
+              },
+              "touches_canonical": true,
+              "note": "changes Codex's turret target rule at activation; needs C60's OK (#149)",
+              "kind": "technique",
+              "level": 16,
+              "cost": 2,
+              "requires": [
+                "quick_deploy"
+              ]
+            },
+            {
+              "id": "spotter",
+              "kind": "passive",
+              "name": "Spotter",
+              "effect": "Designation lasts 0.5 s longer.",
+              "numbers": {
+                "designation_seconds": 0.5
+              },
+              "level": 18,
+              "cost": 1,
+              "requires": [
+                "scrap_shell"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "scrap_shell_2",
+              "kind": "technique upgrade",
+              "name": "Scrap Shell II",
+              "effect": "Orbital Rig's turrets start on the nearest foe he has designated.",
+              "numbers": {
+                "turret_initial_target": "nearest_designated"
+              },
+              "touches_canonical": true,
+              "note": "changes Codex's turret target rule at activation; needs C60's OK (#149)",
+              "level": 26,
+              "cost": 3,
+              "requires": [
+                "spotter"
+              ]
+            },
+            {
+              "id": "overwatch",
+              "kind": "keystone",
+              "name": "Overwatch",
+              "effect": "Turrets may stay a little further from you.",
+              "numbers": {
+                "operator_distance_pct": 15
+              },
+              "touches_canonical": true,
+              "note": "changes a count in Codex's powered form; needs C60's OK (#149)",
+              "level": 28,
+              "cost": 4,
+              "requires": [
+                "scrap_shell_2"
+              ]
+            }
+          ]
+        }
+      ],
+      "points_by_level_30": 29,
+      "tree_cost": 33
+    }
   },
   "weapon": {
     "item": "pulse carbine",
@@ -124,7 +322,8 @@
         "mechanics": {},
         "requires": {
           "level": 1
-        }
+        },
+        "sockets": 1
       },
       {
         "tier": 2,
@@ -144,14 +343,15 @@
         },
         "requires": {
           "level": 8,
-          "forge_tier": 1
+          "forge_open": true
         },
+        "sockets": 2,
         "cost": {
-          "glint": 150,
-          "scrap": 10,
+          "glint": 60,
+          "scrap": 5,
           "home_material": {
             "material": "station alloy",
-            "count": 4
+            "count": 2
           }
         }
       },
@@ -174,14 +374,15 @@
         },
         "requires": {
           "level": 16,
-          "forge_tier": 2
+          "forge_open": true
         },
+        "sockets": 2,
         "cost": {
-          "glint": 600,
-          "scrap": 30,
+          "glint": 150,
+          "scrap": 10,
           "home_material": {
             "material": "station alloy",
-            "count": 10
+            "count": 4
           }
         }
       },
@@ -204,14 +405,15 @@
         },
         "requires": {
           "level": 24,
-          "forge_tier": 3
+          "great_forge": true
         },
+        "sockets": 3,
         "cost": {
-          "glint": 1800,
-          "scrap": 60,
+          "glint": 300,
+          "scrap": 20,
           "home_material": {
             "material": "station alloy",
-            "count": 16
+            "count": 6
           },
           "starshard": 1
         }
