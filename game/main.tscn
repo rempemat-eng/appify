@@ -1,0 +1,23 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://main/pixel_screen.gd" id="1"]
+[ext_resource type="PackedScene" path="res://game.tscn" id="2"]
+
+[node name="Main" type="Node"]
+script = ExtResource("1")
+
+[node name="Screen" type="SubViewportContainer" parent="."]
+offset_right = 960.0
+offset_bottom = 540.0
+texture_filter = 1
+
+[node name="World" type="SubViewport" parent="Screen"]
+handle_input_locally = false
+snap_2d_transforms_to_pixel = true
+snap_2d_vertices_to_pixel = true
+canvas_item_default_texture_filter = 0
+audio_listener_enable_2d = true
+size = Vector2i(960, 540)
+render_target_update_mode = 4
+
+[node name="Game" parent="Screen/World" instance=ExtResource("2")]

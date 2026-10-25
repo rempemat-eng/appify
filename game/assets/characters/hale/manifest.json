@@ -1,0 +1,6230 @@
+{
+ "id": "hale",
+ "name": "Hale",
+ "view": "SNEW",
+ "directions": [
+  "S",
+  "N",
+  "E",
+  "W"
+ ],
+ "default_direction": "E",
+ "frame_size": [
+  160,
+  144
+ ],
+ "foot_pivot": [
+  80,
+  136
+ ],
+ "body_height_target": 74,
+ "walk_speed": 66.2,
+ "stair_speed": null,
+ "anchor_space": "pixels relative to foot_pivot, screen orientation (x right, y down)",
+ "source": "castwork out/hale (procedural rig), imported by game/tools/import_cast.py",
+ "clips": {
+  "idle": {
+   "frame_count": 8,
+   "durations": [
+    0.26,
+    0.18,
+    0.2,
+    0.26,
+    0.22,
+    0.18,
+    0.12,
+    0.18
+   ],
+   "duration": 1.6,
+   "loop": true,
+   "release_frame": null,
+   "release_time": null,
+   "hold_frame": null,
+   "roles": null,
+   "facings": {
+    "S": {
+     "frames": [
+      {
+       "path": "res://assets/animated/hale/idle_S_00.png",
+       "file": "idle_S_00.png",
+       "packed_bounds": [
+        58,
+        62,
+        102,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -16.4,
+         -28.6
+        ],
+        "hand_L": [
+         15.8,
+         -29.0
+        ],
+        "foot_R": [
+         -5.2,
+         -0.4
+        ],
+        "foot_L": [
+         5.2,
+         -1.6
+        ],
+        "hammer_face": [
+         -16.4,
+         -18.0
+        ]
+       },
+       "equipment": {
+        "hammer": 29
+       },
+       "sha256": "dca742dd3c525cb79e95e30693c47a114677a5329c78c6dab8b8369ab33a5604",
+       "sheet": "sheets/idle_S.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/idle_S_01.png",
+       "file": "idle_S_01.png",
+       "packed_bounds": [
+        58,
+        62,
+        102,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -16.4,
+         -28.6
+        ],
+        "hand_L": [
+         15.8,
+         -29.0
+        ],
+        "foot_R": [
+         -5.2,
+         -0.4
+        ],
+        "foot_L": [
+         5.2,
+         -1.6
+        ],
+        "hammer_face": [
+         -16.4,
+         -18.0
+        ]
+       },
+       "equipment": {
+        "hammer": 29
+       },
+       "sha256": "dca742dd3c525cb79e95e30693c47a114677a5329c78c6dab8b8369ab33a5604",
+       "sheet": "sheets/idle_S.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/idle_S_02.png",
+       "file": "idle_S_02.png",
+       "packed_bounds": [
+        58,
+        61,
+        101,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -16.4,
+         -29.1
+        ],
+        "hand_L": [
+         15.8,
+         -29.5
+        ],
+        "foot_R": [
+         -5.2,
+         -0.4
+        ],
+        "foot_L": [
+         5.2,
+         -1.6
+        ],
+        "hammer_face": [
+         -16.4,
+         -18.6
+        ]
+       },
+       "equipment": {
+        "hammer": 31
+       },
+       "sha256": "07a747b5864d86c88526ad9750f03222e755e71feb6ee595b020cdb651db6f2a",
+       "sheet": "sheets/idle_S.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/idle_S_03.png",
+       "file": "idle_S_03.png",
+       "packed_bounds": [
+        58,
+        61,
+        101,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -16.4,
+         -29.1
+        ],
+        "hand_L": [
+         15.8,
+         -29.5
+        ],
+        "foot_R": [
+         -5.2,
+         -0.4
+        ],
+        "foot_L": [
+         5.2,
+         -1.6
+        ],
+        "hammer_face": [
+         -16.4,
+         -18.6
+        ]
+       },
+       "equipment": {
+        "hammer": 31
+       },
+       "sha256": "07a747b5864d86c88526ad9750f03222e755e71feb6ee595b020cdb651db6f2a",
+       "sheet": "sheets/idle_S.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/idle_S_04.png",
+       "file": "idle_S_04.png",
+       "packed_bounds": [
+        58,
+        61,
+        101,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -16.4,
+         -29.1
+        ],
+        "hand_L": [
+         15.8,
+         -29.5
+        ],
+        "foot_R": [
+         -5.2,
+         -0.4
+        ],
+        "foot_L": [
+         5.2,
+         -1.6
+        ],
+        "hammer_face": [
+         -16.4,
+         -18.6
+        ]
+       },
+       "equipment": {
+        "hammer": 31
+       },
+       "sha256": "07a747b5864d86c88526ad9750f03222e755e71feb6ee595b020cdb651db6f2a",
+       "sheet": "sheets/idle_S.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/idle_S_05.png",
+       "file": "idle_S_05.png",
+       "packed_bounds": [
+        58,
+        61,
+        101,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -16.4,
+         -29.1
+        ],
+        "hand_L": [
+         15.8,
+         -29.5
+        ],
+        "foot_R": [
+         -5.2,
+         -0.4
+        ],
+        "foot_L": [
+         5.2,
+         -1.6
+        ],
+        "hammer_face": [
+         -16.4,
+         -18.6
+        ]
+       },
+       "equipment": {
+        "hammer": 31
+       },
+       "sha256": "07a747b5864d86c88526ad9750f03222e755e71feb6ee595b020cdb651db6f2a",
+       "sheet": "sheets/idle_S.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/idle_S_06.png",
+       "file": "idle_S_06.png",
+       "packed_bounds": [
+        58,
+        62,
+        102,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -16.4,
+         -28.6
+        ],
+        "hand_L": [
+         15.8,
+         -29.0
+        ],
+        "foot_R": [
+         -5.2,
+         -0.4
+        ],
+        "foot_L": [
+         5.2,
+         -1.6
+        ],
+        "hammer_face": [
+         -16.4,
+         -18.0
+        ]
+       },
+       "equipment": {
+        "hammer": 29
+       },
+       "sha256": "8eb31678353e1d0c6c28e6fe636bb6090679f6d0117513ac6fe84cbed3cbb40c",
+       "sheet": "sheets/idle_S.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/idle_S_07.png",
+       "file": "idle_S_07.png",
+       "packed_bounds": [
+        58,
+        62,
+        102,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -16.4,
+         -28.6
+        ],
+        "hand_L": [
+         15.8,
+         -29.0
+        ],
+        "foot_R": [
+         -5.2,
+         -0.4
+        ],
+        "foot_L": [
+         5.2,
+         -1.6
+        ],
+        "hammer_face": [
+         -16.4,
+         -18.0
+        ]
+       },
+       "equipment": {
+        "hammer": 29
+       },
+       "sha256": "dca742dd3c525cb79e95e30693c47a114677a5329c78c6dab8b8369ab33a5604",
+       "sheet": "sheets/idle_S.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "N": {
+     "frames": [
+      {
+       "path": "res://assets/animated/hale/idle_N_00.png",
+       "file": "idle_N_00.png",
+       "packed_bounds": [
+        58,
+        62,
+        102,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         16.4,
+         -30.1
+        ],
+        "hand_L": [
+         -15.8,
+         -29.7
+        ],
+        "foot_R": [
+         5.2,
+         -1.6
+        ],
+        "foot_L": [
+         -5.2,
+         -0.4
+        ],
+        "hammer_face": [
+         16.4,
+         -17.9
+        ]
+       },
+       "equipment": {
+        "hammer": 35
+       },
+       "sha256": "524d3d3249fab76ee65788db4fc460561b814f77ba5cdeb0c8debac6cb5869ca",
+       "sheet": "sheets/idle_N.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/idle_N_01.png",
+       "file": "idle_N_01.png",
+       "packed_bounds": [
+        58,
+        62,
+        102,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         16.4,
+         -30.1
+        ],
+        "hand_L": [
+         -15.8,
+         -29.7
+        ],
+        "foot_R": [
+         5.2,
+         -1.6
+        ],
+        "foot_L": [
+         -5.2,
+         -0.4
+        ],
+        "hammer_face": [
+         16.4,
+         -17.9
+        ]
+       },
+       "equipment": {
+        "hammer": 35
+       },
+       "sha256": "524d3d3249fab76ee65788db4fc460561b814f77ba5cdeb0c8debac6cb5869ca",
+       "sheet": "sheets/idle_N.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/idle_N_02.png",
+       "file": "idle_N_02.png",
+       "packed_bounds": [
+        59,
+        61,
+        102,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         16.4,
+         -30.6
+        ],
+        "hand_L": [
+         -15.8,
+         -30.3
+        ],
+        "foot_R": [
+         5.2,
+         -1.6
+        ],
+        "foot_L": [
+         -5.2,
+         -0.4
+        ],
+        "hammer_face": [
+         16.4,
+         -18.5
+        ]
+       },
+       "equipment": {
+        "hammer": 33
+       },
+       "sha256": "9141f9fd56b387fad6dda7e10619fce364357cae498eb0e2c8064fa22c379f7a",
+       "sheet": "sheets/idle_N.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/idle_N_03.png",
+       "file": "idle_N_03.png",
+       "packed_bounds": [
+        59,
+        61,
+        102,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         16.4,
+         -30.6
+        ],
+        "hand_L": [
+         -15.8,
+         -30.3
+        ],
+        "foot_R": [
+         5.2,
+         -1.6
+        ],
+        "foot_L": [
+         -5.2,
+         -0.4
+        ],
+        "hammer_face": [
+         16.4,
+         -18.5
+        ]
+       },
+       "equipment": {
+        "hammer": 33
+       },
+       "sha256": "9141f9fd56b387fad6dda7e10619fce364357cae498eb0e2c8064fa22c379f7a",
+       "sheet": "sheets/idle_N.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/idle_N_04.png",
+       "file": "idle_N_04.png",
+       "packed_bounds": [
+        59,
+        61,
+        102,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         16.4,
+         -30.6
+        ],
+        "hand_L": [
+         -15.8,
+         -30.3
+        ],
+        "foot_R": [
+         5.2,
+         -1.6
+        ],
+        "foot_L": [
+         -5.2,
+         -0.4
+        ],
+        "hammer_face": [
+         16.4,
+         -18.5
+        ]
+       },
+       "equipment": {
+        "hammer": 33
+       },
+       "sha256": "9141f9fd56b387fad6dda7e10619fce364357cae498eb0e2c8064fa22c379f7a",
+       "sheet": "sheets/idle_N.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/idle_N_05.png",
+       "file": "idle_N_05.png",
+       "packed_bounds": [
+        59,
+        61,
+        102,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         16.4,
+         -30.6
+        ],
+        "hand_L": [
+         -15.8,
+         -30.3
+        ],
+        "foot_R": [
+         5.2,
+         -1.6
+        ],
+        "foot_L": [
+         -5.2,
+         -0.4
+        ],
+        "hammer_face": [
+         16.4,
+         -18.5
+        ]
+       },
+       "equipment": {
+        "hammer": 33
+       },
+       "sha256": "9141f9fd56b387fad6dda7e10619fce364357cae498eb0e2c8064fa22c379f7a",
+       "sheet": "sheets/idle_N.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/idle_N_06.png",
+       "file": "idle_N_06.png",
+       "packed_bounds": [
+        58,
+        62,
+        102,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         16.4,
+         -30.1
+        ],
+        "hand_L": [
+         -15.8,
+         -29.7
+        ],
+        "foot_R": [
+         5.2,
+         -1.6
+        ],
+        "foot_L": [
+         -5.2,
+         -0.4
+        ],
+        "hammer_face": [
+         16.4,
+         -17.9
+        ]
+       },
+       "equipment": {
+        "hammer": 35
+       },
+       "sha256": "524d3d3249fab76ee65788db4fc460561b814f77ba5cdeb0c8debac6cb5869ca",
+       "sheet": "sheets/idle_N.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/idle_N_07.png",
+       "file": "idle_N_07.png",
+       "packed_bounds": [
+        58,
+        62,
+        102,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         16.4,
+         -30.1
+        ],
+        "hand_L": [
+         -15.8,
+         -29.7
+        ],
+        "foot_R": [
+         5.2,
+         -1.6
+        ],
+        "foot_L": [
+         -5.2,
+         -0.4
+        ],
+        "hammer_face": [
+         16.4,
+         -17.9
+        ]
+       },
+       "equipment": {
+        "hammer": 35
+       },
+       "sha256": "524d3d3249fab76ee65788db4fc460561b814f77ba5cdeb0c8debac6cb5869ca",
+       "sheet": "sheets/idle_N.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "E": {
+     "frames": [
+      {
+       "path": "res://assets/animated/hale/idle_E_00.png",
+       "file": "idle_E_00.png",
+       "packed_bounds": [
+        68,
+        62,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         0.5,
+         -29.3
+        ],
+        "hand_L": [
+         2.7,
+         -29.3
+        ],
+        "foot_R": [
+         1.1,
+         -1.0
+        ],
+        "foot_L": [
+         -1.1,
+         -1.0
+        ],
+        "hammer_face": [
+         -1.7,
+         -18.0
+        ]
+       },
+       "equipment": {
+        "hammer": 48
+       },
+       "sha256": "7a5efcf924206d78e051efbe1f63e68791dfc39ea47996240f596b5434586852",
+       "sheet": "sheets/idle_E.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/idle_E_01.png",
+       "file": "idle_E_01.png",
+       "packed_bounds": [
+        68,
+        62,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         0.5,
+         -29.3
+        ],
+        "hand_L": [
+         2.7,
+         -29.3
+        ],
+        "foot_R": [
+         1.1,
+         -1.0
+        ],
+        "foot_L": [
+         -1.1,
+         -1.0
+        ],
+        "hammer_face": [
+         -1.7,
+         -18.0
+        ]
+       },
+       "equipment": {
+        "hammer": 48
+       },
+       "sha256": "7a5efcf924206d78e051efbe1f63e68791dfc39ea47996240f596b5434586852",
+       "sheet": "sheets/idle_E.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/idle_E_02.png",
+       "file": "idle_E_02.png",
+       "packed_bounds": [
+        68,
+        61,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         0.5,
+         -29.9
+        ],
+        "hand_L": [
+         2.7,
+         -29.9
+        ],
+        "foot_R": [
+         1.1,
+         -1.0
+        ],
+        "foot_L": [
+         -1.1,
+         -1.0
+        ],
+        "hammer_face": [
+         -1.7,
+         -18.5
+        ]
+       },
+       "equipment": {
+        "hammer": 49
+       },
+       "sha256": "10f43d1de5ad2e28c3702844c58c9ba525e6bd662a2c464cbdf0dca2cc71635b",
+       "sheet": "sheets/idle_E.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/idle_E_03.png",
+       "file": "idle_E_03.png",
+       "packed_bounds": [
+        68,
+        61,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         0.5,
+         -29.9
+        ],
+        "hand_L": [
+         2.7,
+         -29.9
+        ],
+        "foot_R": [
+         1.1,
+         -1.0
+        ],
+        "foot_L": [
+         -1.1,
+         -1.0
+        ],
+        "hammer_face": [
+         -1.7,
+         -18.5
+        ]
+       },
+       "equipment": {
+        "hammer": 49
+       },
+       "sha256": "10f43d1de5ad2e28c3702844c58c9ba525e6bd662a2c464cbdf0dca2cc71635b",
+       "sheet": "sheets/idle_E.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/idle_E_04.png",
+       "file": "idle_E_04.png",
+       "packed_bounds": [
+        68,
+        61,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         0.5,
+         -29.9
+        ],
+        "hand_L": [
+         2.7,
+         -29.9
+        ],
+        "foot_R": [
+         1.1,
+         -1.0
+        ],
+        "foot_L": [
+         -1.1,
+         -1.0
+        ],
+        "hammer_face": [
+         -1.7,
+         -18.5
+        ]
+       },
+       "equipment": {
+        "hammer": 49
+       },
+       "sha256": "10f43d1de5ad2e28c3702844c58c9ba525e6bd662a2c464cbdf0dca2cc71635b",
+       "sheet": "sheets/idle_E.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/idle_E_05.png",
+       "file": "idle_E_05.png",
+       "packed_bounds": [
+        68,
+        61,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         0.5,
+         -29.9
+        ],
+        "hand_L": [
+         2.7,
+         -29.9
+        ],
+        "foot_R": [
+         1.1,
+         -1.0
+        ],
+        "foot_L": [
+         -1.1,
+         -1.0
+        ],
+        "hammer_face": [
+         -1.7,
+         -18.5
+        ]
+       },
+       "equipment": {
+        "hammer": 49
+       },
+       "sha256": "10f43d1de5ad2e28c3702844c58c9ba525e6bd662a2c464cbdf0dca2cc71635b",
+       "sheet": "sheets/idle_E.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/idle_E_06.png",
+       "file": "idle_E_06.png",
+       "packed_bounds": [
+        68,
+        62,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         0.5,
+         -29.3
+        ],
+        "hand_L": [
+         2.7,
+         -29.3
+        ],
+        "foot_R": [
+         1.1,
+         -1.0
+        ],
+        "foot_L": [
+         -1.1,
+         -1.0
+        ],
+        "hammer_face": [
+         -1.7,
+         -18.0
+        ]
+       },
+       "equipment": {
+        "hammer": 48
+       },
+       "sha256": "629664a7eb9d8550393920a598f2cd98495c4816a10f429944231201a9cb7cf9",
+       "sheet": "sheets/idle_E.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/idle_E_07.png",
+       "file": "idle_E_07.png",
+       "packed_bounds": [
+        68,
+        62,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         0.5,
+         -29.3
+        ],
+        "hand_L": [
+         2.7,
+         -29.3
+        ],
+        "foot_R": [
+         1.1,
+         -1.0
+        ],
+        "foot_L": [
+         -1.1,
+         -1.0
+        ],
+        "hammer_face": [
+         -1.7,
+         -18.0
+        ]
+       },
+       "equipment": {
+        "hammer": 48
+       },
+       "sha256": "7a5efcf924206d78e051efbe1f63e68791dfc39ea47996240f596b5434586852",
+       "sheet": "sheets/idle_E.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "W": {
+     "frames": [
+      {
+       "path": "res://assets/animated/hale/idle_W_00.png",
+       "file": "idle_W_00.png",
+       "packed_bounds": [
+        66,
+        62,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.8,
+         -29.3
+        ],
+        "hand_L": [
+         0.5,
+         -29.3
+        ],
+        "foot_R": [
+         -2.2,
+         -1.0
+        ],
+        "foot_L": [
+         2.2,
+         -1.0
+        ],
+        "hammer_face": [
+         -1.6,
+         -18.0
+        ]
+       },
+       "equipment": {
+        "hammer": 2
+       },
+       "sha256": "5d1ce5863639b7327cd1dce0d58d3f361a1894a74f641a5f2008adb8fdb0cb05",
+       "sheet": "sheets/idle_W.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/idle_W_01.png",
+       "file": "idle_W_01.png",
+       "packed_bounds": [
+        66,
+        62,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.8,
+         -29.3
+        ],
+        "hand_L": [
+         0.5,
+         -29.3
+        ],
+        "foot_R": [
+         -2.2,
+         -1.0
+        ],
+        "foot_L": [
+         2.2,
+         -1.0
+        ],
+        "hammer_face": [
+         -1.6,
+         -18.0
+        ]
+       },
+       "equipment": {
+        "hammer": 2
+       },
+       "sha256": "5d1ce5863639b7327cd1dce0d58d3f361a1894a74f641a5f2008adb8fdb0cb05",
+       "sheet": "sheets/idle_W.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/idle_W_02.png",
+       "file": "idle_W_02.png",
+       "packed_bounds": [
+        66,
+        61,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.8,
+         -29.9
+        ],
+        "hand_L": [
+         0.5,
+         -29.9
+        ],
+        "foot_R": [
+         -2.2,
+         -1.0
+        ],
+        "foot_L": [
+         2.2,
+         -1.0
+        ],
+        "hammer_face": [
+         -1.6,
+         -18.5
+        ]
+       },
+       "equipment": {
+        "hammer": 3
+       },
+       "sha256": "af70cf9946b0ba6f908cf30909aa2bd534eadd784d52e7540287e4bad3524f4d",
+       "sheet": "sheets/idle_W.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/idle_W_03.png",
+       "file": "idle_W_03.png",
+       "packed_bounds": [
+        66,
+        61,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.8,
+         -29.9
+        ],
+        "hand_L": [
+         0.5,
+         -29.9
+        ],
+        "foot_R": [
+         -2.2,
+         -1.0
+        ],
+        "foot_L": [
+         2.2,
+         -1.0
+        ],
+        "hammer_face": [
+         -1.6,
+         -18.5
+        ]
+       },
+       "equipment": {
+        "hammer": 3
+       },
+       "sha256": "af70cf9946b0ba6f908cf30909aa2bd534eadd784d52e7540287e4bad3524f4d",
+       "sheet": "sheets/idle_W.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/idle_W_04.png",
+       "file": "idle_W_04.png",
+       "packed_bounds": [
+        66,
+        61,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.8,
+         -29.9
+        ],
+        "hand_L": [
+         0.5,
+         -29.9
+        ],
+        "foot_R": [
+         -2.2,
+         -1.0
+        ],
+        "foot_L": [
+         2.2,
+         -1.0
+        ],
+        "hammer_face": [
+         -1.6,
+         -18.5
+        ]
+       },
+       "equipment": {
+        "hammer": 3
+       },
+       "sha256": "af70cf9946b0ba6f908cf30909aa2bd534eadd784d52e7540287e4bad3524f4d",
+       "sheet": "sheets/idle_W.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/idle_W_05.png",
+       "file": "idle_W_05.png",
+       "packed_bounds": [
+        66,
+        61,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.8,
+         -29.9
+        ],
+        "hand_L": [
+         0.5,
+         -29.9
+        ],
+        "foot_R": [
+         -2.2,
+         -1.0
+        ],
+        "foot_L": [
+         2.2,
+         -1.0
+        ],
+        "hammer_face": [
+         -1.6,
+         -18.5
+        ]
+       },
+       "equipment": {
+        "hammer": 3
+       },
+       "sha256": "af70cf9946b0ba6f908cf30909aa2bd534eadd784d52e7540287e4bad3524f4d",
+       "sheet": "sheets/idle_W.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/idle_W_06.png",
+       "file": "idle_W_06.png",
+       "packed_bounds": [
+        66,
+        62,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.8,
+         -29.3
+        ],
+        "hand_L": [
+         0.5,
+         -29.3
+        ],
+        "foot_R": [
+         -2.2,
+         -1.0
+        ],
+        "foot_L": [
+         2.2,
+         -1.0
+        ],
+        "hammer_face": [
+         -1.6,
+         -18.0
+        ]
+       },
+       "equipment": {
+        "hammer": 2
+       },
+       "sha256": "def63fc1b63178cdc91a50e5fb68cbea7abe886932a1c329d36425c4f903ca98",
+       "sheet": "sheets/idle_W.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/idle_W_07.png",
+       "file": "idle_W_07.png",
+       "packed_bounds": [
+        66,
+        62,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.8,
+         -29.3
+        ],
+        "hand_L": [
+         0.5,
+         -29.3
+        ],
+        "foot_R": [
+         -2.2,
+         -1.0
+        ],
+        "foot_L": [
+         2.2,
+         -1.0
+        ],
+        "hammer_face": [
+         -1.6,
+         -18.0
+        ]
+       },
+       "equipment": {
+        "hammer": 2
+       },
+       "sha256": "5d1ce5863639b7327cd1dce0d58d3f361a1894a74f641a5f2008adb8fdb0cb05",
+       "sheet": "sheets/idle_W.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    }
+   }
+  },
+  "walk": {
+   "frame_count": 10,
+   "durations": [
+    0.056,
+    0.056,
+    0.056,
+    0.056,
+    0.056,
+    0.056,
+    0.056,
+    0.056,
+    0.056,
+    0.056
+   ],
+   "duration": 0.56,
+   "loop": true,
+   "release_frame": null,
+   "release_time": null,
+   "hold_frame": null,
+   "roles": null,
+   "facings": {
+    "S": {
+     "frames": [
+      {
+       "path": "res://assets/animated/hale/walk_S_00.png",
+       "file": "walk_S_00.png",
+       "packed_bounds": [
+        58,
+        64,
+        102,
+        139
+       ],
+       "anchors": {
+        "hand_R": [
+         -16.4,
+         -29.2
+        ],
+        "hand_L": [
+         15.8,
+         -27.1
+        ],
+        "foot_R": [
+         -5.2,
+         2.2
+        ],
+        "foot_L": [
+         5.2,
+         -4.2
+        ],
+        "hammer_face": [
+         -16.4,
+         -18.6
+        ]
+       },
+       "equipment": {
+        "hammer": 32
+       },
+       "sha256": "3a5e5ab0fa4f5759a6ab0d6116ca62bf93e24ed40a900d3d1d4d760bb5361ba4",
+       "sheet": "sheets/walk_S.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/walk_S_01.png",
+       "file": "walk_S_01.png",
+       "packed_bounds": [
+        58,
+        64,
+        102,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         -16.4,
+         -28.7
+        ],
+        "hand_L": [
+         15.8,
+         -27.6
+        ],
+        "foot_R": [
+         -5.2,
+         0.9
+        ],
+        "foot_L": [
+         5.2,
+         -4.9
+        ],
+        "hammer_face": [
+         -16.4,
+         -18.1
+        ]
+       },
+       "equipment": {
+        "hammer": 29
+       },
+       "sha256": "36f9888ab55e7c0eef0777514c8608f3d3fdd665a28f286b0c6e6733b237915b",
+       "sheet": "sheets/walk_S.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/walk_S_02.png",
+       "file": "walk_S_02.png",
+       "packed_bounds": [
+        58,
+        62,
+        102,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -16.4,
+         -29.4
+        ],
+        "hand_L": [
+         15.8,
+         -29.2
+        ],
+        "foot_R": [
+         -5.2,
+         -0.4
+        ],
+        "foot_L": [
+         5.2,
+         -4.8
+        ],
+        "hammer_face": [
+         -16.4,
+         -18.8
+        ]
+       },
+       "equipment": {
+        "hammer": 31
+       },
+       "sha256": "7ba3f897bc5a34820220931f1387ae2d719d77c2517426c5b852022bcb6b3358",
+       "sheet": "sheets/walk_S.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/walk_S_03.png",
+       "file": "walk_S_03.png",
+       "packed_bounds": [
+        58,
+        61,
+        102,
+        135
+       ],
+       "anchors": {
+        "hand_R": [
+         -16.4,
+         -30.0
+        ],
+        "hand_L": [
+         15.8,
+         -30.9
+        ],
+        "foot_R": [
+         -5.2,
+         -1.6
+        ],
+        "foot_L": [
+         5.2,
+         -3.5
+        ],
+        "hammer_face": [
+         -16.4,
+         -19.4
+        ]
+       },
+       "equipment": {
+        "hammer": 29
+       },
+       "sha256": "2d7abd9cd4494b0cb365634d3c2252b497c6f1e3bf600ffafbe4d7b59f1d04e0",
+       "sheet": "sheets/walk_S.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/walk_S_04.png",
+       "file": "walk_S_04.png",
+       "packed_bounds": [
+        58,
+        61,
+        102,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -16.4,
+         -29.5
+        ],
+        "hand_L": [
+         15.8,
+         -31.4
+        ],
+        "foot_R": [
+         -5.2,
+         -2.9
+        ],
+        "foot_L": [
+         5.2,
+         -1.0
+        ],
+        "hammer_face": [
+         -16.4,
+         -19.0
+        ]
+       },
+       "equipment": {
+        "hammer": 30
+       },
+       "sha256": "e1f53d2a75c0e78a45cbebc8ef77c15a1e6a167c7240ab4ccd77895562bdce1c",
+       "sheet": "sheets/walk_S.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/walk_S_05.png",
+       "file": "walk_S_05.png",
+       "packed_bounds": [
+        58,
+        64,
+        102,
+        139
+       ],
+       "anchors": {
+        "hand_R": [
+         -16.4,
+         -26.9
+        ],
+        "hand_L": [
+         15.8,
+         -29.7
+        ],
+        "foot_R": [
+         -5.2,
+         -4.2
+        ],
+        "foot_L": [
+         5.2,
+         2.2
+        ],
+        "hammer_face": [
+         -16.4,
+         -16.3
+        ]
+       },
+       "equipment": {
+        "hammer": 28
+       },
+       "sha256": "c3e1065cd399317b8f22cfab5c3abfe9765baea5222d2c2cb539e68e85a56a9a",
+       "sheet": "sheets/walk_S.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/walk_S_06.png",
+       "file": "walk_S_06.png",
+       "packed_bounds": [
+        58,
+        64,
+        102,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         -16.4,
+         -27.3
+        ],
+        "hand_L": [
+         15.8,
+         -29.2
+        ],
+        "foot_R": [
+         -5.2,
+         -4.9
+        ],
+        "foot_L": [
+         5.2,
+         0.9
+        ],
+        "hammer_face": [
+         -16.4,
+         -16.8
+        ]
+       },
+       "equipment": {
+        "hammer": 31
+       },
+       "sha256": "0f22b01eb0b258d54411f0b6b1810deac6d0550b4f02bb0556ad334a8d1d0274",
+       "sheet": "sheets/walk_S.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/walk_S_07.png",
+       "file": "walk_S_07.png",
+       "packed_bounds": [
+        58,
+        62,
+        102,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -16.4,
+         -28.9
+        ],
+        "hand_L": [
+         15.8,
+         -29.8
+        ],
+        "foot_R": [
+         -5.2,
+         -4.8
+        ],
+        "foot_L": [
+         5.2,
+         -0.4
+        ],
+        "hammer_face": [
+         -16.4,
+         -18.3
+        ]
+       },
+       "equipment": {
+        "hammer": 28
+       },
+       "sha256": "acf5273d93fc74d63db8e4e0b2898c94a69142580bbd8003c43a5375d80ab4f9",
+       "sheet": "sheets/walk_S.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/walk_S_08.png",
+       "file": "walk_S_08.png",
+       "packed_bounds": [
+        58,
+        61,
+        102,
+        135
+       ],
+       "anchors": {
+        "hand_R": [
+         -16.4,
+         -30.4
+        ],
+        "hand_L": [
+         15.8,
+         -30.3
+        ],
+        "foot_R": [
+         -5.2,
+         -3.5
+        ],
+        "foot_L": [
+         5.2,
+         -1.6
+        ],
+        "hammer_face": [
+         -16.4,
+         -19.9
+        ]
+       },
+       "equipment": {
+        "hammer": 31
+       },
+       "sha256": "0060633c4d24873a60eba0438abc0d027e44f2149f90e074a67cf0dbf27bb382",
+       "sheet": "sheets/walk_S.png",
+       "region": [
+        1280,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/walk_S_09.png",
+       "file": "walk_S_09.png",
+       "packed_bounds": [
+        58,
+        61,
+        102,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -16.4,
+         -30.9
+        ],
+        "hand_L": [
+         15.8,
+         -29.8
+        ],
+        "foot_R": [
+         -5.2,
+         -1.0
+        ],
+        "foot_L": [
+         5.2,
+         -2.9
+        ],
+        "hammer_face": [
+         -16.4,
+         -20.3
+        ]
+       },
+       "equipment": {
+        "hammer": 28
+       },
+       "sha256": "12bb098637015bbae13c9d6e76e19088b22815c423bf18578da15cd0f86a26bd",
+       "sheet": "sheets/walk_S.png",
+       "region": [
+        1440,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "N": {
+     "frames": [
+      {
+       "path": "res://assets/animated/hale/walk_N_00.png",
+       "file": "walk_N_00.png",
+       "packed_bounds": [
+        58,
+        63,
+        102,
+        139
+       ],
+       "anchors": {
+        "hand_R": [
+         16.4,
+         -28.4
+        ],
+        "hand_L": [
+         -15.8,
+         -30.5
+        ],
+        "foot_R": [
+         5.2,
+         -4.2
+        ],
+        "foot_L": [
+         -5.2,
+         2.2
+        ],
+        "hammer_face": [
+         16.4,
+         -16.3
+        ]
+       },
+       "equipment": {
+        "hammer": 34
+       },
+       "sha256": "1f2fda35328f15d11b05b079617ed63c15c0c7729ff930d5b2843fa6a66a1f81",
+       "sheet": "sheets/walk_N.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/walk_N_01.png",
+       "file": "walk_N_01.png",
+       "packed_bounds": [
+        58,
+        63,
+        102,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         16.4,
+         -28.9
+        ],
+        "hand_L": [
+         -15.8,
+         -30.0
+        ],
+        "foot_R": [
+         5.2,
+         -2.9
+        ],
+        "foot_L": [
+         -5.2,
+         -1.0
+        ],
+        "hammer_face": [
+         16.4,
+         -16.7
+        ]
+       },
+       "equipment": {
+        "hammer": 32
+       },
+       "sha256": "e39c75c379f8935979c682867565dce82aa32852fe2b962f72b758d1eb42d97d",
+       "sheet": "sheets/walk_N.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/walk_N_02.png",
+       "file": "walk_N_02.png",
+       "packed_bounds": [
+        58,
+        62,
+        102,
+        135
+       ],
+       "anchors": {
+        "hand_R": [
+         16.4,
+         -30.4
+        ],
+        "hand_L": [
+         -15.8,
+         -30.5
+        ],
+        "foot_R": [
+         5.2,
+         -1.6
+        ],
+        "foot_L": [
+         -5.2,
+         -3.5
+        ],
+        "hammer_face": [
+         16.4,
+         -18.3
+        ]
+       },
+       "equipment": {
+        "hammer": 34
+       },
+       "sha256": "4d0e8fbc2d58c5c9fd0bf91dde6d0ec092eab2fac361f70414bb398f75c6ff9b",
+       "sheet": "sheets/walk_N.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/walk_N_03.png",
+       "file": "walk_N_03.png",
+       "packed_bounds": [
+        58,
+        61,
+        102,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         16.4,
+         -32.0
+        ],
+        "hand_L": [
+         -15.8,
+         -31.1
+        ],
+        "foot_R": [
+         5.2,
+         -0.4
+        ],
+        "foot_L": [
+         -5.2,
+         -4.8
+        ],
+        "hammer_face": [
+         16.4,
+         -19.8
+        ]
+       },
+       "equipment": {
+        "hammer": 33
+       },
+       "sha256": "8bc06114d00a3b6f791647c067b65a1274faec4040013eb785d8c067d696727f",
+       "sheet": "sheets/walk_N.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/walk_N_04.png",
+       "file": "walk_N_04.png",
+       "packed_bounds": [
+        58,
+        61,
+        102,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         16.4,
+         -32.4
+        ],
+        "hand_L": [
+         -15.8,
+         -30.6
+        ],
+        "foot_R": [
+         5.2,
+         0.9
+        ],
+        "foot_L": [
+         -5.2,
+         -4.9
+        ],
+        "hammer_face": [
+         16.4,
+         -20.3
+        ]
+       },
+       "equipment": {
+        "hammer": 34
+       },
+       "sha256": "a27f6d63b2a0a38bcb9dc4c66ad3de4aeaaec0ca2733aa466202f02e7fc07c33",
+       "sheet": "sheets/walk_N.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/walk_N_05.png",
+       "file": "walk_N_05.png",
+       "packed_bounds": [
+        58,
+        63,
+        102,
+        139
+       ],
+       "anchors": {
+        "hand_R": [
+         16.4,
+         -30.7
+        ],
+        "hand_L": [
+         -15.8,
+         -27.8
+        ],
+        "foot_R": [
+         5.2,
+         2.2
+        ],
+        "foot_L": [
+         -5.2,
+         -4.2
+        ],
+        "hammer_face": [
+         16.4,
+         -18.5
+        ]
+       },
+       "equipment": {
+        "hammer": 33
+       },
+       "sha256": "12500de4a2d70164028b96150913b1580687825a6a503b6985ae64de4efb5ae9",
+       "sheet": "sheets/walk_N.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/walk_N_06.png",
+       "file": "walk_N_06.png",
+       "packed_bounds": [
+        58,
+        63,
+        102,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         16.4,
+         -30.2
+        ],
+        "hand_L": [
+         -15.8,
+         -28.4
+        ],
+        "foot_R": [
+         5.2,
+         -1.0
+        ],
+        "foot_L": [
+         -5.2,
+         -2.9
+        ],
+        "hammer_face": [
+         16.4,
+         -18.1
+        ]
+       },
+       "equipment": {
+        "hammer": 35
+       },
+       "sha256": "c45f5dd6db15a00b3b23d07d58e315551eb5fc7501c2a04259fa5e45f126be5e",
+       "sheet": "sheets/walk_N.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/walk_N_07.png",
+       "file": "walk_N_07.png",
+       "packed_bounds": [
+        58,
+        62,
+        102,
+        135
+       ],
+       "anchors": {
+        "hand_R": [
+         16.4,
+         -30.9
+        ],
+        "hand_L": [
+         -15.8,
+         -30.0
+        ],
+        "foot_R": [
+         5.2,
+         -3.5
+        ],
+        "foot_L": [
+         -5.2,
+         -1.6
+        ],
+        "hammer_face": [
+         16.4,
+         -18.7
+        ]
+       },
+       "equipment": {
+        "hammer": 32
+       },
+       "sha256": "a162247a62f57d5ace72b5abd25c309e02a720b8f989ef897fbe85aee74c9073",
+       "sheet": "sheets/walk_N.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/walk_N_08.png",
+       "file": "walk_N_08.png",
+       "packed_bounds": [
+        58,
+        61,
+        102,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         16.4,
+         -31.5
+        ],
+        "hand_L": [
+         -15.8,
+         -31.6
+        ],
+        "foot_R": [
+         5.2,
+         -4.8
+        ],
+        "foot_L": [
+         -5.2,
+         -0.4
+        ],
+        "hammer_face": [
+         16.4,
+         -19.4
+        ]
+       },
+       "equipment": {
+        "hammer": 34
+       },
+       "sha256": "bbe853cb6f1dd06208a1764df96f61cf94bb319548c4dc455ce3cc648f1f8c93",
+       "sheet": "sheets/walk_N.png",
+       "region": [
+        1280,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/walk_N_09.png",
+       "file": "walk_N_09.png",
+       "packed_bounds": [
+        58,
+        61,
+        102,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         16.4,
+         -31.1
+        ],
+        "hand_L": [
+         -15.8,
+         -32.2
+        ],
+        "foot_R": [
+         5.2,
+         -4.9
+        ],
+        "foot_L": [
+         -5.2,
+         0.9
+        ],
+        "hammer_face": [
+         16.4,
+         -18.9
+        ]
+       },
+       "equipment": {
+        "hammer": 34
+       },
+       "sha256": "0ff948dfc428cb2eeaaecfe3819a90b55d5a632612cfa47dbaa4db239bbf7f27",
+       "sheet": "sheets/walk_N.png",
+       "region": [
+        1440,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "E": {
+     "frames": [
+      {
+       "path": "res://assets/animated/hale/walk_E_00.png",
+       "file": "walk_E_00.png",
+       "packed_bounds": [
+        66,
+        63,
+        97,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -2.7,
+         -28.8
+        ],
+        "hand_L": [
+         6.5,
+         -28.8
+        ],
+        "foot_R": [
+         8.7,
+         -1.0
+        ],
+        "foot_L": [
+         -8.7,
+         -1.0
+        ],
+        "hammer_face": [
+         -5.0,
+         -17.4
+        ]
+       },
+       "equipment": {
+        "hammer": 49
+       },
+       "sha256": "e4829eac4ebbf6c37b95e7225516fc76741cae61fe9958934fb727e471ec5ed3",
+       "sheet": "sheets/walk_E.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/walk_E_01.png",
+       "file": "walk_E_01.png",
+       "packed_bounds": [
+        68,
+        63,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -1.4,
+         -28.8
+        ],
+        "hand_L": [
+         5.0,
+         -28.8
+        ],
+        "foot_R": [
+         5.0,
+         -1.0
+        ],
+        "foot_L": [
+         -5.0,
+         -2.9
+        ],
+        "hammer_face": [
+         -3.7,
+         -17.4
+        ]
+       },
+       "equipment": {
+        "hammer": 48
+       },
+       "sha256": "0cfb3ba26e120c04a26208ff6513d8003248b8e7e94e36acc32c5194f9477a65",
+       "sheet": "sheets/walk_E.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/walk_E_02.png",
+       "file": "walk_E_02.png",
+       "packed_bounds": [
+        68,
+        62,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -0.1,
+         -29.9
+        ],
+        "hand_L": [
+         3.4,
+         -29.9
+        ],
+        "foot_R": [
+         1.3,
+         -1.0
+        ],
+        "foot_L": [
+         -1.3,
+         -4.1
+        ],
+        "hammer_face": [
+         -2.4,
+         -18.5
+        ]
+       },
+       "equipment": {
+        "hammer": 47
+       },
+       "sha256": "f2ca10611c2aee5b48dde2f74391c12864b2b52ce5daf9732bcea4ef88395365",
+       "sheet": "sheets/walk_E.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/walk_E_03.png",
+       "file": "walk_E_03.png",
+       "packed_bounds": [
+        68,
+        61,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         1.2,
+         -31.0
+        ],
+        "hand_L": [
+         1.9,
+         -31.0
+        ],
+        "foot_R": [
+         -2.4,
+         -1.0
+        ],
+        "foot_L": [
+         2.4,
+         -4.1
+        ],
+        "hammer_face": [
+         -1.1,
+         -19.6
+        ]
+       },
+       "equipment": {
+        "hammer": 47
+       },
+       "sha256": "642b229d25ee9f1796cca3b2220564d603901657df116ae67875e896ac50f090",
+       "sheet": "sheets/walk_E.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/walk_E_04.png",
+       "file": "walk_E_04.png",
+       "packed_bounds": [
+        68,
+        61,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         2.5,
+         -31.0
+        ],
+        "hand_L": [
+         0.4,
+         -31.0
+        ],
+        "foot_R": [
+         -6.1,
+         -1.0
+        ],
+        "foot_L": [
+         6.1,
+         -2.9
+        ],
+        "hammer_face": [
+         0.2,
+         -19.6
+        ]
+       },
+       "equipment": {
+        "hammer": 49
+       },
+       "sha256": "d7dd6ce1d84850e559f6234a038914106c346e5e10e3e02a752a3a9200ecd4e8",
+       "sheet": "sheets/walk_E.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/walk_E_05.png",
+       "file": "walk_E_05.png",
+       "packed_bounds": [
+        65,
+        63,
+        98,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         3.8,
+         -28.8
+        ],
+        "hand_L": [
+         -1.1,
+         -28.8
+        ],
+        "foot_R": [
+         -9.8,
+         -1.0
+        ],
+        "foot_L": [
+         9.8,
+         -1.0
+        ],
+        "hammer_face": [
+         1.6,
+         -17.4
+        ]
+       },
+       "equipment": {
+        "hammer": 48
+       },
+       "sha256": "7cabb6c15a8ad88b7fc5a2023c8cd2e820dcb90ece4537cf31e90815662702c3",
+       "sheet": "sheets/walk_E.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/walk_E_06.png",
+       "file": "walk_E_06.png",
+       "packed_bounds": [
+        68,
+        63,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         2.5,
+         -28.8
+        ],
+        "hand_L": [
+         0.4,
+         -28.8
+        ],
+        "foot_R": [
+         -6.1,
+         -2.9
+        ],
+        "foot_L": [
+         6.1,
+         -1.0
+        ],
+        "hammer_face": [
+         0.2,
+         -17.4
+        ]
+       },
+       "equipment": {
+        "hammer": 50
+       },
+       "sha256": "2ec1bb8942b8e7994c28ee43002731d3c03f93ee335eb26db5d088a7a368a042",
+       "sheet": "sheets/walk_E.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/walk_E_07.png",
+       "file": "walk_E_07.png",
+       "packed_bounds": [
+        68,
+        62,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         1.2,
+         -29.9
+        ],
+        "hand_L": [
+         1.9,
+         -29.9
+        ],
+        "foot_R": [
+         -2.4,
+         -4.1
+        ],
+        "foot_L": [
+         2.4,
+         -1.0
+        ],
+        "hammer_face": [
+         -1.1,
+         -18.5
+        ]
+       },
+       "equipment": {
+        "hammer": 49
+       },
+       "sha256": "f196bf01d39d097e24143fa7666a402b9ce32e312d8ce0c0f0bd28e9321b2bcb",
+       "sheet": "sheets/walk_E.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/walk_E_08.png",
+       "file": "walk_E_08.png",
+       "packed_bounds": [
+        68,
+        61,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -0.1,
+         -31.0
+        ],
+        "hand_L": [
+         3.4,
+         -31.0
+        ],
+        "foot_R": [
+         1.3,
+         -4.1
+        ],
+        "foot_L": [
+         -1.3,
+         -1.0
+        ],
+        "hammer_face": [
+         -2.4,
+         -19.6
+        ]
+       },
+       "equipment": {
+        "hammer": 46
+       },
+       "sha256": "bdfe74db9f60fb0a248dcede319f2eb1c061bf60959cc7c6122273f9ceb43180",
+       "sheet": "sheets/walk_E.png",
+       "region": [
+        1280,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/walk_E_09.png",
+       "file": "walk_E_09.png",
+       "packed_bounds": [
+        68,
+        61,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -1.4,
+         -31.0
+        ],
+        "hand_L": [
+         5.0,
+         -31.0
+        ],
+        "foot_R": [
+         5.0,
+         -2.9
+        ],
+        "foot_L": [
+         -5.0,
+         -1.0
+        ],
+        "hammer_face": [
+         -3.7,
+         -19.6
+        ]
+       },
+       "equipment": {
+        "hammer": 48
+       },
+       "sha256": "a2299268c7efd9a7d399f88bae5181f9e79e24b723f919cf4aa2e0a36df76040",
+       "sheet": "sheets/walk_E.png",
+       "region": [
+        1440,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "W": {
+     "frames": [
+      {
+       "path": "res://assets/animated/hale/walk_W_00.png",
+       "file": "walk_W_00.png",
+       "packed_bounds": [
+        62,
+        63,
+        95,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -0.5,
+         -28.8
+        ],
+        "hand_L": [
+         -3.3,
+         -28.8
+        ],
+        "foot_R": [
+         -9.8,
+         -1.0
+        ],
+        "foot_L": [
+         9.8,
+         -1.0
+        ],
+        "hammer_face": [
+         1.7,
+         -17.4
+        ]
+       },
+       "equipment": {
+        "hammer": 0
+       },
+       "sha256": "eea83d9e8300813b80c79c1aed56a4ec85e37a66f497e22027e90c3b072af7d8",
+       "sheet": "sheets/walk_W.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/walk_W_01.png",
+       "file": "walk_W_01.png",
+       "packed_bounds": [
+        66,
+        63,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -1.9,
+         -28.8
+        ],
+        "hand_L": [
+         -1.8,
+         -28.8
+        ],
+        "foot_R": [
+         -6.1,
+         -1.0
+        ],
+        "foot_L": [
+         6.1,
+         -2.9
+        ],
+        "hammer_face": [
+         0.4,
+         -17.4
+        ]
+       },
+       "equipment": {
+        "hammer": 0
+       },
+       "sha256": "e3a4871d89e6f04b67cd2f7a062fe2f1eae490e54bce7904b3ed8a1fabb86064",
+       "sheet": "sheets/walk_W.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/walk_W_02.png",
+       "file": "walk_W_02.png",
+       "packed_bounds": [
+        66,
+        62,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.2,
+         -29.9
+        ],
+        "hand_L": [
+         -0.3,
+         -29.9
+        ],
+        "foot_R": [
+         -2.4,
+         -1.0
+        ],
+        "foot_L": [
+         2.4,
+         -4.1
+        ],
+        "hammer_face": [
+         -0.9,
+         -18.5
+        ]
+       },
+       "equipment": {
+        "hammer": 1
+       },
+       "sha256": "b7cfc73f870ae41410e7b7ff815d9e5c14bd17b988f58e799a4716e7b87ac2a1",
+       "sheet": "sheets/walk_W.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/walk_W_03.png",
+       "file": "walk_W_03.png",
+       "packed_bounds": [
+        66,
+        61,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -4.5,
+         -31.0
+        ],
+        "hand_L": [
+         1.3,
+         -31.0
+        ],
+        "foot_R": [
+         1.3,
+         -1.0
+        ],
+        "foot_L": [
+         -1.3,
+         -4.1
+        ],
+        "hammer_face": [
+         -2.2,
+         -19.6
+        ]
+       },
+       "equipment": {
+        "hammer": 2
+       },
+       "sha256": "10a8c7845f4a87b930b81672055b784dd89ad4ab5b8f7e3e0a21b232ec7f9ce6",
+       "sheet": "sheets/walk_W.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/walk_W_04.png",
+       "file": "walk_W_04.png",
+       "packed_bounds": [
+        66,
+        61,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -5.8,
+         -31.0
+        ],
+        "hand_L": [
+         2.8,
+         -31.0
+        ],
+        "foot_R": [
+         5.0,
+         -1.0
+        ],
+        "foot_L": [
+         -5.0,
+         -2.9
+        ],
+        "hammer_face": [
+         -3.5,
+         -19.6
+        ]
+       },
+       "equipment": {
+        "hammer": 4
+       },
+       "sha256": "b4a22dfdf437c946516b70c62ba99ae870ab0a13f57e9faf38bc30543494483d",
+       "sheet": "sheets/walk_W.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/walk_W_05.png",
+       "file": "walk_W_05.png",
+       "packed_bounds": [
+        63,
+        63,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -7.1,
+         -28.8
+        ],
+        "hand_L": [
+         4.3,
+         -28.8
+        ],
+        "foot_R": [
+         8.7,
+         -1.0
+        ],
+        "foot_L": [
+         -8.7,
+         -1.0
+        ],
+        "hammer_face": [
+         -4.8,
+         -17.4
+        ]
+       },
+       "equipment": {
+        "hammer": 5
+       },
+       "sha256": "7f26e177296e495f84d67048dbda0a249105da221f3a77041ea0c9f9640c4ae8",
+       "sheet": "sheets/walk_W.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/walk_W_06.png",
+       "file": "walk_W_06.png",
+       "packed_bounds": [
+        66,
+        63,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -5.8,
+         -28.8
+        ],
+        "hand_L": [
+         2.8,
+         -28.8
+        ],
+        "foot_R": [
+         5.0,
+         -2.9
+        ],
+        "foot_L": [
+         -5.0,
+         -1.0
+        ],
+        "hammer_face": [
+         -3.5,
+         -17.4
+        ]
+       },
+       "equipment": {
+        "hammer": 3
+       },
+       "sha256": "4d2dd30393a5ec7f9aa0d6a6392009c60d15607afb31aa61faad8b6f0f04ffc1",
+       "sheet": "sheets/walk_W.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/walk_W_07.png",
+       "file": "walk_W_07.png",
+       "packed_bounds": [
+        66,
+        62,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -4.5,
+         -29.9
+        ],
+        "hand_L": [
+         1.3,
+         -29.9
+        ],
+        "foot_R": [
+         1.3,
+         -4.1
+        ],
+        "foot_L": [
+         -1.3,
+         -1.0
+        ],
+        "hammer_face": [
+         -2.2,
+         -18.5
+        ]
+       },
+       "equipment": {
+        "hammer": 2
+       },
+       "sha256": "7211f68492829c06d6c4f45cd67a8cff284a43d54e75cc35774a9535a3187fea",
+       "sheet": "sheets/walk_W.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/walk_W_08.png",
+       "file": "walk_W_08.png",
+       "packed_bounds": [
+        66,
+        61,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.2,
+         -31.0
+        ],
+        "hand_L": [
+         -0.3,
+         -31.0
+        ],
+        "foot_R": [
+         -2.4,
+         -4.1
+        ],
+        "foot_L": [
+         2.4,
+         -1.0
+        ],
+        "hammer_face": [
+         -0.9,
+         -19.6
+        ]
+       },
+       "equipment": {
+        "hammer": 0
+       },
+       "sha256": "206b3fde129b88a8df0910823f8c7d07eab0a3593371d507c890370aadf01c49",
+       "sheet": "sheets/walk_W.png",
+       "region": [
+        1280,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/walk_W_09.png",
+       "file": "walk_W_09.png",
+       "packed_bounds": [
+        66,
+        61,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -1.9,
+         -31.0
+        ],
+        "hand_L": [
+         -1.8,
+         -31.0
+        ],
+        "foot_R": [
+         -6.1,
+         -2.9
+        ],
+        "foot_L": [
+         6.1,
+         -1.0
+        ],
+        "hammer_face": [
+         0.4,
+         -19.6
+        ]
+       },
+       "equipment": {
+        "hammer": 0
+       },
+       "sha256": "79bf3c73e284c7e29eea1190d73710d5bcc73a61f56842b5a3899f12c3b31ec7",
+       "sheet": "sheets/walk_W.png",
+       "region": [
+        1440,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    }
+   }
+  },
+  "talk": {
+   "frame_count": 8,
+   "durations": [
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.2
+   ],
+   "duration": 1.6,
+   "loop": true,
+   "release_frame": null,
+   "release_time": null,
+   "hold_frame": null,
+   "roles": null,
+   "facings": {
+    "S": {
+     "frames": [
+      {
+       "path": "res://assets/animated/hale/talk_S_00.png",
+       "file": "talk_S_00.png",
+       "packed_bounds": [
+        58,
+        62,
+        102,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -16.4,
+         -28.6
+        ],
+        "hand_L": [
+         15.8,
+         -29.0
+        ],
+        "foot_R": [
+         -5.2,
+         -0.4
+        ],
+        "foot_L": [
+         5.2,
+         -1.6
+        ],
+        "hammer_face": [
+         -16.4,
+         -18.0
+        ]
+       },
+       "equipment": {
+        "hammer": 29
+       },
+       "sha256": "dca742dd3c525cb79e95e30693c47a114677a5329c78c6dab8b8369ab33a5604",
+       "sheet": "sheets/talk_S.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/talk_S_01.png",
+       "file": "talk_S_01.png",
+       "packed_bounds": [
+        58,
+        62,
+        100,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -16.4,
+         -28.6
+        ],
+        "hand_L": [
+         10.9,
+         -31.7
+        ],
+        "foot_R": [
+         -5.2,
+         -0.4
+        ],
+        "foot_L": [
+         5.2,
+         -1.6
+        ],
+        "hammer_face": [
+         -16.4,
+         -18.0
+        ]
+       },
+       "equipment": {
+        "hammer": 29
+       },
+       "sha256": "57713e71c3119ffaaa161e9a5580de2c8478691711a310c809d9fd948070a3d8",
+       "sheet": "sheets/talk_S.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/talk_S_02.png",
+       "file": "talk_S_02.png",
+       "packed_bounds": [
+        59,
+        61,
+        99,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -16.4,
+         -28.6
+        ],
+        "hand_L": [
+         7.6,
+         -32.4
+        ],
+        "foot_R": [
+         -5.2,
+         -0.4
+        ],
+        "foot_L": [
+         5.2,
+         -1.6
+        ],
+        "hammer_face": [
+         -16.4,
+         -18.0
+        ]
+       },
+       "equipment": {
+        "hammer": 29
+       },
+       "sha256": "23ffceb4edf19a5d3969bb618b34ac735ff23f194b46eebf0fc8f0f1418ef794",
+       "sheet": "sheets/talk_S.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/talk_S_03.png",
+       "file": "talk_S_03.png",
+       "packed_bounds": [
+        59,
+        61,
+        99,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -16.4,
+         -28.6
+        ],
+        "hand_L": [
+         9.3,
+         -32.6
+        ],
+        "foot_R": [
+         -5.2,
+         -0.4
+        ],
+        "foot_L": [
+         5.2,
+         -1.6
+        ],
+        "hammer_face": [
+         -16.4,
+         -18.0
+        ]
+       },
+       "equipment": {
+        "hammer": 29
+       },
+       "sha256": "fd3b487b0810f802b14699cc1918fc27ba674c5f11d700d3e6499c2cc6a97a9d",
+       "sheet": "sheets/talk_S.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/talk_S_04.png",
+       "file": "talk_S_04.png",
+       "packed_bounds": [
+        59,
+        61,
+        99,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -16.4,
+         -28.6
+        ],
+        "hand_L": [
+         7.6,
+         -32.4
+        ],
+        "foot_R": [
+         -5.2,
+         -0.4
+        ],
+        "foot_L": [
+         5.2,
+         -1.6
+        ],
+        "hammer_face": [
+         -16.4,
+         -18.0
+        ]
+       },
+       "equipment": {
+        "hammer": 29
+       },
+       "sha256": "23ffceb4edf19a5d3969bb618b34ac735ff23f194b46eebf0fc8f0f1418ef794",
+       "sheet": "sheets/talk_S.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/talk_S_05.png",
+       "file": "talk_S_05.png",
+       "packed_bounds": [
+        58,
+        62,
+        99,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -16.4,
+         -28.6
+        ],
+        "hand_L": [
+         10.1,
+         -32.2
+        ],
+        "foot_R": [
+         -5.2,
+         -0.4
+        ],
+        "foot_L": [
+         5.2,
+         -1.6
+        ],
+        "hammer_face": [
+         -16.4,
+         -18.0
+        ]
+       },
+       "equipment": {
+        "hammer": 29
+       },
+       "sha256": "41b0d7f5ebca78de3931c5d385a406ca67524c90ab4939974add1183c974d4b3",
+       "sheet": "sheets/talk_S.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/talk_S_06.png",
+       "file": "talk_S_06.png",
+       "packed_bounds": [
+        58,
+        62,
+        101,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -16.4,
+         -28.6
+        ],
+        "hand_L": [
+         13.4,
+         -30.3
+        ],
+        "foot_R": [
+         -5.2,
+         -0.4
+        ],
+        "foot_L": [
+         5.2,
+         -1.6
+        ],
+        "hammer_face": [
+         -16.4,
+         -18.0
+        ]
+       },
+       "equipment": {
+        "hammer": 29
+       },
+       "sha256": "4b16a719d227d4166b3e3ff465dbfe49f9309e513aef3b221b4c3dd62b0bc177",
+       "sheet": "sheets/talk_S.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/talk_S_07.png",
+       "file": "talk_S_07.png",
+       "packed_bounds": [
+        58,
+        62,
+        102,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -16.4,
+         -28.6
+        ],
+        "hand_L": [
+         15.8,
+         -29.0
+        ],
+        "foot_R": [
+         -5.2,
+         -0.4
+        ],
+        "foot_L": [
+         5.2,
+         -1.6
+        ],
+        "hammer_face": [
+         -16.4,
+         -18.0
+        ]
+       },
+       "equipment": {
+        "hammer": 29
+       },
+       "sha256": "dca742dd3c525cb79e95e30693c47a114677a5329c78c6dab8b8369ab33a5604",
+       "sheet": "sheets/talk_S.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "N": {
+     "frames": [
+      {
+       "path": "res://assets/animated/hale/talk_N_00.png",
+       "file": "talk_N_00.png",
+       "packed_bounds": [
+        58,
+        62,
+        102,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         16.4,
+         -30.1
+        ],
+        "hand_L": [
+         -15.8,
+         -29.7
+        ],
+        "foot_R": [
+         5.2,
+         -1.6
+        ],
+        "foot_L": [
+         -5.2,
+         -0.4
+        ],
+        "hammer_face": [
+         16.4,
+         -17.9
+        ]
+       },
+       "equipment": {
+        "hammer": 35
+       },
+       "sha256": "524d3d3249fab76ee65788db4fc460561b814f77ba5cdeb0c8debac6cb5869ca",
+       "sheet": "sheets/talk_N.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/talk_N_01.png",
+       "file": "talk_N_01.png",
+       "packed_bounds": [
+        60,
+        62,
+        102,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         16.4,
+         -30.1
+        ],
+        "hand_L": [
+         -10.9,
+         -36.1
+        ],
+        "foot_R": [
+         5.2,
+         -1.6
+        ],
+        "foot_L": [
+         -5.2,
+         -0.4
+        ],
+        "hammer_face": [
+         16.4,
+         -17.9
+        ]
+       },
+       "equipment": {
+        "hammer": 35
+       },
+       "sha256": "2b3154033f1f511022f9bcadec40fa4e3964c45a7400f30abf5ecf109688aad0",
+       "sheet": "sheets/talk_N.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/talk_N_02.png",
+       "file": "talk_N_02.png",
+       "packed_bounds": [
+        61,
+        61,
+        101,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         16.4,
+         -30.1
+        ],
+        "hand_L": [
+         -7.6,
+         -39.3
+        ],
+        "foot_R": [
+         5.2,
+         -1.6
+        ],
+        "foot_L": [
+         -5.2,
+         -0.4
+        ],
+        "hammer_face": [
+         16.4,
+         -17.9
+        ]
+       },
+       "equipment": {
+        "hammer": 35
+       },
+       "sha256": "bc1d52ec4af142b9e962dd96b0677055f50c3673bf97f206cb75f7b04ec99817",
+       "sheet": "sheets/talk_N.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/talk_N_03.png",
+       "file": "talk_N_03.png",
+       "packed_bounds": [
+        61,
+        61,
+        101,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         16.4,
+         -30.1
+        ],
+        "hand_L": [
+         -9.3,
+         -38.3
+        ],
+        "foot_R": [
+         5.2,
+         -1.6
+        ],
+        "foot_L": [
+         -5.2,
+         -0.4
+        ],
+        "hammer_face": [
+         16.4,
+         -17.9
+        ]
+       },
+       "equipment": {
+        "hammer": 35
+       },
+       "sha256": "63fb8874ac51613b36d11d1e9ccdc33182968fcac0f48a2e5b7a84e143ec8c93",
+       "sheet": "sheets/talk_N.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/talk_N_04.png",
+       "file": "talk_N_04.png",
+       "packed_bounds": [
+        61,
+        61,
+        101,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         16.4,
+         -30.1
+        ],
+        "hand_L": [
+         -7.6,
+         -39.3
+        ],
+        "foot_R": [
+         5.2,
+         -1.6
+        ],
+        "foot_L": [
+         -5.2,
+         -0.4
+        ],
+        "hammer_face": [
+         16.4,
+         -17.9
+        ]
+       },
+       "equipment": {
+        "hammer": 35
+       },
+       "sha256": "bc1d52ec4af142b9e962dd96b0677055f50c3673bf97f206cb75f7b04ec99817",
+       "sheet": "sheets/talk_N.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/talk_N_05.png",
+       "file": "talk_N_05.png",
+       "packed_bounds": [
+        61,
+        62,
+        102,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         16.4,
+         -30.1
+        ],
+        "hand_L": [
+         -10.1,
+         -37.2
+        ],
+        "foot_R": [
+         5.2,
+         -1.6
+        ],
+        "foot_L": [
+         -5.2,
+         -0.4
+        ],
+        "hammer_face": [
+         16.4,
+         -17.9
+        ]
+       },
+       "equipment": {
+        "hammer": 35
+       },
+       "sha256": "6dd522c103ee74991f7be87b5214ba4dde26b81ad06fdf74125a3c8f9c75d034",
+       "sheet": "sheets/talk_N.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/talk_N_06.png",
+       "file": "talk_N_06.png",
+       "packed_bounds": [
+        59,
+        62,
+        102,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         16.4,
+         -30.1
+        ],
+        "hand_L": [
+         -13.4,
+         -32.9
+        ],
+        "foot_R": [
+         5.2,
+         -1.6
+        ],
+        "foot_L": [
+         -5.2,
+         -0.4
+        ],
+        "hammer_face": [
+         16.4,
+         -17.9
+        ]
+       },
+       "equipment": {
+        "hammer": 35
+       },
+       "sha256": "13398abd4368cb487937144bf8b5d7d783e3751d1b90b7046e4e8f78b9bdd227",
+       "sheet": "sheets/talk_N.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/talk_N_07.png",
+       "file": "talk_N_07.png",
+       "packed_bounds": [
+        58,
+        62,
+        102,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         16.4,
+         -30.1
+        ],
+        "hand_L": [
+         -15.8,
+         -29.7
+        ],
+        "foot_R": [
+         5.2,
+         -1.6
+        ],
+        "foot_L": [
+         -5.2,
+         -0.4
+        ],
+        "hammer_face": [
+         16.4,
+         -17.9
+        ]
+       },
+       "equipment": {
+        "hammer": 35
+       },
+       "sha256": "524d3d3249fab76ee65788db4fc460561b814f77ba5cdeb0c8debac6cb5869ca",
+       "sheet": "sheets/talk_N.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "E": {
+     "frames": [
+      {
+       "path": "res://assets/animated/hale/talk_E_00.png",
+       "file": "talk_E_00.png",
+       "packed_bounds": [
+        68,
+        62,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         0.5,
+         -29.3
+        ],
+        "hand_L": [
+         2.7,
+         -29.3
+        ],
+        "foot_R": [
+         1.1,
+         -1.0
+        ],
+        "foot_L": [
+         -1.1,
+         -1.0
+        ],
+        "hammer_face": [
+         -1.7,
+         -18.0
+        ]
+       },
+       "equipment": {
+        "hammer": 48
+       },
+       "sha256": "7a5efcf924206d78e051efbe1f63e68791dfc39ea47996240f596b5434586852",
+       "sheet": "sheets/talk_E.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/talk_E_01.png",
+       "file": "talk_E_01.png",
+       "packed_bounds": [
+        68,
+        62,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         0.5,
+         -29.3
+        ],
+        "hand_L": [
+         7.4,
+         -33.9
+        ],
+        "foot_R": [
+         1.1,
+         -1.0
+        ],
+        "foot_L": [
+         -1.1,
+         -1.0
+        ],
+        "hammer_face": [
+         -1.7,
+         -18.0
+        ]
+       },
+       "equipment": {
+        "hammer": 48
+       },
+       "sha256": "8e4a8c685ff1547923d9a9d17ca0f3419e60744f2962114cf041e5a24dbc0204",
+       "sheet": "sheets/talk_E.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/talk_E_02.png",
+       "file": "talk_E_02.png",
+       "packed_bounds": [
+        68,
+        61,
+        95,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         0.5,
+         -29.3
+        ],
+        "hand_L": [
+         10.6,
+         -35.9
+        ],
+        "foot_R": [
+         1.1,
+         -1.0
+        ],
+        "foot_L": [
+         -1.1,
+         -1.0
+        ],
+        "hammer_face": [
+         -1.7,
+         -18.0
+        ]
+       },
+       "equipment": {
+        "hammer": 48
+       },
+       "sha256": "386a3cd705412f627e18d543814b5d23410925a2509206014dd335278f6f8c43",
+       "sheet": "sheets/talk_E.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/talk_E_03.png",
+       "file": "talk_E_03.png",
+       "packed_bounds": [
+        68,
+        61,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         0.5,
+         -29.3
+        ],
+        "hand_L": [
+         9.0,
+         -35.4
+        ],
+        "foot_R": [
+         1.1,
+         -1.0
+        ],
+        "foot_L": [
+         -1.1,
+         -1.0
+        ],
+        "hammer_face": [
+         -1.7,
+         -18.0
+        ]
+       },
+       "equipment": {
+        "hammer": 48
+       },
+       "sha256": "9e6eeb15a18f7d3b6afe2ab2a5fa09f0b8802d0241ed61a77da6a6e8d24da463",
+       "sheet": "sheets/talk_E.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/talk_E_04.png",
+       "file": "talk_E_04.png",
+       "packed_bounds": [
+        68,
+        61,
+        95,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         0.5,
+         -29.3
+        ],
+        "hand_L": [
+         10.6,
+         -35.9
+        ],
+        "foot_R": [
+         1.1,
+         -1.0
+        ],
+        "foot_L": [
+         -1.1,
+         -1.0
+        ],
+        "hammer_face": [
+         -1.7,
+         -18.0
+        ]
+       },
+       "equipment": {
+        "hammer": 48
+       },
+       "sha256": "386a3cd705412f627e18d543814b5d23410925a2509206014dd335278f6f8c43",
+       "sheet": "sheets/talk_E.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/talk_E_05.png",
+       "file": "talk_E_05.png",
+       "packed_bounds": [
+        68,
+        62,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         0.5,
+         -29.3
+        ],
+        "hand_L": [
+         8.2,
+         -34.7
+        ],
+        "foot_R": [
+         1.1,
+         -1.0
+        ],
+        "foot_L": [
+         -1.1,
+         -1.0
+        ],
+        "hammer_face": [
+         -1.7,
+         -18.0
+        ]
+       },
+       "equipment": {
+        "hammer": 48
+       },
+       "sha256": "419525151d0a5ce2f6d20bcd4ba69bb2a5945020a1dc6b06e9f56dc3d91e4e69",
+       "sheet": "sheets/talk_E.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/talk_E_06.png",
+       "file": "talk_E_06.png",
+       "packed_bounds": [
+        68,
+        62,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         0.5,
+         -29.3
+        ],
+        "hand_L": [
+         5.0,
+         -31.6
+        ],
+        "foot_R": [
+         1.1,
+         -1.0
+        ],
+        "foot_L": [
+         -1.1,
+         -1.0
+        ],
+        "hammer_face": [
+         -1.7,
+         -18.0
+        ]
+       },
+       "equipment": {
+        "hammer": 48
+       },
+       "sha256": "900dc5bf0afa6dad7028807c4231444a0e7173f0c6ec74a8cbb36ee896ef700c",
+       "sheet": "sheets/talk_E.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/talk_E_07.png",
+       "file": "talk_E_07.png",
+       "packed_bounds": [
+        68,
+        62,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         0.5,
+         -29.3
+        ],
+        "hand_L": [
+         2.7,
+         -29.3
+        ],
+        "foot_R": [
+         1.1,
+         -1.0
+        ],
+        "foot_L": [
+         -1.1,
+         -1.0
+        ],
+        "hammer_face": [
+         -1.7,
+         -18.0
+        ]
+       },
+       "equipment": {
+        "hammer": 48
+       },
+       "sha256": "7a5efcf924206d78e051efbe1f63e68791dfc39ea47996240f596b5434586852",
+       "sheet": "sheets/talk_E.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "W": {
+     "frames": [
+      {
+       "path": "res://assets/animated/hale/talk_W_00.png",
+       "file": "talk_W_00.png",
+       "packed_bounds": [
+        66,
+        62,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.8,
+         -29.3
+        ],
+        "hand_L": [
+         0.5,
+         -29.3
+        ],
+        "foot_R": [
+         -2.2,
+         -1.0
+        ],
+        "foot_L": [
+         2.2,
+         -1.0
+        ],
+        "hammer_face": [
+         -1.6,
+         -18.0
+        ]
+       },
+       "equipment": {
+        "hammer": 2
+       },
+       "sha256": "5d1ce5863639b7327cd1dce0d58d3f361a1894a74f641a5f2008adb8fdb0cb05",
+       "sheet": "sheets/talk_W.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/talk_W_01.png",
+       "file": "talk_W_01.png",
+       "packed_bounds": [
+        66,
+        62,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.8,
+         -29.3
+        ],
+        "hand_L": [
+         -5.2,
+         -33.9
+        ],
+        "foot_R": [
+         -2.2,
+         -1.0
+        ],
+        "foot_L": [
+         2.2,
+         -1.0
+        ],
+        "hammer_face": [
+         -1.6,
+         -18.0
+        ]
+       },
+       "equipment": {
+        "hammer": 2
+       },
+       "sha256": "5d7bd4563d700c0dfc5c5aa0b3e51a9c2e3a70b0d9f2285115b2bd2715122645",
+       "sheet": "sheets/talk_W.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/talk_W_02.png",
+       "file": "talk_W_02.png",
+       "packed_bounds": [
+        66,
+        61,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.8,
+         -29.3
+        ],
+        "hand_L": [
+         -9.0,
+         -35.9
+        ],
+        "foot_R": [
+         -2.2,
+         -1.0
+        ],
+        "foot_L": [
+         2.2,
+         -1.0
+        ],
+        "hammer_face": [
+         -1.6,
+         -18.0
+        ]
+       },
+       "equipment": {
+        "hammer": 2
+       },
+       "sha256": "e1d560f84b487363ac025dfaef57304dd5bafca82a93cf32817ba4030538512d",
+       "sheet": "sheets/talk_W.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/talk_W_03.png",
+       "file": "talk_W_03.png",
+       "packed_bounds": [
+        66,
+        61,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.8,
+         -29.3
+        ],
+        "hand_L": [
+         -7.1,
+         -35.4
+        ],
+        "foot_R": [
+         -2.2,
+         -1.0
+        ],
+        "foot_L": [
+         2.2,
+         -1.0
+        ],
+        "hammer_face": [
+         -1.6,
+         -18.0
+        ]
+       },
+       "equipment": {
+        "hammer": 2
+       },
+       "sha256": "087585d66110815d1361b60ca842112da8570e3c223780a33027d7951ac3d406",
+       "sheet": "sheets/talk_W.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/talk_W_04.png",
+       "file": "talk_W_04.png",
+       "packed_bounds": [
+        66,
+        61,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.8,
+         -29.3
+        ],
+        "hand_L": [
+         -9.0,
+         -35.9
+        ],
+        "foot_R": [
+         -2.2,
+         -1.0
+        ],
+        "foot_L": [
+         2.2,
+         -1.0
+        ],
+        "hammer_face": [
+         -1.6,
+         -18.0
+        ]
+       },
+       "equipment": {
+        "hammer": 2
+       },
+       "sha256": "e1d560f84b487363ac025dfaef57304dd5bafca82a93cf32817ba4030538512d",
+       "sheet": "sheets/talk_W.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/talk_W_05.png",
+       "file": "talk_W_05.png",
+       "packed_bounds": [
+        66,
+        62,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.8,
+         -29.3
+        ],
+        "hand_L": [
+         -6.2,
+         -34.7
+        ],
+        "foot_R": [
+         -2.2,
+         -1.0
+        ],
+        "foot_L": [
+         2.2,
+         -1.0
+        ],
+        "hammer_face": [
+         -1.6,
+         -18.0
+        ]
+       },
+       "equipment": {
+        "hammer": 2
+       },
+       "sha256": "b7893cfddcd5aa8ea31c7ac1e029993bce1581b5bc93ea691d1e731745d7a7de",
+       "sheet": "sheets/talk_W.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/talk_W_06.png",
+       "file": "talk_W_06.png",
+       "packed_bounds": [
+        66,
+        62,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.8,
+         -29.3
+        ],
+        "hand_L": [
+         -2.4,
+         -31.6
+        ],
+        "foot_R": [
+         -2.2,
+         -1.0
+        ],
+        "foot_L": [
+         2.2,
+         -1.0
+        ],
+        "hammer_face": [
+         -1.6,
+         -18.0
+        ]
+       },
+       "equipment": {
+        "hammer": 2
+       },
+       "sha256": "7bda204244d3106262e8e20efed0f7bc05729036eb2b3cb849f63855ea2c2532",
+       "sheet": "sheets/talk_W.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/talk_W_07.png",
+       "file": "talk_W_07.png",
+       "packed_bounds": [
+        66,
+        62,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.8,
+         -29.3
+        ],
+        "hand_L": [
+         0.5,
+         -29.3
+        ],
+        "foot_R": [
+         -2.2,
+         -1.0
+        ],
+        "foot_L": [
+         2.2,
+         -1.0
+        ],
+        "hammer_face": [
+         -1.6,
+         -18.0
+        ]
+       },
+       "equipment": {
+        "hammer": 2
+       },
+       "sha256": "5d1ce5863639b7327cd1dce0d58d3f361a1894a74f641a5f2008adb8fdb0cb05",
+       "sheet": "sheets/talk_W.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    }
+   }
+  },
+  "work": {
+   "frame_count": 8,
+   "durations": [
+    0.2,
+    0.2429,
+    0.0714,
+    0.0857,
+    0.1286,
+    0.1571,
+    0.1714,
+    0.1429
+   ],
+   "duration": 1.2,
+   "loop": true,
+   "release_frame": null,
+   "release_time": null,
+   "hold_frame": null,
+   "roles": null,
+   "facings": {
+    "S": {
+     "frames": [
+      {
+       "path": "res://assets/animated/hale/work_S_00.png",
+       "file": "work_S_00.png",
+       "packed_bounds": [
+        58,
+        62,
+        99,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.1,
+         -53.8
+        ],
+        "hand_L": [
+         3.3,
+         -39.3
+        ],
+        "foot_R": [
+         -5.2,
+         -1.8
+        ],
+        "foot_L": [
+         5.2,
+         0.1
+        ],
+        "hammer_face": [
+         -13.1,
+         -66.1
+        ],
+        "bar": [
+         0.2,
+         -34.5
+        ]
+       },
+       "equipment": {
+        "hammer": 29,
+        "tongs": 0,
+        "bar": 9
+       },
+       "sha256": "4e6d462b3c2f656892cc3d32575d5c9a5121bde157e89703eda69e0aec0e6e64",
+       "sheet": "sheets/work_S.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/work_S_01.png",
+       "file": "work_S_01.png",
+       "packed_bounds": [
+        58,
+        61,
+        99,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.1,
+         -55.3
+        ],
+        "hand_L": [
+         3.3,
+         -39.3
+        ],
+        "foot_R": [
+         -5.2,
+         -1.8
+        ],
+        "foot_L": [
+         5.2,
+         0.1
+        ],
+        "hammer_face": [
+         -13.1,
+         -67.2
+        ],
+        "bar": [
+         0.2,
+         -34.5
+        ]
+       },
+       "equipment": {
+        "hammer": 30,
+        "tongs": 0,
+        "bar": 9
+       },
+       "sha256": "58fdce6aacd809ea1d074129ea2877d6feace0eea6c41ef76775fec59a77a93c",
+       "sheet": "sheets/work_S.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/work_S_02.png",
+       "file": "work_S_02.png",
+       "packed_bounds": [
+        61,
+        62,
+        99,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -7.6,
+         -49.9
+        ],
+        "hand_L": [
+         3.3,
+         -39.3
+        ],
+        "foot_R": [
+         -5.2,
+         -1.8
+        ],
+        "foot_L": [
+         5.2,
+         0.1
+        ],
+        "hammer_face": [
+         -7.6,
+         -52.1
+        ],
+        "bar": [
+         0.2,
+         -34.5
+        ]
+       },
+       "equipment": {
+        "hammer": 20,
+        "tongs": 0,
+        "bar": 9
+       },
+       "sha256": "109bf00389e124a0f31c980e4a8f0e90fd19b20c33841d6c9738ef29c87527a9",
+       "sheet": "sheets/work_S.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/work_S_03.png",
+       "file": "work_S_03.png",
+       "packed_bounds": [
+        61,
+        64,
+        99,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -6.5,
+         -39.6
+        ],
+        "hand_L": [
+         3.3,
+         -38.2
+        ],
+        "foot_R": [
+         -5.2,
+         -1.8
+        ],
+        "foot_L": [
+         5.2,
+         0.1
+        ],
+        "hammer_face": [
+         -6.5,
+         -29.5
+        ],
+        "bar": [
+         0.2,
+         -33.4
+        ]
+       },
+       "equipment": {
+        "hammer": 26,
+        "tongs": 0,
+        "bar": 9,
+        "sparks": 5
+       },
+       "sha256": "62580c4835761ddb3511ac42696a00d30e668761195597984cefa6559002acab",
+       "sheet": "sheets/work_S.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/work_S_04.png",
+       "file": "work_S_04.png",
+       "packed_bounds": [
+        61,
+        63,
+        99,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -6.5,
+         -42.6
+        ],
+        "hand_L": [
+         3.3,
+         -38.7
+        ],
+        "foot_R": [
+         -5.2,
+         -1.8
+        ],
+        "foot_L": [
+         5.2,
+         0.1
+        ],
+        "hammer_face": [
+         -6.5,
+         -35.9
+        ],
+        "bar": [
+         0.2,
+         -33.9
+        ]
+       },
+       "equipment": {
+        "hammer": 17,
+        "tongs": 0,
+        "bar": 7,
+        "sparks": 5
+       },
+       "sha256": "f6568a0a7e8cf5e1dccdbb34d01259147db345f796b1cf362c78831aff040cb4",
+       "sheet": "sheets/work_S.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/work_S_05.png",
+       "file": "work_S_05.png",
+       "packed_bounds": [
+        56,
+        58,
+        99,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -11.4,
+         -49.3
+        ],
+        "hand_L": [
+         3.3,
+         -39.3
+        ],
+        "foot_R": [
+         -5.2,
+         -1.8
+        ],
+        "foot_L": [
+         5.2,
+         0.1
+        ],
+        "hammer_face": [
+         -11.4,
+         -60.7
+        ],
+        "bar": [
+         0.2,
+         -34.5
+        ]
+       },
+       "equipment": {
+        "hammer": 22,
+        "tongs": 0,
+        "bar": 9,
+        "sparks": 5
+       },
+       "sha256": "32f33e77b018e1782f9fe03dde73b4c7bae9ca42a98aca1adc4c7ab9f6033bf3",
+       "sheet": "sheets/work_S.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/work_S_06.png",
+       "file": "work_S_06.png",
+       "packed_bounds": [
+        59,
+        62,
+        99,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -12.0,
+         -54.1
+        ],
+        "hand_L": [
+         3.3,
+         -39.3
+        ],
+        "foot_R": [
+         -5.2,
+         -1.8
+        ],
+        "foot_L": [
+         5.2,
+         0.1
+        ],
+        "hammer_face": [
+         -12.0,
+         -65.7
+        ],
+        "bar": [
+         0.2,
+         -34.5
+        ]
+       },
+       "equipment": {
+        "hammer": 19,
+        "tongs": 0,
+        "bar": 9
+       },
+       "sha256": "ddcec79a5b4b63a5a08a94f80c68a3601a61686875999d12319280b1010a3fe0",
+       "sheet": "sheets/work_S.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/work_S_07.png",
+       "file": "work_S_07.png",
+       "packed_bounds": [
+        58,
+        62,
+        99,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -12.5,
+         -54.3
+        ],
+        "hand_L": [
+         3.3,
+         -39.3
+        ],
+        "foot_R": [
+         -5.2,
+         -1.8
+        ],
+        "foot_L": [
+         5.2,
+         0.1
+        ],
+        "hammer_face": [
+         -12.5,
+         -66.6
+        ],
+        "bar": [
+         0.2,
+         -34.5
+        ]
+       },
+       "equipment": {
+        "hammer": 30,
+        "tongs": 0,
+        "bar": 9
+       },
+       "sha256": "7ba9712621c3071f0c1c22c79c87e313eb688660513fc4074e3f529bf5220133",
+       "sheet": "sheets/work_S.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "N": {
+     "frames": [
+      {
+       "path": "res://assets/animated/hale/work_N_00.png",
+       "file": "work_N_00.png",
+       "packed_bounds": [
+        61,
+        63,
+        102,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         13.1,
+         -48.5
+        ],
+        "hand_L": [
+         -3.3,
+         -49.9
+        ],
+        "foot_R": [
+         5.2,
+         -0.2
+        ],
+        "foot_L": [
+         -5.2,
+         -2.1
+        ],
+        "hammer_face": [
+         13.1,
+         -57.5
+        ],
+        "bar": [
+         -0.2,
+         -54.7
+        ]
+       },
+       "equipment": {
+        "tongs": 0,
+        "bar": 0,
+        "hammer": 42
+       },
+       "sha256": "64d7697f3883d6037001632d8bcd06c90a51b6bff9c5fabe191373b6b3c40f3b",
+       "sheet": "sheets/work_N.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/work_N_01.png",
+       "file": "work_N_01.png",
+       "packed_bounds": [
+        61,
+        63,
+        102,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         13.1,
+         -49.2
+        ],
+        "hand_L": [
+         -3.3,
+         -49.9
+        ],
+        "foot_R": [
+         5.2,
+         -0.2
+        ],
+        "foot_L": [
+         -5.2,
+         -2.1
+        ],
+        "hammer_face": [
+         13.1,
+         -56.6
+        ],
+        "bar": [
+         -0.2,
+         -54.7
+        ]
+       },
+       "equipment": {
+        "tongs": 0,
+        "bar": 0,
+        "hammer": 38
+       },
+       "sha256": "255dcf8e01ecba697f442398f0963f0683c2d97fcc063d79bdb95a453add95e1",
+       "sheet": "sheets/work_N.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/work_N_02.png",
+       "file": "work_N_02.png",
+       "packed_bounds": [
+        61,
+        62,
+        99,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         7.6,
+         -56.8
+        ],
+        "hand_L": [
+         -3.3,
+         -49.9
+        ],
+        "foot_R": [
+         5.2,
+         -0.2
+        ],
+        "foot_L": [
+         -5.2,
+         -2.1
+        ],
+        "hammer_face": [
+         7.6,
+         -66.0
+        ],
+        "bar": [
+         -0.2,
+         -54.7
+        ]
+       },
+       "equipment": {
+        "tongs": 0,
+        "bar": 0,
+        "hammer": 0
+       },
+       "sha256": "12ade0020ecd8e6913289ee38ee54b84466332ed3b36fca53bafa6fbf05b3ade",
+       "sheet": "sheets/work_N.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/work_N_03.png",
+       "file": "work_N_03.png",
+       "packed_bounds": [
+        61,
+        62,
+        99,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         6.5,
+         -49.6
+        ],
+        "hand_L": [
+         -3.3,
+         -48.9
+        ],
+        "foot_R": [
+         5.2,
+         -0.2
+        ],
+        "foot_L": [
+         -5.2,
+         -2.1
+        ],
+        "hammer_face": [
+         6.5,
+         -45.9
+        ],
+        "bar": [
+         -0.2,
+         -53.6
+        ]
+       },
+       "equipment": {
+        "tongs": 0,
+        "hammer": 1,
+        "bar": 0,
+        "sparks": 3
+       },
+       "sha256": "5bd5c332e141aed41e3de80397068509036db6c98fc33427944a546f8349d90b",
+       "sheet": "sheets/work_N.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/work_N_04.png",
+       "file": "work_N_04.png",
+       "packed_bounds": [
+        61,
+        62,
+        99,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         6.5,
+         -52.1
+        ],
+        "hand_L": [
+         -3.3,
+         -49.4
+        ],
+        "foot_R": [
+         5.2,
+         -0.2
+        ],
+        "foot_L": [
+         -5.2,
+         -2.1
+        ],
+        "hammer_face": [
+         6.5,
+         -53.3
+        ],
+        "bar": [
+         -0.2,
+         -54.2
+        ]
+       },
+       "equipment": {
+        "tongs": 0,
+        "hammer": 0,
+        "bar": 0,
+        "sparks": 2
+       },
+       "sha256": "df9eae6919734cda9d6895f1c96fd86d919ee4671830a8ed8f1ae7794e2fc8eb",
+       "sheet": "sheets/work_N.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/work_N_05.png",
+       "file": "work_N_05.png",
+       "packed_bounds": [
+        61,
+        56,
+        105,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         11.4,
+         -50.8
+        ],
+        "hand_L": [
+         -3.3,
+         -49.9
+        ],
+        "foot_R": [
+         5.2,
+         -0.2
+        ],
+        "foot_L": [
+         -5.2,
+         -2.1
+        ],
+        "hammer_face": [
+         11.4,
+         -62.5
+        ],
+        "bar": [
+         -0.2,
+         -54.7
+        ]
+       },
+       "equipment": {
+        "tongs": 0,
+        "bar": 0,
+        "hammer": 51,
+        "sparks": 4
+       },
+       "sha256": "c99ba85514a749b0a1fe3264e932ff6ad9f449449676480393a750e2b70dab3f",
+       "sheet": "sheets/work_N.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/work_N_06.png",
+       "file": "work_N_06.png",
+       "packed_bounds": [
+        61,
+        62,
+        101,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         12.0,
+         -52.6
+        ],
+        "hand_L": [
+         -3.3,
+         -49.9
+        ],
+        "foot_R": [
+         5.2,
+         -0.2
+        ],
+        "foot_L": [
+         -5.2,
+         -2.1
+        ],
+        "hammer_face": [
+         12.0,
+         -64.1
+        ],
+        "bar": [
+         -0.2,
+         -54.7
+        ]
+       },
+       "equipment": {
+        "tongs": 0,
+        "bar": 0,
+        "hammer": 44
+       },
+       "sha256": "ba67ed6fb2d25ed404f11f08ccbaba1aee3316e8f2825807f617bb392e10c85a",
+       "sheet": "sheets/work_N.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/work_N_07.png",
+       "file": "work_N_07.png",
+       "packed_bounds": [
+        61,
+        63,
+        102,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         12.5,
+         -50.1
+        ],
+        "hand_L": [
+         -3.3,
+         -49.9
+        ],
+        "foot_R": [
+         5.2,
+         -0.2
+        ],
+        "foot_L": [
+         -5.2,
+         -2.1
+        ],
+        "hammer_face": [
+         12.5,
+         -59.7
+        ],
+        "bar": [
+         -0.2,
+         -54.7
+        ]
+       },
+       "equipment": {
+        "tongs": 0,
+        "bar": 0,
+        "hammer": 44
+       },
+       "sha256": "4124831f6dd25ed2e7ab8dc994af83adce5afc8b87e2c1073a839bdd24a621e3",
+       "sheet": "sheets/work_N.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "E": {
+     "frames": [
+      {
+       "path": "res://assets/animated/hale/work_E_00.png",
+       "file": "work_E_00.png",
+       "packed_bounds": [
+        59,
+        62,
+        111,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -8.9,
+         -51.1
+        ],
+        "hand_L": [
+         15.6,
+         -44.6
+        ],
+        "foot_R": [
+         -2.7,
+         -1.0
+        ],
+        "foot_L": [
+         3.8,
+         -1.0
+        ],
+        "hammer_face": [
+         -13.5,
+         -61.8
+        ],
+        "bar": [
+         28.9,
+         -44.6
+        ]
+       },
+       "equipment": {
+        "tongs": 5,
+        "bar": 16,
+        "hammer": 68
+       },
+       "sha256": "7e9c8e0be1a3bdec3c539499a3e6c2a6a0bac907b20daa74a9f8f497defe28de",
+       "sheet": "sheets/work_E.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/work_E_01.png",
+       "file": "work_E_01.png",
+       "packed_bounds": [
+        57,
+        62,
+        111,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -10.0,
+         -52.2
+        ],
+        "hand_L": [
+         15.6,
+         -44.6
+        ],
+        "foot_R": [
+         -2.7,
+         -1.0
+        ],
+        "foot_L": [
+         3.8,
+         -1.0
+        ],
+        "hammer_face": [
+         -16.4,
+         -61.9
+        ],
+        "bar": [
+         28.9,
+         -44.6
+        ]
+       },
+       "equipment": {
+        "tongs": 5,
+        "bar": 16,
+        "hammer": 64
+       },
+       "sha256": "1aec8c188d12b0efcd82345455c7fecb34aee337c2d37768f5aa3a1f6637867b",
+       "sheet": "sheets/work_E.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/work_E_02.png",
+       "file": "work_E_02.png",
+       "packed_bounds": [
+        68,
+        62,
+        111,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         9.0,
+         -53.3
+        ],
+        "hand_L": [
+         15.6,
+         -44.6
+        ],
+        "foot_R": [
+         -2.7,
+         -1.0
+        ],
+        "foot_L": [
+         3.8,
+         -1.0
+        ],
+        "hammer_face": [
+         19.1,
+         -59.0
+        ],
+        "bar": [
+         28.9,
+         -44.6
+        ]
+       },
+       "equipment": {
+        "tongs": 5,
+        "bar": 16,
+        "hammer": 46
+       },
+       "sha256": "5ff3880af67950c97d16f52d8ad9d883911cdef349a1ca53f538e7de382f2d42",
+       "sheet": "sheets/work_E.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/work_E_03.png",
+       "file": "work_E_03.png",
+       "packed_bounds": [
+        69,
+        63,
+        111,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         13.5,
+         -44.6
+        ],
+        "hand_L": [
+         15.6,
+         -43.5
+        ],
+        "foot_R": [
+         -2.7,
+         -1.0
+        ],
+        "foot_L": [
+         3.8,
+         -1.0
+        ],
+        "hammer_face": [
+         22.8,
+         -37.7
+        ],
+        "bar": [
+         28.9,
+         -43.5
+        ]
+       },
+       "equipment": {
+        "tongs": 1,
+        "bar": 10,
+        "hammer": 46,
+        "sparks": 5
+       },
+       "sha256": "3429fec72cf99f1960fe1538a56dcf2436c64193a8966ec6a034c8819c26a4bb",
+       "sheet": "sheets/work_E.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/work_E_04.png",
+       "file": "work_E_04.png",
+       "packed_bounds": [
+        69,
+        63,
+        115,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         13.0,
+         -47.3
+        ],
+        "hand_L": [
+         15.6,
+         -44.1
+        ],
+        "foot_R": [
+         -2.7,
+         -1.0
+        ],
+        "foot_L": [
+         3.8,
+         -1.0
+        ],
+        "hammer_face": [
+         24.2,
+         -44.6
+        ],
+        "bar": [
+         28.9,
+         -44.1
+        ]
+       },
+       "equipment": {
+        "tongs": 7,
+        "bar": 8,
+        "hammer": 46,
+        "sparks": 5
+       },
+       "sha256": "e911847e0419797fb63fb38769405620acc02fdd5a1f1cce056aaf0a2797342c",
+       "sheet": "sheets/work_E.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/work_E_05.png",
+       "file": "work_E_05.png",
+       "packed_bounds": [
+        68,
+        57,
+        111,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         1.0,
+         -50.1
+        ],
+        "hand_L": [
+         15.6,
+         -44.6
+        ],
+        "foot_R": [
+         -2.7,
+         -1.0
+        ],
+        "foot_L": [
+         3.8,
+         -1.0
+        ],
+        "hammer_face": [
+         1.5,
+         -61.6
+        ],
+        "bar": [
+         28.9,
+         -44.6
+        ]
+       },
+       "equipment": {
+        "tongs": 5,
+        "bar": 16,
+        "hammer": 65,
+        "sparks": 5
+       },
+       "sha256": "1e2959056d0a28b678f5f62e19fbbeb9b0cfe3c12e1bc5db841232f51678063e",
+       "sheet": "sheets/work_E.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/work_E_06.png",
+       "file": "work_E_06.png",
+       "packed_bounds": [
+        65,
+        62,
+        111,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.4,
+         -53.3
+        ],
+        "hand_L": [
+         15.6,
+         -44.6
+        ],
+        "foot_R": [
+         -2.7,
+         -1.0
+        ],
+        "foot_L": [
+         3.8,
+         -1.0
+        ],
+        "hammer_face": [
+         -3.5,
+         -64.9
+        ],
+        "bar": [
+         28.9,
+         -44.6
+        ]
+       },
+       "equipment": {
+        "tongs": 5,
+        "bar": 16,
+        "hammer": 67
+       },
+       "sha256": "f54aebab00d17ada05749b5d2849381571d2d1a702ac25c1a5cecde0579a9f35",
+       "sheet": "sheets/work_E.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/work_E_07.png",
+       "file": "work_E_07.png",
+       "packed_bounds": [
+        61,
+        62,
+        111,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -7.2,
+         -52.2
+        ],
+        "hand_L": [
+         15.6,
+         -44.6
+        ],
+        "foot_R": [
+         -2.7,
+         -1.0
+        ],
+        "foot_L": [
+         3.8,
+         -1.0
+        ],
+        "hammer_face": [
+         -11.1,
+         -63.2
+        ],
+        "bar": [
+         28.9,
+         -44.6
+        ]
+       },
+       "equipment": {
+        "tongs": 5,
+        "bar": 16,
+        "hammer": 68
+       },
+       "sha256": "2248e9f83d592b02bc0a34f9e084bf4819c9d8b8a5890017997c81256714434e",
+       "sheet": "sheets/work_E.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "W": {
+     "frames": [
+      {
+       "path": "res://assets/animated/hale/work_W_00.png",
+       "file": "work_W_00.png",
+       "packed_bounds": [
+        49,
+        62,
+        98,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         6.3,
+         -51.1
+        ],
+        "hand_L": [
+         -14.9,
+         -44.6
+        ],
+        "foot_R": [
+         1.7,
+         -1.0
+        ],
+        "foot_L": [
+         -2.7,
+         -1.0
+        ],
+        "hammer_face": [
+         10.9,
+         -61.8
+        ],
+        "bar": [
+         -28.9,
+         -44.6
+        ]
+       },
+       "equipment": {
+        "hammer": 38,
+        "tongs": 5,
+        "bar": 16
+       },
+       "sha256": "d98fe9719579b6bbecab502fbdf3d9bef0ce0ee1f6613f8fea0e48b995b8f3ae",
+       "sheet": "sheets/work_W.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/work_W_01.png",
+       "file": "work_W_01.png",
+       "packed_bounds": [
+        49,
+        62,
+        100,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         7.4,
+         -52.2
+        ],
+        "hand_L": [
+         -14.9,
+         -44.6
+        ],
+        "foot_R": [
+         1.7,
+         -1.0
+        ],
+        "foot_L": [
+         -2.7,
+         -1.0
+        ],
+        "hammer_face": [
+         13.8,
+         -61.9
+        ],
+        "bar": [
+         -28.9,
+         -44.6
+        ]
+       },
+       "equipment": {
+        "hammer": 46,
+        "tongs": 5,
+        "bar": 16
+       },
+       "sha256": "00fd0075aa313130e509919af7b5df292dd0420dcf87ae935294bd3243d2ed2d",
+       "sheet": "sheets/work_W.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/work_W_02.png",
+       "file": "work_W_02.png",
+       "packed_bounds": [
+        49,
+        62,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -10.6,
+         -53.3
+        ],
+        "hand_L": [
+         -14.9,
+         -44.6
+        ],
+        "foot_R": [
+         1.7,
+         -1.0
+        ],
+        "foot_L": [
+         -2.7,
+         -1.0
+        ],
+        "hammer_face": [
+         -20.6,
+         -59.0
+        ],
+        "bar": [
+         -28.9,
+         -44.6
+        ]
+       },
+       "equipment": {
+        "hammer": 51,
+        "tongs": 5,
+        "bar": 16
+       },
+       "sha256": "21e0f417125ecf3a35c46b137b5318de3005044f8fbddd40000692bbdbe86679",
+       "sheet": "sheets/work_W.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/work_W_03.png",
+       "file": "work_W_03.png",
+       "packed_bounds": [
+        49,
+        63,
+        91,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -14.8,
+         -44.6
+        ],
+        "hand_L": [
+         -14.9,
+         -43.5
+        ],
+        "foot_R": [
+         1.7,
+         -1.0
+        ],
+        "foot_L": [
+         -2.7,
+         -1.0
+        ],
+        "hammer_face": [
+         -24.1,
+         -37.7
+        ],
+        "bar": [
+         -28.9,
+         -43.5
+        ]
+       },
+       "equipment": {
+        "hammer": 34,
+        "tongs": 5,
+        "bar": 14,
+        "sparks": 5
+       },
+       "sha256": "fd44517ac7a544d68df9c427d9415869175480a1c1f04b5e9157b83c4ca79161",
+       "sheet": "sheets/work_W.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/work_W_04.png",
+       "file": "work_W_04.png",
+       "packed_bounds": [
+        43,
+        63,
+        91,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -14.3,
+         -47.3
+        ],
+        "hand_L": [
+         -14.9,
+         -44.1
+        ],
+        "foot_R": [
+         1.7,
+         -1.0
+        ],
+        "foot_L": [
+         -2.7,
+         -1.0
+        ],
+        "hammer_face": [
+         -25.5,
+         -44.6
+        ],
+        "bar": [
+         -28.9,
+         -44.1
+        ]
+       },
+       "equipment": {
+        "hammer": 38,
+        "tongs": 11,
+        "bar": 12,
+        "sparks": 5
+       },
+       "sha256": "de6452fac9a8deca11d668d8161201628f31d3a90a588039690a274ba2452958",
+       "sheet": "sheets/work_W.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/work_W_05.png",
+       "file": "work_W_05.png",
+       "packed_bounds": [
+        49,
+        57,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.3,
+         -50.1
+        ],
+        "hand_L": [
+         -14.9,
+         -44.6
+        ],
+        "foot_R": [
+         1.7,
+         -1.0
+        ],
+        "foot_L": [
+         -2.7,
+         -1.0
+        ],
+        "hammer_face": [
+         -3.8,
+         -61.6
+        ],
+        "bar": [
+         -28.9,
+         -44.6
+        ]
+       },
+       "equipment": {
+        "hammer": 0,
+        "tongs": 5,
+        "bar": 16,
+        "sparks": 5
+       },
+       "sha256": "bece9f9743310b25d411c044a563a39da2b5077cf1a0eed3dd5366ab982c7214",
+       "sheet": "sheets/work_W.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/work_W_06.png",
+       "file": "work_W_06.png",
+       "packed_bounds": [
+        49,
+        62,
+        93,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         1.0,
+         -53.3
+        ],
+        "hand_L": [
+         -14.9,
+         -44.6
+        ],
+        "foot_R": [
+         1.7,
+         -1.0
+        ],
+        "foot_L": [
+         -2.7,
+         -1.0
+        ],
+        "hammer_face": [
+         1.1,
+         -64.9
+        ],
+        "bar": [
+         -28.9,
+         -44.6
+        ]
+       },
+       "equipment": {
+        "hammer": 0,
+        "tongs": 5,
+        "bar": 16
+       },
+       "sha256": "cf3a6080bf7e2d66338fed62082f052c5c8bada4c76916dae99c5524e6e1acc2",
+       "sheet": "sheets/work_W.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/hale/work_W_07.png",
+       "file": "work_W_07.png",
+       "packed_bounds": [
+        49,
+        62,
+        96,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         4.7,
+         -52.2
+        ],
+        "hand_L": [
+         -14.9,
+         -44.6
+        ],
+        "foot_R": [
+         1.7,
+         -1.0
+        ],
+        "foot_L": [
+         -2.7,
+         -1.0
+        ],
+        "hammer_face": [
+         8.6,
+         -63.2
+        ],
+        "bar": [
+         -28.9,
+         -44.6
+        ]
+       },
+       "equipment": {
+        "hammer": 15,
+        "tongs": 5,
+        "bar": 16
+       },
+       "sha256": "c43143e588eab18791623b45df5e689be585e0234628ba847bbd8b13e2b0cf5a",
+       "sheet": "sheets/work_W.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    }
+   }
+  }
+ },
+ "pose_count": 136
+}

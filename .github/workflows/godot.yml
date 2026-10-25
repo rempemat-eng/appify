@@ -1,0 +1,34 @@
+name: Godot
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - 'game/**'
+      - '.github/workflows/godot.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'game/**'
+      - '.github/workflows/godot.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    # drafts wait until they are marked ready (ready_for_review starts the run)
+    if: github.event_name != 'pull_request' || !github.event.pull_request.draft
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Get the pinned Godot 4.7.2 (checked against its SHA-512)
+        run: echo "GODOT=$(bash game/tools/get_godot.sh "$RUNNER_TEMP/godot")" >> "$GITHUB_ENV"
+      - name: Import, run the main scene, run the GdUnit4 tests
+        run: bash game/tools/check.sh

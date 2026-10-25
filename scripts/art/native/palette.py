@@ -74,7 +74,11 @@ def ink() -> tuple:
 FAMS = ['crag', 'crag_warm', 'crag_cool', 'grass', 'grass_warm', 'grass_cool', 'leaf', 'leaf_warm',
         'leaf_cool', 'earth', 'earth_warm', 'earth_cool', 'path', 'path_warm', 'path_cool', 'snow',
         'snow_warm', 'snow_cool', 'water', 'water_warm', 'water_cool', 'plaster', 'brass', 'berry',
-        'dusk', 'sky', 'timber', 'stone', 'stone_warm', 'stone_cool']
+        'dusk', 'sky', 'timber', 'stone', 'stone_warm', 'stone_cool',
+        # appended for the village kit (village.py): existing codes keep their numbers
+        'timber_warm', 'timber_cool', 'plaster_warm', 'slate', 'slate_warm', 'slate_cool', 'sand', 'sand_warm',
+        'sand_cool', 'clay', 'clay_cool', 'iron', 'lamp', 'soot', 'ash', 'void', 'lava', 'fox', 'ashlar',
+        'ashlar_warm', 'berry_cool', 'sky_cool', 'brass_warm', 'dusk_cool']
 FI = {n: i for i, n in enumerate(FAMS)}
 
 LUT = np.zeros((len(FAMS) * 8, 3), np.uint8)

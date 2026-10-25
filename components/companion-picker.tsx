@@ -135,10 +135,9 @@ export function CompanionPicker({
                       />
                       <View
                         aria-hidden
-                        pointerEvents="none"
                         accessibilityElementsHidden
                         importantForAccessibility="no-hide-descendants"
-                        style={{ alignItems: 'center', gap: 4 }}
+                        style={{ alignItems: 'center', gap: 4, pointerEvents: 'none' }}
                       >
                         <Pet
                           visitor={option.id}

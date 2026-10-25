@@ -458,7 +458,7 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
         style={{ flex: 1, backgroundColor: c.paper }}
       >
         <CozyBackground />
-        <View pointerEvents="none" style={StyleSheet.absoluteFill}>
+        <View style={[StyleSheet.absoluteFill, { pointerEvents: 'none' }]}>
           <Pulse
             active={combat.d.hp < maxHp(target) * 0.25}
             style={{ position: 'absolute', top: 0, bottom: 0, right: 0, width: '50%' }}
@@ -615,13 +615,13 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
             {damage && !skip && (
               <View
                 key={`burst-${damage.id}`}
-                pointerEvents="none"
                 style={{
                   position: 'absolute',
                   left: damage.side === 'a' ? '12%' : '65%',
                   top: '25%',
                   width: petSize,
                   height: petSize,
+                  pointerEvents: 'none',
                 }}
               >
                 <PixelBurst />
@@ -862,8 +862,11 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
         <BattleIntro skip={skip} />
         {flash && !reduced && (
           <View
-            pointerEvents="none"
-            style={[StyleSheet.absoluteFill, { backgroundColor: c.flash }]}
+            style={[
+              StyleSheet.absoluteFill,
+              { backgroundColor: c.flash },
+              { pointerEvents: 'none' },
+            ]}
           />
         )}
       </View>

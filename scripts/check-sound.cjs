@@ -36,6 +36,14 @@ vm.runInNewContext(compile('lib/sound-assets.ts'), {
   },
 });
 const { soundEffects, ambienceLoops, soundDurations } = assetsModule.exports;
+const rulesModule = { exports: {} };
+vm.runInNewContext(compile('lib/sound-rules.ts'), {
+  module: rulesModule,
+  exports: rulesModule.exports,
+  require: (id) => {
+    throw new Error(`Unexpected sound-rules import: ${id}`);
+  },
+});
 
 function readWav(file) {
   const buffer = fs.readFileSync(path.join(root, file));
@@ -185,6 +193,7 @@ function load({ os = 'web', saved = {}, activated = false, deferredSeeks = false
           },
         };
       if (id === '@/lib/sound-assets') return assetsModule.exports;
+      if (id === '@/lib/sound-rules') return rulesModule.exports;
       throw new Error(`Unexpected sound import: ${id}`);
     },
   });
@@ -269,7 +278,10 @@ async function main() {
     world.handlers.get('pointerdown')({ type: 'pointerdown', pointerType: 'touch' });
     check(world.plays.length === 0, 'without the API a touch pointerdown still waits');
     world.handlers.get('touchend')({ type: 'touchend' });
-    check(world.plays.at(-1) === ambienceLoops.day, 'without the API the touch ending starts audio');
+    check(
+      world.plays.at(-1) === ambienceLoops.day,
+      'without the API the touch ending starts audio',
+    );
   }
   {
     const { sound, world } = load();
@@ -409,6 +421,71 @@ async function main() {
     sound.playSound('splash');
     check(world.plays.at(-1) === soundEffects.splash, 'native plays without a web gesture');
     stop();
+  }
+
+  // Playback rules (lib/sound-rules.ts): every cue has a tier, flavour cues keep a gap, and
+  // Gentle sound keeps confirms and moments only, spaced apart.
+  {
+    const { cueTiers, FLAVOUR_GAP_MS, GENTLE_GAP_MS } = rulesModule.exports;
+    for (const id of Object.keys(soundEffects))
+      check(['confirm', 'moment', 'flavour'].includes(cueTiers[id]), `${id} has a tier`);
+    check(
+      Object.keys(cueTiers).length === Object.keys(soundEffects).length,
+      'no tier for a missing cue',
+    );
+    for (const kind of ['select', 'success', 'error'])
+      check(
+        cueTiers[load({ activated: true }).sound.feedbackSounds[kind]] === 'confirm',
+        `${kind} is a confirm`,
+      );
+
+    const { sound, world } = load({ activated: true });
+    const stop = sound.startSound();
+    await settle();
+    check(sound.useSoundPreference.getState().gentle === false, 'Gentle sound is off by default');
+    sound.playSound('splash');
+    world.now += FLAVOUR_GAP_MS - 1;
+    sound.playSound('water');
+    check(
+      world.plays.at(-1) === soundEffects.splash,
+      'a second flavour cue inside the gap is skipped',
+    );
+    sound.playSound('tap');
+    await settle();
+    check(world.plays.at(-1) === soundEffects.tap, 'a confirm plays inside the flavour gap');
+    world.now += 2;
+    sound.playSound('water');
+    check(world.plays.at(-1) === soundEffects.water, 'flavour plays again after the gap');
+
+    await sound.useSoundPreference.getState().setGentle(true);
+    check(world.storage.get('napattack-sound-gentle') === 'true', 'Gentle sound is saved');
+    world.now += 5000;
+    const before = world.plays.length;
+    for (const id of ['steps', 'splash', 'boop', 'munch', 'rustle']) {
+      world.now += 1000;
+      sound.playSound(id);
+    }
+    check(world.plays.length === before, 'Gentle sound: no flavour cues');
+    world.now += 1000;
+    sound.playSound('tap');
+    await settle();
+    check(world.plays.at(-1) === soundEffects.tap, 'Gentle sound: confirms play');
+    world.now += GENTLE_GAP_MS - 1;
+    sound.playSound('chime');
+    await settle();
+    check(world.plays.at(-1) === soundEffects.tap, 'Gentle sound: effects are spaced apart');
+    world.now += 2;
+    sound.playSound('reward');
+    await settle();
+    check(world.plays.at(-1) === soundEffects.reward, 'Gentle sound: moments play');
+    stop();
+
+    const again = load({ activated: true });
+    again.world.storage.set('napattack-sound-gentle', 'true');
+    const stopAgain = again.sound.startSound();
+    await settle();
+    check(again.sound.useSoundPreference.getState().gentle === true, 'a saved Gentle sound loads');
+    stopAgain();
   }
   console.log(
     `Sound: ${checks} checks passed (generated assets and the sound engine at its boundaries; no real audio output).`,

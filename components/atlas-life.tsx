@@ -534,8 +534,15 @@ export function ZoneResidents({
   if (here.length === 0) return null;
   return (
     <View
-      pointerEvents="none"
-      style={{ position: 'absolute', left, top, width: 320 * u, height: 576 * u, zIndex: 150000 }}
+      style={{
+        position: 'absolute',
+        left,
+        top,
+        width: 320 * u,
+        height: 576 * u,
+        zIndex: 150000,
+        pointerEvents: 'none',
+      }}
     >
       {here.map(([id, route]) => (
         <Resident key={id} id={id} route={route} clock={clock} u={u} />
@@ -574,8 +581,15 @@ export function ZoneLife({
   if (!running) return null;
   return (
     <View
-      pointerEvents="none"
-      style={{ position: 'absolute', left, top, width: 320 * u, height: 576 * u, zIndex: 200000 }}
+      style={{
+        position: 'absolute',
+        left,
+        top,
+        width: 320 * u,
+        height: 576 * u,
+        zIndex: 200000,
+        pointerEvents: 'none',
+      }}
     >
       {zoneEmitters(zone, night).map((e) => (
         <Particle key={`${e.kind}-${e.x}-${e.y}-${e.seed}`} e={e} clock={clock} u={u} />
