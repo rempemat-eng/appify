@@ -1135,12 +1135,12 @@
       "id": "belt_view_pocket",
       "width": 24,
       "dead_end": "view",
-      "why": "brief pocket: a view over the land, from the Lull Road out over the fresh oxbow and the belt",
+      "why": "brief pocket: a view over the land, from the Lull Road north over the belt to the fresh oxbow, where it ends on the Lull Pike's bank (the boss arena)",
       "points": [
         [9344, 4344],
         [9344, 4264],
         [9392, 4264],
-        [9392, 4176]
+        [9392, 4024]
       ]
     },
     {
@@ -1460,9 +1460,9 @@
     },
     {
       "holds": "a view over the land",
-      "at": [9392, 4176],
+      "at": [9392, 4024],
       "trod": "belt_view_pocket",
-      "moved_from": [9340, 3908]
+      "moved_from": [9392, 4176]
     }
   ],
   "egg_spots": [
@@ -1957,5 +1957,228 @@
     "lullford": "cobbled lanes and setts at the bridge foot, cottage gardens behind stone walls, a green with the pump",
     "delta": "reed beds between the arms, marsh, mudflats in front with sandbars at the mouths, boardwalks",
     "coast": "dunes with marram behind a sand and shingle beach west of the delta"
-  }
+  },
+  "fights": {
+    "_about": "Fights for the Godot era (game-design v2, sections 4.4, 4.5, 9, 11.3 and 14; Claude A's to-all-assignments-1025): camps and patrols by Codex's six roles (the kinds are proposals for Codex), the boss arena (about 20 x 14 cells, 160 x 112 world px, inside one 320 x 180 window), low cover (shoot over) and high cover (blocks shots), waystones, the shard's crater, the dungeon's entrance and rooms. Camps refill on each train or ferry arrival, never on a clock. Shardstruck creatures are freed, machines break down, Company troopers and smugglers flee. Raids come only to Crossroads (7.6), so no raiders' camp.",
+    "act": 2,
+    "story": "the Lull (game-design v2, 8.2): smugglers have the bargee's barge; Lullford's swing bridge waits for a gear from Cogsworth; the Lull Pike in the oxbow",
+    "weapons": {
+      "melee": "gaffs, oars",
+      "ranged": "harpoon guns, net launchers",
+      "idea": "pull and pin"
+    },
+    "camps": [
+      {
+        "id": "towpath_otters",
+        "roles": ["swarmer", "swarmer", "swarmer", "swarmer"],
+        "kind": "shardstruck otters",
+        "at": [8560, 3640],
+        "enemies": [
+          [8574, 3644],
+          [8553, 3650],
+          [8545, 3635],
+          [8566, 3629]
+        ],
+        "why": "on the Towpath by the silted oxbow: the Lull's first fight, coming down from the Cog foot"
+      },
+      {
+        "id": "plain_herons",
+        "roles": ["lunger", "lunger", "grunt"],
+        "kind": "shardstruck herons and a heron-stalk crane",
+        "at": [8380, 4110],
+        "enemies": [
+          [8394, 4114],
+          [8367, 4116],
+          [8378, 4098]
+        ],
+        "why": "on the plain's terrace where the Lull Road comes in from the west: long telegraphed stabs"
+      },
+      {
+        "id": "smugglers_barge",
+        "roles": ["grunt", "grunt", "shooter", "caster"],
+        "kind": "smugglers on the bargee's barge (they flee)",
+        "at": [9150, 4480],
+        "enemies": [
+          [9164, 4484],
+          [9143, 4490],
+          [9135, 4475],
+          [9156, 4469]
+        ],
+        "why": "the barge moored on the Lull Cut below the bridge: the act's human enemies, harpoon guns from the deck",
+        "cover": [
+          {
+            "kind": "low",
+            "what": "cargo crates on the bank",
+            "at": [9120, 4470]
+          },
+          {
+            "kind": "low",
+            "what": "a coil of hawser and a capstan",
+            "at": [9190, 4500]
+          },
+          {
+            "kind": "high",
+            "what": "the barge's cabin",
+            "at": [9160, 4466]
+          }
+        ]
+      },
+      {
+        "id": "delta_eels",
+        "roles": ["lunger", "lunger", "swarmer", "swarmer"],
+        "kind": "shardstruck eels and elvers",
+        "at": [8650, 4720],
+        "enemies": [
+          [8664, 4724],
+          [8643, 4730],
+          [8635, 4715],
+          [8656, 4709]
+        ],
+        "why": "at the boardwalk in the delta: eels lunge out of the channels at the planks"
+      },
+      {
+        "id": "coast_crabs",
+        "roles": ["grunt", "swarmer", "swarmer"],
+        "kind": "mud crabs",
+        "at": [8380, 4560],
+        "enemies": [
+          [8394, 4564],
+          [8367, 4566],
+          [8378, 4548]
+        ],
+        "why": "on the Coast Path's creek, west of the delta"
+      }
+    ],
+    "patrols": [
+      {
+        "id": "delta_road_smugglers",
+        "roles": ["grunt", "shooter"],
+        "kind": "smugglers carrying the barge's cargo",
+        "path": [
+          [9196, 4376],
+          [9250, 4494],
+          [9306, 4560]
+        ],
+        "why": "between the barge and the wreck in the reeds, where they hide the cargo"
+      },
+      {
+        "id": "towpath_otters_roam",
+        "roles": ["swarmer", "swarmer"],
+        "kind": "shardstruck otters",
+        "path": [
+          [8520, 3480],
+          [8520, 3720]
+        ],
+        "why": "up and down the Towpath"
+      }
+    ],
+    "boss": {
+      "id": "lull_pike",
+      "name": "the Lull Pike",
+      "arena": [9296, 3872, 160, 112],
+      "at": [9376, 3928],
+      "enter_by": "belt_view_pocket",
+      "shard": true,
+      "teaches": "pull and pin (the harpoon gun)",
+      "why": "the fresh oxbow: the pike lunges from the loop of water at whoever stands on its banks; the water and the reeds bound the fight without walls"
+    },
+    "shard": {
+      "at": [9344, 3904],
+      "crater": "a scorched hollow on the oxbow's inner bank, half drowned, steaming at the waterline",
+      "why": "the Lull's shard fell into the oxbow; the pike grew round it"
+    },
+    "cover": [
+      {
+        "kind": "low",
+        "what": "willow stumps",
+        "at": [9294, 4016]
+      },
+      {
+        "kind": "high",
+        "what": "a pollard willow",
+        "at": [9440, 4000]
+      }
+    ],
+    "waystones": [
+      {
+        "id": "lullford_waystone",
+        "at": [8880, 4270],
+        "why": "at the swing bridge's west foot (bank loot, ride home)"
+      },
+      {
+        "id": "delta_waystone",
+        "at": [8522, 4470],
+        "why": "where the boardwalk leaves the Coast Path"
+      }
+    ],
+    "dungeon": {
+      "id": "sunken_barges",
+      "name": "the Sunken Barges",
+      "entrance": [9352, 4620],
+      "by": "wreck in the reeds",
+      "rooms": [
+        {
+          "id": "hold",
+          "what": "the wreck's flooded hold, crates as cover",
+          "camp": ["grunt", "shooter", "shooter"]
+        },
+        {
+          "id": "lock_tunnel",
+          "what": "an old lock tunnel under the embankment, sluices to open",
+          "camp": ["lunger", "swarmer", "swarmer"]
+        },
+        {
+          "id": "store",
+          "what": "the smugglers' store and the bargee's stolen gear",
+          "camp": ["tank", "shooter", "caster"]
+        }
+      ],
+      "keeper": "the smugglers' skipper (flees when beaten)",
+      "plan": "a zone plan of its own, like game/data/plans/undercroft.json, after this PR"
+    },
+    "raiders_camp": {
+      "none": true,
+      "why": "raids come only to Crossroads (game-design v2, 7.6)"
+    }
+  },
+  "quest_spots": [
+    {
+      "id": "swing_bridge_gear",
+      "at": [8944, 4290],
+      "quest": "the swing span is jammed; it waits for a gear from Cogsworth (W7)"
+    },
+    {
+      "id": "bargee",
+      "at": [9100, 4400],
+      "quest": "the bargee on the Cut's towpath, whose barge the smugglers took"
+    },
+    {
+      "id": "bargees_cook",
+      "at": [8796, 4330],
+      "quest": "the bargee's cook at Lullford's riverside; moves to Crossroads' kitchen and mill when it's over"
+    }
+  ],
+  "windows": [
+    {
+      "id": "lullford_bridge",
+      "rect": [8800, 4192, 320, 180],
+      "focal": [8960, 4312],
+      "clearing": [8880, 4270],
+      "why": "the swing bridge and the toll house, the waystone in the quiet clearing at its west foot"
+    },
+    {
+      "id": "pike_oxbow",
+      "rect": [9216, 3840, 320, 180],
+      "focal": [9376, 3928],
+      "clearing": [9392, 4024],
+      "why": "the boss arena inside one window, with a margin"
+    },
+    {
+      "id": "boardwalk",
+      "rect": [8496, 4600, 320, 180],
+      "focal": [8728, 4624],
+      "clearing": [8530, 4680],
+      "why": "the boardwalk into the reeds, the reed hide its landmark"
+    }
+  ]
 }
