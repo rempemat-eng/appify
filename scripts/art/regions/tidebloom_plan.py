@@ -565,6 +565,33 @@ DUNGEON = {'id': 'basalt_halls', 'name': 'the Basalt Halls', 'entrance': (6888, 
                    'work reaches the isles',
            'why': "the sea has hollowed the basalt arm into the old volcano's lava tube; it climbs under the isle and "
                   'comes out on the crater rim by the pool, a second way down from the top'}
+QUEST_SPOTS = [
+    {'id': 'naturalist_shelter', 'at': (7068, 6316),
+     'quest': "the naturalist, cut off at the rain shelter by the headwaters' watch (headwaters_watch): her notebook "
+              "marks where the shard came down (the cove), and her story 'an inch a year' starts here"},
+    {'id': 'ferryman_pier', 'at': (6520, 6296),
+     'quest': "the ferryman at the pier: the bar's crabs (islet_scuttlers) cut the walk from the Headland; clear "
+              'them and the Shell Bar is open at low tide'},
+    {'id': 'boatwoman_boathouse', 'at': (6664, 6312),
+     'quest': "the boatwoman at the boathouse: the sea cave in the basalt arm hums at night; the Basalt Halls' way in"},
+    {'id': 'beachcomber_turtles', 'at': (6368, 6664),
+     'quest': "the beachcomber on the turtle beach: the turtles won't come ashore while the crabs hold the west arm "
+              '(west_arm_crabs)'},
+]
+WINDOWS = [   # 16:9 windows, one Godot screen each (320 x 180 world px): focal point and the quiet clearing
+    {'id': 'shell_bar', 'rect': [6736, 5832, 320, 180], 'focal': (6930, 5870), 'clearing': (6840, 5960),
+     'why': "the bar's islet with the wreck, the tern colony and the scuttlers' camp; the Headland behind"},
+    {'id': 'lagoon_landing', 'rect': [6400, 6176, 320, 180], 'focal': (6496, 6304), 'clearing': (6560, 6240),
+     'why': 'the pier in the lagoon, the boathouse and the hamlet round them: where the ferry lands'},
+    {'id': 'canopy', 'rect': [6680, 6096, 320, 180], 'focal': (6904, 6152), 'clearing': (6824, 6232),
+     'why': 'the giant tree, the lower fall into the lagoon and the boars under the canopy'},
+    {'id': 'headwaters', 'rect': [6928, 6232, 320, 180], 'focal': (7068, 6316), 'clearing': (7096, 6344),
+     'why': "the rain shelter, the headwaters stair and the watch's camp with its cover; the upper fall at the right"},
+    {'id': 'cove_arena', 'rect': [6896, 6464, 320, 180], 'focal': (7040, 6552), 'clearing': (6920, 6520),
+     'why': "Black-sand Cove: the Basalt Crab's arena, the shard's crater, the sea stack and the cave mouth at the left"},
+    {'id': 'turtle_beach', 'rect': [6256, 6480, 320, 180], 'focal': (6376, 6616), 'clearing': (6400, 6600),
+     'why': "the west arm's end: the turtle beach kept calm, the crabs' camp up the arm"},
+]
 RAIDERS = {'none': True, 'why': 'raids come only to Crossroads (game-design v2, 7.6); Lagoon Landing is never attacked'}
 
 
@@ -601,18 +628,28 @@ def fights(p) -> dict:
         n = len(c['roles'])
         enemies = [settle(p, (at[0] + 28 * math.cos(2 * math.pi * i / n + 0.4), at[1] + 18 * math.sin(2 * math.pi * i / n + 0.4)), G)
                    for i in range(n)]
-        camps.append(dict({k: v for k, v in c.items() if k != 'at'}, at=at, enemies=enemies))
+        xs, ys = [e[0] for e in enemies], [e[1] for e in enemies]
+        x0, y0 = (min(xs) - 24) // GRID * GRID, (min(ys) - 20) // GRID * GRID
+        w = max(96, -(-(max(xs) + 24 - x0) // GRID) * GRID)
+        h = max(64, -(-(max(ys) + 20 - y0) // GRID) * GRID)
+        camps.append(dict({k: v for k, v in c.items() if k != 'at'}, at=at, enemies=enemies, arena=[x0, y0, w, h]))
     patrols = [dict(pt, path=[settle(p, q, G) for q in pt['path']]) for pt in PATROLS]
     boss = dict(BOSS, at=settle(p, BOSS['at'], G))
     return {
         '_about': ("Fights, from game-design v2 (section 14, the map lanes' row): camps and patrols by Codex's roles "
                    '(kinds are proposals for Codex), the boss arena (about 20 x 14 cells), cover, waystones, the '
                    "shard's crater and the dungeon's ends. Camps refill on each ferry arrival, never on a clock."),
+        'act': 2,
+        'story': "the Tidebloom Isles: the volcano's shard fell into Black-sand Cove and woke the basalt; crabs and "
+                 'boars went wild, and the naturalist is cut off at the headwaters',
+        'weapons': {'melee': 'basalt mauls, coral knives', 'ranged': 'spear guns, spring launchers',
+                    'idea': 'piercing, bounce (game-design v2)'},
         'camps': camps, 'patrols': patrols, 'boss': boss,
         'shard': dict(SHARD, at=settle(p, SHARD['at'], G, True)),
         'cover': [dict(c, at=settle(p, c['at'], G, True)) for c in COVER],
         'waystones': [dict(w, at=settle(p, w['at'], G, True)) for w in WAYSTONES],
-        'dungeon': dict(DUNGEON, entrance=settle(p, DUNGEON['entrance'], G), exit=settle(p, DUNGEON['exit'], G)),
+        'dungeon': dict(DUNGEON, entrance=settle(p, DUNGEON['entrance'], G), exit=settle(p, DUNGEON['exit'], G),
+                        keeper='a basalt-shelled moray in the vent, guarding the way up (proposal for Codex)'),
         'raiders_camp': RAIDERS,
     }
 
@@ -634,6 +671,21 @@ def fight_faults(p) -> list:
         for b in F['camps'][i + 1:]:
             if rp.seg_len(a['at'], b['at']) < 192:
                 out.append(f"camps {a['id']} and {b['id']} are {rp.seg_len(a['at'], b['at']):.0f} px apart")
+    for c in F['camps']:
+        ax, ay, aw, ah = c['arena']
+        if not all(ax <= e[0] < ax + aw and ay <= e[1] < ay + ah for e in c['enemies']):
+            out.append(f"camp {c['id']}'s arena does not hold its enemies")
+        if not any(ax - 8 <= q[0] <= ax + aw + 8 and ay - 8 <= q[1] <= ay + ah + 8
+                   for path in paths for q in (v[:2] for v in rp.sample(path['points'], 4))):
+            out.append(f"camp {c['id']}'s arena touches no path")
+    bx, by, bw, bh = p['box']
+    for wnd in p.get('windows', []):
+        x, y, w, h = wnd['rect']
+        if (w, h) != (320, 180) or x < bx or y < by or x + w > bx + bw or y + h > by + bh:
+            out.append(f"window {wnd['id']} is not a 320 x 180 window inside the box")
+        for k in ('focal', 'clearing'):
+            if not (x <= wnd[k][0] < x + w and y <= wnd[k][1] < y + h):
+                out.append(f"window {wnd['id']}'s {k} is outside it")
     x, y, w, h = F['boss']['arena']
     if w < 160 or h < 112:
         out.append('the boss arena is smaller than 20 x 14 cells')
@@ -747,6 +799,9 @@ def main(argv) -> int:
         for what, a, b in rp.fix(p):
             print(f'moved {what} from {a} to {b}')
     p['fights'] = fights(p)
+    G = rp.Ground(p)
+    p['quest_spots'] = [dict(q, at=settle(p, q['at'], G, True)) for q in QUEST_SPOTS]
+    p['windows'] = [dict(w, focal=settle(p, w['focal'], G), clearing=settle(p, w['clearing'], G, True)) for w in WINDOWS]
     path = os.path.join(ROOT, 'art', 'regions', 'tidebloom.json')
     with open(path, 'w') as fh:
         json.dump(p, fh, indent=1, default=int)

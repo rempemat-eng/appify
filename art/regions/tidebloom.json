@@ -3347,6 +3347,13 @@
  },
  "fights": {
   "_about": "Fights, from game-design v2 (section 14, the map lanes' row): camps and patrols by Codex's roles (kinds are proposals for Codex), the boss arena (about 20 x 14 cells), cover, waystones, the shard's crater and the dungeon's ends. Camps refill on each ferry arrival, never on a clock.",
+  "act": 2,
+  "story": "the Tidebloom Isles: the volcano's shard fell into Black-sand Cove and woke the basalt; crabs and boars went wild, and the naturalist is cut off at the headwaters",
+  "weapons": {
+   "melee": "basalt mauls, coral knives",
+   "ranged": "spear guns, spring launchers",
+   "idea": "piercing, bounce (game-design v2)"
+  },
   "camps": [
    {
     "id": "islet_scuttlers",
@@ -3379,6 +3386,12 @@
       6880,
       5884
      ]
+    ],
+    "arena": [
+     6816,
+     5864,
+     104,
+     80
     ]
    },
    {
@@ -3407,6 +3420,12 @@
       6444,
       6420
      ]
+    ],
+    "arena": [
+     6400,
+     6400,
+     96,
+     72
     ]
    },
    {
@@ -3435,6 +3454,12 @@
       6740,
       6180
      ]
+    ],
+    "arena": [
+     6696,
+     6160,
+     96,
+     72
     ]
    },
    {
@@ -3469,6 +3494,12 @@
       7032,
       6396
      ]
+    ],
+    "arena": [
+     6968,
+     6376,
+     104,
+     72
     ]
    }
   ],
@@ -3681,11 +3712,156 @@
     }
    ],
    "plan": "a zone plan of its own (like game/data/plans/undercroft.json) once docs/godot.md's zone work reaches the isles",
-   "why": "the sea has hollowed the basalt arm into the old volcano's lava tube; it climbs under the isle and comes out on the crater rim by the pool, a second way down from the top"
+   "why": "the sea has hollowed the basalt arm into the old volcano's lava tube; it climbs under the isle and comes out on the crater rim by the pool, a second way down from the top",
+   "keeper": "a basalt-shelled moray in the vent, guarding the way up (proposal for Codex)"
   },
   "raiders_camp": {
    "none": true,
    "why": "raids come only to Crossroads (game-design v2, 7.6); Lagoon Landing is never attacked"
   }
- }
+ },
+ "quest_spots": [
+  {
+   "id": "naturalist_shelter",
+   "at": [
+    7068,
+    6316
+   ],
+   "quest": "the naturalist, cut off at the rain shelter by the headwaters' watch (headwaters_watch): her notebook marks where the shard came down (the cove), and her story 'an inch a year' starts here"
+  },
+  {
+   "id": "ferryman_pier",
+   "at": [
+    6520,
+    6296
+   ],
+   "quest": "the ferryman at the pier: the bar's crabs (islet_scuttlers) cut the walk from the Headland; clear them and the Shell Bar is open at low tide"
+  },
+  {
+   "id": "boatwoman_boathouse",
+   "at": [
+    6664,
+    6316
+   ],
+   "quest": "the boatwoman at the boathouse: the sea cave in the basalt arm hums at night; the Basalt Halls' way in"
+  },
+  {
+   "id": "beachcomber_turtles",
+   "at": [
+    6368,
+    6664
+   ],
+   "quest": "the beachcomber on the turtle beach: the turtles won't come ashore while the crabs hold the west arm (west_arm_crabs)"
+  }
+ ],
+ "windows": [
+  {
+   "id": "shell_bar",
+   "rect": [
+    6736,
+    5832,
+    320,
+    180
+   ],
+   "focal": [
+    6928,
+    5868
+   ],
+   "clearing": [
+    6840,
+    5928
+   ],
+   "why": "the bar's islet with the wreck, the tern colony and the scuttlers' camp; the Headland behind"
+  },
+  {
+   "id": "lagoon_landing",
+   "rect": [
+    6400,
+    6176,
+    320,
+    180
+   ],
+   "focal": [
+    6496,
+    6304
+   ],
+   "clearing": [
+    6552,
+    6240
+   ],
+   "why": "the pier in the lagoon, the boathouse and the hamlet round them: where the ferry lands"
+  },
+  {
+   "id": "canopy",
+   "rect": [
+    6680,
+    6096,
+    320,
+    180
+   ],
+   "focal": [
+    6904,
+    6152
+   ],
+   "clearing": [
+    6824,
+    6232
+   ],
+   "why": "the giant tree, the lower fall into the lagoon and the boars under the canopy"
+  },
+  {
+   "id": "headwaters",
+   "rect": [
+    6928,
+    6232,
+    320,
+    180
+   ],
+   "focal": [
+    7068,
+    6316
+   ],
+   "clearing": [
+    7096,
+    6364
+   ],
+   "why": "the rain shelter, the headwaters stair and the watch's camp with its cover; the upper fall at the right"
+  },
+  {
+   "id": "cove_arena",
+   "rect": [
+    6896,
+    6464,
+    320,
+    180
+   ],
+   "focal": [
+    7040,
+    6552
+   ],
+   "clearing": [
+    6920,
+    6520
+   ],
+   "why": "Black-sand Cove: the Basalt Crab's arena, the shard's crater, the sea stack and the cave mouth at the left"
+  },
+  {
+   "id": "turtle_beach",
+   "rect": [
+    6256,
+    6480,
+    320,
+    180
+   ],
+   "focal": [
+    6376,
+    6616
+   ],
+   "clearing": [
+    6400,
+    6620
+   ],
+   "why": "the west arm's end: the turtle beach kept calm, the crabs' camp up the arm"
+  }
+ ]
 }
