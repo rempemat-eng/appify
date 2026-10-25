@@ -964,7 +964,42 @@
     }
   ],
   "clusters": [
-    {"recipe": "moor_wayside", "at": [6424, 2152], "orient": "s", "mirror": false, "seed": 0},
-    {"recipe": "moor_wayside", "at": [6352, 1608], "orient": "s", "mirror": true, "seed": 0}
+    {
+      "recipe": "moor_wayside",
+      "at": [6424, 2152],
+      "orient": "s",
+      "mirror": false,
+      "seed": 0
+    },
+    {
+      "recipe": "moor_wayside",
+      "at": [6352, 1608],
+      "orient": "s",
+      "mirror": true,
+      "seed": 0
+    }
+  ],
+  "camps": [
+    {
+      "id": "fells_ibex",
+      "arena": [6560, 1600, 224, 96],
+      "enemies": [
+        [6600, 1640],
+        [6680, 1660],
+        [6744, 1684]
+      ],
+      "cover": [[6720, 1616]],
+      "why": "shardstruck ibex on the High Fells' bench, the boulder field for cover; the widest flat on the Frostline, so the fight has room to dodge"
+    },
+    {
+      "id": "cirque_choughs",
+      "arena": [6128, 1930, 160, 64],
+      "enemies": [
+        [6160, 1952],
+        [6240, 1964]
+      ],
+      "cover": [],
+      "why": "choughs gone wild over the cirque floor east of the lookout trod's ford: a small fight that teaches dodging on snow"
+    }
   ]
 }

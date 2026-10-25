@@ -262,7 +262,43 @@ def placed(P: dict) -> list:
     return [(n['thing'], n['at'], n) for n in P.get('named', [])] + \
         [(k['holds'], k['at'], k) for k in P.get('pockets', [])] + \
         [(f"marker {m['what']}", m['at'], m) for m in P.get('markers', []) if not m.get('outside_box')] + \
-        [(r['who'], r['at'], r) for r in P.get('residents', [])]
+        [(r['who'], r['at'], r) for r in P.get('residents', [])] + \
+        [(f"camp {c['id']} enemy", e, c) for c in P.get('camps', []) for e in c.get('enemies', [])]
+
+
+def camps_check(P: dict) -> list:
+    """Camps (the Godot game's fights, docs/godot.md 'Camps'; game/data/plans/undercroft.json):
+    each has an id unique in the plan, at least one enemy, and an `arena` rect [x, y, w, h] on
+    the plan's ground, inside the box, holding all its enemies, at least 96 x 64 world px (room
+    to dodge on a 320 x 180 screen) and touched by a path, so the player walks into it. Its
+    enemies are reached by the flood fill like any placed thing (reach)."""
+    out = []
+    pid = P['id']
+    x0, y0, w, h = P['box']
+    seen = set()
+    paths = [p['points'] for p in P.get('routes', []) + P.get('trods', [])]
+    for c in P.get('camps', []):
+        cid = c.get('id')
+        if cid in seen:
+            out.append(f'{pid}: camp {cid} twice')
+        seen.add(cid)
+        if not c.get('enemies'):
+            out.append(f'{pid}: camp {cid} has no enemies')
+        a = c.get('arena')
+        if not a:
+            out.append(f'{pid}: camp {cid} has no arena rect')
+            continue
+        ax, ay, aw, ah = a
+        if aw < 96 or ah < 64:
+            out.append(f'{pid}: camp {cid} arena {a} is smaller than 96 x 64 world px')
+        if ax < x0 or ay < y0 or ax + aw > x0 + w or ay + ah > y0 + h:
+            out.append(f'{pid}: camp {cid} arena {a} leaves the box')
+        for e in c.get('enemies', []):
+            if not (ax <= e[0] <= ax + aw and ay <= e[1] <= ay + ah):
+                out.append(f'{pid}: camp {cid} enemy at {tuple(e)} is outside its arena')
+        if not any(ax - 8 <= x <= ax + aw + 8 and ay - 8 <= y <= ay + ah + 8 for pts in paths for x, y, _s in sample(pts, 8)):
+            out.append(f'{pid}: camp {cid} arena {a} is touched by no path')
+    return out
 
 
 def _decked(P: dict, at) -> bool:
@@ -838,7 +874,7 @@ def check(plan: dict) -> list:
             out.append(f'{pid}: set piece {sp["piece"]} at {tuple(sp["at"])} off the grid')
         inside(sp['at'], f'set piece {sp["piece"]}')
     out += placement(plan) + reach(plan) + water_ends(plan) + crossings_declared(plan) + water_height(plan) + \
-        rails_check(plan)
+        rails_check(plan) + camps_check(plan)
     return out
 
 

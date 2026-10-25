@@ -958,5 +958,44 @@
       "seed": 52,
       "why": "the ledge's short stair"
     }
+  ],
+  "camps": [
+    {
+      "id": "spur_tor",
+      "arena": [4816, 2008, 176, 96],
+      "enemies": [
+        [4848, 2040],
+        [4944, 2048],
+        [4896, 2080]
+      ],
+      "cover": [
+        [4872, 2024],
+        [4968, 2088]
+      ],
+      "why": "shardstruck moor sheep and their ram on the Heather spur's top, where the west trod comes over: open heather to dodge in, two gritstone tors for cover (to-all-godot-1080: plan the combat spaces)"
+    },
+    {
+      "id": "west_moor",
+      "arena": [4816, 2700, 176, 96],
+      "enemies": [
+        [4848, 2730],
+        [4920, 2760],
+        [4960, 2736]
+      ],
+      "cover": [[4888, 2716]],
+      "why": "red grouse gone wild in the deep heather beside the west trod: a quick, low fight on the way down, one gorse brake for cover"
+    },
+    {
+      "id": "gap_flock",
+      "arena": [5376, 3808, 160, 96],
+      "enemies": [
+        [5408, 3840],
+        [5480, 3856],
+        [5440, 3888],
+        [5512, 3832]
+      ],
+      "cover": [[5456, 3824]],
+      "why": "the drover's flock, shardstruck, scattered in the thicket by the gap; freeing them is what lets the drover take the road out (the Brackens gap threshold)"
+    }
   ]
 }
