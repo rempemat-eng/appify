@@ -1,0 +1,139 @@
+{
+  "id": "velvet",
+  "name": "Velvet",
+  "catalogue_prose": {
+    "role": "Coastal duellist · sabre and black lantern",
+    "primary": "Sabre — cut in a quick frontal arc.",
+    "secondary": "Lantern flare — dazzle nearby enemies and expose them to a follow-up.",
+    "block": "Sabre parry — hold the blade across incoming blows.",
+    "special": "Black Lantern — movement leaves finite pale echoes; a successful guard primes a long counter-thrust."
+  },
+  "planar_speed": 63,
+  "resources": {
+    "ammo_capacity": 0,
+    "initial_ammo": 0,
+    "reload_complete_refills_to_capacity": true,
+    "initial_heat": 0
+  },
+  "base": {
+    "actions": {
+      "primary": {
+        "duration_seconds": 0.34,
+        "release_seconds": 0.1292,
+        "cooldown_seconds": 0.34
+      },
+      "secondary": {
+        "duration_seconds": 0.48,
+        "release_seconds": 0.1824,
+        "cooldown_seconds": 1.6
+      },
+      "special": {
+        "duration_seconds": 0.65,
+        "release_seconds": 0.28,
+        "cooldown_seconds": 25
+      },
+      "block": {
+        "raise_seconds": 0.18,
+        "hold_until_released": true,
+        "damage_release_event": false
+      }
+    },
+    "primary_projectiles": []
+  },
+  "powered": {
+    "actions": {
+      "primary": {
+        "duration_seconds": 0.34,
+        "release_seconds": 0.1292,
+        "cooldown_seconds": 0.34
+      },
+      "secondary": {
+        "duration_seconds": 0.48,
+        "release_seconds": 0.1824,
+        "cooldown_seconds": 1.6
+      },
+      "special": {
+        "duration_seconds": 0.65,
+        "release_seconds": 0.28,
+        "cooldown_seconds": 25
+      },
+      "block": {
+        "raise_seconds": 0.18,
+        "hold_until_released": true,
+        "damage_release_event": false
+      }
+    },
+    "primary_projectiles": [],
+    "duration_seconds": 8,
+    "starts_at_special_release": true
+  },
+  "hit_shapes": {
+    "primary": {
+      "kind": "frontal_arc",
+      "reach": 29,
+      "minimum_direction_dot": 0.42,
+      "damage": 21,
+      "knockback": 5
+    },
+    "secondary": {
+      "kind": "frontal_arc",
+      "reach": 55,
+      "minimum_direction_dot": -0.05,
+      "damage": 9,
+      "knockback": 0,
+      "stun_seconds": 0.65,
+      "tank_stun_seconds": 0.25,
+      "vulnerable_seconds": 2.2
+    },
+    "counter": {
+      "kind": "frontal_arc",
+      "reach": 49,
+      "minimum_direction_dot": 0.42,
+      "damage": 35,
+      "knockback": 13
+    }
+  },
+  "executed_rules": {
+    "lantern_flare_damage_order": {
+      "raw_damage": 9,
+      "applies_vulnerability_before_damage": true,
+      "resulting_damage_on_same_target": 12.15,
+      "vulnerability_damage_multiplier": 1.35
+    },
+    "successful_powered_frontal_guard": {
+      "primes_counter_seconds": 2,
+      "any_positive_absorbed_damage": true
+    },
+    "counter": {
+      "next_primary_uses": "counter hit shape",
+      "consumes_counter": true,
+      "survives_form_expiry_until_own_clock_expires": true,
+      "counter_requires_current_powered_form": false
+    },
+    "powered_movement_echo": {
+      "spawn_interval_seconds": 0.4,
+      "initial_clock": 0,
+      "position_behind_actor": 8,
+      "radius": 11,
+      "lifetime_seconds": 1.15,
+      "maximum_active": 4,
+      "damage": 0,
+      "attracts_live_enemies": true,
+      "destroyed_by_one_enemy_projectile_or_melee_hit": true
+    },
+    "source_functions": [
+      "v",
+      "E",
+      "P",
+      "Y",
+      "F",
+      "L",
+      "X"
+    ]
+  },
+  "art_contract": {
+    "release_frame_indices": "supplied separately by the animation manifest; not inferred from seconds or fixed frame counts",
+    "per_facing_screen_anchors": "new74px art must author these; original planar projectile seed9 is not a screen muzzle anchor",
+    "cardinal_aim_quantisation": "presentation facing only; simulation retains continuous aim"
+  }
+}

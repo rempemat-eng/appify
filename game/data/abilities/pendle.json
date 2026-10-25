@@ -1,0 +1,152 @@
+{
+  "id": "pendle",
+  "name": "Pendle",
+  "catalogue_prose": {
+    "role": "Sunstone robot gunslinger · deliberate marksmanship",
+    "primary": "Revolver — one accurate shot; six rounds before a full reload.",
+    "secondary": "Fan fire — fan up to three remaining revolver rounds in a narrow spread, then reload. During Longshot, strike nearby enemies with the rifle stock instead.",
+    "block": "Steel plate — fold out the forearm plate.",
+    "special": "Longshot — holster the revolver and draw a western marksman rifle; slow, penetrating shots replace the primary."
+  },
+  "planar_speed": 57,
+  "resources": {
+    "ammo_capacity": 6,
+    "initial_ammo": 6,
+    "reload_complete_refills_to_capacity": true,
+    "initial_heat": 0
+  },
+  "base": {
+    "actions": {
+      "primary": {
+        "duration_seconds": 0.43,
+        "release_seconds": 0.1634,
+        "cooldown_seconds": 0.43
+      },
+      "secondary": {
+        "duration_seconds": 0.48,
+        "release_seconds": 0.1824,
+        "cooldown_seconds": 1.6
+      },
+      "special": {
+        "duration_seconds": 0.65,
+        "release_seconds": 0.28,
+        "cooldown_seconds": 25
+      },
+      "block": {
+        "raise_seconds": 0.18,
+        "hold_until_released": true,
+        "damage_release_event": false
+      }
+    },
+    "primary_projectiles": [
+      {
+        "kind": "bullet",
+        "speed": 290,
+        "angle_offset_radians": 0,
+        "planar_spawn_forward": 9,
+        "radius": 2,
+        "lifetime_seconds": 0.8,
+        "damage": 24,
+        "pierce_budget": 0,
+        "blast_radius": 0,
+        "powered_at_launch": false
+      }
+    ]
+  },
+  "powered": {
+    "actions": {
+      "primary": {
+        "duration_seconds": 0.9,
+        "release_seconds": 0.342,
+        "cooldown_seconds": 0.9
+      },
+      "secondary": {
+        "duration_seconds": 0.48,
+        "release_seconds": 0.1824,
+        "cooldown_seconds": 1.6
+      },
+      "special": {
+        "duration_seconds": 0.65,
+        "release_seconds": 0.28,
+        "cooldown_seconds": 25
+      },
+      "block": {
+        "raise_seconds": 0.18,
+        "hold_until_released": true,
+        "damage_release_event": false
+      }
+    },
+    "primary_projectiles": [
+      {
+        "kind": "rifle",
+        "speed": 320,
+        "angle_offset_radians": 0,
+        "planar_spawn_forward": 9,
+        "radius": 2,
+        "lifetime_seconds": 1,
+        "damage": 49,
+        "pierce_budget": 4,
+        "blast_radius": 0,
+        "powered_at_launch": true
+      }
+    ],
+    "duration_seconds": 8,
+    "starts_at_special_release": true
+  },
+  "hit_shapes": {
+    "powered_secondary": {
+      "kind": "forward_segment",
+      "reach": 44,
+      "half_width": 0.5,
+      "damage": 22,
+      "pierces": false
+    }
+  },
+  "executed_rules": {
+    "revolver_capacity": 6,
+    "ordinary_primary": {
+      "consume_rounds": 1,
+      "reload_on_empty_seconds": 1.35
+    },
+    "ordinary_secondary": {
+      "shots": "min(3,current_ammo)",
+      "angle_spacing_radians": 0.11,
+      "bullet_damage": 18,
+      "speed": 270,
+      "radius": 2,
+      "lifetime_seconds": 0.75,
+      "reload_after_fan_seconds": 1.4
+    },
+    "powered_primary": {
+      "rifle_damage": 49,
+      "speed": 320,
+      "pierce_budget": 4,
+      "maximum_distinct_targets": 5,
+      "consume_rounds": 0,
+      "ignores_ordinary_ammo_reload_gate": true,
+      "duration_seconds": 0.9
+    },
+    "powered_secondary": {
+      "kind": "forward_segment",
+      "reach": 44,
+      "half_width": 0.5,
+      "damage": 22,
+      "pierces": false
+    },
+    "activation": {
+      "does_not_refill_ammo_or_clear_reload": true
+    },
+    "source_functions": [
+      "w",
+      "E",
+      "q",
+      "M",
+      "v"
+    ]
+  },
+  "art_contract": {
+    "release_frame_indices": "supplied separately by the animation manifest; not inferred from seconds or fixed frame counts",
+    "per_facing_screen_anchors": "new74px art must author these; original planar projectile seed9 is not a screen muzzle anchor",
+    "cardinal_aim_quantisation": "presentation facing only; simulation retains continuous aim"
+  }
+}
