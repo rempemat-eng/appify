@@ -1,4 +1,4 @@
-[gd_scene load_steps=182 format=3]
+[gd_scene load_steps=183 format=3]
 
 [ext_resource type="Texture2D" path="res://zones/woodland/art/ground.png" id="ground"]
 [ext_resource type="Texture2D" path="res://zones/woodland/art/flow.png" id="flow"]
@@ -220,7 +220,7 @@ size = Vector2(36, 12)
 size = Vector2(24, 12)
 
 [sub_resource type="RectangleShape2D" id="r65"]
-size = Vector2(48, 12)
+size = Vector2(36, 24)
 
 [sub_resource type="RectangleShape2D" id="r66"]
 size = Vector2(36, 24)
@@ -394,108 +394,111 @@ size = Vector2(36, 24)
 size = Vector2(36, 24)
 
 [sub_resource type="RectangleShape2D" id="r123"]
-size = Vector2(228, 24)
+size = Vector2(288, 24)
 
 [sub_resource type="RectangleShape2D" id="r124"]
 size = Vector2(72, 48)
 
 [sub_resource type="RectangleShape2D" id="r125"]
-size = Vector2(192, 48)
+size = Vector2(60, 12)
 
 [sub_resource type="RectangleShape2D" id="r126"]
-size = Vector2(36, 24)
+size = Vector2(192, 48)
 
 [sub_resource type="RectangleShape2D" id="r127"]
 size = Vector2(36, 24)
 
 [sub_resource type="RectangleShape2D" id="r128"]
-size = Vector2(84, 36)
+size = Vector2(36, 24)
 
 [sub_resource type="RectangleShape2D" id="r129"]
-size = Vector2(108, 24)
+size = Vector2(84, 36)
 
 [sub_resource type="RectangleShape2D" id="r130"]
-size = Vector2(144, 12)
-
-[sub_resource type="RectangleShape2D" id="r131"]
 size = Vector2(108, 24)
 
+[sub_resource type="RectangleShape2D" id="r131"]
+size = Vector2(144, 12)
+
 [sub_resource type="RectangleShape2D" id="r132"]
-size = Vector2(96, 24)
+size = Vector2(108, 24)
 
 [sub_resource type="RectangleShape2D" id="r133"]
-size = Vector2(72, 12)
-
-[sub_resource type="RectangleShape2D" id="r134"]
-size = Vector2(60, 24)
-
-[sub_resource type="RectangleShape2D" id="r135"]
-size = Vector2(120, 12)
-
-[sub_resource type="RectangleShape2D" id="r136"]
-size = Vector2(48, 12)
-
-[sub_resource type="RectangleShape2D" id="r137"]
-size = Vector2(72, 48)
-
-[sub_resource type="RectangleShape2D" id="r138"]
-size = Vector2(144, 24)
-
-[sub_resource type="RectangleShape2D" id="r139"]
-size = Vector2(108, 36)
-
-[sub_resource type="RectangleShape2D" id="r140"]
-size = Vector2(72, 36)
-
-[sub_resource type="RectangleShape2D" id="r141"]
-size = Vector2(84, 24)
-
-[sub_resource type="RectangleShape2D" id="r142"]
-size = Vector2(180, 36)
-
-[sub_resource type="RectangleShape2D" id="r143"]
 size = Vector2(96, 24)
 
+[sub_resource type="RectangleShape2D" id="r134"]
+size = Vector2(72, 12)
+
+[sub_resource type="RectangleShape2D" id="r135"]
+size = Vector2(60, 24)
+
+[sub_resource type="RectangleShape2D" id="r136"]
+size = Vector2(120, 12)
+
+[sub_resource type="RectangleShape2D" id="r137"]
+size = Vector2(48, 12)
+
+[sub_resource type="RectangleShape2D" id="r138"]
+size = Vector2(72, 48)
+
+[sub_resource type="RectangleShape2D" id="r139"]
+size = Vector2(144, 24)
+
+[sub_resource type="RectangleShape2D" id="r140"]
+size = Vector2(108, 36)
+
+[sub_resource type="RectangleShape2D" id="r141"]
+size = Vector2(72, 36)
+
+[sub_resource type="RectangleShape2D" id="r142"]
+size = Vector2(84, 24)
+
+[sub_resource type="RectangleShape2D" id="r143"]
+size = Vector2(180, 36)
+
 [sub_resource type="RectangleShape2D" id="r144"]
-size = Vector2(156, 12)
+size = Vector2(96, 24)
 
 [sub_resource type="RectangleShape2D" id="r145"]
-size = Vector2(264, 12)
+size = Vector2(156, 12)
 
 [sub_resource type="RectangleShape2D" id="r146"]
-size = Vector2(192, 12)
-
-[sub_resource type="RectangleShape2D" id="r147"]
-size = Vector2(276, 24)
-
-[sub_resource type="RectangleShape2D" id="r148"]
-size = Vector2(48, 24)
-
-[sub_resource type="RectangleShape2D" id="r149"]
-size = Vector2(108, 12)
-
-[sub_resource type="RectangleShape2D" id="r150"]
-size = Vector2(384, 12)
-
-[sub_resource type="RectangleShape2D" id="r151"]
-size = Vector2(72, 24)
-
-[sub_resource type="RectangleShape2D" id="r152"]
-size = Vector2(276, 12)
-
-[sub_resource type="RectangleShape2D" id="r153"]
-size = Vector2(48, 24)
-
-[sub_resource type="RectangleShape2D" id="r154"]
 size = Vector2(264, 12)
 
+[sub_resource type="RectangleShape2D" id="r147"]
+size = Vector2(192, 12)
+
+[sub_resource type="RectangleShape2D" id="r148"]
+size = Vector2(276, 24)
+
+[sub_resource type="RectangleShape2D" id="r149"]
+size = Vector2(48, 24)
+
+[sub_resource type="RectangleShape2D" id="r150"]
+size = Vector2(108, 12)
+
+[sub_resource type="RectangleShape2D" id="r151"]
+size = Vector2(384, 12)
+
+[sub_resource type="RectangleShape2D" id="r152"]
+size = Vector2(72, 24)
+
+[sub_resource type="RectangleShape2D" id="r153"]
+size = Vector2(276, 12)
+
+[sub_resource type="RectangleShape2D" id="r154"]
+size = Vector2(48, 24)
+
 [sub_resource type="RectangleShape2D" id="r155"]
-size = Vector2(192, 48)
+size = Vector2(264, 12)
 
 [sub_resource type="RectangleShape2D" id="r156"]
-size = Vector2(96, 36)
+size = Vector2(192, 48)
 
 [sub_resource type="RectangleShape2D" id="r157"]
+size = Vector2(96, 36)
+
+[sub_resource type="RectangleShape2D" id="r158"]
 size = Vector2(84, 36)
 
 [node name="WoodlandBase" type="Node2D"]
@@ -705,7 +708,7 @@ centered = false
 offset = Vector2(-54, -54)
 
 [node name="willow" type="Sprite2D" parent="Objects"]
-position = Vector2(778, 1318)
+position = Vector2(778, 1312)
 texture = ExtResource("t_willow")
 centered = false
 offset = Vector2(-110, -301)
@@ -795,7 +798,7 @@ centered = false
 offset = Vector2(-105, -250)
 
 [node name="wood-14" type="Sprite2D" parent="Objects"]
-position = Vector2(864, 700)
+position = Vector2(918, 700)
 texture = ExtResource("t_sapling")
 centered = false
 offset = Vector2(-36, -97)
@@ -867,7 +870,7 @@ centered = false
 offset = Vector2(-86, -259)
 
 [node name="wood-26" type="Sprite2D" parent="Objects"]
-position = Vector2(739, 1273)
+position = Vector2(616, 1273)
 texture = ExtResource("t_oak")
 centered = false
 offset = Vector2(-105, -250)
@@ -1262,7 +1265,7 @@ position = Vector2(204, 678)
 shape = SubResource("r64")
 
 [node name="c65" type="CollisionShape2D" parent="Walls"]
-position = Vector2(864, 678)
+position = Vector2(918, 684)
 shape = SubResource("r65")
 
 [node name="c66" type="CollisionShape2D" parent="Walls"]
@@ -1494,7 +1497,7 @@ position = Vector2(366, 1260)
 shape = SubResource("r122")
 
 [node name="c123" type="CollisionShape2D" parent="Walls"]
-position = Vector2(762, 1260)
+position = Vector2(732, 1260)
 shape = SubResource("r123")
 
 [node name="c124" type="CollisionShape2D" parent="Walls"]
@@ -1502,136 +1505,140 @@ position = Vector2(36, 1284)
 shape = SubResource("r124")
 
 [node name="c125" type="CollisionShape2D" parent="Walls"]
-position = Vector2(780, 1296)
+position = Vector2(618, 1278)
 shape = SubResource("r125")
 
 [node name="c126" type="CollisionShape2D" parent="Walls"]
-position = Vector2(162, 1296)
+position = Vector2(780, 1296)
 shape = SubResource("r126")
 
 [node name="c127" type="CollisionShape2D" parent="Walls"]
-position = Vector2(330, 1308)
+position = Vector2(162, 1296)
 shape = SubResource("r127")
 
 [node name="c128" type="CollisionShape2D" parent="Walls"]
-position = Vector2(66, 1326)
+position = Vector2(330, 1308)
 shape = SubResource("r128")
 
 [node name="c129" type="CollisionShape2D" parent="Walls"]
-position = Vector2(414, 1320)
+position = Vector2(66, 1326)
 shape = SubResource("r129")
 
 [node name="c130" type="CollisionShape2D" parent="Walls"]
-position = Vector2(432, 1338)
+position = Vector2(414, 1320)
 shape = SubResource("r130")
 
 [node name="c131" type="CollisionShape2D" parent="Walls"]
-position = Vector2(318, 1356)
+position = Vector2(432, 1338)
 shape = SubResource("r131")
 
 [node name="c132" type="CollisionShape2D" parent="Walls"]
-position = Vector2(456, 1356)
+position = Vector2(318, 1356)
 shape = SubResource("r132")
 
 [node name="c133" type="CollisionShape2D" parent="Walls"]
-position = Vector2(36, 1386)
+position = Vector2(456, 1356)
 shape = SubResource("r133")
 
 [node name="c134" type="CollisionShape2D" parent="Walls"]
-position = Vector2(402, 1392)
+position = Vector2(36, 1386)
 shape = SubResource("r134")
 
 [node name="c135" type="CollisionShape2D" parent="Walls"]
-position = Vector2(60, 1398)
+position = Vector2(402, 1392)
 shape = SubResource("r135")
 
 [node name="c136" type="CollisionShape2D" parent="Walls"]
-position = Vector2(96, 1410)
+position = Vector2(60, 1398)
 shape = SubResource("r136")
 
 [node name="c137" type="CollisionShape2D" parent="Walls"]
-position = Vector2(36, 1452)
+position = Vector2(96, 1410)
 shape = SubResource("r137")
 
 [node name="c138" type="CollisionShape2D" parent="Walls"]
-position = Vector2(468, 1452)
+position = Vector2(36, 1452)
 shape = SubResource("r138")
 
 [node name="c139" type="CollisionShape2D" parent="Walls"]
-position = Vector2(354, 1542)
+position = Vector2(468, 1452)
 shape = SubResource("r139")
 
 [node name="c140" type="CollisionShape2D" parent="Walls"]
-position = Vector2(564, 1542)
+position = Vector2(354, 1542)
 shape = SubResource("r140")
 
 [node name="c141" type="CollisionShape2D" parent="Walls"]
-position = Vector2(462, 1548)
+position = Vector2(564, 1542)
 shape = SubResource("r141")
 
 [node name="c142" type="CollisionShape2D" parent="Walls"]
-position = Vector2(438, 1578)
+position = Vector2(462, 1548)
 shape = SubResource("r142")
 
 [node name="c143" type="CollisionShape2D" parent="Walls"]
-position = Vector2(636, 1584)
+position = Vector2(438, 1578)
 shape = SubResource("r143")
 
 [node name="c144" type="CollisionShape2D" parent="Walls"]
-position = Vector2(174, 1602)
+position = Vector2(636, 1584)
 shape = SubResource("r144")
 
 [node name="c145" type="CollisionShape2D" parent="Walls"]
-position = Vector2(396, 1602)
+position = Vector2(174, 1602)
 shape = SubResource("r145")
 
 [node name="c146" type="CollisionShape2D" parent="Walls"]
-position = Vector2(156, 1614)
+position = Vector2(396, 1602)
 shape = SubResource("r146")
 
 [node name="c147" type="CollisionShape2D" parent="Walls"]
-position = Vector2(402, 1620)
+position = Vector2(156, 1614)
 shape = SubResource("r147")
 
 [node name="c148" type="CollisionShape2D" parent="Walls"]
-position = Vector2(756, 1620)
+position = Vector2(402, 1620)
 shape = SubResource("r148")
 
 [node name="c149" type="CollisionShape2D" parent="Walls"]
-position = Vector2(114, 1626)
+position = Vector2(756, 1620)
 shape = SubResource("r149")
 
 [node name="c150" type="CollisionShape2D" parent="Walls"]
-position = Vector2(252, 1638)
+position = Vector2(114, 1626)
 shape = SubResource("r150")
 
 [node name="c151" type="CollisionShape2D" parent="Walls"]
-position = Vector2(732, 1644)
+position = Vector2(252, 1638)
 shape = SubResource("r151")
 
 [node name="c152" type="CollisionShape2D" parent="Walls"]
-position = Vector2(306, 1650)
+position = Vector2(732, 1644)
 shape = SubResource("r152")
 
 [node name="c153" type="CollisionShape2D" parent="Walls"]
-position = Vector2(588, 1656)
+position = Vector2(306, 1650)
 shape = SubResource("r153")
 
 [node name="c154" type="CollisionShape2D" parent="Walls"]
-position = Vector2(312, 1662)
+position = Vector2(588, 1656)
 shape = SubResource("r154")
 
 [node name="c155" type="CollisionShape2D" parent="Walls"]
-position = Vector2(276, 1692)
+position = Vector2(312, 1662)
 shape = SubResource("r155")
 
 [node name="c156" type="CollisionShape2D" parent="Walls"]
-position = Vector2(504, 1686)
+position = Vector2(276, 1692)
 shape = SubResource("r156")
 
 [node name="c157" type="CollisionShape2D" parent="Walls"]
-position = Vector2(822, 1698)
+position = Vector2(504, 1686)
 shape = SubResource("r157")
+
+[node name="c158" type="CollisionShape2D" parent="Walls"]
+position = Vector2(822, 1698)
+shape = SubResource("r158")
 
 [node name="Stands" type="Node2D" parent="."]
 

@@ -276,19 +276,42 @@ def water_mask_hd(plan: dict, W: int, H: int) -> np.ndarray:
             t = (y - ya) / max(1, f['y0'] - ya)
             xc = xa + (xb - xa) * t * t
             m1[y, int(round(xc - 2.2)):int(round(xc + 2.2)) + 1] = True
+    # the rill (from the top edge to the heap) is redrawn as a meandering brook: its 1x centre
+    # line swings up to 3 world px either side and its width breathes between 0.7 and 1.5 of
+    # the 1x width, both fading out at the top edge and where it reaches the stones
+    yend = rows[-1] if rows else 230
+    cx1, hw1 = {}, {}
+    prev = None
+    for y in range(yend, -1, -1):              # follow the rill's own run up to the top edge
+        row = np.concatenate([[False], m1[y, :110], [False]]).astype(int)
+        dd = np.diff(row)
+        runs = list(zip(np.nonzero(dd == 1)[0], np.nonzero(dd == -1)[0]))
+        if not runs:
+            continue
+        if prev is None:
+            a0, b0 = max(runs, key=lambda r: r[1] - r[0])
+        else:
+            a0, b0 = min(runs, key=lambda r: abs((r[0] + r[1]) / 2.0 - prev))
+            if abs((a0 + b0) / 2.0 - prev) > 6:
+                continue
+        if b0 - a0 >= 2 and b0 - a0 <= 9:
+            cx1[y], hw1[y] = (a0 + b0) / 2.0, (b0 - a0) / 2.0
+            prev = cx1[y]
     k = int(round(D))
     up = np.kron(m1.astype(float), np.ones((k, k)))
-    sway = np.zeros(up.shape[0])
-    for Y in range(up.shape[0]):
-        yw = Y / D
-        if 32 <= yw <= (rows[-1] if rows else 230):
-            taper = min(1.0, (yw - 32) / 24.0, ((rows[-1] if rows else 230) - yw) / 24.0)
-            sway[Y] = 1.8 * D * taper * np.sin(yw / 15.0 + 0.4)
-    west = np.zeros(up.shape[1], bool)
-    west[:int(110 * D)] = True                        # only the rill sways
-    for Y in np.nonzero(sway)[0]:
-        row = up[Y].copy()
-        up[Y, west] = ndi.shift(row, sway[Y], order=1, mode='nearest')[west]
+    if len(cx1) > 20:
+        ys1 = np.array(sorted(cx1))
+        for y in cx1:                          # the 1x rill out, the brook in
+            up[int(y * D):int((y + 1) * D), int((cx1[y] - hw1[y] - 1) * D):int((cx1[y] + hw1[y] + 1) * D)] = 0.0
+        Xw = (np.arange(up.shape[1]) + 0.5) / D
+        for Y in range(int(ys1.min() * D), int((yend + 1) * D)):
+            yw = (Y + 0.5) / D
+            c = np.interp(yw, ys1 + 0.5, [cx1[y] for y in ys1])
+            hw = np.interp(yw, ys1 + 0.5, [hw1[y] for y in ys1])
+            taper = float(np.clip(min((yw - 6) / 24.0, (yend - yw) / 18.0), 0, 1))
+            c += taper * (4.2 * np.sin(yw / 21.0 + 0.4) + 1.4 * np.sin(yw / 8.3 + 1.7))
+            hw *= 1.0 + taper * (0.3 * np.sin(yw / 11.0 + 1.3) + 0.15 * np.sin(yw / 4.3))
+            up[Y, :int(110 * D)] = np.maximum(up[Y, :int(110 * D)], np.clip(hw + 0.5 - np.abs(Xw[:int(110 * D)] - c), 0, 1))
     return ndi.gaussian_filter(up, 0.9 * D)[:H * k, :W * k] > 0.5
 
 
@@ -454,6 +477,62 @@ def tree_shadow_hd(x, y, ex, W, H) -> np.ndarray:
     return ((wx - cx) / rx) ** 2 + ((wy - cy) / ry) ** 2 <= 1.0
 
 
+def lawn_dressing_hd(cv: np.ndarray, plan: dict, h: int, w: int) -> list:
+    """The lawn's dressing at density 3 and up, the way Eastward dresses grass: few, clustered and
+    varied, with calm lawn between. Clusters stand about one in two 20 world px cells; each holds
+    2 to 5 of: a tuft (fine, broad or seeding, 0.5 to 1.6 of the kit's size, three greens), a group
+    of small flowers (white, yellow, violet), or a clover patch laid into the lawn (trefoils, lit at
+    their upper left). Never on paths, water, rock or under an object's foot. Returns low items;
+    the clover is drawn into the codes."""
+    from . import ground as GR
+    from .terrain import noise as TN
+    rng = np.random.default_rng(1907)
+    lawn = (is_fam(cv, 'grass') | is_fam(cv, 'leaf')) & (cv % 8 < 6)
+    lawn = ndi.binary_erosion(lawn, iterations=P(3))
+    for (oid, kind, x, y, ow, oh) in plan['objects']:
+        x0, x1 = P(x - 2, 0), P(x + ow + 2, 0)
+        y0, y1 = P(y + oh * 0.55, 0), P(y + oh + 3, 0)
+        lawn[max(0, y0):max(0, y1), max(0, x0):max(0, x1)] = False
+    items = []
+    cell = 20.0
+    for cy in np.arange(0, h / D, cell):
+        for cx in np.arange(0, w / D, cell):
+            if rng.random() > 0.5:
+                continue
+            ccx, ccy = cx + rng.uniform(2, cell - 2), cy + rng.uniform(2, cell - 2)
+            if TN.vnoise(np.array([ccx]), np.array([ccy]), 60.0, 77)[0] < 0.3:
+                continue                                       # a calm stretch of lawn
+            n = int(rng.integers(2, 6))
+            for j in range(n):
+                tx, ty = ccx + rng.normal(0, 3.2), ccy + rng.normal(0, 2.0)
+                X_, Y_ = int(tx * D), int(ty * D)
+                if not (0 <= Y_ < h and 0 <= X_ < w) or not lawn[Y_, X_]:
+                    continue
+                r = rng.random()
+                if r < 0.55:
+                    fam = ('grass', 'leaf', 'grass')[int(rng.integers(0, 3))]
+                    img = GR.tuft(D, int(rng.integers(0, 10 ** 6)), float(rng.uniform(0.5, 1.6)), fam=fam)
+                elif r < 0.8:
+                    kind = ('white', 'yellow', 'violet', 'white')[int(rng.integers(0, 4))]
+                    img = P4.flowers4(D, int(rng.integers(0, 10 ** 6)), kind=kind, n=int(rng.integers(2, 4)))
+                else:
+                    # a clover patch: trefoils laid into the lawn
+                    for q in range(int(rng.integers(4, 9))):
+                        qx, qy = X_ + int(rng.normal(0, 2.2 * D)), Y_ + int(rng.normal(0, 1.4 * D))
+                        for (dy, dx) in ((-1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (0, 0), (1, 0)):
+                            yy_, xx_ = qy + dy, qx + dx
+                            if 0 <= yy_ < h and 0 <= xx_ < w and lawn[yy_, xx_]:
+                                cv[yy_, xx_] = C('leaf', 4) if (dy, dx) in ((-1, -1), (-1, 0)) else (
+                                    C('leaf', 2) if (dy, dx) == (1, 0) else C('leaf', 3))
+                    continue
+                a = np.asarray(img)[..., 3] > 0
+                if not a.any():
+                    continue
+                x0, y0, x1, y1 = CO._bbox(a)
+                items.append((ty, img, ((x0 + x1) / 2, y1), (tx * D, ty * D), False))
+    return items
+
+
 def mushrooms_at(plan: dict) -> list:
     """Where the woodland's mushrooms grow: in clusters at the feet of stumps and fallen logs,
     on the side away from the path (density 3 and up; the 1x fairy ring was head-sized)."""
@@ -608,10 +687,19 @@ def build() -> Zone:
         fx, fy = x + ow / 2.0, y + oh                     # the 1x object's foot
         at = (fx * D, fy * D)
         things.append((fy, img, anc, at))
-        if ex is not None:
-            tcasts.append(tree_shadow_hd(fx, fy, ex, w, h) if D >= HD else CO.tree_shadow(fx, fy, ex, D, w, h))
+        if ex is not None and D >= HD:
+            casts.append(tree_shadow_hd(fx, fy, ex, w, h))          # the house rule: solid, a one-tone rim
+        elif ex is not None:
+            tcasts.append(CO.tree_shadow(fx, fy, ex, D, w, h))
         else:
             casts.append(CO.shadow_mask(a, anc, D, w, h, at, *CO.SHADOW))
+        if D >= HD and kind in ('forest_bench', 'stump', 'mossy_log'):
+            # a firm contact shade under what lies or stands on the ground, a little east
+            x0_, _y0, x1_, _y1 = CO._bbox(a)
+            half = (x1_ - x0_) / D / 2.0
+            Yg, Xg = np.mgrid[0:h, 0:w]
+            wx_, wy_ = (Xg + 0.5) / D, (Yg + 0.5) / D
+            casts.append(((wx_ - fx - 1.0) / (half + 1.2)) ** 2 + ((wy_ - fy - 0.4) / 2.6) ** 2 <= 1.0)
         bx, by = (at[0] - anc[0]) / D, (at[1] - anc[1]) / D
         objects.append((oid, kind, (bx, by, img.width / D, img.height / D)))
     # low plants baked into the ground: ferns, the fairy ring, fallen leaves
@@ -662,6 +750,8 @@ def build() -> Zone:
                 a = np.asarray(img)[..., 3] > 0
                 x0, y0, x1, y1 = CO._bbox(a)
                 low.append((ty, img, ((x0 + x1) / 2, y1), (tx * D, ty * D), False))
+    if hd:
+        low += lawn_dressing_hd(cv, plan, h, w)
     rng = np.random.default_rng(421)
     for (x, y, _k) in plan['dressing']['leaves']:
         limg = CO.fallen_leaf(D, rng)

@@ -674,31 +674,42 @@ def paint_masses(arr, d, seed=0, look=None, size=None):
     # a weeping crown's strands hang behind its leaf masses: ribbons lit on their left, a
     # leaf notch every few texels, the tips a tone down
     LAST_MASS['strands'] = None
-    if lk['form'] == 'weeping' and strands.any():
-        # one ribbon per master column of strands, 2 texels wide with a texel of air between,
-        # its leaves in short segments (a darker leaf every few texels, offset per strand)
-        mass_bottom = painted.copy()
+    if lk['form'] == 'weeping':
+        # a curtain: strands hang from all along the crown's underside, longest at the sides,
+        # in front of its lower leaves and the trunk; each strand a ribbon of small leaves, lit
+        # on its west edge (more on the crown's west), a darker leaf every few texels, its tip
+        # a tone down; one texel of air between strands so the trunk shows through
         rw = max(2, int(round(0.67 * d)))
-        seg = max(3, int(round(1.4 * d)))
+        seg = max(3, int(round(1.3 * d)))
+        cols_ = np.nonzero(painted.any(0))[0]
+        xl, xr = cols_.min(), cols_.max()
+        ytop = np.nonzero(painted.any(1))[0].min()
+        ch_ = np.nonzero(painted.any(1))[0].max() - ytop
         sm = np.zeros((Hp, Wp), bool)
         st = np.full((Hp, Wp), 2)
-        for x1 in np.nonzero(strands.any(0))[0][::2]:
-            col = np.nonzero(strands[:, x1])[0]
-            xa = int(pad + x1 * sx)
-            ya = int(pad + col.min() * sy) - int(2 * d)
-            yb_ = int(pad + (col.max() + 1) * sy) - int(rng.integers(0, max(1, int(d))))
+        for xa in range(xl + 1, xr - rw + 1, rw + 2 + int(d // 2)):
+            col = np.nonzero(painted[:, xa])[0]
+            if not len(col):
+                continue
+            uu = (xa - (xl + xr) / 2) / max(1, (xr - xl) / 2)
+            start = int(col.max() - (0.12 + 0.2 * abs(uu)) * ch_ * rng.uniform(0.6, 1.0))
+            L = int(ch_ * (0.3 + 0.4 * abs(uu)) * rng.uniform(0.6, 1.15))
             ph = int(rng.integers(0, seg))
-            for y in range(max(0, ya), min(Hp, yb_)):
+            west = uu < 0.1
+            for y in range(max(0, start), min(Hp - 1, start + L)):
                 for k_ in range(rw):
                     x = xa + k_
-                    if 0 <= x < Wp and not mass_bottom[y, x]:
-                        sm[y, x] = True
-                        t = 2 if k_ == 0 else 1
-                        if (y + ph) % seg == 0 and k_ == 0:
-                            t = 3                                    # a lit leaf on the strand
-                        if y >= yb_ - max(1, int(d / 2)):
-                            t = min(t, 2)
-                        st[y, x] = t
+                    if not (0 <= x < Wp):
+                        continue
+                    t = (4 if west else 3) if k_ == 0 else 2
+                    if (y + ph) % seg == 0:
+                        t = t - 1
+                    if y >= start + L - max(2, int(d)):
+                        t = min(t, 2) if k_ == 0 else 1
+                    if (y - start) < max(2, int(d)) and painted[y, x]:
+                        continue                               # it hangs from the leaves above
+                    sm[y, x] = True
+                    st[y, x] = t
         out_t[sm] = st[sm]
         painted |= sm
         LAST_MASS['strands'] = sm

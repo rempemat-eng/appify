@@ -160,7 +160,7 @@
     "form": "conifer",
     "clump": 9,
     "fam": "leaf_cool",
-    "lit": "leaf",
+    "lit": "leaf_cool",
     "shade": "leaf_cool"
    },
    "bark": "pine"
@@ -170,7 +170,7 @@
    "master": "zones_props_willow.png",
    "crown": {
     "form": "weeping",
-    "clump": 10,
+    "clump": 9,
     "fam": "grass_cool",
     "lit": "grass"
    },
@@ -194,7 +194,9 @@
    "crown": {
     "form": "round",
     "clump": 6.5,
-    "lit": "grass_warm"
+    "fam": "grass_warm",
+    "lit": "grass_warm",
+    "shade": "grass"
    },
    "bark": "birch",
    "trunk_w": 4
@@ -217,7 +219,9 @@
    "crown": {
     "form": "round",
     "clump": 4.5,
-    "fam": "grass_cool"
+    "fam": "grass",
+    "lit": "grass_warm",
+    "shade": "grass"
    },
    "bark": "sapling",
    "trunk_w": 2
@@ -321,10 +325,10 @@
   }
  },
  "lawn": {
-  "busy": 0.4,
+  "busy": 0.15,
   "fine": 0.7,
-  "tuft_spacing": 14.0,
-  "_about": "the 2x lawn: about half the field near flat, the mottle and tuft clumps gather in the other half (MEASURE.md bands) The woodland (25 Oct, density 3): fewer, sparser tuft clumps and more calm lawn (Matt: the tufts were uniform and repeated); the varied tufts gather at trunk, stone and stump feet instead (screen.py).",
+  "tuft_spacing": 60.0,
+  "_about": "the 2x lawn: about half the field near flat, the mottle and tuft clumps gather in the other half (MEASURE.md bands) The woodland (25 Oct, density 3, Matt and the coordinator: the tufts read as one stamp on a grid, the mottle as blotches): almost no sheet tufts and a quieter mottle; the lawn's dressing is placed in clusters by screen.lawn_dressing_hd instead (varied tufts, small flowers, clover), with calm lawn between.",
   "measure": {
    "edge_share": [0.2, 0.24],
    "lone_px_max": 0.02,

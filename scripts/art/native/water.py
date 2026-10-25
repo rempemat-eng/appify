@@ -278,6 +278,11 @@ def paint_hd(cv: np.ndarray, mask: np.ndarray, seed: int = 23) -> np.ndarray:
     reach = (hsh % 4) + ((xx % tipw) == 1).astype(int)
     over = (wet | bank) & water_south & (od >= (D + 1.0) - reach + 0.5) & (od > 1.01)
     out[over] = np.where((xx[over] % tipw) == 0, C('grass', 3), C('grass', 2))
+    # and over the side banks of a stream running south, in tips one every 3 texels down it
+    hsh2 = (((yy // tipw) * 2654435761) ^ (seed * 7)) & 0xff
+    reach2 = (hsh2 % 4) + ((yy % tipw) == 1).astype(int)
+    side = (wet | bank) & ~water_south & (np.abs(odx) > np.abs(ody)) & (od >= (D + 1.0) - reach2 + 0.5) & (od > 1.01)
+    out[side] = np.where((yy[side] % tipw) == 0, C('grass', 3), C('grass', 2))
     lip = lawn & (od > D + 1.01) & (od <= D + 2.01)
     lit_lip = (ody < 0) | (odx < 0)
     out[lip & lit_lip] = C('grass', 4)
@@ -285,12 +290,14 @@ def paint_hd(cv: np.ndarray, mask: np.ndarray, seed: int = 23) -> np.ndarray:
     # stones on the bank's lip, lit at the upper left, a dark row beneath; never in a line
     rng = np.random.default_rng(seed + 1)
     wide_near = ndi.grey_dilation(np.where(mask, width, 0), size=(int(4 * D) | 1, int(4 * D) | 1))
-    ey, ex = np.nonzero(bank & (od > D * 0.6) & (wide_near > 3.0))     # none along the narrow rill
+    ey, ex = np.nonzero(bank & (od > D * 0.6) & (wide_near > 1.2))
     if len(ey):
         placed = []
         for k in rng.permutation(len(ey))[:4000]:
             cy, cx = ey[k] / D, ex[k] / D
-            if any((cx - a) ** 2 + (cy - b) ** 2 < 15.0 ** 2 for a, b in placed) or rng.random() < 0.7:
+            narrow = wide_near[ey[k], ex[k]] < 3.0
+            if any((cx - a) ** 2 + (cy - b) ** 2 < (24.0 if narrow else 15.0) ** 2 for a, b in placed) or \
+                    rng.random() < (0.85 if narrow else 0.7):
                 continue
             placed.append((cx, cy))
             rx, ry = rng.uniform(1.0, 2.8), rng.uniform(0.8, 1.7)
