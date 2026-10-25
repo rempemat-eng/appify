@@ -263,7 +263,35 @@ def placed(P: dict) -> list:
         [(k['holds'], k['at'], k) for k in P.get('pockets', [])] + \
         [(f"marker {m['what']}", m['at'], m) for m in P.get('markers', []) if not m.get('outside_box')] + \
         [(r['who'], r['at'], r) for r in P.get('residents', [])] + \
-        [(f"camp {c['id']} enemy", e, c) for c in P.get('camps', []) for e in c.get('enemies', [])]
+        [(f"camp {c['id']} enemy", e, c) for c in camps_of(P) for e in c.get('enemies', [])] + \
+        [(f"waystone {w['id']}", w['at'], w) for w in P.get('fights', {}).get('waystones', [])] + \
+        [(f"quest spot {q['id']}", q['at'], q) for q in P.get('quest_spots', [])] + \
+        ([(f"dungeon {P['fights']['dungeon']['id']} entrance", P['fights']['dungeon']['entrance'], P['fights']['dungeon'])]
+         if P.get('fights', {}).get('dungeon', {}).get('entrance') else [])
+
+
+def camps_of(P: dict) -> list:
+    """A plan's camps: under `fights.camps` (the Godot era's fight layer, as Claude I's and
+    Claude C's plans have it) or, earlier, at the top level."""
+    return P.get('fights', {}).get('camps', P.get('camps', []))
+
+
+def windows_check(P: dict) -> list:
+    """16:9 windows (one 320 x 180 world px screen each, the Godot frame): inside the box,
+    with their focal point and their calm clearing inside them."""
+    out = []
+    x0, y0, w, h = P['box']
+    for wd in P.get('windows', []):
+        rx, ry, rw, rh = wd['rect']
+        if (rw, rh) != (320, 180):
+            out.append(f'{P["id"]}: window {wd["id"]} is {rw} x {rh} (a screen is 320 x 180 world px)')
+        if rx < x0 or ry < y0 or rx + rw > x0 + w or ry + rh > y0 + h:
+            out.append(f'{P["id"]}: window {wd["id"]} {wd["rect"]} leaves the box')
+        for k in ('focal', 'clearing'):
+            q = wd.get(k)
+            if not q or not (rx <= q[0] <= rx + rw and ry <= q[1] <= ry + rh):
+                out.append(f'{P["id"]}: window {wd["id"]} has no {k} inside it')
+    return out
 
 
 def camps_check(P: dict) -> list:
@@ -277,7 +305,7 @@ def camps_check(P: dict) -> list:
     x0, y0, w, h = P['box']
     seen = set()
     paths = [p['points'] for p in P.get('routes', []) + P.get('trods', [])]
-    for c in P.get('camps', []):
+    for c in camps_of(P):
         cid = c.get('id')
         if cid in seen:
             out.append(f'{pid}: camp {cid} twice')
@@ -874,7 +902,7 @@ def check(plan: dict) -> list:
             out.append(f'{pid}: set piece {sp["piece"]} at {tuple(sp["at"])} off the grid')
         inside(sp['at'], f'set piece {sp["piece"]}')
     out += placement(plan) + reach(plan) + water_ends(plan) + crossings_declared(plan) + water_height(plan) + \
-        rails_check(plan) + camps_check(plan)
+        rails_check(plan) + camps_check(plan) + windows_check(plan)
     return out
 
 

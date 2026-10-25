@@ -959,43 +959,183 @@
       "why": "the ledge's short stair"
     }
   ],
-  "camps": [
+  "fights": {
+    "_about": "Fights for the Godot era (game-design v2 sections 4, 9, 11 and 14; to-all-assignments-1025), in the shape of Claude I's plans: camps and patrols by Codex's roles (the kinds are proposals for Codex), cover, waystones, the dungeon's entrance and rooms. Shardstruck creatures are freed, never killed; camps refill on a return, never on a clock.",
+    "act": 1,
+    "story": "the Brackens: the Starfall's shard came down by the old barrow on the Fold spur; the drover's flock and the moor's grouse went wild round it, and the drover cannot take the road west until they are freed",
+    "weapons": {
+      "melee": "crooks, peat spades",
+      "ranged": "slings",
+      "idea": "herding: knock-back into the gorse"
+    },
+    "camps": [
+      {
+        "id": "spur_tor",
+        "arena": [4816, 2008, 176, 96],
+        "enemies": [
+          [4848, 2040],
+          [4944, 2048],
+          [4896, 2080]
+        ],
+        "cover": [
+          [4872, 2024],
+          [4968, 2088]
+        ],
+        "why": "shardstruck moor sheep and their ram on the Heather spur's top, where the west trod comes over: open heather to dodge in, two gritstone tors for cover (to-all-godot-1080: plan the combat spaces)",
+        "roles": ["grunt", "grunt", "lunger"],
+        "kind": "shardstruck moor sheep and their ram",
+        "at": [4848, 2040]
+      },
+      {
+        "id": "west_moor",
+        "arena": [4816, 2700, 176, 96],
+        "enemies": [
+          [4848, 2730],
+          [4920, 2760],
+          [4960, 2736]
+        ],
+        "cover": [[4888, 2716]],
+        "why": "red grouse gone wild in the deep heather beside the west trod: a quick, low fight on the way down, one gorse brake for cover",
+        "roles": ["swarmer", "swarmer", "swarmer"],
+        "kind": "red grouse gone wild",
+        "at": [4848, 2730]
+      },
+      {
+        "id": "gap_flock",
+        "arena": [5376, 3808, 160, 96],
+        "enemies": [
+          [5408, 3840],
+          [5480, 3856],
+          [5440, 3888],
+          [5512, 3832]
+        ],
+        "cover": [[5456, 3824]],
+        "why": "the drover's flock, shardstruck, scattered in the thicket by the gap; freeing them is what lets the drover take the road out (the Brackens gap threshold)",
+        "roles": ["grunt", "grunt", "grunt", "swarmer"],
+        "kind": "the drover's flock, shardstruck",
+        "at": [5408, 3840]
+      }
+    ],
+    "patrols": [
+      {
+        "id": "stray_dog",
+        "roles": ["lunger"],
+        "kind": "the drover's dog, shardstruck",
+        "path": [
+          [5016, 3776],
+          [5200, 3776]
+        ],
+        "why": "ranging along the Drover's Road above the gap, as the brief has it ranging ahead of the flock"
+      }
+    ],
+    "cover": [
+      {
+        "kind": "low",
+        "what": "gritstone tors",
+        "at": [4872, 2024]
+      },
+      {
+        "kind": "low",
+        "what": "a gritstone tor",
+        "at": [4968, 2088]
+      },
+      {
+        "kind": "high",
+        "what": "a gorse brake",
+        "at": [5456, 3824]
+      },
+      {
+        "kind": "high",
+        "what": "a gorse brake",
+        "at": [4888, 2716]
+      }
+    ],
+    "waystones": [
+      {
+        "id": "brackens_waystone",
+        "at": [5240, 3800],
+        "why": "at the gap, just off the Drover's Road where it leaves the valley: the moor's way back home"
+      }
+    ],
+    "shard": {
+      "in_dungeon": "the_barrow",
+      "why": "the shard lies in the barrow's end chamber"
+    },
+    "dungeon": {
+      "id": "the_barrow",
+      "name": "the Barrow",
+      "entrance": [4872, 3184],
+      "by": "a turf-roofed passage grave on the Fold spur, its door stones fallen in",
+      "rooms": [
+        {
+          "id": "passage",
+          "what": "the low passage, roots through the roof",
+          "camp": ["swarmer", "swarmer", "grunt"]
+        },
+        {
+          "id": "side_cells",
+          "what": "two side cells with fallen kerb stones as cover",
+          "camp": ["grunt", "shooter", "lunger"]
+        },
+        {
+          "id": "end_chamber",
+          "what": "the end chamber, the shard in its hearth",
+          "camp": ["tank"]
+        }
+      ],
+      "keeper": "a shardstruck badger sow in the end chamber, freed to lead her cubs out",
+      "plan": "a zone plan of its own, like game/data/plans/undercroft.json, after this PR"
+    },
+    "raiders_camp": {
+      "none": true,
+      "why": "raids come only to Crossroads (game-design v2, 7.6)"
+    }
+  },
+  "quest_spots": [
     {
-      "id": "spur_tor",
-      "arena": [4816, 2008, 176, 96],
-      "enemies": [
-        [4848, 2040],
-        [4944, 2048],
-        [4896, 2080]
-      ],
-      "cover": [
-        [4872, 2024],
-        [4968, 2088]
-      ],
-      "why": "shardstruck moor sheep and their ram on the Heather spur's top, where the west trod comes over: open heather to dodge in, two gritstone tors for cover (to-all-godot-1080: plan the combat spaces)"
+      "id": "drover",
+      "at": [5232, 3744],
+      "quest": "the drover at the gap, who will not go west until his flock is freed (gap_flock)"
     },
     {
-      "id": "west_moor",
-      "arena": [4816, 2700, 176, 96],
-      "enemies": [
-        [4848, 2730],
-        [4920, 2760],
-        [4960, 2736]
-      ],
-      "cover": [[4888, 2716]],
-      "why": "red grouse gone wild in the deep heather beside the west trod: a quick, low fight on the way down, one gorse brake for cover"
+      "id": "shepherd",
+      "at": [5196, 3828],
+      "quest": "the shepherd's hut: her dog is gone wild on the road (stray_dog)"
     },
     {
-      "id": "gap_flock",
-      "arena": [5376, 3808, 160, 96],
-      "enemies": [
-        [5408, 3840],
-        [5480, 3856],
-        [5440, 3888],
-        [5512, 3832]
-      ],
-      "cover": [[5456, 3824]],
-      "why": "the drover's flock, shardstruck, scattered in the thicket by the gap; freeing them is what lets the drover take the road out (the Brackens gap threshold)"
+      "id": "well_rope",
+      "at": [5040, 3300],
+      "quest": "the drove well's rope is cut and the bucket lost in the barrow (the_barrow)"
+    }
+  ],
+  "windows": [
+    {
+      "id": "the_gap",
+      "rect": [5040, 3720, 320, 180],
+      "focal": [5200, 3776],
+      "clearing": [5240, 3800],
+      "why": "west to east: the broken fold, the Drover's Road through the gap between the bluffs, the shepherd's hut and the waystone"
+    },
+    {
+      "id": "cairn_flat",
+      "rect": [5040, 2540, 320, 180],
+      "focal": [5232, 2620],
+      "clearing": [5200, 2660],
+      "why": "the crest trod comes up to the cairn and the bench, the valley's edge far off at the right"
+    },
+    {
+      "id": "heather_spur",
+      "rect": [4800, 1940, 320, 180],
+      "focal": [4904, 2040],
+      "clearing": [4960, 1990],
+      "why": "the spur's top in heather, two tors, the stair down its south rim at the bottom"
+    },
+    {
+      "id": "drove_well",
+      "rect": [4880, 3180, 320, 180],
+      "focal": [5064, 3316],
+      "clearing": [5000, 3260],
+      "why": "the well, the ring trod and the barrow's door at the left edge"
     }
   ]
 }

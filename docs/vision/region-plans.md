@@ -22,7 +22,8 @@ All points are world px on the v5.3 canvas (11264 x 6912), on the 8 px grid for 
 | `coast`                                                 | the land's outline as one polygon, or `{name: polygon}` for several islands (strings there are notes); outside it is sea |
 | `buildings`                                             | `{id, foot: [x, y] its south-west corner, w}`: footprints nothing may stand in (a door marker stands at its building) |
 | `in_water`                                              | on a named thing, pocket, marker or resident that stands in the shallows or on stilts by design |
-| `camps`                                                 | the Godot game's fights (docs/godot.md, Camps): `{id, arena: [x, y, w, h], enemies: [[x, y], ...], cover: [[x, y], ...], boss?, why}`; the arena is at least 96 x 64 world px, holds its enemies and is touched by a path |
+| `fights`                                                | the Godot era's fight layer (Claude I's shape): `act`, `story`, `weapons`, `camps` (`{id, roles, kind, at, arena: [x, y, w, h], enemies, cover?, why}`; the arena at least 96 x 64 world px, holding its enemies, touched by a path), `patrols` (`{id, roles, kind, path}`), `cover` (low or high), `waystones`, `shard`, `dungeon` (`{id, name, entrance, by, rooms, keeper, plan}`), `raiders_camp`; enemies, waystones and the entrance are reached like any placed thing |
+| `quest_spots`, `windows`                                | quest spots `{id, at, quest}` (reached like placed things); 16:9 windows `{id, rect: [x, y, 320, 180], focal, clearing, why}`, one Godot screen each, inside the box |
 | `rails[]` (more)                                        | `crossings` (`{with, at}`), `inclines` (`{at, kind}`: cutting, embankment or rope incline), `buffers`, `viaduct`, `tunnel` |
 
 ## The check
