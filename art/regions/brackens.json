@@ -132,6 +132,17 @@
         [5128, 3896]
       ],
       "face": "rock"
+    },
+    {
+      "id": "heather_spur",
+      "tier": 2,
+      "why": "the Heather spur (brief: (4990, 1960) to (4560, 2190)) at the crest's height, pushing west over the box edge into the Rift country; the west trod comes down its south rim (lane R, 22 Oct)",
+      "outline": [
+        [4800, 1952],
+        [5008, 1952],
+        [5008, 2208],
+        [4800, 2208]
+      ]
     }
   ],
   "faces": {
@@ -278,24 +289,29 @@
     {
       "id": "crest_trod",
       "width": 24,
-      "why": "a sheep trod down the crest from the Heather spur's viewpoint to the drove well: with the flank trod and the east trod it makes the moor's loop",
+      "why": "up from the drove well onto the crest to the cairn flat, a level place with a cairn and a bench looking east over the valley (lane R, 22 Oct: the crest is no longer walked end to end beside the flank trod)",
       "points": [
-        [5008, 1968],
-        [5056, 1968],
-        [5056, 2280],
-        [5104, 2280],
-        [5104, 2376],
-        [5088, 2376],
-        [5088, 2456],
-        [5120, 2456],
-        [5120, 2552],
-        [5104, 2552],
-        [5104, 3008],
-        [5168, 3008],
-        [5168, 3096],
-        [5144, 3096],
+        [5160, 3360],
+        [5160, 3344],
         [5144, 3344],
-        [5160, 3344]
+        [5144, 3096],
+        [5168, 3096],
+        [5168, 3008],
+        [5104, 3008],
+        [5104, 2656],
+        [5232, 2656]
+      ],
+      "dead_end": "view"
+    },
+    {
+      "id": "west_trod",
+      "width": 24,
+      "why": "from the crest's north end west along the Heather spur, down its south rim and south along the moor's west side to the ring trod: the loop comes back by the west, away from the flank trod (lane R, 22 Oct)",
+      "points": [
+        [5008, 1976],
+        [4904, 1976],
+        [4904, 3168],
+        [5008, 3168]
       ]
     }
   ],
@@ -330,7 +346,16 @@
     {
       "id": "crest_stair",
       "on": "crest_trod",
-      "at": [5144, 3228],
+      "at": [5144, 3224],
+      "from_tier": 2,
+      "to_tier": 1,
+      "width": 40,
+      "kind": "stone"
+    },
+    {
+      "id": "spur_stair",
+      "on": "west_trod",
+      "at": [4904, 2228],
       "from_tier": 2,
       "to_tier": 1,
       "width": 40,
@@ -400,6 +425,14 @@
       "route": "Drover's Road",
       "where": "beside the path",
       "moved_from": [5447, 3882]
+    },
+    {
+      "thing": "cairn flat",
+      "kind": "view",
+      "at": [5256, 2632],
+      "route": "crest trod",
+      "where": "at the trod's end",
+      "why": "a level place on the crest with a cairn and the wayside bench, looking east over the valley (lane R, 22 Oct)"
     }
   ],
   "pockets": [
@@ -532,26 +565,6 @@
       "moved_from": [4980, 1968]
     },
     {
-      "t": "S",
-      "what": "cairn",
-      "at": [5008, 2068],
-      "dress": true,
-      "moved_from": [5004, 2068]
-    },
-    {
-      "t": "S",
-      "what": "cairn",
-      "at": [5036, 2176],
-      "dress": true
-    },
-    {
-      "t": "S",
-      "what": "cairn",
-      "at": [5072, 2300],
-      "dress": true,
-      "moved_from": [5072, 2288]
-    },
-    {
       "t": "I",
       "what": "water trough",
       "at": [5452, 2296],
@@ -585,22 +598,9 @@
       "moved_from": [5292, 1968]
     },
     {
-      "t": "I",
-      "what": "signpost",
-      "at": [5068, 2432],
-      "dress": true,
-      "moved_from": [5080, 2432]
-    },
-    {
-      "t": "I",
-      "what": "bench",
-      "at": [5076, 2536],
-      "dress": true
-    },
-    {
       "t": "S",
       "what": "cairn",
-      "at": [5124, 2640],
+      "at": [5124, 2636],
       "dress": true,
       "moved_from": [5108, 2640]
     },
@@ -738,6 +738,38 @@
       "what": "cairn",
       "at": [5508, 3888],
       "dress": true
+    },
+    {
+      "t": "S",
+      "what": "cairn",
+      "at": [5028, 1956],
+      "dress": true,
+      "moved_from": [5028, 1976]
+    },
+    {
+      "t": "S",
+      "what": "cairn",
+      "at": [4876, 2024],
+      "dress": true
+    },
+    {
+      "t": "S",
+      "what": "cairn",
+      "at": [4876, 2244],
+      "dress": true,
+      "moved_from": [4876, 2240]
+    },
+    {
+      "t": "I",
+      "what": "water trough",
+      "at": [5132, 2688],
+      "dress": true
+    },
+    {
+      "t": "I",
+      "what": "signpost",
+      "at": [4932, 2688],
+      "dress": true
     }
   ],
   "obstacles": [
@@ -858,8 +890,73 @@
     }
   ],
   "clusters": [
-    {"recipe": "sheepfold_corner", "at": [5408, 3832], "orient": "n", "mirror": false, "seed": 0, "replaces": [5456, 3872]},
-    {"recipe": "sheepfold_corner", "at": [4808, 3552], "orient": "n", "mirror": true, "seed": 0, "replaces": [4856, 3584]},
-    {"recipe": "moor_wayside", "at": [5120, 2632], "orient": "w", "mirror": true, "seed": 0}
+    {
+      "recipe": "sheepfold_corner",
+      "at": [5408, 3832],
+      "orient": "n",
+      "mirror": false,
+      "seed": 0,
+      "replaces": [5456, 3872]
+    },
+    {
+      "recipe": "sheepfold_corner",
+      "at": [4808, 3552],
+      "orient": "n",
+      "mirror": true,
+      "seed": 0,
+      "replaces": [4856, 3584]
+    },
+    {
+      "recipe": "moor_wayside",
+      "at": [5208, 2608],
+      "orient": "s",
+      "mirror": true,
+      "seed": 0,
+      "replaces": [5256, 2632]
+    }
+  ],
+  "set_pieces": [
+    {
+      "piece": "ledge",
+      "biome": "moor",
+      "at": [5440, 2584],
+      "seed": 40,
+      "why": "a peat-bank ledge on the flank climb (lane R, 22 Oct)"
+    },
+    {
+      "piece": "stair",
+      "biome": "moor",
+      "at": [5440, 2592],
+      "seed": 50,
+      "why": "the ledge's short stair"
+    },
+    {
+      "piece": "ledge",
+      "biome": "moor",
+      "at": [5432, 2872],
+      "seed": 41,
+      "why": "a peat-bank ledge on the flank climb (lane R, 22 Oct)"
+    },
+    {
+      "piece": "stair",
+      "biome": "moor",
+      "at": [5432, 2880],
+      "seed": 51,
+      "why": "the ledge's short stair"
+    },
+    {
+      "piece": "ledge",
+      "biome": "moor",
+      "at": [5424, 2296],
+      "seed": 42,
+      "why": "a peat-bank ledge on the flank climb (lane R, 22 Oct)"
+    },
+    {
+      "piece": "stair",
+      "biome": "moor",
+      "at": [5424, 2304],
+      "seed": 52,
+      "why": "the ledge's short stair"
+    }
   ]
 }

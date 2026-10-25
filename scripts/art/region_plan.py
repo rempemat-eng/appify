@@ -35,6 +35,11 @@ docs/vision/regions/*.md section 8, research/world-benchmark.md, eastward-edges.
 - placement, reach and water ends (from Claude I's lull_delta.py, #177): nothing placed in
   water, the sea or a building; every placed thing and egg spot reachable from the routes on
   stairs, bridges and fords; every water body with a source and an outlet, or declared closed.
+- crossings, water height, rails and meets (lane R, 22 and 23 Oct): every crossing of open water
+  carried by a bridge, ford or declared crossing; water never runs uphill and every drop has a
+  fall; rails end at a stop, declare their crossings and change tier on an incline, and a rail
+  two plans share has one line; a path ending on the box edge meets a neighbour's path or a
+  lane G route.
 
 Run:
     python3 scripts/art/region_plan.py --check            (every plan; exits non-zero on a fault)
@@ -404,6 +409,228 @@ def water_ends(P: dict) -> list:
     return out
 
 
+# --- crossings, water height, rails and meets at the box edge (lane R, 22 and 23 Oct) -------
+
+def _seg_x(a, b, c, d):
+    """Where segment ab crosses segment cd, or None (touching ends count)."""
+    (x1, y1), (x2, y2), (x3, y3), (x4, y4) = a, b, c, d
+    den = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4)
+    if den == 0:
+        return None
+    t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / den
+    u = -((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / den
+    if 0 <= t <= 1 and 0 <= u <= 1:
+        return (x1 + t * (x2 - x1), y1 + t * (y2 - y1))
+    return None
+
+
+def _cross_points(pa, pb) -> list:
+    """Every point where polyline pa crosses polyline pb."""
+    out = []
+    for a, b in zip(pa, pa[1:]):
+        for c, d in zip(pb, pb[1:]):
+            q = _seg_x(tuple(a[:2]), tuple(b[:2]), tuple(c[:2]), tuple(d[:2]))
+            if q and not any(math.hypot(q[0] - o[0], q[1] - o[1]) < 4 for o in out):
+                out.append(q)
+    return out
+
+
+def _near(pt, pts, r) -> bool:
+    return any(math.hypot(pt[0] - q[0], pt[1] - q[1]) <= r for q in pts)
+
+
+def _walked(P: dict) -> list:
+    """The plan's walked paths, without the ones that are a deck themselves."""
+    return [p for p in P.get('routes', []) + P.get('trods', [])
+            if p.get('kind') not in SPANS and p['id'] not in ('jetty', 'boardwalk', 'slipway')]
+
+
+def crossings_declared(P: dict) -> list:
+    """Every place a route or trod crosses open water carries it over: a bridge on the water, a
+    ford on the path, a crossing the plan declares, or a deck span or island, within half the
+    water's width plus 16 px of the crossing (lane R, 22 Oct)."""
+    out = []
+    for w in P.get('water', []):
+        if w.get('closed') or w.get('declared_closed') and not w.get('width'):
+            continue
+        r = w.get('width', 8) / 2 + 16
+        carried = [b['at'] for b in w.get('bridges', [])] + list(w.get('fords', [])) + \
+            [c['at'] for c in P.get('crossings', []) if c.get('over', w['id']) == w['id']]
+        for pth in _walked(P):
+            mine = carried + ([pth['ford']] if pth.get('ford') else []) + list(pth.get('fords', []))
+            for q in _cross_points(pth['points'], w['points']):
+                if not _near(q, mine, r) and not _decked(P, q):
+                    out.append(f'{P["id"]}: {pth["id"]} crosses {w["id"]} at ({q[0]:.0f}, {q[1]:.0f}) with no bridge, '
+                               f'ford or crossing within {r:.0f} px')
+    return out
+
+
+def _falls(w) -> list:
+    out = []
+    for f in w.get('falls', []):
+        out.append(tuple(f['at']) if isinstance(f, dict) else tuple(f[:2]))
+    return out
+
+
+def _tier_runs(G, pts, step=4.0, settle=32.0):
+    """The ground's tier along a polyline as (tier, x, y) where it settles: a change counts
+    only once the new tier holds for `settle` px, so a line along a rim (flicking between the
+    tier above and the face's foot) reads as one tier."""
+    seq = [(G.at(x, y)[0], x, y) for x, y, _s in sample(pts, step)]
+    seq = [q for q in seq if q[0] is not None]
+    k = max(1, int(settle / step))
+    out = []
+    i = 0
+    while i < len(seq):
+        t = seq[i][0]
+        j = i
+        while j < len(seq) and seq[j][0] == t:
+            j += 1
+        if j - i >= k or not out or j >= len(seq):
+            if not out or out[-1][0] != t:
+                out.append(seq[i])
+        i = j
+    return out
+
+
+def water_height(P: dict) -> list:
+    """A stream never runs uphill: along its points (source to outlet) its ground's tier never
+    rises, and every drop has a fall within 48 px (lane R, 23 Oct)."""
+    out = []
+    G = Ground(P)
+    for w in P.get('water', []):
+        if w.get('closed') or len(w.get('points', [])) < 2:
+            continue
+        falls = _falls(w)
+        last = None
+        rose = dropped = False
+        for t, x, y in _tier_runs(G, w['points']):
+            if last is not None and t > last[0] and not rose:
+                out.append(f'{P["id"]}: water {w["id"]} rises from tier {last[0]} to {t} at ({x:.0f}, {y:.0f}) '
+                           f'(points run source to outlet; water never runs uphill)')
+                rose = True
+            if last is not None and t < last[0] and not _near((x, y), falls, 48) and not dropped:
+                out.append(f'{P["id"]}: water {w["id"]} drops from tier {last[0]} to {t} at ({x:.0f}, {y:.0f}) '
+                           f'with no fall within 48 px')
+                dropped = True
+            last = (t, x, y)
+    return out
+
+
+INCLINES = ('cutting', 'embankment', 'rope incline')
+VIADUCT = 128                     # px either side of a rail's viaduct point the ground's tier does not touch it
+
+
+def rails_check(P: dict) -> list:
+    """Rails (lane R, 23 Oct): each end at a stop or buffer of the plan (within 64 px: a
+    platform is long), at another rail, or
+    leaving across the box edge; every crossing of a path, another rail or open water declared
+    in the rail's `crossings` (or a water bridge, or its viaduct) within 24 px; every change of
+    tier on an incline (`inclines`: {at, kind} with kind a cutting, an embankment or a rope
+    incline) within 48 px, except on its viaduct (within VIADUCT px of `viaduct`). A rail in a
+    tunnel is under the ground: only its ends count; two rails joined end to end meet, not cross."""
+    out = []
+    pid = P['id']
+    x0, y0, w, h = P['box']
+    stops = [s['at'] for s in P.get('stops', [])]
+    rails = P.get('rails', [])
+    G = Ground(P)
+    for r in rails:
+        pts = r['points']
+        for end in (pts[0], pts[-1]):
+            on_edge = abs(end[0] - x0) <= 8 or abs(end[0] - x0 - w) <= 8 or abs(end[1] - y0) <= 8 or abs(end[1] - y0 - h) <= 8
+            others = [q for o in rails if o is not r for q in o['points']]
+            if not (on_edge or _near(end, stops + list(r.get('buffers', [])), 64) or _near(end, others, 24)):
+                out.append(f'{pid}: rail {r["id"]} ends at {tuple(end)} with no stop or buffer')
+        if r.get('tunnel'):
+            continue
+        declared = [c['at'] for c in r.get('crossings', [])] + ([r['viaduct']] if r.get('viaduct') else [])
+        against = [(p['id'], p['points']) for p in _walked(P)] + [(o['id'], o['points']) for o in rails if o is not r]
+        for wtr in P.get('water', []):
+            if not wtr.get('closed'):
+                against.append((wtr['id'], wtr['points']))
+                declared += [b['at'] for b in wtr.get('bridges', [])]
+        for oid, opts in against:
+            for q in _cross_points(pts, opts):
+                if _near(q, [pts[0], pts[-1]], 4) and _near(q, [opts[0], opts[-1]], 4):
+                    continue                  # one line runs on from the other's end: a junction
+                if not _near(q, declared, 24):
+                    out.append(f'{pid}: rail {r["id"]} crosses {oid} at ({q[0]:.0f}, {q[1]:.0f}), not declared in its crossings')
+        inc = [i['at'] for i in r.get('inclines', []) if i.get('kind') in INCLINES]
+        for i in r.get('inclines', []):
+            if i.get('kind') not in INCLINES:
+                out.append(f'{pid}: rail {r["id"]} incline at {tuple(i["at"])} is a {i.get("kind")!r} (one of {", ".join(INCLINES)})')
+        last = None
+        deck = [r['viaduct']] if r.get('viaduct') else []
+        for t, x, y in _tier_runs(G, pts):
+            if _near((x, y), deck, VIADUCT):
+                continue                      # carried over the ground on its viaduct
+            if last is not None and t != last and not _near((x, y), inc, 48):
+                out.append(f'{pid}: rail {r["id"]} changes tier {last} to {t} at ({x:.0f}, {y:.0f}) with no incline within 48 px')
+            last = t
+    return out
+
+
+def shared_rails(plans: list) -> list:
+    """A rail two plans both draw has the same line where their boxes overlap (lane R, 23 Oct)."""
+    out = []
+    for i, A in enumerate(plans):
+        for B in plans[i + 1:]:
+            ax, ay, aw, ah = A['box']
+            bx, by, bw, bh = B['box']
+            ox0, oy0, ox1, oy1 = max(ax, bx), max(ay, by), min(ax + aw, bx + bw), min(ay + ah, by + bh)
+            ra = {r['id']: r for r in A.get('rails', [])}
+            for rb in B.get('rails', []):
+                if rb['id'] not in ra:
+                    continue
+                pa, pb = ra[rb['id']]['points'], rb['points']
+                for (src, dst, sp, dp) in ((A, B, pa, pb), (B, A, pb, pa)):
+                    for x, y, _s in sample(sp, 8.0):
+                        if ox0 <= x <= ox1 and oy0 <= y <= oy1 and dist_to_line((x, y), dp) > 8:
+                            out.append(f'{src["id"]}: rail {rb["id"]} at ({x:.0f}, {y:.0f}) is off {dst["id"]}\'s line '
+                                       f'for the same rail where the boxes overlap')
+                            break
+    return out
+
+
+_G_ROUTES = None
+
+
+def g_routes() -> list:
+    """Lane G's routes as polylines [(x, y), ...] (lib/world-routes.ts, read with node + tsx), or
+    [] if they cannot be read here (then the meet check uses the other plans only)."""
+    global _G_ROUTES
+    if _G_ROUTES is None:
+        import subprocess
+        root = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..'))
+        code = ("const m = await import('file://' + process.argv[1]);"
+                "process.stdout.write(JSON.stringify(m.worldRoutes.map(r => r.points.map(p => [p[0], p[1]]))));")
+        try:
+            r = subprocess.run([os.environ.get('NODE', 'node'), '--import', 'tsx', '--input-type=module', '-e', code,
+                                os.path.join(root, 'lib', 'world-routes.ts')], cwd=root, capture_output=True,
+                               text=True, timeout=120)
+            _G_ROUTES = json.loads(r.stdout) if r.returncode == 0 else []
+        except Exception:
+            _G_ROUTES = []
+    return _G_ROUTES
+
+
+def edge_meets(P: dict, others: list, routes: list) -> list:
+    """A path that ends on the box edge meets something on the other side: a path of the
+    neighbour's plan or one of lane G's routes, within 16 px (lane R, 23 Oct)."""
+    out = []
+    x0, y0, w, h = P['box']
+    lines = [p['points'] for o in others for p in o.get('routes', []) + o.get('trods', [])] + routes
+    for pth in P.get('routes', []) + P.get('trods', []):
+        for end in (pth['points'][0], pth['points'][-1]):
+            if not (end[0] in (x0, x0 + w) or end[1] in (y0, y0 + h)):
+                continue
+            if not any(dist_to_line(tuple(end[:2]), [q[:2] for q in ln]) <= 16 for ln in lines if len(ln) > 1):
+                out.append(f'{P["id"]}: {pth["id"]} ends on the box edge at {tuple(end[:2])} and meets no path of a '
+                           f'neighbour or lane G route there')
+    return out
+
+
 def variety(plan: dict) -> list:
     """Advisory (a-to-f-grid): a tier's east-west edge that runs more than a screen width without
     stepping in or out. Volume comes from masses that step (to-all-volume)."""
@@ -610,7 +837,8 @@ def check(plan: dict) -> list:
         if sp['at'][0] % GRID or sp['at'][1] % GRID:
             out.append(f'{pid}: set piece {sp["piece"]} at {tuple(sp["at"])} off the grid')
         inside(sp['at'], f'set piece {sp["piece"]}')
-    out += placement(plan) + reach(plan) + water_ends(plan)
+    out += placement(plan) + reach(plan) + water_ends(plan) + crossings_declared(plan) + water_height(plan) + \
+        rails_check(plan)
     return out
 
 
@@ -881,12 +1109,17 @@ def main(argv) -> int:
         return 0
     if '--check' in argv:
         faults = []
-        for pid in plan_ids():
-            p = load(pid)
+        plans = [load(pid) for pid in plan_ids()]
+        routes = g_routes()
+        if not routes:
+            print('note: lane G routes could not be read (node + tsx); edge meets use the other plans only')
+        for p in plans:
             faults += check(p)
+            faults += edge_meets(p, [o for o in plans if o is not p], routes)
             print(summary(p))
             for nt in variety(p):
                 print('note', nt)
+        faults += shared_rails(plans)
         for f in faults:
             print('FAULT', f)
         print(f'{"ok" if not faults else "FAIL"} region plans: {len(plan_ids())} plans, {len(faults)} faults')
