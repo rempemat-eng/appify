@@ -1,0 +1,325 @@
+{
+  "schema_version": 1,
+  "status": "proposal (claude-a/progression, 25 Oct); every number is a placeholder until play-tests and Claude L's harness",
+  "id": "mote",
+  "name": "Mote",
+  "identity": "genderless observatory keeper; long navy coat edged in gold with glass-inlaid hem fragments; two gold crescent hooks at the shoulders; the chest core (gold ring, blue lens); glass shards form in the RIGHT hand",
+  "home_region": "lumen",
+  "home_region_note": "Claude K's proposal on #149 (25 Oct), not yet decided by Matt; it only sets the tier material",
+  "abilities": {
+    "kit": "game/data/abilities/mote.json (Codex, #261); base and powered form unchanged",
+    "base": {
+      "primary": "Glass volley",
+      "secondary": "Gravity anchor",
+      "block": "Glass crescent",
+      "special": "Aphelion"
+    },
+    "techniques": [
+      {
+        "id": "refraction",
+        "name": "Refraction",
+        "level": 3,
+        "binding": "passive: a shard that passes through a gravity anchor",
+        "effect": "The shard splits in two.",
+        "numbers": {
+          "split": 2,
+          "split_damage_pct": 50
+        },
+        "art": {
+          "new_clips": [],
+          "fx": [
+            "split glint"
+          ],
+          "reuses": []
+        },
+        "touches_canonical": false,
+        "upgrade": {
+          "level": 12,
+          "id": "refraction_2",
+          "name": "Refraction II",
+          "effect": "Split shards slow what they hit.",
+          "numbers": {
+            "slow_pct": 15,
+            "slow_seconds": 1.5
+          }
+        }
+      },
+      {
+        "id": "pane_step",
+        "name": "Pane Step",
+        "level": 9,
+        "binding": "a perfect dodge",
+        "effect": "One glass pane stays standing where Mote rolled and stops one projectile.",
+        "numbers": {
+          "pane_seconds": 2,
+          "blocks": 1
+        },
+        "art": {
+          "new_clips": [],
+          "fx": [
+            "standing pane (rise 2, hold, shatter 3)"
+          ],
+          "reuses": [
+            "dodge"
+          ]
+        },
+        "touches_canonical": false,
+        "upgrade": {
+          "level": 20,
+          "id": "pane_step_2",
+          "name": "Pane Step II",
+          "effect": "A pane that blocks shatters into a small volley.",
+          "numbers": {
+            "volley_shards": 3,
+            "shard_damage_pct": 30
+          }
+        }
+      },
+      {
+        "id": "starfall",
+        "name": "Starfall",
+        "level": 16,
+        "binding": "a gravity anchor that draws in three or more foes",
+        "effect": "A small rain of light falls on the anchor a moment later.",
+        "numbers": {
+          "min_foes": 3,
+          "delay_seconds": 0.6,
+          "damage": 16,
+          "radius": 22
+        },
+        "art": {
+          "new_clips": [],
+          "fx": [
+            "light rain (6 drawings, finite)"
+          ],
+          "reuses": []
+        },
+        "touches_canonical": false,
+        "upgrade": {
+          "level": 26,
+          "id": "starfall_2",
+          "name": "Starfall II",
+          "effect": "The rain covers a quarter more ground.",
+          "numbers": {
+            "radius_pct": 25
+          }
+        }
+      }
+    ]
+  },
+  "weapon": {
+    "item": "core and glass",
+    "equipment_tag": "core",
+    "tiers": [
+      {
+        "tier": 1,
+        "name": "Observatory core",
+        "art": {
+          "silhouette": "today's drawing: gold ring round a blue glass lens with an amber light; clear blue shards",
+          "materials": [
+            "gold",
+            "glass blue",
+            "amber"
+          ],
+          "glow": "the core's light as drawn",
+          "size": "as drawn",
+          "read_check": "the current drawing"
+        },
+        "mechanics": {},
+        "requires": {
+          "level": 1
+        }
+      },
+      {
+        "tier": 2,
+        "name": "Dropped hooks",
+        "art": {
+          "silhouette": "the crescent hooks gain hanging glass drops (2 px); the shards gain a faceted light edge",
+          "materials": [
+            "gold",
+            "glass blue"
+          ],
+          "glow": "none",
+          "size": "as drawn",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
+        },
+        "mechanics": {
+          "shard_speed_pct": 8
+        },
+        "requires": {
+          "level": 8,
+          "forge_tier": 1
+        },
+        "cost": {
+          "glint": 150,
+          "scrap": 10,
+          "home_material": {
+            "material": "Moonsilver",
+            "count": 4
+          }
+        }
+      },
+      {
+        "tier": 3,
+        "name": "Orrery core",
+        "art": {
+          "silhouette": "a thin gold orrery ring (1 px) tilted round the core; violet-tinted shards",
+          "materials": [
+            "gold",
+            "violet",
+            "glass blue"
+          ],
+          "glow": "none",
+          "size": "ring 2 px outside the core",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
+        },
+        "mechanics": {
+          "anchor_radius_pct": 8
+        },
+        "requires": {
+          "level": 16,
+          "forge_tier": 2
+        },
+        "cost": {
+          "glint": 600,
+          "scrap": 30,
+          "home_material": {
+            "material": "Moonsilver",
+            "count": 10
+          }
+        }
+      },
+      {
+        "tier": 4,
+        "name": "Little moon",
+        "art": {
+          "silhouette": "the lens becomes a tiny full moon (starlight disc with two craters); the hooks tipped with stars",
+          "materials": [
+            "starlight (new)",
+            "gold"
+          ],
+          "glow": "the moon glows one tone; shards leave a 1 px trail of two drawings (off under reduced motion)",
+          "size": "as tier 3",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
+        },
+        "mechanics": {
+          "named": "Little moon: volley shards converge 15 % sooner",
+          "converge_pct": -15
+        },
+        "requires": {
+          "level": 24,
+          "forge_tier": 3
+        },
+        "cost": {
+          "glint": 1800,
+          "scrap": 60,
+          "home_material": {
+            "material": "Moonsilver",
+            "count": 16
+          },
+          "starshard": 1
+        }
+      }
+    ]
+  },
+  "outfits": [
+    {
+      "id": "dawn_coat",
+      "name": "Dawn coat",
+      "description": "a pale dawn-pink coat with silver edges",
+      "parts": [
+        "coat"
+      ],
+      "ramps": {
+        "navy": "dawn (new)",
+        "gold": "steel"
+      },
+      "unlock": {
+        "source": "story",
+        "event": "quest:folk_mote:done"
+      }
+    },
+    {
+      "id": "star_chart",
+      "name": "Star chart",
+      "description": "the navy coat printed with constellations in 1 px gold dots and lines",
+      "parts": [
+        "coat (chart detail)"
+      ],
+      "ramps": {},
+      "unlock": {
+        "source": "village",
+        "event": "restore:glassworks:2"
+      }
+    },
+    {
+      "id": "eclipse",
+      "name": "Eclipse",
+      "description": "a black coat with a thin gold corona at the collar",
+      "parts": [
+        "coat",
+        "collar (corona)"
+      ],
+      "ramps": {
+        "navy": "ink (new)"
+      },
+      "unlock": {
+        "source": "glint",
+        "event": "buy:stall:eclipse",
+        "note": "1,000 Glint, stall tier 3"
+      }
+    }
+  ],
+  "accessories": [
+    {
+      "id": "circlet",
+      "name": "Orbit circlet",
+      "slot": "head",
+      "description": "a gold ring floating level round the tall head, one small star on it",
+      "unlock": {
+        "source": "arena",
+        "event": "arena:zero_g_dome:gold"
+      },
+      "perk": null
+    },
+    {
+      "id": "stole",
+      "name": "Star stole",
+      "slot": "back",
+      "description": "a long narrow stole hanging from the crescent hooks down the back",
+      "unlock": {
+        "source": "bond",
+        "event": "bond:any:9"
+      },
+      "perk": null
+    },
+    {
+      "id": "collar_gem",
+      "name": "Collar gem",
+      "slot": "neck",
+      "description": "a violet gem at the standing collar's front",
+      "unlock": {
+        "source": "drop",
+        "event": "drop:lumen"
+      },
+      "perk": null
+    },
+    {
+      "id": "pocket_orrery",
+      "name": "Pocket orrery",
+      "slot": "trinket",
+      "description": "a tiny brass orrery at the coat's pocket, 3 px",
+      "unlock": {
+        "source": "story",
+        "event": "quest:lumen_grove:done"
+      },
+      "perk": {
+        "status": "proposal",
+        "text": "A soft hum when a secret is within 4 tiles",
+        "numbers": {
+          "secret_hint_tiles": 4
+        }
+      }
+    }
+  ]
+}

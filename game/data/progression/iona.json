@@ -1,0 +1,329 @@
+{
+  "schema_version": 1,
+  "status": "proposal (claude-a/progression, 25 Oct); every number is a placeholder until play-tests and Claude L's harness",
+  "id": "iona",
+  "name": "Iona",
+  "identity": "grassland storm-lancer; one 92 px spear in the RIGHT hand, the LEFT grips the same shaft for two-handed actions; long braid down the back, magenta scarf",
+  "home_region": "brackens",
+  "home_region_note": "Claude K's proposal on #149 (25 Oct), not yet decided by Matt; it only sets the tier material",
+  "abilities": {
+    "kit": "game/data/abilities/iona.json (Codex, #261); base and powered form unchanged",
+    "base": {
+      "primary": "Spearpoint",
+      "secondary": "Wind lunge",
+      "block": "Gust guard",
+      "special": "Storm Mantle"
+    },
+    "techniques": [
+      {
+        "id": "gale_step",
+        "name": "Gale Step",
+        "level": 3,
+        "binding": "primary within 0.3 s after a dodge",
+        "effect": "The roll flows into a long thrust that reaches further than Spearpoint.",
+        "numbers": {
+          "window_seconds": 0.3,
+          "reach_pct": 30
+        },
+        "art": {
+          "new_clips": [],
+          "fx": [],
+          "reuses": [
+            "dodge",
+            "primary"
+          ]
+        },
+        "touches_canonical": false,
+        "upgrade": {
+          "level": 12,
+          "id": "gale_step_2",
+          "name": "Gale Step II",
+          "effect": "A Gale Step that hits gives back half a dodge charge.",
+          "numbers": {
+            "dodge_refund": 0.5
+          }
+        }
+      },
+      {
+        "id": "static_charge",
+        "name": "Static Charge",
+        "level": 9,
+        "binding": "passive: every third spear hit on the same foe charges it",
+        "effect": "The next Wind lunge into a charged foe discharges one small arc to a second foe. Smaller than Storm Mantle's arcs, and only from a lunge.",
+        "numbers": {
+          "hits_to_charge": 3,
+          "arc_damage_pct": 40,
+          "arc_range": 40
+        },
+        "art": {
+          "new_clips": [],
+          "fx": [
+            "charge mark on the foe (2 drawings)"
+          ],
+          "reuses": [
+            "secondary"
+          ]
+        },
+        "touches_canonical": false,
+        "upgrade": {
+          "level": 20,
+          "id": "static_charge_2",
+          "name": "Static Charge II",
+          "effect": "The discharge interrupts a shooter's wind-up, once per foe.",
+          "numbers": {
+            "interrupt_per_foe": 1
+          }
+        }
+      },
+      {
+        "id": "windbreak",
+        "name": "Windbreak",
+        "level": 16,
+        "binding": "raise Gust guard within 0.2 s of a projectile reaching you",
+        "effect": "The projectile is turned back along its path instead of draining guard.",
+        "numbers": {
+          "window_seconds": 0.2
+        },
+        "art": {
+          "new_clips": [],
+          "fx": [
+            "deflect gust (3 drawings)"
+          ],
+          "reuses": [
+            "guard 0 to 4"
+          ]
+        },
+        "touches_canonical": false,
+        "upgrade": {
+          "level": 26,
+          "id": "windbreak_2",
+          "name": "Windbreak II",
+          "effect": "Deflected projectiles carry a storm arc.",
+          "numbers": {
+            "arc_damage_pct": 30
+          }
+        }
+      }
+    ]
+  },
+  "weapon": {
+    "item": "spear",
+    "equipment_tag": "spear",
+    "tiers": [
+      {
+        "tier": 1,
+        "name": "Ash spear",
+        "art": {
+          "silhouette": "today's drawing: steel leaf blade, gold collar, gold-banded brass shaft, steel butt spike; 92 px",
+          "materials": [
+            "steel",
+            "gold",
+            "brass"
+          ],
+          "glow": "none",
+          "size": "as drawn",
+          "read_check": "the current drawing"
+        },
+        "mechanics": {},
+        "requires": {
+          "level": 1
+        }
+      },
+      {
+        "tier": 2,
+        "name": "Windcut spear",
+        "art": {
+          "silhouette": "two swept barbs (4 px each) below the leaf blade; a magenta pennon (2 x 6 px) tied at the collar that trails like her scarf",
+          "materials": [
+            "steel",
+            "gold",
+            "scarf (pennon)"
+          ],
+          "glow": "none",
+          "size": "92 px; the barbs widen the head to 9 px",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
+        },
+        "mechanics": {
+          "primary_reach": 4
+        },
+        "requires": {
+          "level": 8,
+          "forge_tier": 1
+        },
+        "cost": {
+          "glint": 150,
+          "scrap": 10,
+          "home_material": {
+            "material": "fleece",
+            "count": 4
+          }
+        }
+      },
+      {
+        "tier": 3,
+        "name": "Stormwrought spear",
+        "art": {
+          "silhouette": "the blade reforged in blued steel with a bright edge; three copper coil rings below the collar; the butt spike becomes a weighted ring pommel",
+          "materials": [
+            "storm (blade flat)",
+            "steel (edge)",
+            "copper (new)"
+          ],
+          "glow": "none",
+          "size": "92 px",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
+        },
+        "mechanics": {
+          "secondary_cooldown_pct": -8
+        },
+        "requires": {
+          "level": 16,
+          "forge_tier": 2
+        },
+        "cost": {
+          "glint": 600,
+          "scrap": 30,
+          "home_material": {
+            "material": "fleece",
+            "count": 10
+          }
+        }
+      },
+      {
+        "tier": 4,
+        "name": "Starfall lance",
+        "art": {
+          "silhouette": "a pale moonsilver blade with a 1 px storm-blue fuller; a gold crescent collar; the pennon becomes a ribbon of light 8 px long",
+          "materials": [
+            "moonsilver (new)",
+            "storm",
+            "gold",
+            "starlight (new)"
+          ],
+          "glow": "the fuller and ribbon glow in their light tone; the ribbon lags one drawing behind the spear",
+          "size": "92 px (length is fixed by the kit's reach)",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
+        },
+        "mechanics": {
+          "named": "Stormlit: the first hit after a Wind lunge arcs to one more foe for 30 %",
+          "arc_damage_pct": 30
+        },
+        "requires": {
+          "level": 24,
+          "forge_tier": 3
+        },
+        "cost": {
+          "glint": 1800,
+          "scrap": 60,
+          "home_material": {
+            "material": "fleece",
+            "count": 16
+          },
+          "starshard": 1
+        }
+      }
+    ]
+  },
+  "outfits": [
+    {
+      "id": "moor_coat",
+      "name": "Moor coat",
+      "description": "heather-purple split coat with a sheepskin collar; the scarf stays magenta",
+      "parts": [
+        "coat (collar)"
+      ],
+      "ramps": {
+        "berry": "heather (new)"
+      },
+      "unlock": {
+        "source": "story",
+        "event": "quest:folk_iona:done"
+      }
+    },
+    {
+      "id": "drill_coat",
+      "name": "Yard drill coat",
+      "description": "a short fitted jacket in place of the knee-length coat, with brass toggles; the side panels show as trousers",
+      "parts": [
+        "coat (short variant)"
+      ],
+      "ramps": {
+        "berry": "berry"
+      },
+      "unlock": {
+        "source": "village",
+        "event": "restore:training_yard:2"
+      }
+    },
+    {
+      "id": "tempest",
+      "name": "Tempest",
+      "description": "storm-blue coat with white piping and a darker braid ribbon",
+      "parts": [
+        "coat"
+      ],
+      "ramps": {
+        "berry": "stormcoat (new)"
+      },
+      "unlock": {
+        "source": "glint",
+        "event": "buy:stall:tempest",
+        "note": "600 Glint, stall tier 2"
+      }
+    }
+  ],
+  "accessories": [
+    {
+      "id": "feather_pin",
+      "name": "Kestrel hairpin",
+      "slot": "head",
+      "description": "a gold pin with a kestrel feather (4 px) at the root of the braid",
+      "unlock": {
+        "source": "bond",
+        "event": "bond:any:4"
+      },
+      "perk": null
+    },
+    {
+      "id": "storm_cloak",
+      "name": "Shoulder cloak",
+      "slot": "back",
+      "description": "a short cloak on the LEFT shoulder only, over the harness, so the harness ring still shows on the back",
+      "unlock": {
+        "source": "arena",
+        "event": "arena:training_yard:gold"
+      },
+      "perk": null
+    },
+    {
+      "id": "tartan_scarf",
+      "name": "Moor tartan scarf",
+      "slot": "neck",
+      "description": "the scarf in a two-colour check, same knot and one tail",
+      "unlock": {
+        "source": "drop",
+        "event": "drop:brackens"
+      },
+      "perk": null,
+      "replaces": "scarf"
+    },
+    {
+      "id": "weathervane",
+      "name": "Weathervane charm",
+      "slot": "trinket",
+      "description": "a tiny brass cockerel on the harness ring, 3 x 3 px",
+      "unlock": {
+        "source": "glint",
+        "event": "buy:stall:weathervane",
+        "note": "300 Glint"
+      },
+      "perk": {
+        "status": "proposal",
+        "text": "The familiar's weak-point glint lasts 0.5 s longer",
+        "numbers": {
+          "weak_point_seconds": 0.5
+        }
+      }
+    }
+  ]
+}

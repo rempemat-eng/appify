@@ -1,0 +1,323 @@
+{
+  "schema_version": 1,
+  "status": "proposal (claude-a/progression, 25 Oct); every number is a placeholder until play-tests and Claude L's harness",
+  "id": "clack",
+  "name": "Clack",
+  "identity": "older broad heavy gunner; rocket launcher on the RIGHT shoulder, a separate pressure chamber under the tube, a two-rocket rack on the front LEFT of the belt, a folding loader frame flat on the back",
+  "home_region": "cogsworth",
+  "home_region_note": "Claude K's proposal on #149 (25 Oct), not yet decided by Matt; it only sets the tier material",
+  "abilities": {
+    "kit": "game/data/abilities/clack.json (Codex, #261); base and powered form unchanged",
+    "base": {
+      "primary": "Shoulder rocket",
+      "secondary": "Concussive vent",
+      "block": "Blast guard",
+      "special": "Siegebreaker"
+    },
+    "techniques": [
+      {
+        "id": "hot_loader",
+        "name": "Hot Loader",
+        "level": 3,
+        "binding": "Concussive vent during a reload",
+        "effect": "The vent's kick speeds the loading.",
+        "numbers": {
+          "reload_remaining_pct": -30
+        },
+        "art": {
+          "new_clips": [],
+          "fx": [],
+          "reuses": [
+            "secondary"
+          ]
+        },
+        "touches_canonical": false,
+        "upgrade": {
+          "level": 12,
+          "id": "hot_loader_2",
+          "name": "Hot Loader II",
+          "effect": "A vent that hits two or more foes completes the reload.",
+          "numbers": {
+            "min_foes": 2
+          }
+        }
+      },
+      {
+        "id": "cluster_nose",
+        "name": "Cluster Nose",
+        "level": 9,
+        "binding": "passive on Shoulder rocket",
+        "effect": "The blast scatters three small bomblets that pop a moment later.",
+        "numbers": {
+          "bomblets": 3,
+          "delay_seconds": 0.5,
+          "bomblet_damage_pct": 20
+        },
+        "art": {
+          "new_clips": [],
+          "fx": [
+            "bomblet (3 drawings)"
+          ],
+          "reuses": []
+        },
+        "touches_canonical": false,
+        "upgrade": {
+          "level": 20,
+          "id": "cluster_nose_2",
+          "name": "Cluster Nose II",
+          "effect": "Bomblets nudge small foes toward the blast's centre.",
+          "numbers": {
+            "pull": 8
+          }
+        }
+      },
+      {
+        "id": "planted_shield",
+        "name": "Planted Shield",
+        "level": 16,
+        "binding": "hold Blast guard for 1 s",
+        "effect": "He plants the shield: he cannot walk, blocked shots stop draining the guard, and the next rocket's blast is larger.",
+        "numbers": {
+          "hold_seconds": 1.0,
+          "blast_radius_pct": 50
+        },
+        "art": {
+          "new_clips": [],
+          "fx": [
+            "dust at the shield foot"
+          ],
+          "reuses": [
+            "guard 4"
+          ]
+        },
+        "touches_canonical": false,
+        "upgrade": {
+          "level": 26,
+          "id": "planted_shield_2",
+          "name": "Planted Shield II",
+          "effect": "The planted shield covers his whole front half.",
+          "numbers": {
+            "arc_degrees": 180
+          }
+        }
+      }
+    ]
+  },
+  "weapon": {
+    "item": "rocket launcher",
+    "equipment_tag": "launcher",
+    "tiers": [
+      {
+        "tier": 1,
+        "name": "Works launcher",
+        "art": {
+          "silhouette": "today's drawing: gunmetal tube with orange bands, brass muzzle ring, flared exhaust bell",
+          "materials": [
+            "gunmetal",
+            "orange",
+            "brass"
+          ],
+          "glow": "none",
+          "size": "as drawn",
+          "read_check": "the current drawing"
+        },
+        "mechanics": {},
+        "requires": {
+          "level": 1
+        }
+      },
+      {
+        "tier": 2,
+        "name": "Plated launcher",
+        "art": {
+          "silhouette": "riveted heat plates over the tube; the orange bands become 2 px diagonal hazard stripes; the bell 2 px wider",
+          "materials": [
+            "gunmetal",
+            "orange",
+            "brass"
+          ],
+          "glow": "none",
+          "size": "bell +2 px (still clear of his head and back)",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
+        },
+        "mechanics": {
+          "reload_pct": -8
+        },
+        "requires": {
+          "level": 8,
+          "forge_tier": 1
+        },
+        "cost": {
+          "glint": 150,
+          "scrap": 10,
+          "home_material": {
+            "material": "brass",
+            "count": 4
+          }
+        }
+      },
+      {
+        "tier": 3,
+        "name": "Braked launcher",
+        "art": {
+          "silhouette": "a brass muzzle brake with four vents; a small periscope sight on the left; a second gauge on the pressure chamber",
+          "materials": [
+            "brass",
+            "gunmetal",
+            "glass blue"
+          ],
+          "glow": "none",
+          "size": "+3 px at the muzzle",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
+        },
+        "mechanics": {
+          "blast_radius_pct": 6
+        },
+        "requires": {
+          "level": 16,
+          "forge_tier": 2
+        },
+        "cost": {
+          "glint": 600,
+          "scrap": 30,
+          "home_material": {
+            "material": "brass",
+            "count": 10
+          }
+        }
+      },
+      {
+        "tier": 4,
+        "name": "Starnose launcher",
+        "art": {
+          "silhouette": "a dark station-alloy tube with gold bands; the loaded rocket's nose in the bore is pale starlight",
+          "materials": [
+            "alloy (new)",
+            "gold",
+            "starlight (new)"
+          ],
+          "glow": "the rocket nose glows one tone; it goes dark when fired and returns on reload, so reload state reads on the body",
+          "size": "as tier 3",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
+        },
+        "mechanics": {
+          "named": "Starnose: a rocket that frees a foe cuts the reload by 20 %",
+          "reload_on_free_pct": -20
+        },
+        "requires": {
+          "level": 24,
+          "forge_tier": 3
+        },
+        "cost": {
+          "glint": 1800,
+          "scrap": 60,
+          "home_material": {
+            "material": "brass",
+            "count": 16
+          },
+          "starshard": 1
+        }
+      }
+    ]
+  },
+  "outfits": [
+    {
+      "id": "foundry",
+      "name": "Foundry hand",
+      "description": "a leather apron over the teal shirt and soot on the sleeves",
+      "parts": [
+        "apron (new part)"
+      ],
+      "ramps": {},
+      "unlock": {
+        "source": "story",
+        "event": "quest:folk_clack:done"
+      }
+    },
+    {
+      "id": "dock_boss",
+      "name": "Dock boss",
+      "description": "a navy pea coat with the sleeves rolled, the harness over it",
+      "parts": [
+        "shirt (coat variant)"
+      ],
+      "ramps": {
+        "teal": "navy (new)"
+      },
+      "unlock": {
+        "source": "village",
+        "event": "restore:workshop:1"
+      }
+    },
+    {
+      "id": "hazard",
+      "name": "Hazard orange",
+      "description": "orange coveralls with reflective bands",
+      "parts": [
+        "shirt",
+        "trousers"
+      ],
+      "ramps": {
+        "teal": "hazard (new)",
+        "denim": "hazard (new)"
+      },
+      "unlock": {
+        "source": "arena",
+        "event": "arena:gear_floor:gold"
+      }
+    }
+  ],
+  "accessories": [
+    {
+      "id": "welder_cap",
+      "name": "Welder's cap",
+      "slot": "head",
+      "description": "a soft striped cap under the pushed-up goggles",
+      "unlock": {
+        "source": "glint",
+        "event": "buy:stall:welder_cap",
+        "note": "250 Glint"
+      },
+      "perk": null
+    },
+    {
+      "id": "loader_cover",
+      "name": "Canvas cover",
+      "slot": "back",
+      "description": "a canvas sling cover strapped over the folded loader frame; it lifts with the frame in Siegebreaker",
+      "unlock": {
+        "source": "drop",
+        "event": "drop:cogsworth"
+      },
+      "perk": null
+    },
+    {
+      "id": "neckerchief",
+      "name": "Red neckerchief",
+      "slot": "neck",
+      "description": "a red cotton neckerchief knotted at the side",
+      "unlock": {
+        "source": "bond",
+        "event": "bond:any:5"
+      },
+      "perk": null
+    },
+    {
+      "id": "gauge_fob",
+      "name": "Gauge fob",
+      "slot": "trinket",
+      "description": "a small pressure gauge on a chain at the belt",
+      "unlock": {
+        "source": "village",
+        "event": "restore:workshop:2"
+      },
+      "perk": {
+        "status": "proposal",
+        "text": "The bond meter starts each outing 10 higher",
+        "numbers": {
+          "bond_start": 10
+        }
+      }
+    }
+  ]
+}

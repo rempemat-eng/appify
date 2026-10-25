@@ -1,0 +1,323 @@
+{
+  "schema_version": 1,
+  "status": "proposal (claude-a/progression, 25 Oct); every number is a placeholder until play-tests and Claude L's harness",
+  "id": "morel",
+  "name": "Morel",
+  "identity": "older grassland alchemist; one blue flask in the RIGHT hand, a closed reagent case on the RIGHT hip, the catalyst apparatus at the LEFT hip, one mask on the chest (on the face in the special)",
+  "home_region": "valley",
+  "home_region_note": "Claude K's proposal on #149 (25 Oct), not yet decided by Matt; it only sets the tier material",
+  "abilities": {
+    "kit": "game/data/abilities/morel.json (Codex, #261); base and powered form unchanged",
+    "base": {
+      "primary": "Reagent flask",
+      "secondary": "Catalyst",
+      "block": "Mineral ward",
+      "special": "Catalyst mask"
+    },
+    "techniques": [
+      {
+        "id": "tacky_reagent",
+        "name": "Tacky Reagent",
+        "level": 3,
+        "binding": "passive on reagent patches",
+        "effect": "Foes standing in a patch move slower.",
+        "numbers": {
+          "slow_pct": 20
+        },
+        "art": {
+          "new_clips": [],
+          "fx": [
+            "patch edge bubbles (finite)"
+          ],
+          "reuses": []
+        },
+        "touches_canonical": false,
+        "upgrade": {
+          "level": 12,
+          "id": "tacky_reagent_2",
+          "name": "Tacky Reagent II",
+          "effect": "Slowed foes take more from a Catalyst spark.",
+          "numbers": {
+            "spark_bonus_pct": 20
+          }
+        }
+      },
+      {
+        "id": "mineral_skin",
+        "name": "Mineral Skin",
+        "level": 9,
+        "binding": "throw a flask at your own feet (aim within 1.5 tiles)",
+        "effect": "Instead of a patch, a mineral skin softens the next hit you take.",
+        "numbers": {
+          "damage_reduction_pct": 30,
+          "lasts_seconds": 6
+        },
+        "art": {
+          "new_clips": [],
+          "fx": [
+            "mineral sheen on the body (finite, 3 drawings)"
+          ],
+          "reuses": [
+            "primary"
+          ]
+        },
+        "touches_canonical": false,
+        "upgrade": {
+          "level": 20,
+          "id": "mineral_skin_2",
+          "name": "Mineral Skin II",
+          "effect": "The skin also clears burn, chill and shock.",
+          "numbers": {
+            "cleanse": true
+          }
+        }
+      },
+      {
+        "id": "drowsy_fume",
+        "name": "Drowsy Fume",
+        "level": 16,
+        "binding": "Catalyst through three or more patches at once",
+        "effect": "A fume rises from the chain and makes foes in it attack half as often for a short time.",
+        "numbers": {
+          "min_patches": 3,
+          "attack_rate_pct": -50,
+          "lasts_seconds": 3
+        },
+        "art": {
+          "new_clips": [],
+          "fx": [
+            "fume cloud (6 drawings, finite)"
+          ],
+          "reuses": [
+            "secondary"
+          ]
+        },
+        "touches_canonical": false,
+        "upgrade": {
+          "level": 26,
+          "id": "drowsy_fume_2",
+          "name": "Drowsy Fume II",
+          "effect": "The fume spreads to patches next to it.",
+          "numbers": {
+            "spread": 1
+          }
+        }
+      }
+    ]
+  },
+  "weapon": {
+    "item": "flask and catalyst",
+    "equipment_tag": "flask",
+    "tiers": [
+      {
+        "tier": 1,
+        "name": "Field kit",
+        "art": {
+          "silhouette": "today's drawing: blue glass flask held by the neck; brass chamber, glass bulb and copper coil",
+          "materials": [
+            "glass blue",
+            "brass",
+            "copper"
+          ],
+          "glow": "none",
+          "size": "as drawn",
+          "read_check": "the current drawing"
+        },
+        "mechanics": {},
+        "requires": {
+          "level": 1
+        }
+      },
+      {
+        "tier": 2,
+        "name": "Caged flasks",
+        "art": {
+          "silhouette": "a copper wire cage (1 px grid) over the flask glass; a second coil on the catalyst",
+          "materials": [
+            "glass blue",
+            "copper"
+          ],
+          "glow": "none",
+          "size": "as drawn",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
+        },
+        "mechanics": {
+          "throw_range_pct": 10
+        },
+        "requires": {
+          "level": 8,
+          "forge_tier": 1
+        },
+        "cost": {
+          "glint": 150,
+          "scrap": 10,
+          "home_material": {
+            "material": "timber",
+            "count": 4
+          }
+        }
+      },
+      {
+        "tier": 3,
+        "name": "Sealed flasks",
+        "art": {
+          "silhouette": "a brass cap with a red wax seal on each flask; brass corners on the reagent case; the catalyst bulb 2 px larger with a small gauge",
+          "materials": [
+            "glass blue",
+            "brass",
+            "bandana (wax)"
+          ],
+          "glow": "the bulb's light tone only",
+          "size": "bulb +2 px",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
+        },
+        "mechanics": {
+          "patch_lifetime_pct": 15
+        },
+        "requires": {
+          "level": 16,
+          "forge_tier": 2
+        },
+        "cost": {
+          "glint": 600,
+          "scrap": 30,
+          "home_material": {
+            "material": "timber",
+            "count": 10
+          }
+        }
+      },
+      {
+        "tier": 4,
+        "name": "Starglass kit",
+        "art": {
+          "silhouette": "pale violet-white glass with a 2 px mote of light floating inside each flask; the catalyst bulb holds a captive spark; gold rims on the mask lenses",
+          "materials": [
+            "starlight (new)",
+            "gold",
+            "brass"
+          ],
+          "glow": "the mote and spark glow; the spark flares once on Catalyst",
+          "size": "as tier 3",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
+        },
+        "mechanics": {
+          "named": "Starglass: a Catalyst chain jumps one extra patch",
+          "extra_jump": 1
+        },
+        "requires": {
+          "level": 24,
+          "forge_tier": 3
+        },
+        "cost": {
+          "glint": 1800,
+          "scrap": 60,
+          "home_material": {
+            "material": "timber",
+            "count": 16
+          },
+          "starshard": 1
+        }
+      }
+    ]
+  },
+  "outfits": [
+    {
+      "id": "herbalist",
+      "name": "Herbalist's apron",
+      "description": "a green apron with herb sprigs in the bib pocket, sleeves rolled",
+      "parts": [
+        "apron (pocket)"
+      ],
+      "ramps": {
+        "apron": "herb green (new)"
+      },
+      "unlock": {
+        "source": "village",
+        "event": "restore:apothecary:2"
+      }
+    },
+    {
+      "id": "lab_coat",
+      "name": "Laboratory coat",
+      "description": "a long cream coat over the apron, open at the front so the case and apparatus show",
+      "parts": [
+        "coat (new part)"
+      ],
+      "ramps": {},
+      "unlock": {
+        "source": "story",
+        "event": "quest:folk_morel:done"
+      }
+    },
+    {
+      "id": "ember_smock",
+      "name": "Ember smock",
+      "description": "a leather smock with scorch marks, for the fire country's forges",
+      "parts": [
+        "apron"
+      ],
+      "ramps": {
+        "apron": "leather"
+      },
+      "unlock": {
+        "source": "drop",
+        "event": "drop:fire_country"
+      }
+    }
+  ],
+  "accessories": [
+    {
+      "id": "bowler",
+      "name": "Bowler hat",
+      "slot": "head",
+      "description": "a small dark bowler on the bald crown; the mask strap passes under it in the special",
+      "unlock": {
+        "source": "glint",
+        "event": "buy:stall:bowler",
+        "note": "300 Glint"
+      },
+      "perk": null
+    },
+    {
+      "id": "oilcloth",
+      "name": "Oilcloth cape",
+      "slot": "back",
+      "description": "a short oilcloth shoulder cape, cut above the case and apparatus",
+      "unlock": {
+        "source": "arena",
+        "event": "arena:gear_floor:silver"
+      },
+      "perk": null
+    },
+    {
+      "id": "spectacles_chain",
+      "name": "Spectacles on a chain",
+      "slot": "neck",
+      "description": "half-moon spectacles hanging on a gold chain over the mask",
+      "unlock": {
+        "source": "bond",
+        "event": "bond:any:4"
+      },
+      "perk": null
+    },
+    {
+      "id": "pocket_mortar",
+      "name": "Pocket mortar",
+      "slot": "trinket",
+      "description": "a tiny stone mortar and pestle on the belt, 3 x 3 px",
+      "unlock": {
+        "source": "story",
+        "event": "quest:apothecary_first_tonic:done",
+        "note": "the apothecary's first village quest (Claude K)"
+      },
+      "perk": {
+        "status": "proposal",
+        "text": "Tonics heal 5 % more",
+        "numbers": {
+          "tonic_heal_pct": 5
+        }
+      }
+    }
+  ]
+}

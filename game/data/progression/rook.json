@@ -1,0 +1,323 @@
+{
+  "schema_version": 1,
+  "status": "proposal (claude-a/progression, 25 Oct); every number is a placeholder until play-tests and Claude L's harness",
+  "id": "rook",
+  "name": "Rook",
+  "identity": "orbital salvager in a cream pressure suit; one pulse carbine (right hand on the grip, left on the fore-end); ONE helmet at the RIGHT hip, worn only in Orbital Rig; twin-thruster pack with two nozzles",
+  "home_region": "halcyon",
+  "home_region_note": "Claude K's proposal on #149 (25 Oct), not yet decided by Matt; it only sets the tier material",
+  "abilities": {
+    "kit": "game/data/abilities/rook.json (Codex, #261); base and powered form unchanged",
+    "base": {
+      "primary": "Pulse carbine",
+      "secondary": "Thruster Vault",
+      "block": "Energy guard",
+      "special": "Orbital Rig"
+    },
+    "techniques": [
+      {
+        "id": "air_shot",
+        "name": "Air Shot",
+        "level": 3,
+        "binding": "carbine bolts fired while airborne in a vault",
+        "effect": "Bolts fired from the air are charged.",
+        "numbers": {
+          "power_pct": 25
+        },
+        "art": {
+          "new_clips": [],
+          "fx": [],
+          "reuses": [
+            "the airborne primary (#257 lists it as missing; it is needed anyway)"
+          ]
+        },
+        "touches_canonical": false,
+        "upgrade": {
+          "level": 12,
+          "id": "air_shot_2",
+          "name": "Air Shot II",
+          "effect": "Landing from a vault puffs a dust ring that knocks swarmers back.",
+          "numbers": {
+            "ring_radius": 22,
+            "knockback": 14
+          }
+        }
+      },
+      {
+        "id": "thruster_flare",
+        "name": "Thruster Flare",
+        "level": 9,
+        "binding": "passive on Thruster Vault",
+        "effect": "The take-off leaves a short flame at its start that burns foes in it.",
+        "numbers": {
+          "burn_seconds": 1.2,
+          "length": 20
+        },
+        "art": {
+          "new_clips": [],
+          "fx": [
+            "flame patch (4 drawings, finite)"
+          ],
+          "reuses": []
+        },
+        "touches_canonical": false,
+        "upgrade": {
+          "level": 20,
+          "id": "thruster_flare_2",
+          "name": "Thruster Flare II",
+          "effect": "The vault recharges faster.",
+          "numbers": {
+            "cooldown_pct": -20
+          }
+        }
+      },
+      {
+        "id": "scrap_shell",
+        "name": "Scrap Shell",
+        "level": 16,
+        "binding": "block three hits with Energy guard",
+        "effect": "The guard banks a shell; the next vault lands with a burst round him.",
+        "numbers": {
+          "hits": 3,
+          "burst_damage": 14,
+          "burst_radius": 26
+        },
+        "art": {
+          "new_clips": [],
+          "fx": [
+            "shell counter on the guard (3 pips)",
+            "burst (4 drawings)"
+          ],
+          "reuses": []
+        },
+        "touches_canonical": true,
+        "upgrade": {
+          "level": 26,
+          "id": "scrap_shell_2",
+          "name": "Scrap Shell II",
+          "effect": "Orbital Rig's turrets start on the nearest foe he has designated.",
+          "numbers": {
+            "turret_initial_target": "nearest_designated"
+          }
+        },
+        "note": "changes Codex's turret target rule at activation; needs C60's OK (#149)"
+      }
+    ]
+  },
+  "weapon": {
+    "item": "pulse carbine",
+    "equipment_tag": "carbine",
+    "tiers": [
+      {
+        "tier": 1,
+        "name": "Salvage carbine",
+        "art": {
+          "silhouette": "today's drawing: the pulse carbine with its fore-end",
+          "materials": [
+            "gunmetal",
+            "orange"
+          ],
+          "glow": "amber bolts as drawn",
+          "size": "as drawn",
+          "read_check": "the current drawing"
+        },
+        "mechanics": {},
+        "requires": {
+          "level": 1
+        }
+      },
+      {
+        "tier": 2,
+        "name": "Shrouded carbine",
+        "art": {
+          "silhouette": "an extended barrel shroud with an orange stripe; a stock pad",
+          "materials": [
+            "gunmetal",
+            "orange"
+          ],
+          "glow": "none",
+          "size": "+3 px barrel",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
+        },
+        "mechanics": {
+          "bolt_speed_pct": 8
+        },
+        "requires": {
+          "level": 8,
+          "forge_tier": 1
+        },
+        "cost": {
+          "glint": 150,
+          "scrap": 10,
+          "home_material": {
+            "material": "station alloy",
+            "count": 4
+          }
+        }
+      },
+      {
+        "tier": 3,
+        "name": "Scoped carbine",
+        "art": {
+          "silhouette": "a top-mounted salvaged scope with an orange lens; a cooling coil on the side",
+          "materials": [
+            "gunmetal",
+            "copper (new)",
+            "orange"
+          ],
+          "glow": "the scope lens's light tone",
+          "size": "scope +3 px above the top line",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
+        },
+        "mechanics": {
+          "vault_cooldown_pct": -8
+        },
+        "requires": {
+          "level": 16,
+          "forge_tier": 2
+        },
+        "cost": {
+          "glint": 600,
+          "scrap": 30,
+          "home_material": {
+            "material": "station alloy",
+            "count": 10
+          }
+        }
+      },
+      {
+        "tier": 4,
+        "name": "Lander carbine",
+        "art": {
+          "silhouette": "a moonsilver emitter crown and a gold crescent on the stock; the bolts turn pale gold",
+          "materials": [
+            "moonsilver (new)",
+            "gold"
+          ],
+          "glow": "bolt colour changes (an effect sprite, not body art)",
+          "size": "as tier 3",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
+        },
+        "mechanics": {
+          "named": "Lander gold: bolts fired from the air pierce one foe",
+          "air_pierce": 1
+        },
+        "requires": {
+          "level": 24,
+          "forge_tier": 3
+        },
+        "cost": {
+          "glint": 1800,
+          "scrap": 60,
+          "home_material": {
+            "material": "station alloy",
+            "count": 16
+          },
+          "starshard": 1
+        }
+      }
+    ]
+  },
+  "outfits": [
+    {
+      "id": "eva_orange",
+      "name": "EVA orange",
+      "description": "an orange pressure suit with cream panels",
+      "parts": [
+        "suit"
+      ],
+      "ramps": {
+        "cream": "eva orange (new)",
+        "orange": "cream"
+      },
+      "unlock": {
+        "source": "story",
+        "event": "quest:folk_rook:done"
+      }
+    },
+    {
+      "id": "station_crew",
+      "name": "Station crew",
+      "description": "a grey crew jumpsuit with a station patch, the pressure seals left open",
+      "parts": [
+        "suit (patch)"
+      ],
+      "ramps": {
+        "cream": "crew grey (new)"
+      },
+      "unlock": {
+        "source": "village",
+        "event": "restore:station:4"
+      }
+    },
+    {
+      "id": "salvage_rust",
+      "name": "Salvage rust",
+      "description": "a rust-brown suit patched with mismatched panels",
+      "parts": [
+        "suit (patches)"
+      ],
+      "ramps": {
+        "cream": "rust (new)"
+      },
+      "unlock": {
+        "source": "drop",
+        "event": "drop:halcyon"
+      }
+    }
+  ],
+  "accessories": [
+    {
+      "id": "helmet_livery",
+      "name": "Antenna and stripe",
+      "slot": "head",
+      "description": "a whip antenna and a red stripe on the ONE helmet; they show at the hip, in the hand and worn",
+      "unlock": {
+        "source": "arena",
+        "event": "arena:zero_g_dome:silver",
+        "note": "Rook's head slot dresses the helmet: a hat cannot coexist with the helmet he puts on"
+      },
+      "perk": null
+    },
+    {
+      "id": "tank_paint",
+      "name": "Tank paint",
+      "slot": "back",
+      "description": "the two thruster tanks painted with white chevrons (the nozzles unchanged)",
+      "unlock": {
+        "source": "glint",
+        "event": "buy:stall:tank_paint",
+        "note": "450 Glint, stall tier 3"
+      },
+      "perk": null
+    },
+    {
+      "id": "dog_tags",
+      "name": "Dog tags",
+      "slot": "neck",
+      "description": "two tags on a chain over the neck seal",
+      "unlock": {
+        "source": "bond",
+        "event": "bond:any:8"
+      },
+      "perk": null
+    },
+    {
+      "id": "salvage_tag",
+      "name": "Salvage tag",
+      "slot": "trinket",
+      "description": "a stamped metal tag on the belt, 2 x 3 px",
+      "unlock": {
+        "source": "drop",
+        "event": "drop:halcyon"
+      },
+      "perk": {
+        "status": "proposal",
+        "text": "Salvage gives 1 more scrap per item",
+        "numbers": {
+          "scrap_per_salvage": 1
+        }
+      }
+    }
+  ]
+}

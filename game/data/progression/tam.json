@@ -1,0 +1,326 @@
+{
+  "schema_version": 1,
+  "status": "proposal (claude-a/progression, 25 Oct); every number is a placeholder until play-tests and Claude L's harness",
+  "id": "tam",
+  "name": "Tam",
+  "identity": "mature Frostline ice monk in ochre and saffron robes; cool grey-blue wraps on both forearms, palms and shins; one mala round the neck; no weapon, the wraps are his",
+  "home_region": "frostline",
+  "home_region_note": "Claude K's proposal on #149 (25 Oct), not yet decided by Matt; it only sets the tier material",
+  "abilities": {
+    "kit": "game/data/abilities/tam.json (Codex, #261); base and powered form unchanged",
+    "base": {
+      "primary": "Frost palms",
+      "secondary": "Ice ridge",
+      "block": "Ice guard",
+      "special": "Glacier Form"
+    },
+    "techniques": [
+      {
+        "id": "cold_breath",
+        "name": "Cold Breath",
+        "level": 3,
+        "binding": "hold Ice guard for 1 s",
+        "effect": "The held breath steadies him: the next palm applies two frost instead of one.",
+        "numbers": {
+          "hold_seconds": 1.0,
+          "frost": 2
+        },
+        "art": {
+          "new_clips": [],
+          "fx": [
+            "breath frost (3 drawings, finite)"
+          ],
+          "reuses": [
+            "guard 4"
+          ]
+        },
+        "touches_canonical": false,
+        "upgrade": {
+          "level": 12,
+          "id": "cold_breath_2",
+          "name": "Cold Breath II",
+          "effect": "The steadied palm also slows the foe.",
+          "numbers": {
+            "slow_pct": 20,
+            "slow_seconds": 2
+          }
+        }
+      },
+      {
+        "id": "ridge_wall",
+        "name": "Ridge Wall",
+        "level": 9,
+        "binding": "passive on Ice ridge",
+        "effect": "The ridge ends in a low ice wall that stops projectiles for a moment.",
+        "numbers": {
+          "wall_seconds": 2,
+          "width_tiles": 1
+        },
+        "art": {
+          "new_clips": [],
+          "fx": [
+            "ice wall (rise 3, hold 1, crumble 3)"
+          ],
+          "reuses": []
+        },
+        "touches_canonical": false,
+        "upgrade": {
+          "level": 20,
+          "id": "ridge_wall_2",
+          "name": "Ridge Wall II",
+          "effect": "A wall that is hit shatters and chills foes beside it.",
+          "numbers": {
+            "chill_seconds": 1.5
+          }
+        }
+      },
+      {
+        "id": "still_water",
+        "name": "Still Water Step",
+        "level": 16,
+        "binding": "a perfect dodge",
+        "effect": "A frost patch is left where he rolled; foes on it slow.",
+        "numbers": {
+          "slow_pct": 30,
+          "patch_seconds": 2
+        },
+        "art": {
+          "new_clips": [],
+          "fx": [
+            "frost patch"
+          ],
+          "reuses": [
+            "dodge"
+          ]
+        },
+        "touches_canonical": false,
+        "upgrade": {
+          "level": 26,
+          "id": "still_water_2",
+          "name": "Still Water Step II",
+          "effect": "Palms on a foe standing on the patch add one more frost.",
+          "numbers": {
+            "extra_frost": 1
+          }
+        }
+      }
+    ]
+  },
+  "weapon": {
+    "item": "wraps",
+    "equipment_tag": "wraps",
+    "tiers": [
+      {
+        "tier": 1,
+        "name": "Plain wraps",
+        "art": {
+          "silhouette": "today's drawing: grey-blue cloth wraps on forearms, palms and shins",
+          "materials": [
+            "wrap (grey-blue)"
+          ],
+          "glow": "none",
+          "size": "as drawn",
+          "read_check": "the current drawing"
+        },
+        "mechanics": {},
+        "requires": {
+          "level": 1
+        }
+      },
+      {
+        "tier": 2,
+        "name": "Frost-stitched wraps",
+        "art": {
+          "silhouette": "white zigzag stitching (1 px) along the wraps and a second wind at the wrists; three ice-blue beads added to the mala",
+          "materials": [
+            "wrap",
+            "fletch (stitch)",
+            "storm (beads)"
+          ],
+          "glow": "none",
+          "size": "wrists +1 px",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
+        },
+        "mechanics": {
+          "ridge_speed_pct": 10
+        },
+        "requires": {
+          "level": 8,
+          "forge_tier": 1
+        },
+        "cost": {
+          "glint": 150,
+          "scrap": 10,
+          "home_material": {
+            "material": "frost iron",
+            "count": 4
+          }
+        }
+      },
+      {
+        "tier": 3,
+        "name": "Hoarfrost guards",
+        "art": {
+          "silhouette": "pale ice plates (3 px) on the backs of both hands and the shins, tied over the wraps",
+          "materials": [
+            "wrap",
+            "ice (new)"
+          ],
+          "glow": "none",
+          "size": "hands +1 px",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
+        },
+        "mechanics": {
+          "guard_drain_pct": -10
+        },
+        "requires": {
+          "level": 16,
+          "forge_tier": 2
+        },
+        "cost": {
+          "glint": 600,
+          "scrap": 30,
+          "home_material": {
+            "material": "frost iron",
+            "count": 10
+          }
+        }
+      },
+      {
+        "tier": 4,
+        "name": "Moonbead wraps",
+        "art": {
+          "silhouette": "the ice plates turn to clear starglass lit from inside; the guru bead becomes a small glowing moon (2 x 2 px)",
+          "materials": [
+            "ice (new)",
+            "starlight (new)"
+          ],
+          "glow": "the plates and bead glow one tone; brighter in Glacier Form",
+          "size": "as tier 3",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
+        },
+        "mechanics": {
+          "named": "Moonbead: a frost shatter also chills foes beside the target",
+          "chill_seconds": 1
+        },
+        "requires": {
+          "level": 24,
+          "forge_tier": 3
+        },
+        "cost": {
+          "glint": 1800,
+          "scrap": 60,
+          "home_material": {
+            "material": "frost iron",
+            "count": 16
+          },
+          "starshard": 1
+        }
+      }
+    ]
+  },
+  "outfits": [
+    {
+      "id": "snow_robes",
+      "name": "Snow robes",
+      "description": "grey and white winter robes with a padded outer robe; same drape over the LEFT shoulder",
+      "parts": [
+        "outer robe (padded)"
+      ],
+      "ramps": {
+        "saffron": "snow (new)",
+        "ochre": "slate (new)"
+      },
+      "unlock": {
+        "source": "village",
+        "event": "restore:training_yard:1"
+      }
+    },
+    {
+      "id": "pilgrim",
+      "name": "Pilgrim",
+      "description": "a darker maroon outer robe for the long road, same drape and sash",
+      "parts": [
+        "outer robe"
+      ],
+      "ramps": {
+        "saffron": "maroon (new)"
+      },
+      "unlock": {
+        "source": "story",
+        "event": "quest:folk_tam:done"
+      }
+    },
+    {
+      "id": "temple_gold",
+      "name": "Temple gold",
+      "description": "bright saffron and gold-trimmed robes for festivals",
+      "parts": [
+        "outer robe (trim)"
+      ],
+      "ramps": {
+        "saffron": "saffron",
+        "gold": "gold"
+      },
+      "unlock": {
+        "source": "glint",
+        "event": "buy:stall:temple_gold",
+        "note": "700 Glint, stall tier 3"
+      }
+    }
+  ],
+  "accessories": [
+    {
+      "id": "kasa",
+      "name": "Straw rain hat",
+      "slot": "head",
+      "description": "a wide conical straw hat (18 px across) that sits on the cropped hair and casts a shadow on the face",
+      "unlock": {
+        "source": "arena",
+        "event": "arena:castle_courtyard:gold"
+      },
+      "perk": null
+    },
+    {
+      "id": "mino",
+      "name": "Straw rain cape",
+      "slot": "back",
+      "description": "a short straw cape over the shoulders, the robe end still showing below it",
+      "unlock": {
+        "source": "drop",
+        "event": "drop:frostline"
+      },
+      "perk": null
+    },
+    {
+      "id": "winter_mala",
+      "name": "Winter mala",
+      "slot": "neck",
+      "description": "the mala in white beads with a blue tassel",
+      "unlock": {
+        "source": "bond",
+        "event": "bond:any:3"
+      },
+      "perk": null,
+      "replaces": "mala"
+    },
+    {
+      "id": "kettle_charm",
+      "name": "Kettle charm",
+      "slot": "trinket",
+      "description": "a tiny dented kettle (3 px) on the sash, from the bothy",
+      "unlock": {
+        "source": "glint",
+        "event": "buy:stall:kettle_charm",
+        "note": "300 Glint"
+      },
+      "perk": {
+        "status": "proposal",
+        "text": "Chill on you wears off 20 % sooner",
+        "numbers": {
+          "chill_duration_pct": -20
+        }
+      }
+    }
+  ]
+}

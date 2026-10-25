@@ -1,0 +1,341 @@
+{
+  "schema_version": 1,
+  "status": "proposal (claude-a/progression, 25 Oct); every number is a placeholder until play-tests and Claude L's harness",
+  "id": "bramble",
+  "name": "Bramble",
+  "identity": "older grassland ranger; left-handed archer: bow in the RIGHT hand, quiver over the LEFT shoulder, billhook at the RIGHT hip, folding buckler on the RIGHT forearm",
+  "home_region": "valley",
+  "home_region_note": "Claude K's proposal on #149 (25 Oct), not yet decided by Matt; it only sets the tier material",
+  "abilities": {
+    "kit": "game/data/abilities/bramble.json (Codex, #261); base and powered form unchanged",
+    "base": {
+      "primary": "Quickdraw",
+      "secondary": "Billhook",
+      "block": "Briar buckler",
+      "special": "Briarshot"
+    },
+    "techniques": [
+      {
+        "id": "steady_aim",
+        "name": "Steady Aim",
+        "level": 3,
+        "binding": "passive: stand still without firing",
+        "effect": "Standing still and not firing builds Aim pips; the next arrow spends them for extra power.",
+        "numbers": {
+          "pip_seconds": 0.5,
+          "max_pips": 3,
+          "power_per_pip_pct": 15
+        },
+        "art": {
+          "new_clips": [],
+          "fx": [
+            "aim pips over the bow hand"
+          ],
+          "reuses": [
+            "idle"
+          ]
+        },
+        "touches_canonical": false,
+        "upgrade": {
+          "level": 12,
+          "id": "steady_aim_2",
+          "name": "Steady Aim II",
+          "effect": "Pips build faster, and a full three-pip arrow pierces one foe.",
+          "numbers": {
+            "pip_seconds": 0.35,
+            "full_pip_pierce": 1
+          }
+        }
+      },
+      {
+        "id": "hook_and_loose",
+        "name": "Hook and Loose",
+        "level": 9,
+        "binding": "primary within 0.4 s after the billhook sweep",
+        "effect": "A point-blank arrow follows the sweep and knocks the nearest foe back.",
+        "numbers": {
+          "window_seconds": 0.4,
+          "knockback": 18
+        },
+        "art": {
+          "new_clips": [
+            "secondary_loose (8 drawings: the sweep's settle into a quick draw)"
+          ],
+          "fx": [],
+          "reuses": [
+            "secondary",
+            "primary"
+          ]
+        },
+        "touches_canonical": false,
+        "upgrade": {
+          "level": 20,
+          "id": "hook_and_loose_2",
+          "name": "Hook and Loose II",
+          "effect": "The sweep also staggers light foes, so the arrow lands.",
+          "numbers": {
+            "stagger_seconds": 0.5
+          }
+        }
+      },
+      {
+        "id": "briar_snare",
+        "name": "Briar Snare",
+        "level": 16,
+        "binding": "lower the buckler within 0.5 s after it blocks a hit",
+        "effect": "A briar snare drops at your feet and roots the next ground foe that steps on it.",
+        "numbers": {
+          "window_seconds": 0.5,
+          "root_seconds": 1.2,
+          "max_snares": 1,
+          "snare_lifetime_seconds": 6
+        },
+        "art": {
+          "new_clips": [],
+          "fx": [
+            "snare (3 drawings: drop, set, spring)"
+          ],
+          "reuses": [
+            "guard 5 to 7"
+          ]
+        },
+        "touches_canonical": false,
+        "upgrade": {
+          "level": 26,
+          "id": "briar_snare_2",
+          "name": "Briar Snare II",
+          "effect": "Two snares at once; a foe rooted by Briarshot springs the nearest snare too.",
+          "numbers": {
+            "max_snares": 2
+          }
+        }
+      }
+    ]
+  },
+  "weapon": {
+    "item": "bow",
+    "equipment_tag": "bow",
+    "tiers": [
+      {
+        "tier": 1,
+        "name": "Yew bow",
+        "art": {
+          "silhouette": "today's drawing: a plain shallow recurve, 42 px tip to tip, leather grip wrap",
+          "materials": [
+            "bow",
+            "leather",
+            "string"
+          ],
+          "glow": "none",
+          "size": "as drawn",
+          "read_check": "the current drawing"
+        },
+        "mechanics": {},
+        "requires": {
+          "level": 1
+        }
+      },
+      {
+        "tier": 2,
+        "name": "Carved recurve",
+        "art": {
+          "silhouette": "the limb tips curl back 3 px each into a clear recurve; the grip is wrapped in green cord 6 px long",
+          "materials": [
+            "bow",
+            "mantle (grip cord)",
+            "string"
+          ],
+          "glow": "none",
+          "size": "44 px tip to tip",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
+        },
+        "mechanics": {
+          "arrow_speed_pct": 8
+        },
+        "requires": {
+          "level": 8,
+          "forge_tier": 1
+        },
+        "cost": {
+          "glint": 150,
+          "scrap": 10,
+          "home_material": {
+            "material": "timber",
+            "count": 4
+          }
+        }
+      },
+      {
+        "tier": 3,
+        "name": "Horn-tipped bow",
+        "art": {
+          "silhouette": "pale horn caps (3 px) on both tips; a 2 x 3 px shard set into the riser in a gold bezel",
+          "materials": [
+            "bow",
+            "cream (horn)",
+            "gold",
+            "storm (shard)"
+          ],
+          "glow": "the shard's light tone only; no animation",
+          "size": "44 px",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
+        },
+        "mechanics": {
+          "primary_cooldown_pct": -6
+        },
+        "requires": {
+          "level": 16,
+          "forge_tier": 2
+        },
+        "cost": {
+          "glint": 600,
+          "scrap": 30,
+          "home_material": {
+            "material": "timber",
+            "count": 10
+          }
+        }
+      },
+      {
+        "tier": 4,
+        "name": "Starfall bow",
+        "art": {
+          "silhouette": "limbs of dark moonwood that flare into crescent tips (+2 px each end); gold riser; the string is drawn in starlight",
+          "materials": [
+            "moonwood (new)",
+            "gold",
+            "starlight (new)"
+          ],
+          "glow": "the string's base and light tones glow while drawn; a 2 px sparkle at each tip on release (2 drawings, off under reduced motion)",
+          "size": "46 px tip to tip; still inside the cell",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
+        },
+        "mechanics": {
+          "named": "Starlit: a three-pip arrow also shows the foe's weak point for 2 s",
+          "weak_point_seconds": 2
+        },
+        "requires": {
+          "level": 24,
+          "forge_tier": 3
+        },
+        "cost": {
+          "glint": 1800,
+          "scrap": 60,
+          "home_material": {
+            "material": "timber",
+            "count": 16
+          },
+          "starshard": 1
+        }
+      }
+    ]
+  },
+  "outfits": [
+    {
+      "id": "autumn_forester",
+      "name": "Autumn forester",
+      "description": "russet mantle with a hood lying flat on the back below the quiver; oatmeal shirt",
+      "parts": [
+        "mantle (hood variant)"
+      ],
+      "ramps": {
+        "mantle": "russet (new)",
+        "cream": "oatmeal (new)"
+      },
+      "unlock": {
+        "source": "story",
+        "event": "quest:folk_bramble:done",
+        "note": "his folk quest (Claude K names it)"
+      }
+    },
+    {
+      "id": "sheepskin_mantle",
+      "name": "Sheepskin mantle",
+      "description": "the same mantle with a 2 px fleece edge at the collar and hem, a knitted waistcoat under it",
+      "parts": [
+        "mantle (fleece edge)",
+        "waistcoat (new part over the shirt)"
+      ],
+      "ramps": {
+        "cream": "fleece (new)"
+      },
+      "unlock": {
+        "source": "village",
+        "event": "restore:fold_and_loom:1",
+        "note": "the Brackens mover's loom gives wool"
+      }
+    },
+    {
+      "id": "ranger_pine",
+      "name": "Ranger's pine",
+      "description": "deep pine-green mantle with a gold leaf clasp; dark trousers",
+      "parts": [
+        "mantle (clasp)"
+      ],
+      "ramps": {
+        "mantle": "pine (new)",
+        "trouser": "loden (new)"
+      },
+      "unlock": {
+        "source": "glint",
+        "event": "buy:stall:ranger_pine",
+        "note": "450 Glint, stall tier 2 (placeholder)"
+      }
+    }
+  ],
+  "accessories": [
+    {
+      "id": "feather_cap",
+      "name": "Feathered cap",
+      "slot": "head",
+      "description": "a small green felt cap on the curls with one pheasant feather (5 px) to the back",
+      "unlock": {
+        "source": "drop",
+        "event": "drop:valley",
+        "note": "rare camp chest drop in the valley and woodland"
+      },
+      "perk": null
+    },
+    {
+      "id": "travel_cloak",
+      "name": "Patched travelling cloak",
+      "slot": "back",
+      "description": "a knee-length brown cloak with two square patches; it replaces the mantle and keeps the quiver over it",
+      "unlock": {
+        "source": "arena",
+        "event": "arena:training_yard:silver"
+      },
+      "perk": null,
+      "replaces": "mantle"
+    },
+    {
+      "id": "oak_scarf",
+      "name": "Oak-leaf scarf",
+      "slot": "neck",
+      "description": "a short knitted scarf with an oak-leaf pattern in two tones, one tail over the right shoulder",
+      "unlock": {
+        "source": "bond",
+        "event": "bond:any:3"
+      },
+      "perk": null
+    },
+    {
+      "id": "acorn_whistle",
+      "name": "Acorn whistle",
+      "slot": "trinket",
+      "description": "a carved acorn whistle on a cord at the belt, 3 x 4 px",
+      "unlock": {
+        "source": "glint",
+        "event": "buy:stall:acorn_whistle",
+        "note": "250 Glint, stall tier 1"
+      },
+      "perk": {
+        "status": "proposal",
+        "text": "Pickup magnet radius +15 %",
+        "numbers": {
+          "magnet_radius_pct": 15
+        }
+      }
+    }
+  ]
+}
