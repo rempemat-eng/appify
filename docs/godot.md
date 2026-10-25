@@ -109,7 +109,7 @@ Hale (the smith), Moss (the stall keeper) and Ada Fern are drawn in the cast's s
 
 The lit forge's fire and the smithy chimney's smoke are looping strips (`python3 game/tools/gen_village_fx.py` writes `zones/crossroads/art/fx/`), played by `world/loop_fx.gd`: only while on screen, and held on one drawing under reduced motion. gen_village swaps the kit's static `forge_fire` for the strip (`LOOPS`) and puts the smoke on the smithy's chimney pot while the forge is restored (`SMOKE`).
 
-Screenshot options: `--stage=<id>` puts the save in a plan stage (`--zone=crossroads --stage=homecoming`), and `--at=x,y` stands the player at a world point.
+Screenshot options: `--stage=<id>` puts the save in a plan stage (`--zone=crossroads --stage=homecoming`), and `--at=x,y` stands the player at a world point. `--camp` sets the woodland enemy camp (the drawn creatures) just north of the player.
 
 ## How lanes add a region (zone)
 

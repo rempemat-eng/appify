@@ -1,0 +1,57 @@
+{
+ "id": "boarlet/telegraph_N_02",
+ "file": "art/cast/boarlet/telegraph_N_02.png",
+ "sha256": "0e6083e93afdd3df8b19a64aaecf8e2d63f948d392b78b7f019999f72903b401",
+ "kind": "telegraph_N",
+ "biome": "woodland",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  160,
+  144
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 1
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 1,
+   "tones": 24.0,
+   "shapes": 52.0
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.889,
+  "tones_ratio": 0.889,
+  "shapes_ratio": 1.033,
+  "passed": false,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    67,
+    95,
+    93,
+    139
+   ],
+   "message": "boarlet/telegraph_N_02: detail bar 0.89 of Eastward's prop band (24.0 tones, 52.0 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  }
+ ],
+ "reviewed": "2026-10-25",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}
