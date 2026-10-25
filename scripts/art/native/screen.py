@@ -30,6 +30,8 @@ from . import ctx
 from . import animate
 from . import compose as CO
 from . import props as P4
+from . import props_stones as PS
+from . import props_trees as PT
 from . import water as WA
 from .ctx import D, P
 from .palette import C, FI, is_fam, sib, step
@@ -245,6 +247,12 @@ def tree_dims(master: str) -> dict:
 def sprite(kind: str, recipe: dict, seed: int):
     """(picture, anchor (texels: the foot), alpha, shadow extra) for one kind."""
     paint = recipe['paint']
+    if paint == 'tree' and recipe.get('trunk') in PT.SPECIES:
+        # a birch or beech: the trunk read from the master by its shape and drawn for the
+        # species, joined up into the crown (props_trees.py, Claude B)
+        im, _, _ = CO.old_sprite(_master(recipe['master']), raw=True)
+        img, anc, a, ex = PT.tree_sprite(np.asarray(im), D, seed, recipe['trunk'])
+        return img, anc, a, ex
     if paint == 'tree':
         ex = tree_dims(recipe['master'])
         img, anc, a = CO.sprite_for('tree', _master(recipe['master']), D, seed, ex)
@@ -254,6 +262,9 @@ def sprite(kind: str, recipe: dict, seed: int):
         return img, anc, a, None
     if paint == 'boulder':
         img, anc, a = P4.boulder4(D, recipe['size'][0], recipe['size'][1], seed=seed, fam=recipe.get('fam', 'stone'))
+    elif paint == 'standing_stone':
+        img, anc, a = PS.standing_stone4(D, recipe['size'][0], recipe['size'][1], seed=seed,
+                                         fam=recipe.get('fam', 'stone'))
     elif paint == 'stump':
         img, anc, a = P4.stump4(D, seed=seed)
     elif paint == 'log':
