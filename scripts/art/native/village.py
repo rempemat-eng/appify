@@ -1046,33 +1046,58 @@ def p_well(w, h, seed, choked=False):
 
 
 def p_lantern(w, h, seed, lit=False):
-    """The shard lantern: a tall iron post on a stone foot, a glass cage on top with a slate hood.
-    Lit, the woodland's shard glows pale blue in it."""
+    """The shard lantern: a street lamp 46 world px tall (about 1.8 people, size-guide.md: lamps 50 to
+    65, kept low on the square): a stepped stone plinth, a fluted iron foot, a tapering post with
+    collars, scroll brackets under a glass cage with four frame bars, a pointed cap and a finial.
+    Lit, the woodland's shard glows pale blue in the cage."""
     rng = np.random.default_rng(seed)
-    p = _pic(w, h, up=58, side=6)
+    p = _pic(w, h, up=50, side=8)
     a, cx, yb = p.a, p.ax, p.ay
-    blk(a, cx - q(5), yb - q(5), cx + q(5), yb + 1, 'stone_warm', 3, cut=2)
-    blk(a, cx - q(3.5), yb - q(8), cx + q(3.5), yb - q(5), 'stone', 4, cut=1)
-    beam(a, cx - q(1.4), yb - q(46), cx + q(1.4), yb - q(8), rng, 'iron', 3)
-    for yy in (yb - q(20), yb - q(34)):
-        blk(a, cx - q(2.2), yy, cx + q(2.2), yy + q(1.6), 'iron', 4, cut=0)
-    gx0, gx1 = cx - q(5), cx + q(5)
-    gy0, gy1 = yb - q(58), yb - q(46)
-    blk(a, gx0 - q(1), gy1, gx1 + q(1), gy1 + q(2), 'iron', 3, cut=1)
+    # plinth: two stepped stones
+    blk(a, cx - q(6.5), yb - q(3.2), cx + q(6.5), yb + 1, 'stone_warm', 3, cut=2)
+    blk(a, cx - q(4.8), yb - q(6.0), cx + q(4.8), yb - q(3.2), 'stone_warm', 4, cut=1)
+    # the fluted foot: a bell of iron with lit flutes
+    Y, X = np.mgrid[0:a.shape[0], 0:a.shape[1]] + 0.5
+    ft, fb = yb - q(14), yb - q(6)
+    foot = (Y >= ft) & (Y < fb) & (np.abs(X - cx) < q(1.8) + (Y - ft) / max(1, fb - ft) * q(2.0))
+    tt = np.full(a.shape, 2)
+    tt[foot & ((((X - cx) / max(1, q(1.3))).astype(int)) % 2 == 0)] = 3
+    tt[foot & (X < cx - q(1.5))] = 4
+    a[foot] = FI['iron'] * 8 + tt[foot]
+    blk(a, cx - q(2.6), ft - q(1.4), cx + q(2.6), ft, 'iron', 3, cut=0)
+    # the post, tapering, with two collars
+    post = (Y >= yb - q(38)) & (Y < ft - q(1.4)) & (np.abs(X - cx) < q(1.5) - (ft - Y) / max(1, q(26)) * q(0.4))
+    tt = np.full(a.shape, 2)
+    tt[X < cx - q(0.4)] = 4
+    tt[X > cx + q(0.7)] = 1
+    a[post] = FI['iron'] * 8 + tt[post]
+    for yy in (yb - q(24), yb - q(37)):
+        blk(a, cx - q(2.2), yy, cx + q(2.2), yy + q(1.5), 'iron', 3, cut=0)
+    # scroll brackets under the cage
+    for sx in (-1, 1):
+        bar(a, cx + sx * q(1.2), yb - q(36), cx + sx * q(4.6), yb - q(39.5), max(1.0, q(0.5)), 'iron', 3 if sx < 0 else 2)
+        blob(a, ellipse_mask(a.shape, cx + sx * q(4.6), yb - q(36.8), q(1.1), q(1.1)), 'iron', 2)
+    # the cage
+    gx0, gx1 = cx - q(4.5), cx + q(4.5)
+    gy0, gy1 = yb - q(48), yb - q(40)
+    blk(a, gx0 - q(1.2), gy1, gx1 + q(1.2), gy1 + q(1.6), 'iron', 3, cut=1)
+    cage = (Y >= gy0) & (Y < gy1) & (np.abs(X - cx) < q(4.5) - (gy1 - Y) / max(1, gy1 - gy0) * q(0.8))
     if lit:
-        fill(a, gx0, gy0, gx1, gy1, code('sky', 4))
-        blob(a, ellipse_mask(a.shape, cx, (gy0 + gy1) / 2, q(2.2), q(3.6)), 'snow', 5, top=0, left=0, bot=0, right=0)
-        fill(a, gx0, gy0, gx1, gy0 + q(2), code('sky', 5))
+        a[cage] = code('sky', 4)
+        a[cage & (Y < gy0 + q(2))] = code('sky', 5)
+        blob(a, ellipse_mask(a.shape, cx, (gy0 + gy1) / 2 + q(0.5), q(1.8), q(2.8)), 'snow', 5, top=0, left=0, bot=0, right=0)
     else:
-        fill(a, gx0, gy0, gx1, gy1, code('slate_cool', 1))
-        fill(a, gx0, gy0, gx0 + q(3), gy1, code('slate', 3))
-        fill(a, gx0 + q(3), gy0, gx0 + q(4), gy1, code('slate', 2))
-    for xx in (gx0, cx - 1, gx1 - q(1)):
-        fill(a, xx, gy0, xx + max(2, q(1)), gy1, code('iron', 2))
-    hm = roof_mask(a.shape, gx0 - q(2.5), gx1 + q(2.5), gy0 - q(5), gy0 + q(0.5), hip=q(4))
-    a[hm] = code('iron', 3)
-    a[hm & _rect(a.shape, 0, 0, cx, a.shape[0])] = code('iron', 4)
-    fill(a, cx - q(1), gy0 - q(7), cx + q(1), gy0 - q(4.5), code('iron', 3))
+        a[cage] = code('slate_cool', 1)
+        a[cage & (X < cx - q(1.5))] = code('slate', 3)
+        a[cage & (X >= cx - q(1.5)) & (X < cx - q(0.8))] = code('slate', 2)
+    for xx in (cx - q(4.0), cx - 1, cx + q(3.4)):
+        a[cage & (X >= xx) & (X < xx + max(2, q(0.7)))] = code('iron', 2)
+    # the cap: a pointed hood, lit west, a finial
+    cap = (Y >= gy0 - q(5)) & (Y < gy0) & (np.abs(X - cx) < q(6) * (Y - (gy0 - q(5.5))) / q(5.5))
+    a[cap] = code('iron', 3)
+    a[cap & (X < cx - q(0.6))] = code('iron', 4)
+    a[cap & (Y >= gy0 - q(1))] = code('iron', 2)
+    blob(a, ellipse_mask(a.shape, cx, gy0 - q(6.2), q(1.1), q(1.1)), 'iron', 3)
     return finish(p)
 
 

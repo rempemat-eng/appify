@@ -5,7 +5,7 @@
   1920,
   1680
  ],
- "inputs": "1ebcda0d45efdf5e8ee953a6e48092b405ae1a65422199684029479819bdfb51",
+ "inputs": "a36cc3ef23e0a591ff699757c3e530ab6300f616c4a2aa39cc848ac9d4e7c789",
  "kit_drawn": [
   "anvil.png",
   "bakery.png",
@@ -534,8 +534,8 @@
     936
    ],
    "offset": [
-    -36,
-    -242
+    -42,
+    -218
    ],
    "cond": {
     "not_flags": [
@@ -558,8 +558,8 @@
     936
    ],
    "offset": [
-    -36,
-    -242
+    -42,
+    -218
    ],
    "cond": {
     "flags": [

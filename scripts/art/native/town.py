@@ -154,79 +154,94 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         pathm |= m
 
     # --- places ------------------------------------------------------------------------------------
+    # the paved square: rounded on the soft grid (cell 8 world px, corner radius one cell)
     pave = np.zeros((H, W), bool)
     for r in art.get('paving', []):
-        pave |= rect_m(r)
-    pave &= ~(noise(2.0, 31, 1.0) < -1.6) | rect_m(art.get('paving', [[0, 0, 0, 0]])[0], grow=-6)
+        x, y, w, h = r
+        rad = 8.0
+        cx_ = np.clip(WX, x + rad, x + w - rad)
+        cy_ = np.clip(WY, y + rad, y + h - rad)
+        pave |= rect_m(r) & ((WX - cx_) ** 2 + (WY - cy_) ** 2 <= rad * rad)
     if pave.any():
-        flags = np.full((H, W), C('stone', 2), np.int32)
+        # setts: small, irregular, worn; calm (few dark joints) so people and props read on top
+        flags = np.full((H, W), C('stone_warm', 3), np.int32)
         y = 0
-        rowi = 0
         while y < H:
-            rh = q(rng.uniform(4.6, 6.4))
-            x = -int(rng.integers(0, q(6)))
+            rh = q(rng.uniform(2.4, 3.2))
+            x = -int(rng.integers(0, q(4)))
             while x < W:
-                sw = q(rng.uniform(4.8, 8.6))
-                fam = ('stone', 'stone_warm', 'stone_warm', 'stone_cool')[int(rng.integers(0, 4))]
-                t = int(rng.choice([3, 3, 4, 4, 2]))
-                V.blk(flags, x, y, x + sw - 1, y + rh - 1, fam, t, cut=1, top=1, left=1, bot=-1, right=0)
-                r_ = rng.random()
-                if r_ < 0.10:     # a cracked flag
-                    cx0 = x + int(rng.integers(2, max(3, sw - 4)))
-                    V.bar(flags, cx0, y + 1, cx0 + int(rng.integers(-q(1.5), q(1.5) + 1)), y + rh - 2, 0.6, fam, max(1, t - 2))
-                elif r_ < 0.45:   # a chip or a worn hollow
-                    cx0 = x + int(rng.integers(2, max(3, sw - 5)))
-                    cy0 = y + int(rng.integers(2, max(3, rh - 4)))
-                    V.fill(flags, cx0, cy0, cx0 + int(rng.integers(2, 5)), cy0 + 2, C(fam, max(1, t - 1)))
-                elif r_ < 0.55:   # dirt washed into the joint below it
-                    V.fill(flags, x, y + rh - 1, x + sw, y + rh, C('earth', 2))
-                if rng.random() < 0.5:   # a pale fleck on the lit side, a lichen spot
-                    cx0 = x + int(rng.integers(1, max(2, sw // 2)))
-                    cy0 = y + int(rng.integers(1, max(2, rh // 2)))
-                    V.fill(flags, cx0, cy0, cx0 + 2, cy0 + 2,
-                           C(('stone_warm', 'grass_cool', 'stone_warm')[int(rng.integers(0, 3))], int(rng.choice([5, 3, 5]))))
-                if rng.random() < 0.15:  # moss tuft in the joint at the flag's foot
-                    cx0 = x + int(rng.integers(0, max(1, sw - 4)))
-                    V.fill(flags, cx0, y + rh - 2, cx0 + 3, y + rh, C('grass', 3))
-                    V.fill(flags, cx0 + 1, y + rh - 3, cx0 + 3, y + rh - 2, C('grass', 4))
+                sw = q(rng.uniform(3.0, 5.6))
+                fam = ('stone_warm', 'stone_warm', 'stone_warm', 'stone_cool')[int(rng.integers(0, 4))]
+                t = int(rng.choice([4, 4, 4, 4, 4, 3, 5]))
+                jx = int(rng.integers(0, 2))         # irregular joints: some setts butt tight
+                V.blk(flags, x, y, x + sw - jx, y + rh - 1, fam, t, cut=1, top=1, left=0, bot=0, right=0)
+                if rng.random() < 0.06:
+                    V.fill(flags, x + 2, y + 2, x + 4, y + 4, C(fam, max(2, t - 1)))   # a worn dip
                 x += sw
             y += rh
-            rowi += 1
+        # the joints a calm mid tone (not a dark grid), darker only in a few soft patches
+        jm = flags == C('stone_warm', 3)
+        flags[jm & (noise(2.5, 36) > 1.8)] = C('stone_warm', 2)
         cv[pave] = flags[pave]
-        # a ring of setts round the well: small blocks laid in circles
+        # worn smooth where feet go: paler soft patches
+        wear = pave & (noise(5.0, 33) > 0.8) & (cv % 8 == 4)
+        cv[wear] = cv[wear] + 1
+        # a ring of setts round the well, the same size, laid in circles inside a kerb
         for sr in art.get('setts', []):
             cx, cy, r0, r1 = sr
             disc = (((WX - cx) / r1) ** 2 + ((WY - cy) / (r1 * 0.86)) ** 2) < 1.0
-            cv[disc] = C('stone', 2)
+            cv[disc] = C('stone_warm', 3)
             rr = r0
-            while rr < r1:
-                n = max(8, int(2 * math.pi * rr / 4.0))
+            while rr < r1 - 2.5:
+                n = max(8, int(2 * math.pi * rr / 4.4))
                 ph = rng.uniform(0, 1)
                 for k in range(n):
                     a0 = 2 * math.pi * (k + ph) / n
                     sx, sy = cx + math.cos(a0) * rr, cy + math.sin(a0) * rr * 0.86
-                    V.blk(cv, q(sx - 1.8), q(sy - 1.3), q(sx + 1.8), q(sy + 1.3),
-                          ('stone_warm', 'stone')[k % 2], 3 + int(rng.random() < 0.4), cut=1, right=0, left=0)
-                rr += 3.2
-            kerb_r = disc & ~((((WX - cx) / (r1 - 1.6)) ** 2 + ((WY - cy) / ((r1 - 1.6) * 0.86)) ** 2) < 1.0)
+                    V.blk(cv, q(sx - 1.9), q(sy - 1.2), q(sx + 1.9), q(sy + 1.2),
+                          ('stone_warm', 'stone')[k % 2], int(rng.choice([3, 4, 4])), cut=1, top=1, left=0, bot=0, right=0)
+                rr += 2.8
+            kerb_r = disc & ~((((WX - cx) / (r1 - 2.0)) ** 2 + ((WY - cy) / ((r1 - 2.0) * 0.86)) ** 2) < 1.0)
             cv[kerb_r] = C('stone_warm', 4)
-            cv[kerb_r & (WY > cy + 2)] = C('stone_warm', 3)
-        # worn smooth where feet go: the centre of the square a tone lighter in soft patches
-        wear = pave & (noise(5.0, 33) > 0.9) & (cv % 8 == 3)
-        cv[wear] = cv[wear] + 1
-        # grass and moss in the joints near the edge, a kerb where the flags meet the lawn
+            cv[kerb_r & (WY > cy + 3)] = C('stone_warm', 3)
+            rim_in = kerb_r & ~ndi.binary_erosion(disc, iterations=q(2.0) + 1)
+            outer_line = disc & ~ndi.binary_erosion(disc, iterations=1)
+            cv[outer_line] = C('stone', 2)
+        # the kerb: a course of long edging stones round the square, lit on top, a dark front on the
+        # south side, broken where a road comes in; grass creeping over it, worn spots outside
         edge_d = ndi.distance_transform_edt(pave) / D
-        joints = pave & (edge_d < 9) & (cv % 8 <= 2) & (noise(1.5, 34) > 0.0)
-        cv[joints] = C('grass_cool', 2)
-        kerb = pave & (edge_d < 1.6)
-        cv[kerb] = C('stone_warm', 4)
-        below = np.zeros_like(pave)
-        below[1:] = pave[:-1]
-        kerb_front = kerb & ~np.roll(pave, -q(2), axis=0)
-        cv[kerb_front] = C('stone', 2)
-        # the lawn breaking over the kerb in tufts
-        fray = (kerb | (pave & (edge_d < 4))) & (noise(0.9, 35) > 0.7)
-        cv[fray] = C('grass', 3)
+        out_d = ndi.distance_transform_edt(~pave) / D
+        kerb = pave & (edge_d < 3.4) & ~ndi.binary_dilation(pathm, iterations=q(2))
+        gy, gx = np.gradient(edge_d)
+        vertical = np.abs(gx) > np.abs(gy)
+        kh = np.full((H, W), C('stone', 2), np.int32)
+        kv = np.full((H, W), C('stone', 2), np.int32)
+        x = 0
+        while x < W:
+            L_ = q(rng.uniform(6, 10))
+            V.blk(kh, x, 0, x + L_ - 1, H, 'stone_warm', int(rng.choice([4, 4, 3])), cut=0, top=0, left=1, bot=0, right=-1)
+            x += L_
+        y = 0
+        while y < H:
+            L_ = q(rng.uniform(6, 10))
+            V.blk(kv, 0, y, W, y + L_ - 1, 'stone_warm', int(rng.choice([4, 4, 3])), cut=0, top=1, left=0, bot=-1, right=0)
+            y += L_
+        kcode = np.where(vertical, kv, kh)
+        cv[kerb] = kcode[kerb]
+        inner = kerb & (edge_d >= 3.4 - 1.0 / D)
+        cv[inner] = C('stone', 2)                              # the joint between kerb and setts
+        south = kerb & (gy < -0.2) & (edge_d < 1.0)
+        cv[south] = C('stone', 2)                              # the kerb's dark front
+        # outside: a contact line on the lawn, grass tufts over the kerb, worn earth here and there
+        contact = (out_d > 0) & (out_d < 1.4) & ~pathm
+        cv[contact] = step(cv[contact], -2)
+        tuft = pave & (edge_d < 4.5) & (noise(1.1, 37) > 0.85) & ~ndi.binary_dilation(pathm, iterations=q(2))
+        cv[tuft] = C('grass', 3)
+        cv[tuft & (noise(0.7, 38) > 0.5)] = C('grass_cool', 2)
+        cv[tuft & (noise(0.7, 40) > 1.0)] = C('grass', 4)
+        worn = (out_d > 0) & (out_d < 3.5) & (noise(2.0, 39) > 1.3) & ~pathm
+        cv[worn] = C('path_warm', 4)
+        cv[worn & (out_d > 2.5)] = C('grass_warm', 3)
 
     # puddles left by the storm: still water in a hollow, the sky in it, a dark north rim
     for k_, (px, py, prx, pry) in enumerate(art.get('puddles', [])):

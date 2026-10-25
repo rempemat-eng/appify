@@ -870,7 +870,7 @@ only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
 position = Vector2(933, 936)
 texture = ExtResource("t22")
 centered = false
-offset = Vector2(-36, -242)
+offset = Vector2(-42, -218)
 
 [node name="LanternDarkBody" type="StaticBody2D" parent="Props/If_lantern_dark"]
 collision_mask = 0
@@ -887,7 +887,7 @@ only_if = "{\"flags\":[\"shard_home:woodland\"]}"
 position = Vector2(933, 936)
 texture = ExtResource("t23")
 centered = false
-offset = Vector2(-36, -242)
+offset = Vector2(-42, -218)
 
 [node name="LanternLitBody" type="StaticBody2D" parent="Props/If_lantern_lit"]
 collision_mask = 0
