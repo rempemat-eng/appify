@@ -1,0 +1,57 @@
+{
+ "id": "crossroads/boulder_52",
+ "file": "game/zones/crossroads/art/boulder_52.png",
+ "sha256": "fcfec8e2e8ce67035a63f8f1f0eaaa1c7c61b8037112fc540ede6edcd60029b1",
+ "kind": "boulder",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  87,
+  54
+ ],
+ "status": "fail",
+ "counts": {
+  "blocker": 0,
+  "fault": 1,
+  "polish": 0
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 5,
+   "tones": 18.0,
+   "shapes": 26.8
+  },
+  "band": {
+   "tones": 26.25,
+   "shapes": 61.0,
+   "boxes": 3,
+   "patches": 20
+  },
+  "ratio": 0.439,
+  "tones_ratio": 0.686,
+  "shapes_ratio": 0.439,
+  "passed": false,
+  "group": "stone"
+ },
+ "findings": [
+  {
+   "detector": "detail.bar",
+   "severity": "fault",
+   "box": [
+    7,
+    7,
+    87,
+    52
+   ],
+   "message": "crossroads/boulder_52: detail bar 0.44 of Eastward's stone band (18.0 tones, 26.8 shapes a patch against 26.25, 61.0)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  }
+ ],
+ "reviewed": "2026-10-25",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}

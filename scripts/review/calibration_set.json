@@ -1,0 +1,798 @@
+{
+ "_about": "Matt's flagged faults (25 Oct) as the calibration set for both gates. The screenshots are Matt's and stay local (never committed): pass their folder with --flagged. Boxes are in art px of each picture after core.to_native (the woodland shot is 3066 x 1740 at 3.14 screen px a texel, Retina; the crops likewise; 49583f7d is 6.28). Each fault lists what must catch it: 'screen' = the scene gate's image detectors on Matt's picture, 'zone' = the scene gate's data checks on the Godot zone, 'asset' = the asset gate on the asset that draws it. A fault counts as caught when at least one listed route finds it with a listed detector (in the box, for screen and zone routes). Asset refs are pinned to the commit Matt saw ('zone/name@commit', 'file:<repo path>@commit|x0,y0,x1,y1' for a frame of a sheet), so later redraws do not change the calibration.",
+ "H": 74,
+ "faults": [
+  {
+   "id": "W1",
+   "image": "a232d12b-image.png",
+   "what": "staircase-stepped water banks",
+   "box": [
+    150,
+    0,
+    960,
+    500
+   ],
+   "screen": [
+    "logic.water_staircase"
+   ],
+   "asset": {
+    "woodland/ground@2f88ca53": [
+     "logic.water_staircase"
+    ]
+   }
+  },
+  {
+   "id": "W2",
+   "image": "a232d12b-image.png",
+   "what": "a straight diagonal stream",
+   "box": [
+    145,
+    0,
+    245,
+    295
+   ],
+   "screen": [
+    "logic.water_straight"
+   ],
+   "asset": {
+    "woodland/ground@2f88ca53": [
+     "logic.water_straight"
+    ]
+   }
+  },
+  {
+   "id": "W3",
+   "image": "a232d12b-image.png",
+   "what": "a flat white bar waterfall",
+   "box": [
+    215,
+    300,
+    265,
+    455
+   ],
+   "screen": [
+    "detail.fall_flat",
+    "logic.fall_face"
+   ],
+   "asset": {
+    "woodland/ground@2f88ca53": [
+     "detail.fall_flat",
+     "logic.fall_face"
+    ]
+   }
+  },
+  {
+   "id": "W4",
+   "image": "a232d12b-image.png",
+   "what": "a footbridge that does not span the banks",
+   "box": [
+    345,
+    395,
+    430,
+    495
+   ],
+   "screen": [
+    "logic.bridge_span"
+   ],
+   "asset": {
+    "woodland/ground@2f88ca53": [
+     "logic.bridge_span"
+    ]
+   }
+  },
+  {
+   "id": "W5",
+   "image": "a232d12b-image.png",
+   "what": "flat boulders with moss hats",
+   "box": [
+    100,
+    280,
+    365,
+    420
+   ],
+   "screen": [
+    "detail.flat",
+    "detail.volume"
+   ],
+   "asset": {
+    "kit/boulder": [
+     "detail.flat",
+     "detail.volume",
+     "detail.bar"
+    ]
+   }
+  },
+  {
+   "id": "W6",
+   "image": "a232d12b-image.png",
+   "what": "head-sized mushrooms in a row",
+   "box": [
+    395,
+    5,
+    520,
+    60
+   ],
+   "asset": {
+    "kit/mushroom_ring": [
+     "logic.scale",
+     "logic.prop_row"
+    ]
+   }
+  },
+  {
+   "id": "W7",
+   "image": "a232d12b-image.png",
+   "what": "a log running into a trunk drawn over it",
+   "box": [
+    595,
+    175,
+    840,
+    300
+   ],
+   "zone": {
+    "woodland": {
+     "detectors": [
+      "logic.intersect"
+     ],
+     "box": [
+      600,
+      640,
+      860,
+      760
+     ]
+    }
+   }
+  },
+  {
+   "id": "W8",
+   "image": "a232d12b-image.png",
+   "what": "a shadow blob with no caster",
+   "box": [
+    770,
+    290,
+    950,
+    375
+   ],
+   "zone": {
+    "woodland": {
+     "detectors": [
+      "logic.shadow_orphan"
+     ],
+     "box": [
+      740,
+      720,
+      960,
+      820
+     ]
+    }
+   }
+  },
+  {
+   "id": "W9",
+   "image": "a232d12b-image.png",
+   "what": "a stray dotted yellow line",
+   "box": [
+    90,
+    105,
+    125,
+    195
+   ],
+   "screen": [
+    "logic.stray_line"
+   ],
+   "asset": {
+    "woodland/birch@2f88ca53": [
+     "logic.dotted_line"
+    ]
+   }
+  },
+  {
+   "id": "W10",
+   "image": "a232d12b-image.png",
+   "what": "agave plants in a temperate wood",
+   "box": [
+    575,
+    25,
+    720,
+    355
+   ],
+   "asset": {
+    "kit/fern": [
+     "logic.biome"
+    ]
+   }
+  },
+  {
+   "id": "W11",
+   "image": "a232d12b-image.png",
+   "what": "uniform repeated grass",
+   "box": [
+    0,
+    0,
+    960,
+    540
+   ],
+   "asset": {
+    "woodland/ground@2f88ca53": [
+     "detail.repetition"
+    ]
+   }
+  },
+  {
+   "id": "W12",
+   "image": "a232d12b-image.png",
+   "what": "a bench with no path to it",
+   "box": [
+    450,
+    105,
+    570,
+    175
+   ],
+   "zone": {
+    "woodland": {
+     "detectors": [
+      "logic.reach"
+     ],
+     "box": [
+      440,
+      560,
+      580,
+      660
+     ]
+    }
+   }
+  },
+  {
+   "id": "W13",
+   "image": "a232d12b-image.png",
+   "what": "trunks without crowns at the edges",
+   "box": [
+    0,
+    40,
+    115,
+    425
+   ],
+   "zone": {
+    "woodland": {
+     "detectors": [
+      "logic.crown_cut"
+     ],
+     "box": [
+      0,
+      360,
+      150,
+      900
+     ]
+    }
+   },
+   "asset": {
+    "woodland/beech@2f88ca53": [
+     "logic.floating_part"
+    ]
+   }
+  },
+  {
+   "id": "W14",
+   "image": "a232d12b-image.png",
+   "what": "canopies drawn as noisy contour mesh",
+   "box": [
+    0,
+    0,
+    960,
+    540
+   ],
+   "asset": {
+    "woodland/oak@2f88ca53": [
+     "detail.mesh"
+    ],
+    "woodland/hollow_tree@2f88ca53": [
+     "detail.mesh"
+    ],
+    "woodland/beech@2f88ca53": [
+     "detail.mesh"
+    ]
+   }
+  },
+  {
+   "id": "C1",
+   "image": "92844cb1-image.png",
+   "what": "rounded sausage boards with dot nails",
+   "box": [
+    0,
+    0,
+    80,
+    60
+   ],
+   "asset": {
+    "crossroads/north_cottages_damage@2f88ca53": [
+     "detail.volume",
+     "detail.texture",
+     "detail.flat",
+     "detail.bar"
+    ],
+    "crossroads/fern_cottage_damage@2f88ca53": [
+     "detail.volume",
+     "detail.texture",
+     "detail.flat",
+     "detail.bar"
+    ]
+   }
+  },
+  {
+   "id": "C2",
+   "image": "92844cb1-image.png",
+   "what": "flat shutters",
+   "box": [
+    70,
+    0,
+    141,
+    60
+   ],
+   "asset": {
+    "crossroads/north_cottages@2f88ca53": [
+     "detail.volume",
+     "detail.flat",
+     "detail.glyph"
+    ]
+   }
+  },
+  {
+   "id": "C3",
+   "image": "658907ce-image.png",
+   "what": "a bucket floating with no rope or crank",
+   "box": [
+    40,
+    0,
+    80,
+    30
+   ],
+   "asset": {
+    "crossroads/well@2f88ca53": [
+     "logic.construction"
+    ]
+   }
+  },
+  {
+   "id": "C4",
+   "image": "658907ce-image.png",
+   "what": "flat half-disc water in the well",
+   "box": [
+    25,
+    15,
+    95,
+    55
+   ],
+   "asset": {
+    "crossroads/well@2f88ca53": [
+     "detail.water_flat"
+    ]
+   }
+  },
+  {
+   "id": "C5",
+   "image": "658907ce-image.png",
+   "what": "a plain lamp base",
+   "box": [
+    95,
+    0,
+    156,
+    60
+   ],
+   "asset": {
+    "crossroads/lantern_dark@2f88ca53": [
+     "detail.volume",
+     "detail.flat",
+     "detail.bar"
+    ],
+    "crossroads/lantern_lit@2f88ca53": [
+     "detail.volume",
+     "detail.flat",
+     "detail.bar"
+    ]
+   }
+  },
+  {
+   "id": "C6",
+   "image": "de8ed322-image.png",
+   "what": "a flat barrel with no staves",
+   "box": [
+    5,
+    0,
+    60,
+    70
+   ],
+   "asset": {
+    "crossroads/barrel_29@2f88ca53": [
+     "detail.texture",
+     "detail.flat",
+     "detail.volume"
+    ]
+   }
+  },
+  {
+   "id": "C7",
+   "image": "a363a579-image.png",
+   "what": "a waystone reading as a UI block",
+   "box": [
+    0,
+    0,
+    72,
+    127
+   ],
+   "asset": {
+    "crossroads/waystone@2f88ca53": [
+     "detail.glyph"
+    ]
+   }
+  },
+  {
+   "id": "C8",
+   "image": "129fcb0b-image.png",
+   "what": "a bench as a plank on two cubes",
+   "box": [
+    0,
+    0,
+    94,
+    41
+   ],
+   "asset": {
+    "crossroads/bench_28@2f88ca53": [
+     "detail.flat",
+     "detail.volume"
+    ]
+   }
+  },
+  {
+   "id": "C9",
+   "image": "fc11b602-image.png",
+   "what": "a flat anvil",
+   "box": [
+    0,
+    0,
+    70,
+    70
+   ],
+   "asset": {
+    "crossroads/anvil@2f88ca53": [
+     "detail.flat",
+     "detail.volume",
+     "detail.texture"
+    ]
+   }
+  },
+  {
+   "id": "C10",
+   "image": "fc11b602-image.png",
+   "what": "flat blue rectangle trough water",
+   "box": [
+    105,
+    10,
+    175,
+    50
+   ],
+   "asset": {
+    "crossroads/trough_35@2f88ca53": [
+     "detail.water_flat"
+    ]
+   }
+  },
+  {
+   "id": "C11",
+   "image": "fc11b602-image.png",
+   "what": "a flat grindstone",
+   "box": [
+    200,
+    0,
+    265,
+    50
+   ],
+   "asset": {
+    "crossroads/grindstone_36@2f88ca53": [
+     "detail.volume",
+     "detail.flat",
+     "detail.bar"
+    ]
+   }
+  },
+  {
+   "id": "C12",
+   "image": "9aae140a-image.png",
+   "what": "bushes standing on three brown stilts",
+   "box": [
+    0,
+    0,
+    196,
+    109
+   ],
+   "asset": {
+    "crossroads/bush_14@2f88ca53": [
+     "logic.stilts"
+    ],
+    "crossroads/bush_51@2f88ca53": [
+     "logic.stilts"
+    ]
+   }
+  },
+  {
+   "id": "C13",
+   "image": "9aae140a-image.png",
+   "what": "mesh-like foliage",
+   "box": [
+    0,
+    0,
+    196,
+    109
+   ],
+   "asset": {
+    "crossroads/bush_14@2f88ca53": [
+     "detail.mesh"
+    ]
+   }
+  },
+  {
+   "id": "C14",
+   "image": "49583f7d-image.png",
+   "what": "the well very flat and 2D: flat half-disc water, flat posts, flat ring",
+   "box": [
+    0,
+    0,
+    100,
+    76
+   ],
+   "asset": {
+    "crossroads/well@2f88ca53": [
+     "detail.volume",
+     "detail.water_flat"
+    ]
+   }
+  },
+  {
+   "id": "C15",
+   "image": "49583f7d-image.png",
+   "what": "the lamp plinth: flat stacked rectangles with no top plane or side face",
+   "box": [
+    100,
+    0,
+    156,
+    60
+   ],
+   "asset": {
+    "crossroads/lantern_dark@2f88ca53": [
+     "detail.volume"
+    ],
+    "crossroads/lantern_lit@2f88ca53": [
+     "detail.volume"
+    ]
+   }
+  },
+  {
+   "id": "U1",
+   "image": "4081df8a-image.png",
+   "what": "a speckled terrazzo floor of oversized slabs",
+   "box": [
+    0,
+    60,
+    948,
+    500
+   ],
+   "screen": [
+    "detail.flat"
+   ],
+   "asset": {
+    "undercroft/ground@86867e11": [
+     "detail.flat"
+    ]
+   }
+  },
+  {
+   "id": "U2",
+   "image": "4081df8a-image.png",
+   "what": "rooms cut off by hard straight edges, with no wall faces, thickness or base shadow",
+   "box": [
+    330,
+    40,
+    400,
+    500
+   ],
+   "screen": [
+    "detail.flat_line"
+   ],
+   "asset": {
+    "undercroft/ground@86867e11": [
+     "detail.flat_line"
+    ]
+   }
+  },
+  {
+   "id": "U3",
+   "image": "4081df8a-image.png",
+   "what": "no light falloff or ambient occlusion",
+   "box": [
+    0,
+    0,
+    948,
+    515
+   ],
+   "screen": [
+    "detail.no_falloff"
+   ],
+   "asset": {
+    "undercroft/ground@86867e11": [
+     "detail.no_falloff"
+    ]
+   }
+  },
+  {
+   "id": "U4",
+   "image": "4081df8a-image.png",
+   "what": "broken pillars flat with no cylinder shading",
+   "box": [
+    415,
+    40,
+    460,
+    125
+   ],
+   "asset": {
+    "undercroft/stump_nw@86867e11": [
+     "detail.volume"
+    ],
+    "undercroft/stump_se@86867e11": [
+     "detail.volume"
+    ]
+   }
+  },
+  {
+   "id": "U5",
+   "image": "4081df8a-image.png",
+   "what": "the root is a flat bar",
+   "box": [
+    195,
+    0,
+    235,
+    85
+   ],
+   "asset": {
+    "undercroft/roots_hall@86867e11": [
+     "detail.volume",
+     "detail.flat"
+    ],
+    "undercroft/roots_corridor@86867e11": [
+     "detail.volume",
+     "detail.flat"
+    ]
+   }
+  },
+  {
+   "id": "U6",
+   "image": "4081df8a-image.png",
+   "what": "the seal channel a flat blue line",
+   "box": [
+    95,
+    290,
+    325,
+    305
+   ],
+   "screen": [
+    "detail.flat_line"
+   ],
+   "asset": {
+    "undercroft/channel_lit@86867e11": [
+     "detail.water_flat"
+    ]
+   }
+  },
+  {
+   "id": "U7",
+   "image": "4081df8a-image.png",
+   "what": "the plate and target are flat squares",
+   "box": [
+    45,
+    235,
+    105,
+    300
+   ],
+   "asset": {
+    "undercroft/plate_up@86867e11": [
+     "detail.flat"
+    ],
+    "undercroft/seal_slab@86867e11": [
+     "detail.flat",
+     "detail.bar"
+    ]
+   }
+  },
+  {
+   "id": "U8",
+   "image": "4081df8a-image.png",
+   "what": "the boss shell reads as red worms on a dome",
+   "box": [
+    575,
+    135,
+    720,
+    215
+   ],
+   "screen": [
+    "detail.flat"
+   ],
+   "asset": {
+    "file:game/bosses/thornback/art/sheets/calm_S.png@86867e11|0,0,288,208": [
+     "detail.volume"
+    ]
+   }
+  },
+  {
+   "id": "U9",
+   "image": "4081df8a-image.png",
+   "what": "the telegraph is a flat orange debug rectangle",
+   "box": [
+    415,
+    235,
+    670,
+    430
+   ],
+   "screen": [
+    "detail.debug_overlay"
+   ]
+  }
+ ],
+ "clean": {
+  "golden": {
+   "path": "art/golden/pilot/scene_2x.png",
+   "H": 50,
+   "scale": 1,
+   "props": [
+    [
+     480,
+     665,
+     550,
+     700,
+     "bench"
+    ],
+    [
+     400,
+     505,
+     530,
+     620,
+     "tree"
+    ],
+    [
+     35,
+     1140,
+     150,
+     1180,
+     "log"
+    ],
+    [
+     470,
+     425,
+     550,
+     465,
+     "rocks"
+    ],
+    [
+     285,
+     980,
+     420,
+     1095,
+     "fence"
+    ]
+   ]
+  },
+  "eastward": {
+   "shots": [
+    "08",
+    "12",
+    "13",
+    "17",
+    "37"
+   ],
+   "H": 54,
+   "scale": 3
+  }
+ },
+ "images": {
+  "4081df8a-image.png": {
+   "biome": "cellar"
+  }
+ }
+}

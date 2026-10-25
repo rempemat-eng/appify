@@ -1,0 +1,209 @@
+"""Regression tests for the review detectors, on small synthetic pictures (no screenshots).
+
+    python3 -m unittest scripts.review.test_review        (npm run check:review)
+
+Each detector gets a picture that must trip it and one that must not, so a threshold change
+that loses a calibration fault, or starts flagging clean art, fails here first.
+"""
+from __future__ import annotations
+
+import json
+import os
+import tempfile
+import unittest
+
+import numpy as np
+from PIL import Image
+
+from scripts.review import core, water, screen, construct as C, detail as D, scene as SN, gate, assets as A
+
+H = 74
+GRASS = (150, 166, 92)
+GRASS2 = (140, 160, 96)
+BLUE = (60, 100, 170)
+OUT = (30, 25, 23)
+
+
+def lawn(w=400, h=300):
+    rng = np.random.default_rng(1)
+    a = np.zeros((h, w, 4), np.uint8)
+    a[..., :3] = GRASS
+    a[rng.random((h, w)) < 0.3, :3] = GRASS2
+    a[..., 3] = 255
+    return a
+
+
+class Scale(unittest.TestCase):
+    def test_fractional_upscale_is_recovered(self):
+        rng = np.random.default_rng(0)
+        art = (rng.integers(0, 6, (60, 90))[..., None] * 40).repeat(3, -1).astype(np.uint8)
+        big = Image.fromarray(art).resize((round(90 * 3.14), round(60 * 3.14)), Image.NEAREST)
+        s, px, py = core.estimate_scale(np.asarray(big))
+        self.assertAlmostEqual(s, 3.14, delta=0.05)
+        nat, s2, _ = core.to_native(big)
+        self.assertLess(abs(nat.shape[1] - 90), 3)
+
+    def test_native_art_stays_native(self):
+        rng = np.random.default_rng(0)
+        art = (rng.integers(0, 255, (80, 120, 3))).astype(np.uint8)
+        self.assertEqual(core.estimate_scale(art)[0], 1.0)
+
+
+class Water(unittest.TestCase):
+    def test_staircase_bank(self):
+        a = lawn()
+        for y in range(300):
+            x0 = 100 + (y // 8) * 4          # 4 px risers every 8 rows: equal teeth
+            a[y, x0:x0 + 30, :3] = BLUE
+        self.assertTrue(any(f.detector == 'logic.water_staircase' for f in water.check_banks(a, H)))
+
+    def test_meandering_bank_is_clean(self):
+        a = lawn()
+        for y in range(300):
+            x0 = int(150 + 25 * np.sin(y / 40))
+            a[y, x0:x0 + 30, :3] = BLUE
+        self.assertFalse(any(f.detector == 'logic.water_staircase' for f in water.check_banks(a, H)))
+
+    def test_ruler_channel(self):
+        a = lawn(400, 400)
+        for y in range(400):
+            x0 = 50 + int(y * 0.4)
+            a[y, x0:x0 + 25, :3] = BLUE
+        self.assertTrue(any(f.detector == 'logic.water_straight' for f in water.check_banks(a, H)))
+
+    def test_short_bridge(self):
+        a = lawn(400, 200)
+        a[80:120, :, :3] = BLUE
+        a[78:122, 180:210, :3] = (120, 80, 40)       # a deck that barely passes the banks
+        self.assertTrue(any(f.detector == 'logic.bridge_span' for f in water.check_bridges(a, H)))
+        b = lawn(400, 200)
+        b[80:120, :, :3] = BLUE
+        b[60:140, 180:210, :3] = (120, 80, 40)       # lands 20 px on each bank
+        self.assertFalse(any(f.detector == 'logic.bridge_span' for f in water.check_bridges(b, H)))
+
+
+class Screen(unittest.TestCase):
+    def test_dotted_line(self):
+        a = lawn()
+        for y in range(60, 140, 8):
+            a[y:y + 4, 200:203, :3] = (230, 180, 60)
+        self.assertTrue(any(f.detector == 'logic.stray_line' for f in screen.artefacts(a, H, np.zeros(a.shape[:2], bool))))
+
+    def test_debug_overlay(self):
+        a = lawn()
+        a[100:220, 100:260, :3] = (230, 140, 50)
+        self.assertTrue(screen.debug_overlay(a, H, np.zeros(a.shape[:2], bool)))
+
+    def test_falloff_only_indoors(self):
+        a = lawn()
+        self.assertTrue(screen.falloff(a, H, np.zeros(a.shape[:2], bool), 'cellar'))
+        self.assertFalse(screen.falloff(a, H, np.zeros(a.shape[:2], bool), 'woodland'))
+
+
+def sprite(w, h):
+    return np.zeros((h, w, 4), np.uint8)
+
+
+class Asset(unittest.TestCase):
+    def test_floating_crown(self):
+        s = sprite(80, 160)
+        s[10:80, 10:70] = (60, 120, 50, 255)
+        s[100:158, 35:45] = (110, 70, 40, 255)
+        self.assertTrue(C.floating_parts(s[..., 3] > 0, H, 'x/beech'))
+
+    def test_bush_on_stilts(self):
+        s = sprite(100, 90)
+        s[5:70, 5:95] = (70, 130, 60, 255)
+        for x in (25, 45, 65):
+            s[70:88, x:x + 6] = (110, 70, 40, 255)
+        self.assertTrue(C.stilts(s[..., :3], s[..., 3] > 0, H, 'x/bush'))
+
+    def test_rosette_in_temperate_wood(self):
+        s = sprite(60, 50)
+        cx, cy = 30, 48
+        for ang in np.linspace(0.25, np.pi - 0.25, 7):
+            for r in range(0, 40):
+                x, y = int(cx + r * np.cos(ang)), int(cy - r * np.sin(ang))
+                w = max(0, 3 - r // 14)
+                s[max(0, y - 1):y + 1, max(0, x - w):x + w + 1] = (60, 120, 70, 255)
+        self.assertTrue(C.biome_form(s[..., :3], s[..., 3] > 0, H, 'kit/fern', 'woodland'))
+        self.assertFalse(C.biome_form(s[..., :3], s[..., 3] > 0, H, 'kit/fern', 'desert'))
+
+    def test_flat_part_and_volume(self):
+        s = sprite(60, 60)
+        s[5:55, 5:55] = (140, 100, 60, 255)
+        fs, _ = D.judge_object(s[..., :3], s[..., 3] > 0, H, 'x/crate')
+        kinds = {f.detector for f in fs}
+        self.assertIn('detail.flat', kinds)
+        self.assertIn('detail.volume', kinds)
+
+    def test_shaded_part_passes_volume(self):
+        s = sprite(60, 60)
+        for x in range(5, 55):
+            for y in range(5, 55):
+                s[y, x, :3] = np.clip(200 - 2 * x - y + ((x * 7 + y * 3) % 5) * 6, 0, 255)
+        s[5:55, 5:55, 3] = 255
+        fs, _ = D.judge_object(s[..., :3], s[..., 3] > 0, H, 'x/stone')
+        self.assertNotIn('detail.volume', {f.detector for f in fs})
+
+    def test_half_disc_water(self):
+        s = sprite(60, 60)
+        s[10:55, 5:55] = (120, 120, 120, 255)
+        yy, xx = np.mgrid[0:60, 0:60]
+        disc = ((xx - 30) ** 2 + (yy - 30) ** 2 <= 18 ** 2) & (yy >= 30)
+        s[disc] = (*BLUE, 255)
+        self.assertTrue(C.water_shape(s[..., :3], s[..., 3] > 0, H, 'x/well'))
+
+    def test_cylinder(self):
+        s = sprite(40, 100)
+        s[10:95, 8:32] = (150, 150, 150, 255)
+        self.assertTrue(C.cylinder(s[..., :3], s[..., 3] > 0, H, 'x/pillar'))
+        for x in range(8, 32):
+            t = (x - 8) / 24
+            s[10:95, x, :3] = int(170 - 90 * t + 40 * np.exp(-((t - 0.3) / 0.12) ** 2))
+        self.assertFalse(C.cylinder(s[..., :3], s[..., 3] > 0, H, 'x/pillar'))
+
+    def test_scale_against_guide(self):
+        s = sprite(60, 200)
+        s[5:198, 10:50, 3] = 255
+        self.assertTrue(C.scale(s[..., 3] > 0, H, 'barrel', 'x/barrel', 3.0))
+
+
+class Scene(unittest.TestCase):
+    def test_tscn_parser_positions(self):
+        t = tempfile.NamedTemporaryFile('w', suffix='.tscn', delete=False)
+        t.write('[gd_scene format=3]\n\n[node name="Z" type="Node2D"]\n\n'
+                '[node name="A" type="Node2D" parent="."]\nposition = Vector2(10, 20)\n\n'
+                '[node name="B" type="Marker2D" parent="A"]\nposition = Vector2(5, 5)\n')
+        t.close()
+        nodes = SN._walk_nodes(SN.parse_tscn(t.name), '')
+        pos = {e['key']: e['pos'] for e in nodes}
+        self.assertEqual(pos['A/B'], (15.0, 25.0))
+        os.unlink(t.name)
+
+
+class Gate(unittest.TestCase):
+    def test_refusals(self):
+        old_cat, old_queue = gate.CATALOGUE, gate.QUEUE
+        d = tempfile.mkdtemp()
+        try:
+            gate.CATALOGUE = d
+            gate.QUEUE = os.path.join(d, 'fix-queue.json')
+            zone = 'woodland'
+            name = 'stump'
+            png = os.path.join(gate.GAME, 'zones', zone, 'art', name + '.png')
+            self.assertTrue(gate.refusals(zone, [name]))                 # no record
+            os.makedirs(os.path.join(d, zone))
+            sha = A.sha256(png)
+            json.dump({'sha256': sha, 'status': 'fail', 'findings': []}, open(os.path.join(d, zone, name + '.json'), 'w'))
+            self.assertTrue(gate.refusals(zone, [name]))                 # failing and not queued
+            json.dump({'queue': [{'id': f'{zone}/{name}'}]}, open(gate.QUEUE, 'w'))
+            self.assertFalse(gate.refusals(zone, [name]))                # queued
+            json.dump({'sha256': 'x', 'status': 'pass'}, open(os.path.join(d, zone, name + '.json'), 'w'))
+            self.assertTrue(gate.refusals(zone, [name]))                 # stale
+        finally:
+            gate.CATALOGUE, gate.QUEUE = old_cat, old_queue
+
+
+if __name__ == '__main__':
+    unittest.main()

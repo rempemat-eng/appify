@@ -1,0 +1,105 @@
+{
+ "id": "woodland/birch",
+ "file": "game/zones/woodland/art/birch.png",
+ "sha256": "b965959e06adb7e14b28e5cd71690fc03ae493d52faba812c24ac483aed0e660",
+ "kind": "birch",
+ "biome": "woodland",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  112,
+  217
+ ],
+ "status": "fail",
+ "counts": {
+  "blocker": 1,
+  "fault": 2,
+  "polish": 2
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 8,
+   "tones": 20.875,
+   "shapes": 28.875
+  },
+  "band": {
+   "tones": 27.71,
+   "shapes": 63.32,
+   "boxes": 4,
+   "patches": 107
+  },
+  "ratio": 0.456,
+  "tones_ratio": 0.753,
+  "shapes_ratio": 0.456,
+  "passed": false,
+  "group": "foliage"
+ },
+ "findings": [
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    52,
+    27,
+    87,
+    49
+   ],
+   "message": "woodland/birch: the foliage is lit from the right (luminance rises 95 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "logic.dotted_line",
+   "severity": "fault",
+   "box": [
+    50,
+    131,
+    56,
+    185
+   ],
+   "message": "woodland/birch: a part drawn as a broken line of bright dots (54 px, 3 gaps): it reads as a stray dotted line, not a solid thing",
+   "fix": "draw the part as one solid, outlined, shaded form (a trunk with bark, lit left, dark right, joined to its crown) or remove it"
+  },
+  {
+   "detector": "logic.floating_part",
+   "severity": "blocker",
+   "box": [
+    11,
+    12,
+    98,
+    128
+   ],
+   "message": "woodland/birch: the upper 92% of the sprite hovers 2 px above the rest: nothing joins it to what should hold it up",
+   "fix": "join it to its support: a crown sits on its trunk and covers the trunk top, a roof on its posts, a bucket on a rope (world-rules.md 6.9)"
+  },
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    11,
+    12,
+    98,
+    200
+   ],
+   "message": "woodland/birch: detail bar 0.46 of Eastward's foliage band (20.9 tones, 28.9 shapes a patch against 27.71, 63.32)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  },
+  {
+   "detector": "detail.mesh",
+   "severity": "fault",
+   "box": [
+    11,
+    12,
+    98,
+    200
+   ],
+   "message": "woodland/birch: the foliage is a see-through mesh: 37% of the crown is gaps between outlined blobs",
+   "fix": "paint the crown as one mass of leaf clusters (Eastward): lit clumps on top, a darker band under them, a dark interior showing through narrow gaps, no ground visible through the crown and no outline round every blob (art-style.md 4)"
+  }
+ ],
+ "reviewed": "2026-10-25",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}

@@ -1,0 +1,530 @@
+{
+  "schema_version": 1,
+  "status": "proposal (claude-a/progression, 25 Oct); every number is a placeholder until play-tests and Claude L's harness",
+  "id": "ashe",
+  "name": "Ashe",
+  "identity": "ember knight in brass-edged steel plate; ONE sword in the RIGHT hand; ONE barred-visor helm with a crimson crest, carried under the LEFT arm and worn only in Cinderhelm; crimson cape and tabard",
+  "home_region": "fire_country",
+  "home_region_note": "Claude K's proposal on #149 (25 Oct), not yet decided by Matt; it only sets the tier material",
+  "abilities": {
+    "kit": "game/data/abilities/ashe.json (Codex, #261); base and powered form unchanged",
+    "base": {
+      "primary": "Ember blade",
+      "secondary": "Ember thrust",
+      "block": "Armoured guard",
+      "special": "Cinderhelm"
+    },
+    "skill_tree": {
+      "branches": [
+        {
+          "id": "blade",
+          "name": "Blade",
+          "covers": [
+            "primary"
+          ],
+          "nodes": [
+            {
+              "id": "swordwork",
+              "kind": "passive",
+              "name": "Swordwork",
+              "effect": "Ember blade recovers 5 % faster.",
+              "numbers": {
+                "primary_cooldown_pct": -5
+              },
+              "level": 2,
+              "cost": 1,
+              "requires": [],
+              "touches_canonical": false
+            },
+            {
+              "id": "banked_fire",
+              "name": "Banked Fire",
+              "binding": "passive: each Ember blade hit",
+              "effect": "Heat builds in the blade; Ember thrust spends it for extra power.",
+              "numbers": {
+                "max_heat": 5,
+                "power_per_heat_pct": 8
+              },
+              "art": {
+                "new_clips": [],
+                "fx": [
+                  "heat glow on the fuller, 5 steps"
+                ],
+                "reuses": []
+              },
+              "touches_canonical": false,
+              "kind": "technique",
+              "level": 3,
+              "cost": 2,
+              "requires": [
+                "swordwork"
+              ]
+            },
+            {
+              "id": "stoked",
+              "kind": "passive",
+              "name": "Stoked",
+              "effect": "Banked Fire builds one heat on a blocked hit too.",
+              "numbers": {
+                "heat_on_block": 1
+              },
+              "level": 6,
+              "cost": 1,
+              "requires": [
+                "banked_fire"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "banked_fire_2",
+              "kind": "technique upgrade",
+              "name": "Banked Fire II",
+              "effect": "At full heat the guard costs less.",
+              "numbers": {
+                "guard_cost_pct": -30
+              },
+              "level": 12,
+              "cost": 3,
+              "requires": [
+                "stoked"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "inferno",
+              "kind": "keystone",
+              "name": "Inferno",
+              "effect": "At full heat, sweeps burn what they hit.",
+              "numbers": {
+                "burn_seconds": 1.5
+              },
+              "level": 22,
+              "cost": 4,
+              "requires": [
+                "banked_fire_2"
+              ],
+              "touches_canonical": false
+            }
+          ]
+        },
+        {
+          "id": "plate",
+          "name": "Plate",
+          "covers": [
+            "block"
+          ],
+          "nodes": [
+            {
+              "id": "heavy_pauldron",
+              "kind": "passive",
+              "name": "Heavy Pauldron",
+              "effect": "Armoured guard cost -8 %.",
+              "numbers": {
+                "guard_cost_pct": -8
+              },
+              "level": 2,
+              "cost": 1,
+              "requires": [],
+              "touches_canonical": false
+            },
+            {
+              "id": "shoulder_check",
+              "name": "Shoulder Check",
+              "binding": "lower Armoured guard within 0.5 s after it blocks a hit",
+              "effect": "She drives the pauldron forward in a short shove.",
+              "numbers": {
+                "window_seconds": 0.5,
+                "knockback": 20
+              },
+              "art": {
+                "new_clips": [
+                  "guard_check (6 drawings from guard 4)"
+                ],
+                "fx": [],
+                "reuses": [
+                  "guard"
+                ]
+              },
+              "touches_canonical": false,
+              "kind": "technique",
+              "level": 9,
+              "cost": 2,
+              "requires": [
+                "heavy_pauldron"
+              ]
+            },
+            {
+              "id": "hearthold_drill",
+              "kind": "passive",
+              "name": "Hearthold Drill",
+              "effect": "Guard raises 15 % faster.",
+              "numbers": {
+                "raise_pct": -15
+              },
+              "level": 11,
+              "cost": 1,
+              "requires": [
+                "shoulder_check"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "shoulder_check_2",
+              "kind": "technique upgrade",
+              "name": "Shoulder Check II",
+              "effect": "The check breaks a tank's shield guard.",
+              "numbers": {
+                "breaks_guard": true
+              },
+              "level": 20,
+              "cost": 3,
+              "requires": [
+                "hearthold_drill"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "bulwark",
+              "kind": "keystone",
+              "name": "Bulwark",
+              "effect": "Ember thrust breaks a tank's front guard.",
+              "numbers": {
+                "breaks_guard": true
+              },
+              "level": 24,
+              "cost": 4,
+              "requires": [
+                "shoulder_check_2"
+              ],
+              "touches_canonical": false
+            }
+          ]
+        },
+        {
+          "id": "ember",
+          "name": "Ember",
+          "covers": [
+            "secondary",
+            "special"
+          ],
+          "nodes": [
+            {
+              "id": "long_thrust",
+              "kind": "passive",
+              "name": "Long Thrust",
+              "effect": "Ember thrust reach +3.",
+              "numbers": {
+                "secondary_reach": 3
+              },
+              "level": 4,
+              "cost": 1,
+              "requires": [],
+              "touches_canonical": false
+            },
+            {
+              "id": "ember_wake",
+              "name": "Ember Wake",
+              "binding": "passive on Ember thrust",
+              "effect": "The thrust leaves a short burning line on the ground.",
+              "numbers": {
+                "line_length": 36,
+                "burn_seconds": 1.5
+              },
+              "art": {
+                "new_clips": [],
+                "fx": [
+                  "burning line (4 drawings, finite)"
+                ],
+                "reuses": []
+              },
+              "touches_canonical": true,
+              "note": "adds an effect to Codex's natural-expiry finisher without changing its damage; needs C60's OK (#149)",
+              "kind": "technique",
+              "level": 16,
+              "cost": 2,
+              "requires": [
+                "long_thrust"
+              ]
+            },
+            {
+              "id": "kindling",
+              "kind": "passive",
+              "name": "Kindling",
+              "effect": "Ember thrust cooldown -8 %.",
+              "numbers": {
+                "secondary_cooldown_pct": -8
+              },
+              "level": 18,
+              "cost": 1,
+              "requires": [
+                "ember_wake"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "ember_wake_2",
+              "kind": "technique upgrade",
+              "name": "Ember Wake II",
+              "effect": "Cinderhelm's closing finisher also leaves the wake.",
+              "numbers": {
+                "on_finisher": true
+              },
+              "touches_canonical": true,
+              "note": "adds an effect to Codex's natural-expiry finisher without changing its damage; needs C60's OK (#149)",
+              "level": 26,
+              "cost": 3,
+              "requires": [
+                "kindling"
+              ]
+            },
+            {
+              "id": "dragonheart",
+              "kind": "keystone",
+              "name": "Dragonheart",
+              "effect": "Cinderhelm's flame crescents fly 15 % further.",
+              "numbers": {
+                "range_pct": 15
+              },
+              "touches_canonical": true,
+              "note": "changes a count in Codex's powered form; needs C60's OK (#149)",
+              "level": 28,
+              "cost": 4,
+              "requires": [
+                "ember_wake_2"
+              ]
+            }
+          ]
+        }
+      ],
+      "points_by_level_30": 29,
+      "tree_cost": 33
+    }
+  },
+  "weapon": {
+    "item": "sword",
+    "equipment_tag": "sword",
+    "tiers": [
+      {
+        "tier": 1,
+        "name": "Knight's sword",
+        "art": {
+          "silhouette": "today's drawing: steel blade with a fuller, brass cross guard, leather grip, brass pommel",
+          "materials": [
+            "steel",
+            "brass",
+            "leather"
+          ],
+          "glow": "none",
+          "size": "as drawn",
+          "read_check": "the current drawing"
+        },
+        "mechanics": {},
+        "requires": {
+          "level": 1
+        },
+        "sockets": 1
+      },
+      {
+        "tier": 2,
+        "name": "Ember-forged sword",
+        "art": {
+          "silhouette": "the blade 3 px longer; the fuller shows a dull ember line; the cross guard flared at both ends",
+          "materials": [
+            "steel",
+            "ember (fuller, base tone only)",
+            "brass"
+          ],
+          "glow": "none",
+          "size": "+3 px blade",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
+        },
+        "mechanics": {
+          "thrust_reach": 4
+        },
+        "requires": {
+          "level": 8,
+          "forge_open": true
+        },
+        "sockets": 2,
+        "cost": {
+          "glint": 60,
+          "scrap": 5,
+          "home_material": {
+            "material": "ember ore",
+            "count": 2
+          }
+        }
+      },
+      {
+        "tier": 3,
+        "name": "Wave blade",
+        "art": {
+          "silhouette": "a gently waved edge (2 px undulation); a dragon-head pommel; a crimson grip wrap",
+          "materials": [
+            "steel",
+            "brass",
+            "crimson"
+          ],
+          "glow": "none",
+          "size": "as tier 2",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
+        },
+        "mechanics": {
+          "guard_cost_pct": -10
+        },
+        "requires": {
+          "level": 16,
+          "forge_open": true
+        },
+        "sockets": 2,
+        "cost": {
+          "glint": 150,
+          "scrap": 10,
+          "home_material": {
+            "material": "ember ore",
+            "count": 4
+          }
+        }
+      },
+      {
+        "tier": 4,
+        "name": "Starforged edge",
+        "art": {
+          "silhouette": "the fuller glows white-gold; the cross guard becomes two crescent horns",
+          "materials": [
+            "steel",
+            "starlight (new)",
+            "ember",
+            "gold"
+          ],
+          "glow": "one tone at rest, two in Cinderhelm",
+          "size": "as tier 2",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
+        },
+        "mechanics": {
+          "named": "Starforged edge: the third sweep in a row throws a small flame crescent",
+          "crescent_damage_pct": 35
+        },
+        "requires": {
+          "level": 24,
+          "great_forge": true
+        },
+        "sockets": 3,
+        "cost": {
+          "glint": 300,
+          "scrap": 20,
+          "home_material": {
+            "material": "ember ore",
+            "count": 6
+          },
+          "starshard": 1
+        }
+      }
+    ]
+  },
+  "outfits": [
+    {
+      "id": "tournament",
+      "name": "Tournament plate",
+      "description": "polished plate with gold edges and a white tabard with a red dragon",
+      "parts": [
+        "tabard (device)"
+      ],
+      "ramps": {
+        "brass": "gold",
+        "crimson": "white tabard (new)"
+      },
+      "unlock": {
+        "source": "story",
+        "event": "quest:folk_ashe:done"
+      }
+    },
+    {
+      "id": "blackened",
+      "name": "Blackened plate",
+      "description": "dark blued plate with copper edges and an ash-grey cape",
+      "parts": [
+        "plate"
+      ],
+      "ramps": {
+        "steel": "blued (new)",
+        "crimson": "ash (new)"
+      },
+      "unlock": {
+        "source": "village",
+        "event": "restore:trophy_hall:1"
+      }
+    },
+    {
+      "id": "ember_guard",
+      "name": "Ember guard",
+      "description": "plate with the ember ramp in the seams at rest and a black cape",
+      "parts": [
+        "plate (seams)"
+      ],
+      "ramps": {
+        "crimson": "ink (new)"
+      },
+      "unlock": {
+        "source": "glint",
+        "event": "buy:stall:ember_guard",
+        "note": "900 Glint, stall tier 3"
+      }
+    }
+  ],
+  "accessories": [
+    {
+      "id": "dragon_crest",
+      "name": "Dragon crest",
+      "slot": "head",
+      "description": "a crimson dragon-wing crest on the helm, in place of the plain crest; it shows on the helm under the arm and on the head",
+      "unlock": {
+        "source": "drop",
+        "event": "drop:fire_country",
+        "note": "Ashe's head slot is the helm crest: a hat cannot coexist with the helm she puts on"
+      },
+      "perk": null,
+      "replaces": "crest"
+    },
+    {
+      "id": "heraldic_cape",
+      "name": "Heraldic cape",
+      "slot": "back",
+      "description": "the cape with Hearthold's tower in gold",
+      "unlock": {
+        "source": "arena",
+        "event": "arena:castle_courtyard:silver"
+      },
+      "perk": null,
+      "replaces": "cape"
+    },
+    {
+      "id": "mail_coif",
+      "name": "Mail collar",
+      "slot": "neck",
+      "description": "a short mail collar showing above the breastplate",
+      "unlock": {
+        "source": "bond",
+        "event": "bond:any:7"
+      },
+      "perk": null
+    },
+    {
+      "id": "bell_charm",
+      "name": "Bell charm",
+      "slot": "trinket",
+      "description": "a small brass bell on the belt, 3 px",
+      "unlock": {
+        "source": "village",
+        "event": "restore:bell_tower:1"
+      },
+      "perk": {
+        "status": "proposal",
+        "text": "Burn on you wears off 20 % sooner",
+        "numbers": {
+          "burn_duration_pct": -20
+        }
+      }
+    }
+  ]
+}

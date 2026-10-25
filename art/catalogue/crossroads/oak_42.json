@@ -1,0 +1,117 @@
+{
+ "id": "crossroads/oak_42",
+ "file": "game/zones/crossroads/art/oak_42.png",
+ "sha256": "f1b25bf35e51aa7a40f4aac465486b4444345e79cbc3af7439507da3b9b677bf",
+ "kind": "broadleaf",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  217,
+  256
+ ],
+ "status": "fail",
+ "counts": {
+  "blocker": 0,
+  "fault": 2,
+  "polish": 4
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 44,
+   "tones": 19.318181818181817,
+   "shapes": 26.568181818181817
+  },
+  "band": {
+   "tones": 27.71,
+   "shapes": 63.32,
+   "boxes": 4,
+   "patches": 107
+  },
+  "ratio": 0.42,
+  "tones_ratio": 0.697,
+  "shapes_ratio": 0.42,
+  "passed": false,
+  "group": "foliage"
+ },
+ "findings": [
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    115,
+    23,
+    175,
+    88
+   ],
+   "message": "crossroads/oak_42: the foliage is lit from the right (luminance rises 74 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    138,
+    57,
+    151,
+    83
+   ],
+   "message": "crossroads/oak_42: the foliage is lit from the right (luminance rises 50 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    129,
+    83,
+    176,
+    162
+   ],
+   "message": "crossroads/oak_42: the foliage is lit from the right (luminance rises 49 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.volume",
+   "severity": "fault",
+   "box": [
+    115,
+    153,
+    133,
+    241
+   ],
+   "message": "crossroads/oak_42: the red reads 2D: 2 light planes, luminance spread 0",
+   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
+  },
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    11,
+    10,
+    207,
+    243
+   ],
+   "message": "crossroads/oak_42: detail bar 0.42 of Eastward's foliage band (19.3 tones, 26.6 shapes a patch against 27.71, 63.32)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  },
+  {
+   "detector": "detail.mesh",
+   "severity": "fault",
+   "box": [
+    11,
+    10,
+    207,
+    241
+   ],
+   "message": "crossroads/oak_42: the foliage is a see-through mesh: 35% of the crown is gaps between outlined blobs",
+   "fix": "paint the crown as one mass of leaf clusters (Eastward): lit clumps on top, a darker band under them, a dark interior showing through narrow gaps, no ground visible through the crown and no outline round every blob (art-style.md 4)"
+  }
+ ],
+ "reviewed": "2026-10-25",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}
