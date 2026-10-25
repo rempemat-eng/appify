@@ -1,0 +1,2267 @@
+{
+  "schema_version": 1,
+  "status": "recovered_numeric_contract_for_owner_review",
+  "source": {
+    "repository": "rempemat-eng/appify",
+    "commit": "1cd2a03d3dedb86061c5e32f53836cc284cbf6ab",
+    "reference_path": "prototypes/mygame-world-preview/reference/",
+    "zipSha256": "0b0374b323d4525317b32deb57560a85c947e37fa1801a0835249f76cc05cd1c",
+    "bundle": "entry-6fdd0ef25567acc156c4a1e86a9a36fe.js",
+    "bundleSha256": "94f8b4e105ea17d635f2fe7ae6a23d33b4f2fe1cc764761d64a4423b8d1ef82c",
+    "catalogueModule": 3501,
+    "catalogueSha256": "8b2dc37132bc29f9e9f184b42abc209933a2ba98f35ef46e9c1061838492ad6f",
+    "engineModule": 3500,
+    "engineSha256": "21aa782577f3d2fc51389efdd80c4c61a1a7ddd48d128e01eb318daa75d6bc10",
+    "libraryFileId": "libfile_a8686f8b8cfc8191b71d7f2712de1cd8",
+    "recovery_kind": "compiled original catalogue and pure engine; original TypeScript not recovered"
+  },
+  "units": {
+    "distance": "original canonical planar units",
+    "time": "seconds",
+    "angle": "radians",
+    "original_arena": {
+      "width": 320,
+      "height": 180,
+      "minX": 12,
+      "maxX": 308,
+      "minY": 23,
+      "maxY": 168
+    },
+    "rendering_density_changes_balance": false,
+    "port_scale_decision": "unresolved: agree original-unit to foundation-world conversion; density3 does not by itself authorise multiplying reach/speed/radius",
+    "screen_anchors": "separate source texels relative to each facing foot pivot"
+  },
+  "simulation": {
+    "fixed_step_seconds": 0.016666666666666666,
+    "maximum_step_input_seconds": 0.1,
+    "epsilon": 1e-8,
+    "inactive_input_freezes_simulation": true,
+    "input": {
+      "primary": "held; repeats when canAct and cooldown expired",
+      "secondary": "rising-edge; queue 0.7 seconds",
+      "special": "rising-edge; queue 0.7 seconds; priority over secondary",
+      "block": "held; clears queued actions"
+    },
+    "queue": {
+      "slots": 1,
+      "lifetime_seconds": 0.7,
+      "latest_eligible_rising_edge_overwrites_slot": true,
+      "simultaneous_eligible_rising_edges_prefer": "special",
+      "slot_consumed_when_commit_is_attempted": true
+    },
+    "commit_priority": [
+      "block",
+      "queued_slot",
+      "held_primary"
+    ],
+    "special_cooldown_starts_on_commitment": true,
+    "damage_is_not_emitted_by_drawing_preview": true
+  },
+  "shared_hit_rules": {
+    "damage_values_are_raw_before_vulnerability": true,
+    "arc_target_test": "distance<=reach+target_radius and (relative_x*aim_x+relative_y*aim_y)/max(1,distance)>=minimum_direction_dot",
+    "segment_target_test": "projection between -target_radius and reach+target_radius, and point-to-segment distance<=half_width+target_radius",
+    "vulnerable_damage_multiplier": 1.35,
+    "heavy_knockback_multiplier": 0.25,
+    "heavy_kinds": [
+      "tank",
+      "dummy"
+    ]
+  },
+  "common_field_insertion": {
+    "default_replacement_threshold": 10,
+    "removes_exactly_one_oldest_same_kind_before_append_if_count_at_least_threshold": true,
+    "threshold_is_not_a_truncate_all_hard_cap": true
+  },
+  "guard": {
+    "maximum": 100,
+    "idleRecoveryPerSecond": 22,
+    "heldDrainPerSecond": 2,
+    "damageCost": 1.5,
+    "frontalDotThreshold": 0.25,
+    "recoveryDelayAfterGuardedHit": 0.8,
+    "breakDuration": 1.15,
+    "breakHitDuration": 0.4,
+    "ordinaryHitDuration": 0.25,
+    "defeatDuration": 0.8,
+    "blockRaiseDuration": 0.18,
+    "recovery_condition": "not blocking and guardRecovery<=epsilon and guardBroken<=epsilon; action need not be idle",
+    "idleRecoveryPerSecond_is_a_legacy_extraction_label_not_an_idle_gate": true
+  },
+  "movement_multipliers": {
+    "block": 0.42,
+    "hit": 0.2,
+    "special": 0.4,
+    "attack": 0.64,
+    "nixSecondary": 1,
+    "poweredTam": 1.28
+  },
+  "common_projectile_metadata": {
+    "planar_seed_forward": 9,
+    "flight_duration_formula": "clamp((current_aim_distance-9)/speed,0.05,lifetime_seconds)",
+    "launch_height_captured_from_player_vault_height": true,
+    "simulation_travel_is_planar": true,
+    "turret_pulses_use_own_turret_origin_and_launch_height_zero": true
+  },
+  "common_form_rules": {
+    "active_if_remaining_greater_than_epsilon": true,
+    "start_at_special_release": true,
+    "ordinary_duration_seconds": 8,
+    "nix_duration_seconds": 7,
+    "rook_duration_seconds": 10,
+    "cooldown_seconds": 25,
+    "expiry_does_not_clear_existing_projectiles_or_fields": true,
+    "exceptions": [
+      "Rook turrets and designation removed on form end",
+      "Ashe natural live expiry emits aimed finisher; interruption suppresses it",
+      "Defeat clears all projectiles/fields/turrets and vault",
+      "Non-practice wave victory clears projectiles/fields/turrets/vault and sets formRemaining0 directly, bypassing Ashe finisher"
+    ],
+    "engine_performs_no_general_powered_exit_action_lock": true
+  },
+  "characters": [
+    {
+      "id": "bramble",
+      "name": "Bramble",
+      "catalogue_prose": {
+        "role": "Grassland ranger · precise arrows and a billhook",
+        "primary": "Quickdraw — loose a fast aimed arrow.",
+        "secondary": "Billhook — sweep nearby enemies away.",
+        "block": "Briar buckler — hold the folding forearm shield toward danger.",
+        "special": "Briarshot — branches brace the bow; arrows pierce and briefly root their last target."
+      },
+      "planar_speed": 57,
+      "resources": {
+        "ammo_capacity": 0,
+        "initial_ammo": 0,
+        "reload_complete_refills_to_capacity": true,
+        "initial_heat": 0
+      },
+      "base": {
+        "actions": {
+          "primary": {
+            "duration_seconds": 0.42,
+            "release_seconds": 0.1596,
+            "cooldown_seconds": 0.42
+          },
+          "secondary": {
+            "duration_seconds": 0.48,
+            "release_seconds": 0.1824,
+            "cooldown_seconds": 1.6
+          },
+          "special": {
+            "duration_seconds": 0.65,
+            "release_seconds": 0.28,
+            "cooldown_seconds": 25
+          },
+          "block": {
+            "raise_seconds": 0.18,
+            "hold_until_released": true,
+            "damage_release_event": false
+          }
+        },
+        "primary_projectiles": [
+          {
+            "kind": "arrow",
+            "speed": 205,
+            "angle_offset_radians": 0,
+            "planar_spawn_forward": 9,
+            "radius": 2,
+            "lifetime_seconds": 0.92,
+            "damage": 22,
+            "pierce_budget": 0,
+            "blast_radius": 0,
+            "powered_at_launch": false
+          }
+        ]
+      },
+      "powered": {
+        "actions": {
+          "primary": {
+            "duration_seconds": 0.42,
+            "release_seconds": 0.1596,
+            "cooldown_seconds": 0.42
+          },
+          "secondary": {
+            "duration_seconds": 0.48,
+            "release_seconds": 0.1824,
+            "cooldown_seconds": 1.6
+          },
+          "special": {
+            "duration_seconds": 0.65,
+            "release_seconds": 0.28,
+            "cooldown_seconds": 25
+          },
+          "block": {
+            "raise_seconds": 0.18,
+            "hold_until_released": true,
+            "damage_release_event": false
+          }
+        },
+        "primary_projectiles": [
+          {
+            "kind": "arrow",
+            "speed": 205,
+            "angle_offset_radians": 0,
+            "planar_spawn_forward": 9,
+            "radius": 2,
+            "lifetime_seconds": 0.92,
+            "damage": 24,
+            "pierce_budget": 3,
+            "blast_radius": 0,
+            "powered_at_launch": true
+          }
+        ],
+        "duration_seconds": 8,
+        "starts_at_special_release": true
+      },
+      "hit_shapes": {
+        "primary": null,
+        "secondary": {
+          "kind": "frontal_arc",
+          "reach": 36,
+          "minimum_direction_dot": -0.1,
+          "damage": 26,
+          "knockback": 25
+        }
+      },
+      "executed_rules": {
+        "powered_primary": {
+          "projectile_damage": 24,
+          "pierce_budget": 3,
+          "maximum_distinct_targets": 4,
+          "root_last_living_target_only": true,
+          "root_seconds": 0.8,
+          "tank_root_seconds": 0.3,
+          "clear_previous_arrow_hit_roots": true,
+          "powered_flag_captured_on_launch": true
+        },
+        "source_functions": [
+          "E",
+          "T"
+        ]
+      },
+      "art_contract": {
+        "release_frame_indices": "supplied separately by the animation manifest; not inferred from seconds or fixed frame counts",
+        "per_facing_screen_anchors": "new74px art must author these; original planar projectile seed9 is not a screen muzzle anchor",
+        "cardinal_aim_quantisation": "presentation facing only; simulation retains continuous aim"
+      }
+    },
+    {
+      "id": "morel",
+      "name": "Morel",
+      "catalogue_prose": {
+        "role": "Grassland alchemist · prepare and react",
+        "primary": "Reagent flask — throw a flask that leaves a short-lived reagent patch.",
+        "secondary": "Catalyst — send a spark through prepared patches, or burst at close range.",
+        "block": "Mineral ward — hold an alchemical shield.",
+        "special": "Catalyst mask — apparatus opens; flasks ignite nearby patches in a finite chain reaction."
+      },
+      "planar_speed": 57,
+      "resources": {
+        "ammo_capacity": 0,
+        "initial_ammo": 0,
+        "reload_complete_refills_to_capacity": true,
+        "initial_heat": 0
+      },
+      "base": {
+        "actions": {
+          "primary": {
+            "duration_seconds": 0.62,
+            "release_seconds": 0.2356,
+            "cooldown_seconds": 0.62
+          },
+          "secondary": {
+            "duration_seconds": 0.48,
+            "release_seconds": 0.1824,
+            "cooldown_seconds": 1.6
+          },
+          "special": {
+            "duration_seconds": 0.65,
+            "release_seconds": 0.28,
+            "cooldown_seconds": 25
+          },
+          "block": {
+            "raise_seconds": 0.18,
+            "hold_until_released": true,
+            "damage_release_event": false
+          }
+        },
+        "primary_projectiles": [
+          {
+            "kind": "flask",
+            "speed": 135,
+            "angle_offset_radians": 0,
+            "planar_spawn_forward": 9,
+            "radius": 4,
+            "lifetime_seconds": null,
+            "lifetime_formula": "(clamp(aim_distance,28,135)-9)/135",
+            "damage": 14,
+            "pierce_budget": 0,
+            "blast_radius": 0,
+            "powered_at_launch": false
+          }
+        ]
+      },
+      "powered": {
+        "actions": {
+          "primary": {
+            "duration_seconds": 0.62,
+            "release_seconds": 0.2356,
+            "cooldown_seconds": 0.62
+          },
+          "secondary": {
+            "duration_seconds": 0.48,
+            "release_seconds": 0.1824,
+            "cooldown_seconds": 1.6
+          },
+          "special": {
+            "duration_seconds": 0.65,
+            "release_seconds": 0.28,
+            "cooldown_seconds": 25
+          },
+          "block": {
+            "raise_seconds": 0.18,
+            "hold_until_released": true,
+            "damage_release_event": false
+          }
+        },
+        "primary_projectiles": [
+          {
+            "kind": "flask",
+            "speed": 135,
+            "angle_offset_radians": 0,
+            "planar_spawn_forward": 9,
+            "radius": 4,
+            "lifetime_seconds": null,
+            "lifetime_formula": "(clamp(aim_distance,28,135)-9)/135",
+            "damage": 14,
+            "pierce_budget": 0,
+            "blast_radius": 0,
+            "powered_at_launch": true
+          }
+        ],
+        "duration_seconds": 8,
+        "starts_at_special_release": true
+      },
+      "hit_shapes": {
+        "primary": null,
+        "secondary_fallback_without_reagent": {
+          "kind": "frontal_arc",
+          "reach": 34,
+          "minimum_direction_dot": 0,
+          "damage": 20,
+          "knockback": 13
+        }
+      },
+      "executed_rules": {
+        "flask": {
+          "speed": 135,
+          "damage": 14,
+          "radius": 4,
+          "splash_radius": 16,
+          "aimed_distance_min": 28,
+          "aimed_distance_max": 135,
+          "lifetime_formula": "(clamp(aim_distance,28,135)-9)/135",
+          "leaves": {
+            "kind": "reagent",
+            "radius": 18,
+            "lifetime_seconds": 5,
+            "damage_per_tick": 3,
+            "initial_tick_seconds": 0.2,
+            "tick_interval_seconds": 0.6,
+            "maximum_active": 4
+          }
+        },
+        "catalyst": {
+          "select_prepared_reagent_within": 155,
+          "fallback_when_none": "secondary close frontal burst:20 damage",
+          "consumes_each_selected_patch_once": true,
+          "explosion_extra_radius": 8,
+          "damage": 32,
+          "powered_damage": 39,
+          "knockback": 5,
+          "powered_chain_neighbour_distance": 46
+        },
+        "powered_flask_impact": {
+          "initial_neighbour_search_distance": 40,
+          "requires_more_than_one_reagent_patch": true,
+          "then_uses_powered_chain": true,
+          "powered_flag_captured_on_launch": true
+        },
+        "source_functions": [
+          "E",
+          "q",
+          "Y",
+          "T",
+          "G",
+          "_"
+        ]
+      },
+      "art_contract": {
+        "release_frame_indices": "supplied separately by the animation manifest; not inferred from seconds or fixed frame counts",
+        "per_facing_screen_anchors": "new74px art must author these; original planar projectile seed9 is not a screen muzzle anchor",
+        "cardinal_aim_quantisation": "presentation facing only; simulation retains continuous aim"
+      }
+    },
+    {
+      "id": "velvet",
+      "name": "Velvet",
+      "catalogue_prose": {
+        "role": "Coastal duellist · sabre and black lantern",
+        "primary": "Sabre — cut in a quick frontal arc.",
+        "secondary": "Lantern flare — dazzle nearby enemies and expose them to a follow-up.",
+        "block": "Sabre parry — hold the blade across incoming blows.",
+        "special": "Black Lantern — movement leaves finite pale echoes; a successful guard primes a long counter-thrust."
+      },
+      "planar_speed": 63,
+      "resources": {
+        "ammo_capacity": 0,
+        "initial_ammo": 0,
+        "reload_complete_refills_to_capacity": true,
+        "initial_heat": 0
+      },
+      "base": {
+        "actions": {
+          "primary": {
+            "duration_seconds": 0.34,
+            "release_seconds": 0.1292,
+            "cooldown_seconds": 0.34
+          },
+          "secondary": {
+            "duration_seconds": 0.48,
+            "release_seconds": 0.1824,
+            "cooldown_seconds": 1.6
+          },
+          "special": {
+            "duration_seconds": 0.65,
+            "release_seconds": 0.28,
+            "cooldown_seconds": 25
+          },
+          "block": {
+            "raise_seconds": 0.18,
+            "hold_until_released": true,
+            "damage_release_event": false
+          }
+        },
+        "primary_projectiles": []
+      },
+      "powered": {
+        "actions": {
+          "primary": {
+            "duration_seconds": 0.34,
+            "release_seconds": 0.1292,
+            "cooldown_seconds": 0.34
+          },
+          "secondary": {
+            "duration_seconds": 0.48,
+            "release_seconds": 0.1824,
+            "cooldown_seconds": 1.6
+          },
+          "special": {
+            "duration_seconds": 0.65,
+            "release_seconds": 0.28,
+            "cooldown_seconds": 25
+          },
+          "block": {
+            "raise_seconds": 0.18,
+            "hold_until_released": true,
+            "damage_release_event": false
+          }
+        },
+        "primary_projectiles": [],
+        "duration_seconds": 8,
+        "starts_at_special_release": true
+      },
+      "hit_shapes": {
+        "primary": {
+          "kind": "frontal_arc",
+          "reach": 29,
+          "minimum_direction_dot": 0.42,
+          "damage": 21,
+          "knockback": 5
+        },
+        "secondary": {
+          "kind": "frontal_arc",
+          "reach": 55,
+          "minimum_direction_dot": -0.05,
+          "damage": 9,
+          "knockback": 0,
+          "stun_seconds": 0.65,
+          "tank_stun_seconds": 0.25,
+          "vulnerable_seconds": 2.2
+        },
+        "counter": {
+          "kind": "frontal_arc",
+          "reach": 49,
+          "minimum_direction_dot": 0.42,
+          "damage": 35,
+          "knockback": 13
+        }
+      },
+      "executed_rules": {
+        "lantern_flare_damage_order": {
+          "raw_damage": 9,
+          "applies_vulnerability_before_damage": true,
+          "resulting_damage_on_same_target": 12.15,
+          "vulnerability_damage_multiplier": 1.35
+        },
+        "successful_powered_frontal_guard": {
+          "primes_counter_seconds": 2,
+          "any_positive_absorbed_damage": true
+        },
+        "counter": {
+          "next_primary_uses": "counter hit shape",
+          "consumes_counter": true,
+          "survives_form_expiry_until_own_clock_expires": true,
+          "counter_requires_current_powered_form": false
+        },
+        "powered_movement_echo": {
+          "spawn_interval_seconds": 0.4,
+          "initial_clock": 0,
+          "position_behind_actor": 8,
+          "radius": 11,
+          "lifetime_seconds": 1.15,
+          "maximum_active": 4,
+          "damage": 0,
+          "attracts_live_enemies": true,
+          "destroyed_by_one_enemy_projectile_or_melee_hit": true
+        },
+        "source_functions": [
+          "v",
+          "E",
+          "P",
+          "Y",
+          "F",
+          "L",
+          "X"
+        ]
+      },
+      "art_contract": {
+        "release_frame_indices": "supplied separately by the animation manifest; not inferred from seconds or fixed frame counts",
+        "per_facing_screen_anchors": "new74px art must author these; original planar projectile seed9 is not a screen muzzle anchor",
+        "cardinal_aim_quantisation": "presentation facing only; simulation retains continuous aim"
+      }
+    },
+    {
+      "id": "cairn",
+      "name": "Cairn",
+      "catalogue_prose": {
+        "role": "Grassland stone golem · committed strength",
+        "primary": "Stone fist — a heavy close-range punch.",
+        "secondary": "Boulder — throw a stone that stops at its first impact.",
+        "block": "Crossed arms — brace stone forearms.",
+        "special": "Old Growth — roots brace the arms; punches launch a ground shockwave and boulders slam on impact."
+      },
+      "planar_speed": 43,
+      "resources": {
+        "ammo_capacity": 0,
+        "initial_ammo": 0,
+        "reload_complete_refills_to_capacity": true,
+        "initial_heat": 0
+      },
+      "base": {
+        "actions": {
+          "primary": {
+            "duration_seconds": 0.68,
+            "release_seconds": 0.3264,
+            "cooldown_seconds": 0.68
+          },
+          "secondary": {
+            "duration_seconds": 0.72,
+            "release_seconds": 0.34559999999999996,
+            "cooldown_seconds": 1.6
+          },
+          "special": {
+            "duration_seconds": 0.65,
+            "release_seconds": 0.28,
+            "cooldown_seconds": 25
+          },
+          "block": {
+            "raise_seconds": 0.18,
+            "hold_until_released": true,
+            "damage_release_event": false
+          }
+        },
+        "primary_projectiles": []
+      },
+      "powered": {
+        "actions": {
+          "primary": {
+            "duration_seconds": 0.68,
+            "release_seconds": 0.3264,
+            "cooldown_seconds": 0.68
+          },
+          "secondary": {
+            "duration_seconds": 0.72,
+            "release_seconds": 0.34559999999999996,
+            "cooldown_seconds": 1.6
+          },
+          "special": {
+            "duration_seconds": 0.65,
+            "release_seconds": 0.28,
+            "cooldown_seconds": 25
+          },
+          "block": {
+            "raise_seconds": 0.18,
+            "hold_until_released": true,
+            "damage_release_event": false
+          }
+        },
+        "primary_projectiles": [],
+        "duration_seconds": 8,
+        "starts_at_special_release": true
+      },
+      "hit_shapes": {
+        "primary": {
+          "kind": "frontal_arc",
+          "reach": 32,
+          "minimum_direction_dot": 0.35,
+          "damage": 35,
+          "knockback": 12
+        },
+        "powered_extra_primary": {
+          "kind": "forward_segment",
+          "reach": 83,
+          "half_width": 11,
+          "damage": 15,
+          "pierces": true
+        }
+      },
+      "executed_rules": {
+        "boulder": {
+          "speed": 115,
+          "radius": 7,
+          "lifetime_seconds": 1.3,
+          "damage": 34,
+          "powered_damage": 40,
+          "pierce_budget": 0,
+          "powered_blast_radius": 30,
+          "powered_blast_knockback": 13
+        },
+        "powered_primary": {
+          "normal_fist_plus_forward_shockwave": true,
+          "shockwave": {
+            "kind": "forward_segment",
+            "reach": 83,
+            "half_width": 11,
+            "damage": 15,
+            "pierces": true
+          }
+        },
+        "source_functions": [
+          "E",
+          "q",
+          "T"
+        ]
+      },
+      "art_contract": {
+        "release_frame_indices": "supplied separately by the animation manifest; not inferred from seconds or fixed frame counts",
+        "per_facing_screen_anchors": "new74px art must author these; original planar projectile seed9 is not a screen muzzle anchor",
+        "cardinal_aim_quantisation": "presentation facing only; simulation retains continuous aim"
+      }
+    },
+    {
+      "id": "iona",
+      "name": "Iona",
+      "catalogue_prose": {
+        "role": "Grassland storm-lancer · reach and commitment",
+        "primary": "Spearpoint — thrust along a narrow lane.",
+        "secondary": "Wind lunge — commit to a forward surge and spear strike.",
+        "block": "Gust guard — brace the spear in a frontal wind screen.",
+        "special": "Storm Mantle — spear impacts arc to one nearby foe; lunges leave a gust wake."
+      },
+      "planar_speed": 57,
+      "resources": {
+        "ammo_capacity": 0,
+        "initial_ammo": 0,
+        "reload_complete_refills_to_capacity": true,
+        "initial_heat": 0
+      },
+      "base": {
+        "actions": {
+          "primary": {
+            "duration_seconds": 0.48,
+            "release_seconds": 0.1824,
+            "cooldown_seconds": 0.48
+          },
+          "secondary": {
+            "duration_seconds": 0.65,
+            "release_seconds": 0.24700000000000003,
+            "cooldown_seconds": 1.6
+          },
+          "special": {
+            "duration_seconds": 0.65,
+            "release_seconds": 0.28,
+            "cooldown_seconds": 25
+          },
+          "block": {
+            "raise_seconds": 0.18,
+            "hold_until_released": true,
+            "damage_release_event": false
+          }
+        },
+        "primary_projectiles": []
+      },
+      "powered": {
+        "actions": {
+          "primary": {
+            "duration_seconds": 0.48,
+            "release_seconds": 0.1824,
+            "cooldown_seconds": 0.48
+          },
+          "secondary": {
+            "duration_seconds": 0.65,
+            "release_seconds": 0.24700000000000003,
+            "cooldown_seconds": 1.6
+          },
+          "special": {
+            "duration_seconds": 0.65,
+            "release_seconds": 0.28,
+            "cooldown_seconds": 25
+          },
+          "block": {
+            "raise_seconds": 0.18,
+            "hold_until_released": true,
+            "damage_release_event": false
+          }
+        },
+        "primary_projectiles": [],
+        "duration_seconds": 8,
+        "starts_at_special_release": true
+      },
+      "hit_shapes": {
+        "primary": {
+          "kind": "forward_segment",
+          "reach": 48,
+          "half_width": 7,
+          "damage": 23,
+          "pierces": true
+        },
+        "secondary": {
+          "kind": "forward_segment",
+          "reach": 49,
+          "half_width": 9,
+          "damage": 29,
+          "pierces": true,
+          "move_forward": 34,
+          "movement_stops_before_enemy_radius_plus_player_radius_plus": 2,
+          "hit_knockback": 10
+        }
+      },
+      "executed_rules": {
+        "secondary_lunge": {
+          "kind": "forward_segment",
+          "reach": 49,
+          "half_width": 9,
+          "damage": 29,
+          "pierces": true,
+          "move_forward": 34,
+          "movement_stops_before_enemy_radius_plus_player_radius_plus": 2,
+          "hit_knockback": 10
+        },
+        "powered_hit_arc": {
+          "to_one_nearest_other_living_enemy": true,
+          "max_distance_strictly_less_than": 55,
+          "damage": 12,
+          "does_not_recursively_trigger_another_arc": true
+        },
+        "powered_secondary_wake": {
+          "kind": "gust",
+          "centred_between_start_and_end_of_lunge": true,
+          "radius": 25,
+          "lifetime_seconds": 1.5,
+          "damage_per_tick": 8,
+          "initial_tick_seconds": 0.2,
+          "tick_interval_seconds": 0.6
+        },
+        "source_functions": [
+          "q",
+          "B",
+          "_"
+        ]
+      },
+      "art_contract": {
+        "release_frame_indices": "supplied separately by the animation manifest; not inferred from seconds or fixed frame counts",
+        "per_facing_screen_anchors": "new74px art must author these; original planar projectile seed9 is not a screen muzzle anchor",
+        "cardinal_aim_quantisation": "presentation facing only; simulation retains continuous aim"
+      }
+    },
+    {
+      "id": "tam",
+      "name": "Tam",
+      "catalogue_prose": {
+        "role": "Frostline ice monk · disciplined close control",
+        "primary": "Frost palms — palm and elbow strikes build frost.",
+        "secondary": "Ice ridge — send a narrow ridge along the ground.",
+        "block": "Ice guard — cross the forearms behind a frost plate.",
+        "special": "Glacier Form — ice coats the limbs; movement glides, repeated strikes briefly bind then shatter frost."
+      },
+      "planar_speed": 63,
+      "resources": {
+        "ammo_capacity": 0,
+        "initial_ammo": 0,
+        "reload_complete_refills_to_capacity": true,
+        "initial_heat": 0
+      },
+      "base": {
+        "actions": {
+          "primary": {
+            "duration_seconds": 0.32,
+            "release_seconds": 0.1216,
+            "cooldown_seconds": 0.32
+          },
+          "secondary": {
+            "duration_seconds": 0.48,
+            "release_seconds": 0.1824,
+            "cooldown_seconds": 1.6
+          },
+          "special": {
+            "duration_seconds": 0.65,
+            "release_seconds": 0.28,
+            "cooldown_seconds": 25
+          },
+          "block": {
+            "raise_seconds": 0.18,
+            "hold_until_released": true,
+            "damage_release_event": false
+          }
+        },
+        "primary_projectiles": []
+      },
+      "powered": {
+        "actions": {
+          "primary": {
+            "duration_seconds": 0.32,
+            "release_seconds": 0.1216,
+            "cooldown_seconds": 0.32
+          },
+          "secondary": {
+            "duration_seconds": 0.48,
+            "release_seconds": 0.1824,
+            "cooldown_seconds": 1.6
+          },
+          "special": {
+            "duration_seconds": 0.65,
+            "release_seconds": 0.28,
+            "cooldown_seconds": 25
+          },
+          "block": {
+            "raise_seconds": 0.18,
+            "hold_until_released": true,
+            "damage_release_event": false
+          }
+        },
+        "primary_projectiles": [],
+        "duration_seconds": 8,
+        "starts_at_special_release": true
+      },
+      "hit_shapes": {
+        "primary": {
+          "kind": "frontal_arc",
+          "reach": 29,
+          "minimum_direction_dot": 0.4,
+          "damage": 18,
+          "knockback": 4
+        },
+        "secondary": {
+          "kind": "forward_segment",
+          "reach": 100,
+          "half_width": 8,
+          "damage": 24,
+          "pierces": true
+        }
+      },
+      "executed_rules": {
+        "each_eligible_hit": {
+          "frost_added": 1,
+          "frost_cap": 3,
+          "slow_seconds": 1.2,
+          "frost_cleared_after_no_hit_seconds": 3
+        },
+        "powered_shatter_at_three_frost": {
+          "reset_frost_to": 0,
+          "extra_damage": 23,
+          "root_seconds": 0.85,
+          "tank_root_seconds": 0.3,
+          "no_recursive_frost_from_shatter": true
+        },
+        "secondary_ridge": {
+          "slow_seconds": 2,
+          "powered_root_seconds": 0.6,
+          "powered_tank_root_seconds": 0.22
+        },
+        "secondary_ice_field": {
+          "forward_placement": 52,
+          "radius": 19,
+          "lifetime_seconds": 2,
+          "damage": 0,
+          "refresh_slow_seconds": 0.7,
+          "initial_tick_seconds": 0.2,
+          "tick_interval_seconds": 0.6
+        },
+        "powered_movement_multiplier": 1.28,
+        "source_functions": [
+          "v",
+          "q",
+          "B",
+          "L",
+          "_"
+        ]
+      },
+      "art_contract": {
+        "release_frame_indices": "supplied separately by the animation manifest; not inferred from seconds or fixed frame counts",
+        "per_facing_screen_anchors": "new74px art must author these; original planar projectile seed9 is not a screen muzzle anchor",
+        "cardinal_aim_quantisation": "presentation facing only; simulation retains continuous aim"
+      }
+    },
+    {
+      "id": "brine",
+      "name": "Brine",
+      "catalogue_prose": {
+        "role": "Coastal diver · harpoon gun and integral winch",
+        "primary": "Harpoon gun — fire one tethered harpoon, then reload the integral reel.",
+        "secondary": "Reel — pull a light target or winch toward an anchored heavy target; untethered, sweep the gun butt.",
+        "block": "Dive brace — lower the gun and hold the reinforced forearm guard.",
+        "special": "Abyssal Drive — the winch overdrives; heavy piercing shots and stronger controlled reeling."
+      },
+      "planar_speed": 57,
+      "resources": {
+        "ammo_capacity": 1,
+        "initial_ammo": 1,
+        "reload_complete_refills_to_capacity": true,
+        "initial_heat": 0
+      },
+      "base": {
+        "actions": {
+          "primary": {
+            "duration_seconds": 0.64,
+            "release_seconds": 0.2432,
+            "cooldown_seconds": 0.64
+          },
+          "secondary": {
+            "duration_seconds": 0.48,
+            "release_seconds": 0.1824,
+            "cooldown_seconds": 0.7
+          },
+          "special": {
+            "duration_seconds": 0.65,
+            "release_seconds": 0.28,
+            "cooldown_seconds": 25
+          },
+          "block": {
+            "raise_seconds": 0.18,
+            "hold_until_released": true,
+            "damage_release_event": false
+          }
+        },
+        "primary_projectiles": [
+          {
+            "kind": "harpoon",
+            "speed": 175,
+            "angle_offset_radians": 0,
+            "planar_spawn_forward": 9,
+            "radius": 3,
+            "lifetime_seconds": 0.95,
+            "damage": 29,
+            "pierce_budget": 0,
+            "blast_radius": 0,
+            "powered_at_launch": false
+          }
+        ]
+      },
+      "powered": {
+        "actions": {
+          "primary": {
+            "duration_seconds": 0.64,
+            "release_seconds": 0.2432,
+            "cooldown_seconds": 0.64
+          },
+          "secondary": {
+            "duration_seconds": 0.48,
+            "release_seconds": 0.1824,
+            "cooldown_seconds": 0.7
+          },
+          "special": {
+            "duration_seconds": 0.65,
+            "release_seconds": 0.28,
+            "cooldown_seconds": 25
+          },
+          "block": {
+            "raise_seconds": 0.18,
+            "hold_until_released": true,
+            "damage_release_event": false
+          }
+        },
+        "primary_projectiles": [
+          {
+            "kind": "harpoon",
+            "speed": 205,
+            "angle_offset_radians": 0,
+            "planar_spawn_forward": 9,
+            "radius": 3,
+            "lifetime_seconds": 0.95,
+            "damage": 39,
+            "pierce_budget": 1,
+            "blast_radius": 0,
+            "powered_at_launch": true
+          }
+        ],
+        "duration_seconds": 8,
+        "starts_at_special_release": true
+      },
+      "hit_shapes": {
+        "secondary_fallback": {
+          "kind": "frontal_arc",
+          "reach": 32,
+          "minimum_direction_dot": 0.2,
+          "damage": 21,
+          "knockback": 16
+        }
+      },
+      "executed_rules": {
+        "primary": {
+          "replaces_previous_harpoon_projectiles_and_tether": true,
+          "reload_seconds": 0.95,
+          "powered_reload_seconds": 0.52
+        },
+        "harpoon_hit": {
+          "attaches_last_living_hit_target": true,
+          "tether_seconds": 3,
+          "powered_tether_seconds": 4,
+          "powered_flag_captured_on_launch": true
+        },
+        "secondary_reel": {
+          "requires_living_tether_target_within": 185,
+          "light_target_pull": 42,
+          "powered_light_target_pull": 61,
+          "heavy_kinds": [
+            "tank",
+            "dummy"
+          ],
+          "heavy_target_pulls_operator_instead": true,
+          "stop_gap_formula": "player_radius+target_radius+3",
+          "damage": 15,
+          "powered_damage": 23,
+          "powered_tether_remaining_after_reel": 2,
+          "ordinary_reel_clears_tether": true
+        },
+        "secondary_without_valid_tether": {
+          "kind": "frontal_arc",
+          "reach": 32,
+          "minimum_direction_dot": 0.2,
+          "damage": 21,
+          "knockback": 16
+        },
+        "activation": {
+          "refill_ammo": true,
+          "clear_reload": true
+        },
+        "source_functions": [
+          "E",
+          "q",
+          "M",
+          "T",
+          "v"
+        ]
+      },
+      "art_contract": {
+        "release_frame_indices": "supplied separately by the animation manifest; not inferred from seconds or fixed frame counts",
+        "per_facing_screen_anchors": "new74px art must author these; original planar projectile seed9 is not a screen muzzle anchor",
+        "cardinal_aim_quantisation": "presentation facing only; simulation retains continuous aim"
+      }
+    },
+    {
+      "id": "pendle",
+      "name": "Pendle",
+      "catalogue_prose": {
+        "role": "Sunstone robot gunslinger · deliberate marksmanship",
+        "primary": "Revolver — one accurate shot; six rounds before a full reload.",
+        "secondary": "Fan fire — fan up to three remaining revolver rounds in a narrow spread, then reload. During Longshot, strike nearby enemies with the rifle stock instead.",
+        "block": "Steel plate — fold out the forearm plate.",
+        "special": "Longshot — holster the revolver and draw a western marksman rifle; slow, penetrating shots replace the primary."
+      },
+      "planar_speed": 57,
+      "resources": {
+        "ammo_capacity": 6,
+        "initial_ammo": 6,
+        "reload_complete_refills_to_capacity": true,
+        "initial_heat": 0
+      },
+      "base": {
+        "actions": {
+          "primary": {
+            "duration_seconds": 0.43,
+            "release_seconds": 0.1634,
+            "cooldown_seconds": 0.43
+          },
+          "secondary": {
+            "duration_seconds": 0.48,
+            "release_seconds": 0.1824,
+            "cooldown_seconds": 1.6
+          },
+          "special": {
+            "duration_seconds": 0.65,
+            "release_seconds": 0.28,
+            "cooldown_seconds": 25
+          },
+          "block": {
+            "raise_seconds": 0.18,
+            "hold_until_released": true,
+            "damage_release_event": false
+          }
+        },
+        "primary_projectiles": [
+          {
+            "kind": "bullet",
+            "speed": 290,
+            "angle_offset_radians": 0,
+            "planar_spawn_forward": 9,
+            "radius": 2,
+            "lifetime_seconds": 0.8,
+            "damage": 24,
+            "pierce_budget": 0,
+            "blast_radius": 0,
+            "powered_at_launch": false
+          }
+        ]
+      },
+      "powered": {
+        "actions": {
+          "primary": {
+            "duration_seconds": 0.9,
+            "release_seconds": 0.342,
+            "cooldown_seconds": 0.9
+          },
+          "secondary": {
+            "duration_seconds": 0.48,
+            "release_seconds": 0.1824,
+            "cooldown_seconds": 1.6
+          },
+          "special": {
+            "duration_seconds": 0.65,
+            "release_seconds": 0.28,
+            "cooldown_seconds": 25
+          },
+          "block": {
+            "raise_seconds": 0.18,
+            "hold_until_released": true,
+            "damage_release_event": false
+          }
+        },
+        "primary_projectiles": [
+          {
+            "kind": "rifle",
+            "speed": 320,
+            "angle_offset_radians": 0,
+            "planar_spawn_forward": 9,
+            "radius": 2,
+            "lifetime_seconds": 1,
+            "damage": 49,
+            "pierce_budget": 4,
+            "blast_radius": 0,
+            "powered_at_launch": true
+          }
+        ],
+        "duration_seconds": 8,
+        "starts_at_special_release": true
+      },
+      "hit_shapes": {
+        "powered_secondary": {
+          "kind": "forward_segment",
+          "reach": 44,
+          "half_width": 0.5,
+          "damage": 22,
+          "pierces": false
+        }
+      },
+      "executed_rules": {
+        "revolver_capacity": 6,
+        "ordinary_primary": {
+          "consume_rounds": 1,
+          "reload_on_empty_seconds": 1.35
+        },
+        "ordinary_secondary": {
+          "shots": "min(3,current_ammo)",
+          "angle_spacing_radians": 0.11,
+          "bullet_damage": 18,
+          "speed": 270,
+          "radius": 2,
+          "lifetime_seconds": 0.75,
+          "reload_after_fan_seconds": 1.4
+        },
+        "powered_primary": {
+          "rifle_damage": 49,
+          "speed": 320,
+          "pierce_budget": 4,
+          "maximum_distinct_targets": 5,
+          "consume_rounds": 0,
+          "ignores_ordinary_ammo_reload_gate": true,
+          "duration_seconds": 0.9
+        },
+        "powered_secondary": {
+          "kind": "forward_segment",
+          "reach": 44,
+          "half_width": 0.5,
+          "damage": 22,
+          "pierces": false
+        },
+        "activation": {
+          "does_not_refill_ammo_or_clear_reload": true
+        },
+        "source_functions": [
+          "w",
+          "E",
+          "q",
+          "M",
+          "v"
+        ]
+      },
+      "art_contract": {
+        "release_frame_indices": "supplied separately by the animation manifest; not inferred from seconds or fixed frame counts",
+        "per_facing_screen_anchors": "new74px art must author these; original planar projectile seed9 is not a screen muzzle anchor",
+        "cardinal_aim_quantisation": "presentation facing only; simulation retains continuous aim"
+      }
+    },
+    {
+      "id": "mirra",
+      "name": "Mirra",
+      "catalogue_prose": {
+        "role": "Oasis water diviner · shaped currents",
+        "primary": "Water bolt — an aimed current; firing through a spring seal widens it.",
+        "secondary": "Spring seal — place a finite pool at the aimed point, within reach.",
+        "block": "Water curtain — hold a frontal flowing shield.",
+        "special": "Oasis Unbound — seals connect in damaging currents; new seals redirect the network."
+      },
+      "planar_speed": 57,
+      "resources": {
+        "ammo_capacity": 0,
+        "initial_ammo": 0,
+        "reload_complete_refills_to_capacity": true,
+        "initial_heat": 0
+      },
+      "base": {
+        "actions": {
+          "primary": {
+            "duration_seconds": 0.43,
+            "release_seconds": 0.1634,
+            "cooldown_seconds": 0.43
+          },
+          "secondary": {
+            "duration_seconds": 0.48,
+            "release_seconds": 0.1824,
+            "cooldown_seconds": 1.05
+          },
+          "special": {
+            "duration_seconds": 0.65,
+            "release_seconds": 0.28,
+            "cooldown_seconds": 25
+          },
+          "block": {
+            "raise_seconds": 0.18,
+            "hold_until_released": true,
+            "damage_release_event": false
+          }
+        },
+        "primary_projectiles": [
+          {
+            "kind": "water",
+            "speed": 170,
+            "angle_offset_radians": 0,
+            "planar_spawn_forward": 9,
+            "radius": 4,
+            "lifetime_seconds": 1.05,
+            "damage": 21,
+            "pierce_budget": 0,
+            "blast_radius": 0,
+            "powered_at_launch": false
+          }
+        ]
+      },
+      "powered": {
+        "actions": {
+          "primary": {
+            "duration_seconds": 0.43,
+            "release_seconds": 0.1634,
+            "cooldown_seconds": 0.43
+          },
+          "secondary": {
+            "duration_seconds": 0.48,
+            "release_seconds": 0.1824,
+            "cooldown_seconds": 1.05
+          },
+          "special": {
+            "duration_seconds": 0.65,
+            "release_seconds": 0.28,
+            "cooldown_seconds": 25
+          },
+          "block": {
+            "raise_seconds": 0.18,
+            "hold_until_released": true,
+            "damage_release_event": false
+          }
+        },
+        "primary_projectiles": [
+          {
+            "kind": "water",
+            "speed": 170,
+            "angle_offset_radians": 0,
+            "planar_spawn_forward": 9,
+            "radius": 4,
+            "lifetime_seconds": 1.05,
+            "damage": 21,
+            "pierce_budget": 0,
+            "blast_radius": 0,
+            "powered_at_launch": true
+          }
+        ],
+        "duration_seconds": 8,
+        "starts_at_special_release": true
+      },
+      "hit_shapes": {
+        "secondary": {
+          "kind": "aimed_disc",
+          "max_placement_distance": 112,
+          "radius": 18,
+          "damage": 10,
+          "slow_seconds": 1.5
+        }
+      },
+      "executed_rules": {
+        "primary_through_seal": {
+          "only_if_seal_crossing_precedes_or_ties_first_enemy_collision": true,
+          "once_per_projectile": true,
+          "damage_after_amplification": 28,
+          "radius_after_amplification": 6,
+          "pierce_budget_after_amplification": 1,
+          "maximum_distinct_targets": 2
+        },
+        "secondary_seal": {
+          "max_aimed_distance": 112,
+          "radius": 18,
+          "lifetime_seconds": 6,
+          "powered_lifetime_seconds": 8,
+          "replacement_threshold": 3,
+          "powered_replacement_threshold": 5,
+          "insertion_removes_exactly_one_oldest_if_count_at_least_threshold": true,
+          "form_expiry_does_not_shrink_existing_five_seals_to_three": true,
+          "hit_damage": 10,
+          "hit_slow_seconds": 1.5
+        },
+        "activation_seal": {
+          "forward_placement": 30,
+          "radius": 16,
+          "lifetime_seconds": 8
+        },
+        "powered_current_network": {
+          "interval_seconds": 0.35,
+          "initial_clock": 0,
+          "ordered_segments": "player to oldest seal, then each previous seal to next seal",
+          "half_width": 6,
+          "damage": 10,
+          "slow_seconds": 0.5,
+          "once_per_enemy_per_network_tick": true,
+          "stops_when_form_expires": true
+        },
+        "source_functions": [
+          "E",
+          "q",
+          "M",
+          "Y",
+          "F",
+          "_"
+        ]
+      },
+      "art_contract": {
+        "release_frame_indices": "supplied separately by the animation manifest; not inferred from seconds or fixed frame counts",
+        "per_facing_screen_anchors": "new74px art must author these; original planar projectile seed9 is not a screen muzzle anchor",
+        "cardinal_aim_quantisation": "presentation facing only; simulation retains continuous aim"
+      }
+    },
+    {
+      "id": "ashe",
+      "name": "Ashe",
+      "catalogue_prose": {
+        "role": "Sunstone ember knight · sword and cinder armour",
+        "primary": "Ember blade — sweep the sword in a close arc.",
+        "secondary": "Ember thrust — a committed, longer thrust.",
+        "block": "Armoured guard — brace the sword and shoulder plate.",
+        "special": "Cinderhelm — put on the closed helmet; sword blows cast flame crescents and the form ends in an aimed fire finisher."
+      },
+      "planar_speed": 57,
+      "resources": {
+        "ammo_capacity": 0,
+        "initial_ammo": 0,
+        "reload_complete_refills_to_capacity": true,
+        "initial_heat": 0
+      },
+      "base": {
+        "actions": {
+          "primary": {
+            "duration_seconds": 0.48,
+            "release_seconds": 0.1824,
+            "cooldown_seconds": 0.48
+          },
+          "secondary": {
+            "duration_seconds": 0.65,
+            "release_seconds": 0.24700000000000003,
+            "cooldown_seconds": 1.6
+          },
+          "special": {
+            "duration_seconds": 0.65,
+            "release_seconds": 0.28,
+            "cooldown_seconds": 25
+          },
+          "block": {
+            "raise_seconds": 0.18,
+            "hold_until_released": true,
+            "damage_release_event": false
+          }
+        },
+        "primary_projectiles": []
+      },
+      "powered": {
+        "actions": {
+          "primary": {
+            "duration_seconds": 0.48,
+            "release_seconds": 0.1824,
+            "cooldown_seconds": 0.48
+          },
+          "secondary": {
+            "duration_seconds": 0.65,
+            "release_seconds": 0.24700000000000003,
+            "cooldown_seconds": 1.6
+          },
+          "special": {
+            "duration_seconds": 0.65,
+            "release_seconds": 0.28,
+            "cooldown_seconds": 25
+          },
+          "block": {
+            "raise_seconds": 0.18,
+            "hold_until_released": true,
+            "damage_release_event": false
+          }
+        },
+        "primary_projectiles": [
+          {
+            "kind": "flame-crescent",
+            "speed": 145,
+            "angle_offset_radians": 0,
+            "planar_spawn_forward": 9,
+            "radius": 7,
+            "lifetime_seconds": 0.65,
+            "damage": 15,
+            "pierce_budget": 2,
+            "blast_radius": 0,
+            "powered_at_launch": true
+          }
+        ],
+        "duration_seconds": 8,
+        "starts_at_special_release": true
+      },
+      "hit_shapes": {
+        "primary": {
+          "kind": "frontal_arc",
+          "reach": 32,
+          "minimum_direction_dot": 0.32,
+          "damage": 24,
+          "knockback": 6
+        },
+        "secondary": {
+          "kind": "forward_segment",
+          "reach": 65,
+          "half_width": 9,
+          "damage": 32,
+          "pierces": true
+        },
+        "powered_secondary": {
+          "kind": "forward_segment",
+          "reach": 65,
+          "half_width": 9,
+          "damage": 38,
+          "pierces": true
+        },
+        "expiry_finisher": {
+          "kind": "forward_segment",
+          "reach": 98,
+          "half_width": 13,
+          "damage": 34,
+          "pierces": true
+        }
+      },
+      "executed_rules": {
+        "powered_primary_addition": {
+          "kind": "flame-crescent",
+          "speed": 145,
+          "damage": 15,
+          "radius": 7,
+          "lifetime_seconds": 0.65,
+          "pierce_budget": 2
+        },
+        "powered_secondary_flame": {
+          "forward_placement": 42,
+          "radius": 15,
+          "lifetime_seconds": 2,
+          "damage_per_tick": 8,
+          "initial_tick_seconds": 0.2,
+          "tick_interval_seconds": 0.6
+        },
+        "natural_expiry_finisher": {
+          "hit": {
+            "kind": "forward_segment",
+            "reach": 98,
+            "half_width": 13,
+            "damage": 34,
+            "pierces": true
+          },
+          "uses_current_aim_direction_at_expiry": true,
+          "requires_alive": true,
+          "suppressed_on_interruption_or_defeat": true,
+          "flame": {
+            "forward_placement": 52,
+            "radius": 16,
+            "lifetime_seconds": 1,
+            "damage_per_tick": 7
+          }
+        },
+        "source_functions": [
+          "E",
+          "q",
+          "X",
+          "_"
+        ]
+      },
+      "art_contract": {
+        "release_frame_indices": "supplied separately by the animation manifest; not inferred from seconds or fixed frame counts",
+        "per_facing_screen_anchors": "new74px art must author these; original planar projectile seed9 is not a screen muzzle anchor",
+        "cardinal_aim_quantisation": "presentation facing only; simulation retains continuous aim"
+      }
+    },
+    {
+      "id": "clack",
+      "name": "Clack",
+      "catalogue_prose": {
+        "role": "Coastal launcher gunner · carried rockets",
+        "primary": "Shoulder rocket — fire a visible rocket with a bounded blast radius; reload between shots.",
+        "secondary": "Concussive vent — release a short-range space-clearing blast from the launcher’s separate pressure chamber, including while its rocket loader reloads.",
+        "block": "Blast guard — unfold the launcher shield.",
+        "special": "Siegebreaker — the loader and shoulder brace unfold; three-rocket salvos replace single shots while the gunner remains mobile."
+      },
+      "planar_speed": 49,
+      "resources": {
+        "ammo_capacity": 1,
+        "initial_ammo": 1,
+        "reload_complete_refills_to_capacity": true,
+        "initial_heat": 0
+      },
+      "base": {
+        "actions": {
+          "primary": {
+            "duration_seconds": 0.8,
+            "release_seconds": 0.384,
+            "cooldown_seconds": 0.8
+          },
+          "secondary": {
+            "duration_seconds": 0.72,
+            "release_seconds": 0.34559999999999996,
+            "cooldown_seconds": 1.6
+          },
+          "special": {
+            "duration_seconds": 0.65,
+            "release_seconds": 0.28,
+            "cooldown_seconds": 25
+          },
+          "block": {
+            "raise_seconds": 0.18,
+            "hold_until_released": true,
+            "damage_release_event": false
+          }
+        },
+        "primary_projectiles": [
+          {
+            "kind": "rocket",
+            "speed": 125,
+            "angle_offset_radians": 0,
+            "planar_spawn_forward": 9,
+            "radius": 4,
+            "lifetime_seconds": 1.45,
+            "damage": 40,
+            "pierce_budget": 0,
+            "blast_radius": 23,
+            "powered_at_launch": false
+          }
+        ]
+      },
+      "powered": {
+        "actions": {
+          "primary": {
+            "duration_seconds": 0.7,
+            "release_seconds": 0.33599999999999997,
+            "cooldown_seconds": 0.7
+          },
+          "secondary": {
+            "duration_seconds": 0.72,
+            "release_seconds": 0.34559999999999996,
+            "cooldown_seconds": 1.6
+          },
+          "special": {
+            "duration_seconds": 0.65,
+            "release_seconds": 0.28,
+            "cooldown_seconds": 25
+          },
+          "block": {
+            "raise_seconds": 0.18,
+            "hold_until_released": true,
+            "damage_release_event": false
+          }
+        },
+        "primary_projectiles": [
+          {
+            "kind": "rocket",
+            "speed": 145,
+            "angle_offset_radians": -0.09,
+            "planar_spawn_forward": 9,
+            "radius": 4,
+            "lifetime_seconds": 1.45,
+            "damage": 20,
+            "pierce_budget": 0,
+            "blast_radius": 19,
+            "powered_at_launch": true
+          },
+          {
+            "kind": "rocket",
+            "speed": 145,
+            "angle_offset_radians": 0,
+            "planar_spawn_forward": 9,
+            "radius": 4,
+            "lifetime_seconds": 1.45,
+            "damage": 20,
+            "pierce_budget": 0,
+            "blast_radius": 19,
+            "powered_at_launch": true
+          },
+          {
+            "kind": "rocket",
+            "speed": 145,
+            "angle_offset_radians": 0.09,
+            "planar_spawn_forward": 9,
+            "radius": 4,
+            "lifetime_seconds": 1.45,
+            "damage": 20,
+            "pierce_budget": 0,
+            "blast_radius": 19,
+            "powered_at_launch": true
+          }
+        ],
+        "duration_seconds": 8,
+        "starts_at_special_release": true
+      },
+      "hit_shapes": {
+        "secondary": {
+          "kind": "frontal_arc",
+          "reach": 43,
+          "minimum_direction_dot": 0.05,
+          "damage": 25,
+          "knockback": 37
+        }
+      },
+      "executed_rules": {
+        "capacity": 1,
+        "ordinary_primary": {
+          "rocket_count": 1,
+          "damage_per_rocket": 40,
+          "speed": 125,
+          "blast_radius": 23,
+          "reload_seconds": 1.15
+        },
+        "powered_primary": {
+          "rocket_count": 3,
+          "angle_offsets_radians": [
+            -0.09,
+            0,
+            0.09
+          ],
+          "damage_per_rocket": 20,
+          "speed": 145,
+          "blast_radius": 19,
+          "reload_seconds": 0.7,
+          "mobile_during_salvo": true
+        },
+        "all_rockets": {
+          "radius": 4,
+          "lifetime_seconds": 1.45,
+          "blast_knockback": 6
+        },
+        "secondary_vent": {
+          "usable_during_primary_reload": true,
+          "hit": {
+            "kind": "frontal_arc",
+            "reach": 43,
+            "minimum_direction_dot": 0.05,
+            "damage": 25,
+            "knockback": 37
+          }
+        },
+        "activation": {
+          "refill_ammo": true,
+          "clear_reload": true
+        },
+        "source_functions": [
+          "E",
+          "q",
+          "M",
+          "w",
+          "T"
+        ]
+      },
+      "art_contract": {
+        "release_frame_indices": "supplied separately by the animation manifest; not inferred from seconds or fixed frame counts",
+        "per_facing_screen_anchors": "new74px art must author these; original planar projectile seed9 is not a screen muzzle anchor",
+        "cardinal_aim_quantisation": "presentation facing only; simulation retains continuous aim"
+      }
+    },
+    {
+      "id": "nix",
+      "name": "Nix",
+      "catalogue_prose": {
+        "role": "Neon Harbour cyborg · laser arm, heat and misdirection",
+        "primary": "Laser arm — emit a narrow, aimable pulse; sustained use builds heat and the arm cools passively.",
+        "secondary": "Afterimage — leave one stationary hologram at the activation origin while moving freely; it attracts enemy attacks and breaks at the first hit or after three seconds.",
+        "block": "Arm shield — hold a compact energy guard.",
+        "special": "Limit Release — arm casing opens; narrow beams pierce multiple targets until the finite form ends."
+      },
+      "planar_speed": 57,
+      "resources": {
+        "ammo_capacity": 0,
+        "initial_ammo": 0,
+        "reload_complete_refills_to_capacity": true,
+        "initial_heat": 0
+      },
+      "base": {
+        "actions": {
+          "primary": {
+            "duration_seconds": 0.21,
+            "release_seconds": 0.0798,
+            "cooldown_seconds": 0.21
+          },
+          "secondary": {
+            "duration_seconds": 0.48,
+            "release_seconds": 0.05,
+            "cooldown_seconds": 6
+          },
+          "special": {
+            "duration_seconds": 0.65,
+            "release_seconds": 0.28,
+            "cooldown_seconds": 25
+          },
+          "block": {
+            "raise_seconds": 0.18,
+            "hold_until_released": true,
+            "damage_release_event": false
+          }
+        },
+        "primary_projectiles": []
+      },
+      "powered": {
+        "actions": {
+          "primary": {
+            "duration_seconds": 0.21,
+            "release_seconds": 0.0798,
+            "cooldown_seconds": 0.21
+          },
+          "secondary": {
+            "duration_seconds": 0.48,
+            "release_seconds": 0.05,
+            "cooldown_seconds": 6
+          },
+          "special": {
+            "duration_seconds": 0.65,
+            "release_seconds": 0.28,
+            "cooldown_seconds": 25
+          },
+          "block": {
+            "raise_seconds": 0.18,
+            "hold_until_released": true,
+            "damage_release_event": false
+          }
+        },
+        "primary_projectiles": [],
+        "duration_seconds": 7,
+        "starts_at_special_release": true
+      },
+      "hit_shapes": {
+        "primary": {
+          "kind": "forward_segment",
+          "reach": 155,
+          "half_width": 3,
+          "damage": 12,
+          "pierces": false
+        },
+        "powered_primary": {
+          "kind": "forward_segment",
+          "reach": 175,
+          "half_width": 4.5,
+          "damage": 15,
+          "pierces": true
+        }
+      },
+      "executed_rules": {
+        "heat": {
+          "maximum": 100,
+          "block_primary_when_at_least": 92,
+          "primary_adds": 19,
+          "powered_primary_adds": 12,
+          "cooling_per_second_during_primary": 4,
+          "cooling_per_second_other_powered_actions": 7,
+          "cooling_per_second_other_ordinary_actions": 15
+        },
+        "secondary_afterimage": {
+          "kind": "hologram",
+          "at_action_commitment_origin": true,
+          "stationary": true,
+          "radius": 7,
+          "lifetime_seconds": 3,
+          "maximum_active": 1,
+          "damage": 0,
+          "destroyed_by_one_enemy_projectile_or_melee_hit": true,
+          "attracts_live_enemies": true,
+          "direct_release_heat_change": 0,
+          "normal_per_tick_cooling_continues": true,
+          "guarantees_projectile_interception": false
+        },
+        "activation": {
+          "cap_existing_heat_at": 45
+        },
+        "source_functions": [
+          "E",
+          "q",
+          "M",
+          "v",
+          "Y",
+          "F",
+          "L"
+        ]
+      },
+      "art_contract": {
+        "release_frame_indices": "supplied separately by the animation manifest; not inferred from seconds or fixed frame counts",
+        "per_facing_screen_anchors": "new74px art must author these; original planar projectile seed9 is not a screen muzzle anchor",
+        "cardinal_aim_quantisation": "presentation facing only; simulation retains continuous aim"
+      }
+    },
+    {
+      "id": "rook",
+      "name": "Rook",
+      "catalogue_prose": {
+        "role": "Orbital salvager · pulse carbine, thruster vault and paired space turrets",
+        "primary": "Pulse carbine — discrete aimed amber bolts, with no disc or tether.",
+        "secondary": "Thruster Vault — make a short directional jetpack vault, keeping aim and carbine available; airborne height avoids ground melee, while projectiles and explosions still hit.",
+        "block": "Energy guard — hold a rectangular amber shield.",
+        "special": "Orbital Rig — deploy exactly two finite space turrets; carbine hits designate their target, and both require the operator nearby."
+      },
+      "planar_speed": 57,
+      "resources": {
+        "ammo_capacity": 0,
+        "initial_ammo": 0,
+        "reload_complete_refills_to_capacity": true,
+        "initial_heat": 0
+      },
+      "base": {
+        "actions": {
+          "primary": {
+            "duration_seconds": 0.3,
+            "release_seconds": 0.11399999999999999,
+            "cooldown_seconds": 0.3
+          },
+          "secondary": {
+            "duration_seconds": 0.55,
+            "release_seconds": 0.05,
+            "cooldown_seconds": 4
+          },
+          "special": {
+            "duration_seconds": 0.65,
+            "release_seconds": 0.28,
+            "cooldown_seconds": 25
+          },
+          "block": {
+            "raise_seconds": 0.18,
+            "hold_until_released": true,
+            "damage_release_event": false
+          }
+        },
+        "primary_projectiles": [
+          {
+            "kind": "pulse",
+            "speed": 220,
+            "angle_offset_radians": 0,
+            "planar_spawn_forward": 9,
+            "radius": 3,
+            "lifetime_seconds": 1,
+            "damage": 16,
+            "pierce_budget": 0,
+            "blast_radius": 0,
+            "powered_at_launch": false
+          }
+        ]
+      },
+      "powered": {
+        "actions": {
+          "primary": {
+            "duration_seconds": 0.3,
+            "release_seconds": 0.11399999999999999,
+            "cooldown_seconds": 0.3
+          },
+          "secondary": {
+            "duration_seconds": 0.55,
+            "release_seconds": 0.05,
+            "cooldown_seconds": 4
+          },
+          "special": {
+            "duration_seconds": 0.65,
+            "release_seconds": 0.28,
+            "cooldown_seconds": 25
+          },
+          "block": {
+            "raise_seconds": 0.18,
+            "hold_until_released": true,
+            "damage_release_event": false
+          }
+        },
+        "primary_projectiles": [
+          {
+            "kind": "pulse",
+            "speed": 220,
+            "angle_offset_radians": 0,
+            "planar_spawn_forward": 9,
+            "radius": 3,
+            "lifetime_seconds": 1,
+            "damage": 16,
+            "pierce_budget": 0,
+            "blast_radius": 0,
+            "powered_at_launch": true
+          }
+        ],
+        "duration_seconds": 10,
+        "starts_at_special_release": true
+      },
+      "hit_shapes": {},
+      "executed_rules": {
+        "vault": {
+          "duration": 0.55,
+          "height": 18,
+          "airborneThreshold": 2,
+          "forwardSpeed": 72,
+          "carbineAvailable": true,
+          "avoids": [
+            "melee",
+            "field"
+          ],
+          "stillHitBy": [
+            "projectile",
+            "explosion"
+          ]
+        },
+        "vault_direction": "movement direction if movement length>0.1; otherwise aim direction at commitment",
+        "carbine_hit": {
+          "designates_last_living_target_seconds": 1.2
+        },
+        "powered_turrets": {
+          "count": 2,
+          "lifetime_seconds": 10,
+          "initial_offsets": [
+            [
+              -15,
+              -14
+            ],
+            [
+              15,
+              -14
+            ]
+          ],
+          "target_follow_offsets": [
+            [
+              -16,
+              -14
+            ],
+            [
+              16,
+              -14
+            ]
+          ],
+          "follow_factor_per_fixed_step": 0.11666666666666667,
+          "require_designated_living_target_operator_distance_strictly_less_than": 190,
+          "require_turret_operator_distance_strictly_less_than": 55,
+          "preserves_live_existing_designation_on_activation": true,
+          "initial_cooldown_seconds": 0.18,
+          "firing_interval_seconds": 0.44,
+          "projectile": {
+            "kind": "turret-pulse",
+            "speed": 205,
+            "radius": 2,
+            "lifetime_seconds": 1,
+            "damage": 7,
+            "pierce_budget": 0
+          },
+          "removed_at_form_expiry_or_defeat": true
+        },
+        "source_functions": [
+          "v",
+          "q",
+          "M",
+          "T",
+          "N",
+          "P",
+          "X"
+        ]
+      },
+      "art_contract": {
+        "release_frame_indices": "supplied separately by the animation manifest; not inferred from seconds or fixed frame counts",
+        "per_facing_screen_anchors": "new74px art must author these; original planar projectile seed9 is not a screen muzzle anchor",
+        "cardinal_aim_quantisation": "presentation facing only; simulation retains continuous aim"
+      }
+    },
+    {
+      "id": "mote",
+      "name": "Mote",
+      "catalogue_prose": {
+        "role": "Genderless observatory keeper · glass and gravity",
+        "primary": "Glass volley — three precise converging shards.",
+        "secondary": "Gravity anchor — briefly draw nearby foes into a marked point.",
+        "block": "Glass crescent — hold overlapping panes toward the threat.",
+        "special": "Aphelion — the core opens; orbiting glass releases directed shard storms with each volley."
+      },
+      "planar_speed": 57,
+      "resources": {
+        "ammo_capacity": 0,
+        "initial_ammo": 0,
+        "reload_complete_refills_to_capacity": true,
+        "initial_heat": 0
+      },
+      "base": {
+        "actions": {
+          "primary": {
+            "duration_seconds": 0.48,
+            "release_seconds": 0.1824,
+            "cooldown_seconds": 0.48
+          },
+          "secondary": {
+            "duration_seconds": 0.48,
+            "release_seconds": 0.1824,
+            "cooldown_seconds": 3.1
+          },
+          "special": {
+            "duration_seconds": 0.65,
+            "release_seconds": 0.28,
+            "cooldown_seconds": 25
+          },
+          "block": {
+            "raise_seconds": 0.18,
+            "hold_until_released": true,
+            "damage_release_event": false
+          }
+        },
+        "primary_projectiles": [
+          {
+            "kind": "glass",
+            "speed": 179.99999999999997,
+            "angle_offset_radians": -0.11,
+            "planar_spawn_forward": 9,
+            "radius": 2,
+            "lifetime_seconds": 0.95,
+            "damage": 9,
+            "pierce_budget": 0,
+            "blast_radius": 0,
+            "powered_at_launch": false
+          },
+          {
+            "kind": "glass",
+            "speed": 180,
+            "angle_offset_radians": 0,
+            "planar_spawn_forward": 9,
+            "radius": 2,
+            "lifetime_seconds": 0.95,
+            "damage": 9,
+            "pierce_budget": 0,
+            "blast_radius": 0,
+            "powered_at_launch": false
+          },
+          {
+            "kind": "glass",
+            "speed": 179.99999999999997,
+            "angle_offset_radians": 0.11,
+            "planar_spawn_forward": 9,
+            "radius": 2,
+            "lifetime_seconds": 0.95,
+            "damage": 9,
+            "pierce_budget": 0,
+            "blast_radius": 0,
+            "powered_at_launch": false
+          }
+        ]
+      },
+      "powered": {
+        "actions": {
+          "primary": {
+            "duration_seconds": 0.48,
+            "release_seconds": 0.1824,
+            "cooldown_seconds": 0.48
+          },
+          "secondary": {
+            "duration_seconds": 0.48,
+            "release_seconds": 0.1824,
+            "cooldown_seconds": 3.1
+          },
+          "special": {
+            "duration_seconds": 0.65,
+            "release_seconds": 0.28,
+            "cooldown_seconds": 25
+          },
+          "block": {
+            "raise_seconds": 0.18,
+            "hold_until_released": true,
+            "damage_release_event": false
+          }
+        },
+        "primary_projectiles": [
+          {
+            "kind": "glass",
+            "speed": 209.99999999999997,
+            "angle_offset_radians": -0.11,
+            "planar_spawn_forward": 9,
+            "radius": 2,
+            "lifetime_seconds": 0.95,
+            "damage": 12,
+            "pierce_budget": 1,
+            "blast_radius": 0,
+            "powered_at_launch": true
+          },
+          {
+            "kind": "glass",
+            "speed": 210,
+            "angle_offset_radians": 0,
+            "planar_spawn_forward": 9,
+            "radius": 2,
+            "lifetime_seconds": 0.95,
+            "damage": 12,
+            "pierce_budget": 1,
+            "blast_radius": 0,
+            "powered_at_launch": true
+          },
+          {
+            "kind": "glass",
+            "speed": 209.99999999999997,
+            "angle_offset_radians": 0.11,
+            "planar_spawn_forward": 9,
+            "radius": 2,
+            "lifetime_seconds": 0.95,
+            "damage": 12,
+            "pierce_budget": 1,
+            "blast_radius": 0,
+            "powered_at_launch": true
+          },
+          {
+            "kind": "orbit-shard",
+            "speed": 190.00000000000003,
+            "angle_offset_radians": -0.22,
+            "planar_spawn_forward": 9,
+            "radius": 2,
+            "lifetime_seconds": 0.9,
+            "damage": 10,
+            "pierce_budget": 1,
+            "blast_radius": 0,
+            "powered_at_launch": true
+          },
+          {
+            "kind": "orbit-shard",
+            "speed": 190.00000000000003,
+            "angle_offset_radians": 0.22,
+            "planar_spawn_forward": 9,
+            "radius": 2,
+            "lifetime_seconds": 0.9,
+            "damage": 10,
+            "pierce_budget": 1,
+            "blast_radius": 0,
+            "powered_at_launch": true
+          }
+        ],
+        "duration_seconds": 8,
+        "starts_at_special_release": true
+      },
+      "hit_shapes": {},
+      "executed_rules": {
+        "ordinary_primary": {
+          "shards": 3,
+          "angle_offsets_radians": [
+            -0.11,
+            0,
+            0.11
+          ],
+          "kind": "glass",
+          "speed": 180,
+          "damage": 9,
+          "radius": 2,
+          "lifetime_seconds": 0.95,
+          "pierce_budget": 0
+        },
+        "powered_primary": {
+          "main_shards": 3,
+          "speed": 210,
+          "damage": 12,
+          "pierce_budget": 1,
+          "extra_shards": {
+            "count": 2,
+            "kind": "orbit-shard",
+            "angle_offsets_radians": [
+              -0.22,
+              0.22
+            ],
+            "speed": 190,
+            "damage": 10,
+            "radius": 2,
+            "lifetime_seconds": 0.9,
+            "pierce_budget": 1
+          }
+        },
+        "secondary_gravity": {
+          "max_aimed_distance": 100,
+          "radius": 32,
+          "powered_radius": 39,
+          "lifetime_seconds": 1.8,
+          "powered_lifetime_seconds": 2.3,
+          "damage_per_tick": 4,
+          "initial_tick_seconds": 0.2,
+          "tick_interval_seconds": 0.45,
+          "light_pull_units_per_second": 32,
+          "heavy_pull_units_per_second": 13,
+          "heavy_kinds": [
+            "tank",
+            "dummy"
+          ],
+          "refresh_slow_seconds": 0.2
+        },
+        "powered_orbit_visual": {
+          "effect_on_activation_seconds": 0.7,
+          "effect_after_primary_seconds": 0.32,
+          "autonomous_damaging_orbit_entities": false
+        },
+        "source_functions": [
+          "E",
+          "q",
+          "M",
+          "_"
+        ]
+      },
+      "art_contract": {
+        "release_frame_indices": "supplied separately by the animation manifest; not inferred from seconds or fixed frame counts",
+        "per_facing_screen_anchors": "new74px art must author these; original planar projectile seed9 is not a screen muzzle anchor",
+        "cardinal_aim_quantisation": "presentation facing only; simulation retains continuous aim"
+      }
+    }
+  ],
+  "unresolved_for_foundation_owner": [
+    "Original planar-unit to new foundation-world conversion; preserve time/damage/ammo independently of art density.",
+    "New74px per-facing muzzle/contact/held-prop/nozzle anchors and release-frame indices; old generated art is reference only.",
+    "Production wall/terrain/deck collision rules and collision groups. The original arena engine has no authored wall/stair map contract.",
+    "Confirm intentional differences before porting v4 studio extensions such as autonomous Mote orbiters or a counter restricted to current powered mode."
+  ]
+}

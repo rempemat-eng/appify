@@ -1,0 +1,707 @@
+{
+  "schema_version": 1,
+  "status": "independent_static_source_audit",
+  "source_commit": "1cd2a03d3dedb86061c5e32f53836cc284cbf6ab",
+  "source": "prototypes/mygame-world-preview/reference/original-modules.json",
+  "source_engine_module": 3500,
+  "source_engine_sha256": "21aa782577f3d2fc51389efdd80c4c61a1a7ddd48d128e01eb318daa75d6bc10",
+  "units": "Original320x180 planar coordinates, seconds, damage and radians. These are not74px sprite coordinates, drawing indices or density3 dimensions.",
+  "validation": {
+    "catalogue_and_engine_hashes_match_embedded_provenance": true,
+    "method": "Read every recovered compiled engine function and compare stateful paths. No game port or runtime execution is claimed by this audit.",
+    "art_generated": false,
+    "source_changed": false
+  },
+  "source_symbols": {
+    "v": "fixed-step state update and input ordering",
+    "R": "action durations",
+    "D": "release-time rule",
+    "w": "start-action restrictions and cooldowns",
+    "M": "activate form",
+    "X": "end form",
+    "Y": "bounded field insertion",
+    "I": "player projectile creation",
+    "E": "primary release dispatch",
+    "q": "secondary release dispatch",
+    "B": "enemy damage, frost and lightning procs",
+    "P": "incoming damage, guard, vault immunity and defeat",
+    "T": "projectile contact effects",
+    "F": "swept projectile motion and seal ordering",
+    "G": "finite reagent reaction chain",
+    "_": "field ticks and Mirra network",
+    "N": "Rook turret follow and firing",
+    "L": "enemy timers and decoy target selection"
+  },
+  "shared_rules": {
+    "fixed_step_seconds": 0.016666666666666666,
+    "maximum_accepted_step_seconds": 0.1,
+    "epsilon": 1e-08,
+    "special_cooldown_seconds": 25,
+    "form_seconds": {
+      "rook": 10,
+      "nix": 7,
+      "other": 8
+    },
+    "form_timer_start": "M at the special action's release, not input commitment or animation completion",
+    "form_timer_expiry": "v decrements specialRemaining before that tick's ordinary action release; X expires form immediately. Delaying for an art clip changes canonical mechanics.",
+    "projectile_launch_state": "I captures powered and launchHeight into each projectile. T uses projectile.powered for harpoon tether duration, powered arrow root and flask-chain effects.",
+    "guard": {
+      "front_dot_minimum": 0.25,
+      "damage_cost": 1.5,
+      "maximum": 100,
+      "held_drain_per_second": 2,
+      "ordinary_recovery_per_second": 22,
+      "guarded_hit_recovery_delay_seconds": 0.8,
+      "break_lock_seconds": 1.15,
+      "break_reaction_seconds": 0.4,
+      "ordinary_hit_reaction_seconds": 0.25,
+      "defeat_reaction_seconds": 0.8,
+      "raise_seconds": 0.18,
+      "overflow": "Only min(incoming damage, guard/1.5) is absorbed. Remaining damage causes ordinary hit or defeat. A fully guarded break retains the0.4s reaction from the break function."
+    },
+    "vulnerability_damage_multiplier": 1.35,
+    "heavy_push_multiplier": 0.25,
+    "heavy_kinds": [
+      "tank",
+      "dummy"
+    ],
+    "death": "Interrupts a live form through X(true), cancels vault and clears projectiles, fields and turrets.",
+    "presentation_boundary": "The old samplePose frame count is a presentation implementation and is not a requirement for the new code-drawn animation. Release seconds and effects are authoritative here.",
+    "field_replacement_thresholds": {
+      "reagent": 4,
+      "seal_base": 3,
+      "seal_powered": 5,
+      "echo": 4,
+      "hologram": 1,
+      "other": 10
+    },
+    "field_insertion_policy": "Y removes exactly one oldest field of that kind when its current count is at or above the applicable insertion threshold, then appends one. Seal thresholds are3 in base and5 while powered. This is not a bulk prune: five powered seals can persist after expiry and after a base insertion. Form expiry alone does not prune them."
+  },
+  "characters": {
+    "bramble": {
+      "sources": [
+        "E",
+        "T"
+      ],
+      "powered_arrow": {
+        "damage": 24,
+        "pierce_budget": 3,
+        "ordinary_damage": 22
+      },
+      "root": {
+        "ordinary_target_seconds": 0.8,
+        "tank_seconds": 0.3,
+        "policy": "On each surviving powered-arrow contact, clear rootRemaining on earlier hitIds for that projectile, then root the current target. This keeps its last surviving hit target rooted."
+      },
+      "gotchas": [
+        "pierce3 allows an initial hit plus up to3 further hits; it does not mean3 targets total.",
+        "Root is determined by the projectile's captured powered flag, even if the form expires in flight."
+      ]
+    },
+    "morel": {
+      "sources": [
+        "E",
+        "q",
+        "T",
+        "G",
+        "Y"
+      ],
+      "flask": {
+        "direct_damage": 14,
+        "impact_radius": 16,
+        "reagent_radius": 18,
+        "reagent_seconds": 5,
+        "reagent_tick_damage": 3,
+        "initial_tick_seconds": 0.2,
+        "repeat_tick_seconds": 0.6
+      },
+      "secondary": {
+        "prepared_patch_search_radius": 155,
+        "no_patch_fallback": {
+          "kind": "arc_melee",
+          "reach": 34,
+          "cone_dot_minimum": 0,
+          "damage": 20,
+          "push": 13
+        }
+      },
+      "chain": {
+        "base_damage": 32,
+        "powered_damage": 39,
+        "damage_radius_extra": 8,
+        "push": 5,
+        "powered_neighbour_radius": 46,
+        "algorithm": "Queue patch IDs, maintain visited set, remove each consumed patch and enqueue powered neighbouring patches. Finite fields and visited IDs bound the reaction."
+      },
+      "powered_flask_trigger": {
+        "nearby_patch_radius": 40,
+        "minimum_nearby_patches_after_new_patch": 2,
+        "powered_flag_source": "flask projectile at launch"
+      },
+      "gotchas": [
+        "No prepared patch is a valid20-damage close burst, not a failed action.",
+        "The powered contact trigger calls G with powered=true even if the caster's form has expired since launch.",
+        "The secondary's chain power follows the current form at Q release."
+      ]
+    },
+    "velvet": {
+      "sources": [
+        "v",
+        "q",
+        "E",
+        "P",
+        "Y",
+        "L",
+        "F"
+      ],
+      "lantern": {
+        "reach": 55,
+        "cone_dot_minimum": -0.05,
+        "stun_seconds": 0.65,
+        "tank_stun_seconds": 0.25,
+        "vulnerable_seconds": 2.2,
+        "raw_damage": 9,
+        "vulnerability_applied_before_damage": true,
+        "same_hit_damage_multiplier": 1.35,
+        "same_hit_observed_damage": 12.15,
+        "damage_note": "q sets vulnerableRemaining before calling B(raw9), so the same lantern hit already receives the shared1.35 multiplier."
+      },
+      "powered_guard": {
+        "counter_window_seconds": 2,
+        "trigger": "A successfully absorbed frontal hit while powered sets counterRemaining, even if some overflow damage also reaches the player."
+      },
+      "counter": {
+        "reach": 49,
+        "cone_dot_minimum": 0.42,
+        "damage": 35,
+        "push": 13,
+        "consumed_on": "next primary release with counterRemaining>0",
+        "base_primary_reach": 29,
+        "base_primary_damage": 21,
+        "base_primary_push": 5
+      },
+      "echoes": {
+        "requires": "powered and moving",
+        "interval_seconds": 0.4,
+        "offset_behind_current_aim": 8,
+        "radius": 11,
+        "lifetime_seconds": 1.15,
+        "cap": 4,
+        "damage": 0,
+        "breaks_on": "one enemy projectile or melee intersection",
+        "enemy_attraction_range": 200
+      },
+      "gotchas": [
+        "The E counter condition checks counterRemaining rather than rechecking form, so a primed counter can survive a form expiry for its remaining window.",
+        "Echoes are finite targetable fields, not damaging clones or replayed attacks.",
+        "The movement echo timer only advances while powered and moving."
+      ]
+    },
+    "cairn": {
+      "sources": [
+        "E",
+        "q",
+        "T"
+      ],
+      "primary": {
+        "arc_reach": 32,
+        "cone_dot_minimum": 0.35,
+        "damage": 35,
+        "push": 12
+      },
+      "powered_primary_extra": {
+        "kind": "shockwave_lane",
+        "reach": 83,
+        "half_width": 11,
+        "damage": 15,
+        "pierces": true
+      },
+      "boulder": {
+        "base_damage": 34,
+        "powered_damage": 40,
+        "powered_blast_radius": 30,
+        "radius": 7,
+        "speed": 115,
+        "lifetime_seconds": 1.3,
+        "blast_push": 13
+      },
+      "gotchas": [
+        "The powered boulder's blast damage is40 to enemies in the blast radius, not40 direct plus another40 on the same contact.",
+        "The recovered simple arena has no world-wall collision contract; wall/height integration must be supplied by the foundation."
+      ]
+    },
+    "iona": {
+      "sources": [
+        "E",
+        "q",
+        "C",
+        "S",
+        "B"
+      ],
+      "primary": {
+        "lane_reach": 48,
+        "half_width": 7,
+        "damage": 23,
+        "pierces": true
+      },
+      "secondary": {
+        "forward_displacement": 34,
+        "movement": "instant C translation clipped against enemy clearance and arena bounds",
+        "post_move_lane_reach": 49,
+        "half_width": 9,
+        "damage": 29,
+        "pierces": true
+      },
+      "powered_secondary_gust": {
+        "placement": "midpoint of pre/post lunge positions",
+        "radius": 25,
+        "seconds": 1.5,
+        "damage_per_tick": 8,
+        "first_tick_seconds": 0.2,
+        "repeat_tick_seconds": 0.6
+      },
+      "lightning": {
+        "requires": "current powered form and a proc-enabled hit",
+        "nearest_other_foe_distance_exclusive": 55,
+        "damage": 12,
+        "recursive": false,
+        "target_count_per_hit": 1
+      },
+      "gotchas": [
+        "The recovered lunge is not a0.18s physics dash. That was a later studio presentation/physics extension.",
+        "The lightning arc can proc for each qualifying damage call, including gust ticks, but its own damage call disables recursive procs."
+      ]
+    },
+    "tam": {
+      "sources": [
+        "v",
+        "E",
+        "q",
+        "B",
+        "L",
+        "_"
+      ],
+      "primary": {
+        "arc_reach": 29,
+        "cone_dot_minimum": 0.4,
+        "damage": 18,
+        "push": 4
+      },
+      "frost": {
+        "maximum": 3,
+        "gain_per_proc_enabled_hit": 1,
+        "slow_seconds_on_gain": 1.2,
+        "reset_after_no_hit_seconds_exclusive": 3
+      },
+      "powered_shatter": {
+        "threshold": 3,
+        "consumes_frost": true,
+        "bonus_damage": 23,
+        "root_seconds": 0.85,
+        "tank_root_seconds": 0.3,
+        "recursive": false
+      },
+      "secondary": {
+        "lane_reach": 100,
+        "half_width": 8,
+        "damage": 24,
+        "slow_seconds": 2,
+        "powered_root_seconds": 0.6,
+        "powered_tank_root_seconds": 0.22
+      },
+      "ice_field": {
+        "forward_offset": 52,
+        "radius": 19,
+        "seconds": 2,
+        "damage": 0,
+        "slow_refresh_seconds": 0.7
+      },
+      "powered_movement_multiplier": 1.28,
+      "gotchas": [
+        "The numeric engine only changes speed in the powered glide; drawing a glide rather than stepping is an art/identity requirement, not an extra airborne immunity.",
+        "Frost can be applied by any proc-enabled damage call from Tam, not just her primary.",
+        "Root timers use max for secondary binding so a shorter new bind does not reduce an existing longer one."
+      ]
+    },
+    "brine": {
+      "sources": [
+        "v",
+        "M",
+        "E",
+        "q",
+        "T"
+      ],
+      "activation": "Refills the one-round harpoon and resets reload to0.",
+      "primary": {
+        "replaces_existing_player_harpoons": true,
+        "clears_existing_tether": true,
+        "base_reload_seconds": 0.95,
+        "powered_reload_seconds": 0.52
+      },
+      "tether": {
+        "requires_surviving_harpoon_target": true,
+        "base_lifetime_seconds": 3,
+        "powered_launch_lifetime_seconds": 4,
+        "maximum_reel_distance": 185
+      },
+      "reel": {
+        "pull_base": 42,
+        "pull_powered": 61,
+        "clearance": "player radius + target radius +3",
+        "base_damage": 15,
+        "powered_damage": 23,
+        "heavy_target": "Move player towards tank/dummy; otherwise move target towards player.",
+        "base_after_reel": "Clear tetherId and remaining.",
+        "powered_after_reel_remaining_seconds": 2
+      },
+      "no_valid_tether": {
+        "kind": "gun_butt_arc",
+        "reach": 32,
+        "cone_dot_minimum": 0.2,
+        "damage": 21,
+        "push": 16
+      },
+      "gotchas": [
+        "A live target outside185 units uses the same gun-butt fallback as an absent target.",
+        "Normal v updates invalidate expired/dead target IDs before release; q itself checks ID, HP and range.",
+        "Reload gates primary, not the independent secondary. A port that gates all Q actions on ammo changes the kit.",
+        "Harpoon tether lifetime depends on launch power, not current gear when it hits."
+      ]
+    },
+    "pendle": {
+      "sources": [
+        "v",
+        "w",
+        "E",
+        "q"
+      ],
+      "capacity": 6,
+      "base_primary": {
+        "ammo_cost": 1,
+        "empty_reload_seconds": 1.35
+      },
+      "base_secondary": {
+        "rounds": "min(3,current ammo)",
+        "ammo_cost": "rounds fired",
+        "spread_between_rounds_radians": 0.11,
+        "reload_seconds": 1.4
+      },
+      "powered_primary": {
+        "kind": "rifle",
+        "action_seconds": 0.9,
+        "ammo_cost": 0,
+        "reload_gate_bypassed": true,
+        "pierce_budget": 4,
+        "damage": 49
+      },
+      "powered_secondary": {
+        "kind": "rifle_stock_lane_melee",
+        "reach": 44,
+        "half_width": 0.5,
+        "damage": 22,
+        "pierces": false,
+        "projectiles": 0
+      },
+      "gotchas": [
+        "The ordinary fan is up to3 rounds, never automatically all6.",
+        "Powered Q is a stock strike, never a rifle fan.",
+        "Only Brine/Clack have special-activation ammo reset; Pendle does not.",
+        "Powered primary bypasses ammo/reload restrictions and does not consume revolver ammo."
+      ]
+    },
+    "mirra": {
+      "sources": [
+        "M",
+        "q",
+        "Y",
+        "F",
+        "T",
+        "_"
+      ],
+      "special_entry_seed": {
+        "forward_offset": 30,
+        "radius": 16,
+        "seconds": 8
+      },
+      "secondary_seal": {
+        "distance": "min(112,aim distance)",
+        "radius": 18,
+        "base_seconds": 6,
+        "powered_seconds": 8,
+        "initial_damage": 10,
+        "initial_slow_seconds": 1.5
+      },
+      "amplified_water": {
+        "damage": 28,
+        "radius": 6,
+        "pierce_budget": 1,
+        "trigger": "A swept seal entry occurs no later than the earliest enemy contact during that projectile step.",
+        "single_amplification": true
+      },
+      "water_on_hit_slow_seconds": 1.2,
+      "powered_network": {
+        "interval_seconds": 0.35,
+        "path": "Player to oldest extant seal, then consecutive seals in insertion order.",
+        "hit_lane_half_width": 6,
+        "damage_per_network_tick": 10,
+        "slow_seconds": 0.5,
+        "hit_deduplication": "One hit per enemy across all segments of a network tick."
+      },
+      "gotchas": [
+        "A seal behind a target must not amplify the water bolt that hits that target first.",
+        "The source forms a consecutive chain, not every pair of seals.",
+        "There is no reference code for arbitrary user-redirection of the seal network beyond inserting/replacing seals and movement."
+      ]
+    },
+    "ashe": {
+      "sources": [
+        "E",
+        "q",
+        "X"
+      ],
+      "powered_primary_extra": {
+        "kind": "flame_crescent",
+        "damage": 15,
+        "radius": 7,
+        "speed": 145,
+        "seconds": 0.65,
+        "pierce_budget": 2
+      },
+      "secondary": {
+        "lane_reach": 65,
+        "half_width": 9,
+        "base_damage": 32,
+        "powered_damage": 38,
+        "pierces": true
+      },
+      "powered_secondary_flame": {
+        "forward_offset": 42,
+        "radius": 15,
+        "seconds": 2,
+        "damage_per_tick": 8
+      },
+      "expiry_finisher": {
+        "trigger": "Natural form expiry while alive, never X(interrupted=true)",
+        "aim": "Current dirX/dirY at expiry, temporarily substituted for old action direction.",
+        "lane_reach": 98,
+        "half_width": 13,
+        "damage": 34,
+        "pierces": true,
+        "flame_forward_offset": 52,
+        "flame_radius": 16,
+        "flame_seconds": 1,
+        "flame_tick_damage": 7
+      },
+      "gotchas": [
+        "The original engine emits the finisher immediately at natural expiry; it has no separately delayed finisher action timeline.",
+        "Death/interruption suppresses the finisher.",
+        "Aim follows current direction at expiry, not the direction captured on form activation."
+      ]
+    },
+    "clack": {
+      "sources": [
+        "M",
+        "w",
+        "E",
+        "q"
+      ],
+      "activation": "Refills the one-round launcher and resets reload to0.",
+      "primary": {
+        "base_projectiles": 1,
+        "powered_projectiles": 3,
+        "powered_angles_radians": [
+          -0.09,
+          0,
+          0.09
+        ],
+        "base_damage_per_rocket": 40,
+        "powered_damage_per_rocket": 20,
+        "base_speed": 125,
+        "powered_speed": 145,
+        "blast_radius_base": 23,
+        "blast_radius_powered": 19,
+        "reload_base_seconds": 1.15,
+        "reload_powered_seconds": 0.7
+      },
+      "secondary": {
+        "kind": "vent_concussion_arc",
+        "reach": 43,
+        "cone_dot_minimum": 0.05,
+        "damage": 25,
+        "push": 37,
+        "available_during_reload": true
+      },
+      "gotchas": [
+        "The powered salvo consumes one ammo from a one-round launcher and emits three rockets.",
+        "The independent vent remains available while reloading; do not replace the whole kit with a reload lock.",
+        "No stationary planted-cannon state exists in the reference; attack movement still uses the shared0.64 multiplier."
+      ]
+    },
+    "nix": {
+      "sources": [
+        "v",
+        "w",
+        "M",
+        "q",
+        "Y",
+        "F",
+        "L"
+      ],
+      "heat": {
+        "maximum": 100,
+        "primary_gate_at_or_above": 92,
+        "gain_base": 19,
+        "gain_powered": 12,
+        "cooling_during_primary_per_second": 4,
+        "cooling_powered_other_per_second": 7,
+        "cooling_ordinary_other_per_second": 15,
+        "special_activation_cap": 45
+      },
+      "secondary": {
+        "kind": "hologram",
+        "origin": "Q actionOrigin captured at commitment, not player position at release",
+        "radius": 7,
+        "seconds": 3,
+        "cap": 1,
+        "damage": 0,
+        "one_hit": true,
+        "enemy_attraction_range": 200,
+        "movement_multiplier": 1
+      },
+      "secondary_release_seconds": 0.05,
+      "gotchas": [
+        "Q does not explicitly clear heat or cool it instantly. Heat0 in a clean release snapshot is the initial state, not an ability effect.",
+        "Only special activation caps current heat at45.",
+        "F removes a hologram on enemy projectile contact but still checks whether that same projectile segment also hits the player; it is not guaranteed projectile interception.",
+        "The old decoy is fixed at the Q commitment origin and must not follow the player."
+      ]
+    },
+    "rook": {
+      "sources": [
+        "v",
+        "q",
+        "M",
+        "X",
+        "P",
+        "T",
+        "N"
+      ],
+      "vault": {
+        "duration_seconds": 0.55,
+        "maximum_height": 18,
+        "height_formula": "18*sin(pi*(1-vaultRemaining/vaultDuration))",
+        "airborne_threshold_exclusive": 2,
+        "forward_speed": 72,
+        "direction": "Movement input if its magnitude>0.1 when Q commits, otherwise current aim.",
+        "firing_available_after_Q_release": true,
+        "avoids_damage_kinds": [
+          "melee",
+          "field"
+        ],
+        "still_hit_by": [
+          "projectile",
+          "explosion"
+        ]
+      },
+      "designation": {
+        "trigger": "A surviving target hit by a player pulse",
+        "seconds": 1.2
+      },
+      "turrets": {
+        "count": 2,
+        "spawn_offset_x": [
+          -15,
+          15
+        ],
+        "spawn_offset_y": -14,
+        "follow_offset_x": [
+          -16,
+          16
+        ],
+        "follow_offset_y": -14,
+        "follow_lerp_per_fixed_step": 0.11666666666666667,
+        "target_operator_range_exclusive": 190,
+        "fire_operator_range_exclusive": 55,
+        "initial_cooldown_seconds": 0.18,
+        "shot_cooldown_seconds": 0.44,
+        "shot_speed": 205,
+        "shot_damage": 7,
+        "shot_radius": 2,
+        "shot_seconds": 1,
+        "target": "Only a live player-designated enemy; otherwise aim at player aim without firing.",
+        "ends_on": "Natural expiry, interruption or death."
+      },
+      "gotchas": [
+        "Turret cooldown resets only when an actual shot fires; an idle turret does not repeatedly reset itself.",
+        "The54px peak in the old960x540 studio was a3x projection of the canonical18-unit height, not a different ability.",
+        "Normal movement and0.55s forward vault translation can combine; a pure standstill vault travels approximately39.6 original units before bounds/collision.",
+        "Ground-contact enemy separation resumes below the airborne threshold, and landing applies extra overlap separation."
+      ]
+    },
+    "mote": {
+      "sources": [
+        "M",
+        "E",
+        "q",
+        "_"
+      ],
+      "base_primary": {
+        "glass_projectiles": 3,
+        "angles_radians": [
+          -0.11,
+          0,
+          0.11
+        ],
+        "speed": 180,
+        "damage_each": 9,
+        "radius": 2,
+        "seconds": 0.95
+      },
+      "powered_primary": {
+        "glass_projectiles": 3,
+        "glass_speed": 210,
+        "glass_damage_each": 12,
+        "glass_pierce_budget": 1,
+        "extra_orbit_shard_projectiles": 2,
+        "extra_angles_radians": [
+          -0.22,
+          0.22
+        ],
+        "extra_speed": 190,
+        "extra_damage_each": 10,
+        "extra_seconds": 0.9,
+        "extra_pierce_budget": 1
+      },
+      "gravity": {
+        "distance": "min(100,aim distance)",
+        "base_radius": 32,
+        "powered_radius": 39,
+        "base_seconds": 1.8,
+        "powered_seconds": 2.3,
+        "damage_per_tick": 4,
+        "first_tick_seconds": 0.2,
+        "repeat_tick_seconds": 0.45,
+        "pull_speed_light": 32,
+        "pull_speed_heavy": 13,
+        "slow_refresh_seconds": 0.2
+      },
+      "gotchas": [
+        "The recovered primary is a straight three-angle fan; it contains no homing or converging-trajectory update.",
+        "The recovered engine has no autonomous persistent damaging orbit entities. M activation adds an orbit visual effect; E emits two additional orbit-shard projectiles only when a powered primary releases.",
+        "A later studio's persistent three orbiting entities must be labelled as an extension or resolved by the integration owner, not silently asserted as recovered numeric behaviour.",
+        "Gravity damage calls disable recursive frost/lightning proc handling, unlike ordinary damage fields."
+      ]
+    }
+  },
+  "integration_questions": [
+    "Should the Godot port preserve all recovered numeric rules exactly, or are the later studio's continuous Iona dash and persistent Mote orbit entities intentional design changes?",
+    "Should a primed Velvet counter be allowed to survive powered-form expiry as the recovered E condition currently permits?",
+    "Should Nix holograms intercept enemy projectiles, or merely break and attract enemy aim as the current reference implements?",
+    "What explicit world-unit mapping will the foundation adopt? Density3 and74px source height do not by themselves authorise multiplying combat distances/speeds by3.",
+    "What is the canonical wall/height/zone obstruction API? The recovered arena engine has swept enemy collisions and bounds but no production map-wall contract.",
+    "Should Ashe's expiry finisher retain immediate mechanical release at exact expiry while art is coordinated, or should timing be intentionally redesigned?"
+  ],
+  "final_qc_clarifications": [
+    "Field thresholds and Velvet lantern raw-versus-observed damage clarified against final abilities-v1.json and data-audit.json. Numeric source rules are unchanged."
+  ]
+}

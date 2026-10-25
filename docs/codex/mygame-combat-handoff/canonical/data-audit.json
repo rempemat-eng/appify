@@ -1,0 +1,140 @@
+{
+  "schema_version": 1,
+  "status": "all_findings_resolved",
+  "reviewed_data_sha256": "ab9028dc55991b55478c0edf90a7347ba19b8ae3a6386ee50b2888889ee9fb4d",
+  "source_engine_sha256": "21aa782577f3d2fc51389efdd80c4c61a1a7ddd48d128e01eb318daa75d6bc10",
+  "scope": "Static comparison of build-ability-data.mjs and abilities-v1.json with all original compiled engine functions. No files except this audit were changed.",
+  "numeric_attack_values": "All reviewed per-character damage, reach, half-width, speed, radius, lifetime, cooldown, ammo and duration values agree with source. Corrections below clarify conditions and invariant claims; they are not failed projectile snapshot probes.",
+  "corrections": [
+    {
+      "id": "mirra_dynamic_seal_cap",
+      "severity": "correct_semantic_overclaim",
+      "field": "characters[mirra].executed_rules.secondary_seal.maximum_active / powered_maximum_active",
+      "source_functions": [
+        "Y",
+        "M",
+        "X"
+      ],
+      "observed": "Values3 and5 are described as maximum_active. In source Y removes exactly ONE oldest seal if current count>=the current threshold, then adds one. X does not clear seals or shrink their count.",
+      "expected": "Call these insertion replacement thresholds3/5 and record that existing seals survive expiry without immediate pruning. Starting with5 powered seals, natural expiry and a base-Q insertion can still leave5 seals.",
+      "suggested_probe": "Create5 powered seals, expire form, insert one base seal; assert count remains5 and the oldest existing seal was replaced.",
+      "resolution_status": "resolved_in_final_data",
+      "resolution_verified_against_original_source": true
+    },
+    {
+      "id": "single_slot_queue",
+      "severity": "clarify_port_logic",
+      "field": "simulation.priority and simulation.input",
+      "source_functions": [
+        "v"
+      ],
+      "observed": "A flat block>special>secondary>held_primary list can imply that an already queued special always dominates a later secondary edge.",
+      "expected": "There is one queuedAction slot. The latest eligible rising edge overwrites that slot; special wins only when special and secondary rise in the same tick. Block clears the queue. On canAct, queued special/secondary are consumed before held primary.",
+      "suggested_probe": "During an active attack, queue special then on a later tick raise secondary; assert queuedAction becomes secondary. In a single tick with both rising, assert special.",
+      "resolution_status": "resolved_in_final_data",
+      "resolution_verified_against_original_source": true
+    },
+    {
+      "id": "exact_arc_formula",
+      "severity": "correct_formula_text",
+      "field": "shared_hit_rules.arc_target_test",
+      "source_functions": [
+        "H"
+      ],
+      "observed": "The prose says normalised_direction_dot.",
+      "expected": "dot(target_minus_player,action_direction)/max(1,distance)>=minimum_direction_dot, together with distance<=reach+target_radius. This matches normalisation for distance>=1 but is different at close overlap.",
+      "resolution_status": "resolved_in_final_data",
+      "resolution_verified_against_original_source": true
+    },
+    {
+      "id": "strict_rook_ranges",
+      "severity": "clarify_thresholds",
+      "field": "characters[rook].executed_rules.powered_turrets range gates",
+      "source_functions": [
+        "N"
+      ],
+      "observed": "require_designated_living_target_within_operator_distance190 and require_turret_within_operator_distance55 leave inclusive/exclusive comparison unspecified.",
+      "expected": "Both comparisons are strictly less than190 and55, respectively; equality does not permit firing.",
+      "resolution_status": "resolved_in_final_data",
+      "resolution_verified_against_original_source": true
+    },
+    {
+      "id": "lantern_applies_own_vulnerability",
+      "severity": "clarify_raw_vs_actual_damage",
+      "field": "characters[velvet].hit_shapes.secondary.damage",
+      "source_functions": [
+        "q",
+        "B"
+      ],
+      "observed": "The raw damage parameter is9, with shared vulnerability multiplier1.35 correctly declared elsewhere.",
+      "expected": "State that Q sets vulnerableRemaining2.2 BEFORE B receives raw9, so a surviving ordinary target loses12.15 HP immediately. Do not label9 as observed HP loss.",
+      "suggested_probe": "Place a500HP target inside the lantern arc, release Q and assert487.85HP plus vulnerability2.2.",
+      "resolution_status": "resolved_in_final_data",
+      "resolution_verified_against_original_source": true
+    },
+    {
+      "id": "guard_recovery_not_idle_only",
+      "severity": "correct_historical_field_semantics",
+      "field": "guard.idleRecoveryPerSecond",
+      "source_functions": [
+        "v"
+      ],
+      "observed": "The copied constants key idleRecoveryPerSecond22 suggests recovery is restricted to idle.",
+      "expected": "Recovery occurs whenever not blocking, guardRecovery<=epsilon and guardBroken<=epsilon, including ordinary attack actions. Rename to unblockedRecoveryPerSecond or add the exact eligibility condition.",
+      "resolution_status": "resolved_in_final_data",
+      "resolution_verified_against_original_source": true
+    },
+    {
+      "id": "victory_cleanup",
+      "severity": "add_missing_retirement_rule",
+      "field": "common_form_rules.exceptions",
+      "source_functions": [
+        "v"
+      ],
+      "observed": "Defeat cleanup is listed but non-practice victory cleanup is absent.",
+      "expected": "On victory, v directly sets specialRemaining0, clears projectiles/fields/turrets and vault, and returns to idle. It does not call X, so it does not emit Ashe natural-expiry finisher.",
+      "resolution_status": "resolved_in_final_data",
+      "resolution_verified_against_original_source": true
+    },
+    {
+      "id": "projectile_flight_presentation",
+      "severity": "add_port_metadata",
+      "field": "common projectile rules / primary_projectiles",
+      "source_functions": [
+        "I"
+      ],
+      "observed": "Data preserves lifetime and spawn-forward9 but omits the original flightDuration and launchHeight capture.",
+      "expected": "Record flight_duration_seconds=clamp((aim_distance-9)/speed,0.05,lifetime_seconds) and launch_height=player.vaultHeight at launch. These are original metadata; visual per-facing muzzle anchors remain separate.",
+      "resolution_status": "resolved_in_final_data",
+      "resolution_verified_against_original_source": true
+    },
+    {
+      "id": "q_heat_direct_effect_wording",
+      "severity": "clarify_direct_effect",
+      "field": "characters[nix].executed_rules.secondary_afterimage.resets_or_reduces_heat",
+      "source_functions": [
+        "q",
+        "v"
+      ],
+      "observed": "false is correct for the direct Q release handler, but could be read as preventing normal cooling during the action.",
+      "expected": "Prefer direct_release_heat_change0. Ordinary cooling still runs during Q at15/sec, or7/sec powered; special caps existing heat at45.",
+      "resolution_status": "resolved_in_final_data",
+      "resolution_verified_against_original_source": true
+    }
+  ],
+  "confirmed_high_risk_rules": [
+    "All14 base/powered timing helpers and release seconds are separate from drawing frame indices.",
+    "Velvet primed counter can survive form expiry; release consumes its own remaining timer.",
+    "Morel chain is finite, consumes patches once and can propagate beyond the initial155-unit selection when powered.",
+    "Brine out-of-range/dead/absent tether uses gun-butt fallback; projectile launch state controls later tether lifetime.",
+    "Pendle normal Q uses up to3 available rounds; powered Q is22-damage stock melee; special does not refill ammo.",
+    "Nix Q origin is action commitment; Mote has no autonomous persistent damaging orbit objects in this recovered source.",
+    "Iona recovered Q displacement is instant34 units, not a0.18s studio dash.",
+    "Ashe finisher is immediate on natural live expiry and uses current aim; interruption suppresses it.",
+    "Rook retains firing after Q release while airborne and has exactly2 designated-target turrets with per-turret cooldowns."
+  ],
+  "initial_reviewed_data_sha256": "b663ec5e05c0640dd8258d6f3ecb893594ab8d94361b7a0ac8fdb6b1260d5bfe",
+  "remaining_findings": [],
+  "reviewed_characters": 14,
+  "final_review_summary": "All9 findings were corrected or clarified in the final builder/data. No additional numeric or semantic discrepancy found on reread; source presentation/world-unit decisions remain explicitly unresolved for the foundation owner."
+}

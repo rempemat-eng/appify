@@ -1,0 +1,19 @@
+{
+  "status": "passed",
+  "mode": "legacy_source_structural_only",
+  "checks": 754,
+  "source_git_blobs": 11,
+  "source_commit": "4d7efc7085786c897fc0c50f7151a0ae7e62f0c2",
+  "characters": 14,
+  "clips": 239,
+  "reference_drawings": 2135,
+  "existing_archive_check": null,
+  "scope": "Legacy E authoring timing, layout and attachment-track shape; no new art, engine port or canonical balance validation.",
+  "not_tested": [
+    "Godot4.7.2 or adopted plugin compatibility",
+    "new74px art or S/N/W anchors",
+    "formal JSON-schema validation: jsonschema dependency is not installed",
+    "new game/ implementation",
+    "Independent comparison with the existing delivered sheet archive: pass --archive PATH to include it"
+  ]
+}

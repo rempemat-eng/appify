@@ -1,0 +1,18 @@
+{
+  "status": "passed",
+  "scope": "Source-only validator detects corrupted timing and altered exact-head source",
+  "controls": [
+    {
+      "control": "timing_mismatch",
+      "expected_exit": "nonzero",
+      "actual_exit": 1,
+      "detected": true
+    },
+    {
+      "control": "source_hash_mismatch",
+      "expected_exit": "nonzero",
+      "actual_exit": 1,
+      "detected": true
+    }
+  ]
+}

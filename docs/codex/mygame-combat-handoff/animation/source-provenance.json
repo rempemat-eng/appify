@@ -1,0 +1,104 @@
+{
+  "commit": "4d7efc7085786c897fc0c50f7151a0ae7e62f0c2",
+  "records": [
+    {
+      "path": "ART_DIRECTION.md",
+      "git_blob_sha": "9230df7c4e37364cf04dd86a1431ea088df4ea08",
+      "size": 11878,
+      "source_url": "https://github.com/rempemat-eng/appify/blob/4d7efc7085786c897fc0c50f7151a0ae7e62f0c2/prototypes/mygame-animation-studio/ART_DIRECTION.md",
+      "local_sha256": "5ea55d2b6d7c0ba9c4dfae0a5281ba8e7641652d6c6abfc44849a9723cce3aa6",
+      "local_git_blob_sha": "9230df7c4e37364cf04dd86a1431ea088df4ea08",
+      "local_bytes_identical": true
+    },
+    {
+      "path": "WORLD_ANIMATION_CONTEXT.md",
+      "git_blob_sha": "c73cc75cf715c0545cb195d12fc1b02c69e7f0c2",
+      "size": 6643,
+      "source_url": "https://github.com/rempemat-eng/appify/blob/4d7efc7085786c897fc0c50f7151a0ae7e62f0c2/prototypes/mygame-animation-studio/WORLD_ANIMATION_CONTEXT.md",
+      "local_sha256": "a9e6490c64298897899f82bf18843701a4f96ee9ff31738075e07b5b9ad7fc1a",
+      "local_git_blob_sha": "c73cc75cf715c0545cb195d12fc1b02c69e7f0c2",
+      "local_bytes_identical": true
+    },
+    {
+      "path": "scripts/animation_yard.gd",
+      "git_blob_sha": "a8475976bb9f7408d4a0dd1911506194f839f386",
+      "size": 59772,
+      "source_url": "https://github.com/rempemat-eng/appify/blob/4d7efc7085786c897fc0c50f7151a0ae7e62f0c2/prototypes/mygame-animation-studio/scripts/animation_yard.gd",
+      "local_sha256": "cafe41e2f5d57639e9d72c253c3a9b55a91a07154021ad28441a611912f58d82",
+      "local_git_blob_sha": "a8475976bb9f7408d4a0dd1911506194f839f386",
+      "local_bytes_identical": true
+    },
+    {
+      "path": "scripts/roster_actor.gd",
+      "git_blob_sha": "98abbd72c763d675ae007320d860a91ee180c32a",
+      "size": 21904,
+      "source_url": "https://github.com/rempemat-eng/appify/blob/4d7efc7085786c897fc0c50f7151a0ae7e62f0c2/prototypes/mygame-animation-studio/scripts/roster_actor.gd",
+      "local_sha256": "a21758618952be57b3442af69c41208dfeaebe6e2ca3da203c1cdbbf0216561b",
+      "local_git_blob_sha": "98abbd72c763d675ae007320d860a91ee180c32a",
+      "local_bytes_identical": true
+    },
+    {
+      "path": "tools/build_animation_roster.py",
+      "git_blob_sha": "ceab4e380b46bd0a4dc4225d981b4be45db8eed9",
+      "size": 31006,
+      "source_url": "https://github.com/rempemat-eng/appify/blob/4d7efc7085786c897fc0c50f7151a0ae7e62f0c2/prototypes/mygame-animation-studio/tools/build_animation_roster.py",
+      "local_sha256": "9cb26791d7c8e3d8ac2ad698eff835f1c5b6c5e9fc69454bc3794cff1d5d7a53",
+      "local_git_blob_sha": "ceab4e380b46bd0a4dc4225d981b4be45db8eed9",
+      "local_bytes_identical": true
+    },
+    {
+      "path": "tests/roster_animation_test.gd",
+      "git_blob_sha": "bacf5db96024f64bedf7786b64b5cb6bfc89cdd0",
+      "size": 24129,
+      "source_url": "https://github.com/rempemat-eng/appify/blob/4d7efc7085786c897fc0c50f7151a0ae7e62f0c2/prototypes/mygame-animation-studio/tests/roster_animation_test.gd",
+      "local_sha256": "de0d5ed9a920f07e2271b6401648e9465514ec783a711cc8065f72f654f5f25c",
+      "local_git_blob_sha": "bacf5db96024f64bedf7786b64b5cb6bfc89cdd0",
+      "local_bytes_identical": true
+    },
+    {
+      "path": "art-source/animated/v3/elements-anchors.json",
+      "git_blob_sha": "4a3857196770cef15fe1534f95e4f63154a56db2",
+      "size": 36641,
+      "source_url": "https://github.com/rempemat-eng/appify/blob/4d7efc7085786c897fc0c50f7151a0ae7e62f0c2/prototypes/mygame-animation-studio/art-source/animated/v3/elements-anchors.json",
+      "local_sha256": "8f75cadd5510d51a47fd3996f9595aebb72bfb3f3e284814346d058a844b8da2",
+      "local_git_blob_sha": "4a3857196770cef15fe1534f95e4f63154a56db2",
+      "local_bytes_identical": true
+    },
+    {
+      "path": "art-source/animated/v3/ranger-anchors.json",
+      "git_blob_sha": "91c673b70e2661a2e5666df07b98ac7b1e4c5db5",
+      "size": 1502,
+      "source_url": "https://github.com/rempemat-eng/appify/blob/4d7efc7085786c897fc0c50f7151a0ae7e62f0c2/prototypes/mygame-animation-studio/art-source/animated/v3/ranger-anchors.json",
+      "local_sha256": "fd6a9eba56992a71c7bba0369a2de2b7c390dd7ec157c8f1a525fece46ac5536",
+      "local_git_blob_sha": "91c673b70e2661a2e5666df07b98ac7b1e4c5db5",
+      "local_bytes_identical": true
+    },
+    {
+      "path": "art-source/animated/v3/ranger-other-anchors.json",
+      "git_blob_sha": "2e8a4c39dec99eb8cbce5b3833378d3b50a798df",
+      "size": 1656,
+      "source_url": "https://github.com/rempemat-eng/appify/blob/4d7efc7085786c897fc0c50f7151a0ae7e62f0c2/prototypes/mygame-animation-studio/art-source/animated/v3/ranger-other-anchors.json",
+      "local_sha256": "d2326173c6aba926ba6a2d6274b1e2e65fc594b70f0b8f18327a275526800c91",
+      "local_git_blob_sha": "2e8a4c39dec99eb8cbce5b3833378d3b50a798df",
+      "local_bytes_identical": true
+    },
+    {
+      "path": "art-source/animated/v3/rook-thrusters.json",
+      "git_blob_sha": "42c9f534a98d7e3dcbffe4de1f104a4a307fe475",
+      "size": 558,
+      "source_url": "https://github.com/rempemat-eng/appify/blob/4d7efc7085786c897fc0c50f7151a0ae7e62f0c2/prototypes/mygame-animation-studio/art-source/animated/v3/rook-thrusters.json",
+      "local_sha256": "20338e86a397abfcc3d16fc97513136ad955059da8623e35949974531343c0d0",
+      "local_git_blob_sha": "42c9f534a98d7e3dcbffe4de1f104a4a307fe475",
+      "local_bytes_identical": true
+    },
+    {
+      "path": "art-source/animated/v3/tech-anchors.json",
+      "git_blob_sha": "ff36d6dc613cfebd2f0e278f8e0c8532b6ce27b6",
+      "size": 1449,
+      "source_url": "https://github.com/rempemat-eng/appify/blob/4d7efc7085786c897fc0c50f7151a0ae7e62f0c2/prototypes/mygame-animation-studio/art-source/animated/v3/tech-anchors.json",
+      "local_sha256": "f683926becea8faa182506366a618ca5a0b3a3ba280349f3cdbfdc70468948e6",
+      "local_git_blob_sha": "ff36d6dc613cfebd2f0e278f8e0c8532b6ce27b6",
+      "local_bytes_identical": true
+    }
+  ]
+}

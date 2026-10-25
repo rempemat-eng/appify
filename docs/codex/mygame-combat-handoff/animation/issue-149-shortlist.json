@@ -1,0 +1,27 @@
+{
+  "status": "proposed_forward_requirements_not_implemented_v3",
+  "source_commit": "4d7efc7085786c897fc0c50f7151a0ae7e62f0c2",
+  "for_issue_149": [
+    "Per-facing id/view/frame_size/foot_pivot plus variable-length frames/durations/loop; no fixed 96 px height or 96-frame quota. Re-author all anchors on Claude A's 74 px art.",
+    "Each action: explicit release_frame/release_time and measured release_anchor; guard hold_frame; jump/vault load/rise/apex/fall/land indices. Keep simulation seconds separate from art weights.",
+    "All 24 common base/powered clips per facing; Brine untetheredQ, Rook airborne shots, Pendle reload, Velvet counter and Ashe expiry finisher variants.",
+    "Continuous per-frame emitter tracks for Brine tether; per-frame held-boulder anchors for Cairn; actual Rook nozzle anchors/directions. Separate image offsets from planar projectile seed/height.",
+    "Events: release/finish/cancel, footfall/land/voidfall. Release payload separates semantic action from selected clip/view and includes action-instance ID, time, contact index, ground origin, visual attachment, height and aim.",
+    "Canonical ability-data timings/rules govern damage/cooldowns/expiry. The real sprite commits to contact before one release event; slow frames/cancellation cannot duplicate or resurrect it.",
+    "Owner questions: manifest/resource layout, world-unit conversion at density 3, cardinal/continuous aim, event API, support-height contract and agreed game/ files once foundation lands."
+  ],
+  "published_v3_limits": [
+    "E only and fixed RIGHT release direction",
+    "17 common clips plus Pendle reload",
+    "no finite canonical form clock; poweredQ/jump/dodge blocked",
+    "Cairn held boulder and traversal phase indices hardcoded",
+    "full-canvas PNGs; no published v4 tightcrop/directional implementation"
+  ],
+  "source_review_files": [
+    "scripts/roster_actor.gd",
+    "scripts/animation_yard.gd",
+    "tools/build_animation_roster.py",
+    "tests/roster_animation_test.gd",
+    "WORLD_ANIMATION_CONTEXT.md"
+  ]
+}

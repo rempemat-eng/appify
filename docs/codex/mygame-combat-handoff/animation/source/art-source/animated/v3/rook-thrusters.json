@@ -1,0 +1,13 @@
+{
+  "rook": {
+    "secondary": {
+      "thruster_anchors": [[-26, -59]]
+    }
+  },
+  "_provenance": {
+    "frame": "rook/secondary-03.png; per-frame support-bottom registration",
+    "coordinate_space": "logical pixels relative to pivot(96,172)",
+    "visibility": "One near backpack nozzle is visible at packed pixel(70,113). The far twin unit is occluded by the torso in this east-facing launch pose. The orange/black hip sphere is the carried helmet and must never emit exhaust.",
+    "evidence": "captures/visual-v3/rook-vault03-source-detail.png"
+  }
+}
