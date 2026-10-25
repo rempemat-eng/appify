@@ -86,7 +86,21 @@ func _on_zone(zone: Zone) -> void:
 	pcam.limit_right = int(b.end.x)
 	pcam.limit_bottom = int(b.end.y)
 	pcam.teleport_position()
+	snap_camera()
 	autosave()
+
+## Puts the Camera2D on the phantom camera at once, so the first frame drawn in a new zone already shows the
+## player (the host only moves the camera on its next physics step; a slow first frame showed the world's
+## origin at the centre of the screen for that frame).
+func snap_camera() -> void:
+	var cam := $Camera2D as Camera2D
+	cam.global_position = (player.global_position + pcam.follow_offset).round()
+	cam.limit_left = pcam.limit_left
+	cam.limit_top = pcam.limit_top
+	cam.limit_right = pcam.limit_right
+	cam.limit_bottom = pcam.limit_bottom
+	cam.reset_smoothing()
+	cam.force_update_scroll()
 
 func _on_downed() -> void:
 	# no naps at 0 HP (4): the player gets up at the zone's start with full health
@@ -196,9 +210,38 @@ func _demo() -> void:
 		get_tree().quit()
 
 func _shot(path: String) -> void:
+	# wait in frames as well as seconds: a slow first frame (a big zone loading) can use up the whole wait,
+	# and the picture would be the frame drawn before the camera ever moved
 	await get_tree().create_timer(float(args.get("wait", "2.0")), true, false, true).timeout
+	while Engine.get_process_frames() < SHOT_MIN_FRAMES:
+		await get_tree().process_frame
 	await RenderingServer.frame_post_draw
 	var img := get_tree().root.get_texture().get_image()
+	var ok := frame_covered(img)
 	var err := img.save_png(path)
-	print("SHOT %s %s %s" % [path, img.get_size(), error_string(err)])
-	get_tree().quit(0 if err == OK else 1)
+	print("SHOT %s %s %s%s" % [path, img.get_size(), error_string(err), "" if ok else " FAILED: the world does not cover the frame"])
+	if not ok:
+		push_error("shot %s: a quarter of the frame is black (the world does not cover it)" % path)
+	get_tree().quit(0 if err == OK and ok else 1)
+
+const SHOT_MIN_FRAMES := 30
+
+## True when the world picture covers the whole frame: no quarter of it is almost all black. A camera
+## left at the world's origin (the frame drawn before it followed anyone) leaves three quarters black.
+static func frame_covered(img: Image, max_black := 0.9) -> bool:
+	var w := img.get_width()
+	var h := img.get_height()
+	for q in 4:
+		var x0 := (q % 2) * w / 2
+		var y0 := (q / 2) * h / 2
+		var black := 0
+		var n := 0
+		for y in range(y0, y0 + h / 2, 8):
+			for x in range(x0, x0 + w / 2, 8):
+				var c := img.get_pixel(x, y)
+				n += 1
+				if c.r + c.g + c.b < 0.06:
+					black += 1
+		if float(black) / float(maxi(n, 1)) > max_black:
+			return false
+	return true
