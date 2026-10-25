@@ -1,0 +1,6026 @@
+{
+ "id": "ada",
+ "name": "Ada Fern",
+ "view": "SNEW",
+ "directions": [
+  "S",
+  "N",
+  "E",
+  "W"
+ ],
+ "default_direction": "E",
+ "frame_size": [
+  160,
+  144
+ ],
+ "foot_pivot": [
+  80,
+  136
+ ],
+ "body_height_target": 70,
+ "walk_speed": 64.4,
+ "stair_speed": null,
+ "anchor_space": "pixels relative to foot_pivot, screen orientation (x right, y down)",
+ "source": "castwork out/ada (procedural rig), imported by game/tools/import_cast.py",
+ "clips": {
+  "idle": {
+   "frame_count": 8,
+   "durations": [
+    0.26,
+    0.18,
+    0.2,
+    0.26,
+    0.22,
+    0.18,
+    0.12,
+    0.18
+   ],
+   "duration": 1.6,
+   "loop": true,
+   "release_frame": null,
+   "release_time": null,
+   "hold_frame": null,
+   "roles": null,
+   "facings": {
+    "S": {
+     "frames": [
+      {
+       "path": "res://assets/animated/ada/idle_S_00.png",
+       "file": "idle_S_00.png",
+       "packed_bounds": [
+        61,
+        65,
+        98,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.2,
+         -28.1
+        ],
+        "hand_L": [
+         12.7,
+         -28.2
+        ],
+        "foot_R": [
+         -5.1,
+         -0.4
+        ],
+        "foot_L": [
+         5.1,
+         -1.6
+        ],
+        "broom_foot": [
+         -13.2,
+         -2.5
+        ]
+       },
+       "equipment": {
+        "broom": 136
+       },
+       "sha256": "6bd73b8a489bdae1f920d5cca0af156811867053f5be02a247b28c6f5ddc9a48",
+       "sheet": "sheets/idle_S.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/idle_S_01.png",
+       "file": "idle_S_01.png",
+       "packed_bounds": [
+        61,
+        65,
+        98,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.2,
+         -28.1
+        ],
+        "hand_L": [
+         12.7,
+         -28.2
+        ],
+        "foot_R": [
+         -5.1,
+         -0.4
+        ],
+        "foot_L": [
+         5.1,
+         -1.6
+        ],
+        "broom_foot": [
+         -13.2,
+         -2.5
+        ]
+       },
+       "equipment": {
+        "broom": 136
+       },
+       "sha256": "6bd73b8a489bdae1f920d5cca0af156811867053f5be02a247b28c6f5ddc9a48",
+       "sheet": "sheets/idle_S.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/idle_S_02.png",
+       "file": "idle_S_02.png",
+       "packed_bounds": [
+        61,
+        64,
+        98,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.2,
+         -28.7
+        ],
+        "hand_L": [
+         12.7,
+         -28.7
+        ],
+        "foot_R": [
+         -5.1,
+         -0.4
+        ],
+        "foot_L": [
+         5.1,
+         -1.6
+        ],
+        "broom_foot": [
+         -13.2,
+         -3.0
+        ]
+       },
+       "equipment": {
+        "broom": 131
+       },
+       "sha256": "642244ddcfc9403f927a3f087c4a79ee6b2f27a6b7ddd9f2426b227dd764dad1",
+       "sheet": "sheets/idle_S.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/idle_S_03.png",
+       "file": "idle_S_03.png",
+       "packed_bounds": [
+        61,
+        64,
+        98,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.2,
+         -28.7
+        ],
+        "hand_L": [
+         12.7,
+         -28.7
+        ],
+        "foot_R": [
+         -5.1,
+         -0.4
+        ],
+        "foot_L": [
+         5.1,
+         -1.6
+        ],
+        "broom_foot": [
+         -13.2,
+         -3.0
+        ]
+       },
+       "equipment": {
+        "broom": 131
+       },
+       "sha256": "642244ddcfc9403f927a3f087c4a79ee6b2f27a6b7ddd9f2426b227dd764dad1",
+       "sheet": "sheets/idle_S.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/idle_S_04.png",
+       "file": "idle_S_04.png",
+       "packed_bounds": [
+        61,
+        64,
+        98,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.2,
+         -28.7
+        ],
+        "hand_L": [
+         12.7,
+         -28.7
+        ],
+        "foot_R": [
+         -5.1,
+         -0.4
+        ],
+        "foot_L": [
+         5.1,
+         -1.6
+        ],
+        "broom_foot": [
+         -13.2,
+         -3.0
+        ]
+       },
+       "equipment": {
+        "broom": 131
+       },
+       "sha256": "642244ddcfc9403f927a3f087c4a79ee6b2f27a6b7ddd9f2426b227dd764dad1",
+       "sheet": "sheets/idle_S.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/idle_S_05.png",
+       "file": "idle_S_05.png",
+       "packed_bounds": [
+        61,
+        64,
+        98,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.2,
+         -28.7
+        ],
+        "hand_L": [
+         12.7,
+         -28.7
+        ],
+        "foot_R": [
+         -5.1,
+         -0.4
+        ],
+        "foot_L": [
+         5.1,
+         -1.6
+        ],
+        "broom_foot": [
+         -13.2,
+         -3.0
+        ]
+       },
+       "equipment": {
+        "broom": 131
+       },
+       "sha256": "642244ddcfc9403f927a3f087c4a79ee6b2f27a6b7ddd9f2426b227dd764dad1",
+       "sheet": "sheets/idle_S.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/idle_S_06.png",
+       "file": "idle_S_06.png",
+       "packed_bounds": [
+        61,
+        65,
+        98,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.2,
+         -28.1
+        ],
+        "hand_L": [
+         12.7,
+         -28.2
+        ],
+        "foot_R": [
+         -5.1,
+         -0.4
+        ],
+        "foot_L": [
+         5.1,
+         -1.6
+        ],
+        "broom_foot": [
+         -13.2,
+         -2.5
+        ]
+       },
+       "equipment": {
+        "broom": 136
+       },
+       "sha256": "c54896026e4d24da064f3e2db28c025f97013d92e9a52df3f8030b2128d56d97",
+       "sheet": "sheets/idle_S.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/idle_S_07.png",
+       "file": "idle_S_07.png",
+       "packed_bounds": [
+        61,
+        65,
+        98,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.2,
+         -28.1
+        ],
+        "hand_L": [
+         12.7,
+         -28.2
+        ],
+        "foot_R": [
+         -5.1,
+         -0.4
+        ],
+        "foot_L": [
+         5.1,
+         -1.6
+        ],
+        "broom_foot": [
+         -13.2,
+         -2.5
+        ]
+       },
+       "equipment": {
+        "broom": 136
+       },
+       "sha256": "6bd73b8a489bdae1f920d5cca0af156811867053f5be02a247b28c6f5ddc9a48",
+       "sheet": "sheets/idle_S.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "N": {
+     "frames": [
+      {
+       "path": "res://assets/animated/ada/idle_N_00.png",
+       "file": "idle_N_00.png",
+       "packed_bounds": [
+        62,
+        66,
+        99,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         13.2,
+         -31.1
+        ],
+        "hand_L": [
+         -12.7,
+         -28.9
+        ],
+        "foot_R": [
+         5.1,
+         -1.6
+        ],
+        "foot_L": [
+         -5.1,
+         -0.4
+        ],
+        "broom_foot": [
+         13.2,
+         -3.9
+        ]
+       },
+       "equipment": {
+        "broom": 124
+       },
+       "sha256": "83ce2ebf6a359f6d927b70141737d99d39ededc83502f7e6f452399139721a58",
+       "sheet": "sheets/idle_N.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/idle_N_01.png",
+       "file": "idle_N_01.png",
+       "packed_bounds": [
+        62,
+        66,
+        99,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         13.2,
+         -31.1
+        ],
+        "hand_L": [
+         -12.7,
+         -28.9
+        ],
+        "foot_R": [
+         5.1,
+         -1.6
+        ],
+        "foot_L": [
+         -5.1,
+         -0.4
+        ],
+        "broom_foot": [
+         13.2,
+         -3.9
+        ]
+       },
+       "equipment": {
+        "broom": 124
+       },
+       "sha256": "83ce2ebf6a359f6d927b70141737d99d39ededc83502f7e6f452399139721a58",
+       "sheet": "sheets/idle_N.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/idle_N_02.png",
+       "file": "idle_N_02.png",
+       "packed_bounds": [
+        62,
+        65,
+        99,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         13.2,
+         -31.6
+        ],
+        "hand_L": [
+         -12.7,
+         -29.5
+        ],
+        "foot_R": [
+         5.1,
+         -1.6
+        ],
+        "foot_L": [
+         -5.1,
+         -0.4
+        ],
+        "broom_foot": [
+         13.2,
+         -4.5
+        ]
+       },
+       "equipment": {
+        "broom": 124
+       },
+       "sha256": "778d8ebb668c47f8912b6aefff4a2f718d9e6655d2f1baf0afc3d9d165292907",
+       "sheet": "sheets/idle_N.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/idle_N_03.png",
+       "file": "idle_N_03.png",
+       "packed_bounds": [
+        62,
+        65,
+        99,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         13.2,
+         -31.6
+        ],
+        "hand_L": [
+         -12.7,
+         -29.5
+        ],
+        "foot_R": [
+         5.1,
+         -1.6
+        ],
+        "foot_L": [
+         -5.1,
+         -0.4
+        ],
+        "broom_foot": [
+         13.2,
+         -4.5
+        ]
+       },
+       "equipment": {
+        "broom": 124
+       },
+       "sha256": "778d8ebb668c47f8912b6aefff4a2f718d9e6655d2f1baf0afc3d9d165292907",
+       "sheet": "sheets/idle_N.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/idle_N_04.png",
+       "file": "idle_N_04.png",
+       "packed_bounds": [
+        62,
+        65,
+        99,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         13.2,
+         -31.6
+        ],
+        "hand_L": [
+         -12.7,
+         -29.5
+        ],
+        "foot_R": [
+         5.1,
+         -1.6
+        ],
+        "foot_L": [
+         -5.1,
+         -0.4
+        ],
+        "broom_foot": [
+         13.2,
+         -4.5
+        ]
+       },
+       "equipment": {
+        "broom": 124
+       },
+       "sha256": "778d8ebb668c47f8912b6aefff4a2f718d9e6655d2f1baf0afc3d9d165292907",
+       "sheet": "sheets/idle_N.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/idle_N_05.png",
+       "file": "idle_N_05.png",
+       "packed_bounds": [
+        62,
+        65,
+        99,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         13.2,
+         -31.6
+        ],
+        "hand_L": [
+         -12.7,
+         -29.5
+        ],
+        "foot_R": [
+         5.1,
+         -1.6
+        ],
+        "foot_L": [
+         -5.1,
+         -0.4
+        ],
+        "broom_foot": [
+         13.2,
+         -4.5
+        ]
+       },
+       "equipment": {
+        "broom": 124
+       },
+       "sha256": "778d8ebb668c47f8912b6aefff4a2f718d9e6655d2f1baf0afc3d9d165292907",
+       "sheet": "sheets/idle_N.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/idle_N_06.png",
+       "file": "idle_N_06.png",
+       "packed_bounds": [
+        62,
+        66,
+        99,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         13.2,
+         -31.1
+        ],
+        "hand_L": [
+         -12.7,
+         -28.9
+        ],
+        "foot_R": [
+         5.1,
+         -1.6
+        ],
+        "foot_L": [
+         -5.1,
+         -0.4
+        ],
+        "broom_foot": [
+         13.2,
+         -3.9
+        ]
+       },
+       "equipment": {
+        "broom": 124
+       },
+       "sha256": "83ce2ebf6a359f6d927b70141737d99d39ededc83502f7e6f452399139721a58",
+       "sheet": "sheets/idle_N.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/idle_N_07.png",
+       "file": "idle_N_07.png",
+       "packed_bounds": [
+        62,
+        66,
+        99,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         13.2,
+         -31.1
+        ],
+        "hand_L": [
+         -12.7,
+         -28.9
+        ],
+        "foot_R": [
+         5.1,
+         -1.6
+        ],
+        "foot_L": [
+         -5.1,
+         -0.4
+        ],
+        "broom_foot": [
+         13.2,
+         -3.9
+        ]
+       },
+       "equipment": {
+        "broom": 124
+       },
+       "sha256": "83ce2ebf6a359f6d927b70141737d99d39ededc83502f7e6f452399139721a58",
+       "sheet": "sheets/idle_N.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "E": {
+     "frames": [
+      {
+       "path": "res://assets/animated/ada/idle_E_00.png",
+       "file": "idle_E_00.png",
+       "packed_bounds": [
+        67,
+        65,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         2.9,
+         -29.6
+        ],
+        "hand_L": [
+         2.3,
+         -28.6
+        ],
+        "foot_R": [
+         1.1,
+         -1.0
+        ],
+        "foot_L": [
+         -1.1,
+         -1.0
+        ],
+        "broom_foot": [
+         0.8,
+         -3.2
+        ]
+       },
+       "equipment": {
+        "broom": 128
+       },
+       "sha256": "dd929450fd6ff047fb3ec20f4036dc5baf70ef19694df8609dd4a0a879795aa4",
+       "sheet": "sheets/idle_E.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/idle_E_01.png",
+       "file": "idle_E_01.png",
+       "packed_bounds": [
+        67,
+        65,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         2.9,
+         -29.6
+        ],
+        "hand_L": [
+         2.3,
+         -28.6
+        ],
+        "foot_R": [
+         1.1,
+         -1.0
+        ],
+        "foot_L": [
+         -1.1,
+         -1.0
+        ],
+        "broom_foot": [
+         0.8,
+         -3.2
+        ]
+       },
+       "equipment": {
+        "broom": 128
+       },
+       "sha256": "dd929450fd6ff047fb3ec20f4036dc5baf70ef19694df8609dd4a0a879795aa4",
+       "sheet": "sheets/idle_E.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/idle_E_02.png",
+       "file": "idle_E_02.png",
+       "packed_bounds": [
+        67,
+        64,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         2.9,
+         -30.2
+        ],
+        "hand_L": [
+         2.3,
+         -29.1
+        ],
+        "foot_R": [
+         1.1,
+         -1.0
+        ],
+        "foot_L": [
+         -1.1,
+         -1.0
+        ],
+        "broom_foot": [
+         0.8,
+         -3.7
+        ]
+       },
+       "equipment": {
+        "broom": 132
+       },
+       "sha256": "6b155a967271b0b6663ae1cca9ced37ddf6f6d6815b83a1b8bde651297ffe4cf",
+       "sheet": "sheets/idle_E.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/idle_E_03.png",
+       "file": "idle_E_03.png",
+       "packed_bounds": [
+        67,
+        64,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         2.9,
+         -30.2
+        ],
+        "hand_L": [
+         2.3,
+         -29.1
+        ],
+        "foot_R": [
+         1.1,
+         -1.0
+        ],
+        "foot_L": [
+         -1.1,
+         -1.0
+        ],
+        "broom_foot": [
+         0.8,
+         -3.7
+        ]
+       },
+       "equipment": {
+        "broom": 132
+       },
+       "sha256": "6b155a967271b0b6663ae1cca9ced37ddf6f6d6815b83a1b8bde651297ffe4cf",
+       "sheet": "sheets/idle_E.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/idle_E_04.png",
+       "file": "idle_E_04.png",
+       "packed_bounds": [
+        67,
+        64,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         2.9,
+         -30.2
+        ],
+        "hand_L": [
+         2.3,
+         -29.1
+        ],
+        "foot_R": [
+         1.1,
+         -1.0
+        ],
+        "foot_L": [
+         -1.1,
+         -1.0
+        ],
+        "broom_foot": [
+         0.8,
+         -3.7
+        ]
+       },
+       "equipment": {
+        "broom": 132
+       },
+       "sha256": "6b155a967271b0b6663ae1cca9ced37ddf6f6d6815b83a1b8bde651297ffe4cf",
+       "sheet": "sheets/idle_E.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/idle_E_05.png",
+       "file": "idle_E_05.png",
+       "packed_bounds": [
+        67,
+        64,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         2.9,
+         -30.2
+        ],
+        "hand_L": [
+         2.3,
+         -29.1
+        ],
+        "foot_R": [
+         1.1,
+         -1.0
+        ],
+        "foot_L": [
+         -1.1,
+         -1.0
+        ],
+        "broom_foot": [
+         0.8,
+         -3.7
+        ]
+       },
+       "equipment": {
+        "broom": 132
+       },
+       "sha256": "c0b5a0c65c9a1fc90f82fe834d15b34a2e465d3a967d576ded5dca702803f68b",
+       "sheet": "sheets/idle_E.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/idle_E_06.png",
+       "file": "idle_E_06.png",
+       "packed_bounds": [
+        67,
+        65,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         2.9,
+         -29.6
+        ],
+        "hand_L": [
+         2.3,
+         -28.6
+        ],
+        "foot_R": [
+         1.1,
+         -1.0
+        ],
+        "foot_L": [
+         -1.1,
+         -1.0
+        ],
+        "broom_foot": [
+         0.8,
+         -3.2
+        ]
+       },
+       "equipment": {
+        "broom": 128
+       },
+       "sha256": "62781e0f26f3cc3a1ec67df7c6d7bb013adb8e3878c6083bb7deadec02dbf890",
+       "sheet": "sheets/idle_E.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/idle_E_07.png",
+       "file": "idle_E_07.png",
+       "packed_bounds": [
+        67,
+        65,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         2.9,
+         -29.6
+        ],
+        "hand_L": [
+         2.3,
+         -28.6
+        ],
+        "foot_R": [
+         1.1,
+         -1.0
+        ],
+        "foot_L": [
+         -1.1,
+         -1.0
+        ],
+        "broom_foot": [
+         0.8,
+         -3.2
+        ]
+       },
+       "equipment": {
+        "broom": 128
+       },
+       "sha256": "dd929450fd6ff047fb3ec20f4036dc5baf70ef19694df8609dd4a0a879795aa4",
+       "sheet": "sheets/idle_E.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "W": {
+     "frames": [
+      {
+       "path": "res://assets/animated/ada/idle_W_00.png",
+       "file": "idle_W_00.png",
+       "packed_bounds": [
+        67,
+        65,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -5.6,
+         -29.6
+        ],
+        "hand_L": [
+         0.2,
+         -28.6
+        ],
+        "foot_R": [
+         -2.1,
+         -1.0
+        ],
+        "foot_L": [
+         2.1,
+         -1.0
+        ],
+        "broom_foot": [
+         -3.5,
+         -3.2
+        ]
+       },
+       "equipment": {
+        "broom": 21
+       },
+       "sha256": "0eb27005d61fce3ede285011ab5520cce0d320647acf7fd19dca6c47c095511e",
+       "sheet": "sheets/idle_W.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/idle_W_01.png",
+       "file": "idle_W_01.png",
+       "packed_bounds": [
+        67,
+        65,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -5.6,
+         -29.6
+        ],
+        "hand_L": [
+         0.2,
+         -28.6
+        ],
+        "foot_R": [
+         -2.1,
+         -1.0
+        ],
+        "foot_L": [
+         2.1,
+         -1.0
+        ],
+        "broom_foot": [
+         -3.5,
+         -3.2
+        ]
+       },
+       "equipment": {
+        "broom": 21
+       },
+       "sha256": "0eb27005d61fce3ede285011ab5520cce0d320647acf7fd19dca6c47c095511e",
+       "sheet": "sheets/idle_W.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/idle_W_02.png",
+       "file": "idle_W_02.png",
+       "packed_bounds": [
+        67,
+        64,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -5.6,
+         -30.2
+        ],
+        "hand_L": [
+         0.2,
+         -29.1
+        ],
+        "foot_R": [
+         -2.1,
+         -1.0
+        ],
+        "foot_L": [
+         2.1,
+         -1.0
+        ],
+        "broom_foot": [
+         -3.5,
+         -3.7
+        ]
+       },
+       "equipment": {
+        "broom": 21
+       },
+       "sha256": "cb95062ad56895c16287a339f313bb8e3b9e5d2f3e5b9e421cefaf31d87cbf48",
+       "sheet": "sheets/idle_W.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/idle_W_03.png",
+       "file": "idle_W_03.png",
+       "packed_bounds": [
+        67,
+        64,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -5.6,
+         -30.2
+        ],
+        "hand_L": [
+         0.2,
+         -29.1
+        ],
+        "foot_R": [
+         -2.1,
+         -1.0
+        ],
+        "foot_L": [
+         2.1,
+         -1.0
+        ],
+        "broom_foot": [
+         -3.5,
+         -3.7
+        ]
+       },
+       "equipment": {
+        "broom": 21
+       },
+       "sha256": "cb95062ad56895c16287a339f313bb8e3b9e5d2f3e5b9e421cefaf31d87cbf48",
+       "sheet": "sheets/idle_W.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/idle_W_04.png",
+       "file": "idle_W_04.png",
+       "packed_bounds": [
+        67,
+        64,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -5.6,
+         -30.2
+        ],
+        "hand_L": [
+         0.2,
+         -29.1
+        ],
+        "foot_R": [
+         -2.1,
+         -1.0
+        ],
+        "foot_L": [
+         2.1,
+         -1.0
+        ],
+        "broom_foot": [
+         -3.5,
+         -3.7
+        ]
+       },
+       "equipment": {
+        "broom": 21
+       },
+       "sha256": "cb95062ad56895c16287a339f313bb8e3b9e5d2f3e5b9e421cefaf31d87cbf48",
+       "sheet": "sheets/idle_W.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/idle_W_05.png",
+       "file": "idle_W_05.png",
+       "packed_bounds": [
+        67,
+        64,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -5.6,
+         -30.2
+        ],
+        "hand_L": [
+         0.2,
+         -29.1
+        ],
+        "foot_R": [
+         -2.1,
+         -1.0
+        ],
+        "foot_L": [
+         2.1,
+         -1.0
+        ],
+        "broom_foot": [
+         -3.5,
+         -3.7
+        ]
+       },
+       "equipment": {
+        "broom": 21
+       },
+       "sha256": "d5d80d8a4d4623b5194bfdaa90476af5e01a693fa789db531834f65ca585b222",
+       "sheet": "sheets/idle_W.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/idle_W_06.png",
+       "file": "idle_W_06.png",
+       "packed_bounds": [
+        67,
+        65,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -5.6,
+         -29.6
+        ],
+        "hand_L": [
+         0.2,
+         -28.6
+        ],
+        "foot_R": [
+         -2.1,
+         -1.0
+        ],
+        "foot_L": [
+         2.1,
+         -1.0
+        ],
+        "broom_foot": [
+         -3.5,
+         -3.2
+        ]
+       },
+       "equipment": {
+        "broom": 21
+       },
+       "sha256": "ded7f0fcd848e2dfdf97c912178fe91a79810f01d0ddf9e69b35ed4672b5ff48",
+       "sheet": "sheets/idle_W.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/idle_W_07.png",
+       "file": "idle_W_07.png",
+       "packed_bounds": [
+        67,
+        65,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -5.6,
+         -29.6
+        ],
+        "hand_L": [
+         0.2,
+         -28.6
+        ],
+        "foot_R": [
+         -2.1,
+         -1.0
+        ],
+        "foot_L": [
+         2.1,
+         -1.0
+        ],
+        "broom_foot": [
+         -3.5,
+         -3.2
+        ]
+       },
+       "equipment": {
+        "broom": 21
+       },
+       "sha256": "0eb27005d61fce3ede285011ab5520cce0d320647acf7fd19dca6c47c095511e",
+       "sheet": "sheets/idle_W.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    }
+   }
+  },
+  "walk": {
+   "frame_count": 10,
+   "durations": [
+    0.056,
+    0.056,
+    0.056,
+    0.056,
+    0.056,
+    0.056,
+    0.056,
+    0.056,
+    0.056,
+    0.056
+   ],
+   "duration": 0.56,
+   "loop": true,
+   "release_frame": null,
+   "release_time": null,
+   "hold_frame": null,
+   "roles": null,
+   "facings": {
+    "S": {
+     "frames": [
+      {
+       "path": "res://assets/animated/ada/walk_S_00.png",
+       "file": "walk_S_00.png",
+       "packed_bounds": [
+        61,
+        66,
+        98,
+        139
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.2,
+         -28.2
+        ],
+        "hand_L": [
+         12.7,
+         -26.4
+        ],
+        "foot_R": [
+         -5.1,
+         2.2
+        ],
+        "foot_L": [
+         5.1,
+         -4.2
+        ],
+        "broom_foot": [
+         -13.2,
+         -2.5
+        ]
+       },
+       "equipment": {
+        "broom": 136
+       },
+       "sha256": "148af6688c22bf692aac619901745a1ad6f1db78183f2f767997e3754cecd174",
+       "sheet": "sheets/walk_S.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/walk_S_01.png",
+       "file": "walk_S_01.png",
+       "packed_bounds": [
+        61,
+        66,
+        99,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.2,
+         -27.9
+        ],
+        "hand_L": [
+         12.7,
+         -26.9
+        ],
+        "foot_R": [
+         -5.1,
+         0.9
+        ],
+        "foot_L": [
+         5.1,
+         -4.8
+        ],
+        "broom_foot": [
+         -13.2,
+         -2.3
+        ]
+       },
+       "equipment": {
+        "broom": 136
+       },
+       "sha256": "357108d190e383a566f0678ad21c707aa86d623f1da2244ad7e320a14a4770f5",
+       "sheet": "sheets/walk_S.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/walk_S_02.png",
+       "file": "walk_S_02.png",
+       "packed_bounds": [
+        61,
+        65,
+        99,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.2,
+         -28.8
+        ],
+        "hand_L": [
+         12.7,
+         -28.5
+        ],
+        "foot_R": [
+         -5.1,
+         -0.4
+        ],
+        "foot_L": [
+         5.1,
+         -4.7
+        ],
+        "broom_foot": [
+         -13.2,
+         -3.1
+        ]
+       },
+       "equipment": {
+        "broom": 131
+       },
+       "sha256": "270c5c12719ba4dd18da80c6ff7c3844a2ce2a6b8aba061cf39dbf38243e38ed",
+       "sheet": "sheets/walk_S.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/walk_S_03.png",
+       "file": "walk_S_03.png",
+       "packed_bounds": [
+        61,
+        64,
+        99,
+        135
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.2,
+         -29.6
+        ],
+        "hand_L": [
+         12.7,
+         -30.0
+        ],
+        "foot_R": [
+         -5.1,
+         -1.6
+        ],
+        "foot_L": [
+         5.1,
+         -3.4
+        ],
+        "broom_foot": [
+         -13.2,
+         -3.9
+        ]
+       },
+       "equipment": {
+        "broom": 131
+       },
+       "sha256": "8b3aab829bf1ccb9d23c372d0e1b372f413dce4da8f5763a8cd1b8f0118bdb7a",
+       "sheet": "sheets/walk_S.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/walk_S_04.png",
+       "file": "walk_S_04.png",
+       "packed_bounds": [
+        61,
+        64,
+        99,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.2,
+         -29.4
+        ],
+        "hand_L": [
+         12.7,
+         -30.6
+        ],
+        "foot_R": [
+         -5.1,
+         -2.9
+        ],
+        "foot_L": [
+         5.1,
+         -1.0
+        ],
+        "broom_foot": [
+         -13.2,
+         -3.7
+        ]
+       },
+       "equipment": {
+        "broom": 131
+       },
+       "sha256": "59148c3c1b102d9796cf7b1a3e242fb9e1611a47cc2c760484c88ef1c550f228",
+       "sheet": "sheets/walk_S.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/walk_S_05.png",
+       "file": "walk_S_05.png",
+       "packed_bounds": [
+        61,
+        66,
+        98,
+        139
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.2,
+         -27.0
+        ],
+        "hand_L": [
+         12.7,
+         -29.0
+        ],
+        "foot_R": [
+         -5.1,
+         -4.2
+        ],
+        "foot_L": [
+         5.1,
+         2.2
+        ],
+        "broom_foot": [
+         -13.2,
+         -1.4
+        ]
+       },
+       "equipment": {
+        "broom": 135
+       },
+       "sha256": "fc83372bea5e377807088bbe04796bdc62a50fa81b01059bbd82d2b478ccffca",
+       "sheet": "sheets/walk_S.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/walk_S_06.png",
+       "file": "walk_S_06.png",
+       "packed_bounds": [
+        61,
+        66,
+        99,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.2,
+         -27.3
+        ],
+        "hand_L": [
+         12.7,
+         -28.4
+        ],
+        "foot_R": [
+         -5.1,
+         -4.8
+        ],
+        "foot_L": [
+         5.1,
+         0.9
+        ],
+        "broom_foot": [
+         -13.2,
+         -1.6
+        ]
+       },
+       "equipment": {
+        "broom": 131
+       },
+       "sha256": "40adc384f3a44c2dbd7b37efaff1fc0606d9d2efc3732dae2234c6cd1b7af0d9",
+       "sheet": "sheets/walk_S.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/walk_S_07.png",
+       "file": "walk_S_07.png",
+       "packed_bounds": [
+        61,
+        65,
+        99,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.2,
+         -28.6
+        ],
+        "hand_L": [
+         12.7,
+         -29.0
+        ],
+        "foot_R": [
+         -5.1,
+         -4.7
+        ],
+        "foot_L": [
+         5.1,
+         -0.4
+        ],
+        "broom_foot": [
+         -13.2,
+         -2.9
+        ]
+       },
+       "equipment": {
+        "broom": 130
+       },
+       "sha256": "78ca1b30b25510ecd23d09056135a85128eefa29cdbcd0f2716c1923fdb6c0c1",
+       "sheet": "sheets/walk_S.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/walk_S_08.png",
+       "file": "walk_S_08.png",
+       "packed_bounds": [
+        61,
+        64,
+        99,
+        135
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.2,
+         -29.8
+        ],
+        "hand_L": [
+         12.7,
+         -29.5
+        ],
+        "foot_R": [
+         -5.1,
+         -3.4
+        ],
+        "foot_L": [
+         5.1,
+         -1.6
+        ],
+        "broom_foot": [
+         -13.2,
+         -4.2
+        ]
+       },
+       "equipment": {
+        "broom": 131
+       },
+       "sha256": "e5a4c8a5ad9b665b09e9a4bab198efa0df1c0430360515c7323f893fd01e43ab",
+       "sheet": "sheets/walk_S.png",
+       "region": [
+        1280,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/walk_S_09.png",
+       "file": "walk_S_09.png",
+       "packed_bounds": [
+        61,
+        64,
+        99,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.2,
+         -30.1
+        ],
+        "hand_L": [
+         12.7,
+         -29.0
+        ],
+        "foot_R": [
+         -5.1,
+         -1.0
+        ],
+        "foot_L": [
+         5.1,
+         -2.9
+        ],
+        "broom_foot": [
+         -13.2,
+         -4.4
+        ]
+       },
+       "equipment": {
+        "broom": 135
+       },
+       "sha256": "5714dee8ecba2d7ed1f9c52bdd76d4d291886f671effdecc8ba8520240a90000",
+       "sheet": "sheets/walk_S.png",
+       "region": [
+        1440,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "N": {
+     "frames": [
+      {
+       "path": "res://assets/animated/ada/walk_N_00.png",
+       "file": "walk_N_00.png",
+       "packed_bounds": [
+        62,
+        66,
+        99,
+        139
+       ],
+       "anchors": {
+        "hand_R": [
+         13.2,
+         -30.0
+        ],
+        "hand_L": [
+         -12.7,
+         -29.7
+        ],
+        "foot_R": [
+         5.1,
+         -4.2
+        ],
+        "foot_L": [
+         -5.1,
+         2.2
+        ],
+        "broom_foot": [
+         13.2,
+         -2.9
+        ]
+       },
+       "equipment": {
+        "broom": 140
+       },
+       "sha256": "57c2550f181ab731496ca4b8d9425d7ac4e2c701628a49b3cd2b5825f6363a4e",
+       "sheet": "sheets/walk_N.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/walk_N_01.png",
+       "file": "walk_N_01.png",
+       "packed_bounds": [
+        61,
+        66,
+        99,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         13.2,
+         -30.2
+        ],
+        "hand_L": [
+         -12.7,
+         -29.2
+        ],
+        "foot_R": [
+         5.1,
+         -2.9
+        ],
+        "foot_L": [
+         -5.1,
+         -1.0
+        ],
+        "broom_foot": [
+         13.2,
+         -3.1
+        ]
+       },
+       "equipment": {
+        "broom": 141
+       },
+       "sha256": "6ca270f3209c5244d1c23c74b610f0089992bd998aebbad0ad1dc722e602bb30",
+       "sheet": "sheets/walk_N.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/walk_N_02.png",
+       "file": "walk_N_02.png",
+       "packed_bounds": [
+        61,
+        65,
+        99,
+        135
+       ],
+       "anchors": {
+        "hand_R": [
+         13.2,
+         -31.5
+        ],
+        "hand_L": [
+         -12.7,
+         -29.7
+        ],
+        "foot_R": [
+         5.1,
+         -1.6
+        ],
+        "foot_L": [
+         -5.1,
+         -3.4
+        ],
+        "broom_foot": [
+         13.2,
+         -4.4
+        ]
+       },
+       "equipment": {
+        "broom": 123
+       },
+       "sha256": "c27c5909096c11e0773c1f99af9eba23e7b4874ed2cab3882808dc735cf61d92",
+       "sheet": "sheets/walk_N.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/walk_N_03.png",
+       "file": "walk_N_03.png",
+       "packed_bounds": [
+        61,
+        64,
+        99,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         13.2,
+         -32.8
+        ],
+        "hand_L": [
+         -12.7,
+         -30.3
+        ],
+        "foot_R": [
+         5.1,
+         -0.4
+        ],
+        "foot_L": [
+         -5.1,
+         -4.7
+        ],
+        "broom_foot": [
+         13.2,
+         -5.7
+        ]
+       },
+       "equipment": {
+        "broom": 119
+       },
+       "sha256": "e3613e0df6fa896ca590f98fa5759329172d7da9859c46107446874d4b255e5e",
+       "sheet": "sheets/walk_N.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/walk_N_04.png",
+       "file": "walk_N_04.png",
+       "packed_bounds": [
+        61,
+        64,
+        99,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         13.2,
+         -33.0
+        ],
+        "hand_L": [
+         -12.7,
+         -29.7
+        ],
+        "foot_R": [
+         5.1,
+         0.9
+        ],
+        "foot_L": [
+         -5.1,
+         -4.8
+        ],
+        "broom_foot": [
+         13.2,
+         -5.9
+        ]
+       },
+       "equipment": {
+        "broom": 123
+       },
+       "sha256": "05817732970585d433cbc9e75da1078be51a86e32d3e2d66015e2dbfd1ef14c6",
+       "sheet": "sheets/walk_N.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/walk_N_05.png",
+       "file": "walk_N_05.png",
+       "packed_bounds": [
+        62,
+        66,
+        99,
+        139
+       ],
+       "anchors": {
+        "hand_R": [
+         13.2,
+         -31.1
+        ],
+        "hand_L": [
+         -12.7,
+         -27.1
+        ],
+        "foot_R": [
+         5.1,
+         2.2
+        ],
+        "foot_L": [
+         -5.1,
+         -4.2
+        ],
+        "broom_foot": [
+         13.2,
+         -4.0
+        ]
+       },
+       "equipment": {
+        "broom": 124
+       },
+       "sha256": "c203a2aeeae3aaac3c979dcc8e2fbddc7fb56447a7982c5d2ad13bfeae4a341d",
+       "sheet": "sheets/walk_N.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/walk_N_06.png",
+       "file": "walk_N_06.png",
+       "packed_bounds": [
+        61,
+        66,
+        99,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         13.2,
+         -30.9
+        ],
+        "hand_L": [
+         -12.7,
+         -27.6
+        ],
+        "foot_R": [
+         5.1,
+         -1.0
+        ],
+        "foot_L": [
+         -5.1,
+         -2.9
+        ],
+        "broom_foot": [
+         13.2,
+         -3.8
+        ]
+       },
+       "equipment": {
+        "broom": 121
+       },
+       "sha256": "46471c295e47a94264d70998cc9578baab9f7856e0f98d7087617af2f04e3bd5",
+       "sheet": "sheets/walk_N.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/walk_N_07.png",
+       "file": "walk_N_07.png",
+       "packed_bounds": [
+        61,
+        65,
+        99,
+        135
+       ],
+       "anchors": {
+        "hand_R": [
+         13.2,
+         -31.7
+        ],
+        "hand_L": [
+         -12.7,
+         -29.2
+        ],
+        "foot_R": [
+         5.1,
+         -3.4
+        ],
+        "foot_L": [
+         -5.1,
+         -1.6
+        ],
+        "broom_foot": [
+         13.2,
+         -4.6
+        ]
+       },
+       "equipment": {
+        "broom": 117
+       },
+       "sha256": "937a7c70b862a8332ef83846b0f791142e13e1e98a5e01ab5b60604713371a0c",
+       "sheet": "sheets/walk_N.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/walk_N_08.png",
+       "file": "walk_N_08.png",
+       "packed_bounds": [
+        61,
+        64,
+        99,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         13.2,
+         -32.6
+        ],
+        "hand_L": [
+         -12.7,
+         -30.8
+        ],
+        "foot_R": [
+         5.1,
+         -4.7
+        ],
+        "foot_L": [
+         -5.1,
+         -0.4
+        ],
+        "broom_foot": [
+         13.2,
+         -5.4
+        ]
+       },
+       "equipment": {
+        "broom": 123
+       },
+       "sha256": "4604c8bf691d64bde6d398fce2683a6477c5ca40a38b4443c623f1099bcefe65",
+       "sheet": "sheets/walk_N.png",
+       "region": [
+        1280,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/walk_N_09.png",
+       "file": "walk_N_09.png",
+       "packed_bounds": [
+        61,
+        64,
+        99,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         13.2,
+         -32.4
+        ],
+        "hand_L": [
+         -12.7,
+         -31.3
+        ],
+        "foot_R": [
+         5.1,
+         -4.8
+        ],
+        "foot_L": [
+         -5.1,
+         0.9
+        ],
+        "broom_foot": [
+         13.2,
+         -5.2
+        ]
+       },
+       "equipment": {
+        "broom": 141
+       },
+       "sha256": "a2f85ad46bd05e79ac2cd32532158451b80965573f411476de0c89b545ab55ab",
+       "sheet": "sheets/walk_N.png",
+       "region": [
+        1440,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "E": {
+     "frames": [
+      {
+       "path": "res://assets/animated/ada/walk_E_00.png",
+       "file": "walk_E_00.png",
+       "packed_bounds": [
+        67,
+        66,
+        96,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         1.3,
+         -29.1
+        ],
+        "hand_L": [
+         6.0,
+         -28.0
+        ],
+        "foot_R": [
+         8.5,
+         -1.0
+        ],
+        "foot_L": [
+         -8.5,
+         -1.0
+        ],
+        "broom_foot": [
+         -0.8,
+         -2.7
+        ]
+       },
+       "equipment": {
+        "broom": 134
+       },
+       "sha256": "c910a4ae2e7be311df4085e2268225b12cfe646ec56c013d9216d05f84597ac1",
+       "sheet": "sheets/walk_E.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/walk_E_01.png",
+       "file": "walk_E_01.png",
+       "packed_bounds": [
+        67,
+        66,
+        93,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         2.0,
+         -29.1
+        ],
+        "hand_L": [
+         4.6,
+         -28.0
+        ],
+        "foot_R": [
+         4.9,
+         -1.0
+        ],
+        "foot_L": [
+         -4.9,
+         -2.9
+        ],
+        "broom_foot": [
+         -0.2,
+         -2.7
+        ]
+       },
+       "equipment": {
+        "broom": 128
+       },
+       "sha256": "2f31f14b717207de5214418ff6a25549cb7e0aa375ae2360716fbd6165f2e203",
+       "sheet": "sheets/walk_E.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/walk_E_02.png",
+       "file": "walk_E_02.png",
+       "packed_bounds": [
+        67,
+        65,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         2.6,
+         -30.2
+        ],
+        "hand_L": [
+         3.1,
+         -29.1
+        ],
+        "foot_R": [
+         1.3,
+         -1.0
+        ],
+        "foot_L": [
+         -1.3,
+         -4.0
+        ],
+        "broom_foot": [
+         0.5,
+         -3.7
+        ]
+       },
+       "equipment": {
+        "broom": 122
+       },
+       "sha256": "9ea92f5a3d54dad724beac8e5bc8748bc0aa1c0a31451e1f710a1c3de93b53b4",
+       "sheet": "sheets/walk_E.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/walk_E_03.png",
+       "file": "walk_E_03.png",
+       "packed_bounds": [
+        67,
+        64,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         3.2,
+         -31.2
+        ],
+        "hand_L": [
+         1.6,
+         -30.2
+        ],
+        "foot_R": [
+         -2.3,
+         -1.0
+        ],
+        "foot_L": [
+         2.3,
+         -4.0
+        ],
+        "broom_foot": [
+         1.1,
+         -4.8
+        ]
+       },
+       "equipment": {
+        "broom": 134
+       },
+       "sha256": "24ca49f1f9ef3ecf31a8d205e3633c52d065af2d167545abb74ab2b248105b00",
+       "sheet": "sheets/walk_E.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/walk_E_04.png",
+       "file": "walk_E_04.png",
+       "packed_bounds": [
+        67,
+        64,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         3.9,
+         -31.2
+        ],
+        "hand_L": [
+         0.1,
+         -30.2
+        ],
+        "foot_R": [
+         -5.9,
+         -1.0
+        ],
+        "foot_L": [
+         5.9,
+         -2.9
+        ],
+        "broom_foot": [
+         1.8,
+         -4.8
+        ]
+       },
+       "equipment": {
+        "broom": 128
+       },
+       "sha256": "4c5cb21f5777215324bd7bbf2d78c4305fc4acc72452f279efb721f9ff571587",
+       "sheet": "sheets/walk_E.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/walk_E_05.png",
+       "file": "walk_E_05.png",
+       "packed_bounds": [
+        66,
+        66,
+        97,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         4.5,
+         -29.1
+        ],
+        "hand_L": [
+         -1.4,
+         -28.0
+        ],
+        "foot_R": [
+         -9.5,
+         -1.0
+        ],
+        "foot_L": [
+         9.5,
+         -1.0
+        ],
+        "broom_foot": [
+         2.4,
+         -2.7
+        ]
+       },
+       "equipment": {
+        "broom": 128
+       },
+       "sha256": "c412c7175a89432fe69f28d35e23c56772876115eca06705ad1cd5f7cb1155e3",
+       "sheet": "sheets/walk_E.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/walk_E_06.png",
+       "file": "walk_E_06.png",
+       "packed_bounds": [
+        67,
+        66,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         3.9,
+         -29.1
+        ],
+        "hand_L": [
+         0.1,
+         -28.0
+        ],
+        "foot_R": [
+         -5.9,
+         -2.9
+        ],
+        "foot_L": [
+         5.9,
+         -1.0
+        ],
+        "broom_foot": [
+         1.8,
+         -2.7
+        ]
+       },
+       "equipment": {
+        "broom": 128
+       },
+       "sha256": "9bb9fef7eb05e27107c0253b6b31fc2fbcde8bbe02702799eab2abd2990cdd2d",
+       "sheet": "sheets/walk_E.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/walk_E_07.png",
+       "file": "walk_E_07.png",
+       "packed_bounds": [
+        67,
+        65,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         3.2,
+         -30.2
+        ],
+        "hand_L": [
+         1.6,
+         -29.1
+        ],
+        "foot_R": [
+         -2.3,
+         -4.0
+        ],
+        "foot_L": [
+         2.3,
+         -1.0
+        ],
+        "broom_foot": [
+         1.1,
+         -3.7
+        ]
+       },
+       "equipment": {
+        "broom": 134
+       },
+       "sha256": "ac11dab28efbf8ef0b2d56e09e0774f50ba68e9a3a5355d2a42f726fd986cbd7",
+       "sheet": "sheets/walk_E.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/walk_E_08.png",
+       "file": "walk_E_08.png",
+       "packed_bounds": [
+        67,
+        64,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         2.6,
+         -31.2
+        ],
+        "hand_L": [
+         3.1,
+         -30.2
+        ],
+        "foot_R": [
+         1.3,
+         -4.0
+        ],
+        "foot_L": [
+         -1.3,
+         -1.0
+        ],
+        "broom_foot": [
+         0.5,
+         -4.8
+        ]
+       },
+       "equipment": {
+        "broom": 123
+       },
+       "sha256": "0b2050f5e266a8b415a49c2de165728a61cbe1cd84d540c52e6b8df7e700d8f1",
+       "sheet": "sheets/walk_E.png",
+       "region": [
+        1280,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/walk_E_09.png",
+       "file": "walk_E_09.png",
+       "packed_bounds": [
+        67,
+        64,
+        93,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         2.0,
+         -31.2
+        ],
+        "hand_L": [
+         4.6,
+         -30.2
+        ],
+        "foot_R": [
+         4.9,
+         -2.9
+        ],
+        "foot_L": [
+         -4.9,
+         -1.0
+        ],
+        "broom_foot": [
+         -0.2,
+         -4.8
+        ]
+       },
+       "equipment": {
+        "broom": 128
+       },
+       "sha256": "f88e49fcc17ce6b39894127c3991654eb39ffd121030ae127da54b48ff8238c7",
+       "sheet": "sheets/walk_E.png",
+       "region": [
+        1440,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "W": {
+     "frames": [
+      {
+       "path": "res://assets/animated/ada/walk_W_00.png",
+       "file": "walk_W_00.png",
+       "packed_bounds": [
+        63,
+        66,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -4.0,
+         -29.1
+        ],
+        "hand_L": [
+         -3.5,
+         -28.0
+        ],
+        "foot_R": [
+         -9.5,
+         -1.0
+        ],
+        "foot_L": [
+         9.5,
+         -1.0
+        ],
+        "broom_foot": [
+         -1.9,
+         -2.7
+        ]
+       },
+       "equipment": {
+        "broom": 50
+       },
+       "sha256": "ed7a6a8b5115d2b0dceb6d30899d6142fe8e12ae8d9c1211f91eb84421ab44d5",
+       "sheet": "sheets/walk_W.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/walk_W_01.png",
+       "file": "walk_W_01.png",
+       "packed_bounds": [
+        66,
+        66,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -4.6,
+         -29.1
+        ],
+        "hand_L": [
+         -2.0,
+         -28.0
+        ],
+        "foot_R": [
+         -5.9,
+         -1.0
+        ],
+        "foot_L": [
+         5.9,
+         -2.9
+        ],
+        "broom_foot": [
+         -2.5,
+         -2.7
+        ]
+       },
+       "equipment": {
+        "broom": 12
+       },
+       "sha256": "65f449472d053f2e046ede1996d45f66223d0723a7c44d78c6451e72035c3d83",
+       "sheet": "sheets/walk_W.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/walk_W_02.png",
+       "file": "walk_W_02.png",
+       "packed_bounds": [
+        67,
+        65,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -5.2,
+         -30.2
+        ],
+        "hand_L": [
+         -0.5,
+         -29.1
+        ],
+        "foot_R": [
+         -2.3,
+         -1.0
+        ],
+        "foot_L": [
+         2.3,
+         -4.0
+        ],
+        "broom_foot": [
+         -3.1,
+         -3.7
+        ]
+       },
+       "equipment": {
+        "broom": 15
+       },
+       "sha256": "37a0bdaf10a1e6a11419391aa6c363eae69042c5f79459f61c02ffb7f42f8beb",
+       "sheet": "sheets/walk_W.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/walk_W_03.png",
+       "file": "walk_W_03.png",
+       "packed_bounds": [
+        67,
+        64,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -5.9,
+         -31.2
+        ],
+        "hand_L": [
+         1.0,
+         -30.2
+        ],
+        "foot_R": [
+         1.3,
+         -1.0
+        ],
+        "foot_L": [
+         -1.3,
+         -4.0
+        ],
+        "broom_foot": [
+         -3.8,
+         -4.8
+        ]
+       },
+       "equipment": {
+        "broom": 21
+       },
+       "sha256": "7e66da56d2897affaf8e231ee3cc7e3ab73951d855f1c9ae987f689794a2f406",
+       "sheet": "sheets/walk_W.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/walk_W_04.png",
+       "file": "walk_W_04.png",
+       "packed_bounds": [
+        67,
+        64,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -6.5,
+         -31.2
+        ],
+        "hand_L": [
+         2.4,
+         -30.2
+        ],
+        "foot_R": [
+         4.9,
+         -1.0
+        ],
+        "foot_L": [
+         -4.9,
+         -2.9
+        ],
+        "broom_foot": [
+         -4.4,
+         -4.8
+        ]
+       },
+       "equipment": {
+        "broom": 10
+       },
+       "sha256": "361d7a02e3971133407cb662db1e4bd3b98fc03472dc54b944a5a0eb9621385f",
+       "sheet": "sheets/walk_W.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/walk_W_05.png",
+       "file": "walk_W_05.png",
+       "packed_bounds": [
+        64,
+        66,
+        93,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -7.2,
+         -29.1
+        ],
+        "hand_L": [
+         3.9,
+         -28.0
+        ],
+        "foot_R": [
+         8.5,
+         -1.0
+        ],
+        "foot_L": [
+         -8.5,
+         -1.0
+        ],
+        "broom_foot": [
+         -5.0,
+         -2.7
+        ]
+       },
+       "equipment": {
+        "broom": 28
+       },
+       "sha256": "bfb1155acee4ec53ddb40547b19a0fadbb585c742286bcd66b8a825c020a95bf",
+       "sheet": "sheets/walk_W.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/walk_W_06.png",
+       "file": "walk_W_06.png",
+       "packed_bounds": [
+        67,
+        66,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -6.5,
+         -29.1
+        ],
+        "hand_L": [
+         2.4,
+         -28.0
+        ],
+        "foot_R": [
+         4.9,
+         -2.9
+        ],
+        "foot_L": [
+         -4.9,
+         -1.0
+        ],
+        "broom_foot": [
+         -4.4,
+         -2.7
+        ]
+       },
+       "equipment": {
+        "broom": 7
+       },
+       "sha256": "f6965530e7079f3e84f426b9e63ba84e816a700f5744c4bb25bad02b72d766bf",
+       "sheet": "sheets/walk_W.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/walk_W_07.png",
+       "file": "walk_W_07.png",
+       "packed_bounds": [
+        67,
+        65,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -5.9,
+         -30.2
+        ],
+        "hand_L": [
+         1.0,
+         -29.1
+        ],
+        "foot_R": [
+         1.3,
+         -4.0
+        ],
+        "foot_L": [
+         -1.3,
+         -1.0
+        ],
+        "broom_foot": [
+         -3.8,
+         -3.7
+        ]
+       },
+       "equipment": {
+        "broom": 25
+       },
+       "sha256": "4a2902000f2ad1bd7fb37f54a7de08829fb3df9e2535ef318b97988b1d5e9c00",
+       "sheet": "sheets/walk_W.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/walk_W_08.png",
+       "file": "walk_W_08.png",
+       "packed_bounds": [
+        67,
+        64,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -5.2,
+         -31.2
+        ],
+        "hand_L": [
+         -0.5,
+         -30.2
+        ],
+        "foot_R": [
+         -2.3,
+         -4.0
+        ],
+        "foot_L": [
+         2.3,
+         -1.0
+        ],
+        "broom_foot": [
+         -3.1,
+         -4.8
+        ]
+       },
+       "equipment": {
+        "broom": 7
+       },
+       "sha256": "8f0c0d4db99ca436114594a6068f33fcbd089b6f5e3e314b81d7bcd1d3270bfc",
+       "sheet": "sheets/walk_W.png",
+       "region": [
+        1280,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/walk_W_09.png",
+       "file": "walk_W_09.png",
+       "packed_bounds": [
+        66,
+        64,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -4.6,
+         -31.2
+        ],
+        "hand_L": [
+         -2.0,
+         -30.2
+        ],
+        "foot_R": [
+         -5.9,
+         -2.9
+        ],
+        "foot_L": [
+         5.9,
+         -1.0
+        ],
+        "broom_foot": [
+         -2.5,
+         -4.8
+        ]
+       },
+       "equipment": {
+        "broom": 16
+       },
+       "sha256": "561bc331f4911ac82474d17f60c7fbeb7b59a59e2230db021c5796a3d0ab3ea7",
+       "sheet": "sheets/walk_W.png",
+       "region": [
+        1440,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    }
+   }
+  },
+  "talk": {
+   "frame_count": 8,
+   "durations": [
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.2
+   ],
+   "duration": 1.6,
+   "loop": true,
+   "release_frame": null,
+   "release_time": null,
+   "hold_frame": null,
+   "roles": null,
+   "facings": {
+    "S": {
+     "frames": [
+      {
+       "path": "res://assets/animated/ada/talk_S_00.png",
+       "file": "talk_S_00.png",
+       "packed_bounds": [
+        61,
+        65,
+        98,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.2,
+         -28.1
+        ],
+        "hand_L": [
+         12.7,
+         -28.2
+        ],
+        "foot_R": [
+         -5.1,
+         -0.4
+        ],
+        "foot_L": [
+         5.1,
+         -1.6
+        ],
+        "broom_foot": [
+         -13.2,
+         -2.5
+        ]
+       },
+       "equipment": {
+        "broom": 136
+       },
+       "sha256": "6bd73b8a489bdae1f920d5cca0af156811867053f5be02a247b28c6f5ddc9a48",
+       "sheet": "sheets/talk_S.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/talk_S_01.png",
+       "file": "talk_S_01.png",
+       "packed_bounds": [
+        61,
+        65,
+        98,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.2,
+         -28.1
+        ],
+        "hand_L": [
+         9.5,
+         -31.1
+        ],
+        "foot_R": [
+         -5.1,
+         -0.4
+        ],
+        "foot_L": [
+         5.1,
+         -1.6
+        ],
+        "broom_foot": [
+         -13.2,
+         -2.5
+        ]
+       },
+       "equipment": {
+        "broom": 136
+       },
+       "sha256": "ea56f0a07bbfcc2ac8ce5b0d4d497144a2b1830534ee5c1b3131b06ef48db53c",
+       "sheet": "sheets/talk_S.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/talk_S_02.png",
+       "file": "talk_S_02.png",
+       "packed_bounds": [
+        61,
+        64,
+        97,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.2,
+         -28.1
+        ],
+        "hand_L": [
+         7.4,
+         -32.0
+        ],
+        "foot_R": [
+         -5.1,
+         -0.4
+        ],
+        "foot_L": [
+         5.1,
+         -1.6
+        ],
+        "broom_foot": [
+         -13.2,
+         -2.5
+        ]
+       },
+       "equipment": {
+        "broom": 136
+       },
+       "sha256": "73f6a84f41d374013eb01078d0cdae11c5446be9757cc2d897ba132f074081c5",
+       "sheet": "sheets/talk_S.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/talk_S_03.png",
+       "file": "talk_S_03.png",
+       "packed_bounds": [
+        61,
+        64,
+        97,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.2,
+         -28.1
+        ],
+        "hand_L": [
+         8.5,
+         -32.0
+        ],
+        "foot_R": [
+         -5.1,
+         -0.4
+        ],
+        "foot_L": [
+         5.1,
+         -1.6
+        ],
+        "broom_foot": [
+         -13.2,
+         -2.5
+        ]
+       },
+       "equipment": {
+        "broom": 136
+       },
+       "sha256": "012e6920675a2f85c6492d152acc24e6e03b21d588deae15f2ce02459bd9fc7b",
+       "sheet": "sheets/talk_S.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/talk_S_04.png",
+       "file": "talk_S_04.png",
+       "packed_bounds": [
+        61,
+        64,
+        97,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.2,
+         -28.1
+        ],
+        "hand_L": [
+         7.4,
+         -32.0
+        ],
+        "foot_R": [
+         -5.1,
+         -0.4
+        ],
+        "foot_L": [
+         5.1,
+         -1.6
+        ],
+        "broom_foot": [
+         -13.2,
+         -2.5
+        ]
+       },
+       "equipment": {
+        "broom": 136
+       },
+       "sha256": "73f6a84f41d374013eb01078d0cdae11c5446be9757cc2d897ba132f074081c5",
+       "sheet": "sheets/talk_S.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/talk_S_05.png",
+       "file": "talk_S_05.png",
+       "packed_bounds": [
+        61,
+        65,
+        97,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.2,
+         -28.1
+        ],
+        "hand_L": [
+         9.0,
+         -31.6
+        ],
+        "foot_R": [
+         -5.1,
+         -0.4
+        ],
+        "foot_L": [
+         5.1,
+         -1.6
+        ],
+        "broom_foot": [
+         -13.2,
+         -2.5
+        ]
+       },
+       "equipment": {
+        "broom": 136
+       },
+       "sha256": "8a2892f5e33c941c68fca92ea5a69b29b0c67cd5c2cdb7b32de9a2bb06586cba",
+       "sheet": "sheets/talk_S.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/talk_S_06.png",
+       "file": "talk_S_06.png",
+       "packed_bounds": [
+        61,
+        65,
+        98,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.2,
+         -28.1
+        ],
+        "hand_L": [
+         11.1,
+         -29.6
+        ],
+        "foot_R": [
+         -5.1,
+         -0.4
+        ],
+        "foot_L": [
+         5.1,
+         -1.6
+        ],
+        "broom_foot": [
+         -13.2,
+         -2.5
+        ]
+       },
+       "equipment": {
+        "broom": 136
+       },
+       "sha256": "c6b863d56f1d9506c023409b1d2b49a5a6d7737388b6600bed302ea51b3ff670",
+       "sheet": "sheets/talk_S.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/talk_S_07.png",
+       "file": "talk_S_07.png",
+       "packed_bounds": [
+        61,
+        65,
+        98,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.2,
+         -28.1
+        ],
+        "hand_L": [
+         12.7,
+         -28.2
+        ],
+        "foot_R": [
+         -5.1,
+         -0.4
+        ],
+        "foot_L": [
+         5.1,
+         -1.6
+        ],
+        "broom_foot": [
+         -13.2,
+         -2.5
+        ]
+       },
+       "equipment": {
+        "broom": 136
+       },
+       "sha256": "6bd73b8a489bdae1f920d5cca0af156811867053f5be02a247b28c6f5ddc9a48",
+       "sheet": "sheets/talk_S.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "N": {
+     "frames": [
+      {
+       "path": "res://assets/animated/ada/talk_N_00.png",
+       "file": "talk_N_00.png",
+       "packed_bounds": [
+        62,
+        66,
+        99,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         13.2,
+         -31.1
+        ],
+        "hand_L": [
+         -12.7,
+         -28.9
+        ],
+        "foot_R": [
+         5.1,
+         -1.6
+        ],
+        "foot_L": [
+         -5.1,
+         -0.4
+        ],
+        "broom_foot": [
+         13.2,
+         -3.9
+        ]
+       },
+       "equipment": {
+        "broom": 124
+       },
+       "sha256": "83ce2ebf6a359f6d927b70141737d99d39ededc83502f7e6f452399139721a58",
+       "sheet": "sheets/talk_N.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/talk_N_01.png",
+       "file": "talk_N_01.png",
+       "packed_bounds": [
+        62,
+        66,
+        99,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         13.2,
+         -31.1
+        ],
+        "hand_L": [
+         -9.5,
+         -34.9
+        ],
+        "foot_R": [
+         5.1,
+         -1.6
+        ],
+        "foot_L": [
+         -5.1,
+         -0.4
+        ],
+        "broom_foot": [
+         13.2,
+         -3.9
+        ]
+       },
+       "equipment": {
+        "broom": 124
+       },
+       "sha256": "5dd8776b87fd7ca9ffc7a7d820cac21f1000351dfd96f8d9b694f81994b36bbe",
+       "sheet": "sheets/talk_N.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/talk_N_02.png",
+       "file": "talk_N_02.png",
+       "packed_bounds": [
+        63,
+        64,
+        99,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         13.2,
+         -31.1
+        ],
+        "hand_L": [
+         -7.4,
+         -37.9
+        ],
+        "foot_R": [
+         5.1,
+         -1.6
+        ],
+        "foot_L": [
+         -5.1,
+         -0.4
+        ],
+        "broom_foot": [
+         13.2,
+         -3.9
+        ]
+       },
+       "equipment": {
+        "broom": 124
+       },
+       "sha256": "4d17d2c49deb390e864822a4a02a45aab9120ae35caaa6175b8956c11b7263d2",
+       "sheet": "sheets/talk_N.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/talk_N_03.png",
+       "file": "talk_N_03.png",
+       "packed_bounds": [
+        63,
+        64,
+        98,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         13.2,
+         -31.1
+        ],
+        "hand_L": [
+         -8.5,
+         -36.9
+        ],
+        "foot_R": [
+         5.1,
+         -1.6
+        ],
+        "foot_L": [
+         -5.1,
+         -0.4
+        ],
+        "broom_foot": [
+         13.2,
+         -3.9
+        ]
+       },
+       "equipment": {
+        "broom": 124
+       },
+       "sha256": "2db575ecfe8acc3051863ea180bcc636ed46fc074dfc2b0e7f653a142d7dba8f",
+       "sheet": "sheets/talk_N.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/talk_N_04.png",
+       "file": "talk_N_04.png",
+       "packed_bounds": [
+        63,
+        64,
+        99,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         13.2,
+         -31.1
+        ],
+        "hand_L": [
+         -7.4,
+         -37.9
+        ],
+        "foot_R": [
+         5.1,
+         -1.6
+        ],
+        "foot_L": [
+         -5.1,
+         -0.4
+        ],
+        "broom_foot": [
+         13.2,
+         -3.9
+        ]
+       },
+       "equipment": {
+        "broom": 124
+       },
+       "sha256": "4d17d2c49deb390e864822a4a02a45aab9120ae35caaa6175b8956c11b7263d2",
+       "sheet": "sheets/talk_N.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/talk_N_05.png",
+       "file": "talk_N_05.png",
+       "packed_bounds": [
+        63,
+        66,
+        99,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         13.2,
+         -31.1
+        ],
+        "hand_L": [
+         -9.0,
+         -35.9
+        ],
+        "foot_R": [
+         5.1,
+         -1.6
+        ],
+        "foot_L": [
+         -5.1,
+         -0.4
+        ],
+        "broom_foot": [
+         13.2,
+         -3.9
+        ]
+       },
+       "equipment": {
+        "broom": 124
+       },
+       "sha256": "a114111582942a747964ccda100316e91fa6bbb8984c5cd0fa05baa7cb281105",
+       "sheet": "sheets/talk_N.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/talk_N_06.png",
+       "file": "talk_N_06.png",
+       "packed_bounds": [
+        62,
+        66,
+        99,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         13.2,
+         -31.1
+        ],
+        "hand_L": [
+         -11.1,
+         -31.9
+        ],
+        "foot_R": [
+         5.1,
+         -1.6
+        ],
+        "foot_L": [
+         -5.1,
+         -0.4
+        ],
+        "broom_foot": [
+         13.2,
+         -3.9
+        ]
+       },
+       "equipment": {
+        "broom": 124
+       },
+       "sha256": "9a4272fdb6df55b5c5d61839b246356d8b28aefc2004f5c31413d10577855427",
+       "sheet": "sheets/talk_N.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/talk_N_07.png",
+       "file": "talk_N_07.png",
+       "packed_bounds": [
+        62,
+        66,
+        99,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         13.2,
+         -31.1
+        ],
+        "hand_L": [
+         -12.7,
+         -28.9
+        ],
+        "foot_R": [
+         5.1,
+         -1.6
+        ],
+        "foot_L": [
+         -5.1,
+         -0.4
+        ],
+        "broom_foot": [
+         13.2,
+         -3.9
+        ]
+       },
+       "equipment": {
+        "broom": 124
+       },
+       "sha256": "83ce2ebf6a359f6d927b70141737d99d39ededc83502f7e6f452399139721a58",
+       "sheet": "sheets/talk_N.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "E": {
+     "frames": [
+      {
+       "path": "res://assets/animated/ada/talk_E_00.png",
+       "file": "talk_E_00.png",
+       "packed_bounds": [
+        67,
+        65,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         2.9,
+         -29.6
+        ],
+        "hand_L": [
+         2.3,
+         -28.6
+        ],
+        "foot_R": [
+         1.1,
+         -1.0
+        ],
+        "foot_L": [
+         -1.1,
+         -1.0
+        ],
+        "broom_foot": [
+         0.8,
+         -3.2
+        ]
+       },
+       "equipment": {
+        "broom": 128
+       },
+       "sha256": "dd929450fd6ff047fb3ec20f4036dc5baf70ef19694df8609dd4a0a879795aa4",
+       "sheet": "sheets/talk_E.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/talk_E_01.png",
+       "file": "talk_E_01.png",
+       "packed_bounds": [
+        67,
+        65,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         2.9,
+         -29.6
+        ],
+        "hand_L": [
+         6.5,
+         -33.0
+        ],
+        "foot_R": [
+         1.1,
+         -1.0
+        ],
+        "foot_L": [
+         -1.1,
+         -1.0
+        ],
+        "broom_foot": [
+         0.8,
+         -3.2
+        ]
+       },
+       "equipment": {
+        "broom": 128
+       },
+       "sha256": "d4140c5c76ffe91f1c65ac2a7d12b78ddc5f9ad9812b840591637ba17eea6e9b",
+       "sheet": "sheets/talk_E.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/talk_E_02.png",
+       "file": "talk_E_02.png",
+       "packed_bounds": [
+        67,
+        64,
+        93,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         2.9,
+         -29.6
+        ],
+        "hand_L": [
+         9.2,
+         -34.9
+        ],
+        "foot_R": [
+         1.1,
+         -1.0
+        ],
+        "foot_L": [
+         -1.1,
+         -1.0
+        ],
+        "broom_foot": [
+         0.8,
+         -3.2
+        ]
+       },
+       "equipment": {
+        "broom": 131
+       },
+       "sha256": "23392d0d2204d9c8015090350a19d31a7cc2c9a933b5b9e81adcb378af4c47bf",
+       "sheet": "sheets/talk_E.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/talk_E_03.png",
+       "file": "talk_E_03.png",
+       "packed_bounds": [
+        67,
+        64,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         2.9,
+         -29.6
+        ],
+        "hand_L": [
+         7.8,
+         -34.5
+        ],
+        "foot_R": [
+         1.1,
+         -1.0
+        ],
+        "foot_L": [
+         -1.1,
+         -1.0
+        ],
+        "broom_foot": [
+         0.8,
+         -3.2
+        ]
+       },
+       "equipment": {
+        "broom": 131
+       },
+       "sha256": "1f970d36eb791613c55b0c0ec750d1b844d6b0bd5dc593b8d4747dbd21d0c5d3",
+       "sheet": "sheets/talk_E.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/talk_E_04.png",
+       "file": "talk_E_04.png",
+       "packed_bounds": [
+        67,
+        64,
+        93,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         2.9,
+         -29.6
+        ],
+        "hand_L": [
+         9.2,
+         -34.9
+        ],
+        "foot_R": [
+         1.1,
+         -1.0
+        ],
+        "foot_L": [
+         -1.1,
+         -1.0
+        ],
+        "broom_foot": [
+         0.8,
+         -3.2
+        ]
+       },
+       "equipment": {
+        "broom": 131
+       },
+       "sha256": "23392d0d2204d9c8015090350a19d31a7cc2c9a933b5b9e81adcb378af4c47bf",
+       "sheet": "sheets/talk_E.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/talk_E_05.png",
+       "file": "talk_E_05.png",
+       "packed_bounds": [
+        67,
+        65,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         2.9,
+         -29.6
+        ],
+        "hand_L": [
+         7.2,
+         -33.8
+        ],
+        "foot_R": [
+         1.1,
+         -1.0
+        ],
+        "foot_L": [
+         -1.1,
+         -1.0
+        ],
+        "broom_foot": [
+         0.8,
+         -3.2
+        ]
+       },
+       "equipment": {
+        "broom": 128
+       },
+       "sha256": "90f3c9d563ec9302a602eaa43144762a18dd54d719c9cc123b3cfdf9d79a3d0a",
+       "sheet": "sheets/talk_E.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/talk_E_06.png",
+       "file": "talk_E_06.png",
+       "packed_bounds": [
+        67,
+        65,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         2.9,
+         -29.6
+        ],
+        "hand_L": [
+         4.4,
+         -30.8
+        ],
+        "foot_R": [
+         1.1,
+         -1.0
+        ],
+        "foot_L": [
+         -1.1,
+         -1.0
+        ],
+        "broom_foot": [
+         0.8,
+         -3.2
+        ]
+       },
+       "equipment": {
+        "broom": 128
+       },
+       "sha256": "5b75b6bb41700c1b08f8846816768682b126be34c8cd06f9252aa2bc12bcf841",
+       "sheet": "sheets/talk_E.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/talk_E_07.png",
+       "file": "talk_E_07.png",
+       "packed_bounds": [
+        67,
+        65,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         2.9,
+         -29.6
+        ],
+        "hand_L": [
+         2.3,
+         -28.6
+        ],
+        "foot_R": [
+         1.1,
+         -1.0
+        ],
+        "foot_L": [
+         -1.1,
+         -1.0
+        ],
+        "broom_foot": [
+         0.8,
+         -3.2
+        ]
+       },
+       "equipment": {
+        "broom": 128
+       },
+       "sha256": "dd929450fd6ff047fb3ec20f4036dc5baf70ef19694df8609dd4a0a879795aa4",
+       "sheet": "sheets/talk_E.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "W": {
+     "frames": [
+      {
+       "path": "res://assets/animated/ada/talk_W_00.png",
+       "file": "talk_W_00.png",
+       "packed_bounds": [
+        67,
+        65,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -5.6,
+         -29.6
+        ],
+        "hand_L": [
+         0.2,
+         -28.6
+        ],
+        "foot_R": [
+         -2.1,
+         -1.0
+        ],
+        "foot_L": [
+         2.1,
+         -1.0
+        ],
+        "broom_foot": [
+         -3.5,
+         -3.2
+        ]
+       },
+       "equipment": {
+        "broom": 21
+       },
+       "sha256": "0eb27005d61fce3ede285011ab5520cce0d320647acf7fd19dca6c47c095511e",
+       "sheet": "sheets/talk_W.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/talk_W_01.png",
+       "file": "talk_W_01.png",
+       "packed_bounds": [
+        67,
+        65,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -5.6,
+         -29.6
+        ],
+        "hand_L": [
+         -4.6,
+         -33.0
+        ],
+        "foot_R": [
+         -2.1,
+         -1.0
+        ],
+        "foot_L": [
+         2.1,
+         -1.0
+        ],
+        "broom_foot": [
+         -3.5,
+         -3.2
+        ]
+       },
+       "equipment": {
+        "broom": 18
+       },
+       "sha256": "a6b10a31751974ef9a6e3feb1342099a1fb6c7c7e5230670fcbfd8fad29fa5f1",
+       "sheet": "sheets/talk_W.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/talk_W_02.png",
+       "file": "talk_W_02.png",
+       "packed_bounds": [
+        67,
+        64,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -5.6,
+         -29.6
+        ],
+        "hand_L": [
+         -7.7,
+         -34.9
+        ],
+        "foot_R": [
+         -2.1,
+         -1.0
+        ],
+        "foot_L": [
+         2.1,
+         -1.0
+        ],
+        "broom_foot": [
+         -3.5,
+         -3.2
+        ]
+       },
+       "equipment": {
+        "broom": 17
+       },
+       "sha256": "c313cb33a7ae7bd64834fe9603d867ad8ec4feeb2806c80402d68e3051e74187",
+       "sheet": "sheets/talk_W.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/talk_W_03.png",
+       "file": "talk_W_03.png",
+       "packed_bounds": [
+        67,
+        64,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -5.6,
+         -29.6
+        ],
+        "hand_L": [
+         -6.1,
+         -34.5
+        ],
+        "foot_R": [
+         -2.1,
+         -1.0
+        ],
+        "foot_L": [
+         2.1,
+         -1.0
+        ],
+        "broom_foot": [
+         -3.5,
+         -3.2
+        ]
+       },
+       "equipment": {
+        "broom": 17
+       },
+       "sha256": "e60ea188afde7571ca3d65eec4dd66ea58ca52a3d68a076bd4c6f68e413d7647",
+       "sheet": "sheets/talk_W.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/talk_W_04.png",
+       "file": "talk_W_04.png",
+       "packed_bounds": [
+        67,
+        64,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -5.6,
+         -29.6
+        ],
+        "hand_L": [
+         -7.7,
+         -34.9
+        ],
+        "foot_R": [
+         -2.1,
+         -1.0
+        ],
+        "foot_L": [
+         2.1,
+         -1.0
+        ],
+        "broom_foot": [
+         -3.5,
+         -3.2
+        ]
+       },
+       "equipment": {
+        "broom": 17
+       },
+       "sha256": "c313cb33a7ae7bd64834fe9603d867ad8ec4feeb2806c80402d68e3051e74187",
+       "sheet": "sheets/talk_W.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/talk_W_05.png",
+       "file": "talk_W_05.png",
+       "packed_bounds": [
+        67,
+        65,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -5.6,
+         -29.6
+        ],
+        "hand_L": [
+         -5.4,
+         -33.8
+        ],
+        "foot_R": [
+         -2.1,
+         -1.0
+        ],
+        "foot_L": [
+         2.1,
+         -1.0
+        ],
+        "broom_foot": [
+         -3.5,
+         -3.2
+        ]
+       },
+       "equipment": {
+        "broom": 18
+       },
+       "sha256": "51693e0f405f2956f9338114f3c9ad23b76879f33654733fc72c9c1c87455ebb",
+       "sheet": "sheets/talk_W.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/talk_W_06.png",
+       "file": "talk_W_06.png",
+       "packed_bounds": [
+        67,
+        65,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -5.6,
+         -29.6
+        ],
+        "hand_L": [
+         -2.2,
+         -30.8
+        ],
+        "foot_R": [
+         -2.1,
+         -1.0
+        ],
+        "foot_L": [
+         2.1,
+         -1.0
+        ],
+        "broom_foot": [
+         -3.5,
+         -3.2
+        ]
+       },
+       "equipment": {
+        "broom": 19
+       },
+       "sha256": "27dbb55fa0b5b7dd37d46d33a58d8adbe32467ef8ee154ea9f7b7e578ba0fd56",
+       "sheet": "sheets/talk_W.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/talk_W_07.png",
+       "file": "talk_W_07.png",
+       "packed_bounds": [
+        67,
+        65,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -5.6,
+         -29.6
+        ],
+        "hand_L": [
+         0.2,
+         -28.6
+        ],
+        "foot_R": [
+         -2.1,
+         -1.0
+        ],
+        "foot_L": [
+         2.1,
+         -1.0
+        ],
+        "broom_foot": [
+         -3.5,
+         -3.2
+        ]
+       },
+       "equipment": {
+        "broom": 21
+       },
+       "sha256": "0eb27005d61fce3ede285011ab5520cce0d320647acf7fd19dca6c47c095511e",
+       "sheet": "sheets/talk_W.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    }
+   }
+  },
+  "work": {
+   "frame_count": 8,
+   "durations": [
+    0.15,
+    0.15,
+    0.15,
+    0.15,
+    0.15,
+    0.15,
+    0.15,
+    0.15
+   ],
+   "duration": 1.2,
+   "loop": true,
+   "release_frame": null,
+   "release_time": null,
+   "hold_frame": null,
+   "roles": null,
+   "facings": {
+    "S": {
+     "frames": [
+      {
+       "path": "res://assets/animated/ada/work_S_00.png",
+       "file": "work_S_00.png",
+       "packed_bounds": [
+        60,
+        66,
+        97,
+        141
+       ],
+       "anchors": {
+        "hand_R": [
+         -4.2,
+         -25.6
+        ],
+        "hand_L": [
+         1.1,
+         -39.6
+        ],
+        "foot_R": [
+         -5.1,
+         -0.6
+        ],
+        "foot_L": [
+         5.1,
+         -1.7
+        ],
+        "broom_foot": [
+         -14.8,
+         2.5
+        ]
+       },
+       "equipment": {
+        "broom": 128
+       },
+       "sha256": "7ab72111e33a1e8712b5ded2b1b9eeffe49c311fe41543a22a0ec9c6d32faa3a",
+       "sheet": "sheets/work_S.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/work_S_01.png",
+       "file": "work_S_01.png",
+       "packed_bounds": [
+        55,
+        66,
+        97,
+        140
+       ],
+       "anchors": {
+        "hand_R": [
+         -7.2,
+         -25.7
+        ],
+        "hand_L": [
+         -1.2,
+         -39.6
+        ],
+        "foot_R": [
+         -5.1,
+         -0.6
+        ],
+        "foot_L": [
+         5.1,
+         -1.7
+        ],
+        "broom_foot": [
+         -19.2,
+         1.8
+        ]
+       },
+       "equipment": {
+        "broom": 130
+       },
+       "sha256": "96bb20a23524d5bf7a55bbcfd362d2f12234516680540dfac00c4c4edac31047",
+       "sheet": "sheets/work_S.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/work_S_02.png",
+       "file": "work_S_02.png",
+       "packed_bounds": [
+        53,
+        66,
+        96,
+        140
+       ],
+       "anchors": {
+        "hand_R": [
+         -8.5,
+         -26.0
+        ],
+        "hand_L": [
+         -2.1,
+         -39.6
+        ],
+        "foot_R": [
+         -5.1,
+         -0.6
+        ],
+        "foot_L": [
+         5.1,
+         -1.7
+        ],
+        "broom_foot": [
+         -21.1,
+         1.2
+        ]
+       },
+       "equipment": {
+        "broom": 136
+       },
+       "sha256": "dd7282c7c7936658fe7aff2ff6d11a85bf040f242ae6338e62f46f78a5b9e679",
+       "sheet": "sheets/work_S.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/work_S_03.png",
+       "file": "work_S_03.png",
+       "packed_bounds": [
+        55,
+        66,
+        97,
+        140
+       ],
+       "anchors": {
+        "hand_R": [
+         -7.2,
+         -26.2
+        ],
+        "hand_L": [
+         -1.2,
+         -39.6
+        ],
+        "foot_R": [
+         -5.1,
+         -0.6
+        ],
+        "foot_L": [
+         5.1,
+         -1.7
+        ],
+        "broom_foot": [
+         -19.6,
+         1.1
+        ]
+       },
+       "equipment": {
+        "broom": 135
+       },
+       "sha256": "671d1cf182feec4c04bcd26c50be22602aeb4969cec305db1416371de6ece40c",
+       "sheet": "sheets/work_S.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/work_S_04.png",
+       "file": "work_S_04.png",
+       "packed_bounds": [
+        59,
+        66,
+        97,
+        140
+       ],
+       "anchors": {
+        "hand_R": [
+         -4.2,
+         -26.3
+        ],
+        "hand_L": [
+         1.1,
+         -39.6
+        ],
+        "foot_R": [
+         -5.1,
+         -0.6
+        ],
+        "foot_L": [
+         5.1,
+         -1.7
+        ],
+        "broom_foot": [
+         -15.3,
+         1.5
+        ]
+       },
+       "equipment": {
+        "broom": 132
+       },
+       "sha256": "74cccbd755d93620b2f047ee36b4a7b4e3b05d1bb4457f49e946ab3ac70f92e8",
+       "sheet": "sheets/work_S.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/work_S_05.png",
+       "file": "work_S_05.png",
+       "packed_bounds": [
+        63,
+        66,
+        97,
+        140
+       ],
+       "anchors": {
+        "hand_R": [
+         -1.2,
+         -26.2
+        ],
+        "hand_L": [
+         3.3,
+         -39.6
+        ],
+        "foot_R": [
+         -5.1,
+         -0.6
+        ],
+        "foot_L": [
+         5.1,
+         -1.7
+        ],
+        "broom_foot": [
+         -10.9,
+         2.3
+        ]
+       },
+       "equipment": {
+        "broom": 133
+       },
+       "sha256": "f6f0b03eb476255aa7cd929c8f2199b2e05a66f921ba8c41535aed682634b647",
+       "sheet": "sheets/work_S.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/work_S_06.png",
+       "file": "work_S_06.png",
+       "packed_bounds": [
+        64,
+        66,
+        96,
+        141
+       ],
+       "anchors": {
+        "hand_R": [
+         -0.0,
+         -26.0
+        ],
+        "hand_L": [
+         4.2,
+         -39.6
+        ],
+        "foot_R": [
+         -5.1,
+         -0.6
+        ],
+        "foot_L": [
+         5.1,
+         -1.7
+        ],
+        "broom_foot": [
+         -8.9,
+         2.8
+        ]
+       },
+       "equipment": {
+        "broom": 137
+       },
+       "sha256": "07c400493da64212de79198fa535238161cc27f840d344f54cc2cc3f7961ce0c",
+       "sheet": "sheets/work_S.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/work_S_07.png",
+       "file": "work_S_07.png",
+       "packed_bounds": [
+        63,
+        66,
+        97,
+        141
+       ],
+       "anchors": {
+        "hand_R": [
+         -1.2,
+         -25.7
+        ],
+        "hand_L": [
+         3.3,
+         -39.6
+        ],
+        "foot_R": [
+         -5.1,
+         -0.6
+        ],
+        "foot_L": [
+         5.1,
+         -1.7
+        ],
+        "broom_foot": [
+         -10.6,
+         2.9
+        ]
+       },
+       "equipment": {
+        "broom": 129
+       },
+       "sha256": "7e4fb7c26475b63d4d431340eafdf19cf264a6bcb9aca0d5ab2387b074b9ee3e",
+       "sheet": "sheets/work_S.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "N": {
+     "frames": [
+      {
+       "path": "res://assets/animated/ada/work_N_00.png",
+       "file": "work_N_00.png",
+       "packed_bounds": [
+        63,
+        65,
+        99,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         4.2,
+         -31.5
+        ],
+        "hand_L": [
+         -1.1,
+         -41.9
+        ],
+        "foot_R": [
+         5.1,
+         -1.4
+        ],
+        "foot_L": [
+         -5.1,
+         -0.3
+        ],
+        "broom_foot": [
+         14.8,
+         -10.9
+        ]
+       },
+       "equipment": {
+        "broom": 41
+       },
+       "sha256": "239d2a23783eca58653c46100180afa92e86c4a25103edba62fc48e5493229b9",
+       "sheet": "sheets/work_N.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/work_N_01.png",
+       "file": "work_N_01.png",
+       "packed_bounds": [
+        63,
+        65,
+        103,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         7.2,
+         -31.4
+        ],
+        "hand_L": [
+         1.2,
+         -41.9
+        ],
+        "foot_R": [
+         5.1,
+         -1.4
+        ],
+        "foot_L": [
+         -5.1,
+         -0.3
+        ],
+        "broom_foot": [
+         19.2,
+         -10.8
+        ]
+       },
+       "equipment": {
+        "broom": 66
+       },
+       "sha256": "00c6022d03c9a87bd4881f9e81e09601515204a03dc05727818c4f0a18e66af4",
+       "sheet": "sheets/work_N.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/work_N_02.png",
+       "file": "work_N_02.png",
+       "packed_bounds": [
+        64,
+        65,
+        105,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         8.5,
+         -31.2
+        ],
+        "hand_L": [
+         2.1,
+         -41.9
+        ],
+        "foot_R": [
+         5.1,
+         -1.4
+        ],
+        "foot_L": [
+         -5.1,
+         -0.3
+        ],
+        "broom_foot": [
+         21.1,
+         -9.9
+        ]
+       },
+       "equipment": {
+        "broom": 77
+       },
+       "sha256": "9b4a639004440b2a6aedb0652cc3857e3811d8dcb52854648f4cb0a9cde003e3",
+       "sheet": "sheets/work_N.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/work_N_03.png",
+       "file": "work_N_03.png",
+       "packed_bounds": [
+        63,
+        65,
+        104,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         7.2,
+         -30.9
+        ],
+        "hand_L": [
+         1.2,
+         -41.9
+        ],
+        "foot_R": [
+         5.1,
+         -1.4
+        ],
+        "foot_L": [
+         -5.1,
+         -0.3
+        ],
+        "broom_foot": [
+         19.6,
+         -8.6
+        ]
+       },
+       "equipment": {
+        "broom": 77
+       },
+       "sha256": "3902a38ae3fd4a5974280ab0e9e1e487079a742cf50989966fd0d8666a594ea6",
+       "sheet": "sheets/work_N.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/work_N_04.png",
+       "file": "work_N_04.png",
+       "packed_bounds": [
+        63,
+        65,
+        100,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         4.2,
+         -30.8
+        ],
+        "hand_L": [
+         -1.1,
+         -41.9
+        ],
+        "foot_R": [
+         5.1,
+         -1.4
+        ],
+        "foot_L": [
+         -5.1,
+         -0.3
+        ],
+        "broom_foot": [
+         15.3,
+         -7.6
+        ]
+       },
+       "equipment": {
+        "broom": 53
+       },
+       "sha256": "365dc2f39da047bd09d25587295abcd4ef09b3861606fd72dcb8516bdc703cf2",
+       "sheet": "sheets/work_N.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/work_N_05.png",
+       "file": "work_N_05.png",
+       "packed_bounds": [
+        63,
+        65,
+        97,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         1.2,
+         -30.9
+        ],
+        "hand_L": [
+         -3.3,
+         -41.9
+        ],
+        "foot_R": [
+         5.1,
+         -1.4
+        ],
+        "foot_L": [
+         -5.1,
+         -0.3
+        ],
+        "broom_foot": [
+         10.9,
+         -7.6
+        ]
+       },
+       "equipment": {
+        "broom": 20
+       },
+       "sha256": "b3d482423a51260b945c1a083c38f4b4bf9f922558445cf291145dd812c55fd7",
+       "sheet": "sheets/work_N.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/work_N_06.png",
+       "file": "work_N_06.png",
+       "packed_bounds": [
+        64,
+        65,
+        96,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         0.0,
+         -31.2
+        ],
+        "hand_L": [
+         -4.2,
+         -41.9
+        ],
+        "foot_R": [
+         5.1,
+         -1.4
+        ],
+        "foot_L": [
+         -5.1,
+         -0.3
+        ],
+        "broom_foot": [
+         8.9,
+         -8.6
+        ]
+       },
+       "equipment": {
+        "broom": 8
+       },
+       "sha256": "e4106780d0ce48ac7e0f9cdcb1b4fe894d9f080950e09b5dea6fb1b179e07f19",
+       "sheet": "sheets/work_N.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/work_N_07.png",
+       "file": "work_N_07.png",
+       "packed_bounds": [
+        63,
+        65,
+        97,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         1.2,
+         -31.4
+        ],
+        "hand_L": [
+         -3.3,
+         -41.9
+        ],
+        "foot_R": [
+         5.1,
+         -1.4
+        ],
+        "foot_L": [
+         -5.1,
+         -0.3
+        ],
+        "broom_foot": [
+         10.6,
+         -10.0
+        ]
+       },
+       "equipment": {
+        "broom": 15
+       },
+       "sha256": "3df33a5bb8f8a50378b8d571a2ca98cdfc394fe517b4573ebb04af3b2b5df819",
+       "sheet": "sheets/work_N.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "E": {
+     "frames": [
+      {
+       "path": "res://assets/animated/ada/work_E_00.png",
+       "file": "work_E_00.png",
+       "packed_bounds": [
+        67,
+        66,
+        102,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         8.1,
+         -28.6
+        ],
+        "hand_L": [
+         3.3,
+         -40.8
+        ],
+        "foot_R": [
+         0.6,
+         -1.0
+        ],
+        "foot_L": [
+         -1.6,
+         -1.0
+        ],
+        "broom_foot": [
+         17.6,
+         -4.2
+        ]
+       },
+       "equipment": {
+        "broom": 110
+       },
+       "sha256": "ecbd4c8b45480cefbb4c3b78064415da47c572f8fc66bf8c94dfa797e7a58153",
+       "sheet": "sheets/work_E.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/work_E_01.png",
+       "file": "work_E_01.png",
+       "packed_bounds": [
+        67,
+        66,
+        101,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         7.4,
+         -28.6
+        ],
+        "hand_L": [
+         3.1,
+         -40.8
+        ],
+        "foot_R": [
+         0.6,
+         -1.0
+        ],
+        "foot_L": [
+         -1.6,
+         -1.0
+        ],
+        "broom_foot": [
+         16.1,
+         -4.5
+        ]
+       },
+       "equipment": {
+        "broom": 108
+       },
+       "sha256": "a247d37d2907b0bcb3179af0f6253395e7030c6f26c73b8b48c101c7d7eebcac",
+       "sheet": "sheets/work_E.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/work_E_02.png",
+       "file": "work_E_02.png",
+       "packed_bounds": [
+        67,
+        66,
+        98,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         6.6,
+         -28.6
+        ],
+        "hand_L": [
+         3.0,
+         -40.8
+        ],
+        "foot_R": [
+         0.6,
+         -1.0
+        ],
+        "foot_L": [
+         -1.6,
+         -1.0
+        ],
+        "broom_foot": [
+         13.7,
+         -4.3
+        ]
+       },
+       "equipment": {
+        "broom": 106
+       },
+       "sha256": "8c2e9903c59ae0dd3e3e6e2ad7991b9d5ba2de3a019c743e5a42cd2cf9d900e1",
+       "sheet": "sheets/work_E.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/work_E_03.png",
+       "file": "work_E_03.png",
+       "packed_bounds": [
+        67,
+        66,
+        97,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         5.9,
+         -28.6
+        ],
+        "hand_L": [
+         3.1,
+         -40.8
+        ],
+        "foot_R": [
+         0.6,
+         -1.0
+        ],
+        "foot_L": [
+         -1.6,
+         -1.0
+        ],
+        "broom_foot": [
+         11.8,
+         -3.7
+        ]
+       },
+       "equipment": {
+        "broom": 112
+       },
+       "sha256": "5a5c266cc72508e3191b8e594f70093ffe10478978b258263b43bc0bb3a0d809",
+       "sheet": "sheets/work_E.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/work_E_04.png",
+       "file": "work_E_04.png",
+       "packed_bounds": [
+        67,
+        66,
+        96,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         5.9,
+         -28.6
+        ],
+        "hand_L": [
+         3.3,
+         -40.8
+        ],
+        "foot_R": [
+         0.6,
+         -1.0
+        ],
+        "foot_L": [
+         -1.6,
+         -1.0
+        ],
+        "broom_foot": [
+         11.5,
+         -3.0
+        ]
+       },
+       "equipment": {
+        "broom": 107
+       },
+       "sha256": "0eca7eb72c6e5e559c370426f48100aec4eeb5b658cef9ee60fe951a26367201",
+       "sheet": "sheets/work_E.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/work_E_05.png",
+       "file": "work_E_05.png",
+       "packed_bounds": [
+        68,
+        66,
+        98,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         6.5,
+         -28.6
+        ],
+        "hand_L": [
+         3.5,
+         -40.8
+        ],
+        "foot_R": [
+         0.6,
+         -1.0
+        ],
+        "foot_L": [
+         -1.6,
+         -1.0
+        ],
+        "broom_foot": [
+         13.0,
+         -2.7
+        ]
+       },
+       "equipment": {
+        "broom": 117
+       },
+       "sha256": "ab57c2a3a05dab9f42aeef5b53d4e835679bd8d3ac8d1423e08fbcc9a00fe566",
+       "sheet": "sheets/work_E.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/work_E_06.png",
+       "file": "work_E_06.png",
+       "packed_bounds": [
+        68,
+        66,
+        100,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         7.4,
+         -28.6
+        ],
+        "hand_L": [
+         3.6,
+         -40.8
+        ],
+        "foot_R": [
+         0.6,
+         -1.0
+        ],
+        "foot_L": [
+         -1.6,
+         -1.0
+        ],
+        "broom_foot": [
+         15.5,
+         -2.9
+        ]
+       },
+       "equipment": {
+        "broom": 122
+       },
+       "sha256": "4c7a073f21e8b64d00e5c0250bc1bef2437af12f9b963f8b6ffe93395a7b0ad2",
+       "sheet": "sheets/work_E.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/work_E_07.png",
+       "file": "work_E_07.png",
+       "packed_bounds": [
+        68,
+        66,
+        102,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         8.0,
+         -28.6
+        ],
+        "hand_L": [
+         3.5,
+         -40.8
+        ],
+        "foot_R": [
+         0.6,
+         -1.0
+        ],
+        "foot_L": [
+         -1.6,
+         -1.0
+        ],
+        "broom_foot": [
+         17.4,
+         -3.5
+        ]
+       },
+       "equipment": {
+        "broom": 112
+       },
+       "sha256": "c5c8a5ead36ed6a76b836063475b8f7071083e8d600e03e994d11102d3843145",
+       "sheet": "sheets/work_E.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "W": {
+     "frames": [
+      {
+       "path": "res://assets/animated/ada/work_W_00.png",
+       "file": "work_W_00.png",
+       "packed_bounds": [
+        54,
+        66,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -8.9,
+         -28.6
+        ],
+        "hand_L": [
+         -3.1,
+         -40.8
+        ],
+        "foot_R": [
+         -1.6,
+         -1.0
+        ],
+        "foot_L": [
+         2.6,
+         -1.0
+        ],
+        "broom_foot": [
+         -20.6,
+         -4.2
+        ]
+       },
+       "equipment": {
+        "broom": 83
+       },
+       "sha256": "f308b442e1f8b2674dcef9407471c54c29bf6e7737fff89879c27482fc8cd169",
+       "sheet": "sheets/work_W.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/work_W_01.png",
+       "file": "work_W_01.png",
+       "packed_bounds": [
+        55,
+        66,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -8.9,
+         -28.6
+        ],
+        "hand_L": [
+         -3.3,
+         -40.8
+        ],
+        "foot_R": [
+         -1.6,
+         -1.0
+        ],
+        "foot_L": [
+         2.6,
+         -1.0
+        ],
+        "broom_foot": [
+         -19.9,
+         -4.5
+        ]
+       },
+       "equipment": {
+        "broom": 82
+       },
+       "sha256": "81a70a52f5fd7bc43ba2c5c9cc3f54b66b83b10630792818f0780a232f6714dd",
+       "sheet": "sheets/work_W.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/work_W_02.png",
+       "file": "work_W_02.png",
+       "packed_bounds": [
+        56,
+        66,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -8.3,
+         -28.6
+        ],
+        "hand_L": [
+         -3.4,
+         -40.8
+        ],
+        "foot_R": [
+         -1.6,
+         -1.0
+        ],
+        "foot_L": [
+         2.6,
+         -1.0
+        ],
+        "broom_foot": [
+         -18.0,
+         -4.3
+        ]
+       },
+       "equipment": {
+        "broom": 78
+       },
+       "sha256": "079483b5e5f889cde4b030eb7dced76ed53b9f8a87c31c72a1f6c7e6199c79db",
+       "sheet": "sheets/work_W.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/work_W_03.png",
+       "file": "work_W_03.png",
+       "packed_bounds": [
+        59,
+        66,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -7.4,
+         -28.6
+        ],
+        "hand_L": [
+         -3.3,
+         -40.8
+        ],
+        "foot_R": [
+         -1.6,
+         -1.0
+        ],
+        "foot_L": [
+         2.6,
+         -1.0
+        ],
+        "broom_foot": [
+         -15.7,
+         -3.7
+        ]
+       },
+       "equipment": {
+        "broom": 65
+       },
+       "sha256": "2adc190b7182bf76d08cff1cdf2ecfb66cabe8c697d3ad4339954871118f279e",
+       "sheet": "sheets/work_W.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/work_W_04.png",
+       "file": "work_W_04.png",
+       "packed_bounds": [
+        60,
+        66,
+        92,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -6.8,
+         -28.6
+        ],
+        "hand_L": [
+         -3.1,
+         -40.8
+        ],
+        "foot_R": [
+         -1.6,
+         -1.0
+        ],
+        "foot_L": [
+         2.6,
+         -1.0
+        ],
+        "broom_foot": [
+         -14.6,
+         -3.0
+        ]
+       },
+       "equipment": {
+        "broom": 66
+       },
+       "sha256": "05daa46e19c81dcdbb8c98c88d29e4410e29ab9417eebd853b0aeea6cfb6e55f",
+       "sheet": "sheets/work_W.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/work_W_05.png",
+       "file": "work_W_05.png",
+       "packed_bounds": [
+        59,
+        66,
+        91,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -6.8,
+         -28.6
+        ],
+        "hand_L": [
+         -2.8,
+         -40.8
+        ],
+        "foot_R": [
+         -1.6,
+         -1.0
+        ],
+        "foot_L": [
+         2.6,
+         -1.0
+        ],
+        "broom_foot": [
+         -15.2,
+         -2.7
+        ]
+       },
+       "equipment": {
+        "broom": 118
+       },
+       "sha256": "30f65c01195fbc8e77078513e17909fcb56cf23f99d6e8a8faefa549ed4ba937",
+       "sheet": "sheets/work_W.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/work_W_06.png",
+       "file": "work_W_06.png",
+       "packed_bounds": [
+        57,
+        66,
+        91,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -7.4,
+         -28.6
+        ],
+        "hand_L": [
+         -2.8,
+         -40.8
+        ],
+        "foot_R": [
+         -1.6,
+         -1.0
+        ],
+        "foot_L": [
+         2.6,
+         -1.0
+        ],
+        "broom_foot": [
+         -17.2,
+         -2.9
+        ]
+       },
+       "equipment": {
+        "broom": 119
+       },
+       "sha256": "33d55e7d5c578ed46aad8cb02ee8af7c4e9b767072e53a2aa45950e6d21eba6e",
+       "sheet": "sheets/work_W.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/ada/work_W_07.png",
+       "file": "work_W_07.png",
+       "packed_bounds": [
+        55,
+        66,
+        91,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -8.3,
+         -28.6
+        ],
+        "hand_L": [
+         -2.8,
+         -40.8
+        ],
+        "foot_R": [
+         -1.6,
+         -1.0
+        ],
+        "foot_L": [
+         2.6,
+         -1.0
+        ],
+        "broom_foot": [
+         -19.5,
+         -3.5
+        ]
+       },
+       "equipment": {
+        "broom": 119
+       },
+       "sha256": "7a8f2bf223b25fe9b5e777ca0ca62e619444f21a13a857f9b7c85fa83b7af89c",
+       "sheet": "sheets/work_W.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    }
+   }
+  }
+ },
+ "pose_count": 136
+}

@@ -1,0 +1,28 @@
+{
+  "stone_sign": {
+    "name": "Weathered sign",
+    "entries": [
+      {
+        "if": { "done": ["woodland_stones"] },
+        "lines": ["The meadow is quiet again. Someone has scratched a small star under the words."]
+      },
+      {
+        "if": { "step": ["woodland_stones", "return"] },
+        "lines": [
+          "The mosslings are gone from the meadow.",
+          "A pouch hangs from the post, left by whoever wrote the sign. Inside: 40 Glint."
+        ]
+      },
+      {
+        "if": { "active": ["woodland_stones"] },
+        "lines": ["Mosslings, shardstruck since the starfall, nest in the meadow east of the stones."]
+      },
+      {
+        "lines": [
+          "TO WHOEVER READS THIS: since the starfall the mosslings in the meadow have turned wild.",
+          "Drive them off and the stones will be safe to visit again. A reward hangs here for you."
+        ]
+      }
+    ]
+  }
+}

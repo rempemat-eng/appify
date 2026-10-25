@@ -101,6 +101,42 @@ export function crispOn(grid: PixelGrid, assetDensity: ArtDensity) {
   return device >= 1 && Math.abs(device - Math.round(device)) < 1e-9;
 }
 
+/**
+ * The interface's grid: the HUD, the hotbar, frames, sheets, cards and icons (Claude M,
+ * 21 Oct). The world's grid above picks a texel for the world's art, and at density 2 that
+ * can make a world pixel smaller in CSS px (1 instead of 1.5 on a 2x iPhone SE, 1.14 instead
+ * of 1.43 on an S25 Ultra at QHD+). If the interface followed it, every frame, icon and bar
+ * would shrink there while the font sizes (ui-tokens `type`, in CSS px) stay, so labels would
+ * crowd their frames and the HUD would sit lower in reach. So the interface keeps its own
+ * unit, the density-1 grid's, at every art density:
+ *
+ * - **Size:** an interface pixel is exactly as many device pixels as today on every screen,
+ *   so the HUD, the hotbar and every touch target are the same physical size at density 1,
+ *   1.5 and 2, and the game at density 1 is unchanged (`interfaceGrid(...).unit` equals
+ *   `pixelScale(..., 1)`).
+ * - **Detail follows the screen**, like an app's @2x and @3x icons: the interface draws its
+ *   finer art (32-row icons, frame detail at half an interface pixel) where an interface
+ *   pixel splits into whole device pixels at the game's density (4 device px on 3x phones and
+ *   1080 to 1440 px Androids, 2 on a desktop: 2 device px a texel, the same texel as the
+ *   world's at density 2), and its 1x art elsewhere (3 device px on a 2x iPhone SE, 5 on an
+ *   S25 Ultra at QHD+), which is still crisp. `density` says which it draws.
+ */
+export function interfaceGrid(
+  width: number,
+  dpr: number,
+  density: ArtDensity = ART_DENSITY,
+): PixelGrid {
+  const base = pixelGrid(width, dpr, 1);
+  const fine = density !== 1 && Number.isInteger(base.deviceTexel / density);
+  const drawn: ArtDensity = fine ? density : 1;
+  return {
+    density: drawn,
+    deviceTexel: base.deviceTexel / drawn,
+    texel: base.unit / drawn,
+    unit: base.unit,
+  };
+}
+
 /** Round a CSS length to whole device pixels, so an art pixel never straddles two. */
 export function snapToDevice(value: number, dpr: number) {
   const ratio = dpr > 0 ? dpr : 1;
