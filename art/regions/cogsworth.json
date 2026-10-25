@@ -1913,6 +1913,11 @@
       ],
       "falls": [
         {
+          "at": [8336, 2904],
+          "drop_tiers": 1,
+          "what": "the town weir, where the Cog leaves Cogsworth for the lowland"
+        },
+        {
           "at": [8856, 3112],
           "drop_tiers": 1,
           "what": "the Cog's last weir, into the Lull at the confluence"

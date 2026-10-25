@@ -110,7 +110,9 @@ WATER_ENDS['cog-upper']['bridges'] = [{'at': [7664, 1944], 'span': 64, 'kind': '
                                        'name': "the High Fells' footbridge over the Cog (W3), a rockfall on it"}]
 WATER_ENDS['cog-lower']['bridges'] = [{'at': [8496, 3064], 'span': 64, 'kind': 'bridge',
                                        'name': "the Cog foot bridge: the Towpath's footbridge to the Lull bank"}]
-WATER_ENDS['cog-lower']['falls'] = [{'at': [8856, 3112], 'drop_tiers': 1,
+WATER_ENDS['cog-lower']['falls'] = [{'at': [8336, 2904], 'drop_tiers': 1,
+                                     'what': "the town weir, where the Cog leaves Cogsworth for the lowland"},
+                                    {'at': [8856, 3112], 'drop_tiers': 1,
                                      'what': "the Cog's last weir, into the Lull at the confluence"}]
 GORGE_RIM = 2         # tiers of wall each side of the Lull's cut stand at least this high
 
@@ -307,6 +309,8 @@ def land():
         for (ax, ay, aw, at), (bx, by, bw, bt) in zip(pts[:-1], pts[1:]):
             m = _course([(ax, ay), (bx, by)], max(aw, bw)) & ~town
             route[m & (route == '')] = name
+            # a bridge's deck carries the route's tier over the water (the bridge is declared on
+            # the water in WATER_ENDS, so a path crosses a stream only there)
             if at == bt:
                 tier[m] = at
             mid = ((ax + bx) / 2, (ay + by) / 2)
