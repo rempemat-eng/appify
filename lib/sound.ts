@@ -110,6 +110,21 @@ function effectPlayer(id: SoundId) {
   return player;
 }
 
+/**
+ * expo-audio types play() as synchronous, but its web player can return a
+ * promise. Pausing or replacing that player rejects the promise with
+ * AbortError, so attach the rejection handler before any later pause.
+ */
+function playPlayer(player: AudioPlayer) {
+  try {
+    const attempt = player.play() as unknown;
+    void Promise.resolve(attempt).catch(() => {});
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export function playSound(id: SoundId) {
   const preference = useSoundPreference.getState();
   if (!preference.loaded || !preference.effects || !userActive()) return;
@@ -136,10 +151,10 @@ export function playSound(id: SoundId) {
             latest.effects &&
             userActive()
           )
-            player.play();
+            playPlayer(player);
         })
         .catch(() => {});
-    } else player.play();
+    } else playPlayer(player);
   } catch {
     // Audio is decoration: a failed sound never breaks a tap.
   }
@@ -163,8 +178,7 @@ function applyAmbience() {
       player.loop = true;
       ambiencePlayers.set(want, player);
     }
-    player.play();
-    current = { id: want, player };
+    if (playPlayer(player)) current = { id: want, player };
   } catch {
     current = null;
   }
