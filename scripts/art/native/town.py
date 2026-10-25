@@ -470,14 +470,40 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
     # --- static cast shadows into the ground, then tidy ---------------------------------------------
     kx, ky = CO.SHADOW
     rim = max(2, q(2))
-    for o in objects:
-        if not o.get('static') or o.get('png') is None or o['kind'] in ('glow', 'smoke', 'damage'):
-            continue
+    def shade_masks(o):
         m = CO.shadow_mask(o['alpha'], o['anchor'], D, W, H, o['foot'], kx, ky)
-        core = ndi.binary_erosion(m, iterations=rim)
+        contact = CO.foot_shadow(pics[o['png']], o['anchor'], W, H, o['foot'], D)
+        return m, ndi.binary_erosion(m, iterations=rim), contact
+
+    NOSHADE = ('glow', 'smoke', 'damage', 'debris')
+    for o in objects:
+        if not o.get('static') or o.get('png') is None or o['kind'] in NOSHADE:
+            continue
+        m, core, contact = shade_masks(o)
         cv[m] = step(cv[m], -1)
         cv[core] = step(cv[core], -1)
+        cv[contact] = step(cv[contact], -1)
     lone_fix(cv, keep=(cv % 8 >= 6))
+    # an object that comes and goes carries its cast and contact shadow in a picture of its own: the
+    # ground under it stepped down, laid just above the ground in the same condition
+    for o in list(objects):
+        if o.get('static') or o.get('png') is None or o['kind'] in NOSHADE:
+            continue
+        m, core, contact = shade_masks(o)
+        sm = m | contact
+        if not sm.any():
+            continue
+        sc = cv.copy()
+        sc[m] = step(sc[m], -1)
+        sc[core] = step(sc[core], -1)
+        sc[contact] = step(sc[contact], -1)
+        ys, xs = np.nonzero(sm)
+        bx0, by0, bx1, by1 = xs.min(), ys.min(), xs.max() + 1, ys.max() + 1
+        crop = np.where(sm[by0:by1, bx0:bx1], sc[by0:by1, bx0:bx1], -1)
+        name = o['id'] + '_shadow'
+        pics[name] = Image.fromarray(to_rgba(crop), 'RGBA')
+        objects.append(dict(id=name, kind='shadow', png=name, foot=(int(bx0), int(by0)), anchor=(0, 0), alpha=crop >= 0,
+                            cond=o.get('cond'), solid=None, static=False, of=o['id']))
     ground = Image.fromarray(to_rgba(cv), 'RGBA').convert('RGB')
 
     # --- write ---------------------------------------------------------------------------------------
@@ -489,7 +515,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
     for name, img in pics.items():
         img.save(os.path.join(out_dir, name + '.png'), optimize=True)
     doc = dict(zone=plan['id'], density=D, size=[W, H], inputs=plan.get('_inputs'),
-               kit_drawn=sorted({o['png'] + '.png' for o in objects if o.get('png') and o['kind'] not in KIT_SPRITES}),
+               kit_drawn=sorted({o['png'] + '.png' for o in objects if o.get('png') and o['kind'] not in KIT_SPRITES + ('shadow',)}),
                objects=[])
     for o in objects:
         e = dict(id=o['id'], kind=o['kind'], png=(o['png'] + '.png') if o.get('png') else None,
@@ -505,7 +531,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         os.makedirs(preview, exist_ok=True)
         for sid, state in stage_states(plan).items():
             img = ground.convert('RGBA')
-            for o in sorted([o for o in objects if o.get('png')], key=lambda o: (o['foot'][1], o['kind'] == 'damage')):
+            for o in sorted([o for o in objects if o.get('png')], key=lambda o: (o['kind'] != 'shadow', o['foot'][1], o['kind'] == 'damage')):
                 if not holds(o.get('cond'), state):
                     continue
                 pic = pics[o['png']]
