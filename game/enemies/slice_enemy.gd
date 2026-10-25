@@ -104,6 +104,10 @@ func _update_state(delta: float) -> void:
 		"windup":
 			velocity = Vector2.ZERO  # direction locks at commitment; no tracking during tell
 			if elapsed >= windup_time():
+				if role == "shooter" and not _can_commit():
+					_cancel_attack()
+					hsm.dispatch(&"recover")
+					return
 				_struck = false
 				hsm.dispatch(&"attack")
 				if role == "shooter":

@@ -157,3 +157,21 @@ func test_locked_lunge_misses_behind_and_hits_only_once_in_front() -> void:
 	enemy.step(0.01)
 	enemy.step(0.01)
 	assert_int(target.hits).is_equal(1)
+
+func test_shooter_cancels_if_it_leaves_the_view_during_its_tell() -> void:
+	var pool: SliceAttackSlots = auto_free(SliceAttackSlots.new())
+	add_child(pool)
+	var target: Node2D = auto_free(Node2D.new())
+	add_child(target)
+	target.position = Vector2(90, 0)
+	var enemy := _enemy("shooter", pool, target)
+	var attacks := [0]
+	enemy.released.connect(func() -> void: attacks[0] += 1)
+	enemy.position = Vector2(-2000, 0)
+	enemy.home = enemy.position
+	target.position = enemy.position + Vector2(90, 0)
+	enemy.step(enemy.windup_time())
+	assert_str(enemy.state).is_equal("recover")
+	assert_int(attacks[0]).is_equal(0)
+	assert_int(pool.count()).is_equal(0)
+	assert_object(enemy.shot).is_null()
