@@ -2,7 +2,7 @@ extends Node
 ## The zone loader. Zones are scenes listed in res://data/zones.json ({"woodland": "res://zones/...tscn"}).
 ## The game scene calls `attach(root, player)` once; `go_to(zone, spawn)` then swaps the zone under `root`,
 ## moves the one player into the new zone's Actors node at the named spawn, records where the player is in
-## the save, and emits `zone_changed`. Doors (world/door.gd) call it; so does loading a save.
+## the save (and the flag "visited:<zone>"), and emits `zone_changed`. Doors (world/door.gd) call it; so does loading a save.
 
 signal zone_changing(zone_id: String)
 signal zone_changed(zone: Zone)
@@ -53,6 +53,7 @@ func go_to(zone_id: String, spawn: String = "start") -> bool:
 			player.reset_motion()
 	SaveGame.data.zone = zone_id
 	SaveGame.data.spawn = spawn
+	SaveGame.set_flag("visited:" + zone_id)
 	Quests.notify("enter:" + zone_id)
 	_busy = false
 	zone_changed.emit(next)

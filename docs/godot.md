@@ -46,15 +46,15 @@ game/
   main/                  pixel_screen.gd (scale rule) and sharp_bilinear.gdshader (the non-integer fallback)
   game.tscn, game.gd     ZoneRoot, the Camera2D with PhantomCameraHost, the PhantomCamera2D, the UI layer
   core/                  autoloads: inputs.gd (Inputs), save_game.gd (SaveGame), quests.gd (Quests),
-                         dialogue.gd (Dialogue), zones.gd (Zones)
+                         dialogue.gd (Dialogue), zones.gd (Zones), village.gd (Village)
   actors/                player.gd/.tscn, enemy.gd/.tscn (LimboAI state machine)
-  world/                 zone.gd, door.gd, interactable.gd, camp.gd, flow_anim.gd
+  world/                 zone.gd, door.gd, interactable.gd, restore_site.gd, conditional.gd, camp.gd, flow_anim.gd
   ui/                    hud.gd, dialogue_box.gd
-  data/                  zones.json, quests/*.json, dialogue/*.json
+  data/                  zones.json, quests/*.json, dialogue/*.json, plans/*.json (zone plans: Crossroads, the Undercroft)
   zones/<id>/            art/*.png, kit.json, walk.txt, <id>_base.tscn (generated), <id>.tscn (authored)
   art/placeholder/       player, mossling and sign stand-ins (tools/gen_placeholders.py)
   test/                  GdUnit4 suites and fixtures
-  tools/                 gen_zone.py, gen_placeholders.py, check.sh, get_godot.sh, fetch_limboai_release.sh
+  tools/                 gen_zone.py, gen_blockout.py, gen_placeholders.py, check.sh, get_godot.sh, fetch_limboai_release.sh
   addons/                vendored plugins (below)
 ```
 
@@ -81,10 +81,13 @@ Dialogic 2 was evaluated and **not adopted yet**: it adds 11 MB and its own inpu
 - **Enemy** (`actors/enemy.gd`): the evaluation's LimboAI state machine (idle, chase, a 0.5 s telegraphed wind-up, lunge, recover, leash home), now dying at 0 HP and reporting to its camp.
 - **Camera** (`game.gd`): a PhantomCamera2D following the player with damping, pixel snapping, the zone's bounds as limits, aim look-ahead up to 48 world px past a 16 px dead zone (11.2), and a 1 world px shake on hits (off under reduced motion).
 - **Save** (`core/save_game.gd`): one versioned JSON document, `user://save_0.json`, written to a temporary file and renamed. `data` holds zone, spawn, Glint, flags, quests, player and settings. When a field changes shape, bump `VERSION` and add a step to `_migrate`. The game autosaves when a quest moves and when the zone changes.
-- **Zones** (`core/zones.gd`, `world/zone.gd`, `world/door.gd`): `data/zones.json` maps ids to scenes. `Zones.go_to(id, spawn)` swaps the zone, moves the one player into its `Actors` at the spawn marker and records it in the save. A door to a zone not in the table is refused with a warning (the woodland's east door to the garden waits for the garden).
+- **Zones** (`core/zones.gd`, `world/zone.gd`, `world/door.gd`): `data/zones.json` maps ids to scenes. `Zones.go_to(id, spawn)` swaps the zone, moves the one player into its `Actors` at the spawn marker and records it in the save. A door to a zone not in the table is refused with a warning (Crossroads' west road to Valley Halt waits for act 1). A door's `only_if` condition keeps it shut until it holds (the Undercroft's hatch). Entering a zone sets the flag `visited:<zone>`.
 - **Quests** (`core/quests.gd`): JSON in `data/quests/`. The world reports plain events (`talk:<speaker>`, `camp:<camp>`, `enter:<zone>`); a quest starts on its `start.on` event, each step completes on its `on` event (if its `if` condition holds) or at once when its `done_if` already holds; rewards pay Glint and set flags. Conditions (`flags`, `not_flags`, `done`, `active`, `not_started`, `step`) are shared with dialogue. Quests never expire and never run on a clock (8.3).
 - **Dialogue** (`core/dialogue.gd`, `ui/dialogue_box.gd`): JSON in `data/dialogue/`, per speaker a name and entries; the first entry whose condition holds is shown, then `talk:<speaker>` goes to the quests. An `Interactable` (`world/interactable.gd`) shows a "!" while a quest waits on it.
+- **Village** (`core/village.gd`, `world/restore_site.gd`, `world/conditional.gd`): zone plans in `data/plans/` list `restores` (cost in Glint, optional condition) and `stages`. A `RestoreSite` ("restore here") pays and restores instantly, records the tier in `SaveGame.data.village.restored` and reports `restore:<id>`. A `Conditional` node shows and enables its children only while its condition holds, so one scene holds the broken and the restored town. Conditions also take `restored`, `not_restored` and `glint_at_least`.
 - **Camps** (`world/camp.gd`): a node whose child enemies count as one fight; clearing it sets `camp_cleared:<id>` and reports `camp:<id>`; a cleared camp stays empty.
+
+The vertical slice's chain (`docs/vision/vertical-slice.md`): *The road home*, *The cold forge*, *Under the stones* and *Home again*, through the woodland, Crossroads and the Undercroft. Crossroads and the Undercroft are blockouts: `python3 game/tools/gen_blockout.py` writes `zones/<id>/<id>.tscn` from `data/plans/<id>.json` (placeholder rectangles; regenerate, do not edit).
 
 The sample quest, **Thorns by the stones** (`data/quests/woodland_stones.json`): read the sign by the stone circle, clear the three mosslings in the meadow east of it, read the sign again for 40 Glint.
 

@@ -1,0 +1,934 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://world/zone.gd" id="zone"]
+[ext_resource type="Script" path="res://world/conditional.gd" id="cond"]
+[ext_resource type="Script" path="res://world/interactable.gd" id="talk"]
+[ext_resource type="Script" path="res://world/restore_site.gd" id="site"]
+[ext_resource type="Script" path="res://world/door.gd" id="door"]
+[ext_resource type="Script" path="res://world/camp.gd" id="camp"]
+[ext_resource type="PackedScene" path="res://actors/enemy.tscn" id="enemy"]
+
+[sub_resource type="RectangleShape2D" id="s0"]
+size = Vector2(1920, 24)
+
+[sub_resource type="RectangleShape2D" id="s1"]
+size = Vector2(24, 1680)
+
+[sub_resource type="RectangleShape2D" id="s2"]
+size = Vector2(450, 120)
+
+[sub_resource type="RectangleShape2D" id="s3"]
+size = Vector2(450, 150)
+
+[sub_resource type="RectangleShape2D" id="s4"]
+size = Vector2(450, 36)
+
+[sub_resource type="RectangleShape2D" id="s5"]
+size = Vector2(480, 36)
+
+[sub_resource type="RectangleShape2D" id="s6"]
+size = Vector2(420, 450)
+
+[sub_resource type="RectangleShape2D" id="s7"]
+size = Vector2(240, 132)
+
+[sub_resource type="RectangleShape2D" id="s8"]
+size = Vector2(288, 120)
+
+[sub_resource type="RectangleShape2D" id="s9"]
+size = Vector2(228, 156)
+
+[sub_resource type="RectangleShape2D" id="s10"]
+size = Vector2(228, 144)
+
+[sub_resource type="RectangleShape2D" id="s11"]
+size = Vector2(252, 180)
+
+[sub_resource type="RectangleShape2D" id="s12"]
+size = Vector2(210, 132)
+
+[sub_resource type="RectangleShape2D" id="s13"]
+size = Vector2(72, 60)
+
+[sub_resource type="RectangleShape2D" id="s14"]
+size = Vector2(60, 48)
+
+[sub_resource type="RectangleShape2D" id="s15"]
+size = Vector2(108, 48)
+
+[sub_resource type="RectangleShape2D" id="s16"]
+size = Vector2(42, 24)
+
+[sub_resource type="RectangleShape2D" id="s17"]
+size = Vector2(90, 54)
+
+[sub_resource type="RectangleShape2D" id="s18"]
+size = Vector2(78, 48)
+
+[sub_resource type="RectangleShape2D" id="s19"]
+size = Vector2(90, 42)
+
+[sub_resource type="RectangleShape2D" id="s20"]
+size = Vector2(30, 66)
+
+[sub_resource type="CircleShape2D" id="s21"]
+radius = 30
+
+[sub_resource type="CircleShape2D" id="s22"]
+radius = 5
+
+[sub_resource type="CircleShape2D" id="s23"]
+radius = 22
+
+[sub_resource type="RectangleShape2D" id="s24"]
+size = Vector2(24, 144)
+
+[sub_resource type="RectangleShape2D" id="s25"]
+size = Vector2(24, 120)
+
+[node name="Crossroads" type="Node2D"]
+y_sort_enabled = true
+script = ExtResource("zone")
+zone_id = "crossroads"
+bounds = Rect2(0, 0, 1920, 1680)
+
+[node name="Ground" type="Node2D" parent="."]
+z_index = -10
+
+[node name="Void" type="Polygon2D" parent="Ground"]
+color = Color(0.125, 0.125, 0.125, 1.000)
+polygon = PackedVector2Array(0, 0, 1920, 0, 1920, 1680, 0, 1680)
+
+[node name="Tier_square_floor" type="Polygon2D" parent="Ground"]
+color = Color(0.561, 0.541, 0.431, 1.000)
+polygon = PackedVector2Array(0, 450, 1920, 450, 1920, 1680, 0, 1680)
+
+[node name="Tier_hut_terrace" type="Polygon2D" parent="Ground"]
+color = Color(0.498, 0.604, 0.361, 1.000)
+polygon = PackedVector2Array(450, 0, 1500, 0, 1500, 420, 450, 420)
+
+[node name="Tier_terrace_lane" type="Polygon2D" parent="Ground"]
+color = Color(0.435, 0.561, 0.314, 1.000)
+polygon = PackedVector2Array(0, 120, 450, 120, 450, 300, 0, 300)
+
+[node name="Route_halt_road_0" type="Polygon2D" parent="Ground"]
+color = Color(0.690, 0.627, 0.502, 0.550)
+polygon = PackedVector2Array(0, 948, 600, 948, 600, 852, 0, 852)
+
+[node name="Route_harbour_road_0" type="Polygon2D" parent="Ground"]
+color = Color(0.690, 0.627, 0.502, 0.550)
+polygon = PackedVector2Array(1320, 1038, 1920, 1038, 1920, 942, 1320, 942)
+
+[node name="Route_green_lane_0" type="Polygon2D" parent="Ground"]
+color = Color(0.690, 0.627, 0.502, 0.550)
+polygon = PackedVector2Array(753.737, 1103.38, 573.737, 1295.38, 626.263, 1344.62, 806.263, 1152.62)
+
+[node name="Route_green_lane_1" type="Polygon2D" parent="Ground"]
+color = Color(0.690, 0.627, 0.502, 0.550)
+polygon = PackedVector2Array(583.9, 1287.8, 403.9, 1377.8, 436.1, 1442.2, 616.1, 1352.2)
+
+[node name="Route_garden_walk_0" type="Polygon2D" parent="Ground"]
+color = Color(0.690, 0.627, 0.502, 0.550)
+polygon = PackedVector2Array(0, 246, 960, 246, 960, 174, 0, 174)
+
+[node name="Route_garden_walk_1" type="Polygon2D" parent="Ground"]
+color = Color(0.690, 0.627, 0.502, 0.550)
+polygon = PackedVector2Array(924, 210, 924, 450, 996, 450, 996, 210)
+
+[node name="Place_square" type="Polygon2D" parent="Ground"]
+color = Color(0.639, 0.608, 0.486, 1.000)
+polygon = PackedVector2Array(600, 600, 1320, 600, 1320, 1128, 600, 1128)
+
+[node name="Place_green" type="Polygon2D" parent="Ground"]
+color = Color(0.435, 0.604, 0.322, 1.000)
+polygon = PackedVector2Array(120, 1230, 630, 1230, 630, 1620, 120, 1620)
+
+[node name="Place_crater" type="Polygon2D" parent="Ground"]
+color = Color(0.290, 0.251, 0.220, 1.000)
+polygon = PackedVector2Array(1410, 1320, 1620, 1320, 1620, 1470, 1410, 1470)
+
+[node name="Stair_gate_stair" type="Polygon2D" parent="Ground"]
+color = Color(0.753, 0.722, 0.627, 1.000)
+polygon = PackedVector2Array(900, 414, 1020, 414, 1020, 462, 900, 462)
+
+[node name="Lot_halt_lot" type="Polygon2D" parent="Ground"]
+color = Color(0.227, 0.188, 0.188, 1.000)
+polygon = PackedVector2Array(60, 960, 270, 960, 270, 1140, 60, 1140)
+
+[node name="Lot_harbour_lot" type="Polygon2D" parent="Ground"]
+color = Color(0.227, 0.188, 0.188, 1.000)
+polygon = PackedVector2Array(1680, 1050, 1890, 1050, 1890, 1260, 1680, 1260)
+
+[node name="Pad_pad_halt_gate" type="Polygon2D" parent="Ground"]
+color = Color(0.847, 0.816, 0.722, 0.700)
+polygon = PackedVector2Array(600, 870, 660, 870, 660, 930, 600, 930)
+
+[node name="Pad_pad_harbour_gate" type="Polygon2D" parent="Ground"]
+color = Color(0.847, 0.816, 0.722, 0.700)
+polygon = PackedVector2Array(1260, 960, 1320, 960, 1320, 1020, 1260, 1020)
+
+[node name="Pad_pad_green" type="Polygon2D" parent="Ground"]
+color = Color(0.847, 0.816, 0.722, 0.300)
+polygon = PackedVector2Array(660, 1170, 720, 1170, 720, 1230, 660, 1230)
+
+[node name="Pad_pad_stair" type="Polygon2D" parent="Ground"]
+color = Color(0.847, 0.816, 0.722, 0.300)
+polygon = PackedVector2Array(930, 510, 990, 510, 990, 570, 930, 570)
+
+[node name="Pad_pad_library" type="Polygon2D" parent="Ground"]
+color = Color(0.847, 0.816, 0.722, 0.300)
+polygon = PackedVector2Array(858, 612, 918, 612, 918, 672, 858, 672)
+
+[node name="Pad_pad_crater" type="Polygon2D" parent="Ground"]
+color = Color(0.847, 0.816, 0.722, 0.300)
+polygon = PackedVector2Array(1530, 1170, 1590, 1170, 1590, 1230, 1530, 1230)
+
+[node name="Face_lane_bank" type="Polygon2D" parent="Ground"]
+color = Color(0.235, 0.227, 0.204, 1.000)
+polygon = PackedVector2Array(0, 0, 450, 0, 450, 120, 0, 120)
+
+[node name="Face_lane_face" type="Polygon2D" parent="Ground"]
+color = Color(0.235, 0.227, 0.204, 1.000)
+polygon = PackedVector2Array(0, 300, 450, 300, 450, 450, 0, 450)
+
+[node name="Face_terrace_face_w" type="Polygon2D" parent="Ground"]
+color = Color(0.235, 0.227, 0.204, 1.000)
+polygon = PackedVector2Array(450, 420, 900, 420, 900, 456, 450, 456)
+
+[node name="Face_terrace_face_e" type="Polygon2D" parent="Ground"]
+color = Color(0.235, 0.227, 0.204, 1.000)
+polygon = PackedVector2Array(1020, 420, 1500, 420, 1500, 456, 1020, 456)
+
+[node name="Face_terrace_bank_e" type="Polygon2D" parent="Ground"]
+color = Color(0.235, 0.227, 0.204, 1.000)
+polygon = PackedVector2Array(1500, 0, 1920, 0, 1920, 450, 1500, 450)
+
+[node name="Building_hut" type="Polygon2D" parent="Ground"]
+color = Color(0.608, 0.482, 0.333, 1.000)
+polygon = PackedVector2Array(840, 60, 1080, 60, 1080, 192, 840, 192)
+
+[node name="Door_hut" type="Polygon2D" parent="Ground"]
+color = Color(0.165, 0.125, 0.094, 1.000)
+polygon = PackedVector2Array(942, 180, 978, 180, 978, 192, 942, 192)
+
+[node name="Building_library" type="Polygon2D" parent="Ground"]
+color = Color(0.490, 0.435, 0.533, 1.000)
+polygon = PackedVector2Array(600, 468, 888, 468, 888, 588, 600, 588)
+
+[node name="Door_library" type="Polygon2D" parent="Ground"]
+color = Color(0.165, 0.125, 0.094, 1.000)
+polygon = PackedVector2Array(726, 576, 762, 576, 762, 588, 726, 588)
+
+[node name="Building_north_cottages" type="Polygon2D" parent="Ground"]
+color = Color(0.541, 0.459, 0.376, 1.000)
+polygon = PackedVector2Array(1032, 468, 1320, 468, 1320, 588, 1032, 588)
+
+[node name="Door_north_cottages" type="Polygon2D" parent="Ground"]
+color = Color(0.165, 0.125, 0.094, 1.000)
+polygon = PackedVector2Array(1230, 576, 1266, 576, 1266, 588, 1230, 588)
+
+[node name="Building_bakery" type="Polygon2D" parent="Ground"]
+color = Color(0.627, 0.471, 0.314, 1.000)
+polygon = PackedVector2Array(330, 708, 558, 708, 558, 864, 330, 864)
+
+[node name="Door_bakery" type="Polygon2D" parent="Ground"]
+color = Color(0.165, 0.125, 0.094, 1.000)
+polygon = PackedVector2Array(540, 774, 576, 774, 576, 786, 540, 786)
+
+[node name="Building_herbalist" type="Polygon2D" parent="Ground"]
+color = Color(0.435, 0.541, 0.416, 1.000)
+polygon = PackedVector2Array(330, 948, 558, 948, 558, 1092, 330, 1092)
+
+[node name="Door_herbalist" type="Polygon2D" parent="Ground"]
+color = Color(0.165, 0.125, 0.094, 1.000)
+polygon = PackedVector2Array(540, 1008, 576, 1008, 576, 1020, 540, 1020)
+
+[node name="Building_smithy" type="Polygon2D" parent="Ground"]
+color = Color(0.416, 0.353, 0.314, 1.000)
+polygon = PackedVector2Array(1368, 660, 1620, 660, 1620, 840, 1368, 840)
+
+[node name="Door_smithy" type="Polygon2D" parent="Ground"]
+color = Color(0.165, 0.125, 0.094, 1.000)
+polygon = PackedVector2Array(1392, 858, 1428, 858, 1428, 870, 1392, 870)
+
+[node name="Building_fern_cottage" type="Polygon2D" parent="Ground"]
+color = Color(0.541, 0.459, 0.376, 1.000)
+polygon = PackedVector2Array(1368, 1110, 1578, 1110, 1578, 1242, 1368, 1242)
+
+[node name="Door_fern_cottage" type="Polygon2D" parent="Ground"]
+color = Color(0.165, 0.125, 0.094, 1.000)
+polygon = PackedVector2Array(1392, 1230, 1428, 1230, 1428, 1242, 1392, 1242)
+
+[node name="Walls" type="Node2D" parent="."]
+
+[node name="EdgeN" type="StaticBody2D" parent="Walls"]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/EdgeN"]
+position = Vector2(960, -12)
+shape = SubResource("s0")
+
+[node name="EdgeS" type="StaticBody2D" parent="Walls"]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/EdgeS"]
+position = Vector2(960, 1692)
+shape = SubResource("s0")
+
+[node name="EdgeW" type="StaticBody2D" parent="Walls"]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/EdgeW"]
+position = Vector2(-12, 840)
+shape = SubResource("s1")
+
+[node name="EdgeE" type="StaticBody2D" parent="Walls"]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/EdgeE"]
+position = Vector2(1932, 840)
+shape = SubResource("s1")
+
+[node name="Face_lane_bank" type="StaticBody2D" parent="Walls"]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Face_lane_bank"]
+position = Vector2(225, 60)
+shape = SubResource("s2")
+
+[node name="Face_lane_face" type="StaticBody2D" parent="Walls"]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Face_lane_face"]
+position = Vector2(225, 375)
+shape = SubResource("s3")
+
+[node name="Face_terrace_face_w" type="StaticBody2D" parent="Walls"]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Face_terrace_face_w"]
+position = Vector2(675, 438)
+shape = SubResource("s4")
+
+[node name="Face_terrace_face_e" type="StaticBody2D" parent="Walls"]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Face_terrace_face_e"]
+position = Vector2(1260, 438)
+shape = SubResource("s5")
+
+[node name="Face_terrace_bank_e" type="StaticBody2D" parent="Walls"]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Face_terrace_bank_e"]
+position = Vector2(1710, 225)
+shape = SubResource("s6")
+
+[node name="Building_hut" type="StaticBody2D" parent="Walls"]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Building_hut"]
+position = Vector2(960, 126)
+shape = SubResource("s7")
+
+[node name="Building_library" type="StaticBody2D" parent="Walls"]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Building_library"]
+position = Vector2(744, 528)
+shape = SubResource("s8")
+
+[node name="Building_north_cottages" type="StaticBody2D" parent="Walls"]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Building_north_cottages"]
+position = Vector2(1176, 528)
+shape = SubResource("s8")
+
+[node name="Building_bakery" type="StaticBody2D" parent="Walls"]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Building_bakery"]
+position = Vector2(444, 786)
+shape = SubResource("s9")
+
+[node name="Building_herbalist" type="StaticBody2D" parent="Walls"]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Building_herbalist"]
+position = Vector2(444, 1020)
+shape = SubResource("s10")
+
+[node name="Building_smithy" type="StaticBody2D" parent="Walls"]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Building_smithy"]
+position = Vector2(1494, 750)
+shape = SubResource("s11")
+
+[node name="Building_fern_cottage" type="StaticBody2D" parent="Walls"]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Building_fern_cottage"]
+position = Vector2(1473, 1176)
+shape = SubResource("s12")
+
+[node name="Props" type="Node2D" parent="."]
+z_index = -5
+
+[node name="If_well_choked" type="Node2D" parent="Props"]
+script = ExtResource("cond")
+only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
+
+[node name="WellChoked" type="Polygon2D" parent="Props/If_well_choked"]
+color = Color(0.357, 0.322, 0.286, 1.000)
+polygon = PackedVector2Array(828, 900, 900, 900, 900, 960, 828, 960)
+
+[node name="WellChokedBody" type="StaticBody2D" parent="Props/If_well_choked"]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Props/If_well_choked/WellChokedBody"]
+position = Vector2(864, 930)
+shape = SubResource("s13")
+
+[node name="If_well" type="Node2D" parent="Props"]
+script = ExtResource("cond")
+only_if = "{\"flags\":[\"shard_home:woodland\"]}"
+
+[node name="Well" type="Polygon2D" parent="Props/If_well"]
+color = Color(0.333, 0.439, 0.541, 1.000)
+polygon = PackedVector2Array(834, 906, 894, 906, 894, 954, 834, 954)
+
+[node name="WellBody" type="StaticBody2D" parent="Props/If_well"]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Props/If_well/WellBody"]
+position = Vector2(864, 930)
+shape = SubResource("s14")
+
+[node name="If_smithy_rubble" type="Node2D" parent="Props"]
+script = ExtResource("cond")
+only_if = "{\"not_restored\":[\"forge\"]}"
+
+[node name="SmithyRubble" type="Polygon2D" parent="Props/If_smithy_rubble"]
+color = Color(0.357, 0.322, 0.286, 1.000)
+polygon = PackedVector2Array(1356, 846, 1464, 846, 1464, 894, 1356, 894)
+
+[node name="SmithyRubbleBody" type="StaticBody2D" parent="Props/If_smithy_rubble"]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Props/If_smithy_rubble/SmithyRubbleBody"]
+position = Vector2(1410, 870)
+shape = SubResource("s15")
+
+[node name="If_smithy_boards" type="Node2D" parent="Props"]
+script = ExtResource("cond")
+only_if = "{\"not_restored\":[\"forge\"]}"
+
+[node name="SmithyBoards" type="Polygon2D" parent="Props/If_smithy_boards"]
+color = Color(0.290, 0.227, 0.165, 1.000)
+polygon = PackedVector2Array(1410, 708, 1578, 708, 1578, 738, 1410, 738)
+
+[node name="If_forge_fire" type="Node2D" parent="Props"]
+script = ExtResource("cond")
+only_if = "{\"restored\":[\"forge\"]}"
+
+[node name="ForgeFire" type="Polygon2D" parent="Props/If_forge_fire"]
+color = Color(0.941, 0.565, 0.227, 1.000)
+polygon = PackedVector2Array(1500, 786, 1548, 786, 1548, 822, 1500, 822)
+
+[node name="If_anvil" type="Node2D" parent="Props"]
+script = ExtResource("cond")
+only_if = "{\"restored\":[\"forge\"]}"
+
+[node name="Anvil" type="Polygon2D" parent="Props/If_anvil"]
+color = Color(0.227, 0.227, 0.251, 1.000)
+polygon = PackedVector2Array(1470, 876, 1512, 876, 1512, 900, 1470, 900)
+
+[node name="AnvilBody" type="StaticBody2D" parent="Props/If_anvil"]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Props/If_anvil/AnvilBody"]
+position = Vector2(1491, 888)
+shape = SubResource("s16")
+
+[node name="If_square_rubble_a" type="Node2D" parent="Props"]
+script = ExtResource("cond")
+only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
+
+[node name="SquareRubbleA" type="Polygon2D" parent="Props/If_square_rubble_a"]
+color = Color(0.357, 0.322, 0.286, 1.000)
+polygon = PackedVector2Array(660, 1020, 750, 1020, 750, 1074, 660, 1074)
+
+[node name="SquareRubbleABody" type="StaticBody2D" parent="Props/If_square_rubble_a"]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Props/If_square_rubble_a/SquareRubbleABody"]
+position = Vector2(705, 1047)
+shape = SubResource("s17")
+
+[node name="SquareRubbleB" type="Polygon2D" parent="Props"]
+color = Color(0.357, 0.322, 0.286, 1.000)
+polygon = PackedVector2Array(1188, 642, 1266, 642, 1266, 690, 1188, 690)
+
+[node name="SquareRubbleBBody" type="StaticBody2D" parent="Props"]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Props/SquareRubbleBBody"]
+position = Vector2(1227, 666)
+shape = SubResource("s18")
+
+[node name="If_fern_boards" type="Node2D" parent="Props"]
+script = ExtResource("cond")
+only_if = "{\"not_restored\":[\"fern_cottage\"]}"
+
+[node name="FernBoards" type="Polygon2D" parent="Props/If_fern_boards"]
+color = Color(0.290, 0.227, 0.165, 1.000)
+polygon = PackedVector2Array(1386, 1140, 1554, 1140, 1554, 1170, 1386, 1170)
+
+[node name="If_fern_rubble" type="Node2D" parent="Props"]
+script = ExtResource("cond")
+only_if = "{\"not_restored\":[\"fern_cottage\"]}"
+
+[node name="FernRubble" type="Polygon2D" parent="Props/If_fern_rubble"]
+color = Color(0.357, 0.322, 0.286, 1.000)
+polygon = PackedVector2Array(1374, 1248, 1464, 1248, 1464, 1290, 1374, 1290)
+
+[node name="FernRubbleBody" type="StaticBody2D" parent="Props/If_fern_rubble"]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Props/If_fern_rubble/FernRubbleBody"]
+position = Vector2(1419, 1269)
+shape = SubResource("s19")
+
+[node name="If_lantern_dark" type="Node2D" parent="Props"]
+script = ExtResource("cond")
+only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
+
+[node name="LanternDark" type="Polygon2D" parent="Props/If_lantern_dark"]
+color = Color(0.333, 0.314, 0.290, 1.000)
+polygon = PackedVector2Array(918, 870, 948, 870, 948, 936, 918, 936)
+
+[node name="LanternDarkBody" type="StaticBody2D" parent="Props/If_lantern_dark"]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Props/If_lantern_dark/LanternDarkBody"]
+position = Vector2(933, 903)
+shape = SubResource("s20")
+
+[node name="If_lantern_lit" type="Node2D" parent="Props"]
+script = ExtResource("cond")
+only_if = "{\"flags\":[\"shard_home:woodland\"]}"
+
+[node name="LanternLit" type="Polygon2D" parent="Props/If_lantern_lit"]
+color = Color(0.910, 0.941, 1.000, 1.000)
+polygon = PackedVector2Array(918, 870, 948, 870, 948, 936, 918, 936)
+
+[node name="LanternLitBody" type="StaticBody2D" parent="Props/If_lantern_lit"]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Props/If_lantern_lit/LanternLitBody"]
+position = Vector2(933, 903)
+shape = SubResource("s20")
+
+[node name="If_crater_smoke" type="Node2D" parent="Props"]
+script = ExtResource("cond")
+only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
+
+[node name="CraterSmoke" type="Polygon2D" parent="Props/If_crater_smoke"]
+color = Color(0.604, 0.604, 0.604, 1.000)
+polygon = PackedVector2Array(1470, 1260, 1560, 1260, 1560, 1320, 1470, 1320)
+
+[node name="If_beds_scorched" type="Node2D" parent="Props"]
+script = ExtResource("cond")
+only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
+
+[node name="BedsScorched" type="Polygon2D" parent="Props/If_beds_scorched"]
+color = Color(0.353, 0.290, 0.227, 1.000)
+polygon = PackedVector2Array(1140, 240, 1380, 240, 1380, 360, 1140, 360)
+
+[node name="If_beds_dug" type="Node2D" parent="Props"]
+script = ExtResource("cond")
+only_if = "{\"flags\":[\"shard_home:woodland\"]}"
+
+[node name="BedsDug" type="Polygon2D" parent="Props/If_beds_dug"]
+color = Color(0.416, 0.306, 0.188, 1.000)
+polygon = PackedVector2Array(1140, 240, 1380, 240, 1380, 360, 1140, 360)
+
+[node name="Stall" type="Polygon2D" parent="Props"]
+color = Color(0.690, 0.541, 0.290, 1.000)
+polygon = PackedVector2Array(1098, 708, 1206, 708, 1206, 756, 1098, 756)
+
+[node name="StallBody" type="StaticBody2D" parent="Props"]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Props/StallBody"]
+position = Vector2(1152, 732)
+shape = SubResource("s15")
+
+[node name="Actors" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="Moss" type="Area2D" parent="Actors"]
+position = Vector2(1152, 786)
+script = ExtResource("talk")
+speaker_id = "moss"
+
+[node name="Shape" type="CollisionShape2D" parent="Actors/Moss"]
+shape = SubResource("s21")
+
+[node name="Body" type="Polygon2D" parent="Actors/Moss"]
+color = Color(0.788, 0.627, 0.314, 1.000)
+polygon = PackedVector2Array(-12, -48, 12, -48, 12, 0, -12, 0)
+
+[node name="Name" type="Label" parent="Actors/Moss"]
+offset_left = -40
+offset_top = -72
+offset_right = 40
+offset_bottom = -52
+text = "Moss"
+horizontal_alignment = 1
+
+[node name="Post" type="StaticBody2D" parent="Actors/Moss"]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Actors/Moss/Post"]
+shape = SubResource("s22")
+
+[node name="If_hale_square" type="Node2D" parent="Actors"]
+script = ExtResource("cond")
+only_if = "{\"not_restored\":[\"forge\"]}"
+
+[node name="HaleSquare" type="Area2D" parent="Actors/If_hale_square"]
+position = Vector2(1290, 900)
+script = ExtResource("talk")
+speaker_id = "hale"
+
+[node name="Shape" type="CollisionShape2D" parent="Actors/If_hale_square/HaleSquare"]
+shape = SubResource("s21")
+
+[node name="Body" type="Polygon2D" parent="Actors/If_hale_square/HaleSquare"]
+color = Color(0.627, 0.314, 0.251, 1.000)
+polygon = PackedVector2Array(-12, -48, 12, -48, 12, 0, -12, 0)
+
+[node name="Name" type="Label" parent="Actors/If_hale_square/HaleSquare"]
+offset_left = -40
+offset_top = -72
+offset_right = 40
+offset_bottom = -52
+text = "Hale"
+horizontal_alignment = 1
+
+[node name="Post" type="StaticBody2D" parent="Actors/If_hale_square/HaleSquare"]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Actors/If_hale_square/HaleSquare/Post"]
+shape = SubResource("s22")
+
+[node name="If_hale_forge" type="Node2D" parent="Actors"]
+script = ExtResource("cond")
+only_if = "{\"restored\":[\"forge\"]}"
+
+[node name="HaleForge" type="Area2D" parent="Actors/If_hale_forge"]
+position = Vector2(1560, 894)
+script = ExtResource("talk")
+speaker_id = "hale"
+
+[node name="Shape" type="CollisionShape2D" parent="Actors/If_hale_forge/HaleForge"]
+shape = SubResource("s21")
+
+[node name="Body" type="Polygon2D" parent="Actors/If_hale_forge/HaleForge"]
+color = Color(0.627, 0.314, 0.251, 1.000)
+polygon = PackedVector2Array(-12, -48, 12, -48, 12, 0, -12, 0)
+
+[node name="Name" type="Label" parent="Actors/If_hale_forge/HaleForge"]
+offset_left = -40
+offset_top = -72
+offset_right = 40
+offset_bottom = -52
+text = "Hale"
+horizontal_alignment = 1
+
+[node name="Post" type="StaticBody2D" parent="Actors/If_hale_forge/HaleForge"]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Actors/If_hale_forge/HaleForge/Post"]
+shape = SubResource("s22")
+
+[node name="Morel" type="Area2D" parent="Actors"]
+position = Vector2(600, 1056)
+script = ExtResource("talk")
+speaker_id = "morel"
+
+[node name="Shape" type="CollisionShape2D" parent="Actors/Morel"]
+shape = SubResource("s21")
+
+[node name="Body" type="Polygon2D" parent="Actors/Morel"]
+color = Color(0.753, 0.604, 0.251, 1.000)
+polygon = PackedVector2Array(-12, -48, 12, -48, 12, 0, -12, 0)
+
+[node name="Name" type="Label" parent="Actors/Morel"]
+offset_left = -40
+offset_top = -72
+offset_right = 40
+offset_bottom = -52
+text = "Morel"
+horizontal_alignment = 1
+
+[node name="Post" type="StaticBody2D" parent="Actors/Morel"]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Actors/Morel/Post"]
+shape = SubResource("s22")
+
+[node name="If_ada" type="Node2D" parent="Actors"]
+script = ExtResource("cond")
+only_if = "{\"flags\":[\"shard_home:woodland\"]}"
+
+[node name="Ada" type="Area2D" parent="Actors/If_ada"]
+position = Vector2(1500, 1296)
+script = ExtResource("talk")
+speaker_id = "ada_fern"
+
+[node name="Shape" type="CollisionShape2D" parent="Actors/If_ada/Ada"]
+shape = SubResource("s21")
+
+[node name="Body" type="Polygon2D" parent="Actors/If_ada/Ada"]
+color = Color(0.478, 0.627, 0.753, 1.000)
+polygon = PackedVector2Array(-12, -48, 12, -48, 12, 0, -12, 0)
+
+[node name="Name" type="Label" parent="Actors/If_ada/Ada"]
+offset_left = -40
+offset_top = -72
+offset_right = 40
+offset_bottom = -52
+text = "Ada Fern"
+horizontal_alignment = 1
+
+[node name="Post" type="StaticBody2D" parent="Actors/If_ada/Ada"]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Actors/If_ada/Ada/Post"]
+shape = SubResource("s22")
+
+[node name="NoticeBoard" type="Area2D" parent="Actors"]
+position = Vector2(708, 666)
+script = ExtResource("talk")
+speaker_id = "notice_board"
+verb = "Read"
+
+[node name="Shape" type="CollisionShape2D" parent="Actors/NoticeBoard"]
+shape = SubResource("s21")
+
+[node name="Body" type="Polygon2D" parent="Actors/NoticeBoard"]
+color = Color(0.478, 0.353, 0.227, 1.000)
+polygon = PackedVector2Array(-15, -30, 15, -30, 15, 0, -15, 0)
+
+[node name="Post" type="StaticBody2D" parent="Actors/NoticeBoard"]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Actors/NoticeBoard/Post"]
+shape = SubResource("s22")
+
+[node name="Waystone" type="Area2D" parent="Actors"]
+position = Vector2(1260, 1068)
+script = ExtResource("talk")
+speaker_id = "waystone"
+verb = "Touch"
+
+[node name="Shape" type="CollisionShape2D" parent="Actors/Waystone"]
+shape = SubResource("s21")
+
+[node name="Body" type="Polygon2D" parent="Actors/Waystone"]
+color = Color(0.541, 0.541, 0.627, 1.000)
+polygon = PackedVector2Array(-15, -30, 15, -30, 15, 0, -15, 0)
+
+[node name="Post" type="StaticBody2D" parent="Actors/Waystone"]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Actors/Waystone/Post"]
+shape = SubResource("s22")
+
+[node name="ShardLantern" type="Area2D" parent="Actors"]
+position = Vector2(933, 954)
+script = ExtResource("talk")
+speaker_id = "shard_lantern"
+verb = "Look"
+
+[node name="Shape" type="CollisionShape2D" parent="Actors/ShardLantern"]
+shape = SubResource("s23")
+
+[node name="HutBed" type="Area2D" parent="Actors"]
+position = Vector2(960, 210)
+script = ExtResource("talk")
+speaker_id = "hut_door"
+verb = "Enter"
+
+[node name="Shape" type="CollisionShape2D" parent="Actors/HutBed"]
+shape = SubResource("s21")
+
+[node name="If_smithy_site" type="Node2D" parent="Actors"]
+script = ExtResource("cond")
+only_if = "{\"not_restored\":[\"forge\"]}"
+
+[node name="SmithySite" type="Area2D" parent="Actors/If_smithy_site"]
+position = Vector2(1410, 912)
+script = ExtResource("site")
+restore_id = "forge"
+verb = "Restore"
+
+[node name="Shape" type="CollisionShape2D" parent="Actors/If_smithy_site/SmithySite"]
+shape = SubResource("s21")
+
+[node name="Mark" type="Polygon2D" parent="Actors/If_smithy_site/SmithySite"]
+color = Color(0.941, 0.816, 0.376, 1.000)
+polygon = PackedVector2Array(-12, -3, 12, -3, 12, 3, -12, 3)
+
+[node name="If_fern_site" type="Node2D" parent="Actors"]
+script = ExtResource("cond")
+only_if = "{\"flags\":[\"shard_home:woodland\"],\"not_restored\":[\"fern_cottage\"]}"
+
+[node name="FernSite" type="Area2D" parent="Actors/If_fern_site"]
+position = Vector2(1440, 1308)
+script = ExtResource("site")
+restore_id = "fern_cottage"
+verb = "Restore"
+
+[node name="Shape" type="CollisionShape2D" parent="Actors/If_fern_site/FernSite"]
+shape = SubResource("s21")
+
+[node name="Mark" type="Polygon2D" parent="Actors/If_fern_site/FernSite"]
+color = Color(0.941, 0.816, 0.376, 1.000)
+polygon = PackedVector2Array(-12, -3, 12, -3, 12, 3, -12, 3)
+
+[node name="Labels" type="Node2D" parent="."]
+z_index = 5
+
+[node name="Label_hut" type="Label" parent="Labels"]
+offset_left = 840
+offset_top = 66
+offset_right = 1080
+offset_bottom = 90
+text = "Your hut"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Label_library" type="Label" parent="Labels"]
+offset_left = 600
+offset_top = 474
+offset_right = 888
+offset_bottom = 498
+text = "Library (roof torn)"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Label_north_cottages" type="Label" parent="Labels"]
+offset_left = 1032
+offset_top = 474
+offset_right = 1320
+offset_bottom = 498
+text = "North terrace cottages"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Label_bakery" type="Label" parent="Labels"]
+offset_left = 330
+offset_top = 714
+offset_right = 558
+offset_bottom = 738
+text = "Bakery (cold)"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Label_herbalist" type="Label" parent="Labels"]
+offset_left = 330
+offset_top = 954
+offset_right = 558
+offset_bottom = 978
+text = "Herbalist's (apothecary, stage 1)"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Label_smithy" type="Label" parent="Labels"]
+offset_left = 1368
+offset_top = 666
+offset_right = 1620
+offset_bottom = 690
+text = "The old smithy"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Label_fern_cottage" type="Label" parent="Labels"]
+offset_left = 1368
+offset_top = 1116
+offset_right = 1578
+offset_bottom = 1140
+text = "The Ferns' cottage"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Spawns" type="Node2D" parent="."]
+
+[node name="start" type="Marker2D" parent="Spawns"]
+position = Vector2(960, 1200)
+
+[node name="woodland" type="Marker2D" parent="Spawns"]
+position = Vector2(90, 210)
+
+[node name="hut" type="Marker2D" parent="Spawns"]
+position = Vector2(960, 252)
+
+[node name="halt" type="Marker2D" parent="Spawns"]
+position = Vector2(72, 900)
+
+[node name="RaidPads" type="Node2D" parent="."]
+
+[node name="pad_halt_gate" type="Marker2D" parent="RaidPads"]
+position = Vector2(630, 900)
+metadata/stage = 0
+metadata/lane = "halt_road"
+
+[node name="pad_harbour_gate" type="Marker2D" parent="RaidPads"]
+position = Vector2(1290, 990)
+metadata/stage = 0
+metadata/lane = "harbour_road"
+
+[node name="pad_green" type="Marker2D" parent="RaidPads"]
+position = Vector2(690, 1200)
+metadata/stage = 1
+metadata/lane = "green_lane"
+
+[node name="pad_stair" type="Marker2D" parent="RaidPads"]
+position = Vector2(960, 540)
+metadata/stage = 1
+metadata/lane = "garden_walk"
+
+[node name="pad_library" type="Marker2D" parent="RaidPads"]
+position = Vector2(888, 642)
+metadata/stage = 1
+metadata/lane = ""
+
+[node name="pad_crater" type="Marker2D" parent="RaidPads"]
+position = Vector2(1560, 1200)
+metadata/stage = 1
+metadata/lane = ""
+
+[node name="Doors" type="Node2D" parent="."]
+
+[node name="ToWoodland" type="Area2D" parent="Doors"]
+position = Vector2(12, 210)
+script = ExtResource("door")
+target_zone = "woodland"
+target_spawn = "crossroads"
+
+[node name="Shape" type="CollisionShape2D" parent="Doors/ToWoodland"]
+shape = SubResource("s24")
+
+[node name="ToHalt" type="Area2D" parent="Doors"]
+position = Vector2(12, 900)
+script = ExtResource("door")
+target_zone = "halt"
+target_spawn = "crossroads"
+
+[node name="Shape" type="CollisionShape2D" parent="Doors/ToHalt"]
+shape = SubResource("s25")

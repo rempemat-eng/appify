@@ -19,6 +19,7 @@ SaveGame="*res://core/save_game.gd"
 Quests="*res://core/quests.gd"
 Dialogue="*res://core/dialogue.gd"
 Zones="*res://core/zones.gd"
+Village="*res://core/village.gd"
 PhantomCameraManager="*res://addons/phantom_camera/scripts/managers/phantom_camera_manager.gd"
 
 [display]

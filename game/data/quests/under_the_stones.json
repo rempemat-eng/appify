@@ -1,0 +1,25 @@
+{
+  "id": "under_the_stones",
+  "title": "Under the stones",
+  "kind": "main",
+  "summary": "The great shard fell into the Undercroft below the stone circle. Something with thorns sleeps on it.",
+  "start": { "on": "talk:hale", "if": { "done": ["cold_forge"] } },
+  "steps": [
+    { "id": "descend", "text": "Go down through the hatch by the stone circle", "on": "enter:undercroft" },
+    {
+      "id": "rooms",
+      "text": "Free the shardstruck in the Undercroft",
+      "on": "camp:undercroft_rooms",
+      "done_if": { "flags": ["camp_cleared:undercroft_rooms"] }
+    },
+    {
+      "id": "thornback",
+      "text": "Free the Thornback",
+      "on": "camp:thornback",
+      "done_if": { "flags": ["camp_cleared:thornback"] }
+    },
+    { "id": "shard", "text": "Take the great shard", "on": "talk:circle_shard", "set_flags": ["shard_taken:woodland"] },
+    { "id": "lantern", "text": "Set the shard in the lantern on the square", "on": "talk:shard_lantern", "set_flags": ["shard_home:woodland"] }
+  ],
+  "rewards": { "glint": 60, "flags": ["thornback_freed"] }
+}

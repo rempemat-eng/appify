@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene format=3]
 
 [ext_resource type="Script" path="res://world/zone.gd" id="1"]
 [ext_resource type="PackedScene" path="res://zones/woodland/woodland_base.tscn" id="2"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" path="res://world/camp.gd" id="5"]
 [ext_resource type="PackedScene" path="res://actors/enemy.tscn" id="6"]
 [ext_resource type="Script" path="res://world/door.gd" id="7"]
+[ext_resource type="Script" path="res://world/conditional.gd" id="8"]
 
 [sub_resource type="CircleShape2D" id="talk"]
 radius = 30.0
@@ -16,6 +17,9 @@ radius = 5.0
 
 [sub_resource type="RectangleShape2D" id="edge"]
 size = Vector2(18, 72)
+
+[sub_resource type="RectangleShape2D" id="hatch"]
+size = Vector2(30, 24)
 
 [node name="Woodland" type="Node2D"]
 y_sort_enabled = true
@@ -61,18 +65,61 @@ position = Vector2(612, 1150)
 [node name="Mossling3" parent="Actors/MeadowCamp" instance=ExtResource("6")]
 position = Vector2(560, 1185)
 
+[node name="HaleOnThePath" type="Node2D" parent="Actors"]
+script = ExtResource("8")
+only_if = "{\"not_started\":[\"road_to_crossroads\"]}"
+
+[node name="Hale" type="Area2D" parent="Actors/HaleOnThePath"]
+position = Vector2(800, 1330)
+script = ExtResource("3")
+speaker_id = "hale"
+
+[node name="Shape" type="CollisionShape2D" parent="Actors/HaleOnThePath/Hale"]
+shape = SubResource("talk")
+
+[node name="Body" type="Polygon2D" parent="Actors/HaleOnThePath/Hale"]
+color = Color(0.627, 0.314, 0.251, 1)
+polygon = PackedVector2Array(-12, -48, 12, -48, 12, 0, -12, 0)
+
+[node name="Post" type="StaticBody2D" parent="Actors/HaleOnThePath/Hale"]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Actors/HaleOnThePath/Hale/Post"]
+shape = SubResource("post")
+
+[node name="Hatch" type="Polygon2D" parent="Actors"]
+z_index = -1
+color = Color(0.25, 0.2, 0.15, 1)
+polygon = PackedVector2Array(315, 1018, 345, 1018, 345, 1042, 315, 1042)
+
 [node name="Spawns" type="Node2D" parent="."]
 
 [node name="start" type="Marker2D" parent="Spawns"]
 position = Vector2(405, 750)
 
+[node name="crossroads" type="Marker2D" parent="Spawns"]
+position = Vector2(880, 1340)
+
+[node name="undercroft" type="Marker2D" parent="Spawns"]
+position = Vector2(330, 1080)
+
 [node name="Doors" type="Node2D" parent="."]
 
-[node name="ToGarden" type="Area2D" parent="Doors"]
+[node name="ToUndercroft" type="Area2D" parent="Doors"]
+position = Vector2(330, 1030)
+script = ExtResource("7")
+target_zone = "undercroft"
+target_spawn = "start"
+only_if = "{\"flags\":[\"undercroft_open\"]}"
+
+[node name="Shape" type="CollisionShape2D" parent="Doors/ToUndercroft"]
+shape = SubResource("hatch")
+
+[node name="ToCrossroads" type="Area2D" parent="Doors"]
 position = Vector2(951, 1356)
 script = ExtResource("7")
-target_zone = "garden"
+target_zone = "crossroads"
 target_spawn = "woodland"
 
-[node name="Shape" type="CollisionShape2D" parent="Doors/ToGarden"]
+[node name="Shape" type="CollisionShape2D" parent="Doors/ToCrossroads"]
 shape = SubResource("edge")
