@@ -5,7 +5,7 @@
   1920,
   1680
  ],
- "inputs": "9b9aadf6a9f750ca4549a0bf25fb30a9c1da8848eecdc788ecd2b1c64d4e18f6",
+ "inputs": "cb1013fe3dbef2241431ce65de296180c5166f2063eb3770f894ed8fa1676588",
  "kit_drawn": [
   "anvil.png",
   "bakery.png",
@@ -660,7 +660,7 @@
    ],
    "offset": [
     -48,
-    -122
+    -128
    ],
    "cond": null,
    "solid": null
@@ -880,7 +880,7 @@
    ],
    "offset": [
     -39,
-    -62
+    -71
    ],
    "cond": null,
    "solid": [
@@ -1175,7 +1175,7 @@
    ],
    "offset": [
     -45,
-    -50
+    -86
    ],
    "cond": null,
    "solid": [
@@ -1275,7 +1275,7 @@
    ],
    "offset": [
     -39,
-    -62
+    -71
    ],
    "cond": null,
    "solid": [
@@ -1315,7 +1315,7 @@
    ],
    "offset": [
     -39,
-    -50
+    -53
    ],
    "cond": null,
    "solid": [
@@ -1335,7 +1335,7 @@
    ],
    "offset": [
     -42,
-    -74
+    -80
    ],
    "cond": null,
    "solid": [
@@ -1674,8 +1674,8 @@
     840
    ],
    "offset": [
-    -48,
-    -44
+    -51,
+    -47
    ],
    "cond": {
     "not_flags": [
@@ -1693,8 +1693,8 @@
     936
    ],
    "offset": [
-    -42,
-    -38
+    -45,
+    -41
    ],
    "cond": {
     "not_flags": [
@@ -1712,8 +1712,8 @@
     1080
    ],
    "offset": [
-    -45,
-    -38
+    -48,
+    -41
    ],
    "cond": {
     "not_flags": [
@@ -1731,8 +1731,8 @@
     936
    ],
    "offset": [
-    -39,
-    -38
+    -42,
+    -41
    ],
    "cond": {
     "not_flags": [
@@ -1771,7 +1771,7 @@
    ],
    "offset": [
     -45,
-    -50
+    -86
    ],
    "cond": null,
    "solid": [
@@ -1906,7 +1906,7 @@
    "kind": "shadow",
    "png": "square_rubble_a_shadow.png",
    "foot": [
-    655,
+    651,
     1070
    ],
    "offset": [
@@ -1926,7 +1926,7 @@
    "kind": "shadow",
    "png": "fern_rubble_shadow.png",
    "foot": [
-    1370,
+    1366,
     1286
    ],
    "offset": [
