@@ -1,0 +1,46 @@
+{
+  "id": "a1_the_circle_wakes",
+  "title": "The circle wakes",
+  "kind": "main",
+  "region": "valley",
+  "summary": "Three great shards hum in the lantern. The old folk said the stone circle was built to hold the moon's light.",
+  "start": {
+    "on": "talk:shard_lantern",
+    "if": {
+      "flags": [
+        "shard_home:woodland",
+        "shard_home:frostline",
+        "shard_home:brackens"
+      ]
+    }
+  },
+  "steps": [
+    {
+      "id": "stones",
+      "text": "Carry the lantern's light to the stone circle",
+      "on": "talk:circle_stones"
+    },
+    {
+      "id": "trial",
+      "text": "Stand the circle's trial",
+      "on": "camp:circle_trial",
+      "done_if": {
+        "flags": [
+          "camp_cleared:circle_trial"
+        ]
+      }
+    },
+    {
+      "id": "cairn",
+      "text": "Speak to the stone that woke",
+      "on": "talk:cairn"
+    }
+  ],
+  "rewards": {
+    "glint": 50,
+    "flags": [
+      "folk:cairn",
+      "circle_awake"
+    ]
+  }
+}
