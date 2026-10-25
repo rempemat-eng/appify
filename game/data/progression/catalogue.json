@@ -1,0 +1,270 @@
+{
+  "schema_version": 1,
+  "status": "proposal (claude-a/progression, 25 Oct); every number is a placeholder until play-tests and Claude L's harness",
+  "design": "docs/vision/progression.md",
+  "builds_on": {
+    "abilities": "game/data/abilities/<id>.json (Codex C60, PR #261, branch codex/godot-ability-kits): the base kit and the powered form are canonical and unchanged here",
+    "game_design": "docs/vision/game-design.md (PR #223): level 1 to 30 shared, gear level and the forge, Glint, scrap and region materials; its perk card is replaced by the skill tree"
+  },
+  "levels": {
+    "range": [
+      1,
+      30
+    ],
+    "shared": true,
+    "skill_points": "one point at every level from 2 to 30 (29 in all); Glint never buys points",
+    "late_joiner": "arrives at the shared level with all its points unspent, and a 'choose for me' button that follows the folk's first branch",
+    "replaces": "game-design.md section 6's perk card of three: its ideas are folded into each folk's tree as minor nodes",
+    "inputs": "no new buttons: every technique binds to primary, secondary, block, special, dodge, a timing window or a passive condition. None uses a hold on primary (Codex's primary repeats while held)"
+  },
+  "skill_tree": {
+    "shape": "three branches per folk, each matching part of its kit; five nodes a branch, fifteen in all",
+    "branch_nodes": [
+      {
+        "slot": "minor_a",
+        "kind": "passive",
+        "cost": 1,
+        "levels": [
+          2,
+          2,
+          4
+        ]
+      },
+      {
+        "slot": "technique",
+        "kind": "technique",
+        "cost": 2,
+        "levels": [
+          3,
+          9,
+          16
+        ]
+      },
+      {
+        "slot": "minor_b",
+        "kind": "passive",
+        "cost": 1,
+        "levels": [
+          6,
+          11,
+          18
+        ]
+      },
+      {
+        "slot": "upgrade",
+        "kind": "technique upgrade",
+        "cost": 3,
+        "levels": [
+          12,
+          20,
+          26
+        ]
+      },
+      {
+        "slot": "keystone",
+        "kind": "keystone",
+        "cost": 4,
+        "levels": [
+          22,
+          24,
+          28
+        ]
+      }
+    ],
+    "levels_note": "levels[i] is the level a node unlocks in branch i (branch 1, 2, 3); a node also needs the node before it in its branch",
+    "budget": "the whole tree costs 33 points and a folk earns 29 by level 30, so a finished folk has everything except one keystone: the build choice is which keystone to leave out, and the order you take nodes in",
+    "modifiers": "every node is a modifier layered over the canonical kit at run time; game/data/abilities/*.json is never edited",
+    "respec": {
+      "status": "proposal",
+      "where": "your bed in the hut",
+      "cost_glint": 50,
+      "first_free": true,
+      "note": "refunds every point; never in a fight, siege or dungeon"
+    }
+  },
+  "glint": {
+    "buys": [
+      "outfits and accessories at Moss's stall",
+      "forge work (weapon tiers, fittings set and moved, gear level)",
+      "village restoration",
+      "shops and map services (fast travel extras, the lookout's markers, seeds, tonics)",
+      "respec"
+    ],
+    "never_buys": [
+      "skill points",
+      "levels",
+      "XP",
+      "weapon tiers before their level"
+    ]
+  },
+  "weapon_tiers": {
+    "names": [
+      "Made",
+      "Fitted",
+      "Masterwork",
+      "Starfall"
+    ],
+    "rules": [
+      "Each folk keeps one signature weapon, the item its kit is built on (Matt, 25 Oct). Tiers change its drawing and add one small handling change each.",
+      "Tiers are level milestones: a tier opens at its level, then Hale forges it cheaply, per folk (Matt, 25 Oct).",
+      "No tier multiplies damage. Power comes from gear level and the forge (game-design.md 5.6 and appendix B).",
+      "Loot is fittings: weapon drops are fittings with game-design's rarity and affixes, set into the signature weapon's sockets at the forge (moved freely, a small Glint fee). Sockets grow with the tier.",
+      "Tier sizes are relative to the tier-1 drawing (Bramble's bow is being redrawn larger in cast v2).",
+      "A tier keeps the weapon's grip and release anchors within 1 px; a longer tier records its own anchors in the manifest.",
+      "A folk who joins late arrives at the highest tier any folk has reached, except Starfall, which is always a forge step."
+    ],
+    "tiers": [
+      {
+        "tier": 1,
+        "name": "Made",
+        "requires": {
+          "level": 1
+        },
+        "sockets": 1,
+        "cost": null
+      },
+      {
+        "tier": 2,
+        "name": "Fitted",
+        "requires": {
+          "level": 8,
+          "forge_open": true
+        },
+        "sockets": 2,
+        "cost": {
+          "glint": 60,
+          "scrap": 5,
+          "home_material": 2
+        }
+      },
+      {
+        "tier": 3,
+        "name": "Masterwork",
+        "requires": {
+          "level": 16,
+          "forge_open": true
+        },
+        "sockets": 2,
+        "cost": {
+          "glint": 150,
+          "scrap": 10,
+          "home_material": 4
+        }
+      },
+      {
+        "tier": 4,
+        "name": "Starfall",
+        "requires": {
+          "level": 24,
+          "great_forge": true
+        },
+        "sockets": 3,
+        "cost": {
+          "glint": 300,
+          "scrap": 20,
+          "home_material": 6,
+          "starshard": 1
+        }
+      }
+    ],
+    "starshard": "a fist-sized splinter of moon; guaranteed on the first defeat of every boss from act 3 on and from the deep shards after the story; Moss's stall sells them at a fixed price after the story. Never random-priced, never timed",
+    "smith": "Hale, at the forge (game/core/village.gd restore id 'forge'); 'Show me' previews the next tier on the folk before paying"
+  },
+  "cosmetics": {
+    "rule": "Outfits are looks only. Accessories are looks only, except each folk's trinket, which carries one small perk marked 'proposal'. Only the active folk's trinket counts, so perks never stack.",
+    "slots": {
+      "outfit": "the body's cloth and colours; one at a time; 'home' is the drawn look",
+      "head": "a hat or headpiece; for Ashe, Brine and Rook it dresses the helmet instead (a hat cannot coexist with the helmet they wear)",
+      "back": "cloak, cape or what rides on the back; never hides tagged back gear (quiver, pack, slung rifle, loader frame)",
+      "neck": "scarf, collar or chain",
+      "trinket": "a small belt or chest charm, 2 to 4 px"
+    },
+    "per_character": {
+      "outfits": 3,
+      "accessories": 4
+    },
+    "sources": {
+      "story": "a quest's end: the folk's own quest (game-design 8.3) or a named main or village quest. Event quest:<id>:done; quest ids are Claude K's and are placeholders here",
+      "arena": "a first rank in a ring (game-design 9). Event arena:<ring>:<bronze|silver|gold>. Never Star (Hard only)",
+      "village": "a building restored to a tier (game-design 7.3). Event restore:<building>:<tier>",
+      "bond": "any familiar reaching a bond level (game-design 4.1). Event bond:any:<level>",
+      "drop": "a rare drop from camp chests and elites in one region (looter-lite). Event drop:<region>",
+      "glint": "bought at Moss's stall at a fixed price once the stall tier stocks it. Event buy:stall:<item>"
+    },
+    "drop_rules": {
+      "chance_per_camp_chest_pct": 3,
+      "chance_per_elite_pct": 2,
+      "bad_luck_counter": "guaranteed by the 12th camp chest in that region",
+      "only_unowned": true,
+      "drops_for_folk_not_yet_met": "kept in the wardrobe, shown when they join",
+      "rates_in_journal": true
+    },
+    "never": [
+      "screen time",
+      "rest or naps",
+      "real-time clocks or dailies",
+      "paid or random purchases",
+      "anything that expires"
+    ],
+    "ramps": "names in item 'ramps' and tier 'materials' are descriptive; '(new)' marks a ramp to add to castwork palette.py with four tones (deep, shadow, base, light, optional shine); others name the material already on that part",
+    "new_ramps": {
+      "starlight": [
+        "#3A3470",
+        "#6E66B8",
+        "#C8C4F0",
+        "#FFF6D8",
+        "#FFFFFF"
+      ],
+      "moonsilver": [
+        "#4A4E66",
+        "#8088A4",
+        "#C4CAD8",
+        "#F0F2F6",
+        "#FFFFFF"
+      ],
+      "moonwood": [
+        "#1E1A36",
+        "#33305A",
+        "#4C4A80",
+        "#7470A8"
+      ]
+    }
+  },
+  "events": {
+    "level_up": "level:<n>",
+    "skill_point": "points:<folk>:<n>",
+    "node": "node:<folk>:<node id>",
+    "tier": "tier:<folk>:<1-4>",
+    "unlock": "cosmetic:<folk>:<item>"
+  },
+  "save": {
+    "status": "proposal for the save owner; nothing here changes game/core/save_game.gd",
+    "fields": {
+      "progression.level": "int, shared by every folk",
+      "progression.xp": "int",
+      "folk.<id>.weapon_tier": "int 1 to 4",
+      "folk.<id>.fittings": "[fitting ids or null], one per socket",
+      "folk.<id>.look": "{outfit, head, back, neck, trinket}: item ids or null",
+      "wardrobe": "{<folk>: [item ids]} unlocked cosmetics",
+      "drop_counters": "{<region>: int} for the bad-luck counter",
+      "folk.<id>.nodes": "[node ids] taken in the tree; unspent points = (level - 1) - spent",
+      "seen": "[ids] for the 'new' marks"
+    }
+  },
+  "characters": [
+    "bramble",
+    "iona",
+    "pendle",
+    "cairn",
+    "morel",
+    "velvet",
+    "tam",
+    "mirra",
+    "brine",
+    "ashe",
+    "clack",
+    "nix",
+    "rook",
+    "mote"
+  ]
+}
