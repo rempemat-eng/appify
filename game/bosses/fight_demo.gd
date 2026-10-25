@@ -88,6 +88,10 @@ func _save_shot() -> void:
 	set_physics_process(false)
 	await RenderingServer.frame_post_draw
 	var img := get_tree().root.get_texture().get_image()
+	if not game.frame_covered(img):
+		push_error("telegraph shot: the world does not cover the frame")
+		get_tree().quit(1)
+		return
 	var err := img.save_png(shot_path)
 	print("SHOT %s %s %s (%s, %.2f of %.2f s)" % [shot_path, img.get_size(), error_string(err), boss.attack, boss.elapsed, boss.windup_time])
 	get_tree().quit(0 if err == OK else 1)
