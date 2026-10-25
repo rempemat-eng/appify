@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://world/zone.gd" id="1"]
+
+[node name="Zonea" type="Node2D"]
+script = ExtResource("1")
+zone_id = "a"
+bounds = Rect2(0, 0, 320, 180)
+
+[node name="Actors" type="Node2D" parent="."]
+
+[node name="Spawns" type="Node2D" parent="."]
+
+[node name="west" type="Marker2D" parent="Spawns"]
+position = Vector2(30, 60)

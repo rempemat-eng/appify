@@ -1,0 +1,29 @@
+{
+  "circle_shard": {
+    "name": "The great shard",
+    "entries": [
+      {
+        "if": { "flags": ["shard_taken:woodland"] },
+        "lines": ["Only a scorch on the stone where the shard lay."]
+      },
+      {
+        "lines": [
+          "A piece of the moon, as long as your arm, cold as river water. The Thornback sleeps beside it, calm now.",
+          "You wrap the shard in your mantle. It is lighter than it looks."
+        ]
+      }
+    ]
+  },
+  "cairn_statue": {
+    "name": "Stone figure",
+    "entries": [
+      {
+        "if": { "flags": ["shard_taken:woodland"] },
+        "lines": ["The stone figure's eye slits glow faintly amber, then fade. Not yet."]
+      },
+      {
+        "lines": ["A figure of granite slabs, half sunk into the wall, turf growing on its shoulders. It looks almost like it is waiting."]
+      }
+    ]
+  }
+}

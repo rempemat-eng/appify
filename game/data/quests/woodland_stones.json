@@ -1,0 +1,21 @@
+{
+  "id": "woodland_stones",
+  "title": "Thorns by the stones",
+  "kind": "main",
+  "summary": "The sign by the stone circle asks for the shardstruck mosslings in the meadow to be driven off.",
+  "start": { "on": "talk:stone_sign" },
+  "steps": [
+    {
+      "id": "clear_camp",
+      "text": "Clear the mossling camp in the meadow",
+      "on": "camp:meadow",
+      "done_if": { "flags": ["camp_cleared:meadow"] }
+    },
+    {
+      "id": "return",
+      "text": "Return to the sign by the stones",
+      "on": "talk:stone_sign"
+    }
+  ],
+  "rewards": { "glint": 40, "flags": ["woodland_stones_done"] }
+}

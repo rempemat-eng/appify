@@ -1,0 +1,93 @@
+{
+ "id": "crossroads/bush_18",
+ "file": "game/zones/crossroads/art/bush_18.png",
+ "sha256": "5c328ecfd0acb869d2d14cf791f567ee231e13c12debd63c328bcf6ddc85addd",
+ "kind": "bush",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  118,
+  97
+ ],
+ "status": "fail",
+ "counts": {
+  "blocker": 1,
+  "fault": 2,
+  "polish": 1
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 5,
+   "tones": 23.0,
+   "shapes": 29.6
+  },
+  "band": {
+   "tones": 27.71,
+   "shapes": 63.32,
+   "boxes": 4,
+   "patches": 107
+  },
+  "ratio": 0.467,
+  "tones_ratio": 0.83,
+  "shapes_ratio": 0.467,
+  "passed": false,
+  "group": "foliage"
+ },
+ "findings": [
+  {
+   "detector": "logic.floating_part",
+   "severity": "blocker",
+   "box": [
+    70,
+    16,
+    107,
+    72
+   ],
+   "message": "crossroads/bush_18: a part (885 px, 27% of the sprite) hangs in the air, 14 px above the ground line, touching nothing below",
+   "fix": "join it to what holds it up: a crown sits on its trunk and covers the trunk top, a bucket hangs from a rope on a windlass, a sign from a bracket (world-rules.md 6.9)"
+  },
+  {
+   "detector": "logic.stilts",
+   "severity": "fault",
+   "box": [
+    11,
+    68,
+    107,
+    86
+   ],
+   "message": "crossroads/bush_18: the mass stands on 3 separate thin legs (27 px of legs under a 95 px wide mass)",
+   "fix": "a bush grows from the ground: let the foliage come down to a dark, grassed base with only a stem or two glimpsed in the shade, and a contact shadow under it (no stilts)"
+  },
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    11,
+    10,
+    107,
+    86
+   ],
+   "message": "crossroads/bush_18: detail bar 0.47 of Eastward's foliage band (23.0 tones, 29.6 shapes a patch against 27.71, 63.32)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  },
+  {
+   "detector": "detail.mesh",
+   "severity": "fault",
+   "box": [
+    11,
+    10,
+    107,
+    86
+   ],
+   "message": "crossroads/bush_18: the foliage is a see-through mesh: 36% of the crown is gaps between outlined blobs",
+   "fix": "paint the crown as one mass of leaf clusters (Eastward): lit clumps on top, a darker band under them, a dark interior showing through narrow gaps, no ground visible through the crown and no outline round every blob (art-style.md 4)"
+  }
+ ],
+ "reviewed": "2026-10-25",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}
