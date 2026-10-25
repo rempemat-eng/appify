@@ -68,6 +68,7 @@
     "check:economy-sim": "node --import tsx scripts/economy-model.test.ts && npm run sim:economy -- --check",
     "check:world-land": "node --import tsx lib/world-land.test.ts",
     "check:kit": "python3 -m scripts.art.native.check",
+    "check:godot": "bash game/tools/check.sh",
     "check:pointer-events": "node scripts/check-pointer-events.cjs"
   },
   "dependencies": {

@@ -1,0 +1,42 @@
+{
+  "_about": "The Undercroft under the woodland's stone circle as a blockout plan (Claude A, 25 Oct; docs/vision/vertical-slice.md, beat 6). Same shape as crossroads.json. Three rooms and the Thornback's chamber in a row; the fights are camps of actors/enemy.tscn stand-ins until Codex's woodland enemies and the Thornback land (game/enemies/**). The final dungeon goes on the cliff core's tiers (game-design.md 12.2).",
+  "id": "undercroft",
+  "owner": "claude-a",
+  "box": [0, 0, 600, 200],
+  "tiers": [
+    { "id": "floor", "tier": 3, "colour": "#4e4a44", "outline": [[0, 20], [600, 20], [600, 180], [0, 180]] }
+  ],
+  "places": [
+    { "id": "chamber", "kind": "boss_room", "rect": [452, 20, 148, 160], "colour": "#5a4a4a", "why": "the Thornback's chamber, under the circle's centre" }
+  ],
+  "faces": [
+    { "id": "roof", "rect": [0, 0, 600, 20] },
+    { "id": "floor_edge", "rect": [0, 180, 600, 20] },
+    { "id": "sep1_n", "rect": [160, 20, 12, 70] },
+    { "id": "sep1_s", "rect": [160, 110, 12, 70] },
+    { "id": "sep2_n", "rect": [320, 20, 12, 70] },
+    { "id": "sep2_s", "rect": [320, 110, 12, 70] },
+    { "id": "sep3_n", "rect": [440, 20, 12, 66] },
+    { "id": "sep3_s", "rect": [440, 114, 12, 66] }
+  ],
+  "props": [
+    { "id": "roots_a", "kind": "roots", "rect": [60, 30, 30, 16], "solid": true, "colour": "#3a4a2a" },
+    { "id": "roots_b", "kind": "roots", "rect": [230, 140, 34, 16], "solid": true, "colour": "#3a4a2a" },
+    { "id": "pillar", "kind": "pillar", "rect": [380, 60, 16, 16], "solid": true, "colour": "#6a6660" },
+    { "id": "shard_glow", "kind": "glow", "rect": [556, 94, 16, 12], "colour": "#e8f0ff", "if": { "not_flags": ["shard_taken:woodland"] }, "why": "the woodland's great shard" }
+  ],
+  "camps": [
+    { "id": "undercroft_rooms", "enemies": [[110, 70], [120, 130], [250, 80], [270, 120], [380, 120]], "why": "the rooms' shardstruck mosslings (stand-ins for a grunt, a lunger, a shooter and a swarmer)" },
+    { "id": "thornback", "enemies": [[520, 100]], "boss": true, "why": "the Thornback stand-in: one enemy until Codex's boss lands" }
+  ],
+  "things": [
+    { "id": "circle_shard", "speaker": "circle_shard", "verb": "Take", "at": [564, 110], "colour": "#00000000", "if": { "flags": ["camp_cleared:thornback"] } },
+    { "id": "cairn_statue", "speaker": "cairn_statue", "verb": "Look", "at": [580, 40], "colour": "#7a7a70", "why": "Cairn, asleep in the wall: he stands up in act 1" }
+  ],
+  "spawns": [
+    { "id": "start", "at": [30, 100] }
+  ],
+  "doors": [
+    { "id": "to_woodland", "rect": [0, 80, 8, 40], "to": "woodland", "spawn": "undercroft" }
+  ]
+}
