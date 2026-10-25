@@ -167,6 +167,10 @@ def foliage_sprite_hd(kind, old, d, seed, ex, look=None, bark='oak', scale=None)
     look = dict(look or {})
     if kind == 'bush':
         look.setdefault('form', 'bush')
+        look.setdefault('clump', 7.0)
+        look.setdefault('fam', 'grass_cool')
+    elif 'oak' in os.path.basename(old):
+        look.setdefault('clump', 11.0)
     out, _, (pad, sx, sy) = F5.paint_masses(A, d, seed=seed, look=look, size=size)
     if look.get('form') == 'bush':
         return Image.fromarray(out), None, out[..., 3] > 0

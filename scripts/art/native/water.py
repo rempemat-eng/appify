@@ -319,18 +319,18 @@ def fall_hd(cv: np.ndarray, x0: float, w: float, y0: float, y1: float, seed: int
     cx = x0 + w / 2.0
     # the lip: the water runs over a worn ledge stone, a little wider than the fall, rounded at
     # its ends, its top wet and lit, its face dark; the water's own surface slides over it
-    for Y in range(P(y0 - 2.4, 0), P(y0 + 0.6, 0)):
-        for X in range(P(x0 - 2.5, 0), P(x0 + w + 2.5, 0)):
+    rx, ry, ly = w / 2.0 + 2.2, 1.7, y0 - 0.9
+    for Y in range(P(ly - ry, 0), P(ly + ry, 0) + 1):
+        for X in range(P(cx - rx, 0), P(cx + rx, 0) + 1):
             if not (0 <= Y < H and 0 <= X < W):
                 continue
-            r = (Y / D - (y0 - 2.4))
-            u = (X / D - cx) / (w / 2.0 + 2.5)
-            if abs(u) > 1.0 - 0.25 * max(0.0, 1.0 - r) ** 2 - (0.15 if r > 2.4 else 0):
+            u, v = (X / D + 0.5 / D - cx) / rx, (Y / D + 0.5 / D - ly) / ry
+            if u * u + v * v > 1.0:
                 continue
-            if abs(X / D - cx) < w / 2.0 - 0.3 and r < 2.0:
-                cv[Y, X] = C('water', 4) if r < 0.8 else C('water', 3)      # the glassy tongue over the lip
+            if abs(X / D + 0.5 / D - cx) < w / 2.0 - 0.3 and v < 0.6:
+                cv[Y, X] = C('water', 4) if v < -0.2 else C('water', 3)       # the glassy tongue over the lip
             else:
-                cv[Y, X] = C('stone', 4) if r < 0.8 else (C('stone', 2) if r < 2.0 else C('stone', 1))
+                cv[Y, X] = C('stone', 4) if v < -0.35 else (C('stone', 2) if v < 0.5 else C('stone', 1))
     cols = {}
     for Y in range(P(y0, 0), P(y1, 0)):
         yw = Y / D

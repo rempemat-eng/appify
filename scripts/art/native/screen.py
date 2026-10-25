@@ -303,7 +303,7 @@ def footbridge_hd(cv: np.ndarray, x0, w, y0, y1, water: np.ndarray) -> None:
     wr = wr[(wr >= P(y0 - 10, 0)) & (wr <= P(y1 + 10, 0))]
     ya_w, yb_w = (wr.min() / D, (wr.max() + 1) / D) if len(wr) else (y0, y1)
     ya, yb = ya_w - 4.0, yb_w + 3.0                    # the deck reaches 3 to 4 px onto each bank
-    X0, X1, Y0, Y1 = P(x0, 0), P(x0 + w, 0), P(ya, 0), P(yb, 0)
+    X1, Y0, Y1 = P(x0 + w, 0), P(ya, 0), P(yb, 0)
     rng = np.random.default_rng(int(x0 * 13 + y0))
 
     def put(Y, X, c):
@@ -365,19 +365,22 @@ def footbridge_hd(cv: np.ndarray, x0, w, y0, y1, water: np.ndarray) -> None:
         for Y in range(Y0, Y1):
             for j in range(P(1.4)):
                 put(Y, X + j, C('timber', (4 if j == 0 else 3) if lit else (2 if j == 0 else 1)))
-        for py in np.linspace(ya + 1.0, yb - 0.8, 4):
-            for Y in range(P(py - 5.0, 0), P(py + 0.4, 0)):
-                for j in range(-1, P(1.4) + 1):
-                    edge_ = j < 0 or j >= P(1.4)
-                    put(Y, X + j, C('timber_cool', 0) if edge_ else C('timber', (4 if j == 0 else 3) if lit else 2))
+        rail_y0, rail_y1 = ya - 3.6, yb - 3.6
+        for Y in range(P(rail_y0, 0), P(rail_y1, 0)):
+            for j in range(P(1.0)):
+                put(Y, X + j, C('timber', 4 if lit else 2) if j == 0 else C('timber', 3 if lit else 1))
+        for py in np.linspace(ya + 1.0, yb - 0.8, 3):
+            for Y in range(P(py - 4.4, 0), P(py + 0.4, 0)):
+                for j in range(-1, P(1.6) + 1):
+                    edge_ = j < 0 or j >= P(1.6) or Y >= P(py + 0.4, 0) - 1
+                    top_ = Y < P(py - 4.4, 0) + P(0.7)
+                    c = C('timber_cool', 0) if edge_ else C('timber', (5 if top_ else (4 if j == 0 else 3)) if lit else (3 if top_ else 2))
+                    put(Y, X + j - P(0.3), c)
             if not lit:
                 for j in range(P(1.0)):
-                    put(P(py + 0.4, 0) + j, X + P(1.4) + 1, C('water_cool', 1) if water[min(H - 1, P(py + 0.4, 0) + j), min(W - 1, X + P(1.4) + 1)] else C('earth', 1))
-        rail_y0, rail_y1 = ya - 5.0, yb - 5.0
-        for Y in range(P(rail_y0, 0), P(rail_y1, 0)):
-            for j in range(-1, P(1.2) + 1):
-                edge_ = j < 0 or j >= P(1.2)
-                put(Y, X + j, C('timber_cool', 0) if edge_ else C('timber', 5 if (lit and j == 0) else (4 if lit else 2)))
+                    yy_, xx_ = P(py + 0.4, 0) + j, X + P(1.6)
+                    if 0 <= yy_ < H and 0 <= xx_ < W:
+                        put(yy_, xx_, C('water_cool', 1) if water[yy_, xx_] else C('earth', 1))
 
 
 def path_hd(cv: np.ndarray, pts, hw0: float, seed: int = 0, spur: bool = False) -> None:
@@ -551,6 +554,7 @@ def terrain(plan: dict, layers: dict) -> tuple:
     br = pl['bridge']
     if hd:
         WA.paint_hd(cv, wm)
+        SC.reeds(cv)                  # the reeds stand in the water beside the bridge, not on it
         footbridge_hd(cv, br['x0'], br['w'], br['y0'], br['y1'], wm)
         # the spring's heap: the pilot's boulders (props.boulder4), back to front, the lip stone
         # first; moss grows in from their tops
@@ -575,7 +579,7 @@ def terrain(plan: dict, layers: dict) -> tuple:
             boulder(cv, b['at'][0], b['at'][1], b['size'][0], b['size'][1], b['seed'], moss=b['moss'])
         WA.wet_rock(cv, f['x0'], f['w'], f['y0'] - 2, f['y1'])
         WA.fall(cv, f['x0'], f['w'], f['y0'], f['y1'], seed=f.get('seed', 11))
-    SC.reeds(cv)
+        SC.reeds(cv)
     layers['water'] = cv.copy()
     # no speckle: a lone pixel takes its most common neighbour (outlines and water excepted)
     keep = (cv % 8 >= 6) | np.isin(cv // 8, [FI['water'], FI['water_warm'], FI['water_cool']])
