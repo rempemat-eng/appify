@@ -32,6 +32,7 @@ import { pixelScale, snapToDevice } from '@/lib/pixel-scale';
 import { prefetchRegion } from '@/lib/zone-prefetch';
 import { WORLD_CANVAS } from '@/lib/world-flag';
 import { WORLD_TILE, worldTiles } from '@/lib/world-canvas';
+import { landBox, regionOpensOut } from '@/lib/world-view';
 import { worldFlowArt, worldTileArt } from '@/lib/world-canvas-assets';
 import {
   TILE_MOUNT_MARGIN,
@@ -1363,30 +1364,12 @@ export function AtlasWalk({
   const roomAbove = region === 'valley' || zoneBeyondByRegion[region] ? 96 : 0;
   // The camera keeps to the land you can walk on, plus a margin (art-faults.md, rule 13:
   // no screens full of what lies past the world), not to the region's whole rectangle.
-  const land = (() => {
-    const rows = walkRows ?? regionWalk(region);
-    let x0 = Infinity;
-    let x1 = -Infinity;
-    let y0 = Infinity;
-    let y1 = -Infinity;
-    rows.forEach((row, r) => {
-      const a = row.indexOf('.');
-      if (a < 0) return;
-      const b = row.lastIndexOf('.');
-      x0 = Math.min(x0, a);
-      x1 = Math.max(x1, b + 1);
-      y0 = Math.min(y0, r);
-      y1 = Math.max(y1, r + 1);
-    });
-    const PAD = 40;
-    const c = TILE.cell;
-    return {
-      x0: Math.max(0, x0 * c - PAD) * u,
-      x1: Math.min(bounds.width, x1 * c + PAD) * u,
-      y0: Math.max(0, y0 * c - PAD) * u,
-      y1: Math.min(bounds.height, y1 * c + PAD) * u,
-    };
-  })();
+  const land = landBox(
+    walkRows ?? regionWalk(region),
+    TILE.cell * u,
+    { width: bounds.width * u, height: bounds.height * u },
+    40 * u,
+  );
   const top = Math.max(-roomAbove, land.y0 - roomAbove);
   // The framing eases when it changes (a card opening below), instead of jumping.
   const focus = useSharedValue(focusY);
@@ -1484,7 +1467,7 @@ export function AtlasWalk({
     [tiles, mountKey],
   );
   const gaps: { col: number; row: number }[] = [];
-  const opensOut = region === 'valley' || region === 'moon' || !!zoneBeyondByRegion[region];
+  const opensOut = regionOpensOut(region, zoneBeyondByRegion, zoneScenery);
   for (const { col, row } of cellsNear(region, seen, MOUNT_MARGIN)) {
     const inside =
       col >= bounds.minCol &&
