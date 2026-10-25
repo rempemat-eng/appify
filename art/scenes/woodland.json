@@ -1,5 +1,5 @@
 {
- "_about": "The valley woodland (LAYOUT valley 'woodland', 320 x 576 world px) at density 2, drawn by the kit from this plan and the woodland biome. Its geometry is today's 1x woodland (scripts/art/valley_zones.py woodland), read call by call, so the walk mask, the stands, the ports and the forager's round stay exactly as they are: the objects keep their ids, boxes and feet, and the water and rock footprints (water_rle, rock_rle: per row the runs [x0, x1) in world px) are the 1x's own. The 1x zone stays for density 1. Rendered by: python3 scripts/art/native_zones.py Density 3 (25 Oct): log-1 lies 8 px further west so its end no longer runs into tree-4's trunk (walk.txt in game/zones/woodland blocks its new cells), and a worn spur leads from the path to the bench. The bushes, hollies and brambles come in variants (bush_b, bush_c, holly_b, bramble_b: other sizes, shapes and greens), and pine-1, pine-2 and pine-7 stand 10 px lower so more of their crowns show under the top edge. wood-14 (a sapling) stands 18 px east and wood-26 (an oak) 41 px west so their crowns are not hidden behind tree-4 and the willow (check:kit 'every trunk shows its crown').",
+ "_about": "The valley woodland (LAYOUT valley 'woodland', 320 x 576 world px) at density 2, drawn by the kit from this plan and the woodland biome. Its geometry is today's 1x woodland (scripts/art/valley_zones.py woodland), read call by call, so the walk mask, the stands, the ports and the forager's round stay exactly as they are: the objects keep their ids, boxes and feet, and the water and rock footprints (water_rle, rock_rle: per row the runs [x0, x1) in world px) are the 1x's own. The 1x zone stays for density 1. Rendered by: python3 scripts/art/native_zones.py Density 3 (25 Oct): log-1 lies 8 px further west so its end no longer runs into tree-4's trunk (walk.txt in game/zones/woodland blocks its new cells), and a worn spur leads from the path to the bench. The bushes, hollies and brambles come in variants (bush_b, bush_c, holly_b, bramble_b: other sizes, shapes and greens), and pine-1, pine-2 and pine-7 stand 10 px lower so more of their crowns show under the top edge. wood-14 (a sapling) stands 18 px east and wood-26 (an oak) 41 px west so their crowns are not hidden behind tree-4 and the willow (check:kit 'every trunk shows its crown'). wood-39 (a beech wholly behind wood-44 and pine-4, only its pale trunk showing) is gone; the clump keeps its blocked cells.",
  "id": "woodland",
  "zone": "woodland",
  "biome": "woodland",
@@ -1751,7 +1751,6 @@
   ["wood-36", "birch", 139, 454, 30, 65],
   ["wood-37", "holly", 176, 492, 27, 25],
   ["wood-38", "bramble", 194, 511, 36, 20],
-  ["wood-39", "beech", 32, 459, 52, 81],
   ["wood-40", "stump", 88, 522, 21, 16],
   ["wood-41", "oak", 114, 465, 65, 78],
   ["wood-42", "bramble_b", 147, 523, 36, 20],

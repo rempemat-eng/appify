@@ -167,7 +167,7 @@ def crowns() -> list:
     import numpy as np
     from PIL import Image
     from scipy import ndimage as ndi
-    CROWN_MIN, OVER_MAX, COLOUR_MIN = 0.35, 0.3, 12.0
+    CROWN_MIN, OVER_MAX, COLOUR_MIN = 0.4, 0.3, 12.0
     bad = []
     for kp in sorted(glob.glob(os.path.join(ROOT, 'game', 'zones', '*', 'kit.json'))):
         kit = json.load(open(kp))

@@ -947,12 +947,6 @@ texture = ExtResource("t_bramble")
 centered = false
 offset = Vector2(-62, -76)
 
-[node name="wood-39" type="Sprite2D" parent="Objects"]
-position = Vector2(173, 1627)
-texture = ExtResource("t_beech")
-centered = false
-offset = Vector2(-86, -259)
-
 [node name="wood-40" type="Sprite2D" parent="Objects"]
 position = Vector2(296, 1617)
 texture = ExtResource("t_stump")

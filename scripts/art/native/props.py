@@ -77,7 +77,7 @@ BARK = {
     # family, its base tone, the marks: plates (oak, pine), smooth (beech), dashes (birch)
     'oak': ('timber_cool', 3, 'plates'),
     'pine': ('timber_warm', 2, 'plates'),
-    'beech': ('stone', 3, 'smooth'),
+    'beech': ('stone', 2, 'smooth'),
     'birch': ('plaster', 3, 'dashes'),
     'sapling': ('timber_cool', 3, 'smooth'),
 }
