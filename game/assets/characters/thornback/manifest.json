@@ -6627,15 +6627,15 @@
   "stagger": {
    "frame_count": 7,
    "durations": [
-    0.0929,
-    0.0929,
-    0.0929,
-    0.0929,
-    0.0929,
-    0.0929,
-    0.0929
+    0.0746,
+    0.0959,
+    0.0959,
+    0.0959,
+    0.0959,
+    0.0959,
+    0.0959
    ],
-   "duration": 0.6503,
+   "duration": 0.65,
    "loop": false,
    "release_frame": null,
    "release_time": null,
@@ -6648,44 +6648,44 @@
        "path": "res://assets/animated/thornback/stagger_S_00.png",
        "file": "stagger_S_00.png",
        "packed_bounds": [
-        68,
+        67,
         85,
-        94,
+        93,
         140
        ],
        "anchors": {
         "foot_R": [
-         -6.3,
+         -7.4,
          2.3
         ],
         "foot_L": [
-         8.5,
+         7.4,
          2.3
         ],
         "hind_R": [
-         -6.3,
+         -7.4,
          -5.8
         ],
         "hind_L": [
-         8.5,
+         7.4,
          -5.8
         ],
         "shard": [
-         4.9,
+         3.9,
          -46.1
         ],
         "strike": [
-         1.1,
-         -2.3
+         -0.0,
+         -1.1
         ]
        },
        "equipment": {
-        "shard": 113,
-        "bramble": 128,
+        "shard": 108,
+        "bramble": 139,
         "tusk": 14,
-        "glow": 36
+        "glow": 40
        },
-       "sha256": "8ab6081a0a967579c52d6d754bdc8c0b1320129786967cc30949b7132aa67e39",
+       "sha256": "30eed1bf2be8d3e693383c1b76bdb1485d6293f4359a05c2800455136d0bc303",
        "sheet": "sheets/stagger_S.png",
        "region": [
         0,
@@ -6948,44 +6948,44 @@
        "path": "res://assets/animated/thornback/stagger_S_06.png",
        "file": "stagger_S_06.png",
        "packed_bounds": [
-        66,
-        86,
-        92,
+        67,
+        85,
+        93,
         140
        ],
        "anchors": {
         "foot_R": [
-         -8.5,
+         -7.4,
          2.3
         ],
         "foot_L": [
-         6.3,
+         7.4,
          2.3
         ],
         "hind_R": [
-         -8.5,
+         -7.4,
          -5.8
         ],
         "hind_L": [
-         6.3,
+         7.4,
          -5.8
         ],
         "shard": [
-         2.8,
-         -46.1
+         3.9,
+         -46.6
         ],
         "strike": [
-         -1.1,
-         -2.3
+         -0.0,
+         -4.4
         ]
        },
        "equipment": {
-        "shard": 113,
-        "bramble": 126,
-        "tusk": 14,
-        "glow": 48
+        "shard": 115,
+        "bramble": 123,
+        "tusk": 12,
+        "glow": 51
        },
-       "sha256": "0b3cc790f0adb549600fa86b03b5c40a937d837ef0ee8f5a9dbe7d3ae27897e8",
+       "sha256": "929b01bcc155f39f0037bf86e821905d18086dcdd098f7d28e86106dd8852953",
        "sheet": "sheets/stagger_S.png",
        "region": [
         960,
@@ -7002,44 +7002,44 @@
        "path": "res://assets/animated/thornback/stagger_N_00.png",
        "file": "stagger_N_00.png",
        "packed_bounds": [
-        66,
+        67,
         90,
-        92,
+        93,
         140
        ],
        "anchors": {
         "foot_R": [
-         6.3,
+         7.4,
          -6.3
         ],
         "foot_L": [
-         -8.5,
+         -7.4,
          -6.3
         ],
         "hind_R": [
-         6.3,
+         7.4,
          1.8
         ],
         "hind_L": [
-         -8.5,
+         -7.4,
          1.8
         ],
         "shard": [
-         -4.9,
+         -3.9,
          -39.3
         ],
         "strike": [
-         -1.1,
-         -30.6
+         0.0,
+         -30.4
         ]
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 134,
-        "shard": 121,
-        "glow": 35
+        "bramble": 117,
+        "shard": 117,
+        "glow": 31
        },
-       "sha256": "5d0d8f0db8367f63ab1a509d64130d5877da1c979e4d4858da25a55e557ecab0",
+       "sha256": "f7f2aaba7ce17c1ab3f050b99ecc335cdf2e6ec36a3fd680e32de108b3e328bb",
        "sheet": "sheets/stagger_N.png",
        "region": [
         0,
@@ -7302,44 +7302,44 @@
        "path": "res://assets/animated/thornback/stagger_N_06.png",
        "file": "stagger_N_06.png",
        "packed_bounds": [
-        68,
-        90,
-        94,
+        67,
+        89,
+        93,
         140
        ],
        "anchors": {
         "foot_R": [
-         8.5,
+         7.4,
          -6.3
         ],
         "foot_L": [
-         -6.3,
+         -7.4,
          -6.3
         ],
         "hind_R": [
-         8.5,
+         7.4,
          1.8
         ],
         "hind_L": [
-         -6.3,
+         -7.4,
          1.8
         ],
         "shard": [
-         -2.8,
-         -39.3
+         -3.9,
+         -39.8
         ],
         "strike": [
-         1.1,
-         -30.6
+         0.0,
+         -32.7
         ]
        },
        "equipment": {
         "tusk": 0,
         "bramble": 137,
-        "shard": 121,
-        "glow": 33
+        "shard": 126,
+        "glow": 35
        },
-       "sha256": "5d8b9c0f2a8117028183fa45bb25ab71f729c4297e96571cfa9d022686fcd266",
+       "sha256": "6fe451b6c12e19eebf3e61ccbc0f00c61c93afdbf663f3b359e588f89756e5ca",
        "sheet": "sheets/stagger_N.png",
        "region": [
         960,
@@ -7357,43 +7357,43 @@
        "file": "stagger_E_00.png",
        "packed_bounds": [
         52,
-        89,
-        124,
+        90,
+        125,
         136
        ],
        "anchors": {
         "foot_R": [
-         11.5,
+         11.4,
          -2.0
         ],
         "foot_L": [
-         13.0,
+         12.9,
          -2.0
         ],
         "hind_R": [
-         -11.4,
+         -11.5,
          -2.0
         ],
         "hind_L": [
-         -9.9,
+         -10.1,
          -2.0
         ],
         "shard": [
-         -9.3,
-         -42.2
+         -9.4,
+         -41.9
         ],
         "strike": [
-         40.6,
-         -13.8
+         41.9,
+         -12.5
         ]
        },
        "equipment": {
-        "bramble": 132,
-        "shard": 150,
+        "bramble": 121,
+        "shard": 151,
         "tusk": 21,
-        "glow": 40
+        "glow": 48
        },
-       "sha256": "d8c5bc7ab3592edefe6e90cd9190b3115e173b1132ae4d222a26644ee1decb17",
+       "sha256": "bb5cf654d15acbc3f8fb118483679eb445e09141d600bbe82c502c27994af83e",
        "sheet": "sheets/stagger_E.png",
        "region": [
         0,
@@ -7657,43 +7657,43 @@
        "file": "stagger_E_06.png",
        "packed_bounds": [
         52,
-        89,
+        88,
         123,
         136
        ],
        "anchors": {
         "foot_R": [
-         11.3,
+         11.4,
          -2.0
         ],
         "foot_L": [
-         12.8,
+         12.9,
          -2.0
         ],
         "hind_R": [
-         -11.7,
+         -11.5,
          -2.0
         ],
         "hind_L": [
-         -10.2,
+         -10.1,
          -2.0
         ],
         "shard": [
-         -9.5,
-         -42.2
+         -9.4,
+         -43.2
         ],
         "strike": [
-         40.4,
-         -13.8
+         40.5,
+         -18.5
         ]
        },
        "equipment": {
-        "bramble": 130,
-        "shard": 149,
-        "tusk": 20,
-        "glow": 40
+        "bramble": 133,
+        "shard": 151,
+        "tusk": 22,
+        "glow": 46
        },
-       "sha256": "d123579a3623f8e004709c7eec5df4913544640d7a045d9c27ee9eefc87f68f5",
+       "sha256": "d8bfb699211e7bf721386bd1df5f99485f8b49a553c3b95c6eb88b3d7e44f3b6",
        "sheet": "sheets/stagger_E.png",
        "region": [
         960,
@@ -7710,44 +7710,44 @@
        "path": "res://assets/animated/thornback/stagger_W_00.png",
        "file": "stagger_W_00.png",
        "packed_bounds": [
-        37,
+        35,
         89,
         108,
         136
        ],
        "anchors": {
         "foot_R": [
-         -12.8,
+         -12.9,
          -2.0
         ],
         "foot_L": [
-         -11.3,
+         -11.4,
          -2.0
         ],
         "hind_R": [
-         10.2,
+         10.1,
          -2.0
         ],
         "hind_L": [
-         11.7,
+         11.5,
          -2.0
         ],
         "shard": [
-         10.3,
-         -42.2
+         10.2,
+         -41.9
         ],
         "strike": [
-         -40.4,
-         -13.8
+         -41.9,
+         -12.5
         ]
        },
        "equipment": {
-        "bramble": 122,
-        "shard": 147,
-        "tusk": 20,
+        "bramble": 121,
+        "shard": 149,
+        "tusk": 21,
         "glow": 51
        },
-       "sha256": "603323099276e7e24deb8511ff31a838633b01e9cd5a90fa75591e1d4babcc96",
+       "sha256": "905e659f5aafb3ef624299b979359dfa0ff9a93612006eba507ee77aa8cc5454",
        "sheet": "sheets/stagger_W.png",
        "region": [
         0,
@@ -8010,44 +8010,44 @@
        "path": "res://assets/animated/thornback/stagger_W_06.png",
        "file": "stagger_W_06.png",
        "packed_bounds": [
-        36,
-        89,
+        37,
+        88,
         108,
         136
        ],
        "anchors": {
         "foot_R": [
-         -13.0,
+         -12.9,
          -2.0
         ],
         "foot_L": [
-         -11.5,
+         -11.4,
          -2.0
         ],
         "hind_R": [
-         9.9,
+         10.1,
          -2.0
         ],
         "hind_L": [
-         11.4,
+         11.5,
          -2.0
         ],
         "shard": [
-         10.1,
-         -42.2
+         10.2,
+         -43.2
         ],
         "strike": [
-         -40.6,
-         -13.8
+         -40.5,
+         -18.5
         ]
        },
        "equipment": {
-        "bramble": 122,
+        "bramble": 127,
         "shard": 147,
-        "tusk": 21,
-        "glow": 51
+        "tusk": 22,
+        "glow": 49
        },
-       "sha256": "377a1db56c948ae5554466ea1b68038719cb35461de93236edc3488c3ce0430a",
+       "sha256": "b2823dcfcdfe0968ea3feea7087a04fbe23e4aef46c9153f48cc0f0db20a7b36",
        "sheet": "sheets/stagger_W.png",
        "region": [
         960,

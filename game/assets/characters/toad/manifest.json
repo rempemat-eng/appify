@@ -5703,15 +5703,15 @@
   "stagger": {
    "frame_count": 7,
    "durations": [
-    0.0929,
-    0.0929,
-    0.0929,
-    0.0929,
-    0.0929,
-    0.0929,
-    0.0929
+    0.0746,
+    0.0959,
+    0.0959,
+    0.0959,
+    0.0959,
+    0.0959,
+    0.0959
    ],
-   "duration": 0.6503,
+   "duration": 0.65,
    "loop": false,
    "release_frame": null,
    "release_time": null,
@@ -5724,35 +5724,35 @@
        "path": "res://assets/animated/toad/stagger_S_00.png",
        "file": "stagger_S_00.png",
        "packed_bounds": [
-        67,
-        108,
-        95,
+        66,
+        107,
+        94,
         139
        ],
        "anchors": {
         "foot_R": [
-         -4.4,
+         -5.0,
          1.2
         ],
         "foot_L": [
-         5.6,
+         5.0,
          1.2
         ],
         "muzzle": [
-         0.6,
-         -2.5
+         -0.0,
+         -4.7
         ],
         "shard": [
-         -0.6,
-         -24.7
+         -1.2,
+         -25.9
         ]
        },
        "equipment": {
         "bramble": 37,
-        "shard": 34,
-        "glow": 7
+        "shard": 33,
+        "glow": 11
        },
-       "sha256": "a2658ccc68e0748dececbe9ce2d052787dc15635391fdde14c55d0dd6d325f57",
+       "sha256": "991206baeb0cf19c98e0a41e16b34b9c516e1353a733792df3064a2069759431",
        "sheet": "sheets/stagger_S.png",
        "region": [
         0,
@@ -5970,35 +5970,35 @@
        "path": "res://assets/animated/toad/stagger_S_06.png",
        "file": "stagger_S_06.png",
        "packed_bounds": [
-        65,
-        108,
-        93,
+        66,
+        107,
+        94,
         139
        ],
        "anchors": {
         "foot_R": [
-         -5.6,
+         -5.0,
          1.2
         ],
         "foot_L": [
-         4.4,
+         5.0,
          1.2
         ],
         "muzzle": [
-         -0.6,
-         -2.5
+         -0.0,
+         -5.0
         ],
         "shard": [
-         -1.8,
-         -24.7
+         -1.2,
+         -26.0
         ]
        },
        "equipment": {
-        "bramble": 38,
-        "shard": 34,
-        "glow": 12
+        "bramble": 36,
+        "shard": 35,
+        "glow": 11
        },
-       "sha256": "216e782f8b33724e5a9fa964dd3ff97e32c97d6e4639c37329d0ea9b7136d508",
+       "sha256": "61b70fc6c5f8a412fec5a1855def7470d48588facb985f190a6bdc517e08b2f3",
        "sheet": "sheets/stagger_S.png",
        "region": [
         960,
@@ -6015,35 +6015,35 @@
        "path": "res://assets/animated/toad/stagger_N_00.png",
        "file": "stagger_N_00.png",
        "packed_bounds": [
-        65,
-        108,
-        93,
-        137
+        66,
+        109,
+        94,
+        136
        ],
        "anchors": {
         "foot_R": [
-         4.4,
+         5.0,
          -5.2
         ],
         "foot_L": [
-         -5.6,
+         -5.0,
          -5.2
         ],
         "muzzle": [
-         -0.6,
-         -15.5
+         0.0,
+         -17.7
         ],
         "shard": [
-         0.6,
-         -22.2
+         1.2,
+         -23.4
         ]
        },
        "equipment": {
-        "bramble": 56,
-        "shard": 32,
-        "glow": 15
+        "bramble": 54,
+        "shard": 36,
+        "glow": 14
        },
-       "sha256": "a77c55145a2f1251cb2741a4add033921db51e15b6def684c5882c517318993f",
+       "sha256": "d20a4cb95e03eb137e593f81b2bd51d72757ef9037a8dedbac7dafb21efe8770",
        "sheet": "sheets/stagger_N.png",
        "region": [
         0,
@@ -6261,35 +6261,35 @@
        "path": "res://assets/animated/toad/stagger_N_06.png",
        "file": "stagger_N_06.png",
        "packed_bounds": [
-        67,
+        66,
         108,
-        95,
-        137
+        94,
+        136
        ],
        "anchors": {
         "foot_R": [
-         5.6,
+         5.0,
          -5.2
         ],
         "foot_L": [
-         -4.4,
+         -5.0,
          -5.2
         ],
         "muzzle": [
-         0.6,
-         -15.5
+         0.0,
+         -18.0
         ],
         "shard": [
-         1.8,
-         -22.2
+         1.2,
+         -23.5
         ]
        },
        "equipment": {
         "bramble": 55,
-        "shard": 32,
+        "shard": 35,
         "glow": 15
        },
-       "sha256": "a8fcff57ff1b377858ccec4f094a6907d764d93bcf12981036c05503503532f7",
+       "sha256": "5f24a679a1acb4a4ca9567989973d367ed96c03eeb6310c52612b00aa141a33b",
        "sheet": "sheets/stagger_N.png",
        "region": [
         960,
@@ -6307,34 +6307,34 @@
        "file": "stagger_E_00.png",
        "packed_bounds": [
         67,
-        109,
-        101,
+        108,
+        99,
         136
        ],
        "anchors": {
         "foot_R": [
-         8.6,
+         8.5,
          -2.0
         ],
         "foot_L": [
-         9.6,
+         9.5,
          -2.0
         ],
         "muzzle": [
-         18.6,
-         -9.0
+         18.5,
+         -11.2
         ],
         "shard": [
-         -3.6,
-         -23.4
+         -3.7,
+         -24.6
         ]
        },
        "equipment": {
-        "bramble": 42,
-        "shard": 34,
-        "glow": 16
+        "bramble": 36,
+        "shard": 40,
+        "glow": 11
        },
-       "sha256": "ec2b1dfb702801427770d5cf5a02150b3bd147f5c24983e2f85f3c3d88f544ce",
+       "sha256": "f61ad537e140c851f8d29d930ccc92d9a83610b17d662867f497df790b17bc58",
        "sheet": "sheets/stagger_E.png",
        "region": [
         0,
@@ -6553,34 +6553,34 @@
        "file": "stagger_E_06.png",
        "packed_bounds": [
         67,
-        109,
+        108,
         99,
         136
        ],
        "anchors": {
         "foot_R": [
-         8.4,
+         8.5,
          -2.0
         ],
         "foot_L": [
-         9.4,
+         9.5,
          -2.0
         ],
         "muzzle": [
-         18.4,
-         -9.0
+         18.5,
+         -11.5
         ],
         "shard": [
          -3.7,
-         -23.4
+         -24.8
         ]
        },
        "equipment": {
-        "bramble": 43,
-        "shard": 33,
-        "glow": 16
+        "bramble": 33,
+        "shard": 40,
+        "glow": 12
        },
-       "sha256": "71ab612ac0cac9ce50023e7f5d39218db8b7fdc9ef302d0b2c484d89f9b01a3c",
+       "sha256": "4be65b602bbb0ac3f6477e839c800b54ff58e2b7e2e955fffff7d7096b1452b9",
        "sheet": "sheets/stagger_E.png",
        "region": [
         960,
@@ -6598,34 +6598,34 @@
        "file": "stagger_W_00.png",
        "packed_bounds": [
         60,
-        109,
+        108,
         93,
         136
        ],
        "anchors": {
         "foot_R": [
-         -9.4,
+         -9.5,
          -2.0
         ],
         "foot_L": [
-         -8.4,
+         -8.5,
          -2.0
         ],
         "muzzle": [
-         -18.4,
-         -9.0
+         -18.5,
+         -11.2
         ],
         "shard": [
-         3.5,
-         -23.4
+         3.4,
+         -24.6
         ]
        },
        "equipment": {
-        "bramble": 32,
-        "shard": 32,
-        "glow": 15
+        "bramble": 29,
+        "shard": 39,
+        "glow": 12
        },
-       "sha256": "f47f162debcdc14511da0d7648f50e76cf83527e9479b158aeb7c501f9d3e35b",
+       "sha256": "fd8c2e7938c40eda1e5da682b1acce7e2118d0183ab4d4c5b1865992df25ca74",
        "sheet": "sheets/stagger_W.png",
        "region": [
         0,
@@ -6844,34 +6844,34 @@
        "file": "stagger_W_06.png",
        "packed_bounds": [
         60,
-        109,
+        108,
         93,
         136
        ],
        "anchors": {
         "foot_R": [
-         -9.6,
+         -9.5,
          -2.0
         ],
         "foot_L": [
-         -8.6,
+         -8.5,
          -2.0
         ],
         "muzzle": [
-         -18.6,
-         -9.0
+         -18.5,
+         -11.5
         ],
         "shard": [
          3.4,
-         -23.4
+         -24.8
         ]
        },
        "equipment": {
-        "bramble": 35,
-        "shard": 33,
-        "glow": 17
+        "bramble": 24,
+        "shard": 39,
+        "glow": 13
        },
-       "sha256": "310bdf301d0645ad3e943ea4b871f48e4f82c44c296afd9756c5ebfae0493d17",
+       "sha256": "f036fb186724f51c5b47d7a8ff5e0e46916f98dac531f2878e3d04e4f26bce3e",
        "sheet": "sheets/stagger_W.png",
        "region": [
         960,

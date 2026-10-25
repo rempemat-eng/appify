@@ -6627,15 +6627,15 @@
   "stagger": {
    "frame_count": 7,
    "durations": [
-    0.0929,
-    0.0929,
-    0.0929,
-    0.0929,
-    0.0929,
-    0.0929,
-    0.0929
+    0.0746,
+    0.0959,
+    0.0959,
+    0.0959,
+    0.0959,
+    0.0959,
+    0.0959
    ],
-   "duration": 0.6503,
+   "duration": 0.65,
    "loop": false,
    "release_frame": null,
    "release_time": null,
@@ -6649,43 +6649,43 @@
        "file": "stagger_S_00.png",
        "packed_bounds": [
         66,
-        101,
-        95,
-        140
+        100,
+        94,
+        139
        ],
        "anchors": {
         "foot_R": [
-         -7.5,
+         -8.0,
          1.3
         ],
         "foot_L": [
-         8.5,
+         8.0,
          1.3
         ],
         "hind_R": [
-         -7.5,
+         -8.0,
          -4.8
         ],
         "hind_L": [
-         8.5,
+         8.0,
          -4.8
         ],
         "strike": [
-         0.5,
-         2.4
+         -0.0,
+         -1.0
         ],
         "shard": [
-         -2.1,
-         -31.7
+         -2.6,
+         -32.3
         ]
        },
        "equipment": {
-        "shell": 313,
-        "moss": 159,
-        "shard": 39,
-        "glow": 16
+        "shell": 304,
+        "moss": 161,
+        "shard": 40,
+        "glow": 10
        },
-       "sha256": "39f9d66f94e5a270c17fe31c623670521096408dac486febaea88012bf9ff5db",
+       "sha256": "2dab417f01289db15a04e7753978d830a7421c4dbf043d7addcc8db3da89ca9c",
        "sheet": "sheets/stagger_S.png",
        "region": [
         0,
@@ -6948,44 +6948,44 @@
        "path": "res://assets/animated/tortoise/stagger_S_06.png",
        "file": "stagger_S_06.png",
        "packed_bounds": [
-        65,
-        101,
+        66,
+        100,
         94,
-        140
+        139
        ],
        "anchors": {
         "foot_R": [
-         -8.5,
+         -8.0,
          1.3
         ],
         "foot_L": [
-         7.5,
+         8.0,
          1.3
         ],
         "hind_R": [
-         -8.5,
+         -8.0,
          -4.8
         ],
         "hind_L": [
-         7.5,
+         8.0,
          -4.8
         ],
         "strike": [
-         -0.5,
-         2.4
+         -0.0,
+         -0.2
         ],
         "shard": [
-         -3.1,
-         -31.7
+         -2.6,
+         -32.4
         ]
        },
        "equipment": {
-        "shell": 310,
-        "moss": 166,
-        "shard": 39,
+        "shell": 302,
+        "moss": 164,
+        "shard": 36,
         "glow": 10
        },
-       "sha256": "d40a924f6b6610d9ad0ef7a7a104a73ffc8a1b89700260dee2c24795cc2586b8",
+       "sha256": "0919f9944a4a442cb095d30e72dc235995da0dcfc0427328415587ec11066ba9",
        "sheet": "sheets/stagger_S.png",
        "region": [
         960,
@@ -7002,44 +7002,44 @@
        "path": "res://assets/animated/tortoise/stagger_N_00.png",
        "file": "stagger_N_00.png",
        "packed_bounds": [
-        65,
+        66,
         102,
         94,
         139
        ],
        "anchors": {
         "foot_R": [
-         7.5,
+         8.0,
          -5.3
         ],
         "foot_L": [
-         -8.5,
+         -8.0,
          -5.3
         ],
         "hind_R": [
-         7.5,
+         8.0,
          0.8
         ],
         "hind_L": [
-         -8.5,
+         -8.0,
          0.8
         ],
         "strike": [
-         -0.5,
-         -15.4
+         0.0,
+         -16.4
         ],
         "shard": [
-         2.1,
-         -30.4
+         2.6,
+         -31.0
         ]
        },
        "equipment": {
-        "shell": 319,
-        "moss": 158,
-        "shard": 33,
-        "glow": 17
+        "shell": 312,
+        "moss": 155,
+        "shard": 36,
+        "glow": 15
        },
-       "sha256": "b6ca22609dfc7cba13a2451ebbc814a44ddf9449cb39e4740ec58a0e5af1add4",
+       "sha256": "3ef93701c3f67a4adbd066c7b058fc5dc833c55043c634b941b0744199c4f6bd",
        "sheet": "sheets/stagger_N.png",
        "region": [
         0,
@@ -7303,43 +7303,43 @@
        "file": "stagger_N_06.png",
        "packed_bounds": [
         66,
-        102,
-        95,
+        101,
+        94,
         139
        ],
        "anchors": {
         "foot_R": [
-         8.5,
+         8.0,
          -5.3
         ],
         "foot_L": [
-         -7.5,
+         -8.0,
          -5.3
         ],
         "hind_R": [
-         8.5,
+         8.0,
          0.8
         ],
         "hind_L": [
-         -7.5,
+         -8.0,
          0.8
         ],
         "strike": [
-         0.5,
-         -15.4
+         0.0,
+         -17.8
         ],
         "shard": [
-         3.1,
-         -30.4
+         2.6,
+         -31.2
         ]
        },
        "equipment": {
-        "shell": 322,
-        "moss": 157,
-        "shard": 33,
-        "glow": 12
+        "shell": 312,
+        "moss": 153,
+        "shard": 36,
+        "glow": 16
        },
-       "sha256": "85e732e4f357515e32c9d9182b878723263447a56e633e1d672c54940729cdfb",
+       "sha256": "acac7ee6040c8ed41354bdfa95a64a5a6c9db15f0fa92c7b50556ea564ed0a4c",
        "sheet": "sheets/stagger_N.png",
        "region": [
         960,
@@ -7357,13 +7357,13 @@
        "file": "stagger_E_00.png",
        "packed_bounds": [
         63,
-        102,
-        108,
+        101,
+        104,
         136
        ],
        "anchors": {
         "foot_R": [
-         8.8,
+         8.7,
          -2.0
         ],
         "foot_L": [
@@ -7379,21 +7379,21 @@
          -2.0
         ],
         "strike": [
-         25.6,
-         -4.0
+         22.0,
+         -6.2
         ],
         "shard": [
          -2.0,
-         -31.1
+         -31.7
         ]
        },
        "equipment": {
-        "shell": 353,
-        "moss": 171,
-        "shard": 36,
-        "glow": 16
+        "shell": 348,
+        "moss": 174,
+        "shard": 34,
+        "glow": 14
        },
-       "sha256": "cdafb857f0ec048c72fa55ea8cd61b370ebcb4b3804f5691ba48b2bd389c0736",
+       "sha256": "65cb9c0e253c2b3124ed30d36683ed3fb518f3bc37d41b432600808c86e7c0d4",
        "sheet": "sheets/stagger_E.png",
        "region": [
         0,
@@ -7658,7 +7658,7 @@
        "packed_bounds": [
         63,
         101,
-        108,
+        107,
         136
        ],
        "anchors": {
@@ -7667,7 +7667,7 @@
          -2.0
         ],
         "foot_L": [
-         10.2,
+         10.3,
          -2.0
         ],
         "hind_R": [
@@ -7679,21 +7679,21 @@
          -2.0
         ],
         "strike": [
-         25.4,
-         -4.0
+         25.0,
+         -6.5
         ],
         "shard": [
-         -2.1,
-         -31.1
+         -2.0,
+         -31.8
         ]
        },
        "equipment": {
-        "shell": 354,
-        "moss": 168,
+        "shell": 349,
+        "moss": 174,
         "shard": 36,
-        "glow": 16
+        "glow": 10
        },
-       "sha256": "226664f7c0ecf1e7490f34fad3024226892598fe9e68b498f1a513b185d785b0",
+       "sha256": "b073d928e3bca5608db2e8c0cd0e1472c43372a496cd443a7e9de297c8d96e2e",
        "sheet": "sheets/stagger_E.png",
        "region": [
         960,
@@ -7710,14 +7710,14 @@
        "path": "res://assets/animated/tortoise/stagger_W_00.png",
        "file": "stagger_W_00.png",
        "packed_bounds": [
-        51,
-        102,
+        55,
+        101,
         97,
         136
        ],
        "anchors": {
         "foot_R": [
-         -10.2,
+         -10.3,
          -2.0
         ],
         "foot_L": [
@@ -7733,21 +7733,21 @@
          -2.0
         ],
         "strike": [
-         -25.4,
-         -4.0
+         -22.0,
+         -6.2
         ],
         "shard": [
-         1.6,
-         -31.1
+         1.5,
+         -31.7
         ]
        },
        "equipment": {
-        "shell": 354,
-        "moss": 167,
-        "shard": 36,
-        "glow": 14
+        "shell": 348,
+        "moss": 175,
+        "shard": 34,
+        "glow": 15
        },
-       "sha256": "1cd036b45adac57a5eba4a32d56676d679d0ef383803be0575a8cdce62c226c0",
+       "sha256": "dc64fd8f537f4a6c4e036f8230f164d7315cf70397be89ee402465837ac8f6b6",
        "sheet": "sheets/stagger_W.png",
        "region": [
         0,
@@ -8010,8 +8010,8 @@
        "path": "res://assets/animated/tortoise/stagger_W_06.png",
        "file": "stagger_W_06.png",
        "packed_bounds": [
-        51,
-        102,
+        52,
+        101,
         97,
         136
        ],
@@ -8021,7 +8021,7 @@
          -2.0
         ],
         "foot_L": [
-         -8.8,
+         -8.7,
          -2.0
         ],
         "hind_R": [
@@ -8033,21 +8033,21 @@
          -2.0
         ],
         "strike": [
-         -25.6,
-         -4.0
+         -25.0,
+         -6.5
         ],
         "shard": [
          1.5,
-         -31.1
+         -31.8
         ]
        },
        "equipment": {
-        "shell": 353,
-        "moss": 171,
-        "shard": 36,
+        "shell": 349,
+        "moss": 172,
+        "shard": 34,
         "glow": 15
        },
-       "sha256": "4176ef92d9fbe21c68fda3b9e96033028b4dfc65e458c10324b6c733fd0c538f",
+       "sha256": "3707d7487c62e34c764c8eae2a25829d0108f4d63346cb83e1dc78153ef4ba2d",
        "sheet": "sheets/stagger_W.png",
        "region": [
         960,
