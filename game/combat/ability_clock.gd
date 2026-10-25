@@ -14,6 +14,8 @@ var released := false
 var instance := 0
 var powered_remaining := 0.0
 var cooldowns := {"primary": 0.0, "secondary": 0.0, "special": 0.0}
+## Optional runner eligibility gate. A rejection must not spend a cooldown or action token.
+var can_commit := Callable()
 var _events: Array[Dictionary] = []
 var _queued := ""
 var _queue_remaining := 0.0
@@ -52,6 +54,8 @@ func is_busy() -> bool:
 ## belongs to the future runner, which must check it before this commitment (ammo, heat, tether).
 func commit(name: String) -> bool:
 	if kit.is_empty() or is_busy() or not cooldowns.has(name) or cooldowns[name] > 0.00000001:
+		return false
+	if can_commit.is_valid() and not can_commit.call(name, is_powered()):
 		return false
 	_action_powered = is_powered()
 	var spec: Dictionary = kit["powered" if _action_powered else "base"].actions[name]

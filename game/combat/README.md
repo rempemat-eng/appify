@@ -53,3 +53,24 @@ binding or Player attachment. No Player/art/enemy/world/save/package/CI/reward c
 verify/art-repro, hosted CI and rendered gameplay not yet run. Keep draft, do not integrate.
 The PR checkpoint contains exact head/base, test results and reconstruction steps. C35's prior
 handoff evidence and C40's HOLD are preserved separately in the economy heartbeat on #149.
+
+## Resource checkpoint (continuation)
+
+`AbilityResources` now ports the resource branches of the pinned recovered engine's w/E/q/M/v:
+pre-commit ammo/heat eligibility; release-only consumption; partial Pendle fan, rifle/stock bypass;
+Brine/Clack reloads and special refill/reset; Nix heat cap and three cooling rates. Its `advance`
+requires the runner to split at clock boundaries. `AbilityClock.can_commit` is the optional runner
+eligibility callback, before token/cooldown expenditure. This component is not yet attached to the
+clock's releases/time slices or to Player. Call release exactly once per token; cancelled preparation
+must never call it. The oracle uses LIVE powered state at release for resource/effect branches;
+`powered_at_commit` remains timing metadata, not authority to freeze all release effects. A runner
+must preserve this distinction, then capture the actual launch state on a projectile.
+
+Next: wire these two components through ordered time-slice/release callbacks (including held-input
+resource rejection and form-expiry boundaries), then finite canonical effect commands and Player
+integration. Do not pass an unsplit coarse delta to resource cooling/reload.
+
+Integration decision needed from A before health application: the canonical attacks carry raw damage
+9–49, foundation `Enemy` defaults to3 HP and `SliceEnemy` to4/8/12 HP with integer `take_hit`.
+No adapter or revised HP budget is approved. Keep canonical damage unchanged and obtain one explicit
+health/damage mapping; no guessed divisor, silent one-hit balance or enemy-lane edits.
