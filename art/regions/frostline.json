@@ -962,5 +962,9 @@
       "id": "frostline-12",
       "rect": [6448, 1792, 352, 512]
     }
+  ],
+  "clusters": [
+    {"recipe": "moor_wayside", "at": [6424, 2152], "orient": "s", "mirror": false, "seed": 0},
+    {"recipe": "moor_wayside", "at": [6352, 1608], "orient": "s", "mirror": true, "seed": 0}
   ]
 }

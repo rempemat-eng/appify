@@ -58,8 +58,11 @@ export function Planting({ children }: { children: React.ReactNode }) {
     <View style={{ alignItems: 'center' }}>
       <Animated.View style={rise}>{children}</Animated.View>
       <Animated.View
-        pointerEvents="none"
-        style={[{ position: 'absolute', bottom: 10, flexDirection: 'row', gap: 13 }, dirt]}
+        style={[
+          { position: 'absolute', bottom: 10, flexDirection: 'row', gap: 13 },
+          dirt,
+          { pointerEvents: 'none' },
+        ]}
       >
         {[0, 1, 2, 3, 4].map((i) => (
           <View
@@ -83,7 +86,7 @@ export function PetalFall() {
   }));
   if (reduced) return null;
   return (
-    <View pointerEvents="none" style={StyleSheet.absoluteFill}>
+    <View style={[StyleSheet.absoluteFill, { pointerEvents: 'none' }]}>
       <Animated.View style={[{ height: 200 }, motion]}>
         <Svg width="100%" height={200} viewBox="0 0 160 100">
           {Array.from({ length: 22 }, (_, i) => (
@@ -117,7 +120,6 @@ export function DreamDustFlight({ toLeft = true }: { toLeft?: boolean }) {
   if (reduced) return null;
   return (
     <Animated.View
-      pointerEvents="none"
       style={[
         {
           position: 'absolute',
@@ -127,6 +129,7 @@ export function DreamDustFlight({ toLeft = true }: { toLeft?: boolean }) {
           gap: 5,
         },
         motion,
+        { pointerEvents: 'none' },
       ]}
     >
       <PixelIcon name="dreamDust" size={16} />
