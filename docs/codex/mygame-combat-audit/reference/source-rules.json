@@ -1,0 +1,97 @@
+{
+  "authority": "Source-derived annotations of the hash-pinned archived combat engine. Values are in its 320x180 simulation units; these are not artwork anchors or approved production balance changes.",
+  "global": {
+    "fixed_step_seconds": 0.016666666666666666,
+    "max_input_step_seconds": 0.1,
+    "epsilon": 1e-8,
+    "arena": {"width":320,"height":180,"min_x":12,"max_x":308,"min_y":23,"max_y":168},
+    "player": {"radius":7,"hp":160},
+    "input": {"primary":"held, repeats when free and cooldown expires","secondary":"rising edge, queued for 0.7s","special":"rising edge, priority over secondary, queued for 0.7s","block":"held, clears queued actions"},
+    "secondary_cooldowns_seconds": {"default":1.6,"brine":0.7,"mirra":1.05,"mote":3.1,"nix":6,"rook":4},
+    "special_cooldown_seconds": 25,
+    "form_durations_seconds": {"default":8,"nix":7,"rook":10},
+    "form_lifecycle": "Begins at special release (0.28s), timer decreases each fixed step. Expiry ends form; death interrupts it; victory/reset clears transient objects. There is no manual E exit in this engine. Ashe's finisher occurs on natural expiry only.",
+    "planar_speeds": {"default":57,"cairn":43,"clack":49,"velvet":63,"tam":63},
+    "speed_multipliers": {"block":0.42,"hit":0.2,"special":0.4,"primary_or_secondary":0.64,"nix_secondary":1,"powered_tam":1.28},
+    "guard": {"maximum":100,"idle_recovery_per_second":22,"held_drain_per_second":2,"guard_cost_per_damage":1.5,"frontal_dot_threshold":0.25,"recovery_delay_after_hit_seconds":0.8,"break_seconds":1.15,"break_hit_clip_seconds":0.4,"ordinary_hit_seconds":0.25,"defeat_seconds":0.8,"raise_seconds":0.18},
+    "projectile_origin": {"forward_offset":9,"origin":"player simulation position plus committed action direction times forward offset","launch_height":"current vaultHeight","art_hand_or_muzzle_anchor":null},
+    "aim": {"continuous":true,"cardinal_facing":"abs(x)>abs(y) chooses E/W, otherwise S/N","attack_direction":"committed at action start; ordinary movement can continue at action multiplier","new_art_per_facing_anchors":null,"new_art_aim_poses":null},
+    "damage": {"vulnerability_multiplier":1.35,"tank_or_dummy_knockback_multiplier":0.25},
+    "field_limits": {"reagent":4,"base_seal":3,"powered_seal":5,"echo":4,"hologram":1,"default":10},
+    "field_ticks": {"first_tick_seconds":0.2,"ordinary_interval_seconds":0.6,"gravity_interval_seconds":0.45},
+    "melee_geometry": {"arc":"enemy centre within reach+enemy radius, forward normalized dot >= threshold","line":"projection from -enemy radius to reach+enemy radius and segment distance <= halfwidth+enemy radius","line_pierce_false":"only nearest intersecting living enemy","line_pierce_true":"all intersecting living enemies"}
+  },
+  "characters": {
+    "bramble": {
+      "primary": {"kind":"arrow","speed":205,"damage":22,"radius":2,"lifetime_seconds":0.92,"pierce":0},
+      "secondary": {"kind":"arc","reach":36,"dot_threshold":-0.1,"damage":26,"knockback":25},
+      "powered": {"arrow_damage":24,"arrow_pierce":3,"last_hit_root_seconds":0.8,"tank_root_seconds":0.3,"root_ownership":"clears this arrow's previous targets' root, then roots its current living hit"}
+    },
+    "morel": {
+      "primary": {"kind":"flask","speed":135,"damage":14,"radius":4,"aim_distance_min":28,"aim_distance_max":135,"flight_seconds_formula":"(clamp(distance_to_live_aim,28,135)-9)/135","impact_radius":16,"reagent_radius":18,"reagent_seconds":5,"reagent_tick_damage":3},
+      "secondary": {"kind":"catalyst","patch_selection_radius":155,"reaction_radius_addition":8,"reaction_damage":32,"reaction_knockback":5,"fallback":{"kind":"arc","reach":34,"dot_threshold":0,"damage":20,"knockback":13}},
+      "powered": {"reaction_damage":39,"chain_link_distance":46,"new_flask_ignition_distance":40,"new_flask_ignition_requires_at_least_patches":2}
+    },
+    "velvet": {
+      "primary": {"kind":"arc","reach":29,"dot_threshold":0.42,"damage":21,"knockback":5},
+      "secondary": {"kind":"lantern","reach":55,"dot_threshold":-0.05,"damage":9,"stun_seconds":0.65,"tank_stun_seconds":0.25,"vulnerable_seconds":2.2},
+      "powered": {"guard_counter_window_seconds":2,"counter_reach":49,"counter_damage":35,"counter_knockback":13,"moving_echo_interval_seconds":0.4,"echo_radius":11,"echo_seconds":1.15,"echo_offset_behind_aim":8,"echo_enemy_attraction_distance":200,"echo_breaks_on_enemy_attack":true}
+    },
+    "cairn": {
+      "primary": {"kind":"arc","reach":32,"dot_threshold":0.35,"damage":35,"knockback":12},
+      "secondary": {"kind":"boulder","speed":115,"damage":34,"radius":7,"lifetime_seconds":1.3,"pierce":0},
+      "powered": {"primary_extra":{"kind":"line_shockwave","reach":83,"halfwidth":11,"damage":15,"pierce":true},"boulder_damage":40,"boulder_blast_radius":30,"boulder_blast_knockback":13}
+    },
+    "iona": {
+      "primary": {"kind":"line_spear","reach":48,"halfwidth":7,"damage":23,"pierce":true},
+      "secondary": {"kind":"lunge","planar_advance":34,"advance_limit":"nearest living enemy clearance and arena boundary","hit_origin":"after advance","reach":49,"halfwidth":9,"damage":29,"knockback":10,"pierce":true},
+      "powered": {"chain_radius_exclusive":55,"chain_targets":1,"chain_damage":12,"chain_can_recurse":false,"lunge_gust_radius":25,"lunge_gust_seconds":1.5,"lunge_gust_tick_damage":8}
+    },
+    "tam": {
+      "primary": {"kind":"arc","reach":29,"dot_threshold":0.4,"damage":18,"knockback":4,"frost_per_hit":1,"maximum_frost":3,"frost_clears_after_no_hit_seconds":3,"hit_slow_seconds":1.2},
+      "secondary": {"kind":"line_ice_ridge","reach":100,"halfwidth":8,"damage":24,"pierce":true,"slow_seconds":2,"ice_patch_forward_offset":52,"ice_patch_radius":19,"ice_patch_seconds":2},
+      "powered": {"movement_multiplier":1.28,"frost_shatter_at":3,"shatter_damage":23,"shatter_root_seconds":0.85,"tank_shatter_root_seconds":0.3,"ridge_root_seconds":0.6,"tank_ridge_root_seconds":0.22}
+    },
+    "brine": {
+      "primary": {"kind":"harpoon","speed":175,"damage":29,"radius":3,"lifetime_seconds":0.95,"pierce":0,"ammo":1,"reload_seconds":0.95,"living_hit_tether_seconds":3,"new_shot_clears_previous_harpoon_and_tether":true},
+      "secondary": {"kind":"reel","maximum_tether_target_distance":185,"maximum_travel":42,"clearance":"player radius + target radius +3","light_target":"pull target toward player","tank_or_dummy":"move player toward anchored target","damage":15,"base_reel_consumes_tether":true,"fallback":{"kind":"arc_gun_butt","reach":32,"dot_threshold":0.2,"damage":21,"knockback":16}},
+      "powered": {"harpoon_speed":205,"harpoon_damage":39,"harpoon_pierce":1,"reload_seconds":0.52,"living_hit_tether_seconds":4,"reel_maximum_travel":61,"reel_damage":23,"retained_tether_seconds":2,"activation_refills_ammo_and_clears_reload":true}
+    },
+    "pendle": {
+      "primary": {"kind":"bullet","speed":290,"damage":24,"radius":2,"lifetime_seconds":0.8,"ammo":6,"empty_reload_seconds":1.35},
+      "secondary": {"kind":"fan_bullet","maximum_rounds":3,"spread_step_radians":0.11,"speed":270,"damage":18,"radius":2,"lifetime_seconds":0.75,"reload_seconds":1.4},
+      "powered": {"primary":{"kind":"rifle","speed":320,"damage":49,"radius":2,"lifetime_seconds":1,"pierce":4,"consumes_revolver_ammo":false},"secondary":{"kind":"line_rifle_butt","reach":44,"halfwidth":0.5,"damage":22,"pierce":false},"note":"The 0.5 halfwidth is the actual engine argument, not a corrected or retuned value."}
+    },
+    "mirra": {
+      "primary": {"kind":"water","speed":170,"damage":21,"radius":4,"lifetime_seconds":1.05,"hit_slow_seconds":1.2,"cross_seal":{"damage":28,"radius":6,"pierce":1,"ordering":"seal intersection must precede first enemy intersection on the same segment"}},
+      "secondary": {"kind":"seal","maximum_aim_distance":112,"radius":18,"duration_seconds":6,"placement_hit_damage":10,"placement_slow_seconds":1.5},
+      "powered": {"seal_seconds":8,"seal_limit":5,"activation_seal_forward_offset":30,"activation_seal_radius":16,"current_interval_seconds":0.35,"network_order":"player then seals in insertion order","current_hit_halfwidth":6,"current_damage":10,"current_slow_seconds":0.5,"hit_once_per_network_tick":true}
+    },
+    "ashe": {
+      "primary": {"kind":"arc","reach":32,"dot_threshold":0.32,"damage":24,"knockback":6},
+      "secondary": {"kind":"line_thrust","reach":65,"halfwidth":9,"damage":32,"pierce":true},
+      "powered": {"primary_extra":{"kind":"flame_crescent","speed":145,"damage":15,"radius":7,"lifetime_seconds":0.65,"pierce":2},"secondary_damage":38,"thrust_flame":{"forward_offset":42,"radius":15,"duration_seconds":2,"tick_damage":8},"natural_expiry_finisher":{"kind":"aimed_line","reach":98,"halfwidth":13,"damage":34,"pierce":true,"flame_forward_offset":52,"flame_radius":16,"flame_seconds":1,"flame_tick_damage":7},"finisher_on_death_or_interruption":false}
+    },
+    "clack": {
+      "primary": {"kind":"rocket","speed":125,"damage":40,"radius":4,"lifetime_seconds":1.45,"blast_radius":23,"ammo":1,"reload_seconds":1.15},
+      "secondary": {"kind":"arc_pressure_vent","reach":43,"dot_threshold":0.05,"damage":25,"knockback":37,"allowed_while_rocket_reload":true},
+      "powered": {"salvo_angles_radians":[-0.09,0,0.09],"rocket_speed":145,"rocket_damage":20,"rocket_blast_radius":19,"reload_seconds":0.7,"activation_refills_ammo_and_clears_reload":true,"stationary_turret":false}
+    },
+    "nix": {
+      "primary": {"kind":"line_laser","reach":155,"halfwidth":3,"damage":12,"pierce":false,"heat_increment":19,"cannot_start_primary_heat_at_least":92,"heat_maximum":100},
+      "secondary": {"kind":"stationary_hologram","origin":"actionOrigin captured at secondary commitment","radius":7,"duration_seconds":3,"limit":1,"attracts_enemy_within":200,"breaks_on_first_attack":true,"free_movement":true},
+      "powered": {"laser_reach":175,"laser_halfwidth":4.5,"laser_damage":15,"laser_pierce":true,"heat_increment":12,"activation_heat_cap":45},
+      "heat_cooling_per_second": {"while_primary_action":4,"otherwise_powered":7,"otherwise_base":15}
+    },
+    "rook": {
+      "primary": {"kind":"pulse","speed":220,"damage":16,"radius":3,"lifetime_seconds":1,"living_hit_designation_seconds":1.2},
+      "secondary": {"kind":"directional_vault","duration_seconds":0.55,"height":18,"height_formula":"18*sin(pi*(1-remaining/duration))","airborne_above":2,"forward_speed":72,"direction":"movement vector at commitment if length>0.1, otherwise committed aim","aim_and_primary_remain_available":true,"avoids_damage_kinds":["melee","field"],"still_hit_by":["projectile","explosion"]},
+      "powered": {"turret_count":2,"turret_duration_seconds":10,"initial_offset_x":[-15,15],"initial_offset_y":-14,"follow_offset_x":[-16,16],"follow_offset_y":-14,"follow_lerp_per_tick":0.11666666666666667,"initial_cooldown_seconds":0.18,"fire_interval_seconds":0.44,"designation_max_operator_distance_exclusive":190,"firing_max_operator_distance_exclusive":55,"projectile_speed":205,"projectile_damage":7,"projectile_radius":2,"projectile_lifetime_seconds":1,"expiry_clears_designation_and_turrets":true}
+    },
+    "mote": {
+      "primary": {"kind":"glass","angles_radians":[-0.11,0,0.11],"speed":180,"damage":9,"radius":2,"lifetime_seconds":0.95,"pierce":0},
+      "secondary": {"kind":"gravity","maximum_aim_distance":100,"radius":32,"duration_seconds":1.8,"tick_damage":4,"pull_speed":32,"tank_or_dummy_pull_speed":13,"slow_refresh_seconds":0.2},
+      "powered": {"glass_speed":210,"glass_damage":12,"glass_pierce":1,"extra_shards":{"kind":"orbit_shard","angles_radians":[-0.22,0.22],"speed":190,"damage":10,"radius":2,"lifetime_seconds":0.9,"pierce":1},"gravity_radius":39,"gravity_seconds":2.3}
+    }
+  }
+}

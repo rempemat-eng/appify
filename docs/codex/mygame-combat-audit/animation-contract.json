@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "status": "reference_handoff_with_pending_port_requirements",
+  "studio_source_commit": "4d7efc7085786c897fc0c50f7151a0ae7e62f0c2",
+  "target": {
+    "foundation": "game/; wait for Claude A foundation and agreed ownership",
+    "engine_requested": "4.7.2",
+    "logical_viewport": [960, 540],
+    "approximate_body_height_px": 74,
+    "display_scale_1080p": 2,
+    "display_scale_4k": 4,
+    "facings": ["S", "N", "E", "W"],
+    "mirror_west": false,
+    "lighting": "upper_left",
+    "world_art_density": 3,
+    "density_scales_character_anchors": false,
+    "simulation_to_world_transform": null,
+    "simulation_to_world_status": "agree_explicitly; canonical_arena_320x180_and_studio_960x540_are_distinct"
+  },
+  "existing_resources": ["assets/animated/<id>/manifest.json", "assets/animated/<id>/frames.tres"],
+  "base_clips": ["idle", "walk", "primary", "secondary", "special", "guard", "hit", "defeat"],
+  "traversal_clips": ["jump", "stair_up", "stair_down", "dodge"],
+  "existing_powered_clips": ["powered_idle", "powered_walk", "powered_primary", "powered_guard", "powered_exit"],
+  "character_specific_clips": {"pendle": ["reload"]},
+  "timing": {
+    "units": "seconds",
+    "frame_index_base": 0,
+    "existing_playback_authority": "SpriteFrames duration / animation speed; exporter speed=1.0",
+    "release_precedence": ["release_time", "sum(durations[:release_frame])", "actor_fallback"],
+    "gameplay_authority": "canonical simulation action clocks; never render-completion dependent",
+    "release_event_count_per_action": 1,
+    "commit_release_pose_before_event": true,
+    "commit_release_pose_status": "required_port_fix; not_present_in_published_studio"
+  },
+  "coordinates": {
+    "foot_pivot": "absolute in untrimmed logical frame canvas",
+    "effect_anchors": "offset from visual foot; +x right, +y down",
+    "packed_bounds": "left,top,right,bottom; maxima exclusive; not hitboxes",
+    "redraw": "reauthor pivots,bounds,hand,muzzle,held-object,nozzle anchors per facing for new body size"
+  },
+  "existing_manifest_fields_consumed": {
+    "actor": ["foot_pivot", "clips.<name>.release_time", "clips.<name>.release_frame", "clips.<name>.hold_frame"],
+    "yard": ["clips.<name>.release_anchor", "clips.<name>.contact_reach", "clips.<name>.hand_anchors", "clips.<name>.thruster_anchors", "clips.<name>.baked_effects"]
+  },
+  "existing_signals": ["action_released", "action_finished", "action_cancelled", "footfall", "landed", "void_fall"],
+  "pending_redraw_importer_extensions": {
+    "facing_resource_wrapper": "agree_with_Claude_A; same_clip_manifest_shape_per_facing",
+    "per_facing_anchor_status": {"S": "pending", "N": "pending", "E": "reauthor_for_74px", "W": "pending_independent_relighting"},
+    "continuous_aim": "canonical simulation vector separate from four-way body facing",
+    "optional_named_aim_poses": "only_if_drawn_art_requires; no_extra_AI_directions",
+    "pose_roles": ["load", "rise", "apex", "descend", "landing", "settle"],
+    "attachment_tracks": ["hand", "held_object", "muzzle", "thruster_nozzles"],
+    "authored_contact_events": ["foot_contact"],
+    "powered_state_coverage": ["secondary", "jump", "stair_up", "stair_down", "dodge", "hit", "defeat"],
+    "powered_state_coverage_status": "draw_or_layer_where_allowed; absent_from_old_studio_not_approved_gameplay_gates"
+  },
+  "separate_scene_entities": ["brine_tether", "nix_stationary_decoy", "mirra_seals_and_currents", "rook_two_turrets", "mote_orbiting_shards", "cairn_held_boulder"],
+  "production_art_status": "Claude_A_code_drawn_redraw; existing_AI_sheets_reference_only"
+}

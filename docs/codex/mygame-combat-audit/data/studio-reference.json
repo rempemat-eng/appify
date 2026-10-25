@@ -1,0 +1,6171 @@
+{
+  "schema_version": 1,
+  "source_commit": "4d7efc7085786c897fc0c50f7151a0ae7e62f0c2",
+  "authority": "Reference-only east-facing v3 drawing cadence and anchors. Never use these study mechanics as the canonical combat model.",
+  "units": {
+    "coordinates": "original studio logical image pixels",
+    "anchor_origin": "relative to each manifest foot pivot, +x right, +y down",
+    "canonical_simulation_coordinates": "separate 320x180 simulation domain; conversion pending"
+  },
+  "characters": {
+    "bramble": {
+      "manifest_sha256": "09a8aa068eed1d7630b62da9a6d622d2bc0f0ebddf8de4a3397260da7f388a02",
+      "manifest_url": "https://github.com/rempemat-eng/appify/blob/4d7efc7085786c897fc0c50f7151a0ae7e62f0c2/prototypes/mygame-animation-studio/assets/animated/bramble/manifest.json",
+      "view": "E",
+      "frame_size": [
+        192,
+        192
+      ],
+      "foot_pivot": [
+        96,
+        172
+      ],
+      "body_height_target": 96,
+      "fit_factor": 1,
+      "clips": {
+        "idle": {
+          "frame_count": 8,
+          "durations": [
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2
+          ],
+          "duration": 1.6,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "walk": {
+          "frame_count": 16,
+          "durations": [
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "primary": {
+          "frame_count": 16,
+          "durations": [
+            0.0385,
+            0.0315,
+            0.0385,
+            0.0315,
+            0.044,
+            0.036,
+            0.0605,
+            0.049499999999999995,
+            0.022,
+            0.018,
+            0.030249999999999996,
+            0.024749999999999998,
+            0.04675,
+            0.03825,
+            0.0715,
+            0.058499999999999996
+          ],
+          "duration": 0.64,
+          "loop": false,
+          "release_frame": 8,
+          "release_time": 0.32999999999999996,
+          "release_anchor": [
+            55,
+            -52
+          ],
+          "hold_frame": null
+        },
+        "secondary": {
+          "frame_count": 8,
+          "durations": [
+            0.07,
+            0.07,
+            0.08,
+            0.11,
+            0.04,
+            0.055,
+            0.085,
+            0.13
+          ],
+          "duration": 0.64,
+          "loop": false,
+          "release_frame": 4,
+          "release_time": 0.33,
+          "release_anchor": [
+            65,
+            -52
+          ],
+          "contact_reach": 66,
+          "hold_frame": null
+        },
+        "special": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.08,
+            0.09,
+            0.12,
+            0.06,
+            0.08,
+            0.12,
+            0.18
+          ],
+          "duration": 0.82,
+          "loop": false,
+          "release_frame": 4,
+          "release_time": 0.38,
+          "hold_frame": null
+        },
+        "guard": {
+          "frame_count": 8,
+          "durations": [
+            0.055,
+            0.055,
+            0.055,
+            0.055,
+            0.12,
+            0.12,
+            0.12,
+            0.12
+          ],
+          "duration": 0.7,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": 4
+        },
+        "hit": {
+          "frame_count": 8,
+          "durations": [
+            0.035,
+            0.065,
+            0.09,
+            0.12,
+            0.13,
+            0.15,
+            0.16,
+            0.18
+          ],
+          "duration": 0.9299999999999999,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "defeat": {
+          "frame_count": 8,
+          "durations": [
+            0.08,
+            0.1,
+            0.1,
+            0.12,
+            0.15,
+            0.18,
+            0.24,
+            0.3
+          ],
+          "duration": 1.27,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "jump": {
+          "frame_count": 8,
+          "durations": [
+            0.08,
+            0.055,
+            0.08,
+            0.11,
+            0.11,
+            0.08,
+            0.07,
+            0.115
+          ],
+          "duration": 0.7000000000000001,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "stair_up": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "stair_down": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "dodge": {
+          "frame_count": 8,
+          "durations": [
+            0.055,
+            0.045,
+            0.04,
+            0.045,
+            0.06,
+            0.07,
+            0.08,
+            0.1
+          ],
+          "duration": 0.495,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "powered_idle": {
+          "frame_count": 8,
+          "durations": [
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2
+          ],
+          "duration": 1.6,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "powered_walk": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "powered_primary": {
+          "frame_count": 8,
+          "durations": [
+            0.06243243243243244,
+            0.06243243243243244,
+            0.07135135135135136,
+            0.0981081081081081,
+            0.03567567567567568,
+            0.06314814814814815,
+            0.09759259259259259,
+            0.14925925925925926
+          ],
+          "duration": 0.64,
+          "loop": false,
+          "release_frame": 5,
+          "release_time": 0.33,
+          "release_anchor": [
+            53,
+            -68
+          ],
+          "hold_frame": null
+        },
+        "powered_guard": {
+          "frame_count": 8,
+          "durations": [
+            0.055,
+            0.055,
+            0.055,
+            0.055,
+            0.12,
+            0.12,
+            0.12,
+            0.12
+          ],
+          "duration": 0.7,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": 4
+        },
+        "powered_exit": {
+          "frame_count": 8,
+          "durations": [
+            0.11,
+            0.1,
+            0.1,
+            0.09,
+            0.09,
+            0.1,
+            0.12,
+            0.15
+          ],
+          "duration": 0.86,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        }
+      },
+      "redraw_facings": {
+        "S": null,
+        "N": null,
+        "E": null,
+        "W": null
+      },
+      "redraw_aim_poses": null,
+      "redraw_anchors_status": "pending Claude A authored per-facing anchors at the new approximately 74px body scale; no mirrored or inferred coordinates"
+    },
+    "morel": {
+      "manifest_sha256": "597cf6a00b068b4468b514829f87f18d5233467b9782abe1531d0aef0bc6c3f7",
+      "manifest_url": "https://github.com/rempemat-eng/appify/blob/4d7efc7085786c897fc0c50f7151a0ae7e62f0c2/prototypes/mygame-animation-studio/assets/animated/morel/manifest.json",
+      "view": "E",
+      "frame_size": [
+        192,
+        192
+      ],
+      "foot_pivot": [
+        96,
+        172
+      ],
+      "body_height_target": 96,
+      "fit_factor": 1,
+      "clips": {
+        "idle": {
+          "frame_count": 8,
+          "durations": [
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2
+          ],
+          "duration": 1.6,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "walk": {
+          "frame_count": 16,
+          "durations": [
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "primary": {
+          "frame_count": 16,
+          "durations": [
+            0.0385,
+            0.0315,
+            0.0385,
+            0.0315,
+            0.044,
+            0.036,
+            0.0605,
+            0.049499999999999995,
+            0.022,
+            0.018,
+            0.030249999999999996,
+            0.024749999999999998,
+            0.04675,
+            0.03825,
+            0.0715,
+            0.058499999999999996
+          ],
+          "duration": 0.64,
+          "loop": false,
+          "release_frame": 8,
+          "release_time": 0.32999999999999996,
+          "release_anchor": [
+            34,
+            -87
+          ],
+          "hold_frame": null
+        },
+        "secondary": {
+          "frame_count": 8,
+          "durations": [
+            0.07,
+            0.07,
+            0.08,
+            0.11,
+            0.04,
+            0.055,
+            0.085,
+            0.13
+          ],
+          "duration": 0.64,
+          "loop": false,
+          "release_frame": 4,
+          "release_time": 0.33,
+          "release_anchor": [
+            48,
+            -64
+          ],
+          "hold_frame": null
+        },
+        "special": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.08,
+            0.09,
+            0.12,
+            0.06,
+            0.08,
+            0.12,
+            0.18
+          ],
+          "duration": 0.82,
+          "loop": false,
+          "release_frame": 4,
+          "release_time": 0.38,
+          "hold_frame": null
+        },
+        "guard": {
+          "frame_count": 8,
+          "durations": [
+            0.055,
+            0.055,
+            0.055,
+            0.055,
+            0.12,
+            0.12,
+            0.12,
+            0.12
+          ],
+          "duration": 0.7,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": 4
+        },
+        "hit": {
+          "frame_count": 8,
+          "durations": [
+            0.035,
+            0.065,
+            0.09,
+            0.12,
+            0.13,
+            0.15,
+            0.16,
+            0.18
+          ],
+          "duration": 0.9299999999999999,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "defeat": {
+          "frame_count": 8,
+          "durations": [
+            0.08,
+            0.1,
+            0.1,
+            0.12,
+            0.15,
+            0.18,
+            0.24,
+            0.3
+          ],
+          "duration": 1.27,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "jump": {
+          "frame_count": 8,
+          "durations": [
+            0.08,
+            0.055,
+            0.08,
+            0.11,
+            0.11,
+            0.08,
+            0.07,
+            0.115
+          ],
+          "duration": 0.7000000000000001,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "stair_up": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "stair_down": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "dodge": {
+          "frame_count": 8,
+          "durations": [
+            0.055,
+            0.045,
+            0.04,
+            0.045,
+            0.06,
+            0.07,
+            0.08,
+            0.1
+          ],
+          "duration": 0.495,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "powered_idle": {
+          "frame_count": 8,
+          "durations": [
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2
+          ],
+          "duration": 1.6,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "powered_walk": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "powered_primary": {
+          "frame_count": 8,
+          "durations": [
+            0.07,
+            0.07,
+            0.08,
+            0.11,
+            0.04,
+            0.055,
+            0.085,
+            0.13
+          ],
+          "duration": 0.64,
+          "loop": false,
+          "release_frame": 4,
+          "release_time": 0.33,
+          "release_anchor": [
+            33,
+            -86
+          ],
+          "hold_frame": null
+        },
+        "powered_guard": {
+          "frame_count": 8,
+          "durations": [
+            0.055,
+            0.055,
+            0.055,
+            0.055,
+            0.12,
+            0.12,
+            0.12,
+            0.12
+          ],
+          "duration": 0.7,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": 4
+        },
+        "powered_exit": {
+          "frame_count": 8,
+          "durations": [
+            0.11,
+            0.1,
+            0.1,
+            0.09,
+            0.09,
+            0.1,
+            0.12,
+            0.15
+          ],
+          "duration": 0.86,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        }
+      },
+      "redraw_facings": {
+        "S": null,
+        "N": null,
+        "E": null,
+        "W": null
+      },
+      "redraw_aim_poses": null,
+      "redraw_anchors_status": "pending Claude A authored per-facing anchors at the new approximately 74px body scale; no mirrored or inferred coordinates"
+    },
+    "velvet": {
+      "manifest_sha256": "0e1f24fa82df470e2278cc85d5462c060c08c1550b897de132345cf3c77507a8",
+      "manifest_url": "https://github.com/rempemat-eng/appify/blob/4d7efc7085786c897fc0c50f7151a0ae7e62f0c2/prototypes/mygame-animation-studio/assets/animated/velvet/manifest.json",
+      "view": "E",
+      "frame_size": [
+        192,
+        192
+      ],
+      "foot_pivot": [
+        96,
+        172
+      ],
+      "body_height_target": 96,
+      "fit_factor": 1,
+      "clips": {
+        "idle": {
+          "frame_count": 8,
+          "durations": [
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2
+          ],
+          "duration": 1.6,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "walk": {
+          "frame_count": 16,
+          "durations": [
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "primary": {
+          "frame_count": 16,
+          "durations": [
+            0.0385,
+            0.0315,
+            0.0385,
+            0.0315,
+            0.044,
+            0.036,
+            0.0605,
+            0.049499999999999995,
+            0.022,
+            0.018,
+            0.030249999999999996,
+            0.024749999999999998,
+            0.04675,
+            0.03825,
+            0.0715,
+            0.058499999999999996
+          ],
+          "duration": 0.64,
+          "loop": false,
+          "release_frame": 8,
+          "release_time": 0.32999999999999996,
+          "release_anchor": [
+            86,
+            -65
+          ],
+          "contact_reach": 86,
+          "hold_frame": null
+        },
+        "secondary": {
+          "frame_count": 8,
+          "durations": [
+            0.07,
+            0.07,
+            0.08,
+            0.11,
+            0.04,
+            0.055,
+            0.085,
+            0.13
+          ],
+          "duration": 0.64,
+          "loop": false,
+          "release_frame": 4,
+          "release_time": 0.33,
+          "release_anchor": [
+            -40,
+            -73
+          ],
+          "hold_frame": null
+        },
+        "special": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.08,
+            0.09,
+            0.12,
+            0.06,
+            0.08,
+            0.12,
+            0.18
+          ],
+          "duration": 0.82,
+          "loop": false,
+          "release_frame": 4,
+          "release_time": 0.38,
+          "hold_frame": null
+        },
+        "guard": {
+          "frame_count": 8,
+          "durations": [
+            0.055,
+            0.055,
+            0.055,
+            0.055,
+            0.12,
+            0.12,
+            0.12,
+            0.12
+          ],
+          "duration": 0.7,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": 4
+        },
+        "hit": {
+          "frame_count": 8,
+          "durations": [
+            0.035,
+            0.065,
+            0.09,
+            0.12,
+            0.13,
+            0.15,
+            0.16,
+            0.18
+          ],
+          "duration": 0.9299999999999999,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "defeat": {
+          "frame_count": 8,
+          "durations": [
+            0.08,
+            0.1,
+            0.1,
+            0.12,
+            0.15,
+            0.18,
+            0.24,
+            0.3
+          ],
+          "duration": 1.27,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "jump": {
+          "frame_count": 8,
+          "durations": [
+            0.08,
+            0.055,
+            0.08,
+            0.11,
+            0.11,
+            0.08,
+            0.07,
+            0.115
+          ],
+          "duration": 0.7000000000000001,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "stair_up": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "stair_down": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "dodge": {
+          "frame_count": 8,
+          "durations": [
+            0.055,
+            0.045,
+            0.04,
+            0.045,
+            0.06,
+            0.07,
+            0.08,
+            0.1
+          ],
+          "duration": 0.495,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "powered_idle": {
+          "frame_count": 8,
+          "durations": [
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2
+          ],
+          "duration": 1.6,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "powered_walk": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "powered_primary": {
+          "frame_count": 8,
+          "durations": [
+            0.07,
+            0.07,
+            0.08,
+            0.11,
+            0.04,
+            0.055,
+            0.085,
+            0.13
+          ],
+          "duration": 0.64,
+          "loop": false,
+          "release_frame": 4,
+          "release_time": 0.33,
+          "release_anchor": [
+            73,
+            -64
+          ],
+          "contact_reach": 73,
+          "hold_frame": null
+        },
+        "powered_guard": {
+          "frame_count": 8,
+          "durations": [
+            0.055,
+            0.055,
+            0.055,
+            0.055,
+            0.12,
+            0.12,
+            0.12,
+            0.12
+          ],
+          "duration": 0.7,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": 4
+        },
+        "powered_exit": {
+          "frame_count": 7,
+          "durations": [
+            0.11,
+            0.11,
+            0.11,
+            0.11,
+            0.12,
+            0.14,
+            0.16
+          ],
+          "duration": 0.86,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        }
+      },
+      "redraw_facings": {
+        "S": null,
+        "N": null,
+        "E": null,
+        "W": null
+      },
+      "redraw_aim_poses": null,
+      "redraw_anchors_status": "pending Claude A authored per-facing anchors at the new approximately 74px body scale; no mirrored or inferred coordinates"
+    },
+    "cairn": {
+      "manifest_sha256": "659089a64d7b42c47569adf85489a6a3cad9f9fe5aaf476703ec795423d8e1ba",
+      "manifest_url": "https://github.com/rempemat-eng/appify/blob/4d7efc7085786c897fc0c50f7151a0ae7e62f0c2/prototypes/mygame-animation-studio/assets/animated/cairn/manifest.json",
+      "view": "E",
+      "frame_size": [
+        192,
+        192
+      ],
+      "foot_pivot": [
+        96,
+        172
+      ],
+      "body_height_target": 112,
+      "fit_factor": 1,
+      "clips": {
+        "idle": {
+          "frame_count": 8,
+          "durations": [
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2
+          ],
+          "duration": 1.6,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "walk": {
+          "frame_count": 16,
+          "durations": [
+            0.065,
+            0.065,
+            0.065,
+            0.065,
+            0.065,
+            0.065,
+            0.065,
+            0.065,
+            0.065,
+            0.065,
+            0.065,
+            0.065,
+            0.065,
+            0.065,
+            0.065,
+            0.065
+          ],
+          "duration": 1.04,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "primary": {
+          "frame_count": 16,
+          "durations": [
+            0.065,
+            0.06,
+            0.06,
+            0.06,
+            0.065,
+            0.07,
+            0.08,
+            0.1,
+            0.035,
+            0.04,
+            0.05,
+            0.07,
+            0.08,
+            0.09,
+            0.11,
+            0.13
+          ],
+          "duration": 1.165,
+          "loop": false,
+          "release_frame": 8,
+          "release_time": 0.56,
+          "release_anchor": [
+            74,
+            -6
+          ],
+          "contact_reach": 78,
+          "hold_frame": null
+        },
+        "secondary": {
+          "frame_count": 16,
+          "durations": [
+            0.065,
+            0.06,
+            0.06,
+            0.06,
+            0.065,
+            0.07,
+            0.08,
+            0.1,
+            0.035,
+            0.04,
+            0.05,
+            0.07,
+            0.08,
+            0.09,
+            0.11,
+            0.13
+          ],
+          "duration": 1.165,
+          "loop": false,
+          "release_frame": 8,
+          "release_time": 0.56,
+          "release_anchor": [
+            88,
+            -68
+          ],
+          "hold_frame": null
+        },
+        "special": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.08,
+            0.09,
+            0.12,
+            0.06,
+            0.08,
+            0.12,
+            0.18
+          ],
+          "duration": 0.82,
+          "loop": false,
+          "release_frame": 4,
+          "release_time": 0.38,
+          "hold_frame": null
+        },
+        "guard": {
+          "frame_count": 8,
+          "durations": [
+            0.055,
+            0.055,
+            0.055,
+            0.055,
+            0.12,
+            0.12,
+            0.12,
+            0.12
+          ],
+          "duration": 0.7,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": 3
+        },
+        "hit": {
+          "frame_count": 4,
+          "durations": [
+            0.045,
+            0.08,
+            0.13,
+            0.2
+          ],
+          "duration": 0.455,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "defeat": {
+          "frame_count": 4,
+          "durations": [
+            0.1,
+            0.15,
+            0.22,
+            0.35
+          ],
+          "duration": 0.82,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "jump": {
+          "frame_count": 8,
+          "durations": [
+            0.08,
+            0.055,
+            0.08,
+            0.11,
+            0.11,
+            0.08,
+            0.07,
+            0.115
+          ],
+          "duration": 0.7000000000000001,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "stair_up": {
+          "frame_count": 8,
+          "durations": [
+            0.13,
+            0.13,
+            0.13,
+            0.13,
+            0.13,
+            0.13,
+            0.13,
+            0.13
+          ],
+          "duration": 1.04,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "stair_down": {
+          "frame_count": 8,
+          "durations": [
+            0.13,
+            0.13,
+            0.13,
+            0.13,
+            0.13,
+            0.13,
+            0.13,
+            0.13
+          ],
+          "duration": 1.04,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "dodge": {
+          "frame_count": 8,
+          "durations": [
+            0.055,
+            0.045,
+            0.04,
+            0.045,
+            0.06,
+            0.07,
+            0.08,
+            0.1
+          ],
+          "duration": 0.495,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "powered_idle": {
+          "frame_count": 8,
+          "durations": [
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2
+          ],
+          "duration": 1.6,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "powered_walk": {
+          "frame_count": 8,
+          "durations": [
+            0.13,
+            0.13,
+            0.13,
+            0.13,
+            0.13,
+            0.13,
+            0.13,
+            0.13
+          ],
+          "duration": 1.04,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "powered_primary": {
+          "frame_count": 8,
+          "durations": [
+            0.1,
+            0.1,
+            0.1,
+            0.12,
+            0.14,
+            0.06,
+            0.14,
+            0.18
+          ],
+          "duration": 0.9400000000000001,
+          "loop": false,
+          "release_frame": 5,
+          "release_time": 0.56,
+          "release_anchor": [
+            56,
+            -6
+          ],
+          "contact_reach": 59,
+          "hold_frame": null
+        },
+        "powered_guard": {
+          "frame_count": 8,
+          "durations": [
+            0.055,
+            0.055,
+            0.055,
+            0.055,
+            0.12,
+            0.12,
+            0.12,
+            0.12
+          ],
+          "duration": 0.7,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": 4
+        },
+        "powered_exit": {
+          "frame_count": 8,
+          "durations": [
+            0.11,
+            0.1,
+            0.1,
+            0.09,
+            0.09,
+            0.1,
+            0.12,
+            0.15
+          ],
+          "duration": 0.86,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        }
+      },
+      "redraw_facings": {
+        "S": null,
+        "N": null,
+        "E": null,
+        "W": null
+      },
+      "redraw_aim_poses": null,
+      "redraw_anchors_status": "pending Claude A authored per-facing anchors at the new approximately 74px body scale; no mirrored or inferred coordinates"
+    },
+    "iona": {
+      "manifest_sha256": "334bc081b01d295f8879ca578dfbb1d2e01e8b2c7163bc49070622a7a4ebdf9d",
+      "manifest_url": "https://github.com/rempemat-eng/appify/blob/4d7efc7085786c897fc0c50f7151a0ae7e62f0c2/prototypes/mygame-animation-studio/assets/animated/iona/manifest.json",
+      "view": "E",
+      "frame_size": [
+        224,
+        192
+      ],
+      "foot_pivot": [
+        96,
+        172
+      ],
+      "body_height_target": 96,
+      "fit_factor": 1,
+      "clips": {
+        "idle": {
+          "frame_count": 8,
+          "durations": [
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2
+          ],
+          "duration": 1.6,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "walk": {
+          "frame_count": 16,
+          "durations": [
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "primary": {
+          "frame_count": 16,
+          "durations": [
+            0.0385,
+            0.0315,
+            0.0385,
+            0.0315,
+            0.044,
+            0.036,
+            0.0605,
+            0.049499999999999995,
+            0.022,
+            0.018,
+            0.030249999999999996,
+            0.024749999999999998,
+            0.04675,
+            0.03825,
+            0.0715,
+            0.058499999999999996
+          ],
+          "duration": 0.64,
+          "loop": false,
+          "release_frame": 8,
+          "release_time": 0.32999999999999996,
+          "release_anchor": [
+            101,
+            -74
+          ],
+          "contact_reach": 101,
+          "hold_frame": null
+        },
+        "secondary": {
+          "frame_count": 8,
+          "durations": [
+            0.07,
+            0.07,
+            0.08,
+            0.11,
+            0.04,
+            0.055,
+            0.085,
+            0.13
+          ],
+          "duration": 0.64,
+          "loop": false,
+          "release_frame": 4,
+          "release_time": 0.33,
+          "release_anchor": [
+            87,
+            -42
+          ],
+          "contact_reach": 87,
+          "hold_frame": null
+        },
+        "special": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.08,
+            0.09,
+            0.12,
+            0.06,
+            0.08,
+            0.12,
+            0.18
+          ],
+          "duration": 0.82,
+          "loop": false,
+          "release_frame": 4,
+          "release_time": 0.38,
+          "hold_frame": null
+        },
+        "guard": {
+          "frame_count": 8,
+          "durations": [
+            0.055,
+            0.055,
+            0.055,
+            0.055,
+            0.12,
+            0.12,
+            0.12,
+            0.12
+          ],
+          "duration": 0.7,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": 4
+        },
+        "hit": {
+          "frame_count": 8,
+          "durations": [
+            0.035,
+            0.065,
+            0.09,
+            0.12,
+            0.13,
+            0.15,
+            0.16,
+            0.18
+          ],
+          "duration": 0.9299999999999999,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "defeat": {
+          "frame_count": 8,
+          "durations": [
+            0.08,
+            0.1,
+            0.1,
+            0.12,
+            0.15,
+            0.18,
+            0.24,
+            0.3
+          ],
+          "duration": 1.27,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "jump": {
+          "frame_count": 8,
+          "durations": [
+            0.08,
+            0.055,
+            0.08,
+            0.11,
+            0.11,
+            0.08,
+            0.07,
+            0.115
+          ],
+          "duration": 0.7000000000000001,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "stair_up": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "stair_down": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "dodge": {
+          "frame_count": 8,
+          "durations": [
+            0.055,
+            0.045,
+            0.04,
+            0.045,
+            0.06,
+            0.07,
+            0.08,
+            0.1
+          ],
+          "duration": 0.495,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "powered_idle": {
+          "frame_count": 8,
+          "durations": [
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2
+          ],
+          "duration": 1.6,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "powered_walk": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "powered_primary": {
+          "frame_count": 8,
+          "durations": [
+            0.07,
+            0.07,
+            0.08,
+            0.11,
+            0.04,
+            0.055,
+            0.085,
+            0.13
+          ],
+          "duration": 0.64,
+          "loop": false,
+          "release_frame": 4,
+          "release_time": 0.33,
+          "release_anchor": [
+            113,
+            -68
+          ],
+          "contact_reach": 113,
+          "hold_frame": null
+        },
+        "powered_guard": {
+          "frame_count": 8,
+          "durations": [
+            0.055,
+            0.055,
+            0.055,
+            0.055,
+            0.12,
+            0.12,
+            0.12,
+            0.12
+          ],
+          "duration": 0.7,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": 4
+        },
+        "powered_exit": {
+          "frame_count": 8,
+          "durations": [
+            0.11,
+            0.1,
+            0.1,
+            0.09,
+            0.09,
+            0.1,
+            0.12,
+            0.15
+          ],
+          "duration": 0.86,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        }
+      },
+      "redraw_facings": {
+        "S": null,
+        "N": null,
+        "E": null,
+        "W": null
+      },
+      "redraw_aim_poses": null,
+      "redraw_anchors_status": "pending Claude A authored per-facing anchors at the new approximately 74px body scale; no mirrored or inferred coordinates"
+    },
+    "tam": {
+      "manifest_sha256": "46457b1c3c51c007720a2063fa7e29e78a37724bce23ad1c9e69776f030f3110",
+      "manifest_url": "https://github.com/rempemat-eng/appify/blob/4d7efc7085786c897fc0c50f7151a0ae7e62f0c2/prototypes/mygame-animation-studio/assets/animated/tam/manifest.json",
+      "view": "E",
+      "frame_size": [
+        192,
+        192
+      ],
+      "foot_pivot": [
+        96,
+        172
+      ],
+      "body_height_target": 96,
+      "fit_factor": 1,
+      "clips": {
+        "idle": {
+          "frame_count": 8,
+          "durations": [
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2
+          ],
+          "duration": 1.6,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "walk": {
+          "frame_count": 16,
+          "durations": [
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "primary": {
+          "frame_count": 16,
+          "durations": [
+            0.0385,
+            0.0315,
+            0.0385,
+            0.0315,
+            0.044,
+            0.036,
+            0.0605,
+            0.049499999999999995,
+            0.022,
+            0.018,
+            0.030249999999999996,
+            0.024749999999999998,
+            0.04675,
+            0.03825,
+            0.0715,
+            0.058499999999999996
+          ],
+          "duration": 0.64,
+          "loop": false,
+          "release_frame": 8,
+          "release_time": 0.32999999999999996,
+          "release_anchor": [
+            59,
+            -69
+          ],
+          "contact_reach": 59,
+          "hold_frame": null
+        },
+        "secondary": {
+          "frame_count": 8,
+          "durations": [
+            0.07,
+            0.07,
+            0.08,
+            0.11,
+            0.04,
+            0.055,
+            0.085,
+            0.13
+          ],
+          "duration": 0.64,
+          "loop": false,
+          "release_frame": 4,
+          "release_time": 0.33,
+          "release_anchor": [
+            12,
+            -27
+          ],
+          "hold_frame": null
+        },
+        "special": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.08,
+            0.09,
+            0.12,
+            0.06,
+            0.08,
+            0.12,
+            0.18
+          ],
+          "duration": 0.82,
+          "loop": false,
+          "release_frame": 4,
+          "release_time": 0.38,
+          "hold_frame": null
+        },
+        "guard": {
+          "frame_count": 8,
+          "durations": [
+            0.055,
+            0.055,
+            0.055,
+            0.055,
+            0.12,
+            0.12,
+            0.12,
+            0.12
+          ],
+          "duration": 0.7,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": 4
+        },
+        "hit": {
+          "frame_count": 8,
+          "durations": [
+            0.035,
+            0.065,
+            0.09,
+            0.12,
+            0.13,
+            0.15,
+            0.16,
+            0.18
+          ],
+          "duration": 0.9299999999999999,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "defeat": {
+          "frame_count": 8,
+          "durations": [
+            0.08,
+            0.1,
+            0.1,
+            0.12,
+            0.15,
+            0.18,
+            0.24,
+            0.3
+          ],
+          "duration": 1.27,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "jump": {
+          "frame_count": 8,
+          "durations": [
+            0.08,
+            0.055,
+            0.08,
+            0.11,
+            0.11,
+            0.08,
+            0.07,
+            0.115
+          ],
+          "duration": 0.7000000000000001,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "stair_up": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "stair_down": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "dodge": {
+          "frame_count": 8,
+          "durations": [
+            0.055,
+            0.045,
+            0.04,
+            0.045,
+            0.06,
+            0.07,
+            0.08,
+            0.1
+          ],
+          "duration": 0.495,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "powered_idle": {
+          "frame_count": 8,
+          "durations": [
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2
+          ],
+          "duration": 1.6,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "powered_walk": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "powered_primary": {
+          "frame_count": 8,
+          "durations": [
+            0.07,
+            0.07,
+            0.08,
+            0.11,
+            0.04,
+            0.055,
+            0.085,
+            0.13
+          ],
+          "duration": 0.64,
+          "loop": false,
+          "release_frame": 4,
+          "release_time": 0.33,
+          "release_anchor": [
+            63,
+            -77
+          ],
+          "contact_reach": 63,
+          "hold_frame": null
+        },
+        "powered_guard": {
+          "frame_count": 8,
+          "durations": [
+            0.055,
+            0.055,
+            0.055,
+            0.055,
+            0.12,
+            0.12,
+            0.12,
+            0.12
+          ],
+          "duration": 0.7,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": 4
+        },
+        "powered_exit": {
+          "frame_count": 8,
+          "durations": [
+            0.11,
+            0.1,
+            0.1,
+            0.09,
+            0.09,
+            0.1,
+            0.12,
+            0.15
+          ],
+          "duration": 0.86,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        }
+      },
+      "redraw_facings": {
+        "S": null,
+        "N": null,
+        "E": null,
+        "W": null
+      },
+      "redraw_aim_poses": null,
+      "redraw_anchors_status": "pending Claude A authored per-facing anchors at the new approximately 74px body scale; no mirrored or inferred coordinates"
+    },
+    "brine": {
+      "manifest_sha256": "1ea5315e4c31f8254d9e5d4c20caa29e957d19f2794354a59b9afddbcbbd2f62",
+      "manifest_url": "https://github.com/rempemat-eng/appify/blob/4d7efc7085786c897fc0c50f7151a0ae7e62f0c2/prototypes/mygame-animation-studio/assets/animated/brine/manifest.json",
+      "view": "E",
+      "frame_size": [
+        192,
+        192
+      ],
+      "foot_pivot": [
+        96,
+        172
+      ],
+      "body_height_target": 96,
+      "fit_factor": 1,
+      "clips": {
+        "idle": {
+          "frame_count": 8,
+          "durations": [
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2
+          ],
+          "duration": 1.6,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hand_anchors": [
+            [
+              42,
+              -42
+            ],
+            [
+              37,
+              -40
+            ],
+            [
+              29,
+              -54
+            ],
+            [
+              40,
+              -39
+            ],
+            [
+              44,
+              -40
+            ],
+            [
+              45,
+              -50
+            ],
+            [
+              38,
+              -44
+            ],
+            [
+              35,
+              -41
+            ]
+          ],
+          "hold_frame": null
+        },
+        "walk": {
+          "frame_count": 16,
+          "durations": [
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hand_anchors": [
+            [
+              54,
+              -44
+            ],
+            [
+              48,
+              -43
+            ],
+            [
+              54,
+              -40
+            ],
+            [
+              48,
+              -40
+            ],
+            [
+              38,
+              -40
+            ],
+            [
+              40,
+              -46
+            ],
+            [
+              45,
+              -40
+            ],
+            [
+              44,
+              -42
+            ],
+            [
+              54,
+              -44
+            ],
+            [
+              45,
+              -42
+            ],
+            [
+              49,
+              -40
+            ],
+            [
+              42,
+              -44
+            ],
+            [
+              40,
+              -44
+            ],
+            [
+              40,
+              -42
+            ],
+            [
+              46,
+              -50
+            ],
+            [
+              44,
+              -44
+            ]
+          ],
+          "hold_frame": null
+        },
+        "primary": {
+          "frame_count": 16,
+          "durations": [
+            0.0385,
+            0.0315,
+            0.0385,
+            0.0315,
+            0.044,
+            0.036,
+            0.0605,
+            0.049499999999999995,
+            0.022,
+            0.018,
+            0.030249999999999996,
+            0.024749999999999998,
+            0.04675,
+            0.03825,
+            0.0715,
+            0.058499999999999996
+          ],
+          "duration": 0.64,
+          "loop": false,
+          "release_frame": 8,
+          "release_time": 0.32999999999999996,
+          "release_anchor": [
+            62,
+            -70
+          ],
+          "hand_anchors": [
+            [
+              41,
+              -42
+            ],
+            [
+              36,
+              -44
+            ],
+            [
+              41,
+              -52
+            ],
+            [
+              44,
+              -60
+            ],
+            [
+              51,
+              -60
+            ],
+            [
+              48,
+              -74
+            ],
+            [
+              46,
+              -73
+            ],
+            [
+              45,
+              -73
+            ],
+            [
+              62,
+              -70
+            ],
+            [
+              53,
+              -66
+            ],
+            [
+              56,
+              -62
+            ],
+            [
+              53,
+              -52
+            ],
+            [
+              41,
+              -48
+            ],
+            [
+              42,
+              -38
+            ],
+            [
+              41,
+              -44
+            ],
+            [
+              39,
+              -42
+            ]
+          ],
+          "hold_frame": null
+        },
+        "secondary": {
+          "frame_count": 8,
+          "durations": [
+            0.07,
+            0.07,
+            0.08,
+            0.11,
+            0.04,
+            0.055,
+            0.085,
+            0.13
+          ],
+          "duration": 0.64,
+          "loop": false,
+          "release_frame": 4,
+          "release_time": 0.33,
+          "release_anchor": [
+            49,
+            -46
+          ],
+          "hand_anchors": [
+            [
+              44,
+              -46
+            ],
+            [
+              40,
+              -41
+            ],
+            [
+              41,
+              -38
+            ],
+            [
+              45,
+              -40
+            ],
+            [
+              49,
+              -46
+            ],
+            [
+              47,
+              -41
+            ],
+            [
+              43,
+              -40
+            ],
+            [
+              45,
+              -46
+            ]
+          ],
+          "hold_frame": null
+        },
+        "special": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.08,
+            0.09,
+            0.12,
+            0.06,
+            0.08,
+            0.12,
+            0.18
+          ],
+          "duration": 0.82,
+          "loop": false,
+          "release_frame": 4,
+          "release_time": 0.38,
+          "hand_anchors": [
+            [
+              40,
+              -40
+            ],
+            [
+              37,
+              -40
+            ],
+            [
+              42,
+              -38
+            ],
+            [
+              40,
+              -54
+            ],
+            [
+              46,
+              -38
+            ],
+            [
+              37,
+              -54
+            ],
+            [
+              37,
+              -54
+            ],
+            [
+              38,
+              -40
+            ]
+          ],
+          "hold_frame": null
+        },
+        "guard": {
+          "frame_count": 8,
+          "durations": [
+            0.055,
+            0.055,
+            0.055,
+            0.055,
+            0.12,
+            0.12,
+            0.12,
+            0.12
+          ],
+          "duration": 0.7,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hand_anchors": [
+            [
+              37,
+              -50
+            ],
+            [
+              38,
+              -42
+            ],
+            [
+              37,
+              -38
+            ],
+            [
+              50,
+              -56
+            ],
+            [
+              49,
+              -56
+            ],
+            [
+              39,
+              -54
+            ],
+            [
+              43,
+              -57
+            ],
+            [
+              39,
+              -56
+            ]
+          ],
+          "hold_frame": 4
+        },
+        "hit": {
+          "frame_count": 8,
+          "durations": [
+            0.035,
+            0.065,
+            0.09,
+            0.12,
+            0.13,
+            0.15,
+            0.16,
+            0.18
+          ],
+          "duration": 0.9299999999999999,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "defeat": {
+          "frame_count": 8,
+          "durations": [
+            0.08,
+            0.1,
+            0.1,
+            0.12,
+            0.15,
+            0.18,
+            0.24,
+            0.3
+          ],
+          "duration": 1.27,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "jump": {
+          "frame_count": 8,
+          "durations": [
+            0.08,
+            0.055,
+            0.08,
+            0.11,
+            0.11,
+            0.08,
+            0.07,
+            0.115
+          ],
+          "duration": 0.7000000000000001,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hand_anchors": [
+            [
+              50,
+              -43
+            ],
+            [
+              42,
+              -38
+            ],
+            [
+              37,
+              -52
+            ],
+            [
+              39,
+              -45
+            ],
+            [
+              31,
+              -34
+            ],
+            [
+              29,
+              -48
+            ],
+            [
+              35,
+              -39
+            ],
+            [
+              41,
+              -44
+            ]
+          ],
+          "hold_frame": null
+        },
+        "stair_up": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hand_anchors": [
+            [
+              50,
+              -69
+            ],
+            [
+              42,
+              -58
+            ],
+            [
+              41,
+              -66
+            ],
+            [
+              35,
+              -68
+            ],
+            [
+              32,
+              -54
+            ],
+            [
+              34,
+              -54
+            ],
+            [
+              37,
+              -65
+            ],
+            [
+              40,
+              -60
+            ]
+          ],
+          "hold_frame": null
+        },
+        "stair_down": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hand_anchors": [
+            [
+              40,
+              -43
+            ],
+            [
+              35,
+              -49
+            ],
+            [
+              36,
+              -42
+            ],
+            [
+              29,
+              -37
+            ],
+            [
+              24,
+              -38
+            ],
+            [
+              29,
+              -46
+            ],
+            [
+              35,
+              -46
+            ],
+            [
+              43,
+              -52
+            ]
+          ],
+          "hold_frame": null
+        },
+        "dodge": {
+          "frame_count": 8,
+          "durations": [
+            0.055,
+            0.045,
+            0.04,
+            0.045,
+            0.06,
+            0.07,
+            0.08,
+            0.1
+          ],
+          "duration": 0.495,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hand_anchors": [
+            [
+              34,
+              -48
+            ],
+            [
+              38,
+              -48
+            ],
+            [
+              53,
+              -45
+            ],
+            [
+              65,
+              -42
+            ],
+            [
+              61,
+              -34
+            ],
+            [
+              45,
+              -44
+            ],
+            [
+              42,
+              -45
+            ],
+            [
+              40,
+              -46
+            ]
+          ],
+          "hold_frame": null
+        },
+        "powered_idle": {
+          "frame_count": 8,
+          "durations": [
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2
+          ],
+          "duration": 1.6,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hand_anchors": [
+            [
+              45,
+              -42
+            ],
+            [
+              41,
+              -42
+            ],
+            [
+              43,
+              -40
+            ],
+            [
+              36,
+              -40
+            ],
+            [
+              35,
+              -40
+            ],
+            [
+              37,
+              -40
+            ],
+            [
+              38,
+              -42
+            ],
+            [
+              37,
+              -40
+            ]
+          ],
+          "hold_frame": null
+        },
+        "powered_walk": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hand_anchors": [
+            [
+              49,
+              -44
+            ],
+            [
+              44,
+              -38
+            ],
+            [
+              45,
+              -38
+            ],
+            [
+              43,
+              -40
+            ],
+            [
+              41,
+              -44
+            ],
+            [
+              39,
+              -44
+            ],
+            [
+              38,
+              -45
+            ],
+            [
+              34,
+              -41
+            ]
+          ],
+          "hold_frame": null
+        },
+        "powered_primary": {
+          "frame_count": 8,
+          "durations": [
+            0.105,
+            0.105,
+            0.12,
+            0.08119047619047617,
+            0.02952380952380952,
+            0.04059523809523809,
+            0.06273809523809523,
+            0.09595238095238096
+          ],
+          "duration": 0.6399999999999999,
+          "loop": false,
+          "release_frame": 3,
+          "release_time": 0.32999999999999996,
+          "release_anchor": [
+            55,
+            -64
+          ],
+          "hand_anchors": [
+            [
+              43,
+              -43
+            ],
+            [
+              37,
+              -42
+            ],
+            [
+              44,
+              -68
+            ],
+            [
+              55,
+              -64
+            ],
+            [
+              50,
+              -52
+            ],
+            [
+              46,
+              -64
+            ],
+            [
+              45,
+              -47
+            ],
+            [
+              37,
+              -42
+            ]
+          ],
+          "hold_frame": null
+        },
+        "powered_guard": {
+          "frame_count": 8,
+          "durations": [
+            0.055,
+            0.055,
+            0.055,
+            0.055,
+            0.12,
+            0.12,
+            0.12,
+            0.12
+          ],
+          "duration": 0.7,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hand_anchors": [
+            [
+              43,
+              -42
+            ],
+            [
+              36,
+              -40
+            ],
+            [
+              33,
+              -70
+            ],
+            [
+              31,
+              -70
+            ],
+            [
+              36,
+              -66
+            ],
+            [
+              39,
+              -42
+            ],
+            [
+              40,
+              -38
+            ],
+            [
+              38,
+              -40
+            ]
+          ],
+          "hold_frame": 4
+        },
+        "powered_exit": {
+          "frame_count": 8,
+          "durations": [
+            0.11,
+            0.1,
+            0.1,
+            0.09,
+            0.09,
+            0.1,
+            0.12,
+            0.15
+          ],
+          "duration": 0.86,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hand_anchors": [
+            [
+              49,
+              -42
+            ],
+            [
+              39,
+              -40
+            ],
+            [
+              40,
+              -41
+            ],
+            [
+              37,
+              -42
+            ],
+            [
+              36,
+              -38
+            ],
+            [
+              36,
+              -38
+            ],
+            [
+              37,
+              -38
+            ],
+            [
+              32,
+              -39
+            ]
+          ],
+          "hold_frame": null
+        }
+      },
+      "redraw_facings": {
+        "S": null,
+        "N": null,
+        "E": null,
+        "W": null
+      },
+      "redraw_aim_poses": null,
+      "redraw_anchors_status": "pending Claude A authored per-facing anchors at the new approximately 74px body scale; no mirrored or inferred coordinates"
+    },
+    "pendle": {
+      "manifest_sha256": "fbd6b67cfa197fc783882134bfbe8a9043234687e8ec1ec03a3aaa1530fa4f28",
+      "manifest_url": "https://github.com/rempemat-eng/appify/blob/4d7efc7085786c897fc0c50f7151a0ae7e62f0c2/prototypes/mygame-animation-studio/assets/animated/pendle/manifest.json",
+      "view": "E",
+      "frame_size": [
+        192,
+        192
+      ],
+      "foot_pivot": [
+        96,
+        172
+      ],
+      "body_height_target": 96,
+      "fit_factor": 1,
+      "clips": {
+        "idle": {
+          "frame_count": 8,
+          "durations": [
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2
+          ],
+          "duration": 1.6,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "walk": {
+          "frame_count": 16,
+          "durations": [
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "primary": {
+          "frame_count": 16,
+          "durations": [
+            0.0385,
+            0.0315,
+            0.0385,
+            0.0315,
+            0.044,
+            0.036,
+            0.0605,
+            0.049499999999999995,
+            0.022,
+            0.018,
+            0.030249999999999996,
+            0.024749999999999998,
+            0.04675,
+            0.03825,
+            0.0715,
+            0.058499999999999996
+          ],
+          "duration": 0.64,
+          "loop": false,
+          "release_frame": 8,
+          "release_time": 0.32999999999999996,
+          "release_anchor": [
+            56,
+            -72
+          ],
+          "baked_effects": [
+            "muzzle_flash"
+          ],
+          "hold_frame": null
+        },
+        "secondary": {
+          "frame_count": 8,
+          "durations": [
+            0.07,
+            0.07,
+            0.08,
+            0.11,
+            0.04,
+            0.055,
+            0.085,
+            0.13
+          ],
+          "duration": 0.64,
+          "loop": false,
+          "release_frame": 4,
+          "release_time": 0.33,
+          "release_anchor": [
+            64,
+            -70
+          ],
+          "hold_frame": null
+        },
+        "special": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.08,
+            0.09,
+            0.12,
+            0.06,
+            0.08,
+            0.12,
+            0.18
+          ],
+          "duration": 0.82,
+          "loop": false,
+          "release_frame": 4,
+          "release_time": 0.38,
+          "hold_frame": null
+        },
+        "guard": {
+          "frame_count": 8,
+          "durations": [
+            0.055,
+            0.055,
+            0.055,
+            0.055,
+            0.12,
+            0.12,
+            0.12,
+            0.12
+          ],
+          "duration": 0.7,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": 4
+        },
+        "hit": {
+          "frame_count": 8,
+          "durations": [
+            0.035,
+            0.065,
+            0.09,
+            0.12,
+            0.13,
+            0.15,
+            0.16,
+            0.18
+          ],
+          "duration": 0.9299999999999999,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "defeat": {
+          "frame_count": 8,
+          "durations": [
+            0.08,
+            0.1,
+            0.1,
+            0.12,
+            0.15,
+            0.18,
+            0.24,
+            0.3
+          ],
+          "duration": 1.27,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "jump": {
+          "frame_count": 8,
+          "durations": [
+            0.08,
+            0.055,
+            0.08,
+            0.11,
+            0.11,
+            0.08,
+            0.07,
+            0.115
+          ],
+          "duration": 0.7000000000000001,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "stair_up": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "stair_down": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "dodge": {
+          "frame_count": 8,
+          "durations": [
+            0.055,
+            0.045,
+            0.04,
+            0.045,
+            0.06,
+            0.07,
+            0.08,
+            0.1
+          ],
+          "duration": 0.495,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "powered_idle": {
+          "frame_count": 8,
+          "durations": [
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2
+          ],
+          "duration": 1.6,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "powered_walk": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "powered_primary": {
+          "frame_count": 8,
+          "durations": [
+            0.07,
+            0.07,
+            0.08,
+            0.11,
+            0.04,
+            0.055,
+            0.085,
+            0.13
+          ],
+          "duration": 0.64,
+          "loop": false,
+          "release_frame": 4,
+          "release_time": 0.33,
+          "release_anchor": [
+            57,
+            -68
+          ],
+          "hold_frame": null
+        },
+        "powered_guard": {
+          "frame_count": 8,
+          "durations": [
+            0.055,
+            0.055,
+            0.055,
+            0.055,
+            0.12,
+            0.12,
+            0.12,
+            0.12
+          ],
+          "duration": 0.7,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": 4
+        },
+        "powered_exit": {
+          "frame_count": 8,
+          "durations": [
+            0.11,
+            0.1,
+            0.1,
+            0.09,
+            0.09,
+            0.1,
+            0.12,
+            0.15
+          ],
+          "duration": 0.86,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "reload": {
+          "frame_count": 8,
+          "durations": [
+            0.1,
+            0.12,
+            0.15,
+            0.17,
+            0.19,
+            0.16,
+            0.12,
+            0.1
+          ],
+          "duration": 1.11,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        }
+      },
+      "redraw_facings": {
+        "S": null,
+        "N": null,
+        "E": null,
+        "W": null
+      },
+      "redraw_aim_poses": null,
+      "redraw_anchors_status": "pending Claude A authored per-facing anchors at the new approximately 74px body scale; no mirrored or inferred coordinates"
+    },
+    "mirra": {
+      "manifest_sha256": "5818878c567c5d27e9c6d502525d77f495146e57e1aa8d446c404c9afa282c0c",
+      "manifest_url": "https://github.com/rempemat-eng/appify/blob/4d7efc7085786c897fc0c50f7151a0ae7e62f0c2/prototypes/mygame-animation-studio/assets/animated/mirra/manifest.json",
+      "view": "E",
+      "frame_size": [
+        192,
+        192
+      ],
+      "foot_pivot": [
+        96,
+        172
+      ],
+      "body_height_target": 96,
+      "fit_factor": 1,
+      "clips": {
+        "idle": {
+          "frame_count": 8,
+          "durations": [
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2
+          ],
+          "duration": 1.6,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "walk": {
+          "frame_count": 16,
+          "durations": [
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "primary": {
+          "frame_count": 16,
+          "durations": [
+            0.0385,
+            0.0315,
+            0.0385,
+            0.0315,
+            0.044,
+            0.036,
+            0.0605,
+            0.049499999999999995,
+            0.022,
+            0.018,
+            0.030249999999999996,
+            0.024749999999999998,
+            0.04675,
+            0.03825,
+            0.0715,
+            0.058499999999999996
+          ],
+          "duration": 0.64,
+          "loop": false,
+          "release_frame": 8,
+          "release_time": 0.32999999999999996,
+          "release_anchor": [
+            56,
+            -79
+          ],
+          "hold_frame": null
+        },
+        "secondary": {
+          "frame_count": 8,
+          "durations": [
+            0.07,
+            0.07,
+            0.08,
+            0.11,
+            0.04,
+            0.055,
+            0.085,
+            0.13
+          ],
+          "duration": 0.64,
+          "loop": false,
+          "release_frame": 4,
+          "release_time": 0.33,
+          "release_anchor": [
+            55,
+            -31
+          ],
+          "hold_frame": null
+        },
+        "special": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.08,
+            0.09,
+            0.12,
+            0.06,
+            0.08,
+            0.12,
+            0.18
+          ],
+          "duration": 0.82,
+          "loop": false,
+          "release_frame": 4,
+          "release_time": 0.38,
+          "hold_frame": null
+        },
+        "guard": {
+          "frame_count": 8,
+          "durations": [
+            0.055,
+            0.055,
+            0.055,
+            0.055,
+            0.12,
+            0.12,
+            0.12,
+            0.12
+          ],
+          "duration": 0.7,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": 4
+        },
+        "hit": {
+          "frame_count": 8,
+          "durations": [
+            0.035,
+            0.065,
+            0.09,
+            0.12,
+            0.13,
+            0.15,
+            0.16,
+            0.18
+          ],
+          "duration": 0.9299999999999999,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "defeat": {
+          "frame_count": 8,
+          "durations": [
+            0.08,
+            0.1,
+            0.1,
+            0.12,
+            0.15,
+            0.18,
+            0.24,
+            0.3
+          ],
+          "duration": 1.27,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "jump": {
+          "frame_count": 8,
+          "durations": [
+            0.08,
+            0.055,
+            0.08,
+            0.11,
+            0.11,
+            0.08,
+            0.07,
+            0.115
+          ],
+          "duration": 0.7000000000000001,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "stair_up": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "stair_down": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "dodge": {
+          "frame_count": 8,
+          "durations": [
+            0.055,
+            0.045,
+            0.04,
+            0.045,
+            0.06,
+            0.07,
+            0.08,
+            0.1
+          ],
+          "duration": 0.495,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "powered_idle": {
+          "frame_count": 8,
+          "durations": [
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2
+          ],
+          "duration": 1.6,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "powered_walk": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "powered_primary": {
+          "frame_count": 8,
+          "durations": [
+            0.06243243243243244,
+            0.06243243243243244,
+            0.07135135135135136,
+            0.0981081081081081,
+            0.03567567567567568,
+            0.06314814814814815,
+            0.09759259259259259,
+            0.14925925925925926
+          ],
+          "duration": 0.64,
+          "loop": false,
+          "release_frame": 5,
+          "release_time": 0.33,
+          "release_anchor": [
+            68,
+            -73
+          ],
+          "hold_frame": null
+        },
+        "powered_guard": {
+          "frame_count": 8,
+          "durations": [
+            0.055,
+            0.055,
+            0.055,
+            0.055,
+            0.12,
+            0.12,
+            0.12,
+            0.12
+          ],
+          "duration": 0.7,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": 4
+        },
+        "powered_exit": {
+          "frame_count": 8,
+          "durations": [
+            0.11,
+            0.1,
+            0.1,
+            0.09,
+            0.09,
+            0.1,
+            0.12,
+            0.15
+          ],
+          "duration": 0.86,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        }
+      },
+      "redraw_facings": {
+        "S": null,
+        "N": null,
+        "E": null,
+        "W": null
+      },
+      "redraw_aim_poses": null,
+      "redraw_anchors_status": "pending Claude A authored per-facing anchors at the new approximately 74px body scale; no mirrored or inferred coordinates"
+    },
+    "ashe": {
+      "manifest_sha256": "581edcf1f8e8f5864931e7fe7b9e4197995ccfbf7665ed085e25a2299417a55b",
+      "manifest_url": "https://github.com/rempemat-eng/appify/blob/4d7efc7085786c897fc0c50f7151a0ae7e62f0c2/prototypes/mygame-animation-studio/assets/animated/ashe/manifest.json",
+      "view": "E",
+      "frame_size": [
+        256,
+        192
+      ],
+      "foot_pivot": [
+        132,
+        172
+      ],
+      "body_height_target": 96,
+      "fit_factor": 1,
+      "clips": {
+        "idle": {
+          "frame_count": 8,
+          "durations": [
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2
+          ],
+          "duration": 1.6,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "walk": {
+          "frame_count": 16,
+          "durations": [
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "primary": {
+          "frame_count": 16,
+          "durations": [
+            0.04529411764705883,
+            0.037058823529411776,
+            0.04529411764705883,
+            0.037058823529411776,
+            0.05176470588235294,
+            0.04235294117647059,
+            0.0711764705882353,
+            0.042684283727399165,
+            0.01897079276773296,
+            0.015521557719054242,
+            0.026084840055632823,
+            0.021342141863699583,
+            0.04031293463143255,
+            0.03298331015299027,
+            0.061655076495132126,
+            0.050445062586926284
+          ],
+          "duration": 0.64,
+          "loop": false,
+          "release_frame": 7,
+          "release_time": 0.33000000000000007,
+          "release_anchor": [
+            104,
+            -63
+          ],
+          "contact_reach": 104,
+          "hold_frame": null
+        },
+        "secondary": {
+          "frame_count": 8,
+          "durations": [
+            0.07,
+            0.07,
+            0.08,
+            0.11,
+            0.04,
+            0.055,
+            0.085,
+            0.13
+          ],
+          "duration": 0.64,
+          "loop": false,
+          "release_frame": 4,
+          "release_time": 0.33,
+          "release_anchor": [
+            94,
+            -62
+          ],
+          "contact_reach": 94,
+          "hold_frame": null
+        },
+        "special": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.08,
+            0.09,
+            0.12,
+            0.06,
+            0.08,
+            0.12,
+            0.18
+          ],
+          "duration": 0.82,
+          "loop": false,
+          "release_frame": 4,
+          "release_time": 0.38,
+          "hold_frame": null
+        },
+        "guard": {
+          "frame_count": 8,
+          "durations": [
+            0.055,
+            0.055,
+            0.055,
+            0.055,
+            0.12,
+            0.12,
+            0.12,
+            0.12
+          ],
+          "duration": 0.7,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": 4
+        },
+        "hit": {
+          "frame_count": 8,
+          "durations": [
+            0.035,
+            0.065,
+            0.09,
+            0.12,
+            0.13,
+            0.15,
+            0.16,
+            0.18
+          ],
+          "duration": 0.9299999999999999,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "defeat": {
+          "frame_count": 8,
+          "durations": [
+            0.08,
+            0.1,
+            0.1,
+            0.12,
+            0.15,
+            0.18,
+            0.24,
+            0.3
+          ],
+          "duration": 1.27,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "jump": {
+          "frame_count": 8,
+          "durations": [
+            0.08,
+            0.055,
+            0.08,
+            0.11,
+            0.11,
+            0.08,
+            0.07,
+            0.115
+          ],
+          "duration": 0.7000000000000001,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "stair_up": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "stair_down": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "dodge": {
+          "frame_count": 8,
+          "durations": [
+            0.055,
+            0.045,
+            0.04,
+            0.045,
+            0.06,
+            0.07,
+            0.08,
+            0.1
+          ],
+          "duration": 0.495,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "powered_idle": {
+          "frame_count": 8,
+          "durations": [
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2
+          ],
+          "duration": 1.6,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "powered_walk": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "powered_primary": {
+          "frame_count": 8,
+          "durations": [
+            0.07,
+            0.07,
+            0.08,
+            0.11,
+            0.04,
+            0.055,
+            0.085,
+            0.13
+          ],
+          "duration": 0.64,
+          "loop": false,
+          "release_frame": 4,
+          "release_time": 0.33,
+          "release_anchor": [
+            110,
+            -81
+          ],
+          "contact_reach": 110,
+          "hold_frame": null
+        },
+        "powered_guard": {
+          "frame_count": 8,
+          "durations": [
+            0.055,
+            0.055,
+            0.055,
+            0.055,
+            0.12,
+            0.12,
+            0.12,
+            0.12
+          ],
+          "duration": 0.7,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": 4
+        },
+        "powered_exit": {
+          "frame_count": 8,
+          "durations": [
+            0.11,
+            0.1,
+            0.1,
+            0.09,
+            0.09,
+            0.1,
+            0.12,
+            0.15
+          ],
+          "duration": 0.86,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        }
+      },
+      "redraw_facings": {
+        "S": null,
+        "N": null,
+        "E": null,
+        "W": null
+      },
+      "redraw_aim_poses": null,
+      "redraw_anchors_status": "pending Claude A authored per-facing anchors at the new approximately 74px body scale; no mirrored or inferred coordinates"
+    },
+    "clack": {
+      "manifest_sha256": "a6cfb4d246e120241021b29092783c318c7e4e57a6364054edbffc0849c8f1b8",
+      "manifest_url": "https://github.com/rempemat-eng/appify/blob/4d7efc7085786c897fc0c50f7151a0ae7e62f0c2/prototypes/mygame-animation-studio/assets/animated/clack/manifest.json",
+      "view": "E",
+      "frame_size": [
+        192,
+        192
+      ],
+      "foot_pivot": [
+        96,
+        172
+      ],
+      "body_height_target": 96,
+      "fit_factor": 1,
+      "clips": {
+        "idle": {
+          "frame_count": 8,
+          "durations": [
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2
+          ],
+          "duration": 1.6,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "walk": {
+          "frame_count": 16,
+          "durations": [
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "primary": {
+          "frame_count": 16,
+          "durations": [
+            0.0385,
+            0.0315,
+            0.0385,
+            0.0315,
+            0.044,
+            0.036,
+            0.0605,
+            0.049499999999999995,
+            0.022,
+            0.018,
+            0.030249999999999996,
+            0.024749999999999998,
+            0.04675,
+            0.03825,
+            0.0715,
+            0.058499999999999996
+          ],
+          "duration": 0.64,
+          "loop": false,
+          "release_frame": 8,
+          "release_time": 0.32999999999999996,
+          "release_anchor": [
+            60,
+            -79
+          ],
+          "hold_frame": null
+        },
+        "secondary": {
+          "frame_count": 8,
+          "durations": [
+            0.07,
+            0.07,
+            0.08,
+            0.11,
+            0.04,
+            0.055,
+            0.085,
+            0.13
+          ],
+          "duration": 0.64,
+          "loop": false,
+          "release_frame": 4,
+          "release_time": 0.33,
+          "release_anchor": [
+            27,
+            -59
+          ],
+          "hold_frame": null
+        },
+        "special": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.08,
+            0.09,
+            0.12,
+            0.06,
+            0.08,
+            0.12,
+            0.18
+          ],
+          "duration": 0.82,
+          "loop": false,
+          "release_frame": 4,
+          "release_time": 0.38,
+          "hold_frame": null
+        },
+        "guard": {
+          "frame_count": 8,
+          "durations": [
+            0.055,
+            0.055,
+            0.055,
+            0.055,
+            0.12,
+            0.12,
+            0.12,
+            0.12
+          ],
+          "duration": 0.7,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": 4
+        },
+        "hit": {
+          "frame_count": 8,
+          "durations": [
+            0.035,
+            0.065,
+            0.09,
+            0.12,
+            0.13,
+            0.15,
+            0.16,
+            0.18
+          ],
+          "duration": 0.9299999999999999,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "defeat": {
+          "frame_count": 8,
+          "durations": [
+            0.08,
+            0.1,
+            0.1,
+            0.12,
+            0.15,
+            0.18,
+            0.24,
+            0.3
+          ],
+          "duration": 1.27,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "jump": {
+          "frame_count": 8,
+          "durations": [
+            0.08,
+            0.055,
+            0.08,
+            0.11,
+            0.11,
+            0.08,
+            0.07,
+            0.115
+          ],
+          "duration": 0.7000000000000001,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "stair_up": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "stair_down": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "dodge": {
+          "frame_count": 8,
+          "durations": [
+            0.055,
+            0.045,
+            0.04,
+            0.045,
+            0.06,
+            0.07,
+            0.08,
+            0.1
+          ],
+          "duration": 0.495,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "powered_idle": {
+          "frame_count": 8,
+          "durations": [
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2
+          ],
+          "duration": 1.6,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "powered_walk": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "powered_primary": {
+          "frame_count": 8,
+          "durations": [
+            0.07,
+            0.07,
+            0.08,
+            0.11,
+            0.04,
+            0.055,
+            0.085,
+            0.13
+          ],
+          "duration": 0.64,
+          "loop": false,
+          "release_frame": 4,
+          "release_time": 0.33,
+          "release_anchor": [
+            43,
+            -69
+          ],
+          "hold_frame": null
+        },
+        "powered_guard": {
+          "frame_count": 8,
+          "durations": [
+            0.055,
+            0.055,
+            0.055,
+            0.055,
+            0.12,
+            0.12,
+            0.12,
+            0.12
+          ],
+          "duration": 0.7,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": 4
+        },
+        "powered_exit": {
+          "frame_count": 8,
+          "durations": [
+            0.11,
+            0.1,
+            0.1,
+            0.09,
+            0.09,
+            0.1,
+            0.12,
+            0.15
+          ],
+          "duration": 0.86,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        }
+      },
+      "redraw_facings": {
+        "S": null,
+        "N": null,
+        "E": null,
+        "W": null
+      },
+      "redraw_aim_poses": null,
+      "redraw_anchors_status": "pending Claude A authored per-facing anchors at the new approximately 74px body scale; no mirrored or inferred coordinates"
+    },
+    "nix": {
+      "manifest_sha256": "f97e90351f9f31d97ff727a226b4253729bc57e27a12cf9f68f37bf26708620b",
+      "manifest_url": "https://github.com/rempemat-eng/appify/blob/4d7efc7085786c897fc0c50f7151a0ae7e62f0c2/prototypes/mygame-animation-studio/assets/animated/nix/manifest.json",
+      "view": "E",
+      "frame_size": [
+        192,
+        192
+      ],
+      "foot_pivot": [
+        96,
+        172
+      ],
+      "body_height_target": 96,
+      "fit_factor": 1,
+      "clips": {
+        "idle": {
+          "frame_count": 8,
+          "durations": [
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2
+          ],
+          "duration": 1.6,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "walk": {
+          "frame_count": 16,
+          "durations": [
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "primary": {
+          "frame_count": 16,
+          "durations": [
+            0.0385,
+            0.0315,
+            0.0385,
+            0.0315,
+            0.044,
+            0.036,
+            0.0605,
+            0.049499999999999995,
+            0.022,
+            0.018,
+            0.030249999999999996,
+            0.024749999999999998,
+            0.04675,
+            0.03825,
+            0.0715,
+            0.058499999999999996
+          ],
+          "duration": 0.64,
+          "loop": false,
+          "release_frame": 8,
+          "release_time": 0.32999999999999996,
+          "release_anchor": [
+            49,
+            -62
+          ],
+          "hold_frame": null
+        },
+        "secondary": {
+          "frame_count": 8,
+          "durations": [
+            0.07,
+            0.07,
+            0.08,
+            0.11,
+            0.04,
+            0.055,
+            0.085,
+            0.13
+          ],
+          "duration": 0.64,
+          "loop": false,
+          "release_frame": 4,
+          "release_time": 0.33,
+          "release_anchor": [
+            42,
+            -58
+          ],
+          "hold_frame": null
+        },
+        "special": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.08,
+            0.09,
+            0.12,
+            0.06,
+            0.08,
+            0.12,
+            0.18
+          ],
+          "duration": 0.82,
+          "loop": false,
+          "release_frame": 4,
+          "release_time": 0.38,
+          "hold_frame": null
+        },
+        "guard": {
+          "frame_count": 8,
+          "durations": [
+            0.055,
+            0.055,
+            0.055,
+            0.055,
+            0.12,
+            0.12,
+            0.12,
+            0.12
+          ],
+          "duration": 0.7,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": 4
+        },
+        "hit": {
+          "frame_count": 8,
+          "durations": [
+            0.035,
+            0.065,
+            0.09,
+            0.12,
+            0.13,
+            0.15,
+            0.16,
+            0.18
+          ],
+          "duration": 0.9299999999999999,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "defeat": {
+          "frame_count": 8,
+          "durations": [
+            0.08,
+            0.1,
+            0.1,
+            0.12,
+            0.15,
+            0.18,
+            0.24,
+            0.3
+          ],
+          "duration": 1.27,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "jump": {
+          "frame_count": 8,
+          "durations": [
+            0.08,
+            0.055,
+            0.08,
+            0.11,
+            0.11,
+            0.08,
+            0.07,
+            0.115
+          ],
+          "duration": 0.7000000000000001,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "stair_up": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "stair_down": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "dodge": {
+          "frame_count": 8,
+          "durations": [
+            0.055,
+            0.045,
+            0.04,
+            0.045,
+            0.06,
+            0.07,
+            0.08,
+            0.1
+          ],
+          "duration": 0.495,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "powered_idle": {
+          "frame_count": 8,
+          "durations": [
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2
+          ],
+          "duration": 1.6,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "powered_walk": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "powered_primary": {
+          "frame_count": 8,
+          "durations": [
+            0.06243243243243244,
+            0.06243243243243244,
+            0.07135135135135136,
+            0.0981081081081081,
+            0.03567567567567568,
+            0.06314814814814815,
+            0.09759259259259259,
+            0.14925925925925926
+          ],
+          "duration": 0.64,
+          "loop": false,
+          "release_frame": 5,
+          "release_time": 0.33,
+          "release_anchor": [
+            40,
+            -67
+          ],
+          "hold_frame": null
+        },
+        "powered_guard": {
+          "frame_count": 8,
+          "durations": [
+            0.055,
+            0.055,
+            0.055,
+            0.055,
+            0.12,
+            0.12,
+            0.12,
+            0.12
+          ],
+          "duration": 0.7,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": 4
+        },
+        "powered_exit": {
+          "frame_count": 8,
+          "durations": [
+            0.11,
+            0.1,
+            0.1,
+            0.09,
+            0.09,
+            0.1,
+            0.12,
+            0.15
+          ],
+          "duration": 0.86,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        }
+      },
+      "redraw_facings": {
+        "S": null,
+        "N": null,
+        "E": null,
+        "W": null
+      },
+      "redraw_aim_poses": null,
+      "redraw_anchors_status": "pending Claude A authored per-facing anchors at the new approximately 74px body scale; no mirrored or inferred coordinates"
+    },
+    "rook": {
+      "manifest_sha256": "496c24c5d55c1b7a881dc07fa4ef12e1d7c5766dd19fd66c6a24ed05dbda7957",
+      "manifest_url": "https://github.com/rempemat-eng/appify/blob/4d7efc7085786c897fc0c50f7151a0ae7e62f0c2/prototypes/mygame-animation-studio/assets/animated/rook/manifest.json",
+      "view": "E",
+      "frame_size": [
+        192,
+        192
+      ],
+      "foot_pivot": [
+        96,
+        172
+      ],
+      "body_height_target": 96,
+      "fit_factor": 1,
+      "clips": {
+        "idle": {
+          "frame_count": 8,
+          "durations": [
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2
+          ],
+          "duration": 1.6,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "walk": {
+          "frame_count": 16,
+          "durations": [
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "primary": {
+          "frame_count": 16,
+          "durations": [
+            0.0385,
+            0.0315,
+            0.0385,
+            0.0315,
+            0.044,
+            0.036,
+            0.0605,
+            0.049499999999999995,
+            0.022,
+            0.018,
+            0.030249999999999996,
+            0.024749999999999998,
+            0.04675,
+            0.03825,
+            0.0715,
+            0.058499999999999996
+          ],
+          "duration": 0.64,
+          "loop": false,
+          "release_frame": 8,
+          "release_time": 0.32999999999999996,
+          "release_anchor": [
+            48,
+            -64
+          ],
+          "hold_frame": null
+        },
+        "secondary": {
+          "frame_count": 8,
+          "durations": [
+            0.07,
+            0.07,
+            0.08,
+            0.11,
+            0.04,
+            0.055,
+            0.085,
+            0.13
+          ],
+          "duration": 0.64,
+          "loop": false,
+          "release_frame": 3,
+          "release_time": 0.22000000000000003,
+          "release_anchor": [
+            45,
+            -70
+          ],
+          "thruster_anchors": [
+            [
+              -26,
+              -59
+            ]
+          ],
+          "hold_frame": null
+        },
+        "special": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.08,
+            0.09,
+            0.12,
+            0.06,
+            0.08,
+            0.12,
+            0.18
+          ],
+          "duration": 0.82,
+          "loop": false,
+          "release_frame": 4,
+          "release_time": 0.38,
+          "hold_frame": null
+        },
+        "guard": {
+          "frame_count": 8,
+          "durations": [
+            0.055,
+            0.055,
+            0.055,
+            0.055,
+            0.12,
+            0.12,
+            0.12,
+            0.12
+          ],
+          "duration": 0.7,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": 4
+        },
+        "hit": {
+          "frame_count": 8,
+          "durations": [
+            0.035,
+            0.065,
+            0.09,
+            0.12,
+            0.13,
+            0.15,
+            0.16,
+            0.18
+          ],
+          "duration": 0.9299999999999999,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "defeat": {
+          "frame_count": 8,
+          "durations": [
+            0.08,
+            0.1,
+            0.1,
+            0.12,
+            0.15,
+            0.18,
+            0.24,
+            0.3
+          ],
+          "duration": 1.27,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "jump": {
+          "frame_count": 8,
+          "durations": [
+            0.08,
+            0.055,
+            0.08,
+            0.11,
+            0.11,
+            0.08,
+            0.07,
+            0.115
+          ],
+          "duration": 0.7000000000000001,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "stair_up": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "stair_down": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "dodge": {
+          "frame_count": 8,
+          "durations": [
+            0.055,
+            0.045,
+            0.04,
+            0.045,
+            0.06,
+            0.07,
+            0.08,
+            0.1
+          ],
+          "duration": 0.495,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "powered_idle": {
+          "frame_count": 8,
+          "durations": [
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2
+          ],
+          "duration": 1.6,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "powered_walk": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "powered_primary": {
+          "frame_count": 8,
+          "durations": [
+            0.07,
+            0.07,
+            0.08,
+            0.11,
+            0.04,
+            0.055,
+            0.085,
+            0.13
+          ],
+          "duration": 0.64,
+          "loop": false,
+          "release_frame": 4,
+          "release_time": 0.33,
+          "release_anchor": [
+            45,
+            -62
+          ],
+          "hold_frame": null
+        },
+        "powered_guard": {
+          "frame_count": 8,
+          "durations": [
+            0.055,
+            0.055,
+            0.055,
+            0.055,
+            0.12,
+            0.12,
+            0.12,
+            0.12
+          ],
+          "duration": 0.7,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": 4
+        },
+        "powered_exit": {
+          "frame_count": 8,
+          "durations": [
+            0.11,
+            0.1,
+            0.1,
+            0.09,
+            0.09,
+            0.1,
+            0.12,
+            0.15
+          ],
+          "duration": 0.86,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        }
+      },
+      "redraw_facings": {
+        "S": null,
+        "N": null,
+        "E": null,
+        "W": null
+      },
+      "redraw_aim_poses": null,
+      "redraw_anchors_status": "pending Claude A authored per-facing anchors at the new approximately 74px body scale; no mirrored or inferred coordinates"
+    },
+    "mote": {
+      "manifest_sha256": "5a9bf693c05a779b152c40252699a00edc83c8542bf61ada0e6880787566aa07",
+      "manifest_url": "https://github.com/rempemat-eng/appify/blob/4d7efc7085786c897fc0c50f7151a0ae7e62f0c2/prototypes/mygame-animation-studio/assets/animated/mote/manifest.json",
+      "view": "E",
+      "frame_size": [
+        192,
+        192
+      ],
+      "foot_pivot": [
+        96,
+        172
+      ],
+      "body_height_target": 96,
+      "fit_factor": 1,
+      "clips": {
+        "idle": {
+          "frame_count": 8,
+          "durations": [
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2
+          ],
+          "duration": 1.6,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "walk": {
+          "frame_count": 16,
+          "durations": [
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045,
+            0.045
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "primary": {
+          "frame_count": 16,
+          "durations": [
+            0.0385,
+            0.0315,
+            0.0385,
+            0.0315,
+            0.044,
+            0.036,
+            0.0605,
+            0.049499999999999995,
+            0.022,
+            0.018,
+            0.030249999999999996,
+            0.024749999999999998,
+            0.04675,
+            0.03825,
+            0.0715,
+            0.058499999999999996
+          ],
+          "duration": 0.64,
+          "loop": false,
+          "release_frame": 8,
+          "release_time": 0.32999999999999996,
+          "release_anchor": [
+            61,
+            -81
+          ],
+          "hold_frame": null
+        },
+        "secondary": {
+          "frame_count": 8,
+          "durations": [
+            0.07,
+            0.07,
+            0.08,
+            0.11,
+            0.04,
+            0.055,
+            0.085,
+            0.13
+          ],
+          "duration": 0.64,
+          "loop": false,
+          "release_frame": 4,
+          "release_time": 0.33,
+          "release_anchor": [
+            24,
+            -54
+          ],
+          "hold_frame": null
+        },
+        "special": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.08,
+            0.09,
+            0.12,
+            0.06,
+            0.08,
+            0.12,
+            0.18
+          ],
+          "duration": 0.82,
+          "loop": false,
+          "release_frame": 2,
+          "release_time": 0.16999999999999998,
+          "hold_frame": null
+        },
+        "guard": {
+          "frame_count": 8,
+          "durations": [
+            0.055,
+            0.055,
+            0.055,
+            0.055,
+            0.12,
+            0.12,
+            0.12,
+            0.12
+          ],
+          "duration": 0.7,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": 4
+        },
+        "hit": {
+          "frame_count": 8,
+          "durations": [
+            0.035,
+            0.065,
+            0.09,
+            0.12,
+            0.13,
+            0.15,
+            0.16,
+            0.18
+          ],
+          "duration": 0.9299999999999999,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "defeat": {
+          "frame_count": 8,
+          "durations": [
+            0.08,
+            0.1,
+            0.1,
+            0.12,
+            0.15,
+            0.18,
+            0.24,
+            0.3
+          ],
+          "duration": 1.27,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "jump": {
+          "frame_count": 8,
+          "durations": [
+            0.08,
+            0.055,
+            0.08,
+            0.11,
+            0.11,
+            0.08,
+            0.07,
+            0.115
+          ],
+          "duration": 0.7000000000000001,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "stair_up": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "stair_down": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "dodge": {
+          "frame_count": 8,
+          "durations": [
+            0.055,
+            0.045,
+            0.04,
+            0.045,
+            0.06,
+            0.07,
+            0.08,
+            0.1
+          ],
+          "duration": 0.495,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "powered_idle": {
+          "frame_count": 8,
+          "durations": [
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2,
+            0.2
+          ],
+          "duration": 1.6,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "powered_walk": {
+          "frame_count": 8,
+          "durations": [
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09,
+            0.09
+          ],
+          "duration": 0.72,
+          "loop": true,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        },
+        "powered_primary": {
+          "frame_count": 8,
+          "durations": [
+            0.07,
+            0.07,
+            0.08,
+            0.11,
+            0.04,
+            0.055,
+            0.085,
+            0.13
+          ],
+          "duration": 0.64,
+          "loop": false,
+          "release_frame": 4,
+          "release_time": 0.33,
+          "release_anchor": [
+            51,
+            -68
+          ],
+          "hold_frame": null
+        },
+        "powered_guard": {
+          "frame_count": 8,
+          "durations": [
+            0.055,
+            0.055,
+            0.055,
+            0.055,
+            0.12,
+            0.12,
+            0.12,
+            0.12
+          ],
+          "duration": 0.7,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": 4
+        },
+        "powered_exit": {
+          "frame_count": 8,
+          "durations": [
+            0.11,
+            0.1,
+            0.1,
+            0.09,
+            0.09,
+            0.1,
+            0.12,
+            0.15
+          ],
+          "duration": 0.86,
+          "loop": false,
+          "release_frame": null,
+          "release_time": null,
+          "hold_frame": null
+        }
+      },
+      "redraw_facings": {
+        "S": null,
+        "N": null,
+        "E": null,
+        "W": null
+      },
+      "redraw_aim_poses": null,
+      "redraw_anchors_status": "pending Claude A authored per-facing anchors at the new approximately 74px body scale; no mirrored or inferred coordinates"
+    }
+  },
+  "timing_mismatches": [
+    {
+      "id": "bramble",
+      "clip": "primary",
+      "studio_duration_seconds": 0.64,
+      "canonical_duration_seconds": 0.42,
+      "studio_release_seconds": 0.32999999999999996,
+      "canonical_release_seconds": 0.1596,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "bramble",
+      "clip": "secondary",
+      "studio_duration_seconds": 0.64,
+      "canonical_duration_seconds": 0.48,
+      "studio_release_seconds": 0.33,
+      "canonical_release_seconds": 0.1824,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "bramble",
+      "clip": "special",
+      "studio_duration_seconds": 0.82,
+      "canonical_duration_seconds": 0.65,
+      "studio_release_seconds": 0.38,
+      "canonical_release_seconds": 0.28,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "bramble",
+      "clip": "powered_primary",
+      "studio_duration_seconds": 0.64,
+      "canonical_duration_seconds": 0.42,
+      "studio_release_seconds": 0.33,
+      "canonical_release_seconds": 0.1596,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "morel",
+      "clip": "primary",
+      "studio_duration_seconds": 0.64,
+      "canonical_duration_seconds": 0.62,
+      "studio_release_seconds": 0.32999999999999996,
+      "canonical_release_seconds": 0.2356,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "morel",
+      "clip": "secondary",
+      "studio_duration_seconds": 0.64,
+      "canonical_duration_seconds": 0.48,
+      "studio_release_seconds": 0.33,
+      "canonical_release_seconds": 0.1824,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "morel",
+      "clip": "special",
+      "studio_duration_seconds": 0.82,
+      "canonical_duration_seconds": 0.65,
+      "studio_release_seconds": 0.38,
+      "canonical_release_seconds": 0.28,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "morel",
+      "clip": "powered_primary",
+      "studio_duration_seconds": 0.64,
+      "canonical_duration_seconds": 0.62,
+      "studio_release_seconds": 0.33,
+      "canonical_release_seconds": 0.2356,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "velvet",
+      "clip": "primary",
+      "studio_duration_seconds": 0.64,
+      "canonical_duration_seconds": 0.34,
+      "studio_release_seconds": 0.32999999999999996,
+      "canonical_release_seconds": 0.1292,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "velvet",
+      "clip": "secondary",
+      "studio_duration_seconds": 0.64,
+      "canonical_duration_seconds": 0.48,
+      "studio_release_seconds": 0.33,
+      "canonical_release_seconds": 0.1824,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "velvet",
+      "clip": "special",
+      "studio_duration_seconds": 0.82,
+      "canonical_duration_seconds": 0.65,
+      "studio_release_seconds": 0.38,
+      "canonical_release_seconds": 0.28,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "velvet",
+      "clip": "powered_primary",
+      "studio_duration_seconds": 0.64,
+      "canonical_duration_seconds": 0.34,
+      "studio_release_seconds": 0.33,
+      "canonical_release_seconds": 0.1292,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "cairn",
+      "clip": "primary",
+      "studio_duration_seconds": 1.165,
+      "canonical_duration_seconds": 0.68,
+      "studio_release_seconds": 0.56,
+      "canonical_release_seconds": 0.3264,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "cairn",
+      "clip": "secondary",
+      "studio_duration_seconds": 1.165,
+      "canonical_duration_seconds": 0.72,
+      "studio_release_seconds": 0.56,
+      "canonical_release_seconds": 0.34559999999999996,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "cairn",
+      "clip": "special",
+      "studio_duration_seconds": 0.82,
+      "canonical_duration_seconds": 0.65,
+      "studio_release_seconds": 0.38,
+      "canonical_release_seconds": 0.28,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "cairn",
+      "clip": "powered_primary",
+      "studio_duration_seconds": 0.9400000000000001,
+      "canonical_duration_seconds": 0.68,
+      "studio_release_seconds": 0.56,
+      "canonical_release_seconds": 0.3264,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "iona",
+      "clip": "primary",
+      "studio_duration_seconds": 0.64,
+      "canonical_duration_seconds": 0.48,
+      "studio_release_seconds": 0.32999999999999996,
+      "canonical_release_seconds": 0.1824,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "iona",
+      "clip": "secondary",
+      "studio_duration_seconds": 0.64,
+      "canonical_duration_seconds": 0.65,
+      "studio_release_seconds": 0.33,
+      "canonical_release_seconds": 0.24700000000000003,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "iona",
+      "clip": "special",
+      "studio_duration_seconds": 0.82,
+      "canonical_duration_seconds": 0.65,
+      "studio_release_seconds": 0.38,
+      "canonical_release_seconds": 0.28,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "iona",
+      "clip": "powered_primary",
+      "studio_duration_seconds": 0.64,
+      "canonical_duration_seconds": 0.48,
+      "studio_release_seconds": 0.33,
+      "canonical_release_seconds": 0.1824,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "tam",
+      "clip": "primary",
+      "studio_duration_seconds": 0.64,
+      "canonical_duration_seconds": 0.32,
+      "studio_release_seconds": 0.32999999999999996,
+      "canonical_release_seconds": 0.1216,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "tam",
+      "clip": "secondary",
+      "studio_duration_seconds": 0.64,
+      "canonical_duration_seconds": 0.48,
+      "studio_release_seconds": 0.33,
+      "canonical_release_seconds": 0.1824,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "tam",
+      "clip": "special",
+      "studio_duration_seconds": 0.82,
+      "canonical_duration_seconds": 0.65,
+      "studio_release_seconds": 0.38,
+      "canonical_release_seconds": 0.28,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "tam",
+      "clip": "powered_primary",
+      "studio_duration_seconds": 0.64,
+      "canonical_duration_seconds": 0.32,
+      "studio_release_seconds": 0.33,
+      "canonical_release_seconds": 0.1216,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "brine",
+      "clip": "primary",
+      "studio_duration_seconds": 0.64,
+      "canonical_duration_seconds": 0.64,
+      "studio_release_seconds": 0.32999999999999996,
+      "canonical_release_seconds": 0.2432,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "brine",
+      "clip": "secondary",
+      "studio_duration_seconds": 0.64,
+      "canonical_duration_seconds": 0.48,
+      "studio_release_seconds": 0.33,
+      "canonical_release_seconds": 0.1824,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "brine",
+      "clip": "special",
+      "studio_duration_seconds": 0.82,
+      "canonical_duration_seconds": 0.65,
+      "studio_release_seconds": 0.38,
+      "canonical_release_seconds": 0.28,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "brine",
+      "clip": "powered_primary",
+      "studio_duration_seconds": 0.6399999999999999,
+      "canonical_duration_seconds": 0.64,
+      "studio_release_seconds": 0.32999999999999996,
+      "canonical_release_seconds": 0.2432,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "pendle",
+      "clip": "primary",
+      "studio_duration_seconds": 0.64,
+      "canonical_duration_seconds": 0.43,
+      "studio_release_seconds": 0.32999999999999996,
+      "canonical_release_seconds": 0.1634,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "pendle",
+      "clip": "secondary",
+      "studio_duration_seconds": 0.64,
+      "canonical_duration_seconds": 0.48,
+      "studio_release_seconds": 0.33,
+      "canonical_release_seconds": 0.1824,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "pendle",
+      "clip": "special",
+      "studio_duration_seconds": 0.82,
+      "canonical_duration_seconds": 0.65,
+      "studio_release_seconds": 0.38,
+      "canonical_release_seconds": 0.28,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "pendle",
+      "clip": "powered_primary",
+      "studio_duration_seconds": 0.64,
+      "canonical_duration_seconds": 0.9,
+      "studio_release_seconds": 0.33,
+      "canonical_release_seconds": 0.342,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "mirra",
+      "clip": "primary",
+      "studio_duration_seconds": 0.64,
+      "canonical_duration_seconds": 0.43,
+      "studio_release_seconds": 0.32999999999999996,
+      "canonical_release_seconds": 0.1634,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "mirra",
+      "clip": "secondary",
+      "studio_duration_seconds": 0.64,
+      "canonical_duration_seconds": 0.48,
+      "studio_release_seconds": 0.33,
+      "canonical_release_seconds": 0.1824,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "mirra",
+      "clip": "special",
+      "studio_duration_seconds": 0.82,
+      "canonical_duration_seconds": 0.65,
+      "studio_release_seconds": 0.38,
+      "canonical_release_seconds": 0.28,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "mirra",
+      "clip": "powered_primary",
+      "studio_duration_seconds": 0.64,
+      "canonical_duration_seconds": 0.43,
+      "studio_release_seconds": 0.33,
+      "canonical_release_seconds": 0.1634,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "ashe",
+      "clip": "primary",
+      "studio_duration_seconds": 0.64,
+      "canonical_duration_seconds": 0.48,
+      "studio_release_seconds": 0.33000000000000007,
+      "canonical_release_seconds": 0.1824,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "ashe",
+      "clip": "secondary",
+      "studio_duration_seconds": 0.64,
+      "canonical_duration_seconds": 0.65,
+      "studio_release_seconds": 0.33,
+      "canonical_release_seconds": 0.24700000000000003,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "ashe",
+      "clip": "special",
+      "studio_duration_seconds": 0.82,
+      "canonical_duration_seconds": 0.65,
+      "studio_release_seconds": 0.38,
+      "canonical_release_seconds": 0.28,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "ashe",
+      "clip": "powered_primary",
+      "studio_duration_seconds": 0.64,
+      "canonical_duration_seconds": 0.48,
+      "studio_release_seconds": 0.33,
+      "canonical_release_seconds": 0.1824,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "clack",
+      "clip": "primary",
+      "studio_duration_seconds": 0.64,
+      "canonical_duration_seconds": 0.8,
+      "studio_release_seconds": 0.32999999999999996,
+      "canonical_release_seconds": 0.384,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "clack",
+      "clip": "secondary",
+      "studio_duration_seconds": 0.64,
+      "canonical_duration_seconds": 0.72,
+      "studio_release_seconds": 0.33,
+      "canonical_release_seconds": 0.34559999999999996,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "clack",
+      "clip": "special",
+      "studio_duration_seconds": 0.82,
+      "canonical_duration_seconds": 0.65,
+      "studio_release_seconds": 0.38,
+      "canonical_release_seconds": 0.28,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "clack",
+      "clip": "powered_primary",
+      "studio_duration_seconds": 0.64,
+      "canonical_duration_seconds": 0.7,
+      "studio_release_seconds": 0.33,
+      "canonical_release_seconds": 0.33599999999999997,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "nix",
+      "clip": "primary",
+      "studio_duration_seconds": 0.64,
+      "canonical_duration_seconds": 0.21,
+      "studio_release_seconds": 0.32999999999999996,
+      "canonical_release_seconds": 0.0798,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "nix",
+      "clip": "secondary",
+      "studio_duration_seconds": 0.64,
+      "canonical_duration_seconds": 0.48,
+      "studio_release_seconds": 0.33,
+      "canonical_release_seconds": 0.05,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "nix",
+      "clip": "special",
+      "studio_duration_seconds": 0.82,
+      "canonical_duration_seconds": 0.65,
+      "studio_release_seconds": 0.38,
+      "canonical_release_seconds": 0.28,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "nix",
+      "clip": "powered_primary",
+      "studio_duration_seconds": 0.64,
+      "canonical_duration_seconds": 0.21,
+      "studio_release_seconds": 0.33,
+      "canonical_release_seconds": 0.0798,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "rook",
+      "clip": "primary",
+      "studio_duration_seconds": 0.64,
+      "canonical_duration_seconds": 0.3,
+      "studio_release_seconds": 0.32999999999999996,
+      "canonical_release_seconds": 0.11399999999999999,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "rook",
+      "clip": "secondary",
+      "studio_duration_seconds": 0.64,
+      "canonical_duration_seconds": 0.55,
+      "studio_release_seconds": 0.22000000000000003,
+      "canonical_release_seconds": 0.05,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "rook",
+      "clip": "special",
+      "studio_duration_seconds": 0.82,
+      "canonical_duration_seconds": 0.65,
+      "studio_release_seconds": 0.38,
+      "canonical_release_seconds": 0.28,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "rook",
+      "clip": "powered_primary",
+      "studio_duration_seconds": 0.64,
+      "canonical_duration_seconds": 0.3,
+      "studio_release_seconds": 0.33,
+      "canonical_release_seconds": 0.11399999999999999,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "mote",
+      "clip": "primary",
+      "studio_duration_seconds": 0.64,
+      "canonical_duration_seconds": 0.48,
+      "studio_release_seconds": 0.32999999999999996,
+      "canonical_release_seconds": 0.1824,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "mote",
+      "clip": "secondary",
+      "studio_duration_seconds": 0.64,
+      "canonical_duration_seconds": 0.48,
+      "studio_release_seconds": 0.33,
+      "canonical_release_seconds": 0.1824,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "mote",
+      "clip": "special",
+      "studio_duration_seconds": 0.82,
+      "canonical_duration_seconds": 0.65,
+      "studio_release_seconds": 0.16999999999999998,
+      "canonical_release_seconds": 0.28,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    },
+    {
+      "id": "mote",
+      "clip": "powered_primary",
+      "studio_duration_seconds": 0.64,
+      "canonical_duration_seconds": 0.48,
+      "studio_release_seconds": 0.33,
+      "canonical_release_seconds": 0.1824,
+      "resolution": "retime new art to canonical simulation event; author the new release frame explicitly"
+    }
+  ],
+  "semantic_mismatches": [
+    "Studio E toggles an indefinite powered equipment review. Canonical special begins on release, expires after 8s (Nix7/Rook10), has25s cooldown and no manual toggle exit.",
+    "Studio gates powered secondaries and traversal. Canonical powered secondaries remain available, and Rook can aim/fire during vault.",
+    "Studio Morel rejects catalyst without marks; canonical has a close-range catalyst burst fallback.",
+    "Studio Brine rejects untethered Q; canonical uses a gun-butt sweep.",
+    "Studio Pendle fans all remaining rounds; canonical fans at most3, then reloads. Powered Q is a rifle-stock strike.",
+    "Studio guard is an animation interruption/hold. Canonical guard has frontal geometry,100 meter, drain, absorption, recovery and guard break.",
+    "Studio has cosmetic or simplified fields/turrets/heat. The recovered canonical engine defines actual status, field damage, heat, designated turret targets and finite lifecycles.",
+    "Studio attacks emit east. Canonical action direction is a continuous committed vector with a cardinal presentation facing.",
+    "Canonical Iona lunge is a clipped34-unit advance followed by a line strike. Studio uses a timed dash/contact sweep; preserve the canonical reference and agree world-collision adaptation during the port.",
+    "Canonical reload timers are simulation-owned and can overlap movement/other permitted actions; studio Pendle has a blocking1.11s reload study. New art must not extend the rule timer.",
+    "Old v3 audit claim that Brine gun-butt/Morel close burst were defects is superseded by recovered canonical source.",
+    "New four-facing74px art and density3 world are not supplied by these manifests. Anchor and gameplay-unit conversion needs explicit integration agreement."
+  ]
+}
