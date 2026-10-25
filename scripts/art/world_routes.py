@@ -1049,24 +1049,46 @@ def build_route(spec):
             'objectBy': BETWEEN, 'bandFade': 160,
         })
 
-    # meeting cells: where the line passes from one owner's land into another's
+    # meeting cells: where the line passes from one owner into another's. A stretch a lane
+    # drew is that lane's wherever it runs (on a box line too), so where two drawn stretches
+    # or a drawn stretch and lane G's line join, the meet is the joint itself
+    def part_of(lane, v):
+        who, part = owner(*v)
+        if who == lane:
+            return part
+        # on a box line, or just outside it: the lane's nearest box
+        def gap(box):
+            x0, y0, x1, y1 = box
+            return math.hypot(max(x0 - v[0], 0, v[0] - x1), max(y0 - v[1], 0, v[1] - y1))
+        return min(((gap(bx), n) for (w, n, bx) in FOOTPRINTS if w == lane))[1]
+
+    def holder(i):
+        if vsrc[i] is not None:
+            lane = pieces[vsrc[i]]['lane']
+            return lane, part_of(lane, verts[i])
+        return owner(*verts[i])
+
     meets = []
-    prev = owner(*verts[0])
+    prev = holder(0)
     for i in range(1, len(verts)):
         a, b = verts[i - 1], verts[i]
-        cur = owner(*b)
-        if cur[0] == prev[0] and cur[1] == prev[1]:
+        cur = holder(i)
+        if cur == prev:
             continue
-        # find the crossing between a and b at 1 px
-        n = max(1, int(math.dist(a, b)))
-        q = b
-        for j in range(1, n + 1):
-            x = a[0] + (b[0] - a[0]) * j / n
-            y = a[1] + (b[1] - a[1]) * j / n
-            if owner(x, y) != prev:
-                q = (x, y)
-                break
-        sq = vs[i - 1] + math.dist(a, q)
+        if vsrc[i - 1] != vsrc[i]:
+            k = i if vsrc[i] is not None else i - 1
+            q, sq = verts[k], vs[k]
+        else:
+            # find the crossing between a and b at 1 px
+            n = max(1, int(math.dist(a, b)))
+            q = b
+            for j in range(1, n + 1):
+                x = a[0] + (b[0] - a[0]) * j / n
+                y = a[1] + (b[1] - a[1]) * j / n
+                if owner(x, y) != prev:
+                    q = (x, y)
+                    break
+            sq = vs[i - 1] + math.dist(a, q)
         meets.append({
             'route': rid, 'from': prev[0], 'fromPart': prev[1], 'to': cur[0], 'toPart': cur[1],
             'at': [snap(q[0]), snap(q[1])], 'cell': [snap(q[0]) // GRID, snap(q[1]) // GRID],

@@ -327,7 +327,13 @@ for (const r of worldRoutes) {
         ) <= ROUTE_GRID;
       return inside && near;
     });
-    assert.ok(onEdge, `${r.name}: meeting cell (${m.at[0]}, ${m.at[1]}) on a footprint's edge`);
+    // or where a lane's drawn stretch begins or ends (two plans' lines join there, which can
+    // lie inside the overlap of their boxes)
+    const atJoint = r.drawnBy.some((d) => Math.abs(m.s - d.from) <= 8 || Math.abs(m.s - d.to) <= 8);
+    assert.ok(
+      onEdge || atJoint,
+      `${r.name}: meeting cell (${m.at[0]}, ${m.at[1]}) on a footprint's edge or a joint`,
+    );
     assert.ok(m.width >= ROUTE_WIDTH.min && m.width <= ROUTE_WIDTH.max, `${r.name}: meeting width`);
   }
 }

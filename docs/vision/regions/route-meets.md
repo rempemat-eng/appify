@@ -8,42 +8,42 @@ Inside your footprint you paint the route's surface to the line, width and tier 
 
 | Route     | Crossing                            | Cell       | World px     | Tier | Width | Heading |
 | --------- | ----------------------------------- | ---------- | ------------ | ---- | ----- | ------- |
-| Shell Bar | the Headland to the Tidebloom Isles | (882, 725) | (7056, 5800) | 0    | 48    | 90      |
+| Shell Bar | the Headland to the Tidebloom Isles | (862, 728) | (6896, 5824) | 0    | 56    | 90      |
 
 ## Lane D (Sunstone Reach)
 
 | Route         | Crossing                            | Cell       | World px     | Tier | Width | Heading |
 | ------------- | ----------------------------------- | ---------- | ------------ | ---- | ----- | ------- |
-| Ash Coast     | the home valley to the fire country | (700, 552) | (5600, 4416) | 3    | 32    | 180     |
+| Ash Coast     | the home valley to the fire country | (700, 542) | (5600, 4336) | 3    | 40    | 180     |
 | Drover's Road | the Brackens to the Sunstone basin  | (600, 442) | (4800, 3536) | 4    | 32    | 180     |
 
 ## Lane E (the home valley)
 
 | Route         | Crossing                                        | Cell       | World px     | Tier | Width | Heading |
 | ------------- | ----------------------------------------------- | ---------- | ------------ | ---- | ----- | ------- |
-| Ash Coast     | the home valley to the fire country             | (700, 552) | (5600, 4416) | 3    | 32    | 180     |
+| Ash Coast     | the home valley to the fire country             | (700, 542) | (5600, 4336) | 3    | 40    | 180     |
 | Coast Path    | the home valley to the land between             | (875, 634) | (7000, 5072) | 3    | 32    | 0       |
-| Col Path      | the home valley to the Frostline                | (786, 287) | (6288, 2296) | 7    | 24    | -90     |
+| Col Path      | the home valley to the Frostline                | (786, 288) | (6288, 2304) | 7    | 24    | -90     |
 | Drover's Road | the home valley to the Brackens                 | (700, 493) | (5600, 3944) | 4    | 32    | 180     |
 | Foothill Road | the home valley to Cogsworth and the coal hills | (875, 399) | (7000, 3192) | 7    | 48    | 0       |
 | Lull Road     | the home valley to the land between             | (875, 477) | (7000, 3816) | 4    | 40    | 0       |
-| Shell Bar     | the Headland to the Tidebloom Isles             | (882, 725) | (7056, 5800) | 0    | 48    | 90      |
+| Shell Bar     | the Headland to the Tidebloom Isles             | (862, 728) | (6896, 5824) | 0    | 56    | 90      |
 
 ## Lane F (the Frostline, the massif and the Brackens)
 
 | Route         | Crossing                           | Cell       | World px     | Tier | Width | Heading |
 | ------------- | ---------------------------------- | ---------- | ------------ | ---- | ----- | ------- |
-| Col Path      | the home valley to the Frostline   | (786, 287) | (6288, 2296) | 7    | 24    | -90     |
+| Col Path      | the home valley to the Frostline   | (786, 288) | (6288, 2304) | 7    | 24    | -90     |
 | Drover's Road | the home valley to the Brackens    | (700, 493) | (5600, 3944) | 4    | 32    | 180     |
 | Drover's Road | the Brackens to the Sunstone basin | (600, 442) | (4800, 3536) | 4    | 32    | 180     |
-| High Fells    | the Frostline to the land between  | (850, 202) | (6800, 1616) | 12   | 24    | 0       |
+| High Fells    | the Frostline to the land between  | (850, 202) | (6800, 1616) | 12   | 24    | 90      |
 
 ## Lane H (Cogsworth and the coal hills)
 
 | Route         | Crossing                                                   | Cell        | World px     | Tier | Width | Heading |
 | ------------- | ---------------------------------------------------------- | ----------- | ------------ | ---- | ----- | ------- |
 | Foothill Road | the home valley to Cogsworth and the coal hills            | (875, 399)  | (7000, 3192) | 7    | 48    | 0       |
-| High Fells    | the land between to Cogsworth and the coal hills           | (909, 212)  | (7272, 1696) | 12   | 24    | 90      |
+| High Fells    | the land between to Cogsworth and the coal hills           | (909, 212)  | (7272, 1696) | 12   | 24    | 0       |
 | Towpath       | Cogsworth and the coal hills to the Lull belt and Lullford | (1060, 412) | (8480, 3296) | 5    | 32    | 90      |
 
 ## Lane I (Neon Harbour and the Lull belt)
