@@ -1,42 +1,77 @@
 {
-  "_about": "The Undercroft under the woodland's stone circle as a blockout plan (Claude A, 25 Oct; docs/vision/vertical-slice.md, beat 6). Same shape as crossroads.json. Three rooms and the Thornback's chamber in a row; the fights are camps of actors/enemy.tscn stand-ins until Codex's woodland enemies and the Thornback land (game/enemies/**). The final dungeon goes on the cliff core's tiers (game-design.md 12.2).",
+  "_about": "The Undercroft under the woodland's stone circle (Claude A, 25 Oct; docs/vision/vertical-slice.md, beat 6), drawn: python3 game/tools/gen_undercroft.py renders it with scripts/art/native/undercroft.py and writes zones/undercroft/undercroft.tscn. World px, on the 8 px soft grid. Four rooms in a row: the stair hall under the hatch, the root corridor, the seal room (the two-step puzzle: stand on the plate, then pull the lever) and the Thornback's chamber. Walls are blocks: `rect` is the whole drawn block and its collision, `face` the height of its south face (0: only its top shows).",
   "id": "undercroft",
   "owner": "claude-a",
-  "box": [0, 0, 600, 200],
+  "box": [0, 0, 768, 216],
+  "art": { "kit": "undercroft", "seed": 31 },
   "tiers": [
-    { "id": "floor", "tier": 3, "colour": "#4e4a44", "outline": [[0, 20], [600, 20], [600, 180], [0, 180]] }
+    { "id": "floor", "tier": 3, "colour": "#4e4a44", "outline": [[16, 56], [752, 56], [752, 200], [16, 200]] }
+  ],
+  "rooms": [
+    { "id": "stair_hall", "rect": [16, 56, 184, 144], "why": "under the hatch: daylight down the stair, two torches" },
+    { "id": "root_corridor", "rect": [216, 104, 184, 64], "why": "the oak's roots have split the vault; a corridor between two thick walls" },
+    { "id": "seal_room", "rect": [416, 56, 144, 144], "why": "the plate and the lever that sink the sealed slab" },
+    { "id": "chamber", "rect": [576, 56, 176, 144], "why": "the Thornback's chamber under the circle's centre: the skylight shaft, the shard, Cairn's alcove" }
   ],
   "places": [
-    { "id": "chamber", "kind": "boss_room", "rect": [452, 20, 148, 160], "colour": "#5a4a4a", "why": "the Thornback's chamber, under the circle's centre" }
+    { "id": "chamber", "kind": "boss_room", "rect": [576, 56, 176, 144], "colour": "#5a4a4a", "why": "the arena: the Thornback never leaves it" }
   ],
-  "faces": [
-    { "id": "roof", "rect": [0, 0, 600, 20] },
-    { "id": "floor_edge", "rect": [0, 180, 600, 20] },
-    { "id": "sep1_n", "rect": [160, 20, 12, 70] },
-    { "id": "sep1_s", "rect": [160, 110, 12, 70] },
-    { "id": "sep2_n", "rect": [320, 20, 12, 70] },
-    { "id": "sep2_s", "rect": [320, 110, 12, 70] },
-    { "id": "sep3_n", "rect": [440, 20, 12, 66] },
-    { "id": "sep3_s", "rect": [440, 114, 12, 66] }
+  "walls": [
+    { "id": "north_hall", "rect": [16, 0, 184, 56], "face": 40 },
+    { "id": "sep1_n", "rect": [200, 0, 16, 112], "face": 40 },
+    { "id": "corridor_n", "rect": [216, 0, 184, 104], "face": 40, "roots": [264, 344] },
+    { "id": "sep2_n", "rect": [400, 0, 16, 112], "face": 40 },
+    { "id": "north_seal", "rect": [416, 0, 144, 56], "face": 40, "roots": [520] },
+    { "id": "sep3_n", "rect": [560, 0, 16, 112], "face": 40 },
+    { "id": "north_chamber", "rect": [576, 0, 176, 56], "face": 40, "alcove": 720, "skylight": [600, 4, 48, 8] },
+    { "id": "west_n", "rect": [0, 0, 16, 120], "face": 0 },
+    { "id": "west_s", "rect": [0, 152, 16, 64], "face": 0 },
+    { "id": "east", "rect": [752, 0, 16, 216], "face": 0 },
+    { "id": "south", "rect": [16, 200, 736, 16], "face": 0 },
+    { "id": "sep1_s", "rect": [200, 160, 16, 40], "face": 0 },
+    { "id": "corridor_s", "rect": [216, 168, 184, 32], "face": 0 },
+    { "id": "sep2_s", "rect": [400, 160, 16, 40], "face": 0 },
+    { "id": "sep3_s", "rect": [560, 160, 16, 40], "face": 0 }
   ],
+  "stair": { "rect": [0, 120, 16, 32], "why": "the hatch stair up to the woodland, lit from above" },
+  "torches": [[56, 56], [160, 56], [248, 104], [376, 104], [440, 56], [536, 56], [608, 56], [704, 56]],
+  "skylight": { "at": [640, 132], "rx": 40, "ry": 30, "why": "a crack in the vault under the circle lets a shaft of daylight in" },
   "props": [
-    { "id": "roots_a", "kind": "roots", "rect": [60, 30, 30, 16], "solid": true, "colour": "#3a4a2a" },
-    { "id": "roots_b", "kind": "roots", "rect": [230, 140, 34, 16], "solid": true, "colour": "#3a4a2a" },
-    { "id": "pillar", "kind": "pillar", "rect": [380, 60, 16, 16], "solid": true, "colour": "#6a6660" },
-    { "id": "shard_glow", "kind": "glow", "rect": [556, 94, 16, 12], "colour": "#e8f0ff", "if": { "not_flags": ["shard_taken:woodland"] }, "why": "the woodland's great shard" }
+    { "id": "rubble_hall", "kind": "rubble", "at": [44, 192], "size": [24, 10], "solid": true },
+    { "id": "roots_hall", "kind": "roots", "at": [120, 72], "size": [28, 10], "solid": true, "why": "the oak's roots came through the vault and spread on the floor" },
+    { "id": "rubble_corridor", "kind": "rubble", "at": [344, 116], "size": [16, 8], "solid": true, "why": "a block fallen where the roots split the vault" },
+    { "id": "roots_corridor", "kind": "roots", "at": [272, 164], "size": [26, 8], "solid": true },
+    { "id": "urn_seal", "kind": "urn", "at": [428, 72], "size": [8, 6], "solid": true },
+    { "id": "rubble_seal", "kind": "rubble", "at": [432, 194], "size": [16, 6], "solid": true },
+    { "id": "stump_nw", "kind": "stump", "at": [592, 76], "size": [12, 8], "solid": true, "why": "a broken pillar of the old vault" },
+    { "id": "stump_se", "kind": "stump", "at": [736, 194], "size": [12, 8], "solid": true },
+    { "id": "rubble_chamber", "kind": "rubble", "at": [736, 76], "size": [16, 8], "solid": true },
+    { "id": "shard", "kind": "shard", "at": [700, 128], "size": [12, 8], "solid": false, "if": { "not_flags": ["shard_taken:woodland"] }, "why": "the woodland's great shard" }
   ],
+  "puzzle": {
+    "plate": { "id": "seal_plate", "at": [472, 128], "size": [16, 16], "flag": "undercroft_plate" },
+    "channel": [[480, 136], [552, 136]],
+    "lever": { "id": "seal_lever", "at": [548, 96], "flag": "undercroft_seal_open" },
+    "seal": { "id": "seal_slab", "rect": [560, 112, 16, 48], "height": 40 },
+    "why": "two steps: the plate charges the channel, the lever sinks the slab; both persist in the save"
+  },
   "camps": [
-    { "id": "undercroft_rooms", "enemies": [[110, 70], [120, 130], [250, 80], [270, 120], [380, 120]], "why": "the rooms' shardstruck mosslings (stand-ins for a grunt, a lunger, a shooter and a swarmer)" },
-    { "id": "thornback", "enemies": [[520, 100]], "boss": true, "why": "the Thornback stand-in: one enemy until Codex's boss lands" }
+    { "id": "undercroft_rooms", "enemies": [[96, 128, "rusher"], [160, 96, "shooter"], [304, 136, "shield"], [368, 128, "rusher"], [496, 104, "elite"]], "why": "the rooms' shardstruck (Codex's woodland roles: rusher, shooter, shield bearer, elite)" },
+    { "id": "thornback", "enemies": [[664, 120]], "boss": true, "why": "the Thornback, freed not killed" }
   ],
+  "arena": [584, 64, 160, 132],
+  "rest": [636, 164],
   "things": [
-    { "id": "circle_shard", "speaker": "circle_shard", "verb": "Take", "at": [564, 110], "colour": "#00000000", "if": { "flags": ["camp_cleared:thornback"] } },
-    { "id": "cairn_statue", "speaker": "cairn_statue", "verb": "Look", "at": [580, 40], "colour": "#7a7a70", "why": "Cairn, asleep in the wall: he stands up in act 1" }
+    { "id": "circle_shard", "speaker": "circle_shard", "verb": "Take", "at": [700, 132], "colour": "#00000000", "if": { "flags": ["camp_cleared:thornback"] } },
+    { "id": "cairn_statue", "speaker": "cairn_statue", "verb": "Look", "at": [720, 66], "colour": "#00000000", "why": "Cairn, asleep in the wall: he stands up in act 1" }
   ],
   "spawns": [
-    { "id": "start", "at": [30, 100] }
+    { "id": "start", "at": [32, 136] },
+    { "id": "corridor", "at": [232, 136], "why": "screenshots" },
+    { "id": "seal", "at": [448, 160], "why": "screenshots" },
+    { "id": "arena", "at": [600, 160], "why": "screenshots and the fight demo" }
   ],
   "doors": [
-    { "id": "to_woodland", "rect": [0, 80, 8, 40], "to": "woodland", "spawn": "undercroft" }
+    { "id": "to_woodland", "rect": [0, 120, 8, 32], "to": "woodland", "spawn": "undercroft" }
   ]
 }

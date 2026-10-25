@@ -3,8 +3,14 @@
     "name": "The great shard",
     "entries": [
       {
-        "if": { "flags": ["shard_taken:woodland"] },
-        "lines": ["Only a scorch on the stone where the shard lay."]
+        "if": {
+          "flags": [
+            "shard_taken:woodland"
+          ]
+        },
+        "lines": [
+          "Only a scorch on the stone where the shard lay."
+        ]
       },
       {
         "lines": [
@@ -18,11 +24,49 @@
     "name": "Stone figure",
     "entries": [
       {
-        "if": { "flags": ["shard_taken:woodland"] },
-        "lines": ["The stone figure's eye slits glow faintly amber, then fade. Not yet."]
+        "if": {
+          "flags": [
+            "shard_taken:woodland"
+          ]
+        },
+        "lines": [
+          "The stone figure's eye slits glow faintly amber, then fade. Not yet."
+        ]
       },
       {
-        "lines": ["A figure of granite slabs, half sunk into the wall, turf growing on its shoulders. It looks almost like it is waiting."]
+        "lines": [
+          "A figure of granite slabs, half sunk into the wall, turf growing on its shoulders. It looks almost like it is waiting."
+        ]
+      }
+    ]
+  },
+  "seal_lever": {
+    "name": "Old lever",
+    "entries": [
+      {
+        "if": {
+          "flags": [
+            "undercroft_seal_open"
+          ]
+        },
+        "lines": [
+          "The lever lies down. The slab has sunk into the floor."
+        ]
+      },
+      {
+        "if": {
+          "flags": [
+            "undercroft_plate"
+          ]
+        },
+        "lines": [
+          "You haul on the lever. Under the floor, stone grinds on stone, and the sealed slab sinks away."
+        ]
+      },
+      {
+        "lines": [
+          "The lever will not move. The channel at its foot is dark, as if something under the floor is not set yet."
+        ]
       }
     ]
   }

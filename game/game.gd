@@ -6,6 +6,7 @@ extends Node2D
 ## Command-line options (after `--`): --fresh (ignore the save), --zone=<id>, --spawn=<name>,
 ## --shot=<png path> (wait, save a 1:1 picture of the window, quit), --demo (a scripted walk in four
 ## directions with a bow shot after each, for screenshots and videos; --quit ends the run after it),
+## --bossfight (the Thornback fought by a simple pilot: bosses/fight_demo.gd; --telegraph_shot=<png>),
 ## --lineup (the whole cast in a row), --cycle (the player becomes each cast member in turn) and
 ## --character=<id> (start as that cast member).
 ## See docs/godot.md.
@@ -42,6 +43,10 @@ func _ready() -> void:
 	Quests.completed.connect(func(_id: String) -> void: autosave())
 	Village.changed.connect(func(_id: String) -> void: autosave())
 	pcam.follow_target = player
+	if args.has("bossfight"):
+		BossFightDemo.prepare()
+		args.zone = "undercroft"
+		args.spawn = "arena"
 	var zone: String = args.get("zone", SaveGame.data.zone)
 	if not Zones.go_to(zone, args.get("spawn", SaveGame.data.spawn)):
 		Zones.go_to("woodland", "start")
@@ -49,6 +54,12 @@ func _ready() -> void:
 		_shot.call_deferred(args.shot)
 	if args.has("demo"):
 		_demo.call_deferred()
+	if args.has("bossfight"):
+		var pilot := BossFightDemo.new()
+		pilot.player = player
+		pilot.shot_path = String(args.get("telegraph_shot", ""))
+		pilot.quit_after = args.has("quit")
+		add_child(pilot)
 	if args.has("lineup"):
 		_lineup.call_deferred()
 	if args.has("character"):

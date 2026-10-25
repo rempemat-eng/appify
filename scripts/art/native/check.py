@@ -8,7 +8,7 @@
    already verified on this machine (.cache/kit/verified/, keyed by their hash), so it costs a
    render only when something it reads has changed.
 3. The lawn band. The golden's lawn measure (measure.py, MEASURE.md) sits in its biome's band.
-4. The drawn villages (village.py, town.py): house colours only, few lone pixels, and a note when a
+4. The drawn villages (village.py, town.py) and the Undercroft (undercroft.py): house colours only, few lone pixels, and a note when a
    zone's pictures are older than the kit or its plan.
 
     python3 -m scripts.art.native.check            all gates
@@ -136,8 +136,13 @@ def villages() -> list:
             bad.append(f'{plan["id"]}: no kit.json (python3 game/tools/gen_village.py {plan["id"]})')
             continue
         kit = json.load(open(kp))
-        if kit.get('inputs') != town.input_hash(plan_path, kit['density']):
-            notes.append(f'{plan["id"]}: the kit or the plan changed since it was drawn: python3 game/tools/gen_village.py {plan["id"]}')
+        if plan['art'].get('kit') == 'undercroft':     # the vault kit (undercroft.py) has its own inputs and tool
+            from scripts.art.native import undercroft
+            stale, tool = kit.get('inputs') != undercroft.input_hash(plan_path, kit['density']), 'gen_undercroft.py'
+        else:
+            stale, tool = kit.get('inputs') != town.input_hash(plan_path, kit['density']), 'gen_village.py ' + plan['id']
+        if stale:
+            notes.append(f'{plan["id"]}: the kit or the plan changed since it was drawn: python3 game/tools/{tool}')
         drawn = set(kit.get('kit_drawn', []))
         for f in sorted(glob.glob(os.path.join(zdir, 'art', '*.png'))):
             img = Image.open(f).convert('RGBA')
