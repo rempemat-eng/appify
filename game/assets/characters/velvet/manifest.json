@@ -24184,43 +24184,43 @@
        "path": "res://assets/animated/velvet/powered_primary_S_00.png",
        "file": "powered_primary_S_00.png",
        "packed_bounds": [
-        61,
         62,
-        104,
-        138
+        62,
+        106,
+        137
        ],
        "anchors": {
         "hand_R": [
-         -13.5,
-         -31.7
+         -12.0,
+         -28.8
         ],
         "hand_L": [
-         10.0,
-         -32.2
+         9.0,
+         -31.8
         ],
         "foot_R": [
          -5.0,
-         -2.2
+         -2.1
         ],
         "foot_L": [
          5.0,
-         0.8
+         0.4
         ],
         "lantern": [
-         -13.5,
-         -21.7
+         -12.0,
+         -18.8
         ],
         "blade_tip": [
-         22.9,
-         -35.5
+         24.0,
+         -38.6
         ]
        },
        "equipment": {
-        "scabbard": 5,
-        "lantern": 111,
-        "sabre": 48
+        "scabbard": 0,
+        "lantern": 108,
+        "sabre": 60
        },
-       "sha256": "ca142bbc1483a7c4d196da7b168a7788f3a2c38e7881c810ed2ddd4e489620ea",
+       "sha256": "80068d3ad9e70dc557ce861e0f069c5931b2cdafec44ea89c2d4799888e5d627",
        "sheet": "sheets/powered_primary_S.png",
        "region": [
         0,
@@ -24234,42 +24234,42 @@
        "file": "powered_primary_S_01.png",
        "packed_bounds": [
         61,
-        59,
-        100,
+        63,
+        108,
         138
        ],
        "anchors": {
         "hand_R": [
-         -13.5,
-         -30.7
+         -12.8,
+         -29.3
         ],
         "hand_L": [
-         10.0,
-         -53.4
+         9.5,
+         -42.1
         ],
         "foot_R": [
          -5.0,
-         -2.2
+         -2.1
         ],
         "foot_L": [
          5.0,
-         0.8
+         0.6
         ],
         "lantern": [
-         -13.5,
-         -20.7
+         -12.8,
+         -19.3
         ],
         "blade_tip": [
-         18.9,
-         -75.7
+         26.2,
+         -63.3
         ]
        },
        "equipment": {
-        "scabbard": 5,
-        "sabre": 69,
-        "lantern": 111
+        "scabbard": 0,
+        "lantern": 97,
+        "sabre": 75
        },
-       "sha256": "6f5d16ace30d5adf3851c14239d36b1763d5d090d3408931f64c7ad087524df2",
+       "sha256": "b95beaebd70090e1eab818b92d394cf907ffe63e6fead7089cbdf86f6b8db778",
        "sheet": "sheets/powered_primary_S.png",
        "region": [
         160,
@@ -24283,18 +24283,18 @@
        "file": "powered_primary_S_02.png",
        "packed_bounds": [
         61,
-        60,
-        100,
+        63,
+        103,
         138
        ],
        "anchors": {
         "hand_R": [
-         -13.5,
-         -30.7
+         -13.2,
+         -30.1
         ],
         "hand_L": [
-         10.0,
-         -54.6
+         9.8,
+         -49.8
         ],
         "foot_R": [
          -5.0,
@@ -24302,23 +24302,23 @@
         ],
         "foot_L": [
          5.0,
-         0.8
+         0.7
         ],
         "lantern": [
-         -13.5,
-         -20.7
+         -13.2,
+         -20.1
         ],
         "blade_tip": [
-         18.7,
-         -74.9
+         21.8,
+         -71.7
         ]
        },
        "equipment": {
-        "scabbard": 5,
-        "sabre": 65,
-        "lantern": 111
+        "scabbard": 3,
+        "sabre": 74,
+        "lantern": 104
        },
-       "sha256": "47b001bc2c4715968cda986453710db7c202778506a001e8ec12820c19b27036",
+       "sha256": "6d43313ed02619926cee05c053471bf454992064c5ecaec6ea26cd5daeaed436",
        "sheet": "sheets/powered_primary_S.png",
        "region": [
         320,
@@ -24585,43 +24585,43 @@
        "path": "res://assets/animated/velvet/powered_primary_N_00.png",
        "file": "powered_primary_N_00.png",
        "packed_bounds": [
-        58,
+        57,
         62,
-        100,
+        98,
         137
        ],
        "anchors": {
         "hand_R": [
-         13.5,
-         -30.3
+         12.0,
+         -35.2
         ],
         "hand_L": [
-         -10.0,
-         -37.8
+         -9.0,
+         -38.2
         ],
         "foot_R": [
          5.0,
-         0.2
+         0.1
         ],
         "foot_L": [
          -5.0,
-         -2.8
+         -2.4
         ],
         "lantern": [
-         13.5,
-         -20.3
+         12.0,
+         -25.2
         ],
         "blade_tip": [
-         -20.2,
-         -57.4
+         -21.5,
+         -59.0
         ]
        },
        "equipment": {
-        "sabre": 47,
-        "scabbard": 52,
-        "lantern": 106
+        "lantern": 57,
+        "sabre": 46,
+        "scabbard": 83
        },
-       "sha256": "ac20fd55bd79bd0988d625bc520047a6cfc26272b9cf031599a35c38429107df",
+       "sha256": "6e34f99e79c7dd1d11ff18f1ef413214b0fa9df42a621428e4d9af063c0afdd8",
        "sheet": "sheets/powered_primary_N.png",
        "region": [
         0,
@@ -24634,43 +24634,43 @@
        "path": "res://assets/animated/velvet/powered_primary_N_01.png",
        "file": "powered_primary_N_01.png",
        "packed_bounds": [
-        60,
+        55,
         64,
-        100,
+        99,
         137
        ],
        "anchors": {
         "hand_R": [
-         13.5,
-         -29.3
+         12.8,
+         -31.7
         ],
         "hand_L": [
-         -10.0,
-         -50.6
+         -9.5,
+         -43.9
         ],
         "foot_R": [
          5.0,
-         0.2
+         0.1
         ],
         "foot_L": [
          -5.0,
-         -2.8
+         -2.6
         ],
         "lantern": [
-         13.5,
-         -19.3
+         12.8,
+         -21.7
         ],
         "blade_tip": [
-         -18.6,
-         -60.6
+         -24.0,
+         -65.5
         ]
        },
        "equipment": {
-        "scabbard": 52,
-        "lantern": 106,
-        "sabre": 49
+        "scabbard": 42,
+        "lantern": 107,
+        "sabre": 72
        },
-       "sha256": "82bad84be0bc7014ddc10a94f794734a1e48c7480406239791fa0e1583f7eb50",
+       "sha256": "fb698c8ee320e03c8b999dd77308c1f4e240e50b6a6f00c39d7ef8a28c1033d4",
        "sheet": "sheets/powered_primary_N.png",
        "region": [
         160,
@@ -24683,19 +24683,19 @@
        "path": "res://assets/animated/velvet/powered_primary_N_02.png",
        "file": "powered_primary_N_02.png",
        "packed_bounds": [
-        59,
+        57,
         64,
-        100,
+        99,
         137
        ],
        "anchors": {
         "hand_R": [
-         13.5,
-         -29.3
+         13.2,
+         -30.3
         ],
         "hand_L": [
-         -10.0,
-         -51.4
+         -9.8,
+         -48.6
         ],
         "foot_R": [
          5.0,
@@ -24703,23 +24703,23 @@
         ],
         "foot_L": [
          -5.0,
-         -2.8
+         -2.7
         ],
         "lantern": [
-         13.5,
-         -19.3
+         13.2,
+         -20.3
         ],
         "blade_tip": [
-         -19.2,
-         -57.6
+         -21.3,
+         -59.6
         ]
        },
        "equipment": {
-        "scabbard": 52,
-        "lantern": 106,
-        "sabre": 44
+        "scabbard": 47,
+        "lantern": 97,
+        "sabre": 47
        },
-       "sha256": "36e593954801d4e9fd7c2c4d1298f274cdda947416a3e40280f3b2f4903a5742",
+       "sha256": "5ac469f297f6f600a006cd40715a6217db121650f9df64420019b72287982735",
        "sheet": "sheets/powered_primary_N.png",
        "region": [
         320,
@@ -24988,41 +24988,41 @@
        "packed_bounds": [
         61,
         62,
-        114,
+        112,
         136
        ],
        "anchors": {
         "hand_R": [
-         -3.4,
-         -31.0
+         7.8,
+         -32.0
         ],
         "hand_L": [
-         9.0,
+         9.9,
          -35.0
         ],
         "foot_L": [
-         5.5,
+         4.5,
          -1.0
         ],
         "foot_R": [
-         -4.0,
+         -3.5,
          -1.0
         ],
         "lantern": [
-         -3.4,
-         -21.0
+         7.8,
+         -22.0
         ],
         "blade_tip": [
-         32.4,
-         -44.7
+         30.9,
+         -47.4
         ]
        },
        "equipment": {
-        "sabre": 64,
-        "scabbard": 51,
-        "lantern": 101
+        "sabre": 63,
+        "scabbard": 87,
+        "lantern": 100
        },
-       "sha256": "509bc86d3e6d47a28646b4a4abb8b2a3cfd9b5748b337d062cfc75c078c18f67",
+       "sha256": "e204eb77d60756da0d8fdd988a225a6b021b0b371b828fd33defe8142b8668cd",
        "sheet": "sheets/powered_primary_E.png",
        "region": [
         0,
@@ -25035,43 +25035,43 @@
        "path": "res://assets/animated/velvet/powered_primary_E_01.png",
        "file": "powered_primary_E_01.png",
        "packed_bounds": [
-        57,
+        61,
         63,
         93,
         136
        ],
        "anchors": {
         "hand_R": [
-         -3.4,
-         -30.0
+         2.2,
+         -30.5
         ],
         "hand_L": [
-         -3.0,
-         -52.0
+         3.5,
+         -43.0
         ],
         "foot_L": [
-         5.5,
+         5.0,
          -1.0
         ],
         "foot_R": [
-         -4.0,
+         -3.8,
          -1.0
         ],
         "lantern": [
-         -3.4,
-         -20.0
+         2.2,
+         -20.5
         ],
         "blade_tip": [
-         -21.9,
-         -68.4
+         4.2,
+         -65.1
         ]
        },
        "equipment": {
-        "sabre": 27,
-        "scabbard": 51,
-        "lantern": 101
+        "sabre": 6,
+        "scabbard": 80,
+        "lantern": 100
        },
-       "sha256": "64b8f08dbaf6a468479f39c50fe7b8a69ac1fa029598eecc2ed6a7ec4de906e1",
+       "sha256": "06d211a4fa01309d5f1cabc6c44256a75c132069b875f270c01e5a2536339fb0",
        "sheet": "sheets/powered_primary_E.png",
        "region": [
         160,
@@ -25084,43 +25084,43 @@
        "path": "res://assets/animated/velvet/powered_primary_E_02.png",
        "file": "powered_primary_E_02.png",
        "packed_bounds": [
-        54,
+        61,
         63,
         93,
         136
        ],
        "anchors": {
         "hand_R": [
-         -3.4,
-         -30.0
+         -1.1,
+         -30.2
         ],
         "hand_L": [
-         -3.5,
-         -53.0
+         -0.8,
+         -49.2
         ],
         "foot_L": [
-         5.5,
+         5.3,
          -1.0
         ],
         "foot_R": [
-         -4.0,
+         -3.9,
          -1.0
         ],
         "lantern": [
-         -3.4,
-         -20.0
+         -1.1,
+         -20.2
         ],
         "blade_tip": [
-         -24.5,
-         -66.6
+         -17.6,
+         -66.2
         ]
        },
        "equipment": {
-        "sabre": 32,
-        "scabbard": 51,
-        "lantern": 101
+        "sabre": 17,
+        "scabbard": 62,
+        "lantern": 104
        },
-       "sha256": "130707de08d85e97ddfc1dee1de67ba4d67d1924fb364014275786db9b1968d7",
+       "sha256": "12e800f1f872fd9f4763e8aa89dde190df6a86686196d805184530609e53bc78",
        "sheet": "sheets/powered_primary_E.png",
        "region": [
         320,
@@ -25387,43 +25387,43 @@
        "path": "res://assets/animated/velvet/powered_primary_W_00.png",
        "file": "powered_primary_W_00.png",
        "packed_bounds": [
-        50,
+        52,
         62,
         96,
         136
        ],
        "anchors": {
         "hand_R": [
-         0.6,
-         -31.0
+         -10.2,
+         -32.0
         ],
         "hand_L": [
-         -7.0,
+         -8.1,
          -35.0
         ],
         "foot_R": [
-         3.0,
+         2.5,
          -1.0
         ],
         "foot_L": [
-         -4.5,
+         -3.5,
          -1.0
         ],
         "lantern": [
-         0.6,
-         -21.0
+         -10.2,
+         -22.0
         ],
         "blade_tip": [
-         -28.5,
-         -44.9
+         -26.6,
+         -47.8
         ]
        },
        "equipment": {
         "scabbard": 13,
-        "lantern": 0,
-        "sabre": 72
+        "lantern": 88,
+        "sabre": 66
        },
-       "sha256": "68a4ff59ac56a2130cb961dcc7b99b6a1654f1ebb466d08fc36142d084fd3bdf",
+       "sha256": "4954df19eebce4ab180eb0775969df508ce210818641f897cf03df2a73acd7d7",
        "sheet": "sheets/powered_primary_W.png",
        "region": [
         0,
@@ -25438,41 +25438,41 @@
        "packed_bounds": [
         68,
         63,
-        107,
+        96,
         136
        ],
        "anchors": {
         "hand_R": [
-         0.6,
-         -30.0
+         -4.8,
+         -30.5
         ],
         "hand_L": [
-         5.0,
-         -52.0
+         -1.5,
+         -43.0
         ],
         "foot_R": [
-         3.0,
+         2.8,
          -1.0
         ],
         "foot_L": [
-         -4.5,
+         -4.0,
          -1.0
         ],
         "lantern": [
-         0.6,
-         -20.0
+         -4.8,
+         -20.5
         ],
         "blade_tip": [
-         25.3,
-         -68.4
+         0.9,
+         -65.2
         ]
        },
        "equipment": {
         "scabbard": 13,
-        "lantern": 0,
-        "sabre": 73
+        "lantern": 31,
+        "sabre": 19
        },
-       "sha256": "d476eb41faba5041fab7d3c4237f473e24414232dfb274c30bb8a0c3829528eb",
+       "sha256": "c17691429cc291efda0a6fc9075ec263b1fb012bed81319fe13ae627097562d2",
        "sheet": "sheets/powered_primary_W.png",
        "region": [
         160,
@@ -25487,41 +25487,41 @@
        "packed_bounds": [
         68,
         63,
-        109,
+        103,
         136
        ],
        "anchors": {
         "hand_R": [
-         0.6,
-         -30.0
+         -1.5,
+         -30.2
         ],
         "hand_L": [
-         5.5,
-         -53.0
+         2.8,
+         -49.2
         ],
         "foot_R": [
-         3.0,
+         2.9,
          -1.0
         ],
         "foot_L": [
-         -4.5,
+         -4.3,
          -1.0
         ],
         "lantern": [
-         0.6,
-         -20.0
+         -1.5,
+         -20.2
         ],
         "blade_tip": [
-         27.9,
-         -66.6
+         21.5,
+         -66.2
         ]
        },
        "equipment": {
         "scabbard": 13,
-        "lantern": 0,
-        "sabre": 79
+        "lantern": 6,
+        "sabre": 31
        },
-       "sha256": "1c143c91e06edf0b316e612ea69a1388a7b6644300a749f0c4ebfe111e113cda",
+       "sha256": "99b662f3a25a756c9faea8b51ab9051426920c0b49d8510235275caf71359bda",
        "sheet": "sheets/powered_primary_W.png",
        "region": [
         320,
@@ -25822,43 +25822,43 @@
        "path": "res://assets/animated/velvet/powered_guard_S_00.png",
        "file": "powered_guard_S_00.png",
        "packed_bounds": [
-        60,
         62,
-        107,
+        62,
+        106,
         137
        ],
        "anchors": {
         "hand_R": [
-         -13.5,
-         -26.4
+         -12.0,
+         -28.8
         ],
         "hand_L": [
-         11.0,
-         -29.9
+         9.0,
+         -31.8
         ],
         "foot_R": [
          -5.0,
-         -0.3
+         -2.1
         ],
         "foot_L": [
          5.0,
-         -1.7
+         0.4
         ],
         "lantern": [
-         -13.5,
-         -16.4
+         -12.0,
+         -18.8
         ],
         "blade_tip": [
-         25.8,
-         -20.6
+         24.0,
+         -38.6
         ]
        },
        "equipment": {
-        "scabbard": 1,
-        "lantern": 106,
-        "sabre": 57
+        "scabbard": 0,
+        "lantern": 108,
+        "sabre": 60
        },
-       "sha256": "26c0c06087711cf86f1ae08ecb2b6e4ac6965db8cfaeabb1b7d7e5d03b1ade1c",
+       "sha256": "06ee8653747eee9558db79ac9d4e8657edc7723dc1bed6905c66f11f8deddb7b",
        "sheet": "sheets/powered_guard_S.png",
        "region": [
         0,
@@ -25873,41 +25873,41 @@
        "packed_bounds": [
         61,
         63,
-        104,
-        136
+        105,
+        137
        ],
        "anchors": {
         "hand_R": [
-         -13.5,
-         -29.8
+         -12.8,
+         -29.1
         ],
         "hand_L": [
-         8.0,
-         -32.7
+         8.5,
+         -32.0
         ],
         "foot_R": [
          -5.0,
-         -1.3
+         -1.7
         ],
         "foot_L": [
          5.0,
-         -0.7
+         -0.1
         ],
         "lantern": [
-         -13.5,
-         -19.8
+         -12.8,
+         -19.1
         ],
         "blade_tip": [
-         23.0,
-         -43.2
+         23.5,
+         -40.7
         ]
        },
        "equipment": {
-        "scabbard": 5,
-        "lantern": 111,
-        "sabre": 61
+        "scabbard": 0,
+        "lantern": 96,
+        "sabre": 58
        },
-       "sha256": "c00b0f8f52759689239c994b2e84910cbdf463cf384560ddea2e62d86560f8b3",
+       "sha256": "ec879e11d254303c78b85d7d65c82d2e76f139b5c48baea14b909c8f5826838e",
        "sheet": "sheets/powered_guard_S.png",
        "region": [
         160,
@@ -25922,17 +25922,17 @@
        "packed_bounds": [
         61,
         63,
-        99,
+        101,
         137
        ],
        "anchors": {
         "hand_R": [
-         -13.5,
-         -30.8
+         -13.2,
+         -30.2
         ],
         "hand_L": [
-         5.0,
-         -35.2
+         5.8,
+         -34.2
         ],
         "foot_R": [
          -5.0,
@@ -25943,20 +25943,20 @@
          0.4
         ],
         "lantern": [
-         -13.5,
-         -20.8
+         -13.2,
+         -20.2
         ],
         "blade_tip": [
-         17.7,
-         -55.4
+         19.2,
+         -52.6
         ]
        },
        "equipment": {
-        "scabbard": 5,
-        "lantern": 111,
-        "sabre": 73
+        "scabbard": 3,
+        "lantern": 104,
+        "sabre": 71
        },
-       "sha256": "affe35ecb31c1e538bdfb8874649a20e8e53baffb27862df7e6bf724932807b7",
+       "sha256": "f9b3fe9b1cf52df159d77c6aa1e3b01a49e6f773f7da70abd03029cf65f56192",
        "sheet": "sheets/powered_guard_S.png",
        "region": [
         320,
@@ -26218,43 +26218,43 @@
        "path": "res://assets/animated/velvet/powered_guard_N_00.png",
        "file": "powered_guard_N_00.png",
        "packed_bounds": [
-        53,
+        57,
         62,
-        100,
+        98,
         137
        ],
        "anchors": {
         "hand_R": [
-         13.5,
-         -28.4
+         12.0,
+         -35.2
         ],
         "hand_L": [
-         -11.0,
-         -34.1
+         -9.0,
+         -38.2
         ],
         "foot_R": [
          5.0,
-         -1.7
+         0.1
         ],
         "foot_L": [
          -5.0,
-         -0.3
+         -2.4
         ],
         "lantern": [
-         13.5,
-         -18.4
+         12.0,
+         -25.2
         ],
         "blade_tip": [
-         -25.8,
-         -43.4
+         -21.5,
+         -59.0
         ]
        },
        "equipment": {
-        "sabre": 43,
-        "scabbard": 45,
-        "lantern": 107
+        "lantern": 57,
+        "sabre": 46,
+        "scabbard": 83
        },
-       "sha256": "84bc22852c03b279d94b62b50553717fdf0d6fbfbf225b7a5fa2f95e447b4f0b",
+       "sha256": "5c02852e7c853c03dda572e75c13f9156966c9aa41329e1ef19fabf626bbe32a",
        "sheet": "sheets/powered_guard_N.png",
        "region": [
         0,
@@ -26269,41 +26269,41 @@
        "packed_bounds": [
         58,
         63,
-        100,
-        136
+        99,
+        137
        ],
        "anchors": {
         "hand_R": [
-         13.5,
-         -29.2
+         12.8,
+         -31.9
         ],
         "hand_L": [
-         -8.0,
-         -38.3
+         -8.5,
+         -38.0
         ],
         "foot_R": [
          5.0,
-         -0.7
+         -0.3
         ],
         "foot_L": [
          -5.0,
-         -1.3
+         -1.9
         ],
         "lantern": [
-         13.5,
-         -19.2
+         12.8,
+         -21.9
         ],
         "blade_tip": [
-         -20.4,
-         -60.9
+         -20.9,
+         -59.7
         ]
        },
        "equipment": {
-        "sabre": 45,
-        "scabbard": 53,
-        "lantern": 104
+        "sabre": 47,
+        "lantern": 68,
+        "scabbard": 85
        },
-       "sha256": "aa7d17c2d0127be15e6fb90994ebbbd2feb5930ab399eb346d4ff450846c0417",
+       "sha256": "cf7f8dace5056c5962c4c064308c93c42f51aa673be0a4f3b98c4aa75e30872e",
        "sheet": "sheets/powered_guard_N.png",
        "region": [
         160,
@@ -26316,19 +26316,19 @@
        "path": "res://assets/animated/velvet/powered_guard_N_02.png",
        "file": "powered_guard_N_02.png",
        "packed_bounds": [
+        62,
         64,
-        64,
-        100,
+        99,
         137
        ],
        "anchors": {
         "hand_R": [
-         13.5,
-         -28.8
+         13.2,
+         -29.8
         ],
         "hand_L": [
-         -5.0,
-         -41.4
+         -5.8,
+         -40.5
         ],
         "foot_R": [
          5.0,
@@ -26339,20 +26339,20 @@
          -2.4
         ],
         "lantern": [
-         13.5,
-         -18.8
+         13.2,
+         -19.8
         ],
         "blade_tip": [
-         -15.1,
-         -67.2
+         -16.5,
+         -66.0
         ]
        },
        "equipment": {
-        "sabre": 46,
-        "scabbard": 51,
-        "lantern": 111
+        "sabre": 49,
+        "scabbard": 47,
+        "lantern": 100
        },
-       "sha256": "2e58d381490e16ced476bfdefa7d3f177a5d297099ee5fa39e28798668a2fa08",
+       "sha256": "22ce4922704f918ed5a5d94e8ef30095b30d0ef70ced315e295125cc83ef55b4",
        "sheet": "sheets/powered_guard_N.png",
        "region": [
         320,
@@ -26616,41 +26616,41 @@
        "packed_bounds": [
         61,
         62,
-        113,
+        112,
         136
        ],
        "anchors": {
         "hand_R": [
-         1.6,
-         -27.4
-        ],
-        "hand_L": [
-         7.1,
+         7.8,
          -32.0
         ],
+        "hand_L": [
+         9.9,
+         -35.0
+        ],
         "foot_L": [
-         -1.5,
+         4.5,
          -1.0
         ],
         "foot_R": [
-         1.5,
+         -3.5,
          -1.0
         ],
         "lantern": [
-         1.6,
-         -17.4
+         7.8,
+         -22.0
         ],
         "blade_tip": [
-         31.3,
-         -30.7
+         30.9,
+         -47.4
         ]
        },
        "equipment": {
-        "sabre": 55,
-        "scabbard": 76,
-        "lantern": 106
+        "sabre": 63,
+        "scabbard": 87,
+        "lantern": 100
        },
-       "sha256": "15216756e21f7aeb8ab221d2fa55a8d9e224038db7251d730f3f10189233e5dc",
+       "sha256": "18898d527d340752e5722490bde3130c1072232016a58a7b5927e16fda6ad391",
        "sheet": "sheets/powered_guard_E.png",
        "region": [
         0,
@@ -26665,41 +26665,41 @@
        "packed_bounds": [
         61,
         63,
-        109,
+        110,
         136
        ],
        "anchors": {
         "hand_R": [
-         -2.4,
-         -29.5
+         2.7,
+         -30.5
         ],
         "hand_L": [
-         8.8,
-         -35.5
+         9.3,
+         -35.0
         ],
         "foot_L": [
-         1.5,
+         3.0,
          -1.0
         ],
         "foot_R": [
-         -1.5,
+         -2.5,
          -1.0
         ],
         "lantern": [
-         -2.4,
-         -19.5
+         2.7,
+         -20.5
         ],
         "blade_tip": [
-         27.4,
-         -51.0
+         29.2,
+         -49.0
         ]
        },
        "equipment": {
-        "scabbard": 58,
-        "lantern": 109,
-        "sabre": 75
+        "scabbard": 81,
+        "lantern": 108,
+        "sabre": 70
        },
-       "sha256": "7512284f156ebb56cad56dc4ec580f3d1fa125c3f63b1433e20e86f2cda36e6a",
+       "sha256": "79df45aea5a12169ed71934dd28999db69a0f8d9dd6a3029972c401e03974a7b",
        "sheet": "sheets/powered_guard_E.png",
        "region": [
         160,
@@ -26714,17 +26714,17 @@
        "packed_bounds": [
         61,
         64,
-        100,
+        103,
         136
        ],
        "anchors": {
         "hand_R": [
-         -4.3,
-         -29.8
+         -1.9,
+         -30.0
         ],
         "hand_L": [
-         9.5,
-         -38.3
+         9.6,
+         -37.4
         ],
         "foot_L": [
          4.5,
@@ -26735,20 +26735,20 @@
          -1.0
         ],
         "lantern": [
-         -4.3,
-         -19.8
+         -1.9,
+         -20.0
         ],
         "blade_tip": [
-         18.8,
-         -61.0
+         21.2,
+         -58.9
         ]
        },
        "equipment": {
-        "scabbard": 51,
-        "lantern": 111,
-        "sabre": 68
+        "scabbard": 59,
+        "lantern": 101,
+        "sabre": 74
        },
-       "sha256": "790eb5e0f78c5cdbac6a9786e30b217049fc1903891d3524c48cfa86cf519be6",
+       "sha256": "8b89581684a20a3935c7b5cf7f4d136c9917fef7381e49c96060257aba516245",
        "sheet": "sheets/powered_guard_E.png",
        "region": [
         320,
@@ -27017,36 +27017,36 @@
        ],
        "anchors": {
         "hand_R": [
-         -4.3,
-         -27.4
-        ],
-        "hand_L": [
-         -4.9,
+         -10.2,
          -32.0
         ],
-        "foot_R": [
-         -2.5,
-         -1.0
+        "hand_L": [
+         -8.1,
+         -35.0
         ],
-        "foot_L": [
+        "foot_R": [
          2.5,
          -1.0
         ],
+        "foot_L": [
+         -3.5,
+         -1.0
+        ],
         "lantern": [
-         -4.3,
-         -17.4
+         -10.2,
+         -22.0
         ],
         "blade_tip": [
-         -26.7,
-         -30.9
+         -26.6,
+         -47.8
         ]
        },
        "equipment": {
         "scabbard": 13,
-        "lantern": 26,
-        "sabre": 65
+        "lantern": 88,
+        "sabre": 66
        },
-       "sha256": "5aff6ab7db597b0adb87a2e8e16ab3e823839556b0cde8ae243639ba98937b0e",
+       "sha256": "b15ff981dc8233e868f554e8d2b0398ff0fba25926f25ea4420522a3f0014ff1",
        "sheet": "sheets/powered_guard_W.png",
        "region": [
         0,
@@ -27059,43 +27059,43 @@
        "path": "res://assets/animated/velvet/powered_guard_W_01.png",
        "file": "powered_guard_W_01.png",
        "packed_bounds": [
-        55,
+        54,
         63,
         96,
         136
        ],
        "anchors": {
         "hand_R": [
-         -0.4,
-         -29.5
+         -5.3,
+         -30.5
         ],
         "hand_L": [
-         -7.2,
-         -35.5
+         -7.7,
+         -35.0
         ],
         "foot_R": [
-         0.5,
+         1.5,
          -1.0
         ],
         "foot_L": [
-         -0.5,
+         -2.0,
          -1.0
         ],
         "lantern": [
-         -0.4,
-         -19.5
+         -5.3,
+         -20.5
         ],
         "blade_tip": [
-         -23.3,
-         -51.3
+         -25.0,
+         -49.3
         ]
        },
        "equipment": {
         "scabbard": 12,
-        "lantern": 1,
-        "sabre": 72
+        "lantern": 38,
+        "sabre": 68
        },
-       "sha256": "87a4ab9dbe2480660637689c3145e15e5b5f91a4c77b3b3c127536406a69fe29",
+       "sha256": "2be2419d6f50b00897ddef703e02b8f17a99b5572f0bb427b97bd1a4b78b9281",
        "sheet": "sheets/powered_guard_W.png",
        "region": [
         160,
@@ -27108,19 +27108,19 @@
        "path": "res://assets/animated/velvet/powered_guard_W_02.png",
        "file": "powered_guard_W_02.png",
        "packed_bounds": [
-        63,
+        61,
         64,
         96,
         136
        ],
        "anchors": {
         "hand_R": [
-         1.6,
-         -29.8
+         -0.7,
+         -30.0
         ],
         "hand_L": [
-         -8.5,
-         -38.3
+         -8.4,
+         -37.4
         ],
         "foot_R": [
          2.5,
@@ -27131,20 +27131,20 @@
          -1.0
         ],
         "lantern": [
-         1.6,
-         -19.8
+         -0.7,
+         -20.0
         ],
         "blade_tip": [
-         -15.5,
-         -61.3
+         -17.7,
+         -59.1
         ]
        },
        "equipment": {
         "scabbard": 12,
-        "lantern": 0,
+        "lantern": 3,
         "sabre": 72
        },
-       "sha256": "bdf63d34d7e7e82c30e46a47c5cf9d82c0876154ea24dbf56c7c5b6e4411f35c",
+       "sha256": "1cf8de18343f374da459662d69fb34bf7bf07c92954efaab5dac5b5ea5d7ddaa",
        "sheet": "sheets/powered_guard_W.png",
        "region": [
         320,
@@ -29032,43 +29032,43 @@
        "path": "res://assets/animated/velvet/powered_hit_S_00.png",
        "file": "powered_hit_S_00.png",
        "packed_bounds": [
-        60,
+        61,
         62,
-        101,
+        108,
         137
        ],
        "anchors": {
         "hand_R": [
-         -14.2,
-         -28.2
+         -13.0,
+         -28.0
         ],
         "hand_L": [
-         14.5,
-         -28.4
+         11.2,
+         -29.9
         ],
         "foot_R": [
          -5.0,
-         -0.3
+         -2.1
         ],
         "foot_L": [
          5.0,
-         -1.7
+         0.4
         ],
         "lantern": [
-         -14.2,
-         -18.2
+         -13.0,
+         -18.0
         ],
         "blade_tip": [
-         19.5,
-         -3.7
+         26.2,
+         -36.6
         ]
        },
        "equipment": {
-        "scabbard": 6,
-        "lantern": 104,
-        "sabre": 79
+        "scabbard": 0,
+        "lantern": 105,
+        "sabre": 57
        },
-       "sha256": "e14fc0937631cb05159c43e31ebdd36e1c2837757060c17d378762c3f36ba043",
+       "sha256": "565d5e401dcd73e3e38cfe51ae5181c82c408bddc48ca6eec778f7b2a10795eb",
        "sheet": "sheets/powered_hit_S.png",
        "region": [
         0,
@@ -29081,43 +29081,43 @@
        "path": "res://assets/animated/velvet/powered_hit_S_01.png",
        "file": "powered_hit_S_01.png",
        "packed_bounds": [
-        59,
+        60,
         63,
-        101,
+        110,
         137
        ],
        "anchors": {
         "hand_R": [
-         -14.7,
-         -27.8
+         -14.0,
+         -27.7
         ],
         "hand_L": [
-         15.0,
-         -28.7
+         13.2,
+         -29.1
         ],
         "foot_R": [
          -5.0,
-         -0.3
+         -2.1
         ],
         "foot_L": [
          5.0,
-         -1.7
+         0.4
         ],
         "lantern": [
-         -14.7,
-         -17.8
+         -14.0,
+         -17.7
         ],
         "blade_tip": [
-         20.0,
-         -4.0
+         28.2,
+         -35.8
         ]
        },
        "equipment": {
-        "scabbard": 11,
-        "lantern": 101,
-        "sabre": 67
+        "scabbard": 6,
+        "lantern": 108,
+        "sabre": 57
        },
-       "sha256": "152f6c67f347acdef47ee700313337cf4e9677d4f88171bf8f4212657f0663ce",
+       "sha256": "69b1a31a7b06edc232f8d40ea3c12fdfd49a2f593e889d3534e769e0ed679a93",
        "sheet": "sheets/powered_hit_S.png",
        "region": [
         160,
@@ -29132,41 +29132,41 @@
        "packed_bounds": [
         60,
         65,
-        101,
+        110,
         137
        ],
        "anchors": {
         "hand_R": [
-         -14.4,
+         -14.2,
          -24.9
         ],
         "hand_L": [
-         14.3,
+         13.9,
          -25.0
         ],
         "foot_R": [
          -5.0,
-         -0.3
+         -2.1
         ],
         "foot_L": [
          5.0,
-         -1.7
+         0.4
         ],
         "lantern": [
-         -14.4,
+         -14.2,
          -14.9
         ],
         "blade_tip": [
-         19.3,
-         -0.3
+         28.9,
+         -31.8
         ]
        },
        "equipment": {
-        "scabbard": 8,
-        "lantern": 111,
-        "sabre": 75
+        "scabbard": 6,
+        "lantern": 108,
+        "sabre": 59
        },
-       "sha256": "3ba32f7bcac9336446c7276478cb3148ea41c13752d6b34528bf16fa40a1cc4f",
+       "sha256": "aa19bd0d024745d5bf5e6813bc199ce8c3c47b03d093208e7c3dce730199b946",
        "sheet": "sheets/powered_hit_S.png",
        "region": [
         320,
@@ -29195,11 +29195,11 @@
         ],
         "foot_R": [
          -5.0,
-         -0.3
+         -1.0
         ],
         "foot_L": [
          5.0,
-         -1.7
+         -0.7
         ],
         "lantern": [
          -14.9,
@@ -29215,7 +29215,7 @@
         "lantern": 100,
         "sabre": 77
        },
-       "sha256": "983f8a1030df392a2c147ccb57b43a9e0f59f5f63910a410db6b23d03f717bd8",
+       "sha256": "b4efdadbd81306d926c861405257af358bfacba40ed8473de49760bd59b606e9",
        "sheet": "sheets/powered_hit_S.png",
        "region": [
         480,
@@ -29428,43 +29428,43 @@
        "path": "res://assets/animated/velvet/powered_hit_N_00.png",
        "file": "powered_hit_N_00.png",
        "packed_bounds": [
-        56,
+        55,
         65,
-        100,
+        99,
         137
        ],
        "anchors": {
         "hand_R": [
-         14.2,
+         13.0,
          -34.2
         ],
         "hand_L": [
-         -14.5,
-         -33.6
+         -11.2,
+         -35.7
         ],
         "foot_R": [
          5.0,
-         -1.7
+         0.1
         ],
         "foot_L": [
          -5.0,
-         -0.3
+         -2.4
         ],
         "lantern": [
-         14.2,
+         13.0,
          -24.2
         ],
         "blade_tip": [
-         -22.3,
-         -21.4
+         -23.7,
+         -56.6
         ]
        },
        "equipment": {
-        "lantern": 82,
+        "lantern": 70,
         "sabre": 53,
         "scabbard": 83
        },
-       "sha256": "5ce039a3f553c43e37ff5af5ff04bc55c6f45b94147aebcd6bbc3fa9dc5535ae",
+       "sha256": "d8a46a36338735339096f1990aa86f835a8ae234f366f3e2d53705eda85da199",
        "sheet": "sheets/powered_hit_N.png",
        "region": [
         0,
@@ -29477,43 +29477,43 @@
        "path": "res://assets/animated/velvet/powered_hit_N_01.png",
        "file": "powered_hit_N_01.png",
        "packed_bounds": [
-        56,
+        53,
         66,
-        101,
+        100,
         137
        ],
        "anchors": {
         "hand_R": [
-         14.7,
+         14.0,
          -33.4
         ],
         "hand_L": [
-         -15.0,
-         -33.3
+         -13.2,
+         -34.1
         ],
         "foot_R": [
          5.0,
-         -1.7
+         0.1
         ],
         "foot_L": [
          -5.0,
-         -0.3
+         -2.4
         ],
         "lantern": [
-         14.7,
+         14.0,
          -23.4
         ],
         "blade_tip": [
-         -22.8,
-         -21.0
+         -25.7,
+         -55.0
         ]
        },
        "equipment": {
-        "lantern": 95,
-        "sabre": 52,
+        "lantern": 84,
+        "sabre": 61,
         "scabbard": 83
        },
-       "sha256": "773e16db3e1f03d01e786037a2786d0cdfaea215837b8fb6350d583b8f83836d",
+       "sha256": "f1f4765d0c7f6cc92b89208d3f99a97431cf494197363e6a302c64797f37ce27",
        "sheet": "sheets/powered_hit_N.png",
        "region": [
         160,
@@ -29526,43 +29526,43 @@
        "path": "res://assets/animated/velvet/powered_hit_N_02.png",
        "file": "powered_hit_N_02.png",
        "packed_bounds": [
-        57,
+        52,
         67,
-        101,
+        100,
         137
        ],
        "anchors": {
         "hand_R": [
-         14.4,
-         -30.3
+         14.2,
+         -30.4
         ],
         "hand_L": [
-         -14.3,
-         -30.5
+         -13.9,
+         -30.8
         ],
         "foot_R": [
          5.0,
-         -1.7
+         0.1
         ],
         "foot_L": [
          -5.0,
-         -0.3
+         -2.4
         ],
         "lantern": [
-         14.4,
-         -20.3
+         14.2,
+         -20.4
         ],
         "blade_tip": [
-         -22.1,
-         -18.2
+         -26.3,
+         -51.6
         ]
        },
        "equipment": {
-        "lantern": 89,
-        "sabre": 53,
+        "lantern": 82,
+        "sabre": 68,
         "scabbard": 83
        },
-       "sha256": "ebb41a275e32336cbc105f91aab14a57dc31b597bcb73a6a7fb9e10f1d8c2eae",
+       "sha256": "cc5833a76368ae00506e1bb0a4e5a2464a7ecd426c8ea66687fddc3b26da312a",
        "sheet": "sheets/powered_hit_N.png",
        "region": [
         320,
@@ -29578,7 +29578,7 @@
         57,
         65,
         101,
-        137
+        136
        ],
        "anchors": {
         "hand_R": [
@@ -29591,11 +29591,11 @@
         ],
         "foot_R": [
          5.0,
-         -1.7
+         -1.0
         ],
         "foot_L": [
          -5.0,
-         -0.3
+         -1.3
         ],
         "lantern": [
          14.9,
@@ -29611,7 +29611,7 @@
         "sabre": 53,
         "scabbard": 83
        },
-       "sha256": "ed4747d1894cd4ab8fa8e75d52f2af2501bfdc1b40df1cb267c10719b1e782d1",
+       "sha256": "44e9b51d165751f304e072df351a507d70f23a09df0f35213114a2fb7543524e",
        "sheet": "sheets/powered_hit_N.png",
        "region": [
         480,
@@ -29826,41 +29826,41 @@
        "packed_bounds": [
         61,
         63,
-        109,
+        112,
         136
        ],
        "anchors": {
         "hand_R": [
-         7.2,
-         -31.2
+         7.5,
+         -31.1
         ],
         "hand_L": [
-         8.9,
-         -31.0
+         9.5,
+         -32.8
         ],
         "foot_L": [
-         -1.5,
+         4.5,
          -1.0
         ],
         "foot_R": [
-         1.5,
+         -3.5,
          -1.0
         ],
         "lantern": [
-         7.2,
-         -21.2
+         7.5,
+         -21.1
         ],
         "blade_tip": [
-         27.5,
-         -12.4
+         30.5,
+         -45.2
         ]
        },
        "equipment": {
-        "sabre": 55,
+        "sabre": 61,
         "scabbard": 87,
-        "lantern": 97
+        "lantern": 105
        },
-       "sha256": "26c7311f2e3a55a9ac8bdcc381d6dff75d54d5c98e629f75366574c32ad848b8",
+       "sha256": "c8831221f4084bcb8ada43ce8b7aea0ca5c1e63001ad9b45b1d22470db49c464",
        "sheet": "sheets/powered_hit_E.png",
        "region": [
         0,
@@ -29875,41 +29875,41 @@
        "packed_bounds": [
         61,
         65,
-        108,
+        111,
         136
        ],
        "anchors": {
         "hand_R": [
-         6.5,
+         6.7,
          -30.6
         ],
         "hand_L": [
-         8.0,
-         -31.0
+         8.6,
+         -31.6
         ],
         "foot_L": [
-         -1.5,
+         4.5,
          -1.0
         ],
         "foot_R": [
-         1.5,
+         -3.5,
          -1.0
         ],
         "lantern": [
-         6.5,
+         6.7,
          -20.6
         ],
         "blade_tip": [
-         26.6,
-         -12.4
+         29.5,
+         -44.0
         ]
        },
        "equipment": {
-        "sabre": 56,
+        "sabre": 64,
         "scabbard": 87,
-        "lantern": 109
+        "lantern": 108
        },
-       "sha256": "022a74b961273e29cfb8224089544efcd804a9165132786032d08122ba053c39",
+       "sha256": "867ba824e8540ffaa9d9a56d985b47fe55d65ad02f5b9bbdd0e48022961f8b6b",
        "sheet": "sheets/powered_hit_E.png",
        "region": [
         160,
@@ -29924,41 +29924,41 @@
        "packed_bounds": [
         61,
         66,
-        109,
+        112,
         136
        ],
        "anchors": {
         "hand_R": [
-         6.3,
-         -27.6
-        ],
-        "hand_L": [
-         9.3,
+         6.4,
          -27.7
         ],
+        "hand_L": [
+         9.6,
+         -27.9
+        ],
         "foot_L": [
-         -1.5,
+         4.5,
          -1.0
         ],
         "foot_R": [
-         1.5,
+         -3.5,
          -1.0
         ],
         "lantern": [
-         6.3,
-         -17.6
+         6.4,
+         -17.7
         ],
         "blade_tip": [
-         27.8,
-         -9.1
+         30.5,
+         -40.3
         ]
        },
        "equipment": {
-        "sabre": 62,
+        "sabre": 61,
         "scabbard": 87,
-        "lantern": 100
+        "lantern": 110
        },
-       "sha256": "1fb35de8a5f7814577c750970472f27cf821cbedf3ad8e994e97838cc15f14ee",
+       "sha256": "2f99b00a406fba354ca032fff47c2f72c1965cdef7c9d82cf87c5e76680e1d9a",
        "sheet": "sheets/powered_hit_E.png",
        "region": [
         320,
@@ -29986,11 +29986,11 @@
          -26.5
         ],
         "foot_L": [
-         -1.5,
+         1.5,
          -1.0
         ],
         "foot_R": [
-         1.5,
+         -0.5,
          -1.0
         ],
         "lantern": [
@@ -30007,7 +30007,7 @@
         "scabbard": 86,
         "lantern": 108
        },
-       "sha256": "3ed6616a2bcd6474643c4a649aeb6dd7f15d2dfe016ae5266c372f8d730323e9",
+       "sha256": "75378121fe356ca48be1054c5d084d8a2187b1f2a03f5f66ec332d3f500c4b4e",
        "sheet": "sheets/powered_hit_E.png",
        "region": [
         480,
@@ -30220,43 +30220,43 @@
        "path": "res://assets/animated/velvet/powered_hit_W_00.png",
        "file": "powered_hit_W_00.png",
        "packed_bounds": [
-        55,
+        53,
         63,
         96,
         136
        ],
        "anchors": {
         "hand_R": [
-         -10.0,
-         -31.2
+         -10.1,
+         -31.1
         ],
         "hand_L": [
-         -6.0,
-         -31.0
+         -7.3,
+         -32.8
         ],
         "foot_R": [
-         -2.5,
-         -1.0
-        ],
-        "foot_L": [
          2.5,
          -1.0
         ],
+        "foot_L": [
+         -3.5,
+         -1.0
+        ],
         "lantern": [
-         -10.0,
-         -21.2
+         -10.1,
+         -21.1
         ],
         "blade_tip": [
-         -23.4,
-         -12.4
+         -25.8,
+         -45.6
         ]
        },
        "equipment": {
         "scabbard": 19,
-        "lantern": 73,
-        "sabre": 72
+        "lantern": 90,
+        "sabre": 71
        },
-       "sha256": "09bd89c37285eb725aab370a8d3f53106ab0356cc8b05e6a70922b5b25413996",
+       "sha256": "e8b9b004f7de0d2f178415edc037f9a9b021902832d9d973ec28ec72b9db9892",
        "sheet": "sheets/powered_hit_W.png",
        "region": [
         0,
@@ -30269,43 +30269,43 @@
        "path": "res://assets/animated/velvet/powered_hit_W_01.png",
        "file": "powered_hit_W_01.png",
        "packed_bounds": [
-        56,
+        54,
         65,
         97,
         136
        ],
        "anchors": {
         "hand_R": [
-         -9.4,
+         -9.5,
          -30.6
         ],
         "hand_L": [
-         -5.0,
-         -31.0
+         -5.9,
+         -31.6
         ],
         "foot_R": [
-         -2.5,
-         -1.0
-        ],
-        "foot_L": [
          2.5,
          -1.0
         ],
+        "foot_L": [
+         -3.5,
+         -1.0
+        ],
         "lantern": [
-         -9.4,
+         -9.5,
          -20.6
         ],
         "blade_tip": [
-         -22.4,
-         -12.4
+         -24.4,
+         -44.4
         ]
        },
        "equipment": {
         "scabbard": 23,
-        "lantern": 64,
-        "sabre": 70
+        "lantern": 83,
+        "sabre": 72
        },
-       "sha256": "d8c20abf32bff1b882e86aa0b153e64f467668182b1c8a71d624e89acb958a58",
+       "sha256": "438b2dfe2437460023efaa807d27227e85eeff1919806dc2331fc780d5c4a0d8",
        "sheet": "sheets/powered_hit_W.png",
        "region": [
         160,
@@ -30318,43 +30318,43 @@
        "path": "res://assets/animated/velvet/powered_hit_W_02.png",
        "file": "powered_hit_W_02.png",
        "packed_bounds": [
-        55,
+        53,
         66,
         96,
         136
        ],
        "anchors": {
         "hand_R": [
-         -9.1,
-         -27.6
-        ],
-        "hand_L": [
-         -6.4,
+         -9.3,
          -27.7
         ],
-        "foot_R": [
-         -2.5,
-         -1.0
+        "hand_L": [
+         -6.8,
+         -27.9
         ],
-        "foot_L": [
+        "foot_R": [
          2.5,
          -1.0
         ],
+        "foot_L": [
+         -3.5,
+         -1.0
+        ],
         "lantern": [
-         -9.1,
-         -17.6
+         -9.3,
+         -17.7
         ],
         "blade_tip": [
-         -23.8,
-         -9.1
+         -25.3,
+         -40.7
         ]
        },
        "equipment": {
         "scabbard": 19,
-        "lantern": 48,
-        "sabre": 76
+        "lantern": 61,
+        "sabre": 69
        },
-       "sha256": "cdf98f5501d490bacce07e9560ac252116cfdc6ea3dbd47903e4ae44cf7669e0",
+       "sha256": "bcff0d6b5c55e2631a6e3a0becd8501f6b7b62ed0c3d0b4f5a8786adebe214cf",
        "sheet": "sheets/powered_hit_W.png",
        "region": [
         320,
@@ -30382,11 +30382,11 @@
          -26.5
         ],
         "foot_R": [
-         -2.5,
+         -0.5,
          -1.0
         ],
         "foot_L": [
-         2.5,
+         -0.5,
          -1.0
         ],
         "lantern": [
@@ -30400,10 +30400,10 @@
        },
        "equipment": {
         "scabbard": 13,
-        "lantern": 35,
+        "lantern": 45,
         "sabre": 80
        },
-       "sha256": "8f993350e287f06d15c072c0a8030f89d37f8f73bf5fa05f05f3e2b6586c76de",
+       "sha256": "86f61dd782c654df8fe7476fbb0402b53cf17651d4619d843d51af0f43c83738",
        "sheet": "sheets/powered_hit_W.png",
        "region": [
         480,
@@ -30637,43 +30637,43 @@
        "path": "res://assets/animated/velvet/powered_dodge_S_00.png",
        "file": "powered_dodge_S_00.png",
        "packed_bounds": [
-        60,
+        61,
         67,
-        100,
-        140
+        107,
+        136
        ],
        "anchors": {
         "hand_R": [
-         -13.6,
-         -22.5
+         -12.8,
+         -23.6
         ],
         "hand_L": [
-         13.4,
-         -22.2
+         10.8,
+         -25.9
         ],
         "foot_R": [
          -5.0,
-         0.1
+         -1.2
         ],
         "foot_L": [
          5.0,
-         -2.4
+         -0.7
         ],
         "lantern": [
-         -13.6,
-         -12.5
+         -12.8,
+         -13.6
         ],
         "blade_tip": [
-         18.4,
-         2.5
+         25.8,
+         -32.7
         ]
        },
        "equipment": {
-        "scabbard": 1,
-        "lantern": 107,
-        "sabre": 73
+        "scabbard": 0,
+        "lantern": 100,
+        "sabre": 58
        },
-       "sha256": "cdc3e67205a684f9180a84a8954ae7fd7caadebcc594b74a5af6eb8aa7eca206",
+       "sha256": "7beaf73892482fe0577234f94557014e87981e7e25ddcd38bbf99a645645c81d",
        "sheet": "sheets/powered_dodge_S.png",
        "region": [
         0,
@@ -30688,41 +30688,41 @@
        "packed_bounds": [
         60,
         71,
-        101,
+        109,
         136
        ],
        "anchors": {
         "hand_R": [
-         -14.2,
-         -19.9
+         -13.9,
+         -19.4
         ],
         "hand_L": [
-         14.1,
-         -25.7
+         12.8,
+         -25.3
         ],
         "foot_R": [
          -5.0,
-         -0.9
+         -1.2
         ],
         "foot_L": [
          5.0,
-         -6.0
+         -4.1
         ],
         "lantern": [
-         -14.2,
-         -9.9
+         -13.9,
+         -9.4
         ],
         "blade_tip": [
-         19.2,
-         -1.0
+         27.9,
+         -32.0
         ]
        },
        "equipment": {
-        "scabbard": 3,
-        "sabre": 71,
-        "lantern": 107
+        "scabbard": 1,
+        "sabre": 56,
+        "lantern": 99
        },
-       "sha256": "1f68e1cde85549f8f6d44997b27614719a3512298b5744a838065f62711ffea3",
+       "sha256": "543901488630591ce719f1b0029a4bd0af377fcbe2c95749c52faf87d538d31f",
        "sheet": "sheets/powered_dodge_S.png",
        "region": [
         160,
@@ -30737,41 +30737,41 @@
        "packed_bounds": [
         59,
         74,
-        100,
+        110,
         138
        ],
        "anchors": {
         "hand_R": [
-         -15.1,
-         -20.0
+         -15.0,
+         -19.7
         ],
         "hand_L": [
-         13.9,
-         -26.4
+         13.7,
+         -25.8
         ],
         "foot_R": [
          -5.0,
-         1.2
+         0.8
         ],
         "foot_L": [
          5.0,
-         -4.5
+         -4.0
         ],
         "lantern": [
-         -15.1,
-         -10.0
+         -15.0,
+         -9.7
         ],
         "blade_tip": [
-         19.0,
-         -1.7
+         28.7,
+         -32.6
         ]
        },
        "equipment": {
-        "scabbard": 11,
-        "sabre": 71,
-        "lantern": 104
+        "scabbard": 12,
+        "sabre": 55,
+        "lantern": 108
        },
-       "sha256": "bc1e8ff1feffcfdd99acff4e1daea4e6fa8f1d454591977613f24fd29ffed681",
+       "sha256": "0502a1b3312d5e3aa8a27870b72878756c062dc58b088fc50a7a27d2404adce2",
        "sheet": "sheets/powered_dodge_S.png",
        "region": [
         320,
@@ -31033,43 +31033,43 @@
        "path": "res://assets/animated/velvet/powered_dodge_N_00.png",
        "file": "powered_dodge_N_00.png",
        "packed_bounds": [
-        58,
+        55,
         64,
-        100,
-        137
+        99,
+        136
        ],
        "anchors": {
         "hand_R": [
-         13.6,
-         -24.9
+         12.8,
+         -28.4
         ],
         "hand_L": [
-         -13.4,
-         -25.3
+         -10.8,
+         -30.9
         ],
         "foot_R": [
          5.0,
-         -2.1
+         -0.8
         ],
         "foot_L": [
          -5.0,
-         0.4
+         -1.3
         ],
         "lantern": [
-         13.6,
-         -14.9
+         12.8,
+         -18.4
         ],
         "blade_tip": [
-         -21.2,
-         -13.0
+         -23.3,
+         -51.8
         ]
        },
        "equipment": {
-        "sabre": 48,
-        "scabbard": 44,
-        "lantern": 110
+        "lantern": 64,
+        "sabre": 55,
+        "scabbard": 83
        },
-       "sha256": "2d6d66aae8a02f6e84a52abffce9e314f6c93b5b337ea4641cde3119c00d7caa",
+       "sha256": "76001ee8523faf0d76d22b74cbd045c244303e81ad238e48691dd1bc3a57da05",
        "sheet": "sheets/powered_dodge_N.png",
        "region": [
         0,
@@ -31082,43 +31082,43 @@
        "path": "res://assets/animated/velvet/powered_dodge_N_01.png",
        "file": "powered_dodge_N_01.png",
        "packed_bounds": [
-        57,
+        53,
         65,
         100,
-        138
+        137
        ],
        "anchors": {
         "hand_R": [
-         14.2,
-         -23.2
+         13.9,
+         -23.5
         ],
         "hand_L": [
-         -14.1,
-         -23.4
+         -12.8,
+         -24.9
         ],
         "foot_R": [
          5.0,
-         -5.1
+         -3.6
         ],
         "foot_L": [
          -5.0,
-         1.0
+         -0.0
         ],
         "lantern": [
-         14.2,
-         -13.2
+         13.9,
+         -13.5
         ],
         "blade_tip": [
-         -21.9,
-         -11.1
+         -25.3,
+         -45.8
         ]
        },
        "equipment": {
-        "lantern": 74,
+        "lantern": 75,
         "scabbard": 83,
-        "sabre": 51
+        "sabre": 76
        },
-       "sha256": "c15567e3f38a271e77248460bc96de71de02b5ad02450515459ca59f6d9dcd99",
+       "sha256": "a998090c9c7c7332223530feb19c33641bdf18cd9c76de2f6f2005bae7c3667c",
        "sheet": "sheets/powered_dodge_N.png",
        "region": [
         160,
@@ -31131,43 +31131,43 @@
        "path": "res://assets/animated/velvet/powered_dodge_N_02.png",
        "file": "powered_dodge_N_02.png",
        "packed_bounds": [
-        57,
+        53,
         67,
         101,
         139
        ],
        "anchors": {
         "hand_R": [
-         15.1,
+         15.0,
          -21.3
         ],
         "hand_L": [
-         -13.9,
-         -23.4
+         -13.7,
+         -23.1
         ],
         "foot_R": [
          5.0,
-         -5.2
+         -4.6
         ],
         "foot_L": [
          -5.0,
-         2.5
+         2.0
         ],
         "lantern": [
-         15.1,
+         15.0,
          -11.3
         ],
         "blade_tip": [
-         -21.7,
-         -11.2
+         -26.2,
+         -43.9
         ]
        },
        "equipment": {
         "scabbard": 65,
         "lantern": 105,
-        "sabre": 58
+        "sabre": 72
        },
-       "sha256": "bfc5102ab3bd47e0c877379bac514abfde9b3f14c82591d71f5ae066a0ac42b9",
+       "sha256": "5fed888ac5545bbb3510d7123818cd22e9431e3b7324792394eed99599bf39a0",
        "sheet": "sheets/powered_dodge_N.png",
        "region": [
         320,
@@ -31431,41 +31431,41 @@
        "packed_bounds": [
         61,
         66,
-        106,
+        111,
         136
        ],
        "anchors": {
         "hand_R": [
-         2.1,
-         -23.7
+         5.5,
+         -26.0
         ],
         "hand_L": [
-         5.8,
-         -23.7
+         8.3,
+         -28.4
         ],
         "foot_L": [
-         -3.5,
+         1.3,
          -1.0
         ],
         "foot_R": [
-         2.5,
+         -1.1,
          -1.0
         ],
         "lantern": [
-         2.1,
-         -13.7
+         5.5,
+         -16.0
         ],
         "blade_tip": [
-         24.3,
-         -5.1
+         29.2,
+         -40.8
         ]
        },
        "equipment": {
-        "sabre": 55,
-        "scabbard": 81,
-        "lantern": 108
+        "sabre": 56,
+        "scabbard": 86,
+        "lantern": 102
        },
-       "sha256": "b54d86bf6a884f57d24abbaee3206850c9f4fc537a572c91e370fe83dffb70a9",
+       "sha256": "be2577622c16c45f8b07985d4689026399d0f296f0f94f176416e5c60ce8fda8",
        "sheet": "sheets/powered_dodge_E.png",
        "region": [
         0,
@@ -31480,41 +31480,41 @@
        "packed_bounds": [
         61,
         68,
-        99,
-        134
+        103,
+        135
        ],
        "anchors": {
         "hand_R": [
-         3.4,
-         -21.5
+         4.5,
+         -21.4
         ],
         "hand_L": [
-         -1.9,
-         -24.6
+         0.8,
+         -25.1
         ],
         "foot_L": [
-         -9.5,
-         -2.5
+         -5.3,
+         -2.1
         ],
         "foot_R": [
-         5.5,
-         -3.0
+         2.8,
+         -2.4
         ],
         "lantern": [
-         3.4,
-         -11.5
+         4.5,
+         -11.4
         ],
         "blade_tip": [
-         16.6,
-         -5.9
+         21.8,
+         -37.5
         ]
        },
        "equipment": {
-        "sabre": 22,
+        "sabre": 15,
         "scabbard": 87,
-        "lantern": 109
+        "lantern": 107
        },
-       "sha256": "217c3081ed6fe9af8b4dac6d3c5a6b1ad0c5c67a618ec37e0c82618eca7619d1",
+       "sha256": "63fc200d9392f43019d0119be2b10046bb4539320df9d0aa13a6a38c829dc8b5",
        "sheet": "sheets/powered_dodge_E.png",
        "region": [
         160,
@@ -31534,36 +31534,36 @@
        ],
        "anchors": {
         "hand_R": [
-         0.4,
-         -20.7
+         0.7,
+         -20.5
         ],
         "hand_L": [
-         -2.8,
-         -24.9
+         -2.5,
+         -24.5
         ],
         "foot_L": [
-         -9.5,
+         -8.1,
          -1.0
         ],
         "foot_R": [
-         8.5,
-         -2.0
+         7.3,
+         -1.9
         ],
         "lantern": [
-         0.4,
-         -10.7
+         0.7,
+         -10.5
         ],
         "blade_tip": [
-         15.8,
-         -6.3
+         18.5,
+         -36.9
         ]
        },
        "equipment": {
-        "sabre": 16,
-        "scabbard": 78,
-        "lantern": 110
+        "sabre": 4,
+        "scabbard": 80,
+        "lantern": 107
        },
-       "sha256": "2f7a3f2f33e1090dc31494a68674c0544a642098c1f831f3bfb65da9fbc07750",
+       "sha256": "f49c64607e2faf41f0c360e84358ff74072e7bd0361f541b1af3c5a33406ff5b",
        "sheet": "sheets/powered_dodge_E.png",
        "region": [
         320,
@@ -31825,43 +31825,43 @@
        "path": "res://assets/animated/velvet/powered_dodge_W_00.png",
        "file": "powered_dodge_W_00.png",
        "packed_bounds": [
-        58,
+        54,
         66,
         96,
         136
        ],
        "anchors": {
         "hand_R": [
-         -4.8,
-         -23.7
+         -8.1,
+         -26.0
         ],
         "hand_L": [
-         -3.1,
-         -23.7
+         -6.1,
+         -28.4
         ],
         "foot_R": [
-         -3.5,
+         0.1,
          -1.0
         ],
         "foot_L": [
-         4.5,
+         -0.3,
          -1.0
         ],
         "lantern": [
-         -4.8,
-         -13.7
+         -8.1,
+         -16.0
         ],
         "blade_tip": [
-         -20.5,
-         -5.1
+         -24.6,
+         -41.2
         ]
        },
        "equipment": {
         "scabbard": 13,
-        "lantern": 2,
-        "sabre": 72
+        "lantern": 55,
+        "sabre": 67
        },
-       "sha256": "a43647c045e4c189893b6e80d168d77b34965edcb860ac6942a7ff24515ad6f3",
+       "sha256": "21f6fabceab602e1f25c4b9ab36587eda03a83411c7cfc2c3730cbb17e6cc309",
        "sheet": "sheets/powered_dodge_W.png",
        "region": [
         0,
@@ -31877,40 +31877,40 @@
         61,
         68,
         96,
-        134
+        135
        ],
        "anchors": {
         "hand_R": [
-         -6.2,
-         -21.5
+         -7.2,
+         -21.4
         ],
         "hand_L": [
-         4.8,
-         -24.6
+         1.7,
+         -25.1
         ],
         "foot_R": [
-         -6.5,
-         -3.0
+         -3.8,
+         -2.4
         ],
         "foot_L": [
-         10.5,
-         -2.5
+         6.3,
+         -2.1
         ],
         "lantern": [
-         -6.2,
-         -11.5
+         -7.2,
+         -11.4
         ],
         "blade_tip": [
-         -12.6,
-         -5.9
+         -16.8,
+         -37.9
         ]
        },
        "equipment": {
-        "scabbard": 2,
-        "lantern": 2,
-        "sabre": 74
+        "scabbard": 6,
+        "lantern": 15,
+        "sabre": 67
        },
-       "sha256": "a7820c100c561e147425ae653b9af99e3e93a0b008afd37fe77acdedb3faf056",
+       "sha256": "fcf26cbbf66298b30410423bdb54313f3e1a84158ae5b30b082dc103204af48f",
        "sheet": "sheets/powered_dodge_W.png",
        "region": [
         160,
@@ -31930,36 +31930,36 @@
        ],
        "anchors": {
         "hand_R": [
-         -3.4,
-         -20.7
+         -3.7,
+         -20.5
         ],
         "hand_L": [
-         5.6,
-         -24.9
+         5.2,
+         -24.5
         ],
         "foot_R": [
-         -9.5,
-         -2.0
+         -8.3,
+         -1.9
         ],
         "foot_L": [
-         10.5,
+         9.1,
          -1.0
         ],
         "lantern": [
-         -3.4,
-         -10.7
+         -3.7,
+         -10.5
         ],
         "blade_tip": [
-         -11.8,
-         -6.3
+         -13.3,
+         -37.2
         ]
        },
        "equipment": {
-        "scabbard": 1,
-        "lantern": 26,
-        "sabre": 75
+        "scabbard": 3,
+        "lantern": 10,
+        "sabre": 70
        },
-       "sha256": "eed9b78f9732adf5f1584789f89f5714557a3f754c720a27a942b9b658a7d908",
+       "sha256": "05c3e11d3b14d6884931e8a4e0b1b2f0996f056ec0efc0427d4edb9e10487143",
        "sheet": "sheets/powered_dodge_W.png",
        "region": [
         320,
@@ -32251,43 +32251,43 @@
        "path": "res://assets/animated/velvet/powered_jump_S_00.png",
        "file": "powered_jump_S_00.png",
        "packed_bounds": [
-        60,
+        61,
         68,
-        109,
+        108,
         137
        ],
        "anchors": {
         "hand_R": [
-         -14.1,
-         -21.2
+         -13.2,
+         -21.5
         ],
         "hand_L": [
-         14.0,
-         -22.4
+         11.2,
+         -24.6
         ],
         "foot_R": [
          -5.0,
-         -0.3
+         -2.1
         ],
         "foot_L": [
          5.0,
-         -1.7
+         0.4
         ],
         "lantern": [
-         -14.1,
-         -11.2
+         -13.2,
+         -11.5
         ],
         "blade_tip": [
-         27.4,
-         -6.7
+         27.2,
+         -22.0
         ]
        },
        "equipment": {
-        "scabbard": 3,
-        "sabre": 63,
-        "lantern": 104
+        "scabbard": 0,
+        "lantern": 107,
+        "sabre": 53
        },
-       "sha256": "e6952e6de66464a341e594cea2b223fcc6671c6994e277c9c5fb313b23af5f6d",
+       "sha256": "a04f7872cdcf850f7b18263c30123e91d885b88bb18913f4a7387e20cf9e1f6b",
        "sheet": "sheets/powered_jump_S.png",
        "region": [
         0,
@@ -32300,43 +32300,43 @@
        "path": "res://assets/animated/velvet/powered_jump_S_01.png",
        "file": "powered_jump_S_01.png",
        "packed_bounds": [
-        59,
+        60,
         64,
         109,
         136
        ],
        "anchors": {
         "hand_R": [
-         -15.0,
-         -30.2
+         -14.1,
+         -29.5
         ],
         "hand_L": [
-         14.5,
-         -34.4
+         12.8,
+         -33.3
         ],
         "foot_R": [
          -5.0,
-         -1.1
+         -1.4
         ],
         "foot_L": [
          5.0,
-         -3.4
+         -2.2
         ],
         "lantern": [
-         -15.0,
-         -20.2
+         -14.1,
+         -19.5
         ],
         "blade_tip": [
          27.9,
-         -18.6
+         -23.4
         ]
        },
        "equipment": {
-        "scabbard": 10,
-        "sabre": 68,
-        "lantern": 105
+        "scabbard": 7,
+        "lantern": 106,
+        "sabre": 61
        },
-       "sha256": "59071672e659c802f3a9ef41be28c8bb7c4c55071704d3309b28e5954cba9c3c",
+       "sha256": "fba12e179b76c825727f73265db57c1f935cee7cf66dbd68ca659f07b6f679dd",
        "sheet": "sheets/powered_jump_S.png",
        "region": [
         160,
@@ -32356,36 +32356,36 @@
        ],
        "anchors": {
         "hand_R": [
-         -16.0,
-         -34.8
+         -15.6,
+         -34.2
         ],
         "hand_L": [
-         15.5,
-         -39.0
+         14.8,
+         -38.3
         ],
         "foot_R": [
          -5.0,
-         -5.9
+         -5.6
         ],
         "foot_L": [
          5.0,
-         -9.7
+         -8.7
         ],
         "lantern": [
-         -16.0,
-         -24.8
+         -15.6,
+         -24.2
         ],
         "blade_tip": [
          28.9,
-         -23.3
+         -24.3
         ]
        },
        "equipment": {
         "scabbard": 11,
-        "lantern": 108,
-        "sabre": 67
+        "lantern": 105,
+        "sabre": 63
        },
-       "sha256": "377465d8db2f69f91ff7a75c54cddb8325ea103da306c42f30e127721d6ae0eb",
+       "sha256": "3224beb1afd3881711d98c36b767f41e32497e3f86c9f309945ccf81ddf7007e",
        "sheet": "sheets/powered_jump_S.png",
        "region": [
         320,
@@ -32647,43 +32647,43 @@
        "path": "res://assets/animated/velvet/powered_jump_N_00.png",
        "file": "powered_jump_N_00.png",
        "packed_bounds": [
-        49,
+        53,
         66,
-        100,
+        99,
         137
        ],
        "anchors": {
         "hand_R": [
-         14.1,
-         -24.5
+         13.2,
+         -26.9
         ],
         "hand_L": [
-         -14.0,
-         -22.9
+         -11.2,
+         -28.6
         ],
         "foot_R": [
          5.0,
-         -1.7
+         0.1
         ],
         "foot_L": [
          -5.0,
-         -0.3
+         -2.4
         ],
         "lantern": [
-         14.1,
-         -14.5
+         13.2,
+         -16.9
         ],
         "blade_tip": [
-         -29.2,
-         -24.5
+         -25.6,
+         -43.2
         ]
        },
        "equipment": {
-        "lantern": 77,
-        "scabbard": 83,
-        "sabre": 55
+        "lantern": 66,
+        "sabre": 47,
+        "scabbard": 83
        },
-       "sha256": "4021758bb22ffe2c499590b0b765d3d348729748f7d140ca96fc768e86c33cae",
+       "sha256": "bf2a76e6baff6d0c1d75a5d4da7ed2520c4e43856e759e1301d3787667a119c1",
        "sheet": "sheets/powered_jump_N.png",
        "region": [
         0,
@@ -32696,43 +32696,43 @@
        "path": "res://assets/animated/velvet/powered_jump_N_01.png",
        "file": "powered_jump_N_01.png",
        "packed_bounds": [
-        49,
+        50,
         63,
-        101,
+        100,
         135
        ],
        "anchors": {
         "hand_R": [
-         15.0,
-         -36.8
+         14.1,
+         -36.0
         ],
         "hand_L": [
-         -14.5,
-         -39.6
+         -12.8,
+         -38.9
         ],
         "foot_R": [
          5.0,
-         -2.9
+         -2.0
         ],
         "foot_L": [
          -5.0,
-         -1.6
+         -1.9
         ],
         "lantern": [
-         15.0,
-         -26.8
+         14.1,
+         -26.0
         ],
         "blade_tip": [
-         -29.7,
-         -41.3
+         -28.1,
+         -47.3
         ]
        },
        "equipment": {
-        "lantern": 100,
-        "sabre": 50,
+        "lantern": 85,
+        "sabre": 51,
         "scabbard": 83
        },
-       "sha256": "097a142bdcd438ae3a855e17430ac8cf6ff15002456e7c97c9e9704bf891404e",
+       "sha256": "40a8941a9f68b550b8cf5bb6e11ab3d0c10c42873b6e0202420389bdd0a4ea37",
        "sheet": "sheets/powered_jump_N.png",
        "region": [
         160,
@@ -32752,36 +32752,36 @@
        ],
        "anchors": {
         "hand_R": [
-         16.0,
-         -42.2
+         15.6,
+         -41.5
         ],
         "hand_L": [
-         -15.5,
-         -45.0
+         -14.8,
+         -44.3
         ],
         "foot_R": [
          5.0,
-         -8.0
+         -7.2
         ],
         "foot_L": [
          -5.0,
-         -8.3
+         -7.7
         ],
         "lantern": [
-         16.0,
-         -32.2
+         15.6,
+         -31.5
         ],
         "blade_tip": [
-         -30.7,
-         -46.6
+         -30.2,
+         -48.2
         ]
        },
        "equipment": {
-        "lantern": 105,
+        "lantern": 106,
         "sabre": 54,
         "scabbard": 83
        },
-       "sha256": "f1720f98590c990117c1f455b01c7f9679b7bb566a1ef8c4e2c6090cbc08482e",
+       "sha256": "d6ed457d9f48d4641d6eb62df2d0a81465505fe8c2339dddba44f2d186e2ac03",
        "sheet": "sheets/powered_jump_N.png",
        "region": [
         320,
@@ -33045,41 +33045,41 @@
        "packed_bounds": [
         61,
         67,
-        107,
+        112,
         136
        ],
        "anchors": {
         "hand_R": [
-         3.3,
-         -22.9
+         6.3,
+         -24.2
         ],
         "hand_L": [
-         2.1,
-         -22.7
+         6.7,
+         -26.6
         ],
         "foot_L": [
-         -1.5,
+         4.5,
          -1.0
         ],
         "foot_R": [
-         1.5,
+         -3.5,
          -1.0
         ],
         "lantern": [
-         3.3,
-         -12.9
+         6.3,
+         -14.2
         ],
         "blade_tip": [
-         25.1,
-         -14.6
+         30.3,
+         -31.3
         ]
        },
        "equipment": {
-        "sabre": 41,
-        "scabbard": 83,
-        "lantern": 110
+        "sabre": 51,
+        "scabbard": 87,
+        "lantern": 97
        },
-       "sha256": "23a0c6d2492f05a8c4a1e0d0c1323852a4e5bbb6a4e915e475fd4724fd8b7991",
+       "sha256": "fee49496f0cff30ddfdd65510f9e713f3ae5b11a191f114839aad4547a7a1898",
        "sheet": "sheets/powered_jump_E.png",
        "region": [
         0,
@@ -33094,41 +33094,41 @@
        "packed_bounds": [
         61,
         63,
-        113,
+        115,
         135
        ],
        "anchors": {
         "hand_R": [
-         8.0,
-         -33.5
+         7.9,
+         -32.8
         ],
         "hand_L": [
-         8.9,
-         -37.0
+         9.2,
+         -36.1
         ],
         "foot_L": [
-         -2.0,
-         -2.5
+         -0.1,
+         -2.1
         ],
         "foot_R": [
-         2.0,
-         -2.0
+         0.4,
+         -1.7
         ],
         "lantern": [
-         8.0,
-         -23.5
+         7.9,
+         -22.8
         ],
         "blade_tip": [
-         32.0,
-         -28.9
+         33.2,
+         -34.1
         ]
        },
        "equipment": {
-        "sabre": 50,
+        "sabre": 52,
         "scabbard": 87,
-        "lantern": 107
+        "lantern": 108
        },
-       "sha256": "10a721ff5e76c6fe8b2bf6be320d446d7947ba65fe135f5f3b780746bf96a10e",
+       "sha256": "7ac71248128b141c3f7db9951054084c6b57f178d3f33a8655c77d7956a75a08",
        "sheet": "sheets/powered_jump_E.png",
        "region": [
         160,
@@ -33143,41 +33143,41 @@
        "packed_bounds": [
         61,
         62,
-        114,
-        130
+        115,
+        131
        ],
        "anchors": {
         "hand_R": [
-         8.9,
-         -38.5
+         8.8,
+         -37.8
         ],
         "hand_L": [
-         10.1,
-         -42.0
+         10.0,
+         -41.3
         ],
         "foot_L": [
-         -1.5,
-         -9.0
+         -0.9,
+         -8.2
         ],
         "foot_R": [
-         2.5,
-         -7.0
+         1.9,
+         -6.4
         ],
         "lantern": [
-         8.9,
-         -28.5
+         8.8,
+         -27.8
         ],
         "blade_tip": [
-         33.1,
-         -33.9
+         33.5,
+         -35.1
         ]
        },
        "equipment": {
-        "sabre": 49,
+        "sabre": 53,
         "scabbard": 87,
         "lantern": 107
        },
-       "sha256": "fa0cd2204144b89832793fe0a8be763401d1db96dba9a210b967a1827eb65e8f",
+       "sha256": "eee0c63b23a42b8d2bbb857496da5cbbb77f105c2e4ffe268980d9e400e8b74b",
        "sheet": "sheets/powered_jump_E.png",
        "region": [
         320,
@@ -33439,43 +33439,43 @@
        "path": "res://assets/animated/velvet/powered_jump_W_00.png",
        "file": "powered_jump_W_00.png",
        "packed_bounds": [
-        59,
+        53,
         67,
         96,
         136
        ],
        "anchors": {
         "hand_R": [
-         -6.1,
-         -22.9
+         -8.9,
+         -24.2
         ],
         "hand_L": [
-         0.7,
-         -22.7
+         -4.5,
+         -26.6
         ],
         "foot_R": [
-         -2.5,
-         -1.0
-        ],
-        "foot_L": [
          2.5,
          -1.0
         ],
+        "foot_L": [
+         -3.5,
+         -1.0
+        ],
         "lantern": [
-         -6.1,
-         -12.9
+         -8.9,
+         -14.2
         ],
         "blade_tip": [
-         -20.0,
-         -14.6
+         -25.5,
+         -31.5
         ]
        },
        "equipment": {
         "scabbard": 13,
-        "lantern": 10,
-        "sabre": 65
+        "lantern": 51,
+        "sabre": 68
        },
-       "sha256": "e025316179799d6193f00b1252eefc3cc945cdd5c4f0bbbf19bf481d2d10f21a",
+       "sha256": "8847a99726bce790dd03807f75180619985615be3d0fbfc44769e5c77dadb878",
        "sheet": "sheets/powered_jump_W.png",
        "region": [
         0,
@@ -33488,43 +33488,43 @@
        "path": "res://assets/animated/velvet/powered_jump_W_01.png",
        "file": "powered_jump_W_01.png",
        "packed_bounds": [
-        52,
+        50,
         63,
         96,
         135
        ],
        "anchors": {
         "hand_R": [
-         -11.0,
-         -33.5
+         -10.8,
+         -32.8
         ],
         "hand_L": [
-         -6.0,
-         -37.0
+         -6.7,
+         -36.1
         ],
         "foot_R": [
-         -3.0,
-         -2.0
+         -1.4,
+         -1.7
         ],
         "foot_L": [
-         3.0,
-         -2.5
+         1.1,
+         -2.1
         ],
         "lantern": [
-         -11.0,
-         -23.5
+         -10.8,
+         -22.8
         ],
         "blade_tip": [
-         -26.7,
-         -28.9
+         -28.2,
+         -34.3
         ]
        },
        "equipment": {
         "scabbard": 13,
-        "lantern": 92,
-        "sabre": 68
+        "lantern": 96,
+        "sabre": 66
        },
-       "sha256": "dc7644e4ffad8d011df4c27fe19b1b73e755528c3652fa8235fd68bbb0298e72",
+       "sha256": "ca886dcc195f5ead53f707c17117a0fdbde2d5e66a9c17c2072fe45e416abe25",
        "sheet": "sheets/powered_jump_W.png",
        "region": [
         160,
@@ -33540,40 +33540,40 @@
         51,
         62,
         96,
-        130
+        131
        ],
        "anchors": {
         "hand_R": [
-         -12.1,
-         -38.5
+         -11.9,
+         -37.8
         ],
         "hand_L": [
-         -7.0,
-         -42.0
+         -7.1,
+         -41.3
         ],
         "foot_R": [
-         -3.5,
-         -7.0
+         -2.9,
+         -6.4
         ],
         "foot_L": [
-         2.5,
-         -9.0
+         1.9,
+         -8.2
         ],
         "lantern": [
-         -12.1,
-         -28.5
+         -11.9,
+         -27.8
         ],
         "blade_tip": [
-         -27.6,
-         -33.9
+         -28.1,
+         -35.2
         ]
        },
        "equipment": {
         "scabbard": 23,
         "lantern": 94,
-        "sabre": 67
+        "sabre": 70
        },
-       "sha256": "ab097f8efd1d8aaf4e3538b88ea5178e5ff4a525a45a0825fb8af025c866008d",
+       "sha256": "b204bb13f4d1cd03c5fffc8ff79c62a346a18eb0a12f17ea0080d09f245bcd48",
        "sheet": "sheets/powered_jump_W.png",
        "region": [
         320,
@@ -37067,43 +37067,43 @@
        "path": "res://assets/animated/velvet/powered_secondary_S_00.png",
        "file": "powered_secondary_S_00.png",
        "packed_bounds": [
-        60,
         62,
-        107,
+        62,
+        106,
         137
        ],
        "anchors": {
         "hand_R": [
-         -13.9,
-         -26.8
+         -12.0,
+         -28.8
         ],
         "hand_L": [
-         10.0,
-         -30.5
+         9.0,
+         -31.8
         ],
         "foot_R": [
          -5.0,
-         -1.7
+         -2.1
         ],
         "foot_L": [
          5.0,
          0.4
         ],
         "lantern": [
-         -13.9,
-         -16.8
+         -12.0,
+         -18.8
         ],
         "blade_tip": [
-         25.5,
-         -32.5
+         24.0,
+         -38.6
         ]
        },
        "equipment": {
-        "scabbard": 2,
-        "lantern": 100,
-        "sabre": 53
+        "scabbard": 0,
+        "lantern": 108,
+        "sabre": 60
        },
-       "sha256": "e25a149dceefd857822881a08ed10a5fd4ae9ce23cda67c77be4198076594baa",
+       "sha256": "5db3b1938195b47824b3b090c548785ef452bbb6462cc24514e3b2884288e49b",
        "sheet": "sheets/powered_secondary_S.png",
        "region": [
         0,
@@ -37118,21 +37118,21 @@
        "packed_bounds": [
         61,
         62,
-        107,
+        106,
         137
        ],
        "anchors": {
         "hand_R": [
          -12.0,
-         -37.3
+         -33.1
         ],
         "hand_L": [
-         10.0,
-         -30.5
+         9.5,
+         -31.2
         ],
         "foot_R": [
          -5.0,
-         -1.7
+         -1.9
         ],
         "foot_L": [
          5.0,
@@ -37140,19 +37140,19 @@
         ],
         "lantern": [
          -12.0,
-         -27.3
+         -23.1
         ],
         "blade_tip": [
-         25.5,
-         -32.5
+         24.8,
+         -35.6
         ]
        },
        "equipment": {
-        "scabbard": 6,
+        "scabbard": 2,
         "lantern": 105,
-        "sabre": 53
+        "sabre": 59
        },
-       "sha256": "ed6f438f5271cf15c55d437d41b4434ec73b4b8f0e1f8095e45b888cba000785",
+       "sha256": "65c10adeb7d9c0d651917bbe315d3ee8b20975badc5fe8c0f1e5b1b97fac57e6",
        "sheet": "sheets/powered_secondary_S.png",
        "region": [
         160,
@@ -37172,36 +37172,36 @@
        ],
        "anchors": {
         "hand_R": [
-         -11.5,
-         -40.7
+         -11.6,
+         -38.3
         ],
         "hand_L": [
-         10.0,
-         -30.5
+         9.8,
+         -30.8
         ],
         "foot_R": [
          -5.0,
-         -1.7
+         -1.8
         ],
         "foot_L": [
          5.0,
          0.4
         ],
         "lantern": [
-         -11.5,
-         -30.7
+         -11.6,
+         -28.3
         ],
         "blade_tip": [
-         25.5,
-         -32.5
+         25.2,
+         -33.8
         ]
        },
        "equipment": {
-        "scabbard": 11,
-        "lantern": 111,
-        "sabre": 53
+        "scabbard": 8,
+        "lantern": 106,
+        "sabre": 56
        },
-       "sha256": "80b0cd7fd58d9ad56f0d8b02f3d0789a8d0ad73509edcf87a71d0822668e23a3",
+       "sha256": "c5f94b48937afb7c11d2876f13ef6ff7cf213be2fa6d61585fcb5e36ad9dc738",
        "sheet": "sheets/powered_secondary_S.png",
        "region": [
         320,
@@ -37517,43 +37517,43 @@
        "path": "res://assets/animated/velvet/powered_secondary_N_00.png",
        "file": "powered_secondary_N_00.png",
        "packed_bounds": [
-        55,
+        57,
         62,
-        100,
+        98,
         137
        ],
        "anchors": {
         "hand_R": [
-         13.9,
-         -27.8
+         12.0,
+         -35.2
         ],
         "hand_L": [
-         -10.0,
-         -35.5
+         -9.0,
+         -38.2
         ],
         "foot_R": [
          5.0,
-         -0.3
+         0.1
         ],
         "foot_L": [
          -5.0,
          -2.4
         ],
         "lantern": [
-         13.9,
-         -17.8
+         12.0,
+         -25.2
         ],
         "blade_tip": [
-         -23.2,
-         -53.5
+         -21.5,
+         -59.0
         ]
        },
        "equipment": {
-        "sabre": 45,
-        "scabbard": 44,
-        "lantern": 107
+        "lantern": 57,
+        "sabre": 46,
+        "scabbard": 83
        },
-       "sha256": "613ec54b2251fefb01ef2945c5e45d9079c0c6b937a194676c5ee8507964bc41",
+       "sha256": "70397d3d3885799a780e9e717f692d030846788000feaf3c52b975ebc2796f4d",
        "sheet": "sheets/powered_secondary_N.png",
        "region": [
         0,
@@ -37566,7 +37566,7 @@
        "path": "res://assets/animated/velvet/powered_secondary_N_01.png",
        "file": "powered_secondary_N_01.png",
        "packed_bounds": [
-        55,
+        56,
         63,
         99,
         137
@@ -37574,15 +37574,15 @@
        "anchors": {
         "hand_R": [
          12.0,
-         -36.7
+         -35.9
         ],
         "hand_L": [
-         -10.0,
-         -35.5
+         -9.5,
+         -36.8
         ],
         "foot_R": [
          5.0,
-         -0.3
+         -0.1
         ],
         "foot_L": [
          -5.0,
@@ -37590,19 +37590,19 @@
         ],
         "lantern": [
          12.0,
-         -26.7
+         -25.9
         ],
         "blade_tip": [
-         -23.2,
-         -53.5
+         -22.4,
+         -56.3
         ]
        },
        "equipment": {
-        "sabre": 45,
-        "scabbard": 47,
-        "lantern": 108
+        "sabre": 48,
+        "lantern": 60,
+        "scabbard": 83
        },
-       "sha256": "fdc2111c091bc15f199a98155753742271b4840dc35176fcd843d1e974f04723",
+       "sha256": "9da5f4c413129e54b50a45a62b970f4d5c07a2e6a64e042a2f8302cb97b1db8f",
        "sheet": "sheets/powered_secondary_N.png",
        "region": [
         160,
@@ -37615,43 +37615,43 @@
        "path": "res://assets/animated/velvet/powered_secondary_N_02.png",
        "file": "powered_secondary_N_02.png",
        "packed_bounds": [
-        55,
+        56,
         63,
         99,
         137
        ],
        "anchors": {
         "hand_R": [
-         11.5,
-         -39.3
+         11.6,
+         -38.5
         ],
         "hand_L": [
-         -10.0,
-         -35.5
+         -9.8,
+         -36.0
         ],
         "foot_R": [
          5.0,
-         -0.3
+         -0.2
         ],
         "foot_L": [
          -5.0,
          -2.4
         ],
         "lantern": [
-         11.5,
-         -29.3
+         11.6,
+         -28.5
         ],
         "blade_tip": [
-         -23.2,
-         -53.5
+         -22.9,
+         -54.6
         ]
        },
        "equipment": {
-        "sabre": 45,
-        "scabbard": 56,
-        "lantern": 106
+        "sabre": 49,
+        "scabbard": 53,
+        "lantern": 107
        },
-       "sha256": "3d89bb53de2c750e4bcf001d0dd6daf0eb160283cdcf559afd6578e0d2fcc4b7",
+       "sha256": "0461cdb91d6210762057f98f4cec158bdf3cd4319cf16fd60ff6d722d570a87d",
        "sheet": "sheets/powered_secondary_N.png",
        "region": [
         320,
@@ -37974,36 +37974,36 @@
        ],
        "anchors": {
         "hand_R": [
-         0.0,
-         -27.3
+         7.8,
+         -32.0
         ],
         "hand_L": [
-         8.0,
-         -33.0
+         9.9,
+         -35.0
         ],
         "foot_L": [
          4.5,
          -1.0
         ],
         "foot_R": [
-         -2.5,
+         -3.5,
          -1.0
         ],
         "lantern": [
-         0.0,
-         -17.3
+         7.8,
+         -22.0
         ],
         "blade_tip": [
-         30.7,
-         -41.6
+         30.9,
+         -47.4
         ]
        },
        "equipment": {
-        "sabre": 57,
-        "scabbard": 70,
-        "lantern": 105
+        "sabre": 63,
+        "scabbard": 87,
+        "lantern": 100
        },
-       "sha256": "4c93e4edb71d8c163bf470f37486542c9ef3b448abb94bc6684e4b4c1365c9d0",
+       "sha256": "ac67910246d76293158e83508d0e800072477fa4ed8390757652ec69277c7f32",
        "sheet": "sheets/powered_secondary_E.png",
        "region": [
         0,
@@ -38023,36 +38023,36 @@
        ],
        "anchors": {
         "hand_R": [
-         -2.2,
-         -37.0
+         2.8,
+         -34.5
         ],
         "hand_L": [
-         8.0,
-         -33.0
+         8.9,
+         -34.0
         ],
         "foot_L": [
          4.5,
          -1.0
         ],
         "foot_R": [
-         -2.5,
+         -3.0,
          -1.0
         ],
         "lantern": [
-         -2.2,
-         -27.0
+         2.8,
+         -24.5
         ],
         "blade_tip": [
-         30.7,
-         -41.6
+         30.9,
+         -44.6
         ]
        },
        "equipment": {
-        "sabre": 57,
-        "scabbard": 55,
-        "lantern": 100
+        "sabre": 65,
+        "scabbard": 83,
+        "lantern": 107
        },
-       "sha256": "e503b1c8e4cffd635346c5808dad61fbe4449ac2517bfe3fe6e33917a75dac97",
+       "sha256": "7f36a613388dcc6b8788da20538150edc88d9efb9a4fce1692e16b059c9dfb19",
        "sheet": "sheets/powered_secondary_E.png",
        "region": [
         160,
@@ -38072,36 +38072,36 @@
        ],
        "anchors": {
         "hand_R": [
-         -3.2,
-         -40.0
+         -1.0,
+         -38.4
         ],
         "hand_L": [
-         8.0,
-         -33.0
+         8.4,
+         -33.4
         ],
         "foot_L": [
          4.5,
          -1.0
         ],
         "foot_R": [
-         -2.5,
+         -2.7,
          -1.0
         ],
         "lantern": [
-         -3.2,
-         -30.0
+         -1.0,
+         -28.4
         ],
         "blade_tip": [
-         30.7,
-         -41.6
+         30.8,
+         -42.8
         ]
        },
        "equipment": {
-        "sabre": 57,
-        "scabbard": 56,
-        "lantern": 100
+        "sabre": 56,
+        "scabbard": 61,
+        "lantern": 107
        },
-       "sha256": "b5161cdb623011d680ae703dbc207bc9e53d68bd90f6cdcd11cd5f6facb35248",
+       "sha256": "0bbc345c18345780ee063424e49c27140dd2d9da42cac0885edc969d68326b66",
        "sheet": "sheets/powered_secondary_E.png",
        "region": [
         320,
@@ -38424,15 +38424,15 @@
        ],
        "anchors": {
         "hand_R": [
-         -2.8,
-         -27.3
+         -10.2,
+         -32.0
         ],
         "hand_L": [
-         -6.0,
-         -33.0
+         -8.1,
+         -35.0
         ],
         "foot_R": [
-         1.5,
+         2.5,
          -1.0
         ],
         "foot_L": [
@@ -38440,20 +38440,20 @@
          -1.0
         ],
         "lantern": [
-         -2.8,
-         -17.3
+         -10.2,
+         -22.0
         ],
         "blade_tip": [
-         -26.3,
-         -41.9
+         -26.6,
+         -47.8
         ]
        },
        "equipment": {
         "scabbard": 13,
-        "lantern": 11,
-        "sabre": 67
+        "lantern": 88,
+        "sabre": 66
        },
-       "sha256": "b1fa93b12eae6dbe47f359d589947a8efd88e49132666e88391f1072a0a93c5e",
+       "sha256": "4f717d44cd71dc8eab7ac81a17511c98f580e4a539adcaad067ae5bd2c67a216",
        "sheet": "sheets/powered_secondary_W.png",
        "region": [
         0,
@@ -38473,15 +38473,15 @@
        ],
        "anchors": {
         "hand_R": [
-         -0.2,
-         -37.0
+         -5.2,
+         -34.5
         ],
         "hand_L": [
-         -6.0,
-         -33.0
+         -7.0,
+         -34.0
         ],
         "foot_R": [
-         1.5,
+         2.0,
          -1.0
         ],
         "foot_L": [
@@ -38489,20 +38489,20 @@
          -1.0
         ],
         "lantern": [
-         -0.2,
-         -27.0
+         -5.2,
+         -24.5
         ],
         "blade_tip": [
-         -26.3,
-         -41.9
+         -26.5,
+         -44.9
         ]
        },
        "equipment": {
         "scabbard": 13,
-        "lantern": 0,
-        "sabre": 67
+        "lantern": 36,
+        "sabre": 68
        },
-       "sha256": "8813b2c5e27ea0992ccde5a3ae3c9259abd1fa83169aa8e8e03f761ef9b3d35c",
+       "sha256": "a978bab897ad9f346368be929c0331fa8b87849d6142889cf75398337711791f",
        "sheet": "sheets/powered_secondary_W.png",
        "region": [
         160,
@@ -38522,15 +38522,15 @@
        ],
        "anchors": {
         "hand_R": [
-         0.8,
-         -40.0
+         -1.4,
+         -38.4
         ],
         "hand_L": [
-         -6.0,
-         -33.0
+         -6.4,
+         -33.4
         ],
         "foot_R": [
-         1.5,
+         1.7,
          -1.0
         ],
         "foot_L": [
@@ -38538,20 +38538,20 @@
          -1.0
         ],
         "lantern": [
-         0.8,
-         -30.0
+         -1.4,
+         -28.4
         ],
         "blade_tip": [
-         -26.3,
-         -41.9
+         -26.4,
+         -43.1
         ]
        },
        "equipment": {
         "scabbard": 13,
-        "lantern": 0,
-        "sabre": 67
+        "lantern": 4,
+        "sabre": 65
        },
-       "sha256": "527b931e60d87dba846189ef7537b4f445dcb9160691403e8e1f324406fd04e6",
+       "sha256": "a40f186af16b785602f1282ddc429bd71d535d3e4bad9707b27b1947af08e9d8",
        "sheet": "sheets/powered_secondary_W.png",
        "region": [
         320,

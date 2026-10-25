@@ -4723,12 +4723,12 @@
         ]
        },
        "equipment": {
+        "launcher": 136,
         "rack": 40,
-        "loader": 78,
-        "chamber": 36,
-        "launcher": 204
+        "loader": 98,
+        "chamber": 44
        },
-       "sha256": "15c1cd21ced81152bdd04f3013138e71db4d5a113b16fa13037d5c4e13ef6992",
+       "sha256": "19da1537b9c910234b476c4125ab5fef47d0882af3cc56d1048d0627410076bc",
        "sheet": "sheets/primary_N.png",
        "region": [
         1120,
@@ -4773,12 +4773,12 @@
         ]
        },
        "equipment": {
+        "launcher": 187,
         "rack": 40,
-        "loader": 55,
-        "chamber": 80,
-        "launcher": 350
+        "loader": 91,
+        "chamber": 80
        },
-       "sha256": "b1670c917d6207999966b4830cdc9dccdbbaa60e61453519cf96dd32daf0485e",
+       "sha256": "cc286d970db8dd01b8ed04252300bf7ed58000ae299737222455d862d154a99c",
        "sheet": "sheets/primary_N.png",
        "region": [
         1280,
@@ -4823,12 +4823,12 @@
         ]
        },
        "equipment": {
+        "launcher": 187,
         "rack": 40,
-        "loader": 55,
-        "chamber": 80,
-        "launcher": 350
+        "loader": 91,
+        "chamber": 80
        },
-       "sha256": "abb09b1354eb5d7f1ce6bbf979f0b3bda5fd0e6a5c1481e182745560f8a3afe3",
+       "sha256": "0a552f65a45d7d1b5fee5b814c22beb05363381aa4d0ae08378d66bb2223e9fe",
        "sheet": "sheets/primary_N.png",
        "region": [
         1440,
@@ -4873,12 +4873,12 @@
         ]
        },
        "equipment": {
+        "launcher": 155,
         "rack": 40,
         "loader": 79,
-        "chamber": 27,
-        "launcher": 168
+        "chamber": 31
        },
-       "sha256": "08aa9ec619d76ed0afbaa42edefbe58f3a9be238cbddb1f6f17128f68a8bd4c9",
+       "sha256": "f4bf9ad21d8cf843e319fb716f9fed53f21830e048da32f55aaa7b605d475d34",
        "sheet": "sheets/primary_N.png",
        "region": [
         1600,
