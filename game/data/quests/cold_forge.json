@@ -1,0 +1,17 @@
+{
+  "id": "cold_forge",
+  "title": "The cold forge",
+  "kind": "main",
+  "summary": "Slates from the storm block the old smithy. Clear them and Hale's forge can burn again.",
+  "start": { "on": "talk:hale", "if": { "done": ["road_to_crossroads"] } },
+  "steps": [
+    {
+      "id": "restore",
+      "text": "Restore the old smithy (30 Glint)",
+      "on": "restore:forge",
+      "done_if": { "restored": ["forge"] }
+    },
+    { "id": "report", "text": "Tell Hale the forge is lit", "on": "talk:hale" }
+  ],
+  "rewards": { "glint": 0, "flags": ["forge_open", "undercroft_open"] }
+}

@@ -1,0 +1,5498 @@
+{
+ "id": "moss",
+ "name": "Moss",
+ "view": "SNEW",
+ "directions": [
+  "S",
+  "N",
+  "E",
+  "W"
+ ],
+ "default_direction": "E",
+ "frame_size": [
+  160,
+  144
+ ],
+ "foot_pivot": [
+  80,
+  136
+ ],
+ "body_height_target": 72,
+ "walk_speed": 54.6,
+ "stair_speed": null,
+ "anchor_space": "pixels relative to foot_pivot, screen orientation (x right, y down)",
+ "source": "castwork out/moss (procedural rig), imported by game/tools/import_cast.py",
+ "clips": {
+  "idle": {
+   "frame_count": 8,
+   "durations": [
+    0.26,
+    0.18,
+    0.2,
+    0.26,
+    0.22,
+    0.18,
+    0.12,
+    0.18
+   ],
+   "duration": 1.6,
+   "loop": true,
+   "release_frame": null,
+   "release_time": null,
+   "hold_frame": null,
+   "roles": null,
+   "facings": {
+    "S": {
+     "frames": [
+      {
+       "path": "res://assets/animated/moss/idle_S_00.png",
+       "file": "idle_S_00.png",
+       "packed_bounds": [
+        61,
+        64,
+        100,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.8,
+         -26.1
+        ],
+        "hand_L": [
+         11.7,
+         -29.5
+        ],
+        "foot_R": [
+         -4.9,
+         -0.5
+        ],
+        "foot_L": [
+         4.9,
+         -1.5
+        ]
+       },
+       "equipment": {
+        "basket": 93
+       },
+       "sha256": "894a8bda1ec21ceb773d3693bb83b7db74113d15ed870bdcaa05eed2a96634ff",
+       "sheet": "sheets/idle_S.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/idle_S_01.png",
+       "file": "idle_S_01.png",
+       "packed_bounds": [
+        61,
+        64,
+        100,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.8,
+         -26.1
+        ],
+        "hand_L": [
+         11.7,
+         -29.5
+        ],
+        "foot_R": [
+         -4.9,
+         -0.5
+        ],
+        "foot_L": [
+         4.9,
+         -1.5
+        ]
+       },
+       "equipment": {
+        "basket": 93
+       },
+       "sha256": "894a8bda1ec21ceb773d3693bb83b7db74113d15ed870bdcaa05eed2a96634ff",
+       "sheet": "sheets/idle_S.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/idle_S_02.png",
+       "file": "idle_S_02.png",
+       "packed_bounds": [
+        62,
+        63,
+        100,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.8,
+         -26.6
+        ],
+        "hand_L": [
+         11.7,
+         -30.0
+        ],
+        "foot_R": [
+         -4.9,
+         -0.5
+        ],
+        "foot_L": [
+         4.9,
+         -1.5
+        ]
+       },
+       "equipment": {
+        "basket": 96
+       },
+       "sha256": "358cdf0f10dc1a3fc14428dd58312890a5ac6203fa92ffa87195403295dc7823",
+       "sheet": "sheets/idle_S.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/idle_S_03.png",
+       "file": "idle_S_03.png",
+       "packed_bounds": [
+        62,
+        63,
+        100,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.8,
+         -26.6
+        ],
+        "hand_L": [
+         11.7,
+         -30.0
+        ],
+        "foot_R": [
+         -4.9,
+         -0.5
+        ],
+        "foot_L": [
+         4.9,
+         -1.5
+        ]
+       },
+       "equipment": {
+        "basket": 96
+       },
+       "sha256": "358cdf0f10dc1a3fc14428dd58312890a5ac6203fa92ffa87195403295dc7823",
+       "sheet": "sheets/idle_S.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/idle_S_04.png",
+       "file": "idle_S_04.png",
+       "packed_bounds": [
+        62,
+        63,
+        100,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.8,
+         -26.6
+        ],
+        "hand_L": [
+         11.7,
+         -30.0
+        ],
+        "foot_R": [
+         -4.9,
+         -0.5
+        ],
+        "foot_L": [
+         4.9,
+         -1.5
+        ]
+       },
+       "equipment": {
+        "basket": 96
+       },
+       "sha256": "358cdf0f10dc1a3fc14428dd58312890a5ac6203fa92ffa87195403295dc7823",
+       "sheet": "sheets/idle_S.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/idle_S_05.png",
+       "file": "idle_S_05.png",
+       "packed_bounds": [
+        62,
+        63,
+        100,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.8,
+         -26.6
+        ],
+        "hand_L": [
+         11.7,
+         -30.0
+        ],
+        "foot_R": [
+         -4.9,
+         -0.5
+        ],
+        "foot_L": [
+         4.9,
+         -1.5
+        ]
+       },
+       "equipment": {
+        "basket": 96
+       },
+       "sha256": "358cdf0f10dc1a3fc14428dd58312890a5ac6203fa92ffa87195403295dc7823",
+       "sheet": "sheets/idle_S.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/idle_S_06.png",
+       "file": "idle_S_06.png",
+       "packed_bounds": [
+        61,
+        64,
+        100,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.8,
+         -26.1
+        ],
+        "hand_L": [
+         11.7,
+         -29.5
+        ],
+        "foot_R": [
+         -4.9,
+         -0.5
+        ],
+        "foot_L": [
+         4.9,
+         -1.5
+        ]
+       },
+       "equipment": {
+        "basket": 93
+       },
+       "sha256": "0bd6a813f43c0c25ceb6a5c278fe51e832a4cc5d5865e6a2e161eb3230455310",
+       "sheet": "sheets/idle_S.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/idle_S_07.png",
+       "file": "idle_S_07.png",
+       "packed_bounds": [
+        61,
+        64,
+        100,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.8,
+         -26.1
+        ],
+        "hand_L": [
+         11.7,
+         -29.5
+        ],
+        "foot_R": [
+         -4.9,
+         -0.5
+        ],
+        "foot_L": [
+         4.9,
+         -1.5
+        ]
+       },
+       "equipment": {
+        "basket": 93
+       },
+       "sha256": "894a8bda1ec21ceb773d3693bb83b7db74113d15ed870bdcaa05eed2a96634ff",
+       "sheet": "sheets/idle_S.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "N": {
+     "frames": [
+      {
+       "path": "res://assets/animated/moss/idle_N_00.png",
+       "file": "idle_N_00.png",
+       "packed_bounds": [
+        60,
+        66,
+        99,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         13.8,
+         -27.9
+        ],
+        "hand_L": [
+         -11.7,
+         -33.7
+        ],
+        "foot_R": [
+         4.9,
+         -1.5
+        ],
+        "foot_L": [
+         -4.9,
+         -0.5
+        ]
+       },
+       "equipment": {
+        "basket": 54
+       },
+       "sha256": "b1c5a0c916ea4a826c60bd7c75451d3fcdcfe1e9acff1b5990a0bbe31284e91e",
+       "sheet": "sheets/idle_N.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/idle_N_01.png",
+       "file": "idle_N_01.png",
+       "packed_bounds": [
+        60,
+        66,
+        99,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         13.8,
+         -27.9
+        ],
+        "hand_L": [
+         -11.7,
+         -33.7
+        ],
+        "foot_R": [
+         4.9,
+         -1.5
+        ],
+        "foot_L": [
+         -4.9,
+         -0.5
+        ]
+       },
+       "equipment": {
+        "basket": 54
+       },
+       "sha256": "b1c5a0c916ea4a826c60bd7c75451d3fcdcfe1e9acff1b5990a0bbe31284e91e",
+       "sheet": "sheets/idle_N.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/idle_N_02.png",
+       "file": "idle_N_02.png",
+       "packed_bounds": [
+        60,
+        65,
+        98,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         13.8,
+         -28.4
+        ],
+        "hand_L": [
+         -11.7,
+         -34.3
+        ],
+        "foot_R": [
+         4.9,
+         -1.5
+        ],
+        "foot_L": [
+         -4.9,
+         -0.5
+        ]
+       },
+       "equipment": {
+        "basket": 54
+       },
+       "sha256": "04c1ae0a4df01af204d11054ac5cb3e611b46ac2551bd2d895e29d6e6b44cda7",
+       "sheet": "sheets/idle_N.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/idle_N_03.png",
+       "file": "idle_N_03.png",
+       "packed_bounds": [
+        60,
+        65,
+        98,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         13.8,
+         -28.4
+        ],
+        "hand_L": [
+         -11.7,
+         -34.3
+        ],
+        "foot_R": [
+         4.9,
+         -1.5
+        ],
+        "foot_L": [
+         -4.9,
+         -0.5
+        ]
+       },
+       "equipment": {
+        "basket": 54
+       },
+       "sha256": "04c1ae0a4df01af204d11054ac5cb3e611b46ac2551bd2d895e29d6e6b44cda7",
+       "sheet": "sheets/idle_N.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/idle_N_04.png",
+       "file": "idle_N_04.png",
+       "packed_bounds": [
+        60,
+        65,
+        98,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         13.8,
+         -28.4
+        ],
+        "hand_L": [
+         -11.7,
+         -34.3
+        ],
+        "foot_R": [
+         4.9,
+         -1.5
+        ],
+        "foot_L": [
+         -4.9,
+         -0.5
+        ]
+       },
+       "equipment": {
+        "basket": 54
+       },
+       "sha256": "04c1ae0a4df01af204d11054ac5cb3e611b46ac2551bd2d895e29d6e6b44cda7",
+       "sheet": "sheets/idle_N.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/idle_N_05.png",
+       "file": "idle_N_05.png",
+       "packed_bounds": [
+        60,
+        65,
+        98,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         13.8,
+         -28.4
+        ],
+        "hand_L": [
+         -11.7,
+         -34.3
+        ],
+        "foot_R": [
+         4.9,
+         -1.5
+        ],
+        "foot_L": [
+         -4.9,
+         -0.5
+        ]
+       },
+       "equipment": {
+        "basket": 54
+       },
+       "sha256": "04c1ae0a4df01af204d11054ac5cb3e611b46ac2551bd2d895e29d6e6b44cda7",
+       "sheet": "sheets/idle_N.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/idle_N_06.png",
+       "file": "idle_N_06.png",
+       "packed_bounds": [
+        60,
+        66,
+        99,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         13.8,
+         -27.9
+        ],
+        "hand_L": [
+         -11.7,
+         -33.7
+        ],
+        "foot_R": [
+         4.9,
+         -1.5
+        ],
+        "foot_L": [
+         -4.9,
+         -0.5
+        ]
+       },
+       "equipment": {
+        "basket": 54
+       },
+       "sha256": "b1c5a0c916ea4a826c60bd7c75451d3fcdcfe1e9acff1b5990a0bbe31284e91e",
+       "sheet": "sheets/idle_N.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/idle_N_07.png",
+       "file": "idle_N_07.png",
+       "packed_bounds": [
+        60,
+        66,
+        99,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         13.8,
+         -27.9
+        ],
+        "hand_L": [
+         -11.7,
+         -33.7
+        ],
+        "foot_R": [
+         4.9,
+         -1.5
+        ],
+        "foot_L": [
+         -4.9,
+         -0.5
+        ]
+       },
+       "equipment": {
+        "basket": 54
+       },
+       "sha256": "b1c5a0c916ea4a826c60bd7c75451d3fcdcfe1e9acff1b5990a0bbe31284e91e",
+       "sheet": "sheets/idle_N.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "E": {
+     "frames": [
+      {
+       "path": "res://assets/animated/moss/idle_E_00.png",
+       "file": "idle_E_00.png",
+       "packed_bounds": [
+        64,
+        67,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         1.2,
+         -27.0
+        ],
+        "hand_L": [
+         7.3,
+         -31.6
+        ],
+        "foot_R": [
+         1.0,
+         -1.0
+        ],
+        "foot_L": [
+         -1.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 2
+       },
+       "sha256": "85ebd76d3847ea79087a94e1b5dba47e57a8ddb046d7450936ba5a819df20508",
+       "sheet": "sheets/idle_E.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/idle_E_01.png",
+       "file": "idle_E_01.png",
+       "packed_bounds": [
+        64,
+        67,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         1.2,
+         -27.0
+        ],
+        "hand_L": [
+         7.3,
+         -31.6
+        ],
+        "foot_R": [
+         1.0,
+         -1.0
+        ],
+        "foot_L": [
+         -1.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 2
+       },
+       "sha256": "85ebd76d3847ea79087a94e1b5dba47e57a8ddb046d7450936ba5a819df20508",
+       "sheet": "sheets/idle_E.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/idle_E_02.png",
+       "file": "idle_E_02.png",
+       "packed_bounds": [
+        63,
+        66,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         1.2,
+         -27.5
+        ],
+        "hand_L": [
+         7.3,
+         -32.1
+        ],
+        "foot_R": [
+         1.0,
+         -1.0
+        ],
+        "foot_L": [
+         -1.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 3
+       },
+       "sha256": "d9ff7ca7d56e3f8da7e2e48ce83d0acacd292efb642adecf0f58485377caeea5",
+       "sheet": "sheets/idle_E.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/idle_E_03.png",
+       "file": "idle_E_03.png",
+       "packed_bounds": [
+        63,
+        66,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         1.2,
+         -27.5
+        ],
+        "hand_L": [
+         7.3,
+         -32.1
+        ],
+        "foot_R": [
+         1.0,
+         -1.0
+        ],
+        "foot_L": [
+         -1.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 3
+       },
+       "sha256": "d9ff7ca7d56e3f8da7e2e48ce83d0acacd292efb642adecf0f58485377caeea5",
+       "sheet": "sheets/idle_E.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/idle_E_04.png",
+       "file": "idle_E_04.png",
+       "packed_bounds": [
+        63,
+        66,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         1.2,
+         -27.5
+        ],
+        "hand_L": [
+         7.3,
+         -32.1
+        ],
+        "foot_R": [
+         1.0,
+         -1.0
+        ],
+        "foot_L": [
+         -1.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 3
+       },
+       "sha256": "d9ff7ca7d56e3f8da7e2e48ce83d0acacd292efb642adecf0f58485377caeea5",
+       "sheet": "sheets/idle_E.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/idle_E_05.png",
+       "file": "idle_E_05.png",
+       "packed_bounds": [
+        64,
+        66,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         1.2,
+         -27.5
+        ],
+        "hand_L": [
+         7.3,
+         -32.1
+        ],
+        "foot_R": [
+         1.0,
+         -1.0
+        ],
+        "foot_L": [
+         -1.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 3
+       },
+       "sha256": "2ec44aebad2526c171870f9049645354fa418415f5adc28db1bd64b48d7e143d",
+       "sheet": "sheets/idle_E.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/idle_E_06.png",
+       "file": "idle_E_06.png",
+       "packed_bounds": [
+        64,
+        67,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         1.2,
+         -27.0
+        ],
+        "hand_L": [
+         7.3,
+         -31.6
+        ],
+        "foot_R": [
+         1.0,
+         -1.0
+        ],
+        "foot_L": [
+         -1.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 2
+       },
+       "sha256": "1634eaab96801c00b8d36e8eb9494c6f7b81761d94a1c8e1f5cd27e5c1f807ad",
+       "sheet": "sheets/idle_E.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/idle_E_07.png",
+       "file": "idle_E_07.png",
+       "packed_bounds": [
+        64,
+        67,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         1.2,
+         -27.0
+        ],
+        "hand_L": [
+         7.3,
+         -31.6
+        ],
+        "foot_R": [
+         1.0,
+         -1.0
+        ],
+        "foot_L": [
+         -1.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 2
+       },
+       "sha256": "85ebd76d3847ea79087a94e1b5dba47e57a8ddb046d7450936ba5a819df20508",
+       "sheet": "sheets/idle_E.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "W": {
+     "frames": [
+      {
+       "path": "res://assets/animated/moss/idle_W_00.png",
+       "file": "idle_W_00.png",
+       "packed_bounds": [
+        65,
+        67,
+        95,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.9,
+         -27.0
+        ],
+        "hand_L": [
+         -4.9,
+         -31.6
+        ],
+        "foot_R": [
+         -2.0,
+         -1.0
+        ],
+        "foot_L": [
+         2.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 100
+       },
+       "sha256": "43d211d00211315937f0f5db319ed13241b2157c97686ea11cadb75171003f19",
+       "sheet": "sheets/idle_W.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/idle_W_01.png",
+       "file": "idle_W_01.png",
+       "packed_bounds": [
+        65,
+        67,
+        95,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.9,
+         -27.0
+        ],
+        "hand_L": [
+         -4.9,
+         -31.6
+        ],
+        "foot_R": [
+         -2.0,
+         -1.0
+        ],
+        "foot_L": [
+         2.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 100
+       },
+       "sha256": "43d211d00211315937f0f5db319ed13241b2157c97686ea11cadb75171003f19",
+       "sheet": "sheets/idle_W.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/idle_W_02.png",
+       "file": "idle_W_02.png",
+       "packed_bounds": [
+        65,
+        66,
+        96,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.9,
+         -27.5
+        ],
+        "hand_L": [
+         -4.9,
+         -32.1
+        ],
+        "foot_R": [
+         -2.0,
+         -1.0
+        ],
+        "foot_L": [
+         2.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 96
+       },
+       "sha256": "a6a2cc8ffe26b83ad6132b94c99e17a7ae63a18c8bc959170de5da8be8a25f46",
+       "sheet": "sheets/idle_W.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/idle_W_03.png",
+       "file": "idle_W_03.png",
+       "packed_bounds": [
+        65,
+        66,
+        96,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.9,
+         -27.5
+        ],
+        "hand_L": [
+         -4.9,
+         -32.1
+        ],
+        "foot_R": [
+         -2.0,
+         -1.0
+        ],
+        "foot_L": [
+         2.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 96
+       },
+       "sha256": "a6a2cc8ffe26b83ad6132b94c99e17a7ae63a18c8bc959170de5da8be8a25f46",
+       "sheet": "sheets/idle_W.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/idle_W_04.png",
+       "file": "idle_W_04.png",
+       "packed_bounds": [
+        65,
+        66,
+        96,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.9,
+         -27.5
+        ],
+        "hand_L": [
+         -4.9,
+         -32.1
+        ],
+        "foot_R": [
+         -2.0,
+         -1.0
+        ],
+        "foot_L": [
+         2.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 96
+       },
+       "sha256": "a6a2cc8ffe26b83ad6132b94c99e17a7ae63a18c8bc959170de5da8be8a25f46",
+       "sheet": "sheets/idle_W.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/idle_W_05.png",
+       "file": "idle_W_05.png",
+       "packed_bounds": [
+        65,
+        66,
+        95,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.9,
+         -27.5
+        ],
+        "hand_L": [
+         -4.9,
+         -32.1
+        ],
+        "foot_R": [
+         -2.0,
+         -1.0
+        ],
+        "foot_L": [
+         2.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 96
+       },
+       "sha256": "1658bac3e664b6ab859a9eaf2718dde64799535eae40acb806b507cbc39a062d",
+       "sheet": "sheets/idle_W.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/idle_W_06.png",
+       "file": "idle_W_06.png",
+       "packed_bounds": [
+        65,
+        67,
+        95,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.9,
+         -27.0
+        ],
+        "hand_L": [
+         -4.9,
+         -31.6
+        ],
+        "foot_R": [
+         -2.0,
+         -1.0
+        ],
+        "foot_L": [
+         2.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 100
+       },
+       "sha256": "7e6b20b980aa9e8c459d88db6a51b337395c5e52a6d673324502db29dbe5d327",
+       "sheet": "sheets/idle_W.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/idle_W_07.png",
+       "file": "idle_W_07.png",
+       "packed_bounds": [
+        65,
+        67,
+        95,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.9,
+         -27.0
+        ],
+        "hand_L": [
+         -4.9,
+         -31.6
+        ],
+        "foot_R": [
+         -2.0,
+         -1.0
+        ],
+        "foot_L": [
+         2.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 100
+       },
+       "sha256": "43d211d00211315937f0f5db319ed13241b2157c97686ea11cadb75171003f19",
+       "sheet": "sheets/idle_W.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    }
+   }
+  },
+  "walk": {
+   "frame_count": 10,
+   "durations": [
+    0.056,
+    0.056,
+    0.056,
+    0.056,
+    0.056,
+    0.056,
+    0.056,
+    0.056,
+    0.056,
+    0.056
+   ],
+   "duration": 0.56,
+   "loop": true,
+   "release_frame": null,
+   "release_time": null,
+   "hold_frame": null,
+   "roles": null,
+   "facings": {
+    "S": {
+     "frames": [
+      {
+       "path": "res://assets/animated/moss/walk_S_00.png",
+       "file": "walk_S_00.png",
+       "packed_bounds": [
+        61,
+        66,
+        100,
+        139
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.8,
+         -26.7
+        ],
+        "hand_L": [
+         11.7,
+         -28.4
+        ],
+        "foot_R": [
+         -4.9,
+         1.7
+        ],
+        "foot_L": [
+         4.9,
+         -3.7
+        ]
+       },
+       "equipment": {
+        "basket": 95
+       },
+       "sha256": "37470c6b1c4eeedf6b514487f44c5e53633896b5e3157d507b6a70c4a919df13",
+       "sheet": "sheets/walk_S.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/walk_S_01.png",
+       "file": "walk_S_01.png",
+       "packed_bounds": [
+        61,
+        66,
+        100,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.8,
+         -26.3
+        ],
+        "hand_L": [
+         11.7,
+         -28.4
+        ],
+        "foot_R": [
+         -4.9,
+         0.6
+        ],
+        "foot_L": [
+         4.9,
+         -4.4
+        ]
+       },
+       "equipment": {
+        "basket": 95
+       },
+       "sha256": "a9975bd28dffd856f0098ac28eff8b7532a855bb956c7e72758c39663a04d91b",
+       "sheet": "sheets/walk_S.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/walk_S_02.png",
+       "file": "walk_S_02.png",
+       "packed_bounds": [
+        61,
+        65,
+        100,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.8,
+         -26.8
+        ],
+        "hand_L": [
+         11.7,
+         -29.5
+        ],
+        "foot_R": [
+         -4.9,
+         -0.5
+        ],
+        "foot_L": [
+         4.9,
+         -4.4
+        ]
+       },
+       "equipment": {
+        "basket": 95
+       },
+       "sha256": "a3c125ec564ecf95e385f12ab2151bd6d9f42e26af9634a380e537822f3a7e4b",
+       "sheet": "sheets/walk_S.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/walk_S_03.png",
+       "file": "walk_S_03.png",
+       "packed_bounds": [
+        61,
+        64,
+        100,
+        135
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.8,
+         -27.4
+        ],
+        "hand_L": [
+         11.7,
+         -30.5
+        ],
+        "foot_R": [
+         -4.9,
+         -1.5
+        ],
+        "foot_L": [
+         4.9,
+         -3.4
+        ]
+       },
+       "equipment": {
+        "basket": 96
+       },
+       "sha256": "b21b70575913b2342148315489ddefc54079e6e6f7968ecb6c8da2235dabc21a",
+       "sheet": "sheets/walk_S.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/walk_S_04.png",
+       "file": "walk_S_04.png",
+       "packed_bounds": [
+        61,
+        64,
+        100,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.8,
+         -27.0
+        ],
+        "hand_L": [
+         11.7,
+         -30.5
+        ],
+        "foot_R": [
+         -4.9,
+         -2.6
+        ],
+        "foot_L": [
+         4.9,
+         -1.2
+        ]
+       },
+       "equipment": {
+        "basket": 96
+       },
+       "sha256": "81a21c3b4794edefe33beab6ea573c55351fbbd32879d62df14634b6e4da006e",
+       "sheet": "sheets/walk_S.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/walk_S_05.png",
+       "file": "walk_S_05.png",
+       "packed_bounds": [
+        61,
+        66,
+        100,
+        139
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.8,
+         -24.5
+        ],
+        "hand_L": [
+         11.7,
+         -28.4
+        ],
+        "foot_R": [
+         -4.9,
+         -3.7
+        ],
+        "foot_L": [
+         4.9,
+         1.7
+        ]
+       },
+       "equipment": {
+        "basket": 95
+       },
+       "sha256": "079a33472b0100b72eaa6e65eb7402b536521c9749cac007e52c684f88e6418d",
+       "sheet": "sheets/walk_S.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/walk_S_06.png",
+       "file": "walk_S_06.png",
+       "packed_bounds": [
+        61,
+        66,
+        100,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.8,
+         -25.0
+        ],
+        "hand_L": [
+         11.7,
+         -28.4
+        ],
+        "foot_R": [
+         -4.9,
+         -4.4
+        ],
+        "foot_L": [
+         4.9,
+         0.6
+        ]
+       },
+       "equipment": {
+        "basket": 95
+       },
+       "sha256": "15164068c052d893aec95d2d147dde3bb82e6faa5d39bee95e395690e87764f7",
+       "sheet": "sheets/walk_S.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/walk_S_07.png",
+       "file": "walk_S_07.png",
+       "packed_bounds": [
+        61,
+        65,
+        100,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.8,
+         -26.4
+        ],
+        "hand_L": [
+         11.7,
+         -29.5
+        ],
+        "foot_R": [
+         -4.9,
+         -4.4
+        ],
+        "foot_L": [
+         4.9,
+         -0.5
+        ]
+       },
+       "equipment": {
+        "basket": 95
+       },
+       "sha256": "042abbd56e5666823421a194d0fd3a1158c8f76ddb6c83088914a2993bfd9de3",
+       "sheet": "sheets/walk_S.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/walk_S_08.png",
+       "file": "walk_S_08.png",
+       "packed_bounds": [
+        61,
+        64,
+        100,
+        135
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.8,
+         -27.9
+        ],
+        "hand_L": [
+         11.7,
+         -30.5
+        ],
+        "foot_R": [
+         -4.9,
+         -3.4
+        ],
+        "foot_L": [
+         4.9,
+         -1.5
+        ]
+       },
+       "equipment": {
+        "basket": 96
+       },
+       "sha256": "de0e306a019b12c2abafd0e02609e4d4b9b85d3f7240e6872311b6aede578eca",
+       "sheet": "sheets/walk_S.png",
+       "region": [
+        1280,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/walk_S_09.png",
+       "file": "walk_S_09.png",
+       "packed_bounds": [
+        61,
+        64,
+        100,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.8,
+         -28.3
+        ],
+        "hand_L": [
+         11.7,
+         -30.5
+        ],
+        "foot_R": [
+         -4.9,
+         -1.2
+        ],
+        "foot_L": [
+         4.9,
+         -2.6
+        ]
+       },
+       "equipment": {
+        "basket": 96
+       },
+       "sha256": "504f632d12c3bcf8e8a4974650e1bccc8af43790afe5f9e2826e7ecf9b8ac14d",
+       "sheet": "sheets/walk_S.png",
+       "region": [
+        1440,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "N": {
+     "frames": [
+      {
+       "path": "res://assets/animated/moss/walk_N_00.png",
+       "file": "walk_N_00.png",
+       "packed_bounds": [
+        60,
+        67,
+        99,
+        139
+       ],
+       "anchors": {
+        "hand_R": [
+         13.8,
+         -26.3
+        ],
+        "hand_L": [
+         -11.7,
+         -32.7
+        ],
+        "foot_R": [
+         4.9,
+         -3.7
+        ],
+        "foot_L": [
+         -4.9,
+         1.7
+        ]
+       },
+       "equipment": {
+        "basket": 55
+       },
+       "sha256": "51b235ee21f8ef3a30ba40ac3c4095b3b85fc05baa9df156fa50036aacac759a",
+       "sheet": "sheets/walk_N.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/walk_N_01.png",
+       "file": "walk_N_01.png",
+       "packed_bounds": [
+        60,
+        67,
+        99,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         13.8,
+         -26.7
+        ],
+        "hand_L": [
+         -11.7,
+         -32.7
+        ],
+        "foot_R": [
+         4.9,
+         -2.6
+        ],
+        "foot_L": [
+         -4.9,
+         -1.2
+        ]
+       },
+       "equipment": {
+        "basket": 55
+       },
+       "sha256": "5a0cfff5a6860e0671d574751b44a34a10238d70f79afb1bc3371820e53c4bd5",
+       "sheet": "sheets/walk_N.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/walk_N_02.png",
+       "file": "walk_N_02.png",
+       "packed_bounds": [
+        60,
+        66,
+        99,
+        135
+       ],
+       "anchors": {
+        "hand_R": [
+         13.8,
+         -28.2
+        ],
+        "hand_L": [
+         -11.7,
+         -33.7
+        ],
+        "foot_R": [
+         4.9,
+         -1.5
+        ],
+        "foot_L": [
+         -4.9,
+         -3.4
+        ]
+       },
+       "equipment": {
+        "basket": 55
+       },
+       "sha256": "358eb035495ee5d1208f46b0e9565dab82a896ec9551dc80bdc22f8d2279fc15",
+       "sheet": "sheets/walk_N.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/walk_N_03.png",
+       "file": "walk_N_03.png",
+       "packed_bounds": [
+        60,
+        64,
+        99,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         13.8,
+         -29.6
+        ],
+        "hand_L": [
+         -11.7,
+         -34.8
+        ],
+        "foot_R": [
+         4.9,
+         -0.5
+        ],
+        "foot_L": [
+         -4.9,
+         -4.4
+        ]
+       },
+       "equipment": {
+        "basket": 55
+       },
+       "sha256": "3da6889bce8cd8b70dbae34d94cc3b68cbdf8a8fe4587e518baf8ac5386d027b",
+       "sheet": "sheets/walk_N.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/walk_N_04.png",
+       "file": "walk_N_04.png",
+       "packed_bounds": [
+        60,
+        64,
+        99,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         13.8,
+         -30.1
+        ],
+        "hand_L": [
+         -11.7,
+         -34.8
+        ],
+        "foot_R": [
+         4.9,
+         0.6
+        ],
+        "foot_L": [
+         -4.9,
+         -4.4
+        ]
+       },
+       "equipment": {
+        "basket": 55
+       },
+       "sha256": "dcac8220cb33d91e0af202107b8d85155ed138b75bb7f690d391e4ad3074a710",
+       "sheet": "sheets/walk_N.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/walk_N_05.png",
+       "file": "walk_N_05.png",
+       "packed_bounds": [
+        60,
+        67,
+        99,
+        139
+       ],
+       "anchors": {
+        "hand_R": [
+         13.8,
+         -28.5
+        ],
+        "hand_L": [
+         -11.7,
+         -32.7
+        ],
+        "foot_R": [
+         4.9,
+         1.7
+        ],
+        "foot_L": [
+         -4.9,
+         -3.7
+        ]
+       },
+       "equipment": {
+        "basket": 55
+       },
+       "sha256": "3a5b9512280d46822ac84aa30e41a5a0d9df27a645557d640cee00b92538f4ac",
+       "sheet": "sheets/walk_N.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/walk_N_06.png",
+       "file": "walk_N_06.png",
+       "packed_bounds": [
+        60,
+        67,
+        99,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         13.8,
+         -28.0
+        ],
+        "hand_L": [
+         -11.7,
+         -32.7
+        ],
+        "foot_R": [
+         4.9,
+         -1.2
+        ],
+        "foot_L": [
+         -4.9,
+         -2.6
+        ]
+       },
+       "equipment": {
+        "basket": 55
+       },
+       "sha256": "18ac97a57d157e06013064807d0776b97293c2d5e6b08b86bae337275baaa31c",
+       "sheet": "sheets/walk_N.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/walk_N_07.png",
+       "file": "walk_N_07.png",
+       "packed_bounds": [
+        60,
+        66,
+        99,
+        135
+       ],
+       "anchors": {
+        "hand_R": [
+         13.8,
+         -28.6
+        ],
+        "hand_L": [
+         -11.7,
+         -33.7
+        ],
+        "foot_R": [
+         4.9,
+         -3.4
+        ],
+        "foot_L": [
+         -4.9,
+         -1.5
+        ]
+       },
+       "equipment": {
+        "basket": 55
+       },
+       "sha256": "04635203cdbe9a3df1d78d5741e805d6d5e071925ad52acbc81e08012c445a6f",
+       "sheet": "sheets/walk_N.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/walk_N_08.png",
+       "file": "walk_N_08.png",
+       "packed_bounds": [
+        60,
+        64,
+        99,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         13.8,
+         -29.2
+        ],
+        "hand_L": [
+         -11.7,
+         -34.8
+        ],
+        "foot_R": [
+         4.9,
+         -4.4
+        ],
+        "foot_L": [
+         -4.9,
+         -0.5
+        ]
+       },
+       "equipment": {
+        "basket": 55
+       },
+       "sha256": "137b69b3f703a5a3bf421f205bda163902e530408c02bb8d57fc0c41910dee2c",
+       "sheet": "sheets/walk_N.png",
+       "region": [
+        1280,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/walk_N_09.png",
+       "file": "walk_N_09.png",
+       "packed_bounds": [
+        60,
+        64,
+        99,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         13.8,
+         -28.8
+        ],
+        "hand_L": [
+         -11.7,
+         -34.8
+        ],
+        "foot_R": [
+         4.9,
+         -4.4
+        ],
+        "foot_L": [
+         -4.9,
+         0.6
+        ]
+       },
+       "equipment": {
+        "basket": 55
+       },
+       "sha256": "6576c75f0e7ec8e6feed6a377555ae4c39194dbe69c5f25248c3a09a79199a80",
+       "sheet": "sheets/walk_N.png",
+       "region": [
+        1440,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "E": {
+     "frames": [
+      {
+       "path": "res://assets/animated/moss/walk_E_00.png",
+       "file": "walk_E_00.png",
+       "packed_bounds": [
+        63,
+        68,
+        95,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -1.9,
+         -26.5
+        ],
+        "hand_L": [
+         7.3,
+         -30.6
+        ],
+        "foot_R": [
+         7.2,
+         -1.0
+        ],
+        "foot_L": [
+         -7.2,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 3
+       },
+       "sha256": "c76f1688fc97ad742c8cb9e7db6ee7dd635a4390530e74339840efc229a00f4f",
+       "sheet": "sheets/walk_E.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/walk_E_01.png",
+       "file": "walk_E_01.png",
+       "packed_bounds": [
+        63,
+        68,
+        95,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -0.7,
+         -26.5
+        ],
+        "hand_L": [
+         7.3,
+         -30.6
+        ],
+        "foot_R": [
+         4.1,
+         -1.0
+        ],
+        "foot_L": [
+         -4.1,
+         -2.8
+        ]
+       },
+       "equipment": {
+        "basket": 3
+       },
+       "sha256": "1b46a998782fe0cd23a9738af69d86b0a394e27b2b96f42ee87ada31c5917f38",
+       "sheet": "sheets/walk_E.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/walk_E_02.png",
+       "file": "walk_E_02.png",
+       "packed_bounds": [
+        63,
+        67,
+        95,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         0.6,
+         -27.5
+        ],
+        "hand_L": [
+         7.3,
+         -31.6
+        ],
+        "foot_R": [
+         1.0,
+         -1.0
+        ],
+        "foot_L": [
+         -1.0,
+         -3.9
+        ]
+       },
+       "equipment": {
+        "basket": 3
+       },
+       "sha256": "15a0e738322c2909247ece33aa49941da912fde9c70f461dbe17323059b2bcd1",
+       "sheet": "sheets/walk_E.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/walk_E_03.png",
+       "file": "walk_E_03.png",
+       "packed_bounds": [
+        63,
+        66,
+        95,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         1.8,
+         -28.5
+        ],
+        "hand_L": [
+         7.3,
+         -32.6
+        ],
+        "foot_R": [
+         -2.0,
+         -1.0
+        ],
+        "foot_L": [
+         2.0,
+         -3.9
+        ]
+       },
+       "equipment": {
+        "basket": 3
+       },
+       "sha256": "f95383c49f45c26cbaf32490d459bd95e7569bf9b3e23c28573e72df44df90a0",
+       "sheet": "sheets/walk_E.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/walk_E_04.png",
+       "file": "walk_E_04.png",
+       "packed_bounds": [
+        63,
+        66,
+        95,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         3.0,
+         -28.5
+        ],
+        "hand_L": [
+         7.3,
+         -32.6
+        ],
+        "foot_R": [
+         -5.1,
+         -1.0
+        ],
+        "foot_L": [
+         5.1,
+         -2.8
+        ]
+       },
+       "equipment": {
+        "basket": 3
+       },
+       "sha256": "4542a2f2b48ec870ae3580e4080c7b5e7c816fd886dc43f91a651e229ec02ef5",
+       "sheet": "sheets/walk_E.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/walk_E_05.png",
+       "file": "walk_E_05.png",
+       "packed_bounds": [
+        63,
+        68,
+        96,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         4.2,
+         -26.5
+        ],
+        "hand_L": [
+         7.3,
+         -30.6
+        ],
+        "foot_R": [
+         -8.1,
+         -1.0
+        ],
+        "foot_L": [
+         8.1,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 3
+       },
+       "sha256": "203ad6d553d1df6de1efcc5ca276598e279838c436cf8d07ae746bbd04d77094",
+       "sheet": "sheets/walk_E.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/walk_E_06.png",
+       "file": "walk_E_06.png",
+       "packed_bounds": [
+        63,
+        68,
+        95,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         3.0,
+         -26.5
+        ],
+        "hand_L": [
+         7.3,
+         -30.6
+        ],
+        "foot_R": [
+         -5.1,
+         -2.8
+        ],
+        "foot_L": [
+         5.1,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 3
+       },
+       "sha256": "e86d0c4fb8b1857e0c56bb500751a91a94e2e10d5813a49aff6e37e2b29175ca",
+       "sheet": "sheets/walk_E.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/walk_E_07.png",
+       "file": "walk_E_07.png",
+       "packed_bounds": [
+        63,
+        67,
+        95,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         1.8,
+         -27.5
+        ],
+        "hand_L": [
+         7.3,
+         -31.6
+        ],
+        "foot_R": [
+         -2.0,
+         -3.9
+        ],
+        "foot_L": [
+         2.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 3
+       },
+       "sha256": "a6c5f35286070882e696cf792eaf7d1be3d92fc73577da0dce0a3bbb2e3fccd2",
+       "sheet": "sheets/walk_E.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/walk_E_08.png",
+       "file": "walk_E_08.png",
+       "packed_bounds": [
+        63,
+        66,
+        95,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         0.6,
+         -28.5
+        ],
+        "hand_L": [
+         7.3,
+         -32.6
+        ],
+        "foot_R": [
+         1.0,
+         -3.9
+        ],
+        "foot_L": [
+         -1.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 3
+       },
+       "sha256": "f4ac12d45cae50781425d278b09db28d5881b44e749afb04d2aeb220bbd298ed",
+       "sheet": "sheets/walk_E.png",
+       "region": [
+        1280,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/walk_E_09.png",
+       "file": "walk_E_09.png",
+       "packed_bounds": [
+        63,
+        66,
+        95,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -0.7,
+         -28.5
+        ],
+        "hand_L": [
+         7.3,
+         -32.6
+        ],
+        "foot_R": [
+         4.1,
+         -2.8
+        ],
+        "foot_L": [
+         -4.1,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 3
+       },
+       "sha256": "29b036e839e92d953b54910c6fa4697c250a57204e76f06b0ac81a65d22cf793",
+       "sheet": "sheets/walk_E.png",
+       "region": [
+        1440,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "W": {
+     "frames": [
+      {
+       "path": "res://assets/animated/moss/walk_W_00.png",
+       "file": "walk_W_00.png",
+       "packed_bounds": [
+        64,
+        68,
+        96,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -0.9,
+         -26.5
+        ],
+        "hand_L": [
+         -4.9,
+         -30.6
+        ],
+        "foot_R": [
+         -8.1,
+         -1.0
+        ],
+        "foot_L": [
+         8.1,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 100
+       },
+       "sha256": "992f068cfa4425f5b5e1fd133690544072a73deb33c2d3f5775d2feb346fee3d",
+       "sheet": "sheets/walk_W.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/walk_W_01.png",
+       "file": "walk_W_01.png",
+       "packed_bounds": [
+        64,
+        68,
+        96,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -2.1,
+         -26.5
+        ],
+        "hand_L": [
+         -4.9,
+         -30.6
+        ],
+        "foot_R": [
+         -5.1,
+         -1.0
+        ],
+        "foot_L": [
+         5.1,
+         -2.8
+        ]
+       },
+       "equipment": {
+        "basket": 100
+       },
+       "sha256": "3d3fbea8dd1170d9aeff667767f8a8024b01a5971d2594bb5dfc947d520b636a",
+       "sheet": "sheets/walk_W.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/walk_W_02.png",
+       "file": "walk_W_02.png",
+       "packed_bounds": [
+        64,
+        67,
+        96,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.3,
+         -27.5
+        ],
+        "hand_L": [
+         -4.9,
+         -31.6
+        ],
+        "foot_R": [
+         -2.0,
+         -1.0
+        ],
+        "foot_L": [
+         2.0,
+         -3.9
+        ]
+       },
+       "equipment": {
+        "basket": 100
+       },
+       "sha256": "94e8f3fc92d41cbfc888388f6407ce69cd1f5ab4ef1e55f11414e6d69f1418c8",
+       "sheet": "sheets/walk_W.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/walk_W_03.png",
+       "file": "walk_W_03.png",
+       "packed_bounds": [
+        64,
+        66,
+        96,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -4.5,
+         -28.5
+        ],
+        "hand_L": [
+         -4.9,
+         -32.6
+        ],
+        "foot_R": [
+         1.0,
+         -1.0
+        ],
+        "foot_L": [
+         -1.0,
+         -3.9
+        ]
+       },
+       "equipment": {
+        "basket": 99
+       },
+       "sha256": "9606a3d9ab9bb5cdb13d9c910a83f4492b5d366f207c53d644ff792a87579310",
+       "sheet": "sheets/walk_W.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/walk_W_04.png",
+       "file": "walk_W_04.png",
+       "packed_bounds": [
+        64,
+        66,
+        96,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -5.8,
+         -28.5
+        ],
+        "hand_L": [
+         -4.9,
+         -32.6
+        ],
+        "foot_R": [
+         4.1,
+         -1.0
+        ],
+        "foot_L": [
+         -4.1,
+         -2.8
+        ]
+       },
+       "equipment": {
+        "basket": 99
+       },
+       "sha256": "2b6d6bb972c90e4f7390461e8622d9dfb8846c42844c1ec10d331574620b267e",
+       "sheet": "sheets/walk_W.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/walk_W_05.png",
+       "file": "walk_W_05.png",
+       "packed_bounds": [
+        64,
+        68,
+        96,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -7.0,
+         -26.5
+        ],
+        "hand_L": [
+         -4.9,
+         -30.6
+        ],
+        "foot_R": [
+         7.2,
+         -1.0
+        ],
+        "foot_L": [
+         -7.2,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 100
+       },
+       "sha256": "80a24f23a7c6d9f2808b223431e26f48eb9e9d9f99f5e6848b6859032037cf51",
+       "sheet": "sheets/walk_W.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/walk_W_06.png",
+       "file": "walk_W_06.png",
+       "packed_bounds": [
+        64,
+        68,
+        96,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -5.8,
+         -26.5
+        ],
+        "hand_L": [
+         -4.9,
+         -30.6
+        ],
+        "foot_R": [
+         4.1,
+         -2.8
+        ],
+        "foot_L": [
+         -4.1,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 100
+       },
+       "sha256": "f4996bc9291a97172120edffc45e0c33cdb901342ab19ade073bf7a1cf90280d",
+       "sheet": "sheets/walk_W.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/walk_W_07.png",
+       "file": "walk_W_07.png",
+       "packed_bounds": [
+        64,
+        67,
+        96,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -4.5,
+         -27.5
+        ],
+        "hand_L": [
+         -4.9,
+         -31.6
+        ],
+        "foot_R": [
+         1.0,
+         -3.9
+        ],
+        "foot_L": [
+         -1.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 100
+       },
+       "sha256": "2f26ca01955dfd0c88b5d3157a73f4c79d0aeab45c52b98b6769c4fb2dbb1ede",
+       "sheet": "sheets/walk_W.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/walk_W_08.png",
+       "file": "walk_W_08.png",
+       "packed_bounds": [
+        64,
+        66,
+        96,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.3,
+         -28.5
+        ],
+        "hand_L": [
+         -4.9,
+         -32.6
+        ],
+        "foot_R": [
+         -2.0,
+         -3.9
+        ],
+        "foot_L": [
+         2.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 99
+       },
+       "sha256": "f2d8c8f67395a780181c06a0612988196667f70c96ad8304cdc0a4420660afd6",
+       "sheet": "sheets/walk_W.png",
+       "region": [
+        1280,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/walk_W_09.png",
+       "file": "walk_W_09.png",
+       "packed_bounds": [
+        64,
+        66,
+        96,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -2.1,
+         -28.5
+        ],
+        "hand_L": [
+         -4.9,
+         -32.6
+        ],
+        "foot_R": [
+         -5.1,
+         -2.8
+        ],
+        "foot_L": [
+         5.1,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 99
+       },
+       "sha256": "a960f9c4d2151c513b1f0a021974208cf8f7993f109e0786a0de0d55726a0792",
+       "sheet": "sheets/walk_W.png",
+       "region": [
+        1440,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    }
+   }
+  },
+  "talk": {
+   "frame_count": 8,
+   "durations": [
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.2
+   ],
+   "duration": 1.6,
+   "loop": true,
+   "release_frame": null,
+   "release_time": null,
+   "hold_frame": null,
+   "roles": null,
+   "facings": {
+    "S": {
+     "frames": [
+      {
+       "path": "res://assets/animated/moss/talk_S_00.png",
+       "file": "talk_S_00.png",
+       "packed_bounds": [
+        61,
+        64,
+        100,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.8,
+         -26.1
+        ],
+        "hand_L": [
+         11.7,
+         -29.5
+        ],
+        "foot_R": [
+         -4.9,
+         -0.5
+        ],
+        "foot_L": [
+         4.9,
+         -1.5
+        ]
+       },
+       "equipment": {
+        "basket": 93
+       },
+       "sha256": "894a8bda1ec21ceb773d3693bb83b7db74113d15ed870bdcaa05eed2a96634ff",
+       "sheet": "sheets/talk_S.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/talk_S_01.png",
+       "file": "talk_S_01.png",
+       "packed_bounds": [
+        62,
+        64,
+        100,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -10.4,
+         -29.3
+        ],
+        "hand_L": [
+         11.7,
+         -29.5
+        ],
+        "foot_R": [
+         -4.9,
+         -0.5
+        ],
+        "foot_L": [
+         4.9,
+         -1.5
+        ]
+       },
+       "equipment": {
+        "basket": 93
+       },
+       "sha256": "c1cc44c31e0e84ee2eefdbaca0ed45ba4fe8fafa7fadc44f6ca930ffecd1ddc7",
+       "sheet": "sheets/talk_S.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/talk_S_02.png",
+       "file": "talk_S_02.png",
+       "packed_bounds": [
+        63,
+        63,
+        100,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -8.2,
+         -30.4
+        ],
+        "hand_L": [
+         11.7,
+         -29.5
+        ],
+        "foot_R": [
+         -4.9,
+         -0.5
+        ],
+        "foot_L": [
+         4.9,
+         -1.5
+        ]
+       },
+       "equipment": {
+        "basket": 94
+       },
+       "sha256": "0ef481110322c648506d305942bdf3d5041ca6ed1b115fa59e0911af21e94188",
+       "sheet": "sheets/talk_S.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/talk_S_03.png",
+       "file": "talk_S_03.png",
+       "packed_bounds": [
+        63,
+        63,
+        100,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -9.3,
+         -30.4
+        ],
+        "hand_L": [
+         11.7,
+         -29.5
+        ],
+        "foot_R": [
+         -4.9,
+         -0.5
+        ],
+        "foot_L": [
+         4.9,
+         -1.5
+        ]
+       },
+       "equipment": {
+        "basket": 94
+       },
+       "sha256": "a7be575b39f07e4af760febd67db7de75e6f6194861ceee48b1d22c17dd78602",
+       "sheet": "sheets/talk_S.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/talk_S_04.png",
+       "file": "talk_S_04.png",
+       "packed_bounds": [
+        63,
+        63,
+        100,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -8.2,
+         -30.4
+        ],
+        "hand_L": [
+         11.7,
+         -29.5
+        ],
+        "foot_R": [
+         -4.9,
+         -0.5
+        ],
+        "foot_L": [
+         4.9,
+         -1.5
+        ]
+       },
+       "equipment": {
+        "basket": 94
+       },
+       "sha256": "0ef481110322c648506d305942bdf3d5041ca6ed1b115fa59e0911af21e94188",
+       "sheet": "sheets/talk_S.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/talk_S_05.png",
+       "file": "talk_S_05.png",
+       "packed_bounds": [
+        62,
+        64,
+        100,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -9.8,
+         -29.8
+        ],
+        "hand_L": [
+         11.7,
+         -29.5
+        ],
+        "foot_R": [
+         -4.9,
+         -0.5
+        ],
+        "foot_L": [
+         4.9,
+         -1.5
+        ]
+       },
+       "equipment": {
+        "basket": 93
+       },
+       "sha256": "97579649d98722563890d17c48e76d2f38039fd000968f167372944167870f46",
+       "sheet": "sheets/talk_S.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/talk_S_06.png",
+       "file": "talk_S_06.png",
+       "packed_bounds": [
+        61,
+        64,
+        100,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -12.1,
+         -27.7
+        ],
+        "hand_L": [
+         11.7,
+         -29.5
+        ],
+        "foot_R": [
+         -4.9,
+         -0.5
+        ],
+        "foot_L": [
+         4.9,
+         -1.5
+        ]
+       },
+       "equipment": {
+        "basket": 93
+       },
+       "sha256": "2d176f1f575ff3d0b19b266480e349a84bd735926b270122012b0ec4223f2748",
+       "sheet": "sheets/talk_S.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/talk_S_07.png",
+       "file": "talk_S_07.png",
+       "packed_bounds": [
+        61,
+        64,
+        100,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.8,
+         -26.1
+        ],
+        "hand_L": [
+         11.7,
+         -29.5
+        ],
+        "foot_R": [
+         -4.9,
+         -0.5
+        ],
+        "foot_L": [
+         4.9,
+         -1.5
+        ]
+       },
+       "equipment": {
+        "basket": 93
+       },
+       "sha256": "894a8bda1ec21ceb773d3693bb83b7db74113d15ed870bdcaa05eed2a96634ff",
+       "sheet": "sheets/talk_S.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "N": {
+     "frames": [
+      {
+       "path": "res://assets/animated/moss/talk_N_00.png",
+       "file": "talk_N_00.png",
+       "packed_bounds": [
+        60,
+        66,
+        99,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         13.8,
+         -27.9
+        ],
+        "hand_L": [
+         -11.7,
+         -33.7
+        ],
+        "foot_R": [
+         4.9,
+         -1.5
+        ],
+        "foot_L": [
+         -4.9,
+         -0.5
+        ]
+       },
+       "equipment": {
+        "basket": 54
+       },
+       "sha256": "b1c5a0c916ea4a826c60bd7c75451d3fcdcfe1e9acff1b5990a0bbe31284e91e",
+       "sheet": "sheets/talk_N.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/talk_N_01.png",
+       "file": "talk_N_01.png",
+       "packed_bounds": [
+        60,
+        66,
+        98,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         10.4,
+         -33.9
+        ],
+        "hand_L": [
+         -11.7,
+         -33.7
+        ],
+        "foot_R": [
+         4.9,
+         -1.5
+        ],
+        "foot_L": [
+         -4.9,
+         -0.5
+        ]
+       },
+       "equipment": {
+        "basket": 55
+       },
+       "sha256": "0b9f5bf06aff052fefc46eaa14806a0ebcccc3d04e7c8c2b676068bc3fbb0121",
+       "sheet": "sheets/talk_N.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/talk_N_02.png",
+       "file": "talk_N_02.png",
+       "packed_bounds": [
+        60,
+        65,
+        97,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         8.2,
+         -36.9
+        ],
+        "hand_L": [
+         -11.7,
+         -33.7
+        ],
+        "foot_R": [
+         4.9,
+         -1.5
+        ],
+        "foot_L": [
+         -4.9,
+         -0.5
+        ]
+       },
+       "equipment": {
+        "basket": 50
+       },
+       "sha256": "8e6fef45e355de6c061beb625d645bba53fd57494206cc01cff4b55c34019f41",
+       "sheet": "sheets/talk_N.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/talk_N_03.png",
+       "file": "talk_N_03.png",
+       "packed_bounds": [
+        60,
+        65,
+        97,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         9.3,
+         -35.9
+        ],
+        "hand_L": [
+         -11.7,
+         -33.7
+        ],
+        "foot_R": [
+         4.9,
+         -1.5
+        ],
+        "foot_L": [
+         -4.9,
+         -0.5
+        ]
+       },
+       "equipment": {
+        "basket": 50
+       },
+       "sha256": "dd6bb3b83afc4bdef8fe75011b9d652379ea8933b74b38e5b12e17588ec74e5a",
+       "sheet": "sheets/talk_N.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/talk_N_04.png",
+       "file": "talk_N_04.png",
+       "packed_bounds": [
+        60,
+        65,
+        97,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         8.2,
+         -36.9
+        ],
+        "hand_L": [
+         -11.7,
+         -33.7
+        ],
+        "foot_R": [
+         4.9,
+         -1.5
+        ],
+        "foot_L": [
+         -4.9,
+         -0.5
+        ]
+       },
+       "equipment": {
+        "basket": 50
+       },
+       "sha256": "8e6fef45e355de6c061beb625d645bba53fd57494206cc01cff4b55c34019f41",
+       "sheet": "sheets/talk_N.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/talk_N_05.png",
+       "file": "talk_N_05.png",
+       "packed_bounds": [
+        60,
+        66,
+        98,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         9.8,
+         -34.9
+        ],
+        "hand_L": [
+         -11.7,
+         -33.7
+        ],
+        "foot_R": [
+         4.9,
+         -1.5
+        ],
+        "foot_L": [
+         -4.9,
+         -0.5
+        ]
+       },
+       "equipment": {
+        "basket": 55
+       },
+       "sha256": "8a25269af99f48a72c83b40b988ebc0ca3477b59ff964899142942032b9d7049",
+       "sheet": "sheets/talk_N.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/talk_N_06.png",
+       "file": "talk_N_06.png",
+       "packed_bounds": [
+        60,
+        66,
+        99,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         12.1,
+         -30.9
+        ],
+        "hand_L": [
+         -11.7,
+         -33.7
+        ],
+        "foot_R": [
+         4.9,
+         -1.5
+        ],
+        "foot_L": [
+         -4.9,
+         -0.5
+        ]
+       },
+       "equipment": {
+        "basket": 54
+       },
+       "sha256": "3e20e31498ba90a9e608b3c9882e6621970f6c1708481938d8ded06e829f5f2b",
+       "sheet": "sheets/talk_N.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/talk_N_07.png",
+       "file": "talk_N_07.png",
+       "packed_bounds": [
+        60,
+        66,
+        99,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         13.8,
+         -27.9
+        ],
+        "hand_L": [
+         -11.7,
+         -33.7
+        ],
+        "foot_R": [
+         4.9,
+         -1.5
+        ],
+        "foot_L": [
+         -4.9,
+         -0.5
+        ]
+       },
+       "equipment": {
+        "basket": 54
+       },
+       "sha256": "b1c5a0c916ea4a826c60bd7c75451d3fcdcfe1e9acff1b5990a0bbe31284e91e",
+       "sheet": "sheets/talk_N.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "E": {
+     "frames": [
+      {
+       "path": "res://assets/animated/moss/talk_E_00.png",
+       "file": "talk_E_00.png",
+       "packed_bounds": [
+        64,
+        67,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         1.2,
+         -27.0
+        ],
+        "hand_L": [
+         7.3,
+         -31.6
+        ],
+        "foot_R": [
+         1.0,
+         -1.0
+        ],
+        "foot_L": [
+         -1.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 2
+       },
+       "sha256": "85ebd76d3847ea79087a94e1b5dba47e57a8ddb046d7450936ba5a819df20508",
+       "sheet": "sheets/talk_E.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/talk_E_01.png",
+       "file": "talk_E_01.png",
+       "packed_bounds": [
+        64,
+        67,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         5.5,
+         -31.6
+        ],
+        "hand_L": [
+         7.3,
+         -31.6
+        ],
+        "foot_R": [
+         1.0,
+         -1.0
+        ],
+        "foot_L": [
+         -1.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 2
+       },
+       "sha256": "df4b076eaaaaaa9c0a9e2d5cf1ae34fbdaaee7428f8a3de92cd12c7737221ce1",
+       "sheet": "sheets/talk_E.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/talk_E_02.png",
+       "file": "talk_E_02.png",
+       "packed_bounds": [
+        64,
+        66,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         8.4,
+         -33.6
+        ],
+        "hand_L": [
+         7.3,
+         -31.6
+        ],
+        "foot_R": [
+         1.0,
+         -1.0
+        ],
+        "foot_L": [
+         -1.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 3
+       },
+       "sha256": "a523e10eb6975fe989764377bb5390a902cc8588c84d8fa220ceb2a9f7f0438e",
+       "sheet": "sheets/talk_E.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/talk_E_03.png",
+       "file": "talk_E_03.png",
+       "packed_bounds": [
+        64,
+        66,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         6.9,
+         -33.1
+        ],
+        "hand_L": [
+         7.3,
+         -31.6
+        ],
+        "foot_R": [
+         1.0,
+         -1.0
+        ],
+        "foot_L": [
+         -1.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 3
+       },
+       "sha256": "d336ca8c179e82cf03123f56875e6cf95ce7916ec75581854f2a126dd35253b5",
+       "sheet": "sheets/talk_E.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/talk_E_04.png",
+       "file": "talk_E_04.png",
+       "packed_bounds": [
+        64,
+        66,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         8.4,
+         -33.6
+        ],
+        "hand_L": [
+         7.3,
+         -31.6
+        ],
+        "foot_R": [
+         1.0,
+         -1.0
+        ],
+        "foot_L": [
+         -1.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 3
+       },
+       "sha256": "a523e10eb6975fe989764377bb5390a902cc8588c84d8fa220ceb2a9f7f0438e",
+       "sheet": "sheets/talk_E.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/talk_E_05.png",
+       "file": "talk_E_05.png",
+       "packed_bounds": [
+        64,
+        67,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         6.2,
+         -32.4
+        ],
+        "hand_L": [
+         7.3,
+         -31.6
+        ],
+        "foot_R": [
+         1.0,
+         -1.0
+        ],
+        "foot_L": [
+         -1.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 2
+       },
+       "sha256": "f9fcd5497a129b702754b707884d69b44973d8d4346502c615e355ddbb27defd",
+       "sheet": "sheets/talk_E.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/talk_E_06.png",
+       "file": "talk_E_06.png",
+       "packed_bounds": [
+        64,
+        67,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         3.3,
+         -29.3
+        ],
+        "hand_L": [
+         7.3,
+         -31.6
+        ],
+        "foot_R": [
+         1.0,
+         -1.0
+        ],
+        "foot_L": [
+         -1.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 2
+       },
+       "sha256": "2bf9693c55e5fd828d62f1f17b6658479b1047e3e919aa5f7699bb420c60e6b8",
+       "sheet": "sheets/talk_E.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/talk_E_07.png",
+       "file": "talk_E_07.png",
+       "packed_bounds": [
+        64,
+        67,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         1.2,
+         -27.0
+        ],
+        "hand_L": [
+         7.3,
+         -31.6
+        ],
+        "foot_R": [
+         1.0,
+         -1.0
+        ],
+        "foot_L": [
+         -1.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 2
+       },
+       "sha256": "85ebd76d3847ea79087a94e1b5dba47e57a8ddb046d7450936ba5a819df20508",
+       "sheet": "sheets/talk_E.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "W": {
+     "frames": [
+      {
+       "path": "res://assets/animated/moss/talk_W_00.png",
+       "file": "talk_W_00.png",
+       "packed_bounds": [
+        65,
+        67,
+        95,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.9,
+         -27.0
+        ],
+        "hand_L": [
+         -4.9,
+         -31.6
+        ],
+        "foot_R": [
+         -2.0,
+         -1.0
+        ],
+        "foot_L": [
+         2.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 100
+       },
+       "sha256": "43d211d00211315937f0f5db319ed13241b2157c97686ea11cadb75171003f19",
+       "sheet": "sheets/talk_W.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/talk_W_01.png",
+       "file": "talk_W_01.png",
+       "packed_bounds": [
+        65,
+        67,
+        95,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -7.6,
+         -31.6
+        ],
+        "hand_L": [
+         -4.9,
+         -31.6
+        ],
+        "foot_R": [
+         -2.0,
+         -1.0
+        ],
+        "foot_L": [
+         2.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 100
+       },
+       "sha256": "cce2777943e8facaae64f61321843ac77616d4a7866c9ac10c17d3b70d0eb6f3",
+       "sheet": "sheets/talk_W.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/talk_W_02.png",
+       "file": "talk_W_02.png",
+       "packed_bounds": [
+        65,
+        66,
+        95,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -10.0,
+         -33.6
+        ],
+        "hand_L": [
+         -4.9,
+         -31.6
+        ],
+        "foot_R": [
+         -2.0,
+         -1.0
+        ],
+        "foot_L": [
+         2.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 100
+       },
+       "sha256": "bb3d05affa79fbe19eac9498d77efb02dd8d4d2bbc691bd98c08915fbee88375",
+       "sheet": "sheets/talk_W.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/talk_W_03.png",
+       "file": "talk_W_03.png",
+       "packed_bounds": [
+        65,
+        66,
+        95,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -8.8,
+         -33.1
+        ],
+        "hand_L": [
+         -4.9,
+         -31.6
+        ],
+        "foot_R": [
+         -2.0,
+         -1.0
+        ],
+        "foot_L": [
+         2.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 100
+       },
+       "sha256": "9f04604d0cb3e6cbc36fa85382e52ce09ca63efd2d4982526dc3e9029fd7e59c",
+       "sheet": "sheets/talk_W.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/talk_W_04.png",
+       "file": "talk_W_04.png",
+       "packed_bounds": [
+        65,
+        66,
+        95,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -10.0,
+         -33.6
+        ],
+        "hand_L": [
+         -4.9,
+         -31.6
+        ],
+        "foot_R": [
+         -2.0,
+         -1.0
+        ],
+        "foot_L": [
+         2.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 100
+       },
+       "sha256": "bb3d05affa79fbe19eac9498d77efb02dd8d4d2bbc691bd98c08915fbee88375",
+       "sheet": "sheets/talk_W.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/talk_W_05.png",
+       "file": "talk_W_05.png",
+       "packed_bounds": [
+        65,
+        67,
+        95,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -8.2,
+         -32.4
+        ],
+        "hand_L": [
+         -4.9,
+         -31.6
+        ],
+        "foot_R": [
+         -2.0,
+         -1.0
+        ],
+        "foot_L": [
+         2.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 100
+       },
+       "sha256": "75e9f5055d7e28e9292ba71a5181fdde98ab3cb46b7b90a6a2834c43f863fc6e",
+       "sheet": "sheets/talk_W.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/talk_W_06.png",
+       "file": "talk_W_06.png",
+       "packed_bounds": [
+        65,
+        67,
+        95,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -5.7,
+         -29.3
+        ],
+        "hand_L": [
+         -4.9,
+         -31.6
+        ],
+        "foot_R": [
+         -2.0,
+         -1.0
+        ],
+        "foot_L": [
+         2.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 100
+       },
+       "sha256": "33cbc3c66153674e65cca996249fdbadda3009a3f3e0757438565f0cccd6f29e",
+       "sheet": "sheets/talk_W.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/talk_W_07.png",
+       "file": "talk_W_07.png",
+       "packed_bounds": [
+        65,
+        67,
+        95,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.9,
+         -27.0
+        ],
+        "hand_L": [
+         -4.9,
+         -31.6
+        ],
+        "foot_R": [
+         -2.0,
+         -1.0
+        ],
+        "foot_L": [
+         2.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 100
+       },
+       "sha256": "43d211d00211315937f0f5db319ed13241b2157c97686ea11cadb75171003f19",
+       "sheet": "sheets/talk_W.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    }
+   }
+  },
+  "work": {
+   "frame_count": 8,
+   "durations": [
+    0.16,
+    0.15,
+    0.14,
+    0.15,
+    0.17,
+    0.15,
+    0.14,
+    0.14
+   ],
+   "duration": 1.2,
+   "loop": true,
+   "release_frame": null,
+   "release_time": null,
+   "hold_frame": null,
+   "roles": null,
+   "facings": {
+    "S": {
+     "frames": [
+      {
+       "path": "res://assets/animated/moss/work_S_00.png",
+       "file": "work_S_00.png",
+       "packed_bounds": [
+        62,
+        64,
+        96,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.8,
+         -26.1
+        ],
+        "hand_L": [
+         3.1,
+         -31.3
+        ],
+        "foot_R": [
+         -4.9,
+         -0.5
+        ],
+        "foot_L": [
+         4.9,
+         -1.5
+        ]
+       },
+       "equipment": {
+        "basket": 98
+       },
+       "sha256": "bc585ffa06d476965ba0e32d64f197558227ecaa50581af8d9d291b80cb5f923",
+       "sheet": "sheets/work_S.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/work_S_01.png",
+       "file": "work_S_01.png",
+       "packed_bounds": [
+        63,
+        64,
+        96,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         0.5,
+         -27.2
+        ],
+        "hand_L": [
+         3.1,
+         -31.3
+        ],
+        "foot_R": [
+         -4.9,
+         -0.5
+        ],
+        "foot_L": [
+         4.9,
+         -1.5
+        ]
+       },
+       "equipment": {
+        "basket": 75
+       },
+       "sha256": "722ddbf9f0d6520af09b3f452f50a1e0e89c19b0e4d273210903f532f91415b2",
+       "sheet": "sheets/work_S.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/work_S_02.png",
+       "file": "work_S_02.png",
+       "packed_bounds": [
+        63,
+        64,
+        96,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -1.0,
+         -29.9
+        ],
+        "hand_L": [
+         3.1,
+         -31.3
+        ],
+        "foot_R": [
+         -4.9,
+         -0.5
+        ],
+        "foot_L": [
+         4.9,
+         -1.5
+        ]
+       },
+       "equipment": {
+        "basket": 89,
+        "apple": 12
+       },
+       "sha256": "7b8b6f7e800a2d8bab6fd54d6a427b5690001c5efe041b5ac81559dedf8daccb",
+       "sheet": "sheets/work_S.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/work_S_03.png",
+       "file": "work_S_03.png",
+       "packed_bounds": [
+        63,
+        65,
+        96,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -2.0,
+         -32.1
+        ],
+        "hand_L": [
+         3.1,
+         -31.3
+        ],
+        "foot_R": [
+         -4.9,
+         -0.5
+        ],
+        "foot_L": [
+         4.9,
+         -1.5
+        ]
+       },
+       "equipment": {
+        "basket": 91,
+        "apple": 7
+       },
+       "sha256": "dd10b7f7ee100e482a7c83f13c42c6e0180969b6581fa0d5ebeb422b978102a5",
+       "sheet": "sheets/work_S.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/work_S_04.png",
+       "file": "work_S_04.png",
+       "packed_bounds": [
+        63,
+        65,
+        96,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -4.1,
+         -32.2
+        ],
+        "hand_L": [
+         3.1,
+         -30.8
+        ],
+        "foot_R": [
+         -4.9,
+         -0.5
+        ],
+        "foot_L": [
+         4.9,
+         -1.5
+        ]
+       },
+       "equipment": {
+        "basket": 100,
+        "apple": 5
+       },
+       "sha256": "c43bb91ef567db1fdfbf88ca9bcc14375cabc4450a8e28476df2f86b9913e796",
+       "sheet": "sheets/work_S.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/work_S_05.png",
+       "file": "work_S_05.png",
+       "packed_bounds": [
+        63,
+        66,
+        96,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -4.6,
+         -31.0
+        ],
+        "hand_L": [
+         3.1,
+         -30.8
+        ],
+        "foot_R": [
+         -4.9,
+         -0.5
+        ],
+        "foot_L": [
+         4.9,
+         -1.5
+        ]
+       },
+       "equipment": {
+        "basket": 102,
+        "apple": 10
+       },
+       "sha256": "9eb01cae6ee16e696d727cbcf2f00c7b205c4221e06b6fb22feec73a89fed7f9",
+       "sheet": "sheets/work_S.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/work_S_06.png",
+       "file": "work_S_06.png",
+       "packed_bounds": [
+        63,
+        65,
+        96,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -9.2,
+         -29.4
+        ],
+        "hand_L": [
+         3.1,
+         -31.3
+        ],
+        "foot_R": [
+         -4.9,
+         -0.5
+        ],
+        "foot_L": [
+         4.9,
+         -1.5
+        ]
+       },
+       "equipment": {
+        "basket": 93
+       },
+       "sha256": "15cc1302f2d048302cf507f516c685f382015c52fee0fd5d9141af0684493b14",
+       "sheet": "sheets/work_S.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/work_S_07.png",
+       "file": "work_S_07.png",
+       "packed_bounds": [
+        62,
+        64,
+        96,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.8,
+         -26.1
+        ],
+        "hand_L": [
+         3.1,
+         -31.3
+        ],
+        "foot_R": [
+         -4.9,
+         -0.5
+        ],
+        "foot_L": [
+         4.9,
+         -1.5
+        ]
+       },
+       "equipment": {
+        "basket": 97
+       },
+       "sha256": "5cbbb64f6122fd5c2acaa849709be738a96b60c0c4236f6c7be59e5a867718be",
+       "sheet": "sheets/work_S.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "N": {
+     "frames": [
+      {
+       "path": "res://assets/animated/moss/work_N_00.png",
+       "file": "work_N_00.png",
+       "packed_bounds": [
+        63,
+        66,
+        98,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         13.8,
+         -27.9
+        ],
+        "hand_L": [
+         -3.1,
+         -37.0
+        ],
+        "foot_R": [
+         4.9,
+         -1.5
+        ],
+        "foot_L": [
+         -4.9,
+         -0.5
+        ]
+       },
+       "equipment": {
+        "basket": 0
+       },
+       "sha256": "5e78c44020c0465a41ba66e127ee62484d9f35faee9530ee8a4c7b2a88487b79",
+       "sheet": "sheets/work_N.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/work_N_01.png",
+       "file": "work_N_01.png",
+       "packed_bounds": [
+        63,
+        66,
+        96,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -0.5,
+         -32.9
+        ],
+        "hand_L": [
+         -3.1,
+         -37.0
+        ],
+        "foot_R": [
+         4.9,
+         -1.5
+        ],
+        "foot_L": [
+         -4.9,
+         -0.5
+        ]
+       },
+       "equipment": {
+        "basket": 0
+       },
+       "sha256": "fada6fd668523fb6246472488ff967012eefa1a22f106d589563d373dacd54de",
+       "sheet": "sheets/work_N.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/work_N_02.png",
+       "file": "work_N_02.png",
+       "packed_bounds": [
+        63,
+        66,
+        96,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         1.0,
+         -36.3
+        ],
+        "hand_L": [
+         -3.1,
+         -37.0
+        ],
+        "foot_R": [
+         4.9,
+         -1.5
+        ],
+        "foot_L": [
+         -4.9,
+         -0.5
+        ]
+       },
+       "equipment": {
+        "basket": 0,
+        "apple": 0
+       },
+       "sha256": "fada6fd668523fb6246472488ff967012eefa1a22f106d589563d373dacd54de",
+       "sheet": "sheets/work_N.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/work_N_03.png",
+       "file": "work_N_03.png",
+       "packed_bounds": [
+        63,
+        66,
+        96,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         2.0,
+         -39.2
+        ],
+        "hand_L": [
+         -3.1,
+         -37.0
+        ],
+        "foot_R": [
+         4.9,
+         -1.5
+        ],
+        "foot_L": [
+         -4.9,
+         -0.5
+        ]
+       },
+       "equipment": {
+        "basket": 0,
+        "apple": 0
+       },
+       "sha256": "ea93459ab5c56feab4aa055af455dab17aa4b24e7f4f29a25ed3a1718bd7b3c8",
+       "sheet": "sheets/work_N.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/work_N_04.png",
+       "file": "work_N_04.png",
+       "packed_bounds": [
+        63,
+        66,
+        96,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         4.1,
+         -42.2
+        ],
+        "hand_L": [
+         -3.1,
+         -36.5
+        ],
+        "foot_R": [
+         4.9,
+         -1.5
+        ],
+        "foot_L": [
+         -4.9,
+         -0.5
+        ]
+       },
+       "equipment": {
+        "basket": 0,
+        "apple": 0
+       },
+       "sha256": "51443d8570c8db3f3b64f559bee99ca88619881a55968f345279ec3be5b4a28c",
+       "sheet": "sheets/work_N.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/work_N_05.png",
+       "file": "work_N_05.png",
+       "packed_bounds": [
+        63,
+        66,
+        96,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         4.6,
+         -41.4
+        ],
+        "hand_L": [
+         -3.1,
+         -36.5
+        ],
+        "foot_R": [
+         4.9,
+         -1.5
+        ],
+        "foot_L": [
+         -4.9,
+         -0.5
+        ]
+       },
+       "equipment": {
+        "basket": 0,
+        "apple": 0
+       },
+       "sha256": "3339daf8865eeb635310488842f903e2591fa18cdf975bc6c713d37e66e30f63",
+       "sheet": "sheets/work_N.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/work_N_06.png",
+       "file": "work_N_06.png",
+       "packed_bounds": [
+        63,
+        66,
+        97,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         9.2,
+         -35.8
+        ],
+        "hand_L": [
+         -3.1,
+         -37.0
+        ],
+        "foot_R": [
+         4.9,
+         -1.5
+        ],
+        "foot_L": [
+         -4.9,
+         -0.5
+        ]
+       },
+       "equipment": {
+        "basket": 0
+       },
+       "sha256": "742305c984da6b7cbc2b9f4e1aaa2519e6c9beadf8076c2be76308c1c34c3461",
+       "sheet": "sheets/work_N.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/work_N_07.png",
+       "file": "work_N_07.png",
+       "packed_bounds": [
+        63,
+        66,
+        98,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         13.8,
+         -27.9
+        ],
+        "hand_L": [
+         -3.1,
+         -37.0
+        ],
+        "foot_R": [
+         4.9,
+         -1.5
+        ],
+        "foot_L": [
+         -4.9,
+         -0.5
+        ]
+       },
+       "equipment": {
+        "basket": 0
+       },
+       "sha256": "9f141a3448d5ef71ce61d540950eec28b7542c836a1c1c96be1dd2c27d72294a",
+       "sheet": "sheets/work_N.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "E": {
+     "frames": [
+      {
+       "path": "res://assets/animated/moss/work_E_00.png",
+       "file": "work_E_00.png",
+       "packed_bounds": [
+        64,
+        67,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         1.2,
+         -27.0
+        ],
+        "hand_L": [
+         8.5,
+         -34.2
+        ],
+        "foot_R": [
+         1.0,
+         -1.0
+        ],
+        "foot_L": [
+         -1.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 70
+       },
+       "sha256": "039b01e779594c7c1ce061fe29ce1c9399c5cf36ead3b86d8a257c30b1a15c5e",
+       "sheet": "sheets/work_E.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/work_E_01.png",
+       "file": "work_E_01.png",
+       "packed_bounds": [
+        64,
+        67,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         8.2,
+         -30.1
+        ],
+        "hand_L": [
+         8.5,
+         -34.2
+        ],
+        "foot_R": [
+         1.0,
+         -1.0
+        ],
+        "foot_L": [
+         -1.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 76
+       },
+       "sha256": "d8f0dc2225c998d212e73f753cdb11c795ab9e2f5d17f8052e584384c7f099d6",
+       "sheet": "sheets/work_E.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/work_E_02.png",
+       "file": "work_E_02.png",
+       "packed_bounds": [
+        64,
+        67,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         9.1,
+         -33.1
+        ],
+        "hand_L": [
+         8.5,
+         -34.2
+        ],
+        "foot_R": [
+         1.0,
+         -1.0
+        ],
+        "foot_L": [
+         -1.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 92,
+        "apple": 11
+       },
+       "sha256": "3a5481208dd260c932df3f03f3c07d22ba7ef2cca964d298b55f23ae0fc96080",
+       "sheet": "sheets/work_E.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/work_E_03.png",
+       "file": "work_E_03.png",
+       "packed_bounds": [
+        65,
+        67,
+        95,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         10.0,
+         -35.7
+        ],
+        "hand_L": [
+         8.5,
+         -34.2
+        ],
+        "foot_R": [
+         1.0,
+         -1.0
+        ],
+        "foot_L": [
+         -1.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 99,
+        "apple": 12
+       },
+       "sha256": "d16cd297ac3077f2bab2e9dd81f3b4fb25802d4e78c784bdbe27d4f7145acc4b",
+       "sheet": "sheets/work_E.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/work_E_04.png",
+       "file": "work_E_04.png",
+       "packed_bounds": [
+        65,
+        67,
+        98,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         13.9,
+         -37.2
+        ],
+        "hand_L": [
+         8.5,
+         -33.6
+        ],
+        "foot_R": [
+         1.0,
+         -1.0
+        ],
+        "foot_L": [
+         -1.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 106,
+        "apple": 11
+       },
+       "sha256": "c9a3a686d046918221a5fa951b015920d7b5147fe85efb9a88933d3792a572bf",
+       "sheet": "sheets/work_E.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/work_E_05.png",
+       "file": "work_E_05.png",
+       "packed_bounds": [
+        65,
+        67,
+        99,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         14.3,
+         -36.2
+        ],
+        "hand_L": [
+         8.5,
+         -33.6
+        ],
+        "foot_R": [
+         1.0,
+         -1.0
+        ],
+        "foot_L": [
+         -1.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 105,
+        "apple": 12
+       },
+       "sha256": "dfc6f54ddbc9a061c0712036d32beb9f6d84c1fe16fd0e3b15e578edb23fb90a",
+       "sheet": "sheets/work_E.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/work_E_06.png",
+       "file": "work_E_06.png",
+       "packed_bounds": [
+        65,
+        67,
+        95,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         8.3,
+         -32.6
+        ],
+        "hand_L": [
+         8.5,
+         -34.2
+        ],
+        "foot_R": [
+         1.0,
+         -1.0
+        ],
+        "foot_L": [
+         -1.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 83
+       },
+       "sha256": "45f1a04b53d1d999ede3e0f6b5433f8e57f2efd2426300213e07acea18e1ee64",
+       "sheet": "sheets/work_E.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/work_E_07.png",
+       "file": "work_E_07.png",
+       "packed_bounds": [
+        64,
+        67,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         1.2,
+         -27.0
+        ],
+        "hand_L": [
+         8.5,
+         -34.2
+        ],
+        "foot_R": [
+         1.0,
+         -1.0
+        ],
+        "foot_L": [
+         -1.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 68
+       },
+       "sha256": "e3117316ab6ddd6ae540c2c20b271a0d5797357693c1536b0506b57dcb1ba102",
+       "sheet": "sheets/work_E.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "W": {
+     "frames": [
+      {
+       "path": "res://assets/animated/moss/work_W_00.png",
+       "file": "work_W_00.png",
+       "packed_bounds": [
+        65,
+        67,
+        95,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.9,
+         -27.0
+        ],
+        "hand_L": [
+         -7.9,
+         -34.2
+        ],
+        "foot_R": [
+         -2.0,
+         -1.0
+        ],
+        "foot_L": [
+         2.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 103
+       },
+       "sha256": "a137a2b5a4fa2f824fa2b613e339466f8f39dba9538d9dfa1f6a4b460fb06fbd",
+       "sheet": "sheets/work_W.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/work_W_01.png",
+       "file": "work_W_01.png",
+       "packed_bounds": [
+        65,
+        67,
+        95,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -8.1,
+         -30.1
+        ],
+        "hand_L": [
+         -7.9,
+         -34.2
+        ],
+        "foot_R": [
+         -2.0,
+         -1.0
+        ],
+        "foot_L": [
+         2.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 77
+       },
+       "sha256": "4b6fd69cb97b39f270386eaa67c4bdb30c0d844c3feecacdf6df07d6f5b7e9a2",
+       "sheet": "sheets/work_W.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/work_W_02.png",
+       "file": "work_W_02.png",
+       "packed_bounds": [
+        65,
+        67,
+        95,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -9.3,
+         -33.1
+        ],
+        "hand_L": [
+         -7.9,
+         -34.2
+        ],
+        "foot_R": [
+         -2.0,
+         -1.0
+        ],
+        "foot_L": [
+         2.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 97,
+        "apple": 3
+       },
+       "sha256": "38584bf5b97766611d11c5d7eb4fe081c9d6a365dfb924723e19b556ad455434",
+       "sheet": "sheets/work_W.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/work_W_03.png",
+       "file": "work_W_03.png",
+       "packed_bounds": [
+        64,
+        67,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -10.4,
+         -35.7
+        ],
+        "hand_L": [
+         -7.9,
+         -34.2
+        ],
+        "foot_R": [
+         -2.0,
+         -1.0
+        ],
+        "foot_L": [
+         2.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 99,
+        "apple": 10
+       },
+       "sha256": "ec36722628e4237d590ee0c3c90bacff76a7b7277a4b0e7f269bdba989aa361f",
+       "sheet": "sheets/work_W.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/work_W_04.png",
+       "file": "work_W_04.png",
+       "packed_bounds": [
+        61,
+        67,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -14.7,
+         -37.2
+        ],
+        "hand_L": [
+         -7.9,
+         -33.6
+        ],
+        "foot_R": [
+         -2.0,
+         -1.0
+        ],
+        "foot_L": [
+         2.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "apple": 11,
+        "basket": 107
+       },
+       "sha256": "4b1ad926fd1b2abcc4f8c760c322b709826cfea7f206c4cdfd528b8ed8a4319c",
+       "sheet": "sheets/work_W.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/work_W_05.png",
+       "file": "work_W_05.png",
+       "packed_bounds": [
+        60,
+        67,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -15.2,
+         -36.2
+        ],
+        "hand_L": [
+         -7.9,
+         -33.6
+        ],
+        "foot_R": [
+         -2.0,
+         -1.0
+        ],
+        "foot_L": [
+         2.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "apple": 13,
+        "basket": 106
+       },
+       "sha256": "99fb378462563670ee624c3a84848023dae9cdf271f121759bc408aa1ecc2d5b",
+       "sheet": "sheets/work_W.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/work_W_06.png",
+       "file": "work_W_06.png",
+       "packed_bounds": [
+        64,
+        67,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -10.1,
+         -32.6
+        ],
+        "hand_L": [
+         -7.9,
+         -34.2
+        ],
+        "foot_R": [
+         -2.0,
+         -1.0
+        ],
+        "foot_L": [
+         2.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 99
+       },
+       "sha256": "42b291aefefa7377adeb112dd717f404c6c15df50c28c009a39e69b0ab9ce1ff",
+       "sheet": "sheets/work_W.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/moss/work_W_07.png",
+       "file": "work_W_07.png",
+       "packed_bounds": [
+        65,
+        67,
+        95,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.9,
+         -27.0
+        ],
+        "hand_L": [
+         -7.9,
+         -34.2
+        ],
+        "foot_R": [
+         -2.0,
+         -1.0
+        ],
+        "foot_L": [
+         2.0,
+         -1.0
+        ]
+       },
+       "equipment": {
+        "basket": 100
+       },
+       "sha256": "25639044f7f946e2360d8aa2acf4c675f00d60efc3e5119a58cf4a7a6d71061b",
+       "sheet": "sheets/work_W.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    }
+   }
+  }
+ },
+ "pose_count": 136
+}
