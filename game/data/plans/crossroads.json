@@ -715,6 +715,8 @@
   "people": [
     {
       "id": "moss",
+      "face": "S",
+      "work": true,
       "speaker": "moss",
       "name": "Moss",
       "at": [
@@ -725,6 +727,7 @@
     },
     {
       "id": "hale_square",
+      "face": "S",
       "speaker": "hale",
       "name": "Hale",
       "at": [
@@ -741,10 +744,12 @@
     },
     {
       "id": "hale_forge",
+      "face": "W",
+      "work": true,
       "speaker": "hale",
       "name": "Hale",
       "at": [
-        520,
+        510,
         298
       ],
       "colour": "#a05040",
@@ -756,6 +761,7 @@
     },
     {
       "id": "morel",
+      "face": "S",
       "speaker": "morel",
       "name": "Morel",
       "at": [
@@ -767,6 +773,8 @@
     },
     {
       "id": "ada",
+      "face": "S",
+      "work": true,
       "speaker": "ada_fern",
       "name": "Ada Fern",
       "at": [

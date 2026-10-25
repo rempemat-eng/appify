@@ -18,87 +18,89 @@
 [ext_resource type="Texture2D" path="res://zones/crossroads/art/herbalist.png" id="t8"]
 [ext_resource type="Texture2D" path="res://zones/crossroads/art/herbalist_damage.png" id="t9"]
 [ext_resource type="Texture2D" path="res://zones/crossroads/art/smithy.png" id="t10"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/smithy_damage.png" id="t11"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/fern_cottage.png" id="t12"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/fern_cottage_damage.png" id="t13"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/well_choked.png" id="t14"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/well.png" id="t15"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/smithy_rubble.png" id="t16"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/forge_fire.png" id="t17"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/anvil.png" id="t18"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/square_rubble_a.png" id="t19"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/square_rubble_b.png" id="t20"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/fern_rubble.png" id="t21"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/lantern_dark.png" id="t22"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/lantern_lit.png" id="t23"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/crater_smoke.png" id="t24"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/beds_scorched.png" id="t25"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/beds_dug.png" id="t26"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/stall.png" id="t27"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/notice_board.png" id="t28"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/waystone.png" id="t29"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/fence_0.png" id="t30"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/fence_1.png" id="t31"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/fence_2.png" id="t32"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/fence_3.png" id="t33"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/fence_4.png" id="t34"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/fence_5.png" id="t35"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/oak_6.png" id="t36"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/bush_7.png" id="t37"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/bush_8.png" id="t38"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/flower_tub_9.png" id="t39"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/flower_tub_10.png" id="t40"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/woodpile_11.png" id="t41"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/sacks_12.png" id="t42"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/oak_13.png" id="t43"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/bush_14.png" id="t44"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/bush_15.png" id="t45"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/bush_16.png" id="t46"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/bush_17.png" id="t47"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/bush_18.png" id="t48"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/hay_19.png" id="t49"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/hay_20.png" id="t50"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/oak_21.png" id="t51"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/bush_22.png" id="t52"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/bush_23.png" id="t53"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/kit_lantern_24.png" id="t54"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/kit_lantern_25.png" id="t55"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/flower_tub_26.png" id="t56"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/flower_tub_27.png" id="t57"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/bench_28.png" id="t58"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/barrel_29.png" id="t59"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/crates_30.png" id="t60"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/barrel_31.png" id="t61"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/crates_32.png" id="t62"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/woodpile_33.png" id="t63"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/coal_34.png" id="t64"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/trough_35.png" id="t65"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/grindstone_36.png" id="t66"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/barrel_37.png" id="t67"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/flower_tub_38.png" id="t68"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/barrel_39.png" id="t69"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/oak_40.png" id="t70"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/oak_41.png" id="t71"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/oak_42.png" id="t72"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/oak_43.png" id="t73"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/oak_44.png" id="t74"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/oak_45.png" id="t75"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/oak_46.png" id="t76"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/bush_47.png" id="t77"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/bush_48.png" id="t78"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/bush_49.png" id="t79"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/bush_50.png" id="t80"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/bush_51.png" id="t81"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/boulder_52.png" id="t82"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/debris_a.png" id="t83"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/debris_b.png" id="t84"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/debris_c.png" id="t85"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/debris_d.png" id="t86"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/handcart.png" id="t87"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/bench_58.png" id="t88"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/flower_tub_59.png" id="t89"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/flower_tub_60.png" id="t90"]
-[ext_resource type="Texture2D" path="res://assets/characters/morel/sheets/idle_S.png" id="c0"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/fx/chimney_smoke_8.png" id="t11"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/smithy_damage.png" id="t12"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/fern_cottage.png" id="t13"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/fern_cottage_damage.png" id="t14"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/well_choked.png" id="t15"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/well.png" id="t16"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/smithy_rubble.png" id="t17"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/fx/forge_fire_8.png" id="t18"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/anvil.png" id="t19"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/square_rubble_a.png" id="t20"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/square_rubble_b.png" id="t21"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/fern_rubble.png" id="t22"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/lantern_dark.png" id="t23"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/lantern_lit.png" id="t24"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/crater_smoke.png" id="t25"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/beds_scorched.png" id="t26"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/beds_dug.png" id="t27"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/stall.png" id="t28"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/notice_board.png" id="t29"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/waystone.png" id="t30"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/fence_0.png" id="t31"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/fence_1.png" id="t32"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/fence_2.png" id="t33"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/fence_3.png" id="t34"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/fence_4.png" id="t35"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/fence_5.png" id="t36"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/oak_6.png" id="t37"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/bush_7.png" id="t38"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/bush_8.png" id="t39"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/flower_tub_9.png" id="t40"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/flower_tub_10.png" id="t41"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/woodpile_11.png" id="t42"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/sacks_12.png" id="t43"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/oak_13.png" id="t44"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/bush_14.png" id="t45"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/bush_15.png" id="t46"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/bush_16.png" id="t47"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/bush_17.png" id="t48"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/bush_18.png" id="t49"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/hay_19.png" id="t50"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/hay_20.png" id="t51"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/oak_21.png" id="t52"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/bush_22.png" id="t53"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/bush_23.png" id="t54"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/kit_lantern_24.png" id="t55"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/kit_lantern_25.png" id="t56"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/flower_tub_26.png" id="t57"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/flower_tub_27.png" id="t58"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/bench_28.png" id="t59"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/barrel_29.png" id="t60"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/crates_30.png" id="t61"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/barrel_31.png" id="t62"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/crates_32.png" id="t63"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/woodpile_33.png" id="t64"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/coal_34.png" id="t65"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/trough_35.png" id="t66"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/grindstone_36.png" id="t67"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/barrel_37.png" id="t68"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/flower_tub_38.png" id="t69"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/barrel_39.png" id="t70"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/oak_40.png" id="t71"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/oak_41.png" id="t72"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/oak_42.png" id="t73"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/oak_43.png" id="t74"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/oak_44.png" id="t75"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/oak_45.png" id="t76"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/oak_46.png" id="t77"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/bush_47.png" id="t78"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/bush_48.png" id="t79"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/bush_49.png" id="t80"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/bush_50.png" id="t81"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/bush_51.png" id="t82"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/boulder_52.png" id="t83"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/debris_a.png" id="t84"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/debris_b.png" id="t85"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/debris_c.png" id="t86"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/debris_d.png" id="t87"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/handcart.png" id="t88"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/bench_58.png" id="t89"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/flower_tub_59.png" id="t90"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/flower_tub_60.png" id="t91"]
+[ext_resource type="Script" path="res://world/villager.gd" id="villager"]
+[ext_resource type="Script" path="res://world/loop_fx.gd" id="loopfx"]
 
 [sub_resource type="RectangleShape2D" id="s0"]
 size = Vector2(1920, 24)
@@ -710,19 +712,33 @@ texture = ExtResource("t10")
 centered = false
 offset = Vector2(-138, -329)
 
+[node name="If_smithy_smoke" type="Node2D" parent="Props"]
+script = ExtResource("cond")
+only_if = "{\"restored\":[\"forge\"]}"
+
+[node name="SmithySmoke" type="Sprite2D" parent="Props/If_smithy_smoke"]
+position = Vector2(1578, 511)
+texture = ExtResource("t11")
+centered = false
+offset = Vector2(-16, -56)
+hframes = 8
+script = ExtResource("loopfx")
+fps = 6.0
+z_index = 1
+
 [node name="If_smithy_damage" type="Node2D" parent="Props"]
 script = ExtResource("cond")
 only_if = "{\"not_restored\":[\"forge\"]}"
 
 [node name="SmithyDamage" type="Sprite2D" parent="Props/If_smithy_damage"]
 position = Vector2(1494, 841)
-texture = ExtResource("t11")
+texture = ExtResource("t12")
 centered = false
 offset = Vector2(-138, -330)
 
 [node name="FernCottage" type="Sprite2D" parent="Props"]
 position = Vector2(1473, 1242)
-texture = ExtResource("t12")
+texture = ExtResource("t13")
 centered = false
 offset = Vector2(-117, -260)
 
@@ -732,7 +748,7 @@ only_if = "{\"not_restored\":[\"fern_cottage\"]}"
 
 [node name="FernCottageDamage" type="Sprite2D" parent="Props/If_fern_cottage_damage"]
 position = Vector2(1473, 1243)
-texture = ExtResource("t13")
+texture = ExtResource("t14")
 centered = false
 offset = Vector2(-117, -261)
 
@@ -742,7 +758,7 @@ only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
 
 [node name="WellChoked" type="Sprite2D" parent="Props/If_well_choked"]
 position = Vector2(864, 960)
-texture = ExtResource("t14")
+texture = ExtResource("t15")
 centered = false
 offset = Vector2(-51, -92)
 
@@ -759,7 +775,7 @@ only_if = "{\"flags\":[\"shard_home:woodland\"]}"
 
 [node name="Well" type="Sprite2D" parent="Props/If_well"]
 position = Vector2(864, 954)
-texture = ExtResource("t15")
+texture = ExtResource("t16")
 centered = false
 offset = Vector2(-45, -164)
 
@@ -776,7 +792,7 @@ only_if = "{\"not_restored\":[\"forge\"]}"
 
 [node name="SmithyRubble" type="Sprite2D" parent="Props/If_smithy_rubble"]
 position = Vector2(1410, 894)
-texture = ExtResource("t16")
+texture = ExtResource("t17")
 centered = false
 offset = Vector2(-63, -93)
 
@@ -797,9 +813,12 @@ only_if = "{\"restored\":[\"forge\"]}"
 
 [node name="ForgeFire" type="Sprite2D" parent="Props/If_forge_fire"]
 position = Vector2(1458, 842)
-texture = ExtResource("t17")
+texture = ExtResource("t18")
 centered = false
 offset = Vector2(-27, -88)
+hframes = 8
+script = ExtResource("loopfx")
+fps = 9.0
 
 [node name="If_anvil" type="Node2D" parent="Props"]
 script = ExtResource("cond")
@@ -807,7 +826,7 @@ only_if = "{\"restored\":[\"forge\"]}"
 
 [node name="Anvil" type="Sprite2D" parent="Props/If_anvil"]
 position = Vector2(1491, 900)
-texture = ExtResource("t18")
+texture = ExtResource("t19")
 centered = false
 offset = Vector2(-36, -68)
 
@@ -824,7 +843,7 @@ only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
 
 [node name="SquareRubbleA" type="Sprite2D" parent="Props/If_square_rubble_a"]
 position = Vector2(705, 1074)
-texture = ExtResource("t19")
+texture = ExtResource("t20")
 centered = false
 offset = Vector2(-54, -105)
 
@@ -837,7 +856,7 @@ shape = SubResource("s30")
 
 [node name="SquareRubbleB" type="Sprite2D" parent="Props"]
 position = Vector2(1227, 690)
-texture = ExtResource("t20")
+texture = ExtResource("t21")
 centered = false
 offset = Vector2(-48, -93)
 
@@ -851,7 +870,7 @@ only_if = "{\"not_restored\":[\"fern_cottage\"]}"
 
 [node name="FernRubble" type="Sprite2D" parent="Props/If_fern_rubble"]
 position = Vector2(1419, 1290)
-texture = ExtResource("t21")
+texture = ExtResource("t22")
 centered = false
 offset = Vector2(-54, -82)
 
@@ -868,7 +887,7 @@ only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
 
 [node name="LanternDark" type="Sprite2D" parent="Props/If_lantern_dark"]
 position = Vector2(933, 936)
-texture = ExtResource("t22")
+texture = ExtResource("t23")
 centered = false
 offset = Vector2(-42, -218)
 
@@ -885,7 +904,7 @@ only_if = "{\"flags\":[\"shard_home:woodland\"]}"
 
 [node name="LanternLit" type="Sprite2D" parent="Props/If_lantern_lit"]
 position = Vector2(933, 936)
-texture = ExtResource("t23")
+texture = ExtResource("t24")
 centered = false
 offset = Vector2(-42, -218)
 
@@ -902,7 +921,7 @@ only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
 
 [node name="CraterSmoke" type="Sprite2D" parent="Props/If_crater_smoke"]
 position = Vector2(1515, 1320)
-texture = ExtResource("t24")
+texture = ExtResource("t25")
 centered = false
 offset = Vector2(-60, -164)
 
@@ -912,7 +931,7 @@ only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
 
 [node name="BedsScorched" type="Sprite2D" parent="Props/If_beds_scorched"]
 position = Vector2(1260, 360)
-texture = ExtResource("t25")
+texture = ExtResource("t26")
 centered = false
 offset = Vector2(-129, -140)
 
@@ -922,343 +941,343 @@ only_if = "{\"flags\":[\"shard_home:woodland\"]}"
 
 [node name="BedsDug" type="Sprite2D" parent="Props/If_beds_dug"]
 position = Vector2(1260, 360)
-texture = ExtResource("t26")
+texture = ExtResource("t27")
 centered = false
 offset = Vector2(-129, -140)
 
 [node name="Stall" type="Sprite2D" parent="Props"]
 position = Vector2(1152, 756)
-texture = ExtResource("t27")
+texture = ExtResource("t28")
 centered = false
 offset = Vector2(-66, -152)
 
 [node name="NoticeBoard" type="Sprite2D" parent="Props"]
 position = Vector2(708, 666)
-texture = ExtResource("t28")
+texture = ExtResource("t29")
 centered = false
 offset = Vector2(-48, -122)
 
 [node name="Waystone" type="Sprite2D" parent="Props"]
 position = Vector2(1260, 1068)
-texture = ExtResource("t29")
+texture = ExtResource("t30")
 centered = false
 offset = Vector2(-39, -128)
 
 [node name="Fence0" type="Sprite2D" parent="Props"]
 position = Vector2(528, 417)
-texture = ExtResource("t30")
+texture = ExtResource("t31")
 centered = false
 offset = Vector2(-78, -56)
 
 [node name="Fence1" type="Sprite2D" parent="Props"]
 position = Vector2(678, 417)
-texture = ExtResource("t31")
+texture = ExtResource("t32")
 centered = false
 offset = Vector2(-78, -56)
 
 [node name="Fence2" type="Sprite2D" parent="Props"]
 position = Vector2(822, 417)
-texture = ExtResource("t32")
+texture = ExtResource("t33")
 centered = false
 offset = Vector2(-78, -56)
 
 [node name="Fence3" type="Sprite2D" parent="Props"]
 position = Vector2(1098, 417)
-texture = ExtResource("t33")
+texture = ExtResource("t34")
 centered = false
 offset = Vector2(-78, -56)
 
 [node name="Fence4" type="Sprite2D" parent="Props"]
 position = Vector2(1248, 417)
-texture = ExtResource("t34")
+texture = ExtResource("t35")
 centered = false
 offset = Vector2(-78, -56)
 
 [node name="Fence5" type="Sprite2D" parent="Props"]
 position = Vector2(1398, 417)
-texture = ExtResource("t35")
+texture = ExtResource("t36")
 centered = false
 offset = Vector2(-78, -56)
 
 [node name="Oak6" type="Sprite2D" parent="Props"]
 position = Vector2(546, 132)
-texture = ExtResource("t36")
+texture = ExtResource("t37")
 centered = false
 offset = Vector2(-109, -243)
 
 [node name="Bush7" type="Sprite2D" parent="Props"]
 position = Vector2(720, 348)
-texture = ExtResource("t37")
+texture = ExtResource("t38")
 centered = false
 offset = Vector2(-59, -86)
 
 [node name="Bush8" type="Sprite2D" parent="Props"]
 position = Vector2(1434, 366)
-texture = ExtResource("t38")
+texture = ExtResource("t39")
 centered = false
 offset = Vector2(-57, -86)
 
 [node name="FlowerTub9" type="Sprite2D" parent="Props"]
 position = Vector2(894, 210)
-texture = ExtResource("t39")
+texture = ExtResource("t40")
 centered = false
 offset = Vector2(-27, -50)
 
 [node name="FlowerTub10" type="Sprite2D" parent="Props"]
 position = Vector2(1032, 210)
-texture = ExtResource("t40")
+texture = ExtResource("t41")
 centered = false
 offset = Vector2(-27, -50)
 
 [node name="Woodpile11" type="Sprite2D" parent="Props"]
 position = Vector2(1140, 192)
-texture = ExtResource("t41")
+texture = ExtResource("t42")
 centered = false
 offset = Vector2(-39, -62)
 
 [node name="Sacks12" type="Sprite2D" parent="Props"]
 position = Vector2(798, 198)
-texture = ExtResource("t42")
+texture = ExtResource("t43")
 centered = false
 offset = Vector2(-30, -56)
 
 [node name="Oak13" type="Sprite2D" parent="Props"]
 position = Vector2(120, 66)
-texture = ExtResource("t43")
+texture = ExtResource("t44")
 centered = false
 offset = Vector2(-108, -243)
 
 [node name="Bush14" type="Sprite2D" parent="Props"]
 position = Vector2(306, 66)
-texture = ExtResource("t44")
+texture = ExtResource("t45")
 centered = false
 offset = Vector2(-59, -86)
 
 [node name="Bush15" type="Sprite2D" parent="Props"]
 position = Vector2(402, 72)
-texture = ExtResource("t45")
+texture = ExtResource("t46")
 centered = false
 offset = Vector2(-59, -86)
 
 [node name="Bush16" type="Sprite2D" parent="Props"]
 position = Vector2(84, 402)
-texture = ExtResource("t46")
+texture = ExtResource("t47")
 centered = false
 offset = Vector2(-59, -86)
 
 [node name="Bush17" type="Sprite2D" parent="Props"]
 position = Vector2(240, 390)
-texture = ExtResource("t47")
+texture = ExtResource("t48")
 centered = false
 offset = Vector2(-58, -86)
 
 [node name="Bush18" type="Sprite2D" parent="Props"]
 position = Vector2(384, 405)
-texture = ExtResource("t48")
+texture = ExtResource("t49")
 centered = false
 offset = Vector2(-59, -86)
 
 [node name="Hay19" type="Sprite2D" parent="Props"]
 position = Vector2(1620, 186)
-texture = ExtResource("t49")
+texture = ExtResource("t50")
 centered = false
 offset = Vector2(-33, -62)
 
 [node name="Hay20" type="Sprite2D" parent="Props"]
 position = Vector2(1776, 294)
-texture = ExtResource("t50")
+texture = ExtResource("t51")
 centered = false
 offset = Vector2(-33, -62)
 
 [node name="Oak21" type="Sprite2D" parent="Props"]
 position = Vector2(1842, 120)
-texture = ExtResource("t51")
+texture = ExtResource("t52")
 centered = false
 offset = Vector2(-108, -243)
 
 [node name="Bush22" type="Sprite2D" parent="Props"]
 position = Vector2(1560, 396)
-texture = ExtResource("t52")
+texture = ExtResource("t53")
 centered = false
 offset = Vector2(-58, -86)
 
 [node name="Bush23" type="Sprite2D" parent="Props"]
 position = Vector2(1866, 396)
-texture = ExtResource("t53")
+texture = ExtResource("t54")
 centered = false
 offset = Vector2(-58, -86)
 
 [node name="KitLantern24" type="Sprite2D" parent="Props"]
 position = Vector2(870, 600)
-texture = ExtResource("t54")
+texture = ExtResource("t55")
 centered = false
 offset = Vector2(-12, -118)
 
 [node name="KitLantern25" type="Sprite2D" parent="Props"]
 position = Vector2(1050, 600)
-texture = ExtResource("t55")
+texture = ExtResource("t56")
 centered = false
 offset = Vector2(-12, -118)
 
 [node name="FlowerTub26" type="Sprite2D" parent="Props"]
 position = Vector2(690, 600)
-texture = ExtResource("t56")
+texture = ExtResource("t57")
 centered = false
 offset = Vector2(-27, -50)
 
 [node name="FlowerTub27" type="Sprite2D" parent="Props"]
 position = Vector2(798, 600)
-texture = ExtResource("t57")
+texture = ExtResource("t58")
 centered = false
 offset = Vector2(-27, -50)
 
 [node name="Bench28" type="Sprite2D" parent="Props"]
 position = Vector2(1050, 1116)
-texture = ExtResource("t58")
+texture = ExtResource("t59")
 centered = false
 offset = Vector2(-42, -44)
 
 [node name="Barrel29" type="Sprite2D" parent="Props"]
 position = Vector2(582, 756)
-texture = ExtResource("t59")
+texture = ExtResource("t60")
 centered = false
 offset = Vector2(-21, -65)
 
 [node name="Crates30" type="Sprite2D" parent="Props"]
 position = Vector2(582, 828)
-texture = ExtResource("t60")
+texture = ExtResource("t61")
 centered = false
 offset = Vector2(-24, -104)
 
 [node name="Barrel31" type="Sprite2D" parent="Props"]
 position = Vector2(1074, 756)
-texture = ExtResource("t61")
+texture = ExtResource("t62")
 centered = false
 offset = Vector2(-21, -65)
 
 [node name="Crates32" type="Sprite2D" parent="Props"]
 position = Vector2(1230, 756)
-texture = ExtResource("t62")
+texture = ExtResource("t63")
 centered = false
 offset = Vector2(-24, -104)
 
 [node name="Woodpile33" type="Sprite2D" parent="Props"]
 position = Vector2(1671, 720)
-texture = ExtResource("t63")
+texture = ExtResource("t64")
 centered = false
 offset = Vector2(-39, -62)
 
 [node name="Coal34" type="Sprite2D" parent="Props"]
 position = Vector2(1680, 792)
-texture = ExtResource("t64")
+texture = ExtResource("t65")
 centered = false
 offset = Vector2(-30, -50)
 
 [node name="Trough35" type="Sprite2D" parent="Props"]
 position = Vector2(1584, 906)
-texture = ExtResource("t65")
+texture = ExtResource("t66")
 centered = false
 offset = Vector2(-36, -47)
 
 [node name="Grindstone36" type="Sprite2D" parent="Props"]
 position = Vector2(1674, 882)
-texture = ExtResource("t66")
+texture = ExtResource("t67")
 centered = false
 offset = Vector2(-30, -59)
 
 [node name="Barrel37" type="Sprite2D" parent="Props"]
 position = Vector2(1338, 792)
-texture = ExtResource("t67")
+texture = ExtResource("t68")
 centered = false
 offset = Vector2(-21, -65)
 
 [node name="FlowerTub38" type="Sprite2D" parent="Props"]
 position = Vector2(1320, 1242)
-texture = ExtResource("t68")
+texture = ExtResource("t69")
 centered = false
 offset = Vector2(-27, -50)
 
 [node name="Barrel39" type="Sprite2D" parent="Props"]
 position = Vector2(1602, 1224)
-texture = ExtResource("t69")
+texture = ExtResource("t70")
 centered = false
 offset = Vector2(-21, -65)
 
 [node name="Oak40" type="Sprite2D" parent="Props"]
 position = Vector2(900, 1440)
-texture = ExtResource("t70")
+texture = ExtResource("t71")
 centered = false
 offset = Vector2(-108, -243)
 
 [node name="Oak41" type="Sprite2D" parent="Props"]
 position = Vector2(1176, 1626)
-texture = ExtResource("t71")
+texture = ExtResource("t72")
 centered = false
 offset = Vector2(-108, -243)
 
 [node name="Oak42" type="Sprite2D" parent="Props"]
 position = Vector2(1812, 1524)
-texture = ExtResource("t72")
+texture = ExtResource("t73")
 centered = false
 offset = Vector2(-109, -243)
 
 [node name="Oak43" type="Sprite2D" parent="Props"]
 position = Vector2(66, 1224)
-texture = ExtResource("t73")
+texture = ExtResource("t74")
 centered = false
 offset = Vector2(-109, -243)
 
 [node name="Oak44" type="Sprite2D" parent="Props"]
 position = Vector2(546, 1644)
-texture = ExtResource("t74")
+texture = ExtResource("t75")
 centered = false
 offset = Vector2(-108, -243)
 
 [node name="Oak45" type="Sprite2D" parent="Props"]
 position = Vector2(1836, 786)
-texture = ExtResource("t75")
+texture = ExtResource("t76")
 centered = false
 offset = Vector2(-108, -243)
 
 [node name="Oak46" type="Sprite2D" parent="Props"]
 position = Vector2(120, 732)
-texture = ExtResource("t76")
+texture = ExtResource("t77")
 centered = false
 offset = Vector2(-108, -243)
 
 [node name="Bush47" type="Sprite2D" parent="Props"]
 position = Vector2(756, 1572)
-texture = ExtResource("t77")
+texture = ExtResource("t78")
 centered = false
 offset = Vector2(-58, -86)
 
 [node name="Bush48" type="Sprite2D" parent="Props"]
 position = Vector2(1338, 1428)
-texture = ExtResource("t78")
+texture = ExtResource("t79")
 centered = false
 offset = Vector2(-58, -86)
 
 [node name="Bush49" type="Sprite2D" parent="Props"]
 position = Vector2(1710, 1338)
-texture = ExtResource("t79")
+texture = ExtResource("t80")
 centered = false
 offset = Vector2(-60, -86)
 
 [node name="Bush50" type="Sprite2D" parent="Props"]
 position = Vector2(246, 684)
-texture = ExtResource("t80")
+texture = ExtResource("t81")
 centered = false
 offset = Vector2(-60, -86)
 
 [node name="Bush51" type="Sprite2D" parent="Props"]
 position = Vector2(1812, 528)
-texture = ExtResource("t81")
+texture = ExtResource("t82")
 centered = false
 offset = Vector2(-59, -86)
 
 [node name="Boulder52" type="Sprite2D" parent="Props"]
 position = Vector2(996, 1272)
-texture = ExtResource("t82")
+texture = ExtResource("t83")
 centered = false
 offset = Vector2(-47, -52)
 
@@ -1268,7 +1287,7 @@ only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
 
 [node name="DebrisA" type="Sprite2D" parent="Props/If_debris_a"]
 position = Vector2(786, 840)
-texture = ExtResource("t83")
+texture = ExtResource("t84")
 centered = false
 offset = Vector2(-48, -44)
 
@@ -1278,7 +1297,7 @@ only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
 
 [node name="DebrisB" type="Sprite2D" parent="Props/If_debris_b"]
 position = Vector2(1116, 936)
-texture = ExtResource("t84")
+texture = ExtResource("t85")
 centered = false
 offset = Vector2(-42, -38)
 
@@ -1288,7 +1307,7 @@ only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
 
 [node name="DebrisC" type="Sprite2D" parent="Props/If_debris_c"]
 position = Vector2(954, 1080)
-texture = ExtResource("t85")
+texture = ExtResource("t86")
 centered = false
 offset = Vector2(-45, -38)
 
@@ -1298,31 +1317,31 @@ only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
 
 [node name="DebrisD" type="Sprite2D" parent="Props/If_debris_d"]
 position = Vector2(1434, 936)
-texture = ExtResource("t86")
+texture = ExtResource("t87")
 centered = false
 offset = Vector2(-39, -38)
 
 [node name="Handcart" type="Sprite2D" parent="Props"]
 position = Vector2(708, 786)
-texture = ExtResource("t87")
+texture = ExtResource("t88")
 centered = false
 offset = Vector2(-54, -74)
 
 [node name="Bench58" type="Sprite2D" parent="Props"]
 position = Vector2(810, 1116)
-texture = ExtResource("t88")
+texture = ExtResource("t89")
 centered = false
 offset = Vector2(-42, -44)
 
 [node name="FlowerTub59" type="Sprite2D" parent="Props"]
 position = Vector2(1140, 600)
-texture = ExtResource("t89")
+texture = ExtResource("t90")
 centered = false
 offset = Vector2(-27, -50)
 
 [node name="FlowerTub60" type="Sprite2D" parent="Props"]
 position = Vector2(1212, 600)
-texture = ExtResource("t90")
+texture = ExtResource("t91")
 centered = false
 offset = Vector2(-27, -50)
 
@@ -1338,17 +1357,13 @@ marker_height = 82.0
 [node name="Shape" type="CollisionShape2D" parent="Actors/Moss"]
 shape = SubResource("s33")
 
-[node name="Body" type="Polygon2D" parent="Actors/Moss"]
-color = Color(0.788, 0.627, 0.314, 1.000)
-polygon = PackedVector2Array(-12, -48, 12, -48, 12, 0, -12, 0)
-
-[node name="Name" type="Label" parent="Actors/Moss"]
-offset_left = -40
-offset_top = -72
-offset_right = 40
-offset_bottom = -52
-text = "Moss"
-horizontal_alignment = 1
+[node name="Body" type="AnimatedSprite2D" parent="Actors/Moss"]
+script = ExtResource("villager")
+character = "moss"
+facing_at_rest = "S"
+work = true
+centered = false
+offset = Vector2(-80, -136)
 
 [node name="Post" type="StaticBody2D" parent="Actors/Moss"]
 collision_mask = 0
@@ -1369,17 +1384,13 @@ marker_height = 82.0
 [node name="Shape" type="CollisionShape2D" parent="Actors/If_hale_square/HaleSquare"]
 shape = SubResource("s33")
 
-[node name="Body" type="Polygon2D" parent="Actors/If_hale_square/HaleSquare"]
-color = Color(0.627, 0.314, 0.251, 1.000)
-polygon = PackedVector2Array(-12, -48, 12, -48, 12, 0, -12, 0)
-
-[node name="Name" type="Label" parent="Actors/If_hale_square/HaleSquare"]
-offset_left = -40
-offset_top = -72
-offset_right = 40
-offset_bottom = -52
-text = "Hale"
-horizontal_alignment = 1
+[node name="Body" type="AnimatedSprite2D" parent="Actors/If_hale_square/HaleSquare"]
+script = ExtResource("villager")
+character = "hale"
+facing_at_rest = "S"
+work = false
+centered = false
+offset = Vector2(-80, -136)
 
 [node name="Post" type="StaticBody2D" parent="Actors/If_hale_square/HaleSquare"]
 collision_mask = 0
@@ -1392,7 +1403,7 @@ script = ExtResource("cond")
 only_if = "{\"restored\":[\"forge\"]}"
 
 [node name="HaleForge" type="Area2D" parent="Actors/If_hale_forge"]
-position = Vector2(1560, 894)
+position = Vector2(1530, 894)
 script = ExtResource("talk")
 speaker_id = "hale"
 marker_height = 82.0
@@ -1400,17 +1411,13 @@ marker_height = 82.0
 [node name="Shape" type="CollisionShape2D" parent="Actors/If_hale_forge/HaleForge"]
 shape = SubResource("s33")
 
-[node name="Body" type="Polygon2D" parent="Actors/If_hale_forge/HaleForge"]
-color = Color(0.627, 0.314, 0.251, 1.000)
-polygon = PackedVector2Array(-12, -48, 12, -48, 12, 0, -12, 0)
-
-[node name="Name" type="Label" parent="Actors/If_hale_forge/HaleForge"]
-offset_left = -40
-offset_top = -72
-offset_right = 40
-offset_bottom = -52
-text = "Hale"
-horizontal_alignment = 1
+[node name="Body" type="AnimatedSprite2D" parent="Actors/If_hale_forge/HaleForge"]
+script = ExtResource("villager")
+character = "hale"
+facing_at_rest = "W"
+work = true
+centered = false
+offset = Vector2(-80, -136)
 
 [node name="Post" type="StaticBody2D" parent="Actors/If_hale_forge/HaleForge"]
 collision_mask = 0
@@ -1427,11 +1434,12 @@ marker_height = 82.0
 [node name="Shape" type="CollisionShape2D" parent="Actors/Morel"]
 shape = SubResource("s33")
 
-[node name="Body" type="Sprite2D" parent="Actors/Morel"]
-texture = ExtResource("c0")
+[node name="Body" type="AnimatedSprite2D" parent="Actors/Morel"]
+script = ExtResource("villager")
+character = "morel"
+facing_at_rest = "S"
+work = false
 centered = false
-region_enabled = true
-region_rect = Rect2(0, 0, 160, 144)
 offset = Vector2(-80, -136)
 
 [node name="Post" type="StaticBody2D" parent="Actors/Morel"]
@@ -1453,17 +1461,13 @@ marker_height = 82.0
 [node name="Shape" type="CollisionShape2D" parent="Actors/If_ada/Ada"]
 shape = SubResource("s33")
 
-[node name="Body" type="Polygon2D" parent="Actors/If_ada/Ada"]
-color = Color(0.478, 0.627, 0.753, 1.000)
-polygon = PackedVector2Array(-12, -48, 12, -48, 12, 0, -12, 0)
-
-[node name="Name" type="Label" parent="Actors/If_ada/Ada"]
-offset_left = -40
-offset_top = -72
-offset_right = 40
-offset_bottom = -52
-text = "Ada Fern"
-horizontal_alignment = 1
+[node name="Body" type="AnimatedSprite2D" parent="Actors/If_ada/Ada"]
+script = ExtResource("villager")
+character = "ada"
+facing_at_rest = "S"
+work = true
+centered = false
+offset = Vector2(-80, -136)
 
 [node name="Post" type="StaticBody2D" parent="Actors/If_ada/Ada"]
 collision_mask = 0

@@ -36,9 +36,26 @@ ROOT = os.path.dirname(GAME)
 DENSITY = GB.DENSITY
 t, vec, pascal = GB.t, GB.vec, GB.pascal
 
-# people drawn from the cast (game/assets/characters/<id>): idle, facing the player
-CAST = {'morel': 'morel'}
+# people drawn from the cast (game/assets/characters/<id>) as Villagers (world/villager.gd): idle or
+# their work loop, turning to talk when the player is near. Plan people may set "face" and "work".
+CAST = {'morel': 'morel', 'hale': 'hale', 'moss': 'moss', 'ada_fern': 'ada'}
+# looping effect strips (tools/gen_village_fx.py) that replace a kit picture: id -> (strip, drawings, fps)
+LOOPS = {'forge_fire': ('fx/forge_fire_8.png', 8, 9.0)}
+# chimney smoke over a building's pot while a condition holds: building id -> condition
+SMOKE = {'smithy': {'restored': ['forge']}}
+SMOKE_STRIP = ('fx/chimney_smoke_8.png', 8, 6.0, 32, 56)
 MARKER = {'people': 82.0, 'notice_board': 108.0, 'waystone': 108.0}
+
+
+def chimney_pot(zid: str, o: dict) -> tuple:
+    """The top centre of a building picture's chimney (its topmost opaque row), in texels."""
+    from PIL import Image
+    import numpy as np
+    a = np.array(Image.open(os.path.join(GAME, 'zones', zid, 'art', o['png'])).convert('RGBA'))[..., 3] > 0
+    ys, xs = np.nonzero(a)
+    top = ys.min()
+    cx = (xs[ys == top].min() + xs[ys == top].max() + 1) / 2.0
+    return o['foot'][0] + o['offset'][0] + cx, o['foot'][1] + o['offset'][1] + top
 
 
 def render(zid: str, preview: str | None) -> None:
@@ -86,12 +103,27 @@ def build(plan: dict, kit: dict) -> str:
         parent = 'Props'
         if o.get('cond'):
             parent = s.wrap('Props', {'if': o['cond']}, 'If_' + o['id'])
-        if o.get('png'):
+        if o.get('png') and o['id'] in LOOPS:
+            fx, fy = o['foot']
+            ox, oy = o['offset']
+            strip_png, n, fps = LOOPS[o['id']]
+            s.node(pascal(o['id']), 'Sprite2D', parent, {
+                'position': vec(fx, fy), 'texture': 'ExtResource("%s")' % tex(strip_png), 'centered': 'false',
+                'offset': vec(ox, oy), 'hframes': n, 'script': 'ExtResource("loopfx")', 'fps': fps})
+        elif o.get('png'):
             fx, fy = o['foot']
             ox, oy = o['offset']
             s.node(pascal(o['id']), 'Sprite2D', parent, {
                 'position': vec(fx, fy), 'texture': 'ExtResource("%s")' % tex(o['png']), 'centered': 'false',
                 'offset': vec(ox, oy)})
+        if o['id'] in SMOKE and o.get('png'):
+            px, py = chimney_pot(zid, o)
+            sp = s.wrap('Props', {'if': SMOKE[o['id']]}, 'If_%s_smoke' % o['id'])
+            strip_png, n, fps, w, h = SMOKE_STRIP
+            s.node(pascal(o['id']) + 'Smoke', 'Sprite2D', sp, {
+                'position': vec(px, py), 'texture': 'ExtResource("%s")' % tex(strip_png), 'centered': 'false',
+                'offset': vec(-w // 2, -h), 'hframes': n, 'script': 'ExtResource("loopfx")', 'fps': fps,
+                'z_index': 1})
         if o.get('solid') and o.get('cond'):
             s.solid(pascal(o['id']) + 'Body', parent, o['solid'])
 
@@ -116,11 +148,10 @@ def build(plan: dict, kit: dict) -> str:
             if kind == 'people':
                 cid = CAST.get(p['speaker'])
                 if cid:
-                    sheet = f'res://assets/characters/{cid}/sheets/idle_S.png'
-                    cast_ext.setdefault(sheet, 'c%d' % len(cast_ext))
-                    s.node('Body', 'Sprite2D', path, {'texture': 'ExtResource("%s")' % cast_ext[sheet], 'centered': 'false',
-                                                      'region_enabled': 'true', 'region_rect': 'Rect2(0, 0, 160, 144)',
-                                                      'offset': vec(-80, -136)})
+                    s.node('Body', 'AnimatedSprite2D', path, {'script': 'ExtResource("villager")', 'character': '"%s"' % cid,
+                                                              'facing_at_rest': '"%s"' % p.get('face', 'S'),
+                                                              'work': 'true' if p.get('work') else 'false',
+                                                              'centered': 'false', 'offset': vec(-80, -136)})
                 else:
                     # not drawn yet: the blockout's marker and name
                     s.polygon('Body', path, [[-4, -16], [4, -16], [4, 0], [-4, 0]], GB.colour(col))
@@ -172,6 +203,8 @@ def build(plan: dict, kit: dict) -> str:
     ext = ''.join('[ext_resource type="%s" path="%s" id="%s"]\n' % (typ, path, i) for i, typ, path in GB.EXT)
     ext += ''.join('[ext_resource type="Texture2D" path="%s%s" id="%s"]\n' % (res, png, i) for png, i in ext_tex.items())
     ext += ''.join('[ext_resource type="Texture2D" path="%s" id="%s"]\n' % (path, i) for path, i in cast_ext.items())
+    ext += '[ext_resource type="Script" path="res://world/villager.gd" id="villager"]\n'
+    ext += '[ext_resource type="Script" path="res://world/loop_fx.gd" id="loopfx"]\n'
     return '[gd_scene format=3]\n\n' + ext + '\n' + '\n'.join(s.subs) + '\n' + '\n'.join(s.nodes)
 
 

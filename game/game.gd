@@ -7,7 +7,8 @@ extends Node2D
 ## --shot=<png path> (wait, save a 1:1 picture of the window, quit), --demo (a scripted walk in four
 ## directions with a bow shot after each, for screenshots and videos; --quit ends the run after it),
 ## --lineup (the whole cast in a row), --cycle (the player becomes each cast member in turn) and
-## --character=<id> (start as that cast member).
+## --character=<id> (start as that cast member), --stage=<id> (a zone plan's named state),
+## --at=x,y (stand at a world point).
 ## See docs/godot.md.
 
 const DENSITY := 3.0
@@ -42,6 +43,8 @@ func _ready() -> void:
 	Quests.completed.connect(func(_id: String) -> void: autosave())
 	Village.changed.connect(func(_id: String) -> void: autosave())
 	pcam.follow_target = player
+	if args.has("stage"):
+		apply_stage(String(args.get("zone", SaveGame.data.zone)), String(args.stage))
 	var zone: String = args.get("zone", SaveGame.data.zone)
 	if not Zones.go_to(zone, args.get("spawn", SaveGame.data.spawn)):
 		Zones.go_to("woodland", "start")
@@ -51,6 +54,9 @@ func _ready() -> void:
 		_demo.call_deferred()
 	if args.has("lineup"):
 		_lineup.call_deferred()
+	if args.has("at"):                           # --at=x,y: stand at a world point (screenshots)
+		var xy := String(args.at).split(",")
+		player.global_position = Vector2(float(xy[0]), float(xy[1])) * DENSITY
 	if args.has("character"):
 		select_character.call_deferred(String(args.character))
 	if args.has("cycle"):
@@ -121,6 +127,22 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_tree().paused = not get_tree().paused
 		paused_label.visible = get_tree().paused
 		get_viewport().set_input_as_handled()
+
+## --stage=<id>: put the save in one of a zone plan's named stages (its restores and flags), to see
+## or test that state directly (e.g. --zone=crossroads --stage=homecoming).
+static func apply_stage(zone: String, stage: String) -> void:
+	var f := FileAccess.open("res://data/plans/%s.json" % zone, FileAccess.READ)
+	if f == null:
+		return
+	var plan: Dictionary = JSON.parse_string(f.get_as_text())
+	for st in plan.get("stages", []):
+		if st.id != stage:
+			continue
+		var cond: Dictionary = st.get("if", {})
+		for r in cond.get("restored", []):
+			SaveGame.data.village.restored[r] = 1
+		for fl in cond.get("flags", []):
+			SaveGame.set_flag(fl)
 
 func select_character(id: String) -> void:
 	if player.set_character(id):
