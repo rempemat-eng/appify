@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" path="res://actors/enemy.tscn" id="6"]
 [ext_resource type="Script" path="res://world/door.gd" id="7"]
 [ext_resource type="Script" path="res://world/conditional.gd" id="8"]
+[ext_resource type="Script" path="res://world/villager.gd" id="9"]
 
 [sub_resource type="CircleShape2D" id="talk"]
 radius = 30.0
@@ -73,13 +74,17 @@ only_if = "{\"not_started\":[\"road_to_crossroads\"]}"
 position = Vector2(800, 1330)
 script = ExtResource("3")
 speaker_id = "hale"
+marker_height = 86.0
 
 [node name="Shape" type="CollisionShape2D" parent="Actors/HaleOnThePath/Hale"]
 shape = SubResource("talk")
 
-[node name="Body" type="Polygon2D" parent="Actors/HaleOnThePath/Hale"]
-color = Color(0.627, 0.314, 0.251, 1)
-polygon = PackedVector2Array(-12, -48, 12, -48, 12, 0, -12, 0)
+[node name="Body" type="AnimatedSprite2D" parent="Actors/HaleOnThePath/Hale"]
+centered = false
+offset = Vector2(-80, -136)
+script = ExtResource("9")
+character = "hale"
+facing_at_rest = "W"
 
 [node name="Post" type="StaticBody2D" parent="Actors/HaleOnThePath/Hale"]
 collision_mask = 0

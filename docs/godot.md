@@ -107,6 +107,14 @@ All fourteen are imported (`python3 game/tools/import_cast.py <castwork>/out`, 2
 
 Scale: the cast is drawn at the 960 x 540 grid's own scale (Bramble 74 texels tall), and its walk speed is in texels a second (Bramble 68, the speed at which his planted foot does not slide). That is slower than the design's 50 world px (150 texels) run; a faster run needs a run cycle with a longer stride, not a faster walk.
 
+## Village folk and village effects
+
+Hale (the smith), Moss (the stall keeper) and Ada Fern are drawn in the cast's style in the castwork (`src/folk.py` and one module each) with four clips: idle, walk, talk (a small gesture loop) and work (Hale hammering at her anvil, Moss moving apples from her basket, Ada sweeping), and imported like the cast (`import_cast.py <castwork>/out hale moss ada`). In a zone, `world/villager.gd` (`Villager`, a CastSprite) plays a person's work loop or idle facing `facing_at_rest`, and turns to the player and talks while the player is within 40 world px; the quest triggers stay on the parent Interactable. gen_village maps plan speakers to characters (`CAST`) and reads `face` and `work` from each plan person; Hale also stands on the woodland's east path.
+
+The lit forge's fire and the smithy chimney's smoke are looping strips (`python3 game/tools/gen_village_fx.py` writes `zones/crossroads/art/fx/`), played by `world/loop_fx.gd`: only while on screen, and held on one drawing under reduced motion. gen_village swaps the kit's static `forge_fire` for the strip (`LOOPS`) and puts the smoke on the smithy's chimney pot while the forge is restored (`SMOKE`).
+
+Screenshot options: `--stage=<id>` puts the save in a plan stage (`--zone=crossroads --stage=homecoming`), and `--at=x,y` stands the player at a world point.
+
 ## How lanes add a region (zone)
 
 1. Render the zone with the kit at density 3 and import it: `python3 game/tools/gen_zone.py <zone> --render <kit checkout> --walk <kit checkout>/lib/zone-maps.ts`. It runs `python3 -m scripts.art.native.zone --zone <zone> --density 3` in the kit checkout, copies the pictures to `game/zones/<zone>/art/`, keeps the kit's boxes in `kit.json` and the walk mask in `walk.txt`, and writes `<zone>_base.tscn`: ground and water below everything, the objects y-sorted with their feet as origins, the blocked walk cells as merged collision rectangles, and the named stands as markers. Without `--render`, it rebuilds the base scene from what is already in the folder.
