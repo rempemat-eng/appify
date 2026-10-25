@@ -1,0 +1,592 @@
+{
+ "id": "woodland/ground",
+ "file": "game/zones/woodland/art/ground.png",
+ "sha256": "e6fcf9dd727e3830c9dc995e61af8f58e75871fbe5ece7b18e8c51146f7ddc77",
+ "kind": "ground",
+ "biome": "woodland",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  960,
+  1728
+ ],
+ "status": "fail",
+ "counts": {
+  "blocker": 0,
+  "fault": 47,
+  "polish": 0
+ },
+ "detail_bar": null,
+ "findings": [
+  {
+   "detector": "logic.water_staircase",
+   "severity": "fault",
+   "box": [
+    175,
+    25,
+    251,
+    190
+   ],
+   "message": "water bank steps in a staircase of 19 teeth (3 px risers, 8 px treads) along a diagonal",
+   "fix": "redraw the bank as a straight run along x or y that turns only at cell lines, with 1 px wobble and rounded or chamfered corners (eastward-edges.md 1.4 to 1.6), or as a smooth natural curve; never a run of equal teeth"
+  },
+  {
+   "detector": "logic.water_staircase",
+   "severity": "fault",
+   "box": [
+    858,
+    847,
+    955,
+    935
+   ],
+   "message": "water bank steps in a staircase of 9 teeth (3 px risers, 8 px treads) along a diagonal",
+   "fix": "redraw the bank as a straight run along x or y that turns only at cell lines, with 1 px wobble and rounded or chamfered corners (eastward-edges.md 1.4 to 1.6), or as a smooth natural curve; never a run of equal teeth"
+  },
+  {
+   "detector": "logic.water_staircase",
+   "severity": "fault",
+   "box": [
+    425,
+    883,
+    522,
+    947
+   ],
+   "message": "water bank steps in a staircase of 9 teeth (3 px risers, 9 px treads) along a diagonal",
+   "fix": "redraw the bank as a straight run along x or y that turns only at cell lines, with 1 px wobble and rounded or chamfered corners (eastward-edges.md 1.4 to 1.6), or as a smooth natural curve; never a run of equal teeth"
+  },
+  {
+   "detector": "logic.water_staircase",
+   "severity": "fault",
+   "box": [
+    178,
+    873,
+    219,
+    926
+   ],
+   "message": "water bank steps in a staircase of 8 teeth (3 px risers, 4 px treads) along a diagonal",
+   "fix": "redraw the bank as a straight run along x or y that turns only at cell lines, with 1 px wobble and rounded or chamfered corners (eastward-edges.md 1.4 to 1.6), or as a smooth natural curve; never a run of equal teeth"
+  },
+  {
+   "detector": "logic.water_staircase",
+   "severity": "fault",
+   "box": [
+    154,
+    219,
+    194,
+    409
+   ],
+   "message": "water bank steps in a staircase of 7 teeth (3 px risers, 29 px treads) along a diagonal",
+   "fix": "redraw the bank as a straight run along x or y that turns only at cell lines, with 1 px wobble and rounded or chamfered corners (eastward-edges.md 1.4 to 1.6), or as a smooth natural curve; never a run of equal teeth"
+  },
+  {
+   "detector": "logic.water_staircase",
+   "severity": "fault",
+   "box": [
+    702,
+    850,
+    847,
+    926
+   ],
+   "message": "water bank steps in a staircase of 6 teeth (3 px risers, 13 px treads) along a diagonal",
+   "fix": "redraw the bank as a straight run along x or y that turns only at cell lines, with 1 px wobble and rounded or chamfered corners (eastward-edges.md 1.4 to 1.6), or as a smooth natural curve; never a run of equal teeth"
+  },
+  {
+   "detector": "logic.water_staircase",
+   "severity": "fault",
+   "box": [
+    199,
+    70,
+    234,
+    108
+   ],
+   "message": "water bank steps in a staircase of 5 teeth (4 px risers, 6 px treads) along a diagonal",
+   "fix": "redraw the bank as a straight run along x or y that turns only at cell lines, with 1 px wobble and rounded or chamfered corners (eastward-edges.md 1.4 to 1.6), or as a smooth natural curve; never a run of equal teeth"
+  },
+  {
+   "detector": "logic.water_staircase",
+   "severity": "fault",
+   "box": [
+    157,
+    466,
+    191,
+    576
+   ],
+   "message": "water bank steps in a staircase of 5 teeth (4 px risers, 24 px treads) along a diagonal",
+   "fix": "redraw the bank as a straight run along x or y that turns only at cell lines, with 1 px wobble and rounded or chamfered corners (eastward-edges.md 1.4 to 1.6), or as a smooth natural curve; never a run of equal teeth"
+  },
+  {
+   "detector": "logic.water_staircase",
+   "severity": "fault",
+   "box": [
+    597,
+    865,
+    648,
+    935
+   ],
+   "message": "water bank steps in a staircase of 5 teeth (3 px risers, 8 px treads) along a diagonal",
+   "fix": "redraw the bank as a straight run along x or y that turns only at cell lines, with 1 px wobble and rounded or chamfered corners (eastward-edges.md 1.4 to 1.6), or as a smooth natural curve; never a run of equal teeth"
+  },
+  {
+   "detector": "logic.water_staircase",
+   "severity": "fault",
+   "box": [
+    198,
+    910,
+    315,
+    928
+   ],
+   "message": "water bank steps in a staircase of 4 teeth (8 px risers, 2 px treads) along a diagonal",
+   "fix": "redraw the bank as a straight run along x or y that turns only at cell lines, with 1 px wobble and rounded or chamfered corners (eastward-edges.md 1.4 to 1.6), or as a smooth natural curve; never a run of equal teeth"
+  },
+  {
+   "detector": "logic.bridge_span",
+   "severity": "fault",
+   "box": [
+    363,
+    860,
+    419,
+    937
+   ],
+   "message": "the bridge does not reach both banks: its deck rests 6 px past the north bank and 3 px past the south bank (needs 7)",
+   "fix": "lengthen the deck so both ends land on dry ground with an abutment or sleeper on each bank, and the path meeting each end (world-rules.md 7.5)"
+  },
+  {
+   "detector": "logic.water_straight",
+   "severity": "fault",
+   "box": [
+    151,
+    219,
+    194,
+    445
+   ],
+   "message": "both banks run ruler-straight and parallel on a diagonal for 221 px (3.0 H): a drawn channel, not a stream",
+   "fix": "a stream follows the land: give it bends, pools and narrows, or lay a man-made channel along x or y with a built edge (world-rules.md 7, art-faults rule 3)"
+  },
+  {
+   "detector": "logic.water_straight",
+   "severity": "fault",
+   "box": [
+    172,
+    -1,
+    260,
+    201
+   ],
+   "message": "both banks run ruler-straight and parallel on a diagonal for 197 px (2.7 H): a drawn channel, not a stream",
+   "fix": "a stream follows the land: give it bends, pools and narrows, or lay a man-made channel along x or y with a built edge (world-rules.md 7, art-faults rule 3)"
+  },
+  {
+   "detector": "logic.water_straight",
+   "severity": "fault",
+   "box": [
+    154,
+    457,
+    203,
+    654
+   ],
+   "message": "both banks run ruler-straight and parallel on a diagonal for 192 px (2.6 H): a drawn channel, not a stream",
+   "fix": "a stream follows the land: give it bends, pools and narrows, or lay a man-made channel along x or y with a built edge (world-rules.md 7, art-faults rule 3)"
+  },
+  {
+   "detector": "logic.water_straight",
+   "severity": "fault",
+   "box": [
+    732,
+    849,
+    863,
+    926
+   ],
+   "message": "both banks run ruler-straight and parallel on a diagonal for 126 px (1.7 H): a drawn channel, not a stream",
+   "fix": "a stream follows the land: give it bends, pools and narrows, or lay a man-made channel along x or y with a built edge (world-rules.md 7, art-faults rule 3)"
+  },
+  {
+   "detector": "detail.repetition",
+   "severity": "fault",
+   "box": [
+    0,
+    0,
+    960,
+    1728
+   ],
+   "message": "491 tuft blades repeat an exact stamp (105 stamps, the commonest 15 times): 1.6 repeats per H^2 (the pilot golden 0.0, Eastward 0.0 to 0.7); the grass reads as wallpaper",
+   "fix": "ground is a calm field with a few soft patches and clumped tufts of varied size, shape and tone, denser at edges and under things, sparse where people walk; draw tufts from several designs and vary each (eastward-edges.md 5.5)"
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    19,
+    846,
+    210,
+    935
+   ],
+   "message": "a flat foliage area of one tone, 6728 px (1.23 H^2)",
+   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    142,
+    1613,
+    316,
+    1703
+   ],
+   "message": "a flat foliage area of one tone, 5779 px (1.06 H^2)",
+   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    591,
+    1592,
+    698,
+    1607
+   ],
+   "message": "a thing drawn flat: 4 tones, two cover 97% (0.17 H^2)",
+   "fix": "give it form and material: a lit top plane, a mid front and a dark side (a cylinder: a highlight band and a core shadow), occlusion where it meets the floor, its texture in clusters"
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    740,
+    1255,
+    896,
+    1350
+   ],
+   "message": "a flat foliage area of one tone, 5325 px (0.97 H^2)",
+   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    685,
+    1153,
+    888,
+    1241
+   ],
+   "message": "a flat foliage area of one tone, 5194 px (0.95 H^2)",
+   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    24,
+    287,
+    153,
+    327
+   ],
+   "message": "a thing drawn flat: 4 tones, two cover 93% (0.47 H^2)",
+   "fix": "give it form and material: a lit top plane, a mid front and a dark side (a cylinder: a highlight band and a core shadow), occlusion where it meets the floor, its texture in clusters"
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    790,
+    738,
+    941,
+    808
+   ],
+   "message": "a flat foliage area of one tone, 4620 px (0.84 H^2)",
+   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    352,
+    1266,
+    408,
+    1282
+   ],
+   "message": "a thing drawn flat: 4 tones, two cover 78% (0.11 H^2)",
+   "fix": "give it form and material: a lit top plane, a mid front and a dark side (a cylinder: a highlight band and a core shadow), occlusion where it meets the floor, its texture in clusters"
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    82,
+    166,
+    172,
+    247
+   ],
+   "message": "a flat foliage area of one tone, 3724 px (0.68 H^2)",
+   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
+  },
+  {
+   "detector": "detail.fall_flat",
+   "severity": "fault",
+   "box": [
+    226,
+    774,
+    257,
+    899
+   ],
+   "message": "the fall is a flat bar: constant width (cv 0.16), straight sides, the two main tones cover 60%",
+   "fix": "draw the fall as falling water: a white lip, streaks in 4 to 5 tones that wander and break, a width that swells where it hits rock, spray and a churned plunge pool (world-rules.md 7.2)"
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    23,
+    1023,
+    176,
+    1078
+   ],
+   "message": "a flat foliage area of one tone, 3140 px (0.57 H^2)",
+   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    411,
+    1642,
+    484,
+    1728
+   ],
+   "message": "a flat straw area of one tone, 2893 px (0.53 H^2)",
+   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    23,
+    609,
+    131,
+    688
+   ],
+   "message": "a flat foliage area of one tone, 2494 px (0.46 H^2)",
+   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    296,
+    1657,
+    415,
+    1728
+   ],
+   "message": "a flat foliage area of one tone, 2152 px (0.39 H^2)",
+   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    21,
+    369,
+    105,
+    426
+   ],
+   "message": "a flat foliage area of one tone, 2114 px (0.39 H^2)",
+   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    118,
+    807,
+    193,
+    865
+   ],
+   "message": "a flat stone area of one tone, 1686 px (0.31 H^2)",
+   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    265,
+    815,
+    346,
+    864
+   ],
+   "message": "a flat stone area of one tone, 1475 px (0.27 H^2)",
+   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
+  },
+  {
+   "detector": "logic.fall_face",
+   "severity": "fault",
+   "box": [
+    223,
+    774,
+    260,
+    899
+   ],
+   "message": "the fall drops past turf (26% of its flanks are grass), not over a face",
+   "fix": "a fall needs a drop: put a rock or cliff face behind it from lip to pool, with the lip on the higher ground (world-rules.md 7.2)"
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    70,
+    1150,
+    137,
+    1210
+   ],
+   "message": "a flat foliage area of one tone, 1413 px (0.26 H^2)",
+   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    709,
+    189,
+    784,
+    242
+   ],
+   "message": "a flat foliage area of one tone, 1361 px (0.25 H^2)",
+   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    193,
+    187,
+    237,
+    243
+   ],
+   "message": "a flat foliage area of one tone, 1320 px (0.24 H^2)",
+   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    47,
+    1414,
+    139,
+    1441
+   ],
+   "message": "a flat foliage area of one tone, 1252 px (0.23 H^2)",
+   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    53,
+    1314,
+    131,
+    1349
+   ],
+   "message": "a flat foliage area of one tone, 993 px (0.18 H^2)",
+   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    263,
+    765,
+    313,
+    820
+   ],
+   "message": "a flat stone area of one tone, 938 px (0.17 H^2)",
+   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    903,
+    660,
+    960,
+    707
+   ],
+   "message": "a flat straw area of one tone, 916 px (0.17 H^2)",
+   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    194,
+    769,
+    229,
+    826
+   ],
+   "message": "a flat stone area of one tone, 902 px (0.16 H^2)",
+   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    232,
+    121,
+    278,
+    157
+   ],
+   "message": "a flat foliage area of one tone, 888 px (0.16 H^2)",
+   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    46,
+    439,
+    104,
+    475
+   ],
+   "message": "a flat foliage area of one tone, 872 px (0.16 H^2)",
+   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    827,
+    138,
+    917,
+    167
+   ],
+   "message": "a flat foliage area of one tone, 844 px (0.15 H^2)",
+   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    483,
+    1667,
+    524,
+    1717
+   ],
+   "message": "a flat foliage area of one tone, 838 px (0.15 H^2)",
+   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
+  },
+  {
+   "detector": "logic.water_source",
+   "severity": "fault",
+   "box": [
+    222,
+    756,
+    261,
+    782
+   ],
+   "message": "the fall pours from nothing: no stream or pool feeds its lip",
+   "fix": "run the stream to the lip and over it, as wide as the fall, or start the water at a drawn spring (world-rules.md 7.1 and 7.2)"
+  }
+ ],
+ "reviewed": "2026-10-25",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}
