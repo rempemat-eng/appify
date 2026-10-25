@@ -13,7 +13,7 @@ extends Node2D
 
 const LOOKS := {"rusher": "boarlet", "shooter": "toad", "shield": "tortoise", "elite": "thornback"}
 ## Contact shadow half-widths in texels (the creature's footprint).
-const SHADOW := {"boarlet": 17.0, "toad": 15.0, "tortoise": 21.0, "thornback": 24.0}
+const SHADOW := {"boarlet": 22.0, "toad": 21.0, "tortoise": 25.0, "thornback": 32.0}
 ## The reserved telegraph colour (game-design 4.4), as Codex's placeholder marks used it.
 const TELL := Color(1.0, 0.65, 0.15)
 const SEED := preload("res://assets/enemies/seed.png")

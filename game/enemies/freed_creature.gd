@@ -7,6 +7,7 @@ extends Node2D
 
 const LEAVE := 1.6
 const FADE := 0.6
+const SHARD := preload("res://assets/enemies/shard.png")
 
 var character := ""
 var facing := "S"
@@ -22,6 +23,21 @@ func _ready() -> void:
 		queue_free()
 		return
 	sprite.play_clip("freed", facing, true)
+	if not SaveGame.setting("reduced_motion", false):
+		_pop_shard()
+
+## The shard leaves the creature as its own finite effect: it rises from where it was lodged,
+## tumbles and fades (the drawings only show it working loose).
+func _pop_shard() -> void:
+	var s := Sprite2D.new()
+	s.texture = SHARD
+	s.position = sprite.anchor("shard", 1)
+	add_child(s)
+	var t := create_tween().set_parallel(true)
+	t.tween_property(s, "position", s.position + Vector2(10, -42), 0.55).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	t.tween_property(s, "rotation", 2.6, 0.55)
+	t.tween_property(s, "modulate:a", 0.0, 0.25).set_delay(0.35)
+	t.chain().tween_callback(s.queue_free)
 
 func _process(delta: float) -> void:
 	if sprite == null:
