@@ -1,7 +1,7 @@
 extends Node2D
 ## The running game inside the 960 x 540 art grid: loads the save, makes the one player, hands both to
 ## the zone loader, drives the Phantom Camera (aim look-ahead, zone limits, hit shake) and autosaves when
-## quests move or zones change.
+## quests move, a building is restored or zones change.
 ##
 ## Command-line options (after `--`): --fresh (ignore the save), --zone=<id>, --spawn=<name>,
 ## --shot=<png path> (wait, save a 1:1 picture of the window, quit). See docs/godot.md.
@@ -35,6 +35,7 @@ func _ready() -> void:
 	Quests.started.connect(func(_id: String) -> void: autosave())
 	Quests.advanced.connect(func(_id: String, _s: int) -> void: autosave())
 	Quests.completed.connect(func(_id: String) -> void: autosave())
+	Village.changed.connect(func(_id: String) -> void: autosave())
 	pcam.follow_target = player
 	var zone: String = args.get("zone", SaveGame.data.zone)
 	if not Zones.go_to(zone, args.get("spawn", SaveGame.data.spawn)):

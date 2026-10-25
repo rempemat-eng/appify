@@ -1,0 +1,17 @@
+{
+  "id": "home_again",
+  "title": "Home again",
+  "kind": "village",
+  "summary": "With the shard lit, the Ferns come back from the halt farm. Their door is still under rubble.",
+  "start": { "on": "talk:moss", "if": { "done": ["under_the_stones"] } },
+  "steps": [
+    {
+      "id": "clear",
+      "text": "Clear the Ferns' door (20 Glint)",
+      "on": "restore:fern_cottage",
+      "done_if": { "restored": ["fern_cottage"] }
+    },
+    { "id": "welcome", "text": "Welcome Ada Fern home", "on": "talk:ada_fern" }
+  ],
+  "rewards": { "glint": 25, "flags": ["fern_home", "seeds:valley"] }
+}

@@ -8,13 +8,15 @@ extends Node
 ##     "rewards": { "glint": 40, "flags": ["..."] } }
 ##
 ## The world reports what happens as plain event strings through `notify()`: "talk:<speaker>",
-## "camp:<camp>", "enter:<zone>", "pickup:<item>". A step completes when its `on` event arrives and its
+## "camp:<camp>", "enter:<zone>", "restore:<id>", "pickup:<item>". A step completes when its `on` event arrives and its
 ## `if` condition holds, or at once when its `done_if` condition already holds (so clearing a camp before
 ## taking the quest still counts). Progress lives in SaveGame.data.quests[id] = {state, step}.
 ## A quest never expires and never runs on a clock (8.3).
 ##
 ## Conditions (also used by dialogue): { "flags": [..], "not_flags": [..], "done": [quest ids],
-## "active": [quest ids], "not_started": [quest ids], "step": [quest id, step id] }; all must hold.
+## "active": [quest ids], "not_started": [quest ids], "step": [quest id, step id],
+## "restored": [restore ids], "not_restored": [restore ids], "glint_at_least": n }; all must hold.
+## Restores live in SaveGame.data.village.restored (core/village.gd).
 
 signal started(id: String)
 signal advanced(id: String, step: int)
@@ -79,6 +81,15 @@ func check(cond: Variant) -> bool:
 	for q in cond.get("not_started", []):
 		if state(q) != "none":
 			return false
+	var restored: Dictionary = SaveGame.data.village.restored
+	for r in cond.get("restored", []):
+		if int(restored.get(r, 0)) <= 0:
+			return false
+	for r in cond.get("not_restored", []):
+		if int(restored.get(r, 0)) > 0:
+			return false
+	if int(SaveGame.data.glint) < int(cond.get("glint_at_least", 0)):
+		return false
 	if cond.has("step"):
 		var qid: String = cond.step[0]
 		if state(qid) != "active" or current_step(qid).get("id", "") != cond.step[1]:

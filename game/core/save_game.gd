@@ -22,6 +22,7 @@ static func fresh() -> Dictionary:
 		"flags": {},
 		"quests": {},
 		"player": {"hp": 5, "max_hp": 5},
+		"village": {"restored": {}},
 		"settings": {"reduced_motion": false, "pixel_scale": "fill"},
 	}
 
@@ -92,6 +93,10 @@ func _migrate(doc: Dictionary) -> Dictionary:
 	out.glint = int(out.glint)
 	out.player.hp = int(out.player.get("hp", 5))
 	out.player.max_hp = int(out.player.get("max_hp", 5))
+	if typeof(out.village) != TYPE_DICTIONARY or typeof(out.village.get("restored")) != TYPE_DICTIONARY:
+		out.village = {"restored": {}}
+	for r in out.village.restored:
+		out.village.restored[r] = int(out.village.restored[r])
 	for q in out.quests.values():
 		q.step = int(q.get("step", 0))
 	return out

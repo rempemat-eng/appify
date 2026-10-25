@@ -1,0 +1,1015 @@
+{
+  "_about": "Crossroads as a zone plan for the vertical slice (Claude A, 25 Oct; docs/vision/vertical-slice.md). Shaped like art/regions/*.json (id, box, tiers with outlines, routes, stairs, places) plus what a playable zone needs: buildings, lots, props, people, spawns, doors, restores, stages and raid pads. World px, local to the zone, origin at the top-left; origin_on_canvas maps it onto the 11264 x 6912 world canvas (the square sits where art/regions/valley.json puts it: 6176, 3448). 'if' is a quest condition (core/quests.gd): an item shows only while it holds, so one plan holds the broken and the restored town. game/tools/gen_blockout.py writes zones/crossroads/crossroads.tscn from it; core/village.gd reads restores and stages. Every rectangle is a blockout placeholder, not art.",
+  "id": "crossroads",
+  "owner": "claude-a",
+  "origin_on_canvas": [
+    5976,
+    3248
+  ],
+  "box": [
+    0,
+    0,
+    640,
+    560
+  ],
+  "stages": [
+    {
+      "id": "broken",
+      "why": "the morning after the starfall: rubble round a choked well, only Moss's stall open"
+    },
+    {
+      "id": "forge",
+      "if": {
+        "restored": [
+          "forge"
+        ]
+      },
+      "why": "the smithy repaired as the forge; Hale back at her anvil"
+    },
+    {
+      "id": "homecoming",
+      "if": {
+        "restored": [
+          "forge"
+        ],
+        "flags": [
+          "shard_home:woodland"
+        ]
+      },
+      "why": "the woodland's great shard in the lantern; the first household comes home"
+    }
+  ],
+  "restores": [
+    {
+      "id": "forge",
+      "name": "The old smithy",
+      "cost": {
+        "glint": 30
+      },
+      "why": "stage 0's first service: upgrade and salvage (game-design.md 7.3); cost is a placeholder"
+    },
+    {
+      "id": "fern_cottage",
+      "name": "The Ferns' cottage",
+      "cost": {
+        "glint": 20
+      },
+      "if": {
+        "flags": [
+          "shard_home:woodland"
+        ]
+      },
+      "why": "the first household home (the homecoming quest); cost is a placeholder"
+    }
+  ],
+  "tiers": [
+    {
+      "id": "square_floor",
+      "tier": 4,
+      "colour": "#8f8a6e",
+      "outline": [
+        [
+          0,
+          150
+        ],
+        [
+          640,
+          150
+        ],
+        [
+          640,
+          560
+        ],
+        [
+          0,
+          560
+        ]
+      ]
+    },
+    {
+      "id": "hut_terrace",
+      "tier": 5,
+      "colour": "#7f9a5c",
+      "outline": [
+        [
+          150,
+          0
+        ],
+        [
+          500,
+          0
+        ],
+        [
+          500,
+          140
+        ],
+        [
+          150,
+          140
+        ]
+      ],
+      "why": "your hut and its beds, above the square (world-plan 8.2's T2)"
+    },
+    {
+      "id": "terrace_lane",
+      "tier": 5,
+      "colour": "#6f8f50",
+      "outline": [
+        [
+          0,
+          40
+        ],
+        [
+          150,
+          40
+        ],
+        [
+          150,
+          100
+        ],
+        [
+          0,
+          100
+        ]
+      ],
+      "why": "the garden walk west to the woodland"
+    }
+  ],
+  "faces": [
+    {
+      "id": "lane_bank",
+      "rect": [
+        0,
+        0,
+        150,
+        40
+      ],
+      "why": "the bank above the garden walk"
+    },
+    {
+      "id": "lane_face",
+      "rect": [
+        0,
+        100,
+        150,
+        50
+      ],
+      "why": "the garden walk's retaining wall"
+    },
+    {
+      "id": "terrace_face_w",
+      "rect": [
+        150,
+        140,
+        150,
+        12
+      ],
+      "why": "the terrace's retaining wall, west of the gate stair"
+    },
+    {
+      "id": "terrace_face_e",
+      "rect": [
+        340,
+        140,
+        160,
+        12
+      ]
+    },
+    {
+      "id": "terrace_bank_e",
+      "rect": [
+        500,
+        0,
+        140,
+        150
+      ],
+      "why": "the hay slope's foot"
+    }
+  ],
+  "routes": [
+    {
+      "id": "halt_road",
+      "kind": "road",
+      "width": 32,
+      "points": [
+        [
+          0,
+          300
+        ],
+        [
+          200,
+          300
+        ]
+      ],
+      "why": "west to Valley Halt (closed in the slice)"
+    },
+    {
+      "id": "harbour_road",
+      "kind": "road",
+      "width": 32,
+      "points": [
+        [
+          440,
+          330
+        ],
+        [
+          640,
+          330
+        ]
+      ]
+    },
+    {
+      "id": "green_lane",
+      "kind": "lane",
+      "width": 24,
+      "points": [
+        [
+          260,
+          376
+        ],
+        [
+          200,
+          440
+        ],
+        [
+          140,
+          470
+        ]
+      ]
+    },
+    {
+      "id": "garden_walk",
+      "kind": "path",
+      "width": 24,
+      "points": [
+        [
+          0,
+          70
+        ],
+        [
+          320,
+          70
+        ],
+        [
+          320,
+          150
+        ]
+      ]
+    }
+  ],
+  "stairs": [
+    {
+      "id": "gate_stair",
+      "at": [
+        320,
+        146
+      ],
+      "from_tier": 5,
+      "to_tier": 4,
+      "width": 40,
+      "kind": "stone",
+      "why": "the garden's gate stair on the square's axis (valley.json's gate_stair)"
+    }
+  ],
+  "places": [
+    {
+      "id": "square",
+      "kind": "square",
+      "rect": [
+        200,
+        200,
+        240,
+        176
+      ],
+      "colour": "#a39b7c"
+    },
+    {
+      "id": "green",
+      "kind": "green",
+      "rect": [
+        40,
+        410,
+        170,
+        130
+      ],
+      "colour": "#6f9a52",
+      "why": "the green and its ring (training yard, stage 1)"
+    },
+    {
+      "id": "crater",
+      "kind": "crater",
+      "rect": [
+        470,
+        440,
+        70,
+        50
+      ],
+      "colour": "#4a4038",
+      "why": "the shard crater in the park, smoking until the shard comes home"
+    }
+  ],
+  "buildings": [
+    {
+      "id": "hut",
+      "name": "Your hut",
+      "rect": [
+        280,
+        20,
+        80,
+        44
+      ],
+      "door": [
+        320,
+        64
+      ],
+      "colour": "#9b7b55",
+      "stage": 0
+    },
+    {
+      "id": "library",
+      "name": "Library (roof torn)",
+      "rect": [
+        200,
+        156,
+        96,
+        40
+      ],
+      "door": [
+        248,
+        196
+      ],
+      "colour": "#7d6f88",
+      "stage": 1
+    },
+    {
+      "id": "north_cottages",
+      "name": "North terrace cottages",
+      "rect": [
+        344,
+        156,
+        96,
+        40
+      ],
+      "door": [
+        416,
+        196
+      ],
+      "colour": "#8a7560",
+      "stage": 1
+    },
+    {
+      "id": "bakery",
+      "name": "Bakery (cold)",
+      "rect": [
+        110,
+        236,
+        76,
+        52
+      ],
+      "door": [
+        186,
+        262
+      ],
+      "colour": "#a07850",
+      "stage": 1
+    },
+    {
+      "id": "herbalist",
+      "name": "Herbalist's (apothecary, stage 1)",
+      "rect": [
+        110,
+        316,
+        76,
+        48
+      ],
+      "door": [
+        186,
+        340
+      ],
+      "colour": "#6f8a6a",
+      "stage": 1
+    },
+    {
+      "id": "smithy",
+      "name": "The old smithy",
+      "rect": [
+        456,
+        220,
+        84,
+        60
+      ],
+      "door": [
+        470,
+        290
+      ],
+      "colour": "#6a5a50",
+      "stage": 0,
+      "restore": "forge"
+    },
+    {
+      "id": "fern_cottage",
+      "name": "The Ferns' cottage",
+      "rect": [
+        456,
+        370,
+        70,
+        44
+      ],
+      "door": [
+        470,
+        414
+      ],
+      "colour": "#8a7560",
+      "stage": 1,
+      "restore": "fern_cottage"
+    }
+  ],
+  "lots": [
+    {
+      "id": "halt_lot",
+      "rect": [
+        20,
+        320,
+        70,
+        60
+      ],
+      "why": "burnt lot on the halt road: the workshop (stage 2)"
+    },
+    {
+      "id": "harbour_lot",
+      "rect": [
+        560,
+        350,
+        70,
+        70
+      ],
+      "why": "burnt lot on the harbour road: the glassworks (stage 3)"
+    }
+  ],
+  "props": [
+    {
+      "id": "well_choked",
+      "kind": "rubble",
+      "rect": [
+        276,
+        300,
+        24,
+        20
+      ],
+      "solid": true,
+      "colour": "#5b5249",
+      "if": {
+        "not_flags": [
+          "shard_home:woodland"
+        ]
+      },
+      "why": "the well choked with rubble"
+    },
+    {
+      "id": "well",
+      "kind": "well",
+      "rect": [
+        278,
+        302,
+        20,
+        16
+      ],
+      "solid": true,
+      "colour": "#55708a",
+      "if": {
+        "flags": [
+          "shard_home:woodland"
+        ]
+      }
+    },
+    {
+      "id": "smithy_rubble",
+      "kind": "rubble",
+      "rect": [
+        452,
+        282,
+        36,
+        16
+      ],
+      "solid": true,
+      "colour": "#5b5249",
+      "if": {
+        "not_restored": [
+          "forge"
+        ]
+      },
+      "why": "fallen slates across the smithy door"
+    },
+    {
+      "id": "smithy_boards",
+      "kind": "boards",
+      "rect": [
+        470,
+        236,
+        56,
+        10
+      ],
+      "colour": "#4a3a2a",
+      "if": {
+        "not_restored": [
+          "forge"
+        ]
+      }
+    },
+    {
+      "id": "forge_fire",
+      "kind": "glow",
+      "rect": [
+        500,
+        262,
+        16,
+        12
+      ],
+      "colour": "#f0903a",
+      "if": {
+        "restored": [
+          "forge"
+        ]
+      },
+      "why": "the forge lit"
+    },
+    {
+      "id": "anvil",
+      "kind": "anvil",
+      "rect": [
+        490,
+        292,
+        14,
+        8
+      ],
+      "solid": true,
+      "colour": "#3a3a40",
+      "if": {
+        "restored": [
+          "forge"
+        ]
+      }
+    },
+    {
+      "id": "square_rubble_a",
+      "kind": "rubble",
+      "rect": [
+        220,
+        340,
+        30,
+        18
+      ],
+      "solid": true,
+      "colour": "#5b5249",
+      "if": {
+        "not_flags": [
+          "shard_home:woodland"
+        ]
+      }
+    },
+    {
+      "id": "square_rubble_b",
+      "kind": "rubble",
+      "rect": [
+        396,
+        214,
+        26,
+        16
+      ],
+      "solid": true,
+      "colour": "#5b5249"
+    },
+    {
+      "id": "fern_boards",
+      "kind": "boards",
+      "rect": [
+        462,
+        380,
+        56,
+        10
+      ],
+      "colour": "#4a3a2a",
+      "if": {
+        "not_restored": [
+          "fern_cottage"
+        ]
+      }
+    },
+    {
+      "id": "fern_rubble",
+      "kind": "rubble",
+      "rect": [
+        458,
+        416,
+        30,
+        14
+      ],
+      "solid": true,
+      "colour": "#5b5249",
+      "if": {
+        "not_restored": [
+          "fern_cottage"
+        ]
+      }
+    },
+    {
+      "id": "lantern_dark",
+      "kind": "lantern",
+      "rect": [
+        306,
+        290,
+        10,
+        22
+      ],
+      "solid": true,
+      "colour": "#55504a",
+      "if": {
+        "not_flags": [
+          "shard_home:woodland"
+        ]
+      },
+      "why": "the shard lantern, empty"
+    },
+    {
+      "id": "lantern_lit",
+      "kind": "lantern",
+      "rect": [
+        306,
+        290,
+        10,
+        22
+      ],
+      "solid": true,
+      "colour": "#e8f0ff",
+      "if": {
+        "flags": [
+          "shard_home:woodland"
+        ]
+      },
+      "why": "the shard lantern holding the woodland's shard"
+    },
+    {
+      "id": "crater_smoke",
+      "kind": "smoke",
+      "rect": [
+        490,
+        420,
+        30,
+        20
+      ],
+      "colour": "#9a9a9a",
+      "if": {
+        "not_flags": [
+          "shard_home:woodland"
+        ]
+      }
+    },
+    {
+      "id": "beds_scorched",
+      "kind": "beds",
+      "rect": [
+        380,
+        80,
+        80,
+        40
+      ],
+      "colour": "#5a4a3a",
+      "if": {
+        "not_flags": [
+          "shard_home:woodland"
+        ]
+      },
+      "why": "four crop beds, scorched"
+    },
+    {
+      "id": "beds_dug",
+      "kind": "beds",
+      "rect": [
+        380,
+        80,
+        80,
+        40
+      ],
+      "colour": "#6a4e30",
+      "if": {
+        "flags": [
+          "shard_home:woodland"
+        ]
+      },
+      "why": "four beds dug over; two planted with valley seeds after the homecoming"
+    },
+    {
+      "id": "stall",
+      "kind": "stall",
+      "rect": [
+        366,
+        236,
+        36,
+        16
+      ],
+      "solid": true,
+      "colour": "#b08a4a",
+      "why": "Moss's stall, the one thing open"
+    }
+  ],
+  "people": [
+    {
+      "id": "moss",
+      "speaker": "moss",
+      "name": "Moss",
+      "at": [
+        384,
+        262
+      ],
+      "colour": "#c9a050"
+    },
+    {
+      "id": "hale_square",
+      "speaker": "hale",
+      "name": "Hale",
+      "at": [
+        430,
+        300
+      ],
+      "colour": "#a05040",
+      "if": {
+        "not_restored": [
+          "forge"
+        ]
+      },
+      "why": "the smith waits by her ruined smithy"
+    },
+    {
+      "id": "hale_forge",
+      "speaker": "hale",
+      "name": "Hale",
+      "at": [
+        520,
+        298
+      ],
+      "colour": "#a05040",
+      "if": {
+        "restored": [
+          "forge"
+        ]
+      }
+    },
+    {
+      "id": "morel",
+      "speaker": "morel",
+      "name": "Morel",
+      "at": [
+        200,
+        352
+      ],
+      "colour": "#c09a40",
+      "why": "the alchemist outside his torn herbalist's (cast: Codex's fourteen); joins in act 1"
+    },
+    {
+      "id": "ada",
+      "speaker": "ada_fern",
+      "name": "Ada Fern",
+      "at": [
+        500,
+        432
+      ],
+      "colour": "#7aa0c0",
+      "if": {
+        "flags": [
+          "shard_home:woodland"
+        ]
+      },
+      "why": "placeholder villager: the first household home"
+    }
+  ],
+  "things": [
+    {
+      "id": "notice_board",
+      "speaker": "notice_board",
+      "verb": "Read",
+      "at": [
+        236,
+        222
+      ],
+      "colour": "#7a5a3a"
+    },
+    {
+      "id": "waystone",
+      "speaker": "waystone",
+      "verb": "Touch",
+      "at": [
+        420,
+        356
+      ],
+      "colour": "#8a8aa0"
+    },
+    {
+      "id": "shard_lantern",
+      "speaker": "shard_lantern",
+      "verb": "Look",
+      "at": [
+        311,
+        318
+      ],
+      "colour": "#00000000",
+      "radius": 22
+    },
+    {
+      "id": "hut_bed",
+      "speaker": "hut_door",
+      "verb": "Enter",
+      "at": [
+        320,
+        70
+      ],
+      "colour": "#00000000"
+    }
+  ],
+  "restore_sites": [
+    {
+      "id": "smithy_site",
+      "restore": "forge",
+      "at": [
+        470,
+        304
+      ],
+      "if": {
+        "not_restored": [
+          "forge"
+        ]
+      }
+    },
+    {
+      "id": "fern_site",
+      "restore": "fern_cottage",
+      "at": [
+        480,
+        436
+      ],
+      "if": {
+        "flags": [
+          "shard_home:woodland"
+        ],
+        "not_restored": [
+          "fern_cottage"
+        ]
+      }
+    }
+  ],
+  "spawns": [
+    {
+      "id": "start",
+      "at": [
+        320,
+        400
+      ]
+    },
+    {
+      "id": "woodland",
+      "at": [
+        30,
+        70
+      ],
+      "why": "arriving from the woodland along the garden walk"
+    },
+    {
+      "id": "hut",
+      "at": [
+        320,
+        84
+      ]
+    },
+    {
+      "id": "halt",
+      "at": [
+        24,
+        300
+      ]
+    }
+  ],
+  "doors": [
+    {
+      "id": "to_woodland",
+      "rect": [
+        0,
+        46,
+        8,
+        48
+      ],
+      "to": "woodland",
+      "spawn": "crossroads"
+    },
+    {
+      "id": "to_halt",
+      "rect": [
+        0,
+        280,
+        8,
+        40
+      ],
+      "to": "halt",
+      "spawn": "crossroads",
+      "why": "Valley Halt waits for act 1; refused with a warning"
+    }
+  ],
+  "raid_pads": [
+    {
+      "id": "pad_halt_gate",
+      "at": [
+        210,
+        300
+      ],
+      "size": 20,
+      "stage": 0,
+      "lane": "halt_road",
+      "why": "first night: where the halt road meets the square"
+    },
+    {
+      "id": "pad_harbour_gate",
+      "at": [
+        430,
+        330
+      ],
+      "size": 20,
+      "stage": 0,
+      "lane": "harbour_road",
+      "why": "first night: where the harbour road meets the square"
+    },
+    {
+      "id": "pad_green",
+      "at": [
+        230,
+        400
+      ],
+      "size": 20,
+      "stage": 1,
+      "lane": "green_lane"
+    },
+    {
+      "id": "pad_stair",
+      "at": [
+        320,
+        180
+      ],
+      "size": 20,
+      "stage": 1,
+      "lane": "garden_walk"
+    },
+    {
+      "id": "pad_library",
+      "at": [
+        296,
+        214
+      ],
+      "size": 20,
+      "stage": 1
+    },
+    {
+      "id": "pad_crater",
+      "at": [
+        520,
+        400
+      ],
+      "size": 20,
+      "stage": 1
+    }
+  ],
+  "raid_lanes": [
+    {
+      "id": "halt_road",
+      "first_night": true,
+      "points": [
+        [
+          0,
+          300
+        ],
+        [
+          200,
+          300
+        ],
+        [
+          306,
+          312
+        ]
+      ]
+    },
+    {
+      "id": "harbour_road",
+      "first_night": false,
+      "points": [
+        [
+          640,
+          330
+        ],
+        [
+          440,
+          330
+        ],
+        [
+          316,
+          312
+        ]
+      ]
+    }
+  ]
+}

@@ -1,0 +1,216 @@
+{
+  "hale": {
+    "name": "Hale",
+    "entries": [
+      {
+        "if": { "done": ["home_again"] },
+        "lines": ["Two chimneys smoking on the square. It almost looks like a town again."]
+      },
+      {
+        "if": { "done": ["under_the_stones"] },
+        "lines": [
+          "You hear it? The lantern hums. Moss says the Ferns are on their way back from the halt farm.",
+          "Bring me your blade whenever you like. The anvil's ready."
+        ]
+      },
+      {
+        "if": { "step": ["under_the_stones", "lantern"] },
+        "lines": ["That's the light that fell? Put it in the lantern by the well. The old folk said that's what it was for."]
+      },
+      {
+        "if": { "active": ["under_the_stones"] },
+        "lines": [
+          "The hatch by the stone circle is open now. Mind the thorns down there.",
+          "Whatever's sleeping on that shard isn't wicked. It's sick with the light. Free it, don't finish it."
+        ]
+      },
+      {
+        "if": { "step": ["cold_forge", "report"] },
+        "lines": [
+          "Listen to that bellows! Ten years I've worked this fire and I've never been so glad to hear it.",
+          "Now, the light that fell. It came down inside the stone circle, and the circle's hollow underneath.",
+          "There's an old hatch by the stones. I've unbarred it for you. Bring the light back here, if you can lift it."
+        ]
+      },
+      {
+        "if": { "active": ["cold_forge"], "glint_at_least": 30 },
+        "lines": [
+          "Slates from the roof came down across my door. Moss will sell you beams and nails for 30 Glint.",
+          "See the mark by the door? Clear it there and I can light the forge."
+        ]
+      },
+      {
+        "if": { "active": ["cold_forge"] },
+        "lines": [
+          "I need 30 Glint of beams and nails to clear my door, and I've nothing left.",
+          "The sign by the stones in the woodland had a pouch on it. Someone wanted those mosslings calmed."
+        ]
+      },
+      {
+        "if": { "done": ["road_to_crossroads"] },
+        "lines": [
+          "That's my smithy. Was my smithy. The roof held, but the slates came down across the door.",
+          "Get me in there and I'll have the forge going by nightfall."
+        ]
+      },
+      {
+        "if": { "step": ["road_to_crossroads", "moss"] },
+        "lines": ["Talk to Moss at the stall first. She knows who's still here and who ran."]
+      },
+      {
+        "if": { "active": ["road_to_crossroads"] },
+        "lines": ["East along the path, then the garden walk down to the square. I'll be right behind you."]
+      },
+      {
+        "lines": [
+          "Bramble! You're alive. I came out to see where the star fell and couldn't find my way back in the dark.",
+          "Half of Crossroads ran to the halt farm when the storm hit. Walk back with me?"
+        ]
+      }
+    ]
+  },
+  "moss": {
+    "name": "Moss",
+    "entries": [
+      {
+        "if": { "done": ["home_again"] },
+        "lines": ["The Ferns are home and their beds are dug. Two packets of valley seed, on the house. Plant them on your terrace."]
+      },
+      {
+        "if": { "step": ["home_again", "welcome"] },
+        "lines": ["Go on, Ada's waiting by her door."]
+      },
+      {
+        "if": { "active": ["home_again"] },
+        "lines": ["The Ferns' door is still under the rubble. Clear it at the mark, and I'll knock a little off the timber for you."]
+      },
+      {
+        "if": { "done": ["under_the_stones"] },
+        "lines": [
+          "Look at the lantern! The smoke's stopped over the crater, too.",
+          "The Ferns sent word from the halt farm. They'll come home if there's a house to come home to."
+        ]
+      },
+      {
+        "if": { "step": ["road_to_crossroads", "moss"] },
+        "lines": [
+          "Bramble. And Hale with you! I thought the woods had you both.",
+          "It's me and the stall, mostly. The well's choked, the bakery's cold, the Ferns are at the halt farm.",
+          "And there's a crater in the park that still smokes. Talk to Hale. If her forge burns, we can mend the rest."
+        ]
+      },
+      {
+        "lines": ["Stall's open. It's the only thing on the square that is."]
+      }
+    ]
+  },
+  "morel": {
+    "name": "Morel",
+    "entries": [
+      {
+        "if": { "done": ["under_the_stones"] },
+        "lines": [
+          "The roof of my herbalist's is in the bakery's yard. When you're back from the hills, help me put it on again.",
+          "Until then, nothing to brew with. Your terrace beds will change that."
+        ]
+      },
+      {
+        "lines": [
+          "Morel. I mix the tonics. Mixed. The storm put half my jars on the floor and the other half in the street.",
+          "Mind the mosslings in the woods. They aren't angry. The fallen light has got into them, like a fever."
+        ]
+      }
+    ]
+  },
+  "ada_fern": {
+    "name": "Ada Fern",
+    "entries": [
+      {
+        "if": { "done": ["home_again"] },
+        "lines": ["We'll dig your beds over in the morning. The least we can do."]
+      },
+      {
+        "if": { "restored": ["fern_cottage"] },
+        "lines": [
+          "Our door! We slept in a hay loft for a week.",
+          "Thank you, Bramble. When the beds are dug, come and see what grows."
+        ]
+      },
+      {
+        "lines": ["We saw the lantern from the halt farm road. But the door's still buried."]
+      }
+    ]
+  },
+  "notice_board": {
+    "name": "Notice board",
+    "entries": [
+      {
+        "if": { "done": ["under_the_stones"] },
+        "lines": ["A new note: THE BELL TOWER WILL WARN OF RAIDERS. DO NOT FACE THEM ALONE. (No bounties pinned yet.)"]
+      },
+      {
+        "lines": ["Torn notices. One survives: MARKET DAY, SATURDAY. The rest the storm took."]
+      }
+    ]
+  },
+  "waystone": {
+    "name": "Waystone",
+    "entries": [
+      { "lines": ["The waystone is cracked through. It will carry travellers again once the valley's ways are mended."] }
+    ]
+  },
+  "shard_lantern": {
+    "name": "Shard lantern",
+    "entries": [
+      {
+        "if": { "flags": ["shard_home:woodland"] },
+        "lines": ["The great shard hums in the lantern. One of many, by the look of the empty cradles."]
+      },
+      {
+        "if": { "step": ["under_the_stones", "lantern"] },
+        "lines": ["You lift the shard into the lantern's cradle. Light runs down the iron and into the well."]
+      },
+      {
+        "lines": ["An iron lantern beside the well, older than the town, with a dozen empty cradles."]
+      }
+    ]
+  },
+  "hut_door": {
+    "name": "Your hut",
+    "entries": [
+      { "lines": ["Your hut came through the storm. The bed and the stash wait inside (interiors come later)."] }
+    ]
+  },
+  "restore_forge": {
+    "name": "The old smithy",
+    "entries": [
+      {
+        "if": { "restored": ["forge"] },
+        "lines": ["The forge is lit."]
+      },
+      {
+        "if": { "glint_at_least": 30 },
+        "lines": ["You pay 30 Glint for beams and nails and clear the slates from the door. Hale's fire takes on the first try."]
+      },
+      {
+        "lines": ["Slates and beams block the smithy door. Clearing it needs 30 Glint of timber."]
+      }
+    ]
+  },
+  "restore_fern_cottage": {
+    "name": "The Ferns' cottage",
+    "entries": [
+      {
+        "if": { "restored": ["fern_cottage"] },
+        "lines": ["The door is clear."]
+      },
+      {
+        "if": { "glint_at_least": 20 },
+        "lines": ["You pay 20 Glint for timber and clear the rubble from the Ferns' door. The shutters open."]
+      },
+      {
+        "lines": ["Rubble blocks the Ferns' door. Clearing it needs 20 Glint of timber."]
+      }
+    ]
+  }
+}
