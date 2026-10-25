@@ -5,7 +5,7 @@
   1920,
   1680
  ],
- "inputs": "9bd7b7dcfc2cfa2c63d213eecc48464009f5eb0a47747f91a4b55f968244d5f6",
+ "inputs": "da877666d50fd03becabe7eda326c6c46bb9c670fe412dafcb987474da109736",
  "kit_drawn": [
   "anvil.png",
   "bakery.png",
@@ -325,8 +325,8 @@
     960
    ],
    "offset": [
-    -51,
-    -92
+    -63,
+    -80
    ],
    "cond": {
     "not_flags": [
@@ -349,8 +349,8 @@
     954
    ],
    "offset": [
-    -45,
-    -164
+    -57,
+    -170
    ],
    "cond": {
     "flags": [
@@ -429,8 +429,8 @@
     900
    ],
    "offset": [
-    -36,
-    -68
+    -42,
+    -74
    ],
    "cond": {
     "restored": [
@@ -639,8 +639,8 @@
     756
    ],
    "offset": [
-    -66,
-    -152
+    -69,
+    -158
    ],
    "cond": null,
    "solid": [
@@ -660,7 +660,7 @@
    ],
    "offset": [
     -48,
-    -122
+    -128
    ],
    "cond": null,
    "solid": null
@@ -674,8 +674,8 @@
     1068
    ],
    "offset": [
-    -39,
-    -128
+    -45,
+    -134
    ],
    "cond": null,
    "solid": null
@@ -690,7 +690,7 @@
    ],
    "offset": [
     -78,
-    -56
+    -59
    ],
    "cond": null,
    "solid": null
@@ -705,7 +705,7 @@
    ],
    "offset": [
     -78,
-    -56
+    -59
    ],
    "cond": null,
    "solid": null
@@ -720,7 +720,7 @@
    ],
    "offset": [
     -78,
-    -56
+    -59
    ],
    "cond": null,
    "solid": null
@@ -735,7 +735,7 @@
    ],
    "offset": [
     -78,
-    -56
+    -59
    ],
    "cond": null,
    "solid": null
@@ -750,7 +750,7 @@
    ],
    "offset": [
     -78,
-    -56
+    -59
    ],
    "cond": null,
    "solid": null
@@ -765,7 +765,7 @@
    ],
    "offset": [
     -78,
-    -56
+    -59
    ],
    "cond": null,
    "solid": null
@@ -840,7 +840,7 @@
    ],
    "offset": [
     -27,
-    -50
+    -53
    ],
    "cond": null,
    "solid": [
@@ -860,7 +860,7 @@
    ],
    "offset": [
     -27,
-    -50
+    -53
    ],
    "cond": null,
    "solid": [
@@ -880,7 +880,7 @@
    ],
    "offset": [
     -39,
-    -62
+    -71
    ],
    "cond": null,
    "solid": [
@@ -900,7 +900,7 @@
    ],
    "offset": [
     -30,
-    -56
+    -62
    ],
    "cond": null,
    "solid": [
@@ -1135,7 +1135,7 @@
    ],
    "offset": [
     -27,
-    -50
+    -53
    ],
    "cond": null,
    "solid": [
@@ -1155,7 +1155,7 @@
    ],
    "offset": [
     -27,
-    -50
+    -53
    ],
    "cond": null,
    "solid": [
@@ -1174,8 +1174,8 @@
     1116
    ],
    "offset": [
-    -42,
-    -44
+    -45,
+    -86
    ],
    "cond": null,
    "solid": [
@@ -1194,8 +1194,8 @@
     756
    ],
    "offset": [
-    -21,
-    -65
+    -24,
+    -71
    ],
    "cond": null,
    "solid": [
@@ -1214,8 +1214,8 @@
     828
    ],
    "offset": [
-    -24,
-    -104
+    -27,
+    -110
    ],
    "cond": null,
    "solid": [
@@ -1234,8 +1234,8 @@
     756
    ],
    "offset": [
-    -21,
-    -65
+    -24,
+    -71
    ],
    "cond": null,
    "solid": [
@@ -1254,8 +1254,8 @@
     756
    ],
    "offset": [
-    -24,
-    -104
+    -27,
+    -110
    ],
    "cond": null,
    "solid": [
@@ -1275,7 +1275,7 @@
    ],
    "offset": [
     -39,
-    -62
+    -71
    ],
    "cond": null,
    "solid": [
@@ -1295,7 +1295,7 @@
    ],
    "offset": [
     -30,
-    -50
+    -53
    ],
    "cond": null,
    "solid": [
@@ -1314,8 +1314,8 @@
     906
    ],
    "offset": [
-    -36,
-    -47
+    -39,
+    -53
    ],
    "cond": null,
    "solid": [
@@ -1334,8 +1334,8 @@
     882
    ],
    "offset": [
-    -30,
-    -59
+    -42,
+    -80
    ],
    "cond": null,
    "solid": [
@@ -1354,8 +1354,8 @@
     792
    ],
    "offset": [
-    -21,
-    -65
+    -24,
+    -71
    ],
    "cond": null,
    "solid": [
@@ -1375,7 +1375,7 @@
    ],
    "offset": [
     -27,
-    -50
+    -53
    ],
    "cond": null,
    "solid": [
@@ -1394,8 +1394,8 @@
     1224
    ],
    "offset": [
-    -21,
-    -65
+    -24,
+    -71
    ],
    "cond": null,
    "solid": [
@@ -1674,8 +1674,8 @@
     840
    ],
    "offset": [
-    -48,
-    -44
+    -51,
+    -47
    ],
    "cond": {
     "not_flags": [
@@ -1693,8 +1693,8 @@
     936
    ],
    "offset": [
-    -42,
-    -38
+    -45,
+    -41
    ],
    "cond": {
     "not_flags": [
@@ -1712,8 +1712,8 @@
     1080
    ],
    "offset": [
-    -45,
-    -38
+    -48,
+    -41
    ],
    "cond": {
     "not_flags": [
@@ -1731,8 +1731,8 @@
     936
    ],
    "offset": [
-    -39,
-    -38
+    -42,
+    -41
    ],
    "cond": {
     "not_flags": [
@@ -1750,8 +1750,8 @@
     786
    ],
    "offset": [
-    -54,
-    -74
+    -57,
+    -80
    ],
    "cond": null,
    "solid": [
@@ -1770,8 +1770,8 @@
     1116
    ],
    "offset": [
-    -42,
-    -44
+    -45,
+    -86
    ],
    "cond": null,
    "solid": [
@@ -1791,7 +1791,7 @@
    ],
    "offset": [
     -27,
-    -50
+    -53
    ],
    "cond": null,
    "solid": [
@@ -1811,7 +1811,7 @@
    ],
    "offset": [
     -27,
-    -50
+    -53
    ],
    "cond": null,
    "solid": [
@@ -1820,6 +1820,206 @@
     12,
     6
    ]
+  },
+  {
+   "id": "well_choked_shadow",
+   "kind": "shadow",
+   "png": "well_choked_shadow.png",
+   "foot": [
+    832,
+    956
+   ],
+   "offset": [
+    0,
+    0
+   ],
+   "cond": {
+    "not_flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": null,
+   "of": "well_choked"
+  },
+  {
+   "id": "well_shadow",
+   "kind": "shadow",
+   "png": "well_shadow.png",
+   "foot": [
+    838,
+    950
+   ],
+   "offset": [
+    0,
+    0
+   ],
+   "cond": {
+    "flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": null,
+   "of": "well"
+  },
+  {
+   "id": "smithy_rubble_shadow",
+   "kind": "shadow",
+   "png": "smithy_rubble_shadow.png",
+   "foot": [
+    1347,
+    890
+   ],
+   "offset": [
+    0,
+    0
+   ],
+   "cond": {
+    "not_restored": [
+     "forge"
+    ]
+   },
+   "solid": null,
+   "of": "smithy_rubble"
+  },
+  {
+   "id": "anvil_shadow",
+   "kind": "shadow",
+   "png": "anvil_shadow.png",
+   "foot": [
+    1473,
+    896
+   ],
+   "offset": [
+    0,
+    0
+   ],
+   "cond": {
+    "restored": [
+     "forge"
+    ]
+   },
+   "solid": null,
+   "of": "anvil"
+  },
+  {
+   "id": "square_rubble_a_shadow",
+   "kind": "shadow",
+   "png": "square_rubble_a_shadow.png",
+   "foot": [
+    651,
+    1070
+   ],
+   "offset": [
+    0,
+    0
+   ],
+   "cond": {
+    "not_flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": null,
+   "of": "square_rubble_a"
+  },
+  {
+   "id": "fern_rubble_shadow",
+   "kind": "shadow",
+   "png": "fern_rubble_shadow.png",
+   "foot": [
+    1366,
+    1286
+   ],
+   "offset": [
+    0,
+    0
+   ],
+   "cond": {
+    "not_restored": [
+     "fern_cottage"
+    ]
+   },
+   "solid": null,
+   "of": "fern_rubble"
+  },
+  {
+   "id": "lantern_dark_shadow",
+   "kind": "shadow",
+   "png": "lantern_dark_shadow.png",
+   "foot": [
+    909,
+    932
+   ],
+   "offset": [
+    0,
+    0
+   ],
+   "cond": {
+    "not_flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": null,
+   "of": "lantern_dark"
+  },
+  {
+   "id": "lantern_lit_shadow",
+   "kind": "shadow",
+   "png": "lantern_lit_shadow.png",
+   "foot": [
+    909,
+    932
+   ],
+   "offset": [
+    0,
+    0
+   ],
+   "cond": {
+    "flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": null,
+   "of": "lantern_lit"
+  },
+  {
+   "id": "beds_scorched_shadow",
+   "kind": "shadow",
+   "png": "beds_scorched_shadow.png",
+   "foot": [
+    1139,
+    356
+   ],
+   "offset": [
+    0,
+    0
+   ],
+   "cond": {
+    "not_flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": null,
+   "of": "beds_scorched"
+  },
+  {
+   "id": "beds_dug_shadow",
+   "kind": "shadow",
+   "png": "beds_dug_shadow.png",
+   "foot": [
+    1139,
+    356
+   ],
+   "offset": [
+    0,
+    0
+   ],
+   "cond": {
+    "flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": null,
+   "of": "beds_dug"
   }
  ]
 }

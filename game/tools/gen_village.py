@@ -113,9 +113,11 @@ def build(plan: dict, kit: dict) -> str:
         elif o.get('png'):
             fx, fy = o['foot']
             ox, oy = o['offset']
-            s.node(pascal(o['id']), 'Sprite2D', parent, {
-                'position': vec(fx, fy), 'texture': 'ExtResource("%s")' % tex(o['png']), 'centered': 'false',
-                'offset': vec(ox, oy)})
+            props = {'position': vec(fx, fy), 'texture': 'ExtResource("%s")' % tex(o['png']), 'centered': 'false',
+                     'offset': vec(ox, oy)}
+            if o['kind'] == 'shadow':
+                props['z_index'] = -9      # the shadow of a prop that comes and goes: on the ground, under everything
+            s.node(pascal(o['id']), 'Sprite2D', parent, props)
         if o['id'] in SMOKE and o.get('png'):
             px, py = chimney_pot(zid, o)
             sp = s.wrap('Props', {'if': SMOKE[o['id']]}, 'If_%s_smoke' % o['id'])
@@ -220,8 +222,17 @@ def main(argv=None) -> int:
     plan = json.load(open(os.path.join(GAME, 'data', 'plans', zid + '.json')))
     kit = json.load(open(os.path.join(GAME, 'zones', zid, 'kit.json')))
     out = os.path.join(GAME, 'zones', zid, zid + '.tscn')
+    text = build(plan, kit)
+    # the placement gate: no art reaches the zone without a passing review record
+    # (scripts/review/gate.py; npm run review:asset -- <zone>/<name> --record)
+    sys.path.insert(0, ROOT)
+    from scripts.review.gate import refusals
+    bad = refusals(zid, text=text)
+    if bad:
+        print('refused to place unreviewed or failing art:\n  ' + '\n  '.join(bad), file=sys.stderr)
+        return 1
     with open(out, 'w') as f:
-        f.write(build(plan, kit))
+        f.write(text)
     print('wrote', os.path.relpath(out, GAME), len(kit['objects']), 'objects')
     return 0
 

@@ -99,6 +99,16 @@
 [ext_resource type="Texture2D" path="res://zones/crossroads/art/bench_58.png" id="t89"]
 [ext_resource type="Texture2D" path="res://zones/crossroads/art/flower_tub_59.png" id="t90"]
 [ext_resource type="Texture2D" path="res://zones/crossroads/art/flower_tub_60.png" id="t91"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/well_choked_shadow.png" id="t92"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/well_shadow.png" id="t93"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/smithy_rubble_shadow.png" id="t94"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/anvil_shadow.png" id="t95"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/square_rubble_a_shadow.png" id="t96"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/fern_rubble_shadow.png" id="t97"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/lantern_dark_shadow.png" id="t98"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/lantern_lit_shadow.png" id="t99"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/beds_scorched_shadow.png" id="t100"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/beds_dug_shadow.png" id="t101"]
 [ext_resource type="Script" path="res://world/villager.gd" id="villager"]
 [ext_resource type="Script" path="res://world/loop_fx.gd" id="loopfx"]
 
@@ -760,7 +770,7 @@ only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
 position = Vector2(864, 960)
 texture = ExtResource("t15")
 centered = false
-offset = Vector2(-51, -92)
+offset = Vector2(-63, -80)
 
 [node name="WellChokedBody" type="StaticBody2D" parent="Props/If_well_choked"]
 collision_mask = 0
@@ -777,7 +787,7 @@ only_if = "{\"flags\":[\"shard_home:woodland\"]}"
 position = Vector2(864, 954)
 texture = ExtResource("t16")
 centered = false
-offset = Vector2(-45, -164)
+offset = Vector2(-57, -170)
 
 [node name="WellBody" type="StaticBody2D" parent="Props/If_well"]
 collision_mask = 0
@@ -828,7 +838,7 @@ only_if = "{\"restored\":[\"forge\"]}"
 position = Vector2(1491, 900)
 texture = ExtResource("t19")
 centered = false
-offset = Vector2(-36, -68)
+offset = Vector2(-42, -74)
 
 [node name="AnvilBody" type="StaticBody2D" parent="Props/If_anvil"]
 collision_mask = 0
@@ -949,55 +959,55 @@ offset = Vector2(-129, -140)
 position = Vector2(1152, 756)
 texture = ExtResource("t28")
 centered = false
-offset = Vector2(-66, -152)
+offset = Vector2(-69, -158)
 
 [node name="NoticeBoard" type="Sprite2D" parent="Props"]
 position = Vector2(708, 666)
 texture = ExtResource("t29")
 centered = false
-offset = Vector2(-48, -122)
+offset = Vector2(-48, -128)
 
 [node name="Waystone" type="Sprite2D" parent="Props"]
 position = Vector2(1260, 1068)
 texture = ExtResource("t30")
 centered = false
-offset = Vector2(-39, -128)
+offset = Vector2(-45, -134)
 
 [node name="Fence0" type="Sprite2D" parent="Props"]
 position = Vector2(528, 417)
 texture = ExtResource("t31")
 centered = false
-offset = Vector2(-78, -56)
+offset = Vector2(-78, -59)
 
 [node name="Fence1" type="Sprite2D" parent="Props"]
 position = Vector2(678, 417)
 texture = ExtResource("t32")
 centered = false
-offset = Vector2(-78, -56)
+offset = Vector2(-78, -59)
 
 [node name="Fence2" type="Sprite2D" parent="Props"]
 position = Vector2(822, 417)
 texture = ExtResource("t33")
 centered = false
-offset = Vector2(-78, -56)
+offset = Vector2(-78, -59)
 
 [node name="Fence3" type="Sprite2D" parent="Props"]
 position = Vector2(1098, 417)
 texture = ExtResource("t34")
 centered = false
-offset = Vector2(-78, -56)
+offset = Vector2(-78, -59)
 
 [node name="Fence4" type="Sprite2D" parent="Props"]
 position = Vector2(1248, 417)
 texture = ExtResource("t35")
 centered = false
-offset = Vector2(-78, -56)
+offset = Vector2(-78, -59)
 
 [node name="Fence5" type="Sprite2D" parent="Props"]
 position = Vector2(1398, 417)
 texture = ExtResource("t36")
 centered = false
-offset = Vector2(-78, -56)
+offset = Vector2(-78, -59)
 
 [node name="Oak6" type="Sprite2D" parent="Props"]
 position = Vector2(546, 132)
@@ -1021,25 +1031,25 @@ offset = Vector2(-57, -86)
 position = Vector2(894, 210)
 texture = ExtResource("t40")
 centered = false
-offset = Vector2(-27, -50)
+offset = Vector2(-27, -53)
 
 [node name="FlowerTub10" type="Sprite2D" parent="Props"]
 position = Vector2(1032, 210)
 texture = ExtResource("t41")
 centered = false
-offset = Vector2(-27, -50)
+offset = Vector2(-27, -53)
 
 [node name="Woodpile11" type="Sprite2D" parent="Props"]
 position = Vector2(1140, 192)
 texture = ExtResource("t42")
 centered = false
-offset = Vector2(-39, -62)
+offset = Vector2(-39, -71)
 
 [node name="Sacks12" type="Sprite2D" parent="Props"]
 position = Vector2(798, 198)
 texture = ExtResource("t43")
 centered = false
-offset = Vector2(-30, -56)
+offset = Vector2(-30, -62)
 
 [node name="Oak13" type="Sprite2D" parent="Props"]
 position = Vector2(120, 66)
@@ -1123,85 +1133,85 @@ offset = Vector2(-12, -118)
 position = Vector2(690, 600)
 texture = ExtResource("t57")
 centered = false
-offset = Vector2(-27, -50)
+offset = Vector2(-27, -53)
 
 [node name="FlowerTub27" type="Sprite2D" parent="Props"]
 position = Vector2(798, 600)
 texture = ExtResource("t58")
 centered = false
-offset = Vector2(-27, -50)
+offset = Vector2(-27, -53)
 
 [node name="Bench28" type="Sprite2D" parent="Props"]
 position = Vector2(1050, 1116)
 texture = ExtResource("t59")
 centered = false
-offset = Vector2(-42, -44)
+offset = Vector2(-45, -86)
 
 [node name="Barrel29" type="Sprite2D" parent="Props"]
 position = Vector2(582, 756)
 texture = ExtResource("t60")
 centered = false
-offset = Vector2(-21, -65)
+offset = Vector2(-24, -71)
 
 [node name="Crates30" type="Sprite2D" parent="Props"]
 position = Vector2(582, 828)
 texture = ExtResource("t61")
 centered = false
-offset = Vector2(-24, -104)
+offset = Vector2(-27, -110)
 
 [node name="Barrel31" type="Sprite2D" parent="Props"]
 position = Vector2(1074, 756)
 texture = ExtResource("t62")
 centered = false
-offset = Vector2(-21, -65)
+offset = Vector2(-24, -71)
 
 [node name="Crates32" type="Sprite2D" parent="Props"]
 position = Vector2(1230, 756)
 texture = ExtResource("t63")
 centered = false
-offset = Vector2(-24, -104)
+offset = Vector2(-27, -110)
 
 [node name="Woodpile33" type="Sprite2D" parent="Props"]
 position = Vector2(1671, 720)
 texture = ExtResource("t64")
 centered = false
-offset = Vector2(-39, -62)
+offset = Vector2(-39, -71)
 
 [node name="Coal34" type="Sprite2D" parent="Props"]
 position = Vector2(1680, 792)
 texture = ExtResource("t65")
 centered = false
-offset = Vector2(-30, -50)
+offset = Vector2(-30, -53)
 
 [node name="Trough35" type="Sprite2D" parent="Props"]
 position = Vector2(1584, 906)
 texture = ExtResource("t66")
 centered = false
-offset = Vector2(-36, -47)
+offset = Vector2(-39, -53)
 
 [node name="Grindstone36" type="Sprite2D" parent="Props"]
 position = Vector2(1674, 882)
 texture = ExtResource("t67")
 centered = false
-offset = Vector2(-30, -59)
+offset = Vector2(-42, -80)
 
 [node name="Barrel37" type="Sprite2D" parent="Props"]
 position = Vector2(1338, 792)
 texture = ExtResource("t68")
 centered = false
-offset = Vector2(-21, -65)
+offset = Vector2(-24, -71)
 
 [node name="FlowerTub38" type="Sprite2D" parent="Props"]
 position = Vector2(1320, 1242)
 texture = ExtResource("t69")
 centered = false
-offset = Vector2(-27, -50)
+offset = Vector2(-27, -53)
 
 [node name="Barrel39" type="Sprite2D" parent="Props"]
 position = Vector2(1602, 1224)
 texture = ExtResource("t70")
 centered = false
-offset = Vector2(-21, -65)
+offset = Vector2(-24, -71)
 
 [node name="Oak40" type="Sprite2D" parent="Props"]
 position = Vector2(900, 1440)
@@ -1289,7 +1299,7 @@ only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
 position = Vector2(786, 840)
 texture = ExtResource("t84")
 centered = false
-offset = Vector2(-48, -44)
+offset = Vector2(-51, -47)
 
 [node name="If_debris_b" type="Node2D" parent="Props"]
 script = ExtResource("cond")
@@ -1299,7 +1309,7 @@ only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
 position = Vector2(1116, 936)
 texture = ExtResource("t85")
 centered = false
-offset = Vector2(-42, -38)
+offset = Vector2(-45, -41)
 
 [node name="If_debris_c" type="Node2D" parent="Props"]
 script = ExtResource("cond")
@@ -1309,7 +1319,7 @@ only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
 position = Vector2(954, 1080)
 texture = ExtResource("t86")
 centered = false
-offset = Vector2(-45, -38)
+offset = Vector2(-48, -41)
 
 [node name="If_debris_d" type="Node2D" parent="Props"]
 script = ExtResource("cond")
@@ -1319,31 +1329,141 @@ only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
 position = Vector2(1434, 936)
 texture = ExtResource("t87")
 centered = false
-offset = Vector2(-39, -38)
+offset = Vector2(-42, -41)
 
 [node name="Handcart" type="Sprite2D" parent="Props"]
 position = Vector2(708, 786)
 texture = ExtResource("t88")
 centered = false
-offset = Vector2(-54, -74)
+offset = Vector2(-57, -80)
 
 [node name="Bench58" type="Sprite2D" parent="Props"]
 position = Vector2(810, 1116)
 texture = ExtResource("t89")
 centered = false
-offset = Vector2(-42, -44)
+offset = Vector2(-45, -86)
 
 [node name="FlowerTub59" type="Sprite2D" parent="Props"]
 position = Vector2(1140, 600)
 texture = ExtResource("t90")
 centered = false
-offset = Vector2(-27, -50)
+offset = Vector2(-27, -53)
 
 [node name="FlowerTub60" type="Sprite2D" parent="Props"]
 position = Vector2(1212, 600)
 texture = ExtResource("t91")
 centered = false
-offset = Vector2(-27, -50)
+offset = Vector2(-27, -53)
+
+[node name="If_well_choked_shadow" type="Node2D" parent="Props"]
+script = ExtResource("cond")
+only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
+
+[node name="WellChokedShadow" type="Sprite2D" parent="Props/If_well_choked_shadow"]
+position = Vector2(832, 956)
+texture = ExtResource("t92")
+centered = false
+offset = Vector2(0, 0)
+z_index = -9
+
+[node name="If_well_shadow" type="Node2D" parent="Props"]
+script = ExtResource("cond")
+only_if = "{\"flags\":[\"shard_home:woodland\"]}"
+
+[node name="WellShadow" type="Sprite2D" parent="Props/If_well_shadow"]
+position = Vector2(838, 950)
+texture = ExtResource("t93")
+centered = false
+offset = Vector2(0, 0)
+z_index = -9
+
+[node name="If_smithy_rubble_shadow" type="Node2D" parent="Props"]
+script = ExtResource("cond")
+only_if = "{\"not_restored\":[\"forge\"]}"
+
+[node name="SmithyRubbleShadow" type="Sprite2D" parent="Props/If_smithy_rubble_shadow"]
+position = Vector2(1347, 890)
+texture = ExtResource("t94")
+centered = false
+offset = Vector2(0, 0)
+z_index = -9
+
+[node name="If_anvil_shadow" type="Node2D" parent="Props"]
+script = ExtResource("cond")
+only_if = "{\"restored\":[\"forge\"]}"
+
+[node name="AnvilShadow" type="Sprite2D" parent="Props/If_anvil_shadow"]
+position = Vector2(1473, 896)
+texture = ExtResource("t95")
+centered = false
+offset = Vector2(0, 0)
+z_index = -9
+
+[node name="If_square_rubble_a_shadow" type="Node2D" parent="Props"]
+script = ExtResource("cond")
+only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
+
+[node name="SquareRubbleAShadow" type="Sprite2D" parent="Props/If_square_rubble_a_shadow"]
+position = Vector2(651, 1070)
+texture = ExtResource("t96")
+centered = false
+offset = Vector2(0, 0)
+z_index = -9
+
+[node name="If_fern_rubble_shadow" type="Node2D" parent="Props"]
+script = ExtResource("cond")
+only_if = "{\"not_restored\":[\"fern_cottage\"]}"
+
+[node name="FernRubbleShadow" type="Sprite2D" parent="Props/If_fern_rubble_shadow"]
+position = Vector2(1366, 1286)
+texture = ExtResource("t97")
+centered = false
+offset = Vector2(0, 0)
+z_index = -9
+
+[node name="If_lantern_dark_shadow" type="Node2D" parent="Props"]
+script = ExtResource("cond")
+only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
+
+[node name="LanternDarkShadow" type="Sprite2D" parent="Props/If_lantern_dark_shadow"]
+position = Vector2(909, 932)
+texture = ExtResource("t98")
+centered = false
+offset = Vector2(0, 0)
+z_index = -9
+
+[node name="If_lantern_lit_shadow" type="Node2D" parent="Props"]
+script = ExtResource("cond")
+only_if = "{\"flags\":[\"shard_home:woodland\"]}"
+
+[node name="LanternLitShadow" type="Sprite2D" parent="Props/If_lantern_lit_shadow"]
+position = Vector2(909, 932)
+texture = ExtResource("t99")
+centered = false
+offset = Vector2(0, 0)
+z_index = -9
+
+[node name="If_beds_scorched_shadow" type="Node2D" parent="Props"]
+script = ExtResource("cond")
+only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
+
+[node name="BedsScorchedShadow" type="Sprite2D" parent="Props/If_beds_scorched_shadow"]
+position = Vector2(1139, 356)
+texture = ExtResource("t100")
+centered = false
+offset = Vector2(0, 0)
+z_index = -9
+
+[node name="If_beds_dug_shadow" type="Node2D" parent="Props"]
+script = ExtResource("cond")
+only_if = "{\"flags\":[\"shard_home:woodland\"]}"
+
+[node name="BedsDugShadow" type="Sprite2D" parent="Props/If_beds_dug_shadow"]
+position = Vector2(1139, 356)
+texture = ExtResource("t101")
+centered = false
+offset = Vector2(0, 0)
+z_index = -9
 
 [node name="Actors" type="Node2D" parent="."]
 y_sort_enabled = true
