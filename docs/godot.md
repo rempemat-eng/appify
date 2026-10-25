@@ -54,7 +54,7 @@ game/
   zones/<id>/            art/*.png, kit.json, walk.txt, <id>_base.tscn (generated), <id>.tscn (authored)
   art/placeholder/       player, mossling and sign stand-ins (tools/gen_placeholders.py)
   test/                  GdUnit4 suites and fixtures
-  tools/                 gen_zone.py, gen_blockout.py, gen_placeholders.py, check.sh, get_godot.sh, fetch_limboai_release.sh
+  tools/                 gen_zone.py, gen_blockout.py, gen_village.py, gen_placeholders.py, check.sh, get_godot.sh, fetch_limboai_release.sh
   addons/                vendored plugins (below)
 ```
 
@@ -87,7 +87,7 @@ Dialogic 2 was evaluated and **not adopted yet**: it adds 11 MB and its own inpu
 - **Village** (`core/village.gd`, `world/restore_site.gd`, `world/conditional.gd`): zone plans in `data/plans/` list `restores` (cost in Glint, optional condition) and `stages`. A `RestoreSite` ("restore here") pays and restores instantly, records the tier in `SaveGame.data.village.restored` and reports `restore:<id>`. A `Conditional` node shows and enables its children only while its condition holds, so one scene holds the broken and the restored town. Conditions also take `restored`, `not_restored` and `glint_at_least`.
 - **Camps** (`world/camp.gd`): a node whose child enemies count as one fight; clearing it sets `camp_cleared:<id>` and reports `camp:<id>`; a cleared camp stays empty.
 
-The vertical slice's chain (`docs/vision/vertical-slice.md`): *The road home*, *The cold forge*, *Under the stones* and *Home again*, through the woodland, Crossroads and the Undercroft. Crossroads and the Undercroft are blockouts: `python3 game/tools/gen_blockout.py` writes `zones/<id>/<id>.tscn` from `data/plans/<id>.json` (placeholder rectangles; regenerate, do not edit).
+The vertical slice's chain (`docs/vision/vertical-slice.md`): *The road home*, *The cold forge*, *Under the stones* and *Home again*, through the woodland, Crossroads and the Undercroft. The Undercroft is a blockout: `python3 game/tools/gen_blockout.py` writes `zones/<id>/<id>.tscn` from `data/plans/<id>.json` (placeholder rectangles; regenerate, do not edit). **Crossroads is drawn** (25 Oct): `python3 game/tools/gen_village.py crossroads` renders its plan with the kit (`scripts/art/native/village.py` draws the buildings, their storm damage as separate overlays and the props; `town.py` paints the ground and writes `zones/crossroads/art/` and `kit.json`), then writes `crossroads.tscn` with the blockout's node names: the ground picture, `Walls` (edges, faces, footprints, solid dressing), `Props` (every building, prop and dressing piece y-sorted with the actors by its feet; a damage overlay sits in `If_<building>_damage`, shown until its restore, and the plan's conditional props keep `If_<id>`), `Actors`, `BuildingDoors`, `Spawns` (`square` for screenshots), `RaidPads` and `Doors`. The plan's `art` section holds each building's look, the walls, paving, puddles and the dressing with reasons; `--preview DIR` writes the whole zone per stage. Re-import (`$GODOT --headless --path game --import`) after regenerating, and `npm run check:kit` checks the pictures (house colours, lone pixels, staleness against the kit and plan). gen_blockout skips plans with `art`.
 
 The sample quest, **Thorns by the stones** (`data/quests/woodland_stones.json`): read the sign by the stone circle, clear the three mosslings in the meadow east of it, read the sign again for 40 Glint.
 

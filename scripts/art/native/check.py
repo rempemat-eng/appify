@@ -8,6 +8,8 @@
    already verified on this machine (.cache/kit/verified/, keyed by their hash), so it costs a
    render only when something it reads has changed.
 3. The lawn band. The golden's lawn measure (measure.py, MEASURE.md) sits in its biome's band.
+4. The drawn villages (village.py, town.py): house colours only, few lone pixels, and a note when a
+   zone's pictures are older than the kit or its plan.
 
     python3 -m scripts.art.native.check            all gates
     python3 -m scripts.art.native.check --no-cache rebuild even if verified
@@ -111,6 +113,48 @@ def rebuild(scene: str, biome: str, d: float, golden: str, use_cache: bool) -> t
     return True, lines[0], meas
 
 
+def villages() -> list:
+    """4. The drawn villages (town.py, village.py): every picture of a zone plan with "art" is in
+    house colours only, the village's own drawings have at most LONE_MAX lone pixels, the ground at
+    most LONE_GROUND, and kit.json was written from today's kit and plan (else: regenerate)."""
+    import glob
+    import numpy as np
+    from PIL import Image
+    from scripts.art.native import palette as PAL
+    from scripts.art.native import raster
+    from scripts.art.native import town
+    LONE_MAX, LONE_GROUND = 0.01, 0.02
+    house = {PAL.rgb(f, t) for f in PAL.RAMPS for t in range(7)} | {PAL.ink()}
+    bad, notes = [], []
+    for plan_path in sorted(glob.glob(os.path.join(ROOT, 'game', 'data', 'plans', '*.json'))):
+        plan = json.load(open(plan_path))
+        if 'art' not in plan:
+            continue
+        zdir = os.path.join(ROOT, 'game', 'zones', plan['id'])
+        kp = os.path.join(zdir, 'kit.json')
+        if not os.path.exists(kp):
+            bad.append(f'{plan["id"]}: no kit.json (python3 game/tools/gen_village.py {plan["id"]})')
+            continue
+        kit = json.load(open(kp))
+        if kit.get('inputs') != town.input_hash(plan_path, kit['density']):
+            notes.append(f'{plan["id"]}: the kit or the plan changed since it was drawn: python3 game/tools/gen_village.py {plan["id"]}')
+        drawn = set(kit.get('kit_drawn', []))
+        for f in sorted(glob.glob(os.path.join(zdir, 'art', '*.png'))):
+            img = Image.open(f).convert('RGBA')
+            a = np.asarray(img)
+            cols = {tuple(int(v) for v in c) for c in np.unique(a[a[..., 3] > 0][:, :3], axis=0)}
+            off = [c for c in cols if c not in house]
+            name = os.path.basename(f)
+            if off:
+                bad.append(f'{plan["id"]}/{name}: {len(off)} colour(s) off the house palette')
+            lim = LONE_GROUND if name == 'ground.png' else (LONE_MAX if name in drawn else None)
+            if lim is not None:
+                ls = raster.lone_share(img)
+                if ls > lim:
+                    bad.append(f'{plan["id"]}/{name}: {100 * ls:.2f} % lone pixels (at most {100 * lim:.0f} %)')
+    return bad, notes
+
+
 def main(argv=None) -> int:
     argv = sys.argv[1:] if argv is None else argv
     use_cache = '--no-cache' not in argv
@@ -138,10 +182,15 @@ def main(argv=None) -> int:
                   f'(at most {100 * band.get("lone_px_max", 1.0):.0f} %): {"ok" if inside else "OUT OF BAND"}')
             if not inside:
                 fails.append(f'{scene}: lawn measure out of the {biome_name} band')
+    vbad, vnotes = villages()
+    print(f'[kit] drawn villages (house colours, lone pixels): {"ok" if not vbad else str(len(vbad)) + " finding(s)"}')
+    for n in vnotes:
+        print('[kit] note:', n)
+    fails += vbad
     for f in fails:
         print('FAIL:', f)
     if not fails:
-        print('PASS: kit gates (palette codes, golden rebuild, lawn band)')
+        print('PASS: kit gates (palette codes, golden rebuild, lawn band, drawn villages)')
     return 1 if fails else 0
 
 

@@ -10,7 +10,8 @@ placeholder polygons for ground, buildings and props, merged walls for faces, bu
 edges, Interactables for people and things, RestoreSites, Camps of actors/enemy.tscn, Doors, Spawns and
 raid pad markers (group "raid_pad"). An item with "if" is wrapped in a Conditional (world/conditional.gd)
 so the one scene holds every stage. Positions are world px times DENSITY (3 texels). No art: replace the
-scene with a kit-rendered base (tools/gen_zone.py) when Crossroads is drawn, keeping the node names.
+scene with a kit-rendered one when the zone is drawn, keeping the node names: a plan with "art" is drawn by
+tools/gen_village.py (Crossroads) and skipped here.
 """
 import json
 import os
@@ -265,6 +266,9 @@ def main(ids):
         ids = sorted(f[:-5] for f in os.listdir(PLANS) if f.endswith('.json'))
     for zid in ids:
         plan = json.load(open(os.path.join(PLANS, zid + '.json')))
+        if 'art' in plan:
+            print(zid, 'is drawn: python3 game/tools/gen_village.py', zid)
+            continue
         out_dir = os.path.join(GAME, 'zones', zid)
         os.makedirs(out_dir, exist_ok=True)
         out = os.path.join(out_dir, zid + '.tscn')

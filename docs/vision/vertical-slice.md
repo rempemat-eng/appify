@@ -52,7 +52,7 @@ Glint over the chain: 40 + 10 - 30 + 60 - 20 + 25 = 85 at the end, enough for a 
 
 `game/data/plans/crossroads.json`, in world px local to the zone (640 x 560; `origin_on_canvas` 5976, 3248 puts the square where `art/regions/valley.json` has it, 6176, 3448). It reuses the region plan's keys (`id`, `box`, `tiers` with outlines, `faces`, `routes`, `stairs`, `places`) and adds what a playable zone needs: `buildings` (rect, door, stage, restore), `lots` (the burnt lots for stage 2 and 3), `props`, `people`, `things`, `restore_sites`, `spawns`, `doors`, `raid_pads` (two for the first night, four more for stage 1) and `raid_lanes`. One plan holds every state: any item with `if` shows only while its condition holds, and `stages` names them (broken, forge, homecoming) for tests and tools. `game/data/plans/undercroft.json` has the same shape, with `camps`.
 
-`python3 game/tools/gen_blockout.py` writes `game/zones/<id>/<id>.tscn` from a plan: flat placeholder rectangles, walls, interactables, restore sites, camps, doors, spawns and raid pad markers, with conditional items wrapped in `Conditional` nodes. When the kit draws Crossroads, its base scene replaces the rectangles and the node names stay.
+`python3 game/tools/gen_blockout.py` writes `game/zones/<id>/<id>.tscn` from a plan: flat placeholder rectangles, walls, interactables, restore sites, camps, doors, spawns and raid pad markers, with conditional items wrapped in `Conditional` nodes. Crossroads is now drawn (25 Oct): `python3 game/tools/gen_village.py crossroads` renders the plan with the kit's village module (buildings drawn once, the storm's damage an overlay each restore removes) and writes the scene with the same node names (docs/godot.md).
 
 ## Play it
 

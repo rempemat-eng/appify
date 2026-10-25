@@ -367,8 +367,8 @@
         52
       ],
       "door": [
-        186,
-        262
+        170,
+        288
       ],
       "colour": "#a07850",
       "stage": 1
@@ -378,13 +378,13 @@
       "name": "Herbalist's (apothecary, stage 1)",
       "rect": [
         110,
-        316,
+        330,
         76,
-        48
+        44
       ],
       "door": [
-        186,
-        340
+        170,
+        374
       ],
       "colour": "#6f8a6a",
       "stage": 1
@@ -399,8 +399,8 @@
         60
       ],
       "door": [
-        470,
-        290
+        486,
+        280
       ],
       "colour": "#6a5a50",
       "stage": 0,
@@ -520,7 +520,7 @@
       "id": "forge_fire",
       "kind": "glow",
       "rect": [
-        500,
+        478,
         262,
         16,
         12
@@ -885,6 +885,14 @@
         24,
         300
       ]
+    },
+    {
+      "id": "square",
+      "at": [
+        404,
+        296
+      ],
+      "why": "the square's east side, the stall and the forge in view (screenshots, later fast travel)"
     }
   ],
   "doors": [
@@ -1011,5 +1019,983 @@
         ]
       ]
     }
-  ]
+  ],
+  "art": {
+    "_about": "The drawing (scripts/art/native/village.py and town.py, game/tools/gen_village.py; Claude A, 25 Oct): how each building looks (one design; its storm damage an overlay the restore removes), the dry-stone walls drawn on the faces, the paving, the uplands, the green's ring and the dressing with its reasons. Doors face south: the oblique view shows no east walls, so the bakery's and the herbalist's doors moved to their south fronts. The herbalist's moved 14 px south so its roof clears the halt road.",
+    "biome": "meadow",
+    "uplands": [],
+    "walls": [
+      [
+        0,
+        26,
+        150,
+        12
+      ],
+      [
+        0,
+        140,
+        300,
+        12
+      ],
+      [
+        340,
+        140,
+        300,
+        12
+      ]
+    ],
+    "paving": [
+      [
+        198,
+        196,
+        244,
+        180
+      ],
+      [
+        298,
+        150,
+        44,
+        50
+      ]
+    ],
+    "ring": [
+      125,
+      475,
+      62,
+      46,
+      8
+    ],
+    "looks": {
+      "hut": {
+        "kind": "hut",
+        "wall": "boards",
+        "roof": "thatch",
+        "hip": 10,
+        "paint": "leaf",
+        "door": 40,
+        "windows": [
+          16,
+          64
+        ],
+        "box": true,
+        "wall_h": 34,
+        "roof_h": 24
+      },
+      "library": {
+        "kind": "library",
+        "wall": "ashlar",
+        "roof": "slate",
+        "hip": 14,
+        "paint": "berry",
+        "door": 48,
+        "windows": [
+          18,
+          78
+        ],
+        "arch": true,
+        "shutters": false,
+        "sign": [
+          60,
+          "book"
+        ],
+        "damage": [
+          [
+            "hole",
+            28,
+            26,
+            20
+          ],
+          [
+            "tarp",
+            50,
+            78,
+            "leaf_cool"
+          ],
+          "slates"
+        ]
+      },
+      "north_cottages": {
+        "kind": "terrace",
+        "wall": "frame",
+        "roof": "slate",
+        "posts": [
+          24,
+          48,
+          72
+        ],
+        "units": [
+          [
+            0,
+            48,
+            "sky"
+          ],
+          [
+            48,
+            96,
+            "dusk"
+          ]
+        ],
+        "doors": [
+          [
+            12,
+            "sky"
+          ],
+          [
+            72,
+            "dusk"
+          ]
+        ],
+        "windows": [
+          34,
+          58
+        ],
+        "chimney": [
+          48
+        ],
+        "box": true,
+        "damage": [
+          [
+            "tarp",
+            4,
+            40,
+            "sand"
+          ],
+          [
+            "boards",
+            34,
+            31,
+            15,
+            15
+          ],
+          [
+            "slates",
+            5
+          ]
+        ]
+      },
+      "bakery": {
+        "kind": "cottage",
+        "wall": "stone",
+        "roof": "slate",
+        "paint": "berry",
+        "door": 60,
+        "windows": [
+          16,
+          38
+        ],
+        "chimney": [
+          12
+        ],
+        "chimney_w": 12,
+        "sign": [
+          44,
+          "bread"
+        ],
+        "damage": [
+          [
+            "scaffold",
+            4,
+            28,
+            8
+          ],
+          [
+            "hole",
+            48,
+            16,
+            16
+          ],
+          [
+            "slates",
+            4
+          ]
+        ]
+      },
+      "herbalist": {
+        "kind": "cottage",
+        "wall": "frame",
+        "roof": "thatch",
+        "hip": 8,
+        "paint": "dusk",
+        "door": 60,
+        "windows": [
+          18,
+          40
+        ],
+        "posts": [
+          29,
+          50
+        ],
+        "sign": [
+          2,
+          "leaf"
+        ],
+        "box": true,
+        "damage": [
+          [
+            "hole",
+            30,
+            18,
+            14
+          ],
+          [
+            "boards",
+            40,
+            31,
+            15,
+            15
+          ],
+          [
+            "crack",
+            6
+          ]
+        ],
+        "wall_h": 36,
+        "roof_h": 22
+      },
+      "smithy": {
+        "kind": "forge",
+        "wall": "stone",
+        "roof": "slate",
+        "door": 30,
+        "mouth_w": 30,
+        "mouth_h": 27,
+        "windows": [
+          70
+        ],
+        "shutters": false,
+        "chimney": [
+          70
+        ],
+        "chimney_w": 14,
+        "chimney_h": 20,
+        "wall_h": 42,
+        "sign": [
+          47,
+          "hammer"
+        ],
+        "damage": [
+          [
+            "hole",
+            54,
+            22,
+            24
+          ],
+          [
+            "boards",
+            30,
+            28,
+            32,
+            27
+          ],
+          [
+            "scaffold",
+            60,
+            80,
+            10
+          ],
+          [
+            "slates",
+            5
+          ]
+        ]
+      },
+      "fern_cottage": {
+        "kind": "cottage",
+        "wall": "frame",
+        "roof": "slate",
+        "paint": "brass",
+        "door": 14,
+        "windows": [
+          46
+        ],
+        "posts": [
+          28,
+          62
+        ],
+        "chimney": [
+          56
+        ],
+        "box": true,
+        "damage": [
+          [
+            "boards",
+            14,
+            32,
+            16,
+            32
+          ],
+          [
+            "tarp",
+            28,
+            64,
+            "sand"
+          ],
+          [
+            "boards",
+            46,
+            31,
+            15,
+            15
+          ]
+        ],
+        "roof_h": 28
+      }
+    },
+    "dressing": [
+      {
+        "kind": "fence",
+        "at": [
+          176,
+          139
+        ],
+        "size": [
+          48,
+          4
+        ],
+        "solid": false,
+        "why": "the terrace's rail above the square"
+      },
+      {
+        "kind": "fence",
+        "at": [
+          226,
+          139
+        ],
+        "size": [
+          48,
+          4
+        ],
+        "solid": false
+      },
+      {
+        "kind": "fence",
+        "at": [
+          274,
+          139
+        ],
+        "size": [
+          48,
+          4
+        ],
+        "solid": false
+      },
+      {
+        "kind": "fence",
+        "at": [
+          366,
+          139
+        ],
+        "size": [
+          48,
+          4
+        ],
+        "solid": false
+      },
+      {
+        "kind": "fence",
+        "at": [
+          416,
+          139
+        ],
+        "size": [
+          48,
+          4
+        ],
+        "solid": false
+      },
+      {
+        "kind": "fence",
+        "at": [
+          466,
+          139
+        ],
+        "size": [
+          48,
+          4
+        ],
+        "solid": false
+      },
+      {
+        "kind": "oak",
+        "at": [
+          182,
+          44
+        ],
+        "why": "the old oak on your terrace"
+      },
+      {
+        "kind": "bush",
+        "at": [
+          240,
+          116
+        ]
+      },
+      {
+        "kind": "bush",
+        "at": [
+          478,
+          122
+        ]
+      },
+      {
+        "kind": "flower_tub",
+        "at": [
+          298,
+          70
+        ],
+        "size": [
+          12,
+          6
+        ],
+        "why": "your door's pots"
+      },
+      {
+        "kind": "flower_tub",
+        "at": [
+          344,
+          70
+        ],
+        "size": [
+          12,
+          6
+        ]
+      },
+      {
+        "kind": "woodpile",
+        "at": [
+          380,
+          64
+        ],
+        "size": [
+          22,
+          8
+        ]
+      },
+      {
+        "kind": "sacks",
+        "at": [
+          266,
+          66
+        ],
+        "size": [
+          14,
+          8
+        ],
+        "why": "seed sacks waiting for the beds"
+      },
+      {
+        "kind": "oak",
+        "at": [
+          40,
+          22
+        ],
+        "solid": false,
+        "why": "the bank above the garden walk"
+      },
+      {
+        "kind": "bush",
+        "at": [
+          102,
+          22
+        ],
+        "solid": false
+      },
+      {
+        "kind": "bush",
+        "at": [
+          134,
+          24
+        ],
+        "solid": false
+      },
+      {
+        "kind": "bush",
+        "at": [
+          28,
+          134
+        ],
+        "solid": false,
+        "why": "the planted bank under the walk"
+      },
+      {
+        "kind": "bush",
+        "at": [
+          80,
+          130
+        ],
+        "solid": false
+      },
+      {
+        "kind": "bush",
+        "at": [
+          128,
+          135
+        ],
+        "solid": false
+      },
+      {
+        "kind": "hay",
+        "at": [
+          540,
+          62
+        ],
+        "size": [
+          18,
+          10
+        ],
+        "solid": false,
+        "why": "the hay slope"
+      },
+      {
+        "kind": "hay",
+        "at": [
+          592,
+          98
+        ],
+        "size": [
+          18,
+          10
+        ],
+        "solid": false
+      },
+      {
+        "kind": "oak",
+        "at": [
+          614,
+          40
+        ],
+        "solid": false
+      },
+      {
+        "kind": "bush",
+        "at": [
+          520,
+          132
+        ],
+        "solid": false
+      },
+      {
+        "kind": "bush",
+        "at": [
+          622,
+          132
+        ],
+        "solid": false
+      },
+      {
+        "kind": "kit_lantern",
+        "at": [
+          290,
+          200
+        ],
+        "why": "the gate lane's lamps"
+      },
+      {
+        "kind": "kit_lantern",
+        "at": [
+          350,
+          200
+        ]
+      },
+      {
+        "kind": "flower_tub",
+        "at": [
+          230,
+          200
+        ],
+        "size": [
+          12,
+          6
+        ]
+      },
+      {
+        "kind": "flower_tub",
+        "at": [
+          266,
+          200
+        ],
+        "size": [
+          12,
+          6
+        ]
+      },
+      {
+        "kind": "bench",
+        "at": [
+          350,
+          372
+        ],
+        "size": [
+          24,
+          6
+        ],
+        "why": "a bench on the square's south side"
+      },
+      {
+        "kind": "barrel",
+        "at": [
+          194,
+          252
+        ],
+        "size": [
+          10,
+          8
+        ]
+      },
+      {
+        "kind": "crates",
+        "at": [
+          194,
+          276
+        ],
+        "size": [
+          12,
+          10
+        ],
+        "why": "the bakery's flour crates"
+      },
+      {
+        "kind": "barrel",
+        "at": [
+          358,
+          252
+        ],
+        "size": [
+          10,
+          8
+        ],
+        "why": "Moss's stock"
+      },
+      {
+        "kind": "crates",
+        "at": [
+          410,
+          252
+        ],
+        "size": [
+          12,
+          10
+        ]
+      },
+      {
+        "kind": "woodpile",
+        "at": [
+          557,
+          240
+        ],
+        "size": [
+          22,
+          8
+        ],
+        "why": "the anvil yard: fuel"
+      },
+      {
+        "kind": "coal",
+        "at": [
+          560,
+          264
+        ],
+        "size": [
+          16,
+          8
+        ]
+      },
+      {
+        "kind": "trough",
+        "at": [
+          528,
+          302
+        ],
+        "size": [
+          20,
+          8
+        ],
+        "why": "the anvil yard: the quench trough"
+      },
+      {
+        "kind": "grindstone",
+        "at": [
+          558,
+          294
+        ],
+        "size": [
+          14,
+          6
+        ]
+      },
+      {
+        "kind": "barrel",
+        "at": [
+          446,
+          264
+        ],
+        "size": [
+          10,
+          8
+        ]
+      },
+      {
+        "kind": "flower_tub",
+        "at": [
+          440,
+          414
+        ],
+        "size": [
+          12,
+          6
+        ]
+      },
+      {
+        "kind": "barrel",
+        "at": [
+          534,
+          408
+        ],
+        "size": [
+          10,
+          8
+        ],
+        "why": "the Ferns' rain barrel"
+      },
+      {
+        "kind": "oak",
+        "at": [
+          300,
+          480
+        ],
+        "why": "the park round the crater"
+      },
+      {
+        "kind": "oak",
+        "at": [
+          392,
+          542
+        ]
+      },
+      {
+        "kind": "oak",
+        "at": [
+          604,
+          508
+        ]
+      },
+      {
+        "kind": "oak",
+        "at": [
+          22,
+          408
+        ]
+      },
+      {
+        "kind": "oak",
+        "at": [
+          182,
+          548
+        ]
+      },
+      {
+        "kind": "oak",
+        "at": [
+          612,
+          262
+        ]
+      },
+      {
+        "kind": "oak",
+        "at": [
+          40,
+          244
+        ]
+      },
+      {
+        "kind": "bush",
+        "at": [
+          252,
+          524
+        ]
+      },
+      {
+        "kind": "bush",
+        "at": [
+          446,
+          476
+        ]
+      },
+      {
+        "kind": "bush",
+        "at": [
+          570,
+          446
+        ]
+      },
+      {
+        "kind": "bush",
+        "at": [
+          82,
+          228
+        ]
+      },
+      {
+        "kind": "bush",
+        "at": [
+          604,
+          176
+        ]
+      },
+      {
+        "kind": "boulder",
+        "at": [
+          332,
+          424
+        ]
+      },
+      {
+        "kind": "debris",
+        "at": [
+          262,
+          280
+        ],
+        "size": [
+          26,
+          12
+        ],
+        "solid": false,
+        "if": {
+          "not_flags": [
+            "shard_home:woodland"
+          ]
+        },
+        "id": "debris_a",
+        "why": "storm litter on the flags until the homecoming"
+      },
+      {
+        "kind": "debris",
+        "at": [
+          372,
+          312
+        ],
+        "size": [
+          22,
+          10
+        ],
+        "solid": false,
+        "if": {
+          "not_flags": [
+            "shard_home:woodland"
+          ]
+        },
+        "id": "debris_b"
+      },
+      {
+        "kind": "debris",
+        "at": [
+          318,
+          360
+        ],
+        "size": [
+          24,
+          10
+        ],
+        "solid": false,
+        "if": {
+          "not_flags": [
+            "shard_home:woodland"
+          ]
+        },
+        "id": "debris_c"
+      },
+      {
+        "kind": "debris",
+        "at": [
+          478,
+          312
+        ],
+        "size": [
+          20,
+          10
+        ],
+        "solid": false,
+        "if": {
+          "not_flags": [
+            "shard_home:woodland"
+          ]
+        },
+        "id": "debris_d"
+      },
+      {
+        "kind": "cart",
+        "at": [
+          236,
+          262
+        ],
+        "size": [
+          22,
+          8
+        ],
+        "id": "handcart",
+        "why": "a handcart left when the village ran to the halt farm"
+      },
+      {
+        "kind": "bench",
+        "at": [
+          270,
+          372
+        ],
+        "size": [
+          24,
+          6
+        ]
+      },
+      {
+        "kind": "flower_tub",
+        "at": [
+          380,
+          200
+        ],
+        "size": [
+          12,
+          6
+        ]
+      },
+      {
+        "kind": "flower_tub",
+        "at": [
+          404,
+          200
+        ],
+        "size": [
+          12,
+          6
+        ]
+      }
+    ],
+    "setts": [
+      [
+        288,
+        314,
+        16,
+        30
+      ]
+    ],
+    "puddles": [
+      [
+        250,
+        250,
+        10,
+        4
+      ],
+      [
+        404,
+        330,
+        8,
+        3
+      ],
+      [
+        228,
+        318,
+        6,
+        2.5
+      ]
+    ]
+  }
 }
