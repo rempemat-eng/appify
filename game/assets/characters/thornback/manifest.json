@@ -48,9 +48,9 @@
        "path": "res://assets/animated/thornback/idle_S_00.png",
        "file": "idle_S_00.png",
        "packed_bounds": [
-        67,
-        85,
-        93,
+        66,
+        95,
+        95,
         140
        ],
        "anchors": {
@@ -71,8 +71,8 @@
          -5.8
         ],
         "shard": [
-         3.9,
-         -46.2
+         13.9,
+         -38.4
         ],
         "strike": [
          -0.0,
@@ -80,12 +80,11 @@
         ]
        },
        "equipment": {
-        "shard": 114,
-        "bramble": 116,
-        "tusk": 14,
-        "glow": 48
+        "shard": 90,
+        "bramble": 124,
+        "tusk": 14
        },
-       "sha256": "be093d4bc24f0e30739d5d9065b9631b029be13000f6ad33729118c0f9891062",
+       "sha256": "dd524ef6ee8f58d114e6799e6555f30f0b86a1290fc5411803e4bfbdbd76899e",
        "sheet": "sheets/idle_S.png",
        "region": [
         0,
@@ -98,9 +97,9 @@
        "path": "res://assets/animated/thornback/idle_S_01.png",
        "file": "idle_S_01.png",
        "packed_bounds": [
-        67,
-        86,
-        93,
+        66,
+        95,
+        95,
         140
        ],
        "anchors": {
@@ -121,8 +120,8 @@
          -5.8
         ],
         "shard": [
-         3.9,
-         -46.0
+         13.9,
+         -38.1
         ],
         "strike": [
          -0.0,
@@ -130,12 +129,11 @@
         ]
        },
        "equipment": {
-        "shard": 114,
-        "bramble": 129,
-        "tusk": 14,
-        "glow": 39
+        "shard": 104,
+        "bramble": 117,
+        "tusk": 14
        },
-       "sha256": "7ffb28b39a0b5e8145ec84b3cc1aa5157b767e8434c8be2131ece8a4646eb4c0",
+       "sha256": "a1d94d026356e3f2988af5f121448ccb802de03a7fc3afa6e84e1e959ae3002b",
        "sheet": "sheets/idle_S.png",
        "region": [
         160,
@@ -148,9 +146,9 @@
        "path": "res://assets/animated/thornback/idle_S_02.png",
        "file": "idle_S_02.png",
        "packed_bounds": [
-        67,
-        86,
-        93,
+        66,
+        95,
+        95,
         140
        ],
        "anchors": {
@@ -171,8 +169,8 @@
          -5.8
         ],
         "shard": [
-         3.9,
-         -45.8
+         13.9,
+         -38.0
         ],
         "strike": [
          -0.0,
@@ -180,12 +178,11 @@
         ]
        },
        "equipment": {
-        "shard": 112,
-        "bramble": 128,
-        "tusk": 12,
-        "glow": 46
+        "shard": 94,
+        "bramble": 118,
+        "tusk": 12
        },
-       "sha256": "c4ca88e6fd20caae7a30cc252ba5e8c725af9e76bd56977e79b4a70c7da03336",
+       "sha256": "f3d844bf22b0ef18b90839c6808a68983d842edd60e7ab5583c73765eaf53d97",
        "sheet": "sheets/idle_S.png",
        "region": [
         320,
@@ -198,9 +195,9 @@
        "path": "res://assets/animated/thornback/idle_S_03.png",
        "file": "idle_S_03.png",
        "packed_bounds": [
-        67,
-        86,
-        93,
+        66,
+        95,
+        95,
         140
        ],
        "anchors": {
@@ -221,8 +218,8 @@
          -5.8
         ],
         "shard": [
-         3.9,
-         -46.0
+         13.9,
+         -38.1
         ],
         "strike": [
          -0.0,
@@ -230,12 +227,11 @@
         ]
        },
        "equipment": {
-        "shard": 114,
-        "bramble": 123,
-        "tusk": 14,
-        "glow": 40
+        "shard": 104,
+        "bramble": 117,
+        "tusk": 14
        },
-       "sha256": "596f2f13925b3f15bd203f38708f9ca841c9c0535a60fdf0e4248efc24aaf344",
+       "sha256": "a1d94d026356e3f2988af5f121448ccb802de03a7fc3afa6e84e1e959ae3002b",
        "sheet": "sheets/idle_S.png",
        "region": [
         480,
@@ -248,9 +244,9 @@
        "path": "res://assets/animated/thornback/idle_S_04.png",
        "file": "idle_S_04.png",
        "packed_bounds": [
-        67,
-        85,
-        93,
+        66,
+        95,
+        95,
         140
        ],
        "anchors": {
@@ -271,8 +267,8 @@
          -5.8
         ],
         "shard": [
-         3.9,
-         -46.2
+         13.9,
+         -38.4
         ],
         "strike": [
          -0.0,
@@ -280,12 +276,11 @@
         ]
        },
        "equipment": {
-        "shard": 113,
-        "bramble": 122,
-        "tusk": 14,
-        "glow": 41
+        "shard": 90,
+        "bramble": 124,
+        "tusk": 14
        },
-       "sha256": "649c082b35eb5800bba6d8a91ec13ee897eece353616563c874a194541d39564",
+       "sha256": "dd524ef6ee8f58d114e6799e6555f30f0b86a1290fc5411803e4bfbdbd76899e",
        "sheet": "sheets/idle_S.png",
        "region": [
         640,
@@ -298,9 +293,9 @@
        "path": "res://assets/animated/thornback/idle_S_05.png",
        "file": "idle_S_05.png",
        "packed_bounds": [
-        67,
-        85,
-        93,
+        66,
+        94,
+        95,
         140
        ],
        "anchors": {
@@ -321,8 +316,8 @@
          -5.8
         ],
         "shard": [
-         3.9,
-         -46.5
+         13.9,
+         -38.7
         ],
         "strike": [
          -0.0,
@@ -330,12 +325,11 @@
         ]
        },
        "equipment": {
-        "shard": 116,
-        "bramble": 123,
-        "tusk": 14,
-        "glow": 47
+        "shard": 91,
+        "bramble": 124,
+        "tusk": 14
        },
-       "sha256": "e750c661783b0e78f971a721c721dc2feae996f23155de915affa7f9641d5877",
+       "sha256": "8325c405fc25d982bc6f6efaee91652504982c5a03a0fb8ef6b63dd9535ddb27",
        "sheet": "sheets/idle_S.png",
        "region": [
         800,
@@ -348,9 +342,9 @@
        "path": "res://assets/animated/thornback/idle_S_06.png",
        "file": "idle_S_06.png",
        "packed_bounds": [
-        67,
-        85,
-        93,
+        66,
+        94,
+        95,
         140
        ],
        "anchors": {
@@ -371,8 +365,8 @@
          -5.8
         ],
         "shard": [
-         3.9,
-         -46.6
+         13.9,
+         -38.8
         ],
         "strike": [
          -0.0,
@@ -380,12 +374,11 @@
         ]
        },
        "equipment": {
-        "shard": 115,
-        "bramble": 123,
-        "tusk": 14,
-        "glow": 51
+        "shard": 99,
+        "bramble": 120,
+        "tusk": 14
        },
-       "sha256": "1b8765a4d750f2767a4837e10629a9d418c87c0481ecaa2db8b9d3412d326bbe",
+       "sha256": "2157dcbaa12e7c1c1df898fd962576cd028a0680bde06ab8bd52043003bed9ef",
        "sheet": "sheets/idle_S.png",
        "region": [
         960,
@@ -398,9 +391,9 @@
        "path": "res://assets/animated/thornback/idle_S_07.png",
        "file": "idle_S_07.png",
        "packed_bounds": [
-        67,
-        85,
-        93,
+        66,
+        94,
+        95,
         140
        ],
        "anchors": {
@@ -421,8 +414,8 @@
          -5.8
         ],
         "shard": [
-         3.9,
-         -46.5
+         13.9,
+         -38.7
         ],
         "strike": [
          -0.0,
@@ -430,12 +423,11 @@
         ]
        },
        "equipment": {
-        "shard": 116,
-        "bramble": 123,
-        "tusk": 14,
-        "glow": 40
+        "shard": 91,
+        "bramble": 124,
+        "tusk": 14
        },
-       "sha256": "52a3ad6d71a3facb76810bdc8b83c901bd66577a7296640fb98dbee93dd897e4",
+       "sha256": "42290858874f4f56d947d3ff7f851c279c4d79c05d37d4a1159f5268e9882c9c",
        "sheet": "sheets/idle_S.png",
        "region": [
         1120,
@@ -452,8 +444,8 @@
        "path": "res://assets/animated/thornback/idle_N_00.png",
        "file": "idle_N_00.png",
        "packed_bounds": [
-        67,
-        89,
+        64,
+        92,
         93,
         140
        ],
@@ -475,8 +467,8 @@
          1.8
         ],
         "shard": [
-         -3.9,
-         -39.4
+         -13.9,
+         -31.8
         ],
         "strike": [
          0.0,
@@ -485,11 +477,10 @@
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 132,
-        "shard": 119,
-        "glow": 37
+        "bramble": 131,
+        "shard": 117
        },
-       "sha256": "a404ce7f536ebe41ea6c67d9a76bcd89bd259b9966f6ed95fa4b44c846956e25",
+       "sha256": "d85a861425e7772710390afc24d3a8a57b85b9150155318d6e46a5fdbdd14f7f",
        "sheet": "sheets/idle_N.png",
        "region": [
         0,
@@ -502,8 +493,8 @@
        "path": "res://assets/animated/thornback/idle_N_01.png",
        "file": "idle_N_01.png",
        "packed_bounds": [
-        67,
-        89,
+        64,
+        92,
         93,
         140
        ],
@@ -525,8 +516,8 @@
          1.8
         ],
         "shard": [
-         -3.9,
-         -39.1
+         -13.9,
+         -31.5
         ],
         "strike": [
          0.0,
@@ -535,11 +526,10 @@
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 134,
-        "shard": 122,
-        "glow": 34
+        "bramble": 133,
+        "shard": 116
        },
-       "sha256": "6999a28cda1e0539fdbc7c43652104904b0e91f3de9e24837c706950b73b500f",
+       "sha256": "196a825033311c46c82f72e79acc8ae11cd03300697a1ba666662c2eb4890e7b",
        "sheet": "sheets/idle_N.png",
        "region": [
         160,
@@ -552,8 +542,8 @@
        "path": "res://assets/animated/thornback/idle_N_02.png",
        "file": "idle_N_02.png",
        "packed_bounds": [
-        67,
-        90,
+        64,
+        92,
         93,
         140
        ],
@@ -575,8 +565,8 @@
          1.8
         ],
         "shard": [
-         -3.9,
-         -39.0
+         -13.9,
+         -31.4
         ],
         "strike": [
          0.0,
@@ -585,11 +575,10 @@
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 135,
-        "shard": 125,
-        "glow": 39
+        "bramble": 136,
+        "shard": 115
        },
-       "sha256": "5c5926b2948e388d7189893d23e947f7e5eae1d9145625649daa67881f1c057b",
+       "sha256": "1611b69a34d2ff38526985646cc97bbf164b3208e3c04a86f34f2de52416c89c",
        "sheet": "sheets/idle_N.png",
        "region": [
         320,
@@ -602,8 +591,8 @@
        "path": "res://assets/animated/thornback/idle_N_03.png",
        "file": "idle_N_03.png",
        "packed_bounds": [
-        67,
-        89,
+        64,
+        92,
         93,
         140
        ],
@@ -625,8 +614,8 @@
          1.8
         ],
         "shard": [
-         -3.9,
-         -39.1
+         -13.9,
+         -31.5
         ],
         "strike": [
          0.0,
@@ -635,11 +624,10 @@
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 131,
-        "shard": 121,
-        "glow": 32
+        "bramble": 133,
+        "shard": 116
        },
-       "sha256": "290e99f9af98bf007c0ff9cd45a16b777e3dfe9477ebfe920a2c7af99cefd57e",
+       "sha256": "196a825033311c46c82f72e79acc8ae11cd03300697a1ba666662c2eb4890e7b",
        "sheet": "sheets/idle_N.png",
        "region": [
         480,
@@ -652,8 +640,8 @@
        "path": "res://assets/animated/thornback/idle_N_04.png",
        "file": "idle_N_04.png",
        "packed_bounds": [
-        67,
-        89,
+        64,
+        92,
         93,
         140
        ],
@@ -675,8 +663,8 @@
          1.8
         ],
         "shard": [
-         -3.9,
-         -39.4
+         -13.9,
+         -31.8
         ],
         "strike": [
          0.0,
@@ -685,11 +673,10 @@
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 135,
-        "shard": 121,
-        "glow": 37
+        "bramble": 131,
+        "shard": 117
        },
-       "sha256": "7cbea54af96a81a0c4290a1d60592f39a48105101980ded036df327a3503624b",
+       "sha256": "d85a861425e7772710390afc24d3a8a57b85b9150155318d6e46a5fdbdd14f7f",
        "sheet": "sheets/idle_N.png",
        "region": [
         640,
@@ -702,8 +689,8 @@
        "path": "res://assets/animated/thornback/idle_N_05.png",
        "file": "idle_N_05.png",
        "packed_bounds": [
-        67,
-        89,
+        64,
+        92,
         93,
         140
        ],
@@ -725,8 +712,8 @@
          1.8
         ],
         "shard": [
-         -3.9,
-         -39.7
+         -13.9,
+         -32.1
         ],
         "strike": [
          0.0,
@@ -735,11 +722,10 @@
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 136,
-        "shard": 127,
-        "glow": 41
+        "bramble": 124,
+        "shard": 120
        },
-       "sha256": "597fe84b671d87907fd103e7631ee4786f0464e94ffdc907031a691bc5ba2877",
+       "sha256": "59de1ae872aa0715c117ccc23eb6ebd4f06687fc96c32a432cdc4ee3c75e90a0",
        "sheet": "sheets/idle_N.png",
        "region": [
         800,
@@ -752,8 +738,8 @@
        "path": "res://assets/animated/thornback/idle_N_06.png",
        "file": "idle_N_06.png",
        "packed_bounds": [
-        67,
-        89,
+        64,
+        92,
         93,
         140
        ],
@@ -775,8 +761,8 @@
          1.8
         ],
         "shard": [
-         -3.9,
-         -39.8
+         -13.9,
+         -32.2
         ],
         "strike": [
          0.0,
@@ -785,11 +771,10 @@
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 137,
-        "shard": 126,
-        "glow": 35
+        "bramble": 135,
+        "shard": 112
        },
-       "sha256": "6fe451b6c12e19eebf3e61ccbc0f00c61c93afdbf663f3b359e588f89756e5ca",
+       "sha256": "3d58ead62ec1fed46d68efbcf9322a199ce3e0381dd3d09d64b682b9fe9a5cfd",
        "sheet": "sheets/idle_N.png",
        "region": [
         960,
@@ -802,8 +787,8 @@
        "path": "res://assets/animated/thornback/idle_N_07.png",
        "file": "idle_N_07.png",
        "packed_bounds": [
-        67,
-        89,
+        64,
+        92,
         93,
         140
        ],
@@ -825,8 +810,8 @@
          1.8
         ],
         "shard": [
-         -3.9,
-         -39.7
+         -13.9,
+         -32.1
         ],
         "strike": [
          0.0,
@@ -835,11 +820,10 @@
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 133,
-        "shard": 128,
-        "glow": 34
+        "bramble": 124,
+        "shard": 120
        },
-       "sha256": "ebc82901ae058691a3eeb3799c0d1daf9e50f0f1110b5a3c3a56bec14fb8aff4",
+       "sha256": "59de1ae872aa0715c117ccc23eb6ebd4f06687fc96c32a432cdc4ee3c75e90a0",
        "sheet": "sheets/idle_N.png",
        "region": [
         1120,
@@ -857,7 +841,7 @@
        "file": "idle_E_00.png",
        "packed_bounds": [
         52,
-        88,
+        95,
         123,
         136
        ],
@@ -879,8 +863,8 @@
          -2.0
         ],
         "shard": [
-         -9.4,
-         -42.8
+         -8.1,
+         -35.1
         ],
         "strike": [
          40.5,
@@ -888,12 +872,11 @@
         ]
        },
        "equipment": {
-        "bramble": 126,
-        "shard": 156,
-        "tusk": 18,
-        "glow": 47
+        "bramble": 167,
+        "shard": 74,
+        "tusk": 18
        },
-       "sha256": "8757f1538bd77e745a0f5e3786893448e30d58b2b240e8a99897f411c3191e3b",
+       "sha256": "09267999e6216f31b120d358fd058f70f72af59873d4229bbdbdf7f0f5456005",
        "sheet": "sheets/idle_E.png",
        "region": [
         0,
@@ -907,7 +890,7 @@
        "file": "idle_E_01.png",
        "packed_bounds": [
         52,
-        89,
+        95,
         123,
         136
        ],
@@ -929,8 +912,8 @@
          -2.0
         ],
         "shard": [
-         -9.4,
-         -42.5
+         -8.1,
+         -34.8
         ],
         "strike": [
          40.5,
@@ -938,12 +921,11 @@
         ]
        },
        "equipment": {
-        "bramble": 135,
-        "shard": 156,
-        "tusk": 23,
-        "glow": 45
+        "bramble": 170,
+        "shard": 76,
+        "tusk": 23
        },
-       "sha256": "7bd1b67ea273e17fc64682b9cd26c4443b1e2f58e0ba47f43fa9706bbcd95b6a",
+       "sha256": "097da79743ab999560516ac79f66b5494603513057f8df8691e38b76aa936eaf",
        "sheet": "sheets/idle_E.png",
        "region": [
         160,
@@ -957,7 +939,7 @@
        "file": "idle_E_02.png",
        "packed_bounds": [
         52,
-        89,
+        95,
         123,
         136
        ],
@@ -979,8 +961,8 @@
          -2.0
         ],
         "shard": [
-         -9.4,
-         -42.4
+         -8.1,
+         -34.7
         ],
         "strike": [
          40.5,
@@ -988,12 +970,11 @@
         ]
        },
        "equipment": {
-        "bramble": 131,
-        "shard": 151,
-        "tusk": 22,
-        "glow": 49
+        "bramble": 171,
+        "shard": 76,
+        "tusk": 22
        },
-       "sha256": "ab93a0fd231b12e3ef9c3ca684da662cd072d39d36f64be7b46b21da791afd4e",
+       "sha256": "668f4e8ba2b04cd42a7176bbb55210d44e0352588faf029e81011b2319963af8",
        "sheet": "sheets/idle_E.png",
        "region": [
         320,
@@ -1007,7 +988,7 @@
        "file": "idle_E_03.png",
        "packed_bounds": [
         52,
-        89,
+        95,
         123,
         136
        ],
@@ -1029,8 +1010,8 @@
          -2.0
         ],
         "shard": [
-         -9.4,
-         -42.5
+         -8.1,
+         -34.8
         ],
         "strike": [
          40.5,
@@ -1038,12 +1019,11 @@
         ]
        },
        "equipment": {
-        "bramble": 131,
-        "shard": 156,
-        "tusk": 23,
-        "glow": 42
+        "bramble": 170,
+        "shard": 76,
+        "tusk": 23
        },
-       "sha256": "e3996cd9e268289b06ce7c897f2cde9087edffdb2a5a6baaa4ccec9cc3cfb547",
+       "sha256": "097da79743ab999560516ac79f66b5494603513057f8df8691e38b76aa936eaf",
        "sheet": "sheets/idle_E.png",
        "region": [
         480,
@@ -1057,7 +1037,7 @@
        "file": "idle_E_04.png",
        "packed_bounds": [
         52,
-        89,
+        95,
         123,
         136
        ],
@@ -1079,8 +1059,8 @@
          -2.0
         ],
         "shard": [
-         -9.4,
-         -42.8
+         -8.1,
+         -35.1
         ],
         "strike": [
          40.5,
@@ -1088,12 +1068,11 @@
         ]
        },
        "equipment": {
-        "bramble": 131,
-        "shard": 156,
-        "tusk": 18,
-        "glow": 42
+        "bramble": 167,
+        "shard": 74,
+        "tusk": 18
        },
-       "sha256": "a2f1c7ac961c96248470fd8fc551c1f05f6d6e7aefd0fdb4e392835e99042478",
+       "sha256": "09267999e6216f31b120d358fd058f70f72af59873d4229bbdbdf7f0f5456005",
        "sheet": "sheets/idle_E.png",
        "region": [
         640,
@@ -1107,7 +1086,7 @@
        "file": "idle_E_05.png",
        "packed_bounds": [
         52,
-        88,
+        95,
         123,
         136
        ],
@@ -1129,8 +1108,8 @@
          -2.0
         ],
         "shard": [
-         -9.4,
-         -43.1
+         -8.1,
+         -35.4
         ],
         "strike": [
          40.5,
@@ -1138,12 +1117,11 @@
         ]
        },
        "equipment": {
-        "bramble": 132,
-        "shard": 154,
-        "tusk": 19,
-        "glow": 47
+        "bramble": 165,
+        "shard": 72,
+        "tusk": 19
        },
-       "sha256": "59027d7d539fd797c2602b4be461d8f403790a6f0c467f978b5eae0f1ccde709",
+       "sha256": "ed3c02729d9369cd46e34c9fb4f7d9eddd2c94dac2b57fff2ebac8149181cc8a",
        "sheet": "sheets/idle_E.png",
        "region": [
         800,
@@ -1157,7 +1135,7 @@
        "file": "idle_E_06.png",
        "packed_bounds": [
         52,
-        88,
+        95,
         123,
         136
        ],
@@ -1179,8 +1157,8 @@
          -2.0
         ],
         "shard": [
-         -9.4,
-         -43.2
+         -8.1,
+         -35.5
         ],
         "strike": [
          40.5,
@@ -1188,12 +1166,11 @@
         ]
        },
        "equipment": {
-        "bramble": 132,
-        "shard": 151,
-        "tusk": 19,
-        "glow": 46
+        "bramble": 163,
+        "shard": 76,
+        "tusk": 19
        },
-       "sha256": "74ba06b0d1cf6bd2b4740f53a9921b29ef39ecfdf4c4d9a0816f72bb7f353596",
+       "sha256": "06eca619dd9c92dc244c2d6e70c833246a389b179f7b4d97d86cfca6f842bbc8",
        "sheet": "sheets/idle_E.png",
        "region": [
         960,
@@ -1207,7 +1184,7 @@
        "file": "idle_E_07.png",
        "packed_bounds": [
         52,
-        88,
+        95,
         123,
         136
        ],
@@ -1229,8 +1206,8 @@
          -2.0
         ],
         "shard": [
-         -9.4,
-         -43.1
+         -8.1,
+         -35.4
         ],
         "strike": [
          40.5,
@@ -1238,12 +1215,11 @@
         ]
        },
        "equipment": {
-        "bramble": 133,
-        "shard": 154,
-        "tusk": 19,
-        "glow": 42
+        "bramble": 165,
+        "shard": 72,
+        "tusk": 19
        },
-       "sha256": "bf6bcd21ead5b73a38fba244a46b04055cc84c0a7988f80fc1cbd71d48bf6e16",
+       "sha256": "36292782db386e7a02a94e46ceb134353b88a07eb73f9d93f437e246cdd2ff00",
        "sheet": "sheets/idle_E.png",
        "region": [
         1120,
@@ -1261,7 +1237,7 @@
        "file": "idle_W_00.png",
        "packed_bounds": [
         37,
-        88,
+        95,
         108,
         136
        ],
@@ -1283,8 +1259,8 @@
          -2.0
         ],
         "shard": [
-         10.2,
-         -42.8
+         10.8,
+         -35.1
         ],
         "strike": [
          -40.5,
@@ -1292,12 +1268,11 @@
         ]
        },
        "equipment": {
-        "bramble": 126,
-        "shard": 149,
-        "tusk": 18,
-        "glow": 46
+        "bramble": 157,
+        "shard": 77,
+        "tusk": 18
        },
-       "sha256": "21542f5332e66ea5622ede2b441b3dc9f2fcecc88bc23d7fa68337a343377921",
+       "sha256": "8fca30c70196776bb521667da8173543c2eae2221dfe1cf242c62ebb407e4a65",
        "sheet": "sheets/idle_W.png",
        "region": [
         0,
@@ -1311,7 +1286,7 @@
        "file": "idle_W_01.png",
        "packed_bounds": [
         37,
-        89,
+        95,
         108,
         136
        ],
@@ -1333,8 +1308,8 @@
          -2.0
         ],
         "shard": [
-         10.2,
-         -42.5
+         10.8,
+         -34.8
         ],
         "strike": [
          -40.5,
@@ -1342,12 +1317,11 @@
         ]
        },
        "equipment": {
-        "bramble": 123,
-        "shard": 151,
-        "tusk": 23,
-        "glow": 49
+        "bramble": 155,
+        "shard": 78,
+        "tusk": 23
        },
-       "sha256": "6244fd92e085d5df008e573e3270433cffb071df41a0a70d83b1f3ddef85ef6c",
+       "sha256": "16d16ed936889e4602978f2217a94d6b90c23e4138a280e5a310964b1569fe58",
        "sheet": "sheets/idle_W.png",
        "region": [
         160,
@@ -1361,7 +1335,7 @@
        "file": "idle_W_02.png",
        "packed_bounds": [
         37,
-        89,
+        95,
         108,
         136
        ],
@@ -1383,8 +1357,8 @@
          -2.0
         ],
         "shard": [
-         10.2,
-         -42.4
+         10.8,
+         -34.7
         ],
         "strike": [
          -40.5,
@@ -1392,12 +1366,11 @@
         ]
        },
        "equipment": {
-        "bramble": 125,
-        "shard": 146,
-        "tusk": 22,
-        "glow": 48
+        "bramble": 156,
+        "shard": 78,
+        "tusk": 22
        },
-       "sha256": "937ea9da175ed0df32044f02f724e2bae1ddb52c9b824800315613bb7f4dc619",
+       "sha256": "3c688ee0b9d290ce41b127edda70bf3d7029f90b029c9171532686e56fd80baa",
        "sheet": "sheets/idle_W.png",
        "region": [
         320,
@@ -1411,7 +1384,7 @@
        "file": "idle_W_03.png",
        "packed_bounds": [
         37,
-        89,
+        95,
         108,
         136
        ],
@@ -1433,8 +1406,8 @@
          -2.0
         ],
         "shard": [
-         10.2,
-         -42.5
+         10.8,
+         -34.8
         ],
         "strike": [
          -40.5,
@@ -1442,12 +1415,11 @@
         ]
        },
        "equipment": {
-        "bramble": 127,
-        "shard": 151,
-        "tusk": 23,
-        "glow": 44
+        "bramble": 155,
+        "shard": 78,
+        "tusk": 23
        },
-       "sha256": "1dd98253cd32919a9296a806b712cb0ef0645e6dc0e83bfb11f381b0e95dc51b",
+       "sha256": "16d16ed936889e4602978f2217a94d6b90c23e4138a280e5a310964b1569fe58",
        "sheet": "sheets/idle_W.png",
        "region": [
         480,
@@ -1461,7 +1433,7 @@
        "file": "idle_W_04.png",
        "packed_bounds": [
         37,
-        88,
+        95,
         108,
         136
        ],
@@ -1483,8 +1455,8 @@
          -2.0
         ],
         "shard": [
-         10.2,
-         -42.8
+         10.8,
+         -35.1
         ],
         "strike": [
          -40.5,
@@ -1492,12 +1464,11 @@
         ]
        },
        "equipment": {
-        "bramble": 123,
-        "shard": 149,
-        "tusk": 18,
-        "glow": 48
+        "bramble": 157,
+        "shard": 77,
+        "tusk": 18
        },
-       "sha256": "7d525d61b6b7cc7833b97d90f89ade6c1582678e7de452080d1eb7d1e0ab340c",
+       "sha256": "8fca30c70196776bb521667da8173543c2eae2221dfe1cf242c62ebb407e4a65",
        "sheet": "sheets/idle_W.png",
        "region": [
         640,
@@ -1511,7 +1482,7 @@
        "file": "idle_W_05.png",
        "packed_bounds": [
         37,
-        88,
+        95,
         108,
         136
        ],
@@ -1533,8 +1504,8 @@
          -2.0
         ],
         "shard": [
-         10.2,
-         -43.1
+         10.8,
+         -35.4
         ],
         "strike": [
          -40.5,
@@ -1542,12 +1513,11 @@
         ]
        },
        "equipment": {
-        "bramble": 124,
-        "shard": 149,
-        "tusk": 19,
-        "glow": 49
+        "bramble": 155,
+        "shard": 77,
+        "tusk": 19
        },
-       "sha256": "c0c5efd458461629a1a9ea8051f7f0a2560d30cd1f97a34a046f9d4ca7b5d25f",
+       "sha256": "59a9b075b56851b88a653f87db1c2a988bd921f87a4feb315d1353fd2a1d166e",
        "sheet": "sheets/idle_W.png",
        "region": [
         800,
@@ -1561,7 +1531,7 @@
        "file": "idle_W_06.png",
        "packed_bounds": [
         37,
-        88,
+        95,
         108,
         136
        ],
@@ -1583,8 +1553,8 @@
          -2.0
         ],
         "shard": [
-         10.2,
-         -43.2
+         10.8,
+         -35.5
         ],
         "strike": [
          -40.5,
@@ -1592,12 +1562,11 @@
         ]
        },
        "equipment": {
-        "bramble": 127,
-        "shard": 147,
-        "tusk": 19,
-        "glow": 49
+        "bramble": 153,
+        "shard": 82,
+        "tusk": 19
        },
-       "sha256": "0095740537f1c0296a2877a54ea8732df8b1d2ba02e54679569431c111c141a0",
+       "sha256": "045dd84bedc60d1986111965536774fc22c689bb8a847376b332a414d57a3abd",
        "sheet": "sheets/idle_W.png",
        "region": [
         960,
@@ -1611,7 +1580,7 @@
        "file": "idle_W_07.png",
        "packed_bounds": [
         37,
-        88,
+        95,
         108,
         136
        ],
@@ -1633,8 +1602,8 @@
          -2.0
         ],
         "shard": [
-         10.2,
-         -43.1
+         10.8,
+         -35.4
         ],
         "strike": [
          -40.5,
@@ -1642,12 +1611,11 @@
         ]
        },
        "equipment": {
-        "bramble": 124,
-        "shard": 149,
-        "tusk": 19,
-        "glow": 51
+        "bramble": 155,
+        "shard": 77,
+        "tusk": 19
        },
-       "sha256": "6580e4e33a2afe77de3a38b17cb938ab1fe7285e57636ce4312511e25f0e148d",
+       "sha256": "d7ec848eec8d5d9384b3f0f58e68313568cc5161e0aaa418ed24c3b0274eed19",
        "sheet": "sheets/idle_W.png",
        "region": [
         1120,
@@ -1685,9 +1653,9 @@
        "path": "res://assets/animated/thornback/move_S_00.png",
        "file": "move_S_00.png",
        "packed_bounds": [
-        67,
-        85,
-        93,
+        66,
+        94,
+        95,
         141
        ],
        "anchors": {
@@ -1708,8 +1676,8 @@
          -7.0
         ],
         "shard": [
-         3.9,
-         -46.6
+         13.9,
+         -38.8
         ],
         "strike": [
          -0.0,
@@ -1717,12 +1685,11 @@
         ]
        },
        "equipment": {
-        "shard": 115,
-        "bramble": 123,
-        "tusk": 12,
-        "glow": 51
+        "shard": 99,
+        "bramble": 120,
+        "tusk": 12
        },
-       "sha256": "51bdf90640180e8354524c053de7454be3e4abf227ddceca99008c863e06b104",
+       "sha256": "5fc9e678a642cc06f8b1afb92e9687eb219691345ccc9362cef32b16cec4e89f",
        "sheet": "sheets/move_S.png",
        "region": [
         0,
@@ -1735,9 +1702,9 @@
        "path": "res://assets/animated/thornback/move_S_01.png",
        "file": "move_S_01.png",
        "packed_bounds": [
-        67,
-        85,
-        93,
+        66,
+        95,
+        95,
         141
        ],
        "anchors": {
@@ -1758,8 +1725,8 @@
          -8.8
         ],
         "shard": [
-         3.9,
-         -46.1
+         13.9,
+         -38.3
         ],
         "strike": [
          -0.0,
@@ -1767,12 +1734,11 @@
         ]
        },
        "equipment": {
-        "shard": 116,
-        "bramble": 124,
-        "tusk": 14,
-        "glow": 41
+        "shard": 93,
+        "bramble": 121,
+        "tusk": 14
        },
-       "sha256": "5eaf5d7940f1e98a0363c5ff0cb96ccee19f6779da51768cfc36bbd7e26c0c9d",
+       "sha256": "f6211a3eef65fefb01366ba7bf12ce21099e68178f8fb20310ebefa4cb84ec21",
        "sheet": "sheets/move_S.png",
        "region": [
         160,
@@ -1785,9 +1751,9 @@
        "path": "res://assets/animated/thornback/move_S_02.png",
        "file": "move_S_02.png",
        "packed_bounds": [
-        67,
-        86,
-        93,
+        66,
+        95,
+        95,
         139
        ],
        "anchors": {
@@ -1808,8 +1774,8 @@
          -8.4
         ],
         "shard": [
-         3.9,
-         -45.6
+         13.9,
+         -37.7
         ],
         "strike": [
          -0.0,
@@ -1817,12 +1783,11 @@
         ]
        },
        "equipment": {
-        "shard": 115,
-        "bramble": 123,
-        "tusk": 14,
-        "glow": 51
+        "shard": 91,
+        "bramble": 124,
+        "tusk": 14
        },
-       "sha256": "fba489033ae9771b02c185f542bdcf28ed8808111140ef173d74d8580211dd4a",
+       "sha256": "ee3776d01690dc564e724324b5e4ab8896aebe880692d0839a56fb6d7ccb59a3",
        "sheet": "sheets/move_S.png",
        "region": [
         320,
@@ -1835,9 +1800,9 @@
        "path": "res://assets/animated/thornback/move_S_03.png",
        "file": "move_S_03.png",
        "packed_bounds": [
-        67,
-        85,
-        93,
+        66,
+        95,
+        95,
         138
        ],
        "anchors": {
@@ -1858,8 +1823,8 @@
          -6.1
         ],
         "shard": [
-         3.9,
-         -46.1
+         13.9,
+         -38.3
         ],
         "strike": [
          -0.0,
@@ -1867,12 +1832,11 @@
         ]
        },
        "equipment": {
-        "shard": 117,
-        "bramble": 122,
-        "tusk": 18,
-        "glow": 46
+        "shard": 93,
+        "bramble": 123,
+        "tusk": 18
        },
-       "sha256": "fd70d2c1717a27592649d5972d776196cbf268b64bde95c4a00c404abbb910dc",
+       "sha256": "a0006d5527cd5bba1af70026593998842a5d1dd7a0cdc0ea53bf6ef83da452fb",
        "sheet": "sheets/move_S.png",
        "region": [
         480,
@@ -1885,9 +1849,9 @@
        "path": "res://assets/animated/thornback/move_S_04.png",
        "file": "move_S_04.png",
        "packed_bounds": [
-        67,
-        85,
-        93,
+        66,
+        94,
+        95,
         141
        ],
        "anchors": {
@@ -1908,8 +1872,8 @@
          -3.2
         ],
         "shard": [
-         3.9,
-         -46.6
+         13.9,
+         -38.8
         ],
         "strike": [
          -0.0,
@@ -1917,12 +1881,11 @@
         ]
        },
        "equipment": {
-        "shard": 116,
-        "bramble": 125,
-        "tusk": 12,
-        "glow": 40
+        "shard": 99,
+        "bramble": 120,
+        "tusk": 12
        },
-       "sha256": "7d14400b814280356067eee90c1419a9020f8e8b20a8834b054bbc96de0a4031",
+       "sha256": "3b6d319bfcf5ec4e7f07fa2f9dcab8398d623d9ae2f3410f492132c3ce7bb6fc",
        "sheet": "sheets/move_S.png",
        "region": [
         640,
@@ -1935,9 +1898,9 @@
        "path": "res://assets/animated/thornback/move_S_05.png",
        "file": "move_S_05.png",
        "packed_bounds": [
-        67,
-        86,
-        93,
+        66,
+        95,
+        95,
         141
        ],
        "anchors": {
@@ -1958,8 +1921,8 @@
          -3.7
         ],
         "shard": [
-         3.9,
-         -46.1
+         13.9,
+         -38.3
         ],
         "strike": [
          -0.0,
@@ -1967,12 +1930,11 @@
         ]
        },
        "equipment": {
-        "shard": 116,
-        "bramble": 124,
-        "tusk": 14,
-        "glow": 51
+        "shard": 93,
+        "bramble": 121,
+        "tusk": 14
        },
-       "sha256": "90ce4c9b78f686a8d4c7ba2b677e42de100e7d96f2fc7a10173a08499809c561",
+       "sha256": "d85c4ad3b0c32a1ee144cba1df090a8c301a22bd8b8779597c792ee897190389",
        "sheet": "sheets/move_S.png",
        "region": [
         800,
@@ -1985,9 +1947,9 @@
        "path": "res://assets/animated/thornback/move_S_06.png",
        "file": "move_S_06.png",
        "packed_bounds": [
-        67,
-        86,
-        93,
+        66,
+        95,
+        95,
         139
        ],
        "anchors": {
@@ -2008,8 +1970,8 @@
          -5.1
         ],
         "shard": [
-         3.9,
-         -45.6
+         13.9,
+         -37.7
         ],
         "strike": [
          -0.0,
@@ -2017,12 +1979,11 @@
         ]
        },
        "equipment": {
-        "shard": 115,
-        "bramble": 119,
-        "tusk": 14,
-        "glow": 43
+        "shard": 91,
+        "bramble": 124,
+        "tusk": 14
        },
-       "sha256": "54e863937e703f528ad75cbb0ee334c7ed65da691489357f1f9fbefb3910e228",
+       "sha256": "44b0c988f69d7ed3ca2da690e12a541e727320ee7e2cbf61db5e7c60ee62ca7a",
        "sheet": "sheets/move_S.png",
        "region": [
         960,
@@ -2035,9 +1996,9 @@
        "path": "res://assets/animated/thornback/move_S_07.png",
        "file": "move_S_07.png",
        "packed_bounds": [
-        67,
-        85,
-        93,
+        66,
+        95,
+        95,
         138
        ],
        "anchors": {
@@ -2058,8 +2019,8 @@
          -6.4
         ],
         "shard": [
-         3.9,
-         -46.1
+         13.9,
+         -38.3
         ],
         "strike": [
          -0.0,
@@ -2067,12 +2028,11 @@
         ]
        },
        "equipment": {
-        "shard": 116,
-        "bramble": 126,
-        "tusk": 18,
-        "glow": 41
+        "shard": 93,
+        "bramble": 123,
+        "tusk": 18
        },
-       "sha256": "f0089a093c12e9c7f2f77ca84f89548300e3df4d82c335414cc47fcd563078f4",
+       "sha256": "cca51a263719693266d7655cd4296a1e354e002ecb9a4de109a1bd8b844e87b6",
        "sheet": "sheets/move_S.png",
        "region": [
         1120,
@@ -2089,8 +2049,8 @@
        "path": "res://assets/animated/thornback/move_N_00.png",
        "file": "move_N_00.png",
        "packed_bounds": [
-        67,
-        89,
+        64,
+        92,
         93,
         141
        ],
@@ -2112,8 +2072,8 @@
          3.0
         ],
         "shard": [
-         -3.9,
-         -39.8
+         -13.9,
+         -32.2
         ],
         "strike": [
          0.0,
@@ -2122,11 +2082,10 @@
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 137,
-        "shard": 126,
-        "glow": 35
+        "bramble": 135,
+        "shard": 112
        },
-       "sha256": "616da392f2a71d46d6a289dc313fcc06f4b5cd8ddd6cc27a3257e3eaa8caa537",
+       "sha256": "8416d15cc940ad0e7173d4f2b2aa2f28458553baf77c6a35abc263db9becaa7f",
        "sheet": "sheets/move_N.png",
        "region": [
         0,
@@ -2139,8 +2098,8 @@
        "path": "res://assets/animated/thornback/move_N_01.png",
        "file": "move_N_01.png",
        "packed_bounds": [
-        67,
-        89,
+        64,
+        92,
         93,
         138
        ],
@@ -2162,8 +2121,8 @@
          0.0
         ],
         "shard": [
-         -3.9,
-         -39.3
+         -13.9,
+         -31.7
         ],
         "strike": [
          0.0,
@@ -2172,11 +2131,10 @@
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 133,
-        "shard": 122,
-        "glow": 39
+        "bramble": 132,
+        "shard": 116
        },
-       "sha256": "fc17d6da421f69b166efed14693b4e643b99d84d43540be6b9b4eef964944bde",
+       "sha256": "1fa23bc65ac1f4b6cca9aac7fc6e25b5afd90252105ff21e6d8cc4dbcd1cafc0",
        "sheet": "sheets/move_N.png",
        "region": [
         160,
@@ -2189,8 +2147,8 @@
        "path": "res://assets/animated/thornback/move_N_02.png",
        "file": "move_N_02.png",
        "packed_bounds": [
-        67,
-        90,
+        64,
+        93,
         93,
         139
        ],
@@ -2212,8 +2170,8 @@
          -2.3
         ],
         "shard": [
-         -3.9,
-         -38.7
+         -13.9,
+         -31.1
         ],
         "strike": [
          0.0,
@@ -2222,11 +2180,10 @@
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 134,
-        "shard": 133,
-        "glow": 40
+        "bramble": 126,
+        "shard": 120
        },
-       "sha256": "35955fdd1fe91fef9ea0d1c04717d02adf92b2e9e3684f09eac2fb3381ae95dc",
+       "sha256": "fec39262234e9e044a2e08a86a8bc26004e2de9dd03dbcace1d6bde3e6a55657",
        "sheet": "sheets/move_N.png",
        "region": [
         320,
@@ -2239,8 +2196,8 @@
        "path": "res://assets/animated/thornback/move_N_03.png",
        "file": "move_N_03.png",
        "packed_bounds": [
-        67,
-        89,
+        64,
+        93,
         93,
         140
        ],
@@ -2262,8 +2219,8 @@
          -2.7
         ],
         "shard": [
-         -3.9,
-         -39.3
+         -13.9,
+         -31.7
         ],
         "strike": [
          0.0,
@@ -2272,11 +2229,10 @@
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 130,
-        "shard": 121,
-        "glow": 35
+        "bramble": 132,
+        "shard": 116
        },
-       "sha256": "3fcd9fc4334306259b949a6bbb599b4a8968dd4d9f6adf4ba8ac44f81560a78d",
+       "sha256": "95687f49de35bfb40d9487f1d48a35afb4639b79ff697c49cefcda45f4e3233d",
        "sheet": "sheets/move_N.png",
        "region": [
         480,
@@ -2289,8 +2245,8 @@
        "path": "res://assets/animated/thornback/move_N_04.png",
        "file": "move_N_04.png",
        "packed_bounds": [
-        67,
-        89,
+        64,
+        92,
         93,
         141
        ],
@@ -2312,8 +2268,8 @@
          -0.8
         ],
         "shard": [
-         -3.9,
-         -39.8
+         -13.9,
+         -32.2
         ],
         "strike": [
          0.0,
@@ -2322,11 +2278,10 @@
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 138,
-        "shard": 128,
-        "glow": 27
+        "bramble": 135,
+        "shard": 112
        },
-       "sha256": "08cbe29d38eb0935e4830caf32711a64e06eaf629d95af80cd94c1cc5b4f59a3",
+       "sha256": "806ae71a0ff7114214cd942c8b441abf1782181b7dbbbc2696a8a57d8051709f",
        "sheet": "sheets/move_N.png",
        "region": [
         640,
@@ -2339,8 +2294,8 @@
        "path": "res://assets/animated/thornback/move_N_05.png",
        "file": "move_N_05.png",
        "packed_bounds": [
-        67,
-        89,
+        64,
+        92,
         93,
         138
        ],
@@ -2362,8 +2317,8 @@
          -0.3
         ],
         "shard": [
-         -3.9,
-         -39.3
+         -13.9,
+         -31.7
         ],
         "strike": [
          0.0,
@@ -2372,11 +2327,10 @@
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 134,
-        "shard": 122,
-        "glow": 41
+        "bramble": 132,
+        "shard": 116
        },
-       "sha256": "0141936d04889a09b059d90e1328dccc463ed97d024b93aac486244739433512",
+       "sha256": "c84ca3dcf7404fcac0704e9c0645d9085bca31bd5b1502e164bc8fc737daf422",
        "sheet": "sheets/move_N.png",
        "region": [
         800,
@@ -2389,8 +2343,8 @@
        "path": "res://assets/animated/thornback/move_N_06.png",
        "file": "move_N_06.png",
        "packed_bounds": [
-        67,
-        90,
+        64,
+        93,
         93,
         139
        ],
@@ -2412,8 +2366,8 @@
          1.1
         ],
         "shard": [
-         -3.9,
-         -38.7
+         -13.9,
+         -31.1
         ],
         "strike": [
          0.0,
@@ -2422,11 +2376,10 @@
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 133,
-        "shard": 131,
-        "glow": 32
+        "bramble": 126,
+        "shard": 120
        },
-       "sha256": "5025abf649d947239294f6058d360a3b520f627ad5d76c38df2f43b6a3a12f38",
+       "sha256": "529040b47bc8de3a4d35a705553f0aa49c5361bdcfb795b97c7a2c044a1ee8eb",
        "sheet": "sheets/move_N.png",
        "region": [
         960,
@@ -2439,8 +2392,8 @@
        "path": "res://assets/animated/thornback/move_N_07.png",
        "file": "move_N_07.png",
        "packed_bounds": [
-        67,
-        89,
+        64,
+        93,
         93,
         140
        ],
@@ -2462,8 +2415,8 @@
          2.4
         ],
         "shard": [
-         -3.9,
-         -39.3
+         -13.9,
+         -31.7
         ],
         "strike": [
          0.0,
@@ -2472,11 +2425,10 @@
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 133,
-        "shard": 122,
-        "glow": 39
+        "bramble": 132,
+        "shard": 116
        },
-       "sha256": "68423c23a6f30c7eeb28beda1c415844b97cf8eefdb3044d2b5e3e9993d2ba9e",
+       "sha256": "94d371947369c68a8a979b62f5804ff28afe09f91b45f7eab150d0f7a435bcf7",
        "sheet": "sheets/move_N.png",
        "region": [
         1120,
@@ -2494,7 +2446,7 @@
        "file": "move_E_00.png",
        "packed_bounds": [
         52,
-        88,
+        95,
         123,
         136
        ],
@@ -2516,8 +2468,8 @@
          -2.0
         ],
         "shard": [
-         -9.4,
-         -43.2
+         -8.1,
+         -35.5
         ],
         "strike": [
          40.5,
@@ -2525,12 +2477,11 @@
         ]
        },
        "equipment": {
-        "bramble": 133,
-        "shard": 151,
-        "tusk": 22,
-        "glow": 46
+        "bramble": 164,
+        "shard": 76,
+        "tusk": 22
        },
-       "sha256": "1c50635479b2df4001bc09bf1ee3d805eafb8d0ac00a1ece3789c2fd7320b68f",
+       "sha256": "721dd29e37ced9676eba694e58fc6f1a5afd6be96e030a4343157b8354b40d9c",
        "sheet": "sheets/move_E.png",
        "region": [
         0,
@@ -2544,7 +2495,7 @@
        "file": "move_E_01.png",
        "packed_bounds": [
         52,
-        89,
+        95,
         123,
         136
        ],
@@ -2566,8 +2517,8 @@
          -4.4
         ],
         "shard": [
-         -9.4,
-         -42.7
+         -8.1,
+         -35.0
         ],
         "strike": [
          40.5,
@@ -2575,12 +2526,11 @@
         ]
        },
        "equipment": {
-        "bramble": 137,
-        "shard": 152,
-        "tusk": 19,
-        "glow": 43
+        "bramble": 174,
+        "shard": 76,
+        "tusk": 19
        },
-       "sha256": "4443f9ca112064fe34257e2ac676df513cf8a636d0dec0f19001b1fbefb3fec0",
+       "sha256": "72209c8919d77994d415b7d36dd584b12aed09afb113922d0da812edd07f9750",
        "sheet": "sheets/move_E.png",
        "region": [
         160,
@@ -2594,7 +2544,7 @@
        "file": "move_E_02.png",
        "packed_bounds": [
         52,
-        89,
+        96,
         123,
         136
        ],
@@ -2616,8 +2566,8 @@
          -5.4
         ],
         "shard": [
-         -9.4,
-         -42.1
+         -8.1,
+         -34.4
         ],
         "strike": [
          40.5,
@@ -2625,12 +2575,11 @@
         ]
        },
        "equipment": {
-        "bramble": 129,
-        "shard": 154,
-        "tusk": 23,
-        "glow": 51
+        "bramble": 164,
+        "shard": 72,
+        "tusk": 23
        },
-       "sha256": "7da06bc32162209e291715d543bd475b159a6533f54f1e923bbdf78c22ac9288",
+       "sha256": "fa4662d271bc44720d3a275d9f11f0a980b7e93e3c5c64b43b87a5dd25b0a28e",
        "sheet": "sheets/move_E.png",
        "region": [
         320,
@@ -2644,7 +2593,7 @@
        "file": "move_E_03.png",
        "packed_bounds": [
         52,
-        89,
+        95,
         123,
         136
        ],
@@ -2666,8 +2615,8 @@
          -4.4
         ],
         "shard": [
-         -9.4,
-         -42.7
+         -8.1,
+         -35.0
         ],
         "strike": [
          40.5,
@@ -2675,12 +2624,11 @@
         ]
        },
        "equipment": {
-        "bramble": 132,
-        "shard": 152,
-        "tusk": 18,
-        "glow": 47
+        "bramble": 173,
+        "shard": 76,
+        "tusk": 18
        },
-       "sha256": "edb6f4678f2e7c3d2f4402273221f94e227028c045dc1aa79ad85b99fdf77038",
+       "sha256": "00cf1caca5f5f6e8e552be7f8d1cb70d0039bc0d3bf8234b757b34e6563289bf",
        "sheet": "sheets/move_E.png",
        "region": [
         480,
@@ -2694,7 +2642,7 @@
        "file": "move_E_04.png",
        "packed_bounds": [
         52,
-        88,
+        95,
         123,
         136
        ],
@@ -2716,8 +2664,8 @@
          -2.0
         ],
         "shard": [
-         -9.4,
-         -43.2
+         -8.1,
+         -35.5
         ],
         "strike": [
          40.5,
@@ -2725,12 +2673,11 @@
         ]
        },
        "equipment": {
-        "bramble": 134,
-        "shard": 151,
-        "tusk": 22,
-        "glow": 40
+        "bramble": 164,
+        "shard": 76,
+        "tusk": 22
        },
-       "sha256": "19fe7cef98355614e5e140a89e4f65e6a4e0b0711e48c703a4c7b20ad46294e8",
+       "sha256": "5b67fe875a83bd1864f0c9b4913240b94e18092e49d64d8faeeb0d6f6a3cbe32",
        "sheet": "sheets/move_E.png",
        "region": [
         640,
@@ -2744,7 +2691,7 @@
        "file": "move_E_05.png",
        "packed_bounds": [
         52,
-        89,
+        95,
         123,
         136
        ],
@@ -2766,8 +2713,8 @@
          -2.0
         ],
         "shard": [
-         -9.4,
-         -42.7
+         -8.1,
+         -35.0
         ],
         "strike": [
          40.5,
@@ -2775,12 +2722,11 @@
         ]
        },
        "equipment": {
-        "bramble": 136,
-        "shard": 152,
-        "tusk": 19,
-        "glow": 45
+        "bramble": 174,
+        "shard": 76,
+        "tusk": 19
        },
-       "sha256": "addfe15575378f553c2b924abc516360e21cb0ec3d15c659281c01c68c243dde",
+       "sha256": "f25803686d62b908a86044a5724935cfeec6668d89ded7055539788bc968cb2d",
        "sheet": "sheets/move_E.png",
        "region": [
         800,
@@ -2794,7 +2740,7 @@
        "file": "move_E_06.png",
        "packed_bounds": [
         52,
-        89,
+        96,
         123,
         136
        ],
@@ -2816,8 +2762,8 @@
          -2.0
         ],
         "shard": [
-         -9.4,
-         -42.1
+         -8.1,
+         -34.4
         ],
         "strike": [
          40.5,
@@ -2825,12 +2771,11 @@
         ]
        },
        "equipment": {
-        "bramble": 131,
-        "shard": 154,
-        "tusk": 23,
-        "glow": 39
+        "bramble": 164,
+        "shard": 72,
+        "tusk": 23
        },
-       "sha256": "c69614dd7e80a83d1c15e17b8cfd052f39f686ff43b620a4fba92a10e1234c01",
+       "sha256": "fae87c6004b0ea0ce4e4e291b96b34b60c979441b2b05da94bc74eb240dfcee8",
        "sheet": "sheets/move_E.png",
        "region": [
         960,
@@ -2844,7 +2789,7 @@
        "file": "move_E_07.png",
        "packed_bounds": [
         52,
-        89,
+        95,
         123,
         136
        ],
@@ -2866,8 +2811,8 @@
          -2.0
         ],
         "shard": [
-         -9.4,
-         -42.7
+         -8.1,
+         -35.0
         ],
         "strike": [
          40.5,
@@ -2875,12 +2820,11 @@
         ]
        },
        "equipment": {
-        "bramble": 136,
-        "shard": 152,
-        "tusk": 18,
-        "glow": 43
+        "bramble": 173,
+        "shard": 76,
+        "tusk": 18
        },
-       "sha256": "e1bfbfe32095d9cabeda32e4249ba0e7d418c7790895fae4c34fe7af0598a065",
+       "sha256": "c5bb7332aa1256763ac0d2e2adce948ab7538713f08b1e3b5bae818be74dd4c0",
        "sheet": "sheets/move_E.png",
        "region": [
         1120,
@@ -2898,7 +2842,7 @@
        "file": "move_W_00.png",
        "packed_bounds": [
         37,
-        88,
+        95,
         108,
         136
        ],
@@ -2920,8 +2864,8 @@
          -2.0
         ],
         "shard": [
-         10.2,
-         -43.2
+         10.8,
+         -35.5
         ],
         "strike": [
          -40.5,
@@ -2929,12 +2873,11 @@
         ]
        },
        "equipment": {
-        "bramble": 127,
-        "shard": 147,
-        "tusk": 22,
-        "glow": 49
+        "bramble": 153,
+        "shard": 82,
+        "tusk": 22
        },
-       "sha256": "ad9c19bbf872b67ca55876ee7fd73c7140814d074033e1b068f6216258ae945a",
+       "sha256": "34ca0a985ff3b59e1eb4e8c03bd6aac79aabec16157ffb5b404ef8b1a26c8b7b",
        "sheet": "sheets/move_W.png",
        "region": [
         0,
@@ -2948,7 +2891,7 @@
        "file": "move_W_01.png",
        "packed_bounds": [
         37,
-        89,
+        95,
         108,
         136
        ],
@@ -2970,8 +2913,8 @@
          -4.4
         ],
         "shard": [
-         10.2,
-         -42.7
+         10.8,
+         -35.0
         ],
         "strike": [
          -40.5,
@@ -2979,12 +2922,11 @@
         ]
        },
        "equipment": {
-        "bramble": 122,
-        "shard": 153,
-        "tusk": 19,
-        "glow": 46
+        "bramble": 157,
+        "shard": 78,
+        "tusk": 19
        },
-       "sha256": "7dbc754a5dc22d94db0d653e36cdfc73b759da9a6d8984f45f8e42e18ca2c4f1",
+       "sha256": "3e7aadafd5334b64d9bcf76e605845e28376186ee0a290f39d1c4f0f73625605",
        "sheet": "sheets/move_W.png",
        "region": [
         160,
@@ -2998,7 +2940,7 @@
        "file": "move_W_02.png",
        "packed_bounds": [
         37,
-        89,
+        96,
         108,
         136
        ],
@@ -3020,8 +2962,8 @@
          -5.4
         ],
         "shard": [
-         10.2,
-         -42.1
+         10.8,
+         -34.4
         ],
         "strike": [
          -40.5,
@@ -3029,12 +2971,11 @@
         ]
        },
        "equipment": {
-        "bramble": 127,
-        "shard": 147,
-        "tusk": 23,
-        "glow": 48
+        "bramble": 155,
+        "shard": 77,
+        "tusk": 23
        },
-       "sha256": "ea30233adc5b6f40b11352149b1930e6d2728b23aed8b5cd1d5819606b8c5a4d",
+       "sha256": "ede9749efd9754a63a424968808456884a19ee234a1c755c26a4f99f5f74d324",
        "sheet": "sheets/move_W.png",
        "region": [
         320,
@@ -3048,7 +2989,7 @@
        "file": "move_W_03.png",
        "packed_bounds": [
         37,
-        89,
+        95,
         108,
         136
        ],
@@ -3070,8 +3011,8 @@
          -4.4
         ],
         "shard": [
-         10.2,
-         -42.7
+         10.8,
+         -35.0
         ],
         "strike": [
          -40.5,
@@ -3079,12 +3020,11 @@
         ]
        },
        "equipment": {
-        "bramble": 125,
-        "shard": 153,
-        "tusk": 18,
-        "glow": 48
+        "bramble": 157,
+        "shard": 78,
+        "tusk": 18
        },
-       "sha256": "87ff1fb9b24dc599a913635822abf4701bed51706f3be8cef5979ff73bf721f9",
+       "sha256": "e218718929858b7f7a7289a1107accdeaaecb9e0bca159562d72f27ba0e2eff4",
        "sheet": "sheets/move_W.png",
        "region": [
         480,
@@ -3098,7 +3038,7 @@
        "file": "move_W_04.png",
        "packed_bounds": [
         37,
-        88,
+        95,
         108,
         136
        ],
@@ -3120,8 +3060,8 @@
          -2.0
         ],
         "shard": [
-         10.2,
-         -43.2
+         10.8,
+         -35.5
         ],
         "strike": [
          -40.5,
@@ -3129,12 +3069,11 @@
         ]
        },
        "equipment": {
-        "bramble": 123,
-        "shard": 147,
-        "tusk": 22,
-        "glow": 50
+        "bramble": 153,
+        "shard": 82,
+        "tusk": 22
        },
-       "sha256": "18a6874ebdcc64bffa67cc54b6cc72acdd7e2426efea416241cce58d295e3153",
+       "sha256": "4198da2ad1de2a551b4ad7025efa79493f8acf6fd88bb18c09ea3491821a685f",
        "sheet": "sheets/move_W.png",
        "region": [
         640,
@@ -3148,7 +3087,7 @@
        "file": "move_W_05.png",
        "packed_bounds": [
         37,
-        89,
+        95,
         108,
         136
        ],
@@ -3170,8 +3109,8 @@
          -2.0
         ],
         "shard": [
-         10.2,
-         -42.7
+         10.8,
+         -35.0
         ],
         "strike": [
          -40.5,
@@ -3179,12 +3118,11 @@
         ]
        },
        "equipment": {
-        "bramble": 123,
-        "shard": 153,
-        "tusk": 19,
-        "glow": 48
+        "bramble": 157,
+        "shard": 78,
+        "tusk": 19
        },
-       "sha256": "750e493a384ce5e99472ea46c3859a0c387551f5d62a3828ccbb0196042b9011",
+       "sha256": "b019dcd983fe1c435318a3aeda117cb763951fd9202f75d15e1a538b90ee22e7",
        "sheet": "sheets/move_W.png",
        "region": [
         800,
@@ -3198,7 +3136,7 @@
        "file": "move_W_06.png",
        "packed_bounds": [
         37,
-        89,
+        96,
         108,
         136
        ],
@@ -3220,8 +3158,8 @@
          -2.0
         ],
         "shard": [
-         10.2,
-         -42.1
+         10.8,
+         -34.4
         ],
         "strike": [
          -40.5,
@@ -3229,12 +3167,11 @@
         ]
        },
        "equipment": {
-        "bramble": 127,
-        "shard": 147,
-        "tusk": 23,
-        "glow": 46
+        "bramble": 155,
+        "shard": 77,
+        "tusk": 23
        },
-       "sha256": "0701287cf8909efaebea68e969e5fabddebdcc089ca8367a68bded6e402460fc",
+       "sha256": "7229620c2ab7ef28d27459966fcc2ed3675d170964bddbdc80391c29088e412c",
        "sheet": "sheets/move_W.png",
        "region": [
         960,
@@ -3248,7 +3185,7 @@
        "file": "move_W_07.png",
        "packed_bounds": [
         37,
-        89,
+        95,
         108,
         136
        ],
@@ -3270,8 +3207,8 @@
          -2.0
         ],
         "shard": [
-         10.2,
-         -42.7
+         10.8,
+         -35.0
         ],
         "strike": [
          -40.5,
@@ -3279,12 +3216,11 @@
         ]
        },
        "equipment": {
-        "bramble": 122,
-        "shard": 153,
-        "tusk": 18,
-        "glow": 46
+        "bramble": 157,
+        "shard": 78,
+        "tusk": 18
        },
-       "sha256": "2dbff73a8ce5b0a1db3258c70040005cb3be2546713cb50b4538a8f18a2e6f0b",
+       "sha256": "3bb90c20a7fc9811a12ae8fb1ff7a8bd5711f79f0dd82a8e2ef7addae74eddb7",
        "sheet": "sheets/move_W.png",
        "region": [
         1120,
@@ -3322,9 +3258,9 @@
        "path": "res://assets/animated/thornback/telegraph_S_00.png",
        "file": "telegraph_S_00.png",
        "packed_bounds": [
-        67,
-        85,
-        93,
+        66,
+        94,
+        95,
         140
        ],
        "anchors": {
@@ -3345,8 +3281,8 @@
          -5.8
         ],
         "shard": [
-         3.9,
-         -46.7
+         13.9,
+         -38.9
         ],
         "strike": [
          -0.0,
@@ -3354,12 +3290,11 @@
         ]
        },
        "equipment": {
-        "shard": 114,
-        "bramble": 121,
-        "tusk": 12,
-        "glow": 49
+        "shard": 91,
+        "bramble": 113,
+        "tusk": 12
        },
-       "sha256": "b2c620bb0c02f7f1eacb47b0c0b9cdb4891bf2bdf6e45a1ac291e0619d3b4c74",
+       "sha256": "8a3713f4d799d1c152f61aeaa7d61911b46ff47e1b0248a12e33214d9d3e1f77",
        "sheet": "sheets/telegraph_S.png",
        "region": [
         0,
@@ -3372,9 +3307,9 @@
        "path": "res://assets/animated/thornback/telegraph_S_01.png",
        "file": "telegraph_S_01.png",
        "packed_bounds": [
-        67,
-        83,
-        93,
+        66,
+        89,
+        95,
         140
        ],
        "anchors": {
@@ -3395,8 +3330,8 @@
          -5.8
         ],
         "shard": [
-         3.9,
-         -48.1
+         13.9,
+         -40.2
         ],
         "strike": [
          -0.0,
@@ -3404,12 +3339,11 @@
         ]
        },
        "equipment": {
-        "shard": 106,
-        "bramble": 154,
-        "tusk": 14,
-        "glow": 46
+        "shard": 93,
+        "bramble": 167,
+        "tusk": 14
        },
-       "sha256": "577e3e5d2ccf91da5da7478095c92b426bd4f8148b4457e11b32ce2873a744ba",
+       "sha256": "d9ca8871d870ad1aded95df76d20e3ce606b7f872f7fb658ea160fddf4ca9b3a",
        "sheet": "sheets/telegraph_S.png",
        "region": [
         160,
@@ -3422,10 +3356,10 @@
        "path": "res://assets/animated/thornback/telegraph_S_02.png",
        "file": "telegraph_S_02.png",
        "packed_bounds": [
-        67,
-        85,
-        93,
-        142
+        66,
+        89,
+        95,
+        140
        ],
        "anchors": {
         "foot_R": [
@@ -3445,21 +3379,20 @@
          -5.8
         ],
         "shard": [
-         3.9,
-         -47.3
+         13.9,
+         -39.4
         ],
         "strike": [
          -0.0,
-         2.4
+         0.6
         ]
        },
        "equipment": {
-        "shard": 101,
-        "bramble": 170,
-        "tusk": 14,
-        "glow": 54
+        "shard": 93,
+        "bramble": 172,
+        "tusk": 12
        },
-       "sha256": "bcd6f84f83c0eb321722de4e9778f8455b6cc8b040dd5a92add8634515e66fdb",
+       "sha256": "357f769b9ae6815b3516cfa6a2fd1653cdf4f082c7b65003da8079742e49409f",
        "sheet": "sheets/telegraph_S.png",
        "region": [
         320,
@@ -3472,10 +3405,10 @@
        "path": "res://assets/animated/thornback/telegraph_S_03.png",
        "file": "telegraph_S_03.png",
        "packed_bounds": [
-        62,
-        85,
-        93,
-        142
+        63,
+        89,
+        95,
+        140
        ],
        "anchors": {
         "foot_R": [
@@ -3495,21 +3428,20 @@
          -5.8
         ],
         "shard": [
-         3.9,
-         -47.3
+         13.9,
+         -39.4
         ],
         "strike": [
          -0.0,
-         2.4
+         0.6
         ]
        },
        "equipment": {
-        "shard": 101,
-        "bramble": 170,
-        "tusk": 14,
-        "glow": 54
+        "shard": 93,
+        "bramble": 172,
+        "tusk": 12
        },
-       "sha256": "ba92adeec88bc7cb832bbce09ff422d448ce2c0837d4100ad8878a361c73e0aa",
+       "sha256": "4848199dbc37fc81e88e2db37ffdc9da99dc07f29fdb6a95abb5f94371d2c1a7",
        "sheet": "sheets/telegraph_S.png",
        "region": [
         480,
@@ -3522,10 +3454,10 @@
        "path": "res://assets/animated/thornback/telegraph_S_04.png",
        "file": "telegraph_S_04.png",
        "packed_bounds": [
-        56,
-        85,
-        93,
-        142
+        58,
+        89,
+        95,
+        140
        ],
        "anchors": {
         "foot_R": [
@@ -3545,21 +3477,20 @@
          -5.8
         ],
         "shard": [
-         3.9,
-         -47.3
+         13.9,
+         -39.4
         ],
         "strike": [
          -0.0,
-         2.4
+         0.6
         ]
        },
        "equipment": {
-        "shard": 101,
-        "bramble": 170,
-        "tusk": 14,
-        "glow": 54
+        "shard": 93,
+        "bramble": 172,
+        "tusk": 12
        },
-       "sha256": "2aa80c23fb81c784be220e1f6400e908f4b1cf865601840153c4c11c48c5d078",
+       "sha256": "2144bf0af77c319a23d17f8290f29786feb4465eff4c0b83c6510fbba5a4ea54",
        "sheet": "sheets/telegraph_S.png",
        "region": [
         640,
@@ -3572,10 +3503,10 @@
        "path": "res://assets/animated/thornback/telegraph_S_05.png",
        "file": "telegraph_S_05.png",
        "packed_bounds": [
-        61,
-        85,
-        93,
-        142
+        63,
+        89,
+        95,
+        140
        ],
        "anchors": {
         "foot_R": [
@@ -3595,21 +3526,20 @@
          -5.8
         ],
         "shard": [
-         3.9,
-         -47.3
+         13.9,
+         -39.4
         ],
         "strike": [
          -0.0,
-         2.4
+         0.6
         ]
        },
        "equipment": {
-        "shard": 101,
-        "bramble": 170,
-        "tusk": 14,
-        "glow": 54
+        "shard": 93,
+        "bramble": 172,
+        "tusk": 12
        },
-       "sha256": "402081eefa81685e2180a4749f2217efe2e8f8a2089631c965fe4c957d0ac33d",
+       "sha256": "222029e72b19e9b1a1a951003f076c187a06147f950fcb8490b884864d1dc2c6",
        "sheet": "sheets/telegraph_S.png",
        "region": [
         800,
@@ -3622,10 +3552,10 @@
        "path": "res://assets/animated/thornback/telegraph_S_06.png",
        "file": "telegraph_S_06.png",
        "packed_bounds": [
-        54,
-        85,
-        92,
-        143
+        56,
+        89,
+        94,
+        141
        ],
        "anchors": {
         "foot_R": [
@@ -3645,21 +3575,20 @@
          -5.8
         ],
         "shard": [
-         3.0,
-         -47.0
+         13.0,
+         -39.2
         ],
         "strike": [
          -0.8,
-         3.4
+         1.6
         ]
        },
        "equipment": {
-        "shard": 103,
-        "bramble": 166,
-        "tusk": 15,
-        "glow": 44
+        "shard": 89,
+        "bramble": 180,
+        "tusk": 14
        },
-       "sha256": "027ef20998a17749a0234f0ffe5eeb4048c870dbfaa34e978afa30e64b4ba3ba",
+       "sha256": "6b13c3ee0654a2707c3a17f5cab0281940fe05c15c187b4e1c8c02faac1bc3a9",
        "sheet": "sheets/telegraph_S.png",
        "region": [
         960,
@@ -3672,10 +3601,10 @@
        "path": "res://assets/animated/thornback/telegraph_S_07.png",
        "file": "telegraph_S_07.png",
        "packed_bounds": [
-        52,
-        85,
-        94,
-        143
+        54,
+        89,
+        96,
+        141
        ],
        "anchors": {
         "foot_R": [
@@ -3695,21 +3624,20 @@
          -5.8
         ],
         "shard": [
-         4.7,
-         -47.0
+         14.7,
+         -39.2
         ],
         "strike": [
          0.8,
-         3.4
+         1.6
         ]
        },
        "equipment": {
-        "shard": 99,
-        "bramble": 167,
-        "tusk": 15,
-        "glow": 55
+        "shard": 93,
+        "bramble": 183,
+        "tusk": 14
        },
-       "sha256": "017ca19de7412b491732e1edb9ceb5cf9b427939adeffca123c02040eb57874b",
+       "sha256": "0fac9f4e96b24c727491843a3e320004b7ce788fc1945ceba59a5c4b5304102c",
        "sheet": "sheets/telegraph_S.png",
        "region": [
         1120,
@@ -3726,8 +3654,8 @@
        "path": "res://assets/animated/thornback/telegraph_N_00.png",
        "file": "telegraph_N_00.png",
        "packed_bounds": [
-        67,
-        88,
+        64,
+        91,
         93,
         140
        ],
@@ -3749,8 +3677,8 @@
          1.8
         ],
         "shard": [
-         -3.9,
-         -39.9
+         -13.9,
+         -32.3
         ],
         "strike": [
          0.0,
@@ -3759,11 +3687,10 @@
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 137,
-        "shard": 127,
-        "glow": 39
+        "bramble": 139,
+        "shard": 115
        },
-       "sha256": "0bef63dd87d931634ceb9c4b2b902d9c0288761d33e4dd01f460c284a0ba22d6",
+       "sha256": "ad979b018f712370b404b162bb34af7a0efaf2440dae91d5842c4e26f2590e1a",
        "sheet": "sheets/telegraph_N.png",
        "region": [
         0,
@@ -3776,8 +3703,8 @@
        "path": "res://assets/animated/thornback/telegraph_N_01.png",
        "file": "telegraph_N_01.png",
        "packed_bounds": [
-        67,
-        90,
+        64,
+        94,
         93,
         140
        ],
@@ -3799,8 +3726,8 @@
          1.8
         ],
         "shard": [
-         -3.9,
-         -41.2
+         -13.9,
+         -33.6
         ],
         "strike": [
          0.0,
@@ -3809,11 +3736,10 @@
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 89,
-        "shard": 116,
-        "glow": 37
+        "bramble": 74,
+        "shard": 121
        },
-       "sha256": "a0a35778efeb18e9a9ad6ce65460eae6804b0e56bad1584bd46c47e17e87d91f",
+       "sha256": "7b7fba439938e84d204764ad67642880ef5fe8075e1e01596dd065e725bf8bca",
        "sheet": "sheets/telegraph_N.png",
        "region": [
         160,
@@ -3826,8 +3752,8 @@
        "path": "res://assets/animated/thornback/telegraph_N_02.png",
        "file": "telegraph_N_02.png",
        "packed_bounds": [
-        67,
-        91,
+        64,
+        96,
         93,
         140
        ],
@@ -3849,21 +3775,20 @@
          1.8
         ],
         "shard": [
-         -3.9,
-         -40.4
+         -13.9,
+         -32.8
         ],
         "strike": [
          0.0,
-         -27.4
+         -28.2
         ]
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 84,
-        "shard": 118,
-        "glow": 40
+        "bramble": 69,
+        "shard": 109
        },
-       "sha256": "3de92a37f9d3d96f7b60d7a2e255806f4e6b42cfaf77444b4b48108af1bb7bba",
+       "sha256": "8f54cea35fed8ff0a3b837f3d1b5a6b65501a519cc52dd691cd18ff90b196d29",
        "sheet": "sheets/telegraph_N.png",
        "region": [
         320,
@@ -3876,8 +3801,8 @@
        "path": "res://assets/animated/thornback/telegraph_N_03.png",
        "file": "telegraph_N_03.png",
        "packed_bounds": [
-        67,
-        91,
+        64,
+        96,
         93,
         140
        ],
@@ -3899,21 +3824,20 @@
          1.8
         ],
         "shard": [
-         -3.9,
-         -40.4
+         -13.9,
+         -32.8
         ],
         "strike": [
          0.0,
-         -27.4
+         -28.2
         ]
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 84,
-        "shard": 118,
-        "glow": 40
+        "bramble": 69,
+        "shard": 109
        },
-       "sha256": "10fcc7d0807b3f0895b80abbd47b58bb17e79f6aca0b7efb312095a5f68e36ac",
+       "sha256": "38d96b50be6841e73434b57a432a5365beb861085bf1ea563aa36f8b0343eb88",
        "sheet": "sheets/telegraph_N.png",
        "region": [
         480,
@@ -3926,8 +3850,8 @@
        "path": "res://assets/animated/thornback/telegraph_N_04.png",
        "file": "telegraph_N_04.png",
        "packed_bounds": [
-        67,
-        91,
+        64,
+        96,
         93,
         140
        ],
@@ -3949,21 +3873,20 @@
          1.8
         ],
         "shard": [
-         -3.9,
-         -40.4
+         -13.9,
+         -32.8
         ],
         "strike": [
          0.0,
-         -27.4
+         -28.2
         ]
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 84,
-        "shard": 118,
-        "glow": 40
+        "bramble": 69,
+        "shard": 109
        },
-       "sha256": "fff8a694a3057d89e9fdcbcc0feccd950c171e2c870ac411512513c760707f5c",
+       "sha256": "2401981de122b285991d71b1dff62d682e19f3b2e36020833ee24e19a3d7bad0",
        "sheet": "sheets/telegraph_N.png",
        "region": [
         640,
@@ -3976,8 +3899,8 @@
        "path": "res://assets/animated/thornback/telegraph_N_05.png",
        "file": "telegraph_N_05.png",
        "packed_bounds": [
-        67,
-        91,
+        64,
+        96,
         93,
         140
        ],
@@ -3999,21 +3922,20 @@
          1.8
         ],
         "shard": [
-         -3.9,
-         -40.4
+         -13.9,
+         -32.8
         ],
         "strike": [
          0.0,
-         -27.4
+         -28.2
         ]
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 84,
-        "shard": 118,
-        "glow": 40
+        "bramble": 69,
+        "shard": 109
        },
-       "sha256": "7fdb92301ee8872203fa6541e60e90effbc40efacf9bfb966b1f480a4779ad2d",
+       "sha256": "635cd038c7a64b0fb431904e1fd904c01523fa9e6352ec35eb0874ca5ca83f39",
        "sheet": "sheets/telegraph_N.png",
        "region": [
         800,
@@ -4026,8 +3948,8 @@
        "path": "res://assets/animated/thornback/telegraph_N_06.png",
        "file": "telegraph_N_06.png",
        "packed_bounds": [
-        68,
-        91,
+        65,
+        97,
         94,
         140
        ],
@@ -4049,21 +3971,20 @@
          1.8
         ],
         "shard": [
-         -3.0,
-         -40.2
+         -13.0,
+         -32.6
         ],
         "strike": [
          0.8,
-         -26.9
+         -27.7
         ]
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 88,
-        "shard": 116,
-        "glow": 38
+        "bramble": 68,
+        "shard": 117
        },
-       "sha256": "eae528ce4e3d86cd56fe8fa3dc7985a60a3a852080a761cd1562c9deff373c0c",
+       "sha256": "2edfab4bf926108c226aed17ab8626727fbef959ba72b6f929c609854631f18a",
        "sheet": "sheets/telegraph_N.png",
        "region": [
         960,
@@ -4076,8 +3997,8 @@
        "path": "res://assets/animated/thornback/telegraph_N_07.png",
        "file": "telegraph_N_07.png",
        "packed_bounds": [
-        65,
-        91,
+        63,
+        97,
         92,
         140
        ],
@@ -4099,21 +4020,20 @@
          1.8
         ],
         "shard": [
-         -4.7,
-         -40.2
+         -14.7,
+         -32.6
         ],
         "strike": [
          -0.8,
-         -26.9
+         -27.7
         ]
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 90,
-        "shard": 113,
-        "glow": 45
+        "bramble": 64,
+        "shard": 121
        },
-       "sha256": "2a1b2c47b44b28aaf616d1cf8bb80d8ee1a900a127b88204d9c69577f4a17637",
+       "sha256": "4aa29939e44c7b308e7ca14f3192e289ef1e178dc81f00c4e417da10116315c9",
        "sheet": "sheets/telegraph_N.png",
        "region": [
         1120,
@@ -4131,7 +4051,7 @@
        "file": "telegraph_E_00.png",
        "packed_bounds": [
         52,
-        88,
+        95,
         122,
         136
        ],
@@ -4153,8 +4073,8 @@
          -2.0
         ],
         "shard": [
-         -9.4,
-         -43.3
+         -8.1,
+         -35.6
         ],
         "strike": [
          39.8,
@@ -4162,12 +4082,11 @@
         ]
        },
        "equipment": {
-        "bramble": 134,
-        "shard": 146,
-        "tusk": 21,
-        "glow": 47
+        "bramble": 163,
+        "shard": 76,
+        "tusk": 21
        },
-       "sha256": "066fea28fe5687efa5f897392ef94ead57dc8841ceeda39c0a19d98fcf4d82e5",
+       "sha256": "912eac21f7615198b5e1d10bb220e44994ffaa717bf1f5d8f9f482fcf31fe660",
        "sheet": "sheets/telegraph_E.png",
        "region": [
         0,
@@ -4181,7 +4100,7 @@
        "file": "telegraph_E_01.png",
        "packed_bounds": [
         52,
-        87,
+        92,
         124,
         136
        ],
@@ -4203,8 +4122,8 @@
          -2.0
         ],
         "shard": [
-         -9.4,
-         -44.0
+         -8.1,
+         -36.3
         ],
         "strike": [
          40.5,
@@ -4212,12 +4131,11 @@
         ]
        },
        "equipment": {
-        "bramble": 119,
-        "shard": 151,
-        "tusk": 22,
-        "glow": 39
+        "bramble": 183,
+        "shard": 73,
+        "tusk": 22
        },
-       "sha256": "ea8c7799037e26e8f67ba011ed3215691469eb309e32716709297595c6fbdadc",
+       "sha256": "664e915694fb5ad7508cca874648acc41a25824fc8960b216a33d903482fcfe3",
        "sheet": "sheets/telegraph_E.png",
        "region": [
         160,
@@ -4231,9 +4149,9 @@
        "file": "telegraph_E_02.png",
        "packed_bounds": [
         52,
-        89,
-        126,
-        138
+        92,
+        125,
+        136
        ],
        "anchors": {
         "foot_R": [
@@ -4253,21 +4171,20 @@
          -2.0
         ],
         "shard": [
-         -9.4,
-         -42.4
+         -8.1,
+         -34.7
         ],
         "strike": [
-         42.5,
-         -4.8
+         41.2,
+         -8.0
         ]
        },
        "equipment": {
-        "bramble": 128,
-        "shard": 146,
-        "tusk": 18,
-        "glow": 43
+        "bramble": 199,
+        "shard": 76,
+        "tusk": 21
        },
-       "sha256": "33742d46a9f872961c02f1dad9c3d0da6fb7c3feaba4ab977e8b11a204810571",
+       "sha256": "a3e8eeb545bea3c25db33a0288e64026f711dd486f81da06a301df969c4d8ffc",
        "sheet": "sheets/telegraph_E.png",
        "region": [
         320,
@@ -4281,9 +4198,9 @@
        "file": "telegraph_E_03.png",
        "packed_bounds": [
         52,
-        89,
-        126,
-        138
+        92,
+        125,
+        136
        ],
        "anchors": {
         "foot_R": [
@@ -4303,21 +4220,20 @@
          -2.0
         ],
         "shard": [
-         -9.4,
-         -42.4
+         -8.1,
+         -34.7
         ],
         "strike": [
-         42.5,
-         -4.8
+         41.2,
+         -8.0
         ]
        },
        "equipment": {
-        "bramble": 128,
-        "shard": 146,
-        "tusk": 18,
-        "glow": 43
+        "bramble": 199,
+        "shard": 76,
+        "tusk": 21
        },
-       "sha256": "61c5bdddbc62cb1c14301b7236a3b0d38735deb65004a7c74b5f3f5962a17993",
+       "sha256": "f7f7b7758cbddd3558cda422822c3990e427db00f29c3db17520e462c0b68408",
        "sheet": "sheets/telegraph_E.png",
        "region": [
         480,
@@ -4331,9 +4247,9 @@
        "file": "telegraph_E_04.png",
        "packed_bounds": [
         52,
-        89,
-        126,
-        138
+        92,
+        125,
+        136
        ],
        "anchors": {
         "foot_R": [
@@ -4353,21 +4269,20 @@
          -2.0
         ],
         "shard": [
-         -9.4,
-         -42.4
+         -8.1,
+         -34.7
         ],
         "strike": [
-         42.5,
-         -4.8
+         41.2,
+         -8.0
         ]
        },
        "equipment": {
-        "bramble": 128,
-        "shard": 146,
-        "tusk": 18,
-        "glow": 43
+        "bramble": 199,
+        "shard": 76,
+        "tusk": 21
        },
-       "sha256": "69ad696d6984b504f48c2ccfdf22d44cd717acc447c77ebde2d4e1c6ffe9c74f",
+       "sha256": "c7da96ab61c33d55f7d731938ef043322c585a8e8d6984a880fd46d840a16ff6",
        "sheet": "sheets/telegraph_E.png",
        "region": [
         640,
@@ -4381,9 +4296,9 @@
        "file": "telegraph_E_05.png",
        "packed_bounds": [
         52,
-        89,
-        126,
-        138
+        92,
+        125,
+        136
        ],
        "anchors": {
         "foot_R": [
@@ -4403,21 +4318,20 @@
          -2.0
         ],
         "shard": [
-         -9.4,
-         -42.4
+         -8.1,
+         -34.7
         ],
         "strike": [
-         42.5,
-         -4.8
+         41.2,
+         -8.0
         ]
        },
        "equipment": {
-        "bramble": 128,
-        "shard": 146,
-        "tusk": 18,
-        "glow": 43
+        "bramble": 199,
+        "shard": 76,
+        "tusk": 21
        },
-       "sha256": "ffbaa3e12b94a0c6170f381a8a79dd8a2f2df7721deca7b092637afaceb5f0fe",
+       "sha256": "7bd98a1fa5b7295632e3704b221b32007fd9c214905e9b0a7b208f4edcc1b2a9",
        "sheet": "sheets/telegraph_E.png",
        "region": [
         800,
@@ -4431,9 +4345,9 @@
        "file": "telegraph_E_06.png",
        "packed_bounds": [
         52,
-        89,
-        127,
-        139
+        92,
+        125,
+        136
        ],
        "anchors": {
         "foot_R": [
@@ -4453,21 +4367,20 @@
          -2.0
         ],
         "shard": [
-         -9.5,
-         -42.0
+         -8.1,
+         -34.3
         ],
         "strike": [
-         43.1,
-         -3.2
+         41.8,
+         -6.4
         ]
        },
        "equipment": {
-        "bramble": 136,
-        "shard": 145,
-        "tusk": 21,
-        "glow": 40
+        "bramble": 201,
+        "shard": 81,
+        "tusk": 21
        },
-       "sha256": "6bed5961b3d7e11d6af68e0e87015d8568f70fed5f3dd9dac7ff66e1bf67f2b0",
+       "sha256": "55be08f7e6a651df319704139371eea99fdd7fe196c00a9665ae261e2cd06a76",
        "sheet": "sheets/telegraph_E.png",
        "region": [
         960,
@@ -4481,9 +4394,9 @@
        "file": "telegraph_E_07.png",
        "packed_bounds": [
         52,
-        89,
-        127,
-        139
+        92,
+        125,
+        137
        ],
        "anchors": {
         "foot_R": [
@@ -4503,21 +4416,20 @@
          -2.0
         ],
         "shard": [
-         -9.3,
-         -42.0
+         -8.0,
+         -34.3
         ],
         "strike": [
-         43.3,
-         -3.2
+         41.9,
+         -6.4
         ]
        },
        "equipment": {
-        "bramble": 134,
-        "shard": 146,
-        "tusk": 22,
-        "glow": 39
+        "bramble": 205,
+        "shard": 74,
+        "tusk": 19
        },
-       "sha256": "8b1c47d6fa433623bfe5b7267a6570aa9e01310fb486cdb82e6a08860a60aa1c",
+       "sha256": "52ab73579a597fc9c060b0e62f8c989764b8528e9f40e47a98909876ec6f5b24",
        "sheet": "sheets/telegraph_E.png",
        "region": [
         1120,
@@ -4535,7 +4447,7 @@
        "file": "telegraph_W_00.png",
        "packed_bounds": [
         38,
-        88,
+        95,
         108,
         136
        ],
@@ -4557,8 +4469,8 @@
          -2.0
         ],
         "shard": [
-         10.2,
-         -43.3
+         10.8,
+         -35.6
         ],
         "strike": [
          -39.8,
@@ -4566,12 +4478,11 @@
         ]
        },
        "equipment": {
-        "bramble": 123,
-        "shard": 146,
-        "tusk": 21,
-        "glow": 52
+        "bramble": 144,
+        "shard": 85,
+        "tusk": 21
        },
-       "sha256": "362cc9acec18dad054f2a8d3e2f85e617742f3401fda3efccf0f517efc6600a3",
+       "sha256": "b730126f414b76485e545c6f96c4ab5806d8ca87d6e89792a25d80963b7cd8b9",
        "sheet": "sheets/telegraph_W.png",
        "region": [
         0,
@@ -4585,7 +4496,7 @@
        "file": "telegraph_W_01.png",
        "packed_bounds": [
         36,
-        87,
+        92,
         108,
         136
        ],
@@ -4607,8 +4518,8 @@
          -2.0
         ],
         "shard": [
-         10.2,
-         -44.0
+         10.8,
+         -36.3
         ],
         "strike": [
          -40.5,
@@ -4616,12 +4527,11 @@
         ]
        },
        "equipment": {
-        "bramble": 125,
-        "shard": 144,
-        "tusk": 22,
-        "glow": 52
+        "bramble": 180,
+        "shard": 77,
+        "tusk": 22
        },
-       "sha256": "b49a75aa44fd08766b1422f7e4bd4b69ab2023c1e9c1cad66790fdca819ae2d9",
+       "sha256": "34392c1258bbe64ad948e2a8b4421bd1581eb0ff41069dcde77110e89e61dd52",
        "sheet": "sheets/telegraph_W.png",
        "region": [
         160,
@@ -4634,10 +4544,10 @@
        "path": "res://assets/animated/thornback/telegraph_W_02.png",
        "file": "telegraph_W_02.png",
        "packed_bounds": [
-        34,
-        89,
+        35,
+        92,
         108,
-        138
+        136
        ],
        "anchors": {
         "foot_R": [
@@ -4657,21 +4567,20 @@
          -2.0
         ],
         "shard": [
-         10.2,
-         -42.4
+         10.8,
+         -34.7
         ],
         "strike": [
-         -42.5,
-         -4.8
+         -41.2,
+         -8.0
         ]
        },
        "equipment": {
-        "bramble": 127,
-        "shard": 146,
-        "tusk": 18,
-        "glow": 45
+        "bramble": 193,
+        "shard": 78,
+        "tusk": 21
        },
-       "sha256": "fca4f2063c565c93bfb0cb304d90ff6bc03483746b45ae3b06feba80fd783209",
+       "sha256": "4bcc3a77c96b1f1841ef229322c10ca01ffb5e4e7d815c57930a2466bf492394",
        "sheet": "sheets/telegraph_W.png",
        "region": [
         320,
@@ -4684,10 +4593,10 @@
        "path": "res://assets/animated/thornback/telegraph_W_03.png",
        "file": "telegraph_W_03.png",
        "packed_bounds": [
-        34,
-        89,
+        35,
+        92,
         108,
-        138
+        136
        ],
        "anchors": {
         "foot_R": [
@@ -4707,21 +4616,20 @@
          -2.0
         ],
         "shard": [
-         10.2,
-         -42.4
+         10.8,
+         -34.7
         ],
         "strike": [
-         -42.5,
-         -4.8
+         -41.2,
+         -8.0
         ]
        },
        "equipment": {
-        "bramble": 127,
-        "shard": 146,
-        "tusk": 18,
-        "glow": 45
+        "bramble": 193,
+        "shard": 78,
+        "tusk": 21
        },
-       "sha256": "27a05cb4d13afbe44f2e36bacc8a6ef9d69dc12d59d1a3a4092dfdb3af840c49",
+       "sha256": "8fb2695ee2afa11585e3612ec6d841b1fdd39e7163b1de64cac9d577eb061d07",
        "sheet": "sheets/telegraph_W.png",
        "region": [
         480,
@@ -4734,10 +4642,10 @@
        "path": "res://assets/animated/thornback/telegraph_W_04.png",
        "file": "telegraph_W_04.png",
        "packed_bounds": [
-        34,
-        89,
+        35,
+        92,
         108,
-        138
+        136
        ],
        "anchors": {
         "foot_R": [
@@ -4757,21 +4665,20 @@
          -2.0
         ],
         "shard": [
-         10.2,
-         -42.4
+         10.8,
+         -34.7
         ],
         "strike": [
-         -42.5,
-         -4.8
+         -41.2,
+         -8.0
         ]
        },
        "equipment": {
-        "bramble": 127,
-        "shard": 146,
-        "tusk": 18,
-        "glow": 45
+        "bramble": 193,
+        "shard": 78,
+        "tusk": 21
        },
-       "sha256": "44168004895ea34b164ab04057c7891b23c9173a252f6ae03e1ecd68df15cc23",
+       "sha256": "b29044a050f73a2f1a61fbf00ae96aada937efd2acc51b69470e7781344241b1",
        "sheet": "sheets/telegraph_W.png",
        "region": [
         640,
@@ -4784,10 +4691,10 @@
        "path": "res://assets/animated/thornback/telegraph_W_05.png",
        "file": "telegraph_W_05.png",
        "packed_bounds": [
-        34,
-        89,
+        35,
+        92,
         108,
-        138
+        136
        ],
        "anchors": {
         "foot_R": [
@@ -4807,21 +4714,20 @@
          -2.0
         ],
         "shard": [
-         10.2,
-         -42.4
+         10.8,
+         -34.7
         ],
         "strike": [
-         -42.5,
-         -4.8
+         -41.2,
+         -8.0
         ]
        },
        "equipment": {
-        "bramble": 127,
-        "shard": 146,
-        "tusk": 18,
-        "glow": 45
+        "bramble": 193,
+        "shard": 78,
+        "tusk": 21
        },
-       "sha256": "0d181181e59f962ae3739beac1fa08778de174f6337f47ea01d2bb1e0c96e49a",
+       "sha256": "3d586fb2ee80caab627f555bb3fea7e23e8d8c2c882c2c3690136696c3e2199f",
        "sheet": "sheets/telegraph_W.png",
        "region": [
         800,
@@ -4834,10 +4740,10 @@
        "path": "res://assets/animated/thornback/telegraph_W_06.png",
        "file": "telegraph_W_06.png",
        "packed_bounds": [
-        33,
-        89,
+        35,
+        92,
         108,
-        139
+        136
        ],
        "anchors": {
         "foot_R": [
@@ -4857,21 +4763,20 @@
          -2.0
         ],
         "shard": [
-         10.1,
-         -42.0
+         10.7,
+         -34.3
         ],
         "strike": [
-         -43.3,
-         -3.2
+         -41.9,
+         -6.4
         ]
        },
        "equipment": {
-        "bramble": 126,
-        "shard": 144,
-        "tusk": 22,
-        "glow": 51
+        "bramble": 195,
+        "shard": 81,
+        "tusk": 19
        },
-       "sha256": "d183ec9cd9096d7e95058c2e45a6f1b0292ca297c94be59d210ba3630ae43228",
+       "sha256": "b760438541625da28280d677d8eaaba823aaf2c5cea29cd98bcb986a8dfe5f2d",
        "sheet": "sheets/telegraph_W.png",
        "region": [
         960,
@@ -4884,10 +4789,10 @@
        "path": "res://assets/animated/thornback/telegraph_W_07.png",
        "file": "telegraph_W_07.png",
        "packed_bounds": [
-        33,
-        89,
+        35,
+        92,
         108,
-        139
+        137
        ],
        "anchors": {
         "foot_R": [
@@ -4907,21 +4812,20 @@
          -2.0
         ],
         "shard": [
-         10.2,
-         -42.0
+         10.9,
+         -34.3
         ],
         "strike": [
-         -43.1,
-         -3.2
+         -41.8,
+         -6.4
         ]
        },
        "equipment": {
-        "bramble": 128,
-        "shard": 144,
-        "tusk": 21,
-        "glow": 47
+        "bramble": 195,
+        "shard": 78,
+        "tusk": 21
        },
-       "sha256": "cfd4db596cee0fba236701f97075eb4f08981ac4b4b761ecc68f9e815d7c6bbd",
+       "sha256": "b9d4570c53dd3cf7ec9ec57e795dc66aa370350ae245c32963ac5bc9f9d07e4c",
        "sheet": "sheets/telegraph_W.png",
        "region": [
         1120,
@@ -4955,9 +4859,9 @@
        "path": "res://assets/animated/thornback/attack_S_00.png",
        "file": "attack_S_00.png",
        "packed_bounds": [
-        61,
-        86,
-        93,
+        62,
+        94,
+        95,
         142
        ],
        "anchors": {
@@ -4978,8 +4882,8 @@
          -9.7
         ],
         "shard": [
-         3.9,
-         -45.6
+         13.9,
+         -37.8
         ],
         "strike": [
          -0.0,
@@ -4987,12 +4891,11 @@
         ]
        },
        "equipment": {
-        "shard": 115,
-        "bramble": 132,
-        "tusk": 14,
-        "glow": 42
+        "shard": 96,
+        "bramble": 136,
+        "tusk": 14
        },
-       "sha256": "51d9a9b4cef70922e650d98e46b36e0d92d15e9b1099c9f1a20909bfcc9cf6fb",
+       "sha256": "bf67bbdc75caa92a6c25bff880580fe30595bedf67e0de91278988c914f4ba50",
        "sheet": "sheets/attack_S.png",
        "region": [
         0,
@@ -5005,10 +4908,10 @@
        "path": "res://assets/animated/thornback/attack_S_01.png",
        "file": "attack_S_01.png",
        "packed_bounds": [
-        56,
-        86,
-        93,
-        141
+        58,
+        94,
+        95,
+        142
        ],
        "anchors": {
         "foot_R": [
@@ -5028,8 +4931,8 @@
          -8.6
         ],
         "shard": [
-         3.9,
-         -45.6
+         13.9,
+         -37.8
         ],
         "strike": [
          -0.0,
@@ -5037,12 +4940,11 @@
         ]
        },
        "equipment": {
-        "shard": 115,
-        "bramble": 132,
-        "tusk": 14,
-        "glow": 42
+        "shard": 96,
+        "bramble": 136,
+        "tusk": 14
        },
-       "sha256": "4f2971aa5684d0791b1c5859430c7bd5d803d9c1d632c4b180276a642e8b5def",
+       "sha256": "d6d75e5cc46ecfd82cf92bc6367e4e1b5b47416d260ef2aa5bc947137b1fc532",
        "sheet": "sheets/attack_S.png",
        "region": [
         160,
@@ -5055,9 +4957,9 @@
        "path": "res://assets/animated/thornback/attack_S_02.png",
        "file": "attack_S_02.png",
        "packed_bounds": [
-        52,
-        86,
-        93,
+        54,
+        94,
+        95,
         142
        ],
        "anchors": {
@@ -5078,8 +4980,8 @@
          -9.7
         ],
         "shard": [
-         3.9,
-         -45.6
+         13.9,
+         -37.8
         ],
         "strike": [
          -0.0,
@@ -5087,12 +4989,11 @@
         ]
        },
        "equipment": {
-        "shard": 115,
-        "bramble": 132,
-        "tusk": 14,
-        "glow": 42
+        "shard": 96,
+        "bramble": 136,
+        "tusk": 14
        },
-       "sha256": "a001afd7e8df5f78175a523ddf5b00d850c3bb1395a3c45a1a97136b157a9903",
+       "sha256": "a4742880327b3f090b4314448002dd86f5c9e2a15ef6abe1d1139b21ca5001c9",
        "sheet": "sheets/attack_S.png",
        "region": [
         320,
@@ -5105,10 +5006,10 @@
        "path": "res://assets/animated/thornback/attack_S_03.png",
        "file": "attack_S_03.png",
        "packed_bounds": [
-        49,
-        86,
-        93,
-        141
+        52,
+        94,
+        95,
+        142
        ],
        "anchors": {
         "foot_R": [
@@ -5128,8 +5029,8 @@
          -6.7
         ],
         "shard": [
-         3.9,
-         -45.3
+         13.9,
+         -37.5
         ],
         "strike": [
          -0.0,
@@ -5137,12 +5038,11 @@
         ]
        },
        "equipment": {
-        "shard": 109,
-        "bramble": 140,
-        "tusk": 14,
-        "glow": 48
+        "shard": 93,
+        "bramble": 141,
+        "tusk": 14
        },
-       "sha256": "4360862527d68fbc92cb93f6349944e173f0d664717fd5096914e06688d6fb53",
+       "sha256": "31d4c3ed47ea1f417d4831e9a38abd695eb6cd35ee3d069c57c026850db22eb0",
        "sheet": "sheets/attack_S.png",
        "region": [
         480,
@@ -5164,8 +5064,8 @@
        "path": "res://assets/animated/thornback/attack_N_00.png",
        "file": "attack_N_00.png",
        "packed_bounds": [
-        67,
-        91,
+        64,
+        94,
         93,
         142
        ],
@@ -5187,8 +5087,8 @@
          1.6
         ],
         "shard": [
-         -3.9,
-         -38.8
+         -13.9,
+         -31.2
         ],
         "strike": [
          0.0,
@@ -5197,11 +5097,10 @@
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 122,
-        "shard": 123,
-        "glow": 34
+        "bramble": 111,
+        "shard": 112
        },
-       "sha256": "1c0fe417eaacc7433bd24e2a73063e2421bcc1901156e5adc16a8b9e59e916e1",
+       "sha256": "48302968ad532044c1a9e86c4c0cdc0b8a747b22d75d89c9ec7abd9ff206b745",
        "sheet": "sheets/attack_N.png",
        "region": [
         0,
@@ -5214,8 +5113,8 @@
        "path": "res://assets/animated/thornback/attack_N_01.png",
        "file": "attack_N_01.png",
        "packed_bounds": [
-        67,
-        91,
+        64,
+        94,
         93,
         142
        ],
@@ -5237,8 +5136,8 @@
          4.6
         ],
         "shard": [
-         -3.9,
-         -38.8
+         -13.9,
+         -31.2
         ],
         "strike": [
          0.0,
@@ -5247,11 +5146,10 @@
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 122,
-        "shard": 123,
-        "glow": 34
+        "bramble": 111,
+        "shard": 112
        },
-       "sha256": "f646adf27085e529a785058f4070ba59bd3ec98b78348817a2574a7b2993080b",
+       "sha256": "231afbc37ba15315c95d89dbf449a25efdd26a497fdb8ea862d25ddc7a1c9df5",
        "sheet": "sheets/attack_N.png",
        "region": [
         160,
@@ -5264,8 +5162,8 @@
        "path": "res://assets/animated/thornback/attack_N_02.png",
        "file": "attack_N_02.png",
        "packed_bounds": [
-        67,
-        91,
+        64,
+        94,
         93,
         142
        ],
@@ -5287,8 +5185,8 @@
          1.6
         ],
         "shard": [
-         -3.9,
-         -38.8
+         -13.9,
+         -31.2
         ],
         "strike": [
          0.0,
@@ -5297,11 +5195,10 @@
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 122,
-        "shard": 123,
-        "glow": 34
+        "bramble": 111,
+        "shard": 112
        },
-       "sha256": "a216122e0a24b3e7491d3c2326b521847fd1a70e12f200623ce9651d5d2087ec",
+       "sha256": "a608c21241ae644d8a54c7ea04cea717ea275e04dc952dcdd82ca642d7f48ca3",
        "sheet": "sheets/attack_N.png",
        "region": [
         320,
@@ -5315,7 +5212,7 @@
        "file": "attack_N_03.png",
        "packed_bounds": [
         64,
-        91,
+        95,
         93,
         141
        ],
@@ -5337,8 +5234,8 @@
          2.7
         ],
         "shard": [
-         -3.9,
-         -38.4
+         -13.9,
+         -30.8
         ],
         "strike": [
          0.0,
@@ -5347,11 +5244,10 @@
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 115,
-        "shard": 118,
-        "glow": 41
+        "bramble": 107,
+        "shard": 112
        },
-       "sha256": "dff09d2e9624d99eee312fd59fc62e9b8fd6c540a79d7ee4c56024c27d10a18c",
+       "sha256": "d1730c024addc1074c3a6ab3b6f268a73fa5e272bb2d74f1e8a952e7a6a6f153",
        "sheet": "sheets/attack_N.png",
        "region": [
         480,
@@ -5374,7 +5270,7 @@
        "file": "attack_E_00.png",
        "packed_bounds": [
         52,
-        90,
+        95,
         128,
         136
        ],
@@ -5396,8 +5292,8 @@
          -4.0
         ],
         "shard": [
-         -9.4,
-         -41.5
+         -8.1,
+         -33.8
         ],
         "strike": [
          44.6,
@@ -5405,12 +5301,11 @@
         ]
        },
        "equipment": {
-        "bramble": 127,
-        "shard": 154,
-        "tusk": 19,
-        "glow": 48
+        "bramble": 177,
+        "shard": 76,
+        "tusk": 19
        },
-       "sha256": "c1b23531214372653fcf9018edf17fda7d4233fad80b3a8f9a513841ea13d4ce",
+       "sha256": "5ffe3fe51c0c61fd874d964d078724d522b6f9160fef507f8aaae1bf05d26c7e",
        "sheet": "sheets/attack_E.png",
        "region": [
         0,
@@ -5424,7 +5319,7 @@
        "file": "attack_E_01.png",
        "packed_bounds": [
         52,
-        90,
+        95,
         128,
         136
        ],
@@ -5446,8 +5341,8 @@
          -2.0
         ],
         "shard": [
-         -9.4,
-         -41.5
+         -8.1,
+         -33.8
         ],
         "strike": [
          44.6,
@@ -5455,12 +5350,11 @@
         ]
        },
        "equipment": {
-        "bramble": 127,
-        "shard": 154,
-        "tusk": 19,
-        "glow": 48
+        "bramble": 177,
+        "shard": 76,
+        "tusk": 19
        },
-       "sha256": "b1a7d78ac71e200466c59c3eddfb30b3eca6bb36228e307b9683b3ebdc743fd7",
+       "sha256": "8f08d1e14a95179c822cd90a23f7fa5fbfb0fd322eaf44102fd8bd282c5f4973",
        "sheet": "sheets/attack_E.png",
        "region": [
         160,
@@ -5474,7 +5368,7 @@
        "file": "attack_E_02.png",
        "packed_bounds": [
         52,
-        90,
+        95,
         128,
         136
        ],
@@ -5496,8 +5390,8 @@
          -4.0
         ],
         "shard": [
-         -9.4,
-         -41.5
+         -8.1,
+         -33.8
         ],
         "strike": [
          44.6,
@@ -5505,12 +5399,11 @@
         ]
        },
        "equipment": {
-        "bramble": 127,
-        "shard": 154,
-        "tusk": 19,
-        "glow": 48
+        "bramble": 177,
+        "shard": 76,
+        "tusk": 19
        },
-       "sha256": "a7131a2ce748053bfd85efd97070b91da763ce1cc6cb0a60bd89ab3c32db6c21",
+       "sha256": "647afc89e3417dbd7a9a822222e5ac287f6ada8f1b1c8a92cfff0b3f47e3019a",
        "sheet": "sheets/attack_E.png",
        "region": [
         320,
@@ -5524,9 +5417,9 @@
        "file": "attack_E_03.png",
        "packed_bounds": [
         52,
-        91,
+        96,
         129,
-        136
+        137
        ],
        "anchors": {
         "foot_R": [
@@ -5546,8 +5439,8 @@
          -2.0
         ],
         "shard": [
-         -9.4,
-         -40.9
+         -8.1,
+         -33.1
         ],
         "strike": [
          44.6,
@@ -5555,12 +5448,11 @@
         ]
        },
        "equipment": {
-        "bramble": 119,
-        "shard": 153,
-        "tusk": 23,
-        "glow": 45
+        "bramble": 176,
+        "shard": 74,
+        "tusk": 23
        },
-       "sha256": "ea5d53ab987f8b3f43aeca389c2434ced22b5779ff702935633d1bbb6e3c699e",
+       "sha256": "3f7243a3f8f0e2c5532cf747ed56b66519678ef2fc4c0b2c8af51c7fbde1525f",
        "sheet": "sheets/attack_E.png",
        "region": [
         480,
@@ -5583,7 +5475,7 @@
        "file": "attack_W_00.png",
        "packed_bounds": [
         32,
-        90,
+        95,
         108,
         136
        ],
@@ -5605,8 +5497,8 @@
          -4.0
         ],
         "shard": [
-         10.2,
-         -41.5
+         10.8,
+         -33.8
         ],
         "strike": [
          -44.6,
@@ -5614,12 +5506,11 @@
         ]
        },
        "equipment": {
-        "bramble": 124,
-        "shard": 147,
-        "tusk": 19,
-        "glow": 53
+        "bramble": 169,
+        "shard": 78,
+        "tusk": 19
        },
-       "sha256": "cfbf0036d003421ffa7dd3b5bffef9105323ec5143fb97d115e05cce56691f3c",
+       "sha256": "fc8ca087c244c5e575bc849f159bc6e53f6bf7bb3dd8ed6fdc2adfa46c1057da",
        "sheet": "sheets/attack_W.png",
        "region": [
         0,
@@ -5633,7 +5524,7 @@
        "file": "attack_W_01.png",
        "packed_bounds": [
         32,
-        90,
+        95,
         108,
         136
        ],
@@ -5655,8 +5546,8 @@
          -2.0
         ],
         "shard": [
-         10.2,
-         -41.5
+         10.8,
+         -33.8
         ],
         "strike": [
          -44.6,
@@ -5664,12 +5555,11 @@
         ]
        },
        "equipment": {
-        "bramble": 124,
-        "shard": 147,
-        "tusk": 19,
-        "glow": 53
+        "bramble": 169,
+        "shard": 78,
+        "tusk": 19
        },
-       "sha256": "1e23c019277064f26815bb1138af679f7bba325f9a34e6dbd95fa6fa6fa1984f",
+       "sha256": "10bfededd0b864d9927e2ff75438fe8d64e2748042789be30ceb86535ae88a0c",
        "sheet": "sheets/attack_W.png",
        "region": [
         160,
@@ -5683,7 +5573,7 @@
        "file": "attack_W_02.png",
        "packed_bounds": [
         32,
-        90,
+        95,
         108,
         136
        ],
@@ -5705,8 +5595,8 @@
          -4.0
         ],
         "shard": [
-         10.2,
-         -41.5
+         10.8,
+         -33.8
         ],
         "strike": [
          -44.6,
@@ -5714,12 +5604,11 @@
         ]
        },
        "equipment": {
-        "bramble": 124,
-        "shard": 147,
-        "tusk": 19,
-        "glow": 53
+        "bramble": 169,
+        "shard": 78,
+        "tusk": 19
        },
-       "sha256": "d25b9297c319bc9acf2f0d400ae03b366b63e8bdcbb4c9792edf4d68eb55fa34",
+       "sha256": "274033264d5fde17821b84c70aace38461c3f0c55e04efff5ab23ae6f458c902",
        "sheet": "sheets/attack_W.png",
        "region": [
         320,
@@ -5733,9 +5622,9 @@
        "file": "attack_W_03.png",
        "packed_bounds": [
         31,
-        90,
+        96,
         108,
-        136
+        137
        ],
        "anchors": {
         "foot_R": [
@@ -5755,8 +5644,8 @@
          -2.0
         ],
         "shard": [
-         10.2,
-         -40.9
+         10.8,
+         -33.1
         ],
         "strike": [
          -44.6,
@@ -5764,12 +5653,11 @@
         ]
        },
        "equipment": {
-        "bramble": 125,
-        "shard": 153,
-        "tusk": 23,
-        "glow": 47
+        "bramble": 170,
+        "shard": 77,
+        "tusk": 23
        },
-       "sha256": "da8d7a0b60826c2da10413bb04763324260ebebfc7d9a309069a0e454325202b",
+       "sha256": "b523b2e720c3aa10aed9e934e889b60a501624e0c87de03be1fc7a9824c8864f",
        "sheet": "sheets/attack_W.png",
        "region": [
         480,
@@ -5812,9 +5700,9 @@
        "path": "res://assets/animated/thornback/hurt_S_00.png",
        "file": "hurt_S_00.png",
        "packed_bounds": [
-        69,
-        86,
-        95,
+        68,
+        96,
+        97,
         140
        ],
        "anchors": {
@@ -5835,8 +5723,8 @@
          -5.8
         ],
         "shard": [
-         5.9,
-         -46.0
+         15.9,
+         -38.1
         ],
         "strike": [
          2.0,
@@ -5844,12 +5732,11 @@
         ]
        },
        "equipment": {
-        "shard": 116,
-        "bramble": 114,
-        "tusk": 14,
-        "glow": 36
+        "shard": 107,
+        "bramble": 101,
+        "tusk": 14
        },
-       "sha256": "099bdd0346a277c0f9a60d30ba4f6c1fd8ae93c03a10fc43c7e483e3780fbcc3",
+       "sha256": "ba749646905e21e8324b50125277b01611c9ef88b68a24b68d397a7b51792333",
        "sheet": "sheets/hurt_S.png",
        "region": [
         0,
@@ -5862,9 +5749,9 @@
        "path": "res://assets/animated/thornback/hurt_S_01.png",
        "file": "hurt_S_01.png",
        "packed_bounds": [
-        65,
-        86,
-        92,
+        64,
+        96,
+        93,
         140
        ],
        "anchors": {
@@ -5885,8 +5772,8 @@
          -5.8
         ],
         "shard": [
-         2.2,
-         -46.0
+         12.2,
+         -38.1
         ],
         "strike": [
          -1.6,
@@ -5894,12 +5781,11 @@
         ]
        },
        "equipment": {
-        "shard": 117,
-        "bramble": 107,
-        "tusk": 17,
-        "glow": 33
+        "shard": 107,
+        "bramble": 96,
+        "tusk": 17
        },
-       "sha256": "29600e3c08cb6973203c1dadfd847bf6e116d5baefd2db2d9583b55e234c3eaf",
+       "sha256": "d5bfcc7c1e1e9f221e1067658fabfa6f0e61ed324ad3b7c42f1728ce478b1032",
        "sheet": "sheets/hurt_S.png",
        "region": [
         160,
@@ -5912,9 +5798,9 @@
        "path": "res://assets/animated/thornback/hurt_S_02.png",
        "file": "hurt_S_02.png",
        "packed_bounds": [
-        68,
-        85,
-        94,
+        67,
+        95,
+        96,
         140
        ],
        "anchors": {
@@ -5935,8 +5821,8 @@
          -5.8
         ],
         "shard": [
-         4.7,
-         -46.3
+         14.7,
+         -38.5
         ],
         "strike": [
          0.8,
@@ -5944,12 +5830,11 @@
         ]
        },
        "equipment": {
-        "shard": 108,
-        "bramble": 117,
-        "tusk": 17,
-        "glow": 44
+        "shard": 97,
+        "bramble": 112,
+        "tusk": 17
        },
-       "sha256": "03c13e16852c60c4585bd939dd09da3fff1e6500e5647537d33005de752f8b93",
+       "sha256": "8bcc5185fe260ccefa462e26f49c06fa526a7a8daea3784173e3012fd5ba5443",
        "sheet": "sheets/hurt_S.png",
        "region": [
         320,
@@ -5962,9 +5847,9 @@
        "path": "res://assets/animated/thornback/hurt_S_03.png",
        "file": "hurt_S_03.png",
        "packed_bounds": [
-        67,
-        85,
-        93,
+        66,
+        94,
+        95,
         140
        ],
        "anchors": {
@@ -5985,8 +5870,8 @@
          -5.8
         ],
         "shard": [
-         3.9,
-         -46.6
+         13.9,
+         -38.8
         ],
         "strike": [
          -0.0,
@@ -5994,12 +5879,11 @@
         ]
        },
        "equipment": {
-        "shard": 115,
-        "bramble": 123,
-        "tusk": 12,
-        "glow": 51
+        "shard": 99,
+        "bramble": 120,
+        "tusk": 12
        },
-       "sha256": "929b01bcc155f39f0037bf86e821905d18086dcdd098f7d28e86106dd8852953",
+       "sha256": "ddff13d764626191ea31c6db490728ab110ff7c78cfbc46668b3a5a899c31cee",
        "sheet": "sheets/hurt_S.png",
        "region": [
         480,
@@ -6016,8 +5900,8 @@
        "path": "res://assets/animated/thornback/hurt_N_00.png",
        "file": "hurt_N_00.png",
        "packed_bounds": [
-        65,
-        89,
+        62,
+        92,
         91,
         140
        ],
@@ -6039,8 +5923,8 @@
          1.8
         ],
         "shard": [
-         -5.9,
-         -39.1
+         -15.9,
+         -31.5
         ],
         "strike": [
          -2.0,
@@ -6049,11 +5933,10 @@
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 148,
-        "shard": 124,
-        "glow": 32
+        "bramble": 151,
+        "shard": 113
        },
-       "sha256": "1598c1f8383a8dd22773783efe8ea0f69b850939fcc860ca10a0d200db1fd2a2",
+       "sha256": "50fa793c759f11b0efa5c6e79f1f055ce37952ccbcb19b764281305b3e058826",
        "sheet": "sheets/hurt_N.png",
        "region": [
         0,
@@ -6066,8 +5949,8 @@
        "path": "res://assets/animated/thornback/hurt_N_01.png",
        "file": "hurt_N_01.png",
        "packed_bounds": [
-        68,
-        89,
+        66,
+        92,
         95,
         140
        ],
@@ -6089,8 +5972,8 @@
          1.8
         ],
         "shard": [
-         -2.2,
-         -39.1
+         -12.2,
+         -31.5
         ],
         "strike": [
          1.6,
@@ -6100,10 +5983,9 @@
        "equipment": {
         "tusk": 0,
         "bramble": 154,
-        "shard": 116,
-        "glow": 33
+        "shard": 107
        },
-       "sha256": "d8c011ce71032525853de18f1ea990e6fdec840aedfb43244d906a63450a3ef9",
+       "sha256": "8523b30948967f5f6a24a3eefbd2f62a29096ea8d6a375ba0bdfdc239418239f",
        "sheet": "sheets/hurt_N.png",
        "region": [
         160,
@@ -6116,8 +5998,8 @@
        "path": "res://assets/animated/thornback/hurt_N_02.png",
        "file": "hurt_N_02.png",
        "packed_bounds": [
-        66,
-        89,
+        63,
+        92,
         92,
         140
        ],
@@ -6139,8 +6021,8 @@
          1.8
         ],
         "shard": [
-         -4.7,
-         -39.5
+         -14.7,
+         -31.9
         ],
         "strike": [
          -0.8,
@@ -6149,11 +6031,10 @@
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 145,
-        "shard": 117,
-        "glow": 35
+        "bramble": 144,
+        "shard": 109
        },
-       "sha256": "6a5d3c13d8f257fa4d026ec60ba52850d7e59828bcab8d5a70c189de9bcbca06",
+       "sha256": "9357e27298cc057c940da9051979bc2e6fd3434755cf7a1cbc0db7101e79f96a",
        "sheet": "sheets/hurt_N.png",
        "region": [
         320,
@@ -6166,8 +6047,8 @@
        "path": "res://assets/animated/thornback/hurt_N_03.png",
        "file": "hurt_N_03.png",
        "packed_bounds": [
-        67,
-        89,
+        64,
+        92,
         93,
         140
        ],
@@ -6189,8 +6070,8 @@
          1.8
         ],
         "shard": [
-         -3.9,
-         -39.8
+         -13.9,
+         -32.2
         ],
         "strike": [
          0.0,
@@ -6199,11 +6080,10 @@
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 137,
-        "shard": 126,
-        "glow": 35
+        "bramble": 135,
+        "shard": 112
        },
-       "sha256": "6fe451b6c12e19eebf3e61ccbc0f00c61c93afdbf663f3b359e588f89756e5ca",
+       "sha256": "bcf8f3b799df6f1aeddc36297807736418c8b7fcabd3b98c78b0d3fd3d4f82c3",
        "sheet": "sheets/hurt_N.png",
        "region": [
         480,
@@ -6221,7 +6101,7 @@
        "file": "hurt_E_00.png",
        "packed_bounds": [
         52,
-        89,
+        95,
         121,
         136
        ],
@@ -6243,8 +6123,8 @@
          -2.0
         ],
         "shard": [
-         -9.2,
-         -42.5
+         -7.9,
+         -34.8
         ],
         "strike": [
          38.0,
@@ -6252,12 +6132,11 @@
         ]
        },
        "equipment": {
-        "bramble": 128,
-        "shard": 146,
-        "tusk": 21,
-        "glow": 46
+        "bramble": 160,
+        "shard": 72,
+        "tusk": 21
        },
-       "sha256": "7b1bdbf37f4951b2c27cafae37376ebc6c0d2329c61bd08046e0352823bdc367",
+       "sha256": "1d29697554855fe2f489c34d17ca8336e44c33bc36ce46d178e0976abaca4e7c",
        "sheet": "sheets/hurt_E.png",
        "region": [
         0,
@@ -6271,7 +6150,7 @@
        "file": "hurt_E_01.png",
        "packed_bounds": [
         52,
-        89,
+        95,
         121,
         136
        ],
@@ -6293,8 +6172,8 @@
          -2.0
         ],
         "shard": [
-         -9.6,
-         -42.5
+         -8.2,
+         -34.8
         ],
         "strike": [
          38.3,
@@ -6302,12 +6181,11 @@
         ]
        },
        "equipment": {
-        "bramble": 126,
-        "shard": 152,
-        "tusk": 20,
-        "glow": 47
+        "bramble": 156,
+        "shard": 80,
+        "tusk": 20
        },
-       "sha256": "8c83a82312cb1845c67e2257b87af03c857f4c0372bd1247599a1a037e8acc84",
+       "sha256": "a26e998272d4f39ec624e246ff7139fbdd5afa4303c21a9b156dc10253b43cb4",
        "sheet": "sheets/hurt_E.png",
        "region": [
         160,
@@ -6321,7 +6199,7 @@
        "file": "hurt_E_02.png",
        "packed_bounds": [
         52,
-        88,
+        95,
         123,
         136
        ],
@@ -6343,8 +6221,8 @@
          -2.0
         ],
         "shard": [
-         -9.3,
-         -42.9
+         -8.0,
+         -35.2
         ],
         "strike": [
          39.9,
@@ -6352,12 +6230,11 @@
         ]
        },
        "equipment": {
-        "bramble": 139,
-        "shard": 150,
-        "tusk": 20,
-        "glow": 43
+        "bramble": 171,
+        "shard": 70,
+        "tusk": 20
        },
-       "sha256": "dc3449560eca066747843827fdcba067427a8f6865162030d29273c98c08417f",
+       "sha256": "7bc5af1a676ddb9d623cbff972dd79ab5c668c5a13c4557ed45683a1b81a01cd",
        "sheet": "sheets/hurt_E.png",
        "region": [
         320,
@@ -6371,7 +6248,7 @@
        "file": "hurt_E_03.png",
        "packed_bounds": [
         52,
-        88,
+        95,
         123,
         136
        ],
@@ -6393,8 +6270,8 @@
          -2.0
         ],
         "shard": [
-         -9.4,
-         -43.2
+         -8.1,
+         -35.5
         ],
         "strike": [
          40.5,
@@ -6402,12 +6279,11 @@
         ]
        },
        "equipment": {
-        "bramble": 133,
-        "shard": 151,
-        "tusk": 22,
-        "glow": 46
+        "bramble": 164,
+        "shard": 76,
+        "tusk": 22
        },
-       "sha256": "d8bfb699211e7bf721386bd1df5f99485f8b49a553c3b95c6eb88b3d7e44f3b6",
+       "sha256": "14f143c1bc66aa78c9dd1c4c354d65c8fac7aa128de071199053baec5a30e3ef",
        "sheet": "sheets/hurt_E.png",
        "region": [
         480,
@@ -6425,7 +6301,7 @@
        "file": "hurt_W_00.png",
        "packed_bounds": [
         40,
-        89,
+        95,
         108,
         136
        ],
@@ -6447,8 +6323,8 @@
          -2.0
         ],
         "shard": [
-         10.4,
-         -42.5
+         11.0,
+         -34.8
         ],
         "strike": [
          -37.6,
@@ -6456,12 +6332,11 @@
         ]
        },
        "equipment": {
-        "bramble": 112,
-        "shard": 156,
-        "tusk": 18,
-        "glow": 44
+        "bramble": 142,
+        "shard": 78,
+        "tusk": 18
        },
-       "sha256": "c73e64a3d9541e0cb97a37bc59277ffec94b5e44239e6e49244630a51f0c9346",
+       "sha256": "8db710a7784135b6a65076184d41168d3b846091c09890f3760c1d0fcd6a0992",
        "sheet": "sheets/hurt_W.png",
        "region": [
         0,
@@ -6475,7 +6350,7 @@
        "file": "hurt_W_01.png",
        "packed_bounds": [
         39,
-        89,
+        95,
         108,
         136
        ],
@@ -6497,8 +6372,8 @@
          -2.0
         ],
         "shard": [
-         10.0,
-         -42.5
+         10.7,
+         -34.8
         ],
         "strike": [
          -38.6,
@@ -6506,12 +6381,11 @@
         ]
        },
        "equipment": {
-        "bramble": 124,
-        "shard": 148,
-        "tusk": 22,
-        "glow": 45
+        "bramble": 147,
+        "shard": 79,
+        "tusk": 22
        },
-       "sha256": "8e76a38fb97e668522b7891767d9c21c2f0a029c8e1c8bb0d0daa941804806d9",
+       "sha256": "f662175e133ff013eede74378b855ef6880cc83b5bce2563002c8861eceec2e9",
        "sheet": "sheets/hurt_W.png",
        "region": [
         160,
@@ -6525,7 +6399,7 @@
        "file": "hurt_W_02.png",
        "packed_bounds": [
         38,
-        88,
+        95,
         108,
         136
        ],
@@ -6547,8 +6421,8 @@
          -2.0
         ],
         "shard": [
-         10.2,
-         -42.9
+         10.9,
+         -35.2
         ],
         "strike": [
          -39.7,
@@ -6556,12 +6430,11 @@
         ]
        },
        "equipment": {
-        "bramble": 130,
-        "shard": 154,
-        "tusk": 19,
-        "glow": 46
+        "bramble": 158,
+        "shard": 75,
+        "tusk": 19
        },
-       "sha256": "9fa8371bceec91ae11bd682f55a8ecb1d55ffbf81468c1ffab71e8e771106ee7",
+       "sha256": "0743e79f532bbb5855e52b83984f7ce796dce3aa317903acd1b2abfa1e98ec89",
        "sheet": "sheets/hurt_W.png",
        "region": [
         320,
@@ -6575,7 +6448,7 @@
        "file": "hurt_W_03.png",
        "packed_bounds": [
         37,
-        88,
+        95,
         108,
         136
        ],
@@ -6597,8 +6470,8 @@
          -2.0
         ],
         "shard": [
-         10.2,
-         -43.2
+         10.8,
+         -35.5
         ],
         "strike": [
          -40.5,
@@ -6606,12 +6479,11 @@
         ]
        },
        "equipment": {
-        "bramble": 127,
-        "shard": 147,
-        "tusk": 22,
-        "glow": 49
+        "bramble": 153,
+        "shard": 82,
+        "tusk": 22
        },
-       "sha256": "b2823dcfcdfe0968ea3feea7087a04fbe23e4aef46c9153f48cc0f0db20a7b36",
+       "sha256": "5d7274a2728dfd550bd131babaac3246077c1569b3245b9df0c1e5dcee534bd1",
        "sheet": "sheets/hurt_W.png",
        "region": [
         480,
@@ -6648,9 +6520,9 @@
        "path": "res://assets/animated/thornback/stagger_S_00.png",
        "file": "stagger_S_00.png",
        "packed_bounds": [
-        67,
-        85,
+        66,
         93,
+        95,
         140
        ],
        "anchors": {
@@ -6671,8 +6543,8 @@
          -5.8
         ],
         "shard": [
-         3.9,
-         -46.1
+         13.9,
+         -38.3
         ],
         "strike": [
          -0.0,
@@ -6680,12 +6552,11 @@
         ]
        },
        "equipment": {
-        "shard": 108,
-        "bramble": 139,
-        "tusk": 14,
-        "glow": 40
+        "shard": 98,
+        "bramble": 141,
+        "tusk": 14
        },
-       "sha256": "30eed1bf2be8d3e693383c1b76bdb1485d6293f4359a05c2800455136d0bc303",
+       "sha256": "3dfb7dd8d5ab41255a35e10396b630246569db319fe51fb853c6a1aa83e391cc",
        "sheet": "sheets/stagger_S.png",
        "region": [
         0,
@@ -6698,9 +6569,9 @@
        "path": "res://assets/animated/thornback/stagger_S_01.png",
        "file": "stagger_S_01.png",
        "packed_bounds": [
-        67,
-        85,
-        93,
+        66,
+        94,
+        95,
         140
        ],
        "anchors": {
@@ -6721,8 +6592,8 @@
          -5.8
         ],
         "shard": [
-         3.9,
-         -46.1
+         13.9,
+         -38.3
         ],
         "strike": [
          -0.0,
@@ -6730,12 +6601,11 @@
         ]
        },
        "equipment": {
-        "shard": 115,
-        "bramble": 121,
-        "tusk": 16,
-        "glow": 43
+        "shard": 102,
+        "bramble": 127,
+        "tusk": 16
        },
-       "sha256": "2ae80f834d35412845d400303aea17b80c9670547b9f1735a15eaf275d57772d",
+       "sha256": "df4d38108abb9c719ca635aca4ec1e107291ec2cf9d3771f60bfb6dd9f70d051",
        "sheet": "sheets/stagger_S.png",
        "region": [
         160,
@@ -6748,9 +6618,9 @@
        "path": "res://assets/animated/thornback/stagger_S_02.png",
        "file": "stagger_S_02.png",
        "packed_bounds": [
-        66,
-        86,
-        92,
+        65,
+        94,
+        94,
         140
        ],
        "anchors": {
@@ -6771,8 +6641,8 @@
          -5.8
         ],
         "shard": [
-         2.8,
-         -46.1
+         12.8,
+         -38.3
         ],
         "strike": [
          -1.1,
@@ -6780,12 +6650,11 @@
         ]
        },
        "equipment": {
-        "shard": 113,
-        "bramble": 126,
-        "tusk": 14,
-        "glow": 48
+        "shard": 102,
+        "bramble": 127,
+        "tusk": 14
        },
-       "sha256": "dc87f56deac96ef364a539ec6e38098aee43a5c736cfea2339703b3febb1e2cb",
+       "sha256": "55baedfc6d074f9581beef0dbdf71a7f5c1b97f164b1b6a5d0b64727c20b69c0",
        "sheet": "sheets/stagger_S.png",
        "region": [
         320,
@@ -6798,9 +6667,9 @@
        "path": "res://assets/animated/thornback/stagger_S_03.png",
        "file": "stagger_S_03.png",
        "packed_bounds": [
-        67,
-        85,
-        93,
+        66,
+        94,
+        95,
         140
        ],
        "anchors": {
@@ -6821,8 +6690,8 @@
          -5.8
         ],
         "shard": [
-         3.9,
-         -46.1
+         13.9,
+         -38.3
         ],
         "strike": [
          -0.0,
@@ -6830,12 +6699,11 @@
         ]
        },
        "equipment": {
-        "shard": 115,
-        "bramble": 121,
-        "tusk": 16,
-        "glow": 43
+        "shard": 102,
+        "bramble": 127,
+        "tusk": 16
        },
-       "sha256": "f1a5b9f7d3cdf6717ccd0065dd91f6d24360fcdc725e8c5bd845913c5219c243",
+       "sha256": "aca866bd667b9c4ec26eb58fc12eaf71196e5eff18ad39cf7a9a449c3662eddf",
        "sheet": "sheets/stagger_S.png",
        "region": [
         480,
@@ -6848,9 +6716,9 @@
        "path": "res://assets/animated/thornback/stagger_S_04.png",
        "file": "stagger_S_04.png",
        "packed_bounds": [
-        68,
-        85,
+        67,
         94,
+        96,
         140
        ],
        "anchors": {
@@ -6871,8 +6739,8 @@
          -5.8
         ],
         "shard": [
-         4.9,
-         -46.1
+         14.9,
+         -38.3
         ],
         "strike": [
          1.1,
@@ -6880,12 +6748,11 @@
         ]
        },
        "equipment": {
-        "shard": 113,
-        "bramble": 128,
-        "tusk": 14,
-        "glow": 36
+        "shard": 99,
+        "bramble": 131,
+        "tusk": 14
        },
-       "sha256": "e733e17fde27d60203a4cdd8f8cc68ae74fdddb983160175c44e7e33dd0c4cd6",
+       "sha256": "e3b9a7a64542750c82cee2e24faee5785c3b2b7e8046785a067aa2ba35ed2e6a",
        "sheet": "sheets/stagger_S.png",
        "region": [
         640,
@@ -6898,9 +6765,9 @@
        "path": "res://assets/animated/thornback/stagger_S_05.png",
        "file": "stagger_S_05.png",
        "packed_bounds": [
-        67,
-        85,
-        93,
+        66,
+        94,
+        95,
         140
        ],
        "anchors": {
@@ -6921,8 +6788,8 @@
          -5.8
         ],
         "shard": [
-         3.9,
-         -46.1
+         13.9,
+         -38.3
         ],
         "strike": [
          -0.0,
@@ -6930,12 +6797,11 @@
         ]
        },
        "equipment": {
-        "shard": 115,
-        "bramble": 121,
-        "tusk": 16,
-        "glow": 43
+        "shard": 102,
+        "bramble": 127,
+        "tusk": 16
        },
-       "sha256": "77bc927f7be73655ac2285f23581d8db94932ba521d3b4cfea52dc4268ba9e40",
+       "sha256": "407a45eba8514d48b486a6c20049f39d907fa6f70478b984bef09557cc6d2d8a",
        "sheet": "sheets/stagger_S.png",
        "region": [
         800,
@@ -6948,9 +6814,9 @@
        "path": "res://assets/animated/thornback/stagger_S_06.png",
        "file": "stagger_S_06.png",
        "packed_bounds": [
-        67,
-        85,
-        93,
+        66,
+        94,
+        95,
         140
        ],
        "anchors": {
@@ -6971,8 +6837,8 @@
          -5.8
         ],
         "shard": [
-         3.9,
-         -46.6
+         13.9,
+         -38.8
         ],
         "strike": [
          -0.0,
@@ -6980,12 +6846,11 @@
         ]
        },
        "equipment": {
-        "shard": 115,
-        "bramble": 123,
-        "tusk": 12,
-        "glow": 51
+        "shard": 99,
+        "bramble": 120,
+        "tusk": 12
        },
-       "sha256": "929b01bcc155f39f0037bf86e821905d18086dcdd098f7d28e86106dd8852953",
+       "sha256": "ddff13d764626191ea31c6db490728ab110ff7c78cfbc46668b3a5a899c31cee",
        "sheet": "sheets/stagger_S.png",
        "region": [
         960,
@@ -7002,8 +6867,8 @@
        "path": "res://assets/animated/thornback/stagger_N_00.png",
        "file": "stagger_N_00.png",
        "packed_bounds": [
-        67,
-        90,
+        64,
+        94,
         93,
         140
        ],
@@ -7025,8 +6890,8 @@
          1.8
         ],
         "shard": [
-         -3.9,
-         -39.3
+         -13.9,
+         -31.7
         ],
         "strike": [
          0.0,
@@ -7035,11 +6900,10 @@
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 117,
-        "shard": 117,
-        "glow": 31
+        "bramble": 107,
+        "shard": 116
        },
-       "sha256": "f7f2aaba7ce17c1ab3f050b99ecc335cdf2e6ec36a3fd680e32de108b3e328bb",
+       "sha256": "b8da01085bd20676133fdd53db34af9dcd92431fbc2ccfc9a95a85bc7ef4bb58",
        "sheet": "sheets/stagger_N.png",
        "region": [
         0,
@@ -7052,8 +6916,8 @@
        "path": "res://assets/animated/thornback/stagger_N_01.png",
        "file": "stagger_N_01.png",
        "packed_bounds": [
-        67,
-        90,
+        64,
+        91,
         93,
         140
        ],
@@ -7075,8 +6939,8 @@
          1.8
         ],
         "shard": [
-         -3.9,
-         -39.3
+         -13.9,
+         -31.7
         ],
         "strike": [
          0.0,
@@ -7085,11 +6949,10 @@
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 134,
-        "shard": 120,
-        "glow": 27
+        "bramble": 125,
+        "shard": 113
        },
-       "sha256": "e7381fd5b258025597e3bbebb816c3d41e36e7cc0d6c58a77aa274c782ac90d8",
+       "sha256": "fec2dc24cb590d5fccad61e4d57959aab3da99448482f8008aef9233aa06e3b4",
        "sheet": "sheets/stagger_N.png",
        "region": [
         160,
@@ -7102,8 +6965,8 @@
        "path": "res://assets/animated/thornback/stagger_N_02.png",
        "file": "stagger_N_02.png",
        "packed_bounds": [
-        68,
-        90,
+        65,
+        92,
         94,
         140
        ],
@@ -7125,8 +6988,8 @@
          1.8
         ],
         "shard": [
-         -2.8,
-         -39.3
+         -12.8,
+         -31.7
         ],
         "strike": [
          1.1,
@@ -7135,11 +6998,10 @@
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 137,
-        "shard": 121,
-        "glow": 33
+        "bramble": 127,
+        "shard": 113
        },
-       "sha256": "56d604a0c9e1654b4641707394eed661df70bf505abec8837a3b78041787df11",
+       "sha256": "214ba674f5fdc4a78c7c30d4f3699add24e4f73f38016ad79b69b9cb6e806ed0",
        "sheet": "sheets/stagger_N.png",
        "region": [
         320,
@@ -7152,8 +7014,8 @@
        "path": "res://assets/animated/thornback/stagger_N_03.png",
        "file": "stagger_N_03.png",
        "packed_bounds": [
-        67,
-        90,
+        64,
+        91,
         93,
         140
        ],
@@ -7175,8 +7037,8 @@
          1.8
         ],
         "shard": [
-         -3.9,
-         -39.3
+         -13.9,
+         -31.7
         ],
         "strike": [
          0.0,
@@ -7185,11 +7047,10 @@
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 134,
-        "shard": 120,
-        "glow": 27
+        "bramble": 125,
+        "shard": 113
        },
-       "sha256": "c807e62dcca39f2ffb9c3066822d4577efc0887edc48aab02cea5bef258086e0",
+       "sha256": "8e8393b56bc9907cbc2279e4ea6988c5ef52fdc96e55f43ce8c3a0519cb7f1f1",
        "sheet": "sheets/stagger_N.png",
        "region": [
         480,
@@ -7202,8 +7063,8 @@
        "path": "res://assets/animated/thornback/stagger_N_04.png",
        "file": "stagger_N_04.png",
        "packed_bounds": [
-        66,
-        90,
+        63,
+        92,
         92,
         140
        ],
@@ -7225,8 +7086,8 @@
          1.8
         ],
         "shard": [
-         -4.9,
-         -39.3
+         -14.9,
+         -31.7
         ],
         "strike": [
          -1.1,
@@ -7235,11 +7096,10 @@
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 134,
-        "shard": 121,
-        "glow": 35
+        "bramble": 125,
+        "shard": 113
        },
-       "sha256": "c8903770e6ae681f9d01b368b1ae03c6e21ec54d8654b94664e46ac4cae1fdab",
+       "sha256": "ec6f5b7ad5dc417d494ed168c14326a24842e9b2ee3d9fff049145767e96a1bf",
        "sheet": "sheets/stagger_N.png",
        "region": [
         640,
@@ -7252,8 +7112,8 @@
        "path": "res://assets/animated/thornback/stagger_N_05.png",
        "file": "stagger_N_05.png",
        "packed_bounds": [
-        67,
-        90,
+        64,
+        91,
         93,
         140
        ],
@@ -7275,8 +7135,8 @@
          1.8
         ],
         "shard": [
-         -3.9,
-         -39.3
+         -13.9,
+         -31.7
         ],
         "strike": [
          0.0,
@@ -7285,11 +7145,10 @@
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 134,
-        "shard": 120,
-        "glow": 27
+        "bramble": 125,
+        "shard": 113
        },
-       "sha256": "8b15aae463f7ce0c41baafb55a1d47b04a579236ece65320a1e431f8617e6acb",
+       "sha256": "4e1da80234743ee6acb141e4be00e352c0254630774cba35e2519ee51f239ce5",
        "sheet": "sheets/stagger_N.png",
        "region": [
         800,
@@ -7302,8 +7161,8 @@
        "path": "res://assets/animated/thornback/stagger_N_06.png",
        "file": "stagger_N_06.png",
        "packed_bounds": [
-        67,
-        89,
+        64,
+        92,
         93,
         140
        ],
@@ -7325,8 +7184,8 @@
          1.8
         ],
         "shard": [
-         -3.9,
-         -39.8
+         -13.9,
+         -32.2
         ],
         "strike": [
          0.0,
@@ -7335,11 +7194,10 @@
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 137,
-        "shard": 126,
-        "glow": 35
+        "bramble": 135,
+        "shard": 112
        },
-       "sha256": "6fe451b6c12e19eebf3e61ccbc0f00c61c93afdbf663f3b359e588f89756e5ca",
+       "sha256": "bcf8f3b799df6f1aeddc36297807736418c8b7fcabd3b98c78b0d3fd3d4f82c3",
        "sheet": "sheets/stagger_N.png",
        "region": [
         960,
@@ -7357,7 +7215,7 @@
        "file": "stagger_E_00.png",
        "packed_bounds": [
         52,
-        90,
+        95,
         125,
         136
        ],
@@ -7379,8 +7237,8 @@
          -2.0
         ],
         "shard": [
-         -9.4,
-         -41.9
+         -8.1,
+         -34.2
         ],
         "strike": [
          41.9,
@@ -7388,12 +7246,11 @@
         ]
        },
        "equipment": {
-        "bramble": 121,
-        "shard": 151,
-        "tusk": 21,
-        "glow": 48
+        "bramble": 175,
+        "shard": 74,
+        "tusk": 21
        },
-       "sha256": "bb5cf654d15acbc3f8fb118483679eb445e09141d600bbe82c502c27994af83e",
+       "sha256": "7d46eee6e7cec7d1e5e130f446123b3453df714fc7e753c44444f10e05892c5a",
        "sheet": "sheets/stagger_E.png",
        "region": [
         0,
@@ -7407,7 +7264,7 @@
        "file": "stagger_E_01.png",
        "packed_bounds": [
         52,
-        89,
+        95,
         124,
         136
        ],
@@ -7429,8 +7286,8 @@
          -2.0
         ],
         "shard": [
-         -9.4,
-         -42.2
+         -8.1,
+         -34.5
         ],
         "strike": [
          40.5,
@@ -7438,12 +7295,11 @@
         ]
        },
        "equipment": {
-        "bramble": 128,
-        "shard": 154,
-        "tusk": 20,
-        "glow": 38
+        "bramble": 170,
+        "shard": 72,
+        "tusk": 20
        },
-       "sha256": "da0d3ccb888c0eb62a76bbd5a264ca4f9cceb2b41a827b873530b1baf6a0691c",
+       "sha256": "ad8cf89d0f059fb4ced817ac62fb8299f8e68270e83daa872167a706fa7ca889",
        "sheet": "sheets/stagger_E.png",
        "region": [
         160,
@@ -7457,7 +7313,7 @@
        "file": "stagger_E_02.png",
        "packed_bounds": [
         52,
-        89,
+        95,
         123,
         136
        ],
@@ -7479,8 +7335,8 @@
          -2.0
         ],
         "shard": [
-         -9.5,
-         -42.2
+         -8.2,
+         -34.5
         ],
         "strike": [
          40.4,
@@ -7488,12 +7344,11 @@
         ]
        },
        "equipment": {
-        "bramble": 130,
-        "shard": 149,
-        "tusk": 20,
-        "glow": 40
+        "bramble": 166,
+        "shard": 76,
+        "tusk": 20
        },
-       "sha256": "deeffe2082eb6c6ed678843adb8e0e6c50a285ea01dfb330e1131016393f4ffa",
+       "sha256": "5439d2460a993505d97e6d7e95d612cbb71c4cb1a2577573d7c43a44ef5fcf51",
        "sheet": "sheets/stagger_E.png",
        "region": [
         320,
@@ -7507,7 +7362,7 @@
        "file": "stagger_E_03.png",
        "packed_bounds": [
         52,
-        89,
+        95,
         124,
         136
        ],
@@ -7529,8 +7384,8 @@
          -2.0
         ],
         "shard": [
-         -9.4,
-         -42.2
+         -8.1,
+         -34.5
         ],
         "strike": [
          40.5,
@@ -7538,12 +7393,11 @@
         ]
        },
        "equipment": {
-        "bramble": 128,
-        "shard": 154,
-        "tusk": 20,
-        "glow": 38
+        "bramble": 170,
+        "shard": 72,
+        "tusk": 20
        },
-       "sha256": "03a2bdeefaf5db4fb5b7eea2a96e47dce31d921ea54e0fcdd583d03ca4524f94",
+       "sha256": "75a932c4a15c8b44fc1172effbe893690f0d5bf4d43770119671ade4e50f4e96",
        "sheet": "sheets/stagger_E.png",
        "region": [
         480,
@@ -7557,7 +7411,7 @@
        "file": "stagger_E_04.png",
        "packed_bounds": [
         52,
-        89,
+        95,
         124,
         136
        ],
@@ -7579,8 +7433,8 @@
          -2.0
         ],
         "shard": [
-         -9.3,
-         -42.2
+         -7.9,
+         -34.5
         ],
         "strike": [
          40.6,
@@ -7588,12 +7442,11 @@
         ]
        },
        "equipment": {
-        "bramble": 132,
-        "shard": 150,
-        "tusk": 21,
-        "glow": 40
+        "bramble": 173,
+        "shard": 69,
+        "tusk": 21
        },
-       "sha256": "d97b486036e87e67980c2154b8b7442e777fe6f409fcaa093c6d1ad76f82c1d3",
+       "sha256": "a66d88adc9016fe486200cd92133fdcb0a139624992d217741f7d9a0145ad057",
        "sheet": "sheets/stagger_E.png",
        "region": [
         640,
@@ -7607,7 +7460,7 @@
        "file": "stagger_E_05.png",
        "packed_bounds": [
         52,
-        89,
+        95,
         124,
         136
        ],
@@ -7629,8 +7482,8 @@
          -2.0
         ],
         "shard": [
-         -9.4,
-         -42.2
+         -8.1,
+         -34.5
         ],
         "strike": [
          40.5,
@@ -7638,12 +7491,11 @@
         ]
        },
        "equipment": {
-        "bramble": 128,
-        "shard": 154,
-        "tusk": 20,
-        "glow": 38
+        "bramble": 170,
+        "shard": 72,
+        "tusk": 20
        },
-       "sha256": "6467048d8851fb836984ca45aefdb200933663a14ccaab31199409a634cb02c8",
+       "sha256": "5f1919cc6cc178f3f7d8bbdfde6cffc618cc8c2bf0b3122aec61d4a8b269a3f9",
        "sheet": "sheets/stagger_E.png",
        "region": [
         800,
@@ -7657,7 +7509,7 @@
        "file": "stagger_E_06.png",
        "packed_bounds": [
         52,
-        88,
+        95,
         123,
         136
        ],
@@ -7679,8 +7531,8 @@
          -2.0
         ],
         "shard": [
-         -9.4,
-         -43.2
+         -8.1,
+         -35.5
         ],
         "strike": [
          40.5,
@@ -7688,12 +7540,11 @@
         ]
        },
        "equipment": {
-        "bramble": 133,
-        "shard": 151,
-        "tusk": 22,
-        "glow": 46
+        "bramble": 164,
+        "shard": 76,
+        "tusk": 22
        },
-       "sha256": "d8bfb699211e7bf721386bd1df5f99485f8b49a553c3b95c6eb88b3d7e44f3b6",
+       "sha256": "14f143c1bc66aa78c9dd1c4c354d65c8fac7aa128de071199053baec5a30e3ef",
        "sheet": "sheets/stagger_E.png",
        "region": [
         960,
@@ -7711,7 +7562,7 @@
        "file": "stagger_W_00.png",
        "packed_bounds": [
         35,
-        89,
+        95,
         108,
         136
        ],
@@ -7733,8 +7584,8 @@
          -2.0
         ],
         "shard": [
-         10.2,
-         -41.9
+         10.8,
+         -34.2
         ],
         "strike": [
          -41.9,
@@ -7742,12 +7593,11 @@
         ]
        },
        "equipment": {
-        "bramble": 121,
-        "shard": 149,
-        "tusk": 21,
-        "glow": 51
+        "bramble": 169,
+        "shard": 77,
+        "tusk": 21
        },
-       "sha256": "905e659f5aafb3ef624299b979359dfa0ff9a93612006eba507ee77aa8cc5454",
+       "sha256": "dc4e378fa8543e4d882d49eab99612253a8f0c76fa2ad4fe3d37a7d28856528a",
        "sheet": "sheets/stagger_W.png",
        "region": [
         0,
@@ -7761,7 +7611,7 @@
        "file": "stagger_W_01.png",
        "packed_bounds": [
         36,
-        89,
+        95,
         108,
         136
        ],
@@ -7783,8 +7633,8 @@
          -2.0
         ],
         "shard": [
-         10.2,
-         -42.2
+         10.8,
+         -34.5
         ],
         "strike": [
          -40.5,
@@ -7792,12 +7642,11 @@
         ]
        },
        "equipment": {
-        "bramble": 124,
-        "shard": 147,
-        "tusk": 20,
-        "glow": 50
+        "bramble": 165,
+        "shard": 78,
+        "tusk": 20
        },
-       "sha256": "391af2af68d22a619bff8e2fc5bbbd3c461979d2f8ea6efdd6c606cea8f1e443",
+       "sha256": "4b2606e479398aa335816983ee3af64088b1fe6a61883b2d2a8d8d03c690416c",
        "sheet": "sheets/stagger_W.png",
        "region": [
         160,
@@ -7811,7 +7660,7 @@
        "file": "stagger_W_02.png",
        "packed_bounds": [
         36,
-        89,
+        95,
         108,
         136
        ],
@@ -7833,8 +7682,8 @@
          -2.0
         ],
         "shard": [
-         10.1,
-         -42.2
+         10.7,
+         -34.5
         ],
         "strike": [
          -40.6,
@@ -7842,12 +7691,11 @@
         ]
        },
        "equipment": {
-        "bramble": 122,
-        "shard": 147,
-        "tusk": 21,
-        "glow": 51
+        "bramble": 165,
+        "shard": 78,
+        "tusk": 21
        },
-       "sha256": "12718a9dbb86b30af551d77df2d70901a48dccef42c6b784f65553faab8bb020",
+       "sha256": "72370beaa9d0f2ac6b191b8c587726125bb4a706a2e91b44c2ab13ef106cf18d",
        "sheet": "sheets/stagger_W.png",
        "region": [
         320,
@@ -7861,7 +7709,7 @@
        "file": "stagger_W_03.png",
        "packed_bounds": [
         36,
-        89,
+        95,
         108,
         136
        ],
@@ -7883,8 +7731,8 @@
          -2.0
         ],
         "shard": [
-         10.2,
-         -42.2
+         10.8,
+         -34.5
         ],
         "strike": [
          -40.5,
@@ -7892,12 +7740,11 @@
         ]
        },
        "equipment": {
-        "bramble": 124,
-        "shard": 147,
-        "tusk": 20,
-        "glow": 50
+        "bramble": 165,
+        "shard": 78,
+        "tusk": 20
        },
-       "sha256": "533eb6d165476bede2bb5ccb972e21d01c94e8fcf5d0748022ec07bdcfa1bd54",
+       "sha256": "df00a486885f69d3830ab95398a8e98f046f191f90cc4d722fb8b4988f1e59f1",
        "sheet": "sheets/stagger_W.png",
        "region": [
         480,
@@ -7911,7 +7758,7 @@
        "file": "stagger_W_04.png",
        "packed_bounds": [
         37,
-        89,
+        95,
         108,
         136
        ],
@@ -7933,8 +7780,8 @@
          -2.0
         ],
         "shard": [
-         10.3,
-         -42.2
+         10.9,
+         -34.5
         ],
         "strike": [
          -40.4,
@@ -7942,12 +7789,11 @@
         ]
        },
        "equipment": {
-        "bramble": 122,
-        "shard": 147,
-        "tusk": 20,
-        "glow": 51
+        "bramble": 164,
+        "shard": 75,
+        "tusk": 20
        },
-       "sha256": "db3051343a5f8fa48da3b5c51a533fffc7f3768547f62cf3dda46bdca4db8e8a",
+       "sha256": "20bcd224e20a51963d961f0a8333984c389cfa5c69761f993f81e6afee1f9901",
        "sheet": "sheets/stagger_W.png",
        "region": [
         640,
@@ -7961,7 +7807,7 @@
        "file": "stagger_W_05.png",
        "packed_bounds": [
         36,
-        89,
+        95,
         108,
         136
        ],
@@ -7983,8 +7829,8 @@
          -2.0
         ],
         "shard": [
-         10.2,
-         -42.2
+         10.8,
+         -34.5
         ],
         "strike": [
          -40.5,
@@ -7992,12 +7838,11 @@
         ]
        },
        "equipment": {
-        "bramble": 124,
-        "shard": 147,
-        "tusk": 20,
-        "glow": 50
+        "bramble": 165,
+        "shard": 78,
+        "tusk": 20
        },
-       "sha256": "187c74c6feb074eb2d4b5ec317e2ae85fb2348ec3c10ea4aa5a1711c9255deb2",
+       "sha256": "9da95454bd788a798fe3fb60774fa5a1d0e36beeef062d9b25a24a14a874faf6",
        "sheet": "sheets/stagger_W.png",
        "region": [
         800,
@@ -8011,7 +7856,7 @@
        "file": "stagger_W_06.png",
        "packed_bounds": [
         37,
-        88,
+        95,
         108,
         136
        ],
@@ -8033,8 +7878,8 @@
          -2.0
         ],
         "shard": [
-         10.2,
-         -43.2
+         10.8,
+         -35.5
         ],
         "strike": [
          -40.5,
@@ -8042,12 +7887,11 @@
         ]
        },
        "equipment": {
-        "bramble": 127,
-        "shard": 147,
-        "tusk": 22,
-        "glow": 49
+        "bramble": 153,
+        "shard": 82,
+        "tusk": 22
        },
-       "sha256": "b2823dcfcdfe0968ea3feea7087a04fbe23e4aef46c9153f48cc0f0db20a7b36",
+       "sha256": "5d7274a2728dfd550bd131babaac3246077c1569b3245b9df0c1e5dcee534bd1",
        "sheet": "sheets/stagger_W.png",
        "region": [
         960,
@@ -8090,58 +7934,8 @@
        "path": "res://assets/animated/thornback/freed_S_00.png",
        "file": "freed_S_00.png",
        "packed_bounds": [
-        65,
-        80,
-        93,
-        140
-       ],
-       "anchors": {
-        "foot_R": [
-         -7.4,
-         2.3
-        ],
-        "foot_L": [
-         7.4,
-         2.3
-        ],
-        "hind_R": [
-         -7.4,
-         -5.8
-        ],
-        "hind_L": [
-         7.4,
-         -5.8
-        ],
-        "shard": [
-         4.9,
-         -51.6
-        ],
-        "strike": [
-         -0.0,
-         -5.9
-        ]
-       },
-       "equipment": {
-        "bramble": 118,
-        "tusk": 14,
-        "shard": 166,
-        "glow": 49
-       },
-       "sha256": "9ab8742279afb50960b7c819ac802f089b06248b5e14730aff69d80266458c75",
-       "sheet": "sheets/freed_S.png",
-       "region": [
-        0,
-        0,
-        160,
-        144
-       ]
-      },
-      {
-       "path": "res://assets/animated/thornback/freed_S_01.png",
-       "file": "freed_S_01.png",
-       "packed_bounds": [
-        66,
-        66,
+        62,
+        92,
         99,
         140
        ],
@@ -8163,8 +7957,57 @@
          -5.8
         ],
         "shard": [
-         14.5,
-         -63.4
+         18.1,
+         -41.7
+        ],
+        "strike": [
+         -0.0,
+         -5.9
+        ]
+       },
+       "equipment": {
+        "bramble": 126,
+        "tusk": 14,
+        "shard": 126
+       },
+       "sha256": "bd0fdbaf5a0bc8b28140eed2779fb0609f29aeaa0a3ea94282b36aa88b988eee",
+       "sheet": "sheets/freed_S.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/thornback/freed_S_01.png",
+       "file": "freed_S_01.png",
+       "packed_bounds": [
+        58,
+        79,
+        109,
+        140
+       ],
+       "anchors": {
+        "foot_R": [
+         -7.4,
+         2.3
+        ],
+        "foot_L": [
+         7.4,
+         2.3
+        ],
+        "hind_R": [
+         -7.4,
+         -5.8
+        ],
+        "hind_L": [
+         7.4,
+         -5.8
+        ],
+        "shard": [
+         27.5,
+         -48.0
         ],
         "strike": [
          -0.0,
@@ -8172,12 +8015,11 @@
         ]
        },
        "equipment": {
-        "bramble": 172,
+        "bramble": 142,
         "tusk": 14,
-        "shard": 153,
-        "glow": 58
+        "shard": 124
        },
-       "sha256": "2c4ea9bd1c542664229e33a5dbe9cef481ccd92ebb6e109b2966135a8f01a6a2",
+       "sha256": "0e8c6d54b2e784bcf56a4039b94adb7fe38d877c057051106cc5b901fa82e92c",
        "sheet": "sheets/freed_S.png",
        "region": [
         160,
@@ -8190,9 +8032,9 @@
        "path": "res://assets/animated/thornback/freed_S_02.png",
        "file": "freed_S_02.png",
        "packed_bounds": [
-        66,
-        58,
-        102,
+        54,
+        72,
+        113,
         140
        ],
        "anchors": {
@@ -8213,8 +8055,8 @@
          -5.8
         ],
         "shard": [
-         19.8,
-         -67.3
+         32.5,
+         -50.0
         ],
         "strike": [
          -0.0,
@@ -8222,12 +8064,11 @@
         ]
        },
        "equipment": {
-        "bramble": 182,
+        "bramble": 154,
         "tusk": 14,
-        "shard": 163,
-        "glow": 54
+        "shard": 129
        },
-       "sha256": "2604d0946cd2537fe8a4f9db7fea510dbc3f991e8b027c3845fca4e38fdcc152",
+       "sha256": "b5dc746ee0695cac68a5fca705820583ed0c18809866b73cdcb5e76259bef8fe",
        "sheet": "sheets/freed_S.png",
        "region": [
         320,
@@ -8240,9 +8081,9 @@
        "path": "res://assets/animated/thornback/freed_S_03.png",
        "file": "freed_S_03.png",
        "packed_bounds": [
-        64,
-        58,
-        100,
+        47,
+        73,
+        117,
         140
        ],
        "anchors": {
@@ -8263,8 +8104,8 @@
          -5.8
         ],
         "shard": [
-         18.6,
-         -64.5
+         33.7,
+         -48.9
         ],
         "strike": [
          -0.0,
@@ -8272,11 +8113,11 @@
         ]
        },
        "equipment": {
-        "bramble": 182,
+        "bramble": 154,
         "tusk": 14,
-        "shard": 155
+        "shard": 123
        },
-       "sha256": "a59b8c3fa5446617ef1639f0cf91888f881a18e06fa77c5116fbc9b66baabafa",
+       "sha256": "310df5b5d641317ff0835df824effffaf15efddd171db7f9fae1c4006e594e65",
        "sheet": "sheets/freed_S.png",
        "region": [
         480,
@@ -8290,7 +8131,7 @@
        "file": "freed_S_04.png",
        "packed_bounds": [
         70,
-        92,
+        94,
         96,
         140
        ],
@@ -8317,10 +8158,10 @@
         ]
        },
        "equipment": {
-        "bramble": 182,
+        "bramble": 155,
         "tusk": 17
        },
-       "sha256": "7bf11f3b8d21011e065bda83f9910c3b219beddfe2d3202c7c9c2e9c67c123ab",
+       "sha256": "2ccf58f6d476fa6512ea5e547192aee0fe42693b175f900a7ff655ccffd9e2a7",
        "sheet": "sheets/freed_S.png",
        "region": [
         640,
@@ -8334,7 +8175,7 @@
        "file": "freed_S_05.png",
        "packed_bounds": [
         64,
-        92,
+        94,
         90,
         140
        ],
@@ -8361,10 +8202,10 @@
         ]
        },
        "equipment": {
-        "bramble": 180,
+        "bramble": 151,
         "tusk": 17
        },
-       "sha256": "0e5361fff2065103e62c5eaf925d57e71a2fd0a224b7fd3faacbc6929c4a94fc",
+       "sha256": "f43770e5f6e3b3f564def5a13fe716d05da3e656a7ffb4aa8712df7b97f9edff",
        "sheet": "sheets/freed_S.png",
        "region": [
         800,
@@ -8378,7 +8219,7 @@
        "file": "freed_S_06.png",
        "packed_bounds": [
         69,
-        92,
+        94,
         95,
         140
        ],
@@ -8405,10 +8246,10 @@
         ]
        },
        "equipment": {
-        "bramble": 182,
+        "bramble": 153,
         "tusk": 13
        },
-       "sha256": "36091b86630bf77d79fcfe1f237abf7c19b471c2ed237b32b705240bbe29e1eb",
+       "sha256": "4c37cc94d77405be32cf18487ccb1d12b06a5614a57ea8198f69c2d97c9c41a4",
        "sheet": "sheets/freed_S.png",
        "region": [
         960,
@@ -8422,7 +8263,7 @@
        "file": "freed_S_07.png",
        "packed_bounds": [
         66,
-        92,
+        94,
         92,
         140
        ],
@@ -8449,10 +8290,10 @@
         ]
        },
        "equipment": {
-        "bramble": 179,
+        "bramble": 152,
         "tusk": 16
        },
-       "sha256": "d14190e1e5e1700b4b184199c08d284b403efc64fd7f5743708c9a7dc896d35a",
+       "sha256": "7daa707012ed2138e96a0c8b83bb2415a4e9a67d02eb8eb3f43a743676ea4c44",
        "sheet": "sheets/freed_S.png",
        "region": [
         1120,
@@ -8466,7 +8307,7 @@
        "file": "freed_S_08.png",
        "packed_bounds": [
         67,
-        96,
+        98,
         93,
         140
        ],
@@ -8493,10 +8334,10 @@
         ]
        },
        "equipment": {
-        "bramble": 165,
+        "bramble": 136,
         "tusk": 16
        },
-       "sha256": "098b986ad2487739f6022c73c05ea66f6d8aa1d0b02c2fbfe950e9a615729899",
+       "sha256": "ad2254ece1f9770bfc2daf0046814bf6b469d2c1e9bffd86b753c74ab9291adb",
        "sheet": "sheets/freed_S.png",
        "region": [
         1280,
@@ -8510,7 +8351,7 @@
        "file": "freed_S_09.png",
        "packed_bounds": [
         67,
-        96,
+        99,
         93,
         140
        ],
@@ -8537,10 +8378,10 @@
         ]
        },
        "equipment": {
-        "bramble": 161,
+        "bramble": 124,
         "tusk": 18
        },
-       "sha256": "66a5dff18788605f36c0b47741789074fca409eb015d1a1d5ff5f44142d61f6f",
+       "sha256": "f98c151f97777748884a3fb8989f7787cb5a1419cbde5b0c0100fc2c9c776e83",
        "sheet": "sheets/freed_S.png",
        "region": [
         1440,
@@ -8554,7 +8395,7 @@
        "file": "freed_S_10.png",
        "packed_bounds": [
         67,
-        96,
+        99,
         93,
         140
        ],
@@ -8581,10 +8422,10 @@
         ]
        },
        "equipment": {
-        "bramble": 161,
+        "bramble": 124,
         "tusk": 18
        },
-       "sha256": "3b7f562b4e45e99026b9d76184d7a8d46bbd2c4d8eef720986f4b3f52d2e2368",
+       "sha256": "2ad1aafd3d7e8b171ab860a5ee2a16502e486d116baf14757953cc6453a5dfca",
        "sheet": "sheets/freed_S.png",
        "region": [
         1600,
@@ -8598,7 +8439,7 @@
        "file": "freed_S_11.png",
        "packed_bounds": [
         67,
-        93,
+        96,
         93,
         140
        ],
@@ -8625,10 +8466,10 @@
         ]
        },
        "equipment": {
-        "bramble": 177,
+        "bramble": 148,
         "tusk": 18
        },
-       "sha256": "af4c7fdd5f2cb5afb96b603112b19097587921846d78ba8419af29e073549829",
+       "sha256": "ad5f468a58fbb68f540079f8dcbf9701ea0135e65d8de4d23a68070a51f2d2b6",
        "sheet": "sheets/freed_S.png",
        "region": [
         1760,
@@ -8642,7 +8483,7 @@
        "file": "freed_S_12.png",
        "packed_bounds": [
         67,
-        92,
+        94,
         93,
         140
        ],
@@ -8669,10 +8510,10 @@
         ]
        },
        "equipment": {
-        "bramble": 184,
+        "bramble": 156,
         "tusk": 12
        },
-       "sha256": "4388132dff50dea9ee0fd74fa3f90eb5bb3b1123cd69918d380a1b867c1a7e69",
+       "sha256": "e9ba21f810164278379deda32a6223b10a11539b8642f7c46a55f437b67bdbb3",
        "sheet": "sheets/freed_S.png",
        "region": [
         1920,
@@ -8689,9 +8530,9 @@
        "path": "res://assets/animated/thornback/freed_N_00.png",
        "file": "freed_N_00.png",
        "packed_bounds": [
-        67,
-        84,
-        95,
+        60,
+        91,
+        97,
         140
        ],
        "anchors": {
@@ -8712,8 +8553,8 @@
          1.8
         ],
         "shard": [
-         -4.9,
-         -43.5
+         -18.1,
+         -34.1
         ],
         "strike": [
          0.0,
@@ -8721,12 +8562,11 @@
         ]
        },
        "equipment": {
-        "tusk": 0,
-        "bramble": 162,
-        "shard": 130,
-        "glow": 40
+        "tusk": 1,
+        "bramble": 193,
+        "shard": 107
        },
-       "sha256": "cf71e01c4daaf596b9608a34b36a2b9a6a2d27d76183658fd64f86291303075c",
+       "sha256": "803052aa7c3a1b67f34d149d4cc3d0a2161da887ba8f1905f0994fd318c2c3bb",
        "sheet": "sheets/freed_N.png",
        "region": [
         0,
@@ -8739,9 +8579,9 @@
        "path": "res://assets/animated/thornback/freed_N_01.png",
        "file": "freed_N_01.png",
        "packed_bounds": [
-        67,
-        71,
-        100,
+        56,
+        83,
+        106,
         140
        ],
        "anchors": {
@@ -8762,8 +8602,8 @@
          1.8
         ],
         "shard": [
-         0.7,
-         -57.0
+         -20.1,
+         -49.5
         ],
         "strike": [
          0.0,
@@ -8771,12 +8611,11 @@
         ]
        },
        "equipment": {
-        "tusk": 1,
-        "bramble": 209,
-        "shard": 128,
-        "glow": 48
+        "tusk": 4,
+        "bramble": 197,
+        "shard": 116
        },
-       "sha256": "d192ae296c5b6323e1a967bce9b831850022a11bad37dd6644486c65b5b7b602",
+       "sha256": "899ded85965b7eac8601725347a8881caf44aa3c499f1eb5c2bc8a306d71d7d5",
        "sheet": "sheets/freed_N.png",
        "region": [
         160,
@@ -8789,9 +8628,9 @@
        "path": "res://assets/animated/thornback/freed_N_02.png",
        "file": "freed_N_02.png",
        "packed_bounds": [
-        67,
-        65,
-        104,
+        53,
+        77,
+        111,
         140
        ],
        "anchors": {
@@ -8812,8 +8651,8 @@
          1.8
         ],
         "shard": [
-         4.3,
-         -62.3
+         -20.6,
+         -57.1
         ],
         "strike": [
          0.0,
@@ -8821,12 +8660,11 @@
         ]
        },
        "equipment": {
-        "tusk": 0,
-        "bramble": 206,
-        "shard": 129,
-        "glow": 59
+        "tusk": 1,
+        "bramble": 185,
+        "shard": 112
        },
-       "sha256": "4e90b6546c07e203cbfcd4965b02bd081499db6504b8b8e394eb384302a468a1",
+       "sha256": "d88b3db276f31373944aaba9e9fbd902094c6a5cf49fdb457d227deff687e009",
        "sheet": "sheets/freed_N.png",
        "region": [
         320,
@@ -8839,9 +8677,9 @@
        "path": "res://assets/animated/thornback/freed_N_03.png",
        "file": "freed_N_03.png",
        "packed_bounds": [
-        67,
-        64,
-        101,
+        45,
+        77,
+        115,
         140
        ],
        "anchors": {
@@ -8862,8 +8700,8 @@
          1.8
         ],
         "shard": [
-         3.3,
-         -58.9
+         -22.9,
+         -54.0
         ],
         "strike": [
          0.0,
@@ -8871,11 +8709,11 @@
         ]
        },
        "equipment": {
-        "tusk": 0,
-        "bramble": 206,
-        "shard": 137
+        "tusk": 1,
+        "bramble": 185,
+        "shard": 117
        },
-       "sha256": "19690d2baae86edef5b21e4ee4e2983524ef5054a66bfd6898bd79b1d051d739",
+       "sha256": "2726fb5409c2f358203d60b032e137843649e5503ca6b7d2b402cc07b72082e7",
        "sheet": "sheets/freed_N.png",
        "region": [
         480,
@@ -8917,9 +8755,9 @@
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 212
+        "bramble": 190
        },
-       "sha256": "01e6b1c5c979ab12285bb858d8256ad4315507606e6202b62601bd3bc98c253c",
+       "sha256": "83f3f7961edf94fedd08ae428035bb2be74baa4a83eba3440c9fa8809e3fcda0",
        "sheet": "sheets/freed_N.png",
        "region": [
         640,
@@ -8961,9 +8799,9 @@
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 202
+        "bramble": 184
        },
-       "sha256": "a1b5c7cc8c7237a22deabd1ae42f2f8a7f57aa3fbfb24fbb25cb054d6546b1b0",
+       "sha256": "dec389604a9dde722d768e6adea867d4cd466781e22e953e15fc02bf272d1020",
        "sheet": "sheets/freed_N.png",
        "region": [
         800,
@@ -9004,10 +8842,10 @@
         ]
        },
        "equipment": {
-        "tusk": 0,
-        "bramble": 206
+        "tusk": 1,
+        "bramble": 185
        },
-       "sha256": "f9c1967ab978c4ca52619a205afa2ebf2bf110d12e1a76f079223d8459ebb9e5",
+       "sha256": "88af2978a768f52003e725712848533d9e631b190a5a381513416ec6ae57e5ca",
        "sheet": "sheets/freed_N.png",
        "region": [
         960,
@@ -9049,9 +8887,9 @@
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 212
+        "bramble": 191
        },
-       "sha256": "ebe9d81bbb5b5c8a2f43e36908e2265115cb3418ff32aa84adfef17277a64ca2",
+       "sha256": "b443c7946e49674e096de2b10ab970412df9f7d6d3ad24f28989aaa3bf7df6ca",
        "sheet": "sheets/freed_N.png",
        "region": [
         1120,
@@ -9092,10 +8930,10 @@
         ]
        },
        "equipment": {
-        "tusk": 2,
-        "bramble": 231
+        "tusk": 4,
+        "bramble": 222
        },
-       "sha256": "42f8b402607bb6d1be391378e0da5cc723a888b6922b05b3114205162df71ffe",
+       "sha256": "0a749d4d518e9d63b6988919315e65108a1ccb120d51d0df9250216317baf1ce",
        "sheet": "sheets/freed_N.png",
        "region": [
         1280,
@@ -9136,10 +8974,10 @@
         ]
        },
        "equipment": {
-        "tusk": 2,
-        "bramble": 234
+        "tusk": 4,
+        "bramble": 228
        },
-       "sha256": "1d21b080a15582014c0090c6fe0977b1de080df4ace375668a9301eea714ce17",
+       "sha256": "3c014a22a2e1d19b0f50c53a984e30afd106ec3fceea6964a648e958ea2ba23a",
        "sheet": "sheets/freed_N.png",
        "region": [
         1440,
@@ -9180,10 +9018,10 @@
         ]
        },
        "equipment": {
-        "tusk": 2,
-        "bramble": 234
+        "tusk": 4,
+        "bramble": 228
        },
-       "sha256": "1d21b080a15582014c0090c6fe0977b1de080df4ace375668a9301eea714ce17",
+       "sha256": "3c014a22a2e1d19b0f50c53a984e30afd106ec3fceea6964a648e958ea2ba23a",
        "sheet": "sheets/freed_N.png",
        "region": [
         1600,
@@ -9224,10 +9062,10 @@
         ]
        },
        "equipment": {
-        "tusk": 0,
-        "bramble": 209
+        "tusk": 3,
+        "bramble": 197
        },
-       "sha256": "f8d0b4c4e69455ee670bfcf883e5997805baed1b6dcf789474622a81089bccd6",
+       "sha256": "49a758a21064751fe6a3ef68e07804b9807d1394bf9d01e83f4a67d04dcbc141",
        "sheet": "sheets/freed_N.png",
        "region": [
         1760,
@@ -9268,10 +9106,10 @@
         ]
        },
        "equipment": {
-        "tusk": 0,
-        "bramble": 206
+        "tusk": 1,
+        "bramble": 185
        },
-       "sha256": "5091bfa6695999fbe3384578642ae9fefcee0094f1d478d0bd9dfc67753ed39f",
+       "sha256": "abaafb6c8f4a286c823ff33b37dfc36033a02459c1881376e6146c59ea4b21ef",
        "sheet": "sheets/freed_N.png",
        "region": [
         1920,
@@ -9289,7 +9127,7 @@
        "file": "freed_E_00.png",
        "packed_bounds": [
         52,
-        84,
+        94,
         122,
         136
        ],
@@ -9311,8 +9149,8 @@
          -2.0
         ],
         "shard": [
-         -11.0,
-         -47.6
+         -9.0,
+         -37.9
         ],
         "strike": [
          39.2,
@@ -9320,12 +9158,11 @@
         ]
        },
        "equipment": {
-        "bramble": 197,
+        "bramble": 182,
         "tusk": 22,
-        "shard": 152,
-        "glow": 51
+        "shard": 77
        },
-       "sha256": "856cbb6b5eccb760d3ca7f4490dddc3d4004b42338e1c9c2937bb9ee13246c7d",
+       "sha256": "e9c30765d8f39c6cc95a56877d38a910d11b943b361d5502ab8e0fff678fbf12",
        "sheet": "sheets/freed_E.png",
        "region": [
         0,
@@ -9339,7 +9176,7 @@
        "file": "freed_E_01.png",
        "packed_bounds": [
         52,
-        69,
+        81,
         122,
         136
        ],
@@ -9361,8 +9198,8 @@
          -2.0
         ],
         "shard": [
-         -5.3,
-         -62.7
+         -6.4,
+         -49.9
         ],
         "strike": [
          39.2,
@@ -9372,10 +9209,9 @@
        "equipment": {
         "bramble": 229,
         "tusk": 17,
-        "shard": 154,
-        "glow": 50
+        "shard": 77
        },
-       "sha256": "c6ec994b7c85e4de9d9d7c430a02a2b05385f6b4adaf471235652069ef73d60d",
+       "sha256": "4853316848796f2df641e1a831a41f18f0c219be81519aa316da7f7547d6db38",
        "sheet": "sheets/freed_E.png",
        "region": [
         160,
@@ -9389,7 +9225,7 @@
        "file": "freed_E_02.png",
        "packed_bounds": [
         52,
-        60,
+        76,
         123,
         136
        ],
@@ -9411,8 +9247,8 @@
          -2.0
         ],
         "shard": [
-         -1.3,
-         -68.8
+         -4.7,
+         -55.3
         ],
         "strike": [
          39.8,
@@ -9422,10 +9258,9 @@
        "equipment": {
         "bramble": 226,
         "tusk": 18,
-        "shard": 149,
-        "glow": 47
+        "shard": 73
        },
-       "sha256": "2a6757a2b317e65f6f201c129df3df1011f13fd2e5c92ef24f774a4c4719db94",
+       "sha256": "b03d1ab63baec7d32212ddc76ffc98a922ee6577b5753b5ed011a1f67d1119a5",
        "sheet": "sheets/freed_E.png",
        "region": [
         320,
@@ -9439,7 +9274,7 @@
        "file": "freed_E_03.png",
        "packed_bounds": [
         52,
-        63,
+        75,
         123,
         136
        ],
@@ -9461,8 +9296,8 @@
          -2.0
         ],
         "shard": [
-         -2.6,
-         -65.3
+         -5.7,
+         -53.1
         ],
         "strike": [
          40.5,
@@ -9472,9 +9307,9 @@
        "equipment": {
         "bramble": 229,
         "tusk": 19,
-        "shard": 147
+        "shard": 70
        },
-       "sha256": "b8e7daccd7d66a9029035b7abd145c2730c862827857ca81a1fb7c8ea31206ca",
+       "sha256": "a17363efe11f5bbfeb2646e615be3da146c01e0249e3eb724740324bef4b5204",
        "sheet": "sheets/freed_E.png",
        "region": [
         480,
@@ -9488,7 +9323,7 @@
        "file": "freed_E_04.png",
        "packed_bounds": [
         52,
-        93,
+        95,
         123,
         136
        ],
@@ -9518,7 +9353,7 @@
         "bramble": 229,
         "tusk": 21
        },
-       "sha256": "bc6182d6a6967ae976628ad0fae01ca821f88d4f70ee523ac9ef5f087054c014",
+       "sha256": "d225d14b6fa067b11547d33af8e06bfe866d4dda3db789ab9403257d44c87099",
        "sheet": "sheets/freed_E.png",
        "region": [
         640,
@@ -9532,7 +9367,7 @@
        "file": "freed_E_05.png",
        "packed_bounds": [
         52,
-        93,
+        95,
         123,
         136
        ],
@@ -9562,7 +9397,7 @@
         "bramble": 232,
         "tusk": 18
        },
-       "sha256": "8f5017c166d2b6a8c8e71e4919278a1a54be325e47eaaa14485102b48811dd09",
+       "sha256": "14eaf35d1c46a870f9e41db1ea85965a9576ba27fe093fda061a65e0f3aa736b",
        "sheet": "sheets/freed_E.png",
        "region": [
         800,
@@ -9576,7 +9411,7 @@
        "file": "freed_E_06.png",
        "packed_bounds": [
         52,
-        93,
+        95,
         123,
         136
        ],
@@ -9606,7 +9441,7 @@
         "bramble": 232,
         "tusk": 21
        },
-       "sha256": "d2877d828b0eb8b77b4067d2d6e89925271bce853943fdb1bb7ee285bf408721",
+       "sha256": "05b435fcd8d0d6a8b1e95a2bd44e2d573b4c21d3523087cb388c4020be9ab792",
        "sheet": "sheets/freed_E.png",
        "region": [
         960,
@@ -9620,7 +9455,7 @@
        "file": "freed_E_07.png",
        "packed_bounds": [
         52,
-        93,
+        95,
         123,
         136
        ],
@@ -9650,7 +9485,7 @@
         "bramble": 228,
         "tusk": 22
        },
-       "sha256": "316ab50d96163e656484376de3815c4148aba167ab222babe13ee6ab8d6b9b59",
+       "sha256": "b629584eac8c1193e5ed871fb41f4ff967b2746e1fa4beccd77b71347dcabbe6",
        "sheet": "sheets/freed_E.png",
        "region": [
         1120,
@@ -9664,7 +9499,7 @@
        "file": "freed_E_08.png",
        "packed_bounds": [
         52,
-        93,
+        96,
         123,
         136
        ],
@@ -9694,7 +9529,7 @@
         "bramble": 232,
         "tusk": 17
        },
-       "sha256": "5550fdd61cfb425c1f5fdfe6c3fcd648dde700c1a339b7d0627c7ffdd98da8aa",
+       "sha256": "c3a05a71d6ce143e2f370d76ce29021c09c7a022143ec04cb6e6498b1ed5e0e1",
        "sheet": "sheets/freed_E.png",
        "region": [
         1280,
@@ -9708,7 +9543,7 @@
        "file": "freed_E_09.png",
        "packed_bounds": [
         52,
-        93,
+        95,
         123,
         136
        ],
@@ -9738,7 +9573,7 @@
         "bramble": 233,
         "tusk": 19
        },
-       "sha256": "b8d5c56160a305f83931cc25252bb77d0b765b18a007620bd786197dc6827154",
+       "sha256": "c8e3ce1dac84b89bc3f1d10dd9b7dd645d8cdcd2dd8f05562db944c12773f0d4",
        "sheet": "sheets/freed_E.png",
        "region": [
         1440,
@@ -9752,7 +9587,7 @@
        "file": "freed_E_10.png",
        "packed_bounds": [
         52,
-        93,
+        95,
         123,
         136
        ],
@@ -9782,7 +9617,7 @@
         "bramble": 233,
         "tusk": 19
        },
-       "sha256": "f8c08f92ea79e59418c04b7b512f64a6052be1fdc14c07d4d898afa46b0af4d4",
+       "sha256": "97df1d3e0dba456b7fab93dc7522eddf426c3e4e0f3129a432b80ba0feba2e60",
        "sheet": "sheets/freed_E.png",
        "region": [
         1600,
@@ -9796,7 +9631,7 @@
        "file": "freed_E_11.png",
        "packed_bounds": [
         52,
-        93,
+        95,
         124,
         136
        ],
@@ -9826,7 +9661,7 @@
         "bramble": 237,
         "tusk": 17
        },
-       "sha256": "0353e036eea2bafefc7a5984f783eee0355c3fbd4ccc6a6ba80f672b0ed772f5",
+       "sha256": "325f374a182aca2503c113f4e260bd2de2deb891cca2b72ca134fb8877a3e82b",
        "sheet": "sheets/freed_E.png",
        "region": [
         1760,
@@ -9840,7 +9675,7 @@
        "file": "freed_E_12.png",
        "packed_bounds": [
         52,
-        93,
+        95,
         123,
         136
        ],
@@ -9870,7 +9705,7 @@
         "bramble": 230,
         "tusk": 22
        },
-       "sha256": "54fa53ec43bcfac48d6526f5edb868ec5267403a6974561e0e31716893a4b616",
+       "sha256": "f60af66bdc66240f20a473ccbdc235ed4ed9f83682fdaa18b5c3f76366bf2ef1",
        "sheet": "sheets/freed_E.png",
        "region": [
         1920,
@@ -9888,7 +9723,7 @@
        "file": "freed_W_00.png",
        "packed_bounds": [
         38,
-        84,
+        94,
         108,
         136
        ],
@@ -9910,8 +9745,8 @@
          -2.0
         ],
         "shard": [
-         12.0,
-         -47.6
+         12.6,
+         -37.9
         ],
         "strike": [
          -39.2,
@@ -9919,12 +9754,11 @@
         ]
        },
        "equipment": {
-        "bramble": 188,
+        "bramble": 183,
         "tusk": 22,
-        "shard": 148,
-        "glow": 55
+        "shard": 74
        },
-       "sha256": "7b2ce38b8073541c896e69eeb3c5890bd399df9676cdd6c1b1413878d2269418",
+       "sha256": "7638b875800b7261b3c525fca1cdfc2027dc2f087c818b98262d8edb72108f00",
        "sheet": "sheets/freed_W.png",
        "region": [
         0,
@@ -9938,7 +9772,7 @@
        "file": "freed_W_01.png",
        "packed_bounds": [
         38,
-        68,
+        83,
         108,
         136
        ],
@@ -9960,8 +9794,8 @@
          -2.0
         ],
         "shard": [
-         6.5,
-         -63.0
+         11.0,
+         -50.9
         ],
         "strike": [
          -39.2,
@@ -9971,10 +9805,9 @@
        "equipment": {
         "bramble": 211,
         "tusk": 17,
-        "shard": 140,
-        "glow": 52
+        "shard": 77
        },
-       "sha256": "9c6b5a3648b72e32b97fdb22f767c5fa4c3e0af44436f623e22177d9ae491649",
+       "sha256": "e8ecd5decaf46e8517de6bbb7e90e293fde4be31167ec7a909c07b5a8d362875",
        "sheet": "sheets/freed_W.png",
        "region": [
         160,
@@ -9988,7 +9821,7 @@
        "file": "freed_W_02.png",
        "packed_bounds": [
         37,
-        60,
+        76,
         108,
         136
        ],
@@ -10010,8 +9843,8 @@
          -2.0
         ],
         "shard": [
-         2.6,
-         -69.2
+         9.8,
+         -56.9
         ],
         "strike": [
          -39.8,
@@ -10021,10 +9854,9 @@
        "equipment": {
         "bramble": 213,
         "tusk": 18,
-        "shard": 143,
-        "glow": 47
+        "shard": 79
        },
-       "sha256": "4d25279c23bfb9847a40e6d2749f0f81bd39ace2b94854335b11e8f8a40c8129",
+       "sha256": "fc14bf0beb36ff40adb92243310ddae9a831ab3c8beaaf2f09842bcfb421d017",
        "sheet": "sheets/freed_W.png",
        "region": [
         320,
@@ -10038,7 +9870,7 @@
        "file": "freed_W_03.png",
        "packed_bounds": [
         37,
-        63,
+        76,
         108,
         136
        ],
@@ -10060,8 +9892,8 @@
          -2.0
         ],
         "shard": [
-         3.8,
-         -65.7
+         11.2,
+         -54.6
         ],
         "strike": [
          -40.5,
@@ -10071,9 +9903,9 @@
        "equipment": {
         "bramble": 215,
         "tusk": 19,
-        "shard": 139
+        "shard": 76
        },
-       "sha256": "a7c6ce41109e4666bec278ea0a66665750ad55685aaa705b19a6f85500d9eb5f",
+       "sha256": "c6ad78fdca98789fbbbbdd04792b4a94646d2ad01ce6a090377ed61624dd937d",
        "sheet": "sheets/freed_W.png",
        "region": [
         480,
@@ -10087,7 +9919,7 @@
        "file": "freed_W_04.png",
        "packed_bounds": [
         37,
-        93,
+        95,
         108,
         136
        ],
@@ -10117,7 +9949,7 @@
         "bramble": 215,
         "tusk": 18
        },
-       "sha256": "3cd0dca40f89198de2f5d2d1c58c5889f4075a8633fb61b3fe03df8f7de73dbb",
+       "sha256": "719b21ec0bd1581f80f33c5279dd4bd47a04a66dca01df45acff165dad185a54",
        "sheet": "sheets/freed_W.png",
        "region": [
         640,
@@ -10131,7 +9963,7 @@
        "file": "freed_W_05.png",
        "packed_bounds": [
         37,
-        93,
+        95,
         108,
         136
        ],
@@ -10161,7 +9993,7 @@
         "bramble": 217,
         "tusk": 21
        },
-       "sha256": "1f1167a49f59b50ae94705674c5c4ed94089945657306465dd83bcd78a1b25f9",
+       "sha256": "7d32c353601ce5cbc22d41aec5e20f2bffae373dc7d2b797f043a246646b3425",
        "sheet": "sheets/freed_W.png",
        "region": [
         800,
@@ -10175,7 +10007,7 @@
        "file": "freed_W_06.png",
        "packed_bounds": [
         37,
-        93,
+        95,
         108,
         136
        ],
@@ -10205,7 +10037,7 @@
         "bramble": 216,
         "tusk": 18
        },
-       "sha256": "c29adad2ae5d81f369ae275958db193b2f22bf5150cf7827be412095dc199a70",
+       "sha256": "b805357923332418d75408a792c32afc570a34f011cc5f9f515b6d04b4841311",
        "sheet": "sheets/freed_W.png",
        "region": [
         960,
@@ -10219,7 +10051,7 @@
        "file": "freed_W_07.png",
        "packed_bounds": [
         37,
-        93,
+        95,
         108,
         136
        ],
@@ -10249,7 +10081,7 @@
         "bramble": 216,
         "tusk": 22
        },
-       "sha256": "b99826d311dee076db054932d3213d2b5dac65ea31238d234953b22215a55cf9",
+       "sha256": "05243b68dc6cbb725f7e7f645994e3ae6374e1c4a24127d63496e45168daa4c1",
        "sheet": "sheets/freed_W.png",
        "region": [
         1120,
@@ -10263,7 +10095,7 @@
        "file": "freed_W_08.png",
        "packed_bounds": [
         37,
-        93,
+        96,
         108,
         136
        ],
@@ -10293,7 +10125,7 @@
         "bramble": 220,
         "tusk": 17
        },
-       "sha256": "42141a247413d4c47cdea39be46dbdae9e7a75e55c01ae457bccd68a825d786c",
+       "sha256": "4da01ddbcf5676f1bb5ed712bc3ec266944356ab993f1bbf50bd1477c39bb9f9",
        "sheet": "sheets/freed_W.png",
        "region": [
         1280,
@@ -10307,7 +10139,7 @@
        "file": "freed_W_09.png",
        "packed_bounds": [
         37,
-        93,
+        95,
         108,
         136
        ],
@@ -10337,7 +10169,7 @@
         "bramble": 216,
         "tusk": 19
        },
-       "sha256": "4f6a18c02cf4361506bf0b271bbdb4cebbed91f657295a2c23bf591f29d5bd93",
+       "sha256": "a78a65741dbea363cb820497ffedf00c5bf6da78a1ea2b413474379fa2e1415c",
        "sheet": "sheets/freed_W.png",
        "region": [
         1440,
@@ -10351,7 +10183,7 @@
        "file": "freed_W_10.png",
        "packed_bounds": [
         37,
-        93,
+        95,
         108,
         136
        ],
@@ -10381,7 +10213,7 @@
         "bramble": 216,
         "tusk": 19
        },
-       "sha256": "7a825fc98276f34fa9cb6a72b0f63513e562ee99b104049d5bc99c0772b99461",
+       "sha256": "9d88948ce51dc833c101ea65941baeceda6e25eff3f2a80ae4e5187009caa8c2",
        "sheet": "sheets/freed_W.png",
        "region": [
         1600,
@@ -10395,7 +10227,7 @@
        "file": "freed_W_11.png",
        "packed_bounds": [
         36,
-        93,
+        95,
         108,
         136
        ],
@@ -10425,7 +10257,7 @@
         "bramble": 217,
         "tusk": 17
        },
-       "sha256": "464f45b21322b779d0cd3175e334de446fd84eb944e9aafcb52536ed4f5e9207",
+       "sha256": "ccaa76176972c2fefb6db04161ae2f95864dceaf40cc4bafc33d388da15bbeaa",
        "sheet": "sheets/freed_W.png",
        "region": [
         1760,
@@ -10439,7 +10271,7 @@
        "file": "freed_W_12.png",
        "packed_bounds": [
         37,
-        93,
+        95,
         108,
         136
        ],
@@ -10469,7 +10301,7 @@
         "bramble": 215,
         "tusk": 22
        },
-       "sha256": "ffd432b4b84b9c1e0ebcf3e64fe4418c25b2cb49efee8e7c8927856f40c28de1",
+       "sha256": "95d0637474e00d3753b2e61c0b0d4161412b0bc0ed6fc29fe56506da707e3c2c",
        "sheet": "sheets/freed_W.png",
        "region": [
         1920,
@@ -10508,7 +10340,7 @@
        "file": "freed_move_S_00.png",
        "packed_bounds": [
         67,
-        92,
+        94,
         93,
         141
        ],
@@ -10535,10 +10367,10 @@
         ]
        },
        "equipment": {
-        "bramble": 184,
+        "bramble": 156,
         "tusk": 12
        },
-       "sha256": "8e9dbad792070e8aa7f72627fbde41e41d2c471fa8ce0b57f38c68d347f8a9c3",
+       "sha256": "f17d36c0e0ea3679d1f7aaf6dc742df336737b38757de6346e8e9df594fff80e",
        "sheet": "sheets/freed_move_S.png",
        "region": [
         0,
@@ -10552,7 +10384,7 @@
        "file": "freed_move_S_01.png",
        "packed_bounds": [
         67,
-        93,
+        95,
         93,
         141
        ],
@@ -10579,10 +10411,10 @@
         ]
        },
        "equipment": {
-        "bramble": 182,
+        "bramble": 156,
         "tusk": 14
        },
-       "sha256": "68acb180b8c3c0df7ee2729811f607f2bce5db109e2fc9c1617c5fabd79c35eb",
+       "sha256": "3f7f9adbb791c87dc6e2466ca28f72e391946161ac33d4cb536da2c7475f15d3",
        "sheet": "sheets/freed_move_S.png",
        "region": [
         160,
@@ -10596,7 +10428,7 @@
        "file": "freed_move_S_02.png",
        "packed_bounds": [
         67,
-        94,
+        95,
         93,
         139
        ],
@@ -10623,10 +10455,10 @@
         ]
        },
        "equipment": {
-        "bramble": 181,
+        "bramble": 156,
         "tusk": 14
        },
-       "sha256": "d7c3271bd3b6b5235b0c18f59e722cb015a5ffc19b7f4cc4c9a38af12c36f724",
+       "sha256": "4c0d4c9297a7170fc1d8f4d4a84b7e90630f5280d4d700ea6fe7d5f818e52cd6",
        "sheet": "sheets/freed_move_S.png",
        "region": [
         320,
@@ -10640,7 +10472,7 @@
        "file": "freed_move_S_03.png",
        "packed_bounds": [
         67,
-        93,
+        95,
         93,
         138
        ],
@@ -10667,10 +10499,10 @@
         ]
        },
        "equipment": {
-        "bramble": 184,
+        "bramble": 158,
         "tusk": 18
        },
-       "sha256": "358143220e92818dad659e7e46b7ecc84d53cf9f8c7c8b18664e632f4d8ead50",
+       "sha256": "9e02766afa8765afa5d8e23a8b6b542f591098b0b5eb549c69fd88343afbcec3",
        "sheet": "sheets/freed_move_S.png",
        "region": [
         480,
@@ -10684,7 +10516,7 @@
        "file": "freed_move_S_04.png",
        "packed_bounds": [
         67,
-        92,
+        94,
         93,
         141
        ],
@@ -10711,10 +10543,10 @@
         ]
        },
        "equipment": {
-        "bramble": 184,
+        "bramble": 156,
         "tusk": 12
        },
-       "sha256": "6cf0d631e11d2d9555acda0dbe00476fb032b308f424f2faf56d2f81d39c2b93",
+       "sha256": "269975f8f5e09c3a3b2103173d5d409b6bb7f6b801776b34ea3a0454e95e031d",
        "sheet": "sheets/freed_move_S.png",
        "region": [
         640,
@@ -10728,7 +10560,7 @@
        "file": "freed_move_S_05.png",
        "packed_bounds": [
         67,
-        93,
+        95,
         93,
         141
        ],
@@ -10755,10 +10587,10 @@
         ]
        },
        "equipment": {
-        "bramble": 182,
+        "bramble": 156,
         "tusk": 14
        },
-       "sha256": "14cbf2b01106b33c35960310b12823705ed6c0bc8eeaac68951d18c3c2ef3e24",
+       "sha256": "5c3cc0c88375be9559f371c7999b07fdb02727a28d4c26526e56c4a1db703ac6",
        "sheet": "sheets/freed_move_S.png",
        "region": [
         800,
@@ -10772,7 +10604,7 @@
        "file": "freed_move_S_06.png",
        "packed_bounds": [
         67,
-        94,
+        95,
         93,
         139
        ],
@@ -10799,10 +10631,10 @@
         ]
        },
        "equipment": {
-        "bramble": 181,
+        "bramble": 156,
         "tusk": 14
        },
-       "sha256": "4b3bd786c77110879cafe4c5f7e03b7012cd4808f7b904a6db397db94a21db1e",
+       "sha256": "66aeb698f026619fddeaeb9020115221e0c70ce0177063f89c3cafef7465b0b7",
        "sheet": "sheets/freed_move_S.png",
        "region": [
         960,
@@ -10816,7 +10648,7 @@
        "file": "freed_move_S_07.png",
        "packed_bounds": [
         67,
-        93,
+        95,
         93,
         138
        ],
@@ -10843,10 +10675,10 @@
         ]
        },
        "equipment": {
-        "bramble": 184,
+        "bramble": 158,
         "tusk": 18
        },
-       "sha256": "53ab11e8f385b60d54cb2986fd091f6eff61ab78c2c79253cfe8ea05f1766562",
+       "sha256": "698a6b0928381171a4f1d77c0196fba6d0f3d56fd4423b4294dba263af44dc2b",
        "sheet": "sheets/freed_move_S.png",
        "region": [
         1120,
@@ -10891,10 +10723,10 @@
         ]
        },
        "equipment": {
-        "tusk": 0,
-        "bramble": 206
+        "tusk": 1,
+        "bramble": 185
        },
-       "sha256": "e230a529aace1228d08f57dc31ed8426021786aaeb0e25248f10d39749b00abd",
+       "sha256": "6337afd0c565c861ebd343458e1674a7257296d7353366c598fc4df8a4f7459c",
        "sheet": "sheets/freed_move_N.png",
        "region": [
         0,
@@ -10936,9 +10768,9 @@
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 197
+        "bramble": 186
        },
-       "sha256": "e147b71426e79d9a240c0c452a09feb3b72ce14dee12bb73cb6c8fb72b47d727",
+       "sha256": "7e045ce2fb97ed1b79b1d44951f3dd686460681425ce97cec30bceee22a727f5",
        "sheet": "sheets/freed_move_N.png",
        "region": [
         160,
@@ -10979,10 +10811,10 @@
         ]
        },
        "equipment": {
-        "tusk": 0,
-        "bramble": 207
+        "tusk": 1,
+        "bramble": 181
        },
-       "sha256": "f7b81c52f276f8bb199f31359211b2150b1c2698638476303f14b4cd20b7cf1b",
+       "sha256": "848a95f5f75467687c32c4aca9805b7d41f102c30973d69fa433377259c7c932",
        "sheet": "sheets/freed_move_N.png",
        "region": [
         320,
@@ -11024,9 +10856,9 @@
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 197
+        "bramble": 186
        },
-       "sha256": "ded657ab1a230e0d7b07560fccf0fa06617f48ac0e659853581de2e136c4461b",
+       "sha256": "4a0ec13e396331ba600f77f92c7eb43246b9bd4ca720b87f99954ade1e6b3ea2",
        "sheet": "sheets/freed_move_N.png",
        "region": [
         480,
@@ -11067,10 +10899,10 @@
         ]
        },
        "equipment": {
-        "tusk": 0,
-        "bramble": 206
+        "tusk": 1,
+        "bramble": 185
        },
-       "sha256": "e0d7f7fc2877bd5a06cc75937be7f4975932090a1fa6e4be06dc95083c304177",
+       "sha256": "fd2343b75c13444dd30101aad31104e1b87234da09f91f738b13a836159d2a8a",
        "sheet": "sheets/freed_move_N.png",
        "region": [
         640,
@@ -11112,9 +10944,9 @@
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 197
+        "bramble": 186
        },
-       "sha256": "c1e6c3a57e8600d3ca97f30adbd4856296badfc26efb867bf99c40ca21424e58",
+       "sha256": "d96bb5d0628461fb45d4ac71f18efe06bb51ea0be0ec1277398cfef6ff2b1743",
        "sheet": "sheets/freed_move_N.png",
        "region": [
         800,
@@ -11155,10 +10987,10 @@
         ]
        },
        "equipment": {
-        "tusk": 0,
-        "bramble": 207
+        "tusk": 1,
+        "bramble": 181
        },
-       "sha256": "0079c604c3dae79f71bf40607e3b867560540701e53c4b05a7c8449bb3a53a99",
+       "sha256": "64ceef7b4e06fead2a52902ea63043e73c6dca59df1f94770391c15c3ed79e75",
        "sheet": "sheets/freed_move_N.png",
        "region": [
         960,
@@ -11200,9 +11032,9 @@
        },
        "equipment": {
         "tusk": 0,
-        "bramble": 197
+        "bramble": 186
        },
-       "sha256": "5757203bdbe44810804ebfe63d090c9a623eb168d05dfa2533ceb046e1a6bc95",
+       "sha256": "b094916f7f633827f8ebede8c6edb814d3d806125a08be519085c2b201916df7",
        "sheet": "sheets/freed_move_N.png",
        "region": [
         1120,
@@ -11220,7 +11052,7 @@
        "file": "freed_move_E_00.png",
        "packed_bounds": [
         52,
-        93,
+        95,
         123,
         136
        ],
@@ -11250,7 +11082,7 @@
         "bramble": 230,
         "tusk": 22
        },
-       "sha256": "d274ab23ce568c938c1889a1df174b99f69ab692875cbd66d38dd12588d60cdb",
+       "sha256": "9e3c6a5349ccee561ded4a017ff92b8951bc11740a5ed8568ad34ae8e47f8f8c",
        "sheet": "sheets/freed_move_E.png",
        "region": [
         0,
@@ -11264,7 +11096,7 @@
        "file": "freed_move_E_01.png",
        "packed_bounds": [
         52,
-        94,
+        95,
         123,
         136
        ],
@@ -11294,7 +11126,7 @@
         "bramble": 239,
         "tusk": 19
        },
-       "sha256": "a25d6d0fcfaaa1f80e5f7bb2886c4c7832223605175cb5220f434c2f2a4cbefa",
+       "sha256": "a15dbcb3465ecb18fc50ccf4f7f27d775a33b288930e01ad81f456a977104bd3",
        "sheet": "sheets/freed_move_E.png",
        "region": [
         160,
@@ -11308,7 +11140,7 @@
        "file": "freed_move_E_02.png",
        "packed_bounds": [
         52,
-        94,
+        96,
         123,
         136
        ],
@@ -11338,7 +11170,7 @@
         "bramble": 228,
         "tusk": 23
        },
-       "sha256": "5840c8572d65f1429516e65eb571d86c320979cee9f0f72e14eb39ceb52eaad4",
+       "sha256": "bbf4c3f107bff4c5c0793870ebb8c4d7b8530071c087fcf6c49401943bc05f9a",
        "sheet": "sheets/freed_move_E.png",
        "region": [
         320,
@@ -11352,7 +11184,7 @@
        "file": "freed_move_E_03.png",
        "packed_bounds": [
         52,
-        94,
+        95,
         123,
         136
        ],
@@ -11382,7 +11214,7 @@
         "bramble": 238,
         "tusk": 18
        },
-       "sha256": "2e9e3f701a1ff29a8e3581c8951e38417c2d996fd8980ce647bf02a5a0a2e15b",
+       "sha256": "033bee43bc54de68c30eda981d420e761b92dfff4f84b99b1b16a595811c39b4",
        "sheet": "sheets/freed_move_E.png",
        "region": [
         480,
@@ -11396,7 +11228,7 @@
        "file": "freed_move_E_04.png",
        "packed_bounds": [
         52,
-        93,
+        95,
         123,
         136
        ],
@@ -11426,7 +11258,7 @@
         "bramble": 230,
         "tusk": 22
        },
-       "sha256": "7bda72571ff0b9f77df7b808b560bfcd463edab0bba2afe04d86e2e34fc5abf7",
+       "sha256": "070ebe10ffed5cc81f1dd4e9c37586a9d133d52aa39ab6688a64ce1e412b8f9f",
        "sheet": "sheets/freed_move_E.png",
        "region": [
         640,
@@ -11440,7 +11272,7 @@
        "file": "freed_move_E_05.png",
        "packed_bounds": [
         52,
-        94,
+        95,
         123,
         136
        ],
@@ -11470,7 +11302,7 @@
         "bramble": 239,
         "tusk": 19
        },
-       "sha256": "efde2ecac1dde3ace08f28b2cca7c34188677087d096b913f98d1ff46ba0320b",
+       "sha256": "27f2f5d6c032050543f2c56edd7d60f8413f045147d882325d8f0be9a4a73d35",
        "sheet": "sheets/freed_move_E.png",
        "region": [
         800,
@@ -11484,7 +11316,7 @@
        "file": "freed_move_E_06.png",
        "packed_bounds": [
         52,
-        94,
+        96,
         123,
         136
        ],
@@ -11514,7 +11346,7 @@
         "bramble": 228,
         "tusk": 23
        },
-       "sha256": "cad3225ca552b20ab752b413dfda39ac2eb4a48f1c57be5ea3c3cc96512d8141",
+       "sha256": "2f3e1d22f8531ed8bac59f53241fcbe8590fbde990e80f2a6fd33a9b9885724d",
        "sheet": "sheets/freed_move_E.png",
        "region": [
         960,
@@ -11528,7 +11360,7 @@
        "file": "freed_move_E_07.png",
        "packed_bounds": [
         52,
-        94,
+        95,
         123,
         136
        ],
@@ -11558,7 +11390,7 @@
         "bramble": 238,
         "tusk": 18
        },
-       "sha256": "740afcde988ca346d0a0476b0a10c7ff956401d63beeb2961488dfc4109dadc9",
+       "sha256": "2e6942611dd3dda30abb818cd03b861fb78b3fc03b5bff9edb44f00aaa165b0f",
        "sheet": "sheets/freed_move_E.png",
        "region": [
         1120,
@@ -11576,7 +11408,7 @@
        "file": "freed_move_W_00.png",
        "packed_bounds": [
         37,
-        93,
+        95,
         108,
         136
        ],
@@ -11606,7 +11438,7 @@
         "bramble": 215,
         "tusk": 22
        },
-       "sha256": "2c79892659c7cbdc83d24b85ca48681f5be98f10f3b314989fde46a167eb6c1c",
+       "sha256": "a76a9d0f7b4f749d7ecff7f31168de7a99cee0c0b4c251031b521a0bed5f7a7b",
        "sheet": "sheets/freed_move_W.png",
        "region": [
         0,
@@ -11620,7 +11452,7 @@
        "file": "freed_move_W_01.png",
        "packed_bounds": [
         37,
-        94,
+        95,
         108,
         136
        ],
@@ -11650,7 +11482,7 @@
         "bramble": 220,
         "tusk": 19
        },
-       "sha256": "53f3107ecb36b30525632dabd46cb9bc80ab674d7dbc7de26b808d357b76f4a5",
+       "sha256": "ebe496897fa8aa13cd3fab910d2cc178c8a949b36d02392f76f0efe3c9ce6f77",
        "sheet": "sheets/freed_move_W.png",
        "region": [
         160,
@@ -11664,7 +11496,7 @@
        "file": "freed_move_W_02.png",
        "packed_bounds": [
         37,
-        94,
+        96,
         108,
         136
        ],
@@ -11694,7 +11526,7 @@
         "bramble": 216,
         "tusk": 23
        },
-       "sha256": "4180ed0ac5747bd04c72fc3fa5e492dcecbeb1604e32fd07d85a85023e340822",
+       "sha256": "916ab0928ba207786767dfd25d5456703b664e7c9a01adc7f5cda459e766df4e",
        "sheet": "sheets/freed_move_W.png",
        "region": [
         320,
@@ -11708,7 +11540,7 @@
        "file": "freed_move_W_03.png",
        "packed_bounds": [
         37,
-        94,
+        95,
         108,
         136
        ],
@@ -11738,7 +11570,7 @@
         "bramble": 220,
         "tusk": 18
        },
-       "sha256": "7acf55318c7822926290bd0d81c29be694333fd1a3deda3b0897feddf1048797",
+       "sha256": "b63b9b156db13a5d58389c0304182aacdf2cd02735ee7eda409dc37921f6e5ab",
        "sheet": "sheets/freed_move_W.png",
        "region": [
         480,
@@ -11752,7 +11584,7 @@
        "file": "freed_move_W_04.png",
        "packed_bounds": [
         37,
-        93,
+        95,
         108,
         136
        ],
@@ -11782,7 +11614,7 @@
         "bramble": 215,
         "tusk": 22
        },
-       "sha256": "6af78f6d3425dc5ed1fdbcdd0ef07334ff1d6ff77aab1d25242459f9856c0646",
+       "sha256": "2417f890ba4f94d3a8a817eb3c1d259584eea90d9e0af0c2ee3e719ffc9f1fdb",
        "sheet": "sheets/freed_move_W.png",
        "region": [
         640,
@@ -11796,7 +11628,7 @@
        "file": "freed_move_W_05.png",
        "packed_bounds": [
         37,
-        94,
+        95,
         108,
         136
        ],
@@ -11826,7 +11658,7 @@
         "bramble": 220,
         "tusk": 19
        },
-       "sha256": "9ab373c56e62f703a8dee3d86096f1956a6cadad15dc2c4ab49c9230bcf48559",
+       "sha256": "d9708548a97bb86bf889f46fb707bc850d70822e74c22063fe7c5d5e50b9ab58",
        "sheet": "sheets/freed_move_W.png",
        "region": [
         800,
@@ -11840,7 +11672,7 @@
        "file": "freed_move_W_06.png",
        "packed_bounds": [
         37,
-        94,
+        96,
         108,
         136
        ],
@@ -11870,7 +11702,7 @@
         "bramble": 216,
         "tusk": 23
        },
-       "sha256": "51dbe26f2cddc7fc99c54d9257cdce15bf94c4f8761a23813b5e17e98e9b5560",
+       "sha256": "6f307cf7bb54eb081b1bb886103431a8ee5d862a778aa1aa72693ed101623f81",
        "sheet": "sheets/freed_move_W.png",
        "region": [
         960,
@@ -11884,7 +11716,7 @@
        "file": "freed_move_W_07.png",
        "packed_bounds": [
         37,
-        94,
+        95,
         108,
         136
        ],
@@ -11914,7 +11746,7 @@
         "bramble": 220,
         "tusk": 18
        },
-       "sha256": "0916c9bc2e4f3b7db1a588c8980bae646d3fbc2e2e5e1ed7a0ce24df46cb2cb4",
+       "sha256": "75ba3e3eb534ca3cb8d72ae5c66de2edb2a06a8645a27c0d0f84ebaf211f0145",
        "sheet": "sheets/freed_move_W.png",
        "region": [
         1120,

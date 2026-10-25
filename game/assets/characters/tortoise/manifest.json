@@ -49,7 +49,7 @@
        "file": "idle_S_00.png",
        "packed_bounds": [
         66,
-        100,
+        102,
         94,
         139
        ],
@@ -80,12 +80,12 @@
         ]
        },
        "equipment": {
-        "shell": 304,
-        "moss": 161,
+        "shell": 376,
+        "moss": 91,
         "shard": 40,
-        "glow": 10
+        "claw": 5
        },
-       "sha256": "168cc15dbf8e19d992313a9ee29fcfdf7690c4ab1efa2769d7b9c09b91c498ed",
+       "sha256": "1f1c8abfb177cb99190d9bd50ac821593b628bd60d625d1523cca765f02132fe",
        "sheet": "sheets/idle_S.png",
        "region": [
         0,
@@ -99,7 +99,7 @@
        "file": "idle_S_01.png",
        "packed_bounds": [
         66,
-        100,
+        102,
         94,
         139
        ],
@@ -130,12 +130,12 @@
         ]
        },
        "equipment": {
-        "shell": 301,
-        "moss": 157,
+        "shell": 376,
+        "moss": 87,
         "shard": 40,
-        "glow": 15
+        "claw": 5
        },
-       "sha256": "f690d0e847c4c4807ce4537a159fece3df63746bd3b77d65aafa7f009d7fe314",
+       "sha256": "2c02cfb5768c1364907ba9325868d095006c9af70a508744d96bbccf707d2644",
        "sheet": "sheets/idle_S.png",
        "region": [
         160,
@@ -149,7 +149,7 @@
        "file": "idle_S_02.png",
        "packed_bounds": [
         66,
-        100,
+        102,
         94,
         139
        ],
@@ -180,12 +180,12 @@
         ]
        },
        "equipment": {
-        "shell": 301,
-        "moss": 155,
+        "shell": 375,
+        "moss": 87,
         "shard": 40,
-        "glow": 16
+        "claw": 5
        },
-       "sha256": "7b555abb43abdba1c8c3b2153895383517202309c29687c051cab21d2ed1dda6",
+       "sha256": "728369b80ebb503127680623dcee01a25cc4e26be88a319cd3195e52f5358eee",
        "sheet": "sheets/idle_S.png",
        "region": [
         320,
@@ -199,7 +199,7 @@
        "file": "idle_S_03.png",
        "packed_bounds": [
         66,
-        100,
+        102,
         94,
         139
        ],
@@ -230,12 +230,12 @@
         ]
        },
        "equipment": {
-        "shell": 301,
-        "moss": 158,
+        "shell": 376,
+        "moss": 87,
         "shard": 40,
-        "glow": 11
+        "claw": 5
        },
-       "sha256": "544cc7b51f33825b663b559dd2f4668cf2402401c64c83bfe928cba268b1904e",
+       "sha256": "2c02cfb5768c1364907ba9325868d095006c9af70a508744d96bbccf707d2644",
        "sheet": "sheets/idle_S.png",
        "region": [
         480,
@@ -249,7 +249,7 @@
        "file": "idle_S_04.png",
        "packed_bounds": [
         66,
-        100,
+        102,
         94,
         139
        ],
@@ -280,12 +280,12 @@
         ]
        },
        "equipment": {
-        "shell": 304,
-        "moss": 160,
+        "shell": 376,
+        "moss": 91,
         "shard": 40,
-        "glow": 15
+        "claw": 5
        },
-       "sha256": "e5d2c5a928f7c70428ed7ab53c7339d110c76946da1a34e225c1623138266edf",
+       "sha256": "1f1c8abfb177cb99190d9bd50ac821593b628bd60d625d1523cca765f02132fe",
        "sheet": "sheets/idle_S.png",
        "region": [
         640,
@@ -299,7 +299,7 @@
        "file": "idle_S_05.png",
        "packed_bounds": [
         66,
-        100,
+        102,
         94,
         139
        ],
@@ -330,12 +330,12 @@
         ]
        },
        "equipment": {
-        "shell": 302,
-        "moss": 161,
+        "shell": 378,
+        "moss": 91,
         "shard": 36,
-        "glow": 17
+        "claw": 5
        },
-       "sha256": "6124d2d285b5ad35f8786825d194ab0954e5f4adb5831e7bcab388ca6b5a76c8",
+       "sha256": "dec9fa90d7f96c4f8cdfaa9fa963ad973bfbb0435e045e7507f6207972d061e4",
        "sheet": "sheets/idle_S.png",
        "region": [
         800,
@@ -349,7 +349,7 @@
        "file": "idle_S_06.png",
        "packed_bounds": [
         66,
-        100,
+        102,
         94,
         139
        ],
@@ -380,12 +380,12 @@
         ]
        },
        "equipment": {
-        "shell": 302,
-        "moss": 164,
+        "shell": 376,
+        "moss": 91,
         "shard": 36,
-        "glow": 10
+        "claw": 6
        },
-       "sha256": "d323ed4abc51c10dcd594ac238fe545e8b5b43388faa0e8b8b37b5f9b57b055f",
+       "sha256": "24cbf757e94eee1c8566d6ccbf0840985714af53f8b6a62681e8991939e71b1f",
        "sheet": "sheets/idle_S.png",
        "region": [
         960,
@@ -399,7 +399,7 @@
        "file": "idle_S_07.png",
        "packed_bounds": [
         66,
-        100,
+        102,
         94,
         139
        ],
@@ -430,12 +430,12 @@
         ]
        },
        "equipment": {
-        "shell": 302,
-        "moss": 163,
+        "shell": 378,
+        "moss": 91,
         "shard": 36,
-        "glow": 14
+        "claw": 5
        },
-       "sha256": "39ee030613780a6a2c70b6fb204dfb78c35e0c6557fd13772777202750c814d8",
+       "sha256": "34835b248e1b67c3c8960c6ada4a8987915c0648e718714b08d769db1c52fdc1",
        "sheet": "sheets/idle_S.png",
        "region": [
         1120,
@@ -453,7 +453,7 @@
        "file": "idle_N_00.png",
        "packed_bounds": [
         66,
-        102,
+        103,
         94,
         139
        ],
@@ -484,12 +484,11 @@
         ]
        },
        "equipment": {
-        "shell": 312,
-        "moss": 155,
-        "shard": 36,
-        "glow": 15
+        "shell": 386,
+        "moss": 89,
+        "shard": 36
        },
-       "sha256": "122046341c089ee185d13ab80d0471b68f7b333886bca13d26c996669e5bba10",
+       "sha256": "0bad93d65b206dc5be1baec82ae6ce6f1bab26034cc956eb6903a1ff0a77d0d7",
        "sheet": "sheets/idle_N.png",
        "region": [
         0,
@@ -503,7 +502,7 @@
        "file": "idle_N_01.png",
        "packed_bounds": [
         66,
-        102,
+        103,
         94,
         139
        ],
@@ -534,12 +533,11 @@
         ]
        },
        "equipment": {
-        "shell": 309,
-        "moss": 156,
-        "shard": 36,
-        "glow": 11
+        "shell": 384,
+        "moss": 85,
+        "shard": 36
        },
-       "sha256": "96309f3b84ac4a9fa1d735a00b53056ff8f9957e3af04edb88bd372887a213a6",
+       "sha256": "a9e07d2cbd88e9e77ffd7cc140d10e8f6de010da3bbe87a7c8fe34535f0def9c",
        "sheet": "sheets/idle_N.png",
        "region": [
         160,
@@ -553,7 +551,7 @@
        "file": "idle_N_02.png",
        "packed_bounds": [
         66,
-        102,
+        103,
         94,
         139
        ],
@@ -584,12 +582,11 @@
         ]
        },
        "equipment": {
-        "shell": 309,
-        "moss": 154,
-        "shard": 36,
-        "glow": 12
+        "shell": 383,
+        "moss": 85,
+        "shard": 36
        },
-       "sha256": "5cc3d5baa1bdf48d820d9393bfc9000038ae3d626151a022f0ea4bc4725e37f2",
+       "sha256": "3f8909bd1e4f0dc042393b3285d8050619b90c0d3a6c4809d0588abe14327d9f",
        "sheet": "sheets/idle_N.png",
        "region": [
         320,
@@ -603,7 +600,7 @@
        "file": "idle_N_03.png",
        "packed_bounds": [
         66,
-        102,
+        103,
         94,
         139
        ],
@@ -634,12 +631,11 @@
         ]
        },
        "equipment": {
-        "shell": 309,
-        "moss": 152,
-        "shard": 36,
-        "glow": 15
+        "shell": 384,
+        "moss": 85,
+        "shard": 36
        },
-       "sha256": "41038e1cf9665e0a9c30f8da9d13be30c9dece402806292b2f5eb062bc203fdf",
+       "sha256": "a9e07d2cbd88e9e77ffd7cc140d10e8f6de010da3bbe87a7c8fe34535f0def9c",
        "sheet": "sheets/idle_N.png",
        "region": [
         480,
@@ -653,7 +649,7 @@
        "file": "idle_N_04.png",
        "packed_bounds": [
         66,
-        101,
+        103,
         94,
         139
        ],
@@ -684,12 +680,11 @@
         ]
        },
        "equipment": {
-        "shell": 312,
-        "moss": 156,
-        "shard": 36,
-        "glow": 14
+        "shell": 386,
+        "moss": 89,
+        "shard": 36
        },
-       "sha256": "6626841ac2aa5c79504e93ba73aa42b84493fe550496bb9bfb191ff82f5979e7",
+       "sha256": "0bad93d65b206dc5be1baec82ae6ce6f1bab26034cc956eb6903a1ff0a77d0d7",
        "sheet": "sheets/idle_N.png",
        "region": [
         640,
@@ -703,7 +698,7 @@
        "file": "idle_N_05.png",
        "packed_bounds": [
         66,
-        101,
+        103,
         94,
         139
        ],
@@ -734,12 +729,11 @@
         ]
        },
        "equipment": {
-        "shell": 312,
-        "moss": 159,
-        "shard": 36,
-        "glow": 12
+        "shell": 390,
+        "moss": 85,
+        "shard": 36
        },
-       "sha256": "9d963954195a051bfbdbabca04bff464baf3254948a27459b9b467d62e699ce7",
+       "sha256": "047a7c6aefee9af91f37c54cb82f9f5779d0e62818481520699c69fe9cdd6582",
        "sheet": "sheets/idle_N.png",
        "region": [
         800,
@@ -753,7 +747,7 @@
        "file": "idle_N_06.png",
        "packed_bounds": [
         66,
-        101,
+        103,
         94,
         139
        ],
@@ -784,12 +778,11 @@
         ]
        },
        "equipment": {
-        "shell": 312,
-        "moss": 153,
-        "shard": 36,
-        "glow": 16
+        "shell": 388,
+        "moss": 85,
+        "shard": 36
        },
-       "sha256": "acac7ee6040c8ed41354bdfa95a64a5a6c9db15f0fa92c7b50556ea564ed0a4c",
+       "sha256": "0007b418dbe613f62b2d5ca015352cfd0a8cdbb46d753b736515e4aa3149808d",
        "sheet": "sheets/idle_N.png",
        "region": [
         960,
@@ -803,7 +796,7 @@
        "file": "idle_N_07.png",
        "packed_bounds": [
         66,
-        101,
+        103,
         94,
         139
        ],
@@ -834,12 +827,11 @@
         ]
        },
        "equipment": {
-        "shell": 312,
-        "moss": 157,
-        "shard": 36,
-        "glow": 12
+        "shell": 390,
+        "moss": 85,
+        "shard": 36
        },
-       "sha256": "3ea20e3d20dc0b3af90a51aa55e7c2cd79f8e1e3de9502b5de7bd4279a07e60a",
+       "sha256": "047a7c6aefee9af91f37c54cb82f9f5779d0e62818481520699c69fe9cdd6582",
        "sheet": "sheets/idle_N.png",
        "region": [
         1120,
@@ -857,8 +849,8 @@
        "file": "idle_E_00.png",
        "packed_bounds": [
         63,
-        101,
-        107,
+        102,
+        108,
         136
        ],
        "anchors": {
@@ -888,12 +880,12 @@
         ]
        },
        "equipment": {
-        "shell": 348,
-        "moss": 174,
+        "shell": 436,
+        "moss": 92,
         "shard": 34,
-        "glow": 14
+        "claw": 4
        },
-       "sha256": "aeec9da4074f9dfda64f682a8ef92db6862f4144da92b220ee07a7be2c920d95",
+       "sha256": "bccfe5991f76d414263d05d8c90f73ac11531bdb136c32ee42e403f04f689f50",
        "sheet": "sheets/idle_E.png",
        "region": [
         0,
@@ -907,8 +899,8 @@
        "file": "idle_E_01.png",
        "packed_bounds": [
         63,
-        101,
-        107,
+        102,
+        108,
         136
        ],
        "anchors": {
@@ -938,12 +930,12 @@
         ]
        },
        "equipment": {
-        "shell": 347,
-        "moss": 176,
+        "shell": 436,
+        "moss": 93,
         "shard": 34,
-        "glow": 16
+        "claw": 4
        },
-       "sha256": "e5228d0f57537528800d2c726b262f67d4a325030108d4ec06b945a43138709b",
+       "sha256": "fb2247c1759839be58749711fd446ecc5ae9429bad5f813f40c43c3fcfdb173f",
        "sheet": "sheets/idle_E.png",
        "region": [
         160,
@@ -957,8 +949,8 @@
        "file": "idle_E_02.png",
        "packed_bounds": [
         63,
-        101,
-        107,
+        102,
+        108,
         136
        ],
        "anchors": {
@@ -988,12 +980,12 @@
         ]
        },
        "equipment": {
-        "shell": 348,
-        "moss": 175,
+        "shell": 436,
+        "moss": 92,
         "shard": 34,
-        "glow": 12
+        "claw": 4
        },
-       "sha256": "1b14ea3e4473a86b6b9e437693fbeb98e87d2e0e23d983a90a41fcb6f8a7b24e",
+       "sha256": "009fe7095079ad322fb94eaa809c002ae120dc32568c566a50e25f2c0aa0bf19",
        "sheet": "sheets/idle_E.png",
        "region": [
         320,
@@ -1007,8 +999,8 @@
        "file": "idle_E_03.png",
        "packed_bounds": [
         63,
-        101,
-        107,
+        102,
+        108,
         136
        ],
        "anchors": {
@@ -1038,12 +1030,12 @@
         ]
        },
        "equipment": {
-        "shell": 347,
-        "moss": 177,
+        "shell": 436,
+        "moss": 93,
         "shard": 34,
-        "glow": 13
+        "claw": 4
        },
-       "sha256": "d1cf8db08fadfa697a605e0869f40bce2810456e5df516d4df8e469277d4c8f4",
+       "sha256": "fb2247c1759839be58749711fd446ecc5ae9429bad5f813f40c43c3fcfdb173f",
        "sheet": "sheets/idle_E.png",
        "region": [
         480,
@@ -1057,8 +1049,8 @@
        "file": "idle_E_04.png",
        "packed_bounds": [
         63,
-        101,
-        107,
+        102,
+        108,
         136
        ],
        "anchors": {
@@ -1088,12 +1080,12 @@
         ]
        },
        "equipment": {
-        "shell": 348,
-        "moss": 173,
+        "shell": 436,
+        "moss": 92,
         "shard": 34,
-        "glow": 16
+        "claw": 4
        },
-       "sha256": "61378c84a1398845117ad9ce55a4354c1a72995fa5d6c4ea567ccf30ae3a1cce",
+       "sha256": "bccfe5991f76d414263d05d8c90f73ac11531bdb136c32ee42e403f04f689f50",
        "sheet": "sheets/idle_E.png",
        "region": [
         640,
@@ -1107,8 +1099,8 @@
        "file": "idle_E_05.png",
        "packed_bounds": [
         63,
-        101,
-        107,
+        102,
+        108,
         136
        ],
        "anchors": {
@@ -1138,12 +1130,12 @@
         ]
        },
        "equipment": {
-        "shell": 346,
-        "moss": 173,
+        "shell": 434,
+        "moss": 90,
         "shard": 36,
-        "glow": 12
+        "claw": 4
        },
-       "sha256": "86fbb9c6201491501a3a463892f8c902772dac504e1a82c37fb62c15b66d209c",
+       "sha256": "f425f3b24ab286433959db7d4c8e6af20329eceadfe77511564b9cbb3958ccca",
        "sheet": "sheets/idle_E.png",
        "region": [
         800,
@@ -1157,8 +1149,8 @@
        "file": "idle_E_06.png",
        "packed_bounds": [
         63,
-        101,
-        107,
+        102,
+        108,
         136
        ],
        "anchors": {
@@ -1188,12 +1180,12 @@
         ]
        },
        "equipment": {
-        "shell": 349,
-        "moss": 174,
+        "shell": 436,
+        "moss": 90,
         "shard": 36,
-        "glow": 10
+        "claw": 4
        },
-       "sha256": "1c162764311c3a27de935810aeff009930f786780907949c8744d040707d7e1e",
+       "sha256": "254ee545fcdbe359c660a89abd15dc111a8dac26817118d2638a6d35b7dc55fb",
        "sheet": "sheets/idle_E.png",
        "region": [
         960,
@@ -1207,8 +1199,8 @@
        "file": "idle_E_07.png",
        "packed_bounds": [
         63,
-        101,
-        107,
+        102,
+        108,
         136
        ],
        "anchors": {
@@ -1238,12 +1230,12 @@
         ]
        },
        "equipment": {
-        "shell": 346,
-        "moss": 172,
+        "shell": 434,
+        "moss": 90,
         "shard": 36,
-        "glow": 16
+        "claw": 4
        },
-       "sha256": "8f837242246662921d3c1e9ce39454a5bfe70bcefed6ec8dd1d7d43145574c02",
+       "sha256": "8daf493b78c4fb0db70282559e33495838893323ff9c9776d74b6239e5c48b1a",
        "sheet": "sheets/idle_E.png",
        "region": [
         1120,
@@ -1260,8 +1252,8 @@
        "path": "res://assets/animated/tortoise/idle_W_00.png",
        "file": "idle_W_00.png",
        "packed_bounds": [
-        52,
-        101,
+        51,
+        102,
         97,
         136
        ],
@@ -1292,12 +1284,12 @@
         ]
        },
        "equipment": {
-        "shell": 348,
-        "moss": 175,
+        "shell": 436,
+        "moss": 92,
         "shard": 34,
-        "glow": 15
+        "claw": 4
        },
-       "sha256": "633e0c766c072032c7583c9612fc1991ce66939dd5a24ad95568efff234c7fa3",
+       "sha256": "9c0c1ff573ada7df3065c0a41a5f480c1308abc0e35a300572218685b19214a5",
        "sheet": "sheets/idle_W.png",
        "region": [
         0,
@@ -1310,8 +1302,8 @@
        "path": "res://assets/animated/tortoise/idle_W_01.png",
        "file": "idle_W_01.png",
        "packed_bounds": [
-        52,
-        101,
+        51,
+        102,
         97,
         136
        ],
@@ -1342,12 +1334,12 @@
         ]
        },
        "equipment": {
-        "shell": 347,
-        "moss": 175,
+        "shell": 436,
+        "moss": 92,
         "shard": 34,
-        "glow": 15
+        "claw": 4
        },
-       "sha256": "a5e538f019fc6cc80cc9ae417856427a7aec0b4b14e95c07e29e60dfe12b8fc4",
+       "sha256": "16ccc4078454e83cf56920e0b6759e8e8303a12e04eda6f87896c105ac28f10f",
        "sheet": "sheets/idle_W.png",
        "region": [
         160,
@@ -1360,8 +1352,8 @@
        "path": "res://assets/animated/tortoise/idle_W_02.png",
        "file": "idle_W_02.png",
        "packed_bounds": [
-        52,
-        101,
+        51,
+        102,
         97,
         136
        ],
@@ -1392,12 +1384,12 @@
         ]
        },
        "equipment": {
-        "shell": 348,
-        "moss": 177,
+        "shell": 436,
+        "moss": 91,
         "shard": 34,
-        "glow": 10
+        "claw": 4
        },
-       "sha256": "c4d8cb971cc2471c90a056521a23b8d8ea276761be0f29eb98b9afd8bcc0aed9",
+       "sha256": "7fede1314e5197984758d7684ef573239f1eadd32098c02c270d3f826ea95bb5",
        "sheet": "sheets/idle_W.png",
        "region": [
         320,
@@ -1410,8 +1402,8 @@
        "path": "res://assets/animated/tortoise/idle_W_03.png",
        "file": "idle_W_03.png",
        "packed_bounds": [
-        52,
-        101,
+        51,
+        102,
         97,
         136
        ],
@@ -1442,12 +1434,12 @@
         ]
        },
        "equipment": {
-        "shell": 347,
-        "moss": 175,
+        "shell": 436,
+        "moss": 92,
         "shard": 34,
-        "glow": 15
+        "claw": 4
        },
-       "sha256": "8776c51a7f6a7987d0e0f605887070da0fc7bf6551b43a25704f9d0a2c80bc02",
+       "sha256": "16ccc4078454e83cf56920e0b6759e8e8303a12e04eda6f87896c105ac28f10f",
        "sheet": "sheets/idle_W.png",
        "region": [
         480,
@@ -1460,8 +1452,8 @@
        "path": "res://assets/animated/tortoise/idle_W_04.png",
        "file": "idle_W_04.png",
        "packed_bounds": [
-        52,
-        101,
+        51,
+        102,
         97,
         136
        ],
@@ -1492,12 +1484,12 @@
         ]
        },
        "equipment": {
-        "shell": 348,
-        "moss": 173,
+        "shell": 436,
+        "moss": 92,
         "shard": 34,
-        "glow": 16
+        "claw": 4
        },
-       "sha256": "1cd9edf4cebebafafc303bf8b8a831ef088dc131741dd9c0fe8833a6934aee90",
+       "sha256": "9c0c1ff573ada7df3065c0a41a5f480c1308abc0e35a300572218685b19214a5",
        "sheet": "sheets/idle_W.png",
        "region": [
         640,
@@ -1510,8 +1502,8 @@
        "path": "res://assets/animated/tortoise/idle_W_05.png",
        "file": "idle_W_05.png",
        "packed_bounds": [
-        52,
-        101,
+        51,
+        102,
         97,
         136
        ],
@@ -1542,12 +1534,12 @@
         ]
        },
        "equipment": {
-        "shell": 346,
-        "moss": 175,
+        "shell": 434,
+        "moss": 90,
         "shard": 34,
-        "glow": 10
+        "claw": 4
        },
-       "sha256": "ffeba070b61a3714b2b373f7b95db2a3b209f2eeaac9f64f91ade1822eae33d6",
+       "sha256": "6be4d329e802a8f58fd26c39638addf0123f5454769b449c3094a67dc88402e5",
        "sheet": "sheets/idle_W.png",
        "region": [
         800,
@@ -1560,8 +1552,8 @@
        "path": "res://assets/animated/tortoise/idle_W_06.png",
        "file": "idle_W_06.png",
        "packed_bounds": [
-        52,
-        101,
+        51,
+        102,
         97,
         136
        ],
@@ -1592,12 +1584,12 @@
         ]
        },
        "equipment": {
-        "shell": 349,
-        "moss": 172,
+        "shell": 436,
+        "moss": 90,
         "shard": 34,
-        "glow": 15
+        "claw": 4
        },
-       "sha256": "888301ac15af6581601baedc933a9444dc7ab884e33311401862953bc6cb5cb9",
+       "sha256": "2d5304c83cc6cb2234f1155a48c7c5c83eed616570961aa47ab25af8593658aa",
        "sheet": "sheets/idle_W.png",
        "region": [
         960,
@@ -1610,8 +1602,8 @@
        "path": "res://assets/animated/tortoise/idle_W_07.png",
        "file": "idle_W_07.png",
        "packed_bounds": [
-        52,
-        101,
+        51,
+        102,
         97,
         136
        ],
@@ -1642,12 +1634,12 @@
         ]
        },
        "equipment": {
-        "shell": 346,
-        "moss": 171,
+        "shell": 434,
+        "moss": 90,
         "shard": 34,
-        "glow": 15
+        "claw": 4
        },
-       "sha256": "376ef4c5079aca1197f4744e21378cad7f7cefd35dff8d8b5b558ffa3600ab1f",
+       "sha256": "bba9d03ad4d126bbdde733af5d379094f616041da951440af0bb28472b46f9f6",
        "sheet": "sheets/idle_W.png",
        "region": [
         1120,
@@ -1686,7 +1678,7 @@
        "file": "move_S_00.png",
        "packed_bounds": [
         66,
-        100,
+        102,
         94,
         140
        ],
@@ -1717,12 +1709,12 @@
         ]
        },
        "equipment": {
-        "shell": 302,
-        "moss": 164,
+        "shell": 376,
+        "moss": 91,
         "shard": 36,
-        "glow": 10
+        "claw": 7
        },
-       "sha256": "45755a9e412851dec210185da87d1753a68abfc68b04732809f026db930fbcf9",
+       "sha256": "f56d9f12fe99a49465edc02a620c6a0c644e4e20f76e6cbc07a6c76a9e987634",
        "sheet": "sheets/move_S.png",
        "region": [
         0,
@@ -1736,7 +1728,7 @@
        "file": "move_S_01.png",
        "packed_bounds": [
         66,
-        100,
+        102,
         94,
         140
        ],
@@ -1767,12 +1759,12 @@
         ]
        },
        "equipment": {
-        "shell": 299,
-        "moss": 157,
+        "shell": 374,
+        "moss": 87,
         "shard": 40,
-        "glow": 15
+        "claw": 4
        },
-       "sha256": "f264332ef015777cdb4cbe5149f9a8898913ceaf7d90117f432ca3f43d56500f",
+       "sha256": "f3a9069a68600f4bd73e478c6492b4dc121606fa47bb075e4a903ae2a66ba3e4",
        "sheet": "sheets/move_S.png",
        "region": [
         160,
@@ -1786,7 +1778,7 @@
        "file": "move_S_02.png",
        "packed_bounds": [
         65,
-        101,
+        102,
         95,
         139
        ],
@@ -1817,12 +1809,12 @@
         ]
        },
        "equipment": {
-        "shell": 298,
-        "moss": 160,
+        "shell": 372,
+        "moss": 91,
         "shard": 40,
-        "glow": 13
+        "claw": 4
        },
-       "sha256": "eff031f8851bb5c068954e59b71f10f38c9a433529ed5c38edfa92ec1e047c71",
+       "sha256": "1e9cc6f01ea952847865dfbb59a8f3fd5ade17d773e0965cc493f310161f20cc",
        "sheet": "sheets/move_S.png",
        "region": [
         320,
@@ -1836,7 +1828,7 @@
        "file": "move_S_03.png",
        "packed_bounds": [
         66,
-        100,
+        102,
         94,
         139
        ],
@@ -1867,12 +1859,12 @@
         ]
        },
        "equipment": {
-        "shell": 301,
-        "moss": 158,
+        "shell": 374,
+        "moss": 87,
         "shard": 40,
-        "glow": 11
+        "claw": 4
        },
-       "sha256": "82409f64b941d30f0c63f00a01e70188c0ca6a80ed72e6105ff93008245b81c6",
+       "sha256": "6ee8b76b2eefffd794c0b972e1ce254b124dce1a92c34953195605ad8e49b573",
        "sheet": "sheets/move_S.png",
        "region": [
         480,
@@ -1886,7 +1878,7 @@
        "file": "move_S_04.png",
        "packed_bounds": [
         66,
-        100,
+        102,
         94,
         140
        ],
@@ -1917,12 +1909,12 @@
         ]
        },
        "equipment": {
-        "shell": 302,
-        "moss": 161,
+        "shell": 376,
+        "moss": 91,
         "shard": 36,
-        "glow": 14
+        "claw": 6
        },
-       "sha256": "0134869bfdba28d8eaf84e87bdbad69265001c6f3692b385ed2b1f64403ccf8e",
+       "sha256": "f5e04de5958f84bae1461ef7670fc4a91279ad2cabd234b7ac40c1482d49a79c",
        "sheet": "sheets/move_S.png",
        "region": [
         640,
@@ -1936,7 +1928,7 @@
        "file": "move_S_05.png",
        "packed_bounds": [
         66,
-        100,
+        102,
         94,
         140
        ],
@@ -1967,12 +1959,12 @@
         ]
        },
        "equipment": {
-        "shell": 299,
-        "moss": 155,
+        "shell": 374,
+        "moss": 87,
         "shard": 40,
-        "glow": 15
+        "claw": 4
        },
-       "sha256": "9303f45da44efa1b623cecb0e575f229038f50c87147489b80e2148bb851a3d6",
+       "sha256": "aff4f59044675b5e5d4ed1b4fa818fc09382f139fe65143f0c79b506d7c3e499",
        "sheet": "sheets/move_S.png",
        "region": [
         800,
@@ -1986,7 +1978,7 @@
        "file": "move_S_06.png",
        "packed_bounds": [
         65,
-        101,
+        102,
         95,
         139
        ],
@@ -2017,12 +2009,12 @@
         ]
        },
        "equipment": {
-        "shell": 298,
-        "moss": 162,
+        "shell": 372,
+        "moss": 91,
         "shard": 40,
-        "glow": 11
+        "claw": 4
        },
-       "sha256": "461ebb4495c1c8457db2cd9e7aeb2e14285c718e06578ee0d76c2c93eadf49d6",
+       "sha256": "5d136955254f83610c901df1ef424f95967ae43de3fe0e8611736cd1d34ca543",
        "sheet": "sheets/move_S.png",
        "region": [
         960,
@@ -2036,7 +2028,7 @@
        "file": "move_S_07.png",
        "packed_bounds": [
         66,
-        100,
+        102,
         94,
         139
        ],
@@ -2067,12 +2059,12 @@
         ]
        },
        "equipment": {
-        "shell": 301,
-        "moss": 157,
+        "shell": 374,
+        "moss": 87,
         "shard": 40,
-        "glow": 15
+        "claw": 4
        },
-       "sha256": "ffabaae86c1f5bb1e300faa77c329774f16a69d7b2ef918431d5b3ef5aa780e4",
+       "sha256": "c6ed3c9ad8733268428c018c4b5e93b4cab9a8d6b059739aec3631a07d6a19c6",
        "sheet": "sheets/move_S.png",
        "region": [
         1120,
@@ -2090,7 +2082,7 @@
        "file": "move_N_00.png",
        "packed_bounds": [
         66,
-        101,
+        103,
         94,
         140
        ],
@@ -2121,12 +2113,11 @@
         ]
        },
        "equipment": {
-        "shell": 312,
-        "moss": 153,
-        "shard": 36,
-        "glow": 16
+        "shell": 388,
+        "moss": 85,
+        "shard": 36
        },
-       "sha256": "838b8507d274f02134033b7a4811e33f245fd9f2325cf1b75fb7fa7c036202a7",
+       "sha256": "f58138093540730c0e4f6199201a11907b69be12b45db35db6b21be86b9b5d37",
        "sheet": "sheets/move_N.png",
        "region": [
         0,
@@ -2140,7 +2131,7 @@
        "file": "move_N_01.png",
        "packed_bounds": [
         66,
-        102,
+        103,
         94,
         138
        ],
@@ -2171,12 +2162,11 @@
         ]
        },
        "equipment": {
-        "shell": 309,
-        "moss": 156,
-        "shard": 36,
-        "glow": 11
+        "shell": 384,
+        "moss": 85,
+        "shard": 36
        },
-       "sha256": "ec2f1e2d8528b813c10bd10f244bc7df408df2fc69f3b7effc16c59a15a9c679",
+       "sha256": "3a015321af98147e128ac2f1b0a9def45049446d2781c5b0574e286568ceb14c",
        "sheet": "sheets/move_N.png",
        "region": [
         160,
@@ -2190,7 +2180,7 @@
        "file": "move_N_02.png",
        "packed_bounds": [
         65,
-        102,
+        103,
         95,
         139
        ],
@@ -2221,12 +2211,11 @@
         ]
        },
        "equipment": {
-        "shell": 306,
-        "moss": 153,
-        "shard": 40,
-        "glow": 15
+        "shell": 380,
+        "moss": 85,
+        "shard": 40
        },
-       "sha256": "470bd64893b61e36b9fb38d5d33bdf87d1af9632b574f9074c5110e50fdba3a0",
+       "sha256": "09f285e997d79849ce1d6951c8a9384dce1d842a0c9415b7f01d0cdcd91b82d6",
        "sheet": "sheets/move_N.png",
        "region": [
         320,
@@ -2240,7 +2229,7 @@
        "file": "move_N_03.png",
        "packed_bounds": [
         66,
-        102,
+        103,
         94,
         140
        ],
@@ -2271,12 +2260,11 @@
         ]
        },
        "equipment": {
-        "shell": 309,
-        "moss": 152,
-        "shard": 36,
-        "glow": 15
+        "shell": 384,
+        "moss": 85,
+        "shard": 36
        },
-       "sha256": "cd94ca7ac8da84c21e07c9a2bf3bb81d70c437e77f9127e5178c67a1a9d9deb4",
+       "sha256": "4fba1fe1f757779c2ee9715b3fcf9639b27704bfffd88599474e211e99252ccc",
        "sheet": "sheets/move_N.png",
        "region": [
         480,
@@ -2290,7 +2278,7 @@
        "file": "move_N_04.png",
        "packed_bounds": [
         66,
-        101,
+        103,
         94,
         140
        ],
@@ -2321,12 +2309,11 @@
         ]
        },
        "equipment": {
-        "shell": 312,
-        "moss": 155,
-        "shard": 36,
-        "glow": 13
+        "shell": 388,
+        "moss": 85,
+        "shard": 36
        },
-       "sha256": "0eccfd3d91eb599977d7f0c0010db627dc3f271f8b39c28b5379b2a44bc310cc",
+       "sha256": "6e0a95a3087e0fbf99b95dce316dc6dab06e61f444888bf0858aa4a9bfafcc4e",
        "sheet": "sheets/move_N.png",
        "region": [
         640,
@@ -2340,7 +2327,7 @@
        "file": "move_N_05.png",
        "packed_bounds": [
         66,
-        101,
+        103,
         94,
         138
        ],
@@ -2371,12 +2358,11 @@
         ]
        },
        "equipment": {
-        "shell": 309,
-        "moss": 155,
-        "shard": 36,
-        "glow": 13
+        "shell": 384,
+        "moss": 85,
+        "shard": 36
        },
-       "sha256": "2def580f771d6137575dbec3efb0a0ac329c0752a6abad140c5d43da3ec87bcf",
+       "sha256": "c0123327e27bb0e9d81d0de22f7937fdc62c22acf37441869b89f1ad778a95c1",
        "sheet": "sheets/move_N.png",
        "region": [
         800,
@@ -2390,7 +2376,7 @@
        "file": "move_N_06.png",
        "packed_bounds": [
         65,
-        102,
+        103,
         95,
         139
        ],
@@ -2421,12 +2407,11 @@
         ]
        },
        "equipment": {
-        "shell": 306,
-        "moss": 152,
-        "shard": 40,
-        "glow": 14
+        "shell": 380,
+        "moss": 85,
+        "shard": 40
        },
-       "sha256": "b8e69d5cc308c1e98fb7f0b9205a751248bf84cc00b482916cb73db38f44d8bb",
+       "sha256": "928b898c1280d54bef6a27849f02338ad2159545e1c31a0ad864c09f5c6a6b1b",
        "sheet": "sheets/move_N.png",
        "region": [
         960,
@@ -2440,7 +2425,7 @@
        "file": "move_N_07.png",
        "packed_bounds": [
         66,
-        102,
+        103,
         94,
         140
        ],
@@ -2471,12 +2456,11 @@
         ]
        },
        "equipment": {
-        "shell": 309,
-        "moss": 156,
-        "shard": 36,
-        "glow": 11
+        "shell": 384,
+        "moss": 85,
+        "shard": 36
        },
-       "sha256": "de1176bc764d005d30e996af9e47958a7a039cbfa646f71e0feb7a18ee34ddca",
+       "sha256": "eabca8f30f592d47e682a887837eea9b84a33d8292fd4662166a420140698db4",
        "sheet": "sheets/move_N.png",
        "region": [
         1120,
@@ -2494,8 +2478,8 @@
        "file": "move_E_00.png",
        "packed_bounds": [
         63,
-        101,
-        107,
+        102,
+        108,
         136
        ],
        "anchors": {
@@ -2525,12 +2509,12 @@
         ]
        },
        "equipment": {
-        "shell": 349,
-        "moss": 174,
+        "shell": 436,
+        "moss": 90,
         "shard": 36,
-        "glow": 10
+        "claw": 4
        },
-       "sha256": "cff2d187f8f1e95f2fe5e0aaf05328655716013f7ffe6eb1032ad03ffc79342e",
+       "sha256": "fbe84055bad04fddb5a62c6b3605edaa3615083ed4f899a0c7ccc88aabab46da",
        "sheet": "sheets/move_E.png",
        "region": [
         0,
@@ -2544,8 +2528,8 @@
        "file": "move_E_01.png",
        "packed_bounds": [
         63,
-        101,
-        107,
+        102,
+        108,
         136
        ],
        "anchors": {
@@ -2575,12 +2559,12 @@
         ]
        },
        "equipment": {
-        "shell": 345,
-        "moss": 176,
+        "shell": 434,
+        "moss": 93,
         "shard": 34,
-        "glow": 16
+        "claw": 4
        },
-       "sha256": "8e1c58490aeed0b478556e7c252e50747d279a02b65af8a67edf02b9d33a16c1",
+       "sha256": "65357be494445d6fefd6a4ad30c516831c8ee332d7051e06f99383f720314e75",
        "sheet": "sheets/move_E.png",
        "region": [
         160,
@@ -2594,8 +2578,8 @@
        "file": "move_E_02.png",
        "packed_bounds": [
         63,
-        101,
-        107,
+        103,
+        108,
         136
        ],
        "anchors": {
@@ -2625,12 +2609,12 @@
         ]
        },
        "equipment": {
-        "shell": 346,
-        "moss": 174,
+        "shell": 433,
+        "moss": 90,
         "shard": 32,
-        "glow": 11
+        "claw": 4
        },
-       "sha256": "62a8e70b6e885b1e7de31293dc7a631dcec3e74a6f5390bed1ed03f219ab93f9",
+       "sha256": "fa54559a2b2919347651038528150f71d0420dff6406c0a9f9cc84540c1eb7db",
        "sheet": "sheets/move_E.png",
        "region": [
         320,
@@ -2644,8 +2628,8 @@
        "file": "move_E_03.png",
        "packed_bounds": [
         63,
-        101,
-        107,
+        102,
+        108,
         136
        ],
        "anchors": {
@@ -2675,12 +2659,12 @@
         ]
        },
        "equipment": {
-        "shell": 345,
-        "moss": 177,
+        "shell": 434,
+        "moss": 93,
         "shard": 34,
-        "glow": 13
+        "claw": 4
        },
-       "sha256": "2bee7aba41551763aef91dd34615b77f687d5f4d5b8023c97e6f087ea79156e9",
+       "sha256": "bb0b2200e3c7f31ca2d72f9f8d37a6c5ac5e4c9388e6148a9e37da5926c050d3",
        "sheet": "sheets/move_E.png",
        "region": [
         480,
@@ -2694,8 +2678,8 @@
        "file": "move_E_04.png",
        "packed_bounds": [
         63,
-        101,
-        107,
+        102,
+        108,
         136
        ],
        "anchors": {
@@ -2725,12 +2709,12 @@
         ]
        },
        "equipment": {
-        "shell": 349,
-        "moss": 171,
+        "shell": 436,
+        "moss": 90,
         "shard": 36,
-        "glow": 16
+        "claw": 4
        },
-       "sha256": "997bc3a2cda999e608146fe2671af8727124cad4404f6dab9b68e4c72ad395fe",
+       "sha256": "b94818cb766411fb0de9da35d545d1a750437c592585a98663ce63c6e001bc49",
        "sheet": "sheets/move_E.png",
        "region": [
         640,
@@ -2744,8 +2728,8 @@
        "file": "move_E_05.png",
        "packed_bounds": [
         63,
-        101,
-        107,
+        102,
+        108,
         136
        ],
        "anchors": {
@@ -2775,12 +2759,12 @@
         ]
        },
        "equipment": {
-        "shell": 345,
-        "moss": 177,
+        "shell": 434,
+        "moss": 93,
         "shard": 34,
-        "glow": 12
+        "claw": 4
        },
-       "sha256": "eac572d87678cf1aa8024b44d874a897ee54c15644c86570884dcc7dfbe7501a",
+       "sha256": "33fb242303f58cb03c017a90e4595298be7455f944e02688354498908b87ddfe",
        "sheet": "sheets/move_E.png",
        "region": [
         800,
@@ -2794,8 +2778,8 @@
        "file": "move_E_06.png",
        "packed_bounds": [
         63,
-        101,
-        107,
+        103,
+        108,
         136
        ],
        "anchors": {
@@ -2825,12 +2809,12 @@
         ]
        },
        "equipment": {
-        "shell": 346,
-        "moss": 171,
+        "shell": 433,
+        "moss": 90,
         "shard": 32,
-        "glow": 16
+        "claw": 4
        },
-       "sha256": "1afe45571dd5e120688076950d47f97620bf0f0000c986e130af5100a282e4ee",
+       "sha256": "afde4894d403ef9090bc49d0b0704ea4233e46ac8f47df07e966f7fb5fdf06d1",
        "sheet": "sheets/move_E.png",
        "region": [
         960,
@@ -2844,8 +2828,8 @@
        "file": "move_E_07.png",
        "packed_bounds": [
         63,
-        101,
-        107,
+        102,
+        108,
         136
        ],
        "anchors": {
@@ -2875,12 +2859,12 @@
         ]
        },
        "equipment": {
-        "shell": 345,
-        "moss": 176,
+        "shell": 434,
+        "moss": 93,
         "shard": 34,
-        "glow": 16
+        "claw": 4
        },
-       "sha256": "4d0b4ef5c912846bf1a733830f12f048852432da328aacaf724285e3d32331a2",
+       "sha256": "c4c2b3195295efde47341c88491e6ed3ea6dc88746c6f1c82111779ce3c78537",
        "sheet": "sheets/move_E.png",
        "region": [
         1120,
@@ -2897,8 +2881,8 @@
        "path": "res://assets/animated/tortoise/move_W_00.png",
        "file": "move_W_00.png",
        "packed_bounds": [
-        52,
-        101,
+        51,
+        102,
         97,
         136
        ],
@@ -2929,12 +2913,12 @@
         ]
        },
        "equipment": {
-        "shell": 349,
-        "moss": 172,
+        "shell": 436,
+        "moss": 90,
         "shard": 34,
-        "glow": 15
+        "claw": 4
        },
-       "sha256": "173b968afc3349ef1e629052c7dcce956b33c894fa35824f00a68808f1de15c4",
+       "sha256": "5acd856c1a0a948d4318e8f9826bb439ddb83718d27f843b5e7c86fa11bba29e",
        "sheet": "sheets/move_W.png",
        "region": [
         0,
@@ -2947,8 +2931,8 @@
        "path": "res://assets/animated/tortoise/move_W_01.png",
        "file": "move_W_01.png",
        "packed_bounds": [
-        52,
-        101,
+        51,
+        102,
         97,
         136
        ],
@@ -2979,12 +2963,12 @@
         ]
        },
        "equipment": {
-        "shell": 345,
-        "moss": 175,
+        "shell": 434,
+        "moss": 92,
         "shard": 34,
-        "glow": 16
+        "claw": 4
        },
-       "sha256": "493c4a50b8dbbe1b9e054aaf0ec481a3b2887d0ea2d616fd7357da555d0ac501",
+       "sha256": "14e9bdfb1e616d92137afee0c55688c256b90fd517167796d5c0c415af3010fb",
        "sheet": "sheets/move_W.png",
        "region": [
         160,
@@ -2997,8 +2981,8 @@
        "path": "res://assets/animated/tortoise/move_W_02.png",
        "file": "move_W_02.png",
        "packed_bounds": [
-        52,
-        101,
+        51,
+        103,
         97,
         136
        ],
@@ -3029,12 +3013,12 @@
         ]
        },
        "equipment": {
-        "shell": 346,
-        "moss": 174,
+        "shell": 433,
+        "moss": 90,
         "shard": 35,
-        "glow": 12
+        "claw": 4
        },
-       "sha256": "7a2013bdb2a8baaf495dd90d1cca3e916bb3f73492b5ba1134962565d3a6858d",
+       "sha256": "89d9a6886779e6adaaf47b1126b9a79109367e5f32820a8dbace94e1ccc2da63",
        "sheet": "sheets/move_W.png",
        "region": [
         320,
@@ -3047,8 +3031,8 @@
        "path": "res://assets/animated/tortoise/move_W_03.png",
        "file": "move_W_03.png",
        "packed_bounds": [
-        52,
-        101,
+        51,
+        102,
         97,
         136
        ],
@@ -3079,12 +3063,12 @@
         ]
        },
        "equipment": {
-        "shell": 345,
-        "moss": 175,
+        "shell": 434,
+        "moss": 92,
         "shard": 34,
-        "glow": 15
+        "claw": 4
        },
-       "sha256": "a978ed258eaff08d9a4c398a4006cb6d48ec9e641c24dbc3018a6e1ef84652c4",
+       "sha256": "419bb258802ba945650572cce245df43f9692ca12e1023032aa080b59a6e555f",
        "sheet": "sheets/move_W.png",
        "region": [
         480,
@@ -3097,8 +3081,8 @@
        "path": "res://assets/animated/tortoise/move_W_04.png",
        "file": "move_W_04.png",
        "packed_bounds": [
-        52,
-        101,
+        51,
+        102,
         97,
         136
        ],
@@ -3129,12 +3113,12 @@
         ]
        },
        "equipment": {
-        "shell": 349,
-        "moss": 171,
+        "shell": 436,
+        "moss": 90,
         "shard": 34,
-        "glow": 14
+        "claw": 4
        },
-       "sha256": "741d67dfffc09dea6f33403d6816a1b53747c544971b9acf71de5233921a3e2c",
+       "sha256": "a179a417f00ee8e410bd22932ba9bd5cc3a0577e3c321a3bb70f46a0ffb1f7a2",
        "sheet": "sheets/move_W.png",
        "region": [
         640,
@@ -3147,8 +3131,8 @@
        "path": "res://assets/animated/tortoise/move_W_05.png",
        "file": "move_W_05.png",
        "packed_bounds": [
-        52,
-        101,
+        51,
+        102,
         97,
         136
        ],
@@ -3179,12 +3163,12 @@
         ]
        },
        "equipment": {
-        "shell": 345,
-        "moss": 178,
+        "shell": 434,
+        "moss": 92,
         "shard": 34,
-        "glow": 11
+        "claw": 4
        },
-       "sha256": "d54a4224534bcf2031c4be6e659eddaa2b296b4515f4a9200fe262f9f5569573",
+       "sha256": "f4bc997a31e08bd9117f073ee3f7145f5bf2882504fd95a0c531267bdef9de05",
        "sheet": "sheets/move_W.png",
        "region": [
         800,
@@ -3197,8 +3181,8 @@
        "path": "res://assets/animated/tortoise/move_W_06.png",
        "file": "move_W_06.png",
        "packed_bounds": [
-        52,
-        101,
+        51,
+        103,
         97,
         136
        ],
@@ -3229,12 +3213,12 @@
         ]
        },
        "equipment": {
-        "shell": 346,
-        "moss": 170,
+        "shell": 433,
+        "moss": 90,
         "shard": 35,
-        "glow": 16
+        "claw": 4
        },
-       "sha256": "e905ec0d37604855ceaded5a5fe93d5b9591f4ceb23d92bda16b76354d3ef3d9",
+       "sha256": "091468c1a2df6c2ce2da59524cab846a435d2a1c9d85df973409658dfb778e99",
        "sheet": "sheets/move_W.png",
        "region": [
         960,
@@ -3247,8 +3231,8 @@
        "path": "res://assets/animated/tortoise/move_W_07.png",
        "file": "move_W_07.png",
        "packed_bounds": [
-        52,
-        101,
+        51,
+        102,
         97,
         136
        ],
@@ -3279,12 +3263,12 @@
         ]
        },
        "equipment": {
-        "shell": 345,
-        "moss": 175,
+        "shell": 434,
+        "moss": 92,
         "shard": 34,
-        "glow": 16
+        "claw": 4
        },
-       "sha256": "cf620e3bc811c50fecee5e45f586297e1f08d6784999072f34b7e05ab907e40d",
+       "sha256": "baec5bc583f5290e8fece927392a03dae71e732f89c4006f440865ce946c7556",
        "sheet": "sheets/move_W.png",
        "region": [
         1120,
@@ -3323,7 +3307,7 @@
        "file": "telegraph_S_00.png",
        "packed_bounds": [
         66,
-        100,
+        102,
         94,
         139
        ],
@@ -3354,12 +3338,12 @@
         ]
        },
        "equipment": {
-        "shell": 298,
-        "moss": 159,
+        "shell": 373,
+        "moss": 89,
         "shard": 40,
-        "glow": 12
+        "claw": 5
        },
-       "sha256": "6f5e3559652b83ad0316478a0db7c411ed335b129b49b9b5767c7d4e3944ccd2",
+       "sha256": "b1a6870439a16496f8c55ec211bd81c3ef3e7fa3cc3a4b04c4b88dc9a73e44a4",
        "sheet": "sheets/telegraph_S.png",
        "region": [
         0,
@@ -3373,7 +3357,7 @@
        "file": "telegraph_S_01.png",
        "packed_bounds": [
         66,
-        100,
+        102,
         94,
         139
        ],
@@ -3404,12 +3388,12 @@
         ]
        },
        "equipment": {
-        "shell": 300,
-        "moss": 164,
+        "shell": 376,
+        "moss": 91,
         "shard": 36,
-        "glow": 10
+        "claw": 6
        },
-       "sha256": "574b4619499cceec780d16c96a45253356a5092fd552f741b516482694314c9d",
+       "sha256": "7f4ab2c611445b53620c2ea30eca3c09f6c0b5b860928de24b5a3ff8c615225c",
        "sheet": "sheets/telegraph_S.png",
        "region": [
         160,
@@ -3423,7 +3407,7 @@
        "file": "telegraph_S_02.png",
        "packed_bounds": [
         66,
-        99,
+        100,
         94,
         136
        ],
@@ -3454,12 +3438,12 @@
         ]
        },
        "equipment": {
-        "shell": 293,
-        "moss": 161,
+        "shell": 364,
+        "moss": 93,
         "shard": 42,
-        "glow": 15
+        "claw": 9
        },
-       "sha256": "35968e837f7be103201a7788549020738ec95b431f9a2e56bbca5888f014b98b",
+       "sha256": "f75f88b95f70e4e1cac992e7686ea3b20c7ae4edebacfe491213233b0cd87190",
        "sheet": "sheets/telegraph_S.png",
        "region": [
         320,
@@ -3473,7 +3457,7 @@
        "file": "telegraph_S_03.png",
        "packed_bounds": [
         66,
-        98,
+        99,
         94,
         134
        ],
@@ -3504,12 +3488,12 @@
         ]
        },
        "equipment": {
-        "shell": 295,
-        "moss": 162,
+        "shell": 367,
+        "moss": 93,
         "shard": 40,
-        "glow": 14
+        "claw": 9
        },
-       "sha256": "5fa27142f03b826f8b182cfb43ff8d70cdff337602bb6bd6c9c3ffeaf55c580b",
+       "sha256": "db07fa26453042264611d7bb10c360f57ba6629dc5d9e72405e1c45dec58d4a1",
        "sheet": "sheets/telegraph_S.png",
        "region": [
         480,
@@ -3523,7 +3507,7 @@
        "file": "telegraph_S_04.png",
        "packed_bounds": [
         66,
-        97,
+        99,
         94,
         133
        ],
@@ -3554,12 +3538,12 @@
         ]
        },
        "equipment": {
-        "shell": 289,
-        "moss": 156,
+        "shell": 358,
+        "moss": 87,
         "shard": 40,
-        "glow": 11
+        "claw": 9
        },
-       "sha256": "ec6ed51395868d90fe9a26a32155c1cd5729d1504a1fe97ee1ee7aa158b05210",
+       "sha256": "e4f66c769e8fcc50cc4886e79b56eac0803a388f3978cb9cfd03f37b37350c03",
        "sheet": "sheets/telegraph_S.png",
        "region": [
         640,
@@ -3573,7 +3557,7 @@
        "file": "telegraph_S_05.png",
        "packed_bounds": [
         66,
-        97,
+        98,
         94,
         133
        ],
@@ -3604,12 +3588,12 @@
         ]
        },
        "equipment": {
-        "shell": 292,
-        "moss": 161,
+        "shell": 360,
+        "moss": 93,
         "shard": 42,
-        "glow": 12
+        "claw": 9
        },
-       "sha256": "3825462d3a15eb44dc83e33d500be79f844fc0694319258927367b270eb9563e",
+       "sha256": "3dccad2a69921d9a8c55f4e8124e6aa1ff12a87eb60c0ae3e2085a06561bda57",
        "sheet": "sheets/telegraph_S.png",
        "region": [
         800,
@@ -3623,7 +3607,7 @@
        "file": "telegraph_S_06.png",
        "packed_bounds": [
         65,
-        97,
+        98,
         94,
         133
        ],
@@ -3654,12 +3638,12 @@
         ]
        },
        "equipment": {
-        "shell": 308,
-        "moss": 158,
+        "shell": 371,
+        "moss": 95,
         "shard": 39,
-        "glow": 16
+        "claw": 9
        },
-       "sha256": "93e1c828f7676bc8d335670c6ff114fbf947dbcd679c911fa54b8c205257462f",
+       "sha256": "621632ccf64aa7dca515e4ca7d7c01932455ac03b20b120e372cc2e2dc3305e5",
        "sheet": "sheets/telegraph_S.png",
        "region": [
         960,
@@ -3673,7 +3657,7 @@
        "file": "telegraph_S_07.png",
        "packed_bounds": [
         66,
-        97,
+        98,
         95,
         133
        ],
@@ -3704,12 +3688,12 @@
         ]
        },
        "equipment": {
-        "shell": 310,
-        "moss": 156,
+        "shell": 372,
+        "moss": 94,
         "shard": 39,
-        "glow": 11
+        "claw": 9
        },
-       "sha256": "e3fadfcf0d9f7961713b9c63564dd979e68a9bdb07f401171595898fc27821fe",
+       "sha256": "e2f3665b3e777f511f12a9b4134b32c484f22c5320d5a64aa8a951dc1a3b4205",
        "sheet": "sheets/telegraph_S.png",
        "region": [
         1120,
@@ -3727,7 +3711,7 @@
        "file": "telegraph_N_00.png",
        "packed_bounds": [
         66,
-        102,
+        103,
         94,
         139
        ],
@@ -3758,12 +3742,11 @@
         ]
        },
        "equipment": {
-        "shell": 306,
-        "moss": 155,
-        "shard": 36,
-        "glow": 14
+        "shell": 381,
+        "moss": 87,
+        "shard": 36
        },
-       "sha256": "9363324fcfcf7f2abc8afc9ab9b77339a9b4348d020e5de5e2d99418544f7c97",
+       "sha256": "a66f73a8342f53e95938ce6854940d717db7c54d8e4534aaf20c2905ad55053c",
        "sheet": "sheets/telegraph_N.png",
        "region": [
         0,
@@ -3777,7 +3760,7 @@
        "file": "telegraph_N_01.png",
        "packed_bounds": [
         66,
-        101,
+        103,
         94,
         139
        ],
@@ -3808,12 +3791,11 @@
         ]
        },
        "equipment": {
-        "shell": 312,
-        "moss": 153,
-        "shard": 36,
-        "glow": 16
+        "shell": 388,
+        "moss": 85,
+        "shard": 36
        },
-       "sha256": "acac7ee6040c8ed41354bdfa95a64a5a6c9db15f0fa92c7b50556ea564ed0a4c",
+       "sha256": "0007b418dbe613f62b2d5ca015352cfd0a8cdbb46d753b736515e4aa3149808d",
        "sheet": "sheets/telegraph_N.png",
        "region": [
         160,
@@ -3827,7 +3809,7 @@
        "file": "telegraph_N_02.png",
        "packed_bounds": [
         66,
-        100,
+        102,
         94,
         139
        ],
@@ -3858,12 +3840,11 @@
         ]
        },
        "equipment": {
-        "shell": 312,
-        "moss": 159,
-        "shard": 37,
-        "glow": 11
+        "shell": 386,
+        "moss": 89,
+        "shard": 37
        },
-       "sha256": "4ba70bcc54fe6f2deba4dc11ba47dfe5257c4d05cea7b58f498c4874fa170459",
+       "sha256": "9e2151510b148b55d94b222140220ae608b1985b7dcfa7685e1285749eba3877",
        "sheet": "sheets/telegraph_N.png",
        "region": [
         320,
@@ -3877,7 +3858,7 @@
        "file": "telegraph_N_03.png",
        "packed_bounds": [
         66,
-        99,
+        101,
         94,
         139
        ],
@@ -3908,12 +3889,11 @@
         ]
        },
        "equipment": {
-        "shell": 315,
-        "moss": 155,
-        "shard": 36,
-        "glow": 15
+        "shell": 390,
+        "moss": 87,
+        "shard": 36
        },
-       "sha256": "9f4ad5dc2a708851a0c6d5f1f75f8e45a6b60eb9461fd4729a300ebc541b4635",
+       "sha256": "358d15cbc1022c65ccd1bd84e5d722eb10cd53a47c4e0a4749cab1aecff0ac68",
        "sheet": "sheets/telegraph_N.png",
        "region": [
         480,
@@ -3927,7 +3907,7 @@
        "file": "telegraph_N_04.png",
        "packed_bounds": [
         66,
-        99,
+        100,
         94,
         139
        ],
@@ -3958,12 +3938,11 @@
         ]
        },
        "equipment": {
-        "shell": 309,
-        "moss": 152,
-        "shard": 36,
-        "glow": 15
+        "shell": 384,
+        "moss": 85,
+        "shard": 36
        },
-       "sha256": "b95361ce786976aa5b4cc985fde9c048527227cc926f8ea9ddb62bf93f008670",
+       "sha256": "431479037a1dcc69f3e590b2672535c9fbb95fb19537b1272f7a055806d03e72",
        "sheet": "sheets/telegraph_N.png",
        "region": [
         640,
@@ -3977,7 +3956,7 @@
        "file": "telegraph_N_05.png",
        "packed_bounds": [
         66,
-        98,
+        100,
         94,
         139
        ],
@@ -4008,12 +3987,11 @@
         ]
        },
        "equipment": {
-        "shell": 312,
-        "moss": 156,
-        "shard": 37,
-        "glow": 15
+        "shell": 386,
+        "moss": 89,
+        "shard": 37
        },
-       "sha256": "fae5151ec746ae93858161d3a16fabecf974f1d6e477226b71ecd6885a6846ff",
+       "sha256": "1fc455631e4a1d2bb880568f97f727a19c9f208f9287ce90044ff26b65cfb472",
        "sheet": "sheets/telegraph_N.png",
        "region": [
         800,
@@ -4027,7 +4005,7 @@
        "file": "telegraph_N_06.png",
        "packed_bounds": [
         66,
-        98,
+        99,
         95,
         139
        ],
@@ -4058,12 +4036,11 @@
         ]
        },
        "equipment": {
-        "shell": 325,
-        "moss": 154,
-        "shard": 36,
-        "glow": 16
+        "shell": 395,
+        "moss": 90,
+        "shard": 36
        },
-       "sha256": "8ad345ce8e65f51937a51eaa06d88cdc44be1bedddaf1618a82735b47ddab6ca",
+       "sha256": "ce26e42e477cd10661c8c4ec6f9c1f5fb13a536e1a67a450e44f730e7ae17374",
        "sheet": "sheets/telegraph_N.png",
        "region": [
         960,
@@ -4077,7 +4054,7 @@
        "file": "telegraph_N_07.png",
        "packed_bounds": [
         65,
-        98,
+        99,
         94,
         139
        ],
@@ -4108,12 +4085,11 @@
         ]
        },
        "equipment": {
-        "shell": 322,
-        "moss": 157,
-        "shard": 36,
-        "glow": 13
+        "shell": 394,
+        "moss": 91,
+        "shard": 36
        },
-       "sha256": "10232dd52389ee68019b2e0a6de93f9d97c93b6f2d7c7d4be1eef010da49827b",
+       "sha256": "c8748aacd2775efcc05d72f8ed65186459671c67c853e552b1a8190b1ca17c77",
        "sheet": "sheets/telegraph_N.png",
        "region": [
         1120,
@@ -4131,7 +4107,7 @@
        "file": "telegraph_E_00.png",
        "packed_bounds": [
         63,
-        101,
+        103,
         106,
         136
        ],
@@ -4162,12 +4138,12 @@
         ]
        },
        "equipment": {
-        "shell": 346,
-        "moss": 171,
+        "shell": 432,
+        "moss": 90,
         "shard": 34,
-        "glow": 14
+        "claw": 4
        },
-       "sha256": "905d521aec64600ad2a8107f608ddf06c91ba50ebe2dd9239a78b2dca6048d1d",
+       "sha256": "8c8641786700063b12392301c121d70d6b68837fd19b82b3ed2827cc5d0e979b",
        "sheet": "sheets/telegraph_E.png",
        "region": [
         0,
@@ -4181,8 +4157,8 @@
        "file": "telegraph_E_01.png",
        "packed_bounds": [
         63,
-        101,
-        103,
+        102,
+        104,
         136
        ],
        "anchors": {
@@ -4212,12 +4188,12 @@
         ]
        },
        "equipment": {
-        "shell": 349,
-        "moss": 174,
+        "shell": 436,
+        "moss": 90,
         "shard": 36,
-        "glow": 10
+        "claw": 4
        },
-       "sha256": "c6dab94e9781a1fcbb6940079d4349e2659f145b55286dee4c876f9f73d8fd12",
+       "sha256": "44cda2140146b2f5664d35a2858885335f970e6884528d896a2644fedf220cb3",
        "sheet": "sheets/telegraph_E.png",
        "region": [
         160,
@@ -4231,8 +4207,8 @@
        "file": "telegraph_E_02.png",
        "packed_bounds": [
         63,
-        100,
         101,
+        102,
         136
        ],
        "anchors": {
@@ -4262,12 +4238,12 @@
         ]
        },
        "equipment": {
-        "shell": 360,
-        "moss": 174,
+        "shell": 439,
+        "moss": 97,
         "shard": 36,
-        "glow": 13
+        "claw": 4
        },
-       "sha256": "8288efee05d61d01de7eb870b66b7e1e6f1df10b7fdf202a9131534c6e208515",
+       "sha256": "46eb29990c923b54a89f81dc538ddf27a24011dd7a425359815f41a7bc46aba1",
        "sheet": "sheets/telegraph_E.png",
        "region": [
         320,
@@ -4281,8 +4257,8 @@
        "file": "telegraph_E_03.png",
        "packed_bounds": [
         63,
-        99,
-        101,
+        100,
+        102,
         136
        ],
        "anchors": {
@@ -4312,12 +4288,12 @@
         ]
        },
        "equipment": {
-        "shell": 351,
-        "moss": 171,
+        "shell": 423,
+        "moss": 102,
         "shard": 36,
-        "glow": 16
+        "claw": 4
        },
-       "sha256": "49bc36328c6fd44786dfb03384bf7d05b8687caa9341f2037c175fc7fdac6102",
+       "sha256": "c4baa08c6a00348ec0503b28c31d2cb6374061269e7aefa5f77c33f3e32fedaf",
        "sheet": "sheets/telegraph_E.png",
        "region": [
         480,
@@ -4331,8 +4307,8 @@
        "file": "telegraph_E_04.png",
        "packed_bounds": [
         64,
-        98,
-        101,
+        99,
+        102,
         136
        ],
        "anchors": {
@@ -4362,12 +4338,12 @@
         ]
        },
        "equipment": {
-        "shell": 343,
-        "moss": 172,
+        "shell": 407,
+        "moss": 106,
         "shard": 34,
-        "glow": 13
+        "claw": 4
        },
-       "sha256": "842f6da46eb61941d50ca711efea227036c891b4ab7a3829534132c456e4ba0c",
+       "sha256": "4ca6db702b30f4020c3788f93a1e4216d08c4427373af56b769ba37fce1d379c",
        "sheet": "sheets/telegraph_E.png",
        "region": [
         640,
@@ -4381,8 +4357,8 @@
        "file": "telegraph_E_05.png",
        "packed_bounds": [
         64,
-        97,
-        101,
+        99,
+        102,
         136
        ],
        "anchors": {
@@ -4412,12 +4388,12 @@
         ]
        },
        "equipment": {
-        "shell": 349,
-        "moss": 171,
+        "shell": 410,
+        "moss": 107,
         "shard": 36,
-        "glow": 11
+        "claw": 4
        },
-       "sha256": "b75e285e96269bd9079853a087e425d09674a73ad04cf17a72aee414b7a1f954",
+       "sha256": "f7ceb9e789b74ca193f002e21f626cfd0a456bd6924c548f5dc3383397a2c724",
        "sheet": "sheets/telegraph_E.png",
        "region": [
         800,
@@ -4431,8 +4407,8 @@
        "file": "telegraph_E_06.png",
        "packed_bounds": [
         64,
-        97,
-        101,
+        99,
+        102,
         136
        ],
        "anchors": {
@@ -4462,12 +4438,12 @@
         ]
        },
        "equipment": {
-        "shell": 354,
-        "moss": 170,
+        "shell": 411,
+        "moss": 112,
         "shard": 32,
-        "glow": 12
+        "claw": 4
        },
-       "sha256": "3933dad538e81ab87ef3193ba25f438cc084c1aa528a254a8d30feb428fa334c",
+       "sha256": "4ee22a8f85b2debbe41adaf877a2e0bda3c29027bafe36bfd9594158357a8b8e",
        "sheet": "sheets/telegraph_E.png",
        "region": [
         960,
@@ -4481,8 +4457,8 @@
        "file": "telegraph_E_07.png",
        "packed_bounds": [
         64,
-        97,
-        101,
+        99,
+        102,
         136
        ],
        "anchors": {
@@ -4512,12 +4488,12 @@
         ]
        },
        "equipment": {
-        "shell": 355,
-        "moss": 169,
+        "shell": 412,
+        "moss": 110,
         "shard": 32,
-        "glow": 12
+        "claw": 4
        },
-       "sha256": "2d0008531b24ed7c665d4e86e5ba2afdcb32123191c8dfd43fadc1d86284feeb",
+       "sha256": "049f43ec674f3a610ef4b6cb7a0e5727804ab92371d349a3a482463e88f96ee3",
        "sheet": "sheets/telegraph_E.png",
        "region": [
         1120,
@@ -4534,8 +4510,8 @@
        "path": "res://assets/animated/tortoise/telegraph_W_00.png",
        "file": "telegraph_W_00.png",
        "packed_bounds": [
-        54,
-        101,
+        53,
+        103,
         97,
         136
        ],
@@ -4566,12 +4542,12 @@
         ]
        },
        "equipment": {
-        "shell": 346,
-        "moss": 167,
+        "shell": 432,
+        "moss": 88,
         "shard": 35,
-        "glow": 15
+        "claw": 4
        },
-       "sha256": "198540f3a4c1b7b6bb304d85664a748781a94c10c757d271553ebbc05b60a6a5",
+       "sha256": "0f75f191725a8f924fc647299a9f974bd6efede4cbb68e1ff2b1351556ea0fd6",
        "sheet": "sheets/telegraph_W.png",
        "region": [
         0,
@@ -4584,8 +4560,8 @@
        "path": "res://assets/animated/tortoise/telegraph_W_01.png",
        "file": "telegraph_W_01.png",
        "packed_bounds": [
-        56,
-        101,
+        55,
+        102,
         97,
         136
        ],
@@ -4616,12 +4592,12 @@
         ]
        },
        "equipment": {
-        "shell": 349,
-        "moss": 172,
+        "shell": 436,
+        "moss": 90,
         "shard": 34,
-        "glow": 15
+        "claw": 4
        },
-       "sha256": "cc72e0f3ac9cc583065abfc6d98d5bf885cd7791c97ce0e62796d92a70fba7bf",
+       "sha256": "7ea44aa668748b29a818749fd59f460af3e1802aa5cb4ba43d47eb6a3e81914f",
        "sheet": "sheets/telegraph_W.png",
        "region": [
         160,
@@ -4634,8 +4610,8 @@
        "path": "res://assets/animated/tortoise/telegraph_W_02.png",
        "file": "telegraph_W_02.png",
        "packed_bounds": [
-        58,
-        99,
+        57,
+        101,
         97,
         136
        ],
@@ -4666,12 +4642,12 @@
         ]
        },
        "equipment": {
-        "shell": 360,
-        "moss": 174,
+        "shell": 439,
+        "moss": 96,
         "shard": 36,
-        "glow": 12
+        "claw": 4
        },
-       "sha256": "256cde417af1de03f30b21f00cb7aa08cdc7b1aa4b32b9d979615558d4f4aa75",
+       "sha256": "c3cd564a603cbef26dbb5a8b2579f392df9e8b9b044f8f084c31eb4d2bf4695f",
        "sheet": "sheets/telegraph_W.png",
        "region": [
         320,
@@ -4684,8 +4660,8 @@
        "path": "res://assets/animated/tortoise/telegraph_W_03.png",
        "file": "telegraph_W_03.png",
        "packed_bounds": [
-        58,
-        99,
+        57,
+        100,
         97,
         136
        ],
@@ -4716,12 +4692,12 @@
         ]
        },
        "equipment": {
-        "shell": 351,
-        "moss": 169,
+        "shell": 423,
+        "moss": 100,
         "shard": 36,
-        "glow": 14
+        "claw": 4
        },
-       "sha256": "bd3e4bfc144a56384bde1cd330861591def24b386694400c6b10c231998a59e2",
+       "sha256": "9a559dbf533e350ebcee7c6895f0e8bff7cf8a12e7d022000d48fb3ca675c709",
        "sheet": "sheets/telegraph_W.png",
        "region": [
         480,
@@ -4734,8 +4710,8 @@
        "path": "res://assets/animated/tortoise/telegraph_W_04.png",
        "file": "telegraph_W_04.png",
        "packed_bounds": [
-        58,
-        98,
+        57,
+        99,
         96,
         136
        ],
@@ -4766,12 +4742,12 @@
         ]
        },
        "equipment": {
-        "shell": 343,
-        "moss": 168,
+        "shell": 407,
+        "moss": 103,
         "shard": 34,
-        "glow": 15
+        "claw": 4
        },
-       "sha256": "4b4dd4dea5620c958386fe5f246e93ac28eb2882594d762784ce36648c6ea5d6",
+       "sha256": "dadd7eb7b07c876fd91733deb68c56e616f7074f692e6065dc7c86866f0f469b",
        "sheet": "sheets/telegraph_W.png",
        "region": [
         640,
@@ -4784,8 +4760,8 @@
        "path": "res://assets/animated/tortoise/telegraph_W_05.png",
        "file": "telegraph_W_05.png",
        "packed_bounds": [
-        58,
-        97,
+        57,
+        99,
         96,
         136
        ],
@@ -4816,12 +4792,12 @@
         ]
        },
        "equipment": {
-        "shell": 349,
-        "moss": 166,
+        "shell": 410,
+        "moss": 104,
         "shard": 36,
-        "glow": 13
+        "claw": 4
        },
-       "sha256": "7687c0a447235ed6d152a9518fd915ed6a3d73a8d8a63467ba4881808bd592d5",
+       "sha256": "cf917070cd6400a1174e577ee229d482bf9aac766c37cab68cb5ead97da59de9",
        "sheet": "sheets/telegraph_W.png",
        "region": [
         800,
@@ -4834,8 +4810,8 @@
        "path": "res://assets/animated/tortoise/telegraph_W_06.png",
        "file": "telegraph_W_06.png",
        "packed_bounds": [
-        58,
-        97,
+        57,
+        99,
         96,
         136
        ],
@@ -4866,12 +4842,12 @@
         ]
        },
        "equipment": {
-        "shell": 355,
-        "moss": 165,
+        "shell": 412,
+        "moss": 107,
         "shard": 33,
-        "glow": 14
+        "claw": 4
        },
-       "sha256": "769ec3a898c06d586b604db8d06c3e44bde400fe80ed7322054adbcfdfac2585",
+       "sha256": "9ca9cb7706ae8b041597eb612f80162ce555efc6e0d7cd8cfca715001551d262",
        "sheet": "sheets/telegraph_W.png",
        "region": [
         960,
@@ -4884,8 +4860,8 @@
        "path": "res://assets/animated/tortoise/telegraph_W_07.png",
        "file": "telegraph_W_07.png",
        "packed_bounds": [
-        58,
-        97,
+        57,
+        99,
         96,
         136
        ],
@@ -4916,12 +4892,12 @@
         ]
        },
        "equipment": {
-        "shell": 354,
-        "moss": 167,
+        "shell": 411,
+        "moss": 108,
         "shard": 33,
-        "glow": 12
+        "claw": 4
        },
-       "sha256": "c4973ebe8ab3f20233c3992f7c51e45e96a146df81d6d87018b57a3d7ecf1a0d",
+       "sha256": "1d60f671ecdabba5b68cde8f60c52cae9e0f26b1d666ce5ab28305c6530ddac8",
        "sheet": "sheets/telegraph_W.png",
        "region": [
         1120,
@@ -4956,7 +4932,7 @@
        "file": "attack_S_00.png",
        "packed_bounds": [
         66,
-        101,
+        102,
         94,
         141
        ],
@@ -4987,12 +4963,12 @@
         ]
        },
        "equipment": {
-        "shell": 304,
-        "moss": 162,
+        "shell": 378,
+        "moss": 93,
         "shard": 42,
-        "glow": 14
+        "claw": 2
        },
-       "sha256": "08fa09d94c763267fec252a3012a3726bdb4045e440fe4359d3ec5f626ba9984",
+       "sha256": "a2978b99e13fa0a080131e3cdebcd4d209ab91cacb29395afba70951ab6cb9a9",
        "sheet": "sheets/attack_S.png",
        "region": [
         0,
@@ -5006,7 +4982,7 @@
        "file": "attack_S_01.png",
        "packed_bounds": [
         65,
-        101,
+        102,
         95,
         142
        ],
@@ -5037,12 +5013,12 @@
         ]
        },
        "equipment": {
-        "shell": 302,
-        "moss": 162,
+        "shell": 376,
+        "moss": 91,
         "shard": 40,
-        "glow": 11
+        "claw": 2
        },
-       "sha256": "96f4065e477501e57e99e09f59dd3ddbbeeb904313e8fdf2e3c47a7bc17444fd",
+       "sha256": "6a3caa134ff98bcd4cd79c37b6b691174d03ba1ab1d8f8571c78c7317f9908d3",
        "sheet": "sheets/attack_S.png",
        "region": [
         160,
@@ -5056,7 +5032,7 @@
        "file": "attack_S_02.png",
        "packed_bounds": [
         66,
-        100,
+        102,
         94,
         142
        ],
@@ -5087,12 +5063,12 @@
         ]
        },
        "equipment": {
-        "shell": 301,
-        "moss": 158,
+        "shell": 376,
+        "moss": 87,
         "shard": 40,
-        "glow": 11
+        "claw": 2
        },
-       "sha256": "200c6adcd26262e52f4d1a07c755b55e92443c037d791307b193f80dac7145fd",
+       "sha256": "d928e7833122c12378eb6553d5e1a141420dc13b6f6d16990aa92d88b4e875a0",
        "sheet": "sheets/attack_S.png",
        "region": [
         320,
@@ -5106,7 +5082,7 @@
        "file": "attack_S_03.png",
        "packed_bounds": [
         64,
-        100,
+        102,
         96,
         142
        ],
@@ -5137,12 +5113,12 @@
         ]
        },
        "equipment": {
-        "shell": 304,
-        "moss": 161,
+        "shell": 378,
+        "moss": 91,
         "shard": 40,
-        "glow": 10
+        "claw": 5
        },
-       "sha256": "8547f4b4bcbc0ce02b87d0f91c034958fdf43e7222a90529f0ed0783c5a53fcd",
+       "sha256": "fcd740b1da3bda0ef9d570180184f0e0e11f9901a67f02e63a2fcbac7b77291c",
        "sheet": "sheets/attack_S.png",
        "region": [
         480,
@@ -5165,7 +5141,7 @@
        "file": "attack_N_00.png",
        "packed_bounds": [
         66,
-        102,
+        104,
         94,
         139
        ],
@@ -5196,12 +5172,11 @@
         ]
        },
        "equipment": {
-        "shell": 298,
-        "moss": 155,
-        "shard": 37,
-        "glow": 15
+        "shell": 358,
+        "moss": 89,
+        "shard": 37
        },
-       "sha256": "be18dc2f938c2722de53af1499ae434ffa66e1f6daddee6f366383432d914257",
+       "sha256": "6b131d6b03bb7552d13dd13c31b4bb71325c442dabd0ca32c9cf284229554a4b",
        "sheet": "sheets/attack_N.png",
        "region": [
         0,
@@ -5215,7 +5190,7 @@
        "file": "attack_N_01.png",
        "packed_bounds": [
         65,
-        102,
+        103,
         95,
         139
        ],
@@ -5246,12 +5221,11 @@
         ]
        },
        "equipment": {
-        "shell": 291,
-        "moss": 152,
-        "shard": 40,
-        "glow": 14
+        "shell": 350,
+        "moss": 85,
+        "shard": 40
        },
-       "sha256": "a837e62f34aba825479d119533637789e7b3d8f257bd739dba48d5e187986038",
+       "sha256": "1891ecc913acfe4690ee2bf335f01c0a5bc748d645ac3febd3c1b7f2017a90e5",
        "sheet": "sheets/attack_N.png",
        "region": [
         160,
@@ -5265,7 +5239,7 @@
        "file": "attack_N_02.png",
        "packed_bounds": [
         66,
-        102,
+        103,
         94,
         139
        ],
@@ -5296,12 +5270,11 @@
         ]
        },
        "equipment": {
-        "shell": 296,
-        "moss": 152,
-        "shard": 36,
-        "glow": 15
+        "shell": 358,
+        "moss": 85,
+        "shard": 36
        },
-       "sha256": "ca4a647d87d798e468b1e5b27b28024397a142ba0c2e293328804da1fbd19b5a",
+       "sha256": "309dc718642e9bfcb048df7ee5d73ab09f84c397f5957c2223c0c3a331202d50",
        "sheet": "sheets/attack_N.png",
        "region": [
         320,
@@ -5315,7 +5288,7 @@
        "file": "attack_N_03.png",
        "packed_bounds": [
         64,
-        102,
+        103,
         96,
         139
        ],
@@ -5346,12 +5319,11 @@
         ]
        },
        "equipment": {
-        "shell": 296,
-        "moss": 155,
-        "shard": 36,
-        "glow": 15
+        "shell": 354,
+        "moss": 89,
+        "shard": 36
        },
-       "sha256": "ac4e2e6aad7c137cb9f81617062600c0014e105f1bdcf79cd5b7273d69dc960f",
+       "sha256": "ec552304349de2a2f9c99be0eb3813c9b431b4dab3ff78aeb131c466cb61a4be",
        "sheet": "sheets/attack_N.png",
        "region": [
         480,
@@ -5374,8 +5346,8 @@
        "file": "attack_E_00.png",
        "packed_bounds": [
         63,
+        103,
         102,
-        101,
         137
        ],
        "anchors": {
@@ -5405,12 +5377,12 @@
         ]
        },
        "equipment": {
-        "shell": 360,
-        "moss": 170,
+        "shell": 438,
+        "moss": 92,
         "shard": 36,
-        "glow": 15
+        "claw": 3
        },
-       "sha256": "db2e75aae4cbe59f46f58e32c61fe34ee5439320081c76b88fdf6e0044d66f59",
+       "sha256": "4b3ed3c41134a46f4ea8da8d3fcf11364b93f4bc2cf729244057ec668b38f0bf",
        "sheet": "sheets/attack_E.png",
        "region": [
         0,
@@ -5424,7 +5396,7 @@
        "file": "attack_E_01.png",
        "packed_bounds": [
         63,
-        101,
+        103,
         103,
         138
        ],
@@ -5455,12 +5427,12 @@
         ]
        },
        "equipment": {
-        "shell": 345,
-        "moss": 169,
+        "shell": 429,
+        "moss": 91,
         "shard": 32,
-        "glow": 16
+        "claw": 4
        },
-       "sha256": "0a62f07f6b12f34133eaa792f91613b796e219df2096f4c725ca96fd09276243",
+       "sha256": "c37e27070f59c9d3e855b3bd73e916bc2f529d31cb836e9b4c71f34649b03f26",
        "sheet": "sheets/attack_E.png",
        "region": [
         160,
@@ -5474,7 +5446,7 @@
        "file": "attack_E_02.png",
        "packed_bounds": [
         63,
-        101,
+        102,
         105,
         140
        ],
@@ -5505,12 +5477,12 @@
         ]
        },
        "equipment": {
-        "shell": 339,
-        "moss": 175,
+        "shell": 422,
+        "moss": 91,
         "shard": 34,
-        "glow": 13
+        "claw": 4
        },
-       "sha256": "efe964a5d0b59851473463f470fc7ee7b2153935ef89b9ead4e9d39631007895",
+       "sha256": "21c16f59dc553bee999f207e9edbe3f146da16ae46357d2b206f2269503789c4",
        "sheet": "sheets/attack_E.png",
        "region": [
         320,
@@ -5524,7 +5496,7 @@
        "file": "attack_E_03.png",
        "packed_bounds": [
         63,
-        101,
+        102,
         106,
         140
        ],
@@ -5555,12 +5527,12 @@
         ]
        },
        "equipment": {
-        "shell": 341,
-        "moss": 174,
+        "shell": 422,
+        "moss": 92,
         "shard": 34,
-        "glow": 14
+        "claw": 2
        },
-       "sha256": "f2ea77bcefe2cef4fd22dd7dca2e052afb6b348ca097a69aebd9fc5e73ae5a6e",
+       "sha256": "c871b7176e85c11136cc9cba9c291f35245c6072b20b0633dbbc9f30172593c9",
        "sheet": "sheets/attack_E.png",
        "region": [
         480,
@@ -5582,8 +5554,8 @@
        "path": "res://assets/animated/tortoise/attack_W_00.png",
        "file": "attack_W_00.png",
        "packed_bounds": [
-        58,
-        102,
+        57,
+        103,
         97,
         137
        ],
@@ -5614,12 +5586,12 @@
         ]
        },
        "equipment": {
-        "shell": 360,
-        "moss": 169,
+        "shell": 438,
+        "moss": 92,
         "shard": 36,
-        "glow": 15
+        "claw": 3
        },
-       "sha256": "a002337169d3143065f87375b2b5f20fe9f1b5655990161e5e905f122c42dee4",
+       "sha256": "460eb9272a0fb20d1f2fcfb68f2d43ed071109b0d8a5f14c63c18423f22c9b5b",
        "sheet": "sheets/attack_W.png",
        "region": [
         0,
@@ -5632,8 +5604,8 @@
        "path": "res://assets/animated/tortoise/attack_W_01.png",
        "file": "attack_W_01.png",
        "packed_bounds": [
-        57,
-        101,
+        56,
+        103,
         97,
         138
        ],
@@ -5664,12 +5636,12 @@
         ]
        },
        "equipment": {
-        "shell": 345,
-        "moss": 168,
+        "shell": 429,
+        "moss": 91,
         "shard": 35,
-        "glow": 16
+        "claw": 4
        },
-       "sha256": "310fb24356dfea3f62e52c4b23cd3e9943cc9e6b33e7a96fa7fe8b1911820b5f",
+       "sha256": "14f5a1f11853af4820fc8fbd2ad2324fca7e4255c51a429501302e2885a0902a",
        "sheet": "sheets/attack_W.png",
        "region": [
         160,
@@ -5683,7 +5655,7 @@
        "file": "attack_W_02.png",
        "packed_bounds": [
         55,
-        101,
+        102,
         97,
         140
        ],
@@ -5714,12 +5686,12 @@
         ]
        },
        "equipment": {
-        "shell": 339,
-        "moss": 174,
+        "shell": 422,
+        "moss": 91,
         "shard": 34,
-        "glow": 15
+        "claw": 4
        },
-       "sha256": "bf991f1d5bae147b66c2e15ea083df408a1fd650f67598b72d781ad65a3dc81b",
+       "sha256": "dd518a6c3a732f9d157c2d3f2a94715e7b177ce20e2ef5a4be1e3d78b69f9ed6",
        "sheet": "sheets/attack_W.png",
        "region": [
         320,
@@ -5733,7 +5705,7 @@
        "file": "attack_W_03.png",
        "packed_bounds": [
         54,
-        101,
+        102,
         97,
         140
        ],
@@ -5764,12 +5736,12 @@
         ]
        },
        "equipment": {
-        "shell": 341,
-        "moss": 175,
+        "shell": 422,
+        "moss": 92,
         "shard": 34,
-        "glow": 15
+        "claw": 2
        },
-       "sha256": "24c90e6d42b4ba44283f4ab1675bf27e7ebc39d378412ffb34c590de4c50c99e",
+       "sha256": "c8038119ce2fba96432a787e1c2cd2c1d5ee9730b2235ed58167aef934f6256e",
        "sheet": "sheets/attack_W.png",
        "region": [
         480,
@@ -5813,7 +5785,7 @@
        "file": "hurt_S_00.png",
        "packed_bounds": [
         67,
-        100,
+        102,
         96,
         139
        ],
@@ -5844,12 +5816,12 @@
         ]
        },
        "equipment": {
-        "shell": 303,
-        "moss": 158,
+        "shell": 377,
+        "moss": 91,
         "shard": 36,
-        "glow": 17
+        "claw": 5
        },
-       "sha256": "afadaefba1f80074dd5d3db287401a321989ff2eab7675db2ed9d36105b23708",
+       "sha256": "2fb2a4367775c9c6a2836fd5e8ab3e29de5ba73d3bc4a0471c1884cc6691f782",
        "sheet": "sheets/hurt_S.png",
        "region": [
         0,
@@ -5863,7 +5835,7 @@
        "file": "hurt_S_01.png",
        "packed_bounds": [
         65,
-        101,
+        102,
         93,
         139
        ],
@@ -5894,12 +5866,12 @@
         ]
        },
        "equipment": {
-        "shell": 295,
-        "moss": 162,
+        "shell": 372,
+        "moss": 90,
         "shard": 40,
-        "glow": 13
+        "claw": 5
        },
-       "sha256": "4791864df9284f5fe58920b09405fb719c7ef9baeee0f086b27bfe018b40d777",
+       "sha256": "ae0e0e7bdec9cb4353978ded2bdf98cd88982a15bf87c4065c3c060a549a24e3",
        "sheet": "sheets/hurt_S.png",
        "region": [
         160,
@@ -5913,7 +5885,7 @@
        "file": "hurt_S_02.png",
        "packed_bounds": [
         66,
-        100,
+        102,
         95,
         139
        ],
@@ -5944,12 +5916,12 @@
         ]
        },
        "equipment": {
-        "shell": 308,
-        "moss": 164,
+        "shell": 379,
+        "moss": 92,
         "shard": 33,
-        "glow": 11
+        "claw": 5
        },
-       "sha256": "239714a461123038795ce662e7e82ad3c383681680c415751fb12369307fd9a3",
+       "sha256": "1d69e83051e881001c26551e726be4302c445c572f61778d46222edf690d3ec6",
        "sheet": "sheets/hurt_S.png",
        "region": [
         320,
@@ -5963,7 +5935,7 @@
        "file": "hurt_S_03.png",
        "packed_bounds": [
         66,
-        100,
+        102,
         94,
         139
        ],
@@ -5994,12 +5966,12 @@
         ]
        },
        "equipment": {
-        "shell": 302,
-        "moss": 164,
+        "shell": 376,
+        "moss": 91,
         "shard": 36,
-        "glow": 10
+        "claw": 6
        },
-       "sha256": "0919f9944a4a442cb095d30e72dc235995da0dcfc0427328415587ec11066ba9",
+       "sha256": "2d6f0c0ffcb21b036f44d1d0b0209d200efdd55476fe1a48448d3bd7c0be13f2",
        "sheet": "sheets/hurt_S.png",
        "region": [
         480,
@@ -6017,7 +5989,7 @@
        "file": "hurt_N_00.png",
        "packed_bounds": [
         64,
-        102,
+        103,
         93,
         139
        ],
@@ -6048,12 +6020,11 @@
         ]
        },
        "equipment": {
-        "shell": 306,
-        "moss": 164,
-        "shard": 33,
-        "glow": 10
+        "shell": 383,
+        "moss": 90,
+        "shard": 33
        },
-       "sha256": "2dd57f432db534f0c2115b1254a594382e6086cfcccaca324e1e5be52bd38405",
+       "sha256": "9fdd583b6ac2960030e9fefa43217b69924fd4f161d6c4fecf81cdfe8f59b38f",
        "sheet": "sheets/hurt_N.png",
        "region": [
         0,
@@ -6067,7 +6038,7 @@
        "file": "hurt_N_01.png",
        "packed_bounds": [
         67,
-        102,
+        103,
         95,
         139
        ],
@@ -6098,12 +6069,11 @@
         ]
        },
        "equipment": {
-        "shell": 308,
-        "moss": 156,
-        "shard": 36,
-        "glow": 11
+        "shell": 381,
+        "moss": 87,
+        "shard": 36
        },
-       "sha256": "e4d96db8b4fd916e2db6efdf4df7172b76c9f157d9f35d27e0041d22ade9d746",
+       "sha256": "e627af6de374b6279e5e71faeb90d579942f6f6df7173a1ec7727b6331efa3c4",
        "sheet": "sheets/hurt_N.png",
        "region": [
         160,
@@ -6117,7 +6087,7 @@
        "file": "hurt_N_02.png",
        "packed_bounds": [
         65,
-        101,
+        103,
         94,
         139
        ],
@@ -6148,12 +6118,11 @@
         ]
        },
        "equipment": {
-        "shell": 314,
-        "moss": 159,
-        "shard": 33,
-        "glow": 15
+        "shell": 392,
+        "moss": 87,
+        "shard": 33
        },
-       "sha256": "90c6e03cc7bda0a74e118375cdc3fd4a24540d54eb50999b3a596b78dc25e26e",
+       "sha256": "d474e6352a0b7fb33b91bfe6113cfa87675a4b7d8478d5fb8a1035a8d3e15385",
        "sheet": "sheets/hurt_N.png",
        "region": [
         320,
@@ -6167,7 +6136,7 @@
        "file": "hurt_N_03.png",
        "packed_bounds": [
         66,
-        101,
+        103,
         94,
         139
        ],
@@ -6198,12 +6167,11 @@
         ]
        },
        "equipment": {
-        "shell": 312,
-        "moss": 153,
-        "shard": 36,
-        "glow": 16
+        "shell": 388,
+        "moss": 85,
+        "shard": 36
        },
-       "sha256": "acac7ee6040c8ed41354bdfa95a64a5a6c9db15f0fa92c7b50556ea564ed0a4c",
+       "sha256": "0007b418dbe613f62b2d5ca015352cfd0a8cdbb46d753b736515e4aa3149808d",
        "sheet": "sheets/hurt_N.png",
        "region": [
         480,
@@ -6221,7 +6189,7 @@
        "file": "hurt_E_00.png",
        "packed_bounds": [
         63,
-        101,
+        103,
         103,
         136
        ],
@@ -6252,12 +6220,12 @@
         ]
        },
        "equipment": {
-        "shell": 344,
-        "moss": 169,
+        "shell": 430,
+        "moss": 89,
         "shard": 37,
-        "glow": 15
+        "claw": 4
        },
-       "sha256": "c1cb4c70e79edd052038270033850a8a5dbf06951f870198b94e39034d7b16d2",
+       "sha256": "c054e6abf53c68c681c3d6f19161290a24b7d6f529344efca7293257a7430203",
        "sheet": "sheets/hurt_E.png",
        "region": [
         0,
@@ -6271,8 +6239,8 @@
        "file": "hurt_E_01.png",
        "packed_bounds": [
         63,
-        101,
-        102,
+        103,
+        103,
         136
        ],
        "anchors": {
@@ -6302,12 +6270,12 @@
         ]
        },
        "equipment": {
-        "shell": 346,
-        "moss": 170,
+        "shell": 431,
+        "moss": 90,
         "shard": 34,
-        "glow": 14
+        "claw": 4
        },
-       "sha256": "a7c15045bad357416bcd8b8f998dad360a19294b168f46138b5f5f68706a9a99",
+       "sha256": "306bcc76c27dd65e342bfc39568e5aa30ea5ce585180d7aed0e44a991b626e8c",
        "sheet": "sheets/hurt_E.png",
        "region": [
         160,
@@ -6321,7 +6289,7 @@
        "file": "hurt_E_02.png",
        "packed_bounds": [
         63,
-        101,
+        102,
         105,
         136
        ],
@@ -6352,12 +6320,12 @@
         ]
        },
        "equipment": {
-        "shell": 347,
-        "moss": 173,
+        "shell": 434,
+        "moss": 90,
         "shard": 36,
-        "glow": 11
+        "claw": 4
        },
-       "sha256": "e91dc4630525bda4def7ce891ea6224fe2c2121b9d0e23f6846adff1014a659b",
+       "sha256": "ccf986cdfd47abd7020056fae8e95e6eab3e800409d27d3a0c205025ce3473cc",
        "sheet": "sheets/hurt_E.png",
        "region": [
         320,
@@ -6371,8 +6339,8 @@
        "file": "hurt_E_03.png",
        "packed_bounds": [
         63,
-        101,
-        107,
+        102,
+        108,
         136
        ],
        "anchors": {
@@ -6402,12 +6370,12 @@
         ]
        },
        "equipment": {
-        "shell": 349,
-        "moss": 174,
+        "shell": 436,
+        "moss": 90,
         "shard": 36,
-        "glow": 10
+        "claw": 4
        },
-       "sha256": "b073d928e3bca5608db2e8c0cd0e1472c43372a496cd443a7e9de297c8d96e2e",
+       "sha256": "9881485d7a8fc72913b19db81c6f9f1fa48ac9aa4e668e33984a6572f40651f0",
        "sheet": "sheets/hurt_E.png",
        "region": [
         480,
@@ -6424,8 +6392,8 @@
        "path": "res://assets/animated/tortoise/hurt_W_00.png",
        "file": "hurt_W_00.png",
        "packed_bounds": [
-        57,
-        101,
+        56,
+        103,
         97,
         136
        ],
@@ -6456,12 +6424,12 @@
         ]
        },
        "equipment": {
-        "shell": 345,
-        "moss": 165,
+        "shell": 430,
+        "moss": 87,
         "shard": 37,
-        "glow": 17
+        "claw": 4
        },
-       "sha256": "9fbfbd1f09c7efec653b639cffc3e6942a9db453bf374f9b8752bc95b4591009",
+       "sha256": "b77d73bdbdb753ff4d6dba44f3a0792626599e5bbd1aebbeedb78dcf73c2e04b",
        "sheet": "sheets/hurt_W.png",
        "region": [
         0,
@@ -6475,7 +6443,7 @@
        "file": "hurt_W_01.png",
        "packed_bounds": [
         56,
-        101,
+        103,
         97,
         136
        ],
@@ -6506,12 +6474,12 @@
         ]
        },
        "equipment": {
-        "shell": 344,
-        "moss": 168,
+        "shell": 430,
+        "moss": 89,
         "shard": 35,
-        "glow": 16
+        "claw": 4
        },
-       "sha256": "aed1e874254b6fd9b415232d2599ce5873a25f615221156fee3be51c0a919731",
+       "sha256": "bf768e707958ef1d594c55e51d1f570aebdf264bae65e06a705c4b5781b1f48e",
        "sheet": "sheets/hurt_W.png",
        "region": [
         160,
@@ -6525,7 +6493,7 @@
        "file": "hurt_W_02.png",
        "packed_bounds": [
         54,
-        101,
+        102,
         97,
         136
        ],
@@ -6556,12 +6524,12 @@
         ]
        },
        "equipment": {
-        "shell": 349,
-        "moss": 172,
+        "shell": 435,
+        "moss": 90,
         "shard": 34,
-        "glow": 14
+        "claw": 4
        },
-       "sha256": "429a9d7353f5792de3b33c43f5ca3ff5ef936647fd945467d3256e5c691a6429",
+       "sha256": "c15a3e74ad59c7fbbe672b5c08888b4c7c041f578ea17760870e54fc8b243563",
        "sheet": "sheets/hurt_W.png",
        "region": [
         320,
@@ -6574,8 +6542,8 @@
        "path": "res://assets/animated/tortoise/hurt_W_03.png",
        "file": "hurt_W_03.png",
        "packed_bounds": [
-        52,
-        101,
+        51,
+        102,
         97,
         136
        ],
@@ -6606,12 +6574,12 @@
         ]
        },
        "equipment": {
-        "shell": 349,
-        "moss": 172,
+        "shell": 436,
+        "moss": 90,
         "shard": 34,
-        "glow": 15
+        "claw": 4
        },
-       "sha256": "3707d7487c62e34c764c8eae2a25829d0108f4d63346cb83e1dc78153ef4ba2d",
+       "sha256": "cbb800e7fc923012d5fdcb08eae9fa0d901a7c209ffdb2d8aa927d6c78086f7d",
        "sheet": "sheets/hurt_W.png",
        "region": [
         480,
@@ -6649,7 +6617,7 @@
        "file": "stagger_S_00.png",
        "packed_bounds": [
         66,
-        100,
+        102,
         94,
         139
        ],
@@ -6680,12 +6648,12 @@
         ]
        },
        "equipment": {
-        "shell": 304,
-        "moss": 161,
+        "shell": 378,
+        "moss": 91,
         "shard": 40,
-        "glow": 10
+        "claw": 5
        },
-       "sha256": "2dab417f01289db15a04e7753978d830a7421c4dbf043d7addcc8db3da89ca9c",
+       "sha256": "3aa4e2b840287401968ba14e35f371520c67db96005167cd0155305bb8706525",
        "sheet": "sheets/stagger_S.png",
        "region": [
         0,
@@ -6699,7 +6667,7 @@
        "file": "stagger_S_01.png",
        "packed_bounds": [
         66,
-        101,
+        102,
         94,
         140
        ],
@@ -6730,12 +6698,12 @@
         ]
        },
        "equipment": {
-        "shell": 304,
-        "moss": 162,
+        "shell": 376,
+        "moss": 93,
         "shard": 42,
-        "glow": 14
+        "claw": 5
        },
-       "sha256": "a14b4c15de6c3b1834c698f7c07f9ce02e3a38a70f1d206804be7b1638de605a",
+       "sha256": "fcdad7a379bc69d8ad31f2e9e54f4ee5f62a0b6f66748da3b547e3c5337badb1",
        "sheet": "sheets/stagger_S.png",
        "region": [
         160,
@@ -6749,7 +6717,7 @@
        "file": "stagger_S_02.png",
        "packed_bounds": [
         65,
-        101,
+        102,
         94,
         140
        ],
@@ -6780,12 +6748,12 @@
         ]
        },
        "equipment": {
-        "shell": 310,
-        "moss": 166,
+        "shell": 385,
+        "moss": 94,
         "shard": 39,
-        "glow": 10
+        "claw": 4
        },
-       "sha256": "064b86b1adaa27c1a77f1ea8af988b328190080ee1343519049000e5eca8654b",
+       "sha256": "b65bcdf37b0ff5184ef59c82612069a8bdc013c381201efe7940e437294c4171",
        "sheet": "sheets/stagger_S.png",
        "region": [
         320,
@@ -6799,7 +6767,7 @@
        "file": "stagger_S_03.png",
        "packed_bounds": [
         66,
-        101,
+        102,
         94,
         140
        ],
@@ -6830,12 +6798,12 @@
         ]
        },
        "equipment": {
-        "shell": 304,
-        "moss": 162,
+        "shell": 376,
+        "moss": 93,
         "shard": 42,
-        "glow": 14
+        "claw": 5
        },
-       "sha256": "34ab94fff875bae2ecaa1b6979558707292ef098db428e97602107435b3eda41",
+       "sha256": "7b2d800197474a40b45dfcad95aaa0b9ac02afbdcc8631c0f5bc1c25042f45bc",
        "sheet": "sheets/stagger_S.png",
        "region": [
         480,
@@ -6849,7 +6817,7 @@
        "file": "stagger_S_04.png",
        "packed_bounds": [
         66,
-        101,
+        102,
         95,
         140
        ],
@@ -6880,12 +6848,12 @@
         ]
        },
        "equipment": {
-        "shell": 313,
-        "moss": 159,
+        "shell": 387,
+        "moss": 92,
         "shard": 39,
-        "glow": 16
+        "claw": 4
        },
-       "sha256": "fd9d01a87be9be9601f08788fee715b09ce820a635aceb9ce38f2afd7c80be6f",
+       "sha256": "7854a565fcc321118df2aebc55122f8de588487d4e44d80a5691cfdd26074ccb",
        "sheet": "sheets/stagger_S.png",
        "region": [
         640,
@@ -6899,7 +6867,7 @@
        "file": "stagger_S_05.png",
        "packed_bounds": [
         66,
-        101,
+        102,
         94,
         140
        ],
@@ -6930,12 +6898,12 @@
         ]
        },
        "equipment": {
-        "shell": 304,
-        "moss": 162,
+        "shell": 376,
+        "moss": 93,
         "shard": 42,
-        "glow": 14
+        "claw": 5
        },
-       "sha256": "43828899ca217891554fa3226e80bae3fc8edbeba1ced9c43d27752ad4763dee",
+       "sha256": "7d34b8432434619bafbd714b30ab4693b5c26de78589dcf91712a6dee7ed05cb",
        "sheet": "sheets/stagger_S.png",
        "region": [
         800,
@@ -6949,7 +6917,7 @@
        "file": "stagger_S_06.png",
        "packed_bounds": [
         66,
-        100,
+        102,
         94,
         139
        ],
@@ -6980,12 +6948,12 @@
         ]
        },
        "equipment": {
-        "shell": 302,
-        "moss": 164,
+        "shell": 376,
+        "moss": 91,
         "shard": 36,
-        "glow": 10
+        "claw": 6
        },
-       "sha256": "0919f9944a4a442cb095d30e72dc235995da0dcfc0427328415587ec11066ba9",
+       "sha256": "2d6f0c0ffcb21b036f44d1d0b0209d200efdd55476fe1a48448d3bd7c0be13f2",
        "sheet": "sheets/stagger_S.png",
        "region": [
         960,
@@ -7003,7 +6971,7 @@
        "file": "stagger_N_00.png",
        "packed_bounds": [
         66,
-        102,
+        103,
         94,
         139
        ],
@@ -7034,12 +7002,11 @@
         ]
        },
        "equipment": {
-        "shell": 312,
-        "moss": 155,
-        "shard": 36,
-        "glow": 15
+        "shell": 386,
+        "moss": 89,
+        "shard": 36
        },
-       "sha256": "3ef93701c3f67a4adbd066c7b058fc5dc833c55043c634b941b0744199c4f6bd",
+       "sha256": "8d8318c06f2c7c98e3cf926144622968db773dcf0bda6e2f7948f9788d770b7e",
        "sheet": "sheets/stagger_N.png",
        "region": [
         0,
@@ -7053,7 +7020,7 @@
        "file": "stagger_N_01.png",
        "packed_bounds": [
         66,
-        102,
+        103,
         94,
         139
        ],
@@ -7084,12 +7051,11 @@
         ]
        },
        "equipment": {
-        "shell": 312,
-        "moss": 155,
-        "shard": 37,
-        "glow": 15
+        "shell": 386,
+        "moss": 89,
+        "shard": 37
        },
-       "sha256": "a58a1a4cfd2d1753cc1aca8f6d747c3e3e9be40faa09d13a02efcc65e1693e03",
+       "sha256": "3696ac1c728ada38276c5dddf8bd33aae4a5b1a616e62db5e15e639f89131917",
        "sheet": "sheets/stagger_N.png",
        "region": [
         160,
@@ -7103,7 +7069,7 @@
        "file": "stagger_N_02.png",
        "packed_bounds": [
         66,
-        102,
+        104,
         95,
         139
        ],
@@ -7134,12 +7100,11 @@
         ]
        },
        "equipment": {
-        "shell": 322,
-        "moss": 157,
-        "shard": 33,
-        "glow": 12
+        "shell": 396,
+        "moss": 89,
+        "shard": 33
        },
-       "sha256": "1bb5ed3e61510ee31cf5f4c50dc1baa8853bde139e65814f344f1a0033a172b4",
+       "sha256": "1f80505962b707e387cf1f01263ce3b68c6e6d807721ef6135d7c696f1005cd8",
        "sheet": "sheets/stagger_N.png",
        "region": [
         320,
@@ -7153,7 +7118,7 @@
        "file": "stagger_N_03.png",
        "packed_bounds": [
         66,
-        102,
+        103,
         94,
         139
        ],
@@ -7184,12 +7149,11 @@
         ]
        },
        "equipment": {
-        "shell": 312,
-        "moss": 155,
-        "shard": 37,
-        "glow": 15
+        "shell": 386,
+        "moss": 89,
+        "shard": 37
        },
-       "sha256": "f25e2041fd08783edbe9a33de762d20d892212e9fc1e5c4c956fcd4b9373936c",
+       "sha256": "1b310f85cc12c5a4fe0d9866901eb169547ae0bea0804202f782a1802453c599",
        "sheet": "sheets/stagger_N.png",
        "region": [
         480,
@@ -7203,7 +7167,7 @@
        "file": "stagger_N_04.png",
        "packed_bounds": [
         65,
-        102,
+        104,
         94,
         139
        ],
@@ -7234,12 +7198,11 @@
         ]
        },
        "equipment": {
-        "shell": 319,
-        "moss": 158,
-        "shard": 33,
-        "glow": 17
+        "shell": 394,
+        "moss": 91,
+        "shard": 33
        },
-       "sha256": "05fdbf09eaeab3dacbf725a3ff4dd52c4b869e694f26726a51724abc5150bfa5",
+       "sha256": "99aad92f73e764a88db3aa8eaba0751ce7efa68ae3981958d2ace821e0f59e2c",
        "sheet": "sheets/stagger_N.png",
        "region": [
         640,
@@ -7253,7 +7216,7 @@
        "file": "stagger_N_05.png",
        "packed_bounds": [
         66,
-        102,
+        103,
         94,
         139
        ],
@@ -7284,12 +7247,11 @@
         ]
        },
        "equipment": {
-        "shell": 312,
-        "moss": 155,
-        "shard": 37,
-        "glow": 15
+        "shell": 386,
+        "moss": 89,
+        "shard": 37
        },
-       "sha256": "103d35d48c81bd1cf7aa00191d5d1b3d408557de2c37a01ab41bbd61151666ba",
+       "sha256": "9c273d5cfb81dda4925260f25f9aefe35022206e8e31640afe473d97c872af2d",
        "sheet": "sheets/stagger_N.png",
        "region": [
         800,
@@ -7303,7 +7265,7 @@
        "file": "stagger_N_06.png",
        "packed_bounds": [
         66,
-        101,
+        103,
         94,
         139
        ],
@@ -7334,12 +7296,11 @@
         ]
        },
        "equipment": {
-        "shell": 312,
-        "moss": 153,
-        "shard": 36,
-        "glow": 16
+        "shell": 388,
+        "moss": 85,
+        "shard": 36
        },
-       "sha256": "acac7ee6040c8ed41354bdfa95a64a5a6c9db15f0fa92c7b50556ea564ed0a4c",
+       "sha256": "0007b418dbe613f62b2d5ca015352cfd0a8cdbb46d753b736515e4aa3149808d",
        "sheet": "sheets/stagger_N.png",
        "region": [
         960,
@@ -7357,8 +7318,8 @@
        "file": "stagger_E_00.png",
        "packed_bounds": [
         63,
-        101,
-        104,
+        102,
+        105,
         136
        ],
        "anchors": {
@@ -7388,12 +7349,12 @@
         ]
        },
        "equipment": {
-        "shell": 348,
-        "moss": 174,
+        "shell": 436,
+        "moss": 92,
         "shard": 34,
-        "glow": 14
+        "claw": 4
        },
-       "sha256": "65cb9c0e253c2b3124ed30d36683ed3fb518f3bc37d41b432600808c86e7c0d4",
+       "sha256": "5775eb2e92fb08d14557135e59737dfc76d4bdac26412fea4a000732a702a231",
        "sheet": "sheets/stagger_E.png",
        "region": [
         0,
@@ -7407,7 +7368,7 @@
        "file": "stagger_E_01.png",
        "packed_bounds": [
         63,
-        102,
+        103,
         108,
         136
        ],
@@ -7438,12 +7399,12 @@
         ]
        },
        "equipment": {
-        "shell": 354,
-        "moss": 169,
+        "shell": 438,
+        "moss": 91,
         "shard": 36,
-        "glow": 15
+        "claw": 4
        },
-       "sha256": "86e044762b85809f8f5f5a8ea78f8431b659c463776ef5757c12730d77567d27",
+       "sha256": "32ed68e9f56c538b2e170debb8993c78b2d73d532bd4f11458c81cc65f5183ab",
        "sheet": "sheets/stagger_E.png",
        "region": [
         160,
@@ -7457,7 +7418,7 @@
        "file": "stagger_E_02.png",
        "packed_bounds": [
         63,
-        101,
+        103,
         108,
         136
        ],
@@ -7488,12 +7449,12 @@
         ]
        },
        "equipment": {
-        "shell": 354,
-        "moss": 168,
+        "shell": 438,
+        "moss": 90,
         "shard": 36,
-        "glow": 16
+        "claw": 4
        },
-       "sha256": "ec2f146b94f2a8b4a31fe0a3912598204cbfc99e7dbe4dc88cb2aec6bbfd8135",
+       "sha256": "73796242aed5b341e8dc8a90ed3e3a18989a9bdf9d6457b4c76baca38d754986",
        "sheet": "sheets/stagger_E.png",
        "region": [
         320,
@@ -7507,7 +7468,7 @@
        "file": "stagger_E_03.png",
        "packed_bounds": [
         63,
-        102,
+        103,
         108,
         136
        ],
@@ -7538,12 +7499,12 @@
         ]
        },
        "equipment": {
-        "shell": 354,
-        "moss": 169,
+        "shell": 438,
+        "moss": 91,
         "shard": 36,
-        "glow": 15
+        "claw": 4
        },
-       "sha256": "0730dcfbad1c66990018a5ea217c102f47d3c0229640d49f95f96b6b3871f054",
+       "sha256": "84d6052331880ff1807c78c594b95fd1d50178fe8e36cdbfda08ed12ae799b47",
        "sheet": "sheets/stagger_E.png",
        "region": [
         480,
@@ -7557,7 +7518,7 @@
        "file": "stagger_E_04.png",
        "packed_bounds": [
         63,
-        102,
+        103,
         108,
         136
        ],
@@ -7588,12 +7549,12 @@
         ]
        },
        "equipment": {
-        "shell": 353,
-        "moss": 171,
+        "shell": 438,
+        "moss": 93,
         "shard": 36,
-        "glow": 16
+        "claw": 4
        },
-       "sha256": "47fd9a96416241cc4c4b96532263b16f798d51c61a66ef6e7cb077a66c4ee9ff",
+       "sha256": "c092c5fbf8cbc5a786faff381ef2458c44dbe8d11a8e9ba8d71ddf4b2a931279",
        "sheet": "sheets/stagger_E.png",
        "region": [
         640,
@@ -7607,7 +7568,7 @@
        "file": "stagger_E_05.png",
        "packed_bounds": [
         63,
-        102,
+        103,
         108,
         136
        ],
@@ -7638,12 +7599,12 @@
         ]
        },
        "equipment": {
-        "shell": 354,
-        "moss": 169,
+        "shell": 438,
+        "moss": 91,
         "shard": 36,
-        "glow": 15
+        "claw": 4
        },
-       "sha256": "b67cb91c4d42bc27104e4d93cfac988306b99057cff639b77305206be402c3d8",
+       "sha256": "f581b682d537534d8193938fb9049569393ab410cfcf409611755c50e7e07227",
        "sheet": "sheets/stagger_E.png",
        "region": [
         800,
@@ -7657,8 +7618,8 @@
        "file": "stagger_E_06.png",
        "packed_bounds": [
         63,
-        101,
-        107,
+        102,
+        108,
         136
        ],
        "anchors": {
@@ -7688,12 +7649,12 @@
         ]
        },
        "equipment": {
-        "shell": 349,
-        "moss": 174,
+        "shell": 436,
+        "moss": 90,
         "shard": 36,
-        "glow": 10
+        "claw": 4
        },
-       "sha256": "b073d928e3bca5608db2e8c0cd0e1472c43372a496cd443a7e9de297c8d96e2e",
+       "sha256": "9881485d7a8fc72913b19db81c6f9f1fa48ac9aa4e668e33984a6572f40651f0",
        "sheet": "sheets/stagger_E.png",
        "region": [
         960,
@@ -7710,8 +7671,8 @@
        "path": "res://assets/animated/tortoise/stagger_W_00.png",
        "file": "stagger_W_00.png",
        "packed_bounds": [
-        55,
-        101,
+        54,
+        102,
         97,
         136
        ],
@@ -7742,12 +7703,12 @@
         ]
        },
        "equipment": {
-        "shell": 348,
-        "moss": 175,
+        "shell": 436,
+        "moss": 92,
         "shard": 34,
-        "glow": 15
+        "claw": 4
        },
-       "sha256": "dc64fd8f537f4a6c4e036f8230f164d7315cf70397be89ee402465837ac8f6b6",
+       "sha256": "6f48ca9709d648282d1cf249f549412cece44689d4ab855a467565546d711fa4",
        "sheet": "sheets/stagger_W.png",
        "region": [
         0,
@@ -7761,7 +7722,7 @@
        "file": "stagger_W_01.png",
        "packed_bounds": [
         51,
-        102,
+        103,
         97,
         136
        ],
@@ -7792,12 +7753,12 @@
         ]
        },
        "equipment": {
-        "shell": 354,
-        "moss": 168,
+        "shell": 438,
+        "moss": 91,
         "shard": 36,
-        "glow": 15
+        "claw": 4
        },
-       "sha256": "a10e0e050481bcce8f987e7adcabcbd08b79d9b607e2ea7ae325708245e9fbb0",
+       "sha256": "d69ebb8100281e473355e6443518c1db0ef9606747d48667a651f1cbe2f239ee",
        "sheet": "sheets/stagger_W.png",
        "region": [
         160,
@@ -7811,7 +7772,7 @@
        "file": "stagger_W_02.png",
        "packed_bounds": [
         51,
-        102,
+        103,
         97,
         136
        ],
@@ -7842,12 +7803,12 @@
         ]
        },
        "equipment": {
-        "shell": 353,
-        "moss": 171,
+        "shell": 438,
+        "moss": 93,
         "shard": 36,
-        "glow": 15
+        "claw": 4
        },
-       "sha256": "03511868a39bbd1449d572bd97f88a9145cb2625bf4ce16b563cfbc4a3d6a43c",
+       "sha256": "cb47f3cc4ad32b0b5bd51c75b4acd1c98274fe77d661b233ca2cc22b28392ba2",
        "sheet": "sheets/stagger_W.png",
        "region": [
         320,
@@ -7861,7 +7822,7 @@
        "file": "stagger_W_03.png",
        "packed_bounds": [
         51,
-        102,
+        103,
         97,
         136
        ],
@@ -7892,12 +7853,12 @@
         ]
        },
        "equipment": {
-        "shell": 354,
-        "moss": 168,
+        "shell": 438,
+        "moss": 91,
         "shard": 36,
-        "glow": 15
+        "claw": 4
        },
-       "sha256": "e07793c4deeb68605f49e9ccbdeb59e0ca7000569dec681968676431675f6d4e",
+       "sha256": "dea28470ffc5fa346b5db2d391dd649546ecbceac7e3d297a1716ebcaeda4393",
        "sheet": "sheets/stagger_W.png",
        "region": [
         480,
@@ -7911,7 +7872,7 @@
        "file": "stagger_W_04.png",
        "packed_bounds": [
         51,
-        102,
+        103,
         97,
         136
        ],
@@ -7942,12 +7903,12 @@
         ]
        },
        "equipment": {
-        "shell": 354,
-        "moss": 167,
+        "shell": 438,
+        "moss": 90,
         "shard": 36,
-        "glow": 14
+        "claw": 4
        },
-       "sha256": "8db2556bb5882fded1c8e5f612014dbfc1f457907b9755c9fe600a7e7b28b51e",
+       "sha256": "1399b643784aa53344b071a52ae927bf7ef3ce7894230d08f0ded0715652c60f",
        "sheet": "sheets/stagger_W.png",
        "region": [
         640,
@@ -7961,7 +7922,7 @@
        "file": "stagger_W_05.png",
        "packed_bounds": [
         51,
-        102,
+        103,
         97,
         136
        ],
@@ -7992,12 +7953,12 @@
         ]
        },
        "equipment": {
-        "shell": 354,
-        "moss": 168,
+        "shell": 438,
+        "moss": 91,
         "shard": 36,
-        "glow": 15
+        "claw": 4
        },
-       "sha256": "b8e7917e1121f2811ead67f5b2d78f7a8d8d9859a5723224703a4df4cf7bf823",
+       "sha256": "5ac48a399f6c0b05928ba018c2ba0e5447876143eda202a953af872a62d33346",
        "sheet": "sheets/stagger_W.png",
        "region": [
         800,
@@ -8010,8 +7971,8 @@
        "path": "res://assets/animated/tortoise/stagger_W_06.png",
        "file": "stagger_W_06.png",
        "packed_bounds": [
-        52,
-        101,
+        51,
+        102,
         97,
         136
        ],
@@ -8042,12 +8003,12 @@
         ]
        },
        "equipment": {
-        "shell": 349,
-        "moss": 172,
+        "shell": 436,
+        "moss": 90,
         "shard": 34,
-        "glow": 15
+        "claw": 4
        },
-       "sha256": "3707d7487c62e34c764c8eae2a25829d0108f4d63346cb83e1dc78153ef4ba2d",
+       "sha256": "cbb800e7fc923012d5fdcb08eae9fa0d901a7c209ffdb2d8aa927d6c78086f7d",
        "sheet": "sheets/stagger_W.png",
        "region": [
         960,
@@ -8090,7 +8051,7 @@
        "file": "freed_S_00.png",
        "packed_bounds": [
         66,
-        96,
+        98,
         94,
         139
        ],
@@ -8121,12 +8082,12 @@
         ]
        },
        "equipment": {
-        "shell": 300,
-        "moss": 176,
+        "shell": 376,
+        "moss": 102,
         "shard": 33,
-        "glow": 16
+        "claw": 6
        },
-       "sha256": "4cebbc76d625bc5dec53890c65a3792e041d1c17a3b2fa0384cd1780e3aae7c1",
+       "sha256": "0e30b7678b8921d16c3bbd5864bf17fd019a1c97205a851297624011e507d573",
        "sheet": "sheets/freed_S.png",
        "region": [
         0,
@@ -8140,7 +8101,7 @@
        "file": "freed_S_01.png",
        "packed_bounds": [
         66,
-        85,
+        86,
         94,
         139
        ],
@@ -8171,12 +8132,12 @@
         ]
        },
        "equipment": {
-        "shell": 300,
-        "moss": 178,
+        "shell": 376,
+        "moss": 102,
         "shard": 32,
-        "glow": 11
+        "claw": 6
        },
-       "sha256": "bb75dcbc048de2d8951c8120a250e2a11737d1137598e2e7a88295f57a7e9c91",
+       "sha256": "4e0378eadbdfd604099de258a59179d349a617dcf6413afa70fb14aae50f01dd",
        "sheet": "sheets/freed_S.png",
        "region": [
         160,
@@ -8190,7 +8151,7 @@
        "file": "freed_S_02.png",
        "packed_bounds": [
         66,
-        78,
+        81,
         94,
         139
        ],
@@ -8221,12 +8182,12 @@
         ]
        },
        "equipment": {
-        "shell": 300,
-        "moss": 178,
-        "shard": 37,
-        "glow": 10
+        "shell": 376,
+        "moss": 102,
+        "shard": 36,
+        "claw": 6
        },
-       "sha256": "87e9f8d0c3f1079b4f54f13530a32d3b14f1dea49c4658ba68431b6f04d0e0dd",
+       "sha256": "fd25476d6281b406385ebbd438292ea7eaad3a3c647f061b35726de0c92c576a",
        "sheet": "sheets/freed_S.png",
        "region": [
         320,
@@ -8271,11 +8232,12 @@
         ]
        },
        "equipment": {
-        "shell": 300,
-        "moss": 178,
-        "shard": 34
+        "shell": 376,
+        "moss": 102,
+        "shard": 34,
+        "claw": 6
        },
-       "sha256": "58da1028d446b51905c206b3b0e98508130ed77b0c218a305fef04c75df090d4",
+       "sha256": "8cb71eee83328bbd2235e098d3e4f32384aa50145c107c89382b4879189a99cf",
        "sheet": "sheets/freed_S.png",
        "region": [
         480,
@@ -8316,10 +8278,11 @@
         ]
        },
        "equipment": {
-        "shell": 300,
-        "moss": 178
+        "shell": 376,
+        "moss": 102,
+        "claw": 6
        },
-       "sha256": "1ce05cab22a14c17f5c2b387f8a147b36ce61de6b6697f7db2c87aa49d7a35a6",
+       "sha256": "98cb01cebd86cd10c0659d27260591f5de409977b08c9fb22d0605d145284d41",
        "sheet": "sheets/freed_S.png",
        "region": [
         640,
@@ -8360,10 +8323,11 @@
         ]
        },
        "equipment": {
-        "shell": 300,
-        "moss": 178
+        "shell": 376,
+        "moss": 102,
+        "claw": 6
        },
-       "sha256": "d21afb0354953ca7d847c59357aee3b6b927cbb162dae353b9e048e11c005ee8",
+       "sha256": "3bc4f33604ca3d8f5c6cf50cae850c5a5dc4ec652d1a6a1969cb9bbb4fe0d125",
        "sheet": "sheets/freed_S.png",
        "region": [
         800,
@@ -8404,10 +8368,11 @@
         ]
        },
        "equipment": {
-        "shell": 300,
-        "moss": 178
+        "shell": 376,
+        "moss": 102,
+        "claw": 6
        },
-       "sha256": "d21afb0354953ca7d847c59357aee3b6b927cbb162dae353b9e048e11c005ee8",
+       "sha256": "3bc4f33604ca3d8f5c6cf50cae850c5a5dc4ec652d1a6a1969cb9bbb4fe0d125",
        "sheet": "sheets/freed_S.png",
        "region": [
         960,
@@ -8448,10 +8413,11 @@
         ]
        },
        "equipment": {
-        "shell": 300,
-        "moss": 178
+        "shell": 376,
+        "moss": 102,
+        "claw": 6
        },
-       "sha256": "ca5294fb56101268bd13ebed9eea39333f55f345ae486eb243640ac217b83da0",
+       "sha256": "25174a4f04618ea4590ae6f50371601e95875c4575f3e7120b0bb6d8d5c6a040",
        "sheet": "sheets/freed_S.png",
        "region": [
         1120,
@@ -8492,10 +8458,11 @@
         ]
        },
        "equipment": {
-        "shell": 302,
-        "moss": 178
+        "shell": 376,
+        "moss": 102,
+        "claw": 6
        },
-       "sha256": "694b3b92fa88886729108a56e6499b56b703ed52a11e83ca1922de9fccb747d9",
+       "sha256": "cc61ea4bb3cc6eed2309dde95fa4c9cb6073652921508fada60b65eff3a19d1c",
        "sheet": "sheets/freed_S.png",
        "region": [
         1280,
@@ -8536,10 +8503,11 @@
         ]
        },
        "equipment": {
-        "shell": 304,
-        "moss": 176
+        "shell": 377,
+        "moss": 101,
+        "claw": 6
        },
-       "sha256": "631ea00bae8f72c6d00b568e40a350a935a65c387cd273705e8f40750a70905b",
+       "sha256": "b187a31316d9bcd7ab9ec08e273453f3d060687993c502d5b92afc53b1c7bc1f",
        "sheet": "sheets/freed_S.png",
        "region": [
         1440,
@@ -8580,10 +8548,11 @@
         ]
        },
        "equipment": {
-        "shell": 298,
-        "moss": 182
+        "shell": 374,
+        "moss": 104,
+        "claw": 6
        },
-       "sha256": "84dfffe6cd831333c22acd9eed76b349925eb9c3d8b1de7fde2cea7874a19c98",
+       "sha256": "cf3fc93e9f26442d0fad00ebab9ece2819a05583f75c7abbcdc5467b3140b7f1",
        "sheet": "sheets/freed_S.png",
        "region": [
         1600,
@@ -8624,10 +8593,11 @@
         ]
        },
        "equipment": {
-        "shell": 302,
-        "moss": 178
+        "shell": 376,
+        "moss": 102,
+        "claw": 6
        },
-       "sha256": "694b3b92fa88886729108a56e6499b56b703ed52a11e83ca1922de9fccb747d9",
+       "sha256": "cc61ea4bb3cc6eed2309dde95fa4c9cb6073652921508fada60b65eff3a19d1c",
        "sheet": "sheets/freed_S.png",
        "region": [
         1760,
@@ -8645,7 +8615,7 @@
        "file": "freed_N_00.png",
        "packed_bounds": [
         66,
-        98,
+        99,
         94,
         139
        ],
@@ -8676,12 +8646,11 @@
         ]
        },
        "equipment": {
-        "shell": 312,
-        "moss": 175,
-        "shard": 33,
-        "glow": 16
+        "shell": 388,
+        "moss": 102,
+        "shard": 33
        },
-       "sha256": "4454192d711dcea76fdd71fe407f6c1d54bb27cd565304cbd16fd78e1230b9bb",
+       "sha256": "b45fa64135dd44ef9341862a4ff88e0a68d75afb5dda8d6effa9929e233b12f8",
        "sheet": "sheets/freed_N.png",
        "region": [
         0,
@@ -8695,7 +8664,7 @@
        "file": "freed_N_01.png",
        "packed_bounds": [
         66,
-        87,
+        90,
         94,
         139
        ],
@@ -8726,12 +8695,11 @@
         ]
        },
        "equipment": {
-        "shell": 312,
-        "moss": 178,
-        "shard": 30,
-        "glow": 13
+        "shell": 388,
+        "moss": 102,
+        "shard": 29
        },
-       "sha256": "e534d1764668f7ff93609c6e6340cd924684243c81a0dd66fcac099efd4093fa",
+       "sha256": "9e0b06b6e66980c356ab88781d5a8c930c13392c51fe4a54af5509171f302779",
        "sheet": "sheets/freed_N.png",
        "region": [
         160,
@@ -8745,8 +8713,8 @@
        "file": "freed_N_02.png",
        "packed_bounds": [
         66,
-        82,
-        95,
+        85,
+        94,
         139
        ],
        "anchors": {
@@ -8776,12 +8744,11 @@
         ]
        },
        "equipment": {
-        "shell": 312,
-        "moss": 178,
-        "shard": 33,
-        "glow": 9
+        "shell": 388,
+        "moss": 102,
+        "shard": 33
        },
-       "sha256": "164f0ee78023b22706f4004b3b96128b9518b851e3b1f3528f6f8fce418cd81c",
+       "sha256": "01f789878b7e85f34cb72614e72c76ff5d3b87c8acf55eee9d272470dd0ace52",
        "sheet": "sheets/freed_N.png",
        "region": [
         320,
@@ -8826,11 +8793,11 @@
         ]
        },
        "equipment": {
-        "shell": 312,
-        "moss": 178,
+        "shell": 388,
+        "moss": 102,
         "shard": 38
        },
-       "sha256": "4b3907e1074a897603d3465a0e84e40000a0d98e38b65d72c8451808cb4eda27",
+       "sha256": "7da39986be501c61ca9cdbef7f7418db1a08968a21d66a3ab4bd3a28bdaa5f61",
        "sheet": "sheets/freed_N.png",
        "region": [
         480,
@@ -8871,10 +8838,10 @@
         ]
        },
        "equipment": {
-        "shell": 312,
-        "moss": 178
+        "shell": 388,
+        "moss": 102
        },
-       "sha256": "b0115019d6fa82d0a2aa389d118458173624092b53872e45993ff8f28d075d55",
+       "sha256": "f0996063bdbafe60c4aad242b22933b594488083baee9a156662f57fbda67e48",
        "sheet": "sheets/freed_N.png",
        "region": [
         640,
@@ -8915,10 +8882,10 @@
         ]
        },
        "equipment": {
-        "shell": 312,
-        "moss": 178
+        "shell": 388,
+        "moss": 102
        },
-       "sha256": "b0115019d6fa82d0a2aa389d118458173624092b53872e45993ff8f28d075d55",
+       "sha256": "f0996063bdbafe60c4aad242b22933b594488083baee9a156662f57fbda67e48",
        "sheet": "sheets/freed_N.png",
        "region": [
         800,
@@ -8959,10 +8926,10 @@
         ]
        },
        "equipment": {
-        "shell": 312,
-        "moss": 178
+        "shell": 388,
+        "moss": 102
        },
-       "sha256": "b0115019d6fa82d0a2aa389d118458173624092b53872e45993ff8f28d075d55",
+       "sha256": "f0996063bdbafe60c4aad242b22933b594488083baee9a156662f57fbda67e48",
        "sheet": "sheets/freed_N.png",
        "region": [
         960,
@@ -9003,10 +8970,10 @@
         ]
        },
        "equipment": {
-        "shell": 312,
-        "moss": 178
+        "shell": 388,
+        "moss": 102
        },
-       "sha256": "b0115019d6fa82d0a2aa389d118458173624092b53872e45993ff8f28d075d55",
+       "sha256": "f0996063bdbafe60c4aad242b22933b594488083baee9a156662f57fbda67e48",
        "sheet": "sheets/freed_N.png",
        "region": [
         1120,
@@ -9047,10 +9014,10 @@
         ]
        },
        "equipment": {
-        "shell": 312,
-        "moss": 178
+        "shell": 388,
+        "moss": 102
        },
-       "sha256": "b0115019d6fa82d0a2aa389d118458173624092b53872e45993ff8f28d075d55",
+       "sha256": "f0996063bdbafe60c4aad242b22933b594488083baee9a156662f57fbda67e48",
        "sheet": "sheets/freed_N.png",
        "region": [
         1280,
@@ -9091,10 +9058,10 @@
         ]
        },
        "equipment": {
-        "shell": 308,
-        "moss": 182
+        "shell": 386,
+        "moss": 104
        },
-       "sha256": "093588c05e8c7fdf9ae221a2b4eb02a4a0265037468755e2874f4bab2ecf4db7",
+       "sha256": "eca2b9828823651ee730569525a4710ac246e6c82afef918cc5da1566521d32d",
        "sheet": "sheets/freed_N.png",
        "region": [
         1440,
@@ -9135,10 +9102,10 @@
         ]
        },
        "equipment": {
-        "shell": 314,
-        "moss": 176
+        "shell": 389,
+        "moss": 101
        },
-       "sha256": "b61190921a2d599146f1427897f134d074b6317311b228ed5d0d3e06d0986825",
+       "sha256": "8486aaea12ebeb9fbc5c35d56ddfbbbb232cacf922a9d8e38f2b40b4e45a39d7",
        "sheet": "sheets/freed_N.png",
        "region": [
         1600,
@@ -9179,10 +9146,10 @@
         ]
        },
        "equipment": {
-        "shell": 312,
-        "moss": 178
+        "shell": 388,
+        "moss": 102
        },
-       "sha256": "b0115019d6fa82d0a2aa389d118458173624092b53872e45993ff8f28d075d55",
+       "sha256": "f0996063bdbafe60c4aad242b22933b594488083baee9a156662f57fbda67e48",
        "sheet": "sheets/freed_N.png",
        "region": [
         1760,
@@ -9200,8 +9167,8 @@
        "file": "freed_E_00.png",
        "packed_bounds": [
         63,
-        97,
-        103,
+        98,
+        104,
         136
        ],
        "anchors": {
@@ -9231,12 +9198,12 @@
         ]
        },
        "equipment": {
-        "shell": 349,
-        "moss": 184,
+        "shell": 436,
+        "moss": 98,
         "shard": 36,
-        "glow": 17
+        "claw": 4
        },
-       "sha256": "3723aa492a4dee7dfc65caa6fa24d5af03201661e13a844b1a7044b7bcfb68e3",
+       "sha256": "32cb4ca502f01f4231691f6e093bcf4e537dd82db59e71114d8b3bd52a9f1663",
        "sheet": "sheets/freed_E.png",
        "region": [
         0,
@@ -9250,7 +9217,7 @@
        "file": "freed_E_01.png",
        "packed_bounds": [
         63,
-        86,
+        88,
         103,
         136
        ],
@@ -9281,12 +9248,12 @@
         ]
        },
        "equipment": {
-        "shell": 349,
-        "moss": 185,
+        "shell": 436,
+        "moss": 98,
         "shard": 35,
-        "glow": 14
+        "claw": 4
        },
-       "sha256": "e7774b39dc438a7fa57c7c0672972dd35e1462e2651b8fa7ac1c648b0d3cd30b",
+       "sha256": "2f7f99b7b0e5b6ad125b5cb8f9a418a000001c5bf0c557f22f6f89134daae9d9",
        "sheet": "sheets/freed_E.png",
        "region": [
         160,
@@ -9300,7 +9267,7 @@
        "file": "freed_E_02.png",
        "packed_bounds": [
         63,
-        80,
+        82,
         103,
         136
        ],
@@ -9331,12 +9298,12 @@
         ]
        },
        "equipment": {
-        "shell": 349,
-        "moss": 185,
-        "shard": 37,
-        "glow": 9
+        "shell": 436,
+        "moss": 98,
+        "shard": 36,
+        "claw": 4
        },
-       "sha256": "8b79f9d2ef98295be11e1e16c1b7cdb502a42ba9b0c5bcb6f455172b0ef7b205",
+       "sha256": "7e92ad102c0e8bd258e92ec05f88ea2adc698f12cdf76cdf3a5233ef365d9453",
        "sheet": "sheets/freed_E.png",
        "region": [
         320,
@@ -9351,7 +9318,7 @@
        "packed_bounds": [
         63,
         80,
-        103,
+        104,
         136
        ],
        "anchors": {
@@ -9381,11 +9348,12 @@
         ]
        },
        "equipment": {
-        "shell": 349,
-        "moss": 185,
-        "shard": 32
+        "shell": 436,
+        "moss": 98,
+        "shard": 30,
+        "claw": 4
        },
-       "sha256": "510e32fdadf0bbb037693f445f0d0c22027932b9743dec7de7247804f3378a4a",
+       "sha256": "5451fc6615d7dabc9657c9a62f9887e0ee618b3c274764df95519be69906e1a9",
        "sheet": "sheets/freed_E.png",
        "region": [
         480,
@@ -9400,7 +9368,7 @@
        "packed_bounds": [
         63,
         109,
-        104,
+        105,
         136
        ],
        "anchors": {
@@ -9426,10 +9394,11 @@
         ]
        },
        "equipment": {
-        "shell": 349,
-        "moss": 185
+        "shell": 436,
+        "moss": 98,
+        "claw": 4
        },
-       "sha256": "28f4786e4a463cb37458f88bfb933eead6796cbf04a45558f4c6195214ba17c8",
+       "sha256": "644d47cd241e85d6dcf183dc0f2511738ce4b97a1ca5015990249874785274cb",
        "sheet": "sheets/freed_E.png",
        "region": [
         640,
@@ -9444,7 +9413,7 @@
        "packed_bounds": [
         63,
         109,
-        106,
+        107,
         136
        ],
        "anchors": {
@@ -9470,10 +9439,11 @@
         ]
        },
        "equipment": {
-        "shell": 349,
-        "moss": 185
+        "shell": 436,
+        "moss": 98,
+        "claw": 4
        },
-       "sha256": "d345da8893292b10e23f58c21091335cda3f19fd2a9d2e6dab9db86eaf59748c",
+       "sha256": "6ef872c5d1b1c00c71bebfa76f56c48e621cc80664b766351a09710bacb59a88",
        "sheet": "sheets/freed_E.png",
        "region": [
         800,
@@ -9514,10 +9484,11 @@
         ]
        },
        "equipment": {
-        "shell": 349,
-        "moss": 185
+        "shell": 436,
+        "moss": 98,
+        "claw": 4
        },
-       "sha256": "0688a939678a3d240564c0709162249779c23cf45dda024afa27718394948ca3",
+       "sha256": "1b8cdad5a1c5e7b2189f97db59eeb4185f1b483bba04c8bc09556ea8da12897a",
        "sheet": "sheets/freed_E.png",
        "region": [
         960,
@@ -9558,10 +9529,11 @@
         ]
        },
        "equipment": {
-        "shell": 349,
-        "moss": 185
+        "shell": 436,
+        "moss": 98,
+        "claw": 4
        },
-       "sha256": "6ea7ed4a1d852376d20d855793dd551f9526806bb9518ebae52f29046a1de631",
+       "sha256": "cfbc98d44fd3139a8fadaf22625b2b38a7bacab01f5ab53cd37824e53ab088fb",
        "sheet": "sheets/freed_E.png",
        "region": [
         1120,
@@ -9576,7 +9548,7 @@
        "packed_bounds": [
         63,
         109,
-        107,
+        108,
         136
        ],
        "anchors": {
@@ -9602,10 +9574,11 @@
         ]
        },
        "equipment": {
-        "shell": 349,
-        "moss": 185
+        "shell": 436,
+        "moss": 98,
+        "claw": 4
        },
-       "sha256": "47f8c07d6af7a983c98c86f0fd34c55e3de10b02b9cbb07abc6c9e2a57a5791e",
+       "sha256": "a17e4099357bc95e057ce50e0c6563c5c41bc962687a24c9fb402282bc3d0b83",
        "sheet": "sheets/freed_E.png",
        "region": [
         1280,
@@ -9620,7 +9593,7 @@
        "packed_bounds": [
         63,
         109,
-        107,
+        108,
         136
        ],
        "anchors": {
@@ -9646,10 +9619,11 @@
         ]
        },
        "equipment": {
-        "shell": 349,
-        "moss": 185
+        "shell": 436,
+        "moss": 98,
+        "claw": 4
        },
-       "sha256": "c16519bed564e43a2aa070de815766067ab964a635fd9f3105ddf9c9bffa2593",
+       "sha256": "88622576ee23ed3b697f6df2fffe6c75002bae6af077dcb4b659000a7b345b04",
        "sheet": "sheets/freed_E.png",
        "region": [
         1440,
@@ -9664,7 +9638,7 @@
        "packed_bounds": [
         63,
         109,
-        107,
+        108,
         136
        ],
        "anchors": {
@@ -9690,10 +9664,11 @@
         ]
        },
        "equipment": {
-        "shell": 350,
-        "moss": 184
+        "shell": 436,
+        "moss": 98,
+        "claw": 4
        },
-       "sha256": "b51705610d77d757e08feab536edaac322f0a275ff2b748541d1f114ecbc49a4",
+       "sha256": "ba928ea3d23048a96cfe80c7ec8a7fea03250df0e45d7aabd07f3f0ca6c36340",
        "sheet": "sheets/freed_E.png",
        "region": [
         1600,
@@ -9708,7 +9683,7 @@
        "packed_bounds": [
         63,
         109,
-        107,
+        108,
         136
        ],
        "anchors": {
@@ -9734,10 +9709,11 @@
         ]
        },
        "equipment": {
-        "shell": 349,
-        "moss": 185
+        "shell": 436,
+        "moss": 98,
+        "claw": 4
        },
-       "sha256": "47f8c07d6af7a983c98c86f0fd34c55e3de10b02b9cbb07abc6c9e2a57a5791e",
+       "sha256": "a17e4099357bc95e057ce50e0c6563c5c41bc962687a24c9fb402282bc3d0b83",
        "sheet": "sheets/freed_E.png",
        "region": [
         1760,
@@ -9754,8 +9730,8 @@
        "path": "res://assets/animated/tortoise/freed_W_00.png",
        "file": "freed_W_00.png",
        "packed_bounds": [
-        56,
-        97,
+        55,
+        98,
         97,
         136
        ],
@@ -9786,12 +9762,12 @@
         ]
        },
        "equipment": {
-        "shell": 349,
-        "moss": 184,
+        "shell": 436,
+        "moss": 98,
         "shard": 34,
-        "glow": 12
+        "claw": 4
        },
-       "sha256": "19d3667a20391d3765391f8b693cacfc21cf562dab40ebf0dfd81b3535a81c94",
+       "sha256": "c585d15faf3f8ebb93872e5557289b920ba1208320856d276775231c4326b686",
        "sheet": "sheets/freed_W.png",
        "region": [
         0,
@@ -9804,8 +9780,8 @@
        "path": "res://assets/animated/tortoise/freed_W_01.png",
        "file": "freed_W_01.png",
        "packed_bounds": [
-        57,
-        86,
+        56,
+        88,
         97,
         136
        ],
@@ -9836,12 +9812,12 @@
         ]
        },
        "equipment": {
-        "shell": 349,
-        "moss": 185,
+        "shell": 436,
+        "moss": 98,
         "shard": 38,
-        "glow": 12
+        "claw": 4
        },
-       "sha256": "dea3499c7c600da1c86f7aa479c9dce57d0c879b66a2611decada66ceb2315b3",
+       "sha256": "8758ed48550e8e9d7951ca813a8761e49a959c423756449a71589122abd9f9b6",
        "sheet": "sheets/freed_W.png",
        "region": [
         160,
@@ -9854,8 +9830,8 @@
        "path": "res://assets/animated/tortoise/freed_W_02.png",
        "file": "freed_W_02.png",
        "packed_bounds": [
-        57,
-        80,
+        56,
+        83,
         97,
         136
        ],
@@ -9886,12 +9862,12 @@
         ]
        },
        "equipment": {
-        "shell": 349,
-        "moss": 185,
+        "shell": 436,
+        "moss": 98,
         "shard": 31,
-        "glow": 10
+        "claw": 4
        },
-       "sha256": "5af33b24ebc84851b205e83e135ecdb93313f093f130c99af03854b906b34d4d",
+       "sha256": "65472b248e4baf09e3db6019831e4780f6405891ec224035b065f22e86c228bc",
        "sheet": "sheets/freed_W.png",
        "region": [
         320,
@@ -9904,7 +9880,7 @@
        "path": "res://assets/animated/tortoise/freed_W_03.png",
        "file": "freed_W_03.png",
        "packed_bounds": [
-        56,
+        55,
         80,
         97,
         136
@@ -9936,11 +9912,12 @@
         ]
        },
        "equipment": {
-        "shell": 349,
-        "moss": 185,
-        "shard": 29
+        "shell": 436,
+        "moss": 98,
+        "shard": 29,
+        "claw": 4
        },
-       "sha256": "d309396f559f4609aca9ed0b4d9a204635c8c63122691433d0b6d19c7e668d9a",
+       "sha256": "e9757cb67074135e17aacba5dc2585720288e25b6ac30607ecb02620fc79fc7c",
        "sheet": "sheets/freed_W.png",
        "region": [
         480,
@@ -9953,7 +9930,7 @@
        "path": "res://assets/animated/tortoise/freed_W_04.png",
        "file": "freed_W_04.png",
        "packed_bounds": [
-        55,
+        54,
         109,
         97,
         136
@@ -9981,10 +9958,11 @@
         ]
        },
        "equipment": {
-        "shell": 349,
-        "moss": 185
+        "shell": 436,
+        "moss": 98,
+        "claw": 4
        },
-       "sha256": "7b436690b48c88195ca8485fb63d6c53ef43f02564c92fd1cfd1e517fec465cd",
+       "sha256": "2c8f0fc52217ab635b768ca52e0c2976d5ac5d1699b19ae9a0e1ebd9947af8bb",
        "sheet": "sheets/freed_W.png",
        "region": [
         640,
@@ -9997,7 +9975,7 @@
        "path": "res://assets/animated/tortoise/freed_W_05.png",
        "file": "freed_W_05.png",
        "packed_bounds": [
-        53,
+        52,
         109,
         97,
         136
@@ -10025,10 +10003,11 @@
         ]
        },
        "equipment": {
-        "shell": 349,
-        "moss": 185
+        "shell": 436,
+        "moss": 98,
+        "claw": 4
        },
-       "sha256": "0b8c655f5e7c29a01286f36186be08886f8376efa906d00c0ae5c999e0b6e40e",
+       "sha256": "e774a06e70f628b104691392cd38d9336ce87168708aa2a1d77325f28f8b0692",
        "sheet": "sheets/freed_W.png",
        "region": [
         800,
@@ -10069,10 +10048,11 @@
         ]
        },
        "equipment": {
-        "shell": 349,
-        "moss": 185
+        "shell": 436,
+        "moss": 98,
+        "claw": 4
        },
-       "sha256": "32c3a750698d8db3e7fdf0fe82951bcd2584fa81a36acd35d8b199be0fe31914",
+       "sha256": "dde68ad0b70fe7f0ce71987b782cfd26275ca6a4751f93762533f0b7ccacd632",
        "sheet": "sheets/freed_W.png",
        "region": [
         960,
@@ -10113,10 +10093,11 @@
         ]
        },
        "equipment": {
-        "shell": 349,
-        "moss": 185
+        "shell": 436,
+        "moss": 98,
+        "claw": 4
        },
-       "sha256": "7a54cf3d3e293a6b3fd5c62a9fec1b531888aaa3347ac76137feb9923551e82b",
+       "sha256": "01acf9988af77d2bf08675fa497d1e8e31ff1953c05c9009578783e3515d2d3e",
        "sheet": "sheets/freed_W.png",
        "region": [
         1120,
@@ -10129,7 +10110,7 @@
        "path": "res://assets/animated/tortoise/freed_W_08.png",
        "file": "freed_W_08.png",
        "packed_bounds": [
-        52,
+        51,
         109,
         97,
         136
@@ -10157,10 +10138,11 @@
         ]
        },
        "equipment": {
-        "shell": 349,
-        "moss": 185
+        "shell": 436,
+        "moss": 98,
+        "claw": 4
        },
-       "sha256": "c830068fd9730b24001cce21d99973d147b39a27573c88e736990c3bb8d7560d",
+       "sha256": "9651567a4b6bdb2f3d4363bfbf177304744d806ac4ca7f869cdd78a9273ed132",
        "sheet": "sheets/freed_W.png",
        "region": [
         1280,
@@ -10173,7 +10155,7 @@
        "path": "res://assets/animated/tortoise/freed_W_09.png",
        "file": "freed_W_09.png",
        "packed_bounds": [
-        52,
+        51,
         109,
         97,
         136
@@ -10201,10 +10183,11 @@
         ]
        },
        "equipment": {
-        "shell": 350,
-        "moss": 184
+        "shell": 436,
+        "moss": 98,
+        "claw": 4
        },
-       "sha256": "d8e16334c9ab2c816943adf2cf80c3d195307d86f0abe6a9b29089627efa09b3",
+       "sha256": "68028419d3621310d1f8d17df7bdab9e39d6b9181e03d975ba71017c80173aa8",
        "sheet": "sheets/freed_W.png",
        "region": [
         1440,
@@ -10217,7 +10200,7 @@
        "path": "res://assets/animated/tortoise/freed_W_10.png",
        "file": "freed_W_10.png",
        "packed_bounds": [
-        52,
+        51,
         109,
         97,
         136
@@ -10245,10 +10228,11 @@
         ]
        },
        "equipment": {
-        "shell": 349,
-        "moss": 185
+        "shell": 436,
+        "moss": 98,
+        "claw": 4
        },
-       "sha256": "895a54aec6583dd99dc10106c029880b33bd122d5d9a113709cdbe4ae5dbdfb4",
+       "sha256": "0441c940ed0420aa13d6dd1821454f712e89ac37e53e2867bab9c3834d04daec",
        "sheet": "sheets/freed_W.png",
        "region": [
         1600,
@@ -10261,7 +10245,7 @@
        "path": "res://assets/animated/tortoise/freed_W_11.png",
        "file": "freed_W_11.png",
        "packed_bounds": [
-        52,
+        51,
         109,
         97,
         136
@@ -10289,10 +10273,11 @@
         ]
        },
        "equipment": {
-        "shell": 349,
-        "moss": 185
+        "shell": 436,
+        "moss": 98,
+        "claw": 4
        },
-       "sha256": "c830068fd9730b24001cce21d99973d147b39a27573c88e736990c3bb8d7560d",
+       "sha256": "9651567a4b6bdb2f3d4363bfbf177304744d806ac4ca7f869cdd78a9273ed132",
        "sheet": "sheets/freed_W.png",
        "region": [
         1760,
@@ -10358,10 +10343,11 @@
         ]
        },
        "equipment": {
-        "shell": 302,
-        "moss": 178
+        "shell": 376,
+        "moss": 102,
+        "claw": 7
        },
-       "sha256": "e71fc37c8a192b3c4e4e2cdd9366306ab7d23d5ef44ed45fb3dda22ecf52f80b",
+       "sha256": "b9bb0c74abae8b247e98bcd0bb37c2618d283dbedb73cbb5025e68595a515c7e",
        "sheet": "sheets/freed_move_S.png",
        "region": [
         0,
@@ -10402,10 +10388,11 @@
         ]
        },
        "equipment": {
-        "shell": 299,
-        "moss": 177
+        "shell": 374,
+        "moss": 102,
+        "claw": 4
        },
-       "sha256": "301a56f0b862987f08824fa9e6d108324aff692d6dfe9947485febaf8c5a3c06",
+       "sha256": "94a788fac1159be2b63e70e6da97062a199224ea063f2894385cde63d583e71e",
        "sheet": "sheets/freed_move_S.png",
        "region": [
         160,
@@ -10446,10 +10433,11 @@
         ]
        },
        "equipment": {
-        "shell": 298,
-        "moss": 178
+        "shell": 372,
+        "moss": 104,
+        "claw": 4
        },
-       "sha256": "010b36ba7876c4fcb2c5d7ab33bf4bf298d35f55d881b9f0098501c93c2565df",
+       "sha256": "f87c1718c329e2b7bdf16ae465405ab5dd45fb0a35333f44a3d9a85b0b2ea831",
        "sheet": "sheets/freed_move_S.png",
        "region": [
         320,
@@ -10490,10 +10478,11 @@
         ]
        },
        "equipment": {
-        "shell": 301,
-        "moss": 177
+        "shell": 374,
+        "moss": 102,
+        "claw": 4
        },
-       "sha256": "91bf5da8292892049b88536a9c5b51ee856748e00988eef827c17c698efba136",
+       "sha256": "b886c15f8447620d6452646db12dda37649307972165b7484b1e793b1dd8c271",
        "sheet": "sheets/freed_move_S.png",
        "region": [
         480,
@@ -10534,10 +10523,11 @@
         ]
        },
        "equipment": {
-        "shell": 302,
-        "moss": 178
+        "shell": 376,
+        "moss": 102,
+        "claw": 6
        },
-       "sha256": "a6880d0be6c4bbd7420d71032256092cd9b88a6c416eba0024b792d9f3b5410a",
+       "sha256": "b20ecd20b218115bfcbabce0bb4664c228dc0a9fade53625e560dbcfda84aaa9",
        "sheet": "sheets/freed_move_S.png",
        "region": [
         640,
@@ -10578,10 +10568,11 @@
         ]
        },
        "equipment": {
-        "shell": 299,
-        "moss": 177
+        "shell": 374,
+        "moss": 102,
+        "claw": 4
        },
-       "sha256": "6d3b148b5ea877a6c117ee5ed8c29be6adda7f7ea823155d5c8e96c1c9429c4a",
+       "sha256": "e6f900634649b65966d1a0450fb366144108bee839da376f0dd4aa50f2a77640",
        "sheet": "sheets/freed_move_S.png",
        "region": [
         800,
@@ -10622,10 +10613,11 @@
         ]
        },
        "equipment": {
-        "shell": 298,
-        "moss": 178
+        "shell": 372,
+        "moss": 104,
+        "claw": 4
        },
-       "sha256": "5f4477f4b1c85781a732f5e4d2fb888c7d85ea28bb709c28c9a25ab39c86ded7",
+       "sha256": "1d3908d8fbb5cf249ae9481c2b864175af425849812f3ad90ff81106f4065a48",
        "sheet": "sheets/freed_move_S.png",
        "region": [
         960,
@@ -10666,10 +10658,11 @@
         ]
        },
        "equipment": {
-        "shell": 301,
-        "moss": 177
+        "shell": 374,
+        "moss": 102,
+        "claw": 4
        },
-       "sha256": "91bf5da8292892049b88536a9c5b51ee856748e00988eef827c17c698efba136",
+       "sha256": "a7f2d8245a8e8f4feec9df4fdd8c9df2ebc275bb9c5e7e12d51574a266671ae2",
        "sheet": "sheets/freed_move_S.png",
        "region": [
         1120,
@@ -10714,10 +10707,10 @@
         ]
        },
        "equipment": {
-        "shell": 312,
-        "moss": 178
+        "shell": 388,
+        "moss": 102
        },
-       "sha256": "2b99a214719dbb59ca66a67db157938cc921eee4f870ef6e604e5b8da0fb903c",
+       "sha256": "c1a675d3a0d2568e51fb06b9b42d89adc1b4aca2e3ecdafd5cf6fe8ef83da91f",
        "sheet": "sheets/freed_move_N.png",
        "region": [
         0,
@@ -10758,10 +10751,10 @@
         ]
        },
        "equipment": {
-        "shell": 309,
-        "moss": 177
+        "shell": 384,
+        "moss": 102
        },
-       "sha256": "d0345a04db6530b30567c44722904b92d23d90991779fdab6c381192232308f1",
+       "sha256": "146f6eebbab7c6e4ee8f333d2165054d645617157b3d73a52caaff8f0b07d978",
        "sheet": "sheets/freed_move_N.png",
        "region": [
         160,
@@ -10802,10 +10795,10 @@
         ]
        },
        "equipment": {
-        "shell": 306,
-        "moss": 178
+        "shell": 380,
+        "moss": 104
        },
-       "sha256": "7f5ae015901920ea7e7838e41fc82e177d8dd0c785f043cdbe0e35808023565c",
+       "sha256": "035e143a95bc4d4ab699a9d168c3bbd7aaa4c6b4c328e880bb18577b5ac170ae",
        "sheet": "sheets/freed_move_N.png",
        "region": [
         320,
@@ -10846,10 +10839,10 @@
         ]
        },
        "equipment": {
-        "shell": 309,
-        "moss": 177
+        "shell": 384,
+        "moss": 102
        },
-       "sha256": "c5a545db735307a538f477a208c305eb3c32a4369551d9d7e35e121330b2d9b1",
+       "sha256": "4584d4575d14caa040c9df93c203d4d0dd1b394ca69c507cac6f31c697b3d88e",
        "sheet": "sheets/freed_move_N.png",
        "region": [
         480,
@@ -10890,10 +10883,10 @@
         ]
        },
        "equipment": {
-        "shell": 312,
-        "moss": 178
+        "shell": 388,
+        "moss": 102
        },
-       "sha256": "4f729d4865ed0f7a4c377d79a2c02d1f29de3a54544ab56623d5b44524da5d2d",
+       "sha256": "11afbd5190f510983e0421b5cae31037a9d4d332e018f94adcfccffeeed58637",
        "sheet": "sheets/freed_move_N.png",
        "region": [
         640,
@@ -10934,10 +10927,10 @@
         ]
        },
        "equipment": {
-        "shell": 309,
-        "moss": 177
+        "shell": 384,
+        "moss": 102
        },
-       "sha256": "c66feaebe72c527d9c9222e7f18b7173c3f9087ebb75140ac7caefebf7be6366",
+       "sha256": "5e286ff4a611d3d9aa1ed0962cb83786f8734a247242ba8843f496bedcca0e23",
        "sheet": "sheets/freed_move_N.png",
        "region": [
         800,
@@ -10978,10 +10971,10 @@
         ]
        },
        "equipment": {
-        "shell": 306,
-        "moss": 178
+        "shell": 380,
+        "moss": 104
        },
-       "sha256": "576e8137d84fff21848dedbe87cad0361fa6b6843c9efd56facb7d4d6082f6e6",
+       "sha256": "004408e8964e27c72c6b84828151ef37f769bbe940774a8792475480e5cf36bd",
        "sheet": "sheets/freed_move_N.png",
        "region": [
         960,
@@ -11022,10 +11015,10 @@
         ]
        },
        "equipment": {
-        "shell": 309,
-        "moss": 177
+        "shell": 384,
+        "moss": 102
        },
-       "sha256": "8ba71d15024ea15c861fb2122c74ee0718f2c89aae911590f25a59a004f60d44",
+       "sha256": "ffb40caa48cdd817e8fda4f59a08a8a35d7aa70a63532c58a6e62428a3d0c82c",
        "sheet": "sheets/freed_move_N.png",
        "region": [
         1120,
@@ -11044,7 +11037,7 @@
        "packed_bounds": [
         63,
         109,
-        107,
+        108,
         136
        ],
        "anchors": {
@@ -11070,10 +11063,11 @@
         ]
        },
        "equipment": {
-        "shell": 349,
-        "moss": 185
+        "shell": 436,
+        "moss": 98,
+        "claw": 4
        },
-       "sha256": "44c50a925181391aab459393c687a359e0f5ed9151bab894a3d0d2db59141da4",
+       "sha256": "d3ff998ac656318f993d355053967e66beb73e9a2e220040356cfb5a6022c676",
        "sheet": "sheets/freed_move_E.png",
        "region": [
         0,
@@ -11088,7 +11082,7 @@
        "packed_bounds": [
         63,
         109,
-        107,
+        108,
         136
        ],
        "anchors": {
@@ -11114,10 +11108,11 @@
         ]
        },
        "equipment": {
-        "shell": 345,
-        "moss": 189
+        "shell": 434,
+        "moss": 100,
+        "claw": 4
        },
-       "sha256": "c5801489b5363e39c65db798b36ccc11fd7e9fc1b41ee8294e41db9c18fc2077",
+       "sha256": "a45889a85f80709d5207e88f0ce357beac6728154ef1307b47fd3d05596fd6e6",
        "sheet": "sheets/freed_move_E.png",
        "region": [
         160,
@@ -11132,7 +11127,7 @@
        "packed_bounds": [
         63,
         110,
-        107,
+        108,
         136
        ],
        "anchors": {
@@ -11158,10 +11153,11 @@
         ]
        },
        "equipment": {
-        "shell": 346,
-        "moss": 182
+        "shell": 433,
+        "moss": 95,
+        "claw": 4
        },
-       "sha256": "174f7e9b44d99a28fa248c3e280e47a47714369621d3a4e79281642b13530a16",
+       "sha256": "212f9ffc568b6f8200b2a9a2f30b25b37ae1089268cb3badbba605a52caede8c",
        "sheet": "sheets/freed_move_E.png",
        "region": [
         320,
@@ -11176,7 +11172,7 @@
        "packed_bounds": [
         63,
         109,
-        107,
+        108,
         136
        ],
        "anchors": {
@@ -11202,10 +11198,11 @@
         ]
        },
        "equipment": {
-        "shell": 345,
-        "moss": 189
+        "shell": 434,
+        "moss": 100,
+        "claw": 4
        },
-       "sha256": "9c2a2bd0f22f3a0a72f06200f43a5f5760440c3a2f6971d4073ca23c598d0507",
+       "sha256": "a9371ffff018a03f5c16aae173658a597c66ad065ca62ebe0c7bc1e577f2bc6d",
        "sheet": "sheets/freed_move_E.png",
        "region": [
         480,
@@ -11220,7 +11217,7 @@
        "packed_bounds": [
         63,
         109,
-        107,
+        108,
         136
        ],
        "anchors": {
@@ -11246,10 +11243,11 @@
         ]
        },
        "equipment": {
-        "shell": 349,
-        "moss": 185
+        "shell": 436,
+        "moss": 98,
+        "claw": 4
        },
-       "sha256": "7bba5cd20c4ec55258961ee93bbc83ff2b37078007f9f2c56c14610149f04d19",
+       "sha256": "60074da10ab40bf6b10e0cac1e34b10591a8393f7e38b153f6d28395fefa727c",
        "sheet": "sheets/freed_move_E.png",
        "region": [
         640,
@@ -11264,7 +11262,7 @@
        "packed_bounds": [
         63,
         109,
-        107,
+        108,
         136
        ],
        "anchors": {
@@ -11290,10 +11288,11 @@
         ]
        },
        "equipment": {
-        "shell": 345,
-        "moss": 189
+        "shell": 434,
+        "moss": 100,
+        "claw": 4
        },
-       "sha256": "52484ba1e03700265f647468910825b80705aa4e5b4b30774d15b9caae6ebbc7",
+       "sha256": "28670c61093fcaf4d06984e3132ff569aa3d7da38b77c3a5151e30df6ef4c7f8",
        "sheet": "sheets/freed_move_E.png",
        "region": [
         800,
@@ -11308,7 +11307,7 @@
        "packed_bounds": [
         63,
         110,
-        107,
+        108,
         136
        ],
        "anchors": {
@@ -11334,10 +11333,11 @@
         ]
        },
        "equipment": {
-        "shell": 346,
-        "moss": 182
+        "shell": 433,
+        "moss": 95,
+        "claw": 4
        },
-       "sha256": "85940b5e8e62f5b6a38a9385ff8197a9a8cbf75ad279010e42c80456c608c2b5",
+       "sha256": "b076434d4d56073abb275176cd27a93ed829852caf594a3a68daaf7fcadbeb90",
        "sheet": "sheets/freed_move_E.png",
        "region": [
         960,
@@ -11352,7 +11352,7 @@
        "packed_bounds": [
         63,
         109,
-        107,
+        108,
         136
        ],
        "anchors": {
@@ -11378,10 +11378,11 @@
         ]
        },
        "equipment": {
-        "shell": 345,
-        "moss": 189
+        "shell": 434,
+        "moss": 100,
+        "claw": 4
        },
-       "sha256": "2c0d4b16a9cc9f459fe502b7572be97fcdd3426d4d2913b83bbbb70995d70756",
+       "sha256": "4313979353795d43ee8740d5b3667bd7441673d8ae8a601fd3418ede5d8c6fb5",
        "sheet": "sheets/freed_move_E.png",
        "region": [
         1120,
@@ -11398,7 +11399,7 @@
        "path": "res://assets/animated/tortoise/freed_move_W_00.png",
        "file": "freed_move_W_00.png",
        "packed_bounds": [
-        52,
+        51,
         109,
         97,
         136
@@ -11426,10 +11427,11 @@
         ]
        },
        "equipment": {
-        "shell": 349,
-        "moss": 185
+        "shell": 436,
+        "moss": 98,
+        "claw": 4
        },
-       "sha256": "d77c9f2c0eca38adff065e94e2b2c7d0267aba852da673465639f107a08986cf",
+       "sha256": "9aa56ff2ea0dfb93194edd04079d45f812af7e7fb8b7551467b9b71d39b9ca15",
        "sheet": "sheets/freed_move_W.png",
        "region": [
         0,
@@ -11442,7 +11444,7 @@
        "path": "res://assets/animated/tortoise/freed_move_W_01.png",
        "file": "freed_move_W_01.png",
        "packed_bounds": [
-        52,
+        51,
         109,
         97,
         136
@@ -11470,10 +11472,11 @@
         ]
        },
        "equipment": {
-        "shell": 345,
-        "moss": 189
+        "shell": 434,
+        "moss": 100,
+        "claw": 4
        },
-       "sha256": "9b8d51e484e5bf6fa010b656fa2c73e8372bcfa34394dca02cca5d8010da817c",
+       "sha256": "64aef8f9ee57a96f208b2d53f5ae4cfca4de86f96c03fdbb8545a4f79cfb6e11",
        "sheet": "sheets/freed_move_W.png",
        "region": [
         160,
@@ -11486,7 +11489,7 @@
        "path": "res://assets/animated/tortoise/freed_move_W_02.png",
        "file": "freed_move_W_02.png",
        "packed_bounds": [
-        52,
+        51,
         110,
         97,
         136
@@ -11514,10 +11517,11 @@
         ]
        },
        "equipment": {
-        "shell": 346,
-        "moss": 182
+        "shell": 433,
+        "moss": 95,
+        "claw": 4
        },
-       "sha256": "86c4a22fa0685abe667d50d7f960b1ed0a86feebd10ca9bc92fd2cea65ad8624",
+       "sha256": "c10d1de8184a8150b3f5ba2ab7c631ff2683b170198a53d19636c89a51a0e054",
        "sheet": "sheets/freed_move_W.png",
        "region": [
         320,
@@ -11530,7 +11534,7 @@
        "path": "res://assets/animated/tortoise/freed_move_W_03.png",
        "file": "freed_move_W_03.png",
        "packed_bounds": [
-        52,
+        51,
         109,
         97,
         136
@@ -11558,10 +11562,11 @@
         ]
        },
        "equipment": {
-        "shell": 345,
-        "moss": 189
+        "shell": 434,
+        "moss": 100,
+        "claw": 4
        },
-       "sha256": "2ae02165e2304ab5f5e53e00e054b3fc19fad8cb382dc150a7b8b25002a63d2a",
+       "sha256": "28e8f4723296411da76f4a4de1519bd2b72ad3965367c0c9847f0e6781a197f1",
        "sheet": "sheets/freed_move_W.png",
        "region": [
         480,
@@ -11574,7 +11579,7 @@
        "path": "res://assets/animated/tortoise/freed_move_W_04.png",
        "file": "freed_move_W_04.png",
        "packed_bounds": [
-        52,
+        51,
         109,
         97,
         136
@@ -11602,10 +11607,11 @@
         ]
        },
        "equipment": {
-        "shell": 349,
-        "moss": 185
+        "shell": 436,
+        "moss": 98,
+        "claw": 4
        },
-       "sha256": "0aea7b0445b675193a99f1f267fb1c8aca30dbdb06c2ab673ac8bcac5d8d6a19",
+       "sha256": "47f865a6dd53d02d47ca0bfc6e93d5e88a054600aa0d0c2749a9e20056f07418",
        "sheet": "sheets/freed_move_W.png",
        "region": [
         640,
@@ -11618,7 +11624,7 @@
        "path": "res://assets/animated/tortoise/freed_move_W_05.png",
        "file": "freed_move_W_05.png",
        "packed_bounds": [
-        52,
+        51,
         109,
         97,
         136
@@ -11646,10 +11652,11 @@
         ]
        },
        "equipment": {
-        "shell": 345,
-        "moss": 189
+        "shell": 434,
+        "moss": 100,
+        "claw": 4
        },
-       "sha256": "da65d8e5d0cb29d091a76220d8085c1115a48587f81fe8efdd103c54e3a808be",
+       "sha256": "129d7638d01a30982bc3c9e434f5377608297756052efa440cfdd64aa846f45e",
        "sheet": "sheets/freed_move_W.png",
        "region": [
         800,
@@ -11662,7 +11669,7 @@
        "path": "res://assets/animated/tortoise/freed_move_W_06.png",
        "file": "freed_move_W_06.png",
        "packed_bounds": [
-        52,
+        51,
         110,
         97,
         136
@@ -11690,10 +11697,11 @@
         ]
        },
        "equipment": {
-        "shell": 346,
-        "moss": 182
+        "shell": 433,
+        "moss": 95,
+        "claw": 4
        },
-       "sha256": "6b18932fdf498653eed7f2e5ee8393b45c11bc1a393288a1f1a114c767707a57",
+       "sha256": "8a3a3699fc53ba8d95bed2def1f80038ba3d84a9fc98aea01a24472c32372838",
        "sheet": "sheets/freed_move_W.png",
        "region": [
         960,
@@ -11706,7 +11714,7 @@
        "path": "res://assets/animated/tortoise/freed_move_W_07.png",
        "file": "freed_move_W_07.png",
        "packed_bounds": [
-        52,
+        51,
         109,
         97,
         136
@@ -11734,10 +11742,11 @@
         ]
        },
        "equipment": {
-        "shell": 345,
-        "moss": 189
+        "shell": 434,
+        "moss": 100,
+        "claw": 4
        },
-       "sha256": "5562fa828c4dbc604631ef4b0e04fead642c4ed4faa99eeb34854a8abb7219c6",
+       "sha256": "52c9fb59579198ea9d6e21f7943f9b8f84806c147045feb8625876a0eb586d2e",
        "sheet": "sheets/freed_move_W.png",
        "region": [
         1120,

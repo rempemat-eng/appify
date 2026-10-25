@@ -49,7 +49,7 @@
        "file": "idle_S_00.png",
        "packed_bounds": [
         70,
-        104,
+        105,
         90,
         139
        ],
@@ -81,10 +81,9 @@
        },
        "equipment": {
         "shard": 39,
-        "tusk": 8,
-        "glow": 15
+        "tusk": 8
        },
-       "sha256": "663f63179c212b975a6613f64c3085d0ac13802778fc8972cac22c5de61946e2",
+       "sha256": "ddc4b55e526550cf9eda27aac5d4e6cfbcf29f4ce9f4bbf1d307e80eeeef558b",
        "sheet": "sheets/idle_S.png",
        "region": [
         0,
@@ -98,7 +97,7 @@
        "file": "idle_S_01.png",
        "packed_bounds": [
         70,
-        104,
+        105,
         90,
         139
        ],
@@ -130,10 +129,9 @@
        },
        "equipment": {
         "shard": 39,
-        "tusk": 8,
-        "glow": 9
+        "tusk": 8
        },
-       "sha256": "58ae60dc22e477ea5fce3a510629f787165a23566b594b0672efc92b8db97ce8",
+       "sha256": "49d01051884066199d6082a9f9d884be31ff30eea74faf6fa5dcff4a846f4f53",
        "sheet": "sheets/idle_S.png",
        "region": [
         160,
@@ -147,7 +145,7 @@
        "file": "idle_S_02.png",
        "packed_bounds": [
         70,
-        104,
+        106,
         90,
         139
        ],
@@ -179,10 +177,9 @@
        },
        "equipment": {
         "shard": 35,
-        "tusk": 8,
-        "glow": 14
+        "tusk": 8
        },
-       "sha256": "419927796a5088422e67233efc23b7fcb71f6b4802172edc1081cd8c96b90db0",
+       "sha256": "e754f85e7c588b19e952637e0c8dc13cf36cd4dc56fde981f239ccf94f0d90ed",
        "sheet": "sheets/idle_S.png",
        "region": [
         320,
@@ -196,7 +193,7 @@
        "file": "idle_S_03.png",
        "packed_bounds": [
         70,
-        104,
+        105,
         90,
         139
        ],
@@ -228,10 +225,9 @@
        },
        "equipment": {
         "shard": 39,
-        "tusk": 8,
-        "glow": 14
+        "tusk": 8
        },
-       "sha256": "c741b34ffea2d261ecf66a4259068da182227d9f004a48532118ca38ebb82065",
+       "sha256": "49d01051884066199d6082a9f9d884be31ff30eea74faf6fa5dcff4a846f4f53",
        "sheet": "sheets/idle_S.png",
        "region": [
         480,
@@ -245,7 +241,7 @@
        "file": "idle_S_04.png",
        "packed_bounds": [
         70,
-        104,
+        105,
         90,
         139
        ],
@@ -277,10 +273,9 @@
        },
        "equipment": {
         "shard": 39,
-        "tusk": 8,
-        "glow": 10
+        "tusk": 8
        },
-       "sha256": "24f19eb3888de81834a422df74dcd092a21f85b42580f6b68c6bf96dc85726de",
+       "sha256": "ddc4b55e526550cf9eda27aac5d4e6cfbcf29f4ce9f4bbf1d307e80eeeef558b",
        "sheet": "sheets/idle_S.png",
        "region": [
         640,
@@ -294,7 +289,7 @@
        "file": "idle_S_05.png",
        "packed_bounds": [
         70,
-        103,
+        105,
         90,
         139
        ],
@@ -326,10 +321,9 @@
        },
        "equipment": {
         "shard": 35,
-        "tusk": 8,
-        "glow": 12
+        "tusk": 8
        },
-       "sha256": "0691ee7ce43ee354fb58dbfc4ea595ab0dddb997d27424a5be50ee5b02b81de9",
+       "sha256": "e69e89fd4d99e996297761e478f8f6a654dd0ac007aadcebb416c172ec969260",
        "sheet": "sheets/idle_S.png",
        "region": [
         800,
@@ -343,7 +337,7 @@
        "file": "idle_S_06.png",
        "packed_bounds": [
         70,
-        103,
+        105,
         90,
         139
        ],
@@ -375,10 +369,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 6,
-        "glow": 16
+        "tusk": 6
        },
-       "sha256": "b8db2790c9350a53e9f33c0e6d75db933cfc6fd4ef5b8a65d514c5cf152d3c59",
+       "sha256": "7a9c4837f7a72ca3ba9b55df0a9e8ca262cd9bcf94eb8c6c0af9866b4a33a330",
        "sheet": "sheets/idle_S.png",
        "region": [
         960,
@@ -392,7 +385,7 @@
        "file": "idle_S_07.png",
        "packed_bounds": [
         70,
-        103,
+        105,
         90,
         139
        ],
@@ -424,10 +417,9 @@
        },
        "equipment": {
         "shard": 35,
-        "tusk": 8,
-        "glow": 11
+        "tusk": 8
        },
-       "sha256": "bc0b9c07491746dc59d7d0f6ab568b18ed83fa9578877f61f19160fae5f11178",
+       "sha256": "4215546f3eb3d000c0251cc1decf2c206098380d940dcf121ae7ad6ba3f1556c",
        "sheet": "sheets/idle_S.png",
        "region": [
         1120,
@@ -445,7 +437,7 @@
        "file": "idle_N_00.png",
        "packed_bounds": [
         70,
-        101,
+        102,
         90,
         138
        ],
@@ -477,10 +469,9 @@
        },
        "equipment": {
         "tusk": 0,
-        "shard": 33,
-        "glow": 13
+        "shard": 33
        },
-       "sha256": "edbbfba5a86bd4689aa8e09c5ec76a2c899a35e3210bb0394d9a8e1a6053535f",
+       "sha256": "45d7ba397d18a429db7e21911acbd4283402273dbc87096ef199f8d920473da2",
        "sheet": "sheets/idle_N.png",
        "region": [
         0,
@@ -494,7 +485,7 @@
        "file": "idle_N_01.png",
        "packed_bounds": [
         70,
-        101,
+        103,
         90,
         138
        ],
@@ -526,10 +517,9 @@
        },
        "equipment": {
         "tusk": 0,
-        "shard": 31,
-        "glow": 12
+        "shard": 31
        },
-       "sha256": "183269c13182cfb99570ef8061607f4e2f5a73f66bf2e2facb1a5b6c6d72a9eb",
+       "sha256": "c8af4894c5e53b6b79fc82867bcdede3ba3429c54c07fce41dd254c67cd7ec7b",
        "sheet": "sheets/idle_N.png",
        "region": [
         160,
@@ -543,7 +533,7 @@
        "file": "idle_N_02.png",
        "packed_bounds": [
         70,
-        101,
+        103,
         90,
         138
        ],
@@ -575,10 +565,9 @@
        },
        "equipment": {
         "tusk": 0,
-        "shard": 31,
-        "glow": 14
+        "shard": 31
        },
-       "sha256": "33466bfcdd8a50ce619a025afe91cfda9379d940bc2f8287c6bbc6088d292302",
+       "sha256": "a677f0d3ebfdc6978ebfcc9fff4f35bc0d8f6156c3a125172c521710202ae5a1",
        "sheet": "sheets/idle_N.png",
        "region": [
         320,
@@ -592,7 +581,7 @@
        "file": "idle_N_03.png",
        "packed_bounds": [
         70,
-        101,
+        103,
         90,
         138
        ],
@@ -624,10 +613,9 @@
        },
        "equipment": {
         "tusk": 0,
-        "shard": 31,
-        "glow": 12
+        "shard": 31
        },
-       "sha256": "048b68361bc4ec5c868761b27da186a515350f92347267ff547f5ffaa8b8509a",
+       "sha256": "c8af4894c5e53b6b79fc82867bcdede3ba3429c54c07fce41dd254c67cd7ec7b",
        "sheet": "sheets/idle_N.png",
        "region": [
         480,
@@ -641,7 +629,7 @@
        "file": "idle_N_04.png",
        "packed_bounds": [
         70,
-        101,
+        102,
         90,
         138
        ],
@@ -673,10 +661,9 @@
        },
        "equipment": {
         "tusk": 0,
-        "shard": 33,
-        "glow": 11
+        "shard": 33
        },
-       "sha256": "47eb6c08ac555344c6794fcfa3b998b47fe1506df3f682f2ae3ffb316c8e3a9a",
+       "sha256": "45d7ba397d18a429db7e21911acbd4283402273dbc87096ef199f8d920473da2",
        "sheet": "sheets/idle_N.png",
        "region": [
         640,
@@ -690,7 +677,7 @@
        "file": "idle_N_05.png",
        "packed_bounds": [
         70,
-        101,
+        102,
         90,
         138
        ],
@@ -722,10 +709,9 @@
        },
        "equipment": {
         "tusk": 0,
-        "shard": 35,
-        "glow": 14
+        "shard": 35
        },
-       "sha256": "50b553b8a476e0d2ad391f587d924434592e5a0840fdd7d9b8ac9e1a57a70527",
+       "sha256": "5feadb7ff8c0c202ebb8fb2937f30f92df23c9f33184165eb31b932c1b63bd1d",
        "sheet": "sheets/idle_N.png",
        "region": [
         800,
@@ -739,7 +725,7 @@
        "file": "idle_N_06.png",
        "packed_bounds": [
         70,
-        101,
+        102,
         90,
         138
        ],
@@ -771,10 +757,9 @@
        },
        "equipment": {
         "tusk": 0,
-        "shard": 35,
-        "glow": 14
+        "shard": 35
        },
-       "sha256": "0240fb0ad1f446ac3f3917849a590ba4671f01cf2d37560f6e1c76b806aee88f",
+       "sha256": "2e220d0f4cb92c39afeb5399965bea69cad2a2b82277dcc01fd1f5344dee15a8",
        "sheet": "sheets/idle_N.png",
        "region": [
         960,
@@ -788,7 +773,7 @@
        "file": "idle_N_07.png",
        "packed_bounds": [
         70,
-        101,
+        102,
         90,
         138
        ],
@@ -820,10 +805,9 @@
        },
        "equipment": {
         "tusk": 0,
-        "shard": 35,
-        "glow": 9
+        "shard": 35
        },
-       "sha256": "2c2c64217af2d8f65015f775c211b585c6e7cde6f026e131e6a500717347c3b4",
+       "sha256": "5feadb7ff8c0c202ebb8fb2937f30f92df23c9f33184165eb31b932c1b63bd1d",
        "sheet": "sheets/idle_N.png",
        "region": [
         1120,
@@ -841,7 +825,7 @@
        "file": "idle_E_00.png",
        "packed_bounds": [
         59,
-        102,
+        104,
         111,
         136
        ],
@@ -873,10 +857,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 7,
-        "glow": 15
+        "tusk": 7
        },
-       "sha256": "a6631894d606f9628ec6054e50ac7ca0b39bc460408fa6f1098208c4463a2ced",
+       "sha256": "5ecdd2bc9e85e1529ae37883647c352c7b918e93f8149ab7db90739868cf9e4c",
        "sheet": "sheets/idle_E.png",
        "region": [
         0,
@@ -890,7 +873,7 @@
        "file": "idle_E_01.png",
        "packed_bounds": [
         59,
-        102,
+        104,
         111,
         136
        ],
@@ -922,10 +905,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 6,
-        "glow": 11
+        "tusk": 6
        },
-       "sha256": "92bc2c434b866ef97ed38ae659499d0799ca602841aae23759573eb289a46fd6",
+       "sha256": "00e5aa4625f76f29f32cd69997b7e80b9662c0d0c0d47bc79c379c776d9c199c",
        "sheet": "sheets/idle_E.png",
        "region": [
         160,
@@ -939,7 +921,7 @@
        "file": "idle_E_02.png",
        "packed_bounds": [
         59,
-        103,
+        104,
         111,
         136
        ],
@@ -971,10 +953,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 7,
-        "glow": 15
+        "tusk": 7
        },
-       "sha256": "a733d27e74656b46784341f0e37608cd099abc2ec07383f2caa28f51909e834d",
+       "sha256": "437d9a7ec80e24e2fc2ebd0883294c49c5ead047327cbc8d1f341d5dd78590f5",
        "sheet": "sheets/idle_E.png",
        "region": [
         320,
@@ -988,7 +969,7 @@
        "file": "idle_E_03.png",
        "packed_bounds": [
         59,
-        103,
+        104,
         111,
         136
        ],
@@ -1020,10 +1001,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 6,
-        "glow": 13
+        "tusk": 6
        },
-       "sha256": "3e87342c80e2fa81664f8b7c21173b2fd98f1103fb4cf27c8f4755d84bf70416",
+       "sha256": "00e5aa4625f76f29f32cd69997b7e80b9662c0d0c0d47bc79c379c776d9c199c",
        "sheet": "sheets/idle_E.png",
        "region": [
         480,
@@ -1037,7 +1017,7 @@
        "file": "idle_E_04.png",
        "packed_bounds": [
         59,
-        102,
+        104,
         111,
         136
        ],
@@ -1069,10 +1049,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 7,
-        "glow": 12
+        "tusk": 7
        },
-       "sha256": "28ee763234be3bc107d5f4d97909282c5524623c59016aef3399c7307f811087",
+       "sha256": "5ecdd2bc9e85e1529ae37883647c352c7b918e93f8149ab7db90739868cf9e4c",
        "sheet": "sheets/idle_E.png",
        "region": [
         640,
@@ -1086,7 +1065,7 @@
        "file": "idle_E_05.png",
        "packed_bounds": [
         59,
-        102,
+        104,
         111,
         136
        ],
@@ -1118,10 +1097,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 7,
-        "glow": 15
+        "tusk": 7
        },
-       "sha256": "688c3735ed5369915164725dcf05739af255d0343e3f0f91a826b2b1413ea408",
+       "sha256": "bac650f1eb7ece0ecbaa9c6f10aa671a7ede4c867a09f7aad1ccca873a7e670e",
        "sheet": "sheets/idle_E.png",
        "region": [
         800,
@@ -1135,7 +1113,7 @@
        "file": "idle_E_06.png",
        "packed_bounds": [
         59,
-        102,
+        104,
         111,
         136
        ],
@@ -1167,10 +1145,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 8,
-        "glow": 15
+        "tusk": 8
        },
-       "sha256": "50919f2b2429e9be0d08702d049e7ba0919980e820ce1e90f0f612b4aa12f3da",
+       "sha256": "f74fe593a1dd86c8365881b8ee423e5972ddb9edba90eeee31f4a90b26d3a966",
        "sheet": "sheets/idle_E.png",
        "region": [
         960,
@@ -1184,7 +1161,7 @@
        "file": "idle_E_07.png",
        "packed_bounds": [
         59,
-        102,
+        104,
         111,
         136
        ],
@@ -1216,10 +1193,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 7,
-        "glow": 12
+        "tusk": 7
        },
-       "sha256": "db079d06a8a59dbb060946f9eb1df05694e820293dc4861fa4d3edadcf07a0ee",
+       "sha256": "95eb04761ebeda4a441ae4915bfbc81181d48a77a5947d95aad6d5da881673a9",
        "sheet": "sheets/idle_E.png",
        "region": [
         1120,
@@ -1237,7 +1213,7 @@
        "file": "idle_W_00.png",
        "packed_bounds": [
         49,
-        102,
+        104,
         101,
         136
        ],
@@ -1269,10 +1245,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 7,
-        "glow": 12
+        "tusk": 7
        },
-       "sha256": "9047e62b9dbb625c1edcb4c537002a5b942be43285688b7045dd3556f2a603cf",
+       "sha256": "0bb5b3f2e77720abc6b2e74c342a909b203fc0f29ea62f9ccdfd4d5ceec9d8d7",
        "sheet": "sheets/idle_W.png",
        "region": [
         0,
@@ -1286,7 +1261,7 @@
        "file": "idle_W_01.png",
        "packed_bounds": [
         49,
-        103,
+        104,
         101,
         136
        ],
@@ -1318,10 +1293,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 6,
-        "glow": 14
+        "tusk": 6
        },
-       "sha256": "c133db2c2a542bc968178eed23ee7c97f5c34e0d55bb270f4913e2a7b4e90b5f",
+       "sha256": "5adcea5f126cb6fe2c28afc6286ce22ad263959a3585e0115ac1d0646bf367d4",
        "sheet": "sheets/idle_W.png",
        "region": [
         160,
@@ -1335,7 +1309,7 @@
        "file": "idle_W_02.png",
        "packed_bounds": [
         49,
-        103,
+        104,
         101,
         136
        ],
@@ -1367,10 +1341,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 7,
-        "glow": 16
+        "tusk": 7
        },
-       "sha256": "1e4c568da7ea00c7c2ac97774c01deb99b84c30eb6953507d3f9cf18ba97bdfb",
+       "sha256": "fa2c85471da0d5c8ad101bd7019cd8ccd8b33f7bb2f24a4998ccba23b621be03",
        "sheet": "sheets/idle_W.png",
        "region": [
         320,
@@ -1384,7 +1357,7 @@
        "file": "idle_W_03.png",
        "packed_bounds": [
         49,
-        103,
+        104,
         101,
         136
        ],
@@ -1416,10 +1389,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 6,
-        "glow": 10
+        "tusk": 6
        },
-       "sha256": "776bb2f258f68e4d466035335b35b173f79737a96ee0e1adec6729cab16a56fa",
+       "sha256": "5adcea5f126cb6fe2c28afc6286ce22ad263959a3585e0115ac1d0646bf367d4",
        "sheet": "sheets/idle_W.png",
        "region": [
         480,
@@ -1433,7 +1405,7 @@
        "file": "idle_W_04.png",
        "packed_bounds": [
         49,
-        102,
+        104,
         101,
         136
        ],
@@ -1465,10 +1437,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 7,
-        "glow": 15
+        "tusk": 7
        },
-       "sha256": "3b75fe981283d4dcc91f625573bb4313b142aae0e317991b36485b78612034dc",
+       "sha256": "0bb5b3f2e77720abc6b2e74c342a909b203fc0f29ea62f9ccdfd4d5ceec9d8d7",
        "sheet": "sheets/idle_W.png",
        "region": [
         640,
@@ -1482,7 +1453,7 @@
        "file": "idle_W_05.png",
        "packed_bounds": [
         49,
-        102,
+        104,
         101,
         136
        ],
@@ -1514,10 +1485,9 @@
        },
        "equipment": {
         "shard": 32,
-        "tusk": 7,
-        "glow": 16
+        "tusk": 7
        },
-       "sha256": "1adc67c7531634f885b79428c7cb7d20182d83db1b372d7540f7891fb2666426",
+       "sha256": "65a18781c8c1c5a7d3debac3c981845558ca7299b3426688f275c448f34eaca3",
        "sheet": "sheets/idle_W.png",
        "region": [
         800,
@@ -1531,7 +1501,7 @@
        "file": "idle_W_06.png",
        "packed_bounds": [
         49,
-        102,
+        104,
         101,
         136
        ],
@@ -1563,10 +1533,9 @@
        },
        "equipment": {
         "shard": 32,
-        "tusk": 8,
-        "glow": 13
+        "tusk": 8
        },
-       "sha256": "88ad38a05704a671079efc01b16783f2fd40e9eafe72526aa5e2298dd251b1bf",
+       "sha256": "65b31e78878c2305e1911ac9be2a00f2d5931f9a24b7329fec878365ecdd7333",
        "sheet": "sheets/idle_W.png",
        "region": [
         960,
@@ -1580,7 +1549,7 @@
        "file": "idle_W_07.png",
        "packed_bounds": [
         49,
-        102,
+        104,
         101,
         136
        ],
@@ -1612,10 +1581,9 @@
        },
        "equipment": {
         "shard": 32,
-        "tusk": 7,
-        "glow": 14
+        "tusk": 7
        },
-       "sha256": "880696eb358f17b617f54b90339b5852ba376477aac61c7b98e2003c1066d992",
+       "sha256": "914cc44b9471b68f770daef15952bc092ad1e7b8676fa5c4f1cb237e1238abce",
        "sheet": "sheets/idle_W.png",
        "region": [
         1120,
@@ -1654,7 +1622,7 @@
        "file": "move_S_00.png",
        "packed_bounds": [
         70,
-        103,
+        105,
         90,
         140
        ],
@@ -1686,10 +1654,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 10,
-        "glow": 16
+        "tusk": 10
        },
-       "sha256": "584df1e141da87471e098c664c97632f22abfeef55f10400516cd9610c49c966",
+       "sha256": "ddc06180e4023a6a516040bfe75842cfe8bbe2dd3606c41d663f6a844f54a414",
        "sheet": "sheets/move_S.png",
        "region": [
         0,
@@ -1703,7 +1670,7 @@
        "file": "move_S_01.png",
        "packed_bounds": [
         70,
-        104,
+        105,
         90,
         139
        ],
@@ -1735,10 +1702,9 @@
        },
        "equipment": {
         "shard": 39,
-        "tusk": 8,
-        "glow": 9
+        "tusk": 8
        },
-       "sha256": "d1f3ef76a218debe9845bd19c7167cbec527a5382d4053ec17415e3cd3d38da1",
+       "sha256": "0902b7ff71224d5d6c580078f7d8b6211cea811ed68dc0c922e2c5ecca7f63b1",
        "sheet": "sheets/move_S.png",
        "region": [
         160,
@@ -1752,7 +1718,7 @@
        "file": "move_S_02.png",
        "packed_bounds": [
         70,
-        104,
+        106,
         90,
         138
        ],
@@ -1784,10 +1750,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 10,
-        "glow": 15
+        "tusk": 10
        },
-       "sha256": "46a0918bf7e3a9854fc20c0bd890f18c8f3a0afc4313fbd7c05c05dc47162269",
+       "sha256": "04d2407bf2f2920b670119f29f9a9e9b14c7f01a798cf99ca6d30e039debbd45",
        "sheet": "sheets/move_S.png",
        "region": [
         320,
@@ -1801,7 +1766,7 @@
        "file": "move_S_03.png",
        "packed_bounds": [
         70,
-        104,
+        105,
         90,
         137
        ],
@@ -1833,10 +1798,9 @@
        },
        "equipment": {
         "shard": 39,
-        "tusk": 8,
-        "glow": 14
+        "tusk": 8
        },
-       "sha256": "6c64eeb285fd4e9f71acd0a4808c4aefe0245a4b32ca64f4250464fe1d7d2bcc",
+       "sha256": "3748525100dcc444ec46581f777470aaceed4a6b05182043c22f57776975e6e6",
        "sheet": "sheets/move_S.png",
        "region": [
         480,
@@ -1850,7 +1814,7 @@
        "file": "move_S_04.png",
        "packed_bounds": [
         70,
-        103,
+        105,
         90,
         140
        ],
@@ -1882,10 +1846,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 10,
-        "glow": 11
+        "tusk": 10
        },
-       "sha256": "1783099014262400e30d3c25e28c9d8ef003b5de7e58b876f4e21facd832d771",
+       "sha256": "f3a1a00b8b0593e8ec9ff9d5ab5019aef9cb861ffd4192d470b2d81fe456284a",
        "sheet": "sheets/move_S.png",
        "region": [
         640,
@@ -1899,7 +1862,7 @@
        "file": "move_S_05.png",
        "packed_bounds": [
         70,
-        104,
+        105,
         90,
         139
        ],
@@ -1931,10 +1894,9 @@
        },
        "equipment": {
         "shard": 39,
-        "tusk": 8,
-        "glow": 14
+        "tusk": 8
        },
-       "sha256": "b8442a93286ee4c75c78cd999bd184b29bed3eb63c74edd672635f4361ee0b48",
+       "sha256": "1993962cd59e2c0dceed6fffa8e5fbc8f2da6393a1daaf051ccab386409e352a",
        "sheet": "sheets/move_S.png",
        "region": [
         800,
@@ -1948,7 +1910,7 @@
        "file": "move_S_06.png",
        "packed_bounds": [
         70,
-        104,
+        106,
         90,
         138
        ],
@@ -1980,10 +1942,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 10,
-        "glow": 12
+        "tusk": 10
        },
-       "sha256": "14616ab624e0f1c4234de926a0d9341c3f1e75e95d8a12fe4f305a35c2f865f4",
+       "sha256": "92aae936e930842e6c6296075c61707b5be81fe8005d4704c9c7c6726169afa8",
        "sheet": "sheets/move_S.png",
        "region": [
         960,
@@ -1997,7 +1958,7 @@
        "file": "move_S_07.png",
        "packed_bounds": [
         70,
-        104,
+        105,
         90,
         137
        ],
@@ -2029,10 +1990,9 @@
        },
        "equipment": {
         "shard": 39,
-        "tusk": 8,
-        "glow": 9
+        "tusk": 8
        },
-       "sha256": "18c973c7c9dae043ebb003ce02f771de5174ced8da055bf71f36086578023667",
+       "sha256": "3748525100dcc444ec46581f777470aaceed4a6b05182043c22f57776975e6e6",
        "sheet": "sheets/move_S.png",
        "region": [
         1120,
@@ -2050,7 +2010,7 @@
        "file": "move_N_00.png",
        "packed_bounds": [
         70,
-        101,
+        102,
         90,
         139
        ],
@@ -2082,10 +2042,9 @@
        },
        "equipment": {
         "tusk": 0,
-        "shard": 35,
-        "glow": 14
+        "shard": 35
        },
-       "sha256": "e3f94ae6ec7e689e2e5fbef5eafc9c63d02e3c8ba65c88fbe005ea17a4e6a06c",
+       "sha256": "acfd6ca372e4f148796ab8f54cda65567fe3ca141189bbbb78e80eebc9522040",
        "sheet": "sheets/move_N.png",
        "region": [
         0,
@@ -2099,7 +2058,7 @@
        "file": "move_N_01.png",
        "packed_bounds": [
         70,
-        101,
+        103,
         90,
         137
        ],
@@ -2131,10 +2090,9 @@
        },
        "equipment": {
         "tusk": 0,
-        "shard": 31,
-        "glow": 11
+        "shard": 31
        },
-       "sha256": "2a3640c51f202dadffe6125d18d8df307b91f6c013e16f983ff16ebb0006a6a7",
+       "sha256": "0babdab7361840169ed1bd45543e499df14ba41f214186be3a75d49dd9cea2e5",
        "sheet": "sheets/move_N.png",
        "region": [
         160,
@@ -2148,7 +2106,7 @@
        "file": "move_N_02.png",
        "packed_bounds": [
         70,
-        101,
+        103,
         90,
         138
        ],
@@ -2180,10 +2138,9 @@
        },
        "equipment": {
         "tusk": 0,
-        "shard": 31,
-        "glow": 15
+        "shard": 31
        },
-       "sha256": "7430aef481b513e79dc60937f9ad6ccc6264ddbe709b3bb7f7a6ab2015c8b95d",
+       "sha256": "57765566a9b068bf8be6bd7d00b3cf0952a4414ad0986123907a6337fa5775d1",
        "sheet": "sheets/move_N.png",
        "region": [
         320,
@@ -2197,7 +2154,7 @@
        "file": "move_N_03.png",
        "packed_bounds": [
         70,
-        101,
+        103,
         90,
         139
        ],
@@ -2229,10 +2186,9 @@
        },
        "equipment": {
         "tusk": 0,
-        "shard": 31,
-        "glow": 13
+        "shard": 31
        },
-       "sha256": "16e1195e6de00e77ca93486c2bda9eb76754fa3d2bbb43cbf9a0d541b2f271e4",
+       "sha256": "3c7207c77eefddc3a2adbc31d7746bc96ecdf0e58022fe4b0ff4f6642ae38621",
        "sheet": "sheets/move_N.png",
        "region": [
         480,
@@ -2246,7 +2202,7 @@
        "file": "move_N_04.png",
        "packed_bounds": [
         70,
-        100,
+        102,
         90,
         139
        ],
@@ -2278,10 +2234,9 @@
        },
        "equipment": {
         "tusk": 0,
-        "shard": 35,
-        "glow": 12
+        "shard": 35
        },
-       "sha256": "85080e4fbb30f9a6e8f23a53b61d1f970180698ffefebfa0566ade9a3a3c17ce",
+       "sha256": "d636d2f6544a71bdf923eb2ecb5be466fc30f684b4621cb56528196a40846f78",
        "sheet": "sheets/move_N.png",
        "region": [
         640,
@@ -2295,7 +2250,7 @@
        "file": "move_N_05.png",
        "packed_bounds": [
         70,
-        101,
+        103,
         90,
         137
        ],
@@ -2327,10 +2282,9 @@
        },
        "equipment": {
         "tusk": 0,
-        "shard": 31,
-        "glow": 15
+        "shard": 31
        },
-       "sha256": "fe300b5ad16ca696dfe7e9d8a7a394eace380f09f20997a693547fe194206c97",
+       "sha256": "0babdab7361840169ed1bd45543e499df14ba41f214186be3a75d49dd9cea2e5",
        "sheet": "sheets/move_N.png",
        "region": [
         800,
@@ -2344,7 +2298,7 @@
        "file": "move_N_06.png",
        "packed_bounds": [
         70,
-        101,
+        103,
         90,
         138
        ],
@@ -2376,10 +2330,9 @@
        },
        "equipment": {
         "tusk": 0,
-        "shard": 31,
-        "glow": 13
+        "shard": 31
        },
-       "sha256": "d5c0e2b629426ef5ad7c10f5bc064478f016c847cc97a33aa588c1c39a3bfb2f",
+       "sha256": "2003628b0748ce0707154294613850f1b724294ec2fabfef172bf7351ba14faf",
        "sheet": "sheets/move_N.png",
        "region": [
         960,
@@ -2393,7 +2346,7 @@
        "file": "move_N_07.png",
        "packed_bounds": [
         70,
-        101,
+        103,
         90,
         139
        ],
@@ -2425,10 +2378,9 @@
        },
        "equipment": {
         "tusk": 0,
-        "shard": 31,
-        "glow": 11
+        "shard": 31
        },
-       "sha256": "cd80f03428d5ab43dc861a3ab70e60f7a5764a07af4f9d7052b58fdeafde9e34",
+       "sha256": "0f96ccc7e31c7252146312fb20b0a3f8addb76abda6eac25fa65d73e1aaa8991",
        "sheet": "sheets/move_N.png",
        "region": [
         1120,
@@ -2446,7 +2398,7 @@
        "file": "move_E_00.png",
        "packed_bounds": [
         59,
-        102,
+        104,
         111,
         136
        ],
@@ -2478,10 +2430,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 7,
-        "glow": 15
+        "tusk": 7
        },
-       "sha256": "dff07eb58ebc0342101dc95856ebc66a97b828e591334f58aea1ebe4fd6cc557",
+       "sha256": "91fe3005b2b161031ea10e2b89e3b9052d3dbc35659b922ede4edcb7cd6aee81",
        "sheet": "sheets/move_E.png",
        "region": [
         0,
@@ -2495,7 +2446,7 @@
        "file": "move_E_01.png",
        "packed_bounds": [
         59,
-        102,
+        104,
         111,
         136
        ],
@@ -2527,10 +2478,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 8,
-        "glow": 11
+        "tusk": 8
        },
-       "sha256": "6c5f63b432a1aa0343fa2c4b196422fb0410f92f9dbf00813608ce713929852f",
+       "sha256": "f2ff2ae33c61fa4175d745225f7dbe0e8e5605b086f658515f05d3b702e55805",
        "sheet": "sheets/move_E.png",
        "region": [
         160,
@@ -2544,7 +2494,7 @@
        "file": "move_E_02.png",
        "packed_bounds": [
         59,
-        103,
+        104,
         111,
         136
        ],
@@ -2576,10 +2526,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 8,
-        "glow": 16
+        "tusk": 8
        },
-       "sha256": "2b9dba76f3ed743de7ae5a63de5cbabdc86aab0aad7a90715162786c05127776",
+       "sha256": "47796a6123c99dc9c407b758b54ddb39512bc7c673f6998cdac9400cda3c29ce",
        "sheet": "sheets/move_E.png",
        "region": [
         320,
@@ -2593,7 +2542,7 @@
        "file": "move_E_03.png",
        "packed_bounds": [
         59,
-        102,
+        104,
         111,
         136
        ],
@@ -2625,10 +2574,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 7,
-        "glow": 16
+        "tusk": 7
        },
-       "sha256": "04caff2ddd0be3c1df48600bbc0afe8e2e325d6b079a4e88d4baabc6bfa16cfd",
+       "sha256": "d0726958395cfb620a36d20dae57b2807ff486064bae4318a9d4ec9bf81f5531",
        "sheet": "sheets/move_E.png",
        "region": [
         480,
@@ -2642,7 +2590,7 @@
        "file": "move_E_04.png",
        "packed_bounds": [
         59,
-        102,
+        104,
         111,
         136
        ],
@@ -2674,10 +2622,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 7,
-        "glow": 12
+        "tusk": 7
        },
-       "sha256": "80b6267fc82562d5eb42d7d7aeb51f6df2a4c46da6c9be45d7b27d7f35f80c70",
+       "sha256": "44895d6a83f43ca2f604def66a834c4ee947067afa24c3b4e4dbc2bf0153e4d9",
        "sheet": "sheets/move_E.png",
        "region": [
         640,
@@ -2691,7 +2638,7 @@
        "file": "move_E_05.png",
        "packed_bounds": [
         59,
-        102,
+        104,
         111,
         136
        ],
@@ -2723,10 +2670,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 8,
-        "glow": 16
+        "tusk": 8
        },
-       "sha256": "cca0effbe3808de0eae053fa15a627347a3d0982a0703d4d1896f1f64e8d0baf",
+       "sha256": "bf88c25acb383aad96f5eb7e53a87f4fa917327477e2edca816682ff7a5fca49",
        "sheet": "sheets/move_E.png",
        "region": [
         800,
@@ -2740,7 +2686,7 @@
        "file": "move_E_06.png",
        "packed_bounds": [
         59,
-        103,
+        104,
         111,
         136
        ],
@@ -2772,10 +2718,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 8,
-        "glow": 11
+        "tusk": 8
        },
-       "sha256": "0c80b7ce9143b605e7a795440a2c41250966f076f82543572b64966eaa5d47e1",
+       "sha256": "d19addb14427943c0352ab58626c64fea5e8a1d0a7d2476179a7c6359f261ce0",
        "sheet": "sheets/move_E.png",
        "region": [
         960,
@@ -2789,7 +2734,7 @@
        "file": "move_E_07.png",
        "packed_bounds": [
         59,
-        102,
+        104,
         111,
         136
        ],
@@ -2821,10 +2766,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 7,
-        "glow": 11
+        "tusk": 7
        },
-       "sha256": "059f6b632d6083cd1a2cadeb0e633c19f9a9e47e64859374c7b0d8002f19261d",
+       "sha256": "3fd6a3d999bd2c82dfaefd042611c2b200ece5813e29079fe50ae5a3962c4428",
        "sheet": "sheets/move_E.png",
        "region": [
         1120,
@@ -2842,7 +2786,7 @@
        "file": "move_W_00.png",
        "packed_bounds": [
         49,
-        102,
+        104,
         101,
         136
        ],
@@ -2874,10 +2818,9 @@
        },
        "equipment": {
         "shard": 32,
-        "tusk": 7,
-        "glow": 13
+        "tusk": 7
        },
-       "sha256": "2e5c5fa5610257ad1b2a74694807d7d9b9e030889cf32c08c546aa169098e872",
+       "sha256": "d1dd17763c8605425fc325a7992b6e43466d985a16731fdf31c67e14a163d7a4",
        "sheet": "sheets/move_W.png",
        "region": [
         0,
@@ -2891,7 +2834,7 @@
        "file": "move_W_01.png",
        "packed_bounds": [
         49,
-        102,
+        104,
         101,
         136
        ],
@@ -2923,10 +2866,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 8,
-        "glow": 14
+        "tusk": 8
        },
-       "sha256": "4767733fb51cd2f18e8739475ad122581a32b2c5e7f7283d2caf5d8904856892",
+       "sha256": "b9a0d33fd64fe498af5237b1910d427280439fbf3a32ea6692e0a1b5ed2d81f5",
        "sheet": "sheets/move_W.png",
        "region": [
         160,
@@ -2940,7 +2882,7 @@
        "file": "move_W_02.png",
        "packed_bounds": [
         49,
-        103,
+        104,
         101,
         136
        ],
@@ -2972,10 +2914,9 @@
        },
        "equipment": {
         "shard": 37,
-        "tusk": 8,
-        "glow": 14
+        "tusk": 8
        },
-       "sha256": "af80449878e2677de4b8d6ec00b273440373beb0aad380d53cdcd265677de997",
+       "sha256": "38bf3a5523b4ca1f5f67e61cbc2caa94b81ca77a57a433f5146cdd4a4693ac84",
        "sheet": "sheets/move_W.png",
        "region": [
         320,
@@ -2989,7 +2930,7 @@
        "file": "move_W_03.png",
        "packed_bounds": [
         49,
-        102,
+        104,
         101,
         136
        ],
@@ -3021,10 +2962,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 7,
-        "glow": 13
+        "tusk": 7
        },
-       "sha256": "feb2424a60c4136bfe111917cf90e749b826b09c954f47fd6c1c678b6c9d3023",
+       "sha256": "7a0d6ae7baed13943ce853e482ea7e99e450b9f95b50adb186303c798f019269",
        "sheet": "sheets/move_W.png",
        "region": [
         480,
@@ -3038,7 +2978,7 @@
        "file": "move_W_04.png",
        "packed_bounds": [
         49,
-        102,
+        104,
         101,
         136
        ],
@@ -3070,10 +3010,9 @@
        },
        "equipment": {
         "shard": 32,
-        "tusk": 7,
-        "glow": 13
+        "tusk": 7
        },
-       "sha256": "39d97823b4f6e044020802328f22e698266dee4e9f382330aa51ed94fb7d46d7",
+       "sha256": "b8a275281584e99c8135ec818db3c44de822da94685fc758a67771f088cd6338",
        "sheet": "sheets/move_W.png",
        "region": [
         640,
@@ -3087,7 +3026,7 @@
        "file": "move_W_05.png",
        "packed_bounds": [
         49,
-        103,
+        104,
         101,
         136
        ],
@@ -3119,10 +3058,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 8,
-        "glow": 14
+        "tusk": 8
        },
-       "sha256": "83b1169330f9a81a6ef3eeb79bacb2ecda63a483db1a5f7b6e16f9f5ddf6a10d",
+       "sha256": "0db07a200c35629caf1978f9b1f84f913956cc0c08a7f3b12f93f38ce7f23fa8",
        "sheet": "sheets/move_W.png",
        "region": [
         800,
@@ -3136,7 +3074,7 @@
        "file": "move_W_06.png",
        "packed_bounds": [
         49,
-        103,
+        104,
         101,
         136
        ],
@@ -3168,10 +3106,9 @@
        },
        "equipment": {
         "shard": 37,
-        "tusk": 8,
-        "glow": 11
+        "tusk": 8
        },
-       "sha256": "a1530265cde597f653f2e40ce514bdde474221e6c88bc1cf06b1c8eea0f28f8a",
+       "sha256": "cef6bf93da3b9b607ee138ad947db790a1500aa8663aeb6df5c4074f172eed58",
        "sheet": "sheets/move_W.png",
        "region": [
         960,
@@ -3185,7 +3122,7 @@
        "file": "move_W_07.png",
        "packed_bounds": [
         49,
-        102,
+        104,
         101,
         136
        ],
@@ -3217,10 +3154,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 7,
-        "glow": 14
+        "tusk": 7
        },
-       "sha256": "48b0d75a021837bfd69027de1d9937df8b3a0c20137ff0829e510e364864d628",
+       "sha256": "c56654f7e9649b3b8b28e80feab154cd507a0b8398625b173a79d7d24d737acf",
        "sheet": "sheets/move_W.png",
        "region": [
         1120,
@@ -3259,7 +3195,7 @@
        "file": "telegraph_S_00.png",
        "packed_bounds": [
         70,
-        103,
+        105,
         90,
         139
        ],
@@ -3291,10 +3227,9 @@
        },
        "equipment": {
         "shard": 35,
-        "tusk": 10,
-        "glow": 14
+        "tusk": 10
        },
-       "sha256": "39a12acdcd52180ccef4d09b2711455a6c60ce11f92241ac896750b8565ed3e3",
+       "sha256": "b53fe1529783796dad424ff8e6c9c4e2060daf6bdadffca58885e0480b7cb532",
        "sheet": "sheets/telegraph_S.png",
        "region": [
         0,
@@ -3308,7 +3243,7 @@
        "file": "telegraph_S_01.png",
        "packed_bounds": [
         70,
-        104,
+        105,
         90,
         139
        ],
@@ -3340,10 +3275,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 8,
-        "glow": 13
+        "tusk": 8
        },
-       "sha256": "0539fe09c85c8b27b00e9aa1337d21043d9a90532098bc9b9f59f981a930e39a",
+       "sha256": "1db8ccc33ad491b87e9bb892b05648d9aaa45b3550e0f137c9529800a492b462",
        "sheet": "sheets/telegraph_S.png",
        "region": [
         160,
@@ -3357,7 +3291,7 @@
        "file": "telegraph_S_02.png",
        "packed_bounds": [
         70,
-        104,
+        105,
         90,
         139
        ],
@@ -3384,15 +3318,14 @@
         ],
         "strike": [
          -0.0,
-         0.8
+         -0.4
         ]
        },
        "equipment": {
         "shard": 33,
-        "tusk": 8,
-        "glow": 12
+        "tusk": 8
        },
-       "sha256": "d8fe281e12f34d7656eb4d1fb62d6fea8ba8281c9cfeb5f025e3b0e8cc7e3990",
+       "sha256": "4ebdf9d99c50fff4ff0db5cfe32cf81db80e7e60e41c19b0208b9d042d36993a",
        "sheet": "sheets/telegraph_S.png",
        "region": [
         320,
@@ -3405,8 +3338,8 @@
        "path": "res://assets/animated/boarlet/telegraph_S_03.png",
        "file": "telegraph_S_03.png",
        "packed_bounds": [
-        66,
-        104,
+        67,
+        105,
         90,
         139
        ],
@@ -3433,15 +3366,14 @@
         ],
         "strike": [
          -0.0,
-         0.8
+         -0.4
         ]
        },
        "equipment": {
         "shard": 33,
-        "tusk": 8,
-        "glow": 12
+        "tusk": 8
        },
-       "sha256": "539c9e57d5674bfccd8fdc8cc2e44f6d0a385e63f2c1875eaa6c3399516b73cd",
+       "sha256": "1db17c7ba5860f138239e1e292cedc6a59b77d8e79c5d5015a30bc0e034705e8",
        "sheet": "sheets/telegraph_S.png",
        "region": [
         480,
@@ -3454,8 +3386,8 @@
        "path": "res://assets/animated/boarlet/telegraph_S_04.png",
        "file": "telegraph_S_04.png",
        "packed_bounds": [
-        62,
-        104,
+        64,
+        105,
         90,
         139
        ],
@@ -3482,15 +3414,14 @@
         ],
         "strike": [
          -0.0,
-         0.8
+         -0.4
         ]
        },
        "equipment": {
         "shard": 33,
-        "tusk": 8,
-        "glow": 12
+        "tusk": 8
        },
-       "sha256": "de34c2cfc3ece37dc3e959572662b32921587c8220263151b88b2133909b38f6",
+       "sha256": "21066d4fdb9b9eec3cbb542a7623eadb1f27e9e8e38ebdd7deef5faa8726b3ad",
        "sheet": "sheets/telegraph_S.png",
        "region": [
         640,
@@ -3503,8 +3434,8 @@
        "path": "res://assets/animated/boarlet/telegraph_S_05.png",
        "file": "telegraph_S_05.png",
        "packed_bounds": [
-        66,
-        104,
+        67,
+        105,
         90,
         139
        ],
@@ -3531,15 +3462,14 @@
         ],
         "strike": [
          -0.0,
-         0.8
+         -0.4
         ]
        },
        "equipment": {
         "shard": 33,
-        "tusk": 8,
-        "glow": 12
+        "tusk": 8
        },
-       "sha256": "a683bf5f7760649558c87d4674570ee17b7d54394e26a41a12de3771b74acd90",
+       "sha256": "42b66250efa646b1b41cc736a0b2533143098c6732969cf4532f47bae4b25bcc",
        "sheet": "sheets/telegraph_S.png",
        "region": [
         800,
@@ -3552,10 +3482,10 @@
        "path": "res://assets/animated/boarlet/telegraph_S_06.png",
        "file": "telegraph_S_06.png",
        "packed_bounds": [
-        60,
-        104,
+        62,
+        105,
         89,
-        140
+        139
        ],
        "anchors": {
         "foot_R": [
@@ -3580,15 +3510,14 @@
         ],
         "strike": [
          -0.6,
-         1.4
+         0.2
         ]
        },
        "equipment": {
         "shard": 30,
-        "tusk": 8,
-        "glow": 13
+        "tusk": 5
        },
-       "sha256": "c5159615b0f8521554409b192305988f0b8776d053b8f11fe851222b5147d718",
+       "sha256": "ca24eae0e46641a863f70b4bf2b7552755dcbcd5fec8994ac047c49effb25ebe",
        "sheet": "sheets/telegraph_S.png",
        "region": [
         960,
@@ -3601,10 +3530,10 @@
        "path": "res://assets/animated/boarlet/telegraph_S_07.png",
        "file": "telegraph_S_07.png",
        "packed_bounds": [
-        59,
-        104,
+        61,
+        105,
         91,
-        140
+        139
        ],
        "anchors": {
         "foot_R": [
@@ -3629,15 +3558,14 @@
         ],
         "strike": [
          0.6,
-         1.4
+         0.2
         ]
        },
        "equipment": {
         "shard": 34,
-        "tusk": 8,
-        "glow": 15
+        "tusk": 5
        },
-       "sha256": "323f8b2c44719ac728ec45b19a78c77118cab2d97a5e121ae9509f4bdb6eda14",
+       "sha256": "af1955df275e605d4c62401047ac28ec41f46bb5ccdb68a0767fd10a786a22de",
        "sheet": "sheets/telegraph_S.png",
        "region": [
         1120,
@@ -3655,7 +3583,7 @@
        "file": "telegraph_N_00.png",
        "packed_bounds": [
         70,
-        100,
+        102,
         90,
         138
        ],
@@ -3687,10 +3615,9 @@
        },
        "equipment": {
         "tusk": 0,
-        "shard": 31,
-        "glow": 15
+        "shard": 31
        },
-       "sha256": "2cf08c5d04fcb50065dcc7cac45b2ae3217e22cb4d7a67d50520f7250e01ce1f",
+       "sha256": "be0267345673ce8b86312f70a59d5c9e9f75e0ae79d9571d14c43e98bb8dff2f",
        "sheet": "sheets/telegraph_N.png",
        "region": [
         0,
@@ -3704,7 +3631,7 @@
        "file": "telegraph_N_01.png",
        "packed_bounds": [
         70,
-        101,
+        103,
         90,
         138
        ],
@@ -3736,10 +3663,9 @@
        },
        "equipment": {
         "tusk": 0,
-        "shard": 31,
-        "glow": 12
+        "shard": 31
        },
-       "sha256": "806acfaec86989244af89e213a24f15db5056792ad1cafbbab7c8c1c23c1746e",
+       "sha256": "b8ad3a5947feb8252cb94654e804c23671e1fdec620c97ae90aa469abe55cbb1",
        "sheet": "sheets/telegraph_N.png",
        "region": [
         160,
@@ -3753,7 +3679,7 @@
        "file": "telegraph_N_02.png",
        "packed_bounds": [
         70,
-        102,
+        104,
         90,
         138
        ],
@@ -3780,15 +3706,14 @@
         ],
         "strike": [
          0.0,
-         -21.3
+         -21.7
         ]
        },
        "equipment": {
         "tusk": 0,
-        "shard": 31,
-        "glow": 13
+        "shard": 31
        },
-       "sha256": "2d73cf379433142d55d71db5dd4ebb0cfe97c66c1d7a197b0f15675693702592",
+       "sha256": "3b4c388b51b1d05a61b772360c6ef3f228ce727b31791bf03dcb2e342f9c4fd4",
        "sheet": "sheets/telegraph_N.png",
        "region": [
         320,
@@ -3802,7 +3727,7 @@
        "file": "telegraph_N_03.png",
        "packed_bounds": [
         70,
-        102,
+        104,
         90,
         138
        ],
@@ -3829,15 +3754,14 @@
         ],
         "strike": [
          0.0,
-         -21.3
+         -21.7
         ]
        },
        "equipment": {
         "tusk": 0,
-        "shard": 31,
-        "glow": 13
+        "shard": 31
        },
-       "sha256": "d79966d15010a3d72479e3425095156c78d1690b345a94b814450da403cc60eb",
+       "sha256": "2bbdd5919639acab6b602514788e54e885a6586fce5adade7560a0a8a59adc50",
        "sheet": "sheets/telegraph_N.png",
        "region": [
         480,
@@ -3851,7 +3775,7 @@
        "file": "telegraph_N_04.png",
        "packed_bounds": [
         70,
-        102,
+        104,
         90,
         138
        ],
@@ -3878,15 +3802,14 @@
         ],
         "strike": [
          0.0,
-         -21.3
+         -21.7
         ]
        },
        "equipment": {
         "tusk": 0,
-        "shard": 31,
-        "glow": 13
+        "shard": 31
        },
-       "sha256": "45c4a3e6bcef49ecfc5c4b521722597d9c7f9f52ab62feffc3e5dfa06fb7dbff",
+       "sha256": "617aba7ec695c1d624c04d0555a88313c22ea12cac60ad55a65690416b5aa2cc",
        "sheet": "sheets/telegraph_N.png",
        "region": [
         640,
@@ -3900,7 +3823,7 @@
        "file": "telegraph_N_05.png",
        "packed_bounds": [
         70,
-        102,
+        104,
         90,
         138
        ],
@@ -3927,15 +3850,14 @@
         ],
         "strike": [
          0.0,
-         -21.3
+         -21.7
         ]
        },
        "equipment": {
         "tusk": 0,
-        "shard": 31,
-        "glow": 13
+        "shard": 31
        },
-       "sha256": "c3be870f3c4ec3a985c754256b1c0a44e39871238dc3d0b67eea86b5f8ba1f10",
+       "sha256": "65d63cdefbd0d8ba24af98500f281dd1e448df528af7d336f9704c9a2c440378",
        "sheet": "sheets/telegraph_N.png",
        "region": [
         800,
@@ -3949,7 +3871,7 @@
        "file": "telegraph_N_06.png",
        "packed_bounds": [
         71,
-        103,
+        104,
         91,
         138
        ],
@@ -3976,15 +3898,14 @@
         ],
         "strike": [
          0.6,
-         -21.0
+         -21.5
         ]
        },
        "equipment": {
         "tusk": 0,
-        "shard": 32,
-        "glow": 16
+        "shard": 32
        },
-       "sha256": "d1a4e029120afc14107e55d4cebabf75440f8f4daa864f0f50e6f2539936b367",
+       "sha256": "0050176db0bde1aafc4045c53af26cc7bc89209130208c9278ec863066244be2",
        "sheet": "sheets/telegraph_N.png",
        "region": [
         960,
@@ -3998,7 +3919,7 @@
        "file": "telegraph_N_07.png",
        "packed_bounds": [
         69,
-        102,
+        104,
         89,
         138
        ],
@@ -4025,15 +3946,14 @@
         ],
         "strike": [
          -0.6,
-         -21.0
+         -21.5
         ]
        },
        "equipment": {
         "tusk": 0,
-        "shard": 36,
-        "glow": 12
+        "shard": 36
        },
-       "sha256": "61e1e6a0986066ce22830c53a78f36a01e77b3d03a36cd0efbfbccaddf932e14",
+       "sha256": "c883bbcb4efa3d0848ebeb5f9aa65d7af34803bb96b7b0f7bfe24a79d3277637",
        "sheet": "sheets/telegraph_N.png",
        "region": [
         1120,
@@ -4051,7 +3971,7 @@
        "file": "telegraph_E_00.png",
        "packed_bounds": [
         59,
-        102,
+        103,
         110,
         136
        ],
@@ -4083,10 +4003,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 9,
-        "glow": 16
+        "tusk": 9
        },
-       "sha256": "217ca402805aaa193a21ddf80fb2bbb81e7bba14e45262bc4ff76155540481a0",
+       "sha256": "b807498d55def6e17df0703f67d2aa329dbda6d705c25779a4be5db55df219f1",
        "sheet": "sheets/telegraph_E.png",
        "region": [
         0,
@@ -4100,7 +4019,7 @@
        "file": "telegraph_E_01.png",
        "packed_bounds": [
         59,
-        103,
+        105,
         111,
         136
        ],
@@ -4132,10 +4051,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 8,
-        "glow": 12
+        "tusk": 8
        },
-       "sha256": "3e3a71924c2479300f64d888434a816aff0f71991a7a02eb078eface511d773a",
+       "sha256": "06d43cc1c7ec645ab026bc8e96bbcc4d1b76e28160ef65828877d68f22006f11",
        "sheet": "sheets/telegraph_E.png",
        "region": [
         160,
@@ -4149,8 +4067,8 @@
        "file": "telegraph_E_02.png",
        "packed_bounds": [
         59,
-        105,
-        113,
+        107,
+        112,
         136
        ],
        "anchors": {
@@ -4175,16 +4093,15 @@
          -26.9
         ],
         "strike": [
-         31.5,
-         -5.5
+         30.5,
+         -7.5
         ]
        },
        "equipment": {
         "shard": 33,
-        "tusk": 9,
-        "glow": 13
+        "tusk": 9
        },
-       "sha256": "e2834810ba3c5ca8b1440842d75169ee98ec3f70c541c8aaf15570f42803dba8",
+       "sha256": "a071c745f649c2fd64dfec2ab3bb18e5fc8f610c3b411a0be7cc8676253b3f5d",
        "sheet": "sheets/telegraph_E.png",
        "region": [
         320,
@@ -4198,8 +4115,8 @@
        "file": "telegraph_E_03.png",
        "packed_bounds": [
         59,
-        105,
-        113,
+        107,
+        112,
         136
        ],
        "anchors": {
@@ -4224,16 +4141,15 @@
          -26.9
         ],
         "strike": [
-         31.5,
-         -5.5
+         30.5,
+         -7.5
         ]
        },
        "equipment": {
         "shard": 33,
-        "tusk": 9,
-        "glow": 13
+        "tusk": 9
        },
-       "sha256": "8583d3c26de5a49e4efa9963731e5305ab93dfece22031761325b8c46d893730",
+       "sha256": "88230bf23d5cbd3d7f0454c8b67787fee97a18b63e978ed77efd9631b1e1d20f",
        "sheet": "sheets/telegraph_E.png",
        "region": [
         480,
@@ -4247,8 +4163,8 @@
        "file": "telegraph_E_04.png",
        "packed_bounds": [
         59,
-        105,
-        113,
+        107,
+        112,
         136
        ],
        "anchors": {
@@ -4273,16 +4189,15 @@
          -26.9
         ],
         "strike": [
-         31.5,
-         -5.5
+         30.5,
+         -7.5
         ]
        },
        "equipment": {
         "shard": 33,
-        "tusk": 9,
-        "glow": 13
+        "tusk": 9
        },
-       "sha256": "8e46f1fbabd9722864992d78b59085f53fddfe41b876809814df5a9b96ad2b20",
+       "sha256": "4f96c59a6a1b7071a01fbea0d7a8eae155ef40b390bdc1deda349b36dfa21b63",
        "sheet": "sheets/telegraph_E.png",
        "region": [
         640,
@@ -4296,8 +4211,8 @@
        "file": "telegraph_E_05.png",
        "packed_bounds": [
         59,
-        105,
-        113,
+        107,
+        112,
         136
        ],
        "anchors": {
@@ -4322,16 +4237,15 @@
          -26.9
         ],
         "strike": [
-         31.5,
-         -5.5
+         30.5,
+         -7.5
         ]
        },
        "equipment": {
         "shard": 33,
-        "tusk": 9,
-        "glow": 13
+        "tusk": 9
        },
-       "sha256": "cd3f6cb565b8840e0caa82bd64ed995808c410d3a17da8c34f5f534efc91ebc5",
+       "sha256": "b47b6e62d3e6ebb3bda8f3a204092c5066c77519274b67907c75527e2efb94ae",
        "sheet": "sheets/telegraph_E.png",
        "region": [
         800,
@@ -4345,8 +4259,8 @@
        "file": "telegraph_E_06.png",
        "packed_bounds": [
         59,
-        105,
-        113,
+        107,
+        112,
         136
        ],
        "anchors": {
@@ -4371,16 +4285,15 @@
          -26.4
         ],
         "strike": [
-         31.9,
-         -4.5
+         30.9,
+         -6.5
         ]
        },
        "equipment": {
         "shard": 35,
-        "tusk": 7,
-        "glow": 12
+        "tusk": 7
        },
-       "sha256": "4cce5f9ed29ca00b553557c4501b6a6e26eaf3a3227a634be6df615ce002dfe0",
+       "sha256": "e66318f18b6a504865bcef975cfca30515a1634c03b90ddb4bcc78f90adfbea9",
        "sheet": "sheets/telegraph_E.png",
        "region": [
         960,
@@ -4394,8 +4307,8 @@
        "file": "telegraph_E_07.png",
        "packed_bounds": [
         59,
-        105,
-        113,
+        107,
+        112,
         136
        ],
        "anchors": {
@@ -4420,16 +4333,15 @@
          -26.4
         ],
         "strike": [
-         32.1,
-         -4.5
+         31.1,
+         -6.5
         ]
        },
        "equipment": {
         "shard": 33,
-        "tusk": 8,
-        "glow": 12
+        "tusk": 8
        },
-       "sha256": "59ab0573e171a7949c5ed31b01d7ea4019fbdace9886985ae65dece62c9c4bec",
+       "sha256": "7822caf8f4843173e03e1f8d879b9432d9bc94f6c3359a5945d3b25cb7234d44",
        "sheet": "sheets/telegraph_E.png",
        "region": [
         1120,
@@ -4447,7 +4359,7 @@
        "file": "telegraph_W_00.png",
        "packed_bounds": [
         50,
-        102,
+        103,
         101,
         136
        ],
@@ -4479,10 +4391,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 9,
-        "glow": 15
+        "tusk": 9
        },
-       "sha256": "eeb8fb977b000ad6ce05ee29867b2fbcda6a3cd00f9802b44711f2cabf2bf4f3",
+       "sha256": "cd7e4a3f7b57c7fdc707eb66da60fc40d3e63bf4006254a4a1b0746c8405d374",
        "sheet": "sheets/telegraph_W.png",
        "region": [
         0,
@@ -4496,7 +4407,7 @@
        "file": "telegraph_W_01.png",
        "packed_bounds": [
         49,
-        104,
+        105,
         101,
         136
        ],
@@ -4528,10 +4439,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 8,
-        "glow": 14
+        "tusk": 8
        },
-       "sha256": "2775c65e98ad3d9355fd7bfec015849099dd1bdce64d5bf44b704150a88aa2c1",
+       "sha256": "989ef30706a25359cb7c98a0ca525572c77a207399e431c9c502af89414d670f",
        "sheet": "sheets/telegraph_W.png",
        "region": [
         160,
@@ -4544,8 +4454,8 @@
        "path": "res://assets/animated/boarlet/telegraph_W_02.png",
        "file": "telegraph_W_02.png",
        "packed_bounds": [
-        47,
-        105,
+        48,
+        107,
         101,
         136
        ],
@@ -4571,16 +4481,15 @@
          -26.9
         ],
         "strike": [
-         -31.5,
-         -5.5
+         -30.5,
+         -7.5
         ]
        },
        "equipment": {
         "shard": 33,
-        "tusk": 9,
-        "glow": 10
+        "tusk": 9
        },
-       "sha256": "6dc6994f62f975ae99ec40548bd71846acf74af7e6d26f4755fe2e5790f3c2ce",
+       "sha256": "9ad891dc256e00e347b0f058fc1f0051181c7ace4d3ff2653642b503593c3054",
        "sheet": "sheets/telegraph_W.png",
        "region": [
         320,
@@ -4593,8 +4502,8 @@
        "path": "res://assets/animated/boarlet/telegraph_W_03.png",
        "file": "telegraph_W_03.png",
        "packed_bounds": [
-        47,
-        105,
+        48,
+        107,
         101,
         136
        ],
@@ -4620,16 +4529,15 @@
          -26.9
         ],
         "strike": [
-         -31.5,
-         -5.5
+         -30.5,
+         -7.5
         ]
        },
        "equipment": {
         "shard": 33,
-        "tusk": 9,
-        "glow": 10
+        "tusk": 9
        },
-       "sha256": "351f6af7e29f347c1776778f7b4efcc903b72d811cf8eef7f07a35f6b55007d1",
+       "sha256": "adb53ef2ad71e936ed596854801416642004b6dd1c5d5ca6a761aa84d6ce7191",
        "sheet": "sheets/telegraph_W.png",
        "region": [
         480,
@@ -4642,8 +4550,8 @@
        "path": "res://assets/animated/boarlet/telegraph_W_04.png",
        "file": "telegraph_W_04.png",
        "packed_bounds": [
-        47,
-        105,
+        48,
+        107,
         101,
         136
        ],
@@ -4669,16 +4577,15 @@
          -26.9
         ],
         "strike": [
-         -31.5,
-         -5.5
+         -30.5,
+         -7.5
         ]
        },
        "equipment": {
         "shard": 33,
-        "tusk": 9,
-        "glow": 10
+        "tusk": 9
        },
-       "sha256": "43ac1ab281e066cb054bf2e58864f2935d228ee7b6fe94eb49c8519c80136789",
+       "sha256": "365cf98b9c5d4fc0e9cfa44c96c45e72f548cffc553dba2d01f14146aae4fcb7",
        "sheet": "sheets/telegraph_W.png",
        "region": [
         640,
@@ -4691,8 +4598,8 @@
        "path": "res://assets/animated/boarlet/telegraph_W_05.png",
        "file": "telegraph_W_05.png",
        "packed_bounds": [
-        47,
-        105,
+        48,
+        107,
         101,
         136
        ],
@@ -4718,16 +4625,15 @@
          -26.9
         ],
         "strike": [
-         -31.5,
-         -5.5
+         -30.5,
+         -7.5
         ]
        },
        "equipment": {
         "shard": 33,
-        "tusk": 9,
-        "glow": 10
+        "tusk": 9
        },
-       "sha256": "7ae249469229186cca976bdc19973f8e2a1174f8b43e5618662df9d8e9e8ffe4",
+       "sha256": "18b505a88f4a5c4f1ca3fd8012bce31458b1c67e4985ef962e5b7707134d83c0",
        "sheet": "sheets/telegraph_W.png",
        "region": [
         800,
@@ -4740,8 +4646,8 @@
        "path": "res://assets/animated/boarlet/telegraph_W_06.png",
        "file": "telegraph_W_06.png",
        "packed_bounds": [
-        47,
-        105,
+        48,
+        107,
         101,
         136
        ],
@@ -4767,16 +4673,15 @@
          -26.4
         ],
         "strike": [
-         -32.1,
-         -4.5
+         -31.1,
+         -6.5
         ]
        },
        "equipment": {
         "shard": 32,
-        "tusk": 8,
-        "glow": 13
+        "tusk": 8
        },
-       "sha256": "572ff72d25cac08c5ddd89e90b63d43a74f942753b943600eab56e771abafc6a",
+       "sha256": "0751c7f3405010514938898fbbb7a03b19545de4a9986eaf38ef9ba0c3711c25",
        "sheet": "sheets/telegraph_W.png",
        "region": [
         960,
@@ -4789,8 +4694,8 @@
        "path": "res://assets/animated/boarlet/telegraph_W_07.png",
        "file": "telegraph_W_07.png",
        "packed_bounds": [
-        47,
-        105,
+        48,
+        107,
         101,
         136
        ],
@@ -4816,16 +4721,15 @@
          -26.4
         ],
         "strike": [
-         -31.9,
-         -4.5
+         -30.9,
+         -6.5
         ]
        },
        "equipment": {
         "shard": 32,
-        "tusk": 7,
-        "glow": 13
+        "tusk": 7
        },
-       "sha256": "abc453322318c7f0dbf0a91c460975ed87e83c2d2ba01556ea2fc5d7c7d17728",
+       "sha256": "6fcb26fa72df7b65c99844084cf927d8ff14a335a425b952abd273de7cd6f23c",
        "sheet": "sheets/telegraph_W.png",
        "region": [
         1120,
@@ -4860,7 +4764,7 @@
        "file": "attack_S_00.png",
        "packed_bounds": [
         66,
-        105,
+        106,
         90,
         140
        ],
@@ -4892,10 +4796,9 @@
        },
        "equipment": {
         "shard": 39,
-        "tusk": 8,
-        "glow": 10
+        "tusk": 8
        },
-       "sha256": "5651d5d3a7af2f32d1da152b6c619a4b9773ebf88e84202d37480bbc1ddbacd7",
+       "sha256": "40360abcbd7f7906f35b23eab1a19de17bfd640f49dc672fde09e936cd37a946",
        "sheet": "sheets/attack_S.png",
        "region": [
         0,
@@ -4908,8 +4811,8 @@
        "path": "res://assets/animated/boarlet/attack_S_01.png",
        "file": "attack_S_01.png",
        "packed_bounds": [
-        62,
-        105,
+        63,
+        106,
         90,
         140
        ],
@@ -4941,10 +4844,9 @@
        },
        "equipment": {
         "shard": 39,
-        "tusk": 8,
-        "glow": 10
+        "tusk": 8
        },
-       "sha256": "5da56022e7bfbf4e2a55fbf862b25099f3a93669bdb791d0f4ee9408c0340ea1",
+       "sha256": "9f8e194e10b12d276ce36f2ce6d56b27317bf8fddff7e791dfa4b2fc8c469933",
        "sheet": "sheets/attack_S.png",
        "region": [
         160,
@@ -4957,8 +4859,8 @@
        "path": "res://assets/animated/boarlet/attack_S_02.png",
        "file": "attack_S_02.png",
        "packed_bounds": [
-        59,
-        105,
+        60,
+        106,
         90,
         140
        ],
@@ -4990,10 +4892,9 @@
        },
        "equipment": {
         "shard": 39,
-        "tusk": 8,
-        "glow": 10
+        "tusk": 8
        },
-       "sha256": "28691493422afe3f2057ff855a48e8b24977e0d102670c954a707c3722a35939",
+       "sha256": "dedd7062be6fa8f7d511dcebdf37040a5e053c7d8e13c69a47262d3b43544606",
        "sheet": "sheets/attack_S.png",
        "region": [
         320,
@@ -5006,8 +4907,8 @@
        "path": "res://assets/animated/boarlet/attack_S_03.png",
        "file": "attack_S_03.png",
        "packed_bounds": [
-        57,
-        105,
+        59,
+        107,
         90,
         140
        ],
@@ -5039,10 +4940,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 6,
-        "glow": 13
+        "tusk": 6
        },
-       "sha256": "3871e563d610e2881ced9f041f99f4ae46ac3e1f7ef0e2c1dda11eda7f5ae0bd",
+       "sha256": "eba75f7d374b928bcd997d877a609850a8ab7370cb6b917a1fe199e80fff6fe1",
        "sheet": "sheets/attack_S.png",
        "region": [
         480,
@@ -5065,7 +4965,7 @@
        "file": "attack_N_00.png",
        "packed_bounds": [
         70,
-        102,
+        104,
         90,
         141
        ],
@@ -5097,10 +4997,9 @@
        },
        "equipment": {
         "tusk": 0,
-        "shard": 31,
-        "glow": 12
+        "shard": 31
        },
-       "sha256": "eeda15d385d610c3d7f53fc3b33aa8afc358782b89b045d48983b9e5c90f3960",
+       "sha256": "2fa66f02e4f01c6555dc69a68d0936b92e77ad78a461d5499904595d728154c0",
        "sheet": "sheets/attack_N.png",
        "region": [
         0,
@@ -5114,7 +5013,7 @@
        "file": "attack_N_01.png",
        "packed_bounds": [
         70,
-        102,
+        104,
         90,
         141
        ],
@@ -5146,10 +5045,9 @@
        },
        "equipment": {
         "tusk": 0,
-        "shard": 31,
-        "glow": 12
+        "shard": 31
        },
-       "sha256": "39a6ccc3ccabfa2020bca75478266010a715acec6a1e43fc54829a83ada6f8ef",
+       "sha256": "8d5182f955244aab70b926d91276bf294c8ca47769ad831d5a5298423310433b",
        "sheet": "sheets/attack_N.png",
        "region": [
         160,
@@ -5163,7 +5061,7 @@
        "file": "attack_N_02.png",
        "packed_bounds": [
         70,
-        102,
+        104,
         90,
         141
        ],
@@ -5195,10 +5093,9 @@
        },
        "equipment": {
         "tusk": 0,
-        "shard": 31,
-        "glow": 12
+        "shard": 31
        },
-       "sha256": "ab853b709019ebabf1442b5c7964f409b2ac9fb7d309d64afc8b78179df9912e",
+       "sha256": "7914ddd06794cf7ece0d817d8bf9cef902545e76f0ea40e2122cfe84a7c8f14b",
        "sheet": "sheets/attack_N.png",
        "region": [
         320,
@@ -5211,8 +5108,8 @@
        "path": "res://assets/animated/boarlet/attack_N_03.png",
        "file": "attack_N_03.png",
        "packed_bounds": [
-        68,
-        103,
+        70,
+        104,
         90,
         139
        ],
@@ -5244,10 +5141,9 @@
        },
        "equipment": {
         "tusk": 0,
-        "shard": 35,
-        "glow": 14
+        "shard": 35
        },
-       "sha256": "0238e275f829e7b64e26f459ffbe7fde544d7c58fd74d30687ccdd1d7def4fae",
+       "sha256": "38dd14c29466c242dc056cc3b8bbbbefe3fa70a6b5c072ed230f358913e80e72",
        "sheet": "sheets/attack_N.png",
        "region": [
         480,
@@ -5270,7 +5166,7 @@
        "file": "attack_E_00.png",
        "packed_bounds": [
         59,
-        105,
+        106,
         115,
         136
        ],
@@ -5302,10 +5198,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 10,
-        "glow": 15
+        "tusk": 10
        },
-       "sha256": "72160a0c48b9284af75c92a8f96605a0ea6942c1cd204764477a84826218e045",
+       "sha256": "1b332a8fbafa77ae9608e615cdb15fbb0ca0ff6a234d8f22b53679550cd481c3",
        "sheet": "sheets/attack_E.png",
        "region": [
         0,
@@ -5319,7 +5214,7 @@
        "file": "attack_E_01.png",
        "packed_bounds": [
         59,
-        105,
+        106,
         115,
         136
        ],
@@ -5351,10 +5246,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 10,
-        "glow": 15
+        "tusk": 10
        },
-       "sha256": "d13a067380e8ba7ffa59c28a03d4838e58a2b7e557890c66c6460fbf17686715",
+       "sha256": "69339b096714404f718bc6ea5a0eedb2c3ea6b381b1d112100fc11e6c44562ac",
        "sheet": "sheets/attack_E.png",
        "region": [
         160,
@@ -5368,7 +5262,7 @@
        "file": "attack_E_02.png",
        "packed_bounds": [
         59,
-        105,
+        106,
         115,
         136
        ],
@@ -5400,10 +5294,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 10,
-        "glow": 15
+        "tusk": 10
        },
-       "sha256": "9e25e908169cd49a020f1fd823725201aa791e5f12fe261df208fdd6190cad04",
+       "sha256": "73f71663a5f25bce3afe6fd36c3663583a4dc03f4dbaad34526c504ffd8cd65c",
        "sheet": "sheets/attack_E.png",
        "region": [
         320,
@@ -5417,7 +5310,7 @@
        "file": "attack_E_03.png",
        "packed_bounds": [
         59,
-        106,
+        107,
         115,
         136
        ],
@@ -5449,10 +5342,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 10,
-        "glow": 13
+        "tusk": 10
        },
-       "sha256": "8afc5a6c99844a747e696e2ca15bc806cf46c365c1cf7927a20c51401568eeab",
+       "sha256": "b2497bbc4a0c6eea8851fb130d9ecb704ab01e424f22e753eafc458150bdc791",
        "sheet": "sheets/attack_E.png",
        "region": [
         480,
@@ -5475,7 +5367,7 @@
        "file": "attack_W_00.png",
        "packed_bounds": [
         45,
-        105,
+        106,
         101,
         136
        ],
@@ -5507,10 +5399,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 10,
-        "glow": 16
+        "tusk": 10
        },
-       "sha256": "fb7a74807d2ad165959d408f742e30bd0b1b268bbb38e3558e93d9f4ff9f3e16",
+       "sha256": "39b058c0999a2cd62db41c41f6b52b221d97f555bb582283cc7a24b71705b0b5",
        "sheet": "sheets/attack_W.png",
        "region": [
         0,
@@ -5524,7 +5415,7 @@
        "file": "attack_W_01.png",
        "packed_bounds": [
         45,
-        105,
+        106,
         101,
         136
        ],
@@ -5556,10 +5447,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 10,
-        "glow": 16
+        "tusk": 10
        },
-       "sha256": "05c1ab04ec3c98ed538feb3c399eef4c7c535e9a32278089ba6e289507f5d396",
+       "sha256": "5161a3be0e804a866a40a9d3b9f3e91b314997f8d945e8cb74415b933be20f88",
        "sheet": "sheets/attack_W.png",
        "region": [
         160,
@@ -5573,7 +5463,7 @@
        "file": "attack_W_02.png",
        "packed_bounds": [
         45,
-        105,
+        106,
         101,
         136
        ],
@@ -5605,10 +5495,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 10,
-        "glow": 16
+        "tusk": 10
        },
-       "sha256": "5fc5ccc0000c9eb8725f543f09fe657b07409fbc9c3cb1b64b3d6641122e8b5c",
+       "sha256": "231607bc225b2b2ae5e74e089162a3e23712a799664d216f47d529b4a2dabcd0",
        "sheet": "sheets/attack_W.png",
        "region": [
         320,
@@ -5622,7 +5511,7 @@
        "file": "attack_W_03.png",
        "packed_bounds": [
         45,
-        106,
+        107,
         101,
         136
        ],
@@ -5654,10 +5543,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 10,
-        "glow": 10
+        "tusk": 10
        },
-       "sha256": "fe42db64fdc746c0a9f8d1e98114876bc423a11366d52a2dbe1ee70d893f6d41",
+       "sha256": "028e393161dbe0e6065c530bdb1f471c81ff3002a743be8dab9eb5d1d3b1480e",
        "sheet": "sheets/attack_W.png",
        "region": [
         480,
@@ -5701,7 +5589,7 @@
        "file": "hurt_S_00.png",
        "packed_bounds": [
         72,
-        103,
+        105,
         91,
         139
        ],
@@ -5733,10 +5621,9 @@
        },
        "equipment": {
         "shard": 34,
-        "tusk": 6,
-        "glow": 9
+        "tusk": 6
        },
-       "sha256": "761ad5489e4f2848de8eeb03b364bb5139d2dcaee6a08c34b192976245760653",
+       "sha256": "6435f1c80dfaaa2896aa27238d0b5a75fe0c0a37c6653fb9e23dec02eb94f565",
        "sheet": "sheets/hurt_S.png",
        "region": [
         0,
@@ -5750,7 +5637,7 @@
        "file": "hurt_S_01.png",
        "packed_bounds": [
         69,
-        103,
+        105,
         89,
         139
        ],
@@ -5782,10 +5669,9 @@
        },
        "equipment": {
         "shard": 34,
-        "tusk": 9,
-        "glow": 11
+        "tusk": 9
        },
-       "sha256": "03ab34c5388b3fdbbe667db1a39f3a7b9897b94fa65a49ca1ebf02c13c77f3ea",
+       "sha256": "fccf4eefdadad111c9e212c4ce373f47a36c69700272fbfd53ed923c1bd02db6",
        "sheet": "sheets/hurt_S.png",
        "region": [
         160,
@@ -5799,7 +5685,7 @@
        "file": "hurt_S_02.png",
        "packed_bounds": [
         71,
-        103,
+        105,
         91,
         139
        ],
@@ -5831,10 +5717,9 @@
        },
        "equipment": {
         "shard": 34,
-        "tusk": 7,
-        "glow": 13
+        "tusk": 7
        },
-       "sha256": "4d2cff9d2b4fe5241f8961eb7866d68a2142538bf9e5b14dfda3f276f3c95005",
+       "sha256": "efa91b6053ea1115d8ce6d56b34381cb01f5e73a78fe178a81bac5a57d289496",
        "sheet": "sheets/hurt_S.png",
        "region": [
         320,
@@ -5848,7 +5733,7 @@
        "file": "hurt_S_03.png",
        "packed_bounds": [
         70,
-        103,
+        105,
         90,
         139
        ],
@@ -5880,10 +5765,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 10,
-        "glow": 16
+        "tusk": 10
        },
-       "sha256": "00e0cd74b2938df5345068521ec2a7109c35a2cf9392978c19c354e405d07322",
+       "sha256": "bd014656160d66b17ec5bace8a8d620cd6ce68c5b80dae4d974a87de9aded5fb",
        "sheet": "sheets/hurt_S.png",
        "region": [
         480,
@@ -5901,7 +5785,7 @@
        "file": "hurt_N_00.png",
        "packed_bounds": [
         69,
-        100,
+        102,
         88,
         138
        ],
@@ -5933,10 +5817,9 @@
        },
        "equipment": {
         "tusk": 0,
-        "shard": 32,
-        "glow": 12
+        "shard": 32
        },
-       "sha256": "605a7f4dba1686b85507d2e8c51d34f972e3412e25815c23c775e80265743767",
+       "sha256": "78054db882cb188d81a8aefe74ea725dff74cff838ee6fb2dd3f7e5ffe98f9d7",
        "sheet": "sheets/hurt_N.png",
        "region": [
         0,
@@ -5950,7 +5833,7 @@
        "file": "hurt_N_01.png",
        "packed_bounds": [
         71,
-        100,
+        102,
         91,
         138
        ],
@@ -5982,10 +5865,9 @@
        },
        "equipment": {
         "tusk": 0,
-        "shard": 36,
-        "glow": 13
+        "shard": 36
        },
-       "sha256": "816575fe0b37ee02ad39ec284750bb9a068501bdad73da4606c9b0fce197aeac",
+       "sha256": "85c4f69254a73f92feda1f6f153239acb23231d5e307b7f4e85c5a5a4685871a",
        "sheet": "sheets/hurt_N.png",
        "region": [
         160,
@@ -5999,7 +5881,7 @@
        "file": "hurt_N_02.png",
        "packed_bounds": [
         69,
-        101,
+        102,
         89,
         138
        ],
@@ -6031,10 +5913,9 @@
        },
        "equipment": {
         "tusk": 0,
-        "shard": 36,
-        "glow": 14
+        "shard": 36
        },
-       "sha256": "424389ade6037bfd8e61512446365e6800f36ca02e030434b76feccf3c3fcb16",
+       "sha256": "d146ca5dbf1adfb461cad9676d050cfe5e3246e66303f8285cda6a4abdd2ea39",
        "sheet": "sheets/hurt_N.png",
        "region": [
         320,
@@ -6048,7 +5929,7 @@
        "file": "hurt_N_03.png",
        "packed_bounds": [
         70,
-        101,
+        102,
         90,
         138
        ],
@@ -6080,10 +5961,9 @@
        },
        "equipment": {
         "tusk": 0,
-        "shard": 35,
-        "glow": 14
+        "shard": 35
        },
-       "sha256": "cefe635e9b6591a1a8041ea3a8cd04fd7c9ba7e8e61a09d26154edb47868b7b9",
+       "sha256": "f696a8c38ed4eb479153b4ff97690bdadae912ade46088ca2330c407724cef65",
        "sheet": "sheets/hurt_N.png",
        "region": [
         480,
@@ -6101,7 +5981,7 @@
        "file": "hurt_E_00.png",
        "packed_bounds": [
         59,
-        102,
+        104,
         109,
         136
        ],
@@ -6133,10 +6013,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 7,
-        "glow": 15
+        "tusk": 7
        },
-       "sha256": "b7fa2dfc012893da3928db277498be19a8e3bc3d24a80fb20f1615f4a592c29b",
+       "sha256": "be152239da45239ce376957d1ffca5cb7c75ce5e906cf4d1a901de3b273d67a8",
        "sheet": "sheets/hurt_E.png",
        "region": [
         0,
@@ -6150,7 +6029,7 @@
        "file": "hurt_E_01.png",
        "packed_bounds": [
         59,
-        102,
+        104,
         109,
         136
        ],
@@ -6182,10 +6061,9 @@
        },
        "equipment": {
         "shard": 35,
-        "tusk": 9,
-        "glow": 14
+        "tusk": 9
        },
-       "sha256": "112cfb52ca8ccc3d6feba131e4bf2d582b60b77258f9441bf2c38495ae7b6beb",
+       "sha256": "eaea5997d9c23dee24394cf9a4a2c4d668bfba3c68934c19878a0979a6f5b433",
        "sheet": "sheets/hurt_E.png",
        "region": [
         160,
@@ -6199,7 +6077,7 @@
        "file": "hurt_E_02.png",
        "packed_bounds": [
         59,
-        102,
+        104,
         110,
         136
        ],
@@ -6231,10 +6109,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 6,
-        "glow": 15
+        "tusk": 6
        },
-       "sha256": "96894084b64a0c50a8d403ee474bb08a6e279aad4a8105ed58257933c70a033e",
+       "sha256": "3912931692503966e4fbcdaaf2d0c0227197eb01626b446adb56ff68452a1132",
        "sheet": "sheets/hurt_E.png",
        "region": [
         320,
@@ -6248,7 +6125,7 @@
        "file": "hurt_E_03.png",
        "packed_bounds": [
         59,
-        102,
+        104,
         111,
         136
        ],
@@ -6280,10 +6157,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 7,
-        "glow": 15
+        "tusk": 7
        },
-       "sha256": "93c11a92441e914cf654e22e77dd2fc6439fba9c957bb105706f7b753a75da5b",
+       "sha256": "3fc66da3237291282116281905b56e2ee5d273c4e02d5c867beb3dce8d88ef34",
        "sheet": "sheets/hurt_E.png",
        "region": [
         480,
@@ -6301,7 +6177,7 @@
        "file": "hurt_W_00.png",
        "packed_bounds": [
         51,
-        102,
+        104,
         101,
         136
        ],
@@ -6333,10 +6209,9 @@
        },
        "equipment": {
         "shard": 32,
-        "tusk": 8,
-        "glow": 14
+        "tusk": 8
        },
-       "sha256": "eb8eea1ede2b93aab76b38f57a215e07471cfcca82c30619f2335e5f946d02fa",
+       "sha256": "f453ae64c109d036b5ae433f308de36b874acf21380f9d27ad19234a59b0f8bf",
        "sheet": "sheets/hurt_W.png",
        "region": [
         0,
@@ -6350,7 +6225,7 @@
        "file": "hurt_W_01.png",
        "packed_bounds": [
         51,
-        102,
+        104,
         101,
         136
        ],
@@ -6382,10 +6257,9 @@
        },
        "equipment": {
         "shard": 32,
-        "tusk": 6,
-        "glow": 12
+        "tusk": 6
        },
-       "sha256": "8b3f25244c448eb56481202a31054e4b211c2661dc549df05ce65279c056af75",
+       "sha256": "4dbfc3ac0b9a71754b4110a69ab7c48f660e04ba20fe24f4483357cc8811146e",
        "sheet": "sheets/hurt_W.png",
        "region": [
         160,
@@ -6399,7 +6273,7 @@
        "file": "hurt_W_02.png",
        "packed_bounds": [
         50,
-        102,
+        104,
         101,
         136
        ],
@@ -6431,10 +6305,9 @@
        },
        "equipment": {
         "shard": 32,
-        "tusk": 9,
-        "glow": 14
+        "tusk": 9
        },
-       "sha256": "095acd93a153b8f7a0e588cbaa3eddf53090353e07ce430b4d2d6cc86681b297",
+       "sha256": "2d23206559df2d42c6f16d9d60dc58ec15197302b483c0671c6a3c588c1b7306",
        "sheet": "sheets/hurt_W.png",
        "region": [
         320,
@@ -6448,7 +6321,7 @@
        "file": "hurt_W_03.png",
        "packed_bounds": [
         49,
-        102,
+        104,
         101,
         136
        ],
@@ -6480,10 +6353,9 @@
        },
        "equipment": {
         "shard": 32,
-        "tusk": 7,
-        "glow": 13
+        "tusk": 7
        },
-       "sha256": "8638de6b33b69ab92ff9174bc187973a79b0d3dae96cf823680b0d01cde9beac",
+       "sha256": "8e8f437a7ef72b2f1b43a984e729fe61f7b24ec5fa969d4e0686b36490950dca",
        "sheet": "sheets/hurt_W.png",
        "region": [
         480,
@@ -6521,7 +6393,7 @@
        "file": "stagger_S_00.png",
        "packed_bounds": [
         70,
-        105,
+        106,
         90,
         139
        ],
@@ -6553,10 +6425,9 @@
        },
        "equipment": {
         "shard": 39,
-        "tusk": 6,
-        "glow": 11
+        "tusk": 6
        },
-       "sha256": "a22d5e1fc5fb4d37690504ff4820407018d1c014d8f404757527f7ddac0f6138",
+       "sha256": "4e83f18329f30a322e8c7a6c2e21d2aa39ed4e794d2d48bb50b31aa50ca5a6ef",
        "sheet": "sheets/stagger_S.png",
        "region": [
         0,
@@ -6570,7 +6441,7 @@
        "file": "stagger_S_01.png",
        "packed_bounds": [
         70,
-        104,
+        106,
         90,
         139
        ],
@@ -6602,10 +6473,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 8,
-        "glow": 13
+        "tusk": 8
        },
-       "sha256": "e962a9c22549d98a3c154e39b6d63addaafd263ff6c392a06885aba1735f163e",
+       "sha256": "f94bef39b13e8f9e4af6e9c56485f66d3e190b719874fea567843a881ca2c1e5",
        "sheet": "sheets/stagger_S.png",
        "region": [
         160,
@@ -6619,7 +6489,7 @@
        "file": "stagger_S_02.png",
        "packed_bounds": [
         69,
-        104,
+        106,
         89,
         139
        ],
@@ -6651,10 +6521,9 @@
        },
        "equipment": {
         "shard": 34,
-        "tusk": 6,
-        "glow": 16
+        "tusk": 6
        },
-       "sha256": "0cc1c3bc1e0a37417572257deba084deaf5e8d050598761e0a1c76a0e86f8c29",
+       "sha256": "741619d1e18330c64fe339a832cc35796e94d6802abdbfa865fda621d9032448",
        "sheet": "sheets/stagger_S.png",
        "region": [
         320,
@@ -6668,7 +6537,7 @@
        "file": "stagger_S_03.png",
        "packed_bounds": [
         70,
-        104,
+        106,
         90,
         139
        ],
@@ -6700,10 +6569,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 8,
-        "glow": 13
+        "tusk": 8
        },
-       "sha256": "1eb21566ecaaade7d5b9f2ecce15c0670312e9b19050ff464c5112911084d931",
+       "sha256": "cab43c8834f4f4108f16beed39d5c7e1fdd8f3fa7b7f881c61b71e12e4539382",
        "sheet": "sheets/stagger_S.png",
        "region": [
         480,
@@ -6717,7 +6585,7 @@
        "file": "stagger_S_04.png",
        "packed_bounds": [
         71,
-        104,
+        106,
         91,
         139
        ],
@@ -6749,10 +6617,9 @@
        },
        "equipment": {
         "shard": 34,
-        "tusk": 6,
-        "glow": 10
+        "tusk": 6
        },
-       "sha256": "b88c8966f9325d2052282e62c452bfa438948cec85ccd0916c4ac3c482c68e6f",
+       "sha256": "54e8d27e829f8e4f77b1ba12f34607c58a53f460d3d805c7a9d532b6a47b1870",
        "sheet": "sheets/stagger_S.png",
        "region": [
         640,
@@ -6766,7 +6633,7 @@
        "file": "stagger_S_05.png",
        "packed_bounds": [
         70,
-        104,
+        106,
         90,
         139
        ],
@@ -6798,10 +6665,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 8,
-        "glow": 13
+        "tusk": 8
        },
-       "sha256": "6b128137d9048588d84e0a27e7fbdf84ecdedf53ee6000a81a970cc7c0176a13",
+       "sha256": "85a8e29e9bc3405d990a1e9de9e8699b1d3c0ef27f4b61dc0f489c4c78896c2f",
        "sheet": "sheets/stagger_S.png",
        "region": [
         800,
@@ -6815,7 +6681,7 @@
        "file": "stagger_S_06.png",
        "packed_bounds": [
         70,
-        103,
+        105,
         90,
         139
        ],
@@ -6847,10 +6713,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 10,
-        "glow": 16
+        "tusk": 10
        },
-       "sha256": "00e0cd74b2938df5345068521ec2a7109c35a2cf9392978c19c354e405d07322",
+       "sha256": "bd014656160d66b17ec5bace8a8d620cd6ce68c5b80dae4d974a87de9aded5fb",
        "sheet": "sheets/stagger_S.png",
        "region": [
         960,
@@ -6868,7 +6733,7 @@
        "file": "stagger_N_00.png",
        "packed_bounds": [
         70,
-        102,
+        103,
         90,
         138
        ],
@@ -6900,10 +6765,9 @@
        },
        "equipment": {
         "tusk": 0,
-        "shard": 33,
-        "glow": 10
+        "shard": 33
        },
-       "sha256": "4af612182204f0a44de734038efd315ef17738eebc51b4b60cc7d40d4fb04478",
+       "sha256": "0da7ccf3ad1098f1e4d400d2947d340f1c61f198805a42b2aa8c66b43b0f3517",
        "sheet": "sheets/stagger_N.png",
        "region": [
         0,
@@ -6917,7 +6781,7 @@
        "file": "stagger_N_01.png",
        "packed_bounds": [
         70,
-        101,
+        102,
         90,
         138
        ],
@@ -6949,10 +6813,9 @@
        },
        "equipment": {
         "tusk": 0,
-        "shard": 31,
-        "glow": 12
+        "shard": 31
        },
-       "sha256": "0fa0053b8cf39670142b4642464ce8a72987a88b27766096dcc2bedcc5b28505",
+       "sha256": "03f7b02f6e44a848e0d8ea7479b370e7e991e33bbbfe4be26b1b3579a1b5d1ae",
        "sheet": "sheets/stagger_N.png",
        "region": [
         160,
@@ -6966,7 +6829,7 @@
        "file": "stagger_N_02.png",
        "packed_bounds": [
         71,
-        101,
+        103,
         91,
         138
        ],
@@ -6998,10 +6861,9 @@
        },
        "equipment": {
         "tusk": 0,
-        "shard": 31,
-        "glow": 14
+        "shard": 31
        },
-       "sha256": "68094d1ffb4058fe3f2abac76d23df75e27bab89a65b155b12d4cd6b11c837cc",
+       "sha256": "335187d4247b4773ac638c6985e48f25ec587bb39d0723e2ac0f502e3884c928",
        "sheet": "sheets/stagger_N.png",
        "region": [
         320,
@@ -7015,7 +6877,7 @@
        "file": "stagger_N_03.png",
        "packed_bounds": [
         70,
-        101,
+        102,
         90,
         138
        ],
@@ -7047,10 +6909,9 @@
        },
        "equipment": {
         "tusk": 0,
-        "shard": 31,
-        "glow": 12
+        "shard": 31
        },
-       "sha256": "f05d25dd9bc51e1d0202cf027702a864faed13926b0c96a3a910f0fc958062b8",
+       "sha256": "83471b2b8c066efa3cf36fc4b31422c1f2d3da2348ffa99cc566825809bdd472",
        "sheet": "sheets/stagger_N.png",
        "region": [
         480,
@@ -7064,7 +6925,7 @@
        "file": "stagger_N_04.png",
        "packed_bounds": [
         69,
-        101,
+        103,
         89,
         138
        ],
@@ -7096,10 +6957,9 @@
        },
        "equipment": {
         "tusk": 0,
-        "shard": 32,
-        "glow": 14
+        "shard": 32
        },
-       "sha256": "85543b74fda1452105b0ecd798f136e0fe8b68384abf8298a427e63d56cfd2fe",
+       "sha256": "dbc3b68a8ce63ec7a59567f610e7fa69f0e88257c26c434925796b563b3d291a",
        "sheet": "sheets/stagger_N.png",
        "region": [
         640,
@@ -7113,7 +6973,7 @@
        "file": "stagger_N_05.png",
        "packed_bounds": [
         70,
-        101,
+        102,
         90,
         138
        ],
@@ -7145,10 +7005,9 @@
        },
        "equipment": {
         "tusk": 0,
-        "shard": 31,
-        "glow": 12
+        "shard": 31
        },
-       "sha256": "a21af3b2e55f4787b49729fe729a0a2b68a0b1f59ad20595e814e1d7e81fb74f",
+       "sha256": "237f0df5e370eeadfae07fc38eedc6b399db7a272e324c57992417e52fca60a4",
        "sheet": "sheets/stagger_N.png",
        "region": [
         800,
@@ -7162,7 +7021,7 @@
        "file": "stagger_N_06.png",
        "packed_bounds": [
         70,
-        101,
+        102,
         90,
         138
        ],
@@ -7194,10 +7053,9 @@
        },
        "equipment": {
         "tusk": 0,
-        "shard": 35,
-        "glow": 14
+        "shard": 35
        },
-       "sha256": "cefe635e9b6591a1a8041ea3a8cd04fd7c9ba7e8e61a09d26154edb47868b7b9",
+       "sha256": "f696a8c38ed4eb479153b4ff97690bdadae912ade46088ca2330c407724cef65",
        "sheet": "sheets/stagger_N.png",
        "region": [
         960,
@@ -7215,7 +7073,7 @@
        "file": "stagger_E_00.png",
        "packed_bounds": [
         59,
-        105,
+        106,
         112,
         136
        ],
@@ -7247,10 +7105,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 8,
-        "glow": 15
+        "tusk": 8
        },
-       "sha256": "8d978d2c281e6ffd7a7208381b66cb804ef9d0c8abc122aa38680dc031f17e90",
+       "sha256": "b6e559189e9329dc332479b46a2829d101075ba673fd170d7864a261ac783c50",
        "sheet": "sheets/stagger_E.png",
        "region": [
         0,
@@ -7264,7 +7121,7 @@
        "file": "stagger_E_01.png",
        "packed_bounds": [
         59,
-        103,
+        105,
         111,
         136
        ],
@@ -7296,10 +7153,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 7,
-        "glow": 12
+        "tusk": 7
        },
-       "sha256": "811d339b0d163fb2ef83317d8926fe61b4229bd7522e81b7962ccc78f7965d8b",
+       "sha256": "c41d8df39e4c9fde0ed001f7c89805ebb2aa0c99be8f13c78c285c328c08d6f9",
        "sheet": "sheets/stagger_E.png",
        "region": [
         160,
@@ -7313,7 +7169,7 @@
        "file": "stagger_E_02.png",
        "packed_bounds": [
         59,
-        103,
+        105,
         111,
         136
        ],
@@ -7345,10 +7201,9 @@
        },
        "equipment": {
         "shard": 34,
-        "tusk": 7,
-        "glow": 11
+        "tusk": 7
        },
-       "sha256": "6800d524da39b703c9bd55adc68b0fcb08af19f42b02c8d7ffb729f860642bc4",
+       "sha256": "7f8f339bf3ff39ad6d95d8324062508def06c748519213a6314f9ffcc6e54a7c",
        "sheet": "sheets/stagger_E.png",
        "region": [
         320,
@@ -7362,7 +7217,7 @@
        "file": "stagger_E_03.png",
        "packed_bounds": [
         59,
-        103,
+        105,
         111,
         136
        ],
@@ -7394,10 +7249,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 7,
-        "glow": 12
+        "tusk": 7
        },
-       "sha256": "97bcbaed40d4dd30353e94c9aa91282aa219278ee96d2cf82af9dcd974862b3e",
+       "sha256": "4dea933c981a276f6be7009cf4c69560db79105864a4c5e34ea907e41c3afd5f",
        "sheet": "sheets/stagger_E.png",
        "region": [
         480,
@@ -7411,7 +7265,7 @@
        "file": "stagger_E_04.png",
        "packed_bounds": [
         59,
-        103,
+        105,
         111,
         136
        ],
@@ -7443,10 +7297,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 8,
-        "glow": 12
+        "tusk": 8
        },
-       "sha256": "42a4e48d0f5ba1b99e16ec1c754f2f22fee9552707c4a83c171c176098ef256e",
+       "sha256": "63664438c347fecad0970ed4c6c91880e647a17b9e1ae768b18e027edfcd8e7b",
        "sheet": "sheets/stagger_E.png",
        "region": [
         640,
@@ -7460,7 +7313,7 @@
        "file": "stagger_E_05.png",
        "packed_bounds": [
         59,
-        103,
+        105,
         111,
         136
        ],
@@ -7492,10 +7345,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 7,
-        "glow": 12
+        "tusk": 7
        },
-       "sha256": "834277c452e1c13c1277d8a32c70cd8df6e4eff7965e1a5a65b1ec1913100285",
+       "sha256": "5e844f3fc83bd1dfc0f76d165c2b20b791b3eee3c008f13da6796a9c25fa213b",
        "sheet": "sheets/stagger_E.png",
        "region": [
         800,
@@ -7509,7 +7361,7 @@
        "file": "stagger_E_06.png",
        "packed_bounds": [
         59,
-        102,
+        104,
         111,
         136
        ],
@@ -7541,10 +7393,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 7,
-        "glow": 15
+        "tusk": 7
        },
-       "sha256": "93c11a92441e914cf654e22e77dd2fc6439fba9c957bb105706f7b753a75da5b",
+       "sha256": "3fc66da3237291282116281905b56e2ee5d273c4e02d5c867beb3dce8d88ef34",
        "sheet": "sheets/stagger_E.png",
        "region": [
         960,
@@ -7562,7 +7413,7 @@
        "file": "stagger_W_00.png",
        "packed_bounds": [
         48,
-        105,
+        106,
         101,
         136
        ],
@@ -7594,10 +7445,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 8,
-        "glow": 16
+        "tusk": 8
        },
-       "sha256": "98629bf869b042141595f0a13f33560f092318bd364bc1fb0e917cea013b83d8",
+       "sha256": "9baea3f7621514c6c938b85cf814c3cd8b430efab745b227b36e0502fda3eadf",
        "sheet": "sheets/stagger_W.png",
        "region": [
         0,
@@ -7611,7 +7461,7 @@
        "file": "stagger_W_01.png",
        "packed_bounds": [
         49,
-        104,
+        105,
         101,
         136
        ],
@@ -7643,10 +7493,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 7,
-        "glow": 14
+        "tusk": 7
        },
-       "sha256": "0476404b6a843b205f95b7b40500b831a24ae28dc58ac952a50b2c38d6eba682",
+       "sha256": "e79d96f10480dfde61478f033a1c8dc23baf8719a8126faa35dd08e3c7ba34b5",
        "sheet": "sheets/stagger_W.png",
        "region": [
         160,
@@ -7660,7 +7509,7 @@
        "file": "stagger_W_02.png",
        "packed_bounds": [
         49,
-        104,
+        105,
         101,
         136
        ],
@@ -7692,10 +7541,9 @@
        },
        "equipment": {
         "shard": 32,
-        "tusk": 8,
-        "glow": 14
+        "tusk": 8
        },
-       "sha256": "554227cf30b91d74621caa0c0bfa1018ec8984d23438cb31f518a3277df40afd",
+       "sha256": "2e0199afa029cff65ec249b7f8d0dbdc07333cf84dcf8017a4a5cc348d2f33b1",
        "sheet": "sheets/stagger_W.png",
        "region": [
         320,
@@ -7709,7 +7557,7 @@
        "file": "stagger_W_03.png",
        "packed_bounds": [
         49,
-        104,
+        105,
         101,
         136
        ],
@@ -7741,10 +7589,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 7,
-        "glow": 14
+        "tusk": 7
        },
-       "sha256": "459b8e126d8edd174d2ad4a122cf9347bc75f9bf8683d5dc534ecfb84393d3af",
+       "sha256": "e1302cc5ca9b16b4516b1cf322091bf9f037bfb5e8a6275026fc5209a8faf1b9",
        "sheet": "sheets/stagger_W.png",
        "region": [
         480,
@@ -7758,7 +7605,7 @@
        "file": "stagger_W_04.png",
        "packed_bounds": [
         49,
-        104,
+        105,
         101,
         136
        ],
@@ -7790,10 +7637,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 7,
-        "glow": 13
+        "tusk": 7
        },
-       "sha256": "874c6c6aecd98cf033d947b6f13e61b60c7f6543b9460303a88f34d49e976e40",
+       "sha256": "f6bd40c3de0f4da1f9a50c35893bb6b33037180800f7e91c078e95ec2c85894a",
        "sheet": "sheets/stagger_W.png",
        "region": [
         640,
@@ -7807,7 +7653,7 @@
        "file": "stagger_W_05.png",
        "packed_bounds": [
         49,
-        104,
+        105,
         101,
         136
        ],
@@ -7839,10 +7685,9 @@
        },
        "equipment": {
         "shard": 33,
-        "tusk": 7,
-        "glow": 14
+        "tusk": 7
        },
-       "sha256": "1de796f918f6d36aeffa9bf3dc1a10c35874af03e0e9dd8700d533d924cf428b",
+       "sha256": "67cb22bc914aa2c40329d73e0cb1290415215435c5fc90db2a07c4a817ad6688",
        "sheet": "sheets/stagger_W.png",
        "region": [
         800,
@@ -7856,7 +7701,7 @@
        "file": "stagger_W_06.png",
        "packed_bounds": [
         49,
-        102,
+        104,
         101,
         136
        ],
@@ -7888,10 +7733,9 @@
        },
        "equipment": {
         "shard": 32,
-        "tusk": 7,
-        "glow": 13
+        "tusk": 7
        },
-       "sha256": "8638de6b33b69ab92ff9174bc187973a79b0d3dae96cf823680b0d01cde9beac",
+       "sha256": "8e8f437a7ef72b2f1b43a984e729fe61f7b24ec5fa969d4e0686b36490950dca",
        "sheet": "sheets/stagger_W.png",
        "region": [
         960,
@@ -7934,8 +7778,8 @@
        "path": "res://assets/animated/boarlet/freed_S_00.png",
        "file": "freed_S_00.png",
        "packed_bounds": [
-        69,
-        99,
+        70,
+        101,
         90,
         139
        ],
@@ -7967,10 +7811,9 @@
        },
        "equipment": {
         "tusk": 10,
-        "shard": 35,
-        "glow": 15
+        "shard": 34
        },
-       "sha256": "f889a15875784fbda5064e322b1be6bebd303f517c6c56c4e0968ffa490c75f8",
+       "sha256": "af6269078ea0fdfbad490c8d13de430955f7ff982a0adf9aeeefd1a4ea387816",
        "sheet": "sheets/freed_S.png",
        "region": [
         0,
@@ -7983,8 +7826,8 @@
        "path": "res://assets/animated/boarlet/freed_S_01.png",
        "file": "freed_S_01.png",
        "packed_bounds": [
-        69,
-        88,
+        70,
+        89,
         90,
         139
        ],
@@ -8016,10 +7859,9 @@
        },
        "equipment": {
         "tusk": 8,
-        "shard": 41,
-        "glow": 11
+        "shard": 41
        },
-       "sha256": "2e500ce51d549fede506fa9b60843e283bcaf192db275e03a92336346df66752",
+       "sha256": "5a514927f24b7b7a74a7253940eb7b44cd4e422a253c41d62fcdc34f0b790939",
        "sheet": "sheets/freed_S.png",
        "region": [
         160,
@@ -8032,8 +7874,8 @@
        "path": "res://assets/animated/boarlet/freed_S_02.png",
        "file": "freed_S_02.png",
        "packed_bounds": [
-        69,
-        81,
+        70,
+        84,
         90,
         139
        ],
@@ -8065,10 +7907,9 @@
        },
        "equipment": {
         "tusk": 6,
-        "shard": 37,
-        "glow": 11
+        "shard": 37
        },
-       "sha256": "20232aa626d6a769288ca8d03ffc780d945d2a858ac7d09de7569af2082ea9c3",
+       "sha256": "024d23e5550794a4973d82ee6217d25820bbc8206884ef0647657bea598664e5",
        "sheet": "sheets/freed_S.png",
        "region": [
         320,
@@ -8114,9 +7955,9 @@
        },
        "equipment": {
         "tusk": 8,
-        "shard": 38
+        "shard": 36
        },
-       "sha256": "4eaab506e0509109a5ecbcbd173abacc82dfd1df51ee380ba9fad2f05336c9db",
+       "sha256": "e6de9a2d136702c9583ec590279de74cef5fdd4cb51a297b679951dca56885e6",
        "sheet": "sheets/freed_S.png",
        "region": [
         480,
@@ -8130,7 +7971,7 @@
        "file": "freed_S_04.png",
        "packed_bounds": [
         72,
-        107,
+        108,
         92,
         139
        ],
@@ -8159,7 +8000,7 @@
        "equipment": {
         "tusk": 8
        },
-       "sha256": "daa28fdbf6023de8c00d24f9d2b2f4341818f83e1d6e2fa8a59c4edd86d611ef",
+       "sha256": "c7c2ba096bd0afdb3cbfe1c27c42954f987f854e7ce0aba15803b129f0f29278",
        "sheet": "sheets/freed_S.png",
        "region": [
         640,
@@ -8173,7 +8014,7 @@
        "file": "freed_S_05.png",
        "packed_bounds": [
         68,
-        107,
+        108,
         88,
         139
        ],
@@ -8202,7 +8043,7 @@
        "equipment": {
         "tusk": 8
        },
-       "sha256": "dd34015f88cf42a4c00924aa36ab1b662d1bf0b4e298406678f1f76ca3260b34",
+       "sha256": "3ecbf4a4950f321ce83032794a36c5982b8f52e6846ddd78786c30cbf83bfd31",
        "sheet": "sheets/freed_S.png",
        "region": [
         800,
@@ -8216,7 +8057,7 @@
        "file": "freed_S_06.png",
        "packed_bounds": [
         72,
-        107,
+        108,
         91,
         139
        ],
@@ -8245,7 +8086,7 @@
        "equipment": {
         "tusk": 6
        },
-       "sha256": "d2979fc8908777c5bf1526c2eabee10740ae222b015ebd6ea967048c5df0c475",
+       "sha256": "1b6038ba3a63729700034543415b6cc7e01937441dafd828974667e4da5b65d2",
        "sheet": "sheets/freed_S.png",
        "region": [
         960,
@@ -8259,7 +8100,7 @@
        "file": "freed_S_07.png",
        "packed_bounds": [
         69,
-        107,
+        108,
         89,
         139
        ],
@@ -8288,7 +8129,7 @@
        "equipment": {
         "tusk": 10
        },
-       "sha256": "e910cfb45a674195cc8a160f1a96b5933e796315c352dc8a191b6ff17226476f",
+       "sha256": "1156ed325c72278f6f48c1130031a2134768310825e1c388f9b0cdaaaa493757",
        "sheet": "sheets/freed_S.png",
        "region": [
         1120,
@@ -8302,7 +8143,7 @@
        "file": "freed_S_08.png",
        "packed_bounds": [
         70,
-        109,
+        111,
         90,
         139
        ],
@@ -8331,7 +8172,7 @@
        "equipment": {
         "tusk": 8
        },
-       "sha256": "21c6a75dc1f130e69baabe0608512e9bf9408b8d029f079c526549fe5e5fe05c",
+       "sha256": "0205757bc13a04a62215932ef68e0732605d644ba34efc0329f9d6d0ef39e154",
        "sheet": "sheets/freed_S.png",
        "region": [
         1280,
@@ -8345,7 +8186,7 @@
        "file": "freed_S_09.png",
        "packed_bounds": [
         70,
-        109,
+        111,
         90,
         139
        ],
@@ -8374,7 +8215,7 @@
        "equipment": {
         "tusk": 10
        },
-       "sha256": "2c0afbc97167b9cde474655fcc8a87c6dfbe506afbcd79c3522cfd69f0881178",
+       "sha256": "56fbf0af59d994e9c4554a56348e7eb333ec54034666f18ce09ef892c644f7c8",
        "sheet": "sheets/freed_S.png",
        "region": [
         1440,
@@ -8388,7 +8229,7 @@
        "file": "freed_S_10.png",
        "packed_bounds": [
         70,
-        109,
+        111,
         90,
         139
        ],
@@ -8417,7 +8258,7 @@
        "equipment": {
         "tusk": 10
        },
-       "sha256": "8d25a3ad99662ddc16355da9e9126e33d7e3309b5499de9a6ae59ecab0f99248",
+       "sha256": "a7fd213a027e8c6f8484882022dc413546f46d523489283c2a6ce4bb7bacb979",
        "sheet": "sheets/freed_S.png",
        "region": [
         1600,
@@ -8431,7 +8272,7 @@
        "file": "freed_S_11.png",
        "packed_bounds": [
         70,
-        108,
+        109,
         90,
         139
        ],
@@ -8460,7 +8301,7 @@
        "equipment": {
         "tusk": 10
        },
-       "sha256": "fd43e715e44eb453689de565613ebdc63f83c832fd0a446bbd50765bbf4cfa05",
+       "sha256": "80a03bd42ca039626fc59cca4f78a53a14ce7ced6e8242f1060e7a06b954a9ca",
        "sheet": "sheets/freed_S.png",
        "region": [
         1760,
@@ -8474,7 +8315,7 @@
        "file": "freed_S_12.png",
        "packed_bounds": [
         70,
-        107,
+        108,
         90,
         139
        ],
@@ -8503,7 +8344,7 @@
        "equipment": {
         "tusk": 10
        },
-       "sha256": "3561a081f0008245ce302954df9f2e2cc0361aaa19aaa32b080cd701704aba21",
+       "sha256": "8659d4f4f206202a5c4c5147d3d6a9bad11f516325d44119ac53ef35a709802e",
        "sheet": "sheets/freed_S.png",
        "region": [
         1920,
@@ -8521,8 +8362,8 @@
        "file": "freed_N_00.png",
        "packed_bounds": [
         70,
-        97,
-        91,
+        99,
+        90,
         138
        ],
        "anchors": {
@@ -8553,10 +8394,9 @@
        },
        "equipment": {
         "tusk": 0,
-        "shard": 32,
-        "glow": 10
+        "shard": 32
        },
-       "sha256": "dd1e8e7c1169e7e2b37c51ab4f7b9be9c0379c6fcc508441d2876e4ff1b62efe",
+       "sha256": "bd189a1006b6049dda44b077a7a2ab5d07d4a36621e47c0d3054523f6f8c08ac",
        "sheet": "sheets/freed_N.png",
        "region": [
         0,
@@ -8570,8 +8410,8 @@
        "file": "freed_N_01.png",
        "packed_bounds": [
         70,
-        88,
-        95,
+        90,
+        93,
         138
        ],
        "anchors": {
@@ -8602,10 +8442,9 @@
        },
        "equipment": {
         "tusk": 0,
-        "shard": 33,
-        "glow": 11
+        "shard": 33
        },
-       "sha256": "99fa375cec6f9e39407fecc93e54195badf0cc67832aae8070ed78b68d1bc189",
+       "sha256": "f06c0025733bee62cf62fd0346e64463f9c9b1a5b068d31ab47f39dc95c452c1",
        "sheet": "sheets/freed_N.png",
        "region": [
         160,
@@ -8619,8 +8458,8 @@
        "file": "freed_N_02.png",
        "packed_bounds": [
         70,
-        83,
-        98,
+        85,
+        96,
         138
        ],
        "anchors": {
@@ -8651,10 +8490,9 @@
        },
        "equipment": {
         "tusk": 0,
-        "shard": 32,
-        "glow": 14
+        "shard": 31
        },
-       "sha256": "0970e864ae47c726f40a5821f56a09c96a6047ba5d61465f074a42182505075d",
+       "sha256": "de3fc9f8a7f5bc5bf19a7ec2afa087140f3645f3662ec5f83ac83f2ad41cc3ea",
        "sheet": "sheets/freed_N.png",
        "region": [
         320,
@@ -8702,7 +8540,7 @@
         "tusk": 0,
         "shard": 33
        },
-       "sha256": "8ddee18db9c4e427d5e0ba9fd9790680c5018f4e079685b87eef2e05b7a871d4",
+       "sha256": "3756ac0e802e80382a671db6c002de56a36268b14d22de4fb5eb1f3038c0b0ab",
        "sheet": "sheets/freed_N.png",
        "region": [
         480,
@@ -8745,7 +8583,7 @@
        "equipment": {
         "tusk": 0
        },
-       "sha256": "54f54c0811907b78439f21f9be4efaa8b36946d6471a3c8a592f217542bfcfcc",
+       "sha256": "bd9bd70c1de4fdfe5b379714453d4395810aa7b824110d59445a89f9cb741706",
        "sheet": "sheets/freed_N.png",
        "region": [
         640,
@@ -8788,7 +8626,7 @@
        "equipment": {
         "tusk": 0
        },
-       "sha256": "86289452d5ea98015b251fb93bc73181cd100560391b7d6b8398f1dd6cf33250",
+       "sha256": "652127b54a9fb42a1a110157a77f5f9b3d2c6699b924ceb439410b2585cd0d50",
        "sheet": "sheets/freed_N.png",
        "region": [
         800,
@@ -8831,7 +8669,7 @@
        "equipment": {
         "tusk": 0
        },
-       "sha256": "9bdacf6efa9f20199b9de5737f948e5a1f7967238d73e49a8dabd1ec18758ba7",
+       "sha256": "e59c811a7f47e4e6f90fe5c8bba78042ed850fee6c7450a77882abd9a97b876c",
        "sheet": "sheets/freed_N.png",
        "region": [
         960,
@@ -8874,7 +8712,7 @@
        "equipment": {
         "tusk": 0
        },
-       "sha256": "387a238b0ca3170473445d55d4d1364918f545f7ed0b6ea11df82fc219524d8b",
+       "sha256": "13c4c659279353004d01b5ab27192859b4fc7d810ef8925744fb27f719f36f1e",
        "sheet": "sheets/freed_N.png",
        "region": [
         1120,
@@ -8917,7 +8755,7 @@
        "equipment": {
         "tusk": 0
        },
-       "sha256": "37ec65525e93ec259707a59bafe3226ac9a6cc732413fa19840e1df0af9a9e6f",
+       "sha256": "6584bfdad7b0294dfee992448e92561d1464171bf7849a68cd83889a813412ec",
        "sheet": "sheets/freed_N.png",
        "region": [
         1280,
@@ -8960,7 +8798,7 @@
        "equipment": {
         "tusk": 0
        },
-       "sha256": "10623311ed97101d9ac1000109530a7d87b9a5267a98d5b804b065f92e222c88",
+       "sha256": "9fb09d4a2e80939db94a677ff9c5f08c1449a5ffb3495d9381ecdc22d93f42da",
        "sheet": "sheets/freed_N.png",
        "region": [
         1440,
@@ -9003,7 +8841,7 @@
        "equipment": {
         "tusk": 0
        },
-       "sha256": "10623311ed97101d9ac1000109530a7d87b9a5267a98d5b804b065f92e222c88",
+       "sha256": "9fb09d4a2e80939db94a677ff9c5f08c1449a5ffb3495d9381ecdc22d93f42da",
        "sheet": "sheets/freed_N.png",
        "region": [
         1600,
@@ -9046,7 +8884,7 @@
        "equipment": {
         "tusk": 0
        },
-       "sha256": "7fd6b0c81ea5bbea519a264e2764af2b4285807ceae662e0e1a90b2972d29ab8",
+       "sha256": "0e2311b787cbeec55720a725465a3303f9d057a5b2e579fe60987fd8fc1938d2",
        "sheet": "sheets/freed_N.png",
        "region": [
         1760,
@@ -9089,7 +8927,7 @@
        "equipment": {
         "tusk": 0
        },
-       "sha256": "e7f4a8d94908af0c6ea515871ee763222f01ab5c851190a1512723a55027fe42",
+       "sha256": "0a419878930fcae04583d4c85dfc1ff08bb918d5c5e1bad00a95dad4907b79c0",
        "sheet": "sheets/freed_N.png",
        "region": [
         1920,
@@ -9107,7 +8945,7 @@
        "file": "freed_E_00.png",
        "packed_bounds": [
         59,
-        98,
+        100,
         110,
         136
        ],
@@ -9139,10 +8977,9 @@
        },
        "equipment": {
         "tusk": 7,
-        "shard": 33,
-        "glow": 12
+        "shard": 33
        },
-       "sha256": "e2b40326b79fdaf3c07f7484f99b79484418ec9edfb9fa35a621afb885d320cb",
+       "sha256": "507a1410c37cc41d6baaad481956640ed9ca35878958188d62e77690b120f804",
        "sheet": "sheets/freed_E.png",
        "region": [
         0,
@@ -9156,7 +8993,7 @@
        "file": "freed_E_01.png",
        "packed_bounds": [
         59,
-        87,
+        89,
         110,
         136
        ],
@@ -9188,10 +9025,9 @@
        },
        "equipment": {
         "tusk": 7,
-        "shard": 35,
-        "glow": 15
+        "shard": 34
        },
-       "sha256": "a278019389b77265c1ad5b28af8cb388b79a8ca17c9f3fcb87fd03c8461672b4",
+       "sha256": "ecaa9480b160619fb50148396fce129e0b6cb8b2bc398e169c276bdf013ec833",
        "sheet": "sheets/freed_E.png",
        "region": [
         160,
@@ -9205,7 +9041,7 @@
        "file": "freed_E_02.png",
        "packed_bounds": [
         59,
-        81,
+        84,
         110,
         136
        ],
@@ -9237,10 +9073,9 @@
        },
        "equipment": {
         "tusk": 7,
-        "shard": 32,
-        "glow": 13
+        "shard": 32
        },
-       "sha256": "438169cab72658b93ea72c8769faf8e29b4d412437719e7b1c509b6a37dbb96f",
+       "sha256": "2617b53b432746a950521def551b1d5067b63cbbdf9ec039d4b456dd1f3f2ac0",
        "sheet": "sheets/freed_E.png",
        "region": [
         320,
@@ -9288,7 +9123,7 @@
         "tusk": 7,
         "shard": 36
        },
-       "sha256": "90e617400a88d06c5a5fecfbcd98798f40bbc8b12e3117bdf0471c5cc3b70d63",
+       "sha256": "cfba432616886354d723e830cb8f5b794c0ead314af7b54cee8ed2792766b17e",
        "sheet": "sheets/freed_E.png",
        "region": [
         480,
@@ -9302,7 +9137,7 @@
        "file": "freed_E_04.png",
        "packed_bounds": [
         59,
-        104,
+        106,
         111,
         136
        ],
@@ -9331,7 +9166,7 @@
        "equipment": {
         "tusk": 7
        },
-       "sha256": "36da025ea417b2776a8fb973de4e9b94d48d2fd95e2c6f6054b8c84ea09f6aa9",
+       "sha256": "5410673c3931ac4312f9d55fc27087b6aa348467e749b9e8d69dd62000289523",
        "sheet": "sheets/freed_E.png",
        "region": [
         640,
@@ -9345,7 +9180,7 @@
        "file": "freed_E_05.png",
        "packed_bounds": [
         59,
-        104,
+        106,
         111,
         136
        ],
@@ -9374,7 +9209,7 @@
        "equipment": {
         "tusk": 8
        },
-       "sha256": "75324ceb04a9f6295e39735799197f1ca12c5e2a1dc2670a58cdc05d39d3a71d",
+       "sha256": "5033a90368f420d393320907b17a079916d1ce33f65d8a15486491a9786e0663",
        "sheet": "sheets/freed_E.png",
        "region": [
         800,
@@ -9388,7 +9223,7 @@
        "file": "freed_E_06.png",
        "packed_bounds": [
         59,
-        104,
+        106,
         111,
         136
        ],
@@ -9417,7 +9252,7 @@
        "equipment": {
         "tusk": 7
        },
-       "sha256": "3e207c43c12aa69251f49de12ab6d4621a7550fdf94c150634b9e06afbbbc0ec",
+       "sha256": "f5e26f1467e277858772e30d80353ddb94eca31874dd41a029b5c83c837e23cc",
        "sheet": "sheets/freed_E.png",
        "region": [
         960,
@@ -9431,7 +9266,7 @@
        "file": "freed_E_07.png",
        "packed_bounds": [
         59,
-        104,
+        106,
         111,
         136
        ],
@@ -9460,7 +9295,7 @@
        "equipment": {
         "tusk": 9
        },
-       "sha256": "ec7f19fdb0bcee8b876bb9729815221fdc641a0209e32f4e560fbe921eeb684c",
+       "sha256": "46e33bc50ad9471f10c2c7aabe33eb82745496070fb1ef108c6edc3d35a7629e",
        "sheet": "sheets/freed_E.png",
        "region": [
         1120,
@@ -9474,7 +9309,7 @@
        "file": "freed_E_08.png",
        "packed_bounds": [
         59,
-        104,
+        106,
         111,
         136
        ],
@@ -9503,7 +9338,7 @@
        "equipment": {
         "tusk": 7
        },
-       "sha256": "17abe77674f49c0aeebf2e6b73c1eabd2a79ff29833c82d6cebd12d730b048f6",
+       "sha256": "0b4cde2324a765a8939c6f3c7886cd746020ed18b170a7ab133f29a876b23abf",
        "sheet": "sheets/freed_E.png",
        "region": [
         1280,
@@ -9517,7 +9352,7 @@
        "file": "freed_E_09.png",
        "packed_bounds": [
         59,
-        104,
+        106,
         111,
         136
        ],
@@ -9546,7 +9381,7 @@
        "equipment": {
         "tusk": 7
        },
-       "sha256": "5e8ec3434d0703e0dde274dd181a5c8fbe31d35d9fb757cd1cea7b463469df20",
+       "sha256": "07887c6bf7f571bc0302cc3d78c6e6b7a8dad84e25a2ba778ab568cd67de4d4c",
        "sheet": "sheets/freed_E.png",
        "region": [
         1440,
@@ -9560,7 +9395,7 @@
        "file": "freed_E_10.png",
        "packed_bounds": [
         59,
-        104,
+        106,
         111,
         136
        ],
@@ -9589,7 +9424,7 @@
        "equipment": {
         "tusk": 7
        },
-       "sha256": "be099395cdf4058d762a971ef5468d9146b5c28ffbec84c1ecedb6b5be0fc4a9",
+       "sha256": "490d7196c308b4a3b015a98d75079757a876f00019bf83ecee25317a87b78dab",
        "sheet": "sheets/freed_E.png",
        "region": [
         1600,
@@ -9603,7 +9438,7 @@
        "file": "freed_E_11.png",
        "packed_bounds": [
         59,
-        104,
+        106,
         111,
         136
        ],
@@ -9632,7 +9467,7 @@
        "equipment": {
         "tusk": 7
        },
-       "sha256": "8c7dff955d49ba7c81d1ba4375e70e4646d17970e5453155395d728f4da74c88",
+       "sha256": "2127ad2a624594c03be9621dccc534ff4d977511aa09137d095aa9bf296e9b59",
        "sheet": "sheets/freed_E.png",
        "region": [
         1760,
@@ -9646,7 +9481,7 @@
        "file": "freed_E_12.png",
        "packed_bounds": [
         59,
-        104,
+        106,
         111,
         136
        ],
@@ -9675,7 +9510,7 @@
        "equipment": {
         "tusk": 7
        },
-       "sha256": "e6536b2c57c7983dc18be27196e86dba6bbd0952bc63fcc6f752d47fa8009d8c",
+       "sha256": "8de81b66f7f772201dfb466dd09805bbb0db0278b7ad0795bb07063f7422381d",
        "sheet": "sheets/freed_E.png",
        "region": [
         1920,
@@ -9693,7 +9528,7 @@
        "file": "freed_W_00.png",
        "packed_bounds": [
         50,
-        98,
+        100,
         101,
         136
        ],
@@ -9725,10 +9560,9 @@
        },
        "equipment": {
         "tusk": 7,
-        "shard": 33,
-        "glow": 15
+        "shard": 33
        },
-       "sha256": "7c91713d85d227b19629b3f659a6bffc0206c75af278f8b975bdb1fc147da4ae",
+       "sha256": "96b8cb2e834d81855f11a9468995e7b6d4e56869c2cacf2eb46d863d47fc0642",
        "sheet": "sheets/freed_W.png",
        "region": [
         0,
@@ -9742,7 +9576,7 @@
        "file": "freed_W_01.png",
        "packed_bounds": [
         50,
-        87,
+        89,
         101,
         136
        ],
@@ -9774,10 +9608,9 @@
        },
        "equipment": {
         "tusk": 7,
-        "shard": 34,
-        "glow": 12
+        "shard": 34
        },
-       "sha256": "b8d2faa40a2d63006408503747583e4f9fc1957743f33c268b1cf373e6b53c3b",
+       "sha256": "e6aa7a66554159d9d11d29ba83408cb33046bc25160ace15bd62f04fa5a305be",
        "sheet": "sheets/freed_W.png",
        "region": [
         160,
@@ -9791,7 +9624,7 @@
        "file": "freed_W_02.png",
        "packed_bounds": [
         50,
-        81,
+        84,
         101,
         136
        ],
@@ -9823,10 +9656,9 @@
        },
        "equipment": {
         "tusk": 7,
-        "shard": 35,
-        "glow": 14
+        "shard": 35
        },
-       "sha256": "af5d5cda32c8ae99ff4f440416b8351b210c574db67bb9a2476554de0d97e796",
+       "sha256": "c6c12aa5385a7a7a3290fc039d4294ace4a9f379a40c02875104ec21a067329a",
        "sheet": "sheets/freed_W.png",
        "region": [
         320,
@@ -9872,9 +9704,9 @@
        },
        "equipment": {
         "tusk": 7,
-        "shard": 33
+        "shard": 31
        },
-       "sha256": "793d29ded66fc7039a77130923a60d1825b6acc9c836e554624b8f11ba6bb8e1",
+       "sha256": "48126a5d05c7b60675cfc11bb6ba7ae22df8e26cfa74c4561356dc177761dc4a",
        "sheet": "sheets/freed_W.png",
        "region": [
         480,
@@ -9888,7 +9720,7 @@
        "file": "freed_W_04.png",
        "packed_bounds": [
         49,
-        104,
+        106,
         101,
         136
        ],
@@ -9917,7 +9749,7 @@
        "equipment": {
         "tusk": 8
        },
-       "sha256": "8b16c07e295602e1102f9242db7ce7f46c181e051cedbaa1cecdb7ae652cfb89",
+       "sha256": "2ef8bf6910fb1694bf743dadb410ee399ee933f29440c88a9170e646b5dd7fd3",
        "sheet": "sheets/freed_W.png",
        "region": [
         640,
@@ -9931,7 +9763,7 @@
        "file": "freed_W_05.png",
        "packed_bounds": [
         49,
-        104,
+        106,
         101,
         136
        ],
@@ -9960,7 +9792,7 @@
        "equipment": {
         "tusk": 7
        },
-       "sha256": "ebdf92b8fbb03b8ab5a42c289cf23d4fd65e2db79b33d67bcce01843fe832a91",
+       "sha256": "99fbafc32f210db2c5772dae75e30d3685b45c0b777a1776736af3123e71a7ca",
        "sheet": "sheets/freed_W.png",
        "region": [
         800,
@@ -9974,7 +9806,7 @@
        "file": "freed_W_06.png",
        "packed_bounds": [
         49,
-        104,
+        106,
         101,
         136
        ],
@@ -10003,7 +9835,7 @@
        "equipment": {
         "tusk": 8
        },
-       "sha256": "c3e0830f93a019c83d4b4779b9e389914992d59031de61c23fc9ab511d07d0ca",
+       "sha256": "6a09b328862590c15f66c82499fc5c26019cd31b352504fe541c925fa672fee3",
        "sheet": "sheets/freed_W.png",
        "region": [
         960,
@@ -10017,7 +9849,7 @@
        "file": "freed_W_07.png",
        "packed_bounds": [
         49,
-        104,
+        106,
         101,
         136
        ],
@@ -10046,7 +9878,7 @@
        "equipment": {
         "tusk": 6
        },
-       "sha256": "61f8135107839fcfe719a9b1877c7a7fd9ed1ec44d4e9196790bd4deb01dc650",
+       "sha256": "18579080183161efbc2070b4dae89512401a4062439907d03b6171673dfba955",
        "sheet": "sheets/freed_W.png",
        "region": [
         1120,
@@ -10060,7 +9892,7 @@
        "file": "freed_W_08.png",
        "packed_bounds": [
         49,
-        104,
+        106,
         101,
         136
        ],
@@ -10089,7 +9921,7 @@
        "equipment": {
         "tusk": 7
        },
-       "sha256": "1ca56535dda1f9b684c2761401d3b95e1b785b4ed4abbaa56882ef4f7beef7b8",
+       "sha256": "649c399a7cb96f390bdca529d24ad32d3f5d757e011f090ef2620f6182820a5d",
        "sheet": "sheets/freed_W.png",
        "region": [
         1280,
@@ -10103,7 +9935,7 @@
        "file": "freed_W_09.png",
        "packed_bounds": [
         49,
-        104,
+        106,
         101,
         136
        ],
@@ -10132,7 +9964,7 @@
        "equipment": {
         "tusk": 7
        },
-       "sha256": "10f9bf41e1965a1b8e55a261bf8d9ab29ede7f6545f6d74055342678f5535011",
+       "sha256": "e1f68dc586b552da24b5234ce5f5a304cdcbebf98ebbbad35b2abbc02ea85bad",
        "sheet": "sheets/freed_W.png",
        "region": [
         1440,
@@ -10146,7 +9978,7 @@
        "file": "freed_W_10.png",
        "packed_bounds": [
         49,
-        104,
+        106,
         101,
         136
        ],
@@ -10175,7 +10007,7 @@
        "equipment": {
         "tusk": 7
        },
-       "sha256": "32d9d63daae83d62211550cc42b3e81ce8c4fff9676f7d8080f0df1792781cfa",
+       "sha256": "20c456c7f7552ede4dbfd11fcd35f08818be91c2cd1f549c79ea2211c5b81bbf",
        "sheet": "sheets/freed_W.png",
        "region": [
         1600,
@@ -10189,7 +10021,7 @@
        "file": "freed_W_11.png",
        "packed_bounds": [
         49,
-        104,
+        106,
         101,
         136
        ],
@@ -10218,7 +10050,7 @@
        "equipment": {
         "tusk": 7
        },
-       "sha256": "3fd3e961979e681ea84a858d13d584f32080dd39b5d43e1d154c351dd6bacf12",
+       "sha256": "8ce271736942c3b802cd7a054f7c9e77db7ce81c6d57b75ade7b3c796cb1c158",
        "sheet": "sheets/freed_W.png",
        "region": [
         1760,
@@ -10232,7 +10064,7 @@
        "file": "freed_W_12.png",
        "packed_bounds": [
         49,
-        104,
+        106,
         101,
         136
        ],
@@ -10261,7 +10093,7 @@
        "equipment": {
         "tusk": 7
        },
-       "sha256": "4c78909a03ca4cd1471a7c47462d38637651ad407be9f9822f95f56eedaf92f0",
+       "sha256": "340ec76f3d1cf795c62f9c5d0e90c310eb3b3cf91af68fbe32974ab3b548d0c1",
        "sheet": "sheets/freed_W.png",
        "region": [
         1920,
@@ -10300,7 +10132,7 @@
        "file": "freed_move_S_00.png",
        "packed_bounds": [
         70,
-        107,
+        108,
         90,
         140
        ],
@@ -10329,7 +10161,7 @@
        "equipment": {
         "tusk": 10
        },
-       "sha256": "4b34487721bc9a2462bbd26f18b9b7f38de53a4747ec83ddacbf903bc81b417f",
+       "sha256": "967b2ab1c7ef5245f41d066f20392dea0c6752adbaef70693ff64a08f0a9a7e5",
        "sheet": "sheets/freed_move_S.png",
        "region": [
         0,
@@ -10343,7 +10175,7 @@
        "file": "freed_move_S_01.png",
        "packed_bounds": [
         70,
-        107,
+        108,
         90,
         139
        ],
@@ -10372,7 +10204,7 @@
        "equipment": {
         "tusk": 8
        },
-       "sha256": "441f669b0b70a1386fd04500e4c18bff4d3cb347241e1d0ae0c65090618b7512",
+       "sha256": "16f0a386fe74eb2f17e65d2b5071706b27ae5f401f856689e71a6d27ee91cda3",
        "sheet": "sheets/freed_move_S.png",
        "region": [
         160,
@@ -10386,7 +10218,7 @@
        "file": "freed_move_S_02.png",
        "packed_bounds": [
         70,
-        107,
+        109,
         90,
         138
        ],
@@ -10415,7 +10247,7 @@
        "equipment": {
         "tusk": 10
        },
-       "sha256": "f9a34c20f95ea1246ff9cc80f90da9b4b33aac4951f7e7872911179532c2a33f",
+       "sha256": "bea9ac9096805a973679b310efab4ee2ad842b800bf0ea2b6cc279d47eccfd62",
        "sheet": "sheets/freed_move_S.png",
        "region": [
         320,
@@ -10429,7 +10261,7 @@
        "file": "freed_move_S_03.png",
        "packed_bounds": [
         70,
-        107,
+        108,
         90,
         137
        ],
@@ -10458,7 +10290,7 @@
        "equipment": {
         "tusk": 8
        },
-       "sha256": "5879ebaf8ba4c451fe0ff59f3b502b886b6c2cd06efd608598400a1b28e6b153",
+       "sha256": "4b0ffbc0e094e83c0f308ebb3fd746a93d83f3fc0f83271474b6bde538183110",
        "sheet": "sheets/freed_move_S.png",
        "region": [
         480,
@@ -10472,7 +10304,7 @@
        "file": "freed_move_S_04.png",
        "packed_bounds": [
         70,
-        107,
+        108,
         90,
         140
        ],
@@ -10501,7 +10333,7 @@
        "equipment": {
         "tusk": 10
        },
-       "sha256": "8e4a3aa3a7205581132fdce6b4e002d9f32f1ddcb4cea366d081f88cde612c94",
+       "sha256": "d41cf4e7dfade7da4bf2c812ce8cd9ecdca704443163027f61e6517e5de51c97",
        "sheet": "sheets/freed_move_S.png",
        "region": [
         640,
@@ -10515,7 +10347,7 @@
        "file": "freed_move_S_05.png",
        "packed_bounds": [
         70,
-        107,
+        108,
         90,
         139
        ],
@@ -10544,7 +10376,7 @@
        "equipment": {
         "tusk": 8
        },
-       "sha256": "772c6fc94d0609069c13c4e974e2c2eea75f1badc3485f767cf17d79b119b25f",
+       "sha256": "17ded82ad9e9f4fad6d53af79b1caa98affc8d247f34516c4a88b716c28ffb81",
        "sheet": "sheets/freed_move_S.png",
        "region": [
         800,
@@ -10558,7 +10390,7 @@
        "file": "freed_move_S_06.png",
        "packed_bounds": [
         70,
-        107,
+        109,
         90,
         138
        ],
@@ -10587,7 +10419,7 @@
        "equipment": {
         "tusk": 10
        },
-       "sha256": "1c4defce08f4b9015aa33b264f25197ec8252068413706bc49db4e92da17b479",
+       "sha256": "046ebd30a093ef245f3c926071d49329f1681fb16c547c7135023b544cfdd078",
        "sheet": "sheets/freed_move_S.png",
        "region": [
         960,
@@ -10601,7 +10433,7 @@
        "file": "freed_move_S_07.png",
        "packed_bounds": [
         70,
-        107,
+        108,
         90,
         137
        ],
@@ -10630,7 +10462,7 @@
        "equipment": {
         "tusk": 8
        },
-       "sha256": "5879ebaf8ba4c451fe0ff59f3b502b886b6c2cd06efd608598400a1b28e6b153",
+       "sha256": "4b0ffbc0e094e83c0f308ebb3fd746a93d83f3fc0f83271474b6bde538183110",
        "sheet": "sheets/freed_move_S.png",
        "region": [
         1120,
@@ -10677,7 +10509,7 @@
        "equipment": {
         "tusk": 0
        },
-       "sha256": "b272cea738cce48d8156bb9356501ab86d3d3935236dfa69077c8c544645e0f7",
+       "sha256": "7af95c9c81b668b0f81c25b5125fa72a168a548755a0a2e580506e2bd1bf8402",
        "sheet": "sheets/freed_move_N.png",
        "region": [
         0,
@@ -10720,7 +10552,7 @@
        "equipment": {
         "tusk": 0
        },
-       "sha256": "20ea23a9f5920c7221e322585f61c3460bc76e01331e2cc69baa2802b5e48450",
+       "sha256": "7ef1e41bc113a1e0aef300881a0f35f20b31ee0408f5823f44ddc25fa933ff03",
        "sheet": "sheets/freed_move_N.png",
        "region": [
         160,
@@ -10763,7 +10595,7 @@
        "equipment": {
         "tusk": 0
        },
-       "sha256": "bae5e736c6e86645c0247f3a34eaa65f91928d47a7f3e549eb616c0a81ff6e60",
+       "sha256": "15902aa556a38d45a405193a084c17fff76e1402537c01d4ef5eb0e3afe694ca",
        "sheet": "sheets/freed_move_N.png",
        "region": [
         320,
@@ -10806,7 +10638,7 @@
        "equipment": {
         "tusk": 0
        },
-       "sha256": "6d705601d641745f429a3bb5c9ff155354da8a0d402ecc2d525719067a17d846",
+       "sha256": "4fa28c801402a6f333490e21e44961139289a5e1a86229c588b74b77cdd578c6",
        "sheet": "sheets/freed_move_N.png",
        "region": [
         480,
@@ -10849,7 +10681,7 @@
        "equipment": {
         "tusk": 0
        },
-       "sha256": "54c2622a4792ef66266e24ce611a9301ec03ffcaab0c72efe26752647437b26a",
+       "sha256": "f2e112dd64eab2a7166af795dfe24b44dfb384bcb804eb735cd0fbde6ac6085c",
        "sheet": "sheets/freed_move_N.png",
        "region": [
         640,
@@ -10892,7 +10724,7 @@
        "equipment": {
         "tusk": 0
        },
-       "sha256": "20ea23a9f5920c7221e322585f61c3460bc76e01331e2cc69baa2802b5e48450",
+       "sha256": "7ef1e41bc113a1e0aef300881a0f35f20b31ee0408f5823f44ddc25fa933ff03",
        "sheet": "sheets/freed_move_N.png",
        "region": [
         800,
@@ -10935,7 +10767,7 @@
        "equipment": {
         "tusk": 0
        },
-       "sha256": "ca8a98e7247538387740fddd174044a2f1df6f3aa5b18f699b9dfa8774d5399c",
+       "sha256": "ea9a79c6222b171f8d6f900e6fac3ea2a7dbfa325d19483279375f3aa2fc7476",
        "sheet": "sheets/freed_move_N.png",
        "region": [
         960,
@@ -10978,7 +10810,7 @@
        "equipment": {
         "tusk": 0
        },
-       "sha256": "bb0a4d08d981408d123c8e4631044cbb83a3a5a318fe29985b0f2f95d6c42e5d",
+       "sha256": "ff564c47dd820d6bc599d7fb9f0530a3c81708fcb921d75676772ef305d7343c",
        "sheet": "sheets/freed_move_N.png",
        "region": [
         1120,
@@ -10996,7 +10828,7 @@
        "file": "freed_move_E_00.png",
        "packed_bounds": [
         59,
-        104,
+        106,
         111,
         136
        ],
@@ -11025,7 +10857,7 @@
        "equipment": {
         "tusk": 7
        },
-       "sha256": "17ca6905d68d07b7d47530fd20f74b55eccd9849cdf2f305a03e01a863b8c4dd",
+       "sha256": "554d2ffd682112138b1ccbb1f3173501a2c5f9eea3011579b066ab546fec665e",
        "sheet": "sheets/freed_move_E.png",
        "region": [
         0,
@@ -11039,7 +10871,7 @@
        "file": "freed_move_E_01.png",
        "packed_bounds": [
         59,
-        105,
+        107,
         111,
         136
        ],
@@ -11068,7 +10900,7 @@
        "equipment": {
         "tusk": 8
        },
-       "sha256": "024ee71d92b027322660e2f5249c826f3fb9237f7eba673519f0c8bef3f6811b",
+       "sha256": "26e3fc55ff00f46d0f2c6d6212c38ce23a29801bbc9452912bff37f4afcc6d61",
        "sheet": "sheets/freed_move_E.png",
        "region": [
         160,
@@ -11082,7 +10914,7 @@
        "file": "freed_move_E_02.png",
        "packed_bounds": [
         59,
-        105,
+        107,
         111,
         136
        ],
@@ -11111,7 +10943,7 @@
        "equipment": {
         "tusk": 8
        },
-       "sha256": "2bf045c45190501d0c7bf62e50d675743cff2e37e111893d45a57c2bd43b3109",
+       "sha256": "83a850a4fed2abf81799bcf9bd145f2eba12da3ae8ecbf994023bc13f2077f2d",
        "sheet": "sheets/freed_move_E.png",
        "region": [
         320,
@@ -11125,7 +10957,7 @@
        "file": "freed_move_E_03.png",
        "packed_bounds": [
         59,
-        105,
+        107,
         111,
         136
        ],
@@ -11154,7 +10986,7 @@
        "equipment": {
         "tusk": 7
        },
-       "sha256": "c62b53ed0446f26bd054d813f967956341762d3ba0d571e757e88519a4b54968",
+       "sha256": "0aa4542a1b38ca614c8afe9c2e9b92919261a14c9580a14bbb14bd16c2f7e831",
        "sheet": "sheets/freed_move_E.png",
        "region": [
         480,
@@ -11168,7 +11000,7 @@
        "file": "freed_move_E_04.png",
        "packed_bounds": [
         59,
-        104,
+        106,
         111,
         136
        ],
@@ -11197,7 +11029,7 @@
        "equipment": {
         "tusk": 7
        },
-       "sha256": "b0021e84186c159e3c9a1904299c4064536cbee9910f5cde2b50bd729ef5641a",
+       "sha256": "b63fe2fb3e891c986212ff7c6b84cebacb153877204d22e3c3105df8e4e8688a",
        "sheet": "sheets/freed_move_E.png",
        "region": [
         640,
@@ -11211,7 +11043,7 @@
        "file": "freed_move_E_05.png",
        "packed_bounds": [
         59,
-        105,
+        107,
         111,
         136
        ],
@@ -11240,7 +11072,7 @@
        "equipment": {
         "tusk": 8
        },
-       "sha256": "4621ec21cc44e4a979427f809f6a6faa4fcec571e754b091f80f9adae07f0646",
+       "sha256": "106a02b0ef14ccb10ee924c016bafce3a68b13ede675a0f1c36e9ba52341588a",
        "sheet": "sheets/freed_move_E.png",
        "region": [
         800,
@@ -11254,7 +11086,7 @@
        "file": "freed_move_E_06.png",
        "packed_bounds": [
         59,
-        105,
+        107,
         111,
         136
        ],
@@ -11283,7 +11115,7 @@
        "equipment": {
         "tusk": 8
        },
-       "sha256": "ed07674e8805c5021ba3022c486f02909a64c1f0bb8f8d33b054640379425857",
+       "sha256": "d8d04c799983c8692b8f1b467c60bf56670c4a37c2eb257e9084036a080086d3",
        "sheet": "sheets/freed_move_E.png",
        "region": [
         960,
@@ -11297,7 +11129,7 @@
        "file": "freed_move_E_07.png",
        "packed_bounds": [
         59,
-        105,
+        107,
         111,
         136
        ],
@@ -11326,7 +11158,7 @@
        "equipment": {
         "tusk": 7
        },
-       "sha256": "da0aa2b09c7fe3c3b06d961dcaccb32b01a319568f399c2cb463b0faef4412a6",
+       "sha256": "d1aea740d682f50fb7b404527220e112b9ba0d6eb8d346a0cd0996175deb88e8",
        "sheet": "sheets/freed_move_E.png",
        "region": [
         1120,
@@ -11344,7 +11176,7 @@
        "file": "freed_move_W_00.png",
        "packed_bounds": [
         49,
-        104,
+        106,
         101,
         136
        ],
@@ -11373,7 +11205,7 @@
        "equipment": {
         "tusk": 7
        },
-       "sha256": "1bcbef2bb70124f907a11191e4aa6c08ec29514f2b7be67e40a355225d77414f",
+       "sha256": "563af877661c4e09efb150b74ecaad7d6a9c21095502763bed35c404e38d7828",
        "sheet": "sheets/freed_move_W.png",
        "region": [
         0,
@@ -11387,7 +11219,7 @@
        "file": "freed_move_W_01.png",
        "packed_bounds": [
         49,
-        105,
+        107,
         101,
         136
        ],
@@ -11416,7 +11248,7 @@
        "equipment": {
         "tusk": 8
        },
-       "sha256": "ed1d4e944e86f5a6794327632577c4c134bd1a27a6199ba295a49a09b74840e7",
+       "sha256": "bfbfc90d39d9c692e80ad51bfbcf098645bb40ea4aa01eec20f9b04ff6675373",
        "sheet": "sheets/freed_move_W.png",
        "region": [
         160,
@@ -11430,7 +11262,7 @@
        "file": "freed_move_W_02.png",
        "packed_bounds": [
         49,
-        105,
+        107,
         101,
         136
        ],
@@ -11459,7 +11291,7 @@
        "equipment": {
         "tusk": 8
        },
-       "sha256": "24986ffd9dea64cca3b33ece9969e69b9f362881ca57d0f284f5754be5a82504",
+       "sha256": "f8867d25151f0ada00588c4527c7bfe3dfff82f7b833ed72e45d3e3f6d7931a8",
        "sheet": "sheets/freed_move_W.png",
        "region": [
         320,
@@ -11473,7 +11305,7 @@
        "file": "freed_move_W_03.png",
        "packed_bounds": [
         49,
-        105,
+        107,
         101,
         136
        ],
@@ -11502,7 +11334,7 @@
        "equipment": {
         "tusk": 7
        },
-       "sha256": "763a796fd31a57f7b977efd6accd3d224e728c20a78d6cb8000976c66e74b8e8",
+       "sha256": "d4423ee61299817d3642a20c6d155fa8fda74f5a424c9d1d22ebb4e08233c2ef",
        "sheet": "sheets/freed_move_W.png",
        "region": [
         480,
@@ -11516,7 +11348,7 @@
        "file": "freed_move_W_04.png",
        "packed_bounds": [
         49,
-        104,
+        106,
         101,
         136
        ],
@@ -11545,7 +11377,7 @@
        "equipment": {
         "tusk": 7
        },
-       "sha256": "406d0f6cdd3b817e8cdad7d19f9075782df097285564b5b943ad5d3c2c36fdb9",
+       "sha256": "c0b7c81bd83fd327a1becb52224f56035a0985ee7c868767b13428e144933496",
        "sheet": "sheets/freed_move_W.png",
        "region": [
         640,
@@ -11559,7 +11391,7 @@
        "file": "freed_move_W_05.png",
        "packed_bounds": [
         49,
-        105,
+        107,
         101,
         136
        ],
@@ -11588,7 +11420,7 @@
        "equipment": {
         "tusk": 8
        },
-       "sha256": "34cb3803950fd5f82edb34d15d0cb1ce2705a167c3999ec010a2161b5eca48fa",
+       "sha256": "f41202e1f6517190d7d83f6dda31d52a6a058f542a88a61759d524985a26ef5e",
        "sheet": "sheets/freed_move_W.png",
        "region": [
         800,
@@ -11602,7 +11434,7 @@
        "file": "freed_move_W_06.png",
        "packed_bounds": [
         49,
-        105,
+        107,
         101,
         136
        ],
@@ -11631,7 +11463,7 @@
        "equipment": {
         "tusk": 8
        },
-       "sha256": "7c3efc0eb80e0899d1b46e3d264e728b9312b930243547996dd09e1b46ef8ad9",
+       "sha256": "d12acce89c6cd94891bf84cb7eb02a0c6ebbe0f71fe1ecafa01c59fc9e949243",
        "sheet": "sheets/freed_move_W.png",
        "region": [
         960,
@@ -11645,7 +11477,7 @@
        "file": "freed_move_W_07.png",
        "packed_bounds": [
         49,
-        105,
+        107,
         101,
         136
        ],
@@ -11674,7 +11506,7 @@
        "equipment": {
         "tusk": 7
        },
-       "sha256": "c5656f3d3796272953a83afb3e5eaf76b1d0ba9aa497994016d547cff464ede4",
+       "sha256": "ded5f330adfe3695c6bd19d264b44770fde0599759589254adf182a670f62418",
        "sheet": "sheets/freed_move_W.png",
        "region": [
         1120,

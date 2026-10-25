@@ -72,12 +72,11 @@
         ]
        },
        "equipment": {
-        "bramble": 37,
+        "bramble": 44,
         "shard": 33,
-        "sac": 20,
-        "glow": 11
+        "wet": 5
        },
-       "sha256": "0171c594d854fd8e6e2208387660b23e8d5b943f729b0d09590c373593e0cfd1",
+       "sha256": "033d026647accc1fb06de967e4ec3211253d0b129e1dcf8d251ed02dd910c82d",
        "sheet": "sheets/idle_S.png",
        "region": [
         0,
@@ -114,12 +113,11 @@
         ]
        },
        "equipment": {
-        "bramble": 40,
+        "bramble": 45,
         "shard": 34,
-        "sac": 28,
-        "glow": 8
+        "wet": 5
        },
-       "sha256": "3107744f08a4e725970ee63e7f2cfeb920fe9bf24a13b24a1d0f5241d84e4a7d",
+       "sha256": "d880ce11e0c7b24584acaa4720360b23b27deb3aedc655192c2856a065723fbb",
        "sheet": "sheets/idle_S.png",
        "region": [
         160,
@@ -156,12 +154,11 @@
         ]
        },
        "equipment": {
-        "bramble": 41,
+        "bramble": 45,
         "shard": 34,
-        "sac": 30,
-        "glow": 10
+        "wet": 6
        },
-       "sha256": "02e1f59f29172a432a2e7fb05b1abd5e79600979654e85853bef15a2f22337cf",
+       "sha256": "4729f218954c8500c1096624739ce0af9cc5be0af56367dee4234b4815dd8d97",
        "sheet": "sheets/idle_S.png",
        "region": [
         320,
@@ -198,12 +195,11 @@
         ]
        },
        "equipment": {
-        "bramble": 38,
+        "bramble": 45,
         "shard": 34,
-        "sac": 28,
-        "glow": 12
+        "wet": 5
        },
-       "sha256": "5c57a406f7df74ad93d262662067ed17484c4090a56f164b0f0f6bb7f65bc70d",
+       "sha256": "d880ce11e0c7b24584acaa4720360b23b27deb3aedc655192c2856a065723fbb",
        "sheet": "sheets/idle_S.png",
        "region": [
         480,
@@ -240,12 +236,11 @@
         ]
        },
        "equipment": {
-        "bramble": 39,
+        "bramble": 44,
         "shard": 33,
-        "sac": 20,
-        "glow": 7
+        "wet": 5
        },
-       "sha256": "5d7989687a59f1f499da1254f52efd6b1ba76683291a659a130739bdf7d5aec4",
+       "sha256": "033d026647accc1fb06de967e4ec3211253d0b129e1dcf8d251ed02dd910c82d",
        "sheet": "sheets/idle_S.png",
        "region": [
         640,
@@ -259,7 +254,7 @@
        "file": "idle_S_05.png",
        "packed_bounds": [
         66,
-        106,
+        107,
         94,
         139
        ],
@@ -282,11 +277,11 @@
         ]
        },
        "equipment": {
-        "bramble": 39,
+        "bramble": 43,
         "shard": 35,
-        "glow": 9
+        "wet": 5
        },
-       "sha256": "c3740dd02edc121bd65110f85413e1f26a2f1a9129f4f2cc695b6b8c5b93e77c",
+       "sha256": "c186bd60fafac3b0a81f08a8f020dd40871ead7c23b7345da6bb6c67b31e93bd",
        "sheet": "sheets/idle_S.png",
        "region": [
         800,
@@ -323,11 +318,11 @@
         ]
        },
        "equipment": {
-        "bramble": 36,
+        "bramble": 43,
         "shard": 35,
-        "glow": 11
+        "wet": 5
        },
-       "sha256": "fa57e47c7b72f78f238e4bd45ccee39f975969213a5de9845f688f6c7d93f03e",
+       "sha256": "ca77fe2fa8687d919af9023a0485ee88b9c5b10ddc616a687d03f70ac8393d22",
        "sheet": "sheets/idle_S.png",
        "region": [
         960,
@@ -364,11 +359,11 @@
         ]
        },
        "equipment": {
-        "bramble": 37,
+        "bramble": 43,
         "shard": 35,
-        "glow": 9
+        "wet": 5
        },
-       "sha256": "90a883e2f383fbb75a562c625428fe5d4b88d3bbe2b42a3739cbb3bb316e1046",
+       "sha256": "7399e3e33b55c6c046918cdc860542d87ee181968d5e5c47e5a6b3c8acc5f231",
        "sheet": "sheets/idle_S.png",
        "region": [
         1120,
@@ -409,11 +404,10 @@
         ]
        },
        "equipment": {
-        "bramble": 54,
-        "shard": 36,
-        "glow": 14
+        "bramble": 61,
+        "shard": 36
        },
-       "sha256": "26b914376fc5521528fa0a8738138b80ad441bad6f875de68da226dfc2de42e9",
+       "sha256": "e9b7334b3dd2125cbe18d28235dc552b67845a0157c4ab4ee634492fe0c61e2b",
        "sheet": "sheets/idle_N.png",
        "region": [
         0,
@@ -450,11 +444,10 @@
         ]
        },
        "equipment": {
-        "bramble": 59,
-        "shard": 35,
-        "glow": 13
+        "bramble": 65,
+        "shard": 35
        },
-       "sha256": "5e15487aa2ea5f010926cf881ddb90f7de8fce7e2437a2d30a587f0ed523b58d",
+       "sha256": "fb87a1e1c237172a788b33d64effeef4ac9646a15cf5e34fbafe26ce9c28194e",
        "sheet": "sheets/idle_N.png",
        "region": [
         160,
@@ -491,11 +484,10 @@
         ]
        },
        "equipment": {
-        "bramble": 57,
-        "shard": 35,
-        "glow": 14
+        "bramble": 65,
+        "shard": 35
        },
-       "sha256": "f0a1ebea63252649ed04628e8829a604235c0ca80273d8363f6087aaa4d4b09e",
+       "sha256": "5a61c542db8a07bcf3162646496b5b2e5573d2934a16ac04816d2f97e6fd1557",
        "sheet": "sheets/idle_N.png",
        "region": [
         320,
@@ -532,11 +524,10 @@
         ]
        },
        "equipment": {
-        "bramble": 58,
-        "shard": 35,
-        "glow": 14
+        "bramble": 65,
+        "shard": 35
        },
-       "sha256": "18b70d3b4bad5f2570d9520bc9c1f317733b218ecf2bba27bd508bb3b76f6573",
+       "sha256": "fb87a1e1c237172a788b33d64effeef4ac9646a15cf5e34fbafe26ce9c28194e",
        "sheet": "sheets/idle_N.png",
        "region": [
         480,
@@ -573,11 +564,10 @@
         ]
        },
        "equipment": {
-        "bramble": 55,
-        "shard": 36,
-        "glow": 11
+        "bramble": 61,
+        "shard": 36
        },
-       "sha256": "d6ca37ad2bd6a6d479f58fc522ee689842cdee4e6737f776070fa4e0b1b9db96",
+       "sha256": "e9b7334b3dd2125cbe18d28235dc552b67845a0157c4ab4ee634492fe0c61e2b",
        "sheet": "sheets/idle_N.png",
        "region": [
         640,
@@ -614,11 +604,10 @@
         ]
        },
        "equipment": {
-        "bramble": 55,
-        "shard": 32,
-        "glow": 13
+        "bramble": 62,
+        "shard": 32
        },
-       "sha256": "3cd75537de3cb34c723305d63e05b54601227ab56c788b6c8cd7b85527176689",
+       "sha256": "889ed0f76859754f2154ce9701477cc859d588b6bbfd226d4f62bf37f129cfb2",
        "sheet": "sheets/idle_N.png",
        "region": [
         800,
@@ -655,11 +644,10 @@
         ]
        },
        "equipment": {
-        "bramble": 55,
-        "shard": 35,
-        "glow": 15
+        "bramble": 63,
+        "shard": 35
        },
-       "sha256": "7cd244a7db6018b19817a6ceb947d94dd910b234c2898ceeb33a8671f82dde44",
+       "sha256": "01da777a2e321d7f140f13b1e8f8a9c472a11176e04ac1c140704e0a2ae47199",
        "sheet": "sheets/idle_N.png",
        "region": [
         960,
@@ -696,11 +684,10 @@
         ]
        },
        "equipment": {
-        "bramble": 57,
-        "shard": 32,
-        "glow": 10
+        "bramble": 62,
+        "shard": 32
        },
-       "sha256": "80f5a4549b1c754f0db040066f5ee5da85be0f4d8bdebe66047b6627736cf8e7",
+       "sha256": "889ed0f76859754f2154ce9701477cc859d588b6bbfd226d4f62bf37f129cfb2",
        "sheet": "sheets/idle_N.png",
        "region": [
         1120,
@@ -741,12 +728,11 @@
         ]
        },
        "equipment": {
-        "sac": 24,
-        "bramble": 36,
+        "bramble": 41,
         "shard": 40,
-        "glow": 11
+        "wet": 3
        },
-       "sha256": "de1d4907a0c02d6cc3aacbedfc9540df000357693cdbca9449d9236c7a39a8e9",
+       "sha256": "ab4240e98cd65de2c6c423c639d9a038cbb912b178500f92b92a16bdbac81ec7",
        "sheet": "sheets/idle_E.png",
        "region": [
         0,
@@ -783,12 +769,11 @@
         ]
        },
        "equipment": {
-        "sac": 25,
-        "bramble": 35,
+        "bramble": 40,
         "shard": 42,
-        "glow": 15
+        "wet": 2
        },
-       "sha256": "d02e2235674be0037f95380471df52bf28f170568ba7f89a8ef305deb2723cca",
+       "sha256": "0d2f23c9aaeb302f243bcb550e6bad85001343d32a766fb90563bd27edcde31c",
        "sheet": "sheets/idle_E.png",
        "region": [
         160,
@@ -803,7 +788,7 @@
        "packed_bounds": [
         67,
         108,
-        100,
+        99,
         136
        ],
        "anchors": {
@@ -825,12 +810,11 @@
         ]
        },
        "equipment": {
-        "sac": 28,
-        "bramble": 38,
+        "bramble": 43,
         "shard": 38,
-        "glow": 12
+        "wet": 2
        },
-       "sha256": "9d86a6043504aafd1b8535050b041ec4ecdf95ab5ac6e29b82f8fe320f2fbfb1",
+       "sha256": "4aae1722993cdc4c1af8edf657f53ce3cebec8a11cd11374e694ee5d830fe842",
        "sheet": "sheets/idle_E.png",
        "region": [
         320,
@@ -867,12 +851,11 @@
         ]
        },
        "equipment": {
-        "sac": 25,
-        "bramble": 35,
+        "bramble": 40,
         "shard": 42,
-        "glow": 12
+        "wet": 2
        },
-       "sha256": "02438e8b9836d819aa40a09cb28f8e7c710cd3da95758a86144782bba0443f18",
+       "sha256": "0d2f23c9aaeb302f243bcb550e6bad85001343d32a766fb90563bd27edcde31c",
        "sheet": "sheets/idle_E.png",
        "region": [
         480,
@@ -909,12 +892,11 @@
         ]
        },
        "equipment": {
-        "sac": 24,
-        "bramble": 36,
+        "bramble": 41,
         "shard": 40,
-        "glow": 16
+        "wet": 3
        },
-       "sha256": "0bc8df9c7f0a859eb170f2499d6e2afca7487c92fd519f615c5fe60f138cc35f",
+       "sha256": "ab4240e98cd65de2c6c423c639d9a038cbb912b178500f92b92a16bdbac81ec7",
        "sheet": "sheets/idle_E.png",
        "region": [
         640,
@@ -951,11 +933,11 @@
         ]
        },
        "equipment": {
-        "bramble": 34,
+        "bramble": 38,
         "shard": 40,
-        "glow": 15
+        "wet": 4
        },
-       "sha256": "49e1b6423780edd6ef80ec8211f096bd11a1d7f066503bf0fb7dc7253feb7568",
+       "sha256": "4273e98e0fe3b7459be0b3c34d627949a7abc722f1678f3d0c0eb78f38905e02",
        "sheet": "sheets/idle_E.png",
        "region": [
         800,
@@ -992,11 +974,11 @@
         ]
        },
        "equipment": {
-        "bramble": 33,
+        "bramble": 38,
         "shard": 40,
-        "glow": 12
+        "wet": 4
        },
-       "sha256": "0b6b78176610f4bfdbb2c6218ab96b9447e3e62eb96fb3abeee16fda3e3790b1",
+       "sha256": "8028b8e94bd119c56ea991c0480afde7c13272ca099af1f00ced2fb75cf8ffa5",
        "sheet": "sheets/idle_E.png",
        "region": [
         960,
@@ -1033,11 +1015,11 @@
         ]
        },
        "equipment": {
-        "bramble": 34,
+        "bramble": 38,
         "shard": 40,
-        "glow": 15
+        "wet": 4
        },
-       "sha256": "f2331d2bcfbe7a1ac334923b10457d85d3538ba22e26d14863bfc6142efab53b",
+       "sha256": "cb4368378a29415454046f3e89cbf7c31ff6757a3dec1632893c0baa6002a13e",
        "sheet": "sheets/idle_E.png",
        "region": [
         1120,
@@ -1078,12 +1060,11 @@
         ]
        },
        "equipment": {
-        "sac": 24,
-        "bramble": 29,
+        "bramble": 33,
         "shard": 39,
-        "glow": 12
+        "wet": 4
        },
-       "sha256": "c47cc963205f516da4bf7587c3bb5bfbcdc5c905209bbebef20e1991c0628dd6",
+       "sha256": "7cf7eda93f4880fbe650cb47f337e9a70263578469c9273fe2dad95baae9735a",
        "sheet": "sheets/idle_W.png",
        "region": [
         0,
@@ -1120,12 +1101,11 @@
         ]
        },
        "equipment": {
-        "sac": 25,
-        "bramble": 29,
+        "bramble": 34,
         "shard": 39,
-        "glow": 16
+        "wet": 4
        },
-       "sha256": "a2bea8dac606dd401ae3b4d2f8f07f792f97802c883d588d81488ef3a8f9628d",
+       "sha256": "31ab2ed1dcf999835215a290c0f18f605876660520a97ee1847acca49388bcb4",
        "sheet": "sheets/idle_W.png",
        "region": [
         160,
@@ -1162,12 +1142,11 @@
         ]
        },
        "equipment": {
-        "sac": 28,
-        "bramble": 32,
+        "bramble": 36,
         "shard": 37,
-        "glow": 12
+        "wet": 4
        },
-       "sha256": "3288b8a42ba8f17b4c1b76c0862ecb3a4f9ee4a6ad0a6eb8fc3ac286911f6f9e",
+       "sha256": "a13b603250d88896b19c6bebcab5004d9a4864754b5fb6d3bc2f0beb9638d89e",
        "sheet": "sheets/idle_W.png",
        "region": [
         320,
@@ -1204,12 +1183,11 @@
         ]
        },
        "equipment": {
-        "sac": 25,
-        "bramble": 29,
+        "bramble": 34,
         "shard": 39,
-        "glow": 14
+        "wet": 4
        },
-       "sha256": "e9a6efba72a848e0366c7cae66f5c2dfc4c38a3f42cc40554d11f6c4c9e434c1",
+       "sha256": "31ab2ed1dcf999835215a290c0f18f605876660520a97ee1847acca49388bcb4",
        "sheet": "sheets/idle_W.png",
        "region": [
         480,
@@ -1246,12 +1224,11 @@
         ]
        },
        "equipment": {
-        "sac": 24,
-        "bramble": 28,
+        "bramble": 33,
         "shard": 39,
-        "glow": 16
+        "wet": 4
        },
-       "sha256": "d6979005e32c1ac9bf4e970bad2fd5931368d312b6ab83762588b2879f7a4874",
+       "sha256": "7cf7eda93f4880fbe650cb47f337e9a70263578469c9273fe2dad95baae9735a",
        "sheet": "sheets/idle_W.png",
        "region": [
         640,
@@ -1288,11 +1265,11 @@
         ]
        },
        "equipment": {
-        "bramble": 25,
+        "bramble": 28,
         "shard": 39,
-        "glow": 13
+        "wet": 5
        },
-       "sha256": "597786a98991a48f6ef95d66f4c554b19384b158343e44c016bf9cb0b04a92df",
+       "sha256": "6f71638ce7193a7c5efb9122a84b8769b51291a329c001daf0c20b932ea98671",
        "sheet": "sheets/idle_W.png",
        "region": [
         800,
@@ -1329,11 +1306,11 @@
         ]
        },
        "equipment": {
-        "bramble": 24,
+        "bramble": 28,
         "shard": 39,
-        "glow": 13
+        "wet": 5
        },
-       "sha256": "29d343bd86ce5ad8e81b05992b97b7438d5959f077956d034e25ec2977927b76",
+       "sha256": "39081ae7624ad10c4c0b4d9059bfb9bc19cd15fe870e4f952ca4f9a6b7262170",
        "sheet": "sheets/idle_W.png",
        "region": [
         960,
@@ -1370,11 +1347,11 @@
         ]
        },
        "equipment": {
-        "bramble": 25,
+        "bramble": 28,
         "shard": 39,
-        "glow": 14
+        "wet": 5
        },
-       "sha256": "a50993ae6a424bd96c26972c453cfc34f03eb095d0eca7132a2688196b169df3",
+       "sha256": "c7c06edb025855cf0d33ab880005a2e3e8016fb9d5ef363416b5d7d26c49dd66",
        "sheet": "sheets/idle_W.png",
        "region": [
         1120,
@@ -1436,11 +1413,11 @@
         ]
        },
        "equipment": {
-        "bramble": 38,
+        "bramble": 45,
         "shard": 34,
-        "glow": 12
+        "wet": 6
        },
-       "sha256": "54294ecf0d8bc89448f15f282348c22c2283d4a301f9ccfd26054d69711f47cf",
+       "sha256": "4729f218954c8500c1096624739ce0af9cc5be0af56367dee4234b4815dd8d97",
        "sheet": "sheets/move_S.png",
        "region": [
         0,
@@ -1477,11 +1454,11 @@
         ]
        },
        "equipment": {
-        "bramble": 36,
+        "bramble": 43,
         "shard": 35,
-        "glow": 11
+        "wet": 4
        },
-       "sha256": "3d3b8af238bf786c7372b24f1378e269e417b4de895c01bc85681a1b3b69004d",
+       "sha256": "ea8bb17366b3b43cc6678a00f9cd369194c4f52a575031471d79e2c5b2da0db3",
        "sheet": "sheets/move_S.png",
        "region": [
         160,
@@ -1495,7 +1472,7 @@
        "file": "move_S_02.png",
        "packed_bounds": [
         66,
-        105,
+        106,
         94,
         139
        ],
@@ -1518,11 +1495,11 @@
         ]
        },
        "equipment": {
-        "bramble": 37,
+        "bramble": 43,
         "shard": 38,
-        "glow": 12
+        "wet": 5
        },
-       "sha256": "9175da88afd309e7b6b6bedb1951473e3eecf5c3e302d631d9808c839f5e53c0",
+       "sha256": "ba14afb811b74fcce1d73965d1ccc57a30d923511f70ef503b75daf9c46adbcd",
        "sheet": "sheets/move_S.png",
        "region": [
         320,
@@ -1536,7 +1513,7 @@
        "file": "move_S_03.png",
        "packed_bounds": [
         66,
-        105,
+        106,
         94,
         139
        ],
@@ -1559,11 +1536,11 @@
         ]
        },
        "equipment": {
-        "bramble": 42,
+        "bramble": 46,
         "shard": 34,
-        "glow": 7
+        "wet": 5
        },
-       "sha256": "6ce7809272ac8da90e51c82d259247e32b0a54cc32ebcc9e7509dae25c1b7bb6",
+       "sha256": "8f6698a5dd6fc41e9dd298c3fddeba11c17c9be2255cc21157df64090b61118c",
        "sheet": "sheets/move_S.png",
        "region": [
         480,
@@ -1577,7 +1554,7 @@
        "file": "move_S_04.png",
        "packed_bounds": [
         66,
-        106,
+        107,
         94,
         139
        ],
@@ -1600,11 +1577,11 @@
         ]
        },
        "equipment": {
-        "bramble": 41,
+        "bramble": 46,
         "shard": 34,
-        "glow": 10
+        "wet": 6
        },
-       "sha256": "bb23296d22cc90ea2230c08fbef93ca515dda4f9603d74f37e57f6980e97c4a0",
+       "sha256": "db1e745e16e833ff0607ce0f1a51b0814583131eeed2c404613dbd902a8ff251",
        "sheet": "sheets/move_S.png",
        "region": [
         640,
@@ -1618,7 +1595,7 @@
        "file": "move_S_05.png",
        "packed_bounds": [
         66,
-        106,
+        107,
         94,
         138
        ],
@@ -1641,11 +1618,11 @@
         ]
        },
        "equipment": {
-        "bramble": 39,
+        "bramble": 44,
         "shard": 34,
-        "glow": 10
+        "wet": 4
        },
-       "sha256": "1f7703baf0c0efbfd988eb243e18ed44e61817ed3a36fb9fc24c0ccb153b3086",
+       "sha256": "c6da649e8eeaacb47426b4bb506439342df58a551cc186309b4f27b926c18808",
        "sheet": "sheets/move_S.png",
        "region": [
         800,
@@ -1682,11 +1659,11 @@
         ]
        },
        "equipment": {
-        "bramble": 36,
+        "bramble": 43,
         "shard": 35,
-        "glow": 11
+        "wet": 6
        },
-       "sha256": "ec1eaba9a60e8e819806a315af642e9498ecb9f550a1390d8ffbc6581f0f4cac",
+       "sha256": "795c2479297ec32609754915eeb3844316597f93ecf09b5fc11d1239df1da08b",
        "sheet": "sheets/move_S.png",
        "region": [
         960,
@@ -1723,11 +1700,11 @@
         ]
        },
        "equipment": {
-        "bramble": 40,
+        "bramble": 45,
         "shard": 34,
-        "glow": 8
+        "wet": 5
        },
-       "sha256": "47ad93cebf25c3041af8f2cdee0cfbf4b169c1241d157c57044573d31c2d6250",
+       "sha256": "48a4c90d997aa773fc821a51e47c05e3a6a26520be55cd0e52791130fdd53f83",
        "sheet": "sheets/move_S.png",
        "region": [
         1120,
@@ -1768,11 +1745,10 @@
         ]
        },
        "equipment": {
-        "bramble": 58,
-        "shard": 35,
-        "glow": 14
+        "bramble": 65,
+        "shard": 35
        },
-       "sha256": "5f9cde1a4b560f68b3a2ac7b73a0a33a20a7e8f855db5664f9ca51ae69c9c7dc",
+       "sha256": "6f3e15538c3583f51d57c84fbb27a7f435f9078b7e2407482661ed342627d23e",
        "sheet": "sheets/move_N.png",
        "region": [
         0,
@@ -1809,11 +1785,10 @@
         ]
        },
        "equipment": {
-        "bramble": 54,
-        "shard": 36,
-        "glow": 15
+        "bramble": 61,
+        "shard": 36
        },
-       "sha256": "36053c5396dc37b4ae6e87b9269c60d77518623020589717442d1fe8c614367d",
+       "sha256": "cb809cf4cd4311c109b49dd97a868ff3c9bd06c436cb49bdb5329f6519fe4663",
        "sheet": "sheets/move_N.png",
        "region": [
         160,
@@ -1850,11 +1825,10 @@
         ]
        },
        "equipment": {
-        "bramble": 59,
-        "shard": 34,
-        "glow": 16
+        "bramble": 66,
+        "shard": 34
        },
-       "sha256": "98c2486cbdd7ff54c9a4cf4a8e99a3d474594142d674d5484740eb22acd313a4",
+       "sha256": "43a2dc0fe523345e343e10f88d3db64ca270ec5c90517a5dfa7e7d37e16eb798",
        "sheet": "sheets/move_N.png",
        "region": [
         320,
@@ -1891,11 +1865,10 @@
         ]
        },
        "equipment": {
-        "bramble": 59,
-        "shard": 35,
-        "glow": 11
+        "bramble": 65,
+        "shard": 35
        },
-       "sha256": "4ae28fc142fb92ba201d90f3617f356ad710f7b7c8ae5bb7c16731aea9da3df7",
+       "sha256": "89513b5ef93b863a01c9db72d95dc3ef95d1777646d51964559616dee77fd570",
        "sheet": "sheets/move_N.png",
        "region": [
         480,
@@ -1932,11 +1905,10 @@
         ]
        },
        "equipment": {
-        "bramble": 59,
-        "shard": 35,
-        "glow": 10
+        "bramble": 63,
+        "shard": 35
        },
-       "sha256": "eb7aa1bf78c131543ce60d358352a83048e10d27c89b4134564b316835751ae6",
+       "sha256": "06ee5e7e27cef02db383ae6f8aceb7ac76d557d557783019092a60ec0d3e809f",
        "sheet": "sheets/move_N.png",
        "region": [
         640,
@@ -1973,11 +1945,10 @@
         ]
        },
        "equipment": {
-        "bramble": 60,
-        "shard": 35,
-        "glow": 11
+        "bramble": 65,
+        "shard": 35
        },
-       "sha256": "36bc5fef8230dcf2c6b86fec54a32173abb245bc69400dbe2b316bc55c6c1b06",
+       "sha256": "f323a604816e39e1e70bd99db5a4517408aec3155cb93e6a5078ae67d90423de",
        "sheet": "sheets/move_N.png",
        "region": [
         800,
@@ -2014,11 +1985,10 @@
         ]
        },
        "equipment": {
-        "bramble": 55,
-        "shard": 35,
-        "glow": 15
+        "bramble": 63,
+        "shard": 35
        },
-       "sha256": "5f24a679a1acb4a4ca9567989973d367ed96c03eeb6310c52612b00aa141a33b",
+       "sha256": "f09d660e4f867f23caa0d77d148d39997d9a5a0d011ef0b68b7c068aab31c39f",
        "sheet": "sheets/move_N.png",
        "region": [
         960,
@@ -2055,11 +2025,10 @@
         ]
        },
        "equipment": {
-        "bramble": 59,
-        "shard": 35,
-        "glow": 12
+        "bramble": 65,
+        "shard": 35
        },
-       "sha256": "8e1d07beb3fe99eae15c59d81c64f2891136eb63d9515088e2d3344444249add",
+       "sha256": "5ad777825759c6fbc124e9c38a92f7375236914d595b93cd6dd6ae654878665f",
        "sheet": "sheets/move_N.png",
        "region": [
         1120,
@@ -2100,11 +2069,11 @@
         ]
        },
        "equipment": {
-        "bramble": 38,
+        "bramble": 43,
         "shard": 38,
-        "glow": 13
+        "wet": 2
        },
-       "sha256": "afed7f2723f2da7c417e557b3ec302c4b304edbd64d4960bd59272aadc72e3f7",
+       "sha256": "c28576df3bc4d34f8f7b5d670e3ca10ca7a20cff058837a16f98ab5ecbc204a4",
        "sheet": "sheets/move_E.png",
        "region": [
         0,
@@ -2141,11 +2110,11 @@
         ]
        },
        "equipment": {
-        "bramble": 33,
+        "bramble": 38,
         "shard": 40,
-        "glow": 12
+        "wet": 4
        },
-       "sha256": "25a9d5c912b5b140d888648ca476845d5d9b0124d2a4e8446459092e15bac91e",
+       "sha256": "b410a7f7481041e352794ba03d8d3b3783e43f75565ab579d2e49adbb59dfa4e",
        "sheet": "sheets/move_E.png",
        "region": [
         160,
@@ -2159,7 +2128,7 @@
        "file": "move_E_02.png",
        "packed_bounds": [
         67,
-        106,
+        107,
         99,
         136
        ],
@@ -2182,11 +2151,11 @@
         ]
        },
        "equipment": {
-        "bramble": 34,
+        "bramble": 39,
         "shard": 36,
-        "glow": 15
+        "wet": 2
        },
-       "sha256": "cb03f8aae7f0506541fdf69a453cfc2222a12df6f17356d701bb6259cdf8eb66",
+       "sha256": "af0d3c42cf3db5f6508650e25941e7a774e20257113dae7ae00c01e6830969e0",
        "sheet": "sheets/move_E.png",
        "region": [
         320,
@@ -2200,7 +2169,7 @@
        "file": "move_E_03.png",
        "packed_bounds": [
         67,
-        106,
+        107,
         99,
         136
        ],
@@ -2223,11 +2192,11 @@
         ]
        },
        "equipment": {
-        "bramble": 33,
+        "bramble": 37,
         "shard": 36,
-        "glow": 16
+        "wet": 4
        },
-       "sha256": "1eb59b0b2d228d95b2ad1ce4e6c32987d5d4865458d237f603643b5ef255204d",
+       "sha256": "0a37f585cdb4252540e77487d046d3aadfd71dba29f7a35c3c795e0cd12c9482",
        "sheet": "sheets/move_E.png",
        "region": [
         480,
@@ -2241,7 +2210,7 @@
        "file": "move_E_04.png",
        "packed_bounds": [
         67,
-        107,
+        108,
         99,
         136
        ],
@@ -2264,11 +2233,11 @@
         ]
        },
        "equipment": {
-        "bramble": 34,
+        "bramble": 37,
         "shard": 36,
-        "glow": 16
+        "wet": 4
        },
-       "sha256": "e9402b39e296016c4bf5be1dea5ecd1c669d0774ba33dbe5224a83c686ba9606",
+       "sha256": "a4c94319b224ab593a92ffb1bf78e2bd81c239a4df1eba6f451db906e5fe8a09",
        "sheet": "sheets/move_E.png",
        "region": [
         640,
@@ -2305,11 +2274,11 @@
         ]
        },
        "equipment": {
-        "bramble": 33,
+        "bramble": 37,
         "shard": 36,
-        "glow": 15
+        "wet": 4
        },
-       "sha256": "f104944bd2c240946924583fceb2cd24f98966fe3bbead42255405b8f66bd2c3",
+       "sha256": "dbb460c0ccf6a55523e3a09c2ef5945afae50ab14b7103d25b82cf252503b013",
        "sheet": "sheets/move_E.png",
        "region": [
         800,
@@ -2346,11 +2315,11 @@
         ]
        },
        "equipment": {
-        "bramble": 33,
+        "bramble": 38,
         "shard": 40,
-        "glow": 12
+        "wet": 4
        },
-       "sha256": "a3bb3185dd0bc03921e169592f19371764ecf98133cd7cda88333c2684536269",
+       "sha256": "0212953e0cf48c41c418cf9a77e9f5fba9e548f23abd3743c00bd26915443808",
        "sheet": "sheets/move_E.png",
        "region": [
         960,
@@ -2387,11 +2356,11 @@
         ]
        },
        "equipment": {
-        "bramble": 35,
+        "bramble": 40,
         "shard": 42,
-        "glow": 15
+        "wet": 3
        },
-       "sha256": "e7c63aa3f5310c0bc2d4fb796c26543c18e11dc4c8586e6f098b370482db12e4",
+       "sha256": "fd5d1c45326b6934c39dbccbba2b5632dbf1ecca8544faf41785fb6ff6160e1d",
        "sheet": "sheets/move_E.png",
        "region": [
         1120,
@@ -2432,11 +2401,11 @@
         ]
        },
        "equipment": {
-        "bramble": 32,
+        "bramble": 36,
         "shard": 37,
-        "glow": 13
+        "wet": 4
        },
-       "sha256": "9c7322ca217047b9870e75c3e2d2cc2a117df26a9eb5a238cba38d7e95d722f5",
+       "sha256": "cc7eff94f092d329bc60be8c03681b145624f79018ade3eae07fbf44eb000a66",
        "sheet": "sheets/move_W.png",
        "region": [
         0,
@@ -2473,11 +2442,11 @@
         ]
        },
        "equipment": {
-        "bramble": 26,
+        "bramble": 30,
         "shard": 39,
-        "glow": 12
+        "wet": 5
        },
-       "sha256": "496e168bbead1e7a68234b82206e573c9997a8afb460f8f2d856b2f94143d2ef",
+       "sha256": "895671fc39f905c1422212d64f1350a1ae378cc3ee74af718ff8c2e4ab1979e3",
        "sheet": "sheets/move_W.png",
        "region": [
         160,
@@ -2491,7 +2460,7 @@
        "file": "move_W_02.png",
        "packed_bounds": [
         60,
-        106,
+        107,
         93,
         136
        ],
@@ -2514,11 +2483,11 @@
         ]
        },
        "equipment": {
-        "bramble": 29,
+        "bramble": 33,
         "shard": 35,
-        "glow": 13
+        "wet": 4
        },
-       "sha256": "ef887ff349b0f05b91e1da82d428d3744b76f50705c7e08d844d4cbcd7447896",
+       "sha256": "7024be62f2a4478e87013970725da7c79358a54b2702fe3bda1ba1468624ad70",
        "sheet": "sheets/move_W.png",
        "region": [
         320,
@@ -2532,7 +2501,7 @@
        "file": "move_W_03.png",
        "packed_bounds": [
         60,
-        106,
+        107,
         93,
         136
        ],
@@ -2555,11 +2524,11 @@
         ]
        },
        "equipment": {
-        "bramble": 28,
+        "bramble": 31,
         "shard": 35,
-        "glow": 16
+        "wet": 5
        },
-       "sha256": "d2f1b07999f10e8dc7819e0f064895af2bda946cbb73e8fb0d4a3eceeefd113e",
+       "sha256": "ff61d25a518d95e0e237daa15c2f12b8233e27f1c9a6771ba5d2c0cee0247c5f",
        "sheet": "sheets/move_W.png",
        "region": [
         480,
@@ -2573,7 +2542,7 @@
        "file": "move_W_04.png",
        "packed_bounds": [
         60,
-        107,
+        108,
         93,
         136
        ],
@@ -2596,11 +2565,11 @@
         ]
        },
        "equipment": {
-        "bramble": 26,
+        "bramble": 30,
         "shard": 35,
-        "glow": 16
+        "wet": 5
        },
-       "sha256": "4d505ab1b6f815d3860a528a517f6d5c13547b92e7dc3d4b00b253c2987f3f72",
+       "sha256": "4d7539754737304c252b1f1bd59cdcc4de6d756fd9ad77c15d362a53998de79b",
        "sheet": "sheets/move_W.png",
        "region": [
         640,
@@ -2637,11 +2606,11 @@
         ]
        },
        "equipment": {
-        "bramble": 27,
+        "bramble": 29,
         "shard": 39,
-        "glow": 13
+        "wet": 5
        },
-       "sha256": "4ffb5d6acf3901fd2c413d0b4042be496befe77db6a83e1c052c2a8b322ac7e7",
+       "sha256": "4e6984aa694311fd609bb013c18c5b6853a932475a2ffa5ccf94333c4b8b283b",
        "sheet": "sheets/move_W.png",
        "region": [
         800,
@@ -2678,11 +2647,11 @@
         ]
        },
        "equipment": {
-        "bramble": 24,
+        "bramble": 28,
         "shard": 39,
-        "glow": 13
+        "wet": 5
        },
-       "sha256": "753c404d594548f989d572879db0330e05468319984b031c670bf73140013ef7",
+       "sha256": "31fc6af590f869a39073351865deb74a3956a831d5fd46baf1501298c1326717",
        "sheet": "sheets/move_W.png",
        "region": [
         960,
@@ -2719,11 +2688,11 @@
         ]
        },
        "equipment": {
-        "bramble": 28,
+        "bramble": 33,
         "shard": 39,
-        "glow": 17
+        "wet": 5
        },
-       "sha256": "8f0a56f64077865d41388e96d487c784a3fd336364e29a74f0247d1042732e5b",
+       "sha256": "c7bebf94a66bff271a49bee2f309029fe8744bfb344186cbd7656f2a700156ce",
        "sheet": "sheets/move_W.png",
        "region": [
         1120,
@@ -2785,12 +2754,12 @@
         ]
        },
        "equipment": {
-        "bramble": 38,
+        "bramble": 45,
         "shard": 34,
-        "sac": 22,
-        "glow": 12
+        "sac": 12,
+        "wet": 6
        },
-       "sha256": "e74bb78919f09c4815270359bdca48f9fe2e3ec1db0a220d13a19b7e48758e0d",
+       "sha256": "14dc53b4d6b77421130464e2b4e85881b6a05285820ec5d093ac03ab4af253e8",
        "sheet": "sheets/telegraph_S.png",
        "region": [
         0,
@@ -2804,7 +2773,7 @@
        "file": "telegraph_S_01.png",
        "packed_bounds": [
         66,
-        106,
+        107,
         94,
         139
        ],
@@ -2827,12 +2796,12 @@
         ]
        },
        "equipment": {
-        "bramble": 38,
+        "bramble": 46,
         "shard": 34,
-        "sac": 28,
-        "glow": 12
+        "sac": 20,
+        "wet": 2
        },
-       "sha256": "42a32e35b0420507f13de18939a397aaf3d8924ab6c7454ef796a204d8cb7f3c",
+       "sha256": "15059cdf1e86de21c70e010306e0463ab0ddad7e848bed44f8d569b7fa2e092f",
        "sheet": "sheets/telegraph_S.png",
        "region": [
         160,
@@ -2846,7 +2815,7 @@
        "file": "telegraph_S_02.png",
        "packed_bounds": [
         66,
-        106,
+        107,
         94,
         139
        ],
@@ -2869,13 +2838,13 @@
         ]
        },
        "equipment": {
-        "bramble": 35,
+        "bramble": 39,
         "shard": 38,
-        "sac": 39,
-        "glow": 9,
+        "sac": 22,
+        "wet": 3,
         "glint": 5
        },
-       "sha256": "720b622833d86d42f9c83d8b08463e928341624bc89472f339a597dbd1695d53",
+       "sha256": "cc2c7687386bd51b01b4034fe379b30ca8c3ada5107c7ad60643254afb71bb9f",
        "sheet": "sheets/telegraph_S.png",
        "region": [
         320,
@@ -2912,13 +2881,13 @@
         ]
        },
        "equipment": {
-        "bramble": 35,
+        "bramble": 38,
         "shard": 33,
-        "sac": 50,
-        "glow": 7,
+        "sac": 31,
+        "wet": 3,
         "glint": 9
        },
-       "sha256": "a3e8b7d0ac7acaa16b44392f23f9f65c73f84b9440d1f4835add7eca8366baf5",
+       "sha256": "0ebf558f888aeb55f678b4b349bc8d7eda272be43ab9c373a9e0f3b293ae433e",
        "sheet": "sheets/telegraph_S.png",
        "region": [
         480,
@@ -2955,13 +2924,13 @@
         ]
        },
        "equipment": {
-        "bramble": 35,
+        "bramble": 38,
         "shard": 33,
-        "sac": 59,
-        "glow": 7,
+        "sac": 35,
+        "wet": 3,
         "glint": 13
        },
-       "sha256": "9ea1f53f53cb3f5f27bcfaaf69f9ccc1e5f343a2ab2628d988b67743a2c6679b",
+       "sha256": "2bca0d0971952772214a32b88d3d1c8f43cdb1505751b5096a63ef2715d72d00",
        "sheet": "sheets/telegraph_S.png",
        "region": [
         640,
@@ -2998,13 +2967,13 @@
         ]
        },
        "equipment": {
-        "bramble": 35,
+        "bramble": 38,
         "shard": 33,
-        "sac": 65,
-        "glow": 7,
+        "sac": 37,
+        "wet": 3,
         "glint": 13
        },
-       "sha256": "dbcc1055428574fe4d9e81cb5b44c42a8c011026ff99701c78cce9129170f10c",
+       "sha256": "57304543ef41113851025d9706bb7d18ca77bb98349ac43a46bf094e6f241291",
        "sheet": "sheets/telegraph_S.png",
        "region": [
         800,
@@ -3041,13 +3010,13 @@
         ]
        },
        "equipment": {
-        "bramble": 33,
+        "bramble": 38,
         "shard": 31,
-        "sac": 71,
-        "glow": 8,
+        "sac": 43,
+        "wet": 2,
         "glint": 13
        },
-       "sha256": "b8c18f889f6aab930b13208e5ec1931aba0fa53fb7d0a50db73e744eaaf452ce",
+       "sha256": "c211980744e50a09bd7d21968f6f584aec066f855e98025ab7c167a13feb49ae",
        "sheet": "sheets/telegraph_S.png",
        "region": [
         960,
@@ -3084,13 +3053,13 @@
         ]
        },
        "equipment": {
-        "bramble": 34,
+        "bramble": 39,
         "shard": 32,
-        "sac": 71,
-        "glow": 10,
+        "sac": 42,
+        "wet": 1,
         "glint": 13
        },
-       "sha256": "2385ce3f5ff9d0f191147f77bb5ca002ccb2671d398a1064abbb05d914d0c6b9",
+       "sha256": "4025726080fcf4897cb0e0c11bae2b631a0f85a557370ae2737fd9054071c82c",
        "sheet": "sheets/telegraph_S.png",
        "region": [
         1120,
@@ -3131,11 +3100,10 @@
         ]
        },
        "equipment": {
-        "bramble": 58,
-        "shard": 35,
-        "glow": 14
+        "bramble": 65,
+        "shard": 35
        },
-       "sha256": "1b9d2c4ee07a9a46fd8acb961410d2631a812064e8d4fb8fc708df236f890988",
+       "sha256": "4de3cf2304333c06923fc7d83d1e4b82c426e33c65273ab6d33a6ecc9ee1d491",
        "sheet": "sheets/telegraph_N.png",
        "region": [
         0,
@@ -3172,11 +3140,10 @@
         ]
        },
        "equipment": {
-        "bramble": 56,
-        "shard": 35,
-        "glow": 16
+        "bramble": 65,
+        "shard": 35
        },
-       "sha256": "a24895cd5a35a31cc2c244db5910e2cb99585fc4a1afe31075cfc65ada538347",
+       "sha256": "8849127ac1dedf94f422970dd5ecc9692da077c3ce56c1766f8f68bb2eccf888",
        "sheet": "sheets/telegraph_N.png",
        "region": [
         160,
@@ -3213,11 +3180,10 @@
         ]
        },
        "equipment": {
-        "bramble": 58,
-        "shard": 34,
-        "glow": 15
+        "bramble": 66,
+        "shard": 34
        },
-       "sha256": "0f4bde88f2803fa3f6bd1bb8711d232ccb03bf836c55fe1f67d3a0a2b6bf1905",
+       "sha256": "5834b9fe15007a86d52921d86ad5d546a7ab01d6773ba7e8bc174e857580a7bd",
        "sheet": "sheets/telegraph_N.png",
        "region": [
         320,
@@ -3254,11 +3220,10 @@
         ]
        },
        "equipment": {
-        "bramble": 56,
-        "shard": 35,
-        "glow": 13
+        "bramble": 65,
+        "shard": 35
        },
-       "sha256": "5e4532705e845b3de30bd7d155873eb8dc55e30dad15757b1d1dff89e0f28438",
+       "sha256": "1b527a311a0efb3ac942d6da09a9756e349784845ba46e0edd1ec22c98402cc8",
        "sheet": "sheets/telegraph_N.png",
        "region": [
         480,
@@ -3295,11 +3260,10 @@
         ]
        },
        "equipment": {
-        "bramble": 56,
-        "shard": 35,
-        "glow": 13
+        "bramble": 65,
+        "shard": 35
        },
-       "sha256": "5e4532705e845b3de30bd7d155873eb8dc55e30dad15757b1d1dff89e0f28438",
+       "sha256": "1b527a311a0efb3ac942d6da09a9756e349784845ba46e0edd1ec22c98402cc8",
        "sheet": "sheets/telegraph_N.png",
        "region": [
         640,
@@ -3336,11 +3300,10 @@
         ]
        },
        "equipment": {
-        "bramble": 56,
-        "shard": 35,
-        "glow": 13
+        "bramble": 65,
+        "shard": 35
        },
-       "sha256": "5e4532705e845b3de30bd7d155873eb8dc55e30dad15757b1d1dff89e0f28438",
+       "sha256": "1b527a311a0efb3ac942d6da09a9756e349784845ba46e0edd1ec22c98402cc8",
        "sheet": "sheets/telegraph_N.png",
        "region": [
         800,
@@ -3377,11 +3340,10 @@
         ]
        },
        "equipment": {
-        "bramble": 60,
-        "shard": 32,
-        "glow": 15
+        "bramble": 67,
+        "shard": 32
        },
-       "sha256": "7cf210ce58677358b73a07ea88d7bc4d1fbe7c92cf5bde771d922bbfa411e564",
+       "sha256": "9d272e3c7f63f1bd4aeb54ee151f7fd294ddd1709f5274a107e4f8577f2effe8",
        "sheet": "sheets/telegraph_N.png",
        "region": [
         960,
@@ -3418,11 +3380,10 @@
         ]
        },
        "equipment": {
-        "bramble": 61,
-        "shard": 32,
-        "glow": 12
+        "bramble": 66,
+        "shard": 32
        },
-       "sha256": "2b7031fa86ddc77334d68b9695b04cec500e02934a4254540c249fe961ee2fc8",
+       "sha256": "6eee2bd9d955b395ac8c9c40497d8a32bb49a86cb05a4bd4aa02b31d8867fc41",
        "sheet": "sheets/telegraph_N.png",
        "region": [
         1120,
@@ -3463,12 +3424,12 @@
         ]
        },
        "equipment": {
-        "sac": 22,
-        "bramble": 35,
+        "sac": 11,
+        "bramble": 40,
         "shard": 42,
-        "glow": 13
+        "wet": 2
        },
-       "sha256": "cb1b40a873738388102514941035e73eae89b84b015ea112dff709ce21ff2979",
+       "sha256": "c2a7baba666d6bd30f5b9e99648bd791125122937317f1d95410775e8ad3501b",
        "sheet": "sheets/telegraph_E.png",
        "region": [
         0,
@@ -3482,7 +3443,7 @@
        "file": "telegraph_E_01.png",
        "packed_bounds": [
         67,
-        107,
+        108,
         100,
         136
        ],
@@ -3505,12 +3466,12 @@
         ]
        },
        "equipment": {
-        "sac": 30,
-        "bramble": 34,
+        "sac": 17,
+        "bramble": 37,
         "shard": 36,
-        "glow": 11
+        "wet": 4
        },
-       "sha256": "25a91362cb0077fadd50a112ddc99909c19beb1c9e72cb4177336127846b5626",
+       "sha256": "8ddabe61b1bd116671dfc2ddff4a678063e5f2c93f26f5befc714e3bf49bfc94",
        "sheet": "sheets/telegraph_E.png",
        "region": [
         160,
@@ -3524,7 +3485,7 @@
        "file": "telegraph_E_02.png",
        "packed_bounds": [
         67,
-        107,
+        108,
         102,
         136
        ],
@@ -3547,13 +3508,13 @@
         ]
        },
        "equipment": {
-        "sac": 43,
-        "bramble": 36,
+        "sac": 25,
+        "bramble": 39,
         "shard": 36,
-        "glow": 11,
+        "wet": 2,
         "glint": 5
        },
-       "sha256": "93f7e300b0d0a207b6f23f63c3c492798b4d3dea6b09dae98390daafd6dc5393",
+       "sha256": "9a85435017ae9d0ec067f04bcc5089f065864f33d7167521b3ef7656556e3705",
        "sheet": "sheets/telegraph_E.png",
        "region": [
         320,
@@ -3590,13 +3551,13 @@
         ]
        },
        "equipment": {
-        "sac": 54,
-        "bramble": 35,
+        "sac": 32,
+        "bramble": 40,
         "shard": 42,
-        "glow": 12,
+        "wet": 2,
         "glint": 9
        },
-       "sha256": "cc30fb9d50f7bc8c61341e36c0408d3c4605789a8741213ea5f72499a191c4b6",
+       "sha256": "b43757b39ac1642c18b0080a787003cad7589b05228240fdfb910e98240a65e0",
        "sheet": "sheets/telegraph_E.png",
        "region": [
         480,
@@ -3633,13 +3594,13 @@
         ]
        },
        "equipment": {
-        "sac": 63,
-        "bramble": 35,
+        "sac": 39,
+        "bramble": 40,
         "shard": 42,
-        "glow": 12,
+        "wet": 2,
         "glint": 13
        },
-       "sha256": "8bdb25b0828fe208c82328d0b16e4cf5e4edcd16b62c78263db259fb7d69afad",
+       "sha256": "3245bd08fea4422447df42a3bda27f5fdc226f264e8d14dc72fe7f42abe10560",
        "sheet": "sheets/telegraph_E.png",
        "region": [
         640,
@@ -3676,13 +3637,13 @@
         ]
        },
        "equipment": {
-        "sac": 71,
-        "bramble": 35,
+        "sac": 46,
+        "bramble": 40,
         "shard": 42,
-        "glow": 12,
+        "wet": 2,
         "glint": 13
        },
-       "sha256": "fff3de19f86bd4405b492654c45fa45d6994d400c62a68c6cef23397178678ad",
+       "sha256": "7365d2c728272a0f3112713a0c4e97bbe95a18f77b88237e52a9848fec1ee3db",
        "sheet": "sheets/telegraph_E.png",
        "region": [
         800,
@@ -3719,13 +3680,13 @@
         ]
        },
        "equipment": {
-        "sac": 75,
-        "bramble": 37,
+        "sac": 48,
+        "bramble": 41,
         "shard": 39,
-        "glow": 13,
+        "wet": 2,
         "glint": 13
        },
-       "sha256": "37761193f12389a9f2d58bc55d4c695d578efc4beb5745c85e4301c32a9f2675",
+       "sha256": "cf0b615ad69fb8d6950ff90b4b91140f7d8fc9b1a79f1c7cb9af0c0aa5a07672",
        "sheet": "sheets/telegraph_E.png",
        "region": [
         960,
@@ -3762,13 +3723,13 @@
         ]
        },
        "equipment": {
-        "sac": 75,
-        "bramble": 36,
+        "sac": 48,
+        "bramble": 40,
         "shard": 40,
-        "glow": 13,
+        "wet": 2,
         "glint": 13
        },
-       "sha256": "e3da91efceca9e3dce0da186e7005253e213a7077d0b2f8ce353d6b2e612a87c",
+       "sha256": "19199cf28356dc7b155222e20f395d6118f2e2f60984f672a9de38a49d0350db",
        "sheet": "sheets/telegraph_E.png",
        "region": [
         1120,
@@ -3809,12 +3770,12 @@
         ]
        },
        "equipment": {
-        "sac": 22,
-        "bramble": 29,
+        "sac": 11,
+        "bramble": 34,
         "shard": 39,
-        "glow": 14
+        "wet": 4
        },
-       "sha256": "43d0cd7d198e49346986449060f3b5b1959449432f900fb7981c3765e8417bcf",
+       "sha256": "06a9e28ba4441d52630a154d9521ab38355854e3c4f2d6934769284ac2a99896",
        "sheet": "sheets/telegraph_W.png",
        "region": [
         0,
@@ -3828,7 +3789,7 @@
        "file": "telegraph_W_01.png",
        "packed_bounds": [
         60,
-        107,
+        108,
         93,
         136
        ],
@@ -3851,12 +3812,12 @@
         ]
        },
        "equipment": {
-        "sac": 30,
-        "bramble": 28,
+        "sac": 17,
+        "bramble": 30,
         "shard": 35,
-        "glow": 10
+        "wet": 4
        },
-       "sha256": "6664c8290a1e7e27c4c51d0aa1526cbdf5a698775d6dafd28d6f86bc14346420",
+       "sha256": "214cfc33bb32b021b4050c57ef9cf153a889dd6b286bd0f2397f60b580833bda",
        "sheet": "sheets/telegraph_W.png",
        "region": [
         160,
@@ -3870,7 +3831,7 @@
        "file": "telegraph_W_02.png",
        "packed_bounds": [
         58,
-        107,
+        108,
         93,
         136
        ],
@@ -3893,13 +3854,13 @@
         ]
        },
        "equipment": {
-        "sac": 43,
-        "bramble": 30,
+        "sac": 25,
+        "bramble": 33,
         "shard": 35,
-        "glow": 11,
+        "wet": 3,
         "glint": 5
        },
-       "sha256": "2620a470eed78a8ccfb357abd3d8acd9edccce6cdb9ddd02e5fe03cba931adcf",
+       "sha256": "1c5294b713683b6018e4d8b2205932da82bfc2b76194d23d3ddf7c36975216a5",
        "sheet": "sheets/telegraph_W.png",
        "region": [
         320,
@@ -3936,13 +3897,13 @@
         ]
        },
        "equipment": {
-        "sac": 54,
-        "bramble": 30,
+        "sac": 32,
+        "bramble": 34,
         "shard": 39,
-        "glow": 12,
+        "wet": 3,
         "glint": 9
        },
-       "sha256": "f704344c2afbb2e544eb52f53193a2c93fee2cae455a4f74ed1ace501909236e",
+       "sha256": "1c37fbdf07dc80a4cef15c1ae8ed26a44707e6cb632d8c687d851c303766bf6c",
        "sheet": "sheets/telegraph_W.png",
        "region": [
         480,
@@ -3979,13 +3940,13 @@
         ]
        },
        "equipment": {
-        "sac": 63,
-        "bramble": 30,
+        "sac": 39,
+        "bramble": 34,
         "shard": 39,
-        "glow": 12,
+        "wet": 4,
         "glint": 13
        },
-       "sha256": "308020bb28a387c0839a1203a9660c180165fd1ce025bae8d13e31fff4a5ca59",
+       "sha256": "3f4a58f9344521a8f2fd63fbba5d97efbc49f4ef24e6baec74aa3ba77da895af",
        "sheet": "sheets/telegraph_W.png",
        "region": [
         640,
@@ -4022,13 +3983,13 @@
         ]
        },
        "equipment": {
-        "sac": 71,
-        "bramble": 30,
+        "sac": 46,
+        "bramble": 34,
         "shard": 39,
-        "glow": 12,
+        "wet": 4,
         "glint": 13
        },
-       "sha256": "6b893470e1520f5a650e8c25885673778a63b0c4dc926f982b698258e81322bf",
+       "sha256": "70f2926797c702ec100fa26e817d58b3d9fc62b2386ea8103e9ca6be491a401d",
        "sheet": "sheets/telegraph_W.png",
        "region": [
         800,
@@ -4065,13 +4026,13 @@
         ]
        },
        "equipment": {
-        "sac": 75,
-        "bramble": 32,
+        "sac": 48,
+        "bramble": 36,
         "shard": 36,
-        "glow": 12,
+        "wet": 4,
         "glint": 13
        },
-       "sha256": "d8d186558298e408b22d8f18bff4bf91042cee059998371d6c42040152a374dc",
+       "sha256": "c58281271106de49d9e5272777b2e2df75d92a2eda4e23a8cafa6081660eb82d",
        "sheet": "sheets/telegraph_W.png",
        "region": [
         960,
@@ -4108,13 +4069,13 @@
         ]
        },
        "equipment": {
-        "sac": 75,
-        "bramble": 32,
+        "sac": 48,
+        "bramble": 36,
         "shard": 36,
-        "glow": 12,
+        "wet": 4,
         "glint": 13
        },
-       "sha256": "9539c431ceb2b5e7c54b98ef9eaaee6f165604139aa175d669e3ce8e797a8fec",
+       "sha256": "d03b92949725db3cf87d16c27711785391e40112101d225cc4acfa27aefed50f",
        "sheet": "sheets/telegraph_W.png",
        "region": [
         1120,
@@ -4150,7 +4111,7 @@
        "file": "attack_S_00.png",
        "packed_bounds": [
         66,
-        106,
+        107,
         94,
         139
        ],
@@ -4173,12 +4134,12 @@
         ]
        },
        "equipment": {
-        "bramble": 36,
+        "bramble": 42,
         "shard": 38,
-        "sac": 16,
-        "glow": 10
+        "sac": 4,
+        "wet": 2
        },
-       "sha256": "341c0b4f1760a0f2309513a8690078d20b4dbff6615bb656872c542e49a11327",
+       "sha256": "6b7bd7c4d4c27a94b5cc2992098afe52a3fe6a7d9094511ed63642c138dcbc21",
        "sheet": "sheets/attack_S.png",
        "region": [
         0,
@@ -4192,7 +4153,7 @@
        "file": "attack_S_01.png",
        "packed_bounds": [
         66,
-        107,
+        108,
         94,
         139
        ],
@@ -4215,12 +4176,12 @@
         ]
        },
        "equipment": {
-        "bramble": 39,
+        "bramble": 44,
         "shard": 38,
-        "sac": 4,
-        "glow": 11
+        "sac": 0,
+        "wet": 4
        },
-       "sha256": "5e1906cc450d9eeca5c4ec14dee13ae72d95030803fe74d65d767a144813929e",
+       "sha256": "015bf00483cfd312c5342656f793056da3d9eb7486695bc73d284ecbc32ca0d5",
        "sheet": "sheets/attack_S.png",
        "region": [
         160,
@@ -4234,7 +4195,7 @@
        "file": "attack_S_02.png",
        "packed_bounds": [
         66,
-        107,
+        108,
         94,
         139
        ],
@@ -4257,11 +4218,11 @@
         ]
        },
        "equipment": {
-        "bramble": 42,
+        "bramble": 47,
         "shard": 34,
-        "glow": 10
+        "wet": 3
        },
-       "sha256": "07431abf49e61434258c777a08f3cc8dc5ccf332431624b3355df6691da34728",
+       "sha256": "ac213bbfedad54e6e59092ec31069971c404d83fb5a7e159d0986425acf6acdb",
        "sheet": "sheets/attack_S.png",
        "region": [
         320,
@@ -4298,11 +4259,11 @@
         ]
        },
        "equipment": {
-        "bramble": 37,
+        "bramble": 44,
         "shard": 33,
-        "glow": 11
+        "wet": 5
        },
-       "sha256": "991206baeb0cf19c98e0a41e16b34b9c516e1353a733792df3064a2069759431",
+       "sha256": "f535ef907fafb8328def046d49341ce757520da1cded9613a0d3b71ddd7aef1b",
        "sheet": "sheets/attack_S.png",
        "region": [
         480,
@@ -4339,11 +4300,11 @@
         ]
        },
        "equipment": {
-        "bramble": 36,
+        "bramble": 43,
         "shard": 35,
-        "glow": 11
+        "wet": 6
        },
-       "sha256": "61b70fc6c5f8a412fec5a1855def7470d48588facb985f190a6bdc517e08b2f3",
+       "sha256": "7db0eab45a72978e13dd269656075b17c162b47483277ef3fa91be3d5d98d892",
        "sheet": "sheets/attack_S.png",
        "region": [
         640,
@@ -4389,11 +4350,10 @@
         ]
        },
        "equipment": {
-        "bramble": 57,
-        "shard": 34,
-        "glow": 13
+        "bramble": 65,
+        "shard": 34
        },
-       "sha256": "11e9ef1790a1fef28be19e6544bf95b9b3095018a0cb687aae70675c5c07db66",
+       "sha256": "0805d84efe98048dec10a9eed9f9396dc0b6ec9944523251b4cc65fc574787a5",
        "sheet": "sheets/attack_N.png",
        "region": [
         0,
@@ -4430,11 +4390,10 @@
         ]
        },
        "equipment": {
-        "bramble": 58,
-        "shard": 34,
-        "glow": 15
+        "bramble": 65,
+        "shard": 34
        },
-       "sha256": "d0f76906842bed7f3645de5199432de5fcaa7b6f0d312aa16f1d3f12d5c09301",
+       "sha256": "6541346be39989c212e0d060acd59e5d6fd457a96696eab161c22a5abe6ce64c",
        "sheet": "sheets/attack_N.png",
        "region": [
         160,
@@ -4471,11 +4430,10 @@
         ]
        },
        "equipment": {
-        "bramble": 62,
-        "shard": 35,
-        "glow": 10
+        "bramble": 65,
+        "shard": 35
        },
-       "sha256": "961f1848b78a83d709e0391922fda64deceee31dfcc104f7a46796cc20b02459",
+       "sha256": "960385dbb0ced2fce473c3fc01507274b3eba6b33515f92d269f9e5faf58fd44",
        "sheet": "sheets/attack_N.png",
        "region": [
         320,
@@ -4512,11 +4470,10 @@
         ]
        },
        "equipment": {
-        "bramble": 54,
-        "shard": 36,
-        "glow": 14
+        "bramble": 61,
+        "shard": 36
        },
-       "sha256": "d20a4cb95e03eb137e593f81b2bd51d72757ef9037a8dedbac7dafb21efe8770",
+       "sha256": "95c64cdeffa19576b6817810ad19a808d9af8d21aca325cbcb886af3bbedd018",
        "sheet": "sheets/attack_N.png",
        "region": [
         480,
@@ -4553,11 +4510,10 @@
         ]
        },
        "equipment": {
-        "bramble": 55,
-        "shard": 35,
-        "glow": 15
+        "bramble": 63,
+        "shard": 35
        },
-       "sha256": "5f24a679a1acb4a4ca9567989973d367ed96c03eeb6310c52612b00aa141a33b",
+       "sha256": "f09d660e4f867f23caa0d77d148d39997d9a5a0d011ef0b68b7c068aab31c39f",
        "sheet": "sheets/attack_N.png",
        "region": [
         640,
@@ -4580,8 +4536,8 @@
        "file": "attack_E_00.png",
        "packed_bounds": [
         67,
-        107,
-        102,
+        108,
+        101,
         136
        ],
        "anchors": {
@@ -4603,12 +4559,12 @@
         ]
        },
        "equipment": {
-        "sac": 30,
-        "bramble": 35,
+        "sac": 22,
+        "bramble": 37,
         "shard": 36,
-        "glow": 10
+        "wet": 2
        },
-       "sha256": "c9263ab3a1746022d379d7a7134b3d11dd3cb92573538746b79ebdeb874e714e",
+       "sha256": "348ced788c4eb679c046a5b62cf171b6d8a48a9d856a2b3cac93437d0e6d6b3d",
        "sheet": "sheets/attack_E.png",
        "region": [
         0,
@@ -4622,7 +4578,7 @@
        "file": "attack_E_01.png",
        "packed_bounds": [
         67,
-        108,
+        109,
         100,
         136
        ],
@@ -4645,12 +4601,12 @@
         ]
        },
        "equipment": {
-        "sac": 17,
-        "bramble": 33,
+        "sac": 10,
+        "bramble": 37,
         "shard": 36,
-        "glow": 15
+        "wet": 2
        },
-       "sha256": "8e5dce1a341bd46307fc6804c5944fbb96c4de899194e2679b981f0ac3957df6",
+       "sha256": "6f521621dac034a2b5d28be40800191db3d543674f94d8214eb8780e908c8800",
        "sheet": "sheets/attack_E.png",
        "region": [
         160,
@@ -4664,7 +4620,7 @@
        "file": "attack_E_02.png",
        "packed_bounds": [
         67,
-        108,
+        109,
         99,
         136
        ],
@@ -4687,11 +4643,11 @@
         ]
        },
        "equipment": {
-        "bramble": 34,
+        "bramble": 37,
         "shard": 36,
-        "glow": 16
+        "wet": 4
        },
-       "sha256": "73febbcf185d363be1d0663ca9290ce9d21cb23d7aa394db960af66e75e73c58",
+       "sha256": "934fff6efd380f6fb46ffdc349646e7cd24135977f4ba9393b0b1cdb5b8d4f87",
        "sheet": "sheets/attack_E.png",
        "region": [
         320,
@@ -4728,11 +4684,11 @@
         ]
        },
        "equipment": {
-        "bramble": 36,
+        "bramble": 41,
         "shard": 40,
-        "glow": 11
+        "wet": 3
        },
-       "sha256": "f61ad537e140c851f8d29d930ccc92d9a83610b17d662867f497df790b17bc58",
+       "sha256": "c73b67abe4157c0bfc1e944bd95a66d2fbbebd3588ad4b67c430fdd22251ef8a",
        "sheet": "sheets/attack_E.png",
        "region": [
         480,
@@ -4769,11 +4725,11 @@
         ]
        },
        "equipment": {
-        "bramble": 33,
+        "bramble": 38,
         "shard": 40,
-        "glow": 12
+        "wet": 4
        },
-       "sha256": "4be65b602bbb0ac3f6477e839c800b54ff58e2b7e2e955fffff7d7096b1452b9",
+       "sha256": "541f7cb08cecd840752a0f1e5771f9de2958e79d808971123eddc94db1136024",
        "sheet": "sheets/attack_E.png",
        "region": [
         640,
@@ -4796,7 +4752,7 @@
        "file": "attack_W_00.png",
        "packed_bounds": [
         58,
-        107,
+        108,
         93,
         136
        ],
@@ -4819,12 +4775,12 @@
         ]
        },
        "equipment": {
-        "sac": 32,
-        "bramble": 28,
+        "sac": 22,
+        "bramble": 30,
         "shard": 35,
-        "glow": 11
+        "wet": 3
        },
-       "sha256": "97318a30ecdaa852b7c1038be77ffe9001c0ce1bccaf4eda31391437eabb5f42",
+       "sha256": "10d67196a2b82ce7a66306ddb886b393c5e737d1eaaf5fdb99e402d803d31220",
        "sheet": "sheets/attack_W.png",
        "region": [
         0,
@@ -4838,7 +4794,7 @@
        "file": "attack_W_01.png",
        "packed_bounds": [
         59,
-        108,
+        109,
         93,
         136
        ],
@@ -4861,12 +4817,12 @@
         ]
        },
        "equipment": {
-        "sac": 20,
-        "bramble": 26,
+        "sac": 10,
+        "bramble": 30,
         "shard": 35,
-        "glow": 16
+        "wet": 3
        },
-       "sha256": "c494c33152f4bcc7f225e5964a77e3a92781c68c62c2477cef6084c12af30a00",
+       "sha256": "a7493562a0825b6d976469e51bbd18455554540684abba14ebc3b427f9eff3e9",
        "sheet": "sheets/attack_W.png",
        "region": [
         160,
@@ -4880,7 +4836,7 @@
        "file": "attack_W_02.png",
        "packed_bounds": [
         60,
-        108,
+        109,
         93,
         136
        ],
@@ -4903,11 +4859,11 @@
         ]
        },
        "equipment": {
-        "bramble": 26,
+        "bramble": 30,
         "shard": 35,
-        "glow": 16
+        "wet": 4
        },
-       "sha256": "b4c7fbf849454307448e4ab1f233d8c51c44505a0a5fe2cb4885582f825b6372",
+       "sha256": "f23bd788313d9def7557dc93927523da2caa431b5880e4a80b1855bf703cef8f",
        "sheet": "sheets/attack_W.png",
        "region": [
         320,
@@ -4944,11 +4900,11 @@
         ]
        },
        "equipment": {
-        "bramble": 29,
+        "bramble": 33,
         "shard": 39,
-        "glow": 12
+        "wet": 4
        },
-       "sha256": "fd8c2e7938c40eda1e5da682b1acce7e2118d0183ab4d4c5b1865992df25ca74",
+       "sha256": "a5966f6914d5335a90a5c59666b80796b510a4d6318d36aa74dd7bc0074a5579",
        "sheet": "sheets/attack_W.png",
        "region": [
         480,
@@ -4985,11 +4941,11 @@
         ]
        },
        "equipment": {
-        "bramble": 24,
+        "bramble": 28,
         "shard": 39,
-        "glow": 13
+        "wet": 5
        },
-       "sha256": "f036fb186724f51c5b47d7a8ff5e0e46916f98dac531f2878e3d04e4f26bce3e",
+       "sha256": "b4f40dc3047a29e959ab08e65629f1a21941608c5d20d8f26f77647a3d4b6593",
        "sheet": "sheets/attack_W.png",
        "region": [
         640,
@@ -5033,7 +4989,7 @@
        "file": "hurt_S_00.png",
        "packed_bounds": [
         67,
-        108,
+        109,
         95,
         139
        ],
@@ -5056,11 +5012,11 @@
         ]
        },
        "equipment": {
-        "bramble": 39,
+        "bramble": 46,
         "shard": 36,
-        "glow": 12
+        "wet": 5
        },
-       "sha256": "c03c9d72cad95acc076dc5ad8245f6bcc1ab477bdd0ba7f80891d95883b569cd",
+       "sha256": "1641ad22651b0f1f213855cb2b80a12db0adcb4a504106cc35c13c74520beda9",
        "sheet": "sheets/hurt_S.png",
        "region": [
         0,
@@ -5074,7 +5030,7 @@
        "file": "hurt_S_01.png",
        "packed_bounds": [
         65,
-        108,
+        109,
         93,
         139
        ],
@@ -5097,11 +5053,11 @@
         ]
        },
        "equipment": {
-        "bramble": 39,
+        "bramble": 44,
         "shard": 38,
-        "glow": 11
+        "wet": 5
        },
-       "sha256": "349a322f5a2dced2126bd4e7f967c4c29096802ee7a0e2fac99a9e9be939bc1f",
+       "sha256": "e2a11da44ca3697c66f74b4f65681bddabf2c63bb85aaffcacdd720d0cc966bf",
        "sheet": "sheets/hurt_S.png",
        "region": [
         160,
@@ -5115,7 +5071,7 @@
        "file": "hurt_S_02.png",
        "packed_bounds": [
         66,
-        107,
+        108,
         94,
         139
        ],
@@ -5138,11 +5094,11 @@
         ]
        },
        "equipment": {
-        "bramble": 41,
+        "bramble": 47,
         "shard": 32,
-        "glow": 9
+        "wet": 5
        },
-       "sha256": "ef89e927709fd1259d5a53833f7aa9e1bcb6aa8a57cba5fe7dfd08860877e4ea",
+       "sha256": "b77fef2c84b85889505b9ab3896937002cd062a1e3317c280aa54437f52a8540",
        "sheet": "sheets/hurt_S.png",
        "region": [
         320,
@@ -5179,11 +5135,11 @@
         ]
        },
        "equipment": {
-        "bramble": 36,
+        "bramble": 43,
         "shard": 35,
-        "glow": 11
+        "wet": 6
        },
-       "sha256": "61b70fc6c5f8a412fec5a1855def7470d48588facb985f190a6bdc517e08b2f3",
+       "sha256": "7db0eab45a72978e13dd269656075b17c162b47483277ef3fa91be3d5d98d892",
        "sheet": "sheets/hurt_S.png",
        "region": [
         480,
@@ -5224,11 +5180,10 @@
         ]
        },
        "equipment": {
-        "bramble": 59,
-        "shard": 32,
-        "glow": 15
+        "bramble": 66,
+        "shard": 32
        },
-       "sha256": "f3d7e0f4d9183f171b4f7553d14c027c380be385d0019ecf2cc904be36df7d77",
+       "sha256": "8b29daf126a136d261b1586eade94ba06320ed8ac38b6e68f0eb5e6a0c879e26",
        "sheet": "sheets/hurt_N.png",
        "region": [
         0,
@@ -5265,11 +5220,10 @@
         ]
        },
        "equipment": {
-        "bramble": 57,
-        "shard": 34,
-        "glow": 13
+        "bramble": 65,
+        "shard": 34
        },
-       "sha256": "e9b239c362156ff5be1679a892d0e86f18ad5424b0f83b2860cc07f5c74b26f2",
+       "sha256": "47fd3bfe16dc9fce4890fef021d8f4742e2cb5912fa1424dd6da10d9af6fca88",
        "sheet": "sheets/hurt_N.png",
        "region": [
         160,
@@ -5306,11 +5260,10 @@
         ]
        },
        "equipment": {
-        "bramble": 55,
-        "shard": 33,
-        "glow": 15
+        "bramble": 62,
+        "shard": 33
        },
-       "sha256": "e892c7a34b9c95985b371671fc08b7d49cfc141815ea8efa90e6ff88198c47de",
+       "sha256": "731408a4055ff16594c6f5f2012f46d5a35d928403ee76353606eb7d4843ff8c",
        "sheet": "sheets/hurt_N.png",
        "region": [
         320,
@@ -5347,11 +5300,10 @@
         ]
        },
        "equipment": {
-        "bramble": 55,
-        "shard": 35,
-        "glow": 15
+        "bramble": 63,
+        "shard": 35
        },
-       "sha256": "5f24a679a1acb4a4ca9567989973d367ed96c03eeb6310c52612b00aa141a33b",
+       "sha256": "f09d660e4f867f23caa0d77d148d39997d9a5a0d011ef0b68b7c068aab31c39f",
        "sheet": "sheets/hurt_N.png",
        "region": [
         480,
@@ -5369,7 +5321,7 @@
        "file": "hurt_E_00.png",
        "packed_bounds": [
         67,
-        109,
+        110,
         99,
         136
        ],
@@ -5392,11 +5344,11 @@
         ]
        },
        "equipment": {
-        "bramble": 34,
+        "bramble": 38,
         "shard": 34,
-        "glow": 16
+        "wet": 2
        },
-       "sha256": "8d6f75e64e5ec78fd1d0a13da754403816ade7a8eebbe4fa123bb63c01638e24",
+       "sha256": "1d86394146d97547d46d4b1daccd7df37c8dd2c1c5e4e90bfd32677182ad1061",
        "sheet": "sheets/hurt_E.png",
        "region": [
         0,
@@ -5410,7 +5362,7 @@
        "file": "hurt_E_01.png",
        "packed_bounds": [
         67,
-        109,
+        110,
         98,
         136
        ],
@@ -5433,11 +5385,11 @@
         ]
        },
        "equipment": {
-        "bramble": 35,
+        "bramble": 40,
         "shard": 33,
-        "glow": 16
+        "wet": 2
        },
-       "sha256": "3a628d40f137d813ac686a6e9a2749351bb4a85372b9f78810b1e2d9eda2fe83",
+       "sha256": "e3428afdc160409754903f118553b4eea695995fc85ee5224b43e162f86c0863",
        "sheet": "sheets/hurt_E.png",
        "region": [
         160,
@@ -5451,7 +5403,7 @@
        "file": "hurt_E_02.png",
        "packed_bounds": [
         67,
-        108,
+        109,
         99,
         136
        ],
@@ -5474,11 +5426,11 @@
         ]
        },
        "equipment": {
-        "bramble": 34,
+        "bramble": 37,
         "shard": 34,
-        "glow": 15
+        "wet": 4
        },
-       "sha256": "5e0b14214d42b9983f647f274df69090e341a8187220f7cafccfcd0713d51403",
+       "sha256": "abb655f3051ae2e61223e35f132b7be1b4e9e8c47aeeb15a3d6d22be9a81ec4a",
        "sheet": "sheets/hurt_E.png",
        "region": [
         320,
@@ -5515,11 +5467,11 @@
         ]
        },
        "equipment": {
-        "bramble": 33,
+        "bramble": 38,
         "shard": 40,
-        "glow": 12
+        "wet": 4
        },
-       "sha256": "4be65b602bbb0ac3f6477e839c800b54ff58e2b7e2e955fffff7d7096b1452b9",
+       "sha256": "541f7cb08cecd840752a0f1e5771f9de2958e79d808971123eddc94db1136024",
        "sheet": "sheets/hurt_E.png",
        "region": [
         480,
@@ -5537,7 +5489,7 @@
        "file": "hurt_W_00.png",
        "packed_bounds": [
         61,
-        109,
+        110,
         93,
         136
        ],
@@ -5560,11 +5512,11 @@
         ]
        },
        "equipment": {
-        "bramble": 26,
+        "bramble": 29,
         "shard": 33,
-        "glow": 15
+        "wet": 3
        },
-       "sha256": "c478dc1a28e9c0ae9d27f822452710e1bfda36221b916b0e4af211f8b2378bc7",
+       "sha256": "8b1f20c15d874a34fe1f492cdf2a6fa882a27310654504fbcce09aea61ace8c6",
        "sheet": "sheets/hurt_W.png",
        "region": [
         0,
@@ -5578,7 +5530,7 @@
        "file": "hurt_W_01.png",
        "packed_bounds": [
         61,
-        109,
+        110,
         93,
         136
        ],
@@ -5601,11 +5553,11 @@
         ]
        },
        "equipment": {
-        "bramble": 30,
+        "bramble": 33,
         "shard": 33,
-        "glow": 14
+        "wet": 3
        },
-       "sha256": "5a027547280986c95e10a58c813d4f2ac274eac95b339a4c399369c159a28ddd",
+       "sha256": "87e51d492c9d4668f5a98b676f600ff737589f786dc9b48adb0ae5ec995cdad2",
        "sheet": "sheets/hurt_W.png",
        "region": [
         160,
@@ -5619,7 +5571,7 @@
        "file": "hurt_W_02.png",
        "packed_bounds": [
         60,
-        108,
+        109,
         93,
         136
        ],
@@ -5642,11 +5594,11 @@
         ]
        },
        "equipment": {
-        "bramble": 28,
+        "bramble": 31,
         "shard": 32,
-        "glow": 15
+        "wet": 5
        },
-       "sha256": "ea47b4e3debce845bf4a358e6fcc0030d9b880e0cf66182d71508054d0c18fc2",
+       "sha256": "7d0712dc2e86e4772289634eb62d1cc24c730be894ed15adb21ce9b8fede16d7",
        "sheet": "sheets/hurt_W.png",
        "region": [
         320,
@@ -5683,11 +5635,11 @@
         ]
        },
        "equipment": {
-        "bramble": 24,
+        "bramble": 28,
         "shard": 39,
-        "glow": 13
+        "wet": 5
        },
-       "sha256": "f036fb186724f51c5b47d7a8ff5e0e46916f98dac531f2878e3d04e4f26bce3e",
+       "sha256": "b4f40dc3047a29e959ab08e65629f1a21941608c5d20d8f26f77647a3d4b6593",
        "sheet": "sheets/hurt_W.png",
        "region": [
         480,
@@ -5748,11 +5700,11 @@
         ]
        },
        "equipment": {
-        "bramble": 37,
+        "bramble": 44,
         "shard": 33,
-        "glow": 11
+        "wet": 5
        },
-       "sha256": "991206baeb0cf19c98e0a41e16b34b9c516e1353a733792df3064a2069759431",
+       "sha256": "f535ef907fafb8328def046d49341ce757520da1cded9613a0d3b71ddd7aef1b",
        "sheet": "sheets/stagger_S.png",
        "region": [
         0,
@@ -5766,7 +5718,7 @@
        "file": "stagger_S_01.png",
        "packed_bounds": [
         66,
-        108,
+        109,
         94,
         139
        ],
@@ -5789,11 +5741,11 @@
         ]
        },
        "equipment": {
-        "bramble": 37,
+        "bramble": 42,
         "shard": 36,
-        "glow": 8
+        "wet": 5
        },
-       "sha256": "9eaadffd663ffe9eb3af67d01127006198d6a1cc6ae7577b8fceffb65c6b5b80",
+       "sha256": "608b2da90e59d608be9e2f0ef48ed41f73297ce1b1148a3bee654c89eb4a8c47",
        "sheet": "sheets/stagger_S.png",
        "region": [
         160,
@@ -5807,7 +5759,7 @@
        "file": "stagger_S_02.png",
        "packed_bounds": [
         65,
-        108,
+        109,
         93,
         139
        ],
@@ -5830,11 +5782,11 @@
         ]
        },
        "equipment": {
-        "bramble": 38,
+        "bramble": 45,
         "shard": 34,
-        "glow": 12
+        "wet": 5
        },
-       "sha256": "9d6129d9a359d4fed3176f13c77b23a3b0b0c2fb92fd5cc0cec8846dd7b8ddc7",
+       "sha256": "f287d8277e66cbe906c51271754e21967e74909c281289eb1f5d680314a46bfb",
        "sheet": "sheets/stagger_S.png",
        "region": [
         320,
@@ -5848,7 +5800,7 @@
        "file": "stagger_S_03.png",
        "packed_bounds": [
         66,
-        108,
+        109,
         94,
         139
        ],
@@ -5871,11 +5823,11 @@
         ]
        },
        "equipment": {
-        "bramble": 37,
+        "bramble": 42,
         "shard": 36,
-        "glow": 8
+        "wet": 5
        },
-       "sha256": "c617c74baf1bee08f94cf082c502731514c525f89360caa36a1c11f551400248",
+       "sha256": "c0ccd10e7f02b0f632658e6e769ee4d92d0a7d301d3d3dd86cc3413d808b7a48",
        "sheet": "sheets/stagger_S.png",
        "region": [
         480,
@@ -5889,7 +5841,7 @@
        "file": "stagger_S_04.png",
        "packed_bounds": [
         67,
-        108,
+        109,
         95,
         139
        ],
@@ -5912,11 +5864,11 @@
         ]
        },
        "equipment": {
-        "bramble": 37,
+        "bramble": 43,
         "shard": 34,
-        "glow": 7
+        "wet": 5
        },
-       "sha256": "156c752b4bb556ce261e7cf26af47c3b4cee499f128863ca037117092f3db8a4",
+       "sha256": "027ba8fb2ac408ff72dbb4403a281397ff6387ec35b93dfb87c392ab5bffb77c",
        "sheet": "sheets/stagger_S.png",
        "region": [
         640,
@@ -5930,7 +5882,7 @@
        "file": "stagger_S_05.png",
        "packed_bounds": [
         66,
-        108,
+        109,
         94,
         139
        ],
@@ -5953,11 +5905,11 @@
         ]
        },
        "equipment": {
-        "bramble": 37,
+        "bramble": 42,
         "shard": 36,
-        "glow": 8
+        "wet": 5
        },
-       "sha256": "60e702ec7c617ca4dfb03eccb9fa88b10d393994c40aece0789ac0f6a188324a",
+       "sha256": "a5d361ca3aa4f8fa50aed4f9ad4f61e6d1b4813948049f08934627598867da57",
        "sheet": "sheets/stagger_S.png",
        "region": [
         800,
@@ -5994,11 +5946,11 @@
         ]
        },
        "equipment": {
-        "bramble": 36,
+        "bramble": 43,
         "shard": 35,
-        "glow": 11
+        "wet": 6
        },
-       "sha256": "61b70fc6c5f8a412fec5a1855def7470d48588facb985f190a6bdc517e08b2f3",
+       "sha256": "7db0eab45a72978e13dd269656075b17c162b47483277ef3fa91be3d5d98d892",
        "sheet": "sheets/stagger_S.png",
        "region": [
         960,
@@ -6039,11 +5991,10 @@
         ]
        },
        "equipment": {
-        "bramble": 54,
-        "shard": 36,
-        "glow": 14
+        "bramble": 61,
+        "shard": 36
        },
-       "sha256": "d20a4cb95e03eb137e593f81b2bd51d72757ef9037a8dedbac7dafb21efe8770",
+       "sha256": "95c64cdeffa19576b6817810ad19a808d9af8d21aca325cbcb886af3bbedd018",
        "sheet": "sheets/stagger_N.png",
        "region": [
         0,
@@ -6080,11 +6031,10 @@
         ]
        },
        "equipment": {
-        "bramble": 57,
-        "shard": 35,
-        "glow": 13
+        "bramble": 63,
+        "shard": 35
        },
-       "sha256": "b5c57f393d0bae23030e3d5db6072fb9b179e745c5bef8fd50977b3d383ae0f5",
+       "sha256": "1af47a1c0faced85ed6e971b052faf74c20a48d65f62768d331f5570503deff4",
        "sheet": "sheets/stagger_N.png",
        "region": [
         160,
@@ -6121,11 +6071,10 @@
         ]
        },
        "equipment": {
-        "bramble": 55,
-        "shard": 32,
-        "glow": 15
+        "bramble": 62,
+        "shard": 32
        },
-       "sha256": "df7a52fe5412ab308fd0b58670a5dd7ae07071684111450d4907b1b6ff1fde36",
+       "sha256": "1e946b139aea02cc98de0cd259b24e8729fbfae28b047afe8e977058dbb4be14",
        "sheet": "sheets/stagger_N.png",
        "region": [
         320,
@@ -6162,11 +6111,10 @@
         ]
        },
        "equipment": {
-        "bramble": 57,
-        "shard": 35,
-        "glow": 13
+        "bramble": 63,
+        "shard": 35
        },
-       "sha256": "ea1436a821aebb7453a19dc866c4638e4a502a3f4a388fbefe683fe37cf105a7",
+       "sha256": "a897f02a02a4231204e504efeea28ce43d22862597819c3b71c8bde85ccb99ac",
        "sheet": "sheets/stagger_N.png",
        "region": [
         480,
@@ -6203,11 +6151,10 @@
         ]
        },
        "equipment": {
-        "bramble": 56,
-        "shard": 32,
-        "glow": 15
+        "bramble": 62,
+        "shard": 32
        },
-       "sha256": "71c30e19d56109a910a2afcddd8815b527d3e2b577671d6a0d067d750f60b9be",
+       "sha256": "4bc7a601044662a5c8b97f33bffe0e52a61628a32befe5bfdc2233026c7434d0",
        "sheet": "sheets/stagger_N.png",
        "region": [
         640,
@@ -6244,11 +6191,10 @@
         ]
        },
        "equipment": {
-        "bramble": 57,
-        "shard": 35,
-        "glow": 13
+        "bramble": 63,
+        "shard": 35
        },
-       "sha256": "79cc8c9b9cb299ed7d9234c24c3a06e147a5ca3031dc3100f42d31b54b84df8d",
+       "sha256": "1370ce2d37bb32745bb14e74450b794df0f78639200f36d244b7026ddc857dae",
        "sheet": "sheets/stagger_N.png",
        "region": [
         800,
@@ -6285,11 +6231,10 @@
         ]
        },
        "equipment": {
-        "bramble": 55,
-        "shard": 35,
-        "glow": 15
+        "bramble": 63,
+        "shard": 35
        },
-       "sha256": "5f24a679a1acb4a4ca9567989973d367ed96c03eeb6310c52612b00aa141a33b",
+       "sha256": "f09d660e4f867f23caa0d77d148d39997d9a5a0d011ef0b68b7c068aab31c39f",
        "sheet": "sheets/stagger_N.png",
        "region": [
         960,
@@ -6330,11 +6275,11 @@
         ]
        },
        "equipment": {
-        "bramble": 36,
+        "bramble": 41,
         "shard": 40,
-        "glow": 11
+        "wet": 3
        },
-       "sha256": "f61ad537e140c851f8d29d930ccc92d9a83610b17d662867f497df790b17bc58",
+       "sha256": "c73b67abe4157c0bfc1e944bd95a66d2fbbebd3588ad4b67c430fdd22251ef8a",
        "sheet": "sheets/stagger_E.png",
        "region": [
         0,
@@ -6371,11 +6316,11 @@
         ]
        },
        "equipment": {
-        "bramble": 41,
+        "bramble": 46,
         "shard": 36,
-        "glow": 15
+        "wet": 2
        },
-       "sha256": "a64e134bc8972f81145d2e2669242d7d91c9d83c4925a1b4ee7aa45b4b8b654f",
+       "sha256": "5d3e5b25d752db28b001b0a30fc680282d0108ebe0e00ca2f8a2a53ad68c37aa",
        "sheet": "sheets/stagger_E.png",
        "region": [
         160,
@@ -6412,11 +6357,11 @@
         ]
        },
        "equipment": {
-        "bramble": 43,
+        "bramble": 49,
         "shard": 33,
-        "glow": 16
+        "wet": 2
        },
-       "sha256": "1688c63f54a80c8977e274f72d4548d5a4375bbaab08f7f34f6930c47ddb743a",
+       "sha256": "d5a18eb18304159875b7de8894b0bb7e94d16f086e899c60fc6f7de4961dbc44",
        "sheet": "sheets/stagger_E.png",
        "region": [
         320,
@@ -6453,11 +6398,11 @@
         ]
        },
        "equipment": {
-        "bramble": 41,
+        "bramble": 46,
         "shard": 36,
-        "glow": 15
+        "wet": 2
        },
-       "sha256": "0f47ea484ffe20e2d577cf301e1220aef766381d5119af17d175484b815707bb",
+       "sha256": "f3cc99b5b658ac84a547c1523ccf80f7a7696d058f6e70c38038cf70baa8b03a",
        "sheet": "sheets/stagger_E.png",
        "region": [
         480,
@@ -6494,11 +6439,11 @@
         ]
        },
        "equipment": {
-        "bramble": 42,
+        "bramble": 47,
         "shard": 34,
-        "glow": 16
+        "wet": 2
        },
-       "sha256": "e0fbcc61ec4b8a362e05d8969239695f362e2eab595d13a3e922e80e102d20e6",
+       "sha256": "cd55d04298e20dc4a22c8fdac5b67b366ba2246dcbbf78571366695416a2222c",
        "sheet": "sheets/stagger_E.png",
        "region": [
         640,
@@ -6535,11 +6480,11 @@
         ]
        },
        "equipment": {
-        "bramble": 41,
+        "bramble": 46,
         "shard": 36,
-        "glow": 15
+        "wet": 2
        },
-       "sha256": "461869ba06e6d8570b5161faef0d8ce5c36e15111e69dae4193e53fa10aee341",
+       "sha256": "0296600daad446355e1f54c9741d90da0efb25549e3f73ad6cd450e3172dc5ad",
        "sheet": "sheets/stagger_E.png",
        "region": [
         800,
@@ -6576,11 +6521,11 @@
         ]
        },
        "equipment": {
-        "bramble": 33,
+        "bramble": 38,
         "shard": 40,
-        "glow": 12
+        "wet": 4
        },
-       "sha256": "4be65b602bbb0ac3f6477e839c800b54ff58e2b7e2e955fffff7d7096b1452b9",
+       "sha256": "541f7cb08cecd840752a0f1e5771f9de2958e79d808971123eddc94db1136024",
        "sheet": "sheets/stagger_E.png",
        "region": [
         960,
@@ -6621,11 +6566,11 @@
         ]
        },
        "equipment": {
-        "bramble": 29,
+        "bramble": 33,
         "shard": 39,
-        "glow": 12
+        "wet": 4
        },
-       "sha256": "fd8c2e7938c40eda1e5da682b1acce7e2118d0183ab4d4c5b1865992df25ca74",
+       "sha256": "a5966f6914d5335a90a5c59666b80796b510a4d6318d36aa74dd7bc0074a5579",
        "sheet": "sheets/stagger_W.png",
        "region": [
         0,
@@ -6662,11 +6607,11 @@
         ]
        },
        "equipment": {
-        "bramble": 32,
+        "bramble": 36,
         "shard": 35,
-        "glow": 16
+        "wet": 3
        },
-       "sha256": "2d6e256c00479b182fdefdadf9d06d8ea6979bc40e64c22bcf283bf5fcb74e2f",
+       "sha256": "622f9e63a7db06a3022713308e1e0e79700d6ebd4dc3b50d7bed8bfd175056c4",
        "sheet": "sheets/stagger_W.png",
        "region": [
         160,
@@ -6703,11 +6648,11 @@
         ]
        },
        "equipment": {
-        "bramble": 35,
+        "bramble": 40,
         "shard": 33,
-        "glow": 17
+        "wet": 3
        },
-       "sha256": "8fc46f3cbbe67736c3103f6c78810cafa1649293308c0528b7fd131eca793783",
+       "sha256": "3feb765ae2b0cf0ac85efc9cd49d32a462a00720d67b3059dc2d75a53046d8e7",
        "sheet": "sheets/stagger_W.png",
        "region": [
         320,
@@ -6744,11 +6689,11 @@
         ]
        },
        "equipment": {
-        "bramble": 32,
+        "bramble": 36,
         "shard": 35,
-        "glow": 16
+        "wet": 3
        },
-       "sha256": "15c1a3973e30148b63c63ed8aec1daf7b2c556c73404810ce476059c4b5b1fb0",
+       "sha256": "8a88e7abd11c4e7abce2bebb7bb8a37f45cf5bb48c324f02d11e14fa374a19b0",
        "sheet": "sheets/stagger_W.png",
        "region": [
         480,
@@ -6785,11 +6730,11 @@
         ]
        },
        "equipment": {
-        "bramble": 32,
+        "bramble": 36,
         "shard": 32,
-        "glow": 15
+        "wet": 3
        },
-       "sha256": "4cd00e83e4319ca5571a8ab6e656a715fd05c65d486adc879fd7948faaa2ed69",
+       "sha256": "2dba8e75b1a02c2a2b230586c4a9bb1b4380ce6d1eadc3f00174349e592f1efb",
        "sheet": "sheets/stagger_W.png",
        "region": [
         640,
@@ -6826,11 +6771,11 @@
         ]
        },
        "equipment": {
-        "bramble": 32,
+        "bramble": 36,
         "shard": 35,
-        "glow": 16
+        "wet": 3
        },
-       "sha256": "38d7d5b6a50f6c4485b5995c6d8ea65778befbdbb78bb627cbdeb7b9780d5fe4",
+       "sha256": "bc7d1af9c2e92bf0b7a4a9df4eaf8f4f30ac95f38a9fc7711a816da0463a45e6",
        "sheet": "sheets/stagger_W.png",
        "region": [
         800,
@@ -6867,11 +6812,11 @@
         ]
        },
        "equipment": {
-        "bramble": 24,
+        "bramble": 28,
         "shard": 39,
-        "glow": 13
+        "wet": 5
        },
-       "sha256": "f036fb186724f51c5b47d7a8ff5e0e46916f98dac531f2878e3d04e4f26bce3e",
+       "sha256": "b4f40dc3047a29e959ab08e65629f1a21941608c5d20d8f26f77647a3d4b6593",
        "sheet": "sheets/stagger_W.png",
        "region": [
         960,
@@ -6914,7 +6859,7 @@
        "file": "freed_S_00.png",
        "packed_bounds": [
         66,
-        103,
+        105,
         94,
         139
        ],
@@ -6937,11 +6882,11 @@
         ]
        },
        "equipment": {
-        "bramble": 45,
+        "bramble": 49,
         "shard": 36,
-        "glow": 14
+        "wet": 6
        },
-       "sha256": "dcb34b2d97064c85eacc0e574255db26194ca69d994f46ae3c71f1147ca68b0d",
+       "sha256": "dbbf1a596214c3a2afc7e10daa5def8994847ec11887960f157ee3726d1109bd",
        "sheet": "sheets/freed_S.png",
        "region": [
         0,
@@ -6955,7 +6900,7 @@
        "file": "freed_S_01.png",
        "packed_bounds": [
         66,
-        92,
+        94,
         94,
         139
        ],
@@ -6980,9 +6925,9 @@
        "equipment": {
         "bramble": 64,
         "shard": 37,
-        "glow": 10
+        "wet": 6
        },
-       "sha256": "937d5e9ee47cccd6c875a0b0edca4e84063c20396f9696a3ffea728293635a52",
+       "sha256": "7b309677fb561fda0d432bf51833cadd5c37c2dd339bddf2ef0c41441b002c5d",
        "sheet": "sheets/freed_S.png",
        "region": [
         160,
@@ -6996,7 +6941,7 @@
        "file": "freed_S_02.png",
        "packed_bounds": [
         66,
-        84,
+        87,
         94,
         139
        ],
@@ -7020,10 +6965,10 @@
        },
        "equipment": {
         "bramble": 64,
-        "shard": 37,
-        "glow": 13
+        "shard": 36,
+        "wet": 6
        },
-       "sha256": "1529b458c4f497c8dbb662672cefa72439d8fdecddd38173107ed293375865a3",
+       "sha256": "6b969b37bb8114bf95573e58f85953f849932eaad1b83c57ebc1c8e631386611",
        "sheet": "sheets/freed_S.png",
        "region": [
         320,
@@ -7061,10 +7006,11 @@
        },
        "equipment": {
         "bramble": 64,
-        "sac": 30,
-        "shard": 38
+        "sac": 20,
+        "shard": 36,
+        "wet": 6
        },
-       "sha256": "197cb7ca7c6d9bd4a4f9e569bc5d1542b1d32489e0f8bf9bfcbc2843839a19cd",
+       "sha256": "a79b95bc06423b1ca51f8aef92a9dc02c1d809d492c6cc82046f949b82adbf37",
        "sheet": "sheets/freed_S.png",
        "region": [
         480,
@@ -7098,9 +7044,10 @@
        },
        "equipment": {
         "bramble": 66,
-        "sac": 50
+        "sac": 34,
+        "wet": 5
        },
-       "sha256": "4042820a46deec100e298f42a53db188e6eba4f759f699015213d935d85ccaf5",
+       "sha256": "2a85c6c52aebfd9e81a9a4404bd5c31d0dd3be5304fdf16dbfad83a0e94d8e67",
        "sheet": "sheets/freed_S.png",
        "region": [
         640,
@@ -7134,9 +7081,10 @@
        },
        "equipment": {
         "bramble": 64,
-        "sac": 30
+        "sac": 20,
+        "wet": 6
        },
-       "sha256": "5742c4ebd62cf1ac7b558e16e8f6319a5112af836c149dcf0ce42a4cb199a316",
+       "sha256": "86be710583997d8dbeb054735e0de442b947f6385a7a55561be2197fc47b01a0",
        "sheet": "sheets/freed_S.png",
        "region": [
         800,
@@ -7169,9 +7117,10 @@
         ]
        },
        "equipment": {
-        "bramble": 64
+        "bramble": 64,
+        "wet": 6
        },
-       "sha256": "4e138f381ced882697e7c78707ad307b33dd0be11547b84695486215fe4faaa5",
+       "sha256": "d9d7d7b0411a66bada5ddc900628375c883c1b9569ba8c3447530221b7ff355c",
        "sheet": "sheets/freed_S.png",
        "region": [
         960,
@@ -7204,9 +7153,10 @@
         ]
        },
        "equipment": {
-        "bramble": 66
+        "bramble": 66,
+        "wet": 5
        },
-       "sha256": "ee3d3ad8fc0cf61a581f5eca728dd859b271c0bd293661b4d0774478ddea02b5",
+       "sha256": "fdade86a8ef6cd4554366480ba3d67857e263664c5ba41b4ccdc589b81c81732",
        "sheet": "sheets/freed_S.png",
        "region": [
         1120,
@@ -7239,9 +7189,10 @@
         ]
        },
        "equipment": {
-        "bramble": 64
+        "bramble": 64,
+        "wet": 6
        },
-       "sha256": "4e138f381ced882697e7c78707ad307b33dd0be11547b84695486215fe4faaa5",
+       "sha256": "d9d7d7b0411a66bada5ddc900628375c883c1b9569ba8c3447530221b7ff355c",
        "sheet": "sheets/freed_S.png",
        "region": [
         1280,
@@ -7274,9 +7225,10 @@
         ]
        },
        "equipment": {
-        "bramble": 64
+        "bramble": 64,
+        "wet": 6
        },
-       "sha256": "89adf49a46fd6d42a09b56712390bccffb47984de3337b7f993185caa5babed2",
+       "sha256": "fe7b4a07a2166cde130191b1a5c2f4dc10485d7ad74cf8f2a7fe2ab21fde2b50",
        "sheet": "sheets/freed_S.png",
        "region": [
         1440,
@@ -7309,9 +7261,10 @@
         ]
        },
        "equipment": {
-        "bramble": 64
+        "bramble": 64,
+        "wet": 6
        },
-       "sha256": "edcd7b44909169c2f06ccb105f4f1a7698b86cd6ddad22f5b41c608a19cc3e09",
+       "sha256": "3a30bd2bd8ce331ffa6bffe20abc5cc9a398f4ffea8535e88afff654920ac044",
        "sheet": "sheets/freed_S.png",
        "region": [
         1600,
@@ -7344,9 +7297,10 @@
         ]
        },
        "equipment": {
-        "bramble": 64
+        "bramble": 64,
+        "wet": 6
        },
-       "sha256": "89adf49a46fd6d42a09b56712390bccffb47984de3337b7f993185caa5babed2",
+       "sha256": "fe7b4a07a2166cde130191b1a5c2f4dc10485d7ad74cf8f2a7fe2ab21fde2b50",
        "sheet": "sheets/freed_S.png",
        "region": [
         1760,
@@ -7364,7 +7318,7 @@
        "file": "freed_N_00.png",
        "packed_bounds": [
         66,
-        106,
+        108,
         94,
         137
        ],
@@ -7387,11 +7341,10 @@
         ]
        },
        "equipment": {
-        "bramble": 60,
-        "shard": 32,
-        "glow": 12
+        "bramble": 65,
+        "shard": 32
        },
-       "sha256": "2c7cac81369513b8bca1e2cfecdecf1a0272841b2e48f066364ed99c15b59f7c",
+       "sha256": "342bae3e87843878589a19e2d1fc8c213128e10152a3cc5112c3139b1d1f3f3a",
        "sheet": "sheets/freed_N.png",
        "region": [
         0,
@@ -7405,7 +7358,7 @@
        "file": "freed_N_01.png",
        "packed_bounds": [
         66,
-        96,
+        99,
         94,
         137
        ],
@@ -7429,10 +7382,9 @@
        },
        "equipment": {
         "bramble": 75,
-        "shard": 34,
-        "glow": 14
+        "shard": 33
        },
-       "sha256": "258d27d2801e2ed9fe5de9b784c5a4659b8cd3c72a3af00788feb01810d30de9",
+       "sha256": "f815a06915c764ac6389cc02befd4108dc3a6175eb983d70b3216d95f60dc094",
        "sheet": "sheets/freed_N.png",
        "region": [
         160,
@@ -7446,7 +7398,7 @@
        "file": "freed_N_02.png",
        "packed_bounds": [
         66,
-        90,
+        92,
         94,
         136
        ],
@@ -7470,10 +7422,9 @@
        },
        "equipment": {
         "bramble": 75,
-        "shard": 34,
-        "glow": 9
+        "shard": 33
        },
-       "sha256": "1cddb5071f31ca9f3af337afc3d6d2857f623b5d788d3a7cbb803dcc5252d877",
+       "sha256": "19a29b52d9221d602a8294baf3643a1959120baae573459240daa67b50d13a3f",
        "sheet": "sheets/freed_N.png",
        "region": [
         320,
@@ -7511,9 +7462,9 @@
        },
        "equipment": {
         "bramble": 75,
-        "shard": 28
+        "shard": 29
        },
-       "sha256": "f7f49ad007b9a3f46b5904f81ad24242f63c7d6c3ff12f589cc4b8ca1395633c",
+       "sha256": "74c23e12a04a2fbdadf9ff9c77ec21cf8469d5307cdaf7db0031ab9ce9493eb5",
        "sheet": "sheets/freed_N.png",
        "region": [
         480,
@@ -7548,7 +7499,7 @@
        "equipment": {
         "bramble": 77
        },
-       "sha256": "3011178d70223a0bdf8f17d3e591670517d49a8f5a3690ae7fd48529b70f004e",
+       "sha256": "befb19b3937e6a2d1c1af5f419848d06880d10cad42db53baa839b13e711aac2",
        "sheet": "sheets/freed_N.png",
        "region": [
         640,
@@ -7583,7 +7534,7 @@
        "equipment": {
         "bramble": 75
        },
-       "sha256": "a6244fa28901b0abd5fd633502126006daaccf43b94f8fe15ecd09075dece7f3",
+       "sha256": "77b6b517993d0867769e3cb571d9fe15a7c4400f8a6f6cb2368075817a380570",
        "sheet": "sheets/freed_N.png",
        "region": [
         800,
@@ -7618,7 +7569,7 @@
        "equipment": {
         "bramble": 75
        },
-       "sha256": "a6244fa28901b0abd5fd633502126006daaccf43b94f8fe15ecd09075dece7f3",
+       "sha256": "77b6b517993d0867769e3cb571d9fe15a7c4400f8a6f6cb2368075817a380570",
        "sheet": "sheets/freed_N.png",
        "region": [
         960,
@@ -7653,7 +7604,7 @@
        "equipment": {
         "bramble": 77
        },
-       "sha256": "a60d10003d3a7afeb81a2ea1e49019ee90b69f2649d38dd5d74308c3665467a7",
+       "sha256": "68122bc5b11e76d4db498e6d634c364e957322467e5b397eb77bfbd741eeaf06",
        "sheet": "sheets/freed_N.png",
        "region": [
         1120,
@@ -7688,7 +7639,7 @@
        "equipment": {
         "bramble": 75
        },
-       "sha256": "a6244fa28901b0abd5fd633502126006daaccf43b94f8fe15ecd09075dece7f3",
+       "sha256": "77b6b517993d0867769e3cb571d9fe15a7c4400f8a6f6cb2368075817a380570",
        "sheet": "sheets/freed_N.png",
        "region": [
         1280,
@@ -7723,7 +7674,7 @@
        "equipment": {
         "bramble": 75
        },
-       "sha256": "a6244fa28901b0abd5fd633502126006daaccf43b94f8fe15ecd09075dece7f3",
+       "sha256": "77b6b517993d0867769e3cb571d9fe15a7c4400f8a6f6cb2368075817a380570",
        "sheet": "sheets/freed_N.png",
        "region": [
         1440,
@@ -7758,7 +7709,7 @@
        "equipment": {
         "bramble": 78
        },
-       "sha256": "c9a3eb22858d51af80db2bcc7ce1f00f22231ec167420253bd93e6fcaaa1b7db",
+       "sha256": "c30aacfe6eec3541ae09b6a0ded2593439e5548980cbb5a84d0d316c5eef2c69",
        "sheet": "sheets/freed_N.png",
        "region": [
         1600,
@@ -7793,7 +7744,7 @@
        "equipment": {
         "bramble": 75
        },
-       "sha256": "a6244fa28901b0abd5fd633502126006daaccf43b94f8fe15ecd09075dece7f3",
+       "sha256": "77b6b517993d0867769e3cb571d9fe15a7c4400f8a6f6cb2368075817a380570",
        "sheet": "sheets/freed_N.png",
        "region": [
         1760,
@@ -7811,7 +7762,7 @@
        "file": "freed_E_00.png",
        "packed_bounds": [
         67,
-        105,
+        106,
         99,
         136
        ],
@@ -7834,11 +7785,11 @@
         ]
        },
        "equipment": {
-        "bramble": 42,
+        "bramble": 47,
         "shard": 37,
-        "glow": 12
+        "wet": 4
        },
-       "sha256": "ebbb0ea23aac65a6c14d074273441ae0fc4f8a7602e42351a00d9994d0c29567",
+       "sha256": "1fe15fa795fee058815166125843b3776d546b0467faa49f7243981b4406f7e2",
        "sheet": "sheets/freed_E.png",
        "region": [
         0,
@@ -7852,7 +7803,7 @@
        "file": "freed_E_01.png",
        "packed_bounds": [
         67,
-        94,
+        95,
         99,
         136
        ],
@@ -7877,9 +7828,9 @@
        "equipment": {
         "bramble": 70,
         "shard": 37,
-        "glow": 15
+        "wet": 4
        },
-       "sha256": "d427323cda542662e018cd0e32ca88605b813a5465e5f74572bc2de46e402cfb",
+       "sha256": "272047f2fe218788bb3e3ef24e43c9a5431053c3cd093d73f75ea752853950bf",
        "sheet": "sheets/freed_E.png",
        "region": [
         160,
@@ -7893,7 +7844,7 @@
        "file": "freed_E_02.png",
        "packed_bounds": [
         67,
-        86,
+        89,
         99,
         136
        ],
@@ -7917,10 +7868,10 @@
        },
        "equipment": {
         "bramble": 70,
-        "shard": 36,
-        "glow": 12
+        "shard": 35,
+        "wet": 4
        },
-       "sha256": "81eb8f3801de3154d8503e7ef2f1717dee825538603f8437fd1836613f322f71",
+       "sha256": "f74f8da816eb400b64f61990fc069e051cdad1d76fb776324a0531e646c82cd9",
        "sheet": "sheets/freed_E.png",
        "region": [
         320,
@@ -7935,7 +7886,7 @@
        "packed_bounds": [
         67,
         87,
-        100,
+        99,
         136
        ],
        "anchors": {
@@ -7957,11 +7908,12 @@
         ]
        },
        "equipment": {
-        "sac": 32,
+        "sac": 17,
         "bramble": 70,
-        "shard": 36
+        "shard": 36,
+        "wet": 4
        },
-       "sha256": "e0e5452378deda4a3b86db213ff5447741b9a7a72c92dd1cefc03b7927ec85d9",
+       "sha256": "b574f0b0d419525abadfbcd674f6992c30fd04d60311b21219d22f4e5bb01799",
        "sheet": "sheets/freed_E.png",
        "region": [
         480,
@@ -7976,7 +7928,7 @@
        "packed_bounds": [
         67,
         108,
-        101,
+        99,
         136
        ],
        "anchors": {
@@ -7994,10 +7946,11 @@
         ]
        },
        "equipment": {
-        "sac": 50,
-        "bramble": 66
+        "sac": 30,
+        "bramble": 66,
+        "wet": 3
        },
-       "sha256": "943a016dcf5f6a209de2fe531fcdaafbc66f34f655d76ec375716e9490f15c3b",
+       "sha256": "a9b39946c6721d8d33b9f8d48d412524e8c04fa3727c2b4b0bc1b81f455a522a",
        "sheet": "sheets/freed_E.png",
        "region": [
         640,
@@ -8012,7 +7965,7 @@
        "packed_bounds": [
         67,
         108,
-        100,
+        99,
         136
        ],
        "anchors": {
@@ -8030,10 +7983,11 @@
         ]
        },
        "equipment": {
-        "sac": 32,
-        "bramble": 70
+        "sac": 17,
+        "bramble": 70,
+        "wet": 4
        },
-       "sha256": "310f566b5c0ca053e09a26574c2e0369eea4afd0922cd829a97dd759bd826b3d",
+       "sha256": "a97af17de9b0684fc74b53128bf076c5b872d877ff9d56f1b4d96920a55fea59",
        "sheet": "sheets/freed_E.png",
        "region": [
         800,
@@ -8066,9 +8020,10 @@
         ]
        },
        "equipment": {
-        "bramble": 70
+        "bramble": 70,
+        "wet": 4
        },
-       "sha256": "c9686528341a0d0718cdd5e5c2a64f53a552749d14c476c8127777939df1d01e",
+       "sha256": "14998e75c3201c62321a5d647cc721094bb175156939d16d62c45c596a213cc2",
        "sheet": "sheets/freed_E.png",
        "region": [
         960,
@@ -8101,9 +8056,10 @@
         ]
        },
        "equipment": {
-        "bramble": 66
+        "bramble": 66,
+        "wet": 3
        },
-       "sha256": "1f02d647cb35de398996c84f63ba98c5e341ee3eaab0adf1376efb368d206cd1",
+       "sha256": "39314450361834cf33f20943b52831293f8a462e722d2e45e1c327a5f3c323de",
        "sheet": "sheets/freed_E.png",
        "region": [
         1120,
@@ -8136,9 +8092,10 @@
         ]
        },
        "equipment": {
-        "bramble": 70
+        "bramble": 70,
+        "wet": 4
        },
-       "sha256": "c9686528341a0d0718cdd5e5c2a64f53a552749d14c476c8127777939df1d01e",
+       "sha256": "14998e75c3201c62321a5d647cc721094bb175156939d16d62c45c596a213cc2",
        "sheet": "sheets/freed_E.png",
        "region": [
         1280,
@@ -8171,9 +8128,10 @@
         ]
        },
        "equipment": {
-        "bramble": 70
+        "bramble": 70,
+        "wet": 4
        },
-       "sha256": "cef72e4ecac40cd18e7d1e8e829cb5fba2c0896407d041d2ded12ba077e33a51",
+       "sha256": "4f78aed98e88cd9b641d27cb404fac5b585dae87d1d12e7f267ad40121ed3005",
        "sheet": "sheets/freed_E.png",
        "region": [
         1440,
@@ -8206,9 +8164,10 @@
         ]
        },
        "equipment": {
-        "bramble": 67
+        "bramble": 67,
+        "wet": 3
        },
-       "sha256": "38cc1f13e063fd72036cb64513f5d7d2871071e99d869aecbddb72174803855a",
+       "sha256": "408f18cd139a7f3efb2f32cb5d63c93eabd5affa87178c0abdb041196c88621c",
        "sheet": "sheets/freed_E.png",
        "region": [
         1600,
@@ -8241,9 +8200,10 @@
         ]
        },
        "equipment": {
-        "bramble": 70
+        "bramble": 70,
+        "wet": 4
        },
-       "sha256": "cef72e4ecac40cd18e7d1e8e829cb5fba2c0896407d041d2ded12ba077e33a51",
+       "sha256": "4f78aed98e88cd9b641d27cb404fac5b585dae87d1d12e7f267ad40121ed3005",
        "sheet": "sheets/freed_E.png",
        "region": [
         1760,
@@ -8261,7 +8221,7 @@
        "file": "freed_W_00.png",
        "packed_bounds": [
         60,
-        105,
+        106,
         93,
         136
        ],
@@ -8284,11 +8244,11 @@
         ]
        },
        "equipment": {
-        "bramble": 35,
+        "bramble": 40,
         "shard": 36,
-        "glow": 12
+        "wet": 5
        },
-       "sha256": "a2ac546f04a41fa07a8342655e68eab0a9545f77df76e6a0265a0b3ab6092b33",
+       "sha256": "e31da5eddb76a6dbca0b5838b448a2805b64397aae7c4f553e20fd24f026fa8c",
        "sheet": "sheets/freed_W.png",
        "region": [
         0,
@@ -8302,7 +8262,7 @@
        "file": "freed_W_01.png",
        "packed_bounds": [
         60,
-        94,
+        96,
         93,
         136
        ],
@@ -8327,9 +8287,9 @@
        "equipment": {
         "bramble": 63,
         "shard": 29,
-        "glow": 16
+        "wet": 5
        },
-       "sha256": "0e553347d27a3f05c122ce41d740697dca559af6330aa1b785017d7c3f3fd7dc",
+       "sha256": "f6b5b184951ae2cd49421cc6992d4e01549c0a7226e03348fc4a40f495e3a36d",
        "sheet": "sheets/freed_W.png",
        "region": [
         160,
@@ -8343,7 +8303,7 @@
        "file": "freed_W_02.png",
        "packed_bounds": [
         60,
-        86,
+        89,
         93,
         136
        ],
@@ -8368,9 +8328,9 @@
        "equipment": {
         "bramble": 63,
         "shard": 35,
-        "glow": 16
+        "wet": 5
        },
-       "sha256": "12b9955abd2f1ba712e75494ac0d183460ec7dec5934b1b814f4985f3ac57e44",
+       "sha256": "11720bd1dd6fb8dff5202fd434c4d71cbcc083f075307bd9b93c90d3cb9051e7",
        "sheet": "sheets/freed_W.png",
        "region": [
         320,
@@ -8407,11 +8367,12 @@
         ]
        },
        "equipment": {
-        "sac": 32,
+        "sac": 17,
         "bramble": 63,
-        "shard": 36
+        "shard": 34,
+        "wet": 5
        },
-       "sha256": "2d4e33e520b871eccb01c4eab39a815c0c91e399e14cff8aa15bcee41c9774f8",
+       "sha256": "369cb9cff41e57509198bdd910183d77730ec97a66a272e5be58366fa13fff6e",
        "sheet": "sheets/freed_W.png",
        "region": [
         480,
@@ -8424,7 +8385,7 @@
        "path": "res://assets/animated/toad/freed_W_04.png",
        "file": "freed_W_04.png",
        "packed_bounds": [
-        59,
+        60,
         108,
         93,
         136
@@ -8444,10 +8405,11 @@
         ]
        },
        "equipment": {
-        "sac": 50,
-        "bramble": 61
+        "sac": 30,
+        "bramble": 61,
+        "wet": 3
        },
-       "sha256": "5ae20b7e95e0c8737e406787d5932c5209c7c3d7d2aad82a3bba2fa025587b56",
+       "sha256": "9143f64ab2d957679615643629448fcc1623889debac70a920944cab89b986d7",
        "sheet": "sheets/freed_W.png",
        "region": [
         640,
@@ -8480,10 +8442,11 @@
         ]
        },
        "equipment": {
-        "sac": 32,
-        "bramble": 63
+        "sac": 17,
+        "bramble": 63,
+        "wet": 5
        },
-       "sha256": "eadd53831481e07255cbcc58093966ddcbb891e8379a5eb0cc7ac8c2c7ccd2df",
+       "sha256": "6c334e55de0e21b4b2609c27e76f30c18ffa72c06acac7caedd89ca7d350535f",
        "sheet": "sheets/freed_W.png",
        "region": [
         800,
@@ -8516,9 +8479,10 @@
         ]
        },
        "equipment": {
-        "bramble": 63
+        "bramble": 63,
+        "wet": 5
        },
-       "sha256": "06ff757bf1d03458af74d81089bc00bc99a4004abb03178c5ed69bfd51336661",
+       "sha256": "2909613d8fecd525798925dea087c4dca20582a81cc73d2bf2e21308ac3791a7",
        "sheet": "sheets/freed_W.png",
        "region": [
         960,
@@ -8551,9 +8515,10 @@
         ]
        },
        "equipment": {
-        "bramble": 61
+        "bramble": 61,
+        "wet": 3
        },
-       "sha256": "b352d949e769f252292e7f6b00791165b697a5627739c5ef323c784be09dd8e1",
+       "sha256": "ce7256da78bc009e76de9c70f2e42a97112a59df9f8b8a0d3acaf5b562c9e4e9",
        "sheet": "sheets/freed_W.png",
        "region": [
         1120,
@@ -8586,9 +8551,10 @@
         ]
        },
        "equipment": {
-        "bramble": 63
+        "bramble": 63,
+        "wet": 5
        },
-       "sha256": "06ff757bf1d03458af74d81089bc00bc99a4004abb03178c5ed69bfd51336661",
+       "sha256": "2909613d8fecd525798925dea087c4dca20582a81cc73d2bf2e21308ac3791a7",
        "sheet": "sheets/freed_W.png",
        "region": [
         1280,
@@ -8621,9 +8587,10 @@
         ]
        },
        "equipment": {
-        "bramble": 63
+        "bramble": 63,
+        "wet": 5
        },
-       "sha256": "b14f2ad36371714124dafdac3a94c719e8d5d84e3ee6b755b2c69f6d4e836c7b",
+       "sha256": "0fedfcfcf5f62aed64f93af6bf5d5de6ff10864ffce84ea84e5b7569d966619b",
        "sheet": "sheets/freed_W.png",
        "region": [
         1440,
@@ -8656,9 +8623,10 @@
         ]
        },
        "equipment": {
-        "bramble": 64
+        "bramble": 64,
+        "wet": 4
        },
-       "sha256": "d0cb9fc60a012fdc44eda66241ded25b38546a83c5f154b241d5eed0f247c4bb",
+       "sha256": "c9df56d681cf7e7540f33724f34bf126416729778b759a05521cbd2a7b286257",
        "sheet": "sheets/freed_W.png",
        "region": [
         1600,
@@ -8691,9 +8659,10 @@
         ]
        },
        "equipment": {
-        "bramble": 63
+        "bramble": 63,
+        "wet": 5
        },
-       "sha256": "b14f2ad36371714124dafdac3a94c719e8d5d84e3ee6b755b2c69f6d4e836c7b",
+       "sha256": "0fedfcfcf5f62aed64f93af6bf5d5de6ff10864ffce84ea84e5b7569d966619b",
        "sheet": "sheets/freed_W.png",
        "region": [
         1760,
@@ -8751,9 +8720,10 @@
         ]
        },
        "equipment": {
-        "bramble": 66
+        "bramble": 66,
+        "wet": 6
        },
-       "sha256": "117962c3a9333bec65394ed628e31bf0a884f86174aaffcc0972e2b4e3d80c77",
+       "sha256": "e0fa8d42715cc93cf6e610f7b576b3a708e0687fbd0e8c2932934be639ad1430",
        "sheet": "sheets/freed_move_S.png",
        "region": [
         0,
@@ -8786,9 +8756,10 @@
         ]
        },
        "equipment": {
-        "bramble": 64
+        "bramble": 64,
+        "wet": 4
        },
-       "sha256": "02f9ce65e83d8fd219ef7c6513c7c58965ec7840deb709fd13e8d57db27fcd61",
+       "sha256": "b173008f0cb02ba2a9c55ad8e8be8dc8915ca6e8f08e3993d39d2564242356e3",
        "sheet": "sheets/freed_move_S.png",
        "region": [
         160,
@@ -8821,9 +8792,10 @@
         ]
        },
        "equipment": {
-        "bramble": 64
+        "bramble": 64,
+        "wet": 5
        },
-       "sha256": "4051bcb393df05fe8b2db1adb454416a8425fad1561d4e24e4d029d5a7cafa35",
+       "sha256": "5fb792fb81d1fc0a6709994442565f5fad432573b41ebdaaeec355a061fd6e56",
        "sheet": "sheets/freed_move_S.png",
        "region": [
         320,
@@ -8856,9 +8828,10 @@
         ]
        },
        "equipment": {
-        "bramble": 67
+        "bramble": 67,
+        "wet": 5
        },
-       "sha256": "245e2f9aeb90bb2dc1c3a3c6e1d4f5f7330b5409d94729e6e4e588ac96960d51",
+       "sha256": "f941784c0780a624bc7bb202a0f806ee2bf098ba095dddedf165422a981cc86e",
        "sheet": "sheets/freed_move_S.png",
        "region": [
         480,
@@ -8891,9 +8864,10 @@
         ]
        },
        "equipment": {
-        "bramble": 67
+        "bramble": 67,
+        "wet": 6
        },
-       "sha256": "13ca5737337d29a1df157eed8d19f79dba03f9dc6cb1ad06d3eaa64ea4f8965c",
+       "sha256": "20409d6155bc56311540368676299337cec01ef21b3be44de856fe9bab77b47b",
        "sheet": "sheets/freed_move_S.png",
        "region": [
         640,
@@ -8926,9 +8900,10 @@
         ]
        },
        "equipment": {
-        "bramble": 65
+        "bramble": 65,
+        "wet": 4
        },
-       "sha256": "bcc06d76cd1814abc1f4988bcc3725ea51a1eb730415405b741cfe812fbd6b91",
+       "sha256": "e6ea36968a9d4506bcdbf2b8e0f567aa26df3a30ea89480aab3f184b9facba98",
        "sheet": "sheets/freed_move_S.png",
        "region": [
         800,
@@ -8961,9 +8936,10 @@
         ]
        },
        "equipment": {
-        "bramble": 64
+        "bramble": 64,
+        "wet": 6
        },
-       "sha256": "179504da14b470e115c83acd0e65af28d8490c9aca7d3d506798da9f54016dc0",
+       "sha256": "6451243dc3c70203cdc2e82155ab86503d14819f09e904ddec3047ef97892a0a",
        "sheet": "sheets/freed_move_S.png",
        "region": [
         960,
@@ -8996,9 +8972,10 @@
         ]
        },
        "equipment": {
-        "bramble": 66
+        "bramble": 66,
+        "wet": 5
        },
-       "sha256": "876fec8f18b1a2210631ce2e6dedf209274e65f629bd4e0d9f3a89c2d26ae218",
+       "sha256": "75a18771634af40de0b550a35a7dff7e87770f49aa3faf1e23231670690e77c2",
        "sheet": "sheets/freed_move_S.png",
        "region": [
         1120,
@@ -9037,7 +9014,7 @@
        "equipment": {
         "bramble": 75
        },
-       "sha256": "b81c78716521c7bb6b31ae658ed0fdf2b976bbd4ccd97c8aa329fbca046466a2",
+       "sha256": "76f502a3d14b90e95502ad51c45e0fa1d46f09b77c69951d661b8ece9788197e",
        "sheet": "sheets/freed_move_N.png",
        "region": [
         0,
@@ -9072,7 +9049,7 @@
        "equipment": {
         "bramble": 73
        },
-       "sha256": "e7d6e540b26e5b097b81144b742915ed686159c309f7032834d67c220773bc5f",
+       "sha256": "e4ba1e7cc960a73e11210cd45fa85393cc586067e57433c78b756316d49ddd20",
        "sheet": "sheets/freed_move_N.png",
        "region": [
         160,
@@ -9107,7 +9084,7 @@
        "equipment": {
         "bramble": 78
        },
-       "sha256": "667f3365b5997579a31192174326ce98d991ebad5ae8e29c99094444a82dee3f",
+       "sha256": "965001c9d76dbe51eddf9348112421f3d1e4cb9c7aa0b23c574d0ce91a37b605",
        "sheet": "sheets/freed_move_N.png",
        "region": [
         320,
@@ -9142,7 +9119,7 @@
        "equipment": {
         "bramble": 77
        },
-       "sha256": "4e01cce725227e3604afafdac992833b1676e066cc8ec0e4c356b50b91bd131a",
+       "sha256": "8121c813d985fa209e3b25fbf39b8a69ddf3dab2f0dca4640fb321d684b8a7d6",
        "sheet": "sheets/freed_move_N.png",
        "region": [
         480,
@@ -9177,7 +9154,7 @@
        "equipment": {
         "bramble": 75
        },
-       "sha256": "92d7b39fa250a77962a87898a1b12d40efa0c54c44001bd06a2b7f497d913e43",
+       "sha256": "ec3e5fce5846f2d38c36381aee8621dd9f9d1bfd0163d4486cae3a2d90112704",
        "sheet": "sheets/freed_move_N.png",
        "region": [
         640,
@@ -9212,7 +9189,7 @@
        "equipment": {
         "bramble": 77
        },
-       "sha256": "ed1e4defbeebf545c7bc7592d27a1808df747eb225968e1e2391f13cc978729b",
+       "sha256": "ca92f06d10d6313dc94a074d6a1fc54d61836f97f4a36c3df80187f99b116886",
        "sheet": "sheets/freed_move_N.png",
        "region": [
         800,
@@ -9247,7 +9224,7 @@
        "equipment": {
         "bramble": 75
        },
-       "sha256": "a6244fa28901b0abd5fd633502126006daaccf43b94f8fe15ecd09075dece7f3",
+       "sha256": "77b6b517993d0867769e3cb571d9fe15a7c4400f8a6f6cb2368075817a380570",
        "sheet": "sheets/freed_move_N.png",
        "region": [
         960,
@@ -9282,7 +9259,7 @@
        "equipment": {
         "bramble": 76
        },
-       "sha256": "375aab207e1ea39a02e01e11b2c94b0cafed673b292b05a59d82e82cf573c6e3",
+       "sha256": "6b469e3a49517976bbacc1ce970ef966aa1a7e137bfee06d1d6b715039927d80",
        "sheet": "sheets/freed_move_N.png",
        "region": [
         1120,
@@ -9319,9 +9296,10 @@
         ]
        },
        "equipment": {
-        "bramble": 73
+        "bramble": 73,
+        "wet": 3
        },
-       "sha256": "38383f6080a098a0236f9a6456a3879ca9acd0ca2a9b8d82d8b4810213642c1d",
+       "sha256": "38a9b952c09126d0e66161a71c5c4742d446b1f681c75858f2661099e8050965",
        "sheet": "sheets/freed_move_E.png",
        "region": [
         0,
@@ -9354,9 +9332,10 @@
         ]
        },
        "equipment": {
-        "bramble": 70
+        "bramble": 70,
+        "wet": 4
        },
-       "sha256": "54b7cc5902e722f96c98a6fe7e97af72e0a315d90f6ac453627f50c7d55177ca",
+       "sha256": "f22cc10f4a2e4070fec3c23da79a7f9b11312ae30f57dd77d36abe1d57d42d95",
        "sheet": "sheets/freed_move_E.png",
        "region": [
         160,
@@ -9389,9 +9368,10 @@
         ]
        },
        "equipment": {
-        "bramble": 67
+        "bramble": 67,
+        "wet": 3
        },
-       "sha256": "81213f41e449e99b49f4bc8afdda838672c452c8009c93474f9416b7c7e80566",
+       "sha256": "e850d236fc3d553f4e3079d9042c10c726f719546a480e8b6f304d59f45b19d1",
        "sheet": "sheets/freed_move_E.png",
        "region": [
         320,
@@ -9424,9 +9404,10 @@
         ]
        },
        "equipment": {
-        "bramble": 66
+        "bramble": 66,
+        "wet": 4
        },
-       "sha256": "97a4a52065fbbb9f9f0b27e87f858c0e38064a8c95ff1dc2461c43b3858493a3",
+       "sha256": "a73d56fcd0699bc99dc1c3be1b093c083d1062925e831cdbb32d6461973644f6",
        "sheet": "sheets/freed_move_E.png",
        "region": [
         480,
@@ -9459,9 +9440,10 @@
         ]
        },
        "equipment": {
-        "bramble": 66
+        "bramble": 66,
+        "wet": 4
        },
-       "sha256": "f25a52ccb0bbd84a510c6a5e9ad01294dcd12f71bdb578b8a00915167f4707e1",
+       "sha256": "08a3fe2e0366ec85efcd1134f1cfcc59503bc36043ab51336e35db03870dc4ac",
        "sheet": "sheets/freed_move_E.png",
        "region": [
         640,
@@ -9494,9 +9476,10 @@
         ]
        },
        "equipment": {
-        "bramble": 66
+        "bramble": 66,
+        "wet": 4
        },
-       "sha256": "cfc40a0ce4d0fccb5ead4a5e74245cb004d35e771113e7fc90040f43ed3d6311",
+       "sha256": "1b37b5ae072408501a6f2b340eae138bc74becbc337ac435d5b15077f2c1be15",
        "sheet": "sheets/freed_move_E.png",
        "region": [
         800,
@@ -9529,9 +9512,10 @@
         ]
        },
        "equipment": {
-        "bramble": 70
+        "bramble": 70,
+        "wet": 4
        },
-       "sha256": "68b2026b14236a0cecde46a885976876d11e4dbd2e3c4e4e9abca2c199b743cc",
+       "sha256": "6d2e77c6eb94c1c8b0efbbe8786e3722b8e90cef58c82decfa7017056842c3de",
        "sheet": "sheets/freed_move_E.png",
        "region": [
         960,
@@ -9564,9 +9548,10 @@
         ]
        },
        "equipment": {
-        "bramble": 73
+        "bramble": 73,
+        "wet": 4
        },
-       "sha256": "2846d21d5deae5133fef655c7a74868540eec36dda8e1918ff675c4b303872b9",
+       "sha256": "0dcd653b066a339a090665953d20ed57c949a8a61616c6eaf2b428b5ce18571e",
        "sheet": "sheets/freed_move_E.png",
        "region": [
         1120,
@@ -9603,9 +9588,10 @@
         ]
        },
        "equipment": {
-        "bramble": 69
+        "bramble": 69,
+        "wet": 4
        },
-       "sha256": "bcc9c152a50dc5d7d9d4b78b1d6862cf323f375115de7e80f878253463a97ea8",
+       "sha256": "e43d76a2b60b7f1c850dc8be9a1a4ae8e13401f4a235d59e9c1f55ff1fc75f60",
        "sheet": "sheets/freed_move_W.png",
        "region": [
         0,
@@ -9638,9 +9624,10 @@
         ]
        },
        "equipment": {
-        "bramble": 65
+        "bramble": 65,
+        "wet": 5
        },
-       "sha256": "ab6a3c79ad8a9940ae234697e0b7f29fa15e4b591bd5e2a1716507bd3c89efaf",
+       "sha256": "23e3d305c41ab461550fa15a663f8dd2b59b020198f98dca90026eec4dbb5b10",
        "sheet": "sheets/freed_move_W.png",
        "region": [
         160,
@@ -9673,9 +9660,10 @@
         ]
        },
        "equipment": {
-        "bramble": 64
+        "bramble": 64,
+        "wet": 4
        },
-       "sha256": "048390ccd842748237cb238e7c865efc038060bd4414ba76c33235fd2c0e915c",
+       "sha256": "a6e550e175f65b79ab387911dcc27367cdc1c87814386ec562ccadbb0886364e",
        "sheet": "sheets/freed_move_W.png",
        "region": [
         320,
@@ -9708,9 +9696,10 @@
         ]
        },
        "equipment": {
-        "bramble": 63
+        "bramble": 63,
+        "wet": 5
        },
-       "sha256": "10d8dc47825c24f15f87bf738311fe0ae078d6161bedfac865849eb28d48ee89",
+       "sha256": "77c9df1e5fdd55edf0c123c5bf048976d16d33e3cc1239b1d503807818b92c3b",
        "sheet": "sheets/freed_move_W.png",
        "region": [
         480,
@@ -9743,9 +9732,10 @@
         ]
        },
        "equipment": {
-        "bramble": 62
+        "bramble": 62,
+        "wet": 5
        },
-       "sha256": "3f927480e89012ff0c43188f260b74d2187f7cf62fcf868779588ec952ad8693",
+       "sha256": "5ac8df41740172d034b712521f3c8fa649d8970eecda4b8b1a05e05aac728153",
        "sheet": "sheets/freed_move_W.png",
        "region": [
         640,
@@ -9778,9 +9768,10 @@
         ]
        },
        "equipment": {
-        "bramble": 62
+        "bramble": 62,
+        "wet": 5
        },
-       "sha256": "72b0cf55e1fb7ee1d54e4d82c478d43bae8f0396fc4329c366a00b886d592cb2",
+       "sha256": "29c962f19f5c798fd325eec3158ce3174cdcf43ea214b3b152466c6f22ddfec3",
        "sheet": "sheets/freed_move_W.png",
        "region": [
         800,
@@ -9813,9 +9804,10 @@
         ]
        },
        "equipment": {
-        "bramble": 63
+        "bramble": 63,
+        "wet": 5
        },
-       "sha256": "98f9260d6dcc7a876bf7262637caef5d311e3326101284b215dc62e70d4b154b",
+       "sha256": "1c8879cf9e2eb4b3a41b5ab1cc31faf4118d3df6756dd11e3effac179f0f77a6",
        "sheet": "sheets/freed_move_W.png",
        "region": [
         960,
@@ -9848,9 +9840,10 @@
         ]
        },
        "equipment": {
-        "bramble": 68
+        "bramble": 68,
+        "wet": 5
        },
-       "sha256": "d9dbc876bf73b31adf66104ed0d756a6902ad4c2d1e119d9e0b65d1009c08e10",
+       "sha256": "3bc7e1e09565ed5f2ee22880833305007728f383de0f4d434a5a3d083c25ab53",
        "sheet": "sheets/freed_move_W.png",
        "region": [
         1120,
