@@ -5,7 +5,7 @@
   1920,
   1680
  ],
- "inputs": "4b54909fdbf8c7056aa8cd6acb68ac3d531417924476ad5bafb28e57afb26b97",
+ "inputs": "b2de601a5a38c0c81ef8960a8b17c017f1314c32e5003b4bb8c8e2223bbaddfa",
  "kit_drawn": [
   "anvil.png",
   "bakery.png",
@@ -800,7 +800,7 @@
    ],
    "offset": [
     -57,
-    -74
+    -73
    ],
    "cond": null,
    "solid": [
@@ -820,7 +820,7 @@
    ],
    "offset": [
     -57,
-    -74
+    -73
    ],
    "cond": null,
    "solid": [
@@ -940,7 +940,7 @@
    ],
    "offset": [
     -57,
-    -74
+    -73
    ],
    "cond": null,
    "solid": null
@@ -955,7 +955,7 @@
    ],
    "offset": [
     -57,
-    -74
+    -73
    ],
    "cond": null,
    "solid": null
@@ -970,7 +970,7 @@
    ],
    "offset": [
     -57,
-    -74
+    -73
    ],
    "cond": null,
    "solid": null
@@ -985,7 +985,7 @@
    ],
    "offset": [
     -57,
-    -74
+    -73
    ],
    "cond": null,
    "solid": null
@@ -1000,7 +1000,7 @@
    ],
    "offset": [
     -57,
-    -74
+    -73
    ],
    "cond": null,
    "solid": null
@@ -1065,7 +1065,7 @@
    ],
    "offset": [
     -57,
-    -74
+    -73
    ],
    "cond": null,
    "solid": null
@@ -1080,7 +1080,7 @@
    ],
    "offset": [
     -57,
-    -74
+    -73
    ],
    "cond": null,
    "solid": null
@@ -1555,7 +1555,7 @@
    ],
    "offset": [
     -57,
-    -74
+    -73
    ],
    "cond": null,
    "solid": [
@@ -1575,7 +1575,7 @@
    ],
    "offset": [
     -57,
-    -74
+    -73
    ],
    "cond": null,
    "solid": [
@@ -1595,7 +1595,7 @@
    ],
    "offset": [
     -57,
-    -74
+    -73
    ],
    "cond": null,
    "solid": [
@@ -1615,7 +1615,7 @@
    ],
    "offset": [
     -57,
-    -74
+    -73
    ],
    "cond": null,
    "solid": [
@@ -1635,7 +1635,7 @@
    ],
    "offset": [
     -57,
-    -74
+    -73
    ],
    "cond": null,
    "solid": [

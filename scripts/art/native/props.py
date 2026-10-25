@@ -116,20 +116,44 @@ def trunk4(d, length=24.0, trunk_w=8.0, seed=11, bark='oak', flare=1.0, hollow=F
             sp.mark('trunk', g.capsule(x, y0, x + rng.uniform(-0.6, 0.6), y0 + ln, 0.6), -1)
             if x < half * 0.3:
                 sp.mark('trunk', g.capsule(x - 1.4, y0 + 1, x - 1.4, y0 + ln * 0.6, 0.55), 1)
+            else:
+                # on the shaded side the plates catch a little reflected light (the bark is never one flat tone)
+                sp.mark('trunk', g.capsule(x - 1.2, y0 + 1.5, x - 1.2, y0 + ln * 0.5, 0.6), 1)
+        # a cylinder: the core shadow right of centre, the rim beyond it in reflected light; the
+        # shaded bark in plates of three tones (reflected light, shade, a dark crack), so the dark
+        # side is never one flat tone
+        sp.mark('trunk', g.rect(half * 0.35, top, half * 0.7, -3) & tr, -1)
+        k = 0
+        for yb_ in np.arange(top + 2, -3, 4.5):
+            for c, (xa_, xb_) in enumerate(((half * 0.55, half * 0.8), (half * 0.8, half + 2))):
+                v = (1, 0, -1)[(k + 2 * c) % 3]
+                if v:
+                    sp.mark('trunk', g.rect(xa_, yb_ + 0.6 * c, xb_, yb_ + 3.6 + 0.6 * c) & tr, v)
+            k += 1
+        # the shaded side's bark: short plates in reflected light and dark cracks between them
+        for j in range(int(16 + L / 1.5)):
+            x = rng.uniform(half * 0.55, half - 0.3)
+            y0 = rng.uniform(top + 4, -6)
+            ln = rng.uniform(3, 8)
+            sp.mark('trunk', g.capsule(x, y0, x, y0 + ln, 1.3), 1 if j % 2 else -1)
     elif kind == 'smooth':
         for j in range(int(2 + L / 22)):
             y = rng.uniform(top + 6, -10)
             sp.mark('trunk', g.ellipse(rng.uniform(-half * 0.3, half * 0.3), y, half * 0.9, 0.7), -1)
         sp.mark('trunk', g.rect(-half - 2, top, -half + max(1.5, tw * 0.18), 0) & tr, 1)
     elif kind == 'dashes':
+        # the white bark as a cylinder: a lit band left of centre, a grey core shade on the right,
+        # papery patches, then the dark lenticels
+        sp.mark('trunk', g.rect(-half * 0.55, top, -half * 0.1, 0) & tr, 1)
+        sp.mark('trunk', g.rect(half * 0.35, top, half + 2, 0) & tr, -1)
+        for j in range(int(3 + L / 10)):
+            y = rng.uniform(top + 3, -4)
+            x = rng.uniform(-half, half * 0.2)
+            sp.mark('trunk', g.ellipse(x, y, rng.uniform(1.2, 2.2), rng.uniform(0.7, 1.4)) & tr, -1)
         for j in range(int(4 + L / 6)):
             y = rng.uniform(top + 3, -4)
             x = rng.uniform(-half, half * 0.6)
             sp.detail(g.rect(x, y, x + rng.uniform(2.5, 5.5), y + 1.1) & tr, pk.rgb('stone', 1))
-    if tw >= 8 and L > 24:
-        kx, ky = rng.uniform(-half * 0.3, half * 0.3), rng.uniform(top * 0.6, top * 0.35)
-        sp.mark('trunk', g.ellipse(kx, ky, 1.6, 1.3), -2)
-        sp.mark('trunk', g.rect(kx - 1.4, ky - 2.2, kx + 0.6, ky - 1.3), 1)
     if fl > 0.05:
         for (x0, x1) in ((-half + 1, -half - 6 * fl), (half - 1, half + 6 * fl)):
             sp.mark('trunk', g.capsule(x0, -3, x1, -1.0, 0.8), 1 if x1 < 0 else -1)
@@ -144,7 +168,26 @@ def trunk4(d, length=24.0, trunk_w=8.0, seed=11, bark='oak', flare=1.0, hollow=F
         sp.detail(g.ellipse(0.5, hy + hh + 0.8, hw * 0.8, 0.8) & ~g.ellipse(0.5, hy + 0.6, hw, hh), pk.rgb(fam, 4))
         for ex_ in (-hw * 0.35, hw * 0.35 + 1):
             sp.detail(g.rect(ex_ - 0.6, hy - 0.6, ex_ + 0.6, hy + 0.6), pk.rgb('brass', 5))
-    return _out(sp)
+    img, anc, al = _out(sp)
+    if kind == 'plates':
+        # the shaded side's bark in plates: where the shade is one flat tone, plates of its
+        # neighbouring tones in a brick pattern (reflected light, the shade, a dark crack)
+        a = np.asarray(img).copy()
+        c0, c1, c2 = (np.array(pk.rgb(fam, t)) for t in (0, 1, 2))
+        flat = al & (a[..., :3] == c1).all(-1)
+        yy, xx = np.nonzero(flat)
+        cx_ = anc[0]
+        ph = max(2, int(round(1.6 * d)))
+        for y, x in zip(yy, xx):
+            if x < cx_:
+                continue
+            q = ((y // (2 * ph)) + (x + (y // (2 * ph)) % 2 * ph) // ph) % 3
+            if q == 0:
+                a[y, x, :3] = c2
+            elif q == 2:
+                a[y, x, :3] = c0
+        img = Image.fromarray(a)
+    return img, anc, al
 
 
 # ------------------------------------------------------------------------------------------------
@@ -597,15 +640,23 @@ def boulder4(d, w=21, h=13, seed=31, fam='stone', moss='top'):
         if moss == 'lichen':
             ys_, xs_ = np.nonzero(m)
             if len(ys_):
-                for _ in range(int(rng.integers(2, 5))):
+                for _ in range(int(rng.integers(7, 12))):
                     q = int(rng.integers(0, len(ys_)))
-                    if ys_[q] < y0 + hh * 0.18 or ys_[q] > y0 + hh * 0.7 or rel[ys_[q], xs_[q]] > 0.1:
+                    if ys_[q] < y0 + hh * 0.18 or ys_[q] > y0 + hh * 0.8 or rel[ys_[q], xs_[q]] > 0.25:
                         continue
                     rb = rng.uniform(0.5, 1.0) * d
                     mb = m & ((yy - ys_[q]) ** 2 / 0.6 + (xx - xs_[q]) ** 2 <= rb * rb)
                     fm[mb] = 2
                     tt[mb] = 3
                     tt[mb & ~np.roll(mb, -1, 0)] = 2
+            # a standing stone's weathered face: small pits and flakes on its lit planes too
+            wy_, wx_ = np.nonzero(m & (tt >= 3))
+            for _ in range(int(len(wy_) / (3.5 * d * d))):
+                q = int(rng.integers(0, len(wy_)))
+                y_, x_ = wy_[q], wx_[q]
+                for (dy, dx) in ((0, 0), (0, 1)) if rng.random() < 0.6 else ((0, 0), (1, 0)):
+                    if 0 <= y_ + dy < Hp and 0 <= x_ + dx < Wp and m[y_ + dy, x_ + dx] and fm[y_ + dy, x_ + dx] != 2:
+                        tt[y_ + dy, x_ + dx] = max(1, tt[y_ + dy, x_ + dx] - 1)
         if top.any() and moss == 'top':
             ty_, tx_ = np.nonzero(top)
             for _ in range(int(rng.integers(3, 6))):
@@ -634,7 +685,7 @@ def boulder4(d, w=21, h=13, seed=31, fam='stone', moss='top'):
         t[ring] = 0
     # small pits on the sides
     sy_, sx_ = np.nonzero(allm & (t >= 2) & (t <= 3) & ~ndi.binary_dilation(crack, iterations=3))
-    for _ in range(int(len(sy_) / (20 * d * d))):
+    for _ in range(int(len(sy_) / ((5 if moss == 'lichen' else 20) * d * d))):
         q = int(rng.integers(0, len(sy_)))
         y, x = sy_[q], sx_[q]
         t[y, x] = max(1, t[y, x] - 2)

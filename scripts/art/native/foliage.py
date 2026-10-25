@@ -494,7 +494,7 @@ def paint_masses(arr, d, seed=0, look=None, size=None):
     blossoms, or none). size=(w, h) world px rescales the design. Returns (RGBA uint8, anchor,
     (pad, sx, sy)) like paint()."""
     lk = dict(form='round', clump=8.0, fam='grass', lit='grass', shade='grass_cool', dark=0, berries=None,
-              glint=0.25, marks=0.2)
+              glint=0.25, marks=0.45, lit_marks=0.5, hue=0.3)
     lk.update(look or {})
     H1, W1 = arr.shape[:2]
     _tf, _ff, fol, bl, wood = read_master(arr)
@@ -597,6 +597,7 @@ def paint_masses(arr, d, seed=0, look=None, size=None):
     # leaf's tip lies over the one below it (the lit tips point down into the shade)
     out_t = np.full((Hp, Wp), -1)
     out_k = np.full((Hp, Wp), -1)
+    out_f = np.zeros((Hp, Wp), int)
     allow = ndi.binary_dilation(S, iterations=max(1, int(round(0.4 * d))))
     px, py = lw - 1, lh - 2
     cells = []
@@ -623,6 +624,9 @@ def paint_masses(arr, d, seed=0, look=None, size=None):
             continue
         out_t[Y, X] = t
         out_k[Y, X] = sid
+        out_f[Y, X] = 1 if rng.random() < lk['hue'] else 0      # a leaf on the sibling green now and then
+        if rng.random() < lk['lit_marks'] and t <= 4:
+            marks.append((yc - lh // 2 + 1, xc - 1, -(min(4, t + 1)) - 10, sid))   # a lit leaf edge, 2 px
         if 2 <= t <= 4 and rr_ < lk['marks']:
             marks.append((yc + lh // 2 - 1, xc, t, sid))       # a leaf mark at its tip
         elif t <= 2 and rr_ < lk['marks'] * 0.8:
@@ -638,12 +642,16 @@ def paint_masses(arr, d, seed=0, look=None, size=None):
             for (dy, dx) in ((0, 0), (0, 1)):
                 if 0 <= y + dy < Hp and 0 <= x + dx < Wp and out_k[y + dy, x + dx] == sid_:
                     out_t[y + dy, x + dx] = 5
+        elif t <= -10:
+            for (dy, dx) in ((0, 0), (0, 1)):                  # a lit leaf edge
+                if 0 <= y + dy < Hp and 0 <= x + dx < Wp and out_k[y + dy, x + dx] == sid_:
+                    out_t[y + dy, x + dx] = -(t + 10)
         elif t < 0:
-            for (dy, dx) in ((0, -1), (0, 0), (1, -2)):         # a lit leaf edge in the shade
+            for (dy, dx) in ((0, -1), (0, 0), (1, -1)):         # a lit leaf edge in the shade
                 if 0 <= y + dy < Hp and 0 <= x + dx < Wp and out_k[y + dy, x + dx] == sid_:
                     out_t[y + dy, x + dx] = -t
         else:
-            for (dy, dx) in ((0, 0), (-1, -1), (-1, 1)):          # a small V at the leaf's tip, never a line
+            for (dy, dx) in ((0, 0), (-1, 0), (-1, -1)):          # a small dark notch at the leaf's tip, never a line
                 if 0 <= y + dy < Hp and 0 <= x + dx < Wp and out_k[y + dy, x + dx] == sid_:
                     out_t[y + dy, x + dx] = t - 1
     # no lone pixels inside
@@ -713,8 +721,12 @@ def paint_masses(arr, d, seed=0, look=None, size=None):
         out_t[sm] = st[sm]
         painted |= sm
         LAST_MASS['strands'] = sm
-    # the bush's foot: the lowest leaves in the under-shade, where it meets the ground
+    # the bush's foot: the lowest leaves in the under-shade, where it meets the ground (nothing
+    # hangs below the flattened foot, so no leaf tip reads as a leg)
     if lk['form'] == 'bush':
+        ysS = np.nonzero(S.any(1))[0]
+        painted[ysS.max() + 1:] = False
+        out_t[~painted] = -1
         yb = np.nonzero(painted.any(1))[0].max()
         foot = painted & (yy >= yb - max(1, int(round(0.8 * d))))
         out_t[foot] = np.minimum(out_t[foot], 1)
@@ -722,11 +734,15 @@ def paint_masses(arr, d, seed=0, look=None, size=None):
 
     def fam_of(t):
         return lk['lit'] if t >= 4 else (lk['shade'] if t <= 1 else lk['fam'])
+    ALT = {'grass': 'grass_cool', 'grass_cool': 'grass', 'grass_warm': 'grass', 'leaf': 'leaf_cool',
+           'leaf_cool': 'leaf', 'leaf_warm': 'leaf'}
     for t in range(6):
         m = painted & (out_t == t)
         if m.any():
             out[m, :3] = pk.rgb(fam_of(t), t)
             out[m, 3] = 255
+            ma = m & (out_f == 1) & (t >= 2)
+            out[ma, :3] = pk.rgb(ALT.get(fam_of(t), fam_of(t)), t)
     # the outline, on the silhouette only: the foliage's own darkest green on the lower right,
     # a tone-1 leaf edge on the lit upper left
     edge = painted & ~ndi.binary_erosion(painted)

@@ -279,7 +279,7 @@ def water_mask_hd(plan: dict, W: int, H: int) -> np.ndarray:
     # the rill (from the top edge to the heap) is redrawn as a meandering brook: its 1x centre
     # line swings up to 3 world px either side and its width breathes between 0.7 and 1.5 of
     # the 1x width, both fading out at the top edge and where it reaches the stones
-    yend = rows[-1] if rows else 230
+    yend = int(f['y0']) if rows else 230     # the brook runs on through the channel to the lip
     cx1, hw1 = {}, {}
     prev = None
     for y in range(yend, -1, -1):              # follow the rill's own run up to the top edge
@@ -308,11 +308,39 @@ def water_mask_hd(plan: dict, W: int, H: int) -> np.ndarray:
             yw = (Y + 0.5) / D
             c = np.interp(yw, ys1 + 0.5, [cx1[y] for y in ys1])
             hw = np.interp(yw, ys1 + 0.5, [hw1[y] for y in ys1])
-            taper = float(np.clip(min((yw - 6) / 24.0, (yend - yw) / 18.0), 0, 1))
-            c += taper * (4.2 * np.sin(yw / 21.0 + 0.4) + 1.4 * np.sin(yw / 8.3 + 1.7))
+            taper = float(np.clip(min(0.5 + yw / 16.0, (yend - yw) / 14.0), 0, 1))
+            c += taper * (4.2 * np.sin(yw / 21.0 + 0.4) + 2.4 * np.sin(yw / 5.6 + 0.2) + 0.8 * np.sin(yw / 3.1 + 0.3))
             hw *= 1.0 + taper * (0.3 * np.sin(yw / 11.0 + 1.3) + 0.15 * np.sin(yw / 4.3))
+            # the banks' small irregularity (stones, roots, a bitten edge), so no diagonal reads as a
+            # regular staircase of steps
+            hb = ((Y * 2654435761) >> 7) & 0xff
+            c += (hb % 5 - 2) * 0.12
+            hw += ((hb >> 3) % 3 - 1) * 0.15
             up[Y, :int(110 * D)] = np.maximum(up[Y, :int(110 * D)], np.clip(hw + 0.5 - np.abs(Xw[:int(110 * D)] - c), 0, 1))
-    return ndi.gaussian_filter(up, 0.9 * D)[:H * k, :W * k] > 0.5
+    # the river sways a little too (no ruler-straight reach): its columns east of the bridge move
+    # up and down by up to 1.6 world px
+    x_a = int((br["x0"] + br["w"] + 3) * D)
+    y_a, y_b = int((br['y0'] - 30) * D), int((br['y1'] + 30) * D)
+    for X in range(x_a, up.shape[1]):
+        xw = X / D
+        fade = min(1.0, (xw - x_a / D) / 5.0)
+        hb = ((X * 2654435761) >> 7) & 0xff
+        sh = fade * D * (2.2 * np.sin(xw / 13.0 + 0.8) + 2.0 * np.sin(xw / 6.1 + 2.1)) + (hb % 3 - 1) * 0.4
+        up[y_a:y_b, X] = ndi.shift(up[y_a:y_b, X], sh, order=1, mode='nearest')
+    soft = ndi.gaussian_filter(up, 0.9 * D)
+    # a bitten, uneven edge (roots, stones, slumped turf): a small noise on the soft edge so a
+    # diagonal bank never reads as a staircase of equal steps
+    rn = np.random.default_rng(4423).random(soft.shape)
+    wob = ndi.gaussian_filter(rn, 2.2)
+    wob = (wob - wob.mean()) / max(1e-6, wob.std())
+    band = (soft > 0.08) & (soft < 0.92)
+    m = np.where(band, soft + 0.2 * wob, soft) > 0.5
+    m = ndi.binary_fill_holes(m)
+    lab, n = ndi.label(m)
+    if n:
+        sizes = ndi.sum(m, lab, range(1, n + 1))
+        m = np.isin(lab, 1 + np.nonzero(sizes >= 6 * D * D)[0])
+    return m[:H * k, :W * k]
 
 
 def footbridge_hd(cv: np.ndarray, x0, w, y0, y1, water: np.ndarray) -> None:
@@ -470,8 +498,8 @@ def tree_shadow_hd(x, y, ex, W, H) -> np.ndarray:
     the trunk's foot and reaches east and a little south (the sun at the upper left), as wide as
     the crown, so it always reads as that tree's."""
     cw = ex['w']
-    cx, cy = x + 0.2 * cw, y + 0.035 * cw
-    rx, ry = 0.5 * cw, 0.17 * cw + 2.0
+    cx, cy = x + 0.1 * cw, y + 0.03 * cw
+    rx, ry = 0.36 * cw, 0.14 * cw + 2.0
     Y, X = np.mgrid[0:H, 0:W]
     wx, wy = (X + 0.5) / D, (Y + 0.5) / D
     return ((wx - cx) / rx) ** 2 + ((wy - cy) / ry) ** 2 <= 1.0
@@ -632,8 +660,7 @@ def terrain(plan: dict, layers: dict) -> tuple:
     f = plan['water']['fall']
     br = pl['bridge']
     if hd:
-        WA.paint_hd(cv, wm)
-        SC.reeds(cv)                  # the reeds stand in the water beside the bridge, not on it
+        WA.paint_hd(cv, wm)            # (no reeds at density 3: their stalks bit stairs into the bank)
         footbridge_hd(cv, br['x0'], br['w'], br['y0'], br['y1'], wm)
         # the spring's heap: the pilot's boulders (props.boulder4), back to front, the lip stone
         # first; moss grows in from their tops

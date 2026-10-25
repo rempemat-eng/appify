@@ -194,9 +194,9 @@
    "crown": {
     "form": "round",
     "clump": 6.5,
-    "fam": "grass_warm",
-    "lit": "grass_warm",
-    "shade": "grass"
+    "fam": "grass",
+    "lit": "grass",
+    "shade": "grass_cool"
    },
    "bark": "birch",
    "trunk_w": 4
@@ -220,7 +220,7 @@
     "form": "round",
     "clump": 4.5,
     "fam": "grass",
-    "lit": "grass_warm",
+    "lit": "grass",
     "shade": "grass"
    },
    "bark": "sapling",
@@ -281,7 +281,7 @@
     "form": "bush",
     "clump": 6,
     "fam": "grass",
-    "lit": "grass_warm"
+    "lit": "grass"
    },
    "scale": [0.8, 0.85],
    "seed": 811
@@ -325,8 +325,8 @@
   }
  },
  "lawn": {
-  "busy": 0.15,
-  "fine": 0.7,
+  "busy": 0.35,
+  "fine": 0.35,
   "tuft_spacing": 60.0,
   "_about": "the 2x lawn: about half the field near flat, the mottle and tuft clumps gather in the other half (MEASURE.md bands) The woodland (25 Oct, density 3, Matt and the coordinator: the tufts read as one stamp on a grid, the mottle as blotches): almost no sheet tufts and a quieter mottle; the lawn's dressing is placed in clusters by screen.lawn_dressing_hd instead (varied tufts, small flowers, clover), with calm lawn between.",
   "measure": {
