@@ -22,44 +22,16 @@
     {
       "id": "beach",
       "tier": 0,
-      "why": "the shingle beach where the boats are hauled up (world 2)",
+      "why": "the shingle beach where the boats are hauled up, and the rock shelf east of it with the tide pools (world 2); wide enough under the shelf's face for the boats (lane R 24 Oct 07:53 (PR #240): a beach landing, not a jetty harbour)",
       "outline": [
-        [7856, 5152],
-        [8048, 5152],
-        [8048, 5168],
-        [8080, 5168],
-        [8080, 5184],
-        [8144, 5184],
-        [8144, 5200],
+        [7648, 5168],
+        [8160, 5168],
         [8160, 5200],
-        [8160, 5216],
-        [8256, 5216],
-        [8256, 5200],
         [8288, 5200],
-        [8288, 5248],
-        [8256, 5248],
-        [8256, 5264],
+        [8288, 5296],
+        [8160, 5296],
         [8160, 5264],
-        [8160, 5248],
-        [8144, 5248],
-        [8144, 5232],
-        [8080, 5232],
-        [8080, 5216],
-        [8048, 5216],
-        [8048, 5200],
-        [7856, 5200],
-        [7856, 5216],
-        [7776, 5216],
-        [7776, 5232],
-        [7680, 5232],
-        [7680, 5248],
-        [7648, 5248],
-        [7648, 5200],
-        [7680, 5200],
-        [7680, 5184],
-        [7776, 5184],
-        [7776, 5168],
-        [7856, 5168]
+        [7648, 5264]
       ]
     },
     {
@@ -70,23 +42,9 @@
         [7648, 4848],
         [8288, 4848],
         [8288, 5200],
-        [8256, 5200],
-        [8256, 5216],
-        [8160, 5216],
         [8160, 5200],
-        [8144, 5200],
-        [8144, 5184],
-        [8080, 5184],
-        [8080, 5168],
-        [8048, 5168],
-        [8048, 5152],
-        [7856, 5152],
-        [7856, 5168],
-        [7776, 5168],
-        [7776, 5184],
-        [7680, 5184],
-        [7680, 5200],
-        [7648, 5200]
+        [8160, 5168],
+        [7648, 5168]
       ]
     }
   ],
@@ -102,44 +60,34 @@
       "id": "sea",
       "kind": "sea",
       "closed": true,
-      "why": "the cove opens south; lane G draws the open sea past the box",
+      "why": "the cove's open water south of the shingle; lane G draws the open sea past the box",
       "points": [
-        [7856, 5200],
-        [8048, 5200],
-        [8048, 5216],
-        [8080, 5216],
-        [8080, 5232],
-        [8144, 5232],
-        [8144, 5248],
-        [8160, 5248],
+        [7648, 5264],
         [8160, 5264],
-        [8256, 5264],
-        [8256, 5248],
-        [8288, 5248],
+        [8160, 5296],
+        [8288, 5296],
         [8288, 5456],
-        [7648, 5456],
-        [7648, 5248],
-        [7680, 5248],
-        [7680, 5232],
-        [7776, 5232],
-        [7776, 5216],
-        [7856, 5216]
+        [7648, 5456]
       ],
       "islands": [],
       "declared_closed": "the sea"
     },
     {
       "id": "heron_pools",
-      "kind": "pools",
-      "closed": true,
-      "why": "shallow pools in a wet hollow behind the coast, herons fishing",
+      "kind": "tide_pools",
+      "why": "tide pools in the rock shelf east of the beach, where the heron fishes (lane R 24 Oct 07:53 (PR #240): a beach landing, not a jetty harbour)",
       "points": [
-        [8064, 4976],
-        [8160, 4976],
-        [8160, 5024],
-        [8064, 5024]
+        [8240, 5256],
+        [8280, 5256],
+        [8280, 5288],
+        [8240, 5288]
       ],
-      "declared_closed": "rain-fed pools in a hollow"
+      "declared_closed": "filled by the tide over the rocks",
+      "moved_from": [
+        [8064, 4976],
+        [8160, 5024]
+      ],
+      "closed": true
     }
   ],
   "routes": [
@@ -228,32 +176,39 @@
     {
       "id": "harbour_lane",
       "width": 24,
-      "why": "from the Coast Path down into the village",
+      "why": "from the Coast Path straight down to the slip's head",
       "points": [
-        [7920, 5040],
-        [7920, 5136]
+        [7952, 5040],
+        [7952, 5152]
       ]
     },
     {
       "id": "harbour_street",
       "width": 32,
-      "why": "the village's street along the top of the cove, the cottages facing the boats",
+      "why": "the village's street along the cottages to the smokehouse at the slip's head",
       "points": [
-        [7728, 5152],
-        [7856, 5152],
-        [7856, 5136],
-        [8000, 5136],
-        [8000, 5152],
-        [8160, 5152]
+        [7680, 5152],
+        [8040, 5152]
       ]
     },
     {
       "id": "slipway",
       "width": 32,
-      "why": "down the shingle to the boats",
+      "why": "down the shingle to the boats hauled up on the beach",
       "points": [
-        [7952, 5136],
-        [7952, 5248]
+        [7952, 5152],
+        [7952, 5232]
+      ]
+    },
+    {
+      "id": "shingle_walk",
+      "width": 24,
+      "why": "along the shingle from the slip's foot past the boats, east onto the rocks to the tide pools",
+      "points": [
+        [7712, 5232],
+        [8136, 5232],
+        [8136, 5248],
+        [8232, 5248]
       ]
     }
   ],
@@ -261,12 +216,12 @@
     {
       "id": "slipway_1_0_52",
       "on": "slipway",
-      "at": [7952, 5172],
+      "at": [7952, 5184],
       "from_tier": 1,
       "to_tier": 0,
       "width": 40,
-      "kind": "timber",
-      "why": "where the lane changes terrace: a flight of steps through the face"
+      "kind": "stone",
+      "why": "the slip goes down the shelf's face in a flight of steps beside the ramp"
     }
   ],
   "buildings": [
@@ -274,64 +229,65 @@
       "id": "cottage_1",
       "kind": "cottage",
       "kit": "valley",
-      "foot": [7736, 5128],
-      "w": 64,
+      "foot": [7672, 5128],
+      "w": 56,
       "faces": "south",
-      "why": "fishermen's cottages facing the cove"
+      "why": "fishermen's cottages, west of the slip, facing the boats"
     },
     {
       "id": "cottage_2",
       "kind": "cottage",
       "kit": "valley",
-      "foot": [7800, 5128],
-      "w": 64,
+      "foot": [7736, 5128],
+      "w": 56,
       "faces": "south",
-      "why": "fishermen's cottages facing the cove"
+      "why": "fishermen's cottages, west of the slip, facing the boats"
     },
     {
       "id": "cottage_3",
       "kind": "cottage",
       "kit": "valley",
-      "foot": [8008, 5128],
-      "w": 64,
+      "foot": [7800, 5128],
+      "w": 56,
       "faces": "south",
-      "why": "fishermen's cottages facing the cove"
+      "why": "fishermen's cottages, west of the slip, facing the boats"
     },
     {
       "id": "cottage_4",
       "kind": "cottage",
       "kit": "valley",
-      "foot": [8072, 5128],
-      "w": 64,
+      "foot": [7864, 5128],
+      "w": 56,
       "faces": "south",
-      "why": "fishermen's cottages facing the cove"
+      "why": "fishermen's cottages, west of the slip, facing the boats"
     },
     {
-      "id": "net_loft",
-      "kind": "shed",
+      "id": "smokehouse",
+      "kind": "landmark_shed",
       "kit": "valley",
-      "foot": [8144, 5136],
-      "w": 48,
-      "faces": "south"
+      "foot": [7976, 5128],
+      "w": 56,
+      "faces": "south",
+      "why": "Gullwick's one landmark: the smokehouse at the slip's head, its fish rack beside it (lane R 24 Oct 07:53 (PR #240): a beach landing, not a jetty harbour)"
     }
   ],
   "places": [
     {
       "id": "gullwick",
-      "kind": "harbour",
+      "kind": "beach_landing",
       "at": [7950, 5130],
       "rect": [7680, 5072, 512, 224],
-      "why": "a cove on the open coast west of the delta: fish, and a beach to haul boats (block-out settlement)"
+      "why": "a fishing village on the open coast west of the delta, west to east: cottages, the slip with the smokehouse at its head and the boats on the shingle, then the rocks and tide pools (lane R 24 Oct 07:53 (PR #240): a beach landing, not a jetty harbour; Driftwood is the jetty harbour)"
     }
   ],
   "named": [
     {
       "thing": "heron pools",
       "kind": "wild",
-      "at": [8120, 4972],
+      "at": [8256, 5236],
       "route": "Coast Path",
-      "where": "beside the path",
-      "why": "the pools in the hollow beside the path",
+      "where": "a short way off the path",
+      "why": "the tide pools in the rocks east of the beach (lane R 24 Oct 07:53 (PR #240): a beach landing, not a jetty harbour)",
       "moved_from": [8129, 4982]
     }
   ],
@@ -348,8 +304,9 @@
     {
       "t": "A",
       "what": "hares",
-      "at": [7696, 5078],
-      "route": "Coast Path"
+      "at": [7664, 5076],
+      "route": "Coast Path",
+      "moved_from": [7696, 5078]
     },
     {
       "t": "I",
@@ -360,28 +317,28 @@
     {
       "t": "S",
       "what": "cold fire ring",
-      "at": [7728, 5080],
+      "at": [7664, 5060],
       "route": "Coast Path",
       "moved_from": [7789, 5092]
     },
     {
       "t": "S",
       "what": "marker stone",
-      "at": [7872, 5108],
+      "at": [7928, 5104],
       "route": "Coast Path",
       "moved_from": [7849, 5111]
     },
     {
       "t": "A",
       "what": "hares",
-      "at": [7900, 5112],
+      "at": [7932, 5068],
       "route": "Coast Path",
       "moved_from": [7911, 5121]
     },
     {
       "t": "I",
       "what": "noticeboard",
-      "at": [7952, 5008],
+      "at": [7928, 5204],
       "route": "Coast Path",
       "moved_from": [7954, 5032]
     },
@@ -429,7 +386,7 @@
     {
       "t": "S",
       "what": "mended fence",
-      "at": [7900, 5056],
+      "at": [7900, 5008],
       "route": "Gullwick",
       "moved_from": [7920, 5048]
     },
@@ -442,91 +399,129 @@
     {
       "t": "I",
       "what": "gate",
-      "at": [7952, 5080],
-      "route": "Gullwick"
+      "at": [7928, 5084],
+      "route": "Gullwick",
+      "moved_from": [7920, 5080]
     },
     {
       "t": "I",
       "what": "gate",
-      "at": [8000, 5080],
+      "at": [8040, 5072],
       "route": "Gullwick",
       "moved_from": [8008, 5080]
     },
     {
       "t": "I",
       "what": "door",
-      "at": [8104, 5104],
+      "at": [8004, 5124],
       "route": "Gullwick",
-      "moved_from": [8104, 5080]
+      "moved_from": [8104, 5080],
+      "why": "the smokehouse door (its cottage moved west)"
     },
     {
       "t": "S",
       "what": "tracks",
-      "at": [7900, 5088],
+      "at": [7884, 5008],
       "route": "Gullwick",
       "moved_from": [7912, 5088]
     },
     {
       "t": "S",
-      "what": "old boot",
-      "at": [7940, 5092],
+      "what": "nets drying",
+      "at": [7864, 5212],
       "route": "Gullwick",
-      "moved_from": [7928, 5088]
+      "moved_from": [7928, 5088],
+      "swapped_from": ["old boot", [7940, 5092]],
+      "why": "lane R 24 Oct 07:53 (PR #240): a beach landing, not a jetty harbour"
     },
     {
       "t": "I",
       "what": "bench",
-      "at": [8088, 5176],
+      "at": [8200, 5272],
       "route": "Gullwick",
       "moved_from": [8088, 5096]
     },
     {
       "t": "S",
-      "what": "old boot",
-      "at": [7872, 5092],
+      "what": "lobster pots",
+      "at": [7912, 5212],
       "route": "Gullwick",
-      "moved_from": [7824, 5112]
+      "moved_from": [7824, 5112],
+      "swapped_from": ["old boot", [7872, 5092]],
+      "why": "lane R 24 Oct 07:53 (PR #240): a beach landing, not a jetty harbour"
     },
     {
       "t": "S",
       "what": "marker stone",
-      "at": [7872, 5076],
+      "at": [7868, 5008],
       "route": "Gullwick",
       "moved_from": [7824, 5120]
     },
     {
       "t": "I",
       "what": "signpost",
-      "at": [8120, 5176],
+      "at": [8064, 5160],
       "route": "Gullwick",
       "moved_from": [8096, 5128]
     },
     {
       "t": "S",
-      "what": "tracks",
-      "at": [7928, 5192],
+      "what": "upturned-hull shed",
+      "at": [7712, 5208],
       "route": "Gullwick",
-      "moved_from": [7952, 5168]
+      "moved_from": [7952, 5168],
+      "swapped_from": ["tracks", [7928, 5192]],
+      "why": "lane R 24 Oct 07:53 (PR #240): a beach landing, not a jetty harbour"
     },
     {
       "t": "S",
-      "what": "marker stone",
-      "at": [8104, 5176],
-      "route": "Gullwick"
+      "what": "fish rack",
+      "at": [8064, 5116],
+      "route": "Gullwick",
+      "swapped_from": ["marker stone", [8104, 5176]],
+      "why": "lane R 24 Oct 07:53 (PR #240): a beach landing, not a jetty harbour"
     },
     {
       "t": "I",
       "what": "noticeboard",
-      "at": [8024, 5188],
+      "at": [7930, 5120],
       "route": "Gullwick",
       "moved_from": [8024, 5184]
     },
     {
       "t": "I",
       "what": "resident",
-      "at": [7860, 5196],
+      "at": [7848, 5204],
       "route": "Gullwick",
       "moved_from": [7832, 5200]
+    },
+    {
+      "t": "I",
+      "what": "capstan",
+      "at": [7984, 5212],
+      "route": "Coast Path",
+      "why": "hauls the boats up the shingle (lane R 24 Oct 07:53 (PR #240): a beach landing, not a jetty harbour)"
+    },
+    {
+      "t": "S",
+      "what": "boat hauled up",
+      "at": [7744, 5252],
+      "route": "Coast Path",
+      "why": "lane R 24 Oct 07:53 (PR #240): a beach landing, not a jetty harbour"
+    },
+    {
+      "t": "S",
+      "what": "boat hauled up",
+      "at": [7808, 5252],
+      "route": "Coast Path",
+      "why": "lane R 24 Oct 07:53 (PR #240): a beach landing, not a jetty harbour"
+    },
+    {
+      "t": "S",
+      "what": "boat hauled up",
+      "at": [8008, 5252],
+      "route": "Coast Path",
+      "why": "lane R 24 Oct 07:53 (PR #240): a beach landing, not a jetty harbour"
     }
   ],
   "obstacles": [
@@ -542,8 +537,8 @@
       "side": "south",
       "layers": "the sea is the edge, with surf",
       "along": [
-        [7648, 5232],
-        [8288, 5232]
+        [7648, 5264],
+        [8288, 5296]
       ]
     }
   ],
@@ -551,21 +546,22 @@
   "residents": [
     {
       "who": "a fisher mending nets",
-      "at": [7984, 5196],
-      "note": "on the beach by the boats",
+      "at": [7920, 5252],
+      "note": "mending nets by the boats",
       "moved_from": [7984, 5232]
     },
     {
       "who": "a heron",
-      "at": [8112, 5024],
-      "note": "in the pools",
+      "at": [8232, 5276],
+      "note": "on the rocks by the tide pools",
       "moved_from": [8112, 5000]
     }
   ],
   "ground": {
     "_about": "for the painter",
     "shelf": "short sea-turf with thrift and sea campion, gorse",
-    "beach": "shingle and sand, boats hauled up, nets drying",
-    "village": "cobbles and slate steps, lobster pots"
+    "beach": "shingle with the boats hauled up, a capstan above the slip, nets drying, lobster pots",
+    "village": "cobbles and slate steps, lobster pots",
+    "rocks": "a low rock shelf east of the beach with tide pools, weed and limpets"
   }
 }
