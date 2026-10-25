@@ -149,7 +149,7 @@ only_if = "{\"flags\":[\"undercroft_plate\"]}"
 position = Vector2(1440, 408)
 texture = ExtResource("t3")
 centered = false
-offset = Vector2(-3, -9)
+offset = Vector2(-1, -5)
 
 [node name="If_seal_sunk" type="Node2D" parent="Floor"]
 script = ExtResource("cond")
@@ -402,13 +402,13 @@ offset = Vector2(-36, -40)
 position = Vector2(1776, 228)
 texture = ExtResource("t11")
 centered = false
-offset = Vector2(-33, -104)
+offset = Vector2(-42, -98)
 
 [node name="StumpSe" type="Sprite2D" parent="Props"]
 position = Vector2(2208, 582)
 texture = ExtResource("t12")
 centered = false
-offset = Vector2(-33, -104)
+offset = Vector2(-42, -98)
 
 [node name="RubbleChamber" type="Sprite2D" parent="Props"]
 position = Vector2(2202, 234)

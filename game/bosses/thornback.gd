@@ -39,8 +39,6 @@ const VOLLEY := [8, 12]
 const SLAM_RADIUS := 34.0 * DENSITY
 const BODY_RADIUS := 20.0 * DENSITY
 const NEAR := 46.0 * DENSITY
-const TELEGRAPH := Color("#f27222")       ## house lava 3
-const TELEGRAPH_FILL := Color(0.949, 0.447, 0.133, 0.28)
 const ART := "res://bosses/thornback/art/"
 
 @export var arena := Rect2()   ## texels in the zone; empty = no limit (tests)
@@ -420,31 +418,76 @@ func _free() -> void:
 func _exit_tree() -> void:
 	_release_slot()
 
-# --- telegraphs: ground marks that fill over the wind-up (no blinking) -------------------------------
+# --- the floor under it: its contact shadow, and the telegraphs as marks in the dust ---------------
+## Colours from the house ramps: the dust (path 4), the scuffs (path 2), the lit edge (lamp 4), shadow (soot 0).
+const DUST := Color("#c39771")
+const SCUFF := Color("#885c4b")
+const LIT := Color("#f5d49c")
+const SHADOW := Color("#1c1426")
+
 func _draw_telegraph() -> void:
+	# the contact shadow: a soft-edged oval under the body, pushed a little down-right (light upper left)
+	marks.draw_set_transform(Vector2(6, 3), 0.0, Vector2(1.0, 0.34))
+	marks.draw_circle(Vector2.ZERO, BODY_RADIUS * 1.7, Color(SHADOW, 0.28))
+	marks.draw_circle(Vector2.ZERO, BODY_RADIUS * 1.35, Color(SHADOW, 0.3))
+	marks.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 	if state != "windup":
 		return
 	var k := clampf(elapsed / maxf(windup_time, 0.01), 0.0, 1.0)
 	match attack:
 		"charge":
 			var length := _lane_length()
-			var side := aim.orthogonal() * BODY_RADIUS * 0.9
+			var side := aim.orthogonal()
+			var half := BODY_RADIUS * 0.9
+			# the whole lane, faint, so it reads from the first frame; scuffed furrows along both edges
 			var far := aim * length
-			marks.draw_colored_polygon(PackedVector2Array([side, far + side, far - side, -side]), TELEGRAPH_FILL)
-			var fill := aim * length * k
-			marks.draw_colored_polygon(PackedVector2Array([side, fill + side, fill - side, -side]), Color(TELEGRAPH, 0.45))
-			for e in [[side, far + side], [-side, far - side], [far + side, far - side]]:
-				marks.draw_line(e[0], e[1], TELEGRAPH, 3.0)
+			marks.draw_colored_polygon(PackedVector2Array([side * half, far + side * half, far - side * half, -side * half]), Color(DUST, 0.14))
+			var d := 6.0
+			while d < length:
+				for sgn: float in [-1.0, 1.0]:
+					var p: Vector2 = aim * d + side * half * sgn
+					marks.draw_line(_px(p), _px(p + aim * 9.0), Color(SCUFF, 0.75), 3.0)
+				d += 15.0
+			# the dust kicked up so far, and the lit edge that runs ahead of it
+			var reach := length * k
+			var i := 0
+			d = 4.0
+			while d < reach:
+				var off := (float((i * 37) % 11) / 10.0 - 0.5) * half * 1.6
+				marks.draw_rect(Rect2(_px(aim * d + side * off) - Vector2(3, 3), Vector2(6, 3)), Color(DUST, 0.55))
+				i += 1
+				d += 5.0
+			marks.draw_line(_px(aim * reach + side * half), _px(aim * reach - side * half), Color(LIT, 0.95), 3.0)
 		"volley":
 			var n: int = VOLLEY[phase - 1]
-			for i in n:
-				var a := TAU * float(i) / float(n) + (PI / float(n) if phase == 2 else 0.0)
-				var d := Vector2.from_angle(a)
-				marks.draw_line(d * BODY_RADIUS, d * (BODY_RADIUS + 40.0 * DENSITY * k), TELEGRAPH, 3.0)
+			var full := 40.0 * DENSITY
+			for j in n:
+				var a := TAU * float(j) / float(n) + (PI / float(n) if phase == 2 else 0.0)
+				var v := Vector2.from_angle(a)
+				var d := BODY_RADIUS
+				while d < BODY_RADIUS + full:
+					marks.draw_line(_px(v * d), _px(v * (d + 6.0)), Color(SCUFF, 0.6), 3.0)
+					d += 12.0
+				var tip := v * (BODY_RADIUS + full * k)
+				marks.draw_line(_px(v * BODY_RADIUS), _px(tip), Color(DUST, 0.5), 3.0)
+				marks.draw_rect(Rect2(_px(tip) - Vector2(3, 3), Vector2(6, 6)), Color(LIT, 0.95))
 		"slam":
-			marks.draw_circle(Vector2.ZERO, SLAM_RADIUS, TELEGRAPH_FILL)
-			marks.draw_circle(Vector2.ZERO, SLAM_RADIUS * k, Color(TELEGRAPH, 0.4))
-			marks.draw_arc(Vector2.ZERO, SLAM_RADIUS, 0.0, TAU, 48, TELEGRAPH, 3.0)
+			# a ring of cracks where the forefeet will land; the dust fills it, its lit edge runs outwards
+			var pts := PackedVector2Array()
+			for j in 37:
+				var a := TAU * float(j) / 36.0
+				var r := SLAM_RADIUS + (6.0 if j % 3 == 0 else -3.0)
+				pts.append(_px(Vector2.from_angle(a) * r))
+			marks.draw_polyline(pts, Color(SCUFF, 0.8), 3.0)
+			for j in 8:
+				var v := Vector2.from_angle(TAU * float(j) / 8.0 + 0.2)
+				marks.draw_line(_px(v * SLAM_RADIUS * 0.55), _px(v * SLAM_RADIUS), Color(SCUFF, 0.6), 3.0)
+			marks.draw_circle(Vector2.ZERO, SLAM_RADIUS * k, Color(DUST, 0.3))
+			marks.draw_arc(Vector2.ZERO, SLAM_RADIUS * k, 0.0, TAU, 40, Color(LIT, 0.95), 3.0)
+
+## Snaps a point to the 3-texel world pixel, so the marks sit on the art's grid.
+func _px(p: Vector2) -> Vector2:
+	return (p / DENSITY).round() * DENSITY
 
 func _lane_length() -> float:
 	if arena.size == Vector2.ZERO:

@@ -138,6 +138,16 @@ def _sprite(d, mirror=False):
     return R.Sprite(int(round(FW * s)), int(round(FH * s)), s, PIVOT[0] * s, PIVOT[1] * s, mirror=mirror)
 
 
+def ndi_close(m, n):
+    from scipy import ndimage
+    return ndimage.binary_closing(m, iterations=n)
+
+
+def ndi_dilate(m, n):
+    from scipy import ndimage
+    return ndimage.binary_dilation(m, iterations=n)
+
+
 def _thorn_tris(g, pts, out_c, length, every=9.0, w=2.6, side=1):
     """Thorns along a cane: small triangles pointing away from out_c."""
     m = np.zeros((g.h, g.w), bool)
@@ -212,10 +222,12 @@ def draw(facing: str, P: dict, d: float = 3.0) -> Image.Image:
             sp.add(name + '_shin', g.capsule(kx, ky, fx, fy - 6, 7 * k, 5 * k), fam, base=base, z=z + 0.02)
             sp.add(name + '_hoof', g.rrect(fx - 6 * k, fy - 8, fx + 6.5 * k, fy + 0.5, 2), 'soot', base=2, z=z + 0.05)
         # the body: rump, barrel, the high shoulder hump of a boar
-        sp.add('rump', g.ellipse(-46, by + 6 + tilt * 0.3, 30, 30), fur, base=3, z=1.0)
-        sp.add('barrel', g.ellipse(-6, by + 4 + tilt * 0.1, 56, 32, rot=-tilt * 0.35), fur, base=3, z=1.1)
-        sp.add('shoulder', g.ellipse(26, by - 6 - tilt * 0.7, 38, 40), fur, base=3, z=1.2)
-        sp.add('belly', g.ellipse(-4, by + 26 + tilt * 0.1, 44, 9) & ~g.ellipse(-4, by + 40, 60, 12), fur_dark, base=2, z=1.15)
+        body = (g.ellipse(-46, by + 6 + tilt * 0.3, 30, 30) | g.ellipse(-6, by + 4 + tilt * 0.1, 56, 32, rot=-tilt * 0.35)
+                | g.ellipse(26, by - 6 - tilt * 0.7, 38, 40))
+        sp.add('body', body, fur, base=3, z=1.1, k=0.8)
+        sp.mark('body', g.Y > by + 18 + tilt * 0.1, -1)                  # the belly in its own shade
+        sp.mark('body', (g.Y > by + 28) & (g.X > -40) & (g.X < 40), -1)
+        sp.mark('body', g.ellipse(26, by - 26 - tilt * 0.7, 26, 10), 1)  # the lit hump
         # head: a long wedge, low and forward, the snout disc and the tusks
         hx, hy = 64 - fl - crouch * 2, by + 10 - tilt * 1.3 + head_dy
         sp.add('head', g.ellipse(hx, hy, 32, 25, rot=22 + head_dy), fur, base=3, z=2.0)
@@ -239,7 +251,7 @@ def draw(facing: str, P: dict, d: float = 3.0) -> Image.Image:
         eye_c = (hx + 8, hy - 6)
         sp.add('tail', g.capsule(-74, by - 4, -82, by + 12, 2.4, 1.6), fur_dark, base=2, z=0.9)
         shell_c = (-10, by - 4 - tilt * 0.4)
-        shell_r = (52, 40)
+        shell_r = (56, 54)
         shell_a = (192, 348)
     elif f == 'S':
         by = -56 + bob + crouch * 4
@@ -253,8 +265,8 @@ def draw(facing: str, P: dict, d: float = 3.0) -> Image.Image:
             fy = fy * (1 - lie) - 3 * lie
             sp.add(name, g.capsule(x, top, fx, fy - 6, 10, 7), fam, base=2 if fam == fur else 1, z=z)
             sp.add(name + '_hoof', g.rrect(fx - 7, fy - 7, fx + 7, fy + 0.5, 2), 'soot', base=2, z=z + 0.05)
-        sp.add('rump', g.ellipse(0, by - 12, 50, 26), fur_dark, base=2, z=0.8)
-        sp.add('barrel', g.ellipse(0, by + 2 - lift_front * 0.6, 54, 34), fur, base=3, z=1.1)
+        sp.add('body', g.ellipse(0, by - 12, 50, 26) | g.ellipse(0, by + 2 - lift_front * 0.6, 54, 34), fur, base=3, z=1.1, k=0.8)
+        sp.mark('body', g.Y > by + 22, -1)
         hx, hy = 0, by + 10 - lift_front * 1.2 + head_dy - fl * 0.5
         sp.add('head', g.ellipse(hx, hy, 34, 28), fur, base=3, z=2.0)
         sp.add('brow', g.ellipse(hx, hy - 10, 26, 10), fur_dark, base=3, z=2.02)
@@ -271,7 +283,7 @@ def draw(facing: str, P: dict, d: float = 3.0) -> Image.Image:
         sp.add('mane', g.stroke([(-6, by - 30), (0, by - 34), (6, by - 30)], 6), mane, base=2, z=1.3)
         eye_c = None
         shell_c = (0, by - 6)
-        shell_r = (52, 30)
+        shell_r = (58, 46)
         shell_a = (190, 350)
     else:  # N
         by = -60 + bob + crouch * 4
@@ -289,13 +301,13 @@ def draw(facing: str, P: dict, d: float = 3.0) -> Image.Image:
         sp.add('head', g.ellipse(hx, hy, 26, 18), fur_dark, base=2, z=0.7)
         for sgn in (-1, 1):
             sp.add('ear%d' % sgn, g.ellipse(hx + sgn * 22, hy - 10, 7, 11, rot=sgn * 30), fur_dark, base=2, z=0.75)
-        sp.add('barrel', g.ellipse(0, by, 54, 34), fur, base=3, z=1.1)
-        sp.add('rump', g.ellipse(0, by + 12, 44, 26), fur, base=3, z=1.3)
+        sp.add('body', g.ellipse(0, by, 54, 34) | g.ellipse(0, by + 12, 44, 26), fur, base=3, z=1.1, k=0.8)
+        sp.mark('body', g.Y > by + 26, -1)
         sp.add('tail', g.capsule(0, by + 20, 3, by + 36, 2.6, 1.8), fur_dark, base=2, z=1.4)
         sp.add('tuft', g.ellipse(3, by + 38, 3.4, 4.2), mane, base=1, z=1.45)
         eye_c = None
         shell_c = (0, by - 4)
-        shell_r = (50, 32)
+        shell_r = (56, 48)
         shell_a = (185, 355)
 
     # the bramble shell: canes arched over the back, crossing canes, thorns, leaves, berries and the
@@ -305,18 +317,19 @@ def draw(facing: str, P: dict, d: float = 3.0) -> Image.Image:
         rx, ry = shell_r
         a0, a1 = shell_a
         canes = []
-        for k in range(5):
-            sc = 0.62 + 0.11 * k
+        NA = 8
+        for k in range(NA):
+            sc = 0.42 + 0.095 * k
             pts = []
             for j in range(15):
-                a = math.radians(a0 + (a1 - a0) * j / 14)
+                a = math.radians(a0 - 8 + (a1 - a0 + 16) * j / 14)
                 wob = math.sin(j * 1.1 + k * 1.7) * 3
                 pts.append((cx + math.cos(a) * (rx * sc + wob), cy + math.sin(a) * (ry * sc + wob) - 6))
             canes.append(pts)
         for k in range(3):
             j0 = 2 + k * 4
             p0 = canes[0][j0]
-            p1 = canes[4][min(14, j0 + 3)]
+            p1 = canes[NA - 1][min(14, j0 + 3)]
             canes.append([p0, ((p0[0] + p1[0]) / 2, (p0[1] + p1[1]) / 2 - 8), p1])
         shell_mask = np.zeros((g.h, g.w), bool)
         cane_masks = []
@@ -336,14 +349,20 @@ def draw(facing: str, P: dict, d: float = 3.0) -> Image.Image:
         for pts in hang:
             canes.append(pts)
         canes.insert(0, None)
+        dome_fill = True
         for k, pts in enumerate(canes):
             if pts is None:
                 cane_masks.append(dome)
                 continue
-            r = 5.6 if k <= 5 else (4.0 if k <= 8 else 2.4)
+            r = 5.2 if k <= NA else (4.2 if k <= NA + 3 else 2.4)
             m = g.stroke(pts, r)
             cane_masks.append(m)
             shell_mask |= m
+        # the tangle only shows in the gaps between the canes (no solid dome)
+        weave = np.zeros_like(shell_mask)
+        for m in cane_masks[1:NA + 4]:
+            weave |= m
+        cane_masks[0] = ndi_close(weave, 4) & ~weave
         # freed: the shell cracks; the tangle splits in three and every cane falls its own way
         if P['shell'] > 0:
             def shift(m, dx, dy):
@@ -359,32 +378,59 @@ def draw(facing: str, P: dict, d: float = 3.0) -> Image.Image:
             cane_masks = moved
         canes = [c for c in canes if c is not None]
         zs = -1.35 if f == 'S' else 0.0          # seen from the front, the shell is behind the head
-        sp.add('tangle', cane_masks[0], 'leaf_cool', base=1, z=2.9 + zs, k=0.9, lo=0, hi=2)
-        for k, m in enumerate(cane_masks[1:]):
-            fam = ('leaf_cool', 'berry_cool')[k % 2]
-            zz = 3.0 + k * 0.02 + (0.3 if 5 <= k < 8 else 0) - (0.2 if k >= 8 else 0)
-            sp.add('cane%d' % k, m, fam, base=3 if P['shell'] < 0.5 else 2, z=zz + zs, line=True, k=0.7)
+        live = P['shell'] < 0.5
+        # the tangle's depths between the canes, in deep shade
+        sp.add('tangle', cane_masks[0], 'soot', base=1, z=2.9 + zs, k=0.9, lo=0, hi=1)
+        arcs, cross, hang = cane_masks[1:NA + 1], cane_masks[NA + 1:NA + 4], cane_masks[NA + 4:]
+        # woody canes: grey-brown bark, round in section; knots a tone darker
+        for k, m in enumerate(arcs):
+            fam = ('berry_cool', 'leaf_cool')[k % 2]
+            sp.add('cane%d' % k, m, fam, base=2, z=3.0 + k * 0.02 + zs, line=True, k=0.7, hi=3)
+            if live:
+                kn = np.zeros_like(m)
+                for (x, y) in canes[k][2::3]:
+                    kn |= g.ellipse(x, y, 2.2, 2.2)
+                sp.mark('cane%d' % k, kn, -1)
+        # crossing canes woven through them: over one arc, under the next
+        for j, m in enumerate(cross):
+            sp.add('cross%d' % j, m, 'berry_cool', base=2, z=3.3 + j * 0.01 + zs, line=True, k=0.7, hi=3)
+            for k, am in enumerate(arcs):
+                if (k + j) % 2 == 0:
+                    over = am & ndi_dilate(m, 3)
+                    if over.any():
+                        sp.add('weave%d_%d' % (j, k), over, ('berry_cool', 'leaf_cool')[k % 2], base=2,
+                               z=3.4 + zs + k * 0.001, k=0.7, hi=3)
+        for j, m in enumerate(hang):
+            sp.add('vine%d' % j, m, 'earth_warm', base=2, z=2.95 + zs, k=0.7)
         if P['shell'] < 0.35:
             th = np.zeros((g.h, g.w), bool)
-            for k, pts in enumerate(canes[:5]):
-                th |= _thorn_tris(g, pts, (cx, cy + 24), 8 * P['spines'] + k * 0.6, every=12 - k, w=2.6)
+            for k, pts in enumerate(canes[:NA + 3]):
+                th |= _thorn_tris(g, pts, (cx, cy + 24), 4.5 * P['spines'] + (k % 3) * 0.6, every=7.5 + (k % 3), w=1.8)
             th &= ~shell_mask
             sp.add('thorns', th, 'sand', base=4, z=2.95 + zs, k=0.5, lo=3, hi=5)
             lv = np.zeros((g.h, g.w), bool)
+            lv2 = np.zeros((g.h, g.w), bool)
             be = np.zeros((g.h, g.w), bool)
-            for k, (pts, j) in enumerate(((canes[1], 4), (canes[3], 9), (canes[2], 12), (canes[4], 6), (canes[0], 10))):
-                x, y = pts[j]
-                if k % 2 == 0:
-                    lv |= g.ellipse(x + 3, y - 3, 5, 2.6, rot=-30 + k * 25)
-                else:
-                    be |= g.ellipse(x, y - 1, 2.6, 2.6) | g.ellipse(x + 4, y + 1, 2.4, 2.4)
-            sp.add('leaves', lv, 'leaf', base=3, z=3.4 + zs, k=0.6)
-            sp.add('berries', be, 'berry', base=3, z=3.45 + zs, k=0.6)
+            for k, pts in enumerate(canes[2:NA]):
+                for j in range(1 + k % 2, len(pts) - 1, 3):
+                    x, y = pts[j]
+                    rot = -40 + ((j * 37 + k * 23) % 80)
+                    leaf = g.ellipse(x + 3, y - 3, 5.2, 2.4, rot=rot)
+                    if (j + k) % 3 == 0:
+                        lv2 |= leaf
+                    else:
+                        lv |= leaf
+                    if (j + k) % 7 == 0:
+                        be |= g.ellipse(x - 3, y + 1, 2.2, 2.2) | g.ellipse(x + 1, y + 2, 2.0, 2.0)
+            sp.add('leaves', lv, 'leaf', base=3, z=3.5 + zs, k=0.6)
+            sp.add('leaves2', lv2 & ~lv, 'leaf_cool', base=3, z=3.45 + zs, k=0.6)
+            sp.add('berries', be, 'berry', base=3, z=3.55 + zs, k=0.6)
         # the splinter of the shard, lodged at the top of the shell
-        top = canes[2][7 if f != 'N' else 6]
+        top = canes[NA - 2][7 if f != 'N' else 6]
         sdy = drop * 1.2
         spl = g.poly([(top[0] - 6, top[1] + 4 + sdy), (top[0] - 2, top[1] - 22 + sdy), (top[0] + 7, top[1] - 28 + sdy),
                       (top[0] + 6, top[1] + 4 + sdy)])
+        sp.add('socket', g.ellipse(top[0] + 1, top[1] + 3 + sdy, 8, 3.4), 'soot', base=1, z=3.58 + zs, fixed=1)
         glow = P['glow']
         if glow > 0:
             sp.add('splinter', spl, 'sky', base=glow, z=3.6 + zs, fixed=glow, glow=True)
