@@ -1,7 +1,7 @@
 """Turn a kit zone into a Godot scene: game/zones/<zone>/<zone>_base.tscn.
 
     # 1. render the zone with the art kit at density 3 and copy its pictures and boxes in
-    python3 game/tools/gen_zone.py woodland --render /path/to/kit-checkout --walk /path/to/kit-checkout/lib/zone-maps.ts
+    python3 game/tools/gen_zone.py woodland --render .      # the kit in this checkout (scripts/art/native/zone.py)
     # 2. later, rebuild the scene only (no render) from what step 1 stored in the zone folder
     python3 game/tools/gen_zone.py woodland
 
@@ -51,15 +51,17 @@ def walk_from_zone_maps(path: str, zone: str):
 
 def render(kit: str, zone: str, density: float, out: str) -> dict:
     """Run the kit's zone export and copy its pictures into out/art."""
-    r = subprocess.run([sys.executable, '-m', 'scripts.art.native.zone', '--zone', zone, '--density', f'{density:g}'],
-                       cwd=kit, check=True, capture_output=True, text=True)
+    import tempfile
+    src = tempfile.mkdtemp(prefix=f'zone-{zone}-')       # the pictures stay out of the kit's assets/
+    r = subprocess.run([sys.executable, '-m', 'scripts.art.native.zone', '--zone', zone, '--density', f'{density:g}',
+                        '--out', src], cwd=kit, check=True, capture_output=True, text=True)
     doc = json.loads(r.stdout.strip().split('\n')[-1])
-    src = os.path.join(kit, 'assets', 'zones', zone, '2x')  # the kit's folder name, whatever the density
     art = os.path.join(out, 'art')
     os.makedirs(art, exist_ok=True)
     for f in sorted(os.listdir(src)):
         if f.endswith('.png'):
             shutil.copy(os.path.join(src, f), os.path.join(art, f))
+    shutil.rmtree(src, ignore_errors=True)
     return doc
 
 

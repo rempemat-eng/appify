@@ -39,11 +39,12 @@ def _h(*v):
     return water_flow._hash(*v)
 
 
-def water(codes, mask, still, s, falls=(), n=FRAMES, foam_fid=None):
+def water(codes, mask, still, s, falls=(), n=FRAMES, foam_fid=None, thin=False):
     """Frames of moving water as (family, tone) changes. Running water: streaks 4 to 10 texels
     along the flow in one lane in three, drifting downstream by 4 world px a frame (a loop of
     32 world px); still water (a pool): glints that come and go in pairs; banks: foam that
-    laps along the edge; falls: light ribbons sliding down the sheet. Returns n RGBA arrays."""
+    laps along the edge; falls: light ribbons sliding down the sheet. thin (density 3 and up):
+    a streak is one texel across its lane (a ripple line, not a block). Returns n RGBA arrays."""
     H, W = mask.shape
     F = np.where(codes >= 0, codes // 8, 0)
     T = np.where(codes >= 0, codes % 8, 0)
@@ -71,6 +72,8 @@ def water(codes, mask, still, s, falls=(), n=FRAMES, foam_fid=None):
         fam = F.copy()
         pos = (u + phase - f * shift) % period
         streak = run & lane_on & (pos < length)
+        if thin:
+            streak &= (v % lane_w) == 0
         head = streak & (pos == 0)
         dT[streak] = 1
         dT[head] = 2

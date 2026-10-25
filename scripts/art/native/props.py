@@ -72,6 +72,81 @@ def oak4(d, w=65, h=78, trunk_w=11, crown_h=50, seed=11):
     return _out(sp)
 
 
+# density 3 and up: one trunk painter for every crowned tree (compose.foliage_sprite_hd)
+BARK = {
+    # family, its base tone, the marks: plates (oak, pine), smooth (beech), dashes (birch)
+    'oak': ('timber_cool', 3, 'plates'),
+    'pine': ('timber_warm', 2, 'plates'),
+    'beech': ('stone', 3, 'smooth'),
+    'birch': ('plaster', 3, 'dashes'),
+    'sapling': ('timber_cool', 3, 'smooth'),
+}
+
+
+def trunk4(d, length=24.0, trunk_w=8.0, seed=11, bark='oak', flare=1.0, hollow=False):
+    """A trunk length world px tall (its top hidden under the crown), trunk_w wide, flaring into
+    roots at the ground (flare 0 for a thin stem). Bark lit on the left (a cylinder's ramp), its
+    marks per bark kind: broken vertical plates (oak, pine), a few soft rings (beech), dark
+    horizontal dashes on pale bark (birch); a knot; roots that meet the ground with their own
+    shaded undersides. Returns (img, anchor at the foot, alpha)."""
+    fam, base, kind = BARK.get(bark, BARK['oak'])
+    L, tw = length * 2, trunk_w * 2
+    fl = flare * tw / 22.0
+    half = tw / 2
+    sp = _sprite(d, tw + 30 * fl + 8, L + 8, (tw + 30 * fl + 8) / 2, 3)
+    g = sp.g
+    rng = np.random.default_rng(seed)
+    top = -L
+    pts = [(-half * 0.86, top), (half * 0.86, top), (half, -16 * max(fl, 0.4))]
+    if fl > 0.05:
+        pts += [(half + 0.8 * fl, -9 * fl), (half + 2.4 * fl, -4.5 * fl), (half + 7 * fl, -0.4), (half + 1.5 * fl, -1.4),
+                (2, 0), (-3, -1.0), (-half - 1.5 * fl, -1.4), (-half - 7 * fl, -0.3), (-half - 2.4 * fl, -4.5 * fl),
+                (-half - 0.8 * fl, -9 * fl)]
+    else:
+        pts += [(half, 0), (-half, 0)]
+    pts += [(-half, -16 * max(fl, 0.4))]
+    tr = pk.round_mask(g.poly(pts), 1)
+    sp.add('trunk', tr, fam, base=base, lo=0 if fam.startswith('timber') else 1, hi=min(5, base + 2), z=1, mode='cyl',
+           k=1.0)
+    if kind == 'plates':
+        for j in range(int(5 + tw / 3 + L / 14)):
+            x = rng.uniform(-half + 1.5, half - 1.5)
+            y0 = rng.uniform(top + 4, -8)
+            ln = rng.uniform(5, 11)
+            sp.mark('trunk', g.capsule(x, y0, x + rng.uniform(-0.6, 0.6), y0 + ln, 0.6), -1)
+            if x < half * 0.3:
+                sp.mark('trunk', g.capsule(x - 1.4, y0 + 1, x - 1.4, y0 + ln * 0.6, 0.55), 1)
+    elif kind == 'smooth':
+        for j in range(int(2 + L / 22)):
+            y = rng.uniform(top + 6, -10)
+            sp.mark('trunk', g.ellipse(rng.uniform(-half * 0.3, half * 0.3), y, half * 0.9, 0.7), -1)
+        sp.mark('trunk', g.rect(-half - 2, top, -half + max(1.5, tw * 0.18), 0) & tr, 1)
+    elif kind == 'dashes':
+        for j in range(int(4 + L / 6)):
+            y = rng.uniform(top + 3, -4)
+            x = rng.uniform(-half, half * 0.6)
+            sp.detail(g.rect(x, y, x + rng.uniform(2.5, 5.5), y + 1.1) & tr, pk.rgb('stone', 1))
+    if tw >= 8 and L > 24:
+        kx, ky = rng.uniform(-half * 0.3, half * 0.3), rng.uniform(top * 0.6, top * 0.35)
+        sp.mark('trunk', g.ellipse(kx, ky, 1.6, 1.3), -2)
+        sp.mark('trunk', g.rect(kx - 1.4, ky - 2.2, kx + 0.6, ky - 1.3), 1)
+    if fl > 0.05:
+        for (x0, x1) in ((-half + 1, -half - 6 * fl), (half - 1, half + 6 * fl)):
+            sp.mark('trunk', g.capsule(x0, -3, x1, -1.0, 0.8), 1 if x1 < 0 else -1)
+    sp.mark('trunk', g.rect(-tw, top - 2, tw, top + 7), -1)        # in the crown's shade at its top
+    if hollow:
+        # a hollow low in the trunk: a dark opening, its lit lower lip and shaded upper rim, and
+        # two eyes watching from inside
+        hw, hh = half * 0.42, min(-top * 0.16, half * 0.75)
+        hy = -hh - 5
+        sp.detail(g.ellipse(0.5, hy, hw + 1.2, hh + 1.2), pk.rgb(fam, 1))
+        sp.detail(g.ellipse(0.5, hy + 0.6, hw, hh), pk.rgb('soot', 0))
+        sp.detail(g.ellipse(0.5, hy + hh + 0.8, hw * 0.8, 0.8) & ~g.ellipse(0.5, hy + 0.6, hw, hh), pk.rgb(fam, 4))
+        for ex_ in (-hw * 0.35, hw * 0.35 + 1):
+            sp.detail(g.rect(ex_ - 0.6, hy - 0.6, ex_ + 0.6, hy + 0.6), pk.rgb('brass', 5))
+    return _out(sp)
+
+
 # ------------------------------------------------------------------------------------------------
 def bench4(d, seed=41):
     """The 1x bench (34 x 16 world px), seen from the front: two grey iron end frames (an upright,
@@ -412,7 +487,7 @@ def _poly_mask(pts, X, Y):
     return inside
 
 
-def boulder4(d, w=21, h=13, seed=31, fam='stone'):
+def boulder4(d, w=21, h=13, seed=31, fam='stone', moss='top'):
     """r7/r8: the 1x grey stone (21 x 13 world px) as two or three chunks of pixel-art stone (Matt:
     rocks read vector-like). r8: rounded chunk outlines, a top plane tilted 5 to 20 degrees, a
     two-tone step from top to side, one crack per stone and no mark crossing it. Each chunk has a flat lit top (tone 4, mottled), a bright rim along
@@ -517,8 +592,21 @@ def boulder4(d, w=21, h=13, seed=31, fam='stone'):
                 y += 1
                 if rng.random() < 0.35:
                     x += 1 if rng.random() < 0.6 else -1
-        # moss on the top's back half
-        if top.any():
+        # moss on the top's back half ('top'); on a standing stone ('lichen') small patches of
+        # lichen on its lit upper flank instead, never a cap on its tip
+        if moss == 'lichen':
+            ys_, xs_ = np.nonzero(m)
+            if len(ys_):
+                for _ in range(int(rng.integers(2, 5))):
+                    q = int(rng.integers(0, len(ys_)))
+                    if ys_[q] < y0 + hh * 0.18 or ys_[q] > y0 + hh * 0.7 or rel[ys_[q], xs_[q]] > 0.1:
+                        continue
+                    rb = rng.uniform(0.5, 1.0) * d
+                    mb = m & ((yy - ys_[q]) ** 2 / 0.6 + (xx - xs_[q]) ** 2 <= rb * rb)
+                    fm[mb] = 2
+                    tt[mb] = 3
+                    tt[mb & ~np.roll(mb, -1, 0)] = 2
+        if top.any() and moss == 'top':
             ty_, tx_ = np.nonzero(top)
             for _ in range(int(rng.integers(3, 6))):
                 q = int(rng.integers(0, len(ty_)))
@@ -644,3 +732,151 @@ def flowers4(d, seed, kind='white', n=3):
                 put(yy, xx, pk.rgb(fam, 5 if (dy < 0 or dx < 0) else 4))
         put(y, x, pk.rgb('brass', 4) if fam == 'plaster' else pk.rgb('plaster', 5))
     return Image.fromarray(out, 'RGBA')
+
+
+# ------------------------------------------------------------------------------------------------
+# density 3 and up: the woodland's low plants and mushrooms (25 Oct)
+# ------------------------------------------------------------------------------------------------
+def _rgba(h, w):
+    return np.zeros((h, w, 4), np.uint8)
+
+
+def _put(a, y, x, fam, t):
+    if 0 <= y < a.shape[0] and 0 <= x < a.shape[1]:
+        a[y, x, :3] = pk.rgb(fam, t)
+        a[y, x, 3] = 255
+
+
+def _finish(a):
+    img = Image.fromarray(a, 'RGBA')
+    al = a[..., 3] > 0
+    ys, xs = np.nonzero(al)
+    return img, ((xs.min() + xs.max() + 1) / 2.0, ys.max() + 1.0), al
+
+
+def mushrooms_hd(d, n=5, seed=0, kind='brown'):
+    """A cluster of n mushrooms at ankle height (1.5 to 4 world px), the tallest at the back,
+    leaning a little apart: a pale stem lit on the left, a domed cap lit at its upper left with
+    a dark gill line under its rim (and white flecks on the red kind)."""
+    rng = np.random.default_rng(seed)
+    Wd, Hd = int(10 * d), int(7 * d)
+    a = _rgba(Hd, Wd)
+    caps = {'brown': ('clay', 'brass_warm'), 'red': ('berry', 'berry')}[kind]
+    items = []
+    for k in range(n):
+        x = Wd / 2 + rng.uniform(-3.4, 3.4) * d
+        h = rng.uniform(1.5, 3.8) * d
+        cw = rng.uniform(1.8, 3.2) * d
+        items.append((h, x, cw))
+    items.sort(key=lambda t: -t[0])                    # tall ones behind
+    for j, (h, x, cw) in enumerate(items):
+        foot = Hd - 1 - int(rng.integers(0, max(1, int(1.6 * d))))
+        top = int(foot - h)
+        sw = max(1, int(round(0.55 * d)))
+        lean = rng.uniform(-0.12, 0.12)
+        for y in range(top, foot + 1):
+            xc = int(round(x + lean * (foot - y)))
+            for i in range(sw + 1):
+                _put(a, y, xc - sw // 2 + i, 'plaster', 4 if i == 0 else (3 if i < sw else 2))
+        xc = int(round(x + lean * (foot - top)))
+        ch = max(2, int(round(cw * 0.55)))
+        fam = caps[j % 2]
+        for yy in range(ch):
+            half = cw / 2 * np.sqrt(max(0.0, 1 - ((ch - 1 - yy) / ch) ** 2)) + 0.4
+            for xx in range(int(round(xc - half)), int(round(xc + half)) + 1):
+                u = (xx - (xc - half)) / max(1.0, 2 * half)
+                t = 4 if (yy < ch * 0.45 and u < 0.45) else (3 if u < 0.8 else 2)
+                _put(a, top - ch + 1 + yy, xx, fam, t)
+        for xx in range(int(round(xc - cw / 2)), int(round(xc + cw / 2)) + 1):
+            _put(a, top + 1, xx, fam, 1)               # the gills' dark line under the rim
+        if kind == 'red':
+            _put(a, top - ch + 2, int(xc - cw / 5), 'plaster', 5)
+            _put(a, top - 1, int(xc + cw / 5), 'plaster', 5)
+    return _finish(a)
+
+
+def fern_hd(d, seed=0, size=1.0):
+    """A fern (knee high, 8 to 16 world px across): fronds arching up out of one crown and
+    bending down at their tips, each a midrib with leaflets in pairs that shorten to the tip and
+    point out along it; the fronds at the back in shade, those facing the upper left lit."""
+    rng = np.random.default_rng(seed)
+    Wd, Hd = int(22 * size * d), int(14 * size * d)
+    a = _rgba(Hd, Wd)
+    bx, by = Wd / 2, Hd - 1.5
+    n = int(rng.integers(7, 10))
+    fronds = []
+    for k in range(n):
+        f = (k + rng.uniform(-0.25, 0.25)) / (n - 1)          # 0 west .. 1 east
+        dirx = (f - 0.5) * 2
+        el = np.radians(80 - 55 * abs(dirx) + rng.uniform(-6, 6))
+        L = rng.uniform(8.0, 10.5) * size * d * (0.85 if abs(dirx) < 0.3 else 1.0)
+        back = abs(dirx) < 0.35
+        fronds.append((0 if back else 1, dirx, el, L))
+    fronds.sort(key=lambda q: (q[0], -abs(q[1])))
+    for (front, dirx, el, L) in fronds:
+        sx_ = 1 if dirx >= 0 else -1
+        P0 = np.array([bx, by])
+        P1 = P0 + np.array([dirx * L * 0.3 + sx_ * L * 0.1, -L * 1.5 * np.sin(el)])
+        P2 = P0 + np.array([dirx * L * 0.95 + sx_ * L * 0.22, -L * 0.45 * np.sin(el)])
+        lit = dirx < 0.25
+        base_t = 3 if (lit and front) else 2
+        steps = int(L * 2)
+        notch = max(2, int(round(0.8 * d)))
+        for i in range(steps):
+            t = i / max(1, steps - 1)
+            pt = (1 - t) ** 2 * P0 + 2 * (1 - t) * t * P1 + t * t * P2
+            tg = 2 * (1 - t) * (P1 - P0) + 2 * t * (P2 - P1)
+            tg = tg / max(1e-6, np.hypot(*tg))
+            nrm = np.array([-tg[1], tg[0]])
+            half = (0.25 + 0.75 * np.sin(np.pi * min(1.0, t * 1.15))) * 1.5 * size * d
+            if (i // notch) % 2:
+                half *= 0.6                                 # the gaps between leaflets
+            for q in np.arange(-half, half + 0.01, 0.5):
+                pq = pt + nrm * q
+                up = (nrm * np.sign(q))[1] < 0 if q != 0 else False
+                tt = base_t + (1 if (up and abs(q) > half * 0.35) else 0) - (1 if abs(q) < 0.5 else 0)
+                _put(a, int(pq[1]), int(pq[0]), 'leaf', int(np.clip(tt, 1, 4)) if front else int(np.clip(tt - 1, 0, 3)))
+    for k in range(int(2.5 * d)):
+        _put(a, int(by), int(bx - 1.2 * d + k), 'leaf', 0)
+        _put(a, int(by) - 1, int(bx - 0.8 * d + k * 0.7), 'leaf', 1)
+    return _finish(a)
+
+
+def foxglove_hd(d, seed=0, size=1.0):
+    """A foxglove: a rosette of broad leaves on the ground and a spike (12 to 18 world px) hung
+    with pink bells down one side, the lowest open (a dark mouth with a pale lip), buds at the
+    top; the spike lit on its left."""
+    rng = np.random.default_rng(seed)
+    Wd, Hd = int(12 * d), int(19 * size * d)
+    a = _rgba(Hd, Wd)
+    cx = Wd / 2
+    top = int(Hd - 17 * size * d)
+    for y in range(top, Hd - 1):                        # the stem
+        _put(a, y, int(cx), 'leaf', 2)
+    nb = int(rng.integers(5, 8))
+    for i in range(nb):                                 # the bells, low ones open
+        y = int(Hd - 6 * d - i * (11 * size * d - 2) / nb)
+        side = 1 if i % 2 else -1
+        rows = [max(2, int(round(1.0 * d))), max(3, int(round(1.4 * d))), max(3, int(round(1.4 * d))), max(4, int(round(1.8 * d)))]
+        if i >= nb - 2:
+            rows = rows[:2]                             # buds at the top
+        for r_, bw in enumerate(rows):
+            x0 = int(cx + 1) if side > 0 else int(cx - bw)
+            for xx in range(bw):
+                t = 4 if xx == (0 if side < 0 else 0) and r_ < 2 else 3
+                if r_ == len(rows) - 1 and len(rows) == 4:
+                    t = 1 if 0 < xx < bw - 1 else 3
+                _put(a, y + r_, x0 + xx, 'berry', t)
+        if len(rows) == 4:
+            x0 = int(cx + 1) if side > 0 else int(cx - rows[3])
+            _put(a, y + 4, x0 + rows[3] // 2, 'plaster', 5)
+    for k in range(5):                                  # the rosette
+        ang = np.radians(-180 + 45 * k + rng.uniform(-10, 10))
+        L = rng.uniform(4.5, 6.5) * d
+        for q in range(int(L)):
+            w = max(1, int((1 - abs(q / L - 0.45) * 1.6) * 1.6 * d))
+            x = cx + np.cos(ang) * q
+            y = Hd - 2 + np.sin(ang) * q * 0.4
+            for j in range(w):
+                _put(a, int(y - j * 0.5), int(x), 'leaf', 3 if (k < 2 and j == w - 1) else 2)
+    return _finish(a)

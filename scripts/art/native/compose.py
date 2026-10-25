@@ -155,6 +155,54 @@ def foliage_sprite(kind, old, d, seed, ex):
     return c, None, np.asarray(c)[..., 3] > 0
 
 
+def foliage_sprite_hd(kind, old, d, seed, ex, look=None, bark='oak', scale=None):
+    """Density 3 and up (25 Oct): a crown or a bush painted as leaf masses (foliage.paint_masses)
+    from its 1x master. A bush sits on the ground with no stems. A tree stands on its own trunk
+    (props.trunk4) whose foot is the master's trunk foot and whose top reaches 3 world px up
+    under the crown, so the crown always covers it. Returns (img, None, alpha)."""
+    im, _anc1, _a1 = old_sprite(old, raw=True)
+    A = np.asarray(im)
+    H1, W1 = A.shape[:2]
+    size = (W1 * scale[0], H1 * scale[1]) if scale else None
+    look = dict(look or {})
+    if kind == 'bush':
+        look.setdefault('form', 'bush')
+    out, _, (pad, sx, sy) = F5.paint_masses(A, d, seed=seed, look=look, size=size)
+    if look.get('form') == 'bush':
+        return Image.fromarray(out), None, out[..., 3] > 0
+    # the trunk's foot and width from the master: its opaque, non-green pixels in the bottom rows
+    a8 = A.astype(int)
+    al = a8[..., 3] > 0
+    green = al & (a8[..., 1] > a8[..., 0] + 4)
+    yb = int(np.nonzero(al.any(1))[0].max())
+    rows = slice(max(0, yb - 5), yb - 1) if yb > 6 else slice(yb, yb + 1)
+    base = al[rows] & ~green[rows]
+    cols = np.nonzero(base.any(0))[0]
+    if not len(cols):
+        cols = np.nonzero(al[yb])[0]
+    tcx = (cols.min() + cols.max() + 1) / 2.0
+    tw = ex.get('tw') or max(2.0, (cols.max() - cols.min() + 1) * 0.8)
+    fx, fy = pad + tcx * sx, pad + (yb + 1) * sy                 # the trunk foot in the crown image
+    crown = F5.LAST_MASS['mass']
+    half = max(1, int(tw * d / 2))
+    band = crown[:, max(0, int(fx) - half):int(fx) + half + 1]
+    bots = [np.nonzero(band[:, j])[0].max() for j in range(band.shape[1]) if band[:, j].any()]
+    cb = min(bots) if bots else fy - 10 * d          # the crown's highest underside over the trunk
+    length = max(4.0, (fy - cb) / d + 3.0)
+    tr, tanc, _ = P4.trunk4(d, length=length, trunk_w=tw, seed=seed, bark=bark,
+                            flare=ex.get('flare', 1.0 if tw >= 5 else 0.0), hollow=ex.get('hollow', False))
+    oxt, oyt = 0.0, 0.0
+    oxf, oyf = tanc[0] - fx, tanc[1] - fy
+    mx, my = min(oxt, oxf), min(oyt, oyf)
+    oxt, oyt, oxf, oyf = oxt - mx, oyt - my, oxf - mx, oyf - my
+    W = int(np.ceil(max(oxt + tr.width, oxf + out.shape[1])))
+    H = int(np.ceil(max(oyt + tr.height, oyf + out.shape[0])))
+    c = Image.new('RGBA', (W, H), (0, 0, 0, 0))
+    c.alpha_composite(tr, (int(round(oxt)), int(round(oyt))))
+    c.alpha_composite(Image.fromarray(out), (int(round(oxf)), int(round(oyf))))
+    return c, None, np.asarray(c)[..., 3] > 0
+
+
 def ctiles_bush(d, w, h, seed):
     """The c-tiles shrubs: the 1x master bush's design at their own size (no stubs, no
     blossoms), painted the same way at every level."""
@@ -226,6 +274,10 @@ def new_sprite(kind, d, seed, ex):
 def sprite_for(kind, old, d, seed, ex):
     """(img, anchor, alpha) at density d; the anchor is where the 1x sprite's anchor is: the
     bottom centre of its box (the fence: its west post)."""
+    if d >= F5.HD and old and kind in FOLIAGE:
+        img, anc, a = foliage_sprite_hd(kind, old, d, seed, ex, ex.get('crown'), ex.get('bark', 'oak'), ex.get('scale'))
+        x0, y0, x1, y1 = _bbox(a)
+        return img, ((x0 + x1) / 2, y1), a
     if d != 1 and old and kind in FOLIAGE:
         img, anc, a = foliage_sprite(kind, old, d, seed, ex)
         x0, y0, x1, y1 = _bbox(a)
@@ -383,10 +435,24 @@ def build(d: float, frame: int = 1):
         at = (w['foot'][0] * d, w['foot'][1] * d)
         things.append((w['foot'][1], fr, anc, at))
         ovals.append(foot_shadow(fr, anc, W, H, at, d))
+    cast_shadows(G, shadows + small_sh + ovals, tshadows, things, d)
+    img = G.rgba()
+    things.sort(key=lambda t: t[0])
+    for (_, im, an, at_) in things:
+        paste(img, im, an, at_)
+    return img
+
+
+def cast_shadows(G, casts, tshadows, things, d):
+    """The one shadow rule, on a ground canvas in codes: every cast (a mask) solid, two tones
+    under the ground's own body tone with a one-tone rim (1 world px); a crown's shadow
+    (tshadows) with a dappled rim; a contact line (tone 1) under every thing's foot. Only
+    walkable ground takes them (not rock faces or water)."""
     # shadows: solid, two tones under the ground's own body tone, a one-tone rim (1 world px)
+    H, W = G.h, G.w
     ground_px = walkable_ground(G)
     core = np.zeros((H, W), bool)
-    for m in shadows + small_sh + ovals:
+    for m in casts:
         core |= m
     rim_w = max(1, int(round(d)))
     inner = ndi.binary_erosion(core, iterations=rim_w)
@@ -428,11 +494,6 @@ def build(d: float, frame: int = 1):
         if id(im) not in NOCONTACT:
             cm |= _contact(im, an, at_, W, H, d)
     G.tone[cm & ground_px] = np.minimum(G.tone[cm & ground_px], 1)
-    img = G.rgba()
-    things.sort(key=lambda t: t[0])
-    for (_, im, an, at_) in things:
-        paste(img, im, an, at_)
-    return img
 
 
 # ------------------------------------------------------------------------------------------------
