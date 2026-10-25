@@ -32,7 +32,50 @@ Sound is part of "one game, not an app with a game in it", but it stays decorati
 - `useAmbience(id | null)` is the only way to start a loop. Home passes `'day'`, `'night'` (21:00 to 06:00) or `null` from the same `gardenActive` flag that pauses the garden. Any sheet, a tab change, the app going to the background or a nap stops it. In the world, `useZoneAmbience(zone)` picks the place's loop the same way.
 - The store stays free of audio. `lib/game.ts` exposes `onFeedback()` and more specific `feedback()` kinds (`nap`, `wake`, `friend`, `levelup`, `reward`). `startSound()` (called once in `app/_layout.tsx`) maps every kind to a cue in `feedbackSounds`.
 - On iOS and Android the audio session mixes with the player's own music, follows the silent switch and stops in the background (`setAudioModeAsync` in `startSound()`).
-- The garden guide has two pixel switches, **Sound effects** and **Garden ambience**. Both are on by default and saved on the device.
+- The garden guide has three pixel switches: **Sound effects** and **Garden ambience** (on by default) and **Gentle sound** (off by default), all saved on the device.
+
+## Playback rules (Claude M, 21 Oct; `lib/sound-rules.ts`)
+
+`playSound` asks `cueAllowed` before every effect. Each cue has a tier:
+
+| Tier        | Cues                                                                     | Rule                                                           |
+| ----------- | ------------------------------------------------------------------------ | -------------------------------------------------------------- |
+| **confirm** | `tap`, `chime`, `oops`                                                   | Always plays while effects are on: it tells you the tap landed |
+| **moment**  | `nap`, `wake`, `friend`, `levelup`, `reward`, `hit`, `raid`              | Plays while effects are on                                     |
+| **flavour** | `steps`, `splash`, `page`, `water`, `rustle`, `lantern`, `boop`, `munch` | At most one every 600 ms; none with Gentle sound               |
+
+- **Mute** is the Sound effects switch (cancels pending rewinds and pauses active cues) and, for loops, the ambience switch. On native the phone's silent switch also mutes, and nothing plays in the background.
+- **Gentle sound** is the reduced-stimulation setting: confirms and moments only, and no two effects start within 400 ms. It does not follow reduced motion on its own, because the two needs differ; the guide offers both side by side. Ambience keeps its own switch.
+- A new cue must be given a tier in `cueTiers`; `check:sound` fails on a cue without one.
+
+## Inventory (21 Oct)
+
+- **18 effects and 5 loops, 2.71 MB of the 2.75 MB budget** (`check-sound.cjs`). The budget is full: new loops need either a larger budget or shorter, lower-rate beds.
+- **Where they play:** the table above. The world plays only three place loops (Frostline, Sunstone, Isles, mapped by zone in `zoneAmbience`); every other zone, the city and the station are silent.
+- **A known web bug, found by the play-test harness:** a cue paused while its `play()` is still starting raises an unhandled "The play() request was interrupted by a call to pause()" in Chromium (about one flow in eight). Codex's #141 (C25) catches exactly this; it waits only on four unrelated visual items, which move to Claude M's lane so #141 can land on its own.
+
+## Proposed: a sound set per region (for Matt; not built)
+
+Each region gets one bed loop in the same recipe as today's (generated, pentatonic, soft, mastered in the file), plus UI cues shared everywhere. Loops are 12 to 16 s, 11 kHz mono (about 0.3 MB each), so ten more cost about 3 MB: the budget would rise from 2.75 to about 6 MB, small beside the 24 to 50 MB of 2x art. Same rules as now: one loop at a time, only while its screen is active, never under a journey, the map or a sheet.
+
+| Region (owner)                          | Bed loop                                                                        |
+| --------------------------------------- | ------------------------------------------------------------------------------- |
+| Home valley, garden (E)                 | today's day and night loops                                                     |
+| Crossroads Town, valley villages (E)    | the valley loop with a far cart, a bell and voices kept low                     |
+| Frostline and the massif (F)            | today's frost loop; glaciers add slow creaking ice                              |
+| The Brackens (F)                        | wind in heather, a curlew, a far sheep bell                                     |
+| Cogsworth and the coal hills (H)        | slow far gears, a steam sigh every few seconds, a train horn                    |
+| The Narrows and Fernhollow (H)          | the river in the gorge; old forest: deep birds, creaking boughs                 |
+| Neon Harbour, the Heights, docks (I)    | old town: gulls and water on stone; new town: rain hum and a soft electric buzz |
+| The Lull delta, Lullford, Gullwick (I)  | slow river, reeds, frogs at night; gulls on the coast                           |
+| Skyport and the Cape Road (I)           | high wind, a far engine drone                                                   |
+| Tidebloom Isles, the Shell Bar (C)      | today's isles loop; the bar adds shallow lapping water                          |
+| Sunstone Reach and the fire country (D) | today's sunstone loop; near Ember, a low rumble                                 |
+| Halcyon Station and the moon            | a quiet station hum; the moon is silent but for your steps                      |
+
+**Interface cues (shared):** a paper rustle when a sheet opens and a softer one when it closes, a wooden click for a switch (higher for on, lower for off), and a soft card slide in the battle. All are confirms, so Gentle sound keeps them. The volume of every new file follows today's levels (effects around -18 to -28 dBFS, loops around -24).
+
+**Choices for Matt:** raise the sound budget to about 6 MB for the region loops; and whether night versions of the city loops are worth their bytes.
 
 ## Rules for new sounds
 

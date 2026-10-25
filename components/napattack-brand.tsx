@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Platform, StyleSheet, Text, View, type TextStyle } from 'react-native';
 import Svg, { Rect } from 'react-native-svg';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { CozyBackground } from '@/components/cozy-ui';
@@ -7,6 +7,13 @@ import { cozy as c } from '@/lib/cozy';
 import { petPixels } from '@/lib/pet-art';
 import { useReducedMotion } from '@/lib/motion';
 import { useGame } from '@/lib/game';
+
+// A hard 3 px drop shadow under the wordmark. react-native-web 0.21 deprecates the three
+// textShadow* props in favour of the CSS shorthand, which React Native itself does not read.
+const brandShadow: TextStyle =
+  Platform.OS === 'web'
+    ? { textShadow: `0px 3px 0px ${c.shadow}` }
+    : { textShadowColor: c.shadow, textShadowOffset: { width: 0, height: 3 }, textShadowRadius: 0 };
 
 const edges = [
   [-2, 0],
@@ -41,18 +48,7 @@ function Lettering({
           {text}
         </Text>
       ))}
-      <Text
-        accessible={false}
-        style={[
-          type,
-          {
-            color,
-            textShadowColor: c.shadow,
-            textShadowOffset: { width: 0, height: 3 },
-            textShadowRadius: 0,
-          },
-        ]}
-      >
+      <Text accessible={false} style={[type, { color }, brandShadow]}>
         {text}
       </Text>
     </View>
@@ -144,11 +140,11 @@ export function NapAttackSplash({ onFinish }: { onFinish: (done: boolean) => voi
   }, [ready, reduced, alpha, onFinish]);
   return (
     <Animated.View
-      pointerEvents="none"
       style={[
         StyleSheet.absoluteFill,
         { zIndex: 1000, alignItems: 'center', justifyContent: 'center', gap: 24 },
         motion,
+        { pointerEvents: 'none' },
       ]}
     >
       <CozyBackground />
