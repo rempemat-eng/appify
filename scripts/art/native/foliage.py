@@ -161,7 +161,10 @@ def _paint(arr, d, seed, size, blossoms, legs, bias, crease_depth=1.0):
     famo = np.zeros((Hp, Wp), int)
     kind = 'big' if d >= 1.75 else ('small' if d >= 1.25 else 'tiny')
     stamps = STAMPS[kind]
-    pitch = max(1.0, LEAF_PITCH * d * (0.9 if kind == 'tiny' else 1.0))
+    # the big stamps are drawn at 2x texels: past 2x the pitch stays at their 2x spacing, so the
+    # leaves still overlap into one mass (at 3x a 1.5x wider pitch left the crown a lace; Claude B,
+    # lane R 25 Oct 17:08 finding 3). Unchanged at density 2 and below.
+    pitch = max(1.0, LEAF_PITCH * min(d, 2.0) * (0.9 if kind == 'tiny' else 1.0))
     allow = ndi.binary_dilation(mask, iterations=max(1, int(round(1.6 * d)))) if kind != 'tiny' else mask
     leaves = []
     for cy in np.arange(0, Hp, pitch):

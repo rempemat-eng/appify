@@ -139,7 +139,8 @@
   },
   "beech": {
    "paint": "tree",
-   "master": "zones_props_beech.png"
+   "master": "zones_props_beech.png",
+   "trunk": "beech"
   },
   "pine": {
    "paint": "tree",
@@ -154,8 +155,9 @@
    "master": "zones_props_hollow_tree.png"
   },
   "birch": {
-   "paint": "foliage",
-   "master": "zones_props_birch.png"
+   "paint": "tree",
+   "master": "zones_props_birch.png",
+   "trunk": "birch"
   },
   "holly": {
    "paint": "foliage",
@@ -174,17 +176,17 @@
    "master": "zones_props_bush.png"
   },
   "standing_stone": {
-   "paint": "boulder",
+   "paint": "standing_stone",
    "size": [16, 29],
    "fam": "stone"
   },
   "standing_stone_b": {
-   "paint": "boulder",
+   "paint": "standing_stone",
    "size": [17, 29],
    "fam": "stone"
   },
   "standing_stone_low": {
-   "paint": "boulder",
+   "paint": "standing_stone",
    "size": [15, 21],
    "fam": "stone"
   },
@@ -198,7 +200,7 @@
   "forest_bench": {
    "paint": "bench"
   },
-  "_about": "tree: the crown painted from the master with leaf stamps (foliage.py) on the kit's trunk (props.oak4); foliage: the whole master painted (a bush, or a thin-stemmed tree whose bark the trunk painter does not draw); boulder, stump, log, bench: the props painters"
+  "_about": "tree: the crown painted from the master with leaf stamps (foliage.py) on the kit's trunk (props.oak4; with \"trunk\": birch or beech, the species' trunk joined into the crown, props_trees.py); foliage: the whole master painted (a bush, or a thin-stemmed tree whose bark the trunk painter does not draw); standing_stone (props_stones.py), boulder, stump, log, bench: the props painters"
  },
  "lawn": {
   "busy": 0.8,
