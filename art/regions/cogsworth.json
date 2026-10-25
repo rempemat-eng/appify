@@ -3923,5 +3923,193 @@
       ],
       "any_biome": true
     }
+  ],
+  "screen": {
+    "size": [320, 180],
+    "why": "960 x 540 art at density 3 (docs/godot.md)"
+  },
+  "screens": [
+    {
+      "id": "fernhollow",
+      "rect": [7000, 3116, 320, 180],
+      "what": "the cottages north of the Foothill Road, the eel pond and the windmill south of it"
+    },
+    {
+      "id": "pit_head",
+      "rect": [7120, 2860, 320, 180],
+      "what": "the pit head and the Deep Seam's mouth beside the road, the knoll behind"
+    },
+    {
+      "id": "coal_forest",
+      "rect": [7232, 2600, 320, 180],
+      "what": "the burners' camp and the clearing in the coal forest, the road's north leg"
+    },
+    {
+      "id": "high_fells_descent",
+      "rect": [7232, 1696, 320, 180],
+      "what": "the four benches and their stairs off the massif, the tor"
+    },
+    {
+      "id": "footbridge",
+      "rect": [7536, 1800, 320, 180],
+      "what": "the High Fells' footbridge over the Cog, the wayside cairn, the echo cave"
+    },
+    {
+      "id": "spoil_loop",
+      "rect": [8024, 1816, 320, 180],
+      "what": "the spoil heap above the town with the loop round it"
+    },
+    {
+      "id": "cog_foot",
+      "rect": [8336, 2936, 320, 180],
+      "what": "the town weir, the Cog foot bridge, the lock-keeper's bench, the lookout"
+    },
+    {
+      "id": "gorge_head",
+      "rect": [8520, 2760, 320, 180],
+      "what": "the tipple yard above the Narrows, the gorge's rim east"
+    },
+    {
+      "id": "narrows_viaduct",
+      "rect": [8840, 2216, 320, 180],
+      "what": "the Narrows and the viaduct over the white water"
+    }
+  ],
+  "camps": [
+    {
+      "id": "spoil_loop",
+      "arena": [8064, 1840, 240, 120],
+      "tier": 4,
+      "roles": ["rusher", "rusher", "rusher", "shooter"],
+      "cover": [
+        {
+          "what": "the spoil heap",
+          "rect": [8136, 1904, 96, 56]
+        },
+        {
+          "what": "tipped tubs",
+          "rect": [8088, 1864, 16, 16]
+        },
+        {
+          "what": "a sleeper stack",
+          "rect": [8264, 1880, 24, 16]
+        }
+      ],
+      "why": "a shard in the heap's crown has woken the coal moles; one throws clinker from the top"
+    },
+    {
+      "id": "coal_forest",
+      "arena": [7240, 2640, 176, 104],
+      "tier": 4,
+      "roles": ["shield", "rusher", "rusher"],
+      "cover": [
+        {
+          "what": "felled trunks",
+          "rect": [7280, 2680, 40, 8]
+        },
+        {
+          "what": "a ring of stumps",
+          "rect": [7360, 2704, 16, 16]
+        }
+      ],
+      "why": "the charcoal smoke drew a wild thicket-hog and its litter to the burners' clearing"
+    },
+    {
+      "id": "gorge_head",
+      "arena": [8560, 2816, 240, 96],
+      "tier": 3,
+      "roles": ["shooter", "shooter", "rusher", "elite"],
+      "cover": [
+        {
+          "what": "boulders off the rim",
+          "rect": [8616, 2848, 24, 16]
+        },
+        {
+          "what": "a fallen viaduct stone",
+          "rect": [8712, 2872, 32, 16]
+        },
+        {
+          "what": "the tipple's spoil",
+          "rect": [8664, 2824, 24, 16]
+        }
+      ],
+      "why": "the Narrows' crows gone wild over the tipple yard, with the starfall's elite on the rim"
+    }
+  ],
+  "dungeon": {
+    "id": "deep_seam",
+    "name": "The Deep Seam",
+    "at": [7248, 3004],
+    "door": [7232, 2996, 32, 16],
+    "zone": "deep_seam",
+    "route": "Foothill Road",
+    "why": "the old pit under the headframe; a shard fell down the shaft and the seam glows"
+  },
+  "quest_spots": [
+    {
+      "id": "echo_cave",
+      "at": [7596, 1852],
+      "kind": "story",
+      "what": "a voice answers from the cave in the bench face"
+    },
+    {
+      "id": "climbers_camp",
+      "at": [7308, 1820],
+      "kind": "story",
+      "what": "the fallen climber's camp: a journal and a frayed rope"
+    },
+    {
+      "id": "bell_fells",
+      "at": [7592, 1800],
+      "kind": "story",
+      "what": "the buried bell on the High Fells (a pocket)"
+    },
+    {
+      "id": "bell_forest",
+      "at": [7216, 2752],
+      "kind": "story",
+      "what": "the buried bell in the coal forest (a pocket)"
+    },
+    {
+      "id": "eel_pond",
+      "at": [7124, 3256],
+      "kind": "fetch",
+      "what": "the eel-catcher's lost trap"
+    },
+    {
+      "id": "tram_tipple",
+      "at": [8368, 2812],
+      "kind": "talk",
+      "what": "the tipple-man at his chute"
+    },
+    {
+      "id": "rail_ruin",
+      "at": [8520, 2880],
+      "kind": "story",
+      "what": "the rails end at a view down the Cog"
+    },
+    {
+      "id": "narrows_lookout",
+      "at": [8552, 2976],
+      "kind": "view",
+      "what": "the lookout over the Narrows"
+    }
+  ],
+  "waystones": [
+    {
+      "id": "footbridge",
+      "at": [7600, 1968],
+      "why": "where the High Fells reach the Cog, by the wayside cairn"
+    },
+    {
+      "id": "fernhollow",
+      "at": [7300, 3150],
+      "why": "the hamlet on the Foothill Road"
+    },
+    {
+      "id": "cog_foot",
+      "at": [8560, 3024],
+      "why": "the north bank by the Cog foot bridge, on the way to Lullford"
+    }
   ]
 }

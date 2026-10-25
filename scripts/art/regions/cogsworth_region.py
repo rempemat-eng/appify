@@ -52,6 +52,7 @@ import sys
 import tempfile
 
 import numpy as np
+from scipy import ndimage as ndi
 from PIL import Image, ImageDraw
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -178,6 +179,54 @@ CLUSTER_SPOTS = [
     ('woodland_glade', (7380, 2900), 160, 1),  # the coal forest beside the Foothill Road
     ('mine_yard', (7520, 1900), 200, 1),       # a prospector's adit in a bench face on the High Fells
     ('moor_wayside', (7700, 1900), 160, 1),    # a waymark where the High Fells reach the footbridge
+]
+# --- the Godot era (Claude A, 25 Oct: to-all-godot-1080, to-all-assignments-1025) --------------
+# The game is landscape, a 960 x 540 art grid at density 3: one screen is 320 x 180 world px.
+# What a zone needs beyond the layout, as data: the screens to compose, the camps (an arena with
+# cover and the roles of the wild creatures in it: game/enemies' rusher, shooter, shield, elite;
+# they are freed, not killed), one dungeon entrance, quest spots and waystones.
+SCREEN = (320, 180)
+SCREENS = [   # (id, x, y, what the frame is composed round)
+    ('fernhollow', 7000, 3116, "the cottages north of the Foothill Road, the eel pond and the windmill south of it"),
+    ('pit_head', 7120, 2860, "the pit head and the Deep Seam's mouth beside the road, the knoll behind"),
+    ('coal_forest', 7232, 2600, "the burners' camp and the clearing in the coal forest, the road's north leg"),
+    ('high_fells_descent', 7232, 1696, "the four benches and their stairs off the massif, the tor"),
+    ('footbridge', 7536, 1800, "the High Fells' footbridge over the Cog, the wayside cairn, the echo cave"),
+    ('spoil_loop', 8024, 1816, "the spoil heap above the town with the loop round it"),
+    ('cog_foot', 8336, 2936, "the town weir, the Cog foot bridge, the lock-keeper's bench, the lookout"),
+    ('gorge_head', 8520, 2760, "the tipple yard above the Narrows, the gorge's rim east"),
+    ('narrows_viaduct', 8840, 2216, "the Narrows and the viaduct over the white water"),
+]
+CAMPS = [   # (id, arena x0, y0, x1, y1, roles, cover [(what, rect)], why)
+    ('spoil_loop', 8064, 1840, 8304, 1960, ['rusher', 'rusher', 'rusher', 'shooter'],
+     [('the spoil heap', (8136, 1904, 8232, 1960)), ('tipped tubs', (8088, 1864, 8104, 1880)),
+      ('a sleeper stack', (8264, 1880, 8288, 1896))],
+     "a shard in the heap's crown has woken the coal moles; one throws clinker from the top"),
+    ('coal_forest', 7240, 2640, 7416, 2744, ['shield', 'rusher', 'rusher'],
+     [('felled trunks', (7280, 2680, 7320, 2688)), ('a ring of stumps', (7360, 2704, 7376, 2720))],
+     "the charcoal smoke drew a wild thicket-hog and its litter to the burners' clearing"),
+    ('gorge_head', 8560, 2816, 8800, 2912, ['shooter', 'shooter', 'rusher', 'elite'],
+     [('boulders off the rim', (8616, 2848, 8640, 2864)), ('a fallen viaduct stone', (8712, 2872, 8744, 2888)),
+      ("the tipple's spoil", (8664, 2824, 8688, 2840))],
+     "the Narrows' crows gone wild over the tipple yard, with the starfall's elite on the rim"),
+]
+DUNGEON = {'id': 'deep_seam', 'name': 'The Deep Seam', 'at': (7248, 3004), 'door': (7232, 2996, 7264, 3012),
+           'zone': 'deep_seam', 'route': 'Foothill Road',
+           'why': "the old pit under the headframe; a shard fell down the shaft and the seam glows"}
+QUEST_SPOTS = [   # (id, x, y, kind, what)
+    ('echo_cave', 7596, 1852, 'story', 'a voice answers from the cave in the bench face'),
+    ('climbers_camp', 7308, 1820, 'story', "the fallen climber's camp: a journal and a frayed rope"),
+    ('bell_fells', 7592, 1800, 'story', 'the buried bell on the High Fells (a pocket)'),
+    ('bell_forest', 7216, 2752, 'story', 'the buried bell in the coal forest (a pocket)'),
+    ('eel_pond', 7124, 3256, 'fetch', "the eel-catcher's lost trap"),
+    ('tram_tipple', 8368, 2812, 'talk', 'the tipple-man at his chute'),
+    ('rail_ruin', 8520, 2880, 'story', 'the rails end at a view down the Cog'),
+    ('narrows_lookout', 8552, 2976, 'view', 'the lookout over the Narrows'),
+]
+WAYSTONES = [   # (id, x, y, why); the town's own is the station square's (cogsworth_plan)
+    ('footbridge', 7600, 1968, "where the High Fells reach the Cog, by the wayside cairn"),
+    ('fernhollow', 7300, 3150, "the hamlet on the Foothill Road"),
+    ('cog_foot', 8560, 3024, "the north bank by the Cog foot bridge, on the way to Lullford"),
 ]
 TIER_CHANGE_RUN = 64  # route px either side of a change where its tier may be either
 
@@ -439,6 +488,41 @@ def check(L=None, verbose=True) -> list:
         got = tier[min(r, ROWS - 1), min(c, COLS - 1)]
         if got != want:
             faults.append(f'the {g} gate at {(wx, wy)} is on tier {got} (G gives {want})')
+    # the Godot era's data: screens inside the box; each camp's arena on one tier, dry, out of the
+    # town, its cover inside it and off the routes, joined to a route on its own tier; the
+    # dungeon door, quest spots and waystones on dry land near a route
+    for i, x, y, _w in SCREENS:
+        if not (X0 <= x and x + SCREEN[0] <= X0 + W and Y0 <= y and y + SCREEN[1] <= BOX[1] + BOX[3]):
+            faults.append(f'screen {i} leaves the box')
+    for i, x0, y0, x1, y1, roles, cov, _why in CAMPS:
+        sl = _cells((x0, y0, x1, y1))
+        t = tier[sl]
+        main = np.bincount(t.ravel()).argmax()
+        if (t == main).mean() < 0.85:
+            faults.append(f'camp {i}: its arena is not on one tier ({(t == main).mean():.0%})')
+        if water[sl].any() or town[sl].any():
+            faults.append(f'camp {i}: its arena runs into water or the town')
+        for w, (a, b, c, d) in cov:
+            if not (x0 <= a and c <= x1 and y0 <= b and d <= y1):
+                faults.append(f'camp {i}: {w} lies outside the arena')
+            if (route[_cells((a, b, c, d))] != '').any():
+                faults.append(f'camp {i}: {w} stands on a route')
+        if not set(roles) <= {'rusher', 'shooter', 'shield', 'elite'}:
+            faults.append(f'camp {i}: unknown roles {roles}')
+        lab, _n = ndi.label((tier == main) & ~water)
+        ids = set(np.unique(lab[sl][t == main])) - {0}
+        if not ((route != '') & np.isin(lab, list(ids))).any():
+            faults.append(f'camp {i}: no route reaches its arena on its tier')
+    pts = [('dungeon ' + DUNGEON['id'], DUNGEON['at'])] + [('quest spot ' + q[0], q[1:3]) for q in QUEST_SPOTS] + \
+          [('waystone ' + w_[0], w_[1:3]) for w_ in WAYSTONES]
+    lines = [q for pts_ in L['routes'].values() for q in _along(pts_)]
+    lines += [q for _n, _h, tp, cl in POCKET_TRODS for q in _along([*tp, cl])]   # the pockets' trods
+    for nm, (x, y) in pts:
+        r, c = cell(x, y)
+        if water[r, c]:
+            faults.append(f'{nm} at {(x, y)} stands in water')
+        if min(abs(x - a) + abs(y - b) for a, b in lines) > 240:
+            faults.append(f'{nm} at {(x, y)} is more than 240 px from a route')
     # the plan file in F's schema is this module's output, never edited by hand
     if os.path.exists(PLAN_PATH):
         with open(PLAN_PATH) as fh:
@@ -577,6 +661,15 @@ def export_plan(L=None) -> dict:
         if m.get('moved_from') == m['at']:
             m.pop('moved_from')
     out['clusters'] = _clusters(out)
+    out['screen'] = {'size': list(SCREEN), 'why': '960 x 540 art at density 3 (docs/godot.md)'}
+    out['screens'] = [{'id': i, 'rect': [x, y, *SCREEN], 'what': w} for i, x, y, w in SCREENS]
+    out['camps'] = [{'id': i, 'arena': [x0, y0, x1 - x0, y1 - y0], 'tier': int(L['tier'][((y0 + y1) // 2 - Y0) // CELL, ((x0 + x1) // 2 - X0) // CELL]) - BASE,
+                     'roles': roles, 'cover': [{'what': w, 'rect': [a, b, c - a, d - b]} for w, (a, b, c, d) in cov], 'why': why}
+                    for i, x0, y0, x1, y1, roles, cov, why in CAMPS]
+    out['dungeon'] = dict(DUNGEON, at=list(DUNGEON['at']), door=[DUNGEON['door'][0], DUNGEON['door'][1],
+                                                               DUNGEON['door'][2] - DUNGEON['door'][0], DUNGEON['door'][3] - DUNGEON['door'][1]])
+    out['quest_spots'] = [{'id': i, 'at': [x, y], 'kind': k, 'what': w} for i, x, y, k, w in QUEST_SPOTS]
+    out['waystones'] = [{'id': i, 'at': [x, y], 'why': w} for i, x, y, w in WAYSTONES]
     return out
 
 

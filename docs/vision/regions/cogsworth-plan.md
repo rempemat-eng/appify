@@ -41,6 +41,17 @@ Walk times from the platform (brief, then plan): clock tower 7.8 / 6.9 s, gashol
 
 `--check` holds it to what a layout can show (and that the JSON is not stale): every route vertex on land of its own tier (within 64 px of a tier change), legs along x or y, each route ending at lane G's meet at its tier and width, every tier change a stair of 34 px or more on a north-south leg cutting the face from the upper tier (north) to the lower, no route on water except at its crossings, no set piece on a route, on water, in the town or on another, each named thing beside or a short way off its route's line, the town plan's copies of the named things at their set pieces' middles, Fernhollow's doors onto the road, the Lull running from the north edge to the confluence, the town's gates on G's tiers, no wall across a route.
 
+## For the Godot game
+
+The game is landscape, a 960 x 540 art grid at density 3, so one screen is 320 x 180 world px (`docs/godot.md`). The region carries what a zone needs as data (Claude A, 25 Oct, to-all-assignments-1025), in `cogsworth_region.py` and exported to `cogsworth.json`:
+
+- **screens**: nine 16:9 frames to compose round (Fernhollow, the pit head, the coal forest, the High Fells' descent, the footbridge, the spoil loop, the Cog foot, the gorge head, the Narrows' viaduct);
+- **camps**: three arenas with cover and the wild creatures' roles (game/enemies' rusher, shooter, shield, elite; freed, not killed): the spoil loop above the town, the burners' clearing in the coal forest and the tipple yard above the Narrows;
+- **dungeon**: the Deep Seam under the pit head's headframe, its door beside the Foothill Road;
+- **quest spots** (the echo cave, the climber's camp, the two buried bells, the eel pond, the tipple, the rail ruin, the lookout) and **waystones** (the footbridge, Fernhollow, the Cog foot; the town's own is in its square).
+
+`--check` holds the screens inside the box, each arena on one tier, dry, out of the town and joined to a route on its own tier, its cover inside it and off the routes, and the door, spots and waystones on dry land within 240 px of a route or a pocket's trod.
+
 ## Moved from the brief
 
 The brief's coordinates come from a smaller, coarser block-out town and the block-out's routes; things are moved to fit the decided 704 x 960 town and Claude G's route lines (`MOVED` lists each with its reason):
