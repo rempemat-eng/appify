@@ -5466,7 +5466,7 @@
         57,
         61,
         101,
-        138
+        135
        ],
        "anchors": {
         "hand_R": [
@@ -5479,11 +5479,11 @@
         ],
         "foot_R": [
          -6.0,
-         0.8
+         -1.8
         ],
         "foot_L": [
          6.0,
-         -2.8
+         -1.9
         ],
         "strike": [
          -8.5,
@@ -5496,7 +5496,7 @@
         "buckler": 4,
         "billhook": 22
        },
-       "sha256": "fcd6ce8a9e17f55c038785ff1ef590c2a698b432395bf7929c3a418603553c4b",
+       "sha256": "c6a35601b155b0a79a9810d89c337fd02a8f873a99021d752bcb86418d6e5c55",
        "sheet": "sheets/secondary_S.png",
        "region": [
         480,
@@ -5529,7 +5529,7 @@
         ],
         "foot_L": [
          6.0,
-         -2.8
+         -5.2
         ],
         "strike": [
          -7.5,
@@ -5542,7 +5542,7 @@
         "buckler": 13,
         "billhook": 11
        },
-       "sha256": "a44cf0be3841932eb4807e5c6d45c421e82915fa98dcf78422438914bf759158",
+       "sha256": "85c0f7c1b3c1b1156471453670f41080eb4f68ad3d9b164488f1a40a5ca7f1ca",
        "sheet": "sheets/secondary_S.png",
        "region": [
         640,
@@ -5696,7 +5696,7 @@
         59,
         61,
         101,
-        137
+        134
        ],
        "anchors": {
         "hand_R": [
@@ -5709,11 +5709,11 @@
         ],
         "foot_R": [
          -6.0,
-         -0.1
+         -2.6
         ],
         "foot_L": [
          6.0,
-         -1.9
+         -2.8
         ]
        },
        "equipment": {
@@ -5722,7 +5722,7 @@
         "billhook": 50,
         "buckler": 13
        },
-       "sha256": "3bfbd1f5684427a7e68c47b7cf80a0c4a2ef9a263980aa9f7fdc701dfbc51e6b",
+       "sha256": "4bc3d955f85ab637646e70a3c4f8bf0c54c228be830fb5852daf429385b313b9",
        "sheet": "sheets/secondary_S.png",
        "region": [
         1280,
@@ -5755,7 +5755,7 @@
         ],
         "foot_L": [
          6.0,
-         -1.9
+         -4.4
         ]
        },
        "equipment": {
@@ -5764,7 +5764,7 @@
         "billhook": 57,
         "buckler": 6
        },
-       "sha256": "d38a92aedc9d5839944a29ad8e16855f6f57a1c34e57362c8ba8c5884d10f92f",
+       "sha256": "9cf106d1c83eb4d9b540dcee070d0e384bf81c131ae178e7eda1e68c4903fb8c",
        "sheet": "sheets/secondary_S.png",
        "region": [
         1440,
@@ -5999,7 +5999,7 @@
         59,
         62,
         103,
-        138
+        137
        ],
        "anchors": {
         "hand_R": [
@@ -6012,11 +6012,11 @@
         ],
         "foot_R": [
          6.0,
-         -2.8
+         -5.2
         ],
         "foot_L": [
          -6.0,
-         0.8
+         -0.1
         ],
         "strike": [
          8.5,
@@ -6029,7 +6029,7 @@
         "buckler": 0,
         "billhook": 32
        },
-       "sha256": "12878787aeeae5a7b234a3ee80ec5ae6103da25c1e3d0c7cdd1f733c1e30a6f9",
+       "sha256": "b77993171c1a579b1455e427436c9eab8c69c4359c9e7fe042b1e19ed15689b9",
        "sheet": "sheets/secondary_N.png",
        "region": [
         480,
@@ -6045,7 +6045,7 @@
         59,
         63,
         100,
-        138
+        135
        ],
        "anchors": {
         "hand_R": [
@@ -6062,7 +6062,7 @@
         ],
         "foot_L": [
          -6.0,
-         0.8
+         -1.8
         ],
         "strike": [
          7.5,
@@ -6075,7 +6075,7 @@
         "buckler": 1,
         "billhook": 12
        },
-       "sha256": "76c811f6c9cce8e01c404d3bb71d4ed99777561b7ec3c4aa2c16fe2d7b46a37e",
+       "sha256": "0376687c7c72c8b239035fe3e9b6fed6bc8af9106066bef8a748d2414b23561a",
        "sheet": "sheets/secondary_N.png",
        "region": [
         640,
@@ -6229,7 +6229,7 @@
         59,
         61,
         101,
-        137
+        138
        ],
        "anchors": {
         "hand_R": [
@@ -6242,11 +6242,11 @@
         ],
         "foot_R": [
          6.0,
-         -1.9
+         -4.4
         ],
         "foot_L": [
          -6.0,
-         -0.1
+         0.8
         ]
        },
        "equipment": {
@@ -6255,7 +6255,7 @@
         "bow": 128,
         "buckler": 10
        },
-       "sha256": "8cda6ebf931f502c6590ccc7a374aef2bfebbfb9b8d5edfc922255b19f89adf6",
+       "sha256": "74e870bfc6f27c6806cc1b66a7666153ee5a68b5cdf621cf4d2dd786c493e121",
        "sheet": "sheets/secondary_N.png",
        "region": [
         1280,
@@ -6271,7 +6271,7 @@
         59,
         61,
         100,
-        137
+        135
        ],
        "anchors": {
         "hand_R": [
@@ -6288,7 +6288,7 @@
         ],
         "foot_L": [
          -6.0,
-         -0.1
+         -2.6
         ]
        },
        "equipment": {
@@ -6297,7 +6297,7 @@
         "bow": 128,
         "buckler": 0
        },
-       "sha256": "8a0871d471f5eb0450fa43c6174a8d9310cc3976b161c8f3ac4d5542a4ccb5a7",
+       "sha256": "b3b51cf8893325c93b1dbdea903c6138c018126edfe74811185068c67e42a67f",
        "sheet": "sheets/secondary_N.png",
        "region": [
         1440,
@@ -6545,10 +6545,10 @@
         ],
         "foot_R": [
          4.4,
-         -1.0
+         -3.5
         ],
         "foot_L": [
-         -4.4,
+         -1.9,
          -1.0
         ],
         "strike": [
@@ -6562,7 +6562,7 @@
         "buckler": 7,
         "billhook": 45
        },
-       "sha256": "716e795dfacbf62a7b1254f4469f04b12eeeeef09e6a0b31639f4a6cd1a9460b",
+       "sha256": "620210e820dd76bc3145bda1c2dfee5bcf424f9c44f5e804bf581423f2c4fcac",
        "sheet": "sheets/secondary_E.png",
        "region": [
         480,
@@ -6595,7 +6595,7 @@
         ],
         "foot_L": [
          -4.4,
-         -1.0
+         -3.5
         ],
         "strike": [
          -20.5,
@@ -6608,7 +6608,7 @@
         "buckler": 11,
         "billhook": 49
        },
-       "sha256": "696cd8f9d55eadb95061483bece290e8a1b889dd58ec4a4b48d7a0e48c1213c2",
+       "sha256": "de1d683eb844edd9826aded1f2705e59b7ec2bca597c0057f1782d882a75ac24",
        "sheet": "sheets/secondary_E.png",
        "region": [
         640,
@@ -6775,10 +6775,10 @@
         ],
         "foot_R": [
          1.9,
-         -1.0
+         -3.5
         ],
         "foot_L": [
-         -1.9,
+         -4.4,
          -1.0
         ]
        },
@@ -6788,7 +6788,7 @@
         "billhook": 53,
         "buckler": 12
        },
-       "sha256": "e1793d5a02bf0054815e7723078720962f2f92f0d16bb67f0abca1b65e45b1f5",
+       "sha256": "1eba29bb52defa60a5b720ab16b37848024e7338dcf6dbf1af5c5718f8fadb86",
        "sheet": "sheets/secondary_E.png",
        "region": [
         1280,
@@ -6821,7 +6821,7 @@
         ],
         "foot_L": [
          -1.9,
-         -1.0
+         -3.5
         ]
        },
        "equipment": {
@@ -6830,7 +6830,7 @@
         "billhook": 64,
         "buckler": 10
        },
-       "sha256": "e4eb771a383c8b1c22d46cdabb61155b08a26275782caaa543d82e31d567059c",
+       "sha256": "82f403eebd56807821e82f3b7d63af257ca646bac5c345bcd4bcce3fbe3ada5f",
        "sheet": "sheets/secondary_E.png",
        "region": [
         1440,
@@ -7078,10 +7078,10 @@
         ],
         "foot_R": [
          -5.6,
-         -1.0
+         -3.5
         ],
         "foot_L": [
-         5.6,
+         3.1,
          -1.0
         ],
         "strike": [
@@ -7095,7 +7095,7 @@
         "buckler": 0,
         "billhook": 17
        },
-       "sha256": "1db281c05a9a11736abe7715d4a8bcf1ba4360c43bc6106a2fa43f8b11b9e147",
+       "sha256": "b7c0f6650852d510c174e6830c0cca24de5ce3af236253538ff743ce58df7f27",
        "sheet": "sheets/secondary_W.png",
        "region": [
         480,
@@ -7128,7 +7128,7 @@
         ],
         "foot_L": [
          5.6,
-         -1.0
+         -3.5
         ],
         "strike": [
          18.3,
@@ -7141,7 +7141,7 @@
         "buckler": 0,
         "billhook": 46
        },
-       "sha256": "82e427b7762f7dacb29810bbec4b337b4738f8685fa9487030904ca2e26c2774",
+       "sha256": "a3c1c06e81e03bf1e2f2f55b2ca11aa3657671d1a36426273f047f2a5b362af0",
        "sheet": "sheets/secondary_W.png",
        "region": [
         640,
@@ -7308,10 +7308,10 @@
         ],
         "foot_R": [
          -3.1,
-         -1.0
+         -3.5
         ],
         "foot_L": [
-         3.1,
+         5.6,
          -1.0
         ]
        },
@@ -7321,7 +7321,7 @@
         "buckler": 0,
         "billhook": 36
        },
-       "sha256": "7ca711ce372745db3cb64270db4a081f97c322323035455aa1ee8b5f792727f4",
+       "sha256": "5921d20fa5f0af70a68abd9ed40dc32e47a886820e21d8d678a16dd0db4893a0",
        "sheet": "sheets/secondary_W.png",
        "region": [
         1280,
@@ -7354,7 +7354,7 @@
         ],
         "foot_L": [
          3.1,
-         -1.0
+         -3.5
         ]
        },
        "equipment": {
@@ -7363,7 +7363,7 @@
         "buckler": 0,
         "billhook": 36
        },
-       "sha256": "7ca711ce372745db3cb64270db4a081f97c322323035455aa1ee8b5f792727f4",
+       "sha256": "f08df657137d76d5f8ebf59be43e34501464644e69930f52f16bed3e6fc7a09a",
        "sheet": "sheets/secondary_W.png",
        "region": [
         1440,
@@ -33309,7 +33309,7 @@
         57,
         61,
         101,
-        138
+        135
        ],
        "anchors": {
         "hand_R": [
@@ -33322,11 +33322,11 @@
         ],
         "foot_R": [
          -6.0,
-         0.8
+         -1.8
         ],
         "foot_L": [
          6.0,
-         -2.8
+         -1.9
         ],
         "strike": [
          -8.5,
@@ -33339,7 +33339,7 @@
         "buckler": 4,
         "billhook": 22
        },
-       "sha256": "281e51414e666a7d45e829eeaadc32c090199a51bb74ef756623fe3acc21b16e",
+       "sha256": "57c9c6bfc8132e74620cba98657d1e5c3b25612490d21a19f856eef138d5908b",
        "sheet": "sheets/powered_secondary_S.png",
        "region": [
         480,
@@ -33372,7 +33372,7 @@
         ],
         "foot_L": [
          6.0,
-         -2.8
+         -5.2
         ],
         "strike": [
          -7.5,
@@ -33385,7 +33385,7 @@
         "buckler": 13,
         "billhook": 11
        },
-       "sha256": "9245e4f2a57525537eccaadc05f6276bf1c12fb7a33d571255125b80d4cf4ed3",
+       "sha256": "e1ac0a2a2e886d6667192a50087e6c8f2355f831aa4b949e31e979a694f5e5cb",
        "sheet": "sheets/powered_secondary_S.png",
        "region": [
         640,
@@ -33539,7 +33539,7 @@
         59,
         61,
         101,
-        137
+        134
        ],
        "anchors": {
         "hand_R": [
@@ -33552,11 +33552,11 @@
         ],
         "foot_R": [
          -6.0,
-         -0.1
+         -2.6
         ],
         "foot_L": [
          6.0,
-         -1.9
+         -2.8
         ]
        },
        "equipment": {
@@ -33565,7 +33565,7 @@
         "billhook": 50,
         "buckler": 13
        },
-       "sha256": "8af47397a77b70204c41141e4d5ff02ea4f22922f320f8d5d6688b28f3629163",
+       "sha256": "850f12a09e152f28c877dbb0df71ade4ea9f2401866407bffb09cee82def2d57",
        "sheet": "sheets/powered_secondary_S.png",
        "region": [
         1280,
@@ -33598,7 +33598,7 @@
         ],
         "foot_L": [
          6.0,
-         -1.9
+         -4.4
         ]
        },
        "equipment": {
@@ -33607,7 +33607,7 @@
         "billhook": 57,
         "buckler": 6
        },
-       "sha256": "c8f7b1f8c9dfa9fa3675b88a9c15e80e5c925650494547a39ae654caf7bec561",
+       "sha256": "e1f2f2e8f9ede8ef676c4cc55d82c2371006178454f153534fb50d5739f037ee",
        "sheet": "sheets/powered_secondary_S.png",
        "region": [
         1440,
@@ -33842,7 +33842,7 @@
         59,
         62,
         103,
-        138
+        137
        ],
        "anchors": {
         "hand_R": [
@@ -33855,11 +33855,11 @@
         ],
         "foot_R": [
          6.0,
-         -2.8
+         -5.2
         ],
         "foot_L": [
          -6.0,
-         0.8
+         -0.1
         ],
         "strike": [
          8.5,
@@ -33872,7 +33872,7 @@
         "buckler": 0,
         "billhook": 32
        },
-       "sha256": "7f03523037f7832545b8206d155a3fac1d0381eb8fcf017ab186b72d8eea2b0a",
+       "sha256": "24894fb79b8dc314f0904c4364dc0e28659c90a73f16826c0526077c41855205",
        "sheet": "sheets/powered_secondary_N.png",
        "region": [
         480,
@@ -33888,7 +33888,7 @@
         59,
         63,
         100,
-        138
+        135
        ],
        "anchors": {
         "hand_R": [
@@ -33905,7 +33905,7 @@
         ],
         "foot_L": [
          -6.0,
-         0.8
+         -1.8
         ],
         "strike": [
          7.5,
@@ -33918,7 +33918,7 @@
         "buckler": 1,
         "billhook": 12
        },
-       "sha256": "7890bcd39da3818716d0d8a6bbe00ccfd5054899244aff28cd23c11100bf59c8",
+       "sha256": "804f3324753c46b62fd216d6b84da3b9a7aa0602da4936e90a5818c86f123bc7",
        "sheet": "sheets/powered_secondary_N.png",
        "region": [
         640,
@@ -34072,7 +34072,7 @@
         59,
         61,
         101,
-        137
+        138
        ],
        "anchors": {
         "hand_R": [
@@ -34085,11 +34085,11 @@
         ],
         "foot_R": [
          6.0,
-         -1.9
+         -4.4
         ],
         "foot_L": [
          -6.0,
-         -0.1
+         0.8
         ]
        },
        "equipment": {
@@ -34098,7 +34098,7 @@
         "bow": 161,
         "buckler": 10
        },
-       "sha256": "463b3662b9988a0c44348e83796b7cf19b6a692582159b77e7d075291469ab52",
+       "sha256": "9c7def817e528f64fdcf1e0098f0ac6be36ee3a40d39228879b0d08a84322ebc",
        "sheet": "sheets/powered_secondary_N.png",
        "region": [
         1280,
@@ -34114,7 +34114,7 @@
         59,
         61,
         100,
-        137
+        135
        ],
        "anchors": {
         "hand_R": [
@@ -34131,7 +34131,7 @@
         ],
         "foot_L": [
          -6.0,
-         -0.1
+         -2.6
         ]
        },
        "equipment": {
@@ -34140,7 +34140,7 @@
         "bow": 165,
         "buckler": 0
        },
-       "sha256": "5963c8e8f5c70b70e64ba730c1b58050a39705a297cf4814224659c79bd44d4c",
+       "sha256": "18b29a124bb380fd5848f40a313565d67c0eacf2a6e717b6b9e53367dcb99596",
        "sheet": "sheets/powered_secondary_N.png",
        "region": [
         1440,
@@ -34388,10 +34388,10 @@
         ],
         "foot_R": [
          4.4,
-         -1.0
+         -3.5
         ],
         "foot_L": [
-         -4.4,
+         -1.9,
          -1.0
         ],
         "strike": [
@@ -34405,7 +34405,7 @@
         "buckler": 7,
         "billhook": 45
        },
-       "sha256": "b3f996685e540a58e1f2fa4a23866e68d80cb2274e98458f294d88d5fa2317f1",
+       "sha256": "fd8931ace5fee662b70575d56b28264f1781e2b0f25763a05c801bf2a58f4f22",
        "sheet": "sheets/powered_secondary_E.png",
        "region": [
         480,
@@ -34438,7 +34438,7 @@
         ],
         "foot_L": [
          -4.4,
-         -1.0
+         -3.5
         ],
         "strike": [
          -20.5,
@@ -34451,7 +34451,7 @@
         "buckler": 11,
         "billhook": 49
        },
-       "sha256": "ee09d38b1f76bf45be99e2df6a477aaddb3b6ddef5a0b73668dc051b9d793568",
+       "sha256": "a2abfc91bbab66401501d1e6621df055ddb4dc06582542b9a1e5d118e7d4ac05",
        "sheet": "sheets/powered_secondary_E.png",
        "region": [
         640,
@@ -34618,10 +34618,10 @@
         ],
         "foot_R": [
          1.9,
-         -1.0
+         -3.5
         ],
         "foot_L": [
-         -1.9,
+         -4.4,
          -1.0
         ]
        },
@@ -34631,7 +34631,7 @@
         "billhook": 53,
         "buckler": 12
        },
-       "sha256": "a2a8654f08739b4696520266f1bd422270b07c72d94f1f3208231193fd35fe52",
+       "sha256": "5e5eb6ea26dac6624a8d709a682e6fb5fd0de80627ab3f0228d993f3bb2c4fca",
        "sheet": "sheets/powered_secondary_E.png",
        "region": [
         1280,
@@ -34664,7 +34664,7 @@
         ],
         "foot_L": [
          -1.9,
-         -1.0
+         -3.5
         ]
        },
        "equipment": {
@@ -34673,7 +34673,7 @@
         "billhook": 64,
         "buckler": 9
        },
-       "sha256": "06b7095c0ed40d6bff8ca6e16002adb133492483283a910fd3b10a175e672ce2",
+       "sha256": "61c9617ff6c1587117b9af8e0668fa047d638342ec495e8bb903f7a7755f9c13",
        "sheet": "sheets/powered_secondary_E.png",
        "region": [
         1440,
@@ -34921,10 +34921,10 @@
         ],
         "foot_R": [
          -5.6,
-         -1.0
+         -3.5
         ],
         "foot_L": [
-         5.6,
+         3.1,
          -1.0
         ],
         "strike": [
@@ -34938,7 +34938,7 @@
         "buckler": 0,
         "billhook": 17
        },
-       "sha256": "1b103863e6ec975eabb64440ca513c82c1878edeb1960a03f89925555a2f85d6",
+       "sha256": "8be4be8a5307b9b85fb3351d39d6b5dc324ff88149a5f36f0797bfaf0860ea49",
        "sheet": "sheets/powered_secondary_W.png",
        "region": [
         480,
@@ -34971,7 +34971,7 @@
         ],
         "foot_L": [
          5.6,
-         -1.0
+         -3.5
         ],
         "strike": [
          18.3,
@@ -34984,7 +34984,7 @@
         "buckler": 0,
         "billhook": 46
        },
-       "sha256": "0d03f46b2b6ffd8c612ec0f197bba090964288ebe2f66ff71d0997499214bdb9",
+       "sha256": "fd71a2f81192a5deb3df912323b721cc9134d1f997a81724f79d08e21c04e3bb",
        "sheet": "sheets/powered_secondary_W.png",
        "region": [
         640,
@@ -35151,10 +35151,10 @@
         ],
         "foot_R": [
          -3.1,
-         -1.0
+         -3.5
         ],
         "foot_L": [
-         3.1,
+         5.6,
          -1.0
         ]
        },
@@ -35164,7 +35164,7 @@
         "buckler": 0,
         "billhook": 36
        },
-       "sha256": "7e300283c3fc54b578e685730739e53eb58e142f1813cc99085cda02411ec217",
+       "sha256": "b934f8ac2e4f0e12c25907d83f0d47d067ecdd5a128751420c7ddd5b0a6f5d70",
        "sheet": "sheets/powered_secondary_W.png",
        "region": [
         1280,
@@ -35197,7 +35197,7 @@
         ],
         "foot_L": [
          3.1,
-         -1.0
+         -3.5
         ]
        },
        "equipment": {
@@ -35206,7 +35206,7 @@
         "buckler": 0,
         "billhook": 36
        },
-       "sha256": "7e300283c3fc54b578e685730739e53eb58e142f1813cc99085cda02411ec217",
+       "sha256": "f0349a562f6de6440cb679a1bab6f41680f85e35ad3995a262e99b6d2f81c314",
        "sheet": "sheets/powered_secondary_W.png",
        "region": [
         1440,
