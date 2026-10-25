@@ -15,7 +15,7 @@ $GODOT --path game -- --fresh --zone=woodland --spawn=stones   # play (needs a d
 
 `check:godot` (`game/tools/check.sh`) fails on any `SCRIPT ERROR` or engine `ERROR:` line, not only on the exit code, and keeps user data and editor settings in a temporary folder. It is not part of `npm run verify` (that needs no Godot); the `Godot` GitHub Actions job (`.github/workflows/godot.yml`) runs it on ready PRs and on `main` when `game/` changes. Draft PRs run no CI, so run it locally before marking a PR ready.
 
-Game options, after `--`: `--fresh` ignores the save, `--zone=<id>` and `--spawn=<name>` choose where to start, `--shot=<png>` waits 2 s (`--wait=<s>` to change), saves the whole window 1:1 and quits.
+Game options, after `--`: `--fresh` ignores the save, `--zone=<id>` and `--spawn=<name>` choose where to start, `--shot=<png>` waits 2 s (`--wait=<s>` to change), saves the whole window 1:1 and quits; `--demo` walks the player right, down, left and up with a bow shot after each (`--quit` to end after it). For a video that keeps real time on a slow machine, use the movie maker: `DISPLAY=:96 $GODOT --path game --audio-driver Dummy --resolution 1920x1080 --write-movie out.avi --fixed-fps 30 -- --fresh --demo --quit`.
 
 **Screenshot recipe** (the container has no display):
 

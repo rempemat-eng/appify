@@ -4,7 +4,9 @@ extends Node2D
 ## quests move or zones change.
 ##
 ## Command-line options (after `--`): --fresh (ignore the save), --zone=<id>, --spawn=<name>,
-## --shot=<png path> (wait, save a 1:1 picture of the window, quit). See docs/godot.md.
+## --shot=<png path> (wait, save a 1:1 picture of the window, quit), --demo (a scripted walk in four
+## directions with a bow shot after each, for screenshots and videos; --quit ends the run after it).
+## See docs/godot.md.
 
 const DENSITY := 3.0
 const LOOK_MAX := 48.0 * DENSITY   ## 11.2: look-ahead up to 48 world px ...
@@ -41,6 +43,8 @@ func _ready() -> void:
 		Zones.go_to("woodland", "start")
 	if args.has("shot"):
 		_shot.call_deferred(args.shot)
+	if args.has("demo"):
+		_demo.call_deferred()
 
 static func parse_args(list: PackedStringArray) -> Dictionary:
 	var out := {}
@@ -91,6 +95,20 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_tree().paused = not get_tree().paused
 		paused_label.visible = get_tree().paused
 		get_viewport().set_input_as_handled()
+
+func _demo() -> void:
+	player.use_mouse_aim = false
+	await get_tree().create_timer(0.8).timeout
+	for step in [["move_right", Vector2.RIGHT], ["move_down", Vector2.DOWN], ["move_left", Vector2.LEFT], ["move_up", Vector2.UP]]:
+		Input.action_press(step[0])
+		await get_tree().create_timer(1.3).timeout
+		Input.action_release(step[0])
+		await get_tree().create_timer(0.3).timeout
+		player.aim = step[1]
+		player.start_shot()
+		await get_tree().create_timer(1.0).timeout
+	if args.has("quit"):
+		get_tree().quit()
 
 func _shot(path: String) -> void:
 	await get_tree().create_timer(float(args.get("wait", "2.0")), true, false, true).timeout
