@@ -25,6 +25,9 @@ Beyond F's schema the plan carries, for the lanes that read it: `areas` (F's scr
 `clusters` and `cluster_slots` (Claude B's recipes, #188), `rest_spots`, `story` and `ring`
 (Claude K's handoffs, #197: the naturalist's story, the quiet place with no ring), and the
 `coast` it checks itself against (isle_faults), since F's check has no coast yet.
+Since 25 Oct (game-design v2, to-all-godot-1080) it also carries `fights`: camps and patrols by
+role, the Basalt Crab's arena and the shard, cover, waystones and the Basalt Halls' two ends,
+held by fight_faults.
 
     python3 scripts/art/regions/tidebloom_plan.py           # write art/regions/tidebloom.json
     python3 scripts/art/region_plan.py --check              # hold it to the rules
@@ -197,10 +200,11 @@ HEADWATERS = [
 CRATER_RIM = [(7056, 6184, 7168, 6248)]
 
 # --- the paths (axis runs, as the grid ruling wants them) -------------------------------------
-SHELL_BAR = [[7000, 5792], [6968, 5792], [6936, 5792], [6904, 5792], [6896, 5792], [6896, 5824], [6896, 5856],
+SHELL_BAR = [[6896, 5824], [6896, 5856],
              [6896, 5888], [6896, 5920], [6896, 5952], [6896, 5960], [6864, 5960], [6832, 5960], [6808, 5960],
              [6808, 5992], [6808, 6024], [6808, 6032], [6776, 6032], [6744, 6032], [6720, 6032], [6720, 6064],
-             [6720, 6080], [6704, 6080]]          # lane G's line inside the box (lib/world-routes.ts, shell-bar)
+             [6720, 6080], [6704, 6080]]          # G's line inside the box; it starts at (6896, 5824), where
+# E's bar from the Headland ends (valley.json), so the box overlap y 5792 to 5824 is E's (r-20261023-1554-c)
 TRODS = [
     {'id': 'landing_way', 'why': "from the Shell Bar's landfall round the rainforest's west end down to Lagoon Landing",
      'width': 32, 'points': [[6704, 6080], [6600, 6080], [6600, 6176], [6576, 6176], [6576, 6272]]},
@@ -365,7 +369,8 @@ STORY = {
     ],
     'draw': False,
 }
-RING = {'none': True, 'why': 'the Tidebloom Isles stay the quiet place with no ring (cast.md; no fight here, no rival)'}
+RING = {'none': True, 'why': "no arena rival's ring here (cast.md); the isles' fights are the camps and the "
+                             "Basalt Crab's arena in `fights` (game-design v2)"}
 
 
 def areas() -> list:
@@ -503,6 +508,141 @@ def isle_faults(p) -> list:
 
 
 
+# --- fights (game-design v2, section 14 and the lanes' row: camps and patrols by role, the dungeon,
+# the boss arena, cover, waystones and the shard's crater; to-all-godot-1080). Act 2's isles: the
+# volcano's shard wakes the basalt and the naturalist is cut off at the headwaters; the boss is the
+# Basalt Crab at Black-sand Cove. Roles are Codex's (grunt, lunger, shooter, swarmer); enemy kinds
+# are proposals for Codex. Freed, never killed. Points are settled onto walkable dry land by
+# `settle`, so the brief's points stay readable here. About 3,800 px of path: a camp or event every
+# 576 to 1152 px of it (benchmark) gives the four camps and three patrols below (seven events).
+CAMPS = [
+    {'id': 'islet_scuttlers', 'at': (6872, 5904), 'roles': ['swarmer'] * 4,
+     'kind': 'shardstruck shore crabs', 'why': "on the Shell Bar's islet: the isles' first fight, small and quick, "
+                                              'before the ferry or the walk lands you'},
+    {'id': 'west_arm_crabs', 'at': (6448, 6440), 'roles': ['grunt', 'grunt', 'lunger'],
+     'kind': 'basalt-shelled sand crabs', 'why': 'half way down the west arm, between the landing and the calm turtle beach'},
+    {'id': 'canopy_boars', 'at': (6744, 6200), 'roles': ['grunt', 'lunger', 'lunger'],
+     'kind': 'shardstruck forest boars in basalt crusts', 'why': 'under the canopy on the loop, the first fight on the raised ground'},
+    {'id': 'headwaters_watch', 'at': (7024, 6412), 'roles': ['shooter', 'shooter', 'grunt', 'grunt'],
+     'kind': 'basalt spitters and their grunts', 'cover': True,
+     'why': 'the naturalist is cut off at the rain shelter above: this camp holds the foot of the headwaters stair, '
+            "so the isles' ranged fight happens here, with cover; the shelter itself (a rest spot) stays out of it"},
+]
+PATROLS = [
+    {'id': 'bar_tide_patrol', 'roles': ['swarmer', 'swarmer'], 'kind': 'shore crabs at low tide',
+     'path': [(6896, 5936), (6808, 5976), (6800, 6024)], 'why': 'crabs walk the Shell Bar when the tide is out'},
+    {'id': 'loop_patrol', 'roles': ['grunt', 'lunger'], 'kind': 'crusted boars',
+     'path': [(6976, 6216), (6976, 6296), (6872, 6304)], 'why': "along the loop's east run under the canopy"},
+    {'id': 'cove_patrol', 'roles': ['lunger', 'lunger', 'swarmer'], 'kind': 'basalt lungers and their brood',
+     'path': [(7096, 6432), (7168, 6432), (7168, 6400)], 'why': 'on the loop above the cove: the last fight before the arena'},
+]
+BOSS = {'id': 'basalt_crab', 'name': 'the Basalt Crab', 'arena': [6960, 6496, 160, 112],
+        'at': (7040, 6552), 'teaches': 'the bond burst (game-design v2, section 8)',
+        'shard': True, 'enter_by': 'cove_stair',
+        'why': "Black-sand Cove under the east body: the stair comes down into it; sea on the south and east, the "
+               'basalt arm on the west, so the fight is boxed without walls'}
+SHARD = {'at': (7056, 6576), 'crater': 'a glassy black crater in the cove sand, steaming where the tide reaches it',
+         'why': "the volcano's shard fell into the cove; the Basalt Crab grew its shell round it (it lies calm beside "
+                'the shard when freed)'}
+COVER = [   # low cover blocks walking but not shots; high cover blocks both (game-design v2)
+    {'kind': 'low', 'what': 'basalt blocks', 'at': (6992, 6440)}, {'kind': 'low', 'what': 'a fallen tree fern', 'at': (7064, 6440)},
+    {'kind': 'high', 'what': 'a basalt column', 'at': (7080, 6412)},
+    {'kind': 'low', 'what': 'driftwood', 'at': (6992, 6528)}, {'kind': 'high', 'what': 'a basalt column', 'at': (7096, 6520)},
+    {'kind': 'low', 'what': 'black boulders', 'at': (7064, 6584)},
+]
+WAYSTONES = [
+    {'id': 'lagoon_waystone', 'at': (6560, 6288), 'why': 'by the pier, where the ferry lands (bank loot, ride home)'},
+    {'id': 'headwaters_waystone', 'at': (7008, 6328), 'why': 'at the rain shelter once the headwaters are freed: before the cove'},
+]
+DUNGEON = {'id': 'basalt_halls', 'name': 'the Basalt Halls', 'entrance': (6888, 6664), 'by': 'sea_cave',
+           'exit': (7096, 6216), 'exit_by': 'crater_spur',
+           'rooms': [{'id': 'drowned_gallery', 'what': 'a tidal cave: pools to cross on columns', 'camp': ['swarmer'] * 3},
+                     {'id': 'column_hall', 'what': 'a hall of basalt columns: cover against shooters',
+                      'camp': ['shooter', 'shooter', 'grunt']},
+                     {'id': 'vent', 'what': 'the old lava tube rising to the crater: lungers on the ledges',
+                      'camp': ['lunger', 'lunger', 'grunt']}],
+           'plan': 'a zone plan of its own (like game/data/plans/undercroft.json) once docs/godot.md\'s zone '
+                   'work reaches the isles',
+           'why': "the sea has hollowed the basalt arm into the old volcano's lava tube; it climbs under the isle and "
+                  'comes out on the crater rim by the pool, a second way down from the top'}
+RAIDERS = {'none': True, 'why': 'raids come only to Crossroads (game-design v2, 7.6); Lagoon Landing is never attacked'}
+
+
+def settle(p, pt, G, away_from_paths=False):
+    """The nearest point to pt (4 px steps, up to 64 px) on walkable dry land: a tier top, not a
+    face, on the isle or the bar, out of water by 8 px, and with `away_from_paths` off every path."""
+    paths = p['routes'] + p['trods']
+
+    def ok(x, y):
+        t, f = G.at(x, y)
+        if t is None or f or not on_land(p, (x, y)) or in_water(p, (x, y), 8):
+            return False
+        return not away_from_paths or all(rp.dist_to_line((x, y), q['points']) > q['width'] / 2 + 6 for q in paths)
+    x0, y0 = int(pt[0]) // 4 * 4, int(pt[1]) // 4 * 4
+    best = None
+    for dx in range(-64, 65, 4):
+        for dy in range(-64, 65, 4):
+            d = dx * dx + dy * dy
+            if (best is None or d < best[0]) and ok(x0 + dx, y0 + dy):
+                best = (d, [x0 + dx, y0 + dy])
+    if best is None:
+        raise SystemExit(f'nothing walkable near {pt}')
+    return best[1]
+
+
+def fights(p) -> dict:
+    """The fight layer: camps with their enemies set round the centre, patrols, the boss arena and
+    the shard, cover, waystones, the dungeon's ends; every point settled onto walkable land."""
+    G = rp.Ground(p)
+    import math
+    camps = []
+    for c in CAMPS:
+        at = settle(p, c['at'], G)
+        n = len(c['roles'])
+        enemies = [settle(p, (at[0] + 28 * math.cos(2 * math.pi * i / n + 0.4), at[1] + 18 * math.sin(2 * math.pi * i / n + 0.4)), G)
+                   for i in range(n)]
+        camps.append(dict({k: v for k, v in c.items() if k != 'at'}, at=at, enemies=enemies))
+    patrols = [dict(pt, path=[settle(p, q, G) for q in pt['path']]) for pt in PATROLS]
+    boss = dict(BOSS, at=settle(p, BOSS['at'], G))
+    return {
+        '_about': ("Fights, from game-design v2 (section 14, the map lanes' row): camps and patrols by Codex's roles "
+                   '(kinds are proposals for Codex), the boss arena (about 20 x 14 cells), cover, waystones, the '
+                   "shard's crater and the dungeon's ends. Camps refill on each ferry arrival, never on a clock."),
+        'camps': camps, 'patrols': patrols, 'boss': boss,
+        'shard': dict(SHARD, at=settle(p, SHARD['at'], G, True)),
+        'cover': [dict(c, at=settle(p, c['at'], G, True)) for c in COVER],
+        'waystones': [dict(w, at=settle(p, w['at'], G, True)) for w in WAYSTONES],
+        'dungeon': dict(DUNGEON, entrance=settle(p, DUNGEON['entrance'], G), exit=settle(p, DUNGEON['exit'], G)),
+        'raiders_camp': RAIDERS,
+    }
+
+
+def fight_faults(p) -> list:
+    """The fight layer's own checks: every camp within 160 px of a path (you can see it from the way),
+    the arena 20 x 14 cells or more and holding the boss and the shard, and camps 192 px or more
+    apart and clear of rest spots by 96 px (a rest spot is never inside a fight)."""
+    F = p['fights']
+    out = []
+    paths = p['routes'] + p['trods']
+    for c in F['camps']:
+        if min(rp.dist_to_line(c['at'], q['points']) for q in paths) > 160:
+            out.append(f"camp {c['id']} is more than 160 px from any path")
+        for r in p['rest_spots']:
+            if rp.seg_len(c['at'], r['stand']) < 96:
+                out.append(f"camp {c['id']} is {rp.seg_len(c['at'], r['stand']):.0f} px from the rest spot {r['id']}")
+    for i, a in enumerate(F['camps']):
+        for b in F['camps'][i + 1:]:
+            if rp.seg_len(a['at'], b['at']) < 192:
+                out.append(f"camps {a['id']} and {b['id']} are {rp.seg_len(a['at'], b['at']):.0f} px apart")
+    x, y, w, h = F['boss']['arena']
+    if w < 160 or h < 112:
+        out.append('the boss arena is smaller than 20 x 14 cells')
+    for what, pt in (('boss', F['boss']['at']), ('shard', F['shard']['at'])):
+        if not (x <= pt[0] < x + w and y <= pt[1] < y + h):
+            out.append(f'the {what} is outside the arena')
+    return out
+
+
 def plan() -> dict:
     p = {
         '_about': ("The Tidebloom Isles and the Shell Bar as a plan (Claude C, lane C, 21 Oct), in Claude F's schema "
@@ -606,11 +746,12 @@ def main(argv) -> int:
             print(f'dressed {area} with a {what} at {at}')
         for what, a, b in rp.fix(p):
             print(f'moved {what} from {a} to {b}')
+    p['fights'] = fights(p)
     path = os.path.join(ROOT, 'art', 'regions', 'tidebloom.json')
     with open(path, 'w') as fh:
         json.dump(p, fh, indent=1, default=int)
         fh.write('\n')
-    faults = rp.check(p) + isle_faults(p)
+    faults = rp.check(p) + isle_faults(p) + fight_faults(p)
     print(rp.summary(p))
     for f in faults:
         print('FAULT', f)

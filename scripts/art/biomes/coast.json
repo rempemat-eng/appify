@@ -1,6 +1,7 @@
 {
-  "_about": "The coast biome's brief as data (Claude C, lane C, 21 Oct): what the shared kit needs to paint a coast, written before the kit exists (rules-system.md 2 and 4, to-all-kit-freeze). Palette intent names house ramps (art/house-palette.json) and tones 0 (darkest) to 5 (lightest), never RGB. Edge sets name the cliff core's EDGE_SETS or are marked proposed. Plants and dressing follow to-all-clean (calm fields, clumped, no speckle) and to-all-volume (masses with depth, form shading, vegetation on rims and feet). Status 'brief': Claude A turns it into the kit's biome file at the kit cut and pins a kit version; until then numbers here are intent, not measured.",
+  "_about": "The coast biome's brief as data (Claude C, lane C, 21 Oct): what the shared kit needs to paint a coast, written before the kit exists (rules-system.md 2 and 4, to-all-kit-freeze). Palette intent names house ramps (art/house-palette.json) and tones 0 (darkest) to 5 (lightest), never RGB. Edge sets name the cliff core's EDGE_SETS or are marked proposed. Plants and dressing follow to-all-clean (calm fields, clumped, no speckle) and to-all-volume (masses with depth, form shading, vegetation on rims and feet). Status 'brief': Claude A turns it into the kit's biome file at the kit cut and pins a kit version; until then numbers here are intent, not measured. Its own biome, not a variant of the kit's meadow (scripts/art/biomes/meadow.json, meadow@1, #215): the cliff core's coast edge set and the sea are what no meadow parameter reaches, so it shares the kit's engine (palette codes, shadow, lawn measure for its turf) and supplies its own sheets, edges and water. The kit renders at density 3 now (to-all-godot-1080); every size here is in world px.",
   "id": "coast",
+  "extends": null,
   "status": "brief",
   "owner": "claude-c",
   "kit": null,
@@ -432,5 +433,47 @@
       "note": "young lava where it meets the sea is the ash biome's"
     }
   },
-  "port_from": "coast_kit.py (#162, frozen): see docs/vision/research/kit-ports-c.md"
+  "port_from": "coast_kit.py (#162, frozen): see docs/vision/research/kit-ports-c.md",
+  "sources": [
+    "docs/vision/regions/tidebloom-isles.md",
+    "docs/vision/world-plan.md",
+    "docs/vision/rules-system.md",
+    "docs/vision/eastward-edges.md",
+    "art/regions/tidebloom.json",
+    "docs/vision/research/kit-ports-c.md"
+  ],
+  "needs_from_kit": {
+    "_about": "Techniques the coast needs that the meadow golden scene does not show (to-all-kit-215: sent to claude-a as c-to-a-isle-techniques); each goes into scripts/art/native once, for everyone. Ports name the frozen #162 function in kit-ports-c.md.",
+    "water": [
+      "the sea as one plane in depth bands along the shore with sparse ripple strokes (port sea, ripples)",
+      "flow as one tone along its own ramp (port flow_frames)",
+      "a churned plunge pool at a fall's foot; a stream fanning out over a beach",
+      "the lagoon: the shallow band over sand"
+    ],
+    "edges": [
+      "shore_beach: swash, damp sand behind it (port surf)",
+      "shore_rock: a dark wet ring and lace, breakers on a reef (port surf, breakers)",
+      "coast_isle: basalt faces under a forest-floor lip, roots and ferns hanging, a black-grit foot",
+      "the in-water foot rule for any face: wet tone, weed, barnacles, salt line (port sea_foot)",
+      "sea_wall for harbours (port masonry, ladder, ring)"
+    ],
+    "ground": [
+      "sand sheets: beach bands (dry, wrack line, damp, swash), black sand on basalt, wind ripples, a trail trough in sand (port beach, trail)",
+      "sea turf with thrift and campion clumps",
+      "rainforest floor: loam with leaf-litter clumps under broad canopy shade",
+      "shingle and the shingle-to-sand blend (port shingle, grade)"
+    ],
+    "plants": [
+      "coconut palm, pandanus, tree fern and monstera/banana masters in the leaf-stamp style",
+      "sea grape, marram and gorse clumps",
+      "the giant tree with buttress roots (a landmark)"
+    ],
+    "built": [
+      "a timber pier on piles; a boathouse over the water; a slipway (port pier, slipway)",
+      "a basalt-block stair and a timber stair",
+      "a thatched rain shelter; a packing shed"
+    ],
+    "landmarks": ["sea stack, sea cave mouth, basalt columns, crater lip"],
+    "night": ["a pier lamp; phosphorescence in the swash (finite, off under reduced motion)"]
+  }
 }
