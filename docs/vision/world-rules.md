@@ -98,6 +98,8 @@ Before any art, each region is built as a **semantic layer**: every 4 px walk ce
 
 5.7 **Props carry no time of day.** A prop is drawn alone in the one light, with its cast shadow as its own shape, so it works on any ground and under the night tint; light sources declare their glow (`zoneWindows`, lamp pools). [review]
 
+5.8 **A mover's building carries one feature of its home region, and only one** (21 Oct, [game-design.md](game-design.md) 7.4). Section 5.3 and the atlas keep each region's materials and props in that region. The one exception is a building a household brings when it moves from a freed region to Crossroads: it is built in the valley's materials and palette, on the valley's forms, with a single feature of its home region (Cogsworth's brass clock on the workshop, Sunstone's striped awning, a Neon Harbour arc lamp, the Frostline bothy's stone hut), so the town tells the journey without becoming a theme park. A second regional feature on the same building, or a regional feature on any other valley building, breaks the rule. [review; proposed: `REGION_PROPS` lists each mover's one allowed feature]
+
 ## 6. Props
 
 6.1 **Every prop has a placement type** declared in its own module: `ground`, `wet`, `floating`, `supported`, `edge` or `overhead` (`PLACEMENT`; anything unlisted is `ground`). A ground prop on water or lava, a floating prop on land, or a supported structure with no drawn support is a bug. [world_lint `ground-on-water`, `ground-on-lava`, `floating-on-land`, strict]
@@ -227,6 +229,7 @@ Tools: **world_lint** is `scripts/art/world_lint.py` (on main, run by every zone
 | 3.5           | tiers change only at stairs or ramps                                         | terrace `tier-step`                                                         | report (#90)                         |
 | 3.6           | stairs at least 34 open, landings open and reaching a node, cut on the grid  | terrace `stair-width`, `stair-ends`, `reach`; `cut-on-grid`                 | report (#90); proposed               |
 | 3.7           | railings on built rims                                                       | `rail-at-edge`                                                              | proposed                             |
+| 5.8           | a mover's building carries one feature of its home region                    | review; `REGION_PROPS` allow-list                                           | proposed                             |
 | 3.8           | nothing important hidden by a lower tier                                     | `upper-hidden`                                                              | proposed                             |
 | 4.1 to 4.3    | sprite heights and widths within their kind's range                          | size_check                                                                  | report (this PR)                     |
 | 4.1           | door and storey heights                                                      | `prop-scale` (world_lint, `KIND`, `DOOR_RECTS`, `STOREYS`)                  | proposed (`verticality.md` 5)        |

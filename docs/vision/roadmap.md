@@ -1,5 +1,7 @@
 # Roadmap
 
+> **Superseded 21 Oct by [game-design.md](game-design.md).** Its section 12 is the roadmap now; this page is kept as a record.
+
 ## Now: make it feel like one finished game
 
 The work in progress follows [coherence-plan.md](coherence-plan.md) (Matt's review of 17 Oct): layering and outline fixes (done), an interface system with symmetric insets and a type hierarchy, a detailed pixel icon set, a Stardew-style tabbed game menu, a denser pixel grid with the garden and worlds redrawn at proper proportions and cleaner shading, readable characters, and the mission map as a place.

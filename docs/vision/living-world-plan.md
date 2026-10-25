@@ -1,5 +1,7 @@
 # The living world: merged plan and schedule
 
+> **Superseded 21 Oct by [game-design.md](game-design.md)** wherever this plan rests on time away, screen time, decay, raids or Dream Dust (its section 13); the people, atmosphere, decorating and biome ideas still stand.
+
 Approved by Matt on 17 Oct 2026 (19:16): "try to implement most of the ideas … schedule everything in a way that makes sense". This merges his 11:54 brief (currency and decay, menus, biomes, decorating, interiors, NPCs, visual depth) with Codex's proposals (seasons, weather and time as a scenery layer; a world with a memory; the destination map). `coherence-plan.md` still holds the art rules and the Codex lanes; this file holds the order of the new work.
 
 ## Rules that hold for every phase

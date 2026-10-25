@@ -1,5 +1,7 @@
 # The garden grows
 
+> **Superseded 21 Oct by [game-design.md](game-design.md).** Nothing grows from time away any more; the beds and orchard become the village's crop plots, which grow by outings (its section 7.5).
+
 Time away from the phone visibly changes the world. This is presentation only: it never adds Dream Dust, cards or stats, and nothing ever wilts or goes backwards.
 
 ## The meadow

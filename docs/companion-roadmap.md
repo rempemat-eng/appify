@@ -1,5 +1,7 @@
 # Companions and time away
 
+> **Superseded 21 Oct by [vision/game-design.md](vision/game-design.md).** Nothing in the game is earned by time away any more; this page is kept as a record.
+
 ## Available now
 
 The active companion can be the starter or a befriended visitor. Preview before switching; level, cards, hats, currency and collection stay shared. Invalid or unavailable selections fall back to the starter. Switching is blocked during missions, naps and battles.
