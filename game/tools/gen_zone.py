@@ -140,6 +140,13 @@ def write_scene(zone: str, out: str) -> dict:
     gw, gh = png_size(os.path.join(out, 'art', 'ground.png'))
     head = f'[gd_scene load_steps={len(ext) + len(subs) + 1} format=3]'
     text = '\n\n'.join([head, '\n'.join(ext)] + subs + nodes) + '\n'
+    # the placement gate: no art reaches the zone without a passing review record
+    # (scripts/review/gate.py; npm run review:asset -- <zone>/<name> --record)
+    sys.path.insert(0, os.path.dirname(GAME))
+    from scripts.review.gate import refusals
+    bad = refusals(zone, text=text)
+    if bad:
+        raise SystemExit('refused to place unreviewed or failing art:\n  ' + '\n  '.join(bad))
     open(os.path.join(out, f'{zone}_base.tscn'), 'w').write(text)
     return dict(zone=zone, objects=len(kit['objects']), wall_rects=len(rects), size=[gw, gh], density=D)
 

@@ -1,0 +1,265 @@
+{
+ "about": "Eastward prop, foliage and stone detail bands at our character height (scripts/review/bands.py). Numbers only; the screenshots are official Steam store shots kept local (refs-games/eastward), boxes in native 640 x 360 px.",
+ "adult_native": 54,
+ "H": 74,
+ "boxes": [
+  {
+   "shot": "eastward/17.jpg",
+   "box": [
+    135,
+    47,
+    162,
+    112
+   ],
+   "name": "churns",
+   "group": "prop",
+   "patches": 6,
+   "tones": 22.0,
+   "shapes": 46.333333333333336
+  },
+  {
+   "shot": "eastward/17.jpg",
+   "box": [
+    340,
+    40,
+    392,
+    83
+   ],
+   "name": "churns2",
+   "group": "prop",
+   "patches": 9,
+   "tones": 21.77777777777778,
+   "shapes": 46.55555555555556
+  },
+  {
+   "shot": "eastward/17.jpg",
+   "box": [
+    410,
+    15,
+    472,
+    55
+   ],
+   "name": "bench",
+   "group": "prop",
+   "patches": 12,
+   "tones": 17.916666666666668,
+   "shapes": 33.583333333333336
+  },
+  {
+   "shot": "eastward/17.jpg",
+   "box": [
+    305,
+    177,
+    450,
+    218
+   ],
+   "name": "fence",
+   "group": "prop",
+   "patches": 14,
+   "tones": 19.571428571428573,
+   "shapes": 51.285714285714285
+  },
+  {
+   "shot": "eastward/17.jpg",
+   "box": [
+    460,
+    165,
+    550,
+    250
+   ],
+   "name": "rocks",
+   "group": "stone",
+   "patches": 11,
+   "tones": 19.90909090909091,
+   "shapes": 57.36363636363637
+  },
+  {
+   "shot": "eastward/17.jpg",
+   "box": [
+    120,
+    165,
+    200,
+    215
+   ],
+   "name": "bale",
+   "group": "prop",
+   "patches": 6,
+   "tones": 19.0,
+   "shapes": 40.0
+  },
+  {
+   "shot": "eastward/13.jpg",
+   "box": [
+    375,
+    20,
+    415,
+    125
+   ],
+   "name": "lamp",
+   "group": "prop",
+   "patches": 9,
+   "tones": 39.333333333333336,
+   "shapes": 59.888888888888886
+  },
+  {
+   "shot": "eastward/13.jpg",
+   "box": [
+    410,
+    155,
+    470,
+    220
+   ],
+   "name": "pot",
+   "group": "prop",
+   "patches": 4,
+   "tones": 34.25,
+   "shapes": 62.25
+  },
+  {
+   "shot": "eastward/13.jpg",
+   "box": [
+    345,
+    150,
+    395,
+    235
+   ],
+   "name": "tree",
+   "group": "foliage",
+   "patches": 5,
+   "tones": 24.0,
+   "shapes": 56.2
+  },
+  {
+   "shot": "eastward/13.jpg",
+   "box": [
+    510,
+    150,
+    565,
+    230
+   ],
+   "name": "tree2",
+   "group": "foliage",
+   "patches": 10,
+   "tones": 23.0,
+   "shapes": 57.2
+  },
+  {
+   "shot": "eastward/13.jpg",
+   "box": [
+    505,
+    295,
+    540,
+    350
+   ],
+   "name": "churns3",
+   "group": "prop",
+   "patches": 7,
+   "tones": 32.0,
+   "shapes": 56.57142857142857
+  },
+  {
+   "shot": "eastward/13.jpg",
+   "box": [
+    325,
+    247,
+    350,
+    268
+   ],
+   "name": "rocks2",
+   "group": "stone",
+   "patches": 1,
+   "tones": 31.0,
+   "shapes": 58.0
+  },
+  {
+   "shot": "eastward/12.jpg",
+   "box": [
+    180,
+    200,
+    248,
+    235
+   ],
+   "name": "bench2",
+   "group": "prop",
+   "patches": 10,
+   "tones": 43.7,
+   "shapes": 67.7
+  },
+  {
+   "shot": "eastward/12.jpg",
+   "box": [
+    387,
+    200,
+    420,
+    248
+   ],
+   "name": "postbox",
+   "group": "prop",
+   "patches": 6,
+   "tones": 26.333333333333332,
+   "shapes": 43.5
+  },
+  {
+   "shot": "eastward/12.jpg",
+   "box": [
+    465,
+    110,
+    590,
+    230
+   ],
+   "name": "redtree",
+   "group": "foliage",
+   "patches": 61,
+   "tones": 28.360655737704917,
+   "shapes": 63.557377049180324
+  },
+  {
+   "shot": "eastward/12.jpg",
+   "box": [
+    175,
+    65,
+    245,
+    165
+   ],
+   "name": "pines",
+   "group": "foliage",
+   "patches": 31,
+   "tones": 28.548387096774192,
+   "shapes": 65.96774193548387
+  },
+  {
+   "shot": "eastward/12.jpg",
+   "box": [
+    497,
+    205,
+    555,
+    235
+   ],
+   "name": "rocks3",
+   "group": "stone",
+   "patches": 8,
+   "tones": 34.375,
+   "shapes": 66.375
+  }
+ ],
+ "groups": {
+  "prop": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "stone": {
+   "tones": 26.25,
+   "shapes": 61.0,
+   "boxes": 3,
+   "patches": 20
+  },
+  "foliage": {
+   "tones": 27.71,
+   "shapes": 63.32,
+   "boxes": 4,
+   "patches": 107
+  }
+ }
+}
