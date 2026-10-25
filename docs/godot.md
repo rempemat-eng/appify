@@ -70,6 +70,8 @@ game/
 | Phantom Camera | 0.11.0.3 | `ramokz/phantom-camera` | MIT | 1.3 MB |
 | GdUnit4 | 6.2.2 | `godot-gdunit-labs/gdUnit4` (no bundled self-tests) | MIT | 3.0 MB |
 
+Phantom Camera's updater is off (`phantom_camera/updater/updater_mode=0` in `project.godot`, the addon's own setting). Left on, its editor plugin asks GitHub for releases whenever the project is imported, and a rate-limit reply raised a `SCRIPT ERROR` in `update_button.gd` that failed `check:godot` at random. Update the addon by hand when needed.
+
 LimboAI is trimmed to the platforms we ship: the editor (debug) libraries for Linux x86_64, Windows x86_64 and macOS (universal), and the web build without threads (debug and release). Android, iOS, Linux arm64, 32-bit Windows and threaded web builds are left out (over 50 MB). The desktop release libraries (about 12 MB) are only needed for release exports: `bash game/tools/fetch_limboai_release.sh` fetches the pinned zip, checks it and copies them in (git-ignored). `addons/limboai/bin/limboai.gdextension` lists exactly these.
 
 Dialogic 2 was evaluated and **not adopted yet**: it adds 11 MB and its own input action, its default binds Space and left click (our roll and attack), and the sample quest needs only a speaker, lines and a quest-state condition. `core/dialogue.gd` plus `ui/dialogue_box.gd` do that in about 150 lines. Revisit when branching conversations, portraits or voiced lines arrive.
