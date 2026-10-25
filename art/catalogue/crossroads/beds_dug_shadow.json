@@ -1,0 +1,27 @@
+{
+ "id": "crossroads/beds_dug_shadow",
+ "file": "game/zones/crossroads/art/beds_dug_shadow.png",
+ "sha256": "cc0c63d572990277b3b50415afea48b0adfd63b355fd245523a127c8ba7c460d",
+ "kind": "beds_dug_shadow",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  299,
+  33
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 0
+ },
+ "detail_bar": null,
+ "findings": [],
+ "reviewed": "2026-10-25",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}

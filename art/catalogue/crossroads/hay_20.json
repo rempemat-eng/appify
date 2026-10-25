@@ -1,0 +1,69 @@
+{
+ "id": "crossroads/hay_20",
+ "file": "game/zones/crossroads/art/hay_20.png",
+ "sha256": "c19cecdb626d22e1def713498e3609294a4c3fd7429a35125d75e88a6842680c",
+ "kind": "haystack",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  66,
+  66
+ ],
+ "status": "fail",
+ "counts": {
+  "blocker": 0,
+  "fault": 1,
+  "polish": 1
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 8,
+   "tones": 8.25,
+   "shapes": 12.75
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.253,
+  "tones_ratio": 0.306,
+  "shapes_ratio": 0.253,
+  "passed": false,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "logic.scale",
+   "severity": "polish",
+   "box": [
+    5,
+    7,
+    61,
+    63
+   ],
+   "message": "crossroads/hay_20: 19 world px tall (0.75 of an adult); the size guide gives 24 to 44 for a haystack (a stack 1.5 to 2.5 adults, by the barn's gable)",
+   "fix": "redraw it 24 to 44 world px tall (72 to 132 texels at density 3) and stand it next to Bramble to check"
+  },
+  {
+   "detector": "detail.bar",
+   "severity": "fault",
+   "box": [
+    5,
+    7,
+    61,
+    63
+   ],
+   "message": "crossroads/hay_20: detail bar 0.25 of Eastward's prop band (8.2 tones, 12.8 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  }
+ ],
+ "reviewed": "2026-10-25",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}

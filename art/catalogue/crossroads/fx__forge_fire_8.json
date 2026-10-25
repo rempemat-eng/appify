@@ -1,0 +1,69 @@
+{
+ "id": "crossroads/fx/forge_fire_8",
+ "file": "game/zones/crossroads/art/fx/forge_fire_8.png",
+ "sha256": "27aa44f925818d615bc6ebab69968eb7913325dad39fcaed97bd646f5840cccf",
+ "kind": "forge_fire",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  432,
+  72
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 2
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 8,
+   "tones": 23.25,
+   "shapes": 40.25
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.799,
+  "tones_ratio": 0.861,
+  "shapes_ratio": 0.799,
+  "passed": false,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    220,
+    40,
+    268,
+    68
+   ],
+   "message": "crossroads/fx/forge_fire_8: the wood is lit from the right (luminance rises 10 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    4,
+    19,
+    430,
+    68
+   ],
+   "message": "crossroads/fx/forge_fire_8: detail bar 0.80 of Eastward's prop band (23.2 tones, 40.2 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  }
+ ],
+ "reviewed": "2026-10-25",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}
