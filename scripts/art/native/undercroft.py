@@ -156,6 +156,28 @@ def mottle(cv, mask, rng, sigma=2.4, sib_share=0.12):
     cv[sw2] = sib(cv[sw2], 'cool')
 
 
+def cut_block(a, x0, y0, x1, y1, top, fam, t, rng=None, bevel=1, grain=True):
+    """A dressed stone block seen like everything in the world (3/4 from above, light upper left):
+    a top face `top` texels deep a tone lighter with a lit back arris, a bevel catching the light
+    along the front edge, the front face shading down to a dark foot, the east end a step darker,
+    and stone grain in both faces. x0..x1, y0..y1 is the whole drawn block in texels."""
+    V = _v()
+    code = V.code
+    x0, y0, x1, y1 = int(x0), int(y0), int(x1), int(y1)
+    yt = y0 + int(top)
+    if yt > y0:
+        V.blk(a, x0, y0, x1, yt, fam, min(5, t + 1), cut=1, top=1, left=1, bot=0, right=-1)
+    V.blk(a, x0, yt, x1, y1, fam, t, cut=1, top=0, left=1, bot=-1, right=-1)
+    for k in range(bevel):
+        V.fill(a, x0 + 1, yt + k, x1 - 1, yt + k + 1, code(fam, min(5, t + 2) if k == 0 else min(5, t + 1)))
+    V.fill(a, x0 + 1, y1 - 2, x1 - 1, y1 - 1, code(fam, max(0, t - 1)))
+    V.fill(a, x1 - max(2, (x1 - x0) // 6), yt + bevel, x1 - 1, y1 - 2, code(fam, max(0, t - 1)))
+    if grain and rng is not None and (x1 - x0) * (y1 - y0) > 60:
+        m = np.zeros(a.shape, bool)
+        m[y0 + 2:y1 - 2, x0 + 2:x1 - 2] = True
+        mottle(a, m, rng, sigma=1.3, sib_share=0.1)
+
+
 def masonry(cv, x0, y0, x1, y1, rng, where, base=2, course=5.0, length=(8, 14), east_dark=True):
     """Dressed wall stone in courses, every block lit on its top and west arris."""
     V = _v()
@@ -329,10 +351,34 @@ def split_root(cv, x, y0, y1, rng, where):
 # props (each a Pic: its foot at (ax, ay))
 # ------------------------------------------------------------------------------------------------
 def p_rubble(w, h, seed):
+    """Fallen vault stones: dressed blocks of several sizes, each with its top, bevel and front,
+    piled back to front (the big ones at the foot, a split block leaning on them), chips and grit
+    round the heap."""
     V = _v()
+    q = V.q
     rng = np.random.default_rng(seed)
-    p = V._pic(w, h, up=h * 0.9, side=2)
-    V.stones_heap(p.a, p.ax, p.ay, w, h, rng, slates=False, planks_=False)
+    p = V._pic(w, h, up=h * 1.1, side=3)
+    a, cx, yb = p.a, p.ax, p.ay
+    items = []
+    n = max(4, int(w * h / 40))
+    for k in range(n):
+        fx = rng.uniform(-0.5, 0.5)
+        fy = rng.random() ** 0.6
+        items.append((fy, fx))
+    items.sort()
+    for fy, fx in items:
+        bw = q(rng.uniform(4, 8.5) * (0.7 + 0.5 * fy))
+        bh = q(rng.uniform(2.6, 4.2) * (0.7 + 0.4 * fy))
+        top = max(3, int(bh * rng.uniform(0.35, 0.55)))
+        hump = (1 - (2 * fx) ** 2) * q(h * 0.6)
+        x = int(cx + fx * q(w) - bw / 2)
+        y = int(yb - q(h) * (1 - fy) * 0.55 - hump * (1 - fy) - bh)
+        cut_block(a, x, y, x + bw, y + bh, top, str(rng.choice(['stone', 'stone_warm', 'stone_cool'])),
+                  int(rng.choice([2, 3, 3])), rng)
+    for _ in range(int(w / 2)):
+        x = cx + int(rng.integers(-q(w / 2) - q(3), q(w / 2) + q(3)))
+        y = yb - int(rng.integers(0, q(2.5)))
+        V.blk(a, x, y - 2, x + int(rng.integers(3, 6)), y + 1, 'stone', int(rng.choice([2, 3])), cut=0)
     return V.finish(p)
 
 
@@ -368,22 +414,35 @@ def p_roots(w, h, seed):
 
 
 def p_urn(w, h, seed):
+    """A clay storage jar: a swelling body thrown on the wheel (form-shaded, lit upper left), a
+    rolled rim round a dark mouth, two lug handles, a painted band, a chip knocked out of the
+    shoulder showing the paler clay inside."""
+    from scripts.art.native import raster as R
     V = _v()
-    q = V.q
-    p = V._pic(w, h, up=14, side=1)
-    a, cx, yb = p.a, p.ax, p.ay
-    body = V.ellipse_mask(a.shape, cx, yb - q(6), q(5), q(6))
-    neck = np.zeros(a.shape, bool)
-    neck[yb - q(14):yb - q(10), cx - q(2.5):cx + q(2.5)] = True
-    lip = np.zeros(a.shape, bool)
-    lip[yb - q(15):yb - q(13.5), cx - q(3.5):cx + q(3.5)] = True
-    V.blob(a, body | neck, 'clay', 3)
-    V.blob(a, lip, 'clay', 4)
-    band = body & (np.mgrid[0:a.shape[0], 0:a.shape[1]][0] // q(1.5) == (yb - q(8)) // q(1.5))
-    a[band] = V.code('clay_cool', 2)
-    chip = V.ellipse_mask(a.shape, cx + q(2.5), yb - q(9), q(1.5), q(1.2)) & body
-    a[chip] = V.code('clay_cool', 1)
-    return V.finish(p)
+    s = ctx.D / 3.0
+    W, H = int(round(48 * s)), int(round(60 * s))
+    sp = R.Sprite(W, H, s, W / 2 / s * s, (H - 4 * s))
+    g = sp.g
+    sp.add('body', g.ellipse(0, -18, 15, 17) | g.rrect(-7, -38, 7, -28, 2), 'clay', base=3, z=0)
+    sp.add('rim', g.ellipse(0, -39, 9.5, 3.6), 'clay', base=4, z=1, k=0.8)
+    sp.add('mouth', g.ellipse(0, -39.5, 6.5, 2.0), 'soot', base=1, z=2, fixed=1, outline=False)
+    for sx in (-1, 1):
+        sp.add('lug%d' % sx, g.capsule(sx * 9, -33, sx * 14, -28, 2.4, 2.0), 'clay', base=3, z=-0.5, k=0.8)
+    band = (g.ellipse(0, -18, 15.2, 17.2) & (g.Y > -24) & (g.Y < -20.5))
+    sp.add('band', band, 'clay_cool', base=2, z=0.5, k=0.8)
+    sp.add('chip', g.poly([(5, -30), (10, -27), (7, -24)]), 'sand', base=4, z=0.6, k=0.6)
+    sp.add('foot', g.ellipse(0, -1.5, 9, 2.5), 'clay_cool', base=2, z=-0.2)
+    img = sp.render()
+    p = V.Pic(W, H, W // 2, H - int(round(4 * s)) - 1)
+    from .palette import code_of, FI
+    arr = np.asarray(img)
+    for y, x in zip(*np.nonzero(arr[..., 3] > 0)):
+        e = code_of(arr[y, x, :3])
+        if e == 'ink':
+            p.a[y, x] = FI['soot'] * 8 + 0
+        elif e is not None:
+            p.a[y, x] = FI[e[0]] * 8 + int(e[1])
+    return p
 
 
 def p_stump(w, h, seed):
@@ -449,11 +508,18 @@ def p_torch(frame, seed):
     W, H = q(10), q(22)
     p = V.Pic(W, H, W // 2, H - q(6))
     a, cx, cy = p.a, p.ax, p.ay
-    V.blk(a, cx - q(1.2), cy - q(1), cx + q(1.2), cy + q(5), 'iron', 2, cut=0)        # the wall plate
-    V.bar(a, cx, cy + q(3), cx, cy, q(0.7), 'iron', 3)
-    cup = V.ellipse_mask(a.shape, cx, cy - q(1), q(2.6), q(1.4))
+    V.blk(a, cx - q(1.8), cy + q(2.2), cx + q(1.8), cy + q(6.4), 'iron', 2, cut=1)    # the plate on the wall
+    for ry in (2.9, 5.2):
+        V.fill(a, cx - q(1.1), cy + q(ry), cx - q(1.1) + 2, cy + q(ry) + 2, code('iron', 4))   # rivets into the joint
+        V.fill(a, cx + q(0.6), cy + q(ry), cx + q(0.6) + 2, cy + q(ry) + 2, code('iron', 4))
+    V.bar(a, cx, cy + q(3.6), cx, cy + q(0.6), q(0.6), 'iron', 3)                      # the arm out from the wall
+    V.bar(a, cx, cy + q(3.0), cx + q(1.2), cy + q(1.2), q(0.45), 'iron', 2)            # its strut
+    cup = V.ellipse_mask(a.shape, cx, cy - q(0.4), q(2.4), q(1.6)) & (np.mgrid[0:a.shape[0], 0:a.shape[1]][0] >= cy - q(1.4))
     V.blob(a, cup, 'iron', 3)
-    a[V.ellipse_mask(a.shape, cx, cy - q(1.6), q(1.8), q(0.7))] = code('soot', 1)
+    for bx in (-1.4, 0.6):                                                              # the basket's straps
+        V.fill(a, cx + q(bx), cy - q(1.3), cx + q(bx) + 2, cy + q(0.9), code('iron', 1))
+    V.fill(a, cx - q(2.4), cy - q(1.4), cx + q(2.4), cy - q(1.4) + 2, code('iron', 4))  # the lit rim
+    a[V.ellipse_mask(a.shape, cx, cy - q(1.9), q(1.9), q(0.6))] = code('soot', 1)       # pitch in the cup
     V.outline(a)
     lean = (0, 1, 0, -1)[frame % 4]
     hgt = (9.0, 10.5, 8.0, 10.0)[frame % 4]
@@ -515,7 +581,7 @@ def p_seal(w, h, height, sealed=True):
     # the top: three long slabs end to end, the middle one with the sigil
     for k, (s0, s1) in enumerate(((ytop, ytop + (yface - ytop) // 3), (ytop + (yface - ytop) // 3, ytop + 2 * (yface - ytop) // 3),
                                   (ytop + 2 * (yface - ytop) // 3, yface))):
-        V.blk(a, x0, s0, x1, s1 - 1, 'stone_warm' if k != 1 else 'stone', 2, cut=2)
+        cut_block(a, x0, s0, x1, s1 - 1, (s1 - s0) - q(2), 'stone_warm' if k != 1 else 'stone', 2, rng)
     V.fill(a, x0, ytop, x1, yface, code('stone_cool', 0), a < 0)
     sigil(a, (x0 + x1) / 2, (ytop + yface) / 2, q(5.5), sealed)
     V.fill(a, x0, yface - 2, x1, yface, code('stone', 4))                 # the lit lip
@@ -537,47 +603,74 @@ def p_seal_sunk(w, h):
     p = V.Pic(W, H, W // 2, H - 2)
     a = p.a
     for k in range(3):
-        V.blk(a, 2, 2 + k * (H - 4) // 3, W - 2, 2 + (k + 1) * (H - 4) // 3 - 1, 'stone_warm' if k != 1 else 'stone', 2, cut=2)
+        cut_block(a, 2, 2 + k * (H - 4) // 3, W - 2, 2 + (k + 1) * (H - 4) // 3 - 1, (H - 4) // 3 - 3,
+                  'stone_warm' if k != 1 else 'stone', 2, np.random.default_rng(k))
     sigil(a, W / 2, H / 2, q(5.5), False)
     return V.finish(p)
 
 
 def p_plate(w, h, pressed):
-    """The pressure plate: a square slab with the sigil carved in it, raised two world px; pressed,
-    it sits flush and the sigil glows."""
+    """The pressure plate: a square slab set in a frame of narrow stones, the sigil carved in a sunk
+    panel. Raised two world px it shows a bevel and its front; pressed, it sits flush, its edge in
+    the frame's shadow, and the sigil glows."""
     V = _v()
     q, code = V.q, V.code
+    rng = np.random.default_rng(13)
     up = 0 if pressed else 2
-    W, H = q(w) + 6, q(h + up) + 6
+    W, H = q(w + 4) + 6, q(h + 4 + up) + 6
     p = V.Pic(W, H, W // 2, H - 3)
     a = p.a
-    x0, x1, y0 = 3, W - 3, 3
-    V.blk(a, x0, y0, x1, y0 + q(h), 'stone_warm', 2, cut=2)
-    if up:
-        V.fill(a, x0 + 1, y0 + q(h), x1 - 1, y0 + q(h + up), code('stone_cool', 1))
-    cx, cy = (x0 + x1) // 2, y0 + q(h) // 2
-    star = line_mask(a.shape, [(cx, cy - q(5)), (cx, cy + q(5))], 0.7) | line_mask(a.shape, [(cx - q(5), cy), (cx + q(5), cy)], 0.7)
-    star |= V.ellipse_mask(a.shape, cx, cy, q(1.6), q(1.6))
-    a[star] = code('sky', 4) if pressed else code('stone_cool', 1)
+    x0, y0, x1, y1 = 3, 3 + q(up), W - 3, H - 3
+    for (fx0, fy0, fx1, fy1) in ((x0, y0, x1, y0 + q(2)), (x0, y1 - q(2), x1, y1), (x0, y0, x0 + q(2), y1), (x1 - q(2), y0, x1, y1)):
+        V.blk(a, fx0, fy0, fx1, fy1, 'stone_cool', 2, cut=1)
+    ix0, iy0, ix1, iy1 = x0 + q(2), y0 + q(2), x1 - q(2), y1 - q(2)
+    if pressed:
+        V.fill(a, ix0, iy0, ix1, iy0 + 2, code('soot', 1))
+        cut_block(a, ix0, iy0 + 2, ix1, iy1, iy1 - iy0 - 3, 'stone_warm', 2, rng, bevel=0)
+    else:
+        cut_block(a, ix0, iy0 - q(up), ix1, iy1, iy1 - iy0 - q(up) + q(0.5), 'stone_warm', 2, rng)
+    cx, cy = (ix0 + ix1) / 2, (iy0 + iy1) / 2 - (0 if pressed else q(up))
+    pan = np.zeros(a.shape, bool)
+    pan[int(cy - q(4)):int(cy + q(4)), int(cx - q(4)):int(cx + q(4))] = True
+    a[pan] = code('stone_warm', 1)
+    a[pan & ~np.roll(pan, -1, 0)] = code('stone_warm', 3)        # the panel's lit lower lip
+    star = line_mask(a.shape, [(cx, cy - q(3.4)), (cx, cy + q(3.4))], 0.7) | line_mask(a.shape, [(cx - q(3.4), cy), (cx + q(3.4), cy)], 0.7)
+    star |= V.ellipse_mask(a.shape, cx, cy, q(1.2), q(1.2))
+    a[star & pan] = code('sky', 4) if pressed else code('soot', 1)
     return V.finish(p)
 
 
 def p_lever(pulled):
-    """The lever: a stone post with an iron arm and a worn grip; pulled, the arm lies down to the east."""
+    """The lever: a dressed stone post (top, bevel, front, a carved slot in its top), an iron pivot
+    plate bolted to its face with four rivets, an iron arm through the slot and a wooden grip bound
+    with two iron bands; pulled, the arm lies down to the east."""
     V = _v()
     q, code = V.q, V.code
-    W, H = q(16), q(22)
+    rng = np.random.default_rng(11)
+    W, H = q(18), q(24)
     p = V.Pic(W, H, W // 2, H - 3)
     a, cx, yb = p.a, p.ax, p.ay
-    V.blk(a, cx - q(3.5), yb - q(10), cx + q(3.5), yb, 'stone', 3, cut=2)
-    V.fill(a, cx - q(3.5), yb - q(10), cx + q(3.5), yb - q(9), code('stone', 4))
-    V.fill(a, cx - q(1.2), yb - q(9.6), cx + q(1.2), yb - q(8.4), code('soot', 1))
+    x0, x1 = cx - q(4), cx + q(4)
+    cut_block(a, x0, yb - q(12), x1, yb, q(3.5), 'stone', 3, rng)
+    V.fill(a, cx - q(0.8), yb - q(11.2), cx + q(0.8), yb - q(9.4), code('soot', 0))       # the slot
+    V.fill(a, cx - q(0.8), yb - q(9.4), cx + q(0.8), yb - q(9.4) + 1, code('stone', 4))
+    V.blk(a, cx - q(2.4), yb - q(8), cx + q(2.4), yb - q(3.6), 'iron', 2, cut=1)          # the pivot plate
+    for dx in (-1.6, 1.2):
+        for dy in (7.2, 4.6):
+            V.fill(a, cx + q(dx), yb - q(dy), cx + q(dx) + 2, yb - q(dy) + 2, code('iron', 4))
     if pulled:
-        V.bar(a, cx, yb - q(9), cx + q(6), yb - q(5), q(0.8), 'iron', 3)
-        V.blob(a, V.ellipse_mask(a.shape, cx + q(6), yb - q(5), q(1.3), q(1.3)), 'timber', 3)
+        arm = (cx, yb - q(10.4), cx + q(7), yb - q(6.5))
     else:
-        V.bar(a, cx, yb - q(9), cx - q(2.5), yb - q(17), q(0.8), 'iron', 3)
-        V.blob(a, V.ellipse_mask(a.shape, cx - q(2.5), yb - q(17.5), q(1.3), q(1.6)), 'timber', 3)
+        arm = (cx, yb - q(10.4), cx - q(2.6), yb - q(19))
+    V.bar(a, arm[0], arm[1], arm[2], arm[3], q(0.8), 'iron', 3)
+    gx, gy = arm[2], arm[3]
+    dx, dy = (gx - arm[0]), (gy - arm[1])
+    L = math.hypot(dx, dy)
+    ux, uy = dx / L, dy / L
+    V.bar(a, gx - ux * q(1), gy - uy * q(1), gx + ux * q(2.6), gy + uy * q(2.6), q(1.3), 'timber', 3)
+    for t_ in (0.0, 1.6):
+        bx, by = gx + ux * q(t_), gy + uy * q(t_)
+        V.bar(a, bx - uy * q(1.3), by + ux * q(1.3), bx + uy * q(1.3), by - ux * q(1.3), 0.8, 'iron', 2)
     return V.finish(p)
 
 

@@ -37,15 +37,15 @@
   "torches": [[56, 56], [160, 56], [248, 104], [376, 104], [440, 56], [536, 56], [608, 56], [704, 56]],
   "skylight": { "at": [640, 132], "rx": 40, "ry": 30, "why": "a crack in the vault under the circle lets a shaft of daylight in" },
   "props": [
-    { "id": "rubble_hall", "kind": "rubble", "at": [44, 192], "size": [24, 10], "solid": true },
+    { "id": "rubble_hall", "kind": "rubble", "at": [44, 192], "size": [28, 12], "solid": true },
     { "id": "roots_hall", "kind": "roots", "at": [120, 72], "size": [28, 10], "solid": true, "why": "the oak's roots came through the vault and spread on the floor" },
-    { "id": "rubble_corridor", "kind": "rubble", "at": [344, 116], "size": [16, 8], "solid": true, "why": "a block fallen where the roots split the vault" },
+    { "id": "rubble_corridor", "kind": "rubble", "at": [344, 118], "size": [20, 10], "solid": true, "why": "a block fallen where the roots split the vault" },
     { "id": "roots_corridor", "kind": "roots", "at": [272, 164], "size": [26, 8], "solid": true },
-    { "id": "urn_seal", "kind": "urn", "at": [428, 72], "size": [8, 6], "solid": true },
+    { "id": "urn_seal", "kind": "urn", "at": [430, 74], "size": [10, 6], "solid": true },
     { "id": "rubble_seal", "kind": "rubble", "at": [432, 194], "size": [16, 6], "solid": true },
     { "id": "stump_nw", "kind": "stump", "at": [592, 76], "size": [12, 8], "solid": true, "why": "a broken pillar of the old vault" },
     { "id": "stump_se", "kind": "stump", "at": [736, 194], "size": [12, 8], "solid": true },
-    { "id": "rubble_chamber", "kind": "rubble", "at": [736, 76], "size": [16, 8], "solid": true },
+    { "id": "rubble_chamber", "kind": "rubble", "at": [734, 78], "size": [20, 10], "solid": true },
     { "id": "shard", "kind": "shard", "at": [700, 128], "size": [12, 8], "solid": false, "if": { "not_flags": ["shard_taken:woodland"] }, "why": "the woodland's great shard" }
   ],
   "puzzle": {

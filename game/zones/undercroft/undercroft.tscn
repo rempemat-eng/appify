@@ -72,19 +72,19 @@ size = Vector2(48, 120)
 size = Vector2(552, 96)
 
 [sub_resource type="RectangleShape2D" id="s13"]
-size = Vector2(72, 30)
+size = Vector2(84, 36)
 
 [sub_resource type="RectangleShape2D" id="s14"]
 size = Vector2(84, 30)
 
 [sub_resource type="RectangleShape2D" id="s15"]
-size = Vector2(48, 24)
+size = Vector2(60, 30)
 
 [sub_resource type="RectangleShape2D" id="s16"]
 size = Vector2(78, 24)
 
 [sub_resource type="RectangleShape2D" id="s17"]
-size = Vector2(24, 18)
+size = Vector2(30, 18)
 
 [sub_resource type="RectangleShape2D" id="s18"]
 size = Vector2(48, 18)
@@ -129,7 +129,7 @@ only_if = "{\"not_flags\":[\"undercroft_plate\"]}"
 position = Vector2(1416, 408)
 texture = ExtResource("t1")
 centered = false
-offset = Vector2(-27, -57)
+offset = Vector2(-33, -69)
 
 [node name="If_plate_down" type="Node2D" parent="Floor"]
 script = ExtResource("cond")
@@ -139,7 +139,7 @@ only_if = "{\"flags\":[\"undercroft_plate\"]}"
 position = Vector2(1416, 408)
 texture = ExtResource("t2")
 centered = false
-offset = Vector2(-27, -51)
+offset = Vector2(-33, -63)
 
 [node name="If_channel_lit" type="Node2D" parent="Floor"]
 script = ExtResource("cond")
@@ -300,7 +300,7 @@ shape = SubResource("s11")
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Solid_rubble_hall"]
-position = Vector2(132, 561)
+position = Vector2(132, 558)
 shape = SubResource("s13")
 
 [node name="Solid_roots_hall" type="StaticBody2D" parent="Walls"]
@@ -314,7 +314,7 @@ shape = SubResource("s14")
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Solid_rubble_corridor"]
-position = Vector2(1032, 336)
+position = Vector2(1032, 339)
 shape = SubResource("s15")
 
 [node name="Solid_roots_corridor" type="StaticBody2D" parent="Walls"]
@@ -328,7 +328,7 @@ shape = SubResource("s16")
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Solid_urn_seal"]
-position = Vector2(1284, 207)
+position = Vector2(1290, 213)
 shape = SubResource("s17")
 
 [node name="Solid_rubble_seal" type="StaticBody2D" parent="Walls"]
@@ -356,7 +356,7 @@ shape = SubResource("s19")
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Solid_rubble_chamber"]
-position = Vector2(2208, 216)
+position = Vector2(2202, 219)
 shape = SubResource("s15")
 
 [node name="Props" type="Node2D" parent="."]
@@ -366,7 +366,7 @@ y_sort_enabled = true
 position = Vector2(132, 576)
 texture = ExtResource("t5")
 centered = false
-offset = Vector2(-45, -59)
+offset = Vector2(-54, -78)
 
 [node name="RootsHall" type="Sprite2D" parent="Props"]
 position = Vector2(360, 216)
@@ -375,10 +375,10 @@ centered = false
 offset = Vector2(-75, -50)
 
 [node name="RubbleCorridor" type="Sprite2D" parent="Props"]
-position = Vector2(1032, 348)
+position = Vector2(1032, 354)
 texture = ExtResource("t7")
 centered = false
-offset = Vector2(-33, -48)
+offset = Vector2(-42, -65)
 
 [node name="RootsCorridor" type="Sprite2D" parent="Props"]
 position = Vector2(816, 492)
@@ -387,16 +387,16 @@ centered = false
 offset = Vector2(-72, -44)
 
 [node name="UrnSeal" type="Sprite2D" parent="Props"]
-position = Vector2(1284, 216)
+position = Vector2(1290, 222)
 texture = ExtResource("t9")
 centered = false
-offset = Vector2(-18, -62)
+offset = Vector2(-24, -55)
 
 [node name="RubbleSeal" type="Sprite2D" parent="Props"]
 position = Vector2(1296, 582)
 texture = ExtResource("t10")
 centered = false
-offset = Vector2(-33, -36)
+offset = Vector2(-36, -40)
 
 [node name="StumpNw" type="Sprite2D" parent="Props"]
 position = Vector2(1776, 228)
@@ -411,10 +411,10 @@ centered = false
 offset = Vector2(-33, -104)
 
 [node name="RubbleChamber" type="Sprite2D" parent="Props"]
-position = Vector2(2208, 228)
+position = Vector2(2202, 234)
 texture = ExtResource("t13")
 centered = false
-offset = Vector2(-33, -48)
+offset = Vector2(-42, -65)
 
 [node name="If_shard" type="Node2D" parent="Props"]
 script = ExtResource("cond")
@@ -504,7 +504,7 @@ only_if = "{\"not_flags\":[\"undercroft_seal_open\"]}"
 position = Vector2(1644, 288)
 texture = ExtResource("t17")
 centered = false
-offset = Vector2(-24, -63)
+offset = Vector2(-27, -69)
 
 [node name="LeverUpBody" type="StaticBody2D" parent="Props/If_lever_up"]
 collision_mask = 0
@@ -521,7 +521,7 @@ only_if = "{\"flags\":[\"undercroft_seal_open\"]}"
 position = Vector2(1644, 288)
 texture = ExtResource("t18")
 centered = false
-offset = Vector2(-24, -63)
+offset = Vector2(-27, -69)
 
 [node name="LeverDownBody" type="StaticBody2D" parent="Props/If_lever_down"]
 collision_mask = 0
