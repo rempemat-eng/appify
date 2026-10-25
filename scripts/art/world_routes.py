@@ -630,6 +630,11 @@ def lane_pieces():
         rel = f'art/regions/{fn}'
         with open(os.path.join(REGION_PLANS, fn)) as f:
             plan = json.load(f)
+        if plan.get('owner') == BETWEEN:
+            # lane G's own plan (lull-plain.json) draws its land round these routes: its side
+            # paths and pockets are the plan's
+            G_PLAN_BOXES.append(tuple(plan['box']))
+            continue
         base = (plan.get('base_tier') or {}).get('value', 0) or 0
         for r in plan.get('routes', []):
             rid = r['id'].replace('_', '-')
@@ -659,6 +664,7 @@ KEEP_OURS = {
     ('shell-bar', 'claude-c'): "tidebloom.json paints lane G's Shell Bar to G's line",
 }
 LANE_RAW: dict = {}
+G_PLAN_BOXES: list = []   # boxes of lane G's own region plans
 LANE_PIECES = lane_pieces()
 
 
@@ -1114,12 +1120,18 @@ def build_route(spec):
     return out
 
 
+def _in_g_plan(at):
+    """In lane G's land inside one of lane G's own plans' boxes: that plan seats it."""
+    return owner(*at)[0] == BETWEEN and any(x <= at[0] < x + w and y <= at[1] < y + h
+                                             for (x, y, w, h) in G_PLAN_BOXES)
+
+
 def side_paths(rid, verts, vs, theirs=()):
     """A side path round each obstacle: off the road at a shallow Y about 300 px before,
     round the far side with two gentle bends, back at a Y after (plan 5.6)."""
     out = []
     for (r, what, at) in OBSTACLES:
-        if r != rid or owner(*at)[0] in theirs:
+        if r != rid or owner(*at)[0] in theirs or _in_g_plan(at):
             continue
         so, d = project(verts, vs, at)
         total = vs[-1]
@@ -1152,7 +1164,7 @@ def pocket_paths(rid, verts, vs, theirs=()):
     with one gentle bend, ending in a clearing (80 px or more long, plan 6.4)."""
     out = []
     for (r, holds, at) in POCKETS:
-        if r != rid or owner(*at)[0] in theirs:
+        if r != rid or owner(*at)[0] in theirs or _in_g_plan(at):
             continue
         so, d = project(verts, vs, at)
         p0 = at_s(verts, vs, so)
