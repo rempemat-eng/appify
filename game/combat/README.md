@@ -354,3 +354,31 @@ Next: stateful secondary/special releases using these primitives, then the fixed
 player/dispatcher and granted Player hook. World HP and Tam duplicate-defeat remain owner
 decisions; this checkpoint does not resolve them. C60 remains IMPLEMENTING and PR261 DRAFT.
 Full npm verify/art, matching hosted CI, rendered/native/device validation remain pending.
+
+## Secondary release checkpoint
+
+`AbilitySecondary.release` ports original q on an input-preserving canonical snapshot for
+all fourteen characters. It retains committed action direction, Morel's patchless burst or
+powered reagent chain, Brine's heavy-target versus light-target reel and untethered strike,
+Pendle's partial fan/reload or powered rifle stock, Nix's commitment-origin decoy and
+Rook's vault timer. Melee/passives, serial/effect ordering, field caps/clamps and airborne
+projectile launch state share the existing canonical reducers. No world actor is attached.
+
+This method includes Pendle secondary ammo/reload consumption. The future dispatcher must
+choose one authoritative resource application and synchronize the resource component; it
+must not call both this mutation and AbilityResources.release for the same token. It also
+launches Cairn/Pendle projectiles itself; do not duplicate them via AbilityProjectiles.plan.
+The caller owns contact presentation, eligibility, once-per-token dispatch and clock expiry.
+
+`secondary-oracle.json` contains298 whole-state cases from hash-verified original q and
+unmodified helpers. Covers all14 kits in both forms, three directions and lethal/surviving
+targets; reagent range/chain, tether reach/coincident/heavy cases, partial fans, field caps,
+clamps, passives and empty/capped events. Exact IEEE754 fixture numbers and1e-6 comparisons
+match the other reducers. Reproduce with
+`node game/test/combat/build_secondary_oracle.mjs /path/to/original-modules.json`.
+Initial reference tests caught the sketch's incorrect non-chaining powered Morel call;
+using live power for G's default now preserves the original reaction and chain behaviour.
+
+Next: original special activation and remaining primary/melee state mutations, then the
+fixed-step dispatcher/contact bridge and granted Player hook. World HP/Tam decisions stay
+A-owned. Full verify/art/hosted/rendered/native/device coverage remains pending; keep DRAFT.
