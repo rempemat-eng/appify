@@ -1,0 +1,44 @@
+{
+  "id": "a1_the_road_west",
+  "title": "The road west",
+  "kind": "resident",
+  "region": "brackens",
+  "chapter": [
+    "brackens",
+    3
+  ],
+  "summary": "With Old Fang freed, the drover can take his flock west again. One ram is still loose on the Heather spur.",
+  "start": {
+    "on": "talk:drover",
+    "if": {
+      "done": [
+        "a1_the_cut_rope"
+      ]
+    }
+  },
+  "steps": [
+    {
+      "id": "ram",
+      "text": "Free the old ram on the Heather spur",
+      "on": "camp:spur_tor",
+      "done_if": {
+        "flags": [
+          "camp_cleared:spur_tor"
+        ]
+      }
+    },
+    {
+      "id": "iona",
+      "text": "Find Iona at the gap",
+      "on": "talk:iona"
+    }
+  ],
+  "rewards": {
+    "glint": 30,
+    "flags": [
+      "folk:iona",
+      "mover:drover_niece",
+      "region_free:brackens"
+    ]
+  }
+}

@@ -196,6 +196,8 @@
       "id": "snowmelt_lake",
       "kind": "tarn",
       "closed": true,
+      "source": "meltwater off the glacier snout to the north",
+      "outlet": "sleepwater",
       "points": [
         [6120, 1744],
         [6264, 1744],
@@ -211,6 +213,8 @@
     {
       "id": "sleepwater",
       "kind": "stream",
+      "source": "snowmelt_lake",
+      "outlet": "over the escarpment into the woodland spring pool (south, out of the box)",
       "width": 16,
       "points": [
         [6096, 1848],
@@ -282,6 +286,7 @@
     {
       "id": "gully_trail",
       "width": 24,
+      "fords": [[6040, 2168]],
       "dead_end": "resident",
       "why": "behind the rock rib into Fir Hollow (the forager's clearing, W2's second pine)",
       "points": [
@@ -480,6 +485,7 @@
     {
       "thing": "collapsed bridge",
       "kind": "ruin",
+      "in_water": true,
       "at": [6096, 1888],
       "route": "the Sleepwater",
       "where": "beside the ford: a ruin, not a way",

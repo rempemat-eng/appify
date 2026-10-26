@@ -520,7 +520,7 @@ centered = false
 
 [node name="Water" type="Sprite2D" parent="."]
 z_index = -9
-position = Vector2(178, 756)
+position = Vector2(176, 756)
 texture = ExtResource("flow")
 centered = false
 hframes = 2
@@ -531,478 +531,472 @@ script = ExtResource("flow_anim")
 y_sort_enabled = true
 
 [node name="stone-1" type="Sprite2D" parent="Objects"]
-position = Vector2(232, 1171)
+position = Vector2(228, 1176)
 texture = ExtResource("t_standing_stone")
 centered = false
-offset = Vector2(-36, -102)
+offset = Vector2(-37, -101)
 
 [node name="stone-2" type="Sprite2D" parent="Objects"]
-position = Vector2(338, 1196)
+position = Vector2(336, 1200)
 texture = ExtResource("t_standing_stone_b")
 centered = false
-offset = Vector2(-37, -102)
+offset = Vector2(-40, -100)
 
 [node name="stone-3" type="Sprite2D" parent="Objects"]
-position = Vector2(364, 1268)
+position = Vector2(360, 1272)
 texture = ExtResource("t_standing_stone_low")
 centered = false
-offset = Vector2(-34, -78)
+offset = Vector2(-35, -76)
 
 [node name="stone-4" type="Sprite2D" parent="Objects"]
-position = Vector2(328, 1315)
+position = Vector2(324, 1320)
 texture = ExtResource("t_standing_stone")
 centered = false
-offset = Vector2(-36, -102)
+offset = Vector2(-37, -101)
 
 [node name="stone-5" type="Sprite2D" parent="Objects"]
-position = Vector2(158, 1310)
+position = Vector2(156, 1320)
 texture = ExtResource("t_standing_stone_b")
 centered = false
-offset = Vector2(-37, -102)
+offset = Vector2(-40, -100)
 
 [node name="stone-6" type="Sprite2D" parent="Objects"]
-position = Vector2(112, 1256)
+position = Vector2(108, 1248)
 texture = ExtResource("t_standing_stone_low")
 centered = false
-offset = Vector2(-34, -78)
+offset = Vector2(-35, -76)
 
 [node name="stone-7" type="Sprite2D" parent="Objects"]
-position = Vector2(142, 1190)
+position = Vector2(144, 1200)
 texture = ExtResource("t_standing_stone_low")
 centered = false
-offset = Vector2(-34, -78)
+offset = Vector2(-35, -76)
 
 [node name="stump-1" type="Sprite2D" parent="Objects"]
-position = Vector2(530, 753)
+position = Vector2(528, 744)
 texture = ExtResource("t_stump")
 centered = false
-offset = Vector2(-37, -57)
+offset = Vector2(-43, -57)
 
 [node name="stump-2" type="Sprite2D" parent="Objects"]
-position = Vector2(152, 1077)
+position = Vector2(156, 1080)
 texture = ExtResource("t_stump")
 centered = false
-offset = Vector2(-37, -57)
+offset = Vector2(-43, -57)
 
 [node name="stump-3" type="Sprite2D" parent="Objects"]
-position = Vector2(740, 417)
+position = Vector2(744, 408)
 texture = ExtResource("t_stump")
 centered = false
-offset = Vector2(-37, -57)
+offset = Vector2(-43, -57)
 
 [node name="pine-6" type="Sprite2D" parent="Objects"]
-position = Vector2(54, 565)
+position = Vector2(60, 552)
 texture = ExtResource("t_pine")
 centered = false
-offset = Vector2(-62, -247)
+offset = Vector2(-62, -240)
 
 [node name="pine-7" type="Sprite2D" parent="Objects"]
-position = Vector2(384, 193)
+position = Vector2(384, 192)
 texture = ExtResource("t_pine")
 centered = false
-offset = Vector2(-62, -247)
+offset = Vector2(-62, -240)
 
 [node name="tree-8" type="Sprite2D" parent="Objects"]
-position = Vector2(63, 1352)
+position = Vector2(60, 1344)
 texture = ExtResource("t_bush_c")
 centered = false
-offset = Vector2(-65, -84)
+offset = Vector2(-66, -67)
 
 [node name="bush-2" type="Sprite2D" parent="Objects"]
-position = Vector2(59, 836)
+position = Vector2(60, 816)
 texture = ExtResource("t_bush_b")
 centered = false
-offset = Vector2(-46, -80)
+offset = Vector2(-47, -63)
 
 [node name="bush-3" type="Sprite2D" parent="Objects"]
-position = Vector2(528, 206)
+position = Vector2(528, 192)
 texture = ExtResource("t_bush_c")
 centered = false
-offset = Vector2(-65, -84)
+offset = Vector2(-66, -67)
 
 [node name="tree-1" type="Sprite2D" parent="Objects"]
-position = Vector2(85, 184)
+position = Vector2(84, 192)
 texture = ExtResource("t_oak")
 centered = false
-offset = Vector2(-105, -250)
+offset = Vector2(-106, -243)
 
 [node name="pine-1" type="Sprite2D" parent="Objects"]
-position = Vector2(204, 187)
+position = Vector2(204, 192)
 texture = ExtResource("t_pine")
 centered = false
-offset = Vector2(-62, -247)
+offset = Vector2(-62, -240)
 
 [node name="tree-2" type="Sprite2D" parent="Objects"]
-position = Vector2(694, 196)
+position = Vector2(696, 192)
 texture = ExtResource("t_oak")
 centered = false
-offset = Vector2(-105, -250)
+offset = Vector2(-106, -243)
 
 [node name="pine-2" type="Sprite2D" parent="Objects"]
-position = Vector2(804, 157)
+position = Vector2(804, 168)
 texture = ExtResource("t_pine")
 centered = false
-offset = Vector2(-62, -247)
+offset = Vector2(-62, -240)
 
 [node name="tree-3" type="Sprite2D" parent="Objects"]
-position = Vector2(85, 874)
+position = Vector2(84, 864)
 texture = ExtResource("t_oak")
 centered = false
-offset = Vector2(-105, -250)
+offset = Vector2(-106, -243)
 
 [node name="pine-3" type="Sprite2D" parent="Objects"]
-position = Vector2(54, 1225)
+position = Vector2(60, 1224)
 texture = ExtResource("t_pine")
 centered = false
-offset = Vector2(-62, -247)
+offset = Vector2(-62, -240)
 
 [node name="tree-4" type="Sprite2D" parent="Objects"]
-position = Vector2(784, 754)
+position = Vector2(780, 744)
 texture = ExtResource("t_oak")
 centered = false
-offset = Vector2(-105, -250)
+offset = Vector2(-106, -243)
 
 [node name="tree-5" type="Sprite2D" parent="Objects"]
-position = Vector2(657, 1144)
+position = Vector2(660, 1128)
 texture = ExtResource("t_birch")
 centered = false
-offset = Vector2(-53, -211)
+offset = Vector2(-53, -204)
 
 [node name="pine-4" type="Sprite2D" parent="Objects"]
-position = Vector2(114, 1645)
+position = Vector2(120, 1632)
 texture = ExtResource("t_pine")
 centered = false
-offset = Vector2(-62, -247)
+offset = Vector2(-62, -240)
 
 [node name="tree-6" type="Sprite2D" parent="Objects"]
-position = Vector2(274, 1714)
+position = Vector2(276, 1704)
 texture = ExtResource("t_oak")
 centered = false
-offset = Vector2(-105, -250)
+offset = Vector2(-106, -243)
 
 [node name="pine-5" type="Sprite2D" parent="Objects"]
-position = Vector2(504, 1705)
+position = Vector2(504, 1704)
 texture = ExtResource("t_pine")
 centered = false
-offset = Vector2(-62, -247)
+offset = Vector2(-62, -240)
 
 [node name="tree-7" type="Sprite2D" parent="Objects"]
-position = Vector2(819, 1714)
+position = Vector2(816, 1704)
 texture = ExtResource("t_birch")
 centered = false
-offset = Vector2(-53, -211)
+offset = Vector2(-53, -204)
 
 [node name="oak" type="Sprite2D" parent="Objects"]
-position = Vector2(327, 400)
+position = Vector2(324, 384)
 texture = ExtResource("t_hollow_tree")
 centered = false
-offset = Vector2(-114, -316)
+offset = Vector2(-115, -309)
 
 [node name="log-1" type="Sprite2D" parent="Objects"]
-position = Vector2(662, 751)
+position = Vector2(660, 744)
 texture = ExtResource("t_mossy_log")
 centered = false
-offset = Vector2(-88, -63)
+offset = Vector2(-91, -54)
 
 [node name="log-2" type="Sprite2D" parent="Objects"]
-position = Vector2(470, 1465)
+position = Vector2(468, 1464)
 texture = ExtResource("t_mossy_log")
 centered = false
-offset = Vector2(-88, -63)
+offset = Vector2(-91, -54)
 
 [node name="bench" type="Sprite2D" parent="Objects"]
-position = Vector2(510, 621)
+position = Vector2(516, 624)
 texture = ExtResource("t_forest_bench")
 centered = false
-offset = Vector2(-54, -54)
+offset = Vector2(-54, -51)
 
 [node name="willow" type="Sprite2D" parent="Objects"]
-position = Vector2(778, 1312)
+position = Vector2(780, 1320)
 texture = ExtResource("t_willow")
 centered = false
-offset = Vector2(-110, -301)
+offset = Vector2(-111, -294)
 
 [node name="bush-1" type="Sprite2D" parent="Objects"]
-position = Vector2(905, 1227)
+position = Vector2(912, 1200)
 texture = ExtResource("t_bush")
 centered = false
-offset = Vector2(-56, -91)
+offset = Vector2(-57, -73)
 
 [node name="wood-1" type="Sprite2D" parent="Objects"]
-position = Vector2(27, 214)
+position = Vector2(24, 216)
 texture = ExtResource("t_sapling")
 centered = false
-offset = Vector2(-36, -97)
+offset = Vector2(-37, -90)
 
 [node name="wood-2" type="Sprite2D" parent="Objects"]
-position = Vector2(21, 292)
+position = Vector2(24, 288)
 texture = ExtResource("t_birch")
 centered = false
-offset = Vector2(-53, -211)
+offset = Vector2(-53, -204)
 
 [node name="wood-3" type="Sprite2D" parent="Objects"]
-position = Vector2(94, 307)
+position = Vector2(96, 288)
 texture = ExtResource("t_holly")
 centered = false
-offset = Vector2(-48, -91)
+offset = Vector2(-48, -81)
 
 [node name="wood-4" type="Sprite2D" parent="Objects"]
-position = Vector2(619, 298)
+position = Vector2(624, 288)
 texture = ExtResource("t_oak")
 centered = false
-offset = Vector2(-105, -250)
+offset = Vector2(-106, -243)
 
 [node name="wood-5" type="Sprite2D" parent="Objects"]
-position = Vector2(501, 334)
+position = Vector2(504, 336)
 texture = ExtResource("t_birch")
 centered = false
-offset = Vector2(-53, -211)
+offset = Vector2(-53, -204)
 
 [node name="wood-6" type="Sprite2D" parent="Objects"]
-position = Vector2(47, 376)
+position = Vector2(48, 360)
 texture = ExtResource("t_beech")
 centered = false
-offset = Vector2(-86, -259)
+offset = Vector2(-87, -252)
 
 [node name="wood-7" type="Sprite2D" parent="Objects"]
-position = Vector2(24, 436)
+position = Vector2(24, 432)
 texture = ExtResource("t_pine")
 centered = false
-offset = Vector2(-62, -247)
+offset = Vector2(-62, -240)
 
 [node name="wood-8" type="Sprite2D" parent="Objects"]
-position = Vector2(58, 487)
+position = Vector2(60, 480)
 texture = ExtResource("t_holly_b")
 centered = false
-offset = Vector2(-54, -98)
+offset = Vector2(-54, -88)
 
 [node name="wood-9" type="Sprite2D" parent="Objects"]
-position = Vector2(94, 586)
+position = Vector2(96, 576)
 texture = ExtResource("t_bramble")
 centered = false
-offset = Vector2(-62, -76)
+offset = Vector2(-64, -66)
 
 [node name="wood-10" type="Sprite2D" parent="Objects"]
-position = Vector2(31, 625)
+position = Vector2(36, 624)
 texture = ExtResource("t_oak")
 centered = false
-offset = Vector2(-105, -250)
+offset = Vector2(-106, -243)
 
 [node name="wood-11" type="Sprite2D" parent="Objects"]
-position = Vector2(111, 652)
+position = Vector2(108, 648)
 texture = ExtResource("t_holly_b")
 centered = false
-offset = Vector2(-54, -98)
+offset = Vector2(-54, -88)
 
 [node name="wood-12" type="Sprite2D" parent="Objects"]
-position = Vector2(793, 664)
+position = Vector2(792, 648)
 texture = ExtResource("t_holly")
 centered = false
-offset = Vector2(-48, -91)
+offset = Vector2(-48, -81)
 
 [node name="wood-13" type="Sprite2D" parent="Objects"]
-position = Vector2(847, 649)
+position = Vector2(852, 648)
 texture = ExtResource("t_oak")
 centered = false
-offset = Vector2(-105, -250)
+offset = Vector2(-106, -243)
 
 [node name="wood-14" type="Sprite2D" parent="Objects"]
-position = Vector2(918, 700)
+position = Vector2(924, 696)
 texture = ExtResource("t_sapling")
 centered = false
-offset = Vector2(-36, -97)
+offset = Vector2(-37, -90)
 
 [node name="wood-15" type="Sprite2D" parent="Objects"]
-position = Vector2(19, 772)
+position = Vector2(24, 768)
 texture = ExtResource("t_holly_b")
 centered = false
-offset = Vector2(-54, -98)
+offset = Vector2(-54, -88)
 
 [node name="wood-16" type="Sprite2D" parent="Objects"]
-position = Vector2(49, 865)
+position = Vector2(36, 840)
 texture = ExtResource("t_oak")
 centered = false
-offset = Vector2(-105, -250)
+offset = Vector2(-106, -243)
 
 [node name="wood-17" type="Sprite2D" parent="Objects"]
-position = Vector2(36, 943)
+position = Vector2(36, 936)
 texture = ExtResource("t_pine")
 centered = false
-offset = Vector2(-62, -247)
+offset = Vector2(-62, -240)
 
 [node name="wood-18" type="Sprite2D" parent="Objects"]
-position = Vector2(101, 982)
+position = Vector2(108, 984)
 texture = ExtResource("t_bramble_b")
 centered = false
-offset = Vector2(-54, -76)
+offset = Vector2(-54, -66)
 
 [node name="wood-19" type="Sprite2D" parent="Objects"]
-position = Vector2(49, 1015)
+position = Vector2(48, 1008)
 texture = ExtResource("t_oak")
 centered = false
-offset = Vector2(-105, -250)
+offset = Vector2(-106, -243)
 
 [node name="wood-20" type="Sprite2D" parent="Objects"]
-position = Vector2(58, 1083)
+position = Vector2(60, 1080)
 texture = ExtResource("t_stump")
 centered = false
-offset = Vector2(-37, -57)
+offset = Vector2(-43, -57)
 
 [node name="wood-21" type="Sprite2D" parent="Objects"]
-position = Vector2(564, 1090)
+position = Vector2(564, 1080)
 texture = ExtResource("t_sapling")
 centered = false
-offset = Vector2(-36, -97)
+offset = Vector2(-37, -90)
 
 [node name="wood-22" type="Sprite2D" parent="Objects"]
-position = Vector2(35, 1165)
+position = Vector2(36, 1152)
 texture = ExtResource("t_beech")
 centered = false
-offset = Vector2(-86, -259)
+offset = Vector2(-87, -252)
 
 [node name="wood-23" type="Sprite2D" parent="Objects"]
-position = Vector2(102, 1159)
+position = Vector2(108, 1152)
 texture = ExtResource("t_pine")
 centered = false
-offset = Vector2(-62, -247)
+offset = Vector2(-62, -240)
 
 [node name="wood-24" type="Sprite2D" parent="Objects"]
-position = Vector2(727, 1168)
+position = Vector2(732, 1152)
 texture = ExtResource("t_oak")
 centered = false
-offset = Vector2(-105, -250)
-
-[node name="wood-25" type="Sprite2D" parent="Objects"]
-position = Vector2(677, 1195)
-texture = ExtResource("t_beech")
-centered = false
-offset = Vector2(-86, -259)
+offset = Vector2(-106, -243)
 
 [node name="wood-26" type="Sprite2D" parent="Objects"]
-position = Vector2(616, 1273)
+position = Vector2(612, 1224)
 texture = ExtResource("t_oak")
 centered = false
-offset = Vector2(-105, -250)
+offset = Vector2(-106, -243)
 
 [node name="wood-27" type="Sprite2D" parent="Objects"]
-position = Vector2(18, 1306)
+position = Vector2(24, 1296)
 texture = ExtResource("t_pine")
 centered = false
-offset = Vector2(-62, -247)
+offset = Vector2(-62, -240)
 
 [node name="wood-28" type="Sprite2D" parent="Objects"]
-position = Vector2(412, 1345)
+position = Vector2(420, 1344)
 texture = ExtResource("t_bramble")
 centered = false
-offset = Vector2(-62, -76)
+offset = Vector2(-64, -66)
 
 [node name="wood-29" type="Sprite2D" parent="Objects"]
-position = Vector2(317, 1375)
+position = Vector2(324, 1368)
 texture = ExtResource("t_bramble_b")
 centered = false
-offset = Vector2(-54, -76)
+offset = Vector2(-54, -66)
 
 [node name="wood-30" type="Sprite2D" parent="Objects"]
-position = Vector2(454, 1369)
+position = Vector2(456, 1368)
 texture = ExtResource("t_bramble")
 centered = false
-offset = Vector2(-62, -76)
+offset = Vector2(-64, -66)
 
 [node name="wood-31" type="Sprite2D" parent="Objects"]
-position = Vector2(36, 1411)
+position = Vector2(36, 1416)
 texture = ExtResource("t_birch")
 centered = false
-offset = Vector2(-53, -211)
+offset = Vector2(-53, -204)
 
 [node name="wood-32" type="Sprite2D" parent="Objects"]
-position = Vector2(96, 1420)
+position = Vector2(96, 1416)
 texture = ExtResource("t_sapling")
 centered = false
-offset = Vector2(-36, -97)
+offset = Vector2(-37, -90)
 
 [node name="wood-33" type="Sprite2D" parent="Objects"]
-position = Vector2(404, 1401)
+position = Vector2(408, 1392)
 texture = ExtResource("t_stump")
 centered = false
-offset = Vector2(-37, -57)
+offset = Vector2(-43, -57)
 
 [node name="wood-34" type="Sprite2D" parent="Objects"]
-position = Vector2(24, 1474)
+position = Vector2(24, 1464)
 texture = ExtResource("t_pine")
 centered = false
-offset = Vector2(-62, -247)
+offset = Vector2(-62, -240)
 
 [node name="wood-35" type="Sprite2D" parent="Objects"]
-position = Vector2(353, 1561)
+position = Vector2(360, 1560)
 texture = ExtResource("t_bramble_b")
 centered = false
-offset = Vector2(-54, -76)
+offset = Vector2(-54, -66)
 
 [node name="wood-36" type="Sprite2D" parent="Objects"]
-position = Vector2(462, 1564)
+position = Vector2(468, 1560)
 texture = ExtResource("t_birch")
 centered = false
-offset = Vector2(-53, -211)
+offset = Vector2(-53, -204)
 
 [node name="wood-37" type="Sprite2D" parent="Objects"]
-position = Vector2(568, 1561)
+position = Vector2(564, 1560)
 texture = ExtResource("t_holly")
 centered = false
-offset = Vector2(-48, -91)
+offset = Vector2(-48, -81)
 
 [node name="wood-38" type="Sprite2D" parent="Objects"]
-position = Vector2(634, 1603)
+position = Vector2(636, 1584)
 texture = ExtResource("t_bramble")
 centered = false
-offset = Vector2(-62, -76)
+offset = Vector2(-64, -66)
 
 [node name="wood-40" type="Sprite2D" parent="Objects"]
-position = Vector2(296, 1617)
+position = Vector2(300, 1608)
 texture = ExtResource("t_stump")
 centered = false
-offset = Vector2(-37, -57)
+offset = Vector2(-43, -57)
 
 [node name="wood-41" type="Sprite2D" parent="Objects"]
-position = Vector2(439, 1636)
+position = Vector2(444, 1632)
 texture = ExtResource("t_oak")
 centered = false
-offset = Vector2(-105, -250)
+offset = Vector2(-106, -243)
 
 [node name="wood-42" type="Sprite2D" parent="Objects"]
-position = Vector2(494, 1639)
+position = Vector2(492, 1632)
 texture = ExtResource("t_bramble_b")
 centered = false
-offset = Vector2(-54, -76)
+offset = Vector2(-54, -66)
 
 [node name="wood-43" type="Sprite2D" parent="Objects"]
-position = Vector2(759, 1636)
+position = Vector2(756, 1632)
 texture = ExtResource("t_sapling")
 centered = false
-offset = Vector2(-36, -97)
+offset = Vector2(-37, -90)
 
 [node name="wood-44" type="Sprite2D" parent="Objects"]
-position = Vector2(240, 1657)
+position = Vector2(240, 1656)
 texture = ExtResource("t_oak")
 centered = false
-offset = Vector2(-105, -250)
+offset = Vector2(-106, -243)
 
 [node name="wood-45" type="Sprite2D" parent="Objects"]
-position = Vector2(355, 1672)
+position = Vector2(360, 1656)
 texture = ExtResource("t_oak")
 centered = false
-offset = Vector2(-105, -250)
+offset = Vector2(-106, -243)
 
 [node name="wood-46" type="Sprite2D" parent="Objects"]
-position = Vector2(582, 1672)
+position = Vector2(588, 1656)
 texture = ExtResource("t_sapling")
 centered = false
-offset = Vector2(-36, -97)
+offset = Vector2(-37, -90)
 
 [node name="wood-47" type="Sprite2D" parent="Objects"]
-position = Vector2(727, 1666)
+position = Vector2(732, 1656)
 texture = ExtResource("t_holly_b")
 centered = false
-offset = Vector2(-54, -98)
+offset = Vector2(-54, -88)
 
 [node name="Walls" type="StaticBody2D" parent="."]
 collision_mask = 0

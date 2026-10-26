@@ -1,14 +1,14 @@
 {
  "id": "woodland/willow",
  "file": "game/zones/woodland/art/willow.png",
- "sha256": "a4d78563e694cb20ebaf8a5643a7b2b9ab5a3df6abfa18986256142d84bdc8bd",
+ "sha256": "7811d19f0e7bce8db1a3528a3011e6c78e52233a063c1360961164b2ff0e0cdb",
  "kind": "willow",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  220,
-  301
+  222,
+  294
  ],
  "status": "pass",
  "counts": {
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 111,
-   "tones": 19.36936936936937,
-   "shapes": 38.62162162162162
+   "patches": 117,
+   "tones": 19.418803418803417,
+   "shapes": 38.05982905982906
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.61,
-  "tones_ratio": 0.699,
-  "shapes_ratio": 0.61,
+  "ratio": 0.601,
+  "tones_ratio": 0.701,
+  "shapes_ratio": 0.601,
   "passed": false,
   "group": "foliage"
  },
@@ -39,31 +39,32 @@
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    8,
     10,
-    210,
-    300
+    10,
+    212,
+    294
    ],
-   "message": "woodland/willow: detail bar 0.61 of Eastward's foliage band (19.4 tones, 38.6 shapes a patch against 27.71, 63.32)",
+   "message": "woodland/willow: detail bar 0.60 of Eastward's foliage band (19.4 tones, 38.1 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   },
   {
    "detector": "detail.outline",
    "severity": "polish",
    "box": [
-    8,
     10,
-    210,
-    300
+    10,
+    212,
+    294
    ],
-   "message": "woodland/willow: only 10% of the silhouette is drawn in an edge tone",
+   "message": "woodland/willow: only 18% of the silhouette is drawn in an edge tone",
    "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-10-26",
+  "note": "#288 re-review at ba7714c2: strands in clumps with leaf ticks; no longer a barcode. Polish: the trunk top shows as a bare point inside the curtain."
  }
 }

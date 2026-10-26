@@ -29,7 +29,7 @@ import numpy as np
 from PIL import Image, ImageDraw
 
 from .core import REPO, GAME_H, Finding, write_json, merge_findings, COLOURS
-from . import detail as D, construct as C, bands as B, screen as SC
+from . import detail as D, construct as C, bands as B, screen as SC, scale as S
 
 ZONES = os.path.join(REPO, 'game', 'zones')
 CATALOGUE = os.path.join(REPO, 'art', 'catalogue')
@@ -149,6 +149,12 @@ def review_rgba(rgba: np.ndarray, subject: str, kind: str, biome: str, H: float 
         ignore = SC.hud_mask(rgba) | ~alpha       # transparent parts of an overlay are not art
         rep = SC.review_screen(rgba, H, biome=biome, subject=subject, ignore=ignore)
         findings = list(rep['_objs'])
+        # organic edges on the soft grid (edges.py): judged on the ground picture itself, where no
+        # sprite stands on them (on a composed screen trunks, logs and props join the dirt)
+        from . import edges as E
+        findings += E.ragged_ground(rgba[..., :3], H, subject, ignore)
+        # the ground's grain against Eastward's at the same character height (scale.py)
+        findings += S.check_asset(rgba, subject, kind, H, density, ground=True, ignore=ignore)
     else:
         rgb_n = on_ground(rgba, NEUTRAL)
         f1, parts = D.judge_object(rgb_n, alpha, H, subject, kind=kind)
@@ -156,7 +162,8 @@ def review_rgba(rgba: np.ndarray, subject: str, kind: str, biome: str, H: float 
         findings += C.floating_parts(alpha, H, subject)
         findings += C.stilts(rgb_n, alpha, H, subject)
         findings += C.dotted(rgb_n, alpha, H, subject)
-        findings += C.scale(alpha, H, kind, subject, density)
+        # size against a person (scripts/review/sizes.json; doors, storey and roof for kit buildings)
+        findings += S.check_asset(rgba, subject, kind, H, density)
         findings += C.mushrooms(rgb_n, alpha, H, subject, density)
         findings += C.biome_form(rgb_n, alpha, H, subject, biome)
         findings += C.crown_holes(rgb_n, alpha, H, subject)
@@ -166,6 +173,10 @@ def review_rgba(rgba: np.ndarray, subject: str, kind: str, biome: str, H: float 
         findings += C.glyphs(rgb_n, alpha, H, subject)
         findings += C.construction(rgb_n, alpha, H, subject, kind)
         findings += C.cylinder(rgb_n, alpha, H, subject)
+        from . import edges as E
+        if any(k in subject.split('/')[-1] for k in E.ORGANIC_SPRITES):
+            # a laid-out piece of ground drawn as a sprite (beds, a pond): its outline on the soft grid
+            findings += E.ragged(alpha, H, subject, min_area=0.02, sprite=True)
         ol = D.outline_share(rgb_n, alpha)
         if ol < 0.4 and alpha.sum() > 0.05 * H * H:
             x0, y0, x1, y1 = C.bbox(alpha)
@@ -193,8 +204,22 @@ def review_rgba(rgba: np.ndarray, subject: str, kind: str, biome: str, H: float 
 
 
 # ------------------------------------------------------------------------------------------
+def anchors() -> list[dict]:
+    """The style anchors (catalogue records with `style_anchor`): the props Matt named as the style
+    he is going for (26 Oct: the bench and the green-capped lamp). Every asset sheet shows them."""
+    out = []
+    for rec in sorted(glob.glob(os.path.join(CATALOGUE, '*', '*.json'))):
+        try:
+            r = json.load(open(rec))
+        except Exception:
+            continue
+        if r.get('style_anchor'):
+            out.append(r)
+    return out
+
+
 def siblings(zone: str, name: str, kind: str, n: int = 3) -> list[str]:
-    """The same category in the catalogue, approved first."""
+    """The same category in the catalogue, approved first; then the style anchors."""
     out = []
     for rec in sorted(glob.glob(os.path.join(CATALOGUE, '*', '*.json'))):
         try:
@@ -203,7 +228,14 @@ def siblings(zone: str, name: str, kind: str, n: int = 3) -> list[str]:
             continue
         if r.get('kind') == kind and r.get('id') != f'{zone}/{name}':
             out.append((0 if r.get('status') == 'pass' else 1, r['file']))
-    return [f for _, f in sorted(out)[:n]]
+    sib = [f for _, f in sorted(out)[:n]]
+    for r in anchors():
+        f = r['file']
+        if r.get('id') != f'{zone}/{name}' and f not in sib:
+            if not os.path.exists(os.path.join(REPO, f)) and r['id'].startswith('kit/'):
+                render_kit(r['id'].split('/', 1)[1])
+            sib.append(f)
+    return sib
 
 
 def sheet(path: str, report: dict, out: str) -> None:

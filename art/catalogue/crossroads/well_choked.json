@@ -1,7 +1,7 @@
 {
  "id": "crossroads/well_choked",
  "file": "game/zones/crossroads/art/well_choked.png",
- "sha256": "de8b655169f080f4ec8dccc8f4cef2ff89dfbebccac6f185740b50815b08e424",
+ "sha256": "064c1f67868b3fbaf40b72ee1c7b7e021871d1285d834555001b9660fa3095e0",
  "kind": "well",
  "biome": "valley",
  "H": 74.0,
@@ -14,12 +14,12 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 4
+  "polish": 3
  },
  "detail_bar": {
   "ours": {
    "patches": 11,
-   "tones": 28.727272727272727,
+   "tones": 29.454545454545453,
    "shapes": 43.0
   },
   "band": {
@@ -29,7 +29,7 @@
    "patches": 83
   },
   "ratio": 0.854,
-  "tones_ratio": 1.064,
+  "tones_ratio": 1.091,
   "shapes_ratio": 0.854,
   "passed": false,
   "group": "prop"
@@ -39,25 +39,13 @@
    "detector": "detail.light",
    "severity": "polish",
    "box": [
-    29,
+    28,
     10,
     77,
     35
    ],
-   "message": "crossroads/well_choked: the stone is lit from the right (luminance rises 45 L per H to the east)",
+   "message": "crossroads/well_choked: the stone is lit from the right (luminance rises 53 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
-   "detector": "logic.scale",
-   "severity": "polish",
-   "box": [
-    14,
-    8,
-    107,
-    80
-   ],
-   "message": "crossroads/well_choked: 24 world px tall (0.96 of an adult); the size guide gives 30 to 44 for a well (a well: a wall 10 to 14 high, a roof or winch on posts)",
-   "fix": "redraw it 30 to 44 world px tall (90 to 132 texels at density 3) and stand it next to Bramble to check"
   },
   {
    "detector": "detail.light",
@@ -80,11 +68,11 @@
     107,
     80
    ],
-   "message": "crossroads/well_choked: detail bar 0.85 of Eastward's prop band (28.7 tones, 43.0 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/well_choked: detail bar 0.85 of Eastward's prop band (29.5 tones, 43.0 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",

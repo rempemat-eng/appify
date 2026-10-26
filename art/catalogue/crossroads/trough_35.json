@@ -1,7 +1,7 @@
 {
  "id": "crossroads/trough_35",
  "file": "game/zones/crossroads/art/trough_35.png",
- "sha256": "027bbbcfff9f8fe3f26dee2ce601d8ca46c6c82ac0e68d9599cbdd5cecee9e75",
+ "sha256": "dad751c850f6a17b3d6b93419cd87aee1b5fce079c7d64f91c0cc31c7bd3b38b",
  "kind": "trough",
  "biome": "valley",
  "H": 74.0,
@@ -13,14 +13,14 @@
  "status": "fail",
  "counts": {
   "blocker": 0,
-  "fault": 2,
+  "fault": 1,
   "polish": 1
  },
  "detail_bar": {
   "ours": {
    "patches": 9,
-   "tones": 14.444444444444445,
-   "shapes": 19.77777777777778
+   "tones": 18.11111111111111,
+   "shapes": 24.333333333333332
   },
   "band": {
    "tones": 27.0,
@@ -28,15 +28,15 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.393,
-  "tones_ratio": 0.535,
-  "shapes_ratio": 0.393,
+  "ratio": 0.483,
+  "tones_ratio": 0.671,
+  "shapes_ratio": 0.483,
   "passed": false,
   "group": "prop"
  },
  "findings": [
   {
-   "detector": "logic.scale",
+   "detector": "detail.bar",
    "severity": "polish",
    "box": [
     8,
@@ -44,23 +44,11 @@
     70,
     54
    ],
-   "message": "crossroads/trough_35: 17 world px tall (0.67 of an adult); the size guide gives 8 to 14 for a trough (a trough at an animal's mouth height)",
-   "fix": "redraw it 8 to 14 world px tall (24 to 42 texels at density 3) and stand it next to Bramble to check"
+   "message": "crossroads/trough_35: detail bar 0.48 of Eastward's prop band (18.1 tones, 24.3 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   },
   {
-   "detector": "detail.water_flat",
-   "severity": "fault",
-   "box": [
-    14,
-    14,
-    59,
-    18
-   ],
-   "message": "crossroads/trough_35: the water is a flat rectangle of 3 tones with a ruler-straight edge",
-   "fix": "show depth: the opening as an ellipse from above with its inner wall (lit on the far side, shaded on the near), the water lower than the rim, darker under the near rim, a 1 px light line and a glint (eastward-edges.md 5.3)"
-  },
-  {
-   "detector": "detail.bar",
+   "detector": "logic.scale",
    "severity": "fault",
    "box": [
     8,
@@ -68,11 +56,11 @@
     70,
     54
    ],
-   "message": "crossroads/trough_35: detail bar 0.39 of Eastward's prop band (14.4 tones, 19.8 shapes a patch against 27.0, 50.36)",
-   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+   "message": "crossroads/trough_35: tall 50 art px (0.68 A) is too big for a trough: the size table gives 26 to 44 (0.35 to 0.59 A); Eastward at the same character height: none; from real size (stall counters 0.45 to 0.6 A in 04)",
+   "fix": "redraw it 26 to 44 art px tall (target about 35), checked beside Bramble (74 art px) in the asset sheet"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",

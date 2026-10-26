@@ -33,7 +33,7 @@ zone_id = "woodland"
 y_sort_enabled = true
 
 [node name="StoneSign" type="Area2D" parent="Actors"]
-position = Vector2(372, 1095)
+position = Vector2(372, 1104)
 script = ExtResource("3")
 speaker_id = "stone_sign"
 verb = "Read"

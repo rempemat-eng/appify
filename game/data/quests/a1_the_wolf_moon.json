@@ -1,0 +1,53 @@
+{
+  "id": "a1_the_wolf_moon",
+  "title": "The wolf moon",
+  "kind": "main",
+  "region": "valley",
+  "summary": "The lantern burns brighter than ever, and something on the moor has noticed. Hale wants a bell that can warn the town.",
+  "start": {
+    "on": "talk:hale",
+    "if": {
+      "done": [
+        "a1_the_circle_wakes"
+      ]
+    }
+  },
+  "steps": [
+    {
+      "id": "bell",
+      "text": "Rebuild the library's bell cupola",
+      "on": "restore:bell_tower",
+      "done_if": {
+        "restored": [
+          "bell_tower"
+        ]
+      }
+    },
+    {
+      "id": "ring",
+      "text": "Ring the bell when you're ready",
+      "on": "talk:bell_tower"
+    },
+    {
+      "id": "siege",
+      "text": "Hold the lantern through the wolf moon",
+      "on": "camp:wolf_moon",
+      "done_if": {
+        "flags": [
+          "camp_cleared:wolf_moon"
+        ]
+      }
+    },
+    {
+      "id": "hale",
+      "text": "Find Hale on the square",
+      "on": "talk:hale"
+    }
+  ],
+  "rewards": {
+    "glint": 60,
+    "flags": [
+      "wolf_moon_held"
+    ]
+  }
+}

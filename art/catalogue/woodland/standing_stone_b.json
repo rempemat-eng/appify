@@ -1,14 +1,14 @@
 {
  "id": "woodland/standing_stone_b",
  "file": "game/zones/woodland/art/standing_stone_b.png",
- "sha256": "e98636bfe4050eb5f39d905a94c713707d5d453248a36b3afa9623ccd76d007a",
+ "sha256": "c566ad07202b45b72e13e9c2f0306154b81fffe1cbf42fbde2871e289c16e2f3",
  "kind": "standing_stone",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  75,
-  102
+  81,
+  100
  ],
  "status": "pass",
  "counts": {
@@ -48,7 +48,7 @@
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",

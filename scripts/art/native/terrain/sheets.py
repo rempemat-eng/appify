@@ -777,12 +777,13 @@ def _z(a):
     return (a - a.mean()) / (a.std() + 1e-9)
 
 
-def grass_field_d(W=320, H=832, seed=3, fam='grass', base_tone=3, density=1.0, mottle=0.30):
+def grass_field_d(W=320, H=832, seed=3, fam='grass', base_tone=3, density=1.0, mottle=0.30, tufts=True):
     """A lawn as large as the canvas (no tile, no repeat), in Eastward's manner: one base tone
     with a fine low-contrast mottle (sibling ramps at the same tone, in 1 to 3 world px
     flecks), a few soft blotches a tone up (sun) or down (shade) with an in-between sibling
     rim, and the texture in tufts of 4 to 7 curved blades (dark at the root, lit at the tip)
-    10 to 20 world px apart in loose drifts. No streak hatch."""
+    10 to 20 world px apart in loose drifts. No streak hatch. `tufts=False` leaves them out (the
+    village at density 3 dresses its lawn itself: town.lawn_detail_hd)."""
     Ww, Hw = W, H
     W, H = P(W), P(H)
     rng = _rng(seed)
@@ -813,6 +814,8 @@ def grass_field_d(W=320, H=832, seed=3, fam='grass', base_tone=3, density=1.0, m
         nb = [np.roll(code, sh, ax) for sh, ax in ((1, 0), (-1, 0), (1, 1), (-1, 1))]
         lone = (code != nb[0]) & (code != nb[1]) & (code != nb[2]) & (code != nb[3])
         code = np.where(lone, nb[0], code)
+    if not tufts:
+        return code
     # r3: tufts gather in clumps of 2 to 5 round sparse centres, with calm lawn between the
     # clumps (Eastward), thinned further by a drift noise so whole stretches stay quiet
     drift = up(_z(g4(seed + 3, 16)))

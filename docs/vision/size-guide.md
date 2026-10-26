@@ -12,6 +12,105 @@ This is the one reference every lane draws and places by. For every kind of thin
 
 "let's go with 2x. final decision." **Every size in this guide is in world px** (the "zone px" below), and world logic stays in world units: an adult is 25 world px, a cell 8, the walk grid 4, and positions, walk masks, hit boxes and every rule are measured in them. **All new art is drawn at density 2: multiply by 2 for art px.** An adult is 50 art px tall, a soft-grid cell 16 art px, and 600 art px span the screen (`ART_ACROSS_AT[2]`). The engine and the export contract are in `lib/art-density.ts` and `lib/pixel-scale.ts` (#183), whose header and description summarise the density research; [art-style.md](art-style.md) "Density 2" has the style reference and its lessons. Where this guide says "art px" for a 1x drawing, its 2x equivalent is noted beside it.
 
+## Art px at density 3 (26 Oct): the scale gate
+
+Matt, 26 Oct 15:40: "make sure the size ratios are correct of all the objects, objects vs humans, background/ grass flats etc. vs objects".
+
+The game now draws at **density 3**: 960 x 540 art px on screen, shown 2x at 1080p. An adult (Bramble) is **74 art px** feet to crown, the soft-grid cell **24 art px** (8 world px), Cairn 1.2 of the hero and the creatures 0.55 and 0.75. This section is the table the scale gate measures against; it supersedes the density 2 art px figures above wherever they differ, and the world px sections stay the source for layout.
+
+**The yardstick.** The adult is taken as **1.70 m**, so **43.5 art px a metre** (74 / 1.70). Eastward's John is 54 native px (eastward-edges.md 0), so an Eastward length times **1.37** is ours at the same character height. Every range below was checked against Eastward measured that way in its integer-scale shots (01, 04, 08, 12, 13, 16, 17, 38, 39; 07 and 11 are zoomed out and were not used), read on 4x crops of the native frames (the screenshots and crops stay local).
+
+**Three scales, kept.** What people touch is true size or a touch over; buildings are compressed (a storey 1.3 to 1.9 A); landscape is compressed most (an oak 2 to 4.2 A, not 10). **Eastward's chunky readability** is kept where it applies and named in the last column: its bench seat stands 0.46 A (real 0.26), its bushes are as wide as a person, its tubs and crates read at a glance. Where Eastward is not chunky we do not invent it: its doors are 1.0 A to the lintel (1.15 to 1.2 A with the frame), shorter than a real door; ours may run to 1.3 A, and every Crossroads door now measures 1.27 A, at the top of the range (watch it; do not grow them further).
+
+**The data.** `scripts/review/sizes.json` holds every class (height and width in art px and in A, its real size, the Eastward measurement, the chunky note, how it is measured and the names that map to it), the ground grain, path widths and the cast. `python3 -m scripts.review.scale --markdown` prints the table below from it; change the JSON and reprint. `scripts/art/size_guide.json` (world px, section 10) stays for the old world px checks.
+
+Art px at density 3. A = 74 art px = 1.7 m, so 43.5 art px a metre; Eastward's adult is 54 E px, so an Eastward length times 1.37 is ours.
+
+| Class | Height (art px) | Width (art px) | Height (A) | Real size | Eastward at the same character height | Chunky on purpose |
+| --- | --- | --- | --- | --- | --- | --- |
+| door | 70 to 96 | 33 to 53 | 0.95 to 1.30 | leaf 2.0 to 2.1 m x 0.8 to 1.0 m (1.18 to 1.24 A) | leaf 52 to 55 E (0.96 to 1.02 A), 20 to 30 E wide; 1.15 to 1.2 A with its frame (shots 01, 12, 17, 38) | up to 1.3 A: our door may stand a little over Eastward's and real life so the opening reads at phone size |
+| wide door | 74 to 130 | 59 to 111 | 1.00 to 1.75 | a cart door, barn door or forge mouth 2.5 to 3 m high and wide | the barn's roller door in 17: 67 x 60 E (1.24 x 1.1 A) |  |
+| door handle | 3 to 7 | 3 to 7 | 0.04 to 0.10 | a knob or latch 6 to 10 cm, about 1 m up (0.55 to 0.6 of the leaf) | knob or latch 3 to 4 E (0.06 to 0.07 A) at 0.5 to 0.6 of the leaf (17, 12) | a latch may be 4 to 7 art px so it reads; never a lump bigger than a hand |
+| window | 28 to 46 | 24 to 46 | 0.38 to 0.62 | a cottage window 0.9 to 1.2 m | 23 x 27 E (0.43 x 0.5 A) with frame (12); city 28 x 39 E (01) |  |
+| stair | 12 to 22 | 33 to 118 | 0.16 to 0.30 | a step: riser 15 to 18 cm, tread 28 cm | farm stair 12 E a step (6 tread, 6 riser): 0.22 A pitch, 1.2 A wide (13); city flights 5 E a step (01) | pitch 0.16 to 0.30 A (12 to 22 art px): a short flight of broad steps, wider than Eastward's for the phone |
+| storey | 96 to 141 |  | 1.30 to 1.90 | a storey 2.6 to 3 m | upper storey 1.3 to 1.45 A, shop ground storey 1.6 to 1.9 A (size-guide.md 3) | compressed from real life on purpose (fewer storeys, not squashed ones) |
+| roof | 22 to 170 |  | 0.30 to 2.30 | a 35 to 50 degree roof seen from above | cottage roof 0.8 to 1.6 A eaves to ridge (12, 38); eaves overhang 2 to 5 E |  |
+| cottage | 200 to 340 | 192 to 340 | 2.70 to 4.60 | an 8 x 6 m cottage, 7 m to the ridge (compressed) | house 3.1 A to the ridge, 3.7 A wide (12) |  |
+| terrace | 200 to 340 | 222 to 444 | 2.70 to 4.60 | two cottages in a row | as the cottage |  |
+| hut | 148 to 252 | 178 to 296 | 2.00 to 3.40 | a one-room hut | the thatched hut in 12: 2.5 A to the ridge, 3 A wide |  |
+| civic | 200 to 370 | 222 to 407 | 2.70 to 5.00 | a library or a forge | station 4.5 A wide (08) |  |
+| bench | 37 to 68 | 70 to 107 | 0.50 to 0.92 | seat 0.45 m, back 0.85 m, 1.5 to 1.8 m long | 66 x 47 E with its back (1.2 x 0.87 A) in 12 and 38 | seat and length a touch big, as Eastward's (its seat is 0.46 A, real 0.26 A) |
+| chair | 33 to 59 | 21 to 37 | 0.45 to 0.80 | seat 0.45 m, back 0.9 m | stools and chairs 0.5 to 0.75 A (04) | a touch big |
+| table | 30 to 52 | 52 to 111 | 0.40 to 0.70 | 0.75 m high, 1 to 1.6 m long | stall counters 0.45 to 0.6 A (04) |  |
+| bed | 37 to 67 | 56 to 81 | 0.50 to 0.90 | 2 m x 0.9 to 1.4 m, 0.5 m high | none in the shots; from real size seen from above |  |
+| barrel | 31 to 46 | 24 to 37 | 0.42 to 0.62 | 0.9 m tall, 0.6 m across (0.53 x 0.35 A) | tubs and pots 0.3 to 0.4 A (04); milk cans 0.73 A (17) | up to 0.62 A: a touch over real for readability, never as tall as a hip-high crate stack |
+| crate | 22 to 41 | 26 to 44 | 0.30 to 0.55 | 0.5 m cube | fruit crates 26 x 20 E (0.48 x 0.37 A) in 04 | a touch big |
+| crate stack | 41 to 85 | 26 to 59 | 0.55 to 1.15 | two or three crates | 04: stacks to 1 A |  |
+| sack | 22 to 44 | 22 to 59 | 0.30 to 0.60 | a sack 0.6 to 0.8 m | sacks at the stalls 0.35 to 0.5 A (04) |  |
+| bucket | 13 to 24 | 13 to 22 | 0.18 to 0.32 | 0.3 m | pails 12 to 16 E (0.22 to 0.3 A) (13, 17) | a touch big |
+| well | 89 to 141 | 70 to 118 | 1.20 to 1.90 | a well with its roof 2.2 to 2.6 m, ring 1.2 m across | the bell frame in 13: 58 x 60 E (1.07 x 1.1 A) | the roof may stand over a person's head (1.2 to 1.9 A) |
+| well ring | 41 to 78 | 70 to 118 | 0.55 to 1.05 | the ring 0.8 m high, 1.2 m across | as the well |  |
+| trough | 26 to 44 | 59 to 104 | 0.35 to 0.60 | 0.6 m high, 1.5 m long | none; from real size (stall counters 0.45 to 0.6 A in 04) | a touch big |
+| lamp | 107 to 178 | 15 to 52 | 1.45 to 2.40 | a street lamp 2.5 to 4 m | lamp posts 88 to 100 E (1.6 to 1.85 A) in 13 and 17 | up to 2.4 A where it lights a square |
+| post lantern | 44 to 81 | 15 to 118 | 0.60 to 1.10 | a lantern on a short post or a wall torch | post lanterns 44 to 45 E (0.8 A) in 12 and 38 |  |
+| fence | 41 to 67 | 37 to 296 | 0.55 to 0.90 | a garden fence 1 to 1.2 m | farm gate 40 E, palisade 40 to 45 E (0.75 to 0.83 A) in 17, 12 and 38 |  |
+| post | 41 to 74 | 4 to 15 | 0.55 to 1.00 | a post 1 to 1.4 m | fence posts 0.8 to 0.95 A (17) |  |
+| sign | 67 to 126 | 18 to 81 | 0.90 to 1.70 | a fingerpost 1.6 to 2.4 m | street signs 1.0 to 2.3 A (size-guide.md 5) |  |
+| notice board | 81 to 126 | 44 to 89 | 1.10 to 1.70 | a notice board on two posts, 2 to 2.4 m | the station board in 08: 1.3 A |  |
+| standing stone | 59 to 126 | 33 to 81 | 0.80 to 1.70 | a standing stone 1.4 to 2.5 m | none; scaled from real stones |  |
+| cart | 52 to 89 | 67 to 126 | 0.70 to 1.20 | a handcart 1 m high to its rails, 1.6 to 2 m long | the stall cart in 04: 0.9 x 1.4 A |  |
+| anvil | 30 to 48 | 33 to 59 | 0.40 to 0.65 | an anvil on its block 0.8 m | none; from real size | a touch big |
+| machine | 52 to 89 | 37 to 74 | 0.70 to 1.20 | a grindstone on its frame 1.2 m | none; from real size |  |
+| stall | 104 to 163 | 96 to 178 | 1.40 to 2.20 | a market stall with its canopy 2.4 m | stalls 1.6 to 2 A to the canopy (04) |  |
+| haystack | 33 to 70 | 37 to 89 | 0.45 to 0.95 | a bale 0.5 to 0.9 m, a heap to 1.5 m | bales 30 E (0.55 A) in 17 |  |
+| woodpile | 30 to 67 | 44 to 111 | 0.40 to 0.90 | a stack 0.8 to 1.5 m | none; from real size |  |
+| pile | 18 to 52 | 33 to 89 | 0.25 to 0.70 | a heap 0.5 to 1 m | none; from real size |  |
+| lever | 30 to 81 | 18 to 52 | 0.40 to 1.10 | a floor lever 1 to 1.4 m | none; from real size |  |
+| plate | 30 to 74 | 44 to 74 | 0.40 to 1.00 | a pressure plate 1 m square seen from above | floor switches 0.7 A (dungeon in 06) |  |
+| shard | 59 to 104 | 22 to 59 | 0.80 to 1.40 | the quest shard on its plinth | quest objects 0.8 to 1.3 A |  |
+| rubble | 15 to 63 | 37 to 133 | 0.20 to 0.85 | a heap of fallen stone | rubble heaps 0.3 to 0.8 A (11, 39) |  |
+| broadleaf | 148 to 311 | 133 to 259 | 2.00 to 4.20 | a mature oak 15 to 25 m (compressed most) | the maple in 12: 111 x 118 E (2.05 x 2.2 A); the forest trees in 08 run off the top of the screen (over 3 A) | landscape is compressed: 2 to 4.2 A, not 10 |
+| birch | 133 to 266 | 59 to 133 | 1.80 to 3.60 | a birch 10 to 20 m (compressed) | slender crowns 0.9 to 1.5 A wide (08) |  |
+| conifer | 96 to 311 | 59 to 148 | 1.30 to 4.20 | a pine 15 to 30 m (compressed) | young pines 70 to 74 E (1.3 to 1.35 A), 46 to 55 E wide (13); tall pines in 07 |  |
+| willow | 178 to 311 | 148 to 281 | 2.40 to 4.20 | a willow 10 to 20 m (compressed) | as the broadleaf |  |
+| veteran tree | 222 to 340 | 163 to 281 | 3.00 to 4.60 | an old hollow oak | the forest trees of 08 |  |
+| sapling | 59 to 111 | 30 to 74 | 0.80 to 1.50 | a sapling 1.5 to 3 m | young trees 1.3 A (13) |  |
+| bush | 41 to 81 | 44 to 115 | 0.55 to 1.10 | a shrub 0.8 to 1.8 m | bushes 38 to 50 E tall (0.7 to 0.93 A), 35 to 60 E wide (12, 38) | a touch big: a bush reads as a clump at least as wide as a person |
+| log | 22 to 56 | 89 to 222 | 0.30 to 0.75 | a fallen trunk 0.4 to 0.7 m thick | none in the integer shots; from real size | thick and chunky, seen from above |
+| stump | 22 to 52 | 33 to 81 | 0.30 to 0.70 | a stump 0.3 to 0.6 m with its roots | none in the integer shots; from real size | a touch big: roots flare to 1 A |
+| fern | 20 to 41 | 24 to 52 | 0.27 to 0.55 | a fern 0.4 to 0.9 m | ferns 20 to 25 E (0.37 to 0.46 A) in 12 and 13 |  |
+| flower | 4 to 20 | 4 to 30 | 0.05 to 0.27 | a flower head 3 to 8 cm, a clump 0.2 to 0.4 m | heads 3 to 5 E, clumps about 10 E (0.19 A) in 12 and 13 | heads 4 to 8 art px: a touch big so they read |
+| flower tub | 30 to 63 | 22 to 52 | 0.40 to 0.85 | a tub 0.4 m with plants to 0.8 m | the potted plants in 01: 0.6 to 0.75 A |  |
+| mushroom | 3 to 14 | 3 to 14 | 0.04 to 0.19 | a woodland mushroom 5 to 15 cm | none; ankle high (0.1 A) at most | a cap may be 3 to 14 art px so it reads |
+| mushroom ring | 7 to 67 | 30 to 148 | 0.10 to 0.90 | a ring of ankle-high mushrooms, 0.5 to 2 m across | none |  |
+| grass tuft | 6 to 22 | 7 to 30 | 0.08 to 0.30 | a tuft 10 to 30 cm | tufts 6 to 14 E (0.11 to 0.26 A) in 12 and 13 |  |
+| tall grass | 18 to 41 | 18 to 44 | 0.25 to 0.55 | tall grass and reeds 0.5 to 1 m | the tall clump in 13: 27 E (0.5 A) |  |
+| pillar stump | 37 to 118 | 30 to 74 | 0.50 to 1.60 | a broken column 1 to 2.5 m | broken pillars 0.8 to 1.5 A in the dungeon of 06 (zoomed shot, read by eye) |  |
+| roots | 11 to 52 | 44 to 148 | 0.15 to 0.70 | roots breaking a floor | none |  |
+| rock | 7 to 22 | 11 to 33 | 0.10 to 0.30 | a rock 0.2 to 0.5 m | rocks 8 to 12 E tall, 12 to 23 E wide (0.15 to 0.42 A) in 12 and 13 |  |
+| boulder | 22 to 67 | 30 to 96 | 0.30 to 0.90 | a boulder 0.6 to 1.5 m | the boulder in 13: 19 x 23 E (0.35 x 0.42 A); larger ones on the cliffs of 12 | a touch big |
+| stepping stone | 7 to 18 | 22 to 52 | 0.10 to 0.25 | a flat stone 0.5 to 0.8 m | stepping stones 20 to 35 E wide (0.37 to 0.65 A) in 12 |  |
+| adult | 70 to 78 | 22 to 56 | 0.95 to 1.05 | an adult 1.60 to 1.85 m | every adult 52 to 56 E (12, 13, 16, 17, 38) |  |
+| creature small | 37 to 44 | 22 to 81 | 0.50 to 0.60 | the small creatures: 0.55 of the hero | animals: cows 0.9 A, pigs 0.55 A (17) |  |
+| creature medium | 52 to 61 | 30 to 104 | 0.70 to 0.82 | the medium creatures: 0.75 of the hero | as above |  |
+| large | 83 to 95 | 59 to 104 | 1.12 to 1.28 | Cairn: 1.2 of the hero | none |  |
+
+**Ground grain** (the flats against the things on them). Measured the same way on Eastward's lawns, yard dirt and cobble path (shots 12, 13, 17; native, H 54) and on ours (through Eastward's JPEG pipe, H 74): a mark is a patch of pixels at least 10 L off a 0.4 H median; its size is its larger side.
+
+| Grain | Eastward (in H) | Ours, art px at density 3 |
+| --- | --- | --- |
+| Dark marks (tufts, crumbs, joints) | 0.056 to 0.204 H, about 34 to a H square (5.8 to 61) | at least 4 art px; a fill whose dark marks are under 3 art px (0.75 of Eastward's least) and over 51 to a H square is **speckled** (fault) |
+| Grass tufts | 6 to 14 E tall (0.11 to 0.26 A) | 6 to 22 |
+| Clumps (tall grass, flower clumps) | 10 to 27 E | 15 to 41 |
+| Soft blotches | 0.35 to 0.77 H | 26 to 57 across |
+| Cobbles and setts | 8 to 10 E with joints (0.15 to 0.19 A); 0.12 to 0.13 H inside the joints | 9 to 15 inside the joints |
+| Paving slabs | kerb slabs 34 E long (0.63 A) | 18 to 52 |
+| Ripple lines on water | 0.08 to 0.15 H long, 1 to 2 px thick | 4 to 15 long |
+
+**Widths and the cast.** A path is 48 to 81 art px (Eastward's dirt path 0.9 A), a lane 67 to 100, a road 89 to 148. An adult's body is 70 to 78 art px (Eastward's adults 52 to 56 E); the small creatures 37 to 44 (0.55), the medium 52 to 61 (0.75), Cairn 83 to 95 (1.2). A body is measured without thin equipment or floating parts (rows at least 9 art px wide of the main mass; 6 for creatures).
+
+**How it is checked** (`scripts/review/scale.py`, detector `logic.scale`, docs/review-agents.md): the asset gate measures each picture's opaque box (specks dropped) against its class, a kit building's door openings and latch (by the exact palette family of the leaf or the open doorway, from the plan's `art.looks`) and its storey, roof and windows, and a ground picture's grain, its plan paving and its stairs' step pitch; the scene gate does the same for every sprite placed in a zone plus the plan's route widths. Outside a range by up to 10 % of the bound (at least 4 art px) is polish; further is a fault. The first audit is `docs/reviews/2026-10-26-scale.md`.
+
 ## 0. The quick table
 
 Zone px. A = an adult, 25 px. A cell = 8 px. The phone shows 300 x 655 world px (12 x 26 A), which is 600 x 1310 art px at density 2; the companion walks 40 px a second.

@@ -1,0 +1,33 @@
+{
+  "id": "a1_a_cup_by_the_stove",
+  "title": "A cup by the stove",
+  "kind": "resident",
+  "region": "frostline",
+  "chapter": [
+    "frostline",
+    3
+  ],
+  "summary": "The fells are quiet and the shard is home. Someone at the Col hut might finally sit down.",
+  "start": {
+    "on": "talk:hut_warden",
+    "if": {
+      "done": [
+        "a1_under_the_snout"
+      ]
+    }
+  },
+  "steps": [
+    {
+      "id": "tam",
+      "text": "Talk to Tam by the Col hut's stove",
+      "on": "talk:tam"
+    }
+  ],
+  "rewards": {
+    "glint": 20,
+    "flags": [
+      "folk:tam",
+      "region_free:frostline"
+    ]
+  }
+}

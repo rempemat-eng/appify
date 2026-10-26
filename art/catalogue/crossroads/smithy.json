@@ -1,26 +1,26 @@
 {
  "id": "crossroads/smithy",
  "file": "game/zones/crossroads/art/smithy.png",
- "sha256": "78d3ce8fb8ae50a7ac43a4650433da43fe449cb9605a0bb5c8f89f98e0c97367",
+ "sha256": "85acfe226499443a27530485af566c457b7c1283e60960a7f91ef9acac260f62",
  "kind": "smithy",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  276,
-  333
+  288,
+  327
  ],
  "status": "fail",
  "counts": {
   "blocker": 0,
-  "fault": 9,
-  "polish": 3
+  "fault": 8,
+  "polish": 2
  },
  "detail_bar": {
   "ours": {
-   "patches": 212,
-   "tones": 15.68867924528302,
-   "shapes": 25.287735849056602
+   "patches": 220,
+   "tones": 15.39090909090909,
+   "shapes": 25.48181818181818
   },
   "band": {
    "tones": 27.0,
@@ -28,25 +28,13 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.502,
-  "tones_ratio": 0.581,
-  "shapes_ratio": 0.502,
+  "ratio": 0.506,
+  "tones_ratio": 0.57,
+  "shapes_ratio": 0.506,
   "passed": false,
   "group": "prop"
  },
  "findings": [
-  {
-   "detector": "detail.light",
-   "severity": "polish",
-   "box": [
-    9,
-    79,
-    77,
-    86
-   ],
-   "message": "crossroads/smithy: the stone is lit from the right (luminance rises 8 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
   {
    "detector": "detail.light",
    "severity": "polish",
@@ -63,22 +51,10 @@
    "detector": "detail.volume",
    "severity": "fault",
    "box": [
-    103,
-    307,
-    131,
-    324
-   ],
-   "message": "crossroads/smithy: the red reads 2D: 3 light planes, luminance spread 5",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
     196,
-    229,
+    223,
     246,
-    235
+    229
    ],
    "message": "crossroads/smithy: the wood reads 2D: 2 light planes, luminance spread 29",
    "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
@@ -87,22 +63,10 @@
    "detector": "detail.volume",
    "severity": "fault",
    "box": [
-    61,
-    89,
-    92,
-    96
-   ],
-   "message": "crossroads/smithy: the stone reads 2D: 2 light planes, luminance spread 23",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    29,
-    129,
-    56,
-    136
+    21,
+    113,
+    38,
+    120
    ],
    "message": "crossroads/smithy: the stone reads 2D: 2 light planes, luminance spread 23",
    "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
@@ -112,9 +76,9 @@
    "severity": "fault",
    "box": [
     62,
-    298,
+    292,
     81,
-    311
+    305
    ],
    "message": "crossroads/smithy: the wood reads 2D: 1 light planes, luminance spread 0",
    "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
@@ -124,12 +88,24 @@
    "severity": "fault",
    "box": [
     62,
-    298,
+    292,
     81,
-    311
+    305
    ],
    "message": "crossroads/smithy: a flat wood area: one smooth patch covers 68% (0.025 H^2), 2 tones",
    "fix": "draw the wood as its material: break the fill with its own structure (staves and hoops, grain and nail heads, courses, bevels, leaf clusters) in 4 to 5 tones of its ramp"
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    21,
+    113,
+    38,
+    120
+   ],
+   "message": "crossroads/smithy: a flat stone area: one smooth patch covers 51% (0.011 H^2), 2 tones",
+   "fix": "draw the stone as its material: break the fill with its own structure (staves and hoops, grain and nail heads, courses, bevels, leaf clusters) in 4 to 5 tones of its ramp"
   },
   {
    "detector": "detail.bar",
@@ -137,10 +113,10 @@
    "box": [
     2,
     0,
-    274,
-    330
+    286,
+    324
    ],
-   "message": "crossroads/smithy: detail bar 0.50 of Eastward's prop band (15.7 tones, 25.3 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/smithy: detail bar 0.51 of Eastward's prop band (15.4 tones, 25.5 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   },
   {
@@ -148,11 +124,11 @@
    "severity": "fault",
    "box": [
     196,
-    229,
+    223,
     246,
-    235
+    229
    ],
-   "message": "crossroads/smithy: a flat wood area: one smooth patch covers 44% (0.023 H^2), 2 tones",
+   "message": "crossroads/smithy: a flat wood area: one smooth patch covers 40% (0.022 H^2), 3 tones",
    "fix": "draw the wood as its material: break the fill with its own structure (staves and hoops, grain and nail heads, courses, bevels, leaf clusters) in 4 to 5 tones of its ramp"
   },
   {
@@ -160,11 +136,11 @@
    "severity": "fault",
    "box": [
     82,
-    296,
+    290,
     131,
-    324
+    318
    ],
-   "message": "crossroads/smithy: the stone has no drawn material: only 18% of it shows structure",
+   "message": "crossroads/smithy: the stone has no drawn material: only 19% of it shows structure",
    "fix": "draw the material: planks with grain and a lit edge, staves and hoops, stone courses with chipped corners, a bevel on cut stone, a ring of rust on iron"
   },
   {
@@ -172,15 +148,15 @@
    "severity": "fault",
    "box": [
     62,
-    298,
+    292,
     81,
-    311
+    305
    ],
    "message": "crossroads/smithy: the wood has no drawn material: only 5% of it shows structure",
    "fix": "draw the material: planks with grain and a lit edge, staves and hoops, stone courses with chipped corners, a bevel on cut stone, a ring of rust on iron"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",
