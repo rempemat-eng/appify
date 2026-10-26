@@ -1,6 +1,7 @@
 {
-  "_about": "The city biome's brief as data (Claude C, lane C, 21 Oct): built ground, built edges and lit streets for the shared kit (rules-system.md 2 and 4; the harbour is the kit's second proof, for built edges). Palette intent names house ramps (art/house-palette.json) and tones 0 to 5, never RGB. Edge sets name the cliff core's EDGE_SETS or are marked proposed. to-all-clean holds: paving reads as calm fields with few, large joints, not a grid of pixels; detail sits at height changes and doors. Status 'brief' until Claude A's kit cut pins a version.",
+  "_about": "The city biome's brief as data (Claude C, lane C, 21 Oct): built ground, built edges and lit streets for the shared kit (rules-system.md 2 and 4; the harbour is the kit's second proof, for built edges). Palette intent names house ramps (art/house-palette.json) and tones 0 to 5, never RGB. Edge sets name the cliff core's EDGE_SETS or are marked proposed. to-all-clean holds: paving reads as calm fields with few, large joints, not a grid of pixels; detail sits at height changes and doors. Status 'brief' until Claude A's kit cut pins a version. Its own biome: the cliff core's city edge set (built courses under a coping), which no meadow parameter reaches; it shares the kit's engine (palette codes, shadows) and supplies paving sheets, built edges and lit streets. Crossroads is drawn by the kit's village module (#248), which these variants should reuse for fronts and roofs. Every size is in world px (the kit renders at density 3).",
   "id": "city",
+  "extends": null,
   "status": "brief",
   "owner": "claude-c",
   "kit": null,
@@ -330,5 +331,32 @@
       "fronts": "adobe and clay tile, awnings, flat roofs with ladders"
     }
   },
-  "port_from": "city_kit.py (#169, frozen): see docs/vision/research/kit-ports-c.md"
+  "port_from": "city_kit.py (#169, frozen): see docs/vision/research/kit-ports-c.md",
+  "sources": [
+    "docs/vision/regions/neon-harbour-delta.md",
+    "docs/vision/regions/sunstone-basin-fire-country.md",
+    "docs/vision/rules-system.md",
+    "docs/vision/eastward-edges.md",
+    "docs/vision/research/kit-ports-c.md"
+  ],
+  "needs_from_kit": {
+    "_about": "Techniques the city needs beyond the meadow golden scene and the village module; ports name the frozen #169 function in kit-ports-c.md. The lanes that use city (I, D) add theirs.",
+    "ground": [
+      "setts, flags and asphalt as calm paving sheets with long courses (port flags, setts, asphalt)",
+      "a kerb as a flat 2 px edge (port kerb)"
+    ],
+    "edges": [
+      "brick_retaining with weathering by height (port brick_wall on weathered.py)",
+      "railing_rim: a rim railing that stops walkers, its shadow on the coping (port railing)",
+      "channel: a stone-lined channel with lit copings (port glint)",
+      "quay_wall (shared with coast.sea_wall)"
+    ],
+    "built": [
+      "fronts with roofs running back (port house_front, roof_behind; or the village module's)",
+      "the import of house-kit art as palette codes (port _from_canvas)",
+      "stair streets: a few broad flights with landings on a 40 px wall"
+    ],
+    "water": ["the harbour's reflection band under a wall as broken strokes (port harbour)"],
+    "night": ["lamp pools on paving one tone up; neon signs with a one-cell halo, a few per screen"]
+  }
 }

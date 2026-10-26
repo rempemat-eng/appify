@@ -1,0 +1,57 @@
+{
+ "id": "crossroads/debris_c",
+ "file": "game/zones/crossroads/art/debris_c.png",
+ "sha256": "f71e878e165cccb513bf645fbcc9518f7b463c76087a8e3fbac520c0100e03b8",
+ "kind": "pile",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  96,
+  45
+ ],
+ "status": "fail",
+ "counts": {
+  "blocker": 0,
+  "fault": 1,
+  "polish": 0
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 1,
+   "tones": 26.0,
+   "shapes": 49.0
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.963,
+  "tones_ratio": 0.963,
+  "shapes_ratio": 0.973,
+  "passed": true,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.light",
+   "severity": "fault",
+   "box": [
+    21,
+    10,
+    87,
+    39
+   ],
+   "message": "crossroads/debris_c: lit from the right: luminance rises 37 L per H to the east",
+   "fix": "relight from the upper left: lit faces west and up, shade east and down, the cast shadow east"
+  }
+ ],
+ "reviewed": "2026-10-25",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}

@@ -1,0 +1,69 @@
+{
+ "id": "boarlet/hurt_E_03",
+ "file": "art/cast/boarlet/hurt_E_03.png",
+ "sha256": "0aa08d65e6db201c25345e22d29765c117e9661b84a25073c9372a884d90be35",
+ "kind": "hurt_E",
+ "biome": "woodland",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  160,
+  144
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 2
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 3,
+   "tones": 18.666666666666668,
+   "shapes": 35.333333333333336
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.691,
+  "tones_ratio": 0.691,
+  "shapes_ratio": 0.702,
+  "passed": false,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    59,
+    99,
+    117,
+    127
+   ],
+   "message": "boarlet/hurt_E_03: the wood is lit from the right (luminance rises 14 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    53,
+    95,
+    120,
+    136
+   ],
+   "message": "boarlet/hurt_E_03: detail bar 0.69 of Eastward's prop band (18.7 tones, 35.3 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  }
+ ],
+ "reviewed": "2026-10-25",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}

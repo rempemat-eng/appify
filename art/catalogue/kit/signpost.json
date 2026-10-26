@@ -1,0 +1,69 @@
+{
+ "id": "kit/signpost",
+ "file": "artifacts/review/kit/signpost.png",
+ "sha256": "528fb0d1f327029f1b05de7ea8238c1fd0d141f4701d437bf20566b6af59bf79",
+ "kind": "signpost",
+ "biome": "woodland",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  96,
+  114
+ ],
+ "status": "fail",
+ "counts": {
+  "blocker": 0,
+  "fault": 2,
+  "polish": 0
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 9,
+   "tones": 9.777777777777779,
+   "shapes": 16.0
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.318,
+  "tones_ratio": 0.362,
+  "shapes_ratio": 0.318,
+  "passed": false,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.volume",
+   "severity": "fault",
+   "box": [
+    2,
+    8,
+    88,
+    110
+   ],
+   "message": "kit/signpost: no cylinder shading across the shaft (luminance spread 13 L, brightest at 92% of its width, darkest at 33%)",
+   "fix": "shade it as a cylinder lit from the upper left: a highlight band left of centre, the body, a core shadow toward the right edge with a little reflected light at the rim, an elliptical top face and occlusion where it meets the floor"
+  },
+  {
+   "detector": "detail.bar",
+   "severity": "fault",
+   "box": [
+    1,
+    7,
+    89,
+    111
+   ],
+   "message": "kit/signpost: detail bar 0.32 of Eastward's prop band (9.8 tones, 16.0 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  }
+ ],
+ "reviewed": "2026-10-25",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}

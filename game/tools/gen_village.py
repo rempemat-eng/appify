@@ -222,8 +222,17 @@ def main(argv=None) -> int:
     plan = json.load(open(os.path.join(GAME, 'data', 'plans', zid + '.json')))
     kit = json.load(open(os.path.join(GAME, 'zones', zid, 'kit.json')))
     out = os.path.join(GAME, 'zones', zid, zid + '.tscn')
+    text = build(plan, kit)
+    # the placement gate: no art reaches the zone without a passing review record
+    # (scripts/review/gate.py; npm run review:asset -- <zone>/<name> --record)
+    sys.path.insert(0, ROOT)
+    from scripts.review.gate import refusals
+    bad = refusals(zid, text=text)
+    if bad:
+        print('refused to place unreviewed or failing art:\n  ' + '\n  '.join(bad), file=sys.stderr)
+        return 1
     with open(out, 'w') as f:
-        f.write(build(plan, kit))
+        f.write(text)
     print('wrote', os.path.relpath(out, GAME), len(kit['objects']), 'objects')
     return 0
 
