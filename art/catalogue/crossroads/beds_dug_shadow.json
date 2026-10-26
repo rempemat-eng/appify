@@ -1,7 +1,7 @@
 {
  "id": "crossroads/beds_dug_shadow",
  "file": "game/zones/crossroads/art/beds_dug_shadow.png",
- "sha256": "8a2271fc17d71e12cfd4e808fec0b26642ed076bf4bcc39d6508ea4612b59ad5",
+ "sha256": "66e6822fecbdc568bea0ab5ba11cfbd41dbd4c625159b6ba224cc93c4af3be70",
  "kind": "beds_dug_shadow",
  "biome": "valley",
  "H": 74.0,

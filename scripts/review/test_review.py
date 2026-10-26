@@ -191,6 +191,20 @@ class Asset(unittest.TestCase):
         fs = C.construction(s[..., :3], s[..., 3] > 0, 100, 'x/well', 'well')
         self.assertEqual([], [f.detector for f in fs])
 
+    def test_building_detail_bar_is_a_blocker(self):
+        # a flat building (one fill, an outline) is held back as a blocker; a flat prop only a fault
+        from scripts.review import assets as A
+        s = sprite(120, 120)
+        s[10:110, 10:110] = (150, 140, 130, 255)
+        s[10, 10:110] = s[109, 10:110] = (30, 30, 30, 255)
+        self.assertTrue(A.is_building('crossroads/bakery'))
+        self.assertFalse(A.is_building('crossroads/bakery_damage'))
+        fs, sc = A.review_rgba(s, 'crossroads/bakery', 'bakery', 'valley')
+        bar = [f for f in fs if f.detector == 'detail.bar']
+        self.assertTrue(bar and bar[0].severity == 'blocker')
+        fs, sc = A.review_rgba(s, 'crossroads/crate', 'crate', 'valley')
+        self.assertNotIn('blocker', [f.severity for f in fs if f.detector == 'detail.bar'])
+
     def test_cylinder(self):
         s = sprite(40, 100)
         s[10:95, 8:32] = (150, 150, 150, 255)

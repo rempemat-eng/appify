@@ -109,6 +109,19 @@ def on_ground(rgba: np.ndarray, colour) -> np.ndarray:
     return (rgba[..., :3] * a + bg * (1 - a)).astype(np.uint8)
 
 
+BUILDING_BAR = 0.8      # a building's detail bar must reach 0.8 of Eastward's band, or it is a blocker
+
+
+def is_building(subject: str, kind: str | None = None) -> bool:
+    """A whole building (its size class in the building group); damage overlays and shadows are not."""
+    from . import scale as S
+    base = subject.split('/')[-1]
+    if base.endswith(('_damage', '_shadow')):
+        return False
+    c = S.class_of(subject, kind)
+    return bool(c) and S.CLASSES[c].get('group') == 'building'
+
+
 def group_of(kind: str, rgb, alpha) -> str:
     fam = D.family_map(rgb)
     if (alpha & (fam == 1)).sum() > 0.5 * alpha.sum():
@@ -191,9 +204,13 @@ def review_rgba(rgba: np.ndarray, subject: str, kind: str, biome: str, H: float 
         if score.get('ratio') is not None:
             r = score['ratio']
             low = 0.3 if grp == 'foliage' else 0.45
+            # a building below 0.8 of Eastward's band is a blocker (review of #296, 26 Oct: buildings
+            # at 0.61 to 0.70 read flat beside Eastward's)
+            building = is_building(subject, kind)
             if r < 0.9:
                 x0, y0, x1, y1 = C.bbox(alpha)
-                findings.append(Finding('detail.bar', 'fault' if r < low else 'polish', (x0, y0, x1, y1),
+                sev = 'blocker' if (building and r < BUILDING_BAR) else ('fault' if r < low else 'polish')
+                findings.append(Finding('detail.bar', sev, (x0, y0, x1, y1),
                                         f'{subject}: detail bar {r:.2f} of Eastward\'s {grp} band '
                                         f'({score["ours"]["tones"]:.1f} tones, {score["ours"]["shapes"]:.1f} shapes a patch '
                                         f'against {score["band"]["tones"]}, {score["band"]["shapes"]})',

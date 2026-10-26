@@ -248,9 +248,10 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
 
     D = ctx.D
     q = V.q
-    # the ground (lawn, roads, walls, stairs) stays as on main: the building pieces' density-3 form
-    # (village.HD, fix queue 2) is for the buildings and props only; the terrain lead owns the ground
-    hd_, V.HD = V.HD, False
+    # fix queue 2: the props get their density-3 forms, passed explicitly (never a module switch);
+    # the ground and the buildings are drawn as on main (village.building and the ground painters
+    # default to hd=False; the buildings go to the building lead)
+    PROP_HD = D >= 2.5
     bx, by, bw, bh = plan['box']
     W, H = q(bw), q(bh)
     rng = np.random.default_rng(plan.get('seed', 7))
@@ -627,7 +628,6 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         pathm |= rect_m([sx - sw / 2 + 3, y0w - 6, sw - 6, y1w - y0w + 12])
 
     # --- objects ---------------------------------------------------------------------------------------
-    V.HD = hd_
     objects = []      # dicts: id, png, foot (texels), anchor, if, solid (world rect), sort, kind, layer
     pics = {}
 
@@ -680,7 +680,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
             entry.update(png=None)          # drawn in the building's damage overlay
             objects.append(entry)
             continue
-        pic = V.prop(kind, w, h, seed=sum(map(ord, p['id'])))
+        pic = V.prop(kind, w, h, seed=sum(map(ord, p['id'])), hd=PROP_HD)
         foot = (q(x + w / 2), q(y + h))
         if host is not None and kind == 'glow':
             # the fire burns inside the forge's mouth: sort it just in front of the building
@@ -693,7 +693,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
     THING_KIND = {'notice_board': 'notice_board', 'waystone': 'waystone'}
     for t in plan.get('things', []):
         if t['speaker'] in THING_KIND:
-            pic = V.prop(THING_KIND[t['speaker']], 10, 6, seed=5)
+            pic = V.prop(THING_KIND[t['speaker']], 10, 6, seed=5, hd=PROP_HD)
             x, y = t['at']
             objects.append(dict(id=t['id'], kind=t['speaker'], png=add_pic(t['id'], pic.rgba()), foot=(q(x), q(y)),
                                 anchor=(pic.ax, pic.ay), alpha=pic.alpha(), cond=cond_of(t), solid=None, static=not cond_of(t)))
@@ -715,7 +715,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
             solid = [x - 6, y - 4, 12, 5]
         else:
             w, h = dr.get('size', [12, 8])
-            pic = V.prop(kind, w, h, seed=seed)
+            pic = V.prop(kind, w, h, seed=seed, hd=PROP_HD)
             img, anc, a = pic.rgba(), (pic.ax, pic.ay), pic.alpha()
             solid = [x - w / 2, y - h, w, h] if dr.get('solid', True) else None
         did = dr.get('id', f'{kind}_{k}')
