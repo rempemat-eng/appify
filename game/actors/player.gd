@@ -63,6 +63,8 @@ var character := CHARACTER
 var _shot_dir := Vector2.RIGHT
 var _defeat_t := 0.0
 var action_driver: AbilityActionDriver = null
+var ability_presentation_error := ""
+var _ability_drawing: Dictionary = {}
 
 @onready var sprite: CastSprite = $Sprite
 @onready var hitbox: Area2D = $Hitbox
@@ -101,6 +103,49 @@ func attach_action_driver(driver: AbilityActionDriver) -> bool:
 	action_driver.character_changed(character)
 	return true
 
+## Explicit optional binding: the provider must use this loaded body's exact manifest
+## and supply approved canonical drawing clocks. No production schedule is inferred.
+func bind_ability_presentation(provider: Callable, contact: Callable) -> bool:
+	if not action_driver is AbilityArenaDriver or not provider.is_valid() or not contact.is_valid():
+		return false
+	var expected := action_driver
+	var bound := (action_driver as AbilityArenaDriver).bind_presentation(
+		_ability_contract.bind(provider, expected), _present_ability_drawing.bind(expected),
+		_ability_contact.bind(contact, expected))
+	if bound:
+		_ability_drawing = {}
+		ability_presentation_error = ""
+	return bound
+
+func _ability_contract(snapshot: Dictionary, action: String, provider: Callable, expected: AbilityActionDriver) -> Dictionary:
+	if not _ability_actor_valid(expected):
+		return {}
+	var supplied: Variant = provider.call(snapshot, action)
+	if not _ability_actor_valid(expected):
+		return {} # the provider may have detached/replaced/reset the actor
+	if not supplied is Dictionary or supplied.get("manifest") != sprite.manifest:
+		ability_presentation_error = "presentation manifest differs from loaded body"
+		return {}
+	return supplied
+
+func _ability_actor_valid(expected: AbilityActionDriver) -> bool:
+	return action_driver == expected and is_inside_tree() and hp > 0 and not is_defeated()
+
+func _present_ability_drawing(sample: Dictionary, expected: AbilityActionDriver) -> void:
+	if not _ability_actor_valid(expected):
+		return
+	if not AbilitySpritePresenter.show_drawing(sprite, sample):
+		_ability_drawing = {}
+		ability_presentation_error = "missing or mismatched authored drawing"
+		return
+	_ability_drawing = sample.duplicate(true)
+	ability_presentation_error = ""
+	facing = str(sample.facing)
+
+func _ability_contact(sample: Dictionary, contact: Callable, expected: AbilityActionDriver) -> void:
+	if _ability_actor_valid(expected) and ability_presentation_error == "" and _ability_drawing == sample:
+		contact.call(sample.duplicate(true)) # display callback only, never legacy _release
+
 func detach_action_driver() -> void:
 	if action_driver == null:
 		return
@@ -118,6 +163,8 @@ func _driver_request(action: String, direction: Vector2 = Vector2.ZERO) -> bool:
 func reset_motion() -> void:
 	if action_driver != null:
 		action_driver.cancel("reset_motion")
+		_ability_drawing = {}
+		_set_state(&"idle") # exact drawing callbacks do not change the legacy state field
 	velocity = Vector2.ZERO
 	_roll_t = 0.0
 	_swing_t = 0.0

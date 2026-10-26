@@ -668,3 +668,24 @@ This checkpoint tests the lifecycle with synthetic explicit schedules and real P
 It does not bind CastSprite drawings, load A/J production schedules, handle support/airborne or
 powered/empty/exit art, or attach live-world HP/cover/input/dodge rules. Those remain the next
 integration work and owner decisions. No driver is enabled by default.
+
+## Exact Player drawing callback
+
+`Player.bind_ability_presentation(provider, contact)` explicitly connects the configured arena
+runner to its loaded body. The provider must return that body's exact manifest and an explicit
+canonical schedule. `AbilitySpritePresenter` selects the exact `<clip>_<facing>[_<aim>]` sheet and
+index, stops AnimatedSprite playback, and aligns CastSprite's frame/anchor fields. It does not
+call `play_clip` or `advance`: art template durations, automatic turns and aim easing must not
+replace the runner's contact drawing. The current V2 `playing`, `shown_facing`, `aim_tag` and
+`turn_path` fields are synchronised when present, without editing CastSprite. West is never
+mirrored, source anchors stay unscaled, and missing variants, unequal frame counts, fractional
+indices or forged anchor samples fail closed. No facing fallback or missing-anchor zero is used.
+
+The contact callback runs only after that exact sample has been shown successfully, for the
+same attached, living actor. A replaced/detached driver cannot draw on its replacement. This
+callback is presentation only; legacy arrow/damage dispatch stays suppressed. Tests exercise
+real Player/CastSprite nodes and the loaded base art, with explicit synthetic canonical clocks;
+an aimed-sheet fixture checks exact variant selection. Current-main CastSprite compatibility
+is source-reviewed, not a claim of combined-main or rendered play testing. Production A/J
+schedules, locomotion/guard/support/airborne, powered/empty/exit forms and live-world integration
+remain unfinished. No binding is installed by default.
