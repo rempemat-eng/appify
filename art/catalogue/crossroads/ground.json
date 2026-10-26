@@ -1,7 +1,7 @@
 {
  "id": "crossroads/ground",
  "file": "game/zones/crossroads/art/ground.png",
- "sha256": "fc6d5af05978e5637609d0ac3c1f1720d97de3673396e8898a1348002bd58082",
+ "sha256": "b43b416c189701a6ee479f8553be085a8c39d32ef0e15b33831e17b45fc38055",
  "kind": "ground",
  "biome": "valley",
  "H": 74.0,
@@ -51,7 +51,7 @@
     1920,
     1680
    ],
-   "message": "1241 tuft blades repeat an exact stamp (207 stamps, the commonest 26 times): 2.1 repeats per H^2 (the pilot golden 0.0, Eastward 0.0 to 0.7); the grass reads as wallpaper",
+   "message": "1247 tuft blades repeat an exact stamp (208 stamps, the commonest 26 times): 2.1 repeats per H^2 (the pilot golden 0.0, Eastward 0.0 to 0.7); the grass reads as wallpaper",
    "fix": "ground is a calm field with a few soft patches and clumped tufts of varied size, shape and tone, denser at edges and under things, sparse where people walk; draw tufts from several designs and vary each (eastward-edges.md 5.5)"
   },
   {
@@ -166,12 +166,12 @@
    "detector": "detail.flat",
    "severity": "fault",
    "box": [
-    516,
-    137,
-    706,
+    520,
+    134,
+    707,
     177
    ],
-   "message": "a flat foliage area of one tone, 3002 px (0.55 H^2)",
+   "message": "a flat foliage area of one tone, 3183 px (0.58 H^2)",
    "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
   },
   {
@@ -180,10 +180,10 @@
    "box": [
     873,
     1441,
-    1056,
+    1057,
     1485
    ],
-   "message": "a flat foliage area of one tone, 2729 px (0.50 H^2)",
+   "message": "a flat foliage area of one tone, 2828 px (0.52 H^2)",
    "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
   },
   {
@@ -202,24 +202,24 @@
    "detector": "detail.flat",
    "severity": "fault",
    "box": [
-    35,
+    40,
     1225,
     173,
     1267
    ],
-   "message": "a flat foliage area of one tone, 2136 px (0.39 H^2)",
+   "message": "a flat foliage area of one tone, 2133 px (0.39 H^2)",
    "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
   },
   {
    "detector": "detail.flat",
    "severity": "fault",
    "box": [
-    1792,
+    1789,
     1525,
     1905,
     1568
    ],
-   "message": "a flat foliage area of one tone, 1876 px (0.34 H^2)",
+   "message": "a flat foliage area of one tone, 1945 px (0.36 H^2)",
    "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
   },
   {
@@ -275,11 +275,11 @@
    "severity": "fault",
    "box": [
     1209,
-    1648,
+    1649,
     1300,
     1665
    ],
-   "message": "a flat foliage area of one tone, 810 px (0.15 H^2)",
+   "message": "a flat foliage area of one tone, 803 px (0.15 H^2)",
    "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side"
   },
   {

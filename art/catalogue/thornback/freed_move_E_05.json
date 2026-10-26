@@ -1,0 +1,69 @@
+{
+ "id": "thornback/freed_move_E_05",
+ "file": "art/cast/thornback/freed_move_E_05.png",
+ "sha256": "9e4d15917517f71a944025f2406af548559995bb4c10e5bfcec25981a1565e61",
+ "kind": "freed_move_E",
+ "biome": "woodland",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  160,
+  144
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 2
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 8,
+   "tones": 14.75,
+   "shapes": 37.0
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.546,
+  "tones_ratio": 0.546,
+  "shapes_ratio": 0.735,
+  "passed": false,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    51,
+    83,
+    136,
+    122
+   ],
+   "message": "thornback/freed_move_E_05: the wood is lit from the right (luminance rises 21 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    43,
+    82,
+    137,
+    136
+   ],
+   "message": "thornback/freed_move_E_05: detail bar 0.55 of Eastward's prop band (14.8 tones, 37.0 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  }
+ ],
+ "reviewed": "2026-10-25",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}

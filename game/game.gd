@@ -8,7 +8,8 @@ extends Node2D
 ## directions with a bow shot after each, for screenshots and videos; --quit ends the run after it),
 ## --lineup (the whole cast in a row), --cycle (the player becomes each cast member in turn) and
 ## --character=<id> (start as that cast member), --stage=<id> (a zone plan's named state),
-## --at=x,y (stand at a world point).
+## --at=x,y (stand at a world point), --camp[=dx,dy] (set the woodland enemy camp north of the player,
+## to see and fight the creatures; it is not placed in any zone yet).
 ## See docs/godot.md.
 
 const DENSITY := 3.0
@@ -59,6 +60,8 @@ func _ready() -> void:
 		player.global_position = Vector2(float(xy[0]), float(xy[1])) * DENSITY
 	if args.has("character"):
 		select_character.call_deferred(String(args.character))
+	if args.has("camp"):
+		_camp.call_deferred()
 	if args.has("cycle"):
 		_cycle.call_deferred()
 	_cast_label = Label.new()
@@ -147,6 +150,18 @@ static func apply_stage(zone: String, stage: String) -> void:
 func select_character(id: String) -> void:
 	if player.set_character(id):
 		_cast_label.text = "%s  (1-0, Shift+1-4: character)" % id.capitalize()
+
+## --camp[=dx,dy]: the woodland camp (enemies/woodland_camp.tscn) set 70 world px north of the
+## player, or dx,dy world px from it.
+func _camp() -> void:
+	await get_tree().process_frame
+	var camp: Node2D = (load("res://enemies/woodland_camp.tscn") as PackedScene).instantiate()
+	var off := Vector2(0, -70.0)
+	var xy := String(args.camp).split(",")
+	if xy.size() == 2:
+		off = Vector2(float(xy[0]), float(xy[1]))
+	camp.position = player.position + off * DENSITY
+	player.get_parent().add_child(camp)
 
 ## --lineup: the whole cast standing in a row facing the camera, centred under the player.
 func _lineup() -> void:

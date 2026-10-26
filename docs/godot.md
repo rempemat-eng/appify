@@ -109,7 +109,7 @@ Hale (the smith), Moss (the stall keeper) and Ada Fern are drawn in the cast's s
 
 The lit forge's fire and the smithy chimney's smoke are looping strips (`python3 game/tools/gen_village_fx.py` writes `zones/crossroads/art/fx/`), played by `world/loop_fx.gd`: only while on screen, and held on one drawing under reduced motion. gen_village swaps the kit's static `forge_fire` for the strip (`LOOPS`) and puts the smoke on the smithy's chimney pot while the forge is restored (`SMOKE`).
 
-Screenshot options: `--stage=<id>` puts the save in a plan stage (`--zone=crossroads --stage=homecoming`), and `--at=x,y` stands the player at a world point.
+Screenshot options: `--stage=<id>` puts the save in a plan stage (`--zone=crossroads --stage=homecoming`), and `--at=x,y` stands the player at a world point. `--camp` sets the woodland enemy camp (the drawn creatures) just north of the player.
 
 ## How lanes add a region (zone)
 
@@ -118,7 +118,7 @@ Screenshot options: `--stage=<id>` puts the save in a plan stage (`--zone=crossr
 3. Add the zone to `data/zones.json` and point the neighbours' doors at it.
 4. Run `npm run check:godot` and take a 1920 x 1080 screenshot with the recipe above.
 
-The woodland came from `origin/claude-a/woodland-2x` (PR #222's kit: `scripts/art/native/zone.py` already takes `--density`; at 3 it stores pictures at 1 image px per texel instead of the app's 2x2-doubled ones, so nothing in the kit had to change). Its walk mask and stands are the 1x zone's own from that branch's `lib/zone-maps.ts`. Zones from the world canvas (256 px tiles) or from Tiled with YATI will need their own importer writing the same base-scene shape.
+The woodland's painters (`scripts/art/native/zone.py`, `screen.py`, `water.py`, its plan `art/scenes/woodland.json` and masters in `art/masters/`) came over from `claude-a/woodland-2x` and are now in this repository, so `python3 game/tools/gen_zone.py woodland --render .` redraws it from this checkout (the pictures go to a temporary folder, never `assets/`). From density 3 the kit draws its own way (25 Oct, Matt on the woodland at density 3): crowns and bushes as leaf masses (`foliage.paint_masses`), trunks with bark (`props.trunk4`), water with natural banks and a fall with volume (`water.paint_hd`, `fall_hd`), a footbridge on abutments, the pilot's boulders, ferns, foxgloves and mushrooms at stumps; density 2 is unchanged (`npm run check:kit`). Its walk mask and stands are the 1x zone's own (from that branch's `lib/zone-maps.ts`), edited by hand in `walk.txt` where an object moved (the log and three pines, 25 Oct); do not pass `--walk` again without carrying those edits. Zones from the world canvas (256 px tiles) or from Tiled with YATI will need their own importer writing the same base-scene shape.
 
 ## How lanes add a quest
 

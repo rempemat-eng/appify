@@ -1,0 +1,57 @@
+{
+ "id": "thornback/freed_N_05",
+ "file": "art/cast/thornback/freed_N_05.png",
+ "sha256": "9f4f058e71dc64a27eaa6eae200ca98f1ef9b8f0494969fb0800823b120a7441",
+ "kind": "freed_N",
+ "biome": "woodland",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  160,
+  144
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 1
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 3,
+   "tones": 16.666666666666668,
+   "shapes": 39.666666666666664
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.617,
+  "tones_ratio": 0.617,
+  "shapes_ratio": 0.788,
+  "passed": false,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    66,
+    74,
+    101,
+    138
+   ],
+   "message": "thornback/freed_N_05: detail bar 0.62 of Eastward's prop band (16.7 tones, 39.7 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  }
+ ],
+ "reviewed": "2026-10-25",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}

@@ -1,7 +1,7 @@
 {
  "id": "woodland/stump",
  "file": "game/zones/woodland/art/stump.png",
- "sha256": "61af8cd844a2562190a793f8d162896348bae765d2ce9c5b85a16129ee385b7f",
+ "sha256": "7d07e309cbab2e6ad1637397904d33f7be3e018e87d569bfd36d03c02986ada8",
  "kind": "stump",
  "biome": "woodland",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 4,
-   "tones": 15.25,
-   "shapes": 34.5
+   "tones": 14.75,
+   "shapes": 35.25
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.565,
-  "tones_ratio": 0.565,
-  "shapes_ratio": 0.685,
+  "ratio": 0.546,
+  "tones_ratio": 0.546,
+  "shapes_ratio": 0.7,
   "passed": false,
   "group": "prop"
  },
@@ -56,7 +56,7 @@
     68,
     54
    ],
-   "message": "woodland/stump: detail bar 0.56 of Eastward's prop band (15.2 tones, 34.5 shapes a patch against 27.0, 50.36)",
+   "message": "woodland/stump: detail bar 0.55 of Eastward's prop band (14.8 tones, 35.2 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   },
   {
@@ -68,7 +68,7 @@
     68,
     53
    ],
-   "message": "woodland/stump: a flat red area: one smooth patch covers 42% (0.018 H^2), 4 tones",
+   "message": "woodland/stump: a flat red area: one smooth patch covers 44% (0.019 H^2), 3 tones",
    "fix": "draw the red as its material: break the fill with its own structure (staves and hoops, grain and nail heads, courses, bevels, leaf clusters) in 4 to 5 tones of its ramp"
   }
  ],
