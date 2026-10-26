@@ -496,3 +496,35 @@ Next: ordered fixed-step dispatcher, contact presentation and the granted Player
 Health mapping/#275 and the inherited Tam edge remain A/canonical-owner decisions; no
 progression proposals are adopted. Full verify/art/hosted/rendered/device checks remain
 unfinished. Keep DRAFT.
+
+
+## Ordered canonical arena dispatcher
+
+`AbilitySimulation.step` composes the existing pure reducers once per canonical 1/60 step:
+player timer/action/release, movement/vault, enemy statuses, synchronous projectiles, fields,
+turrets, effect expiry, resource display, previous inputs and wave settlement. The 0.1-second
+outer clamp, accumulator epsilon, inactive/invalid-time no-op and terminal-state clock/effect
+path match original `stepCombat`. Death before/after projectiles skips the same later phases.
+A turret shot remains age zero until the next projectile phase. Victory clears the original
+combat arrays and airborne/form/guard state without changing unrelated data or rewards.
+
+Only the original encounter/practice modes are supported. `live` returns unchanged: legacy
+AI is deliberately not copied over C61's enemy ownership. This is pure arena simulation, not
+a C61/world bridge or terrain/actor movement. Do not tick AbilityClock/AbilityRunner/resources
+or replay launch planning alongside it; these releases already spend and launch once.
+
+`simulation-oracle.json.gz` is a deterministic gzip-compressed, exact IEEE754 fixture with
+5317 complete-state comparisons against the HASH-VERIFIED UNMODIFIED original `stepCombat`.
+Unlike earlier isolated-phase oracles, it does not instrument or replace any original body.
+It covers all14 kits/forms over180 repeated inputs each, clamps/accumulator, terminal clocks,
+input coercion, defeat order and practice/encounter settlement boundaries. Only presentation
+colour is omitted, consistently with previous suites. The comparator checks every key, array
+position and numeric leaf at the existing absolute1e-6 tolerance, reporting the first failing
+path once per case rather than allocating one assertion per leaf. Tests also cover nonfinite
+inputs/time, immutable snapshots and unsupported live-mode no-op.
+
+Regenerate with `node game/test/combat/build_simulation_oracle.mjs /path/to/original-modules.json`.
+The committed compressed fixture avoids adding30MB of redundant test JSON. Contact presentation,
+Player's granted action hook and real C61/world HP integration remain unfinished. Existing health
+mapping/#275 and inherited Tam defeat decisions remain A-owned; no progression proposal adopted.
+Full npm verify/art-repro/hosted/rendered/native/device validation remains pending. Keep DRAFT.
