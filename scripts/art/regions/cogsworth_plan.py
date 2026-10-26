@@ -55,8 +55,8 @@ FERNHOLLOW = {'id': 'fernhollow', 'box': (7000, 2960, 320, 240),   # centre (716
 PLACES = [
     {'id': 'cogsworth', 'kind': 'town', 'box': (*TOWN_ORIGIN, TOWN_W, TOWN_H),
      'why': 'coal and iron in the coal hills, the fast Cog for power (the Millrace), the valley floor for a railway out'},
-    {'id': 'fernhollow', 'kind': 'hamlet', 'box': FERNHOLLOW['box'], 'why': FERNHOLLOW['why']},
-    {'id': 'narrows', 'kind': 'gorge', 'box': (8520, 2160, 640, 920),
+    {'id': 'fernhollow', 'kind': 'hamlet', 'box': FERNHOLLOW['box'], 'at': (7120, 3192), 'why': FERNHOLLOW['why']},
+    {'id': 'narrows', 'kind': 'gorge', 'box': (8520, 2160, 640, 920), 'at': (9000, 2400),
      'why': "the Lull's gorge through the coal hills, white with rapids; the Cog joins at its foot"},
     {'id': 'narrows-viaduct', 'kind': 'bridge', 'at': (9032, 2328),
      'why': "the gorge's narrowest point, where the railway (now the maglev) crossed to the east bank; rail only"},
