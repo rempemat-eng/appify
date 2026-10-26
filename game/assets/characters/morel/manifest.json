@@ -32055,7 +32055,7 @@
         "flask": 0.5,
         "catalyst": null
        },
-       "sha256": "4e804f01a82595e03f2289b80d4501513156160cea55ff461a7b107557ceae7d",
+       "sha256": "e2611b1ec62c1f00d1d9f97ec44b01fee5320643d0d8a0278e8344a4a88cc258",
        "sheet": "sheets/secondary_N.png",
        "region": [
         640,
@@ -32068,7 +32068,7 @@
        "path": "res://assets/animated/morel/secondary_N_05.png",
        "file": "secondary_N_05.png",
        "packed_bounds": [
-        63,
+        56,
         67,
         99,
         137
@@ -32079,8 +32079,8 @@
          -26.8
         ],
         "hand_L": [
-         -6.0,
-         -43.2
+         -13.5,
+         -44.1
         ],
         "foot_R": [
          5.6,
@@ -32095,21 +32095,21 @@
          -19.8
         ],
         "catalyst": [
-         -5.4,
-         -47.9
+         -12.9,
+         -48.8
         ]
        },
        "equipment": {
-        "catalyst": 1,
+        "catalyst": 36,
         "case": 17,
         "flask": 55,
         "mask": 12
        },
        "anchor_gap": {
         "flask": 0.5,
-        "catalyst": 1.2
+        "catalyst": 0.5
        },
-       "sha256": "6a5908778a801df039d37ee23dff642722b76176799a609904f9ad98a70e61e7",
+       "sha256": "48cf1f8352947ef2faa10e4cc4a3b404842ef742d20c66157bdfba3ce9b641dc",
        "sheet": "sheets/secondary_N.png",
        "region": [
         800,
@@ -32122,7 +32122,7 @@
        "path": "res://assets/animated/morel/secondary_N_06.png",
        "file": "secondary_N_06.png",
        "packed_bounds": [
-        63,
+        56,
         66,
         99,
         137
@@ -32133,8 +32133,8 @@
          -26.8
         ],
         "hand_L": [
-         -6.0,
-         -44.8
+         -13.5,
+         -45.8
         ],
         "foot_R": [
          5.6,
@@ -32149,21 +32149,21 @@
          -19.8
         ],
         "catalyst": [
-         -5.4,
-         -50.1
+         -12.9,
+         -51.1
         ]
        },
        "equipment": {
-        "catalyst": 8,
+        "catalyst": 40,
         "case": 17,
         "flask": 54,
         "mask": 12
        },
        "anchor_gap": {
         "flask": 0.5,
-        "catalyst": 0.6
+        "catalyst": 0.7
        },
-       "sha256": "575b7a10587bd716c2ea1f242458f59355567346fc585745ba4fc5ba4aff0866",
+       "sha256": "070995d337b3797dc0bc7929533959ba95ec9bcdab70289159379faf96c69a73",
        "sheet": "sheets/secondary_N.png",
        "region": [
         960,
@@ -32176,7 +32176,7 @@
        "path": "res://assets/animated/morel/secondary_N_07.png",
        "file": "secondary_N_07.png",
        "packed_bounds": [
-        63,
+        56,
         66,
         99,
         137
@@ -32187,8 +32187,8 @@
          -26.8
         ],
         "hand_L": [
-         -6.0,
-         -44.3
+         -13.5,
+         -45.2
         ],
         "foot_R": [
          5.6,
@@ -32203,21 +32203,21 @@
          -19.8
         ],
         "catalyst": [
-         -5.4,
-         -49.4
+         -12.9,
+         -50.3
         ]
        },
        "equipment": {
-        "catalyst": 8,
+        "catalyst": 42,
         "case": 17,
         "flask": 54,
         "mask": 12
        },
        "anchor_gap": {
         "flask": 0.5,
-        "catalyst": 0.2
+        "catalyst": 0.5
        },
-       "sha256": "60b80ca91545678a1c53fce5c39156061959aa074681edbcf6ffa8d82fcd29d8",
+       "sha256": "80434d25775fc18760de7a1ed621c6c6c6de3799d8894540e918d8624a1f39cc",
        "sheet": "sheets/secondary_N.png",
        "region": [
         1120,
@@ -32271,7 +32271,7 @@
         "flask": 0.5,
         "catalyst": 0.1
        },
-       "sha256": "35c0b63fc31df24abb6a103dcc6acf19433f3fb01b65bf71f3c3c2a39b3a0105",
+       "sha256": "d1deb812326a2aad2e89530beb4218b49ef5b527d3f3d4f25270f1aa06f455ee",
        "sheet": "sheets/secondary_N.png",
        "region": [
         1280,
@@ -32493,8 +32493,8 @@
       }
      ],
      "release_anchor": [
-      -5.4,
-      -50.1
+      -12.9,
+      -51.1
      ],
      "release_anchor_name": "catalyst"
     },
@@ -88122,7 +88122,7 @@
         "flask": 0.5,
         "catalyst": null
        },
-       "sha256": "4fe910d356d44a0c591f43ed8d0d2878f5aad33df83263a8c4b2ac6db31bd408",
+       "sha256": "28a5f084a1db95573a30260570aa71f11ac2ce1b4f3128be91a26609df98757f",
        "sheet": "sheets/powered_secondary_N.png",
        "region": [
         640,
@@ -88135,7 +88135,7 @@
        "path": "res://assets/animated/morel/powered_secondary_N_05.png",
        "file": "powered_secondary_N_05.png",
        "packed_bounds": [
-        63,
+        56,
         67,
         99,
         137
@@ -88146,8 +88146,8 @@
          -26.8
         ],
         "hand_L": [
-         -6.0,
-         -43.2
+         -13.5,
+         -44.1
         ],
         "foot_R": [
          5.6,
@@ -88162,21 +88162,21 @@
          -19.8
         ],
         "catalyst": [
-         -5.4,
-         -47.9
+         -12.9,
+         -48.8
         ]
        },
        "equipment": {
-        "catalyst": 1,
+        "catalyst": 36,
         "case": 17,
         "flask": 55,
         "mask": 42
        },
        "anchor_gap": {
         "flask": 0.5,
-        "catalyst": 1.2
+        "catalyst": 0.5
        },
-       "sha256": "b9b61c2e194db918186c18bc5ce94014c6c3473fce7e9368f8c5ff27d0960045",
+       "sha256": "8eac0e056b557ac56a2070e2481fb77212ac82a16322ff803e3c2770ca156d38",
        "sheet": "sheets/powered_secondary_N.png",
        "region": [
         800,
@@ -88189,7 +88189,7 @@
        "path": "res://assets/animated/morel/powered_secondary_N_06.png",
        "file": "powered_secondary_N_06.png",
        "packed_bounds": [
-        63,
+        56,
         66,
         99,
         137
@@ -88200,8 +88200,8 @@
          -26.8
         ],
         "hand_L": [
-         -6.0,
-         -44.8
+         -13.5,
+         -45.8
         ],
         "foot_R": [
          5.6,
@@ -88216,21 +88216,21 @@
          -19.8
         ],
         "catalyst": [
-         -5.4,
-         -50.1
+         -12.9,
+         -51.1
         ]
        },
        "equipment": {
-        "catalyst": 8,
+        "catalyst": 40,
         "case": 17,
         "flask": 54,
         "mask": 42
        },
        "anchor_gap": {
         "flask": 0.5,
-        "catalyst": 0.6
+        "catalyst": 0.7
        },
-       "sha256": "f29dbf849a13d85f7f846f08bbf6297b7e8f019f9653831d14d8299416869188",
+       "sha256": "1f5927d6752814284396a3a990edec2d61c3074a976020d6c9570c266e57b785",
        "sheet": "sheets/powered_secondary_N.png",
        "region": [
         960,
@@ -88243,7 +88243,7 @@
        "path": "res://assets/animated/morel/powered_secondary_N_07.png",
        "file": "powered_secondary_N_07.png",
        "packed_bounds": [
-        63,
+        56,
         66,
         99,
         137
@@ -88254,8 +88254,8 @@
          -26.8
         ],
         "hand_L": [
-         -6.0,
-         -44.3
+         -13.5,
+         -45.2
         ],
         "foot_R": [
          5.6,
@@ -88270,21 +88270,21 @@
          -19.8
         ],
         "catalyst": [
-         -5.4,
-         -49.4
+         -12.9,
+         -50.3
         ]
        },
        "equipment": {
-        "catalyst": 8,
+        "catalyst": 42,
         "case": 17,
         "flask": 54,
         "mask": 42
        },
        "anchor_gap": {
         "flask": 0.5,
-        "catalyst": 0.2
+        "catalyst": 0.5
        },
-       "sha256": "cd7e09ee3c0cbaaa94a2434730ae357cf242c764868a409137dce87f1f44e4e3",
+       "sha256": "e517fd577cf016afbfe6f73e38405577ba40605b8b8581c1078f15782e689a7e",
        "sheet": "sheets/powered_secondary_N.png",
        "region": [
         1120,
@@ -88338,7 +88338,7 @@
         "flask": 0.5,
         "catalyst": 0.1
        },
-       "sha256": "7d67cf6f9d52325f759aa01904cbc572f3ea1765b37a7d59dd4e0ea4842e3baa",
+       "sha256": "612ed294004d59d47501f0780bb1a24533c9ccd2d1ef143535b8647f70531526",
        "sheet": "sheets/powered_secondary_N.png",
        "region": [
         1280,
@@ -88560,8 +88560,8 @@
       }
      ],
      "release_anchor": [
-      -5.4,
-      -50.1
+      -12.9,
+      -51.1
      ],
      "release_anchor_name": "catalyst"
     },
