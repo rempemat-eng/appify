@@ -1,0 +1,520 @@
+{
+  "schema_version": 1,
+  "status": "proposal (claude-a/progression, 25 Oct); every number is a placeholder until play-tests and Claude L's harness",
+  "id": "mirra",
+  "name": "Mirra",
+  "identity": "oasis water diviner; hands empty and open in every clip (water is a scene effect); ivory headwrap with a turquoise gem above the RIGHT ear; turquoise wrist bands; shawl end over the LEFT shoulder",
+  "home_region": "sunstone",
+  "home_region_note": "Claude K's proposal on #149 (25 Oct), not yet decided by Matt; it only sets the tier material",
+  "abilities": {
+    "kit": "game/data/abilities/mirra.json (Codex, #261); base and powered form unchanged",
+    "base": {
+      "primary": "Water bolt",
+      "secondary": "Spring seal",
+      "block": "Water curtain",
+      "special": "Oasis Unbound"
+    },
+    "skill_tree": {
+      "branches": [
+        {
+          "id": "springs",
+          "name": "Springs",
+          "covers": [
+            "secondary"
+          ],
+          "nodes": [
+            {
+              "id": "deep_well",
+              "kind": "passive",
+              "name": "Deep Well",
+              "effect": "Spring seals last 10 % longer.",
+              "numbers": {
+                "seal_lifetime_pct": 10
+              },
+              "level": 2,
+              "cost": 1,
+              "requires": [],
+              "touches_canonical": false
+            },
+            {
+              "id": "seep",
+              "name": "Seep",
+              "binding": "passive: stand in one of your own spring seals",
+              "effect": "The spring heals her a little each second, for a few seconds per seal.",
+              "numbers": {
+                "heal_pct_per_second": 1,
+                "max_seconds_per_seal": 5
+              },
+              "art": {
+                "new_clips": [],
+                "fx": [
+                  "seal ripple at the feet"
+                ],
+                "reuses": []
+              },
+              "touches_canonical": false,
+              "kind": "technique",
+              "level": 3,
+              "cost": 2,
+              "requires": [
+                "deep_well"
+              ]
+            },
+            {
+              "id": "wide_seal",
+              "kind": "passive",
+              "name": "Wide Seal",
+              "effect": "Seal radius +8 %.",
+              "numbers": {
+                "seal_radius_pct": 8
+              },
+              "level": 6,
+              "cost": 1,
+              "requires": [
+                "seep"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "seep_2",
+              "kind": "technique upgrade",
+              "name": "Seep II",
+              "effect": "Dodges recharge faster while she stands in a seal.",
+              "numbers": {
+                "dodge_recharge_pct": 25
+              },
+              "level": 12,
+              "cost": 3,
+              "requires": [
+                "wide_seal"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "oasis",
+              "kind": "keystone",
+              "name": "Oasis",
+              "effect": "You may keep one more seal at a time.",
+              "numbers": {
+                "extra_seals": 1
+              },
+              "level": 22,
+              "cost": 4,
+              "requires": [
+                "seep_2"
+              ],
+              "touches_canonical": false
+            }
+          ]
+        },
+        {
+          "id": "currents",
+          "name": "Currents",
+          "covers": [
+            "primary",
+            "special"
+          ],
+          "nodes": [
+            {
+              "id": "swift_water",
+              "kind": "passive",
+              "name": "Swift Water",
+              "effect": "Water bolts fly 8 % faster.",
+              "numbers": {
+                "bolt_speed_pct": 8
+              },
+              "level": 2,
+              "cost": 1,
+              "requires": [],
+              "touches_canonical": false
+            },
+            {
+              "id": "undertow",
+              "name": "Undertow",
+              "binding": "passive: a water bolt fired through a seal",
+              "effect": "The widened bolt pulls light foes one step toward the seal.",
+              "numbers": {
+                "pull": 12
+              },
+              "art": {
+                "new_clips": [],
+                "fx": [],
+                "reuses": []
+              },
+              "touches_canonical": false,
+              "kind": "technique",
+              "level": 9,
+              "cost": 2,
+              "requires": [
+                "swift_water"
+              ]
+            },
+            {
+              "id": "strong_current",
+              "kind": "passive",
+              "name": "Strong Current",
+              "effect": "Bolts through a seal +10 % width.",
+              "numbers": {
+                "width_pct": 10
+              },
+              "level": 11,
+              "cost": 1,
+              "requires": [
+                "undertow"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "undertow_2",
+              "kind": "technique upgrade",
+              "name": "Undertow II",
+              "effect": "Pulled foes are soaked: their next hit taken is stronger.",
+              "numbers": {
+                "soaked_bonus_pct": 15,
+                "soaked_seconds": 3
+              },
+              "level": 20,
+              "cost": 3,
+              "requires": [
+                "strong_current"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "riverbed",
+              "kind": "keystone",
+              "name": "Riverbed",
+              "effect": "Oasis Unbound's currents slow foes they cross.",
+              "numbers": {
+                "slow_pct": 20
+              },
+              "level": 24,
+              "cost": 4,
+              "requires": [
+                "undertow_2"
+              ],
+              "touches_canonical": false
+            }
+          ]
+        },
+        {
+          "id": "curtain",
+          "name": "Curtain",
+          "covers": [
+            "block"
+          ],
+          "nodes": [
+            {
+              "id": "flowing_guard",
+              "kind": "passive",
+              "name": "Flowing Guard",
+              "effect": "Water curtain guard cost -8 %.",
+              "numbers": {
+                "guard_cost_pct": -8
+              },
+              "level": 4,
+              "cost": 1,
+              "requires": [],
+              "touches_canonical": false
+            },
+            {
+              "id": "curtain_wave",
+              "name": "Curtain Wave",
+              "binding": "hold Water curtain for 0.8 s, then let go",
+              "effect": "The curtain rolls forward as a wave that pushes foes and projectiles back.",
+              "numbers": {
+                "hold_seconds": 0.8,
+                "push": 30
+              },
+              "art": {
+                "new_clips": [
+                  "guard_wave (6 drawings: from guard 4, both palms push forward)"
+                ],
+                "fx": [
+                  "wave (5 drawings)"
+                ],
+                "reuses": [
+                  "guard"
+                ]
+              },
+              "touches_canonical": false,
+              "kind": "technique",
+              "level": 16,
+              "cost": 2,
+              "requires": [
+                "flowing_guard"
+              ]
+            },
+            {
+              "id": "spray",
+              "kind": "passive",
+              "name": "Spray",
+              "effect": "Blocked projectiles splash and soak the nearest foe.",
+              "numbers": {
+                "soaked_seconds": 2
+              },
+              "level": 18,
+              "cost": 1,
+              "requires": [
+                "curtain_wave"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "curtain_wave_2",
+              "kind": "technique upgrade",
+              "name": "Curtain Wave II",
+              "effect": "A spring seal is left where the wave breaks.",
+              "numbers": {
+                "leaves_seal": true
+              },
+              "level": 26,
+              "cost": 3,
+              "requires": [
+                "spray"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "still_pool",
+              "kind": "keystone",
+              "name": "Still Pool",
+              "effect": "Seep also clears burn on you.",
+              "numbers": {
+                "cleanse_burn": true
+              },
+              "level": 28,
+              "cost": 4,
+              "requires": [
+                "curtain_wave_2"
+              ],
+              "touches_canonical": false
+            }
+          ]
+        }
+      ],
+      "points_by_level_30": 29,
+      "tree_cost": 33
+    }
+  },
+  "weapon": {
+    "item": "wrist bands and gem",
+    "equipment_tag": "bands",
+    "tiers": [
+      {
+        "tier": 1,
+        "name": "Turquoise bands",
+        "art": {
+          "silhouette": "today's drawing: turquoise wrist bands with gold studs; the gem in a gold setting above the right ear",
+          "materials": [
+            "turquoise",
+            "gold"
+          ],
+          "glow": "none",
+          "size": "as drawn",
+          "read_check": "the current drawing"
+        },
+        "mechanics": {},
+        "requires": {
+          "level": 1
+        },
+        "sockets": 1
+      },
+      {
+        "tier": 2,
+        "name": "Wave bands",
+        "art": {
+          "silhouette": "the bands 1 px wider with a carved gold wave line; a teardrop pendant (2 x 3 px) under the gem",
+          "materials": [
+            "turquoise",
+            "gold"
+          ],
+          "glow": "none",
+          "size": "bands +1 px",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
+        },
+        "mechanics": {
+          "bolt_speed_pct": 8
+        },
+        "requires": {
+          "level": 8,
+          "forge_open": true
+        },
+        "sockets": 2,
+        "cost": {
+          "glint": 60,
+          "scrap": 5,
+          "home_material": {
+            "material": "sunstone",
+            "count": 2
+          }
+        }
+      },
+      {
+        "tier": 3,
+        "name": "Paired bands",
+        "art": {
+          "silhouette": "a second band high on each forearm, joined to the wrist band by two fine gold chains; the gem +1 px each way",
+          "materials": [
+            "turquoise",
+            "gold"
+          ],
+          "glow": "none",
+          "size": "gem +1 px",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
+        },
+        "mechanics": {
+          "seal_radius_pct": 10
+        },
+        "requires": {
+          "level": 16,
+          "forge_open": true
+        },
+        "sockets": 2,
+        "cost": {
+          "glint": 150,
+          "scrap": 10,
+          "home_material": {
+            "material": "sunstone",
+            "count": 4
+          }
+        }
+      },
+      {
+        "tier": 4,
+        "name": "Starspring bands",
+        "art": {
+          "silhouette": "the turquoise turns to clear water-glass lit from inside; the gem becomes starlit oasis glass",
+          "materials": [
+            "water glass (new)",
+            "starlight (new)",
+            "gold"
+          ],
+          "glow": "the gem glows when a seal is placed and fades over 1 s",
+          "size": "as tier 3",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
+        },
+        "mechanics": {
+          "named": "Starspring: your seals last 1 s longer",
+          "seal_seconds": 1
+        },
+        "requires": {
+          "level": 24,
+          "great_forge": true
+        },
+        "sockets": 3,
+        "cost": {
+          "glint": 300,
+          "scrap": 20,
+          "home_material": {
+            "material": "sunstone",
+            "count": 6
+          },
+          "starshard": 1
+        }
+      }
+    ]
+  },
+  "outfits": [
+    {
+      "id": "dusk_caravan",
+      "name": "Dusk caravan",
+      "description": "indigo tunic and trousers with a gold hem band; the shawl stays turquoise",
+      "parts": [
+        "tunic"
+      ],
+      "ramps": {
+        "ivory": "indigo (new)"
+      },
+      "unlock": {
+        "source": "story",
+        "event": "quest:folk_mirra:done"
+      }
+    },
+    {
+      "id": "garden_linen",
+      "name": "Garden linen",
+      "description": "a green linen tunic with embroidered leaves at the hem",
+      "parts": [
+        "tunic (hem)"
+      ],
+      "ramps": {
+        "ivory": "linen green (new)"
+      },
+      "unlock": {
+        "source": "village",
+        "event": "restore:water_tower:2"
+      }
+    },
+    {
+      "id": "festival_red",
+      "name": "Festival red",
+      "description": "a red and gold tunic with a long fringe on the shawl",
+      "parts": [
+        "tunic",
+        "shawl (fringe)"
+      ],
+      "ramps": {
+        "ivory": "festival red (new)"
+      },
+      "unlock": {
+        "source": "drop",
+        "event": "drop:sunstone"
+      }
+    }
+  ],
+  "accessories": [
+    {
+      "id": "gold_chain",
+      "name": "Gold head chain",
+      "slot": "head",
+      "description": "a fine gold chain over the wrap with one drop on the brow",
+      "unlock": {
+        "source": "glint",
+        "event": "buy:stall:gold_chain",
+        "note": "400 Glint"
+      },
+      "perk": null
+    },
+    {
+      "id": "long_shawl",
+      "name": "Travelling shawl",
+      "slot": "back",
+      "description": "a longer shawl to the knee, its end still over the LEFT shoulder",
+      "unlock": {
+        "source": "arena",
+        "event": "arena:dusty_corral:silver"
+      },
+      "perk": null,
+      "replaces": "shawl"
+    },
+    {
+      "id": "shell_necklace",
+      "name": "Shell necklace",
+      "slot": "neck",
+      "description": "small white shells on a cord",
+      "unlock": {
+        "source": "drop",
+        "event": "drop:isles"
+      },
+      "perk": null
+    },
+    {
+      "id": "dowsing_pendant",
+      "name": "Dowsing pendant",
+      "slot": "trinket",
+      "description": "a brass dowsing pendant at the belt, 2 x 4 px",
+      "unlock": {
+        "source": "bond",
+        "event": "bond:any:5"
+      },
+      "perk": {
+        "status": "proposal",
+        "text": "Regional seeds drop 10 % more often",
+        "numbers": {
+          "seed_drop_pct": 10
+        }
+      }
+    }
+  ]
+}

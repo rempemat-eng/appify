@@ -233,6 +233,7 @@ export function WorldMap({
                 .map((p) => regionPoint(p))
                 .map((stop) => (
                   <View
+                    pointerEvents="none"
                     key={`${stop.x}-${stop.y}`}
                     style={{
                       position: 'absolute',
@@ -243,19 +244,18 @@ export function WorldMap({
                       backgroundColor: '#3B6FA8',
                       borderWidth: 2,
                       borderColor: '#F4EBD0',
-                      pointerEvents: 'none',
                     }}
                   />
                 ))}
               {pin && (
                 <View
+                  pointerEvents="none"
                   accessibilityLabel="You are here"
                   style={{
                     position: 'absolute',
                     left: pin.x - 7,
                     top: pin.y - 7,
                     alignItems: 'center',
-                    pointerEvents: 'none',
                   }}
                 >
                   <View

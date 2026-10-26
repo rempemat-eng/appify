@@ -1,0 +1,524 @@
+{
+  "schema_version": 1,
+  "status": "proposal (claude-a/progression, 25 Oct); every number is a placeholder until play-tests and Claude L's harness",
+  "id": "pendle",
+  "name": "Pendle",
+  "identity": "Sunstone robot gunslinger; one revolver on the RIGHT hip, one marksman rifle slung across the back (stock at the right hip, barrel past the LEFT shoulder); cattleman hat; no clock motif",
+  "home_region": "sunstone",
+  "home_region_note": "Claude K's proposal on #149 (25 Oct), not yet decided by Matt; it only sets the tier material",
+  "abilities": {
+    "kit": "game/data/abilities/pendle.json (Codex, #261); base and powered form unchanged",
+    "base": {
+      "primary": "Revolver",
+      "secondary": "Fan fire",
+      "block": "Steel plate",
+      "special": "Longshot"
+    },
+    "skill_tree": {
+      "branches": [
+        {
+          "id": "revolver",
+          "name": "Revolver",
+          "covers": [
+            "primary"
+          ],
+          "nodes": [
+            {
+              "id": "smooth_action",
+              "kind": "passive",
+              "name": "Smooth Action",
+              "effect": "Revolver cooldown -5 %.",
+              "numbers": {
+                "primary_cooldown_pct": -5
+              },
+              "level": 2,
+              "cost": 1,
+              "requires": [],
+              "touches_canonical": false
+            },
+            {
+              "id": "quick_hands",
+              "name": "Quick Hands",
+              "binding": "a perfect dodge",
+              "effect": "Two rounds slip into the cylinder during the roll.",
+              "numbers": {
+                "rounds": 2
+              },
+              "art": {
+                "new_clips": [],
+                "fx": [],
+                "reuses": [
+                  "dodge"
+                ]
+              },
+              "touches_canonical": false,
+              "kind": "technique",
+              "level": 3,
+              "cost": 2,
+              "requires": [
+                "smooth_action"
+              ]
+            },
+            {
+              "id": "speed_loader",
+              "kind": "passive",
+              "name": "Speed Loader",
+              "effect": "Full reloads 10 % faster.",
+              "numbers": {
+                "reload_pct": -10
+              },
+              "level": 6,
+              "cost": 1,
+              "requires": [
+                "quick_hands"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "quick_hands_2",
+              "kind": "technique upgrade",
+              "name": "Quick Hands II",
+              "effect": "After a full reload from empty, the first shot is a critical hit.",
+              "numbers": {
+                "first_shot_crit": true
+              },
+              "level": 12,
+              "cost": 3,
+              "requires": [
+                "speed_loader"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "high_noon",
+              "kind": "keystone",
+              "name": "High Noon",
+              "effect": "The sixth round of a cylinder knocks back.",
+              "numbers": {
+                "knockback": 16
+              },
+              "level": 22,
+              "cost": 4,
+              "requires": [
+                "quick_hands_2"
+              ],
+              "touches_canonical": false
+            }
+          ]
+        },
+        {
+          "id": "fan_fire",
+          "name": "Fan fire",
+          "covers": [
+            "secondary"
+          ],
+          "nodes": [
+            {
+              "id": "wrist_flick",
+              "kind": "passive",
+              "name": "Wrist Flick",
+              "effect": "Fan fire cooldown -8 %.",
+              "numbers": {
+                "secondary_cooldown_pct": -8
+              },
+              "level": 2,
+              "cost": 1,
+              "requires": [],
+              "touches_canonical": false
+            },
+            {
+              "id": "ricochet",
+              "name": "Ricochet",
+              "binding": "passive on Fan fire",
+              "effect": "Fan fire rounds that hit high cover bounce once.",
+              "numbers": {
+                "bounces": 1,
+                "bounce_damage_pct": 60
+              },
+              "art": {
+                "new_clips": [],
+                "fx": [
+                  "spark on the bounce"
+                ],
+                "reuses": []
+              },
+              "touches_canonical": false,
+              "kind": "technique",
+              "level": 9,
+              "cost": 2,
+              "requires": [
+                "wrist_flick"
+              ]
+            },
+            {
+              "id": "tight_fan",
+              "kind": "passive",
+              "name": "Tight Fan",
+              "effect": "Fan fire spread -10 %.",
+              "numbers": {
+                "spread_pct": -10
+              },
+              "level": 11,
+              "cost": 1,
+              "requires": [
+                "ricochet"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "ricochet_2",
+              "kind": "technique upgrade",
+              "name": "Ricochet II",
+              "effect": "A bounced round turns toward the nearest foe within 30 degrees.",
+              "numbers": {
+                "seek_cone_degrees": 30
+              },
+              "level": 20,
+              "cost": 3,
+              "requires": [
+                "tight_fan"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "gunsmoke",
+              "kind": "keystone",
+              "name": "Gunsmoke",
+              "effect": "Fan fire leaves smoke that makes shooters miss their next shot.",
+              "numbers": {
+                "seconds": 1.5
+              },
+              "level": 24,
+              "cost": 4,
+              "requires": [
+                "ricochet_2"
+              ],
+              "touches_canonical": false
+            }
+          ]
+        },
+        {
+          "id": "marksman",
+          "name": "Marksman",
+          "covers": [
+            "special",
+            "block"
+          ],
+          "nodes": [
+            {
+              "id": "plate_fold",
+              "kind": "passive",
+              "name": "Plate Fold",
+              "effect": "Steel plate raises 15 % faster.",
+              "numbers": {
+                "raise_pct": -15
+              },
+              "level": 4,
+              "cost": 1,
+              "requires": [],
+              "touches_canonical": false
+            },
+            {
+              "id": "dead_eye",
+              "name": "Dead Eye",
+              "binding": "during Longshot, hold still for 0.6 s",
+              "effect": "The foe under the aim shows its weak point (the familiar's glint) for the next shot.",
+              "numbers": {
+                "still_seconds": 0.6
+              },
+              "art": {
+                "new_clips": [],
+                "fx": [
+                  "scope glint on the rifle (1 drawing)"
+                ],
+                "reuses": [
+                  "powered_idle"
+                ]
+              },
+              "touches_canonical": true,
+              "note": "the upgrade extends Codex's canonical form time; needs C60's OK (#149)",
+              "kind": "technique",
+              "level": 16,
+              "cost": 2,
+              "requires": [
+                "plate_fold"
+              ]
+            },
+            {
+              "id": "steady_stock",
+              "kind": "passive",
+              "name": "Steady Stock",
+              "effect": "Longshot shots knock tanks back slightly.",
+              "numbers": {
+                "knockback": 8
+              },
+              "level": 18,
+              "cost": 1,
+              "requires": [
+                "dead_eye"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "dead_eye_2",
+              "kind": "technique upgrade",
+              "name": "Dead Eye II",
+              "effect": "A Longshot weak-point hit gives back 1 s of Longshot.",
+              "numbers": {
+                "form_refund_seconds": 1
+              },
+              "touches_canonical": true,
+              "note": "the upgrade extends Codex's canonical form time; needs C60's OK (#149)",
+              "level": 26,
+              "cost": 3,
+              "requires": [
+                "steady_stock"
+              ]
+            },
+            {
+              "id": "bullseye",
+              "kind": "keystone",
+              "name": "Bullseye",
+              "effect": "Longshot weak-point hits stagger elites.",
+              "numbers": {
+                "stagger_seconds": 0.6
+              },
+              "level": 28,
+              "cost": 4,
+              "requires": [
+                "dead_eye_2"
+              ],
+              "touches_canonical": false
+            }
+          ]
+        }
+      ],
+      "points_by_level_30": 29,
+      "tree_cost": 33
+    }
+  },
+  "weapon": {
+    "item": "revolver",
+    "equipment_tag": "revolver",
+    "tiers": [
+      {
+        "tier": 1,
+        "name": "Trail revolver",
+        "art": {
+          "silhouette": "today's drawing: gunmetal frame, walnut grip, visible cylinder and trigger guard",
+          "materials": [
+            "gunmetal",
+            "rifle (walnut)"
+          ],
+          "glow": "none",
+          "size": "as drawn",
+          "read_check": "the current drawing"
+        },
+        "mechanics": {},
+        "requires": {
+          "level": 1
+        },
+        "sockets": 1
+      },
+      {
+        "tier": 2,
+        "name": "Engraved revolver",
+        "art": {
+          "silhouette": "brass inlay lines on the cylinder; cream grip panels; the barrel 2 px longer",
+          "materials": [
+            "gunmetal",
+            "brass",
+            "cream"
+          ],
+          "glow": "none",
+          "size": "+2 px barrel",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
+        },
+        "mechanics": {
+          "reload_pct": -8
+        },
+        "requires": {
+          "level": 8,
+          "forge_open": true
+        },
+        "sockets": 2,
+        "cost": {
+          "glint": 60,
+          "scrap": 5,
+          "home_material": {
+            "material": "sunstone",
+            "count": 2
+          }
+        }
+      },
+      {
+        "tier": 3,
+        "name": "Brass-frame revolver",
+        "art": {
+          "silhouette": "a brass frame with two 1 px ports on the barrel; a red lanyard from the grip to the belt; the rifle's scope gains a brass sunshade to match",
+          "materials": [
+            "brass",
+            "gunmetal",
+            "bandana (lanyard)"
+          ],
+          "glow": "none",
+          "size": "as tier 2",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
+        },
+        "mechanics": {
+          "fan_spread_pct": -10
+        },
+        "requires": {
+          "level": 16,
+          "forge_open": true
+        },
+        "sockets": 2,
+        "cost": {
+          "glint": 150,
+          "scrap": 10,
+          "home_material": {
+            "material": "sunstone",
+            "count": 4
+          }
+        }
+      },
+      {
+        "tier": 4,
+        "name": "Six Suns",
+        "art": {
+          "silhouette": "the cylinder is sunstone glass lit from inside, with six 1 px chamber glints; a gold muzzle crown; a gold crescent front sight on the rifle",
+          "materials": [
+            "glow",
+            "gold",
+            "gunmetal"
+          ],
+          "glow": "one glint per loaded round; each goes dark as it is fired, so the ammo reads on the body",
+          "size": "as tier 2",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
+        },
+        "mechanics": {
+          "named": "Six Suns: the last round in the cylinder is a critical hit",
+          "last_round_crit": true
+        },
+        "requires": {
+          "level": 24,
+          "great_forge": true
+        },
+        "sockets": 3,
+        "cost": {
+          "glint": 300,
+          "scrap": 20,
+          "home_material": {
+            "material": "sunstone",
+            "count": 6
+          },
+          "starshard": 1
+        }
+      }
+    ]
+  },
+  "outfits": [
+    {
+      "id": "gulch_duster",
+      "name": "Gulch duster",
+      "description": "sand-coloured duster with a dark capelet and a red bandana",
+      "parts": [
+        "duster"
+      ],
+      "ramps": {
+        "duster": "sandcloth (new)"
+      },
+      "unlock": {
+        "source": "story",
+        "event": "quest:folk_pendle:done"
+      }
+    },
+    {
+      "id": "oasis_whites",
+      "name": "Oasis whites",
+      "description": "a short white riding jacket over the gunmetal body, a striped sash like the stall's new awning",
+      "parts": [
+        "duster (short variant)",
+        "sash (new part)"
+      ],
+      "ramps": {
+        "duster": "ivory (new)"
+      },
+      "unlock": {
+        "source": "village",
+        "event": "restore:water_tower:1"
+      }
+    },
+    {
+      "id": "midnight_rider",
+      "name": "Midnight rider",
+      "description": "near-black duster with silver conchos; the lamp eyes stay amber",
+      "parts": [
+        "duster"
+      ],
+      "ramps": {
+        "duster": "ink (new)",
+        "brass": "steel"
+      },
+      "unlock": {
+        "source": "arena",
+        "event": "arena:dusty_corral:gold"
+      }
+    }
+  ],
+  "accessories": [
+    {
+      "id": "gambler_hat",
+      "name": "Flat-brim hat",
+      "slot": "head",
+      "description": "a flat-brimmed gambler's hat with a snakeskin band; it replaces the cattleman hat",
+      "unlock": {
+        "source": "drop",
+        "event": "drop:sunstone"
+      },
+      "perk": null,
+      "replaces": "hat"
+    },
+    {
+      "id": "serape",
+      "name": "Serape",
+      "slot": "back",
+      "description": "a striped serape over the LEFT shoulder, under the slung rifle (the rifle stays fully visible)",
+      "unlock": {
+        "source": "glint",
+        "event": "buy:stall:serape",
+        "note": "500 Glint, stall tier 2"
+      },
+      "perk": null
+    },
+    {
+      "id": "star_bandana",
+      "name": "Star bandana",
+      "slot": "neck",
+      "description": "the bandana with a small white star print",
+      "unlock": {
+        "source": "bond",
+        "event": "bond:any:5"
+      },
+      "perk": null,
+      "replaces": "bandana"
+    },
+    {
+      "id": "silver_dollar",
+      "name": "Lucky silver dollar",
+      "slot": "trinket",
+      "description": "a coin on a chain at the duster's pocket, 3 px",
+      "unlock": {
+        "source": "village",
+        "event": "restore:stall:2"
+      },
+      "perk": {
+        "status": "proposal",
+        "text": "The first reload of each fight is 15 % faster",
+        "numbers": {
+          "first_reload_pct": -15
+        }
+      }
+    }
+  ]
+}

@@ -534,6 +534,7 @@ export function ZoneResidents({
   if (here.length === 0) return null;
   return (
     <View
+      pointerEvents="none"
       style={{
         position: 'absolute',
         left,
@@ -541,7 +542,6 @@ export function ZoneResidents({
         width: 320 * u,
         height: 576 * u,
         zIndex: 150000,
-        pointerEvents: 'none',
       }}
     >
       {here.map(([id, route]) => (
@@ -581,6 +581,7 @@ export function ZoneLife({
   if (!running) return null;
   return (
     <View
+      pointerEvents="none"
       style={{
         position: 'absolute',
         left,
@@ -588,7 +589,6 @@ export function ZoneLife({
         width: 320 * u,
         height: 576 * u,
         zIndex: 200000,
-        pointerEvents: 'none',
       }}
     >
       {zoneEmitters(zone, night).map((e) => (

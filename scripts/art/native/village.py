@@ -445,6 +445,61 @@ def sack(a, cx, cy, rx, ry, fam='plaster_warm'):
     fill(a, int(cx - q(1.3)), int(cy - ry - q(0.4)), int(cx + q(1.3)), int(cy - ry + 1), code('timber_warm', 2))
 
 
+def cyl_tones(u, base=3):
+    """Tones across a cylinder lit from the upper left (u from -1 at the west edge to 1 at the east):
+    a reflected rim, the highlight band, the body, the core shadow, the reflected light."""
+    return np.select([u < -0.8, u < -0.25, u < 0.25, u < 0.75], [base, base + 2, base, base - 2], base - 1)
+
+
+def stone_chunk(a, x0, y0, w, h, fam, t, rng):
+    """A rough stone as a volume: a lit top face (its upper third), a mid front, a dark east flank, a
+    chamfered outline."""
+    if w < 3 or h < 3:
+        return
+    m = chamfer(h, w, 2 if (w > 6 and h > 6) else 1)
+    tt = np.full(m.shape, t, int)
+    topn = max(1, h // 3)
+    tt[:topn, :] = t + 1
+    tt[:, int(w * 0.72):] = t - 1
+    tt[:topn, int(w * 0.72):] = t
+    tt[-1, :] = t - 2
+    T_, L_, _, _ = edges(m)
+    tt[T_] = t + 2
+    put(a, int(x0), int(y0), m, fam, np.clip(tt, 0, 5))
+
+
+def rune_groove(a, pts_list, within, r=None):
+    """A rune cut into stone along curves: a groove glowing softly, its upper lip in shade and its lower
+    lip catching the light."""
+    r = r or max(1.2, q(0.45))
+    g = np.zeros(a.shape, bool)
+    for pts in pts_list:
+        for (x0, y0), (x1, y1) in zip(pts, pts[1:]):
+            g |= seg_mask(a.shape, x0, y0, x1, y1, r)
+    g &= within
+    up_lip = np.roll(g, -1, axis=0) & ~g & within
+    lo_lip = np.roll(g, 1, axis=0) & ~g & within
+    a[g] = code('sky', 3)
+    core = g & np.roll(g, 1, axis=0) & np.roll(g, -1, axis=0) & np.roll(g, 1, axis=1) & np.roll(g, -1, axis=1)
+    a[core] = code('sky', 4)
+    a[up_lip] = code('stone', 1)
+    a[lo_lip] = code('stone', 5)
+
+
+def curve(x0, y0, x1, y1, bend, n=8):
+    """Points along a gentle arc from (x0, y0) to (x1, y1), bowed sideways by `bend` texels."""
+    out = []
+    for k in range(n + 1):
+        t = k / n
+        x = x0 + (x1 - x0) * t
+        y = y0 + (y1 - y0) * t
+        dx, dy = y1 - y0, -(x1 - x0)
+        L_ = math.hypot(dx, dy) or 1
+        b = bend * 4 * t * (1 - t)
+        out.append((x + dx / L_ * b, y + dy / L_ * b))
+    return out
+
+
 def prism(a, x0, y0, x1, y1, top, fam, t=3, side=0, bevel=True, where=None):
     """A block seen from above the front, three planes: the top face lit (`top` texels deep, its
     front arris chamfered and catching the light), the front face in mid tone with a lit west arris,
@@ -1094,28 +1149,26 @@ def _pic(w, h, up=0, side=0):
 
 
 def stones_heap(a, cx, yb, w, h, rng, n=None, fams=STONES, slates=True, planks_=True):
-    """A heap of fallen stones, broken slates and a split board, back to front, lit from the upper
-    left; bigger stones at the foot."""
+    """A heap of fallen stones, broken slates and a split board, back to front: each stone a volume
+    (lit top, mid front, dark east flank), each slate a thin plate with its lit face and dark edge,
+    bigger stones at the foot."""
     n = n or int(w * h / 22) + 4
-    items = []
-    for _ in range(n):
-        fx = rng.uniform(-0.5, 0.5)
-        fy = rng.random() ** 0.7
-        items.append((fy, fx))
-    items.sort()
+    items = sorted((rng.random() ** 0.7, rng.uniform(-0.5, 0.5)) for _ in range(n))
     for fy, fx in items:
         sw = q(rng.uniform(3, 6.5) * (0.7 + 0.5 * fy))
-        sh = q(rng.uniform(2.2, 4) * (0.7 + 0.5 * fy))
+        sh = q(rng.uniform(2.4, 4.2) * (0.7 + 0.5 * fy))
         hump = (1 - (2 * fx) ** 2) * q(h * 0.55)
         x = int(cx + fx * q(w) - sw / 2)
         y = int(yb - q(h) * (1 - fy) * 0.5 - hump * (1 - fy) - sh)
         r = rng.random()
         if slates and r < 0.25:
-            blk(a, x, y + sh // 2, x + sw, y + sh // 2 + max(3, q(1.4)), 'slate', int(rng.choice([2, 3, 4])), cut=1)
+            ty = y + sh // 2
+            blk(a, x, ty, x + sw, ty + max(3, q(1.2)), 'slate', int(rng.choice([3, 4])), cut=1, bot=0)
+            fill(a, x + 1, ty + max(3, q(1.2)), x + sw, ty + max(3, q(1.2)) + 1, code('slate', 1))
         elif planks_ and r < 0.32:
-            bar(a, x - q(4), y + sh, x + sw + q(3), y, q(1.2), 'timber_warm', 3)
+            board(a, x - q(3), y + sh, q(rng.uniform(8, 12)), q(1.8), rng.uniform(-25, -5), 'timber_warm', 3, rng)
         else:
-            blk(a, x, y, x + sw, y + sh, fams[int(rng.integers(0, 3))], int(rng.choice([2, 3, 3, 4])), cut=2 if sw > 8 else 1)
+            stone_chunk(a, x, y, sw, sh, fams[int(rng.integers(0, len(fams)))], int(rng.choice([3, 3, 4])), rng)
 
 
 def p_rubble(w, h, seed):
@@ -1259,59 +1312,70 @@ def p_well(w, h, seed, choked=False):
 
 
 def p_lantern(w, h, seed, lit=False):
-    """The shard lantern: a street lamp 48 world px tall (about 1.9 people): a two-step plinth of
-    dressed stone (lit top faces, bevelled arrises, shaded east sides, a chipped corner), a fluted
-    iron foot, a tapering post with collars, scroll brackets under a glass cage with four frame bars,
-    a pointed cap and a finial. Lit, the woodland's shard glows pale blue in the cage."""
+    """The shard lantern, a street lamp 48 world px tall. Dressed stone plinth courses (lit tops,
+    chamfers, dark east sides); a flared iron foot and a round post shaded as cylinders (a reflected
+    rim, a highlight band, a core shadow) with collars; scroll brackets; a glass cage whose panes
+    reflect the sky in diagonal streaks between lit frame bars, with an iron cradle inside (empty, or
+    holding the woodland's shard alight); a pyramid cap with a lit west facet and a dark east one."""
     rng = np.random.default_rng(seed)
     p = _pic(w, h, up=50, side=8)
     a, cx, yb = p.a, p.ax, p.ay
     prism(a, cx - q(7.5), yb - q(5), cx + q(7.5), yb + 1, q(2.6), 'stone_warm', 3, side=q(2.6))
     prism(a, cx - q(5.2), yb - q(9), cx + q(5.2), yb - q(5), q(2.0), 'stone_warm', 3, side=q(2.0))
-    fill(a, cx - q(7), yb - q(4.5), cx - q(5.6), yb - q(3.4), code('stone', 2))      # a chipped corner
+    fill(a, cx - q(7.5), yb - q(5), cx - q(6.2), yb - q(3.8), code('stone', 2))
     for k in range(3):
-        mx = cx - q(6) + k * q(4.5)
+        mx = cx - q(6.5) + k * q(4.8)
         fill(a, mx, yb - q(1.2), mx + q(1.4), yb, code('leaf', 3))
     Y, X = np.mgrid[0:a.shape[0], 0:a.shape[1]] + 0.5
-    ft, fb = yb - q(15), yb - q(8)
-    foot = (Y >= ft) & (Y < fb) & (np.abs(X - cx) < q(1.8) + (Y - ft) / max(1, fb - ft) * q(2.0))
+    ft, fb = yb - q(15), yb - q(9)
     hw = q(1.8) + (Y - ft) / max(1, fb - ft) * q(2.0)
-    uf = (X - cx) / np.maximum(1, hw)
-    tt = np.select([uf < -0.75, uf < -0.25, uf < 0.35, uf < 0.8], [3, 4, 2, 1], 2)   # rim, highlight, body, core, reflected
-    a[foot] = FI['iron'] * 8 + tt[foot]
-    a[foot & (Y >= fb - q(0.8))] = code('iron', 1)
-    blk(a, cx - q(2.6), ft - q(1.4), cx + q(2.6), ft, 'iron', 3, cut=0)
+    foot = (Y >= ft) & (Y < fb) & (np.abs(X - cx) < hw)
+    a[foot] = FI['iron'] * 8 + np.clip(cyl_tones((X - cx) / np.maximum(1, hw), 3), 0, 5)[foot]
     ao = _rect(a.shape, cx - q(4), fb, cx + q(4.5), fb + 2) & (a >= 0)
-    a[ao] = np.maximum((a[ao] // 8) * 8, a[ao] - 2)          # occlusion where the foot meets the stone
-    post = (Y >= yb - q(38)) & (Y < ft - q(1.4)) & (np.abs(X - cx) < q(1.5) - (ft - Y) / max(1, q(26)) * q(0.4))
-    tt = np.full(a.shape, 2)
-    tt[X < cx - q(0.4)] = 4
-    tt[X > cx + q(0.7)] = 1
-    a[post] = FI['iron'] * 8 + tt[post]
-    for yy in (yb - q(25), yb - q(37)):
-        blk(a, cx - q(2.2), yy, cx + q(2.2), yy + q(1.5), 'iron', 3, cut=0)
+    a[ao] = np.maximum((a[ao] // 8) * 8, a[ao] - 2)
+    hp = q(1.5) - (ft - Y) / max(1, q(26)) * q(0.4)
+    post = (Y >= yb - q(38)) & (Y < ft) & (np.abs(X - cx) < hp)
+    a[post] = FI['iron'] * 8 + np.clip(cyl_tones((X - cx) / np.maximum(1, hp), 3), 0, 5)[post]
+    for yy in (ft - q(1.4), yb - q(25), yb - q(37)):
+        col = (Y >= yy) & (Y < yy + q(1.5)) & (np.abs(X - cx) < q(2.4))
+        a[col] = FI['iron'] * 8 + np.clip(cyl_tones((X - cx) / q(2.4), 3), 0, 5)[col]
+        a[col & (Y < yy + 1)] = code('iron', 5)
     for sx in (-1, 1):
         bar(a, cx + sx * q(1.2), yb - q(36), cx + sx * q(4.6), yb - q(39.5), max(1.0, q(0.5)), 'iron', 3 if sx < 0 else 2)
         blob(a, ellipse_mask(a.shape, cx + sx * q(4.6), yb - q(36.8), q(1.1), q(1.1)), 'iron', 2)
     gx0, gx1 = cx - q(4.5), cx + q(4.5)
     gy0, gy1 = yb - q(48), yb - q(40)
-    blk(a, gx0 - q(1.2), gy1, gx1 + q(1.2), gy1 + q(1.6), 'iron', 3, cut=1)
-    cage = (Y >= gy0) & (Y < gy1) & (np.abs(X - cx) < q(4.5) - (gy1 - Y) / max(1, gy1 - gy0) * q(0.8))
+    prism(a, gx0 - q(1.2), gy1, gx1 + q(1.2), gy1 + q(1.8), q(0.7), 'iron', 3, side=q(1))
+    halfw = q(4.5) - (gy1 - Y) / max(1, gy1 - gy0) * q(0.8)
+    cage = (Y >= gy0) & (Y < gy1) & (np.abs(X - cx) < halfw)
     if lit:
         a[cage] = code('sky', 4)
         a[cage & (Y < gy0 + q(2))] = code('sky', 5)
         blob(a, ellipse_mask(a.shape, cx, (gy0 + gy1) / 2 + q(0.5), q(1.8), q(2.8)), 'snow', 5, top=0, left=0, bot=0, right=0)
     else:
         a[cage] = code('slate_cool', 1)
-        a[cage & (X < cx - q(1.5))] = code('slate', 3)
-        a[cage & (X >= cx - q(1.5)) & (X < cx - q(0.8))] = code('slate', 2)
-    for xx in (cx - q(4.0), cx - 1, cx + q(3.4)):
-        a[cage & (X >= xx) & (X < xx + max(2, q(0.7)))] = code('iron', 2)
-    cap = (Y >= gy0 - q(5)) & (Y < gy0) & (np.abs(X - cx) < q(6) * (Y - (gy0 - q(5.5))) / q(5.5))
+        a[cage & (X > cx + q(1.5))] = code('void', 1)
+        # the empty cradle inside
+        a[_rect(a.shape, cx - q(1.2), gy1 - q(3), cx + q(1.2), gy1 - q(2.4))] = code('iron', 2)
+        bar(a, cx - q(1.2), gy1 - q(3), cx - q(1.8), gy1 - q(5), max(1.0, q(0.35)), 'iron', 2)
+        bar(a, cx + q(1.2), gy1 - q(3), cx + q(1.8), gy1 - q(5), max(1.0, q(0.35)), 'iron', 1)
+    # reflections: diagonal streaks of sky on each pane
+    streak = cage & (np.abs(((X - gx0) + (Y - gy0) * 0.8) % q(5.5) - q(1.2)) < 1.0) & (X < cx + q(2))
+    a[streak] = code('sky', 3 if not lit else 5)
+    for xx in (cx - q(4.2), cx - 1, cx + q(3.4)):
+        bars = cage & (X >= xx) & (X < xx + max(2, q(0.7)))
+        a[bars] = code('iron', 2)
+        a[bars & (X < xx + 1)] = code('iron', 4)
+    # the cap: four facets, the west one lit
+    capy0, capy1 = gy0 - q(5.5), gy0
+    cap = (Y >= capy0) & (Y < capy1) & (np.abs(X - cx) < q(6) * (Y - capy0) / q(5.5))
     a[cap] = code('iron', 3)
-    a[cap & (X < cx - q(0.6))] = code('iron', 4)
-    a[cap & (Y >= gy0 - q(1))] = code('iron', 2)
-    blob(a, ellipse_mask(a.shape, cx, gy0 - q(6.2), q(1.1), q(1.1)), 'iron', 3)
+    a[cap & (X < cx - q(0.4)) & (Y < capy1 - q(1.2))] = code('iron', 4)
+    a[cap & (X < cx - q(2)) & (Y < capy1 - q(1.2)) & (Y > capy0 + q(2))] = code('iron', 5)
+    a[cap & (X > cx + q(0.8))] = code('iron', 2)
+    a[cap & (Y >= capy1 - q(1.2))] = code('iron', 2)
+    a[cap & (Y >= capy1 - q(1.2)) & (X < cx)] = code('iron', 3)
+    blob(a, ellipse_mask(a.shape, cx, capy0 - q(0.8), q(1.1), q(1.1)), 'iron', 4)
     return finish(p)
 
 
@@ -1406,10 +1470,14 @@ def p_anvil(w, h, seed):
     tt[X < cx - q(1)] = 3
     tt[X > cx + q(3)] = 1
     a[m] = FI['iron'] * 8 + tt[m]
-    face = body & (Y < yb - q(16.8))
+    face = body & (Y < yb - q(16.3))
     a[face] = code('iron', 4)
-    a[face & (X > cx - q(3)) & (X < cx + q(1))] = code('iron', 5)       # the polished face
-    a[horn & (Y < yb - q(16.8))] = code('iron', 4)
+    a[face & (Y < yb - q(17.1))] = code('iron', 5)                       # the polished top plane
+    a[face & (X > cx + q(4))] = code('iron', 3)
+    hv = np.clip((Y - (yb - q(17.5))) / q(2.1), 0, 1)
+    a[horn] = FI['iron'] * 8 + np.select([hv < 0.3, hv < 0.65], [4, 3], 1)[horn]   # the horn round, lit on top
+    tip = ellipse_mask(a.shape, cx - q(10), yb - q(15.9), q(0.9), q(0.7))
+    a[tip] = code('iron', 3)
     fill(a, cx + q(3.5), yb - q(17.5), cx + q(4.5), yb - q(16.8), code('iron', 0))   # the hardy hole
     return finish(p)
 
@@ -1465,8 +1533,9 @@ def p_smoke(w, h, seed):
 
 
 def p_beds(w, h, seed, scorched=True):
-    """Four raised beds behind the hut: board edges, soil in rows. Scorched: ash and cinders, black
-    stalks. Dug over: dark tilled earth; two of them sown with the valley's seed."""
+    """Four raised beds behind the hut: board frames as volumes (lit tops, front faces, dark east
+    ends, corner stakes), soil in ridged rows lit on their north slopes. Scorched: ash, cinders and
+    black stalks. Dug over: dark tilled earth; two sown with the valley's seed."""
     rng = np.random.default_rng(seed)
     p = _pic(w, h, up=6, side=2)
     a, cx, yb = p.a, p.ax, p.ay
@@ -1478,53 +1547,70 @@ def p_beds(w, h, seed, scorched=True):
             bx0 = x0 + q(i * (bw + 6))
             by0 = y0 + q(j * (bh + 6))
             bx1, by1 = bx0 + q(bw), by0 + q(bh)
-            blk(a, bx0, by0, bx1, by1 + q(2), 'timber', 3, cut=1)
-            ix0, iy0, ix1, iy1 = bx0 + q(1.6), by0 + q(1.6), bx1 - q(1.6), by1
+            prism(a, bx0, by0, bx1, by1 + q(2.4), q(bh) - q(0.6), 'timber', 3, side=q(1.2))
+            ix0, iy0, ix1, iy1 = bx0 + q(1.4), by0 + q(1.4), bx1 - q(2.4), by1 - q(0.6)
+            soil, lit, dark = (('soot', 2), ('ash', 3), ('soot', 1)) if scorched else (('earth', 2), ('earth', 3), ('earth', 1))
+            a[_rect(a.shape, ix0, iy0, ix1, iy1)] = code(*soil)
+            a[_rect(a.shape, ix0, iy0, ix1, iy0 + q(1))] = code(*dark)
+            for yy in range(iy0 + q(1.6), iy1 - 1, q(3.2)):
+                a[_rect(a.shape, ix0, yy, ix1, yy + 2)] = code(*lit)
+                a[_rect(a.shape, ix0, yy + 2, ix1, yy + 3)] = code(*dark)
             if scorched:
-                fill(a, ix0, iy0, ix1, iy1, code('soot', 2))
-                for yy in range(iy0 + q(2), iy1 - 1, q(3.5)):
-                    fill(a, ix0, yy, ix1, yy + 2, code('ash', 2))
-                for _ in range(5):
+                for _ in range(6):
                     sx = int(rng.integers(ix0 + 2, ix1 - 3))
                     sy = int(rng.integers(iy0 + q(3), iy1 - 1))
                     fill(a, sx, sy - q(3), sx + 2, sy, code('soot', 0))
                     if rng.random() < 0.5:
-                        fill(a, sx + 2, sy - q(3), sx + 4, sy - q(2), code('soot', 0))
+                        fill(a, sx + 2, sy - q(3), sx + 4, sy - q(2.4), code('soot', 0))
                 for _ in range(3):
                     sx = int(rng.integers(ix0 + 2, ix1 - 3))
                     sy = int(rng.integers(iy0 + 2, iy1 - 2))
                     fill(a, sx, sy, sx + 2, sy + 2, code('fox', 3))
-            else:
-                fill(a, ix0, iy0, ix1, iy1, code('earth', 2))
-                for yy in range(iy0 + q(1.5), iy1 - 1, q(3.5)):
-                    fill(a, ix0, yy, ix1, yy + 2, code('earth', 3))
-                    fill(a, ix0, yy + 2, ix1, yy + 3, code('earth', 1))
-                if k in (1, 2):
-                    for yy in range(iy0 + q(2.5), iy1 - 2, q(3.5)):
-                        for xx in range(ix0 + q(2), ix1 - q(2), q(4)):
-                            blob(a, ellipse_mask(a.shape, xx, yy, q(1.2), q(1.0)), 'leaf', 4)
+                    fill(a, sx, sy, sx + 1, sy + 1, code('lamp', 4))
+            elif k in (1, 2):
+                for yy in range(iy0 + q(2.4), iy1 - 2, q(3.2)):
+                    for xx in range(ix0 + q(2), ix1 - q(2), q(4)):
+                        blob(a, ellipse_mask(a.shape, xx, yy, q(1.2), q(1.0)), 'leaf', 4)
+            for sx_ in (bx0, bx1 - q(1.2)):
+                prism(a, sx_, by0 - q(1.4), sx_ + q(1.2), by0 + q(1.6), q(0.5), 'timber', 2, side=0)
             k += 1
     return finish(p)
 
 
 def p_notice_board(w, h, seed):
-    """The notice board: two posts, a boarded panel under a little slate hood, notices pinned on it
-    (one fresh, the rest rain-stained)."""
+    """The notice board: two square posts (lit west faces), a panel of boards with its thickness along
+    the top edge, notices pinned on it (each with a pin, a curled lit corner and its shade), under a
+    little slate hood with a fascia and a shaded underside."""
     rng = np.random.default_rng(seed)
-    p = _pic(22, 6, up=34, side=4)
+    p = _pic(22, 6, up=36, side=4)
     a, cx, yb = p.a, p.ax, p.ay
-    for xx, t in ((cx - q(10), 3), (cx + q(8), 2)):
-        beam(a, xx, yb - q(30), xx + q(2.2), yb, rng, 'timber', t)
+    for xx in (cx - q(10), cx + q(8)):
+        prism(a, xx, yb - q(31), xx + q(2.4), yb, q(0.8), 'timber', 3, side=q(0.9))
     bx0, bx1, by0, by1 = cx - q(9), cx + q(9), yb - q(28), yb - q(14)
-    planks(a, bx0, by0, bx1, by1, rng, base=3, width=3.0, vertical=False)
+    a[_rect(a.shape, bx0, by0, bx1, by1)] = code('timber', 1)
+    yy = by0
+    while yy < by1:
+        th = min(q(rng.uniform(2.6, 3.4)), by1 - yy)
+        if th > 2:
+            board(a, bx0, yy, bx1 - bx0, th - 1, 0, ('timber', 'timber_warm')[int(rng.integers(0, 2))], 3, rng)
+        yy += th
+    prism(a, bx0 - q(0.6), by0 - q(1.6), bx1 + q(0.6), by0, q(0.6), 'timber_warm', 4, side=q(0.8))
     for (nx, ny, nw, nh, t) in ((1, 2, 6, 7, 5), (8.5, 1.5, 5, 5, 4), (10, 7.5, 6, 5, 4), (2.5, 9.5, 5, 3, 3)):
         x, y = bx0 + q(nx), by0 + q(ny)
+        sh = _rect(a.shape, x + 2, y + 2, x + q(nw) + 2, y + q(nh) + 2) & (a >= 0)
+        a[sh] = np.maximum((a[sh] // 8) * 8, a[sh] - 1)
         blk(a, x, y, x + q(nw), y + q(nh), 'plaster', t, cut=0)
         for ly in range(y + q(1.6), y + q(nh) - 2, q(1.6)):
-            fill(a, x + q(1), ly, x + q(nw) - q(1.2), ly + 1, code('dusk', 2))
+            fill(a, x + q(1), ly, x + q(nw) - q(1.2) - int(rng.integers(0, q(1.5))), ly + 1, code('dusk', 2))
+        cx_ = x + q(nw) - q(1.4)
+        cy_ = y + q(nh) - q(1.4)
+        for i in range(q(1.4)):
+            fill(a, cx_ + i, cy_ + q(1.4) - 1 - i, cx_ + q(1.4), cy_ + q(1.4) - i, code('plaster', min(5, t + 1)))
         fill(a, x + q(nw / 2), y, x + q(nw / 2) + 2, y + 2, code('berry', 3))
-    hm = roof_mask(a.shape, bx0 - q(3), bx1 + q(3), by0 - q(6), by0 + q(0.5), hip=q(2))
-    slate_roof(a, hm, bx0 - q(3), bx1 + q(3), by0 - q(6), by0 + q(0.5), rng, row=2.4, width=(3, 4.4), moss=0.2)
+        fill(a, x + q(nw / 2), y, x + q(nw / 2) + 1, y + 1, code('berry', 5))
+    hm = roof_mask(a.shape, bx0 - q(3), bx1 + q(3), by0 - q(7.5), by0 - q(1), hip=q(2))
+    slate_roof(a, hm, bx0 - q(3), bx1 + q(3), by0 - q(7.5), by0 - q(1), rng, row=2.4, width=(3, 4.4), moss=0.2)
+    fascia(a, bx0 - q(3), bx1 + q(3), by0 - q(2.2), rng)
     return finish(p)
 
 
@@ -1559,22 +1645,16 @@ def p_waystone(w, h, seed):
         yy = rng.uniform(top + q(5), bot - q(3))
         sx = cx - half(yy) if rng.random() < 0.5 else cx + half(yy) - q(1)
         fill(a, int(sx), int(yy), int(sx) + q(1.2), int(yy) + q(1.4), code('stone', 2))
-    # the rune: a ring and a cross, cut and glowing
+    # the rune: forked paths cut into the face (a stem, two branches reaching up, two roots, a hook),
+    # glowing softly in the groove, its upper lip in shade and its lower lip lit
     rcy = top + q(15)
-    groove = np.zeros(a.shape, bool)
-    ring = ellipse_mask(a.shape, cx, rcy, q(3.4), q(3.4)) & ~ellipse_mask(a.shape, cx, rcy, q(2.4), q(2.4))
-    groove |= ring
-    groove |= seg_mask(a.shape, cx, rcy - q(6), cx, rcy + q(7), max(1.4, q(0.5)))
-    groove |= seg_mask(a.shape, cx - q(4.5), rcy, cx + q(4.5), rcy, max(1.4, q(0.5)))
-    groove &= front
-    wall_up = groove & ~np.roll(groove, 1, axis=0)
-    wall_lo = groove & ~np.roll(groove, -1, axis=0)
-    a[groove] = code('sky', 3)
-    a[groove & ellipse_mask(a.shape, cx, rcy, q(2), q(2))] = code('sky', 4)
-    a[wall_up] = code('stone', 1)
-    a[wall_lo] = code('stone', 5)
-    halo = ndi.binary_dilation(groove, iterations=1) & ~groove & front
-    a[halo] = code('stone_cool', 4)
+    pts = [curve(cx + q(0.3), rcy + q(8), cx - q(0.2), rcy - q(3), q(0.8)),
+           curve(cx - q(0.2), rcy - q(0.5), cx - q(3.6), rcy - q(6.5), -q(1.2)),
+           curve(cx - q(0.1), rcy + q(1.0), cx + q(3.4), rcy - q(5.0), q(1.4)),
+           curve(cx + q(0.2), rcy + q(5.5), cx - q(2.8), rcy + q(8.5), q(0.6)),
+           curve(cx + q(0.3), rcy + q(5.0), cx + q(3.0), rcy + q(8.0), -q(0.6)),
+           curve(cx - q(3.6), rcy - q(6.5), cx - q(2.0), rcy - q(8.0), -q(0.6), n=3)]
+    rune_groove(a, pts, front)
     # moss and lichen
     for _ in range(5):
         mx = cx + rng.uniform(-q(6), q(5))
@@ -1641,6 +1721,8 @@ def p_barrel(w, h, seed):
     stave = ((u + 1) * 3.5).astype(int)
     tt = tt + np.where(stave % 2 == 0, 0, -1) * (np.abs(u) < 0.8)
     a[m] = FI['timber'] * 8 + np.clip(tt[m], 0, 5)
+    belly = m & (u > -0.6) & (u < -0.38) & (f > 0.2) & (f < 0.8)
+    a[belly] = code('timber', 5)                                        # the bulge catches the light
     seam = m & (np.abs(((u + 1) * 3.5) - np.round((u + 1) * 3.5)) < 0.08)
     a[seam] = code('timber', 1)
     for _ in range(6):
@@ -1659,30 +1741,46 @@ def p_barrel(w, h, seed):
     a[lid] = code('timber_cool', 2)
     inner = ellipse_mask(a.shape, cx, top + q(0.3), r * 0.7, q(1.7))
     a[inner] = code('timber_warm', 4)
-    for k in (-1, 1):
-        a[inner & (np.abs(X - (cx + k * r * 0.24)) < 0.6)] = code('timber_warm', 2)
-    a[inner & (X > cx + r * 0.35)] = code('timber_warm', 3)
+    for k in (-1, 0, 1):
+        a[inner & (np.abs(X - (cx + k * r * 0.3 + r * 0.15)) < 0.6)] = code('timber_warm', 2)    # the lid's planks
+    a[inner & (X > cx + r * 0.4)] = code('timber_warm', 3)
+    a[lid & ~ellipse_mask(a.shape, cx, top, r * 0.86 - 1, q(2.4) - 1) & (Y < top) & (X < cx)] = code('timber_cool', 4)
     return finish(p)
 
 
 def p_trough(w, h, seed):
-    """The quench trough: a stone tank with a dressed coping (lit top face, shaded front), the inner
-    back wall in shade, dark water with a pale waterline against the wall and the sky's glint."""
+    """The quench trough: a stone tank whose coping is a lit top plane on all four sides (the back and
+    end rims narrow, the front rim wide, its front face below in mid tone, the east end in shade);
+    inside, the far wall lit above the waterline, the water darkening with depth toward the front,
+    a band of sky reflected across it and the near wall's shade along its front edge."""
     rng = np.random.default_rng(seed)
-    p = _pic(w, h, up=8, side=2)
+    p = _pic(w, h, up=9, side=2)
     a, cx, yb = p.a, p.ax, p.ay
     x0, x1 = cx - q(w / 2), cx + q(w / 2)
-    rubble(a, x0, yb - q(7), x1, yb, rng, base=3, course=(2.4, 3.4), length=(4, 7), moss=0.35)
-    top = yb - q(h + 7)
-    prism(a, x0, top, x1, yb - q(6), q(2.0), 'stone_warm', 3, side=q(1.6))
-    ix0, ix1, iy0, iy1 = x0 + q(2.2), x1 - q(3.4), top + q(2.0), yb - q(8.2)
-    fill(a, ix0, iy0, ix1, iy1, code('stone', 2))
-    fill(a, ix0, iy0, ix1, iy0 + q(1.6), code('stone', 1))                 # the back wall in shade
-    fill(a, ix0, iy0 + q(1.6), ix1, iy1, code('water_cool', 1))
-    fill(a, ix0, iy0 + q(1.6), ix1, iy0 + q(1.6) + 1, code('water', 4))   # the waterline
-    fill(a, ix0, iy0 + q(1.6) + 1, ix0 + q(1.2), iy1, code('water', 0))    # the west wall's shade
-    fill(a, ix0 + q(4), iy0 + q(3.2), ix0 + q(8), iy0 + q(3.2) + 2, code('sky', 4))
-    fill(a, ix0 + q(9), iy0 + q(4.4), ix0 + q(11), iy0 + q(4.4) + 2, code('sky', 3))
+    top = yb - q(h + 8)
+    rubble(a, x0, yb - q(7.5), x1, yb, rng, base=3, course=(2.4, 3.4), length=(4, 7), moss=0.35)
+    fill(a, x1 - q(1.8), yb - q(7.5), x1, yb, code('stone', 1))                    # the east end in shade
+    # the coping: four lit rims round the opening, the front rim's face below it
+    a[_rect(a.shape, x0, top, x1, yb - q(7.5))] = code('stone_warm', 4)
+    a[_rect(a.shape, x0, top, x1, top + 1)] = code('stone_warm', 5)
+    a[_rect(a.shape, x0, top, x0 + 1, yb - q(7.5))] = code('stone_warm', 5)
+    a[_rect(a.shape, x0, yb - q(9.5), x1, yb - q(7.5))] = code('stone_warm', 3)      # the front rim's face
+    a[_rect(a.shape, x1 - q(1.8), top, x1, yb - q(7.5))] = code('stone_warm', 3)
+    for jx in range(x0 + q(6), x1 - q(2), q(7)):
+        a[_rect(a.shape, jx, top, jx + 1, yb - q(9.5))] = code('stone', 2)
+    ix0, ix1, iy0, iy1 = x0 + q(1.8), x1 - q(3.4), top + q(1.4), yb - q(11.6)
+    # inside: the far wall lit, the waterline, water darkening toward the front, a sky band
+    wall_h = q(1.6)
+    a[_rect(a.shape, ix0, iy0, ix1, iy0 + wall_h)] = code('stone', 4)
+    a[_rect(a.shape, ix0, iy0 + wall_h, ix1, iy0 + wall_h + 1)] = code('water', 4)
+    wy0 = iy0 + wall_h + 1
+    for k, yy in enumerate(range(wy0, iy1)):
+        f = (yy - wy0) / max(1, iy1 - wy0)
+        a[_rect(a.shape, ix0, yy, ix1, yy + 1)] = code('water' if f < 0.45 else 'water_cool', 2 if f < 0.45 else 1)
+    a[_rect(a.shape, ix0 + q(2), wy0 + q(1.4), ix1 - q(5), wy0 + q(1.4) + 2)] = code('sky', 4)
+    a[_rect(a.shape, ix0 + q(6), wy0 + q(2.6), ix1 - q(2), wy0 + q(2.6) + 1)] = code('sky', 3)
+    a[_rect(a.shape, ix0, iy0, ix0 + q(1.0), iy1)] = code('stone', 2)                # the west wall inside
+    a[_rect(a.shape, ix0, iy1 - 1, ix1, iy1)] = code('water_cool', 0)                # the near wall's shade
     return finish(p)
 
 
@@ -1701,53 +1799,83 @@ def p_coal(w, h, seed):
 
 
 def p_woodpile(w, h, seed):
-    """Split logs stacked end-on under a board: the cut ends lit, bark between."""
+    """Split logs stacked end on under a cover board: each end a volume of rings (a pale heart, a
+    darker ring, the bark round it), the split faces lit, dark gaps between the logs, the board's
+    lit top and front edge, a stake at each end."""
     rng = np.random.default_rng(seed)
-    p = _pic(w, h, up=12, side=1)
+    p = _pic(w, h, up=15, side=1)
     a, cx, yb = p.a, p.ax, p.ay
-    x0 = cx - q(w / 2)
+    x0, x1 = cx - q(w / 2), cx + q(w / 2)
     r = q(2.4)
     for row in range(3):
-        n = int(w / 5) - row
+        n = int(w / 5) - (row % 2)
         for k in range(n):
-            x = x0 + q(2.5) + row * q(2.5) + k * q(5)
-            y = yb - q(2.5) - row * q(4.3)
-            m = ellipse_mask(a.shape, x, y, r, r * 0.9)
-            a[m] = code('timber_cool', 2)
-            a[m & ellipse_mask(a.shape, x - 1, y - 1, r - 2, r * 0.9 - 2)] = code('plaster_warm', 3 if rng.random() < 0.6 else 2)
+            x = x0 + q(3) + (q(2.4) if row % 2 else 0) + k * q(5)
+            y = yb - q(2.6) - row * q(4.3)
+            bark = ellipse_mask(a.shape, x, y, r, r * 0.92)
+            a[bark] = code('timber_cool', 1)
+            a[bark & ellipse_mask(a.shape, x - 1, y - 1, r - 1, r * 0.92 - 1)] = code('timber_cool', 2)
+            end = ellipse_mask(a.shape, x - 1, y - 1, r - 2, r * 0.92 - 2)
+            a[end] = code('timber_warm', 4)
+            ring_ = end & ~ellipse_mask(a.shape, x - 1, y - 1, r * 0.55, r * 0.5) & ellipse_mask(a.shape, x - 1, y - 1, r * 0.55 + 1, r * 0.5 + 1)
+            a[ring_] = code('timber_warm', 3)
+            a[end & ~ellipse_mask(a.shape, x - 1.5, y - 1.5, r - 3, r * 0.92 - 3)] = code('timber_warm', 3)
+            a[end & ellipse_mask(a.shape, x - 1.5, y - 1.5, r * 0.25, r * 0.25)] = code('timber_warm', 5)
+            if rng.random() < 0.4:
+                fill(a, int(x - 1), int(y - r + 2), int(x), int(y), code('timber_warm', 2))     # a check
+    prism(a, x0, yb - q(15), x1, yb - q(13), q(0.8), 'timber_warm', 3, side=q(1))
+    for sx in (x0, x1 - q(1.6)):
+        prism(a, sx, yb - q(14), sx + q(1.6), yb, q(0.6), 'timber', 3, side=q(0.6))
     return finish(p)
 
 
 def p_grindstone(w, h, seed):
-    """A treadle grindstone: a sandstone wheel seen side on (its worn edge band, a lit face), an iron
-    axle with a crank, a timber frame on splayed legs, a treadle near the ground with its rod up to
-    the crank, a drip can over the wheel."""
+    """A treadle grindstone: the sandstone wheel side on with its edge face (thickness) to the east and
+    a highlight band on its upper west rim, the axle through bearing blocks on the frame, a crank, the
+    treadle and its connecting rod up to the crank pin, a water pot hung on a bracket dripping on the
+    wheel."""
     rng = np.random.default_rng(seed)
-    p = _pic(w, h, up=18, side=6)
+    p = _pic(w, h, up=20, side=6)
     a, cx, yb = p.a, p.ax, p.ay
-    # frame: two splayed legs each side, a rail
+    Y, X = np.mgrid[0:a.shape[0], 0:a.shape[1]] + 0.5
     for lx, t in ((cx - q(6), 3), (cx + q(5), 2)):
-        bar(a, lx - q(1.5), yb - 1, lx, yb - q(9), max(1.4, q(0.8)), 'timber', t)
-        bar(a, lx + q(1.5), yb - 1, lx, yb - q(9), max(1.4, q(0.8)), 'timber', t - 1)
-    board(a, cx - q(8), yb - q(10), q(16), q(2), 0, 'timber_warm', 3, rng, split=False)
-    # the treadle and its rod
-    board(a, cx - q(7), yb - q(2.2), q(12), q(1.6), -6, 'timber', 3, rng, split=False, grain=False)
-    bar(a, cx + q(4), yb - q(3), cx + q(6.5), yb - q(12), max(1.0, q(0.4)), 'iron', 2)
-    # the wheel
-    wcx, wcy, R = cx, yb - q(13), q(5.5)
-    rim = ellipse_mask(a.shape, wcx, wcy, R, R)
-    a[rim] = code('stone_warm', 3)
-    face = ellipse_mask(a.shape, wcx - q(0.6), wcy - q(0.4), R - q(1.2), R - q(1.2))
-    a[face] = code('stone_warm', 4)
-    a[face & ellipse_mask(a.shape, wcx - q(2), wcy - q(2), q(2.4), q(2))] = code('stone_warm', 5)
-    edge_band = rim & ~ellipse_mask(a.shape, wcx - q(0.4), wcy - q(0.3), R - 1, R - 1)
-    a[edge_band] = code('stone', 2)
-    # axle and crank
-    fill(a, wcx - q(8), wcy - 1, wcx + q(7), wcy + 1, code('iron', 2))
-    blob(a, ellipse_mask(a.shape, wcx, wcy, q(1.2), q(1.2)), 'iron', 3)
-    bar(a, wcx + q(7), wcy, wcx + q(7), wcy + q(2.5), max(1.0, q(0.5)), 'iron', 3)
-    # the drip can over the wheel
-    prism(a, wcx - q(2), wcy - R - q(5), wcx + q(1.5), wcy - R - q(1.5), q(0.8), 'iron', 3, side=q(0.8))
+        bar(a, lx - q(1.6), yb - 1, lx, yb - q(9), max(1.4, q(0.8)), 'timber', t)
+        bar(a, lx + q(1.6), yb - 1, lx, yb - q(9), max(1.4, q(0.8)), 'timber', t - 1)
+    prism(a, cx - q(8), yb - q(10.5), cx + q(8), yb - q(8.5), q(0.7), 'timber_warm', 3, side=q(0.8))
+    # treadle on the ground, rod to the crank
+    board(a, cx - q(7), yb - q(2.4), q(12), q(1.8), -6, 'timber', 3, rng, split=False)
+    wcx, wcy, R = cx - q(0.5), yb - q(14), q(5.5)
+    pin = (wcx + q(7.5), wcy + q(2.5))
+    bar(a, cx + q(4), yb - q(3), pin[0], pin[1], max(1.0, q(0.45)), 'iron', 2)
+    # the wheel: edge face first, then the face, then its highlight band
+    edge_ = ellipse_mask(a.shape, wcx + q(1.4), wcy, R, R)
+    a[edge_] = code('stone_warm', 2)
+    a[edge_ & (Y > wcy + R * 0.4)] = code('stone_warm', 1)
+    face = ellipse_mask(a.shape, wcx, wcy, R, R)
+    d = ((X - wcx) + (Y - wcy)) / (R * 1.41)
+    tt = np.select([d < -0.55, d < 0.2, d < 0.7], [5, 4, 3], 2)
+    a[face] = FI['stone_warm'] * 8 + tt[face]
+    a[face & ~ellipse_mask(a.shape, wcx, wcy, R - 1, R - 1) & (d < -0.2)] = code('stone_warm', 5)
+    for _ in range(4):
+        gx, gy = wcx + rng.uniform(-R * 0.5, R * 0.3), wcy + rng.uniform(-R * 0.5, R * 0.4)
+        fill(a, int(gx), int(gy), int(gx) + 2, int(gy) + 1, code('stone_warm', 3))
+    # axle through bearings, the crank and its pin
+    a[_rect(a.shape, wcx - q(8), wcy - 1, wcx + q(7.5), wcy + 2)] = code('iron', 2)
+    a[_rect(a.shape, wcx - q(8), wcy - 1, wcx + q(7.5), wcy)] = code('iron', 4)
+    for bx_ in (cx - q(7.4), cx + q(4.6)):
+        prism(a, bx_, wcy - q(1.4), bx_ + q(2.6), wcy + q(1.8), q(0.6), 'timber_cool', 3, side=q(0.8))
+        bar(a, bx_ + q(1.3), wcy + q(1.8), bx_ + q(1.3), yb - q(10.5), max(1.2, q(0.6)), 'timber', 2)
+    blob(a, ellipse_mask(a.shape, wcx, wcy, q(1.1), q(1.1)), 'iron', 3)
+    bar(a, wcx + q(7.5), wcy, pin[0], pin[1], max(1.0, q(0.5)), 'iron', 3)
+    blob(a, ellipse_mask(a.shape, pin[0], pin[1], q(0.8), q(0.8)), 'iron', 4)
+    # the water pot on its bracket, dripping
+    bx_, by_ = cx - q(7.4) + q(1.3), wcy - R - q(4)
+    bar(a, bx_, wcy - q(1.4), bx_, by_, max(1.0, q(0.45)), 'iron', 2)
+    bar(a, bx_, by_, wcx - q(1), by_, max(1.0, q(0.45)), 'iron', 3)
+    pot = ellipse_mask(a.shape, wcx - q(1), by_ + q(1.8), q(1.8), q(1.6))
+    up_ = (X - (wcx - q(1))) / q(1.8)
+    a[pot] = FI['clay'] * 8 + np.clip(cyl_tones(up_, 3), 0, 5)[pot]
+    a[_rect(a.shape, wcx - q(1), by_ + q(3.4), wcx - q(1) + 1, wcy - R + 1)] = code('water', 4)
     return finish(p)
 
 
@@ -1770,29 +1898,39 @@ def p_hay(w, h, seed):
 
 
 def p_bench(w, h, seed):
-    """A bench as a volume: the seat seen from above (three boards running its length, their top
-    faces lit, a dark gap between each, end grain at the west end), the seat's front edge in shade
-    showing its thickness, the shade it throws on the legs; two dressed stone legs, each with a lit
-    top, a mid front face and a dark east side."""
+    """A bench: a backrest of two rails on posts, the seat of three planks seen from above with a gap
+    between each, the seat's thickness along its front with the shade it throws, end grain at both
+    ends; timber trestle legs, each two splayed legs with a brace, lit on the west."""
     rng = np.random.default_rng(seed)
-    p = _pic(w, h, up=10, side=2)
+    p = _pic(w, h, up=22, side=2)
     a, cx, yb = p.a, p.ax, p.ay
     x0, x1 = cx - q(w / 2), cx + q(w / 2)
-    for lx in (x0 + q(2), x1 - q(7.5)):
-        prism(a, lx, yb - q(7), lx + q(5.5), yb, q(1.4), 'stone', 3, side=q(1.6))
-    yy = yb - q(13)
-    a[_rect(a.shape, x0, yy, x1, yy + 3 * q(1.5) + 2)] = code('timber', 1)      # the gaps between the boards
+    # backrest: two posts and two rails standing behind the seat, the ground showing between
+    for px in (x0 + q(2), x1 - q(4.4)):
+        prism(a, px, yb - q(21.5), px + q(2.4), yb - q(12), q(0.8), 'timber', 3, side=q(0.8))
+    for ry in (yb - q(21), yb - q(18)):
+        board(a, x0 + q(0.5), ry, x1 - x0 - q(1), q(1.8), 0, 'timber_warm', 4, rng, split=False)
+        sh = _rect(a.shape, x0 + q(0.5), ry + q(1.8), x1 - q(0.5), ry + q(1.8) + 2) & (a >= 0)
+        a[sh] = np.maximum((a[sh] // 8) * 8, a[sh] - 1)
+    # legs: trestles
+    for lx in (x0 + q(4), x1 - q(4)):
+        for sx in (-1, 1):
+            bar(a, lx + sx * q(2.8), yb - 1, lx + sx * q(0.8), yb - q(8), max(1.4, q(0.8)), 'timber', 3 if sx < 0 else 2)
+        bar(a, lx - q(2.2), yb - q(3.5), lx + q(2.2), yb - q(3.5), max(1.2, q(0.6)), 'timber_cool', 2)
+    # the seat
+    yy = yb - q(12.5)
+    a[_rect(a.shape, x0, yy, x1, yy + 3 * q(1.6) + 2)] = code('timber', 0)
     for k in range(3):
-        th = q(1.5)
-        board(a, x0, yy, x1 - x0, th, 0, ('timber_warm', 'timber_warm', 'timber')[k], (5, 4, 4)[k], rng, split=k == 1)
-        a[_rect(a.shape, x0, yy + th - 1, x1, yy + th)] = code(('timber_warm', 'timber_warm', 'timber')[k], (4, 4, 3)[k])
+        th = q(1.6)
+        board(a, x0, yy, x1 - x0, th - 1, 0, ('timber_warm', 'timber_warm', 'timber')[k], (5, 4, 4)[k], rng, split=k == 1)
         yy += th + 1
-    a[_rect(a.shape, x0, yy - 1, x1, yy + q(1.6))] = code('timber', 2)                 # the edge's thickness
-    a[_rect(a.shape, x0, yy + q(1.6) - 1, x1, yy + q(1.6))] = code('timber', 1)
-    sh = _rect(a.shape, x0, yy + q(1.6), x1, yy + q(2.6)) & (a >= 0)
-    a[sh] = np.maximum((a[sh] // 8) * 8, a[sh] - 2)                                     # its shade on the legs
-    a[_rect(a.shape, x0, yb - q(13), x0 + q(1.2), yy + q(1.6))] = code('plaster_warm', 3)   # end grain
-    a[_rect(a.shape, x1 - q(1.2), yb - q(13), x1, yy + q(1.6))] = code('timber', 1)
+    a[_rect(a.shape, x0, yy - 1, x1, yy + q(1.8))] = code('timber', 2)
+    a[_rect(a.shape, x0, yy + q(1.8) - 1, x1, yy + q(1.8))] = code('timber', 1)
+    sh = _rect(a.shape, x0, yy + q(1.8), x1, yy + q(3)) & (a >= 0)
+    a[sh] = np.maximum((a[sh] // 8) * 8, a[sh] - 2)
+    for ex, t in ((x0, 4), (x1 - q(1.4), 2)):
+        a[_rect(a.shape, ex, yb - q(12.5), ex + q(1.4), yy + q(1.8))] = code('plaster_warm', t)
+        a[_rect(a.shape, ex, yb - q(11.5), ex + q(1.4), yb - q(11.5) + 1)] = code('timber_warm', 2)
     return finish(p)
 
 
@@ -1843,25 +1981,34 @@ def p_sacks(w, h, seed):
         sack(a, cx + q(w * dx), yb - q(5 * s_) - (q(5.5) if dy else 0), q(4.2 * s_), q(4.6 * s_))
     return finish(p)
 def p_debris(w, h, seed):
-    """Storm litter on the flags: broken slates, a snapped batten, twigs and leaves."""
+    """Storm litter on the flags: broken slates lying flat (each a thin plate, its face lit, its broken
+    edge dark), a snapped batten with its splintered end, twigs with a few leaves."""
     rng = np.random.default_rng(seed)
-    p = _pic(w, h, up=2, side=2)
+    p = _pic(w, h, up=3, side=3)
     a, cx, yb = p.a, p.ax, p.ay
     for _ in range(int(w * h / 30) + 3):
         x = cx + q(rng.uniform(-w / 2, w / 2))
         y = yb - q(rng.uniform(0, h))
         r = rng.random()
-        if r < 0.45:
-            blk(a, x, y, x + q(rng.uniform(3, 5)), y + max(3, q(1.6)), ('slate', 'slate_cool')[int(rng.integers(0, 2))],
-                int(rng.choice([2, 3, 4])), cut=1)
-        elif r < 0.6:
-            bar(a, x, y, x + q(rng.uniform(6, 10)), y + q(rng.uniform(-2, 2)), max(1, q(0.7)), 'timber_warm', 3)
-        elif r < 0.8:
-            bar(a, x, y, x + q(rng.uniform(3, 6)), y + q(rng.uniform(-3, 3)), max(1.0, D * 0.35), 'timber_cool', 2)
+        if r < 0.5:
+            sw, sh = q(rng.uniform(3, 5.5)), max(3, q(rng.uniform(1.4, 2.2)))
+            fam = ('slate', 'slate_cool')[int(rng.integers(0, 2))]
+            blk(a, x, y, x + sw, y + sh, fam, int(rng.choice([3, 4])), cut=1, bot=0)
+            fill(a, x + 1, y + sh, x + sw, y + sh + 1, code(fam, 1))
+            if rng.random() < 0.5:
+                fill(a, x + sw - 2, y, x + sw, y + 2, code(fam, 1))           # a broken corner
+        elif r < 0.65:
+            board(a, x, y, q(rng.uniform(7, 11)), q(1.4), rng.uniform(-20, 20), 'timber_warm', 3, rng)
         else:
-            blob(a, ellipse_mask(a.shape, x, y, q(1.4), q(1.0)), ('leaf', 'brass', 'fox')[int(rng.integers(0, 3))], 3)
+            x2, y2 = x + q(rng.uniform(4, 7)), y + q(rng.uniform(-2.5, 2.5))
+            bar(a, x, y, x2, y2, max(1.0, D * 0.35), 'timber_cool', 2)
+            for k in range(2):
+                lx, ly = x + (x2 - x) * (0.4 + 0.4 * k), y + (y2 - y) * (0.4 + 0.4 * k) - q(0.8)
+                m = ellipse_mask(a.shape, lx, ly, q(1.1), q(0.8))
+                fam = ('leaf', 'brass')[int(rng.integers(0, 2))]
+                a[m] = code(fam, 3)
+                a[m & ellipse_mask(a.shape, lx - 1, ly - 1, q(0.6), q(0.4))] = code(fam, 4)
     return finish(p)
-
 
 def p_cart(w, h, seed):
     """A handcart left in the square when the village ran: a bed of boards with side rails and nails,

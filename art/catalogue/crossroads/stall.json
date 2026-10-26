@@ -1,0 +1,117 @@
+{
+ "id": "crossroads/stall",
+ "file": "game/zones/crossroads/art/stall.png",
+ "sha256": "5edeabc0694684ac51fe6127eaf86e7f82f88d7f63ceb9202f457424523e71e6",
+ "kind": "stall",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  138,
+  162
+ ],
+ "status": "fail",
+ "counts": {
+  "blocker": 0,
+  "fault": 3,
+  "polish": 3
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 36,
+   "tones": 17.13888888888889,
+   "shapes": 27.13888888888889
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.539,
+  "tones_ratio": 0.635,
+  "shapes_ratio": 0.539,
+  "passed": false,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    21,
+    31,
+    35,
+    87
+   ],
+   "message": "crossroads/stall: the red is lit from the right (luminance rises 44 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    115,
+    31,
+    129,
+    88
+   ],
+   "message": "crossroads/stall: the red is lit from the right (luminance rises 19 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.volume",
+   "severity": "fault",
+   "box": [
+    33,
+    31,
+    45,
+    66
+   ],
+   "message": "crossroads/stall: the wood reads 2D: 2 light planes, luminance spread 20",
+   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
+  },
+  {
+   "detector": "detail.volume",
+   "severity": "fault",
+   "box": [
+    57,
+    31,
+    69,
+    66
+   ],
+   "message": "crossroads/stall: the wood reads 2D: 2 light planes, luminance spread 20",
+   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
+  },
+  {
+   "detector": "detail.volume",
+   "severity": "fault",
+   "box": [
+    81,
+    31,
+    93,
+    66
+   ],
+   "message": "crossroads/stall: the wood reads 2D: 2 light planes, luminance spread 20",
+   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
+  },
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    8,
+    31,
+    130,
+    159
+   ],
+   "message": "crossroads/stall: detail bar 0.54 of Eastward's prop band (17.1 tones, 27.1 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  }
+ ],
+ "reviewed": "2026-10-25",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}

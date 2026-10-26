@@ -421,11 +421,8 @@ function StillPair({
         insetBottom={insetBottom}
       />
       <Animated.View
-        style={[
-          { position: 'absolute', left: 0, top: 0, width, height },
-          fadeIn,
-          { pointerEvents: 'none' },
-        ]}
+        pointerEvents="none"
+        style={[{ position: 'absolute', left: 0, top: 0, width, height }, fadeIn]}
       >
         <RocketScene
           flight={flight}

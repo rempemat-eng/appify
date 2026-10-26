@@ -1,0 +1,57 @@
+{
+ "id": "thornback/thornback_calm_W",
+ "file": "artifacts/thornback/thornback_calm_W.png",
+ "sha256": "4d95a3e159b17dc235a2abe6e4e0218bb9882d6e825652cdcf52f2cbc1960ab7",
+ "kind": "creature",
+ "biome": "cellar",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  288,
+  208
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 1
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 36,
+   "tones": 13.25,
+   "shapes": 24.75
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.491,
+  "tones_ratio": 0.491,
+  "shapes_ratio": 0.491,
+  "passed": false,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    38,
+    109,
+    229,
+    206
+   ],
+   "message": "thornback/thornback_calm_W: detail bar 0.49 of Eastward's prop band (13.2 tones, 24.8 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  }
+ ],
+ "reviewed": "2026-10-26",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}
