@@ -67,7 +67,14 @@ def patches(H: int, W: int, seed: int, cell: float, share: float) -> np.ndarray:
 def blobs(H: int, W: int, seed: int, cell: float, share: float) -> np.ndarray:
     """Rounder soft patches than `patches`: a slow field with one finer octave, so their outline
     wanders in lumps rather than fraying into a camouflage pattern."""
-    v = 0.78 * nz(H, W, cell, seed) + 0.22 * nz(H, W, cell / 3.5, seed + 1)
+    # smoothed white noise (no value-noise lattice: its level sets run straight along the lattice
+    # lines at large cells), with a finer octave for a lumpy outline
+    r = np.random.default_rng(seed)
+    big = ndi.gaussian_filter(r.random((H, W)), cell / 4.0, mode='wrap')
+    fine = ndi.gaussian_filter(r.random((H, W)), cell / 14.0, mode='wrap')
+    big = (big - big.mean()) / max(1e-9, big.std())
+    fine = (fine - fine.mean()) / max(1e-9, fine.std())
+    v = big + 0.25 * fine
     return v > np.quantile(v, 1 - share)
 
 
@@ -198,7 +205,7 @@ def flower(cv, y, x, kind, ok=None):
 # lawn
 # ------------------------------------------------------------------------------------------------
 def lawn(H: int, W: int, seed: int, fam: str = 'grass', base: int = 3, lush: float = 1.0,
-         flowers: float = 1.0) -> np.ndarray:
+         flowers: float = 1.0, grain: float = 1.0) -> np.ndarray:
     """Eastward's lawn at our density (shots 12, 13, 37): one calm field tone; large soft blotches
     (26 to 57 px) a step darker in the cool sibling and a few lit ones in the warm sibling, their
     edges frayed by blades; tufts in loose clumps, dense where the turf is long and sparse between
@@ -212,8 +219,9 @@ def lawn(H: int, W: int, seed: int, fam: str = 'grass', base: int = 3, lush: flo
     # fade out through a 2 x 2 checker (fades are where dither belongs)
     cool = fam + '_cool' if fam + '_cool' in FI else fam
     warm = fam + '_warm' if fam + '_warm' in FI else fam
-    dark = blobs(H, W, seed + 1, 64.0, 0.22)
-    lit = blobs(H, W, seed + 2, 40.0, 0.07) & ~ndi.binary_dilation(dark, iterations=6)
+    # (the two hues share the field about evenly, so neither reads as a shape on the other)
+    dark = blobs(H, W, seed + 1, 70.0, 0.42)
+    lit = blobs(H, W, seed + 2, 80.0, 0.2) & ~ndi.binary_dilation(dark, iterations=4)
     yy, xx = np.mgrid[0:H, 0:W]
     chk = ((xx // 2 + yy // 2) % 2) == 0
     cv[dark] = C(cool, base)
@@ -221,32 +229,50 @@ def lawn(H: int, W: int, seed: int, fam: str = 'grass', base: int = 3, lush: flo
     cv[lit] = C(warm, base)
     cv[ndi.binary_dilation(lit, iterations=2) & ~lit & ~dark & chk] = C(warm, base)
     damp = ndi.gaussian_filter(dark.astype(float), 5.0)
-    # tufts: a density field gathers them in clumps; nowhere quite empty
-    dens = np.clip(0.3 + 0.85 * (fbm(H, W, 40.0, seed + 3) - 0.35) * 1.6 + 0.6 * damp, 0.28, 0.97) * lush
-    sp = 5
-    for gy in range(2, H + 6, sp):
-        for gx in range((gy // sp) % 2 * 3, W + 4, sp):
-            y = gy + int(rng.integers(-2, 3))
-            x = gx + int(rng.integers(-2, 3))
-            if not (0 <= y < H and 0 <= x < W) or rng.random() > dens[y, x]:
-                continue
-            size = rng.uniform(0.6, 1.25) if dens[y, x] > 0.5 else rng.uniform(0.5, 0.95)
-            shp = tuft_shape(rng, size * (1.0 + 0.35 * damp[y, x]))
-            if rng.random() < 0.6 * damp[y, x]:
+    # a low mottle: small clumps (3 to 6 px) of the sibling hue at the same tone, about a third of
+    # the field, so the turf is never one flat colour yet stays calm (its value hardly moves)
+    mot = fbm(H, W, 5.0, seed + 21) > 0.53
+    swap = np.where(dark, C(fam, base), np.where(lit, C(fam, base), C(cool, base)))
+    sel = mot & ((cv == C(fam, base)) | (cv == C(cool, base)) | (cv == C(warm, base)))
+    cv[sel] = swap[sel]
+    # a calm grain (Matt, 26 Oct: the lawn too busy): short lit blades a texel or two long, sparse,
+    # and a dark blade now and then, so no stretch is one flat tone but nothing reads as stipple
+    # (the scale guide: dark marks of 3 px and up, about 34 to a H square in Eastward)
+    for _ in range(int(H * W / 95)):
+        y, x = int(rng.integers(2, H - 1)), int(rng.integers(1, W - 2))
+        cv[y, x] = step(cv[y, x], 1)
+        if rng.random() < 0.6:
+            cv[y - 1, x + (1 if rng.random() < 0.5 else 0)] = step(cv[y - 1, x], 1)
+    for _ in range(int(H * W / 420 * grain)):
+        y, x = int(rng.integers(3, H - 1)), int(rng.integers(1, W - 2))
+        for j in range(int(rng.integers(2, 4))):
+            cv[y - j, x + (j // 2)] = step(cv[y - j, x], -1)
+    # tufts in loose clumps (tufts 7 to 14 px across, clumps 15 to 40), the clumps 35 to 60 px
+    # apart, more in the damp patches, calm turf between them
+    gather = fbm(H, W, 50.0, seed + 3) + 0.5 * damp
+    cl = []
+    for _ in range(int(H * W / 900)):
+        y, x = rng.uniform(-10, H + 10), rng.uniform(-10, W + 10)
+        if any((y - a) ** 2 + (x - b) ** 2 < (36 * (1.2 - 0.4 * lush)) ** 2 for a, b in cl):
+            continue
+        g = gather[int(np.clip(y, 0, H - 1)), int(np.clip(x, 0, W - 1))]
+        if rng.random() > np.clip(0.25 + g * 0.9, 0.1, 0.95) * lush:
+            continue
+        cl.append((y, x))
+        dmp = damp[int(np.clip(y, 0, H - 1)), int(np.clip(x, 0, W - 1))]
+        for _k in range(int(rng.integers(3, 8))):
+            ty = int(round(y + rng.normal(0, 4.5)))
+            tx = int(round(x + rng.normal(0, 8.0)))
+            shp = tuft_shape(rng, rng.uniform(1.25, 2.1))
+            if rng.random() < 0.5 * dmp:
                 shp = [(dy, dx, dt - 1 if dt <= 0 else dt) for (dy, dx, dt) in shp]
-            stamp(cv, y, x, shp, None)
+            stamp(cv, ty, tx, shp, None)
     # no near-black in the turf: the darkest blade is a tone above the ramp's floor
     low = (cv % 8 == 0)
     cv[low] = cv[low] + 1
-    # short lit blades in the sun: a texel or two a tone up, in pairs
-    for _ in range(int(H * W / 150)):
-        y, x = int(rng.integers(2, H - 2)), int(rng.integers(1, W - 2))
-        if lit[y, x] or rng.random() < 0.3:
-            cv[y, x] = step(cv[y, x], 1)
-            cv[y - 1, x + (1 if rng.random() < 0.5 else -1)] = step(cv[y - 1, x], 1)
     # flowers in small groups, few
     if flowers > 0:
-        n = int(H * W / 9000 * flowers)
+        n = int(H * W / 16000 * flowers)
         for _ in range(n):
             cy, cx = int(rng.integers(6, H - 6)), int(rng.integers(6, W - 6))
             kind = ('white', 'white', 'yellow', 'violet')[int(rng.integers(0, 4))]
@@ -465,7 +491,10 @@ def contact(cv: np.ndarray, fx: float, fy: float, w: float, depth: float = 0.3, 
     yy, xx = np.mgrid[0:H, 0:W] + 0.5
     rx, ry = w * 0.55, max(3.0, w * depth * 0.5)
     q = ((xx - fx - dx) / rx) ** 2 + ((yy - fy - dy + ry * 0.35) / ry) ** 2
-    shadow(cv, q <= 1.0, core=core, rim=2, fade=True)
+    # the core under the foot, a tone deeper only close in; the rest a tone, its rim a checker
+    shift(cv, q <= 1.0, -1)
+    shift(cv, q <= 0.35, -(core - 1))
+    shift(cv, (q > 1.0) & (q <= 1.45) & (((xx + yy) % 2) == 0), -1)
 
 
 # ------------------------------------------------------------------------------------------------
@@ -579,14 +608,27 @@ def ledge(cv: np.ndarray, top: np.ndarray, face_h: int, rng, seed: int = 0, kind
     face |= extra & (jag > 1.4) & ~top
     from .softgrid import clean
     face = clean(face & ~top, min_area=1.0)
-    # the side faces where the top ends west and east, down to the face's foot
-    sw = 6
-    hz = ndi.binary_dilation(top | face, structure=np.ones((1, 2 * sw + 1), bool))
-    side = hz & ~top & ~face
-    lower = ~(top | face | side)
-    west_side = side & ndi.binary_dilation(right(top | face, 1), structure=np.ones((1, sw + 1), bool), origin=(0, -(sw // 2)))
+    # the side walls (eastward-edges.md 3.3, Matt 26 Oct 19:42): wherever raised ground ends west
+    # or east, its wall shows as a narrow band seen almost edge-on: along the top's west and east
+    # edges (over the lower ground, or over the face of a lower part at an inner corner) and past
+    # the face's ends, down to its foot. A wall facing west is lit, one facing east in shade.
+    sw = 5
+    row = np.ones((1, 2 * sw + 1), bool)
+    face0 = face.copy()
+    near_top = ndi.binary_dilation(top, structure=row) & ~top
+    near_face = ndi.binary_dilation(face0, structure=row) & ~top & ~face0
+    side = (near_top & ~face0) | (near_top & face0) | near_face
     side = clean(side, min_area=0.5)
-    west_side &= side
+    face = face0 & ~side
+    raised_for = np.where(face0, 0, 1)          # in a face, only the top makes a wall; elsewhere top and face
+    R_all = top | face0
+    east_r = np.zeros_like(top)
+    west_r = np.zeros_like(top)
+    for k in range(1, sw + 2):
+        east_r |= np.where(raised_for == 1, right(R_all, -k), right(top, -k))
+        west_r |= np.where(raised_for == 1, right(R_all, k), right(top, k))
+    west_side = side & east_r & ~west_r          # the raised ground lies east: the wall faces west, lit
+    lower = ~(top | face0 | side)
     # the lip: how far the grass hangs over the face, per column, in lumps
     ov = np.broadcast_to(scallops(W, rng, (9, 22), (1, int(round(2 + 5 * overhang))))[None, :], (H, W))
     dtop = runs_from_top(face)
@@ -627,14 +669,23 @@ def ledge(cv: np.ndarray, top: np.ndarray, face_h: int, rng, seed: int = 0, kind
     ys, xs = np.nonzero(face_b & (db2 == 2))
     for k in rng.permutation(len(ys))[: len(ys) // 16]:
         pebble(cv, int(ys[k]) - 1, int(xs[k]), rng, big=rng.random() < 0.3, ok=face | lower)
-    # the side faces: earth seen edge-on, lit on the west, in shade on the east, a dark outer line
+    # the side walls: narrow clods stood on end (the face's lumps wrapping round the corner in
+    # perspective), lit on west-facing walls, a step or two darker on east-facing ones, the darkest
+    # line of the picture broken along the outer edge, and the wall's foot darker still
     if side.any():
-        clods(cv, side, rng, earth, size=(5, 9), ratio=0.9, gap_t=1, lit_t=4 if not rock else 4, seed=seed + 3)
+        tmp = cv.copy()
+        clods(tmp, side, rng, earth, size=(4, 7), ratio=1.5, gap_t=1, lit_t=4, seed=seed + 3, spacing=0.8,
+              fams=(e0, ew, ec) if rock else (ew, 'crag_warm', 'crag_cool'))
+        cv[side] = tmp[side]
         shift(cv, side & ~west_side, -2)
-        shift(cv, side & west_side, -1)
-        outer = side & ndi.binary_dilation(lower, structure=CROSS) & (nz(H, W, 5.0, seed + 11) > 0.3)
+        shift(cv, side & west_side & (cv % 8 < 5), 0)
+        outer = side & ndi.binary_dilation(lower | (face & ~ndi.binary_dilation(top, structure=row)), structure=np.ones((1, 3), bool))
+        outer &= nz(H, W, 4.0, seed + 11) > 0.28
         cv[outer] = C(ec, 0)
-        # a side face's top rows under the lip, and its foot, darker still
+        # the column of the wall right against the top: its rim, a lit texel on west walls
+        rim_c = side & ndi.binary_dilation(top, structure=np.ones((1, 3), bool))
+        cv[rim_c & west_side] = C(ew, 4)
+        cv[rim_c & ~west_side] = C(ec, 1)
         shift(cv, side & (runs_from_bottom(side) <= 3), -1)
     # the grass lip: top's codes continue down over the overhang, its last row dark, tufts hanging
     colfill = np.where(top, cv, -1)
@@ -646,6 +697,11 @@ def ledge(cv: np.ndarray, top: np.ndarray, face_h: int, rng, seed: int = 0, kind
     shift(cv, under, -2)
     shift(cv, lp & down(under, -1), -1)
     # lit band on the top behind the lip (1 to 3 rows, a tone up)
+    # the lip runs down the sides too: the top's last column over a wall a tone down, the next lit
+    sl = top & ndi.binary_dilation(side, structure=np.ones((1, 3), bool))
+    shift(cv, sl & (cv % 8 < 6), -1)
+    sl2 = top & ndi.binary_dilation(sl, structure=np.ones((1, 3), bool)) & ~sl
+    shift(cv, sl2 & (cv % 8 < 5), 1)
     lit_rows = np.zeros_like(top)
     tl = top & down(lp | face, -1)
     for k in range(1, 4):
@@ -900,12 +956,68 @@ def water(cv: np.ndarray, m: np.ndarray, seed: int, bank_h: int = 7, flow=None, 
     out[lp] = colfill[lp]
     und = lp & down(bank & ~lp, -1)
     out[und] = step(out[und], -2)
-    # the other shores: wet earth a texel, the turf's lip lit
+    # the other shores: the turf's lip lit
     shore = land & ndi.binary_dilation(wat, structure=CROSS) & ~ndi.binary_dilation(bank, iterations=2)
     out[shore & turf] = step(out[shore & turf], 1)
-    s2 = land & ndi.binary_dilation(shore, structure=CROSS) & ~shore & turf & down(wat, -2)
-    out[s2] = step(out[s2], -1)
+    # the east and west banks (Matt, 26 Oct 19:42): a narrow wall of earth 3 px seen almost
+    # edge-on, like a ledge's side: on the west shore it faces east and lies in shade, on the east
+    # shore it faces west and is lit; a light waterline along its foot. Under the north bank the
+    # bank face itself turns the corner, so the bend joins without a seam.
+    westl = np.zeros((H, W), bool)
+    eastl = np.zeros((H, W), bool)
+    for k in range(1, 4):
+        westl |= right(land, k)
+        eastl |= right(land, -k)
+    rbw = runs_from_top(wat)
+    sideb = wat & (westl ^ eastl) & (rbw > 3)
+    vert = ndi.binary_opening(sideb, structure=np.ones((5, 1), bool))      # only along north-south runs
+    wb = vert & westl
+    eb = vert & eastl
+    out[wb] = C('earth', 2)
+    out[wb & right(land, 1)] = C('earth', 1)
+    out[eb] = C('earth_warm', 3)
+    out[eb & right(land, -1)] = C('earth_warm', 4)
+    for b_, d_ in ((wb, 1), (eb, -1)):
+        wl_ = wat & ~vert & right(b_, d_)
+        out[wl_] = C(fam, 5)
     cv[:] = out
+    # the turf hangs over the other shores in rounded tongues (8 to 16 px, 2 to 5 deep), their
+    # underside a tone down and their shade on the water, and reed clumps stand at the waterline
+    # (solid clumps: their blades rise over the turf, not over the water, so the waterline stays
+    # one smooth line; Matt, 26 Oct: no bare banks)
+    sy_, sx_ = np.nonzero(shore & turf)
+    placed = []
+    for k in rng.permutation(len(sy_)):
+        y, x = int(sy_[k]), int(sx_[k])
+        if any((x - a) ** 2 + (y - b) ** 2 < 26 ** 2 for a, b in placed):
+            continue
+        placed.append((x, y))
+        # the direction into the water
+        dyw = int(wat[min(H - 1, y + 2), x]) - int(wat[max(0, y - 2), x])
+        dxw = int(wat[y, min(W - 1, x + 2)]) - int(wat[y, max(0, x - 2)])
+        if dyw == 0 and dxw == 0:
+            continue
+        hw = rng.uniform(4, 8)
+        dep = rng.uniform(2.5, 5.0)
+        base = cv[y - 2 * dyw if 0 <= y - 2 * dyw < H else y, x - 2 * dxw if 0 <= x - 2 * dxw < W else x]
+        base = base if grassy(np.array([[base]]))[0, 0] else C('grass', 3)
+        lob = np.zeros((H, W), bool)
+        for t_ in np.arange(-hw, hw + 0.5, 0.5):
+            for d_ in np.arange(0, dep * np.sqrt(max(0.0, 1 - (t_ / hw) ** 2)) + 0.01, 0.5):
+                Y = int(round(y + dyw * d_ + dxw * t_ * 0 + (t_ if dxw else 0)))
+                X = int(round(x + dxw * d_ + (t_ if dyw else 0)))
+                if 0 <= Y < H and 0 <= X < W:
+                    lob[Y, X] = True
+        lob = ndi.binary_closing(lob, structure=np.ones((3, 3)))
+        lob &= wat & ~under_n
+        if lob.sum() < 12:
+            continue
+        cv[lob] = base
+        cv[lob & ~ndi.binary_erosion(lob | ~wat, structure=CROSS)] = step(base, -1)
+        shd = wat & ~lob & ndi.binary_dilation(lob, iterations=2) & ~ndi.binary_dilation(lob, iterations=0)
+        cv[shd & (cv % 8 > 0)] = cv[shd & (cv % 8 > 0)] - 1
+        if rng.random() < 0.45 * reeds:
+            reed_clump(cv, y, x, rng, turf_ok=~wat | ndi.binary_erosion(lob, structure=CROSS))
     # stones on the bank and the shore, straddling the waterline, a dark ring on the water
     from . import props as P4
     ey, ex = np.nonzero((bank & (runs_from_bottom(bank) <= 3)) | shore)
@@ -946,6 +1058,30 @@ def water(cv: np.ndarray, m: np.ndarray, seed: int, bank_h: int = 7, flow=None, 
         for k in rng.permutation(len(ys))[: int(len(ys) / 1600 * lilies)]:
             lily(cv, int(ys[k]), int(xs[k]), rng, wat)
     return items
+
+
+def reed_clump(cv, y, x, rng, turf_ok=None):
+    """A clump of reeds at the waterline: a solid fan of blades 10 to 18 px tall in the leaf ramp,
+    lit on the west, dark at the foot, some with a brown head; blades rise over the land side."""
+    H, W = cv.shape
+    n = int(rng.integers(5, 9))
+    for b in range(n):
+        u = b / max(1, n - 1) * 2 - 1
+        bx = x + int(round(u * 4))
+        L = int(round((18 - 6 * abs(u)) * rng.uniform(0.7, 1.0)))
+        for j in range(L):
+            X = bx + int(round(u * j * 0.25))
+            Y = y - j
+            tt = 4 if (u < 0 and j > 2) else (3 if j > 2 else 2)
+            if j == L - 1:
+                tt = 5 if u < 0.3 else 4
+            put(cv, Y, X, C('leaf', tt), turf_ok)
+            if j < 4:
+                put(cv, Y, X + 1, C('leaf', 2), turf_ok)
+        if rng.random() < 0.3:
+            X = bx + int(round(u * L * 0.25))
+            for j in range(3):
+                put(cv, y - L - j, X, C('timber', 3 if j else 2), turf_ok)
 
 
 def rush(cv, y, x, rng, n=None, ok=None):
@@ -1064,65 +1200,108 @@ def leaf(cv, cy, cx, ang, L, Wd, fam='leaf', lit_t=4, ok=None):
 
 
 def crop(cv, cy, cx, rng, kind, ok=None):
-    """A crop in its plot: clover-like rosettes, a cabbage head, carrot tops or a seedling."""
-    if kind == 'rosette':
-        a0 = rng.uniform(0, 0.4) + 0.785
-        for k in range(4):
-            leaf(cv, cy, cx, a0 + k * 1.571, 10.5, 7.0, 'leaf', 4, ok)
-        put(cv, cy, cx, C('leaf', 2), ok)
-    elif kind == 'cabbage':
-        for k in range(6):
-            leaf(cv, cy + 1, cx, k * 1.047 + 0.3, 10.5, 7.0, 'leaf_cool', 4, ok)
-        H, W = cv.shape
-        for dy in range(-3, 4):
-            for dx in range(-4, 5):
-                if (dx / 4.2) ** 2 + (dy / 3.4) ** 2 <= 1:
-                    put(cv, cy + dy, cx + dx, C('grass_cool', 5 if dx + dy < -2 else (4 if dx + dy < 2 else 3)), ok)
-    elif kind == 'carrot':
-        for k in range(5):
-            ang = -1.571 + (k - 2) * 0.42
-            leaf(cv, cy, cx + k - 2, ang, 11.0, 3.5, 'grass', 4, ok)
-        for dx in range(-2, 3):
-            put(cv, cy + 1, cx + dx, C('clay', 4 if dx < 0 else 3), ok)
-        put(cv, cy + 2, cx - 1, C('clay', 3), ok)
-        put(cv, cy + 2, cx, C('clay', 2), ok)
-    else:                                                       # a seedling: two small leaves
-        leaf(cv, cy, cx, -2.4, 7.0, 4.0, 'grass', 4, ok)
-        leaf(cv, cy, cx, -0.7, 7.0, 4.0, 'grass', 4, ok)
-        leaf(cv, cy, cx, -1.57, 6.0, 3.0, 'grass', 4, ok)
+    """A crop in its plot, at a growth stage: 'seedling' (two or three small leaves), 'young' (a
+    small rosette), 'lettuce' (a loose rosette of ruffled leaves), 'cabbage' (a pale head in a
+    ring of dark outer leaves), 'carrot' (feathery fronds over an orange shoulder), 'onion'
+    (upright blades over a pale bulb) or 'flowering' (a rosette with a flower stalk). Every leaf
+    is lit on its upper left with a pale midrib and a dark rim; the crop's shade lies on the soil
+    to its lower right."""
+    H, W = cv.shape
+    # its shade on the soil first
+    r_sh = {'seedling': 3, 'young': 6, 'lettuce': 9, 'cabbage': 10, 'carrot': 7, 'onion': 5, 'flowering': 8}[kind]
+    for dy in range(-2, 4):
+        for dx in range(-r_sh, r_sh + 3):
+            if ((dx - 2) / (r_sh + 1)) ** 2 + ((dy - 1) / 3.0) ** 2 <= 1:
+                Y, X = cy + dy + 2, cx + dx
+                if 0 <= Y < H and 0 <= X < W and (ok is None or ok[Y, X]) and cv[Y, X] % 8 < 6:
+                    cv[Y, X] = step(cv[Y, X], -1)
+    if kind == 'seedling':
+        for a in (-2.5, -0.65, -1.57)[:int(rng.integers(2, 4))]:
+            leaf(cv, cy, cx, a, 5.5, 3.5, 'grass', 4, ok)
         put(cv, cy + 1, cx, C('grass', 2), ok)
+    elif kind == 'young':
+        a0 = rng.uniform(0, 0.8)
+        for k in range(4):
+            leaf(cv, cy, cx, a0 + k * 1.571, 7.0, 5.0, 'leaf', 4, ok)
+        put(cv, cy, cx, C('leaf', 2), ok)
+    elif kind == 'lettuce':
+        a0 = rng.uniform(0, 1.0)
+        for k in range(7):
+            leaf(cv, cy + 1, cx, a0 + k * 0.9, 10.0, 7.5, 'grass', 4, ok)
+        for k in range(4):
+            leaf(cv, cy, cx, a0 + 0.4 + k * 1.571, 6.0, 5.0, 'grass', 5, ok)
+        # ruffled rims: a lit texel here and there along the outer leaves
+        for _ in range(8):
+            a = rng.uniform(0, 6.28)
+            put(cv, cy + int(round(7 * np.sin(a) * 0.8)), cx + int(round(8 * np.cos(a))), C('grass', 5), ok)
+    elif kind == 'cabbage':
+        for k in range(7):
+            leaf(cv, cy + 2, cx, k * 0.9 + 0.2, 11.0, 7.5, 'leaf_cool', 4, ok)
+        for dy in range(-5, 5):
+            for dx in range(-6, 7):
+                q = (dx / 6.2) ** 2 + (dy / 4.8) ** 2
+                if q <= 1:
+                    lam = -0.6 * dx / 6 - 0.8 * dy / 5
+                    tt = 5 if lam > 0.55 else (4 if lam > -0.1 else (3 if lam > -0.6 else 2))
+                    put(cv, cy + dy, cx + dx, C('grass_cool', tt), ok)
+        for dx in (-3, 0, 3):                                    # the veins of the wrapping leaves
+            put(cv, cy - 2, cx + dx, C('grass_cool', 3), ok)
+            put(cv, cy - 1, cx + dx + (1 if dx > 0 else -1 if dx < 0 else 0), C('grass_cool', 3), ok)
+    elif kind == 'carrot':
+        for k in range(6):
+            ang = -1.571 + (k - 2.5) * 0.36 + rng.uniform(-0.1, 0.1)
+            L = rng.uniform(9, 14)
+            for j in range(int(L)):                                # a frond: a stem with leaflets
+                X = cx + int(round(np.cos(ang) * j))
+                Y = cy + int(round(np.sin(ang) * j))
+                put(cv, Y, X, C('grass', 3 if j < L * 0.6 else 4), ok)
+                if j % 3 == 2:
+                    put(cv, Y, X - 1, C('grass', 4), ok)
+                    put(cv, Y, X + 1, C('grass', 2), ok)
+        for dx in range(-3, 4):
+            put(cv, cy + 1, cx + dx, C('clay', 5 if dx < -1 else (4 if dx < 2 else 3)), ok)
+        for dx in range(-2, 3):
+            put(cv, cy + 2, cx + dx, C('clay', 3 if dx < 1 else 2), ok)
+    elif kind == 'onion':
+        for dx in (-3, -1, 1, 3):
+            L = int(rng.integers(8, 13))
+            for j in range(L):
+                put(cv, cy - j, cx + dx + (j // 5) * (1 if dx > 0 else -1), C('leaf_cool', 4 if dx < 0 else 3), ok)
+        for dx in range(-3, 4):
+            put(cv, cy + 1, cx + dx, C('plaster', 5 if dx < 0 else 4), ok)
+        put(cv, cy + 2, cx - 1, C('plaster', 3), ok)
+        put(cv, cy + 2, cx, C('plaster', 3), ok)
+    else:                                                       # flowering: a rosette and a stalk
+        for k in range(5):
+            leaf(cv, cy + 1, cx, k * 1.257, 8.0, 5.5, 'leaf', 4, ok)
+        for j in range(1, 12):
+            put(cv, cy - j, cx, C('leaf', 3), ok)
+        flower(cv, cy - 12, cx, 'yellow', ok)
+        flower(cv, cy - 8, cx + 2, 'yellow', ok)
 
 
-def bed(cv, frame, rng, cells_in, cell, kinds=('rosette', 'rosette', 'cabbage', 'carrot', 'seedling'),
-        soil='path_warm', earth='earth_warm'):
-    """A raised garden bed (Eastward 12 and 13): a wide frame of packed soil with a lit outer rim
-    and a darker groove inside it, rounded corners, a low front face on the south and its shadow
-    on the grass; inside, one rounded plot per cell, its soil ringed by a dark furrow and a lighter
-    lip, lit at its upper left, a crop in most. `cells_in`: (x0, y0, x1, y1) of the plots, in
-    cells (texel origin 0)."""
+def bed(cv, frame, rng, cells_in, cell, rows=('cabbage', 'lettuce', 'carrot', 'onion'),
+        wood='earth', earth='earth_warm'):
+    """A raised garden bed (Eastward 12 and 13, in our own timber): a frame of boards round it,
+    their grain running along them with knots, joints and nail heads, square corner posts with
+    their end grain on top, a low front face of boards on the south and its shade on the turf;
+    inside, the soil a little lower, worked into a rounded mound per cell ringed by a furrow, clods
+    and crumbs on it; a crop per plot by rows at mixed growth stages (some freshly sown, one dug
+    over), a weed or two and dropped leaves. `cells_in`: (x0, y0, x1, y1) of the plots, in cells."""
     H, W = cv.shape
     yy, xx = np.mgrid[0:H, 0:W]
-    # the low front face on the south and the frame's shadow on the turf
+    # weathered boards: the cool timber for the body, the plain timber for lit edges
+    wc = wood + '_cool' if wood + '_cool' in FI else wood
+    ww = 'timber' if wood == 'earth' else (wood + '_warm' if wood + '_warm' in FI else wood)
+    band = 9
+    inner = ndi.binary_erosion(frame, iterations=band)
+    ring = frame & ~inner
+    # the low front face on the south: boards seen edge-on, and its shade on the turf
     face = np.zeros_like(frame)
-    for k in range(1, 5):
+    for k in range(1, 6):
         face |= down(frame, k)
     face &= ~frame
     turf = grassy(cv) & ~frame & ~face
-    var0 = nz(H, W, 8.0, 83) > 0.5
-    soil_c = soil.replace('_warm', '') + '_cool' if soil.replace('_warm', '') + '_cool' in FI else soil
-    cv[face] = np.where(var0, C(soil, 2), C(soil_c, 2))[face]
-    cv[face & down(face, -1) & ~down(face, -2)] = np.where(var0, C(soil, 1), C(soil_c, 1))[face & down(face, -1) & ~down(face, -2)]
-    # the frame's boards show as joints across its face every 26 to 40 px, a lit texel beside each
-    xs_f = np.nonzero(face.any(0))[0]
-    if len(xs_f):
-        jx = xs_f[0] + int(rng.integers(8, 20))
-        while jx < xs_f[-1] - 6:
-            col = face[:, jx]
-            cv[col, jx] = C(soil, 1)
-            cv[face[:, jx + 1], jx + 1] = C(soil, 3)
-            jx += int(rng.integers(26, 41))
-    sel = face & ~down(face, 1)                               # the lit rim of the face's top
-    cv[sel] = np.where(var0, C(soil, 3), C(soil, 4))[sel]
     sh = np.zeros_like(frame)
     for k in range(1, 5):
         sh |= down(face, k)
@@ -1130,73 +1309,136 @@ def bed(cv, frame, rng, cells_in, cell, kinds=('rosette', 'rosette', 'cabbage', 
         sh |= right(frame | face, k)
     sh &= turf
     shadow(cv, sh, core=1, rim=0, fade=True)
-    # the frame: a calm soil band, mottled, its outer rim lit (north and west) and a dark groove
-    # one texel inside it
-    f = np.full((H, W), FI[soil])
-    t = np.full((H, W), 4)
-    t[blobs(H, W, 77, 40.0, 0.25)] = 3
-    cv[frame] = (f * 8 + t)[frame]
-    # its packed surface: a few dents and crumbs, never a mottle
-    soil_marks_ = np.random.default_rng(78)
-    ys_, xs_ = np.nonzero(frame & ndi.binary_erosion(frame, iterations=3))
-    for k in soil_marks_.permutation(len(ys_))[: len(ys_) // 160]:
-        y_, x_ = int(ys_[k]), int(xs_[k])
-        cv[y_, x_:x_ + 2] = C(soil, 3)
-        put(cv, y_ + 1, x_ + 1, C(soil, 5), frame)
-    outer = frame & ~ndi.binary_erosion(frame, structure=CROSS)
-    var = nz(H, W, 7.0, 81) > 0.45                         # worn stretches: no ruler-straight rim
-    cv[outer & (down(~frame, 1) | right(~frame, 1))] = np.where(var, C(soil, 5), C(soil, 4))[outer & (down(~frame, 1) | right(~frame, 1))]
+    fr = runs_from_top(face)
+    vf = nz(H, W, 7.0, 68) > 0.5
+    cv[face] = np.where(vf, C(wc, 2), C(wood, 2))[face]
+    cv[face & (fr == 1)] = np.where(vf, C(wood, 3), C(ww, 3))[face & (fr == 1)]
+    gv2 = nz(H, W, 3.5, 70)
+    cv[face & (fr >= 4)] = np.where(gv2 > 0.6, C(wood, 2), np.where(gv2 > 0.35, C(wc, 1), C(wc, 0)))[face & (fr >= 4)]
+    # the boards: along x on the north and south, along y on the west and east
+    ys_, xs_ = np.nonzero(frame)
+    fx0, fx1, fy0, fy1 = xs_.min(), xs_.max(), ys_.min(), ys_.max()
+    ns = ring & ((yy - fy0 < band) | (fy1 - yy < band))
+    we = ring & ~ns
+    t = np.full((H, W), 3)
+    # grain: long streaks a tone down, a few lit, knotted
+    gx = np.sin(xx * 0.09 + yy * 1.7 + 3 * nz(H, W, 14.0, 62)) > 0.82
+    gy = ((np.sin(yy * 0.09 + xx * 1.7 + 3 * nz(H, W, 14.0, 63)) > 0.82))
+    t[ns & gx] = 2
+    t[we & gy] = 2
+    t[ring & (nz(H, W, 6.0, 64) > 0.78)] = 4
+    t[ring & (nz(H, W, 2.5, 65) > 0.7)] = np.minimum(t[ring & (nz(H, W, 2.5, 65) > 0.7)], 2)
+    cv[ring] = (FI[wood] * 8 + t)[ring]
+    # the boards' lit inner and outer edges, a dark gap between board and soil
+    outer = ring & ~ndi.binary_erosion(frame, structure=CROSS)
+    vv = nz(H, W, 6.0, 67) > 0.5
+    sel = outer & (down(~frame, 1) | right(~frame, 1))
+    cv[sel] = np.where(vv, C(ww, 4), C(wood, 4))[sel]
     sel = outer & (down(~frame, -1) | right(~frame, -1))
-    cv[sel] = np.where(var, C(soil, 3), C(soil, 2))[sel]
-    # inside the frame's band (10 px) the bed's soil lies a little lower: darker, a groove of shade
-    # along its north and west edges under the band
-    inner = ndi.binary_erosion(frame, iterations=10)
+    cv[sel] = np.where(vv, C(wc, 2), C(wood, 2))[sel]
+    gap_ = ring & ndi.binary_dilation(inner, structure=CROSS)
+    gv = nz(H, W, 4.0, 66)
+    cv[gap_] = np.where(gv > 0.62, C(earth, 2), np.where(gv > 0.4, C(wood, 1), C(wc, 0)))[gap_]
+    cv[ring & ndi.binary_dilation(gap_, structure=CROSS) & ~gap_ & (down(gap_, 1) | right(gap_, 1))] = C(wc, 2)
+    # board joints with nails either side, every 34 to 56 px
+    nails = []
+    x = fx0 + int(rng.integers(30, 50))
+    while x < fx1 - 20:
+        for (yA, yB) in ((fy0, fy0 + band), (fy1 - band + 1, fy1 + 1)):
+            cv[yA:yB, x][ring[yA:yB, x]] = C(wc, 1)
+            nails += [(yA + band // 2, x - 3), (yA + band // 2, x + 3)]
+        x += int(rng.integers(34, 57))
+    y = fy0 + int(rng.integers(26, 40))
+    while y < fy1 - 20:
+        for (xA, xB) in ((fx0, fx0 + band), (fx1 - band + 1, fx1 + 1)):
+            cv[y, xA:xB][ring[y, xA:xB]] = C(wc, 1)
+            nails += [(y - 3, xA + band // 2), (y + 3, xA + band // 2)]
+        y += int(rng.integers(34, 57))
+    for (ny, nx) in nails:
+        put(cv, ny, nx, C('iron', 1), ring)
+        put(cv, ny - 1, nx - 1, C('iron', 4), ring)
+    # corner posts: 12 px squares a little proud of the frame, end grain on top, lit west side
+    for (px, py) in ((fx0 - 1, fy0 - 1), (fx1 - 10, fy0 - 1), (fx0 - 1, fy1 - 10), (fx1 - 10, fy1 - 10)):
+        for dy in range(12):
+            for dx in range(12):
+                Y, X = py + dy, px + dx
+                if not (0 <= Y < H and 0 <= X < W):
+                    continue
+                rr = np.hypot(dx - 5.5, dy - 5.5)
+                tt = 4 if rr < 1.5 else (3 if int(rr) % 2 else 2)
+                if dx == 0 or dy == 0:
+                    tt = 5
+                if dx == 11 or dy == 11:
+                    tt = 1
+                cv[Y, X] = C(ww if tt >= 4 else wood, tt)
+        if py > fy0:                                           # the south posts show their front
+            for dy in range(12, 17):
+                for dx in range(12):
+                    put(cv, py + dy, px + dx, C(wc, 2 if dx > 0 else 3) if dy < 16 else C(wc, 1))
+    # the soil inside, a little lower: shaded under the north and west boards, clods and crumbs
     fi = np.full((H, W), FI[earth])
     fi[blobs(H, W, 79, 40.0, 0.3)] = FI['earth']
     ti = np.full((H, W), 3)
     cv[inner] = (fi * 8 + ti)[inner]
-    edge_i = inner & ~ndi.binary_erosion(inner, structure=CROSS)
-    sel = edge_i & (down(~inner, 1) | right(~inner, 1))
-    cv[sel] = np.where(var, C(earth, 1), C(earth, 2))[sel]
-    cv[inner & (down(edge_i & down(~inner, 1), 1))] = C(earth, 2)
-    sel = frame & ~inner & ndi.binary_dilation(inner, structure=CROSS) & (down(inner, -1) | right(inner, -1))
-    cv[sel] = np.where(nz(H, W, 6.0, 87) > 0.5, C(soil, 3), C(soil, 4))[sel]
-    ys_, xs_ = np.nonzero(inner)
-    for k in soil_marks_.permutation(len(ys_))[: len(ys_) // 120]:
-        y_, x_ = int(ys_[k]), int(xs_[k])
-        cv[y_, x_:x_ + 2] = C(earth, 2)
-        put(cv, y_ + 1, x_ + 1, C(earth, 4), inner)
+    band_ = inner & ndi.binary_dilation(~inner, iterations=3) & (down(~inner, 3) | right(~inner, 3))
+    dd_ = ndi.distance_transform_edt(inner)
+    shift(cv, band_ & ((dd_ <= 1.5) | (((xx + yy) % 2 == 0) & (dd_ <= 3))) & (nz(H, W, 4.0, 69) > 0.2), -1)
+    ys2, xs2 = np.nonzero(inner)
+    for k in rng.permutation(len(ys2))[: len(ys2) // 160]:
+        y_, x_ = int(ys2[k]), int(xs2[k])
+        cv[y_, x_] = C(earth, 4)
+        put(cv, y_, x_ + 1, C(earth, 4), inner)
+        put(cv, y_ + 1, x_, C(earth, 1), inner)
+        put(cv, y_ + 1, x_ + 1, C(earth, 2), inner)
     # the plots
     x0c, y0c, x1c, y1c = cells_in
     for cyc in range(y0c, y1c):
+        kind = rows[(cyc - y0c) % len(rows)]
         for cxc in range(x0c, x1c):
             X0, Y0 = cxc * cell + 1, cyc * cell + 1
             X1, Y1 = X0 + cell - 2, Y0 + cell - 2
             px, py = xx[Y0:Y1, X0:X1] - X0, yy[Y0:Y1, X0:X1] - Y0
             w_, h_ = X1 - X0, Y1 - Y0
-            # a rounded rectangle (superellipse) plot
             u = (px + 0.5) / w_ * 2 - 1
             v = (py + 0.5) / h_ * 2 - 1
-            r = (np.abs(u) ** 5 + np.abs(v) ** 5) ** 0.2
+            r = (np.abs(u) ** 4 + np.abs(v) ** 4) ** 0.25
             plot = r <= 1.0
             sub = cv[Y0:Y1, X0:X1]
-            sub[plot] = C(earth, 3)
-            sub[plot & (r > 0.9)] = C(earth, 1)                         # the furrow ring
-            sub[plot & (r > 0.8) & (r <= 0.9)] = C(earth, 2)
-            lit_ = plot & (r <= 0.8) & (u + v < -0.35) & (r > 0.45)
-            sub[lit_] = C(earth, 4)
-            sub[plot & (r <= 0.8) & (r > 0.62) & (u + v < -0.9)] = C(soil, 4)
-            shd = plot & (r <= 0.8) & (u + v > 0.8)
-            sub[shd] = C(earth, 2)
-            # soil grain
-            for _ in range(int(rng.integers(2, 5))):
-                gy_, gx_ = int(rng.integers(5, h_ - 5)), int(rng.integers(5, w_ - 5))
-                sub[gy_, gx_] = C(earth, 2)
+            lam = -0.62 * u - 0.78 * v
+            body = np.where(lam > 0.45, 4, np.where(lam > -0.35, 3, 2))
+            sub[plot] = (FI[earth] * 8 + body)[plot]
+            sub[plot & (r > 0.88)] = C(earth, 1)                        # the furrow round it
+            sub[plot & (r > 0.78) & (r <= 0.88) & (lam > 0)] = C(earth, 4)
+            # clods on the mound
+            for _ in range(int(rng.integers(3, 7))):
+                gy_, gx_ = int(rng.integers(4, h_ - 4)), int(rng.integers(4, w_ - 4))
+                sub[gy_, gx_] = C(earth, 4)
                 if gx_ + 1 < w_:
-                    sub[gy_, gx_ + 1] = C(earth, 4) if rng.random() < 0.4 else C(earth, 2)
-            kind = kinds[(cyc - y0c) % len(kinds)]
-            if rng.random() < 0.9:
-                crop(cv, Y0 + h_ // 2 + 1, X0 + w_ // 2, rng, kind if rng.random() < 0.85 else 'seedling')
+                    sub[gy_, gx_ + 1] = C(earth, 3)
+                if gy_ + 1 < h_:
+                    sub[gy_ + 1, gx_] = C(earth, 1)
+            stage = rng.random()
+            k2 = kind
+            if stage < 0.12:
+                k2 = 'seedling'
+            elif stage < 0.22 and kind in ('cabbage', 'lettuce'):
+                k2 = 'young'
+            elif stage < 0.27 and kind == 'lettuce':
+                k2 = 'flowering'
+            if stage > 0.95:
+                # dug over: furrow lines across the mound, no crop
+                for ry in range(5, h_ - 4, 4):
+                    sub[ry, 4:w_ - 4][plot[ry, 4:w_ - 4]] = C(earth, 1)
+                    sub[ry - 1, 4:w_ - 4][plot[ry - 1, 4:w_ - 4]] = C(earth, 4)
+                continue
+            crop(cv, Y0 + h_ // 2 + 1, X0 + w_ // 2 + int(rng.integers(-1, 2)), rng, k2)
+    # a weed or two in the soil between the plots, leaves dropped on frame and soil
+    soil_gap = inner & ~ndi.binary_dilation(np.isin(cv // 8, [FI['leaf'], FI['leaf_cool'], FI['grass'],
+                                                               FI['grass_cool']]), iterations=2)
+    ys3, xs3 = np.nonzero(soil_gap)
+    for k in rng.permutation(len(ys3))[:3]:
+        stamp(cv, int(ys3[k]), int(xs3[k]), tuft_shape(rng, 0.8), C('grass', 3), inner)
+    litter(cv, frame, rng, 0.25)
 
 
 def weeds_at_foot(cv, raised, rng, rate=0.12):
@@ -1235,57 +1477,89 @@ def paving(cv, pave, rng, kerb=9, course=(18, 23), length=(18, 30), fams=('stone
     H, W = cv.shape
     inner = ndi.binary_erosion(pave, iterations=kerb)
     kb = pave & ~inner
-    # the flags
-    y = 0
+    # the flags: courses of varied height, each split into slabs of varied length; now and then a
+    # big slab spans two courses (no brick bond, no repeat)
     sl = np.full((H, W), -1, np.int64)
     k = 0
+    y = -int(rng.integers(0, 10))
     while y < H:
-        ch = int(rng.integers(course[0], course[1] + 1))
-        x = -int(rng.integers(0, length[1]))
+        ch = int(rng.choice([14, 18, 18, 22, 26]))
+        x = -int(rng.integers(0, 30))
         while x < W:
-            L = int(rng.integers(length[0], length[1] + 1))
-            sl[y:y + ch, max(0, x):max(0, x + L)] = k
+            L = int(rng.integers(14, 36))
+            if rng.random() < 0.12:                                  # a big slab over two courses
+                sl[max(0, y):max(0, y + ch + 16), max(0, x):max(0, x + L + 8)] = k
+                L += 8
+            else:
+                sl[max(0, y):max(0, y + ch), max(0, x):max(0, x + L)][sl[max(0, y):max(0, y + ch), max(0, x):max(0, x + L)] < 0] = k
             k += 1
             x += L
         y += ch
+    hsh = (sl * 2654435761 % 1000) / 1000.0
     joint = np.zeros((H, W), bool)
     joint[:-1] |= sl[:-1] != sl[1:]
     joint[:, :-1] |= sl[:, :-1] != sl[:, 1:]
+    # chipped corners: where joints cross, the joint widens to a small round chip on some slabs
+    cross_ = joint & (ndi.convolve(joint.astype(int), np.ones((3, 3), int), mode='constant') >= 5)
+    chip = ndi.binary_dilation(cross_ & (hsh > 0.55), structure=CROSS)
+    joint |= chip
     top_r = np.zeros((H, W), bool)
-    top_r[1:] = sl[1:] != sl[:-1]
+    top_r[1:] = joint[:-1] & ~joint[1:]
     left_c = np.zeros((H, W), bool)
-    left_c[:, 1:] = sl[:, 1:] != sl[:, :-1]
-    bot_r = np.zeros((H, W), bool)
-    bot_r[:-1] = (sl[:-1] != sl[1:])
-    hsh = (sl * 2654435761 % 1000) / 1000.0
+    left_c[:, 1:] = joint[:, :-1] & ~joint[:, 1:]
     fam = np.array([FI[fams[int(v * 997) % len(fams)]] for v in hsh.ravel()]).reshape(H, W)
-    t = np.where(hsh > 0.78, 4, 3)
-    t = np.where((hsh > 0.45) & (hsh < 0.6), 2, t)
+    t = np.where(hsh > 0.8, 4, np.where(hsh < 0.12, 2, 3))
+    # the worn line where feet go (the centre and the way in) a tone lighter on most slabs
+    wear = blobs(H, W, 91, 70.0, 0.3) & (hsh > 0.25)
+    t = np.where(wear & (t == 3), 4, t)
     code = fam * 8 + t
     lit = (top_r | left_c) & ~joint
     code[lit] = fam[lit] * 8 + np.minimum(5, t[lit] + 1)
-    near_bot = down(joint, -1) & ~joint
-    code[near_bot] = fam[near_bot] * 8 + np.maximum(1, t[near_bot] - 1)
+    near_bot = (down(joint, -1) | (down(joint, -2) & (((np.mgrid[0:H, 0:W][1]) % 2) == 0))) & ~joint
+    near_r = right(joint, -1) & ~joint
+    code[near_bot | near_r] = fam[near_bot | near_r] * 8 + np.maximum(1, t[near_bot | near_r] - 1)
     code[joint] = C('stone', 1)
-    # chipped corners: the joint eats a texel at a slab's corner
+    # pits and speckles of the stone's grain, two texels, a tone down, sparse
+    gy_, gx_ = np.nonzero(~joint & ~lit)
+    for kk in rng.permutation(len(gy_))[: len(gy_) // 35]:
+        y0, x0 = int(gy_[kk]), int(gx_[kk])
+        code[y0, x0] = step(code[y0, x0], -1)
+        if x0 + 1 < W and not joint[y0, x0 + 1]:
+            code[y0, x0 + 1] = step(code[y0, x0 + 1], -1)
+    # the pale flags are the most worn: their grain shows as small pits
+    pale = (t >= 4) & ~joint & ~lit
+    py_, px_ = np.nonzero(pale)
+    for kk in rng.permutation(len(py_))[: len(py_) // 22]:
+        code[py_[kk], px_[kk]] = step(code[py_[kk], px_[kk]], -1)
     cv[inner] = code[inner]
-    # cracks and moss in joints
-    ys, xs = np.nonzero(inner & ~joint)
-    for kk in rng.permutation(len(ys))[: len(ys) // 3000]:
+    # cracks: a few, running from a joint across a slab in single steps, a lit texel beside
+    ys, xs = np.nonzero(inner & joint)
+    for kk in rng.permutation(len(ys))[: len(ys) // 400]:
         y0, x0 = int(ys[kk]), int(xs[kk])
         d = 1 if rng.random() < 0.5 else -1
-        for j in range(int(rng.integers(4, 9))):
-            yy_, xx_ = y0 + j // 2, x0 + d * j
-            if 0 <= yy_ < H and 0 <= xx_ < W and inner[yy_, xx_] and not joint[yy_, xx_]:
-                cv[yy_, xx_] = step(cv[yy_, xx_], -2)
+        for j in range(1, int(rng.integers(6, 14))):
+            yy_, xx_ = y0 + j // 2 + (j % 3 == 0), x0 + d * j
+            if not (0 <= yy_ < H and 0 <= xx_ < W) or not inner[yy_, xx_] or joint[yy_, xx_]:
+                break
+            cv[yy_, xx_] = step(cv[yy_, xx_], -2)
+            put(cv, yy_ - 1, xx_, step(cv[max(0, yy_ - 1), xx_], 1), inner & ~joint)
+    # moss and grass in the joints, more towards the edges of the square, and dirt in a few
+    dk = ndi.distance_transform_edt(inner)
     jy, jx = np.nonzero(inner & joint)
-    for kk in rng.permutation(len(jy))[: len(jy) // 90]:
+    for kk in rng.permutation(len(jy))[: len(jy) // 40]:
         y0, x0 = int(jy[kk]), int(jx[kk])
-        for j in range(int(rng.integers(2, 6))):
-            if 0 <= x0 + j < W and joint[y0, x0 + j] and inner[y0, x0 + j]:
-                cv[y0, x0 + j] = C('grass', 3 if j % 2 else 2)
+        if rng.random() > 1.2 - dk[y0, x0] / 60.0:
+            continue
+        horiz_j = 0 <= x0 + 1 < W and joint[y0, x0 + 1]
+        for j in range(int(rng.integers(2, 7))):
+            yy_, xx_ = (y0, x0 + j) if horiz_j else (y0 + j, x0)
+            if 0 <= yy_ < H and 0 <= xx_ < W and joint[yy_, xx_] and inner[yy_, xx_]:
+                cv[yy_, xx_] = C('grass', 3 if j % 2 else 2)
                 if j % 2 == 0:
-                    put(cv, y0 - 1, x0 + j, C('grass', 4), inner)
+                    put(cv, yy_ - 1, xx_, C('grass', 4), inner)
+    for kk in rng.permutation(len(jy))[: len(jy) // 150]:
+        y0, x0 = int(jy[kk]), int(jx[kk])
+        cv[y0, x0] = C('earth', 2)
     # the kerb: long slabs round the square, their top lit, joints across the band
     dist_out = ndi.distance_transform_edt(pave)
     kcode = np.full((H, W), C('ashlar', 4))
@@ -1407,7 +1681,7 @@ def shore(cv, sand_m, sea, rng, seed=0):
 # ------------------------------------------------------------------------------------------------
 # the forest floor
 # ------------------------------------------------------------------------------------------------
-def litter(cv, m, rng, density=1.0):
+def litter(cv, m, rng, density=1.0, shade=True):
     """Fallen leaves and twigs in drifts over `m`: leaves 2 to 3 px (clay, brass, dry earth and
     dead green), each lit at its upper left with a shade texel under it; twigs 4 to 7 px."""
     H, W = cv.shape
@@ -1425,8 +1699,9 @@ def litter(cv, m, rng, density=1.0):
             cv[y, x] = step(c0, 1)
             if rng.random() < 0.6:
                 cv[y - 1, x + 1] = c0
-            sel = cv[y + 1, x + 1:x + lw + 1]
-            cv[y + 1, x + 1:x + lw + 1] = np.where(sel % 8 < 6, step(sel, -1), sel)
+            if shade:
+                sel = cv[y + 1, x + 1:x + lw + 1]
+                cv[y + 1, x + 1:x + lw + 1] = np.where(sel % 8 < 6, step(sel, -1), sel)
         else:
             L = int(rng.integers(4, 8))
             for j in range(L):
@@ -1451,27 +1726,33 @@ def forest_floor(cv, rng, seed, feet=()):
     turf = grassy(cv)
     # the turf frays onto the bare earth
     frayed_edge(cv, bare, turf, rng, tufts=0.8, strays=0.6)
-    litter(cv, bare | (patches(H, W, seed + 4, 30.0, 0.3) & ~bare), rng, 0.8)
+    litter(cv, bare | (patches(H, W, seed + 4, 30.0, 0.3) & ~bare), rng, 0.25, shade=False)
     moss = blobs(H, W, seed + 5, 22.0, 0.05) & ~bare
     cv[moss] = C('leaf', 4)
     cv[moss & ~ndi.binary_erosion(moss, structure=CROSS) & down(~moss, -1)] = C('leaf', 2)
     cv[moss & ndi.binary_erosion(moss, iterations=2) & (nz(H, W, 5.0, seed + 6) > 0.62)] = C('leaf_warm', 4)
     # the canopy's shade and sun flecks
     sh = blobs(H, W, seed + 7, 110.0, 0.68)
+    # no small islands of light in the shade: a gap in the canopy is a broad pool or none
+    holes = ~sh
+    lab_, n_ = ndi.label(holes)
+    if n_:
+        sz_ = ndi.sum(holes, lab_, range(1, n_ + 1))
+        sh |= np.isin(lab_, 1 + np.nonzero(sz_ < 3000)[0])
     shift(cv, sh, -1)
     # its edge fades over 6 px through a checker, then a sparser one (no crisp outline)
     dsh = ndi.distance_transform_edt(~sh)
     shift(cv, (dsh > 0) & (dsh <= 3) & (((xx + yy) % 2) == 0), -1)
     shift(cv, (dsh > 3) & (dsh <= 6) & ((xx % 2) == 0) & ((yy % 2) == 0), -1)
     # out of the shade the turf catches the light: lit blade tips in pairs, a few more of them
-    ys_, xs_ = np.nonzero(~sh & (dsh > 3) & grassy(cv))
-    for k in rng.permutation(len(ys_))[: len(ys_) // 60]:
+    ys_, xs_ = np.nonzero(~sh & (dsh > 1) & grassy(cv))
+    for k in rng.permutation(len(ys_))[: len(ys_) // 40]:
         y_, x_ = int(ys_[k]), int(xs_[k])
         if 1 <= y_ < H and 1 <= x_ < W - 1 and cv[y_, x_] % 8 < 5:
             cv[y_, x_] = step(cv[y_, x_], 1)
             cv[y_ - 1, x_ + (1 if k % 2 else -1)] = step(cv[y_ - 1, x_ + (1 if k % 2 else -1)], 2)
     # in the shade the litter lies thicker and the odd dapple of light gets through
-    litter(cv, sh & (nz(H, W, 20.0, seed + 10) > 0.5), rng, 0.7)
+    litter(cv, sh & (nz(H, W, 20.0, seed + 10) > 0.5), rng, 0.3, shade=False)
     for _ in range(int(sh.sum() / 900)):
         ys_, xs_ = np.nonzero(sh)
         k = int(rng.integers(0, len(ys_)))
@@ -1483,10 +1764,11 @@ def forest_floor(cv, rng, seed, feet=()):
     fl = np.zeros((H, W), bool)
     for _ in range(int(H * W / 16000)):
         fy_, fx_ = rng.uniform(0, H), rng.uniform(0, W)
-        rx_, ry_ = rng.uniform(4, 9), rng.uniform(2, 4)
+        rx_, ry_ = rng.uniform(3, 6), rng.uniform(1.5, 3)
         fl |= ((xx - fx_) / rx_) ** 2 + ((yy - fy_) / ry_) ** 2 <= 1
     shift(cv, fl, 1)
     shift(cv, ndi.binary_dilation(fl, iterations=2) & ~fl & (((xx + yy) % 2) == 0), 1)
+    return sh
 
 
 def roots(cv, x, y, rng, half=12, n=4, wood='timber'):
@@ -1514,6 +1796,150 @@ def roots(cv, x, y, rng, half=12, n=4, wood='timber'):
                 cv[Y + wd, X] = step(cv[Y + wd, X], -2)
             if 0 <= Y + wd + 1 < H and 0 <= X < W and cv[Y + wd + 1, X] % 8 < 6 and j % 2:
                 cv[Y + wd + 1, X] = step(cv[Y + wd + 1, X], -1)
+
+
+# ------------------------------------------------------------------------------------------------
+# a footbridge (Matt, 26 Oct 19:42: bank to bank, abutments on both banks, posts both sides)
+# ------------------------------------------------------------------------------------------------
+def footbridge(cv, x0, x1, water, rng, wood='timber', stone='ashlar') -> list:
+    """A plank footbridge across water running east and west, from x0 to x1 (texels): a dressed
+    stone abutment set into each bank, the deck's planks laid across from one abutment to the other
+    (each lit along its top, a dark joint, a nail at each end), a kerb beam along both sides, posts
+    on both sides at the abutments and mid-span joined by a rail; the deck's thickness shows as a
+    narrow side band (lit on the west, in shade on the east) and its shade lies on the water to the
+    east. Returns the deck mask."""
+    H, W = cv.shape
+    cols = water[:, x0:x1].any(1)
+    ys = np.nonzero(cols)[0]
+    if not len(ys):
+        return np.zeros((H, W), bool)
+    yn, ys_ = int(ys.min()), int(ys.max())
+    wc = wood + '_cool' if wood + '_cool' in FI else wood
+    ww = wood + '_warm' if wood + '_warm' in FI else wood
+    # the shade on the water, east and a little south of the deck
+    sh = np.zeros((H, W), bool)
+    sh[yn:ys_ + 1, x1:min(W, x1 + 7)] = True
+    sh &= water
+    shift(cv, sh, -2)
+    shift(cv, water & np.roll(sh, 3, 1) & ~sh, -1)
+    # the abutments: dressed stone blocks, wider than the deck, their tops lit, faces to the south
+    for (ya, yb) in ((yn - 14, yn + 5), (ys_ - 4, ys_ + 13)):
+        for y in range(ya, yb):
+            for x in range(x0 - 9, x1 + 9):
+                if not (0 <= y < H and 0 <= x < W):
+                    continue
+                by = (y - ya) // 6
+                bx = (x - x0 + 9 + (by % 2) * 7) // 14
+                jy = (y - ya) % 6 == 5
+                jx = (x - x0 + 9 + (by % 2) * 7) % 14 == 13
+                tt = 1 if (jy or jx) else (4 if (y - ya) % 6 == 0 else (3 if (bx + by) % 3 else 2))
+                if y >= yb - 3:
+                    tt = 2 if not jx else 1                       # the abutment's front face
+                cv[y, x] = C(stone, tt)
+    # the deck: planks across, from the north abutment's top to the south one's
+    d0, d1 = yn - 10, ys_ + 8
+    deck = np.zeros((H, W), bool)
+    deck[d0:d1, x0:x1] = True
+    for y in range(d0, d1):
+        k = (y - d0) % 6
+        pl = (y - d0) // 6
+        body = 3 if (pl * 7919) % 5 else 2
+        for x in range(x0, x1):
+            tt = 4 if k == 0 else (1 if k == 5 else body)
+            cv[y, x] = C(ww if k == 0 else wood, tt)
+        if (y - d0) % 6 == 2:
+            put(cv, y, x0 + 4, C('iron', 1))
+            put(cv, y, x1 - 5, C('iron', 1))
+        if (y - d0) % 6 == 3 and rng.random() < 0.5:                 # grain
+            gx = x0 + int(rng.integers(6, max(7, x1 - x0 - 12)))
+            cv[y, gx:gx + int(rng.integers(3, 8))] = C(wood, 2)
+    # kerb beams along both sides
+    cv[d0:d1, x0:x0 + 3] = C(ww, 4)
+    cv[d0:d1, x0 + 2] = C(wood, 2)
+    cv[d0:d1, x1 - 3:x1] = C(wc, 2)
+    cv[d0:d1, x1 - 3] = C(wood, 3)
+    # the deck's thickness: a side band beyond each beam, lit west, dark east, over the water
+    cv[d0 + 2:d1, x0 - 2:x0] = C(wood, 3)
+    cv[d0 + 2:d1, x0 - 2] = C(wc, 1)
+    cv[d0 + 2:d1, x1:x1 + 2] = C(wc, 1)
+    cv[d1:d1 + 3, x0:x1] = np.where(cv[d1:d1 + 3, x0:x1] >= 0, C(wc, 1), cv[d1:d1 + 3, x0:x1])
+    deck[d0:d1 + 3, x0 - 2:x1 + 2] = True
+    # posts both sides at the abutments and mid-span, their tops lit, joined by rails
+    posts = sorted({d0 + 4, (d0 + d1) // 2, d1 - 2})
+    for side_x, lit in ((x0 - 2, True), (x1 - 2, False)):
+        # the rail first (it runs between the posts' tops), then the posts over it
+        for y in range(posts[0] - 10, posts[-1] - 9):
+            put(cv, y, side_x, C(ww, 4) if lit else C(wood, 3))
+            put(cv, y, side_x + 1, C(wood, 3) if lit else C(wc, 1))
+        for py in posts:
+            for dy in range(-12, 1):
+                for dx in range(4):
+                    tt = (4 if dx == 0 else (3 if dx < 3 else 1)) if lit else (3 if dx == 0 else (2 if dx < 3 else 1))
+                    if dy <= -11:
+                        tt = 5 if dx < 3 else 3
+                    put(cv, py + dy, side_x - 1 + dx, C(ww if tt >= 4 else wood, tt))
+            # its shade on the deck or the water to the east
+            for dy in range(-2, 1):
+                X = side_x + 3
+                if 0 <= py + dy < H and 0 <= X < W and cv[py + dy, X] % 8 < 6:
+                    cv[py + dy, X] = step(cv[py + dy, X], -1)
+    return deck
+
+
+# ------------------------------------------------------------------------------------------------
+# a tree standing on the ground (Matt, 26 Oct 19:42: "the trees could be improved a touch")
+# ------------------------------------------------------------------------------------------------
+def seat_tree(img, anc, rng, crown=True):
+    """A kit tree seated in its place, its own design kept: the crown's underside scalloped (no flat
+    base) and a step darker, its shade falling on the trunk below it, and the trunk's foot flaring
+    a few texels into the ground (the roots and the contact shadow are drawn on the ground)."""
+    from PIL import Image
+    from .palette import is_fam as _isf, to_rgba as _rgba
+    from .screen import to_codes
+    cd = to_codes(img)
+    h, w = cd.shape
+    green = (_isf(cd, 'grass') | _isf(cd, 'leaf')) & (cd >= 0)
+    if not green.any():
+        return img, anc
+    wood = (cd >= 0) & ~green & (cd % 8 < 6)
+    # the crown's lowest texel per column, and its scalloped underside
+    low = np.full(w, -1)
+    for x in range(w):
+        ys = np.nonzero(green[:, x])[0]
+        if len(ys):
+            low[x] = ys.max()
+    sc = scallops(w, rng, (6, 12), (0, 3))
+    for x in range(w):
+        if low[x] < 0 or not crown:
+            continue
+        cut = int(sc[x])
+        for k in range(cut):
+            y = low[x] - k
+            if green[y, x] and not wood[min(h - 1, y + 1), x]:
+                cd[y, x] = -1
+        y0 = low[x] - cut
+        y = y0
+        if 0 <= y < h and green[y, x] and cd[y, x] >= 0 and cd[y, x] % 8 >= 2:
+            cd[y, x] = step(cd[y, x], -1)
+        # the crown's shade on the trunk under it, fading over 8 texels
+        for k in range(1, 9):
+            y = low[x] + k
+            if 0 <= y < h and wood[y, x] and (k < 4 or (k + x) % 2 == 0):
+                cd[y, x] = step(cd[y, x], -2 if k < 4 else -1)
+    # the trunk's foot flares: its last rows widen a texel or two each side, in its dark tones
+    foot = int(round(anc[1])) - 1
+    if 0 <= foot < h:
+        xs = np.nonzero(wood[foot])[0]
+        if len(xs):
+            xl, xr = xs.min(), xs.max()
+            for k, wd in ((0, 3), (1, 2), (2, 1), (3, 1)):
+                y = foot - k
+                for d in range(1, wd + 1):
+                    if 0 <= xl - d < w and cd[y, xl - d] < 0:
+                        cd[y, xl - d] = C('timber', 2 if d < wd else 1)
+                    if 0 <= xr + d < w and cd[y, xr + d] < 0:
+                        cd[y, xr + d] = C('timber_cool', 1)
+    return Image.fromarray(_rgba(cd), 'RGBA'), anc
 
 
 def tidy_codes(cv: np.ndarray, keep: np.ndarray | None = None) -> None:

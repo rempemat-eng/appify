@@ -484,3 +484,58 @@ class SizeTable(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class Composition(unittest.TestCase):
+    """logic.composition (Matt, 26 Oct 19:35: "the square needs better centring with the objects on
+    top of it")."""
+
+    def square(self, well_x=240, bench2=True, x1=384):
+        props = [dict(kind='well', x=well_x, y=170, w=54), dict(kind='bench', x=132, y=110, w=66)]
+        if bench2:
+            props.append(dict(kind='bench', x=348, y=110, w=66))
+        return dict(id='square', rect=[96, 48, x1, 264], props=props, entries=[dict(x=240, w=72)])
+
+    def test_composed_square_passes(self):
+        from scripts.review import composition as CP
+        self.assertEqual(CP.check([self.square()]), [])
+
+    def test_off_centre_well_trips(self):
+        from scripts.review import composition as CP
+        fs = CP.check([self.square(well_x=252)])
+        self.assertTrue(any('centrepiece' in f.message for f in fs))
+
+    def test_lone_bench_trips(self):
+        from scripts.review import composition as CP
+        fs = CP.check([self.square(bench2=False)])
+        self.assertTrue(any('twin' in f.message for f in fs))
+
+    def test_uneven_margins_trip(self):
+        from scripts.review import composition as CP
+        fs = CP.check([self.square(x1=432)])
+        self.assertTrue(any('margins' in f.message or 'centrepiece' in f.message for f in fs))
+
+
+class Tiers(unittest.TestCase):
+    """logic.tiers (Matt, 26 Oct 19:42: "make sure the logic is correct")."""
+
+    def plan(self, face=48, y_top=120, y_foot=168, x0=120, x1=192, below=0):
+        return dict(density=3, cell=8, tiers=[dict(id='plateau', level=16, below=below, face_px=face,
+                                                   rects=[[0, 0, 160, 40], [104, 40, 40, 16]])],
+                    stairs=[dict(tier='plateau', x0=x0, x1=x1, y_top=y_top, y_foot=y_foot)])
+
+    def test_consistent_plan_passes(self):
+        from scripts.review import tiers as TI
+        self.assertEqual(TI.check(self.plan()), [])
+
+    def test_face_of_another_height_trips(self):
+        from scripts.review import tiers as TI
+        self.assertTrue(TI.check(self.plan(face=36)))
+
+    def test_stair_head_off_the_rim_trips(self):
+        from scripts.review import tiers as TI
+        self.assertTrue(any('head' in f.message for f in TI.check(self.plan(y_top=100, y_foot=148))))
+
+    def test_stair_across_a_turn_trips(self):
+        from scripts.review import tiers as TI
+        self.assertTrue(any('straddles' in f.message for f in TI.check(self.plan(x0=288, x1=336))))

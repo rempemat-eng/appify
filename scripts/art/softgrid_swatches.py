@@ -69,6 +69,9 @@ class Swatch:
         self.cv = cv
         self.cap = caption
         self.sprites = []          # (image, anchor, (foot x, foot y), base width for its shadow or 0)
+        self.structures = []       # structures carrying props, for logic.composition (scene gate)
+        self.plan = {}             # tiers and stairs, for logic.tiers (scene gate)
+        self.canopy = None         # where a canopy's shade already lies (no second shadow on it)
 
     def add(self, img, anc, foot, shade_w=0.0, depth=0.3):
         self.sprites.append((img.convert('RGBA'), anc, foot))
@@ -98,10 +101,16 @@ class Swatch:
             if ex is not None:                      # a tree: its crown's shadow on the ground
                 fx, fy = x / D, y / D
                 m = SN.tree_shadow_hd(fx, fy, ex, TW, TH)
+                if self.canopy is not None:
+                    m &= ~self.canopy
                 GD.shadow(self.cv, m, core=1, rim=0, fade=True)
                 # what falls from the crown lies in its shade: needles or leaves, twigs
-                GD.litter(self.cv, m & GD.grassy(self.cv), np.random.default_rng(seed), 1.2)
+                GD.litter(self.cv, m & GD.grassy(self.cv), np.random.default_rng(seed), 0.3, shade=False)
                 GD.contact(self.cv, x, y, ex['tw'] * D * 1.6, depth=0.35)
+                yy_, xx_ = np.mgrid[0:TH, 0:TW]
+                near = ((xx_ - x) / (ex['tw'] * D * 1.4)) ** 2 + ((yy_ - y) / 12.0) ** 2 <= 1
+                GD.litter(self.cv, near & GD.grassy(self.cv), np.random.default_rng(seed + 1), 0.8, shade=False)
+                img, anc = GD.seat_tree(img.convert('RGBA'), anc, np.random.default_rng(seed), crown=kind != 'pine')
                 self.sprites.append((img.convert('RGBA'), anc, (x, y)))
             else:
                 bw = (np.asarray(img)[..., 3] > 0).any(0).sum()
@@ -120,18 +129,19 @@ def rect_mask(x0, y0, x1, y1):
 # the swatches
 # ------------------------------------------------------------------------------------------------
 def sw_plateau():
+    """One plateau, one level (16 world px over the lawn): its rim runs straight with a spur of
+    whole cells to the south; the spur's sides show as narrow walls; log steps are cut into the
+    straight face, their head flush with the rim and their foot on the path (logic.tiers)."""
     rng = np.random.default_rng(3)
     cv = GD.lawn(TH, TW, 11)
-    top_plan = cells([[0, 0, 160, 40], [0, 40, 64, 16], [104, 40, 32, 8]])     # unions at 1, 2 and 4+ cells
-    tm = SG.shape(top_plan, TH, TW, 301, r_out=0.65, r_in=0.4)
+    rects = [[0, 0, 160, 40], [104, 40, 40, 16]]
+    tm = SG.shape(cells(rects), TH, TW, 301, r_out=0.65, r_in=0.4)
     top = GD.lawn(TH, TW, 31, base=3, lush=0.9)
     cv[tm] = top[tm]
-    # the path climbs to the steps from the south; the steps are cut into the face, head flush
-    x0, x1 = int(72 * D), int(96 * D)
-    col = tm[:, (x0 + x1) // 2]
-    y_rim = int(np.nonzero(col)[0].max()) + 1
+    x0, x1 = int(40 * D), int(64 * D)
+    y_rim = int(40 * D)
     face_h = int(16 * D)
-    path = SG.route_shape([[84, 120], [84, 60]], 3, TH, TW, seed=5)
+    path = SG.route_shape([[52, 120], [52, 60]], 3, TH, TW, seed=5)
     path[:y_rim + face_h] = False
     path |= rect_mask(x0, y_rim + face_h - 2, x1, y_rim + face_h + 6) & ndi.binary_dilation(path, iterations=8)
     GD.dirt(cv, path, 21, ruts=None, cell=13)
@@ -139,19 +149,20 @@ def sw_plateau():
     cv_turf = GD.grassy(cv) & ~path
     GD.sunken_edge(cv, path, cv_turf & ~face, rng, stones=0.6)
     GD.log_steps(cv, x0, x1, y_rim - 1, y_rim + face_h + 2, 4, rng)
-    s = Swatch(cv, 'grass plateau: earth ledge 16 world px, log steps cut in the face')
+    s = Swatch(cv, 'plateau: one level, a spur with side walls, log steps flush with the rim')
     for img, anc, foot in items:
         if not (x0 - 20 < foot[0] < x1 + 20):
             s.add(img, anc, foot, (np.asarray(img)[..., 3] > 0).any(0).sum() * 0.9, 0.45)
-    # plants that cross the rim and stand at the foot (eastward-edges.md 8: one per 16 to 32 cells of rim)
     s.prop('bush', int(14 * D), y_rim + 2, 3)
-    s.prop('fern', int(124 * D), int(58 * D), 4)
-    s.prop('holly', int(150 * D), int(44 * D), 5)
-    s.prop('rock', int(40 * D), int(37 * D), 33)
-    s.prop('well', *g(17, 14), 3)
+    s.prop('holly', int(150 * D), int(100 * D), 5)
+    s.prop('fern', int(94 * D), int(61 * D), 4)
+    s.prop('rock', int(80 * D), int(30 * D), 33)
     s.prop('bench', *g(3, 3), 41)
-    s.prop('rock', *g(4, 13), 31)
-    s.prop('fern', int(62 * D), int(76 * D), 9)
+    s.prop('well', *g(10, 14), 3)
+    s.prop('rock', *g(1, 13), 31)
+    s.prop('fern', int(24 * D), int(62 * D), 9)
+    s.plan = dict(density=3, cell=8, tiers=[dict(id='plateau', level=16, below=0, face_px=face_h, rects=rects)],
+                  stairs=[dict(tier='plateau', x0=x0, x1=x1, y_top=y_rim - 1, y_foot=y_rim + face_h + 2)])
     return s
 
 
@@ -191,10 +202,9 @@ def sw_pond():
 def sw_river():
     cv = GD.lawn(TH, TW, 14)
     river = SG.shape(SG.cells_route([[0, 48], [72, 48], [72, 96], [160, 96]], 3, TH, TW) |
-                     SG.cells_route([[0, 48], [40, 48]], 4, TH, TW), TH, TW, 402, r_out=1.0, r_in=0.6)
+                     SG.cells_route([[0, 48], [40, 48]], 4, TH, TW), TH, TW, 402, r_out=1.3, r_in=0.6)
     items = GD.water(cv, river, 402, bank_h=10, flow='auto', stones=0.8)
-    from scripts.art.native import screen as SN
-    SN.footbridge_hd(cv, 108, 16, 84, 112, river)
+    GD.footbridge(cv, int(108 * D), int(128 * D), river, np.random.default_rng(12))
     s = Swatch(cv, 'river: cell plan, wide rounded bends, 3 to 4 cells, bridge on footings')
     for it in items:
         s.add(*it)
@@ -207,22 +217,24 @@ def sw_river():
 
 
 def sw_cliff():
+    """One rock tier 32 world px over the lawn, an L of whole cells: an outer corner (east), an inner
+    corner where the west lobe's wall meets the main face, side walls at every end (logic.tiers)."""
     rng = np.random.default_rng(4)
     cv = GD.lawn(TH, TW, 15)
-    top_plan = cells([[0, 0, 96, 32], [0, 32, 48, 24], [96, 0, 64, 16]])
-    tm = SG.shape(top_plan, TH, TW, 303, r_out=0.25, r_in=0.15)
+    rects = [[0, 0, 104, 32], [0, 32, 56, 24]]
+    tm = SG.shape(cells(rects), TH, TW, 303, r_out=0.4, r_in=0.25)
     top = GD.lawn(TH, TW, 35, lush=0.9)
     cv[tm] = top[tm]
     face, items, lip = GD.ledge(cv, tm, int(32 * D), rng, seed=303, kind='rock', earth='crag', shadow_px=18)
-    s = Swatch(cv, 'cliff corner: outer and inner, a rock face 32 world px')
+    s = Swatch(cv, 'cliff: one tier 32 world px, outer and inner corner, side walls')
     for img, anc, foot in items:
         s.add(img, anc, foot, (np.asarray(img)[..., 3] > 0).any(0).sum() * 0.9, 0.45)
-    s.prop('rock', *g(9, 11), 40)
-    s.prop('rock', *g(17, 9), 44)
-    s.prop('fern', int(52 * D), int(89 * D), 3)
-    s.prop('fern', int(150 * D), int(51 * D), 8)
-    s.prop('holly', int(14 * D), int(28 * D), 7)
-    s.prop('bench', *g(13, 13), 44)
+    s.prop('rock', *g(15, 12), 40)
+    s.prop('fern', int(96 * D), int(68 * D), 3)
+    s.prop('fern', int(150 * D), int(30 * D), 8)
+    s.prop('holly', int(14 * D), int(20 * D), 7)
+    s.prop('bench', *g(13, 14), 44)
+    s.plan = dict(density=3, cell=8, tiers=[dict(id='cliff', level=32, below=0, face_px=int(32 * D), rects=rects)])
     return s
 
 
@@ -232,11 +244,13 @@ def sw_beds():
     frame = SG.shape(cells([[32, 24, 96, 48]]), TH, TW, 404, r_out=0.3, r_in=0.1, amp=(0.0, 0.0))
     frame &= ~SG.shape(cells([[40, 32, 80, 32]]), TH, TW, 404, r_out=0.0, r_in=0.0, amp=(0.0, 0.0)) | frame
     # the bed sits on a worn margin of earth where the gardener kneels
-    GD.bed(cv, frame, rng, (5, 4, 15, 8), CELL, kinds=('rosette', 'cabbage', 'seedling', 'cabbage'))
+    GD.bed(cv, frame, rng, (5, 4, 15, 8), CELL)
     GD.weeds_at_foot(cv, frame, rng, rate=0.06)
     s = Swatch(cv, 'garden bed: a raised frame of cells, a rounded plot per cell')
-    s.prop('well', *g(17, 13), 7)
-    s.prop('bench', *g(4, 14), 45)
+    s.structures.append(dict(id='bed', rect=[4 * CELL, 3 * CELL, 16 * CELL, 9 * CELL],
+                             props=[dict(kind='plot', x=(c + 0.5) * CELL, y=5 * CELL, w=CELL - 2) for c in range(5, 15)]))
+    s.prop('well', *g(1, 14), 7)
+    s.prop('bench', *g(16, 14), 45)
     s.prop('rock', *g(18, 2), 41)
     s.prop('holly', int(16 * D), int(30 * D), 9)
     s.prop('fern', int(146 * D), int(70 * D), 6)
@@ -244,39 +258,50 @@ def sw_beds():
 
 
 def sw_square():
+    """A square composed round its contents (Matt, 26 Oct 19:35): the well on the centre axis, the
+    benches a mirrored pair beside it, the square 13 x 10 cells so the margins are even, the path
+    meeting it on its axis (logic.composition checks all four)."""
     rng = np.random.default_rng(5)
     cv = GD.lawn(TH, TW, 17)
-    pave = SG.shape(cells([[32, 16, 96, 72]]), TH, TW, 405, r_out=0.15, r_in=0.1, amp=(0, 0))
-    path = SG.route_shape([[80, 88], [80, 120]], 3, TH, TW, seed=11) & ~pave
+    ax = 84                                                    # the centre axis, world px
+    pave = SG.shape(cells([[32, 16, 104, 80]]), TH, TW, 405, r_out=0.15, r_in=0.1, amp=(0, 0))
+    path = SG.route_shape([[ax, 96], [ax, 120]], 3, TH, TW, seed=11) & ~pave
     turf = GD.grassy(cv) & ~path & ~pave
     GD.dirt(cv, path, 23, ruts=17)
     face = GD.paving(cv, pave, rng)
     path &= ~face
     GD.sunken_edge(cv, path, turf & ~face & ~pave, rng)
     GD.weeds_at_foot(cv, pave, rng)
-    s = Swatch(cv, 'paved square: flags, a kerb with a low face, grass and a dirt path')
-    s.prop('well', *g(10, 6), 8)
-    s.prop('bench', *g(6, 3), 46)
-    s.prop('bench', *g(14, 3), 47)
-    s.prop('rock', *g(2, 12), 42)
-    s.prop('holly', int(16 * D), int(36 * D), 4)
-    s.prop('fern', int(140 * D), int(100 * D), 2)
+    s = Swatch(cv, 'paved square: composed round the well, benches mirrored, path on the axis')
+    well = (int(ax * D), int(72 * D))
+    benches = [(int((ax - 36) * D), int(72 * D)), (int((ax + 36) * D), int(72 * D))]
+    s.prop('well', *well, 8)
+    for i, b in enumerate(benches):
+        s.prop('bench', *b, 46 + i)
+    s.prop('rock', *g(2, 13), 42)
+    s.prop('holly', int(14 * D), int(36 * D), 4)
+    s.prop('fern', int(146 * D), int(104 * D), 2)
+    s.structures.append(dict(id='square', rect=[int(32 * D), int(16 * D), int(136 * D), int(96 * D)],
+                             props=[dict(kind='well', x=well[0], y=well[1], w=54, centre=True)] +
+                             [dict(kind='bench', x=b[0], y=b[1], w=66) for b in benches],
+                             entries=[dict(x=int(ax * D), w=int(24 * D))]))
     return s
 
 
 def sw_forest():
     rng = np.random.default_rng(18)
-    cv = GD.lawn(TH, TW, 18, fam='leaf', base=3, lush=0.7, flowers=0.1)
+    cv = GD.lawn(TH, TW, 18, fam='leaf', base=3, lush=0.6, flowers=0.1, grain=0.15)
     trees = [('pine', *g(3, 9), 11), ('birch', *g(10, 6), 17), ('pine', *g(17, 9), 13), ('oak', *g(13, 1), 14)]
     from scripts.art.native import screen as SN
     tws = {k: (BIOME['recipes'][k].get('trunk_w') or SN.tree_dims(BIOME['recipes'][k]['master'])['tw']) * D for k in ('oak', 'pine', 'beech', 'birch', 'willow', 'hollow_tree')}
-    GD.forest_floor(cv, rng, 418, feet=[(x, y, tws[k] * 0.9) for k, x, y, _ in trees])
+    canopy = GD.forest_floor(cv, rng, 418, feet=[(x, y, tws[k] * 0.9) for k, x, y, _ in trees if y > 60])
     trail = SG.route_shape([[0, 96], [64, 96], [64, 120]], 2, TH, TW, seed=19)
     turf = GD.grassy(cv) & ~trail
     GD.dirt(cv, trail, 24, fam='path', cell=12, stones=0.5)
     GD.litter(cv, trail, rng, 0.6)
     GD.sunken_edge(cv, trail, turf, rng, tufts=0.7)
     s = Swatch(cv, 'forest floor: trunks on cells, roots, ferns, litter, crowns overhead')
+    s.canopy = canopy
     # trunks on cells; their crowns fill the top of the picture, as under a canopy
     for kind, x, y, sd in trees:
         s.prop(kind, x, y, sd)
@@ -318,8 +343,17 @@ SWATCHES = (sw_plateau, sw_paths, sw_pond, sw_river, sw_cliff, sw_beds, sw_squar
 GRIDDED = (0, 1, 3)                # the plateau, the paths and the river again, with the cell grid over them
 
 
-def render(fn):
+def render(fn, out=None):
     s = fn()
+    if out:
+        p = os.path.join(out, f'swatch_{SWATCHES.index(fn)}_{fn.__name__[3:]}.compose.json')
+        if s.structures or s.plan:
+            json.dump(dict(structures=s.structures, **s.plan), open(p, 'w'), indent=1)
+            from scripts.review import composition as CP, tiers as TI
+            for f in CP.check(s.structures) + (TI.check(s.plan) if s.plan else []):
+                print('composition/tiers:', f.message)
+        elif os.path.exists(p):
+            os.remove(p)
     im = Image.fromarray(to_rgba(s.cv), 'RGBA')
     for img, anc, (fx, fy) in sorted(s.sprites, key=lambda t: t[2][1]):
         im.alpha_composite(img, (int(round(fx - anc[0])), int(round(fy - anc[1]))))
@@ -345,7 +379,7 @@ def main(argv=None):
     which = a.only if a.only else range(len(SWATCHES))
     tiles = {}
     for i in which:
-        tiles[i] = render(SWATCHES[i])
+        tiles[i] = render(SWATCHES[i], a.out)
         tiles[i][0].save(os.path.join(a.out, f'swatch_{i}_{SWATCHES[i].__name__[3:]}.png'))
     if a.only:
         return 0
