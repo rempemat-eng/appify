@@ -457,3 +457,42 @@ presentation and the granted Player hook. World-health/#275 and Tam's inherited 
 remain A/canonical-owner decisions. #290 weapon forms/tree proposals remain future coordination,
 not changes to canonical kits. Full verify/art/hosted/rendered/native/device checks remain pending;
 this checkpoint is pure simulation work. Keep DRAFT.
+
+## Canonical player timers, guard and action commitment
+
+`AbilityPlayerPhase.tick` ports the contiguous prefix of original v, ending immediately
+before movement. It advances time/tick, clamps aim and resolves facing, expires cooldowns
+and the input queue, tracks rising edges with special priority, expires counter/designation/
+tether identity, completes reloads, cools heat using the old action/form, and expires power.
+It then handles guard interruption/regeneration, releases the current action, completes it,
+and attempts the next commitment. Rook may commit during a released vault as in the source.
+The queue is consumed even if resource eligibility rejects that commitment.
+
+Activation and release use the existing canonical reducers, including their resource and
+launch mutations exactly once. Form expiry precedes release, so an expiring powered attack
+can release unpowered; a special release can activate a new form on that same tick. Guard
+interrupts an unreleased action. Commitment duration/cooldown reads the audited kit JSON.
+The source's strictly positive power check for duration is deliberately distinct from its
+epsilon-based live-form/eligibility check. Release timing still uses the committed duration,
+not the length of a presentation clip or the current form's new duration.
+
+The input contract is the dispatcher's already-normalised input. The phase does not update
+previous-input state, advance movement, enemies, fields, projectiles, turrets or effects,
+settle a wave, or attach actors. Compose it once before `AbilityMovement`, without also
+advancing AbilityClock/AbilityResources for the same canonical interval. Contact presentation
+and the Player bridge remain unfinished; no Godot/world HP conversion is implied.
+
+`player-phase-oracle.json` has2330 whole-state comparisons against the hash-verified original
+v prefix and its unchanged called helpers. The builder exposes that exact contiguous prefix
+at the movement boundary, plus original R/D for boundary setup; this is explicit test-only
+instrumentation, not a claim of a full unmodified v run. Coverage includes all14 kits/forms,
+release epsilon boundaries, power expiry before guard/release, reload/heat eligibility,
+queue edges and priorities, Rook's vault interruption, identity expiry, aim fallback and
+clamps, repeated inputs and unknown fields. Exact IEEE754 fixture values,1e-6 comparisons
+and input-immutability checks follow the other snapshot suites. Reproduce with
+`node game/test/combat/build_player_phase_oracle.mjs /path/to/original-modules.json`.
+
+Next: ordered fixed-step dispatcher, contact presentation and the granted Player hook.
+Health mapping/#275 and the inherited Tam edge remain A/canonical-owner decisions; no
+progression proposals are adopted. Full verify/art/hosted/rendered/device checks remain
+unfinished. Keep DRAFT.
