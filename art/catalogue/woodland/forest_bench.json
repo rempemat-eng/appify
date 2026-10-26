@@ -1,14 +1,14 @@
 {
  "id": "woodland/forest_bench",
  "file": "game/zones/woodland/art/forest_bench.png",
- "sha256": "94499591b9edbc2bbcf27df888ce77cf66f602d468d7d7d3c59a02471c04f39d",
+ "sha256": "acf4e5eab2752e622433301a5ac5080780bfe968ba2eb0662e2ff6d27a3c3ca8",
  "kind": "bench",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
   108,
-  54
+  51
  ],
  "status": "pass",
  "counts": {
@@ -60,7 +60,7 @@
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",

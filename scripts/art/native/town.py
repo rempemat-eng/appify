@@ -84,36 +84,9 @@ def input_hash(plan_path: str, density: float) -> str:
 
 # ------------------------------------------------------------------------------------------------
 def soil_texture_hd(cv, mask, rng, drawn=None, spacing=1.0, p=0.7):
-    """Bare ground drawn as ground (26 Oct): clods and pebbles lit at their upper left with a shade
-    texel under them, and short cracks, a few world px apart, so trodden earth, ash and the burnt
-    floor are never a flat fill."""
-    from scripts.art.native import ctx as CX
-    from scripts.art.native.palette import step
-    D = CX.D
-    H, W = cv.shape
-    sp_x, sp_y = max(4, int(round(2.2 * D * spacing))), max(3, int(round(1.7 * D * spacing)))
-    for gy in range(0, H, sp_y):
-        for gx in range((gy // sp_y) % 2 * (sp_x // 2), W, sp_x):
-            y0, x0 = gy + int(rng.integers(-1, 2)), gx + int(rng.integers(-2, 3))
-            if not (1 <= y0 < H - 3 and 1 <= x0 < W - 3) or not mask[y0, x0] or rng.random() > p:
-                continue
-            c0 = cv[y0, x0]
-            if c0 % 8 >= 6:
-                continue
-            r = rng.random()
-            if r < 0.45:                                            # a clod: lit cap, its shade below
-                pts = (((0, 0), 1), ((0, 1), 1), ((1, 0), 0), ((1, 1), 0), ((2, 1), -1), ((2, 2), -1), ((1, 2), -1),
-                       ((1, 0), 1))
-            elif r < 0.75:                                          # a dip: shade at its north lip, lit south
-                pts = (((0, 0), -1), ((0, 1), -1), ((1, 1), 1), ((1, 2), 1))
-            else:                                                   # a crack
-                pts = (((0, 0), -1), ((1, 0), -1), ((1, 1), -1), ((1, 2), -1), ((2, 2), -1))
-            for (dy, dx), dt in pts:
-                yy, xx = y0 + dy, x0 + dx
-                if mask[yy, xx] and dt != 0:
-                    cv[yy, xx] = step(cv[yy, xx], dt)
-                    if drawn is not None:
-                        drawn[yy, xx] = True
+    """Bare ground drawn as ground: softedge.soil_marks."""
+    from scripts.art.native import softedge as SE
+    SE.soil_marks(cv, mask, rng, drawn, spacing, p)
 
 
 def crater_hd(cv, WX, WY, cx, cy, rx, ry, rng, noise, drawn=None):
@@ -152,10 +125,11 @@ def crater_hd(cv, WX, WY, cx, cy, rx, ry, rng, noise, drawn=None):
         sel = lip & (fam == f)
         cv[sel] = C(f, 0) + np.minimum(tl[sel], 4)
     # the thrown earth and scorch outside, broken into the lawn
-    thrown = (e >= 1.12) & (e < 1.6) & (noise(0.9, 42) > -0.2 + 0.9 * (e - 1.12) / 0.48 * 2)
+    from scripts.art.native import softedge as SE
+    thrown = SE.soft((e >= 1.12) & (e < 1.6) & (noise(1.3, 42) > -0.2 + 0.9 * (e - 1.12) / 0.48 * 2))
     cv[thrown] = C('earth', 2)
     cv[thrown & (noise(0.6, 43) > 0.5)] = C('earth', 3)
-    scorch = (e >= 1.05) & (e < 1.9) & ~thrown & (noise(0.8, 44) > 0.6 + (e - 1.05))
+    scorch = SE.soft((e >= 1.05) & (e < 1.9) & (noise(1.2, 44) > 0.6 + (e - 1.05))) & ~thrown
     cv[scorch] = step(cv[scorch], -2)
     # stones and clods thrown out, lit at their upper left
     for _ in range(26):
@@ -291,6 +265,10 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
 
     # --- the lawn and the uplands ---------------------------------------------------------------
     hd = D >= 2.5
+    from scripts.art.native import softedge as SE
+
+    def is_turf(c):
+        return np.isin(c // 8, [FI['grass'], FI['grass_warm'], FI['grass_cool'], FI['leaf'], FI['leaf_warm']]) & (c % 8 < 6)
     keep_marks = np.zeros((H, W), bool)             # density 3: drawn marks the lone-pixel tidy keeps
     cv = sheets.grass_field_d(bw, bh, seed=plan.get('lawn_seed', 3), tufts=not hd).astype(np.int32)
     up = sheets.grass_field_d(bw, bh, seed=plan.get('lawn_seed', 3) + 1, base_tone=2, density=1.3,
@@ -312,9 +290,17 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
             cx, cy, rx, ry, wd = art['ring']
             e = ((WX - cx) / rx) ** 2 + ((WY - cy) / ry) ** 2
             band = (e > (1 - wd / rx) ** 2) & (e < 1) & (noise(2.0, 51) > -0.7)
-            cv[band] = np.where(noise(1.2, 52)[band] > 0.3, C('grass_warm', 3), C('path', 4))
             if hd:
-                soil_texture_hd(cv, band, rng, keep_marks, spacing=0.55, p=1.0)
+                # density 3: the trodden ring on the soft grid, grass growing back over it in a few
+                # rounded patches, its north edge under the turf's lip, the turf south of it lit
+                band = SE.soft(band)
+                cv[band] = C('path', 4)
+                regrow = band & SE.soft(noise(1.8, 52) > 0.55)
+                cv[regrow] = C('grass_warm', 3)
+                soil_texture_hd(cv, band & ~regrow, rng, keep_marks, spacing=0.7, p=0.8)
+                SE.rim(cv, band & ~regrow, (cv // 8 == FI['grass']) | (cv // 8 == FI['grass_warm']) | (cv // 8 == FI['grass_cool']))
+            else:
+                cv[band] = np.where(noise(1.2, 52)[band] > 0.3, C('grass_warm', 3), C('path', 4))
 
     # --- roads and paths, worn at their edges ------------------------------------------------------
     def polyline_dist(pts):
@@ -333,13 +319,28 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         wob = noise(3.0, 60 + k, 1.4) + noise(1.0, 80 + k, 0.5)
         m = d < hw + wob
         src = dirt if r['kind'] == 'road' else track
-        cv[m] = src[m]
+        if hd:
+            # density 3 (Matt, 26 Oct 10:19: paths on the soft grid): the edge smooth, stepping a
+            # texel at a time, no teeth; inside calm, one body tone with a few large trodden and dry
+            # patches and clods (the sheets' speckle read as blotches)
+            m = SE.soft(m, smooth=0.6)
+            fam_ = 'path' if r['kind'] == 'road' else 'path_warm'
+            pt = noise(9.0, 140 + k)
+            calm = np.where(pt > 0.9, 4, np.where(pt < -1.4, 2, 3))     # (few dark patches: shade must still show the clods)
+            cv[m] = (FI[fam_] * 8 + calm)[m]
+            # clods in a few drifts (gathered by a slow field), calm earth between them
+            soil_texture_hd(cv, m & (d < hw + wob - 1.2) & (noise(7.0, 150 + k) > 0.1), rng, keep_marks, spacing=1.1, p=0.6)
+        else:
+            cv[m] = src[m]
         # ruts down a road: two worn lines a tone down
         if r['kind'] == 'road':
             for off in (-hw * 0.45, hw * 0.45):
-                rut = (np.abs(d - abs(off)) < 0.9) & m & (noise(1.5, 90 + k) > -0.4)
+                rut = (np.abs(d - abs(off)) < (0.45 if hd else 0.9)) & m & (noise(1.5, 90 + k) > -0.4)
                 cv[rut] = step(cv[rut], -1)
         pathm |= m
+    if hd:
+        turf_ = is_turf(cv)
+        SE.rim(cv, pathm, turf_ & ~pathm)
 
     # --- places ------------------------------------------------------------------------------------
     # the paved square: rounded on the soft grid (cell 8 world px, corner radius one cell)
@@ -424,6 +425,18 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
             kerb_r = disc & ~((((WX - cx) / (r1 - 2.0)) ** 2 + ((WY - cy) / ((r1 - 2.0) * 0.86)) ** 2) < 1.0)
             cv[kerb_r] = C('stone_warm', 4)
             cv[kerb_r & (WY > cy + 3)] = C('stone_warm', 3)
+            if hd:
+                # density 3: the kerb laid in curved blocks: a joint every 5 world px round it, each
+                # block lit on its north-west and a tone down to its south-east end
+                thk = np.arctan2((WY - cy) / 0.86, WX - cx)
+                nb = max(8, int(2 * math.pi * r1 / 5.0))
+                fa = (thk / (2 * math.pi) + 0.5) * nb
+                fr_ = fa - np.floor(fa)
+                cv[kerb_r & (fr_ * (2 * math.pi * r1 / nb) * D < 1.0)] = C('stone', 2)
+                sel = kerb_r & (fr_ > 0.7) & (cv % 8 > 2)
+                cv[sel] = cv[sel] - 1
+                sel = kerb_r & (fr_ > 0.1) & (fr_ < 0.3) & (cv % 8 < 5) & (WY < cy)
+                cv[sel] = cv[sel] + 1
             rim_in = kerb_r & ~ndi.binary_erosion(disc, iterations=q(2.0) + 1)
             outer_line = disc & ~ndi.binary_erosion(disc, iterations=1)
             cv[outer_line] = C('stone', 2)
@@ -460,6 +473,8 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         cv[tuft & (noise(0.7, 38) > 0.5)] = C('grass_cool', 2)
         cv[tuft & (noise(0.7, 40) > 1.0)] = C('grass', 4)
         worn = (out_d > 0) & (out_d < 3.5) & (noise(2.0, 39) > 1.3) & ~pathm
+        if hd:
+            worn = SE.soft(worn) & (out_d > 0) & ~pathm
         cv[worn] = C('path_warm', 4)
         cv[worn & (out_d > 2.5)] = C('grass_warm', 3)
 
@@ -467,6 +482,8 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
     for k_, (px, py, prx, pry) in enumerate(art.get('puddles', [])):
         e = ((WX - px) / prx) ** 2 + ((WY - py) / pry) ** 2 + noise(1.2, 120 + k_, 0.12)
         m = e < 1.0
+        if hd:
+            m = SE.soft(m, smooth=0.4, min_area=1.0)
         cv[m] = C('water', 2)
         cv[m & (WY > py)] = C('water', 3)
         cv[m & (e < 0.35) & (WX < px)] = C('sky', 4)
@@ -510,12 +527,17 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         # the burnt ground: ash and soot in soft clusters, its edge frayed into the lawn
         e = np.maximum(np.abs(WX - (x + w / 2)) / (w / 2), np.abs(WY - (y + h / 2)) / (h / 2))
         m = e < 1.0 + noise(1.6, 70 + k_, 0.08)
+        if hd:
+            m = SE.soft(m, smooth=0.6)
         cv[m] = C('earth', 2)
         cv[m & (noise(1.8, 71 + k_) > 0.1)] = C('earth_cool', 2)
         cv[m & (noise(2.2, 72 + k_) > 0.7)] = C('earth_cool', 1)
-        cv[m & (e > 0.82) & (noise(1.0, 75 + k_) > 0.4)] = C('grass_cool', 2)
         if hd:
-            soil_texture_hd(cv, m & (e <= 0.82), rng, keep_marks)
+            cv[m & (e > 0.82) & SE.soft(noise(1.4, 75 + k_) > 0.4)] = C('grass_cool', 2)
+        else:
+            cv[m & (e > 0.82) & (noise(1.0, 75 + k_) > 0.4)] = C('grass_cool', 2)
+        if hd:
+            soil_texture_hd(cv, m & (e <= 0.82), rng, keep_marks, spacing=0.8, p=0.85)
         # the old footings: a course of stones round where the walls stood, broken in places
         tmp = np.full((H, W), -1, np.int32)
         V.rubble(tmp, q(x + 4), q(y + 4), q(x + w - 4), q(y + h - 4), rng, base=3, course=(3, 3.6), length=(4, 7), moss=0.3)
@@ -721,6 +743,8 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
             shade |= m | contact
             foots.append((o['foot'][0] / D, o['foot'][1] / D, o['kind']))
         drawn = lawn_detail_hd(cv, pathm | pave, shade, foots, rng, noise)
+        # in shade the trodden earth shows its clods closer (the shade keeps them, two tones down)
+        SE.soil_marks(cv, pathm & ndi.binary_erosion(shade, iterations=2), rng, drawn, spacing=0.7, p=0.9)
     else:
         drawn = np.zeros((H, W), bool)
     for o in objects:

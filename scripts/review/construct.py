@@ -433,10 +433,21 @@ def water_shape(rgb, alpha, H, subject):
     return fs
 
 
+def glow(rgb):
+    """A light source's own pixels (lit panes, a flame, a lamp's glass): bright warm yellows and
+    near-whites lit from inside, and the texel round them. They are not lit by the sun, so the
+    light-direction and cylinder checks leave them out (26 Oct: the green-capped lamp, Matt's style
+    anchor, failed both on its own glowing glass)."""
+    r, g, b = (rgb[..., i].astype(int) for i in range(3))
+    m = (r >= 200) & (g >= 135) & (r - b >= 40) & (r >= g)
+    m = ndi.binary_opening(m, structure=np.ones((2, 2)))
+    return ndi.binary_dilation(m, iterations=1) if m.any() else m
+
+
 def object_light(rgb, alpha, H, subject):
     L = lum(rgb)
     fam = D.family_map(rgb)
-    m = alpha & (fam != 0) & ndi.binary_erosion(alpha, iterations=1)
+    m = alpha & (fam != 0) & ndi.binary_erosion(alpha, iterations=1) & ~glow(rgb)
     if m.sum() < 0.04 * H * H:
         return []
     ys, xs = np.nonzero(m)
@@ -485,7 +496,7 @@ def cylinder(rgb, alpha, H, subject):
     if not any(k in base for k in ROUND):
         return []
     fam = D.family_map(rgb)
-    body = alpha & (fam != 0) & ndi.binary_erosion(alpha, iterations=1)
+    body = alpha & (fam != 0) & ndi.binary_erosion(alpha, iterations=1) & ~glow(rgb)
     if body.sum() < 0.03 * H * H:
         return []
     L = lum(rgb)
@@ -493,6 +504,20 @@ def cylinder(rgb, alpha, H, subject):
     # the widest band of rows: the shaft
     widths = body.sum(1)
     rows = widths >= 0.7 * widths.max()
+    if any(k in base for k in ('lantern', 'lamp', 'post')):
+        # a post carrying a lamp: the shaft is the longest run of rows of one width (the post), not
+        # the lamp's box, the widest thing on it
+        best, cur, start = (0, 0), 0, 0
+        for y in range(len(widths)):
+            if widths[y] >= 3 and y > 0 and abs(int(widths[y]) - int(widths[y - 1])) <= 1:
+                cur += 1
+            else:
+                cur, start = (1 if widths[y] >= 3 else 0), y
+            if cur > best[0]:
+                best = (cur, start)
+        if best[0] >= 0.25 * len(ys):
+            rows = np.zeros_like(rows)
+            rows[best[1]:best[1] + best[0]] = True
     xs = np.nonzero(body[rows].any(0))[0]
     if len(xs) < 6:
         return []

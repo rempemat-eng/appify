@@ -1,14 +1,14 @@
 {
  "id": "woodland/bush_b",
  "file": "game/zones/woodland/art/bush_b.png",
- "sha256": "6ef649a74c6163929aaf07448b50ca4ea50b91e7d20a3cb829871feafb5e9e2d",
+ "sha256": "8a70be97055bfb13eeb4b5e34b77c33d2c170cdc6e352b8b23504984f321174d",
  "kind": "bush",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  93,
-  80
+  94,
+  63
  ],
  "status": "pass",
  "counts": {
@@ -48,7 +48,7 @@
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",

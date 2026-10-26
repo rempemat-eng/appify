@@ -1,7 +1,7 @@
 {
  "id": "crossroads/fern_rubble_shadow",
  "file": "game/zones/crossroads/art/fern_rubble_shadow.png",
- "sha256": "07cb61847240bff7204e859023e08f72842853fa15dc07a57d29088018addd6c",
+ "sha256": "1be5070ad765779cfe02553ab184affb4158de40c5af30cdd2ad3eed1b2eba01",
  "kind": "fern_rubble_shadow",
  "biome": "valley",
  "H": 74.0,

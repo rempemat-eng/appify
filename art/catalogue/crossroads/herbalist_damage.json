@@ -1,13 +1,13 @@
 {
  "id": "crossroads/herbalist_damage",
  "file": "game/zones/crossroads/art/herbalist_damage.png",
- "sha256": "34e2db3ccf1194ce4b89478f3b8073d186749e2a086e0221376450efeff5e73f",
+ "sha256": "939352a5a6b1020fb21f078c6ba981b6f00efed595c49f7a54e0273ac43a4e3d",
  "kind": "herbalist",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  252,
+  240,
   192
  ],
  "status": "fail",
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 15,
-   "tones": 19.2,
-   "shapes": 35.46666666666667
+   "patches": 14,
+   "tones": 19.785714285714285,
+   "shapes": 36.5
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.704,
-  "tones_ratio": 0.711,
-  "shapes_ratio": 0.704,
+  "ratio": 0.725,
+  "tones_ratio": 0.733,
+  "shapes_ratio": 0.725,
   "passed": false,
   "group": "prop"
  },
@@ -39,10 +39,10 @@
    "detector": "detail.volume",
    "severity": "fault",
    "box": [
-    91,
-    16,
-    113,
-    24
+    81,
+    17,
+    111,
+    25
    ],
    "message": "crossroads/herbalist_damage: the stone reads 2D: 2 light planes, luminance spread 23",
    "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
@@ -51,16 +51,16 @@
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    28,
-    15,
+    23,
+    16,
     163,
-    174
+    175
    ],
-   "message": "crossroads/herbalist_damage: detail bar 0.70 of Eastward's prop band (19.2 tones, 35.5 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/herbalist_damage: detail bar 0.72 of Eastward's prop band (19.8 tones, 36.5 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",

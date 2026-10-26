@@ -1,26 +1,26 @@
 {
  "id": "crossroads/herbalist",
  "file": "game/zones/crossroads/art/herbalist.png",
- "sha256": "bd860308513a86f200a6186c7e3162a5ca4451bac7c344b3574bb9996313d3a1",
+ "sha256": "7afe839896bdf2fee6a17a6fef093ebf6440a83249f72802f09fa3b8c82458f2",
  "kind": "herbalist",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  252,
+  240,
   192
  ],
  "status": "fail",
  "counts": {
   "blocker": 0,
-  "fault": 6,
+  "fault": 7,
   "polish": 3
  },
  "detail_bar": {
   "ours": {
-   "patches": 116,
-   "tones": 16.146551724137932,
-   "shapes": 28.56896551724138
+   "patches": 112,
+   "tones": 17.107142857142858,
+   "shapes": 29.446428571428573
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.567,
-  "tones_ratio": 0.598,
-  "shapes_ratio": 0.567,
+  "ratio": 0.585,
+  "tones_ratio": 0.634,
+  "shapes_ratio": 0.585,
   "passed": false,
   "group": "prop"
  },
@@ -44,7 +44,7 @@
     110,
     134
    ],
-   "message": "crossroads/herbalist: the violet is lit from the right (luminance rises 121 L per H to the east)",
+   "message": "crossroads/herbalist: the violet is lit from the right (luminance rises 151 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
@@ -56,27 +56,15 @@
     48,
     136
    ],
-   "message": "crossroads/herbalist: the wood is lit from the right (luminance rises 33 L per H to the east)",
+   "message": "crossroads/herbalist: the wood is lit from the right (luminance rises 21 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
    "detector": "detail.volume",
    "severity": "fault",
    "box": [
-    109,
-    140,
-    154,
-    150
-   ],
-   "message": "crossroads/herbalist: the wood reads 2D: 2 light planes, luminance spread 29",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
     43,
-    141,
+    140,
     88,
     150
    ],
@@ -84,15 +72,39 @@
    "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
   },
   {
+   "detector": "detail.volume",
+   "severity": "fault",
+   "box": [
+    109,
+    141,
+    154,
+    150
+   ],
+   "message": "crossroads/herbalist: the wood reads 2D: 2 light planes, luminance spread 29",
+   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
+  },
+  {
+   "detector": "detail.glyph",
+   "severity": "fault",
+   "box": [
+    203,
+    95,
+    211,
+    110
+   ],
+   "message": "crossroads/herbalist: a flat water mark of 1 tones on the body reads as an interface icon, not something carved, painted or worn into the material",
+   "fix": "cut or paint it into the surface: a carved groove with a lit lower lip and a dark upper edge, worn paint with chips, moss in the cut; tone it to the material and the light"
+  },
+  {
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
     0,
     13,
-    252,
+    240,
     190
    ],
-   "message": "crossroads/herbalist: detail bar 0.57 of Eastward's prop band (16.1 tones, 28.6 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/herbalist: detail bar 0.58 of Eastward's prop band (17.1 tones, 29.4 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   },
   {
@@ -100,7 +112,7 @@
    "severity": "fault",
    "box": [
     43,
-    141,
+    140,
     88,
     150
    ],
@@ -112,7 +124,7 @@
    "severity": "fault",
    "box": [
     109,
-    140,
+    141,
     154,
     150
    ],
@@ -144,7 +156,7 @@
    "fix": "cut or paint it into the surface: a carved groove with a lit lower lip and a dark upper edge, worn paint with chips, moss in the cut; tone it to the material and the light"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",

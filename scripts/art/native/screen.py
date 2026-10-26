@@ -140,6 +140,9 @@ def scree(cv: np.ndarray, depth, avoid: np.ndarray, seed=1612) -> None:
     wob = np.array([[smooth_noise(x, y, 5, seed + 2) for x in range(W // k)] for y in range(H // k)])
     wobt = np.kron(wob, np.ones((k, k)))[:H, :W]
     band = (yy / D < dep * (0.75 + 0.35 * wobt)) & ~avoid & (cv >= 0)
+    if D >= HD:      # density 3: the band's lower edge on the soft grid (softedge)
+        from . import softedge as SE
+        band = SE.soft(band, smooth=1.3) & ~avoid & (cv >= 0)
     sheet = TL.SHEETS['path']
     fill = sheet[np.ix_(np.arange(H) % sheet.shape[0], np.arange(W) % sheet.shape[1])]
     cv[band] = step(fill[band], -1)
@@ -446,13 +449,17 @@ def footbridge_hd(cv: np.ndarray, x0, w, y0, y1, water: np.ndarray) -> None:
 
 
 def path_hd(cv: np.ndarray, pts, hw0: float, seed: int = 0, spur: bool = False) -> None:
-    """A worn footpath at density 3 and up: trodden dirt whose edge wanders at two scales (no
-    hard rim), the lawn creeping in over it in leaf-sized tips and a few grass islands near the
-    margin; the dirt mottled in soft patches (trodden darker, dry lighter) with pebbles of 1 to
-    1.6 world px lying here and there, lit at the upper left with a shade under them. A spur
-    (a short side path) widens where it leaves the main path and ends in a small apron."""
+    """A worn footpath at density 3 and up, on the soft grid (Matt, 26 Oct 10:19: paths should
+    "adhere to the soft grid more", like the bench and lamp of the cast video). Its width wanders
+    slowly (two long waves), so the edge runs smooth and steps a texel at a time; a rounded bite of
+    turf or a tongue of dirt about every 16 world px; no one-texel teeth (softedge.soft). The dirt
+    under the turf's north and west lip a tone down, the turf just south of it lit. Inside, calm:
+    one body tone with a few large trodden and dry patches, two faint ruts where feet run, and
+    pebbles in a few small clusters lit at their upper left with a shade under them. A spur (a short
+    side path) widens where it leaves the main path and ends in a small apron."""
     from scipy.spatial import cKDTree
     from .terrain import noise as TN
+    from . import softedge as SE
     H, W = cv.shape
     cp, sarc = SC._curve(pts)
     tree = cKDTree(cp)
@@ -465,42 +472,56 @@ def path_hd(cv: np.ndarray, pts, hw0: float, seed: int = 0, spur: bool = False) 
     dist, idx = tree.query(np.stack([wx.ravel(), wy.ravel()], 1))
     dist, idx = dist.reshape(wx.shape), idx.reshape(wx.shape)
     sa = sarc[idx]
-    hw = hw0 + 0.6 * np.sin(sa / 11.0 + seed) + (TN.vnoise(wx, wy, 6.0, 41 + seed) - 0.5) * 1.8 \
-        + (TN.vnoise(wx, wy, 1.6, 43 + seed) - 0.5) * 0.9
+    tx_, ty_ = np.gradient(cp[:, 0])[idx], np.gradient(cp[:, 1])[idx]
+    side = np.sign(tx_ * (wy - cp[idx, 1]) - ty_ * (wx - cp[idx, 0]))      # which side of the line
+    # the width wanders in two long waves, each side on its own
+    hw = hw0 + 0.7 * np.sin(sa / 13.0 + seed + side * 1.3) + 0.45 * np.sin(sa / 5.3 + 2 * seed + side * 2.1)
+    # a rounded bite or tongue about every 16 world px along each side
+    k_ = np.floor(sa / 16.0)
+    hb = ((k_.astype(np.int64) * 2654435761 + seed * 97 + (side > 0) * 13) % 1000) / 1000.0
+    ph = sa / 16.0 - k_
+    bump = np.exp(-((ph - 0.5) / 0.09) ** 2) * np.where(hb < 0.5, -1.4, 1.1) * (hb < 0.8)
+    hw = hw + bump
     if spur:
         hw = hw + 4.0 * np.exp(-sa / 4.0) + 1.8 * np.exp(-((sarc[-1] - sa) - 2.5) ** 2 / 20.0)
         hw = hw * np.clip((sarc[-1] - sa + 2.5) / 5.0, 0.35, 1.0)
     cur = cv[ys[0]:ys[-1] + 1, xs[0]:xs[-1] + 1]
     grassy = is_fam(cur, 'grass') | is_fam(cur, 'leaf')
-    # the lawn's tips over the margin: leaf-shaped, one every 3 texels, 1 to 4 texels in
-    tip = ((XX // 3) * 2654435761 ^ (YY // 5) * 40503 ^ seed) & 0xff
-    creep = ((tip % 5) + ((XX % 3) == 1)) / D * (dist > hw - 1.6)
-    dirt = grassy & (dist <= hw - creep)
-    isl = (TN.vnoise(wx, wy, 2.2, 47 + seed) > 0.8) & (dist > hw - 2.4) & (dist < hw - 0.8)
-    dirt &= ~isl
-    m1 = TN.vnoise(wx, wy, 5.0, 51 + seed) + 0.35 * TN.vnoise(wx, wy, 1.8, 53 + seed)
+    dirt = SE.soft(dist <= hw) & grassy
+    dirt = SE.soft(dirt)
+    # calm inside: the body, a few large trodden (darker) and dry (lighter) patches, ruts
+    m1 = TN.vnoise(wx, wy, 11.0, 51 + seed)
     t = np.full(dirt.shape, 3)
-    t[m1 < 0.42] = 2
-    t[m1 > 1.0] = 4
+    t[m1 < 0.3] = 2
+    t[m1 > 0.78] = 4
+    rut = (np.abs(dist - 0.38 * hw0) < 0.34) & (TN.vnoise(wx, wy, 7.0, 55 + seed) > 0.45) & (dist < hw - 1.2)
+    t[rut] -= 1
     fam = np.full(dirt.shape, FI['path'])
-    fam[TN.vnoise(wx, wy, 9.0, 57 + seed) > 0.62] = FI['path_warm']
+    fam[TN.vnoise(wx, wy, 14.0, 57 + seed) > 0.62] = FI['path_warm']
     out = cur.copy()
-    out[dirt] = fam[dirt] * 8 + t[dirt]
-    # under the lawn's lip on the north and west margins, a tone of shade (the grass is higher)
-    Pd = np.pad(dirt, 1)
-    north_grass = dirt & (~Pd[:-2, 1:-1] | ~Pd[1:-1, :-2])
-    out[north_grass] = step(out[north_grass], -1)
-    # pebbles
-    ph = ((XX // P(4.5)) * 73856093 ^ (YY // P(4.0)) * 19349663 ^ (seed * 7 + 5)) & 0xffff
-    cy0, cx0 = (YY // P(4.0)) * P(4.0) + (ph % P(4.0)), (XX // P(4.5)) * P(4.5) + ((ph >> 4) % P(4.5))
-    rr = np.maximum(1, np.round((0.5 + ((ph >> 9) % 3) * 0.25) * D)).astype(int)
-    peb = dirt & (ph % 7 == 0) & (dist < hw - 1.2)
-    ry_, rx_ = (YY - cy0), (XX - cx0)
-    inp = peb & (ry_ ** 2 + (rx_ * 0.8) ** 2 <= rr * rr)
-    out[inp] = np.where((ry_[inp] < 0) & (rx_[inp] <= 0), C('stone', 4), C('stone', 3))
-    sh = peb & ~inp & (ry_ >= 0) & (ry_ <= rr + 1) & (rx_ >= -rr + 1) & (rx_ <= rr + 1) & \
-        ((ry_ - 1) ** 2 + ((rx_ - 1) * 0.8) ** 2 <= rr * rr)
-    out[sh & dirt] = step(out[sh & dirt], -1)
+    out[dirt] = fam[dirt] * 8 + np.clip(t[dirt], 1, 5)
+    # pebbles in a few small clusters
+    rng = np.random.default_rng(1301 + seed)
+    inner = dirt & (dist < hw - 1.5)
+    iy, ix = np.nonzero(inner)
+    for _ in range(int(len(iy) / (220 * D * D)) + 1 if len(iy) else 0):
+        k = int(rng.integers(0, len(iy)))
+        for _j in range(int(rng.integers(2, 5))):
+            py, px = iy[k] + int(rng.normal(0, 1.4 * D)), ix[k] + int(rng.normal(0, 2.0 * D))
+            rr = max(1, int(round(rng.uniform(0.5, 0.9) * D)))
+            if not (rr <= py < out.shape[0] - rr - 2 and rr <= px < out.shape[1] - rr - 2) or not inner[py, px]:
+                continue
+            Yp, Xp = np.mgrid[-rr:rr + 2, -rr:rr + 2]
+            stone = (Yp ** 2 + (Xp * 0.8) ** 2 <= rr * rr)
+            shade_ = ((Yp - 1) ** 2 + ((Xp - 1) * 0.8) ** 2 <= rr * rr) & ~stone
+            win = out[py - rr:py + rr + 2, px - rr:px + rr + 2]
+            dwin = dirt[py - rr:py + rr + 2, px - rr:px + rr + 2]
+            win[shade_ & dwin] = step(win[shade_ & dwin], -1)
+            win[stone] = np.where((Yp[stone] < 0) & (Xp[stone] <= 0), C('stone', 4), C('stone', 3))
+    # clods, dips and cracks a few world px apart (so the trodden earth is ground, not a fill)
+    SE.soil_marks(out, dirt & (dist < hw - 1.0), np.random.default_rng(1401 + seed), spacing=1.3, p=0.55)
+    # the edge: dark under the turf's north and west lip, the turf south of it lit
+    SE.rim(out, dirt, grassy & ~dirt)
     cv[ys[0]:ys[-1] + 1, xs[0]:xs[-1] + 1] = out
 
 
@@ -680,15 +701,16 @@ def ground_detail_hd(cv: np.ndarray, plan: dict, trees: list, h: int, w: int, sh
     for p in plan['paths']:
         pts = [tuple(q) for q in p['points']]
         for (a, b) in zip(pts[:-1], pts[1:]):
-            n = int(np.hypot(b[0] - a[0], b[1] - a[1]) / 26) + 1
+            n = int(np.hypot(b[0] - a[0], b[1] - a[1]) / 44) + 1
             for k in range(n):
                 t = (k + rng.uniform(0.2, 0.8)) / n
                 px, py = a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t
                 dx, dy = b[1] - a[1], -(b[0] - a[0])
                 nn = max(1e-6, np.hypot(dx, dy))
                 side = 1 if rng.random() < 0.5 else -1
-                off = p['radius'] + rng.uniform(1.0, 4.0)
-                sites.append((px + side * dx / nn * off, py + side * dy / nn * off, int(rng.integers(1, 4))))
+                # a worn shoulder joined to the path (where feet step off it), not a loose blob beside it
+                off = p['radius'] - 1.0 + rng.uniform(0.0, 1.5)
+                sites.append((px + side * dx / nn * off, py + side * dy / nn * off, int(rng.integers(1, 3))))
     for (oid, kind, x, y, ow, oh) in plan['objects']:
         if kind in ('forest_bench', 'stump', 'hollow_tree'):
             sites.append((x + ow / 2 + rng.uniform(-3, 3), y + oh + rng.uniform(3, 6), int(rng.integers(2, 4))))
@@ -701,21 +723,14 @@ def ground_detail_hd(cv: np.ndarray, plan: dict, trees: list, h: int, w: int, sh
             m = blob(cx_, cy_, rx, ry, seed=int(rng.integers(0, 10 ** 6)), rough=0.35, w=w, h=h)
             earth |= m
     earth &= lawn
-    earth = ndi.binary_opening(earth, iterations=1)
-    lipN = ndi.binary_dilation(earth, structure=np.ones((3, 1), bool), iterations=1) & ~earth & grass
-    lipN &= np.roll(earth, 1, axis=0) | np.roll(earth, 2, axis=0)    # the turf just above bare soil
-    lipS = ndi.binary_dilation(earth, structure=np.ones((3, 1), bool), iterations=1) & ~earth & grass & ~lipN
-    # the bare soil a tone under the path's dirt, a checker of soil and turf round it (worn,
-    # not cut), a dark turf lip on its north edge and a lit one on its south
-    rim = ndi.binary_dilation(earth, iterations=P(1)) & ~earth & grass
+    # on the soft grid (26 Oct): smooth runs, no teeth; dark under the turf's north and west lip,
+    # the turf south of it lit; no dither at the boundary (eastward-edges.md 5.4)
+    from . import softedge as SE
+    earth = SE.soft(earth, min_area=4.0) & lawn
     cv[earth] = C('earth_warm', 3)
     inner = earth & ndi.binary_erosion(earth, iterations=2)
-    cv[inner & (_wnoise(h, w, 1.6, 53) > 0.6)] = C('earth_warm', 4)
-    cv[inner & (_wnoise(h, w, 1.3, 57) < -1.2)] = C('earth_warm', 2)
-    cv[rim & chk] = C('earth_warm', 3)
-    cv[lipN & ~(rim & chk)] = step(cv[lipN & ~(rim & chk)], -1)
-    sel = lipS & ~(rim & chk) & (cv % 8 < 5)
-    cv[sel] = step(cv[sel], 1)
+    cv[inner & (_wnoise(h, w, 2.4, 53) > 0.7)] = C('earth_warm', 4)
+    SE.rim(cv, earth, grass & ~earth)
     ys, xs = np.nonzero(inner)
     for k in rng.choice(len(ys), size=min(len(ys), int(len(ys) / (9 * D * D)) + 1), replace=False) if len(ys) else []:
         y0, x0 = ys[k], xs[k]
@@ -726,6 +741,9 @@ def ground_detail_hd(cv: np.ndarray, plan: dict, trees: list, h: int, w: int, sh
         else:                                                            # a sprout of grass left in it
             cv[y0 - 2:y0 + 1, x0] = C('grass', 3)
             cv[y0 - 1:y0 + 1, x0 + 1] = C('grass', 2)
+    # 2b. in shade the trodden path shows its clods closer (the shade keeps them, two tones down)
+    pathlike = is_fam(cv, 'path') & (cv % 8 < 6)
+    SE.soil_marks(cv, pathlike & ndi.binary_erosion(shade, iterations=2), rng, spacing=0.55, p=1.0)
     # 3. leaf litter, twigs and clover in drifts under the broadleaf crowns
     leaf_tones = [C('clay', 4), C('brass', 4), C('earth_warm', 3), C('leaf_warm', 2), C('clay', 5)]
     for (fx, fy, cw, kind_) in trees:
@@ -896,6 +914,33 @@ def terrain(plan: dict, layers: dict) -> tuple:
     return cv, wm, rock
 
 
+def foot_at_bottom_centre(img, anc, a, ex):
+    """Pad a sprite so its foot (anchor) is the middle of its picture's bottom edge: the game sorts
+    and places a picture by that point, so the object stands exactly where the plan puts its foot,
+    on the soft grid (26 Oct; gen_zone, scene.check_grid)."""
+    ax, ay = anc
+    w, h = img.size
+    left = int(round(max(ax, w - ax) - ax))
+    right = int(round(max(ax, w - ax) - (w - ax)))
+    bottom = max(0, int(round(ay)) - h)
+    top = 0
+    if ay < h:                                   # drop transparent rows below the foot
+        a_ = np.asarray(img)[..., 3]
+        if not a_[int(round(ay)):].any():
+            img = img.crop((0, 0, w, int(round(ay))))
+            a = a[:int(round(ay))]
+            h = img.size[1]
+    W2 = w + left + right
+    if (W2 - 2 * (ax + left)) != 0:              # an odd half texel: one more on the right
+        right += 1 if (ax + left) * 2 > W2 else 0
+        W2 = w + left + right
+    out = Image.new('RGBA', (W2, h + bottom + top), (0, 0, 0, 0))
+    out.alpha_composite(img, (left, top))
+    na = np.zeros((h + bottom + top, W2), bool)
+    na[top:top + a.shape[0], left:left + a.shape[1]] = a
+    return out, (ax + left, ay + top), na, ex
+
+
 def build() -> Zone:
     plan, biome = ctx.PLAN, ctx.BIOME
     layers = {}
@@ -905,6 +950,8 @@ def build() -> Zone:
     sprites, objects, things, casts, tcasts = {}, [], [], [], []
     for k, kind in enumerate(sorted({o[1] for o in plan['objects']})):
         sprites[kind] = sprite(kind, recipes[kind], 700 + k)
+        if D >= HD:
+            sprites[kind] = foot_at_bottom_centre(*sprites[kind])
     for (oid, kind, x, y, ow, oh) in plan['objects']:
         img, anc, a, ex = sprites[kind]
         fx, fy = x + ow / 2.0, y + oh                     # the 1x object's foot

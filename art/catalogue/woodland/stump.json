@@ -1,13 +1,13 @@
 {
  "id": "woodland/stump",
  "file": "game/zones/woodland/art/stump.png",
- "sha256": "f420286d90851b360b4b706fe0b267447e62d0a505c28eaddc848e07084637e3",
+ "sha256": "732f83302b8687ecb2c62040ad9ff80521e3e3a56e21ab6593b8d205bf69be99",
  "kind": "stump",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  85,
+  87,
   57
  ],
  "status": "pass",
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 5,
-   "tones": 25.0,
-   "shapes": 47.6
+   "patches": 6,
+   "tones": 25.5,
+   "shapes": 45.833333333333336
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.926,
-  "tones_ratio": 0.926,
-  "shapes_ratio": 0.945,
+  "ratio": 0.91,
+  "tones_ratio": 0.944,
+  "shapes_ratio": 0.91,
   "passed": true,
   "group": "prop"
  },

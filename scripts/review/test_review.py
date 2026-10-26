@@ -16,6 +16,8 @@ import numpy as np
 from PIL import Image
 
 from scripts.review import core, water, screen, construct as C, detail as D, scene as SN, gate, assets as A
+from scripts.review import edges as E
+from scipy import ndimage as ndi
 
 H = 74
 GRASS = (150, 166, 92)
@@ -297,6 +299,58 @@ class LightSource(unittest.TestCase):
 
     def test_pool_under_a_torch(self):
         self.assertEqual(SN.check_light_sources(self.zone(True), H), [])
+
+
+class RaggedEdge(unittest.TestCase):
+    """detail.ragged_edge (edges.py): a dirt path whose edge is per-pixel noise trips; the same path
+    on the soft grid passes (Matt, 26 Oct 10:19); a bench's thin legs are not teeth."""
+    DIRT = (150, 110, 80)
+
+    def path(self, ragged):
+        a = lawn(400, 300)[..., :3].copy()
+        Y, X = np.mgrid[0:300, 0:400]
+        hw = 40 + 6 * np.sin(Y / 23.0)                          # a slow wander: soft-grid runs
+        m = np.abs(X - 200 - 25 * np.sin(Y / 40.0)) < hw
+        if ragged:
+            rng = np.random.default_rng(5)
+            edge = m & ~ndi.binary_erosion(m, iterations=1)
+            near = ndi.binary_dilation(m, iterations=1) & ~m
+            m = (m & ~(edge & (rng.random(m.shape) < 0.35))) | (near & (rng.random(m.shape) < 0.35))
+        a[m] = self.DIRT
+        return a
+
+    def test_ragged_path_trips(self):
+        fs = E.ragged_ground(self.path(True), H, 'test')
+        self.assertTrue(any(f.detector == 'detail.ragged_edge' for f in fs))
+
+    def test_soft_grid_path_passes(self):
+        self.assertEqual(E.ragged_ground(self.path(False), H, 'test'), [])
+
+    def test_sprite_thin_legs_pass(self):
+        al = np.zeros((60, 90), bool)
+        al[10:30, 5:85] = True                                  # a seat
+        for x in (10, 11, 78, 79):
+            al[30:55, x] = True                                 # legs one or two texels wide
+        self.assertEqual(E.ragged(al, H, 'bench', min_area=0.02, sprite=True), [])
+
+
+class OnGrid(unittest.TestCase):
+    """logic.off_grid: props and structures stand on the soft grid (8 world px, 24 texels at density
+    3); clutter may sit anywhere in a cell."""
+
+    def zone(self, x, y, name='Bench_1'):
+        sp = SN.Sprite(name, 'res://zones/x/art/bench.png', (x, y), (x - 30, y - 40, x + 30, y), 0, True,
+                       np.zeros((40, 60, 4), np.uint8), 'Props')
+        return SN.Zone('x', (960, 960), np.zeros((960, 960, 4), np.uint8), sprites=[sp])
+
+    def test_on_grid_passes(self):
+        self.assertEqual(SN.check_grid(self.zone(12 * 24 + 12, 10 * 24)), [])
+
+    def test_off_grid_trips(self):
+        self.assertTrue(SN.check_grid(self.zone(12 * 24 + 7, 10 * 24 + 5)))
+
+    def test_clutter_may_sit_anywhere(self):
+        self.assertEqual(SN.check_grid(self.zone(12 * 24 + 7, 10 * 24 + 5, 'DebrisA')), [])
 
 if __name__ == '__main__':
     unittest.main()
