@@ -17,6 +17,7 @@ from PIL import Image
 
 from scripts.review import core, water, screen, construct as C, detail as D, scene as SN, gate, assets as A
 from scripts.review import edges as E
+from scripts.review import scale as SZ
 from scipy import ndimage as ndi
 
 H = 74
@@ -404,6 +405,84 @@ class OnGrid(unittest.TestCase):
 
     def test_clutter_may_sit_anywhere(self):
         self.assertEqual(SN.check_grid(self.zone(12 * 24 + 7, 10 * 24 + 5, 'DebrisA')), [])
+
+class SizeTable(unittest.TestCase):
+    """logic.scale (scale.py, sizes.json): sizes against a person, doors, stairs, grain, cast."""
+
+    def test_classes_from_names(self):
+        self.assertEqual(SZ.class_of('crossroads/smithy_rubble'), 'rubble')
+        self.assertEqual(SZ.class_of('crossroads/flower_tub_9'), 'flower_tub')
+        self.assertEqual(SZ.class_of('crossroads/kit_lantern_24'), 'lamp')
+        self.assertEqual(SZ.class_of('undercroft/stump_nw'), 'pillar_stump')
+        self.assertIsNone(SZ.class_of('woodland/flow'))
+        self.assertIsNone(SZ.class_of('crossroads/bakery_damage'))
+
+    def test_barrel_too_tall_trips_and_true_size_passes(self):
+        s = sprite(48, 80)
+        s[20:73, 8:40, 3] = 255                       # 53 art px: 0.72 A
+        fs = SZ.check_sprite(s[..., 3] > 0, 'x/barrel_1')
+        self.assertTrue(any(f.severity == 'fault' for f in fs))
+        s[:, :, 3] = 0
+        s[33:73, 10:38, 3] = 255                      # 40 art px: 0.54 A
+        self.assertEqual(SZ.check_sprite(s[..., 3] > 0, 'x/barrel_1'), [])
+
+    def test_specks_do_not_count(self):
+        s = sprite(48, 80)
+        s[33:73, 10:38, 3] = 255
+        s[2:4, 2:4, 3] = 255                          # a 4 px speck far above
+        self.assertEqual(SZ.check_sprite(s[..., 3] > 0, 'x/barrel_1'), [])
+
+    def _house(self, door_h):
+        stone, leaf = (142, 135, 130), (178, 70, 90)
+        a = np.zeros((200, 160, 4), np.uint8)
+        a[20:197, 12:148] = stone + (255,)
+        B = 196
+        cx = 12 + 60
+        a[B - door_h + 1:B + 1, cx - 22:cx + 22] = leaf + (255,)
+        return a, {'kind': 'cottage', 'door': 20, 'overhang': 3, 'wall_h': 40, 'roof_h': 40}
+
+    def test_door_opening_measured(self):
+        a, look = self._house(92)
+        m = SZ.measure_opening(a, 12 + 60, 196)
+        self.assertAlmostEqual(m['h'], 92, delta=2)
+        self.assertAlmostEqual(m['w'], 44, delta=2)
+        fs = SZ.check_building(a, 'x', 'cottage', look)
+        self.assertFalse([f for f in fs if 'door' in f.subject])
+
+    def test_small_door_trips(self):
+        a, look = self._house(52)
+        fs = SZ.check_building(a, 'x', 'cottage', look)
+        self.assertTrue(any('door' in f.subject and f.severity == 'fault' for f in fs))
+
+    def test_stair_pitch(self):
+        rgb = np.full((60, 120, 3), 150, np.uint8)
+        for y in range(0, 60, 16):
+            rgb[y + 4:y + 12] = 90                    # 8 px dark riser, 16 px pitch
+        m = SZ.stair_pitch(rgb, (0, 0, 120, 60))
+        self.assertEqual(m['pitch'], 16)
+
+    def test_speckled_ground_trips_and_clumped_passes(self):
+        rng = np.random.default_rng(3)
+        g = np.zeros((300, 600, 3), np.uint8)
+        g[:] = GRASS
+        speck = g.copy()
+        for _ in range(3000):                         # many 2 px dark ticks
+            y, x = rng.integers(0, 298), rng.integers(0, 598)
+            speck[y:y + 2, x] = (90, 110, 50)
+        self.assertTrue(any(f.severity == 'fault' for f in SZ.check_grain(speck, H, 'x/ground', jpeg=False)))
+        calm = g.copy()
+        for _ in range(140):                          # fewer 6 px tufts
+            y, x = rng.integers(0, 292), rng.integers(0, 592)
+            calm[y:y + 6, x:x + 5] = (100, 120, 60)
+        self.assertFalse(any(f.severity == 'fault' for f in SZ.check_grain(calm, H, 'x/ground', jpeg=False)))
+
+    def test_body_height_ignores_a_spear(self):
+        a = np.zeros((144, 160), bool)
+        a[62:137, 70:90] = True                       # a 75 px body
+        a[30:137, 95:97] = True                       # a spear, 2 px wide
+        a[60:62, 90:95] = True                        # the hand that holds it
+        self.assertEqual(SZ.body_height(a, 136), 75)
+
 
 if __name__ == '__main__':
     unittest.main()

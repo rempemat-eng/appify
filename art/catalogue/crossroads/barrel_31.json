@@ -10,11 +10,11 @@
   48,
   75
  ],
- "status": "pass",
+ "status": "fail",
  "counts": {
   "blocker": 0,
-  "fault": 0,
-  "polish": 1
+  "fault": 1,
+  "polish": 0
  },
  "detail_bar": {
   "ours": {
@@ -37,15 +37,15 @@
  "findings": [
   {
    "detector": "logic.scale",
-   "severity": "polish",
+   "severity": "fault",
    "box": [
     8,
     19,
     40,
     72
    ],
-   "message": "crossroads/barrel_31: 18 world px tall (0.71 of an adult); the size guide gives 12 to 15 for a barrel (a barrel 14, waist high (scale table))",
-   "fix": "redraw it 12 to 15 world px tall (36 to 45 texels at density 3) and stand it next to Bramble to check"
+   "message": "crossroads/barrel_31: tall 53 art px (0.72 A) is too big for a barrel: the size table gives 31 to 46 (0.42 to 0.62 A); Eastward at the same character height: tubs and pots 0.3 to 0.4 A (04); milk cans 0.73 A (17)",
+   "fix": "redraw it 31 to 46 art px tall (target about 38), checked beside Bramble (74 art px) in the asset sheet"
   }
  ],
  "reviewed": "2026-10-26",

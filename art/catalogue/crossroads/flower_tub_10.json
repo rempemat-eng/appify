@@ -14,7 +14,7 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 3
+  "polish": 2
  },
  "detail_bar": {
   "ours": {
@@ -46,18 +46,6 @@
    ],
    "message": "crossroads/flower_tub_10: the wood is lit from the right (luminance rises 14 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
-   "detector": "logic.scale",
-   "severity": "polish",
-   "box": [
-    6,
-    23,
-    47,
-    54
-   ],
-   "message": "crossroads/flower_tub_10: 10 world px tall (0.41 of an adult); the size guide gives 14 to 22 for a tub (an ore tub or coal cart on narrow rails)",
-   "fix": "redraw it 14 to 22 world px tall (42 to 66 texels at density 3) and stand it next to Bramble to check"
   },
   {
    "detector": "detail.bar",

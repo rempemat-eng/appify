@@ -10,11 +10,11 @@
   78,
   57
  ],
- "status": "pass",
+ "status": "fail",
  "counts": {
   "blocker": 0,
-  "fault": 0,
-  "polish": 2
+  "fault": 1,
+  "polish": 1
  },
  "detail_bar": {
   "ours": {
@@ -36,18 +36,6 @@
  },
  "findings": [
   {
-   "detector": "logic.scale",
-   "severity": "polish",
-   "box": [
-    8,
-    4,
-    70,
-    54
-   ],
-   "message": "crossroads/trough_35: 17 world px tall (0.67 of an adult); the size guide gives 8 to 14 for a trough (a trough at an animal's mouth height)",
-   "fix": "redraw it 8 to 14 world px tall (24 to 42 texels at density 3) and stand it next to Bramble to check"
-  },
-  {
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
@@ -58,6 +46,18 @@
    ],
    "message": "crossroads/trough_35: detail bar 0.48 of Eastward's prop band (18.1 tones, 24.3 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  },
+  {
+   "detector": "logic.scale",
+   "severity": "fault",
+   "box": [
+    8,
+    4,
+    70,
+    54
+   ],
+   "message": "crossroads/trough_35: tall 50 art px (0.68 A) is too big for a trough: the size table gives 26 to 44 (0.35 to 0.59 A); Eastward at the same character height: none; from real size (stall counters 0.45 to 0.6 A in 04)",
+   "fix": "redraw it 26 to 44 art px tall (target about 35), checked beside Bramble (74 art px) in the asset sheet"
   }
  ],
  "reviewed": "2026-10-26",

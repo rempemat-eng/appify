@@ -36,18 +36,6 @@
  },
  "findings": [
   {
-   "detector": "logic.scale",
-   "severity": "polish",
-   "box": [
-    6,
-    15,
-    51,
-    62
-   ],
-   "message": "crossroads/sacks_12: 16 world px tall (0.63 of an adult); the size guide gives 8 to 13 for a sack (a sack a person carries)",
-   "fix": "redraw it 8 to 13 world px tall (24 to 39 texels at density 3) and stand it next to Bramble to check"
-  },
-  {
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
@@ -70,6 +58,18 @@
    ],
    "message": "crossroads/sacks_12: only 39% of the silhouette is drawn in an edge tone",
    "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)"
+  },
+  {
+   "detector": "logic.scale",
+   "severity": "polish",
+   "box": [
+    6,
+    15,
+    51,
+    62
+   ],
+   "message": "crossroads/sacks_12: tall 47 art px (0.64 A) is too big for a sack: the size table gives 22 to 44 (0.30 to 0.59 A); Eastward at the same character height: sacks at the stalls 0.35 to 0.5 A (04)",
+   "fix": "redraw it 22 to 44 art px tall (target about 33), checked beside Bramble (74 art px) in the asset sheet"
   }
  ],
  "reviewed": "2026-10-26",

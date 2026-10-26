@@ -14,7 +14,7 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 2
+  "polish": 1
  },
  "detail_bar": {
   "ours": {
@@ -35,18 +35,6 @@
   "group": "prop"
  },
  "findings": [
-  {
-   "detector": "logic.scale",
-   "severity": "polish",
-   "box": [
-    2,
-    2,
-    106,
-    51
-   ],
-   "message": "woodland/forest_bench: 16 world px tall (0.65 of an adult); the size guide gives 12 to 14 for a bench (seat 7, back 13, length 32: two people sit (scale table))",
-   "fix": "redraw it 12 to 14 world px tall (36 to 42 texels at density 3) and stand it next to Bramble to check"
-  },
   {
    "detector": "detail.bar",
    "severity": "polish",

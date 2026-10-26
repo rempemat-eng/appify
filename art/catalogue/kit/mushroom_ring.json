@@ -13,7 +13,7 @@
  "status": "fail",
  "counts": {
   "blocker": 0,
-  "fault": 5,
+  "fault": 4,
   "polish": 0
  },
  "detail_bar": {
@@ -46,18 +46,6 @@
    ],
    "message": "kit/mushroom_ring: lit from the right: luminance rises 38 L per H to the east",
    "fix": "relight from the upper left: lit faces west and up, shade east and down, the cast shadow east"
-  },
-  {
-   "detector": "logic.scale",
-   "severity": "fault",
-   "box": [
-    11,
-    18,
-    126,
-    68
-   ],
-   "message": "kit/mushroom_ring: 17 world px tall (0.67 of an adult); the size guide gives 1 to 4.5 for a mushroom_ring (a ring of mushrooms is ankle high)",
-   "fix": "redraw it 1 to 4.5 world px tall (3 to 14 texels at density 3) and stand it next to Bramble to check"
   },
   {
    "detector": "logic.prop_row",

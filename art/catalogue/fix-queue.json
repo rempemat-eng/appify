@@ -1,8 +1,15 @@
 {
- "_about": "The fix queue, seeded on 25 Oct 2026 by running the asset gate on every asset already placed in a zone (and the 2x kit's ground props). Most fail; that is expected. A queued asset may stay placed, and be redrawn and re-recorded, while it climbs out of the queue; remove its entry when it passes. New assets are never added here: they must pass (scripts/review/gate.py, docs/review-agents.md).",
+ "_about": "The fix queue, seeded on 25 Oct 2026 by running the asset gate on every asset already placed in a zone (and the 2x kit's ground props). Most fail; that is expected. A queued asset may stay placed, and be redrawn and re-recorded, while it climbs out of the queue; remove its entry when it passes. New assets are never added here: they must pass (scripts/review/gate.py, docs/review-agents.md). On 26 Oct the scale gate (scripts/review/scale.py, sizes.json) added the assets whose size against a person, or whose ground grain against Eastward's, is out of range (docs/reviews/2026-10-26-scale.md).",
  "seeded": "2026-10-25",
  "commit": "14944c89",
  "queue": [
+  {
+   "id": "crossroads/anvil",
+   "sha256": "cbdb19ee4faa701fb4650db6aaa9e1782bd99de65ad08ac08cf71305b447ce0c",
+   "faults": [
+    "logic.scale"
+   ]
+  },
   {
    "id": "crossroads/bakery",
    "sha256": "ecac579ba38328d3ca34e6d4b49e763f9be53b12ded53aad8b687bcbe855d2cc",
@@ -17,6 +24,34 @@
    "faults": [
     "detail.repetition",
     "detail.volume"
+   ]
+  },
+  {
+   "id": "crossroads/barrel_29",
+   "sha256": "4c1b32a4d20fe50122e9bcccf0bd637439755fe7db1240d07e5c8602c9a0f704",
+   "faults": [
+    "logic.scale"
+   ]
+  },
+  {
+   "id": "crossroads/barrel_31",
+   "sha256": "51767231b2ce9f1079301b2d11fbdccdc21b811a5d50dc3db952e942105f1282",
+   "faults": [
+    "logic.scale"
+   ]
+  },
+  {
+   "id": "crossroads/barrel_37",
+   "sha256": "94c94baf8b02d91c5c1208c6824066fa2f1e70e5d2ba4c3d6b00a849cefd0b55",
+   "faults": [
+    "logic.scale"
+   ]
+  },
+  {
+   "id": "crossroads/barrel_39",
+   "sha256": "8b193367ae56dea80d3054c7e394ba5c5e4edb68fc65cf530c395369b9c9e1ee",
+   "faults": [
+    "logic.scale"
    ]
   },
   {
@@ -53,7 +88,7 @@
    "id": "crossroads/ground",
    "sha256": "057d366e3e3b687fb167eb093e179c8c95d5ae17f344d284bae762f28042eb50",
    "faults": [
-    "reviewer.fail"
+    "logic.scale"
    ],
    "note": "re-queued after the #288 second review: S5 (ruts, dark discs, even stipple) and S6 (straight seam on the SW road) go to the next fix-queue PR"
   },
@@ -63,7 +98,8 @@
    "faults": [
     "detail.flat",
     "detail.glyph",
-    "detail.volume"
+    "detail.volume",
+    "logic.scale"
    ]
   },
   {
@@ -147,8 +183,8 @@
    ]
   },
   {
-   "id": "crossroads/smithy_rubble",
-   "sha256": "73a1fbaf4b686b0b58a8791b574b877be26b19650aecaa256d189d2377e2d459",
+   "id": "crossroads/trough_35",
+   "sha256": "dad751c850f6a17b3d6b93419cd87aee1b5fce079c7d64f91c0cc31c7bd3b38b",
    "faults": [
     "logic.scale"
    ]
@@ -189,8 +225,7 @@
     "detail.bar",
     "detail.flat",
     "detail.light",
-    "logic.prop_row",
-    "logic.scale"
+    "logic.prop_row"
    ]
   },
   {
@@ -199,6 +234,13 @@
    "faults": [
     "detail.bar",
     "detail.volume"
+   ]
+  },
+  {
+   "id": "woodland/ground",
+   "sha256": "025f0fbe19c1229d63b04f01effba4170284324e37f19f792a6b5c5f06b5b9cd",
+   "faults": [
+    "logic.scale"
    ]
   }
  ]

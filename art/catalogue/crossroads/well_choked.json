@@ -14,7 +14,7 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 4
+  "polish": 3
  },
  "detail_bar": {
   "ours": {
@@ -46,18 +46,6 @@
    ],
    "message": "crossroads/well_choked: the stone is lit from the right (luminance rises 53 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
-   "detector": "logic.scale",
-   "severity": "polish",
-   "box": [
-    14,
-    8,
-    107,
-    80
-   ],
-   "message": "crossroads/well_choked: 24 world px tall (0.96 of an adult); the size guide gives 30 to 44 for a well (a well: a wall 10 to 14 high, a roof or winch on posts)",
-   "fix": "redraw it 30 to 44 world px tall (90 to 132 texels at density 3) and stand it next to Bramble to check"
   },
   {
    "detector": "detail.light",
