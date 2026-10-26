@@ -382,3 +382,23 @@ using live power for G's default now preserves the original reaction and chain b
 Next: original special activation and remaining primary/melee state mutations, then the
 fixed-step dispatcher/contact bridge and granted Player hook. World HP/Tam decisions stay
 A-owned. Full verify/art/hosted/rendered/native/device coverage remains pending; keep DRAFT.
+
+## Special activation snapshot phase
+
+`AbilitySpecial.activate` ports original M on an independent canonical snapshot. Powered
+lifetime and the event name come from each pinned kit. It preserves the original ordering:
+set live power, append the activation effect and event, then refill Brine/Clack, cap Nix heat,
+add Mirra's seal under the powered cap, replace Rook's pair, and add Mote's orbit effect.
+Rook's two turrets capture current aim and have fresh serial IDs in left/right order; existing
+designation remains. The orbit is a finite visual effect and creates no idle damage or shards.
+
+This reducer does not check input eligibility, advance time, or spend cooldowns. The future
+dispatcher must call it once at contact and reconcile the resource mirror without applying
+`AbilityResources.release("special", ...)` a second time. It does not attach actors or map HP.
+
+`special-oracle.json` contains177 whole-state comparisons against hash-verified, unmodified
+original M: all fourteen kits, live/unpowered states and directions, refill versus Pendle
+non-refill, Nix's strict cap vicinity, Mirra's seal cap/clamping, Rook replacement/designation,
+event limits, repeated dispatch and unknown fields. Input snapshots remain unchanged.
+Regenerate with `node game/test/combat/build_special_oracle.mjs /path/to/original-modules.json`.
+Next: canonical primary/melee mutations, then fixed-step dispatcher/contact and Player hook.
