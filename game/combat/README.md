@@ -592,3 +592,34 @@ contact/presentation consumer, movement modifiers for canonical actions, damage/
 mapping, powered/empty/exit presentation and C61/world attachment still need implementation
 and the existing A/J decisions. Full verify/art-repro/hosted/rendered/device checks remain
 pending; keep the PR draft. No scene or world automatically enables this hook.
+
+## Concrete arena driver and collision-resolution seam
+
+`AbilityArenaDriver.configure(snapshot, origin)` accepts a full caller-supplied canonical
+encounter/practice snapshot and the actor-texel location of its canonical origin. It is not
+a world-state factory or a C61 HP adapter. The approved canonical-to-actor factor is read
+from units.json. No scene installs it. `snapshot()` returns an independent copy.
+
+When attached, this driver's `plans_movement()` bypasses Player's ordinary walk pass. It
+calls the existing canonical dispatcher once with a position resolver: first resolve any
+action-release displacement (such as Iona's lunge), then resolve ordinary movement at each
+fixed1/60 step. Player alone executes each ordered target, using explicit displacement
+through move_and_collide and one wall-slide remainder. This avoids applying the outer
+physics-frame duration to each fixed substep. Canonical movement is the plan, never a
+second actor mover. Walk distance and later echo/field work use the actual resolved ground.
+Without a resolver, original pure simulation behavior and its oracle remain unchanged.
+
+Held inputs, canonical absolute aim and queued direct requests use that one dispatcher.
+Requests survive an incomplete substep and clear after an actual tick; no extra clock,
+resource handler, release reducer or Godot Arrow is run. Inactive time freezes clocks and
+clears queued/held controls. Cancel/reset or a different character disables the driver
+until an explicit configure; invalid time, missing mover and mismatched identity do not
+advance. Direct universal dodge is rejected because the recovered engine has no such
+input rule. Guard still needs the input owner's approved binding.
+
+Snapshot damage/projectiles are isolated canonical arena state, not world HP or rendered
+actors. Terrain-resolved positions do not establish world cover/line-of-sight for a
+release that already ran in canonical action order. Contact-drawing dispatch, world damage
+mapping, support/airborne drawing, powered/empty/exit art, dodge mapping and real C61/world
+attachment remain unfinished and retain their existing owner decisions. Do not use this
+as a default live-world driver before those contracts and rendered coverage are complete.

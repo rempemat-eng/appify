@@ -250,8 +250,8 @@ func _physics_process(delta: float) -> void:
 	_animate(move, delta)
 	queue_redraw()
 
-## One synchronous tick after Player's one collision-aware movement. The runner must
-## not also run AbilityMovement or replay legacy Arrow/swing callbacks for this body.
+## Default drivers tick after Player movement. Planned drivers bypass that pass
+## and resolve ordered targets through Player, never moving a second body copy.
 func _driver_physics(delta: float) -> void:
 	var active := input_enabled and not Dialogue.busy and hp > 0 and not is_defeated()
 	var move := Vector2.ZERO
@@ -264,10 +264,13 @@ func _driver_physics(delta: float) -> void:
 	# Existing mercy/hurt timers stay with Player; legacy roll/recharge/swing clocks do not tick.
 	_iframe_t = maxf(_iframe_t - delta, 0.0)
 	_hurt_t = maxf(_hurt_t - delta, 0.0)
-	velocity = move * walk_speed if _hurt_t <= 0.0 else velocity.move_toward(Vector2.ZERO, 900.0 * delta)
-	if not active:
+	if not action_driver.plans_movement():
+		velocity = move * walk_speed if _hurt_t <= 0.0 else velocity.move_toward(Vector2.ZERO, 900.0 * delta)
+		if not active:
+			velocity = Vector2.ZERO
+		move_and_slide()
+	else:
 		velocity = Vector2.ZERO
-	move_and_slide()
 	var controls := {"active": active, "move": move, "aim": aim,
 		"primary": active and Input.is_action_pressed("attack"),
 		"secondary": active and Input.is_action_pressed("ranged"),
@@ -275,8 +278,19 @@ func _driver_physics(delta: float) -> void:
 		"guard": active and InputMap.has_action("guard") and Input.is_action_pressed("guard"),
 		"dodge": active and Input.is_action_just_pressed("dodge")}
 	action_driver.tick(controls, {"position": global_position, "velocity": velocity,
-		"facing": facing, "character": character}, delta)
+		"facing": facing, "character": character, "move_actor": _driver_move_actor}, delta)
 	queue_redraw()
+
+## The driver supplies an absolute actor-texel target; only Player applies it.
+## Explicit displacement avoids move_and_slide using the outer frame duration for
+## each canonical 1/60 substep. Resolve the remainder along a wall, at most once.
+func _driver_move_actor(target: Vector2) -> Vector2:
+	var displacement := target - global_position
+	var collision := move_and_collide(displacement)
+	if collision != null:
+		move_and_collide(collision.get_remainder().slide(collision.get_normal()))
+	velocity = (global_position - (target - displacement)) / AbilitySimulation.DT
+	return global_position
 
 func _update_aim() -> void:
 	var stick := Inputs.stick_aim()

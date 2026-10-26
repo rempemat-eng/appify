@@ -6,7 +6,7 @@ extends RefCounted
 const DT := 1.0 / 60.0
 const EPS := 1.0e-8
 
-static func tick(source: Dictionary, input: Dictionary) -> Dictionary:
+static func tick(source: Dictionary, input: Dictionary, resolve_position: Callable = Callable()) -> Dictionary:
 	var state := source.duplicate(true)
 	var p: Dictionary = state.player
 	var mx := float(input.moveX)
@@ -47,6 +47,9 @@ static func tick(source: Dictionary, input: Dictionary) -> Dictionary:
 	if not p.airborne:
 		_separate(state, 0)
 		_clamp(state)
+	# Optional actor boundary: all canonical movement remains a plan until the
+	# owning CharacterBody resolves it. Later walk/echo effects use the actual result.
+	resolve_actor_position(state, old_x, old_y, resolve_position)
 	if not was_vaulting:
 		var dx := float(p.x) - old_x
 		var dy := float(p.y) - old_y
@@ -60,6 +63,18 @@ static func tick(source: Dictionary, input: Dictionary) -> Dictionary:
 			AbilityImpacts._field(state, "echo", p.x - 8 * p.dirX, p.y - 8 * p.dirY, 11, 1.15, 0)
 			state.echoIn = 0.4
 	return state
+
+static func resolve_actor_position(state: Dictionary, old_x: float, old_y: float, resolver: Callable) -> void:
+	if not resolver.is_valid():
+		return
+	var p: Dictionary = state.player
+	var actual: Variant = resolver.call(float(p.x), float(p.y))
+	if actual is Dictionary and (actual.get("x") is float or actual.get("x") is int) and (actual.get("y") is float or actual.get("y") is int) and is_finite(float(actual.x)) and is_finite(float(actual.y)):
+		p.x = float(actual.x)
+		p.y = float(actual.y)
+	else:
+		p.x = old_x
+		p.y = old_y
 
 static func _clamp(state: Dictionary) -> void:
 	var p: Dictionary = state.player

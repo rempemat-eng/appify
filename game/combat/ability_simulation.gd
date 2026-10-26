@@ -6,7 +6,7 @@ extends RefCounted
 const DT := 1.0 / 60.0
 const EPS := 1.0e-8
 
-static func step(source: Dictionary, raw_input: Dictionary, delta: float) -> Dictionary:
+static func step(source: Dictionary, raw_input: Dictionary, delta: float, resolve_position: Callable = Callable()) -> Dictionary:
 	if raw_input.get("active") is bool and raw_input.active == false:
 		return source
 	var elapsed := clampf(delta, 0.0, 0.1) if is_finite(delta) else 0.0
@@ -21,7 +21,7 @@ static func step(source: Dictionary, raw_input: Dictionary, delta: float) -> Dic
 	while state.accumulator + EPS >= DT:
 		state.accumulator = maxf(0.0, state.accumulator - DT)
 		if state.status == "playing":
-			state = _playing_tick(state, input)
+			state = _playing_tick(state, input, resolve_position)
 		else:
 			state.time += DT
 			state.tick += 1
@@ -54,11 +54,16 @@ static func _truthy(value: Variant) -> bool:
 		return not value.is_empty()
 	return true
 
-static func _playing_tick(source: Dictionary, input: Dictionary) -> Dictionary:
+static func _playing_tick(source: Dictionary, input: Dictionary, resolve_position: Callable = Callable()) -> Dictionary:
 	# These reducers already own release/resource/launch mutations. Do not also tick
 	# AbilityClock/AbilityResources/AbilityRunner or replay projectile planning here.
 	var state := AbilityPlayerPhase.tick(source, input)
-	state = AbilityMovement.tick(state, input)
+	# Some committed secondary releases displace the player before ordinary walking.
+	# Resolve that displacement first, so a blocked dash is not counted backwards
+	# as walk distance and subsequent movement/effects start at the actual body.
+	if resolve_position.is_valid() and (state.player.x != source.player.x or state.player.y != source.player.y):
+		AbilityMovement.resolve_actor_position(state, source.player.x, source.player.y, resolve_position)
+	state = AbilityMovement.tick(state, input, resolve_position)
 	state = AbilityFields.tick_statuses(state)
 	if state.player.hp <= 0:
 		return state
