@@ -177,6 +177,20 @@ class Asset(unittest.TestCase):
         s[disc] = (*BLUE, 255)
         self.assertTrue(C.water_shape(s[..., :3], s[..., 3] > 0, H, 'x/well'))
 
+    def test_well_hood_outline_is_not_the_beam(self):
+        # a slate hood's dark lower outline is wider than the windlass beam; the crank past the beam must count
+        s = sprite(100, 100)
+        s[4:10, 5:95] = (70, 90, 140, 255)          # slate hood
+        s[10, 5:95] = (20, 20, 24, 255)             # its dark outline
+        s[11:90, 30:34] = (130, 85, 45, 255)        # posts
+        s[11:90, 66:70] = (130, 85, 45, 255)
+        s[30:33, 30:70] = (150, 100, 55, 255)       # beam
+        s[33:35, 70:78] = (60, 60, 66, 255)         # iron crank arm, below the beam end
+        s[35:40, 76:78] = (60, 60, 66, 255)         # handle
+        s[60:90, 20:80] = (128, 128, 128, 255)      # well ring
+        fs = C.construction(s[..., :3], s[..., 3] > 0, 100, 'x/well', 'well')
+        self.assertEqual([], [f.detector for f in fs])
+
     def test_cylinder(self):
         s = sprite(40, 100)
         s[10:95, 8:32] = (150, 150, 150, 255)
@@ -190,6 +204,13 @@ class Asset(unittest.TestCase):
         s = sprite(60, 200)
         s[5:198, 10:50, 3] = 255
         self.assertTrue(C.scale(s[..., 3] > 0, H, 'barrel', 'x/barrel', 3.0))
+
+    def test_signpost_boards_are_not_a_shaft(self):
+        s = sprite(60, 120)
+        s[10:30, 5:55] = (150, 110, 70, 255)
+        s[10:30, 5:10] = (210, 170, 120, 255)
+        s[30:118, 27:33] = (120, 85, 55, 255)
+        self.assertFalse(C.cylinder(s[..., :3], s[..., 3] > 0, H, 'kit/signpost'))
 
     def test_scale_of_spread_pieces_and_rubble(self):
         # a ring of small mushrooms is judged by each mushroom's height, not by the ring's depth;

@@ -1,7 +1,7 @@
 {
  "id": "crossroads/library",
  "file": "game/zones/crossroads/art/library.png",
- "sha256": "dbf7387c41d2f98de0c228d77ca2e40a6b7882736af7cc8e04f3b6aad4908ea7",
+ "sha256": "bd3967d31825657cb38d2ce87e3aa03566d5f097e0e83a768f8cc4a12b9fc0cd",
  "kind": "library",
  "biome": "valley",
  "H": 74.0,
@@ -10,17 +10,17 @@
   312,
   234
  ],
- "status": "fail",
+ "status": "pass",
  "counts": {
   "blocker": 0,
-  "fault": 19,
-  "polish": 3
+  "fault": 0,
+  "polish": 2
  },
  "detail_bar": {
   "ours": {
-   "patches": 197,
-   "tones": 15.756345177664974,
-   "shapes": 24.370558375634516
+   "patches": 198,
+   "tones": 19.858585858585858,
+   "shapes": 30.666666666666668
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.484,
-  "tones_ratio": 0.584,
-  "shapes_ratio": 0.484,
+  "ratio": 0.609,
+  "tones_ratio": 0.736,
+  "shapes_ratio": 0.609,
   "passed": false,
   "group": "prop"
  },
@@ -39,193 +39,13 @@
    "detector": "detail.light",
    "severity": "polish",
    "box": [
-    124,
-    26,
+    131,
     152,
-    33
+    179,
+    225
    ],
-   "message": "crossroads/library: the stone is lit from the right (luminance rises 7 L per H to the east)",
+   "message": "crossroads/library: the red is lit from the right (luminance rises 51 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
-   "detector": "detail.light",
-   "severity": "polish",
-   "box": [
-    81,
-    26,
-    109,
-    33
-   ],
-   "message": "crossroads/library: the stone is lit from the right (luminance rises 7 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    121,
-    122,
-    178,
-    131
-   ],
-   "message": "crossroads/library: the wood reads 2D: 2 light planes, luminance spread 24",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    14,
-    134,
-    46,
-    147
-   ],
-   "message": "crossroads/library: the wood reads 2D: 2 light planes, luminance spread 0",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    85,
-    146,
-    99,
-    169
-   ],
-   "message": "crossroads/library: the wood reads 2D: 2 light planes, luminance spread 0",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    188,
-    182,
-    246,
-    204
-   ],
-   "message": "crossroads/library: the wood reads 2D: 2 light planes, luminance spread 26",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    42,
-    26,
-    66,
-    33
-   ],
-   "message": "crossroads/library: the stone reads 2D: 2 light planes, luminance spread 23",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    81,
-    26,
-    109,
-    33
-   ],
-   "message": "crossroads/library: the stone reads 2D: 2 light planes, luminance spread 23",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    124,
-    26,
-    152,
-    33
-   ],
-   "message": "crossroads/library: the stone reads 2D: 2 light planes, luminance spread 23",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    3,
-    46,
-    31,
-    53
-   ],
-   "message": "crossroads/library: the stone reads 2D: 2 light planes, luminance spread 23",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    3,
-    56,
-    25,
-    63
-   ],
-   "message": "crossroads/library: the stone reads 2D: 2 light planes, luminance spread 23",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    3,
-    66,
-    20,
-    73
-   ],
-   "message": "crossroads/library: the stone reads 2D: 2 light planes, luminance spread 23",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    80,
-    96,
-    97,
-    103
-   ],
-   "message": "crossroads/library: the stone reads 2D: 2 light planes, luminance spread 23",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
-  },
-  {
-   "detector": "detail.flat",
-   "severity": "fault",
-   "box": [
-    14,
-    134,
-    46,
-    147
-   ],
-   "message": "crossroads/library: a flat wood area: one smooth patch covers 52% (0.024 H^2), 4 tones",
-   "fix": "draw the wood as its material: break the fill with its own structure (staves and hoops, grain and nail heads, courses, bevels, leaf clusters) in 4 to 5 tones of its ramp"
-  },
-  {
-   "detector": "detail.flat",
-   "severity": "fault",
-   "box": [
-    3,
-    66,
-    20,
-    73
-   ],
-   "message": "crossroads/library: a flat stone area: one smooth patch covers 51% (0.011 H^2), 2 tones",
-   "fix": "draw the stone as its material: break the fill with its own structure (staves and hoops, grain and nail heads, courses, bevels, leaf clusters) in 4 to 5 tones of its ramp"
-  },
-  {
-   "detector": "detail.flat",
-   "severity": "fault",
-   "box": [
-    80,
-    96,
-    97,
-    103
-   ],
-   "message": "crossroads/library: a flat stone area: one smooth patch covers 51% (0.011 H^2), 2 tones",
-   "fix": "draw the stone as its material: break the fill with its own structure (staves and hoops, grain and nail heads, courses, bevels, leaf clusters) in 4 to 5 tones of its ramp"
   },
   {
    "detector": "detail.bar",
@@ -236,71 +56,11 @@
     310,
     232
    ],
-   "message": "crossroads/library: detail bar 0.48 of Eastward's prop band (15.8 tones, 24.4 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/library: detail bar 0.61 of Eastward's prop band (19.9 tones, 30.7 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
-  },
-  {
-   "detector": "detail.glyph",
-   "severity": "fault",
-   "box": [
-    54,
-    142,
-    64,
-    150
-   ],
-   "message": "crossroads/library: a flat water mark of 2 tones on the body reads as an interface icon, not something carved, painted or worn into the material",
-   "fix": "cut or paint it into the surface: a carved groove with a lit lower lip and a dark upper edge, worn paint with chips, moss in the cut; tone it to the material and the light"
-  },
-  {
-   "detector": "detail.glyph",
-   "severity": "fault",
-   "box": [
-    234,
-    142,
-    244,
-    150
-   ],
-   "message": "crossroads/library: a flat water mark of 2 tones on the body reads as an interface icon, not something carved, painted or worn into the material",
-   "fix": "cut or paint it into the surface: a carved groove with a lit lower lip and a dark upper edge, worn paint with chips, moss in the cut; tone it to the material and the light"
-  },
-  {
-   "detector": "detail.flat",
-   "severity": "fault",
-   "box": [
-    85,
-    146,
-    99,
-    169
-   ],
-   "message": "crossroads/library: a flat wood area: one smooth patch covers 46% (0.014 H^2), 4 tones",
-   "fix": "draw the wood as its material: break the fill with its own structure (staves and hoops, grain and nail heads, courses, bevels, leaf clusters) in 4 to 5 tones of its ramp"
-  },
-  {
-   "detector": "detail.flat",
-   "severity": "fault",
-   "box": [
-    198,
-    131,
-    222,
-    152
-   ],
-   "message": "crossroads/library: a flat wood area: one smooth patch covers 46% (0.030 H^2), 3 tones",
-   "fix": "draw the wood as its material: break the fill with its own structure (staves and hoops, grain and nail heads, courses, bevels, leaf clusters) in 4 to 5 tones of its ramp"
-  },
-  {
-   "detector": "detail.texture",
-   "severity": "fault",
-   "box": [
-    85,
-    146,
-    99,
-    169
-   ],
-   "message": "crossroads/library: the wood has no drawn material: only 16% of it shows structure",
-   "fix": "draw the material: planks with grain and a lit edge, staves and hoops, stone courses with chipped corners, a bevel on cut stone, a ring of rust on iron"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",

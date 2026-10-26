@@ -1,7 +1,7 @@
 {
  "id": "crossroads/anvil",
  "file": "game/zones/crossroads/art/anvil.png",
- "sha256": "cbdb19ee4faa701fb4650db6aaa9e1782bd99de65ad08ac08cf71305b447ce0c",
+ "sha256": "42520d578768c9c7d6d851d211c9c334175e1dd01e1a0a9989584d0480321e68",
  "kind": "small_machine",
  "biome": "valley",
  "H": 74.0,
@@ -10,17 +10,17 @@
   90,
   81
  ],
- "status": "fail",
+ "status": "pass",
  "counts": {
   "blocker": 0,
-  "fault": 1,
+  "fault": 0,
   "polish": 1
  },
  "detail_bar": {
   "ours": {
-   "patches": 4,
-   "tones": 20.25,
-   "shapes": 33.5
+   "patches": 3,
+   "tones": 25.666666666666668,
+   "shapes": 38.0
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.665,
-  "tones_ratio": 0.75,
-  "shapes_ratio": 0.665,
+  "ratio": 0.755,
+  "tones_ratio": 0.951,
+  "shapes_ratio": 0.755,
   "passed": false,
   "group": "prop"
  },
@@ -40,24 +40,12 @@
    "severity": "polish",
    "box": [
     12,
-    24,
+    34,
     64,
     78
    ],
-   "message": "crossroads/anvil: detail bar 0.67 of Eastward's prop band (20.2 tones, 33.5 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/anvil: detail bar 0.76 of Eastward's prop band (25.7 tones, 38.0 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
-  },
-  {
-   "detector": "logic.scale",
-   "severity": "fault",
-   "box": [
-    12,
-    24,
-    64,
-    78
-   ],
-   "message": "crossroads/anvil: tall 54 art px (0.73 A) is too big for a anvil: the size table gives 30 to 48 (0.41 to 0.65 A); Eastward at the same character height: none; from real size",
-   "fix": "redraw it 30 to 48 art px tall (target about 39), checked beside Bramble (74 art px) in the asset sheet"
   }
  ],
  "reviewed": "2026-10-26",

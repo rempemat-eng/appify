@@ -1257,8 +1257,8 @@
             6
           ]
         ],
-        "wall_h": 36,
-        "roof_h": 22
+        "wall_h": 40,
+        "roof_h": 31
       },
       "smithy": {
         "kind": "forge",

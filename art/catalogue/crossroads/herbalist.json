@@ -1,26 +1,26 @@
 {
  "id": "crossroads/herbalist",
  "file": "game/zones/crossroads/art/herbalist.png",
- "sha256": "7afe839896bdf2fee6a17a6fef093ebf6440a83249f72802f09fa3b8c82458f2",
+ "sha256": "f8086453e332d307e2fdfb3aec59955186d9a507c4d88ede0e351fd71b6c8bcc",
  "kind": "herbalist",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
   240,
-  192
+  231
  ],
- "status": "fail",
+ "status": "pass",
  "counts": {
   "blocker": 0,
-  "fault": 8,
+  "fault": 0,
   "polish": 3
  },
  "detail_bar": {
   "ours": {
-   "patches": 112,
-   "tones": 17.107142857142858,
-   "shapes": 29.446428571428573
+   "patches": 138,
+   "tones": 17.934782608695652,
+   "shapes": 31.246376811594203
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.585,
-  "tones_ratio": 0.634,
-  "shapes_ratio": 0.585,
+  "ratio": 0.62,
+  "tones_ratio": 0.664,
+  "shapes_ratio": 0.62,
   "passed": false,
   "group": "prop"
  },
@@ -40,60 +40,24 @@
    "severity": "polish",
    "box": [
     88,
-    95,
+    134,
     110,
-    134
+    173
    ],
-   "message": "crossroads/herbalist: the violet is lit from the right (luminance rises 151 L per H to the east)",
+   "message": "crossroads/herbalist: the violet is lit from the right (luminance rises 115 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
    "detector": "detail.light",
    "severity": "polish",
    "box": [
-    12,
-    97,
-    48,
-    136
+    168,
+    149,
+    216,
+    222
    ],
-   "message": "crossroads/herbalist: the wood is lit from the right (luminance rises 21 L per H to the east)",
+   "message": "crossroads/herbalist: the violet is lit from the right (luminance rises 13 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    43,
-    140,
-    88,
-    150
-   ],
-   "message": "crossroads/herbalist: the wood reads 2D: 2 light planes, luminance spread 29",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    109,
-    141,
-    154,
-    150
-   ],
-   "message": "crossroads/herbalist: the wood reads 2D: 2 light planes, luminance spread 29",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
-  },
-  {
-   "detector": "detail.glyph",
-   "severity": "fault",
-   "box": [
-    203,
-    95,
-    211,
-    110
-   ],
-   "message": "crossroads/herbalist: a flat water mark of 1 tones on the body reads as an interface icon, not something carved, painted or worn into the material",
-   "fix": "cut or paint it into the surface: a carved groove with a lit lower lip and a dark upper edge, worn paint with chips, moss in the cut; tone it to the material and the light"
   },
   {
    "detector": "detail.bar",
@@ -102,70 +66,10 @@
     0,
     13,
     240,
-    190
+    229
    ],
-   "message": "crossroads/herbalist: detail bar 0.58 of Eastward's prop band (17.1 tones, 29.4 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/herbalist: detail bar 0.62 of Eastward's prop band (17.9 tones, 31.2 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
-  },
-  {
-   "detector": "detail.flat",
-   "severity": "fault",
-   "box": [
-    43,
-    140,
-    88,
-    150
-   ],
-   "message": "crossroads/herbalist: a flat wood area: one smooth patch covers 52% (0.033 H^2), 3 tones",
-   "fix": "draw the wood as its material: break the fill with its own structure (staves and hoops, grain and nail heads, courses, bevels, leaf clusters) in 4 to 5 tones of its ramp"
-  },
-  {
-   "detector": "detail.flat",
-   "severity": "fault",
-   "box": [
-    109,
-    141,
-    154,
-    150
-   ],
-   "message": "crossroads/herbalist: a flat wood area: one smooth patch covers 52% (0.033 H^2), 3 tones",
-   "fix": "draw the wood as its material: break the fill with its own structure (staves and hoops, grain and nail heads, courses, bevels, leaf clusters) in 4 to 5 tones of its ramp"
-  },
-  {
-   "detector": "detail.glyph",
-   "severity": "fault",
-   "box": [
-    54,
-    100,
-    64,
-    108
-   ],
-   "message": "crossroads/herbalist: a flat water mark of 2 tones on the body reads as an interface icon, not something carved, painted or worn into the material",
-   "fix": "cut or paint it into the surface: a carved groove with a lit lower lip and a dark upper edge, worn paint with chips, moss in the cut; tone it to the material and the light"
-  },
-  {
-   "detector": "detail.glyph",
-   "severity": "fault",
-   "box": [
-    120,
-    100,
-    130,
-    108
-   ],
-   "message": "crossroads/herbalist: a flat water mark of 2 tones on the body reads as an interface icon, not something carved, painted or worn into the material",
-   "fix": "cut or paint it into the surface: a carved groove with a lit lower lip and a dark upper edge, worn paint with chips, moss in the cut; tone it to the material and the light"
-  },
-  {
-   "detector": "logic.scale",
-   "severity": "fault",
-   "box": [
-    0,
-    13,
-    240,
-    190
-   ],
-   "message": "crossroads/herbalist: tall 177 art px (2.39 A) is too small for a cottage: the size table gives 200 to 340 (2.70 to 4.59 A); Eastward at the same character height: house 3.1 A to the ridge, 3.7 A wide (12)",
-   "fix": "redraw it 200 to 340 art px tall (target about 270), checked beside Bramble (74 art px) in the asset sheet"
   }
  ],
  "reviewed": "2026-10-26",

@@ -63,6 +63,9 @@ def input_hash(plan_path: str, density: float) -> str:
 # ------------------------------------------------------------------------------------------------
 def _v():
     from scripts.art.native import village as V
+    # the Crossroads building pieces' density-3 form (village.HD, fix queue 2) stays out of the
+    # undercroft: its stone, rubble and props keep the look they were reviewed with
+    V.HD = False
     return V
 
 

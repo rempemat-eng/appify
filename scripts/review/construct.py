@@ -394,7 +394,9 @@ def construction(rgb, alpha, H, subject, kind):
     fs = []
     if kind == 'well' and 'choked' not in subject:
         fam = D.family_map(rgb)
-        wood = alpha & np.isin(fam, (3, 0))
+        # wood and its own dark outline (not the outline under a slate hood, fix queue 2)
+        w3 = alpha & (fam == 3)
+        wood = w3 | (alpha & (fam == 0) & ndi.binary_dilation(w3, iterations=1))
         cols = wood.sum(0)
         x0, y0, x1, y1 = bbox(alpha)
         # the beam: the widest wooden row in the upper two thirds
@@ -508,8 +510,8 @@ def cylinder(rgb, alpha, H, subject):
     across their width: a highlight band left of centre and a core shadow toward the right,
     spanning at least 25 L. A flat or banded profile reads as a cut-out."""
     base = subject.split('/')[-1]
-    if not any(k in base for k in ROUND):
-        return []
+    if not any(k in base for k in ROUND) or base.startswith('signpost'):
+        return []        # (a signpost's widest rows are its flat boards, not a round shaft: fix queue 2)
     fam = D.family_map(rgb)
     body = alpha & (fam != 0) & ndi.binary_erosion(alpha, iterations=1) & ~glow(rgb)
     if body.sum() < 0.03 * H * H:

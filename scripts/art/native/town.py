@@ -248,6 +248,9 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
 
     D = ctx.D
     q = V.q
+    # the ground (lawn, roads, walls, stairs) stays as on main: the building pieces' density-3 form
+    # (village.HD, fix queue 2) is for the buildings and props only; the terrain lead owns the ground
+    hd_, V.HD = V.HD, False
     bx, by, bw, bh = plan['box']
     W, H = q(bw), q(bh)
     rng = np.random.default_rng(plan.get('seed', 7))
@@ -624,6 +627,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         pathm |= rect_m([sx - sw / 2 + 3, y0w - 6, sw - 6, y1w - y0w + 12])
 
     # --- objects ---------------------------------------------------------------------------------------
+    V.HD = hd_
     objects = []      # dicts: id, png, foot (texels), anchor, if, solid (world rect), sort, kind, layer
     pics = {}
 

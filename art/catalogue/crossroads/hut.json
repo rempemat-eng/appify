@@ -1,7 +1,7 @@
 {
  "id": "crossroads/hut",
  "file": "game/zones/crossroads/art/hut.png",
- "sha256": "e3fdf94077270354ea799e0394145c7145c9601b5a125dd8b94d48c1f5795057",
+ "sha256": "26cd5d9e6dcec5e6626164c8251c493e6983b1380e02120f56eaaaac5d0203ba",
  "kind": "hut",
  "biome": "valley",
  "H": 74.0,
@@ -10,17 +10,17 @@
   264,
   192
  ],
- "status": "fail",
+ "status": "pass",
  "counts": {
   "blocker": 0,
-  "fault": 3,
-  "polish": 5
+  "fault": 0,
+  "polish": 4
  },
  "detail_bar": {
   "ours": {
    "patches": 122,
-   "tones": 16.71311475409836,
-   "shapes": 29.10655737704918
+   "tones": 18.737704918032787,
+   "shapes": 31.327868852459016
   },
   "band": {
    "tones": 27.0,
@@ -28,13 +28,25 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.578,
-  "tones_ratio": 0.619,
-  "shapes_ratio": 0.578,
+  "ratio": 0.622,
+  "tones_ratio": 0.694,
+  "shapes_ratio": 0.622,
   "passed": false,
   "group": "prop"
  },
  "findings": [
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    82,
+    98,
+    99,
+    134
+   ],
+   "message": "crossroads/hut: the foliage is lit from the right (luminance rises 25 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
   {
    "detector": "detail.light",
    "severity": "polish",
@@ -44,43 +56,19 @@
     244,
     134
    ],
-   "message": "crossroads/hut: the foliage is lit from the right (luminance rises 59 L per H to the east)",
+   "message": "crossroads/hut: the foliage is lit from the right (luminance rises 16 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
    "detector": "detail.light",
    "severity": "polish",
    "box": [
-    82,
-    98,
-    100,
-    134
+    108,
+    110,
+    156,
+    183
    ],
-   "message": "crossroads/hut: the foliage is lit from the right (luminance rises 40 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
-   "detector": "detail.light",
-   "severity": "polish",
-   "box": [
-    21,
-    98,
-    82,
-    143
-   ],
-   "message": "crossroads/hut: the foliage is lit from the right (luminance rises 15 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
-   "detector": "detail.light",
-   "severity": "polish",
-   "box": [
-    165,
-    98,
-    225,
-    143
-   ],
-   "message": "crossroads/hut: the foliage is lit from the right (luminance rises 15 L per H to the east)",
+   "message": "crossroads/hut: the foliage is lit from the right (luminance rises 6 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
@@ -92,47 +80,11 @@
     264,
     190
    ],
-   "message": "crossroads/hut: detail bar 0.58 of Eastward's prop band (16.7 tones, 29.1 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/hut: detail bar 0.62 of Eastward's prop band (18.7 tones, 31.3 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
-  },
-  {
-   "detector": "detail.glyph",
-   "severity": "fault",
-   "box": [
-    48,
-    100,
-    58,
-    108
-   ],
-   "message": "crossroads/hut: a flat water mark of 2 tones on the body reads as an interface icon, not something carved, painted or worn into the material",
-   "fix": "cut or paint it into the surface: a carved groove with a lit lower lip and a dark upper edge, worn paint with chips, moss in the cut; tone it to the material and the light"
-  },
-  {
-   "detector": "detail.glyph",
-   "severity": "fault",
-   "box": [
-    192,
-    100,
-    202,
-    108
-   ],
-   "message": "crossroads/hut: a flat water mark of 2 tones on the body reads as an interface icon, not something carved, painted or worn into the material",
-   "fix": "cut or paint it into the surface: a carved groove with a lit lower lip and a dark upper edge, worn paint with chips, moss in the cut; tone it to the material and the light"
-  },
-  {
-   "detector": "detail.mesh",
-   "severity": "fault",
-   "box": [
-    0,
-    25,
-    264,
-    190
-   ],
-   "message": "crossroads/hut: the foliage is a see-through mesh: 22% of the crown is gaps between outlined blobs",
-   "fix": "paint the crown as one mass of leaf clusters (Eastward): lit clumps on top, a darker band under them, a dark interior showing through narrow gaps, no ground visible through the crown and no outline round every blob (art-style.md 4)"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",

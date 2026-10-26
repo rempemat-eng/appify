@@ -65,10 +65,5 @@
   "agent": "detail-auditor",
   "verdict": "pending",
   "note": "detectors only; the agent checklist has not been run on this asset"
- },
- "style_anchor": {
-  "since": "2026-10-26",
-  "by": "Matt",
-  "note": "\"the lamp and bench are exactly the style i'm going for\" (Matt, 26 Oct 10:19, on the cast-v2 video background): the reference the detail and style gates compare props against (props.bench4 and props.lantern4, the pilot golden's bench and lamp)"
  }
 }

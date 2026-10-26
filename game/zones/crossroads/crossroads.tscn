@@ -702,13 +702,13 @@ offset = Vector2(-120, -285)
 position = Vector2(444, 1128)
 texture = ExtResource("t8")
 centered = false
-offset = Vector2(-120, -188)
+offset = Vector2(-120, -227)
 
 [node name="HerbalistDamage" type="Sprite2D" parent="Props"]
 position = Vector2(444, 1129)
 texture = ExtResource("t9")
 centered = false
-offset = Vector2(-120, -189)
+offset = Vector2(-120, -228)
 
 [node name="Smithy" type="Sprite2D" parent="Props"]
 position = Vector2(1500, 840)
@@ -927,7 +927,7 @@ only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
 position = Vector2(1515, 1320)
 texture = ExtResource("t25")
 centered = false
-offset = Vector2(-60, -164)
+offset = Vector2(-126, -206)
 
 [node name="If_beds_scorched" type="Node2D" parent="Props"]
 script = ExtResource("cond")
@@ -1181,7 +1181,7 @@ offset = Vector2(-30, -53)
 position = Vector2(1584, 912)
 texture = ExtResource("t66")
 centered = false
-offset = Vector2(-39, -53)
+offset = Vector2(-48, -53)
 
 [node name="Grindstone36" type="Sprite2D" parent="Props"]
 position = Vector2(1680, 888)
@@ -1283,7 +1283,7 @@ offset = Vector2(-57, -73)
 position = Vector2(996, 1272)
 texture = ExtResource("t83")
 centered = false
-offset = Vector2(-47, -52)
+offset = Vector2(-41, -52)
 
 [node name="If_debris_a" type="Node2D" parent="Props"]
 script = ExtResource("cond")

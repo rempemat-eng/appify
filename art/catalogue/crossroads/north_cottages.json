@@ -1,7 +1,7 @@
 {
  "id": "crossroads/north_cottages",
  "file": "game/zones/crossroads/art/north_cottages.png",
- "sha256": "e532499dcb188d94bb493b6e9fe47cc882246e719ad4d0b2434aff8fc5e5f372",
+ "sha256": "dfd0366348f0fa5b07176b710516b06a1ce2b52a36e7a9d346adf128fdedb081",
  "kind": "north_cottages",
  "biome": "valley",
  "H": 74.0,
@@ -10,17 +10,17 @@
   312,
   276
  ],
- "status": "fail",
+ "status": "pass",
  "counts": {
   "blocker": 0,
-  "fault": 14,
-  "polish": 6
+  "fault": 0,
+  "polish": 3
  },
  "detail_bar": {
   "ours": {
    "patches": 201,
-   "tones": 16.442786069651742,
-   "shapes": 25.567164179104477
+   "tones": 22.920398009950247,
+   "shapes": 35.08457711442786
   },
   "band": {
    "tones": 27.0,
@@ -28,25 +28,13 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.508,
-  "tones_ratio": 0.609,
-  "shapes_ratio": 0.508,
+  "ratio": 0.697,
+  "tones_ratio": 0.849,
+  "shapes_ratio": 0.697,
   "passed": false,
   "group": "prop"
  },
  "findings": [
-  {
-   "detector": "detail.light",
-   "severity": "polish",
-   "box": [
-    11,
-    157,
-    32,
-    172
-   ],
-   "message": "crossroads/north_cottages: the stone is lit from the right (luminance rises 62 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
   {
    "detector": "detail.light",
    "severity": "polish",
@@ -63,157 +51,13 @@
    "detector": "detail.light",
    "severity": "polish",
    "box": [
-    9,
-    68,
-    47,
-    75
+    204,
+    194,
+    252,
+    267
    ],
-   "message": "crossroads/north_cottages: the stone is lit from the right (luminance rises 31 L per H to the east)",
+   "message": "crossroads/north_cottages: the violet is lit from the right (luminance rises 8 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
-   "detector": "detail.light",
-   "severity": "polish",
-   "box": [
-    179,
-    68,
-    209,
-    75
-   ],
-   "message": "crossroads/north_cottages: the stone is lit from the right (luminance rises 26 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
-   "detector": "detail.light",
-   "severity": "polish",
-   "box": [
-    139,
-    6,
-    173,
-    14
-   ],
-   "message": "crossroads/north_cottages: the stone is lit from the right (luminance rises 14 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    170,
-    56,
-    210,
-    62
-   ],
-   "message": "crossroads/north_cottages: the wood reads 2D: 2 light planes, luminance spread 26",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    91,
-    224,
-    136,
-    234
-   ],
-   "message": "crossroads/north_cottages: the wood reads 2D: 2 light planes, luminance spread 29",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    9,
-    68,
-    47,
-    75
-   ],
-   "message": "crossroads/north_cottages: the stone reads 2D: 2 light planes, luminance spread 23",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    68,
-    68,
-    84,
-    75
-   ],
-   "message": "crossroads/north_cottages: the stone reads 2D: 2 light planes, luminance spread 23",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    179,
-    68,
-    209,
-    75
-   ],
-   "message": "crossroads/north_cottages: the stone reads 2D: 2 light planes, luminance spread 23",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    201,
-    128,
-    218,
-    135
-   ],
-   "message": "crossroads/north_cottages: the stone reads 2D: 2 light planes, luminance spread 23",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    11,
-    157,
-    32,
-    172
-   ],
-   "message": "crossroads/north_cottages: the stone reads 2D: 2 light planes, luminance spread 29",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    167,
-    180,
-    197,
-    218
-   ],
-   "message": "crossroads/north_cottages: the violet reads 2D: 1 light planes, luminance spread 0",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
-  },
-  {
-   "detector": "detail.flat",
-   "severity": "fault",
-   "box": [
-    91,
-    224,
-    136,
-    234
-   ],
-   "message": "crossroads/north_cottages: a flat wood area: one smooth patch covers 52% (0.033 H^2), 3 tones",
-   "fix": "draw the wood as its material: break the fill with its own structure (staves and hoops, grain and nail heads, courses, bevels, leaf clusters) in 4 to 5 tones of its ramp"
-  },
-  {
-   "detector": "detail.flat",
-   "severity": "fault",
-   "box": [
-    201,
-    128,
-    218,
-    135
-   ],
-   "message": "crossroads/north_cottages: a flat stone area: one smooth patch covers 51% (0.011 H^2), 2 tones",
-   "fix": "draw the stone as its material: break the fill with its own structure (staves and hoops, grain and nail heads, courses, bevels, leaf clusters) in 4 to 5 tones of its ramp"
   },
   {
    "detector": "detail.bar",
@@ -224,59 +68,11 @@
     310,
     274
    ],
-   "message": "crossroads/north_cottages: detail bar 0.51 of Eastward's prop band (16.4 tones, 25.6 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/north_cottages: detail bar 0.70 of Eastward's prop band (22.9 tones, 35.1 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
-  },
-  {
-   "detector": "detail.flat",
-   "severity": "fault",
-   "box": [
-    68,
-    68,
-    84,
-    75
-   ],
-   "message": "crossroads/north_cottages: a flat stone area: one smooth patch covers 50% (0.010 H^2), 2 tones",
-   "fix": "draw the stone as its material: break the fill with its own structure (staves and hoops, grain and nail heads, courses, bevels, leaf clusters) in 4 to 5 tones of its ramp"
-  },
-  {
-   "detector": "detail.flat",
-   "severity": "fault",
-   "box": [
-    11,
-    157,
-    32,
-    172
-   ],
-   "message": "crossroads/north_cottages: a flat stone area: one smooth patch covers 50% (0.026 H^2), 7 tones",
-   "fix": "draw the stone as its material: break the fill with its own structure (staves and hoops, grain and nail heads, courses, bevels, leaf clusters) in 4 to 5 tones of its ramp"
-  },
-  {
-   "detector": "detail.glyph",
-   "severity": "fault",
-   "box": [
-    227,
-    179,
-    239,
-    194
-   ],
-   "message": "crossroads/north_cottages: a flat water mark of 3 tones on the body reads as an interface icon, not something carved, painted or worn into the material",
-   "fix": "cut or paint it into the surface: a carved groove with a lit lower lip and a dark upper edge, worn paint with chips, moss in the cut; tone it to the material and the light"
-  },
-  {
-   "detector": "detail.glyph",
-   "severity": "fault",
-   "box": [
-    174,
-    184,
-    184,
-    192
-   ],
-   "message": "crossroads/north_cottages: a flat water mark of 2 tones on the body reads as an interface icon, not something carved, painted or worn into the material",
-   "fix": "cut or paint it into the surface: a carved groove with a lit lower lip and a dark upper edge, worn paint with chips, moss in the cut; tone it to the material and the light"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",

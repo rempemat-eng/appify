@@ -1,7 +1,7 @@
 {
  "id": "woodland/ground",
  "file": "game/zones/woodland/art/ground.png",
- "sha256": "025f0fbe19c1229d63b04f01effba4170284324e37f19f792a6b5c5f06b5b9cd",
+ "sha256": "72d0063398d9d0fa135816dc5732da894c0c3f48771af12df608b829716f7814",
  "kind": "ground",
  "biome": "woodland",
  "H": 74.0,
@@ -27,7 +27,7 @@
     740,
     444
    ],
-   "message": "woodland/ground: the grass fill is speckled at the wrong scale: its dark marks are 3.0 art px (0.041 H) and 82 to a H square in 96% of its tiles; Eastward's are 4.1 to 15.1 art px at the same character height, about 34 to a H square",
+   "message": "woodland/ground: the grass fill is speckled at the wrong scale: its dark marks are 3.0 art px (0.041 H) and 86 to a H square in 96% of its tiles; Eastward's are 4.1 to 15.1 art px at the same character height, about 34 to a H square",
    "fix": "draw fewer, larger marks: tufts 6 to 22 art px in loose clumps, soft blotches 26 to 57 across, and calm ground between them (eastward-edges.md 5.5)"
   }
  ],

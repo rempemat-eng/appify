@@ -1,26 +1,26 @@
 {
  "id": "crossroads/herbalist_damage",
  "file": "game/zones/crossroads/art/herbalist_damage.png",
- "sha256": "939352a5a6b1020fb21f078c6ba981b6f00efed595c49f7a54e0273ac43a4e3d",
+ "sha256": "5e048ae637c4ca7b200ce44f2efbf0655354e8db0c719d4fe099590c20f99fe6",
  "kind": "herbalist",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
   240,
-  192
+  231
  ],
- "status": "fail",
+ "status": "pass",
  "counts": {
   "blocker": 0,
-  "fault": 1,
+  "fault": 0,
   "polish": 1
  },
  "detail_bar": {
   "ours": {
-   "patches": 14,
-   "tones": 19.785714285714285,
-   "shapes": 36.5
+   "patches": 10,
+   "tones": 23.2,
+   "shapes": 35.9
   },
   "band": {
    "tones": 27.0,
@@ -28,35 +28,23 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.725,
-  "tones_ratio": 0.733,
-  "shapes_ratio": 0.725,
+  "ratio": 0.713,
+  "tones_ratio": 0.859,
+  "shapes_ratio": 0.713,
   "passed": false,
   "group": "prop"
  },
  "findings": [
   {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    81,
-    17,
-    111,
-    25
-   ],
-   "message": "crossroads/herbalist_damage: the stone reads 2D: 2 light planes, luminance spread 23",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
-  },
-  {
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    23,
-    16,
-    163,
-    175
+    20,
+    29,
+    165,
+    205
    ],
-   "message": "crossroads/herbalist_damage: detail bar 0.72 of Eastward's prop band (19.8 tones, 36.5 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/herbalist_damage: detail bar 0.71 of Eastward's prop band (23.2 tones, 35.9 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

@@ -1061,7 +1061,7 @@ def building(spec: dict, seed: int = 0) -> Built:
     for (dx, dpaint) in doors:
         if spec.get('kind') == 'forge':
             continue
-        door(a, L + q(dx), B, spec.get('door_w', 16), spec.get('door_h', 31), dpaint, rng,
+        door(a, L + q(dx), B, spec.get('door_w', 16), spec.get('door_h', 26 if HD else 31), dpaint, rng,
              frame='stone' if wall in ('stone', 'ashlar') else 'timber', arch=spec.get('arch', False))
     if spec.get('kind') == 'forge':
         mouth(a, L + q(spec['door']), B, spec.get('mouth_w', 30), spec.get('mouth_h', 27), rng)
@@ -1625,8 +1625,14 @@ def p_well(w, h, seed, choked=False):
         board(a, cx + q(1), cy - q(2), q(w * 0.5), q(1.8), -40, 'timber_cool', 3, rng)
         for _ in range(7):
             sx_, sy_ = cx + q(rng.uniform(-w * 0.35, w * 0.35)), cy + q(rng.uniform(-2, 3))
-            blk(a, int(sx_), int(sy_), int(sx_) + q(3.6), int(sy_) + q(1.6), ('slate', 'slate_cool')[int(rng.integers(0, 2))],
-                int(rng.choice([2, 3, 4])), cut=1)
+            fam_, t_ = ('slate', 'slate_cool')[int(rng.integers(0, 2))], int(rng.choice([2, 3, 4]))
+            blk(a, int(sx_), int(sy_), int(sx_) + q(3.6), int(sy_) + q(1.6), fam_, t_, cut=1)
+            if HD:
+                # a slate tipped into the shaft: its broken underside in shade, a lit chip on the upper edge
+                x0_, x1_, y1_ = int(sx_) + 1, int(sx_) + q(3.6) - 1, int(sy_) + q(1.6)
+                a[_rect(a.shape, x0_, y1_ - 1, x1_, y1_)] = code(fam_, max(0, t_ - 2))
+                cx_ = int(rng.integers(x0_, max(x0_ + 1, x1_ - 2)))
+                a[_rect(a.shape, cx_, int(sy_) + 1, cx_ + 2, int(sy_) + 2)] = code(fam_, min(5, t_ + 1))
         return finish(p)
     water = E(wcx, wcy, wrx, wry)
     a[water] = code('water_cool', 0)
@@ -1677,11 +1683,13 @@ def p_well(w, h, seed, choked=False):
     a[E(bcx + 1, btop + 1, q(2.0), q(0.6))] = code('void', 1)
     # the hood: a slate roof, its underside in shade between the posts
     hx0, hx1 = cx - rx - q(4), cx + rx + q(4)
-    hm = roof_mask(a.shape, hx0, hx1, top_y - q(10), top_y + q(1.5))
-    slate_roof(a, hm, hx0, hx1, top_y - q(10), top_y + q(1.5), rng, row=2.6, width=(3.4, 5.0), moss=0.15)
-    fascia(a, hx0, hx1, top_y, rng)
+    rh_ = 6.0 if HD else 10.0                 # (scale gate, 26 Oct: a lower hood, so the well stands 1.9 A at most)
+    hm = roof_mask(a.shape, hx0, hx1, top_y - q(rh_), top_y + q(1.5))
+    slate_roof(a, hm, hx0, hx1, top_y - q(rh_), top_y + q(1.5), rng, row=2.6, width=(3.4, 5.0), moss=0.15)
+    if not HD:
+        fascia(a, hx0, hx1, top_y, rng)           # (density 3: the slates' own butts make the hood's eave)
     for xx, t in ((hx0, 3), (hx1 - q(1.6), 2)):
-        beam(a, xx, top_y - q(10), xx + q(1.6), top_y + q(2.4), rng, 'timber', t)
+        beam(a, xx, top_y - q(rh_), xx + q(1.6), top_y + q(2.4), rng, 'timber', t)
     under = _rect(a.shape, cx - rx + q(1), top_y + q(2.4), cx + rx - q(1), top_y + q(3.6)) & (a >= 0)
     a[under] = code('timber_cool', 1)
     return finish(p)
@@ -1902,7 +1910,7 @@ def p_fire(w, h, seed):
 def p_smoke(w, h, seed):
     """Smoke from the crater: three puffs rising and leaning east, lit on their west sides."""
     rng = np.random.default_rng(seed)
-    p = _pic(w, h, up=34, side=4)
+    p = _pic(w, h, up=48 if HD else 34, side=26 if HD else 4)   # (HD: room for the billows rising and leaning east, never cut flat)
     a, cx, yb = p.a, p.ax, p.ay
     if HD:
         # density 3 (fix queue 2): the column as billows, each a cluster of round puffs shaded as
@@ -1918,6 +1926,10 @@ def p_smoke(w, h, seed):
                 py_ = y + rng.uniform(-0.5, 0.4) * R
                 r_ = R * rng.uniform(0.45, 0.75)
                 dx, dy = (X - px_) / r_, (Y - py_) / (r_ * 0.85)
+                # where this puff rolls over the smoke below it, its lower edge is a soot crease
+                d2_ = dx * dx + dy * dy
+                crease = (d2_ > 0.78) & (d2_ <= 1) & (dy > 0.25) & (a >= 0) & ((a // 8 == FI['ash']) | (a // 8 == FI['soot']))
+                a[crease] = code('ash', 2)
                 mm = (dx * dx + dy * dy <= 1) & (a < 0) | ((dx * dx + dy * dy <= 1) & (a // 8 == FI['ash']) & (rng.random() < 0.5))
                 nz = np.sqrt(np.clip(1 - dx * dx - dy * dy, 0, 1))
                 I = lam(dx, dy, nz)
@@ -2215,26 +2227,30 @@ def p_trough(w, h, seed):
     inside, the far wall lit above the waterline, the water darkening with depth toward the front,
     a band of sky reflected across it and the near wall's shade along its front edge."""
     rng = np.random.default_rng(seed)
-    p = _pic(w, h, up=9, side=2)
+    p = _pic(max(w, 26) if HD else w, h, up=9, side=2)
+    # (scale gate, 26 Oct: lower and longer, about 36 art px tall and 80 wide, its stone base two
+    # courses: 0.6 m high, 1.5 m long)
+    o = 3.0 if HD else 0.0
+    w = max(w, 26) if HD else w
     a, cx, yb = p.a, p.ax, p.ay
     x0, x1 = cx - q(w / 2), cx + q(w / 2)
-    top = yb - q(h + 8)
-    rubble(a, x0, yb - q(7.5), x1, yb, rng, base=3, course=(2.4, 3.4), length=(4, 7), moss=0.35)
-    fill(a, x1 - q(1.8), yb - q(7.5), x1, yb, code('stone', 1))                    # the east end in shade
+    top = yb - q(h + 8 - (4.0 if HD else 0.0))
+    rubble(a, x0, yb - q(7.5 - o), x1, yb, rng, base=3, course=(2.4, 3.4), length=(4, 7), moss=0.35)
+    fill(a, x1 - q(1.8), yb - q(7.5 - o), x1, yb, code('stone', 1))                    # the east end in shade
     # the coping: four lit rims round the opening, the front rim's face below it
-    a[_rect(a.shape, x0, top, x1, yb - q(7.5))] = code('stone_warm', 4)
+    a[_rect(a.shape, x0, top, x1, yb - q(7.5 - o))] = code('stone_warm', 4)
     a[_rect(a.shape, x0, top, x1, top + 1)] = code('stone_warm', 5)
-    a[_rect(a.shape, x0, top, x0 + 1, yb - q(7.5))] = code('stone_warm', 5)
-    a[_rect(a.shape, x0, yb - q(9.5), x1, yb - q(7.5))] = code('stone_warm', 3)      # the front rim's face
-    a[_rect(a.shape, x1 - q(1.8), top, x1, yb - q(7.5))] = code('stone_warm', 3)
+    a[_rect(a.shape, x0, top, x0 + 1, yb - q(7.5 - o))] = code('stone_warm', 5)
+    a[_rect(a.shape, x0, yb - q(9.5 - o), x1, yb - q(7.5 - o))] = code('stone_warm', 3)      # the front rim's face
+    a[_rect(a.shape, x1 - q(1.8), top, x1, yb - q(7.5 - o))] = code('stone_warm', 3)
     for jx in range(x0 + q(6), x1 - q(2), q(7)):
-        a[_rect(a.shape, jx, top, jx + 1, yb - q(9.5))] = code('stone', 2)
-    ix0, ix1, iy0, iy1 = x0 + q(1.8), x1 - q(3.4), top + q(1.4), yb - q(11.6)
+        a[_rect(a.shape, jx, top, jx + 1, yb - q(9.5 - o))] = code('stone', 2)
+    ix0, ix1, iy0, iy1 = x0 + q(1.8), x1 - q(3.4), top + q(1.4), yb - q(11.6 - o)
     # inside: the far wall lit, the waterline, water darkening toward the front, a sky band
     wall_h = q(1.6)
     if D >= 2.5:     # density 3: the front rim narrower, so the tank's water shows its depth
-        iy1, wall_h = yb - q(10.0), q(1.0)
-        a[_rect(a.shape, x0, yb - q(10.0), x1, yb - q(9.5))] = code('stone_warm', 4)
+        iy1, wall_h = yb - q(10.0 - o), q(1.0)
+        a[_rect(a.shape, x0, yb - q(10.0 - o), x1, yb - q(9.5 - o))] = code('stone_warm', 4)
     a[_rect(a.shape, ix0, iy0, ix1, iy0 + wall_h)] = code('stone', 4)
     a[_rect(a.shape, ix0, iy0 + wall_h, ix1, iy0 + wall_h + 1)] = code('water', 4)
     wy0 = iy0 + wall_h + 1
@@ -2648,7 +2664,13 @@ def upright(a, cx, top, bot, half, fams, base=2.6, k=2.6, seams=0, rng=None, bul
     u = (X - cx) / np.maximum(1, hw)
     m = (np.abs(u) <= 1) & (Y >= top) & (Y < bot)
     nzs = np.sqrt(np.clip(1 - u * u, 0, 1))
-    I = lam(u * nzs ** 0 * 1.0, nzs * 0.9, bulge * np.cos(f * math.pi) + 0.12)
+    if HD:
+        # density 3: the normal of a round body seen from the front (east, south, up): across it
+        # (u, toward the viewer sqrt(1 - u^2)), tilted up a little at a bulge; the brightest band
+        # falls left of centre, not on the west rim
+        I = lam(u, -nzs * 0.35 + 0.0, nzs * 0.9 + bulge * np.cos(f * math.pi) * 0.3)
+    else:
+        I = lam(u * nzs ** 0 * 1.0, nzs * 0.9, bulge * np.cos(f * math.pi) + 0.12)
     t = base + k * I + np.where(u > 0.84, 0.7, 0)
     if seams:
         ang = np.arcsin(np.clip(u, -1, 1))
@@ -2699,8 +2721,10 @@ def p_barrel_hd(w, h, seed):
     rng = np.random.default_rng(seed)
     p = _pic(w, h, up=15, side=2)
     a, cx, yb = p.a, p.ax, p.ay
-    r = q(w / 2)
-    top, bot = yb - q(15), yb
+    # (scale gate, 26 Oct: a barrel reaches a person's belt, 0.42 to 0.62 A: about 40 art px tall
+    # and 28 wide, 0.9 by 0.6 m)
+    r = q(min(w, 8.6) / 2)
+    top, bot = yb - q(11.6), yb
     half = lambda f: r * (0.84 + 0.16 * np.sin(f * math.pi))
     m, u, f = upright(a, cx, top, bot, half, ('timber_cool', 'timber', 'timber_warm'), base=2.7, seams=7, rng=rng, bulge=0.25)
     Y, X = grid(a)
@@ -2711,7 +2735,7 @@ def p_barrel_hd(w, h, seed):
         sel = m & (np.abs(X - gx) < 0.6) & (Y >= gy) & (Y < gy + q(rng.uniform(1.2, 2.6)))
         a[sel] = a[sel] - 1 * ((a[sel] % 8) > 0)
     # hoops
-    for hy in (top + q(2.6), bot - q(4.2)):
+    for hy in (top + q(2.0), bot - q(3.4)):
         hm = m & (Y >= hy) & (Y < hy + q(1.4))
         nzs = np.sqrt(np.clip(1 - u * u, 0, 1))
         paint(a, hm, ('iron', 'iron', 'iron'), 2.4 + 2.4 * lam(u, nzs, 0.1) + 1.2 * (Y < hy + 1))
@@ -2745,9 +2769,9 @@ def p_anvil_hd(w, h, seed):
     Y, X = grid(a)
     # tongs leaning against the block's west side (behind it)
     for dx in (-0.5, 0.5):
-        bar(a, cx - q(7.5) + q(dx), yb - 1, cx - q(4.6) + q(dx) * 0.6, yb - q(11), max(1.0, q(0.42)), 'iron', 2 if dx > 0 else 3)
-    # the block
-    bt = yb - q(9)
+        bar(a, cx - q(7.5) + q(dx), yb - 1, cx - q(4.6) + q(dx) * 0.6, yb - q(8), max(1.0, q(0.42)), 'iron', 2 if dx > 0 else 3)
+    # the block (scale gate, 26 Oct: the anvil's face at a smith's hip, about 42 art px in all)
+    bt = yb - q(5.6)
     R = q(5.6)
     upright(a, cx, bt, yb, lambda f: R * (1 + 0.06 * f), ('timber_cool', 'timber', 'timber_warm'), base=2.5, seams=9, rng=rng)
     tm, _i, _s, _l = ellipse_top(a, cx, bt, R, q(2.1), ('timber_warm', 'plaster_warm', 'plaster'), base=3.4)
@@ -3028,7 +3052,7 @@ def p_sacks_hd(w, h, seed):
     sacks = ((-0.25, 0.0, 1.0), (0.22, 0.0, 0.9), (0.0, -1.0, 0.85))
     for k, (dx, dy, s_) in enumerate(sacks):
         scx, rx, ry = cx + q(w * dx), q(4.2 * s_), q(4.6 * s_)
-        scy = yb - q(5 * s_) - (q(5.5) if dy else 0)
+        scy = yb - q(5 * s_) - (q(4.0 if HD else 5.5) if dy else 0)      # (scale gate: the top sack slumps, about 40 tall)
         nx, ny = (X - scx) / rx, (Y - scy) / ry
         d = nx * nx + ny * ny
         m = d <= 1

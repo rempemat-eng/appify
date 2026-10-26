@@ -1,7 +1,7 @@
 {
  "id": "crossroads/fern_cottage_damage",
  "file": "game/zones/crossroads/art/fern_cottage_damage.png",
- "sha256": "48e690f0d19bd6defbc1a3611ab4665231a164b630a48f80632eedbd9660657a",
+ "sha256": "28c608fed1b8279deeaea24428af1362103b05ff13846cb877fd291cfe3bd6d4",
  "kind": "fern_cottage",
  "biome": "valley",
  "H": 74.0,
@@ -14,13 +14,13 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 2
+  "polish": 1
  },
  "detail_bar": {
   "ours": {
-   "patches": 55,
-   "tones": 17.01818181818182,
-   "shapes": 28.509090909090908
+   "patches": 54,
+   "tones": 17.574074074074073,
+   "shapes": 31.09259259259259
   },
   "band": {
    "tones": 27.0,
@@ -28,35 +28,23 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.566,
-  "tones_ratio": 0.63,
-  "shapes_ratio": 0.566,
+  "ratio": 0.617,
+  "tones_ratio": 0.651,
+  "shapes_ratio": 0.617,
   "passed": false,
   "group": "prop"
  },
  "findings": [
   {
-   "detector": "detail.light",
-   "severity": "polish",
-   "box": [
-    20,
-    170,
-    74,
-    199
-   ],
-   "message": "crossroads/fern_cottage_damage: the red is lit from the right (luminance rises 7 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    19,
+    18,
     60,
     205,
     264
    ],
-   "message": "crossroads/fern_cottage_damage: detail bar 0.57 of Eastward's prop band (17.0 tones, 28.5 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/fern_cottage_damage: detail bar 0.62 of Eastward's prop band (17.6 tones, 31.1 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

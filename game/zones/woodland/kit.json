@@ -1,7 +1,7 @@
 {
  "zone": "woodland",
  "density": 3.0,
- "restricted": 1338,
+ "restricted": 1326,
  "kinds": [
   "beech",
   "birch",
@@ -36,17 +36,17 @@
   [
    "stone-2",
    "standing_stone_b",
-   98.5,
+   99.5,
    366.67,
-   27.0,
+   25.0,
    33.33
   ],
   [
    "stone-3",
    "standing_stone_low",
-   108.33,
+   108.0,
    398.67,
-   23.33,
+   24.0,
    25.33
   ],
   [
@@ -60,25 +60,25 @@
   [
    "stone-5",
    "standing_stone_b",
-   38.5,
+   39.5,
    406.67,
-   27.0,
+   25.0,
    33.33
   ],
   [
    "stone-6",
    "standing_stone_low",
-   24.33,
+   24.0,
    390.67,
-   23.33,
+   24.0,
    25.33
   ],
   [
    "stone-7",
    "standing_stone_low",
-   36.33,
+   36.0,
    374.67,
-   23.33,
+   24.0,
    25.33
   ],
   [

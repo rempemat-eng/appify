@@ -1,7 +1,7 @@
 {
  "id": "crossroads/debris_d",
  "file": "game/zones/crossroads/art/debris_d.png",
- "sha256": "9696a26dd419b03e375b753225c117e62defede859feb10e6c9d360e06e42673",
+ "sha256": "1c911adaa435dd1c3aab434f24d35ce53a3a0b4cfa0c01b6bea69f4a3e4a9fbb",
  "kind": "pile",
  "biome": "valley",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 1,
-   "tones": 27.0,
-   "shapes": 28.0
+   "tones": 34.0,
+   "shapes": 32.0
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.556,
-  "tones_ratio": 1.0,
-  "shapes_ratio": 0.556,
+  "ratio": 0.635,
+  "tones_ratio": 1.259,
+  "shapes_ratio": 0.635,
   "passed": false,
   "group": "prop"
  },
@@ -44,11 +44,11 @@
     73,
     45
    ],
-   "message": "crossroads/debris_d: detail bar 0.56 of Eastward's prop band (27.0 tones, 28.0 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/debris_d: detail bar 0.64 of Eastward's prop band (34.0 tones, 32.0 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",

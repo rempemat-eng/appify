@@ -1,7 +1,7 @@
 {
  "id": "crossroads/barrel_37",
  "file": "game/zones/crossroads/art/barrel_37.png",
- "sha256": "94c94baf8b02d91c5c1208c6824066fa2f1e70e5d2ba4c3d6b00a849cefd0b55",
+ "sha256": "0307bc26631fbac205521ad7ba1d23bb22facca716329d529c00a39c9689cc05",
  "kind": "barrel",
  "biome": "valley",
  "H": 74.0,
@@ -10,17 +10,17 @@
   48,
   75
  ],
- "status": "fail",
+ "status": "pass",
  "counts": {
   "blocker": 0,
-  "fault": 1,
+  "fault": 0,
   "polish": 0
  },
  "detail_bar": {
   "ours": {
-   "patches": 3,
-   "tones": 24.333333333333332,
-   "shapes": 56.666666666666664
+   "patches": 2,
+   "tones": 28.0,
+   "shapes": 60.0
   },
   "band": {
    "tones": 27.0,
@@ -28,26 +28,13 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.901,
-  "tones_ratio": 0.901,
-  "shapes_ratio": 1.125,
+  "ratio": 1.037,
+  "tones_ratio": 1.037,
+  "shapes_ratio": 1.191,
   "passed": true,
   "group": "prop"
  },
- "findings": [
-  {
-   "detector": "logic.scale",
-   "severity": "fault",
-   "box": [
-    8,
-    19,
-    40,
-    72
-   ],
-   "message": "crossroads/barrel_37: tall 53 art px (0.72 A) is too big for a barrel: the size table gives 31 to 46 (0.42 to 0.62 A); Eastward at the same character height: tubs and pots 0.3 to 0.4 A (04); milk cans 0.73 A (17)",
-   "fix": "redraw it 31 to 46 art px tall (target about 38), checked beside Bramble (74 art px) in the asset sheet"
-  }
- ],
+ "findings": [],
  "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",

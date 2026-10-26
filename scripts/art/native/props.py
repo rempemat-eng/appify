@@ -385,7 +385,7 @@ def signpost_hd(d, seed=91):
     ux, uy = (X - ox) / s, (Y - oy) / s
     post = (np.abs(ux) <= 2.8) & (uy >= -62) & (uy <= 0)
     u = ux / 2.8
-    tp = np.where(u < -0.45, 4, np.where(u < 0.25, 3, np.where(u < 0.7, 2, 1)))
+    tp = np.where(u < -0.75, 3, np.where(u < -0.1, 4, np.where(u < 0.4, 3, np.where(u < 0.8, 2, 1))))   # a round post
     tp = np.where((uy < -60.5) & (u < 0.4), 5, tp)                   # its cut top catching the light
     for k in range(6):
         gx = rng.uniform(-2.0, 2.0)
@@ -396,8 +396,9 @@ def signpost_hd(d, seed=91):
         tp = np.where((uy > y0b) & (uy < y1b), tp - 1, tp)            # the boards' shadows on the post
     tp = np.clip(tp, 0, 5)
     F.put(post, np.where(tp >= 4, 'timber_warm', np.where(tp <= 1, 'timber_cool', 'timber')), tp, 1)
-    b1 = _poly_mask([(ox + x * s, oy + y * s) for x, y in [(-22, -68), (22, -68), (29, -62), (22, -56), (-22, -56)]], X, Y)
-    b2 = _poly_mask([(ox + x * s, oy + y * s) for x, y in [(22, -45), (-22, -45), (-29, -39), (-22, -33), (22, -33)]], X, Y)
+    # (scale gate, 26 Oct: the arms span at most 81 art px, about 1.2 to 1.8 m: each a little shorter)
+    b1 = _poly_mask([(ox + x * s, oy + y * s) for x, y in [(-19, -68), (19, -68), (26, -62), (19, -56), (-19, -56)]], X, Y)
+    b2 = _poly_mask([(ox + x * s, oy + y * s) for x, y in [(19, -45), (-19, -45), (-26, -39), (-19, -33), (19, -33)]], X, Y)
     b3 = _poly_mask([(ox + x * s, oy + y * s) for x, y in SIGN3], X, Y)
     _board_hd(F, b1, 0.0, rng, 2, 'timber', s)
     _board_hd(F, b2, 0.0, rng, 2, 'timber', s)
@@ -526,12 +527,20 @@ def gateleaf4(d, seed=105):
 
 
 def post4(d, seed=0):
-    """A short marker post with a cap (stair heads): 12 world px tall."""
-    sp = _sprite(d, 14, 30, 7, 2)
+    """A short marker post with a cap (stair heads): 12 world px tall (17 at density 3: the scale
+    gate, 26 Oct, a post reaches a person's chest, level with a fence's top rail)."""
+    t = 34.0 if d >= 2.5 else 22.0
+    sp = _sprite(d, 14, t + 8, 7, 2)
     g = sp.g
-    sp.add('post', g.rrect(-2.8, -22, 2.8, 0, 1.0), 'timber', base=3, lo=1, hi=5, z=1, mode='cyl')
-    sp.add('cap', g.rrect(-3.6, -25, 3.6, -21, 1.4), 'timber_warm', base=4, lo=2, hi=5, z=2)
-    sp.mark('post', g.rect(-4, -14, 4, -13), -1)
+    sp.add('post', g.rrect(-2.8, -t, 2.8, 0, 1.0), 'timber', base=3, lo=1, hi=5, z=1, mode='cyl')
+    sp.add('cap', g.rrect(-3.6, -t - 3, 3.6, -t + 1, 1.4), 'timber_warm', base=4, lo=2, hi=5, z=2)
+    sp.mark('post', g.rect(-4, -t + 8, 4, -t + 9), -1)
+    if d >= 2.5:
+        rng = np.random.default_rng(seed + 3)
+        for k in range(4):
+            gx, gy = rng.uniform(-1.6, 1.6), rng.uniform(-t + 4, -4)
+            sp.mark('post', g.rect(gx, gy, gx + 0.6, gy + rng.uniform(4, 9)), -1)
+        sp.mark('post', g.rect(-3, -3, 3, 0), -1)
     return _out(sp)
 
 
@@ -1101,7 +1110,7 @@ def fern_hd(d, seed=0, size=1.0):
     bending down at their tips, each a midrib with leaflets in pairs that shorten to the tip and
     point out along it; the fronds at the back in shade, those facing the upper left lit."""
     rng = np.random.default_rng(seed)
-    Wd, Hd = int(22 * size * d), int(14 * size * d)
+    Wd, Hd = int(15 * size * d), int(10 * size * d)          # (scale gate: about 0.5 A across, Eastward 0.37 to 0.46)
     a = _rgba(Hd, Wd)
     bx, by = Wd / 2, Hd - 1.5
     n = int(rng.integers(7, 10))
@@ -1110,7 +1119,7 @@ def fern_hd(d, seed=0, size=1.0):
         f = (k + rng.uniform(-0.25, 0.25)) / (n - 1)          # 0 west .. 1 east
         dirx = (f - 0.5) * 2
         el = np.radians(80 - 55 * abs(dirx) + rng.uniform(-6, 6))
-        L = rng.uniform(8.0, 10.5) * size * d * (0.85 if abs(dirx) < 0.3 else 1.0)
+        L = rng.uniform(5.2, 6.8) * size * d * (0.85 if abs(dirx) < 0.3 else 1.0)
         back = abs(dirx) < 0.35
         fronds.append((0 if back else 1, dirx, el, L))
     fronds.sort(key=lambda q: (q[0], -abs(q[1])))

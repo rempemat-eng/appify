@@ -1,7 +1,7 @@
 {
  "id": "crossroads/bakery",
  "file": "game/zones/crossroads/art/bakery.png",
- "sha256": "1e0c661d844015aa2ea0c37c80849c18031a227702f2ad91fb4cd00505974ce0",
+ "sha256": "323e6cc10bd61000359b1abdf7ee815edd82dea2ac9ab7e98621302969526bf5",
  "kind": "bakery",
  "biome": "valley",
  "H": 74.0,
@@ -10,17 +10,17 @@
   240,
   288
  ],
- "status": "fail",
+ "status": "pass",
  "counts": {
   "blocker": 0,
-  "fault": 5,
-  "polish": 4
+  "fault": 0,
+  "polish": 3
  },
  "detail_bar": {
   "ours": {
    "patches": 168,
-   "tones": 18.125,
-   "shapes": 28.327380952380953
+   "tones": 22.916666666666668,
+   "shapes": 35.029761904761905
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.562,
-  "tones_ratio": 0.671,
-  "shapes_ratio": 0.562,
+  "ratio": 0.696,
+  "tones_ratio": 0.849,
+  "shapes_ratio": 0.696,
   "passed": false,
   "group": "prop"
  },
@@ -39,61 +39,25 @@
    "detector": "detail.light",
    "severity": "polish",
    "box": [
-    148,
-    199,
-    163,
-    230
-   ],
-   "message": "crossroads/bakery: the red is lit from the right (luminance rises 144 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
-   "detector": "detail.light",
-   "severity": "polish",
-   "box": [
     100,
     184,
     174,
-    206
+    205
    ],
-   "message": "crossroads/bakery: the wood is lit from the right (luminance rises 57 L per H to the east)",
+   "message": "crossroads/bakery: the wood is lit from the right (luminance rises 54 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
    "detector": "detail.light",
    "severity": "polish",
    "box": [
-    26,
-    6,
-    69,
-    14
+    148,
+    199,
+    216,
+    279
    ],
-   "message": "crossroads/bakery: the stone is lit from the right (luminance rises 9 L per H to the east)",
+   "message": "crossroads/bakery: the red is lit from the right (luminance rises 6 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    34,
-    184,
-    84,
-    190
-   ],
-   "message": "crossroads/bakery: the wood reads 2D: 2 light planes, luminance spread 29",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    46,
-    130,
-    63,
-    137
-   ],
-   "message": "crossroads/bakery: the stone reads 2D: 2 light planes, luminance spread 23",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
   },
   {
    "detector": "detail.bar",
@@ -104,44 +68,8 @@
     238,
     286
    ],
-   "message": "crossroads/bakery: detail bar 0.56 of Eastward's prop band (18.1 tones, 28.3 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/bakery: detail bar 0.70 of Eastward's prop band (22.9 tones, 35.0 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
-  },
-  {
-   "detector": "detail.flat",
-   "severity": "fault",
-   "box": [
-    46,
-    130,
-    63,
-    137
-   ],
-   "message": "crossroads/bakery: a flat stone area: one smooth patch covers 51% (0.011 H^2), 2 tones",
-   "fix": "draw the stone as its material: break the fill with its own structure (staves and hoops, grain and nail heads, courses, bevels, leaf clusters) in 4 to 5 tones of its ramp"
-  },
-  {
-   "detector": "detail.glyph",
-   "severity": "fault",
-   "box": [
-    48,
-    196,
-    58,
-    204
-   ],
-   "message": "crossroads/bakery: a flat water mark of 2 tones on the body reads as an interface icon, not something carved, painted or worn into the material",
-   "fix": "cut or paint it into the surface: a carved groove with a lit lower lip and a dark upper edge, worn paint with chips, moss in the cut; tone it to the material and the light"
-  },
-  {
-   "detector": "detail.glyph",
-   "severity": "fault",
-   "box": [
-    114,
-    196,
-    124,
-    204
-   ],
-   "message": "crossroads/bakery: a flat water mark of 2 tones on the body reads as an interface icon, not something carved, painted or worn into the material",
-   "fix": "cut or paint it into the surface: a carved groove with a lit lower lip and a dark upper edge, worn paint with chips, moss in the cut; tone it to the material and the light"
   }
  ],
  "reviewed": "2026-10-26",

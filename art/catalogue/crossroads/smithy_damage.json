@@ -1,7 +1,7 @@
 {
  "id": "crossroads/smithy_damage",
  "file": "game/zones/crossroads/art/smithy_damage.png",
- "sha256": "f9c67a255e12aa4d687aadb39fadbf80530b3f1dc15c68f8f13071f1c7c5f40a",
+ "sha256": "8dc4bbaf77ed9c7a26f8dd9b11fb8a61270f07ed8a5fa4001e60baa49cbb4c3e",
  "kind": "smithy",
  "biome": "valley",
  "H": 74.0,
@@ -10,17 +10,17 @@
   288,
   327
  ],
- "status": "fail",
+ "status": "pass",
  "counts": {
   "blocker": 0,
-  "fault": 1,
+  "fault": 0,
   "polish": 1
  },
  "detail_bar": {
   "ours": {
-   "patches": 43,
-   "tones": 16.348837209302324,
-   "shapes": 30.325581395348838
+   "patches": 40,
+   "tones": 15.95,
+   "shapes": 31.0
   },
   "band": {
    "tones": 27.0,
@@ -28,35 +28,23 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.602,
-  "tones_ratio": 0.606,
-  "shapes_ratio": 0.602,
+  "ratio": 0.591,
+  "tones_ratio": 0.591,
+  "shapes_ratio": 0.616,
   "passed": false,
   "group": "prop"
  },
  "findings": [
   {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    196,
-    103,
-    212,
-    118
-   ],
-   "message": "crossroads/smithy_damage: the stone reads 2D: 2 light planes, luminance spread 23",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
-  },
-  {
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    24,
-    89,
+    43,
+    92,
     276,
     326
    ],
-   "message": "crossroads/smithy_damage: detail bar 0.60 of Eastward's prop band (16.3 tones, 30.3 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/smithy_damage: detail bar 0.59 of Eastward's prop band (15.9 tones, 31.0 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

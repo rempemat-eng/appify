@@ -1,7 +1,7 @@
 {
  "id": "crossroads/fern_cottage",
  "file": "game/zones/crossroads/art/fern_cottage.png",
- "sha256": "aa73751512f74003f33218d67aeab52eff9cc1b2deaa3699d9015421a93b2e4c",
+ "sha256": "1e128420631d71cf652dc08fafb5a754b97532002e87de21f0d4891bd2b6b66f",
  "kind": "fern_cottage",
  "biome": "valley",
  "H": 74.0,
@@ -10,17 +10,17 @@
   240,
   264
  ],
- "status": "fail",
+ "status": "pass",
  "counts": {
   "blocker": 0,
-  "fault": 7,
-  "polish": 2
+  "fault": 0,
+  "polish": 3
  },
  "detail_bar": {
   "ours": {
    "patches": 143,
-   "tones": 17.32867132867133,
-   "shapes": 26.76923076923077
+   "tones": 22.6993006993007,
+   "shapes": 34.81818181818182
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.532,
-  "tones_ratio": 0.642,
-  "shapes_ratio": 0.532,
+  "ratio": 0.691,
+  "tones_ratio": 0.841,
+  "shapes_ratio": 0.691,
   "passed": false,
   "group": "prop"
  },
@@ -39,61 +39,25 @@
    "detector": "detail.light",
    "severity": "polish",
    "box": [
-    163,
-    6,
-    197,
-    14
+    207,
+    150,
+    218,
+    207
    ],
-   "message": "crossroads/fern_cottage: the stone is lit from the right (luminance rises 14 L per H to the east)",
+   "message": "crossroads/fern_cottage: the wood is lit from the right (luminance rises 120 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
-   "detector": "detail.volume",
-   "severity": "fault",
+   "detector": "detail.light",
+   "severity": "polish",
    "box": [
-    127,
-    212,
-    172,
-    222
+    194,
+    55,
+    231,
+    62
    ],
-   "message": "crossroads/fern_cottage: the wood reads 2D: 2 light planes, luminance spread 29",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    9,
-    66,
-    78,
-    73
-   ],
-   "message": "crossroads/fern_cottage: the stone reads 2D: 2 light planes, luminance spread 23",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    95,
-    66,
-    111,
-    73
-   ],
-   "message": "crossroads/fern_cottage: the stone reads 2D: 2 light planes, luminance spread 23",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    131,
-    66,
-    157,
-    73
-   ],
-   "message": "crossroads/fern_cottage: the stone reads 2D: 2 light planes, luminance spread 23",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
+   "message": "crossroads/fern_cottage: the red is lit from the right (luminance rises 43 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
    "detector": "detail.bar",
@@ -104,44 +68,8 @@
     238,
     262
    ],
-   "message": "crossroads/fern_cottage: detail bar 0.53 of Eastward's prop band (17.3 tones, 26.8 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/fern_cottage: detail bar 0.69 of Eastward's prop band (22.7 tones, 34.8 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
-  },
-  {
-   "detector": "detail.flat",
-   "severity": "fault",
-   "box": [
-    127,
-    212,
-    172,
-    222
-   ],
-   "message": "crossroads/fern_cottage: a flat wood area: one smooth patch covers 52% (0.033 H^2), 3 tones",
-   "fix": "draw the wood as its material: break the fill with its own structure (staves and hoops, grain and nail heads, courses, bevels, leaf clusters) in 4 to 5 tones of its ramp"
-  },
-  {
-   "detector": "detail.flat",
-   "severity": "fault",
-   "box": [
-    95,
-    66,
-    111,
-    73
-   ],
-   "message": "crossroads/fern_cottage: a flat stone area: one smooth patch covers 50% (0.010 H^2), 2 tones",
-   "fix": "draw the stone as its material: break the fill with its own structure (staves and hoops, grain and nail heads, courses, bevels, leaf clusters) in 4 to 5 tones of its ramp"
-  },
-  {
-   "detector": "detail.glyph",
-   "severity": "fault",
-   "box": [
-    138,
-    172,
-    148,
-    180
-   ],
-   "message": "crossroads/fern_cottage: a flat water mark of 2 tones on the body reads as an interface icon, not something carved, painted or worn into the material",
-   "fix": "cut or paint it into the surface: a carved groove with a lit lower lip and a dark upper edge, worn paint with chips, moss in the cut; tone it to the material and the light"
   }
  ],
  "reviewed": "2026-10-26",

@@ -1,7 +1,7 @@
 {
  "id": "crossroads/well_choked",
  "file": "game/zones/crossroads/art/well_choked.png",
- "sha256": "064c1f67868b3fbaf40b72ee1c7b7e021871d1285d834555001b9660fa3095e0",
+ "sha256": "c54dc0502fe7c818650d110d4167853553fb81caabd0c35ca3208b30c95518ca",
  "kind": "well",
  "biome": "valley",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 11,
-   "tones": 29.454545454545453,
-   "shapes": 43.0
+   "tones": 29.09090909090909,
+   "shapes": 42.27272727272727
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.854,
-  "tones_ratio": 1.091,
-  "shapes_ratio": 0.854,
+  "ratio": 0.839,
+  "tones_ratio": 1.077,
+  "shapes_ratio": 0.839,
   "passed": false,
   "group": "prop"
  },
@@ -44,7 +44,7 @@
     77,
     35
    ],
-   "message": "crossroads/well_choked: the stone is lit from the right (luminance rises 53 L per H to the east)",
+   "message": "crossroads/well_choked: the stone is lit from the right (luminance rises 51 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
@@ -68,7 +68,7 @@
     107,
     80
    ],
-   "message": "crossroads/well_choked: detail bar 0.85 of Eastward's prop band (29.5 tones, 43.0 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/well_choked: detail bar 0.84 of Eastward's prop band (29.1 tones, 42.3 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

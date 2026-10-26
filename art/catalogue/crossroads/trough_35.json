@@ -1,26 +1,26 @@
 {
  "id": "crossroads/trough_35",
  "file": "game/zones/crossroads/art/trough_35.png",
- "sha256": "dad751c850f6a17b3d6b93419cd87aee1b5fce079c7d64f91c0cc31c7bd3b38b",
+ "sha256": "69139c9ecfc7275020df46cef958bf42c3822b1f468a29552aa7bdf2c8848a98",
  "kind": "trough",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  78,
+  96,
   57
  ],
- "status": "fail",
+ "status": "pass",
  "counts": {
   "blocker": 0,
-  "fault": 1,
+  "fault": 0,
   "polish": 1
  },
  "detail_bar": {
   "ours": {
-   "patches": 9,
-   "tones": 18.11111111111111,
-   "shapes": 24.333333333333332
+   "patches": 8,
+   "tones": 20.5,
+   "shapes": 28.875
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.483,
-  "tones_ratio": 0.671,
-  "shapes_ratio": 0.483,
+  "ratio": 0.573,
+  "tones_ratio": 0.759,
+  "shapes_ratio": 0.573,
   "passed": false,
   "group": "prop"
  },
@@ -40,24 +40,12 @@
    "severity": "polish",
    "box": [
     8,
-    4,
-    70,
+    16,
+    88,
     54
    ],
-   "message": "crossroads/trough_35: detail bar 0.48 of Eastward's prop band (18.1 tones, 24.3 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/trough_35: detail bar 0.57 of Eastward's prop band (20.5 tones, 28.9 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
-  },
-  {
-   "detector": "logic.scale",
-   "severity": "fault",
-   "box": [
-    8,
-    4,
-    70,
-    54
-   ],
-   "message": "crossroads/trough_35: tall 50 art px (0.68 A) is too big for a trough: the size table gives 26 to 44 (0.35 to 0.59 A); Eastward at the same character height: none; from real size (stall counters 0.45 to 0.6 A in 04)",
-   "fix": "redraw it 26 to 44 art px tall (target about 35), checked beside Bramble (74 art px) in the asset sheet"
   }
  ],
  "reviewed": "2026-10-26",
