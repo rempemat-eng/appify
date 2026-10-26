@@ -6,16 +6,21 @@ example should still be round ...). most props should probably stay as before (d
 but the ground and the placement of the props changes. consider what natural terrain looks like
 under these constraints". 17:48: "eastward is really the example the soft grid should follow".
 
-Every swatch is drawn only from scripts/art/native/softgrid.py (the ground) and the kit's own props
-(a round well, a bench, rocks), placed with their feet on cells, so the sheet shows what the soft
-grid governs and what stays organic (docs/vision/eastward-edges.md, "What the soft grid governs").
+The plans come from scripts/art/native/softgrid.py (whole cells, rounded corners, lumpy outlines);
+the ground in them is painted by scripts/art/native/softground.py at Eastward's level of detail
+(textured fills, frayed and broken edges, lips, faces, feet and cast shadows, ambient occlusion);
+the props, trees and plants are the kit's own (village.py, props.py, the woodland's tree recipes),
+their feet on cells, so the sheet shows what the soft grid governs and what stays organic
+(docs/vision/eastward-edges.md, "What the soft grid governs").
 
-    python3 -m scripts.art.softgrid_swatches OUT_DIR [--eastward NATIVE_DIR]
+    python3 -m scripts.art.softgrid_swatches OUT_DIR [--only I ...]
 
-writes OUT_DIR/softgrid_swatches_1080p.png (ten swatches, 160 x 120 world px each at density 3,
-1:1) and, with the Eastward native frames (local only, never committed), OUT_DIR/
-softgrid_crops_3x.png: each swatch's key detail at 3x beside the matching Eastward crop scaled to
-the same character height (our adult 74 art px, Eastward's 54 native px).
+writes OUT_DIR/softgrid_swatches_1080p.png (nine swatches, 160 x 120 world px each at density 3,
+1:1, and three of them again under the 24 px cell grid) and OUT_DIR/swatch_<i>_<name>.png, each a
+ground picture that `npm run review:asset -- <png> --kind ground --biome woodland` and `npm run
+review:scene -- <png> --scale 1 --H 74` pass. The side-by-side with Eastward (our crops at 3x, its
+crops at the same character height: our adult 74 art px, its 54 native px) is made locally from
+the references, which are never committed.
 """
 from __future__ import annotations
 
@@ -32,239 +37,293 @@ sys.path.insert(0, ROOT)
 
 from scripts.art.native import ctx, load_biome  # noqa: E402
 
-ctx.configure(3.0, load_biome('woodland'), json.load(open(os.path.join(ROOT, 'art', 'scenes', 'woodland.json'))))
+BIOME = load_biome('woodland')
+ctx.configure(3.0, BIOME, json.load(open(os.path.join(ROOT, 'art', 'scenes', 'woodland.json'))))
 
 from scipy import ndimage as ndi  # noqa: E402
 
 from scripts.art.native import softgrid as SG  # noqa: E402
+from scripts.art.native import softground as GD  # noqa: E402
 from scripts.art.native import props as P4  # noqa: E402
 from scripts.art.native import village as V  # noqa: E402
-from scripts.art.native import water as WA  # noqa: E402
-from scripts.art.native.palette import C, FI, sib, step, to_rgba  # noqa: E402
+from scripts.art.native.palette import to_rgba  # noqa: E402
 
 D = ctx.D
 CELL = SG.cell_px()                  # 24 art px
 TW, TH = 20 * CELL, 15 * CELL        # a swatch: 160 x 120 world px
 
 
-# ------------------------------------------------------------------------------------------------
-# ground fills (texture inside a fill is not governed: soft, low contrast, irregular)
-# ------------------------------------------------------------------------------------------------
-def lawn(seed: int, fam: str = 'grass', base: int = 3) -> np.ndarray:
-    cv = np.full((TH, TW), C(fam, base), np.int32)
-    p = SG.soft_patches(TH, TW, seed, 20.0 * D, 0.10)
-    cv[p] = sib(cv[p], 'cool')
-    rng = np.random.default_rng(seed)
-    # Eastward's blade marks: small V marks a tone down, staggered, sparse
-    sx, sy = int(2.6 * D), int(1.9 * D)
-    for gy in range(0, TH - 2, sy):
-        for gx in range((gy // sy) % 2 * (sx // 2), TW - 3, sx):
-            if rng.random() > 0.55:
-                continue
-            y, x = gy + int(rng.integers(-1, 2)), gx + int(rng.integers(-2, 3))
-            for dy, dx in ((0, 0), (1, 1), (0, 2)):
-                if 0 <= y + dy < TH and 0 <= x + dx < TW:
-                    cv[y + dy, x + dx] = step(cv[y + dy, x + dx], -1)
-    return cv
-
-
-def dirt_fill(cv, m, seed, fam='path'):
-    famc = np.full(cv.shape, FI[fam])
-    famc[SG.soft_patches(*cv.shape, seed, 10.0 * D, 0.15)] = FI[fam + '_warm']
-    famc[SG.soft_patches(*cv.shape, seed + 7, 8.0 * D, 0.10)] = FI[fam + '_cool']
-    cv[m] = (famc * 8 + 3)[m]
-    rng = np.random.default_rng(seed)
-    from scripts.art.native import softedge as SE
-    SE.soil_marks(cv, m & ndi.binary_erosion(m, iterations=3), rng, spacing=1.2, p=0.55)
-
-
-def turf(cv):
-    return (cv // 8 == FI['grass']) | (cv // 8 == FI['grass_cool']) | (cv // 8 == FI['grass_warm']) | \
-        (cv // 8 == FI['leaf']) | (cv // 8 == FI['leaf_cool'])
-
-
-# ------------------------------------------------------------------------------------------------
-# the swatches: (ground codes, [(sprite RGBA, foot x, foot y in texels)], caption)
-# ------------------------------------------------------------------------------------------------
 def cells(rects):
     return SG.cells_rects(rects, TH, TW)
 
 
-def props_row(spots):
-    """Organic props, feet on cells (a round well, a bench, rocks)."""
-    out = []
-    for kind, cx, cy, seed in spots:
-        if kind == 'well':
-            pic = V.prop('well', 18, 14, seed=seed)
-            out.append((pic.rgba(), (pic.ax, pic.ay), (cx, cy)))
-        elif kind == 'bench':
-            pic = V.prop('bench', 24, 6, seed=seed)
-            out.append((pic.rgba(), (pic.ax, pic.ay), (cx, cy)))
-        elif kind == 'rock':
-            img, anc, _ = P4.boulder4(D, 9 + seed % 5, 6 + seed % 3, seed=seed)
-            out.append((img, anc, (cx, cy)))
-        elif kind == 'trunk':
-            img, anc, _ = P4.trunk4(D, length=40.0, trunk_w=9.0, seed=seed, flare=1.0)
-            out.append((img, anc, (cx, cy)))
-        elif kind == 'fern':
-            img, anc, _ = P4.fern_hd(D, seed=seed, size=0.8)
-            out.append((img, anc, (cx, cy)))
-    return out
-
-
 def g(x, y):
-    """A cell's foot point (world px, on the cell's lower edge, centred) in texels."""
+    """A cell's foot point (on the cell's lower edge, centred) in texels."""
     return int((x * 8 + 4) * D), int((y * 8 + 8) * D)
 
 
+class Swatch:
+    """A ground canvas in codes plus the sprites that stand on it (feet on cells)."""
+
+    def __init__(self, cv, caption):
+        self.cv = cv
+        self.cap = caption
+        self.sprites = []          # (image, anchor, (foot x, foot y), base width for its shadow or 0)
+
+    def add(self, img, anc, foot, shade_w=0.0, depth=0.3):
+        self.sprites.append((img.convert('RGBA'), anc, foot))
+        if shade_w:
+            GD.contact(self.cv, foot[0], foot[1], shade_w, depth=depth)
+
+    def prop(self, kind, x, y, seed):
+        if kind == 'well':
+            pic = V.prop('well', 18, 14, seed=seed)
+            self.add(pic.rgba(), (pic.ax, pic.ay), (x, y), 44, 0.45)
+        elif kind == 'bench':
+            pic = V.prop('bench', 24, 6, seed=seed)
+            self.add(pic.rgba(), (pic.ax, pic.ay), (x, y), 66, 0.32)
+        elif kind == 'rock':
+            w = 9 + seed % 5
+            img, anc, _ = P4.boulder4(D, w, 6 + seed % 3, seed=seed)
+            self.add(img, anc, (x, y), w * D * 0.95, 0.5)
+        elif kind == 'fern':
+            img, anc, _ = P4.fern_hd(D, seed=seed, size=0.72)
+            self.add(img, anc, (x, y), 24, 0.3)
+        elif kind == 'stump':
+            img, anc, _ = P4.stump4(D, seed=seed)
+            self.add(img, anc, (x, y), 70, 0.35)
+        elif kind in BIOME['recipes']:
+            from scripts.art.native import screen as SN
+            img, anc, a, ex = SN.sprite(kind, BIOME['recipes'][kind], seed)
+            if ex is not None:                      # a tree: its crown's shadow on the ground
+                fx, fy = x / D, y / D
+                m = SN.tree_shadow_hd(fx, fy, ex, TW, TH)
+                GD.shadow(self.cv, m, core=1, rim=0, fade=True)
+                # what falls from the crown lies in its shade: needles or leaves, twigs
+                GD.litter(self.cv, m & GD.grassy(self.cv), np.random.default_rng(seed), 1.2)
+                GD.contact(self.cv, x, y, ex['tw'] * D * 1.6, depth=0.35)
+                self.sprites.append((img.convert('RGBA'), anc, (x, y)))
+            else:
+                bw = (np.asarray(img)[..., 3] > 0).any(0).sum()
+                self.add(img, anc, (x, y), bw * 0.9, 0.3)
+        else:
+            raise KeyError(kind)
+
+
+def rect_mask(x0, y0, x1, y1):
+    m = np.zeros((TH, TW), bool)
+    m[max(0, y0):y1, max(0, x0):x1] = True
+    return m
+
+
+# ------------------------------------------------------------------------------------------------
+# the swatches
+# ------------------------------------------------------------------------------------------------
 def sw_plateau():
-    cv = lawn(11)
-    top = cells([[0, 0, 160, 40], [0, 40, 64, 16], [104, 40, 32, 8]])        # unions at 1, 2 and 4+ cells
-    tm = SG.shape(top, TH, TW, 301, r_out=0.65, r_in=0.4)
     rng = np.random.default_rng(3)
-    SG.ledge(cv, tm, 12, rng, seed=301)
-    SG.breakers(cv, tm, rng, 0.12, kind='lip')
-    # steps cut into the face: three cells wide, four treads
+    cv = GD.lawn(TH, TW, 11)
+    top_plan = cells([[0, 0, 160, 40], [0, 40, 64, 16], [104, 40, 32, 8]])     # unions at 1, 2 and 4+ cells
+    tm = SG.shape(top_plan, TH, TW, 301, r_out=0.65, r_in=0.4)
+    top = GD.lawn(TH, TW, 31, base=3, lush=0.9)
+    cv[tm] = top[tm]
+    # the path climbs to the steps from the south; the steps are cut into the face, head flush
     x0, x1 = int(72 * D), int(96 * D)
-    ys = np.nonzero(tm[:, (x0 + x1) // 2])[0]
-    y_top = int(ys.max()) + 1
-    SG.steps(cv, x0, x1, y_top - 2, y_top + int(12 * D), 4, rng)
-    path = SG.route_shape([[84, 120], [84, 52]], 3, TH, TW, seed=5) & ~tm
-    path[:y_top + int(12 * D)] = False
-    dirt_fill(cv, path, 21)
-    SG.path_rim(cv, path, turf(cv) & ~path)
-    sp = props_row([('well', *g(15, 12), 3), ('bench', *g(3, 3), 41), ('rock', *g(2, 10), 31), ('rock', *g(17, 3), 33)])
-    return cv, sp, 'grass plateau, earth ledge, steps cut in the face'
+    col = tm[:, (x0 + x1) // 2]
+    y_rim = int(np.nonzero(col)[0].max()) + 1
+    face_h = int(16 * D)
+    path = SG.route_shape([[84, 120], [84, 60]], 3, TH, TW, seed=5)
+    path[:y_rim + face_h] = False
+    path |= rect_mask(x0, y_rim + face_h - 2, x1, y_rim + face_h + 6) & ndi.binary_dilation(path, iterations=8)
+    GD.dirt(cv, path, 21, ruts=None, cell=13)
+    face, items, lip = GD.ledge(cv, tm, face_h, rng, seed=301, kind='earth', shadow_px=15)
+    cv_turf = GD.grassy(cv) & ~path
+    GD.sunken_edge(cv, path, cv_turf & ~face, rng, stones=0.6)
+    GD.log_steps(cv, x0, x1, y_rim - 1, y_rim + face_h + 2, 4, rng)
+    s = Swatch(cv, 'grass plateau: earth ledge 16 world px, log steps cut in the face')
+    for img, anc, foot in items:
+        if not (x0 - 20 < foot[0] < x1 + 20):
+            s.add(img, anc, foot, (np.asarray(img)[..., 3] > 0).any(0).sum() * 0.9, 0.45)
+    # plants that cross the rim and stand at the foot (eastward-edges.md 8: one per 16 to 32 cells of rim)
+    s.prop('bush', int(14 * D), y_rim + 2, 3)
+    s.prop('fern', int(124 * D), int(58 * D), 4)
+    s.prop('holly', int(150 * D), int(44 * D), 5)
+    s.prop('rock', int(40 * D), int(37 * D), 33)
+    s.prop('well', *g(17, 14), 3)
+    s.prop('bench', *g(3, 3), 41)
+    s.prop('rock', *g(4, 13), 31)
+    s.prop('fern', int(62 * D), int(76 * D), 9)
+    return s
 
 
 def sw_paths():
-    cv = lawn(12)
-    m = SG.route_shape([[0, 60], [100, 60], [100, 120]], 3, TH, TW, seed=7)          # a run and a bend
-    m |= SG.route_shape([[100, 60], [100, 0]], 2, TH, TW, seed=8)                   # a T: the side path two cells
-    dirt_fill(cv, m, 22)
-    SG.path_rim(cv, m, turf(cv) & ~m)
-    SG.breakers(cv, m, np.random.default_rng(9), 0.15, kind='path', turf=turf(cv))
-    sp = props_row([('bench', *g(4, 5), 41), ('rock', *g(15, 12), 35), ('well', *g(16, 4), 4)])
-    return cv, sp, 'path: straight run, bend, T-junction, constant widths'
+    rng = np.random.default_rng(9)
+    cv = GD.lawn(TH, TW, 12)
+    plan = SG.cells_route([[0, 60], [100, 60], [100, 120]], 3, TH, TW)                # a run and a bend
+    plan |= SG.cells_route([[100, 60], [100, 0]], 2, TH, TW)                           # a T: the side path two cells
+    m = SG.shape(plan, TH, TW, 7, r_out=SG.R_TURN_OUT, r_in=SG.R_TURN_IN)
+    turf = GD.grassy(cv) & ~m
+    GD.dirt(cv, m, 22, ruts=17)
+    GD.sunken_edge(cv, m, turf, rng)
+    s = Swatch(cv, 'path: straight run, bend, T-junction, constant widths (3 and 2 cells)')
+    s.prop('bench', *g(4, 5), 41)
+    s.prop('rock', *g(15, 12), 35)
+    s.prop('well', *g(16, 4), 4)
+    s.prop('holly', *g(2, 13), 6)
+    s.prop('fern', *g(9, 13), 5)
+    return s
 
 
 def sw_pond():
-    cv = lawn(13)
-    pond = SG.shape(cells([[32, 32, 88, 48], [48, 24, 56, 72], [112, 48, 16, 24]]), TH, TW, 401, r_out=1.4, r_in=0.8)
-    WA.paint_hd(cv, pond)
-    sp = props_row([('rock', *g(4, 5), 36), ('rock', *g(15, 3), 37), ('bench', *g(3, 13), 42), ('well', *g(17, 13), 5)])
-    return cv, sp, 'pond: a rounded union of cells'
+    cv = GD.lawn(TH, TW, 13)
+    pond = SG.shape(cells([[32, 32, 88, 48], [48, 24, 56, 72], [112, 48, 16, 24]]), TH, TW, 401, r_out=1.0, r_in=0.6)
+    items = GD.water(cv, pond, 401, bank_h=11, lilies=0.35, stones=0.6)
+    s = Swatch(cv, 'pond: a rounded union of cells, earth bank, stones, lilies')
+    for it in items:
+        s.add(*it)
+    s.prop('rock', *g(4, 5), 36)
+    s.prop('fern', int(38 * D), int(28 * D), 7)
+    s.prop('bush', int(136 * D), int(44 * D), 8)
+    s.prop('bench', *g(3, 13), 42)
+    s.prop('well', *g(17, 13), 5)
+    return s
 
 
 def sw_river():
-    cv = lawn(14)
+    cv = GD.lawn(TH, TW, 14)
     river = SG.shape(SG.cells_route([[0, 48], [72, 48], [72, 96], [160, 96]], 3, TH, TW) |
                      SG.cells_route([[0, 48], [40, 48]], 4, TH, TW), TH, TW, 402, r_out=1.0, r_in=0.6)
-    WA.paint_hd(cv, river)
+    items = GD.water(cv, river, 402, bank_h=10, flow='auto', stones=0.8)
     from scripts.art.native import screen as SN
-    SN.footbridge_hd(cv, 120, 16, 84, 112, river)
-    sp = props_row([('rock', *g(3, 2), 38), ('bench', *g(14, 4), 43), ('well', *g(3, 13), 6), ('rock', *g(9, 13), 39)])
-    return cv, sp, 'river: cell plan, wide rounded bends, width 3 to 4 cells, bridge on footings'
+    SN.footbridge_hd(cv, 108, 16, 84, 112, river)
+    s = Swatch(cv, 'river: cell plan, wide rounded bends, 3 to 4 cells, bridge on footings')
+    for it in items:
+        s.add(*it)
+    s.prop('rock', *g(3, 2), 38)
+    s.prop('bench', *g(14, 4), 43)
+    s.prop('well', *g(3, 13), 6)
+    s.prop('fern', *g(9, 13), 39)
+    s.prop('bush_c', int(146 * D), int(44 * D), 4)
+    return s
 
 
 def sw_cliff():
-    cv = lawn(15)
-    top = cells([[0, 0, 96, 32], [0, 32, 48, 32], [96, 0, 64, 16]])
-    tm = SG.shape(top, TH, TW, 303, r_out=0.25, r_in=0.15)
     rng = np.random.default_rng(4)
-    SG.ledge(cv, tm, 32, rng, seed=303, earth='crag', roots=False)
-    SG.breakers(cv, tm, rng, 0.12, kind='lip')
-    sp = props_row([('rock', *g(9, 11), 40), ('rock', *g(17, 9), 44), ('bench', *g(13, 13), 44)])
-    return cv, sp, 'cliff corner: outer and inner, a rock face 32 world px'
+    cv = GD.lawn(TH, TW, 15)
+    top_plan = cells([[0, 0, 96, 32], [0, 32, 48, 24], [96, 0, 64, 16]])
+    tm = SG.shape(top_plan, TH, TW, 303, r_out=0.25, r_in=0.15)
+    top = GD.lawn(TH, TW, 35, lush=0.9)
+    cv[tm] = top[tm]
+    face, items, lip = GD.ledge(cv, tm, int(32 * D), rng, seed=303, kind='rock', earth='crag', shadow_px=18)
+    s = Swatch(cv, 'cliff corner: outer and inner, a rock face 32 world px')
+    for img, anc, foot in items:
+        s.add(img, anc, foot, (np.asarray(img)[..., 3] > 0).any(0).sum() * 0.9, 0.45)
+    s.prop('rock', *g(9, 11), 40)
+    s.prop('rock', *g(17, 9), 44)
+    s.prop('fern', int(52 * D), int(89 * D), 3)
+    s.prop('fern', int(150 * D), int(51 * D), 8)
+    s.prop('holly', int(14 * D), int(28 * D), 7)
+    s.prop('bench', *g(13, 13), 44)
+    return s
 
 
 def sw_beds():
-    cv = lawn(16)
-    frame = SG.shape(cells([[24, 24, 112, 56]]), TH, TW, 404, r_out=0.15, r_in=0.1, amp=(0.5, 1.0))
-    cv[frame] = C('path_warm', 3)                                    # the raised soil rim (13)
-    inner = SG.shape(cells([[32, 32, 96, 40]]), TH, TW, 409, r_out=0.15, r_in=0.1, amp=(0, 0))
-    cv[inner] = C('earth', 2)
-    cv[frame & ~inner & ~np.roll(frame, 1, 0)] = C("path_warm", 4)
-    cv[inner & ~np.roll(inner, 1, 0)] = C('earth', 0)
-    for cy in range(4, 10):
-        for cx in range(4, 17):
-            if cy in (4, 9) or cx in (4, 16):
-                continue
-            y0, x0 = int((cy * 8 + 1) * D), int((cx * 8 + 1) * D)
-            y1, x1 = int((cy * 8 + 7) * D), int((cx * 8 + 7) * D)
-            yy, xx = np.mgrid[y0:y1, x0:x1]
-            u, v = (xx - x0) / (x1 - x0) * 2 - 1, (yy - y0) / (y1 - y0) * 2 - 1
-            mound = (np.abs(u) ** 3 + np.abs(v) ** 3) <= 1
-            t = np.where(u + v < -0.5, 4, np.where(u + v < 0.6, 3, 2))
-            sub = cv[y0:y1, x0:x1]
-            sub[mound] = (FI['earth_warm'] * 8 + t)[mound]
-    SG.path_rim(cv, frame, turf(cv) & ~frame)
-    sp = props_row([('well', *g(2, 13), 7), ('bench', *g(16, 13), 45), ('rock', *g(18, 2), 41)])
-    return cv, sp, 'garden beds: a frame of cells, a mound per cell'
+    rng = np.random.default_rng(6)
+    cv = GD.lawn(TH, TW, 16)
+    frame = SG.shape(cells([[32, 24, 96, 48]]), TH, TW, 404, r_out=0.3, r_in=0.1, amp=(0.0, 0.0))
+    frame &= ~SG.shape(cells([[40, 32, 80, 32]]), TH, TW, 404, r_out=0.0, r_in=0.0, amp=(0.0, 0.0)) | frame
+    # the bed sits on a worn margin of earth where the gardener kneels
+    GD.bed(cv, frame, rng, (5, 4, 15, 8), CELL, kinds=('rosette', 'cabbage', 'seedling', 'cabbage'))
+    GD.weeds_at_foot(cv, frame, rng, rate=0.06)
+    s = Swatch(cv, 'garden bed: a raised frame of cells, a rounded plot per cell')
+    s.prop('well', *g(17, 13), 7)
+    s.prop('bench', *g(4, 14), 45)
+    s.prop('rock', *g(18, 2), 41)
+    s.prop('holly', int(16 * D), int(30 * D), 9)
+    s.prop('fern', int(146 * D), int(70 * D), 6)
+    return s
 
 
 def sw_square():
-    cv = lawn(17)
-    pave = SG.shape(cells([[32, 16, 96, 72]]), TH, TW, 405, r_out=0.15, r_in=0.1, amp=(0, 0))
     rng = np.random.default_rng(5)
-    y = 0
-    flags = np.full(cv.shape, C('stone_warm', 3), np.int32)
-    while y < TH:
-        rh = int(rng.uniform(2.4, 3.2) * D)
-        x = -int(rng.integers(0, int(4 * D)))
-        while x < TW:
-            L = int(rng.uniform(3.5, 6.0) * D)
-            V.blk(flags, x, y, x + L - 1, y + rh - 1, ('stone_warm', 'stone', 'stone_warm')[int(rng.integers(0, 3))],
-                  int(rng.choice([3, 3, 4, 2])), cut=1)
-            x += L
-        y += rh
-    flags[flags < 0] = C('stone', 1)
-    cv[pave] = flags[pave]
-    edge = pave & ~ndi.binary_erosion(pave, iterations=int(1.2 * D))
-    cv[edge] = C('stone_warm', 4)
-    cv[edge & ~np.roll(pave, -1, 0)] = C('stone', 2)
+    cv = GD.lawn(TH, TW, 17)
+    pave = SG.shape(cells([[32, 16, 96, 72]]), TH, TW, 405, r_out=0.15, r_in=0.1, amp=(0, 0))
     path = SG.route_shape([[80, 88], [80, 120]], 3, TH, TW, seed=11) & ~pave
-    dirt_fill(cv, path, 23)
-    SG.path_rim(cv, path, turf(cv) & ~path)
-    sp = props_row([('well', *g(10, 6), 8), ('bench', *g(6, 3), 46), ('bench', *g(14, 3), 47), ('rock', *g(2, 12), 42)])
-    return cv, sp, 'paved square meeting grass and a dirt path'
+    turf = GD.grassy(cv) & ~path & ~pave
+    GD.dirt(cv, path, 23, ruts=17)
+    face = GD.paving(cv, pave, rng)
+    path &= ~face
+    GD.sunken_edge(cv, path, turf & ~face & ~pave, rng)
+    GD.weeds_at_foot(cv, pave, rng)
+    s = Swatch(cv, 'paved square: flags, a kerb with a low face, grass and a dirt path')
+    s.prop('well', *g(10, 6), 8)
+    s.prop('bench', *g(6, 3), 46)
+    s.prop('bench', *g(14, 3), 47)
+    s.prop('rock', *g(2, 12), 42)
+    s.prop('holly', int(16 * D), int(36 * D), 4)
+    s.prop('fern', int(140 * D), int(100 * D), 2)
+    return s
 
 
 def sw_forest():
-    cv = lawn(18, fam='leaf', base=2)
-    litter = SG.soft_patches(TH, TW, 418, 9.0 * D, 0.2)
-    cv[litter] = C('earth_warm', 3)
-    cv[litter & SG.soft_patches(TH, TW, 419, 4.0 * D, 0.4)] = C('earth', 2)
-    trunks = [('trunk', *g(4, 4), 11), ('trunk', *g(12, 3), 12), ('trunk', *g(8, 10), 13), ('trunk', *g(16, 11), 14)]
-    ferns = [('fern', int(rng_x * D), int(rng_y * D), s) for (rng_x, rng_y, s) in ((22, 58, 1), (118, 46, 2), (60, 100, 3), (140, 70, 4), (95, 30, 5))]
-    sp = props_row(trunks + ferns + [('rock', *g(18, 6), 43), ('bench', *g(2, 13), 48), ('well', *g(13, 14), 9)])
-    return cv, sp, 'forest floor: trunks on cells, undergrowth free'
+    rng = np.random.default_rng(18)
+    cv = GD.lawn(TH, TW, 18, fam='leaf', base=3, lush=0.7, flowers=0.1)
+    trees = [('pine', *g(3, 9), 11), ('birch', *g(10, 6), 17), ('pine', *g(17, 9), 13), ('oak', *g(13, 1), 14)]
+    from scripts.art.native import screen as SN
+    tws = {k: (BIOME['recipes'][k].get('trunk_w') or SN.tree_dims(BIOME['recipes'][k]['master'])['tw']) * D for k in ('oak', 'pine', 'beech', 'birch', 'willow', 'hollow_tree')}
+    GD.forest_floor(cv, rng, 418, feet=[(x, y, tws[k] * 0.9) for k, x, y, _ in trees])
+    trail = SG.route_shape([[0, 96], [64, 96], [64, 120]], 2, TH, TW, seed=19)
+    turf = GD.grassy(cv) & ~trail
+    GD.dirt(cv, trail, 24, fam='path', cell=12, stones=0.5)
+    GD.litter(cv, trail, rng, 0.6)
+    GD.sunken_edge(cv, trail, turf, rng, tufts=0.7)
+    s = Swatch(cv, 'forest floor: trunks on cells, roots, ferns, litter, crowns overhead')
+    # trunks on cells; their crowns fill the top of the picture, as under a canopy
+    for kind, x, y, sd in trees:
+        s.prop(kind, x, y, sd)
+    for kind, x, y, sd in trees:               # over the shadows: the roots catch the light
+        GD.roots(cv, x, y, rng, half=int(tws[kind] * 0.55), n=4 if kind != 'pine' else 3)
+    for (x, y, sd) in ((int(46 * D), int(80 * D), 1), (int(104 * D), int(66 * D), 2), (int(90 * D), int(112 * D), 3),
+                       (int(150 * D), int(108 * D), 4), (int(8 * D), int(112 * D), 5), (int(122 * D), int(86 * D), 6),
+                       (int(149 * D), int(95 * D), 8)):
+        s.prop('fern', x, y, sd)
+    s.prop('bramble', int(30 * D), int(102 * D), 7)
+    s.prop('stump', *g(16, 13), 61)
+    s.prop('rock', *g(6, 11), 43)
+    img, anc, _ = P4.mushrooms_hd(D, n=5, seed=4, kind='brown')
+    s.add(img, anc, (int(48 * D), int(70 * D)), 18, 0.3)
+    img, anc, _ = P4.mushrooms_hd(D, n=3, seed=5, kind='red')
+    s.add(img, anc, (int(136 * D), int(116 * D)), 14, 0.3)
+    return s
 
 
 def sw_shore():
-    cv = lawn(19)
-    sand = SG.shape(cells([[0, 56, 160, 64], [56, 40, 64, 16]]), TH, TW, 406, r_out=0.15, r_in=0.1, amp=(0.5, 1.0))
-    cv[sand] = C('sand', 3)
-    p = SG.soft_patches(TH, TW, 407, 10.0 * D, 0.15) & sand
-    cv[p] = sib(cv[p], 'warm')
+    rng = np.random.default_rng(20)
+    cv = GD.lawn(TH, TW, 19)
+    sandm = SG.shape(cells([[0, 56, 160, 64], [56, 40, 64, 16]]), TH, TW, 406, r_out=0.15, r_in=0.1, amp=(0.5, 1.0))
     sea = SG.shape(cells([[0, 88, 160, 32], [24, 80, 48, 8]]), TH, TW, 408, r_out=0.65, r_in=0.4)
-    WA.paint_hd(cv, sea)
-    SG.path_rim(cv, sand & ~sea, turf(cv))
-    sp = props_row([('rock', *g(15, 7), 45), ('bench', *g(4, 3), 49), ('well', *g(16, 3), 10)])
-    return cv, sp, 'grass to sand to water: soft, low-contrast transitions'
+    turf = GD.grassy(cv) & ~sandm
+    GD.sand(cv, sandm, 406)
+    GD.shore(cv, sandm, sea, rng, 408)
+    GD.frayed_edge(cv, sandm, turf, rng)
+    s = Swatch(cv, 'grass to sand to sea: frayed, low-contrast transitions, wet sand, swash')
+    s.prop('rock', *g(15, 7), 45)
+    s.prop('bench', *g(4, 3), 49)
+    s.prop('well', *g(16, 3), 10)
+    s.prop('rock', int(40 * D), int(100 * D), 46)
+    s.prop('holly', int(70 * D), int(22 * D), 5)
+    return s
 
 
 SWATCHES = (sw_plateau, sw_paths, sw_pond, sw_river, sw_cliff, sw_beds, sw_square, sw_forest, sw_shore)
-GRIDDED = (1, 3)                   # the path and the river again, with the cell grid over them
+GRIDDED = (0, 1, 3)                # the plateau, the paths and the river again, with the cell grid over them
 
 
 def render(fn):
-    cv, sprites, cap = fn()
-    V.tidy(cv, passes=1, keep=cv % 8 >= 6)
-    im = Image.fromarray(to_rgba(cv), 'RGBA')
-    for img, anc, (fx, fy) in sorted(sprites, key=lambda s: s[2][1]):
-        im.alpha_composite(img.convert('RGBA'), (int(round(fx - anc[0])), int(round(fy - anc[1]))))
-    return im, cap
+    s = fn()
+    im = Image.fromarray(to_rgba(s.cv), 'RGBA')
+    for img, anc, (fx, fy) in sorted(s.sprites, key=lambda t: t[2][1]):
+        im.alpha_composite(img, (int(round(fx - anc[0])), int(round(fy - anc[1]))))
+    return im, s.cap
 
 
 def grid_overlay(im):
@@ -280,28 +339,29 @@ def grid_overlay(im):
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument('out')
-    ap.add_argument('--eastward', help='folder of Eastward native frames (local only)')
+    ap.add_argument('--only', type=int, nargs='*')
     a = ap.parse_args(argv)
     os.makedirs(a.out, exist_ok=True)
-    tiles = [render(fn) for fn in SWATCHES]
+    which = a.only if a.only else range(len(SWATCHES))
+    tiles = {}
+    for i in which:
+        tiles[i] = render(SWATCHES[i])
+        tiles[i][0].save(os.path.join(a.out, f'swatch_{i}_{SWATCHES[i].__name__[3:]}.png'))
+    if a.only:
+        return 0
     sheet = Image.new('RGB', (1920, 1080), (24, 24, 28))
     d = ImageDraw.Draw(sheet)
-    for i, (im, cap) in enumerate(tiles):
+    for i, (im, cap) in tiles.items():
         x, y = (i % 4) * TW, (i // 4) * TH
-        if y + TH > 1080:
-            break
         sheet.paste(im.convert('RGB'), (x, y))
         d.rectangle([x + 2, y + 2, x + 8 + 6 * len(cap), y + 14], fill=(0, 0, 0))
         d.text((x + 5, y + 3), cap, fill=(255, 255, 255))
-    # the last cells of the sheet: the grid over the plateau, the paths and the river, so the plans read
-    for j, idx in enumerate((0,) + GRIDDED):
+    for j, idx in enumerate(GRIDDED):
         gx, gy = (1 + j) * TW, 2 * TH
         sheet.paste(grid_overlay(tiles[idx][0]).convert('RGB'), (gx, gy))
-        d.rectangle([gx + 2, gy + 2, gx + 200, gy + 14], fill=(0, 0, 0))
-        d.text((gx + 5, gy + 3), 'the same, with the 24 px cell grid', fill=(255, 255, 255))
+        d.rectangle([gx + 2, gy + 2, gx + 230, gy + 14], fill=(0, 0, 0))
+        d.text((gx + 5, gy + 3), f'{SWATCHES[idx].__name__[3:]}, with the 24 px cell grid', fill=(255, 255, 255))
     sheet.save(os.path.join(a.out, 'softgrid_swatches_1080p.png'))
-    for i, (im, cap) in enumerate(tiles):
-        im.save(os.path.join(a.out, f'swatch_{i}_{SWATCHES[i].__name__[3:]}.png'))
     print('wrote', os.path.join(a.out, 'softgrid_swatches_1080p.png'))
     return 0
 
