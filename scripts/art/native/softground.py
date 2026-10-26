@@ -205,7 +205,7 @@ def flower(cv, y, x, kind, ok=None):
 # lawn
 # ------------------------------------------------------------------------------------------------
 def lawn(H: int, W: int, seed: int, fam: str = 'grass', base: int = 3, lush: float = 1.0,
-         flowers: float = 1.0, grain: float = 1.0) -> np.ndarray:
+         flowers: float = 1.0, grain: float = 1.0, mottle: float = 3.0) -> np.ndarray:
     """Eastward's lawn at our density (shots 12, 13, 37): one calm field tone; large soft blotches
     (26 to 57 px) a step darker in the cool sibling and a few lit ones in the warm sibling, their
     edges frayed by blades; tufts in loose clumps, dense where the turf is long and sparse between
@@ -231,7 +231,7 @@ def lawn(H: int, W: int, seed: int, fam: str = 'grass', base: int = 3, lush: flo
     damp = ndi.gaussian_filter(dark.astype(float), 5.0)
     # a low mottle: small clumps (3 to 6 px) of the sibling hue at the same tone, about a third of
     # the field, so the turf is never one flat colour yet stays calm (its value hardly moves)
-    mot = fbm(H, W, 5.0, seed + 21) > 0.53
+    mot = fbm(H, W, mottle, seed + 21) > 0.53
     swap = np.where(dark, C(fam, base), np.where(lit, C(fam, base), C(cool, base)))
     sel = mot & ((cv == C(fam, base)) | (cv == C(cool, base)) | (cv == C(warm, base)))
     cv[sel] = swap[sel]
@@ -612,7 +612,7 @@ def ledge(cv: np.ndarray, top: np.ndarray, face_h: int, rng, seed: int = 0, kind
     # or east, its wall shows as a narrow band seen almost edge-on: along the top's west and east
     # edges (over the lower ground, or over the face of a lower part at an inner corner) and past
     # the face's ends, down to its foot. A wall facing west is lit, one facing east in shade.
-    sw = 5
+    sw = 6
     row = np.ones((1, 2 * sw + 1), bool)
     face0 = face.copy()
     near_top = ndi.binary_dilation(top, structure=row) & ~top
@@ -669,24 +669,48 @@ def ledge(cv: np.ndarray, top: np.ndarray, face_h: int, rng, seed: int = 0, kind
     ys, xs = np.nonzero(face_b & (db2 == 2))
     for k in rng.permutation(len(ys))[: len(ys) // 16]:
         pebble(cv, int(ys[k]) - 1, int(xs[k]), rng, big=rng.random() < 0.3, ok=face | lower)
-    # the side walls: narrow clods stood on end (the face's lumps wrapping round the corner in
-    # perspective), lit on west-facing walls, a step or two darker on east-facing ones, the darkest
-    # line of the picture broken along the outer edge, and the wall's foot darker still
+    # the side walls, 6 px across (eastward-edges.md 3.3, Eastward 12 and 39): next to the top the
+    # grass lip turns down over the corner (2 px of the top's own turf, its outer texel a tone
+    # down); then the wall: lit in two or three columns when it faces west, a step or two darker
+    # when it faces east, seamed across every few px like the face's clods; the outer edge the
+    # darkest line of the picture, broken; at its foot the face's clods turn the corner
     if side.any():
-        tmp = cv.copy()
-        clods(tmp, side, rng, earth, size=(4, 7), ratio=1.5, gap_t=1, lit_t=4, seed=seed + 3, spacing=0.8,
-              fams=(e0, ew, ec) if rock else (ew, 'crag_warm', 'crag_cool'))
-        cv[side] = tmp[side]
-        shift(cv, side & ~west_side, -2)
-        shift(cv, side & west_side & (cv % 8 < 5), 0)
-        outer = side & ndi.binary_dilation(lower | (face & ~ndi.binary_dilation(top, structure=row)), structure=np.ones((1, 3), bool))
-        outer &= nz(H, W, 4.0, seed + 11) > 0.28
+        hd = np.zeros((H, W), np.int32)
+        src = np.full((H, W), -1, np.int32)
+        for k in range(sw + 1, 0, -1):
+            for d in (k, -k):
+                Rk = np.where(raised_for == 1, right(R_all, d), right(top, d))
+                hit = side & Rk
+                hd[hit] = k
+                sh_ = np.roll(cv, -d, axis=1)
+                tk = right(top, d)
+                src[hit & tk] = sh_[hit & tk]
+        lipc = side & (hd <= 2) & (src >= 0) & grassy(np.where(src >= 0, src, 0))
+        cv[lipc] = src[lipc]
+        shift(cv, lipc & (hd == 2), -1)
+        body = side & ~lipc
+        seam = (((yy + (xx // 3)) % 6) == 0) & (nz(H, W, 3.0, seed + 12) > 0.3)
+        wl = body & west_side
+        el = body & ~west_side
+        cv[wl] = np.where(hd[wl] <= 4, C(ew, 4), C(e0, 3))
+        cv[wl & (hd == 3)] = C(ew, 3)
+        cv[el] = np.where(hd[el] <= 4, C(ec, 2), C(ec, 1))
+        cv[el & (hd == 3)] = C(e0, 2)
+        cv[body & seam] = step(cv[body & seam], -1)
+        cv[body & seam & ~np.roll(seam, 1, 0) & west_side] = step(cv[body & seam & ~np.roll(seam, 1, 0) & west_side], 0)
+        outer = side & (hd >= sw) & (nz(H, W, 4.0, seed + 11) > 0.25)
+        outer |= side & ndi.binary_dilation(lower, structure=np.ones((1, 3), bool)) & (nz(H, W, 4.0, seed + 11) > 0.25)
         cv[outer] = C(ec, 0)
-        # the column of the wall right against the top: its rim, a lit texel on west walls
-        rim_c = side & ndi.binary_dilation(top, structure=np.ones((1, 3), bool))
-        cv[rim_c & west_side] = C(ew, 4)
-        cv[rim_c & ~west_side] = C(ec, 1)
-        shift(cv, side & (runs_from_bottom(side) <= 3), -1)
+        # the wall's foot: darker, and the face's clods turning the corner over it
+        fb_ = side & (runs_from_bottom(side) <= 4)
+        shift(cv, fb_, -1)
+        corner = (side | face0) & ndi.binary_dilation(side & (runs_from_bottom(side) <= 9), iterations=4) & \
+            (runs_from_bottom(side | face0) <= 9)
+        tmp = cv.copy()
+        clods(tmp, corner, rng, earth, size=(6, 9), ratio=0.8, gap_t=1, lit_t=4, seed=seed + 3,
+              fams=(e0, ew, ec) if rock else (ew, 'crag_warm', 'crag_cool'))
+        cv[corner] = tmp[corner]
+        shift(cv, corner & ~west_side & side, -1)
     # the grass lip: top's codes continue down over the overhang, its last row dark, tufts hanging
     colfill = np.where(top, cv, -1)
     for y in range(1, H):
@@ -965,7 +989,7 @@ def water(cv: np.ndarray, m: np.ndarray, seed: int, bank_h: int = 7, flow=None, 
     # bank face itself turns the corner, so the bend joins without a seam.
     westl = np.zeros((H, W), bool)
     eastl = np.zeros((H, W), bool)
-    for k in range(1, 4):
+    for k in range(1, 6):
         westl |= right(land, k)
         eastl |= right(land, -k)
     rbw = runs_from_top(wat)
@@ -974,9 +998,13 @@ def water(cv: np.ndarray, m: np.ndarray, seed: int, bank_h: int = 7, flow=None, 
     wb = vert & westl
     eb = vert & eastl
     out[wb] = C('earth', 2)
-    out[wb & right(land, 1)] = C('earth', 1)
+    out[wb & ~right(land, 4) & right(land, 3)] = C('earth', 1)
+    out[wb & right(land, 1)] = step(np.where(right(land, 1), np.roll(cv, 1, axis=1), C('grass', 2)), -1)[wb & right(land, 1)]
     out[eb] = C('earth_warm', 3)
-    out[eb & right(land, -1)] = C('earth_warm', 4)
+    out[eb & right(land, -2)] = C('earth_warm', 4)
+    out[eb & right(land, -1)] = np.roll(cv, -1, axis=1)[eb & right(land, -1)]
+    seam_ = (((np.mgrid[0:H, 0:W][0]) % 5) == 0)
+    out[(wb | eb) & seam_ & ~right(land, 1) & ~right(land, -1)] = step(out[(wb | eb) & seam_ & ~right(land, 1) & ~right(land, -1)], -1)
     for b_, d_ in ((wb, 1), (eb, -1)):
         wl_ = wat & ~vert & right(b_, d_)
         out[wl_] = C(fam, 5)

@@ -290,7 +290,7 @@ def sw_square():
 
 def sw_forest():
     rng = np.random.default_rng(18)
-    cv = GD.lawn(TH, TW, 18, fam='leaf', base=3, lush=0.6, flowers=0.1, grain=0.15)
+    cv = GD.lawn(TH, TW, 18, fam='leaf', base=3, lush=0.6, flowers=0.1, grain=0.15, mottle=5.0)
     trees = [('pine', *g(3, 9), 11), ('birch', *g(10, 6), 17), ('pine', *g(17, 9), 13), ('oak', *g(13, 1), 14)]
     from scripts.art.native import screen as SN
     tws = {k: (BIOME['recipes'][k].get('trunk_w') or SN.tree_dims(BIOME['recipes'][k]['master'])['tw']) * D for k in ('oak', 'pine', 'beech', 'birch', 'willow', 'hollow_tree')}
