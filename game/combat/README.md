@@ -310,3 +310,25 @@ and threshold hits, airborne cases, defeat/power cleanup, capped event history, 
 ordering, decoys and strict contact/expiry bounds. Regenerate using
 `node game/test/combat/build_defence_oracle.mjs /path/to/original-modules.json`.
 This remains pure canonical simulation; Godot Player/health/contact attachment is unfinished.
+
+## Powered-form exit checkpoint
+
+`AbilityFormExit.finish` ports original X on an independent canonical snapshot. It clears
+Rook's turrets/designation on either exit. Ashe's normal living exit sets power to zero
+before its forward finisher, temporarily uses current aim rather than the committed action
+direction, damages the captured distance-ordered beam targets, restores the action direction,
+then creates the capped/clamped flame patch. Interrupted/dead exits never launch that finisher.
+Misses, serial/effect order and the 80-event cap match the reference. Other fields and shots
+survive normal exit, as in X; this is not generic effect deletion or defeat cleanup.
+
+The caller owns expiry detection and exactly-once invocation, including the later Player
+phase's threshold/order. This transition does not advance clocks, attach Player, apply world
+HP or replace the existing defence reducer's interrupted-death path. Stateful releases,
+fixed-step dispatcher/contact and Player integration remain unfinished. Keep DRAFT.
+
+`form-exit-oracle.json` has130 whole-state comparisons against hash-verified unmodified X
+and its real S/A/B/Y helpers. Covers all14 kits, both exit reasons, living/dead players,
+Ashe cardinal/diagonal aim, lethal/immortal targets, beam boundaries, field/event caps and
+misses. Regenerate with `node game/test/combat/build_form_exit_oracle.mjs /path/to/original-modules.json`.
+Exact IEEE754 fixture numbers and 1e-6 comparisons follow the existing snapshot suites.
+Full npm verify/art/hosted/rendered/native/device validation remains pending.
