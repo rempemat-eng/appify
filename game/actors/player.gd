@@ -73,6 +73,11 @@ func _ready() -> void:
 	hitbox.monitoring = false
 	set_character(character)
 
+func _exit_tree() -> void:
+	# Scene removal/reparenting must not leave presentation callbacks on a departed actor.
+	if action_driver != null:
+		action_driver.cancel("actor_exited_tree")
+
 ## Swaps the body to another cast member (keeps position, HP and facing). False if unknown.
 func set_character(id: String) -> bool:
 	if hp <= 0 or is_rolling() or is_swinging() or is_shooting() or (action_driver != null and action_driver.is_busy()):

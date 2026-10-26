@@ -14,6 +14,29 @@ var _requests := {"primary": false, "secondary": false, "special": false}
 var _mover := Callable()
 var _requested_aim := Vector2.ZERO
 var last_error := ""
+var _presentation: AbilityContactConsumer = null
+
+## Bind explicitly supplied art clocks and display callbacks to this driver only.
+## A rejected replacement preserves the existing binding. No scene enables this.
+func bind_presentation(provider: Callable, draw: Callable, contact: Callable) -> bool:
+	if not _enabled:
+		return false
+	var candidate := AbilityContactConsumer.new()
+	if not candidate.configure(provider, draw, contact):
+		return false
+	clear_presentation()
+	_presentation = candidate
+	player_phase_observed.connect(_presentation.observe)
+	return true
+
+func clear_presentation() -> void:
+	if _presentation == null:
+		return
+	var old := _presentation
+	_presentation = null
+	old.cancel()
+	if player_phase_observed.is_connected(old.observe):
+		player_phase_observed.disconnect(old.observe)
 
 func configure(source: Dictionary, canonical_origin_in_actor_texels: Vector2) -> bool:
 	if source.get("mode") not in ["encounter", "practice"] or not source.get("player") is Dictionary:
@@ -26,6 +49,7 @@ func configure(source: Dictionary, canonical_origin_in_actor_texels: Vector2) ->
 		return false
 	if not is_finite(canonical_origin_in_actor_texels.x) or not is_finite(canonical_origin_in_actor_texels.y):
 		return false
+	clear_presentation() # a new snapshot needs a fresh, explicit presentation contract
 	_state = source.duplicate(true)
 	_origin = canonical_origin_in_actor_texels
 	_scale = float(AbilityCatalogue.units().canonical_to_actor)
@@ -58,6 +82,7 @@ func request(action: String, direction: Vector2) -> bool:
 
 func cancel(reason: String) -> void:
 	_enabled = false
+	clear_presentation()
 	_clear_requests()
 	_mover = Callable()
 	last_error = reason
@@ -92,6 +117,8 @@ func tick(controls: Dictionary, context: Dictionary, delta: float) -> void:
 		_clear_requests()
 
 func _resolve_position(x: float, y: float) -> Dictionary:
+	if not _enabled or not _mover.is_valid():
+		return {} # a drawing/contact callback can detach the actor during this fixed step
 	var target := _origin + Vector2(x, y) * _scale
 	var actual: Variant = _mover.call(target)
 	if not actual is Vector2 or not is_finite(actual.x) or not is_finite(actual.y):
@@ -104,4 +131,5 @@ func _clear_requests() -> void:
 	_requested_aim = Vector2.ZERO
 
 func _observe_player(before: Dictionary, after: Dictionary, delta: float) -> void:
-	player_phase_observed.emit(before, after, delta)
+	if _enabled:
+		player_phase_observed.emit(before, after, delta)

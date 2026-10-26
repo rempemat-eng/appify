@@ -646,3 +646,25 @@ The tests use explicit synthetic approved-clock contracts, not a claim that A/J'
 schedules or CastSprite bindings have been integrated. Next: lifecycle/actor presentation binding,
 support/airborne and powered/empty/exit forms, then owner-agreed C61/world HP/cover/input/dodge
 integration. No CastSprite, art, enemy, world, save, package or progression change in this step.
+
+## Managed presentation lifecycle
+
+`AbilityArenaDriver.bind_presentation(provider, draw, contact)` now owns the optional consumer's
+signal connection. Call it only after configuring the canonical snapshot. The provider still
+supplies explicit approved per-drawing durations and exact authored variants; this API never
+chooses a production clock or attaches a scene. Invalid callback replacements leave the old
+binding intact. A valid replacement disconnects and cancels its predecessor, and cannot resume
+an already committed action midway through its clock.
+
+`clear_presentation()` is idempotent. Driver cancellation, character mismatch and successful
+snapshot reconfiguration clear the old binding. Player's existing reset/detach/defeat paths
+therefore clear pending contacts; leaving the scene tree now cancels the driver as well. A
+reentered actor requires explicit reconfiguration/rebinding. Cancellation from inside a drawing
+callback suppresses its contact and later phase notifications/movement callbacks in that tick.
+Inactive time freezes the sequence. No separate simulation, damage or projectile dispatch is
+introduced. Existing standalone consumer users retain their documented cancellation duty.
+
+This checkpoint tests the lifecycle with synthetic explicit schedules and real Player nodes.
+It does not bind CastSprite drawings, load A/J production schedules, handle support/airborne or
+powered/empty/exit art, or attach live-world HP/cover/input/dodge rules. Those remain the next
+integration work and owner decisions. No driver is enabled by default.
