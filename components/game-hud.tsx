@@ -141,13 +141,13 @@ export function GameHud() {
   const control = barControl(u);
   return (
     <View
+      pointerEvents="box-none"
       style={{
         position: 'absolute',
         top: insets.top + hudLayout.gap,
         left: side,
         right: side,
         zIndex: 40,
-        pointerEvents: 'box-none',
       }}
     >
       <PixelFrame
@@ -349,6 +349,7 @@ export function GameHotbar({ state, navigation }: BottomTabBarProps) {
   };
   return (
     <View
+      pointerEvents={away ? 'none' : 'box-none'}
       {...(Platform.OS === 'web' ? { inert: away } : {})}
       aria-hidden={away}
       accessibilityElementsHidden={away}
@@ -358,7 +359,6 @@ export function GameHotbar({ state, navigation }: BottomTabBarProps) {
         left: side,
         right: side,
         bottom: insets.bottom + hudLayout.gap,
-        pointerEvents: away ? 'none' : 'box-none',
       }}
     >
       <PixelFrame

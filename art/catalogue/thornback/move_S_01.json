@@ -1,0 +1,57 @@
+{
+ "id": "thornback/move_S_01",
+ "file": "art/cast/thornback/move_S_01.png",
+ "sha256": "e134321e9024e6d9d60b1488f4c6af941c390b502a3c0fb84e7d61d779051886",
+ "kind": "move_S",
+ "biome": "woodland",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  160,
+  144
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 1
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 3,
+   "tones": 28.666666666666668,
+   "shapes": 36.666666666666664
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.728,
+  "tones_ratio": 1.062,
+  "shapes_ratio": 0.728,
+  "passed": false,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    63,
+    73,
+    97,
+    139
+   ],
+   "message": "thornback/move_S_01: detail bar 0.73 of Eastward's prop band (28.7 tones, 36.7 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  }
+ ],
+ "reviewed": "2026-10-25",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}

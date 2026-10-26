@@ -1,0 +1,44 @@
+{
+ "id": "boarlet/freed_move_S_07",
+ "file": "art/cast/boarlet/freed_move_S_07.png",
+ "sha256": "217e11dec0a0fe4c41bdeea5afd73d8d9687a7f53c7922653483951217498e60",
+ "kind": "freed_move_S",
+ "biome": "woodland",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  160,
+  144
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 0
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 1,
+   "tones": 27.0,
+   "shapes": 46.0
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.913,
+  "tones_ratio": 1.0,
+  "shapes_ratio": 0.913,
+  "passed": true,
+  "group": "prop"
+ },
+ "findings": [],
+ "reviewed": "2026-10-25",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}

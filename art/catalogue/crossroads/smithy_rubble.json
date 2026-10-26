@@ -1,0 +1,81 @@
+{
+ "id": "crossroads/smithy_rubble",
+ "file": "game/zones/crossroads/art/smithy_rubble.png",
+ "sha256": "73a1fbaf4b686b0b58a8791b574b877be26b19650aecaa256d189d2377e2d459",
+ "kind": "smithy",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  126,
+  97
+ ],
+ "status": "fail",
+ "counts": {
+  "blocker": 0,
+  "fault": 1,
+  "polish": 2
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 8,
+   "tones": 22.625,
+   "shapes": 29.625
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.588,
+  "tones_ratio": 0.838,
+  "shapes_ratio": 0.588,
+  "passed": false,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "logic.scale",
+   "severity": "fault",
+   "box": [
+    0,
+    36,
+    121,
+    93
+   ],
+   "message": "crossroads/smithy_rubble: 19 world px tall (0.76 of an adult); the size guide gives 72 to 112 for a smithy (a forge or bathhouse: an arch 36 for the hearth, a chimney or roof vent)",
+   "fix": "redraw it 72 to 112 world px tall (216 to 336 texels at density 3) and stand it next to Bramble to check"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    60,
+    39,
+    120,
+    91
+   ],
+   "message": "crossroads/smithy_rubble: the stone is lit from the right (luminance rises 8 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    0,
+    36,
+    121,
+    93
+   ],
+   "message": "crossroads/smithy_rubble: detail bar 0.59 of Eastward's prop band (22.6 tones, 29.6 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  }
+ ],
+ "reviewed": "2026-10-25",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}

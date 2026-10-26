@@ -1,0 +1,69 @@
+{
+ "id": "crossroads/waystone",
+ "file": "game/zones/crossroads/art/waystone.png",
+ "sha256": "b1c917f2b9d9aaed69c055889eb30e444a1f7fa3d277873562a6368a806f8aa3",
+ "kind": "standing_stone",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  90,
+  138
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 2
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 11,
+   "tones": 16.363636363636363,
+   "shapes": 29.454545454545453
+  },
+  "band": {
+   "tones": 26.25,
+   "shapes": 61.0,
+   "boxes": 3,
+   "patches": 20
+  },
+  "ratio": 0.483,
+  "tones_ratio": 0.623,
+  "shapes_ratio": 0.483,
+  "passed": false,
+  "group": "stone"
+ },
+ "findings": [
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    25,
+    108,
+    66,
+    120
+   ],
+   "message": "crossroads/waystone: the foliage is lit from the right (luminance rises 8 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    17,
+    28,
+    73,
+    136
+   ],
+   "message": "crossroads/waystone: detail bar 0.48 of Eastward's stone band (16.4 tones, 29.5 shapes a patch against 26.25, 61.0)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  }
+ ],
+ "reviewed": "2026-10-25",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}

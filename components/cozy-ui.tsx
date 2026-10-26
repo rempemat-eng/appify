@@ -24,22 +24,20 @@ import { panelInset, type } from '@/lib/ui-tokens';
 export function CozyBackground() {
   return (
     <LinearGradient
+      pointerEvents="none"
       colors={[c.paper, c.sage]}
-      style={[StyleSheet.absoluteFill, { pointerEvents: 'none' }]}
+      style={StyleSheet.absoluteFill}
     />
   );
 }
 export function PaperFinish() {
   return (
     <View
+      pointerEvents="none"
       accessible={false}
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants"
-      style={[
-        StyleSheet.absoluteFill,
-        { borderRadius: 0 - 2, overflow: 'hidden' },
-        { pointerEvents: 'none' },
-      ]}
+      style={[StyleSheet.absoluteFill, { borderRadius: 0 - 2, overflow: 'hidden' }]}
     >
       <View
         style={{
@@ -170,6 +168,7 @@ export function CozySheet({
         {/* Skips the entrance. It stays mounted (focus is never dropped) and only takes
             touches and focus while the sheet moves, over the top of the panel. */}
         <Pressable
+          pointerEvents={animating ? 'auto' : 'none'}
           accessible={animating}
           accessibilityRole={animating ? 'button' : undefined}
           accessibilityLabel={animating ? 'Skip sheet animation' : undefined}
@@ -185,7 +184,6 @@ export function CozySheet({
             zIndex: 2,
             alignItems: 'center',
             justifyContent: 'center',
-            pointerEvents: animating ? 'auto' : 'none',
           }}
         >
           {animating && <Text style={[type.caption, { color: c.ink }]}>Skip</Text>}

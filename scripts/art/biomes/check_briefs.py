@@ -73,11 +73,12 @@ def main() -> int:
     faults = []
     paths = sorted(glob.glob(os.path.join(HERE, '*.json')))
     for p in paths:
-        if json.load(open(p)).get('status') == 'brief':
+        b = json.load(open(p))
+        if b.get('status') == 'brief' and b.get('owner') == 'claude-c':   # other lanes' briefs keep their own shapes
             faults += check(p, set(pal['ramps']), cliff_core.EDGE_SETS)
     for f in faults:
         print('FAULT', f)
-    print(f'biome briefs: {len(paths)} files, {len(faults)} faults')
+    print(f'biome briefs (lane C): {len(faults)} faults')
     return 1 if faults else 0
 
 

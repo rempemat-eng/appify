@@ -1,0 +1,522 @@
+{
+  "schema_version": 1,
+  "status": "proposal (claude-a/progression, 25 Oct); every number is a placeholder until play-tests and Claude L's harness",
+  "id": "nix",
+  "name": "Nix",
+  "identity": "Neon Harbour cyborg; the laser arm is his anatomical LEFT arm in every view (steel-blue casing, cyan lens); the RIGHT arm natural with a black wrist wrap; teal jacket with orange lining",
+  "home_region": "neon",
+  "home_region_note": "Claude K's proposal on #149 (25 Oct), not yet decided by Matt; it only sets the tier material",
+  "abilities": {
+    "kit": "game/data/abilities/nix.json (Codex, #261); base and powered form unchanged",
+    "base": {
+      "primary": "Laser arm",
+      "secondary": "Afterimage",
+      "block": "Arm shield",
+      "special": "Limit Release"
+    },
+    "skill_tree": {
+      "branches": [
+        {
+          "id": "laser",
+          "name": "Laser",
+          "covers": [
+            "primary"
+          ],
+          "nodes": [
+            {
+              "id": "heat_spread",
+              "kind": "passive",
+              "name": "Heat Spread",
+              "effect": "Laser pulses add 8 % less heat.",
+              "numbers": {
+                "heat_pct": -8
+              },
+              "level": 2,
+              "cost": 1,
+              "requires": [],
+              "touches_canonical": false
+            },
+            {
+              "id": "heat_sink",
+              "name": "Heat Sink",
+              "binding": "a perfect dodge",
+              "effect": "The arm vents part of its heat.",
+              "numbers": {
+                "heat_vented_pct": 40
+              },
+              "art": {
+                "new_clips": [],
+                "fx": [
+                  "steam vent from the casing (3 drawings)"
+                ],
+                "reuses": [
+                  "dodge"
+                ]
+              },
+              "touches_canonical": false,
+              "kind": "technique",
+              "level": 3,
+              "cost": 2,
+              "requires": [
+                "heat_spread"
+              ]
+            },
+            {
+              "id": "fine_focus",
+              "kind": "passive",
+              "name": "Fine Focus",
+              "effect": "Pulses fly 8 % faster.",
+              "numbers": {
+                "pulse_speed_pct": 8
+              },
+              "level": 6,
+              "cost": 1,
+              "requires": [
+                "heat_sink"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "heat_sink_2",
+              "kind": "technique upgrade",
+              "name": "Heat Sink II",
+              "effect": "The vent releases a small shock ring.",
+              "numbers": {
+                "ring_damage": 8,
+                "ring_radius": 24
+              },
+              "level": 12,
+              "cost": 3,
+              "requires": [
+                "fine_focus"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "overdrive",
+              "kind": "keystone",
+              "name": "Overdrive",
+              "effect": "At over 80 % heat, pulses knock back.",
+              "numbers": {
+                "knockback": 10
+              },
+              "level": 22,
+              "cost": 4,
+              "requires": [
+                "heat_sink_2"
+              ],
+              "touches_canonical": false
+            }
+          ]
+        },
+        {
+          "id": "ghost",
+          "name": "Ghost",
+          "covers": [
+            "secondary"
+          ],
+          "nodes": [
+            {
+              "id": "quick_image",
+              "kind": "passive",
+              "name": "Quick Image",
+              "effect": "Afterimage cooldown -8 %.",
+              "numbers": {
+                "secondary_cooldown_pct": -8
+              },
+              "level": 2,
+              "cost": 1,
+              "requires": [],
+              "touches_canonical": false
+            },
+            {
+              "id": "flashbreak",
+              "name": "Flashbreak",
+              "binding": "passive when the Afterimage breaks",
+              "effect": "The hologram breaks in a flash that blinds foes beside it.",
+              "numbers": {
+                "blind_seconds": 1.0,
+                "radius": 28
+              },
+              "art": {
+                "new_clips": [],
+                "fx": [
+                  "flash (2 drawings)"
+                ],
+                "reuses": []
+              },
+              "touches_canonical": false,
+              "kind": "technique",
+              "level": 9,
+              "cost": 2,
+              "requires": [
+                "quick_image"
+              ]
+            },
+            {
+              "id": "loud_ghost",
+              "kind": "passive",
+              "name": "Loud Ghost",
+              "effect": "The hologram draws foes from 20 % further.",
+              "numbers": {
+                "draw_range_pct": 20
+              },
+              "level": 11,
+              "cost": 1,
+              "requires": [
+                "flashbreak"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "flashbreak_2",
+              "kind": "technique upgrade",
+              "name": "Flashbreak II",
+              "effect": "The flash also shows elites' weak points for 3 s.",
+              "numbers": {
+                "weak_point_seconds": 3
+              },
+              "level": 20,
+              "cost": 3,
+              "requires": [
+                "loud_ghost"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "double_exposure",
+              "kind": "keystone",
+              "name": "Double Exposure",
+              "effect": "Breaking a hologram cools the arm by 20 %.",
+              "numbers": {
+                "cool_pct": 20
+              },
+              "level": 24,
+              "cost": 4,
+              "requires": [
+                "flashbreak_2"
+              ],
+              "touches_canonical": false
+            }
+          ]
+        },
+        {
+          "id": "shield",
+          "name": "Shield",
+          "covers": [
+            "block",
+            "special"
+          ],
+          "nodes": [
+            {
+              "id": "capacitor",
+              "kind": "passive",
+              "name": "Capacitor",
+              "effect": "Arm shield cost -8 %.",
+              "numbers": {
+                "guard_cost_pct": -8
+              },
+              "level": 4,
+              "cost": 1,
+              "requires": [],
+              "touches_canonical": false
+            },
+            {
+              "id": "redline",
+              "name": "Redline",
+              "binding": "passive above 80 % heat",
+              "effect": "Pulses chain to one nearby foe.",
+              "numbers": {
+                "heat_threshold_pct": 80,
+                "chain_damage_pct": 40
+              },
+              "art": {
+                "new_clips": [],
+                "fx": [
+                  "chain arc"
+                ],
+                "reuses": []
+              },
+              "touches_canonical": false,
+              "kind": "technique",
+              "level": 16,
+              "cost": 2,
+              "requires": [
+                "capacitor"
+              ]
+            },
+            {
+              "id": "grounded",
+              "kind": "passive",
+              "name": "Grounded",
+              "effect": "Shock on you wears off 20 % sooner.",
+              "numbers": {
+                "shock_duration_pct": -20
+              },
+              "level": 18,
+              "cost": 1,
+              "requires": [
+                "redline"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "redline_2",
+              "kind": "technique upgrade",
+              "name": "Redline II",
+              "effect": "Blocking with the arm shield above 80 % heat turns part of the blocked damage into cooling.",
+              "numbers": {
+                "cooling_per_block": 10
+              },
+              "level": 26,
+              "cost": 3,
+              "requires": [
+                "grounded"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "limitless",
+              "kind": "keystone",
+              "name": "Limitless",
+              "effect": "Limit Release's beams pierce one more foe.",
+              "numbers": {
+                "pierce": 1
+              },
+              "touches_canonical": true,
+              "note": "changes a count in Codex's powered form; needs C60's OK (#149)",
+              "level": 28,
+              "cost": 4,
+              "requires": [
+                "redline_2"
+              ]
+            }
+          ]
+        }
+      ],
+      "points_by_level_30": 29,
+      "tree_cost": 33
+    }
+  },
+  "weapon": {
+    "item": "laser arm",
+    "equipment_tag": "laser",
+    "tiers": [
+      {
+        "tier": 1,
+        "name": "Courier arm",
+        "art": {
+          "silhouette": "today's drawing: steel-blue casing from the pauldron to a heavy forearm emitter with a cyan lens",
+          "materials": [
+            "steel blue",
+            "cyan"
+          ],
+          "glow": "the lens as drawn",
+          "size": "as drawn",
+          "read_check": "the current drawing"
+        },
+        "mechanics": {},
+        "requires": {
+          "level": 1
+        },
+        "sockets": 1
+      },
+      {
+        "tier": 2,
+        "name": "Finned arm",
+        "art": {
+          "silhouette": "three heat fins (2 px) along the forearm; an orange ring round the lens",
+          "materials": [
+            "steel blue",
+            "orange",
+            "cyan"
+          ],
+          "glow": "none",
+          "size": "forearm +1 px",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
+        },
+        "mechanics": {
+          "cooling_pct": 10
+        },
+        "requires": {
+          "level": 8,
+          "forge_open": true
+        },
+        "sockets": 2,
+        "cost": {
+          "glint": 60,
+          "scrap": 5,
+          "home_material": {
+            "material": "neon glass",
+            "count": 2
+          }
+        }
+      },
+      {
+        "tier": 3,
+        "name": "Focus arm",
+        "art": {
+          "silhouette": "the lens pushed 2 px forward in a short barrel; cyan circuit traces along the casing",
+          "materials": [
+            "steel blue",
+            "cyan"
+          ],
+          "glow": "the traces glow one tone",
+          "size": "+2 px at the lens",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
+        },
+        "mechanics": {
+          "afterimage_cooldown_pct": -8
+        },
+        "requires": {
+          "level": 16,
+          "forge_open": true
+        },
+        "sockets": 2,
+        "cost": {
+          "glint": 150,
+          "scrap": 10,
+          "home_material": {
+            "material": "neon glass",
+            "count": 4
+          }
+        }
+      },
+      {
+        "tier": 4,
+        "name": "Pearl arm",
+        "art": {
+          "silhouette": "pearl-white casing with gold seams; a pale violet-white lens",
+          "materials": [
+            "pearl (new)",
+            "gold",
+            "starlight (new)"
+          ],
+          "glow": "the seams brighten in two steps with heat, so heat reads on the body",
+          "size": "as tier 3",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
+        },
+        "mechanics": {
+          "named": "Pearl core: the heat lockout ends 20 % sooner",
+          "lockout_pct": -20
+        },
+        "requires": {
+          "level": 24,
+          "great_forge": true
+        },
+        "sockets": 3,
+        "cost": {
+          "glint": 300,
+          "scrap": 20,
+          "home_material": {
+            "material": "neon glass",
+            "count": 6
+          },
+          "starshard": 1
+        }
+      }
+    ]
+  },
+  "outfits": [
+    {
+      "id": "night_shift",
+      "name": "Night shift",
+      "description": "a black jacket with a cyan lining and a reflective back stripe",
+      "parts": [
+        "jacket"
+      ],
+      "ramps": {
+        "teal": "ink (new)",
+        "orange": "cyan"
+      },
+      "unlock": {
+        "source": "story",
+        "event": "quest:folk_nix:done"
+      }
+    },
+    {
+      "id": "runner",
+      "name": "Runner's kit",
+      "description": "a cropped orange courier jacket with a number on the back",
+      "parts": [
+        "jacket (cropped variant)"
+      ],
+      "ramps": {
+        "teal": "courier orange (new)"
+      },
+      "unlock": {
+        "source": "village",
+        "event": "restore:lookout:1"
+      }
+    },
+    {
+      "id": "chrome",
+      "name": "Chrome",
+      "description": "a silver jacket with pink circuit traces on the trousers",
+      "parts": [
+        "jacket"
+      ],
+      "ramps": {
+        "teal": "chrome (new)"
+      },
+      "unlock": {
+        "source": "arena",
+        "event": "arena:neon_rooftop:gold"
+      }
+    }
+  ],
+  "accessories": [
+    {
+      "id": "visor",
+      "name": "Visor band",
+      "slot": "head",
+      "description": "a thin cyan visor across the eyes, its band through the hair",
+      "unlock": {
+        "source": "drop",
+        "event": "drop:neon"
+      },
+      "perk": null
+    },
+    {
+      "id": "hood",
+      "name": "Jacket hood",
+      "slot": "back",
+      "description": "a hood that lies on the back of the jacket",
+      "unlock": {
+        "source": "glint",
+        "event": "buy:stall:hood",
+        "note": "400 Glint, stall tier 3"
+      },
+      "perk": null
+    },
+    {
+      "id": "earpiece",
+      "name": "Earpiece cable",
+      "slot": "neck",
+      "description": "a coiled cable from the RIGHT ear to the collar",
+      "unlock": {
+        "source": "bond",
+        "event": "bond:any:7"
+      },
+      "perk": null
+    },
+    {
+      "id": "keychain",
+      "name": "Glitched keychain",
+      "slot": "trinket",
+      "description": "a tiny flickering cube on the belt, 2 px",
+      "unlock": {
+        "source": "glint",
+        "event": "buy:stall:keychain",
+        "note": "300 Glint"
+      },
+      "perk": {
+        "status": "proposal",
+        "text": "The map marks Company crates within 6 tiles",
+        "numbers": {
+          "crate_hint_tiles": 6
+        }
+      }
+    }
+  ]
+}
