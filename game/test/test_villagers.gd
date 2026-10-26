@@ -36,6 +36,11 @@ func test_turns_to_talk_when_the_player_is_near() -> void:
 	p.global_position = Vector2(1500, 500)
 	await get_tree().process_frame
 	await get_tree().process_frame
+	assert_str(v.shown_facing).is_equal("S")
+	for i in 30:                                # past the turn in-between (contract V2.9: idle_SE for a beat)
+		if v.animation == &"idle_S":
+			break
+		await get_tree().process_frame
 	assert_str(v.animation).is_equal("idle_S")
 
 func test_loop_fx_holds_still_under_reduced_motion() -> void:
