@@ -136,7 +136,7 @@ def sw_plateau():
     cv = GD.lawn(TH, TW, 11)
     rects = [[0, 0, 160, 40], [104, 40, 40, 16]]
     tm = SG.shape(cells(rects), TH, TW, 301, r_out=0.65, r_in=0.4)
-    top = GD.lawn(TH, TW, 31, base=3, lush=0.9)
+    top = GD.lawn(TH, TW, 31, base=3, lush=0.5, grain=0.6)
     cv[tm] = top[tm]
     x0, x1 = int(40 * D), int(64 * D)
     y_rim = int(40 * D)
@@ -221,18 +221,18 @@ def sw_cliff():
     corner where the west lobe's wall meets the main face, side walls at every end (logic.tiers)."""
     rng = np.random.default_rng(4)
     cv = GD.lawn(TH, TW, 15)
-    rects = [[0, 0, 104, 32], [0, 32, 56, 24]]
+    rects = [[0, 16, 104, 24], [0, 40, 56, 24]]
     tm = SG.shape(cells(rects), TH, TW, 303, r_out=0.4, r_in=0.25)
-    top = GD.lawn(TH, TW, 35, lush=0.9)
+    top = GD.lawn(TH, TW, 35, lush=0.5, grain=0.6)
     cv[tm] = top[tm]
     face, items, lip = GD.ledge(cv, tm, int(32 * D), rng, seed=303, kind='rock', earth='crag', shadow_px=18)
     s = Swatch(cv, 'cliff: one tier 32 world px, outer and inner corner, side walls')
     for img, anc, foot in items:
         s.add(img, anc, foot, (np.asarray(img)[..., 3] > 0).any(0).sum() * 0.9, 0.45)
-    s.prop('rock', *g(15, 12), 40)
-    s.prop('fern', int(96 * D), int(68 * D), 3)
+    s.prop('rock', *g(15, 13), 40)
+    s.prop('fern', int(96 * D), int(76 * D), 3)
     s.prop('fern', int(150 * D), int(30 * D), 8)
-    s.prop('holly', int(14 * D), int(20 * D), 7)
+    s.prop('holly', int(20 * D), int(36 * D), 7)
     s.prop('bench', *g(13, 14), 44)
     s.plan = dict(density=3, cell=8, tiers=[dict(id='cliff', level=32, below=0, face_px=int(32 * D), rects=rects)])
     return s
@@ -258,32 +258,45 @@ def sw_beds():
 
 
 def sw_square():
-    """A square composed round its contents (Matt, 26 Oct 19:35): the well on the centre axis, the
-    benches a mirrored pair beside it, the square 13 x 10 cells so the margins are even, the path
-    meeting it on its axis (logic.composition checks all four)."""
+    """A village square composed round its contents (Matt, 26 Oct 19:35 and 22:30): the well on
+    the centre axis with a clear cell all round its roof, a pair of benches set back near the north
+    edge facing it, lamps at the four corners, planters flanking the way in, the path meeting the
+    square on its axis; the square 17 x 12 cells, raised a little on a kerb with a lip, a low face
+    and its shadow (logic.composition checks centre, pairs, margins and the way in)."""
     rng = np.random.default_rng(5)
     cv = GD.lawn(TH, TW, 17)
     ax = 84                                                    # the centre axis, world px
-    pave = SG.shape(cells([[32, 16, 104, 80]]), TH, TW, 405, r_out=0.15, r_in=0.1, amp=(0, 0))
-    path = SG.route_shape([[ax, 96], [ax, 120]], 3, TH, TW, seed=11) & ~pave
+    sq = [16, 8, 136, 96]                                      # x, y, w, h in world px: whole cells
+    pave = SG.shape(cells([sq]), TH, TW, 405, r_out=0.25, r_in=0.1, amp=(0, 0))
+    path = SG.route_shape([[ax, 104], [ax, 120]], 3, TH, TW, seed=11) & ~pave
     turf = GD.grassy(cv) & ~path & ~pave
-    GD.dirt(cv, path, 23, ruts=17)
+    GD.dirt(cv, path, 23, ruts=None)
     face = GD.paving(cv, pave, rng)
     path &= ~face
     GD.sunken_edge(cv, path, turf & ~face & ~pave, rng)
     GD.weeds_at_foot(cv, pave, rng)
-    s = Swatch(cv, 'paved square: composed round the well, benches mirrored, path on the axis')
-    well = (int(ax * D), int(72 * D))
-    benches = [(int((ax - 36) * D), int(72 * D)), (int((ax + 36) * D), int(72 * D))]
+    s = Swatch(cv, 'village square: well centred, benches facing it, lamps and planters at the way in')
+    from scripts.art.native import village as VV
+    well = (int(ax * D), int(76 * D))
+    benches = [(int((ax - 40) * D), int(40 * D)), (int((ax + 40) * D), int(40 * D))]
+    lamps = [(int(28 * D), int(96 * D)), (int(140 * D), int(96 * D))]      # at the south corners, by the way in
+    tubs = [(int((ax - 20) * D), int(100 * D)), (int((ax + 20) * D), int(100 * D))]
     s.prop('well', *well, 8)
     for i, b in enumerate(benches):
         s.prop('bench', *b, 46 + i)
-    s.prop('rock', *g(2, 13), 42)
-    s.prop('holly', int(14 * D), int(36 * D), 4)
-    s.prop('fern', int(146 * D), int(104 * D), 2)
-    s.structures.append(dict(id='square', rect=[int(32 * D), int(16 * D), int(136 * D), int(96 * D)],
+    for i, (x, y) in enumerate(lamps):
+        img, anc, _ = P4.lantern4(D, seed=60 + i)
+        s.add(img, anc, (x, y), 18, 0.4)
+    for i, (x, y) in enumerate(tubs):
+        pic = VV.prop('flower_tub', 10, 6, seed=70 + i)
+        s.add(pic.rgba(), (pic.ax, pic.ay), (x, y), 30, 0.4)
+    s.prop('rock', *g(1, 14), 42)
+    s.structures.append(dict(id='square', rect=[int(sq[0] * D), int(sq[1] * D), int((sq[0] + sq[2]) * D),
+                                                int((sq[1] + sq[3]) * D)],
                              props=[dict(kind='well', x=well[0], y=well[1], w=54, centre=True)] +
-                             [dict(kind='bench', x=b[0], y=b[1], w=66) for b in benches],
+                             [dict(kind='bench', x=b[0], y=b[1], w=66) for b in benches] +
+                             [dict(kind='lamp', x=x, y=y, w=18) for x, y in lamps] +
+                             [dict(kind='tub', x=x, y=y, w=30) for x, y in tubs],
                              entries=[dict(x=int(ax * D), w=int(24 * D))]))
     return s
 

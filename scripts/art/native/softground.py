@@ -594,6 +594,16 @@ def ledge(cv: np.ndarray, top: np.ndarray, face_h: int, rng, seed: int = 0, kind
     e0, ew, ec = _earth(earth)
     rock = kind == 'rock'
     yy, xx = np.mgrid[0:H, 0:W]
+    # the raised surface catches more light (Eastward 12, 39, Strange Forest): its turf in the warm
+    # sibling, so the upper ground reads lighter and calmer than the ground below it
+    base_ = top & np.isin(cv // 8, [FI['grass'], FI['leaf']])
+    cool_ = top & np.isin(cv // 8, [FI['grass_cool'], FI['leaf_cool']])
+    cv[base_] = sib(cv[base_], 'warm')
+    cv[cool_] = sib(cv[cool_], 'body')
+    # its back edge (where the top ends to the north): the lip lit, a thin dark line beyond it
+    back = top & down(~top, 1)
+    shift(cv, back & (cv % 8 < 5), 1)
+    shift(cv, ~top & down(top, -1) & down(~top, 1) & grassy(cv), -1)
     # the face: the top extruded down, its foot lumpy
     face = np.zeros_like(top)
     for k in range(1, face_h + 1):
@@ -618,6 +628,15 @@ def ledge(cv: np.ndarray, top: np.ndarray, face_h: int, rng, seed: int = 0, kind
     near_top = ndi.binary_dilation(top, structure=row) & ~top
     near_face = ndi.binary_dilation(face0, structure=row) & ~top & ~face0
     side = (near_top & ~face0) | (near_top & face0) | near_face
+    # along the top's own west and east edges the wall narrows towards the top's back edge (we see
+    # less of it the further back it runs) and ends there
+    first_top = np.where(top.any(0), np.argmax(top, 0), H)
+    yb = ndi.minimum_filter1d(first_top, size=2 * sw + 1)[None, :]
+    hdist = np.full((H, W), 99)
+    for k in range(sw, 0, -1):
+        hdist[(right(top, k) | right(top, -k))] = k
+    wy = np.clip(2 + (yy - yb) / 10.0, 2, sw)
+    side &= ~((hdist <= sw) & ~near_face & (hdist > wy))
     side = clean(side, min_area=0.5)
     face = face0 & ~side
     raised_for = np.where(face0, 0, 1)          # in a face, only the top makes a wall; elsewhere top and face
@@ -700,7 +719,18 @@ def ledge(cv: np.ndarray, top: np.ndarray, face_h: int, rng, seed: int = 0, kind
         cv[body & seam & ~np.roll(seam, 1, 0) & west_side] = step(cv[body & seam & ~np.roll(seam, 1, 0) & west_side], 0)
         outer = side & (hd >= sw) & (nz(H, W, 4.0, seed + 11) > 0.25)
         outer |= side & ndi.binary_dilation(lower, structure=np.ones((1, 3), bool)) & (nz(H, W, 4.0, seed + 11) > 0.25)
-        cv[outer] = C(ec, 0)
+        cv[outer & ~west_side] = C(ec, 0)                        # the near-black line only where it is in shade
+        cv[outer & west_side] = C(e0, 2)
+        # tufts from the top break the band here and there
+        ys_t, xs_t = np.nonzero(side & (hd == 1))
+        taken_t = np.zeros_like(top)
+        for kk in rng.permutation(len(ys_t))[: len(ys_t) // 10]:
+            y_, x_ = int(ys_t[kk]), int(xs_t[kk])
+            if taken_t[max(0, y_ - 14):y_ + 15, max(0, x_ - 4):x_ + 5].any():
+                continue
+            taken_t[y_, x_] = True
+            b_ = src[y_, x_] if src[y_, x_] >= 0 else C('grass', 3)
+            stamp(cv, y_ + 2, x_, [(dy, dx, dt) for (dy, dx, dt) in tuft_shape(rng, 1.1) if dy < 0], b_)
         # the wall's foot: darker, and the face's clods turning the corner over it
         fb_ = side & (runs_from_bottom(side) <= 4)
         shift(cv, fb_, -1)
@@ -780,8 +810,12 @@ def ledge(cv: np.ndarray, top: np.ndarray, face_h: int, rng, seed: int = 0, kind
         above_raised |= down(face | side, k)
     sh = lower & above_raised & (fs <= reach)
     # east of a side face the shadow is thrown east too
-    for k in range(1, 7):
+    for k in range(1, 11):
         sh |= right(side & ~west_side, k) & lower & ~top
+    on_face = np.zeros_like(top)
+    for k in range(1, 7):
+        on_face |= right(side & ~west_side, k) & face
+    shift(cv, on_face, -1)
     core = lower & (fs <= np.maximum(3, reach // 2 - 1)) & above_raised
     shift(cv, sh & ~core, -1)
     shift(cv, core, -2)
@@ -1496,7 +1530,7 @@ def weeds_at_foot(cv, raised, rng, rate=0.12):
 # ------------------------------------------------------------------------------------------------
 # paving and a kerb (Eastward 16 and 01)
 # ------------------------------------------------------------------------------------------------
-def paving(cv, pave, rng, kerb=9, course=(18, 23), length=(18, 30), fams=('stone_warm', 'stone_warm', 'ashlar')):
+def paving(cv, pave, rng, kerb=12, course=(18, 23), length=(18, 30), fams=('stone_warm', 'stone_warm', 'ashlar', 'stone')):
     """A paved square: flags in staggered courses, each a calm slab lit along its top and west
     edges, shaded along its bottom and east, dark joints between them, a chipped corner or a
     crack here and there, moss and grass in a few joints, a worn lighter middle; a kerb of long
@@ -1505,24 +1539,29 @@ def paving(cv, pave, rng, kerb=9, course=(18, 23), length=(18, 30), fams=('stone
     H, W = cv.shape
     inner = ndi.binary_erosion(pave, iterations=kerb)
     kb = pave & ~inner
-    # the flags: courses of varied height, each split into slabs of varied length; now and then a
-    # big slab spans two courses (no brick bond, no repeat)
+    # the flags: the paved area split again and again into rectangles (a few large slabs, many
+    # middling, the odd small one filling a gap), so no joint runs on across the square and nothing
+    # repeats; sizes 12 to 40 px (the size guide's slabs)
     sl = np.full((H, W), -1, np.int64)
+    ys0, xs0 = np.nonzero(pave)
+    stack = [(int(ys0.min()) - 2, int(xs0.min()) - 2, int(ys0.max()) + 3, int(xs0.max()) + 3)]
     k = 0
-    y = -int(rng.integers(0, 10))
-    while y < H:
-        ch = int(rng.choice([14, 18, 18, 22, 26]))
-        x = -int(rng.integers(0, 30))
-        while x < W:
-            L = int(rng.integers(14, 36))
-            if rng.random() < 0.12:                                  # a big slab over two courses
-                sl[max(0, y):max(0, y + ch + 16), max(0, x):max(0, x + L + 8)] = k
-                L += 8
-            else:
-                sl[max(0, y):max(0, y + ch), max(0, x):max(0, x + L)][sl[max(0, y):max(0, y + ch), max(0, x):max(0, x + L)] < 0] = k
+    while stack:
+        y0, x0, y1, x1 = stack.pop()
+        h_, w_ = y1 - y0, x1 - x0
+        big = max(h_, w_)
+        if big <= 40 and (big < 22 or rng.random() < 0.45):
+            sl[max(0, y0):max(0, y1), max(0, x0):max(0, x1)] = k
             k += 1
-            x += L
-        y += ch
+            continue
+        if w_ >= h_ * 1.1 or (abs(w_ - h_) < 4 and rng.random() < 0.5):
+            c = int(x0 + w_ * rng.uniform(0.3, 0.7))
+            c = min(max(c, x0 + 12), x1 - 12)
+            stack += [(y0, x0, y1, c), (y0, c, y1, x1)]
+        else:
+            c = int(y0 + h_ * rng.uniform(0.3, 0.7))
+            c = min(max(c, y0 + 12), y1 - 12)
+            stack += [(y0, x0, c, x1), (c, x0, y1, x1)]
     hsh = (sl * 2654435761 % 1000) / 1000.0
     joint = np.zeros((H, W), bool)
     joint[:-1] |= sl[:-1] != sl[1:]
@@ -1536,7 +1575,7 @@ def paving(cv, pave, rng, kerb=9, course=(18, 23), length=(18, 30), fams=('stone
     left_c = np.zeros((H, W), bool)
     left_c[:, 1:] = joint[:, :-1] & ~joint[:, 1:]
     fam = np.array([FI[fams[int(v * 997) % len(fams)]] for v in hsh.ravel()]).reshape(H, W)
-    t = np.where(hsh > 0.8, 4, np.where(hsh < 0.12, 2, 3))
+    t = np.where(hsh > 0.86, 4, np.where(hsh < 0.07, 2, 3))
     # the worn line where feet go (the centre and the way in) a tone lighter on most slabs
     wear = blobs(H, W, 91, 70.0, 0.3) & (hsh > 0.25)
     t = np.where(wear & (t == 3), 4, t)
@@ -1610,7 +1649,7 @@ def paving(cv, pave, rng, kerb=9, course=(18, 23), length=(18, 30), fams=('stone
     cv[kb & cut] = C('stone', 1)
     # the low front face on the south, the side faces darker, and the shadow on the ground
     face = np.zeros_like(pave)
-    for k2 in range(1, 6):
+    for k2 in range(1, 8):
         face |= down(pave, k2)
     face &= ~pave
     cv[face] = np.where(var, C('ashlar', 2), C('stone_warm', 2))[face]
@@ -1619,13 +1658,22 @@ def paving(cv, pave, rng, kerb=9, course=(18, 23), length=(18, 30), fams=('stone
     cv[face & ~down(face, -1)] = C('stone', 1)
     fcut = face & np.roll(cut, 0, 1)
     cv[fcut] = C('stone', 1)
+    # the kerb's lip: its outer row lit (north and west) or a texel darker (east), a groove inside
+    outer_k = pave & ~ndi.binary_erosion(pave, structure=CROSS)
+    vk = nz(H, W, 5.0, 93)
+    sel = outer_k & (down(~pave, 1) | right(~pave, 1))
+    cv[sel] = np.where(vk > 0.45, C('ashlar', 5), C('ashlar_warm', 4))[sel]
+    cv[outer_k & right(~pave, -1)] = C('ashlar', 2)
+    cv[outer_k & cut] = C('stone', 2)                              # the slab joints cross the lip too
+    chips = outer_k & (nz(H, W, 3.0, 94) > 0.78)
+    cv[chips] = C('stone', 3)
     sh = np.zeros_like(pave)
-    for k2 in range(1, 4):
+    for k2 in range(1, 6):
         sh |= down(face, k2)
-    for k2 in range(1, 4):
+    for k2 in range(1, 6):
         sh |= right(pave | face, k2)
     sh &= ~pave & ~face
-    shadow(cv, sh, core=2, rim=1, fade=True)
+    shadow(cv, sh, core=2, rim=2, fade=True)
     return face
 
 
