@@ -114,7 +114,13 @@ function create(init) {
   return hook;
 }
 
-function load({ os = 'web', saved = {}, activated = false, deferredSeeks = false } = {}) {
+function load({
+  os = 'web',
+  saved = {},
+  activated = false,
+  deferredSeeks = false,
+  asyncPlay = false,
+} = {}) {
   const world = {
     now: 1000,
     storage: new Map(Object.entries(saved)),
@@ -126,6 +132,7 @@ function load({ os = 'web', saved = {}, activated = false, deferredSeeks = false
     effects: [],
     handlers: new Map(),
     seeks: [],
+    playCatches: [],
     navigator: { userActivation: { hasBeenActive: activated } },
   };
   const player = (source) => {
@@ -136,6 +143,16 @@ function load({ os = 'web', saved = {}, activated = false, deferredSeeks = false
       play() {
         world.plays.push(source);
         fake.currentTime = 0.05;
+        if (asyncPlay) {
+          const attempt = Promise.resolve();
+          const catchRejection = attempt.catch.bind(attempt);
+          attempt.catch = (onRejected) => {
+            world.playCatches.push({ source, onRejected });
+            return catchRejection(onRejected);
+          };
+          return attempt;
+        }
+        return undefined;
       },
       pause() {
         world.pauses.push(source);
@@ -243,6 +260,32 @@ async function main() {
     check(!world.plays.includes(ambienceLoops.day), 'ambience stays off on its own switch');
     await sound.useSoundPreference.getState().setAmbience(true);
     check(world.plays.at(-1) === ambienceLoops.day, 'turning ambience on resumes the garden loop');
+  }
+
+  // expo-audio's web player can return a promise even though its type says
+  // play() is synchronous. Every direct and post-rewind play must catch a
+  // pause/replacement AbortError before a later pause can reject it.
+  {
+    const { sound, world } = load({ activated: true, asyncPlay: true });
+    const stop = sound.startSound();
+    await settle();
+    sound.playSound('tap');
+    world.now += 1000;
+    sound.playSound('tap');
+    await settle();
+    sound.setAmbience('day');
+    check(
+      world.playCatches.map(({ source }) => source).join(',') ===
+        [soundEffects.tap, soundEffects.tap, ambienceLoops.day].join(','),
+      'direct, post-rewind and ambience play promises each catch rejection',
+    );
+    sound.setAmbience('night');
+    check(
+      world.pauses.at(-1) === ambienceLoops.day &&
+        world.playCatches.at(-1).source === ambienceLoops.night,
+      'replacing ambience catches the new play promise after pausing the old player',
+    );
+    stop();
   }
 
   // The web gesture gate: no audio until the page has been touched or keyed.

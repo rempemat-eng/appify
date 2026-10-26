@@ -96,3 +96,38 @@ func test_freed_creature_calms_and_leaves() -> void:
 	assert_bool(freed.sprite.clip in ["freed_move", "idle"]).is_true()
 	freed._process(FreedCreature.LEAVE + 0.1)
 	assert_bool(freed.is_queued_for_deletion()).is_true()
+
+func test_the_tell_is_in_the_world_and_glints_at_the_commit() -> void:
+	# no lane or ring: the body winds up (squats, leans back), and one glint at the commit
+	var s := _setup("rusher")
+	var enemy: SliceEnemy = s[1]
+	var look: CreatureLook = s[2]
+	enemy.step(0.01)
+	enemy.step(0.01)
+	assert_str(enemy.state).is_equal("windup")
+	look._process(0.01)
+	enemy.step(enemy.windup_time() * 0.8)
+	look._process(0.01)
+	assert_float(look.sprite.scale.y).is_less(1.0)
+	assert_float(look._glint).is_equal(0.0)
+	enemy.step(enemy.windup_time())
+	look._process(0.01)
+	assert_str(enemy.state).is_equal("attack")
+	assert_float(look._glint).is_greater(0.0)
+	assert_float(look.sprite.scale.y).is_equal(1.0)
+	enemy._cancel_attack()
+
+func test_the_tell_holds_still_under_reduced_motion() -> void:
+	SaveGame.data.settings["reduced_motion"] = true
+	var s := _setup("shooter")
+	var enemy: SliceEnemy = s[1]
+	var look: CreatureLook = s[2]
+	enemy.target.position = Vector2(150, 40)
+	enemy.step(0.01)
+	enemy.step(0.01)
+	enemy.step(enemy.windup_time() * 0.6)
+	look._process(0.01)
+	assert_float(look.sprite.scale.y).is_equal(1.0)
+	assert_float(look.sprite.rotation).is_equal(0.0)
+	SaveGame.data.settings["reduced_motion"] = false
+	enemy._cancel_attack()

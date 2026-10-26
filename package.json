@@ -72,7 +72,7 @@
     "review:scene": "python3 -m scripts.review.run",
     "review:asset": "python3 -m scripts.review.assets",
     "check:godot": "bash game/tools/check.sh",
-    "check:pointer-events": "node scripts/codemod-pointer-events.cjs --check"
+    "check:pointer-events": "node scripts/check-pointer-events.cjs"
   },
   "dependencies": {
     "@biltme/backend": "^0.7.0",

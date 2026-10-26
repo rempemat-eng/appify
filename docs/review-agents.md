@@ -26,11 +26,11 @@ Before you hand art to Claude A or Matt:
 | --- | --- | --- |
 | `water.py` | scene, ground assets | `logic.water_staircase`, `logic.water_straight`, `detail.fall_flat`, `logic.fall_face`, `logic.water_source`, `logic.bridge_span` |
 | `screen.py` | scene, ground assets | `logic.stray_line`, `detail.repetition` (stamped tufts), `detail.flat` (one-tone areas and flat objects), `detail.flat_line`, `detail.no_falloff` (interiors), `detail.debug_overlay` |
-| `scene.py` | scene (Godot data) | `logic.occlusion`, `logic.intersect`, `logic.crown_cut`, `logic.reach`, `logic.shadow_orphan`, `logic.prop_row`, `logic.wiring` |
+| `scene.py` | scene (Godot data) | `logic.occlusion`, `logic.intersect`, `logic.crown_cut`, `logic.reach`, `logic.shadow_orphan`, `logic.light_source`, `logic.prop_row`, `logic.wiring` |
 | `detail.py` | asset | `detail.flat`, `detail.volume`, `detail.texture`, `detail.light`, `detail.mesh`, `detail.water_flat` |
 | `construct.py` | asset | `logic.floating_part`, `logic.stilts`, `logic.dotted_line`, `logic.scale` (size guide), mushrooms (`logic.scale`, `logic.prop_row`), `logic.biome`, `detail.mesh` (see-through crowns), `detail.water_flat` (half discs, flat troughs), `detail.light`, `detail.repetition`, `detail.glyph` (UI-like marks), `logic.construction` (a well needs a crank), `detail.volume` (cylinder shading) |
 | `cast.py` | characters | `cast.foot_slide`, `cast.walk_speed`, `cast.seam`, `cast.equipment`, `cast.end_pose`, `cast.light` (ported from the 25 Oct cast audits; `python3 -m scripts.review.cast [ids]`) |
-| `bands.py` | asset | `detail.bar`: tones and shapes a patch against Eastward's prop, stone and foliage bands, both through the same JPEG pipe (`eastward_bands.json`, numbers only) |
+| `bands.py` | asset, scene | `detail.bar`: tones and shapes a patch against Eastward's prop, stone and foliage bands, both through the same JPEG pipe (`eastward_bands.json`, numbers only); `ground_plane`: a calm ground plane against Eastward's ground band (below) |
 
 Commands: `npm run review:asset`, `npm run review:scene`, `npm run check:review` (unit tests on synthetic pictures), `python3 -m scripts.review.calibrate --flagged <Matt's folder> --eastward <Eastward folder>` (recall and false positives; the pictures stay local).
 
@@ -39,6 +39,23 @@ Commands: `npm run review:asset`, `npm run review:scene`, `npm run check:review`
 `scripts/review/calibration_set.json` holds Matt's flagged faults: the woodland at 1080p (14), the Crossroads close-ups (15) and the Undercroft boss room (9), with the asset versions he saw pinned to their commits. Every fault is caught by at least one route: **38 of 38**. False positives, counted as every fault-level finding on art that is approved or is the reference: **5 on 6 clean screens** (the pilot golden and Eastward 08, 12, 13, 17 and 37: 0.8 a screen) and **20 on 22 clean prop crops** (the golden's and Eastward's, 0.9 a prop, mostly `detail.volume` on parts cut from JPEG or the golden's fence rails; checks that need a real alpha channel are not counted on cut crops). `calibration_results.json` has the table. The image-only shadow and canopy-mesh guesses (`screen.shadows`, `screen.mesh`) are kept behind `experimental=True`: they fired on Eastward as often as on our art, so shadows are checked from the zone's data and crowns from their sprites instead.
 
 What the detectors cannot see, the agents must: whether a waystone reads as a waystone, whether a room has wall faces, where a door leads, whether a placement makes sense for its owner. The detectors are leads; the agents' checklists are the review.
+
+## Ground planes (26 Oct)
+
+`detail.flat` (`screen.flat_objects` and `screen.flats`) was written for things: a prop painted in four tones or fewer, or a one-tone patch inside one. A calm floor that is not the screen's ground palette (an indoor floor beside walls and void, as in the Undercroft) met the same rule, and the Undercroft's round 3 answered it the wrong way, with a glossy diagonal stripe on every flag. Eastward's dungeon floors are calm, dark fields; they would fail the prop rule too.
+
+So a **ground plane** (an area off the ground palette at least 1 H² and 0.5 H across) is now judged by Eastward's **ground band** instead (`bands.ground_plane`, `screen.calm_ground`; a flag inside such a plane is skipped by `flats`). The band (`eastward_bands.json`, `groups.ground`) is measured on six calm ground boxes in shots 06 (the dungeon floor in shade), 13 and 17 (lawn, path, a yard's dirt), listed in `calibrate_boxes.EW_GROUND` and rebuilt with `python3 -m scripts.review.bands --ground <Eastward folder>`. A plane passes when it is both:
+
+- **drawn**: tones and shapes a 0.25 H patch (through the same JPEG pipe) at least 0.9 x the band's least (Eastward 7.5 tones, 23 shapes; band means 11.8 and 39.9);
+- **calm**: the contrast between its pieces (the luminance spread after a 0.12 H median, which keeps flag against flag and drops joints and grain) at most 1.15 x the band's most (Eastward 15.9 L).
+
+A flat fill (2 to 3 tones, 4 to 5 shapes a patch) still trips, and so does a bright floor of contrasting slabs: Matt's terrazzo floor (U1) measures 28 to 33 L between its pieces against Eastward's 5 to 16. The round 4 Undercroft floor measures 9.5 to 11 tones, 27 to 29 shapes and 13 to 16 L. `npm run check:review` holds one picture of each (`GroundPlane`: a calm Eastward-like floor that passes, a flat one and a bright contrasting one that trip).
+
+The zone faults (W7, W8, W12 and the other woodland zone routes) are now pinned to the commit Matt saw (`woodland@2f88ca53` in `calibration_set.json`; `calibrate.pinned_game` extracts the zone's data and the files its scenes reach), as the asset routes already were. Before that, a fixed woodland made the calibration lose the faults it was built on (35 of 38 on 26 Oct). With the pin and the ground band: **38 of 38**; the false positives are in `calibration_results.json`.
+
+## Light sources (26 Oct)
+
+`logic.light_source` (`scene.check_light_sources`): on a dark ground (an interior or a night street, median luminance under 90), a pool of light is a patch at least 35 L over the ground's median (blurred at 0.2 H) and 0.25 H² large. Its brightest point must lie within 1.4 H of a source: a visible sprite named as a light (torch, brazier, lamp, lantern, candle, fire, hearth, forge, window, skylight) or the plan's skylight or stair hatch. Otherwise it is a light from nowhere. Claude A found two such pools in the Undercroft's seal room, where the torches hung above the frame. `check:review` holds a pool with and without a torch (`LightSource`). The Undercroft's pools all find their torches; with the torches removed, all eight are caught.
 
 ## Adding a detector
 
