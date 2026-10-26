@@ -813,8 +813,9 @@ def boulder4(d, w=21, h=13, seed=31, fam='stone', moss='top'):
             arr = fac & ~np.roll(fac, 1, 1)
             tt[fac & (tt >= 2)] -= 1
             tt[arr & (tt <= 3)] = np.minimum(4, tt[arr & (tt <= 3)] + 2)
-            for _ in range(int(rng.integers(1, 3))):
-                by_ = rng.uniform(topline.mean() + 1.5 * d, c['base'] - 1.5 * d)
+            blo, bhi = topline.mean() + 1.5 * d, c['base'] - 1.5 * d
+            for _ in range(int(rng.integers(1, 3)) if bhi > blo else 0):       # (a low chunk has no room for beds)
+                by_ = rng.uniform(blo, bhi)
                 wob = 0.6 * d * np.sin(xx / (2.3 * d) + rng.uniform(0, 6))
                 bed = side & (np.abs(yy - by_ - wob - (xx - c['cx']) * rng.uniform(-0.15, 0.15)) < 0.5)
                 lipb = side & np.roll(bed, 1, 0) & ~bed
