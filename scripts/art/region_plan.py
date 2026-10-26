@@ -32,6 +32,9 @@ docs/vision/regions/*.md section 8, research/world-benchmark.md, eastward-edges.
   story props;
 - set pieces from the cliff core's library, or marked proposed;
 - obstacles at least 800 px apart (brief 7); set pieces of this biome only, on the 8 px grid.
+- placement, reach and water ends (from Claude I's lull_delta.py, #177): nothing placed in
+  water, the sea or a building; every placed thing and egg spot reachable from the routes on
+  stairs, bridges and fords; every water body with a source and an outlet, or declared closed.
 
 Run:
     python3 scripts/art/region_plan.py --check            (every plan; exits non-zero on a fault)
@@ -227,6 +230,178 @@ def detab(outline) -> list:
             continue
         o = new
     return o
+
+
+# --- placement, reach and water ends (from Claude I's lull_delta.py, #177) -----------------
+
+def _in_poly(p, poly) -> bool:
+    x, y, inside = p[0], p[1], False
+    for (x1, y1), (x2, y2) in zip(poly, poly[1:] + poly[:1]):
+        if (y1 > y) != (y2 > y) and x < x1 + (y - y1) * (x2 - x1) / (y2 - y1):
+            inside = not inside
+    return inside
+
+
+def coast_polys(P: dict) -> list:
+    """The plan's land outlines: `coast` as one polygon, or as {name: polygon} for several
+    islands (Claude C; string values there are notes). Outside every one of them is sea."""
+    c = P.get('coast')
+    if not c:
+        return []
+    polys = list(c.values()) if isinstance(c, dict) else [c]
+    return [q for q in polys if isinstance(q, list) and len(q) >= 3 and isinstance(q[0], list)]
+
+
+def placed(P: dict) -> list:
+    """Everything a plan places, as (label, at, the entry)."""
+    return [(n['thing'], n['at'], n) for n in P.get('named', [])] + \
+        [(k['holds'], k['at'], k) for k in P.get('pockets', [])] + \
+        [(f"marker {m['what']}", m['at'], m) for m in P.get('markers', []) if not m.get('outside_box')] + \
+        [(r['who'], r['at'], r) for r in P.get('residents', [])]
+
+
+def _decked(P: dict, at) -> bool:
+    """On a bridge, a deck span or an island the plan declares."""
+    for b in P.get('places', []):
+        if b.get('span') and b['span'][0] <= at[0] <= b['span'][1] and abs(at[1] - b['at'][1]) <= 16:
+            return True
+        ix, iy, iw, ih = b.get('island', (0, 0, 0, 0))
+        if ix <= at[0] <= ix + iw and iy <= at[1] <= iy + ih:
+            return True
+    for w in P.get('water', []):
+        if any(abs(at[0] - b['at'][0]) <= b['span'] / 2 and abs(at[1] - b['at'][1]) <= 16 for b in w.get('bridges', [])):
+            return True
+    return False
+
+
+def placement(P: dict) -> list:
+    """Nothing placed stands in water (inside a closed water body and off its islands, within
+    half a channel's width and 6 px of its line, or in the sea outside the plan's `coast`), or
+    inside a building's footprint (`buildings`: {id, foot: [x, y] its south-west corner, w}; a
+    door marker stands at its building). A thing that stands in the shallows or on stilts by
+    design says so with "in_water": true."""
+    pid, out = P['id'], []
+    coast = coast_polys(P)
+    for what, at, e in placed(P):
+        if e.get('in_water') or _decked(P, at):
+            continue
+        if coast and not any(_in_poly(at, c) for c in coast):
+            out.append(f'{pid}: {what} at {tuple(at)} stands in the sea (outside the coast)')
+        for w in P.get('water', []):
+            if w.get('closed'):
+                if _in_poly(at, w['points']) and not any(_in_poly(at, i['outline']) for i in w.get('islands', [])):
+                    out.append(f'{pid}: {what} at {tuple(at)} stands in the {w["id"]}')
+            elif dist_to_line(at, w['points']) < w.get('width', 8) / 2 + 6:
+                out.append(f'{pid}: {what} at {tuple(at)} stands in the {w["id"]}')
+        for b in P.get('buildings', []):
+            if what.startswith('marker door'):
+                break
+            x, y = b['foot']
+            if x - 4 <= at[0] <= x + b['w'] + 4 and y - 80 <= at[1] <= y + 4:
+                out.append(f'{pid}: {what} at {tuple(at)} stands in the building {b["id"]}')
+    return out
+
+
+def reach(P: dict) -> list:
+    """Reachability on the plan alone (rules-system.md G0): a flood fill at 4 px over walkable
+    ground (tier tops, not faces, not water, not the sea outside the coast, not land marked
+    walkable: false) from every route's ends, changing tier only on a stair and crossing water
+    only on a bridge, causeway, jetty, boardwalk, slipway or declared island. Faults every
+    named thing, pocket, marker, resident and egg spot it cannot reach."""
+    from collections import deque
+    G = Ground(P)
+    x0, y0 = P['box'][0], P['box'][1]
+    c = G.s
+    H, W = G.tier.shape
+
+    def px(q):
+        return ((q[0] - x0) / c, (q[1] - y0) / c)
+    wet = Image.new('L', (W, H), 0)
+    dr = ImageDraw.Draw(wet)
+    if coast_polys(P):
+        dr.rectangle([0, 0, W, H], fill=1)
+        for poly in coast_polys(P):
+            dr.polygon([px(q) for q in poly], fill=0)
+    for wt in P.get('water', []):
+        if wt.get('closed'):
+            dr.polygon([px(q) for q in wt['points']], fill=1)
+            for i in wt.get('islands', []):
+                dr.polygon([px(q) for q in i['outline']], fill=0)
+        else:
+            dr.line([px(q) for q in wt['points']], fill=1, width=max(1, int(wt.get('width', 8) / c)))
+    for a in P.get('areas', []):
+        if a.get('walkable') is False:
+            ax, ay, aw, ah = a['rect']
+            dr.rectangle([px((ax, ay)), px((ax + aw, ay + ah))], fill=1)
+    wet = np.asarray(wet).astype(bool)
+    deck = Image.new('L', (W, H), 0)
+    dd = ImageDraw.Draw(deck)
+    for pth in P.get('routes', []) + P.get('trods', []):
+        if pth.get('kind') in SPANS or pth['id'] in ('jetty', 'boardwalk', 'slipway'):
+            dd.line([px(q) for q in pth['points']], fill=1, width=max(1, int(pth['width'] / c)))
+        for f in ([pth['ford']] if pth.get('ford') else []) + pth.get('fords', []):
+            dd.rectangle([px((f[0] - 16, f[1] - 16)), px((f[0] + 16, f[1] + 16))], fill=1)
+    for pl in P.get('places', []):
+        if pl.get('span'):
+            a, b = pl['span']
+            dd.rectangle([px((a, pl['at'][1] - 16)), px((b, pl['at'][1] + 16))], fill=1)
+        if pl.get('island'):
+            ix, iy, iw, ih = pl['island']
+            dd.rectangle([px((ix, iy)), px((ix + iw, iy + ih))], fill=1)
+    for wt in P.get('water', []):
+        for b in wt.get('bridges', []):
+            dd.rectangle([px((b['at'][0] - b['span'] / 2, b['at'][1] - 16)),
+                          px((b['at'][0] + b['span'] / 2, b['at'][1] + 16))], fill=1)
+        for f in wt.get('fords', []):
+            dd.rectangle([px((f[0] - 16, f[1] - 16)), px((f[0] + 16, f[1] + 16))], fill=1)
+    deck = np.asarray(deck).astype(bool)
+    stair = np.zeros((H, W), bool)
+    yy, xx = np.mgrid[0:H, 0:W]
+    for st in P.get('stairs', []):
+        sx, sy = px(st['at'])
+        stair |= (np.abs(xx - sx) <= (st['width'] / 2 + 8) / c) & (np.abs(yy - sy) <= (FACE + 16) / c)
+    walk = (~wet & ~G.face) | deck | stair
+    tier = G.tier
+    seen = np.zeros((H, W), bool)
+    q = deque()
+    for pth in P.get('routes', []):
+        for p in (pth['points'][0], pth['points'][-1]):
+            cx = min(max(int((p[0] - x0) // c), 0), W - 1)
+            cy = min(max(int((p[1] - y0) // c), 0), H - 1)
+            if walk[cy, cx] and not seen[cy, cx]:
+                seen[cy, cx] = True
+                q.append((cy, cx))
+    while q:
+        r, k = q.popleft()
+        for d1, d2 in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            r2, k2 = r + d1, k + d2
+            if not (0 <= r2 < H and 0 <= k2 < W) or seen[r2, k2] or not walk[r2, k2]:
+                continue
+            if tier[r2, k2] != tier[r, k] and not (stair[r2, k2] or stair[r, k] or deck[r2, k2] or deck[r, k]):
+                continue
+            seen[r2, k2] = True
+            q.append((r2, k2))
+    out = []
+    things = [(w, a) for w, a, _e in placed(P)] + [(e['what'], e['at']) for e in P.get('egg_spots', [])]
+    for what, at in things:
+        cx, cy = int((at[0] - x0) // c), int((at[1] - y0) // c)
+        if not seen[max(0, cy - 3):cy + 4, max(0, cx - 3):cx + 4].any():
+            out.append(f'{P["id"]}: {what} at {tuple(at)} cannot be reached from the routes')
+    return out
+
+
+def water_ends(P: dict) -> list:
+    """Every water body says where it comes from and where it goes (`source` and `outlet`, a
+    name or a point; a stream that leaves the box names where), or is `declared_closed` (a
+    sealed tarn, a dew pond). Water does not appear from nowhere (Claude I, #177)."""
+    out = []
+    for w in P.get('water', []):
+        if w.get('declared_closed'):
+            continue
+        for k in ('source', 'outlet'):
+            if not w.get(k):
+                out.append(f'{P["id"]}: water {w["id"]} has no {k} (or mark it declared_closed)')
+    return out
 
 
 def variety(plan: dict) -> list:
@@ -435,6 +610,7 @@ def check(plan: dict) -> list:
         if sp['at'][0] % GRID or sp['at'][1] % GRID:
             out.append(f'{pid}: set piece {sp["piece"]} at {tuple(sp["at"])} off the grid')
         inside(sp['at'], f'set piece {sp["piece"]}')
+    out += placement(plan) + reach(plan) + water_ends(plan)
     return out
 
 
