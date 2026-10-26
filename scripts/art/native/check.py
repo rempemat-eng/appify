@@ -8,8 +8,9 @@
    already verified on this machine (.cache/kit/verified/, keyed by their hash), so it costs a
    render only when something it reads has changed.
 3. The lawn band. The golden's lawn measure (measure.py, MEASURE.md) sits in its biome's band.
-4. The drawn villages (village.py, town.py): house colours only, few lone pixels, and a note when a
+4. The drawn villages (village.py, town.py) and the Undercroft (undercroft.py): house colours only, few lone pixels, and a note when a
    zone's pictures are older than the kit or its plan.
+5. Every trunk shows its crown in the zones gen_zone writes (crowns()).
 
     python3 -m scripts.art.native.check            all gates
     python3 -m scripts.art.native.check --no-cache rebuild even if verified
@@ -136,8 +137,13 @@ def villages() -> list:
             bad.append(f'{plan["id"]}: no kit.json (python3 game/tools/gen_village.py {plan["id"]})')
             continue
         kit = json.load(open(kp))
-        if kit.get('inputs') != town.input_hash(plan_path, kit['density']):
-            notes.append(f'{plan["id"]}: the kit or the plan changed since it was drawn: python3 game/tools/gen_village.py {plan["id"]}')
+        if plan['art'].get('kit') == 'undercroft':     # the vault kit (undercroft.py) has its own inputs and tool
+            from scripts.art.native import undercroft
+            stale, tool = kit.get('inputs') != undercroft.input_hash(plan_path, kit['density']), 'gen_undercroft.py'
+        else:
+            stale, tool = kit.get('inputs') != town.input_hash(plan_path, kit['density']), 'gen_village.py ' + plan['id']
+        if stale:
+            notes.append(f'{plan["id"]}: the kit or the plan changed since it was drawn: python3 game/tools/{tool}')
         drawn = set(kit.get('kit_drawn', []))
         for f in sorted(glob.glob(os.path.join(zdir, 'art', '*.png'))):
             img = Image.open(f).convert('RGBA')
@@ -153,6 +159,114 @@ def villages() -> list:
                 if ls > lim:
                     bad.append(f'{plan["id"]}/{name}: {100 * ls:.2f} % lone pixels (at most {100 * lim:.0f} %)')
     return bad, notes
+
+
+def crowns() -> list:
+    """5. Every trunk shows its crown (25 Oct): in each zone drawn by gen_zone (game/zones/<zone>/kit.json
+    with [id, kind, x, y, w, h] objects), the objects are stacked by their feet as the game sorts
+    them, and a tree (a picture with a crown of greens over a trunk) fails when its trunk shows
+    but less than CROWN_MIN of its crown does (hidden by what stands in front or cut by the zone's
+    edge), or when its crown lies mostly over a bigger crown of another kind in nearly the same colour, so it reads
+    as part of that one (a small tree's pole under a bigger tree's crown)."""
+    import glob
+    import numpy as np
+    from PIL import Image
+    from scipy import ndimage as ndi
+    CROWN_MIN, OVER_MAX, COLOUR_MIN, SLIM_EDGE_MAX = 0.4, 0.3, 12.0, 0.25
+    bad = []
+    for kp in sorted(glob.glob(os.path.join(ROOT, 'game', 'zones', '*', 'kit.json'))):
+        kit = json.load(open(kp))
+        objs = kit.get('objects', [])
+        if not objs or not isinstance(objs[0], list):
+            continue
+        zdir = os.path.dirname(kp)
+        D = float(kit['density'])
+        gw, gh = Image.open(os.path.join(zdir, 'art', 'ground.png')).size
+        pics = {}
+        for k in sorted({o[1] for o in objs}):
+            a = np.asarray(Image.open(os.path.join(zdir, 'art', k + '.png')).convert('RGBA')).astype(int)
+            al = a[..., 3] > 0
+            green = al & (a[..., 1] > a[..., 0] + 4)
+            H = a.shape[0]
+            low = np.zeros_like(al)
+            low[int(H * 0.45):] = True
+            trunk = al & ~green & low
+            lab, n = ndi.label(trunk)
+            yb = int(np.nonzero(al.any(1))[0].max()) + 1 if al.any() else H
+            base = np.unique(lab[yb - 3:yb][lab[yb - 3:yb] > 0])   # a trunk stands on the ground (no berries)
+            trunk = np.isin(lab, base) & (lab > 0)
+            L = a[..., :3].astype(float)
+            tree = green.sum() > 0.3 * al.sum() and trunk.sum() > 20
+            pics[k] = (al, green, trunk, L, tree)
+        order = sorted(range(len(objs)), key=lambda i: (objs[i][3] + objs[i][5], i))
+        owner = np.full((gh, gw), -1)
+        crown_owner = np.full((gh, gw), -1)
+        placed = {}
+        for i in order:
+            oid, kind, x, y, w, h = objs[i]
+            al, green, trunk, L, tree = pics[kind]
+            ph, pw = al.shape
+            X0 = int(round((x + w / 2) * D)) - pw // 2
+            Y0 = int(round((y + h) * D)) - ph
+            placed[i] = (X0, Y0)
+            ys, xs = np.nonzero(al)
+            gy, gx = ys + Y0, xs + X0
+            ok = (gy >= 0) & (gy < gh) & (gx >= 0) & (gx < gw)
+            if tree:
+                cys, cxs = np.nonzero(green)
+                cy_, cx_ = cys + Y0, cxs + X0
+                cok = (cy_ >= 0) & (cy_ < gh) & (cx_ >= 0) & (cx_ < gw)
+                under = crown_owner[cy_[cok], cx_[cok]]
+                if len(under) and (under >= 0).mean() > OVER_MAX:
+                    j = int(np.bincount(under[under >= 0]).argmax())
+                    oj = objs[j]
+                    alj, gj, _tj, Lj, _ = pics[oj[1]]
+                    Xj, Yj = placed[j]
+                    m = under == j
+                    lj = Lj[cy_[cok][m] - Yj, cx_[cok][m] - Xj].mean(0)
+                    li = L[cys[cok][m], cxs[cok][m]].mean(0)
+                    dist = float(np.sqrt(((li - lj) ** 2).sum()))
+                    if dist < COLOUR_MIN and green.sum() < 0.6 * gj.sum() and kind != oj[1] \
+                            and 'pine' not in (kind, oj[1]):        # a conifer's tiers read against any crown
+                        bad.append(f'{os.path.basename(zdir)}/{oid} ({kind}): its crown lies over {oj[0]}\'s crown in the same '
+                                   f'colour (mean RGB {dist:.0f} apart); move it or give it a lighter or darker green')
+            owner[gy[ok], gx[ok]] = i
+            crown_owner[gy[ok], gx[ok]] = np.where(pics[kind][1][ys[ok], xs[ok]], i, -1) if tree else -1
+        for i in order:
+            oid, kind, x, y, w, h = objs[i]
+            al, green, trunk, L, tree = pics[kind]
+            if not tree:
+                continue
+            X0, Y0 = placed[i]
+
+            def shown(mask):
+                ys, xs = np.nonzero(mask)
+                gy, gx = ys + Y0, xs + X0
+                ok = (gy >= 0) & (gy < gh) & (gx >= 0) & (gx < gw)
+                return (owner[gy[ok], gx[ok]] == i).sum() / max(1, mask.sum())
+            t_, c_ = shown(trunk), shown(green)
+            if t_ > 0.3 and c_ < CROWN_MIN:
+                bad.append(f'{os.path.basename(zdir)}/{oid} ({kind}): its trunk shows ({100 * t_:.0f} %) but only '
+                           f'{100 * c_:.0f} % of its crown does')
+            # a slim tree (a birch, a sapling: its trunk under a sixth of its crown's width) must stand
+            # clear of the bigger crowns: when much of its crown's outline runs against another tree's
+            # crown, the two read as one and its pale trunk as a bare pole under someone else's crown
+            ys, xs = np.nonzero(green)
+            gy, gx = ys + Y0, xs + X0
+            ok = (gy >= 0) & (gy < gh) & (gx >= 0) & (gx < gw)
+            mine = np.zeros((gh, gw), bool)
+            mine[gy[ok], gx[ok]] = owner[gy[ok], gx[ok]] == i
+            tcols = np.nonzero(trunk.any(0))[0]
+            gcols = np.nonzero(green.any(0))[0]
+            slim = len(tcols) and len(gcols) and (tcols.max() - tcols.min() + 1) < (gcols.max() - gcols.min() + 1) / 6
+            if slim and t_ > 0.3 and mine.sum() > 50:
+                edge = mine & ~ndi.binary_erosion(mine)
+                other = ndi.binary_dilation(mine, iterations=3) & ~mine & (crown_owner >= 0) & (owner != i)
+                share = (ndi.binary_dilation(other, iterations=1) & edge).sum() / max(1, edge.sum())
+                if share > SLIM_EDGE_MAX:
+                    bad.append(f'{os.path.basename(zdir)}/{oid} ({kind}): a slim tree whose crown runs into another crown along '
+                               f'{100 * share:.0f} % of its outline, so its trunk reads as a bare pole; stand it clear')
+    return bad
 
 
 def main(argv=None) -> int:
@@ -182,6 +296,9 @@ def main(argv=None) -> int:
                   f'(at most {100 * band.get("lone_px_max", 1.0):.0f} %): {"ok" if inside else "OUT OF BAND"}')
             if not inside:
                 fails.append(f'{scene}: lawn measure out of the {biome_name} band')
+    cbad = crowns()
+    print(f'[kit] every trunk shows its crown (gen_zone zones): {"ok" if not cbad else str(len(cbad)) + " finding(s)"}')
+    fails += cbad
     vbad, vnotes = villages()
     print(f'[kit] drawn villages (house colours, lone pixels): {"ok" if not vbad else str(len(vbad)) + " finding(s)"}')
     for n in vnotes:

@@ -124,6 +124,7 @@ function Sheet({
   });
   return (
     <Animated.View
+      pointerEvents="none"
       style={[
         {
           position: 'absolute',
@@ -134,7 +135,6 @@ function Sheet({
           overflow: 'hidden',
         },
         box,
-        { pointerEvents: 'none' },
       ]}
     >
       <Animated.Image
@@ -217,6 +217,7 @@ function GrainView({ g, c }: { g: Grain; c: Ctx }) {
   });
   return (
     <Animated.View
+      pointerEvents="none"
       style={[
         {
           position: 'absolute',
@@ -227,7 +228,6 @@ function GrainView({ g, c }: { g: Grain; c: Ctx }) {
           backgroundColor: REGOLITH[g.tone],
         },
         style,
-        { pointerEvents: 'none' },
       ]}
     >
       {/* each grain lit on top, its underside nearly black (no air to soften it) */}
@@ -503,6 +503,7 @@ export function RocketScene({
   const sky = rocketArt.sky;
   return (
     <View
+      pointerEvents="none"
       // @ts-expect-error dataSet is a react-native-web prop (crisp pixel scaling via CSS)
       dataSet={{ pixel: 'true' }}
       style={{
@@ -513,7 +514,6 @@ export function RocketScene({
         height,
         overflow: 'hidden',
         backgroundColor: MOON_BG,
-        pointerEvents: 'none',
       }}
     >
       <Animated.View

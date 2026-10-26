@@ -1,0 +1,57 @@
+{
+ "id": "crossroads/fence_4",
+ "file": "game/zones/crossroads/art/fence_4.png",
+ "sha256": "91d82b1ecb87a856e89f97851dde33936c6afe8cd1a71c0f3e91b021d8e2bc44",
+ "kind": "fence",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  156,
+  63
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 1
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 6,
+   "tones": 19.5,
+   "shapes": 37.833333333333336
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.722,
+  "tones_ratio": 0.722,
+  "shapes_ratio": 0.751,
+  "passed": false,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    2,
+    13,
+    154,
+    60
+   ],
+   "message": "crossroads/fence_4: detail bar 0.72 of Eastward's prop band (19.5 tones, 37.8 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  }
+ ],
+ "reviewed": "2026-10-25",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}

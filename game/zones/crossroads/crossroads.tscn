@@ -965,7 +965,7 @@ offset = Vector2(-69, -158)
 position = Vector2(708, 666)
 texture = ExtResource("t29")
 centered = false
-offset = Vector2(-48, -122)
+offset = Vector2(-48, -128)
 
 [node name="Waystone" type="Sprite2D" parent="Props"]
 position = Vector2(1260, 1068)
@@ -1013,19 +1013,19 @@ offset = Vector2(-78, -59)
 position = Vector2(546, 132)
 texture = ExtResource("t37")
 centered = false
-offset = Vector2(-109, -243)
+offset = Vector2(-105, -243)
 
 [node name="Bush7" type="Sprite2D" parent="Props"]
 position = Vector2(720, 348)
 texture = ExtResource("t38")
 centered = false
-offset = Vector2(-59, -86)
+offset = Vector2(-57, -73)
 
 [node name="Bush8" type="Sprite2D" parent="Props"]
 position = Vector2(1434, 366)
 texture = ExtResource("t39")
 centered = false
-offset = Vector2(-57, -86)
+offset = Vector2(-57, -73)
 
 [node name="FlowerTub9" type="Sprite2D" parent="Props"]
 position = Vector2(894, 210)
@@ -1043,7 +1043,7 @@ offset = Vector2(-27, -53)
 position = Vector2(1140, 192)
 texture = ExtResource("t42")
 centered = false
-offset = Vector2(-39, -62)
+offset = Vector2(-39, -71)
 
 [node name="Sacks12" type="Sprite2D" parent="Props"]
 position = Vector2(798, 198)
@@ -1055,37 +1055,37 @@ offset = Vector2(-30, -62)
 position = Vector2(120, 66)
 texture = ExtResource("t44")
 centered = false
-offset = Vector2(-108, -243)
+offset = Vector2(-105, -243)
 
 [node name="Bush14" type="Sprite2D" parent="Props"]
 position = Vector2(306, 66)
 texture = ExtResource("t45")
 centered = false
-offset = Vector2(-59, -86)
+offset = Vector2(-57, -73)
 
 [node name="Bush15" type="Sprite2D" parent="Props"]
 position = Vector2(402, 72)
 texture = ExtResource("t46")
 centered = false
-offset = Vector2(-59, -86)
+offset = Vector2(-57, -73)
 
 [node name="Bush16" type="Sprite2D" parent="Props"]
 position = Vector2(84, 402)
 texture = ExtResource("t47")
 centered = false
-offset = Vector2(-59, -86)
+offset = Vector2(-57, -73)
 
 [node name="Bush17" type="Sprite2D" parent="Props"]
 position = Vector2(240, 390)
 texture = ExtResource("t48")
 centered = false
-offset = Vector2(-58, -86)
+offset = Vector2(-57, -73)
 
 [node name="Bush18" type="Sprite2D" parent="Props"]
 position = Vector2(384, 405)
 texture = ExtResource("t49")
 centered = false
-offset = Vector2(-59, -86)
+offset = Vector2(-57, -73)
 
 [node name="Hay19" type="Sprite2D" parent="Props"]
 position = Vector2(1620, 186)
@@ -1103,19 +1103,19 @@ offset = Vector2(-33, -62)
 position = Vector2(1842, 120)
 texture = ExtResource("t52")
 centered = false
-offset = Vector2(-108, -243)
+offset = Vector2(-106, -243)
 
 [node name="Bush22" type="Sprite2D" parent="Props"]
 position = Vector2(1560, 396)
 texture = ExtResource("t53")
 centered = false
-offset = Vector2(-58, -86)
+offset = Vector2(-57, -73)
 
 [node name="Bush23" type="Sprite2D" parent="Props"]
 position = Vector2(1866, 396)
 texture = ExtResource("t54")
 centered = false
-offset = Vector2(-58, -86)
+offset = Vector2(-57, -73)
 
 [node name="KitLantern24" type="Sprite2D" parent="Props"]
 position = Vector2(870, 600)
@@ -1145,7 +1145,7 @@ offset = Vector2(-27, -53)
 position = Vector2(1050, 1116)
 texture = ExtResource("t59")
 centered = false
-offset = Vector2(-45, -50)
+offset = Vector2(-45, -86)
 
 [node name="Barrel29" type="Sprite2D" parent="Props"]
 position = Vector2(582, 756)
@@ -1175,7 +1175,7 @@ offset = Vector2(-27, -110)
 position = Vector2(1671, 720)
 texture = ExtResource("t64")
 centered = false
-offset = Vector2(-39, -62)
+offset = Vector2(-39, -71)
 
 [node name="Coal34" type="Sprite2D" parent="Props"]
 position = Vector2(1680, 792)
@@ -1187,13 +1187,13 @@ offset = Vector2(-30, -53)
 position = Vector2(1584, 906)
 texture = ExtResource("t66")
 centered = false
-offset = Vector2(-39, -50)
+offset = Vector2(-39, -53)
 
 [node name="Grindstone36" type="Sprite2D" parent="Props"]
 position = Vector2(1674, 882)
 texture = ExtResource("t67")
 centered = false
-offset = Vector2(-42, -74)
+offset = Vector2(-42, -80)
 
 [node name="Barrel37" type="Sprite2D" parent="Props"]
 position = Vector2(1338, 792)
@@ -1217,73 +1217,73 @@ offset = Vector2(-24, -71)
 position = Vector2(900, 1440)
 texture = ExtResource("t71")
 centered = false
-offset = Vector2(-108, -243)
+offset = Vector2(-106, -243)
 
 [node name="Oak41" type="Sprite2D" parent="Props"]
 position = Vector2(1176, 1626)
 texture = ExtResource("t72")
 centered = false
-offset = Vector2(-108, -243)
+offset = Vector2(-106, -243)
 
 [node name="Oak42" type="Sprite2D" parent="Props"]
 position = Vector2(1812, 1524)
 texture = ExtResource("t73")
 centered = false
-offset = Vector2(-109, -243)
+offset = Vector2(-106, -243)
 
 [node name="Oak43" type="Sprite2D" parent="Props"]
 position = Vector2(66, 1224)
 texture = ExtResource("t74")
 centered = false
-offset = Vector2(-109, -243)
+offset = Vector2(-105, -243)
 
 [node name="Oak44" type="Sprite2D" parent="Props"]
 position = Vector2(546, 1644)
 texture = ExtResource("t75")
 centered = false
-offset = Vector2(-108, -243)
+offset = Vector2(-105, -243)
 
 [node name="Oak45" type="Sprite2D" parent="Props"]
 position = Vector2(1836, 786)
 texture = ExtResource("t76")
 centered = false
-offset = Vector2(-108, -243)
+offset = Vector2(-106, -243)
 
 [node name="Oak46" type="Sprite2D" parent="Props"]
 position = Vector2(120, 732)
 texture = ExtResource("t77")
 centered = false
-offset = Vector2(-108, -243)
+offset = Vector2(-105, -243)
 
 [node name="Bush47" type="Sprite2D" parent="Props"]
 position = Vector2(756, 1572)
 texture = ExtResource("t78")
 centered = false
-offset = Vector2(-58, -86)
+offset = Vector2(-57, -73)
 
 [node name="Bush48" type="Sprite2D" parent="Props"]
 position = Vector2(1338, 1428)
 texture = ExtResource("t79")
 centered = false
-offset = Vector2(-58, -86)
+offset = Vector2(-57, -73)
 
 [node name="Bush49" type="Sprite2D" parent="Props"]
 position = Vector2(1710, 1338)
 texture = ExtResource("t80")
 centered = false
-offset = Vector2(-60, -86)
+offset = Vector2(-57, -73)
 
 [node name="Bush50" type="Sprite2D" parent="Props"]
 position = Vector2(246, 684)
 texture = ExtResource("t81")
 centered = false
-offset = Vector2(-60, -86)
+offset = Vector2(-57, -73)
 
 [node name="Bush51" type="Sprite2D" parent="Props"]
 position = Vector2(1812, 528)
 texture = ExtResource("t82")
 centered = false
-offset = Vector2(-59, -86)
+offset = Vector2(-57, -73)
 
 [node name="Boulder52" type="Sprite2D" parent="Props"]
 position = Vector2(996, 1272)
@@ -1299,7 +1299,7 @@ only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
 position = Vector2(786, 840)
 texture = ExtResource("t84")
 centered = false
-offset = Vector2(-48, -44)
+offset = Vector2(-51, -47)
 
 [node name="If_debris_b" type="Node2D" parent="Props"]
 script = ExtResource("cond")
@@ -1309,7 +1309,7 @@ only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
 position = Vector2(1116, 936)
 texture = ExtResource("t85")
 centered = false
-offset = Vector2(-42, -38)
+offset = Vector2(-45, -41)
 
 [node name="If_debris_c" type="Node2D" parent="Props"]
 script = ExtResource("cond")
@@ -1319,7 +1319,7 @@ only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
 position = Vector2(954, 1080)
 texture = ExtResource("t86")
 centered = false
-offset = Vector2(-45, -38)
+offset = Vector2(-48, -41)
 
 [node name="If_debris_d" type="Node2D" parent="Props"]
 script = ExtResource("cond")
@@ -1329,7 +1329,7 @@ only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
 position = Vector2(1434, 936)
 texture = ExtResource("t87")
 centered = false
-offset = Vector2(-39, -38)
+offset = Vector2(-42, -41)
 
 [node name="Handcart" type="Sprite2D" parent="Props"]
 position = Vector2(708, 786)
@@ -1341,7 +1341,7 @@ offset = Vector2(-57, -80)
 position = Vector2(810, 1116)
 texture = ExtResource("t89")
 centered = false
-offset = Vector2(-45, -50)
+offset = Vector2(-45, -86)
 
 [node name="FlowerTub59" type="Sprite2D" parent="Props"]
 position = Vector2(1140, 600)
@@ -1404,7 +1404,7 @@ script = ExtResource("cond")
 only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
 
 [node name="SquareRubbleAShadow" type="Sprite2D" parent="Props/If_square_rubble_a_shadow"]
-position = Vector2(655, 1070)
+position = Vector2(651, 1070)
 texture = ExtResource("t96")
 centered = false
 offset = Vector2(0, 0)
@@ -1415,7 +1415,7 @@ script = ExtResource("cond")
 only_if = "{\"not_restored\":[\"fern_cottage\"]}"
 
 [node name="FernRubbleShadow" type="Sprite2D" parent="Props/If_fern_rubble_shadow"]
-position = Vector2(1370, 1286)
+position = Vector2(1366, 1286)
 texture = ExtResource("t97")
 centered = false
 offset = Vector2(0, 0)
