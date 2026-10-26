@@ -153,3 +153,34 @@ F contains arena bounds, not world terrain: the later Godot bridge must add terr
 against actual APIs without inventing a new reference rule. No terrain collision is claimed here.
 Health application remains gated on A's mapping decision, and presentation remains A/J-owned.
 Full verify/art-repro/hosted CI and rendered/device checks remain pending. Keep DRAFT.
+
+## Impact/status/reagent checkpoint
+
+`AbilityImpacts` ports original T/B/Y/G as a pure snapshot reducer. Its public `impact`,
+`damage`, `field` and `react` functions deep-copy input, then preserve canonical damage,
+vulnerability, knockback/clamps, immortal targets, defeat/tether cleanup, Tam frost/shatter,
+Iona nearest-target lightning, powered arrow root transfer, harpoon tether, water slow,
+Rook designation, field caps/oldest eviction, and breadth-first reagent reactions.
+
+This boundary intentionally uses the reference state's canonical x/y, camelCase dictionaries.
+It is NOT an actor-health adapter: do not feed its damage to foundation low-integer HP until
+A settles the mapping. Convert `AbilityFlight` snake_case/Vector2 shot snapshots in a future
+explicit dispatcher adapter; don't pass them directly. Live player power controls passives,
+while captured projectile power controls projectile effects, as in the original. Apply each
+returned state synchronously before processing the next impact. No elapsed-time field ticks,
+status countdown, melee/stateful release dispatcher, terrain, guard/decoy path or Player hook
+is supplied by this reducer. These remain next steps, not completed gameplay.
+
+Effects preserve kind, geometry, lifetime, serial ordering and optional line origins; colours
+are omitted for presentation to supply. Field `source` remains the originating character.
+`impact-oracle.json` compares207 original-engine snapshots (all projectile launch families,
+base/powered passives, lethal/surviving targets, caps/clamps, chain/cycle/duplicate patch ids,
+immortality, zero/negative damage, coincident knockback and the80-event cap). Only colour
+fields are stripped from the original snapshots. Original function bodies are unmodified:
+`node game/test/combat/build_impact_oracle.mjs /path/to/original-modules.json`.
+Keep DRAFT; full verify/art/CI and rendered/device validation remain pending.
+
+Canonical edge retained for owner review: when powered Tam's shatter is itself lethal, original B
+records defeat/kills in the nested call and again in its caller. The207th oracle records this
+unchanged. C60 does not silently correct the canonical rule; A/canonical owner should decide
+before final integration. No reward is granted by this standalone reducer.
