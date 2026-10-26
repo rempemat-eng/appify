@@ -463,9 +463,16 @@ def cast_shadows(G, casts, tshadows, things, d):
     names = np.array(G.fams, dtype=object)[G.fam]
     body = np.where(np.isin(names, ['path', 'path_warm', 'path_cool', 'earth', 'earth_warm', 'earth_cool']), 4, 3)
     sel = inner & ground_px
-    G.tone[sel] = np.clip(np.minimum(G.tone[sel], body[sel]) - 2, 0, 5)
-    sel = core & ~inner & ground_px
-    G.tone[sel] = np.clip(np.minimum(G.tone[sel], body[sel]) - 1, 0, 5)
+    if d >= 2.5:
+        # density 3 and up (26 Oct): the shade keeps the ground's own variation (patches, worn
+        # earth, litter, tufts' roots) two tones down, so a shadow is never a one-tone rug
+        G.tone[sel] = np.clip(np.minimum(G.tone[sel] - 2, body[sel]), 0, 5)
+        sel = core & ~inner & ground_px
+        G.tone[sel] = np.clip(np.minimum(G.tone[sel] - 1, body[sel] + 1), 0, 5)
+    else:
+        G.tone[sel] = np.clip(np.minimum(G.tone[sel], body[sel]) - 2, 0, 5)
+        sel = core & ~inner & ground_px
+        G.tone[sel] = np.clip(np.minimum(G.tone[sel], body[sel]) - 1, 0, 5)
     # r3: a crown's shadow has a dappled rim, not a rug's edge: in a band about 3 world px
     # wide, blobs of full shade, half shade and sun at leaf scale (the same in world units at
     # every level), and a few sun flecks inside
