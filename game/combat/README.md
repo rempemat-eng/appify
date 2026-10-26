@@ -528,3 +528,36 @@ The committed compressed fixture avoids adding30MB of redundant test JSON. Conta
 Player's granted action hook and real C61/world HP integration remain unfinished. Existing health
 mapping/#275 and inherited Tam defeat decisions remain A-owned; no progression proposal adopted.
 Full npm verify/art-repro/hosted/rendered/native/device validation remains pending. Keep DRAFT.
+
+## Contact drawing sequence (presentation boundary only)
+
+`AbilityContactTrack` selects exact `clips.<clip>.facings.<facing>.frames` (or an explicitly
+requested `aims.<tag>.frames`) and takes an explicit approved canonical duration per drawing.
+It never derives kit timing from art-template duration, interpolates a missing variant, or
+retimes a manifest. The caller must supply the schedule agreed by A/J; current v2 template
+clocks and canonical kit clocks differ. The helper does not imply that #282 is integrated.
+
+Feed each active presentation delta once. Process the ordered `drawing` event before the
+following `contact` event: a coarse step can cross windup, contact and recovery together,
+so use the contact event's retained sample rather than `sample()`'s final recovery drawing.
+The contact is a presentation boundary, not another canonical damage/resource/projectile
+command. Canonical simulation already releases once. The forthcoming bridge must coordinate
+that existing release with presentation; attaching this helper alone does not delay, replay
+or render any canonical effect. No production actor is attached by this change.
+
+At an exact boundary the new drawing owns the time. Drawing zero (including release zero)
+enters on the first valid active advance, even at zero delta; repeated advances never replay
+contacts. Inactive/negative/nonfinite deltas freeze, completion holds the last drawing, and
+cancellation discards remaining contacts. Action-instance tokens must increase even after
+cancellation. Invalid configuration preserves the old sequence without consuming the token.
+
+Anchors are copied from the actual selected drawing in authored source texels relative to
+the foot pivot, already screen-oriented: no W mirroring, factor3 conversion, pivot addition
+or support-height adjustment. `anchor()` returns an explicit missing result rather than
+guessing zero or a previous frame. A genuine [0,0] anchor remains valid. Bramble's reviewed
+previous-frame arrow-tip policy, where applicable, belongs to the explicit bridge contract.
+
+Eleven tests cover exact/coarse ordered contact, variable canonical schedules independent
+of template clocks, aim/facing selection, invalid inputs, cancellation/token replay, inactive
+time, release zero and independent snapshots. Player input/hook and real world/C61 HP mapping
+remain unfinished; full npm/hosted/rendered/native/device checks are still pending. Keep DRAFT.
