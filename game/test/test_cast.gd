@@ -22,8 +22,63 @@ func test_facing_selection() -> void:
 	assert_str(CastSprite.facing_for(Vector2(-1, 0.4))).is_equal("W")
 	assert_str(CastSprite.facing_for(Vector2(0.3, 1))).is_equal("S")
 	assert_str(CastSprite.facing_for(Vector2(-0.2, -1))).is_equal("N")
-	assert_str(CastSprite.facing_for(Vector2(1, 1))).is_equal("S")       # a tie faces S or N
+	assert_str(CastSprite.facing_for(Vector2(1, 1))).is_equal("SE")      # contract v2: eight facings
+	assert_str(CastSprite.facing_for(Vector2(-1, -1))).is_equal("NW")
+	assert_str(CastSprite.facing_for(Vector2(-1, 0.9))).is_equal("SW")
+	assert_str(CastSprite.facing_for(Vector2(1, -1.1))).is_equal("NE")
 	assert_str(CastSprite.facing_for(Vector2.ZERO, "W")).is_equal("W")   # no direction keeps it
+	# hysteresis: 30 degrees below east stays E when already facing E, but is SE from elsewhere
+	var v := Vector2.from_angle(deg_to_rad(30.0))
+	assert_str(CastSprite.facing_for(v, "E")).is_equal("E")
+	assert_str(CastSprite.facing_for(v, "S")).is_equal("SE")
+	assert_str(CastSprite.facing_for(Vector2.from_angle(deg_to_rad(40.0)), "E")).is_equal("SE")
+
+func test_eight_facings_and_fallback() -> void:
+	var p := _player()
+	assert_str(p.sprite.manifest.get("view", "")).is_equal("8dir")
+	for fc in CastSprite.FACINGS8:
+		p.aim = CastSprite.facing_vector(fc)
+		await get_tree().physics_frame
+		await get_tree().physics_frame
+		assert_str(p.facing).is_equal(fc)
+		assert_str(p.sprite.animation).is_equal("idle_" + fc)
+	# a four-facing character shows a diagonal as the profile on its side
+	assert_bool(p.set_character("iona")).is_true()
+	p.aim = CastSprite.facing_vector("NW")
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	assert_str(p.facing).is_equal("NW")
+	assert_str(p.sprite.animation).is_equal("idle_W")
+
+func test_idle_fidget_plays_and_returns() -> void:
+	var s: CastSprite = auto_free(CastSprite.new())
+	add_child(s)
+	assert_bool(s.load_character("bramble")).is_true()
+	var cfg: Dictionary = s.manifest.idle_fidgets
+	assert_int(cfg.clips.size()).is_greater_equal(2)
+	var seen := false
+	for i in int((float(cfg.after) + 3.0) * 60.0):
+		s.advance(1.0 / 60.0)
+		if s.is_fidgeting():
+			seen = true
+			assert_bool(String(s.animation).begins_with("fidget_")).is_true()
+			break
+	assert_bool(seen).is_true()
+	for i in 600:
+		s.advance(1.0 / 60.0)
+		if not s.is_fidgeting():
+			break
+	assert_bool(s.is_fidgeting()).is_false()
+	assert_str(s.animation).is_equal("idle_S")
+	# any other clip cancels it at once
+	s._next_fidget = 0.0
+	for i in 200:
+		s.advance(1.0 / 60.0)
+		if s.is_fidgeting():
+			break
+	s.play_clip("walk", "S")
+	assert_str(s.animation).is_equal("walk_S")
+	assert_bool(s.is_fidgeting()).is_false()
 
 func test_standing_faces_the_aim() -> void:
 	var p := _player()
@@ -38,7 +93,8 @@ func test_shot_releases_on_the_release_frame() -> void:
 	var m := _manifest()
 	var clip: Dictionary = m.clips.primary
 	var rel := int(clip.release_frame)
-	for dir in [Vector2.RIGHT, Vector2.UP, Vector2.LEFT, Vector2.DOWN]:
+	for dir in [Vector2.RIGHT, Vector2.UP, Vector2.LEFT, Vector2.DOWN, Vector2(1, 1).normalized(),
+			Vector2(-1, -1).normalized(), Vector2.from_angle(deg_to_rad(200.0))]:   # any angle: from the nearest facing
 		var p := _player()
 		p.global_position = Vector2(300, 300)
 		p.aim = dir
@@ -101,7 +157,7 @@ func test_every_cast_member_loads_and_switches() -> void:
 		var m: Dictionary = JSON.parse_string(f.get_as_text())
 		assert_float(p.walk_speed).is_equal_approx(float(m.walk_speed), 0.001)
 		for clip in ["idle", "walk", "primary", "dodge", "hit", "defeat"]:
-			for fc in CastSprite.FACINGS:
+			for fc in m.get("directions", CastSprite.FACINGS):
 				assert_bool(p.sprite.sprite_frames.has_animation("%s_%s" % [clip, fc])).is_true()
 	assert_bool(p.set_character("bramble")).is_true()
 	assert_bool(p.start_shot()).is_true()
