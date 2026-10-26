@@ -326,6 +326,25 @@ class RaggedEdge(unittest.TestCase):
     def test_soft_grid_path_passes(self):
         self.assertEqual(E.ragged_ground(self.path(False), H, 'test'), [])
 
+    def river(self, tips):
+        a = lawn(400, 300)[..., :3].copy()
+        Y, X = np.mgrid[0:300, 0:400]
+        c = 150 + 12 * np.sin(X / 37.0)
+        water = np.abs(Y - c) < 40
+        bank = (np.abs(Y - c) < 46) & ~water
+        a[water] = BLUE
+        a[bank] = (70, 45, 42)
+        if tips:                                                # one-texel grass tips every 3 texels
+            comb = bank & (X % 3 == 0) & (np.abs(Y - c) >= 46 - 1 - (X * 7) % 4)    # one-texel tips of turf
+            a[comb] = GRASS
+        return a
+
+    def test_bank_with_tips_trips(self):
+        self.assertTrue(any('bank' in f.message for f in E.ragged_ground(self.river(True), H, 'test')))
+
+    def test_soft_bank_passes(self):
+        self.assertEqual(E.ragged_ground(self.river(False), H, 'test'), [])
+
     def test_sprite_thin_legs_pass(self):
         al = np.zeros((60, 90), bool)
         al[10:30, 5:85] = True                                  # a seat

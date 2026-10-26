@@ -230,9 +230,12 @@ def paint_hd(cv: np.ndarray, mask: np.ndarray, seed: int = 23) -> np.ndarray:
     t = np.full((H, W), 2)
     deep = mask & (wd > 3.4) & (width > 5.5)
     t[deep] = 1
-    t[mask & (wd <= 1.0) & ~north_or_west] = 3          # the lit shallows
+    t[mask & (wd <= 1.0) & ~north_or_west] = 3          # the lit shallows (the near, south and east shores)
+    # under the north and west bank the water is darker, stepping back to the body (eastward-edges
+    # 5.3: 2 to 8 px, 3 to 4 steps; #288 review S9)
+    t[mask & (wd <= 2.4) & north_or_west] = 1
     t[mask & (wd <= 1.3) & north_or_west] = 1            # the bank's shade on the water
-    t[mask & (wd <= 0.5) & north_or_west] = 0
+    t[mask & (wd <= 0.8) & north_or_west] = 0
     fam = np.full((H, W), FI['water'])
     # (the deep stays in the water's own ramp: no navy hole in the middle)
     # ripple lines along the flow: one texel thin, 2 to 5 world px long, a lit line over the
@@ -256,6 +259,9 @@ def paint_hd(cv: np.ndarray, mask: np.ndarray, seed: int = 23) -> np.ndarray:
     below[1:] = line[:-1]
     below &= mask & ~line & on
     t[below] = np.maximum(0, t[below] - 1)
+    # a 1 px very light waterline where the water meets its bank, all round (5.3)
+    edge_w = mask & ~ndi.binary_erosion(mask, structure=np.ones((3, 3), bool))
+    t[edge_w] = np.where(north_or_west[edge_w], 3, 4)
     out = cv.copy()
     out[mask] = fam[mask] * 8 + t[mask]
     # the banks, on lawn and paths only
@@ -270,20 +276,35 @@ def paint_hd(cv: np.ndarray, mask: np.ndarray, seed: int = 23) -> np.ndarray:
     out[bank & water_south] = C('earth', 1)                  # the north bank, in its own shade
     out[bank & ~water_south] = C('earth_warm', 3)            # banks facing the light
     out[bank & ~water_south & ~water_west & (odx > 0)] = C('earth', 2)
-    # the north bank's grass hangs over it in leaf-sized tips (one tip every 3 texels)
-    lawn = (is_fam(cv, 'grass') | is_fam(cv, 'leaf')) & ~mask
-    tipw = 3
-    col = (xx // tipw)
-    hsh = ((col * 2654435761) ^ seed) & 0xff
-    reach = (hsh % 4) + ((xx % tipw) == 1).astype(int)
+    # the north bank's grass hangs over it in rounded lobes, not one-texel tips (#288 review B2:
+    # the tips were per-texel teeth); the lobes' depth wanders slowly along the bank and the
+    # outline is drawn on the soft grid (softedge), as the paths are
+    from . import softedge as SE
+    from .terrain import noise as TN
+    lawn = (is_fam(cv, 'grass') | is_fam(cv, 'leaf')) & ~mask & ~(wet | bank)
+    reach = TN.vnoise_hd(wx, wy, 2.6, seed + 31) * (D - 1.0)          # the bank keeps 2 texels of face
     over = (wet | bank) & water_south & (od >= (D + 1.0) - reach + 0.5) & (od > 1.01)
-    out[over] = np.where((xx[over] % tipw) == 0, C('grass', 3), C('grass', 2))
-    # and over the side banks of a stream running south, in tips one every 3 texels down it
-    hsh2 = (((yy // tipw) * 2654435761) ^ (seed * 7)) & 0xff
-    reach2 = (hsh2 % 4) + ((yy % tipw) == 1).astype(int)
-    side = (wet | bank) & ~water_south & (np.abs(odx) > np.abs(ody)) & (od >= (D + 1.0) - reach2 + 0.5) & (od > 1.01)
-    out[side] = np.where((yy[side] % tipw) == 0, C('grass', 3), C('grass', 2))
-    lip = lawn & (od > D + 1.01) & (od <= D + 2.01)
+    reach2 = TN.vnoise_hd(wx, wy, 2.6, seed + 37) * (D - 1.0)
+    over |= (wet | bank) & ~water_south & (np.abs(odx) > np.abs(ody)) & (od >= (D + 1.0) - reach2 + 0.5) & (od > 1.01)
+    turf = SE.soft(lawn | over, smooth=0.45, min_area=1.0) & ~mask
+    over = turf & (wet | bank)
+    out[over] = C('grass', 2)
+    out[over & ~ndi.binary_erosion(over, iterations=1) & np.roll(~over, 1, axis=0)] = C('grass', 3)
+    # where smoothing took turf away from the bank's edge, the bank fills it
+    gone = (wet | bank) & ~turf
+    out[gone & ~(wet | bank)] = C('earth', 1)
+    nb = lawn & ~turf & ~mask
+    out[nb] = np.where(water_south[nb], C('earth', 1), C('earth_warm', 3))
+    # one last pass on the soft grid over water and bank together: what the turf's lobes left as
+    # a one-texel tooth on the outline goes back to turf, a one-texel bite becomes bank
+    wb = (mask | wet | bank) & ~over
+    wb2 = SE.soft(wb, smooth=0.35, min_area=1.0)
+    out[wb & ~wb2 & ~mask] = C('grass', 2)
+    turf = (turf | (wb & ~wb2)) & ~mask
+    add = wb2 & ~wb & ~mask
+    out[add] = np.where(water_south[add], C('earth', 1), C('earth_warm', 3))
+    over = turf & (wet | bank)
+    lip = turf & ~over & ndi.binary_dilation(wb2 & ~mask, structure=np.ones((3, 3), bool))
     lit_lip = (ody < 0) | (odx < 0)
     out[lip & lit_lip] = C('grass', 4)
     out[lip & ~lit_lip] = C('grass', 2)

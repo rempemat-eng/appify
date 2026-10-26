@@ -702,13 +702,13 @@ offset = Vector2(-115, -309)
 position = Vector2(660, 744)
 texture = ExtResource("t_mossy_log")
 centered = false
-offset = Vector2(-93, -54)
+offset = Vector2(-92, -54)
 
 [node name="log-2" type="Sprite2D" parent="Objects"]
 position = Vector2(468, 1464)
 texture = ExtResource("t_mossy_log")
 centered = false
-offset = Vector2(-93, -54)
+offset = Vector2(-92, -54)
 
 [node name="bench" type="Sprite2D" parent="Objects"]
 position = Vector2(516, 624)
@@ -720,7 +720,7 @@ offset = Vector2(-54, -51)
 position = Vector2(780, 1320)
 texture = ExtResource("t_willow")
 centered = false
-offset = Vector2(-111, -300)
+offset = Vector2(-111, -294)
 
 [node name="bush-1" type="Sprite2D" parent="Objects"]
 position = Vector2(912, 1200)
@@ -872,14 +872,8 @@ texture = ExtResource("t_oak")
 centered = false
 offset = Vector2(-106, -243)
 
-[node name="wood-25" type="Sprite2D" parent="Objects"]
-position = Vector2(684, 1200)
-texture = ExtResource("t_beech")
-centered = false
-offset = Vector2(-87, -252)
-
 [node name="wood-26" type="Sprite2D" parent="Objects"]
-position = Vector2(612, 1272)
+position = Vector2(612, 1224)
 texture = ExtResource("t_oak")
 centered = false
 offset = Vector2(-106, -243)

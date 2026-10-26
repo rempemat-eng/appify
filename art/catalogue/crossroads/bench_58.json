@@ -1,7 +1,7 @@
 {
  "id": "crossroads/bench_58",
  "file": "game/zones/crossroads/art/bench_58.png",
- "sha256": "fa4c79b05a83c79c8ce755c409e92815a945d0a8da95746773b453f5f1bf0604",
+ "sha256": "4c34bbff52ac59a83a2fc47dcbc6a8cb46898302ad7a30c8734ba54d7b52fcc6",
  "kind": "bench",
  "biome": "valley",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 6,
-   "tones": 13.5,
-   "shapes": 26.333333333333332
+   "tones": 13.833333333333334,
+   "shapes": 28.333333333333332
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.5,
-  "tones_ratio": 0.5,
-  "shapes_ratio": 0.523,
+  "ratio": 0.512,
+  "tones_ratio": 0.512,
+  "shapes_ratio": 0.563,
   "passed": false,
   "group": "prop"
  },
@@ -44,7 +44,7 @@
     82,
     61
    ],
-   "message": "crossroads/bench_58: detail bar 0.50 of Eastward's prop band (13.5 tones, 26.3 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/bench_58: detail bar 0.51 of Eastward's prop band (13.8 tones, 28.3 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

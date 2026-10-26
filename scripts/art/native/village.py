@@ -2638,40 +2638,170 @@ def p_sacks_hd(w, h, seed):
 
 
 def p_bench_hd(w, h, seed):
-    """A bench at a person's scale (the size guide: the seat knee high, 7 world px, the back 13): a
-    backrest of two rails on posts, the seat of three planks seen from above with a gap between,
-    the seat's front edge showing its thickness and the shade under it, trestle legs lit on the
-    west, end grain at the seat's ends."""
+    """A bench at a person's scale (the size guide: the seat knee high, 7 world px, the back 13), as
+    a joined frame (#288 review S4): square legs (a lit west face, a dark east face), the back posts
+    running down behind the seat into the rear legs, a stretcher between the front legs, the seat
+    of three planks seen from above with a gap between, its front edge showing its thickness and
+    the shade under it, the west end grain lit and the east end cap in shade, a contact shade at
+    each foot."""
     rng = np.random.default_rng(seed)
     p = _pic(w, h, up=13, side=2)
     a, cx, yb = p.a, p.ax, p.ay
     Y, X = grid(a)
     x0, x1 = cx - q(w / 2), cx + q(w / 2)
     tf = ('timber_cool', 'timber', 'timber_warm')
-    for px in (x0 + q(2), x1 - q(4.2)):                                # back posts
-        post = (X >= px) & (X < px + q(2.0)) & (Y >= yb - q(13)) & (Y < yb - q(7))
-        paint(a, post, tf, np.where(X < px + q(0.8), 3.8, 2.4) + 0.8 * (Y < yb - q(12.4)))
+    lw = q(1.6)                                                        # a leg's width
+    lf = max(1, q(0.55))                                               # its lit west face
+
+    def leg(px, top, bot, base):
+        m = (X >= px) & (X < px + lw) & (Y >= top) & (Y < bot)
+        t = np.where(X < px + lf, base + 1.2, np.where(X >= px + lw - lf, base - 1.0, base))
+        paint(a, m, tf, t - 0.8 * (Y >= bot - q(0.6)))
+        foot = (X >= px - 1) & (X < px + lw + 1) & (Y >= bot) & (Y < bot + 1) & (a < 0)
+        a[foot] = code('earth_cool', 1)                                # contact shade
+    yseat = yb - q(8.4)
+    ysb = yseat + 3 * q(1.3) + q(1.2)                                  # the seat's underside
+    pxs = (x0 + q(1.6), x1 - q(1.6) - lw)
+    for px in pxs:                                                     # rear legs (in the seat's shade)
+        leg(px + q(0.6), ysb, yb - q(1.4), 1.8)
+    for px in pxs:                                                     # back posts
+        post = (X >= px + q(0.6)) & (X < px + q(0.6) + lw) & (Y >= yb - q(13)) & (Y < yseat)
+        paint(a, post, tf, np.where(X < px + q(0.6) + lf, 4.0, np.where(X >= px + q(0.6) + lw - lf, 2.0, 3.0))
+              + 0.6 * (Y < yb - q(12.4)))
     for ry_ in (yb - q(12.6), yb - q(10.2)):                           # back rails
         board(a, x0 + q(0.5), ry_, x1 - x0 - q(1), q(1.6), 0, 'timber_warm', 4, rng, split=False)
+        a[(X >= x1 - q(1.0)) & (X < x1 - q(0.5)) & (Y >= ry_) & (Y < ry_ + q(1.6))] = code('timber_cool', 1)
         sh = (X >= x0) & (X < x1) & (Y >= ry_ + q(1.6)) & (Y < ry_ + q(1.6) + 2) & (a >= 0)
         a[sh] = a[sh] - 1 * ((a[sh] % 8) > 0)
-    for lx in (x0 + q(4), x1 - q(4)):                                  # trestle legs
-        for sx in (-1, 1):
-            bar(a, lx + sx * q(2.2), yb - 1, lx + sx * q(0.7), yb - q(5.6), max(1.4, q(0.75)), 'timber', 3 if sx < 0 else 2)
-        bar(a, lx - q(1.8), yb - q(2.4), lx + q(1.8), yb - q(2.4), max(1.2, q(0.55)), 'timber_cool', 2)
-    yy = yb - q(8.4)                                                   # the seat: three planks from above
+    yy = yseat                                                         # the seat: three planks from above
     a[(X >= x0) & (X < x1) & (Y >= yy) & (Y < yy + 3 * q(1.3) + 2)] = code('timber', 0)
     for k in range(3):
         th = q(1.3)
         board(a, x0, yy, x1 - x0, th - 1, 0, ('timber_warm', 'timber_warm', 'timber')[k], (5, 4, 4)[k], rng, split=k == 1)
         yy += th
     edge = (X >= x0) & (X < x1) & (Y >= yy) & (Y < yy + q(1.2))
-    paint(a, edge, tf, 2.6 + 0.8 * (Y < yy + 1) - 0.8 * (X > x1 - q(1.2)))
-    sh = (X >= x0) & (X < x1) & (Y >= yy + q(1.2)) & (Y < yy + q(2.4)) & (a >= 0)
+    paint(a, edge, tf, 2.6 + 0.8 * (Y < yy + 1))
+    # the end grain: lit at the west end, the east end cap in shade (its far arris a touch lighter)
+    ew = q(1.0)
+    endw = (X >= x0) & (X < x0 + ew) & (Y >= yseat) & (Y < yy + q(1.2))
+    paint(a, endw, ('timber_warm', 'timber_warm', 'timber_warm'), 4.6 - 0.8 * (Y >= yy))
+    ende = (X >= x1 - ew) & (X < x1) & (Y >= yseat) & (Y < yy + q(1.2))
+    paint(a, ende, tf, 1.2 + 0.6 * (Y < yseat + 1))
+    # the shade under the seat, then the front legs and the stretcher between them
+    sh = (X >= x0) & (X < x1) & (Y >= yy + q(1.2)) & (Y < yy + q(2.2)) & (a >= 0)
     a[sh] = a[sh] - 2 * ((a[sh] % 8) > 1)
-    for ex, t in ((x0, 4), (x1 - q(1.2), 2)):                          # end grain
-        a[(X >= ex) & (X < ex + q(1.2)) & (Y >= yb - q(8.4)) & (Y < yy + q(1.2))] = code('plaster_warm', t)
+    for px in pxs:
+        leg(px - q(0.3), yy + q(1.2), yb, 2.8)
+    sy = yb - q(2.6)
+    st = (X >= pxs[0] + lw - q(0.3)) & (X < pxs[1] - q(0.3)) & (Y >= sy) & (Y < sy + q(1.0))
+    paint(a, st, tf, np.where(Y < sy + 1, 3.6, 2.4))
+    ss = (X >= pxs[0] + lw - q(0.3)) & (X < pxs[1] - q(0.3)) & (Y >= sy + q(1.0)) & (Y < sy + q(1.0) + 1) & (a >= 0)
+    a[ss] = a[ss] - 1 * ((a[ss] % 8) > 0)
+    # the story of use: nail heads where each plank crosses a leg (a dark head, its lit west
+    # side), pegs through the back rails into the posts, grain down the legs, two seat patches
+    # worn pale and a dark knock on the front edge
+    yk = yseat
+    for k in range(3):
+        for px in pxs:
+            nx_ = int(px + lw / 2)
+            fill(a, nx_, int(yk + 1), nx_ + 2, int(yk + 2), code('iron', 1))
+            fill(a, nx_, int(yk + 1), nx_ + 1, int(yk + 2), code('iron', 3))
+        yk += q(1.3)
+    for ry_ in (yb - q(12.6), yb - q(10.2)):
+        for px in pxs:
+            gx = int(px + q(0.6) + lw / 2 - 1)
+            fill(a, gx, int(ry_ + 1), gx + 2, int(ry_ + 3), code('timber_cool', 2))
+            fill(a, gx, int(ry_ + 1), gx + 1, int(ry_ + 2), code('timber_warm', 5))
+    for px in pxs:
+        for gx in (px - q(0.3) + lf + 1, px - q(0.3) + lw - lf - 2):
+            gy = int(yy + q(1.2) + rng.integers(1, 4))
+            fill(a, int(gx), gy, int(gx) + 1, gy + int(rng.integers(3, 6)), code('timber_cool', 2))
+    for sx_ in (x0 + (x1 - x0) * 0.3, x0 + (x1 - x0) * 0.66):
+        wm = ((X - sx_) / q(2.6)) ** 2 + ((Y - yseat - q(1.6)) / q(1.2)) ** 2 <= 1
+        wm &= (a % 8 >= 3) & (a % 8 <= 4) & (rng.random(a.shape) < 0.55)
+        a[wm] = a[wm] + 1
+    kx = int(x0 + (x1 - x0) * rng.uniform(0.4, 0.6))
+    fill(a, kx, int(yy), kx + 3, int(yy + 2), code('timber_cool', 1))
+    fill(a, kx, int(yy), kx + 1, int(yy + 1), code('timber_warm', 4))
     return finish(p)
+
+
+def p_grindstone_hd(w, h, seed):
+    """A treadle grindstone with its wheel edge on (#288 review S3: a wheel drawn face on with the
+    axle across its face cannot turn): the axle runs east to west through bearing blocks on the
+    trestle, the sandstone wheel hangs between them as a thick disc seen across its tread, the tread
+    a horizontal cylinder (its top arc lit, the lower curve falling into shade, a bounce at the
+    foot), the wheel's west face a narrow lit ellipse with the hub boss and the iron collar, the
+    crank on the east end, the treadle and its rod, the water pot dripping on the tread."""
+    rng = np.random.default_rng(seed)
+    p = _pic(w, h, up=20, side=6)
+    a, cx, yb = p.a, p.ax, p.ay
+    Y, X = grid(a)
+    tf = ('timber_cool', 'timber', 'timber_warm')
+    # the trestle: splayed legs, square in section (a lit west face, a dark east face)
+    for lx in (cx - q(6), cx + q(5)):
+        for sx in (-1, 1):
+            bar(a, lx + sx * q(1.6), yb - 1, lx, yb - q(9), max(1.4, q(0.8)), 'timber', 3 if sx < 0 else 2)
+    prism(a, cx - q(8), yb - q(10.5), cx + q(8), yb - q(8.5), q(0.7), 'timber_warm', 3, side=q(0.8))
+    board(a, cx - q(7), yb - q(2.4), q(12), q(1.8), -6, 'timber', 3, rng, split=False)
+    wcx, wcy, R = cx - q(0.5), yb - q(14), q(5.5)
+    T = q(3.6)                                   # the tread's width (the wheel's thickness)
+    fw = q(1.3)                                  # the west face's half width (seen a little from the west)
+    tx0 = wcx - T / 2 + fw * 0.5
+    tx1 = tx0 + T
+    # contact shade on the trestle under the wheel
+    cs = (X >= tx0 - fw) & (X < tx1 + 1) & (Y >= wcy + R) & (Y < wcy + R + q(0.8)) & (a >= 0)
+    a[cs] = a[cs] - 1 * ((a[cs] % 8) > 0)
+    # the axle behind the wheel, through both bearings
+    a[_rect(a.shape, wcx - q(8), wcy - 1, wcx + q(7.5), wcy + 2)] = code('iron', 2)
+    a[_rect(a.shape, wcx - q(8), wcy - 1, wcx + q(7.5), wcy)] = code('iron', 4)
+    # the tread: rounded at top and bottom (the disc's silhouette across its rim), a horizontal
+    # cylinder in the light
+    v = (Y - wcy) / R
+    tread = (X >= tx0) & (X < tx1) & (np.abs(v) <= 1)
+    cz = np.sqrt(np.clip(1 - v * v, 0, 1))
+    ex_ = (X - tx0) / max(1, T)                  # across the tread: its arrises catch / lose light
+    I = lam(0.0, cz * 0.95 - 0.0, -v * 0.95)
+    t = 2.8 + 2.7 * I + 0.5 * (ex_ < 0.18) - 0.6 * (ex_ > 0.82) + 0.6 * (v > 0.82)
+    paint(a, tread, ('stone_cool', 'stone_warm', 'stone_warm'), t, lo=1, hi=5)
+    # grit and the wear of the tool: a polished lit band across the upper tread, pits
+    pit = tread & (rng.random(a.shape) < 0.14) & (a % 8 >= 2)
+    a[pit] = a[pit] - 1
+    pol = tread & (np.abs(v + 0.45) < 0.06) & (a % 8 <= 4)
+    a[pol] = a[pol] + 1
+    # the west face: a narrow ellipse, lit (it faces the light), its rim chamfer brighter, the hub
+    face = ((X - tx0) / fw) ** 2 + v ** 2 <= 1
+    face &= X < tx0 + 0.5
+    rr_ = np.hypot((X - tx0) / fw, v)
+    paint(a, face, ('stone_cool', 'stone_warm', 'stone_warm'), 3.6 + 0.8 * (rr_ > 0.82) - 0.7 * (v > 0.55)
+          + 0.4 * (v < -0.5), lo=1, hi=5)
+    ring = face & (np.abs(rr_ - 0.6) < 0.08)
+    a[ring] = a[ring] - 1
+    hub = ((X - tx0) / (fw * 0.55)) ** 2 + ((Y - wcy) / q(1.3)) ** 2 <= 1
+    blob(a, hub, 'iron', 3)
+    a[hub & (Y < wcy - q(0.4))] = code('iron', 4)
+    a[hub & (Y > wcy + q(0.5))] = code('iron', 1)
+    # the bearing blocks and their uprights, the crank on the east end of the axle
+    for bx_ in (cx - q(7.4), cx + q(4.6)):
+        prism(a, bx_, wcy - q(1.4), bx_ + q(2.6), wcy + q(1.8), q(0.6), 'timber_cool', 3, side=q(0.8))
+        bar(a, bx_ + q(1.3), wcy + q(1.8), bx_ + q(1.3), yb - q(10.5), max(1.2, q(0.6)), 'timber', 2)
+    pin = (wcx + q(7.5), wcy + q(2.5))
+    bar(a, cx + q(4), yb - q(3), pin[0], pin[1], max(1.0, q(0.45)), 'iron', 2)
+    bar(a, wcx + q(7.5), wcy, pin[0], pin[1], max(1.0, q(0.5)), 'iron', 3)
+    blob(a, ellipse_mask(a.shape, pin[0], pin[1], q(0.8), q(0.8)), 'iron', 4)
+    # the water pot on its bracket over the tread, dripping on it
+    bx_, by_ = cx - q(7.4) + q(1.3), wcy - R - q(4)
+    bar(a, bx_, wcy - q(1.4), bx_, by_, max(1.0, q(0.45)), 'iron', 2)
+    px_ = (tx0 + tx1) / 2
+    bar(a, bx_, by_, px_, by_, max(1.0, q(0.45)), 'iron', 3)
+    pot = ellipse_mask(a.shape, px_, by_ + q(1.8), q(1.8), q(1.6))
+    up_ = (X - px_) / q(1.8)
+    a[pot] = FI['clay'] * 8 + np.clip(cyl_tones(up_, 3), 0, 5)[pot]
+    a[_rect(a.shape, px_, by_ + q(3.4), px_ + 1, wcy - R + 1)] = code('water', 4)
+    wet = tread & (v < -0.7) & (np.abs(X - px_) < q(0.9))
+    a[wet] = code('stone_cool', 2)
+    return finish(p)
+
 
 PROPS_HD = {
     'barrel': p_barrel_hd,
@@ -2682,4 +2812,5 @@ PROPS_HD = {
     'hay': p_hay_hd,
     'sacks': p_sacks_hd,
     'bench': p_bench_hd,
+    'grindstone': p_grindstone_hd,
 }

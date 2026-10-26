@@ -127,13 +127,23 @@ def ground_masks(rgb: np.ndarray, ignore: np.ndarray | None = None):
         # the region's own texture (pebbles, ripples, darker patches) is inside it, not an edge
         m = ndi.binary_fill_holes(ndi.binary_closing(m, structure=np.ones((3, 3)), iterations=2))
         yield name, m, over
+    # the water with its bank (#288 review B2): the turf-to-bank outline is where a bank's teeth
+    # are; measured on everything that is not turf within a few texels of the water
+    water = np.isin(fam, (2,))
+    if ignore is not None:
+        water &= ~ignore
+    if water.any():
+        near = ndi.binary_dilation(water, iterations=6)
+        m = water | (near & np.isin(fam, (0, 3, 4, 5, 6, 9)))      # dark earth reads red
+        m = ndi.binary_fill_holes(m)            # (no closing: it would fill the very teeth measured)
+        yield 'bank', m, over & ~near
 
 
 def ragged_ground(rgb: np.ndarray, H: float, subject: str, ignore=None) -> list[Finding]:
     out = []
     for name, m, over in ground_masks(rgb, ignore):
         out += ragged(m, H, f'{subject} ({name})', min_area=0.5,
-                      teeth_max=WATER_TEETH_MAX if name == 'water' else TEETH_MAX, exclude=over)
+                      teeth_max=WATER_TEETH_MAX if name in ('water', 'bank') else TEETH_MAX, exclude=over)
     return out
 
 

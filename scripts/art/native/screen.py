@@ -448,7 +448,7 @@ def footbridge_hd(cv: np.ndarray, x0, w, y0, y1, water: np.ndarray) -> None:
                         put(yy_, xx_, C('water_cool', 1) if water[yy_, xx_] else C('earth', 1))
 
 
-def path_hd(cv: np.ndarray, pts, hw0: float, seed: int = 0, spur: bool = False) -> None:
+def path_hd(cv: np.ndarray, pts, hw0: float, seed: int = 0, spur: bool = False) -> np.ndarray:
     """A worn footpath at density 3 and up, on the soft grid (Matt, 26 Oct 10:19: paths should
     "adhere to the soft grid more", like the bench and lamp of the cast video). Its width wanders
     slowly (two long waves), so the edge runs smooth and steps a texel at a time; a rounded bite of
@@ -489,15 +489,22 @@ def path_hd(cv: np.ndarray, pts, hw0: float, seed: int = 0, spur: bool = False) 
     grassy = is_fam(cur, 'grass') | is_fam(cur, 'leaf')
     dirt = SE.soft(dist <= hw) & grassy
     dirt = SE.soft(dirt)
-    # calm inside: the body, a few large trodden (darker) and dry (lighter) patches, ruts
-    m1 = TN.vnoise(wx, wy, 11.0, 51 + seed)
+    # calm inside (#288 review B1): one body tone; large trodden and dry patches as round lobes in
+    # the cool and warm siblings of the same tone (about 16 L apart, Eastward's ground band), from
+    # a noise that avalanches (no rows on the lattice) and one field for every piece of the network
+    # (no seam where two pieces join)
+    m1 = TN.vnoise_hd(wx, wy, 11.0, 51)
     t = np.full(dirt.shape, 3)
-    t[m1 < 0.3] = 2
-    t[m1 > 0.78] = 4
-    rut = (np.abs(dist - 0.38 * hw0) < 0.34) & (TN.vnoise(wx, wy, 7.0, 55 + seed) > 0.45) & (dist < hw - 1.2)
-    t[rut] -= 1
     fam = np.full(dirt.shape, FI['path'])
-    fam[TN.vnoise(wx, wy, 14.0, 57 + seed) > 0.62] = FI['path_warm']
+    fam[m1 < 0.3] = FI['path_cool']
+    fam[m1 > 0.7] = FI['path_warm']
+    # two ruts where feet and wheels run, wandering a texel, broken, on the main line only (not
+    # round a piece's ends, so no loop where pieces join, S8)
+    rw = (TN.vnoise_hd(wx, wy, 5.0, 59) - 0.5) * 0.7
+    mid = (sa > 2.5) & (sa < sarc[-1] - 2.5)
+    rut = (np.abs(dist - 0.38 * hw0 + rw) < 0.34) & (TN.vnoise_hd(wx, wy, 7.0, 55) > 0.42) & (dist < hw - 1.2) & mid \
+        & (hw0 >= 5) & ~spur
+    t[rut] -= 1
     out = cur.copy()
     out[dirt] = fam[dirt] * 8 + np.clip(t[dirt], 1, 5)
     # pebbles in a few small clusters
@@ -519,10 +526,12 @@ def path_hd(cv: np.ndarray, pts, hw0: float, seed: int = 0, spur: bool = False) 
             win[shade_ & dwin] = step(win[shade_ & dwin], -1)
             win[stone] = np.where((Yp[stone] < 0) & (Xp[stone] <= 0), C('stone', 4), C('stone', 3))
     # clods, dips and cracks a few world px apart (so the trodden earth is ground, not a fill)
-    SE.soil_marks(out, dirt & (dist < hw - 1.0), np.random.default_rng(1401 + seed), spacing=1.3, p=0.55)
-    # the edge: dark under the turf's north and west lip, the turf south of it lit
-    SE.rim(out, dirt, grassy & ~dirt)
+    SE.soil_marks(out, dirt & (dist < hw - 1.0) & (TN.vnoise_hd(wx, wy, 7.0, 61) > 0.45), np.random.default_rng(1401 + seed),
+                  spacing=1.2, p=0.6)
     cv[ys[0]:ys[-1] + 1, xs[0]:xs[-1] + 1] = out
+    full = np.zeros((H, W), bool)
+    full[ys[0]:ys[-1] + 1, xs[0]:xs[-1] + 1] = dirt
+    return full
 
 
 def tree_shadow_hd(x, y, ex, W, H) -> np.ndarray:
@@ -575,7 +584,7 @@ def lawn_dressing_hd(cv: np.ndarray, plan: dict, h: int, w: int) -> list:
             if rng.random() > 0.5:
                 continue
             ccx, ccy = cx + rng.uniform(2, cell - 2), cy + rng.uniform(2, cell - 2)
-            if TN.vnoise(np.array([ccx]), np.array([ccy]), 60.0, 77)[0] < 0.3:
+            if TN.vnoise_hd(np.array([ccx]), np.array([ccy]), 60.0, 77)[0] < 0.3:
                 continue                                       # a calm stretch of lawn
             n = int(rng.integers(2, 6))
             for j in range(n):
@@ -856,11 +865,17 @@ def terrain(plan: dict, layers: dict) -> tuple:
     sun(cv, blob(*s['at'], *s['r'], seed=s['seed'], rough=s['rough'], w=w, h=h), heart=P(4), fade=P(2))
     for (lx, ly, rx, ry) in pl['light_pools']:
         sun(cv, blob(lx, ly, rx, ry, seed=int(lx * 7 + ly), rough=0.3, w=w, h=h), heart=P(5), fade=P(2))
+    paths_m = np.zeros(cv.shape, bool)
     for k, p in enumerate(plan['paths']):
         if D >= HD:
-            path_hd(cv, [tuple(q) for q in p['points']], hw0=p['radius'] - 2.0, seed=k, spur=p.get('spur', False))
+            paths_m |= path_hd(cv, [tuple(q) for q in p['points']], hw0=p['radius'] - 2.0, seed=k, spur=p.get('spur', False))
         else:
             SC.worn2(cv, [tuple(q) for q in p['points']], hw0=p['radius'] - 2.0)
+    if D >= HD and paths_m.any():
+        # the network's edge, once round its union: dark under the turf's north and west lip, the
+        # turf south of it lit (no rim line left inside where two pieces join)
+        from . import softedge as SE
+        SE.rim(cv, paths_m, (is_fam(cv, 'grass') | is_fam(cv, 'leaf')) & ~paths_m)
     co, ci = pl['circle_out'], pl['circle_in']
     ring = blob(*co['at'], *co['r'], seed=co['seed'], rough=co['rough'], w=w, h=h) & \
         ~blob(*ci['at'], *ci['r'], seed=ci['seed'], rough=ci['rough'], w=w, h=h)

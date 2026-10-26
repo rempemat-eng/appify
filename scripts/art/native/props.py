@@ -1185,7 +1185,16 @@ def log_hd(d, length=54, thick=15, seed=71):
     yn = (Y - cy) / R                                # -1 top edge .. 1 bottom edge
     th = np.radians(45) + np.arcsin(np.clip(yn, -1, 1))     # the surface angle: 0 straight up, 90 facing south
     # the east end broken: a jagged edge
-    jag = x1 - (1.2 * s * np.abs(np.sin(Y / (1.3 * s) + 0.7)) + 0.9 * s * (np.sin(Y / (0.55 * s)) > 0.3))
+    # the east end broken off in 4 splinters of different widths and lengths, each tapering to a
+    # point (#288 review S1: the regular zigzag read as a comb)
+    cuts = np.sort(rng.uniform(0.15, 0.85, 3))
+    bands = np.concatenate([[0.0], cuts, [1.0]])
+    lens = rng.uniform(1.2, 4.2, 4) * s
+    vv = np.clip((Y - (cy - R)) / (2 * R), 0, 1)
+    bi = np.clip(np.searchsorted(bands, vv, side='right') - 1, 0, 3)
+    b0, b1 = bands[bi], bands[np.minimum(bi + 1, 4)]
+    tip = 1 - np.abs(2 * (vv - b0) / np.maximum(1e-3, b1 - b0) - 1)          # 0 at a splinter's sides, 1 at its axis
+    jag = x1 - 2.4 * s + lens[bi] * tip ** 0.8
     body = (np.abs(yn) <= 1) & (X >= x0) & (X <= jag)
     I = _lambert(-0.12 * (X - (x0 + x1) / 2) / Lw, np.sin(th), np.cos(th))
     t = 2.3 + 2.4 * I
@@ -1228,41 +1237,53 @@ def log_hd(d, length=54, thick=15, seed=71):
     F.put(sc, 'plaster_warm', np.where(X < sx_, 4, 3), z=2.2)
     F.step(body & (np.abs(X - sx_ - 0.6 * s) < 1.4 * s) & (Y > sbase) & (Y < sbase + 1.0 * s) & (F.z < 2), -1)
     # the sawn end facing west: lit, rings round a dark heart, checks, sapwood, the bark rim
-    ex, erx = x0, 0.3 * R
+    ex, erx = x0, 0.42 * R
     eu, ev = (X - ex) / erx, (Y - cy) / R
     er = np.sqrt(eu * eu + ev * ev)
     endm = er <= 1.0
     eth = np.arctan2(ev, eu)
     erw = er * (1 + 0.04 * np.sin(3 * eth + 0.4))
-    te = np.full(endm.shape, 4.0) - 0.8 * np.clip(ev, 0, 1)
-    for rk in (0.22, 0.42, 0.6, 0.74):
-        te = te - 1.0 * (np.abs(erw - rk) < 0.05 + 0.6 / R)
-    te = np.where(erw < 0.12, 2.0, te)
-    te = np.where((erw > 0.82) & (erw <= 0.88), 5.0, te)
-    for a0 in (-2.2, 0.9, 2.6):
-        te = te - 1.6 * ((np.abs(np.angle(np.exp(1j * (eth - a0)))) < 0.06 + 0.5 / (er * R + 1)) & (erw > 0.15) & (erw < 0.8))
+    # the face a tone lighter than the bark, lit to the upper left; three rings, a dark heart and
+    # one check crack (#288 review S1)
+    te = np.full(endm.shape, 4.0) - 0.8 * np.clip(ev, 0, 1) + 0.5 * np.clip(-ev - 0.3, 0, 1)
+    for rk in (0.3, 0.55, 0.76):
+        te = te - 1.0 * (np.abs(erw - rk) < 0.06 + 0.7 / R)
+    te = np.where(erw < 0.13, 2.0, te)
+    te = np.where((erw > 0.84) & (erw <= 0.88), 5.0, te)
+    te = te - 1.6 * ((np.abs(np.angle(np.exp(1j * (eth - 0.7)))) < 0.08 + 0.6 / (er * R + 1)) & (erw > 0.15) & (erw < 0.82))
     tend = np.clip(np.round(te), 1, 5).astype(int)
     F.put(endm & (erw <= 0.88), np.where(tend >= 5, 'plaster', np.where(tend <= 2, 'plaster_cool', 'plaster_warm')), tend, z=3)
     rimt = np.where(ev < -0.2, 4, np.where(ev < 0.5, 3, 2))
     F.put(endm & (erw > 0.88), _bark_fam(rimt), rimt, z=3)
-    # the broken east end: pale splinters in shade with dark gaps
-    spl = body & (X > jag - 1.6 * s) & (F.z <= 1)
-    tsp = np.where(np.sin(Y / (0.7 * s) * 2.1) > 0.2, 2, 1)
-    tsp = np.where(yn < -0.4, tsp + 1, tsp)
-    F.put(spl, 'plaster_cool', tsp, z=1.2)
-    # moss: cushions along the top in two or three runs, drips down the near flank
-    runs = [(0.08, 0.36), (0.46, 0.66), (0.78, 0.93)]
-    for (a, b) in runs:
-        xa, xb = x0 + a * Lw, x0 + b * Lw
-        n = max(2, int((xb - xa) / (2.6 * s)))
-        for j in range(n):
-            mx_ = xa + (j + 0.5) * (xb - xa) / n + rng.uniform(-0.6, 0.6) * s
-            _moss(F, mx_, cy - R + rng.uniform(0.3, 1.0) * s, rng.uniform(1.5, 2.3) * s, 4, rng, s)
-        for j in range(int(rng.integers(1, 3))):
-            dxp = rng.uniform(xa + s, xb - s)
-            ln = rng.uniform(1.8, 3.6) * s
-            drip = (np.abs(X - dxp) < 0.55 * s) & (Y > cy - 0.85 * R) & (Y < cy - 0.85 * R + ln) & body
-            F.put(drip, 'leaf', np.where(X < dxp, 3, 2), z=3.5)
+    # the broken east end: each splinter's pale wood in shade, its upper facet lit, its lower side
+    # dark, a dark hollow at the root of the break
+    spl = body & (X > x1 - 2.4 * s - 0.2) & (F.z <= 1)
+    tsp = np.where(tip > 0.55, np.where(vv - b0 < (b1 - b0) * 0.5, 3, 2), 1)
+    tsp = np.where(X < x1 - 2.0 * s, 0, tsp)
+    F.put(spl, np.where(tsp >= 3, 'plaster_warm', 'plaster'), tsp, z=1.2)
+    # moss: one mantle along the top, uneven in width, draping over the near flank in two or
+    # three rounded lobes; leaf clusters lit on top, a dark tuck where it overhangs (no stems)
+    th_ = (0.9 + 0.8 * np.sin(X / (5.3 * s) + rng.uniform(0, 6)) + 0.5 * np.sin(X / (2.1 * s) + rng.uniform(0, 6))) * s
+    xa_, xb_ = x0 + 0.12 * Lw, x0 + 0.9 * Lw
+    edge_ = np.clip(np.minimum(X - xa_, xb_ - X) / (2.5 * s), 0, 1)
+    hump = (0.5 + 0.45 * np.sin(X / (1.7 * s) + rng.uniform(0, 6)) + 0.3 * np.sin(X / (0.9 * s))) * s   # a cushioned top
+    mant = (Y >= cy - R - hump * edge_) & (Y <= cy - R + 0.6 * s + th_ * edge_) & (X >= xa_) & (X <= xb_) & (edge_ > 0)
+    for _ in range(int(rng.integers(2, 4))):
+        dxp = rng.uniform(xa_ + 2 * s, xb_ - 2 * s)
+        mant |= (((X - dxp) / (1.6 * s)) ** 2 + ((Y - (cy - R + 1.8 * s)) / (2.2 * s)) ** 2 <= 1) & (Y >= cy - R)
+    mant = ndi.binary_opening(mant, iterations=1)
+    dmy = np.zeros_like(mant)
+    dmy[1:] = mant[:-1]
+    top_ = mant & ~np.roll(mant, 2, axis=0)
+    low_ = mant & ~np.roll(mant, -2, axis=0)
+    q = max(2, int(round(0.9 * s)))
+    cn = ndi.gaussian_filter(rng.random(mant.shape), 0.8 * s)
+    clump = cn > np.percentile(cn, 70)                                    # leaf clusters, not a grid
+    tm = np.where(top_, 4, np.where(low_, 2, 3)) + (clump & ~low_ & ~top_)
+    tm = np.where(X > x0 + 0.8 * Lw, tm - 1, tm)
+    F.put(mant, np.where(tm >= 4, 'leaf_warm', 'leaf'), tm, z=3.5)
+    tuck = ndi.binary_dilation(mant, iterations=1) & ~mant & (Y > cy - R) & body
+    F.step(tuck & (F.z < 3.5), -2, lo=0)
     # a bracket fungus in two shelves on the shaded flank: each a half disc standing out from the
     # bark, its top lit with growth bands, a dark rim of thickness under it and its shade below
     for (fx, fy, fw) in ((x0 + 0.22 * Lw, cy + 0.42 * R, 2.6 * s), (x0 + 0.22 * Lw + 2.4 * s, cy + 0.68 * R, 2.0 * s)):

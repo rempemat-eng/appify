@@ -1,13 +1,13 @@
 {
  "id": "woodland/mossy_log",
  "file": "game/zones/woodland/art/mossy_log.png",
- "sha256": "495432789c1bcd965378e15d7633e4567c7247ff7077da32f9d51061925ffec2",
+ "sha256": "24cf69a63c25a501c52b1bb61953f12fe85f730337ff79d66e4e5d68512996a1",
  "kind": "log",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  187,
+  185,
   54
  ],
  "status": "pass",
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 26,
-   "tones": 24.153846153846153,
-   "shapes": 44.26923076923077
+   "patches": 28,
+   "tones": 22.75,
+   "shapes": 41.642857142857146
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.879,
-  "tones_ratio": 0.895,
-  "shapes_ratio": 0.879,
+  "ratio": 0.827,
+  "tones_ratio": 0.843,
+  "shapes_ratio": 0.827,
   "passed": false,
   "group": "prop"
  },
@@ -39,12 +39,12 @@
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    8,
+    5,
     2,
-    179,
+    180,
     54
    ],
-   "message": "woodland/mossy_log: detail bar 0.88 of Eastward's prop band (24.2 tones, 44.3 shapes a patch against 27.0, 50.36)",
+   "message": "woodland/mossy_log: detail bar 0.83 of Eastward's prop band (22.8 tones, 41.6 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

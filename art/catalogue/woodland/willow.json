@@ -1,14 +1,14 @@
 {
  "id": "woodland/willow",
  "file": "game/zones/woodland/art/willow.png",
- "sha256": "ed01f8da40d8289a28971416072a251a3743383b95ed4df826f2775d529995ca",
+ "sha256": "7811d19f0e7bce8db1a3528a3011e6c78e52233a063c1360961164b2ff0e0cdb",
  "kind": "willow",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
   222,
-  300
+  294
  ],
  "status": "pass",
  "counts": {
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 113,
-   "tones": 19.194690265486727,
-   "shapes": 38.283185840707965
+   "patches": 117,
+   "tones": 19.418803418803417,
+   "shapes": 38.05982905982906
   },
   "band": {
    "tones": 27.71,
@@ -28,9 +28,9 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.605,
-  "tones_ratio": 0.693,
-  "shapes_ratio": 0.605,
+  "ratio": 0.601,
+  "tones_ratio": 0.701,
+  "shapes_ratio": 0.601,
   "passed": false,
   "group": "foliage"
  },
@@ -42,9 +42,9 @@
     10,
     10,
     212,
-    300
+    294
    ],
-   "message": "woodland/willow: detail bar 0.60 of Eastward's foliage band (19.2 tones, 38.3 shapes a patch against 27.71, 63.32)",
+   "message": "woodland/willow: detail bar 0.60 of Eastward's foliage band (19.4 tones, 38.1 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   },
   {
@@ -54,9 +54,9 @@
     10,
     10,
     212,
-    300
+    294
    ],
-   "message": "woodland/willow: only 10% of the silhouette is drawn in an edge tone",
+   "message": "woodland/willow: only 18% of the silhouette is drawn in an edge tone",
    "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)"
   }
  ],
