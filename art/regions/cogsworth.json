@@ -1783,14 +1783,24 @@
       "dead_end": "story"
     },
     {
-      "id": "towpath_side_0",
-      "why": "a fallen tree: the way round, south to lane G",
+      "id": "high_fells_camp_0",
+      "why": "east along the bench from the north gate to the spoil heap's loop",
       "width": 24,
       "points": [
-        [8496, 3168],
-        [8448, 3168],
-        [8448, 3296]
-      ]
+        [7824, 1944],
+        [8064, 1944]
+      ],
+      "dead_end": "story"
+    },
+    {
+      "id": "towpath_camp_1",
+      "why": "east off the Towpath into the tipple yard above the Narrows",
+      "width": 24,
+      "points": [
+        [8456, 2840],
+        [8560, 2840]
+      ],
+      "dead_end": "view"
     }
   ],
   "stairs": [
@@ -2310,20 +2320,18 @@
     {
       "thing": "cairn",
       "kind": "landmark",
-      "at": [7980, 1924],
+      "at": [7996, 1924],
       "route": "High Fells",
       "where": "a short way off the path",
-      "piece": "cairn (B, REWORK)",
-      "moved_from": [7996, 1924]
+      "piece": "cairn (B, REWORK)"
     },
     {
       "thing": "crow roost",
       "kind": "wild",
-      "at": [7860, 1916],
+      "at": [7864, 1912],
       "route": "High Fells",
       "where": "beside the path",
-      "piece": "a dead pine (forest kit) with crows",
-      "moved_from": [7864, 1912]
+      "piece": "a dead pine (forest kit) with crows"
     },
     {
       "thing": "rail ruin",
@@ -2669,7 +2677,7 @@
     {
       "t": "S",
       "what": "lost hat",
-      "at": [8428, 3188],
+      "at": [8436, 3188],
       "moved_from": [8432, 3189]
     },
     {
@@ -3981,6 +3989,12 @@
       "arena": [8064, 1840, 240, 120],
       "tier": 4,
       "roles": ["rusher", "rusher", "rusher", "shooter"],
+      "enemies": [
+        [8120, 1864],
+        [8280, 1944],
+        [8232, 1864],
+        [8088, 1944]
+      ],
       "cover": [
         {
           "what": "the spoil heap",
@@ -4002,6 +4016,11 @@
       "arena": [7240, 2640, 176, 104],
       "tier": 4,
       "roles": ["shield", "rusher", "rusher"],
+      "enemies": [
+        [7264, 2664],
+        [7392, 2728],
+        [7360, 2664]
+      ],
       "cover": [
         {
           "what": "felled trunks",
@@ -4019,6 +4038,12 @@
       "arena": [8560, 2816, 240, 96],
       "tier": 3,
       "roles": ["shooter", "shooter", "rusher", "elite"],
+      "enemies": [
+        [8584, 2840],
+        [8776, 2888],
+        [8712, 2840],
+        [8648, 2888]
+      ],
       "cover": [
         {
           "what": "boulders off the rim",

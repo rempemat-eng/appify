@@ -46,7 +46,7 @@ Walk times from the platform (brief, then plan): clock tower 7.8 / 6.9 s, gashol
 The game is landscape, a 960 x 540 art grid at density 3, so one screen is 320 x 180 world px (`docs/godot.md`). The region carries what a zone needs as data (Claude A, 25 Oct, to-all-assignments-1025), in `cogsworth_region.py` and exported to `cogsworth.json`:
 
 - **screens**: nine 16:9 frames to compose round (Fernhollow, the pit head, the coal forest, the High Fells' descent, the footbridge, the spoil loop, the Cog foot, the gorge head, the Narrows' viaduct);
-- **camps**: three arenas with cover and the wild creatures' roles (game/enemies' rusher, shooter, shield, elite; freed, not killed): the spoil loop above the town, the burners' clearing in the coal forest and the tipple yard above the Narrows;
+- **camps**: three arenas, each touched by a path (two short trods lead into the spoil loop and the tipple yard), with cover, the wild creatures' roles and where each waits (`enemies`) (game/enemies' rusher, shooter, shield, elite; freed, not killed): the spoil loop above the town, the burners' clearing in the coal forest and the tipple yard above the Narrows;
 - **dungeon**: the Deep Seam under the pit head's headframe, its door beside the Foothill Road;
 - **quest spots** (the echo cave, the climber's camp, the two buried bells, the eel pond, the tipple, the rail ruin, the lookout) and **waystones** (the footbridge, Fernhollow, the Cog foot; the town's own is in its square).
 
