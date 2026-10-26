@@ -30,7 +30,7 @@ export function LightSweep({ night = false, skip = false }: { night?: boolean; s
     transform: [{ translateX: reduced || night ? 0 : progress.value * 160 }],
   }));
   return (
-    <Animated.View style={[StyleSheet.absoluteFill, motion, { pointerEvents: 'none' }]}>
+    <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFill, motion]}>
       <LinearGradient
         colors={[c.amber, c.paper, c.transparent]}
         start={{ x: 0, y: 0 }}
@@ -48,7 +48,7 @@ export function PixelBurst({ hearts = false, skip = false }: { hearts?: boolean;
     return () => cancelAnimation(progress);
   }, [progress, reduced, skip]);
   return (
-    <View style={[StyleSheet.absoluteFill, { pointerEvents: 'none' }]}>
+    <View pointerEvents="none" style={StyleSheet.absoluteFill}>
       {Array.from({ length: 8 }, (_, i) => (
         <BurstParticle key={i} i={i} progress={progress} reduced={reduced} hearts={hearts} />
       ))}
@@ -111,6 +111,7 @@ export function PlayedCard({
   }));
   return (
     <Animated.View
+      pointerEvents="none"
       style={[
         {
           position: 'absolute',
@@ -125,7 +126,6 @@ export function PlayedCard({
           zIndex: 10,
         },
         motion,
-        { pointerEvents: 'none' },
       ]}
     >
       <CardIllustration id={id} />
@@ -176,6 +176,7 @@ export function PerfectImpact({
       {children}
       {perfect && (
         <Animated.View
+          pointerEvents="none"
           style={[
             {
               position: 'absolute',
@@ -187,7 +188,6 @@ export function PerfectImpact({
               zIndex: 20,
             },
             stamp,
-            { pointerEvents: 'none' },
           ]}
         >
           <PixelText style={{ fontSize: 16 }}>PERFECT!</PixelText>

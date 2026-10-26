@@ -150,6 +150,7 @@ function DreamDustDelta({ amount }: { amount: number }) {
   }));
   return (
     <Animated.View
+      pointerEvents="none"
       style={[
         {
           position: 'absolute',
@@ -162,7 +163,6 @@ function DreamDustDelta({ amount }: { amount: number }) {
           zIndex: 10,
         },
         motion,
-        { pointerEvents: 'none' },
       ]}
     >
       <BodyText style={{ color: amount > 0 ? c.moss : c.error }}>
@@ -184,12 +184,8 @@ export function PixelDissolve() {
   const motion = useAnimatedStyle(() => ({ opacity: opacity.value }));
   return (
     <Animated.View
-      style={[
-        StyleSheet.absoluteFill,
-        { backgroundColor: c.paper },
-        motion,
-        { pointerEvents: 'none' },
-      ]}
+      pointerEvents="none"
+      style={[StyleSheet.absoluteFill, { backgroundColor: c.paper }, motion]}
     />
   );
 }
@@ -225,11 +221,11 @@ export function Pulse({
   return (
     <View style={style}>
       <Animated.View
+        pointerEvents="none"
         style={[
           StyleSheet.absoluteFill,
           { borderRadius: style?.borderRadius ?? 14, backgroundColor: color ?? c.error },
           motion,
-          { pointerEvents: 'none' },
         ]}
       />
       {children}
@@ -245,12 +241,8 @@ export function BattleIntro({ skip = false }: { skip?: boolean }) {
   const motion = useAnimatedStyle(() => ({ opacity: opacity.value }));
   return (
     <Animated.View
-      style={[
-        StyleSheet.absoluteFill,
-        { backgroundColor: c.paper },
-        motion,
-        { pointerEvents: 'none' },
-      ]}
+      pointerEvents="none"
+      style={[StyleSheet.absoluteFill, { backgroundColor: c.paper }, motion]}
     />
   );
 }

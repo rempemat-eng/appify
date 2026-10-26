@@ -188,10 +188,11 @@ export function FrameShape({
   const t = u / 2;
   return (
     <View
+      pointerEvents="none"
       aria-hidden
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants"
-      style={[abs({ left: 0, right: 0, top, bottom }), { pointerEvents: 'none' }]}
+      style={abs({ left: 0, right: 0, top, bottom })}
     >
       {/* fill: two overlapping rectangles leave the corner pixels open */}
       <View
@@ -410,6 +411,7 @@ export function PixelTail({
   const u = usePixelUnit();
   return (
     <View
+      pointerEvents="none"
       aria-hidden
       style={{
         position: 'absolute',
@@ -418,7 +420,6 @@ export function PixelTail({
         marginLeft: Math.round(offset / u) * u - 3 * u,
         width: 6 * u,
         height: 3 * u,
-        pointerEvents: 'none',
       }}
     >
       {[0, 1, 2].map((row) => (
