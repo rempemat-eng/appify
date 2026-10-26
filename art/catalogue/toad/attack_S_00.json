@@ -1,0 +1,44 @@
+{
+ "id": "toad/attack_S_00",
+ "file": "art/cast/toad/attack_S_00.png",
+ "sha256": "4f2a7591c08ac6da139f3b73a3e224f81b5643cc9368c3f080bcb107766d78eb",
+ "kind": "attack_S",
+ "biome": "woodland",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  160,
+  144
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 0
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 1,
+   "tones": 29.0,
+   "shapes": 48.0
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.953,
+  "tones_ratio": 1.074,
+  "shapes_ratio": 0.953,
+  "passed": true,
+  "group": "prop"
+ },
+ "findings": [],
+ "reviewed": "2026-10-25",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}

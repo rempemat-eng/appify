@@ -156,7 +156,7 @@ export function Animal({
           style={[shadeStyle, place]}
         />
       )}
-      <Animated.View pointerEvents="none" style={[{ ...box, zIndex: d.z }, place]}>
+      <Animated.View style={[{ ...box, zIndex: d.z }, place, { pointerEvents: 'none' }]}>
         {sides.flatMap(([side, frames]) =>
           frames
             .map((f, i) => ({ f, slot: i, id: `${side}:${i}:${f[0]}` }))

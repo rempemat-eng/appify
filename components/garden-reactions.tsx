@@ -243,12 +243,11 @@ export function GardenReactions({
 
   return (
     <View
-      pointerEvents="none"
       accessible={false}
       accessibilityElementsHidden
       aria-hidden
       importantForAccessibility="no-hide-descendants"
-      style={{ position: 'absolute', left: 0, top: 0, zIndex: 880 }}
+      style={{ position: 'absolute', left: 0, top: 0, zIndex: 880, pointerEvents: 'none' }}
     >
       {reaction.kind === 'pond' && (
         <>

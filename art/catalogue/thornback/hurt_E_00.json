@@ -1,0 +1,69 @@
+{
+ "id": "thornback/hurt_E_00",
+ "file": "art/cast/thornback/hurt_E_00.png",
+ "sha256": "bd937da4f2ae94468f2ef27f18b38ae570f1dddb60d965ad2c65105946010f76",
+ "kind": "hurt_E",
+ "biome": "woodland",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  160,
+  144
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 2
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 7,
+   "tones": 17.714285714285715,
+   "shapes": 35.714285714285715
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.656,
+  "tones_ratio": 0.656,
+  "shapes_ratio": 0.709,
+  "passed": false,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    51,
+    84,
+    133,
+    123
+   ],
+   "message": "thornback/hurt_E_00: the wood is lit from the right (luminance rises 21 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    43,
+    83,
+    134,
+    136
+   ],
+   "message": "thornback/hurt_E_00: detail bar 0.66 of Eastward's prop band (17.7 tones, 35.7 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  }
+ ],
+ "reviewed": "2026-10-25",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}

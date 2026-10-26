@@ -1,0 +1,57 @@
+{
+ "id": "woodland/standing_stone_low",
+ "file": "game/zones/woodland/art/standing_stone_low.png",
+ "sha256": "c42730aa357e271fdbc08df3b1b5f509ba863089029f61f9c14c3d3bc4bc8d97",
+ "kind": "standing_stone",
+ "biome": "woodland",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  69,
+  78
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 1
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 6,
+   "tones": 18.0,
+   "shapes": 29.166666666666668
+  },
+  "band": {
+   "tones": 26.25,
+   "shapes": 61.0,
+   "boxes": 3,
+   "patches": 20
+  },
+  "ratio": 0.478,
+  "tones_ratio": 0.686,
+  "shapes_ratio": 0.478,
+  "passed": false,
+  "group": "stone"
+ },
+ "findings": [
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    3,
+    4,
+    67,
+    76
+   ],
+   "message": "woodland/standing_stone_low: detail bar 0.48 of Eastward's stone band (18.0 tones, 29.2 shapes a patch against 26.25, 61.0)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  }
+ ],
+ "reviewed": "2026-10-25",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}

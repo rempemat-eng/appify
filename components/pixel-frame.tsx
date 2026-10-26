@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { cozy as c } from '@/lib/cozy';
 import { artOutline } from '@/lib/art-direction';
-import { pixelGrid, pixelScale } from '@/lib/pixel-scale';
+import { interfaceGrid, pixelGrid } from '@/lib/pixel-scale';
 import { switchKeys } from '@/lib/switch-keys';
 
 /**
@@ -139,16 +139,26 @@ export function toneFrom(fill: string, outline: string = artOutline): FrameTone 
 const resolveTone = (tone: FrameToneName | FrameTone) =>
   typeof tone === 'string' ? frameTones[tone] : tone;
 
-/** One world pixel in CSS pixels: the game's shared grid (lib/pixel-scale.ts). Frames,
- *  icons, bars and the world are laid out in it at every art density. */
+/** One interface pixel in CSS pixels (lib/pixel-scale.ts `interfaceGrid`): frames, icons,
+ *  bars, sheets and cards are laid out in it. It is the density-1 world unit at every art
+ *  density, so the interface is the same size on every screen whatever the world draws at;
+ *  art drawn in the world (scenes, journeys, the battle field) takes the world's unit,
+ *  `pixelScale`, instead. */
 export function usePixelUnit() {
   const { width } = useWindowDimensions();
-  return pixelScale(width, PixelRatio.get());
+  return interfaceGrid(width, PixelRatio.get()).unit;
 }
 
-/** The whole grid for the current window: the world unit, the texel and the density drawn
- *  at. A frame or icon drawn finer than 1x takes `assetUnit(grid, density)` as its unit
- *  (lib/pixel-scale.ts). */
+/** The interface's whole grid for the current window: its unit, the texel and the density
+ *  its art is drawn at (2 where an interface pixel splits into whole device pixels at
+ *  density 2, else 1). A frame or icon picks its finer art when `density` is 2. */
+export function useInterfaceGrid() {
+  const { width } = useWindowDimensions();
+  return interfaceGrid(width, PixelRatio.get());
+}
+
+/** The world's grid for the current window: the world unit, the texel and the density drawn
+ *  at (lib/pixel-scale.ts). For art drawn in world pixels. */
 export function usePixelGrid() {
   const { width } = useWindowDimensions();
   return pixelGrid(width, PixelRatio.get());
@@ -171,13 +181,17 @@ export function FrameShape({
 }) {
   const top = offset;
   const bottom = -offset;
+  // 2x finish only on the interface's own grid (not a custom zoom such as the battle's),
+  // where an interface pixel splits into two whole-device-pixel texels
+  const grid = useInterfaceGrid();
+  const fine = grid.density === 2 && Math.abs(u - grid.unit) < 1e-9;
+  const t = u / 2;
   return (
     <View
-      pointerEvents="none"
       aria-hidden
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants"
-      style={abs({ left: 0, right: 0, top, bottom })}
+      style={[abs({ left: 0, right: 0, top, bottom }), { pointerEvents: 'none' }]}
     >
       {/* fill: two overlapping rectangles leave the corner pixels open */}
       <View
@@ -224,6 +238,47 @@ export function FrameShape({
               backgroundColor: tone.dark,
             })}
           />
+          {fine && (
+            <>
+              {/* at 2x the lit and shaded bands fade into the fill over their inner texel */}
+              <View
+                style={abs({
+                  left: 2 * u,
+                  right: 2 * u,
+                  top: u + t,
+                  height: t,
+                  backgroundColor: mixColor(tone.light, tone.fill, 0.5),
+                })}
+              />
+              <View
+                style={abs({
+                  left: u + t,
+                  top: 2 * u,
+                  bottom: 3 * u,
+                  width: t,
+                  backgroundColor: mixColor(tone.light, tone.fill, 0.5),
+                })}
+              />
+              <View
+                style={abs({
+                  left: 2 * u,
+                  right: 2 * u,
+                  bottom: u + t,
+                  height: t,
+                  backgroundColor: mixColor(tone.dark, tone.fill, 0.5),
+                })}
+              />
+              <View
+                style={abs({
+                  right: u + t,
+                  top: 3 * u,
+                  bottom: 2 * u,
+                  width: t,
+                  backgroundColor: mixColor(tone.dark, tone.fill, 0.5),
+                })}
+              />
+            </>
+          )}
         </>
       )}
       {/* outline */}
@@ -355,7 +410,6 @@ export function PixelTail({
   const u = usePixelUnit();
   return (
     <View
-      pointerEvents="none"
       aria-hidden
       style={{
         position: 'absolute',
@@ -364,6 +418,7 @@ export function PixelTail({
         marginLeft: Math.round(offset / u) * u - 3 * u,
         width: 6 * u,
         height: 3 * u,
+        pointerEvents: 'none',
       }}
     >
       {[0, 1, 2].map((row) => (

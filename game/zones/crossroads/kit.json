@@ -1,0 +1,2025 @@
+{
+ "zone": "crossroads",
+ "density": 3.0,
+ "size": [
+  1920,
+  1680
+ ],
+ "inputs": "b2de601a5a38c0c81ef8960a8b17c017f1314c32e5003b4bb8c8e2223bbaddfa",
+ "kit_drawn": [
+  "anvil.png",
+  "bakery.png",
+  "bakery_damage.png",
+  "barrel_29.png",
+  "barrel_31.png",
+  "barrel_37.png",
+  "barrel_39.png",
+  "beds_dug.png",
+  "beds_scorched.png",
+  "bench_28.png",
+  "bench_58.png",
+  "coal_34.png",
+  "crater_smoke.png",
+  "crates_30.png",
+  "crates_32.png",
+  "debris_a.png",
+  "debris_b.png",
+  "debris_c.png",
+  "debris_d.png",
+  "fence_0.png",
+  "fence_1.png",
+  "fence_2.png",
+  "fence_3.png",
+  "fence_4.png",
+  "fence_5.png",
+  "fern_cottage.png",
+  "fern_cottage_damage.png",
+  "fern_rubble.png",
+  "flower_tub_10.png",
+  "flower_tub_26.png",
+  "flower_tub_27.png",
+  "flower_tub_38.png",
+  "flower_tub_59.png",
+  "flower_tub_60.png",
+  "flower_tub_9.png",
+  "forge_fire.png",
+  "grindstone_36.png",
+  "handcart.png",
+  "hay_19.png",
+  "hay_20.png",
+  "herbalist.png",
+  "herbalist_damage.png",
+  "hut.png",
+  "lantern_dark.png",
+  "lantern_lit.png",
+  "library.png",
+  "library_damage.png",
+  "north_cottages.png",
+  "north_cottages_damage.png",
+  "notice_board.png",
+  "sacks_12.png",
+  "smithy.png",
+  "smithy_damage.png",
+  "smithy_rubble.png",
+  "square_rubble_a.png",
+  "square_rubble_b.png",
+  "stall.png",
+  "trough_35.png",
+  "waystone.png",
+  "well.png",
+  "well_choked.png",
+  "woodpile_11.png",
+  "woodpile_33.png"
+ ],
+ "objects": [
+  {
+   "id": "hut",
+   "kind": "building",
+   "png": "hut.png",
+   "foot": [
+    960,
+    192
+   ],
+   "offset": [
+    -132,
+    -188
+   ],
+   "cond": null,
+   "solid": [
+    280,
+    20,
+    80,
+    44
+   ]
+  },
+  {
+   "id": "library",
+   "kind": "building",
+   "png": "library.png",
+   "foot": [
+    744,
+    588
+   ],
+   "offset": [
+    -156,
+    -230
+   ],
+   "cond": null,
+   "solid": [
+    200,
+    156,
+    96,
+    40
+   ]
+  },
+  {
+   "id": "library_damage",
+   "kind": "damage",
+   "png": "library_damage.png",
+   "foot": [
+    744,
+    589
+   ],
+   "offset": [
+    -156,
+    -231
+   ],
+   "cond": null,
+   "solid": null,
+   "of": "library"
+  },
+  {
+   "id": "north_cottages",
+   "kind": "building",
+   "png": "north_cottages.png",
+   "foot": [
+    1176,
+    588
+   ],
+   "offset": [
+    -156,
+    -272
+   ],
+   "cond": null,
+   "solid": [
+    344,
+    156,
+    96,
+    40
+   ]
+  },
+  {
+   "id": "north_cottages_damage",
+   "kind": "damage",
+   "png": "north_cottages_damage.png",
+   "foot": [
+    1176,
+    589
+   ],
+   "offset": [
+    -156,
+    -273
+   ],
+   "cond": null,
+   "solid": null,
+   "of": "north_cottages"
+  },
+  {
+   "id": "bakery",
+   "kind": "building",
+   "png": "bakery.png",
+   "foot": [
+    444,
+    864
+   ],
+   "offset": [
+    -126,
+    -293
+   ],
+   "cond": null,
+   "solid": [
+    110,
+    236,
+    76,
+    52
+   ]
+  },
+  {
+   "id": "bakery_damage",
+   "kind": "damage",
+   "png": "bakery_damage.png",
+   "foot": [
+    444,
+    865
+   ],
+   "offset": [
+    -126,
+    -294
+   ],
+   "cond": null,
+   "solid": null,
+   "of": "bakery"
+  },
+  {
+   "id": "herbalist",
+   "kind": "building",
+   "png": "herbalist.png",
+   "foot": [
+    444,
+    1122
+   ],
+   "offset": [
+    -126,
+    -188
+   ],
+   "cond": null,
+   "solid": [
+    110,
+    330,
+    76,
+    44
+   ]
+  },
+  {
+   "id": "herbalist_damage",
+   "kind": "damage",
+   "png": "herbalist_damage.png",
+   "foot": [
+    444,
+    1123
+   ],
+   "offset": [
+    -126,
+    -189
+   ],
+   "cond": null,
+   "solid": null,
+   "of": "herbalist"
+  },
+  {
+   "id": "smithy",
+   "kind": "building",
+   "png": "smithy.png",
+   "foot": [
+    1494,
+    840
+   ],
+   "offset": [
+    -138,
+    -329
+   ],
+   "cond": null,
+   "solid": [
+    456,
+    220,
+    84,
+    60
+   ]
+  },
+  {
+   "id": "smithy_damage",
+   "kind": "damage",
+   "png": "smithy_damage.png",
+   "foot": [
+    1494,
+    841
+   ],
+   "offset": [
+    -138,
+    -330
+   ],
+   "cond": {
+    "not_restored": [
+     "forge"
+    ]
+   },
+   "solid": null,
+   "of": "smithy"
+  },
+  {
+   "id": "fern_cottage",
+   "kind": "building",
+   "png": "fern_cottage.png",
+   "foot": [
+    1473,
+    1242
+   ],
+   "offset": [
+    -117,
+    -260
+   ],
+   "cond": null,
+   "solid": [
+    456,
+    370,
+    70,
+    44
+   ]
+  },
+  {
+   "id": "fern_cottage_damage",
+   "kind": "damage",
+   "png": "fern_cottage_damage.png",
+   "foot": [
+    1473,
+    1243
+   ],
+   "offset": [
+    -117,
+    -261
+   ],
+   "cond": {
+    "not_restored": [
+     "fern_cottage"
+    ]
+   },
+   "solid": null,
+   "of": "fern_cottage"
+  },
+  {
+   "id": "well_choked",
+   "kind": "well_choked",
+   "png": "well_choked.png",
+   "foot": [
+    864,
+    960
+   ],
+   "offset": [
+    -63,
+    -80
+   ],
+   "cond": {
+    "not_flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": [
+    276,
+    300,
+    24,
+    20
+   ]
+  },
+  {
+   "id": "well",
+   "kind": "well",
+   "png": "well.png",
+   "foot": [
+    864,
+    954
+   ],
+   "offset": [
+    -57,
+    -170
+   ],
+   "cond": {
+    "flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": [
+    278,
+    302,
+    20,
+    16
+   ]
+  },
+  {
+   "id": "smithy_rubble",
+   "kind": "rubble",
+   "png": "smithy_rubble.png",
+   "foot": [
+    1410,
+    894
+   ],
+   "offset": [
+    -63,
+    -93
+   ],
+   "cond": {
+    "not_restored": [
+     "forge"
+    ]
+   },
+   "solid": [
+    452,
+    282,
+    36,
+    16
+   ]
+  },
+  {
+   "id": "smithy_boards",
+   "kind": "boards",
+   "png": null,
+   "foot": null,
+   "offset": null,
+   "cond": {
+    "not_restored": [
+     "forge"
+    ]
+   },
+   "solid": null
+  },
+  {
+   "id": "forge_fire",
+   "kind": "glow",
+   "png": "forge_fire.png",
+   "foot": [
+    1458,
+    842
+   ],
+   "offset": [
+    -27,
+    -88
+   ],
+   "cond": {
+    "restored": [
+     "forge"
+    ]
+   },
+   "solid": null
+  },
+  {
+   "id": "anvil",
+   "kind": "anvil",
+   "png": "anvil.png",
+   "foot": [
+    1491,
+    900
+   ],
+   "offset": [
+    -42,
+    -74
+   ],
+   "cond": {
+    "restored": [
+     "forge"
+    ]
+   },
+   "solid": [
+    490,
+    292,
+    14,
+    8
+   ]
+  },
+  {
+   "id": "square_rubble_a",
+   "kind": "rubble",
+   "png": "square_rubble_a.png",
+   "foot": [
+    705,
+    1074
+   ],
+   "offset": [
+    -54,
+    -105
+   ],
+   "cond": {
+    "not_flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": [
+    220,
+    340,
+    30,
+    18
+   ]
+  },
+  {
+   "id": "square_rubble_b",
+   "kind": "rubble",
+   "png": "square_rubble_b.png",
+   "foot": [
+    1227,
+    690
+   ],
+   "offset": [
+    -48,
+    -93
+   ],
+   "cond": null,
+   "solid": [
+    396,
+    214,
+    26,
+    16
+   ]
+  },
+  {
+   "id": "fern_boards",
+   "kind": "boards",
+   "png": null,
+   "foot": null,
+   "offset": null,
+   "cond": {
+    "not_restored": [
+     "fern_cottage"
+    ]
+   },
+   "solid": null
+  },
+  {
+   "id": "fern_rubble",
+   "kind": "rubble",
+   "png": "fern_rubble.png",
+   "foot": [
+    1419,
+    1290
+   ],
+   "offset": [
+    -54,
+    -82
+   ],
+   "cond": {
+    "not_restored": [
+     "fern_cottage"
+    ]
+   },
+   "solid": [
+    458,
+    416,
+    30,
+    14
+   ]
+  },
+  {
+   "id": "lantern_dark",
+   "kind": "lantern",
+   "png": "lantern_dark.png",
+   "foot": [
+    933,
+    936
+   ],
+   "offset": [
+    -42,
+    -218
+   ],
+   "cond": {
+    "not_flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": [
+    306,
+    290,
+    10,
+    22
+   ]
+  },
+  {
+   "id": "lantern_lit",
+   "kind": "lantern_lit",
+   "png": "lantern_lit.png",
+   "foot": [
+    933,
+    936
+   ],
+   "offset": [
+    -42,
+    -218
+   ],
+   "cond": {
+    "flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": [
+    306,
+    290,
+    10,
+    22
+   ]
+  },
+  {
+   "id": "crater_smoke",
+   "kind": "smoke",
+   "png": "crater_smoke.png",
+   "foot": [
+    1515,
+    1320
+   ],
+   "offset": [
+    -60,
+    -164
+   ],
+   "cond": {
+    "not_flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": null
+  },
+  {
+   "id": "beds_scorched",
+   "kind": "beds",
+   "png": "beds_scorched.png",
+   "foot": [
+    1260,
+    360
+   ],
+   "offset": [
+    -129,
+    -140
+   ],
+   "cond": {
+    "not_flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": null
+  },
+  {
+   "id": "beds_dug",
+   "kind": "beds_dug",
+   "png": "beds_dug.png",
+   "foot": [
+    1260,
+    360
+   ],
+   "offset": [
+    -129,
+    -140
+   ],
+   "cond": {
+    "flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": null
+  },
+  {
+   "id": "stall",
+   "kind": "stall",
+   "png": "stall.png",
+   "foot": [
+    1152,
+    756
+   ],
+   "offset": [
+    -69,
+    -158
+   ],
+   "cond": null,
+   "solid": [
+    366,
+    236,
+    36,
+    16
+   ]
+  },
+  {
+   "id": "notice_board",
+   "kind": "notice_board",
+   "png": "notice_board.png",
+   "foot": [
+    708,
+    666
+   ],
+   "offset": [
+    -48,
+    -128
+   ],
+   "cond": null,
+   "solid": null
+  },
+  {
+   "id": "waystone",
+   "kind": "waystone",
+   "png": "waystone.png",
+   "foot": [
+    1260,
+    1068
+   ],
+   "offset": [
+    -45,
+    -134
+   ],
+   "cond": null,
+   "solid": null
+  },
+  {
+   "id": "fence_0",
+   "kind": "fence",
+   "png": "fence_0.png",
+   "foot": [
+    528,
+    417
+   ],
+   "offset": [
+    -78,
+    -59
+   ],
+   "cond": null,
+   "solid": null
+  },
+  {
+   "id": "fence_1",
+   "kind": "fence",
+   "png": "fence_1.png",
+   "foot": [
+    678,
+    417
+   ],
+   "offset": [
+    -78,
+    -59
+   ],
+   "cond": null,
+   "solid": null
+  },
+  {
+   "id": "fence_2",
+   "kind": "fence",
+   "png": "fence_2.png",
+   "foot": [
+    822,
+    417
+   ],
+   "offset": [
+    -78,
+    -59
+   ],
+   "cond": null,
+   "solid": null
+  },
+  {
+   "id": "fence_3",
+   "kind": "fence",
+   "png": "fence_3.png",
+   "foot": [
+    1098,
+    417
+   ],
+   "offset": [
+    -78,
+    -59
+   ],
+   "cond": null,
+   "solid": null
+  },
+  {
+   "id": "fence_4",
+   "kind": "fence",
+   "png": "fence_4.png",
+   "foot": [
+    1248,
+    417
+   ],
+   "offset": [
+    -78,
+    -59
+   ],
+   "cond": null,
+   "solid": null
+  },
+  {
+   "id": "fence_5",
+   "kind": "fence",
+   "png": "fence_5.png",
+   "foot": [
+    1398,
+    417
+   ],
+   "offset": [
+    -78,
+    -59
+   ],
+   "cond": null,
+   "solid": null
+  },
+  {
+   "id": "oak_6",
+   "kind": "oak",
+   "png": "oak_6.png",
+   "foot": [
+    546,
+    132
+   ],
+   "offset": [
+    -105,
+    -243
+   ],
+   "cond": null,
+   "solid": [
+    178,
+    41,
+    8,
+    4
+   ]
+  },
+  {
+   "id": "bush_7",
+   "kind": "bush",
+   "png": "bush_7.png",
+   "foot": [
+    720,
+    348
+   ],
+   "offset": [
+    -57,
+    -73
+   ],
+   "cond": null,
+   "solid": [
+    232,
+    111,
+    16,
+    6
+   ]
+  },
+  {
+   "id": "bush_8",
+   "kind": "bush",
+   "png": "bush_8.png",
+   "foot": [
+    1434,
+    366
+   ],
+   "offset": [
+    -57,
+    -73
+   ],
+   "cond": null,
+   "solid": [
+    470,
+    117,
+    16,
+    6
+   ]
+  },
+  {
+   "id": "flower_tub_9",
+   "kind": "flower_tub",
+   "png": "flower_tub_9.png",
+   "foot": [
+    894,
+    210
+   ],
+   "offset": [
+    -27,
+    -53
+   ],
+   "cond": null,
+   "solid": [
+    292.0,
+    64,
+    12,
+    6
+   ]
+  },
+  {
+   "id": "flower_tub_10",
+   "kind": "flower_tub",
+   "png": "flower_tub_10.png",
+   "foot": [
+    1032,
+    210
+   ],
+   "offset": [
+    -27,
+    -53
+   ],
+   "cond": null,
+   "solid": [
+    338.0,
+    64,
+    12,
+    6
+   ]
+  },
+  {
+   "id": "woodpile_11",
+   "kind": "woodpile",
+   "png": "woodpile_11.png",
+   "foot": [
+    1140,
+    192
+   ],
+   "offset": [
+    -39,
+    -71
+   ],
+   "cond": null,
+   "solid": [
+    369.0,
+    56,
+    22,
+    8
+   ]
+  },
+  {
+   "id": "sacks_12",
+   "kind": "sacks",
+   "png": "sacks_12.png",
+   "foot": [
+    798,
+    198
+   ],
+   "offset": [
+    -30,
+    -62
+   ],
+   "cond": null,
+   "solid": [
+    259.0,
+    58,
+    14,
+    8
+   ]
+  },
+  {
+   "id": "oak_13",
+   "kind": "oak",
+   "png": "oak_13.png",
+   "foot": [
+    120,
+    66
+   ],
+   "offset": [
+    -105,
+    -243
+   ],
+   "cond": null,
+   "solid": [
+    36,
+    19,
+    8,
+    4
+   ]
+  },
+  {
+   "id": "bush_14",
+   "kind": "bush",
+   "png": "bush_14.png",
+   "foot": [
+    306,
+    66
+   ],
+   "offset": [
+    -57,
+    -73
+   ],
+   "cond": null,
+   "solid": null
+  },
+  {
+   "id": "bush_15",
+   "kind": "bush",
+   "png": "bush_15.png",
+   "foot": [
+    402,
+    72
+   ],
+   "offset": [
+    -57,
+    -73
+   ],
+   "cond": null,
+   "solid": null
+  },
+  {
+   "id": "bush_16",
+   "kind": "bush",
+   "png": "bush_16.png",
+   "foot": [
+    84,
+    402
+   ],
+   "offset": [
+    -57,
+    -73
+   ],
+   "cond": null,
+   "solid": null
+  },
+  {
+   "id": "bush_17",
+   "kind": "bush",
+   "png": "bush_17.png",
+   "foot": [
+    240,
+    390
+   ],
+   "offset": [
+    -57,
+    -73
+   ],
+   "cond": null,
+   "solid": null
+  },
+  {
+   "id": "bush_18",
+   "kind": "bush",
+   "png": "bush_18.png",
+   "foot": [
+    384,
+    405
+   ],
+   "offset": [
+    -57,
+    -73
+   ],
+   "cond": null,
+   "solid": null
+  },
+  {
+   "id": "hay_19",
+   "kind": "hay",
+   "png": "hay_19.png",
+   "foot": [
+    1620,
+    186
+   ],
+   "offset": [
+    -33,
+    -62
+   ],
+   "cond": null,
+   "solid": null
+  },
+  {
+   "id": "hay_20",
+   "kind": "hay",
+   "png": "hay_20.png",
+   "foot": [
+    1776,
+    294
+   ],
+   "offset": [
+    -33,
+    -62
+   ],
+   "cond": null,
+   "solid": null
+  },
+  {
+   "id": "oak_21",
+   "kind": "oak",
+   "png": "oak_21.png",
+   "foot": [
+    1842,
+    120
+   ],
+   "offset": [
+    -106,
+    -243
+   ],
+   "cond": null,
+   "solid": [
+    610,
+    37,
+    8,
+    4
+   ]
+  },
+  {
+   "id": "bush_22",
+   "kind": "bush",
+   "png": "bush_22.png",
+   "foot": [
+    1560,
+    396
+   ],
+   "offset": [
+    -57,
+    -73
+   ],
+   "cond": null,
+   "solid": null
+  },
+  {
+   "id": "bush_23",
+   "kind": "bush",
+   "png": "bush_23.png",
+   "foot": [
+    1866,
+    396
+   ],
+   "offset": [
+    -57,
+    -73
+   ],
+   "cond": null,
+   "solid": null
+  },
+  {
+   "id": "kit_lantern_24",
+   "kind": "kit_lantern",
+   "png": "kit_lantern_24.png",
+   "foot": [
+    870,
+    600
+   ],
+   "offset": [
+    -12,
+    -118
+   ],
+   "cond": null,
+   "solid": [
+    288,
+    198,
+    4,
+    3
+   ]
+  },
+  {
+   "id": "kit_lantern_25",
+   "kind": "kit_lantern",
+   "png": "kit_lantern_25.png",
+   "foot": [
+    1050,
+    600
+   ],
+   "offset": [
+    -12,
+    -118
+   ],
+   "cond": null,
+   "solid": [
+    348,
+    198,
+    4,
+    3
+   ]
+  },
+  {
+   "id": "flower_tub_26",
+   "kind": "flower_tub",
+   "png": "flower_tub_26.png",
+   "foot": [
+    690,
+    600
+   ],
+   "offset": [
+    -27,
+    -53
+   ],
+   "cond": null,
+   "solid": [
+    224.0,
+    194,
+    12,
+    6
+   ]
+  },
+  {
+   "id": "flower_tub_27",
+   "kind": "flower_tub",
+   "png": "flower_tub_27.png",
+   "foot": [
+    798,
+    600
+   ],
+   "offset": [
+    -27,
+    -53
+   ],
+   "cond": null,
+   "solid": [
+    260.0,
+    194,
+    12,
+    6
+   ]
+  },
+  {
+   "id": "bench_28",
+   "kind": "bench",
+   "png": "bench_28.png",
+   "foot": [
+    1050,
+    1116
+   ],
+   "offset": [
+    -45,
+    -86
+   ],
+   "cond": null,
+   "solid": [
+    338.0,
+    366,
+    24,
+    6
+   ]
+  },
+  {
+   "id": "barrel_29",
+   "kind": "barrel",
+   "png": "barrel_29.png",
+   "foot": [
+    582,
+    756
+   ],
+   "offset": [
+    -24,
+    -71
+   ],
+   "cond": null,
+   "solid": [
+    189.0,
+    244,
+    10,
+    8
+   ]
+  },
+  {
+   "id": "crates_30",
+   "kind": "crates",
+   "png": "crates_30.png",
+   "foot": [
+    582,
+    828
+   ],
+   "offset": [
+    -27,
+    -110
+   ],
+   "cond": null,
+   "solid": [
+    188.0,
+    266,
+    12,
+    10
+   ]
+  },
+  {
+   "id": "barrel_31",
+   "kind": "barrel",
+   "png": "barrel_31.png",
+   "foot": [
+    1074,
+    756
+   ],
+   "offset": [
+    -24,
+    -71
+   ],
+   "cond": null,
+   "solid": [
+    353.0,
+    244,
+    10,
+    8
+   ]
+  },
+  {
+   "id": "crates_32",
+   "kind": "crates",
+   "png": "crates_32.png",
+   "foot": [
+    1230,
+    756
+   ],
+   "offset": [
+    -27,
+    -110
+   ],
+   "cond": null,
+   "solid": [
+    404.0,
+    242,
+    12,
+    10
+   ]
+  },
+  {
+   "id": "woodpile_33",
+   "kind": "woodpile",
+   "png": "woodpile_33.png",
+   "foot": [
+    1671,
+    720
+   ],
+   "offset": [
+    -39,
+    -71
+   ],
+   "cond": null,
+   "solid": [
+    546.0,
+    232,
+    22,
+    8
+   ]
+  },
+  {
+   "id": "coal_34",
+   "kind": "coal",
+   "png": "coal_34.png",
+   "foot": [
+    1680,
+    792
+   ],
+   "offset": [
+    -30,
+    -53
+   ],
+   "cond": null,
+   "solid": [
+    552.0,
+    256,
+    16,
+    8
+   ]
+  },
+  {
+   "id": "trough_35",
+   "kind": "trough",
+   "png": "trough_35.png",
+   "foot": [
+    1584,
+    906
+   ],
+   "offset": [
+    -39,
+    -53
+   ],
+   "cond": null,
+   "solid": [
+    518.0,
+    294,
+    20,
+    8
+   ]
+  },
+  {
+   "id": "grindstone_36",
+   "kind": "grindstone",
+   "png": "grindstone_36.png",
+   "foot": [
+    1674,
+    882
+   ],
+   "offset": [
+    -42,
+    -80
+   ],
+   "cond": null,
+   "solid": [
+    551.0,
+    288,
+    14,
+    6
+   ]
+  },
+  {
+   "id": "barrel_37",
+   "kind": "barrel",
+   "png": "barrel_37.png",
+   "foot": [
+    1338,
+    792
+   ],
+   "offset": [
+    -24,
+    -71
+   ],
+   "cond": null,
+   "solid": [
+    441.0,
+    256,
+    10,
+    8
+   ]
+  },
+  {
+   "id": "flower_tub_38",
+   "kind": "flower_tub",
+   "png": "flower_tub_38.png",
+   "foot": [
+    1320,
+    1242
+   ],
+   "offset": [
+    -27,
+    -53
+   ],
+   "cond": null,
+   "solid": [
+    434.0,
+    408,
+    12,
+    6
+   ]
+  },
+  {
+   "id": "barrel_39",
+   "kind": "barrel",
+   "png": "barrel_39.png",
+   "foot": [
+    1602,
+    1224
+   ],
+   "offset": [
+    -24,
+    -71
+   ],
+   "cond": null,
+   "solid": [
+    529.0,
+    400,
+    10,
+    8
+   ]
+  },
+  {
+   "id": "oak_40",
+   "kind": "oak",
+   "png": "oak_40.png",
+   "foot": [
+    900,
+    1440
+   ],
+   "offset": [
+    -106,
+    -243
+   ],
+   "cond": null,
+   "solid": [
+    296,
+    477,
+    8,
+    4
+   ]
+  },
+  {
+   "id": "oak_41",
+   "kind": "oak",
+   "png": "oak_41.png",
+   "foot": [
+    1176,
+    1626
+   ],
+   "offset": [
+    -106,
+    -243
+   ],
+   "cond": null,
+   "solid": [
+    388,
+    539,
+    8,
+    4
+   ]
+  },
+  {
+   "id": "oak_42",
+   "kind": "oak",
+   "png": "oak_42.png",
+   "foot": [
+    1812,
+    1524
+   ],
+   "offset": [
+    -106,
+    -243
+   ],
+   "cond": null,
+   "solid": [
+    600,
+    505,
+    8,
+    4
+   ]
+  },
+  {
+   "id": "oak_43",
+   "kind": "oak",
+   "png": "oak_43.png",
+   "foot": [
+    66,
+    1224
+   ],
+   "offset": [
+    -105,
+    -243
+   ],
+   "cond": null,
+   "solid": [
+    18,
+    405,
+    8,
+    4
+   ]
+  },
+  {
+   "id": "oak_44",
+   "kind": "oak",
+   "png": "oak_44.png",
+   "foot": [
+    546,
+    1644
+   ],
+   "offset": [
+    -105,
+    -243
+   ],
+   "cond": null,
+   "solid": [
+    178,
+    545,
+    8,
+    4
+   ]
+  },
+  {
+   "id": "oak_45",
+   "kind": "oak",
+   "png": "oak_45.png",
+   "foot": [
+    1836,
+    786
+   ],
+   "offset": [
+    -106,
+    -243
+   ],
+   "cond": null,
+   "solid": [
+    608,
+    259,
+    8,
+    4
+   ]
+  },
+  {
+   "id": "oak_46",
+   "kind": "oak",
+   "png": "oak_46.png",
+   "foot": [
+    120,
+    732
+   ],
+   "offset": [
+    -105,
+    -243
+   ],
+   "cond": null,
+   "solid": [
+    36,
+    241,
+    8,
+    4
+   ]
+  },
+  {
+   "id": "bush_47",
+   "kind": "bush",
+   "png": "bush_47.png",
+   "foot": [
+    756,
+    1572
+   ],
+   "offset": [
+    -57,
+    -73
+   ],
+   "cond": null,
+   "solid": [
+    244,
+    519,
+    16,
+    6
+   ]
+  },
+  {
+   "id": "bush_48",
+   "kind": "bush",
+   "png": "bush_48.png",
+   "foot": [
+    1338,
+    1428
+   ],
+   "offset": [
+    -57,
+    -73
+   ],
+   "cond": null,
+   "solid": [
+    438,
+    471,
+    16,
+    6
+   ]
+  },
+  {
+   "id": "bush_49",
+   "kind": "bush",
+   "png": "bush_49.png",
+   "foot": [
+    1710,
+    1338
+   ],
+   "offset": [
+    -57,
+    -73
+   ],
+   "cond": null,
+   "solid": [
+    562,
+    441,
+    16,
+    6
+   ]
+  },
+  {
+   "id": "bush_50",
+   "kind": "bush",
+   "png": "bush_50.png",
+   "foot": [
+    246,
+    684
+   ],
+   "offset": [
+    -57,
+    -73
+   ],
+   "cond": null,
+   "solid": [
+    74,
+    223,
+    16,
+    6
+   ]
+  },
+  {
+   "id": "bush_51",
+   "kind": "bush",
+   "png": "bush_51.png",
+   "foot": [
+    1812,
+    528
+   ],
+   "offset": [
+    -57,
+    -73
+   ],
+   "cond": null,
+   "solid": [
+    596,
+    171,
+    16,
+    6
+   ]
+  },
+  {
+   "id": "boulder_52",
+   "kind": "boulder",
+   "png": "boulder_52.png",
+   "foot": [
+    996,
+    1272
+   ],
+   "offset": [
+    -47,
+    -52
+   ],
+   "cond": null,
+   "solid": [
+    326,
+    420,
+    12,
+    5
+   ]
+  },
+  {
+   "id": "debris_a",
+   "kind": "debris",
+   "png": "debris_a.png",
+   "foot": [
+    786,
+    840
+   ],
+   "offset": [
+    -51,
+    -47
+   ],
+   "cond": {
+    "not_flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": null
+  },
+  {
+   "id": "debris_b",
+   "kind": "debris",
+   "png": "debris_b.png",
+   "foot": [
+    1116,
+    936
+   ],
+   "offset": [
+    -45,
+    -41
+   ],
+   "cond": {
+    "not_flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": null
+  },
+  {
+   "id": "debris_c",
+   "kind": "debris",
+   "png": "debris_c.png",
+   "foot": [
+    954,
+    1080
+   ],
+   "offset": [
+    -48,
+    -41
+   ],
+   "cond": {
+    "not_flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": null
+  },
+  {
+   "id": "debris_d",
+   "kind": "debris",
+   "png": "debris_d.png",
+   "foot": [
+    1434,
+    936
+   ],
+   "offset": [
+    -42,
+    -41
+   ],
+   "cond": {
+    "not_flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": null
+  },
+  {
+   "id": "handcart",
+   "kind": "cart",
+   "png": "handcart.png",
+   "foot": [
+    708,
+    786
+   ],
+   "offset": [
+    -57,
+    -80
+   ],
+   "cond": null,
+   "solid": [
+    225.0,
+    254,
+    22,
+    8
+   ]
+  },
+  {
+   "id": "bench_58",
+   "kind": "bench",
+   "png": "bench_58.png",
+   "foot": [
+    810,
+    1116
+   ],
+   "offset": [
+    -45,
+    -86
+   ],
+   "cond": null,
+   "solid": [
+    258.0,
+    366,
+    24,
+    6
+   ]
+  },
+  {
+   "id": "flower_tub_59",
+   "kind": "flower_tub",
+   "png": "flower_tub_59.png",
+   "foot": [
+    1140,
+    600
+   ],
+   "offset": [
+    -27,
+    -53
+   ],
+   "cond": null,
+   "solid": [
+    374.0,
+    194,
+    12,
+    6
+   ]
+  },
+  {
+   "id": "flower_tub_60",
+   "kind": "flower_tub",
+   "png": "flower_tub_60.png",
+   "foot": [
+    1212,
+    600
+   ],
+   "offset": [
+    -27,
+    -53
+   ],
+   "cond": null,
+   "solid": [
+    398.0,
+    194,
+    12,
+    6
+   ]
+  },
+  {
+   "id": "well_choked_shadow",
+   "kind": "shadow",
+   "png": "well_choked_shadow.png",
+   "foot": [
+    832,
+    956
+   ],
+   "offset": [
+    0,
+    0
+   ],
+   "cond": {
+    "not_flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": null,
+   "of": "well_choked"
+  },
+  {
+   "id": "well_shadow",
+   "kind": "shadow",
+   "png": "well_shadow.png",
+   "foot": [
+    838,
+    950
+   ],
+   "offset": [
+    0,
+    0
+   ],
+   "cond": {
+    "flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": null,
+   "of": "well"
+  },
+  {
+   "id": "smithy_rubble_shadow",
+   "kind": "shadow",
+   "png": "smithy_rubble_shadow.png",
+   "foot": [
+    1347,
+    890
+   ],
+   "offset": [
+    0,
+    0
+   ],
+   "cond": {
+    "not_restored": [
+     "forge"
+    ]
+   },
+   "solid": null,
+   "of": "smithy_rubble"
+  },
+  {
+   "id": "anvil_shadow",
+   "kind": "shadow",
+   "png": "anvil_shadow.png",
+   "foot": [
+    1473,
+    896
+   ],
+   "offset": [
+    0,
+    0
+   ],
+   "cond": {
+    "restored": [
+     "forge"
+    ]
+   },
+   "solid": null,
+   "of": "anvil"
+  },
+  {
+   "id": "square_rubble_a_shadow",
+   "kind": "shadow",
+   "png": "square_rubble_a_shadow.png",
+   "foot": [
+    651,
+    1070
+   ],
+   "offset": [
+    0,
+    0
+   ],
+   "cond": {
+    "not_flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": null,
+   "of": "square_rubble_a"
+  },
+  {
+   "id": "fern_rubble_shadow",
+   "kind": "shadow",
+   "png": "fern_rubble_shadow.png",
+   "foot": [
+    1366,
+    1286
+   ],
+   "offset": [
+    0,
+    0
+   ],
+   "cond": {
+    "not_restored": [
+     "fern_cottage"
+    ]
+   },
+   "solid": null,
+   "of": "fern_rubble"
+  },
+  {
+   "id": "lantern_dark_shadow",
+   "kind": "shadow",
+   "png": "lantern_dark_shadow.png",
+   "foot": [
+    909,
+    932
+   ],
+   "offset": [
+    0,
+    0
+   ],
+   "cond": {
+    "not_flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": null,
+   "of": "lantern_dark"
+  },
+  {
+   "id": "lantern_lit_shadow",
+   "kind": "shadow",
+   "png": "lantern_lit_shadow.png",
+   "foot": [
+    909,
+    932
+   ],
+   "offset": [
+    0,
+    0
+   ],
+   "cond": {
+    "flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": null,
+   "of": "lantern_lit"
+  },
+  {
+   "id": "beds_scorched_shadow",
+   "kind": "shadow",
+   "png": "beds_scorched_shadow.png",
+   "foot": [
+    1139,
+    356
+   ],
+   "offset": [
+    0,
+    0
+   ],
+   "cond": {
+    "not_flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": null,
+   "of": "beds_scorched"
+  },
+  {
+   "id": "beds_dug_shadow",
+   "kind": "shadow",
+   "png": "beds_dug_shadow.png",
+   "foot": [
+    1139,
+    356
+   ],
+   "offset": [
+    0,
+    0
+   ],
+   "cond": {
+    "flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": null,
+   "of": "beds_dug"
+  }
+ ]
+}
