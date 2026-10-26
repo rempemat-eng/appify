@@ -849,15 +849,7 @@
    "width": 40,
    "points": [
     [
-     5800,
-     4064
-    ],
-    [
-     5752,
-     4064
-    ],
-    [
-     5752,
+     5864,
      3992
     ],
     [
@@ -1063,6 +1055,7 @@
      5824
     ]
    ],
+   "note": "below the rock platform's 32 px face (to y 5800), so its leg runs at y 5808; Claude C's bar (tidebloom.json, #266) starts at (6896, 5824) on the same x, so nothing is drawn twice",
    "widths": [
     [
      6896,
@@ -1281,19 +1274,19 @@
      3920
     ],
     [
-     5832,
+     5864,
      3920
     ],
     [
-     5832,
-     4064
+     5864,
+     4096
     ],
     [
      5800,
-     4064
+     4096
     ]
    ],
-   "why": "Crossroads to the halt (brief 8.2: roads west to the halt)"
+   "why": "Crossroads to the halt (brief 8.2: roads west to the halt), over the line once at the halt's level crossing east of the platform"
   },
   {
    "id": "east_road",
@@ -1538,11 +1531,11 @@
      4232
     ],
     [
-     6624,
+     6656,
      4232
     ],
     [
-     6624,
+     6656,
      4336
     ],
     [
@@ -1550,7 +1543,7 @@
      4336
     ]
    ],
-   "why": "round the dew pond (brief 7): the path closer on its west side, joining the lane at a Y each end"
+   "why": "round the dew pond (brief 7): the path closer on its west side, between the pond and the Sleepwater's bank, joining the lane at a Y each end"
   },
   {
    "id": "mill_stair",
@@ -1616,7 +1609,7 @@
    "points": [
     [
      5800,
-     4064
+     4096
     ],
     [
      5800,
@@ -1710,6 +1703,37 @@
     ]
    ],
    "why": "a few steps off the farm track to the wayside shrine"
+  },
+  {
+   "id": "brackens_trod",
+   "width": 24,
+   "points": [
+    [
+     5600,
+     3304
+    ],
+    [
+     5616,
+     3304
+    ],
+    [
+     5616,
+     3400
+    ],
+    [
+     5848,
+     3400
+    ],
+    [
+     5848,
+     3496
+    ],
+    [
+     5936,
+     3496
+    ]
+   ],
+   "why": "the Brackens' east_trod (Claude F, brackens.json) comes in at the box edge; along the woodland bank's foot, outside the woodland, to the timber stair's foot: the moor's second way in"
   },
   {
    "id": "view_pocket",
@@ -2126,6 +2150,24 @@
      3328
     ]
    ],
+   "bridges": [
+    {
+     "at": [
+      6304,
+      3328
+     ],
+     "span": 32,
+     "what": "the garden's own footbridge on its walk to the gate (unchanged)"
+    },
+    {
+     "at": [
+      6040,
+      3120
+     ],
+     "span": 32,
+     "what": "the stepping-stone footbridge at the woodland's gate (its woodland side is Claude A's)"
+    }
+   ],
    "source": "spring_pool",
    "outlet": "millpond",
    "note": "south through the woodland (Claude A's), then east along the garden's south edge (the garden's own stream, its geometry unchanged) to the millpond"
@@ -2266,6 +2308,15 @@
      ],
      "span": 64,
      "what": "the cliff path's footbridge at the estuary"
+    },
+    {
+     "at": [
+      6600,
+      4120
+     ],
+     "span": 48,
+     "what": "the valley train's girder bridge (W3)",
+     "carries": "valley_train"
     }
    ],
    "source": "mill_race",
@@ -2338,6 +2389,16 @@
      "what": "the windmill lane's plank bridge"
     }
    ],
+   "falls": [
+    {
+     "at": [
+      6040,
+      4916
+     ],
+     "drop_tiers": 2,
+     "what": "the outfall's sluice over the shingle bank to the shore"
+    }
+   ],
    "source": "the windmill's scoop wheel, lifting the drains into the embanked outfall at its east foot",
    "outlet": "the sea over the shingle"
   },
@@ -2348,20 +2409,20 @@
    "declared_closed": true,
    "points": [
     [
-     6656,
-     4272
+     6672,
+     4264
     ],
     [
-     6704,
-     4272
+     6712,
+     4264
     ],
     [
-     6704,
-     4312
+     6712,
+     4304
     ],
     [
-     6656,
-     4312
+     6672,
+     4304
     ]
    ],
    "note": "rain-fed, lined with clay: no stream in or out (brief 7)"
@@ -2627,7 +2688,7 @@
    "zone": "halt",
    "at": [
     5760,
-    4072
+    4028
    ],
    "game": "travelPoints.valley: stand('halt', 'platform')"
   },
@@ -2771,20 +2832,21 @@
    "id": "station_house",
    "foot": [
     5672,
-    4024
+    3960
    ],
    "w": 72,
-   "zone": "halt"
+   "zone": "halt",
+   "note": "behind the platform, its door on the Drover's Road"
   },
   {
    "id": "engine_shed",
    "foot": [
     5600,
-    3968
+    4112
    ],
    "w": 64,
    "zone": "halt",
-   "note": "W3: the valley train east"
+   "note": "W3: the valley train east; on the siding south of the line"
   },
   {
    "id": "farmhouse",
@@ -2976,13 +3038,13 @@
    "kind": "platform",
    "rect": [
     5600,
-    4040,
+    4016,
     240,
-    16
+    24
    ],
    "at": [
     5760,
-    4048
+    4028
    ],
    "why": "the halt's 240 px platform; the line runs west off the box into the hills and east to Cogsworth (W3)"
   },
@@ -3147,7 +3209,7 @@
      4048
     ]
    ],
-   "note": "west off the box over the Rift (lane G beyond)"
+   "note": "west off the box over the Rift (lane G beyond); the platform on its north side"
   },
   {
    "id": "valley_train",
@@ -3177,6 +3239,47 @@
      7008,
      3904
     ]
+   ],
+   "continues": {
+    "at": [
+     7008,
+     3904
+    ],
+    "to": "lane G's W3 line east to Cogsworth (the land between)"
+   },
+   "crossings": [
+    {
+     "at": [
+      5864,
+      4048
+     ],
+     "kind": "level crossing",
+     "what": "the west road at the halt's crossing, east of the platform"
+    },
+    {
+     "at": [
+      6264,
+      4120
+     ],
+     "kind": "level crossing",
+     "what": "the harbour road"
+    },
+    {
+     "at": [
+      6600,
+      4120
+     ],
+     "kind": "girder bridge",
+     "what": "over the Sleepwater (its bridge in sleepwater.bridges)"
+    },
+    {
+     "at": [
+      6712,
+      3904
+     ],
+     "kind": "level crossing",
+     "what": "the park lane south"
+    }
    ],
    "note": "east to Cogsworth; level crossings on the harbour road and the park lane, a girder bridge over the Sleepwater; lane G's line beyond the box"
   }
@@ -3443,6 +3546,14 @@
     6876,
     5636
    ]
+  },
+  {
+   "holds": "a bench at the hay trod's end, over the woodland's crowns",
+   "at": [
+    6168,
+    2600
+   ],
+   "trod": "hay_trod"
   }
  ],
  "markers": [
@@ -4003,8 +4114,8 @@
    "t": "I",
    "what": "bench",
    "at": [
-    5724,
-    4060
+    5760,
+    4080
    ],
    "route": "Drover's Road",
    "moved_from": [
@@ -4025,7 +4136,7 @@
    "t": "S",
    "what": "tracks",
    "at": [
-    5664,
+    5668,
     4020
    ],
    "route": "Drover's Road",
@@ -4038,8 +4149,8 @@
    "t": "A",
    "what": "butterflies",
    "at": [
-    5604,
-    3976
+    5620,
+    3916
    ],
    "route": "Drover's Road",
    "moved_from": [
@@ -4344,8 +4455,8 @@
    "t": "S",
    "what": "marker stone",
    "at": [
-    5960,
-    3380
+    5840,
+    3364
    ],
    "route": "Home valley",
    "moved_from": [
@@ -4500,8 +4611,8 @@
    "t": "I",
    "what": "signpost",
    "at": [
-    5892,
-    3464
+    5776,
+    3364
    ],
    "route": "Home valley",
    "moved_from": [
@@ -4513,8 +4624,8 @@
    "t": "I",
    "what": "water trough",
    "at": [
-    5960,
-    3380
+    5852,
+    3364
    ],
    "route": "Home valley",
    "moved_from": [
@@ -4653,20 +4764,16 @@
    "what": "lost hat",
    "at": [
     5912,
-    3464
-   ],
-   "route": "Home valley",
-   "moved_from": [
-    5912,
     3416
-   ]
+   ],
+   "route": "Home valley"
   },
   {
    "t": "S",
    "what": "cart with a broken wheel",
    "at": [
-    5892,
-    3464
+    5828,
+    3432
    ],
    "route": "Home valley",
    "moved_from": [
@@ -4730,8 +4837,8 @@
    "t": "S",
    "what": "cart with a broken wheel",
    "at": [
-    5892,
-    3464
+    5776,
+    3444
    ],
    "route": "Home valley",
    "moved_from": [
@@ -4752,7 +4859,7 @@
    "t": "I",
    "what": "water trough",
    "at": [
-    5892,
+    5804,
     3480
    ],
    "route": "Home valley",
@@ -4783,8 +4890,8 @@
    "t": "S",
    "what": "cart with a broken wheel",
    "at": [
-    5892,
-    3488
+    5868,
+    3476
    ],
    "route": "Home valley",
    "moved_from": [
@@ -4814,8 +4921,8 @@
    "t": "S",
    "what": "lost hat",
    "at": [
-    5892,
-    3496
+    5880,
+    3516
    ],
    "route": "Home valley",
    "moved_from": [
@@ -5303,8 +5410,17 @@
    "dress": true
   },
   {
+   "t": "S",
+   "what": "mended fence",
+   "at": [
+    5968,
+    3416
+   ],
+   "dress": true
+  },
+  {
    "t": "I",
-   "what": "signpost",
+   "what": "water trough",
    "at": [
     6016,
     4540
@@ -5313,7 +5429,7 @@
   },
   {
    "t": "I",
-   "what": "water trough",
+   "what": "noticeboard",
    "at": [
     6092,
     4536
@@ -5322,7 +5438,7 @@
   },
   {
    "t": "S",
-   "what": "marker stone",
+   "what": "old boot",
    "at": [
     6064,
     4580
@@ -5331,7 +5447,7 @@
   },
   {
    "t": "S",
-   "what": "old boot",
+   "what": "cairn",
    "at": [
     6120,
     4588
@@ -5340,7 +5456,7 @@
   },
   {
    "t": "S",
-   "what": "cairn",
+   "what": "mended fence",
    "at": [
     6192,
     4588
@@ -5349,7 +5465,7 @@
   },
   {
    "t": "I",
-   "what": "water trough",
+   "what": "noticeboard",
    "at": [
     6296,
     4096
@@ -5358,7 +5474,7 @@
   },
   {
    "t": "I",
-   "what": "noticeboard",
+   "what": "bench",
    "at": [
     6296,
     4224
@@ -5367,7 +5483,7 @@
   },
   {
    "t": "S",
-   "what": "marker stone",
+   "what": "old boot",
    "at": [
     6288,
     4336
@@ -5376,7 +5492,7 @@
   },
   {
    "t": "S",
-   "what": "old boot",
+   "what": "cairn",
    "at": [
     6296,
     4448
@@ -5385,7 +5501,7 @@
   },
   {
    "t": "S",
-   "what": "cairn",
+   "what": "mended fence",
    "at": [
     6304,
     4568
@@ -5394,28 +5510,19 @@
   },
   {
    "t": "I",
-   "what": "noticeboard",
+   "what": "bench",
    "at": [
     6756,
-    4128
+    4120
    ],
    "dress": true
   },
   {
    "t": "I",
-   "what": "bench",
+   "what": "signpost",
    "at": [
     6764,
-    4304
-   ],
-   "dress": true
-  },
-  {
-   "t": "S",
-   "what": "marker stone",
-   "at": [
-    6772,
-    4480
+    4280
    ],
    "dress": true
   },
@@ -5423,8 +5530,8 @@
    "t": "S",
    "what": "old boot",
    "at": [
-    6680,
-    4260
+    6772,
+    4448
    ],
    "dress": true
   },
@@ -5432,14 +5539,23 @@
    "t": "S",
    "what": "cairn",
    "at": [
-    6704,
+    6664,
+    4204
+   ],
+   "dress": true
+  },
+  {
+   "t": "S",
+   "what": "mended fence",
+   "at": [
+    6656,
     4364
    ],
    "dress": true
   },
   {
    "t": "I",
-   "what": "bench",
+   "what": "signpost",
    "at": [
     5876,
     4632
@@ -5448,7 +5564,7 @@
   },
   {
    "t": "I",
-   "what": "signpost",
+   "what": "water trough",
    "at": [
     5876,
     4672
@@ -5457,7 +5573,7 @@
   },
   {
    "t": "S",
-   "what": "marker stone",
+   "what": "old boot",
    "at": [
     5876,
     4712
@@ -5466,7 +5582,7 @@
   },
   {
    "t": "S",
-   "what": "old boot",
+   "what": "cairn",
    "at": [
     5876,
     4744
@@ -5475,7 +5591,7 @@
   },
   {
    "t": "S",
-   "what": "cairn",
+   "what": "mended fence",
    "at": [
     5876,
     4784
@@ -5484,7 +5600,7 @@
   },
   {
    "t": "I",
-   "what": "signpost",
+   "what": "water trough",
    "at": [
     7088,
     5484
@@ -5497,8 +5613,8 @@
   {
    "kind": "a dew pond",
    "at": [
-    6680,
-    4292
+    6692,
+    4284
    ],
    "moved_from": [
     6680,
@@ -5977,9 +6093,13 @@
    "who": "the station master",
    "at": [
     5728,
-    4080
+    4108
    ],
-   "zone": "halt"
+   "zone": "halt",
+   "moved_from": [
+    5728,
+    4080
+   ]
   },
   {
    "who": "the farmer",
@@ -6501,8 +6621,7 @@
     2880,
     320,
     576
-   ],
-   "walkable": false
+   ]
   },
   {
    "id": "valley-11",
