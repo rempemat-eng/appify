@@ -184,3 +184,34 @@ Canonical edge retained for owner review: when powered Tam's shatter is itself l
 records defeat/kills in the nested call and again in its caller. The207th oracle records this
 unchanged. C60 does not silently correct the canonical rule; A/canonical owner should decide
 before final integration. No reward is granted by this standalone reducer.
+
+## Field/current and status phase checkpoint
+
+`AbilityFields.tick_fields` ports original `_`: fixed1/60 field lifetime and tick cadence,
+ordered damage, gravity pull (heavy targets resist), passive suppression on gravity damage,
+ice slow, expiration after the final tick, and powered Mirra's player-to-seal current chain.
+Currents follow surviving seal insertion order and hit each target once across all segments.
+It shares the canonical damage/event/effect reducers rather than changing passive or defeat rules.
+`tick_statuses` ports only L's status prelude: root/slow/stun/vulnerability countdown, strict
+three-second frost expiry, and dead-target defeat countdown. It never runs legacy enemy AI,
+even in live mode; C61 retains AI ownership.
+
+Both are independent, input-preserving canonical snapshot phases. They do not advance state.time,
+state.tick, player timers/form, projectiles, turret clocks or effect lifetimes. The future fixed-step
+dispatcher must preserve the original phase order: time/player/action/movement, enemy statuses/AI,
+projectiles with synchronous impacts, fields/currents, turrets, effect expiry and end-of-wave rules.
+The field phase deliberately lets an expiring field act before removing it. Do not combine these
+phases by applying all status expiry after field damage, or reduce a coarse delta in one pass.
+
+`field-oracle.json` holds208 whole-state comparisons from hash-verified original `_` and L bodies.
+For L comparisons the original mode is `encounter` to skip its old AI after the status prelude;
+a separate live-mode test proves the port still leaves AI untouched. Cases include all8 field kinds,
+base/powered passives, final ticks, shared/degenerate current segments, dead/immortal targets,
+strict frost boundary and repeated status-before-field phases up to190 ticks. Reproduce with
+`node game/test/combat/build_field_oracle.mjs /path/to/original-modules.json`.
+
+Next: remaining stateful releases/melee/guard/decoy/turrets, explicit Flight-to-canonical snapshot
+adapter, fixed-step once-per-token dispatcher and granted Player hook. World HP and the inherited
+Tam duplicate-defeat edge still await A/canonical-owner decisions at the existing PR checkpoint;
+no mapping or correction is inferred here. This is not integrated gameplay. Keep DRAFT; full
+verify/art/hosted CI/rendered/device checks remain unfinished.
