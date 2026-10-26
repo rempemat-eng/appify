@@ -1,0 +1,10103 @@
+{
+ "id": "toad",
+ "name": "Bramble toad",
+ "view": "SNEW",
+ "directions": [
+  "S",
+  "N",
+  "E",
+  "W"
+ ],
+ "default_direction": "E",
+ "frame_size": [
+  160,
+  144
+ ],
+ "foot_pivot": [
+  80,
+  136
+ ],
+ "body_height_target": 41,
+ "walk_speed": 25.9,
+ "stair_speed": null,
+ "anchor_space": "pixels relative to foot_pivot, screen orientation (x right, y down)",
+ "source": "castwork out/toad (procedural rig), imported by game/tools/import_cast.py",
+ "clips": {
+  "idle": {
+   "frame_count": 8,
+   "durations": [
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.2,
+    0.2
+   ],
+   "duration": 1.6,
+   "loop": true,
+   "release_frame": null,
+   "release_time": null,
+   "hold_frame": null,
+   "roles": null,
+   "facings": {
+    "S": {
+     "frames": [
+      {
+       "path": "res://assets/animated/toad/idle_S_00.png",
+       "file": "idle_S_00.png",
+       "packed_bounds": [
+        60,
+        95,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.8
+        ],
+        "foot_L": [
+         10.2,
+         0.8
+        ],
+        "muzzle": [
+         -0.0,
+         -7.8
+        ],
+        "shard": [
+         -1.7,
+         -38.2
+        ]
+       },
+       "equipment": {
+        "bramble": 89,
+        "shard": 64,
+        "wet": 15
+       },
+       "sha256": "43dde5b23b8cbe70821e6b816ff5615cee2e2abeeef6d67a42552e5212788fa1",
+       "sheet": "sheets/idle_S.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/idle_S_01.png",
+       "file": "idle_S_01.png",
+       "packed_bounds": [
+        60,
+        95,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.8
+        ],
+        "foot_L": [
+         10.2,
+         0.8
+        ],
+        "muzzle": [
+         -0.0,
+         -7.9
+        ],
+        "shard": [
+         -1.7,
+         -38.0
+        ]
+       },
+       "equipment": {
+        "bramble": 87,
+        "shard": 64,
+        "wet": 13
+       },
+       "sha256": "2d65bdfa81c248283220ea574113eb1b9cf286f4b27defeb62560750d14f5493",
+       "sheet": "sheets/idle_S.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/idle_S_02.png",
+       "file": "idle_S_02.png",
+       "packed_bounds": [
+        60,
+        95,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.8
+        ],
+        "foot_L": [
+         10.2,
+         0.8
+        ],
+        "muzzle": [
+         -0.0,
+         -8.0
+        ],
+        "shard": [
+         -1.7,
+         -38.0
+        ]
+       },
+       "equipment": {
+        "bramble": 87,
+        "shard": 64,
+        "wet": 7
+       },
+       "sha256": "e5d7de4237b5a1e862e49291db44325443cd69758074b1ddc0c8fbcd5f7c9f85",
+       "sheet": "sheets/idle_S.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/idle_S_03.png",
+       "file": "idle_S_03.png",
+       "packed_bounds": [
+        60,
+        95,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.8
+        ],
+        "foot_L": [
+         10.2,
+         0.8
+        ],
+        "muzzle": [
+         -0.0,
+         -7.9
+        ],
+        "shard": [
+         -1.7,
+         -38.0
+        ]
+       },
+       "equipment": {
+        "bramble": 87,
+        "shard": 64,
+        "wet": 13
+       },
+       "sha256": "2d65bdfa81c248283220ea574113eb1b9cf286f4b27defeb62560750d14f5493",
+       "sheet": "sheets/idle_S.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/idle_S_04.png",
+       "file": "idle_S_04.png",
+       "packed_bounds": [
+        60,
+        95,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.8
+        ],
+        "foot_L": [
+         10.2,
+         0.8
+        ],
+        "muzzle": [
+         -0.0,
+         -7.8
+        ],
+        "shard": [
+         -1.7,
+         -38.2
+        ]
+       },
+       "equipment": {
+        "bramble": 89,
+        "shard": 64,
+        "wet": 15
+       },
+       "sha256": "43dde5b23b8cbe70821e6b816ff5615cee2e2abeeef6d67a42552e5212788fa1",
+       "sheet": "sheets/idle_S.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/idle_S_05.png",
+       "file": "idle_S_05.png",
+       "packed_bounds": [
+        60,
+        94,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.8
+        ],
+        "foot_L": [
+         10.2,
+         0.8
+        ],
+        "muzzle": [
+         -0.0,
+         -7.6
+        ],
+        "shard": [
+         -1.7,
+         -38.4
+        ]
+       },
+       "equipment": {
+        "bramble": 93,
+        "shard": 63,
+        "wet": 15
+       },
+       "sha256": "8ef04f9116c8f6c8bac32965d7bf702f752352b02e99f5ffa11ccbd4fa7acfba",
+       "sheet": "sheets/idle_S.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/idle_S_06.png",
+       "file": "idle_S_06.png",
+       "packed_bounds": [
+        60,
+        94,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.8
+        ],
+        "foot_L": [
+         10.2,
+         0.8
+        ],
+        "muzzle": [
+         -0.0,
+         -7.6
+        ],
+        "shard": [
+         -1.7,
+         -38.4
+        ]
+       },
+       "equipment": {
+        "bramble": 91,
+        "shard": 65,
+        "wet": 15
+       },
+       "sha256": "1e59e4111b28213dabe947df54be265a75ece127be18bca3405494edf1096577",
+       "sheet": "sheets/idle_S.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/idle_S_07.png",
+       "file": "idle_S_07.png",
+       "packed_bounds": [
+        60,
+        94,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.8
+        ],
+        "foot_L": [
+         10.2,
+         0.8
+        ],
+        "muzzle": [
+         -0.0,
+         -7.6
+        ],
+        "shard": [
+         -1.7,
+         -38.4
+        ]
+       },
+       "equipment": {
+        "bramble": 93,
+        "shard": 63,
+        "wet": 15
+       },
+       "sha256": "cb97114fb8a6f7eedda969348bc35e0f69b40f29217266f031ba169788d6c5e5",
+       "sheet": "sheets/idle_S.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "N": {
+     "frames": [
+      {
+       "path": "res://assets/animated/toad/idle_N_00.png",
+       "file": "idle_N_00.png",
+       "packed_bounds": [
+        60,
+        97,
+        100,
+        135
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.8
+        ],
+        "foot_L": [
+         -10.2,
+         -4.8
+        ],
+        "muzzle": [
+         0.0,
+         -26.6
+        ],
+        "shard": [
+         1.7,
+         -34.6
+        ]
+       },
+       "equipment": {
+        "bramble": 130,
+        "shard": 68
+       },
+       "sha256": "7a344aa18d5c856ed1993e101c06b272dec34a9f86262afd77681bdf0af0f562",
+       "sheet": "sheets/idle_N.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/idle_N_01.png",
+       "file": "idle_N_01.png",
+       "packed_bounds": [
+        60,
+        97,
+        100,
+        135
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.8
+        ],
+        "foot_L": [
+         -10.2,
+         -4.8
+        ],
+        "muzzle": [
+         0.0,
+         -26.7
+        ],
+        "shard": [
+         1.7,
+         -34.4
+        ]
+       },
+       "equipment": {
+        "bramble": 130,
+        "shard": 64
+       },
+       "sha256": "2daf8535dc2508685331b6e83514e4a7173d7d8f4943d28b0b5c1ca6e48f3af9",
+       "sheet": "sheets/idle_N.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/idle_N_02.png",
+       "file": "idle_N_02.png",
+       "packed_bounds": [
+        60,
+        97,
+        100,
+        135
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.8
+        ],
+        "foot_L": [
+         -10.2,
+         -4.8
+        ],
+        "muzzle": [
+         0.0,
+         -26.8
+        ],
+        "shard": [
+         1.7,
+         -34.4
+        ]
+       },
+       "equipment": {
+        "bramble": 131,
+        "shard": 64
+       },
+       "sha256": "236e3aa86093c21fc5262d83dcb94c77ae4616b664f757583048b7ca1c60228f",
+       "sheet": "sheets/idle_N.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/idle_N_03.png",
+       "file": "idle_N_03.png",
+       "packed_bounds": [
+        60,
+        97,
+        100,
+        135
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.8
+        ],
+        "foot_L": [
+         -10.2,
+         -4.8
+        ],
+        "muzzle": [
+         0.0,
+         -26.7
+        ],
+        "shard": [
+         1.7,
+         -34.4
+        ]
+       },
+       "equipment": {
+        "bramble": 130,
+        "shard": 64
+       },
+       "sha256": "2daf8535dc2508685331b6e83514e4a7173d7d8f4943d28b0b5c1ca6e48f3af9",
+       "sheet": "sheets/idle_N.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/idle_N_04.png",
+       "file": "idle_N_04.png",
+       "packed_bounds": [
+        60,
+        97,
+        100,
+        135
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.8
+        ],
+        "foot_L": [
+         -10.2,
+         -4.8
+        ],
+        "muzzle": [
+         0.0,
+         -26.6
+        ],
+        "shard": [
+         1.7,
+         -34.6
+        ]
+       },
+       "equipment": {
+        "bramble": 130,
+        "shard": 68
+       },
+       "sha256": "7a344aa18d5c856ed1993e101c06b272dec34a9f86262afd77681bdf0af0f562",
+       "sheet": "sheets/idle_N.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/idle_N_05.png",
+       "file": "idle_N_05.png",
+       "packed_bounds": [
+        60,
+        96,
+        100,
+        135
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.8
+        ],
+        "foot_L": [
+         -10.2,
+         -4.8
+        ],
+        "muzzle": [
+         0.0,
+         -26.4
+        ],
+        "shard": [
+         1.7,
+         -34.7
+        ]
+       },
+       "equipment": {
+        "bramble": 133,
+        "shard": 65
+       },
+       "sha256": "14d45985e962c30914b9ad311c4f57b774ecb7f7f0dfa0d0065f07e5e84a0f2f",
+       "sheet": "sheets/idle_N.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/idle_N_06.png",
+       "file": "idle_N_06.png",
+       "packed_bounds": [
+        60,
+        96,
+        100,
+        135
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.8
+        ],
+        "foot_L": [
+         -10.2,
+         -4.8
+        ],
+        "muzzle": [
+         0.0,
+         -26.3
+        ],
+        "shard": [
+         1.7,
+         -34.8
+        ]
+       },
+       "equipment": {
+        "bramble": 133,
+        "shard": 65
+       },
+       "sha256": "de3663c49abc7226e30e30c2f15ab10c5aff2abb618bc77e115bbbefc49b7841",
+       "sheet": "sheets/idle_N.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/idle_N_07.png",
+       "file": "idle_N_07.png",
+       "packed_bounds": [
+        60,
+        96,
+        100,
+        135
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.8
+        ],
+        "foot_L": [
+         -10.2,
+         -4.8
+        ],
+        "muzzle": [
+         0.0,
+         -26.4
+        ],
+        "shard": [
+         1.7,
+         -34.7
+        ]
+       },
+       "equipment": {
+        "bramble": 133,
+        "shard": 65
+       },
+       "sha256": "14d45985e962c30914b9ad311c4f57b774ecb7f7f0dfa0d0065f07e5e84a0f2f",
+       "sheet": "sheets/idle_N.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "E": {
+     "frames": [
+      {
+       "path": "res://assets/animated/toad/idle_E_00.png",
+       "file": "idle_E_00.png",
+       "packed_bounds": [
+        61,
+        96,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.3,
+         -2.0
+        ],
+        "foot_L": [
+         13.8,
+         -2.0
+        ],
+        "muzzle": [
+         26.8,
+         -17.2
+        ],
+        "shard": [
+         -5.3,
+         -36.4
+        ]
+       },
+       "equipment": {
+        "bramble": 85,
+        "shard": 61,
+        "wet": 6
+       },
+       "sha256": "bf6d19d0a939ad7f365b5a31656d95618a3d4b174f7c7b2d92668f042ac63ff8",
+       "sheet": "sheets/idle_E.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/idle_E_01.png",
+       "file": "idle_E_01.png",
+       "packed_bounds": [
+        61,
+        96,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.3,
+         -2.0
+        ],
+        "foot_L": [
+         13.8,
+         -2.0
+        ],
+        "muzzle": [
+         26.8,
+         -17.3
+        ],
+        "shard": [
+         -5.3,
+         -36.2
+        ]
+       },
+       "equipment": {
+        "bramble": 87,
+        "shard": 65,
+        "wet": 6
+       },
+       "sha256": "d29b31a15d89af6eca53907a727d22da66ae24aa6f977e1b374990a0f373bf97",
+       "sheet": "sheets/idle_E.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/idle_E_02.png",
+       "file": "idle_E_02.png",
+       "packed_bounds": [
+        61,
+        96,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.3,
+         -2.0
+        ],
+        "foot_L": [
+         13.8,
+         -2.0
+        ],
+        "muzzle": [
+         26.8,
+         -17.4
+        ],
+        "shard": [
+         -5.3,
+         -36.2
+        ]
+       },
+       "equipment": {
+        "bramble": 84,
+        "shard": 66,
+        "wet": 11
+       },
+       "sha256": "eab9f3298a0740004408d520c8c91e428c7825f4a6662e53a612e5b73b4ce90a",
+       "sheet": "sheets/idle_E.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/idle_E_03.png",
+       "file": "idle_E_03.png",
+       "packed_bounds": [
+        61,
+        96,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.3,
+         -2.0
+        ],
+        "foot_L": [
+         13.8,
+         -2.0
+        ],
+        "muzzle": [
+         26.8,
+         -17.3
+        ],
+        "shard": [
+         -5.3,
+         -36.2
+        ]
+       },
+       "equipment": {
+        "bramble": 87,
+        "shard": 65,
+        "wet": 6
+       },
+       "sha256": "d29b31a15d89af6eca53907a727d22da66ae24aa6f977e1b374990a0f373bf97",
+       "sheet": "sheets/idle_E.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/idle_E_04.png",
+       "file": "idle_E_04.png",
+       "packed_bounds": [
+        61,
+        96,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.3,
+         -2.0
+        ],
+        "foot_L": [
+         13.8,
+         -2.0
+        ],
+        "muzzle": [
+         26.8,
+         -17.2
+        ],
+        "shard": [
+         -5.3,
+         -36.4
+        ]
+       },
+       "equipment": {
+        "bramble": 85,
+        "shard": 61,
+        "wet": 6
+       },
+       "sha256": "bf6d19d0a939ad7f365b5a31656d95618a3d4b174f7c7b2d92668f042ac63ff8",
+       "sheet": "sheets/idle_E.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/idle_E_05.png",
+       "file": "idle_E_05.png",
+       "packed_bounds": [
+        61,
+        96,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.3,
+         -2.0
+        ],
+        "foot_L": [
+         13.8,
+         -2.0
+        ],
+        "muzzle": [
+         26.8,
+         -17.0
+        ],
+        "shard": [
+         -5.3,
+         -36.5
+        ]
+       },
+       "equipment": {
+        "bramble": 83,
+        "shard": 64,
+        "wet": 6
+       },
+       "sha256": "ba4d87e3077f347f8f5c1730c09fcb79364aaede2e09874649708217a4aefb97",
+       "sheet": "sheets/idle_E.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/idle_E_06.png",
+       "file": "idle_E_06.png",
+       "packed_bounds": [
+        61,
+        96,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.3,
+         -2.0
+        ],
+        "foot_L": [
+         13.8,
+         -2.0
+        ],
+        "muzzle": [
+         26.8,
+         -17.0
+        ],
+        "shard": [
+         -5.3,
+         -36.6
+        ]
+       },
+       "equipment": {
+        "bramble": 83,
+        "shard": 64,
+        "wet": 8
+       },
+       "sha256": "b876473b5737e8a622e54a0560ffa5959e1f71aa198f9962dcef498e49bb98b7",
+       "sheet": "sheets/idle_E.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/idle_E_07.png",
+       "file": "idle_E_07.png",
+       "packed_bounds": [
+        61,
+        96,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.3,
+         -2.0
+        ],
+        "foot_L": [
+         13.8,
+         -2.0
+        ],
+        "muzzle": [
+         26.8,
+         -17.0
+        ],
+        "shard": [
+         -5.3,
+         -36.5
+        ]
+       },
+       "equipment": {
+        "bramble": 83,
+        "shard": 64,
+        "wet": 6
+       },
+       "sha256": "1aca16a99b8706a28069817f8141ad8848fd6648fcdda4172a8fc44799657112",
+       "sheet": "sheets/idle_E.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "W": {
+     "frames": [
+      {
+       "path": "res://assets/animated/toad/idle_W_00.png",
+       "file": "idle_W_00.png",
+       "packed_bounds": [
+        52,
+        96,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.8,
+         -2.0
+        ],
+        "foot_L": [
+         -12.3,
+         -2.0
+        ],
+        "muzzle": [
+         -26.8,
+         -17.2
+        ],
+        "shard": [
+         5.0,
+         -36.4
+        ]
+       },
+       "equipment": {
+        "bramble": 70,
+        "shard": 65,
+        "wet": 7
+       },
+       "sha256": "872d797f05d57de590d99a85138af4485d378f91d9e03527e688741d15cd4de6",
+       "sheet": "sheets/idle_W.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/idle_W_01.png",
+       "file": "idle_W_01.png",
+       "packed_bounds": [
+        52,
+        96,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.8,
+         -2.0
+        ],
+        "foot_L": [
+         -12.3,
+         -2.0
+        ],
+        "muzzle": [
+         -26.8,
+         -17.3
+        ],
+        "shard": [
+         5.0,
+         -36.2
+        ]
+       },
+       "equipment": {
+        "bramble": 70,
+        "shard": 70,
+        "wet": 7
+       },
+       "sha256": "7d0a2ab0fa063a4c0d2df85a5d3ea0f3c1abdbdc6203bfd59e6c2d215fd37587",
+       "sheet": "sheets/idle_W.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/idle_W_02.png",
+       "file": "idle_W_02.png",
+       "packed_bounds": [
+        52,
+        96,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.8,
+         -2.0
+        ],
+        "foot_L": [
+         -12.3,
+         -2.0
+        ],
+        "muzzle": [
+         -26.8,
+         -17.4
+        ],
+        "shard": [
+         5.0,
+         -36.2
+        ]
+       },
+       "equipment": {
+        "bramble": 69,
+        "shard": 70,
+        "wet": 12
+       },
+       "sha256": "ba12bb0314c5fb395e41fdcf6effe55263db62d7f93b7e253e7d252cce6f8fc6",
+       "sheet": "sheets/idle_W.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/idle_W_03.png",
+       "file": "idle_W_03.png",
+       "packed_bounds": [
+        52,
+        96,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.8,
+         -2.0
+        ],
+        "foot_L": [
+         -12.3,
+         -2.0
+        ],
+        "muzzle": [
+         -26.8,
+         -17.3
+        ],
+        "shard": [
+         5.0,
+         -36.2
+        ]
+       },
+       "equipment": {
+        "bramble": 70,
+        "shard": 70,
+        "wet": 7
+       },
+       "sha256": "7d0a2ab0fa063a4c0d2df85a5d3ea0f3c1abdbdc6203bfd59e6c2d215fd37587",
+       "sheet": "sheets/idle_W.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/idle_W_04.png",
+       "file": "idle_W_04.png",
+       "packed_bounds": [
+        52,
+        96,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.8,
+         -2.0
+        ],
+        "foot_L": [
+         -12.3,
+         -2.0
+        ],
+        "muzzle": [
+         -26.8,
+         -17.2
+        ],
+        "shard": [
+         5.0,
+         -36.4
+        ]
+       },
+       "equipment": {
+        "bramble": 70,
+        "shard": 65,
+        "wet": 7
+       },
+       "sha256": "872d797f05d57de590d99a85138af4485d378f91d9e03527e688741d15cd4de6",
+       "sheet": "sheets/idle_W.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/idle_W_05.png",
+       "file": "idle_W_05.png",
+       "packed_bounds": [
+        52,
+        96,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.8,
+         -2.0
+        ],
+        "foot_L": [
+         -12.3,
+         -2.0
+        ],
+        "muzzle": [
+         -26.8,
+         -17.0
+        ],
+        "shard": [
+         5.0,
+         -36.5
+        ]
+       },
+       "equipment": {
+        "bramble": 67,
+        "shard": 69,
+        "wet": 7
+       },
+       "sha256": "adcdc137bc37851721cdfe3e7fe551b11bec01e81e01f40735d670594beb03e6",
+       "sheet": "sheets/idle_W.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/idle_W_06.png",
+       "file": "idle_W_06.png",
+       "packed_bounds": [
+        52,
+        96,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.8,
+         -2.0
+        ],
+        "foot_L": [
+         -12.3,
+         -2.0
+        ],
+        "muzzle": [
+         -26.8,
+         -17.0
+        ],
+        "shard": [
+         5.0,
+         -36.6
+        ]
+       },
+       "equipment": {
+        "bramble": 68,
+        "shard": 69,
+        "wet": 10
+       },
+       "sha256": "8d334fa651979c471482269a28d41ecdeb4e5c81ccc05a9172dbbab058bef126",
+       "sheet": "sheets/idle_W.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/idle_W_07.png",
+       "file": "idle_W_07.png",
+       "packed_bounds": [
+        52,
+        96,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.8,
+         -2.0
+        ],
+        "foot_L": [
+         -12.3,
+         -2.0
+        ],
+        "muzzle": [
+         -26.8,
+         -17.0
+        ],
+        "shard": [
+         5.0,
+         -36.5
+        ]
+       },
+       "equipment": {
+        "bramble": 67,
+        "shard": 69,
+        "wet": 7
+       },
+       "sha256": "443497514859c35a9d46f359e82e9ad593739714646ca7489cc34dbcc413bde2",
+       "sheet": "sheets/idle_W.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    }
+   }
+  },
+  "move": {
+   "frame_count": 8,
+   "durations": [
+    0.07,
+    0.07,
+    0.07,
+    0.07,
+    0.07,
+    0.07,
+    0.07,
+    0.07
+   ],
+   "duration": 0.56,
+   "loop": true,
+   "release_frame": null,
+   "release_time": null,
+   "hold_frame": null,
+   "roles": null,
+   "facings": {
+    "S": {
+     "frames": [
+      {
+       "path": "res://assets/animated/toad/move_S_00.png",
+       "file": "move_S_00.png",
+       "packed_bounds": [
+        60,
+        95,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.8
+        ],
+        "foot_L": [
+         10.2,
+         0.8
+        ],
+        "muzzle": [
+         -0.0,
+         -8.0
+        ],
+        "shard": [
+         -1.7,
+         -38.0
+        ]
+       },
+       "equipment": {
+        "bramble": 87,
+        "shard": 64,
+        "wet": 7
+       },
+       "sha256": "f5e66aebae288b22291fffa3482b8d63598b96a6e4ba6e43fff74aea9780d37b",
+       "sheet": "sheets/move_S.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/move_S_01.png",
+       "file": "move_S_01.png",
+       "packed_bounds": [
+        60,
+        93,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         -0.7
+        ],
+        "foot_L": [
+         10.2,
+         1.3
+        ],
+        "muzzle": [
+         -0.0,
+         -10.5
+        ],
+        "shard": [
+         -1.7,
+         -39.7
+        ]
+       },
+       "equipment": {
+        "bramble": 85,
+        "shard": 72,
+        "wet": 7
+       },
+       "sha256": "a6df75326d66802eb21040fe894fc9169b48301b62cf7683f461e14c5ee2fb60",
+       "sheet": "sheets/move_S.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/move_S_02.png",
+       "file": "move_S_02.png",
+       "packed_bounds": [
+        60,
+        92,
+        100,
+        139
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         -1.3
+        ],
+        "foot_L": [
+         10.2,
+         1.6
+        ],
+        "muzzle": [
+         -0.0,
+         -10.3
+        ],
+        "shard": [
+         -1.7,
+         -40.7
+        ]
+       },
+       "equipment": {
+        "bramble": 85,
+        "shard": 72,
+        "wet": 7
+       },
+       "sha256": "43ded21f179aa3f79a91e84c29c691353f677ae4eba252a47bc98a9e302a1720",
+       "sheet": "sheets/move_S.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/move_S_03.png",
+       "file": "move_S_03.png",
+       "packed_bounds": [
+        60,
+        92,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         -0.7
+        ],
+        "foot_L": [
+         10.2,
+         1.3
+        ],
+        "muzzle": [
+         -0.0,
+         -8.8
+        ],
+        "shard": [
+         -1.7,
+         -40.4
+        ]
+       },
+       "equipment": {
+        "bramble": 93,
+        "shard": 63,
+        "wet": 15
+       },
+       "sha256": "1c36d6ec8ef8a17edcd7fac2d605f2b6b5e953092f6e975a55a2a50f2ba548f5",
+       "sheet": "sheets/move_S.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/move_S_04.png",
+       "file": "move_S_04.png",
+       "packed_bounds": [
+        60,
+        94,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.8
+        ],
+        "foot_L": [
+         10.2,
+         0.8
+        ],
+        "muzzle": [
+         -0.0,
+         -8.0
+        ],
+        "shard": [
+         -1.7,
+         -38.9
+        ]
+       },
+       "equipment": {
+        "bramble": 89,
+        "shard": 67,
+        "wet": 7
+       },
+       "sha256": "f36d36a1c809d5a74c08d3471aa906c6d7e8fa0e0acce2093ef1c064a32a4f20",
+       "sheet": "sheets/move_S.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/move_S_05.png",
+       "file": "move_S_05.png",
+       "packed_bounds": [
+        60,
+        94,
+        100,
+        137
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.3
+        ],
+        "foot_L": [
+         10.2,
+         -1.8
+        ],
+        "muzzle": [
+         -0.0,
+         -8.9
+        ],
+        "shard": [
+         -1.7,
+         -38.7
+        ]
+       },
+       "equipment": {
+        "bramble": 85,
+        "shard": 72,
+        "wet": 9
+       },
+       "sha256": "216329ac1c67af195b064270838bc4f39dace1a1c9833e2711c2c0a8071ef8d1",
+       "sheet": "sheets/move_S.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/move_S_06.png",
+       "file": "move_S_06.png",
+       "packed_bounds": [
+        60,
+        94,
+        100,
+        137
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.0
+        ],
+        "foot_L": [
+         10.2,
+         -2.9
+        ],
+        "muzzle": [
+         -0.0,
+         -8.0
+        ],
+        "shard": [
+         -1.7,
+         -38.4
+        ]
+       },
+       "equipment": {
+        "bramble": 91,
+        "shard": 65,
+        "wet": 13
+       },
+       "sha256": "09a4e6cf074a246db95dac3091361419c8e6f572b1c1f2af365bb724d29fcbe4",
+       "sheet": "sheets/move_S.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/move_S_07.png",
+       "file": "move_S_07.png",
+       "packed_bounds": [
+        60,
+        95,
+        100,
+        137
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.3
+        ],
+        "foot_L": [
+         10.2,
+         -1.8
+        ],
+        "muzzle": [
+         -0.0,
+         -7.1
+        ],
+        "shard": [
+         -1.7,
+         -38.1
+        ]
+       },
+       "equipment": {
+        "bramble": 88,
+        "shard": 64,
+        "wet": 13
+       },
+       "sha256": "ec99569363af0289a9005df3014177329a6d5e17811991e5ad139a48a394c4d1",
+       "sheet": "sheets/move_S.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "N": {
+     "frames": [
+      {
+       "path": "res://assets/animated/toad/move_N_00.png",
+       "file": "move_N_00.png",
+       "packed_bounds": [
+        60,
+        97,
+        100,
+        135
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.8
+        ],
+        "foot_L": [
+         -10.2,
+         -4.8
+        ],
+        "muzzle": [
+         0.0,
+         -26.8
+        ],
+        "shard": [
+         1.7,
+         -34.4
+        ]
+       },
+       "equipment": {
+        "bramble": 131,
+        "shard": 64
+       },
+       "sha256": "236e3aa86093c21fc5262d83dcb94c77ae4616b664f757583048b7ca1c60228f",
+       "sheet": "sheets/move_N.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/move_N_01.png",
+       "file": "move_N_01.png",
+       "packed_bounds": [
+        60,
+        94,
+        100,
+        135
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -7.4
+        ],
+        "foot_L": [
+         -10.2,
+         -5.3
+        ],
+        "muzzle": [
+         0.0,
+         -29.3
+        ],
+        "shard": [
+         1.7,
+         -36.1
+        ]
+       },
+       "equipment": {
+        "bramble": 129,
+        "shard": 65
+       },
+       "sha256": "75f7121aea1eb0a97c78bf7654f252f1ced85924711e782063f700edeb495aca",
+       "sheet": "sheets/move_N.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/move_N_02.png",
+       "file": "move_N_02.png",
+       "packed_bounds": [
+        60,
+        94,
+        100,
+        135
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -8.5
+        ],
+        "foot_L": [
+         -10.2,
+         -5.6
+        ],
+        "muzzle": [
+         0.0,
+         -29.1
+        ],
+        "shard": [
+         1.7,
+         -37.1
+        ]
+       },
+       "equipment": {
+        "bramble": 128,
+        "shard": 65
+       },
+       "sha256": "04f470c8ecba86fef02edc9031a08f9da5bf8a9b8872e01fbba220ad2765c87f",
+       "sheet": "sheets/move_N.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/move_N_03.png",
+       "file": "move_N_03.png",
+       "packed_bounds": [
+        60,
+        94,
+        100,
+        135
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -7.4
+        ],
+        "foot_L": [
+         -10.2,
+         -5.3
+        ],
+        "muzzle": [
+         0.0,
+         -27.5
+        ],
+        "shard": [
+         1.7,
+         -36.8
+        ]
+       },
+       "equipment": {
+        "bramble": 133,
+        "shard": 65
+       },
+       "sha256": "641c6b21516dea042baa48326717d8419b97a0d7736dd9f29b0b1c7c1b172b0f",
+       "sheet": "sheets/move_N.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/move_N_04.png",
+       "file": "move_N_04.png",
+       "packed_bounds": [
+        60,
+        96,
+        100,
+        135
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.8
+        ],
+        "foot_L": [
+         -10.2,
+         -4.8
+        ],
+        "muzzle": [
+         0.0,
+         -26.8
+        ],
+        "shard": [
+         1.7,
+         -35.2
+        ]
+       },
+       "equipment": {
+        "bramble": 129,
+        "shard": 65
+       },
+       "sha256": "6cd68482174fc53f69a5ce20d99dae9a44d72e37ad71e37885b5833cbae215c0",
+       "sheet": "sheets/move_N.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/move_N_05.png",
+       "file": "move_N_05.png",
+       "packed_bounds": [
+        60,
+        96,
+        100,
+        135
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.3
+        ],
+        "foot_L": [
+         -10.2,
+         -6.3
+        ],
+        "muzzle": [
+         0.0,
+         -27.6
+        ],
+        "shard": [
+         1.7,
+         -35.1
+        ]
+       },
+       "equipment": {
+        "bramble": 130,
+        "shard": 65
+       },
+       "sha256": "e6ab5320ed76c25d4fdfade83a586f8231a45536942a1f115895ea356e474e44",
+       "sheet": "sheets/move_N.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/move_N_06.png",
+       "file": "move_N_06.png",
+       "packed_bounds": [
+        60,
+        96,
+        100,
+        135
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.0
+        ],
+        "foot_L": [
+         -10.2,
+         -6.9
+        ],
+        "muzzle": [
+         0.0,
+         -26.8
+        ],
+        "shard": [
+         1.7,
+         -34.8
+        ]
+       },
+       "equipment": {
+        "bramble": 133,
+        "shard": 65
+       },
+       "sha256": "9241480b5e891d43aac0c3f185d868d3b49678d5dbf69a6159b5dcf3b4f83543",
+       "sheet": "sheets/move_N.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/move_N_07.png",
+       "file": "move_N_07.png",
+       "packed_bounds": [
+        60,
+        97,
+        100,
+        135
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.3
+        ],
+        "foot_L": [
+         -10.2,
+         -6.3
+        ],
+        "muzzle": [
+         0.0,
+         -25.9
+        ],
+        "shard": [
+         1.7,
+         -34.5
+        ]
+       },
+       "equipment": {
+        "bramble": 131,
+        "shard": 68
+       },
+       "sha256": "1832c5dabe4bdbb86af394e8a2789d30cbd0fe6ffd7617a13f9c0bf48baba868",
+       "sheet": "sheets/move_N.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "E": {
+     "frames": [
+      {
+       "path": "res://assets/animated/toad/move_E_00.png",
+       "file": "move_E_00.png",
+       "packed_bounds": [
+        61,
+        96,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.3,
+         -2.0
+        ],
+        "foot_L": [
+         13.8,
+         -2.0
+        ],
+        "muzzle": [
+         26.8,
+         -17.4
+        ],
+        "shard": [
+         -5.3,
+         -36.2
+        ]
+       },
+       "equipment": {
+        "bramble": 84,
+        "shard": 66,
+        "wet": 11
+       },
+       "sha256": "96f0f0a32b69824f98f3fc9e5da473a9f277b2f397a9a3de2aa1ad40b171942d",
+       "sheet": "sheets/move_E.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/move_E_01.png",
+       "file": "move_E_01.png",
+       "packed_bounds": [
+        61,
+        94,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         13.8,
+         -4.1
+        ],
+        "foot_L": [
+         15.4,
+         -2.0
+        ],
+        "muzzle": [
+         26.8,
+         -19.9
+        ],
+        "shard": [
+         -5.3,
+         -37.9
+        ]
+       },
+       "equipment": {
+        "bramble": 85,
+        "shard": 66,
+        "wet": 10
+       },
+       "sha256": "b6007cf8cc029a9a0dc319d40c886533d5bacf3c533e0a6f52434f2576baa2a6",
+       "sheet": "sheets/move_E.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/move_E_02.png",
+       "file": "move_E_02.png",
+       "packed_bounds": [
+        61,
+        93,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         14.4,
+         -4.9
+        ],
+        "foot_L": [
+         16.0,
+         -2.0
+        ],
+        "muzzle": [
+         26.8,
+         -19.7
+        ],
+        "shard": [
+         -5.3,
+         -38.9
+        ]
+       },
+       "equipment": {
+        "bramble": 85,
+        "shard": 66,
+        "wet": 10
+       },
+       "sha256": "2cde05f45cd057b131d33dccd7b2913763ce51fee97cbf639bb524e161209915",
+       "sheet": "sheets/move_E.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/move_E_03.png",
+       "file": "move_E_03.png",
+       "packed_bounds": [
+        61,
+        94,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         13.8,
+         -4.1
+        ],
+        "foot_L": [
+         15.4,
+         -2.0
+        ],
+        "muzzle": [
+         26.8,
+         -18.2
+        ],
+        "shard": [
+         -5.3,
+         -38.6
+        ]
+       },
+       "equipment": {
+        "bramble": 83,
+        "shard": 64,
+        "wet": 6
+       },
+       "sha256": "28e3c970e0754a390bc7618192b7c8970dc7fa62c8504801ba19d8a479685696",
+       "sheet": "sheets/move_E.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/move_E_04.png",
+       "file": "move_E_04.png",
+       "packed_bounds": [
+        61,
+        95,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.3,
+         -2.0
+        ],
+        "foot_L": [
+         13.8,
+         -2.0
+        ],
+        "muzzle": [
+         26.8,
+         -17.4
+        ],
+        "shard": [
+         -5.3,
+         -37.0
+        ]
+       },
+       "equipment": {
+        "bramble": 85,
+        "shard": 66,
+        "wet": 10
+       },
+       "sha256": "25df63ad5e5a7f7cf84eaafeb9d28ea5e99683b52c7d63e8ac3f9e59247dba2c",
+       "sheet": "sheets/move_E.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/move_E_05.png",
+       "file": "move_E_05.png",
+       "packed_bounds": [
+        61,
+        95,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         10.7,
+         -2.0
+        ],
+        "foot_L": [
+         12.3,
+         -4.1
+        ],
+        "muzzle": [
+         26.8,
+         -18.3
+        ],
+        "shard": [
+         -5.3,
+         -36.9
+        ]
+       },
+       "equipment": {
+        "bramble": 85,
+        "shard": 66,
+        "wet": 9
+       },
+       "sha256": "6570636b35061bd7a94bc7032599e877cc1fecb6aaa9f785b4db1ce0ad9f08b2",
+       "sheet": "sheets/move_E.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/move_E_06.png",
+       "file": "move_E_06.png",
+       "packed_bounds": [
+        61,
+        96,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         10.1,
+         -2.0
+        ],
+        "foot_L": [
+         11.7,
+         -4.9
+        ],
+        "muzzle": [
+         26.8,
+         -17.4
+        ],
+        "shard": [
+         -5.3,
+         -36.6
+        ]
+       },
+       "equipment": {
+        "bramble": 83,
+        "shard": 64,
+        "wet": 7
+       },
+       "sha256": "c0eddd162178a159eec4ff31062f3d75ad8c17797d309502808f42c209dcf4e4",
+       "sheet": "sheets/move_E.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/move_E_07.png",
+       "file": "move_E_07.png",
+       "packed_bounds": [
+        61,
+        96,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         10.7,
+         -2.0
+        ],
+        "foot_L": [
+         12.3,
+         -4.1
+        ],
+        "muzzle": [
+         26.8,
+         -16.5
+        ],
+        "shard": [
+         -5.3,
+         -36.3
+        ]
+       },
+       "equipment": {
+        "bramble": 89,
+        "shard": 61,
+        "wet": 7
+       },
+       "sha256": "d96ef773eeb61ea6b44167ca149204dd4f2ee26135de336cfe49e057c1340bb3",
+       "sheet": "sheets/move_E.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "W": {
+     "frames": [
+      {
+       "path": "res://assets/animated/toad/move_W_00.png",
+       "file": "move_W_00.png",
+       "packed_bounds": [
+        52,
+        96,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.8,
+         -2.0
+        ],
+        "foot_L": [
+         -12.3,
+         -2.0
+        ],
+        "muzzle": [
+         -26.8,
+         -17.4
+        ],
+        "shard": [
+         5.0,
+         -36.2
+        ]
+       },
+       "equipment": {
+        "bramble": 69,
+        "shard": 70,
+        "wet": 12
+       },
+       "sha256": "f13344ffb1b89a3e294a51bd8d573d0864e2061f07d32d61d1bdf8f1aaa3e137",
+       "sheet": "sheets/move_W.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/move_W_01.png",
+       "file": "move_W_01.png",
+       "packed_bounds": [
+        52,
+        94,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -15.4,
+         -4.1
+        ],
+        "foot_L": [
+         -13.8,
+         -2.0
+        ],
+        "muzzle": [
+         -26.8,
+         -19.9
+        ],
+        "shard": [
+         5.0,
+         -37.9
+        ]
+       },
+       "equipment": {
+        "bramble": 67,
+        "shard": 71,
+        "wet": 12
+       },
+       "sha256": "7e69392a2f235b4965974b28bc58621521f5f9e216e0019c2a27e97dd9f4e28e",
+       "sheet": "sheets/move_W.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/move_W_02.png",
+       "file": "move_W_02.png",
+       "packed_bounds": [
+        52,
+        93,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -16.0,
+         -4.9
+        ],
+        "foot_L": [
+         -14.4,
+         -2.0
+        ],
+        "muzzle": [
+         -26.8,
+         -19.7
+        ],
+        "shard": [
+         5.0,
+         -38.9
+        ]
+       },
+       "equipment": {
+        "bramble": 67,
+        "shard": 71,
+        "wet": 12
+       },
+       "sha256": "fbcdb240ce2d7ee1267976cf2406cd187f2e47484316900160aceee77f40d578",
+       "sheet": "sheets/move_W.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/move_W_03.png",
+       "file": "move_W_03.png",
+       "packed_bounds": [
+        52,
+        94,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -15.4,
+         -4.1
+        ],
+        "foot_L": [
+         -13.8,
+         -2.0
+        ],
+        "muzzle": [
+         -26.8,
+         -18.2
+        ],
+        "shard": [
+         5.0,
+         -38.6
+        ]
+       },
+       "equipment": {
+        "bramble": 67,
+        "shard": 69,
+        "wet": 7
+       },
+       "sha256": "e69a57980207c0ffaf7165d68712203246611590e00603426b4fd36c66095b46",
+       "sheet": "sheets/move_W.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/move_W_04.png",
+       "file": "move_W_04.png",
+       "packed_bounds": [
+        52,
+        95,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.8,
+         -2.0
+        ],
+        "foot_L": [
+         -12.3,
+         -2.0
+        ],
+        "muzzle": [
+         -26.8,
+         -17.4
+        ],
+        "shard": [
+         5.0,
+         -37.0
+        ]
+       },
+       "equipment": {
+        "bramble": 68,
+        "shard": 71,
+        "wet": 11
+       },
+       "sha256": "4b413ee45ece7a03b850b6d1c3c4ff44180afd24aac629d1c80cc39a9e3ab8c6",
+       "sheet": "sheets/move_W.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/move_W_05.png",
+       "file": "move_W_05.png",
+       "packed_bounds": [
+        52,
+        95,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -12.3,
+         -2.0
+        ],
+        "foot_L": [
+         -10.7,
+         -4.1
+        ],
+        "muzzle": [
+         -26.8,
+         -18.3
+        ],
+        "shard": [
+         5.0,
+         -36.9
+        ]
+       },
+       "equipment": {
+        "bramble": 67,
+        "shard": 71,
+        "wet": 10
+       },
+       "sha256": "f0ebc35fbb20e12f214f623c7dd582d2df789b02fd2e2bf0a7f3768ecf828355",
+       "sheet": "sheets/move_W.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/move_W_06.png",
+       "file": "move_W_06.png",
+       "packed_bounds": [
+        52,
+        96,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -11.7,
+         -2.0
+        ],
+        "foot_L": [
+         -10.1,
+         -4.9
+        ],
+        "muzzle": [
+         -26.8,
+         -17.4
+        ],
+        "shard": [
+         5.0,
+         -36.6
+        ]
+       },
+       "equipment": {
+        "bramble": 68,
+        "shard": 69,
+        "wet": 8
+       },
+       "sha256": "5ef3af9981e6145b09033d6a614c12476c3e8a6784f86c9ac9fc90d95b2a3976",
+       "sheet": "sheets/move_W.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/move_W_07.png",
+       "file": "move_W_07.png",
+       "packed_bounds": [
+        52,
+        96,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -12.3,
+         -2.0
+        ],
+        "foot_L": [
+         -10.7,
+         -4.1
+        ],
+        "muzzle": [
+         -26.8,
+         -16.5
+        ],
+        "shard": [
+         5.0,
+         -36.3
+        ]
+       },
+       "equipment": {
+        "bramble": 69,
+        "shard": 70,
+        "wet": 8
+       },
+       "sha256": "07f10e0f2771d275eef1b0dd5b5c5c1ed1328e5211a091a5307908c6f13f4d17",
+       "sheet": "sheets/move_W.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    }
+   }
+  },
+  "telegraph": {
+   "frame_count": 8,
+   "durations": [
+    0.11,
+    0.11,
+    0.12,
+    0.12,
+    0.12,
+    0.12,
+    0.12,
+    0.13
+   ],
+   "duration": 0.95,
+   "loop": false,
+   "release_frame": null,
+   "release_time": null,
+   "hold_frame": null,
+   "roles": null,
+   "facings": {
+    "S": {
+     "frames": [
+      {
+       "path": "res://assets/animated/toad/telegraph_S_00.png",
+       "file": "telegraph_S_00.png",
+       "packed_bounds": [
+        60,
+        95,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.8
+        ],
+        "foot_L": [
+         10.2,
+         0.8
+        ],
+        "muzzle": [
+         -0.0,
+         -6.5
+        ],
+        "shard": [
+         -1.7,
+         -38.1
+        ]
+       },
+       "equipment": {
+        "bramble": 87,
+        "shard": 64,
+        "wet": 15
+       },
+       "sha256": "b84f62946d85bbb7c3bc996cab4fe703efce14bca9c084e00e0a3909a8af1826",
+       "sheet": "sheets/telegraph_S.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/telegraph_S_01.png",
+       "file": "telegraph_S_01.png",
+       "packed_bounds": [
+        60,
+        94,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.8
+        ],
+        "foot_L": [
+         10.2,
+         0.8
+        ],
+        "muzzle": [
+         -0.0,
+         -10.6
+        ],
+        "shard": [
+         -1.7,
+         -38.8
+        ]
+       },
+       "equipment": {
+        "bramble": 84,
+        "shard": 72,
+        "sac": 36,
+        "wet": 6
+       },
+       "sha256": "715429b47cd033c05f500f22121e469bc1cd57a05db0814d0465128bbb4b1d98",
+       "sheet": "sheets/telegraph_S.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/telegraph_S_02.png",
+       "file": "telegraph_S_02.png",
+       "packed_bounds": [
+        60,
+        94,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.8
+        ],
+        "foot_L": [
+         10.2,
+         0.8
+        ],
+        "muzzle": [
+         -0.0,
+         -11.1
+        ],
+        "shard": [
+         -1.7,
+         -38.6
+        ]
+       },
+       "equipment": {
+        "bramble": 83,
+        "shard": 72,
+        "sac": 43,
+        "wet": 4,
+        "glint": 7
+       },
+       "sha256": "2d2eaeb2cf20217a60461d7aa1422731cb4bc9fe5a916ba35a485deec0ef1b70",
+       "sheet": "sheets/telegraph_S.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/telegraph_S_03.png",
+       "file": "telegraph_S_03.png",
+       "packed_bounds": [
+        60,
+        94,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.8
+        ],
+        "foot_L": [
+         10.2,
+         0.8
+        ],
+        "muzzle": [
+         -0.0,
+         -11.8
+        ],
+        "shard": [
+         -1.7,
+         -38.4
+        ]
+       },
+       "equipment": {
+        "bramble": 85,
+        "shard": 65,
+        "sac": 57,
+        "wet": 7,
+        "glint": 9
+       },
+       "sha256": "d594ec1c438b5d9ff7c5544d88fcf4b39086e94f16a9f42a07796898dcf74cdd",
+       "sheet": "sheets/telegraph_S.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/telegraph_S_04.png",
+       "file": "telegraph_S_04.png",
+       "packed_bounds": [
+        60,
+        94,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.8
+        ],
+        "foot_L": [
+         10.2,
+         0.8
+        ],
+        "muzzle": [
+         -0.0,
+         -11.7
+        ],
+        "shard": [
+         -1.7,
+         -38.4
+        ]
+       },
+       "equipment": {
+        "bramble": 85,
+        "shard": 65,
+        "sac": 67,
+        "wet": 7,
+        "glint": 11
+       },
+       "sha256": "336a42c66ca2cd812b8fed2bca147152d96301862a081cbe261e11357ac7b204",
+       "sheet": "sheets/telegraph_S.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/telegraph_S_05.png",
+       "file": "telegraph_S_05.png",
+       "packed_bounds": [
+        60,
+        94,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.8
+        ],
+        "foot_L": [
+         10.2,
+         0.8
+        ],
+        "muzzle": [
+         -0.0,
+         -11.7
+        ],
+        "shard": [
+         -1.7,
+         -38.4
+        ]
+       },
+       "equipment": {
+        "bramble": 85,
+        "shard": 65,
+        "sac": 78,
+        "wet": 7,
+        "glint": 13
+       },
+       "sha256": "e2a6b24a9c2b9767f8c6540a840e0278dfcd42557226b3b5b1ca403ab8064eaf",
+       "sheet": "sheets/telegraph_S.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/telegraph_S_06.png",
+       "file": "telegraph_S_06.png",
+       "packed_bounds": [
+        59,
+        94,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.6,
+         0.8
+        ],
+        "foot_L": [
+         9.7,
+         0.8
+        ],
+        "muzzle": [
+         -0.4,
+         -11.7
+        ],
+        "shard": [
+         -2.1,
+         -38.4
+        ]
+       },
+       "equipment": {
+        "bramble": 81,
+        "shard": 63,
+        "sac": 78,
+        "wet": 6,
+        "glint": 15
+       },
+       "sha256": "8ea75ea6eea18e97a7f3360fcfc832b8e6d81ff91c89764c0cbdc7ba8c81acfa",
+       "sheet": "sheets/telegraph_S.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/telegraph_S_07.png",
+       "file": "telegraph_S_07.png",
+       "packed_bounds": [
+        60,
+        94,
+        101,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -9.7,
+         0.8
+        ],
+        "foot_L": [
+         10.6,
+         0.8
+        ],
+        "muzzle": [
+         0.4,
+         -11.7
+        ],
+        "shard": [
+         -1.3,
+         -38.4
+        ]
+       },
+       "equipment": {
+        "bramble": 81,
+        "shard": 63,
+        "sac": 78,
+        "wet": 5,
+        "glint": 15
+       },
+       "sha256": "f4c7191a8c6ea81e75514cf2d4eefca8dba74128a7a763a861957300b367243b",
+       "sheet": "sheets/telegraph_S.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "N": {
+     "frames": [
+      {
+       "path": "res://assets/animated/toad/telegraph_N_00.png",
+       "file": "telegraph_N_00.png",
+       "packed_bounds": [
+        60,
+        97,
+        100,
+        135
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.8
+        ],
+        "foot_L": [
+         -10.2,
+         -4.8
+        ],
+        "muzzle": [
+         0.0,
+         -25.3
+        ],
+        "shard": [
+         1.7,
+         -34.4
+        ]
+       },
+       "equipment": {
+        "bramble": 130,
+        "shard": 64
+       },
+       "sha256": "50c9d4dd189ffae702760d0e51c8615984b30de9c4a119c727a89f1007698239",
+       "sheet": "sheets/telegraph_N.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/telegraph_N_01.png",
+       "file": "telegraph_N_01.png",
+       "packed_bounds": [
+        60,
+        94,
+        100,
+        135
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.8
+        ],
+        "foot_L": [
+         -10.2,
+         -4.8
+        ],
+        "muzzle": [
+         0.0,
+         -29.9
+        ],
+        "shard": [
+         1.7,
+         -35.2
+        ]
+       },
+       "equipment": {
+        "bramble": 128,
+        "shard": 65
+       },
+       "sha256": "17a49cd27690f54f1a2f941d76dcc47535d06ac56f4a0be5845358f32dd533f4",
+       "sheet": "sheets/telegraph_N.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/telegraph_N_02.png",
+       "file": "telegraph_N_02.png",
+       "packed_bounds": [
+        60,
+        93,
+        100,
+        135
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.8
+        ],
+        "foot_L": [
+         -10.2,
+         -4.8
+        ],
+        "muzzle": [
+         0.0,
+         -30.9
+        ],
+        "shard": [
+         1.7,
+         -35.0
+        ]
+       },
+       "equipment": {
+        "bramble": 131,
+        "shard": 65
+       },
+       "sha256": "8ac6e03fb0df760674787335da7fb878ab311ff2f4811abaca5656c881138632",
+       "sheet": "sheets/telegraph_N.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/telegraph_N_03.png",
+       "file": "telegraph_N_03.png",
+       "packed_bounds": [
+        60,
+        92,
+        100,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.8
+        ],
+        "foot_L": [
+         -10.2,
+         -4.8
+        ],
+        "muzzle": [
+         0.0,
+         -31.6
+        ],
+        "shard": [
+         1.7,
+         -34.8
+        ]
+       },
+       "equipment": {
+        "bramble": 133,
+        "shard": 65
+       },
+       "sha256": "802becdc83f6ac9920965aa9375bc0aa0e212eadff0fd6f96da2b8ecbebf1e54",
+       "sheet": "sheets/telegraph_N.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/telegraph_N_04.png",
+       "file": "telegraph_N_04.png",
+       "packed_bounds": [
+        60,
+        92,
+        100,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.8
+        ],
+        "foot_L": [
+         -10.2,
+         -4.8
+        ],
+        "muzzle": [
+         0.0,
+         -31.7
+        ],
+        "shard": [
+         1.7,
+         -34.8
+        ]
+       },
+       "equipment": {
+        "bramble": 133,
+        "shard": 65
+       },
+       "sha256": "802becdc83f6ac9920965aa9375bc0aa0e212eadff0fd6f96da2b8ecbebf1e54",
+       "sheet": "sheets/telegraph_N.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/telegraph_N_05.png",
+       "file": "telegraph_N_05.png",
+       "packed_bounds": [
+        60,
+        92,
+        100,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.8
+        ],
+        "foot_L": [
+         -10.2,
+         -4.8
+        ],
+        "muzzle": [
+         0.0,
+         -31.7
+        ],
+        "shard": [
+         1.7,
+         -34.8
+        ]
+       },
+       "equipment": {
+        "bramble": 133,
+        "shard": 65
+       },
+       "sha256": "802becdc83f6ac9920965aa9375bc0aa0e212eadff0fd6f96da2b8ecbebf1e54",
+       "sheet": "sheets/telegraph_N.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/telegraph_N_06.png",
+       "file": "telegraph_N_06.png",
+       "packed_bounds": [
+        60,
+        92,
+        101,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         10.6,
+         -4.8
+        ],
+        "foot_L": [
+         -9.7,
+         -4.8
+        ],
+        "muzzle": [
+         0.4,
+         -31.7
+        ],
+        "shard": [
+         2.1,
+         -34.8
+        ]
+       },
+       "equipment": {
+        "bramble": 131,
+        "shard": 65
+       },
+       "sha256": "4290b91496f74d45bf02c496dd3b71d535c061fff2783002b41ef69f3cfcaab5",
+       "sheet": "sheets/telegraph_N.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/telegraph_N_07.png",
+       "file": "telegraph_N_07.png",
+       "packed_bounds": [
+        59,
+        92,
+        100,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         9.7,
+         -4.8
+        ],
+        "foot_L": [
+         -10.6,
+         -4.8
+        ],
+        "muzzle": [
+         -0.4,
+         -31.7
+        ],
+        "shard": [
+         1.3,
+         -34.8
+        ]
+       },
+       "equipment": {
+        "bramble": 133,
+        "shard": 65
+       },
+       "sha256": "98b507723367e07300e54b2f55cb0d5da2e113e71a915c64bd0b2a0c0d753a2e",
+       "sheet": "sheets/telegraph_N.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "E": {
+     "frames": [
+      {
+       "path": "res://assets/animated/toad/telegraph_E_00.png",
+       "file": "telegraph_E_00.png",
+       "packed_bounds": [
+        61,
+        96,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.3,
+         -2.0
+        ],
+        "foot_L": [
+         13.8,
+         -2.0
+        ],
+        "muzzle": [
+         26.8,
+         -15.9
+        ],
+        "shard": [
+         -5.3,
+         -36.3
+        ]
+       },
+       "equipment": {
+        "bramble": 87,
+        "shard": 65,
+        "wet": 7
+       },
+       "sha256": "aafa1a676ad7ace1641ea751033df2362d6744f5c447a835f4603b7e7689fc8b",
+       "sheet": "sheets/telegraph_E.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/telegraph_E_01.png",
+       "file": "telegraph_E_01.png",
+       "packed_bounds": [
+        61,
+        95,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.3,
+         -2.0
+        ],
+        "foot_L": [
+         13.8,
+         -2.0
+        ],
+        "muzzle": [
+         27.6,
+         -20.3
+        ],
+        "shard": [
+         -5.3,
+         -37.0
+        ]
+       },
+       "equipment": {
+        "sac": 30,
+        "bramble": 85,
+        "shard": 66,
+        "wet": 9
+       },
+       "sha256": "8f04ed4b950cfe3003d15a2456d736691f689c8973a76e24574085002f7bfff5",
+       "sheet": "sheets/telegraph_E.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/telegraph_E_02.png",
+       "file": "telegraph_E_02.png",
+       "packed_bounds": [
+        62,
+        95,
+        112,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.3,
+         -2.0
+        ],
+        "foot_L": [
+         13.8,
+         -2.0
+        ],
+        "muzzle": [
+         28.3,
+         -22.5
+        ],
+        "shard": [
+         -5.3,
+         -37.5
+        ]
+       },
+       "equipment": {
+        "sac": 36,
+        "bramble": 87,
+        "shard": 61,
+        "wet": 6,
+        "glint": 7
+       },
+       "sha256": "329a55baf12504bb7eb3b16b54176b27adf7bacd0b54a43756d91f3a3bed3c93",
+       "sheet": "sheets/telegraph_E.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/telegraph_E_03.png",
+       "file": "telegraph_E_03.png",
+       "packed_bounds": [
+        62,
+        95,
+        112,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.3,
+         -2.0
+        ],
+        "foot_L": [
+         13.8,
+         -2.0
+        ],
+        "muzzle": [
+         28.3,
+         -23.9
+        ],
+        "shard": [
+         -5.3,
+         -37.7
+        ]
+       },
+       "equipment": {
+        "sac": 47,
+        "bramble": 84,
+        "shard": 64,
+        "wet": 7,
+        "glint": 9
+       },
+       "sha256": "d088597e133a74ba6aa1c7f36bdfbdb352b319eab2902860eaa2755b9fb39c64",
+       "sheet": "sheets/telegraph_E.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/telegraph_E_04.png",
+       "file": "telegraph_E_04.png",
+       "packed_bounds": [
+        62,
+        95,
+        113,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.3,
+         -2.0
+        ],
+        "foot_L": [
+         13.8,
+         -2.0
+        ],
+        "muzzle": [
+         28.6,
+         -23.9
+        ],
+        "shard": [
+         -5.3,
+         -37.7
+        ]
+       },
+       "equipment": {
+        "sac": 54,
+        "bramble": 84,
+        "shard": 64,
+        "wet": 7,
+        "glint": 11
+       },
+       "sha256": "58d1fbaa0402156a5ecfae82326b0d40ab875d5d0559e1003068374b07bea855",
+       "sheet": "sheets/telegraph_E.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/telegraph_E_05.png",
+       "file": "telegraph_E_05.png",
+       "packed_bounds": [
+        62,
+        95,
+        114,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.3,
+         -2.0
+        ],
+        "foot_L": [
+         13.8,
+         -2.0
+        ],
+        "muzzle": [
+         28.6,
+         -23.9
+        ],
+        "shard": [
+         -5.3,
+         -37.7
+        ]
+       },
+       "equipment": {
+        "sac": 58,
+        "bramble": 84,
+        "shard": 64,
+        "wet": 7,
+        "glint": 13
+       },
+       "sha256": "6cd6320d9f168e91e4549973f1ab7b2672949a1673ca1d1b7dbe3358bf7e9bee",
+       "sheet": "sheets/telegraph_E.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/telegraph_E_06.png",
+       "file": "telegraph_E_06.png",
+       "packed_bounds": [
+        62,
+        95,
+        114,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.2,
+         -2.0
+        ],
+        "foot_L": [
+         13.8,
+         -2.0
+        ],
+        "muzzle": [
+         28.5,
+         -24.1
+        ],
+        "shard": [
+         -5.4,
+         -37.8
+        ]
+       },
+       "equipment": {
+        "sac": 64,
+        "bramble": 84,
+        "shard": 64,
+        "wet": 9,
+        "glint": 15
+       },
+       "sha256": "dc297e5a22f3d001bf96167d57dd75eab07ee3f68505f1179e863944cb449c43",
+       "sheet": "sheets/telegraph_E.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/telegraph_E_07.png",
+       "file": "telegraph_E_07.png",
+       "packed_bounds": [
+        62,
+        95,
+        114,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.3,
+         -2.0
+        ],
+        "foot_L": [
+         13.9,
+         -2.0
+        ],
+        "muzzle": [
+         28.6,
+         -24.1
+        ],
+        "shard": [
+         -5.3,
+         -37.8
+        ]
+       },
+       "equipment": {
+        "sac": 64,
+        "bramble": 86,
+        "shard": 64,
+        "wet": 9,
+        "glint": 15
+       },
+       "sha256": "bc2ff90aab61b434795d1c2a48a9b2a7e512270e02980c253b5de2f0a2073613",
+       "sheet": "sheets/telegraph_E.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "W": {
+     "frames": [
+      {
+       "path": "res://assets/animated/toad/telegraph_W_00.png",
+       "file": "telegraph_W_00.png",
+       "packed_bounds": [
+        52,
+        96,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.8,
+         -2.0
+        ],
+        "foot_L": [
+         -12.3,
+         -2.0
+        ],
+        "muzzle": [
+         -26.8,
+         -15.9
+        ],
+        "shard": [
+         5.0,
+         -36.3
+        ]
+       },
+       "equipment": {
+        "bramble": 70,
+        "shard": 70,
+        "wet": 9
+       },
+       "sha256": "22c94acf831b2e9e633295558c6ff82fbbac027e9f4580c2987efd0c2bb0697e",
+       "sheet": "sheets/telegraph_W.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/telegraph_W_01.png",
+       "file": "telegraph_W_01.png",
+       "packed_bounds": [
+        51,
+        95,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.8,
+         -2.0
+        ],
+        "foot_L": [
+         -12.3,
+         -2.0
+        ],
+        "muzzle": [
+         -27.6,
+         -20.3
+        ],
+        "shard": [
+         5.0,
+         -37.0
+        ]
+       },
+       "equipment": {
+        "sac": 30,
+        "bramble": 68,
+        "shard": 71,
+        "wet": 10
+       },
+       "sha256": "4cfd6991bb0e3da4799732019ae470f88a3c40d0f3e35bf5d5e41ebf36750480",
+       "sheet": "sheets/telegraph_W.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/telegraph_W_02.png",
+       "file": "telegraph_W_02.png",
+       "packed_bounds": [
+        48,
+        95,
+        98,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.8,
+         -2.0
+        ],
+        "foot_L": [
+         -12.3,
+         -2.0
+        ],
+        "muzzle": [
+         -28.3,
+         -22.5
+        ],
+        "shard": [
+         5.0,
+         -37.5
+        ]
+       },
+       "equipment": {
+        "sac": 36,
+        "bramble": 70,
+        "shard": 65,
+        "wet": 7,
+        "glint": 7
+       },
+       "sha256": "d182699c33e1019401be3b8db4b9b1ba2e7676719ae8cdbda74e1f458102b0a0",
+       "sheet": "sheets/telegraph_W.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/telegraph_W_03.png",
+       "file": "telegraph_W_03.png",
+       "packed_bounds": [
+        48,
+        95,
+        98,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.8,
+         -2.0
+        ],
+        "foot_L": [
+         -12.3,
+         -2.0
+        ],
+        "muzzle": [
+         -28.3,
+         -23.9
+        ],
+        "shard": [
+         5.0,
+         -37.7
+        ]
+       },
+       "equipment": {
+        "sac": 47,
+        "bramble": 68,
+        "shard": 69,
+        "wet": 9,
+        "glint": 9
+       },
+       "sha256": "3f857bdaf23522c58174c41fe343b59994150ef5032c8231ae9bd734bbbdc23e",
+       "sheet": "sheets/telegraph_W.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/telegraph_W_04.png",
+       "file": "telegraph_W_04.png",
+       "packed_bounds": [
+        47,
+        95,
+        98,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.8,
+         -2.0
+        ],
+        "foot_L": [
+         -12.3,
+         -2.0
+        ],
+        "muzzle": [
+         -28.6,
+         -23.9
+        ],
+        "shard": [
+         5.0,
+         -37.7
+        ]
+       },
+       "equipment": {
+        "sac": 54,
+        "bramble": 68,
+        "shard": 69,
+        "wet": 9,
+        "glint": 11
+       },
+       "sha256": "36598b673830ae1f279fb775ab939c2d1c7adb113364039b3549bbe79567fe6e",
+       "sheet": "sheets/telegraph_W.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/telegraph_W_05.png",
+       "file": "telegraph_W_05.png",
+       "packed_bounds": [
+        46,
+        95,
+        98,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.8,
+         -2.0
+        ],
+        "foot_L": [
+         -12.3,
+         -2.0
+        ],
+        "muzzle": [
+         -28.6,
+         -23.9
+        ],
+        "shard": [
+         5.0,
+         -37.7
+        ]
+       },
+       "equipment": {
+        "sac": 58,
+        "bramble": 68,
+        "shard": 69,
+        "wet": 9,
+        "glint": 13
+       },
+       "sha256": "6203bec4050fb1a40c79d3090bace2f78a4fa269263c5b4ec37249f4f7c58b22",
+       "sheet": "sheets/telegraph_W.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/telegraph_W_06.png",
+       "file": "telegraph_W_06.png",
+       "packed_bounds": [
+        46,
+        95,
+        98,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.9,
+         -2.0
+        ],
+        "foot_L": [
+         -12.3,
+         -2.0
+        ],
+        "muzzle": [
+         -28.6,
+         -24.1
+        ],
+        "shard": [
+         4.9,
+         -37.8
+        ]
+       },
+       "equipment": {
+        "sac": 64,
+        "bramble": 67,
+        "shard": 69,
+        "wet": 10,
+        "glint": 15
+       },
+       "sha256": "5dab9d5a6738c0c207cc8c6e6f9ec3f998b997b2d8d1d36ef206b5d73ca46eee",
+       "sheet": "sheets/telegraph_W.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/telegraph_W_07.png",
+       "file": "telegraph_W_07.png",
+       "packed_bounds": [
+        46,
+        95,
+        98,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.8,
+         -2.0
+        ],
+        "foot_L": [
+         -12.2,
+         -2.0
+        ],
+        "muzzle": [
+         -28.5,
+         -24.1
+        ],
+        "shard": [
+         5.0,
+         -37.8
+        ]
+       },
+       "equipment": {
+        "sac": 64,
+        "bramble": 66,
+        "shard": 69,
+        "wet": 10,
+        "glint": 15
+       },
+       "sha256": "5abbccad1c2c36b05c8fb38df90e182b55ad0d1aea000f3ccef09c67cf55c8ec",
+       "sheet": "sheets/telegraph_W.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    }
+   }
+  },
+  "attack": {
+   "frame_count": 5,
+   "durations": [
+    0.06,
+    0.09,
+    0.12,
+    0.13,
+    0.1
+   ],
+   "duration": 0.5,
+   "loop": false,
+   "release_frame": 0,
+   "release_time": 0,
+   "hold_frame": null,
+   "roles": null,
+   "facings": {
+    "S": {
+     "frames": [
+      {
+       "path": "res://assets/animated/toad/attack_S_00.png",
+       "file": "attack_S_00.png",
+       "packed_bounds": [
+        60,
+        94,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.8
+        ],
+        "foot_L": [
+         10.2,
+         0.8
+        ],
+        "muzzle": [
+         -0.0,
+         -10.6
+        ],
+        "shard": [
+         -1.7,
+         -38.4
+        ]
+       },
+       "equipment": {
+        "bramble": 89,
+        "shard": 65,
+        "sac": 0,
+        "wet": 8
+       },
+       "sha256": "4f2a7591c08ac6da139f3b73a3e224f81b5643cc9368c3f080bcb107766d78eb",
+       "sheet": "sheets/attack_S.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/attack_S_01.png",
+       "file": "attack_S_01.png",
+       "packed_bounds": [
+        60,
+        95,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.8
+        ],
+        "foot_L": [
+         10.2,
+         0.8
+        ],
+        "muzzle": [
+         -0.0,
+         -9.7
+        ],
+        "shard": [
+         -1.7,
+         -37.7
+        ]
+       },
+       "equipment": {
+        "bramble": 84,
+        "shard": 72,
+        "wet": 6
+       },
+       "sha256": "59c26006fd8c300be9f271d76a84c39e5a5892d66a06b48832fbbf6d9f67689f",
+       "sheet": "sheets/attack_S.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/attack_S_02.png",
+       "file": "attack_S_02.png",
+       "packed_bounds": [
+        60,
+        96,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.8
+        ],
+        "foot_L": [
+         10.2,
+         0.8
+        ],
+        "muzzle": [
+         -0.0,
+         -8.2
+        ],
+        "shard": [
+         -1.7,
+         -37.3
+        ]
+       },
+       "equipment": {
+        "bramble": 89,
+        "shard": 63,
+        "wet": 9
+       },
+       "sha256": "22d6cd9408c49fa51c788fa3829e49b2255a1ab7429859174e69319dd172d2ef",
+       "sheet": "sheets/attack_S.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/attack_S_03.png",
+       "file": "attack_S_03.png",
+       "packed_bounds": [
+        60,
+        95,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.8
+        ],
+        "foot_L": [
+         10.2,
+         0.8
+        ],
+        "muzzle": [
+         -0.0,
+         -7.6
+        ],
+        "shard": [
+         -1.7,
+         -38.2
+        ]
+       },
+       "equipment": {
+        "bramble": 89,
+        "shard": 64,
+        "wet": 15
+       },
+       "sha256": "a1f0fbc5b01154d71d489d675fb73a925fc4944bc1e7ec7496a79057af8f2d40",
+       "sheet": "sheets/attack_S.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/attack_S_04.png",
+       "file": "attack_S_04.png",
+       "packed_bounds": [
+        60,
+        94,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.8
+        ],
+        "foot_L": [
+         10.2,
+         0.8
+        ],
+        "muzzle": [
+         -0.0,
+         -8.0
+        ],
+        "shard": [
+         -1.7,
+         -38.4
+        ]
+       },
+       "equipment": {
+        "bramble": 91,
+        "shard": 65,
+        "wet": 13
+       },
+       "sha256": "bfddf5de9cb1a7931cf6835429edbb05fe0e9f90e3b34bec6062f56a5c4cea2b",
+       "sheet": "sheets/attack_S.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      }
+     ],
+     "release_anchor": [
+      -0.0,
+      -10.6
+     ],
+     "release_anchor_name": "muzzle"
+    },
+    "N": {
+     "frames": [
+      {
+       "path": "res://assets/animated/toad/attack_N_00.png",
+       "file": "attack_N_00.png",
+       "packed_bounds": [
+        60,
+        92,
+        100,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.8
+        ],
+        "foot_L": [
+         -10.2,
+         -4.8
+        ],
+        "muzzle": [
+         0.0,
+         -31.4
+        ],
+        "shard": [
+         1.7,
+         -34.8
+        ]
+       },
+       "equipment": {
+        "bramble": 133,
+        "shard": 65
+       },
+       "sha256": "f5106502ba02e0e4bd56615c0dd68d3c2a3e80b6fa914d25aef618e6d4d6e008",
+       "sheet": "sheets/attack_N.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/attack_N_01.png",
+       "file": "attack_N_01.png",
+       "packed_bounds": [
+        60,
+        94,
+        100,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.8
+        ],
+        "foot_L": [
+         -10.2,
+         -4.8
+        ],
+        "muzzle": [
+         0.0,
+         -29.5
+        ],
+        "shard": [
+         1.7,
+         -34.1
+        ]
+       },
+       "equipment": {
+        "bramble": 129,
+        "shard": 65
+       },
+       "sha256": "93fe3b9324ecc37295a74b62cf9882b9d6c79a0b7ae5a9688a6c542c4dec11ae",
+       "sheet": "sheets/attack_N.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/attack_N_02.png",
+       "file": "attack_N_02.png",
+       "packed_bounds": [
+        60,
+        97,
+        100,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.8
+        ],
+        "foot_L": [
+         -10.2,
+         -4.8
+        ],
+        "muzzle": [
+         0.0,
+         -26.5
+        ],
+        "shard": [
+         1.7,
+         -33.7
+        ]
+       },
+       "equipment": {
+        "bramble": 134,
+        "shard": 65
+       },
+       "sha256": "5ae42dbecf4abd77c39f066623c07baa8ea651e6f68d01ccf9da912cee99cb20",
+       "sheet": "sheets/attack_N.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/attack_N_03.png",
+       "file": "attack_N_03.png",
+       "packed_bounds": [
+        60,
+        97,
+        100,
+        135
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.8
+        ],
+        "foot_L": [
+         -10.2,
+         -4.8
+        ],
+        "muzzle": [
+         0.0,
+         -26.3
+        ],
+        "shard": [
+         1.7,
+         -34.6
+        ]
+       },
+       "equipment": {
+        "bramble": 130,
+        "shard": 68
+       },
+       "sha256": "3c1232d50b40964ae31197c6b458da9292820171d177589173601cb8991cb167",
+       "sheet": "sheets/attack_N.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/attack_N_04.png",
+       "file": "attack_N_04.png",
+       "packed_bounds": [
+        60,
+        96,
+        100,
+        135
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.8
+        ],
+        "foot_L": [
+         -10.2,
+         -4.8
+        ],
+        "muzzle": [
+         0.0,
+         -26.8
+        ],
+        "shard": [
+         1.7,
+         -34.8
+        ]
+       },
+       "equipment": {
+        "bramble": 133,
+        "shard": 65
+       },
+       "sha256": "9241480b5e891d43aac0c3f185d868d3b49678d5dbf69a6159b5dcf3b4f83543",
+       "sheet": "sheets/attack_N.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      }
+     ],
+     "release_anchor": [
+      0.0,
+      -31.4
+     ],
+     "release_anchor_name": "muzzle"
+    },
+    "E": {
+     "frames": [
+      {
+       "path": "res://assets/animated/toad/attack_E_00.png",
+       "file": "attack_E_00.png",
+       "packed_bounds": [
+        62,
+        95,
+        110,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.3,
+         -2.0
+        ],
+        "foot_L": [
+         13.8,
+         -2.0
+        ],
+        "muzzle": [
+         29.7,
+         -22.5
+        ],
+        "shard": [
+         -5.3,
+         -37.3
+        ]
+       },
+       "equipment": {
+        "sac": 30,
+        "bramble": 87,
+        "shard": 61,
+        "wet": 7
+       },
+       "sha256": "a3afafebb74cf07766a83fab2aa74428b4c12a7009b456db62c8954dc6d78c33",
+       "sheet": "sheets/attack_E.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/attack_E_01.png",
+       "file": "attack_E_01.png",
+       "packed_bounds": [
+        62,
+        96,
+        109,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.3,
+         -2.0
+        ],
+        "foot_L": [
+         13.8,
+         -2.0
+        ],
+        "muzzle": [
+         28.3,
+         -19.6
+        ],
+        "shard": [
+         -5.3,
+         -35.9
+        ]
+       },
+       "equipment": {
+        "bramble": 85,
+        "shard": 66,
+        "wet": 9
+       },
+       "sha256": "bc5d37406a2cd0645a79f029c9f0b3739d496ccd8aaeb290563cea559ccd2da2",
+       "sheet": "sheets/attack_E.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/attack_E_02.png",
+       "file": "attack_E_02.png",
+       "packed_bounds": [
+        61,
+        97,
+        107,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.3,
+         -2.0
+        ],
+        "foot_L": [
+         13.8,
+         -2.0
+        ],
+        "muzzle": [
+         26.1,
+         -17.4
+        ],
+        "shard": [
+         -5.3,
+         -35.5
+        ]
+       },
+       "equipment": {
+        "bramble": 83,
+        "shard": 64,
+        "wet": 7
+       },
+       "sha256": "4a2ff9e6f15bef220d375b32c598d6514a9e1db65c126982d6d901628fa0d1cc",
+       "sheet": "sheets/attack_E.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/attack_E_03.png",
+       "file": "attack_E_03.png",
+       "packed_bounds": [
+        61,
+        96,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.3,
+         -2.0
+        ],
+        "foot_L": [
+         13.8,
+         -2.0
+        ],
+        "muzzle": [
+         26.8,
+         -17.0
+        ],
+        "shard": [
+         -5.3,
+         -36.4
+        ]
+       },
+       "equipment": {
+        "bramble": 85,
+        "shard": 61,
+        "wet": 8
+       },
+       "sha256": "5039c05037c0ab33939d66366d95da196f15789e1ab4b147829130b2b179124e",
+       "sheet": "sheets/attack_E.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/attack_E_04.png",
+       "file": "attack_E_04.png",
+       "packed_bounds": [
+        61,
+        96,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.3,
+         -2.0
+        ],
+        "foot_L": [
+         13.8,
+         -2.0
+        ],
+        "muzzle": [
+         26.8,
+         -17.4
+        ],
+        "shard": [
+         -5.3,
+         -36.6
+        ]
+       },
+       "equipment": {
+        "bramble": 83,
+        "shard": 64,
+        "wet": 7
+       },
+       "sha256": "6cda91141308f5053552834f900299338667f41d3ccf0b14ee7e7f77692f0f4e",
+       "sheet": "sheets/attack_E.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      }
+     ],
+     "release_anchor": [
+      29.7,
+      -22.5
+     ],
+     "release_anchor_name": "muzzle"
+    },
+    "W": {
+     "frames": [
+      {
+       "path": "res://assets/animated/toad/attack_W_00.png",
+       "file": "attack_W_00.png",
+       "packed_bounds": [
+        49,
+        95,
+        98,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.8,
+         -2.0
+        ],
+        "foot_L": [
+         -12.3,
+         -2.0
+        ],
+        "muzzle": [
+         -29.7,
+         -22.5
+        ],
+        "shard": [
+         5.0,
+         -37.3
+        ]
+       },
+       "equipment": {
+        "sac": 30,
+        "bramble": 68,
+        "shard": 70,
+        "wet": 8
+       },
+       "sha256": "3eb47bce12616a4c2a37c82b5ae061ed2a602d652bf326f04bc998df4ab206c0",
+       "sheet": "sheets/attack_W.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/attack_W_01.png",
+       "file": "attack_W_01.png",
+       "packed_bounds": [
+        50,
+        96,
+        98,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.8,
+         -2.0
+        ],
+        "foot_L": [
+         -12.3,
+         -2.0
+        ],
+        "muzzle": [
+         -28.3,
+         -19.6
+        ],
+        "shard": [
+         5.0,
+         -35.9
+        ]
+       },
+       "equipment": {
+        "bramble": 69,
+        "shard": 69,
+        "wet": 10
+       },
+       "sha256": "0a880592987774178f807f4ec0183596aa82d04c0d2ce2d57099e29d18c6a6f3",
+       "sheet": "sheets/attack_W.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/attack_W_02.png",
+       "file": "attack_W_02.png",
+       "packed_bounds": [
+        52,
+        97,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.8,
+         -2.0
+        ],
+        "foot_L": [
+         -12.3,
+         -2.0
+        ],
+        "muzzle": [
+         -26.1,
+         -17.4
+        ],
+        "shard": [
+         5.0,
+         -35.5
+        ]
+       },
+       "equipment": {
+        "bramble": 67,
+        "shard": 69,
+        "wet": 7
+       },
+       "sha256": "9d382d4007d38380e591f28943d33729d0957038f819b4e025db9154979d1410",
+       "sheet": "sheets/attack_W.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/attack_W_03.png",
+       "file": "attack_W_03.png",
+       "packed_bounds": [
+        52,
+        96,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.8,
+         -2.0
+        ],
+        "foot_L": [
+         -12.3,
+         -2.0
+        ],
+        "muzzle": [
+         -26.8,
+         -17.0
+        ],
+        "shard": [
+         5.0,
+         -36.4
+        ]
+       },
+       "equipment": {
+        "bramble": 70,
+        "shard": 65,
+        "wet": 10
+       },
+       "sha256": "65ec0428dd3ca8eb3bef555874655f9aa25276f6364653c10187fc67aed31ada",
+       "sheet": "sheets/attack_W.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/attack_W_04.png",
+       "file": "attack_W_04.png",
+       "packed_bounds": [
+        52,
+        96,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.8,
+         -2.0
+        ],
+        "foot_L": [
+         -12.3,
+         -2.0
+        ],
+        "muzzle": [
+         -26.8,
+         -17.4
+        ],
+        "shard": [
+         5.0,
+         -36.6
+        ]
+       },
+       "equipment": {
+        "bramble": 68,
+        "shard": 69,
+        "wet": 8
+       },
+       "sha256": "20837f0579b643b59e52f808f9d72c61aaf38032d62ad80d54d2d9d771c70ad0",
+       "sheet": "sheets/attack_W.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      }
+     ],
+     "release_anchor": [
+      -29.7,
+      -22.5
+     ],
+     "release_anchor_name": "muzzle"
+    }
+   },
+   "release_anchor": [
+    29.7,
+    -22.5
+   ]
+  },
+  "hurt": {
+   "frame_count": 4,
+   "durations": [
+    0.07,
+    0.08,
+    0.08,
+    0.09
+   ],
+   "duration": 0.32,
+   "loop": false,
+   "release_frame": null,
+   "release_time": null,
+   "hold_frame": null,
+   "roles": null,
+   "facings": {
+    "S": {
+     "frames": [
+      {
+       "path": "res://assets/animated/toad/hurt_S_00.png",
+       "file": "hurt_S_00.png",
+       "packed_bounds": [
+        62,
+        97,
+        102,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -8.4,
+         0.8
+        ],
+        "foot_L": [
+         11.9,
+         0.8
+        ],
+        "muzzle": [
+         1.7,
+         -4.9
+        ],
+        "shard": [
+         0.1,
+         -36.2
+        ]
+       },
+       "equipment": {
+        "bramble": 91,
+        "shard": 58,
+        "wet": 15
+       },
+       "sha256": "9fe6f11b33f44431b0eab0c4a12d6453bc4692ce8c948c69c9af8c9784ce2d6d",
+       "sheet": "sheets/hurt_S.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/hurt_S_01.png",
+       "file": "hurt_S_01.png",
+       "packed_bounds": [
+        58,
+        97,
+        99,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -11.6,
+         0.8
+        ],
+        "foot_L": [
+         8.7,
+         0.8
+        ],
+        "muzzle": [
+         -1.4,
+         -4.9
+        ],
+        "shard": [
+         -3.1,
+         -36.2
+        ]
+       },
+       "equipment": {
+        "bramble": 86,
+        "shard": 61,
+        "wet": 14
+       },
+       "sha256": "31e1bde38673463ed36c2e74b6bd375d4360ffd442cffde8272eaef72a1b627f",
+       "sheet": "sheets/hurt_S.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/hurt_S_02.png",
+       "file": "hurt_S_02.png",
+       "packed_bounds": [
+        60,
+        95,
+        101,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -9.6,
+         0.8
+        ],
+        "foot_L": [
+         10.7,
+         0.8
+        ],
+        "muzzle": [
+         0.6,
+         -7.0
+        ],
+        "shard": [
+         -1.1,
+         -37.4
+        ]
+       },
+       "equipment": {
+        "bramble": 90,
+        "shard": 61,
+        "wet": 13
+       },
+       "sha256": "55b5629ba0928472a29da06758fcfa0404789ece9d88c01c557b0631b40c008f",
+       "sheet": "sheets/hurt_S.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/hurt_S_03.png",
+       "file": "hurt_S_03.png",
+       "packed_bounds": [
+        60,
+        94,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.8
+        ],
+        "foot_L": [
+         10.2,
+         0.8
+        ],
+        "muzzle": [
+         -0.0,
+         -8.0
+        ],
+        "shard": [
+         -1.7,
+         -38.4
+        ]
+       },
+       "equipment": {
+        "bramble": 91,
+        "shard": 65,
+        "wet": 13
+       },
+       "sha256": "bfddf5de9cb1a7931cf6835429edbb05fe0e9f90e3b34bec6062f56a5c4cea2b",
+       "sheet": "sheets/hurt_S.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "N": {
+     "frames": [
+      {
+       "path": "res://assets/animated/toad/hurt_N_00.png",
+       "file": "hurt_N_00.png",
+       "packed_bounds": [
+        58,
+        98,
+        98,
+        137
+       ],
+       "anchors": {
+        "foot_R": [
+         8.4,
+         -4.8
+        ],
+        "foot_L": [
+         -11.9,
+         -4.8
+        ],
+        "muzzle": [
+         -1.7,
+         -22.6
+        ],
+        "shard": [
+         -0.1,
+         -32.6
+        ]
+       },
+       "equipment": {
+        "bramble": 138,
+        "shard": 61
+       },
+       "sha256": "fb9ac004b32d70813d00c2fe9502f746aaa565c55e169250064b94688487d1cf",
+       "sheet": "sheets/hurt_N.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/hurt_N_01.png",
+       "file": "hurt_N_01.png",
+       "packed_bounds": [
+        61,
+        98,
+        102,
+        137
+       ],
+       "anchors": {
+        "foot_R": [
+         11.6,
+         -4.8
+        ],
+        "foot_L": [
+         -8.7,
+         -4.8
+        ],
+        "muzzle": [
+         1.4,
+         -22.6
+        ],
+        "shard": [
+         3.1,
+         -32.6
+        ]
+       },
+       "equipment": {
+        "bramble": 136,
+        "shard": 63
+       },
+       "sha256": "4bdb2e485981e08128424b75a22855ac67e1f3feb68c6da9e266405830e9de49",
+       "sheet": "sheets/hurt_N.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/hurt_N_02.png",
+       "file": "hurt_N_02.png",
+       "packed_bounds": [
+        59,
+        97,
+        100,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         9.6,
+         -4.8
+        ],
+        "foot_L": [
+         -10.7,
+         -4.8
+        ],
+        "muzzle": [
+         -0.6,
+         -25.8
+        ],
+        "shard": [
+         1.1,
+         -33.8
+        ]
+       },
+       "equipment": {
+        "bramble": 132,
+        "shard": 63
+       },
+       "sha256": "4540cc3c0134145f2cf66d587a734748eb8ebf75c61dd9153df233448c4f2b0b",
+       "sheet": "sheets/hurt_N.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/hurt_N_03.png",
+       "file": "hurt_N_03.png",
+       "packed_bounds": [
+        60,
+        96,
+        100,
+        135
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.8
+        ],
+        "foot_L": [
+         -10.2,
+         -4.8
+        ],
+        "muzzle": [
+         0.0,
+         -26.8
+        ],
+        "shard": [
+         1.7,
+         -34.8
+        ]
+       },
+       "equipment": {
+        "bramble": 133,
+        "shard": 65
+       },
+       "sha256": "9241480b5e891d43aac0c3f185d868d3b49678d5dbf69a6159b5dcf3b4f83543",
+       "sheet": "sheets/hurt_N.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "E": {
+     "frames": [
+      {
+       "path": "res://assets/animated/toad/hurt_E_00.png",
+       "file": "hurt_E_00.png",
+       "packed_bounds": [
+        61,
+        98,
+        106,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.4,
+         -2.0
+        ],
+        "foot_L": [
+         14.0,
+         -2.0
+        ],
+        "muzzle": [
+         25.5,
+         -13.8
+        ],
+        "shard": [
+         -5.1,
+         -34.4
+        ]
+       },
+       "equipment": {
+        "bramble": 85,
+        "shard": 65,
+        "wet": 7
+       },
+       "sha256": "0b97fa50187049511f3d9fed705f7c0f547957b209f950b7df59bf1f454d41b8",
+       "sheet": "sheets/hurt_E.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/hurt_E_01.png",
+       "file": "hurt_E_01.png",
+       "packed_bounds": [
+        61,
+        98,
+        106,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.1,
+         -2.0
+        ],
+        "foot_L": [
+         13.7,
+         -2.0
+        ],
+        "muzzle": [
+         25.2,
+         -13.8
+        ],
+        "shard": [
+         -5.5,
+         -34.4
+        ]
+       },
+       "equipment": {
+        "bramble": 88,
+        "shard": 61,
+        "wet": 7
+       },
+       "sha256": "f8468c53b9f0201eded579d695fa757afe26210f698036aedbb8199f3ef9b559",
+       "sheet": "sheets/hurt_E.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/hurt_E_02.png",
+       "file": "hurt_E_02.png",
+       "packed_bounds": [
+        61,
+        97,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.3,
+         -2.0
+        ],
+        "foot_L": [
+         13.9,
+         -2.0
+        ],
+        "muzzle": [
+         26.9,
+         -16.4
+        ],
+        "shard": [
+         -5.3,
+         -35.6
+        ]
+       },
+       "equipment": {
+        "bramble": 82,
+        "shard": 64,
+        "wet": 7
+       },
+       "sha256": "0a9ee937059d176d8766740379412158d073b0c124e8e9ad61a4e327da9eb5ec",
+       "sheet": "sheets/hurt_E.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/hurt_E_03.png",
+       "file": "hurt_E_03.png",
+       "packed_bounds": [
+        61,
+        96,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.3,
+         -2.0
+        ],
+        "foot_L": [
+         13.8,
+         -2.0
+        ],
+        "muzzle": [
+         26.8,
+         -17.4
+        ],
+        "shard": [
+         -5.3,
+         -36.6
+        ]
+       },
+       "equipment": {
+        "bramble": 83,
+        "shard": 64,
+        "wet": 7
+       },
+       "sha256": "6cda91141308f5053552834f900299338667f41d3ccf0b14ee7e7f77692f0f4e",
+       "sheet": "sheets/hurt_E.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "W": {
+     "frames": [
+      {
+       "path": "res://assets/animated/toad/hurt_W_00.png",
+       "file": "hurt_W_00.png",
+       "packed_bounds": [
+        54,
+        98,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.7,
+         -2.0
+        ],
+        "foot_L": [
+         -12.1,
+         -2.0
+        ],
+        "muzzle": [
+         -25.2,
+         -13.8
+        ],
+        "shard": [
+         5.2,
+         -34.4
+        ]
+       },
+       "equipment": {
+        "bramble": 76,
+        "shard": 61,
+        "wet": 8
+       },
+       "sha256": "c4e791a655617fadb0f1493bb06294f2a15443106e0129bc4b537d47fb82d276",
+       "sheet": "sheets/hurt_W.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/hurt_W_01.png",
+       "file": "hurt_W_01.png",
+       "packed_bounds": [
+        53,
+        98,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -14.0,
+         -2.0
+        ],
+        "foot_L": [
+         -12.4,
+         -2.0
+        ],
+        "muzzle": [
+         -25.5,
+         -13.8
+        ],
+        "shard": [
+         4.8,
+         -34.4
+        ]
+       },
+       "equipment": {
+        "bramble": 69,
+        "shard": 65,
+        "wet": 9
+       },
+       "sha256": "eb5983360c1b76f89953e7243628b937514c818f6259894a1579f58f4506d46e",
+       "sheet": "sheets/hurt_W.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/hurt_W_02.png",
+       "file": "hurt_W_02.png",
+       "packed_bounds": [
+        52,
+        97,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.8,
+         -2.0
+        ],
+        "foot_L": [
+         -12.2,
+         -2.0
+        ],
+        "muzzle": [
+         -26.8,
+         -16.4
+        ],
+        "shard": [
+         5.0,
+         -35.6
+        ]
+       },
+       "equipment": {
+        "bramble": 67,
+        "shard": 69,
+        "wet": 8
+       },
+       "sha256": "e3d778b3a2ead8dfe29fbdc3185edd9ab66cd6da3a817f75d0f307d4b787d885",
+       "sheet": "sheets/hurt_W.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/hurt_W_03.png",
+       "file": "hurt_W_03.png",
+       "packed_bounds": [
+        52,
+        96,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.8,
+         -2.0
+        ],
+        "foot_L": [
+         -12.3,
+         -2.0
+        ],
+        "muzzle": [
+         -26.8,
+         -17.4
+        ],
+        "shard": [
+         5.0,
+         -36.6
+        ]
+       },
+       "equipment": {
+        "bramble": 68,
+        "shard": 69,
+        "wet": 8
+       },
+       "sha256": "20837f0579b643b59e52f808f9d72c61aaf38032d62ad80d54d2d9d771c70ad0",
+       "sheet": "sheets/hurt_W.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    }
+   }
+  },
+  "stagger": {
+   "frame_count": 7,
+   "durations": [
+    0.0746,
+    0.0959,
+    0.0959,
+    0.0959,
+    0.0959,
+    0.0959,
+    0.0959
+   ],
+   "duration": 0.65,
+   "loop": false,
+   "release_frame": null,
+   "release_time": null,
+   "hold_frame": null,
+   "roles": null,
+   "facings": {
+    "S": {
+     "frames": [
+      {
+       "path": "res://assets/animated/toad/stagger_S_00.png",
+       "file": "stagger_S_00.png",
+       "packed_bounds": [
+        60,
+        95,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.8
+        ],
+        "foot_L": [
+         10.2,
+         0.8
+        ],
+        "muzzle": [
+         -0.0,
+         -7.6
+        ],
+        "shard": [
+         -1.7,
+         -38.2
+        ]
+       },
+       "equipment": {
+        "bramble": 89,
+        "shard": 64,
+        "wet": 15
+       },
+       "sha256": "a1f0fbc5b01154d71d489d675fb73a925fc4944bc1e7ec7496a79057af8f2d40",
+       "sheet": "sheets/stagger_S.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/stagger_S_01.png",
+       "file": "stagger_S_01.png",
+       "packed_bounds": [
+        60,
+        96,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.8
+        ],
+        "foot_L": [
+         10.2,
+         0.8
+        ],
+        "muzzle": [
+         -0.0,
+         -4.4
+        ],
+        "shard": [
+         -1.7,
+         -36.5
+        ]
+       },
+       "equipment": {
+        "bramble": 88,
+        "shard": 68,
+        "wet": 13
+       },
+       "sha256": "954b1ccb04fdc4f8138e1de5e993a71b139d82f65022d17b3242a1265bef34aa",
+       "sheet": "sheets/stagger_S.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/stagger_S_02.png",
+       "file": "stagger_S_02.png",
+       "packed_bounds": [
+        59,
+        96,
+        99,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -11.0,
+         0.8
+        ],
+        "foot_L": [
+         9.3,
+         0.8
+        ],
+        "muzzle": [
+         -0.9,
+         -4.4
+        ],
+        "shard": [
+         -2.6,
+         -36.5
+        ]
+       },
+       "equipment": {
+        "bramble": 93,
+        "shard": 62,
+        "wet": 12
+       },
+       "sha256": "88cd030d199b6e38ed072ca61923740b8a3cd1f4e08ca73a5b3587084678d9e9",
+       "sheet": "sheets/stagger_S.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/stagger_S_03.png",
+       "file": "stagger_S_03.png",
+       "packed_bounds": [
+        60,
+        96,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.8
+        ],
+        "foot_L": [
+         10.2,
+         0.8
+        ],
+        "muzzle": [
+         -0.0,
+         -4.4
+        ],
+        "shard": [
+         -1.7,
+         -36.5
+        ]
+       },
+       "equipment": {
+        "bramble": 88,
+        "shard": 68,
+        "wet": 13
+       },
+       "sha256": "f1add4625b077fc32d8d9807665347d21b0674680d06f19b509989c9560f3a0e",
+       "sheet": "sheets/stagger_S.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/stagger_S_04.png",
+       "file": "stagger_S_04.png",
+       "packed_bounds": [
+        61,
+        96,
+        101,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -9.3,
+         0.8
+        ],
+        "foot_L": [
+         11.0,
+         0.8
+        ],
+        "muzzle": [
+         0.9,
+         -4.4
+        ],
+        "shard": [
+         -0.8,
+         -36.5
+        ]
+       },
+       "equipment": {
+        "bramble": 89,
+        "shard": 68,
+        "wet": 13
+       },
+       "sha256": "ee1632785520d83d6dfa3143b7a19b288b0ba80b420c853ad2bbe2f854b0810d",
+       "sheet": "sheets/stagger_S.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/stagger_S_05.png",
+       "file": "stagger_S_05.png",
+       "packed_bounds": [
+        60,
+        96,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.8
+        ],
+        "foot_L": [
+         10.2,
+         0.8
+        ],
+        "muzzle": [
+         -0.0,
+         -4.4
+        ],
+        "shard": [
+         -1.7,
+         -36.5
+        ]
+       },
+       "equipment": {
+        "bramble": 88,
+        "shard": 68,
+        "wet": 13
+       },
+       "sha256": "b28fbd8626359e30296442bebd49b55fc6ba29ac68f007920ca6061aad659682",
+       "sheet": "sheets/stagger_S.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/stagger_S_06.png",
+       "file": "stagger_S_06.png",
+       "packed_bounds": [
+        60,
+        94,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.8
+        ],
+        "foot_L": [
+         10.2,
+         0.8
+        ],
+        "muzzle": [
+         -0.0,
+         -8.0
+        ],
+        "shard": [
+         -1.7,
+         -38.4
+        ]
+       },
+       "equipment": {
+        "bramble": 91,
+        "shard": 65,
+        "wet": 13
+       },
+       "sha256": "bfddf5de9cb1a7931cf6835429edbb05fe0e9f90e3b34bec6062f56a5c4cea2b",
+       "sheet": "sheets/stagger_S.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "N": {
+     "frames": [
+      {
+       "path": "res://assets/animated/toad/stagger_N_00.png",
+       "file": "stagger_N_00.png",
+       "packed_bounds": [
+        60,
+        97,
+        100,
+        135
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.8
+        ],
+        "foot_L": [
+         -10.2,
+         -4.8
+        ],
+        "muzzle": [
+         0.0,
+         -26.3
+        ],
+        "shard": [
+         1.7,
+         -34.6
+        ]
+       },
+       "equipment": {
+        "bramble": 130,
+        "shard": 68
+       },
+       "sha256": "3c1232d50b40964ae31197c6b458da9292820171d177589173601cb8991cb167",
+       "sheet": "sheets/stagger_N.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/stagger_N_01.png",
+       "file": "stagger_N_01.png",
+       "packed_bounds": [
+        60,
+        96,
+        100,
+        137
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.8
+        ],
+        "foot_L": [
+         -10.2,
+         -4.8
+        ],
+        "muzzle": [
+         0.0,
+         -23.1
+        ],
+        "shard": [
+         1.7,
+         -32.9
+        ]
+       },
+       "equipment": {
+        "bramble": 131,
+        "shard": 65
+       },
+       "sha256": "a017ee2fcf6585e1014b96caa59a654e3b343b246de2d523dcfb51da4bfe39a5",
+       "sheet": "sheets/stagger_N.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/stagger_N_02.png",
+       "file": "stagger_N_02.png",
+       "packed_bounds": [
+        61,
+        96,
+        101,
+        137
+       ],
+       "anchors": {
+        "foot_R": [
+         11.0,
+         -4.8
+        ],
+        "foot_L": [
+         -9.3,
+         -4.8
+        ],
+        "muzzle": [
+         0.9,
+         -23.1
+        ],
+        "shard": [
+         2.6,
+         -32.9
+        ]
+       },
+       "equipment": {
+        "bramble": 134,
+        "shard": 61
+       },
+       "sha256": "222ee139ef2bb21c11206bf1d12781718cbc2c5faa06fe8360eada21588302f3",
+       "sheet": "sheets/stagger_N.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/stagger_N_03.png",
+       "file": "stagger_N_03.png",
+       "packed_bounds": [
+        60,
+        95,
+        100,
+        137
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.8
+        ],
+        "foot_L": [
+         -10.2,
+         -4.8
+        ],
+        "muzzle": [
+         0.0,
+         -23.1
+        ],
+        "shard": [
+         1.7,
+         -32.9
+        ]
+       },
+       "equipment": {
+        "bramble": 131,
+        "shard": 65
+       },
+       "sha256": "b598af7c3e9979a3c88e83874295709c8d2d4b74026b35701e20f3cb8a7ebff4",
+       "sheet": "sheets/stagger_N.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/stagger_N_04.png",
+       "file": "stagger_N_04.png",
+       "packed_bounds": [
+        59,
+        97,
+        99,
+        137
+       ],
+       "anchors": {
+        "foot_R": [
+         9.3,
+         -4.8
+        ],
+        "foot_L": [
+         -11.0,
+         -4.8
+        ],
+        "muzzle": [
+         -0.9,
+         -23.1
+        ],
+        "shard": [
+         0.8,
+         -32.9
+        ]
+       },
+       "equipment": {
+        "bramble": 130,
+        "shard": 65
+       },
+       "sha256": "4752a59164905848c56b4ba9f91102c072f2c1703a402feea157ea538fde0f24",
+       "sheet": "sheets/stagger_N.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/stagger_N_05.png",
+       "file": "stagger_N_05.png",
+       "packed_bounds": [
+        60,
+        95,
+        100,
+        137
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.8
+        ],
+        "foot_L": [
+         -10.2,
+         -4.8
+        ],
+        "muzzle": [
+         0.0,
+         -23.1
+        ],
+        "shard": [
+         1.7,
+         -32.9
+        ]
+       },
+       "equipment": {
+        "bramble": 131,
+        "shard": 65
+       },
+       "sha256": "e93f6e9f4d15315c80b26662d1dacd127a9848b95f4f6e2468461e648230b26a",
+       "sheet": "sheets/stagger_N.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/stagger_N_06.png",
+       "file": "stagger_N_06.png",
+       "packed_bounds": [
+        60,
+        96,
+        100,
+        135
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.8
+        ],
+        "foot_L": [
+         -10.2,
+         -4.8
+        ],
+        "muzzle": [
+         0.0,
+         -26.8
+        ],
+        "shard": [
+         1.7,
+         -34.8
+        ]
+       },
+       "equipment": {
+        "bramble": 133,
+        "shard": 65
+       },
+       "sha256": "9241480b5e891d43aac0c3f185d868d3b49678d5dbf69a6159b5dcf3b4f83543",
+       "sheet": "sheets/stagger_N.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "E": {
+     "frames": [
+      {
+       "path": "res://assets/animated/toad/stagger_E_00.png",
+       "file": "stagger_E_00.png",
+       "packed_bounds": [
+        61,
+        96,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.3,
+         -2.0
+        ],
+        "foot_L": [
+         13.8,
+         -2.0
+        ],
+        "muzzle": [
+         26.8,
+         -17.0
+        ],
+        "shard": [
+         -5.3,
+         -36.4
+        ]
+       },
+       "equipment": {
+        "bramble": 85,
+        "shard": 61,
+        "wet": 8
+       },
+       "sha256": "5039c05037c0ab33939d66366d95da196f15789e1ab4b147829130b2b179124e",
+       "sheet": "sheets/stagger_E.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/stagger_E_01.png",
+       "file": "stagger_E_01.png",
+       "packed_bounds": [
+        61,
+        98,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.3,
+         -2.0
+        ],
+        "foot_L": [
+         13.8,
+         -2.0
+        ],
+        "muzzle": [
+         26.8,
+         -13.8
+        ],
+        "shard": [
+         -5.3,
+         -34.7
+        ]
+       },
+       "equipment": {
+        "bramble": 83,
+        "shard": 64,
+        "wet": 7
+       },
+       "sha256": "402b5617753b526af868e277bf254a27e6ee8d637373139dcb1f8a353dc832b5",
+       "sheet": "sheets/stagger_E.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/stagger_E_02.png",
+       "file": "stagger_E_02.png",
+       "packed_bounds": [
+        61,
+        98,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.2,
+         -2.0
+        ],
+        "foot_L": [
+         13.8,
+         -2.0
+        ],
+        "muzzle": [
+         26.7,
+         -13.8
+        ],
+        "shard": [
+         -5.4,
+         -34.7
+        ]
+       },
+       "equipment": {
+        "bramble": 83,
+        "shard": 64,
+        "wet": 7
+       },
+       "sha256": "6295e3360c4022425d0e547e051b93a399c00ac795597ee1efefb7d8361ec874",
+       "sheet": "sheets/stagger_E.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/stagger_E_03.png",
+       "file": "stagger_E_03.png",
+       "packed_bounds": [
+        61,
+        98,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.3,
+         -2.0
+        ],
+        "foot_L": [
+         13.8,
+         -2.0
+        ],
+        "muzzle": [
+         26.8,
+         -13.8
+        ],
+        "shard": [
+         -5.3,
+         -34.7
+        ]
+       },
+       "equipment": {
+        "bramble": 83,
+        "shard": 64,
+        "wet": 7
+       },
+       "sha256": "16f69a652eb74819f3958e6bb85ddd2a660f623e2fd5332701ec46bcbfb98d1c",
+       "sheet": "sheets/stagger_E.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/stagger_E_04.png",
+       "file": "stagger_E_04.png",
+       "packed_bounds": [
+        61,
+        98,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.3,
+         -2.0
+        ],
+        "foot_L": [
+         13.9,
+         -2.0
+        ],
+        "muzzle": [
+         26.9,
+         -13.8
+        ],
+        "shard": [
+         -5.2,
+         -34.7
+        ]
+       },
+       "equipment": {
+        "bramble": 82,
+        "shard": 64,
+        "wet": 7
+       },
+       "sha256": "094db0feb268a837f7c9b8b78a5e6340e2343807eb0b448c591eb9079428899a",
+       "sheet": "sheets/stagger_E.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/stagger_E_05.png",
+       "file": "stagger_E_05.png",
+       "packed_bounds": [
+        61,
+        98,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.3,
+         -2.0
+        ],
+        "foot_L": [
+         13.8,
+         -2.0
+        ],
+        "muzzle": [
+         26.8,
+         -13.8
+        ],
+        "shard": [
+         -5.3,
+         -34.7
+        ]
+       },
+       "equipment": {
+        "bramble": 83,
+        "shard": 64,
+        "wet": 7
+       },
+       "sha256": "6964a0691df5800945513f5c68360dff4fe0316bb8968e1990169fd96897975d",
+       "sheet": "sheets/stagger_E.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/stagger_E_06.png",
+       "file": "stagger_E_06.png",
+       "packed_bounds": [
+        61,
+        96,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.3,
+         -2.0
+        ],
+        "foot_L": [
+         13.8,
+         -2.0
+        ],
+        "muzzle": [
+         26.8,
+         -17.4
+        ],
+        "shard": [
+         -5.3,
+         -36.6
+        ]
+       },
+       "equipment": {
+        "bramble": 83,
+        "shard": 64,
+        "wet": 7
+       },
+       "sha256": "6cda91141308f5053552834f900299338667f41d3ccf0b14ee7e7f77692f0f4e",
+       "sheet": "sheets/stagger_E.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "W": {
+     "frames": [
+      {
+       "path": "res://assets/animated/toad/stagger_W_00.png",
+       "file": "stagger_W_00.png",
+       "packed_bounds": [
+        52,
+        96,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.8,
+         -2.0
+        ],
+        "foot_L": [
+         -12.3,
+         -2.0
+        ],
+        "muzzle": [
+         -26.8,
+         -17.0
+        ],
+        "shard": [
+         5.0,
+         -36.4
+        ]
+       },
+       "equipment": {
+        "bramble": 70,
+        "shard": 65,
+        "wet": 10
+       },
+       "sha256": "65ec0428dd3ca8eb3bef555874655f9aa25276f6364653c10187fc67aed31ada",
+       "sheet": "sheets/stagger_W.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/stagger_W_01.png",
+       "file": "stagger_W_01.png",
+       "packed_bounds": [
+        51,
+        98,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.8,
+         -2.0
+        ],
+        "foot_L": [
+         -12.3,
+         -2.0
+        ],
+        "muzzle": [
+         -26.8,
+         -13.8
+        ],
+        "shard": [
+         5.0,
+         -34.7
+        ]
+       },
+       "equipment": {
+        "bramble": 68,
+        "shard": 69,
+        "wet": 9
+       },
+       "sha256": "207ffe94a290026f978f5c3119b4718abaab27055a84acf38c00b6a0f6479de8",
+       "sheet": "sheets/stagger_W.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/stagger_W_02.png",
+       "file": "stagger_W_02.png",
+       "packed_bounds": [
+        51,
+        98,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.9,
+         -2.0
+        ],
+        "foot_L": [
+         -12.3,
+         -2.0
+        ],
+        "muzzle": [
+         -26.9,
+         -13.8
+        ],
+        "shard": [
+         4.9,
+         -34.7
+        ]
+       },
+       "equipment": {
+        "bramble": 68,
+        "shard": 69,
+        "wet": 9
+       },
+       "sha256": "3d58475f7908f59ff981b2ad2abe4d5b30277fcf5881bf12b02fe4d5cb779de9",
+       "sheet": "sheets/stagger_W.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/stagger_W_03.png",
+       "file": "stagger_W_03.png",
+       "packed_bounds": [
+        51,
+        98,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.8,
+         -2.0
+        ],
+        "foot_L": [
+         -12.3,
+         -2.0
+        ],
+        "muzzle": [
+         -26.8,
+         -13.8
+        ],
+        "shard": [
+         5.0,
+         -34.7
+        ]
+       },
+       "equipment": {
+        "bramble": 68,
+        "shard": 69,
+        "wet": 9
+       },
+       "sha256": "f4a652ba9e2ae11a24cfa03b1d087e4fd8e87f8d6b1142f70d2be9cfc877d5c8",
+       "sheet": "sheets/stagger_W.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/stagger_W_04.png",
+       "file": "stagger_W_04.png",
+       "packed_bounds": [
+        52,
+        98,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.8,
+         -2.0
+        ],
+        "foot_L": [
+         -12.2,
+         -2.0
+        ],
+        "muzzle": [
+         -26.7,
+         -13.8
+        ],
+        "shard": [
+         5.1,
+         -34.7
+        ]
+       },
+       "equipment": {
+        "bramble": 68,
+        "shard": 69,
+        "wet": 9
+       },
+       "sha256": "e5ea0232907af079ef4f8608ba159bb47275958f34779a30aed42a804897dad2",
+       "sheet": "sheets/stagger_W.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/stagger_W_05.png",
+       "file": "stagger_W_05.png",
+       "packed_bounds": [
+        51,
+        98,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.8,
+         -2.0
+        ],
+        "foot_L": [
+         -12.3,
+         -2.0
+        ],
+        "muzzle": [
+         -26.8,
+         -13.8
+        ],
+        "shard": [
+         5.0,
+         -34.7
+        ]
+       },
+       "equipment": {
+        "bramble": 68,
+        "shard": 69,
+        "wet": 9
+       },
+       "sha256": "69eaf9ba43a31c26a618595eb2b8e16bcd6273f19ee42e67b7bb98abbbaebf56",
+       "sheet": "sheets/stagger_W.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/stagger_W_06.png",
+       "file": "stagger_W_06.png",
+       "packed_bounds": [
+        52,
+        96,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.8,
+         -2.0
+        ],
+        "foot_L": [
+         -12.3,
+         -2.0
+        ],
+        "muzzle": [
+         -26.8,
+         -17.4
+        ],
+        "shard": [
+         5.0,
+         -36.6
+        ]
+       },
+       "equipment": {
+        "bramble": 68,
+        "shard": 69,
+        "wet": 8
+       },
+       "sha256": "20837f0579b643b59e52f808f9d72c61aaf38032d62ad80d54d2d9d771c70ad0",
+       "sheet": "sheets/stagger_W.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    }
+   }
+  },
+  "freed": {
+   "frame_count": 12,
+   "durations": [
+    0.107,
+    0.0876,
+    0.0973,
+    0.107,
+    0.1362,
+    0.1168,
+    0.1362,
+    0.253,
+    0.1362,
+    0.2919,
+    0.1557,
+    0.1751
+   ],
+   "duration": 1.8,
+   "loop": false,
+   "release_frame": null,
+   "release_time": null,
+   "hold_frame": null,
+   "roles": null,
+   "facings": {
+    "S": {
+     "frames": [
+      {
+       "path": "res://assets/animated/toad/freed_S_00.png",
+       "file": "freed_S_00.png",
+       "packed_bounds": [
+        60,
+        96,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.8
+        ],
+        "foot_L": [
+         10.2,
+         0.8
+        ],
+        "muzzle": [
+         -0.0,
+         -6.5
+        ],
+        "shard": [
+         -1.7,
+         -37.0
+        ]
+       },
+       "equipment": {
+        "bramble": 88,
+        "shard": 74,
+        "wet": 9
+       },
+       "sha256": "db6d89eaafc5824ce3f1636861a8aaa086266dd26bfffa046b89d349d4c735ad",
+       "sheet": "sheets/freed_S.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_S_01.png",
+       "file": "freed_S_01.png",
+       "packed_bounds": [
+        60,
+        93,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.8
+        ],
+        "foot_L": [
+         10.2,
+         0.8
+        ],
+        "muzzle": [
+         -0.0,
+         -6.5
+        ],
+        "shard": [
+         -2.2,
+         -40.7
+        ]
+       },
+       "equipment": {
+        "bramble": 87,
+        "shard": 75,
+        "wet": 9
+       },
+       "sha256": "29d3e51394d01339c27baecfa6a12871c125968b760ddaf3db99a95f75026c93",
+       "sheet": "sheets/freed_S.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_S_02.png",
+       "file": "freed_S_02.png",
+       "packed_bounds": [
+        60,
+        94,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.8
+        ],
+        "foot_L": [
+         10.2,
+         0.8
+        ],
+        "muzzle": [
+         -0.0,
+         -8.0
+        ],
+        "shard": [
+         -1.7,
+         -38.4
+        ]
+       },
+       "equipment": {
+        "bramble": 130,
+        "wet": 13
+       },
+       "sha256": "54e0903e86f49434a9bf56d3527aff87f67b8a64d713505db94fa3237c59b273",
+       "sheet": "sheets/freed_S.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_S_03.png",
+       "file": "freed_S_03.png",
+       "packed_bounds": [
+        60,
+        94,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.8
+        ],
+        "foot_L": [
+         10.2,
+         0.8
+        ],
+        "muzzle": [
+         -0.0,
+         -8.0
+        ],
+        "shard": [
+         -1.7,
+         -38.4
+        ]
+       },
+       "equipment": {
+        "bramble": 130,
+        "sac": 36,
+        "wet": 13
+       },
+       "sha256": "0f41082c794afaa309601806fe71f1b81d20d7f9941552cb7c2b946defb69ed5",
+       "sheet": "sheets/freed_S.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_S_04.png",
+       "file": "freed_S_04.png",
+       "packed_bounds": [
+        60,
+        94,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.8
+        ],
+        "foot_L": [
+         10.2,
+         0.8
+        ],
+        "muzzle": [
+         -0.0,
+         -8.7
+        ],
+        "shard": [
+         -1.7,
+         -39.1
+        ]
+       },
+       "equipment": {
+        "bramble": 125,
+        "sac": 40,
+        "wet": 15
+       },
+       "sha256": "5994af14ea1710ccf53c991b8dbf76b3d756b5ba05486296db02736e05e62552",
+       "sheet": "sheets/freed_S.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_S_05.png",
+       "file": "freed_S_05.png",
+       "packed_bounds": [
+        60,
+        94,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.8
+        ],
+        "foot_L": [
+         10.2,
+         0.8
+        ],
+        "muzzle": [
+         -0.0,
+         -8.0
+        ],
+        "shard": [
+         -1.7,
+         -38.4
+        ]
+       },
+       "equipment": {
+        "bramble": 130,
+        "sac": 36,
+        "wet": 13
+       },
+       "sha256": "0f41082c794afaa309601806fe71f1b81d20d7f9941552cb7c2b946defb69ed5",
+       "sheet": "sheets/freed_S.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_S_06.png",
+       "file": "freed_S_06.png",
+       "packed_bounds": [
+        60,
+        94,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.8
+        ],
+        "foot_L": [
+         10.2,
+         0.8
+        ],
+        "muzzle": [
+         -0.0,
+         -8.0
+        ],
+        "shard": [
+         -1.7,
+         -38.4
+        ]
+       },
+       "equipment": {
+        "bramble": 130,
+        "wet": 13
+       },
+       "sha256": "20de60c130edbe529cea982e25ae999734a2d94953ff8ec26630e7b4f2e9cbc6",
+       "sheet": "sheets/freed_S.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_S_07.png",
+       "file": "freed_S_07.png",
+       "packed_bounds": [
+        60,
+        95,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.8
+        ],
+        "foot_L": [
+         10.2,
+         0.8
+        ],
+        "muzzle": [
+         -0.0,
+         -7.3
+        ],
+        "shard": [
+         -1.7,
+         -37.7
+        ]
+       },
+       "equipment": {
+        "bramble": 128,
+        "wet": 7
+       },
+       "sha256": "67f9fee2b101b454b29542ad55930f54a815515f0f4df76fde07a413f2787c00",
+       "sheet": "sheets/freed_S.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_S_08.png",
+       "file": "freed_S_08.png",
+       "packed_bounds": [
+        60,
+        94,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.8
+        ],
+        "foot_L": [
+         10.2,
+         0.8
+        ],
+        "muzzle": [
+         -0.0,
+         -8.0
+        ],
+        "shard": [
+         -1.7,
+         -38.4
+        ]
+       },
+       "equipment": {
+        "bramble": 130,
+        "wet": 13
+       },
+       "sha256": "20de60c130edbe529cea982e25ae999734a2d94953ff8ec26630e7b4f2e9cbc6",
+       "sheet": "sheets/freed_S.png",
+       "region": [
+        1280,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_S_09.png",
+       "file": "freed_S_09.png",
+       "packed_bounds": [
+        60,
+        94,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.8
+        ],
+        "foot_L": [
+         10.2,
+         0.8
+        ],
+        "muzzle": [
+         -0.0,
+         -8.0
+        ],
+        "shard": [
+         -1.7,
+         -38.4
+        ]
+       },
+       "equipment": {
+        "bramble": 130,
+        "wet": 13
+       },
+       "sha256": "54e0903e86f49434a9bf56d3527aff87f67b8a64d713505db94fa3237c59b273",
+       "sheet": "sheets/freed_S.png",
+       "region": [
+        1440,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_S_10.png",
+       "file": "freed_S_10.png",
+       "packed_bounds": [
+        60,
+        95,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.8
+        ],
+        "foot_L": [
+         10.2,
+         0.8
+        ],
+        "muzzle": [
+         -0.0,
+         -8.0
+        ],
+        "shard": [
+         -1.7,
+         -37.8
+        ]
+       },
+       "equipment": {
+        "bramble": 128,
+        "wet": 7
+       },
+       "sha256": "4ca222a74acfe3b12408a3b917a591324e906de7e5c2aad4c72197f24a100f08",
+       "sheet": "sheets/freed_S.png",
+       "region": [
+        1600,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_S_11.png",
+       "file": "freed_S_11.png",
+       "packed_bounds": [
+        60,
+        94,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.8
+        ],
+        "foot_L": [
+         10.2,
+         0.8
+        ],
+        "muzzle": [
+         -0.0,
+         -8.0
+        ],
+        "shard": [
+         -1.7,
+         -38.4
+        ]
+       },
+       "equipment": {
+        "bramble": 130,
+        "wet": 13
+       },
+       "sha256": "54e0903e86f49434a9bf56d3527aff87f67b8a64d713505db94fa3237c59b273",
+       "sheet": "sheets/freed_S.png",
+       "region": [
+        1760,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "N": {
+     "frames": [
+      {
+       "path": "res://assets/animated/toad/freed_N_00.png",
+       "file": "freed_N_00.png",
+       "packed_bounds": [
+        60,
+        98,
+        100,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.8
+        ],
+        "foot_L": [
+         -10.2,
+         -4.8
+        ],
+        "muzzle": [
+         0.0,
+         -25.3
+        ],
+        "shard": [
+         1.7,
+         -33.4
+        ]
+       },
+       "equipment": {
+        "bramble": 129,
+        "shard": 64
+       },
+       "sha256": "b01a2dec5ed88d783e588b78463daa0c8e6971fd9a059651c236a879b82ec0d9",
+       "sheet": "sheets/freed_N.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_N_01.png",
+       "file": "freed_N_01.png",
+       "packed_bounds": [
+        60,
+        97,
+        100,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.8
+        ],
+        "foot_L": [
+         -10.2,
+         -4.8
+        ],
+        "muzzle": [
+         0.0,
+         -25.3
+        ],
+        "shard": [
+         2.2,
+         -36.6
+        ]
+       },
+       "equipment": {
+        "bramble": 133,
+        "shard": 63
+       },
+       "sha256": "6bb930b6a9b76a5d3921e227a2e28d728d9582ec563238803e5ba787c8c7c2a8",
+       "sheet": "sheets/freed_N.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_N_02.png",
+       "file": "freed_N_02.png",
+       "packed_bounds": [
+        60,
+        96,
+        100,
+        135
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.8
+        ],
+        "foot_L": [
+         -10.2,
+         -4.8
+        ],
+        "muzzle": [
+         0.0,
+         -26.8
+        ],
+        "shard": [
+         1.7,
+         -34.8
+        ]
+       },
+       "equipment": {
+        "bramble": 156
+       },
+       "sha256": "8f8a12e3c789a3137515f1249872ef1e874a01ac71e1fd8bf6481cf39678fd94",
+       "sheet": "sheets/freed_N.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_N_03.png",
+       "file": "freed_N_03.png",
+       "packed_bounds": [
+        60,
+        96,
+        100,
+        135
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.8
+        ],
+        "foot_L": [
+         -10.2,
+         -4.8
+        ],
+        "muzzle": [
+         0.0,
+         -26.8
+        ],
+        "shard": [
+         1.7,
+         -34.8
+        ]
+       },
+       "equipment": {
+        "bramble": 156
+       },
+       "sha256": "8f8a12e3c789a3137515f1249872ef1e874a01ac71e1fd8bf6481cf39678fd94",
+       "sheet": "sheets/freed_N.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_N_04.png",
+       "file": "freed_N_04.png",
+       "packed_bounds": [
+        60,
+        96,
+        100,
+        135
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.8
+        ],
+        "foot_L": [
+         -10.2,
+         -4.8
+        ],
+        "muzzle": [
+         0.0,
+         -27.5
+        ],
+        "shard": [
+         1.7,
+         -35.5
+        ]
+       },
+       "equipment": {
+        "bramble": 153
+       },
+       "sha256": "47a189a5dfd8092c4a4482c0b434533f09f1599acaa11955b18a7bf436a352de",
+       "sheet": "sheets/freed_N.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_N_05.png",
+       "file": "freed_N_05.png",
+       "packed_bounds": [
+        60,
+        96,
+        100,
+        135
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.8
+        ],
+        "foot_L": [
+         -10.2,
+         -4.8
+        ],
+        "muzzle": [
+         0.0,
+         -26.8
+        ],
+        "shard": [
+         1.7,
+         -34.8
+        ]
+       },
+       "equipment": {
+        "bramble": 156
+       },
+       "sha256": "8f8a12e3c789a3137515f1249872ef1e874a01ac71e1fd8bf6481cf39678fd94",
+       "sheet": "sheets/freed_N.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_N_06.png",
+       "file": "freed_N_06.png",
+       "packed_bounds": [
+        60,
+        96,
+        100,
+        135
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.8
+        ],
+        "foot_L": [
+         -10.2,
+         -4.8
+        ],
+        "muzzle": [
+         0.0,
+         -26.8
+        ],
+        "shard": [
+         1.7,
+         -34.8
+        ]
+       },
+       "equipment": {
+        "bramble": 156
+       },
+       "sha256": "8f8a12e3c789a3137515f1249872ef1e874a01ac71e1fd8bf6481cf39678fd94",
+       "sheet": "sheets/freed_N.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_N_07.png",
+       "file": "freed_N_07.png",
+       "packed_bounds": [
+        60,
+        97,
+        100,
+        135
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.8
+        ],
+        "foot_L": [
+         -10.2,
+         -4.8
+        ],
+        "muzzle": [
+         0.0,
+         -26.0
+        ],
+        "shard": [
+         1.7,
+         -34.1
+        ]
+       },
+       "equipment": {
+        "bramble": 152
+       },
+       "sha256": "0088998d372b32a56aef3b68c8cefb257f567fcf425ce4c357f4b1ee8adbb5a1",
+       "sheet": "sheets/freed_N.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_N_08.png",
+       "file": "freed_N_08.png",
+       "packed_bounds": [
+        60,
+        96,
+        100,
+        135
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.8
+        ],
+        "foot_L": [
+         -10.2,
+         -4.8
+        ],
+        "muzzle": [
+         0.0,
+         -26.8
+        ],
+        "shard": [
+         1.7,
+         -34.8
+        ]
+       },
+       "equipment": {
+        "bramble": 156
+       },
+       "sha256": "8f8a12e3c789a3137515f1249872ef1e874a01ac71e1fd8bf6481cf39678fd94",
+       "sheet": "sheets/freed_N.png",
+       "region": [
+        1280,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_N_09.png",
+       "file": "freed_N_09.png",
+       "packed_bounds": [
+        60,
+        96,
+        100,
+        135
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.8
+        ],
+        "foot_L": [
+         -10.2,
+         -4.8
+        ],
+        "muzzle": [
+         0.0,
+         -26.8
+        ],
+        "shard": [
+         1.7,
+         -34.8
+        ]
+       },
+       "equipment": {
+        "bramble": 156
+       },
+       "sha256": "8f8a12e3c789a3137515f1249872ef1e874a01ac71e1fd8bf6481cf39678fd94",
+       "sheet": "sheets/freed_N.png",
+       "region": [
+        1440,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_N_10.png",
+       "file": "freed_N_10.png",
+       "packed_bounds": [
+        60,
+        97,
+        100,
+        135
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.8
+        ],
+        "foot_L": [
+         -10.2,
+         -4.8
+        ],
+        "muzzle": [
+         0.0,
+         -26.8
+        ],
+        "shard": [
+         1.7,
+         -34.2
+        ]
+       },
+       "equipment": {
+        "bramble": 150
+       },
+       "sha256": "e1fe264f4e14d123f38bcc054924a5fa4d941f77e3e3fbf7525b38727345db2c",
+       "sheet": "sheets/freed_N.png",
+       "region": [
+        1600,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_N_11.png",
+       "file": "freed_N_11.png",
+       "packed_bounds": [
+        60,
+        96,
+        100,
+        135
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.8
+        ],
+        "foot_L": [
+         -10.2,
+         -4.8
+        ],
+        "muzzle": [
+         0.0,
+         -26.8
+        ],
+        "shard": [
+         1.7,
+         -34.8
+        ]
+       },
+       "equipment": {
+        "bramble": 156
+       },
+       "sha256": "8f8a12e3c789a3137515f1249872ef1e874a01ac71e1fd8bf6481cf39678fd94",
+       "sheet": "sheets/freed_N.png",
+       "region": [
+        1760,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "E": {
+     "frames": [
+      {
+       "path": "res://assets/animated/toad/freed_E_00.png",
+       "file": "freed_E_00.png",
+       "packed_bounds": [
+        61,
+        97,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.3,
+         -2.0
+        ],
+        "foot_L": [
+         13.8,
+         -2.0
+        ],
+        "muzzle": [
+         26.8,
+         -15.9
+        ],
+        "shard": [
+         -5.3,
+         -35.2
+        ]
+       },
+       "equipment": {
+        "bramble": 83,
+        "shard": 66,
+        "wet": 12
+       },
+       "sha256": "2369b290ec757483651e0d195cd808a71f0456a69c7a0e15a6cfca1dd934d4fe",
+       "sheet": "sheets/freed_E.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_E_01.png",
+       "file": "freed_E_01.png",
+       "packed_bounds": [
+        61,
+        95,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.3,
+         -2.0
+        ],
+        "foot_L": [
+         13.8,
+         -2.0
+        ],
+        "muzzle": [
+         26.8,
+         -15.9
+        ],
+        "shard": [
+         -6.1,
+         -38.7
+        ]
+       },
+       "equipment": {
+        "bramble": 83,
+        "shard": 73,
+        "wet": 13
+       },
+       "sha256": "52a8a718805f0e9e08d5749a819e79017f132891631e2902539e53a4c72e4c7f",
+       "sheet": "sheets/freed_E.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_E_02.png",
+       "file": "freed_E_02.png",
+       "packed_bounds": [
+        61,
+        96,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.3,
+         -2.0
+        ],
+        "foot_L": [
+         13.8,
+         -2.0
+        ],
+        "muzzle": [
+         26.8,
+         -17.4
+        ],
+        "shard": [
+         -5.3,
+         -36.6
+        ]
+       },
+       "equipment": {
+        "bramble": 134,
+        "wet": 7
+       },
+       "sha256": "592f36428fe65ea8c71927e034c74c981bcf5095b36774df1ae99a2edccc4316",
+       "sheet": "sheets/freed_E.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_E_03.png",
+       "file": "freed_E_03.png",
+       "packed_bounds": [
+        61,
+        96,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.3,
+         -2.0
+        ],
+        "foot_L": [
+         13.8,
+         -2.0
+        ],
+        "muzzle": [
+         26.8,
+         -17.4
+        ],
+        "shard": [
+         -5.3,
+         -36.6
+        ]
+       },
+       "equipment": {
+        "sac": 33,
+        "bramble": 134,
+        "wet": 7
+       },
+       "sha256": "25754c037f0e4dc678b1d7c842f77cbc3ad661ba390c652354e37019505eb429",
+       "sheet": "sheets/freed_E.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_E_04.png",
+       "file": "freed_E_04.png",
+       "packed_bounds": [
+        61,
+        95,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.3,
+         -2.0
+        ],
+        "foot_L": [
+         13.8,
+         -2.0
+        ],
+        "muzzle": [
+         26.8,
+         -18.1
+        ],
+        "shard": [
+         -5.3,
+         -37.3
+        ]
+       },
+       "equipment": {
+        "sac": 34,
+        "bramble": 137,
+        "wet": 6
+       },
+       "sha256": "36b2a964e3ce5210c50acdac7cd8fb40b3984c676d0190e7374ee74c8103d528",
+       "sheet": "sheets/freed_E.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_E_05.png",
+       "file": "freed_E_05.png",
+       "packed_bounds": [
+        61,
+        96,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.3,
+         -2.0
+        ],
+        "foot_L": [
+         13.8,
+         -2.0
+        ],
+        "muzzle": [
+         26.8,
+         -17.4
+        ],
+        "shard": [
+         -5.3,
+         -36.6
+        ]
+       },
+       "equipment": {
+        "sac": 33,
+        "bramble": 134,
+        "wet": 7
+       },
+       "sha256": "25754c037f0e4dc678b1d7c842f77cbc3ad661ba390c652354e37019505eb429",
+       "sheet": "sheets/freed_E.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_E_06.png",
+       "file": "freed_E_06.png",
+       "packed_bounds": [
+        61,
+        96,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.3,
+         -2.0
+        ],
+        "foot_L": [
+         13.8,
+         -2.0
+        ],
+        "muzzle": [
+         26.8,
+         -17.4
+        ],
+        "shard": [
+         -5.3,
+         -36.6
+        ]
+       },
+       "equipment": {
+        "bramble": 134,
+        "wet": 7
+       },
+       "sha256": "26670dfce8146f7287da903f95a7b04c47f82c55043ccb1169c5fc5a62625a3d",
+       "sheet": "sheets/freed_E.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_E_07.png",
+       "file": "freed_E_07.png",
+       "packed_bounds": [
+        61,
+        96,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.3,
+         -2.0
+        ],
+        "foot_L": [
+         13.8,
+         -2.0
+        ],
+        "muzzle": [
+         26.8,
+         -16.7
+        ],
+        "shard": [
+         -5.3,
+         -35.9
+        ]
+       },
+       "equipment": {
+        "bramble": 137,
+        "wet": 11
+       },
+       "sha256": "821924e377f1fa08c2851076f4d77630639bd35c6f2931d7eb3c98d982642d09",
+       "sheet": "sheets/freed_E.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_E_08.png",
+       "file": "freed_E_08.png",
+       "packed_bounds": [
+        61,
+        96,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.3,
+         -2.0
+        ],
+        "foot_L": [
+         13.8,
+         -2.0
+        ],
+        "muzzle": [
+         26.8,
+         -17.4
+        ],
+        "shard": [
+         -5.3,
+         -36.6
+        ]
+       },
+       "equipment": {
+        "bramble": 134,
+        "wet": 7
+       },
+       "sha256": "26670dfce8146f7287da903f95a7b04c47f82c55043ccb1169c5fc5a62625a3d",
+       "sheet": "sheets/freed_E.png",
+       "region": [
+        1280,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_E_09.png",
+       "file": "freed_E_09.png",
+       "packed_bounds": [
+        61,
+        96,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.3,
+         -2.0
+        ],
+        "foot_L": [
+         13.8,
+         -2.0
+        ],
+        "muzzle": [
+         26.8,
+         -17.4
+        ],
+        "shard": [
+         -5.3,
+         -36.6
+        ]
+       },
+       "equipment": {
+        "bramble": 134,
+        "wet": 7
+       },
+       "sha256": "592f36428fe65ea8c71927e034c74c981bcf5095b36774df1ae99a2edccc4316",
+       "sheet": "sheets/freed_E.png",
+       "region": [
+        1440,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_E_10.png",
+       "file": "freed_E_10.png",
+       "packed_bounds": [
+        61,
+        96,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.3,
+         -2.0
+        ],
+        "foot_L": [
+         13.8,
+         -2.0
+        ],
+        "muzzle": [
+         26.8,
+         -17.4
+        ],
+        "shard": [
+         -5.3,
+         -36.0
+        ]
+       },
+       "equipment": {
+        "bramble": 138,
+        "wet": 11
+       },
+       "sha256": "e9c02e60d8c86cce57d94c660a443fd3a1005d3a0a411387cf0f7f55de9ac5c4",
+       "sheet": "sheets/freed_E.png",
+       "region": [
+        1600,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_E_11.png",
+       "file": "freed_E_11.png",
+       "packed_bounds": [
+        61,
+        96,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.3,
+         -2.0
+        ],
+        "foot_L": [
+         13.8,
+         -2.0
+        ],
+        "muzzle": [
+         26.8,
+         -17.4
+        ],
+        "shard": [
+         -5.3,
+         -36.6
+        ]
+       },
+       "equipment": {
+        "bramble": 134,
+        "wet": 7
+       },
+       "sha256": "592f36428fe65ea8c71927e034c74c981bcf5095b36774df1ae99a2edccc4316",
+       "sheet": "sheets/freed_E.png",
+       "region": [
+        1760,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "W": {
+     "frames": [
+      {
+       "path": "res://assets/animated/toad/freed_W_00.png",
+       "file": "freed_W_00.png",
+       "packed_bounds": [
+        52,
+        97,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.8,
+         -2.0
+        ],
+        "foot_L": [
+         -12.3,
+         -2.0
+        ],
+        "muzzle": [
+         -26.8,
+         -15.9
+        ],
+        "shard": [
+         5.0,
+         -35.2
+        ]
+       },
+       "equipment": {
+        "bramble": 69,
+        "shard": 70,
+        "wet": 13
+       },
+       "sha256": "b085bfdfb5012d50e646ca157ef2b801efe3728542768804a9f8ef17d4696913",
+       "sheet": "sheets/freed_W.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_W_01.png",
+       "file": "freed_W_01.png",
+       "packed_bounds": [
+        52,
+        95,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.8,
+         -2.0
+        ],
+        "foot_L": [
+         -12.3,
+         -2.0
+        ],
+        "muzzle": [
+         -26.8,
+         -15.9
+        ],
+        "shard": [
+         5.6,
+         -38.7
+        ]
+       },
+       "equipment": {
+        "bramble": 71,
+        "shard": 70,
+        "wet": 13
+       },
+       "sha256": "1ac9bf6f8f6dfa424b6da60654f07412911735dca58c4c689110dfe350076fab",
+       "sheet": "sheets/freed_W.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_W_02.png",
+       "file": "freed_W_02.png",
+       "packed_bounds": [
+        52,
+        96,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.8,
+         -2.0
+        ],
+        "foot_L": [
+         -12.3,
+         -2.0
+        ],
+        "muzzle": [
+         -26.8,
+         -17.4
+        ],
+        "shard": [
+         5.0,
+         -36.6
+        ]
+       },
+       "equipment": {
+        "bramble": 126,
+        "wet": 8
+       },
+       "sha256": "b7eb29ac2fd2041964832ccc9fc440cb8dbc4aeae3b890b6c7e563487da29d22",
+       "sheet": "sheets/freed_W.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_W_03.png",
+       "file": "freed_W_03.png",
+       "packed_bounds": [
+        52,
+        96,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.8,
+         -2.0
+        ],
+        "foot_L": [
+         -12.3,
+         -2.0
+        ],
+        "muzzle": [
+         -26.8,
+         -17.4
+        ],
+        "shard": [
+         5.0,
+         -36.6
+        ]
+       },
+       "equipment": {
+        "sac": 33,
+        "bramble": 126,
+        "wet": 8
+       },
+       "sha256": "11191c07ac2455231a2826f01638a67c6a11ba913a826665bf890edcde7749e7",
+       "sheet": "sheets/freed_W.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_W_04.png",
+       "file": "freed_W_04.png",
+       "packed_bounds": [
+        52,
+        95,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.8,
+         -2.0
+        ],
+        "foot_L": [
+         -12.3,
+         -2.0
+        ],
+        "muzzle": [
+         -26.8,
+         -18.1
+        ],
+        "shard": [
+         5.0,
+         -37.3
+        ]
+       },
+       "equipment": {
+        "sac": 34,
+        "bramble": 126,
+        "wet": 7
+       },
+       "sha256": "8d148e6dbd8a88fa1649427104248c8a78ecb5e3dcf25d7d40c7f944193cd91c",
+       "sheet": "sheets/freed_W.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_W_05.png",
+       "file": "freed_W_05.png",
+       "packed_bounds": [
+        52,
+        96,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.8,
+         -2.0
+        ],
+        "foot_L": [
+         -12.3,
+         -2.0
+        ],
+        "muzzle": [
+         -26.8,
+         -17.4
+        ],
+        "shard": [
+         5.0,
+         -36.6
+        ]
+       },
+       "equipment": {
+        "sac": 33,
+        "bramble": 126,
+        "wet": 8
+       },
+       "sha256": "11191c07ac2455231a2826f01638a67c6a11ba913a826665bf890edcde7749e7",
+       "sheet": "sheets/freed_W.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_W_06.png",
+       "file": "freed_W_06.png",
+       "packed_bounds": [
+        52,
+        96,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.8,
+         -2.0
+        ],
+        "foot_L": [
+         -12.3,
+         -2.0
+        ],
+        "muzzle": [
+         -26.8,
+         -17.4
+        ],
+        "shard": [
+         5.0,
+         -36.6
+        ]
+       },
+       "equipment": {
+        "bramble": 126,
+        "wet": 8
+       },
+       "sha256": "8a3e76748454d8853e0df932e7e381896bd96921538adba9ffe40bf7ab318c52",
+       "sheet": "sheets/freed_W.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_W_07.png",
+       "file": "freed_W_07.png",
+       "packed_bounds": [
+        52,
+        96,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.8,
+         -2.0
+        ],
+        "foot_L": [
+         -12.3,
+         -2.0
+        ],
+        "muzzle": [
+         -26.8,
+         -16.7
+        ],
+        "shard": [
+         5.0,
+         -35.9
+        ]
+       },
+       "equipment": {
+        "bramble": 126,
+        "wet": 12
+       },
+       "sha256": "5fa63159910f7657a6a6eaf42f32a7ac8d6c65d6d378dc0276dc90e2c4e88677",
+       "sheet": "sheets/freed_W.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_W_08.png",
+       "file": "freed_W_08.png",
+       "packed_bounds": [
+        52,
+        96,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.8,
+         -2.0
+        ],
+        "foot_L": [
+         -12.3,
+         -2.0
+        ],
+        "muzzle": [
+         -26.8,
+         -17.4
+        ],
+        "shard": [
+         5.0,
+         -36.6
+        ]
+       },
+       "equipment": {
+        "bramble": 126,
+        "wet": 8
+       },
+       "sha256": "8a3e76748454d8853e0df932e7e381896bd96921538adba9ffe40bf7ab318c52",
+       "sheet": "sheets/freed_W.png",
+       "region": [
+        1280,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_W_09.png",
+       "file": "freed_W_09.png",
+       "packed_bounds": [
+        52,
+        96,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.8,
+         -2.0
+        ],
+        "foot_L": [
+         -12.3,
+         -2.0
+        ],
+        "muzzle": [
+         -26.8,
+         -17.4
+        ],
+        "shard": [
+         5.0,
+         -36.6
+        ]
+       },
+       "equipment": {
+        "bramble": 126,
+        "wet": 8
+       },
+       "sha256": "b7eb29ac2fd2041964832ccc9fc440cb8dbc4aeae3b890b6c7e563487da29d22",
+       "sheet": "sheets/freed_W.png",
+       "region": [
+        1440,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_W_10.png",
+       "file": "freed_W_10.png",
+       "packed_bounds": [
+        52,
+        96,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.8,
+         -2.0
+        ],
+        "foot_L": [
+         -12.3,
+         -2.0
+        ],
+        "muzzle": [
+         -26.8,
+         -17.4
+        ],
+        "shard": [
+         5.0,
+         -36.0
+        ]
+       },
+       "equipment": {
+        "bramble": 127,
+        "wet": 11
+       },
+       "sha256": "8365adcdfc49cdece42c51d2e16fe5ec09fbcde5ad4fd744e9d5f1685b856a58",
+       "sheet": "sheets/freed_W.png",
+       "region": [
+        1600,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_W_11.png",
+       "file": "freed_W_11.png",
+       "packed_bounds": [
+        52,
+        96,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.8,
+         -2.0
+        ],
+        "foot_L": [
+         -12.3,
+         -2.0
+        ],
+        "muzzle": [
+         -26.8,
+         -17.4
+        ],
+        "shard": [
+         5.0,
+         -36.6
+        ]
+       },
+       "equipment": {
+        "bramble": 126,
+        "wet": 8
+       },
+       "sha256": "b7eb29ac2fd2041964832ccc9fc440cb8dbc4aeae3b890b6c7e563487da29d22",
+       "sheet": "sheets/freed_W.png",
+       "region": [
+        1760,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    }
+   }
+  },
+  "freed_move": {
+   "frame_count": 8,
+   "durations": [
+    0.07,
+    0.07,
+    0.07,
+    0.07,
+    0.07,
+    0.07,
+    0.07,
+    0.07
+   ],
+   "duration": 0.56,
+   "loop": true,
+   "release_frame": null,
+   "release_time": null,
+   "hold_frame": null,
+   "roles": null,
+   "facings": {
+    "S": {
+     "frames": [
+      {
+       "path": "res://assets/animated/toad/freed_move_S_00.png",
+       "file": "freed_move_S_00.png",
+       "packed_bounds": [
+        60,
+        95,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.8
+        ],
+        "foot_L": [
+         10.2,
+         0.8
+        ],
+        "muzzle": [
+         -0.0,
+         -8.0
+        ],
+        "shard": [
+         -1.7,
+         -38.0
+        ]
+       },
+       "equipment": {
+        "bramble": 124,
+        "wet": 7
+       },
+       "sha256": "17b5dcb0d318493eedc454ec6bae25b9aa6c5283d4661f09a9d2868992163ba2",
+       "sheet": "sheets/freed_move_S.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_move_S_01.png",
+       "file": "freed_move_S_01.png",
+       "packed_bounds": [
+        60,
+        93,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         -0.7
+        ],
+        "foot_L": [
+         10.2,
+         1.3
+        ],
+        "muzzle": [
+         -0.0,
+         -10.5
+        ],
+        "shard": [
+         -1.7,
+         -39.7
+        ]
+       },
+       "equipment": {
+        "bramble": 127,
+        "wet": 7
+       },
+       "sha256": "11eaa03c31311196f3b26c52e72416eb138bbc7406549991e385a7d0f5cb9f44",
+       "sheet": "sheets/freed_move_S.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_move_S_02.png",
+       "file": "freed_move_S_02.png",
+       "packed_bounds": [
+        60,
+        92,
+        100,
+        139
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         -1.3
+        ],
+        "foot_L": [
+         10.2,
+         1.6
+        ],
+        "muzzle": [
+         -0.0,
+         -10.3
+        ],
+        "shard": [
+         -1.7,
+         -40.7
+        ]
+       },
+       "equipment": {
+        "bramble": 127,
+        "wet": 7
+       },
+       "sha256": "508ecbf65a2ad7c568560b2d316b8e17d74a2c1c6d9ee8275fc5711dbdae3af8",
+       "sheet": "sheets/freed_move_S.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_move_S_03.png",
+       "file": "freed_move_S_03.png",
+       "packed_bounds": [
+        60,
+        92,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         -0.7
+        ],
+        "foot_L": [
+         10.2,
+         1.3
+        ],
+        "muzzle": [
+         -0.0,
+         -8.8
+        ],
+        "shard": [
+         -1.7,
+         -40.4
+        ]
+       },
+       "equipment": {
+        "bramble": 131,
+        "wet": 15
+       },
+       "sha256": "91e86c85e4cb7ac1bb11f1aff45b0df340486b6b2540f4c0a2309e8e6ea1165a",
+       "sheet": "sheets/freed_move_S.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_move_S_04.png",
+       "file": "freed_move_S_04.png",
+       "packed_bounds": [
+        60,
+        94,
+        100,
+        138
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.8
+        ],
+        "foot_L": [
+         10.2,
+         0.8
+        ],
+        "muzzle": [
+         -0.0,
+         -8.0
+        ],
+        "shard": [
+         -1.7,
+         -38.9
+        ]
+       },
+       "equipment": {
+        "bramble": 128,
+        "wet": 7
+       },
+       "sha256": "6ff7baa1fcedc5565c6ac61021a3442ff51f001dd99ac90be40683a7a83faa29",
+       "sheet": "sheets/freed_move_S.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_move_S_05.png",
+       "file": "freed_move_S_05.png",
+       "packed_bounds": [
+        60,
+        94,
+        100,
+        137
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.3
+        ],
+        "foot_L": [
+         10.2,
+         -1.8
+        ],
+        "muzzle": [
+         -0.0,
+         -8.9
+        ],
+        "shard": [
+         -1.7,
+         -38.7
+        ]
+       },
+       "equipment": {
+        "bramble": 127,
+        "wet": 9
+       },
+       "sha256": "5a4a08053ff8193c854b9bd6103c2b86a5272ffca47ec302984b706f031674d9",
+       "sheet": "sheets/freed_move_S.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_move_S_06.png",
+       "file": "freed_move_S_06.png",
+       "packed_bounds": [
+        60,
+        94,
+        100,
+        137
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.0
+        ],
+        "foot_L": [
+         10.2,
+         -2.9
+        ],
+        "muzzle": [
+         -0.0,
+         -8.0
+        ],
+        "shard": [
+         -1.7,
+         -38.4
+        ]
+       },
+       "equipment": {
+        "bramble": 130,
+        "wet": 13
+       },
+       "sha256": "a4ebb709382aa3bf9fa0c220198cc0b7541f87634463126be30db8e18a1faea9",
+       "sheet": "sheets/freed_move_S.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_move_S_07.png",
+       "file": "freed_move_S_07.png",
+       "packed_bounds": [
+        60,
+        95,
+        100,
+        137
+       ],
+       "anchors": {
+        "foot_R": [
+         -10.2,
+         0.3
+        ],
+        "foot_L": [
+         10.2,
+         -1.8
+        ],
+        "muzzle": [
+         -0.0,
+         -7.1
+        ],
+        "shard": [
+         -1.7,
+         -38.1
+        ]
+       },
+       "equipment": {
+        "bramble": 125,
+        "wet": 13
+       },
+       "sha256": "87f98180313ad0297950c5613d81371ae05df456f99289f0431e82685a0cfaed",
+       "sheet": "sheets/freed_move_S.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "N": {
+     "frames": [
+      {
+       "path": "res://assets/animated/toad/freed_move_N_00.png",
+       "file": "freed_move_N_00.png",
+       "packed_bounds": [
+        60,
+        97,
+        100,
+        135
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.8
+        ],
+        "foot_L": [
+         -10.2,
+         -4.8
+        ],
+        "muzzle": [
+         0.0,
+         -26.8
+        ],
+        "shard": [
+         1.7,
+         -34.4
+        ]
+       },
+       "equipment": {
+        "bramble": 154
+       },
+       "sha256": "9b80c9c0501bcd0a90ab46ea63a725de7469150142efa96d3042d80105a43101",
+       "sheet": "sheets/freed_move_N.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_move_N_01.png",
+       "file": "freed_move_N_01.png",
+       "packed_bounds": [
+        60,
+        94,
+        100,
+        135
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -7.4
+        ],
+        "foot_L": [
+         -10.2,
+         -5.3
+        ],
+        "muzzle": [
+         0.0,
+         -29.3
+        ],
+        "shard": [
+         1.7,
+         -36.1
+        ]
+       },
+       "equipment": {
+        "bramble": 152
+       },
+       "sha256": "81106b72823710492103547b10e2734aa553cae0a06f8ebbda2930169c0493ab",
+       "sheet": "sheets/freed_move_N.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_move_N_02.png",
+       "file": "freed_move_N_02.png",
+       "packed_bounds": [
+        60,
+        94,
+        100,
+        135
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -8.5
+        ],
+        "foot_L": [
+         -10.2,
+         -5.6
+        ],
+        "muzzle": [
+         0.0,
+         -29.1
+        ],
+        "shard": [
+         1.7,
+         -37.1
+        ]
+       },
+       "equipment": {
+        "bramble": 151
+       },
+       "sha256": "6683d0e884e87383268de4c1f614297c4f077eb311cc44d0031d743441eaf26c",
+       "sheet": "sheets/freed_move_N.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_move_N_03.png",
+       "file": "freed_move_N_03.png",
+       "packed_bounds": [
+        60,
+        94,
+        100,
+        135
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -7.4
+        ],
+        "foot_L": [
+         -10.2,
+         -5.3
+        ],
+        "muzzle": [
+         0.0,
+         -27.5
+        ],
+        "shard": [
+         1.7,
+         -36.8
+        ]
+       },
+       "equipment": {
+        "bramble": 155
+       },
+       "sha256": "860ae5a0f7dc0db2342132982318954d426831cd2dd68576deef90f579e547b3",
+       "sheet": "sheets/freed_move_N.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_move_N_04.png",
+       "file": "freed_move_N_04.png",
+       "packed_bounds": [
+        60,
+        96,
+        100,
+        135
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.8
+        ],
+        "foot_L": [
+         -10.2,
+         -4.8
+        ],
+        "muzzle": [
+         0.0,
+         -26.8
+        ],
+        "shard": [
+         1.7,
+         -35.2
+        ]
+       },
+       "equipment": {
+        "bramble": 151
+       },
+       "sha256": "bdaadfa0331ab04483d791a83fbf155604f81bf73a06b5cc514f90d7e6a4e237",
+       "sheet": "sheets/freed_move_N.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_move_N_05.png",
+       "file": "freed_move_N_05.png",
+       "packed_bounds": [
+        60,
+        96,
+        100,
+        135
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.3
+        ],
+        "foot_L": [
+         -10.2,
+         -6.3
+        ],
+        "muzzle": [
+         0.0,
+         -27.6
+        ],
+        "shard": [
+         1.7,
+         -35.1
+        ]
+       },
+       "equipment": {
+        "bramble": 153
+       },
+       "sha256": "57ee58861dd30f0ba4bcd82921a217af08f9419527852e01c32daa02ec7419d5",
+       "sheet": "sheets/freed_move_N.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_move_N_06.png",
+       "file": "freed_move_N_06.png",
+       "packed_bounds": [
+        60,
+        96,
+        100,
+        135
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.0
+        ],
+        "foot_L": [
+         -10.2,
+         -6.9
+        ],
+        "muzzle": [
+         0.0,
+         -26.8
+        ],
+        "shard": [
+         1.7,
+         -34.8
+        ]
+       },
+       "equipment": {
+        "bramble": 156
+       },
+       "sha256": "8f8a12e3c789a3137515f1249872ef1e874a01ac71e1fd8bf6481cf39678fd94",
+       "sheet": "sheets/freed_move_N.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_move_N_07.png",
+       "file": "freed_move_N_07.png",
+       "packed_bounds": [
+        60,
+        97,
+        100,
+        135
+       ],
+       "anchors": {
+        "foot_R": [
+         10.2,
+         -4.3
+        ],
+        "foot_L": [
+         -10.2,
+         -6.3
+        ],
+        "muzzle": [
+         0.0,
+         -25.9
+        ],
+        "shard": [
+         1.7,
+         -34.5
+        ]
+       },
+       "equipment": {
+        "bramble": 153
+       },
+       "sha256": "b98fe803dda64f1aad103b3ccbd3bcba25d062a7e40b93980fb804f7da7d1fcd",
+       "sheet": "sheets/freed_move_N.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "E": {
+     "frames": [
+      {
+       "path": "res://assets/animated/toad/freed_move_E_00.png",
+       "file": "freed_move_E_00.png",
+       "packed_bounds": [
+        61,
+        96,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.3,
+         -2.0
+        ],
+        "foot_L": [
+         13.8,
+         -2.0
+        ],
+        "muzzle": [
+         26.8,
+         -17.4
+        ],
+        "shard": [
+         -5.3,
+         -36.2
+        ]
+       },
+       "equipment": {
+        "bramble": 137,
+        "wet": 12
+       },
+       "sha256": "1eec011c0845aa3693583aabe182fedb9fac3db1bdbd1de15c52e10bdc82d9f0",
+       "sheet": "sheets/freed_move_E.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_move_E_01.png",
+       "file": "freed_move_E_01.png",
+       "packed_bounds": [
+        61,
+        94,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         13.8,
+         -4.1
+        ],
+        "foot_L": [
+         15.4,
+         -2.0
+        ],
+        "muzzle": [
+         26.8,
+         -19.9
+        ],
+        "shard": [
+         -5.3,
+         -37.9
+        ]
+       },
+       "equipment": {
+        "bramble": 137,
+        "wet": 11
+       },
+       "sha256": "e85f5a725b6fbdc7cd264672a0c23a33f3976c1ffab6c53829cd84abff4c2eae",
+       "sheet": "sheets/freed_move_E.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_move_E_02.png",
+       "file": "freed_move_E_02.png",
+       "packed_bounds": [
+        61,
+        93,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         14.4,
+         -4.9
+        ],
+        "foot_L": [
+         16.0,
+         -2.0
+        ],
+        "muzzle": [
+         26.8,
+         -19.7
+        ],
+        "shard": [
+         -5.3,
+         -38.9
+        ]
+       },
+       "equipment": {
+        "bramble": 137,
+        "wet": 11
+       },
+       "sha256": "1bfaa2b697b685840d2ba3a9afbd17ce7f44b8901ed400f6c0cfb9b95e37aaff",
+       "sheet": "sheets/freed_move_E.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_move_E_03.png",
+       "file": "freed_move_E_03.png",
+       "packed_bounds": [
+        61,
+        94,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         13.8,
+         -4.1
+        ],
+        "foot_L": [
+         15.4,
+         -2.0
+        ],
+        "muzzle": [
+         26.8,
+         -18.2
+        ],
+        "shard": [
+         -5.3,
+         -38.6
+        ]
+       },
+       "equipment": {
+        "bramble": 135,
+        "wet": 6
+       },
+       "sha256": "ba3af43a215f10f73992b8c740f0131815b126658e0ee32d8f92467dee9e68a8",
+       "sheet": "sheets/freed_move_E.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_move_E_04.png",
+       "file": "freed_move_E_04.png",
+       "packed_bounds": [
+        61,
+        95,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         12.3,
+         -2.0
+        ],
+        "foot_L": [
+         13.8,
+         -2.0
+        ],
+        "muzzle": [
+         26.8,
+         -17.4
+        ],
+        "shard": [
+         -5.3,
+         -37.0
+        ]
+       },
+       "equipment": {
+        "bramble": 137,
+        "wet": 11
+       },
+       "sha256": "e9a50ca7d23a68247969c2ae6bd64993948f22847d8aa46c0d38cd5e5385f641",
+       "sheet": "sheets/freed_move_E.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_move_E_05.png",
+       "file": "freed_move_E_05.png",
+       "packed_bounds": [
+        61,
+        95,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         10.7,
+         -2.0
+        ],
+        "foot_L": [
+         12.3,
+         -4.1
+        ],
+        "muzzle": [
+         26.8,
+         -18.3
+        ],
+        "shard": [
+         -5.3,
+         -36.9
+        ]
+       },
+       "equipment": {
+        "bramble": 137,
+        "wet": 10
+       },
+       "sha256": "02e85f50e354eb2f8951cb236cc1011ef99ba4acc1a9ff673406eac5960d074e",
+       "sheet": "sheets/freed_move_E.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_move_E_06.png",
+       "file": "freed_move_E_06.png",
+       "packed_bounds": [
+        61,
+        96,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         10.1,
+         -2.0
+        ],
+        "foot_L": [
+         11.7,
+         -4.9
+        ],
+        "muzzle": [
+         26.8,
+         -17.4
+        ],
+        "shard": [
+         -5.3,
+         -36.6
+        ]
+       },
+       "equipment": {
+        "bramble": 134,
+        "wet": 7
+       },
+       "sha256": "fb878a92befbdf1fc39bf51e0357beb1c922c362f5509565cba4cdbd5d396fe3",
+       "sheet": "sheets/freed_move_E.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_move_E_07.png",
+       "file": "freed_move_E_07.png",
+       "packed_bounds": [
+        61,
+        96,
+        108,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         10.7,
+         -2.0
+        ],
+        "foot_L": [
+         12.3,
+         -4.1
+        ],
+        "muzzle": [
+         26.8,
+         -16.5
+        ],
+        "shard": [
+         -5.3,
+         -36.3
+        ]
+       },
+       "equipment": {
+        "bramble": 139,
+        "wet": 7
+       },
+       "sha256": "cea99a01e7c32f1af111958c181d22f6826f337d673707a79948573302b79cc6",
+       "sheet": "sheets/freed_move_E.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "W": {
+     "frames": [
+      {
+       "path": "res://assets/animated/toad/freed_move_W_00.png",
+       "file": "freed_move_W_00.png",
+       "packed_bounds": [
+        52,
+        96,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.8,
+         -2.0
+        ],
+        "foot_L": [
+         -12.3,
+         -2.0
+        ],
+        "muzzle": [
+         -26.8,
+         -17.4
+        ],
+        "shard": [
+         5.0,
+         -36.2
+        ]
+       },
+       "equipment": {
+        "bramble": 127,
+        "wet": 12
+       },
+       "sha256": "84a803a37e227edb36e24187a985ae25bc501c0ac85f1f67f86c26dd23ebc936",
+       "sheet": "sheets/freed_move_W.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_move_W_01.png",
+       "file": "freed_move_W_01.png",
+       "packed_bounds": [
+        52,
+        94,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -15.4,
+         -4.1
+        ],
+        "foot_L": [
+         -13.8,
+         -2.0
+        ],
+        "muzzle": [
+         -26.8,
+         -19.9
+        ],
+        "shard": [
+         5.0,
+         -37.9
+        ]
+       },
+       "equipment": {
+        "bramble": 126,
+        "wet": 12
+       },
+       "sha256": "3558692736a24f399736ec35df2f516719a732997ee2ecbaeea6fded07174505",
+       "sheet": "sheets/freed_move_W.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_move_W_02.png",
+       "file": "freed_move_W_02.png",
+       "packed_bounds": [
+        52,
+        93,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -16.0,
+         -4.9
+        ],
+        "foot_L": [
+         -14.4,
+         -2.0
+        ],
+        "muzzle": [
+         -26.8,
+         -19.7
+        ],
+        "shard": [
+         5.0,
+         -38.9
+        ]
+       },
+       "equipment": {
+        "bramble": 126,
+        "wet": 12
+       },
+       "sha256": "eacbbd4e31834893f4cd23c02628c0b1cd66e5afa5b08b3d29afa38354d83cd7",
+       "sheet": "sheets/freed_move_W.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_move_W_03.png",
+       "file": "freed_move_W_03.png",
+       "packed_bounds": [
+        52,
+        94,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -15.4,
+         -4.1
+        ],
+        "foot_L": [
+         -13.8,
+         -2.0
+        ],
+        "muzzle": [
+         -26.8,
+         -18.2
+        ],
+        "shard": [
+         5.0,
+         -38.6
+        ]
+       },
+       "equipment": {
+        "bramble": 127,
+        "wet": 7
+       },
+       "sha256": "48963b4b271e9e8aa55d1297edb6661ab05686161ce719df59adfbc179044224",
+       "sheet": "sheets/freed_move_W.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_move_W_04.png",
+       "file": "freed_move_W_04.png",
+       "packed_bounds": [
+        52,
+        95,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -13.8,
+         -2.0
+        ],
+        "foot_L": [
+         -12.3,
+         -2.0
+        ],
+        "muzzle": [
+         -26.8,
+         -17.4
+        ],
+        "shard": [
+         5.0,
+         -37.0
+        ]
+       },
+       "equipment": {
+        "bramble": 127,
+        "wet": 11
+       },
+       "sha256": "177e832dad4fd6ab8c6d42bbb2a4e6e739c0175ec096b892d92ffdad32b95908",
+       "sheet": "sheets/freed_move_W.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_move_W_05.png",
+       "file": "freed_move_W_05.png",
+       "packed_bounds": [
+        52,
+        95,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -12.3,
+         -2.0
+        ],
+        "foot_L": [
+         -10.7,
+         -4.1
+        ],
+        "muzzle": [
+         -26.8,
+         -18.3
+        ],
+        "shard": [
+         5.0,
+         -36.9
+        ]
+       },
+       "equipment": {
+        "bramble": 126,
+        "wet": 10
+       },
+       "sha256": "22aeb5e937c52307a12a6bfa068b8bdc1422dd0fe24f8b40ac30f500bcbe8c7a",
+       "sheet": "sheets/freed_move_W.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_move_W_06.png",
+       "file": "freed_move_W_06.png",
+       "packed_bounds": [
+        52,
+        96,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -11.7,
+         -2.0
+        ],
+        "foot_L": [
+         -10.1,
+         -4.9
+        ],
+        "muzzle": [
+         -26.8,
+         -17.4
+        ],
+        "shard": [
+         5.0,
+         -36.6
+        ]
+       },
+       "equipment": {
+        "bramble": 126,
+        "wet": 8
+       },
+       "sha256": "fb3c43a3681c305bbcccaa3441b0679b32cf84348ad9306c4d301352f360dd0f",
+       "sheet": "sheets/freed_move_W.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/toad/freed_move_W_07.png",
+       "file": "freed_move_W_07.png",
+       "packed_bounds": [
+        52,
+        96,
+        99,
+        136
+       ],
+       "anchors": {
+        "foot_R": [
+         -12.3,
+         -2.0
+        ],
+        "foot_L": [
+         -10.7,
+         -4.1
+        ],
+        "muzzle": [
+         -26.8,
+         -16.5
+        ],
+        "shard": [
+         5.0,
+         -36.3
+        ]
+       },
+       "equipment": {
+        "bramble": 127,
+        "wet": 8
+       },
+       "sha256": "ac7687be49f198f7c9d4903cb420877bf4768f24cd849309da4cf52fc7576968",
+       "sheet": "sheets/freed_move_W.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    }
+   }
+  }
+ },
+ "pose_count": 240
+}

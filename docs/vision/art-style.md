@@ -19,6 +19,10 @@ The target is a clean, modern top-down pixel style with clear outlines and confi
 
 The rules below still hold. Where one names a pixel size drawn at 1x, its 2x equivalent is noted beside it.
 
+## Density 3: foliage, water and the woodland (Matt, 25 Oct 19:16)
+
+"Especially the trees look really strange." The 2x foliage algorithm (leaf stamps, crease pockets) does not scale: at density 3 it drew a mesh of thin dark contours round many small cells. From density 3 the kit paints foliage as Eastward does: a few large clumps per crown, each a dome lit from the upper left (lit top, mid-tone body, shaded lower right, dark under-shade where it tucks under the clump in front), tones meeting in leaf-shaped scallops whose lit tips point down, sparse leaf marks and glints, leaf tips breaking the silhouette only, and an outline on the silhouette only. Bushes sit on the ground with no stems. Trunks have bark (plates, smooth beech, birch dashes), flare into roots, and reach up under the crown so it always covers them. Water at density 3 has curved banks on the soft grid (no stair steps), a wet edge, a bank lip with stones and grass hanging over it, depth from the bank to the middle and one-texel ripple lines; a fall has a lip, volume, streaks, foam, spray and rings. Size and colour choices per kind are data (the biome recipe's `crown` and `bark`).
+
 ## References
 
 Matt shared these as the bar ("it should be at least like this"). The images are third-party art, so they are described here rather than copied into the repo.
