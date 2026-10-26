@@ -5876,16 +5876,6 @@
       "light": "lanterns"
     },
     {
-      "recipe": "springs_bath",
-      "at": [2304, 5496],
-      "orient": "w",
-      "mirror": true,
-      "seed": 1014,
-      "members": ["stone pool rim", "towels on a rail", "bench", "steam"],
-      "why": "Cinder Springs: the bath kit by the pools on the tier-5 shelf (lane R 23 Oct 15:54, was on tier 2 at (2200, 5624))",
-      "light": "steam"
-    },
-    {
       "recipe": "black_sand_shore",
       "at": [2960, 5680],
       "orient": "s",
@@ -5921,6 +5911,16 @@
       "seed": 1018,
       "members": ["lone tree", "sheep", "stile", "flowers"],
       "why": "the Ash Coast's green shelf"
+    },
+    {
+      "recipe": "springs_bath",
+      "at": [2200, 5624],
+      "orient": "s",
+      "mirror": true,
+      "seed": 1014,
+      "members": ["stone pool rim", "towels on a rail", "bench", "steam"],
+      "why": "Cinder Springs",
+      "light": "steam"
     }
   ],
   "edges": [
