@@ -180,7 +180,7 @@ FLOOR_LADDER_COOL = {3: (('slate', 2), ('slate_cool', 2)), 4: (('slate', 3), ('s
                      5: (('slate', 4), ('slate_cool', 4)), 6: (('slate', 5), ('slate_cool', 5))}
 # under a torch the pool's rungs lean warm (pitch-light on stone: the warm grey and the sand ramp)
 FLOOR_LADDER_WARM = {3: (('stone_warm', 1), ('ash', 2)), 4: (('stone_warm', 2), ('ashlar', 2)),
-                     5: (('ashlar', 3), ('stone_warm', 3)), 6: (('ashlar', 4), ('stone_warm', 4))}
+                     5: (('ashlar', 3), ('sand', 2)), 6: (('sand', 3), ('ashlar', 4))}
 FLOOR_AMBIENT = 1                # far from every light the floor sits on rung 1, in shade, as Eastward's
 
 

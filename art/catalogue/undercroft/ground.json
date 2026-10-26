@@ -1,7 +1,7 @@
 {
  "id": "undercroft/ground",
  "file": "game/zones/undercroft/art/ground.png",
- "sha256": "77e0d58e55921f8d6202d3ecadbd3ec3c016ae9f475e0d8d1bd9e83a5b3be036",
+ "sha256": "57d305142add61fd594c5b6e3e27b677f76722707a596f566d5903fcdba2f410",
  "kind": "ground",
  "biome": "cellar",
  "H": 74.0,
