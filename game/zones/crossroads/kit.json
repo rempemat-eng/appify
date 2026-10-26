@@ -5,7 +5,7 @@
   1920,
   1680
  ],
- "inputs": "b2de601a5a38c0c81ef8960a8b17c017f1314c32e5003b4bb8c8e2223bbaddfa",
+ "inputs": "e491187c0d5752cf402ec1ef5044a5af56308bb59eab73a6a46a1ddeebc955dd",
  "kit_drawn": [
   "anvil.png",
   "bakery.png",
@@ -429,8 +429,8 @@
     900
    ],
    "offset": [
-    -42,
-    -74
+    -45,
+    -77
    ],
    "cond": {
     "restored": [
@@ -1175,7 +1175,7 @@
    ],
    "offset": [
     -45,
-    -86
+    -59
    ],
    "cond": null,
    "solid": [
@@ -1771,7 +1771,7 @@
    ],
    "offset": [
     -45,
-    -86
+    -59
    ],
    "cond": null,
    "solid": [
@@ -1886,7 +1886,7 @@
    "kind": "shadow",
    "png": "anvil_shadow.png",
    "foot": [
-    1473,
+    1464,
     896
    ],
    "offset": [
@@ -1986,7 +1986,7 @@
    "kind": "shadow",
    "png": "beds_scorched_shadow.png",
    "foot": [
-    1139,
+    1136,
     356
    ],
    "offset": [
@@ -2006,7 +2006,7 @@
    "kind": "shadow",
    "png": "beds_dug_shadow.png",
    "foot": [
-    1139,
+    1136,
     356
    ],
    "offset": [

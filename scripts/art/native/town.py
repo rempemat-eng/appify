@@ -83,6 +83,189 @@ def input_hash(plan_path: str, density: float) -> str:
 
 
 # ------------------------------------------------------------------------------------------------
+def soil_texture_hd(cv, mask, rng, drawn=None, spacing=1.0, p=0.7):
+    """Bare ground drawn as ground (26 Oct): clods and pebbles lit at their upper left with a shade
+    texel under them, and short cracks, a few world px apart, so trodden earth, ash and the burnt
+    floor are never a flat fill."""
+    from scripts.art.native import ctx as CX
+    from scripts.art.native.palette import step
+    D = CX.D
+    H, W = cv.shape
+    sp_x, sp_y = max(4, int(round(2.2 * D * spacing))), max(3, int(round(1.7 * D * spacing)))
+    for gy in range(0, H, sp_y):
+        for gx in range((gy // sp_y) % 2 * (sp_x // 2), W, sp_x):
+            y0, x0 = gy + int(rng.integers(-1, 2)), gx + int(rng.integers(-2, 3))
+            if not (1 <= y0 < H - 3 and 1 <= x0 < W - 3) or not mask[y0, x0] or rng.random() > p:
+                continue
+            c0 = cv[y0, x0]
+            if c0 % 8 >= 6:
+                continue
+            r = rng.random()
+            if r < 0.45:                                            # a clod: lit cap, its shade below
+                pts = (((0, 0), 1), ((0, 1), 1), ((1, 0), 0), ((1, 1), 0), ((2, 1), -1), ((2, 2), -1), ((1, 2), -1),
+                       ((1, 0), 1))
+            elif r < 0.75:                                          # a dip: shade at its north lip, lit south
+                pts = (((0, 0), -1), ((0, 1), -1), ((1, 1), 1), ((1, 2), 1))
+            else:                                                   # a crack
+                pts = (((0, 0), -1), ((1, 0), -1), ((1, 1), -1), ((1, 2), -1), ((2, 2), -1))
+            for (dy, dx), dt in pts:
+                yy, xx = y0 + dy, x0 + dx
+                if mask[yy, xx] and dt != 0:
+                    cv[yy, xx] = step(cv[yy, xx], dt)
+                    if drawn is not None:
+                        drawn[yy, xx] = True
+
+
+def crater_hd(cv, WX, WY, cx, cy, rx, ry, rng, noise, drawn=None):
+    """The blast crater at density 3 and up as a landform lit from the upper left (26 Oct, fix queue:
+    it read as flat bands of brown): a raised lip whose outer slope faces out (lit to the north-west,
+    in shade to the south-east), a bowl whose inner walls face in (the south-east wall lit, the
+    north-west wall in its own shade), a dark floor of loose earth, thrown clods and stones outside
+    it thinning into the lawn, scorch broken into the grass."""
+    from scripts.art.native import village as V
+    from scripts.art.native.palette import C, step
+    H, W = cv.shape
+    e = np.sqrt(((WX - cx) / rx) ** 2 + ((WY - cy) / ry) ** 2) + noise(1.4, 41, 0.05)
+    ang = np.arctan2((WY - cy) / ry, (WX - cx) / rx)
+    ux, uy = np.cos(ang), np.sin(ang)                           # outward
+    L = (-0.55, -0.30, 0.78)
+    # the bowl: slope steepest near the lip, flat floor in the middle
+    bowl = e < 0.8
+    sl = np.clip((e - 0.25) / 0.55, 0, 1) * 0.85
+    nx, ny, nz = -ux * sl, -uy * sl, np.sqrt(1 - sl * sl)
+    I = nx * L[0] + ny * L[1] + nz * L[2]
+    tb = np.clip(np.round(1.0 + 2.6 * I), 0, 4).astype(int)
+    fam = np.where(tb >= 3, 'earth_warm', np.where(tb <= 1, 'earth_cool', 'earth'))
+    for f in ('earth_warm', 'earth', 'earth_cool'):
+        sel = bowl & (fam == f)
+        cv[sel] = C(f, 0) + tb[sel]
+    # the lip: outer slope faces out
+    lip = (e >= 0.8) & (e < 1.12)
+    so = np.clip((e - 0.8) / 0.32, 0, 1)
+    sl2 = 0.55 * np.sin(np.pi * so)                              # up then down over the lip
+    out = np.where(so > 0.35, 1.0, -0.6)
+    nx, ny, nz = ux * sl2 * out, uy * sl2 * out, np.sqrt(1 - sl2 * sl2)
+    I = nx * L[0] + ny * L[1] + nz * L[2]
+    tl = np.clip(np.round(1.6 + 2.6 * I), 1, 5).astype(int)
+    fam = np.where(tl >= 4, 'path_warm', np.where(tl <= 1, 'earth_cool', 'earth'))
+    for f in ('path_warm', 'earth', 'earth_cool'):
+        sel = lip & (fam == f)
+        cv[sel] = C(f, 0) + np.minimum(tl[sel], 4)
+    # the thrown earth and scorch outside, broken into the lawn
+    thrown = (e >= 1.12) & (e < 1.6) & (noise(0.9, 42) > -0.2 + 0.9 * (e - 1.12) / 0.48 * 2)
+    cv[thrown] = C('earth', 2)
+    cv[thrown & (noise(0.6, 43) > 0.5)] = C('earth', 3)
+    scorch = (e >= 1.05) & (e < 1.9) & ~thrown & (noise(0.8, 44) > 0.6 + (e - 1.05))
+    cv[scorch] = step(cv[scorch], -2)
+    # stones and clods thrown out, lit at their upper left
+    for _ in range(26):
+        a_ = rng.uniform(0, 2 * math.pi)
+        rr = rng.uniform(0.9, 1.9) if rng.random() < 0.8 else rng.uniform(0.3, 0.75)
+        sx, sy = cx + math.cos(a_) * rx * rr, cy + math.sin(a_) * ry * rr
+        sw, sh = rng.uniform(1.4, 3.6), rng.uniform(1.2, 2.4)
+        V.blk(cv, V.q(sx), V.q(sy), V.q(sx) + V.q(sw), V.q(sy) + V.q(sh),
+              ('crag', 'crag_warm', 'stone', 'earth')[int(rng.integers(0, 4))], int(rng.choice([2, 3, 4])), cut=1)
+    soil_texture_hd(cv, e < 1.6, rng, drawn)
+
+
+def lawn_detail_hd(cv, keep_out, shade, foots, rng, noise):
+    """The village lawn at density 3 and up (26 Oct, fix queue: the sheet's tufts repeated as one
+    stamp, the shade fell as one-tone rugs on a calm field). Drawn in codes before the shadows,
+    which keep it: Eastward's blade texture (small V marks a tone down, staggered about 2.5 world
+    px, gathered by a slow field and twice as close in shade), soft hue patches where the field is
+    calm, tufts from the kit's tuft painter in clumps of varied size, tone and kind (never one
+    stamp), denser at the feet of walls, fences and things and thin where people walk, and small
+    flowers and clover in a few drifts."""
+    from scripts.art.native import ctx as CX
+    from scripts.art.native import ground as GR
+    from scripts.art.native import props as P4
+    from scripts.art.native.palette import C, FI, step, sib, is_fam
+    from scripts.art.native.screen import to_codes
+    D = CX.D
+    H, W = cv.shape
+    drawn = np.zeros((H, W), bool)
+    grass = (is_fam(cv, 'grass') | is_fam(cv, 'leaf')) & (cv % 8 < 6) & ~keep_out
+    lawn = ndi.binary_erosion(grass, iterations=2)
+    slow = noise(30.0, 301)
+    # soft hue patches where the field is calm
+    win = int(round(5 * D))
+    calm = lawn & (ndi.maximum_filter(cv, size=win) == ndi.minimum_filter(cv, size=win))
+    calm = ndi.binary_dilation(calm, iterations=int(round(2 * D))) & lawn
+    va = noise(7.0, 303) + 0.25 * noise(2.0, 305)
+    dn = calm & (va > 1.05 - 0.4 * np.clip(slow, 0, 1.2))
+    upm = calm & (va < -1.15 + 0.25 * np.clip(slow, 0, 1.2))
+    warm = dn & np.isin(cv // 8, [FI['grass_warm'], FI['leaf_warm']])
+    cv[warm] = sib(cv[warm], 'body')
+    cv[dn & ~warm] = sib(cv[dn & ~warm], 'cool')
+    cv[upm] = sib(cv[upm], 'warm')
+    # the blade texture
+    sp_x, sp_y = max(6, int(round(2.6 * D))), max(5, int(round(1.9 * D)))
+    dens = np.clip(0.6 + 0.35 * slow, 0.4, 0.95)
+    grid = [(gy, gx) for gy in range(0, H, sp_y) for gx in range((gy // sp_y) % 2 * (sp_x // 2), W, sp_x)]
+    grid += [(gy, gx) for gy in range(sp_y // 2, H, sp_y) for gx in range((gy // sp_y) % 2 * (sp_x // 2) + sp_x // 4, W, sp_x)
+             if shade[gy, min(W - 1, gx)]]
+    # (4-connected, so no mark is a lone texel)
+    shapes = (((0, 0), (1, 0), (1, 1), (0, 2), (1, 2)), ((0, 0), (0, 1)), ((0, 1), (1, 0), (1, 1)), ((0, 0), (1, 0), (1, 1)))
+    for (gy, gx) in grid:
+        y0, x0 = gy + int(rng.integers(-1, 2)), gx + int(rng.integers(-2, 3))
+        if not (1 <= y0 < H - 2 and 1 <= x0 < W - 3) or not lawn[y0, x0]:
+            continue
+        if rng.random() > (0.95 if (shade[y0, x0] or cv[y0, x0] % 8 >= 4) else dens[y0, x0]):
+            continue
+        for (dy, dx) in shapes[int(rng.integers(0, 4))]:
+            yy, xx = y0 + dy, x0 + dx
+            if lawn[yy, xx] and cv[yy, xx] % 8 > 0:
+                cv[yy, xx] = step(cv[yy, xx], -1)
+                drawn[yy, xx] = True
+    # tufts in clumps: round the feet of things and along the edges of paths and walls, a few
+    # drifts in the open lawn
+    edge = ndi.binary_dilation(keep_out, iterations=int(round(3 * D))) & ~ndi.binary_dilation(keep_out, iterations=int(round(1 * D)))
+    centres = []
+    for (fx, fy, kind) in foots:
+        if kind in ('building', 'shadow'):
+            continue
+        if rng.random() < 0.6:
+            centres.append((fx + rng.uniform(-6, 6), fy + rng.uniform(0, 3), int(rng.integers(1, 4))))
+    ys, xs = np.nonzero(edge & lawn)
+    for k in rng.choice(len(ys), size=min(len(ys), int(len(ys) / (180 * D * D))), replace=False) if len(ys) else []:
+        centres.append((xs[k] / D, ys[k] / D, int(rng.integers(1, 4))))
+    for cy in np.arange(0, H / D, 34.0):
+        for cx in np.arange(0, W / D, 34.0):
+            if rng.random() < 0.4 + 0.25 * float(np.clip(slow[min(H - 1, int(cy * D)), min(W - 1, int(cx * D))], -1, 1)):
+                centres.append((cx + rng.uniform(0, 34), cy + rng.uniform(0, 34), int(rng.integers(2, 5))))
+    placed = []
+    for (cx, cy, n) in centres:
+        for _ in range(n):
+            tx, ty = cx + rng.normal(0, 3.2), cy + rng.normal(0, 2.6)
+            X0, Y0 = int(tx * D), int(ty * D)
+            if not (0 <= Y0 < H and 0 <= X0 < W) or not lawn[Y0, X0]:
+                continue
+            # tufts of a clump stand apart and at different depths (no row of tips reading as a line)
+            if any(abs(tx - px_) < 4.0 and abs(ty - py_) < 2.0 for (px_, py_) in placed):
+                continue
+            placed.append((tx, ty))
+            r = rng.random()
+            if r < 0.78:
+                fam = ('grass', 'leaf', 'grass', 'grass')[int(rng.integers(0, 4))]
+                img = GR.tuft(D, int(rng.integers(0, 10 ** 6)), float(rng.uniform(0.5, 1.5)), fam=fam)
+            else:
+                kind = ('white', 'yellow', 'violet', 'white')[int(rng.integers(0, 4))]
+                img = P4.flowers4(D, int(rng.integers(0, 10 ** 6)), kind=kind, n=int(rng.integers(2, 4)))
+            dec = to_codes(img)
+            hh, ww = dec.shape
+            al = dec >= 0
+            if not al.any():
+                continue
+            bys, bxs = np.nonzero(al)
+            ox, oy = X0 - int((bxs.min() + bxs.max()) / 2), Y0 - int(bys.max())
+            for yy_, xx_ in zip(bys, bxs):
+                Y_, X_ = oy + yy_, ox + xx_
+                if 0 <= Y_ < H and 0 <= X_ < W and grass[Y_, X_]:
+                    cv[Y_, X_] = dec[yy_, xx_]
+                    drawn[Y_, X_] = True
+    return drawn
+
+
 def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
     from scripts.art.native import compose as CO
     from scripts.art.native import village as V
@@ -107,8 +290,11 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         return ndi.zoom(a, 3, order=1)[:H, :W] * amp
 
     # --- the lawn and the uplands ---------------------------------------------------------------
-    cv = sheets.grass_field_d(bw, bh, seed=plan.get('lawn_seed', 3)).astype(np.int32)
-    up = sheets.grass_field_d(bw, bh, seed=plan.get('lawn_seed', 3) + 1, base_tone=2, density=1.3).astype(np.int32)
+    hd = D >= 2.5
+    keep_marks = np.zeros((H, W), bool)             # density 3: drawn marks the lone-pixel tidy keeps
+    cv = sheets.grass_field_d(bw, bh, seed=plan.get('lawn_seed', 3), tufts=not hd).astype(np.int32)
+    up = sheets.grass_field_d(bw, bh, seed=plan.get('lawn_seed', 3) + 1, base_tone=2, density=1.3,
+                              tufts=not hd).astype(np.int32)
     art = plan.get('art', {})
     upland = np.zeros((H, W), bool)
     for r in art.get('uplands', []):
@@ -127,6 +313,8 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
             e = ((WX - cx) / rx) ** 2 + ((WY - cy) / ry) ** 2
             band = (e > (1 - wd / rx) ** 2) & (e < 1) & (noise(2.0, 51) > -0.7)
             cv[band] = np.where(noise(1.2, 52)[band] > 0.3, C('grass_warm', 3), C('path', 4))
+            if hd:
+                soil_texture_hd(cv, band, rng, keep_marks, spacing=0.55, p=1.0)
 
     # --- roads and paths, worn at their edges ------------------------------------------------------
     def polyline_dist(pts):
@@ -174,7 +362,11 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
                 fam = ('stone_warm', 'stone_warm', 'stone_warm', 'stone_cool')[int(rng.integers(0, 4))]
                 t = int(rng.choice([4, 4, 4, 4, 4, 3, 5]))
                 jx = int(rng.integers(0, 2))         # irregular joints: some setts butt tight
-                V.blk(flags, x, y, x + sw - jx, y + rh - 1, fam, t, cut=1, top=1, left=0, bot=0, right=0)
+                # density 3: some setts sit a texel lower
+                # and some butt tight on the row below, so no joint runs ruler-straight across the square
+                jy = int(rng.random() < 0.3) if hd else 0
+                jb = int(rng.random() < 0.5) if hd and not jy else 0
+                V.blk(flags, x, y + jy, x + sw - jx, y + rh - 1 + jb, fam, t, cut=1, top=1, left=0, bot=0, right=0)
                 if rng.random() < 0.06:
                     V.fill(flags, x + 2, y + 2, x + 4, y + 4, C(fam, max(2, t - 1)))   # a worn dip
                 x += sw
@@ -192,6 +384,34 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
             disc = (((WX - cx) / r1) ** 2 + ((WY - cy) / (r1 * 0.86)) ** 2) < 1.0
             cv[disc] = C('stone_warm', 3)
             rr = r0
+            if hd:
+                # density 3: setts laid in true rings (each its own tone, lit on its north-west
+                # edges, shaded on its south-east, calm joints between), on in under the well's foot
+                ex_, ey_ = (WX - cx), (WY - cy) / 0.86
+                rad_ = np.hypot(ex_, ey_)
+                th_ = np.arctan2(ey_, ex_)
+                inside = disc & (rad_ < r1 - 2.0)
+                ring_w = 2.8
+                ri = np.floor(rad_ / ring_w).astype(int)
+                nring = np.maximum(3, (2 * math.pi * (ri + 0.5) * ring_w / 4.2).astype(int))
+                off = (ri * 0.37) % 1.0
+                si = np.floor((th_ / (2 * math.pi) + 0.5) * nring + off).astype(int)
+                key = ri * 1000 + si
+                fr = rad_ / ring_w - ri
+                fa = (th_ / (2 * math.pi) + 0.5) * nring + off - si
+                joint = (fr < 0.16) | (fa * (2 * math.pi * rad_ / nring) * D < 1.0)
+                hsh = (key * 2654435761) % 997
+                tone = np.where(hsh % 5 == 0, 3, np.where(hsh % 7 == 0, 5, 4))
+                famk = np.where(hsh % 3 == 0, FI['stone'], FI['stone_warm'])
+                # lit north-west edge of each sett, shaded south-east
+                lit_e = (fr > 0.75) & (np.cos(th_ - 3.93) > 0.3) | (fa > 0.8) & (np.sin(th_) < 0)
+                dark_e = (fr < 0.32) & (np.cos(th_ - 0.785) > 0.3)
+                tone = np.clip(tone + lit_e.astype(int) - dark_e.astype(int), 2, 5)
+                codes_ = famk * 8 + tone
+                sel = inside & ~joint
+                cv[sel] = codes_[sel]
+                cv[inside & joint] = C('stone_warm', 2)
+                rr = r1          # (the rings are laid)
             while rr < r1 - 2.5:
                 n = max(8, int(2 * math.pi * rr / 4.4))
                 ph = rng.uniform(0, 1)
@@ -257,7 +477,10 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
 
     for pl in plan.get('places', []):
         x, y, w, h = pl['rect']
-        if pl['kind'] == 'crater':
+        if pl['kind'] == 'crater' and hd:
+            cx, cy, rx, ry = x + w / 2, y + h / 2, w / 2, h / 2
+            crater_hd(cv, WX, WY, cx, cy, rx, ry, rng, noise, keep_marks)
+        elif pl['kind'] == 'crater':
             cx, cy, rx, ry = x + w / 2, y + h / 2, w / 2, h / 2
             e = np.sqrt(((WX - cx) / rx) ** 2 + ((WY - cy) / ry) ** 2)
             wob = noise(1.6, 41, 0.07)
@@ -291,6 +514,8 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         cv[m & (noise(1.8, 71 + k_) > 0.1)] = C('earth_cool', 2)
         cv[m & (noise(2.2, 72 + k_) > 0.7)] = C('earth_cool', 1)
         cv[m & (e > 0.82) & (noise(1.0, 75 + k_) > 0.4)] = C('grass_cool', 2)
+        if hd:
+            soil_texture_hd(cv, m & (e <= 0.82), rng, keep_marks)
         # the old footings: a course of stones round where the walls stood, broken in places
         tmp = np.full((H, W), -1, np.int32)
         V.rubble(tmp, q(x + 4), q(y + 4), q(x + w - 4), q(y + h - 4), rng, base=3, course=(3, 3.6), length=(4, 7), moss=0.3)
@@ -338,6 +563,10 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         foot = rect_m([x, y + h, w, 2.6]) & ~cut
         cv[foot] = step(cv[foot], -1)
         foot2 = rect_m([x, y + h, w, 1.0]) & ~cut
+        if hd:      # the damp line at the foot follows the stones: broken, a texel up or down
+            foot2 = (rect_m([x, y + h - 0.34, w, 1.0]) | rect_m([x, y + h + 0.34, w, 1.0])) & ~cut & \
+                np.where(noise(1.2, 93) > 0, rect_m([x, y + h, w, 1.0]), rect_m([x, y + h + 0.34, w, 0.67])) & \
+                (noise(0.7, 91) > -0.8)
         cv[foot2] = step(cv[foot2], -1)
         for k in range(int(w / 14)):
             px = x + rng.uniform(0, w)
@@ -471,11 +700,29 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
     kx, ky = CO.SHADOW
     rim = max(2, q(2))
     def shade_masks(o):
-        m = CO.shadow_mask(o['alpha'], o['anchor'], D, W, H, o['foot'], kx, ky)
+        if hd and o['kind'] == 'oak':
+            # density 3: a crown's shade lies under the crown as the woodland's does (scalloped, sun
+            # flecks), from the trunk's foot east, not the sprite's long silhouette thrown on the lawn
+            from scripts.art.native import screen as SN
+            m = SN.tree_shadow_hd(o['foot'][0] / D, o['foot'][1] / D, tree_ex['oak'], W, H)
+        else:
+            m = CO.shadow_mask(o['alpha'], o['anchor'], D, W, H, o['foot'], kx, ky)
         contact = CO.foot_shadow(pics[o['png']], o['anchor'], W, H, o['foot'], D)
         return m, ndi.binary_erosion(m, iterations=rim), contact
 
     NOSHADE = ('glow', 'smoke', 'damage', 'debris')
+    if hd:
+        shade = np.zeros((H, W), bool)
+        foots = []
+        for o in objects:
+            if o.get('png') is None or o['kind'] in NOSHADE:
+                continue
+            m, _core, contact = shade_masks(o)
+            shade |= m | contact
+            foots.append((o['foot'][0] / D, o['foot'][1] / D, o['kind']))
+        drawn = lawn_detail_hd(cv, pathm | pave, shade, foots, rng, noise)
+    else:
+        drawn = np.zeros((H, W), bool)
     for o in objects:
         if not o.get('static') or o.get('png') is None or o['kind'] in NOSHADE:
             continue
@@ -483,7 +730,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         cv[m] = step(cv[m], -1)
         cv[core] = step(cv[core], -1)
         cv[contact] = step(cv[contact], -1)
-    lone_fix(cv, keep=(cv % 8 >= 6))
+    lone_fix(cv, keep=(cv % 8 >= 6) | drawn | keep_marks)        # (the blade marks are diagonal: they stay)
     # an object that comes and goes carries its cast and contact shadow in a picture of its own: the
     # ground under it stepped down, laid just above the ground in the same condition
     for o in list(objects):

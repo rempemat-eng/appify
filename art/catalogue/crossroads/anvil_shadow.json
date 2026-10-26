@@ -1,13 +1,13 @@
 {
  "id": "crossroads/anvil_shadow",
  "file": "game/zones/crossroads/art/anvil_shadow.png",
- "sha256": "59cecac282f3ec987c88b6cdbd01d4a99a947d494bab9ca333aa7466e49083cb",
+ "sha256": "15f756d03a8e93c8199771c6d48ac92e0f1f01287ed0be3733c5cb9b86d4d5e9",
  "kind": "anvil_shadow",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  59,
+  69,
   17
  ],
  "status": "pass",
@@ -18,7 +18,7 @@
  },
  "detail_bar": null,
  "findings": [],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",

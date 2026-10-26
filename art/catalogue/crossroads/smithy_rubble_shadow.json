@@ -1,7 +1,7 @@
 {
  "id": "crossroads/smithy_rubble_shadow",
  "file": "game/zones/crossroads/art/smithy_rubble_shadow.png",
- "sha256": "6368275589909cd5ca53f80ef4bb50e6af34ed9282aaa9b45315018aac4b83f8",
+ "sha256": "56e19c9b3d74e5003919119ac6a662f05ffbb91c41fb277e9a8ed633381b521d",
  "kind": "smithy_rubble_shadow",
  "biome": "valley",
  "H": 74.0,
@@ -18,7 +18,7 @@
  },
  "detail_bar": null,
  "findings": [],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",

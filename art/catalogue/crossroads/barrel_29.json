@@ -1,7 +1,7 @@
 {
  "id": "crossroads/barrel_29",
  "file": "game/zones/crossroads/art/barrel_29.png",
- "sha256": "141e309a75b17e2999f298867874e5066919d62c2214976a0e00b0216da5e394",
+ "sha256": "4c1b32a4d20fe50122e9bcccf0bd637439755fe7db1240d07e5c8602c9a0f704",
  "kind": "barrel",
  "biome": "valley",
  "H": 74.0,
@@ -14,13 +14,13 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 2
+  "polish": 1
  },
  "detail_bar": {
   "ours": {
    "patches": 3,
-   "tones": 21.666666666666668,
-   "shapes": 44.333333333333336
+   "tones": 25.666666666666668,
+   "shapes": 57.0
   },
   "band": {
    "tones": 27.0,
@@ -28,10 +28,10 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.802,
-  "tones_ratio": 0.802,
-  "shapes_ratio": 0.88,
-  "passed": false,
+  "ratio": 0.951,
+  "tones_ratio": 0.951,
+  "shapes_ratio": 1.132,
+  "passed": true,
   "group": "prop"
  },
  "findings": [
@@ -40,27 +40,15 @@
    "severity": "polish",
    "box": [
     8,
-    18,
+    19,
     40,
     72
    ],
-   "message": "crossroads/barrel_29: 18 world px tall (0.72 of an adult); the size guide gives 12 to 15 for a barrel (a barrel 14, waist high (scale table))",
+   "message": "crossroads/barrel_29: 18 world px tall (0.71 of an adult); the size guide gives 12 to 15 for a barrel (a barrel 14, waist high (scale table))",
    "fix": "redraw it 12 to 15 world px tall (36 to 45 texels at density 3) and stand it next to Bramble to check"
-  },
-  {
-   "detector": "detail.bar",
-   "severity": "polish",
-   "box": [
-    8,
-    18,
-    40,
-    72
-   ],
-   "message": "crossroads/barrel_29: detail bar 0.80 of Eastward's prop band (21.7 tones, 44.3 shapes a patch against 27.0, 50.36)",
-   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",

@@ -1,7 +1,7 @@
 {
  "id": "crossroads/well_shadow",
  "file": "game/zones/crossroads/art/well_shadow.png",
- "sha256": "164bdab4ee3e298976604410c112589cf74f3a9b0c8e7aac015a9a444eb2c2cb",
+ "sha256": "874b9b6af18dbf1149b997bb4ba3803c17934827c56d3420a6030f26efd5164c",
  "kind": "well_shadow",
  "biome": "valley",
  "H": 74.0,
@@ -18,7 +18,7 @@
  },
  "detail_bar": null,
  "findings": [],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",

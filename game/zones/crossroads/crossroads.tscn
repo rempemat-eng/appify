@@ -838,7 +838,7 @@ only_if = "{\"restored\":[\"forge\"]}"
 position = Vector2(1491, 900)
 texture = ExtResource("t19")
 centered = false
-offset = Vector2(-42, -74)
+offset = Vector2(-45, -77)
 
 [node name="AnvilBody" type="StaticBody2D" parent="Props/If_anvil"]
 collision_mask = 0
@@ -1145,7 +1145,7 @@ offset = Vector2(-27, -53)
 position = Vector2(1050, 1116)
 texture = ExtResource("t59")
 centered = false
-offset = Vector2(-45, -86)
+offset = Vector2(-45, -59)
 
 [node name="Barrel29" type="Sprite2D" parent="Props"]
 position = Vector2(582, 756)
@@ -1341,7 +1341,7 @@ offset = Vector2(-57, -80)
 position = Vector2(810, 1116)
 texture = ExtResource("t89")
 centered = false
-offset = Vector2(-45, -86)
+offset = Vector2(-45, -59)
 
 [node name="FlowerTub59" type="Sprite2D" parent="Props"]
 position = Vector2(1140, 600)
@@ -1393,7 +1393,7 @@ script = ExtResource("cond")
 only_if = "{\"restored\":[\"forge\"]}"
 
 [node name="AnvilShadow" type="Sprite2D" parent="Props/If_anvil_shadow"]
-position = Vector2(1473, 896)
+position = Vector2(1464, 896)
 texture = ExtResource("t95")
 centered = false
 offset = Vector2(0, 0)
@@ -1448,7 +1448,7 @@ script = ExtResource("cond")
 only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
 
 [node name="BedsScorchedShadow" type="Sprite2D" parent="Props/If_beds_scorched_shadow"]
-position = Vector2(1139, 356)
+position = Vector2(1136, 356)
 texture = ExtResource("t100")
 centered = false
 offset = Vector2(0, 0)
@@ -1459,7 +1459,7 @@ script = ExtResource("cond")
 only_if = "{\"flags\":[\"shard_home:woodland\"]}"
 
 [node name="BedsDugShadow" type="Sprite2D" parent="Props/If_beds_dug_shadow"]
-position = Vector2(1139, 356)
+position = Vector2(1136, 356)
 texture = ExtResource("t101")
 centered = false
 offset = Vector2(0, 0)
