@@ -689,3 +689,27 @@ an aimed-sheet fixture checks exact variant selection. Current-main CastSprite c
 is source-reviewed, not a claim of combined-main or rendered play testing. Production A/J
 schedules, locomotion/guard/support/airborne, powered/empty/exit forms and live-world integration
 remain unfinished. No binding is installed by default.
+
+### Optional body elevation (C60, support/airborne step)
+
+The existing Player presentation binding also supplies a pose callback. Before each
+fixed player-phase drawing/contact and after final movement/landing, the arena driver
+passes an immutable snapshot. Player lifts only its sprite node from the captured ground
+pivot: `ability_support_height` (explicit actor texels, default zero) plus canonical
+`vaultHeight * canonical_to_actor`. It never derives height from a drawing, scales frame
+anchors, moves collision shapes/ground position or moves a sibling ground shadow.
+No terrain support provider or new shadow art is installed. Canonical vault mechanics
+and their airborne damage rules are unchanged. Inactive drivers freeze the pose.
+
+Reset, detach, driver cancellation/reconfiguration and scene exit restore the captured
+body position. Rebinding first releases the old offset, so it cannot accumulate height.
+Nonfinite support or nonnumeric/negative/nonfinite vault heights fail closed before
+release/contact delivery. The optional pose callback receives an empty snapshot on
+binding release; general consumers must return true after applying a valid snapshot.
+Existing three-callback bindings remain supported. No scene attaches a driver by default.
+
+The height suite covers real Player/body/collider nodes with explicit support and vault
+fixtures, unchanged anchors/state, lifecycle cancellation, pause, landing and height-before-
+contact ordering. It is headless field evidence, not rendered gameplay, A/J production
+schedules, terrain support integration, powered/empty/exit animation or live-world combat.
+Those and the existing HP/Tam/input/cover/dodge agreements remain outstanding.

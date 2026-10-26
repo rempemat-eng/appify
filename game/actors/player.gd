@@ -65,6 +65,10 @@ var _defeat_t := 0.0
 var action_driver: AbilityActionDriver = null
 var ability_presentation_error := ""
 var _ability_drawing: Dictionary = {}
+## Explicit actor-texel support elevation; terrain integration supplies it, never inferred.
+var ability_support_height := 0.0
+var _ability_ground_body := Vector2.ZERO
+var _ability_pose_driver: AbilityActionDriver = null
 
 @onready var sprite: CastSprite = $Sprite
 @onready var hitbox: Area2D = $Hitbox
@@ -111,11 +115,32 @@ func bind_ability_presentation(provider: Callable, contact: Callable) -> bool:
 	var expected := action_driver
 	var bound := (action_driver as AbilityArenaDriver).bind_presentation(
 		_ability_contract.bind(provider, expected), _present_ability_drawing.bind(expected),
-		_ability_contact.bind(contact, expected))
+		_ability_contact.bind(contact, expected), _present_ability_pose.bind(expected))
 	if bound:
+		_ability_ground_body = sprite.position
+		_ability_pose_driver = expected
 		_ability_drawing = {}
 		ability_presentation_error = ""
 	return bound
+
+## Only the body moves above its ground pivot. Colliders, actor, anchors and any
+## sibling ground shadow stay put; no authored frame or canonical value is changed.
+func _present_ability_pose(snapshot: Dictionary, expected: AbilityActionDriver) -> bool:
+	if _ability_pose_driver != expected:
+		return false
+	if snapshot.is_empty():
+		sprite.position = _ability_ground_body
+		_ability_pose_driver = null
+		return true
+	if not _ability_actor_valid(expected):
+		return false
+	var height: Variant = snapshot.get("player", {}).get("vaultHeight")
+	if not (height is int or height is float) or not is_finite(float(height)) or height < 0 or not is_finite(ability_support_height):
+		ability_presentation_error = "invalid runner/support height"
+		_ability_drawing = {}
+		return false
+	sprite.position = _ability_ground_body + Vector2.UP * (ability_support_height + float(height) * float(AbilityCatalogue.units().canonical_to_actor))
+	return true
 
 func _ability_contract(snapshot: Dictionary, action: String, provider: Callable, expected: AbilityActionDriver) -> Dictionary:
 	if not _ability_actor_valid(expected):

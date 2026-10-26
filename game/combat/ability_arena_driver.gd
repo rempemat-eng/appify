@@ -15,10 +15,11 @@ var _mover := Callable()
 var _requested_aim := Vector2.ZERO
 var last_error := ""
 var _presentation: AbilityContactConsumer = null
+var _pose := Callable()
 
 ## Bind explicitly supplied art clocks and display callbacks to this driver only.
 ## A rejected replacement preserves the existing binding. No scene enables this.
-func bind_presentation(provider: Callable, draw: Callable, contact: Callable) -> bool:
+func bind_presentation(provider: Callable, draw: Callable, contact: Callable, pose: Callable = Callable()) -> bool:
 	if not _enabled:
 		return false
 	var candidate := AbilityContactConsumer.new()
@@ -26,6 +27,7 @@ func bind_presentation(provider: Callable, draw: Callable, contact: Callable) ->
 		return false
 	clear_presentation()
 	_presentation = candidate
+	_pose = pose
 	player_phase_observed.connect(_presentation.observe)
 	return true
 
@@ -35,6 +37,10 @@ func clear_presentation() -> void:
 	var old := _presentation
 	_presentation = null
 	old.cancel()
+	var previous_pose := _pose
+	_pose = Callable()
+	if previous_pose.is_valid():
+		previous_pose.call({}) # release the body offset on every lifecycle cancellation
 	if player_phase_observed.is_connected(old.observe):
 		player_phase_observed.disconnect(old.observe)
 
@@ -113,6 +119,8 @@ func tick(controls: Dictionary, context: Dictionary, delta: float) -> void:
 	var previous_tick := int(_state.tick)
 	_state = AbilitySimulation.step(_state, raw, delta, _resolve_position, _observe_player)
 	_mover = Callable()
+	if _enabled and _pose.is_valid():
+		_pose.call(_state.duplicate(true)) # final movement/landing height, even without a new drawing
 	if int(_state.tick) != previous_tick:
 		_clear_requests()
 
@@ -131,5 +139,8 @@ func _clear_requests() -> void:
 	_requested_aim = Vector2.ZERO
 
 func _observe_player(before: Dictionary, after: Dictionary, delta: float) -> void:
+	if _enabled and _pose.is_valid():
+		if _pose.call(after.duplicate(true)) != true:
+			return # malformed height cannot show a release/contact at a stale elevation
 	if _enabled:
 		player_phase_observed.emit(before, after, delta)
