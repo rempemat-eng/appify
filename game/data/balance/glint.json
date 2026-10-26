@@ -4,21 +4,82 @@
   "hud": "Glint only; materials show on the build, forge and stall screens",
   "sources": {
     "enemies": "enemies.json roles[].glint at level 1, x (1 + 0.08 x (enemy_level - 1))",
-    "camp_chest": { "act": { "1": 40, "2": 70, "3": 110, "4": 160 } },
-    "dungeon_chest": { "act": { "1": 80, "2": 140, "3": 220, "4": 320 } },
-    "main_quest": { "act": { "1": 150, "2": 230, "3": 320, "4": 400 } },
-    "side_quest": { "act": { "1": 60, "2": 90, "3": 130, "4": 170 } },
-    "bounty": { "act": { "1": 80, "2": 120, "3": 170, "4": 220 } },
-    "boss": { "act": { "1": 300, "2": 450, "3": 650, "4": 900 } },
-    "arena_first_clear": { "bronze": 50, "silver": 120, "gold": 250 },
+    "camp_chest": {
+      "act": {
+        "1": 40,
+        "2": 70,
+        "3": 110,
+        "4": 160
+      }
+    },
+    "dungeon_chest": {
+      "act": {
+        "1": 80,
+        "2": 140,
+        "3": 220,
+        "4": 320
+      }
+    },
+    "main_quest": {
+      "act": {
+        "1": 150,
+        "2": 230,
+        "3": 320,
+        "4": 400
+      }
+    },
+    "side_quest": {
+      "act": {
+        "1": 60,
+        "2": 90,
+        "3": 130,
+        "4": 170
+      }
+    },
+    "bounty": {
+      "act": {
+        "1": 80,
+        "2": 120,
+        "3": 170,
+        "4": 220
+      }
+    },
+    "boss": {
+      "act": {
+        "1": 300,
+        "2": 450,
+        "3": 650,
+        "4": 900
+      }
+    },
+    "arena_first_clear": {
+      "bronze": 50,
+      "silver": 120,
+      "gold": 250
+    },
     "salvage": "loot.json salvage.glint_by_rarity",
     "stall_sale": "junk at its listed price; spare materials at 4 each",
-    "sieges": { "act": { "1": 120, "2": 200, "3": 300, "4": 420 } },
-    "crops_sold": { "common": 3, "rare": 12 }
+    "sieges": {
+      "act": {
+        "1": 120,
+        "2": 200,
+        "3": 300,
+        "4": 420
+      }
+    },
+    "crops_sold": {
+      "common": 3,
+      "rare": 12
+    }
   },
   "sinks": {
     "building_tier": {
-      "act": { "1": [300, 700], "2": [800, 1800], "3": [1800, 3600], "4": [3500, 6000] }
+      "act": {
+        "1": [300, 700],
+        "2": [800, 1800],
+        "3": [1800, 3600],
+        "4": [3500, 6000]
+      }
     },
     "forge_upgrade": "40 x gear_level x rarity_factor + scrap 5 x gear_level",
     "forge_rarity_factor": {
@@ -34,15 +95,30 @@
       "cap": 300,
       "note": "rising but capped; resets when you change the affix you reforge"
     },
-    "mod": { "act": { "2": 250, "3": 450, "4": 700 } },
+    "mod": {
+      "act": {
+        "2": 250,
+        "3": 450,
+        "4": 700
+      }
+    },
     "tonic_upgrade": [200, 600, 1400],
     "meal": [10, 30],
     "seeds": [5, 40],
     "decoration": [20, 400],
-    "outfit": [100, 600],
+    "outfit": [200, 1000],
     "material_shortfall": {
       "price_vs_sale": 6,
       "note": "a fixed high price, so buying never replaces playing"
+    },
+    "weapon_tier": {
+      "see": "#279 (Hale forges tiers 2, 3, 4 for about 60, 150 and 300 Glint plus scrap and the folk's home material)"
+    },
+    "fitting_move": [10, 40],
+    "respec": {
+      "first": 0,
+      "after": 50,
+      "see": "#279"
     }
   },
   "defeat": {
@@ -55,5 +131,6 @@
     "region_income_vs_buildings": 1.3,
     "nothing_runs_on_real_time": true,
     "nothing_expires": true
-  }
+  },
+  "never_buys": ["skill points", "levels", "XP"]
 }

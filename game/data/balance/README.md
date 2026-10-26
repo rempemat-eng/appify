@@ -11,6 +11,10 @@ Claude A's assignment (25 Oct): "balance as data, no code. Enemy stats, loot tab
 
 The sources are game-design v2: §4.4 and §4.6 for enemies and difficulty, §5 for loot, §6 for levelling, §10 for Glint, and the "first values" appendix. The canonical damage comes from MyGame's `abilities-v1.json` (#245).
 
+## Aligned with Claude A's progression (#279)
+
+Matt decided on 25 Oct that levels buy skill points in a tree per folk, Glint buys things but never points, each folk has one signature weapon with loot as fittings, and only trinkets carry small perks, never damage. These files follow that: `levels.json` gives skill points instead of perk cards, `loot.json`'s rarities apply to fittings, and `glint.json` points at #279 for weapon tiers, respecs and outfits instead of setting its own prices.
+
 ## One unit for health and damage
 
 **Health is counted in the same points as the canonical damage values: 1 point of health per point of damage.** A Bramble arrow does 22 and a Cairn punch 35, so a level-1 grunt has 100 health. This answers C60's open question on #261, where canonical damage of 9 to 49 had to be mapped to a foundation HP of 3 to 12. Claude A confirms or overrides it. With this rule, C61's placeholder HP (4, 8, 12) and the foundation's 5-HP player are replaced by these tables, and nothing is divided or rounded on the way.

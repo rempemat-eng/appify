@@ -6,7 +6,6 @@
     "health_formula": "100 + 12 x (level - 1)",
     "xp_to_next_formula": "100 x level^1.5",
     "xp_to_30_total": 189030,
-    "perk_points_per_level": 1,
     "xp_sources_share": {
       "main_quests": 0.55,
       "side_quests_and_bounties": 0.2,
@@ -18,14 +17,21 @@
       "floor": 0.1,
       "note": "an enemy 3 levels below pays 55 %, 6 or more below pays 10 %, so the story leads"
     },
-    "main_quest_xp_share_of_level": 0.4
+    "main_quest_xp_share_of_level": 0.4,
+    "skill_points": {
+      "per_level_from_2": 1,
+      "total_at_30": 29,
+      "tree_cost": 33,
+      "source": "Claude A's progression (#279): levels buy skills, Glint never does"
+    }
   },
   "gear": {
     "weapon_power_formula": "base(family, kind) x 1.09^(gear_level - 1)",
     "drop_gear_level": "region_level to region_level + 2",
     "level_gap_formula": "clamp(1 + 0.06 x (gear_level - enemy_level), 0.7, 1.3)",
     "crit_multiplier": 1.75,
-    "note": "rarity adds affixes, not base power, so a Common at your level stays useful"
+    "note": "rarity adds affixes to fittings, not base power",
+    "signature_weapon": "one per folk; loot is fittings set into it (#279). Gear level sets its power; its tiers (levels 1, 8, 16, 24) change looks, sockets and one handling detail, never damage"
   },
   "familiar_bond": {
     "max_level": 10,
@@ -37,16 +43,60 @@
     "new_familiar_starts_at": "best bond level - 2, earning bond x2 until caught up"
   },
   "regions": [
-    { "id": "valley", "act": 1, "levels": [1, 3] },
-    { "id": "frostline", "act": 1, "levels": [3, 5] },
-    { "id": "brackens", "act": 1, "levels": [4, 6] },
-    { "id": "cogsworth", "act": 2, "levels": [7, 9] },
-    { "id": "lull", "act": 2, "levels": [9, 11] },
-    { "id": "isles", "act": 2, "levels": [10, 12] },
-    { "id": "sunstone", "act": 3, "levels": [13, 15] },
-    { "id": "fire", "act": 3, "levels": [16, 18] },
-    { "id": "neon", "act": 3, "levels": [19, 22] },
-    { "id": "halcyon", "act": 4, "levels": [23, 26] },
-    { "id": "lumen", "act": 4, "levels": [27, 30] }
+    {
+      "id": "valley",
+      "act": 1,
+      "levels": [1, 3]
+    },
+    {
+      "id": "frostline",
+      "act": 1,
+      "levels": [3, 5]
+    },
+    {
+      "id": "brackens",
+      "act": 1,
+      "levels": [4, 6]
+    },
+    {
+      "id": "cogsworth",
+      "act": 2,
+      "levels": [7, 9]
+    },
+    {
+      "id": "lull",
+      "act": 2,
+      "levels": [9, 11]
+    },
+    {
+      "id": "isles",
+      "act": 2,
+      "levels": [10, 12]
+    },
+    {
+      "id": "sunstone",
+      "act": 3,
+      "levels": [13, 15]
+    },
+    {
+      "id": "fire",
+      "act": 3,
+      "levels": [16, 18]
+    },
+    {
+      "id": "neon",
+      "act": 3,
+      "levels": [19, 22]
+    },
+    {
+      "id": "halcyon",
+      "act": 4,
+      "levels": [23, 26]
+    },
+    {
+      "id": "lumen",
+      "act": 4,
+      "levels": [27, 30]
+    }
   ]
 }
