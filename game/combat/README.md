@@ -623,3 +623,26 @@ release that already ran in canonical action order. Contact-drawing dispatch, wo
 mapping, support/airborne drawing, powered/empty/exit art, dodge mapping and real C61/world
 attachment remain unfinished and retain their existing owner decisions. Do not use this
 as a default live-world driver before those contracts and rendered coverage are complete.
+
+## Ordered contact consumer checkpoint
+
+`AbilityArenaDriver.player_phase_observed(before, after, dt)` now emits every canonical
+player phase, before movement/projectile/field phases. Snapshots are deep copies, so observers
+cannot change simulation state. The optional fifth `AbilitySimulation.step` argument supplies
+that observation seam without changing the original reducer ordering or running another clock.
+
+`AbilityContactConsumer` can connect its `observe` method to this signal. Its provider receives
+an independent state and action and must return explicit `manifest`, `clip`, `facing`, `durations`
+and optional `aim`. Both total duration and the release drawing's onset must match the canonical
+committed clock within numeric tolerance; mismatches fail closed rather than retiming art.
+Draw callbacks precede contact callbacks, including coarse advances and a previous action ending
+on the same tick as a new commitment. Anchors remain authored source texels; callbacks never apply
+canonical damage, consume resources or spawn another projectile. Cancellation/guard/death/identity
+changes discard stale contacts, and reentrant cancellation cannot resume the remaining event list.
+The caller must cancel the consumer on actor detach/reset/driver replacement. Inactive drivers
+emit no player phase, freezing presentation time. This does not add live scene attachment.
+
+The tests use explicit synthetic approved-clock contracts, not a claim that A/J's production
+schedules or CastSprite bindings have been integrated. Next: lifecycle/actor presentation binding,
+support/airborne and powered/empty/exit forms, then owner-agreed C61/world HP/cover/input/dodge
+integration. No CastSprite, art, enemy, world, save, package or progression change in this step.

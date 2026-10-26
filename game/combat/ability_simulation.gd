@@ -6,7 +6,7 @@ extends RefCounted
 const DT := 1.0 / 60.0
 const EPS := 1.0e-8
 
-static func step(source: Dictionary, raw_input: Dictionary, delta: float, resolve_position: Callable = Callable()) -> Dictionary:
+static func step(source: Dictionary, raw_input: Dictionary, delta: float, resolve_position: Callable = Callable(), observe_player: Callable = Callable()) -> Dictionary:
 	if raw_input.get("active") is bool and raw_input.active == false:
 		return source
 	var elapsed := clampf(delta, 0.0, 0.1) if is_finite(delta) else 0.0
@@ -21,7 +21,7 @@ static func step(source: Dictionary, raw_input: Dictionary, delta: float, resolv
 	while state.accumulator + EPS >= DT:
 		state.accumulator = maxf(0.0, state.accumulator - DT)
 		if state.status == "playing":
-			state = _playing_tick(state, input, resolve_position)
+			state = _playing_tick(state, input, resolve_position, observe_player)
 		else:
 			state.time += DT
 			state.tick += 1
@@ -54,10 +54,14 @@ static func _truthy(value: Variant) -> bool:
 		return not value.is_empty()
 	return true
 
-static func _playing_tick(source: Dictionary, input: Dictionary, resolve_position: Callable = Callable()) -> Dictionary:
+static func _playing_tick(source: Dictionary, input: Dictionary, resolve_position: Callable = Callable(), observe_player: Callable = Callable()) -> Dictionary:
 	# These reducers already own release/resource/launch mutations. Do not also tick
 	# AbilityClock/AbilityResources/AbilityRunner or replay projectile planning here.
 	var state := AbilityPlayerPhase.tick(source, input)
+	# Presentation observes every fixed step, including a release and next commit in one tick.
+	# Deep copies prevent a callback from changing canonical simulation state.
+	if observe_player.is_valid():
+		observe_player.call(source.duplicate(true), state.duplicate(true), DT)
 	# Some committed secondary releases displace the player before ordinary walking.
 	# Resolve that displacement first, so a blocked dash is not counted backwards
 	# as walk distance and subsequent movement/effects start at the actual body.

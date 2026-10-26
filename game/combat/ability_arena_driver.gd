@@ -4,6 +4,8 @@ extends AbilityActionDriver
 ## Godot projectiles: canonical snapshots own those effects exactly once.
 ## Not installed by default. Contact/art and C61 live-world adapters remain separate.
 
+signal player_phase_observed(before: Dictionary, after: Dictionary, delta: float)
+
 var _state: Dictionary = {}
 var _origin := Vector2.ZERO
 var _scale := 0.0
@@ -84,7 +86,7 @@ func tick(controls: Dictionary, context: Dictionary, delta: float) -> void:
 		"special": bool(controls.get("special", false)) or _requests.special,
 		"block": bool(controls.get("guard", false))}
 	var previous_tick := int(_state.tick)
-	_state = AbilitySimulation.step(_state, raw, delta, _resolve_position)
+	_state = AbilitySimulation.step(_state, raw, delta, _resolve_position, _observe_player)
 	_mover = Callable()
 	if int(_state.tick) != previous_tick:
 		_clear_requests()
@@ -100,3 +102,6 @@ func _resolve_position(x: float, y: float) -> Dictionary:
 func _clear_requests() -> void:
 	_requests = {"primary": false, "secondary": false, "special": false}
 	_requested_aim = Vector2.ZERO
+
+func _observe_player(before: Dictionary, after: Dictionary, delta: float) -> void:
+	player_phase_observed.emit(before, after, delta)
