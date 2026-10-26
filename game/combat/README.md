@@ -561,3 +561,34 @@ Eleven tests cover exact/coarse ordered contact, variable canonical schedules in
 of template clocks, aim/facing selection, invalid inputs, cancellation/token replay, inactive
 time, release zero and independent snapshots. Player input/hook and real world/C61 HP mapping
 remain unfinished; full npm/hosted/rendered/native/device checks are still pending. Keep DRAFT.
+
+## Player action-driver boundary (optional, not a live combat attachment)
+
+`Player.attach_action_driver(AbilityActionDriver)` is the narrow actor hook authorised by
+Claude A in6402597915. No driver is attached by default. A concrete driver implements
+`tick(controls, context, delta)`, `request(action, direction)`, `cancel(reason)`, `is_busy()`
+and `character_changed(id)`. It owns action clocks, powered state, presentation and combat
+commands. The protocol itself is not a canonical runner or a world-health adapter.
+
+While attached, Player reads held attack/ranged/special, optional existing guard input and
+the dodge edge, keeps facing and performs exactly one collision-aware movement, then calls
+the driver once with its actual post-collision actor position/velocity. Existing mercy/hurt
+timers stay with Player. Legacy roll/recharge/swing/action animation clocks are bypassed;
+direct start_shot/start_swing/start_roll forward a request, and legacy swing hits/Arrow
+release callbacks do nothing. The driver must not run canonical AbilityMovement as a second
+movement pass for this body, or replay canonical releases through AbilityRunner/resources.
+
+Disabled input, dialogue and defeat provide neutral controls with active=false and zero
+movement. The driver must freeze combat time and clear held controls in that case; invalid
+frame deltas never reach it. Reset, defeat and detach cancel explicitly. Attachment rejects
+null, duplicate, defeated or already acting players. Character selection refuses zero HP,
+legacy actions and a busy driver, while preserving HP/position on an idle switch. Detach
+restores the legacy path, without reviving a defeated player. No guard key is invented.
+
+Eight actor tests cover forwarding and legacy suppression, held and inactive inputs,
+post-movement position/one move, cancellation, guarded switching, invalid time and detach.
+This is the tested hook and protocol, not a production canonical driver: the concrete
+contact/presentation consumer, movement modifiers for canonical actions, damage/health
+mapping, powered/empty/exit presentation and C61/world attachment still need implementation
+and the existing A/J decisions. Full verify/art-repro/hosted/rendered/device checks remain
+pending; keep the PR draft. No scene or world automatically enables this hook.

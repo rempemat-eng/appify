@@ -62,6 +62,7 @@ var walk_speed := RUN_SPEED          ## replaced by the manifest's walk_speed in
 var character := CHARACTER
 var _shot_dir := Vector2.RIGHT
 var _defeat_t := 0.0
+var action_driver: AbilityActionDriver = null
 
 @onready var sprite: CastSprite = $Sprite
 @onready var hitbox: Area2D = $Hitbox
@@ -74,15 +75,44 @@ func _ready() -> void:
 
 ## Swaps the body to another cast member (keeps position, HP and facing). False if unknown.
 func set_character(id: String) -> bool:
+	if hp <= 0 or is_rolling() or is_swinging() or is_shooting() or (action_driver != null and action_driver.is_busy()):
+		return false
 	if not sprite.load_character(id):
 		return false
 	character = id
+	if action_driver != null:
+		action_driver.character_changed(id)
 	walk_speed = sprite.walk_speed() if sprite.walk_speed() > 0.0 else RUN_SPEED
 	state = &"idle"
 	sprite.play_clip("idle", facing, true)
 	return true
 
+## Optional C60 boundary. No driver is installed by default. Player retains input,
+## facing, collision and movement; the driver owns action clocks and combat effects.
+func attach_action_driver(driver: AbilityActionDriver) -> bool:
+	if driver == null or action_driver != null or hp <= 0 or is_rolling() or is_swinging() or is_shooting():
+		return false
+	action_driver = driver
+	action_driver.character_changed(character)
+	return true
+
+func detach_action_driver() -> void:
+	if action_driver == null:
+		return
+	var old := action_driver
+	action_driver = null
+	old.cancel("detached")
+	velocity = Vector2.ZERO
+	_set_state(&"idle" if hp > 0 else &"defeat")
+
+func _driver_request(action: String, direction: Vector2 = Vector2.ZERO) -> bool:
+	if hp <= 0 or is_defeated():
+		return false
+	return action_driver.request(action, direction if direction.length() > 0.1 else aim)
+
 func reset_motion() -> void:
+	if action_driver != null:
+		action_driver.cancel("reset_motion")
 	velocity = Vector2.ZERO
 	_roll_t = 0.0
 	_swing_t = 0.0
@@ -108,6 +138,8 @@ func is_defeated() -> bool:
 ## The bow shot (Bramble's primary) at the aim: the body turns to the aim's facing, draws and
 ## looses; the arrow is spawned on the release frame (see _animate).
 func start_shot() -> bool:
+	if action_driver != null:
+		return _driver_request("primary")
 	if is_rolling() or is_shooting() or is_defeated() or not sprite.has_clip("primary"):
 		return false
 	_shot_dir = aim.normalized() if aim.length() > 0.1 else CastSprite.facing_vector(facing)
@@ -118,6 +150,8 @@ func start_shot() -> bool:
 
 ## Rolls toward `dir` (or the aim when standing). Spends a charge; false when none is left.
 func start_roll(dir: Vector2) -> bool:
+	if action_driver != null:
+		return _driver_request("dodge", dir)
 	if roll_charges <= 0 or is_rolling() or is_defeated():
 		return false
 	roll_charges -= 1
@@ -134,6 +168,8 @@ func start_roll(dir: Vector2) -> bool:
 
 ## Swings at the aim; chains into the combo when pressed soon after the last swing.
 func start_swing() -> bool:
+	if action_driver != null:
+		return _driver_request("primary")
 	if is_rolling() or is_swinging():
 		return false
 	combo = combo + 1 if (_since_swing < COMBO_WINDOW and combo < 3) else 1
@@ -155,6 +191,8 @@ func take_damage(amount: int, from_dir: Vector2 = Vector2.ZERO) -> bool:
 	velocity = from_dir * 60.0 * DENSITY
 	hurt.emit(amount)
 	if hp == 0:
+		if action_driver != null:
+			action_driver.cancel("defeated")
 		_set_state(&"defeat")       # downed is emitted once the fall has played (_animate)
 		_defeat_t = 0.0
 	elif not is_rolling():
@@ -165,6 +203,11 @@ func heal_full() -> void:
 	hp = max_hp
 
 func _physics_process(delta: float) -> void:
+	if not is_finite(delta) or delta <= 0.0:
+		return
+	if action_driver != null:
+		_driver_physics(delta)
+		return
 	_roll_t = maxf(_roll_t - delta, 0.0)
 	_iframe_t = maxf(_iframe_t - delta, 0.0)
 	_hurt_t = maxf(_hurt_t - delta, 0.0)
@@ -207,6 +250,34 @@ func _physics_process(delta: float) -> void:
 	_animate(move, delta)
 	queue_redraw()
 
+## One synchronous tick after Player's one collision-aware movement. The runner must
+## not also run AbilityMovement or replay legacy Arrow/swing callbacks for this body.
+func _driver_physics(delta: float) -> void:
+	var active := input_enabled and not Dialogue.busy and hp > 0 and not is_defeated()
+	var move := Vector2.ZERO
+	if active:
+		move = Input.get_vector("move_left", "move_right", "move_up", "move_down")
+		_update_aim()
+		facing = CastSprite.facing_for(move if move.length() > 0.1 else aim, facing)
+		if Input.is_action_just_pressed("interact") and focus != null and is_instance_valid(focus):
+			focus.interact()
+	# Existing mercy/hurt timers stay with Player; legacy roll/recharge/swing clocks do not tick.
+	_iframe_t = maxf(_iframe_t - delta, 0.0)
+	_hurt_t = maxf(_hurt_t - delta, 0.0)
+	velocity = move * walk_speed if _hurt_t <= 0.0 else velocity.move_toward(Vector2.ZERO, 900.0 * delta)
+	if not active:
+		velocity = Vector2.ZERO
+	move_and_slide()
+	var controls := {"active": active, "move": move, "aim": aim,
+		"primary": active and Input.is_action_pressed("attack"),
+		"secondary": active and Input.is_action_pressed("ranged"),
+		"special": active and Input.is_action_pressed("special"),
+		"guard": active and InputMap.has_action("guard") and Input.is_action_pressed("guard"),
+		"dodge": active and Input.is_action_just_pressed("dodge")}
+	action_driver.tick(controls, {"position": global_position, "velocity": velocity,
+		"facing": facing, "character": character}, delta)
+	queue_redraw()
+
 func _update_aim() -> void:
 	var stick := Inputs.stick_aim()
 	if stick != Vector2.ZERO:
@@ -222,6 +293,8 @@ func _input(event: InputEvent) -> void:
 		use_mouse_aim = true
 
 func _resolve_swing() -> void:
+	if action_driver != null:
+		return
 	var heavy := combo >= 3
 	for body in hitbox.get_overlapping_bodies():
 		if body.is_in_group("enemy") and not _swing_hits.has(body) and body.has_method("take_hit"):
@@ -288,6 +361,8 @@ func _advance_action(delta: float) -> void:
 
 ## The arrow leaves the bow where the drawing's arrow tip is, on the release drawing.
 func _release(frame: int) -> void:
+	if action_driver != null:
+		return
 	if character != "bramble":      # the others' projectiles and effects come with the ability runner
 		shot_released.emit(null, frame)
 		return
