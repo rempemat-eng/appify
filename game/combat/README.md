@@ -127,3 +127,29 @@ GdUnit compares complete launch records, plus real Runner partial-fan/form-expir
 Remaining: finite projectile advancement, swept collision/terrain, impact/status/field/stateful
 handlers, contact presentation and Player hook. These launch records are not an implemented world
 combat system; do not attach them as raw HP hits pending Claude A's mapping decision. Keep DRAFT.
+
+## Finite projectile flight checkpoint
+
+`AbilityFlight.tick` advances one **player** projectile by the original fixed 1/60 second step
+in canonical planar coordinates. It preserves clipped final motion, age/remaining, inclusive
+arena bounds, swept target overlap, stable original centre-distance contact order, piercing
+and previous-hit snapshots, splash placement on a contacted target, and seal-before-target
+water amplification (including ties). It returns independent shot snapshots and ordered impact
+commands; it does not mutate targets/seals, apply damage/status, consume resources or attach
+anything to Player. Discard a shot when `alive` is false. Enemy projectiles are deliberately
+rejected until their guard/decoy path is ported.
+
+The 189 free-flight cases and 14 contact cases in `test/combat/flight*-oracle.json` are sampled
+from original hash-checked F, with test-only impact tracing in T. Reproduce with:
+`node game/test/combat/build_flight_oracle.mjs /path/to/original-modules.json`.
+Tests also cover swept tunnelling, dead/previous targets, hit history before insertion,
+short final steps, single expiry blasts, inclusive bounds and zero-length sweeps.
+
+Next: implement original T/B/Y/G impact/status/field handlers and remaining stateful kit rules,
+then wire a once-per-release dispatcher and the granted Player hook. The dispatcher must apply
+ordered impacts synchronously and refresh alive targets between projectile ticks. This primitive
+uses caller-provided target snapshots; it is not the full multi-projectile/world loop. Canonical
+F contains arena bounds, not world terrain: the later Godot bridge must add terrain collision
+against actual APIs without inventing a new reference rule. No terrain collision is claimed here.
+Health application remains gated on A's mapping decision, and presentation remains A/J-owned.
+Full verify/art-repro/hosted CI and rendered/device checks remain pending. Keep DRAFT.
