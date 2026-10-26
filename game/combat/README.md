@@ -215,3 +215,37 @@ adapter, fixed-step once-per-token dispatcher and granted Player hook. World HP 
 Tam duplicate-defeat edge still await A/canonical-owner decisions at the existing PR checkpoint;
 no mapping or correction is inferred here. This is not integrated gameplay. Keep DRAFT; full
 verify/art/hosted CI/rendered/device checks remain unfinished.
+
+## Turret phase checkpoint
+
+`AbilityTurrets.tick` ports the original fixed1/60 N phase on canonical snapshots. Rook's
+surviving turrets follow the player in array order, aim only at the designated living target
+strictly within190 canonical units of the player, and fire only after the cooldown and
+strict55-unit post-interpolation leash tests. No autonomous target acquisition is added.
+Each shot captures canonical turret-pulse data, ordered serial IDs and finite flight duration.
+As in the reference, an expiring turret may fire on its final tick before removal. Wrong
+character, inactive form or dead player clears turrets without launching a shot.
+
+The caller owns active/playing gates, form/designation expiry and original phase order.
+Invoke this phase after projectiles and fields: newly launched pulses remain age0 until the
+next projectile phase. This method never advances player/time/effect clocks or dispatches
+world HP damage. It deep-copies input and deliberately does not inspect designationRemaining:
+the player phase clears designation before this phase, as in the original. Formation uses
+survivor array index rather than remembered left/right identity, including a lone survivor.
+
+`turret-oracle.json` compares126 whole-state snapshots from hash-verified, unmodified original N.
+Reproduce with `node game/test/combat/build_turret_oracle.mjs /path/to/original-modules.json`.
+Coverage includes missing/dead/invalid designations, strict range/leash boundaries, final ticks,
+coincident-aim fallback, wrong/dead/expired owners, survivor ordering and repeated phases.
+Colour alone is omitted for presentation, consistent with the other snapshot reducers.
+Next: stateful action/melee/guard/decoy releases, Flight snapshot adapter, once-per-token dispatcher,
+contact bridge and the granted Player hook. Health mapping/Tam edge remain A-owned decisions.
+Full verify/art/hosted/rendered/device validation remains pending; keep DRAFT.
+
+Turret oracle numbers use little-endian IEEE-754 binary encoding for non-integer values.
+Godot4.7.2's JSON/literal decimal conversion rounds the17-digit remaining lifetime
+0.016666676666666668 down enough that subtracting1/60 falls below1e-8, whereas the
+original JS double stays just above it. A direct binary-decode regression preserves the
+original side of this strict expiry boundary; no gameplay epsilon or test tolerance was
+widened. Formation interpolation uses7/60, the exact double of the reference coefficient,
+instead of a long decimal literal subject to the same parser rounding.
