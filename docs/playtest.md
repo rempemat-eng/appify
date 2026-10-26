@@ -39,3 +39,7 @@ If the Playwright browser is missing, point it at an installed Chromium with `PL
 - links to every screenshot (`artifacts/playtest/images/<screen>/<flow>-<step>.png`).
 
 Look at the screenshots, not just the table: the harness proves the flows run and the interface keeps its size, not that a screen looks right.
+
+## The Godot game's landscape screens
+
+`GODOT=<Godot 4.7.2> python3 scripts/playtest/godot_screens.py` runs the Godot game at 1920x1080, 1280x720 and 4K, and at three phones turned to landscape (874x402@3, 667x375@2 and 915x412@2.625, in device px). It saves a screenshot of each and writes `artifacts/godot-screens/REPORT.md`, with the scale `main/pixel_screen.gd` picks in fill and whole modes, the black bars and the HUD's share of the picture. It needs a display; Xvfb works. This is a desktop window, not a phone: no safe areas, touch or GPU.
