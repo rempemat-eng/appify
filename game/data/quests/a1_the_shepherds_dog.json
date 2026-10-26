@@ -1,0 +1,33 @@
+{
+  "id": "a1_the_shepherds_dog",
+  "title": "The shepherd's dog",
+  "kind": "side",
+  "region": "brackens",
+  "summary": "The shepherd's dog has gone wild and ranges up and down the Drover's Road.",
+  "start": {
+    "on": "talk:shepherd"
+  },
+  "steps": [
+    {
+      "id": "dog",
+      "text": "Calm the shepherd's dog on the Drover's Road",
+      "on": "camp:stray_dog",
+      "done_if": {
+        "flags": [
+          "camp_cleared:stray_dog"
+        ]
+      }
+    },
+    {
+      "id": "home",
+      "text": "Bring the news to the shepherd",
+      "on": "talk:shepherd"
+    }
+  ],
+  "rewards": {
+    "glint": 20,
+    "flags": [
+      "dog_home"
+    ]
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "id": "a1_the_torn_roof",
+  "title": "The torn roof",
+  "kind": "village",
+  "region": "valley",
+  "summary": "Morel's herbalist's lost half its roof in the storm. With it open again, he could brew tonics for the road.",
+  "start": {
+    "on": "talk:morel",
+    "if": {
+      "done": [
+        "home_again"
+      ]
+    }
+  },
+  "steps": [
+    {
+      "id": "roof",
+      "text": "Restore Morel's herbalist's as the apothecary",
+      "on": "restore:apothecary",
+      "done_if": {
+        "restored": [
+          "apothecary"
+        ]
+      }
+    },
+    {
+      "id": "morel",
+      "text": "Talk to Morel in his apothecary",
+      "on": "talk:morel"
+    }
+  ],
+  "rewards": {
+    "glint": 0,
+    "flags": [
+      "folk:morel",
+      "apothecary_open"
+    ]
+  }
+}
