@@ -261,8 +261,7 @@ Its fixed-step `tick` rebuilds target/seal snapshots before each projectile, app
 water-shaped effects and impact commands synchronously, and then keeps only surviving shots.
 This avoids stale targets after an earlier kill or reagent reaction. Contact history is
 inserted after each impact as in F, preserving powered arrow root transfer. The original
-per-shot contact list/order remains unchanged. It clears all shots on initial defeat and
-refuses mixed/enemy input (including in release builds) pending the guard/decoy path.
+per-shot contact list/order remains unchanged. It clears all shots on initial defeat; enemy shots now use the canonical defence/decoy path below.
 
 The phase advances no world time, player/form/status/field/turret/effect clocks, owns no
 active/playing gate and does not settle a wave. It is not attached to Player or Godot actor
@@ -285,6 +284,29 @@ No gameplay epsilon or test tolerance was widened. The original failures are now
 incorrectly assumed all primary releases produced a projectile; melee kits are now covered
 as empty launches, without inventing a projectile for them.
 
-Next: stateful action/melee/guard/decoy releases, full fixed-step dispatcher/contact bridge
+Next: stateful action/melee releases, full fixed-step dispatcher/contact bridge
 and granted Player hook. World HP and Tam duplicate-defeat remain A/canonical-owner decisions.
 Keep DRAFT; full npm verify/art/hosted/rendered/device validation remains pending.
+
+
+## Canonical defence and enemy projectiles
+
+`AbilityDefence.damage` ports original P, guard break and defeat-interrupted power cleanup
+on snapshots, without converting damage to Godot HP. Frontal guard uses the original dot
+threshold and guard cost; full absorption preserves queued actions. Exhausted guard breaks
+before any residual hit, which can replace the break animation. Powered Velvet primes a
+counter only on absorption. Airborne Rook avoids melee/field hits, not projectiles. Death
+clears projectiles/fields/turrets and interrupts power without Ashe's expiry finisher.
+
+`AbilityProjectilePhase.tick` accepts mixed player/enemy shots in array order. Enemy swept
+collisions break all live intersecting echo/hologram fields but do not absorb the bolt;
+the same bolt can still hit the player. Guard uses the shot's previous position, exactly
+as original F. A lethal hit clears earlier survivors and stops later shots. Scalar doubles
+preserve contact/bounds thresholds. No player, field or global clocks advance here.
+
+`defence-oracle.json` has 460 whole-state comparisons from hash-verified unmodified P/F
+and their real helpers. Includes all fourteen kits, guard depletion/overflow, front/rear
+and threshold hits, airborne cases, defeat/power cleanup, capped event history, mixed-shot
+ordering, decoys and strict contact/expiry bounds. Regenerate using
+`node game/test/combat/build_defence_oracle.mjs /path/to/original-modules.json`.
+This remains pure canonical simulation; Godot Player/health/contact attachment is unfinished.
