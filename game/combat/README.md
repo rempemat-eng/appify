@@ -249,3 +249,42 @@ original JS double stays just above it. A direct binary-decode regression preser
 original side of this strict expiry boundary; no gameplay epsilon or test tolerance was
 widened. Formation interpolation uses7/60, the exact double of the reference coefficient,
 instead of a long decimal literal subject to the same parser rounding.
+
+## Ordered player-projectile phase checkpoint
+
+`AbilityProjectilePhase` supplies the explicit camelCase/x-y ↔ snake_case/scalar-point adapter
+between the canonical snapshot reducers and `AbilityFlight`. Unknown shot fields and hit
+history are deep-copied and preserved. Spatial conversion here stays in canonical units;
+actor scaling and source-texel anchors remain future world/presentation boundaries.
+
+Its fixed-step `tick` rebuilds target/seal snapshots before each projectile, applies ordered
+water-shaped effects and impact commands synchronously, and then keeps only surviving shots.
+This avoids stale targets after an earlier kill or reagent reaction. Contact history is
+inserted after each impact as in F, preserving powered arrow root transfer. The original
+per-shot contact list/order remains unchanged. It clears all shots on initial defeat and
+refuses mixed/enemy input (including in release builds) pending the guard/decoy path.
+
+The phase advances no world time, player/form/status/field/turret/effect clocks, owns no
+active/playing gate and does not settle a wave. It is not attached to Player or Godot actor
+health. Call it once per1/60 step in the documented phase order; never replay its impacts.
+New turret shots are created later in the step and move next time.
+
+`projectile-phase-oracle.json` has189 whole-state comparisons against original unmodified F
+and real T/B/Y/G after hash verification. Reproduce with
+`node game/test/combat/build_projectile_phase_oracle.mjs /path/to/original-modules.json`.
+It covers canonical launch families (including melee/no-shot releases), repeated phases,
+consecutive kills, root transfer, seal amplification, reagent reactions, expiry/outside
+blasts and defeat cleanup. Exact IEEE754 fixture doubles avoid decimal-parser boundary
+changes. All numeric comparisons use1e-6 and discrete outcomes remain exact.
+Seven near-boundary cases exposed a real Vector2 float32 rounding error: x320.000001
+survived inside the arena and a gap10.000001 incorrectly hit a target. `AbilityFlight`
+now shares one scalar-double core: the phase calls `tick_scalar` with x/y dictionaries;
+legacy `tick` converts Vector2 inputs/outputs only at its compatibility boundary. Sweeps,
+entry tests, contact ordering, movement and inclusive bounds retain double precision.
+No gameplay epsilon or test tolerance was widened. The original failures are now regressions. The first fixture builder
+incorrectly assumed all primary releases produced a projectile; melee kits are now covered
+as empty launches, without inventing a projectile for them.
+
+Next: stateful action/melee/guard/decoy releases, full fixed-step dispatcher/contact bridge
+and granted Player hook. World HP and Tam duplicate-defeat remain A/canonical-owner decisions.
+Keep DRAFT; full npm verify/art/hosted/rendered/device validation remains pending.
