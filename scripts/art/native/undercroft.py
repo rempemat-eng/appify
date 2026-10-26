@@ -306,7 +306,7 @@ def floor_codes(level, off, mat, var, cool, warm=None):
     dirt = mat == 1                                   # earth packed in a joint, a rung under the stone
     out[dirt] = _FI['earth_cool'] * 8 + np.clip(lv[dirt] - 1, 1, 3)
     drift = mat == 3                                  # grey grit drifted over the flags, a step under them
-    out[drift] = _FI['ash'] * 8 + np.clip(lv[drift] - 1, 1, 3)
+    out[drift] = _FI['ash'] * 8 + np.clip(lv[drift] - 1 + (lv[drift] >= 4), 1, 4)   # in a pool the grit is lit too
     moss = mat == 2
     out[moss] = _FI['leaf_cool'] * 8 + np.clip(lv[moss] - 1, 0, 3)
     out[(raw < 0) & ~moss] = _FI['void'] * 8 + 1
@@ -1206,7 +1206,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
     # its outer edge drops into the dark in a shadowed lip: the coping's thickness, a form shadow
     lip = band & ~far & ~jnt & (dist > q(3.2) + (seg % 2) - 2)
     cv[lip] = fam_b[lip] * 8 + 0
-    weather(cv, band & ~far & ~jnt, rng, 0.7, moss=False, lichen=False)
+    weather(cv, band & ~far & ~jnt, rng, 1.3, moss=False, lichen=True)     # worn coping: pits, chips, lichen
     cv[jnt & (dist > 2) & ~far] = code('void', 1)
     # the south wall's outer face below its coping: the wall's thickness, seen as Eastward cuts it away
     souter = cap & (WY >= by + bh - 9)
@@ -1455,18 +1455,26 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
             e = ((XX - fx - q(2)) / (w / 2 + q(3))) ** 2 + ((YY - fy + q(1)) / q(4)) ** 2
             sel = (e < 1) & floor
             fshade[sel] += 1.2 * (1 - e[sel]) ** 0.5
-    # --- the floor painted: light minus shade, flag by flag ----------------------------------------
-    # Each flag takes the light at its middle (a little jitter, so the steps are few and irregular and
-    # follow the stones, as Eastward's 06); the joints stay dark, rising only slowly in a pool.
+    # --- the floor painted: light minus shade --------------------------------------------------------
+    # In the shade each flag takes the light at its middle (calm, the odd stone a tone off). In a pool
+    # the light runs across the flags in a few soft, irregular steps: each flag is lit where the pool
+    # reaches it and darker on its far side, its contours wobbling with a slow noise (no dither, no
+    # flag-sized squares), so the pool reads round, as Eastward's 06; the joints stay dark.
     level = FLOOR_AMBIENT + lf - fshade
     level -= 0.6 * np.clip(1 - lf / 0.9, 0, 1)            # far from every light the floor sinks towards the dark
-    rung = np.clip(np.floor(level + 0.5).astype(int), 0, 6)
+    wob = ndi.gaussian_filter(np.random.default_rng(91).random((H, W)), q(1.6))
+    wob = (wob - wob.mean()) / (wob.std() + 1e-9)
+    rung = np.clip(np.floor(level + 0.5 + 0.22 * wob).astype(int), 0, 6)
     if nflags:
         with np.errstate(invalid="ignore"):
             fl = np.nan_to_num(ndi.mean(level, labels=slab, index=np.arange(1, nflags + 1)), nan=1.0)
-        fj = np.random.default_rng(93).uniform(-0.3, 0.3, nflags)
+        fj = np.random.default_rng(93).uniform(-0.15, 0.15, nflags)
         fr = np.concatenate([[0], np.clip(np.floor(fl + fj + 0.5).astype(int), 0, 6)])
-        rung[slab > 0] = fr[slab[slab > 0]]
+        shade_f = (slab > 0) & (lf < 0.7)
+        rung[shade_f] = fr[slab[shade_f]]
+        # in a pool a flag keeps to its own value give or take one step: the stones still read as stones
+        inpool = (slab > 0) & (lf >= 0.7)
+        rung[inpool] = np.clip(rung[inpool], fr[slab[inpool]] - 1, fr[slab[inpool]] + 1)
     jl = FLOOR_AMBIENT + 0.45 * lf - fshade - 0.6 * np.clip(1 - lf / 0.9, 0, 1)
     jr = np.clip(np.floor(jl + 0.5).astype(int), 0, 4)
     nb = ndi.grey_erosion(np.where(slab > 0, rung, 9), size=(3, 3))      # the darkest flag beside the joint
