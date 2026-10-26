@@ -2,7 +2,9 @@
 
 Matt, 26 Oct 12:04: "think critically how all these different characters can fit into the game and its world (... the world should feel like many isolated parts but there should be some sort of overarching theme or thing that holds it together)".
 
-**Status.** Claude A's proposal. It builds on the decided points and contradicts none of them: the Starfall, Glint, storm-broken Crossroads as the village you restore, the familiar who backs you with boosts, fourteen playable folk, village raids, the shared level and the skill tree. Sources: `game-design.md` (PR #223), `world-plan.md`, `world-atlas.md`, `regions/`, `vertical-slice.md`, `docs/story/act1.md`, `progression.md`, the castwork cast and Codex's kits (#261). The weapon lines are in `progression.md` and `game/data/progression/`. Every number is a placeholder.
+**Decided by Matt on #290 (26 Oct):** the stone circle and the ring of falls is the unifying device (decision 1). Kinds are a loadout chosen at waystones or the hut (decision 5). Rook stays an astronaut, redesigned to fit ("i do like the astronaut idea but it just needs to fit"); the pad-rigger rework is dropped, and the cast lead is drawing three astronaut options for Matt to choose from. The weapon table is **not approved yet**: Matt is reading it first.
+
+**Status.** Claude A's proposal, except the points decided above. It builds on the decided points and contradicts none of them: the Starfall, Glint, storm-broken Crossroads as the village you restore, the familiar who backs you with boosts, fourteen playable folk, village raids, the shared level and the skill tree. Sources: `game-design.md` (PR #223), `world-plan.md`, `world-atlas.md`, `regions/`, `vertical-slice.md`, `docs/story/act1.md`, `progression.md`, the castwork cast and Codex's kits (#261). The weapon lines are in `progression.md` and `game/data/progression/`. Every number is a placeholder.
 
 ## For Matt (one page)
 
@@ -23,7 +25,7 @@ The theme in one line: **the circle keeps the moon's light for everyone; the Com
 
 **Cast fit: problems and fixes.**
 
-1. **Rook** is a generic astronaut. He joins only in act 4, and his place, Halcyon, belongs to the villain. **Fix:** make him **the Launch Cape's pad rigger**: ground crew who built the rocket the Company took. He wears a flight-line coverall and a flip-up welding visor in place of the pressure suit and space helmet. His thruster pack is a rocket test rig and his turrets are pad survey drones. He joins at the end of act 3, when the rocket is fuelled (W8), and flies you up. His kit is unchanged; his body art is redrawn.
+1. **Rook** is an astronaut who joins only in act 4, and his place, Halcyon, belongs to the villain. **Matt (26 Oct): keep the astronaut, but make him fit.** The cast lead is drawing three astronaut options; this page records Matt's pick when he makes it. His kit is unchanged, and his weapon line's names stay provisional until then.
 2. **Tam** is a bald warrior monk in saffron, in a highland country of bothies. **Fix:** the Frostline gets **the Saddle House**, a small cliff monastery whose order has kept the col and the bothy open for generations. The saffron is there to be seen against snow, as a rescue order would wear it. The hut warden is the order's last elder.
 3. **The spread of technology** (knights, cowboys, steam, neon, rockets) reads as random. **Fix:** technology follows the rail and the shards:
    - Cogsworth's railway carried steam outward.
@@ -31,7 +33,7 @@ The theme in one line: **the circle keeps the moon's light for everyone; the Com
    - Only the Company leapt ahead, on bought shard light: Neon Harbour's neon and Halcyon's rockets.
 4. **Pendle**, a robot in a western town, needs a reason to be there. **Fix:** Cogsworth's works built him as the desert line's marshal. When the Rift cut the line, Dust Gulch kept him as its sheriff.
 5. **Brine**, a copper-helmet diver on a natural island, needs a reason too. **Fix:** he is the naturalist's salvage diver, working the reef wrecks off the Shell Bar. His gear comes from Driftwood's trade.
-6. **Act 3 is crowded** (Mirra, Pendle, Ashe, Nix and Rook join). This is acceptable, because act 3 is the longest. One fallback is to let Pendle ride in early on the desert line's first train.
+6. **Act 3 is crowded** (Mirra, Pendle, Ashe, Nix and possibly Rook join). This is acceptable, because act 3 is the longest. One fallback is to let Pendle ride in early on the desert line's first train.
 
 **Weapon lines and trees** (details in `progression.md`). Tiers open at levels 8, 16 and 24, and Hale forges them cheaply. Each tree has three branches: **kinds** (one loaded at a time), the **weapon** branch (forms and its signature move) and **craft**. *New clips* marks the one form change per folk that needs new clip tables. The other steps are rig parts on the existing clips.
 
@@ -49,16 +51,16 @@ The theme in one line: **the circle keeps the moon's light for everyone; the Com
 | **Ashe** | Knight's sword | Ember longsword | Wyrmfang | Starforged fang | **Flames** (ember, smoke, white fire); **Blade** (Crescent to Twin crescent); **Plate** |
 | **Clack** | Works launcher | Plated launcher | Twin-tube launcher *(new clips)* | Starnose launcher | **Rockets** (cluster, incendiary, concussion); **Salvo** (Hot loader to Hot loader II); **Shield** |
 | **Nix** | Courier arm | Finned arm | Split-lens arm | Pearl arm | **Pulses** (needle, arc, scatter); **Ghost** (Flashbreak to Flashbreak II); **Shield** |
-| **Rook** | Salvage carbine | Shrouded carbine | Twin-barrel rifle | Launch-gold rifle | **Cells** (amber cell, flare cell, mag cell); **Jets** (Air shot to Air shot II); **Rig** |
+| **Rook** *(names provisional)* | Salvage carbine | Shrouded carbine | Twin-barrel rifle | Launch-gold rifle | **Cells** (amber cell, flare cell, mag cell); **Jets** (Air shot to Air shot II); **Rig** |
 | **Mote** | Observatory core | Dropped hooks | Orrery | Little moon | **Glass** (clear glass, violet glass, mirror glass); **Gravity** (Starfall to Starfall II); **Panes** |
 
 **Decisions for you** (recommendation in bold):
 
-1. **The device.** **The stone circle and the ring of falls, with the beam, the craters pointing home, the waystones as the circle's kin and the map built round it.** Or keep the train lines as the only link.
-2. **Rook.** **Rework him as the Launch Cape's pad rigger**, joining at the rocket (act 3's end). His kit is kept; his body art is redrawn. Or keep the orbital salvager on Halcyon.
+1. **The device.** *Decided (26 Oct): the stone circle and the ring of falls.*
+2. **Rook.** *Decided (26 Oct): he stays an astronaut, redesigned to fit; Matt picks from three options.*
 3. **Tam.** **The Saddle House order, with Tam a bald warrior monk in saffron.** Or drop the monastic dress for highland clothes.
-4. **Weapon lines.** **Approve the table, and build Bramble's crossbow and Pendle's twin guns first.** These are the two lines you described, and they test both kinds of form change (a new weapon, and a second weapon).
-5. **Kinds as a loadout.** **One kind loaded at a time, set at a waystone or the hut.** Or a quick switch in a fight, which would need a fifth button.
+4. **Weapon lines.** *Open: Matt is reading the table.* **Recommendation: approve it, and build Bramble's crossbow and Pendle's twin guns first.**
+5. **Kinds as a loadout.** *Decided (26 Oct): one kind loaded at a time, set at a waystone or the hut.*
 
 ## 1. The critique: what holds the world together today
 
@@ -100,8 +102,8 @@ Technology follows the rail and the shards (fit problem 3). The tech column is w
 | The Tidebloom Isles (2) | the sea; the Shell Bar and the ferry (W4) | the naturalist, fishers, divers off the wrecks | sail; Driftwood's diving gear | the volcano's shard wakes the basalt | Brine |
 | The Sunstone basin (3) | the Rift's viaduct (W5); the desert | oasis keepers and a railhead town | windpumps and the desert line; Pendle is Cogsworth-made | the Company's drill stops the spring | Mirra, Pendle |
 | The fire country (3) | the lava flows and the chasm bridge (W6) | Hearthold's knights, the Ember forge | forge and sword; cut off for generations | the dragon shardstruck; the Company presses the forge | Ashe |
-| Neon Harbour and the Launch Cape (3) | the maglev and the Lull (W7) | the Company's city; couriers and fixers | shard-powered neon, the maglev, rockets | the Company's power, bought with shards | Nix, Rook (proposed) |
-| Halcyon Station (4) | orbit (W8) | the Company's drilling platform | shard drills | the drill itself | none |
+| Neon Harbour (3) | the maglev and the Lull (W7) | the Company's city; couriers and fixers | shard-powered neon, the maglev, rockets | the Company's power, bought with shards | Nix |
+| Halcyon Station (4) | orbit (W8) | the Company's drilling platform | shard drills | the drill itself | Rook (the astronaut; his fit waits on Matt's pick) |
 | Lumen (4) | the lander (W9) | the observatory, the circle's twin | old glass and light | the crack's heart | Mote |
 
 ## 4. The cast: where each folk belongs
@@ -120,7 +122,7 @@ Technology follows the rail and the shards (fit problem 3). The tech column is w
 | Pendle | Dust Gulch | Cogsworth-built marshal of the desert line, now the town's sheriff | the line cut; the town dry | the drill stopped; the line open | fixed by the marshal story |
 | Ashe | Hearthold | a knight of the castle | the dragon shardstruck; the forge pressed | the dragon freed; she carries its fang | good |
 | Nix | Neon Harbour | a courier whose arm is Company work | the Company's power, bought with shards | turns on the Company | good |
-| Rook | the Launch Cape (proposed) | the pad rigger who built the rocket | the Company took his rocket | fuels it and flies you up | fixed by the rework |
+| Rook | Halcyon (an astronaut) | to be set by the option Matt picks | to be set | to be set | open: being redesigned to fit (Matt, 26 Oct) |
 | Mote | Lumen's observatory | the circle's twin keeper | the crack's heart | the fourteenth stone; the full moon | good: the device's other end |
 
 **Recurring faces.** Moss travels the lines with each region's goods (her stall widens as the ways open). The Company's buyer is in every region just before you, buying shards (game-design 8.1 foreshadows him in act 1). Hale's forge turns each region's material into the folk's next weapon tier. Each region's mover brings one feature to Crossroads.
@@ -138,4 +140,4 @@ Each line keeps the folk's identity and its four actions. The full art and rig n
 - **The form changes** need the runner to swap the primary's projectile and hit parameters per tier: count, spread, capacity and alternating hands. The kit files stay canonical.
 - **Loadout kinds** add an effect to hits.
 - **Seventeen nodes** change a count or rule in a kit or powered form and are flagged `touches_canonical`.
-- **Rook's rework** changes art only. His kit, including the Orbital Rig turrets, is unchanged.
+- **Rook's redesign** changes art only. His kit, including the Orbital Rig turrets, is unchanged.

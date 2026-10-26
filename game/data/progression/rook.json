@@ -4,7 +4,7 @@
   "id": "rook",
   "name": "Rook",
   "identity": "orbital salvager in a cream pressure suit; one pulse carbine (right hand on the grip, left on the fore-end); ONE helmet at the RIGHT hip, worn only in Orbital Rig; twin-thruster pack with two nozzles",
-  "home_region": "launch_cape (proposed; was halcyon)",
+  "home_region": "halcyon",
   "home_region_note": "see docs/vision/world-and-cast.md (26 Oct); it sets the tier material",
   "abilities": {
     "kit": "game/data/abilities/rook.json (Codex, #261); base and powered form unchanged; every node is a modifier over it",
@@ -381,7 +381,8 @@
           "starshard": 1
         }
       }
-    ]
+    ],
+    "names_status": "provisional: Rook stays an astronaut being redesigned to fit (Matt, 26 Oct); names are set once Matt picks an option"
   },
   "outfits": [
     {
@@ -484,5 +485,6 @@
         }
       }
     }
-  ]
+  ],
+  "identity_status": "being redesigned as an astronaut who fits the world (Matt, 26 Oct; three options from the cast lead)"
 }

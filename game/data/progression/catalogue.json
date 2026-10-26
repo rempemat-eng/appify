@@ -270,5 +270,13 @@
     "nix",
     "rook",
     "mote"
-  ]
+  ],
+  "decisions": {
+    "26 Oct (#290)": [
+      "unifying device: the stone circle and the ring of falls",
+      "kinds: a loadout, one at a time, chosen at a waystone or the hut",
+      "Rook stays an astronaut, redesigned to fit; his weapon names are provisional",
+      "weapon lines: not yet approved (Matt is reading them)"
+    ]
+  }
 }

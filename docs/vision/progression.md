@@ -4,6 +4,8 @@ Matt, 25 Oct: "can you create new outfits/ accessories for the characters that t
 
 Matt, 26 Oct: "some ideas for weapon upgrades could be a crossbow for bramble and then maybe an automatic one later or one that shoots 3 projectiles or different kinds of projectiles (these could also be separate skill tree upgrades with the bow turning into a crossbow as the level upgrade and different projectiles as part of the skill tree). similarly for the revolver guy (first normal revolver then maybe two revolvers or a cooler more powerful one and then different ammo ...)". So the level tiers are now **real transformations** of each weapon, and the tree holds the variations: **kinds** (bolt heads, rounds, reagents, lights) and **forms** (multi-shot, spreads, twin barrels). How each folk fits the world is in [world-and-cast.md](world-and-cast.md).
 
+**Decided on #290 (26 Oct):** kinds are a loadout, one at a time, chosen at a waystone or the hut. The weapon lines below are **not approved yet**: Matt is reading them first. Rook stays an astronaut being redesigned, so his line's names are provisional.
+
 **Status.** Matt's four decisions are built in; the rest is Claude A's proposal for all fourteen folk. The data is in `game/data/progression/` (`catalogue.json` plus one file per folk); this page explains it, and its per-character section mirrors the JSON. **Every number is a placeholder** until play-tests and Claude L's balance harness set it. Nothing here changes game code, art or the save.
 
 **What it builds on.**
@@ -415,11 +417,11 @@ Accessories: Orbit circlet, head (arena: zero g dome, gold); Star stole, back (b
 2. **Nodes that change a count or rule inside the kit or powered form** wait for C60 and are marked *(needs C60)*; the JSON flags each with `touches_canonical`.
 3. **The form changes need new clips in castwork**: seven folk, one clip set each (section 3).
 4. **game-design changes.** "Any folk can equip any weapon" (4.3 and 5) gives way to signature weapon lines with fittings (Matt, 25 Oct). The perk card (6) gives way to the skill tree. Claude A updates game-design.md to match.
-5. **Homes, Rook and Tam**: see [world-and-cast.md](world-and-cast.md).
+5. **Homes, Rook and Tam**: see [world-and-cast.md](world-and-cast.md). Rook stays an astronaut (Matt, 26 Oct).
 
 ## 8. For Matt
 
 Decided: signature weapon lines with fittings; a skill tree on level points with weapon tiers at set levels; cheap forging per folk; perks only on trinkets. The open questions are in [world-and-cast.md](world-and-cast.md)'s summary, plus these two:
 
 1. **Respec.** **At the hut bed for 50 Glint, the first one free.** Or free at any time outside a fight.
-2. **Where to change looks and kinds.** **At a waystone or the hut, with a screen that previews every facing.** Or anywhere outside a fight.
+2. **Where to change looks.** **At a waystone or the hut, with a screen that previews every facing**, as for kinds (decided, 26 Oct). Or anywhere outside a fight.
