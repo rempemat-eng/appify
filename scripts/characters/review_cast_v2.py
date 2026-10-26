@@ -6,14 +6,19 @@ replaces, and reports what a 60 Hz game will actually show:
 - ticks: how many 1/60 s ticks each drawing is on screen when the clip starts on a tick
   (the runner starts actions on a frame), and any drawing shorter than one tick, which a
   dropped or late frame can skip;
-- timing: total duration and release time against contract 1 (Codex's canonical times must
-  not move), and whether the release drawing starts at the release time;
+- timing: total duration and release time against contract 1 (the art's times), and whether
+  the release drawing starts at the release time;
+- canonical: with --canonical (docs/characters/cast-retiming-60hz.json, Codex's times from
+  #257), a 60 Hz schedule for this manifest's drawings that lands the release drawing on the
+  canonical release and the end on the canonical duration, with the verdict of
+  review_retiming.py (ACCEPT, HOLD, POSE or REDRAW) and the per-drawing durations to use;
 - skate: for the walk, the planted foot's speed on screen in each facing against the body's
   walk_speed. player.gd moves the body at walk_speed on screen in every direction, so a
   planted foot must travel back at the same screen speed or it slides;
 - fidgets: each fidget starts and ends on idle drawing 0 in every facing.
 
-    python3 scripts/characters/review_cast_v2.py <v2 manifest> [--v1 <v1 manifest>] [--out f.json]
+    python3 scripts/characters/review_cast_v2.py <v2 manifest> [--v1 <v1 manifest>] \
+        [--canonical docs/characters/cast-retiming-60hz.json] [--out f.json]
 
 Reads JSON only; deterministic.
 """
@@ -22,6 +27,11 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from review_retiming import SQUEEZE, _share  # noqa: E402
 
 TICK = 1.0 / 60.0
 SKATE_LIMIT = 0.15  # planted foot may differ from the body's speed by 15 %
@@ -58,6 +68,47 @@ def clip_rows(m: dict, v1: dict | None) -> list:
             row['duration_change_ms'] = round((cl['duration'] - old['duration']) * 1000, 1)
             if rf is not None and old.get('release_time') is not None:
                 row['release_change_ms'] = round((cl['release_time'] - old['release_time']) * 1000, 1)
+        rows.append(row)
+    return rows
+
+
+def retime(m: dict, canon: dict) -> list:
+    """Canonical 60 Hz schedules for this manifest's action drawings."""
+    rows = []
+    for name, cl in m['clips'].items():
+        c = canon.get(name)
+        rf = cl.get('release_frame')
+        if not c or rf is None:
+            continue
+        d = cl['durations']
+        rel, dur = c['canonical_release'], c['canonical_duration']
+        p_ticks = int(round(rel / TICK))
+        r_ticks = int(round(dur / TICK)) - p_ticks
+        prep, rec = d[:rf], d[rf:]
+        prep_factor = rel / cl['release_time']
+        rec_factor = (dur - rel) / (cl['duration'] - cl['release_time'])
+        row = {'clip': name, 'drawings': len(d), 'release_frame': rf,
+               'art_release': cl['release_time'], 'art_duration': cl['duration'],
+               'canonical_release': rel, 'canonical_duration': dur,
+               'prep_factor': round(prep_factor, 4), 'recovery_factor': round(rec_factor, 4)}
+        drop = []
+        if len(prep) > p_ticks:
+            drop.append(f'{len(prep)} preparation drawings for {p_ticks} ticks: drop {len(prep) - p_ticks}')
+        if len(rec) > r_ticks:
+            drop.append(f'{len(rec)} recovery drawings for {r_ticks} ticks: drop {len(rec) - r_ticks}')
+        if drop:
+            row.update(verdict='REDRAW', problems=drop)
+        else:
+            t = _share(prep, p_ticks) + _share(rec, r_ticks)
+            if prep_factor < SQUEEZE:
+                verdict = 'POSE'
+            elif prep_factor > 1.0 or rec_factor > 1.0:
+                verdict = 'HOLD'
+            else:
+                verdict = 'ACCEPT'
+            row.update(verdict=verdict, problems=[], ticks=t,
+                       durations=[round(k * TICK, 4) for k in t],
+                       release_ticks_shown=t[rf])
         rows.append(row)
     return rows
 
@@ -105,6 +156,7 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument('manifest')
     ap.add_argument('--v1', default=None)
+    ap.add_argument('--canonical', default=None)
     ap.add_argument('--out', default=None)
     a = ap.parse_args()
     with open(a.manifest) as fh:
@@ -116,6 +168,11 @@ def main() -> int:
     data = {'id': m['id'], 'contract': m.get('contract'), 'walk_speed': m['walk_speed'],
             'v1_walk_speed': (v1 or {}).get('walk_speed'), 'clips': clip_rows(m, v1),
             'walk_skate': skate(m), 'fidgets': fidgets(m)}
+    if a.canonical:
+        with open(a.canonical) as fh:
+            src = json.load(fh)
+        canon = {r['clip']: r for r in src['clips'] if r['id'] == m['id']}
+        data['canonical'] = retime(m, canon)
     text = json.dumps(data, indent=1) + '\n'
     if a.out:
         with open(a.out, 'w') as fh:
@@ -123,7 +180,8 @@ def main() -> int:
     sk = data['walk_skate']
     print(m['id'], 'sub-tick:', {r['clip']: r['sub_tick'] for r in data['clips'] if r['sub_tick']},
           'skating facings:', [f for f in sk if not sk[f]['ok']],
-          'fidget seams:', all(v['seamless'] for v in data['fidgets'].values()))
+          'fidget seams:', all(v['seamless'] for v in data['fidgets'].values()),
+          'canonical:', {r['clip']: r['verdict'] for r in data.get('canonical', [])})
     return 0
 
 
