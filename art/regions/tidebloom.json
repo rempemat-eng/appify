@@ -1048,43 +1048,35 @@
    ],
    [
     6840,
-    5784
-   ],
-   [
-    7040,
-    5784
-   ],
-   [
-    7040,
     5800
    ],
    [
-    7032,
+    6848,
     5800
    ],
    [
-    7032,
-    5816
+    6848,
+    5784
    ],
    [
-    7024,
-    5816
+    6928,
+    5784
    ],
    [
-    7024,
-    5824
+    6928,
+    5800
    ],
    [
-    7008,
-    5824
+    6936,
+    5800
    ],
    [
-    7008,
-    5832
+    6936,
+    5808
    ],
    [
     6968,
-    5832
+    5808
    ],
    [
     6968,
@@ -1677,26 +1669,6 @@
    "width": 48,
    "owner_note": "lane G's route (lib/world-routes.ts, shell-bar), painted here to G's line; widths 40 to 56 along it",
    "points": [
-    [
-     7000,
-     5792
-    ],
-    [
-     6968,
-     5792
-    ],
-    [
-     6936,
-     5792
-    ],
-    [
-     6904,
-     5792
-    ],
-    [
-     6896,
-     5792
-    ],
     [
      6896,
      5824
@@ -2436,6 +2408,10 @@
    "t": "A",
    "what": "terns",
    "at": [
+    6944,
+    5828
+   ],
+   "moved_from": [
     6951,
     5828
    ]
@@ -3271,7 +3247,7 @@
  },
  "ring": {
   "none": true,
-  "why": "the Tidebloom Isles stay the quiet place with no ring (cast.md; no fight here, no rival)"
+  "why": "no arena rival's ring here (cast.md); the isles' fights are the camps and the Basalt Crab's arena in `fights` (game-design v2)"
  },
  "edges": [
   {
@@ -3368,5 +3344,524 @@
   "headwaters": "tree ferns and moss on basalt, the stream in rock pools",
   "crater_rim": "basalt and ash with moss and low shrubs, the pool in its cup",
   "black_sand_cove": "black basalt sand, the basalt arm's columns, rock pools, the sea stack"
- }
+ },
+ "fights": {
+  "_about": "Fights, from game-design v2 (section 14, the map lanes' row): camps and patrols by Codex's roles (kinds are proposals for Codex), the boss arena (about 20 x 14 cells), cover, waystones, the shard's crater and the dungeon's ends. Camps refill on each ferry arrival, never on a clock.",
+  "act": 2,
+  "story": "the Tidebloom Isles: the volcano's shard fell into Black-sand Cove and woke the basalt; crabs and boars went wild, and the naturalist is cut off at the headwaters",
+  "weapons": {
+   "melee": "basalt mauls, coral knives",
+   "ranged": "spear guns, spring launchers",
+   "idea": "piercing, bounce (game-design v2)"
+  },
+  "camps": [
+   {
+    "id": "islet_scuttlers",
+    "roles": [
+     "swarmer",
+     "swarmer",
+     "swarmer",
+     "swarmer"
+    ],
+    "kind": "shardstruck shore crabs",
+    "why": "on the Shell Bar's islet: the isles' first fight, small and quick, before the ferry or the walk lands you",
+    "at": [
+     6872,
+     5904
+    ],
+    "enemies": [
+     [
+      6896,
+      5908
+     ],
+     [
+      6860,
+      5920
+     ],
+     [
+      6844,
+      5896
+     ],
+     [
+      6880,
+      5884
+     ]
+    ],
+    "arena": [
+     6816,
+     5864,
+     104,
+     80
+    ]
+   },
+   {
+    "id": "west_arm_crabs",
+    "roles": [
+     "grunt",
+     "grunt",
+     "lunger"
+    ],
+    "kind": "basalt-shelled sand crabs",
+    "why": "half way down the west arm, between the landing and the calm turtle beach",
+    "at": [
+     6448,
+     6440
+    ],
+    "enemies": [
+     [
+      6472,
+      6444
+     ],
+     [
+      6424,
+      6448
+     ],
+     [
+      6444,
+      6420
+     ]
+    ],
+    "arena": [
+     6400,
+     6400,
+     96,
+     72
+    ]
+   },
+   {
+    "id": "canopy_boars",
+    "roles": [
+     "grunt",
+     "lunger",
+     "lunger"
+    ],
+    "kind": "shardstruck forest boars in basalt crusts",
+    "why": "under the canopy on the loop, the first fight on the raised ground",
+    "at": [
+     6744,
+     6200
+    ],
+    "enemies": [
+     [
+      6764,
+      6204
+     ],
+     [
+      6720,
+      6208
+     ],
+     [
+      6740,
+      6180
+     ]
+    ],
+    "arena": [
+     6696,
+     6160,
+     96,
+     72
+    ]
+   },
+   {
+    "id": "headwaters_watch",
+    "roles": [
+     "shooter",
+     "shooter",
+     "grunt",
+     "grunt"
+    ],
+    "kind": "basalt spitters and their grunts",
+    "cover": true,
+    "why": "the naturalist is cut off at the rain shelter above: this camp holds the foot of the headwaters stair, so the isles' ranged fight happens here, with cover; the shelter itself (a rest spot) stays out of it",
+    "at": [
+     7024,
+     6412
+    ],
+    "enemies": [
+     [
+      7048,
+      6416
+     ],
+     [
+      7012,
+      6428
+     ],
+     [
+      6996,
+      6404
+     ],
+     [
+      7032,
+      6396
+     ]
+    ],
+    "arena": [
+     6968,
+     6376,
+     104,
+     72
+    ]
+   }
+  ],
+  "patrols": [
+   {
+    "id": "bar_tide_patrol",
+    "roles": [
+     "swarmer",
+     "swarmer"
+    ],
+    "kind": "shore crabs at low tide",
+    "path": [
+     [
+      6896,
+      5936
+     ],
+     [
+      6808,
+      5976
+     ],
+     [
+      6800,
+      6024
+     ]
+    ],
+    "why": "crabs walk the Shell Bar when the tide is out"
+   },
+   {
+    "id": "loop_patrol",
+    "roles": [
+     "grunt",
+     "lunger"
+    ],
+    "kind": "crusted boars",
+    "path": [
+     [
+      6976,
+      6216
+     ],
+     [
+      6976,
+      6296
+     ],
+     [
+      6872,
+      6304
+     ]
+    ],
+    "why": "along the loop's east run under the canopy"
+   },
+   {
+    "id": "cove_patrol",
+    "roles": [
+     "lunger",
+     "lunger",
+     "swarmer"
+    ],
+    "kind": "basalt lungers and their brood",
+    "path": [
+     [
+      7096,
+      6432
+     ],
+     [
+      7168,
+      6432
+     ],
+     [
+      7168,
+      6400
+     ]
+    ],
+    "why": "on the loop above the cove: the last fight before the arena"
+   }
+  ],
+  "boss": {
+   "id": "basalt_crab",
+   "name": "the Basalt Crab",
+   "arena": [
+    6960,
+    6496,
+    160,
+    112
+   ],
+   "at": [
+    7040,
+    6552
+   ],
+   "teaches": "the bond burst (game-design v2, section 8)",
+   "shard": true,
+   "enter_by": "cove_stair",
+   "why": "Black-sand Cove under the east body: the stair comes down into it; sea on the south and east, the basalt arm on the west, so the fight is boxed without walls"
+  },
+  "shard": {
+   "at": [
+    7056,
+    6576
+   ],
+   "crater": "a glassy black crater in the cove sand, steaming where the tide reaches it",
+   "why": "the volcano's shard fell into the cove; the Basalt Crab grew its shell round it (it lies calm beside the shard when freed)"
+  },
+  "cover": [
+   {
+    "kind": "low",
+    "what": "basalt blocks",
+    "at": [
+     6980,
+     6440
+    ]
+   },
+   {
+    "kind": "low",
+    "what": "a fallen tree fern",
+    "at": [
+     7064,
+     6444
+    ]
+   },
+   {
+    "kind": "high",
+    "what": "a basalt column",
+    "at": [
+     7080,
+     6404
+    ]
+   },
+   {
+    "kind": "low",
+    "what": "driftwood",
+    "at": [
+     6992,
+     6528
+    ]
+   },
+   {
+    "kind": "high",
+    "what": "a basalt column",
+    "at": [
+     7096,
+     6520
+    ]
+   },
+   {
+    "kind": "low",
+    "what": "black boulders",
+    "at": [
+     7064,
+     6584
+    ]
+   }
+  ],
+  "waystones": [
+   {
+    "id": "lagoon_waystone",
+    "at": [
+     6556,
+     6292
+    ],
+    "why": "by the pier, where the ferry lands (bank loot, ride home)"
+   },
+   {
+    "id": "headwaters_waystone",
+    "at": [
+     7012,
+     6328
+    ],
+    "why": "at the rain shelter once the headwaters are freed: before the cove"
+   }
+  ],
+  "dungeon": {
+   "id": "basalt_halls",
+   "name": "the Basalt Halls",
+   "entrance": [
+    6888,
+    6664
+   ],
+   "by": "sea_cave",
+   "exit": [
+    7096,
+    6216
+   ],
+   "exit_by": "crater_spur",
+   "rooms": [
+    {
+     "id": "drowned_gallery",
+     "what": "a tidal cave: pools to cross on columns",
+     "camp": [
+      "swarmer",
+      "swarmer",
+      "swarmer"
+     ]
+    },
+    {
+     "id": "column_hall",
+     "what": "a hall of basalt columns: cover against shooters",
+     "camp": [
+      "shooter",
+      "shooter",
+      "grunt"
+     ]
+    },
+    {
+     "id": "vent",
+     "what": "the old lava tube rising to the crater: lungers on the ledges",
+     "camp": [
+      "lunger",
+      "lunger",
+      "grunt"
+     ]
+    }
+   ],
+   "plan": "a zone plan of its own (like game/data/plans/undercroft.json) once docs/godot.md's zone work reaches the isles",
+   "why": "the sea has hollowed the basalt arm into the old volcano's lava tube; it climbs under the isle and comes out on the crater rim by the pool, a second way down from the top",
+   "keeper": "a basalt-shelled moray in the vent, guarding the way up (proposal for Codex)"
+  },
+  "raiders_camp": {
+   "none": true,
+   "why": "raids come only to Crossroads (game-design v2, 7.6); Lagoon Landing is never attacked"
+  }
+ },
+ "quest_spots": [
+  {
+   "id": "naturalist_shelter",
+   "at": [
+    7068,
+    6316
+   ],
+   "quest": "the naturalist, cut off at the rain shelter by the headwaters' watch (headwaters_watch): her notebook marks where the shard came down (the cove), and her story 'an inch a year' starts here"
+  },
+  {
+   "id": "ferryman_pier",
+   "at": [
+    6520,
+    6296
+   ],
+   "quest": "the ferryman at the pier: the bar's crabs (islet_scuttlers) cut the walk from the Headland; clear them and the Shell Bar is open at low tide"
+  },
+  {
+   "id": "boatwoman_boathouse",
+   "at": [
+    6664,
+    6316
+   ],
+   "quest": "the boatwoman at the boathouse: the sea cave in the basalt arm hums at night; the Basalt Halls' way in"
+  },
+  {
+   "id": "beachcomber_turtles",
+   "at": [
+    6368,
+    6664
+   ],
+   "quest": "the beachcomber on the turtle beach: the turtles won't come ashore while the crabs hold the west arm (west_arm_crabs)"
+  }
+ ],
+ "windows": [
+  {
+   "id": "shell_bar",
+   "rect": [
+    6736,
+    5832,
+    320,
+    180
+   ],
+   "focal": [
+    6928,
+    5868
+   ],
+   "clearing": [
+    6840,
+    5928
+   ],
+   "why": "the bar's islet with the wreck, the tern colony and the scuttlers' camp; the Headland behind"
+  },
+  {
+   "id": "lagoon_landing",
+   "rect": [
+    6400,
+    6176,
+    320,
+    180
+   ],
+   "focal": [
+    6496,
+    6304
+   ],
+   "clearing": [
+    6552,
+    6240
+   ],
+   "why": "the pier in the lagoon, the boathouse and the hamlet round them: where the ferry lands"
+  },
+  {
+   "id": "canopy",
+   "rect": [
+    6680,
+    6096,
+    320,
+    180
+   ],
+   "focal": [
+    6904,
+    6152
+   ],
+   "clearing": [
+    6824,
+    6232
+   ],
+   "why": "the giant tree, the lower fall into the lagoon and the boars under the canopy"
+  },
+  {
+   "id": "headwaters",
+   "rect": [
+    6928,
+    6232,
+    320,
+    180
+   ],
+   "focal": [
+    7068,
+    6316
+   ],
+   "clearing": [
+    7096,
+    6364
+   ],
+   "why": "the rain shelter, the headwaters stair and the watch's camp with its cover; the upper fall at the right"
+  },
+  {
+   "id": "cove_arena",
+   "rect": [
+    6896,
+    6464,
+    320,
+    180
+   ],
+   "focal": [
+    7040,
+    6552
+   ],
+   "clearing": [
+    6920,
+    6520
+   ],
+   "why": "Black-sand Cove: the Basalt Crab's arena, the shard's crater, the sea stack and the cave mouth at the left"
+  },
+  {
+   "id": "turtle_beach",
+   "rect": [
+    6256,
+    6480,
+    320,
+    180
+   ],
+   "focal": [
+    6376,
+    6616
+   ],
+   "clearing": [
+    6400,
+    6620
+   ],
+   "why": "the west arm's end: the turtle beach kept calm, the crabs' camp up the arm"
+  }
+ ]
 }
