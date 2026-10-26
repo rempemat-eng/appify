@@ -14,7 +14,7 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 2
+  "polish": 1
  },
  "detail_bar": {
   "ours": {
@@ -35,18 +35,6 @@
   "group": "prop"
  },
  "findings": [
-  {
-   "detector": "logic.scale",
-   "severity": "polish",
-   "box": [
-    11,
-    21,
-    85,
-    129
-   ],
-   "message": "crossroads/notice_board: 36 world px tall (1.44 of an adult); the size guide gives 40 to 64 for a tall_sign (a departure pylon or street sign on a tall post (1.6 to 2.5 A))",
-   "fix": "redraw it 40 to 64 world px tall (120 to 192 texels at density 3) and stand it next to Bramble to check"
-  },
   {
    "detector": "detail.bar",
    "severity": "polish",

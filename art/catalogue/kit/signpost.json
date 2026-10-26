@@ -14,7 +14,7 @@
  "counts": {
   "blocker": 0,
   "fault": 2,
-  "polish": 0
+  "polish": 1
  },
  "detail_bar": {
   "ours": {
@@ -58,6 +58,18 @@
    ],
    "message": "kit/signpost: detail bar 0.32 of Eastward's prop band (9.8 tones, 16.0 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  },
+  {
+   "detector": "logic.scale",
+   "severity": "polish",
+   "box": [
+    1,
+    7,
+    89,
+    111
+   ],
+   "message": "kit/signpost: wide 88 art px (1.19 A) is too big for a sign: the size table gives 18 to 81 (0.24 to 1.09 A); Eastward at the same character height: street signs 1.0 to 2.3 A (size-guide.md 5)",
+   "fix": "redraw it 18 to 81 art px wide (target about 50), checked beside Bramble (74 art px) in the asset sheet"
   }
  ],
  "reviewed": "2026-10-25",

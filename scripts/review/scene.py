@@ -672,6 +672,8 @@ def review_zone(zone_id: str, H=GAME_H, wiring=True) -> dict:
     fs += check_light_sources(z, H)
     fs += check_rows(z, H)
     fs += check_grid(z, H)
+    from . import scale as S
+    fs += S.check_zone(z, H)          # logic.scale: sizes against a person, doors, stairs, ground grain
     if wiring:
         fs += check_wiring([zone_id])
     return dict(zone=z, findings=fs)

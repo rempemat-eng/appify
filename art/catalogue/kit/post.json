@@ -14,7 +14,7 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 0
+  "polish": 1
  },
  "detail_bar": {
   "ours": {
@@ -32,7 +32,20 @@
   "passed": null,
   "group": "prop"
  },
- "findings": [],
+ "findings": [
+  {
+   "detector": "logic.scale",
+   "severity": "polish",
+   "box": [
+    4,
+    3,
+    16,
+    43
+   ],
+   "message": "kit/post: tall 40 art px (0.54 A) is too small for a post: the size table gives 41 to 74 (0.55 to 1.00 A); Eastward at the same character height: fence posts 0.8 to 0.95 A (17)",
+   "fix": "redraw it 41 to 74 art px tall (target about 58), checked beside Bramble (74 art px) in the asset sheet"
+  }
+ ],
  "reviewed": "2026-10-25",
  "reviewer": {
   "agent": "detail-auditor",

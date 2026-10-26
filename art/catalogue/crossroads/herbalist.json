@@ -13,7 +13,7 @@
  "status": "fail",
  "counts": {
   "blocker": 0,
-  "fault": 7,
+  "fault": 8,
   "polish": 3
  },
  "detail_bar": {
@@ -154,6 +154,18 @@
    ],
    "message": "crossroads/herbalist: a flat water mark of 2 tones on the body reads as an interface icon, not something carved, painted or worn into the material",
    "fix": "cut or paint it into the surface: a carved groove with a lit lower lip and a dark upper edge, worn paint with chips, moss in the cut; tone it to the material and the light"
+  },
+  {
+   "detector": "logic.scale",
+   "severity": "fault",
+   "box": [
+    0,
+    13,
+    240,
+    190
+   ],
+   "message": "crossroads/herbalist: tall 177 art px (2.39 A) is too small for a cottage: the size table gives 200 to 340 (2.70 to 4.59 A); Eastward at the same character height: house 3.1 A to the ridge, 3.7 A wide (12)",
+   "fix": "redraw it 200 to 340 art px tall (target about 270), checked beside Bramble (74 art px) in the asset sheet"
   }
  ],
  "reviewed": "2026-10-26",

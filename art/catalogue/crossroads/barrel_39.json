@@ -10,11 +10,11 @@
   48,
   75
  ],
- "status": "pass",
+ "status": "fail",
  "counts": {
   "blocker": 0,
-  "fault": 0,
-  "polish": 3
+  "fault": 1,
+  "polish": 2
  },
  "detail_bar": {
   "ours": {
@@ -48,18 +48,6 @@
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
-   "detector": "logic.scale",
-   "severity": "polish",
-   "box": [
-    8,
-    19,
-    40,
-    72
-   ],
-   "message": "crossroads/barrel_39: 18 world px tall (0.71 of an adult); the size guide gives 12 to 15 for a barrel (a barrel 14, waist high (scale table))",
-   "fix": "redraw it 12 to 15 world px tall (36 to 45 texels at density 3) and stand it next to Bramble to check"
-  },
-  {
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
@@ -70,6 +58,18 @@
    ],
    "message": "crossroads/barrel_39: detail bar 0.89 of Eastward's prop band (24.0 tones, 53.7 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  },
+  {
+   "detector": "logic.scale",
+   "severity": "fault",
+   "box": [
+    8,
+    19,
+    40,
+    72
+   ],
+   "message": "crossroads/barrel_39: tall 53 art px (0.72 A) is too big for a barrel: the size table gives 31 to 46 (0.42 to 0.62 A); Eastward at the same character height: tubs and pots 0.3 to 0.4 A (04); milk cans 0.73 A (17)",
+   "fix": "redraw it 31 to 46 art px tall (target about 38), checked beside Bramble (74 art px) in the asset sheet"
   }
  ],
  "reviewed": "2026-10-26",
