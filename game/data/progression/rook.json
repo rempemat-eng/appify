@@ -1,32 +1,119 @@
 {
-  "schema_version": 1,
-  "status": "proposal (claude-a/progression, 25 Oct); every number is a placeholder until play-tests and Claude L's harness",
+  "schema_version": 2,
+  "status": "proposal (claude-a/progression-2, 26 Oct); every number is a placeholder until play-tests and Claude L's harness",
   "id": "rook",
   "name": "Rook",
   "identity": "orbital salvager in a cream pressure suit; one pulse carbine (right hand on the grip, left on the fore-end); ONE helmet at the RIGHT hip, worn only in Orbital Rig; twin-thruster pack with two nozzles",
-  "home_region": "halcyon",
-  "home_region_note": "Claude K's proposal on #149 (25 Oct), not yet decided by Matt; it only sets the tier material",
+  "home_region": "launch_cape (proposed; was halcyon)",
+  "home_region_note": "see docs/vision/world-and-cast.md (26 Oct); it sets the tier material",
   "abilities": {
-    "kit": "game/data/abilities/rook.json (Codex, #261); base and powered form unchanged",
+    "kit": "game/data/abilities/rook.json (Codex, #261); base and powered form unchanged; every node is a modifier over it",
     "base": {
       "primary": "Pulse carbine",
       "secondary": "Thruster Vault",
       "block": "Energy guard",
       "special": "Orbital Rig"
     },
+    "loadout_kind": {
+      "label": "cell",
+      "rule": "one loaded at a time, chosen outside fights; the base kind is free"
+    },
     "skill_tree": {
       "branches": [
         {
-          "id": "thrusters",
-          "name": "Thrusters",
+          "id": "cells",
+          "name": "Cells",
+          "covers": [
+            "primary"
+          ],
+          "nodes": [
+            {
+              "id": "amber_cell",
+              "kind": "kind",
+              "name": "Amber cell",
+              "effect": "Loads amber: bolts designate longer.",
+              "numbers": {
+                "designate_seconds": 0.6
+              },
+              "level": 2,
+              "cost": 1,
+              "requires": [],
+              "touches_canonical": false
+            },
+            {
+              "id": "flare_cell",
+              "kind": "kind",
+              "name": "Flare cell",
+              "effect": "Loads flare: bolts set burn.",
+              "numbers": {
+                "burn_seconds": 1.5
+              },
+              "level": 3,
+              "cost": 2,
+              "requires": [
+                "amber_cell"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "hot_coils",
+              "kind": "minor",
+              "name": "Hot coils",
+              "effect": "Carbine recovers 5 % faster.",
+              "numbers": {
+                "fire_interval_pct": -5
+              },
+              "level": 6,
+              "cost": 1,
+              "requires": [
+                "flare_cell"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "mag_cell",
+              "kind": "kind",
+              "name": "Mag cell",
+              "effect": "Loads mag: bolts slow machines more.",
+              "numbers": {
+                "slow_pct": 30
+              },
+              "level": 12,
+              "cost": 3,
+              "requires": [
+                "hot_coils"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "overwatch",
+              "kind": "keystone",
+              "name": "Overwatch",
+              "effect": "Turrets may stay a little further from you.",
+              "numbers": {
+                "operator_distance_pct": 15
+              },
+              "level": 22,
+              "cost": 4,
+              "requires": [
+                "mag_cell"
+              ],
+              "touches_canonical": true,
+              "note": "changes a count or rule in Codex's kit or powered form; needs C60's OK (#149)"
+            }
+          ]
+        },
+        {
+          "id": "jets",
+          "name": "Jets",
           "covers": [
             "secondary"
           ],
           "nodes": [
             {
               "id": "trimmed_jets",
-              "kind": "passive",
-              "name": "Trimmed Jets",
+              "kind": "minor",
+              "name": "Trimmed jets",
               "effect": "Vault cooldown -8 %.",
               "numbers": {
                 "secondary_cooldown_pct": -8
@@ -38,36 +125,28 @@
             },
             {
               "id": "air_shot",
-              "name": "Air Shot",
-              "binding": "carbine bolts fired while airborne in a vault",
-              "effect": "Bolts fired from the air are charged.",
+              "kind": "technique",
+              "name": "Air shot",
+              "effect": "Bolts fired in a vault are charged.",
               "numbers": {
                 "power_pct": 25
               },
-              "art": {
-                "new_clips": [],
-                "fx": [],
-                "reuses": [
-                  "the airborne primary (#257 lists it as missing; it is needed anyway)"
-                ]
-              },
-              "touches_canonical": false,
-              "kind": "technique",
-              "level": 3,
+              "level": 9,
               "cost": 2,
               "requires": [
                 "trimmed_jets"
-              ]
+              ],
+              "touches_canonical": false
             },
             {
               "id": "long_hop",
-              "kind": "passive",
-              "name": "Long Hop",
+              "kind": "minor",
+              "name": "Long hop",
               "effect": "Vault distance +10 %.",
               "numbers": {
                 "distance_pct": 10
               },
-              "level": 6,
+              "level": 11,
               "cost": 1,
               "requires": [
                 "air_shot"
@@ -75,15 +154,14 @@
               "touches_canonical": false
             },
             {
-              "id": "air_shot_2",
-              "kind": "technique upgrade",
-              "name": "Air Shot II",
-              "effect": "Landing from a vault puffs a dust ring that knocks swarmers back.",
+              "id": "air_shot_ii",
+              "kind": "upgrade",
+              "name": "Air shot II",
+              "effect": "Landing puffs a ring that knocks swarmers back.",
               "numbers": {
-                "ring_radius": 22,
-                "knockback": 14
+                "ring_radius": 22
               },
-              "level": 12,
+              "level": 20,
               "cost": 3,
               "requires": [
                 "long_hop"
@@ -93,110 +171,18 @@
             {
               "id": "double_jet",
               "kind": "keystone",
-              "name": "Double Jet",
-              "effect": "Two vaults can be chained before the cooldown.",
+              "name": "Double jet",
+              "effect": "Two vaults can be chained.",
               "numbers": {
                 "charges": 2
-              },
-              "touches_canonical": true,
-              "note": "changes a count in Codex's powered form; needs C60's OK (#149)",
-              "level": 22,
-              "cost": 4,
-              "requires": [
-                "air_shot_2"
-              ]
-            }
-          ]
-        },
-        {
-          "id": "carbine",
-          "name": "Carbine",
-          "covers": [
-            "primary",
-            "block"
-          ],
-          "nodes": [
-            {
-              "id": "hot_coils",
-              "kind": "passive",
-              "name": "Hot Coils",
-              "effect": "Carbine recovers 5 % faster.",
-              "numbers": {
-                "primary_cooldown_pct": -5
-              },
-              "level": 2,
-              "cost": 1,
-              "requires": [],
-              "touches_canonical": false
-            },
-            {
-              "id": "thruster_flare",
-              "name": "Thruster Flare",
-              "binding": "passive on Thruster Vault",
-              "effect": "The take-off leaves a short flame at its start that burns foes in it.",
-              "numbers": {
-                "burn_seconds": 1.2,
-                "length": 20
-              },
-              "art": {
-                "new_clips": [],
-                "fx": [
-                  "flame patch (4 drawings, finite)"
-                ],
-                "reuses": []
-              },
-              "touches_canonical": false,
-              "kind": "technique",
-              "level": 9,
-              "cost": 2,
-              "requires": [
-                "hot_coils"
-              ]
-            },
-            {
-              "id": "shield_cells",
-              "kind": "passive",
-              "name": "Shield Cells",
-              "effect": "Energy guard cost -8 %.",
-              "numbers": {
-                "guard_cost_pct": -8
-              },
-              "level": 11,
-              "cost": 1,
-              "requires": [
-                "thruster_flare"
-              ],
-              "touches_canonical": false
-            },
-            {
-              "id": "thruster_flare_2",
-              "kind": "technique upgrade",
-              "name": "Thruster Flare II",
-              "effect": "The vault recharges faster.",
-              "numbers": {
-                "cooldown_pct": -20
-              },
-              "level": 20,
-              "cost": 3,
-              "requires": [
-                "shield_cells"
-              ],
-              "touches_canonical": false
-            },
-            {
-              "id": "salvager",
-              "kind": "keystone",
-              "name": "Salvager",
-              "effect": "Freed machines drop a little more scrap.",
-              "numbers": {
-                "scrap_pct": 10
               },
               "level": 24,
               "cost": 4,
               "requires": [
-                "thruster_flare_2"
+                "air_shot_ii"
               ],
-              "touches_canonical": false
+              "touches_canonical": true,
+              "note": "changes a count or rule in Codex's kit or powered form; needs C60's OK (#149)"
             }
           ]
         },
@@ -204,53 +190,41 @@
           "id": "rig",
           "name": "Rig",
           "covers": [
+            "block",
             "special"
           ],
           "nodes": [
             {
-              "id": "quick_deploy",
-              "kind": "passive",
-              "name": "Quick Deploy",
-              "effect": "Turrets fire their first pulse sooner.",
+              "id": "shield_cells",
+              "kind": "minor",
+              "name": "Shield cells",
+              "effect": "Energy guard cost -8 %.",
               "numbers": {
-                "first_shot_seconds": -0.08
+                "guard_cost_pct": -8
               },
-              "touches_canonical": true,
-              "note": "changes a count in Codex's powered form; needs C60's OK (#149)",
               "level": 4,
               "cost": 1,
-              "requires": []
+              "requires": [],
+              "touches_canonical": false
             },
             {
               "id": "scrap_shell",
-              "name": "Scrap Shell",
-              "binding": "block three hits with Energy guard",
-              "effect": "The guard banks a shell; the next vault lands with a burst round him.",
-              "numbers": {
-                "hits": 3,
-                "burst_damage": 14,
-                "burst_radius": 26
-              },
-              "art": {
-                "new_clips": [],
-                "fx": [
-                  "shell counter on the guard (3 pips)",
-                  "burst (4 drawings)"
-                ],
-                "reuses": []
-              },
-              "touches_canonical": true,
-              "note": "changes Codex's turret target rule at activation; needs C60's OK (#149)",
               "kind": "technique",
+              "name": "Scrap shell",
+              "effect": "Three blocked hits bank a shell; the next vault lands with a burst.",
+              "numbers": {
+                "hits": 3
+              },
               "level": 16,
               "cost": 2,
               "requires": [
-                "quick_deploy"
-              ]
+                "shield_cells"
+              ],
+              "touches_canonical": false
             },
             {
               "id": "spotter",
-              "kind": "passive",
+              "kind": "minor",
               "name": "Spotter",
               "effect": "Designation lasts 0.5 s longer.",
               "numbers": {
@@ -264,36 +238,36 @@
               "touches_canonical": false
             },
             {
-              "id": "scrap_shell_2",
-              "kind": "technique upgrade",
-              "name": "Scrap Shell II",
-              "effect": "Orbital Rig's turrets start on the nearest foe he has designated.",
+              "id": "scrap_shell_ii",
+              "kind": "upgrade",
+              "name": "Scrap shell II",
+              "effect": "Turrets start on the nearest designated foe.",
               "numbers": {
                 "turret_initial_target": "nearest_designated"
               },
-              "touches_canonical": true,
-              "note": "changes Codex's turret target rule at activation; needs C60's OK (#149)",
               "level": 26,
               "cost": 3,
               "requires": [
                 "spotter"
-              ]
+              ],
+              "touches_canonical": true,
+              "note": "changes a count or rule in Codex's kit or powered form; needs C60's OK (#149)"
             },
             {
-              "id": "overwatch",
+              "id": "quick_deploy",
               "kind": "keystone",
-              "name": "Overwatch",
-              "effect": "Turrets may stay a little further from you.",
+              "name": "Quick deploy",
+              "effect": "Turrets fire their first pulse sooner.",
               "numbers": {
-                "operator_distance_pct": 15
+                "first_shot_seconds": -0.08
               },
-              "touches_canonical": true,
-              "note": "changes a count in Codex's powered form; needs C60's OK (#149)",
               "level": 28,
               "cost": 4,
               "requires": [
-                "scrap_shell_2"
-              ]
+                "scrap_shell_ii"
+              ],
+              "touches_canonical": true,
+              "note": "changes a count or rule in Codex's kit or powered form; needs C60's OK (#149)"
             }
           ]
         }
@@ -305,47 +279,42 @@
   "weapon": {
     "item": "pulse carbine",
     "equipment_tag": "carbine",
+    "line": "Salvage carbine > Shrouded carbine > Twin-barrel rifle > Launch-gold rifle",
     "tiers": [
       {
         "tier": 1,
         "name": "Salvage carbine",
-        "art": {
-          "silhouette": "today's drawing: the pulse carbine with its fore-end",
-          "materials": [
-            "gunmetal",
-            "orange"
-          ],
-          "glow": "amber bolts as drawn",
-          "size": "as drawn",
-          "read_check": "the current drawing"
-        },
-        "mechanics": {},
+        "form": "pulse carbine",
+        "level": 1,
         "requires": {
           "level": 1
         },
-        "sockets": 1
+        "sockets": 1,
+        "art": {
+          "description": "the tier-1 drawing: pulse carbine, right hand on the grip, left on the fore-end",
+          "read_check": "the current drawing"
+        },
+        "rig": "as drawn",
+        "mechanics": {}
       },
       {
         "tier": 2,
         "name": "Shrouded carbine",
-        "art": {
-          "silhouette": "an extended barrel shroud with an orange stripe; a stock pad",
-          "materials": [
-            "gunmetal",
-            "orange"
-          ],
-          "glow": "none",
-          "size": "+3 px barrel",
-          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
-        },
-        "mechanics": {
-          "bolt_speed_pct": 8
-        },
+        "form": "pulse carbine",
+        "level": 8,
         "requires": {
           "level": 8,
           "forge_open": true
         },
         "sockets": 2,
+        "art": {
+          "description": "a barrel shroud (+3 px) with an orange stripe; a stock pad",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster; sizes are relative to the tier-1 drawing"
+        },
+        "rig": "parts",
+        "mechanics": {
+          "projectile_speed_pct": 10
+        },
         "cost": {
           "glint": 60,
           "scrap": 5,
@@ -357,26 +326,23 @@
       },
       {
         "tier": 3,
-        "name": "Scoped carbine",
-        "art": {
-          "silhouette": "a top-mounted salvaged scope with an orange lens; a cooling coil on the side",
-          "materials": [
-            "gunmetal",
-            "copper (new)",
-            "orange"
-          ],
-          "glow": "the scope lens's light tone",
-          "size": "scope +3 px above the top line",
-          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
-        },
-        "mechanics": {
-          "vault_cooldown_pct": -8
-        },
+        "name": "Twin-barrel rifle",
+        "form": "burst rifle",
+        "level": 16,
         "requires": {
           "level": 16,
           "forge_open": true
         },
         "sockets": 2,
+        "art": {
+          "description": "two stacked barrels under one shroud, a top cell housing with a lit charge bar, +4 px longer than tier 1",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster; sizes are relative to the tier-1 drawing"
+        },
+        "rig": "parts: rifle part swap (same grips and existing clips)",
+        "mechanics": {
+          "burst": 2,
+          "fire_interval_pct": 20
+        },
         "cost": {
           "glint": 150,
           "scrap": 10,
@@ -388,26 +354,23 @@
       },
       {
         "tier": 4,
-        "name": "Lander carbine",
-        "art": {
-          "silhouette": "a moonsilver emitter crown and a gold crescent on the stock; the bolts turn pale gold",
-          "materials": [
-            "moonsilver (new)",
-            "gold"
-          ],
-          "glow": "bolt colour changes (an effect sprite, not body art)",
-          "size": "as tier 3",
-          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
-        },
-        "mechanics": {
-          "named": "Lander gold: bolts fired from the air pierce one foe",
-          "air_pierce": 1
-        },
+        "name": "Launch-gold rifle",
+        "form": "burst rifle",
+        "level": 24,
         "requires": {
           "level": 24,
           "great_forge": true
         },
         "sockets": 3,
+        "art": {
+          "description": "a moonsilver emitter crown and gold crescent stock; the bolts pale gold",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster; sizes are relative to the tier-1 drawing"
+        },
+        "rig": "parts: ramp swap on tier 3",
+        "mechanics": {
+          "named": "Launch gold: bolts fired in a vault pierce one",
+          "air_pierce": 1
+        },
         "cost": {
           "glint": 300,
           "scrap": 20,

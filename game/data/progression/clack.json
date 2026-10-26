@@ -1,33 +1,121 @@
 {
-  "schema_version": 1,
-  "status": "proposal (claude-a/progression, 25 Oct); every number is a placeholder until play-tests and Claude L's harness",
+  "schema_version": 2,
+  "status": "proposal (claude-a/progression-2, 26 Oct); every number is a placeholder until play-tests and Claude L's harness",
   "id": "clack",
   "name": "Clack",
   "identity": "older broad heavy gunner; rocket launcher on the RIGHT shoulder, a separate pressure chamber under the tube, a two-rocket rack on the front LEFT of the belt, a folding loader frame flat on the back",
   "home_region": "cogsworth",
-  "home_region_note": "Claude K's proposal on #149 (25 Oct), not yet decided by Matt; it only sets the tier material",
+  "home_region_note": "see docs/vision/world-and-cast.md (26 Oct); it sets the tier material",
   "abilities": {
-    "kit": "game/data/abilities/clack.json (Codex, #261); base and powered form unchanged",
+    "kit": "game/data/abilities/clack.json (Codex, #261); base and powered form unchanged; every node is a modifier over it",
     "base": {
       "primary": "Shoulder rocket",
       "secondary": "Concussive vent",
       "block": "Blast guard",
       "special": "Siegebreaker"
     },
+    "loadout_kind": {
+      "label": "rocket",
+      "rule": "one loaded at a time, chosen outside fights; the base kind is free"
+    },
     "skill_tree": {
       "branches": [
         {
-          "id": "loader",
-          "name": "Loader",
+          "id": "rockets",
+          "name": "Rockets",
           "covers": [
             "primary"
           ],
           "nodes": [
             {
+              "id": "cluster",
+              "kind": "kind",
+              "name": "Cluster",
+              "effect": "Loads cluster rockets: three bomblets pop after the blast.",
+              "numbers": {
+                "bomblets": 3
+              },
+              "level": 2,
+              "cost": 1,
+              "requires": [],
+              "touches_canonical": false
+            },
+            {
+              "id": "incendiary",
+              "kind": "kind",
+              "name": "Incendiary",
+              "effect": "Loads incendiary rockets: the blast leaves fire.",
+              "numbers": {
+                "burn_seconds": 2
+              },
+              "level": 3,
+              "cost": 2,
+              "requires": [
+                "cluster"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "wide_charge",
+              "kind": "minor",
+              "name": "Wide charge",
+              "effect": "Blast radius +6 %.",
+              "numbers": {
+                "blast_radius_pct": 6
+              },
+              "level": 6,
+              "cost": 1,
+              "requires": [
+                "incendiary"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "concussion",
+              "kind": "kind",
+              "name": "Concussion",
+              "effect": "Loads concussion rockets: a wider push, less damage.",
+              "numbers": {
+                "push_pct": 40,
+                "damage_pct": -30
+              },
+              "level": 12,
+              "cost": 3,
+              "requires": [
+                "wide_charge"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "flare",
+              "kind": "keystone",
+              "name": "Flare",
+              "effect": "Loads flare rockets: they light the area and show weak points.",
+              "numbers": {
+                "weak_point_seconds": 3
+              },
+              "level": 22,
+              "cost": 4,
+              "requires": [
+                "concussion"
+              ],
+              "touches_canonical": false
+            }
+          ]
+        },
+        {
+          "id": "salvo",
+          "name": "Salvo",
+          "covers": [
+            "primary",
+            "special"
+          ],
+          "nodes": [
+            {
               "id": "practised_hands",
-              "kind": "passive",
-              "name": "Practised Hands",
-              "effect": "Rocket reload 6 % faster.",
+              "kind": "minor",
+              "name": "Practised hands",
+              "effect": "Reload 6 % faster.",
               "numbers": {
                 "reload_pct": -6
               },
@@ -38,36 +126,28 @@
             },
             {
               "id": "hot_loader",
-              "name": "Hot Loader",
-              "binding": "Concussive vent during a reload",
-              "effect": "The vent's kick speeds the loading.",
+              "kind": "technique",
+              "name": "Hot loader",
+              "effect": "A vent during a reload speeds it.",
               "numbers": {
                 "reload_remaining_pct": -30
               },
-              "art": {
-                "new_clips": [],
-                "fx": [],
-                "reuses": [
-                  "secondary"
-                ]
-              },
-              "touches_canonical": false,
-              "kind": "technique",
-              "level": 3,
+              "level": 9,
               "cost": 2,
               "requires": [
                 "practised_hands"
-              ]
+              ],
+              "touches_canonical": false
             },
             {
               "id": "quick_fuse",
-              "kind": "passive",
-              "name": "Quick Fuse",
+              "kind": "minor",
+              "name": "Quick fuse",
               "effect": "Rockets fly 8 % faster.",
               "numbers": {
                 "rocket_speed_pct": 8
               },
-              "level": 6,
+              "level": 11,
               "cost": 1,
               "requires": [
                 "hot_loader"
@@ -75,14 +155,14 @@
               "touches_canonical": false
             },
             {
-              "id": "hot_loader_2",
-              "kind": "technique upgrade",
-              "name": "Hot Loader II",
-              "effect": "A vent that hits two or more foes completes the reload.",
+              "id": "hot_loader_ii",
+              "kind": "upgrade",
+              "name": "Hot loader II",
+              "effect": "A vent that hits two foes finishes the reload.",
               "numbers": {
                 "min_foes": 2
               },
-              "level": 12,
+              "level": 20,
               "cost": 3,
               "requires": [
                 "quick_fuse"
@@ -90,113 +170,20 @@
               "touches_canonical": false
             },
             {
-              "id": "spare_rack",
-              "kind": "keystone",
-              "name": "Spare Rack",
-              "effect": "Every fourth rocket needs no reload.",
-              "numbers": {
-                "every": 4
-              },
-              "level": 22,
-              "cost": 4,
-              "requires": [
-                "hot_loader_2"
-              ],
-              "touches_canonical": false
-            }
-          ]
-        },
-        {
-          "id": "blast",
-          "name": "Blast",
-          "covers": [
-            "secondary",
-            "special"
-          ],
-          "nodes": [
-            {
-              "id": "wide_charge",
-              "kind": "passive",
-              "name": "Wide Charge",
-              "effect": "Blast radius +6 %.",
-              "numbers": {
-                "blast_radius_pct": 6
-              },
-              "level": 2,
-              "cost": 1,
-              "requires": [],
-              "touches_canonical": false
-            },
-            {
-              "id": "cluster_nose",
-              "name": "Cluster Nose",
-              "binding": "passive on Shoulder rocket",
-              "effect": "The blast scatters three small bomblets that pop a moment later.",
-              "numbers": {
-                "bomblets": 3,
-                "delay_seconds": 0.5,
-                "bomblet_damage_pct": 20
-              },
-              "art": {
-                "new_clips": [],
-                "fx": [
-                  "bomblet (3 drawings)"
-                ],
-                "reuses": []
-              },
-              "touches_canonical": false,
-              "kind": "technique",
-              "level": 9,
-              "cost": 2,
-              "requires": [
-                "wide_charge"
-              ]
-            },
-            {
-              "id": "shrapnel",
-              "kind": "passive",
-              "name": "Shrapnel",
-              "effect": "Bomblets +1.",
-              "numbers": {
-                "bomblets": 1
-              },
-              "level": 11,
-              "cost": 1,
-              "requires": [
-                "cluster_nose"
-              ],
-              "touches_canonical": false
-            },
-            {
-              "id": "cluster_nose_2",
-              "kind": "technique upgrade",
-              "name": "Cluster Nose II",
-              "effect": "Bomblets nudge small foes toward the blast's centre.",
-              "numbers": {
-                "pull": 8
-              },
-              "level": 20,
-              "cost": 3,
-              "requires": [
-                "shrapnel"
-              ],
-              "touches_canonical": false
-            },
-            {
               "id": "siege_master",
               "kind": "keystone",
-              "name": "Siege Master",
+              "name": "Siege master",
               "effect": "Siegebreaker salvos spread 15 % tighter.",
               "numbers": {
                 "spread_pct": -15
               },
-              "touches_canonical": true,
-              "note": "changes a count in Codex's powered form; needs C60's OK (#149)",
               "level": 24,
               "cost": 4,
               "requires": [
-                "cluster_nose_2"
-              ]
+                "hot_loader_ii"
+              ],
+              "touches_canonical": true,
+              "note": "changes a count or rule in Codex's kit or powered form; needs C60's OK (#149)"
             }
           ]
         },
@@ -204,13 +191,14 @@
           "id": "shield",
           "name": "Shield",
           "covers": [
-            "block"
+            "block",
+            "secondary"
           ],
           "nodes": [
             {
               "id": "thick_plate",
-              "kind": "passive",
-              "name": "Thick Plate",
+              "kind": "minor",
+              "name": "Thick plate",
               "effect": "Blast guard cost -8 %.",
               "numbers": {
                 "guard_cost_pct": -8
@@ -222,35 +210,25 @@
             },
             {
               "id": "planted_shield",
-              "name": "Planted Shield",
-              "binding": "hold Blast guard for 1 s",
-              "effect": "He plants the shield: he cannot walk, blocked shots stop draining the guard, and the next rocket's blast is larger.",
+              "kind": "technique",
+              "name": "Planted shield",
+              "effect": "Hold the guard 1 s: planted, it stops draining and the next blast is larger.",
               "numbers": {
-                "hold_seconds": 1.0,
+                "hold_seconds": 1,
                 "blast_radius_pct": 50
               },
-              "art": {
-                "new_clips": [],
-                "fx": [
-                  "dust at the shield foot"
-                ],
-                "reuses": [
-                  "guard 4"
-                ]
-              },
-              "touches_canonical": false,
-              "kind": "technique",
               "level": 16,
               "cost": 2,
               "requires": [
                 "thick_plate"
-              ]
+              ],
+              "touches_canonical": false
             },
             {
               "id": "vent_valve",
-              "kind": "passive",
-              "name": "Vent Valve",
-              "effect": "Concussive vent cooldown -10 %.",
+              "kind": "minor",
+              "name": "Vent valve",
+              "effect": "Vent cooldown -10 %.",
               "numbers": {
                 "secondary_cooldown_pct": -10
               },
@@ -262,10 +240,10 @@
               "touches_canonical": false
             },
             {
-              "id": "planted_shield_2",
-              "kind": "technique upgrade",
-              "name": "Planted Shield II",
-              "effect": "The planted shield covers his whole front half.",
+              "id": "planted_shield_ii",
+              "kind": "upgrade",
+              "name": "Planted shield II",
+              "effect": "The planted shield covers his front half.",
               "numbers": {
                 "arc_degrees": 180
               },
@@ -279,15 +257,15 @@
             {
               "id": "foundry_wall",
               "kind": "keystone",
-              "name": "Foundry Wall",
-              "effect": "A planted shield also blocks for an ally champion behind it in sieges.",
+              "name": "Foundry wall",
+              "effect": "In sieges a planted shield also covers a champion behind it.",
               "numbers": {
                 "siege_cover": true
               },
               "level": 28,
               "cost": 4,
               "requires": [
-                "planted_shield_2"
+                "planted_shield_ii"
               ],
               "touches_canonical": false
             }
@@ -301,49 +279,42 @@
   "weapon": {
     "item": "rocket launcher",
     "equipment_tag": "launcher",
+    "line": "Works launcher > Plated launcher > Twin-tube launcher > Starnose launcher",
     "tiers": [
       {
         "tier": 1,
         "name": "Works launcher",
-        "art": {
-          "silhouette": "today's drawing: gunmetal tube with orange bands, brass muzzle ring, flared exhaust bell",
-          "materials": [
-            "gunmetal",
-            "orange",
-            "brass"
-          ],
-          "glow": "none",
-          "size": "as drawn",
-          "read_check": "the current drawing"
-        },
-        "mechanics": {},
+        "form": "launcher",
+        "level": 1,
         "requires": {
           "level": 1
         },
-        "sockets": 1
+        "sockets": 1,
+        "art": {
+          "description": "the tier-1 drawing: gunmetal tube with orange bands on the right shoulder",
+          "read_check": "the current drawing"
+        },
+        "rig": "as drawn",
+        "mechanics": {}
       },
       {
         "tier": 2,
         "name": "Plated launcher",
-        "art": {
-          "silhouette": "riveted heat plates over the tube; the orange bands become 2 px diagonal hazard stripes; the bell 2 px wider",
-          "materials": [
-            "gunmetal",
-            "orange",
-            "brass"
-          ],
-          "glow": "none",
-          "size": "bell +2 px (still clear of his head and back)",
-          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
-        },
-        "mechanics": {
-          "reload_pct": -8
-        },
+        "form": "launcher",
+        "level": 8,
         "requires": {
           "level": 8,
           "forge_open": true
         },
         "sockets": 2,
+        "art": {
+          "description": "riveted heat plates, hazard stripes, a bell +2 px wider",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster; sizes are relative to the tier-1 drawing"
+        },
+        "rig": "parts",
+        "mechanics": {
+          "reload_pct": -10
+        },
         "cost": {
           "glint": 60,
           "scrap": 5,
@@ -355,26 +326,23 @@
       },
       {
         "tier": 3,
-        "name": "Braked launcher",
-        "art": {
-          "silhouette": "a brass muzzle brake with four vents; a small periscope sight on the left; a second gauge on the pressure chamber",
-          "materials": [
-            "brass",
-            "gunmetal",
-            "glass blue"
-          ],
-          "glow": "none",
-          "size": "+3 px at the muzzle",
-          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
-        },
-        "mechanics": {
-          "blast_radius_pct": 6
-        },
+        "name": "Twin-tube launcher",
+        "form": "twin launcher",
+        "level": 16,
         "requires": {
           "level": 16,
           "forge_open": true
         },
         "sockets": 2,
+        "art": {
+          "description": "a second tube strapped beside the first (the pair 1.6 times the tier-1 width), one loaded nose in each; the rack holds four",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster; sizes are relative to the tier-1 drawing"
+        },
+        "rig": "parts + clips: twin tube part; reload draws two rockets (new reload tables)",
+        "mechanics": {
+          "rockets_per_reload": 2,
+          "note": "two shots between reloads"
+        },
         "cost": {
           "glint": 150,
           "scrap": 10,
@@ -387,26 +355,22 @@
       {
         "tier": 4,
         "name": "Starnose launcher",
-        "art": {
-          "silhouette": "a dark station-alloy tube with gold bands; the loaded rocket's nose in the bore is pale starlight",
-          "materials": [
-            "alloy (new)",
-            "gold",
-            "starlight (new)"
-          ],
-          "glow": "the rocket nose glows one tone; it goes dark when fired and returns on reload, so reload state reads on the body",
-          "size": "as tier 3",
-          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
-        },
-        "mechanics": {
-          "named": "Starnose: a rocket that frees a foe cuts the reload by 20 %",
-          "reload_on_free_pct": -20
-        },
+        "form": "twin launcher",
+        "level": 24,
         "requires": {
           "level": 24,
           "great_forge": true
         },
         "sockets": 3,
+        "art": {
+          "description": "station-alloy tubes with gold bands; both loaded noses glow in starlight",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster; sizes are relative to the tier-1 drawing"
+        },
+        "rig": "parts: ramp swap on tier 3",
+        "mechanics": {
+          "named": "Starnose: a rocket that frees a foe cuts the reload by 20 %",
+          "reload_on_free_pct": -20
+        },
         "cost": {
           "glint": 300,
           "scrap": 20,

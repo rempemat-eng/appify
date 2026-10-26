@@ -1,6 +1,8 @@
-# Character progression: skill trees, weapon tiers, outfits and accessories (25 Oct)
+# Character progression: weapon lines, skill trees, outfits and accessories (25 and 26 Oct)
 
 Matt, 25 Oct: "can you create new outfits/ accessories for the characters that they unlock some way and if i upgrade/ level up a character their weapons should become cooler as well/ they should learn new abilities". His decisions on the first draft, the same day: a "skill tree that you spend level points on and then a new weapons unlocked at specific levels. money can be spent on cosmetics and other things in the map"; one signature weapon per folk with loot as fittings set into it; each folk pays the forge cheaply, and a late joiner arrives at the highest open tier; only trinkets carry small perks, never damage.
+
+Matt, 26 Oct: "some ideas for weapon upgrades could be a crossbow for bramble and then maybe an automatic one later or one that shoots 3 projectiles or different kinds of projectiles (these could also be separate skill tree upgrades with the bow turning into a crossbow as the level upgrade and different projectiles as part of the skill tree). similarly for the revolver guy (first normal revolver then maybe two revolvers or a cooler more powerful one and then different ammo ...)". So the level tiers are now **real transformations** of each weapon, and the tree holds the variations: **kinds** (bolt heads, rounds, reagents, lights) and **forms** (multi-shot, spreads, twin barrels). How each folk fits the world is in [world-and-cast.md](world-and-cast.md).
 
 **Status.** Matt's four decisions are built in; the rest is Claude A's proposal for all fourteen folk. The data is in `game/data/progression/` (`catalogue.json` plus one file per folk); this page explains it, and its per-character section mirrors the JSON. **Every number is a placeholder** until play-tests and Claude L's balance harness set it. Nothing here changes game code, art or the save.
 
@@ -24,27 +26,34 @@ Matt, 25 Oct: "can you create new outfits/ accessories for the characters that t
 
 The shared level runs from 1 to 30 (about three per region). **Every level from 2 gives one skill point** (29 in all), spent in the folk's own tree. A folk starts with Codex's full kit; the tree grows it.
 
-**Each folk's tree has three branches** that match its kit (Bramble: Bow, Blade, Woodcraft), with **five nodes a branch, fifteen in all**:
+**Each folk's tree has three branches, always in the same roles**, with five nodes a branch, fifteen in all:
 
-| Node | Cost | Unlocks at (branch 1 / 2 / 3) | What it is |
+1. **Kinds** (branch 1): what the weapon fires or carries. Bramble's bolt heads (barbed, fire, shard, net), Pendle's rounds (hot, silver, lodestone, sun slugs), Morel's reagents, Velvet's lantern lights, Tam's stances. **One kind is loaded at a time**, chosen at a waystone, the hut or the tree screen, never in a fight, so there is no new button. The base kind is free.
+2. **Form** (branch 2): how the weapon fires. Bramble's twin shot, then a three-bolt spread; Pendle's ricochets and a two-gun fan; Tam's twin and triple ridges; Morel's flask pairs and clusters.
+3. **Craft** (branch 3): the rest of the kit (guard, secondary, special), holding the techniques of 25 Oct that fit there.
+
+| Slot | Cost | Unlocks at (branch 1 / 2 / 3) | Usually |
 | --- | --- | --- | --- |
-| Minor | 1 | level 2 / 2 / 4 | a small passive: a few per cent of cooldown, reach, guard cost or speed |
-| Technique | 2 | 3 / 9 / 16 | a new move or behaviour built on the kit (the folk's signature growth) |
-| Minor | 1 | 6 / 11 / 18 | a second small passive |
-| Technique upgrade | 3 | 12 / 20 / 26 | the technique's stronger form |
-| Keystone | 4 | 22 / 24 / 28 | a branch-defining change |
+| 1 | 1 | level 2 / 2 / 4 | the first kind, or a small passive |
+| 2 | 2 | 3 / 9 / 16 | a second kind, or a technique |
+| 3 | 1 | 6 / 11 / 18 | a small passive |
+| 4 | 3 | 12 / 20 / 26 | a third kind, or the technique's upgrade |
+| 5 | 4 | 22 / 24 / 28 | the keystone |
 
 - **It cannot be rushed.** Each node needs its level and the node before it in its branch.
 - **The build choice.** The whole tree costs 33 points and a folk has 29 at level 30, so a finished folk has everything except one keystone. On the way, the order you take nodes in is the choice (at level 12 you can afford about half the open nodes).
 - **Points are per folk, the level is shared.** A late joiner arrives at the shared level with all its points to spend, and a "choose for me" button that follows the first branch (game-design 6: nothing is levelled twice).
 - **Respec (proposal).** At your bed in the hut, for 50 Glint (the first one free), every point comes back. Never in a fight, siege or dungeon.
 - **No new buttons.** Each technique binds to an existing input (primary, secondary, block, special, dodge), a short timing window after one ("primary within 0.4 s after the sweep"), a held guard, or a passive condition. None uses a hold on primary, because Codex's primary repeats while held.
-- **Art cost.** Of the 42 techniques, 38 reuse existing drawings with a small effect sprite. Four need one new clip each: Bramble's `secondary_loose`, Velvet's `primary_waltz`, Mirra's `guard_wave` and Ashe's `guard_check`. Rook's Air Shot needs the airborne primary that #257 already lists as missing. Minors and keystones need no new body art.
+- **Art cost in the tree.** Kinds and forms are effects: a bolt head's colour, a second projectile, a ridge's extra lane. They need effect sprites, not body clips. A few techniques need one new clip each: Velvet's waltz lunge, Mirra's curtain wave and Ashe's shoulder check. Rook's air shot needs the airborne primary that #257 already lists as missing.
 - **Several techniques use the dodge and the perfect dodge** (game-design 4.2; Codex's kits have no dodge of their own). If the dodge changes, those bindings change with it.
 
-## 3. Weapon tiers and fittings
+## 3. Weapon lines and fittings
 
-Each folk keeps one **signature weapon**, the item its kit is built on: Bramble's bow, Iona's spear, Pendle's revolver, Cairn's fists, Morel's flask and catalyst, Velvet's sabre, Tam's wraps, Mirra's wrist bands and gem, Brine's harpoon gun, Ashe's sword, Clack's launcher, Nix's laser arm, Rook's carbine and Mote's core and glass. **Its tiers are level milestones**: a tier opens at its level, and Hale forges it cheaply, per folk.
+Each folk keeps one **signature weapon line**, and **its tiers are level milestones**: a tier opens at level 8, 16 or 24, and Hale forges it cheaply, per folk. Each tier is a real step, not a reskin: Bramble's bow becomes a crossbow at level 8 and a repeating crossbow at 16; Pendle's revolver becomes a heavy Sunhammer, then twin Sunhammers. The full table for all fourteen is in section 5 and in [world-and-cast.md](world-and-cast.md).
+
+- **One form change per folk** needs new clip tables (Bramble's crossbow, Pendle's twin guns, Iona's glaive, Morel's mortar, Velvet's beam lantern, Brine's cannon, Clack's twin tubes). The other tiers are new or swapped rig parts on the existing clips. Each tier's `rig` field says which.
+- **The kit keeps its four actions, roles and inputs.** A form change alters the primary's projectile or hit numbers through the modifier layer, never the kit files (raised on #149). The damage per second of each step is held level by gear level, so a new form is a new feel, not a power spike.
 
 | Tier | Name | Opens at | Sockets | Hale forges it for (placeholders) |
 | --- | --- | --- | --- | --- |
@@ -54,7 +63,7 @@ Each folk keeps one **signature weapon**, the item its kit is built on: Bramble'
 | 4 | Starfall | level 24, at the great forge | 3 | 300 Glint, 20 scrap, 6 home material, 1 starshard |
 
 - **Loot is fittings.** Weapon drops are fittings with game-design's rarity and affixes (5.3 and 5.4): a Fine fitting carries one affix, a Heroic three. Hale sets them into the signature weapon's sockets, and moves them between folk for a small Glint fee. Gear level and its forge upgrade (5.6) apply to the signature weapon. A fitting is a small visible part where it sits (a gem, a band, a scope).
-- **What a tier changes.** The drawing (silhouette, material, glow, size; each tier is described for an artist in the folk's JSON and below), one more socket at tiers 2 and 4, and **one small handling change** (tiers 2 and 3: a few per cent of reload, reach, cooldown, speed or guard cost; tier 4: one named effect, such as Pendle's last round being a critical hit). Power stays with gear level.
+- **What a tier changes.** The weapon's form and drawing (each tier is described for an artist in the folk's JSON and below), one more socket at tiers 2 and 4, and its handling (fire rate, capacity, reach, projectiles per shot). Tier 4, Starfall, keeps tier 3's form and adds one named effect, such as Pendle's last round being a critical hit. Power stays with gear level.
 - **Sizes are relative to the tier-1 drawing** (for example, +2 px per limb), so they hold when cast v2 redraws a weapon.
 - **Readable at 74 px.** At 1x, each tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster. Several tier 4 glows carry state the player needs: Pendle's six chamber glints go dark as he fires, Clack's rocket nose shows the reload, and Nix's seams brighten with heat.
 - **Starshards** are fist-sized splinters of the moon: guaranteed on the first defeat of each boss from act 3 on and in the deep shards after the story, and sold by Moss at a fixed price after the story. Never random-priced.
@@ -89,280 +98,280 @@ A drop for a folk you have not met yet waits in the wardrobe and shows when they
 
 ### Bramble
 
-Older grassland ranger; left-handed archer: bow in the RIGHT hand, quiver over the LEFT shoulder, billhook at the RIGHT hip, folding buckler on the RIGHT forearm. Kit (Codex): Quickdraw, Billhook, Briar buckler, Briarshot.
+Older grassland ranger; left-handed archer: bow in the RIGHT hand, quiver over the LEFT shoulder, billhook at the RIGHT hip, folding buckler on the RIGHT forearm. Kit (Codex): Quickdraw, Billhook, Briar buckler, Briarshot. Loadout kind: bolt or arrow head.
 
-| Branch | Lv 2 to 4 (1 pt) | Technique (2 pts) | Minor (1 pt) | Upgrade (3 pts) | Keystone (4 pts) |
+| Level | Weapon | What it is | Rig | Changes (placeholders) |
+| --- | --- | --- | --- | --- |
+| 1 | **Yew bow** | the tier-1 drawing: a shallow recurve held in the right hand, quiver over the left shoulder | as drawn | starting weapon |
+| 8 | **Hedge crossbow** | a short ash-wood crossbow with a steel prod (bow arms) as wide as the shoulders, a walnut stock to the shoulder and a goat's-foot lever on the right side; bolts in the same quiver; slung across the back when the billhook is out | new clips | slower, harder-hitting bolts; damage per second held equal by gear level |
+| 16 | **Repeating crossbow** | the crossbow gains a box magazine of 6 bolts on top of the stock and a cocking lever along the right side; the prod +2 px each end over tier 2 | parts | magazine 6, fire interval -30 %, reload seconds 1.2 |
+| 24 | **Starfall repeater** | moonwood stock and prod with crescent tips; the string drawn in starlight; the loaded bolt's head glows | parts | Starlit: the loaded kind's effect is 25 % stronger |
+
+| Branch | 1 pt | 2 pts | 1 pt | 3 pts | Keystone, 4 pts |
 | --- | --- | --- | --- | --- | --- |
-| **Bow** (primary, special) | Fletcher (2): Arrows fly 6 % faster. | **Steady Aim** (3): Standing still and not firing builds Aim pips; the next arrow spends them for extra power. *How:* passive: stand still without firing. | Long Eye (6): Aim pips are kept while walking slowly for 0.5 s. | Steady Aim II (12): Pips build faster, and a full three-pip arrow pierces one foe. | Briar Volley (22): Briarshot's first arrow splits into two. *(needs C60)* |
-| **Blade** (secondary) | Keen Hook (2): Billhook cooldown -8 %. | **Hook and Loose** (9): A point-blank arrow follows the sweep and knocks the nearest foe back. *How:* primary within 0.4 s after the billhook sweep. | Wide Sweep (11): Billhook arc +10 degrees. | Hook and Loose II (20): The sweep also staggers light foes, so the arrow lands. | Hedger (24): A billhook sweep that hits three foes refunds a dodge charge. |
-| **Woodcraft** (block) | Bracer Hide (4): Buckler guard cost -8 %. | **Briar Snare** (16): A briar snare drops at your feet and roots the next ground foe that steps on it. *How:* lower the buckler within 0.5 s after it blocks a hit. | Forager (18): Freed woodland foes drop seeds a little more often. | Briar Snare II (26): Two snares at once; a foe rooted by Briarshot springs the nearest snare too. | Old Ranger (28): Snares and roots last 25 % longer. |
-
-| Tier (level) | Bow | Changes |
-| --- | --- | --- |
-| 1 Yew bow (1) | the tier-1 drawing (being redrawn larger in cast v2): a plain shallow recurve with a leather grip wrap | starting look |
-| 2 Carved recurve (8) | the limb tips curl back +3 px each into a clear recurve; the grip is wrapped in green cord over the whole grip | arrow speed +8 % |
-| 3 Horn-tipped bow (16) | pale horn caps (3 px) on both tips; a 2 x 3 px shard set into the riser in a gold bezel | primary cooldown -6 % |
-| 4 Starfall bow (24) | limbs of dark moonwood that flare into crescent tips (+2 px each end over tier 3); gold riser; the string is drawn in starlight | Starlit: a three-pip arrow also shows the foe's weak point for 2 s |
+| **Bolts** | Barbed heads (2): Loads barbed bolts: they slow what they hit. | Fire heads (3): Loads fire bolts: they set burn. | Fletcher (6): The loaded kind's effect lasts 20 % longer. | Shard heads (12): Loads shard bolts: they pierce one more foe and show a weak point. | Net heads (22): Loads net bolts: they root a light foe; a tank is slowed instead. |
+| **Volley** | Steady hands (2): Shots recover 6 % faster. | Twin shot (9): Every third shot looses two bolts side by side. | Long eye (11): Bolts fly 8 % further. | Three-bolt spread (20): Twin shot becomes three bolts in a narrow fan. | Briar volley (24): Briarshot's powered shots are three-bolt spreads. *(needs C60)* |
+| **Woodcraft** | Keen hook (4): Billhook cooldown -8 %. | Briar snare (16): Lowering the buckler just after a block drops a snare that roots the next foe on it. | Bracer hide (18): Buckler guard cost -8 %. | Briar snare II (26): Two snares at once. | Hook and loose (28): A shot right after the billhook sweep fires point-blank with knockback. |
 
 Outfits: Autumn forester (story: own quest); Sheepskin mantle (village: fold and loom tier 1); Ranger's pine (450 Glint).
 Accessories: Feathered cap, head (rare drop: valley); Patched travelling cloak, back (arena: training yard, silver); Oak-leaf scarf, neck (bond 3); Acorn whistle, trinket (250 Glint, perk: pickup magnet radius +15 %).
 
 ### Iona
 
-Grassland storm-lancer; one long spear in the RIGHT hand, the LEFT grips the same shaft for two-handed actions; long braid down the back, magenta scarf. Kit (Codex): Spearpoint, Wind lunge, Gust guard, Storm Mantle.
+Grassland storm-lancer; one long spear in the RIGHT hand, the LEFT grips the same shaft for two-handed actions; long braid down the back, magenta scarf. Kit (Codex): Spearpoint, Wind lunge, Gust guard, Storm Mantle. Loadout kind: storm.
 
-| Branch | Lv 2 to 4 (1 pt) | Technique (2 pts) | Minor (1 pt) | Upgrade (3 pts) | Keystone (4 pts) |
+| Level | Weapon | What it is | Rig | Changes (placeholders) |
+| --- | --- | --- | --- | --- |
+| 1 | **Ash spear** | the tier-1 drawing: steel leaf blade, gold collar, gold-banded brass shaft, butt spike | as drawn | starting weapon |
+| 8 | **Winged spear** | two swept wings (+4 px each) below the blade that hook a foe; a magenta pennon at the collar | parts | lunge pull 8 |
+| 16 | **Storm glaive** | the leaf blade becomes a long single-edged glaive head (+6 px) with a copper storm vane on its back; the thrust ends in a short cutting turn | new clips | primary arc degrees 40 |
+| 24 | **Starfall lance** | a moonsilver glaive head with a storm-blue fuller; a gold crescent collar; a ribbon of light | parts | Stormlit: the first hit after a lunge arcs to one more foe |
+
+| Branch | 1 pt | 2 pts | 1 pt | 3 pts | Keystone, 4 pts |
 | --- | --- | --- | --- | --- | --- |
-| **Spear** (primary) | Long Haft (2): Spearpoint reach +3. | **Gale Step** (3): The roll flows into a long thrust that reaches further than Spearpoint. *How:* primary within 0.3 s after a dodge. | Quick Recovery (6): Spearpoint recovers 6 % faster. | Gale Step II (12): A Gale Step that hits gives back half a dodge charge. | Thunderhead (22): Storm Mantle's arcs reach one tile further. *(needs C60)* |
-| **Lunge** (secondary, special) | Windborne (2): Wind lunge cooldown -8 %. | **Static Charge** (9): The next Wind lunge into a charged foe discharges one small arc to a second foe. Smaller than Storm Mantle's arcs, and only from a lunge. *How:* passive: every third spear hit on the same foe charges it. | Follow-through (11): A lunge that hits refreshes Spearpoint at once. | Static Charge II (20): The discharge interrupts a shooter's wind-up, once per foe. | Gale Rider (24): Two Wind lunges can be chained before the cooldown. *(needs C60)* |
-| **Gust** (block) | Steady Feet (4): Gust guard drain -10 %. | **Windbreak** (16): The projectile is turned back along its path instead of draining guard. *How:* raise Gust guard within 0.2 s of a projectile reaching you. | Crosswind (18): Shooters' projectiles slow near your raised guard. | Windbreak II (26): Deflected projectiles carry a storm arc. | Eye of the Storm (28): While guarding, foes in melee are pushed back once a second. |
-
-| Tier (level) | Spear | Changes |
-| --- | --- | --- |
-| 1 Ash spear (1) | today's drawing: steel leaf blade, gold collar, gold-banded brass shaft, steel butt spike | starting look |
-| 2 Windcut spear (8) | two swept barbs (4 px each) below the leaf blade; a magenta pennon (2 x 6 px) tied at the collar that trails like her scarf | primary reach +4 |
-| 3 Stormwrought spear (16) | the blade reforged in blued steel with a bright edge; three copper coil rings below the collar; the butt spike becomes a weighted ring pommel | secondary cooldown -8 % |
-| 4 Starfall lance (24) | a pale moonsilver blade with a 1 px storm-blue fuller; a gold crescent collar; the pennon becomes a ribbon of light 8 px long | Stormlit: the first hit after a Wind lunge arcs to one more foe for 30 % |
+| **Storm** | Static (2): Loads static: hits charge foes; every third hit sparks. | Gale (3): Loads gale: hits push foes a step. | Weather eye (6): The loaded storm's effect lasts 20 % longer. | Rain (12): Loads rain: hits soak foes, so shock hurts them more. | Thunderhead (22): Storm Mantle's arcs reach one tile further. *(needs C60)* |
+| **Lance** | Long haft (2): Spearpoint reach +3. | Gale step (9): Primary right after a dodge is a long thrust. | Windborne (11): Wind lunge cooldown -8 %. | Gale step II (20): A Gale step that hits gives back half a dodge. | Gale rider (24): Two Wind lunges can be chained. *(needs C60)* |
+| **Gust** | Steady feet (4): Gust guard drain -10 %. | Windbreak (16): A guard raised just as a shot arrives turns it back. | Crosswind (18): Shots slow near your raised guard. | Windbreak II (26): Turned-back shots carry a storm arc. | Eye of the storm (28): While guarding, foes in melee are pushed back once a second. |
 
 Outfits: Moor coat (story: own quest); Yard drill coat (village: training yard tier 2); Tempest (600 Glint).
 Accessories: Kestrel hairpin, head (bond 4); Shoulder cloak, back (arena: training yard, gold); Moor tartan scarf, neck (rare drop: brackens); Weathervane charm, trinket (300 Glint, perk: the familiar's weak-point glint lasts 0.5 s longer).
 
 ### Pendle
 
-Sunstone robot gunslinger; one revolver on the RIGHT hip, one marksman rifle slung across the back (stock at the right hip, barrel past the LEFT shoulder); cattleman hat; no clock motif. Kit (Codex): Revolver, Fan fire, Steel plate, Longshot.
+Sunstone robot gunslinger; one revolver on the RIGHT hip, one marksman rifle slung across the back (stock at the right hip, barrel past the LEFT shoulder); cattleman hat; no clock motif. Kit (Codex): Revolver, Fan fire, Steel plate, Longshot. Loadout kind: round.
 
-| Branch | Lv 2 to 4 (1 pt) | Technique (2 pts) | Minor (1 pt) | Upgrade (3 pts) | Keystone (4 pts) |
+| Level | Weapon | What it is | Rig | Changes (placeholders) |
+| --- | --- | --- | --- | --- |
+| 1 | **Trail revolver** | the tier-1 drawing: one gunmetal revolver on the right hip, walnut grip; the marksman rifle slung across the back | as drawn | starting weapon |
+| 8 | **Sunhammer** | a heavier long-barrel revolver: barrel +4 px over tier 1, a fluted cylinder, a brass hammer spur and ivory grips | parts | five heavier rounds instead of six |
+| 16 | **Twin Sunhammers** | a second Sunhammer in a cross-draw holster on the left hip; both drawn for primary and fan fire | new clips | capacity per gun 5, alternate hands, fire interval -25 % |
+| 24 | **Six Suns** | both cylinders turn to sunstone glass lit from inside, one glint per loaded round; gold muzzle crowns; the rifle gains a gold crescent sight | parts | Six Suns: the last round in each gun is a critical hit |
+
+| Branch | 1 pt | 2 pts | 1 pt | 3 pts | Keystone, 4 pts |
 | --- | --- | --- | --- | --- | --- |
-| **Revolver** (primary) | Smooth Action (2): Revolver cooldown -5 %. | **Quick Hands** (3): Two rounds slip into the cylinder during the roll. *How:* a perfect dodge. | Speed Loader (6): Full reloads 10 % faster. | Quick Hands II (12): After a full reload from empty, the first shot is a critical hit. | High Noon (22): The sixth round of a cylinder knocks back. |
-| **Fan fire** (secondary) | Wrist Flick (2): Fan fire cooldown -8 %. | **Ricochet** (9): Fan fire rounds that hit high cover bounce once. *How:* passive on Fan fire. | Tight Fan (11): Fan fire spread -10 %. | Ricochet II (20): A bounced round turns toward the nearest foe within 30 degrees. | Gunsmoke (24): Fan fire leaves smoke that makes shooters miss their next shot. |
-| **Marksman** (special, block) | Plate Fold (4): Steel plate raises 15 % faster. | **Dead Eye** (16): The foe under the aim shows its weak point (the familiar's glint) for the next shot. *How:* during Longshot, hold still for 0.6 s. | Steady Stock (18): Longshot shots knock tanks back slightly. | Dead Eye II (26): A Longshot weak-point hit gives back 1 s of Longshot. *(needs C60)* | Bullseye (28): Longshot weak-point hits stagger elites. |
-
-| Tier (level) | Revolver | Changes |
-| --- | --- | --- |
-| 1 Trail revolver (1) | today's drawing: gunmetal frame, walnut grip, visible cylinder and trigger guard | starting look |
-| 2 Engraved revolver (8) | brass inlay lines on the cylinder; cream grip panels; the barrel 2 px longer | reload -8 % |
-| 3 Brass-frame revolver (16) | a brass frame with two 1 px ports on the barrel; a red lanyard from the grip to the belt; the rifle's scope gains a brass sunshade to match | fan spread -10 % |
-| 4 Six Suns (24) | the cylinder is sunstone glass lit from inside, with six 1 px chamber glints; a gold muzzle crown; a gold crescent front sight on the rifle | Six Suns: the last round in the cylinder is a critical hit |
+| **Rounds** | Hot-loaded (2): Loads hot rounds: they set burn. | Silver (3): Loads silver rounds: they pierce one foe. | Hand-loaded (6): Reload 8 % faster. | Lodestone (12): Loads lodestone rounds: they shock and chain to one foe. | Sun slugs (22): Loads sun slugs: a heavy round that staggers but reloads after every two. |
+| **Gunslinger** | Smooth action (2): Revolver recovers 5 % faster. | Ricochet (9): Fan fire rounds bounce once off high cover. | Quick hands (11): A perfect dodge loads two rounds. | Ricochet II (20): A bounced round turns toward the nearest foe. | Showdown (24): With twin guns, fan fire empties both in one wide fan. |
+| **Marksman** | Plate fold (4): Steel plate raises 15 % faster. | Dead eye (16): Holding still for 0.6 s in Longshot shows the foe's weak point. | Steady stock (18): Longshot shots knock tanks back slightly. | Dead eye II (26): A weak-point hit in Longshot gives back 1 s of the form. *(needs C60)* | Bullseye (28): Longshot weak-point hits stagger elites. |
 
 Outfits: Gulch duster (story: own quest); Oasis whites (village: water tower tier 1); Midnight rider (arena: dusty corral, gold).
 Accessories: Flat-brim hat, head (rare drop: sunstone); Serape, back (500 Glint); Star bandana, neck (bond 5); Lucky silver dollar, trinket (village: stall tier 2, perk: the first reload of each fight is 15 % faster).
 
 ### Cairn
 
-Moss-covered granite golem from the woodland circle, about 90 px; great round fists, a sprout on the LEFT shoulder, two floating pebbles over the RIGHT shoulder. Kit (Codex): Stone fist, Boulder, Crossed arms, Old Growth.
+Moss-covered granite golem from the woodland circle, about 90 px; great round fists, a sprout on the LEFT shoulder, two floating pebbles over the RIGHT shoulder. Kit (Codex): Stone fist, Boulder, Crossed arms, Old Growth. Loadout kind: stone.
 
-| Branch | Lv 2 to 4 (1 pt) | Technique (2 pts) | Minor (1 pt) | Upgrade (3 pts) | Keystone (4 pts) |
+| Level | Weapon | What it is | Rig | Changes (placeholders) |
+| --- | --- | --- | --- | --- |
+| 1 | **Bare stone** | the tier-1 drawing: round granite fists | as drawn | starting weapon |
+| 8 | **Banded fists** | two iron bands round each fist, raised 2 px | parts | guard cost -8 % |
+| 16 | **Boulder gauntlets** | the fists grow into rough boulder gauntlets, +4 px round, with roots binding them to the forearms and moss on the knuckles | parts | primary reach 4, knockback +20 % |
+| 24 | **Moonvein gauntlets** | white-gold moonstone veins in the gauntlets' cracks; a crescent shard in each | parts | Moonvein: Stone fist staggers swarmers |
+
+| Branch | 1 pt | 2 pts | 1 pt | 3 pts | Keystone, 4 pts |
 | --- | --- | --- | --- | --- | --- |
-| **Stone** (block) | Granite Skin (2): Guard maximum +10 % (a modifier on the canonical guard). | **Bedrock** (3): Once every few seconds the guard takes a whole hit with no guard cost. *How:* passive on Crossed arms. | Settled (6): Guard recovers 10 % faster. | Bedrock II (12): A Bedrock block shoves the attacker back. | Standing Stone (22): While guarding he cannot be knocked back. |
-| **Throw** (secondary) | Strong Arm (2): Boulders fly 8 % faster. | **Stonebreak** (9): A boulder that hits a tank cracks its front armour for a few seconds. *How:* passive on Boulder. | Heavy Stone (11): Boulder knockback +20 %. | Stonebreak II (20): A boulder that hits any foe slows its next wind-up. | Landslide (24): A boulder hitting a wall breaks into three small stones. |
-| **Moss** (primary, special) | Moss Fists (4): Stone fist recovers 5 % faster. | **Pebble Ward** (16): Each pebble catches one projectile and re-forms after a while. *How:* passive: the two pebbles over his right shoulder. | Deep Roots (18): Old Growth shockwave +10 % radius. | Pebble Ward II (26): A pebble that catches a shot flicks it back. | Circle's Blessing (28): Freed foes near Cairn heal him 1 %. |
-
-| Tier (level) | Fists | Changes |
-| --- | --- | --- |
-| 1 Bare stone (1) | today's drawing: round granite fists with dark joint gaps | starting look |
-| 2 Banded fists (8) | two iron knuckle bands round each fist, raised 2 px from the stone | boulder speed +8 % |
-| 3 Rooted fists (16) | roots wrap the bands and end in small moss cushions on the knuckles; a fern curl on the right wrist | guard cost -10 % |
-| 4 Moonvein fists (24) | seams of white-gold moonstone run through the fist cracks; a crescent shard set in each band | Moonvein: Stone fist staggers swarmers |
+| **Stones** | River stone (2): Throws river stones: they bounce once. | Mossball (3): Throws mossballs: they root where they burst. | Strong arm (6): Thrown stones fly 8 % faster. | Flint (12): Throws flint: it sparks and sets burn. | Landslide (22): Any stone that hits a wall breaks into three. |
+| **Fists** | Moss fists (2): Stone fist recovers 5 % faster. | Stonebreak (9): Fists and boulders crack a tank's front armour. | Deep roots (11): Old Growth shockwave +10 % radius. *(needs C60)* | Stonebreak II (20): Every hit slows the foe's next wind-up. | Rockslide (24): Every third punch in a row sends a short shockwave. |
+| **Bedrock** | Settled (4): Guard recovers 10 % faster. | Bedrock (16): Every few seconds the guard takes a whole hit free. | Pebble ward (18): The two pebbles each catch one shot. | Bedrock II (26): A Bedrock block shoves the attacker back. | Standing stone (28): While guarding he cannot be knocked back. |
 
 Outfits: Spring bloom (village: greenhouse tier 1); Circle runes (story: own quest); Basalt (arena: basalt ring, silver).
 Accessories: Daisy crown, head (bond 2); Wren's nest, back (rare drop: valley); Festival ribbon, neck (200 Glint); Smooth river stone, trinket (rare drop: lull, perk: tonics are drunk 15 % faster).
 
 ### Morel
 
-Older grassland alchemist; one blue flask in the RIGHT hand, a closed reagent case on the RIGHT hip, the catalyst apparatus at the LEFT hip, one mask on the chest (on the face in the special). Kit (Codex): Reagent flask, Catalyst, Mineral ward, Catalyst mask.
+Older grassland alchemist; one blue flask in the RIGHT hand, a closed reagent case on the RIGHT hip, the catalyst apparatus at the LEFT hip, one mask on the chest (on the face in the special). Kit (Codex): Reagent flask, Catalyst, Mineral ward, Catalyst mask. Loadout kind: reagent.
 
-| Branch | Lv 2 to 4 (1 pt) | Technique (2 pts) | Minor (1 pt) | Upgrade (3 pts) | Keystone (4 pts) |
+| Level | Weapon | What it is | Rig | Changes (placeholders) |
+| --- | --- | --- | --- | --- |
+| 1 | **Field kit** | the tier-1 drawing: one blue flask in the right hand, the case on the right hip, the catalyst at the left hip | as drawn | starting weapon |
+| 8 | **Bandolier** | a leather bandolier of six flasks across the chest (left shoulder to right hip); the catalyst gains a second coil | parts | fire interval -15 % |
+| 16 | **Flask mortar** | a short brass mortar on a shoulder strap, the length of a forearm, with a flask seated in its cup; it lobs flasks in a high arc | new clips | range +40 %, lob |
+| 24 | **Starglass mortar** | starglass flasks with a floating mote; the mortar's mouth ringed in gold; gold rims on the mask lenses | parts | Starglass: a foe in a patch shows its weak point when Catalyst sparks through it |
+
+| Branch | 1 pt | 2 pts | 1 pt | 3 pts | Keystone, 4 pts |
 | --- | --- | --- | --- | --- | --- |
-| **Reagents** (primary) | Good Arm (2): Flask range +8 %. | **Tacky Reagent** (3): Foes standing in a patch move slower. *How:* passive on reagent patches. | Long Brew (6): Patches last 15 % longer. | Tacky Reagent II (12): Slowed foes take more from a Catalyst spark. | Three Flasks (22): Every third flask leaves a patch twice the size. |
-| **Remedies** (block) | Mineral Lining (2): Mineral ward guard cost -8 %. | **Mineral Skin** (9): Instead of a patch, a mineral skin softens the next hit you take. *How:* throw a flask at your own feet (aim within 1.5 tiles). | Field Medic (11): A light hit no longer interrupts drinking a tonic. | Mineral Skin II (20): The skin also clears burn, chill and shock. | Antidote (24): Burn, chill and shock on you wear off 25 % sooner. |
-| **Catalysis** (secondary, special) | Spark Gap (4): Catalyst cooldown -8 %. | **Drowsy Fume** (16): A fume rises from the chain and makes foes in it attack half as often for a short time. *How:* Catalyst through three or more patches at once. | Close Burst (18): Catalyst's close burst +15 % radius. | Drowsy Fume II (26): The fume spreads to patches next to it. | Grand Reaction (28): Catalyst mask's chains jump one extra patch. *(needs C60)* |
-
-| Tier (level) | Flask and catalyst | Changes |
-| --- | --- | --- |
-| 1 Field kit (1) | today's drawing: blue glass flask held by the neck; brass chamber, glass bulb and copper coil | starting look |
-| 2 Caged flasks (8) | a copper wire cage (1 px grid) over the flask glass; a second coil on the catalyst | throw range +10 % |
-| 3 Sealed flasks (16) | a brass cap with a red wax seal on each flask; brass corners on the reagent case; the catalyst bulb 2 px larger with a small gauge | patch lifetime +15 % |
-| 4 Starglass kit (24) | pale violet-white glass with a 2 px mote of light floating inside each flask; the catalyst bulb holds a captive spark; gold rims on the mask lenses | Starglass: a foe in a patch shows its weak point when Catalyst sparks through it |
+| **Reagents** | Glue (2): Loads glue: patches slow. | Frost salt (3): Loads frost salt: patches chill. | Long brew (6): Patches last 15 % longer. | Quicklime (12): Loads quicklime: patches burn. | Drowsy fume (22): Loads fume: patches make foes attack half as often. |
+| **Volley** | Good arm (2): Flask range +8 %. | Pair (9): Every third throw is two flasks. | Spark gap (11): Catalyst cooldown -8 %. | Cluster (20): The pair becomes three flasks in a triangle. | Grand reaction (24): Catalyst mask's chains jump one extra patch. *(needs C60)* |
+| **Remedies** | Mineral lining (4): Mineral ward guard cost -8 %. | Mineral skin (16): A flask at your own feet softens the next hit. | Field medic (18): A light hit no longer interrupts a tonic. | Mineral skin II (26): The skin also clears burn, chill and shock. | Antidote (28): Burn, chill and shock on you wear off 25 % sooner. |
 
 Outfits: Herbalist's apron (village: apothecary tier 2); Laboratory coat (story: own quest); Ember smock (rare drop: fire country).
 Accessories: Bowler hat, head (300 Glint); Oilcloth cape, back (arena: gear floor, silver); Spectacles on a chain, neck (bond 4); Pocket mortar, trinket (story: apothecary first tonic, perk: tonics heal 5 % more).
 
 ### Velvet
 
-Coastal duellist from Driftwood; one sabre in the LEFT hand (closed brass knuckle-bow), its empty scabbard on the RIGHT hip, one black lantern by its bail in the RIGHT hand. Kit (Codex): Sabre, Lantern flare, Sabre parry, Black Lantern.
+Coastal duellist from Driftwood; one sabre in the LEFT hand (closed brass knuckle-bow), its empty scabbard on the RIGHT hip, one black lantern by its bail in the RIGHT hand. Kit (Codex): Sabre, Lantern flare, Sabre parry, Black Lantern. Loadout kind: lantern light.
 
-| Branch | Lv 2 to 4 (1 pt) | Technique (2 pts) | Minor (1 pt) | Upgrade (3 pts) | Keystone (4 pts) |
+| Level | Weapon | What it is | Rig | Changes (placeholders) |
+| --- | --- | --- | --- | --- |
+| 1 | **Naval sabre** | the tier-1 drawing: sabre in the left hand, black lantern by its bail in the right | as drawn | starting weapon |
+| 8 | **Cutlass** | a broader, shorter cutlass (+2 px wide at the tip, -2 px long) with a closed brass bowl guard | parts | arc degrees 15, reach -2 |
+| 16 | **Moth sabre and dark lens** | a long slender sabre (+4 px over tier 1) with a moth-wing shell guard; the lantern gains a shuttered bull's-eye lens on its front, so the flare becomes a beam | new clips | reach 4, flare shape cone |
+| 24 | **Moonlit sabre** | a moonsilver blade with a pale edge light; the lantern cage gold, its light pale blue-white | parts | Moonlit: a perfect parry flashes the lantern and exposes foes near you |
+
+| Branch | 1 pt | 2 pts | 1 pt | 3 pts | Keystone, 4 pts |
 | --- | --- | --- | --- | --- | --- |
-| **Sabre** (primary, block) | Light Wrist (2): Sabre recovers 5 % faster. | **Riposte** (3): The next sabre cut comes faster. In the base form only; Black Lantern's long counter-thrust is unchanged. *How:* a parry in the first 0.2 s of a melee hit. | Duellist (6): Parry raises 15 % faster. | Riposte II (12): The riposte cut exposes the foe, as Lantern flare does. | En Garde (22): After a parry, the next hit you take is reduced by 20 %. |
-| **Lantern** (secondary) | Trimmed Wick (2): Lantern flare cooldown -8 %. | **Dim** (9): The lantern shutters after the flare; for a moment shooters lose track of her and hold fire. *How:* passive after Lantern flare. | Wide Beam (11): Flare radius +10 %. | Dim II (20): A perfect dodge while dimmed takes time off the flare's cooldown. | Lighthouse (24): Exposed foes stay exposed 1 s longer. |
-| **Dance** (special) | Light Step (4): Walk speed +4 %. | **Moth's Waltz** (16): The third cut becomes a stepping lunge-cut through the foe. *How:* the third sabre cut in a row. | Tails Fly (18): The third cut's reach +4. | Moth's Waltz II (26): The lunge leaves a pale echo that cuts once more half a second later. | Black Waltz (28): Black Lantern's echoes cut once as they fade. *(needs C60)* |
-
-| Tier (level) | Sabre | Changes |
-| --- | --- | --- |
-| 1 Naval sabre (1) | today's drawing: curved steel blade, brass knuckle-bow guard | starting look |
-| 2 Blackened sabre (8) | a blackened fuller with a bright edge; a second bar on the knuckle-bow | arc degrees +5 |
-| 3 Basket-hilt sabre (16) | a full brass shell guard (5 x 5 px) round the fist; a violet sword knot (5 px) from the pommel | flare cooldown -8 % |
-| 4 Moonlit sabre (24) | a moonsilver blade whose edge carries a pale light; the black lantern's cage turns gold and its flame pale blue-white | Moonlit: a perfect parry flashes the lantern and exposes foes within 2 tiles |
+| **Lights** | White light (2): Loads white: the flare exposes foes longer. | Amber light (3): Loads amber: the flare sets burn. | Trimmed wick (6): Flare cooldown -8 %. | Moth dust (12): Loads moth dust: dazzled foes wander for a moment. | Lighthouse (22): The flare reaches 30 % further. |
+| **Blade** | Light wrist (2): Sabre recovers 5 % faster. | Moth's waltz (9): The third cut in a row is a stepping lunge-cut. | Duellist (11): Parry raises 15 % faster. | Moth's waltz II (20): The lunge leaves an echo that cuts again. | Black waltz (24): Black Lantern's echoes cut once as they fade. *(needs C60)* |
+| **Shadow** | Light step (4): Walk speed +4 %. | Riposte (16): A parry at the last moment makes the next cut faster. | Dim (18): After a flare, shooters lose track of you for a moment. | Riposte II (26): The riposte cut exposes the foe. | En garde (28): After a parry, the next hit you take is 20 % lighter. |
 
 Outfits: Harbour blue (story: own quest); Keeper's oilskin (village: bell tower tier 2); Masquerade (arena: harbour jetty, gold).
 Accessories: Tricorn, head (rare drop: valley); Boat cloak, back (550 Glint); Lace jabot, neck (bond 6); Moth brooch, trinket (arena: harbour jetty, bronze, perk: your defeat cache shows from twice as far).
 
 ### Tam
 
-Mature Frostline ice monk in ochre and saffron robes; cool grey-blue wraps on both forearms, palms and shins; one mala round the neck; no weapon, the wraps are his. Kit (Codex): Frost palms, Ice ridge, Ice guard, Glacier Form.
+Mature Frostline warrior monk, bald, in saffron and ochre robes (the castwork redesign); cool grey-blue wraps on both forearms, palms and shins; one mala round the neck; no weapon, the wraps are his. Kit (Codex): Frost palms, Ice ridge, Ice guard, Glacier Form. Loadout kind: stance.
 
-| Branch | Lv 2 to 4 (1 pt) | Technique (2 pts) | Minor (1 pt) | Upgrade (3 pts) | Keystone (4 pts) |
+| Level | Weapon | What it is | Rig | Changes (placeholders) |
+| --- | --- | --- | --- | --- |
+| 1 | **Plain wraps** | the tier-1 drawing: grey-blue wraps on forearms, palms and shins | as drawn | starting weapon |
+| 8 | **Iron wraps** | dark iron rings sewn into the wraps at wrist and shin; a heavier mala | parts | knockback +15 % |
+| 16 | **Frost gauntlets** | ice grows into fitted gauntlets over both hands with three short ice ridges on the knuckles (+2 px proud); shin guards of ice | parts | every palm adds frost in the base form |
+| 24 | **Moonbead gauntlets** | the ice clears to starglass lit from inside; the guru bead a small glowing moon | parts | Moonbead: a frost shatter chills foes beside the target |
+
+| Branch | 1 pt | 2 pts | 1 pt | 3 pts | Keystone, 4 pts |
 | --- | --- | --- | --- | --- | --- |
-| **Palm** (primary) | Quick Palms (2): Frost palms recover 5 % faster. | **Cold Breath** (3): The held breath steadies him: the next palm applies two frost instead of one. *How:* hold Ice guard for 1 s. | Deep Cold (6): Frost on foes lasts 20 % longer. | Cold Breath II (12): The steadied palm also slows the foe. | Hundred Palms (22): Every fifth palm in a row strikes twice. |
-| **Ridge** (secondary, special) | Long Ridge (2): Ice ridge travels 10 % further. | **Ridge Wall** (9): The ridge ends in a low ice wall that stops projectiles for a moment. *How:* passive on Ice ridge. | Glacier Step (11): Glacier Form's glide +10 % speed. | Ridge Wall II (20): A wall that is hit shatters and chills foes beside it. | Avalanche (24): A ridge that hits three foes leaves an ice field. |
-| **Stillness** (block) | Calm Guard (4): Ice guard drain -10 %. | **Still Water Step** (16): A frost patch is left where he rolled; foes on it slow. *How:* a perfect dodge. | Bothy Warmth (18): Chill on you wears off 20 % sooner. | Still Water Step II (26): Palms on a foe standing on the patch add one more frost. | Unmoved (28): Holding guard for 2 s makes the next block cost nothing. |
-
-| Tier (level) | Wraps | Changes |
-| --- | --- | --- |
-| 1 Plain wraps (1) | today's drawing: grey-blue cloth wraps on forearms, palms and shins | starting look |
-| 2 Frost-stitched wraps (8) | white zigzag stitching (1 px) along the wraps and a second wind at the wrists; three ice-blue beads added to the mala | ridge speed +10 % |
-| 3 Hoarfrost guards (16) | pale ice plates (3 px) on the backs of both hands and the shins, tied over the wraps | guard drain -10 % |
-| 4 Moonbead wraps (24) | the ice plates turn to clear starglass lit from inside; the guru bead becomes a small glowing moon (2 x 2 px) | Moonbead: a frost shatter also chills foes beside the target |
+| **Stances** | Crane (2): Takes crane stance: palms reach 3 further. | Ox (3): Takes ox stance: palms stagger light foes. | Breath (6): Changing stance at a waystone is free and instant. | Glacier (12): Takes glacier stance: every palm adds frost. | Hundred palms (22): Every fifth palm in a row strikes twice. |
+| **Ridge** | Long ridge (2): Ice ridge travels 10 % further. | Twin ridge (9): Ice ridge splits into two lanes. | Glacier step (11): Glacier Form's glide +10 % speed. *(needs C60)* | Three ridges (20): Three lanes in a narrow fan. | Ridge wall (24): Each ridge ends in a low ice wall that stops shots for 2 s. |
+| **Stillness** | Calm guard (4): Ice guard drain -10 %. | Cold breath (16): Holding guard 1 s makes the next palm add two frost. | Still water (18): A perfect dodge leaves a frost patch that slows. | Cold breath II (26): The steadied palm also slows. | Unmoved (28): Holding guard 2 s makes the next block cost nothing. |
 
 Outfits: Snow robes (village: training yard tier 1); Pilgrim (story: own quest); Temple gold (700 Glint).
 Accessories: Straw rain hat, head (arena: castle courtyard, gold); Straw rain cape, back (rare drop: frostline); Winter mala, neck (bond 3); Kettle charm, trinket (300 Glint, perk: your first tonic of each outing refills at the next camp you free).
 
 ### Mirra
 
-Oasis water diviner; hands empty and open in every clip (water is a scene effect); ivory headwrap with a turquoise gem above the RIGHT ear; turquoise wrist bands; shawl end over the LEFT shoulder. Kit (Codex): Water bolt, Spring seal, Water curtain, Oasis Unbound.
+Oasis water diviner; hands empty and open in every clip (water is a scene effect); ivory headwrap with a turquoise gem above the RIGHT ear; turquoise wrist bands; shawl end over the LEFT shoulder. Kit (Codex): Water bolt, Spring seal, Water curtain, Oasis Unbound. Loadout kind: water.
 
-| Branch | Lv 2 to 4 (1 pt) | Technique (2 pts) | Minor (1 pt) | Upgrade (3 pts) | Keystone (4 pts) |
+| Level | Weapon | What it is | Rig | Changes (placeholders) |
+| --- | --- | --- | --- | --- |
+| 1 | **Turquoise bands** | the tier-1 drawing: turquoise wrist bands with gold studs; the gem above the right ear | as drawn | starting weapon |
+| 8 | **Wave bands** | the bands +1 px wider with a gold wave line; a teardrop pendant under the gem | parts | bolt speed +10 % |
+| 16 | **Spring orb** | a fist-sized orb of water that floats at her right hand's height and follows it (a scene effect anchored to hand_R, like her seals); the bolts leave the orb | parts | bolts per shot 2, spread degrees 8 |
+| 24 | **Starspring orb** | the orb holds a starlit core; the bands turn to clear water-glass | parts | Starspring: seals last 1 s longer |
+
+| Branch | 1 pt | 2 pts | 1 pt | 3 pts | Keystone, 4 pts |
 | --- | --- | --- | --- | --- | --- |
-| **Springs** (secondary) | Deep Well (2): Spring seals last 10 % longer. | **Seep** (3): The spring heals her a little each second, for a few seconds per seal. *How:* passive: stand in one of your own spring seals. | Wide Seal (6): Seal radius +8 %. | Seep II (12): Dodges recharge faster while she stands in a seal. | Oasis (22): You may keep one more seal at a time. |
-| **Currents** (primary, special) | Swift Water (2): Water bolts fly 8 % faster. | **Undertow** (9): The widened bolt pulls light foes one step toward the seal. *How:* passive: a water bolt fired through a seal. | Strong Current (11): Bolts through a seal +10 % width. | Undertow II (20): Pulled foes are soaked: their next hit taken is stronger. | Riverbed (24): Oasis Unbound's currents slow foes they cross. |
-| **Curtain** (block) | Flowing Guard (4): Water curtain guard cost -8 %. | **Curtain Wave** (16): The curtain rolls forward as a wave that pushes foes and projectiles back. *How:* hold Water curtain for 0.8 s, then let go. | Spray (18): Blocked projectiles splash and soak the nearest foe. | Curtain Wave II (26): A spring seal is left where the wave breaks. | Still Pool (28): Seep also clears burn on you. |
-
-| Tier (level) | Wrist bands and gem | Changes |
-| --- | --- | --- |
-| 1 Turquoise bands (1) | today's drawing: turquoise wrist bands with gold studs; the gem in a gold setting above the right ear | starting look |
-| 2 Wave bands (8) | the bands 1 px wider with a carved gold wave line; a teardrop pendant (2 x 3 px) under the gem | bolt speed +8 % |
-| 3 Paired bands (16) | a second band high on each forearm, joined to the wrist band by two fine gold chains; the gem +1 px each way | seal radius +10 % |
-| 4 Starspring bands (24) | the turquoise turns to clear water-glass lit from inside; the gem becomes starlit oasis glass | Starspring: your seals last 1 s longer |
+| **Waters** | Spring water (2): Loads spring water: seals heal you a little. | Brine (3): Loads brine: bolts soak foes. | Deep well (6): Seals last 10 % longer. | Hot spring (12): Loads hot spring water: bolts scald (burn). | Oasis (22): You may keep one more seal. |
+| **Currents** | Swift water (2): Bolts fly 8 % faster. | Undertow (9): A bolt through a seal pulls light foes toward it. | Wide seal (11): Seal radius +8 %. | Fountain (20): Bolts through a seal split into three. | Riverbed (24): Oasis Unbound's currents slow foes they cross. |
+| **Curtain** | Flowing guard (4): Curtain guard cost -8 %. | Curtain wave (16): Hold the curtain 0.8 s and release: a wave pushes foes and shots back. | Spray (18): Blocked shots splash and soak the nearest foe. | Curtain wave II (26): The wave leaves a seal where it breaks. | Still pool (28): Standing in a seal clears burn. |
 
 Outfits: Dusk caravan (story: own quest); Garden linen (village: water tower tier 2); Festival red (rare drop: sunstone).
 Accessories: Gold head chain, head (400 Glint); Travelling shawl, back (arena: dusty corral, silver); Shell necklace, neck (rare drop: isles); Dowsing pendant, trinket (bond 5, perk: regional seeds drop 10 % more often).
 
 ### Brine
 
-Coastal diver in a sealed copper helmet; one harpoon gun (wooden stock, gunmetal body, brass reel on the right side); an olive air pack with ONE hose to the helmet's right rear. Kit (Codex): Harpoon gun, Reel, Dive brace, Abyssal Drive.
+Coastal diver in a sealed copper helmet; one harpoon gun (wooden stock, gunmetal body, brass reel on the right side); an olive air pack with ONE hose to the helmet's right rear. Kit (Codex): Harpoon gun, Reel, Dive brace, Abyssal Drive. Loadout kind: harpoon head.
 
-| Branch | Lv 2 to 4 (1 pt) | Technique (2 pts) | Minor (1 pt) | Upgrade (3 pts) | Keystone (4 pts) |
+| Level | Weapon | What it is | Rig | Changes (placeholders) |
+| --- | --- | --- | --- | --- |
+| 1 | **Dock harpoon** | the tier-1 drawing: wooden stock, gunmetal body, brass reel, harpoon in the muzzle | as drawn | starting weapon |
+| 8 | **Sheathed harpoon** | a copper barrel sheath with rivets; the reel +2 px; a barbed head | parts | reel speed +15 % |
+| 16 | **Pressure cannon** | a short, fat pressure cannon: a brass air bottle under the barrel with a gauge, a flared muzzle (+3 px) and a winch drum twice the tier-1 reel | new clips | projectile speed +30 %, pierce 1, tether heavy |
+| 24 | **Abyssal cannon** | a moonsilver head with a teal glow line; navy lacquer; the drum's spokes glow while reeling | parts | Abyss light: a tethered foe shows its weak point |
+
+| Branch | 1 pt | 2 pts | 1 pt | 3 pts | Keystone, 4 pts |
 | --- | --- | --- | --- | --- | --- |
-| **Line** (secondary) | Oiled Reel (2): Reel 10 % faster. | **Anchor Line** (3): He arrives with a gun-butt strike. *How:* Reel toward an anchored heavy target. | Long Line (6): Tether length +10 %. | Anchor Line II (12): The arrival strike staggers the target. | Kraken (22): Reeling a heavy foe drags it one step toward you. |
-| **Harpoon** (primary, special) | Quick Winch (2): Harpoon reload 8 % faster. | **Barbed Line** (9): A tethered foe takes a little damage each second. *How:* passive while a foe is tethered. | Heavy Head (11): Harpoon knockback +15 %. | Barbed Line II (20): Reeling a light foe into a wall stuns it. | Leviathan (24): Abyssal Drive's shots pierce one more foe. *(needs C60)* |
-| **Brace** (block) | Weighted Boots (4): Dive brace guard cost -8 %. | **Pressure Brace** (16): Pressure builds in the pack: the next harpoon flies faster and passes through one foe. *How:* hold Dive brace for 1 s. | Sea Legs (18): Knockback on you -20 %. | Pressure Brace II (26): For its first 0.3 s the brace blocks from every side. | Ironclad (28): Dive brace blocks from both sides. |
-
-| Tier (level) | Harpoon gun | Changes |
-| --- | --- | --- |
-| 1 Dock harpoon (1) | today's drawing: wooden stock, gunmetal body, brass reel under the barrel, harpoon in the muzzle | starting look |
-| 2 Sheathed harpoon (8) | a copper sheath with three rivets over the barrel; the reel drum 2 px wider; a barbed harpoon head | reel speed +10 % |
-| 3 Pressure harpoon (16) | a brass pressure bottle with a round gauge under the barrel; a fin vane on the harpoon | range +8 % |
-| 4 Abyssal harpoon (24) | a moonsilver harpoon head with a bioluminescent teal line; a navy lacquered stock; the reel's spokes glow while reeling | Abyss light: a tethered foe shows its weak point while the line holds |
+| **Heads** | Barbed head (2): Loads barbed heads: tethered foes slow. | Eel head (3): Loads eel heads: the tether shocks every second. | Long line (6): Tether length +10 %. | Buoy head (12): Loads buoy heads: a light foe is lifted and stunned briefly. | Net head (22): Loads net heads: the harpoon bursts into a net that roots. |
+| **Winch** | Oiled reel (2): Reel 10 % faster. | Anchor line (9): Reeling to a heavy target ends in a gun-butt strike. | Quick winch (11): Harpoon reload 8 % faster. | Snap line (20): Reeling a light foe into a wall stuns it. | Leviathan (24): Abyssal Drive's shots pierce one more foe. *(needs C60)* |
+| **Brace** | Weighted boots (4): Brace guard cost -8 %. | Pressure brace (16): Hold the brace 1 s: the next harpoon is faster and pierces. | Sea legs (18): Knockback on you -20 %. | Pressure brace II (26): For its first 0.3 s the brace blocks from every side. | Ironclad (28): The brace blocks from both sides. |
 
 Outfits: Reef suit (story: own quest); Naturalist's suit (village: menagerie tier 1); Deep black (arena: basalt ring, gold).
 Accessories: Copper crest fin, head (bond 6); Net bag, back (rare drop: isles); Diver's medal, neck (350 Glint); Lucky shell, trinket (250 Glint, perk: loot bursts land 30 % closer to you).
 
 ### Ashe
 
-Ember knight in brass-edged steel plate; ONE sword in the RIGHT hand; ONE barred-visor helm with a crimson crest, carried under the LEFT arm and worn only in Cinderhelm; crimson cape and tabard. Kit (Codex): Ember blade, Ember thrust, Armoured guard, Cinderhelm.
+Ember knight in brass-edged steel plate; ONE sword in the RIGHT hand; ONE barred-visor helm with a crimson crest, carried under the LEFT arm and worn only in Cinderhelm; crimson cape and tabard. Kit (Codex): Ember blade, Ember thrust, Armoured guard, Cinderhelm. Loadout kind: flame.
 
-| Branch | Lv 2 to 4 (1 pt) | Technique (2 pts) | Minor (1 pt) | Upgrade (3 pts) | Keystone (4 pts) |
+| Level | Weapon | What it is | Rig | Changes (placeholders) |
+| --- | --- | --- | --- | --- |
+| 1 | **Knight's sword** | the tier-1 drawing: steel blade with a fuller, brass cross guard; the helm under the left arm | as drawn | starting weapon |
+| 8 | **Ember longsword** | a longer blade (+5 px) with a flared guard and an ember line in the fuller; still one-handed | parts | reach 4 |
+| 16 | **Wyrmfang** | a broad blade cut from the freed dragon's shed fang: ivory-white, gently curved, +3 px wider than tier 2, the dragon's scale on the grip; it smoulders at the edge | parts | burn on hit seconds 1 |
+| 24 | **Starforged fang** | the fang's edge glows white-gold; the guard becomes two crescent horns | parts | Starforged: the third sweep in a row throws a small flame crescent |
+
+| Branch | 1 pt | 2 pts | 1 pt | 3 pts | Keystone, 4 pts |
 | --- | --- | --- | --- | --- | --- |
-| **Blade** (primary) | Swordwork (2): Ember blade recovers 5 % faster. | **Banked Fire** (3): Heat builds in the blade; Ember thrust spends it for extra power. *How:* passive: each Ember blade hit. | Stoked (6): Banked Fire builds one heat on a blocked hit too. | Banked Fire II (12): At full heat the guard costs less. | Inferno (22): At full heat, sweeps burn what they hit. |
-| **Plate** (block) | Heavy Pauldron (2): Armoured guard cost -8 %. | **Shoulder Check** (9): She drives the pauldron forward in a short shove. *How:* lower Armoured guard within 0.5 s after it blocks a hit. | Hearthold Drill (11): Guard raises 15 % faster. | Shoulder Check II (20): The check breaks a tank's shield guard. | Bulwark (24): Ember thrust breaks a tank's front guard. |
-| **Ember** (secondary, special) | Long Thrust (4): Ember thrust reach +3. | **Ember Wake** (16): The thrust leaves a short burning line on the ground. *How:* passive on Ember thrust. | Kindling (18): Ember thrust cooldown -8 %. | Ember Wake II (26): Cinderhelm's closing finisher also leaves the wake. *(needs C60)* | Dragonheart (28): Cinderhelm's flame crescents fly 15 % further. *(needs C60)* |
-
-| Tier (level) | Sword | Changes |
-| --- | --- | --- |
-| 1 Knight's sword (1) | today's drawing: steel blade with a fuller, brass cross guard, leather grip, brass pommel | starting look |
-| 2 Ember-forged sword (8) | the blade 3 px longer; the fuller shows a dull ember line; the cross guard flared at both ends | thrust reach +4 |
-| 3 Wave blade (16) | a gently waved edge (2 px undulation); a dragon-head pommel; a crimson grip wrap | guard cost -10 % |
-| 4 Starforged edge (24) | the fuller glows white-gold; the cross guard becomes two crescent horns | Starforged edge: the third sweep in a row throws a small flame crescent |
+| **Flames** | Ember (2): Loads ember: hits build heat; Ember thrust spends it. | Smoke (3): Loads smoke: thrusts leave a cloud shooters cannot see through. | Stoked (6): Flame effects last 20 % longer. | White fire (12): Loads white fire: thrusts pierce one foe. | Ember wake (22): Thrusts leave a burning line. |
+| **Blade** | Swordwork (2): Blade recovers 5 % faster. | Crescent (9): The third sweep in a row throws a short flame crescent. | Long thrust (11): Ember thrust reach +3. | Twin crescent (20): The crescent becomes two, crossed. | Dragonheart (24): Cinderhelm's crescents fly 15 % further. *(needs C60)* |
+| **Plate** | Heavy pauldron (4): Guard cost -8 %. | Shoulder check (16): Lowering the guard just after a block shoves the foe. | Hearthold drill (18): Guard raises 15 % faster. | Shoulder check II (26): The check breaks a tank's guard. | Bulwark (28): Burn on you wears off 30 % sooner. |
 
 Outfits: Tournament plate (story: own quest); Blackened plate (village: trophy hall tier 1); Ember guard (900 Glint).
 Accessories: Dragon crest, head (rare drop: fire country); Heraldic cape, back (arena: castle courtyard, silver); Mail collar, neck (bond 7); Bell charm, trinket (village: bell tower tier 1, perk: burn on you wears off 20 % sooner).
 
 ### Clack
 
-Older broad heavy gunner; rocket launcher on the RIGHT shoulder, a separate pressure chamber under the tube, a two-rocket rack on the front LEFT of the belt, a folding loader frame flat on the back. Kit (Codex): Shoulder rocket, Concussive vent, Blast guard, Siegebreaker.
+Older broad heavy gunner; rocket launcher on the RIGHT shoulder, a separate pressure chamber under the tube, a two-rocket rack on the front LEFT of the belt, a folding loader frame flat on the back. Kit (Codex): Shoulder rocket, Concussive vent, Blast guard, Siegebreaker. Loadout kind: rocket.
 
-| Branch | Lv 2 to 4 (1 pt) | Technique (2 pts) | Minor (1 pt) | Upgrade (3 pts) | Keystone (4 pts) |
+| Level | Weapon | What it is | Rig | Changes (placeholders) |
+| --- | --- | --- | --- | --- |
+| 1 | **Works launcher** | the tier-1 drawing: gunmetal tube with orange bands on the right shoulder | as drawn | starting weapon |
+| 8 | **Plated launcher** | riveted heat plates, hazard stripes, a bell +2 px wider | parts | reload -10 % |
+| 16 | **Twin-tube launcher** | a second tube strapped beside the first (the pair 1.6 times the tier-1 width), one loaded nose in each; the rack holds four | new clips | two shots between reloads |
+| 24 | **Starnose launcher** | station-alloy tubes with gold bands; both loaded noses glow in starlight | parts | Starnose: a rocket that frees a foe cuts the reload by 20 % |
+
+| Branch | 1 pt | 2 pts | 1 pt | 3 pts | Keystone, 4 pts |
 | --- | --- | --- | --- | --- | --- |
-| **Loader** (primary) | Practised Hands (2): Rocket reload 6 % faster. | **Hot Loader** (3): The vent's kick speeds the loading. *How:* Concussive vent during a reload. | Quick Fuse (6): Rockets fly 8 % faster. | Hot Loader II (12): A vent that hits two or more foes completes the reload. | Spare Rack (22): Every fourth rocket needs no reload. |
-| **Blast** (secondary, special) | Wide Charge (2): Blast radius +6 %. | **Cluster Nose** (9): The blast scatters three small bomblets that pop a moment later. *How:* passive on Shoulder rocket. | Shrapnel (11): Bomblets +1. | Cluster Nose II (20): Bomblets nudge small foes toward the blast's centre. | Siege Master (24): Siegebreaker salvos spread 15 % tighter. *(needs C60)* |
-| **Shield** (block) | Thick Plate (4): Blast guard cost -8 %. | **Planted Shield** (16): He plants the shield: he cannot walk, blocked shots stop draining the guard, and the next rocket's blast is larger. *How:* hold Blast guard for 1 s. | Vent Valve (18): Concussive vent cooldown -10 %. | Planted Shield II (26): The planted shield covers his whole front half. | Foundry Wall (28): A planted shield also blocks for an ally champion behind it in sieges. |
-
-| Tier (level) | Rocket launcher | Changes |
-| --- | --- | --- |
-| 1 Works launcher (1) | today's drawing: gunmetal tube with orange bands, brass muzzle ring, flared exhaust bell | starting look |
-| 2 Plated launcher (8) | riveted heat plates over the tube; the orange bands become 2 px diagonal hazard stripes; the bell 2 px wider | reload -8 % |
-| 3 Braked launcher (16) | a brass muzzle brake with four vents; a small periscope sight on the left; a second gauge on the pressure chamber | blast radius +6 % |
-| 4 Starnose launcher (24) | a dark station-alloy tube with gold bands; the loaded rocket's nose in the bore is pale starlight | Starnose: a rocket that frees a foe cuts the reload by 20 % |
+| **Rockets** | Cluster (2): Loads cluster rockets: three bomblets pop after the blast. | Incendiary (3): Loads incendiary rockets: the blast leaves fire. | Wide charge (6): Blast radius +6 %. | Concussion (12): Loads concussion rockets: a wider push, less damage. | Flare (22): Loads flare rockets: they light the area and show weak points. |
+| **Salvo** | Practised hands (2): Reload 6 % faster. | Hot loader (9): A vent during a reload speeds it. | Quick fuse (11): Rockets fly 8 % faster. | Hot loader II (20): A vent that hits two foes finishes the reload. | Siege master (24): Siegebreaker salvos spread 15 % tighter. *(needs C60)* |
+| **Shield** | Thick plate (4): Blast guard cost -8 %. | Planted shield (16): Hold the guard 1 s: planted, it stops draining and the next blast is larger. | Vent valve (18): Vent cooldown -10 %. | Planted shield II (26): The planted shield covers his front half. | Foundry wall (28): In sieges a planted shield also covers a champion behind it. |
 
 Outfits: Foundry hand (story: own quest); Dock boss (village: workshop tier 1); Hazard orange (arena: gear floor, gold).
 Accessories: Welder's cap, head (250 Glint); Canvas cover, back (rare drop: cogsworth); Red neckerchief, neck (bond 5); Gauge fob, trinket (village: workshop tier 2, perk: the bond meter starts each outing 10 higher).
 
 ### Nix
 
-Neon Harbour cyborg; the laser arm is his anatomical LEFT arm in every view (steel-blue casing, cyan lens); the RIGHT arm natural with a black wrist wrap; teal jacket with orange lining. Kit (Codex): Laser arm, Afterimage, Arm shield, Limit Release.
+Neon Harbour cyborg; the laser arm is his anatomical LEFT arm in every view (steel-blue casing, cyan lens); the RIGHT arm natural with a black wrist wrap; teal jacket with orange lining. Kit (Codex): Laser arm, Afterimage, Arm shield, Limit Release. Loadout kind: pulse.
 
-| Branch | Lv 2 to 4 (1 pt) | Technique (2 pts) | Minor (1 pt) | Upgrade (3 pts) | Keystone (4 pts) |
+| Level | Weapon | What it is | Rig | Changes (placeholders) |
+| --- | --- | --- | --- | --- |
+| 1 | **Courier arm** | the tier-1 drawing: steel-blue casing on the LEFT arm, cyan lens | as drawn | starting weapon |
+| 8 | **Finned arm** | three heat fins along the forearm; an orange lens ring | parts | cooling +15 % |
+| 16 | **Split-lens arm** | the emitter widens into a three-lens head (+3 px wide), the lenses in a short row; the casing gains cyan traces | parts | beams 3, spread degrees 10, heat per shot +20 % |
+| 24 | **Pearl arm** | pearl-white casing with gold seams that brighten with heat; violet-white lenses | parts | Pearl core: the heat lockout ends 20 % sooner |
+
+| Branch | 1 pt | 2 pts | 1 pt | 3 pts | Keystone, 4 pts |
 | --- | --- | --- | --- | --- | --- |
-| **Laser** (primary) | Heat Spread (2): Laser pulses add 8 % less heat. | **Heat Sink** (3): The arm vents part of its heat. *How:* a perfect dodge. | Fine Focus (6): Pulses fly 8 % faster. | Heat Sink II (12): The vent releases a small shock ring. | Overdrive (22): At over 80 % heat, pulses knock back. |
-| **Ghost** (secondary) | Quick Image (2): Afterimage cooldown -8 %. | **Flashbreak** (9): The hologram breaks in a flash that blinds foes beside it. *How:* passive when the Afterimage breaks. | Loud Ghost (11): The hologram draws foes from 20 % further. | Flashbreak II (20): The flash also shows elites' weak points for 3 s. | Double Exposure (24): Breaking a hologram cools the arm by 20 %. |
-| **Shield** (block, special) | Capacitor (4): Arm shield cost -8 %. | **Redline** (16): Pulses chain to one nearby foe. *How:* passive above 80 % heat. | Grounded (18): Shock on you wears off 20 % sooner. | Redline II (26): Blocking with the arm shield above 80 % heat turns part of the blocked damage into cooling. | Limitless (28): Limit Release's beams pierce one more foe. *(needs C60)* |
-
-| Tier (level) | Laser arm | Changes |
-| --- | --- | --- |
-| 1 Courier arm (1) | today's drawing: steel-blue casing from the pauldron to a heavy forearm emitter with a cyan lens | starting look |
-| 2 Finned arm (8) | three heat fins (2 px) along the forearm; an orange ring round the lens | cooling +10 % |
-| 3 Focus arm (16) | the lens pushed 2 px forward in a short barrel; cyan circuit traces along the casing | afterimage cooldown -8 % |
-| 4 Pearl arm (24) | pearl-white casing with gold seams; a pale violet-white lens | Pearl core: the heat lockout ends 20 % sooner |
+| **Pulses** | Needle (2): Sets needle pulses: thin, fast, pierce one. | Arc (3): Sets arc pulses: shock that chains to one foe. | Heat spread (6): Pulses add 8 % less heat. | Scatter (12): Sets scatter pulses: short range, a wide spray. | Redline (22): Above 80 % heat, every pulse chains. |
+| **Ghost** | Quick image (2): Afterimage cooldown -8 %. | Flashbreak (9): The hologram breaks in a blinding flash. | Loud ghost (11): The hologram draws foes 20 % further. | Flashbreak II (20): The flash shows elites' weak points. | Double exposure (24): Breaking a hologram cools the arm by 20 %. |
+| **Shield** | Capacitor (4): Arm shield cost -8 %. | Heat sink (16): A perfect dodge vents heat. | Grounded (18): Shock on you wears off 20 % sooner. | Heat sink II (26): The vent releases a small shock ring. | Limitless (28): Limit Release's beams pierce one more. *(needs C60)* |
 
 Outfits: Night shift (story: own quest); Runner's kit (village: lookout tier 1); Chrome (arena: neon rooftop, gold).
 Accessories: Visor band, head (rare drop: neon); Jacket hood, back (400 Glint); Earpiece cable, neck (bond 7); Glitched keychain, trinket (300 Glint, perk: the map marks company crates within 6 tiles).
 
 ### Rook
 
-Orbital salvager in a cream pressure suit; one pulse carbine (right hand on the grip, left on the fore-end); ONE helmet at the RIGHT hip, worn only in Orbital Rig; twin-thruster pack with two nozzles. Kit (Codex): Pulse carbine, Thruster Vault, Energy guard, Orbital Rig.
+Orbital salvager in a cream pressure suit; one pulse carbine (right hand on the grip, left on the fore-end); ONE helmet at the RIGHT hip, worn only in Orbital Rig; twin-thruster pack with two nozzles. Kit (Codex): Pulse carbine, Thruster Vault, Energy guard, Orbital Rig. Loadout kind: cell.
 
-| Branch | Lv 2 to 4 (1 pt) | Technique (2 pts) | Minor (1 pt) | Upgrade (3 pts) | Keystone (4 pts) |
+| Level | Weapon | What it is | Rig | Changes (placeholders) |
+| --- | --- | --- | --- | --- |
+| 1 | **Salvage carbine** | the tier-1 drawing: pulse carbine, right hand on the grip, left on the fore-end | as drawn | starting weapon |
+| 8 | **Shrouded carbine** | a barrel shroud (+3 px) with an orange stripe; a stock pad | parts | projectile speed +10 % |
+| 16 | **Twin-barrel rifle** | two stacked barrels under one shroud, a top cell housing with a lit charge bar, +4 px longer than tier 1 | parts | burst 2, fire interval +20 % |
+| 24 | **Launch-gold rifle** | a moonsilver emitter crown and gold crescent stock; the bolts pale gold | parts | Launch gold: bolts fired in a vault pierce one |
+
+| Branch | 1 pt | 2 pts | 1 pt | 3 pts | Keystone, 4 pts |
 | --- | --- | --- | --- | --- | --- |
-| **Thrusters** (secondary) | Trimmed Jets (2): Vault cooldown -8 %. | **Air Shot** (3): Bolts fired from the air are charged. *How:* carbine bolts fired while airborne in a vault. | Long Hop (6): Vault distance +10 %. | Air Shot II (12): Landing from a vault puffs a dust ring that knocks swarmers back. | Double Jet (22): Two vaults can be chained before the cooldown. *(needs C60)* |
-| **Carbine** (primary, block) | Hot Coils (2): Carbine recovers 5 % faster. | **Thruster Flare** (9): The take-off leaves a short flame at its start that burns foes in it. *How:* passive on Thruster Vault. | Shield Cells (11): Energy guard cost -8 %. | Thruster Flare II (20): The vault recharges faster. | Salvager (24): Freed machines drop a little more scrap. |
-| **Rig** (special) | Quick Deploy (4): Turrets fire their first pulse sooner. | **Scrap Shell** (16): The guard banks a shell; the next vault lands with a burst round him. *How:* block three hits with Energy guard. | Spotter (18): Designation lasts 0.5 s longer. | Scrap Shell II (26): Orbital Rig's turrets start on the nearest foe he has designated. *(needs C60)* | Overwatch (28): Turrets may stay a little further from you. *(needs C60)* |
-
-| Tier (level) | Pulse carbine | Changes |
-| --- | --- | --- |
-| 1 Salvage carbine (1) | today's drawing: the pulse carbine with its fore-end | starting look |
-| 2 Shrouded carbine (8) | an extended barrel shroud with an orange stripe; a stock pad | bolt speed +8 % |
-| 3 Scoped carbine (16) | a top-mounted salvaged scope with an orange lens; a cooling coil on the side | vault cooldown -8 % |
-| 4 Lander carbine (24) | a moonsilver emitter crown and a gold crescent on the stock; the bolts turn pale gold | Lander gold: bolts fired from the air pierce one foe |
+| **Cells** | Amber cell (2): Loads amber: bolts designate longer. | Flare cell (3): Loads flare: bolts set burn. | Hot coils (6): Carbine recovers 5 % faster. | Mag cell (12): Loads mag: bolts slow machines more. | Overwatch (22): Turrets may stay a little further from you. *(needs C60)* |
+| **Jets** | Trimmed jets (2): Vault cooldown -8 %. | Air shot (9): Bolts fired in a vault are charged. | Long hop (11): Vault distance +10 %. | Air shot II (20): Landing puffs a ring that knocks swarmers back. | Double jet (24): Two vaults can be chained. *(needs C60)* |
+| **Rig** | Shield cells (4): Energy guard cost -8 %. | Scrap shell (16): Three blocked hits bank a shell; the next vault lands with a burst. | Spotter (18): Designation lasts 0.5 s longer. | Scrap shell II (26): Turrets start on the nearest designated foe. *(needs C60)* | Quick deploy (28): Turrets fire their first pulse sooner. *(needs C60)* |
 
 Outfits: EVA orange (story: own quest); Station crew (village: station tier 4); Salvage rust (rare drop: halcyon).
 Accessories: Antenna and stripe, head (arena: zero g dome, silver); Tank paint, back (450 Glint); Dog tags, neck (bond 8); Salvage tag, trinket (rare drop: halcyon, perk: salvage gives 1 more scrap per item).
 
 ### Mote
 
-Genderless observatory keeper; long navy coat edged in gold with glass-inlaid hem fragments; two gold crescent hooks at the shoulders; the chest core (gold ring, blue lens); glass shards form in the RIGHT hand. Kit (Codex): Glass volley, Gravity anchor, Glass crescent, Aphelion.
+Genderless observatory keeper; long navy coat edged in gold with glass-inlaid hem fragments; two gold crescent hooks at the shoulders; the chest core (gold ring, blue lens); glass shards form in the RIGHT hand. Kit (Codex): Glass volley, Gravity anchor, Glass crescent, Aphelion. Loadout kind: glass.
 
-| Branch | Lv 2 to 4 (1 pt) | Technique (2 pts) | Minor (1 pt) | Upgrade (3 pts) | Keystone (4 pts) |
+| Level | Weapon | What it is | Rig | Changes (placeholders) |
+| --- | --- | --- | --- | --- |
+| 1 | **Observatory core** | the tier-1 drawing: gold ring round a blue lens; clear blue shards formed in the right hand | as drawn | starting weapon |
+| 8 | **Dropped hooks** | glass drops hang from the crescent hooks; faceted shards | parts | shard speed +10 % |
+| 16 | **Orrery** | a thin gold orrery ring tilted round the body at chest height (2 px outside the coat) carrying two glass beads; each volley also fires one shard from each bead | parts | extra shards 2 |
+| 24 | **Little moon** | the core lens becomes a tiny full moon; the hooks tipped with stars; the beads lit | parts | Little moon: shards converge 15 % sooner |
+
+| Branch | 1 pt | 2 pts | 1 pt | 3 pts | Keystone, 4 pts |
 | --- | --- | --- | --- | --- | --- |
-| **Glass** (primary) | Fine Glass (2): Shards fly 6 % faster. | **Refraction** (3): The shard splits in two. *How:* passive: a shard that passes through a gravity anchor. | Clear Sight (6): Glass volley recovers 5 % faster. | Refraction II (12): Split shards slow what they hit. | Prism (22): Split shards split once more. |
-| **Gravity** (secondary) | Heavy Point (2): Gravity anchor radius +8 %. | **Pane Step** (9): One glass pane stays standing where Mote rolled and stops one projectile. *How:* a perfect dodge. | Tidal Pull (11): Anchor pull +10 %. | Pane Step II (20): A pane that blocks shatters into a small volley. | Event Horizon (24): The anchor holds foes 0.3 s longer. |
-| **Orbit** (block, special) | Bright Panes (4): Glass crescent cost -8 %. | **Starfall** (16): A small rain of light falls on the anchor a moment later. *How:* a gravity anchor that draws in three or more foes. | Night Sky (18): Starfall's rain falls 0.1 s sooner. | Starfall II (26): The rain covers a quarter more ground. | Aphelion Bloom (28): Aphelion's orbit gains one more shard. *(needs C60)* |
-
-| Tier (level) | Core and glass | Changes |
-| --- | --- | --- |
-| 1 Observatory core (1) | today's drawing: gold ring round a blue glass lens with an amber light; clear blue shards | starting look |
-| 2 Dropped hooks (8) | the crescent hooks gain hanging glass drops (2 px); the shards gain a faceted light edge | shard speed +8 % |
-| 3 Orrery core (16) | a thin gold orrery ring (1 px) tilted round the core; violet-tinted shards | anchor radius +8 % |
-| 4 Little moon (24) | the lens becomes a tiny full moon (starlight disc with two craters); the hooks tipped with stars | Little moon: volley shards converge 15 % sooner |
+| **Glass** | Clear glass (2): Loads clear: shards pierce one. | Violet glass (3): Loads violet: shards chill. | Fine glass (6): Shards fly 6 % faster. | Mirror glass (12): Loads mirror: shards bounce once off walls. | Prism (22): Shards that pass an anchor split in two. |
+| **Gravity** | Heavy point (2): Anchor radius +8 %. | Starfall (9): An anchor holding three foes calls a small rain of light. | Tidal pull (11): Anchor pull +10 %. | Starfall II (20): The rain covers a quarter more ground. | Aphelion bloom (24): Aphelion's orbit gains one shard. *(needs C60)* |
+| **Panes** | Bright panes (4): Glass crescent cost -8 %. | Pane step (16): A perfect dodge leaves a pane that stops one shot. | Clear sight (18): Volley recovers 5 % faster. | Pane step II (26): A pane that blocks shatters into a small volley. | Event horizon (28): Anchors hold foes 0.3 s longer. |
 
 Outfits: Dawn coat (story: own quest); Star chart (village: glassworks tier 2); Eclipse (1,000 Glint).
 Accessories: Orbit circlet, head (arena: zero g dome, gold); Star stole, back (bond 9); Collar gem, neck (rare drop: lumen); Pocket orrery, trinket (story: lumen grove, perk: a soft hum when a secret is within 4 tiles).
@@ -395,15 +404,22 @@ Accessories: Orbit circlet, head (arena: zero g dome, gold); Star stole, back (b
 
 ## 7. Conflicts and dependencies (raised on #149)
 
-1. **What the runner must support**: per-folk skill points and node prerequisites (level and the previous node), nodes as modifiers over the canonical kit (a percentage or a count on a named field), and technique hooks (after action X within t, while guard is held for t, on guard release after a block, on a perfect dodge, passive on hit or on projectile). All of it reads `game/data/progression/<id>.json`; the kit files are not edited.
-2. **Nodes that change a count or rule inside the powered form** wait for C60 and are marked *(needs C60)*: three technique upgrades (Pendle's Dead Eye II, Ashe's Ember Wake II, Rook's Scrap Shell II) and a few keystones and minors (for example Iona's Gale Rider, Brine's Leviathan, Nix's Limitless, Mote's Aphelion Bloom). The JSON flags each with `touches_canonical`.
-3. **game-design changes.** "Any folk can equip any weapon" (4.3 and 5) gives way to signature weapons with fittings (Matt, 25 Oct). The perk card (6) gives way to the skill tree. 4.3's specials (Puffcap, Puddle, Tally, Tuff and Bunk among them) predate Codex's fourteen; some of their ideas return as techniques (Bramble's Steady Aim, Velvet's Dim, Cairn's Bedrock, Ashe's Banked Fire, Mirra's Seep, Mote's Starfall). Claude A updates game-design.md to match.
-4. **Homes and materials** follow Claude K's proposal on #149, which Matt has not decided. Only the tier material depends on it.
+1. **What the runner must support**:
+   - per-folk skill points and node prerequisites (a level and the previous node);
+   - nodes as modifiers over the canonical kit (a percentage or a count on a named field);
+   - **weapon forms**: a tier swaps the primary's projectile and hit parameters (count, spread, capacity, alternating hands);
+   - **loadout kinds**: one kind loaded at a time, adding an effect to hits;
+   - technique hooks (after action X within t, while guard is held for t, on guard release after a block, on a perfect dodge, passive on hit or on projectile).
+
+   All of it reads `game/data/progression/<id>.json`; the kit files are not edited.
+2. **Nodes that change a count or rule inside the kit or powered form** wait for C60 and are marked *(needs C60)*; the JSON flags each with `touches_canonical`.
+3. **The form changes need new clips in castwork**: seven folk, one clip set each (section 3).
+4. **game-design changes.** "Any folk can equip any weapon" (4.3 and 5) gives way to signature weapon lines with fittings (Matt, 25 Oct). The perk card (6) gives way to the skill tree. Claude A updates game-design.md to match.
+5. **Homes, Rook and Tam**: see [world-and-cast.md](world-and-cast.md).
 
 ## 8. For Matt
 
-Decided on 25 Oct: signature weapons with fittings; a skill tree on level points with weapon tiers at set levels; cheap forging per folk with late joiners at the highest open tier; perks only on trinkets. Still open, each with a recommendation in bold:
+Decided: signature weapon lines with fittings; a skill tree on level points with weapon tiers at set levels; cheap forging per folk; perks only on trinkets. The open questions are in [world-and-cast.md](world-and-cast.md)'s summary, plus these two:
 
 1. **Respec.** **At the hut bed for 50 Glint, the first one free.** Or free at any time outside a fight.
-2. **The tree's budget.** **29 points against a 33-point tree, so a finished folk leaves out one keystone.** Or enough points to fill the whole tree by level 30.
-3. **Where to change looks.** **At the bed in your hut, with a wardrobe screen that previews every facing.** Or anywhere outside a fight.
+2. **Where to change looks and kinds.** **At a waystone or the hut, with a screen that previews every facing.** Or anywhere outside a fight.
