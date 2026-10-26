@@ -36,18 +36,6 @@
  },
  "findings": [
   {
-   "detector": "logic.scale",
-   "severity": "polish",
-   "box": [
-    14,
-    19,
-    109,
-    170
-   ],
-   "message": "crossroads/well: 50 world px tall (2.01 of an adult); the size guide gives 30 to 44 for a well (a well: a wall 10 to 14 high, a roof or winch on posts)",
-   "fix": "redraw it 30 to 44 world px tall (90 to 132 texels at density 3) and stand it next to Bramble to check"
-  },
-  {
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
@@ -58,6 +46,18 @@
    ],
    "message": "crossroads/well: detail bar 0.69 of Eastward's prop band (21.7 tones, 34.9 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  },
+  {
+   "detector": "logic.scale",
+   "severity": "polish",
+   "box": [
+    14,
+    19,
+    109,
+    170
+   ],
+   "message": "crossroads/well: tall 151 art px (2.04 A) is too big for a well: the size table gives 89 to 141 (1.20 to 1.91 A); Eastward at the same character height: the bell frame in 13: 58 x 60 E (1.07 x 1.1 A)",
+   "fix": "redraw it 89 to 141 art px tall (target about 115), checked beside Bramble (74 art px) in the asset sheet"
   }
  ],
  "reviewed": "2026-10-26",

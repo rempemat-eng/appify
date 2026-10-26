@@ -1,0 +1,1858 @@
+{
+ "_about": "Sizes of everything we place, in art px at density 3 (the game draws 960 x 540 art px, shown 2x at 1080p). Generated table: python3 -m scripts.review.scale --markdown. Ranges are the opaque bounding box (h feet to top, w across) unless measure says otherwise; each is checked against Eastward measured at the same character height (54 E px = 74 art px, k = 1.37). docs/vision/size-guide.md, \"Art px at density 3\".",
+ "unit": {
+  "adult_art_px": 74,
+  "adult_m": 1.7,
+  "art_px_per_m": 43.5,
+  "cell_art_px": 24,
+  "density": 3,
+  "eastward_adult_px": 54,
+  "k_eastward": 1.37,
+  "screen_art_px": [
+   960,
+   540
+  ]
+ },
+ "severity": {
+  "polish_within": 0.1,
+  "polish_min_px": 4,
+  "_about": "outside the range by at most 10 % of the bound (and at least 4 art px) is polish; further is a fault"
+ },
+ "classes": {
+  "door": {
+   "group": "building",
+   "names": [],
+   "h": [
+    70,
+    96
+   ],
+   "w": [
+    33,
+    53
+   ],
+   "h_A": [
+    0.95,
+    1.3
+   ],
+   "w_A": [
+    0.45,
+    0.72
+   ],
+   "real": "leaf 2.0 to 2.1 m x 0.8 to 1.0 m (1.18 to 1.24 A)",
+   "eastward": "leaf 52 to 55 E (0.96 to 1.02 A), 20 to 30 E wide; 1.15 to 1.2 A with its frame (shots 01, 12, 17, 38)",
+   "chunky": "up to 1.3 A: our door may stand a little over Eastward's and real life so the opening reads at phone size",
+   "measure": "door",
+   "note": "the opening (the leaf, or the dark of an open doorway), not the frame or the step"
+  },
+  "wide_door": {
+   "group": "building",
+   "names": [],
+   "h": [
+    74,
+    130
+   ],
+   "w": [
+    59,
+    111
+   ],
+   "h_A": [
+    1.0,
+    1.75
+   ],
+   "w_A": [
+    0.8,
+    1.5
+   ],
+   "real": "a cart door, barn door or forge mouth 2.5 to 3 m high and wide",
+   "eastward": "the barn's roller door in 17: 67 x 60 E (1.24 x 1.1 A)",
+   "chunky": null,
+   "measure": "door",
+   "note": "the forge's mouth and every door a cart passes"
+  },
+  "door_handle": {
+   "group": "building",
+   "names": [],
+   "h": [
+    3,
+    7
+   ],
+   "w": [
+    3,
+    7
+   ],
+   "h_A": [
+    0.04,
+    0.1
+   ],
+   "w_A": [
+    0.04,
+    0.1
+   ],
+   "real": "a knob or latch 6 to 10 cm, about 1 m up (0.55 to 0.6 of the leaf)",
+   "eastward": "knob or latch 3 to 4 E (0.06 to 0.07 A) at 0.5 to 0.6 of the leaf (17, 12)",
+   "chunky": "a latch may be 4 to 7 art px so it reads; never a lump bigger than a hand",
+   "measure": "door"
+  },
+  "window": {
+   "group": "building",
+   "names": [],
+   "h": [
+    28,
+    46
+   ],
+   "w": [
+    24,
+    46
+   ],
+   "h_A": [
+    0.38,
+    0.62
+   ],
+   "w_A": [
+    0.32,
+    0.62
+   ],
+   "real": "a cottage window 0.9 to 1.2 m",
+   "eastward": "23 x 27 E (0.43 x 0.5 A) with frame (12); city 28 x 39 E (01)",
+   "chunky": null,
+   "measure": "spec"
+  },
+  "stair": {
+   "group": "ground",
+   "names": [],
+   "h": [
+    12,
+    22
+   ],
+   "w": [
+    33,
+    118
+   ],
+   "h_A": [
+    0.16,
+    0.3
+   ],
+   "w_A": [
+    0.45,
+    1.6
+   ],
+   "real": "a step: riser 15 to 18 cm, tread 28 cm",
+   "eastward": "farm stair 12 E a step (6 tread, 6 riser): 0.22 A pitch, 1.2 A wide (13); city flights 5 E a step (01)",
+   "chunky": "pitch 0.16 to 0.30 A (12 to 22 art px): a short flight of broad steps, wider than Eastward's for the phone",
+   "measure": "stair",
+   "note": "h is the step pitch (riser plus tread as drawn), w the flight width"
+  },
+  "storey": {
+   "group": "building",
+   "names": [],
+   "h": [
+    96,
+    141
+   ],
+   "w": [
+    0,
+    0
+   ],
+   "h_A": [
+    1.3,
+    1.9
+   ],
+   "w_A": [
+    0,
+    0
+   ],
+   "real": "a storey 2.6 to 3 m",
+   "eastward": "upper storey 1.3 to 1.45 A, shop ground storey 1.6 to 1.9 A (size-guide.md 3)",
+   "chunky": "compressed from real life on purpose (fewer storeys, not squashed ones)",
+   "measure": "spec",
+   "note": "ground to eaves for one storey"
+  },
+  "roof": {
+   "group": "building",
+   "names": [],
+   "h": [
+    22,
+    170
+   ],
+   "w": [
+    0,
+    0
+   ],
+   "h_A": [
+    0.3,
+    2.3
+   ],
+   "w_A": [
+    0,
+    0
+   ],
+   "real": "a 35 to 50 degree roof seen from above",
+   "eastward": "cottage roof 0.8 to 1.6 A eaves to ridge (12, 38); eaves overhang 2 to 5 E",
+   "chunky": null,
+   "measure": "spec",
+   "note": "h is eaves to ridge; overhang 0.08 to 0.2 A (6 to 15 art px)"
+  },
+  "cottage": {
+   "group": "building",
+   "names": [
+    "bakery",
+    "herbalist",
+    "fern_cottage",
+    "cottage"
+   ],
+   "h": [
+    200,
+    340
+   ],
+   "w": [
+    192,
+    340
+   ],
+   "h_A": [
+    2.7,
+    4.6
+   ],
+   "w_A": [
+    2.6,
+    4.6
+   ],
+   "real": "an 8 x 6 m cottage, 7 m to the ridge (compressed)",
+   "eastward": "house 3.1 A to the ridge, 3.7 A wide (12)",
+   "chunky": null,
+   "measure": "bbox"
+  },
+  "terrace": {
+   "group": "building",
+   "names": [
+    "north_cottages",
+    "terrace"
+   ],
+   "h": [
+    200,
+    340
+   ],
+   "w": [
+    222,
+    444
+   ],
+   "h_A": [
+    2.7,
+    4.6
+   ],
+   "w_A": [
+    3.0,
+    6.0
+   ],
+   "real": "two cottages in a row",
+   "eastward": "as the cottage",
+   "chunky": null,
+   "measure": "bbox"
+  },
+  "hut": {
+   "group": "building",
+   "names": [
+    "hut"
+   ],
+   "h": [
+    148,
+    252
+   ],
+   "w": [
+    178,
+    296
+   ],
+   "h_A": [
+    2.0,
+    3.4
+   ],
+   "w_A": [
+    2.4,
+    4.0
+   ],
+   "real": "a one-room hut",
+   "eastward": "the thatched hut in 12: 2.5 A to the ridge, 3 A wide",
+   "chunky": null,
+   "measure": "bbox"
+  },
+  "civic": {
+   "group": "building",
+   "names": [
+    "library",
+    "smithy",
+    "forge"
+   ],
+   "h": [
+    200,
+    370
+   ],
+   "w": [
+    222,
+    407
+   ],
+   "h_A": [
+    2.7,
+    5.0
+   ],
+   "w_A": [
+    3.0,
+    5.5
+   ],
+   "real": "a library or a forge",
+   "eastward": "station 4.5 A wide (08)",
+   "chunky": null,
+   "measure": "bbox"
+  },
+  "bench": {
+   "group": "prop",
+   "names": [
+    "bench",
+    "forest_bench"
+   ],
+   "h": [
+    37,
+    68
+   ],
+   "w": [
+    70,
+    107
+   ],
+   "h_A": [
+    0.5,
+    0.92
+   ],
+   "w_A": [
+    0.95,
+    1.45
+   ],
+   "real": "seat 0.45 m, back 0.85 m, 1.5 to 1.8 m long",
+   "eastward": "66 x 47 E with its back (1.2 x 0.87 A) in 12 and 38",
+   "chunky": "seat and length a touch big, as Eastward's (its seat is 0.46 A, real 0.26 A)",
+   "measure": "bbox"
+  },
+  "chair": {
+   "group": "prop",
+   "names": [
+    "chair",
+    "stool"
+   ],
+   "h": [
+    33,
+    59
+   ],
+   "w": [
+    21,
+    37
+   ],
+   "h_A": [
+    0.45,
+    0.8
+   ],
+   "w_A": [
+    0.28,
+    0.5
+   ],
+   "real": "seat 0.45 m, back 0.9 m",
+   "eastward": "stools and chairs 0.5 to 0.75 A (04)",
+   "chunky": "a touch big",
+   "measure": "bbox"
+  },
+  "table": {
+   "group": "prop",
+   "names": [
+    "table"
+   ],
+   "h": [
+    30,
+    52
+   ],
+   "w": [
+    52,
+    111
+   ],
+   "h_A": [
+    0.4,
+    0.7
+   ],
+   "w_A": [
+    0.7,
+    1.5
+   ],
+   "real": "0.75 m high, 1 to 1.6 m long",
+   "eastward": "stall counters 0.45 to 0.6 A (04)",
+   "chunky": null,
+   "measure": "bbox"
+  },
+  "bed": {
+   "group": "prop",
+   "names": [
+    "bed"
+   ],
+   "h": [
+    37,
+    67
+   ],
+   "w": [
+    56,
+    81
+   ],
+   "h_A": [
+    0.5,
+    0.9
+   ],
+   "w_A": [
+    0.75,
+    1.1
+   ],
+   "real": "2 m x 0.9 to 1.4 m, 0.5 m high",
+   "eastward": "none in the shots; from real size seen from above",
+   "chunky": null,
+   "measure": "bbox",
+   "note": "w is across; the length (1.2 to 1.5 A) is drawn up the picture"
+  },
+  "barrel": {
+   "group": "prop",
+   "names": [
+    "barrel",
+    "urn"
+   ],
+   "h": [
+    31,
+    46
+   ],
+   "w": [
+    24,
+    37
+   ],
+   "h_A": [
+    0.42,
+    0.62
+   ],
+   "w_A": [
+    0.32,
+    0.5
+   ],
+   "real": "0.9 m tall, 0.6 m across (0.53 x 0.35 A)",
+   "eastward": "tubs and pots 0.3 to 0.4 A (04); milk cans 0.73 A (17)",
+   "chunky": "up to 0.62 A: a touch over real for readability, never as tall as a hip-high crate stack",
+   "measure": "bbox"
+  },
+  "crate": {
+   "group": "prop",
+   "names": [
+    "crate"
+   ],
+   "h": [
+    22,
+    41
+   ],
+   "w": [
+    26,
+    44
+   ],
+   "h_A": [
+    0.3,
+    0.55
+   ],
+   "w_A": [
+    0.35,
+    0.6
+   ],
+   "real": "0.5 m cube",
+   "eastward": "fruit crates 26 x 20 E (0.48 x 0.37 A) in 04",
+   "chunky": "a touch big",
+   "measure": "bbox"
+  },
+  "crate_stack": {
+   "group": "prop",
+   "names": [
+    "crates"
+   ],
+   "h": [
+    41,
+    85
+   ],
+   "w": [
+    26,
+    59
+   ],
+   "h_A": [
+    0.55,
+    1.15
+   ],
+   "w_A": [
+    0.35,
+    0.8
+   ],
+   "real": "two or three crates",
+   "eastward": "04: stacks to 1 A",
+   "chunky": null,
+   "measure": "bbox"
+  },
+  "sack": {
+   "group": "prop",
+   "names": [
+    "sacks",
+    "sack"
+   ],
+   "h": [
+    22,
+    44
+   ],
+   "w": [
+    22,
+    59
+   ],
+   "h_A": [
+    0.3,
+    0.6
+   ],
+   "w_A": [
+    0.3,
+    0.8
+   ],
+   "real": "a sack 0.6 to 0.8 m",
+   "eastward": "sacks at the stalls 0.35 to 0.5 A (04)",
+   "chunky": null,
+   "measure": "bbox"
+  },
+  "bucket": {
+   "group": "prop",
+   "names": [
+    "bucket",
+    "pail"
+   ],
+   "h": [
+    13,
+    24
+   ],
+   "w": [
+    13,
+    22
+   ],
+   "h_A": [
+    0.18,
+    0.32
+   ],
+   "w_A": [
+    0.18,
+    0.3
+   ],
+   "real": "0.3 m",
+   "eastward": "pails 12 to 16 E (0.22 to 0.3 A) (13, 17)",
+   "chunky": "a touch big",
+   "measure": "bbox"
+  },
+  "well": {
+   "group": "prop",
+   "names": [
+    "well"
+   ],
+   "h": [
+    89,
+    141
+   ],
+   "w": [
+    70,
+    118
+   ],
+   "h_A": [
+    1.2,
+    1.9
+   ],
+   "w_A": [
+    0.95,
+    1.6
+   ],
+   "real": "a well with its roof 2.2 to 2.6 m, ring 1.2 m across",
+   "eastward": "the bell frame in 13: 58 x 60 E (1.07 x 1.1 A)",
+   "chunky": "the roof may stand over a person's head (1.2 to 1.9 A)",
+   "measure": "bbox",
+   "note": "well_choked is the ring only: see well_ring"
+  },
+  "well_ring": {
+   "group": "prop",
+   "names": [
+    "well_choked"
+   ],
+   "h": [
+    41,
+    78
+   ],
+   "w": [
+    70,
+    118
+   ],
+   "h_A": [
+    0.55,
+    1.05
+   ],
+   "w_A": [
+    0.95,
+    1.6
+   ],
+   "real": "the ring 0.8 m high, 1.2 m across",
+   "eastward": "as the well",
+   "chunky": null,
+   "measure": "bbox"
+  },
+  "trough": {
+   "group": "prop",
+   "names": [
+    "trough"
+   ],
+   "h": [
+    26,
+    44
+   ],
+   "w": [
+    59,
+    104
+   ],
+   "h_A": [
+    0.35,
+    0.6
+   ],
+   "w_A": [
+    0.8,
+    1.4
+   ],
+   "real": "0.6 m high, 1.5 m long",
+   "eastward": "none; from real size (stall counters 0.45 to 0.6 A in 04)",
+   "chunky": "a touch big",
+   "measure": "bbox"
+  },
+  "lamp": {
+   "group": "prop",
+   "names": [
+    "lantern_dark",
+    "lantern_lit",
+    "kit_lantern",
+    "lamp",
+    "lantern"
+   ],
+   "h": [
+    107,
+    178
+   ],
+   "w": [
+    15,
+    52
+   ],
+   "h_A": [
+    1.45,
+    2.4
+   ],
+   "w_A": [
+    0.2,
+    0.7
+   ],
+   "real": "a street lamp 2.5 to 4 m",
+   "eastward": "lamp posts 88 to 100 E (1.6 to 1.85 A) in 13 and 17",
+   "chunky": "up to 2.4 A where it lights a square",
+   "measure": "bbox"
+  },
+  "post_lantern": {
+   "group": "prop",
+   "names": [
+    "torch",
+    "post_lantern"
+   ],
+   "h": [
+    44,
+    81
+   ],
+   "w": [
+    15,
+    118
+   ],
+   "h_A": [
+    0.6,
+    1.1
+   ],
+   "w_A": [
+    0.2,
+    1.6
+   ],
+   "real": "a lantern on a short post or a wall torch",
+   "eastward": "post lanterns 44 to 45 E (0.8 A) in 12 and 38",
+   "chunky": null,
+   "measure": "bbox",
+   "note": "a wall torch is measured with its bracket and glow"
+  },
+  "fence": {
+   "group": "prop",
+   "names": [
+    "fence",
+    "palisade",
+    "gate"
+   ],
+   "h": [
+    41,
+    67
+   ],
+   "w": [
+    37,
+    296
+   ],
+   "h_A": [
+    0.55,
+    0.9
+   ],
+   "w_A": [
+    0.5,
+    4.0
+   ],
+   "real": "a garden fence 1 to 1.2 m",
+   "eastward": "farm gate 40 E, palisade 40 to 45 E (0.75 to 0.83 A) in 17, 12 and 38",
+   "chunky": null,
+   "measure": "bbox"
+  },
+  "post": {
+   "group": "prop",
+   "names": [
+    "post",
+    "bollard"
+   ],
+   "h": [
+    41,
+    74
+   ],
+   "w": [
+    4,
+    15
+   ],
+   "h_A": [
+    0.55,
+    1.0
+   ],
+   "w_A": [
+    0.06,
+    0.2
+   ],
+   "real": "a post 1 to 1.4 m",
+   "eastward": "fence posts 0.8 to 0.95 A (17)",
+   "chunky": null,
+   "measure": "bbox"
+  },
+  "sign": {
+   "group": "prop",
+   "names": [
+    "signpost",
+    "sign"
+   ],
+   "h": [
+    67,
+    126
+   ],
+   "w": [
+    18,
+    81
+   ],
+   "h_A": [
+    0.9,
+    1.7
+   ],
+   "w_A": [
+    0.25,
+    1.1
+   ],
+   "real": "a fingerpost 1.6 to 2.4 m",
+   "eastward": "street signs 1.0 to 2.3 A (size-guide.md 5)",
+   "chunky": null,
+   "measure": "bbox"
+  },
+  "notice_board": {
+   "group": "prop",
+   "names": [
+    "notice_board"
+   ],
+   "h": [
+    81,
+    126
+   ],
+   "w": [
+    44,
+    89
+   ],
+   "h_A": [
+    1.1,
+    1.7
+   ],
+   "w_A": [
+    0.6,
+    1.2
+   ],
+   "real": "a notice board on two posts, 2 to 2.4 m",
+   "eastward": "the station board in 08: 1.3 A",
+   "chunky": null,
+   "measure": "bbox"
+  },
+  "standing_stone": {
+   "group": "stone",
+   "names": [
+    "waystone",
+    "standing_stone"
+   ],
+   "h": [
+    59,
+    126
+   ],
+   "w": [
+    33,
+    81
+   ],
+   "h_A": [
+    0.8,
+    1.7
+   ],
+   "w_A": [
+    0.45,
+    1.1
+   ],
+   "real": "a standing stone 1.4 to 2.5 m",
+   "eastward": "none; scaled from real stones",
+   "chunky": null,
+   "measure": "bbox"
+  },
+  "cart": {
+   "group": "prop",
+   "names": [
+    "handcart",
+    "cart"
+   ],
+   "h": [
+    52,
+    89
+   ],
+   "w": [
+    67,
+    126
+   ],
+   "h_A": [
+    0.7,
+    1.2
+   ],
+   "w_A": [
+    0.9,
+    1.7
+   ],
+   "real": "a handcart 1 m high to its rails, 1.6 to 2 m long",
+   "eastward": "the stall cart in 04: 0.9 x 1.4 A",
+   "chunky": null,
+   "measure": "bbox"
+  },
+  "anvil": {
+   "group": "prop",
+   "names": [
+    "anvil"
+   ],
+   "h": [
+    30,
+    48
+   ],
+   "w": [
+    33,
+    59
+   ],
+   "h_A": [
+    0.4,
+    0.65
+   ],
+   "w_A": [
+    0.45,
+    0.8
+   ],
+   "real": "an anvil on its block 0.8 m",
+   "eastward": "none; from real size",
+   "chunky": "a touch big",
+   "measure": "bbox"
+  },
+  "machine": {
+   "group": "prop",
+   "names": [
+    "grindstone"
+   ],
+   "h": [
+    52,
+    89
+   ],
+   "w": [
+    37,
+    74
+   ],
+   "h_A": [
+    0.7,
+    1.2
+   ],
+   "w_A": [
+    0.5,
+    1.0
+   ],
+   "real": "a grindstone on its frame 1.2 m",
+   "eastward": "none; from real size",
+   "chunky": null,
+   "measure": "bbox"
+  },
+  "stall": {
+   "group": "prop",
+   "names": [
+    "stall"
+   ],
+   "h": [
+    104,
+    163
+   ],
+   "w": [
+    96,
+    178
+   ],
+   "h_A": [
+    1.4,
+    2.2
+   ],
+   "w_A": [
+    1.3,
+    2.4
+   ],
+   "real": "a market stall with its canopy 2.4 m",
+   "eastward": "stalls 1.6 to 2 A to the canopy (04)",
+   "chunky": null,
+   "measure": "bbox"
+  },
+  "haystack": {
+   "group": "prop",
+   "names": [
+    "hay"
+   ],
+   "h": [
+    33,
+    70
+   ],
+   "w": [
+    37,
+    89
+   ],
+   "h_A": [
+    0.45,
+    0.95
+   ],
+   "w_A": [
+    0.5,
+    1.2
+   ],
+   "real": "a bale 0.5 to 0.9 m, a heap to 1.5 m",
+   "eastward": "bales 30 E (0.55 A) in 17",
+   "chunky": null,
+   "measure": "bbox"
+  },
+  "woodpile": {
+   "group": "prop",
+   "names": [
+    "woodpile"
+   ],
+   "h": [
+    30,
+    67
+   ],
+   "w": [
+    44,
+    111
+   ],
+   "h_A": [
+    0.4,
+    0.9
+   ],
+   "w_A": [
+    0.6,
+    1.5
+   ],
+   "real": "a stack 0.8 to 1.5 m",
+   "eastward": "none; from real size",
+   "chunky": null,
+   "measure": "bbox"
+  },
+  "pile": {
+   "group": "prop",
+   "names": [
+    "coal",
+    "pile"
+   ],
+   "h": [
+    18,
+    52
+   ],
+   "w": [
+    33,
+    89
+   ],
+   "h_A": [
+    0.25,
+    0.7
+   ],
+   "w_A": [
+    0.45,
+    1.2
+   ],
+   "real": "a heap 0.5 to 1 m",
+   "eastward": "none; from real size",
+   "chunky": null,
+   "measure": "bbox"
+  },
+  "lever": {
+   "group": "prop",
+   "names": [
+    "lever"
+   ],
+   "h": [
+    30,
+    81
+   ],
+   "w": [
+    18,
+    52
+   ],
+   "h_A": [
+    0.4,
+    1.1
+   ],
+   "w_A": [
+    0.25,
+    0.7
+   ],
+   "real": "a floor lever 1 to 1.4 m",
+   "eastward": "none; from real size",
+   "chunky": null,
+   "measure": "bbox"
+  },
+  "plate": {
+   "group": "prop",
+   "names": [
+    "plate"
+   ],
+   "h": [
+    30,
+    74
+   ],
+   "w": [
+    44,
+    74
+   ],
+   "h_A": [
+    0.4,
+    1.0
+   ],
+   "w_A": [
+    0.6,
+    1.0
+   ],
+   "real": "a pressure plate 1 m square seen from above",
+   "eastward": "floor switches 0.7 A (dungeon in 06)",
+   "chunky": null,
+   "measure": "bbox"
+  },
+  "shard": {
+   "group": "prop",
+   "names": [
+    "shard"
+   ],
+   "h": [
+    59,
+    104
+   ],
+   "w": [
+    22,
+    59
+   ],
+   "h_A": [
+    0.8,
+    1.4
+   ],
+   "w_A": [
+    0.3,
+    0.8
+   ],
+   "real": "the quest shard on its plinth",
+   "eastward": "quest objects 0.8 to 1.3 A",
+   "chunky": null,
+   "measure": "bbox"
+  },
+  "rubble": {
+   "group": "clutter",
+   "names": [
+    "rubble",
+    "debris"
+   ],
+   "h": [
+    15,
+    63
+   ],
+   "w": [
+    37,
+    133
+   ],
+   "h_A": [
+    0.2,
+    0.85
+   ],
+   "w_A": [
+    0.5,
+    1.8
+   ],
+   "real": "a heap of fallen stone",
+   "eastward": "rubble heaps 0.3 to 0.8 A (11, 39)",
+   "chunky": null,
+   "measure": "bbox"
+  },
+  "broadleaf": {
+   "group": "plant",
+   "names": [
+    "oak",
+    "beech",
+    "maple"
+   ],
+   "h": [
+    148,
+    311
+   ],
+   "w": [
+    133,
+    259
+   ],
+   "h_A": [
+    2.0,
+    4.2
+   ],
+   "w_A": [
+    1.8,
+    3.5
+   ],
+   "real": "a mature oak 15 to 25 m (compressed most)",
+   "eastward": "the maple in 12: 111 x 118 E (2.05 x 2.2 A); the forest trees in 08 run off the top of the screen (over 3 A)",
+   "chunky": "landscape is compressed: 2 to 4.2 A, not 10",
+   "measure": "bbox"
+  },
+  "birch": {
+   "group": "plant",
+   "names": [
+    "birch"
+   ],
+   "h": [
+    133,
+    266
+   ],
+   "w": [
+    59,
+    133
+   ],
+   "h_A": [
+    1.8,
+    3.6
+   ],
+   "w_A": [
+    0.8,
+    1.8
+   ],
+   "real": "a birch 10 to 20 m (compressed)",
+   "eastward": "slender crowns 0.9 to 1.5 A wide (08)",
+   "chunky": null,
+   "measure": "bbox"
+  },
+  "conifer": {
+   "group": "plant",
+   "names": [
+    "pine",
+    "spruce",
+    "fir"
+   ],
+   "h": [
+    96,
+    311
+   ],
+   "w": [
+    59,
+    148
+   ],
+   "h_A": [
+    1.3,
+    4.2
+   ],
+   "w_A": [
+    0.8,
+    2.0
+   ],
+   "real": "a pine 15 to 30 m (compressed)",
+   "eastward": "young pines 70 to 74 E (1.3 to 1.35 A), 46 to 55 E wide (13); tall pines in 07",
+   "chunky": null,
+   "measure": "bbox"
+  },
+  "willow": {
+   "group": "plant",
+   "names": [
+    "willow"
+   ],
+   "h": [
+    178,
+    311
+   ],
+   "w": [
+    148,
+    281
+   ],
+   "h_A": [
+    2.4,
+    4.2
+   ],
+   "w_A": [
+    2.0,
+    3.8
+   ],
+   "real": "a willow 10 to 20 m (compressed)",
+   "eastward": "as the broadleaf",
+   "chunky": null,
+   "measure": "bbox"
+  },
+  "veteran_tree": {
+   "group": "plant",
+   "names": [
+    "hollow_tree"
+   ],
+   "h": [
+    222,
+    340
+   ],
+   "w": [
+    163,
+    281
+   ],
+   "h_A": [
+    3.0,
+    4.6
+   ],
+   "w_A": [
+    2.2,
+    3.8
+   ],
+   "real": "an old hollow oak",
+   "eastward": "the forest trees of 08",
+   "chunky": null,
+   "measure": "bbox"
+  },
+  "sapling": {
+   "group": "plant",
+   "names": [
+    "sapling"
+   ],
+   "h": [
+    59,
+    111
+   ],
+   "w": [
+    30,
+    74
+   ],
+   "h_A": [
+    0.8,
+    1.5
+   ],
+   "w_A": [
+    0.4,
+    1.0
+   ],
+   "real": "a sapling 1.5 to 3 m",
+   "eastward": "young trees 1.3 A (13)",
+   "chunky": null,
+   "measure": "bbox"
+  },
+  "bush": {
+   "group": "plant",
+   "names": [
+    "bush",
+    "holly",
+    "bramble",
+    "shrub"
+   ],
+   "h": [
+    41,
+    81
+   ],
+   "w": [
+    44,
+    115
+   ],
+   "h_A": [
+    0.55,
+    1.1
+   ],
+   "w_A": [
+    0.6,
+    1.55
+   ],
+   "real": "a shrub 0.8 to 1.8 m",
+   "eastward": "bushes 38 to 50 E tall (0.7 to 0.93 A), 35 to 60 E wide (12, 38)",
+   "chunky": "a touch big: a bush reads as a clump at least as wide as a person",
+   "measure": "bbox"
+  },
+  "log": {
+   "group": "plant",
+   "names": [
+    "log"
+   ],
+   "h": [
+    22,
+    56
+   ],
+   "w": [
+    89,
+    222
+   ],
+   "h_A": [
+    0.3,
+    0.75
+   ],
+   "w_A": [
+    1.2,
+    3.0
+   ],
+   "real": "a fallen trunk 0.4 to 0.7 m thick",
+   "eastward": "none in the integer shots; from real size",
+   "chunky": "thick and chunky, seen from above",
+   "measure": "bbox"
+  },
+  "stump": {
+   "group": "plant",
+   "names": [
+    "stump"
+   ],
+   "h": [
+    22,
+    52
+   ],
+   "w": [
+    33,
+    81
+   ],
+   "h_A": [
+    0.3,
+    0.7
+   ],
+   "w_A": [
+    0.45,
+    1.1
+   ],
+   "real": "a stump 0.3 to 0.6 m with its roots",
+   "eastward": "none in the integer shots; from real size",
+   "chunky": "a touch big: roots flare to 1 A",
+   "measure": "bbox"
+  },
+  "fern": {
+   "group": "plant",
+   "names": [
+    "fern"
+   ],
+   "h": [
+    20,
+    41
+   ],
+   "w": [
+    24,
+    52
+   ],
+   "h_A": [
+    0.27,
+    0.55
+   ],
+   "w_A": [
+    0.32,
+    0.7
+   ],
+   "real": "a fern 0.4 to 0.9 m",
+   "eastward": "ferns 20 to 25 E (0.37 to 0.46 A) in 12 and 13",
+   "chunky": null,
+   "measure": "bbox"
+  },
+  "flower": {
+   "group": "plant",
+   "names": [
+    "flower"
+   ],
+   "h": [
+    4,
+    20
+   ],
+   "w": [
+    4,
+    30
+   ],
+   "h_A": [
+    0.05,
+    0.27
+   ],
+   "w_A": [
+    0.05,
+    0.4
+   ],
+   "real": "a flower head 3 to 8 cm, a clump 0.2 to 0.4 m",
+   "eastward": "heads 3 to 5 E, clumps about 10 E (0.19 A) in 12 and 13",
+   "chunky": "heads 4 to 8 art px: a touch big so they read",
+   "measure": "bbox"
+  },
+  "flower_tub": {
+   "group": "prop",
+   "names": [
+    "flower_tub",
+    "planter",
+    "tub"
+   ],
+   "h": [
+    30,
+    63
+   ],
+   "w": [
+    22,
+    52
+   ],
+   "h_A": [
+    0.4,
+    0.85
+   ],
+   "w_A": [
+    0.3,
+    0.7
+   ],
+   "real": "a tub 0.4 m with plants to 0.8 m",
+   "eastward": "the potted plants in 01: 0.6 to 0.75 A",
+   "chunky": null,
+   "measure": "bbox"
+  },
+  "mushroom": {
+   "group": "plant",
+   "names": [
+    "mushroom"
+   ],
+   "h": [
+    3,
+    14
+   ],
+   "w": [
+    3,
+    14
+   ],
+   "h_A": [
+    0.04,
+    0.19
+   ],
+   "w_A": [
+    0.04,
+    0.19
+   ],
+   "real": "a woodland mushroom 5 to 15 cm",
+   "eastward": "none; ankle high (0.1 A) at most",
+   "chunky": "a cap may be 3 to 14 art px so it reads",
+   "measure": "bbox"
+  },
+  "mushroom_ring": {
+   "group": "plant",
+   "names": [
+    "mushroom_ring"
+   ],
+   "h": [
+    7,
+    67
+   ],
+   "w": [
+    30,
+    148
+   ],
+   "h_A": [
+    0.1,
+    0.9
+   ],
+   "w_A": [
+    0.4,
+    2.0
+   ],
+   "real": "a ring of ankle-high mushrooms, 0.5 to 2 m across",
+   "eastward": "none",
+   "chunky": null,
+   "measure": "bbox",
+   "note": "laid on the ground: h is the ring's depth up the picture; each cap's height is checked by construct.mushrooms (ankle high)"
+  },
+  "grass_tuft": {
+   "group": "plant",
+   "names": [
+    "tuft",
+    "grass"
+   ],
+   "h": [
+    6,
+    22
+   ],
+   "w": [
+    7,
+    30
+   ],
+   "h_A": [
+    0.08,
+    0.3
+   ],
+   "w_A": [
+    0.1,
+    0.4
+   ],
+   "real": "a tuft 10 to 30 cm",
+   "eastward": "tufts 6 to 14 E (0.11 to 0.26 A) in 12 and 13",
+   "chunky": null,
+   "measure": "bbox"
+  },
+  "tall_grass": {
+   "group": "plant",
+   "names": [
+    "reeds",
+    "tall_grass"
+   ],
+   "h": [
+    18,
+    41
+   ],
+   "w": [
+    18,
+    44
+   ],
+   "h_A": [
+    0.25,
+    0.55
+   ],
+   "w_A": [
+    0.25,
+    0.6
+   ],
+   "real": "tall grass and reeds 0.5 to 1 m",
+   "eastward": "the tall clump in 13: 27 E (0.5 A)",
+   "chunky": null,
+   "measure": "bbox"
+  },
+  "pillar_stump": {
+   "group": "stone",
+   "names": [
+    "pillar",
+    "column"
+   ],
+   "h": [
+    37,
+    118
+   ],
+   "w": [
+    30,
+    74
+   ],
+   "h_A": [
+    0.5,
+    1.6
+   ],
+   "w_A": [
+    0.4,
+    1.0
+   ],
+   "real": "a broken column 1 to 2.5 m",
+   "eastward": "broken pillars 0.8 to 1.5 A in the dungeon of 06 (zoomed shot, read by eye)",
+   "chunky": null,
+   "measure": "bbox"
+  },
+  "roots": {
+   "group": "plant",
+   "names": [
+    "roots"
+   ],
+   "h": [
+    11,
+    52
+   ],
+   "w": [
+    44,
+    148
+   ],
+   "h_A": [
+    0.15,
+    0.7
+   ],
+   "w_A": [
+    0.6,
+    2.0
+   ],
+   "real": "roots breaking a floor",
+   "eastward": "none",
+   "chunky": null,
+   "measure": "bbox"
+  },
+  "rock": {
+   "group": "stone",
+   "names": [
+    "rock",
+    "pebble",
+    "stone_small"
+   ],
+   "h": [
+    7,
+    22
+   ],
+   "w": [
+    11,
+    33
+   ],
+   "h_A": [
+    0.1,
+    0.3
+   ],
+   "w_A": [
+    0.15,
+    0.45
+   ],
+   "real": "a rock 0.2 to 0.5 m",
+   "eastward": "rocks 8 to 12 E tall, 12 to 23 E wide (0.15 to 0.42 A) in 12 and 13",
+   "chunky": null,
+   "measure": "bbox"
+  },
+  "boulder": {
+   "group": "stone",
+   "names": [
+    "boulder"
+   ],
+   "h": [
+    22,
+    67
+   ],
+   "w": [
+    30,
+    96
+   ],
+   "h_A": [
+    0.3,
+    0.9
+   ],
+   "w_A": [
+    0.4,
+    1.3
+   ],
+   "real": "a boulder 0.6 to 1.5 m",
+   "eastward": "the boulder in 13: 19 x 23 E (0.35 x 0.42 A); larger ones on the cliffs of 12",
+   "chunky": "a touch big",
+   "measure": "bbox"
+  },
+  "stepping_stone": {
+   "group": "ground",
+   "names": [],
+   "h": [
+    7,
+    18
+   ],
+   "w": [
+    22,
+    52
+   ],
+   "h_A": [
+    0.1,
+    0.25
+   ],
+   "w_A": [
+    0.3,
+    0.7
+   ],
+   "real": "a flat stone 0.5 to 0.8 m",
+   "eastward": "stepping stones 20 to 35 E wide (0.37 to 0.65 A) in 12",
+   "chunky": null,
+   "measure": "grain"
+  },
+  "adult": {
+   "group": "character",
+   "names": [],
+   "h": [
+    70,
+    78
+   ],
+   "w": [
+    22,
+    56
+   ],
+   "h_A": [
+    0.95,
+    1.05
+   ],
+   "w_A": [
+    0.3,
+    0.75
+   ],
+   "real": "an adult 1.60 to 1.85 m",
+   "eastward": "every adult 52 to 56 E (12, 13, 16, 17, 38)",
+   "chunky": null,
+   "measure": "cast"
+  },
+  "creature_small": {
+   "group": "character",
+   "names": [
+    "boarlet",
+    "toad",
+    "tortoise"
+   ],
+   "h": [
+    37,
+    44
+   ],
+   "w": [
+    22,
+    81
+   ],
+   "h_A": [
+    0.5,
+    0.6
+   ],
+   "w_A": [
+    0.3,
+    1.1
+   ],
+   "real": "the small creatures: 0.55 of the hero",
+   "eastward": "animals: cows 0.9 A, pigs 0.55 A (17)",
+   "chunky": null,
+   "measure": "cast"
+  },
+  "creature_medium": {
+   "group": "character",
+   "names": [
+    "thornback"
+   ],
+   "h": [
+    52,
+    61
+   ],
+   "w": [
+    30,
+    104
+   ],
+   "h_A": [
+    0.7,
+    0.82
+   ],
+   "w_A": [
+    0.4,
+    1.4
+   ],
+   "real": "the medium creatures: 0.75 of the hero",
+   "eastward": "as above",
+   "chunky": null,
+   "measure": "cast"
+  },
+  "large": {
+   "group": "character",
+   "names": [
+    "cairn"
+   ],
+   "h": [
+    83,
+    95
+   ],
+   "w": [
+    59,
+    104
+   ],
+   "h_A": [
+    1.12,
+    1.28
+   ],
+   "w_A": [
+    0.8,
+    1.4
+   ],
+   "real": "Cairn: 1.2 of the hero",
+   "eastward": "none",
+   "chunky": null,
+   "measure": "cast"
+  }
+ },
+ "grain": {
+  "_about": "Ground grain, measured the same way on Eastward (native, H 54) and on ours (through its JPEG pipe, H 74): marks are pixels at least 10 L off a 0.4 H median; their size is the larger side of each mark (in H). Measured on Eastward boxes in shots 12, 13 and 17 (lawns, yard dirt, cobble path).",
+  "mark_size_H": [
+   0.056,
+   0.204
+  ],
+  "mark_size_eastward": {
+   "lawn 13": 0.074,
+   "lawn 17": 0.204,
+   "lawn 12": 0.056,
+   "yard dirt 17": 0.056,
+   "cobble path 13": 0.074
+  },
+  "mark_density_per_H2": [
+   5.8,
+   61.1
+  ],
+  "mark_density_median": 34.0,
+  "speckle_rule": "a fill is speckled (fault) when its dark marks are smaller than 0.75 of Eastward's least (0.042 H, 3 art px) and denser than 1.5 x its median (51 a H square)",
+  "blotch_size_H": [
+   0.35,
+   0.77
+  ],
+  "blotch_rule": "polish outside 0.25 to 1.1 H",
+  "tuft_px": [
+   6,
+   22
+  ],
+  "clump_px": [
+   15,
+   41
+  ],
+  "blotch_px": [
+   26,
+   57
+  ],
+  "cobble_px": [
+   9,
+   15
+  ],
+  "cobble_eastward": "cobbles 8 to 10 E with their joints (0.15 to 0.19 A) in 13; the metric reads 0.12 to 0.13 H inside the joints",
+  "slab_px": [
+   18,
+   52
+  ],
+  "slab_eastward": "kerb slabs 34 E long (0.63 A) in 16; checker 0.18 H (01)",
+  "ripple_px": [
+   4,
+   15
+  ],
+  "ripple_eastward": "ripple lines 0.08 to 0.15 H long, 1 to 2 px thick (13 canal, 39 sea)"
+ },
+ "widths": {
+  "path": [
+   48,
+   81
+  ],
+  "lane": [
+   67,
+   100
+  ],
+  "road": [
+   89,
+   148
+  ],
+  "_eastward": "dirt path 48 to 50 E (0.9 A) in 12 and 13; lane 1 A; streets 2 A and more (01, 16)",
+  "_why": "a path holds one person with room to spare, a lane two side by side, a road a cart and a person"
+ },
+ "aliases": {
+  "undercroft/stump": "pillar_stump",
+  "_about": "zone/name -> class where a name means something else in that zone (the Undercroft's stumps are broken columns)"
+ },
+ "cast": {
+  "creature_small": [
+   "boarlet",
+   "toad",
+   "tortoise"
+  ],
+  "creature_medium": [
+   "thornback"
+  ],
+  "large": [
+   "cairn"
+  ],
+  "default": "adult",
+  "hero": "bramble",
+  "_about": "body height excludes thin equipment (a spear, a staff) and floating parts: only rows at least 6 art px wide in the body's connected mass count"
+ }
+}

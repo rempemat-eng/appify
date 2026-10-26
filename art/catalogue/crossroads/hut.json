@@ -14,7 +14,7 @@
  "counts": {
   "blocker": 0,
   "fault": 3,
-  "polish": 6
+  "polish": 5
  },
  "detail_bar": {
   "ours": {
@@ -46,18 +46,6 @@
    ],
    "message": "crossroads/hut: the foliage is lit from the right (luminance rises 59 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
-   "detector": "logic.scale",
-   "severity": "polish",
-   "box": [
-    0,
-    13,
-    264,
-    190
-   ],
-   "message": "crossroads/hut: 59 world px tall (2.36 of an adult); the size guide gives 64 to 96 for a hut (a one-room hut or bothy: walls 40 to 44 to the eaves, a door 32, no attic storey)",
-   "fix": "redraw it 64 to 96 world px tall (192 to 288 texels at density 3) and stand it next to Bramble to check"
   },
   {
    "detector": "detail.light",

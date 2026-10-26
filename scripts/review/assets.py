@@ -29,7 +29,7 @@ import numpy as np
 from PIL import Image, ImageDraw
 
 from .core import REPO, GAME_H, Finding, write_json, merge_findings, COLOURS
-from . import detail as D, construct as C, bands as B, screen as SC
+from . import detail as D, construct as C, bands as B, screen as SC, scale as S
 
 ZONES = os.path.join(REPO, 'game', 'zones')
 CATALOGUE = os.path.join(REPO, 'art', 'catalogue')
@@ -153,6 +153,8 @@ def review_rgba(rgba: np.ndarray, subject: str, kind: str, biome: str, H: float 
         # sprite stands on them (on a composed screen trunks, logs and props join the dirt)
         from . import edges as E
         findings += E.ragged_ground(rgba[..., :3], H, subject, ignore)
+        # the ground's grain against Eastward's at the same character height (scale.py)
+        findings += S.check_asset(rgba, subject, kind, H, density, ground=True, ignore=ignore)
     else:
         rgb_n = on_ground(rgba, NEUTRAL)
         f1, parts = D.judge_object(rgb_n, alpha, H, subject, kind=kind)
@@ -160,7 +162,8 @@ def review_rgba(rgba: np.ndarray, subject: str, kind: str, biome: str, H: float 
         findings += C.floating_parts(alpha, H, subject)
         findings += C.stilts(rgb_n, alpha, H, subject)
         findings += C.dotted(rgb_n, alpha, H, subject)
-        findings += C.scale(alpha, H, kind, subject, density)
+        # size against a person (scripts/review/sizes.json; doors, storey and roof for kit buildings)
+        findings += S.check_asset(rgba, subject, kind, H, density)
         findings += C.mushrooms(rgb_n, alpha, H, subject, density)
         findings += C.biome_form(rgb_n, alpha, H, subject, biome)
         findings += C.crown_holes(rgb_n, alpha, H, subject)

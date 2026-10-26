@@ -14,7 +14,7 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 2
+  "polish": 1
  },
  "detail_bar": {
   "ours": {
@@ -35,18 +35,6 @@
   "group": "prop"
  },
  "findings": [
-  {
-   "detector": "logic.scale",
-   "severity": "polish",
-   "box": [
-    15,
-    8,
-    67,
-    82
-   ],
-   "message": "crossroads/grindstone_36: 25 world px tall (0.99 of an adult); the size guide gives 4 to 20 for a small_machine (a luggage bot or small drone, knee high)",
-   "fix": "redraw it 4 to 20 world px tall (12 to 60 texels at density 3) and stand it next to Bramble to check"
-  },
   {
    "detector": "detail.bar",
    "severity": "polish",

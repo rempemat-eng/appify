@@ -14,7 +14,7 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 2
+  "polish": 1
  },
  "detail_bar": {
   "ours": {
@@ -35,18 +35,6 @@
   "group": "prop"
  },
  "findings": [
-  {
-   "detector": "logic.scale",
-   "severity": "polish",
-   "box": [
-    0,
-    7,
-    65,
-    63
-   ],
-   "message": "crossroads/hay_19: 19 world px tall (0.75 of an adult); the size guide gives 24 to 44 for a haystack (a stack 1.5 to 2.5 adults, by the barn's gable)",
-   "fix": "redraw it 24 to 44 world px tall (72 to 132 texels at density 3) and stand it next to Bramble to check"
-  },
   {
    "detector": "detail.bar",
    "severity": "polish",

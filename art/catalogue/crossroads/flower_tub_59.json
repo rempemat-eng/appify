@@ -14,7 +14,7 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 2
+  "polish": 1
  },
  "detail_bar": {
   "ours": {
@@ -35,18 +35,6 @@
   "group": "prop"
  },
  "findings": [
-  {
-   "detector": "logic.scale",
-   "severity": "polish",
-   "box": [
-    8,
-    23,
-    48,
-    54
-   ],
-   "message": "crossroads/flower_tub_59: 10 world px tall (0.41 of an adult); the size guide gives 14 to 22 for a tub (an ore tub or coal cart on narrow rails)",
-   "fix": "redraw it 14 to 22 world px tall (42 to 66 texels at density 3) and stand it next to Bramble to check"
-  },
   {
    "detector": "detail.bar",
    "severity": "polish",
