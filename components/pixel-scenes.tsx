@@ -158,12 +158,13 @@ export function PixelScene({
       ]}
     >
       <View
+        pointerEvents="none"
         aria-hidden
         accessibilityElementsHidden
         importantForAccessibility="no-hide-descendants"
         // @ts-expect-error dataSet is a react-native-web prop (nearest-neighbour pixels).
         dataSet={{ pixel: 'true' }}
-        style={[StyleSheet.absoluteFill, { pointerEvents: 'none' }]}
+        style={StyleSheet.absoluteFill}
       >
         <Image
           source={skyOnly ? sceneSkies[phase] : source}
@@ -245,13 +246,10 @@ export function RaidGarden({
     };
     return (
       <View
+        pointerEvents="none"
         // @ts-expect-error dataSet is a react-native-web prop (crisp pixel scaling via CSS)
         dataSet={{ pixel: 'true' }}
-        style={[
-          StyleSheet.absoluteFill,
-          { backgroundColor: land.above, overflow: 'hidden' },
-          { pointerEvents: 'none' },
-        ]}
+        style={[StyleSheet.absoluteFill, { backgroundColor: land.above, overflow: 'hidden' }]}
       >
         <Image source={land.sky} resizeMode="stretch" style={{ ...jl, width: jw, height: jh }} />
         <Animated.View style={[StyleSheet.absoluteFill, farStyle]}>
@@ -272,12 +270,12 @@ export function RaidGarden({
   const platformBottom = BATTLE.feet * pixel - 9 * pixel;
   return (
     <View
+      pointerEvents="none"
       // @ts-expect-error dataSet is a react-native-web prop (crisp pixel scaling via CSS)
       dataSet={{ pixel: 'true' }}
       style={[
         StyleSheet.absoluteFill,
         { backgroundColor: night ? '#1A2142' : '#A9D3E6', overflow: 'hidden' },
-        { pointerEvents: 'none' },
       ]}
     >
       <Image

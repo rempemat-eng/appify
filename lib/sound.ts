@@ -110,6 +110,40 @@ function effectPlayer(id: SoundId) {
   return player;
 }
 
+/**
+ * expo-audio types play() as synchronous, but its web player can return a
+ * promise. Pausing or replacing that player rejects the promise with
+ * AbortError, so attach the rejection handler before any later pause.
+ */
+function playPlayer(player: AudioPlayer) {
+  try {
+    // On the web, expo-audio 57's play() calls the media element's play() and drops its
+    // promise, so the AbortError a pause raises while playback is still starting ("The
+    // play() request was interrupted by a call to pause()") cannot be caught from here. Start
+    // the element ourselves and catch it (the player keeps its own state for pause()).
+    const media = Platform.OS === 'web' ? webMedia(player) : null;
+    if (media) {
+      const attempt: unknown = media.play();
+      void Promise.resolve(attempt).catch(() => {});
+      return true;
+    }
+    const attempt = player.play() as unknown;
+    void Promise.resolve(attempt).catch(() => {});
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/** The web player's media element (expo-audio's AudioPlayer.web keeps it as `media`), or
+ *  null if a later expo-audio changes that, in which case play() is used as before. */
+function webMedia(player: AudioPlayer): { play: () => unknown } | null {
+  const media: unknown = Reflect.get(player, 'media');
+  return media && typeof Reflect.get(media, 'play') === 'function'
+    ? { play: () => Reflect.apply(Reflect.get(media, 'play'), media, []) }
+    : null;
+}
+
 export function playSound(id: SoundId) {
   const preference = useSoundPreference.getState();
   if (!preference.loaded || !preference.effects || !userActive()) return;
@@ -136,10 +170,10 @@ export function playSound(id: SoundId) {
             latest.effects &&
             userActive()
           )
-            player.play();
+            playPlayer(player);
         })
         .catch(() => {});
-    } else player.play();
+    } else playPlayer(player);
   } catch {
     // Audio is decoration: a failed sound never breaks a tap.
   }
@@ -163,8 +197,7 @@ function applyAmbience() {
       player.loop = true;
       ambiencePlayers.set(want, player);
     }
-    player.play();
-    current = { id: want, player };
+    if (playPlayer(player)) current = { id: want, player };
   } catch {
     current = null;
   }
