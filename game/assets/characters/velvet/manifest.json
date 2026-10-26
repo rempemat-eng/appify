@@ -86,7 +86,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 92,
-        "sabre": 79
+        "sabre": 79,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -139,7 +140,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 92,
-        "sabre": 79
+        "sabre": 79,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -192,7 +194,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 92,
-        "sabre": 79
+        "sabre": 79,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -245,7 +248,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 92,
-        "sabre": 79
+        "sabre": 79,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -298,7 +302,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 92,
-        "sabre": 79
+        "sabre": 79,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -351,7 +356,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 92,
-        "sabre": 79
+        "sabre": 79,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -404,7 +410,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 92,
-        "sabre": 79
+        "sabre": 79,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -457,7 +464,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 92,
-        "sabre": 79
+        "sabre": 79,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -510,7 +518,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 92,
-        "sabre": 79
+        "sabre": 79,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -563,7 +572,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 92,
-        "sabre": 79
+        "sabre": 79,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -616,7 +626,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 92,
-        "sabre": 79
+        "sabre": 79,
+        "face": 4
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -669,7 +680,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 92,
-        "sabre": 79
+        "sabre": 79,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -1366,7 +1378,8 @@
        "equipment": {
         "sabre": 59,
         "scabbard": 76,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -1419,7 +1432,8 @@
        "equipment": {
         "sabre": 59,
         "scabbard": 76,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -1472,7 +1486,8 @@
        "equipment": {
         "sabre": 59,
         "scabbard": 76,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -1525,7 +1540,8 @@
        "equipment": {
         "sabre": 56,
         "scabbard": 78,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -1578,7 +1594,8 @@
        "equipment": {
         "sabre": 56,
         "scabbard": 78,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -1631,7 +1648,8 @@
        "equipment": {
         "sabre": 55,
         "scabbard": 78,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -1684,7 +1702,8 @@
        "equipment": {
         "sabre": 55,
         "scabbard": 78,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -1737,7 +1756,8 @@
        "equipment": {
         "sabre": 55,
         "scabbard": 78,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -1790,7 +1810,8 @@
        "equipment": {
         "sabre": 59,
         "scabbard": 76,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -1843,7 +1864,8 @@
        "equipment": {
         "sabre": 59,
         "scabbard": 76,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -1896,7 +1918,8 @@
        "equipment": {
         "sabre": 59,
         "scabbard": 76,
-        "lantern": 92
+        "lantern": 92,
+        "face": 2
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -1949,7 +1972,8 @@
        "equipment": {
         "sabre": 59,
         "scabbard": 76,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -2006,7 +2030,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 5,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -2059,7 +2084,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 5,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -2112,7 +2138,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 5,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -2165,7 +2192,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 5,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -2218,7 +2246,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 5,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -2271,7 +2300,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 15,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -2324,7 +2354,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 15,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -2377,7 +2408,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 15,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -2430,7 +2462,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 5,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -2483,7 +2516,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 5,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -2536,7 +2570,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 5,
-        "sabre": 74
+        "sabre": 74,
+        "face": 2
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -2589,7 +2624,8 @@
        "equipment": {
         "scabbard": 19,
         "lantern": 5,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -2648,7 +2684,8 @@
        "equipment": {
         "scabbard": 45,
         "sabre": 74,
-        "lantern": 92
+        "lantern": 92,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -2701,7 +2738,8 @@
        "equipment": {
         "scabbard": 45,
         "sabre": 74,
-        "lantern": 92
+        "lantern": 92,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -2754,7 +2792,8 @@
        "equipment": {
         "scabbard": 45,
         "sabre": 74,
-        "lantern": 92
+        "lantern": 92,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -2807,7 +2846,8 @@
        "equipment": {
         "scabbard": 46,
         "sabre": 70,
-        "lantern": 92
+        "lantern": 92,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -2860,7 +2900,8 @@
        "equipment": {
         "scabbard": 46,
         "sabre": 70,
-        "lantern": 92
+        "lantern": 92,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -2913,7 +2954,8 @@
        "equipment": {
         "scabbard": 46,
         "sabre": 70,
-        "lantern": 92
+        "lantern": 92,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -2966,7 +3008,8 @@
        "equipment": {
         "scabbard": 46,
         "sabre": 70,
-        "lantern": 92
+        "lantern": 92,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -3019,7 +3062,8 @@
        "equipment": {
         "scabbard": 46,
         "sabre": 70,
-        "lantern": 92
+        "lantern": 92,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -3072,7 +3116,8 @@
        "equipment": {
         "scabbard": 45,
         "sabre": 74,
-        "lantern": 92
+        "lantern": 92,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -3125,7 +3170,8 @@
        "equipment": {
         "scabbard": 45,
         "sabre": 74,
-        "lantern": 92
+        "lantern": 92,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -3178,7 +3224,8 @@
        "equipment": {
         "scabbard": 45,
         "sabre": 74,
-        "lantern": 92
+        "lantern": 92,
+        "face": 4
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -3231,7 +3278,8 @@
        "equipment": {
         "scabbard": 45,
         "sabre": 74,
-        "lantern": 92
+        "lantern": 92,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -3928,7 +3976,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 77,
-        "sabre": 76
+        "sabre": 76,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -3981,7 +4030,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 77,
-        "sabre": 76
+        "sabre": 76,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -4034,7 +4084,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 77,
-        "sabre": 76
+        "sabre": 76,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -4087,7 +4138,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 79,
-        "sabre": 74
+        "sabre": 74,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -4140,7 +4192,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 79,
-        "sabre": 74
+        "sabre": 74,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -4193,7 +4246,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 87,
-        "sabre": 74
+        "sabre": 74,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -4246,7 +4300,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 87,
-        "sabre": 74
+        "sabre": 74,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -4299,7 +4354,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 87,
-        "sabre": 74
+        "sabre": 74,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -4352,7 +4408,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 77,
-        "sabre": 76
+        "sabre": 76,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -4405,7 +4462,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 77,
-        "sabre": 76
+        "sabre": 76,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -4458,7 +4516,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 77,
-        "sabre": 76
+        "sabre": 76,
+        "face": 4
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -4511,7 +4570,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 77,
-        "sabre": 76
+        "sabre": 76,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -5233,7 +5293,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 93,
-        "sabre": 69
+        "sabre": 69,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -5286,7 +5347,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 96,
-        "sabre": 72
+        "sabre": 72,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -5339,7 +5401,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 92,
-        "sabre": 75
+        "sabre": 75,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -5392,7 +5455,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 90,
-        "sabre": 74
+        "sabre": 74,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -5445,7 +5509,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 90,
-        "sabre": 77
+        "sabre": 77,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -5498,7 +5563,8 @@
        "equipment": {
         "scabbard": 2,
         "sabre": 75,
-        "lantern": 97
+        "lantern": 97,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -5551,7 +5617,8 @@
        "equipment": {
         "scabbard": 1,
         "sabre": 70,
-        "lantern": 98
+        "lantern": 98,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -5604,7 +5671,8 @@
        "equipment": {
         "scabbard": 2,
         "sabre": 75,
-        "lantern": 97
+        "lantern": 97,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -5657,7 +5725,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 90,
-        "sabre": 77
+        "sabre": 77,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -5710,7 +5779,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 90,
-        "sabre": 74
+        "sabre": 74,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -5763,7 +5833,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 92,
-        "sabre": 75
+        "sabre": 75,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -5816,7 +5887,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 96,
-        "sabre": 72
+        "sabre": 72,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -6513,7 +6585,8 @@
        "equipment": {
         "sabre": 65,
         "scabbard": 70,
-        "lantern": 90
+        "lantern": 90,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -6566,7 +6639,8 @@
        "equipment": {
         "sabre": 63,
         "scabbard": 71,
-        "lantern": 90
+        "lantern": 90,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -6619,7 +6693,8 @@
        "equipment": {
         "sabre": 61,
         "scabbard": 75,
-        "lantern": 90
+        "lantern": 90,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -6672,7 +6747,8 @@
        "equipment": {
         "sabre": 57,
         "scabbard": 78,
-        "lantern": 90
+        "lantern": 90,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.9,
@@ -6725,7 +6801,8 @@
        "equipment": {
         "sabre": 53,
         "scabbard": 81,
-        "lantern": 93
+        "lantern": 93,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -6778,7 +6855,8 @@
        "equipment": {
         "sabre": 37,
         "scabbard": 83,
-        "lantern": 95
+        "lantern": 95,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -6831,7 +6909,8 @@
        "equipment": {
         "sabre": 30,
         "scabbard": 85,
-        "lantern": 102
+        "lantern": 102,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -6884,7 +6963,8 @@
        "equipment": {
         "sabre": 42,
         "scabbard": 83,
-        "lantern": 95
+        "lantern": 95,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -6937,7 +7017,8 @@
        "equipment": {
         "sabre": 54,
         "scabbard": 81,
-        "lantern": 93
+        "lantern": 93,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -6990,7 +7071,8 @@
        "equipment": {
         "sabre": 59,
         "scabbard": 78,
-        "lantern": 90
+        "lantern": 90,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.9,
@@ -7043,7 +7125,8 @@
        "equipment": {
         "sabre": 61,
         "scabbard": 75,
-        "lantern": 90
+        "lantern": 90,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -7096,7 +7179,8 @@
        "equipment": {
         "sabre": 63,
         "scabbard": 71,
-        "lantern": 90
+        "lantern": 90,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -7153,7 +7237,8 @@
        "equipment": {
         "scabbard": 3,
         "lantern": 11,
-        "sabre": 73
+        "sabre": 73,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -7206,7 +7291,8 @@
        "equipment": {
         "scabbard": 6,
         "lantern": 3,
-        "sabre": 70
+        "sabre": 70,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -7259,7 +7345,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 5,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -7312,7 +7399,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 7,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -7365,7 +7453,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 8,
-        "sabre": 75
+        "sabre": 75,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -7418,7 +7507,8 @@
        "equipment": {
         "scabbard": 6,
         "lantern": 13,
-        "sabre": 73
+        "sabre": 73,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -7471,7 +7561,8 @@
        "equipment": {
         "scabbard": 5,
         "lantern": 22,
-        "sabre": 75
+        "sabre": 75,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -7524,7 +7615,8 @@
        "equipment": {
         "scabbard": 6,
         "lantern": 13,
-        "sabre": 73
+        "sabre": 73,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -7577,7 +7669,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 17,
-        "sabre": 75
+        "sabre": 75,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -7630,7 +7723,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 3,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -7683,7 +7777,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 0,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -7736,7 +7831,8 @@
        "equipment": {
         "scabbard": 6,
         "lantern": 11,
-        "sabre": 70
+        "sabre": 70,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -7795,7 +7891,8 @@
        "equipment": {
         "scabbard": 39,
         "sabre": 77,
-        "lantern": 101
+        "lantern": 101,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -7848,7 +7945,8 @@
        "equipment": {
         "scabbard": 41,
         "sabre": 77,
-        "lantern": 92
+        "lantern": 92,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -7901,7 +7999,8 @@
        "equipment": {
         "scabbard": 43,
         "sabre": 77,
-        "lantern": 90
+        "lantern": 90,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -7954,7 +8053,8 @@
        "equipment": {
         "scabbard": 45,
         "sabre": 71,
-        "lantern": 90
+        "lantern": 90,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -8007,7 +8107,8 @@
        "equipment": {
         "scabbard": 46,
         "sabre": 68,
-        "lantern": 89
+        "lantern": 89,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -8060,7 +8161,8 @@
        "equipment": {
         "scabbard": 47,
         "sabre": 63,
-        "lantern": 91
+        "lantern": 91,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -8113,7 +8215,8 @@
        "equipment": {
         "scabbard": 43,
         "sabre": 60,
-        "lantern": 90
+        "lantern": 90,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -8166,7 +8269,8 @@
        "equipment": {
         "scabbard": 47,
         "sabre": 63,
-        "lantern": 91
+        "lantern": 91,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -8219,7 +8323,8 @@
        "equipment": {
         "scabbard": 46,
         "sabre": 68,
-        "lantern": 89
+        "lantern": 89,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -8272,7 +8377,8 @@
        "equipment": {
         "scabbard": 45,
         "sabre": 71,
-        "lantern": 90
+        "lantern": 90,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -8325,7 +8431,8 @@
        "equipment": {
         "scabbard": 43,
         "sabre": 77,
-        "lantern": 90
+        "lantern": 90,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -8378,7 +8485,8 @@
        "equipment": {
         "scabbard": 41,
         "sabre": 77,
-        "lantern": 92
+        "lantern": 92,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -9075,7 +9183,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 67,
-        "sabre": 75
+        "sabre": 75,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -9128,7 +9237,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 69,
-        "sabre": 75
+        "sabre": 75,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -9181,7 +9291,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 78,
-        "sabre": 71
+        "sabre": 71,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -9234,7 +9345,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 89,
-        "sabre": 76
+        "sabre": 76,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -9287,7 +9399,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 93,
-        "sabre": 77
+        "sabre": 77,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -9340,7 +9453,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 89,
-        "sabre": 75
+        "sabre": 75,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -9393,7 +9507,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 93,
-        "sabre": 73
+        "sabre": 73,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -9446,7 +9561,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 89,
-        "sabre": 75
+        "sabre": 75,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -9499,7 +9615,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 88,
-        "sabre": 77
+        "sabre": 77,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -9552,7 +9669,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 70,
-        "sabre": 76
+        "sabre": 76,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -9605,7 +9723,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 64,
-        "sabre": 71
+        "sabre": 71,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -9658,7 +9777,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 62,
-        "sabre": 75
+        "sabre": 75,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -10385,7 +10505,8 @@
        "equipment": {
         "scabbard": 5,
         "lantern": 97,
-        "sabre": 48
+        "sabre": 48,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -10438,7 +10559,8 @@
        "equipment": {
         "scabbard": 5,
         "lantern": 97,
-        "sabre": 66
+        "sabre": 66,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -10491,7 +10613,8 @@
        "equipment": {
         "scabbard": 5,
         "lantern": 90,
-        "sabre": 79
+        "sabre": 79,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -10544,7 +10667,8 @@
        "equipment": {
         "scabbard": 5,
         "sabre": 69,
-        "lantern": 97
+        "lantern": 97,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -10597,7 +10721,8 @@
        "equipment": {
         "scabbard": 5,
         "sabre": 65,
-        "lantern": 97
+        "lantern": 97,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -10650,7 +10775,8 @@
        "equipment": {
         "scabbard": 5,
         "lantern": 90,
-        "sabre": 77
+        "sabre": 74,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -10703,7 +10829,8 @@
        "equipment": {
         "scabbard": 6,
         "lantern": 97,
-        "sabre": 57
+        "sabre": 57,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -10756,7 +10883,8 @@
        "equipment": {
         "scabbard": 6,
         "lantern": 93,
-        "sabre": 63
+        "sabre": 63,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -10809,7 +10937,8 @@
        "equipment": {
         "scabbard": 11,
         "lantern": 91,
-        "sabre": 72
+        "sabre": 72,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -10862,7 +10991,8 @@
        "equipment": {
         "scabbard": 7,
         "lantern": 86,
-        "sabre": 79
+        "sabre": 79,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -10915,7 +11045,8 @@
        "equipment": {
         "scabbard": 5,
         "lantern": 90,
-        "sabre": 68
+        "sabre": 68,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -10968,7 +11099,8 @@
        "equipment": {
         "scabbard": 2,
         "lantern": 91,
-        "sabre": 63
+        "sabre": 63,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -11021,7 +11153,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 92,
-        "sabre": 51
+        "sabre": 51,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -11074,7 +11207,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 92,
-        "sabre": 59
+        "sabre": 59,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -11127,7 +11261,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 92,
-        "sabre": 67
+        "sabre": 67,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -11180,7 +11315,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 92,
-        "sabre": 74
+        "sabre": 74,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -11233,7 +11369,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 92,
-        "sabre": 79
+        "sabre": 79,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -12205,7 +12342,8 @@
        "equipment": {
         "sabre": 64,
         "scabbard": 51,
-        "lantern": 87
+        "lantern": 87,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -12258,7 +12396,8 @@
        "equipment": {
         "sabre": 26,
         "scabbard": 51,
-        "lantern": 87
+        "lantern": 87,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -12311,7 +12450,8 @@
        "equipment": {
         "sabre": 11,
         "scabbard": 51,
-        "lantern": 95
+        "lantern": 95,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -12364,7 +12504,8 @@
        "equipment": {
         "sabre": 27,
         "scabbard": 51,
-        "lantern": 87
+        "lantern": 87,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -12417,7 +12558,8 @@
        "equipment": {
         "sabre": 32,
         "scabbard": 51,
-        "lantern": 87
+        "lantern": 87,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -12470,7 +12612,8 @@
        "equipment": {
         "scabbard": 51,
         "lantern": 95,
-        "sabre": 76
+        "sabre": 70,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -12523,7 +12666,8 @@
        "equipment": {
         "scabbard": 48,
         "lantern": 87,
-        "sabre": 76
+        "sabre": 76,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -12576,7 +12720,8 @@
        "equipment": {
         "scabbard": 48,
         "lantern": 87,
-        "sabre": 70
+        "sabre": 70,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -12629,7 +12774,8 @@
        "equipment": {
         "scabbard": 42,
         "lantern": 97,
-        "sabre": 65
+        "sabre": 65,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -12682,7 +12828,8 @@
        "equipment": {
         "scabbard": 48,
         "lantern": 95,
-        "sabre": 68
+        "sabre": 68,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -12735,7 +12882,8 @@
        "equipment": {
         "sabre": 58,
         "scabbard": 51,
-        "lantern": 95
+        "lantern": 95,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.9,
@@ -12788,7 +12936,8 @@
        "equipment": {
         "sabre": 55,
         "scabbard": 67,
-        "lantern": 92
+        "lantern": 92,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -12841,7 +12990,8 @@
        "equipment": {
         "sabre": 57,
         "scabbard": 75,
-        "lantern": 98
+        "lantern": 98,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -12894,7 +13044,8 @@
        "equipment": {
         "sabre": 60,
         "scabbard": 76,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -12947,7 +13098,8 @@
        "equipment": {
         "sabre": 60,
         "scabbard": 76,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -13000,7 +13152,8 @@
        "equipment": {
         "sabre": 61,
         "scabbard": 76,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -13053,7 +13206,8 @@
        "equipment": {
         "sabre": 59,
         "scabbard": 76,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -13115,7 +13269,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 0,
-        "sabre": 72
+        "sabre": 72,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -13168,7 +13323,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 0,
-        "sabre": 21
+        "sabre": 21,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -13221,7 +13377,8 @@
        "equipment": {
         "scabbard": 12,
         "lantern": 0,
-        "sabre": 9
+        "sabre": 9,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -13274,7 +13431,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 0,
-        "sabre": 73
+        "sabre": 73,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -13327,7 +13485,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 0,
-        "sabre": 79
+        "sabre": 79,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -13380,7 +13539,8 @@
        "equipment": {
         "scabbard": 23,
         "lantern": 0,
-        "sabre": 78
+        "sabre": 74,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -13433,7 +13593,8 @@
        "equipment": {
         "scabbard": 28,
         "lantern": 0,
-        "sabre": 75
+        "sabre": 75,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -13486,7 +13647,8 @@
        "equipment": {
         "scabbard": 33,
         "lantern": 0,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -13539,7 +13701,8 @@
        "equipment": {
         "scabbard": 27,
         "lantern": 0,
-        "sabre": 70
+        "sabre": 70,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -13592,7 +13755,8 @@
        "equipment": {
         "scabbard": 12,
         "lantern": 0,
-        "sabre": 70
+        "sabre": 70,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -13645,7 +13809,8 @@
        "equipment": {
         "scabbard": 5,
         "lantern": 0,
-        "sabre": 66
+        "sabre": 66,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.9,
@@ -13698,7 +13863,8 @@
        "equipment": {
         "scabbard": 4,
         "lantern": 2,
-        "sabre": 70
+        "sabre": 70,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -13751,7 +13917,8 @@
        "equipment": {
         "scabbard": 6,
         "lantern": 20,
-        "sabre": 70
+        "sabre": 70,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -13804,7 +13971,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 36,
-        "sabre": 71
+        "sabre": 71,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -13857,7 +14025,8 @@
        "equipment": {
         "scabbard": 19,
         "lantern": 11,
-        "sabre": 72
+        "sabre": 72,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -13910,7 +14079,8 @@
        "equipment": {
         "scabbard": 19,
         "lantern": 7,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -13963,7 +14133,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 5,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -14055,7 +14226,8 @@
        "equipment": {
         "scabbard": 2,
         "lantern": 93,
-        "sabre": 53
+        "sabre": 53,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.0,
@@ -14108,7 +14280,8 @@
        "equipment": {
         "scabbard": 6,
         "lantern": 98,
-        "sabre": 53
+        "sabre": 53,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.0,
@@ -14161,7 +14334,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 90,
-        "sabre": 53
+        "sabre": 53,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.0,
@@ -14214,7 +14388,8 @@
        "equipment": {
         "scabbard": 11,
         "lantern": 97,
-        "sabre": 53
+        "sabre": 53,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.0,
@@ -14267,7 +14442,8 @@
        "equipment": {
         "scabbard": 7,
         "lantern": 90,
-        "sabre": 53
+        "sabre": 53,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.0,
@@ -14320,7 +14496,8 @@
        "equipment": {
         "scabbard": 9,
         "sabre": 53,
-        "lantern": 101
+        "lantern": 101,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.0,
@@ -14373,7 +14550,8 @@
        "equipment": {
         "scabbard": 21,
         "sabre": 53,
-        "lantern": 109
+        "lantern": 109,
+        "face": 4
        },
        "anchor_gap": {
         "blade_tip": 0.0,
@@ -14426,7 +14604,8 @@
        "equipment": {
         "scabbard": 21,
         "sabre": 53,
-        "lantern": 109
+        "lantern": 109,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.0,
@@ -14479,7 +14658,8 @@
        "equipment": {
         "scabbard": 16,
         "sabre": 53,
-        "lantern": 106
+        "lantern": 106,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.0,
@@ -14532,7 +14712,8 @@
        "equipment": {
         "scabbard": 9,
         "sabre": 53,
-        "lantern": 101
+        "lantern": 101,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.0,
@@ -14585,7 +14766,8 @@
        "equipment": {
         "scabbard": 0,
         "sabre": 53,
-        "lantern": 95
+        "lantern": 95,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.0,
@@ -14638,7 +14820,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 98,
-        "sabre": 53
+        "sabre": 53,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.0,
@@ -14691,7 +14874,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 92,
-        "sabre": 79
+        "sabre": 79,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -15451,7 +15635,8 @@
        "equipment": {
         "sabre": 57,
         "scabbard": 70,
-        "lantern": 98
+        "lantern": 98,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -15504,7 +15689,8 @@
        "equipment": {
         "sabre": 57,
         "scabbard": 55,
-        "lantern": 86
+        "lantern": 86,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -15557,7 +15743,8 @@
        "equipment": {
         "sabre": 57,
         "scabbard": 54,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -15610,7 +15797,8 @@
        "equipment": {
         "sabre": 57,
         "scabbard": 56,
-        "lantern": 86
+        "lantern": 86,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -15663,7 +15851,8 @@
        "equipment": {
         "sabre": 57,
         "scabbard": 79,
-        "lantern": 89
+        "lantern": 89,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -15716,7 +15905,8 @@
        "equipment": {
         "sabre": 44,
         "scabbard": 87,
-        "lantern": 87
+        "lantern": 87,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -15769,7 +15959,8 @@
        "equipment": {
         "sabre": 33,
         "scabbard": 87,
-        "lantern": 102
+        "lantern": 102,
+        "face": 2
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -15822,7 +16013,8 @@
        "equipment": {
         "sabre": 33,
         "scabbard": 87,
-        "lantern": 100
+        "lantern": 100,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -15875,7 +16067,8 @@
        "equipment": {
         "sabre": 37,
         "scabbard": 87,
-        "lantern": 97
+        "lantern": 97,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -15928,7 +16121,8 @@
        "equipment": {
         "sabre": 37,
         "scabbard": 87,
-        "lantern": 86
+        "lantern": 86,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -15981,7 +16175,8 @@
        "equipment": {
         "sabre": 45,
         "scabbard": 87,
-        "lantern": 96
+        "lantern": 96,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -16034,7 +16229,8 @@
        "equipment": {
         "sabre": 57,
         "scabbard": 83,
-        "lantern": 101
+        "lantern": 101,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -16087,7 +16283,8 @@
        "equipment": {
         "sabre": 59,
         "scabbard": 76,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -16149,7 +16346,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 7,
-        "sabre": 67
+        "sabre": 67,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -16202,7 +16400,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 0,
-        "sabre": 67
+        "sabre": 67,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -16255,7 +16454,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 0,
-        "sabre": 67
+        "sabre": 67,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -16308,7 +16508,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 0,
-        "sabre": 67
+        "sabre": 67,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -16361,7 +16562,8 @@
        "equipment": {
         "scabbard": 19,
         "lantern": 8,
-        "sabre": 67
+        "sabre": 67,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -16414,7 +16616,8 @@
        "equipment": {
         "scabbard": 23,
         "lantern": 26,
-        "sabre": 67
+        "sabre": 67,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -16467,7 +16670,8 @@
        "equipment": {
         "scabbard": 28,
         "lantern": 88,
-        "sabre": 67
+        "sabre": 67,
+        "face": 2
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -16520,7 +16724,8 @@
        "equipment": {
         "scabbard": 23,
         "lantern": 88,
-        "sabre": 67
+        "sabre": 67,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -16573,7 +16778,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 102,
-        "sabre": 67
+        "sabre": 67,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -16626,7 +16832,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 81,
-        "sabre": 67
+        "sabre": 67,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -16679,7 +16886,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 94,
-        "sabre": 67
+        "sabre": 67,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -16732,7 +16940,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 56,
-        "sabre": 67
+        "sabre": 67,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -16785,7 +16994,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 5,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -16872,7 +17082,8 @@
        "equipment": {
         "scabbard": 3,
         "lantern": 101,
-        "sabre": 75
+        "sabre": 75,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -16925,7 +17136,8 @@
        "equipment": {
         "scabbard": 14,
         "lantern": 101,
-        "sabre": 65
+        "sabre": 65,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -16978,7 +17190,8 @@
        "equipment": {
         "scabbard": 16,
         "sabre": 57,
-        "lantern": 98
+        "lantern": 98,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -17031,7 +17244,8 @@
        "equipment": {
         "scabbard": 16,
         "sabre": 52,
-        "lantern": 92
+        "lantern": 92,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -17084,7 +17298,8 @@
        "equipment": {
         "scabbard": 16,
         "sabre": 59,
-        "lantern": 109
+        "lantern": 109,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -17137,7 +17352,8 @@
        "equipment": {
         "scabbard": 18,
         "lantern": 108,
-        "sabre": 60
+        "sabre": 60,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -17190,7 +17406,8 @@
        "equipment": {
         "scabbard": 6,
         "lantern": 100,
-        "sabre": 60
+        "sabre": 60,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -17243,7 +17460,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 108,
-        "sabre": 60
+        "sabre": 60,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -17738,7 +17956,8 @@
        "equipment": {
         "sabre": 59,
         "scabbard": 77,
-        "lantern": 97
+        "lantern": 97,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -17791,7 +18010,8 @@
        "equipment": {
         "sabre": 58,
         "scabbard": 87,
-        "lantern": 93
+        "lantern": 93,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -17844,7 +18064,8 @@
        "equipment": {
         "sabre": 55,
         "scabbard": 87,
-        "lantern": 94
+        "lantern": 94,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -17897,7 +18118,8 @@
        "equipment": {
         "sabre": 47,
         "scabbard": 87,
-        "lantern": 93
+        "lantern": 93,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.0,
@@ -17950,7 +18172,8 @@
        "equipment": {
         "sabre": 41,
         "scabbard": 87,
-        "lantern": 101
+        "lantern": 101,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -18003,7 +18226,8 @@
        "equipment": {
         "sabre": 67,
         "scabbard": 87,
-        "lantern": 100
+        "lantern": 100,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -18056,7 +18280,8 @@
        "equipment": {
         "sabre": 67,
         "scabbard": 61,
-        "lantern": 101
+        "lantern": 101,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -18109,7 +18334,8 @@
        "equipment": {
         "sabre": 63,
         "scabbard": 87,
-        "lantern": 100
+        "lantern": 100,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -18171,7 +18397,8 @@
        "equipment": {
         "scabbard": 12,
         "lantern": 7,
-        "sabre": 75
+        "sabre": 75,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -18224,7 +18451,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 5,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -18277,7 +18505,8 @@
        "equipment": {
         "scabbard": 13,
         "sabre": 67,
-        "lantern": 86
+        "lantern": 86,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -18330,7 +18559,8 @@
        "equipment": {
         "scabbard": 13,
         "sabre": 52,
-        "lantern": 93
+        "lantern": 93,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -18383,7 +18613,8 @@
        "equipment": {
         "scabbard": 19,
         "sabre": 42,
-        "lantern": 101
+        "lantern": 101,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -18436,7 +18667,8 @@
        "equipment": {
         "scabbard": 19,
         "lantern": 3,
-        "sabre": 66
+        "sabre": 66,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -18489,7 +18721,8 @@
        "equipment": {
         "scabbard": 19,
         "lantern": 4,
-        "sabre": 66
+        "sabre": 66,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -18542,7 +18775,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 88,
-        "sabre": 66
+        "sabre": 66,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -18638,7 +18872,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 92,
-        "sabre": 57
+        "sabre": 57,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -18691,7 +18926,8 @@
        "equipment": {
         "scabbard": 5,
         "lantern": 97,
-        "sabre": 61
+        "sabre": 61,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -18744,7 +18980,8 @@
        "equipment": {
         "scabbard": 5,
         "lantern": 97,
-        "sabre": 73
+        "sabre": 73,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -18797,7 +19034,8 @@
        "equipment": {
         "scabbard": 4,
         "lantern": 92,
-        "sabre": 71
+        "sabre": 71,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -18850,7 +19088,8 @@
        "equipment": {
         "scabbard": 5,
         "lantern": 90,
-        "sabre": 69
+        "sabre": 69,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -18903,7 +19142,8 @@
        "equipment": {
         "scabbard": 2,
         "lantern": 93,
-        "sabre": 49
+        "sabre": 49,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -18956,7 +19196,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 92,
-        "sabre": 66
+        "sabre": 66,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -19009,7 +19250,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 92,
-        "sabre": 79
+        "sabre": 79,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -19494,7 +19736,8 @@
        "equipment": {
         "sabre": 55,
         "scabbard": 76,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -19547,7 +19790,8 @@
        "equipment": {
         "scabbard": 58,
         "lantern": 95,
-        "sabre": 75
+        "sabre": 75,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -19600,7 +19844,8 @@
        "equipment": {
         "scabbard": 51,
         "lantern": 97,
-        "sabre": 68
+        "sabre": 68,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -19653,7 +19898,8 @@
        "equipment": {
         "scabbard": 49,
         "lantern": 91,
-        "sabre": 70
+        "sabre": 70,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -19706,7 +19952,8 @@
        "equipment": {
         "scabbard": 50,
         "lantern": 87,
-        "sabre": 70
+        "sabre": 70,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -19759,7 +20006,8 @@
        "equipment": {
         "sabre": 59,
         "scabbard": 70,
-        "lantern": 98
+        "lantern": 98,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -19812,7 +20060,8 @@
        "equipment": {
         "sabre": 62,
         "scabbard": 76,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -19865,7 +20114,8 @@
        "equipment": {
         "sabre": 59,
         "scabbard": 76,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -19922,7 +20172,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 12,
-        "sabre": 65
+        "sabre": 65,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -19975,7 +20226,8 @@
        "equipment": {
         "scabbard": 12,
         "lantern": 0,
-        "sabre": 72
+        "sabre": 72,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -20028,7 +20280,8 @@
        "equipment": {
         "scabbard": 12,
         "lantern": 0,
-        "sabre": 72
+        "sabre": 72,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -20081,7 +20334,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 0,
-        "sabre": 71
+        "sabre": 71,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -20134,7 +20388,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 0,
-        "sabre": 71
+        "sabre": 71,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -20187,7 +20442,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 7,
-        "sabre": 71
+        "sabre": 71,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -20240,7 +20496,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 22,
-        "sabre": 71
+        "sabre": 71,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -20293,7 +20550,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 5,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -20373,7 +20631,8 @@
        "equipment": {
         "scabbard": 6,
         "lantern": 90,
-        "sabre": 79
+        "sabre": 79,
+        "face": 4
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -20426,7 +20685,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 90,
-        "sabre": 74
+        "sabre": 74,
+        "face": 4
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -20479,7 +20739,8 @@
        "equipment": {
         "scabbard": 11,
         "lantern": 94,
-        "sabre": 67
+        "sabre": 67,
+        "face": 4
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -20532,7 +20793,8 @@
        "equipment": {
         "scabbard": 8,
         "lantern": 97,
-        "sabre": 75
+        "sabre": 75,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -20585,7 +20847,8 @@
        "equipment": {
         "scabbard": 14,
         "lantern": 97,
-        "sabre": 73
+        "sabre": 73,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -20638,7 +20901,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 94,
-        "sabre": 77
+        "sabre": 77,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -20691,7 +20955,8 @@
        "equipment": {
         "scabbard": 2,
         "lantern": 91,
-        "sabre": 72
+        "sabre": 72,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -20744,7 +21009,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 97,
-        "sabre": 74
+        "sabre": 74,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -20797,7 +21063,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 92,
-        "sabre": 79
+        "sabre": 79,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -20850,7 +21117,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 92,
-        "sabre": 79
+        "sabre": 79,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -21441,7 +21709,8 @@
        "equipment": {
         "sabre": 55,
         "scabbard": 87,
-        "lantern": 90
+        "lantern": 90,
+        "face": 2
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -21494,7 +21763,8 @@
        "equipment": {
         "sabre": 56,
         "scabbard": 87,
-        "lantern": 93
+        "lantern": 93,
+        "face": 2
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -21547,7 +21817,8 @@
        "equipment": {
         "sabre": 56,
         "scabbard": 87,
-        "lantern": 95
+        "lantern": 95,
+        "face": 2
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -21600,7 +21871,8 @@
        "equipment": {
         "sabre": 62,
         "scabbard": 87,
-        "lantern": 93
+        "lantern": 93,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -21653,7 +21925,8 @@
        "equipment": {
         "sabre": 58,
         "scabbard": 87,
-        "lantern": 92
+        "lantern": 92,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -21706,7 +21979,8 @@
        "equipment": {
         "sabre": 57,
         "scabbard": 86,
-        "lantern": 94
+        "lantern": 94,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -21759,7 +22033,8 @@
        "equipment": {
         "sabre": 57,
         "scabbard": 76,
-        "lantern": 91
+        "lantern": 91,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.9,
@@ -21812,7 +22087,8 @@
        "equipment": {
         "sabre": 58,
         "scabbard": 76,
-        "lantern": 96
+        "lantern": 96,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -21865,7 +22141,8 @@
        "equipment": {
         "sabre": 59,
         "scabbard": 76,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -21918,7 +22195,8 @@
        "equipment": {
         "sabre": 59,
         "scabbard": 76,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -21975,7 +22253,8 @@
        "equipment": {
         "scabbard": 19,
         "lantern": 69,
-        "sabre": 72
+        "sabre": 72,
+        "face": 2
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -22028,7 +22307,8 @@
        "equipment": {
         "scabbard": 23,
         "lantern": 61,
-        "sabre": 79
+        "sabre": 79,
+        "face": 2
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -22081,7 +22361,8 @@
        "equipment": {
         "scabbard": 23,
         "lantern": 56,
-        "sabre": 70
+        "sabre": 70,
+        "face": 2
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -22134,7 +22415,8 @@
        "equipment": {
         "scabbard": 23,
         "lantern": 43,
-        "sabre": 76
+        "sabre": 76,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -22187,7 +22469,8 @@
        "equipment": {
         "scabbard": 23,
         "lantern": 24,
-        "sabre": 76
+        "sabre": 76,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -22240,7 +22523,8 @@
        "equipment": {
         "scabbard": 23,
         "lantern": 15,
-        "sabre": 80
+        "sabre": 80,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -22293,7 +22577,8 @@
        "equipment": {
         "scabbard": 19,
         "lantern": 0,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -22346,7 +22631,8 @@
        "equipment": {
         "scabbard": 12,
         "lantern": 3,
-        "sabre": 74
+        "sabre": 74,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -22399,7 +22685,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 5,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -22452,7 +22739,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 5,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -22530,7 +22818,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 90,
-        "sabre": 71
+        "sabre": 71,
+        "face": 4
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -22583,7 +22872,8 @@
        "equipment": {
         "scabbard": 0,
         "sabre": 63,
-        "lantern": 94
+        "lantern": 94,
+        "face": 4
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -22636,7 +22926,8 @@
        "equipment": {
         "scabbard": 3,
         "sabre": 51,
-        "lantern": 104
+        "lantern": 104,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -22689,7 +22980,8 @@
        "equipment": {
         "scabbard": 0,
         "sabre": 66,
-        "lantern": 105
+        "lantern": 105,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -22742,7 +23034,8 @@
        "equipment": {
         "scabbard": 0,
         "sabre": 66,
-        "lantern": 104
+        "lantern": 104,
+        "face": 4
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -22795,7 +23088,8 @@
        "equipment": {
         "scabbard": 0,
         "sabre": 66,
-        "lantern": 102
+        "lantern": 102,
+        "face": 4
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -22848,7 +23142,8 @@
        "equipment": {
         "scabbard": 0,
         "sabre": 66,
-        "lantern": 98
+        "lantern": 98,
+        "face": 4
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -22901,7 +23196,8 @@
        "equipment": {
         "scabbard": 0,
         "sabre": 66,
-        "lantern": 98
+        "lantern": 98,
+        "face": 4
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -23386,7 +23682,8 @@
        "equipment": {
         "sabre": 45,
         "scabbard": 73,
-        "lantern": 101
+        "lantern": 101,
+        "face": 2
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -23439,7 +23736,8 @@
        "equipment": {
         "sabre": 43,
         "scabbard": 87,
-        "lantern": 102
+        "lantern": 102,
+        "face": 2
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -23492,7 +23790,8 @@
        "equipment": {
         "sabre": 44,
         "scabbard": 84,
-        "lantern": 98
+        "lantern": 98,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -23545,7 +23844,8 @@
        "equipment": {
         "sabre": 37,
         "scabbard": 84,
-        "lantern": 88
+        "lantern": 88,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -23598,7 +23898,8 @@
        "equipment": {
         "sabre": 28,
         "scabbard": 84,
-        "lantern": 96
+        "lantern": 96,
+        "face": 2
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -23651,7 +23952,8 @@
        "equipment": {
         "sabre": 19,
         "scabbard": 84,
-        "lantern": 94
+        "lantern": 94,
+        "face": 2
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -23704,7 +24006,8 @@
        "equipment": {
         "sabre": 16,
         "scabbard": 87,
-        "lantern": 86
+        "lantern": 86,
+        "face": 2
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -23757,7 +24060,8 @@
        "equipment": {
         "sabre": 16,
         "scabbard": 87,
-        "lantern": 86
+        "lantern": 86,
+        "face": 2
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -23814,7 +24118,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 4,
-        "sabre": 72
+        "sabre": 72,
+        "face": 2
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -23867,7 +24172,8 @@
        "equipment": {
         "scabbard": 36,
         "lantern": 19,
-        "sabre": 75
+        "sabre": 75,
+        "face": 2
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -23920,7 +24226,8 @@
        "equipment": {
         "scabbard": 40,
         "lantern": 4,
-        "sabre": 72
+        "sabre": 72,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -23973,7 +24280,8 @@
        "equipment": {
         "scabbard": 33,
         "lantern": 13,
-        "sabre": 73
+        "sabre": 73,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -24026,7 +24334,8 @@
        "equipment": {
         "scabbard": 34,
         "lantern": 16,
-        "sabre": 69
+        "sabre": 69,
+        "face": 2
        },
        "anchor_gap": {
         "blade_tip": 1.2,
@@ -24079,7 +24388,8 @@
        "equipment": {
         "scabbard": 34,
         "lantern": 37,
-        "sabre": 60
+        "sabre": 60,
+        "face": 2
        },
        "anchor_gap": {
         "blade_tip": 4.3,
@@ -24132,7 +24442,8 @@
        "equipment": {
         "scabbard": 32,
         "lantern": 50,
-        "sabre": 57
+        "sabre": 57,
+        "face": 2
        },
        "anchor_gap": {
         "blade_tip": 5.3,
@@ -24185,7 +24496,8 @@
        "equipment": {
         "scabbard": 32,
         "lantern": 50,
-        "sabre": 57
+        "sabre": 57,
+        "face": 2
        },
        "anchor_gap": {
         "blade_tip": 5.3,
@@ -24272,7 +24584,8 @@
        "equipment": {
         "scabbard": 3,
         "sabre": 63,
-        "lantern": 90
+        "lantern": 90,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -24325,7 +24638,8 @@
        "equipment": {
         "scabbard": 10,
         "sabre": 68,
-        "lantern": 98
+        "lantern": 98,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -24378,7 +24692,8 @@
        "equipment": {
         "scabbard": 17,
         "lantern": 101,
-        "sabre": 67
+        "sabre": 67,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -24431,7 +24746,8 @@
        "equipment": {
         "scabbard": 20,
         "lantern": 97,
-        "sabre": 64
+        "sabre": 64,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -24484,7 +24800,8 @@
        "equipment": {
         "scabbard": 18,
         "sabre": 68,
-        "lantern": 98
+        "lantern": 98,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -24537,7 +24854,8 @@
        "equipment": {
         "scabbard": 2,
         "lantern": 93,
-        "sabre": 65
+        "sabre": 65,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -24590,7 +24908,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 96,
-        "sabre": 68
+        "sabre": 68,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -24643,7 +24962,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 92,
-        "sabre": 65
+        "sabre": 65,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -25128,7 +25448,8 @@
        "equipment": {
         "sabre": 41,
         "scabbard": 83,
-        "lantern": 96
+        "lantern": 96,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -25181,7 +25502,8 @@
        "equipment": {
         "sabre": 50,
         "scabbard": 87,
-        "lantern": 100
+        "lantern": 100,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -25234,7 +25556,8 @@
        "equipment": {
         "sabre": 49,
         "scabbard": 87,
-        "lantern": 93
+        "lantern": 93,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -25287,7 +25610,8 @@
        "equipment": {
         "sabre": 50,
         "scabbard": 87,
-        "lantern": 93
+        "lantern": 93,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.9,
@@ -25340,7 +25664,8 @@
        "equipment": {
         "sabre": 46,
         "scabbard": 87,
-        "lantern": 93
+        "lantern": 93,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -25393,7 +25718,8 @@
        "equipment": {
         "sabre": 54,
         "scabbard": 87,
-        "lantern": 90
+        "lantern": 90,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -25446,7 +25772,8 @@
        "equipment": {
         "sabre": 55,
         "scabbard": 77,
-        "lantern": 93
+        "lantern": 93,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -25499,7 +25826,8 @@
        "equipment": {
         "sabre": 54,
         "scabbard": 76,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -25556,7 +25884,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 7,
-        "sabre": 65
+        "sabre": 65,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -25609,7 +25938,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 85,
-        "sabre": 68
+        "sabre": 68,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -25662,7 +25992,8 @@
        "equipment": {
         "scabbard": 23,
         "lantern": 87,
-        "sabre": 67
+        "sabre": 67,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -25715,7 +26046,8 @@
        "equipment": {
         "scabbard": 19,
         "lantern": 66,
-        "sabre": 65
+        "sabre": 65,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -25768,7 +26100,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 83,
-        "sabre": 67
+        "sabre": 67,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -25821,7 +26154,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 50,
-        "sabre": 65
+        "sabre": 65,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -25874,7 +26208,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 1,
-        "sabre": 64
+        "sabre": 64,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -25927,7 +26262,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 11,
-        "sabre": 71
+        "sabre": 71,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -26005,7 +26341,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 93,
-        "sabre": 77
+        "sabre": 77,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -26058,7 +26395,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 90,
-        "sabre": 75
+        "sabre": 75,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -26111,7 +26449,8 @@
        "equipment": {
         "scabbard": 2,
         "lantern": 96,
-        "sabre": 76
+        "sabre": 76,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -26164,7 +26503,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 96,
-        "sabre": 73
+        "sabre": 73,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -26217,7 +26557,8 @@
        "equipment": {
         "scabbard": 1,
         "sabre": 78,
-        "lantern": 93
+        "lantern": 93,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -26270,7 +26611,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 96,
-        "sabre": 73
+        "sabre": 73,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -26323,7 +26665,8 @@
        "equipment": {
         "scabbard": 2,
         "lantern": 96,
-        "sabre": 76
+        "sabre": 76,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -26376,7 +26719,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 90,
-        "sabre": 75
+        "sabre": 75,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -26861,7 +27205,8 @@
        "equipment": {
         "sabre": 61,
         "scabbard": 72,
-        "lantern": 89
+        "lantern": 89,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -26914,7 +27259,8 @@
        "equipment": {
         "sabre": 60,
         "scabbard": 76,
-        "lantern": 89
+        "lantern": 89,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -26967,7 +27313,8 @@
        "equipment": {
         "sabre": 51,
         "scabbard": 81,
-        "lantern": 97
+        "lantern": 97,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -27020,7 +27367,8 @@
        "equipment": {
         "sabre": 36,
         "scabbard": 83,
-        "lantern": 98
+        "lantern": 98,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -27073,7 +27421,8 @@
        "equipment": {
         "sabre": 29,
         "scabbard": 86,
-        "lantern": 90
+        "lantern": 90,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -27126,7 +27475,8 @@
        "equipment": {
         "sabre": 52,
         "scabbard": 83,
-        "lantern": 98
+        "lantern": 98,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -27179,7 +27529,8 @@
        "equipment": {
         "sabre": 54,
         "scabbard": 81,
-        "lantern": 97
+        "lantern": 97,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -27232,7 +27583,8 @@
        "equipment": {
         "sabre": 56,
         "scabbard": 76,
-        "lantern": 89
+        "lantern": 89,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -27289,7 +27641,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 2,
-        "sabre": 78
+        "sabre": 78,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.9,
@@ -27342,7 +27695,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 0,
-        "sabre": 76
+        "sabre": 76,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -27395,7 +27749,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 7,
-        "sabre": 68
+        "sabre": 68,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -27448,7 +27803,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 7,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -27501,7 +27857,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 9,
-        "sabre": 70
+        "sabre": 70,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -27554,7 +27911,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 12,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -27607,7 +27965,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 7,
-        "sabre": 68
+        "sabre": 68,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -27660,7 +28019,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 0,
-        "sabre": 76
+        "sabre": 76,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -27738,7 +28098,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 92,
-        "sabre": 80
+        "sabre": 80,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -27791,7 +28152,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 90,
-        "sabre": 76
+        "sabre": 76,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -27844,7 +28206,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 90,
-        "sabre": 72
+        "sabre": 72,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -27897,7 +28260,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 97,
-        "sabre": 75
+        "sabre": 75,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -27950,7 +28314,8 @@
        "equipment": {
         "scabbard": 0,
         "sabre": 75,
-        "lantern": 97
+        "lantern": 97,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -28003,7 +28368,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 97,
-        "sabre": 75
+        "sabre": 75,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -28056,7 +28422,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 90,
-        "sabre": 72
+        "sabre": 72,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -28109,7 +28476,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 90,
-        "sabre": 76
+        "sabre": 76,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -28594,7 +28962,8 @@
        "equipment": {
         "sabre": 60,
         "scabbard": 69,
-        "lantern": 93
+        "lantern": 93,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -28647,7 +29016,8 @@
        "equipment": {
         "sabre": 58,
         "scabbard": 72,
-        "lantern": 96
+        "lantern": 96,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -28700,7 +29070,8 @@
        "equipment": {
         "sabre": 55,
         "scabbard": 75,
-        "lantern": 90
+        "lantern": 90,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -28753,7 +29124,8 @@
        "equipment": {
         "sabre": 53,
         "scabbard": 78,
-        "lantern": 91
+        "lantern": 91,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -28806,7 +29178,8 @@
        "equipment": {
         "sabre": 48,
         "scabbard": 81,
-        "lantern": 100
+        "lantern": 100,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -28859,7 +29232,8 @@
        "equipment": {
         "sabre": 54,
         "scabbard": 78,
-        "lantern": 91
+        "lantern": 91,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -28912,7 +29286,8 @@
        "equipment": {
         "sabre": 56,
         "scabbard": 75,
-        "lantern": 90
+        "lantern": 90,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -28965,7 +29340,8 @@
        "equipment": {
         "sabre": 58,
         "scabbard": 72,
-        "lantern": 96
+        "lantern": 96,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -29022,7 +29398,8 @@
        "equipment": {
         "scabbard": 9,
         "lantern": 4,
-        "sabre": 71
+        "sabre": 71,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -29075,7 +29452,8 @@
        "equipment": {
         "scabbard": 9,
         "lantern": 12,
-        "sabre": 76
+        "sabre": 76,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -29128,7 +29506,8 @@
        "equipment": {
         "scabbard": 9,
         "lantern": 6,
-        "sabre": 76
+        "sabre": 76,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -29181,7 +29560,8 @@
        "equipment": {
         "scabbard": 9,
         "lantern": 8,
-        "sabre": 75
+        "sabre": 75,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -29234,7 +29614,8 @@
        "equipment": {
         "scabbard": 9,
         "lantern": 25,
-        "sabre": 75
+        "sabre": 75,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -29287,7 +29668,8 @@
        "equipment": {
         "scabbard": 9,
         "lantern": 17,
-        "sabre": 75
+        "sabre": 75,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -29340,7 +29722,8 @@
        "equipment": {
         "scabbard": 9,
         "lantern": 1,
-        "sabre": 76
+        "sabre": 76,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -29393,7 +29776,8 @@
        "equipment": {
         "scabbard": 9,
         "lantern": 0,
-        "sabre": 76
+        "sabre": 76,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -29473,7 +29857,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 93,
-        "sabre": 72
+        "sabre": 72,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -29526,7 +29911,8 @@
        "equipment": {
         "scabbard": 3,
         "sabre": 71,
-        "lantern": 93
+        "lantern": 93,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -29579,7 +29965,8 @@
        "equipment": {
         "scabbard": 18,
         "sabre": 71,
-        "lantern": 97
+        "lantern": 97,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -29632,7 +30019,8 @@
        "equipment": {
         "scabbard": 19,
         "sabre": 71,
-        "lantern": 99
+        "lantern": 99,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 1.0,
@@ -29685,7 +30073,8 @@
        "equipment": {
         "scabbard": 14,
         "sabre": 69,
-        "lantern": 102
+        "lantern": 102,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -29738,7 +30127,8 @@
        "equipment": {
         "scabbard": 1,
         "sabre": 69,
-        "lantern": 93
+        "lantern": 93,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -29791,7 +30181,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 91,
-        "sabre": 65
+        "sabre": 65,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.9,
@@ -29844,7 +30235,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 93,
-        "sabre": 68
+        "sabre": 68,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -29897,7 +30289,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 96,
-        "sabre": 73
+        "sabre": 73,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -29950,7 +30343,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 92,
-        "sabre": 79
+        "sabre": 79,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -30541,7 +30935,8 @@
        "equipment": {
         "sabre": 55,
         "scabbard": 81,
-        "lantern": 101
+        "lantern": 101,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -30594,7 +30989,8 @@
        "equipment": {
         "sabre": 22,
         "scabbard": 87,
-        "lantern": 95
+        "lantern": 95,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -30647,7 +31043,8 @@
        "equipment": {
         "sabre": 21,
         "scabbard": 86,
-        "lantern": 95
+        "lantern": 95,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -30700,7 +31097,8 @@
        "equipment": {
         "sabre": 16,
         "scabbard": 75,
-        "lantern": 98
+        "lantern": 98,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -30753,7 +31151,8 @@
        "equipment": {
         "sabre": 20,
         "scabbard": 83,
-        "lantern": 97
+        "lantern": 97,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -30806,7 +31205,8 @@
        "equipment": {
         "sabre": 26,
         "scabbard": 87,
-        "lantern": 91
+        "lantern": 91,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -30859,7 +31259,8 @@
        "equipment": {
         "sabre": 44,
         "scabbard": 85,
-        "lantern": 93
+        "lantern": 93,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -30912,7 +31313,8 @@
        "equipment": {
         "sabre": 53,
         "scabbard": 82,
-        "lantern": 94
+        "lantern": 94,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -30965,7 +31367,8 @@
        "equipment": {
         "sabre": 56,
         "scabbard": 79,
-        "lantern": 102
+        "lantern": 102,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -31018,7 +31421,8 @@
        "equipment": {
         "sabre": 59,
         "scabbard": 76,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -31075,7 +31479,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 1,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -31128,7 +31533,8 @@
        "equipment": {
         "scabbard": 2,
         "lantern": 2,
-        "sabre": 74
+        "sabre": 74,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -31181,7 +31587,8 @@
        "equipment": {
         "scabbard": 2,
         "lantern": 23,
-        "sabre": 77
+        "sabre": 77,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -31234,7 +31641,8 @@
        "equipment": {
         "scabbard": 2,
         "lantern": 26,
-        "sabre": 75
+        "sabre": 75,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -31287,7 +31695,8 @@
        "equipment": {
         "scabbard": 6,
         "lantern": 21,
-        "sabre": 76
+        "sabre": 76,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -31340,7 +31749,8 @@
        "equipment": {
         "scabbard": 4,
         "lantern": 1,
-        "sabre": 74
+        "sabre": 74,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -31393,7 +31803,8 @@
        "equipment": {
         "scabbard": 4,
         "lantern": 3,
-        "sabre": 70
+        "sabre": 70,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -31446,7 +31857,8 @@
        "equipment": {
         "scabbard": 4,
         "lantern": 4,
-        "sabre": 72
+        "sabre": 72,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -31499,7 +31911,8 @@
        "equipment": {
         "scabbard": 4,
         "lantern": 10,
-        "sabre": 73
+        "sabre": 73,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -31552,7 +31965,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 5,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -31634,7 +32048,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 108,
-        "sabre": 60
+        "sabre": 60,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -31687,7 +32102,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 108,
-        "sabre": 60
+        "sabre": 60,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -31740,7 +32156,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 108,
-        "sabre": 60
+        "sabre": 60,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -31793,7 +32210,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 105,
-        "sabre": 57
+        "sabre": 57,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -31846,7 +32264,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 105,
-        "sabre": 57
+        "sabre": 57,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -31899,7 +32318,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 105,
-        "sabre": 57
+        "sabre": 57,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -31952,7 +32372,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 105,
-        "sabre": 56
+        "sabre": 56,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -32005,7 +32426,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 105,
-        "sabre": 54
+        "sabre": 54,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -32058,7 +32480,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 108,
-        "sabre": 58
+        "sabre": 58,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -32111,7 +32534,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 108,
-        "sabre": 58
+        "sabre": 58,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -32164,7 +32588,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 108,
-        "sabre": 58
+        "sabre": 58,
+        "face": 4
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -32217,7 +32642,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 108,
-        "sabre": 60
+        "sabre": 60,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -32914,7 +33340,8 @@
        "equipment": {
         "sabre": 63,
         "scabbard": 87,
-        "lantern": 100
+        "lantern": 100,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -32967,7 +33394,8 @@
        "equipment": {
         "sabre": 63,
         "scabbard": 87,
-        "lantern": 100
+        "lantern": 100,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -33020,7 +33448,8 @@
        "equipment": {
         "sabre": 62,
         "scabbard": 87,
-        "lantern": 100
+        "lantern": 100,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -33073,7 +33502,8 @@
        "equipment": {
         "sabre": 62,
         "scabbard": 87,
-        "lantern": 107
+        "lantern": 107,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -33126,7 +33556,8 @@
        "equipment": {
         "sabre": 62,
         "scabbard": 87,
-        "lantern": 107
+        "lantern": 107,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -33179,7 +33610,8 @@
        "equipment": {
         "sabre": 62,
         "scabbard": 87,
-        "lantern": 107
+        "lantern": 107,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -33232,7 +33664,8 @@
        "equipment": {
         "sabre": 64,
         "scabbard": 87,
-        "lantern": 107
+        "lantern": 107,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -33285,7 +33718,8 @@
        "equipment": {
         "sabre": 61,
         "scabbard": 87,
-        "lantern": 107
+        "lantern": 107,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -33338,7 +33772,8 @@
        "equipment": {
         "sabre": 60,
         "scabbard": 87,
-        "lantern": 100
+        "lantern": 100,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -33391,7 +33826,8 @@
        "equipment": {
         "sabre": 60,
         "scabbard": 87,
-        "lantern": 100
+        "lantern": 100,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -33444,7 +33880,8 @@
        "equipment": {
         "sabre": 60,
         "scabbard": 87,
-        "lantern": 100
+        "lantern": 100,
+        "face": 2
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -33497,7 +33934,8 @@
        "equipment": {
         "sabre": 63,
         "scabbard": 87,
-        "lantern": 100
+        "lantern": 100,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -33554,7 +33992,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 88,
-        "sabre": 66
+        "sabre": 66,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -33607,7 +34046,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 88,
-        "sabre": 66
+        "sabre": 66,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -33660,7 +34100,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 88,
-        "sabre": 66
+        "sabre": 66,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -33713,7 +34154,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 92,
-        "sabre": 67
+        "sabre": 67,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -33766,7 +34208,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 92,
-        "sabre": 67
+        "sabre": 67,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -33819,7 +34262,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 96,
-        "sabre": 67
+        "sabre": 67,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -33872,7 +34316,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 96,
-        "sabre": 72
+        "sabre": 72,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -33925,7 +34370,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 96,
-        "sabre": 69
+        "sabre": 69,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -33978,7 +34424,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 88,
-        "sabre": 67
+        "sabre": 67,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -34031,7 +34478,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 88,
-        "sabre": 67
+        "sabre": 67,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -34084,7 +34532,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 88,
-        "sabre": 67
+        "sabre": 67,
+        "face": 2
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -34137,7 +34586,8 @@
        "equipment": {
         "scabbard": 19,
         "lantern": 88,
-        "sabre": 66
+        "sabre": 66,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -34196,7 +34646,8 @@
        "equipment": {
         "scabbard": 50,
         "sabre": 78,
-        "lantern": 108
+        "lantern": 108,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -34249,7 +34700,8 @@
        "equipment": {
         "scabbard": 49,
         "sabre": 78,
-        "lantern": 108
+        "lantern": 108,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -34302,7 +34754,8 @@
        "equipment": {
         "scabbard": 49,
         "sabre": 78,
-        "lantern": 108
+        "lantern": 108,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -34355,7 +34808,8 @@
        "equipment": {
         "scabbard": 49,
         "sabre": 77,
-        "lantern": 105
+        "lantern": 105,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -34408,7 +34862,8 @@
        "equipment": {
         "scabbard": 49,
         "sabre": 77,
-        "lantern": 105
+        "lantern": 105,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -34461,7 +34916,8 @@
        "equipment": {
         "scabbard": 49,
         "sabre": 77,
-        "lantern": 105
+        "lantern": 105,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -34514,7 +34970,8 @@
        "equipment": {
         "scabbard": 49,
         "sabre": 74,
-        "lantern": 105
+        "lantern": 105,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.9,
@@ -34567,7 +35024,8 @@
        "equipment": {
         "scabbard": 49,
         "sabre": 74,
-        "lantern": 105
+        "lantern": 105,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -34620,7 +35078,8 @@
        "equipment": {
         "scabbard": 49,
         "sabre": 76,
-        "lantern": 108
+        "lantern": 108,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -34673,7 +35132,8 @@
        "equipment": {
         "scabbard": 49,
         "sabre": 76,
-        "lantern": 108
+        "lantern": 108,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -34726,7 +35186,8 @@
        "equipment": {
         "scabbard": 50,
         "sabre": 76,
-        "lantern": 108
+        "lantern": 108,
+        "face": 4
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -34779,7 +35240,8 @@
        "equipment": {
         "scabbard": 50,
         "sabre": 78,
-        "lantern": 108
+        "lantern": 108,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -35476,7 +35938,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 109,
-        "sabre": 41
+        "sabre": 41,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -35529,7 +35992,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 109,
-        "sabre": 41
+        "sabre": 41,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -35582,7 +36046,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 109,
-        "sabre": 46
+        "sabre": 46,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -35635,7 +36100,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 105,
-        "sabre": 43
+        "sabre": 43,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -35688,7 +36154,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 105,
-        "sabre": 43
+        "sabre": 43,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -35741,7 +36208,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 106,
-        "sabre": 43
+        "sabre": 43,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -35794,7 +36262,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 106,
-        "sabre": 43
+        "sabre": 43,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -35847,7 +36316,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 106,
-        "sabre": 39
+        "sabre": 39,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -35900,7 +36370,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 109,
-        "sabre": 40
+        "sabre": 40,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -35953,7 +36424,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 109,
-        "sabre": 40
+        "sabre": 40,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -36006,7 +36478,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 109,
-        "sabre": 40
+        "sabre": 40,
+        "face": 4
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -36059,7 +36532,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 109,
-        "sabre": 41
+        "sabre": 41,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -36781,7 +37255,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 105,
-        "sabre": 59
+        "sabre": 59,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -36834,7 +37309,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 108,
-        "sabre": 58
+        "sabre": 58,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -36887,7 +37363,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 108,
-        "sabre": 59
+        "sabre": 59,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -36940,7 +37417,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 105,
-        "sabre": 60
+        "sabre": 60,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -36993,7 +37471,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 107,
-        "sabre": 60
+        "sabre": 60,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -37046,7 +37525,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 109,
-        "sabre": 59
+        "sabre": 59,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -37099,7 +37579,8 @@
        "equipment": {
         "scabbard": 0,
         "sabre": 59,
-        "lantern": 109
+        "lantern": 109,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -37152,7 +37633,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 109,
-        "sabre": 59
+        "sabre": 59,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -37205,7 +37687,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 107,
-        "sabre": 60
+        "sabre": 60,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -37258,7 +37741,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 105,
-        "sabre": 60
+        "sabre": 60,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -37311,7 +37795,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 108,
-        "sabre": 59
+        "sabre": 59,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -37364,7 +37849,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 108,
-        "sabre": 58
+        "sabre": 58,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -38061,7 +38547,8 @@
        "equipment": {
         "sabre": 68,
         "scabbard": 87,
-        "lantern": 103
+        "lantern": 103,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -38114,7 +38601,8 @@
        "equipment": {
         "sabre": 62,
         "scabbard": 87,
-        "lantern": 100
+        "lantern": 100,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -38167,7 +38655,8 @@
        "equipment": {
         "sabre": 59,
         "scabbard": 87,
-        "lantern": 111
+        "lantern": 111,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -38220,7 +38709,8 @@
        "equipment": {
         "sabre": 63,
         "scabbard": 87,
-        "lantern": 107
+        "lantern": 107,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -38273,7 +38763,8 @@
        "equipment": {
         "sabre": 58,
         "scabbard": 87,
-        "lantern": 100
+        "lantern": 100,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -38326,7 +38817,8 @@
        "equipment": {
         "sabre": 56,
         "scabbard": 87,
-        "lantern": 112
+        "lantern": 112,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -38379,7 +38871,8 @@
        "equipment": {
         "sabre": 57,
         "scabbard": 87,
-        "lantern": 104
+        "lantern": 104,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -38432,7 +38925,8 @@
        "equipment": {
         "sabre": 56,
         "scabbard": 87,
-        "lantern": 112
+        "lantern": 112,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -38485,7 +38979,8 @@
        "equipment": {
         "sabre": 58,
         "scabbard": 87,
-        "lantern": 100
+        "lantern": 100,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -38538,7 +39033,8 @@
        "equipment": {
         "sabre": 63,
         "scabbard": 87,
-        "lantern": 107
+        "lantern": 107,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -38591,7 +39087,8 @@
        "equipment": {
         "sabre": 59,
         "scabbard": 87,
-        "lantern": 111
+        "lantern": 111,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -38644,7 +39141,8 @@
        "equipment": {
         "sabre": 62,
         "scabbard": 87,
-        "lantern": 100
+        "lantern": 100,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -38701,7 +39199,8 @@
        "equipment": {
         "scabbard": 3,
         "lantern": 84,
-        "sabre": 72
+        "sabre": 72,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -38754,7 +39253,8 @@
        "equipment": {
         "scabbard": 6,
         "lantern": 93,
-        "sabre": 68
+        "sabre": 68,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -38807,7 +39307,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 93,
-        "sabre": 66
+        "sabre": 66,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -38860,7 +39361,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 89,
-        "sabre": 66
+        "sabre": 66,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -38913,7 +39415,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 94,
-        "sabre": 71
+        "sabre": 71,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.9,
@@ -38966,7 +39469,8 @@
        "equipment": {
         "scabbard": 6,
         "lantern": 83,
-        "sabre": 68
+        "sabre": 68,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -39019,7 +39523,8 @@
        "equipment": {
         "scabbard": 5,
         "lantern": 85,
-        "sabre": 72
+        "sabre": 72,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -39072,7 +39577,8 @@
        "equipment": {
         "scabbard": 6,
         "lantern": 89,
-        "sabre": 68
+        "sabre": 68,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -39125,7 +39631,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 104,
-        "sabre": 71
+        "sabre": 71,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.9,
@@ -39178,7 +39685,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 85,
-        "sabre": 66
+        "sabre": 66,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -39231,7 +39739,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 77,
-        "sabre": 66
+        "sabre": 66,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -39284,7 +39793,8 @@
        "equipment": {
         "scabbard": 6,
         "lantern": 87,
-        "sabre": 68
+        "sabre": 68,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -39343,7 +39853,8 @@
        "equipment": {
         "scabbard": 44,
         "sabre": 76,
-        "lantern": 104
+        "lantern": 104,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -39396,7 +39907,8 @@
        "equipment": {
         "scabbard": 49,
         "sabre": 77,
-        "lantern": 111
+        "lantern": 111,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -39449,7 +39961,8 @@
        "equipment": {
         "scabbard": 49,
         "sabre": 76,
-        "lantern": 107
+        "lantern": 107,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -39502,7 +40015,8 @@
        "equipment": {
         "scabbard": 49,
         "sabre": 78,
-        "lantern": 105
+        "lantern": 105,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -39555,7 +40069,8 @@
        "equipment": {
         "scabbard": 49,
         "sabre": 74,
-        "lantern": 99
+        "lantern": 99,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -39608,7 +40123,8 @@
        "equipment": {
         "scabbard": 49,
         "sabre": 78,
-        "lantern": 109
+        "lantern": 109,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -39661,7 +40177,8 @@
        "equipment": {
         "scabbard": 43,
         "sabre": 76,
-        "lantern": 107
+        "lantern": 107,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -39714,7 +40231,8 @@
        "equipment": {
         "scabbard": 49,
         "sabre": 78,
-        "lantern": 109
+        "lantern": 109,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -39767,7 +40285,8 @@
        "equipment": {
         "scabbard": 49,
         "sabre": 74,
-        "lantern": 99
+        "lantern": 99,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -39820,7 +40339,8 @@
        "equipment": {
         "scabbard": 49,
         "sabre": 78,
-        "lantern": 105
+        "lantern": 105,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -39873,7 +40393,8 @@
        "equipment": {
         "scabbard": 49,
         "sabre": 76,
-        "lantern": 107
+        "lantern": 107,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -39926,7 +40447,8 @@
        "equipment": {
         "scabbard": 49,
         "sabre": 77,
-        "lantern": 111
+        "lantern": 111,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -40623,7 +41145,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 106,
-        "sabre": 42
+        "sabre": 42,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -40676,7 +41199,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 100,
-        "sabre": 44
+        "sabre": 44,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -40729,7 +41253,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 109,
-        "sabre": 45
+        "sabre": 45,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -40782,7 +41307,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 105,
-        "sabre": 41
+        "sabre": 41,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -40835,7 +41361,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 106,
-        "sabre": 41
+        "sabre": 41,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.0,
@@ -40888,7 +41415,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 99,
-        "sabre": 42
+        "sabre": 42,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -40941,7 +41469,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 110,
-        "sabre": 44
+        "sabre": 44,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -40994,7 +41523,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 99,
-        "sabre": 42
+        "sabre": 42,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -41047,7 +41577,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 106,
-        "sabre": 41
+        "sabre": 41,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.0,
@@ -41100,7 +41631,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 105,
-        "sabre": 41
+        "sabre": 41,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -41153,7 +41685,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 109,
-        "sabre": 45
+        "sabre": 45,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -41206,7 +41739,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 100,
-        "sabre": 44
+        "sabre": 44,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -41928,7 +42462,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 108,
-        "sabre": 60
+        "sabre": 60,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -41981,7 +42516,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 97,
-        "sabre": 75
+        "sabre": 75,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -42034,7 +42570,8 @@
        "equipment": {
         "scabbard": 2,
         "sabre": 74,
-        "lantern": 104
+        "lantern": 104,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -42087,7 +42624,8 @@
        "equipment": {
         "scabbard": 5,
         "lantern": 104,
-        "sabre": 77
+        "sabre": 74,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -42140,7 +42678,8 @@
        "equipment": {
         "scabbard": 6,
         "lantern": 111,
-        "sabre": 57
+        "sabre": 57,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -42193,7 +42732,8 @@
        "equipment": {
         "scabbard": 6,
         "lantern": 100,
-        "sabre": 63
+        "sabre": 63,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -42246,7 +42786,8 @@
        "equipment": {
         "scabbard": 8,
         "lantern": 102,
-        "sabre": 72
+        "sabre": 72,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -42299,7 +42840,8 @@
        "equipment": {
         "scabbard": 7,
         "lantern": 97,
-        "sabre": 79
+        "sabre": 79,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -42352,7 +42894,8 @@
        "equipment": {
         "scabbard": 5,
         "lantern": 111,
-        "sabre": 80
+        "sabre": 80,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -42405,7 +42948,8 @@
        "equipment": {
         "scabbard": 4,
         "lantern": 104,
-        "sabre": 68
+        "sabre": 68,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -42458,7 +43002,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 99,
-        "sabre": 63
+        "sabre": 63,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -42511,7 +43056,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 108,
-        "sabre": 60
+        "sabre": 60,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -43218,7 +43764,8 @@
        "equipment": {
         "sabre": 63,
         "scabbard": 87,
-        "lantern": 100
+        "lantern": 100,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -43271,7 +43818,8 @@
        "equipment": {
         "sabre": 6,
         "scabbard": 80,
-        "lantern": 100
+        "lantern": 100,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 15.6,
@@ -43324,7 +43872,8 @@
        "equipment": {
         "sabre": 17,
         "scabbard": 67,
-        "lantern": 104
+        "lantern": 104,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -43377,7 +43926,8 @@
        "equipment": {
         "scabbard": 51,
         "lantern": 109,
-        "sabre": 76
+        "sabre": 70,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -43430,7 +43980,8 @@
        "equipment": {
         "scabbard": 48,
         "lantern": 101,
-        "sabre": 76
+        "sabre": 76,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -43483,7 +44034,8 @@
        "equipment": {
         "scabbard": 48,
         "lantern": 101,
-        "sabre": 70
+        "sabre": 70,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -43536,7 +44088,8 @@
        "equipment": {
         "scabbard": 42,
         "lantern": 111,
-        "sabre": 65
+        "sabre": 65,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -43589,7 +44142,8 @@
        "equipment": {
         "scabbard": 48,
         "lantern": 109,
-        "sabre": 68
+        "sabre": 68,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -43642,7 +44196,8 @@
        "equipment": {
         "scabbard": 51,
         "sabre": 79,
-        "lantern": 101
+        "lantern": 101,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -43695,7 +44250,8 @@
        "equipment": {
         "sabre": 58,
         "scabbard": 58,
-        "lantern": 109
+        "lantern": 109,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.9,
@@ -43748,7 +44304,8 @@
        "equipment": {
         "sabre": 55,
         "scabbard": 82,
-        "lantern": 100
+        "lantern": 100,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -43801,7 +44358,8 @@
        "equipment": {
         "sabre": 63,
         "scabbard": 87,
-        "lantern": 100
+        "lantern": 100,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -43863,7 +44421,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 88,
-        "sabre": 66
+        "sabre": 66,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -43916,7 +44475,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 31,
-        "sabre": 19
+        "sabre": 19,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 20.7,
@@ -43969,7 +44529,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 12,
-        "sabre": 31
+        "sabre": 31,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -44022,7 +44583,8 @@
        "equipment": {
         "scabbard": 19,
         "lantern": 0,
-        "sabre": 78
+        "sabre": 74,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -44075,7 +44637,8 @@
        "equipment": {
         "scabbard": 28,
         "lantern": 0,
-        "sabre": 75
+        "sabre": 75,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -44128,7 +44691,8 @@
        "equipment": {
         "scabbard": 33,
         "lantern": 0,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -44181,7 +44745,8 @@
        "equipment": {
         "scabbard": 27,
         "lantern": 0,
-        "sabre": 70
+        "sabre": 70,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -44234,7 +44799,8 @@
        "equipment": {
         "scabbard": 19,
         "lantern": 0,
-        "sabre": 70
+        "sabre": 70,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -44287,7 +44853,8 @@
        "equipment": {
         "scabbard": 6,
         "lantern": 0,
-        "sabre": 77
+        "sabre": 77,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -44340,7 +44907,8 @@
        "equipment": {
         "scabbard": 5,
         "lantern": 0,
-        "sabre": 66
+        "sabre": 66,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.9,
@@ -44393,7 +44961,8 @@
        "equipment": {
         "scabbard": 6,
         "lantern": 42,
-        "sabre": 61
+        "sabre": 61,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -44446,7 +45015,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 88,
-        "sabre": 66
+        "sabre": 66,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -44542,7 +45112,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 108,
-        "sabre": 60
+        "sabre": 60,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -44595,7 +45166,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 96,
-        "sabre": 58
+        "sabre": 58,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -44648,7 +45220,8 @@
        "equipment": {
         "scabbard": 3,
         "lantern": 104,
-        "sabre": 71
+        "sabre": 71,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -44701,7 +45274,8 @@
        "equipment": {
         "scabbard": 4,
         "lantern": 106,
-        "sabre": 71
+        "sabre": 71,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -44754,7 +45328,8 @@
        "equipment": {
         "scabbard": 5,
         "lantern": 104,
-        "sabre": 69
+        "sabre": 69,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -44807,7 +45382,8 @@
        "equipment": {
         "scabbard": 2,
         "lantern": 100,
-        "sabre": 49
+        "sabre": 49,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -44860,7 +45436,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 107,
-        "sabre": 66
+        "sabre": 66,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -44913,7 +45490,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 108,
-        "sabre": 60
+        "sabre": 60,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -45398,7 +45976,8 @@
        "equipment": {
         "sabre": 63,
         "scabbard": 87,
-        "lantern": 100
+        "lantern": 100,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -45451,7 +46030,8 @@
        "equipment": {
         "scabbard": 81,
         "lantern": 108,
-        "sabre": 70
+        "sabre": 70,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -45504,7 +46084,8 @@
        "equipment": {
         "scabbard": 59,
         "lantern": 101,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -45557,7 +46138,8 @@
        "equipment": {
         "scabbard": 49,
         "lantern": 105,
-        "sabre": 70
+        "sabre": 70,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -45610,7 +46192,8 @@
        "equipment": {
         "scabbard": 50,
         "lantern": 101,
-        "sabre": 70
+        "sabre": 70,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -45663,7 +46246,8 @@
        "equipment": {
         "sabre": 59,
         "scabbard": 70,
-        "lantern": 105
+        "lantern": 105,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -45716,7 +46300,8 @@
        "equipment": {
         "sabre": 58,
         "scabbard": 82,
-        "lantern": 105
+        "lantern": 105,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -45769,7 +46354,8 @@
        "equipment": {
         "sabre": 63,
         "scabbard": 87,
-        "lantern": 100
+        "lantern": 100,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -45826,7 +46412,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 88,
-        "sabre": 66
+        "sabre": 66,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -45879,7 +46466,8 @@
        "equipment": {
         "scabbard": 12,
         "lantern": 38,
-        "sabre": 68
+        "sabre": 68,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -45932,7 +46520,8 @@
        "equipment": {
         "scabbard": 12,
         "lantern": 3,
-        "sabre": 72
+        "sabre": 72,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -45985,7 +46574,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 0,
-        "sabre": 71
+        "sabre": 71,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -46038,7 +46628,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 0,
-        "sabre": 71
+        "sabre": 71,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -46091,7 +46682,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 4,
-        "sabre": 71
+        "sabre": 71,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -46144,7 +46736,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 51,
-        "sabre": 71
+        "sabre": 71,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -46197,7 +46790,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 88,
-        "sabre": 66
+        "sabre": 66,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -46275,7 +46869,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 108,
-        "sabre": 60
+        "sabre": 60,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -46328,7 +46923,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 108,
-        "sabre": 60
+        "sabre": 60,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -46381,7 +46977,8 @@
        "equipment": {
         "scabbard": 11,
         "lantern": 108,
-        "sabre": 56
+        "sabre": 56,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -46434,7 +47031,8 @@
        "equipment": {
         "scabbard": 11,
         "lantern": 98,
-        "sabre": 54
+        "sabre": 54,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -46487,7 +47085,8 @@
        "equipment": {
         "scabbard": 7,
         "lantern": 98,
-        "sabre": 64
+        "sabre": 64,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -46540,7 +47139,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 92,
-        "sabre": 75
+        "sabre": 75,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -46593,7 +47193,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 92,
-        "sabre": 79
+        "sabre": 79,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -46646,7 +47247,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 92,
-        "sabre": 79
+        "sabre": 79,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -47131,7 +47733,8 @@
        "equipment": {
         "sabre": 63,
         "scabbard": 87,
-        "lantern": 100
+        "lantern": 100,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -47184,7 +47787,8 @@
        "equipment": {
         "sabre": 67,
         "scabbard": 80,
-        "lantern": 100
+        "lantern": 100,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -47237,7 +47841,8 @@
        "equipment": {
         "sabre": 63,
         "scabbard": 85,
-        "lantern": 101
+        "lantern": 101,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -47290,7 +47895,8 @@
        "equipment": {
         "sabre": 56,
         "scabbard": 85,
-        "lantern": 95
+        "lantern": 95,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -47343,7 +47949,8 @@
        "equipment": {
         "sabre": 59,
         "scabbard": 77,
-        "lantern": 100
+        "lantern": 100,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -47396,7 +48003,8 @@
        "equipment": {
         "sabre": 60,
         "scabbard": 77,
-        "lantern": 93
+        "lantern": 93,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -47449,7 +48057,8 @@
        "equipment": {
         "sabre": 55,
         "scabbard": 77,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -47502,7 +48111,8 @@
        "equipment": {
         "sabre": 59,
         "scabbard": 76,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -47559,7 +48169,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 88,
-        "sabre": 66
+        "sabre": 66,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -47612,7 +48223,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 3,
-        "sabre": 66
+        "sabre": 66,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -47665,7 +48277,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 2,
-        "sabre": 68
+        "sabre": 68,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -47718,7 +48331,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 5,
-        "sabre": 66
+        "sabre": 66,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -47771,7 +48385,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 23,
-        "sabre": 73
+        "sabre": 73,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -47824,7 +48439,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 10,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -47877,7 +48493,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 5,
-        "sabre": 77
+        "sabre": 77,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -47930,7 +48547,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 5,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -48010,7 +48628,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 105,
-        "sabre": 57
+        "sabre": 57,
+        "face": 4
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -48063,7 +48682,8 @@
        "equipment": {
         "scabbard": 5,
         "lantern": 101,
-        "sabre": 58
+        "sabre": 58,
+        "face": 4
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -48116,7 +48736,8 @@
        "equipment": {
         "scabbard": 8,
         "lantern": 111,
-        "sabre": 58
+        "sabre": 58,
+        "face": 4
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -48169,7 +48790,8 @@
        "equipment": {
         "scabbard": 8,
         "lantern": 111,
-        "sabre": 75
+        "sabre": 75,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -48222,7 +48844,8 @@
        "equipment": {
         "scabbard": 14,
         "lantern": 111,
-        "sabre": 73
+        "sabre": 73,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -48275,7 +48898,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 101,
-        "sabre": 77
+        "sabre": 77,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -48328,7 +48952,8 @@
        "equipment": {
         "scabbard": 5,
         "lantern": 108,
-        "sabre": 73
+        "sabre": 73,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -48381,7 +49006,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 106,
-        "sabre": 56
+        "sabre": 56,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.9,
@@ -48434,7 +49060,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 110,
-        "sabre": 52
+        "sabre": 52,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -48487,7 +49114,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 108,
-        "sabre": 60
+        "sabre": 60,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -49078,7 +49706,8 @@
        "equipment": {
         "sabre": 61,
         "scabbard": 87,
-        "lantern": 105
+        "lantern": 105,
+        "face": 2
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -49131,7 +49760,8 @@
        "equipment": {
         "sabre": 65,
         "scabbard": 87,
-        "lantern": 108
+        "lantern": 108,
+        "face": 2
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -49184,7 +49814,8 @@
        "equipment": {
         "sabre": 56,
         "scabbard": 87,
-        "lantern": 110
+        "lantern": 110,
+        "face": 2
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -49237,7 +49868,8 @@
        "equipment": {
         "sabre": 62,
         "scabbard": 87,
-        "lantern": 100
+        "lantern": 100,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -49290,7 +49922,8 @@
        "equipment": {
         "sabre": 58,
         "scabbard": 87,
-        "lantern": 106
+        "lantern": 106,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -49343,7 +49976,8 @@
        "equipment": {
         "sabre": 57,
         "scabbard": 86,
-        "lantern": 108
+        "lantern": 108,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -49396,7 +50030,8 @@
        "equipment": {
         "sabre": 59,
         "scabbard": 87,
-        "lantern": 105
+        "lantern": 105,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -49449,7 +50084,8 @@
        "equipment": {
         "sabre": 59,
         "scabbard": 83,
-        "lantern": 104
+        "lantern": 104,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -49502,7 +50138,8 @@
        "equipment": {
         "sabre": 60,
         "scabbard": 87,
-        "lantern": 107
+        "lantern": 107,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -49555,7 +50192,8 @@
        "equipment": {
         "sabre": 63,
         "scabbard": 87,
-        "lantern": 100
+        "lantern": 100,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -49612,7 +50250,8 @@
        "equipment": {
         "scabbard": 19,
         "lantern": 90,
-        "sabre": 71
+        "sabre": 71,
+        "face": 2
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -49665,7 +50304,8 @@
        "equipment": {
         "scabbard": 23,
         "lantern": 86,
-        "sabre": 68
+        "sabre": 68,
+        "face": 2
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -49718,7 +50358,8 @@
        "equipment": {
         "scabbard": 23,
         "lantern": 80,
-        "sabre": 68
+        "sabre": 68,
+        "face": 2
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -49771,7 +50412,8 @@
        "equipment": {
         "scabbard": 23,
         "lantern": 58,
-        "sabre": 76
+        "sabre": 76,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -49824,7 +50466,8 @@
        "equipment": {
         "scabbard": 23,
         "lantern": 35,
-        "sabre": 76
+        "sabre": 76,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -49877,7 +50520,8 @@
        "equipment": {
         "scabbard": 23,
         "lantern": 26,
-        "sabre": 80
+        "sabre": 80,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -49930,7 +50574,8 @@
        "equipment": {
         "scabbard": 19,
         "lantern": 26,
-        "sabre": 75
+        "sabre": 75,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -49983,7 +50628,8 @@
        "equipment": {
         "scabbard": 12,
         "lantern": 60,
-        "sabre": 72
+        "sabre": 72,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -50036,7 +50682,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 88,
-        "sabre": 68
+        "sabre": 68,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -50089,7 +50736,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 88,
-        "sabre": 66
+        "sabre": 66,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -50169,7 +50817,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 100,
-        "sabre": 58
+        "sabre": 58,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -50222,7 +50871,8 @@
        "equipment": {
         "scabbard": 1,
         "sabre": 56,
-        "lantern": 99
+        "lantern": 99,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -50275,7 +50925,8 @@
        "equipment": {
         "scabbard": 13,
         "sabre": 55,
-        "lantern": 111
+        "lantern": 111,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -50328,7 +50979,8 @@
        "equipment": {
         "scabbard": 14,
         "sabre": 71,
-        "lantern": 106
+        "lantern": 106,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 1.0,
@@ -50381,7 +51033,8 @@
        "equipment": {
         "scabbard": 14,
         "sabre": 69,
-        "lantern": 109
+        "lantern": 109,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -50434,7 +51087,8 @@
        "equipment": {
         "scabbard": 1,
         "sabre": 69,
-        "lantern": 107
+        "lantern": 107,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -50487,7 +51141,8 @@
        "equipment": {
         "scabbard": 1,
         "sabre": 69,
-        "lantern": 101
+        "lantern": 101,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -50540,7 +51195,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 105,
-        "sabre": 59
+        "sabre": 59,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -50593,7 +51249,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 110,
-        "sabre": 52
+        "sabre": 52,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -50646,7 +51303,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 108,
-        "sabre": 60
+        "sabre": 60,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -51237,7 +51895,8 @@
        "equipment": {
         "sabre": 56,
         "scabbard": 86,
-        "lantern": 102
+        "lantern": 102,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -51290,7 +51949,8 @@
        "equipment": {
         "sabre": 15,
         "scabbard": 87,
-        "lantern": 107
+        "lantern": 107,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -51343,7 +52003,8 @@
        "equipment": {
         "sabre": 6,
         "scabbard": 86,
-        "lantern": 102
+        "lantern": 102,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -51396,7 +52057,8 @@
        "equipment": {
         "sabre": 16,
         "scabbard": 75,
-        "lantern": 112
+        "lantern": 112,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -51449,7 +52111,8 @@
        "equipment": {
         "sabre": 20,
         "scabbard": 83,
-        "lantern": 111
+        "lantern": 111,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -51502,7 +52165,8 @@
        "equipment": {
         "sabre": 26,
         "scabbard": 87,
-        "lantern": 98
+        "lantern": 98,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -51555,7 +52219,8 @@
        "equipment": {
         "sabre": 31,
         "scabbard": 87,
-        "lantern": 108
+        "lantern": 108,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -51608,7 +52273,8 @@
        "equipment": {
         "sabre": 55,
         "scabbard": 86,
-        "lantern": 100
+        "lantern": 100,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -51661,7 +52327,8 @@
        "equipment": {
         "sabre": 59,
         "scabbard": 86,
-        "lantern": 108
+        "lantern": 108,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -51714,7 +52381,8 @@
        "equipment": {
         "sabre": 63,
         "scabbard": 87,
-        "lantern": 100
+        "lantern": 100,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -51771,7 +52439,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 55,
-        "sabre": 67
+        "sabre": 67,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -51824,7 +52493,8 @@
        "equipment": {
         "scabbard": 23,
         "lantern": 15,
-        "sabre": 67
+        "sabre": 67,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -51877,7 +52547,8 @@
        "equipment": {
         "scabbard": 8,
         "lantern": 4,
-        "sabre": 66
+        "sabre": 66,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -51930,7 +52601,8 @@
        "equipment": {
         "scabbard": 2,
         "lantern": 26,
-        "sabre": 75
+        "sabre": 75,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -51983,7 +52655,8 @@
        "equipment": {
         "scabbard": 6,
         "lantern": 21,
-        "sabre": 76
+        "sabre": 76,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -52036,7 +52709,8 @@
        "equipment": {
         "scabbard": 4,
         "lantern": 3,
-        "sabre": 74
+        "sabre": 74,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -52089,7 +52763,8 @@
        "equipment": {
         "scabbard": 4,
         "lantern": 17,
-        "sabre": 73
+        "sabre": 73,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -52142,7 +52817,8 @@
        "equipment": {
         "scabbard": 4,
         "lantern": 37,
-        "sabre": 72
+        "sabre": 72,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -52195,7 +52871,8 @@
        "equipment": {
         "scabbard": 4,
         "lantern": 96,
-        "sabre": 68
+        "sabre": 68,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -52248,7 +52925,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 88,
-        "sabre": 66
+        "sabre": 66,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -52335,7 +53013,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 107,
-        "sabre": 53
+        "sabre": 53,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -52388,7 +53067,8 @@
        "equipment": {
         "scabbard": 7,
         "lantern": 106,
-        "sabre": 61
+        "sabre": 61,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -52441,7 +53121,8 @@
        "equipment": {
         "scabbard": 11,
         "lantern": 105,
-        "sabre": 63
+        "sabre": 63,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -52494,7 +53175,8 @@
        "equipment": {
         "scabbard": 11,
         "lantern": 111,
-        "sabre": 64
+        "sabre": 64,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -52547,7 +53229,8 @@
        "equipment": {
         "scabbard": 11,
         "sabre": 68,
-        "lantern": 105
+        "lantern": 105,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -52600,7 +53283,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 100,
-        "sabre": 59
+        "sabre": 59,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -52653,7 +53337,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 110,
-        "sabre": 54
+        "sabre": 54,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -52706,7 +53391,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 108,
-        "sabre": 60
+        "sabre": 60,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -53191,7 +53877,8 @@
        "equipment": {
         "sabre": 51,
         "scabbard": 87,
-        "lantern": 97
+        "lantern": 97,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -53244,7 +53931,8 @@
        "equipment": {
         "sabre": 52,
         "scabbard": 87,
-        "lantern": 108
+        "lantern": 108,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -53297,7 +53985,8 @@
        "equipment": {
         "sabre": 53,
         "scabbard": 87,
-        "lantern": 107
+        "lantern": 107,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -53350,7 +54039,8 @@
        "equipment": {
         "sabre": 50,
         "scabbard": 87,
-        "lantern": 107
+        "lantern": 107,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.9,
@@ -53403,7 +54093,8 @@
        "equipment": {
         "sabre": 46,
         "scabbard": 87,
-        "lantern": 107
+        "lantern": 107,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -53456,7 +54147,8 @@
        "equipment": {
         "sabre": 55,
         "scabbard": 87,
-        "lantern": 106
+        "lantern": 106,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -53509,7 +54201,8 @@
        "equipment": {
         "sabre": 58,
         "scabbard": 86,
-        "lantern": 107
+        "lantern": 107,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -53562,7 +54255,8 @@
        "equipment": {
         "sabre": 63,
         "scabbard": 87,
-        "lantern": 100
+        "lantern": 100,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -53619,7 +54313,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 51,
-        "sabre": 68
+        "sabre": 68,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.0,
@@ -53672,7 +54367,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 96,
-        "sabre": 66
+        "sabre": 66,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -53725,7 +54421,8 @@
        "equipment": {
         "scabbard": 23,
         "lantern": 94,
-        "sabre": 70
+        "sabre": 70,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -53778,7 +54475,8 @@
        "equipment": {
         "scabbard": 19,
         "lantern": 73,
-        "sabre": 65
+        "sabre": 65,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -53831,7 +54529,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 90,
-        "sabre": 67
+        "sabre": 67,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -53884,7 +54583,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 81,
-        "sabre": 66
+        "sabre": 66,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -53937,7 +54637,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 69,
-        "sabre": 70
+        "sabre": 70,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -53990,7 +54691,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 88,
-        "sabre": 66
+        "sabre": 66,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -54068,7 +54770,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 107,
-        "sabre": 77
+        "sabre": 77,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -54121,7 +54824,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 104,
-        "sabre": 75
+        "sabre": 75,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -54174,7 +54878,8 @@
        "equipment": {
         "scabbard": 2,
         "lantern": 110,
-        "sabre": 76
+        "sabre": 76,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -54227,7 +54932,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 110,
-        "sabre": 73
+        "sabre": 73,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -54280,7 +54986,8 @@
        "equipment": {
         "scabbard": 1,
         "sabre": 78,
-        "lantern": 107
+        "lantern": 107,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -54333,7 +55040,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 110,
-        "sabre": 73
+        "sabre": 73,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -54386,7 +55094,8 @@
        "equipment": {
         "scabbard": 2,
         "lantern": 110,
-        "sabre": 76
+        "sabre": 76,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -54439,7 +55148,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 104,
-        "sabre": 75
+        "sabre": 75,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -54924,7 +55634,8 @@
        "equipment": {
         "sabre": 61,
         "scabbard": 72,
-        "lantern": 96
+        "lantern": 96,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -54977,7 +55688,8 @@
        "equipment": {
         "sabre": 60,
         "scabbard": 76,
-        "lantern": 96
+        "lantern": 96,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -55030,7 +55742,8 @@
        "equipment": {
         "sabre": 51,
         "scabbard": 81,
-        "lantern": 104
+        "lantern": 104,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -55083,7 +55796,8 @@
        "equipment": {
         "sabre": 36,
         "scabbard": 83,
-        "lantern": 105
+        "lantern": 105,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -55136,7 +55850,8 @@
        "equipment": {
         "sabre": 29,
         "scabbard": 86,
-        "lantern": 104
+        "lantern": 104,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -55189,7 +55904,8 @@
        "equipment": {
         "sabre": 52,
         "scabbard": 83,
-        "lantern": 105
+        "lantern": 105,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -55242,7 +55958,8 @@
        "equipment": {
         "sabre": 54,
         "scabbard": 81,
-        "lantern": 104
+        "lantern": 104,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -55295,7 +56012,8 @@
        "equipment": {
         "sabre": 56,
         "scabbard": 76,
-        "lantern": 96
+        "lantern": 96,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -55352,7 +56070,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 2,
-        "sabre": 78
+        "sabre": 78,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.9,
@@ -55405,7 +56124,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 0,
-        "sabre": 76
+        "sabre": 76,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -55458,7 +56178,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 10,
-        "sabre": 68
+        "sabre": 68,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -55511,7 +56232,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 12,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -55564,7 +56286,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 17,
-        "sabre": 70
+        "sabre": 70,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -55617,7 +56340,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 18,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -55670,7 +56394,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 8,
-        "sabre": 68
+        "sabre": 68,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -55723,7 +56448,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 0,
-        "sabre": 76
+        "sabre": 76,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -55801,7 +56527,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 106,
-        "sabre": 80
+        "sabre": 80,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -55854,7 +56581,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 104,
-        "sabre": 76
+        "sabre": 76,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -55907,7 +56635,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 104,
-        "sabre": 72
+        "sabre": 72,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -55960,7 +56689,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 111,
-        "sabre": 75
+        "sabre": 75,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -56013,7 +56743,8 @@
        "equipment": {
         "scabbard": 0,
         "sabre": 75,
-        "lantern": 111
+        "lantern": 111,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -56066,7 +56797,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 111,
-        "sabre": 75
+        "sabre": 75,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -56119,7 +56851,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 104,
-        "sabre": 72
+        "sabre": 72,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -56172,7 +56905,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 104,
-        "sabre": 76
+        "sabre": 76,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -56657,7 +57391,8 @@
        "equipment": {
         "sabre": 60,
         "scabbard": 69,
-        "lantern": 107
+        "lantern": 107,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -56710,7 +57445,8 @@
        "equipment": {
         "sabre": 58,
         "scabbard": 72,
-        "lantern": 110
+        "lantern": 110,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -56763,7 +57499,8 @@
        "equipment": {
         "sabre": 55,
         "scabbard": 75,
-        "lantern": 104
+        "lantern": 104,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -56816,7 +57553,8 @@
        "equipment": {
         "sabre": 53,
         "scabbard": 78,
-        "lantern": 105
+        "lantern": 105,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -56869,7 +57607,8 @@
        "equipment": {
         "sabre": 48,
         "scabbard": 81,
-        "lantern": 107
+        "lantern": 107,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -56922,7 +57661,8 @@
        "equipment": {
         "sabre": 54,
         "scabbard": 78,
-        "lantern": 105
+        "lantern": 105,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -56975,7 +57715,8 @@
        "equipment": {
         "sabre": 56,
         "scabbard": 75,
-        "lantern": 104
+        "lantern": 104,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -57028,7 +57769,8 @@
        "equipment": {
         "sabre": 58,
         "scabbard": 72,
-        "lantern": 110
+        "lantern": 110,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -57085,7 +57827,8 @@
        "equipment": {
         "scabbard": 9,
         "lantern": 7,
-        "sabre": 71
+        "sabre": 71,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -57138,7 +57881,8 @@
        "equipment": {
         "scabbard": 9,
         "lantern": 26,
-        "sabre": 76
+        "sabre": 76,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -57191,7 +57935,8 @@
        "equipment": {
         "scabbard": 9,
         "lantern": 12,
-        "sabre": 76
+        "sabre": 76,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -57244,7 +57989,8 @@
        "equipment": {
         "scabbard": 9,
         "lantern": 12,
-        "sabre": 75
+        "sabre": 75,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -57297,7 +58043,8 @@
        "equipment": {
         "scabbard": 9,
         "lantern": 31,
-        "sabre": 75
+        "sabre": 75,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -57350,7 +58097,8 @@
        "equipment": {
         "scabbard": 9,
         "lantern": 21,
-        "sabre": 75
+        "sabre": 75,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -57403,7 +58151,8 @@
        "equipment": {
         "scabbard": 9,
         "lantern": 2,
-        "sabre": 76
+        "sabre": 76,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -57456,7 +58205,8 @@
        "equipment": {
         "scabbard": 9,
         "lantern": 0,
-        "sabre": 76
+        "sabre": 76,
+        "face": 7
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -57539,7 +58289,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 108,
-        "sabre": 60
+        "sabre": 60,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -57592,7 +58343,8 @@
        "equipment": {
         "scabbard": 2,
         "lantern": 105,
-        "sabre": 59
+        "sabre": 59,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -57645,7 +58397,8 @@
        "equipment": {
         "scabbard": 6,
         "lantern": 96,
-        "sabre": 56
+        "sabre": 56,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -57698,7 +58451,8 @@
        "equipment": {
         "scabbard": 11,
         "lantern": 111,
-        "sabre": 53
+        "sabre": 53,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.0,
@@ -57751,7 +58505,8 @@
        "equipment": {
         "scabbard": 7,
         "lantern": 97,
-        "sabre": 53
+        "sabre": 53,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.0,
@@ -57804,7 +58559,8 @@
        "equipment": {
         "scabbard": 9,
         "sabre": 53,
-        "lantern": 108
+        "lantern": 108,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.0,
@@ -57857,7 +58613,8 @@
        "equipment": {
         "scabbard": 21,
         "sabre": 53,
-        "lantern": 109
+        "lantern": 109,
+        "face": 4
        },
        "anchor_gap": {
         "blade_tip": 0.0,
@@ -57910,7 +58667,8 @@
        "equipment": {
         "scabbard": 21,
         "sabre": 53,
-        "lantern": 109
+        "lantern": 109,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.0,
@@ -57963,7 +58721,8 @@
        "equipment": {
         "scabbard": 16,
         "sabre": 53,
-        "lantern": 106
+        "lantern": 106,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.0,
@@ -58016,7 +58775,8 @@
        "equipment": {
         "scabbard": 9,
         "sabre": 53,
-        "lantern": 108
+        "lantern": 108,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.0,
@@ -58069,7 +58829,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 108,
-        "sabre": 59
+        "sabre": 59,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -58122,7 +58883,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 110,
-        "sabre": 54
+        "sabre": 54,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -58175,7 +58937,8 @@
        "equipment": {
         "scabbard": 0,
         "lantern": 108,
-        "sabre": 60
+        "sabre": 60,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -58935,7 +59698,8 @@
        "equipment": {
         "sabre": 63,
         "scabbard": 87,
-        "lantern": 100
+        "lantern": 100,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -58988,7 +59752,8 @@
        "equipment": {
         "sabre": 65,
         "scabbard": 83,
-        "lantern": 107
+        "lantern": 107,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -59041,7 +59806,8 @@
        "equipment": {
         "sabre": 56,
         "scabbard": 67,
-        "lantern": 97
+        "lantern": 97,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -59094,7 +59860,8 @@
        "equipment": {
         "sabre": 57,
         "scabbard": 56,
-        "lantern": 100
+        "lantern": 100,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -59147,7 +59914,8 @@
        "equipment": {
         "sabre": 57,
         "scabbard": 79,
-        "lantern": 103
+        "lantern": 103,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -59200,7 +59968,8 @@
        "equipment": {
         "sabre": 39,
         "scabbard": 87,
-        "lantern": 94
+        "lantern": 94,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -59253,7 +60022,8 @@
        "equipment": {
         "sabre": 33,
         "scabbard": 87,
-        "lantern": 102
+        "lantern": 102,
+        "face": 2
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -59306,7 +60076,8 @@
        "equipment": {
         "sabre": 33,
         "scabbard": 87,
-        "lantern": 100
+        "lantern": 100,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -59359,7 +60130,8 @@
        "equipment": {
         "sabre": 37,
         "scabbard": 87,
-        "lantern": 97
+        "lantern": 97,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -59412,7 +60184,8 @@
        "equipment": {
         "sabre": 37,
         "scabbard": 87,
-        "lantern": 93
+        "lantern": 93,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -59465,7 +60238,8 @@
        "equipment": {
         "sabre": 57,
         "scabbard": 87,
-        "lantern": 110
+        "lantern": 110,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -59518,7 +60292,8 @@
        "equipment": {
         "sabre": 59,
         "scabbard": 87,
-        "lantern": 100
+        "lantern": 100,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -59571,7 +60346,8 @@
        "equipment": {
         "sabre": 63,
         "scabbard": 87,
-        "lantern": 100
+        "lantern": 100,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -59633,7 +60409,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 88,
-        "sabre": 66
+        "sabre": 66,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -59686,7 +60463,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 36,
-        "sabre": 68
+        "sabre": 68,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -59739,7 +60517,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 6,
-        "sabre": 65
+        "sabre": 65,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -59792,7 +60571,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 0,
-        "sabre": 67
+        "sabre": 67,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -59845,7 +60625,8 @@
        "equipment": {
         "scabbard": 19,
         "lantern": 14,
-        "sabre": 67
+        "sabre": 67,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -59898,7 +60679,8 @@
        "equipment": {
         "scabbard": 23,
         "lantern": 38,
-        "sabre": 67
+        "sabre": 67,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -59951,7 +60733,8 @@
        "equipment": {
         "scabbard": 28,
         "lantern": 88,
-        "sabre": 67
+        "sabre": 67,
+        "face": 2
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -60004,7 +60787,8 @@
        "equipment": {
         "scabbard": 23,
         "lantern": 88,
-        "sabre": 67
+        "sabre": 67,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -60057,7 +60841,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 102,
-        "sabre": 67
+        "sabre": 67,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -60110,7 +60895,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 95,
-        "sabre": 67
+        "sabre": 67,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -60163,7 +60949,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 108,
-        "sabre": 73
+        "sabre": 73,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -60216,7 +61003,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 101,
-        "sabre": 67
+        "sabre": 67,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -60269,7 +61057,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 88,
-        "sabre": 66
+        "sabre": 66,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -60361,7 +61150,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 92,
-        "sabre": 79
+        "sabre": 79,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -60414,7 +61204,8 @@
        "equipment": {
         "scabbard": 2,
         "lantern": 101,
-        "sabre": 79
+        "sabre": 79,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -60467,7 +61258,8 @@
        "equipment": {
         "scabbard": 13,
         "sabre": 79,
-        "lantern": 98
+        "lantern": 98,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -60520,7 +61312,8 @@
        "equipment": {
         "scabbard": 13,
         "sabre": 70,
-        "lantern": 98
+        "lantern": 98,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -60573,7 +61366,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 98,
-        "sabre": 77
+        "sabre": 77,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -60626,7 +61420,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 100,
-        "sabre": 73
+        "sabre": 73,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -60679,7 +61474,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 99,
-        "sabre": 77
+        "sabre": 77,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -60732,7 +61528,8 @@
        "equipment": {
         "scabbard": 13,
         "sabre": 66,
-        "lantern": 100
+        "lantern": 100,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -60785,7 +61582,8 @@
        "equipment": {
         "scabbard": 13,
         "sabre": 69,
-        "lantern": 98
+        "lantern": 98,
+        "face": 4
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -60838,7 +61636,8 @@
        "equipment": {
         "scabbard": 13,
         "sabre": 73,
-        "lantern": 98
+        "lantern": 98,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -60891,7 +61690,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 101,
-        "sabre": 79
+        "sabre": 79,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -60944,7 +61744,8 @@
        "equipment": {
         "scabbard": 2,
         "lantern": 93,
-        "sabre": 79
+        "sabre": 79,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -60997,7 +61798,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 92,
-        "sabre": 79
+        "sabre": 79,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -61747,7 +62549,8 @@
        "equipment": {
         "sabre": 59,
         "scabbard": 76,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -61800,7 +62603,8 @@
        "equipment": {
         "sabre": 53,
         "scabbard": 86,
-        "lantern": 86
+        "lantern": 86,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -61853,7 +62657,8 @@
        "equipment": {
         "sabre": 59,
         "scabbard": 87,
-        "lantern": 94
+        "lantern": 94,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -61906,7 +62711,8 @@
        "equipment": {
         "sabre": 40,
         "scabbard": 87,
-        "lantern": 94
+        "lantern": 94,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -61959,7 +62765,8 @@
        "equipment": {
         "scabbard": 87,
         "sabre": 45,
-        "lantern": 94
+        "lantern": 94,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -62012,7 +62819,8 @@
        "equipment": {
         "scabbard": 87,
         "sabre": 36,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -62065,7 +62873,8 @@
        "equipment": {
         "scabbard": 87,
         "sabre": 48,
-        "lantern": 94
+        "lantern": 94,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -62118,7 +62927,8 @@
        "equipment": {
         "sabre": 39,
         "scabbard": 87,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -62171,7 +62981,8 @@
        "equipment": {
         "sabre": 50,
         "scabbard": 87,
-        "lantern": 94
+        "lantern": 94,
+        "face": 2
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -62224,7 +63035,8 @@
        "equipment": {
         "sabre": 59,
         "scabbard": 87,
-        "lantern": 94
+        "lantern": 94,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -62277,7 +63089,8 @@
        "equipment": {
         "sabre": 45,
         "scabbard": 87,
-        "lantern": 86
+        "lantern": 86,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -62330,7 +63143,8 @@
        "equipment": {
         "sabre": 59,
         "scabbard": 76,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -62383,7 +63197,8 @@
        "equipment": {
         "sabre": 59,
         "scabbard": 76,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -62440,7 +63255,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 5,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -62493,7 +63309,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 18,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -62546,7 +63363,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 51,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -62599,7 +63417,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 27,
-        "sabre": 67
+        "sabre": 67,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.0,
@@ -62652,7 +63471,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 26,
-        "sabre": 66
+        "sabre": 66,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -62705,7 +63525,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 39,
-        "sabre": 65
+        "sabre": 65,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -62758,7 +63579,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 17,
-        "sabre": 66
+        "sabre": 66,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -62811,7 +63633,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 46,
-        "sabre": 68
+        "sabre": 68,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -62864,7 +63687,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 39,
-        "sabre": 70
+        "sabre": 70,
+        "face": 2
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -62917,7 +63741,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 39,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -62970,7 +63795,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 40,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -63023,7 +63849,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 2,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -63076,7 +63903,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 5,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -63157,7 +63985,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 92,
-        "sabre": 79
+        "sabre": 79,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -63210,7 +64039,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 92,
-        "sabre": 68
+        "sabre": 68,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -63263,7 +64093,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 92,
-        "sabre": 50
+        "sabre": 50,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -63316,7 +64147,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 92,
-        "sabre": 63
+        "sabre": 63,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.9,
@@ -63369,7 +64201,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 92,
-        "sabre": 73
+        "sabre": 73,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -63422,7 +64255,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 92,
-        "sabre": 75
+        "sabre": 75,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -63475,7 +64309,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 92,
-        "sabre": 77
+        "sabre": 77,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -63528,7 +64363,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 92,
-        "sabre": 51
+        "sabre": 51,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -63581,7 +64417,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 92,
-        "sabre": 47
+        "sabre": 47,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -63634,7 +64471,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 92,
-        "sabre": 70
+        "sabre": 70,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -63687,7 +64525,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 92,
-        "sabre": 79
+        "sabre": 79,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -64331,7 +65170,8 @@
        "equipment": {
         "sabre": 59,
         "scabbard": 76,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -64384,7 +65224,8 @@
        "equipment": {
         "sabre": 57,
         "scabbard": 76,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.9,
@@ -64437,7 +65278,8 @@
        "equipment": {
         "sabre": 62,
         "scabbard": 76,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -64490,7 +65332,8 @@
        "equipment": {
         "sabre": 68,
         "scabbard": 76,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -64543,7 +65386,8 @@
        "equipment": {
         "sabre": 23,
         "scabbard": 76,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 18.9,
@@ -64596,7 +65440,8 @@
        "equipment": {
         "sabre": 12,
         "scabbard": 76,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 3.7,
@@ -64649,7 +65494,8 @@
        "equipment": {
         "sabre": 59,
         "scabbard": 76,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -64702,7 +65548,8 @@
        "equipment": {
         "sabre": 63,
         "scabbard": 76,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -64755,7 +65602,8 @@
        "equipment": {
         "sabre": 63,
         "scabbard": 76,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -64808,7 +65656,8 @@
        "equipment": {
         "sabre": 60,
         "scabbard": 76,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -64861,7 +65710,8 @@
        "equipment": {
         "sabre": 59,
         "scabbard": 76,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -64918,7 +65768,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 5,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -64971,7 +65822,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 12,
-        "sabre": 72
+        "sabre": 72,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -65024,7 +65876,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 12,
-        "sabre": 73
+        "sabre": 73,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -65077,7 +65930,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 12,
-        "sabre": 71
+        "sabre": 71,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.1,
@@ -65130,7 +65984,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 12,
-        "sabre": 48
+        "sabre": 48,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 11.1,
@@ -65183,7 +66038,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 12,
-        "sabre": 53
+        "sabre": 53,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -65236,7 +66092,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 12,
-        "sabre": 77
+        "sabre": 77,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.3,
@@ -65289,7 +66146,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 12,
-        "sabre": 72
+        "sabre": 72,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -65342,7 +66200,8 @@
        "equipment": {
         "scabbard": 19,
         "lantern": 12,
-        "sabre": 72
+        "sabre": 72,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -65395,7 +66254,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 12,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -65448,7 +66308,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 5,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -65527,7 +66388,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 92,
-        "sabre": 79
+        "sabre": 79,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -65580,7 +66442,8 @@
        "equipment": {
         "scabbard": 2,
         "lantern": 93,
-        "sabre": 77
+        "sabre": 77,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -65633,7 +66496,8 @@
        "equipment": {
         "scabbard": 5,
         "lantern": 101,
-        "sabre": 73
+        "sabre": 73,
+        "face": 4
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -65686,7 +66550,8 @@
        "equipment": {
         "scabbard": 4,
         "lantern": 102,
-        "sabre": 73
+        "sabre": 73,
+        "face": 14
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -65739,7 +66604,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 92,
-        "sabre": 78
+        "sabre": 78,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -65792,7 +66658,8 @@
        "equipment": {
         "scabbard": 2,
         "lantern": 93,
-        "sabre": 79
+        "sabre": 79,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -65845,7 +66712,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 92,
-        "sabre": 79
+        "sabre": 79,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -65898,7 +66766,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 92,
-        "sabre": 79
+        "sabre": 79,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -65951,7 +66820,8 @@
        "equipment": {
         "scabbard": 1,
         "lantern": 92,
-        "sabre": 79
+        "sabre": 79,
+        "face": 12
        },
        "anchor_gap": {
         "blade_tip": 0.2,
@@ -66489,7 +67359,8 @@
        "equipment": {
         "sabre": 59,
         "scabbard": 76,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -66542,7 +67413,8 @@
        "equipment": {
         "sabre": 57,
         "scabbard": 78,
-        "lantern": 93
+        "lantern": 93,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.6,
@@ -66595,7 +67467,8 @@
        "equipment": {
         "sabre": 48,
         "scabbard": 77,
-        "lantern": 93
+        "lantern": 93,
+        "face": 2
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -66648,7 +67521,8 @@
        "equipment": {
         "sabre": 54,
         "scabbard": 76,
-        "lantern": 101
+        "lantern": 101,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.4,
@@ -66701,7 +67575,8 @@
        "equipment": {
         "sabre": 59,
         "scabbard": 76,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -66754,7 +67629,8 @@
        "equipment": {
         "sabre": 59,
         "scabbard": 76,
-        "lantern": 93
+        "lantern": 93,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -66807,7 +67683,8 @@
        "equipment": {
         "sabre": 59,
         "scabbard": 76,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -66860,7 +67737,8 @@
        "equipment": {
         "sabre": 59,
         "scabbard": 76,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -66913,7 +67791,8 @@
        "equipment": {
         "sabre": 59,
         "scabbard": 76,
-        "lantern": 92
+        "lantern": 92,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.7,
@@ -66970,7 +67849,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 5,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -67023,7 +67903,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 9,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -67076,7 +67957,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 4,
-        "sabre": 76
+        "sabre": 76,
+        "face": 2
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -67129,7 +68011,8 @@
        "equipment": {
         "scabbard": 10,
         "lantern": 1,
-        "sabre": 71
+        "sabre": 71,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.5,
@@ -67182,7 +68065,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 4,
-        "sabre": 75
+        "sabre": 75,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.9,
@@ -67235,7 +68119,8 @@
        "equipment": {
         "scabbard": 23,
         "lantern": 1,
-        "sabre": 75
+        "sabre": 75,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.9,
@@ -67288,7 +68173,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 5,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -67341,7 +68227,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 5,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.8,
@@ -67394,7 +68281,8 @@
        "equipment": {
         "scabbard": 13,
         "lantern": 5,
-        "sabre": 74
+        "sabre": 74,
+        "face": 6
        },
        "anchor_gap": {
         "blade_tip": 0.8,
