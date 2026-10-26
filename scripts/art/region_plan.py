@@ -566,9 +566,12 @@ def water_height(P: dict) -> list:
         if w.get('closed') or len(w.get('points', [])) < 2:
             continue
         falls = _falls(w)
+        decks = [(b['at'], b.get('span', 32) / 2 + 8) for b in w.get('bridges', [])]
         last = None
         rose = dropped = False
         for t, x, y in _tier_runs(G, w['points']):
+            if any(math.hypot(x - a[0], y - a[1]) <= rr for a, rr in decks):
+                continue                      # under a bridge the tier map carries the deck, not the water
             if last is not None and t > last[0] and not rose:
                 out.append(f'{P["id"]}: water {w["id"]} rises from tier {last[0]} to {t} at ({x:.0f}, {y:.0f}) '
                            f'(points run source to outlet; water never runs uphill)')

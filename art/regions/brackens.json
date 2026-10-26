@@ -1083,12 +1083,20 @@
           "camp": ["tank"]
         }
       ],
-      "keeper": "a shardstruck badger sow in the end chamber, freed to lead her cubs out",
-      "plan": "a zone plan of its own, like game/data/plans/undercroft.json, after this PR"
+      "keeper": "Old Fang (game-design v2 8.2), the barrow's old boar, in the end chamber; freed, he leads the sow and her cubs out",
+      "plan": "a zone plan of its own, like game/data/plans/undercroft.json, after this PR",
+      "camp": "barrow_rooms",
+      "boss": "old_fang"
     },
     "raiders_camp": {
       "none": true,
       "why": "raids come only to Crossroads (game-design v2, 7.6)"
+    },
+    "boss": {
+      "id": "old_fang",
+      "name": "Old Fang",
+      "in_dungeon": "the_barrow",
+      "why": "game-design v2 8.2; Claude K's act 1"
     }
   },
   "quest_spots": [
@@ -1103,9 +1111,24 @@
       "quest": "the shepherd's hut: her dog is gone wild on the road (stray_dog)"
     },
     {
-      "id": "well_rope",
+      "id": "drove_well",
       "at": [5040, 3300],
       "quest": "the drove well's rope is cut and the bucket lost in the barrow (the_barrow)"
+    },
+    {
+      "id": "iona",
+      "at": [5216, 3752],
+      "quest": "Iona at the gap (Claude K's act 1)"
+    },
+    {
+      "id": "hermit",
+      "at": [5160, 3424],
+      "quest": "the hermit at his fire in the pocket off the well trod (Claude K's act 1)"
+    },
+    {
+      "id": "barrow_shard",
+      "at": [4880, 3168],
+      "quest": "the barrow's shard, taken from the end chamber; met at the barrow's door (Claude K's act 1)"
     }
   ],
   "windows": [
