@@ -65,7 +65,7 @@ def stage_states(plan) -> dict:
 
 # ------------------------------------------------------------------------------------------------
 # what a drawn zone is made from (check.py compares it with kit.json's `inputs`)
-INPUTS = ('village.py', 'town.py', 'palette.py', 'raster.py', 'props.py', 'foliage.py', 'compose.py', 'ctx.py',
+INPUTS = ('village.py', 'houses.py', 'town.py', 'palette.py', 'raster.py', 'props.py', 'foliage.py', 'compose.py', 'ctx.py',
           'terrain/sheets.py', 'masters/zones_props_oak.png', 'masters/zones_props_bush.png')
 
 
