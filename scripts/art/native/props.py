@@ -274,7 +274,10 @@ def lantern4(d, seed=0):
 
 def signpost4(d, seed=91):
     """The 1x signpost (30 x 36 world px): two broad boards on a post, the top one pointing east,
-    the lower one west; grain, nail heads, carved marks; a tuft at the foot."""
+    the lower one west; grain, nail heads, carved marks; a tuft at the foot. At density 3 and up:
+    signpost_hd."""
+    if d >= 2.5:
+        return signpost_hd(d, seed=seed)
     sp = _sprite(d, 64, 76, 30, 3)
     g = sp.g
     rng = np.random.default_rng(seed)
@@ -307,6 +310,115 @@ def signpost4(d, seed=91):
     return _out(sp)
 
 
+def _board_hd(F, m, ang, rng, z, fam='timber', s=3.0, seam=True, letters=True):
+    """A sawn sign board as a form: its top arris lit, the face in the light with grain running
+    along it (broken dashes, a knot), a seam between its two planks, the lower arris and the
+    board's thickness in shade, nails with rust runs, carved letters (a dark groove with a lit
+    lower lip), a worn pale patch where hands touch it."""
+    Y, X = np.mgrid[0:F.h, 0:F.w] + 0.5
+    c_, s_ = math.cos(ang), math.sin(ang)
+    u = X * c_ + Y * s_
+    v = -X * s_ + Y * c_
+    um, vm = u[m], v[m]
+    u0, u1, v0, v1 = um.min(), um.max(), vm.min(), vm.max()
+    fv = (v - v0) / max(1.0, v1 - v0)
+    fu = (u - u0) / max(1.0, u1 - u0)
+    t = np.full(m.shape, 3.0)
+    t = np.where(fv < 0.3, 4, t)
+    t = np.where(v - v0 < 1.0, 5, t)
+    t = np.where(fv > 0.78, 2, t)
+    t = np.where(v1 - v < 1.0, 1, t)
+    t = np.where(fu < 0.04, t + 1, t)                                # the lit end grain
+    t = np.where(fu > 0.96, t - 1, t)
+    # grain along the board, broken
+    for k in range(5):
+        vg = v0 + (v1 - v0) * rng.uniform(0.18, 0.72)
+        wav = 0.6 * np.sin(u / (2.5 * s) + rng.uniform(0, 6))
+        run = np.sin(u / rng.uniform(2.0, 3.5) / s + rng.uniform(0, 6)) > -0.2
+        t = np.where((np.abs(v - vg - wav) < 0.5) & run & (fv > 0.12) & (fv < 0.75), t - 1, t)
+    if seam:
+        vs = v0 + (v1 - v0) * 0.5
+        t = np.where(np.abs(v - vs) < 0.5, 1, t)
+        t = np.where((v - vs >= 0.5) & (v - vs < 1.5), np.minimum(t + 1, 5), t)
+    ku = u0 + (u1 - u0) * rng.uniform(0.55, 0.8)
+    kv = v0 + (v1 - v0) * rng.uniform(0.25, 0.4)
+    kd = np.hypot((u - ku) / (1.3 * s), (v - kv) / (0.8 * s))
+    t = np.where(kd < 1, np.where(kd < 0.45, 1, 4), t)
+    wp = np.hypot((u - (u0 + (u1 - u0) * 0.3)) / (4 * s), (v - (v0 + (v1 - v0) * 0.55)) / (1.6 * s)) < 1
+    t = np.where(wp & (rng.random(m.shape) < 0.5) & (t == 3), 4, t)
+    if letters:
+        # carved letters: short strokes cut into the face, each a dark groove with a lit lip
+        cu = u0 + (u1 - u0) * 0.18
+        vl = v0 + (v1 - v0) * 0.38
+        for k in range(int(rng.integers(5, 8))):
+            w_ = rng.uniform(0.6, 1.6) * s
+            tall = rng.random() < 0.5
+            gm = (u >= cu) & (u < cu + (0.6 * s if tall else w_)) & (v >= vl) & (v < vl + (1.8 * s if tall else 0.7 * s))
+            lip = (u >= cu) & (u < cu + (0.6 * s if tall else w_) + 1) & (v >= vl + (1.8 * s if tall else 0.7 * s)) & \
+                  (v < vl + (1.8 * s if tall else 0.7 * s) + 1)
+            t = np.where(gm & m, 1, t)
+            t = np.where(lip & m, 5, t)
+            cu += (0.6 * s if tall else w_) + rng.uniform(0.6, 1.2) * s
+    tt = np.clip(np.round(t), 0, 5).astype(int)
+    F.put(m, np.where(tt >= 4, fam + '_warm' if fam == 'timber' else fam, np.where(tt <= 1, 'timber_cool', fam)), tt, z)
+    for fu_ in (0.07, 0.86):
+        nu = u0 + (u1 - u0) * fu_
+        nv = v0 + (v1 - v0) * 0.5
+        nm_ = (np.abs(u - nu) < 0.55 * s) & (np.abs(v - nv) < 0.55 * s) & m
+        F.put(nm_, 'iron', 2, z + 0.1)
+        F.put(nm_ & (u < nu) & (v < nv), 'iron', 4, z + 0.11)
+        rs = (np.abs(u - nu) < 0.3 * s) & (v > nv + 0.5 * s) & (v < nv + rng.uniform(1.2, 2.2) * s) & m
+        F.put(rs, 'fox', 2, z + 0.1)
+
+
+def signpost_hd(d, seed=91):
+    """The signpost at density 3 (fix queue 2): a squared post lit on its west face and shaded on
+    the east, its grain, a weathered dark foot set in a tuft and the boards' shadows across it;
+    two broad boards (east and west) and a short third arm slanting down to the south-west, each a
+    sawn two-plank board with its arrises, grain, a knot, carved names and rusting nails."""
+    rng = np.random.default_rng(seed)
+    s = d / 2                                     # px per unit (units are half world px)
+    W, Hh = int(math.ceil(64 * s)), int(math.ceil(76 * s))
+    ox, oy = round(30 * s), Hh - max(1, int(round(3 * s)))
+    F = _Form(Hh, W)
+    Y, X = np.mgrid[0:Hh, 0:W] + 0.5
+    ux, uy = (X - ox) / s, (Y - oy) / s
+    post = (np.abs(ux) <= 2.8) & (uy >= -62) & (uy <= 0)
+    u = ux / 2.8
+    tp = np.where(u < -0.45, 4, np.where(u < 0.25, 3, np.where(u < 0.7, 2, 1)))
+    tp = np.where((uy < -60.5) & (u < 0.4), 5, tp)                   # its cut top catching the light
+    for k in range(6):
+        gx = rng.uniform(-2.0, 2.0)
+        g0 = rng.uniform(-58, -12)
+        tp = np.where((np.abs(ux - gx) < 0.45) & (uy > g0) & (uy < g0 + rng.uniform(6, 14)), tp - 1, tp)
+    tp = np.where(uy > -5, tp - 1, tp)                                # weathered foot
+    for (y0b, y1b) in ((-56, -52), (-33, -29)):
+        tp = np.where((uy > y0b) & (uy < y1b), tp - 1, tp)            # the boards' shadows on the post
+    tp = np.clip(tp, 0, 5)
+    F.put(post, np.where(tp >= 4, 'timber_warm', np.where(tp <= 1, 'timber_cool', 'timber')), tp, 1)
+    b1 = _poly_mask([(ox + x * s, oy + y * s) for x, y in [(-22, -68), (22, -68), (29, -62), (22, -56), (-22, -56)]], X, Y)
+    b2 = _poly_mask([(ox + x * s, oy + y * s) for x, y in [(22, -45), (-22, -45), (-29, -39), (-22, -33), (22, -33)]], X, Y)
+    b3 = _poly_mask([(ox + x * s, oy + y * s) for x, y in SIGN3], X, Y)
+    _board_hd(F, b1, 0.0, rng, 2, 'timber', s)
+    _board_hd(F, b2, 0.0, rng, 2, 'timber', s)
+    a3 = math.atan2(-19.6 + 28.0, -11.5 - 2.5)
+    _board_hd(F, b3, a3 + math.pi, rng, 2.5, 'timber', s, seam=False, letters=False)
+    # a tuft at the foot, blades lit on their tips
+    for k in range(9):
+        bx = ox + rng.uniform(-6, 6) * s
+        L = rng.uniform(3, 7) * s
+        lean = rng.uniform(-0.5, 0.5)
+        for j in range(int(L)):
+            yy_, xx_ = int(oy - j), int(bx + lean * j)
+            if 0 <= yy_ < Hh and 0 <= xx_ < W:
+                m1 = np.zeros((Hh, W), bool)
+                m1[yy_, xx_] = True
+                F.put(m1, 'leaf', 4 if j > L * 0.6 else (3 if lean < 0 else 2), 3)
+    F.tidy()
+    img = Image.fromarray(F.image())
+    return img, (ox, oy), np.asarray(img)[..., 3] > 0
+
+
 def fence4(d, length=66, posts=None, seed=101, gate_post=True, n_pickets=7):
     """The 1x palisade (20 world px tall): a tall gate post at the west end braced into the first
     bay, then slim pickets (3 world px) behind two rails that run across in front of them, nail
@@ -337,11 +449,22 @@ def fence4(d, length=66, posts=None, seed=101, gate_post=True, n_pickets=7):
             sp.detail(g.rect(x - 0.5, (y0 + y1) / 2 - 0.5, x + 0.5, (y0 + y1) / 2 + 0.5), pk.rgb('iron', 4))
     if gate_post:
         gp = g.rrect(0, -40, 12, 0, 1.4)
-        sp.add('gate', gp, 'timber', base=3, lo=1, hi=5, z=3, mode='cyl', k=0.8)
+        sp.add('gate', gp, 'timber', base=4 if d >= 2.5 else 3, lo=1, hi=5, z=3, mode='cyl', k=1.1 if d >= 2.5 else 0.8)
         sp.mark('gate', g.rect(0, -40, 13, -38.8), 1)
         for k in range(3):
             gy = rng.uniform(-34, -6)
             sp.mark('gate', g.rect(3 + k * 3.0, gy, 4 + k * 3.0, gy + rng.uniform(5, 9)), -1)
+        if d >= 2.5:
+            # density 3 (fix queue 2): the post's grain runs its whole height, in long checks and
+            # a lighter streak of sapwood, a knot with its dark heart, the foot weathered dark
+            rng2 = np.random.default_rng(seed + 7)
+            for k in range(7):
+                gx = rng2.uniform(2.5, 9.5)
+                gy = rng2.uniform(-38, -10)
+                sp.mark('gate', g.rect(gx, gy, gx + 0.7, gy + rng2.uniform(8, 16)), -1 if k % 3 else 1)
+            sp.mark('gate', g.ellipse(6.5, -22, 1.6, 1.2), -1)
+            sp.mark('gate', g.ellipse(6.3, -22.3, 0.7, 0.5), -2)
+            sp.mark('gate', g.rect(0, -4, 12, 0), -1)
         brace = g.stroke([(12, -12), (x0 + 2 + pitch - 3, -27)], 1.3)
         sp.add('brace', brace, 'timber_warm', base=3, lo=1, hi=4, z=2.5, flat=True)
         sp.mark('brace', g.stroke([(12, -13), (x0 + 2 + pitch - 3, -28)], 0.5), 1)
@@ -489,7 +612,10 @@ def log4(d, length=54, thick=15, seed=71):
 
 def mushroom_ring4(d, w=41, h=20, seed=85, n=10):
     """The 1x fairy ring: about ten mushrooms, red caps with white spots on the west half and tan
-    caps with a pale band on the east, in a ring on a slightly darker patch of grass."""
+    caps with a pale band on the east, in a ring on a slightly darker patch of grass. At density 3
+    and up: mushroom_ring_hd."""
+    if d >= 2.5:
+        return mushroom_ring_hd(d, w=w, seed=seed, n=n + 4)
     sp = _sprite(d, 2 * w + 10, 2 * h + 10, w + 5, 2)
     g = sp.g
     rng = np.random.default_rng(seed)
@@ -677,6 +803,51 @@ def boulder4(d, w=21, h=13, seed=31, fam='stone', moss='top'):
                 tt[hi] = 4
         near = ndi.binary_dilation(crack, iterations=2) & ~crack & m & top
         tt[near & (tt == 3)] = 4                    # r8: no worn dash crosses the crack (it read as a '+')
+        if d >= 2.5:
+            # density 3 (fix queue 2): the stone's own structure at Eastward's detail: a second
+            # plane on the front where the face turns (a lit arris then the darker flank), bedding
+            # lines across the side with a lit lip under each, a warm iron stain, pits with a lit
+            # rim, flecks of quartz on the lit top, lichen rosettes in two greens
+            ang_ = rng.uniform(-0.5, 0.5)
+            fac = side & ((rel + ang_ * (yy - c['base']) / max(1.0, c['ch'])) > rng.uniform(0.05, 0.25))
+            arr = fac & ~np.roll(fac, 1, 1)
+            tt[fac & (tt >= 2)] -= 1
+            tt[arr & (tt <= 3)] = np.minimum(4, tt[arr & (tt <= 3)] + 2)
+            for _ in range(int(rng.integers(1, 3))):
+                by_ = rng.uniform(topline.mean() + 1.5 * d, c['base'] - 1.5 * d)
+                wob = 0.6 * d * np.sin(xx / (2.3 * d) + rng.uniform(0, 6))
+                bed = side & (np.abs(yy - by_ - wob - (xx - c['cx']) * rng.uniform(-0.15, 0.15)) < 0.5)
+                lipb = side & np.roll(bed, 1, 0) & ~bed
+                tt[bed] = np.maximum(0, tt[bed] - 1)
+                tt[lipb & (tt <= 3)] += 1
+            st_ = m & (fm == 0) & ((xx - c['cx'] - rng.uniform(-0.3, 0.3) * c['cw'] / 2) ** 2 / (1.6 * d) ** 2
+                                   + (yy - c['base'] + c['ch'] * 0.35) ** 2 / (1.1 * d) ** 2 < 1)
+            fm[st_ & (rng.random(st_.shape) < 0.8)] = 3
+            wy2, wx2 = np.nonzero(m & (fm != 2))
+            for _ in range(int(len(wy2) / (2.2 * d * d))):
+                q2 = int(rng.integers(0, len(wy2)))
+                y_, x_ = wy2[q2], wx2[q2]
+                if crack[y_, x_]:
+                    continue
+                if top[y_, x_]:
+                    if x_ + 1 < Wp and m[y_, x_ + 1]:
+                        tt[y_, x_] = 5
+                        tt[y_, x_ + 1] = min(5, tt[y_, x_ + 1] + 1)
+                else:
+                    tt[y_, x_] = max(0, tt[y_, x_] - 2)
+                    if y_ + 1 < Hp and m[y_ + 1, x_]:
+                        tt[y_ + 1, x_] = min(4, tt[y_ + 1, x_] + 1)
+            ly_, lx_ = np.nonzero(m & (fm != 2) & ~crack)
+            for _ in range(int(rng.integers(3, 6))):
+                q2 = int(rng.integers(0, len(ly_)))
+                if rel[ly_[q2], lx_[q2]] > 0.5:
+                    continue
+                lr = rng.uniform(0.6, 1.0) * d
+                lm_ = m & ((yy - ly_[q2]) ** 2 / 0.5 + (xx - lx_[q2]) ** 2 <= lr * lr)
+                fm[lm_] = 4
+                tt[lm_] = 3
+                tt[lm_ & ~np.roll(lm_, 1, 0)] = 4
+                tt[lm_ & ~np.roll(lm_, -1, 0)] = 2
         tt[~m] = 0
         t[m] = tt[m]
         fm[m & (fm != 2)] = np.where(rel[m & (fm != 2)] > 0.15, 1, 0)
@@ -699,7 +870,7 @@ def boulder4(d, w=21, h=13, seed=31, fam='stone', moss='top'):
     P_ = np.pad(allm, 1)
     rb_ = allm & (~P_[2:, 1:-1] | ~P_[1:-1, 2:])
     out = np.zeros((Hp, Wp, 4), np.uint8)
-    names = [fam, fam + '_cool', 'grass_cool']
+    names = [fam, fam + '_cool', 'grass_cool', fam + '_warm' if d >= 2.5 else fam, 'leaf']
     for y, x in zip(*np.nonzero(allm)):
         if rb_[y, x] and fm[y, x] != 2:
             out[y, x, :3] = pk.rgb(fam + '_cool', 0)
@@ -722,7 +893,11 @@ def boulder4(d, w=21, h=13, seed=31, fam='stone', moss='top'):
 def fern4(d, seed=51, size=1.0):
     """The 1x fern: a broad, squat crown of pointed leaves (three rising in a V, the others
     spreading level to both sides) round a dark slot at the base; mid green, the east leaves a
-    tone down, short pale rib stripes across the leaves, outlined. size 1.23 is the 1x 27 x 17."""
+    tone down, short pale rib stripes across the leaves, outlined. size 1.23 is the 1x 27 x 17.
+    At density 3 and up the fern is drawn as fronds of paired leaflets (fern_hd; fix queue 2: the
+    pointed-leaf crown read as an agave)."""
+    if d >= 2.5:
+        return fern_hd(d, seed=seed, size=size)
     sp = _sprite(d, 52 * size, 40 * size, 26 * size, 2)
     g = sp.g
     rng = np.random.default_rng(seed)
@@ -847,6 +1022,76 @@ def mushrooms_hd(d, n=5, seed=0, kind='brown'):
         if kind == 'red':
             _put(a, top - ch + 2, int(xc - cw / 5), 'plaster', 5)
             _put(a, top - 1, int(xc + cw / 5), 'plaster', 5)
+    return _finish(a)
+
+
+def _mushroom(a, x, foot, h, cw, fam, red, rng):
+    """One mushroom at ankle height: a pale stem lit on its west side with a dark foot, a domed cap
+    lit at its upper left, its rim's underside (the gills) a dark line, white flecks on a red one."""
+    top = int(round(foot - h))
+    sw = max(2, int(round(0.55 * cw / 2.4 * 2)))
+    lean = rng.uniform(-0.15, 0.15)
+    for y in range(top, foot + 1):
+        xc = int(round(x + lean * (foot - y)))
+        for i in range(sw):
+            t = 5 if i == 0 else (4 if i < sw - 1 else 2)
+            if y >= foot - 1:
+                t = max(1, t - 2)
+            _put(a, y, xc - sw // 2 + i, 'plaster', t)
+    xc = x + lean * (foot - top)
+    ch = max(2, int(round(cw * 0.5)))
+    for yy in range(ch):
+        half = cw / 2 * np.sqrt(max(0.0, 1 - ((ch - 1 - yy) / ch) ** 2)) + 0.4
+        for xx in range(int(round(xc - half)), int(round(xc + half)) + 1):
+            u = (xx - (xc - half)) / max(1.0, 2 * half)
+            t = 5 if (yy < ch * 0.35 and 0.15 < u < 0.4) else (4 if (yy < ch * 0.6 and u < 0.5) else (3 if u < 0.78 else 2))
+            _put(a, top - ch + 1 + yy, xx, fam, t)
+    for xx in range(int(round(xc - cw / 2)), int(round(xc + cw / 2)) + 1):
+        _put(a, top + 1, xx, fam, 1)
+    if red:
+        for (fx, fy) in ((-0.22, 0.3), (0.18, 0.55), (-0.02, 0.75))[:int(rng.integers(2, 4))]:
+            _put(a, top - int(ch * fy), int(round(xc + fx * cw)), 'plaster', 5)
+
+
+def mushroom_ring_hd(d, w=41, seed=85, n=12):
+    """A fairy ring at density 3: ankle-high mushrooms (1.5 to 4 world px) standing round a ring
+    w world px across, seen at the view's slant, at uneven spacing: some alone, some in twos and
+    threes, the young ones small, each its own size and lean; red caps with white flecks on the
+    west side, tan caps on the east. No painted patch: the ring is the mushrooms."""
+    rng = np.random.default_rng(seed)
+    Wd = int((w + 6) * d)
+    ry = (w / 2 - 3) * 0.42
+    Hd = int((2 * ry + 7) * d)
+    a = _rgba(Hd, Wd)
+    rx = (w / 2 - 3) * d
+    cy = Hd - 1 - (ry + 1) * d
+    items = []
+    tops = []
+    ang = rng.uniform(0, 2 * np.pi)
+    tries = 0
+    while len(items) < n and tries < 400:
+        tries += 1
+        ang += rng.uniform(0.25, 0.8)
+        grp = int(rng.choice([1, 1, 2]))
+        for g_ in range(grp):
+            aa = ang + g_ * rng.uniform(0.16, 0.22)
+            rr = rng.uniform(0.9, 1.08)
+            x = Wd / 2 + np.cos(aa) * rx * rr
+            foot = int(cy + np.sin(aa) * ry * d * rr)
+            h = rng.uniform(1.1, 2.1) * d * (0.75 if g_ else 1.0)
+            cw = rng.uniform(1.8, 2.8) * d * (0.8 if g_ else 1.0)
+            top = int(round(foot - h)) - max(2, int(round(cw * 0.5))) + 1
+            # no three caps on one line (a grown ring, not a planted row) and none on another's spot
+            if any(abs(t - top) <= 2 for t in tops):
+                continue
+            if any(abs(it[1] - x) < (cw + it[3]) / 2 + 2 and abs(it[0] - foot) < 6.5 * d for it in items):
+                continue
+            tops.append(top)
+            items.append((foot, x, h, cw))
+    items.sort()
+    for (foot, x, h, cw) in items:
+        red = x < Wd * 0.48 or (x < Wd * 0.58 and rng.random() < 0.4)
+        _mushroom(a, x, foot, h, cw, 'berry' if red else 'clay', red, rng)
     return _finish(a)
 
 

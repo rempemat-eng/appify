@@ -113,6 +113,26 @@ class Asset(unittest.TestCase):
         s[100:158, 35:45] = (110, 70, 40, 255)
         self.assertTrue(C.floating_parts(s[..., 3] > 0, H, 'x/beech'))
 
+    def test_mesh_crown_and_green_paint(self):
+        # a crown of outlined blobs with gaps trips; the same green as door and shutter paint on a
+        # mostly stone building does not (fix queue 2: the hut's green woodwork)
+        s = sprite(160, 120)
+        for cy in range(10, 110, 22):
+            for cx in range(10, 150, 22):
+                yy, xx = np.mgrid[0:120, 0:160]
+                m = (xx - cx) ** 2 + (yy - cy) ** 2 <= 80
+                s[m] = (60, 120, 50, 255)
+                s[m & ((xx - cx) ** 2 + (yy - cy) ** 2 > 60)] = (20, 40, 20, 255)
+        self.assertTrue(C.crown_holes(s[..., :3], s[..., 3] > 0, H, 'x/oak'))
+        b = sprite(300, 200)
+        b[:, :] = (140, 130, 120, 255)
+        b[...] = (140, 130, 120, 255)
+        for x0 in (20, 120, 220):
+            for k in range(0, 50, 6):
+                b[100:190, x0 + k:x0 + k + 5] = (60, 120, 50, 255)
+        self.assertFalse(C.crown_holes(b[..., :3], b[..., 3] > 0, H, 'crossroads/hut'))
+        self.assertFalse(C.crown_holes(s[..., :3], s[..., 3] > 0, H, 'crossroads/library_damage'))
+
     def test_bush_on_stilts(self):
         s = sprite(100, 90)
         s[5:70, 5:95] = (70, 130, 60, 255)
@@ -169,6 +189,20 @@ class Asset(unittest.TestCase):
         s = sprite(60, 200)
         s[5:198, 10:50, 3] = 255
         self.assertTrue(C.scale(s[..., 3] > 0, H, 'barrel', 'x/barrel', 3.0))
+
+    def test_scale_of_spread_pieces_and_rubble(self):
+        # a ring of small mushrooms is judged by each mushroom's height, not by the ring's depth;
+        # one mushroom 17 px tall still trips. A building's rubble is a pile, not the building.
+        s = np.zeros((60, 140), bool)
+        for k in range(10):
+            a = 2 * np.pi * k / 10
+            x, y = int(70 + 55 * np.cos(a)), int(30 + 22 * np.sin(a))
+            s[y:y + 9, x:x + 6] = True
+        self.assertFalse(C.scale(s, H, 'mushroom_ring', 'kit/mushroom_ring', 3.0))
+        s[5:56, 60:66] = True
+        self.assertTrue(C.scale(s, H, 'mushroom_ring', 'kit/mushroom_ring', 3.0))
+        self.assertEqual(C.kind_of('smithy_rubble'), 'pile')
+        self.assertEqual(C.kind_of('smithy'), 'smithy')
 
 
 class Scene(unittest.TestCase):

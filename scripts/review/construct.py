@@ -37,6 +37,7 @@ EXTRA = {
     'mushroom': ((1, 3.5), (1, 4), 'a woodland mushroom is 5 to 20 cm: ankle high at most (15 px a metre)'),
     'mushroom_ring': ((1, 4.5), (8, 60), 'a ring of mushrooms is ankle high'),
 }
+SPREAD = {'mushroom_ring'}          # kinds made of separate pieces standing about on the ground
 # forms that only grow in some biomes
 FORMS = {
     'succulent_rosette': ({'desert', 'arid', 'canyon', 'oasis', 'dry_coast'},
@@ -50,6 +51,8 @@ def kind_of(name: str) -> str:
     base = re.sub(r'_(damage|lit|dark|choked|rubble)$', lambda m: m.group(0) if base in ALIASES else '', base) or base
     if name in ALIASES:
         return ALIASES[name]
+    if re.sub(r'(_\d+|_[a-d])$', '', name).endswith('_rubble'):
+        return 'pile'        # what is left of a building is a heap on the ground (fix queue 2: smithy_rubble)
     if base in ALIASES:
         return ALIASES[base]
     if base in GUIDE['kinds'] or base in EXTRA:
@@ -72,7 +75,7 @@ def bbox(a):
 
 
 # ------------------------------------------------------------------------------------------
-SCATTER = ('debris', 'rubble', 'smoke', 'fx/', 'pile', 'coal', 'crater', '_damage')
+SCATTER = ('debris', 'rubble', 'smoke', 'fx/', 'pile', 'coal', 'crater', '_damage', 'mushroom_ring')
 
 
 def floating_parts(alpha, H, subject):
@@ -232,6 +235,12 @@ def scale(alpha, H, kind, subject, density=3.0):
     (h0, h1), (w0, w1), why = g
     x0, y0, x1, y1 = bbox(alpha)
     hw = (y1 - y0) / density
+    if kind in SPREAD:
+        # pieces spread out on the ground (a ring of mushrooms): the guide's height is each
+        # piece's, not the depth of the ground they stand round
+        lab, n = ndi.label(alpha, structure=np.ones((3, 3), bool))
+        if n > 1:
+            hw = max((sl[0].stop - sl[0].start) for sl in ndi.find_objects(lab)) / density
     ww = (x1 - x0) / density
     tol = GUIDE.get('tolerance', 2)
     fs = []
@@ -324,9 +333,15 @@ def biome_form(rgb, alpha, H, subject, biome):
 
 def crown_holes(rgb, alpha, H, subject):
     """A crown drawn as outlined blobs with the ground showing between them (contour mesh)."""
+    if subject.endswith('_damage'):
+        return []        # a storm-damage overlay (a tarp, a roof hole's dark loft): no crown in it
     fam = D.family_map(rgb)
     fol = alpha & np.isin(fam, (0, 1))
     if (alpha & (fam == 1)).sum() < 0.3 * H * H:
+        return []
+    if (alpha & (fam == 1)).sum() < 0.3 * alpha.sum():
+        # a crown is most of what it belongs to; green paint on a building's doors, shutters and
+        # flower boxes (fix queue 2: the hut) has no crown to see through
         return []
     r = max(2, int(0.05 * H))
     p = r + 1
