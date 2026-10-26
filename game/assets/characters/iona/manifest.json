@@ -86,7 +86,8 @@
        "equipment": {
         "braid": 0,
         "harness": 75,
-        "spear": 267
+        "spear": 267,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -138,7 +139,8 @@
        "equipment": {
         "braid": 0,
         "harness": 78,
-        "spear": 267
+        "spear": 267,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -190,7 +192,8 @@
        "equipment": {
         "braid": 0,
         "harness": 78,
-        "spear": 267
+        "spear": 267,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -242,7 +245,8 @@
        "equipment": {
         "braid": 0,
         "harness": 86,
-        "spear": 266
+        "spear": 266,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -294,7 +298,8 @@
        "equipment": {
         "braid": 0,
         "harness": 86,
-        "spear": 266
+        "spear": 266,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -346,7 +351,8 @@
        "equipment": {
         "braid": 0,
         "harness": 86,
-        "spear": 266
+        "spear": 266,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -398,7 +404,8 @@
        "equipment": {
         "braid": 0,
         "harness": 86,
-        "spear": 266
+        "spear": 266,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -450,7 +457,8 @@
        "equipment": {
         "braid": 0,
         "harness": 86,
-        "spear": 266
+        "spear": 266,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -502,7 +510,8 @@
        "equipment": {
         "braid": 0,
         "harness": 78,
-        "spear": 267
+        "spear": 267,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -554,7 +563,8 @@
        "equipment": {
         "braid": 0,
         "harness": 78,
-        "spear": 267
+        "spear": 267,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -606,7 +616,8 @@
        "equipment": {
         "braid": 0,
         "harness": 75,
-        "spear": 267
+        "spear": 267,
+        "face": 4
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -658,7 +669,8 @@
        "equipment": {
         "braid": 0,
         "harness": 75,
-        "spear": 267
+        "spear": 267,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -1342,7 +1354,8 @@
        "equipment": {
         "braid": 82,
         "harness": 19,
-        "spear": 197
+        "spear": 197,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -1394,7 +1407,8 @@
        "equipment": {
         "braid": 69,
         "harness": 17,
-        "spear": 197
+        "spear": 197,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -1446,7 +1460,8 @@
        "equipment": {
         "braid": 75,
         "harness": 17,
-        "spear": 197
+        "spear": 197,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -1498,7 +1513,8 @@
        "equipment": {
         "braid": 84,
         "harness": 20,
-        "spear": 197
+        "spear": 197,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -1550,7 +1566,8 @@
        "equipment": {
         "braid": 83,
         "harness": 20,
-        "spear": 197
+        "spear": 197,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -1602,7 +1619,8 @@
        "equipment": {
         "braid": 85,
         "harness": 20,
-        "spear": 197
+        "spear": 197,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -1654,7 +1672,8 @@
        "equipment": {
         "braid": 83,
         "harness": 20,
-        "spear": 197
+        "spear": 197,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -1706,7 +1725,8 @@
        "equipment": {
         "braid": 84,
         "harness": 20,
-        "spear": 197
+        "spear": 197,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -1758,7 +1778,8 @@
        "equipment": {
         "braid": 75,
         "harness": 17,
-        "spear": 197
+        "spear": 197,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -1810,7 +1831,8 @@
        "equipment": {
         "braid": 69,
         "harness": 17,
-        "spear": 197
+        "spear": 197,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -1862,7 +1884,8 @@
        "equipment": {
         "braid": 76,
         "harness": 19,
-        "spear": 197
+        "spear": 197,
+        "face": 2
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -1914,7 +1937,8 @@
        "equipment": {
         "braid": 80,
         "harness": 19,
-        "spear": 197
+        "spear": 197,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -1970,7 +1994,8 @@
        "equipment": {
         "braid": 89,
         "spear": 81,
-        "harness": 35
+        "harness": 35,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -2022,7 +2047,8 @@
        "equipment": {
         "braid": 93,
         "spear": 81,
-        "harness": 35
+        "harness": 35,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -2074,7 +2100,8 @@
        "equipment": {
         "braid": 96,
         "spear": 81,
-        "harness": 35
+        "harness": 35,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -2126,7 +2153,8 @@
        "equipment": {
         "braid": 106,
         "spear": 79,
-        "harness": 40
+        "harness": 40,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -2178,7 +2206,8 @@
        "equipment": {
         "braid": 109,
         "spear": 79,
-        "harness": 39
+        "harness": 39,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -2230,7 +2259,8 @@
        "equipment": {
         "braid": 112,
         "spear": 79,
-        "harness": 38
+        "harness": 38,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -2282,7 +2312,8 @@
        "equipment": {
         "braid": 109,
         "spear": 79,
-        "harness": 39
+        "harness": 39,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -2334,7 +2365,8 @@
        "equipment": {
         "braid": 106,
         "spear": 79,
-        "harness": 40
+        "harness": 40,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -2386,7 +2418,8 @@
        "equipment": {
         "braid": 96,
         "spear": 81,
-        "harness": 35
+        "harness": 35,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -2438,7 +2471,8 @@
        "equipment": {
         "braid": 91,
         "spear": 81,
-        "harness": 35
+        "harness": 35,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -2490,7 +2524,8 @@
        "equipment": {
         "braid": 95,
         "spear": 81,
-        "harness": 40
+        "harness": 40,
+        "face": 2
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -2542,7 +2577,8 @@
        "equipment": {
         "braid": 100,
         "spear": 81,
-        "harness": 40
+        "harness": 40,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -2600,7 +2636,8 @@
        "equipment": {
         "braid": 12,
         "harness": 64,
-        "spear": 211
+        "spear": 211,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -2652,7 +2689,8 @@
        "equipment": {
         "braid": 12,
         "harness": 64,
-        "spear": 211
+        "spear": 211,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -2704,7 +2742,8 @@
        "equipment": {
         "braid": 12,
         "harness": 64,
-        "spear": 211
+        "spear": 211,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -2756,7 +2795,8 @@
        "equipment": {
         "braid": 15,
         "harness": 68,
-        "spear": 212
+        "spear": 212,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -2808,7 +2848,8 @@
        "equipment": {
         "braid": 15,
         "harness": 68,
-        "spear": 212
+        "spear": 212,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -2860,7 +2901,8 @@
        "equipment": {
         "braid": 16,
         "harness": 68,
-        "spear": 212
+        "spear": 212,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -2912,7 +2954,8 @@
        "equipment": {
         "braid": 15,
         "harness": 68,
-        "spear": 212
+        "spear": 212,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -2964,7 +3007,8 @@
        "equipment": {
         "braid": 15,
         "harness": 68,
-        "spear": 212
+        "spear": 212,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -3016,7 +3060,8 @@
        "equipment": {
         "braid": 12,
         "harness": 64,
-        "spear": 211
+        "spear": 211,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -3068,7 +3113,8 @@
        "equipment": {
         "braid": 12,
         "harness": 64,
-        "spear": 211
+        "spear": 211,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -3120,7 +3166,8 @@
        "equipment": {
         "braid": 11,
         "harness": 64,
-        "spear": 211
+        "spear": 211,
+        "face": 4
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -3172,7 +3219,8 @@
        "equipment": {
         "braid": 11,
         "harness": 64,
-        "spear": 211
+        "spear": 211,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -3856,7 +3904,8 @@
        "equipment": {
         "braid": 58,
         "spear": 225,
-        "harness": 80
+        "harness": 80,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.8
@@ -3908,7 +3957,8 @@
        "equipment": {
         "braid": 56,
         "spear": 225,
-        "harness": 80
+        "harness": 80,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.8
@@ -3960,7 +4010,8 @@
        "equipment": {
         "braid": 56,
         "spear": 225,
-        "harness": 80
+        "harness": 80,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.8
@@ -4012,7 +4063,8 @@
        "equipment": {
         "braid": 54,
         "spear": 226,
-        "harness": 88
+        "harness": 88,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.8
@@ -4064,7 +4116,8 @@
        "equipment": {
         "braid": 58,
         "spear": 226,
-        "harness": 88
+        "harness": 88,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.8
@@ -4116,7 +4169,8 @@
        "equipment": {
         "braid": 58,
         "spear": 226,
-        "harness": 88
+        "harness": 88,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.8
@@ -4168,7 +4222,8 @@
        "equipment": {
         "braid": 58,
         "spear": 226,
-        "harness": 88
+        "harness": 88,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.8
@@ -4220,7 +4275,8 @@
        "equipment": {
         "braid": 54,
         "spear": 226,
-        "harness": 88
+        "harness": 88,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.8
@@ -4272,7 +4328,8 @@
        "equipment": {
         "braid": 56,
         "spear": 225,
-        "harness": 80
+        "harness": 80,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.8
@@ -4324,7 +4381,8 @@
        "equipment": {
         "braid": 56,
         "spear": 225,
-        "harness": 80
+        "harness": 80,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.8
@@ -4376,7 +4434,8 @@
        "equipment": {
         "braid": 58,
         "spear": 225,
-        "harness": 80
+        "harness": 80,
+        "face": 4
        },
        "anchor_gap": {
         "spear_tip": 0.8
@@ -4428,7 +4487,8 @@
        "equipment": {
         "braid": 58,
         "spear": 225,
-        "harness": 80
+        "harness": 80,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.8
@@ -5137,7 +5197,8 @@
        "equipment": {
         "braid": 0,
         "harness": 76,
-        "spear": 262
+        "spear": 262,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -5189,7 +5250,8 @@
        "equipment": {
         "braid": 0,
         "harness": 76,
-        "spear": 264
+        "spear": 264,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -5241,7 +5303,8 @@
        "equipment": {
         "braid": 0,
         "harness": 76,
-        "spear": 267
+        "spear": 267,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -5293,7 +5356,8 @@
        "equipment": {
         "braid": 0,
         "harness": 76,
-        "spear": 263
+        "spear": 263,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -5345,7 +5409,8 @@
        "equipment": {
         "braid": 0,
         "harness": 76,
-        "spear": 259
+        "spear": 259,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -5397,7 +5462,8 @@
        "equipment": {
         "braid": 0,
         "harness": 76,
-        "spear": 259
+        "spear": 259,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -5449,7 +5515,8 @@
        "equipment": {
         "braid": 0,
         "harness": 76,
-        "spear": 255
+        "spear": 255,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -5501,7 +5568,8 @@
        "equipment": {
         "braid": 0,
         "harness": 76,
-        "spear": 253
+        "spear": 253,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -5553,7 +5621,8 @@
        "equipment": {
         "braid": 0,
         "harness": 76,
-        "spear": 257
+        "spear": 257,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -5605,7 +5674,8 @@
        "equipment": {
         "braid": 0,
         "harness": 76,
-        "spear": 258
+        "spear": 258,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -5657,7 +5727,8 @@
        "equipment": {
         "braid": 0,
         "harness": 76,
-        "spear": 261
+        "spear": 261,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -5709,7 +5780,8 @@
        "equipment": {
         "braid": 0,
         "harness": 76,
-        "spear": 261
+        "spear": 261,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -6393,7 +6465,8 @@
        "equipment": {
         "braid": 52,
         "harness": 9,
-        "spear": 239
+        "spear": 239,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -6445,7 +6518,8 @@
        "equipment": {
         "braid": 53,
         "harness": 9,
-        "spear": 225
+        "spear": 225,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -6497,7 +6571,8 @@
        "equipment": {
         "braid": 51,
         "harness": 7,
-        "spear": 237
+        "spear": 237,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -6549,7 +6624,8 @@
        "equipment": {
         "braid": 54,
         "harness": 17,
-        "spear": 178
+        "spear": 178,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -6601,7 +6677,8 @@
        "equipment": {
         "braid": 54,
         "harness": 19,
-        "spear": 179
+        "spear": 179,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.8
@@ -6653,7 +6730,8 @@
        "equipment": {
         "braid": 57,
         "harness": 14,
-        "spear": 232
+        "spear": 227,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -6705,7 +6783,8 @@
        "equipment": {
         "braid": 56,
         "harness": 19,
-        "spear": 238
+        "spear": 230,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -6757,7 +6836,8 @@
        "equipment": {
         "braid": 57,
         "harness": 16,
-        "spear": 232
+        "spear": 224,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -6809,7 +6889,8 @@
        "equipment": {
         "braid": 54,
         "harness": 12,
-        "spear": 240
+        "spear": 235,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -6861,7 +6942,8 @@
        "equipment": {
         "braid": 54,
         "harness": 17,
-        "spear": 180
+        "spear": 180,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -6913,7 +6995,8 @@
        "equipment": {
         "braid": 51,
         "harness": 17,
-        "spear": 177
+        "spear": 177,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.8
@@ -6965,7 +7048,8 @@
        "equipment": {
         "braid": 53,
         "harness": 7,
-        "spear": 231
+        "spear": 231,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -7021,7 +7105,8 @@
        "equipment": {
         "braid": 80,
         "spear": 101,
-        "harness": 41
+        "harness": 41,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -7073,7 +7158,8 @@
        "equipment": {
         "braid": 74,
         "spear": 98,
-        "harness": 36
+        "harness": 36,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -7125,7 +7211,8 @@
        "equipment": {
         "braid": 74,
         "spear": 81,
-        "harness": 32
+        "harness": 32,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -7177,7 +7264,8 @@
        "equipment": {
         "braid": 80,
         "spear": 88,
-        "harness": 29
+        "harness": 29,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -7229,7 +7317,8 @@
        "equipment": {
         "braid": 71,
         "spear": 87,
-        "harness": 27
+        "harness": 27,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -7281,7 +7370,8 @@
        "equipment": {
         "braid": 70,
         "spear": 91,
-        "harness": 27
+        "harness": 27,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -7333,7 +7423,8 @@
        "equipment": {
         "braid": 73,
         "spear": 116,
-        "harness": 27
+        "harness": 27,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -7385,7 +7476,8 @@
        "equipment": {
         "braid": 70,
         "spear": 105,
-        "harness": 27
+        "harness": 27,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -7437,7 +7529,8 @@
        "equipment": {
         "braid": 71,
         "spear": 95,
-        "harness": 27
+        "harness": 27,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -7489,7 +7582,8 @@
        "equipment": {
         "braid": 80,
         "spear": 91,
-        "harness": 29
+        "harness": 29,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -7541,7 +7635,8 @@
        "equipment": {
         "braid": 74,
         "spear": 85,
-        "harness": 32
+        "harness": 32,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -7593,7 +7688,8 @@
        "equipment": {
         "braid": 74,
         "spear": 106,
-        "harness": 36
+        "harness": 36,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -7651,7 +7747,8 @@
        "equipment": {
         "braid": 17,
         "harness": 70,
-        "spear": 216
+        "spear": 216,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -7703,7 +7800,8 @@
        "equipment": {
         "braid": 16,
         "harness": 70,
-        "spear": 229
+        "spear": 229,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -7755,7 +7853,8 @@
        "equipment": {
         "braid": 16,
         "harness": 70,
-        "spear": 230
+        "spear": 230,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -7807,7 +7906,8 @@
        "equipment": {
         "braid": 15,
         "harness": 70,
-        "spear": 204
+        "spear": 204,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -7859,7 +7959,8 @@
        "equipment": {
         "braid": 13,
         "harness": 70,
-        "spear": 202
+        "spear": 202,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -7911,7 +8012,8 @@
        "equipment": {
         "braid": 11,
         "harness": 70,
-        "spear": 221
+        "spear": 221,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -7963,7 +8065,8 @@
        "equipment": {
         "braid": 8,
         "harness": 70,
-        "spear": 221
+        "spear": 221,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -8015,7 +8118,8 @@
        "equipment": {
         "braid": 10,
         "harness": 70,
-        "spear": 223
+        "spear": 223,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -8067,7 +8171,8 @@
        "equipment": {
         "braid": 11,
         "harness": 70,
-        "spear": 227
+        "spear": 227,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -8119,7 +8224,8 @@
        "equipment": {
         "braid": 15,
         "harness": 70,
-        "spear": 195
+        "spear": 195,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -8171,7 +8277,8 @@
        "equipment": {
         "braid": 15,
         "harness": 70,
-        "spear": 202
+        "spear": 202,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -8223,7 +8330,8 @@
        "equipment": {
         "braid": 16,
         "harness": 70,
-        "spear": 224
+        "spear": 224,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -8907,7 +9015,8 @@
        "equipment": {
         "braid": 52,
         "spear": 169,
-        "harness": 78
+        "harness": 78,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -8959,7 +9068,8 @@
        "equipment": {
         "braid": 53,
         "spear": 199,
-        "harness": 78
+        "harness": 78,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -9011,7 +9121,8 @@
        "equipment": {
         "braid": 55,
         "spear": 211,
-        "harness": 78
+        "harness": 78,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -9063,7 +9174,8 @@
        "equipment": {
         "braid": 60,
         "spear": 210,
-        "harness": 78
+        "harness": 78,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -9115,7 +9227,8 @@
        "equipment": {
         "braid": 67,
         "spear": 214,
-        "harness": 78
+        "harness": 78,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -9167,7 +9280,8 @@
        "equipment": {
         "braid": 75,
         "spear": 213,
-        "harness": 78
+        "harness": 78,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -9219,7 +9333,8 @@
        "equipment": {
         "braid": 84,
         "spear": 216,
-        "harness": 78
+        "harness": 78,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -9271,7 +9386,8 @@
        "equipment": {
         "braid": 75,
         "spear": 209,
-        "harness": 78
+        "harness": 78,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -9323,7 +9439,8 @@
        "equipment": {
         "braid": 67,
         "spear": 208,
-        "harness": 78
+        "harness": 78,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -9375,7 +9492,8 @@
        "equipment": {
         "braid": 60,
         "spear": 199,
-        "harness": 78
+        "harness": 78,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -9427,7 +9545,8 @@
        "equipment": {
         "braid": 55,
         "spear": 192,
-        "harness": 78
+        "harness": 78,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -9479,7 +9598,8 @@
        "equipment": {
         "braid": 51,
         "spear": 179,
-        "harness": 78
+        "harness": 78,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -10191,7 +10311,8 @@
        "equipment": {
         "braid": 0,
         "spear": 190,
-        "harness": 74
+        "harness": 74,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -10243,7 +10364,8 @@
        "equipment": {
         "braid": 0,
         "spear": 123,
-        "harness": 38
+        "harness": 38,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -10295,7 +10417,8 @@
        "equipment": {
         "braid": 0,
         "spear": 74,
-        "harness": 46
+        "harness": 46,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -10347,7 +10470,8 @@
        "equipment": {
         "braid": 0,
         "spear": 74,
-        "harness": 45
+        "harness": 45,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -10399,7 +10523,8 @@
        "equipment": {
         "braid": 0,
         "spear": 81,
-        "harness": 42
+        "harness": 42,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -10451,7 +10576,8 @@
        "equipment": {
         "braid": 0,
         "spear": 80,
-        "harness": 33
+        "harness": 33,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -10503,7 +10629,8 @@
        "equipment": {
         "braid": 0,
         "spear": 79,
-        "harness": 30
+        "harness": 30,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -10555,7 +10682,8 @@
        "equipment": {
         "braid": 0,
         "spear": 77,
-        "harness": 28
+        "harness": 28,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -10607,7 +10735,8 @@
        "equipment": {
         "braid": 0,
         "spear": 79,
-        "harness": 28
+        "harness": 28,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -10659,7 +10788,8 @@
        "equipment": {
         "braid": 0,
         "spear": 84,
-        "harness": 30
+        "harness": 30,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -10711,7 +10841,8 @@
        "equipment": {
         "braid": 0,
         "spear": 101,
-        "harness": 33
+        "harness": 33,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.8
@@ -10763,7 +10894,8 @@
        "equipment": {
         "braid": 0,
         "spear": 127,
-        "harness": 31
+        "harness": 31,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -10815,7 +10947,8 @@
        "equipment": {
         "braid": 0,
         "harness": 75,
-        "spear": 188
+        "spear": 188,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -10867,7 +11000,8 @@
        "equipment": {
         "braid": 0,
         "harness": 75,
-        "spear": 267
+        "spear": 267,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -10919,7 +11053,8 @@
        "equipment": {
         "braid": 0,
         "harness": 75,
-        "spear": 267
+        "spear": 267,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -11769,7 +11904,8 @@
        "equipment": {
         "braid": 66,
         "harness": 24,
-        "spear": 230
+        "spear": 230,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -11821,7 +11957,8 @@
        "equipment": {
         "braid": 68,
         "spear": 184,
-        "harness": 18
+        "harness": 18,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.8
@@ -11873,7 +12010,8 @@
        "equipment": {
         "braid": 89,
         "spear": 207,
-        "harness": 18
+        "harness": 18,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -11925,7 +12063,8 @@
        "equipment": {
         "braid": 97,
         "spear": 206,
-        "harness": 16
+        "harness": 16,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.8
@@ -11977,7 +12116,8 @@
        "equipment": {
         "braid": 102,
         "spear": 207,
-        "harness": 17
+        "harness": 17,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -12029,7 +12169,8 @@
        "equipment": {
         "braid": 41,
         "spear": 203,
-        "harness": 18
+        "harness": 18,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -12081,7 +12222,8 @@
        "equipment": {
         "braid": 22,
         "spear": 204,
-        "harness": 18
+        "harness": 18,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -12133,7 +12275,8 @@
        "equipment": {
         "braid": 18,
         "spear": 204,
-        "harness": 18
+        "harness": 18,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -12185,7 +12328,8 @@
        "equipment": {
         "braid": 17,
         "spear": 205,
-        "harness": 21
+        "harness": 21,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -12237,7 +12381,8 @@
        "equipment": {
         "braid": 28,
         "spear": 200,
-        "harness": 20
+        "harness": 20,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 1.0
@@ -12289,7 +12434,8 @@
        "equipment": {
         "braid": 31,
         "spear": 199,
-        "harness": 19
+        "harness": 19,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 1.1
@@ -12341,7 +12487,8 @@
        "equipment": {
         "braid": 46,
         "spear": 181,
-        "harness": 21
+        "harness": 21,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -12393,7 +12540,8 @@
        "equipment": {
         "braid": 70,
         "harness": 24,
-        "spear": 232
+        "spear": 232,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -12445,7 +12593,8 @@
        "equipment": {
         "braid": 82,
         "harness": 19,
-        "spear": 197
+        "spear": 197,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -12497,7 +12646,8 @@
        "equipment": {
         "braid": 82,
         "harness": 19,
-        "spear": 197
+        "spear": 197,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -12558,7 +12708,8 @@
        "equipment": {
         "braid": 82,
         "spear": 153,
-        "harness": 34
+        "harness": 34,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -12610,7 +12761,8 @@
        "equipment": {
         "braid": 82,
         "spear": 147,
-        "harness": 24
+        "harness": 24,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -12662,7 +12814,8 @@
        "equipment": {
         "braid": 106,
         "spear": 168,
-        "harness": 50
+        "harness": 50,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -12714,7 +12867,8 @@
        "equipment": {
         "braid": 118,
         "spear": 168,
-        "harness": 51
+        "harness": 51,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -12766,7 +12920,8 @@
        "equipment": {
         "braid": 115,
         "spear": 172,
-        "harness": 49
+        "harness": 49,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -12818,7 +12973,8 @@
        "equipment": {
         "braid": 70,
         "spear": 165,
-        "harness": 50
+        "harness": 50,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -12870,7 +13026,8 @@
        "equipment": {
         "braid": 42,
         "spear": 168,
-        "harness": 50
+        "harness": 50,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -12922,7 +13079,8 @@
        "equipment": {
         "braid": 29,
         "spear": 167,
-        "harness": 56
+        "harness": 56,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -12974,7 +13132,8 @@
        "equipment": {
         "braid": 29,
         "spear": 165,
-        "harness": 60
+        "harness": 60,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -13026,7 +13185,8 @@
        "equipment": {
         "braid": 52,
         "spear": 165,
-        "harness": 49
+        "harness": 49,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -13078,7 +13238,8 @@
        "equipment": {
         "braid": 61,
         "spear": 168,
-        "harness": 23
+        "harness": 23,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -13130,7 +13291,8 @@
        "equipment": {
         "braid": 76,
         "spear": 144,
-        "harness": 24
+        "harness": 24,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -13182,7 +13344,8 @@
        "equipment": {
         "braid": 90,
         "spear": 162,
-        "harness": 35
+        "harness": 35,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -13234,7 +13397,8 @@
        "equipment": {
         "braid": 89,
         "spear": 83,
-        "harness": 35
+        "harness": 35,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -13286,7 +13450,8 @@
        "equipment": {
         "braid": 89,
         "spear": 81,
-        "harness": 35
+        "harness": 35,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -13379,7 +13544,8 @@
        "equipment": {
         "braid": 0,
         "spear": 123,
-        "harness": 38
+        "harness": 38,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -13432,7 +13598,8 @@
         "braid": 0,
         "spear": 72,
         "harness": 46,
-        "storm": 21
+        "storm": 21,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -13485,7 +13652,8 @@
         "braid": 0,
         "spear": 70,
         "harness": 48,
-        "storm": 27
+        "storm": 27,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -13538,7 +13706,8 @@
         "braid": 0,
         "spear": 74,
         "harness": 43,
-        "storm": 44
+        "storm": 44,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -13591,7 +13760,8 @@
         "braid": 0,
         "spear": 68,
         "harness": 28,
-        "storm": 49
+        "storm": 49,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -13644,7 +13814,8 @@
         "braid": 0,
         "spear": 64,
         "harness": 28,
-        "storm": 82
+        "storm": 82,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -13697,7 +13868,8 @@
         "braid": 0,
         "spear": 65,
         "harness": 30,
-        "storm": 92
+        "storm": 92,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -13750,7 +13922,8 @@
         "braid": 0,
         "spear": 65,
         "harness": 30,
-        "storm": 76
+        "storm": 76,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -13803,7 +13976,8 @@
         "braid": 0,
         "spear": 74,
         "harness": 27,
-        "storm": 23
+        "storm": 23,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -13856,7 +14030,8 @@
         "braid": 0,
         "spear": 75,
         "harness": 28,
-        "storm": 22
+        "storm": 22,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -13908,7 +14083,8 @@
        "equipment": {
         "braid": 0,
         "spear": 82,
-        "harness": 40
+        "harness": 40,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -13960,7 +14136,8 @@
        "equipment": {
         "braid": 0,
         "spear": 123,
-        "harness": 39
+        "harness": 39,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -14012,7 +14189,8 @@
        "equipment": {
         "braid": 0,
         "harness": 75,
-        "spear": 188
+        "spear": 188,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -14064,7 +14242,8 @@
        "equipment": {
         "braid": 0,
         "harness": 75,
-        "spear": 267
+        "spear": 267,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -14116,7 +14295,8 @@
        "equipment": {
         "braid": 0,
         "harness": 75,
-        "spear": 267
+        "spear": 267,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -14975,7 +15155,8 @@
        "equipment": {
         "braid": 68,
         "spear": 184,
-        "harness": 18
+        "harness": 18,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.8
@@ -15028,7 +15209,8 @@
         "braid": 99,
         "spear": 204,
         "harness": 19,
-        "storm": 21
+        "storm": 21,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -15081,7 +15263,8 @@
         "braid": 101,
         "spear": 202,
         "harness": 22,
-        "storm": 27
+        "storm": 27,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -15134,7 +15317,8 @@
         "braid": 98,
         "spear": 202,
         "harness": 24,
-        "storm": 34
+        "storm": 34,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -15187,7 +15371,8 @@
         "braid": 18,
         "spear": 198,
         "harness": 22,
-        "storm": 44
+        "storm": 44,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -15240,7 +15425,8 @@
         "braid": 16,
         "spear": 197,
         "harness": 16,
-        "storm": 79
+        "storm": 79,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -15293,7 +15479,8 @@
         "braid": 15,
         "spear": 190,
         "harness": 28,
-        "storm": 83
+        "storm": 83,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.9
@@ -15346,7 +15533,8 @@
         "braid": 14,
         "spear": 189,
         "harness": 28,
-        "storm": 61
+        "storm": 61,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.9
@@ -15399,7 +15587,8 @@
         "braid": 18,
         "spear": 199,
         "harness": 20,
-        "storm": 34
+        "storm": 34,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -15452,7 +15641,8 @@
         "braid": 24,
         "spear": 207,
         "harness": 16,
-        "storm": 22
+        "storm": 22,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -15504,7 +15694,8 @@
        "equipment": {
         "braid": 26,
         "spear": 205,
-        "harness": 17
+        "harness": 17,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -15556,7 +15747,8 @@
        "equipment": {
         "braid": 44,
         "spear": 184,
-        "harness": 20
+        "harness": 20,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.8
@@ -15608,7 +15800,8 @@
        "equipment": {
         "braid": 83,
         "harness": 24,
-        "spear": 233
+        "spear": 233,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -15660,7 +15853,8 @@
        "equipment": {
         "braid": 82,
         "harness": 19,
-        "spear": 197
+        "spear": 197,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -15712,7 +15906,8 @@
        "equipment": {
         "braid": 82,
         "harness": 19,
-        "spear": 197
+        "spear": 197,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -15773,7 +15968,8 @@
        "equipment": {
         "braid": 82,
         "spear": 147,
-        "harness": 24
+        "harness": 24,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -15826,7 +16022,8 @@
         "braid": 108,
         "spear": 168,
         "harness": 50,
-        "storm": 28
+        "storm": 28,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -15879,7 +16076,8 @@
         "braid": 107,
         "spear": 160,
         "harness": 55,
-        "storm": 38
+        "storm": 38,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -15932,7 +16130,8 @@
         "braid": 108,
         "spear": 163,
         "harness": 57,
-        "storm": 40
+        "storm": 40,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -15985,7 +16184,8 @@
         "braid": 31,
         "spear": 146,
         "harness": 52,
-        "storm": 54
+        "storm": 54,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -16038,7 +16238,8 @@
         "braid": 27,
         "spear": 135,
         "harness": 50,
-        "storm": 84
+        "storm": 84,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -16091,7 +16292,8 @@
         "braid": 20,
         "spear": 133,
         "harness": 58,
-        "storm": 98
+        "storm": 98,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -16144,7 +16346,8 @@
         "braid": 22,
         "spear": 135,
         "harness": 56,
-        "storm": 77
+        "storm": 77,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -16197,7 +16400,8 @@
         "braid": 27,
         "spear": 148,
         "harness": 52,
-        "storm": 28
+        "storm": 28,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -16250,7 +16454,8 @@
         "braid": 34,
         "spear": 152,
         "harness": 42,
-        "storm": 23
+        "storm": 23,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -16302,7 +16507,8 @@
        "equipment": {
         "braid": 42,
         "spear": 159,
-        "harness": 45
+        "harness": 45,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -16354,7 +16560,8 @@
        "equipment": {
         "braid": 71,
         "spear": 147,
-        "harness": 26
+        "harness": 26,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -16406,7 +16613,8 @@
        "equipment": {
         "braid": 89,
         "spear": 162,
-        "harness": 35
+        "harness": 35,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -16458,7 +16666,8 @@
        "equipment": {
         "braid": 89,
         "spear": 83,
-        "harness": 35
+        "harness": 35,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -16510,7 +16719,8 @@
        "equipment": {
         "braid": 89,
         "spear": 81,
-        "harness": 35
+        "harness": 35,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -16599,7 +16809,8 @@
        "equipment": {
         "braid": 0,
         "harness": 73,
-        "spear": 210
+        "spear": 210,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -16651,7 +16862,8 @@
        "equipment": {
         "braid": 0,
         "harness": 69,
-        "spear": 216
+        "spear": 216,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -16704,7 +16916,8 @@
         "braid": 0,
         "harness": 75,
         "spear": 206,
-        "storm": 26
+        "storm": 26,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -16757,7 +16970,8 @@
         "braid": 0,
         "harness": 72,
         "spear": 205,
-        "storm": 34
+        "storm": 34,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -16810,7 +17024,8 @@
         "braid": 0,
         "harness": 74,
         "spear": 192,
-        "storm": 37
+        "storm": 37,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -16863,7 +17078,8 @@
         "braid": 0,
         "harness": 77,
         "spear": 182,
-        "storm": 87
+        "storm": 87,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -16916,7 +17132,8 @@
         "braid": 0,
         "harness": 76,
         "spear": 186,
-        "storm": 100
+        "storm": 100,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -16969,7 +17186,8 @@
         "braid": 0,
         "harness": 72,
         "spear": 200,
-        "storm": 70
+        "storm": 70,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -17022,7 +17240,8 @@
         "braid": 0,
         "harness": 74,
         "spear": 197,
-        "storm": 72
+        "storm": 72,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -17075,7 +17294,8 @@
         "braid": 0,
         "harness": 73,
         "spear": 195,
-        "storm": 63
+        "storm": 63,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -17128,7 +17348,8 @@
         "braid": 0,
         "harness": 75,
         "spear": 248,
-        "storm": 69
+        "storm": 69,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -17779,7 +18000,8 @@
        "equipment": {
         "braid": 81,
         "harness": 22,
-        "spear": 248
+        "spear": 243,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -17831,7 +18053,8 @@
        "equipment": {
         "braid": 82,
         "harness": 19,
-        "spear": 253
+        "spear": 249,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -17883,8 +18106,9 @@
        "equipment": {
         "braid": 78,
         "harness": 31,
-        "spear": 245,
-        "storm": 31
+        "spear": 240,
+        "storm": 31,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -17936,8 +18160,9 @@
        "equipment": {
         "braid": 74,
         "harness": 33,
-        "spear": 243,
-        "storm": 32
+        "spear": 239,
+        "storm": 32,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -17989,8 +18214,9 @@
        "equipment": {
         "braid": 64,
         "harness": 30,
-        "spear": 225,
-        "storm": 36
+        "spear": 221,
+        "storm": 36,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -18042,8 +18268,9 @@
        "equipment": {
         "braid": 86,
         "harness": 31,
-        "spear": 219,
-        "storm": 92
+        "spear": 215,
+        "storm": 92,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -18095,8 +18322,9 @@
        "equipment": {
         "braid": 76,
         "harness": 30,
-        "spear": 221,
-        "storm": 88
+        "spear": 216,
+        "storm": 88,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -18148,8 +18376,9 @@
        "equipment": {
         "braid": 73,
         "harness": 29,
-        "spear": 236,
-        "storm": 65
+        "spear": 231,
+        "storm": 65,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -18201,8 +18430,9 @@
        "equipment": {
         "braid": 77,
         "harness": 29,
-        "spear": 237,
-        "storm": 63
+        "spear": 234,
+        "storm": 62,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -18254,8 +18484,9 @@
        "equipment": {
         "braid": 81,
         "harness": 21,
-        "spear": 230,
-        "storm": 61
+        "spear": 226,
+        "storm": 59,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -18308,7 +18539,8 @@
         "braid": 82,
         "harness": 18,
         "spear": 183,
-        "storm": 74
+        "storm": 74,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -18369,7 +18601,8 @@
        "equipment": {
         "braid": 91,
         "spear": 98,
-        "harness": 35
+        "harness": 35,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -18421,7 +18654,8 @@
        "equipment": {
         "braid": 87,
         "spear": 96,
-        "harness": 27
+        "harness": 27,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -18474,7 +18708,8 @@
         "braid": 87,
         "spear": 98,
         "harness": 34,
-        "storm": 32
+        "storm": 32,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -18527,7 +18762,8 @@
         "braid": 94,
         "spear": 94,
         "harness": 52,
-        "storm": 37
+        "storm": 37,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -18580,7 +18816,8 @@
         "braid": 79,
         "spear": 93,
         "harness": 55,
-        "storm": 40
+        "storm": 40,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -18633,7 +18870,8 @@
         "braid": 105,
         "spear": 91,
         "harness": 53,
-        "storm": 84
+        "storm": 84,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -18686,7 +18924,8 @@
         "braid": 105,
         "spear": 90,
         "harness": 40,
-        "storm": 87
+        "storm": 87,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -18739,7 +18978,8 @@
         "braid": 90,
         "spear": 85,
         "harness": 24,
-        "storm": 66
+        "storm": 66,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -18792,7 +19032,8 @@
         "braid": 90,
         "spear": 91,
         "harness": 31,
-        "storm": 58
+        "storm": 58,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -18845,7 +19086,8 @@
         "braid": 91,
         "spear": 85,
         "harness": 35,
-        "storm": 47
+        "storm": 47,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -18898,7 +19140,8 @@
         "braid": 89,
         "spear": 63,
         "harness": 35,
-        "storm": 67
+        "storm": 67,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -18993,7 +19236,8 @@
        "equipment": {
         "braid": 0,
         "harness": 72,
-        "spear": 195
+        "spear": 195,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -19045,7 +19289,8 @@
        "equipment": {
         "braid": 0,
         "harness": 52,
-        "spear": 176
+        "spear": 176,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -19097,7 +19342,8 @@
        "equipment": {
         "braid": 0,
         "harness": 59,
-        "spear": 184
+        "spear": 184,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -19149,7 +19395,8 @@
        "equipment": {
         "braid": 0,
         "harness": 61,
-        "spear": 185
+        "spear": 185,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -19201,7 +19448,8 @@
        "equipment": {
         "braid": 0,
         "harness": 61,
-        "spear": 187
+        "spear": 187,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -19253,7 +19501,8 @@
        "equipment": {
         "braid": 0,
         "harness": 51,
-        "spear": 182
+        "spear": 182,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -19305,7 +19554,8 @@
        "equipment": {
         "braid": 0,
         "harness": 72,
-        "spear": 200
+        "spear": 200,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -19357,7 +19607,8 @@
        "equipment": {
         "braid": 0,
         "harness": 75,
-        "spear": 267
+        "spear": 267,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -19833,7 +20084,8 @@
        "equipment": {
         "braid": 83,
         "harness": 24,
-        "spear": 206
+        "spear": 206,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -19885,7 +20137,8 @@
        "equipment": {
         "braid": 81,
         "spear": 183,
-        "harness": 33
+        "harness": 33,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -19937,7 +20190,8 @@
        "equipment": {
         "braid": 82,
         "spear": 180,
-        "harness": 32
+        "harness": 32,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -19989,7 +20243,8 @@
        "equipment": {
         "braid": 44,
         "spear": 194,
-        "harness": 33
+        "harness": 33,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.8
@@ -20041,7 +20296,8 @@
        "equipment": {
         "braid": 36,
         "spear": 197,
-        "harness": 34
+        "harness": 34,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -20093,7 +20349,8 @@
        "equipment": {
         "braid": 78,
         "spear": 183,
-        "harness": 31
+        "harness": 31,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -20145,7 +20402,8 @@
        "equipment": {
         "braid": 81,
         "harness": 27,
-        "spear": 209
+        "spear": 209,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -20197,7 +20455,8 @@
        "equipment": {
         "braid": 82,
         "harness": 19,
-        "spear": 197
+        "spear": 197,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -20253,7 +20512,8 @@
        "equipment": {
         "braid": 89,
         "spear": 149,
-        "harness": 35
+        "harness": 35,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -20305,7 +20565,8 @@
        "equipment": {
         "braid": 93,
         "spear": 131,
-        "harness": 35
+        "harness": 35,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -20357,7 +20618,8 @@
        "equipment": {
         "braid": 93,
         "spear": 127,
-        "harness": 46
+        "harness": 46,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -20409,7 +20671,8 @@
        "equipment": {
         "braid": 56,
         "spear": 128,
-        "harness": 49
+        "harness": 49,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -20461,7 +20724,8 @@
        "equipment": {
         "braid": 53,
         "spear": 134,
-        "harness": 43
+        "harness": 43,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -20513,7 +20777,8 @@
        "equipment": {
         "braid": 87,
         "spear": 131,
-        "harness": 35
+        "harness": 35,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -20565,7 +20830,8 @@
        "equipment": {
         "braid": 91,
         "spear": 153,
-        "harness": 35
+        "harness": 35,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -20617,7 +20883,8 @@
        "equipment": {
         "braid": 89,
         "spear": 81,
-        "harness": 35
+        "harness": 35,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -20695,7 +20962,8 @@
        "equipment": {
         "braid": 0,
         "spear": 244,
-        "harness": 84
+        "harness": 84,
+        "face": 6
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -20747,7 +21015,8 @@
        "equipment": {
         "braid": 0,
         "spear": 256,
-        "harness": 85
+        "harness": 85,
+        "face": 6
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -20799,7 +21068,8 @@
        "equipment": {
         "braid": 0,
         "spear": 228,
-        "harness": 83
+        "harness": 83,
+        "face": 6
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -20851,7 +21121,8 @@
        "equipment": {
         "braid": 0,
         "spear": 216,
-        "harness": 83
+        "harness": 83,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -20903,7 +21174,8 @@
        "equipment": {
         "braid": 0,
         "harness": 77,
-        "spear": 276
+        "spear": 276,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -20955,7 +21227,8 @@
        "equipment": {
         "braid": 0,
         "harness": 78,
-        "spear": 267
+        "spear": 267,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -21007,7 +21280,8 @@
        "equipment": {
         "braid": 0,
         "harness": 75,
-        "spear": 265
+        "spear": 265,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -21059,7 +21333,8 @@
        "equipment": {
         "braid": 0,
         "harness": 78,
-        "spear": 267
+        "spear": 267,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -21111,7 +21386,8 @@
        "equipment": {
         "braid": 0,
         "harness": 75,
-        "spear": 267
+        "spear": 267,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -21639,7 +21915,8 @@
        "equipment": {
         "braid": 136,
         "harness": 11,
-        "spear": 238
+        "spear": 238,
+        "face": 3
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -21691,7 +21968,8 @@
        "equipment": {
         "braid": 137,
         "harness": 15,
-        "spear": 232
+        "spear": 232,
+        "face": 3
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -21743,7 +22021,8 @@
        "equipment": {
         "braid": 140,
         "harness": 11,
-        "spear": 234
+        "spear": 234,
+        "face": 3
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -21795,7 +22074,8 @@
        "equipment": {
         "braid": 132,
         "harness": 12,
-        "spear": 241
+        "spear": 241,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -21847,7 +22127,8 @@
        "equipment": {
         "braid": 104,
         "harness": 13,
-        "spear": 228
+        "spear": 228,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -21899,7 +22180,8 @@
        "equipment": {
         "braid": 67,
         "harness": 11,
-        "spear": 239
+        "spear": 239,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -21951,7 +22233,8 @@
        "equipment": {
         "braid": 70,
         "harness": 21,
-        "spear": 195
+        "spear": 195,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -22003,7 +22286,8 @@
        "equipment": {
         "braid": 69,
         "harness": 17,
-        "spear": 197
+        "spear": 197,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -22055,7 +22339,8 @@
        "equipment": {
         "braid": 82,
         "harness": 19,
-        "spear": 197
+        "spear": 197,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -22111,7 +22396,8 @@
        "equipment": {
         "braid": 127,
         "spear": 105,
-        "harness": 48
+        "harness": 48,
+        "face": 3
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -22163,7 +22449,8 @@
        "equipment": {
         "braid": 133,
         "spear": 102,
-        "harness": 46
+        "harness": 46,
+        "face": 3
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -22215,7 +22502,8 @@
        "equipment": {
         "braid": 123,
         "spear": 108,
-        "harness": 46
+        "harness": 46,
+        "face": 3
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -22267,7 +22555,8 @@
        "equipment": {
         "braid": 132,
         "spear": 107,
-        "harness": 45
+        "harness": 45,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -22319,7 +22608,8 @@
        "equipment": {
         "braid": 129,
         "spear": 99,
-        "harness": 35
+        "harness": 35,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -22371,7 +22661,8 @@
        "equipment": {
         "braid": 94,
         "spear": 90,
-        "harness": 31
+        "harness": 31,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -22423,7 +22714,8 @@
        "equipment": {
         "braid": 101,
         "spear": 83,
-        "harness": 31
+        "harness": 31,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -22475,7 +22767,8 @@
        "equipment": {
         "braid": 93,
         "spear": 81,
-        "harness": 35
+        "harness": 35,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -22527,7 +22820,8 @@
        "equipment": {
         "braid": 89,
         "spear": 81,
-        "harness": 35
+        "harness": 35,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -22604,7 +22898,8 @@
        "equipment": {
         "braid": 0,
         "harness": 84,
-        "spear": 267
+        "spear": 267,
+        "face": 6
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -22656,7 +22951,8 @@
        "equipment": {
         "braid": 0,
         "harness": 69,
-        "spear": 225
+        "spear": 225,
+        "face": 6
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -22708,7 +23004,8 @@
        "equipment": {
         "braid": 0,
         "harness": 29,
-        "spear": 218
+        "spear": 214,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.8
@@ -22760,7 +23057,8 @@
        "equipment": {
         "braid": 0,
         "harness": 29,
-        "spear": 201
+        "spear": 197,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -22812,7 +23110,8 @@
        "equipment": {
         "braid": 0,
         "harness": 29,
-        "spear": 198
+        "spear": 197,
+        "face": 6
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -22864,7 +23163,8 @@
        "equipment": {
         "braid": 0,
         "harness": 23,
-        "spear": 212
+        "spear": 212,
+        "face": 6
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -22916,7 +23216,8 @@
        "equipment": {
         "braid": 0,
         "harness": 23,
-        "spear": 212
+        "spear": 212,
+        "face": 6
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -22968,7 +23269,8 @@
        "equipment": {
         "braid": 0,
         "harness": 23,
-        "spear": 212
+        "spear": 212,
+        "face": 6
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -23444,7 +23746,8 @@
        "equipment": {
         "braid": 142,
         "harness": 19,
-        "spear": 239
+        "spear": 237,
+        "face": 3
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -23496,7 +23799,8 @@
        "equipment": {
         "braid": 37,
         "harness": 36,
-        "spear": 231
+        "spear": 231,
+        "face": 3
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -23548,7 +23852,8 @@
        "equipment": {
         "braid": 29,
         "harness": 33,
-        "spear": 221
+        "spear": 219,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -23600,7 +23905,8 @@
        "equipment": {
         "braid": 22,
         "harness": 31,
-        "spear": 215
+        "spear": 211,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -23652,7 +23958,8 @@
        "equipment": {
         "braid": 24,
         "harness": 29,
-        "spear": 212
+        "spear": 209,
+        "face": 3
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -23704,7 +24011,8 @@
        "equipment": {
         "braid": 26,
         "harness": 29,
-        "spear": 214
+        "spear": 211,
+        "face": 3
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -23756,7 +24064,8 @@
        "equipment": {
         "braid": 19,
         "harness": 31,
-        "spear": 213
+        "spear": 211,
+        "face": 3
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -23808,7 +24117,8 @@
        "equipment": {
         "braid": 19,
         "harness": 31,
-        "spear": 213
+        "spear": 211,
+        "face": 3
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -23864,7 +24174,8 @@
        "equipment": {
         "braid": 146,
         "spear": 119,
-        "harness": 43
+        "harness": 43,
+        "face": 3
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -23916,7 +24227,8 @@
        "equipment": {
         "braid": 54,
         "spear": 151,
-        "harness": 33
+        "harness": 33,
+        "face": 3
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -23968,7 +24280,8 @@
        "equipment": {
         "braid": 32,
         "spear": 173,
-        "harness": 39
+        "harness": 39,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -24020,7 +24333,8 @@
        "equipment": {
         "braid": 27,
         "spear": 181,
-        "harness": 20
+        "harness": 20,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -24071,8 +24385,9 @@
        },
        "equipment": {
         "braid": 22,
-        "spear": 180,
-        "harness": 21
+        "spear": 178,
+        "harness": 21,
+        "face": 3
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -24123,8 +24438,9 @@
        },
        "equipment": {
         "braid": 30,
-        "spear": 212,
-        "harness": 17
+        "spear": 209,
+        "harness": 17,
+        "face": 3
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -24175,8 +24491,9 @@
        },
        "equipment": {
         "braid": 23,
-        "spear": 211,
-        "harness": 15
+        "spear": 209,
+        "harness": 15,
+        "face": 3
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -24227,8 +24544,9 @@
        },
        "equipment": {
         "braid": 23,
-        "spear": 211,
-        "harness": 15
+        "spear": 209,
+        "harness": 15,
+        "face": 3
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -24314,7 +24632,8 @@
        "equipment": {
         "braid": 0,
         "harness": 75,
-        "spear": 230
+        "spear": 230,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -24366,7 +24685,8 @@
        "equipment": {
         "braid": 0,
         "harness": 74,
-        "spear": 248
+        "spear": 248,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -24418,7 +24738,8 @@
        "equipment": {
         "braid": 0,
         "harness": 75,
-        "spear": 174
+        "spear": 174,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -24470,7 +24791,8 @@
        "equipment": {
         "braid": 0,
         "harness": 75,
-        "spear": 173
+        "spear": 173,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -24522,7 +24844,8 @@
        "equipment": {
         "braid": 0,
         "harness": 78,
-        "spear": 174
+        "spear": 174,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -24574,7 +24897,8 @@
        "equipment": {
         "braid": 0,
         "harness": 72,
-        "spear": 230
+        "spear": 230,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -24626,7 +24950,8 @@
        "equipment": {
         "braid": 0,
         "harness": 74,
-        "spear": 229
+        "spear": 229,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -24678,7 +25003,8 @@
        "equipment": {
         "braid": 0,
         "harness": 75,
-        "spear": 267
+        "spear": 267,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -25154,7 +25480,8 @@
        "equipment": {
         "braid": 35,
         "harness": 25,
-        "spear": 234
+        "spear": 234,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -25206,7 +25533,8 @@
        "equipment": {
         "braid": 47,
         "harness": 30,
-        "spear": 247
+        "spear": 247,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -25258,7 +25586,8 @@
        "equipment": {
         "braid": 53,
         "harness": 25,
-        "spear": 237
+        "spear": 237,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.8
@@ -25310,7 +25639,8 @@
        "equipment": {
         "braid": 70,
         "harness": 15,
-        "spear": 238
+        "spear": 238,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -25362,7 +25692,8 @@
        "equipment": {
         "braid": 91,
         "harness": 18,
-        "spear": 239
+        "spear": 239,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -25414,7 +25745,8 @@
        "equipment": {
         "braid": 29,
         "harness": 39,
-        "spear": 234
+        "spear": 234,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -25466,7 +25798,8 @@
        "equipment": {
         "braid": 40,
         "harness": 28,
-        "spear": 233
+        "spear": 233,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.8
@@ -25518,7 +25851,8 @@
        "equipment": {
         "braid": 82,
         "harness": 19,
-        "spear": 197
+        "spear": 197,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -25574,7 +25908,8 @@
        "equipment": {
         "braid": 45,
         "spear": 165,
-        "harness": 28
+        "harness": 28,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -25626,7 +25961,8 @@
        "equipment": {
         "braid": 50,
         "spear": 160,
-        "harness": 32
+        "harness": 32,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -25678,7 +26014,8 @@
        "equipment": {
         "braid": 70,
         "spear": 161,
-        "harness": 49
+        "harness": 49,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -25730,7 +26067,8 @@
        "equipment": {
         "braid": 86,
         "spear": 168,
-        "harness": 39
+        "harness": 39,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -25782,7 +26120,8 @@
        "equipment": {
         "braid": 108,
         "spear": 157,
-        "harness": 49
+        "harness": 49,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -25834,7 +26173,8 @@
        "equipment": {
         "braid": 43,
         "spear": 182,
-        "harness": 33
+        "harness": 33,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -25886,7 +26226,8 @@
        "equipment": {
         "braid": 61,
         "spear": 168,
-        "harness": 27
+        "harness": 27,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -25938,7 +26279,8 @@
        "equipment": {
         "braid": 89,
         "spear": 81,
-        "harness": 35
+        "harness": 35,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -26015,7 +26357,8 @@
        "equipment": {
         "braid": 0,
         "harness": 75,
-        "spear": 254
+        "spear": 254,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -26067,7 +26410,8 @@
        "equipment": {
         "braid": 0,
         "harness": 75,
-        "spear": 255
+        "spear": 255,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -26119,7 +26463,8 @@
        "equipment": {
         "braid": 0,
         "harness": 75,
-        "spear": 258
+        "spear": 258,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -26171,7 +26516,8 @@
        "equipment": {
         "braid": 0,
         "harness": 75,
-        "spear": 256
+        "spear": 256,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -26223,7 +26569,8 @@
        "equipment": {
         "braid": 0,
         "harness": 75,
-        "spear": 254
+        "spear": 254,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -26275,7 +26622,8 @@
        "equipment": {
         "braid": 0,
         "harness": 75,
-        "spear": 256
+        "spear": 256,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -26327,7 +26675,8 @@
        "equipment": {
         "braid": 0,
         "harness": 75,
-        "spear": 258
+        "spear": 258,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -26379,7 +26728,8 @@
        "equipment": {
         "braid": 0,
         "harness": 75,
-        "spear": 255
+        "spear": 255,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -26855,7 +27205,8 @@
        "equipment": {
         "braid": 18,
         "harness": 17,
-        "spear": 233
+        "spear": 233,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -26907,7 +27258,8 @@
        "equipment": {
         "braid": 19,
         "harness": 17,
-        "spear": 239
+        "spear": 239,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -26959,7 +27311,8 @@
        "equipment": {
         "braid": 24,
         "harness": 13,
-        "spear": 233
+        "spear": 233,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -27011,7 +27364,8 @@
        "equipment": {
         "braid": 24,
         "harness": 10,
-        "spear": 231
+        "spear": 231,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -27063,7 +27417,8 @@
        "equipment": {
         "braid": 25,
         "harness": 17,
-        "spear": 229
+        "spear": 229,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -27115,7 +27470,8 @@
        "equipment": {
         "braid": 23,
         "harness": 16,
-        "spear": 227
+        "spear": 227,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -27167,7 +27523,8 @@
        "equipment": {
         "braid": 24,
         "harness": 13,
-        "spear": 233
+        "spear": 233,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -27219,7 +27576,8 @@
        "equipment": {
         "braid": 20,
         "harness": 15,
-        "spear": 237
+        "spear": 237,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.8
@@ -27275,7 +27633,8 @@
        "equipment": {
         "braid": 36,
         "spear": 108,
-        "harness": 33
+        "harness": 33,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -27327,7 +27686,8 @@
        "equipment": {
         "braid": 36,
         "spear": 111,
-        "harness": 29
+        "harness": 29,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -27379,7 +27739,8 @@
        "equipment": {
         "braid": 35,
         "spear": 103,
-        "harness": 26
+        "harness": 26,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -27431,7 +27792,8 @@
        "equipment": {
         "braid": 34,
         "spear": 106,
-        "harness": 24
+        "harness": 24,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -27483,7 +27845,8 @@
        "equipment": {
         "braid": 30,
         "spear": 112,
-        "harness": 22
+        "harness": 22,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -27535,7 +27898,8 @@
        "equipment": {
         "braid": 33,
         "spear": 111,
-        "harness": 24
+        "harness": 24,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -27587,7 +27951,8 @@
        "equipment": {
         "braid": 35,
         "spear": 103,
-        "harness": 26
+        "harness": 26,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -27639,7 +28004,8 @@
        "equipment": {
         "braid": 37,
         "spear": 105,
-        "harness": 29
+        "harness": 29,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -27716,7 +28082,8 @@
        "equipment": {
         "braid": 0,
         "harness": 83,
-        "spear": 257
+        "spear": 257,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -27768,7 +28135,8 @@
        "equipment": {
         "braid": 0,
         "harness": 83,
-        "spear": 253
+        "spear": 253,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -27820,7 +28188,8 @@
        "equipment": {
         "braid": 0,
         "harness": 83,
-        "spear": 258
+        "spear": 258,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -27872,7 +28241,8 @@
        "equipment": {
         "braid": 0,
         "harness": 83,
-        "spear": 259
+        "spear": 259,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -27924,7 +28294,8 @@
        "equipment": {
         "braid": 0,
         "harness": 83,
-        "spear": 257
+        "spear": 257,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -27976,7 +28347,8 @@
        "equipment": {
         "braid": 0,
         "harness": 83,
-        "spear": 255
+        "spear": 255,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -28028,7 +28400,8 @@
        "equipment": {
         "braid": 0,
         "harness": 83,
-        "spear": 258
+        "spear": 258,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -28080,7 +28453,8 @@
        "equipment": {
         "braid": 0,
         "harness": 83,
-        "spear": 256
+        "spear": 256,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -28556,7 +28930,8 @@
        "equipment": {
         "braid": 108,
         "harness": 12,
-        "spear": 232
+        "spear": 228,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -28608,7 +28983,8 @@
        "equipment": {
         "braid": 111,
         "harness": 16,
-        "spear": 231
+        "spear": 223,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -28660,7 +29036,8 @@
        "equipment": {
         "braid": 113,
         "harness": 17,
-        "spear": 231
+        "spear": 223,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.9
@@ -28712,7 +29089,8 @@
        "equipment": {
         "braid": 115,
         "harness": 20,
-        "spear": 235
+        "spear": 231,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -28764,7 +29142,8 @@
        "equipment": {
         "braid": 115,
         "harness": 25,
-        "spear": 232
+        "spear": 232,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -28816,7 +29195,8 @@
        "equipment": {
         "braid": 115,
         "harness": 20,
-        "spear": 231
+        "spear": 227,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.9
@@ -28868,7 +29248,8 @@
        "equipment": {
         "braid": 113,
         "harness": 17,
-        "spear": 231
+        "spear": 223,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.9
@@ -28920,7 +29301,8 @@
        "equipment": {
         "braid": 111,
         "harness": 16,
-        "spear": 235
+        "spear": 227,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -28976,7 +29358,8 @@
        "equipment": {
         "braid": 138,
         "spear": 115,
-        "harness": 46
+        "harness": 46,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -29028,7 +29411,8 @@
        "equipment": {
         "braid": 138,
         "spear": 117,
-        "harness": 40
+        "harness": 40,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -29080,7 +29464,8 @@
        "equipment": {
         "braid": 138,
         "spear": 122,
-        "harness": 35
+        "harness": 35,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -29132,7 +29517,8 @@
        "equipment": {
         "braid": 134,
         "spear": 135,
-        "harness": 35
+        "harness": 35,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -29184,7 +29570,8 @@
        "equipment": {
         "braid": 128,
         "spear": 156,
-        "harness": 35
+        "harness": 35,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -29236,7 +29623,8 @@
        "equipment": {
         "braid": 134,
         "spear": 142,
-        "harness": 35
+        "harness": 35,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -29288,7 +29676,8 @@
        "equipment": {
         "braid": 138,
         "spear": 122,
-        "harness": 35
+        "harness": 35,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -29340,7 +29729,8 @@
        "equipment": {
         "braid": 138,
         "spear": 112,
-        "harness": 40
+        "harness": 40,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -29417,7 +29807,8 @@
        "equipment": {
         "braid": 0,
         "spear": 259,
-        "harness": 71
+        "harness": 71,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -29469,7 +29860,8 @@
        "equipment": {
         "braid": 0,
         "spear": 212,
-        "harness": 68
+        "harness": 68,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -29521,7 +29913,8 @@
        "equipment": {
         "braid": 0,
         "spear": 271,
-        "harness": 64
+        "harness": 64,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -29573,7 +29966,8 @@
        "equipment": {
         "braid": 0,
         "spear": 273,
-        "harness": 66
+        "harness": 66,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -29625,7 +30019,8 @@
        "equipment": {
         "braid": 0,
         "spear": 207,
-        "harness": 68
+        "harness": 68,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -29677,7 +30072,8 @@
        "equipment": {
         "braid": 0,
         "spear": 285,
-        "harness": 70
+        "harness": 70,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -29729,7 +30125,8 @@
        "equipment": {
         "braid": 0,
         "harness": 75,
-        "spear": 276
+        "spear": 276,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -29781,7 +30178,8 @@
        "equipment": {
         "braid": 0,
         "harness": 75,
-        "spear": 267
+        "spear": 267,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -30257,7 +30655,8 @@
        "equipment": {
         "braid": 17,
         "harness": 19,
-        "spear": 231
+        "spear": 231,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -30309,7 +30708,8 @@
        "equipment": {
         "braid": 15,
         "harness": 26,
-        "spear": 214
+        "spear": 214,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -30361,7 +30761,8 @@
        "equipment": {
         "braid": 10,
         "harness": 21,
-        "spear": 234
+        "spear": 234,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -30413,7 +30814,8 @@
        "equipment": {
         "braid": 11,
         "harness": 19,
-        "spear": 232
+        "spear": 232,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -30465,7 +30867,8 @@
        "equipment": {
         "braid": 14,
         "harness": 27,
-        "spear": 223
+        "spear": 223,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -30517,7 +30920,8 @@
        "equipment": {
         "braid": 7,
         "harness": 20,
-        "spear": 239
+        "spear": 239,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -30569,7 +30973,8 @@
        "equipment": {
         "braid": 32,
         "harness": 13,
-        "spear": 234
+        "spear": 234,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -30621,7 +31026,8 @@
        "equipment": {
         "braid": 82,
         "harness": 19,
-        "spear": 197
+        "spear": 197,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -30677,7 +31083,8 @@
        "equipment": {
         "braid": 19,
         "spear": 174,
-        "harness": 28
+        "harness": 28,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -30729,7 +31136,8 @@
        "equipment": {
         "braid": 17,
         "spear": 156,
-        "harness": 30
+        "harness": 30,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -30781,7 +31189,8 @@
        "equipment": {
         "braid": 15,
         "spear": 172,
-        "harness": 34
+        "harness": 34,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -30833,7 +31242,8 @@
        "equipment": {
         "braid": 14,
         "spear": 166,
-        "harness": 34
+        "harness": 34,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -30885,7 +31295,8 @@
        "equipment": {
         "braid": 17,
         "spear": 161,
-        "harness": 31
+        "harness": 31,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -30937,7 +31348,8 @@
        "equipment": {
         "braid": 24,
         "spear": 133,
-        "harness": 28
+        "harness": 28,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -30989,7 +31401,8 @@
        "equipment": {
         "braid": 47,
         "spear": 90,
-        "harness": 24
+        "harness": 24,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.9
@@ -31041,7 +31454,8 @@
        "equipment": {
         "braid": 89,
         "spear": 81,
-        "harness": 35
+        "harness": 35,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -31123,7 +31537,8 @@
         "braid": 0,
         "harness": 75,
         "spear": 252,
-        "storm": 65
+        "storm": 65,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -31176,7 +31591,8 @@
         "braid": 0,
         "harness": 78,
         "spear": 248,
-        "storm": 77
+        "storm": 77,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -31229,7 +31645,8 @@
         "braid": 0,
         "harness": 78,
         "spear": 254,
-        "storm": 61
+        "storm": 61,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -31282,7 +31699,8 @@
         "braid": 0,
         "harness": 86,
         "spear": 249,
-        "storm": 75
+        "storm": 75,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -31335,7 +31753,8 @@
         "braid": 0,
         "harness": 86,
         "spear": 249,
-        "storm": 69
+        "storm": 69,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -31388,7 +31807,8 @@
         "braid": 0,
         "harness": 86,
         "spear": 248,
-        "storm": 72
+        "storm": 72,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -31441,7 +31861,8 @@
         "braid": 0,
         "harness": 86,
         "spear": 248,
-        "storm": 68
+        "storm": 68,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -31494,7 +31915,8 @@
         "braid": 0,
         "harness": 86,
         "spear": 247,
-        "storm": 69
+        "storm": 69,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -31547,7 +31969,8 @@
         "braid": 0,
         "harness": 78,
         "spear": 250,
-        "storm": 69
+        "storm": 69,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -31600,7 +32023,8 @@
         "braid": 0,
         "harness": 78,
         "spear": 252,
-        "storm": 66
+        "storm": 66,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -31653,7 +32077,8 @@
         "braid": 0,
         "harness": 75,
         "spear": 252,
-        "storm": 59
+        "storm": 59,
+        "face": 4
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -31706,7 +32131,8 @@
         "braid": 0,
         "harness": 75,
         "spear": 250,
-        "storm": 66
+        "storm": 66,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -32403,7 +32829,8 @@
         "braid": 82,
         "harness": 19,
         "spear": 181,
-        "storm": 68
+        "storm": 67,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -32456,7 +32883,8 @@
         "braid": 69,
         "harness": 16,
         "spear": 183,
-        "storm": 64
+        "storm": 64,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -32509,7 +32937,8 @@
         "braid": 75,
         "harness": 14,
         "spear": 183,
-        "storm": 63
+        "storm": 63,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -32562,7 +32991,8 @@
         "braid": 84,
         "harness": 20,
         "spear": 186,
-        "storm": 57
+        "storm": 57,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -32615,7 +33045,8 @@
         "braid": 83,
         "harness": 17,
         "spear": 181,
-        "storm": 64
+        "storm": 64,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -32668,7 +33099,8 @@
         "braid": 85,
         "harness": 19,
         "spear": 184,
-        "storm": 62
+        "storm": 62,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -32721,7 +33153,8 @@
         "braid": 83,
         "harness": 20,
         "spear": 181,
-        "storm": 66
+        "storm": 65,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -32774,7 +33207,8 @@
         "braid": 84,
         "harness": 19,
         "spear": 183,
-        "storm": 75
+        "storm": 75,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -32827,7 +33261,8 @@
         "braid": 75,
         "harness": 14,
         "spear": 187,
-        "storm": 68
+        "storm": 68,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -32880,7 +33315,8 @@
         "braid": 69,
         "harness": 17,
         "spear": 183,
-        "storm": 66
+        "storm": 66,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -32933,7 +33369,8 @@
         "braid": 76,
         "harness": 17,
         "spear": 183,
-        "storm": 60
+        "storm": 60,
+        "face": 2
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -32986,7 +33423,8 @@
         "braid": 80,
         "harness": 18,
         "spear": 185,
-        "storm": 62
+        "storm": 62,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -33043,7 +33481,8 @@
         "braid": 89,
         "spear": 73,
         "harness": 35,
-        "storm": 55
+        "storm": 55,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -33096,7 +33535,8 @@
         "braid": 93,
         "spear": 69,
         "harness": 35,
-        "storm": 58
+        "storm": 58,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -33149,7 +33589,8 @@
         "braid": 96,
         "spear": 74,
         "harness": 35,
-        "storm": 47
+        "storm": 47,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -33202,7 +33643,8 @@
         "braid": 106,
         "spear": 63,
         "harness": 40,
-        "storm": 50
+        "storm": 50,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -33255,7 +33697,8 @@
         "braid": 109,
         "spear": 67,
         "harness": 39,
-        "storm": 53
+        "storm": 53,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -33308,7 +33751,8 @@
         "braid": 112,
         "spear": 67,
         "harness": 38,
-        "storm": 59
+        "storm": 59,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -33361,7 +33805,8 @@
         "braid": 109,
         "spear": 68,
         "harness": 39,
-        "storm": 46
+        "storm": 46,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -33414,7 +33859,8 @@
         "braid": 106,
         "spear": 61,
         "harness": 40,
-        "storm": 66
+        "storm": 66,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -33467,7 +33913,8 @@
         "braid": 96,
         "spear": 74,
         "harness": 35,
-        "storm": 59
+        "storm": 59,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -33520,7 +33967,8 @@
         "braid": 91,
         "spear": 69,
         "harness": 35,
-        "storm": 61
+        "storm": 61,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -33573,7 +34021,8 @@
         "braid": 95,
         "spear": 70,
         "harness": 40,
-        "storm": 61
+        "storm": 61,
+        "face": 2
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -33626,7 +34075,8 @@
         "braid": 100,
         "spear": 70,
         "harness": 40,
-        "storm": 43
+        "storm": 43,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -33685,7 +34135,8 @@
         "braid": 12,
         "harness": 64,
         "spear": 197,
-        "storm": 59
+        "storm": 59,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -33738,7 +34189,8 @@
         "braid": 12,
         "harness": 64,
         "spear": 193,
-        "storm": 69
+        "storm": 69,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -33791,7 +34243,8 @@
         "braid": 12,
         "harness": 64,
         "spear": 198,
-        "storm": 61
+        "storm": 61,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -33844,7 +34297,8 @@
         "braid": 15,
         "harness": 68,
         "spear": 199,
-        "storm": 65
+        "storm": 65,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -33897,7 +34351,8 @@
         "braid": 15,
         "harness": 68,
         "spear": 195,
-        "storm": 70
+        "storm": 70,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -33950,7 +34405,8 @@
         "braid": 16,
         "harness": 68,
         "spear": 199,
-        "storm": 66
+        "storm": 66,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -34003,7 +34459,8 @@
         "braid": 14,
         "harness": 68,
         "spear": 195,
-        "storm": 69
+        "storm": 69,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -34056,7 +34513,8 @@
         "braid": 15,
         "harness": 68,
         "spear": 193,
-        "storm": 73
+        "storm": 73,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -34109,7 +34567,8 @@
         "braid": 12,
         "harness": 64,
         "spear": 198,
-        "storm": 71
+        "storm": 71,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -34162,7 +34621,8 @@
         "braid": 12,
         "harness": 64,
         "spear": 195,
-        "storm": 69
+        "storm": 69,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -34215,7 +34675,8 @@
         "braid": 11,
         "harness": 64,
         "spear": 194,
-        "storm": 76
+        "storm": 76,
+        "face": 4
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -34268,7 +34729,8 @@
         "braid": 11,
         "harness": 64,
         "spear": 197,
-        "storm": 57
+        "storm": 57,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -34965,7 +35427,8 @@
         "braid": 58,
         "spear": 210,
         "harness": 80,
-        "storm": 60
+        "storm": 60,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.8
@@ -35018,7 +35481,8 @@
         "braid": 56,
         "spear": 206,
         "harness": 80,
-        "storm": 64
+        "storm": 64,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.8
@@ -35071,7 +35535,8 @@
         "braid": 56,
         "spear": 207,
         "harness": 80,
-        "storm": 63
+        "storm": 63,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.8
@@ -35124,7 +35589,8 @@
         "braid": 54,
         "spear": 207,
         "harness": 88,
-        "storm": 73
+        "storm": 73,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.8
@@ -35177,7 +35643,8 @@
         "braid": 58,
         "spear": 207,
         "harness": 88,
-        "storm": 77
+        "storm": 77,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.8
@@ -35230,7 +35697,8 @@
         "braid": 58,
         "spear": 206,
         "harness": 88,
-        "storm": 67
+        "storm": 67,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.8
@@ -35283,7 +35751,8 @@
         "braid": 58,
         "spear": 208,
         "harness": 88,
-        "storm": 65
+        "storm": 65,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.8
@@ -35336,7 +35805,8 @@
         "braid": 54,
         "spear": 213,
         "harness": 88,
-        "storm": 59
+        "storm": 59,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.8
@@ -35389,7 +35859,8 @@
         "braid": 56,
         "spear": 207,
         "harness": 80,
-        "storm": 72
+        "storm": 72,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.8
@@ -35442,7 +35913,8 @@
         "braid": 56,
         "spear": 204,
         "harness": 80,
-        "storm": 68
+        "storm": 68,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.8
@@ -35495,7 +35967,8 @@
         "braid": 58,
         "spear": 209,
         "harness": 80,
-        "storm": 67
+        "storm": 67,
+        "face": 4
        },
        "anchor_gap": {
         "spear_tip": 0.8
@@ -35548,7 +36021,8 @@
         "braid": 58,
         "spear": 211,
         "harness": 80,
-        "storm": 61
+        "storm": 61,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.8
@@ -36270,7 +36744,8 @@
         "braid": 0,
         "harness": 76,
         "spear": 246,
-        "storm": 63
+        "storm": 63,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -36323,7 +36798,8 @@
         "braid": 0,
         "harness": 76,
         "spear": 245,
-        "storm": 71
+        "storm": 71,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -36376,7 +36852,8 @@
         "braid": 0,
         "harness": 76,
         "spear": 252,
-        "storm": 50
+        "storm": 50,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -36429,7 +36906,8 @@
         "braid": 0,
         "harness": 76,
         "spear": 245,
-        "storm": 78
+        "storm": 78,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -36482,7 +36960,8 @@
         "braid": 0,
         "harness": 76,
         "spear": 242,
-        "storm": 66
+        "storm": 66,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -36535,7 +37014,8 @@
         "braid": 0,
         "harness": 76,
         "spear": 243,
-        "storm": 65
+        "storm": 65,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -36588,7 +37068,8 @@
         "braid": 0,
         "harness": 76,
         "spear": 239,
-        "storm": 69
+        "storm": 69,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -36641,7 +37122,8 @@
         "braid": 0,
         "harness": 76,
         "spear": 236,
-        "storm": 64
+        "storm": 64,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -36694,7 +37176,8 @@
         "braid": 0,
         "harness": 76,
         "spear": 240,
-        "storm": 66
+        "storm": 66,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -36747,7 +37230,8 @@
         "braid": 0,
         "harness": 76,
         "spear": 243,
-        "storm": 66
+        "storm": 66,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -36800,7 +37284,8 @@
         "braid": 0,
         "harness": 76,
         "spear": 245,
-        "storm": 60
+        "storm": 60,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -36853,7 +37338,8 @@
         "braid": 0,
         "harness": 76,
         "spear": 244,
-        "storm": 62
+        "storm": 62,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -37550,7 +38036,8 @@
         "braid": 52,
         "harness": 9,
         "spear": 218,
-        "storm": 65
+        "storm": 65,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -37603,7 +38090,8 @@
         "braid": 53,
         "harness": 9,
         "spear": 209,
-        "storm": 65
+        "storm": 65,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -37656,7 +38144,8 @@
         "braid": 51,
         "harness": 7,
         "spear": 218,
-        "storm": 67
+        "storm": 67,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -37709,7 +38198,8 @@
         "braid": 54,
         "harness": 17,
         "spear": 165,
-        "storm": 61
+        "storm": 61,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -37762,7 +38252,8 @@
         "braid": 54,
         "harness": 19,
         "spear": 165,
-        "storm": 73
+        "storm": 72,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -37814,8 +38305,9 @@
        "equipment": {
         "braid": 57,
         "harness": 14,
-        "spear": 214,
-        "storm": 65
+        "spear": 209,
+        "storm": 65,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -37867,8 +38359,9 @@
        "equipment": {
         "braid": 56,
         "harness": 19,
-        "spear": 226,
-        "storm": 61
+        "spear": 219,
+        "storm": 60,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -37920,8 +38413,9 @@
        "equipment": {
         "braid": 57,
         "harness": 16,
-        "spear": 214,
-        "storm": 73
+        "spear": 208,
+        "storm": 71,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -37973,8 +38467,9 @@
        "equipment": {
         "braid": 54,
         "harness": 12,
-        "spear": 220,
-        "storm": 70
+        "spear": 215,
+        "storm": 70,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -38027,7 +38522,8 @@
         "braid": 54,
         "harness": 17,
         "spear": 169,
-        "storm": 66
+        "storm": 66,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -38080,7 +38576,8 @@
         "braid": 51,
         "harness": 16,
         "spear": 163,
-        "storm": 68
+        "storm": 67,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -38133,7 +38630,8 @@
         "braid": 53,
         "harness": 7,
         "spear": 212,
-        "storm": 65
+        "storm": 65,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -38190,7 +38688,8 @@
         "braid": 80,
         "spear": 90,
         "harness": 41,
-        "storm": 59
+        "storm": 59,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -38243,7 +38742,8 @@
         "braid": 74,
         "spear": 82,
         "harness": 36,
-        "storm": 62
+        "storm": 62,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -38296,7 +38796,8 @@
         "braid": 74,
         "spear": 71,
         "harness": 32,
-        "storm": 53
+        "storm": 53,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -38349,7 +38850,8 @@
         "braid": 80,
         "spear": 74,
         "harness": 29,
-        "storm": 54
+        "storm": 54,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -38402,7 +38904,8 @@
         "braid": 71,
         "spear": 75,
         "harness": 27,
-        "storm": 55
+        "storm": 55,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -38455,7 +38958,8 @@
         "braid": 70,
         "spear": 79,
         "harness": 27,
-        "storm": 61
+        "storm": 61,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -38508,7 +39012,8 @@
         "braid": 73,
         "spear": 102,
         "harness": 27,
-        "storm": 61
+        "storm": 61,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -38561,7 +39066,8 @@
         "braid": 70,
         "spear": 91,
         "harness": 27,
-        "storm": 57
+        "storm": 57,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -38614,7 +39120,8 @@
         "braid": 71,
         "spear": 82,
         "harness": 27,
-        "storm": 61
+        "storm": 61,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -38667,7 +39174,8 @@
         "braid": 80,
         "spear": 76,
         "harness": 29,
-        "storm": 61
+        "storm": 61,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -38720,7 +39228,8 @@
         "braid": 74,
         "spear": 74,
         "harness": 32,
-        "storm": 55
+        "storm": 55,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -38773,7 +39282,8 @@
         "braid": 74,
         "spear": 93,
         "harness": 36,
-        "storm": 50
+        "storm": 50,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -38832,7 +39342,8 @@
         "braid": 17,
         "harness": 70,
         "spear": 196,
-        "storm": 70
+        "storm": 70,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -38885,7 +39396,8 @@
         "braid": 16,
         "harness": 70,
         "spear": 209,
-        "storm": 66
+        "storm": 66,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -38938,7 +39450,8 @@
         "braid": 15,
         "harness": 70,
         "spear": 212,
-        "storm": 62
+        "storm": 62,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -38991,7 +39504,8 @@
         "braid": 14,
         "harness": 70,
         "spear": 192,
-        "storm": 66
+        "storm": 66,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -39044,7 +39558,8 @@
         "braid": 13,
         "harness": 70,
         "spear": 185,
-        "storm": 63
+        "storm": 63,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -39097,7 +39612,8 @@
         "braid": 11,
         "harness": 70,
         "spear": 202,
-        "storm": 75
+        "storm": 75,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -39150,7 +39666,8 @@
         "braid": 8,
         "harness": 70,
         "spear": 202,
-        "storm": 67
+        "storm": 67,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -39203,7 +39720,8 @@
         "braid": 10,
         "harness": 70,
         "spear": 206,
-        "storm": 75
+        "storm": 75,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -39256,7 +39774,8 @@
         "braid": 11,
         "harness": 70,
         "spear": 209,
-        "storm": 63
+        "storm": 63,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -39309,7 +39828,8 @@
         "braid": 15,
         "harness": 70,
         "spear": 182,
-        "storm": 72
+        "storm": 72,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -39362,7 +39882,8 @@
         "braid": 15,
         "harness": 70,
         "spear": 182,
-        "storm": 71
+        "storm": 71,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -39415,7 +39936,8 @@
         "braid": 16,
         "harness": 70,
         "spear": 209,
-        "storm": 50
+        "storm": 50,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -40112,7 +40634,8 @@
         "braid": 52,
         "spear": 151,
         "harness": 78,
-        "storm": 61
+        "storm": 61,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -40165,7 +40688,8 @@
         "braid": 53,
         "spear": 183,
         "harness": 78,
-        "storm": 62
+        "storm": 62,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -40218,7 +40742,8 @@
         "braid": 55,
         "spear": 194,
         "harness": 78,
-        "storm": 62
+        "storm": 62,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -40271,7 +40796,8 @@
         "braid": 60,
         "spear": 190,
         "harness": 78,
-        "storm": 69
+        "storm": 69,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -40324,7 +40850,8 @@
         "braid": 67,
         "spear": 196,
         "harness": 78,
-        "storm": 65
+        "storm": 65,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -40377,7 +40904,8 @@
         "braid": 75,
         "spear": 194,
         "harness": 78,
-        "storm": 67
+        "storm": 67,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -40430,7 +40958,8 @@
         "braid": 84,
         "spear": 200,
         "harness": 78,
-        "storm": 65
+        "storm": 65,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -40483,7 +41012,8 @@
         "braid": 75,
         "spear": 193,
         "harness": 78,
-        "storm": 69
+        "storm": 69,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -40536,7 +41066,8 @@
         "braid": 67,
         "spear": 190,
         "harness": 78,
-        "storm": 68
+        "storm": 68,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -40589,7 +41120,8 @@
         "braid": 60,
         "spear": 180,
         "harness": 78,
-        "storm": 62
+        "storm": 62,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -40642,7 +41174,8 @@
         "braid": 55,
         "spear": 171,
         "harness": 78,
-        "storm": 61
+        "storm": 61,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -40695,7 +41228,8 @@
         "braid": 51,
         "spear": 161,
         "harness": 78,
-        "storm": 63
+        "storm": 63,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -41418,7 +41952,8 @@
         "braid": 0,
         "spear": 176,
         "harness": 74,
-        "storm": 54
+        "storm": 54,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -41471,7 +42006,8 @@
         "braid": 0,
         "spear": 112,
         "harness": 36,
-        "storm": 64
+        "storm": 64,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -41524,7 +42060,8 @@
         "braid": 0,
         "spear": 63,
         "harness": 42,
-        "storm": 60
+        "storm": 60,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -41577,7 +42114,8 @@
         "braid": 0,
         "spear": 62,
         "harness": 41,
-        "storm": 59
+        "storm": 59,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -41630,7 +42168,8 @@
         "braid": 0,
         "spear": 64,
         "harness": 40,
-        "storm": 64
+        "storm": 64,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -41683,7 +42222,8 @@
         "braid": 0,
         "spear": 56,
         "harness": 28,
-        "storm": 96
+        "storm": 96,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -41736,7 +42276,8 @@
         "braid": 0,
         "spear": 66,
         "harness": 28,
-        "storm": 88
+        "storm": 88,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -41789,7 +42330,8 @@
         "braid": 0,
         "spear": 70,
         "harness": 30,
-        "storm": 64
+        "storm": 64,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -41842,7 +42384,8 @@
         "braid": 0,
         "spear": 90,
         "harness": 33,
-        "storm": 55
+        "storm": 55,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -41895,7 +42438,8 @@
         "braid": 0,
         "spear": 116,
         "harness": 31,
-        "storm": 57
+        "storm": 57,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -41948,7 +42492,8 @@
         "braid": 0,
         "harness": 74,
         "spear": 171,
-        "storm": 62
+        "storm": 62,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -42001,7 +42546,8 @@
         "braid": 0,
         "harness": 75,
         "spear": 252,
-        "storm": 66
+        "storm": 66,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -42054,7 +42600,8 @@
         "braid": 0,
         "harness": 75,
         "spear": 252,
-        "storm": 66
+        "storm": 66,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -42814,7 +43361,8 @@
         "braid": 66,
         "harness": 24,
         "spear": 214,
-        "storm": 67
+        "storm": 67,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -42867,7 +43415,8 @@
         "braid": 68,
         "spear": 181,
         "harness": 18,
-        "storm": 54
+        "storm": 54,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -42920,7 +43469,8 @@
         "braid": 89,
         "spear": 204,
         "harness": 18,
-        "storm": 53
+        "storm": 53,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -42973,7 +43523,8 @@
         "braid": 97,
         "spear": 201,
         "harness": 16,
-        "storm": 58
+        "storm": 58,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -43026,7 +43577,8 @@
         "braid": 102,
         "spear": 206,
         "harness": 17,
-        "storm": 45
+        "storm": 45,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -43079,7 +43631,8 @@
         "braid": 18,
         "spear": 188,
         "harness": 18,
-        "storm": 83
+        "storm": 83,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -43132,7 +43685,8 @@
         "braid": 17,
         "spear": 189,
         "harness": 21,
-        "storm": 75
+        "storm": 75,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -43185,7 +43739,8 @@
         "braid": 28,
         "spear": 198,
         "harness": 20,
-        "storm": 49
+        "storm": 49,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -43238,7 +43793,8 @@
         "braid": 31,
         "spear": 199,
         "harness": 19,
-        "storm": 46
+        "storm": 46,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -43291,7 +43847,8 @@
         "braid": 46,
         "spear": 180,
         "harness": 21,
-        "storm": 43
+        "storm": 43,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -43344,7 +43901,8 @@
         "braid": 70,
         "harness": 24,
         "spear": 217,
-        "storm": 61
+        "storm": 61,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -43397,7 +43955,8 @@
         "braid": 82,
         "harness": 19,
         "spear": 183,
-        "storm": 66
+        "storm": 66,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -43450,7 +44009,8 @@
         "braid": 82,
         "harness": 19,
         "spear": 183,
-        "storm": 66
+        "storm": 66,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -43512,7 +44072,8 @@
         "braid": 82,
         "spear": 136,
         "harness": 34,
-        "storm": 70
+        "storm": 70,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -43565,7 +44126,8 @@
         "braid": 82,
         "spear": 131,
         "harness": 24,
-        "storm": 63
+        "storm": 63,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -43618,7 +44180,8 @@
         "braid": 106,
         "spear": 153,
         "harness": 48,
-        "storm": 72
+        "storm": 72,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -43671,7 +44234,8 @@
         "braid": 118,
         "spear": 151,
         "harness": 49,
-        "storm": 68
+        "storm": 68,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -43724,7 +44288,8 @@
         "braid": 115,
         "spear": 156,
         "harness": 47,
-        "storm": 60
+        "storm": 60,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -43777,7 +44342,8 @@
         "braid": 29,
         "spear": 143,
         "harness": 56,
-        "storm": 96
+        "storm": 96,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -43830,7 +44396,8 @@
         "braid": 29,
         "spear": 144,
         "harness": 60,
-        "storm": 86
+        "storm": 86,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -43883,7 +44450,8 @@
         "braid": 52,
         "spear": 150,
         "harness": 49,
-        "storm": 61
+        "storm": 61,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -43936,7 +44504,8 @@
         "braid": 61,
         "spear": 153,
         "harness": 23,
-        "storm": 60
+        "storm": 60,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -43989,7 +44558,8 @@
         "braid": 76,
         "spear": 130,
         "harness": 24,
-        "storm": 54
+        "storm": 54,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -44042,7 +44612,8 @@
         "braid": 90,
         "spear": 141,
         "harness": 35,
-        "storm": 72
+        "storm": 72,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -44095,7 +44666,8 @@
         "braid": 89,
         "spear": 71,
         "harness": 35,
-        "storm": 61
+        "storm": 61,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -44148,7 +44720,8 @@
         "braid": 89,
         "spear": 69,
         "harness": 35,
-        "storm": 61
+        "storm": 61,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -44244,7 +44817,8 @@
         "braid": 0,
         "harness": 72,
         "spear": 178,
-        "storm": 66
+        "storm": 66,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -44297,7 +44871,8 @@
         "braid": 0,
         "harness": 52,
         "spear": 163,
-        "storm": 63
+        "storm": 63,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -44350,7 +44925,8 @@
         "braid": 0,
         "harness": 59,
         "spear": 169,
-        "storm": 57
+        "storm": 57,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -44403,7 +44979,8 @@
         "braid": 0,
         "harness": 60,
         "spear": 169,
-        "storm": 62
+        "storm": 62,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -44456,7 +45033,8 @@
         "braid": 0,
         "harness": 61,
         "spear": 171,
-        "storm": 65
+        "storm": 65,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -44509,7 +45087,8 @@
         "braid": 0,
         "harness": 50,
         "spear": 165,
-        "storm": 72
+        "storm": 72,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -44562,7 +45141,8 @@
         "braid": 0,
         "harness": 72,
         "spear": 185,
-        "storm": 65
+        "storm": 65,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -44615,7 +45195,8 @@
         "braid": 0,
         "harness": 75,
         "spear": 248,
-        "storm": 69
+        "storm": 69,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -45100,7 +45681,8 @@
         "braid": 83,
         "harness": 24,
         "spear": 192,
-        "storm": 57
+        "storm": 57,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -45153,7 +45735,8 @@
         "braid": 81,
         "spear": 182,
         "harness": 33,
-        "storm": 44
+        "storm": 44,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -45206,7 +45789,8 @@
         "braid": 82,
         "spear": 179,
         "harness": 32,
-        "storm": 55
+        "storm": 55,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -45259,7 +45843,8 @@
         "braid": 44,
         "spear": 192,
         "harness": 33,
-        "storm": 46
+        "storm": 46,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -45312,7 +45897,8 @@
         "braid": 36,
         "spear": 193,
         "harness": 34,
-        "storm": 51
+        "storm": 51,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -45365,7 +45951,8 @@
         "braid": 78,
         "spear": 182,
         "harness": 31,
-        "storm": 54
+        "storm": 54,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -45418,7 +46005,8 @@
         "braid": 81,
         "harness": 27,
         "spear": 195,
-        "storm": 55
+        "storm": 55,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -45471,7 +46059,8 @@
         "braid": 82,
         "harness": 18,
         "spear": 183,
-        "storm": 74
+        "storm": 74,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -45528,7 +46117,8 @@
         "braid": 89,
         "spear": 134,
         "harness": 35,
-        "storm": 64
+        "storm": 64,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -45581,7 +46171,8 @@
         "braid": 93,
         "spear": 119,
         "harness": 35,
-        "storm": 62
+        "storm": 62,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -45634,7 +46225,8 @@
         "braid": 93,
         "spear": 113,
         "harness": 46,
-        "storm": 60
+        "storm": 60,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -45687,7 +46279,8 @@
         "braid": 56,
         "spear": 116,
         "harness": 49,
-        "storm": 53
+        "storm": 53,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -45740,7 +46333,8 @@
         "braid": 53,
         "spear": 118,
         "harness": 43,
-        "storm": 70
+        "storm": 70,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -45793,7 +46387,8 @@
         "braid": 87,
         "spear": 117,
         "harness": 35,
-        "storm": 62
+        "storm": 62,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -45846,7 +46441,8 @@
         "braid": 91,
         "spear": 133,
         "harness": 35,
-        "storm": 62
+        "storm": 62,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -45899,7 +46495,8 @@
         "braid": 89,
         "spear": 63,
         "harness": 35,
-        "storm": 67
+        "storm": 67,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -45977,7 +46574,8 @@
         "braid": 0,
         "harness": 75,
         "spear": 252,
-        "storm": 65
+        "storm": 65,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -46030,7 +46628,8 @@
         "braid": 0,
         "harness": 74,
         "spear": 183,
-        "storm": 69
+        "storm": 69,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -46083,7 +46682,8 @@
         "braid": 0,
         "harness": 68,
         "spear": 192,
-        "storm": 43
+        "storm": 43,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -46136,7 +46736,8 @@
         "braid": 0,
         "harness": 68,
         "spear": 190,
-        "storm": 49
+        "storm": 49,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -46189,7 +46790,8 @@
         "braid": 0,
         "harness": 74,
         "spear": 195,
-        "storm": 32
+        "storm": 32,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -46242,7 +46844,8 @@
         "braid": 0,
         "harness": 75,
         "spear": 194,
-        "storm": 28
+        "storm": 28,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -46294,7 +46897,8 @@
        "equipment": {
         "braid": 0,
         "harness": 78,
-        "spear": 267
+        "spear": 267,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -46346,7 +46950,8 @@
        "equipment": {
         "braid": 0,
         "harness": 75,
-        "spear": 267
+        "spear": 267,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -46829,7 +47434,8 @@
         "braid": 82,
         "harness": 19,
         "spear": 181,
-        "storm": 68
+        "storm": 67,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -46882,7 +47488,8 @@
         "braid": 83,
         "harness": 20,
         "spear": 188,
-        "storm": 67
+        "storm": 67,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -46935,7 +47542,8 @@
         "braid": 83,
         "harness": 20,
         "spear": 189,
-        "storm": 54
+        "storm": 54,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -46988,7 +47596,8 @@
         "braid": 83,
         "harness": 20,
         "spear": 190,
-        "storm": 40
+        "storm": 40,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -47041,7 +47650,8 @@
         "braid": 83,
         "harness": 20,
         "spear": 192,
-        "storm": 31
+        "storm": 31,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -47094,7 +47704,8 @@
         "braid": 83,
         "harness": 21,
         "spear": 193,
-        "storm": 34
+        "storm": 34,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -47146,7 +47757,8 @@
        "equipment": {
         "braid": 72,
         "harness": 17,
-        "spear": 197
+        "spear": 197,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -47198,7 +47810,8 @@
        "equipment": {
         "braid": 82,
         "harness": 19,
-        "spear": 197
+        "spear": 197,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -47255,7 +47868,8 @@
         "braid": 89,
         "spear": 73,
         "harness": 35,
-        "storm": 55
+        "storm": 55,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -47308,7 +47922,8 @@
         "braid": 88,
         "spear": 81,
         "harness": 35,
-        "storm": 53
+        "storm": 53,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -47361,7 +47976,8 @@
         "braid": 90,
         "spear": 84,
         "harness": 21,
-        "storm": 51
+        "storm": 51,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -47414,7 +48030,8 @@
         "braid": 90,
         "spear": 86,
         "harness": 21,
-        "storm": 36
+        "storm": 36,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -47467,7 +48084,8 @@
         "braid": 87,
         "spear": 87,
         "harness": 34,
-        "storm": 24
+        "storm": 24,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -47520,7 +48138,8 @@
         "braid": 89,
         "spear": 89,
         "harness": 35,
-        "storm": 27
+        "storm": 27,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -47572,7 +48191,8 @@
        "equipment": {
         "braid": 94,
         "spear": 81,
-        "harness": 35
+        "harness": 35,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -47624,7 +48244,8 @@
        "equipment": {
         "braid": 89,
         "spear": 81,
-        "harness": 35
+        "harness": 35,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -47703,7 +48324,8 @@
         "braid": 0,
         "spear": 232,
         "harness": 84,
-        "storm": 62
+        "storm": 62,
+        "face": 6
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -47756,7 +48378,8 @@
         "braid": 0,
         "spear": 242,
         "harness": 85,
-        "storm": 67
+        "storm": 67,
+        "face": 6
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -47809,7 +48432,8 @@
         "braid": 0,
         "spear": 215,
         "harness": 83,
-        "storm": 63
+        "storm": 63,
+        "face": 6
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -47862,7 +48486,8 @@
         "braid": 0,
         "spear": 199,
         "harness": 83,
-        "storm": 68
+        "storm": 68,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -47915,7 +48540,8 @@
         "braid": 0,
         "harness": 77,
         "spear": 261,
-        "storm": 75
+        "storm": 75,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -47968,7 +48594,8 @@
         "braid": 0,
         "harness": 78,
         "spear": 253,
-        "storm": 69
+        "storm": 69,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -48021,7 +48648,8 @@
         "braid": 0,
         "harness": 75,
         "spear": 247,
-        "storm": 68
+        "storm": 68,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -48074,7 +48702,8 @@
         "braid": 0,
         "harness": 78,
         "spear": 248,
-        "storm": 69
+        "storm": 69,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -48127,7 +48756,8 @@
         "braid": 0,
         "harness": 75,
         "spear": 250,
-        "storm": 69
+        "storm": 69,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -48665,7 +49295,8 @@
         "braid": 136,
         "harness": 11,
         "spear": 220,
-        "storm": 59
+        "storm": 59,
+        "face": 3
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -48718,7 +49349,8 @@
         "braid": 137,
         "harness": 15,
         "spear": 214,
-        "storm": 71
+        "storm": 71,
+        "face": 3
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -48771,7 +49403,8 @@
         "braid": 140,
         "harness": 11,
         "spear": 215,
-        "storm": 58
+        "storm": 58,
+        "face": 3
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -48824,7 +49457,8 @@
         "braid": 132,
         "harness": 12,
         "spear": 223,
-        "storm": 74
+        "storm": 74,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -48877,7 +49511,8 @@
         "braid": 104,
         "harness": 13,
         "spear": 213,
-        "storm": 60
+        "storm": 59,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -48930,7 +49565,8 @@
         "braid": 67,
         "harness": 11,
         "spear": 223,
-        "storm": 62
+        "storm": 62,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -48983,7 +49619,8 @@
         "braid": 70,
         "harness": 21,
         "spear": 180,
-        "storm": 65
+        "storm": 64,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -49036,7 +49673,8 @@
         "braid": 69,
         "harness": 16,
         "spear": 183,
-        "storm": 74
+        "storm": 74,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -49089,7 +49727,8 @@
         "braid": 82,
         "harness": 16,
         "spear": 187,
-        "storm": 68
+        "storm": 68,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -49146,7 +49785,8 @@
         "braid": 127,
         "spear": 93,
         "harness": 48,
-        "storm": 51
+        "storm": 51,
+        "face": 3
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -49199,7 +49839,8 @@
         "braid": 133,
         "spear": 91,
         "harness": 46,
-        "storm": 50
+        "storm": 50,
+        "face": 3
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -49252,7 +49893,8 @@
         "braid": 123,
         "spear": 97,
         "harness": 46,
-        "storm": 58
+        "storm": 58,
+        "face": 3
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -49305,7 +49947,8 @@
         "braid": 132,
         "spear": 96,
         "harness": 45,
-        "storm": 56
+        "storm": 56,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -49358,7 +50001,8 @@
         "braid": 129,
         "spear": 90,
         "harness": 35,
-        "storm": 47
+        "storm": 47,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -49411,7 +50055,8 @@
         "braid": 94,
         "spear": 75,
         "harness": 31,
-        "storm": 58
+        "storm": 58,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -49464,7 +50109,8 @@
         "braid": 101,
         "spear": 72,
         "harness": 31,
-        "storm": 46
+        "storm": 46,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -49517,7 +50163,8 @@
         "braid": 93,
         "spear": 63,
         "harness": 35,
-        "storm": 67
+        "storm": 67,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -49570,7 +50217,8 @@
         "braid": 89,
         "spear": 74,
         "harness": 35,
-        "storm": 59
+        "storm": 59,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -49648,7 +50296,8 @@
         "braid": 0,
         "spear": 255,
         "harness": 71,
-        "storm": 48
+        "storm": 48,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -49701,7 +50350,8 @@
         "braid": 0,
         "spear": 204,
         "harness": 68,
-        "storm": 55
+        "storm": 55,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -49754,7 +50404,8 @@
         "braid": 0,
         "spear": 269,
         "harness": 64,
-        "storm": 47
+        "storm": 47,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -49807,7 +50458,8 @@
         "braid": 0,
         "spear": 271,
         "harness": 66,
-        "storm": 56
+        "storm": 56,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -49860,7 +50512,8 @@
         "braid": 0,
         "spear": 203,
         "harness": 68,
-        "storm": 58
+        "storm": 58,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -49913,7 +50566,8 @@
         "braid": 0,
         "spear": 273,
         "harness": 70,
-        "storm": 62
+        "storm": 62,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -49966,7 +50620,8 @@
         "braid": 0,
         "harness": 75,
         "spear": 258,
-        "storm": 65
+        "storm": 65,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -50019,7 +50674,8 @@
         "braid": 0,
         "harness": 75,
         "spear": 248,
-        "storm": 69
+        "storm": 69,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -50504,7 +51160,8 @@
         "braid": 17,
         "harness": 19,
         "spear": 213,
-        "storm": 66
+        "storm": 66,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -50557,7 +51214,8 @@
         "braid": 15,
         "harness": 26,
         "spear": 196,
-        "storm": 65
+        "storm": 65,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -50610,7 +51268,8 @@
         "braid": 10,
         "harness": 21,
         "spear": 212,
-        "storm": 67
+        "storm": 67,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -50663,7 +51322,8 @@
         "braid": 11,
         "harness": 19,
         "spear": 210,
-        "storm": 67
+        "storm": 67,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -50716,7 +51376,8 @@
         "braid": 14,
         "harness": 27,
         "spear": 197,
-        "storm": 69
+        "storm": 69,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -50769,7 +51430,8 @@
         "braid": 7,
         "harness": 20,
         "spear": 219,
-        "storm": 67
+        "storm": 67,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -50822,7 +51484,8 @@
         "braid": 32,
         "harness": 13,
         "spear": 215,
-        "storm": 64
+        "storm": 64,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -50875,7 +51538,8 @@
         "braid": 82,
         "harness": 18,
         "spear": 183,
-        "storm": 74
+        "storm": 74,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -50932,7 +51596,8 @@
         "braid": 19,
         "spear": 158,
         "harness": 28,
-        "storm": 55
+        "storm": 55,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -50985,7 +51650,8 @@
         "braid": 17,
         "spear": 141,
         "harness": 30,
-        "storm": 62
+        "storm": 62,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -51038,7 +51704,8 @@
         "braid": 15,
         "spear": 152,
         "harness": 34,
-        "storm": 61
+        "storm": 61,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -51091,7 +51758,8 @@
         "braid": 14,
         "spear": 147,
         "harness": 34,
-        "storm": 70
+        "storm": 70,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -51144,7 +51812,8 @@
         "braid": 17,
         "spear": 138,
         "harness": 31,
-        "storm": 69
+        "storm": 69,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -51197,7 +51866,8 @@
         "braid": 24,
         "spear": 121,
         "harness": 28,
-        "storm": 50
+        "storm": 50,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -51250,7 +51920,8 @@
         "braid": 47,
         "spear": 76,
         "harness": 24,
-        "storm": 57
+        "storm": 57,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.9
@@ -51303,7 +51974,8 @@
         "braid": 89,
         "spear": 63,
         "harness": 35,
-        "storm": 67
+        "storm": 67,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -51390,7 +52062,8 @@
         "braid": 0,
         "harness": 75,
         "spear": 215,
-        "storm": 59
+        "storm": 59,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -51443,7 +52116,8 @@
         "braid": 0,
         "harness": 74,
         "spear": 236,
-        "storm": 71
+        "storm": 71,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -51496,7 +52170,8 @@
         "braid": 0,
         "harness": 75,
         "spear": 161,
-        "storm": 59
+        "storm": 59,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -51549,7 +52224,8 @@
         "braid": 0,
         "harness": 75,
         "spear": 158,
-        "storm": 55
+        "storm": 55,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -51602,7 +52278,8 @@
         "braid": 0,
         "harness": 78,
         "spear": 160,
-        "storm": 64
+        "storm": 64,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -51655,7 +52332,8 @@
         "braid": 0,
         "harness": 72,
         "spear": 217,
-        "storm": 67
+        "storm": 67,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -51708,7 +52386,8 @@
         "braid": 0,
         "harness": 74,
         "spear": 211,
-        "storm": 65
+        "storm": 65,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -51761,7 +52440,8 @@
         "braid": 0,
         "harness": 75,
         "spear": 248,
-        "storm": 69
+        "storm": 69,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -52246,7 +52926,8 @@
         "braid": 35,
         "harness": 25,
         "spear": 219,
-        "storm": 65
+        "storm": 65,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -52299,7 +52980,8 @@
         "braid": 47,
         "harness": 30,
         "spear": 229,
-        "storm": 62
+        "storm": 62,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -52352,7 +53034,8 @@
         "braid": 53,
         "harness": 25,
         "spear": 220,
-        "storm": 71
+        "storm": 71,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -52405,7 +53088,8 @@
         "braid": 70,
         "harness": 15,
         "spear": 225,
-        "storm": 65
+        "storm": 65,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -52458,7 +53142,8 @@
         "braid": 91,
         "harness": 18,
         "spear": 218,
-        "storm": 68
+        "storm": 68,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -52511,7 +53196,8 @@
         "braid": 29,
         "harness": 39,
         "spear": 220,
-        "storm": 67
+        "storm": 67,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -52564,7 +53250,8 @@
         "braid": 40,
         "harness": 28,
         "spear": 217,
-        "storm": 59
+        "storm": 59,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -52617,7 +53304,8 @@
         "braid": 82,
         "harness": 18,
         "spear": 183,
-        "storm": 74
+        "storm": 74,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -52674,7 +53362,8 @@
         "braid": 45,
         "spear": 147,
         "harness": 28,
-        "storm": 60
+        "storm": 60,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -52727,7 +53416,8 @@
         "braid": 50,
         "spear": 143,
         "harness": 32,
-        "storm": 61
+        "storm": 61,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -52780,7 +53470,8 @@
         "braid": 70,
         "spear": 145,
         "harness": 49,
-        "storm": 53
+        "storm": 53,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -52833,7 +53524,8 @@
         "braid": 86,
         "spear": 148,
         "harness": 39,
-        "storm": 77
+        "storm": 77,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -52886,7 +53578,8 @@
         "braid": 108,
         "spear": 141,
         "harness": 49,
-        "storm": 67
+        "storm": 67,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -52939,7 +53632,8 @@
         "braid": 43,
         "spear": 159,
         "harness": 33,
-        "storm": 65
+        "storm": 65,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -52992,7 +53686,8 @@
         "braid": 61,
         "spear": 151,
         "harness": 27,
-        "storm": 68
+        "storm": 68,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -53045,7 +53740,8 @@
         "braid": 89,
         "spear": 63,
         "harness": 35,
-        "storm": 67
+        "storm": 67,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -53123,7 +53819,8 @@
         "braid": 0,
         "harness": 75,
         "spear": 239,
-        "storm": 61
+        "storm": 61,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -53176,7 +53873,8 @@
         "braid": 0,
         "harness": 75,
         "spear": 237,
-        "storm": 63
+        "storm": 63,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -53229,7 +53927,8 @@
         "braid": 0,
         "harness": 75,
         "spear": 239,
-        "storm": 63
+        "storm": 63,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -53282,7 +53981,8 @@
         "braid": 0,
         "harness": 75,
         "spear": 236,
-        "storm": 75
+        "storm": 75,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -53335,7 +54035,8 @@
         "braid": 0,
         "harness": 75,
         "spear": 240,
-        "storm": 71
+        "storm": 71,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -53388,7 +54089,8 @@
         "braid": 0,
         "harness": 75,
         "spear": 241,
-        "storm": 62
+        "storm": 62,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -53441,7 +54143,8 @@
         "braid": 0,
         "harness": 75,
         "spear": 241,
-        "storm": 59
+        "storm": 59,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -53494,7 +54197,8 @@
         "braid": 0,
         "harness": 75,
         "spear": 241,
-        "storm": 56
+        "storm": 56,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -53979,7 +54683,8 @@
         "braid": 18,
         "harness": 17,
         "spear": 217,
-        "storm": 70
+        "storm": 70,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -54032,7 +54737,8 @@
         "braid": 19,
         "harness": 17,
         "spear": 222,
-        "storm": 70
+        "storm": 70,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -54085,7 +54791,8 @@
         "braid": 24,
         "harness": 13,
         "spear": 217,
-        "storm": 62
+        "storm": 62,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -54138,7 +54845,8 @@
         "braid": 24,
         "harness": 10,
         "spear": 214,
-        "storm": 72
+        "storm": 71,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -54191,7 +54899,8 @@
         "braid": 25,
         "harness": 17,
         "spear": 211,
-        "storm": 61
+        "storm": 61,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -54244,7 +54953,8 @@
         "braid": 23,
         "harness": 16,
         "spear": 211,
-        "storm": 64
+        "storm": 64,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -54297,7 +55007,8 @@
         "braid": 24,
         "harness": 13,
         "spear": 218,
-        "storm": 60
+        "storm": 60,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -54350,7 +55061,8 @@
         "braid": 20,
         "harness": 15,
         "spear": 221,
-        "storm": 68
+        "storm": 68,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -54407,7 +55119,8 @@
         "braid": 36,
         "spear": 95,
         "harness": 33,
-        "storm": 56
+        "storm": 56,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -54460,7 +55173,8 @@
         "braid": 36,
         "spear": 96,
         "harness": 29,
-        "storm": 57
+        "storm": 57,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -54513,7 +55227,8 @@
         "braid": 35,
         "spear": 89,
         "harness": 26,
-        "storm": 48
+        "storm": 48,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -54566,7 +55281,8 @@
         "braid": 34,
         "spear": 93,
         "harness": 24,
-        "storm": 57
+        "storm": 57,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -54619,7 +55335,8 @@
         "braid": 30,
         "spear": 95,
         "harness": 22,
-        "storm": 61
+        "storm": 61,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -54672,7 +55389,8 @@
         "braid": 33,
         "spear": 96,
         "harness": 24,
-        "storm": 56
+        "storm": 56,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -54725,7 +55443,8 @@
         "braid": 35,
         "spear": 93,
         "harness": 26,
-        "storm": 52
+        "storm": 52,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -54778,7 +55497,8 @@
         "braid": 37,
         "spear": 89,
         "harness": 29,
-        "storm": 67
+        "storm": 67,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -54856,7 +55576,8 @@
         "braid": 0,
         "harness": 83,
         "spear": 244,
-        "storm": 60
+        "storm": 60,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -54909,7 +55630,8 @@
         "braid": 0,
         "harness": 83,
         "spear": 236,
-        "storm": 73
+        "storm": 73,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -54962,7 +55684,8 @@
         "braid": 0,
         "harness": 83,
         "spear": 245,
-        "storm": 56
+        "storm": 56,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -55015,7 +55738,8 @@
         "braid": 0,
         "harness": 83,
         "spear": 242,
-        "storm": 75
+        "storm": 75,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -55068,7 +55792,8 @@
         "braid": 0,
         "harness": 83,
         "spear": 240,
-        "storm": 69
+        "storm": 69,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -55121,7 +55846,8 @@
         "braid": 0,
         "harness": 83,
         "spear": 239,
-        "storm": 71
+        "storm": 71,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -55174,7 +55900,8 @@
         "braid": 0,
         "harness": 83,
         "spear": 241,
-        "storm": 66
+        "storm": 66,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -55227,7 +55954,8 @@
         "braid": 0,
         "harness": 83,
         "spear": 240,
-        "storm": 65
+        "storm": 65,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -55711,8 +56439,9 @@
        "equipment": {
         "braid": 108,
         "harness": 12,
-        "spear": 215,
-        "storm": 67
+        "spear": 211,
+        "storm": 67,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -55764,8 +56493,9 @@
        "equipment": {
         "braid": 111,
         "harness": 16,
-        "spear": 218,
-        "storm": 64
+        "spear": 212,
+        "storm": 62,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -55817,8 +56547,9 @@
        "equipment": {
         "braid": 113,
         "harness": 17,
-        "spear": 207,
-        "storm": 73
+        "spear": 199,
+        "storm": 73,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -55870,8 +56601,9 @@
        "equipment": {
         "braid": 115,
         "harness": 20,
-        "spear": 221,
-        "storm": 69
+        "spear": 218,
+        "storm": 68,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -55924,7 +56656,8 @@
         "braid": 115,
         "harness": 25,
         "spear": 213,
-        "storm": 71
+        "storm": 71,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -55976,8 +56709,9 @@
        "equipment": {
         "braid": 115,
         "harness": 20,
-        "spear": 213,
-        "storm": 63
+        "spear": 210,
+        "storm": 61,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -56029,8 +56763,9 @@
        "equipment": {
         "braid": 113,
         "harness": 17,
-        "spear": 210,
-        "storm": 58
+        "spear": 203,
+        "storm": 57,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -56082,8 +56817,9 @@
        "equipment": {
         "braid": 111,
         "harness": 16,
-        "spear": 215,
-        "storm": 66
+        "spear": 208,
+        "storm": 65,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -56140,7 +56876,8 @@
         "braid": 138,
         "spear": 101,
         "harness": 46,
-        "storm": 60
+        "storm": 60,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -56193,7 +56930,8 @@
         "braid": 138,
         "spear": 104,
         "harness": 40,
-        "storm": 62
+        "storm": 62,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -56246,7 +56984,8 @@
         "braid": 138,
         "spear": 108,
         "harness": 35,
-        "storm": 63
+        "storm": 63,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -56299,7 +57038,8 @@
         "braid": 134,
         "spear": 117,
         "harness": 35,
-        "storm": 70
+        "storm": 70,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -56352,7 +57092,8 @@
         "braid": 128,
         "spear": 134,
         "harness": 35,
-        "storm": 77
+        "storm": 77,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -56405,7 +57146,8 @@
         "braid": 134,
         "spear": 127,
         "harness": 35,
-        "storm": 68
+        "storm": 68,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -56458,7 +57200,8 @@
         "braid": 138,
         "spear": 108,
         "harness": 35,
-        "storm": 61
+        "storm": 61,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -56511,7 +57254,8 @@
         "braid": 138,
         "spear": 98,
         "harness": 40,
-        "storm": 63
+        "storm": 63,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -56596,7 +57340,8 @@
         "braid": 0,
         "spear": 108,
         "harness": 38,
-        "storm": 56
+        "storm": 56,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -56649,7 +57394,8 @@
         "braid": 0,
         "spear": 67,
         "harness": 45,
-        "storm": 58
+        "storm": 58,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -56702,7 +57448,8 @@
         "braid": 0,
         "spear": 68,
         "harness": 47,
-        "storm": 55
+        "storm": 55,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -56755,7 +57502,8 @@
         "braid": 0,
         "spear": 71,
         "harness": 43,
-        "storm": 61
+        "storm": 61,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -56808,7 +57556,8 @@
         "braid": 0,
         "spear": 66,
         "harness": 28,
-        "storm": 67
+        "storm": 67,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -56861,7 +57610,8 @@
         "braid": 0,
         "spear": 64,
         "harness": 28,
-        "storm": 91
+        "storm": 91,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -56914,7 +57664,8 @@
         "braid": 0,
         "spear": 65,
         "harness": 30,
-        "storm": 92
+        "storm": 92,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -56967,7 +57718,8 @@
         "braid": 0,
         "spear": 64,
         "harness": 30,
-        "storm": 85
+        "storm": 85,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.1
@@ -57020,7 +57772,8 @@
         "braid": 0,
         "spear": 69,
         "harness": 27,
-        "storm": 55
+        "storm": 55,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -57073,7 +57826,8 @@
         "braid": 0,
         "spear": 65,
         "harness": 28,
-        "storm": 66
+        "storm": 66,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -57126,7 +57880,8 @@
         "braid": 0,
         "spear": 73,
         "harness": 39,
-        "storm": 57
+        "storm": 57,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -57179,7 +57934,8 @@
         "braid": 0,
         "spear": 110,
         "harness": 37,
-        "storm": 62
+        "storm": 62,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -57232,7 +57988,8 @@
         "braid": 0,
         "harness": 75,
         "spear": 172,
-        "storm": 64
+        "storm": 64,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -57285,7 +58042,8 @@
         "braid": 0,
         "harness": 75,
         "spear": 249,
-        "storm": 76
+        "storm": 76,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -57338,7 +58096,8 @@
         "braid": 0,
         "harness": 75,
         "spear": 253,
-        "storm": 66
+        "storm": 66,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -58204,7 +58963,8 @@
         "braid": 68,
         "spear": 180,
         "harness": 18,
-        "storm": 48
+        "storm": 48,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -58257,7 +59017,8 @@
         "braid": 99,
         "spear": 200,
         "harness": 19,
-        "storm": 50
+        "storm": 50,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -58310,7 +59071,8 @@
         "braid": 101,
         "spear": 201,
         "harness": 22,
-        "storm": 46
+        "storm": 46,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -58363,7 +59125,8 @@
         "braid": 98,
         "spear": 201,
         "harness": 24,
-        "storm": 45
+        "storm": 45,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -58416,7 +59179,8 @@
         "braid": 18,
         "spear": 198,
         "harness": 22,
-        "storm": 49
+        "storm": 49,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -58469,7 +59233,8 @@
         "braid": 16,
         "spear": 197,
         "harness": 16,
-        "storm": 80
+        "storm": 80,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -58522,7 +59287,8 @@
         "braid": 15,
         "spear": 190,
         "harness": 28,
-        "storm": 83
+        "storm": 83,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.9
@@ -58575,7 +59341,8 @@
         "braid": 14,
         "spear": 188,
         "harness": 28,
-        "storm": 73
+        "storm": 73,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.9
@@ -58628,7 +59395,8 @@
         "braid": 18,
         "spear": 197,
         "harness": 20,
-        "storm": 56
+        "storm": 56,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -58681,7 +59449,8 @@
         "braid": 24,
         "spear": 205,
         "harness": 16,
-        "storm": 53
+        "storm": 53,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -58734,7 +59503,8 @@
         "braid": 26,
         "spear": 203,
         "harness": 17,
-        "storm": 49
+        "storm": 49,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -58787,7 +59557,8 @@
         "braid": 44,
         "spear": 183,
         "harness": 20,
-        "storm": 41
+        "storm": 41,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -58840,7 +59611,8 @@
         "braid": 83,
         "harness": 24,
         "spear": 213,
-        "storm": 72
+        "storm": 72,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -58893,7 +59665,8 @@
         "braid": 82,
         "harness": 18,
         "spear": 180,
-        "storm": 69
+        "storm": 69,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -58946,7 +59719,8 @@
         "braid": 82,
         "harness": 16,
         "spear": 182,
-        "storm": 68
+        "storm": 68,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -59008,7 +59782,8 @@
         "braid": 82,
         "spear": 131,
         "harness": 24,
-        "storm": 67
+        "storm": 67,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -59061,7 +59836,8 @@
         "braid": 108,
         "spear": 158,
         "harness": 47,
-        "storm": 69
+        "storm": 69,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -59114,7 +59890,8 @@
         "braid": 107,
         "spear": 155,
         "harness": 52,
-        "storm": 69
+        "storm": 69,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -59167,7 +59944,8 @@
         "braid": 108,
         "spear": 157,
         "harness": 57,
-        "storm": 67
+        "storm": 67,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -59220,7 +59998,8 @@
         "braid": 31,
         "spear": 146,
         "harness": 52,
-        "storm": 62
+        "storm": 62,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -59273,7 +60052,8 @@
         "braid": 27,
         "spear": 135,
         "harness": 50,
-        "storm": 89
+        "storm": 89,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -59326,7 +60106,8 @@
         "braid": 20,
         "spear": 133,
         "harness": 58,
-        "storm": 98
+        "storm": 98,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -59379,7 +60160,8 @@
         "braid": 22,
         "spear": 131,
         "harness": 56,
-        "storm": 91
+        "storm": 91,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -59432,7 +60214,8 @@
         "braid": 27,
         "spear": 140,
         "harness": 52,
-        "storm": 60
+        "storm": 60,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -59485,7 +60268,8 @@
         "braid": 34,
         "spear": 144,
         "harness": 42,
-        "storm": 61
+        "storm": 61,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -59538,7 +60322,8 @@
         "braid": 42,
         "spear": 142,
         "harness": 45,
-        "storm": 66
+        "storm": 66,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -59591,7 +60376,8 @@
         "braid": 71,
         "spear": 135,
         "harness": 26,
-        "storm": 54
+        "storm": 54,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -59644,7 +60430,8 @@
         "braid": 89,
         "spear": 145,
         "harness": 35,
-        "storm": 74
+        "storm": 74,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -59697,7 +60484,8 @@
         "braid": 89,
         "spear": 74,
         "harness": 35,
-        "storm": 52
+        "storm": 52,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -59750,7 +60538,8 @@
         "braid": 89,
         "spear": 72,
         "harness": 35,
-        "storm": 58
+        "storm": 58,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -59836,7 +60625,8 @@
        "equipment": {
         "braid": 0,
         "harness": 75,
-        "spear": 267
+        "spear": 267,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -59888,7 +60678,8 @@
        "equipment": {
         "braid": 0,
         "harness": 70,
-        "spear": 267
+        "spear": 267,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -59940,7 +60731,8 @@
        "equipment": {
         "braid": 0,
         "harness": 72,
-        "spear": 267
+        "spear": 267,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -59992,7 +60784,8 @@
        "equipment": {
         "braid": 0,
         "harness": 77,
-        "spear": 267
+        "spear": 267,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -60044,7 +60837,8 @@
        "equipment": {
         "braid": 0,
         "harness": 75,
-        "spear": 267
+        "spear": 267,
+        "face": 4
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -60096,7 +60890,8 @@
        "equipment": {
         "braid": 0,
         "harness": 73,
-        "spear": 267
+        "spear": 267,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -60148,7 +60943,8 @@
        "equipment": {
         "braid": 0,
         "harness": 78,
-        "spear": 267
+        "spear": 267,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -60200,7 +60996,8 @@
        "equipment": {
         "braid": 0,
         "harness": 75,
-        "spear": 267
+        "spear": 267,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -60676,7 +61473,8 @@
        "equipment": {
         "braid": 82,
         "harness": 19,
-        "spear": 197
+        "spear": 197,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -60728,7 +61526,8 @@
        "equipment": {
         "braid": 82,
         "harness": 19,
-        "spear": 197
+        "spear": 197,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -60780,7 +61579,8 @@
        "equipment": {
         "braid": 82,
         "harness": 19,
-        "spear": 197
+        "spear": 197,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -60832,7 +61632,8 @@
        "equipment": {
         "braid": 77,
         "harness": 17,
-        "spear": 197
+        "spear": 197,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -60884,7 +61685,8 @@
        "equipment": {
         "braid": 81,
         "harness": 17,
-        "spear": 197
+        "spear": 197,
+        "face": 2
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -60936,7 +61738,8 @@
        "equipment": {
         "braid": 77,
         "harness": 17,
-        "spear": 197
+        "spear": 197,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -60988,7 +61791,8 @@
        "equipment": {
         "braid": 69,
         "harness": 17,
-        "spear": 197
+        "spear": 197,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -61040,7 +61844,8 @@
        "equipment": {
         "braid": 82,
         "harness": 19,
-        "spear": 197
+        "spear": 197,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -61096,7 +61901,8 @@
        "equipment": {
         "braid": 89,
         "spear": 81,
-        "harness": 35
+        "harness": 35,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -61148,7 +61954,8 @@
        "equipment": {
         "braid": 85,
         "spear": 81,
-        "harness": 25
+        "harness": 25,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -61200,7 +62007,8 @@
        "equipment": {
         "braid": 91,
         "spear": 81,
-        "harness": 48
+        "harness": 48,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -61252,7 +62060,8 @@
        "equipment": {
         "braid": 96,
         "spear": 81,
-        "harness": 53
+        "harness": 53,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -61304,7 +62113,8 @@
        "equipment": {
         "braid": 109,
         "spear": 81,
-        "harness": 52
+        "harness": 52,
+        "face": 2
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -61356,7 +62166,8 @@
        "equipment": {
         "braid": 97,
         "spear": 81,
-        "harness": 21
+        "harness": 21,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -61408,7 +62219,8 @@
        "equipment": {
         "braid": 93,
         "spear": 81,
-        "harness": 35
+        "harness": 35,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -61460,7 +62272,8 @@
        "equipment": {
         "braid": 89,
         "spear": 81,
-        "harness": 35
+        "harness": 35,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -61537,7 +62350,8 @@
        "equipment": {
         "braid": 0,
         "harness": 75,
-        "spear": 267
+        "spear": 267,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -61589,7 +62403,8 @@
        "equipment": {
         "braid": 0,
         "harness": 74,
-        "spear": 272
+        "spear": 272,
+        "face": 18
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -61641,7 +62456,8 @@
        "equipment": {
         "braid": 0,
         "harness": 75,
-        "spear": 225
+        "spear": 225,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -61693,7 +62509,8 @@
        "equipment": {
         "braid": 0,
         "harness": 78,
-        "spear": 225
+        "spear": 225,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.4
@@ -61745,7 +62562,8 @@
        "equipment": {
         "braid": 0,
         "harness": 78,
-        "spear": 266
+        "spear": 266,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.2
@@ -61797,7 +62615,8 @@
        "equipment": {
         "braid": 0,
         "harness": 77,
-        "spear": 265
+        "spear": 265,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -61849,7 +62668,8 @@
        "equipment": {
         "braid": 0,
         "harness": 78,
-        "spear": 265
+        "spear": 265,
+        "face": 4
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -61901,7 +62721,8 @@
        "equipment": {
         "braid": 0,
         "harness": 75,
-        "spear": 267
+        "spear": 267,
+        "face": 16
        },
        "anchor_gap": {
         "spear_tip": 0.0
@@ -62377,7 +63198,8 @@
        "equipment": {
         "braid": 82,
         "harness": 19,
-        "spear": 197
+        "spear": 197,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -62429,7 +63251,8 @@
        "equipment": {
         "braid": 72,
         "harness": 12,
-        "spear": 239
+        "spear": 239,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -62481,7 +63304,8 @@
        "equipment": {
         "braid": 79,
         "harness": 15,
-        "spear": 238
+        "spear": 230,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.9
@@ -62533,7 +63357,8 @@
        "equipment": {
         "braid": 69,
         "harness": 13,
-        "spear": 238
+        "spear": 230,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.9
@@ -62585,7 +63410,8 @@
        "equipment": {
         "braid": 75,
         "harness": 17,
-        "spear": 167
+        "spear": 167,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -62637,7 +63463,8 @@
        "equipment": {
         "braid": 80,
         "harness": 19,
-        "spear": 193
+        "spear": 193,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -62689,7 +63516,8 @@
        "equipment": {
         "braid": 66,
         "harness": 16,
-        "spear": 195
+        "spear": 195,
+        "face": 2
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -62741,7 +63569,8 @@
        "equipment": {
         "braid": 82,
         "harness": 19,
-        "spear": 197
+        "spear": 197,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.7
@@ -62797,7 +63626,8 @@
        "equipment": {
         "braid": 89,
         "spear": 81,
-        "harness": 35
+        "harness": 35,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -62849,7 +63679,8 @@
        "equipment": {
         "braid": 87,
         "spear": 83,
-        "harness": 37
+        "harness": 37,
+        "face": 9
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -62901,7 +63732,8 @@
        "equipment": {
         "braid": 89,
         "spear": 104,
-        "harness": 35
+        "harness": 35,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -62953,7 +63785,8 @@
        "equipment": {
         "braid": 94,
         "spear": 104,
-        "harness": 35
+        "harness": 35,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.3
@@ -63005,7 +63838,8 @@
        "equipment": {
         "braid": 100,
         "spear": 96,
-        "harness": 35
+        "harness": 35,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.6
@@ -63057,7 +63891,8 @@
        "equipment": {
         "braid": 100,
         "spear": 83,
-        "harness": 35
+        "harness": 35,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -63109,7 +63944,8 @@
        "equipment": {
         "braid": 91,
         "spear": 82,
-        "harness": 35
+        "harness": 35,
+        "face": 2
        },
        "anchor_gap": {
         "spear_tip": 0.5
@@ -63161,7 +63997,8 @@
        "equipment": {
         "braid": 89,
         "spear": 81,
-        "harness": 35
+        "harness": 35,
+        "face": 8
        },
        "anchor_gap": {
         "spear_tip": 0.5
