@@ -402,3 +402,27 @@ non-refill, Nix's strict cap vicinity, Mirra's seal cap/clamping, Rook replaceme
 event limits, repeated dispatch and unknown fields. Input snapshots remain unchanged.
 Regenerate with `node game/test/combat/build_special_oracle.mjs /path/to/original-modules.json`.
 Next: canonical primary/melee mutations, then fixed-step dispatcher/contact and Player hook.
+
+## Primary release snapshot phase
+
+`AbilityPrimary.release` ports original E's primary branch, composing the shared scalar
+strike and launch helpers on an independent canonical snapshot. It increments the combo
+first and preserves original resource, damage/passive, projectile and event order. Brine
+clears tether and all previous harpoons before launching one replacement; powered Pendle
+ignores ordinary ammo/reload. Velvet's primed counter uses its independent timer even after
+power ends. Cairn's shockwave and Ashe's crescent follow the first melee/passive resolution.
+Nix adds heat before the beam; Mote emits shards only with a powered primary release.
+
+The dispatcher owns eligibility and exactly-once contact. This phase already consumes ammo,
+sets reload, adds heat and launches shots: do not also replay `AbilityResources.release` or
+`AbilityProjectiles.plan`. Cancelled preparation must never call it. It does not attach actors,
+convert HP, advance clocks or resolve projectile flight/impact a second time.
+
+`primary-oracle.json` contains312 complete snapshots against hash-verified, unmodified E:
+all kits/forms/directions, lethal/immortal/heavy targets and passive follow-ups, ordinary and
+powered resource states, old harpoons, counter expiry, heat caps, flask lifetime clamps,
+event limits and unknown-field preservation. Source input stays unchanged. Regenerate with
+`node game/test/combat/build_primary_oracle.mjs /path/to/original-modules.json`.
+Next: compose the fixed-step player/action/movement and ordered simulation dispatcher,
+then contact presentation and the granted Player hook. World HP mapping and the inherited
+Tam edge remain A/canonical-owner decisions on the existing remote checkpoint.
