@@ -1,7 +1,7 @@
 {
  "id": "thornback/thornback_volley_windup_E",
  "file": "artifacts/thornback/thornback_volley_windup_E.png",
- "sha256": "30ccc8f50c44a8114fb4c41a4bd73a4a851f4d36535f15d90e3e9f0cf31585aa",
+ "sha256": "d484aa9a85eb6b57b26c0ed3158712ef1ca741109427fd91f4c7c920230bf4fd",
  "kind": "creature",
  "biome": "cellar",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 47,
-   "tones": 19.19148936170213,
-   "shapes": 29.872340425531913
+   "tones": 19.425531914893618,
+   "shapes": 30.085106382978722
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.593,
-  "tones_ratio": 0.711,
-  "shapes_ratio": 0.593,
+  "ratio": 0.597,
+  "tones_ratio": 0.719,
+  "shapes_ratio": 0.597,
   "passed": false,
   "group": "prop"
  },
@@ -68,7 +68,7 @@
     250,
     197
    ],
-   "message": "thornback/thornback_volley_windup_E: detail bar 0.59 of Eastward's prop band (19.2 tones, 29.9 shapes a patch against 27.0, 50.36)",
+   "message": "thornback/thornback_volley_windup_E: detail bar 0.60 of Eastward's prop band (19.4 tones, 30.1 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

@@ -17,6 +17,55 @@ from .core import Finding, keys, hsv, lum, regions, slice_box, merge_findings, w
 from . import water as W
 from .objects import ground_palette
 from . import detail as D
+from . import bands as B
+
+
+def calm_ground(native, comp, H) -> bool:
+    """A large calm area that is a ground plane drawn to Eastward's ground band (bands.ground_plane:
+    drawn texture a patch, quiet contrast between its pieces). Eastward's dungeon floors are dark,
+    calm fields; the prop rule (few tones, two covering most) would call them flat."""
+    if comp.sum() < GROUND_PLANE_MIN * H * H:
+        return False
+    ys, xs = np.nonzero(comp)
+    y0, y1, x0, x1 = ys.min(), ys.max() + 1, xs.min(), xs.max() + 1
+    if min(y1 - y0, x1 - x0) < 0.5 * H:          # a strip (a wall face, a ledge) is not a plane
+        return False
+    r = B.ground_plane(native[y0:y1, x0:x1, :3], comp[y0:y1, x0:x1], H)
+    return bool(r.get('passed'))
+
+
+def piece_of_ground(native, comp, g, H) -> bool:
+    """A small calm patch set in the ground (a flag a tone off its neighbours, a patch of damp): its
+    ring is mostly the screen's ground, and it differs from that ring by no more than Eastward's
+    ground pieces differ from each other (2.5 spreads of the ground band's contrast, in L, and a
+    little hue).
+    A thing stands out further: a prop, a boulder, a slab of Matt's terrazzo (U1) does."""
+    ring = ndi.binary_dilation(comp, iterations=2) & ~comp
+    if not ring.any() or g[ring].mean() < 0.6:
+        return False
+    band = B.load_bands().get('groups', {}).get('ground')
+    if not band:
+        return False
+    a = np.median(native[..., :3][comp].astype(float), axis=0)
+    b = np.median(native[..., :3][ring & g].astype(float), axis=0)
+    wl = np.array([0.299, 0.587, 0.114])
+    dl = abs(float(a @ wl - b @ wl))
+    dc = float(np.linalg.norm((a - a @ wl) - (b - b @ wl)))
+    return dl <= PIECE_SPREAD * band['max_contrast'] and dc <= PIECE_HUE
+
+
+def ground_planes(native, H, ignore) -> np.ndarray:
+    """Every calm ground plane on the screen (calm_ground) as one mask: the regions off the
+    screen's ground palette (after a 3 x 3 opening) that pass the ground band."""
+    k, ground = ground_palette(native)
+    obj = ndi.binary_opening(~np.isin(k, ground) & ~ignore, structure=np.ones((3, 3)))
+    lab, regs = regions(obj, min_area=int(GROUND_PLANE_MIN * H * H))
+    out = np.zeros(obj.shape, bool)
+    for lid, sl, a in regs:
+        c = lab == lid
+        if calm_ground(native, c, H):
+            out |= c
+    return out
 
 SHADOW_MIN_AREA = 0.35        # H^2
 SHADOW_CONTACT = 0.35         # a caster must touch at least this share of the shadow's width
@@ -24,6 +73,10 @@ LINE_MIN_LEN = 0.35           # H: a thin line this long that belongs to nothing
 REPEAT_MIN = 12               # identical tuft stamps on one screen
 REPEAT_DENSITY = 1.0          # exact repeats of a tuft stamp (12 px or more) per H^2 above this is wallpaper
 FLAT_MIN = 0.14               # H^2: a smooth single-tone area inside an object this large is flat
+GROUND_PLANE_MIN = 1.0        # H^2: an area this large may be a ground plane, judged by the ground band
+PIECE_HUE = 32.0              # RGB units off grey: a ground piece's hue may differ this much from its ground
+#                               (light turns a floor warm in a pool and cool in the shade, as Eastward's 06 does)
+PIECE_SPREAD = 2.5            # a ground piece may sit this many of Eastward's piece spreads (std) off its ground
 
 
 def hud_mask(native: np.ndarray) -> np.ndarray:
@@ -214,6 +267,7 @@ def flats(native, H, ignore) -> list[Finding]:
             path |= comp
     sm &= ~path & ~np.isin(fam, (2,))
     fs = []
+    planes = ground_planes(native, H, ignore)
     lab, regs = regions(sm, min_area=int(FLAT_MIN * H * H))
     for lid, sl, a in regs:
         comp = lab == lid
@@ -227,6 +281,8 @@ def flats(native, H, ignore) -> list[Finding]:
         # a calm patch of ground (bordered mostly by the ground palette) is meant to be calm
         ring = ndi.binary_dilation(comp, iterations=2) & ~comp
         if g[ring].mean() >= 0.5:
+            continue
+        if planes[comp].mean() > 0.5 or piece_of_ground(native, comp, g, H):   # a flag of a calm floor
             continue
         sev = 'fault'
         det = 'detail.water_flat' if f == 2 else 'detail.flat'
@@ -265,7 +321,8 @@ def flat_objects(native, H, ignore) -> list[Finding]:
     """Objects drawn as flat shapes: a thing that is not ground (off the screen's ground
     palette, at least 0.06 H^2 after a 3 x 3 opening) painted in four tones or fewer with
     two of them covering three quarters of it. Eastward's shots hold 0 to 3 a screen (JPEG
-    counted fairly at 16 levels), the pilot golden 2, Matt's flagged Undercroft 52."""
+    counted fairly at 16 levels), the pilot golden 2, Matt's flagged Undercroft 52. A ground plane
+    (at least 1 H^2 and 0.5 H across) is judged by Eastward's ground band instead (calm_ground)."""
     k, ground = ground_palette(native)
     g = np.isin(k, ground)
     obj = ndi.binary_opening(~g & ~ignore, structure=np.ones((3, 3)))
@@ -277,7 +334,7 @@ def flat_objects(native, H, ignore) -> list[Finding]:
         v, cnt = np.unique(kk[c], return_counts=True)
         tones = int((cnt >= 3).sum())
         top2 = float(np.sort(cnt)[::-1][:2].sum() / a)
-        if tones <= 4 and top2 >= 0.75:
+        if tones <= 4 and top2 >= 0.75 and not calm_ground(native, c, H) and not piece_of_ground(native, c, g, H):
             out.append((a, slice_box(sl), tones, top2))
     out.sort(key=lambda t: -t[0])
     fs = []

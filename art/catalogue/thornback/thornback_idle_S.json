@@ -1,7 +1,7 @@
 {
  "id": "thornback/thornback_idle_S",
  "file": "artifacts/thornback/thornback_idle_S.png",
- "sha256": "bcae4d4a34d3cb6cd4356c789ba00fe3f7f5fce0908d9d728dce1a315e75e817",
+ "sha256": "f22de0c55a5a0e92486ee3647a726032ed4c1d6763d55e55c0a4868cf246a4f6",
  "kind": "creature",
  "biome": "cellar",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 39,
-   "tones": 21.17948717948718,
-   "shapes": 31.82051282051282
+   "tones": 21.256410256410255,
+   "shapes": 31.53846153846154
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.632,
-  "tones_ratio": 0.784,
-  "shapes_ratio": 0.632,
+  "ratio": 0.626,
+  "tones_ratio": 0.787,
+  "shapes_ratio": 0.626,
   "passed": false,
   "group": "prop"
  },
@@ -44,7 +44,7 @@
     216,
     198
    ],
-   "message": "thornback/thornback_idle_S: detail bar 0.63 of Eastward's prop band (21.2 tones, 31.8 shapes a patch against 27.0, 50.36)",
+   "message": "thornback/thornback_idle_S: detail bar 0.63 of Eastward's prop band (21.3 tones, 31.5 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

@@ -1,7 +1,7 @@
 {
  "id": "undercroft/ground",
  "file": "game/zones/undercroft/art/ground.png",
- "sha256": "703fd449fe26ff062cc73081a04820e282d21c183a9dffeddf89623d56ed5613",
+ "sha256": "77e0d58e55921f8d6202d3ecadbd3ec3c016ae9f475e0d8d1bd9e83a5b3be036",
  "kind": "ground",
  "biome": "cellar",
  "H": 74.0,
@@ -10,27 +10,14 @@
   2304,
   648
  ],
- "status": "fail",
+ "status": "pass",
  "counts": {
   "blocker": 0,
-  "fault": 1,
+  "fault": 0,
   "polish": 0
  },
  "detail_bar": null,
- "findings": [
-  {
-   "detector": "detail.flat",
-   "severity": "fault",
-   "box": [
-    1718,
-    448,
-    1747,
-    469
-   ],
-   "message": "a thing drawn flat: 4 tones, two cover 92% (0.08 H^2)",
-   "fix": "give it form and material: a lit top plane, a mid front and a dark side (a cylinder: a highlight band and a core shadow), occlusion where it meets the floor, its texture in clusters"
-  }
- ],
+ "findings": [],
  "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",

@@ -144,3 +144,13 @@ EW = {
   )
  )
 }
+
+
+# Ground planes in the same shots (native px): calm fields people walk on, measured for the ground
+# band (bands.ground_plane): the dungeon floor in shade (06), a lawn and path (13), the yard's dirt
+# and its lawn (17). Boxes stay clear of props, people, light sources and effects.
+EW_GROUND = {
+ "06": ((160, 190, 240, 250, "dungeon floor"), (165, 255, 225, 300, "dungeon floor south")),
+ "13": ((200, 175, 290, 230, "grass and path"),),
+ "17": ((20, 200, 150, 245, "yard dirt"), (200, 200, 300, 250, "yard dirt east"), (480, 250, 560, 300, "lawn")),
+}

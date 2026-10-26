@@ -430,6 +430,12 @@ def check_shadows(z: Zone, H=GAME_H) -> list[Finding]:
     ratio = v / max(lv, 1e-3)
     cand = (ratio >= 0.45) & (ratio <= 0.8) & (dh <= 40) & (s >= 0.15)
     cand = ndi.binary_closing(cand, structure=np.ones((3, 3)), iterations=2)
+    # a wall's own top (a vault's cut-away dark, a coping in shade) is not a shadow on the ground
+    if z.plan and z.plan.get('walls') and z.plan.get('box'):
+        d = z.size[0] / float(z.plan['box'][2])
+        for w in z.plan['walls']:
+            x, y, ww, hh = (int(round(v * d)) for v in w['rect'])
+            cand[max(0, y):y + hh, max(0, x):x + ww] = False
     # what the player sees of it: not hidden under a sprite
     cover = np.zeros(cand.shape, bool)
     feet = np.zeros(cand.shape, bool)

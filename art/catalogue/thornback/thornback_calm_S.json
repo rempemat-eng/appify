@@ -1,7 +1,7 @@
 {
  "id": "thornback/thornback_calm_S",
  "file": "artifacts/thornback/thornback_calm_S.png",
- "sha256": "8d3dd4b52ec1a4ee0ab7f4b2ea37dc3242f742f3deaa19fc4e9f3ebc98b1bb14",
+ "sha256": "f4c573db0de7dbd84a3a9e9a1dee96722bf73fa396b63fddf127ad7433fc1fad",
  "kind": "creature",
  "biome": "cellar",
  "H": 74.0,

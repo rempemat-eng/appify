@@ -1,7 +1,7 @@
 {
  "id": "thornback/thornback_charge_windup_S",
  "file": "artifacts/thornback/thornback_charge_windup_S.png",
- "sha256": "eeda16cfbc576e6af5c25c7692d5c3bb3f6e0aa9897ff0ca5bb655d50c9211f9",
+ "sha256": "79d373a1e06895139f1f1ab1719b07609c486777897f12392554bc452abf8da1",
  "kind": "creature",
  "biome": "cellar",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 40,
-   "tones": 20.1,
-   "shapes": 30.475
+   "tones": 20.275,
+   "shapes": 30.925
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.605,
-  "tones_ratio": 0.744,
-  "shapes_ratio": 0.605,
+  "ratio": 0.614,
+  "tones_ratio": 0.751,
+  "shapes_ratio": 0.614,
   "passed": false,
   "group": "prop"
  },
@@ -44,7 +44,7 @@
     216,
     198
    ],
-   "message": "thornback/thornback_charge_windup_S: detail bar 0.60 of Eastward's prop band (20.1 tones, 30.5 shapes a patch against 27.0, 50.36)",
+   "message": "thornback/thornback_charge_windup_S: detail bar 0.61 of Eastward's prop band (20.3 tones, 30.9 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

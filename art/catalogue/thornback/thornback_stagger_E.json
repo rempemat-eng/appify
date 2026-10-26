@@ -1,7 +1,7 @@
 {
  "id": "thornback/thornback_stagger_E",
  "file": "artifacts/thornback/thornback_stagger_E.png",
- "sha256": "c34fe1229a331d38c8ef59a22650fda7c423256a576cf7c44eb872981af8778a",
+ "sha256": "73bfccd68903331266283c48753e730e04974dd3ad291f8330d20672d6cc1b7e",
  "kind": "creature",
  "biome": "cellar",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 48,
-   "tones": 17.708333333333332,
-   "shapes": 28.666666666666668
+   "tones": 17.791666666666668,
+   "shapes": 28.5
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.569,
-  "tones_ratio": 0.656,
-  "shapes_ratio": 0.569,
+  "ratio": 0.566,
+  "tones_ratio": 0.659,
+  "shapes_ratio": 0.566,
   "passed": false,
   "group": "prop"
  },
@@ -68,7 +68,7 @@
     249,
     197
    ],
-   "message": "thornback/thornback_stagger_E: detail bar 0.57 of Eastward's prop band (17.7 tones, 28.7 shapes a patch against 27.0, 50.36)",
+   "message": "thornback/thornback_stagger_E: detail bar 0.57 of Eastward's prop band (17.8 tones, 28.5 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

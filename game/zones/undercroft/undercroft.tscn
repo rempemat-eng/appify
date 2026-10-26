@@ -9,6 +9,7 @@
 [ext_resource type="Script" path="res://world/pressure_plate.gd" id="plate"]
 [ext_resource type="Script" path="res://world/seal_lever.gd" id="lever"]
 [ext_resource type="Script" path="res://enemies/slice_enemy.gd" id="enemy"]
+[ext_resource type="Script" path="res://enemies/creature_dresser.gd" id="dresser"]
 [ext_resource type="PackedScene" path="res://bosses/thornback.tscn" id="boss"]
 [ext_resource type="Script" path="res://bosses/thornback_rest.gd" id="rest"]
 [ext_resource type="Texture2D" path="res://zones/undercroft/art/ground.png" id="t0"]
@@ -600,6 +601,10 @@ shape = SubResource("s22")
 [node name="UndercroftRoomsCamp" type="Node2D" parent="Actors"]
 script = ExtResource("camp")
 camp_id = "undercroft_rooms"
+
+[node name="Dresser" type="Node" parent="Actors/UndercroftRoomsCamp"]
+script = ExtResource("dresser")
+with_den = false
 
 [node name="Rusher1" type="CharacterBody2D" parent="Actors/UndercroftRoomsCamp"]
 position = Vector2(288, 384)

@@ -16,7 +16,8 @@ game/bosses/thornback/art/, then writes game/zones/undercroft/undercroft.tscn wi
   Props        y-sorted with the actors: props, torches (world/torch.gd), the lever, the sealed slab (with its
                collision, in a Conditional until the lever is pulled), Cairn in his alcove
   Actors       the things (the shard, Cairn), the plate (world/pressure_plate.gd), the lever (world/seal_lever.gd),
-               the rooms' camp of Codex's enemies (enemies/slice_enemy.gd) and the Thornback's camp
+               the rooms' camp of Codex's enemies (enemies/slice_enemy.gd, dressed as the woodland's creatures by
+               enemies/creature_dresser.gd, without its den) and the Thornback's camp
                (bosses/thornback.tscn, kept inside the plan's arena), the Thornback at rest once freed
   Spawns, Doors
 
@@ -48,6 +49,7 @@ EXT = [
     ('plate', 'Script', 'res://world/pressure_plate.gd'),
     ('lever', 'Script', 'res://world/seal_lever.gd'),
     ('enemy', 'Script', 'res://enemies/slice_enemy.gd'),
+    ('dresser', 'Script', 'res://enemies/creature_dresser.gd'),
     ('boss', 'PackedScene', 'res://bosses/thornback.tscn'),
     ('rest', 'Script', 'res://bosses/thornback_rest.gd'),
 ]
@@ -155,6 +157,10 @@ def build(plan: dict, kit: dict) -> str:
     for camp in plan.get('camps', []):
         name = pascal(camp['id']) + 'Camp'
         s.node(name, 'Node2D', 'Actors', {'script': 'ExtResource("camp")', 'camp_id': '"%s"' % camp['id']})
+        if not camp.get('boss'):
+            # the drawn creatures over Codex's roles, as the woodland camp (enemies/woodland_camp.tscn);
+            # first in the camp so it sees each enemy enter; no bramble den in a stone vault
+            s.node('Dresser', 'Node', 'Actors/' + name, {'script': 'ExtResource("dresser")', 'with_den': 'false'})
         for i, e in enumerate(camp['enemies']):
             x, y = e[0], e[1]
             if camp.get('boss'):

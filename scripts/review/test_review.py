@@ -205,5 +205,76 @@ class Gate(unittest.TestCase):
             gate.CATALOGUE, gate.QUEUE = old_cat, old_queue
 
 
+
+def dungeon_floor(kind: str, seed: int = 3) -> np.ndarray:
+    """A lawn (the screen's ground palette) beside a stone floor 240 x 400 px (17 H^2): 'calm' is an
+    Eastward-like dungeon floor (dark irregular flags, joints a step under them, soft wear, pits and
+    grit in two-pixel clusters, dirt in some joints); 'flat' the same area in two flat tones with ruled
+    joints; 'bright' the calm floor's drawing on bright slabs of very different values (the terrazzo
+    floor Matt flagged, U1)."""
+    from scipy import ndimage as ndi
+    rng = np.random.default_rng(seed)
+    a = np.zeros((400, 640, 4), np.uint8)
+    a[..., 3] = 255
+    a[:, :400, :3] = GRASS
+    a[:, :400][rng.random((400, 400)) < 0.3, :3] = GRASS2
+    F = a[:, 400:, :3]
+    fh, fw = F.shape[:2]
+    if kind == 'flat':
+        F[:] = (70, 66, 74)
+        F[:, fw // 2:] = (78, 74, 80)
+        F[::30, :] = (52, 48, 60)
+        F[:, ::30] = (52, 48, 60)
+        return a
+    ids = np.zeros((fh, fw), int)
+    y = k = 0
+    while y < fh:
+        hh = int(rng.integers(18, 40))
+        x = int(rng.integers(-20, 0))
+        while x < fw:
+            ww = int(rng.integers(18, 44))
+            k += 1
+            ids[y:y + hh, max(0, x):x + ww] = k
+            x += ww
+        y += hh
+    tones = [(68, 64, 72), (74, 70, 76), (64, 62, 74)] if kind == 'calm' else \
+        [(150, 144, 138), (84, 78, 82), (118, 112, 110)]
+    for i in range(1, k + 1):
+        F[ids == i] = tones[int(rng.integers(0, 3))]
+    j = np.zeros((fh, fw), bool)
+    j[:-1] |= ids[:-1] != ids[1:]
+    j[:, :-1] |= ids[:, :-1] != ids[:, 1:]
+    F[j] = (48, 44, 56)
+    wear = ndi.gaussian_filter(rng.random((fh, fw)), 2.5)
+    worn = (wear > np.quantile(wear, 0.8)) & ~j
+    F[worn] = F[worn] - 6
+    for _ in range(2600):
+        yy, xx = int(rng.integers(0, fh - 2)), int(rng.integers(0, fw - 3))
+        F[yy:yy + 2, xx:xx + int(rng.integers(2, 4))] = (52, 48, 60) if rng.random() < 0.6 else (84, 80, 84)
+    dirt = ndi.binary_dilation(j, iterations=1) & (ndi.gaussian_filter(rng.random((fh, fw)), 6) > 0.53)
+    F[dirt] = (66, 46, 48)
+    return a
+
+
+class GroundPlane(unittest.TestCase):
+    """detail.flat on ground planes (round 4 of the Undercroft): a calm, dark floor drawn to
+    Eastward's ground band (eastward_bands.json, groups.ground) is not flat; a flat one, or a
+    bright floor of contrasting slabs, still is."""
+
+    def flat(self, kind):
+        p = dungeon_floor(kind)
+        ign = np.zeros(p.shape[:2], bool)
+        return [f for f in screen.flat_objects(p[..., :3], H, ign) + screen.flats(p[..., :3], H, ign)
+                if f.detector == 'detail.flat']
+
+    def test_calm_eastward_like_floor_passes(self):
+        self.assertEqual(self.flat('calm'), [])
+
+    def test_flat_floor_trips(self):
+        self.assertTrue(self.flat('flat'))
+
+    def test_bright_contrasting_floor_trips(self):
+        self.assertTrue(self.flat('bright'))
+
 if __name__ == '__main__':
     unittest.main()

@@ -437,12 +437,27 @@ def draw(facing: str, P: dict, d: float = 3.0) -> Image.Image:
                       (top[0] + 6, top[1] + 4 + sdy)])
         sp.add('socket', g.ellipse(top[0] + 1, top[1] + 3 + sdy, 8, 3.4), 'soot', base=1, z=3.58 + zs, fixed=1)
         glow = P['glow']
+        # the starfall crystal's own violet (the woodland shard's ramp, and the tells' pulse colour),
+        # cut in facets: the face towards the light lit, a bright core along the ridge, the far
+        # face a step down, so it reads as a crystal and not as a trickle of water
+        far = g.poly([(top[0] + 2, top[1] + 4 + sdy), (top[0] + 2.5, top[1] - 24 + sdy), (top[0] + 7, top[1] - 28 + sdy),
+                      (top[0] + 6, top[1] + 4 + sdy)]) & spl
         if glow > 0:
-            sp.add('splinter', spl, 'sky', base=glow, z=3.6 + zs, fixed=glow, glow=True)
-            core = g.poly([(top[0] - 2, top[1] - 1 + sdy), (top[0] + 1, top[1] - 20 + sdy), (top[0] + 4, top[1] - 1 + sdy)])
-            sp.add('splinter_core', core, 'sky', base=5, z=3.65 + zs, fixed=min(5, glow + 1), glow=True)
+            lit = min(glow, 4)
+            sp.add('splinter', spl, 'dusk', base=lit, z=3.6 + zs, fixed=lit, glow=True)
+            sp.add('splinter_far', far, 'dusk', base=max(1, lit - 2), z=3.62 + zs, fixed=max(1, lit - 2), glow=True)
+            # a step facet across the lit face's foot, a tone down, and a fracture running up it
+            band = g.poly([(top[0] - 7, top[1] + 4 + sdy), (top[0] - 6, top[1] - 7 + sdy), (top[0] + 2, top[1] - 12 + sdy),
+                           (top[0] + 2, top[1] + 4 + sdy)]) & spl & ~far
+            sp.add('splinter_band', band, 'dusk', base=max(1, lit - 1), z=3.63 + zs, fixed=max(1, lit - 1), glow=True)
+            core = g.poly([(top[0] - 2, top[1] - 4 + sdy), (top[0] + 1, top[1] - 22 + sdy), (top[0] + 2, top[1] - 4 + sdy)])
+            sp.add('splinter_core', core, 'dusk', base=5, z=3.65 + zs, fixed=min(5, glow + 1), glow=True)
+            frac = g.stroke([(top[0] - 4, top[1] + 1 + sdy), (top[0] - 3, top[1] - 8 + sdy), (top[0] - 1, top[1] - 14 + sdy)], 0.9)
+            sp.add('splinter_fracture', frac & spl & ~far & ~core, 'dusk', base=max(1, lit - 2), z=3.66 + zs,
+                   fixed=max(1, lit - 2), glow=True)
         else:
-            sp.add('splinter', spl, 'sky_cool', base=2, z=3.6 + zs, k=0.6)
+            sp.add('splinter', spl, 'dusk', base=2, z=3.6 + zs, k=0.6)
+            sp.add('splinter_far', far, 'dusk', base=1, z=3.62 + zs, k=0.6)
 
     if P['shell'] >= 0.9:
         # the shell lies broken beside it: two cane scraps and the splinter, dark now
@@ -450,7 +465,7 @@ def draw(facing: str, P: dict, d: float = 3.0) -> Image.Image:
         sc2 = g.stroke([(50, -4), (64, -10), (78, -5)], 3.2)
         sp.add('scrap1', sc1, 'berry_cool', base=2, z=0.3, k=0.7)
         sp.add('scrap2', sc2, 'leaf_cool', base=2, z=0.3, k=0.7)
-        sp.add('splinter', g.poly([(84, -2), (96, -10), (99, -7), (87, 1)]), 'sky_cool', base=2, z=0.35, k=0.6)
+        sp.add('splinter', g.poly([(84, -2), (96, -10), (99, -7), (87, 1)]), 'dusk', base=2, z=0.35, k=0.6)
 
     if P['lie'] > 0.3:
         # where the shell lay: flattened, parted fur, a few torn leaves still caught in it, old scratches
@@ -478,12 +493,12 @@ def draw(facing: str, P: dict, d: float = 3.0) -> Image.Image:
             sp.mark('body', scr, -1)
             sp.mark('body', g.capsule(-30, ys.min() / 1.0 * 0 - 50, 20, -54, 1.0) & body.mask, 1)
 
-    # the eyes: wild (glowing shard-blue), squinting, dazed or closed in calm sleep
+    # the eyes: wild (glowing with the shard's violet), squinting, dazed or closed in calm sleep
     def eye(cx, cy):
         e = P['eyes']
         if e == 'wild':
-            sp.detail(g.ellipse(cx, cy, 2.6, 2.2), _rgb('sky', 5))
-            sp.detail(g.ellipse(cx + 1, cy + 1, 1.2, 1.0), _rgb('sky', 3))
+            sp.detail(g.ellipse(cx, cy, 2.6, 2.2), _rgb('dusk', 5))
+            sp.detail(g.ellipse(cx + 1, cy + 1, 1.2, 1.0), _rgb('dusk', 4))
         elif e == 'squint':
             sp.detail(g.capsule(cx - 3, cy, cx + 3, cy - 1, 1.0), _rgb('earth_cool', 0))
         elif e == 'dazed':
