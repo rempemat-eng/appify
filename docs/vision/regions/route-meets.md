@@ -50,7 +50,7 @@ Inside your footprint you paint the route's surface to the line, width and tier 
 
 | Route      | Crossing                                                   | Cell        | World px     | Tier | Width | Heading |
 | ---------- | ---------------------------------------------------------- | ----------- | ------------ | ---- | ----- | ------- |
-| Coast Path | the land between to Gullwick                               | (956, 634)  | (7648, 5072) | 3    | 32    | 0       |
+| Coast Path | the land between to Gullwick                               | (956, 629)  | (7648, 5032) | 3    | 32    | -90     |
 | Coast Path | Gullwick to the land between                               | (1021, 606) | (8168, 4848) | 3    | 40    | -90     |
 | Coast Path | the land between to the Lull belt and Lullford             | (1038, 578) | (8304, 4624) | 3    | 40    | 0       |
 | Lull Road  | the land between to the Lull belt and Lullford             | (1038, 518) | (8304, 4144) | 4    | 40    | 0       |
@@ -75,7 +75,7 @@ Inside your footprint you paint the route's surface to the line, width and tier 
 | Ember Way       | path     | Hearthold                                    | Cinderwick                                      | 664         | 16.6     | 18             | 5            | 9                  | -      |
 | Ash Coast       | path     | the valley halt                              | Cinderwick                                      | 4512        | 112.8    | 91             | 2            | 7                  | W5, W6 |
 | Delta Road      | path     | Lullford Bridge, east bank                   | Neon Harbour, the Heights                       | 1312        | 32.8     | 56             | 3            | 11                 | -      |
-| Harbour Bridge  | bridge   | Neon Harbour, the Heights                    | Neon Harbour, the quay at the bridge            | 648         | 16.2     | -              | 3            | 3                  | -      |
+| Harbour Bridge  | bridge   | Neon Harbour, the Heights                    | Neon Harbour, the quay at the bridge            | 784         | 19.6     | -              | 4            | 3                  | -      |
 | Old Bridges     | road     | Neon Harbour, the market                     | Neon Harbour, the docks                         | 384         | 9.6      | 9              | 0            | 0                  | -      |
 | Quay Street     | road     | Neon Harbour, the docks                      | the Gull Strand                                 | 1032        | 25.8     | 24             | 2            | 6                  | -      |
 | Beacon Causeway | causeway | the Gull Strand                              | Beacon Isle                                     | 472         | 11.8     | -              | 0            | 0                  | -      |
@@ -102,10 +102,10 @@ How far each route lies from the block-out's polyline (`docs/vision/research/blo
 | Ember Way       | 52   | 112     | 977              | 664  | 24              |
 | Ash Coast       | 19   | 56      | 3641             | 4512 | 24              |
 | Delta Road      | 18   | 60      | 948              | 1312 | 24              |
-| Harbour Bridge  | 5    | 7       | 670              | 648  | 40              |
-| Old Bridges     | 21   | 41      | 372              | 384  | 40              |
+| Harbour Bridge  | 31   | 131     | 670              | 784  | 40              |
+| Old Bridges     | 20   | 41      | 372              | 384  | 40              |
 | Quay Street     | 15   | 37      | 963              | 1032 | 40              |
-| Beacon Causeway | 27   | 60      | 374              | 472  | 40              |
+| Beacon Causeway | 25   | 60      | 374              | 472  | 40              |
 | Cape Road       | 18   | 44      | 703              | 944  | 40              |
 
 ## Where the routes cross water
