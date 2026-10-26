@@ -7,7 +7,8 @@ at (80, 136)), out/<id>/manifest.json (timings, release frames, anchors per draw
 and a frames.tres for Codex's studio.  This tool turns one character's folder into what the
 game loads, in game/assets/characters/<id>/:
 
-  sheets/<clip>_<F>.png   one horizontal strip per clip and facing (S, N, E, W), cells in order
+  sheets/<clip>_<F>.png   one horizontal strip per clip and facing (S, N, E, W), cells in order;
+                          a weapon clip also has sheets/<clip>_<F>_<tag>.png per aim (contract v2)
   frames.tres             a SpriteFrames: animation <clip>_<F> = AtlasTexture regions of the
                           strip, with the manifest's per-drawing durations (relative to 1 s)
   manifest.json           the castwork manifest, with each frame's sheet and region added
@@ -35,34 +36,42 @@ def import_char(src_root, cid):
     subs, anims = [], []
     for clip, ce in man['clips'].items():
         durs = ce['durations']
+        sets = []
         for fc, fe in ce['facings'].items():
-            frames = fe['frames']
-            sheet = Image.new('RGBA', (cw * len(frames), ch), (0, 0, 0, 0))
+            sets.append(('%s_%s' % (clip, fc), fe['frames'], None))
+            for tag, ae in fe.get('aims', {}).items():      # weapon aims within the facing (contract v2)
+                sets.append(('%s_%s_%s' % (clip, fc, tag), ae['frames'], '%s_%s' % (clip, fc) if tag == '0' else None))
+        for name, frames, same_as in sets:
+            sheet_name = same_as or name                     # aim 0 is the facing's own drawings: no second strip
+            if same_as is None:
+                sheet = Image.new('RGBA', (cw * len(frames), ch), (0, 0, 0, 0))
             for i, fr in enumerate(frames):
                 p = os.path.join(src, fr['file'])
-                data = open(p, 'rb').read()
-                if hashlib.sha256(data).hexdigest() != fr['sha256']:
-                    sys.exit('%s: sha256 does not match the manifest' % p)
-                im = Image.open(p).convert('RGBA')
-                if im.size != (cw, ch):
-                    sys.exit('%s: %s, expected %dx%d' % (p, im.size, cw, ch))
-                sheet.paste(im, (i * cw, 0))
-                fr['sheet'] = 'sheets/%s_%s.png' % (clip, fc)
+                if same_as is None:
+                    data = open(p, 'rb').read()
+                    if hashlib.sha256(data).hexdigest() != fr['sha256']:
+                        sys.exit('%s: sha256 does not match the manifest' % p)
+                    im = Image.open(p).convert('RGBA')
+                    if im.size != (cw, ch):
+                        sys.exit('%s: %s, expected %dx%d' % (p, im.size, cw, ch))
+                    sheet.paste(im, (i * cw, 0))
+                fr['sheet'] = 'sheets/%s.png' % sheet_name
                 fr['region'] = [i * cw, 0, cw, ch]
-            name = '%s_%s' % (clip, fc)
-            sheet.save(os.path.join(dst, 'sheets', name + '.png'), optimize=True)
+            if same_as is None:
+                sheet.save(os.path.join(dst, 'sheets', name + '.png'), optimize=True)
             items = []
             for i, d in enumerate(durs):
-                sid = 'a_%s_%d' % (name, i)
-                subs.append('[sub_resource type="AtlasTexture" id="%s"]\natlas = ExtResource("%s")\nregion = Rect2(%d, 0, %d, %d)\n'
-                            % (sid, name, i * cw, cw, ch))
+                sid = 'a_%s_%d' % (sheet_name, i)
+                if same_as is None:
+                    subs.append('[sub_resource type="AtlasTexture" id="%s"]\natlas = ExtResource("%s")\nregion = Rect2(%d, 0, %d, %d)\n'
+                                % (sid, name, i * cw, cw, ch))
                 items.append('{"duration": %.4f, "texture": SubResource("%s")}' % (d, sid))
-            anims.append((name, ce['loop'], items))
+            anims.append((name, ce['loop'], items, same_as is None))
         ce.pop('frames', None)          # the east copy; the game reads facings
     ext = ['[ext_resource type="Texture2D" path="res://assets/characters/%s/sheets/%s.png" id="%s"]' % (cid, n, n)
-           for n, _, _ in anims]
+           for n, _, _, own in anims if own]
     body = ',\n'.join('{"frames": [%s], "loop": %s, "name": &"%s", "speed": 1.0}' % (', '.join(it), 'true' if lp else 'false', n)
-                      for n, lp, it in anims)
+                      for n, lp, it, _ in anims)
     tres = ('[gd_resource type="SpriteFrames" load_steps=%d format=3]\n\n' % (len(ext) + len(subs) + 1)
             + '\n'.join(ext) + '\n\n' + '\n'.join(subs) + '\n[resource]\nanimations = [\n' + body + '\n]\n')
     open(os.path.join(dst, 'frames.tres'), 'w').write(tres)

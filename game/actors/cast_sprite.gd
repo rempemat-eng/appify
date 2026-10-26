@@ -6,11 +6,14 @@ extends AnimatedSprite2D
 ## are (arrow_tip, hand_R ...), in pixels from the foot pivot. Every facing is drawn from the same
 ## 3D pose (west, south-west and north-west are relit, not mirrored), so flip_h is never used.
 ##
-## Animation contract v2 (castwork CONTRACT.md): eight facings S, SE, E, NE, N, NW, W, SW for the
-## characters whose manifest lists them (Bramble and Velvet first); the others have S, N, E, W and
-## a diagonal falls back to the profile on its side (manifest facing_fallback). facing_for picks the
-## nearest of the eight with hysteresis. Idle fidgets: after idle has shown for a few seconds the
-## sprite plays one of the manifest's idle_fidgets by itself and returns to idle (see _fidget_tick).
+## Animation contract v2 (castwork CONTRACT.md): the body has four facings S, N, E, W (Matt, 26 Oct:
+## "4 directions if its smooth enough ... like eastward"); facing_for picks the nearest with
+## hysteresis. Weapon clips (manifest aim_clips) are also drawn at aims within the facing, every
+## 22.5 degrees: play_clip shows <clip>_<F>_<tag> for the aim set by set_aim (or read from the
+## parent's _shot_dir / aim), and anchor() reads that aim's drawings, so a projectile leaves from
+## the aimed arrow tip. A manifest with eight directions (stored 3/4 work) still plays them. Idle
+## fidgets: after idle has shown for a few seconds the sprite plays one of the manifest's
+## idle_fidgets by itself and returns to idle (see _fidget_tick).
 
 const FACINGS := ["S", "N", "E", "W"]
 const FACINGS8 := ["S", "SE", "E", "NE", "N", "NW", "W", "SW"]
@@ -26,6 +29,8 @@ var frame_index := 0
 var clip_time := 0.0
 var finished := false
 var fidgets_enabled := true
+var aim_vector := Vector2.ZERO  ## the weapon's aim (screen space); zero = read it from the parent
+var aim_tag := ""               ## the aim drawn within the facing ("" when the clip has no aims)
 
 var _idle_t := 0.0              ## seconds idle has shown without a break
 var _next_fidget := 0.0
@@ -49,25 +54,63 @@ func load_character(id: String) -> bool:
 	play_clip("idle", "S")
 	return true
 
-## Which of the eight facings a direction reads as (the nearest; ties go to the cardinal).
-## `fallback` is the current facing: it is kept for a zero direction, and while the direction is
-## within its sector plus HYSTERESIS, so the facing does not flicker on a boundary.
+## Which of S, N, E, W a direction reads as (the nearest; a tie goes to S or N). `fallback` is the
+## current facing: it is kept for a zero direction, and while the direction is within its quarter
+## plus HYSTERESIS, so the facing does not flicker on a boundary. (8-facing manifests: facing_for8.)
 static func facing_for(v: Vector2, fallback := "S") -> String:
+	if v.length() < 0.01:
+		return fallback
+	var a := v.angle()
+	if FACINGS.has(fallback) and absf(angle_difference(a, facing_vector(fallback).angle())) <= PI / 4.0 + HYSTERESIS:
+		return fallback
+	return _nearest(a, FACINGS)
+
+static func facing_for8(v: Vector2, fallback := "S") -> String:
 	if v.length() < 0.01:
 		return fallback
 	var a := v.angle()
 	if FACINGS8.has(fallback) and absf(angle_difference(a, facing_vector(fallback).angle())) <= PI / 8.0 + HYSTERESIS:
 		return fallback
-	return _nearest(a)
+	return _nearest(a, FACINGS8)
 
-static func _nearest(a: float) -> String:
+static func _nearest(a: float, set: Array) -> String:
 	var best := "S"
 	var bd := INF
-	for fc in FACINGS8:
+	for fc in set:
 		var d := absf(angle_difference(a, facing_vector(fc).angle()))
-		if d < bd - 0.0001 or (absf(d - bd) <= 0.0001 and fc.length() == 1):
+		if d < bd - 0.0001 or (absf(d - bd) <= 0.0001 and (fc == "S" or fc == "N")):
 			bd = d
 			best = fc
+	return best
+
+## The weapon's aim for the next weapon clip (screen space). Zero: read the parent's.
+func set_aim(v: Vector2) -> void:
+	aim_vector = v
+
+func _aim_now() -> Vector2:
+	if aim_vector.length() > 0.01:
+		return aim_vector
+	var p := get_parent()
+	if p != null and "_shot_dir" in p and p.has_method("is_shooting") and bool(p.call("is_shooting")):
+		return p.get("_shot_dir")
+	if p != null and "aim" in p:
+		return p.get("aim")
+	return facing_vector(shown_facing)
+
+## The aim tag within the facing nearest the direction v (the facing's aims), "" without aims.
+func aim_tag_for(name: String, fc: String, v: Vector2) -> String:
+	var fe: Dictionary = clip_info(name).facings.get(fc, {})
+	var aims: Dictionary = fe.get("aims", {})
+	if aims.is_empty():
+		return ""
+	var rel := rad_to_deg(angle_difference(facing_vector(fc).angle(), v.angle()))
+	var best := ""
+	var bd := INF
+	for tag in aims:
+		var d := absf(float(aims[tag].deg) - rel)
+		if d < bd:
+			bd = d
+			best = tag
 	return best
 
 ## The unit vector a facing points along (screen space).
@@ -118,7 +161,8 @@ func play_clip(name: String, fc: String, restart := false) -> void:
 	playing = name
 	facing = fc
 	shown_facing = resolve_facing(fc)
-	animation = "%s_%s" % [name, shown_facing]
+	aim_tag = aim_tag_for(name, shown_facing, _aim_now())
+	animation = "%s_%s" % [name, shown_facing] if aim_tag == "" else "%s_%s_%s" % [name, shown_facing, aim_tag]
 	if not keep_phase:          # turning while walking keeps the stride phase
 		clip_time = 0.0
 		finished = false
@@ -158,6 +202,7 @@ func _fidget_tick(delta: float, wrapped: bool) -> void:
 	if playing != "idle":                       # a fidget is playing: back to idle at its end
 		if finished:
 			playing = "idle"
+			aim_tag = ""
 			animation = "idle_%s" % shown_facing
 			clip_time = 0.0
 			finished = false
@@ -173,6 +218,7 @@ func _fidget_tick(delta: float, wrapped: bool) -> void:
 		var pick: String = pool[randi() % pool.size()]
 		_last_fidget = pick
 		playing = pick
+		aim_tag = ""
 		animation = "%s_%s" % [pick, shown_facing]
 		clip_time = 0.0
 		finished = false
@@ -191,7 +237,8 @@ func _rand_every(cfg: Dictionary) -> float:
 
 ## An anchor of the drawing on screen, in pixels from the foot pivot (Vector2.ZERO if absent).
 func anchor(name: String, index: int = -1) -> Vector2:
-	var frames: Array = clip_info().facings[shown_facing].frames
+	var fe: Dictionary = clip_info().facings[shown_facing]
+	var frames: Array = fe.aims[aim_tag].frames if aim_tag != "" and fe.has("aims") else fe.frames
 	var fr: Dictionary = frames[frame_index if index < 0 else index]
 	var a = fr.anchors.get(name)
 	return Vector2.ZERO if a == null else Vector2(a[0], a[1])

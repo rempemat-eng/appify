@@ -22,34 +22,31 @@ func test_facing_selection() -> void:
 	assert_str(CastSprite.facing_for(Vector2(-1, 0.4))).is_equal("W")
 	assert_str(CastSprite.facing_for(Vector2(0.3, 1))).is_equal("S")
 	assert_str(CastSprite.facing_for(Vector2(-0.2, -1))).is_equal("N")
-	assert_str(CastSprite.facing_for(Vector2(1, 1))).is_equal("SE")      # contract v2: eight facings
-	assert_str(CastSprite.facing_for(Vector2(-1, -1))).is_equal("NW")
-	assert_str(CastSprite.facing_for(Vector2(-1, 0.9))).is_equal("SW")
-	assert_str(CastSprite.facing_for(Vector2(1, -1.1))).is_equal("NE")
+	assert_str(CastSprite.facing_for(Vector2(1, 1))).is_equal("S")       # a tie faces S or N
 	assert_str(CastSprite.facing_for(Vector2.ZERO, "W")).is_equal("W")   # no direction keeps it
-	# hysteresis: 30 degrees below east stays E when already facing E, but is SE from elsewhere
-	var v := Vector2.from_angle(deg_to_rad(30.0))
+	# hysteresis: 50 degrees below east stays E when already facing E, but is S from elsewhere
+	var v := Vector2.from_angle(deg_to_rad(50.0))
 	assert_str(CastSprite.facing_for(v, "E")).is_equal("E")
-	assert_str(CastSprite.facing_for(v, "S")).is_equal("SE")
-	assert_str(CastSprite.facing_for(Vector2.from_angle(deg_to_rad(40.0)), "E")).is_equal("SE")
+	assert_str(CastSprite.facing_for(v, "N")).is_equal("S")
+	assert_str(CastSprite.facing_for(Vector2.from_angle(deg_to_rad(60.0)), "E")).is_equal("S")
 
-func test_eight_facings_and_fallback() -> void:
+func test_bow_aims_within_the_facing() -> void:
 	var p := _player()
-	assert_str(p.sprite.manifest.get("view", "")).is_equal("8dir")
-	for fc in CastSprite.FACINGS8:
-		p.aim = CastSprite.facing_vector(fc)
+	var m := _manifest()
+	assert_bool(m.aim_clips.has("primary")).is_true()
+	# 16 directions: facing by quarter, aim by 22.5 degrees within it
+	var cases := [[0.0, "E", "0"], [22.5, "E", "p22"], [-45.0, "E", "m45"], [112.5, "S", "p22"],
+		[180.0, "W", "0"], [-67.5, "N", "p22"], [157.5, "W", "m22"]]
+	for c in cases:
+		var dir := Vector2.from_angle(deg_to_rad(float(c[0])))
+		p.aim = dir
 		await get_tree().physics_frame
 		await get_tree().physics_frame
-		assert_str(p.facing).is_equal(fc)
-		assert_str(p.sprite.animation).is_equal("idle_" + fc)
-	# a four-facing character shows a diagonal as the profile on its side
-	assert_bool(p.set_character("iona")).is_true()
-	p.aim = CastSprite.facing_vector("NW")
-	await get_tree().physics_frame
-	await get_tree().physics_frame
-	assert_str(p.facing).is_equal("NW")
-	assert_str(p.sprite.animation).is_equal("idle_W")
-
+		p.state = &"idle"
+		assert_bool(p.start_shot()).is_true()
+		assert_str(p.facing).is_equal(c[1])
+		assert_str(p.sprite.animation).is_equal("primary_%s_%s" % [c[1], c[2]])
+		p._set_state(&"idle")
 func test_idle_fidget_plays_and_returns() -> void:
 	var s: CastSprite = auto_free(CastSprite.new())
 	add_child(s)
@@ -103,7 +100,8 @@ func test_shot_releases_on_the_release_frame() -> void:
 		p.shot_released.connect(func(a: Node, fr: int) -> void: got.append([a, fr, p.sprite.clip_time]))
 		assert_bool(p.start_shot()).is_true()
 		var fc := CastSprite.facing_for(dir)
-		assert_str(p.sprite.animation).is_equal("primary_" + fc)
+		var tag := p.sprite.aim_tag_for("primary", fc, dir)
+		assert_str(p.sprite.animation).is_equal("primary_%s_%s" % [fc, tag])
 		for i in 60:
 			await get_tree().physics_frame
 			if got.size() > 0:
@@ -113,7 +111,7 @@ func test_shot_releases_on_the_release_frame() -> void:
 		# released within one physics step of the manifest's release time
 		assert_float(got[0][2]).is_between(float(clip.release_time), float(clip.release_time) + 1.0 / 60.0 + 0.001)
 		# from the arrow tip of the drawing before the release (the arrow has left on it)
-		var frames: Array = clip.facings[fc].frames
+		var frames: Array = clip.facings[fc].aims[tag].frames
 		var tip = frames[rel].anchors.get("arrow_tip", frames[rel - 1].anchors.get("arrow_tip"))
 		var arrow: Arrow = got[0][0]
 		assert_vector(arrow.dir).is_equal_approx(dir, Vector2(0.001, 0.001))
