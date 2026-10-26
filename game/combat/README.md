@@ -426,3 +426,34 @@ event limits and unknown-field preservation. Source input stays unchanged. Regen
 Next: compose the fixed-step player/action/movement and ordered simulation dispatcher,
 then contact presentation and the granted Player hook. World HP mapping and the inherited
 Tam edge remain A/canonical-owner decisions on the existing remote checkpoint.
+
+
+## Canonical movement/vault subphase checkpoint
+
+`AbilityMovement.tick` ports the contiguous movement/vault/Velvet-echo section of original v,
+between action commitment and enemy/status phase L. It uses fixed1/60 canonical units and scalar
+double arithmetic, preserving action-specific speeds, Tam's live-form multiplier, the strict
+movement threshold, sequential body separation, double separation on landing, arena clamps,
+vault height/airborne threshold, walk-distance suppression during a vault, and finite echo caps.
+A tiny positive vault timer at or below epsilon still suppresses walk distance but does not
+advance the vault, as in the reference. Input snapshots and unknown fields remain untouched.
+
+The caller must perform timers/releases/commitment before this phase and status/projectile/field/
+turret/effect phases after it. It does not advance time, cooldowns or previous-input state, and is
+not attached to Player. The later actor bridge must use Player's collision/movement ownership;
+these reference arena/body constraints are not Godot terrain or support-height validation.
+Do not invoke both this canonical movement and Player movement independently in the same step.
+
+`movement-oracle.json` contains1272 whole-state comparisons from the hash-verified original engine.
+The builder wraps the exact contiguous movement source slice, closing its trailing if condition
+with an empty body at the L boundary. This is explicit test-only phase instrumentation, not a
+claim that the whole original v ran unchanged. All14 kits/forms/actions, strict movement and
+vault epsilon boundaries, simultaneous landing/body separation, dead/coincident targets, clamps,
+echo-cap replacement and90-step movement/echo sequences are covered. Reproduce:
+`node game/test/combat/build_movement_oracle.mjs /path/to/original-modules.json`.
+
+Next: remaining player timer/guard/commitment phase and ordered fixed-step dispatcher, then contact
+presentation and the granted Player hook. World-health/#275 and Tam's inherited duplicate-defeat
+remain A/canonical-owner decisions. #290 weapon forms/tree proposals remain future coordination,
+not changes to canonical kits. Full verify/art/hosted/rendered/native/device checks remain pending;
+this checkpoint is pure simulation work. Keep DRAFT.
