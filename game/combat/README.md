@@ -105,3 +105,25 @@ The initial partial-fan test mistakenly sampled0.18s, before canonical0.1824s co
 was corrected to read the canonical release value, without changing production timing. Final test
 result and exact source tree are recorded on PR #261. Full verify/art/CI/rendered/device testing
 remains pending until the port is complete. Keep DRAFT.
+
+## Projectile launch checkpoint
+
+`AbilityProjectiles.plan` now converts a release command plus canonical ground origin, locked
+continuous action direction, current aim point and airborne height into independent launch records.
+It ports the original E/q/I projectile branches for every primary, Cairn's secondary boulder and
+Pendle's partial fan (powered secondary emits no projectiles). It captures live release form,
+keeps Mote's shards per-shot, and computes Morel's finite clamped flight lifetime. It never consumes
+ammo again. Radius, velocity, ground seed and damage stay in canonical units; source-texel release
+anchors and the explicit factor3/Cairn manifest conversion belong to a later world bridge. Launch
+height is independent of ground position. The planner is not attached to Runner or Player yet.
+
+`test/combat/projectile-oracle.json` has68 samples from original hash-verified #245 E/q/I code,
+covering all14 kits in both forms with straight and diagonal/airborne shots, fan counts0..3,
+powered stock, base/powered boulders and Morel range clamps. To reproduce, extract #245's
+`canonical/reference/adapter.mjs` and `original-modules.json` into the same directory, then run:
+`node game/test/combat/build_projectile_oracle.mjs /path/to/reference/adapter.mjs`.
+GdUnit compares complete launch records, plus real Runner partial-fan/form-expiry cases.
+
+Remaining: finite projectile advancement, swept collision/terrain, impact/status/field/stateful
+handlers, contact presentation and Player hook. These launch records are not an implemented world
+combat system; do not attach them as raw HP hits pending Claude A's mapping decision. Keep DRAFT.
