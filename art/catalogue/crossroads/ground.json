@@ -1,7 +1,7 @@
 {
  "id": "crossroads/ground",
  "file": "game/zones/crossroads/art/ground.png",
- "sha256": "c871db444fde72eccf76c6c561b75606867ef1d10586885ff3601e524d886b88",
+ "sha256": "057d366e3e3b687fb167eb093e179c8c95d5ae17f344d284bae762f28042eb50",
  "kind": "ground",
  "biome": "valley",
  "H": 74.0,
@@ -21,7 +21,8 @@
  "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "fail",
+  "date": "2026-10-26",
+  "note": "#288 re-review at ba7714c2: S5 (ruler ruts, hard dark discs, even stipple) and S6 (straight seam on the SW road) unchanged."
  }
 }

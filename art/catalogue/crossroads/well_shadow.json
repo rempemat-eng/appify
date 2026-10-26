@@ -1,7 +1,7 @@
 {
  "id": "crossroads/well_shadow",
  "file": "game/zones/crossroads/art/well_shadow.png",
- "sha256": "6ac3e0c87add8a8a14aed10288b67cf813477b0379b6f68b7dc3e6c3db828fd0",
+ "sha256": "390a7ebbe589fa2bd66f3b7adb63fb968adaf759ed51b25abd984fff51f5b710",
  "kind": "well_shadow",
  "biome": "valley",
  "H": 74.0,

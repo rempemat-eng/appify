@@ -1032,34 +1032,12 @@
     "_about": "The drawing (scripts/art/native/village.py and town.py, game/tools/gen_village.py; Claude A, 25 Oct): how each building looks (one design; its storm damage an overlay the restore removes), the dry-stone walls drawn on the faces, the paving, the uplands, the green's ring and the dressing with its reasons. Doors face south: the oblique view shows no east walls, so the bakery's and the herbalist's doors moved to their south fronts. The herbalist's moved 14 px south so its roof clears the halt road.",
     "biome": "meadow",
     "uplands": [],
-    "ledges": [
-      {
-        "top": [
-          [
-            0,
-            0,
-            88,
-            24
-          ],
-          [
-            88,
-            0,
-            56,
-            16
-          ]
-        ],
-        "face": 12,
-        "seed": 301,
-        "why": "the bank above the garden walk as an earth ledge on the soft grid (Matt, 26 Oct 15:36): a grass plateau of whole cells, stepping back east of the lane's end, with a lip, a face of clods and a dark foot; it stays inside the lane_bank face"
-      }
-    ],
     "walls": [
       [
         0,
         26,
         150,
-        12,
-        "ledge"
+        12
       ],
       [
         0,

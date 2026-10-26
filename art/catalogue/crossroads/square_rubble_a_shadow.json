@@ -1,7 +1,7 @@
 {
  "id": "crossroads/square_rubble_a_shadow",
  "file": "game/zones/crossroads/art/square_rubble_a_shadow.png",
- "sha256": "7bc489b4156eae56d83047ad89bf457a0153919a3ae70509e6f60305626f35f2",
+ "sha256": "377b29100c8220eb20dec1c4939aabf9d978c264f70132fb01dfdefd7f84c83f",
  "kind": "square_rubble_a_shadow",
  "biome": "valley",
  "H": 74.0,

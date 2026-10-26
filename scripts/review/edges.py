@@ -113,7 +113,7 @@ def ragged(mask: np.ndarray, H: float, subject: str, min_area: float = 0.3, box0
 # ones by about 0.25 (eastward-edges.md 1.5, 1.6)
 # ------------------------------------------------------------------------------------------------
 CORNER_TURN = 1.05      # a corner turns at least 60 degrees within one cell of outline
-CORNER_R_MIN = 0.2      # in cells: rounder than this, or it reads as a sharp (minecraft) corner
+CORNER_R_MIN = 0.12     # in cells: Eastward's tightest ground corners (the sand plateau in 39, the swamp shelf in 15) are 2.4 native px, 0.14 of its tile; a square corner measures under 0.08
 CORNER_SHARP_MAX = 0.25  # share of a region's corners that may be sharp
 _MOORE = [(-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1)]
 

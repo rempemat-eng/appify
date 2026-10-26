@@ -40,6 +40,8 @@ from .terrain import noise as TN
 CELL = 8.0                    # world px
 R_OUT = 0.4                   # outer corner radius, in cells
 R_IN = 0.25                   # inner corner fillet, in cells
+R_TURN_OUT = 0.4              # a route's turn, outer corner (cells): Eastward 13's dirt paths turn at 6.4 native px, 0.38 of a tile
+R_TURN_IN = 0.25              # and the inner fillet
 LUMP = (8.0, 20.0)            # lump length, art px
 AMP = (1.5, 3.0)              # lump depth, art px
 CROSS = ndi.generate_binary_structure(2, 1)
@@ -97,6 +99,38 @@ def manhattan(points, run: float = 3.0) -> list:
                 out += [(px, ny), (nx, ny)]
             px, py = nx, ny
     return out
+
+
+def cells_route(points, n: int, H: int, W: int, run: float = 5.0) -> np.ndarray:
+    """A route of constant width: n cells wide all along, laid in long straight runs along x and y
+    (a slanting stretch becomes a few runs of about `run` cells), each run a band of exactly n cells
+    centred on its line, the runs overlapping at the turns so a turn is a clean L (rounded later by
+    the outline). For an even n the line lies on cell lines, for an odd n on cell centres."""
+    gh, gw = grid_shape(H, W)
+    m = np.zeros((gh, gw), bool)
+    pts = manhattan(points, run)
+    if n % 2 == 0:
+        snap = lambda v: int(round(v / CELL))                       # a cell line index
+        lo, hi = n // 2, n // 2
+    else:
+        snap = lambda v: int(np.floor(v / CELL))                    # a cell index
+        lo, hi = (n - 1) // 2, (n - 1) // 2 + 1
+    q = [(snap(x), snap(y)) for x, y in pts]
+    for (x0, y0), (x1, y1) in zip(q, q[1:]):
+        if y0 == y1:                                                # along x
+            a, b = sorted((x0, x1))
+            m[max(0, y0 - lo):max(0, y0 + hi), max(0, a - lo):max(0, b + hi)] = True
+        elif x0 == x1:                                              # along y
+            a, b = sorted((y0, y1))
+            m[max(0, a - lo):max(0, b + hi), max(0, x0 - lo):max(0, x0 + hi)] = True
+        else:                                                       # (manhattan leaves none; be safe)
+            m[max(0, min(y0, y1) - lo):max(y0, y1) + hi, max(0, min(x0, x1) - lo):max(x0, x1) + hi] = True
+    return m
+
+
+def route_shape(points, n: int, H: int, W: int, seed: int, run: float = 5.0) -> np.ndarray:
+    """A path or road on the soft grid: constant width, long runs, wide rounded turns."""
+    return shape(cells_route(points, n, H, W, run), H, W, seed, r_out=R_TURN_OUT, r_in=R_TURN_IN)
 
 
 def join4(m: np.ndarray, cost: np.ndarray | None = None) -> np.ndarray:
@@ -216,6 +250,29 @@ def shape(cells: np.ndarray, H: int, W: int, seed: int, **kw) -> np.ndarray:
     return soften(texels(cells, H, W), seed, **kw)
 
 
+def path_rim(cv: np.ndarray, m: np.ndarray, turf: np.ndarray) -> None:
+    """A path's edge bands: a 1 px darker rim along its lower edges (the dirt where the turf below
+    it begins) and a lit lip on the turf along its upper edges."""
+    below = np.zeros_like(m)
+    below[:-1] = m[1:]
+    above = np.zeros_like(m)
+    above[1:] = m[:-1]
+    rim = m & ~below & (cv % 8 > 0) & (cv % 8 < 6)
+    cv[rim] = step(cv[rim], -1)
+    lip = turf & ~m & below & (cv % 8 < 5)
+    cv[lip] = step(cv[lip], 1)
+
+
+def soft_patches(H: int, W: int, seed: int, cell: float, share: float = 0.18) -> np.ndarray:
+    """Irregular, soft-edged patches covering about `share` of an area: a slow field for where they
+    gather, finer octaves for a frayed outline, never a geometric round blob."""
+    yy, xx = np.mgrid[0:H, 0:W] + 0.5
+    v = 0.6 * TN.vnoise_hd(xx, yy, cell, seed) + 0.28 * TN.vnoise_hd(xx, yy, cell / 3.1, seed + 3) + \
+        0.12 * TN.vnoise_hd(xx, yy, cell / 8.0, seed + 5)
+    thr = np.quantile(v, 1 - share)
+    return clean(v > thr, min_area=1.5)
+
+
 # ------------------------------------------------------------------------------------------------
 # 6. breakers
 # ------------------------------------------------------------------------------------------------
@@ -282,7 +339,7 @@ def breakers(cv: np.ndarray, m: np.ndarray, rng, share: float = 0.15, kind: str 
 # a raised plateau's ledge (eastward-edges.md 2.2, 3)
 # ------------------------------------------------------------------------------------------------
 def ledge(cv: np.ndarray, top: np.ndarray, face_h: float, rng, seed: int = 0, earth: str = 'earth',
-          drawn: np.ndarray | None = None) -> np.ndarray:
+          drawn: np.ndarray | None = None, roots: bool = True) -> np.ndarray:
     """An earth ledge under a raised grass plateau `top` (a soft texel mask), `face_h` world px
     tall, seen from the south: the plateau's lip a darker row of its own grass with a lit row
     behind it, the rim line and the under-lip line (the face's darkest), two rows of under-lip shade
@@ -336,7 +393,9 @@ def ledge(cv: np.ndarray, top: np.ndarray, face_h: float, rng, seed: int = 0, ea
     # a dome lit at its upper left with its lower right in shade, dark crevices between them
     bodym = (face & (dtop > 3 + max(1, int(0.6 * D))) & (dbot > 1)) | side
     cv[bodym] = C(earth, 1)                                         # the crevices
-    sx_, sy_ = 2.0 * D, 1.6 * D
+    rock = face_h >= 24                                            # a cliff (eastward-edges 2.3), not a low ledge
+    sz = 2.2 if rock else 1.0                                      # its boulders 8 to 18 px, the ledge's clods smaller
+    sx_, sy_ = 2.0 * D * sz, 1.6 * D * sz
     rows = np.arange(-sy_, H + sy_, sy_)
     for j, gy in enumerate(rows):
         for gx in np.arange(-sx_ + (j % 2) * sx_ / 2, W + sx_, sx_):
@@ -345,7 +404,7 @@ def ledge(cv: np.ndarray, top: np.ndarray, face_h: float, rng, seed: int = 0, ea
             iy, ix = int(cy), int(cx)
             if not (0 <= iy < H and 0 <= ix < W) or not bodym[iy, ix]:
                 continue
-            rw, rh = rng.uniform(0.95, 1.35) * D, rng.uniform(0.8, 1.1) * D
+            rw, rh = rng.uniform(0.95, 1.35) * D * sz, rng.uniform(0.8, 1.1) * D * sz
             y0, y1 = max(0, int(cy - rh - 1)), min(H, int(cy + rh + 2))
             x0, x1 = max(0, int(cx - rw - 1)), min(W, int(cx + rw + 2))
             dy = (yy[y0:y1, x0:x1] - cy) / rh
@@ -356,8 +415,24 @@ def ledge(cv: np.ndarray, top: np.ndarray, face_h: float, rng, seed: int = 0, ea
             fam = np.where(t >= 4, FI[earth + '_warm'] if earth + '_warm' in FI else FI[earth], FI[earth])
             sub = cv[y0:y1, x0:x1]
             sub[dm] = (fam * 8 + t)[dm]
+    if rock:
+        # under the lip a deep shade in two values, ours 4 to 5 world px (Eastward 8 to 11 native in
+        # 12), then a zone of horizontal streaks about 6 world px (13 native) before the boulders
+        u1 = 3 + int(round(4.5 * D))
+        sh = face & (dtop > 2) & (dtop <= u1)
+        cv[sh] = C(earth, 1)
+        cv[sh & (dtop <= 3 + int(round(2.0 * D)))] = C(earth + '_cool' if earth + '_cool' in FI else earth, 1)
+        st = face & (dtop > u1) & (dtop <= u1 + int(round(6 * D))) & (dbot > 2)
+        cv[st] = C(earth, 2)
+        ys2, xs2 = np.nonzero(st)
+        for k in rng.permutation(len(ys2))[:len(ys2) // int(6 * D)]:
+            y, x = int(ys2[k]), int(xs2[k])
+            L = int(rng.uniform(2.0, 5.0) * D)
+            t = 3 if rng.random() < 0.55 else 1
+            seg = st[y, x:x + L]
+            cv[y, x:x + L][seg] = C(earth, t)
     lipy, lipx = np.nonzero(face & (dtop == 1))
-    for k in rng.permutation(len(lipy))[:max(1, len(lipy) // int(30 * D))]:
+    for k in (rng.permutation(len(lipy))[:max(1, len(lipy) // int(30 * D))] if roots else []):
         x0, y0 = int(lipx[k]), int(lipy[k])
         L = int(rng.uniform(1.5, 4.0) * D)
         x = x0
@@ -386,3 +461,36 @@ def ledge(cv: np.ndarray, top: np.ndarray, face_h: float, rng, seed: int = 0, ea
     if drawn is not None:
         drawn |= face | side
     return face | side
+
+
+def steps(cv: np.ndarray, x0: int, x1: int, y_top: int, y_foot: int, n: int, rng, wood: str = 'timber',
+          earth: str = 'earth') -> None:
+    """Steps cut into a ledge's face (Eastward's forest steps in Matt's 26 Oct screenshot and the
+    farm stair in 13): n treads from the rim down to the foot, each a sawn log or plank lit along its
+    front edge and darker on its top's back, over a dark riser; earth cheeks either side carry the
+    face's clods down beside the flight. Texel coordinates; the flight is x0..x1, the rim y_top, the
+    foot y_foot (the head is flush with the rim, the last tread lands on the ground)."""
+    D = ctx.D
+    H, W = cv.shape
+    cheek = max(3, int(round(1.2 * D)))
+    pitch = (y_foot - y_top) / n
+    for k in range(n):
+        ya = int(round(y_top + k * pitch))
+        yb = int(round(y_top + (k + 1) * pitch))
+        tread = max(3, int(round(pitch * 0.62)))
+        cv[ya:yb, x0 + cheek:x1 - cheek] = C(earth + '_cool' if earth + '_cool' in FI else earth, 0)      # the riser's shade
+        for j in range(tread):
+            y = ya + j
+            t = 4 if j == tread - 1 else (3 if j >= tread // 2 else 2)
+            cv[y, x0 + cheek:x1 - cheek] = C(wood, t)
+        # the log's grain and its lit west end, a dark east end
+        for gx in range(x0 + cheek + 2, x1 - cheek - 2, max(4, int(2.4 * D))):
+            gy = ya + int(rng.integers(1, max(2, tread - 1)))
+            cv[gy, gx:gx + int(rng.integers(2, 5))] = C(wood, 1)
+        cv[ya:ya + tread, x0 + cheek] = C(wood + '_warm' if wood + '_warm' in FI else wood, 4)
+        cv[ya:ya + tread, x1 - cheek - 1] = C(wood, 1)
+    # the cheeks: knobbly earth, the west one a step lighter
+    for (c0, c1, t) in ((x0, x0 + cheek, 3), (x1 - cheek, x1, 2)):
+        cv[y_top:y_foot, c0:c1] = C(earth, t)
+        for y in range(y_top + 1, y_foot, max(3, int(1.6 * D))):
+            cv[y, c0:c1] = C(earth, t - 1)

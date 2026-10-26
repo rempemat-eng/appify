@@ -266,7 +266,6 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
     # --- the lawn and the uplands ---------------------------------------------------------------
     hd = D >= 2.5
     from scripts.art.native import softedge as SE
-    from scripts.art.native import softgrid as SG
 
     def is_turf(c):
         return np.isin(c // 8, [FI['grass'], FI['grass_warm'], FI['grass_cool'], FI['leaf'], FI['leaf_warm']]) & (c % 8 < 6)
@@ -321,12 +320,10 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         m = d < hw + wob
         src = dirt if r['kind'] == 'road' else track
         if hd:
-            # density 3 (Matt, 26 Oct 10:19: paths on the soft grid; 26 Oct 15:36: "a bit block like
-            # but ... not sharp like minecraft"): the route's plan in whole cells (blocky runs and
-            # notches), its outline rounded and lumped (softgrid); inside calm, one body tone with a
-            # few large trodden and dry patches and clods
-            m = SG.shape(SG.cells_polyline(r['points'], r.get('width', 24), H, W, shrink=3.0), H, W, seed=60 + k)
-            d = np.minimum(d, polyline_dist(SG.manhattan(r['points'])))
+            # density 3 (Matt, 26 Oct 10:19: paths on the soft grid): the edge smooth, stepping a
+            # texel at a time, no teeth; inside calm, one body tone with a few large trodden and dry
+            # patches and clods (the sheets' speckle read as blotches)
+            m = SE.soft(m, smooth=0.6)
             fam_ = 'path' if r['kind'] == 'road' else 'path_warm'
             pt = noise(9.0, 140 + k)
             calm = np.where(pt > 0.9, 4, np.where(pt < -1.4, 2, 3))     # (few dark patches: shade must still show the clods)
@@ -344,14 +341,8 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
     if hd:
         turf_ = is_turf(cv)
         SE.rim(cv, pathm, turf_ & ~pathm)
-        SG.breakers(cv, pathm, np.random.default_rng(plan.get('seed', 7) + 401), 0.15, kind='path', drawn=keep_marks,
-                    turf=turf_)
 
     # --- places ------------------------------------------------------------------------------------
-    if hd:
-        # (soft grid, 26 Oct: each part of the town draws from its own random stream, so changing a
-        # route's plan does not reshuffle the setts, the lots and the props drawn after it)
-        rng = np.random.default_rng(plan.get('seed', 7) + 500)
     # the paved square: rounded on the soft grid (cell 8 world px, corner radius one cell)
     pave = np.zeros((H, W), bool)
     for r in art.get('paving', []):
@@ -531,15 +522,13 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         elif pl['kind'] == 'lot':
             pass
 
-    if hd:
-        rng = np.random.default_rng(plan.get('seed', 7) + 600)
     for k_, lot in enumerate(plan.get('lots', [])):
         x, y, w, h = lot['rect']
         # the burnt ground: ash and soot in soft clusters, its edge frayed into the lawn
         e = np.maximum(np.abs(WX - (x + w / 2)) / (w / 2), np.abs(WY - (y + h / 2)) / (h / 2))
         m = e < 1.0 + noise(1.6, 70 + k_, 0.08)
         if hd:
-            m = SG.shape(SG.cells_rects([lot['rect']], H, W), H, W, seed=70 + k_)
+            m = SE.soft(m, smooth=0.6)
         cv[m] = C('earth', 2)
         cv[m & (noise(1.8, 71 + k_) > 0.1)] = C('earth_cool', 2)
         cv[m & (noise(2.2, 72 + k_) > 0.7)] = C('earth_cool', 1)
@@ -564,24 +553,10 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
             sx, sy = q(x + rng.uniform(10, w - 10)), q(y + rng.uniform(10, h - 8))
             V.blk(cv, sx, sy, sx + q(rng.uniform(2.5, 4)), sy + q(rng.uniform(1.6, 2.6)), 'stone', int(rng.choice([2, 3])), cut=1)
 
-    # --- earth ledges under raised ground (density 3, the soft grid) ------------------------------------
-    # Matt, 26 Oct 15:36, with an Eastward forest screenshot: blocky plateaus with soft, lumpy, rounded
-    # edges. A bank of natural ground is a plateau of whole cells whose ledge is earth: a grass lip,
-    # the under-lip line, a face of clods, a dark foot (softgrid.ledge)
-    for k_, lg in enumerate(art.get('ledges', []) if hd else []):
-        topm = SG.shape(SG.cells_rects(lg['top'], H, W), H, W, seed=lg.get('seed', 300 + k_))
-        if lg.get('upland', False):
-            cv[topm] = up[topm]
-        lrng = np.random.default_rng(lg.get('seed', 300 + k_))       # its own stream: nothing else moves
-        SG.ledge(cv, topm, lg.get('face', 12), lrng, seed=lg.get('seed', 300 + k_), drawn=keep_marks)
-        SG.breakers(cv, topm, lrng, 0.12, kind='lip', drawn=keep_marks)
-
     # --- retaining walls (faces) and the gate stair ---------------------------------------------------
     stairs = plan.get('stairs', [])
     for f in art.get('walls', []):
-        x, y, w, h = f[:4]
-        if hd and len(f) > 4 and f[4] == 'ledge':
-            continue                    # drawn as an earth ledge at density 3 (art.ledges)
+        x, y, w, h = f
         x0, y0, x1, y1 = q(x), q(y), q(x + w), q(y + h)
         tmp = np.full((H, W), -1, np.int32)
         V.rubble(tmp, x0, y0, x1, y1, rng, base=3, course=(3.0, 4.6), length=(5, 11), moss=0.3)
