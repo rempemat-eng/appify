@@ -713,3 +713,20 @@ fixtures, unchanged anchors/state, lifecycle cancellation, pause, landing and he
 contact ordering. It is headless field evidence, not rendered gameplay, A/J production
 schedules, terrain support integration, powered/empty/exit animation or live-world combat.
 Those and the existing HP/Tam/input/cover/dodge agreements remain outstanding.
+
+### Explicit passive/form drawing clock (C60)
+
+`AbilityPoseTrack` accepts an explicit state identity, clip, facing/aim and approved per-drawing
+schedule. It presents looping idle/walk poses and finite guard/exit poses without requiring or
+emitting a release/contact event. Finite clips hold their final drawing; the caller must select
+the next state. It does not infer powered transitions, harpoon state, defeat routing or clocks.
+A new state identity restarts at drawing zero. Facing/aim changes retain phase only with the
+same clip, loop rule and duration schedule; implicit retiming is rejected. Pauses freeze,
+cancellation invalidates the sample and monotonic tokens reject stale replays. Frame/anchor
+copies remain in authored screen texels, including west. Invalid replacement preserves the
+current valid state. The fixture suite also reads all fourteen published passive/form clip
+sets and Brine's empty variants; fixture template clocks are not production timing approval.
+
+This pure timeline is not yet bound to Player or the arena driver's action consumer. Production
+A/J provider/state selection, powered-idle start/end and powered-defeat exit rules still need
+that explicit binding. No default attachment, combat event, art/renderer or canonical rule change.
