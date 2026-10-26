@@ -332,3 +332,25 @@ Ashe cardinal/diagonal aim, lethal/immortal targets, beam boundaries, field/even
 misses. Regenerate with `node game/test/combat/build_form_exit_oracle.mjs /path/to/original-modules.json`.
 Exact IEEE754 fixture numbers and 1e-6 comparisons follow the existing snapshot suites.
 Full npm verify/art/hosted/rendered/native/device validation remains pending.
+
+## Arc, beam and body-limited dash checkpoint
+
+`AbilityStrikes` ports original O/H, S/A and C as independent canonical snapshots. Arc
+membership is captured before damage/passives mutate targets. Beams capture eligible
+segment hits, retain array order for equal distances, then hit the closest or all captured
+targets; only `lunge` applies its canonical knockback. Misses, effect/serial order and
+passive/defeat handling use the existing reducers. Dash uses the nearest living body in
+its strictly open side-clearance corridor, a two-unit stop gap and arena clamps. It does
+not test world terrain. No action/resource clocks, actor movement or HP conversion occur.
+
+`strike-oracle.json` contains166 whole-state comparisons from hash-verified original
+O/S/C and their unmodified helpers: all14 kits, powered/base passives, arc/beam/clearance
+boundaries, dead/immortal targets, cardinal/diagonal/zero direction, stable ties, misses
+and capped events. Regenerate with
+`node game/test/combat/build_strike_oracle.mjs /path/to/original-modules.json`.
+Fixtures retain exact IEEE754 numbers, full state comparison and input-immutability checks.
+
+Next: stateful secondary/special releases using these primitives, then the fixed-step
+player/dispatcher and granted Player hook. World HP and Tam duplicate-defeat remain owner
+decisions; this checkpoint does not resolve them. C60 remains IMPLEMENTING and PR261 DRAFT.
+Full npm verify/art, matching hosted CI, rendered/native/device validation remain pending.
