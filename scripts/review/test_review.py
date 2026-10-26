@@ -353,6 +353,38 @@ class RaggedEdge(unittest.TestCase):
         self.assertEqual(E.ragged(al, H, 'bench', min_area=0.02, sprite=True), [])
 
 
+class CornerRadius(unittest.TestCase):
+    # Matt, 26 Oct 15:36: blocky plans, "not sharp like minecraft": a plan of whole cells drawn with
+    # square corners trips; the same plan rounded (outer 0.4, inner 0.25 of a cell) and lumped
+    # passes, as does an organic outline with no plan corners
+    def _plan(self):
+        c = 24
+        m = np.zeros((360, 480), bool)
+        for (x, y, w, h) in ((2, 2, 11, 5), (13, 2, 6, 3), (3, 7, 5, 3), (5, 10, 15, 2)):
+            m[y * c:(y + h) * c, x * c:(x + w) * c] = True
+        return m
+
+    def test_square_corners_trip(self):
+        self.assertTrue(E.corner_radius(self._plan(), H, 'x/ground (dirt)'))
+
+    def test_rounded_corners_pass(self):
+        m = self._plan()
+        p = 12
+        mp = np.pad(m, p)
+        dil = lambda a, r: ndi.distance_transform_edt(~a) <= r
+        ero = lambda a, r: ndi.distance_transform_edt(a) > r
+        mp = ero(dil(mp, 6), 6)
+        mp = dil(ero(mp, 9.6), 9.6)
+        self.assertFalse(E.corner_radius(mp[p:-p, p:-p], H, 'x/ground (dirt)'))
+
+    def test_organic_outline_passes(self):
+        yy, xx = np.mgrid[0:360, 0:480]
+        ang = np.arctan2(yy - 180, xx - 240)
+        r = 140 + 12 * np.sin(5 * ang) + 5 * np.sin(13 * ang)
+        m = np.hypot((xx - 240), (yy - 180) * 1.5) < r
+        self.assertFalse(E.corner_radius(m, H, 'x/ground (dirt)'))
+
+
 class OnGrid(unittest.TestCase):
     """logic.off_grid: props and structures stand on the soft grid (8 world px, 24 texels at density
     3); clutter may sit anywhere in a cell."""

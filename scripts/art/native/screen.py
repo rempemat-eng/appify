@@ -449,7 +449,7 @@ def footbridge_hd(cv: np.ndarray, x0, w, y0, y1, water: np.ndarray) -> None:
                         put(yy_, xx_, C('water_cool', 1) if water[yy_, xx_] else C('earth', 1))
 
 
-def path_hd(cv: np.ndarray, pts, hw0: float, seed: int = 0, spur: bool = False) -> np.ndarray:
+def path_hd(cv: np.ndarray, pts, hw0: float, seed: int = 0, spur: bool = False, net: np.ndarray | None = None) -> np.ndarray:
     """A worn footpath at density 3 and up, on the soft grid (Matt, 26 Oct 10:19: paths should
     "adhere to the soft grid more", like the bench and lamp of the cast video). Its width wanders
     slowly (two long waves), so the edge runs smooth and steps a texel at a time; a rounded bite of
@@ -462,6 +462,9 @@ def path_hd(cv: np.ndarray, pts, hw0: float, seed: int = 0, spur: bool = False) 
     from .terrain import noise as TN
     from . import softedge as SE
     H, W = cv.shape
+    if net is not None:
+        from . import softgrid as SG
+        pts = SG.manhattan(pts)            # the ruts and pebbles follow the blocky route, not the old slant
     cp, sarc = SC._curve(pts)
     tree = cKDTree(cp)
     ys = np.arange(max(0, P(cp[:, 1].min() - 14, 0)), min(H, P(cp[:, 1].max() + 14, 0)))
@@ -488,8 +491,14 @@ def path_hd(cv: np.ndarray, pts, hw0: float, seed: int = 0, spur: bool = False) 
         hw = hw * np.clip((sarc[-1] - sa + 2.5) / 5.0, 0.35, 1.0)
     cur = cv[ys[0]:ys[-1] + 1, xs[0]:xs[-1] + 1]
     grassy = is_fam(cur, 'grass') | is_fam(cur, 'leaf')
-    dirt = SE.soft(dist <= hw) & grassy
-    dirt = SE.soft(dirt)
+    if net is not None:
+        # the soft grid (Matt, 26 Oct 15:36): the network's outline comes from its plan in whole
+        # cells, rounded and lumped once for all of it (softgrid.shape); this piece paints the
+        # part of it nearest its own line
+        dirt = net[ys[0]:ys[-1] + 1, xs[0]:xs[-1] + 1] & (dist <= hw0 + 10)
+    else:
+        dirt = SE.soft(dist <= hw) & grassy
+        dirt = SE.soft(dirt)
     # calm inside (#288 review B1): one body tone; large trodden and dry patches as round lobes in
     # the cool and warm siblings of the same tone (about 16 L apart, Eastward's ground band), from
     # a noise that avalanches (no rows on the lattice) and one field for every piece of the network
@@ -504,8 +513,10 @@ def path_hd(cv: np.ndarray, pts, hw0: float, seed: int = 0, spur: bool = False) 
     rw = (TN.vnoise_hd(wx, wy, 5.0, 59) - 0.5) * 0.7
     mid = (sa > 2.5) & (sa < sarc[-1] - 2.5)
     rut = (np.abs(dist - 0.38 * hw0 + rw) < 0.34) & (TN.vnoise_hd(wx, wy, 7.0, 55) > 0.42) & (dist < hw - 1.2) & mid \
-        & (hw0 >= 5) & ~spur
-    t[rut] -= 1
+        & (hw0 >= 5) & (not spur)
+    # (fix: `~spur` on a Python bool is -1, which turned the mask into integer indices and darkened
+    # the first two rows of every piece's box: a straight seam across the path)
+    t[np.asarray(rut, bool)] -= 1
     out = cur.copy()
     out[dirt] = fam[dirt] * 8 + np.clip(t[dirt], 1, 5)
     # pebbles in a few small clusters
@@ -867,9 +878,30 @@ def terrain(plan: dict, layers: dict) -> tuple:
     for (lx, ly, rx, ry) in pl['light_pools']:
         sun(cv, blob(lx, ly, rx, ry, seed=int(lx * 7 + ly), rough=0.3, w=w, h=h), heart=P(5), fade=P(2))
     paths_m = np.zeros(cv.shape, bool)
+    net = None
+    if D >= HD:
+        # the path network's plan in whole cells (8 world px): each path covers the cells whose
+        # centres lie within its radius of its line, so a diagonal is a staircase of cells; one
+        # soft outline for the whole network (softgrid: corners rounded, lumpy runs)
+        from . import softgrid as SG
+        cells = np.zeros(SG.grid_shape(h, w), bool)
+        for p in plan['paths']:
+            cells |= SG.cells_polyline(p['points'], 2 * p['radius'], h, w)
+        net = SG.shape(SG.join4(cells), h, w, seed=plan.get('path_seed', 41))
+        layers['path_cells'] = cells
+        # the whole network's body first (each piece then adds its ruts, pebbles and clods near its
+        # own line), in the calm sibling-hue patches of path_hd
+        from .terrain import noise as TN
+        net &= is_fam(cv, 'grass') | is_fam(cv, 'leaf')
+        yy_, xx_ = np.mgrid[0:h, 0:w]
+        m1 = TN.vnoise_hd((xx_ + 0.5) / D, (yy_ + 0.5) / D, 11.0, 51)
+        fam_ = np.where(m1 < 0.3, FI['path_cool'], np.where(m1 > 0.7, FI['path_warm'], FI['path']))
+        cv[net] = (fam_ * 8 + 3)[net]
+        paths_m |= net
     for k, p in enumerate(plan['paths']):
         if D >= HD:
-            paths_m |= path_hd(cv, [tuple(q) for q in p['points']], hw0=p['radius'] - 2.0, seed=k, spur=p.get('spur', False))
+            paths_m |= path_hd(cv, [tuple(q) for q in p['points']], hw0=p['radius'] - 2.0, seed=k, spur=p.get('spur', False),
+                               net=net)
         else:
             SC.worn2(cv, [tuple(q) for q in p['points']], hw0=p['radius'] - 2.0)
     if D >= HD and paths_m.any():
@@ -877,6 +909,8 @@ def terrain(plan: dict, layers: dict) -> tuple:
         # turf south of it lit (no rim line left inside where two pieces join)
         from . import softedge as SE
         SE.rim(cv, paths_m, (is_fam(cv, 'grass') | is_fam(cv, 'leaf')) & ~paths_m)
+        SG.breakers(cv, paths_m, np.random.default_rng(plan.get('path_seed', 41) + 1), 0.15, kind='path',
+                    turf=is_fam(cv, 'grass') | is_fam(cv, 'leaf') | paths_m)
     co, ci = pl['circle_out'], pl['circle_in']
     ring = blob(*co['at'], *co['r'], seed=co['seed'], rough=co['rough'], w=w, h=h) & \
         ~blob(*ci['at'], *ci['r'], seed=ci['seed'], rough=ci['rough'], w=w, h=h)

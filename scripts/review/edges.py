@@ -107,6 +107,123 @@ def ragged(mask: np.ndarray, H: float, subject: str, min_area: float = 0.3, box0
     return out
 
 
+# ------------------------------------------------------------------------------------------------
+# corner radius (Matt, 26 Oct 15:36: "edges and paths are a bit block like but they are not sharp
+# like minecraft"): a blocky plan's corners are rounded, outer ones by about 0.4 of a cell, inner
+# ones by about 0.25 (eastward-edges.md 1.5, 1.6)
+# ------------------------------------------------------------------------------------------------
+CORNER_TURN = 1.05      # a corner turns at least 60 degrees within one cell of outline
+CORNER_R_MIN = 0.2      # in cells: rounder than this, or it reads as a sharp (minecraft) corner
+CORNER_SHARP_MAX = 0.25  # share of a region's corners that may be sharp
+_MOORE = [(-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1)]
+
+
+def trace(m: np.ndarray) -> np.ndarray:
+    """The outer outline of a region (one connected component) as an ordered list of (y, x)
+    texels, by Moore-neighbour tracing."""
+    ys, xs = np.nonzero(m)
+    if not len(ys):
+        return np.zeros((0, 2))
+    k = np.lexsort((xs, ys))[0]
+    start = (int(ys[k]), int(xs[k]))
+    H, W = m.shape
+    pts = [start]
+    cur, back = start, 6                     # we arrived from the west
+    for _ in range(8 * m.sum() + 8):
+        found = False
+        for j in range(8):
+            d = (back + 1 + j) % 8
+            ny, nx = cur[0] + _MOORE[d][0], cur[1] + _MOORE[d][1]
+            if 0 <= ny < H and 0 <= nx < W and m[ny, nx]:
+                back = (d + 4) % 8
+                cur = (ny, nx)
+                found = True
+                break
+        if not found or (cur == start and len(pts) > 2):
+            break
+        pts.append(cur)
+    return np.array(pts, float)
+
+
+def corners(m: np.ndarray, cell: float) -> list:
+    """The corners of a region's outline: (y, x, turn in radians, radius in px). A corner is a
+    place where the outline turns at least CORNER_TURN within one cell; its radius is the arc over
+    which the middle 80 % of the turn happens, divided by that turn (a pixel staircase or a lump
+    turns back within the cell and is not a corner)."""
+    from scipy.ndimage import gaussian_filter1d
+    P = trace(m)
+    if len(P) < 4 * cell:
+        return []
+    P = np.stack([gaussian_filter1d(P[:, 0], 1.0, mode='wrap'), gaussian_filter1d(P[:, 1], 1.0, mode='wrap')], 1)
+    seg = np.hypot(*np.diff(np.vstack([P, P[:1]]), axis=0).T)
+    s = np.concatenate([[0], np.cumsum(seg)])
+    L = s[-1]
+    n = int(L)
+    if n < 8:
+        return []
+    u = np.linspace(0, L, n, endpoint=False)
+    Pc = np.vstack([P, P[:1]])
+    Q = np.stack([np.interp(u, s, Pc[:, 0]), np.interp(u, s, Pc[:, 1])], 1)
+    d = np.roll(Q, -1, 0) - Q
+    th = np.unwrap(np.arctan2(d[:, 0], d[:, 1]))
+    dth = np.angle(np.exp(1j * np.diff(np.concatenate([th, [th[0]]]))))
+    w = max(3, int(round(cell / 2)))
+    cum = np.concatenate([[0], np.cumsum(np.concatenate([dth, dth, dth]))])
+    T = np.array([cum[n + i + w] - cum[n + i - w] for i in range(n)])
+    out = []
+    taken = np.zeros(n, bool)
+    for i in np.argsort(-np.abs(T)):
+        if abs(T[i]) < CORNER_TURN:
+            break
+        if taken[max(0, i - w):i + w].any() or taken[(np.arange(i - w, i + w)) % n].any():
+            continue
+        taken[(np.arange(i - w, i + w)) % n] = True
+        c = cum[n + i - w:n + i + w + 1] - cum[n + i - w]
+        tot = c[-1]
+        f = c / tot if tot != 0 else c
+        a = np.argmax(f >= 0.1)
+        b = np.argmax(f >= 0.9)
+        r = max(0.5, (b - a)) / (0.8 * abs(tot))
+        # a plan's corner joins two straight arms (a run either side, each within 20 degrees of
+        # its own direction); an organic bend or a lump does not
+        ia = (np.arange(i - w, i - w // 3)) % n
+        ib = (np.arange(i + w // 3, i + w)) % n
+        tha = np.unwrap(th[ia])
+        thb = np.unwrap(th[ib])
+        straight = (np.ptp(tha) < 0.35) and (np.ptp(thb) < 0.35)
+        out.append((Q[i, 0], Q[i, 1], float(tot), float(r), bool(straight)))
+    return out
+
+
+def corner_radius(mask: np.ndarray, H: float, subject: str, min_area: float = 0.5, box0=(0, 0)) -> list[Finding]:
+    """A finding per region whose corners are mostly sharp: a blocky plan drawn as hard squares."""
+    cell = 8.0 * H / 25.0                      # 8 world px at an adult of 25
+    out = []
+    ox, oy = box0
+    lab, regs = regions(mask, min_area=int(min_area * H * H))
+    for lid, sl, a in regs:
+        comp = lab == lid
+        Hm, Wm = comp.shape
+        b = 6                                    # not where the frame cuts the region
+        cs = [c for c in corners(comp, cell) if b <= c[0] < Hm - b and b <= c[1] < Wm - b
+              and c[4] and 1.2 <= abs(c[2]) <= 1.95]           # plan corners: right angles between straight runs
+        if len(cs) < 3:
+            continue
+        sharp = [c for c in cs if c[3] < CORNER_R_MIN * cell]
+        share = len(sharp) / len(cs)
+        if len(sharp) >= 3 and share > CORNER_SHARP_MAX:
+            x0, y0, x1, y1 = slice_box(sl)
+            out.append(Finding('detail.corner_radius', 'fault', (x0 + ox, y0 + oy, x1 + ox, y1 + oy),
+                               f'{subject}: {len(sharp)} of {len(cs)} corners are sharp (radius under '
+                               f'{CORNER_R_MIN:.1f} of a cell): blocky like minecraft, not the soft grid',
+                               'round the plan\'s corners (Matt, 26 Oct: "a bit block like but ... not sharp like '
+                               'minecraft"): outer corners about 0.4 of a cell, inner fillets about 0.25, runs with '
+                               'lumps 8 to 20 px long and 1 to 3 px deep (softgrid.py, eastward-edges.md 1.5, 1.6)',
+                               score=share, threshold=CORNER_SHARP_MAX, subject=subject,
+                               extra=dict(corners=len(cs), sharp=len(sharp), radii=[round(c[3], 1) for c in cs][:20])))
+    return out
+
+
 # sprites that are laid-out ground (their silhouette is an organic edge): props and buildings keep
 # their own drawn outlines (a damage overlay's boards and holes are not an organic edge)
 ORGANIC_SPRITES = ('beds', 'bed_', 'pond', 'puddle', 'patch', 'plot', 'field')
@@ -144,6 +261,8 @@ def ragged_ground(rgb: np.ndarray, H: float, subject: str, ignore=None) -> list[
     for name, m, over in ground_masks(rgb, ignore):
         out += ragged(m, H, f'{subject} ({name})', min_area=0.5,
                       teeth_max=WATER_TEETH_MAX if name in ('water', 'bank') else TEETH_MAX, exclude=over)
+        if name in ('dirt', 'water'):
+            out += corner_radius(m, H, f'{subject} ({name})')
     return out
 
 
