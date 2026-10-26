@@ -1,0 +1,525 @@
+{
+  "_about": "The hut's garden on the T2 terrace, above Crossroads' hut terrace (Claude E, 26 Oct; assignment to-all-assignments-1025). Same shape as crossroads.json. World px local to the zone; origin_on_canvas puts it at art/regions/valley.json's garden (6136, 2800), its south edge on Crossroads' north edge (y 3248), where the hut stands (crossroads.json). The garden keeps valley.json's ids: the trail gate to the hay slope and the Col Path (stand 'trail'), the east gate to the riverside (stand 'east'), the west gate to the woodland (stand 'west'), and the brook along its south side. A home ground: no camp, no raid lane; the slice's last beat plants the first bed. Every rectangle is a blockout placeholder, not art.",
+  "id": "garden",
+  "owner": "claude-e",
+  "origin_on_canvas": [
+    6136,
+    2800
+  ],
+  "box": [
+    0,
+    0,
+    320,
+    448
+  ],
+  "screens": [
+    {
+      "id": "trail_gate",
+      "rect": [
+        0,
+        0,
+        320,
+        180
+      ],
+      "why": "the trail gate under the hay slope face, the Col Path stair going up"
+    },
+    {
+      "id": "beds",
+      "rect": [
+        0,
+        140,
+        320,
+        180
+      ],
+      "why": "the beds and the compost bay: the slice plants the first bed here"
+    },
+    {
+      "id": "south_walk",
+      "rect": [
+        0,
+        268,
+        320,
+        180
+      ],
+      "why": "the brook and its footbridge, the walk down to the hut's terrace"
+    }
+  ],
+  "stages": [
+    {
+      "id": "scorched",
+      "why": "the morning after the Starfall: the beds scorched, the hives toppled"
+    },
+    {
+      "id": "planted",
+      "if": {
+        "flags": [
+          "garden_planted"
+        ]
+      },
+      "why": "the slice's last beat: the first bed dug and sown (vertical-slice.md: crops come at its end)"
+    }
+  ],
+  "tiers": [
+    {
+      "id": "terrace",
+      "tier": 5,
+      "colour": "#6f8a52",
+      "outline": [
+        [
+          0,
+          32
+        ],
+        [
+          320,
+          32
+        ],
+        [
+          320,
+          448
+        ],
+        [
+          0,
+          448
+        ]
+      ]
+    },
+    {
+      "id": "hay_foot",
+      "tier": 6,
+      "colour": "#86965e",
+      "outline": [
+        [
+          0,
+          0
+        ],
+        [
+          176,
+          0
+        ],
+        [
+          176,
+          8
+        ],
+        [
+          224,
+          8
+        ],
+        [
+          224,
+          0
+        ],
+        [
+          320,
+          0
+        ],
+        [
+          320,
+          8
+        ],
+        [
+          0,
+          8
+        ]
+      ]
+    }
+  ],
+  "faces": [
+    {
+      "id": "hay_face_w",
+      "rect": [
+        0,
+        8,
+        184,
+        24
+      ],
+      "why": "the hay slope's 32 px face under the trail gate (valley.json tier 6)"
+    },
+    {
+      "id": "hay_face_e",
+      "rect": [
+        216,
+        8,
+        104,
+        24
+      ],
+      "why": "the same face east of the Col stair"
+    }
+  ],
+  "routes": [
+    {
+      "id": "garden_walk",
+      "kind": "path",
+      "width": 24,
+      "points": [
+        [
+          200,
+          0
+        ],
+        [
+          200,
+          180
+        ],
+        [
+          260,
+          180
+        ],
+        [
+          260,
+          448
+        ]
+      ],
+      "why": "valley.json's garden_walk: from the trail gate past the beds to the hut's terrace, east of the hut"
+    },
+    {
+      "id": "garden_west",
+      "kind": "path",
+      "width": 24,
+      "points": [
+        [
+          0,
+          304
+        ],
+        [
+          200,
+          304
+        ],
+        [
+          200,
+          180
+        ]
+      ],
+      "why": "the west gate's path from the woodland (gates.west)"
+    },
+    {
+      "id": "garden_east",
+      "kind": "path",
+      "width": 24,
+      "points": [
+        [
+          260,
+          288
+        ],
+        [
+          320,
+          288
+        ]
+      ],
+      "why": "the east gate to the riverside (gates.east)"
+    }
+  ],
+  "stairs": [
+    {
+      "id": "col_stair_low",
+      "at": [
+        200,
+        20
+      ],
+      "from_tier": 6,
+      "to_tier": 5,
+      "width": 40,
+      "kind": "stone",
+      "why": "valley.json's col_stair_low: up the hay slope's face to the Col Path"
+    }
+  ],
+  "places": [
+    {
+      "id": "beds",
+      "kind": "beds",
+      "rect": [
+        24,
+        152,
+        152,
+        104
+      ],
+      "colour": "#6b5a40",
+      "why": "four raised beds in two rows, a 16 px walk between: the garden the hut feeds from"
+    },
+    {
+      "id": "orchard_corner",
+      "kind": "orchard",
+      "rect": [
+        24,
+        48,
+        120,
+        88
+      ],
+      "colour": "#7d9258",
+      "why": "three old fruit trees under the face, their windfalls (valley brief: apples only in orchards and gardens)"
+    },
+    {
+      "id": "hive_row",
+      "kind": "hives",
+      "rect": [
+        236,
+        56,
+        72,
+        28
+      ],
+      "colour": "#9a8a60",
+      "why": "the beehives against the face, facing south (toppled in the scorched stage)"
+    }
+  ],
+  "buildings": [
+    {
+      "id": "tool_shed",
+      "name": "Tool shed",
+      "rect": [
+        24,
+        268,
+        48,
+        32
+      ],
+      "door": [
+        48,
+        300
+      ],
+      "colour": "#8a6a48",
+      "why": "the gardener's shed by the west gate: tools, seed, the watering can"
+    }
+  ],
+  "props": [
+    {
+      "id": "compost_bay",
+      "kind": "compost",
+      "rect": [
+        128,
+        268,
+        40,
+        24
+      ],
+      "solid": true,
+      "colour": "#5a4a30",
+      "why": "three timber bays at the beds' foot"
+    },
+    {
+      "id": "water_butt",
+      "kind": "butt",
+      "rect": [
+        76,
+        272,
+        14,
+        14
+      ],
+      "solid": true,
+      "colour": "#6a5a48",
+      "why": "on the shed's gutter"
+    },
+    {
+      "id": "beds_scorched",
+      "kind": "scorch",
+      "rect": [
+        24,
+        152,
+        152,
+        104
+      ],
+      "colour": "#3a3028c0",
+      "if": {
+        "not_flags": [
+          "garden_planted"
+        ]
+      },
+      "why": "the storm's scorch over the beds until the first is planted"
+    },
+    {
+      "id": "hives_toppled",
+      "kind": "rubble",
+      "rect": [
+        236,
+        84,
+        72,
+        12
+      ],
+      "solid": true,
+      "colour": "#7a6a48",
+      "if": {
+        "not_flags": [
+          "garden_planted"
+        ]
+      },
+      "why": "two hives knocked over by the Starfall"
+    },
+    {
+      "id": "bench",
+      "kind": "bench",
+      "rect": [
+        276,
+        196,
+        28,
+        10
+      ],
+      "solid": true,
+      "colour": "#8a6a48",
+      "why": "the rest spot (K's handoffs: rest spots on open, reachable ground with a stand)"
+    },
+    {
+      "id": "brook_0",
+      "kind": "water",
+      "rect": [
+        0,
+        392,
+        248,
+        24
+      ],
+      "solid": true,
+      "colour": "#3a6a8a",
+      "why": "the brook along the garden's south side, east to the millpond"
+    },
+    {
+      "id": "brook_1",
+      "kind": "water",
+      "rect": [
+        272,
+        392,
+        48,
+        24
+      ],
+      "solid": true,
+      "colour": "#3a6a8a",
+      "why": "the brook along the garden's south side, east to the millpond"
+    }
+  ],
+  "things": [
+    {
+      "id": "first_bed",
+      "speaker": "garden_bed",
+      "verb": "Plant",
+      "at": [
+        64,
+        200
+      ],
+      "radius": 24,
+      "if": {
+        "not_flags": [
+          "garden_planted"
+        ]
+      },
+      "why": "the slice's last beat: plant the first bed (quest spot)"
+    },
+    {
+      "id": "shed_door",
+      "speaker": "tool_shed",
+      "verb": "Look",
+      "at": [
+        48,
+        306
+      ]
+    }
+  ],
+  "spawns": [
+    {
+      "id": "start",
+      "at": [
+        260,
+        420
+      ]
+    },
+    {
+      "id": "crossroads",
+      "at": [
+        260,
+        428
+      ]
+    },
+    {
+      "id": "trail",
+      "at": [
+        200,
+        44
+      ]
+    },
+    {
+      "id": "riverside",
+      "at": [
+        304,
+        288
+      ]
+    },
+    {
+      "id": "woodland",
+      "at": [
+        16,
+        304
+      ]
+    }
+  ],
+  "doors": [
+    {
+      "id": "to_crossroads",
+      "rect": [
+        240,
+        440,
+        40,
+        8
+      ],
+      "to": "crossroads",
+      "spawn": "garden",
+      "why": "down to the hut's terrace, east of the hut (crossroads.json needs a 'garden' spawn and door at its local (420, 0); asked claude-a)"
+    },
+    {
+      "id": "to_riverside",
+      "rect": [
+        312,
+        272,
+        8,
+        32
+      ],
+      "to": "riverside",
+      "spawn": "garden"
+    },
+    {
+      "id": "to_woodland",
+      "rect": [
+        0,
+        288,
+        8,
+        32
+      ],
+      "to": "woodland",
+      "spawn": "garden",
+      "why": "the west gate (the woodland is Claude A's: its spawn 'garden' asked of claude-a)"
+    },
+    {
+      "id": "to_hay_slope",
+      "rect": [
+        184,
+        0,
+        32,
+        8
+      ],
+      "to": "hay_slope",
+      "spawn": "garden",
+      "why": "the Col Path up the hay slope (a later zone)"
+    }
+  ],
+  "rest_spots": [
+    {
+      "id": "garden_bench",
+      "at": [
+        290,
+        214
+      ],
+      "why": "the bench over the beds (K's valley rest spot)"
+    }
+  ],
+  "quest_spots": [
+    {
+      "id": "first_bed",
+      "at": [
+        64,
+        200
+      ],
+      "why": "the slice's last beat (vertical-slice.md): dig and sow the first bed"
+    },
+    {
+      "id": "gardener_story",
+      "at": [
+        120,
+        120
+      ],
+      "why": "the gardener's story (K's handoffs, valley): 'the weeds will keep'"
+    }
+  ],
+  "combat_spaces": [],
+  "combat_why": "home ground: no camp and no raid lane (raids come to the square; game-design 7)"
+}

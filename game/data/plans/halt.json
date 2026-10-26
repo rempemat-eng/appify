@@ -1,0 +1,834 @@
+{
+  "_about": "Valley Halt as a zone plan (Claude E, 26 Oct; assignment to-all-assignments-1025), shaped like crossroads.json. World px local to the zone; origin_on_canvas (5600, 3296) puts it west of Crossroads (its east edge x 376 is Crossroads' west edge, x 5976) and on art/regions/valley.json's halt: the platform north of the line (lane R, 23 Oct), the station house behind it, the engine shed on the siding, the farmyard, the farmhouse and the barn; the west road from Crossroads' to_halt door crosses the line once east of the platform. Roads leave west to the Brackens (the Drover's Road, Claude F) and the fire country (the Ash Coast, Claude D), south down the farm track to the fields, and north up the woodland's timber stair (Claude A). Every rectangle is a blockout placeholder, not art.",
+  "id": "halt",
+  "owner": "claude-e",
+  "origin_on_canvas": [
+    5600,
+    3296
+  ],
+  "box": [
+    0,
+    0,
+    376,
+    1056
+  ],
+  "screens": [
+    {
+      "id": "bank_foot",
+      "rect": [
+        0,
+        0,
+        320,
+        180
+      ],
+      "why": "the Brackens' trod along the woodland bank's foot to the timber stair"
+    },
+    {
+      "id": "road_down",
+      "rect": [
+        56,
+        152,
+        320,
+        180
+      ],
+      "why": "the west road from Crossroads' gate turning south"
+    },
+    {
+      "id": "station",
+      "rect": [
+        0,
+        520,
+        320,
+        180
+      ],
+      "why": "the station house, the platform and the line; the level crossing east of it"
+    },
+    {
+      "id": "yard",
+      "rect": [
+        0,
+        820,
+        320,
+        180
+      ],
+      "why": "the farmyard between the farmhouse and the barn; the Ash Coast and the farm track leave"
+    }
+  ],
+  "stages": [
+    {
+      "id": "closed",
+      "why": "the slice: the halt closed, its points iced and the line blocked by a fallen shard"
+    },
+    {
+      "id": "open",
+      "if": {
+        "flags": [
+          "halt_open"
+        ]
+      },
+      "why": "act 1: the line cleared, the valley train runs (W3)"
+    }
+  ],
+  "tiers": [
+    {
+      "id": "floor",
+      "tier": 4,
+      "colour": "#7d9258",
+      "outline": [
+        [
+          0,
+          0
+        ],
+        [
+          376,
+          0
+        ],
+        [
+          376,
+          1008
+        ],
+        [
+          0,
+          1008
+        ]
+      ]
+    },
+    {
+      "id": "lowland",
+      "tier": 3,
+      "colour": "#8e9a62",
+      "outline": [
+        [
+          0,
+          1040
+        ],
+        [
+          376,
+          1040
+        ],
+        [
+          376,
+          1056
+        ],
+        [
+          0,
+          1056
+        ]
+      ]
+    }
+  ],
+  "faces": [
+    {
+      "id": "lowland_face_w",
+      "rect": [
+        0,
+        1008,
+        44,
+        32
+      ],
+      "why": "the floor's south face to the coastal lowland (valley.json tier 4 to 3)"
+    },
+    {
+      "id": "lowland_face_e",
+      "rect": [
+        84,
+        1008,
+        292,
+        32
+      ],
+      "why": "the same face east of the Ash Coast stair"
+    }
+  ],
+  "routes": [
+    {
+      "id": "west_road",
+      "kind": "road",
+      "width": 32,
+      "points": [
+        [
+          376,
+          252
+        ],
+        [
+          272,
+          252
+        ],
+        [
+          272,
+          416
+        ],
+        [
+          264,
+          416
+        ],
+        [
+          264,
+          800
+        ],
+        [
+          200,
+          800
+        ]
+      ],
+      "why": "valley.json's west_road from Crossroads' to_halt door (its local 0, 300), over the line once at x 264"
+    },
+    {
+      "id": "drovers_road",
+      "kind": "road",
+      "width": 32,
+      "points": [
+        [
+          264,
+          696
+        ],
+        [
+          32,
+          696
+        ],
+        [
+          32,
+          648
+        ],
+        [
+          0,
+          648
+        ]
+      ],
+      "why": "valley.json's Drover's Road north of the line to Claude F's Brackens (meet 5600, 3944, tier 4, 32 px)"
+    },
+    {
+      "id": "brackens_trod",
+      "kind": "path",
+      "width": 24,
+      "points": [
+        [
+          0,
+          8
+        ],
+        [
+          16,
+          8
+        ],
+        [
+          16,
+          104
+        ],
+        [
+          248,
+          104
+        ],
+        [
+          248,
+          200
+        ],
+        [
+          336,
+          200
+        ]
+      ],
+      "why": "the Brackens' east_trod (Claude F) along the woodland bank's foot to the timber stair's foot"
+    },
+    {
+      "id": "stair_foot",
+      "kind": "path",
+      "width": 32,
+      "points": [
+        [
+          336,
+          48
+        ],
+        [
+          336,
+          200
+        ],
+        [
+          376,
+          200
+        ]
+      ],
+      "why": "the woodland's timber stair (Claude A) comes down here and runs on to Crossroads' west gate"
+    },
+    {
+      "id": "halt_yard",
+      "kind": "path",
+      "width": 32,
+      "points": [
+        [
+          200,
+          800
+        ],
+        [
+          200,
+          856
+        ]
+      ],
+      "why": "between the crossing and the farm gate"
+    },
+    {
+      "id": "ash_coast",
+      "kind": "path",
+      "width": 32,
+      "points": [
+        [
+          200,
+          856
+        ],
+        [
+          128,
+          856
+        ],
+        [
+          128,
+          936
+        ],
+        [
+          64,
+          936
+        ],
+        [
+          64,
+          1040
+        ],
+        [
+          0,
+          1040
+        ]
+      ],
+      "why": "valley.json's Ash Coast to Claude D's fire country (meet 5600, 4336, tier 3)"
+    },
+    {
+      "id": "farm_track",
+      "kind": "track",
+      "width": 24,
+      "points": [
+        [
+          200,
+          856
+        ],
+        [
+          272,
+          856
+        ],
+        [
+          272,
+          1056
+        ]
+      ],
+      "why": "down to the fields and the windmill (the fields are a later zone)"
+    }
+  ],
+  "stairs": [
+    {
+      "id": "ash_stair",
+      "at": [
+        64,
+        1024
+      ],
+      "from_tier": 4,
+      "to_tier": 3,
+      "width": 40,
+      "kind": "stone"
+    },
+    {
+      "id": "farm_stair",
+      "at": [
+        272,
+        1024
+      ],
+      "from_tier": 4,
+      "to_tier": 3,
+      "width": 40,
+      "kind": "timber"
+    }
+  ],
+  "places": [
+    {
+      "id": "platform",
+      "kind": "platform",
+      "rect": [
+        0,
+        720,
+        240,
+        24
+      ],
+      "colour": "#a8a090",
+      "why": "the 240 px platform north of the line (lane R, 23 Oct); travelPoints.valley stands on it"
+    },
+    {
+      "id": "line",
+      "kind": "rail",
+      "rect": [
+        0,
+        748,
+        376,
+        8
+      ],
+      "colour": "#4a4038",
+      "why": "the desert line (W5) west and the valley train (W3) east, at world y 4048"
+    },
+    {
+      "id": "crossing",
+      "kind": "crossing",
+      "rect": [
+        248,
+        740,
+        32,
+        24
+      ],
+      "colour": "#b8a888",
+      "why": "the halt's level crossing on the west road, east of the platform"
+    },
+    {
+      "id": "farmyard",
+      "kind": "yard",
+      "rect": [
+        64,
+        872,
+        168,
+        112
+      ],
+      "colour": "#a09070"
+    }
+  ],
+  "buildings": [
+    {
+      "id": "station_house",
+      "name": "Station house",
+      "rect": [
+        72,
+        624,
+        72,
+        40
+      ],
+      "door": [
+        108,
+        664
+      ],
+      "colour": "#8a7058",
+      "why": "behind the platform, its door on the Drover's Road"
+    },
+    {
+      "id": "engine_shed",
+      "name": "Engine shed",
+      "rect": [
+        0,
+        776,
+        64,
+        40
+      ],
+      "door": [
+        32,
+        816
+      ],
+      "colour": "#6a5a48",
+      "why": "on the siding south of the line (W3)"
+    },
+    {
+      "id": "farmhouse",
+      "name": "Farmhouse",
+      "rect": [
+        152,
+        944,
+        64,
+        40
+      ],
+      "door": [
+        184,
+        984
+      ],
+      "colour": "#9b7b55"
+    },
+    {
+      "id": "barn",
+      "name": "Barn",
+      "rect": [
+        32,
+        936,
+        72,
+        48
+      ],
+      "door": [
+        68,
+        984
+      ],
+      "colour": "#7a5a3a"
+    }
+  ],
+  "props": [
+    {
+      "id": "line_bed",
+      "kind": "rail",
+      "rect": [
+        0,
+        748,
+        248,
+        8
+      ],
+      "solid": false,
+      "colour": "#4a4038"
+    },
+    {
+      "id": "fallen_shard",
+      "kind": "shard",
+      "rect": [
+        300,
+        736,
+        40,
+        28
+      ],
+      "solid": true,
+      "colour": "#7a90b8",
+      "if": {
+        "not_flags": [
+          "halt_open"
+        ]
+      },
+      "why": "a fallen shard across the line east of the crossing: why the halt is closed"
+    },
+    {
+      "id": "wagons",
+      "kind": "wagons",
+      "rect": [
+        0,
+        768,
+        56,
+        16
+      ],
+      "solid": true,
+      "colour": "#5a4a3a",
+      "why": "two goods wagons on the siding: cover on the yard side"
+    },
+    {
+      "id": "milk_churns",
+      "kind": "churns",
+      "rect": [
+        168,
+        712,
+        20,
+        10
+      ],
+      "solid": true,
+      "colour": "#a0a0a8",
+      "why": "on the platform end, waiting for the train"
+    },
+    {
+      "id": "hay_cart",
+      "kind": "cart",
+      "rect": [
+        96,
+        900,
+        36,
+        20
+      ],
+      "solid": true,
+      "colour": "#8a6a48",
+      "why": "in the farmyard: cover for the yard's fight"
+    },
+    {
+      "id": "woodland_bank",
+      "kind": "bank",
+      "rect": [
+        32,
+        0,
+        344,
+        56
+      ],
+      "solid": true,
+      "colour": "#3c3a34",
+      "why": "the woodland's south face above the trod (the woodland is Claude A's)"
+    }
+  ],
+  "things": [
+    {
+      "id": "waystone",
+      "speaker": "waystone",
+      "verb": "Touch",
+      "at": [
+        216,
+        704
+      ],
+      "why": "the valley's second waystone, on the platform (to-all-assignments-1025: waystones)"
+    },
+    {
+      "id": "timetable",
+      "speaker": "halt_timetable",
+      "verb": "Read",
+      "at": [
+        124,
+        704
+      ]
+    }
+  ],
+  "camps": [
+    {
+      "id": "halt_yard",
+      "enemies": [
+        [
+          88,
+          880
+        ],
+        [
+          140,
+          872
+        ],
+        [
+          196,
+          900
+        ],
+        [
+          120,
+          944
+        ]
+      ],
+      "roles": [
+        "rusher",
+        "rusher",
+        "shooter",
+        "shield"
+      ],
+      "why": "shardstruck in the farmyard round the hay cart (Codex's woodland roles)"
+    },
+    {
+      "id": "drovers_cut",
+      "enemies": [
+        [
+          60,
+          640
+        ],
+        [
+          110,
+          660
+        ],
+        [
+          150,
+          630
+        ]
+      ],
+      "roles": [
+        "shooter",
+        "rusher",
+        "elite"
+      ],
+      "if": {
+        "flags": [
+          "act1_started"
+        ]
+      },
+      "why": "act 1: wild things on the Drover's Road where it leaves for the Brackens"
+    }
+  ],
+  "spawns": [
+    {
+      "id": "start",
+      "at": [
+        264,
+        300
+      ]
+    },
+    {
+      "id": "crossroads",
+      "at": [
+        352,
+        252
+      ]
+    },
+    {
+      "id": "brackens",
+      "at": [
+        16,
+        648
+      ]
+    },
+    {
+      "id": "brackens_trod",
+      "at": [
+        16,
+        12
+      ]
+    },
+    {
+      "id": "fire_country",
+      "at": [
+        16,
+        1040
+      ]
+    },
+    {
+      "id": "woodland",
+      "at": [
+        336,
+        72
+      ]
+    },
+    {
+      "id": "fields",
+      "at": [
+        272,
+        1040
+      ]
+    },
+    {
+      "id": "platform",
+      "at": [
+        160,
+        732
+      ]
+    }
+  ],
+  "doors": [
+    {
+      "id": "to_crossroads",
+      "rect": [
+        368,
+        232,
+        8,
+        40
+      ],
+      "to": "crossroads",
+      "spawn": "halt",
+      "why": "Crossroads' to_halt door at its local (0, 280 to 320)"
+    },
+    {
+      "id": "to_brackens",
+      "rect": [
+        0,
+        632,
+        8,
+        32
+      ],
+      "to": "brackens",
+      "spawn": "valley",
+      "why": "Claude F's Brackens"
+    },
+    {
+      "id": "to_brackens_trod",
+      "rect": [
+        0,
+        0,
+        8,
+        24
+      ],
+      "to": "brackens",
+      "spawn": "valley_trod"
+    },
+    {
+      "id": "to_fire_country",
+      "rect": [
+        0,
+        1024,
+        8,
+        32
+      ],
+      "to": "fire_country",
+      "spawn": "valley",
+      "why": "Claude D's fire country"
+    },
+    {
+      "id": "to_woodland",
+      "rect": [
+        320,
+        48,
+        32,
+        8
+      ],
+      "to": "woodland",
+      "spawn": "halt",
+      "why": "up the woodland's timber stair (Claude A's woodland: spawn 'halt' asked)"
+    },
+    {
+      "id": "to_fields",
+      "rect": [
+        260,
+        1048,
+        24,
+        8
+      ],
+      "to": "fields",
+      "spawn": "halt",
+      "why": "the fields and the windmill: a later zone"
+    }
+  ],
+  "combat_spaces": [
+    {
+      "id": "yard_arena",
+      "kind": "arena",
+      "rect": [
+        56,
+        860,
+        176,
+        112
+      ],
+      "camp": "halt_yard",
+      "cover": [
+        "hay_cart",
+        "barn",
+        "farmhouse"
+      ],
+      "why": "an open yard ringed by buildings: room for a cluster, two ways out (Ash Coast west, farm track south)"
+    },
+    {
+      "id": "platform_edge",
+      "kind": "edge",
+      "rect": [
+        0,
+        720,
+        240,
+        24
+      ],
+      "why": "a raised deck edge over the line: a ledge for knock-back and ranged play"
+    },
+    {
+      "id": "siding_cover",
+      "kind": "cover",
+      "rect": [
+        0,
+        760,
+        64,
+        40
+      ],
+      "why": "the wagons on the siding"
+    },
+    {
+      "id": "drovers_cut",
+      "kind": "lane",
+      "rect": [
+        0,
+        620,
+        200,
+        60
+      ],
+      "camp": "drovers_cut",
+      "why": "a narrow road between the station house and the line: a lane fight, act 1"
+    }
+  ],
+  "quest_spots": [
+    {
+      "id": "fallen_shard",
+      "at": [
+        320,
+        750
+      ],
+      "why": "clearing the shard opens the line (act 1, halt_open)"
+    },
+    {
+      "id": "station_master",
+      "at": [
+        208,
+        676
+      ],
+      "why": "whoever keeps the halt (a resident for K)"
+    }
+  ],
+  "rest_spots": [
+    {
+      "id": "platform_bench",
+      "at": [
+        96,
+        724
+      ],
+      "why": "the bench on the platform"
+    }
+  ],
+  "dungeon_entrance": null,
+  "dungeon_why": "the valley's dungeon is the Undercroft under Crossroads (Claude A)"
+}
