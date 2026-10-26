@@ -11,8 +11,8 @@ extends Node2D
 ## The tells, as the Thornback's (bosses/thornback.gd): the body winds up (it squats and leans back,
 ## then springs), dust kicks back from its feet, a short run of scuffs and pebbles ahead of it points
 ## the way and reaches further as the tell runs, and one glint at the commit. The toad's aim: its
-## throat puffs, its head turns to the target, and a few dust motes rise along the first metre of the
-## line. Timings are the enemy's own (windup_time); under reduced motion the body holds still and the
+## throat swells (its own telegraph clip), its head turns to the target, and a few dust motes rise
+## along the first metre of the line. Timings are the enemy's own (windup_time); under reduced motion the body holds still and the
 ## dust does not flicker, but the marks and the glint still show.
 ##
 ## State -> clip: idle -> idle, approach/leash -> move, windup -> telegraph (stretched to the
@@ -23,12 +23,10 @@ const LOOKS := {"rusher": "boarlet", "shooter": "toad", "shield": "tortoise", "e
 ## Contact shadow half-widths in texels (the creature's footprint).
 const SHADOW := {"boarlet": 22.0, "toad": 21.0, "tortoise": 25.0, "thornback": 32.0}
 ## Colours from the house ramps, as the Thornback's: the dust (path 4), the scuffs (path 2), the lit
-## glint (lamp 4), the toad's throat (its pale belly).
+## glint (lamp 4).
 const DUST := Color("#c39771")
 const SCUFF := Color("#885c4b")
 const LIT := Color("#f5d49c")
-const THROAT := Color("#e2d6a4")
-const TOAD_EDGE := Color("#2e3a1e")
 const GLINT_TIME := 0.12
 ## Scuff run length at the end of the tell, in world px (the charge's first stride), per role.
 const RUN := {"rusher": 26.0, "elite": 34.0, "shield": 14.0}
@@ -42,7 +40,7 @@ var _flash := 0.0
 var _hurt := 0.0
 var _state := ""
 var _glint := 0.0
-var tells: Node2D          ## over the sprite: dust puffs, the throat, the motes and the glint
+var tells: Node2D          ## over the sprite: the toad's motes and the glint
 
 func _ready() -> void:
 	enemy = get_parent() as SliceEnemy
@@ -166,7 +164,7 @@ func _draw() -> void:
 
 ## On the floor ahead of it during the wind-up: a short run of scuffs and kicked pebbles from its
 ## snout, pointing the way and reaching further as the tell runs (its length says when, no box);
-## the toad leaves no run (its read is the throat, the head and the motes, over the sprite).
+## the toad leaves no run (its read is its clip's throat, the head and the motes).
 func _draw_marks(k: float) -> void:
 	if enemy.role == "shooter":
 		return
@@ -191,8 +189,8 @@ func _draw_marks(k: float) -> void:
 		d += 10.0
 		i += 1
 
-## Over the sprite: dust kicked back from the feet in two puffs a stroke (the toad: its throat
-## puffing and dust motes along the first metre of its line), and one glint at the commit.
+## Over the sprite: the toad's dust motes along the first metre of its line, and one glint at the
+## commit.
 func _draw_tells() -> void:
 	if sprite == null or enemy.dead:
 		return
@@ -203,11 +201,6 @@ func _draw_tells() -> void:
 	if enemy.state == "windup":
 		var k := _k()
 		if enemy.role == "shooter":
-			# the throat sac under the jaw swells, outlined in the toad's own dark green, a lit spot on it
-			var r := 1.5 + 3.5 * k * (1.0 if _reduced() else 0.85 + 0.15 * absf(sin(enemy.elapsed * 14.0)))
-			# under the jaw: ahead of the body side-on, low on its chest facing us, hidden facing away
-			if sprite.facing != "N":
-				_draw_throat(_px(Vector2(fv.x * rx * 0.95, -rx * (0.45 if fv.y == 0.0 else 0.3))), r)
 			var metre := 15.0 * SliceEnemy.DENSITY                  # about a metre: a person is 25 world px
 			for j in 4:
 				var t := (float(j) + 1.0) / 4.0
@@ -221,11 +214,6 @@ func _draw_tells() -> void:
 		var at := _px(head + Vector2(0, -6))
 		for v in [Vector2(9, 0), Vector2(0, 9)]:
 			tells.draw_line(at - v, at + v, Color(1, 0.97, 0.9, a), 3.0)
-
-func _draw_throat(at: Vector2, r: float) -> void:
-	tells.draw_circle(at, r + 1.0, Color(TOAD_EDGE, 0.9))
-	tells.draw_circle(at, r, Color(THROAT, 0.95))
-	tells.draw_rect(Rect2(at + Vector2(-r * 0.5, -r * 0.6).round(), Vector2(2, 2)), Color(1, 0.98, 0.9, 0.8))
 
 func side_wobble(f: Vector2, j: int) -> Vector2:
 	return f.orthogonal() * (3.0 if j % 2 == 0 else -3.0)
