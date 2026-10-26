@@ -19,13 +19,30 @@ var speakers: Dictionary = {}
 var busy := false
 
 func _ready() -> void:
-	for f in DirAccess.get_files_at(DIR):
+	var files := Array(DirAccess.get_files_at(DIR))
+	files.sort()
+	for f in files:
 		if f.ends_with(".json"):
 			var doc: Variant = JSON.parse_string(FileAccess.get_file_as_string(DIR.path_join(f)))
 			if typeof(doc) == TYPE_DICTIONARY:
-				speakers.merge(doc, true)
+				add_doc(doc)
 			else:
 				push_error("Dialogue: %s is not a JSON object" % f)
+
+## Adds one file's speakers. A speaker named in several files (an act's file adding lines to the
+## slice's Moss, say) keeps the first file's name and gets every file's entries, ordered by each
+## entry's optional "priority" (default 0, higher first); equal priorities keep file order.
+func add_doc(doc: Dictionary) -> void:
+	for id in doc:
+		var sp: Dictionary = doc[id]
+		if not speakers.has(id):
+			speakers[id] = {"name": sp.get("name", id), "entries": []}
+		var all: Array = speakers[id].entries + sp.get("entries", [])
+		var keyed := []
+		for i in all.size():
+			keyed.append([-int(all[i].get("priority", 0)), i, all[i]])
+		keyed.sort()
+		speakers[id].entries = keyed.map(func(k): return k[2])
 
 func lines_for(id: String) -> PackedStringArray:
 	var sp: Dictionary = speakers.get(id, {})

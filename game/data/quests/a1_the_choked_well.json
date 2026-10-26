@@ -1,0 +1,38 @@
+{
+  "id": "a1_the_choked_well",
+  "title": "The choked well",
+  "kind": "village",
+  "region": "valley",
+  "summary": "The well on the square is still choked with rubble from the storm.",
+  "start": {
+    "on": "talk:moss",
+    "if": {
+      "done": [
+        "a1_bread_for_the_bothy"
+      ]
+    }
+  },
+  "steps": [
+    {
+      "id": "well",
+      "text": "Clear the well on the square",
+      "on": "restore:well",
+      "done_if": {
+        "restored": [
+          "well"
+        ]
+      }
+    },
+    {
+      "id": "moss",
+      "text": "Tell Moss the well is clear",
+      "on": "talk:moss"
+    }
+  ],
+  "rewards": {
+    "glint": 15,
+    "flags": [
+      "well_clear"
+    ]
+  }
+}

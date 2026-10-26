@@ -1,5 +1,5 @@
 extends PanelContainer
-## The minimal dialogue box: listens to Dialogue.opened, shows one line at a time with a short type-on
+## The dialogue box, in the HUD's pixel font on its wood panel (ui/ui_style.gd): listens to Dialogue.opened, shows one line at a time with a short type-on
 ## (instant under reduced motion), advances on E / Enter / gamepad A or Y or a tap on the box, and
 ## emits Dialogue.closed after the last line. Space and left click stay free for roll and attack.
 
@@ -22,19 +22,14 @@ func _ready() -> void:
 	offset_right = 300
 	offset_top = -128
 	offset_bottom = -44
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.12, 0.1, 0.13, 0.92)
-	style.border_color = Color(0.93, 0.85, 0.66)
-	style.set_border_width_all(3)
-	style.set_content_margin_all(10)
-	add_theme_stylebox_override("panel", style)
+	add_theme_stylebox_override("panel", UiStyle.panel(6))   # the HUD's wood panel and pixel font
 	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 3)
 	add_child(box)
-	_name.add_theme_font_size_override("font_size", 12)
-	_name.add_theme_color_override("font_color", Color(1.0, 0.86, 0.45))
-	_text.add_theme_font_size_override("font_size", 14)
+	UiStyle.style_label(_name, UiStyle.TITLE)
+	UiStyle.style_label(_text)
 	_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_text.custom_minimum_size = Vector2(570, 44)
+	_text.custom_minimum_size = Vector2(570, UiStyle.LINE * 3)
 	box.add_child(_name)
 	box.add_child(_text)
 	Dialogue.opened.connect(_open)
