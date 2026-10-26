@@ -1,0 +1,69 @@
+{
+ "id": "undercroft/torch",
+ "file": "game/zones/undercroft/art/torch.png",
+ "sha256": "627a28062aaa6f9ab3945b72f42aae8633260a4e71e37cf84a4e9c0138125c21",
+ "kind": "torch",
+ "biome": "cellar",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  120,
+  66
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 2
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 2,
+   "tones": 20.5,
+   "shapes": 23.0
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.457,
+  "tones_ratio": 0.759,
+  "shapes_ratio": 0.457,
+  "passed": false,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    96,
+    13,
+    114,
+    51
+   ],
+   "message": "undercroft/torch: the wood is lit from the right (luminance rises 16 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    6,
+    9,
+    114,
+    66
+   ],
+   "message": "undercroft/torch: detail bar 0.46 of Eastward's prop band (20.5 tones, 23.0 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  }
+ ],
+ "reviewed": "2026-10-26",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}

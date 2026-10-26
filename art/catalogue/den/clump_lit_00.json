@@ -1,0 +1,42 @@
+{
+ "id": "den/clump_lit_00",
+ "file": "art/cast/den/clump_lit_00.png",
+ "sha256": "d4207aacbba66a2b8a5455dedf2a413663f280a90916374ed4ad0a89c9de1924",
+ "kind": "clump",
+ "biome": "woodland",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  160,
+  144
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 0
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 0,
+   "tones": 0.0,
+   "shapes": 0.0
+  },
+  "band": {
+   "tones": 27.71,
+   "shapes": 63.32,
+   "boxes": 4,
+   "patches": 107
+  },
+  "ratio": null,
+  "passed": null,
+  "group": "foliage"
+ },
+ "findings": [],
+ "reviewed": "2026-10-25",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}

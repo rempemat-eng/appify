@@ -146,10 +146,11 @@ export function GardenKeepsakeArt({
 }) {
   return (
     <View
+      pointerEvents="none"
       aria-hidden
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants"
-      style={{ width: size, height: size, pointerEvents: 'none' }}
+      style={{ width: size, height: size }}
     >
       <Svg width={size} height={size} viewBox="0 0 16 16">
         {ornamentArt[intention].map((pixel) => (

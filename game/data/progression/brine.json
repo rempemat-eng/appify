@@ -1,0 +1,521 @@
+{
+  "schema_version": 1,
+  "status": "proposal (claude-a/progression, 25 Oct); every number is a placeholder until play-tests and Claude L's harness",
+  "id": "brine",
+  "name": "Brine",
+  "identity": "coastal diver in a sealed copper helmet; one harpoon gun (wooden stock, gunmetal body, brass reel on the right side); an olive air pack with ONE hose to the helmet's right rear",
+  "home_region": "isles",
+  "home_region_note": "Claude K's proposal on #149 (25 Oct), not yet decided by Matt; it only sets the tier material",
+  "abilities": {
+    "kit": "game/data/abilities/brine.json (Codex, #261); base and powered form unchanged",
+    "base": {
+      "primary": "Harpoon gun",
+      "secondary": "Reel",
+      "block": "Dive brace",
+      "special": "Abyssal Drive"
+    },
+    "skill_tree": {
+      "branches": [
+        {
+          "id": "line",
+          "name": "Line",
+          "covers": [
+            "secondary"
+          ],
+          "nodes": [
+            {
+              "id": "oiled_reel",
+              "kind": "passive",
+              "name": "Oiled Reel",
+              "effect": "Reel 10 % faster.",
+              "numbers": {
+                "reel_speed_pct": 10
+              },
+              "level": 2,
+              "cost": 1,
+              "requires": [],
+              "touches_canonical": false
+            },
+            {
+              "id": "anchor_line",
+              "name": "Anchor Line",
+              "binding": "Reel toward an anchored heavy target",
+              "effect": "He arrives with a gun-butt strike.",
+              "numbers": {
+                "strike_damage_pct": 60
+              },
+              "art": {
+                "new_clips": [],
+                "fx": [],
+                "reuses": [
+                  "secondary (the untethered sweep's drawings)"
+                ]
+              },
+              "touches_canonical": false,
+              "kind": "technique",
+              "level": 3,
+              "cost": 2,
+              "requires": [
+                "oiled_reel"
+              ]
+            },
+            {
+              "id": "long_line",
+              "kind": "passive",
+              "name": "Long Line",
+              "effect": "Tether length +10 %.",
+              "numbers": {
+                "tether_pct": 10
+              },
+              "level": 6,
+              "cost": 1,
+              "requires": [
+                "anchor_line"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "anchor_line_2",
+              "kind": "technique upgrade",
+              "name": "Anchor Line II",
+              "effect": "The arrival strike staggers the target.",
+              "numbers": {
+                "stagger_seconds": 0.6
+              },
+              "level": 12,
+              "cost": 3,
+              "requires": [
+                "long_line"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "kraken",
+              "kind": "keystone",
+              "name": "Kraken",
+              "effect": "Reeling a heavy foe drags it one step toward you.",
+              "numbers": {
+                "pull": 10
+              },
+              "level": 22,
+              "cost": 4,
+              "requires": [
+                "anchor_line_2"
+              ],
+              "touches_canonical": false
+            }
+          ]
+        },
+        {
+          "id": "harpoon",
+          "name": "Harpoon",
+          "covers": [
+            "primary",
+            "special"
+          ],
+          "nodes": [
+            {
+              "id": "quick_winch",
+              "kind": "passive",
+              "name": "Quick Winch",
+              "effect": "Harpoon reload 8 % faster.",
+              "numbers": {
+                "reload_pct": -8
+              },
+              "level": 2,
+              "cost": 1,
+              "requires": [],
+              "touches_canonical": false
+            },
+            {
+              "id": "barbed_line",
+              "name": "Barbed Line",
+              "binding": "passive while a foe is tethered",
+              "effect": "A tethered foe takes a little damage each second.",
+              "numbers": {
+                "damage_per_second": 3
+              },
+              "art": {
+                "new_clips": [],
+                "fx": [],
+                "reuses": []
+              },
+              "touches_canonical": false,
+              "kind": "technique",
+              "level": 9,
+              "cost": 2,
+              "requires": [
+                "quick_winch"
+              ]
+            },
+            {
+              "id": "heavy_head",
+              "kind": "passive",
+              "name": "Heavy Head",
+              "effect": "Harpoon knockback +15 %.",
+              "numbers": {
+                "knockback_pct": 15
+              },
+              "level": 11,
+              "cost": 1,
+              "requires": [
+                "barbed_line"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "barbed_line_2",
+              "kind": "technique upgrade",
+              "name": "Barbed Line II",
+              "effect": "Reeling a light foe into a wall stuns it.",
+              "numbers": {
+                "stun_seconds": 0.8
+              },
+              "level": 20,
+              "cost": 3,
+              "requires": [
+                "heavy_head"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "leviathan",
+              "kind": "keystone",
+              "name": "Leviathan",
+              "effect": "Abyssal Drive's shots pierce one more foe.",
+              "numbers": {
+                "pierce": 1
+              },
+              "touches_canonical": true,
+              "note": "changes a count in Codex's powered form; needs C60's OK (#149)",
+              "level": 24,
+              "cost": 4,
+              "requires": [
+                "barbed_line_2"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "brace",
+          "name": "Brace",
+          "covers": [
+            "block"
+          ],
+          "nodes": [
+            {
+              "id": "weighted_boots",
+              "kind": "passive",
+              "name": "Weighted Boots",
+              "effect": "Dive brace guard cost -8 %.",
+              "numbers": {
+                "guard_cost_pct": -8
+              },
+              "level": 4,
+              "cost": 1,
+              "requires": [],
+              "touches_canonical": false
+            },
+            {
+              "id": "pressure_brace",
+              "name": "Pressure Brace",
+              "binding": "hold Dive brace for 1 s",
+              "effect": "Pressure builds in the pack: the next harpoon flies faster and passes through one foe.",
+              "numbers": {
+                "hold_seconds": 1.0,
+                "speed_pct": 30,
+                "pierce": 1
+              },
+              "art": {
+                "new_clips": [],
+                "fx": [
+                  "pack gauge needle (2 drawings)"
+                ],
+                "reuses": [
+                  "guard 4"
+                ]
+              },
+              "touches_canonical": false,
+              "kind": "technique",
+              "level": 16,
+              "cost": 2,
+              "requires": [
+                "weighted_boots"
+              ]
+            },
+            {
+              "id": "sea_legs",
+              "kind": "passive",
+              "name": "Sea Legs",
+              "effect": "Knockback on you -20 %.",
+              "numbers": {
+                "knockback_taken_pct": -20
+              },
+              "level": 18,
+              "cost": 1,
+              "requires": [
+                "pressure_brace"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "pressure_brace_2",
+              "kind": "technique upgrade",
+              "name": "Pressure Brace II",
+              "effect": "For its first 0.3 s the brace blocks from every side.",
+              "numbers": {
+                "omni_block_seconds": 0.3
+              },
+              "level": 26,
+              "cost": 3,
+              "requires": [
+                "sea_legs"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "ironclad",
+              "kind": "keystone",
+              "name": "Ironclad",
+              "effect": "Dive brace blocks from both sides.",
+              "numbers": {
+                "arc_degrees": 360
+              },
+              "level": 28,
+              "cost": 4,
+              "requires": [
+                "pressure_brace_2"
+              ],
+              "touches_canonical": false
+            }
+          ]
+        }
+      ],
+      "points_by_level_30": 29,
+      "tree_cost": 33
+    }
+  },
+  "weapon": {
+    "item": "harpoon gun",
+    "equipment_tag": "harpoon_gun",
+    "tiers": [
+      {
+        "tier": 1,
+        "name": "Dock harpoon",
+        "art": {
+          "silhouette": "today's drawing: wooden stock, gunmetal body, brass reel under the barrel, harpoon in the muzzle",
+          "materials": [
+            "rifle (wood)",
+            "gunmetal",
+            "brass"
+          ],
+          "glow": "none",
+          "size": "as drawn",
+          "read_check": "the current drawing"
+        },
+        "mechanics": {},
+        "requires": {
+          "level": 1
+        },
+        "sockets": 1
+      },
+      {
+        "tier": 2,
+        "name": "Sheathed harpoon",
+        "art": {
+          "silhouette": "a copper sheath with three rivets over the barrel; the reel drum 2 px wider; a barbed harpoon head",
+          "materials": [
+            "copper (new)",
+            "gunmetal",
+            "brass"
+          ],
+          "glow": "none",
+          "size": "reel +2 px",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
+        },
+        "mechanics": {
+          "reel_speed_pct": 10
+        },
+        "requires": {
+          "level": 8,
+          "forge_open": true
+        },
+        "sockets": 2,
+        "cost": {
+          "glint": 60,
+          "scrap": 5,
+          "home_material": {
+            "material": "basalt",
+            "count": 2
+          }
+        }
+      },
+      {
+        "tier": 3,
+        "name": "Pressure harpoon",
+        "art": {
+          "silhouette": "a brass pressure bottle with a round gauge under the barrel; a fin vane on the harpoon",
+          "materials": [
+            "brass",
+            "gunmetal",
+            "steel"
+          ],
+          "glow": "the gauge face only",
+          "size": "as tier 2",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
+        },
+        "mechanics": {
+          "range_pct": 8
+        },
+        "requires": {
+          "level": 16,
+          "forge_open": true
+        },
+        "sockets": 2,
+        "cost": {
+          "glint": 150,
+          "scrap": 10,
+          "home_material": {
+            "material": "basalt",
+            "count": 4
+          }
+        }
+      },
+      {
+        "tier": 4,
+        "name": "Abyssal harpoon",
+        "art": {
+          "silhouette": "a moonsilver harpoon head with a bioluminescent teal line; a navy lacquered stock; the reel's spokes glow while reeling",
+          "materials": [
+            "moonsilver (new)",
+            "abyss teal (new)",
+            "navy (new)"
+          ],
+          "glow": "the teal line glows; the spokes glow only while the reel turns",
+          "size": "as tier 2",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
+        },
+        "mechanics": {
+          "named": "Abyss light: a tethered foe shows its weak point while the line holds",
+          "weak_point_while_tethered": true
+        },
+        "requires": {
+          "level": 24,
+          "great_forge": true
+        },
+        "sockets": 3,
+        "cost": {
+          "glint": 300,
+          "scrap": 20,
+          "home_material": {
+            "material": "basalt",
+            "count": 6
+          },
+          "starshard": 1
+        }
+      }
+    ]
+  },
+  "outfits": [
+    {
+      "id": "reef_suit",
+      "name": "Reef suit",
+      "description": "a coral-orange canvas suit with sand-coloured reinforcements",
+      "parts": [
+        "suit"
+      ],
+      "ramps": {
+        "cream": "coral (new)",
+        "olive": "sand (new)"
+      },
+      "unlock": {
+        "source": "story",
+        "event": "quest:folk_brine:done"
+      }
+    },
+    {
+      "id": "naturalist",
+      "name": "Naturalist's suit",
+      "description": "a green suit with specimen pouches on the weight belt",
+      "parts": [
+        "weight belt (pouches)"
+      ],
+      "ramps": {
+        "cream": "sea green (new)"
+      },
+      "unlock": {
+        "source": "village",
+        "event": "restore:menagerie:1"
+      }
+    },
+    {
+      "id": "deep_black",
+      "name": "Deep black",
+      "description": "a black rubberised suit with brass fittings polished bright",
+      "parts": [
+        "suit"
+      ],
+      "ramps": {
+        "cream": "rubber black (new)"
+      },
+      "unlock": {
+        "source": "arena",
+        "event": "arena:basalt_ring:gold"
+      }
+    }
+  ],
+  "accessories": [
+    {
+      "id": "crest_fin",
+      "name": "Copper crest fin",
+      "slot": "head",
+      "description": "a fin-shaped copper crest bolted to the top of the helmet (the helmet stays sealed)",
+      "unlock": {
+        "source": "bond",
+        "event": "bond:any:6"
+      },
+      "perk": null
+    },
+    {
+      "id": "net_bag",
+      "name": "Net bag",
+      "slot": "back",
+      "description": "a string net bag with two shells, tied to the air pack below the hose valve",
+      "unlock": {
+        "source": "drop",
+        "event": "drop:isles"
+      },
+      "perk": null
+    },
+    {
+      "id": "diver_medal",
+      "name": "Diver's medal",
+      "slot": "neck",
+      "description": "a brass medal on a short chain from the corselet",
+      "unlock": {
+        "source": "glint",
+        "event": "buy:stall:diver_medal",
+        "note": "350 Glint"
+      },
+      "perk": null
+    },
+    {
+      "id": "lucky_shell",
+      "name": "Lucky shell",
+      "slot": "trinket",
+      "description": "a spiral shell on the weight belt, 3 px",
+      "unlock": {
+        "source": "glint",
+        "event": "buy:stall:lucky_shell",
+        "note": "250 Glint"
+      },
+      "perk": {
+        "status": "proposal",
+        "text": "Loot bursts land 30 % closer to you",
+        "numbers": {
+          "loot_scatter_pct": -30
+        }
+      }
+    }
+  ]
+}

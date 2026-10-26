@@ -240,6 +240,96 @@
    "patches": 8,
    "tones": 34.375,
    "shapes": 66.375
+  },
+  {
+   "shot": "eastward/06.jpg",
+   "box": [
+    160,
+    190,
+    240,
+    250
+   ],
+   "name": "dungeon floor",
+   "group": "ground",
+   "patches": 24,
+   "tones": 10.38,
+   "shapes": 35.25,
+   "contrast": 3.91
+  },
+  {
+   "shot": "eastward/06.jpg",
+   "box": [
+    165,
+    255,
+    225,
+    300
+   ],
+   "name": "dungeon floor south",
+   "group": "ground",
+   "patches": 12,
+   "tones": 10.08,
+   "shapes": 36.67,
+   "contrast": 2.42
+  },
+  {
+   "shot": "eastward/13.jpg",
+   "box": [
+    200,
+    175,
+    290,
+    230
+   ],
+   "name": "grass and path",
+   "group": "ground",
+   "patches": 24,
+   "tones": 19.17,
+   "shapes": 59.38,
+   "contrast": 10.34
+  },
+  {
+   "shot": "eastward/17.jpg",
+   "box": [
+    20,
+    200,
+    150,
+    245
+   ],
+   "name": "yard dirt",
+   "group": "ground",
+   "patches": 27,
+   "tones": 13.63,
+   "shapes": 41.52,
+   "contrast": 9.54
+  },
+  {
+   "shot": "eastward/17.jpg",
+   "box": [
+    200,
+    200,
+    300,
+    250
+   ],
+   "name": "yard dirt east",
+   "group": "ground",
+   "patches": 21,
+   "tones": 9.95,
+   "shapes": 43.33,
+   "contrast": 9.7
+  },
+  {
+   "shot": "eastward/17.jpg",
+   "box": [
+    480,
+    250,
+    560,
+    300
+   ],
+   "name": "lawn",
+   "group": "ground",
+   "patches": 18,
+   "tones": 7.5,
+   "shapes": 23.0,
+   "contrast": 3.14
   }
  ],
  "groups": {
@@ -260,6 +350,15 @@
    "shapes": 63.32,
    "boxes": 4,
    "patches": 107
+  },
+  "ground": {
+   "tones": 11.79,
+   "shapes": 39.86,
+   "min_tones": 7.5,
+   "min_shapes": 23.0,
+   "max_contrast": 10.34,
+   "boxes": 6,
+   "patches": 126
   }
  }
 }

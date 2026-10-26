@@ -121,13 +121,13 @@ export function PixelButton({
       style={{ paddingBottom: depth }}
     >
       <View
+        pointerEvents="none"
         style={{
           position: 'absolute',
           left: 0,
           right: 0,
           top: depth,
           bottom: 0,
-          pointerEvents: 'none',
         }}
       >
         <FrameShape
@@ -563,12 +563,12 @@ export function Pet({
         <View style={{ backgroundColor: c.transparent }}>
           {heart > 0 && (
             <View
+              pointerEvents="none"
               style={{
                 position: 'absolute',
                 top: -16,
                 left: scaledSize / 2 - 16,
                 zIndex: 4,
-                pointerEvents: 'none',
               }}
             >
               <PixelIcon name="heart" size={32} />
@@ -629,6 +629,7 @@ export function Pet({
           </Animated.View>
           {canPose && (
             <Svg
+              pointerEvents="none"
               width={scaledSize}
               height={scaledSize}
               viewBox="0 0 32 32"
@@ -637,7 +638,6 @@ export function Pet({
                 left: 0,
                 top: 0,
                 transform: [{ scaleX: facing === 'left' ? -1 : 1 }],
-                pointerEvents: 'none',
               }}
             >
               {pixels
@@ -679,12 +679,12 @@ export function Pet({
         >
           {heart > 0 && (
             <View
+              pointerEvents="none"
               style={{
                 position: 'absolute',
                 top: -16,
                 left: scaledSize / 2 - 16,
                 zIndex: 4,
-                pointerEvents: 'none',
               }}
             >
               <PixelIcon name="heart" size={32} />
@@ -745,6 +745,7 @@ export function Pet({
           </Animated.View>
           {canPose && (
             <Svg
+              pointerEvents="none"
               width={scaledSize}
               height={scaledSize}
               viewBox="0 0 32 32"
@@ -753,7 +754,6 @@ export function Pet({
                 left: 0,
                 top: 0,
                 transform: [{ scaleX: facing === 'left' ? -1 : 1 }],
-                pointerEvents: 'none',
               }}
             >
               {pixels
@@ -787,7 +787,7 @@ export function FloatingZ() {
     transform: [{ translateY: y.value }],
   }));
   return (
-    <Animated.View style={[motion, { pointerEvents: 'none' }]}>
+    <Animated.View pointerEvents="none" style={motion}>
       <Text style={{ fontFamily: 'PixelifySans_700Bold', color: c.paper, fontSize: 20 }}>
         z z z
       </Text>

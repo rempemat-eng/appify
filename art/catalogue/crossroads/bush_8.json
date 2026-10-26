@@ -1,26 +1,26 @@
 {
  "id": "crossroads/bush_8",
  "file": "game/zones/crossroads/art/bush_8.png",
- "sha256": "cb4e2e1a95fe3aea3fa287f69a72bac95aaa88d3e33143e3d59bf2abc0757e98",
+ "sha256": "8120478c8e5e0bbbec1be1bbb6820733e837ce1419a30271b24e83dd73e2238d",
  "kind": "bush",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  118,
-  97
+  112,
+  91
  ],
- "status": "fail",
+ "status": "pass",
  "counts": {
   "blocker": 0,
-  "fault": 2,
-  "polish": 2
+  "fault": 0,
+  "polish": 1
  },
  "detail_bar": {
   "ours": {
-   "patches": 7,
-   "tones": 23.857142857142858,
-   "shapes": 36.142857142857146
+   "patches": 13,
+   "tones": 19.692307692307693,
+   "shapes": 38.69230769230769
   },
   "band": {
    "tones": 27.71,
@@ -28,60 +28,24 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.571,
-  "tones_ratio": 0.861,
-  "shapes_ratio": 0.571,
+  "ratio": 0.611,
+  "tones_ratio": 0.711,
+  "shapes_ratio": 0.611,
   "passed": false,
   "group": "foliage"
  },
  "findings": [
   {
-   "detector": "detail.light",
-   "severity": "polish",
-   "box": [
-    33,
-    11,
-    105,
-    51
-   ],
-   "message": "crossroads/bush_8: the foliage is lit from the right (luminance rises 14 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
-   "detector": "logic.stilts",
-   "severity": "fault",
-   "box": [
-    9,
-    70,
-    105,
-    86
-   ],
-   "message": "crossroads/bush_8: the mass stands on 3 separate thin legs (27 px of legs under a 96 px wide mass)",
-   "fix": "a bush grows from the ground: let the foliage come down to a dark, grassed base with only a stem or two glimpsed in the shade, and a contact shadow under it (no stilts)"
-  },
-  {
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    9,
-    11,
-    105,
-    86
+    10,
+    10,
+    104,
+    73
    ],
-   "message": "crossroads/bush_8: detail bar 0.57 of Eastward's foliage band (23.9 tones, 36.1 shapes a patch against 27.71, 63.32)",
+   "message": "crossroads/bush_8: detail bar 0.61 of Eastward's foliage band (19.7 tones, 38.7 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
-  },
-  {
-   "detector": "detail.mesh",
-   "severity": "fault",
-   "box": [
-    9,
-    11,
-    105,
-    86
-   ],
-   "message": "crossroads/bush_8: the foliage is a see-through mesh: 30% of the crown is gaps between outlined blobs",
-   "fix": "paint the crown as one mass of leaf clusters (Eastward): lit clumps on top, a darker band under them, a dark interior showing through narrow gaps, no ground visible through the crown and no outline round every blob (art-style.md 4)"
   }
  ],
  "reviewed": "2026-10-25",

@@ -68,6 +68,39 @@ def pinned(ref: str, folder: str):
     return out, zone, name
 
 
+def pinned_game(zone: str, commit: str, folder: str) -> str:
+    """The zone's scene data as it was at a commit, in a folder laid out like game/: its data, its
+    zone folder and every res:// file the scenes reach (followed through instanced scenes). A
+    zone fault stays a test of the detectors after the zone itself is fixed (W7, W8, W12)."""
+    import re
+    import subprocess
+    root = os.path.join(folder, commit, 'game')
+    if os.path.isdir(os.path.join(root, 'zones', zone)):
+        return root
+    os.makedirs(os.path.join(folder, commit), exist_ok=True)
+    tar = subprocess.run(['git', 'archive', commit, 'game/data', f'game/zones/{zone}'], cwd=REPO,
+                         capture_output=True, check=True).stdout
+    subprocess.run(['tar', '-x', '-C', os.path.join(folder, commit)], input=tar, check=True)
+    todo = [os.path.join(root, 'zones', zone, f) for f in os.listdir(os.path.join(root, 'zones', zone))
+            if f.endswith('.tscn')]
+    seen = set()
+    while todo:
+        t = todo.pop()
+        for rp in re.findall(r'res://([^"]+)', open(t, errors='ignore').read()):
+            out = os.path.join(root, rp)
+            if rp in seen or os.path.exists(out):
+                continue
+            seen.add(rp)
+            r = subprocess.run(['git', 'show', f'{commit}:game/{rp}'], cwd=REPO, capture_output=True)
+            if r.returncode:
+                continue
+            os.makedirs(os.path.dirname(out), exist_ok=True)
+            open(out, 'wb').write(r.stdout)
+            if rp.endswith('.tscn'):
+                todo.append(out)
+    return root
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument('--flagged', required=True)
@@ -92,8 +125,16 @@ def main(argv=None):
         return screens[img]
 
     def zone(z):
+        """'woodland' is the zone now; 'woodland@<commit>' the zone as Matt saw it (pinned_game)."""
         if z not in zones:
-            zones[z] = [f.to_json() for f in SN.review_zone(z, H, wiring=False)['findings']]
+            name, _, commit = z.partition('@')
+            keep = SN.GAME
+            if commit:
+                SN.GAME = pinned_game(name, commit, os.path.join(a.out, 'pinned'))
+            try:
+                zones[z] = [f.to_json() for f in SN.review_zone(name, H, wiring=False)['findings']]
+            finally:
+                SN.GAME = keep
         return zones[z]
 
     def asset(ref):

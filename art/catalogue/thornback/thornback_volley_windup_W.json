@@ -1,0 +1,69 @@
+{
+ "id": "thornback/thornback_volley_windup_W",
+ "file": "artifacts/thornback/thornback_volley_windup_W.png",
+ "sha256": "747b06a8bbafed414085162ed27ddc084e5d5979f344f2d6f2efb5b49e6d0e25",
+ "kind": "creature",
+ "biome": "cellar",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  288,
+  208
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 2
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 47,
+   "tones": 18.085106382978722,
+   "shapes": 29.27659574468085
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.581,
+  "tones_ratio": 0.67,
+  "shapes_ratio": 0.581,
+  "passed": false,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    147,
+    46,
+    159,
+    78
+   ],
+   "message": "thornback/thornback_volley_windup_W: the violet is lit from the right (luminance rises 281 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    38,
+    46,
+    229,
+    197
+   ],
+   "message": "thornback/thornback_volley_windup_W: detail bar 0.58 of Eastward's prop band (18.1 tones, 29.3 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  }
+ ],
+ "reviewed": "2026-10-26",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}

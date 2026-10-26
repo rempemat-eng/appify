@@ -1,0 +1,81 @@
+{
+ "id": "thornback/thornback_volley_windup_E",
+ "file": "artifacts/thornback/thornback_volley_windup_E.png",
+ "sha256": "d484aa9a85eb6b57b26c0ed3158712ef1ca741109427fd91f4c7c920230bf4fd",
+ "kind": "creature",
+ "biome": "cellar",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  288,
+  208
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 3
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 47,
+   "tones": 19.425531914893618,
+   "shapes": 30.085106382978722
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.597,
+  "tones_ratio": 0.719,
+  "shapes_ratio": 0.597,
+  "passed": false,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    60,
+    105,
+    248,
+    189
+   ],
+   "message": "thornback/thornback_volley_windup_E: the wood is lit from the right (luminance rises 13 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    73,
+    58,
+    199,
+    127
+   ],
+   "message": "thornback/thornback_volley_windup_E: the foliage is lit from the right (luminance rises 7 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    59,
+    46,
+    250,
+    197
+   ],
+   "message": "thornback/thornback_volley_windup_E: detail bar 0.60 of Eastward's prop band (19.4 tones, 30.1 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  }
+ ],
+ "reviewed": "2026-10-26",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}

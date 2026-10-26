@@ -111,7 +111,7 @@ export function MemoryStamp({
 }) {
   return (
     <View
-      style={{ pointerEvents: 'none' }}
+      pointerEvents="none"
       aria-hidden
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants"

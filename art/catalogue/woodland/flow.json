@@ -1,14 +1,14 @@
 {
  "id": "woodland/flow",
  "file": "game/zones/woodland/art/flow.png",
- "sha256": "4e45e48f691e6d88e1757e815a744adb3bbd668648d541cbb69da8dfc7b7b3b9",
+ "sha256": "f5c690c6177a9dd37b9f5cf8b636dd3e1c0bce35d7772d51ac8dff187a46f723",
  "kind": "flow",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  1688,
-  704
+  1564,
+  792
  ],
  "status": "pass",
  "counts": {

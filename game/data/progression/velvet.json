@@ -1,0 +1,525 @@
+{
+  "schema_version": 1,
+  "status": "proposal (claude-a/progression, 25 Oct); every number is a placeholder until play-tests and Claude L's harness",
+  "id": "velvet",
+  "name": "Velvet",
+  "identity": "coastal duellist from Driftwood; one sabre in the LEFT hand (closed brass knuckle-bow), its empty scabbard on the RIGHT hip, one black lantern by its bail in the RIGHT hand",
+  "home_region": "valley",
+  "home_region_note": "Claude K's proposal on #149 (25 Oct), not yet decided by Matt; it only sets the tier material",
+  "abilities": {
+    "kit": "game/data/abilities/velvet.json (Codex, #261); base and powered form unchanged",
+    "base": {
+      "primary": "Sabre",
+      "secondary": "Lantern flare",
+      "block": "Sabre parry",
+      "special": "Black Lantern"
+    },
+    "skill_tree": {
+      "branches": [
+        {
+          "id": "sabre",
+          "name": "Sabre",
+          "covers": [
+            "primary",
+            "block"
+          ],
+          "nodes": [
+            {
+              "id": "light_wrist",
+              "kind": "passive",
+              "name": "Light Wrist",
+              "effect": "Sabre recovers 5 % faster.",
+              "numbers": {
+                "primary_cooldown_pct": -5
+              },
+              "level": 2,
+              "cost": 1,
+              "requires": [],
+              "touches_canonical": false
+            },
+            {
+              "id": "riposte",
+              "name": "Riposte",
+              "binding": "a parry in the first 0.2 s of a melee hit",
+              "effect": "The next sabre cut comes faster. In the base form only; Black Lantern's long counter-thrust is unchanged.",
+              "numbers": {
+                "window_seconds": 0.2,
+                "next_cut_speed_pct": 40
+              },
+              "art": {
+                "new_clips": [],
+                "fx": [
+                  "parry spark"
+                ],
+                "reuses": [
+                  "guard",
+                  "primary"
+                ]
+              },
+              "touches_canonical": false,
+              "kind": "technique",
+              "level": 3,
+              "cost": 2,
+              "requires": [
+                "light_wrist"
+              ]
+            },
+            {
+              "id": "duellist",
+              "kind": "passive",
+              "name": "Duellist",
+              "effect": "Parry raises 15 % faster.",
+              "numbers": {
+                "raise_pct": -15
+              },
+              "level": 6,
+              "cost": 1,
+              "requires": [
+                "riposte"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "riposte_2",
+              "kind": "technique upgrade",
+              "name": "Riposte II",
+              "effect": "The riposte cut exposes the foe, as Lantern flare does.",
+              "numbers": {
+                "expose": true
+              },
+              "level": 12,
+              "cost": 3,
+              "requires": [
+                "duellist"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "en_garde",
+              "kind": "keystone",
+              "name": "En Garde",
+              "effect": "After a parry, the next hit you take is reduced by 20 %.",
+              "numbers": {
+                "reduction_pct": 20
+              },
+              "level": 22,
+              "cost": 4,
+              "requires": [
+                "riposte_2"
+              ],
+              "touches_canonical": false
+            }
+          ]
+        },
+        {
+          "id": "lantern",
+          "name": "Lantern",
+          "covers": [
+            "secondary"
+          ],
+          "nodes": [
+            {
+              "id": "trimmed_wick",
+              "kind": "passive",
+              "name": "Trimmed Wick",
+              "effect": "Lantern flare cooldown -8 %.",
+              "numbers": {
+                "secondary_cooldown_pct": -8
+              },
+              "level": 2,
+              "cost": 1,
+              "requires": [],
+              "touches_canonical": false
+            },
+            {
+              "id": "dim",
+              "name": "Dim",
+              "binding": "passive after Lantern flare",
+              "effect": "The lantern shutters after the flare; for a moment shooters lose track of her and hold fire.",
+              "numbers": {
+                "seconds": 1.5
+              },
+              "art": {
+                "new_clips": [],
+                "fx": [],
+                "reuses": [
+                  "the lantern's lamp states"
+                ]
+              },
+              "touches_canonical": false,
+              "kind": "technique",
+              "level": 9,
+              "cost": 2,
+              "requires": [
+                "trimmed_wick"
+              ]
+            },
+            {
+              "id": "wide_beam",
+              "kind": "passive",
+              "name": "Wide Beam",
+              "effect": "Flare radius +10 %.",
+              "numbers": {
+                "radius_pct": 10
+              },
+              "level": 11,
+              "cost": 1,
+              "requires": [
+                "dim"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "dim_2",
+              "kind": "technique upgrade",
+              "name": "Dim II",
+              "effect": "A perfect dodge while dimmed takes time off the flare's cooldown.",
+              "numbers": {
+                "flare_cooldown_refund_pct": 30
+              },
+              "level": 20,
+              "cost": 3,
+              "requires": [
+                "wide_beam"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "lighthouse",
+              "kind": "keystone",
+              "name": "Lighthouse",
+              "effect": "Exposed foes stay exposed 1 s longer.",
+              "numbers": {
+                "expose_seconds": 1
+              },
+              "level": 24,
+              "cost": 4,
+              "requires": [
+                "dim_2"
+              ],
+              "touches_canonical": false
+            }
+          ]
+        },
+        {
+          "id": "dance",
+          "name": "Dance",
+          "covers": [
+            "special"
+          ],
+          "nodes": [
+            {
+              "id": "light_step",
+              "kind": "passive",
+              "name": "Light Step",
+              "effect": "Walk speed +4 %.",
+              "numbers": {
+                "walk_speed_pct": 4
+              },
+              "level": 4,
+              "cost": 1,
+              "requires": [],
+              "touches_canonical": false
+            },
+            {
+              "id": "moths_waltz",
+              "name": "Moth's Waltz",
+              "binding": "the third sabre cut in a row",
+              "effect": "The third cut becomes a stepping lunge-cut through the foe.",
+              "numbers": {
+                "chain_window_seconds": 0.6,
+                "reach": 14
+              },
+              "art": {
+                "new_clips": [
+                  "primary_waltz (10 drawings)"
+                ],
+                "fx": [],
+                "reuses": []
+              },
+              "touches_canonical": false,
+              "kind": "technique",
+              "level": 16,
+              "cost": 2,
+              "requires": [
+                "light_step"
+              ]
+            },
+            {
+              "id": "tails_fly",
+              "kind": "passive",
+              "name": "Tails Fly",
+              "effect": "The third cut's reach +4.",
+              "numbers": {
+                "reach": 4
+              },
+              "level": 18,
+              "cost": 1,
+              "requires": [
+                "moths_waltz"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "moths_waltz_2",
+              "kind": "technique upgrade",
+              "name": "Moth's Waltz II",
+              "effect": "The lunge leaves a pale echo that cuts once more half a second later.",
+              "numbers": {
+                "echo_delay_seconds": 0.5,
+                "echo_damage_pct": 50
+              },
+              "level": 26,
+              "cost": 3,
+              "requires": [
+                "tails_fly"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "black_waltz",
+              "kind": "keystone",
+              "name": "Black Waltz",
+              "effect": "Black Lantern's echoes cut once as they fade.",
+              "numbers": {
+                "echo_damage_pct": 30
+              },
+              "touches_canonical": true,
+              "note": "changes a count in Codex's powered form; needs C60's OK (#149)",
+              "level": 28,
+              "cost": 4,
+              "requires": [
+                "moths_waltz_2"
+              ]
+            }
+          ]
+        }
+      ],
+      "points_by_level_30": 29,
+      "tree_cost": 33
+    }
+  },
+  "weapon": {
+    "item": "sabre",
+    "equipment_tag": "sabre",
+    "tiers": [
+      {
+        "tier": 1,
+        "name": "Naval sabre",
+        "art": {
+          "silhouette": "today's drawing: curved steel blade, brass knuckle-bow guard",
+          "materials": [
+            "steel",
+            "brass"
+          ],
+          "glow": "none",
+          "size": "as drawn",
+          "read_check": "the current drawing"
+        },
+        "mechanics": {},
+        "requires": {
+          "level": 1
+        },
+        "sockets": 1
+      },
+      {
+        "tier": 2,
+        "name": "Blackened sabre",
+        "art": {
+          "silhouette": "a blackened fuller with a bright edge; a second bar on the knuckle-bow",
+          "materials": [
+            "steel",
+            "gunmetal",
+            "brass"
+          ],
+          "glow": "none",
+          "size": "as drawn",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
+        },
+        "mechanics": {
+          "arc_degrees": 5
+        },
+        "requires": {
+          "level": 8,
+          "forge_open": true
+        },
+        "sockets": 2,
+        "cost": {
+          "glint": 60,
+          "scrap": 5,
+          "home_material": {
+            "material": "timber",
+            "count": 2
+          }
+        }
+      },
+      {
+        "tier": 3,
+        "name": "Basket-hilt sabre",
+        "art": {
+          "silhouette": "a full brass shell guard (5 x 5 px) round the fist; a violet sword knot (5 px) from the pommel",
+          "materials": [
+            "steel",
+            "brass",
+            "violet"
+          ],
+          "glow": "none",
+          "size": "guard +2 px",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
+        },
+        "mechanics": {
+          "flare_cooldown_pct": -8
+        },
+        "requires": {
+          "level": 16,
+          "forge_open": true
+        },
+        "sockets": 2,
+        "cost": {
+          "glint": 150,
+          "scrap": 10,
+          "home_material": {
+            "material": "timber",
+            "count": 4
+          }
+        }
+      },
+      {
+        "tier": 4,
+        "name": "Moonlit sabre",
+        "art": {
+          "silhouette": "a moonsilver blade whose edge carries a pale light; the black lantern's cage turns gold and its flame pale blue-white",
+          "materials": [
+            "moonsilver (new)",
+            "gold",
+            "starlight (new)"
+          ],
+          "glow": "the edge glows one tone; the lantern's lit tone changes colour (all lamp states)",
+          "size": "as tier 3",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
+        },
+        "mechanics": {
+          "named": "Moonlit: a perfect parry flashes the lantern and exposes foes within 2 tiles",
+          "expose_radius_tiles": 2
+        },
+        "requires": {
+          "level": 24,
+          "great_forge": true
+        },
+        "sockets": 3,
+        "cost": {
+          "glint": 300,
+          "scrap": 20,
+          "home_material": {
+            "material": "timber",
+            "count": 6
+          },
+          "starshard": 1
+        }
+      }
+    ]
+  },
+  "outfits": [
+    {
+      "id": "harbour_blue",
+      "name": "Harbour blue",
+      "description": "navy coat with silver piping; the cravat stays cream",
+      "parts": [
+        "coat"
+      ],
+      "ramps": {
+        "violet": "navy (new)",
+        "gold": "steel"
+      },
+      "unlock": {
+        "source": "story",
+        "event": "quest:folk_velvet:done"
+      }
+    },
+    {
+      "id": "lighthouse_keeper",
+      "name": "Keeper's oilskin",
+      "description": "a short yellow oilskin coat over the naval coat's tails",
+      "parts": [
+        "coat (short variant)"
+      ],
+      "ramps": {
+        "violet": "oilskin (new)"
+      },
+      "unlock": {
+        "source": "village",
+        "event": "restore:bell_tower:2"
+      }
+    },
+    {
+      "id": "masquerade",
+      "name": "Masquerade",
+      "description": "a deep plum coat with gold embroidery on the tails",
+      "parts": [
+        "coat (embroidery)"
+      ],
+      "ramps": {
+        "violet": "plum (new)"
+      },
+      "unlock": {
+        "source": "arena",
+        "event": "arena:harbour_jetty:gold"
+      }
+    }
+  ],
+  "accessories": [
+    {
+      "id": "tricorn",
+      "name": "Tricorn",
+      "slot": "head",
+      "description": "a small black tricorn with a gold edge on the silver hair",
+      "unlock": {
+        "source": "drop",
+        "event": "drop:valley",
+        "note": "the Driftwood coast camps"
+      },
+      "perk": null
+    },
+    {
+      "id": "boat_cloak",
+      "name": "Boat cloak",
+      "slot": "back",
+      "description": "a short dark cloak on both shoulders, cut above the coat tails",
+      "unlock": {
+        "source": "glint",
+        "event": "buy:stall:boat_cloak",
+        "note": "550 Glint, stall tier 2"
+      },
+      "perk": null
+    },
+    {
+      "id": "lace_jabot",
+      "name": "Lace jabot",
+      "slot": "neck",
+      "description": "a lace jabot in place of the plain cravat",
+      "unlock": {
+        "source": "bond",
+        "event": "bond:any:6"
+      },
+      "perk": null,
+      "replaces": "cravat"
+    },
+    {
+      "id": "moth_brooch",
+      "name": "Moth brooch",
+      "slot": "trinket",
+      "description": "a silver moth brooch on the lapel, 3 x 2 px",
+      "unlock": {
+        "source": "arena",
+        "event": "arena:harbour_jetty:bronze"
+      },
+      "perk": {
+        "status": "proposal",
+        "text": "Your defeat cache shows from twice as far",
+        "numbers": {
+          "cache_marker_range_pct": 100
+        }
+      }
+    }
+  ]
+}

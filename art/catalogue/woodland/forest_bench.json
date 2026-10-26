@@ -1,7 +1,7 @@
 {
  "id": "woodland/forest_bench",
  "file": "game/zones/woodland/art/forest_bench.png",
- "sha256": "7bca0af567e1a3fb52645d4efbaf2adf0ad59645cf10b6110f8e305ac5fe6199",
+ "sha256": "94499591b9edbc2bbcf27df888ce77cf66f602d468d7d7d3c59a02471c04f39d",
  "kind": "bench",
  "biome": "woodland",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 10,
-   "tones": 18.0,
-   "shapes": 28.9
+   "tones": 18.6,
+   "shapes": 30.7
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.574,
-  "tones_ratio": 0.667,
-  "shapes_ratio": 0.574,
+  "ratio": 0.61,
+  "tones_ratio": 0.689,
+  "shapes_ratio": 0.61,
   "passed": false,
   "group": "prop"
  },
@@ -56,7 +56,7 @@
     106,
     51
    ],
-   "message": "woodland/forest_bench: detail bar 0.57 of Eastward's prop band (18.0 tones, 28.9 shapes a patch against 27.0, 50.36)",
+   "message": "woodland/forest_bench: detail bar 0.61 of Eastward's prop band (18.6 tones, 30.7 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

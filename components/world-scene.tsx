@@ -183,6 +183,7 @@ export function WorldScene({
   const images = worldImages[world];
   return (
     <View
+      pointerEvents="none"
       aria-hidden
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants"
@@ -193,7 +194,6 @@ export function WorldScene({
         height: viewHeight,
         overflow: 'hidden',
         backgroundColor: world === 'mountain' ? '#6A9468' : '#73A85E',
-        pointerEvents: 'none',
       }}
     >
       <Animated.View

@@ -1,26 +1,26 @@
 {
  "id": "crossroads/bush_51",
  "file": "game/zones/crossroads/art/bush_51.png",
- "sha256": "ca90ac99db4479f31b4258b69d5069cc18c99980a21a0fe6a2ce5ab5b71068d1",
+ "sha256": "7768e5c60320da72ee45026226942c3ea59a3bceff321458eb8ab0cc2f9746b9",
  "kind": "bush",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  118,
-  97
+  112,
+  91
  ],
- "status": "fail",
+ "status": "pass",
  "counts": {
-  "blocker": 1,
-  "fault": 2,
+  "blocker": 0,
+  "fault": 0,
   "polish": 1
  },
  "detail_bar": {
   "ours": {
-   "patches": 4,
-   "tones": 23.25,
-   "shapes": 34.0
+   "patches": 13,
+   "tones": 19.76923076923077,
+   "shapes": 35.76923076923077
   },
   "band": {
    "tones": 27.71,
@@ -28,60 +28,24 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.537,
-  "tones_ratio": 0.839,
-  "shapes_ratio": 0.537,
+  "ratio": 0.565,
+  "tones_ratio": 0.713,
+  "shapes_ratio": 0.565,
   "passed": false,
   "group": "foliage"
  },
  "findings": [
   {
-   "detector": "logic.floating_part",
-   "severity": "blocker",
-   "box": [
-    11,
-    17,
-    48,
-    75
-   ],
-   "message": "crossroads/bush_51: a part (838 px, 25% of the sprite) hangs in the air, 11 px above the ground line, touching nothing below",
-   "fix": "join it to what holds it up: a crown sits on its trunk and covers the trunk top, a bucket hangs from a rope on a windlass, a sign from a bracket (world-rules.md 6.9)"
-  },
-  {
-   "detector": "logic.stilts",
-   "severity": "fault",
-   "box": [
-    11,
-    72,
-    108,
-    86
-   ],
-   "message": "crossroads/bush_51: the mass stands on 3 separate thin legs (27 px of legs under a 92 px wide mass)",
-   "fix": "a bush grows from the ground: let the foliage come down to a dark, grassed base with only a stem or two glimpsed in the shade, and a contact shadow under it (no stilts)"
-  },
-  {
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    11,
     10,
-    108,
-    86
+    10,
+    104,
+    73
    ],
-   "message": "crossroads/bush_51: detail bar 0.54 of Eastward's foliage band (23.2 tones, 34.0 shapes a patch against 27.71, 63.32)",
+   "message": "crossroads/bush_51: detail bar 0.56 of Eastward's foliage band (19.8 tones, 35.8 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
-  },
-  {
-   "detector": "detail.mesh",
-   "severity": "fault",
-   "box": [
-    11,
-    10,
-    108,
-    86
-   ],
-   "message": "crossroads/bush_51: the foliage is a see-through mesh: 35% of the crown is gaps between outlined blobs",
-   "fix": "paint the crown as one mass of leaf clusters (Eastward): lit clumps on top, a darker band under them, a dark interior showing through narrow gaps, no ground visible through the crown and no outline round every blob (art-style.md 4)"
   }
  ],
  "reviewed": "2026-10-25",
