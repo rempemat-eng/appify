@@ -282,9 +282,9 @@ def paint_hd(cv: np.ndarray, mask: np.ndarray, seed: int = 23) -> np.ndarray:
     from . import softedge as SE
     from .terrain import noise as TN
     lawn = (is_fam(cv, 'grass') | is_fam(cv, 'leaf')) & ~mask & ~(wet | bank)
-    reach = TN.vnoise_hd(wx, wy, 2.6, seed + 31) * (D - 1.0)          # the bank keeps 2 texels of face
+    reach = TN.vnoise_hd(wx, wy, 7.0, seed + 31) * (D - 1.0)          # the bank keeps 2 texels of face
     over = (wet | bank) & water_south & (od >= (D + 1.0) - reach + 0.5) & (od > 1.01)
-    reach2 = TN.vnoise_hd(wx, wy, 2.6, seed + 37) * (D - 1.0)
+    reach2 = TN.vnoise_hd(wx, wy, 7.0, seed + 37) * (D - 1.0)
     over |= (wet | bank) & ~water_south & (np.abs(odx) > np.abs(ody)) & (od >= (D + 1.0) - reach2 + 0.5) & (od > 1.01)
     turf = SE.soft(lawn | over, smooth=0.45, min_area=1.0) & ~mask
     over = turf & (wet | bank)

@@ -1184,17 +1184,24 @@ def log_hd(d, length=54, thick=15, seed=71):
     Y, X = np.mgrid[0:Hh, 0:W] + 0.5
     yn = (Y - cy) / R                                # -1 top edge .. 1 bottom edge
     th = np.radians(45) + np.arcsin(np.clip(yn, -1, 1))     # the surface angle: 0 straight up, 90 facing south
-    # the east end broken: a jagged edge
-    # the east end broken off in 4 splinters of different widths and lengths, each tapering to a
-    # point (#288 review S1: the regular zigzag read as a comb)
-    cuts = np.sort(rng.uniform(0.15, 0.85, 3))
-    bands = np.concatenate([[0.0], cuts, [1.0]])
-    lens = rng.uniform(1.2, 4.2, 4) * s
+    # the east end broken off in 3 to 5 splinters (#288 second review S1: four equal symmetric
+    # cones read as stakes): bands of unequal width, each splinter's point off its centre so it
+    # leans, lengths from stubby to long, and the roots at different depths so the break has a
+    # hollow among them
+    ns = int(rng.integers(3, 6))
+    bands = np.concatenate([[0.0], np.cumsum(rng.dirichlet(np.full(ns, 1.6)))])
+    bands[-1] = 1.0
+    lens = rng.permutation(np.linspace(1.0, 5.6, ns) * rng.uniform(0.85, 1.15, ns)) * s
+    pkv = rng.uniform(0.2, 0.8, ns)                     # where along its band each point sits
+    root = rng.uniform(-1.4, 0.4, ns) * s                # the depth each splinter breaks from
     vv = np.clip((Y - (cy - R)) / (2 * R), 0, 1)
-    bi = np.clip(np.searchsorted(bands, vv, side='right') - 1, 0, 3)
-    b0, b1 = bands[bi], bands[np.minimum(bi + 1, 4)]
-    tip = 1 - np.abs(2 * (vv - b0) / np.maximum(1e-3, b1 - b0) - 1)          # 0 at a splinter's sides, 1 at its axis
-    jag = x1 - 2.4 * s + lens[bi] * tip ** 0.8
+    bi = np.clip(np.searchsorted(bands, vv, side='right') - 1, 0, ns - 1)
+    b0, b1 = bands[bi], bands[np.minimum(bi + 1, ns)]
+    fr_ = (vv - b0) / np.maximum(1e-3, b1 - b0)
+    pkb = pkv[bi]
+    tip = np.where(fr_ < pkb, fr_ / pkb, (1 - fr_) / (1 - pkb))         # 0 at a splinter's sides, 1 at its point
+    upper = fr_ < pkb                                                    # its upper facet (towards the light)
+    jag = x1 - 2.4 * s + root[bi] + lens[bi] * np.clip(tip, 0, 1) ** 0.7
     body = (np.abs(yn) <= 1) & (X >= x0) & (X <= jag)
     I = _lambert(-0.12 * (X - (x0 + x1) / 2) / Lw, np.sin(th), np.cos(th))
     t = 2.3 + 2.4 * I
@@ -1257,9 +1264,15 @@ def log_hd(d, length=54, thick=15, seed=71):
     F.put(endm & (erw > 0.88), _bark_fam(rimt), rimt, z=3)
     # the broken east end: each splinter's pale wood in shade, its upper facet lit, its lower side
     # dark, a dark hollow at the root of the break
-    spl = body & (X > x1 - 2.4 * s - 0.2) & (F.z <= 1)
-    tsp = np.where(tip > 0.55, np.where(vv - b0 < (b1 - b0) * 0.5, 3, 2), 1)
-    tsp = np.where(X < x1 - 2.0 * s, 0, tsp)
+    # the splinters keep their bark on the outside; the torn wood shows only on the break face, a
+    # strip just inside each splinter's edge (lit on its upper facet, shaded on its lower), and
+    # where two splinters part the break goes dark into a hollow
+    rx_ = x1 - 2.4 * s + root[bi]                                       # this splinter's root
+    face_w = (0.7 + 0.6 * (1 - tip)) * s
+    spl = body & (X > jag - face_w) & (X > rx_ - 0.6 * s) & (F.z <= 1)
+    tsp = np.where(upper, 3, 2)
+    tsp = np.where(X >= jag - 0.9, tsp - 1, tsp)                         # the torn tip edge
+    tsp = np.where((tip < 0.3) & (X < rx_ + 1.2 * s), 0, tsp)          # the hollow where splinters part
     F.put(spl, np.where(tsp >= 3, 'plaster_warm', 'plaster'), tsp, z=1.2)
     # moss: one mantle along the top, uneven in width, draping over the near flank in two or
     # three rounded lobes; leaf clusters lit on top, a dark tuck where it overhangs (no stems)

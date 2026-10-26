@@ -63,7 +63,8 @@
  "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-10-26",
+  "note": "#288 re-review at ba7714c2: wheel now edge-on with hubs; 3D right. Polish: detail bar 0.69."
  }
 }

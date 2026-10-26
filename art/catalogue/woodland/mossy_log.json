@@ -1,26 +1,26 @@
 {
  "id": "woodland/mossy_log",
  "file": "game/zones/woodland/art/mossy_log.png",
- "sha256": "24cf69a63c25a501c52b1bb61953f12fe85f730337ff79d66e4e5d68512996a1",
+ "sha256": "a8e18a8d5a9338f0aff3a20264e7762f082ba71c9d6d2e9b64f3e88ed46aa23a",
  "kind": "log",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  185,
+  183,
   54
  ],
  "status": "pass",
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 1
+  "polish": 2
  },
  "detail_bar": {
   "ours": {
-   "patches": 28,
-   "tones": 22.75,
-   "shapes": 41.642857142857146
+   "patches": 27,
+   "tones": 22.51851851851852,
+   "shapes": 41.592592592592595
   },
   "band": {
    "tones": 27.0,
@@ -28,23 +28,35 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.827,
-  "tones_ratio": 0.843,
-  "shapes_ratio": 0.827,
+  "ratio": 0.826,
+  "tones_ratio": 0.834,
+  "shapes_ratio": 0.826,
   "passed": false,
   "group": "prop"
  },
  "findings": [
   {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    50,
+    37,
+    96,
+    53
+   ],
+   "message": "woodland/mossy_log: the red is lit from the right (luminance rises 26 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    5,
+    3,
     2,
     180,
     54
    ],
-   "message": "woodland/mossy_log: detail bar 0.83 of Eastward's prop band (22.8 tones, 41.6 shapes a patch against 27.0, 50.36)",
+   "message": "woodland/mossy_log: detail bar 0.83 of Eastward's prop band (22.5 tones, 41.6 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

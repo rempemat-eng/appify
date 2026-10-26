@@ -316,9 +316,10 @@ def water_mask_hd(plan: dict, W: int, H: int) -> np.ndarray:
             hw *= 1.0 + taper * (0.3 * np.sin(yw / 11.0 + 1.3) + 0.15 * np.sin(yw / 4.3))
             # the banks' small irregularity (stones, roots, a bitten edge), so no diagonal reads as a
             # regular staircase of steps
-            hb = ((Y * 2654435761) >> 7) & 0xff
-            c += (hb % 5 - 2) * 0.12
-            hw += ((hb >> 3) % 3 - 1) * 0.15
+            # (#288 second review: a per-row jitter read as a run of 45-degree zigzags; the
+            # irregularity is now a slow wander, a few world px long, so the rill meanders)
+            c += 0.35 * np.sin(yw / 1.9 + 1.1) * np.sin(yw / 7.3) + 0.8 * np.sin(yw / 4.4 + 2.0)
+            hw += 0.25 * np.sin(yw / 2.7 + 0.5) * np.sin(yw / 9.1 + 2.0)
             up[Y, :int(110 * D)] = np.maximum(up[Y, :int(110 * D)], np.clip(hw + 0.5 - np.abs(Xw[:int(110 * D)] - c), 0, 1))
     # the river sways a little too (no ruler-straight reach): its columns east of the bridge move
     # up and down by up to 1.6 world px
@@ -345,10 +346,10 @@ def water_mask_hd(plan: dict, W: int, H: int) -> np.ndarray:
     # a bitten, uneven edge (roots, stones, slumped turf): a small noise on the soft edge so a
     # diagonal bank never reads as a staircase of equal steps
     rn = np.random.default_rng(4423).random(soft.shape)
-    wob = ndi.gaussian_filter(rn, 2.2)
+    wob = ndi.gaussian_filter(rn, 1.6 * D)
     wob = (wob - wob.mean()) / max(1e-6, wob.std())
     band = (soft > 0.08) & (soft < 0.92)
-    m = np.where(band, soft + 0.2 * wob, soft) > 0.5
+    m = np.where(band, soft + 0.45 * wob, soft) > 0.5
     m = ndi.binary_fill_holes(m)
     lab, n = ndi.label(m)
     if n:

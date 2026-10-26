@@ -50,6 +50,14 @@
    ]
   },
   {
+   "id": "crossroads/ground",
+   "sha256": "057d366e3e3b687fb167eb093e179c8c95d5ae17f344d284bae762f28042eb50",
+   "faults": [
+    "reviewer.fail"
+   ],
+   "note": "re-queued after the #288 second review: S5 (ruts, dark discs, even stipple) and S6 (straight seam on the SW road) go to the next fix-queue PR"
+  },
+  {
    "id": "crossroads/herbalist",
    "sha256": "bd860308513a86f200a6186c7e3162a5ca4451bac7c344b3574bb9996313d3a1",
    "faults": [

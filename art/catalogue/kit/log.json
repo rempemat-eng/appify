@@ -1,7 +1,7 @@
 {
  "id": "kit/log",
  "file": "artifacts/review/kit/log.png",
- "sha256": "a85730485fc8d4b947c90d0a39441910ba40b44c653445959fbf2520620a6107",
+ "sha256": "c9fb9c565eeb881625605b2db386ee543696e16c25a44b7b2984ecc2fe4d83f0",
  "kind": "log",
  "biome": "woodland",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 26,
-   "tones": 24.5,
-   "shapes": 44.19230769230769
+   "tones": 22.53846153846154,
+   "shapes": 40.34615384615385
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.878,
-  "tones_ratio": 0.907,
-  "shapes_ratio": 0.878,
+  "ratio": 0.801,
+  "tones_ratio": 0.835,
+  "shapes_ratio": 0.801,
   "passed": false,
   "group": "prop"
  },
@@ -39,12 +39,12 @@
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    1,
+    0,
     2,
-    172,
+    178,
     54
    ],
-   "message": "kit/log: detail bar 0.88 of Eastward's prop band (24.5 tones, 44.2 shapes a patch against 27.0, 50.36)",
+   "message": "kit/log: detail bar 0.80 of Eastward's prop band (22.5 tones, 40.3 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

@@ -520,7 +520,7 @@ centered = false
 
 [node name="Water" type="Sprite2D" parent="."]
 z_index = -9
-position = Vector2(178, 756)
+position = Vector2(176, 756)
 texture = ExtResource("flow")
 centered = false
 hframes = 2
@@ -702,13 +702,13 @@ offset = Vector2(-115, -309)
 position = Vector2(660, 744)
 texture = ExtResource("t_mossy_log")
 centered = false
-offset = Vector2(-92, -54)
+offset = Vector2(-91, -54)
 
 [node name="log-2" type="Sprite2D" parent="Objects"]
 position = Vector2(468, 1464)
 texture = ExtResource("t_mossy_log")
 centered = false
-offset = Vector2(-92, -54)
+offset = Vector2(-91, -54)
 
 [node name="bench" type="Sprite2D" parent="Objects"]
 position = Vector2(516, 624)
