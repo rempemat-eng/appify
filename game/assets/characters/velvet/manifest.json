@@ -2414,6 +2414,2376 @@
       }
      ]
     }
+   },
+   "turns": {
+    "SE": {
+     "frames": [
+      {
+       "path": "res://assets/animated/velvet/idle_SE_00.png",
+       "file": "idle_SE_00.png",
+       "packed_bounds": [
+        58,
+        62,
+        112,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         -8.4,
+         -23.3
+        ],
+        "hand_L": [
+         13.2,
+         -29.9
+        ],
+        "foot_L": [
+         2.5,
+         -2.7
+        ],
+        "foot_R": [
+         -2.5,
+         0.7
+        ],
+        "lantern": [
+         -8.4,
+         -13.3
+        ],
+        "blade_tip": [
+         30.2,
+         -8.4
+        ]
+       },
+       "equipment": {
+        "scabbard": 45,
+        "sabre": 74,
+        "lantern": 92
+       },
+       "sha256": "0502a3f898105689c86e57e562a6a531ad2535259706f3795b6ed67d2f2e27a5",
+       "sheet": "sheets/idle_SE.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/idle_SE_01.png",
+       "file": "idle_SE_01.png",
+       "packed_bounds": [
+        58,
+        62,
+        112,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         -8.4,
+         -23.3
+        ],
+        "hand_L": [
+         13.2,
+         -29.9
+        ],
+        "foot_L": [
+         2.5,
+         -2.7
+        ],
+        "foot_R": [
+         -2.5,
+         0.7
+        ],
+        "lantern": [
+         -8.4,
+         -13.3
+        ],
+        "blade_tip": [
+         30.2,
+         -8.4
+        ]
+       },
+       "equipment": {
+        "scabbard": 45,
+        "sabre": 74,
+        "lantern": 92
+       },
+       "sha256": "5d9bf743d159cbe22a31d810c7cfe22a2f93faf9f094749e2221c45520427600",
+       "sheet": "sheets/idle_SE.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/idle_SE_02.png",
+       "file": "idle_SE_02.png",
+       "packed_bounds": [
+        58,
+        62,
+        112,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         -8.4,
+         -23.3
+        ],
+        "hand_L": [
+         13.2,
+         -29.9
+        ],
+        "foot_L": [
+         2.5,
+         -2.7
+        ],
+        "foot_R": [
+         -2.5,
+         0.7
+        ],
+        "lantern": [
+         -8.4,
+         -13.3
+        ],
+        "blade_tip": [
+         30.2,
+         -8.4
+        ]
+       },
+       "equipment": {
+        "scabbard": 45,
+        "sabre": 74,
+        "lantern": 92
+       },
+       "sha256": "5d9bf743d159cbe22a31d810c7cfe22a2f93faf9f094749e2221c45520427600",
+       "sheet": "sheets/idle_SE.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/idle_SE_03.png",
+       "file": "idle_SE_03.png",
+       "packed_bounds": [
+        58,
+        61,
+        112,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         -8.4,
+         -24.3
+        ],
+        "hand_L": [
+         13.1,
+         -30.9
+        ],
+        "foot_L": [
+         2.5,
+         -2.7
+        ],
+        "foot_R": [
+         -2.5,
+         0.7
+        ],
+        "lantern": [
+         -8.4,
+         -14.3
+        ],
+        "blade_tip": [
+         30.1,
+         -9.4
+        ]
+       },
+       "equipment": {
+        "scabbard": 46,
+        "sabre": 70,
+        "lantern": 92
+       },
+       "sha256": "8281e939d1ee9551954e7a84f87ed4f8adeaeec3587d0f559b4fd1cdfb9b14e8",
+       "sheet": "sheets/idle_SE.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/idle_SE_04.png",
+       "file": "idle_SE_04.png",
+       "packed_bounds": [
+        58,
+        61,
+        112,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         -8.4,
+         -24.3
+        ],
+        "hand_L": [
+         13.1,
+         -30.9
+        ],
+        "foot_L": [
+         2.5,
+         -2.7
+        ],
+        "foot_R": [
+         -2.5,
+         0.7
+        ],
+        "lantern": [
+         -8.4,
+         -14.3
+        ],
+        "blade_tip": [
+         30.1,
+         -9.4
+        ]
+       },
+       "equipment": {
+        "scabbard": 46,
+        "sabre": 70,
+        "lantern": 92
+       },
+       "sha256": "8281e939d1ee9551954e7a84f87ed4f8adeaeec3587d0f559b4fd1cdfb9b14e8",
+       "sheet": "sheets/idle_SE.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/idle_SE_05.png",
+       "file": "idle_SE_05.png",
+       "packed_bounds": [
+        58,
+        61,
+        112,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         -8.4,
+         -24.3
+        ],
+        "hand_L": [
+         13.1,
+         -30.9
+        ],
+        "foot_L": [
+         2.5,
+         -2.7
+        ],
+        "foot_R": [
+         -2.5,
+         0.7
+        ],
+        "lantern": [
+         -8.4,
+         -14.3
+        ],
+        "blade_tip": [
+         30.1,
+         -9.4
+        ]
+       },
+       "equipment": {
+        "scabbard": 46,
+        "sabre": 70,
+        "lantern": 92
+       },
+       "sha256": "696ace008ec490747026a861d1133dc112e9cfe26b7875dabd88cc53e734ad35",
+       "sheet": "sheets/idle_SE.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/idle_SE_06.png",
+       "file": "idle_SE_06.png",
+       "packed_bounds": [
+        58,
+        61,
+        112,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         -8.4,
+         -24.3
+        ],
+        "hand_L": [
+         13.1,
+         -30.9
+        ],
+        "foot_L": [
+         2.5,
+         -2.7
+        ],
+        "foot_R": [
+         -2.5,
+         0.7
+        ],
+        "lantern": [
+         -8.4,
+         -14.3
+        ],
+        "blade_tip": [
+         30.1,
+         -9.4
+        ]
+       },
+       "equipment": {
+        "scabbard": 46,
+        "sabre": 70,
+        "lantern": 92
+       },
+       "sha256": "696ace008ec490747026a861d1133dc112e9cfe26b7875dabd88cc53e734ad35",
+       "sheet": "sheets/idle_SE.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/idle_SE_07.png",
+       "file": "idle_SE_07.png",
+       "packed_bounds": [
+        58,
+        61,
+        112,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         -8.4,
+         -24.3
+        ],
+        "hand_L": [
+         13.1,
+         -30.9
+        ],
+        "foot_L": [
+         2.5,
+         -2.7
+        ],
+        "foot_R": [
+         -2.5,
+         0.7
+        ],
+        "lantern": [
+         -8.4,
+         -14.3
+        ],
+        "blade_tip": [
+         30.1,
+         -9.4
+        ]
+       },
+       "equipment": {
+        "scabbard": 46,
+        "sabre": 70,
+        "lantern": 92
+       },
+       "sha256": "696ace008ec490747026a861d1133dc112e9cfe26b7875dabd88cc53e734ad35",
+       "sheet": "sheets/idle_SE.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/idle_SE_08.png",
+       "file": "idle_SE_08.png",
+       "packed_bounds": [
+        58,
+        62,
+        112,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         -8.4,
+         -23.3
+        ],
+        "hand_L": [
+         13.2,
+         -29.9
+        ],
+        "foot_L": [
+         2.5,
+         -2.7
+        ],
+        "foot_R": [
+         -2.5,
+         0.7
+        ],
+        "lantern": [
+         -8.4,
+         -13.3
+        ],
+        "blade_tip": [
+         30.2,
+         -8.4
+        ]
+       },
+       "equipment": {
+        "scabbard": 45,
+        "sabre": 74,
+        "lantern": 92
+       },
+       "sha256": "5d9bf743d159cbe22a31d810c7cfe22a2f93faf9f094749e2221c45520427600",
+       "sheet": "sheets/idle_SE.png",
+       "region": [
+        1280,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/idle_SE_09.png",
+       "file": "idle_SE_09.png",
+       "packed_bounds": [
+        58,
+        62,
+        112,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         -8.4,
+         -23.3
+        ],
+        "hand_L": [
+         13.2,
+         -29.9
+        ],
+        "foot_L": [
+         2.5,
+         -2.7
+        ],
+        "foot_R": [
+         -2.5,
+         0.7
+        ],
+        "lantern": [
+         -8.4,
+         -13.3
+        ],
+        "blade_tip": [
+         30.2,
+         -8.4
+        ]
+       },
+       "equipment": {
+        "scabbard": 45,
+        "sabre": 74,
+        "lantern": 92
+       },
+       "sha256": "5d9bf743d159cbe22a31d810c7cfe22a2f93faf9f094749e2221c45520427600",
+       "sheet": "sheets/idle_SE.png",
+       "region": [
+        1440,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/idle_SE_10.png",
+       "file": "idle_SE_10.png",
+       "packed_bounds": [
+        58,
+        62,
+        112,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         -8.4,
+         -23.3
+        ],
+        "hand_L": [
+         13.2,
+         -29.9
+        ],
+        "foot_L": [
+         2.5,
+         -2.7
+        ],
+        "foot_R": [
+         -2.5,
+         0.7
+        ],
+        "lantern": [
+         -8.4,
+         -13.3
+        ],
+        "blade_tip": [
+         30.2,
+         -8.4
+        ]
+       },
+       "equipment": {
+        "scabbard": 45,
+        "sabre": 74,
+        "lantern": 92
+       },
+       "sha256": "e9d99500f15a7a7174298203b2e0f371b4433e2122574f91d33d6677269f04c5",
+       "sheet": "sheets/idle_SE.png",
+       "region": [
+        1600,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/idle_SE_11.png",
+       "file": "idle_SE_11.png",
+       "packed_bounds": [
+        58,
+        62,
+        112,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         -8.4,
+         -23.3
+        ],
+        "hand_L": [
+         13.2,
+         -29.9
+        ],
+        "foot_L": [
+         2.5,
+         -2.7
+        ],
+        "foot_R": [
+         -2.5,
+         0.7
+        ],
+        "lantern": [
+         -8.4,
+         -13.3
+        ],
+        "blade_tip": [
+         30.2,
+         -8.4
+        ]
+       },
+       "equipment": {
+        "scabbard": 45,
+        "sabre": 74,
+        "lantern": 92
+       },
+       "sha256": "0502a3f898105689c86e57e562a6a531ad2535259706f3795b6ed67d2f2e27a5",
+       "sheet": "sheets/idle_SE.png",
+       "region": [
+        1760,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "NE": {
+     "frames": [
+      {
+       "path": "res://assets/animated/velvet/idle_NE_00.png",
+       "file": "idle_NE_00.png",
+       "packed_bounds": [
+        67,
+        62,
+        96,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         10.7,
+         -24.8
+        ],
+        "hand_L": [
+         -5.6,
+         -31.9
+        ],
+        "foot_L": [
+         -4.6,
+         -1.7
+        ],
+        "foot_R": [
+         4.6,
+         -0.3
+        ],
+        "lantern": [
+         10.7,
+         -14.8
+        ],
+        "blade_tip": [
+         4.1,
+         -18.9
+        ]
+       },
+       "equipment": {
+        "sabre": 3,
+        "scabbard": 86,
+        "lantern": 95
+       },
+       "sha256": "e2eb91906d972dcd63bb25436d83741040834cf36166162ecd63842cd9013a6a",
+       "sheet": "sheets/idle_NE.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/idle_NE_01.png",
+       "file": "idle_NE_01.png",
+       "packed_bounds": [
+        67,
+        62,
+        96,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         10.7,
+         -24.8
+        ],
+        "hand_L": [
+         -5.6,
+         -31.9
+        ],
+        "foot_L": [
+         -4.6,
+         -1.7
+        ],
+        "foot_R": [
+         4.6,
+         -0.3
+        ],
+        "lantern": [
+         10.7,
+         -14.8
+        ],
+        "blade_tip": [
+         4.1,
+         -18.9
+        ]
+       },
+       "equipment": {
+        "sabre": 3,
+        "scabbard": 86,
+        "lantern": 95
+       },
+       "sha256": "e2eb91906d972dcd63bb25436d83741040834cf36166162ecd63842cd9013a6a",
+       "sheet": "sheets/idle_NE.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/idle_NE_02.png",
+       "file": "idle_NE_02.png",
+       "packed_bounds": [
+        67,
+        62,
+        96,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         10.7,
+         -24.8
+        ],
+        "hand_L": [
+         -5.6,
+         -31.9
+        ],
+        "foot_L": [
+         -4.6,
+         -1.7
+        ],
+        "foot_R": [
+         4.6,
+         -0.3
+        ],
+        "lantern": [
+         10.7,
+         -14.8
+        ],
+        "blade_tip": [
+         4.1,
+         -18.9
+        ]
+       },
+       "equipment": {
+        "sabre": 3,
+        "scabbard": 86,
+        "lantern": 95
+       },
+       "sha256": "570e2885e30faa09a0745102f841058b028017bcdca2eb339c92345f3a0853f3",
+       "sheet": "sheets/idle_NE.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/idle_NE_03.png",
+       "file": "idle_NE_03.png",
+       "packed_bounds": [
+        67,
+        61,
+        96,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         10.6,
+         -25.8
+        ],
+        "hand_L": [
+         -5.6,
+         -32.8
+        ],
+        "foot_L": [
+         -4.6,
+         -1.7
+        ],
+        "foot_R": [
+         4.6,
+         -0.3
+        ],
+        "lantern": [
+         10.6,
+         -15.8
+        ],
+        "blade_tip": [
+         4.1,
+         -19.8
+        ]
+       },
+       "equipment": {
+        "sabre": 4,
+        "scabbard": 86,
+        "lantern": 97
+       },
+       "sha256": "afbbb61807d1283ee4a5eb6b9a4dddcbb5fcdad3608f0132e89cfd1c46342b32",
+       "sheet": "sheets/idle_NE.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/idle_NE_04.png",
+       "file": "idle_NE_04.png",
+       "packed_bounds": [
+        67,
+        61,
+        96,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         10.6,
+         -25.8
+        ],
+        "hand_L": [
+         -5.6,
+         -32.8
+        ],
+        "foot_L": [
+         -4.6,
+         -1.7
+        ],
+        "foot_R": [
+         4.6,
+         -0.3
+        ],
+        "lantern": [
+         10.6,
+         -15.8
+        ],
+        "blade_tip": [
+         4.1,
+         -19.8
+        ]
+       },
+       "equipment": {
+        "sabre": 4,
+        "scabbard": 86,
+        "lantern": 97
+       },
+       "sha256": "afbbb61807d1283ee4a5eb6b9a4dddcbb5fcdad3608f0132e89cfd1c46342b32",
+       "sheet": "sheets/idle_NE.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/idle_NE_05.png",
+       "file": "idle_NE_05.png",
+       "packed_bounds": [
+        67,
+        61,
+        97,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         10.6,
+         -25.8
+        ],
+        "hand_L": [
+         -5.6,
+         -32.8
+        ],
+        "foot_L": [
+         -4.6,
+         -1.7
+        ],
+        "foot_R": [
+         4.6,
+         -0.3
+        ],
+        "lantern": [
+         10.6,
+         -15.8
+        ],
+        "blade_tip": [
+         4.1,
+         -19.8
+        ]
+       },
+       "equipment": {
+        "sabre": 4,
+        "scabbard": 86,
+        "lantern": 97
+       },
+       "sha256": "4fdd8b17cb8218bf2efc3959a348e53cde6722632d17c19fe1f571d5ca24c57f",
+       "sheet": "sheets/idle_NE.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/idle_NE_06.png",
+       "file": "idle_NE_06.png",
+       "packed_bounds": [
+        67,
+        61,
+        97,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         10.6,
+         -25.8
+        ],
+        "hand_L": [
+         -5.6,
+         -32.8
+        ],
+        "foot_L": [
+         -4.6,
+         -1.7
+        ],
+        "foot_R": [
+         4.6,
+         -0.3
+        ],
+        "lantern": [
+         10.6,
+         -15.8
+        ],
+        "blade_tip": [
+         4.1,
+         -19.8
+        ]
+       },
+       "equipment": {
+        "sabre": 4,
+        "scabbard": 86,
+        "lantern": 97
+       },
+       "sha256": "4fdd8b17cb8218bf2efc3959a348e53cde6722632d17c19fe1f571d5ca24c57f",
+       "sheet": "sheets/idle_NE.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/idle_NE_07.png",
+       "file": "idle_NE_07.png",
+       "packed_bounds": [
+        67,
+        61,
+        97,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         10.6,
+         -25.8
+        ],
+        "hand_L": [
+         -5.6,
+         -32.8
+        ],
+        "foot_L": [
+         -4.6,
+         -1.7
+        ],
+        "foot_R": [
+         4.6,
+         -0.3
+        ],
+        "lantern": [
+         10.6,
+         -15.8
+        ],
+        "blade_tip": [
+         4.1,
+         -19.8
+        ]
+       },
+       "equipment": {
+        "sabre": 4,
+        "scabbard": 86,
+        "lantern": 97
+       },
+       "sha256": "4fdd8b17cb8218bf2efc3959a348e53cde6722632d17c19fe1f571d5ca24c57f",
+       "sheet": "sheets/idle_NE.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/idle_NE_08.png",
+       "file": "idle_NE_08.png",
+       "packed_bounds": [
+        67,
+        62,
+        96,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         10.7,
+         -24.8
+        ],
+        "hand_L": [
+         -5.6,
+         -31.9
+        ],
+        "foot_L": [
+         -4.6,
+         -1.7
+        ],
+        "foot_R": [
+         4.6,
+         -0.3
+        ],
+        "lantern": [
+         10.7,
+         -14.8
+        ],
+        "blade_tip": [
+         4.1,
+         -18.9
+        ]
+       },
+       "equipment": {
+        "sabre": 3,
+        "scabbard": 86,
+        "lantern": 95
+       },
+       "sha256": "570e2885e30faa09a0745102f841058b028017bcdca2eb339c92345f3a0853f3",
+       "sheet": "sheets/idle_NE.png",
+       "region": [
+        1280,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/idle_NE_09.png",
+       "file": "idle_NE_09.png",
+       "packed_bounds": [
+        67,
+        62,
+        96,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         10.7,
+         -24.8
+        ],
+        "hand_L": [
+         -5.6,
+         -31.9
+        ],
+        "foot_L": [
+         -4.6,
+         -1.7
+        ],
+        "foot_R": [
+         4.6,
+         -0.3
+        ],
+        "lantern": [
+         10.7,
+         -14.8
+        ],
+        "blade_tip": [
+         4.1,
+         -18.9
+        ]
+       },
+       "equipment": {
+        "sabre": 3,
+        "scabbard": 86,
+        "lantern": 95
+       },
+       "sha256": "e2eb91906d972dcd63bb25436d83741040834cf36166162ecd63842cd9013a6a",
+       "sheet": "sheets/idle_NE.png",
+       "region": [
+        1440,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/idle_NE_10.png",
+       "file": "idle_NE_10.png",
+       "packed_bounds": [
+        67,
+        62,
+        96,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         10.7,
+         -24.8
+        ],
+        "hand_L": [
+         -5.6,
+         -31.9
+        ],
+        "foot_L": [
+         -4.6,
+         -1.7
+        ],
+        "foot_R": [
+         4.6,
+         -0.3
+        ],
+        "lantern": [
+         10.7,
+         -14.8
+        ],
+        "blade_tip": [
+         4.1,
+         -18.9
+        ]
+       },
+       "equipment": {
+        "sabre": 3,
+        "scabbard": 86,
+        "lantern": 95
+       },
+       "sha256": "e2eb91906d972dcd63bb25436d83741040834cf36166162ecd63842cd9013a6a",
+       "sheet": "sheets/idle_NE.png",
+       "region": [
+        1600,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/idle_NE_11.png",
+       "file": "idle_NE_11.png",
+       "packed_bounds": [
+        67,
+        62,
+        96,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         10.7,
+         -24.8
+        ],
+        "hand_L": [
+         -5.6,
+         -31.9
+        ],
+        "foot_L": [
+         -4.6,
+         -1.7
+        ],
+        "foot_R": [
+         4.6,
+         -0.3
+        ],
+        "lantern": [
+         10.7,
+         -14.8
+        ],
+        "blade_tip": [
+         4.1,
+         -18.9
+        ]
+       },
+       "equipment": {
+        "sabre": 3,
+        "scabbard": 86,
+        "lantern": 95
+       },
+       "sha256": "e2eb91906d972dcd63bb25436d83741040834cf36166162ecd63842cd9013a6a",
+       "sheet": "sheets/idle_NE.png",
+       "region": [
+        1760,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "SW": {
+     "frames": [
+      {
+       "path": "res://assets/animated/velvet/idle_SW_00.png",
+       "file": "idle_SW_00.png",
+       "packed_bounds": [
+        61,
+        62,
+        94,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         -12.6,
+         -30.0
+        ],
+        "hand_L": [
+         7.4,
+         -23.3
+        ],
+        "foot_R": [
+         -5.3,
+         -1.7
+        ],
+        "foot_L": [
+         5.3,
+         -0.3
+        ],
+        "lantern": [
+         -12.6,
+         -20.0
+        ],
+        "blade_tip": [
+         0.2,
+         1.1
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 77,
+        "sabre": 76
+       },
+       "sha256": "dd12d77656fed1335eacbadb28de8ced68286dfd4e1eba8036c4477032ac4256",
+       "sheet": "sheets/idle_SW.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/idle_SW_01.png",
+       "file": "idle_SW_01.png",
+       "packed_bounds": [
+        61,
+        62,
+        94,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         -12.6,
+         -30.0
+        ],
+        "hand_L": [
+         7.4,
+         -23.3
+        ],
+        "foot_R": [
+         -5.3,
+         -1.7
+        ],
+        "foot_L": [
+         5.3,
+         -0.3
+        ],
+        "lantern": [
+         -12.6,
+         -20.0
+        ],
+        "blade_tip": [
+         0.2,
+         1.1
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 77,
+        "sabre": 76
+       },
+       "sha256": "a3e4e2a1e7d8078871294d021f3ddd3971b62073dc28ea78cc2b08837b77ccfe",
+       "sheet": "sheets/idle_SW.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/idle_SW_02.png",
+       "file": "idle_SW_02.png",
+       "packed_bounds": [
+        61,
+        62,
+        94,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         -12.6,
+         -30.0
+        ],
+        "hand_L": [
+         7.4,
+         -23.3
+        ],
+        "foot_R": [
+         -5.3,
+         -1.7
+        ],
+        "foot_L": [
+         5.3,
+         -0.3
+        ],
+        "lantern": [
+         -12.6,
+         -20.0
+        ],
+        "blade_tip": [
+         0.2,
+         1.1
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 77,
+        "sabre": 76
+       },
+       "sha256": "5d0423846505abcb429a73658ccc98a308746806ab34834f934cd6c6b8c535b9",
+       "sheet": "sheets/idle_SW.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/idle_SW_03.png",
+       "file": "idle_SW_03.png",
+       "packed_bounds": [
+        61,
+        61,
+        94,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -12.5,
+         -31.0
+        ],
+        "hand_L": [
+         7.5,
+         -24.3
+        ],
+        "foot_R": [
+         -5.3,
+         -1.7
+        ],
+        "foot_L": [
+         5.3,
+         -0.3
+        ],
+        "lantern": [
+         -12.5,
+         -21.0
+        ],
+        "blade_tip": [
+         0.2,
+         0.0
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 79,
+        "sabre": 74
+       },
+       "sha256": "072eaebf65bdfe280a37a6cf91aff400d452faed06c40b73a8903d4b9d2424cf",
+       "sheet": "sheets/idle_SW.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/idle_SW_04.png",
+       "file": "idle_SW_04.png",
+       "packed_bounds": [
+        61,
+        61,
+        94,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -12.5,
+         -31.0
+        ],
+        "hand_L": [
+         7.5,
+         -24.3
+        ],
+        "foot_R": [
+         -5.3,
+         -1.7
+        ],
+        "foot_L": [
+         5.3,
+         -0.3
+        ],
+        "lantern": [
+         -12.5,
+         -21.0
+        ],
+        "blade_tip": [
+         0.2,
+         0.0
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 79,
+        "sabre": 74
+       },
+       "sha256": "072eaebf65bdfe280a37a6cf91aff400d452faed06c40b73a8903d4b9d2424cf",
+       "sheet": "sheets/idle_SW.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/idle_SW_05.png",
+       "file": "idle_SW_05.png",
+       "packed_bounds": [
+        60,
+        61,
+        94,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -12.5,
+         -31.0
+        ],
+        "hand_L": [
+         7.5,
+         -24.3
+        ],
+        "foot_R": [
+         -5.3,
+         -1.7
+        ],
+        "foot_L": [
+         5.3,
+         -0.3
+        ],
+        "lantern": [
+         -12.5,
+         -21.0
+        ],
+        "blade_tip": [
+         0.2,
+         0.0
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 87,
+        "sabre": 74
+       },
+       "sha256": "011fcd84be9b1c53c3bd88ae1d3b8c484c05c9298de33d019c5be7cf298addf7",
+       "sheet": "sheets/idle_SW.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/idle_SW_06.png",
+       "file": "idle_SW_06.png",
+       "packed_bounds": [
+        60,
+        61,
+        94,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -12.5,
+         -31.0
+        ],
+        "hand_L": [
+         7.5,
+         -24.3
+        ],
+        "foot_R": [
+         -5.3,
+         -1.7
+        ],
+        "foot_L": [
+         5.3,
+         -0.3
+        ],
+        "lantern": [
+         -12.5,
+         -21.0
+        ],
+        "blade_tip": [
+         0.2,
+         0.0
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 87,
+        "sabre": 74
+       },
+       "sha256": "011fcd84be9b1c53c3bd88ae1d3b8c484c05c9298de33d019c5be7cf298addf7",
+       "sheet": "sheets/idle_SW.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/idle_SW_07.png",
+       "file": "idle_SW_07.png",
+       "packed_bounds": [
+        60,
+        61,
+        94,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -12.5,
+         -31.0
+        ],
+        "hand_L": [
+         7.5,
+         -24.3
+        ],
+        "foot_R": [
+         -5.3,
+         -1.7
+        ],
+        "foot_L": [
+         5.3,
+         -0.3
+        ],
+        "lantern": [
+         -12.5,
+         -21.0
+        ],
+        "blade_tip": [
+         0.2,
+         0.0
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 87,
+        "sabre": 74
+       },
+       "sha256": "011fcd84be9b1c53c3bd88ae1d3b8c484c05c9298de33d019c5be7cf298addf7",
+       "sheet": "sheets/idle_SW.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/idle_SW_08.png",
+       "file": "idle_SW_08.png",
+       "packed_bounds": [
+        61,
+        62,
+        94,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         -12.6,
+         -30.0
+        ],
+        "hand_L": [
+         7.4,
+         -23.3
+        ],
+        "foot_R": [
+         -5.3,
+         -1.7
+        ],
+        "foot_L": [
+         5.3,
+         -0.3
+        ],
+        "lantern": [
+         -12.6,
+         -20.0
+        ],
+        "blade_tip": [
+         0.2,
+         1.1
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 77,
+        "sabre": 76
+       },
+       "sha256": "5d0423846505abcb429a73658ccc98a308746806ab34834f934cd6c6b8c535b9",
+       "sheet": "sheets/idle_SW.png",
+       "region": [
+        1280,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/idle_SW_09.png",
+       "file": "idle_SW_09.png",
+       "packed_bounds": [
+        61,
+        62,
+        94,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         -12.6,
+         -30.0
+        ],
+        "hand_L": [
+         7.4,
+         -23.3
+        ],
+        "foot_R": [
+         -5.3,
+         -1.7
+        ],
+        "foot_L": [
+         5.3,
+         -0.3
+        ],
+        "lantern": [
+         -12.6,
+         -20.0
+        ],
+        "blade_tip": [
+         0.2,
+         1.1
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 77,
+        "sabre": 76
+       },
+       "sha256": "a3e4e2a1e7d8078871294d021f3ddd3971b62073dc28ea78cc2b08837b77ccfe",
+       "sheet": "sheets/idle_SW.png",
+       "region": [
+        1440,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/idle_SW_10.png",
+       "file": "idle_SW_10.png",
+       "packed_bounds": [
+        61,
+        62,
+        94,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         -12.6,
+         -30.0
+        ],
+        "hand_L": [
+         7.4,
+         -23.3
+        ],
+        "foot_R": [
+         -5.3,
+         -1.7
+        ],
+        "foot_L": [
+         5.3,
+         -0.3
+        ],
+        "lantern": [
+         -12.6,
+         -20.0
+        ],
+        "blade_tip": [
+         0.2,
+         1.1
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 77,
+        "sabre": 76
+       },
+       "sha256": "35e6241a4e4275b22913e45bf2676af7be759ff419c07ac770553793f45e78e7",
+       "sheet": "sheets/idle_SW.png",
+       "region": [
+        1600,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/idle_SW_11.png",
+       "file": "idle_SW_11.png",
+       "packed_bounds": [
+        61,
+        62,
+        94,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         -12.6,
+         -30.0
+        ],
+        "hand_L": [
+         7.4,
+         -23.3
+        ],
+        "foot_R": [
+         -5.3,
+         -1.7
+        ],
+        "foot_L": [
+         5.3,
+         -0.3
+        ],
+        "lantern": [
+         -12.6,
+         -20.0
+        ],
+        "blade_tip": [
+         0.2,
+         1.1
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 77,
+        "sabre": 76
+       },
+       "sha256": "dd12d77656fed1335eacbadb28de8ced68286dfd4e1eba8036c4477032ac4256",
+       "sheet": "sheets/idle_SW.png",
+       "region": [
+        1760,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "NW": {
+     "frames": [
+      {
+       "path": "res://assets/animated/velvet/idle_NW_00.png",
+       "file": "idle_NW_00.png",
+       "packed_bounds": [
+        50,
+        62,
+        101,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         6.5,
+         -31.5
+        ],
+        "hand_L": [
+         -11.3,
+         -25.3
+        ],
+        "foot_R": [
+         1.8,
+         -2.7
+        ],
+        "foot_L": [
+         -1.8,
+         0.7
+        ],
+        "lantern": [
+         6.5,
+         -21.5
+        ],
+        "blade_tip": [
+         -28.3,
+         -9.6
+        ]
+       },
+       "equipment": {
+        "scabbard": 64,
+        "lantern": 16,
+        "sabre": 68
+       },
+       "sha256": "836bc19c4e629f9e4bffce088654715f5fe560174b4e1ab655691adbe3d7b524",
+       "sheet": "sheets/idle_NW.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/idle_NW_01.png",
+       "file": "idle_NW_01.png",
+       "packed_bounds": [
+        50,
+        62,
+        101,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         6.5,
+         -31.5
+        ],
+        "hand_L": [
+         -11.3,
+         -25.3
+        ],
+        "foot_R": [
+         1.8,
+         -2.7
+        ],
+        "foot_L": [
+         -1.8,
+         0.7
+        ],
+        "lantern": [
+         6.5,
+         -21.5
+        ],
+        "blade_tip": [
+         -28.3,
+         -9.6
+        ]
+       },
+       "equipment": {
+        "scabbard": 64,
+        "lantern": 16,
+        "sabre": 68
+       },
+       "sha256": "67a008d95355ee033397dc6e87450fdc2de53996be7daa9f6d68abd5382381a9",
+       "sheet": "sheets/idle_NW.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/idle_NW_02.png",
+       "file": "idle_NW_02.png",
+       "packed_bounds": [
+        50,
+        62,
+        101,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         6.5,
+         -31.5
+        ],
+        "hand_L": [
+         -11.3,
+         -25.3
+        ],
+        "foot_R": [
+         1.8,
+         -2.7
+        ],
+        "foot_L": [
+         -1.8,
+         0.7
+        ],
+        "lantern": [
+         6.5,
+         -21.5
+        ],
+        "blade_tip": [
+         -28.3,
+         -9.6
+        ]
+       },
+       "equipment": {
+        "scabbard": 64,
+        "lantern": 10,
+        "sabre": 68
+       },
+       "sha256": "e7102ebe3bd67a940d40b9528471e51d958a10305a516236b34fce6bcfd43fdb",
+       "sheet": "sheets/idle_NW.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/idle_NW_03.png",
+       "file": "idle_NW_03.png",
+       "packed_bounds": [
+        50,
+        61,
+        101,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         6.5,
+         -32.4
+        ],
+        "hand_L": [
+         -11.2,
+         -26.3
+        ],
+        "foot_R": [
+         1.8,
+         -2.7
+        ],
+        "foot_L": [
+         -1.8,
+         0.7
+        ],
+        "lantern": [
+         6.5,
+         -22.4
+        ],
+        "blade_tip": [
+         -28.1,
+         -10.6
+        ]
+       },
+       "equipment": {
+        "scabbard": 64,
+        "lantern": 11,
+        "sabre": 66
+       },
+       "sha256": "4fa992362b2cdc7fe2fb5d9f15c4bece04f36a7cbe9bc5cbbe7b341b723ab60f",
+       "sheet": "sheets/idle_NW.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/idle_NW_04.png",
+       "file": "idle_NW_04.png",
+       "packed_bounds": [
+        50,
+        61,
+        101,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         6.5,
+         -32.4
+        ],
+        "hand_L": [
+         -11.2,
+         -26.3
+        ],
+        "foot_R": [
+         1.8,
+         -2.7
+        ],
+        "foot_L": [
+         -1.8,
+         0.7
+        ],
+        "lantern": [
+         6.5,
+         -22.4
+        ],
+        "blade_tip": [
+         -28.1,
+         -10.6
+        ]
+       },
+       "equipment": {
+        "scabbard": 64,
+        "lantern": 11,
+        "sabre": 66
+       },
+       "sha256": "4fa992362b2cdc7fe2fb5d9f15c4bece04f36a7cbe9bc5cbbe7b341b723ab60f",
+       "sheet": "sheets/idle_NW.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/idle_NW_05.png",
+       "file": "idle_NW_05.png",
+       "packed_bounds": [
+        50,
+        61,
+        101,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         6.5,
+         -32.4
+        ],
+        "hand_L": [
+         -11.2,
+         -26.3
+        ],
+        "foot_R": [
+         1.8,
+         -2.7
+        ],
+        "foot_L": [
+         -1.8,
+         0.7
+        ],
+        "lantern": [
+         6.5,
+         -22.4
+        ],
+        "blade_tip": [
+         -28.1,
+         -10.6
+        ]
+       },
+       "equipment": {
+        "scabbard": 69,
+        "lantern": 1,
+        "sabre": 66
+       },
+       "sha256": "1fdbb0e0a8386ae0439d467604d1e03fe89bb4b18c6fbdb6af981bd6e12342f7",
+       "sheet": "sheets/idle_NW.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/idle_NW_06.png",
+       "file": "idle_NW_06.png",
+       "packed_bounds": [
+        50,
+        61,
+        101,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         6.5,
+         -32.4
+        ],
+        "hand_L": [
+         -11.2,
+         -26.3
+        ],
+        "foot_R": [
+         1.8,
+         -2.7
+        ],
+        "foot_L": [
+         -1.8,
+         0.7
+        ],
+        "lantern": [
+         6.5,
+         -22.4
+        ],
+        "blade_tip": [
+         -28.1,
+         -10.6
+        ]
+       },
+       "equipment": {
+        "scabbard": 69,
+        "lantern": 1,
+        "sabre": 66
+       },
+       "sha256": "1fdbb0e0a8386ae0439d467604d1e03fe89bb4b18c6fbdb6af981bd6e12342f7",
+       "sheet": "sheets/idle_NW.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/idle_NW_07.png",
+       "file": "idle_NW_07.png",
+       "packed_bounds": [
+        50,
+        61,
+        101,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         6.5,
+         -32.4
+        ],
+        "hand_L": [
+         -11.2,
+         -26.3
+        ],
+        "foot_R": [
+         1.8,
+         -2.7
+        ],
+        "foot_L": [
+         -1.8,
+         0.7
+        ],
+        "lantern": [
+         6.5,
+         -22.4
+        ],
+        "blade_tip": [
+         -28.1,
+         -10.6
+        ]
+       },
+       "equipment": {
+        "scabbard": 69,
+        "lantern": 1,
+        "sabre": 66
+       },
+       "sha256": "1fdbb0e0a8386ae0439d467604d1e03fe89bb4b18c6fbdb6af981bd6e12342f7",
+       "sheet": "sheets/idle_NW.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/idle_NW_08.png",
+       "file": "idle_NW_08.png",
+       "packed_bounds": [
+        50,
+        62,
+        101,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         6.5,
+         -31.5
+        ],
+        "hand_L": [
+         -11.3,
+         -25.3
+        ],
+        "foot_R": [
+         1.8,
+         -2.7
+        ],
+        "foot_L": [
+         -1.8,
+         0.7
+        ],
+        "lantern": [
+         6.5,
+         -21.5
+        ],
+        "blade_tip": [
+         -28.3,
+         -9.6
+        ]
+       },
+       "equipment": {
+        "scabbard": 64,
+        "lantern": 10,
+        "sabre": 68
+       },
+       "sha256": "e7102ebe3bd67a940d40b9528471e51d958a10305a516236b34fce6bcfd43fdb",
+       "sheet": "sheets/idle_NW.png",
+       "region": [
+        1280,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/idle_NW_09.png",
+       "file": "idle_NW_09.png",
+       "packed_bounds": [
+        50,
+        62,
+        101,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         6.5,
+         -31.5
+        ],
+        "hand_L": [
+         -11.3,
+         -25.3
+        ],
+        "foot_R": [
+         1.8,
+         -2.7
+        ],
+        "foot_L": [
+         -1.8,
+         0.7
+        ],
+        "lantern": [
+         6.5,
+         -21.5
+        ],
+        "blade_tip": [
+         -28.3,
+         -9.6
+        ]
+       },
+       "equipment": {
+        "scabbard": 64,
+        "lantern": 16,
+        "sabre": 68
+       },
+       "sha256": "67a008d95355ee033397dc6e87450fdc2de53996be7daa9f6d68abd5382381a9",
+       "sheet": "sheets/idle_NW.png",
+       "region": [
+        1440,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/idle_NW_10.png",
+       "file": "idle_NW_10.png",
+       "packed_bounds": [
+        50,
+        62,
+        101,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         6.5,
+         -31.5
+        ],
+        "hand_L": [
+         -11.3,
+         -25.3
+        ],
+        "foot_R": [
+         1.8,
+         -2.7
+        ],
+        "foot_L": [
+         -1.8,
+         0.7
+        ],
+        "lantern": [
+         6.5,
+         -21.5
+        ],
+        "blade_tip": [
+         -28.3,
+         -9.6
+        ]
+       },
+       "equipment": {
+        "scabbard": 64,
+        "lantern": 16,
+        "sabre": 68
+       },
+       "sha256": "836bc19c4e629f9e4bffce088654715f5fe560174b4e1ab655691adbe3d7b524",
+       "sheet": "sheets/idle_NW.png",
+       "region": [
+        1600,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/idle_NW_11.png",
+       "file": "idle_NW_11.png",
+       "packed_bounds": [
+        50,
+        62,
+        101,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         6.5,
+         -31.5
+        ],
+        "hand_L": [
+         -11.3,
+         -25.3
+        ],
+        "foot_R": [
+         1.8,
+         -2.7
+        ],
+        "foot_L": [
+         -1.8,
+         0.7
+        ],
+        "lantern": [
+         6.5,
+         -21.5
+        ],
+        "blade_tip": [
+         -28.3,
+         -9.6
+        ]
+       },
+       "equipment": {
+        "scabbard": 64,
+        "lantern": 16,
+        "sabre": 68
+       },
+       "sha256": "836bc19c4e629f9e4bffce088654715f5fe560174b4e1ab655691adbe3d7b524",
+       "sheet": "sheets/idle_NW.png",
+       "region": [
+        1760,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    }
    }
   },
   "walk": {
@@ -4798,6 +7168,2376 @@
        },
        "sha256": "d78c12a1d556d73a1a88cf96e38edb684f35e5bfbb0c3f38e408d17ad6713171",
        "sheet": "sheets/walk_W.png",
+       "region": [
+        1760,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    }
+   },
+   "turns": {
+    "SE": {
+     "frames": [
+      {
+       "path": "res://assets/animated/velvet/walk_SE_00.png",
+       "file": "walk_SE_00.png",
+       "packed_bounds": [
+        58,
+        64,
+        115,
+        140
+       ],
+       "anchors": {
+        "hand_R": [
+         -10.0,
+         -22.5
+        ],
+        "hand_L": [
+         15.7,
+         -28.9
+        ],
+        "foot_L": [
+         -2.8,
+         -4.6
+        ],
+        "foot_R": [
+         2.8,
+         2.6
+        ],
+        "lantern": [
+         -10.0,
+         -12.5
+        ],
+        "blade_tip": [
+         33.2,
+         -8.1
+        ]
+       },
+       "equipment": {
+        "scabbard": 39,
+        "sabre": 77,
+        "lantern": 101
+       },
+       "sha256": "7ac231d9183af2c43c7bd00aa44170bae5107da9fb97cf1e3378ef1d0d5a44b2",
+       "sheet": "sheets/walk_SE.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/walk_SE_01.png",
+       "file": "walk_SE_01.png",
+       "packed_bounds": [
+        58,
+        64,
+        114,
+        139
+       ],
+       "anchors": {
+        "hand_R": [
+         -9.4,
+         -22.4
+        ],
+        "hand_L": [
+         14.9,
+         -28.7
+        ],
+        "foot_L": [
+         -0.6,
+         -5.6
+        ],
+        "foot_R": [
+         0.6,
+         1.8
+        ],
+        "lantern": [
+         -9.4,
+         -12.4
+        ],
+        "blade_tip": [
+         32.3,
+         -7.7
+        ]
+       },
+       "equipment": {
+        "scabbard": 41,
+        "sabre": 77,
+        "lantern": 92
+       },
+       "sha256": "3f049d9a8fae24e9816b54b52e469e305e9b7e0574b2d47f5001b34ee0cfe0f4",
+       "sheet": "sheets/walk_SE.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/walk_SE_02.png",
+       "file": "walk_SE_02.png",
+       "packed_bounds": [
+        58,
+        63,
+        113,
+        139
+       ],
+       "anchors": {
+        "hand_R": [
+         -8.9,
+         -23.2
+        ],
+        "hand_L": [
+         14.1,
+         -29.7
+        ],
+        "foot_L": [
+         1.6,
+         -6.1
+        ],
+        "foot_R": [
+         -1.6,
+         1.0
+        ],
+        "lantern": [
+         -8.9,
+         -13.2
+        ],
+        "blade_tip": [
+         31.4,
+         -8.4
+        ]
+       },
+       "equipment": {
+        "scabbard": 43,
+        "sabre": 77,
+        "lantern": 90
+       },
+       "sha256": "0d50d208bd244f8923b65c6eb6b3124da667d1cb3998ff7b141cf2f0c234f4cd",
+       "sheet": "sheets/walk_SE.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/walk_SE_03.png",
+       "file": "walk_SE_03.png",
+       "packed_bounds": [
+        58,
+        62,
+        112,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         -8.3,
+         -24.1
+        ],
+        "hand_L": [
+         13.3,
+         -30.7
+        ],
+        "foot_L": [
+         3.9,
+         -5.7
+        ],
+        "foot_R": [
+         -3.9,
+         0.2
+        ],
+        "lantern": [
+         -8.3,
+         -14.1
+        ],
+        "blade_tip": [
+         30.4,
+         -9.2
+        ]
+       },
+       "equipment": {
+        "scabbard": 45,
+        "sabre": 71,
+        "lantern": 90
+       },
+       "sha256": "21ca96bbea19ac2bae4cac3c98828a7efad84ed7bc8c905875d6c7368511e01b",
+       "sheet": "sheets/walk_SE.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/walk_SE_04.png",
+       "file": "walk_SE_04.png",
+       "packed_bounds": [
+        58,
+        62,
+        111,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -7.8,
+         -24.1
+        ],
+        "hand_L": [
+         12.5,
+         -30.8
+        ],
+        "foot_L": [
+         6.1,
+         -4.5
+        ],
+        "foot_R": [
+         -6.1,
+         -0.5
+        ],
+        "lantern": [
+         -7.8,
+         -14.1
+        ],
+        "blade_tip": [
+         29.4,
+         -9.1
+        ]
+       },
+       "equipment": {
+        "scabbard": 46,
+        "sabre": 68,
+        "lantern": 89
+       },
+       "sha256": "6136150f611a32330a46014ac02a318fb7ba164d9844788176fb24202f5fe450",
+       "sheet": "sheets/walk_SE.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/walk_SE_05.png",
+       "file": "walk_SE_05.png",
+       "packed_bounds": [
+        58,
+        63,
+        110,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -7.3,
+         -23.0
+        ],
+        "hand_L": [
+         11.7,
+         -30.0
+        ],
+        "foot_L": [
+         8.4,
+         -2.4
+        ],
+        "foot_R": [
+         -8.4,
+         -1.3
+        ],
+        "lantern": [
+         -7.3,
+         -13.0
+        ],
+        "blade_tip": [
+         28.3,
+         -8.0
+        ]
+       },
+       "equipment": {
+        "scabbard": 47,
+        "sabre": 63,
+        "lantern": 91
+       },
+       "sha256": "bc21c5a7f3696d717acd386939a498f4f767ee83f8e9e9a49254270a96ef2821",
+       "sheet": "sheets/walk_SE.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/walk_SE_06.png",
+       "file": "walk_SE_06.png",
+       "packed_bounds": [
+        58,
+        64,
+        109,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         -6.8,
+         -22.1
+        ],
+        "hand_L": [
+         10.8,
+         -29.3
+        ],
+        "foot_L": [
+         10.6,
+         0.1
+        ],
+        "foot_R": [
+         -10.6,
+         -2.1
+        ],
+        "lantern": [
+         -6.8,
+         -12.1
+        ],
+        "blade_tip": [
+         27.2,
+         -7.1
+        ]
+       },
+       "equipment": {
+        "scabbard": 43,
+        "sabre": 60,
+        "lantern": 90
+       },
+       "sha256": "4b6ca2d1ec5fd6db164685ce91ca58ac2f5d3590daefdb91be4989e2911f5c97",
+       "sheet": "sheets/walk_SE.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/walk_SE_07.png",
+       "file": "walk_SE_07.png",
+       "packed_bounds": [
+        58,
+        64,
+        110,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -7.3,
+         -22.0
+        ],
+        "hand_L": [
+         11.7,
+         -29.0
+        ],
+        "foot_L": [
+         8.4,
+         -0.7
+        ],
+        "foot_R": [
+         -8.4,
+         -3.1
+        ],
+        "lantern": [
+         -7.3,
+         -12.0
+        ],
+        "blade_tip": [
+         28.3,
+         -7.0
+        ]
+       },
+       "equipment": {
+        "scabbard": 47,
+        "sabre": 63,
+        "lantern": 91
+       },
+       "sha256": "c3a521c5591297b0f7424def427b0706a0dd96fc82b3aa9c596f5f41ac8806fd",
+       "sheet": "sheets/walk_SE.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/walk_SE_08.png",
+       "file": "walk_SE_08.png",
+       "packed_bounds": [
+        58,
+        63,
+        111,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -7.8,
+         -23.1
+        ],
+        "hand_L": [
+         12.5,
+         -29.8
+        ],
+        "foot_L": [
+         6.1,
+         -1.5
+        ],
+        "foot_R": [
+         -6.1,
+         -3.6
+        ],
+        "lantern": [
+         -7.8,
+         -13.1
+        ],
+        "blade_tip": [
+         29.4,
+         -8.1
+        ]
+       },
+       "equipment": {
+        "scabbard": 46,
+        "sabre": 68,
+        "lantern": 89
+       },
+       "sha256": "9f801c7e370208338fa64e709abf33e4227697336fc22c13861de7b6356488b2",
+       "sheet": "sheets/walk_SE.png",
+       "region": [
+        1280,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/walk_SE_09.png",
+       "file": "walk_SE_09.png",
+       "packed_bounds": [
+        58,
+        62,
+        112,
+        135
+       ],
+       "anchors": {
+        "hand_R": [
+         -8.3,
+         -24.1
+        ],
+        "hand_L": [
+         13.3,
+         -30.7
+        ],
+        "foot_L": [
+         3.9,
+         -2.2
+        ],
+        "foot_R": [
+         -3.9,
+         -3.3
+        ],
+        "lantern": [
+         -8.3,
+         -14.1
+        ],
+        "blade_tip": [
+         30.4,
+         -9.2
+        ]
+       },
+       "equipment": {
+        "scabbard": 45,
+        "sabre": 71,
+        "lantern": 90
+       },
+       "sha256": "bb8d135609caaa6de9e9f983e29aed24dfcd4748f6e00aa14502c047f031b035",
+       "sheet": "sheets/walk_SE.png",
+       "region": [
+        1440,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/walk_SE_10.png",
+       "file": "walk_SE_10.png",
+       "packed_bounds": [
+        58,
+        62,
+        113,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -8.9,
+         -24.2
+        ],
+        "hand_L": [
+         14.1,
+         -30.7
+        ],
+        "foot_L": [
+         1.6,
+         -3.0
+        ],
+        "foot_R": [
+         -1.6,
+         -2.0
+        ],
+        "lantern": [
+         -8.9,
+         -14.2
+        ],
+        "blade_tip": [
+         31.4,
+         -9.4
+        ]
+       },
+       "equipment": {
+        "scabbard": 43,
+        "sabre": 77,
+        "lantern": 90
+       },
+       "sha256": "dd732ef457e29a84ef9b7bdbf3dcaf9f08dd3fceec601306e6ceabe8bc8d27df",
+       "sheet": "sheets/walk_SE.png",
+       "region": [
+        1600,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/walk_SE_11.png",
+       "file": "walk_SE_11.png",
+       "packed_bounds": [
+        58,
+        63,
+        114,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         -9.4,
+         -23.4
+        ],
+        "hand_L": [
+         14.9,
+         -29.7
+        ],
+        "foot_L": [
+         -0.6,
+         -3.8
+        ],
+        "foot_R": [
+         0.6,
+         0.1
+        ],
+        "lantern": [
+         -9.4,
+         -13.4
+        ],
+        "blade_tip": [
+         32.3,
+         -8.7
+        ]
+       },
+       "equipment": {
+        "scabbard": 41,
+        "sabre": 77,
+        "lantern": 92
+       },
+       "sha256": "5875b12c80d3fda6308abd07fe0f1e7c0176323dfc980d740189feeb052ae766",
+       "sheet": "sheets/walk_SE.png",
+       "region": [
+        1760,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "NE": {
+     "frames": [
+      {
+       "path": "res://assets/animated/velvet/walk_NE_00.png",
+       "file": "walk_NE_00.png",
+       "packed_bounds": [
+        65,
+        63,
+        97,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         9.4,
+         -23.0
+        ],
+        "hand_L": [
+         -3.0,
+         -32.7
+        ],
+        "foot_L": [
+         -9.9,
+         0.1
+        ],
+        "foot_R": [
+         9.9,
+         -2.1
+        ],
+        "lantern": [
+         9.4,
+         -13.0
+        ],
+        "blade_tip": [
+         8.0,
+         -21.0
+        ]
+       },
+       "equipment": {
+        "sabre": 3,
+        "scabbard": 80,
+        "lantern": 90
+       },
+       "sha256": "f2cccfefc89c99b72e081cb89dfa886ce5b70c94d07ee989720bdf3d38887085",
+       "sheet": "sheets/walk_NE.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/walk_NE_01.png",
+       "file": "walk_NE_01.png",
+       "packed_bounds": [
+        66,
+        63,
+        96,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         10.0,
+         -23.2
+        ],
+        "hand_L": [
+         -3.8,
+         -32.0
+        ],
+        "foot_L": [
+         -7.7,
+         -2.4
+        ],
+        "foot_R": [
+         7.7,
+         -1.3
+        ],
+        "lantern": [
+         10.0,
+         -13.2
+        ],
+        "blade_tip": [
+         6.8,
+         -19.8
+        ]
+       },
+       "equipment": {
+        "sabre": 3,
+        "scabbard": 84,
+        "lantern": 98
+       },
+       "sha256": "1eae0e5f810a64be4b600b202efcf872b07ed77ccfec67d545ab2059dd9bfe6e",
+       "sheet": "sheets/walk_NE.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/walk_NE_02.png",
+       "file": "walk_NE_02.png",
+       "packed_bounds": [
+        66,
+        62,
+        96,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         10.4,
+         -24.5
+        ],
+        "hand_L": [
+         -4.6,
+         -32.3
+        ],
+        "foot_L": [
+         -5.4,
+         -4.5
+        ],
+        "foot_R": [
+         5.4,
+         -0.5
+        ],
+        "lantern": [
+         10.4,
+         -14.5
+        ],
+        "blade_tip": [
+         5.5,
+         -19.7
+        ]
+       },
+       "equipment": {
+        "sabre": 2,
+        "scabbard": 85,
+        "lantern": 93
+       },
+       "sha256": "f4acf589bf7134bd7d09d91117723a99cfe5b75a87f518313fa0affeaa6918b0",
+       "sheet": "sheets/walk_NE.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/walk_NE_03.png",
+       "file": "walk_NE_03.png",
+       "packed_bounds": [
+        67,
+        61,
+        96,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         10.9,
+         -25.7
+        ],
+        "hand_L": [
+         -5.5,
+         -32.7
+        ],
+        "foot_L": [
+         -3.2,
+         -5.7
+        ],
+        "foot_R": [
+         3.2,
+         0.2
+        ],
+        "lantern": [
+         10.9,
+         -15.7
+        ],
+        "blade_tip": [
+         4.2,
+         -19.7
+        ]
+       },
+       "equipment": {
+        "sabre": 3,
+        "scabbard": 87,
+        "lantern": 101
+       },
+       "sha256": "9f423c0a49e71f62c3afc4617ac6d45a44bfe66054ba7ecdad990fa59b83a523",
+       "sheet": "sheets/walk_NE.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/walk_NE_04.png",
+       "file": "walk_NE_04.png",
+       "packed_bounds": [
+        67,
+        61,
+        97,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         11.4,
+         -26.0
+        ],
+        "hand_L": [
+         -6.3,
+         -32.3
+        ],
+        "foot_L": [
+         -0.9,
+         -6.1
+        ],
+        "foot_R": [
+         0.9,
+         1.0
+        ],
+        "lantern": [
+         11.4,
+         -16.0
+        ],
+        "blade_tip": [
+         2.9,
+         -18.8
+        ]
+       },
+       "equipment": {
+        "sabre": 7,
+        "scabbard": 88,
+        "lantern": 91
+       },
+       "sha256": "4f1db5792092a421b52df84bdff54678030b58b1ca410f8a7bb0cc46c9e839c0",
+       "sheet": "sheets/walk_NE.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/walk_NE_05.png",
+       "file": "walk_NE_05.png",
+       "packed_bounds": [
+        66,
+        62,
+        96,
+        139
+       ],
+       "anchors": {
+        "hand_R": [
+         12.0,
+         -25.3
+        ],
+        "hand_L": [
+         -7.3,
+         -30.9
+        ],
+        "foot_L": [
+         1.3,
+         -5.6
+        ],
+        "foot_R": [
+         -1.3,
+         1.8
+        ],
+        "lantern": [
+         12.0,
+         -15.3
+        ],
+        "blade_tip": [
+         1.5,
+         -16.9
+        ]
+       },
+       "equipment": {
+        "sabre": 14,
+        "scabbard": 89,
+        "lantern": 99
+       },
+       "sha256": "f58f73d797f35de9a36d416cc68be7e5f38d63aa478ff60f597cbf28ad053c06",
+       "sheet": "sheets/walk_NE.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/walk_NE_06.png",
+       "file": "walk_NE_06.png",
+       "packed_bounds": [
+        66,
+        63,
+        97,
+        140
+       ],
+       "anchors": {
+        "hand_R": [
+         12.5,
+         -24.7
+        ],
+        "hand_L": [
+         -8.2,
+         -29.6
+        ],
+        "foot_L": [
+         3.5,
+         -4.6
+        ],
+        "foot_R": [
+         -3.5,
+         2.6
+        ],
+        "lantern": [
+         12.5,
+         -14.7
+        ],
+        "blade_tip": [
+         0.0,
+         -15.1
+        ]
+       },
+       "equipment": {
+        "sabre": 18,
+        "scabbard": 89,
+        "lantern": 98
+       },
+       "sha256": "7bd5573dc852beabfcebffcf34c22b1d52994e17b52231ecf4253ce4e10e1c90",
+       "sheet": "sheets/walk_NE.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/walk_NE_07.png",
+       "file": "walk_NE_07.png",
+       "packed_bounds": [
+        66,
+        63,
+        96,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         12.0,
+         -24.3
+        ],
+        "hand_L": [
+         -7.3,
+         -29.9
+        ],
+        "foot_L": [
+         1.3,
+         -3.8
+        ],
+        "foot_R": [
+         -1.3,
+         0.1
+        ],
+        "lantern": [
+         12.0,
+         -14.3
+        ],
+        "blade_tip": [
+         1.5,
+         -15.9
+        ]
+       },
+       "equipment": {
+        "sabre": 14,
+        "scabbard": 89,
+        "lantern": 99
+       },
+       "sha256": "5914923d26d3acaa9204af0dd0444c376aa5c73114d19a0db93786868470f9fb",
+       "sheet": "sheets/walk_NE.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/walk_NE_08.png",
+       "file": "walk_NE_08.png",
+       "packed_bounds": [
+        66,
+        62,
+        97,
+        135
+       ],
+       "anchors": {
+        "hand_R": [
+         11.4,
+         -25.0
+        ],
+        "hand_L": [
+         -6.3,
+         -31.3
+        ],
+        "foot_L": [
+         -0.9,
+         -3.0
+        ],
+        "foot_R": [
+         0.9,
+         -2.0
+        ],
+        "lantern": [
+         11.4,
+         -15.0
+        ],
+        "blade_tip": [
+         2.9,
+         -17.8
+        ]
+       },
+       "equipment": {
+        "sabre": 7,
+        "scabbard": 88,
+        "lantern": 91
+       },
+       "sha256": "db0dfa95520329c257e2b2b72da2588004cd2176330cb166798b1943748d844c",
+       "sheet": "sheets/walk_NE.png",
+       "region": [
+        1280,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/walk_NE_09.png",
+       "file": "walk_NE_09.png",
+       "packed_bounds": [
+        67,
+        61,
+        96,
+        135
+       ],
+       "anchors": {
+        "hand_R": [
+         10.9,
+         -25.7
+        ],
+        "hand_L": [
+         -5.5,
+         -32.7
+        ],
+        "foot_L": [
+         -3.2,
+         -2.2
+        ],
+        "foot_R": [
+         3.2,
+         -3.3
+        ],
+        "lantern": [
+         10.9,
+         -15.7
+        ],
+        "blade_tip": [
+         4.2,
+         -19.7
+        ]
+       },
+       "equipment": {
+        "sabre": 3,
+        "scabbard": 87,
+        "lantern": 101
+       },
+       "sha256": "d1985f3da80751877bf4c1812ddec202a6e6d93a9af65ee48c590fa429e0352c",
+       "sheet": "sheets/walk_NE.png",
+       "region": [
+        1440,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/walk_NE_10.png",
+       "file": "walk_NE_10.png",
+       "packed_bounds": [
+        67,
+        61,
+        96,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         10.4,
+         -25.5
+        ],
+        "hand_L": [
+         -4.6,
+         -33.3
+        ],
+        "foot_L": [
+         -5.4,
+         -1.5
+        ],
+        "foot_R": [
+         5.4,
+         -3.6
+        ],
+        "lantern": [
+         10.4,
+         -15.5
+        ],
+        "blade_tip": [
+         5.5,
+         -20.7
+        ]
+       },
+       "equipment": {
+        "sabre": 2,
+        "scabbard": 85,
+        "lantern": 93
+       },
+       "sha256": "56867e9cfe5b89c6d954a7696645475f9d8f36f2ad2f0ccc9a83724fcdc6c1d1",
+       "sheet": "sheets/walk_NE.png",
+       "region": [
+        1600,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/walk_NE_11.png",
+       "file": "walk_NE_11.png",
+       "packed_bounds": [
+        66,
+        62,
+        96,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         10.0,
+         -24.2
+        ],
+        "hand_L": [
+         -3.8,
+         -33.0
+        ],
+        "foot_L": [
+         -7.7,
+         -0.7
+        ],
+        "foot_R": [
+         7.7,
+         -3.1
+        ],
+        "lantern": [
+         10.0,
+         -14.2
+        ],
+        "blade_tip": [
+         6.8,
+         -20.8
+        ]
+       },
+       "equipment": {
+        "sabre": 3,
+        "scabbard": 84,
+        "lantern": 98
+       },
+       "sha256": "564900fc54bc4df89abd206dcd98fe37eb7902a0ac52132baa2afabd129e8552",
+       "sheet": "sheets/walk_NE.png",
+       "region": [
+        1760,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "SW": {
+     "frames": [
+      {
+       "path": "res://assets/animated/velvet/walk_SW_00.png",
+       "file": "walk_SW_00.png",
+       "packed_bounds": [
+        62,
+        64,
+        96,
+        139
+       ],
+       "anchors": {
+        "hand_R": [
+         -11.4,
+         -29.3
+        ],
+        "hand_L": [
+         4.9,
+         -22.4
+        ],
+        "foot_R": [
+         -10.6,
+         0.1
+        ],
+        "foot_L": [
+         10.6,
+         -2.1
+        ],
+        "lantern": [
+         -11.4,
+         -19.3
+        ],
+        "blade_tip": [
+         -3.5,
+         1.2
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 67,
+        "sabre": 75
+       },
+       "sha256": "c06ee0a9a779e5edf79fb17185b4dc8cbfa1185e0090adc3534ae2864ee5fa4f",
+       "sheet": "sheets/walk_SW.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/walk_SW_01.png",
+       "file": "walk_SW_01.png",
+       "packed_bounds": [
+        61,
+        64,
+        94,
+        139
+       ],
+       "anchors": {
+        "hand_R": [
+         -11.9,
+         -29.1
+        ],
+        "hand_L": [
+         5.7,
+         -22.2
+        ],
+        "foot_R": [
+         -8.4,
+         -0.7
+        ],
+        "foot_L": [
+         8.4,
+         -3.1
+        ],
+        "lantern": [
+         -11.9,
+         -19.1
+        ],
+        "blade_tip": [
+         -2.4,
+         1.6
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 69,
+        "sabre": 75
+       },
+       "sha256": "3656e61f092b21ff8534a30373ca4d8f9f1439659f3768117acdb8dd6de3a91b",
+       "sheet": "sheets/walk_SW.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/walk_SW_02.png",
+       "file": "walk_SW_02.png",
+       "packed_bounds": [
+        62,
+        63,
+        94,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         -12.4,
+         -30.0
+        ],
+        "hand_L": [
+         6.5,
+         -23.1
+        ],
+        "foot_R": [
+         -6.1,
+         -1.5
+        ],
+        "foot_L": [
+         6.1,
+         -3.6
+        ],
+        "lantern": [
+         -12.4,
+         -20.0
+        ],
+        "blade_tip": [
+         -1.1,
+         1.0
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 78,
+        "sabre": 71
+       },
+       "sha256": "1a0011dd273762367c58c708b43e4b9c6858024ff96270fd0760c00b628a2800",
+       "sheet": "sheets/walk_SW.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/walk_SW_03.png",
+       "file": "walk_SW_03.png",
+       "packed_bounds": [
+        61,
+        62,
+        94,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         -12.8,
+         -30.9
+        ],
+        "hand_L": [
+         7.4,
+         -24.1
+        ],
+        "foot_R": [
+         -3.9,
+         -2.2
+        ],
+        "foot_L": [
+         3.9,
+         -3.3
+        ],
+        "lantern": [
+         -12.8,
+         -20.9
+        ],
+        "blade_tip": [
+         0.1,
+         0.3
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 89,
+        "sabre": 76
+       },
+       "sha256": "3984af7064480bcf1e390da3753af01b8c251f027878e7d71247927bcda5a2cf",
+       "sheet": "sheets/walk_SW.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/walk_SW_04.png",
+       "file": "walk_SW_04.png",
+       "packed_bounds": [
+        61,
+        62,
+        94,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.4,
+         -30.8
+        ],
+        "hand_L": [
+         8.2,
+         -24.2
+        ],
+        "foot_R": [
+         -1.6,
+         -3.0
+        ],
+        "foot_L": [
+         1.6,
+         -2.0
+        ],
+        "lantern": [
+         -13.4,
+         -20.8
+        ],
+        "blade_tip": [
+         1.4,
+         0.5
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 93,
+        "sabre": 77
+       },
+       "sha256": "733fbab3b6997693be2581f1437289f4df41bb8933cb4a452d4e043836b61e48",
+       "sheet": "sheets/walk_SW.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/walk_SW_05.png",
+       "file": "walk_SW_05.png",
+       "packed_bounds": [
+        61,
+        63,
+        95,
+        139
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.9,
+         -29.8
+        ],
+        "hand_L": [
+         9.1,
+         -23.4
+        ],
+        "foot_R": [
+         0.6,
+         -3.8
+        ],
+        "foot_L": [
+         -0.6,
+         0.1
+        ],
+        "lantern": [
+         -13.9,
+         -19.8
+        ],
+        "blade_tip": [
+         2.8,
+         1.6
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 89,
+        "sabre": 75
+       },
+       "sha256": "b2fde2644b0bef648bdae91ff7d935203ce4744a9919ab97bcb8b0f2a467992b",
+       "sheet": "sheets/walk_SW.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/walk_SW_06.png",
+       "file": "walk_SW_06.png",
+       "packed_bounds": [
+        61,
+        64,
+        96,
+        140
+       ],
+       "anchors": {
+        "hand_R": [
+         -14.4,
+         -28.8
+        ],
+        "hand_L": [
+         10.1,
+         -22.7
+        ],
+        "foot_R": [
+         2.8,
+         -4.6
+        ],
+        "foot_L": [
+         -2.8,
+         2.6
+        ],
+        "lantern": [
+         -14.4,
+         -18.8
+        ],
+        "blade_tip": [
+         4.2,
+         2.6
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 93,
+        "sabre": 73
+       },
+       "sha256": "5481b7acbdf93b3289be010e0f7e9feb96b15f5cd1b7e43f154bbdd2e42c0edb",
+       "sheet": "sheets/walk_SW.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/walk_SW_07.png",
+       "file": "walk_SW_07.png",
+       "packed_bounds": [
+        61,
+        64,
+        95,
+        140
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.9,
+         -28.8
+        ],
+        "hand_L": [
+         9.1,
+         -22.4
+        ],
+        "foot_R": [
+         0.6,
+         -5.6
+        ],
+        "foot_L": [
+         -0.6,
+         1.8
+        ],
+        "lantern": [
+         -13.9,
+         -18.8
+        ],
+        "blade_tip": [
+         2.8,
+         2.6
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 89,
+        "sabre": 75
+       },
+       "sha256": "3920c89095c445560d35499f23c4e8b11b5c3757f2d48bc544e0b33f687439ed",
+       "sheet": "sheets/walk_SW.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/walk_SW_08.png",
+       "file": "walk_SW_08.png",
+       "packed_bounds": [
+        61,
+        63,
+        94,
+        139
+       ],
+       "anchors": {
+        "hand_R": [
+         -13.4,
+         -29.8
+        ],
+        "hand_L": [
+         8.2,
+         -23.2
+        ],
+        "foot_R": [
+         -1.6,
+         -6.1
+        ],
+        "foot_L": [
+         1.6,
+         1.0
+        ],
+        "lantern": [
+         -13.4,
+         -19.8
+        ],
+        "blade_tip": [
+         1.4,
+         1.5
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 88,
+        "sabre": 77
+       },
+       "sha256": "59b22a1805bf87d2896e4a94c9faaa0f95d71d913f084b644e9610afb86b4f7a",
+       "sheet": "sheets/walk_SW.png",
+       "region": [
+        1280,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/walk_SW_09.png",
+       "file": "walk_SW_09.png",
+       "packed_bounds": [
+        61,
+        62,
+        94,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         -12.8,
+         -30.9
+        ],
+        "hand_L": [
+         7.4,
+         -24.1
+        ],
+        "foot_R": [
+         -3.9,
+         -5.7
+        ],
+        "foot_L": [
+         3.9,
+         0.2
+        ],
+        "lantern": [
+         -12.8,
+         -20.9
+        ],
+        "blade_tip": [
+         0.1,
+         0.3
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 70,
+        "sabre": 76
+       },
+       "sha256": "0e62b0277ff404ced20dd4cbc28ef846bf39e6945c5a2162277f8990726666ea",
+       "sheet": "sheets/walk_SW.png",
+       "region": [
+        1440,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/walk_SW_10.png",
+       "file": "walk_SW_10.png",
+       "packed_bounds": [
+        62,
+        62,
+        94,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -12.4,
+         -31.0
+        ],
+        "hand_L": [
+         6.5,
+         -24.1
+        ],
+        "foot_R": [
+         -6.1,
+         -4.5
+        ],
+        "foot_L": [
+         6.1,
+         -0.5
+        ],
+        "lantern": [
+         -12.4,
+         -21.0
+        ],
+        "blade_tip": [
+         -1.1,
+         0.0
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 64,
+        "sabre": 71
+       },
+       "sha256": "771443efc42b9776fb9c2ee461fc45998aa1e835f3a1c3cea4bd5543784c1a78",
+       "sheet": "sheets/walk_SW.png",
+       "region": [
+        1600,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/walk_SW_11.png",
+       "file": "walk_SW_11.png",
+       "packed_bounds": [
+        61,
+        63,
+        94,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         -11.9,
+         -30.1
+        ],
+        "hand_L": [
+         5.7,
+         -23.2
+        ],
+        "foot_R": [
+         -8.4,
+         -2.4
+        ],
+        "foot_L": [
+         8.4,
+         -1.3
+        ],
+        "lantern": [
+         -11.9,
+         -20.1
+        ],
+        "blade_tip": [
+         -2.4,
+         0.6
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 62,
+        "sabre": 75
+       },
+       "sha256": "1a6d5e2d65256d1f71b6b03139629aef324b3088bc4a44edcd50280b4ec1d7fb",
+       "sheet": "sheets/walk_SW.png",
+       "region": [
+        1760,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "NW": {
+     "frames": [
+      {
+       "path": "res://assets/animated/velvet/walk_NW_00.png",
+       "file": "walk_NW_00.png",
+       "packed_bounds": [
+        47,
+        63,
+        101,
+        140
+       ],
+       "anchors": {
+        "hand_R": [
+         8.0,
+         -29.8
+        ],
+        "hand_L": [
+         -13.8,
+         -26.1
+        ],
+        "foot_R": [
+         -3.5,
+         -4.6
+        ],
+        "foot_L": [
+         3.5,
+         2.6
+        ],
+        "lantern": [
+         8.0,
+         -19.8
+        ],
+        "blade_tip": [
+         -31.4,
+         -11.9
+        ]
+       },
+       "equipment": {
+        "scabbard": 57,
+        "lantern": 19,
+        "sabre": 69
+       },
+       "sha256": "f57644b1578dc2f10633eccd2d84c90a69a9e9de09c5c8a00ab2d07cef7197a3",
+       "sheet": "sheets/walk_NW.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/walk_NW_01.png",
+       "file": "walk_NW_01.png",
+       "packed_bounds": [
+        48,
+        63,
+        101,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         7.5,
+         -30.0
+        ],
+        "hand_L": [
+         -13.1,
+         -25.4
+        ],
+        "foot_R": [
+         -1.3,
+         -3.8
+        ],
+        "foot_L": [
+         1.3,
+         0.1
+        ],
+        "lantern": [
+         7.5,
+         -20.0
+        ],
+        "blade_tip": [
+         -30.5,
+         -10.7
+        ]
+       },
+       "equipment": {
+        "scabbard": 64,
+        "lantern": 9,
+        "sabre": 68
+       },
+       "sha256": "cd37d6d6f76653283f5c80377adc21ab457873133a004fa35abe582434b006d8",
+       "sheet": "sheets/walk_NW.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/walk_NW_02.png",
+       "file": "walk_NW_02.png",
+       "packed_bounds": [
+        49,
+        62,
+        101,
+        135
+       ],
+       "anchors": {
+        "hand_R": [
+         6.9,
+         -31.2
+        ],
+        "hand_L": [
+         -12.3,
+         -25.8
+        ],
+        "foot_R": [
+         0.9,
+         -3.0
+        ],
+        "foot_L": [
+         -0.9,
+         -2.0
+        ],
+        "lantern": [
+         6.9,
+         -21.2
+        ],
+        "blade_tip": [
+         -29.5,
+         -10.6
+        ]
+       },
+       "equipment": {
+        "scabbard": 60,
+        "lantern": 18,
+        "sabre": 68
+       },
+       "sha256": "6bc53b88522744e42aad5daddeea415cd62f686d74b3ffe7b63a381d47b52a9e",
+       "sheet": "sheets/walk_NW.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/walk_NW_03.png",
+       "file": "walk_NW_03.png",
+       "packed_bounds": [
+        50,
+        61,
+        101,
+        135
+       ],
+       "anchors": {
+        "hand_R": [
+         6.4,
+         -32.5
+        ],
+        "hand_L": [
+         -11.4,
+         -26.2
+        ],
+        "foot_R": [
+         3.2,
+         -2.2
+        ],
+        "foot_L": [
+         -3.2,
+         -3.3
+        ],
+        "lantern": [
+         6.4,
+         -22.5
+        ],
+        "blade_tip": [
+         -28.4,
+         -10.5
+        ]
+       },
+       "equipment": {
+        "scabbard": 68,
+        "lantern": 7,
+        "sabre": 72
+       },
+       "sha256": "a13758c49aaa0de2b7129e5c6ba96589ac666c14e1169864ef6045ace5f63894",
+       "sheet": "sheets/walk_NW.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/walk_NW_04.png",
+       "file": "walk_NW_04.png",
+       "packed_bounds": [
+        51,
+        61,
+        101,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         5.9,
+         -32.8
+        ],
+        "hand_L": [
+         -10.6,
+         -25.7
+        ],
+        "foot_R": [
+         5.4,
+         -1.5
+        ],
+        "foot_L": [
+         -5.4,
+         -3.6
+        ],
+        "lantern": [
+         5.9,
+         -22.8
+        ],
+        "blade_tip": [
+         -27.3,
+         -9.4
+        ]
+       },
+       "equipment": {
+        "scabbard": 67,
+        "lantern": 7,
+        "sabre": 72
+       },
+       "sha256": "42664bc31c5833395dcb690d55404a3c5998c5b1cf191ccc80727156c13c1354",
+       "sheet": "sheets/walk_NW.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/walk_NW_05.png",
+       "file": "walk_NW_05.png",
+       "packed_bounds": [
+        52,
+        62,
+        101,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         5.4,
+         -32.1
+        ],
+        "hand_L": [
+         -9.8,
+         -24.3
+        ],
+        "foot_R": [
+         7.7,
+         -0.7
+        ],
+        "foot_L": [
+         -7.7,
+         -3.1
+        ],
+        "lantern": [
+         5.4,
+         -22.1
+        ],
+        "blade_tip": [
+         -26.2,
+         -7.5
+        ]
+       },
+       "equipment": {
+        "scabbard": 67,
+        "lantern": 8,
+        "sabre": 70
+       },
+       "sha256": "2272e67e1527d253c923d85343ceb7ad75e63df742443ec16dbf6ccb1c7051f7",
+       "sheet": "sheets/walk_NW.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/walk_NW_06.png",
+       "file": "walk_NW_06.png",
+       "packed_bounds": [
+        54,
+        63,
+        101,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         4.9,
+         -31.5
+        ],
+        "hand_L": [
+         -8.9,
+         -22.9
+        ],
+        "foot_R": [
+         9.9,
+         0.1
+        ],
+        "foot_L": [
+         -9.9,
+         -2.1
+        ],
+        "lantern": [
+         4.9,
+         -21.5
+        ],
+        "blade_tip": [
+         -25.0,
+         -5.6
+        ]
+       },
+       "equipment": {
+        "scabbard": 69,
+        "lantern": 1,
+        "sabre": 72
+       },
+       "sha256": "967cd17c0204f8bd800d0d340481138efa103bd8eff0196acfc7a6bce131c25b",
+       "sheet": "sheets/walk_NW.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/walk_NW_07.png",
+       "file": "walk_NW_07.png",
+       "packed_bounds": [
+        52,
+        63,
+        101,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         5.4,
+         -31.1
+        ],
+        "hand_L": [
+         -9.8,
+         -23.3
+        ],
+        "foot_R": [
+         7.7,
+         -2.4
+        ],
+        "foot_L": [
+         -7.7,
+         -1.3
+        ],
+        "lantern": [
+         5.4,
+         -21.1
+        ],
+        "blade_tip": [
+         -26.2,
+         -6.5
+        ]
+       },
+       "equipment": {
+        "scabbard": 67,
+        "lantern": 7,
+        "sabre": 70
+       },
+       "sha256": "59c7039582856d9b6b4219d334367a83f3b0df0532e51c94d28c22fd455b6899",
+       "sheet": "sheets/walk_NW.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/walk_NW_08.png",
+       "file": "walk_NW_08.png",
+       "packed_bounds": [
+        51,
+        62,
+        101,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         5.9,
+         -31.8
+        ],
+        "hand_L": [
+         -10.6,
+         -24.7
+        ],
+        "foot_R": [
+         5.4,
+         -4.5
+        ],
+        "foot_L": [
+         -5.4,
+         -0.5
+        ],
+        "lantern": [
+         5.9,
+         -21.8
+        ],
+        "blade_tip": [
+         -27.3,
+         -8.4
+        ]
+       },
+       "equipment": {
+        "scabbard": 67,
+        "lantern": 7,
+        "sabre": 72
+       },
+       "sha256": "e0602e6e0ce1f1f968a31a4e2fa3627b084941764f014e9d310d1971cef81360",
+       "sheet": "sheets/walk_NW.png",
+       "region": [
+        1280,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/walk_NW_09.png",
+       "file": "walk_NW_09.png",
+       "packed_bounds": [
+        50,
+        61,
+        101,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         6.4,
+         -32.5
+        ],
+        "hand_L": [
+         -11.4,
+         -26.2
+        ],
+        "foot_R": [
+         3.2,
+         -5.7
+        ],
+        "foot_L": [
+         -3.2,
+         0.2
+        ],
+        "lantern": [
+         6.4,
+         -22.5
+        ],
+        "blade_tip": [
+         -28.4,
+         -10.5
+        ]
+       },
+       "equipment": {
+        "scabbard": 68,
+        "lantern": 7,
+        "sabre": 72
+       },
+       "sha256": "96dd857a5de8c649b02416aeaec16cef2339397db0bfb32d19d2d26e0c9db43a",
+       "sheet": "sheets/walk_NW.png",
+       "region": [
+        1440,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/walk_NW_10.png",
+       "file": "walk_NW_10.png",
+       "packed_bounds": [
+        49,
+        61,
+        101,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         6.9,
+         -32.2
+        ],
+        "hand_L": [
+         -12.3,
+         -26.8
+        ],
+        "foot_R": [
+         0.9,
+         -6.1
+        ],
+        "foot_L": [
+         -0.9,
+         1.0
+        ],
+        "lantern": [
+         6.9,
+         -22.2
+        ],
+        "blade_tip": [
+         -29.5,
+         -11.6
+        ]
+       },
+       "equipment": {
+        "scabbard": 60,
+        "lantern": 18,
+        "sabre": 68
+       },
+       "sha256": "294032ff3571cce39ed576c1b188c9977a70911e5b8d301bc06f6828b4c487a2",
+       "sheet": "sheets/walk_NW.png",
+       "region": [
+        1600,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/walk_NW_11.png",
+       "file": "walk_NW_11.png",
+       "packed_bounds": [
+        48,
+        62,
+        101,
+        139
+       ],
+       "anchors": {
+        "hand_R": [
+         7.5,
+         -31.0
+        ],
+        "hand_L": [
+         -13.1,
+         -26.4
+        ],
+        "foot_R": [
+         -1.3,
+         -5.6
+        ],
+        "foot_L": [
+         1.3,
+         1.8
+        ],
+        "lantern": [
+         7.5,
+         -21.0
+        ],
+        "blade_tip": [
+         -30.5,
+         -11.7
+        ]
+       },
+       "equipment": {
+        "scabbard": 64,
+        "lantern": 9,
+        "sabre": 68
+       },
+       "sha256": "3528feef5787fb8f0afd9eb1ef5e395c492157bb7f5af058e6b83bec3dd4bafe",
+       "sheet": "sheets/walk_NW.png",
        "region": [
         1760,
         0,
@@ -26886,6 +31626,2376 @@
       }
      ]
     }
+   },
+   "turns": {
+    "SE": {
+     "frames": [
+      {
+       "path": "res://assets/animated/velvet/powered_idle_SE_00.png",
+       "file": "powered_idle_SE_00.png",
+       "packed_bounds": [
+        58,
+        62,
+        119,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.0,
+         -26.8
+        ],
+        "hand_L": [
+         13.4,
+         -35.0
+        ],
+        "foot_L": [
+         6.7,
+         -1.2
+        ],
+        "foot_R": [
+         -6.0,
+         -0.5
+        ],
+        "lantern": [
+         -3.0,
+         -16.8
+        ],
+        "blade_tip": [
+         37.5,
+         -45.8
+        ]
+       },
+       "equipment": {
+        "scabbard": 50,
+        "sabre": 78,
+        "lantern": 108
+       },
+       "sha256": "5ea30ebb20afcbb6e741bbb68cf451348b14d197175544b52e3e2b05d42b6e8c",
+       "sheet": "sheets/powered_idle_SE.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_idle_SE_01.png",
+       "file": "powered_idle_SE_01.png",
+       "packed_bounds": [
+        58,
+        62,
+        119,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.0,
+         -26.8
+        ],
+        "hand_L": [
+         13.4,
+         -35.0
+        ],
+        "foot_L": [
+         6.7,
+         -1.2
+        ],
+        "foot_R": [
+         -6.0,
+         -0.5
+        ],
+        "lantern": [
+         -3.0,
+         -16.8
+        ],
+        "blade_tip": [
+         37.5,
+         -45.8
+        ]
+       },
+       "equipment": {
+        "scabbard": 49,
+        "sabre": 78,
+        "lantern": 108
+       },
+       "sha256": "dd26ea10dd495ccd9f4af0d63dd7c1181ca981919176a8b974d49d68055db1ad",
+       "sheet": "sheets/powered_idle_SE.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_idle_SE_02.png",
+       "file": "powered_idle_SE_02.png",
+       "packed_bounds": [
+        58,
+        62,
+        119,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.0,
+         -26.8
+        ],
+        "hand_L": [
+         13.4,
+         -35.0
+        ],
+        "foot_L": [
+         6.7,
+         -1.2
+        ],
+        "foot_R": [
+         -6.0,
+         -0.5
+        ],
+        "lantern": [
+         -3.0,
+         -16.8
+        ],
+        "blade_tip": [
+         37.1,
+         -46.6
+        ]
+       },
+       "equipment": {
+        "scabbard": 49,
+        "sabre": 78,
+        "lantern": 108
+       },
+       "sha256": "d494f87dbc9512051d1659332d22d9991f7bc4e8b105f4d917e9856a73413b34",
+       "sheet": "sheets/powered_idle_SE.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_idle_SE_03.png",
+       "file": "powered_idle_SE_03.png",
+       "packed_bounds": [
+        58,
+        61,
+        118,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.0,
+         -27.3
+        ],
+        "hand_L": [
+         13.4,
+         -35.5
+        ],
+        "foot_L": [
+         6.7,
+         -1.2
+        ],
+        "foot_R": [
+         -6.0,
+         -0.5
+        ],
+        "lantern": [
+         -3.0,
+         -17.3
+        ],
+        "blade_tip": [
+         36.7,
+         -47.9
+        ]
+       },
+       "equipment": {
+        "scabbard": 49,
+        "sabre": 77,
+        "lantern": 105
+       },
+       "sha256": "4d6bff612cc13b00b622fd2afb55adb6735320b0278a660d2804c5dc96d77e83",
+       "sheet": "sheets/powered_idle_SE.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_idle_SE_04.png",
+       "file": "powered_idle_SE_04.png",
+       "packed_bounds": [
+        58,
+        61,
+        118,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.0,
+         -27.3
+        ],
+        "hand_L": [
+         13.4,
+         -35.5
+        ],
+        "foot_L": [
+         6.7,
+         -1.2
+        ],
+        "foot_R": [
+         -6.0,
+         -0.5
+        ],
+        "lantern": [
+         -3.0,
+         -17.3
+        ],
+        "blade_tip": [
+         36.7,
+         -47.9
+        ]
+       },
+       "equipment": {
+        "scabbard": 49,
+        "sabre": 77,
+        "lantern": 105
+       },
+       "sha256": "4d6bff612cc13b00b622fd2afb55adb6735320b0278a660d2804c5dc96d77e83",
+       "sheet": "sheets/powered_idle_SE.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_idle_SE_05.png",
+       "file": "powered_idle_SE_05.png",
+       "packed_bounds": [
+        58,
+        61,
+        118,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.0,
+         -27.3
+        ],
+        "hand_L": [
+         13.4,
+         -35.5
+        ],
+        "foot_L": [
+         6.7,
+         -1.2
+        ],
+        "foot_R": [
+         -6.0,
+         -0.5
+        ],
+        "lantern": [
+         -3.0,
+         -17.3
+        ],
+        "blade_tip": [
+         36.7,
+         -47.9
+        ]
+       },
+       "equipment": {
+        "scabbard": 49,
+        "sabre": 77,
+        "lantern": 105
+       },
+       "sha256": "22ffab6a9a4f5d8f8c8c63e862d6792e1b377c22c6a40d2d9fae64a73a0b2f4b",
+       "sheet": "sheets/powered_idle_SE.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_idle_SE_06.png",
+       "file": "powered_idle_SE_06.png",
+       "packed_bounds": [
+        58,
+        61,
+        118,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.0,
+         -27.3
+        ],
+        "hand_L": [
+         13.4,
+         -35.5
+        ],
+        "foot_L": [
+         6.7,
+         -1.2
+        ],
+        "foot_R": [
+         -6.0,
+         -0.5
+        ],
+        "lantern": [
+         -3.0,
+         -17.3
+        ],
+        "blade_tip": [
+         37.1,
+         -47.1
+        ]
+       },
+       "equipment": {
+        "scabbard": 49,
+        "sabre": 74,
+        "lantern": 105
+       },
+       "sha256": "6519ea68c32da2f74057a5aab7b14e8ad547b443197319f04f7ae71ea8d6dff8",
+       "sheet": "sheets/powered_idle_SE.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_idle_SE_07.png",
+       "file": "powered_idle_SE_07.png",
+       "packed_bounds": [
+        58,
+        61,
+        119,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.0,
+         -27.3
+        ],
+        "hand_L": [
+         13.4,
+         -35.5
+        ],
+        "foot_L": [
+         6.7,
+         -1.2
+        ],
+        "foot_R": [
+         -6.0,
+         -0.5
+        ],
+        "lantern": [
+         -3.0,
+         -17.3
+        ],
+        "blade_tip": [
+         37.5,
+         -46.3
+        ]
+       },
+       "equipment": {
+        "scabbard": 49,
+        "sabre": 74,
+        "lantern": 105
+       },
+       "sha256": "9eb4b8b949d75c9b4aa890173c58ccc1c7def077223931aa3a05aced05952bc9",
+       "sheet": "sheets/powered_idle_SE.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_idle_SE_08.png",
+       "file": "powered_idle_SE_08.png",
+       "packed_bounds": [
+        58,
+        62,
+        119,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.0,
+         -26.8
+        ],
+        "hand_L": [
+         13.4,
+         -35.0
+        ],
+        "foot_L": [
+         6.7,
+         -1.2
+        ],
+        "foot_R": [
+         -6.0,
+         -0.5
+        ],
+        "lantern": [
+         -3.0,
+         -16.8
+        ],
+        "blade_tip": [
+         38.0,
+         -44.9
+        ]
+       },
+       "equipment": {
+        "scabbard": 49,
+        "sabre": 76,
+        "lantern": 108
+       },
+       "sha256": "3880f64ced8d27dc68c548c6c2059cab26ea5f96b4052e9facbdb8550e3289b5",
+       "sheet": "sheets/powered_idle_SE.png",
+       "region": [
+        1280,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_idle_SE_09.png",
+       "file": "powered_idle_SE_09.png",
+       "packed_bounds": [
+        58,
+        62,
+        119,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.0,
+         -26.8
+        ],
+        "hand_L": [
+         13.4,
+         -35.0
+        ],
+        "foot_L": [
+         6.7,
+         -1.2
+        ],
+        "foot_R": [
+         -6.0,
+         -0.5
+        ],
+        "lantern": [
+         -3.0,
+         -16.8
+        ],
+        "blade_tip": [
+         38.0,
+         -44.9
+        ]
+       },
+       "equipment": {
+        "scabbard": 49,
+        "sabre": 76,
+        "lantern": 108
+       },
+       "sha256": "94857dce045ab3d921317f1810418ab44b2443a4dca56a2771ef1ee5a0bab0c7",
+       "sheet": "sheets/powered_idle_SE.png",
+       "region": [
+        1440,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_idle_SE_10.png",
+       "file": "powered_idle_SE_10.png",
+       "packed_bounds": [
+        58,
+        62,
+        119,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.0,
+         -26.8
+        ],
+        "hand_L": [
+         13.4,
+         -35.0
+        ],
+        "foot_L": [
+         6.7,
+         -1.2
+        ],
+        "foot_R": [
+         -6.0,
+         -0.5
+        ],
+        "lantern": [
+         -3.0,
+         -16.8
+        ],
+        "blade_tip": [
+         38.0,
+         -44.9
+        ]
+       },
+       "equipment": {
+        "scabbard": 50,
+        "sabre": 76,
+        "lantern": 108
+       },
+       "sha256": "248d92294f843d5174c88dd564eea29c1946719926a0b1d9660fe6b44915b793",
+       "sheet": "sheets/powered_idle_SE.png",
+       "region": [
+        1600,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_idle_SE_11.png",
+       "file": "powered_idle_SE_11.png",
+       "packed_bounds": [
+        58,
+        62,
+        119,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.0,
+         -26.8
+        ],
+        "hand_L": [
+         13.4,
+         -35.0
+        ],
+        "foot_L": [
+         6.7,
+         -1.2
+        ],
+        "foot_R": [
+         -6.0,
+         -0.5
+        ],
+        "lantern": [
+         -3.0,
+         -16.8
+        ],
+        "blade_tip": [
+         37.5,
+         -45.8
+        ]
+       },
+       "equipment": {
+        "scabbard": 50,
+        "sabre": 78,
+        "lantern": 108
+       },
+       "sha256": "5ea30ebb20afcbb6e741bbb68cf451348b14d197175544b52e3e2b05d42b6e8c",
+       "sheet": "sheets/powered_idle_SE.png",
+       "region": [
+        1760,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "NE": {
+     "frames": [
+      {
+       "path": "res://assets/animated/velvet/powered_idle_NE_00.png",
+       "file": "powered_idle_NE_00.png",
+       "packed_bounds": [
+        67,
+        62,
+        100,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         14.0,
+         -31.3
+        ],
+        "hand_L": [
+         0.6,
+         -39.5
+        ],
+        "foot_L": [
+         -0.4,
+         -3.2
+        ],
+        "foot_R": [
+         1.1,
+         1.0
+        ],
+        "lantern": [
+         14.0,
+         -21.3
+        ],
+        "blade_tip": [
+         6.6,
+         -61.0
+        ]
+       },
+       "equipment": {
+        "sabre": 0,
+        "scabbard": 89,
+        "lantern": 105
+       },
+       "sha256": "9e783cae076fe5fd1f04c200d5fe22b55736b15b2f593e61cb2a1b086fcfad04",
+       "sheet": "sheets/powered_idle_NE.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_idle_NE_01.png",
+       "file": "powered_idle_NE_01.png",
+       "packed_bounds": [
+        67,
+        62,
+        100,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         14.0,
+         -31.3
+        ],
+        "hand_L": [
+         0.6,
+         -39.5
+        ],
+        "foot_L": [
+         -0.4,
+         -3.2
+        ],
+        "foot_R": [
+         1.1,
+         1.0
+        ],
+        "lantern": [
+         14.0,
+         -21.3
+        ],
+        "blade_tip": [
+         6.6,
+         -61.0
+        ]
+       },
+       "equipment": {
+        "sabre": 0,
+        "scabbard": 89,
+        "lantern": 105
+       },
+       "sha256": "9e783cae076fe5fd1f04c200d5fe22b55736b15b2f593e61cb2a1b086fcfad04",
+       "sheet": "sheets/powered_idle_NE.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_idle_NE_02.png",
+       "file": "powered_idle_NE_02.png",
+       "packed_bounds": [
+        67,
+        62,
+        100,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         14.0,
+         -31.3
+        ],
+        "hand_L": [
+         0.6,
+         -39.5
+        ],
+        "foot_L": [
+         -0.4,
+         -3.2
+        ],
+        "foot_R": [
+         1.1,
+         1.0
+        ],
+        "lantern": [
+         14.0,
+         -21.3
+        ],
+        "blade_tip": [
+         6.5,
+         -61.6
+        ]
+       },
+       "equipment": {
+        "sabre": 0,
+        "scabbard": 89,
+        "lantern": 105
+       },
+       "sha256": "75adf6b2c78533a64d5d53ee32aafd1bb323c4bbba9989c2dc7260ced2cdf51f",
+       "sheet": "sheets/powered_idle_NE.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_idle_NE_03.png",
+       "file": "powered_idle_NE_03.png",
+       "packed_bounds": [
+        67,
+        61,
+        100,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         14.0,
+         -31.8
+        ],
+        "hand_L": [
+         0.6,
+         -40.0
+        ],
+        "foot_L": [
+         -0.4,
+         -3.2
+        ],
+        "foot_R": [
+         1.1,
+         1.0
+        ],
+        "lantern": [
+         14.0,
+         -21.8
+        ],
+        "blade_tip": [
+         6.4,
+         -62.6
+        ]
+       },
+       "equipment": {
+        "sabre": 0,
+        "scabbard": 89,
+        "lantern": 108
+       },
+       "sha256": "acf3e5cc348b35487db57e09da029a9b74907c83494ee8b8408466a253400186",
+       "sheet": "sheets/powered_idle_NE.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_idle_NE_04.png",
+       "file": "powered_idle_NE_04.png",
+       "packed_bounds": [
+        67,
+        61,
+        100,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         14.0,
+         -31.8
+        ],
+        "hand_L": [
+         0.6,
+         -40.0
+        ],
+        "foot_L": [
+         -0.4,
+         -3.2
+        ],
+        "foot_R": [
+         1.1,
+         1.0
+        ],
+        "lantern": [
+         14.0,
+         -21.8
+        ],
+        "blade_tip": [
+         6.4,
+         -62.6
+        ]
+       },
+       "equipment": {
+        "sabre": 0,
+        "scabbard": 89,
+        "lantern": 108
+       },
+       "sha256": "acf3e5cc348b35487db57e09da029a9b74907c83494ee8b8408466a253400186",
+       "sheet": "sheets/powered_idle_NE.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_idle_NE_05.png",
+       "file": "powered_idle_NE_05.png",
+       "packed_bounds": [
+        67,
+        61,
+        101,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         14.0,
+         -31.8
+        ],
+        "hand_L": [
+         0.6,
+         -40.0
+        ],
+        "foot_L": [
+         -0.4,
+         -3.2
+        ],
+        "foot_R": [
+         1.1,
+         1.0
+        ],
+        "lantern": [
+         14.0,
+         -21.8
+        ],
+        "blade_tip": [
+         6.4,
+         -62.6
+        ]
+       },
+       "equipment": {
+        "sabre": 0,
+        "scabbard": 89,
+        "lantern": 108
+       },
+       "sha256": "f53c019041b5d334ebdb99d9e6b6b16c89d514b4c61c82927b16fbc9b5f6fe3f",
+       "sheet": "sheets/powered_idle_NE.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_idle_NE_06.png",
+       "file": "powered_idle_NE_06.png",
+       "packed_bounds": [
+        67,
+        61,
+        101,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         14.0,
+         -31.8
+        ],
+        "hand_L": [
+         0.6,
+         -40.0
+        ],
+        "foot_L": [
+         -0.4,
+         -3.2
+        ],
+        "foot_R": [
+         1.1,
+         1.0
+        ],
+        "lantern": [
+         14.0,
+         -21.8
+        ],
+        "blade_tip": [
+         6.5,
+         -62.1
+        ]
+       },
+       "equipment": {
+        "sabre": 0,
+        "scabbard": 89,
+        "lantern": 108
+       },
+       "sha256": "f53c019041b5d334ebdb99d9e6b6b16c89d514b4c61c82927b16fbc9b5f6fe3f",
+       "sheet": "sheets/powered_idle_NE.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_idle_NE_07.png",
+       "file": "powered_idle_NE_07.png",
+       "packed_bounds": [
+        67,
+        61,
+        101,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         14.0,
+         -31.8
+        ],
+        "hand_L": [
+         0.6,
+         -40.0
+        ],
+        "foot_L": [
+         -0.4,
+         -3.2
+        ],
+        "foot_R": [
+         1.1,
+         1.0
+        ],
+        "lantern": [
+         14.0,
+         -21.8
+        ],
+        "blade_tip": [
+         6.6,
+         -61.5
+        ]
+       },
+       "equipment": {
+        "sabre": 0,
+        "scabbard": 89,
+        "lantern": 108
+       },
+       "sha256": "f53c019041b5d334ebdb99d9e6b6b16c89d514b4c61c82927b16fbc9b5f6fe3f",
+       "sheet": "sheets/powered_idle_NE.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_idle_NE_08.png",
+       "file": "powered_idle_NE_08.png",
+       "packed_bounds": [
+        67,
+        62,
+        100,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         14.0,
+         -31.3
+        ],
+        "hand_L": [
+         0.6,
+         -39.5
+        ],
+        "foot_L": [
+         -0.4,
+         -3.2
+        ],
+        "foot_R": [
+         1.1,
+         1.0
+        ],
+        "lantern": [
+         14.0,
+         -21.3
+        ],
+        "blade_tip": [
+         6.7,
+         -60.5
+        ]
+       },
+       "equipment": {
+        "sabre": 0,
+        "scabbard": 89,
+        "lantern": 105
+       },
+       "sha256": "75adf6b2c78533a64d5d53ee32aafd1bb323c4bbba9989c2dc7260ced2cdf51f",
+       "sheet": "sheets/powered_idle_NE.png",
+       "region": [
+        1280,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_idle_NE_09.png",
+       "file": "powered_idle_NE_09.png",
+       "packed_bounds": [
+        67,
+        62,
+        100,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         14.0,
+         -31.3
+        ],
+        "hand_L": [
+         0.6,
+         -39.5
+        ],
+        "foot_L": [
+         -0.4,
+         -3.2
+        ],
+        "foot_R": [
+         1.1,
+         1.0
+        ],
+        "lantern": [
+         14.0,
+         -21.3
+        ],
+        "blade_tip": [
+         6.7,
+         -60.5
+        ]
+       },
+       "equipment": {
+        "sabre": 0,
+        "scabbard": 89,
+        "lantern": 105
+       },
+       "sha256": "9e783cae076fe5fd1f04c200d5fe22b55736b15b2f593e61cb2a1b086fcfad04",
+       "sheet": "sheets/powered_idle_NE.png",
+       "region": [
+        1440,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_idle_NE_10.png",
+       "file": "powered_idle_NE_10.png",
+       "packed_bounds": [
+        67,
+        62,
+        100,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         14.0,
+         -31.3
+        ],
+        "hand_L": [
+         0.6,
+         -39.5
+        ],
+        "foot_L": [
+         -0.4,
+         -3.2
+        ],
+        "foot_R": [
+         1.1,
+         1.0
+        ],
+        "lantern": [
+         14.0,
+         -21.3
+        ],
+        "blade_tip": [
+         6.7,
+         -60.5
+        ]
+       },
+       "equipment": {
+        "sabre": 0,
+        "scabbard": 89,
+        "lantern": 105
+       },
+       "sha256": "9e783cae076fe5fd1f04c200d5fe22b55736b15b2f593e61cb2a1b086fcfad04",
+       "sheet": "sheets/powered_idle_NE.png",
+       "region": [
+        1600,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_idle_NE_11.png",
+       "file": "powered_idle_NE_11.png",
+       "packed_bounds": [
+        67,
+        62,
+        100,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         14.0,
+         -31.3
+        ],
+        "hand_L": [
+         0.6,
+         -39.5
+        ],
+        "foot_L": [
+         -0.4,
+         -3.2
+        ],
+        "foot_R": [
+         1.1,
+         1.0
+        ],
+        "lantern": [
+         14.0,
+         -21.3
+        ],
+        "blade_tip": [
+         6.6,
+         -61.0
+        ]
+       },
+       "equipment": {
+        "sabre": 0,
+        "scabbard": 89,
+        "lantern": 105
+       },
+       "sha256": "9e783cae076fe5fd1f04c200d5fe22b55736b15b2f593e61cb2a1b086fcfad04",
+       "sheet": "sheets/powered_idle_NE.png",
+       "region": [
+        1760,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "SW": {
+     "frames": [
+      {
+       "path": "res://assets/animated/velvet/powered_idle_SW_00.png",
+       "file": "powered_idle_SW_00.png",
+       "packed_bounds": [
+        58,
+        62,
+        93,
+        139
+       ],
+       "anchors": {
+        "hand_R": [
+         -15.7,
+         -32.7
+        ],
+        "hand_L": [
+         0.6,
+         -30.5
+        ],
+        "foot_R": [
+         -1.8,
+         -3.0
+        ],
+        "foot_L": [
+         1.1,
+         1.2
+        ],
+        "lantern": [
+         -15.7,
+         -22.7
+        ],
+        "blade_tip": [
+         -3.7,
+         -38.2
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 109,
+        "sabre": 41
+       },
+       "sha256": "65f207b47b6644352d0c0fcafa34540084291835eb7519be95ecbf1006a0e25b",
+       "sheet": "sheets/powered_idle_SW.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_idle_SW_01.png",
+       "file": "powered_idle_SW_01.png",
+       "packed_bounds": [
+        58,
+        62,
+        94,
+        139
+       ],
+       "anchors": {
+        "hand_R": [
+         -15.7,
+         -32.7
+        ],
+        "hand_L": [
+         0.6,
+         -30.5
+        ],
+        "foot_R": [
+         -1.8,
+         -3.0
+        ],
+        "foot_L": [
+         1.1,
+         1.2
+        ],
+        "lantern": [
+         -15.7,
+         -22.7
+        ],
+        "blade_tip": [
+         -3.7,
+         -38.2
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 109,
+        "sabre": 41
+       },
+       "sha256": "63925086915861bdc68244fd0e8f8e8768fa3e6cd97ba518cc64f9002873d1f5",
+       "sheet": "sheets/powered_idle_SW.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_idle_SW_02.png",
+       "file": "powered_idle_SW_02.png",
+       "packed_bounds": [
+        58,
+        62,
+        94,
+        139
+       ],
+       "anchors": {
+        "hand_R": [
+         -15.7,
+         -32.7
+        ],
+        "hand_L": [
+         0.6,
+         -30.5
+        ],
+        "foot_R": [
+         -1.8,
+         -3.0
+        ],
+        "foot_L": [
+         1.1,
+         1.2
+        ],
+        "lantern": [
+         -15.7,
+         -22.7
+        ],
+        "blade_tip": [
+         -3.5,
+         -39.1
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 109,
+        "sabre": 46
+       },
+       "sha256": "1c4ab8c959763230610cc610e68e7cb46c490e14b1299a1f9b33440a1a9a965b",
+       "sheet": "sheets/powered_idle_SW.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_idle_SW_03.png",
+       "file": "powered_idle_SW_03.png",
+       "packed_bounds": [
+        58,
+        61,
+        94,
+        139
+       ],
+       "anchors": {
+        "hand_R": [
+         -15.7,
+         -33.2
+        ],
+        "hand_L": [
+         0.6,
+         -31.0
+        ],
+        "foot_R": [
+         -1.8,
+         -3.0
+        ],
+        "foot_L": [
+         1.1,
+         1.2
+        ],
+        "lantern": [
+         -15.7,
+         -23.2
+        ],
+        "blade_tip": [
+         -3.3,
+         -40.5
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 105,
+        "sabre": 43
+       },
+       "sha256": "debf72b144226982664478a694542b425b073ca7d8905cfd4865b3a4ce9db6f5",
+       "sheet": "sheets/powered_idle_SW.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_idle_SW_04.png",
+       "file": "powered_idle_SW_04.png",
+       "packed_bounds": [
+        58,
+        61,
+        94,
+        139
+       ],
+       "anchors": {
+        "hand_R": [
+         -15.7,
+         -33.2
+        ],
+        "hand_L": [
+         0.6,
+         -31.0
+        ],
+        "foot_R": [
+         -1.8,
+         -3.0
+        ],
+        "foot_L": [
+         1.1,
+         1.2
+        ],
+        "lantern": [
+         -15.7,
+         -23.2
+        ],
+        "blade_tip": [
+         -3.3,
+         -40.5
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 105,
+        "sabre": 43
+       },
+       "sha256": "debf72b144226982664478a694542b425b073ca7d8905cfd4865b3a4ce9db6f5",
+       "sheet": "sheets/powered_idle_SW.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_idle_SW_05.png",
+       "file": "powered_idle_SW_05.png",
+       "packed_bounds": [
+        57,
+        61,
+        94,
+        139
+       ],
+       "anchors": {
+        "hand_R": [
+         -15.7,
+         -33.2
+        ],
+        "hand_L": [
+         0.6,
+         -31.0
+        ],
+        "foot_R": [
+         -1.8,
+         -3.0
+        ],
+        "foot_L": [
+         1.1,
+         1.2
+        ],
+        "lantern": [
+         -15.7,
+         -23.2
+        ],
+        "blade_tip": [
+         -3.3,
+         -40.5
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 106,
+        "sabre": 43
+       },
+       "sha256": "282e0b99eb2b47ccf8c224f48af391fb4e69521744a6454bfaa391e806cdbfa3",
+       "sheet": "sheets/powered_idle_SW.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_idle_SW_06.png",
+       "file": "powered_idle_SW_06.png",
+       "packed_bounds": [
+        57,
+        61,
+        94,
+        139
+       ],
+       "anchors": {
+        "hand_R": [
+         -15.7,
+         -33.2
+        ],
+        "hand_L": [
+         0.6,
+         -31.0
+        ],
+        "foot_R": [
+         -1.8,
+         -3.0
+        ],
+        "foot_L": [
+         1.1,
+         1.2
+        ],
+        "lantern": [
+         -15.7,
+         -23.2
+        ],
+        "blade_tip": [
+         -3.5,
+         -39.6
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 106,
+        "sabre": 43
+       },
+       "sha256": "617e6e36c21b9ce1c7b9e23b7addefc362748b56ff81c44b6f5bc16ed3a4a25a",
+       "sheet": "sheets/powered_idle_SW.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_idle_SW_07.png",
+       "file": "powered_idle_SW_07.png",
+       "packed_bounds": [
+        57,
+        61,
+        94,
+        139
+       ],
+       "anchors": {
+        "hand_R": [
+         -15.7,
+         -33.2
+        ],
+        "hand_L": [
+         0.6,
+         -31.0
+        ],
+        "foot_R": [
+         -1.8,
+         -3.0
+        ],
+        "foot_L": [
+         1.1,
+         1.2
+        ],
+        "lantern": [
+         -15.7,
+         -23.2
+        ],
+        "blade_tip": [
+         -3.7,
+         -38.7
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 106,
+        "sabre": 39
+       },
+       "sha256": "f10a821afe33179dc2af5734ca8c15568ac21dce03abe1408e7c1492bdce38ee",
+       "sheet": "sheets/powered_idle_SW.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_idle_SW_08.png",
+       "file": "powered_idle_SW_08.png",
+       "packed_bounds": [
+        58,
+        62,
+        94,
+        139
+       ],
+       "anchors": {
+        "hand_R": [
+         -15.7,
+         -32.7
+        ],
+        "hand_L": [
+         0.6,
+         -30.5
+        ],
+        "foot_R": [
+         -1.8,
+         -3.0
+        ],
+        "foot_L": [
+         1.1,
+         1.2
+        ],
+        "lantern": [
+         -15.7,
+         -22.7
+        ],
+        "blade_tip": [
+         -4.0,
+         -37.2
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 109,
+        "sabre": 40
+       },
+       "sha256": "e596ddecf5a198a009db2d869ad51e09b9f5e54ee4b770040ea46787f6df1d86",
+       "sheet": "sheets/powered_idle_SW.png",
+       "region": [
+        1280,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_idle_SW_09.png",
+       "file": "powered_idle_SW_09.png",
+       "packed_bounds": [
+        58,
+        62,
+        94,
+        139
+       ],
+       "anchors": {
+        "hand_R": [
+         -15.7,
+         -32.7
+        ],
+        "hand_L": [
+         0.6,
+         -30.5
+        ],
+        "foot_R": [
+         -1.8,
+         -3.0
+        ],
+        "foot_L": [
+         1.1,
+         1.2
+        ],
+        "lantern": [
+         -15.7,
+         -22.7
+        ],
+        "blade_tip": [
+         -4.0,
+         -37.2
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 109,
+        "sabre": 40
+       },
+       "sha256": "10444c48519f3bd0384a2e600364b86e3ef6fe9a8035045f2ab10a4310c1edc7",
+       "sheet": "sheets/powered_idle_SW.png",
+       "region": [
+        1440,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_idle_SW_10.png",
+       "file": "powered_idle_SW_10.png",
+       "packed_bounds": [
+        58,
+        62,
+        93,
+        139
+       ],
+       "anchors": {
+        "hand_R": [
+         -15.7,
+         -32.7
+        ],
+        "hand_L": [
+         0.6,
+         -30.5
+        ],
+        "foot_R": [
+         -1.8,
+         -3.0
+        ],
+        "foot_L": [
+         1.1,
+         1.2
+        ],
+        "lantern": [
+         -15.7,
+         -22.7
+        ],
+        "blade_tip": [
+         -4.0,
+         -37.2
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 109,
+        "sabre": 40
+       },
+       "sha256": "8ad914f4da4209c3868ca4fa293197cbe1638dccdb898cf3eaa85d34742d2475",
+       "sheet": "sheets/powered_idle_SW.png",
+       "region": [
+        1600,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_idle_SW_11.png",
+       "file": "powered_idle_SW_11.png",
+       "packed_bounds": [
+        58,
+        62,
+        93,
+        139
+       ],
+       "anchors": {
+        "hand_R": [
+         -15.7,
+         -32.7
+        ],
+        "hand_L": [
+         0.6,
+         -30.5
+        ],
+        "foot_R": [
+         -1.8,
+         -3.0
+        ],
+        "foot_L": [
+         1.1,
+         1.2
+        ],
+        "lantern": [
+         -15.7,
+         -22.7
+        ],
+        "blade_tip": [
+         -3.7,
+         -38.2
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 109,
+        "sabre": 41
+       },
+       "sha256": "65f207b47b6644352d0c0fcafa34540084291835eb7519be95ecbf1006a0e25b",
+       "sheet": "sheets/powered_idle_SW.png",
+       "region": [
+        1760,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "NW": {
+     "frames": [
+      {
+       "path": "res://assets/animated/velvet/powered_idle_NW_00.png",
+       "file": "powered_idle_NW_00.png",
+       "packed_bounds": [
+        44,
+        62,
+        101,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         1.3,
+         -37.2
+        ],
+        "hand_L": [
+         -12.1,
+         -35.0
+        ],
+        "foot_R": [
+         5.3,
+         -1.5
+        ],
+        "foot_L": [
+         -6.0,
+         -0.8
+        ],
+        "lantern": [
+         1.3,
+         -27.2
+        ],
+        "blade_tip": [
+         -34.6,
+         -48.5
+        ]
+       },
+       "equipment": {
+        "scabbard": 73,
+        "lantern": 5,
+        "sabre": 69
+       },
+       "sha256": "21e4a088de8a40aa3f52045d9b9d86cacb985694e4ca6e4f96ab7ec87c5887cf",
+       "sheet": "sheets/powered_idle_NW.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_idle_NW_01.png",
+       "file": "powered_idle_NW_01.png",
+       "packed_bounds": [
+        44,
+        62,
+        101,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         1.3,
+         -37.2
+        ],
+        "hand_L": [
+         -12.1,
+         -35.0
+        ],
+        "foot_R": [
+         5.3,
+         -1.5
+        ],
+        "foot_L": [
+         -6.0,
+         -0.8
+        ],
+        "lantern": [
+         1.3,
+         -27.2
+        ],
+        "blade_tip": [
+         -34.6,
+         -48.5
+        ]
+       },
+       "equipment": {
+        "scabbard": 73,
+        "lantern": 5,
+        "sabre": 69
+       },
+       "sha256": "b386c08a9b7bda0240059889c85eb1eab648a5d231e1ad603a0fc60909a90e34",
+       "sheet": "sheets/powered_idle_NW.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_idle_NW_02.png",
+       "file": "powered_idle_NW_02.png",
+       "packed_bounds": [
+        44,
+        62,
+        101,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         1.3,
+         -37.2
+        ],
+        "hand_L": [
+         -12.1,
+         -35.0
+        ],
+        "foot_R": [
+         5.3,
+         -1.5
+        ],
+        "foot_L": [
+         -6.0,
+         -0.8
+        ],
+        "lantern": [
+         1.3,
+         -27.2
+        ],
+        "blade_tip": [
+         -34.2,
+         -49.3
+        ]
+       },
+       "equipment": {
+        "scabbard": 70,
+        "lantern": 5,
+        "sabre": 71
+       },
+       "sha256": "af53c0095a3970ad44c7d08e7330019df9e368d391409dd352dbfa7af8e0d5fe",
+       "sheet": "sheets/powered_idle_NW.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_idle_NW_03.png",
+       "file": "powered_idle_NW_03.png",
+       "packed_bounds": [
+        45,
+        61,
+        101,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         1.3,
+         -37.7
+        ],
+        "hand_L": [
+         -12.1,
+         -35.5
+        ],
+        "foot_R": [
+         5.3,
+         -1.5
+        ],
+        "foot_L": [
+         -6.0,
+         -0.8
+        ],
+        "lantern": [
+         1.3,
+         -27.7
+        ],
+        "blade_tip": [
+         -33.7,
+         -50.5
+        ]
+       },
+       "equipment": {
+        "scabbard": 70,
+        "lantern": 5,
+        "sabre": 73
+       },
+       "sha256": "297a5f3ebfd308584a6a54adcfa7fe967a85642ec8ee9825439c2b590a8dce60",
+       "sheet": "sheets/powered_idle_NW.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_idle_NW_04.png",
+       "file": "powered_idle_NW_04.png",
+       "packed_bounds": [
+        45,
+        61,
+        101,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         1.3,
+         -37.7
+        ],
+        "hand_L": [
+         -12.1,
+         -35.5
+        ],
+        "foot_R": [
+         5.3,
+         -1.5
+        ],
+        "foot_L": [
+         -6.0,
+         -0.8
+        ],
+        "lantern": [
+         1.3,
+         -27.7
+        ],
+        "blade_tip": [
+         -33.7,
+         -50.5
+        ]
+       },
+       "equipment": {
+        "scabbard": 70,
+        "lantern": 5,
+        "sabre": 73
+       },
+       "sha256": "297a5f3ebfd308584a6a54adcfa7fe967a85642ec8ee9825439c2b590a8dce60",
+       "sheet": "sheets/powered_idle_NW.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_idle_NW_05.png",
+       "file": "powered_idle_NW_05.png",
+       "packed_bounds": [
+        45,
+        61,
+        101,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         1.3,
+         -37.7
+        ],
+        "hand_L": [
+         -12.1,
+         -35.5
+        ],
+        "foot_R": [
+         5.3,
+         -1.5
+        ],
+        "foot_L": [
+         -6.0,
+         -0.8
+        ],
+        "lantern": [
+         1.3,
+         -27.7
+        ],
+        "blade_tip": [
+         -33.7,
+         -50.5
+        ]
+       },
+       "equipment": {
+        "scabbard": 70,
+        "lantern": 6,
+        "sabre": 73
+       },
+       "sha256": "37bd058e766d1a67f1c70a4c083e272fb5eccc57e1a5afebc70cd4b6c6310c64",
+       "sheet": "sheets/powered_idle_NW.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_idle_NW_06.png",
+       "file": "powered_idle_NW_06.png",
+       "packed_bounds": [
+        44,
+        61,
+        101,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         1.3,
+         -37.7
+        ],
+        "hand_L": [
+         -12.1,
+         -35.5
+        ],
+        "foot_R": [
+         5.3,
+         -1.5
+        ],
+        "foot_L": [
+         -6.0,
+         -0.8
+        ],
+        "lantern": [
+         1.3,
+         -27.7
+        ],
+        "blade_tip": [
+         -34.2,
+         -49.8
+        ]
+       },
+       "equipment": {
+        "scabbard": 70,
+        "lantern": 6,
+        "sabre": 70
+       },
+       "sha256": "48994647ce69d3cd170b782b2d425c90d8914e88b9dacfe9ea0d087a229e865a",
+       "sheet": "sheets/powered_idle_NW.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_idle_NW_07.png",
+       "file": "powered_idle_NW_07.png",
+       "packed_bounds": [
+        44,
+        61,
+        101,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         1.3,
+         -37.7
+        ],
+        "hand_L": [
+         -12.1,
+         -35.5
+        ],
+        "foot_R": [
+         5.3,
+         -1.5
+        ],
+        "foot_L": [
+         -6.0,
+         -0.8
+        ],
+        "lantern": [
+         1.3,
+         -27.7
+        ],
+        "blade_tip": [
+         -34.6,
+         -49.0
+        ]
+       },
+       "equipment": {
+        "scabbard": 70,
+        "lantern": 6,
+        "sabre": 74
+       },
+       "sha256": "6bd64630cfdfb20ae9620f22a2c36a80e2eb08da896e4eca522690bebed89138",
+       "sheet": "sheets/powered_idle_NW.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_idle_NW_08.png",
+       "file": "powered_idle_NW_08.png",
+       "packed_bounds": [
+        44,
+        62,
+        101,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         1.3,
+         -37.2
+        ],
+        "hand_L": [
+         -12.1,
+         -35.0
+        ],
+        "foot_R": [
+         5.3,
+         -1.5
+        ],
+        "foot_L": [
+         -6.0,
+         -0.8
+        ],
+        "lantern": [
+         1.3,
+         -27.2
+        ],
+        "blade_tip": [
+         -35.0,
+         -47.7
+        ]
+       },
+       "equipment": {
+        "scabbard": 70,
+        "lantern": 5,
+        "sabre": 70
+       },
+       "sha256": "74d4c0c2229d219ff5207a3a47d81a25f79d5cc767772a713fa929b7ad4a00f7",
+       "sheet": "sheets/powered_idle_NW.png",
+       "region": [
+        1280,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_idle_NW_09.png",
+       "file": "powered_idle_NW_09.png",
+       "packed_bounds": [
+        44,
+        62,
+        101,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         1.3,
+         -37.2
+        ],
+        "hand_L": [
+         -12.1,
+         -35.0
+        ],
+        "foot_R": [
+         5.3,
+         -1.5
+        ],
+        "foot_L": [
+         -6.0,
+         -0.8
+        ],
+        "lantern": [
+         1.3,
+         -27.2
+        ],
+        "blade_tip": [
+         -35.0,
+         -47.7
+        ]
+       },
+       "equipment": {
+        "scabbard": 73,
+        "lantern": 5,
+        "sabre": 70
+       },
+       "sha256": "e3b63a5fbf6cc1caee581bcf1257450065613ddfe806d156dbed65b55ea0f090",
+       "sheet": "sheets/powered_idle_NW.png",
+       "region": [
+        1440,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_idle_NW_10.png",
+       "file": "powered_idle_NW_10.png",
+       "packed_bounds": [
+        44,
+        62,
+        101,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         1.3,
+         -37.2
+        ],
+        "hand_L": [
+         -12.1,
+         -35.0
+        ],
+        "foot_R": [
+         5.3,
+         -1.5
+        ],
+        "foot_L": [
+         -6.0,
+         -0.8
+        ],
+        "lantern": [
+         1.3,
+         -27.2
+        ],
+        "blade_tip": [
+         -35.0,
+         -47.7
+        ]
+       },
+       "equipment": {
+        "scabbard": 73,
+        "lantern": 5,
+        "sabre": 70
+       },
+       "sha256": "d2838f38b202a87cb85eaf8df88bcc4fafad14a2113a50ff8b4591535c27ac50",
+       "sheet": "sheets/powered_idle_NW.png",
+       "region": [
+        1600,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_idle_NW_11.png",
+       "file": "powered_idle_NW_11.png",
+       "packed_bounds": [
+        44,
+        62,
+        101,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         1.3,
+         -37.2
+        ],
+        "hand_L": [
+         -12.1,
+         -35.0
+        ],
+        "foot_R": [
+         5.3,
+         -1.5
+        ],
+        "foot_L": [
+         -6.0,
+         -0.8
+        ],
+        "lantern": [
+         1.3,
+         -27.2
+        ],
+        "blade_tip": [
+         -34.6,
+         -48.5
+        ]
+       },
+       "equipment": {
+        "scabbard": 73,
+        "lantern": 5,
+        "sabre": 69
+       },
+       "sha256": "21e4a088de8a40aa3f52045d9b9d86cacb985694e4ca6e4f96ab7ec87c5887cf",
+       "sheet": "sheets/powered_idle_NW.png",
+       "region": [
+        1760,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    }
    }
   },
   "powered_walk": {
@@ -29270,6 +36380,2376 @@
        },
        "sha256": "22c2c2214580bc61f2f75422ac6330a3856db9ce37600c6391b3a753732cd94d",
        "sheet": "sheets/powered_walk_W.png",
+       "region": [
+        1760,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    }
+   },
+   "turns": {
+    "SE": {
+     "frames": [
+      {
+       "path": "res://assets/animated/velvet/powered_walk_SE_00.png",
+       "file": "powered_walk_SE_00.png",
+       "packed_bounds": [
+        58,
+        64,
+        120,
+        140
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.7,
+         -27.2
+        ],
+        "hand_L": [
+         14.1,
+         -34.4
+        ],
+        "foot_L": [
+         -2.8,
+         -4.6
+        ],
+        "foot_R": [
+         2.8,
+         2.6
+        ],
+        "lantern": [
+         -3.7,
+         -17.2
+        ],
+        "blade_tip": [
+         38.3,
+         -45.1
+        ]
+       },
+       "equipment": {
+        "scabbard": 44,
+        "sabre": 76,
+        "lantern": 104
+       },
+       "sha256": "e6149708f65f7af3392ad4b34d469154b731b6bb1dcf4df292261280424543aa",
+       "sheet": "sheets/powered_walk_SE.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_walk_SE_01.png",
+       "file": "powered_walk_SE_01.png",
+       "packed_bounds": [
+        58,
+        64,
+        119,
+        139
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.4,
+         -26.9
+        ],
+        "hand_L": [
+         13.8,
+         -34.2
+        ],
+        "foot_L": [
+         -0.6,
+         -5.6
+        ],
+        "foot_R": [
+         0.6,
+         1.8
+        ],
+        "lantern": [
+         -3.4,
+         -16.9
+        ],
+        "blade_tip": [
+         38.0,
+         -45.0
+        ]
+       },
+       "equipment": {
+        "scabbard": 49,
+        "sabre": 77,
+        "lantern": 111
+       },
+       "sha256": "560bf41ceb539041c73a601c9413abed14698158db3bc2f28ee9ab214e3bfbd6",
+       "sheet": "sheets/powered_walk_SE.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_walk_SE_02.png",
+       "file": "powered_walk_SE_02.png",
+       "packed_bounds": [
+        58,
+        63,
+        119,
+        139
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.2,
+         -27.6
+        ],
+        "hand_L": [
+         13.6,
+         -35.1
+        ],
+        "foot_L": [
+         1.6,
+         -6.1
+        ],
+        "foot_R": [
+         -1.6,
+         1.0
+        ],
+        "lantern": [
+         -3.2,
+         -17.6
+        ],
+        "blade_tip": [
+         37.8,
+         -45.9
+        ]
+       },
+       "equipment": {
+        "scabbard": 49,
+        "sabre": 76,
+        "lantern": 107
+       },
+       "sha256": "08971efcf1c6076c928d3a00c2614ec85cec8e23ab161c9d573178860854daff",
+       "sheet": "sheets/powered_walk_SE.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_walk_SE_03.png",
+       "file": "powered_walk_SE_03.png",
+       "packed_bounds": [
+        58,
+        62,
+        119,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.0,
+         -28.3
+        ],
+        "hand_L": [
+         13.4,
+         -36.0
+        ],
+        "foot_L": [
+         3.9,
+         -5.7
+        ],
+        "foot_R": [
+         -3.9,
+         0.2
+        ],
+        "lantern": [
+         -3.0,
+         -18.3
+        ],
+        "blade_tip": [
+         37.5,
+         -46.8
+        ]
+       },
+       "equipment": {
+        "scabbard": 49,
+        "sabre": 78,
+        "lantern": 105
+       },
+       "sha256": "a29bbae035bccf3dd22955fe2ee278b3f687415204b99dc82bfef043ae02d20b",
+       "sheet": "sheets/powered_walk_SE.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_walk_SE_04.png",
+       "file": "powered_walk_SE_04.png",
+       "packed_bounds": [
+        58,
+        62,
+        119,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -2.7,
+         -28.4
+        ],
+        "hand_L": [
+         13.1,
+         -36.3
+        ],
+        "foot_L": [
+         6.1,
+         -4.5
+        ],
+        "foot_R": [
+         -6.1,
+         -0.5
+        ],
+        "lantern": [
+         -2.7,
+         -18.4
+        ],
+        "blade_tip": [
+         37.3,
+         -47.0
+        ]
+       },
+       "equipment": {
+        "scabbard": 49,
+        "sabre": 74,
+        "lantern": 99
+       },
+       "sha256": "2cbe073f95f0d63ff176598b1fbbb99cab6360d9a57ed69bf4efd0d6b79891a2",
+       "sheet": "sheets/powered_walk_SE.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_walk_SE_05.png",
+       "file": "powered_walk_SE_05.png",
+       "packed_bounds": [
+        58,
+        63,
+        119,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -2.5,
+         -27.5
+        ],
+        "hand_L": [
+         12.9,
+         -35.6
+        ],
+        "foot_L": [
+         8.4,
+         -2.4
+        ],
+        "foot_R": [
+         -8.4,
+         -1.3
+        ],
+        "lantern": [
+         -2.5,
+         -17.5
+        ],
+        "blade_tip": [
+         37.1,
+         -46.3
+        ]
+       },
+       "equipment": {
+        "scabbard": 49,
+        "sabre": 78,
+        "lantern": 109
+       },
+       "sha256": "bca4999e0b9a2997dbb937f2e51162582ed2c06edec7246d87200c94fc31b22e",
+       "sheet": "sheets/powered_walk_SE.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_walk_SE_06.png",
+       "file": "powered_walk_SE_06.png",
+       "packed_bounds": [
+        58,
+        64,
+        118,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         -2.3,
+         -26.7
+        ],
+        "hand_L": [
+         12.7,
+         -34.8
+        ],
+        "foot_L": [
+         10.6,
+         0.1
+        ],
+        "foot_R": [
+         -10.6,
+         -2.1
+        ],
+        "lantern": [
+         -2.3,
+         -16.7
+        ],
+        "blade_tip": [
+         36.8,
+         -45.6
+        ]
+       },
+       "equipment": {
+        "scabbard": 43,
+        "sabre": 76,
+        "lantern": 107
+       },
+       "sha256": "837fd66a84358e8042d57c98addb02664c4157f0df004e61ce2fdb4b1ac3b7a1",
+       "sheet": "sheets/powered_walk_SE.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_walk_SE_07.png",
+       "file": "powered_walk_SE_07.png",
+       "packed_bounds": [
+        58,
+        64,
+        119,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -2.5,
+         -26.5
+        ],
+        "hand_L": [
+         12.9,
+         -34.6
+        ],
+        "foot_L": [
+         8.4,
+         -0.7
+        ],
+        "foot_R": [
+         -8.4,
+         -3.1
+        ],
+        "lantern": [
+         -2.5,
+         -16.5
+        ],
+        "blade_tip": [
+         37.1,
+         -45.3
+        ]
+       },
+       "equipment": {
+        "scabbard": 49,
+        "sabre": 78,
+        "lantern": 109
+       },
+       "sha256": "f36960031c42d3c129cfb2a2d12a2cea4a7d284cee86ce4d835182a81c883dc8",
+       "sheet": "sheets/powered_walk_SE.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_walk_SE_08.png",
+       "file": "powered_walk_SE_08.png",
+       "packed_bounds": [
+        58,
+        63,
+        119,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -2.7,
+         -27.4
+        ],
+        "hand_L": [
+         13.1,
+         -35.3
+        ],
+        "foot_L": [
+         6.1,
+         -1.5
+        ],
+        "foot_R": [
+         -6.1,
+         -3.6
+        ],
+        "lantern": [
+         -2.7,
+         -17.4
+        ],
+        "blade_tip": [
+         37.3,
+         -46.0
+        ]
+       },
+       "equipment": {
+        "scabbard": 49,
+        "sabre": 74,
+        "lantern": 99
+       },
+       "sha256": "560449c158bec175f9d15aea665cdbc9123390387129eaec2352981965e6f632",
+       "sheet": "sheets/powered_walk_SE.png",
+       "region": [
+        1280,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_walk_SE_09.png",
+       "file": "powered_walk_SE_09.png",
+       "packed_bounds": [
+        58,
+        62,
+        119,
+        135
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.0,
+         -28.3
+        ],
+        "hand_L": [
+         13.4,
+         -36.0
+        ],
+        "foot_L": [
+         3.9,
+         -2.2
+        ],
+        "foot_R": [
+         -3.9,
+         -3.3
+        ],
+        "lantern": [
+         -3.0,
+         -18.3
+        ],
+        "blade_tip": [
+         37.5,
+         -46.8
+        ]
+       },
+       "equipment": {
+        "scabbard": 49,
+        "sabre": 78,
+        "lantern": 105
+       },
+       "sha256": "6fc9eb0a0f3766733d5cb0d931b7ebc9ce15044c7b83e0a791da2bfa96595fb5",
+       "sheet": "sheets/powered_walk_SE.png",
+       "region": [
+        1440,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_walk_SE_10.png",
+       "file": "powered_walk_SE_10.png",
+       "packed_bounds": [
+        58,
+        62,
+        119,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.2,
+         -28.6
+        ],
+        "hand_L": [
+         13.6,
+         -36.1
+        ],
+        "foot_L": [
+         1.6,
+         -3.0
+        ],
+        "foot_R": [
+         -1.6,
+         -2.0
+        ],
+        "lantern": [
+         -3.2,
+         -18.6
+        ],
+        "blade_tip": [
+         37.8,
+         -46.9
+        ]
+       },
+       "equipment": {
+        "scabbard": 49,
+        "sabre": 76,
+        "lantern": 107
+       },
+       "sha256": "9ed9f008711445ef11e068510a21848f86f9e8f547bd3646fc913c21fe829d6a",
+       "sheet": "sheets/powered_walk_SE.png",
+       "region": [
+        1600,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_walk_SE_11.png",
+       "file": "powered_walk_SE_11.png",
+       "packed_bounds": [
+        58,
+        63,
+        119,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         -3.4,
+         -27.9
+        ],
+        "hand_L": [
+         13.8,
+         -35.2
+        ],
+        "foot_L": [
+         -0.6,
+         -3.8
+        ],
+        "foot_R": [
+         0.6,
+         0.1
+        ],
+        "lantern": [
+         -3.4,
+         -17.9
+        ],
+        "blade_tip": [
+         38.0,
+         -46.0
+        ]
+       },
+       "equipment": {
+        "scabbard": 49,
+        "sabre": 77,
+        "lantern": 111
+       },
+       "sha256": "15d819f1b09982d41601f246efd79bfa5a8f43aa96bcda10a39b1f401ed12a6c",
+       "sheet": "sheets/powered_walk_SE.png",
+       "region": [
+        1760,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "NE": {
+     "frames": [
+      {
+       "path": "res://assets/animated/velvet/powered_walk_NE_00.png",
+       "file": "powered_walk_NE_00.png",
+       "packed_bounds": [
+        65,
+        63,
+        100,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         13.3,
+         -31.1
+        ],
+        "hand_L": [
+         1.3,
+         -39.3
+        ],
+        "foot_L": [
+         -9.9,
+         0.1
+        ],
+        "foot_R": [
+         9.9,
+         -2.1
+        ],
+        "lantern": [
+         13.3,
+         -21.1
+        ],
+        "blade_tip": [
+         7.3,
+         -60.9
+        ]
+       },
+       "equipment": {
+        "sabre": 0,
+        "scabbard": 89,
+        "lantern": 96
+       },
+       "sha256": "4c227a2d4223653b613db89fae50a98d91546f3eb05ac15cbf75a9a74f748950",
+       "sheet": "sheets/powered_walk_NE.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_walk_NE_01.png",
+       "file": "powered_walk_NE_01.png",
+       "packed_bounds": [
+        66,
+        63,
+        101,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         13.5,
+         -31.0
+        ],
+        "hand_L": [
+         1.1,
+         -39.0
+        ],
+        "foot_L": [
+         -7.7,
+         -2.4
+        ],
+        "foot_R": [
+         7.7,
+         -1.3
+        ],
+        "lantern": [
+         13.5,
+         -21.0
+        ],
+        "blade_tip": [
+         7.1,
+         -60.6
+        ]
+       },
+       "equipment": {
+        "sabre": 0,
+        "scabbard": 89,
+        "lantern": 111
+       },
+       "sha256": "cfb2a24c70a1e9e86de1fe89a140618c42ac4b27cea522102faa9adb97b00aa2",
+       "sheet": "sheets/powered_walk_NE.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_walk_NE_02.png",
+       "file": "powered_walk_NE_02.png",
+       "packed_bounds": [
+        66,
+        62,
+        100,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         13.8,
+         -31.9
+        ],
+        "hand_L": [
+         0.9,
+         -39.7
+        ],
+        "foot_L": [
+         -5.4,
+         -4.5
+        ],
+        "foot_R": [
+         5.4,
+         -0.5
+        ],
+        "lantern": [
+         13.8,
+         -21.9
+        ],
+        "blade_tip": [
+         6.8,
+         -61.3
+        ]
+       },
+       "equipment": {
+        "sabre": 0,
+        "scabbard": 89,
+        "lantern": 108
+       },
+       "sha256": "332274f6229e2c026c4c8bf11a5c07dc8b57bcd852e6138a662dac714d8269b9",
+       "sheet": "sheets/powered_walk_NE.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_walk_NE_03.png",
+       "file": "powered_walk_NE_03.png",
+       "packed_bounds": [
+        67,
+        61,
+        100,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         14.0,
+         -32.8
+        ],
+        "hand_L": [
+         0.6,
+         -40.5
+        ],
+        "foot_L": [
+         -3.2,
+         -5.7
+        ],
+        "foot_R": [
+         3.2,
+         0.2
+        ],
+        "lantern": [
+         14.0,
+         -22.8
+        ],
+        "blade_tip": [
+         6.6,
+         -62.0
+        ]
+       },
+       "equipment": {
+        "sabre": 0,
+        "scabbard": 89,
+        "lantern": 108
+       },
+       "sha256": "30be89220fa41712ed46a7e037efcf28f07c62f94b64f8f2d35a0e7e7025d371",
+       "sheet": "sheets/powered_walk_NE.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_walk_NE_04.png",
+       "file": "powered_walk_NE_04.png",
+       "packed_bounds": [
+        67,
+        61,
+        100,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         14.2,
+         -33.0
+        ],
+        "hand_L": [
+         0.4,
+         -40.6
+        ],
+        "foot_L": [
+         -0.9,
+         -6.1
+        ],
+        "foot_R": [
+         0.9,
+         1.0
+        ],
+        "lantern": [
+         14.2,
+         -23.0
+        ],
+        "blade_tip": [
+         6.4,
+         -62.2
+        ]
+       },
+       "equipment": {
+        "sabre": 0,
+        "scabbard": 89,
+        "lantern": 96
+       },
+       "sha256": "2f924e60977e2bc472895eb7342531304846dd9d5573b9d9809dba34b399a07c",
+       "sheet": "sheets/powered_walk_NE.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_walk_NE_05.png",
+       "file": "powered_walk_NE_05.png",
+       "packed_bounds": [
+        66,
+        62,
+        100,
+        139
+       ],
+       "anchors": {
+        "hand_R": [
+         14.5,
+         -32.3
+        ],
+        "hand_L": [
+         0.2,
+         -39.7
+        ],
+        "foot_L": [
+         1.3,
+         -5.6
+        ],
+        "foot_R": [
+         -1.3,
+         1.8
+        ],
+        "lantern": [
+         14.5,
+         -22.3
+        ],
+        "blade_tip": [
+         6.1,
+         -61.3
+        ]
+       },
+       "equipment": {
+        "sabre": 0,
+        "scabbard": 89,
+        "lantern": 107
+       },
+       "sha256": "8954084d7032e9d92e00ce27f4269b7aee1ab464ec7af1f943bd4790889f59b5",
+       "sheet": "sheets/powered_walk_NE.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_walk_NE_06.png",
+       "file": "powered_walk_NE_06.png",
+       "packed_bounds": [
+        66,
+        63,
+        100,
+        140
+       ],
+       "anchors": {
+        "hand_R": [
+         14.7,
+         -31.6
+        ],
+        "hand_L": [
+         -0.1,
+         -38.8
+        ],
+        "foot_L": [
+         3.5,
+         -4.6
+        ],
+        "foot_R": [
+         -3.5,
+         2.6
+        ],
+        "lantern": [
+         14.7,
+         -21.6
+        ],
+        "blade_tip": [
+         5.9,
+         -60.4
+        ]
+       },
+       "equipment": {
+        "sabre": 0,
+        "scabbard": 89,
+        "lantern": 108
+       },
+       "sha256": "1e0ec0bf5a213f0809c986090b0ba9286caa77321222b5d0e4fbefbdbd87cd8b",
+       "sheet": "sheets/powered_walk_NE.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_walk_NE_07.png",
+       "file": "powered_walk_NE_07.png",
+       "packed_bounds": [
+        66,
+        63,
+        100,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         14.5,
+         -31.3
+        ],
+        "hand_L": [
+         0.2,
+         -38.7
+        ],
+        "foot_L": [
+         1.3,
+         -3.8
+        ],
+        "foot_R": [
+         -1.3,
+         0.1
+        ],
+        "lantern": [
+         14.5,
+         -21.3
+        ],
+        "blade_tip": [
+         6.1,
+         -60.3
+        ]
+       },
+       "equipment": {
+        "sabre": 0,
+        "scabbard": 89,
+        "lantern": 107
+       },
+       "sha256": "194778321b7f84db6c2877c635e99bccd2db834ca4234a5aaf1541bf3f57e27d",
+       "sheet": "sheets/powered_walk_NE.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_walk_NE_08.png",
+       "file": "powered_walk_NE_08.png",
+       "packed_bounds": [
+        66,
+        62,
+        100,
+        135
+       ],
+       "anchors": {
+        "hand_R": [
+         14.2,
+         -32.0
+        ],
+        "hand_L": [
+         0.4,
+         -39.6
+        ],
+        "foot_L": [
+         -0.9,
+         -3.0
+        ],
+        "foot_R": [
+         0.9,
+         -2.0
+        ],
+        "lantern": [
+         14.2,
+         -22.0
+        ],
+        "blade_tip": [
+         6.4,
+         -61.2
+        ]
+       },
+       "equipment": {
+        "sabre": 0,
+        "scabbard": 89,
+        "lantern": 96
+       },
+       "sha256": "bb97dc3e58933f86b43ebbcb785ac2218b90748c00e9e70836ad24d1202e5dcf",
+       "sheet": "sheets/powered_walk_NE.png",
+       "region": [
+        1280,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_walk_NE_09.png",
+       "file": "powered_walk_NE_09.png",
+       "packed_bounds": [
+        67,
+        61,
+        100,
+        135
+       ],
+       "anchors": {
+        "hand_R": [
+         14.0,
+         -32.8
+        ],
+        "hand_L": [
+         0.6,
+         -40.5
+        ],
+        "foot_L": [
+         -3.2,
+         -2.2
+        ],
+        "foot_R": [
+         3.2,
+         -3.3
+        ],
+        "lantern": [
+         14.0,
+         -22.8
+        ],
+        "blade_tip": [
+         6.6,
+         -62.0
+        ]
+       },
+       "equipment": {
+        "sabre": 0,
+        "scabbard": 89,
+        "lantern": 108
+       },
+       "sha256": "d1dd14800a25575d51e9972c23dde7f908006ebcf69a537fe5174dfca7e5b061",
+       "sheet": "sheets/powered_walk_NE.png",
+       "region": [
+        1440,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_walk_NE_10.png",
+       "file": "powered_walk_NE_10.png",
+       "packed_bounds": [
+        67,
+        61,
+        100,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         13.8,
+         -32.9
+        ],
+        "hand_L": [
+         0.9,
+         -40.7
+        ],
+        "foot_L": [
+         -5.4,
+         -1.5
+        ],
+        "foot_R": [
+         5.4,
+         -3.6
+        ],
+        "lantern": [
+         13.8,
+         -22.9
+        ],
+        "blade_tip": [
+         6.8,
+         -62.3
+        ]
+       },
+       "equipment": {
+        "sabre": 0,
+        "scabbard": 89,
+        "lantern": 108
+       },
+       "sha256": "f8e4abcd7bfa7b4149cff2362fc23779a0465e7bb5d9c5c7ccea921cf813089a",
+       "sheet": "sheets/powered_walk_NE.png",
+       "region": [
+        1600,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_walk_NE_11.png",
+       "file": "powered_walk_NE_11.png",
+       "packed_bounds": [
+        66,
+        62,
+        101,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         13.5,
+         -32.0
+        ],
+        "hand_L": [
+         1.1,
+         -40.0
+        ],
+        "foot_L": [
+         -7.7,
+         -0.7
+        ],
+        "foot_R": [
+         7.7,
+         -3.1
+        ],
+        "lantern": [
+         13.5,
+         -22.0
+        ],
+        "blade_tip": [
+         7.1,
+         -61.6
+        ]
+       },
+       "equipment": {
+        "sabre": 0,
+        "scabbard": 89,
+        "lantern": 111
+       },
+       "sha256": "a2464dc49173748a9d93d46b945e2fdb955ffb3bc7a52c92f2a4a2bccbe59d9d",
+       "sheet": "sheets/powered_walk_NE.png",
+       "region": [
+        1760,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "SW": {
+     "frames": [
+      {
+       "path": "res://assets/animated/velvet/powered_walk_SW_00.png",
+       "file": "powered_walk_SW_00.png",
+       "packed_bounds": [
+        58,
+        64,
+        96,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         -15.0,
+         -33.1
+        ],
+        "hand_L": [
+         -0.1,
+         -29.9
+        ],
+        "foot_R": [
+         -10.6,
+         0.1
+        ],
+        "foot_L": [
+         10.6,
+         -2.1
+        ],
+        "lantern": [
+         -15.0,
+         -23.1
+        ],
+        "blade_tip": [
+         -4.4,
+         -37.5
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 106,
+        "sabre": 42
+       },
+       "sha256": "e46a21311d7635ed4f189f7820de6751bc25e9c2e628deb47850766e0cb581b6",
+       "sheet": "sheets/powered_walk_SW.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_walk_SW_01.png",
+       "file": "powered_walk_SW_01.png",
+       "packed_bounds": [
+        58,
+        64,
+        94,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -15.2,
+         -32.8
+        ],
+        "hand_L": [
+         0.2,
+         -29.8
+        ],
+        "foot_R": [
+         -8.4,
+         -0.7
+        ],
+        "foot_L": [
+         8.4,
+         -3.1
+        ],
+        "lantern": [
+         -15.2,
+         -22.8
+        ],
+        "blade_tip": [
+         -4.2,
+         -37.4
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 100,
+        "sabre": 44
+       },
+       "sha256": "52aef6bb5e2550f54f113970f4d7ed90c8ab0a49ab65b90ec792f87f0b55b4c2",
+       "sheet": "sheets/powered_walk_SW.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_walk_SW_02.png",
+       "file": "powered_walk_SW_02.png",
+       "packed_bounds": [
+        58,
+        63,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -15.5,
+         -33.5
+        ],
+        "hand_L": [
+         0.4,
+         -30.7
+        ],
+        "foot_R": [
+         -6.1,
+         -1.5
+        ],
+        "foot_L": [
+         6.1,
+         -3.6
+        ],
+        "lantern": [
+         -15.5,
+         -23.5
+        ],
+        "blade_tip": [
+         -4.0,
+         -38.3
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 109,
+        "sabre": 45
+       },
+       "sha256": "c40b0a92591666b029780e89abdca6a7f51f11952a5651b618f7a98ad2e87653",
+       "sheet": "sheets/powered_walk_SW.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_walk_SW_03.png",
+       "file": "powered_walk_SW_03.png",
+       "packed_bounds": [
+        58,
+        62,
+        94,
+        135
+       ],
+       "anchors": {
+        "hand_R": [
+         -15.7,
+         -34.2
+        ],
+        "hand_L": [
+         0.6,
+         -31.5
+        ],
+        "foot_R": [
+         -3.9,
+         -2.2
+        ],
+        "foot_L": [
+         3.9,
+         -3.3
+        ],
+        "lantern": [
+         -15.7,
+         -24.2
+        ],
+        "blade_tip": [
+         -3.7,
+         -39.2
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 105,
+        "sabre": 41
+       },
+       "sha256": "81def6d0544ebc7284941d26d54d1e9b2257b41d5e7cd86a8d743150e3f487c2",
+       "sheet": "sheets/powered_walk_SW.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_walk_SW_04.png",
+       "file": "powered_walk_SW_04.png",
+       "packed_bounds": [
+        58,
+        62,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -15.9,
+         -34.4
+        ],
+        "hand_L": [
+         0.9,
+         -31.8
+        ],
+        "foot_R": [
+         -1.6,
+         -3.0
+        ],
+        "foot_L": [
+         1.6,
+         -2.0
+        ],
+        "lantern": [
+         -15.9,
+         -24.4
+        ],
+        "blade_tip": [
+         -3.5,
+         -39.5
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 106,
+        "sabre": 41
+       },
+       "sha256": "be9e96421d30c08315f272a25159e3d7a13bf209ab0ba6772110608f60431228",
+       "sheet": "sheets/powered_walk_SW.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_walk_SW_05.png",
+       "file": "powered_walk_SW_05.png",
+       "packed_bounds": [
+        59,
+        63,
+        94,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         -16.2,
+         -33.5
+        ],
+        "hand_L": [
+         1.1,
+         -31.1
+        ],
+        "foot_R": [
+         0.6,
+         -3.8
+        ],
+        "foot_L": [
+         -0.6,
+         0.1
+        ],
+        "lantern": [
+         -16.2,
+         -23.5
+        ],
+        "blade_tip": [
+         -3.3,
+         -38.8
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 99,
+        "sabre": 42
+       },
+       "sha256": "fc1c37ade0c42a1fa39016eb4bcd6f4911460d6afddc00f713261c11ed4d74f0",
+       "sheet": "sheets/powered_walk_SW.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_walk_SW_06.png",
+       "file": "powered_walk_SW_06.png",
+       "packed_bounds": [
+        58,
+        64,
+        94,
+        140
+       ],
+       "anchors": {
+        "hand_R": [
+         -16.4,
+         -32.6
+        ],
+        "hand_L": [
+         1.3,
+         -30.4
+        ],
+        "foot_R": [
+         2.8,
+         -4.6
+        ],
+        "foot_L": [
+         -2.8,
+         2.6
+        ],
+        "lantern": [
+         -16.4,
+         -22.6
+        ],
+        "blade_tip": [
+         -3.0,
+         -38.0
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 110,
+        "sabre": 44
+       },
+       "sha256": "7e0426aa4388978bed7c05f1a67a72a5e1dcca07a66bd911dcbf75bb479085f7",
+       "sheet": "sheets/powered_walk_SW.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_walk_SW_07.png",
+       "file": "powered_walk_SW_07.png",
+       "packed_bounds": [
+        59,
+        64,
+        94,
+        139
+       ],
+       "anchors": {
+        "hand_R": [
+         -16.2,
+         -32.5
+        ],
+        "hand_L": [
+         1.1,
+         -30.1
+        ],
+        "foot_R": [
+         0.6,
+         -5.6
+        ],
+        "foot_L": [
+         -0.6,
+         1.8
+        ],
+        "lantern": [
+         -16.2,
+         -22.5
+        ],
+        "blade_tip": [
+         -3.3,
+         -37.8
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 99,
+        "sabre": 42
+       },
+       "sha256": "7d6d4fd17c6795070edb03181fcf5b5298857f006f7022b0bb16322eb166e7c9",
+       "sheet": "sheets/powered_walk_SW.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_walk_SW_08.png",
+       "file": "powered_walk_SW_08.png",
+       "packed_bounds": [
+        58,
+        63,
+        94,
+        139
+       ],
+       "anchors": {
+        "hand_R": [
+         -15.9,
+         -33.4
+        ],
+        "hand_L": [
+         0.9,
+         -30.8
+        ],
+        "foot_R": [
+         -1.6,
+         -6.1
+        ],
+        "foot_L": [
+         1.6,
+         1.0
+        ],
+        "lantern": [
+         -15.9,
+         -23.4
+        ],
+        "blade_tip": [
+         -3.5,
+         -38.5
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 106,
+        "sabre": 41
+       },
+       "sha256": "08b6d7ce43b16c1d15d11659b14889e965ad315cea6bf00fb8b2d9d99237c7e9",
+       "sheet": "sheets/powered_walk_SW.png",
+       "region": [
+        1280,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_walk_SW_09.png",
+       "file": "powered_walk_SW_09.png",
+       "packed_bounds": [
+        58,
+        62,
+        94,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         -15.7,
+         -34.2
+        ],
+        "hand_L": [
+         0.6,
+         -31.5
+        ],
+        "foot_R": [
+         -3.9,
+         -5.7
+        ],
+        "foot_L": [
+         3.9,
+         0.2
+        ],
+        "lantern": [
+         -15.7,
+         -24.2
+        ],
+        "blade_tip": [
+         -3.7,
+         -39.2
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 105,
+        "sabre": 41
+       },
+       "sha256": "d1e06bba636fc0c30abe02abbfb3c1fec098b5e8b89711ffa427f1cdeae1330a",
+       "sheet": "sheets/powered_walk_SW.png",
+       "region": [
+        1440,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_walk_SW_10.png",
+       "file": "powered_walk_SW_10.png",
+       "packed_bounds": [
+        58,
+        62,
+        94,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         -15.5,
+         -34.5
+        ],
+        "hand_L": [
+         0.4,
+         -31.7
+        ],
+        "foot_R": [
+         -6.1,
+         -4.5
+        ],
+        "foot_L": [
+         6.1,
+         -0.5
+        ],
+        "lantern": [
+         -15.5,
+         -24.5
+        ],
+        "blade_tip": [
+         -4.0,
+         -39.3
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 109,
+        "sabre": 45
+       },
+       "sha256": "ef2cf4ac80eb17cf0a6c3c632982b234a79e53bc94bbd4ed48d66ee3b3629b55",
+       "sheet": "sheets/powered_walk_SW.png",
+       "region": [
+        1600,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_walk_SW_11.png",
+       "file": "powered_walk_SW_11.png",
+       "packed_bounds": [
+        58,
+        63,
+        94,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         -15.2,
+         -33.8
+        ],
+        "hand_L": [
+         0.2,
+         -30.8
+        ],
+        "foot_R": [
+         -8.4,
+         -2.4
+        ],
+        "foot_L": [
+         8.4,
+         -1.3
+        ],
+        "lantern": [
+         -15.2,
+         -23.8
+        ],
+        "blade_tip": [
+         -4.2,
+         -38.4
+        ]
+       },
+       "equipment": {
+        "scabbard": 0,
+        "lantern": 100,
+        "sabre": 44
+       },
+       "sha256": "00d2efb6315be7df995f4a2304222aff305bf321243e8e56c0bd4acb475e771e",
+       "sheet": "sheets/powered_walk_SW.png",
+       "region": [
+        1760,
+        0,
+        160,
+        144
+       ]
+      }
+     ]
+    },
+    "NW": {
+     "frames": [
+      {
+       "path": "res://assets/animated/velvet/powered_walk_NW_00.png",
+       "file": "powered_walk_NW_00.png",
+       "packed_bounds": [
+        43,
+        63,
+        101,
+        140
+       ],
+       "anchors": {
+        "hand_R": [
+         2.0,
+         -37.0
+        ],
+        "hand_L": [
+         -12.8,
+         -34.8
+        ],
+        "foot_R": [
+         -3.5,
+         -4.6
+        ],
+        "foot_L": [
+         3.5,
+         2.6
+        ],
+        "lantern": [
+         2.0,
+         -27.0
+        ],
+        "blade_tip": [
+         -35.3,
+         -48.4
+        ]
+       },
+       "equipment": {
+        "scabbard": 70,
+        "lantern": 5,
+        "sabre": 74
+       },
+       "sha256": "23a60abb8863b4aa7f86c73e4e685e01fcff194f00ebbcba60f87286c5092388",
+       "sheet": "sheets/powered_walk_NW.png",
+       "region": [
+        0,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_walk_NW_01.png",
+       "file": "powered_walk_NW_01.png",
+       "packed_bounds": [
+        44,
+        63,
+        101,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         1.7,
+         -36.9
+        ],
+        "hand_L": [
+         -12.6,
+         -34.6
+        ],
+        "foot_R": [
+         -1.3,
+         -3.8
+        ],
+        "foot_L": [
+         1.3,
+         0.1
+        ],
+        "lantern": [
+         1.7,
+         -26.9
+        ],
+        "blade_tip": [
+         -35.0,
+         -48.1
+        ]
+       },
+       "equipment": {
+        "scabbard": 70,
+        "lantern": 5,
+        "sabre": 74
+       },
+       "sha256": "7bd350e7ec24693e1c409f3c7264b3ace8d32e663707d28af01eb9d716832a2e",
+       "sheet": "sheets/powered_walk_NW.png",
+       "region": [
+        160,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_walk_NW_02.png",
+       "file": "powered_walk_NW_02.png",
+       "packed_bounds": [
+        44,
+        62,
+        101,
+        135
+       ],
+       "anchors": {
+        "hand_R": [
+         1.5,
+         -37.8
+        ],
+        "hand_L": [
+         -12.3,
+         -35.3
+        ],
+        "foot_R": [
+         0.9,
+         -3.0
+        ],
+        "foot_L": [
+         -0.9,
+         -2.0
+        ],
+        "lantern": [
+         1.5,
+         -27.8
+        ],
+        "blade_tip": [
+         -34.8,
+         -48.8
+        ]
+       },
+       "equipment": {
+        "scabbard": 70,
+        "lantern": 5,
+        "sabre": 72
+       },
+       "sha256": "514d08ac6ce8ecc9f5f4f83da400c49c1cf8bc9021299886925bfa4629672b65",
+       "sheet": "sheets/powered_walk_NW.png",
+       "region": [
+        320,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_walk_NW_03.png",
+       "file": "powered_walk_NW_03.png",
+       "packed_bounds": [
+        44,
+        61,
+        101,
+        135
+       ],
+       "anchors": {
+        "hand_R": [
+         1.3,
+         -38.7
+        ],
+        "hand_L": [
+         -12.1,
+         -36.0
+        ],
+        "foot_R": [
+         3.2,
+         -2.2
+        ],
+        "foot_L": [
+         -3.2,
+         -3.3
+        ],
+        "lantern": [
+         1.3,
+         -28.7
+        ],
+        "blade_tip": [
+         -34.6,
+         -49.5
+        ]
+       },
+       "equipment": {
+        "scabbard": 70,
+        "lantern": 5,
+        "sabre": 69
+       },
+       "sha256": "9f15e8b58c0813d7e04fafde36d0d58e9bc64f1a356083ab5f9ce1b35e29eb57",
+       "sheet": "sheets/powered_walk_NW.png",
+       "region": [
+        480,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_walk_NW_04.png",
+       "file": "powered_walk_NW_04.png",
+       "packed_bounds": [
+        44,
+        61,
+        101,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         1.0,
+         -39.0
+        ],
+        "hand_L": [
+         -11.9,
+         -36.1
+        ],
+        "foot_R": [
+         5.4,
+         -1.5
+        ],
+        "foot_L": [
+         -5.4,
+         -3.6
+        ],
+        "lantern": [
+         1.0,
+         -29.0
+        ],
+        "blade_tip": [
+         -34.3,
+         -49.6
+        ]
+       },
+       "equipment": {
+        "scabbard": 70,
+        "lantern": 5,
+        "sabre": 69
+       },
+       "sha256": "4852c274593754719de309d5edbe41695ba94cd0b37af16ab81d9d1ae0b7016a",
+       "sheet": "sheets/powered_walk_NW.png",
+       "region": [
+        640,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_walk_NW_05.png",
+       "file": "powered_walk_NW_05.png",
+       "packed_bounds": [
+        44,
+        62,
+        101,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         0.8,
+         -38.3
+        ],
+        "hand_L": [
+         -11.6,
+         -35.2
+        ],
+        "foot_R": [
+         7.7,
+         -0.7
+        ],
+        "foot_L": [
+         -7.7,
+         -3.1
+        ],
+        "lantern": [
+         0.8,
+         -28.3
+        ],
+        "blade_tip": [
+         -34.1,
+         -48.8
+        ]
+       },
+       "equipment": {
+        "scabbard": 70,
+        "lantern": 4,
+        "sabre": 67
+       },
+       "sha256": "6b76d54f9b875aded02f29f1a9df0f2057e70ed728e8efd98c7b7e0c66174784",
+       "sheet": "sheets/powered_walk_NW.png",
+       "region": [
+        800,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_walk_NW_06.png",
+       "file": "powered_walk_NW_06.png",
+       "packed_bounds": [
+        45,
+        63,
+        101,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         0.6,
+         -37.5
+        ],
+        "hand_L": [
+         -11.4,
+         -34.4
+        ],
+        "foot_R": [
+         9.9,
+         0.1
+        ],
+        "foot_L": [
+         -9.9,
+         -2.1
+        ],
+        "lantern": [
+         0.6,
+         -27.5
+        ],
+        "blade_tip": [
+         -33.9,
+         -47.9
+        ]
+       },
+       "equipment": {
+        "scabbard": 70,
+        "lantern": 5,
+        "sabre": 69
+       },
+       "sha256": "5cb47ddd3e8811ffc3899212cd6e919a348819534f87ed05daebb738cd91ccdc",
+       "sheet": "sheets/powered_walk_NW.png",
+       "region": [
+        960,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_walk_NW_07.png",
+       "file": "powered_walk_NW_07.png",
+       "packed_bounds": [
+        44,
+        63,
+        101,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         0.8,
+         -37.3
+        ],
+        "hand_L": [
+         -11.6,
+         -34.2
+        ],
+        "foot_R": [
+         7.7,
+         -2.4
+        ],
+        "foot_L": [
+         -7.7,
+         -1.3
+        ],
+        "lantern": [
+         0.8,
+         -27.3
+        ],
+        "blade_tip": [
+         -34.1,
+         -47.8
+        ]
+       },
+       "equipment": {
+        "scabbard": 70,
+        "lantern": 4,
+        "sabre": 67
+       },
+       "sha256": "f808bf1f00db27e7b85a6f5b10aa4484b68674efad3c3cd062621082c390ec7b",
+       "sheet": "sheets/powered_walk_NW.png",
+       "region": [
+        1120,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_walk_NW_08.png",
+       "file": "powered_walk_NW_08.png",
+       "packed_bounds": [
+        44,
+        62,
+        101,
+        136
+       ],
+       "anchors": {
+        "hand_R": [
+         1.0,
+         -38.0
+        ],
+        "hand_L": [
+         -11.9,
+         -35.1
+        ],
+        "foot_R": [
+         5.4,
+         -4.5
+        ],
+        "foot_L": [
+         -5.4,
+         -0.5
+        ],
+        "lantern": [
+         1.0,
+         -28.0
+        ],
+        "blade_tip": [
+         -34.3,
+         -48.6
+        ]
+       },
+       "equipment": {
+        "scabbard": 70,
+        "lantern": 5,
+        "sabre": 69
+       },
+       "sha256": "ad93a8783795b3d89dbbd493e4df7044578d2437c80522a35194108f30780151",
+       "sheet": "sheets/powered_walk_NW.png",
+       "region": [
+        1280,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_walk_NW_09.png",
+       "file": "powered_walk_NW_09.png",
+       "packed_bounds": [
+        44,
+        61,
+        101,
+        137
+       ],
+       "anchors": {
+        "hand_R": [
+         1.3,
+         -38.7
+        ],
+        "hand_L": [
+         -12.1,
+         -36.0
+        ],
+        "foot_R": [
+         3.2,
+         -5.7
+        ],
+        "foot_L": [
+         -3.2,
+         0.2
+        ],
+        "lantern": [
+         1.3,
+         -28.7
+        ],
+        "blade_tip": [
+         -34.6,
+         -49.5
+        ]
+       },
+       "equipment": {
+        "scabbard": 70,
+        "lantern": 5,
+        "sabre": 69
+       },
+       "sha256": "537b3d24d2052ac090d1ddb8e4548ee42bc3176461b985fb6f585604a0759a5b",
+       "sheet": "sheets/powered_walk_NW.png",
+       "region": [
+        1440,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_walk_NW_10.png",
+       "file": "powered_walk_NW_10.png",
+       "packed_bounds": [
+        44,
+        61,
+        101,
+        138
+       ],
+       "anchors": {
+        "hand_R": [
+         1.5,
+         -38.8
+        ],
+        "hand_L": [
+         -12.3,
+         -36.3
+        ],
+        "foot_R": [
+         0.9,
+         -6.1
+        ],
+        "foot_L": [
+         -0.9,
+         1.0
+        ],
+        "lantern": [
+         1.5,
+         -28.8
+        ],
+        "blade_tip": [
+         -34.8,
+         -49.8
+        ]
+       },
+       "equipment": {
+        "scabbard": 70,
+        "lantern": 5,
+        "sabre": 72
+       },
+       "sha256": "d9a06169a5d7b1d86e66b5e2f2ee4f2bc7b71b5fb6cf5764e2781cc592c18a52",
+       "sheet": "sheets/powered_walk_NW.png",
+       "region": [
+        1600,
+        0,
+        160,
+        144
+       ]
+      },
+      {
+       "path": "res://assets/animated/velvet/powered_walk_NW_11.png",
+       "file": "powered_walk_NW_11.png",
+       "packed_bounds": [
+        44,
+        62,
+        101,
+        139
+       ],
+       "anchors": {
+        "hand_R": [
+         1.7,
+         -37.9
+        ],
+        "hand_L": [
+         -12.6,
+         -35.6
+        ],
+        "foot_R": [
+         -1.3,
+         -5.6
+        ],
+        "foot_L": [
+         1.3,
+         1.8
+        ],
+        "lantern": [
+         1.7,
+         -27.9
+        ],
+        "blade_tip": [
+         -35.0,
+         -49.1
+        ]
+       },
+       "equipment": {
+        "scabbard": 70,
+        "lantern": 5,
+        "sabre": 74
+       },
+       "sha256": "77410f7beb1c016baa60b975af0f269ce736cde81817a5adcacf0b4bd2bf1fa0",
+       "sheet": "sheets/powered_walk_NW.png",
        "region": [
         1760,
         0,
@@ -52975,5 +62455,23 @@
   ],
   "rule": "after idle has shown for `after` s, play one fidget (random, never the same twice running) when idle reaches drawing 0, then idle; the next after a random `every` s of idle; any other clip cancels it at once (fidgets start and end on idle 0)"
  },
- "pose_count": 1056
+ "pose_count": 1056,
+ "turn_inbetweens": {
+  "facings": [
+   "SE",
+   "NE",
+   "SW",
+   "NW"
+  ],
+  "clips": [
+   "idle",
+   "walk",
+   "powered_idle",
+   "powered_walk"
+  ],
+  "hold": 0.07,
+  "hold_180": 0.055,
+  "aim_step": 0.04,
+  "rule": "turn in-betweens, not playable facings: when the body facing changes between S N E W during a clip listed here, show turns[D] (the three-quarter drawing between the two facings) for `hold` s, keeping the drawing index and the clip time; a 180-degree turn passes through one side (D1, the cardinal between, D2; `hold_180` s each), the side the input rotates toward (S side on an exact reversal). A weapon clip shows its straight-ahead drawing on the in-betweens. Within a facing the weapon aim steps one aim_tag per `aim_step` s toward a new aim instead of jumping."
+ }
 }

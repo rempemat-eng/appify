@@ -45,8 +45,48 @@ func test_bow_aims_within_the_facing() -> void:
 		p.state = &"idle"
 		assert_bool(p.start_shot()).is_true()
 		assert_str(p.facing).is_equal(c[1])
+		assert_str(p.sprite.aim_tag).is_equal(c[2])
+		p.sprite.advance(0.2)                       # past any turn in-between
 		assert_str(p.sprite.animation).is_equal("primary_%s_%s" % [c[1], c[2]])
 		p._set_state(&"idle")
+
+func test_turn_steps() -> void:
+	assert_array(CastSprite.turn_steps("E", "N")).is_equal(["NE"])
+	assert_array(CastSprite.turn_steps("S", "W")).is_equal(["SW"])
+	assert_array(CastSprite.turn_steps("E", "E")).is_empty()
+	# a reversal passes through the side the input rotates toward, else the S side
+	assert_array(CastSprite.turn_steps("E", "W", Vector2(-1, -0.2))).is_equal(["NE", "N", "NW"])
+	assert_array(CastSprite.turn_steps("E", "W", Vector2(-1, 0.2))).is_equal(["SE", "S", "SW"])
+	assert_array(CastSprite.turn_steps("E", "W")).is_equal(["SE", "S", "SW"])
+	assert_array(CastSprite.turn_steps("W", "E")).is_equal(["SW", "S", "SE"])
+	assert_array(CastSprite.turn_steps("N", "S")).is_equal(["NE", "E", "SE"])
+
+func test_turn_inbetween_keeps_the_stride() -> void:
+	var s: CastSprite = auto_free(CastSprite.new())
+	add_child(s)
+	assert_bool(s.load_character("bramble")).is_true()
+	var ti: Dictionary = s.manifest.turn_inbetweens
+	assert_array(ti.facings).contains_exactly_in_any_order(["SE", "NE", "SW", "NW"])
+	s.fidgets_enabled = false
+	s.play_clip("walk", "E")
+	s.advance(0.2)
+	var t := s.clip_time
+	var i := s.frame_index
+	s.play_clip("walk", "N")                        # a quarter turn mid-stride
+	assert_str(s.animation).is_equal("walk_NE")
+	assert_float(s.clip_time).is_equal(t)           # same phase, same drawing
+	assert_int(s.frame_index).is_equal(i)
+	assert_int(s.frame).is_equal(i)
+	s.advance(float(ti.hold) + 0.005)
+	assert_str(s.animation).is_equal("walk_N")
+	s.play_clip("walk", "S")                        # a reversal: three short steps
+	assert_int(s.turn_path.size()).is_equal(3)
+	for k in 3:
+		s.advance(float(ti.hold_180) + 0.002)
+	assert_str(s.animation).is_equal("walk_S")
+	# the in-between drawings line up with the clip's own
+	for d in ti.facings:
+		assert_int(s.manifest.clips.walk.turns[d].frames.size()).is_equal(int(s.manifest.clips.walk.frame_count))
 func test_idle_fidget_plays_and_returns() -> void:
 	var s: CastSprite = auto_free(CastSprite.new())
 	add_child(s)
@@ -84,6 +124,9 @@ func test_standing_faces_the_aim() -> void:
 		await get_tree().physics_frame     # emitted before the nodes' own physics step ...
 		await get_tree().physics_frame     # ... so wait one more
 		assert_str(p.facing).is_equal(want[0])
+		assert_str(p.sprite.shown_facing).is_equal(want[0])
+		for k in 6:                         # past the turn in-between (contract V2.9)
+			await get_tree().physics_frame
 		assert_str(p.sprite.animation).is_equal("idle_" + want[0])
 
 func test_shot_releases_on_the_release_frame() -> void:
@@ -101,7 +144,8 @@ func test_shot_releases_on_the_release_frame() -> void:
 		assert_bool(p.start_shot()).is_true()
 		var fc := CastSprite.facing_for(dir)
 		var tag := p.sprite.aim_tag_for("primary", fc, dir)
-		assert_str(p.sprite.animation).is_equal("primary_%s_%s" % [fc, tag])
+		assert_str(p.sprite.shown_facing).is_equal(fc)
+		assert_str(p.sprite.aim_tag).is_equal(tag)
 		for i in 60:
 			await get_tree().physics_frame
 			if got.size() > 0:

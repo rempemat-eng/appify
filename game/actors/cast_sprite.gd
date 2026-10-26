@@ -11,7 +11,11 @@ extends AnimatedSprite2D
 ## hysteresis. Weapon clips (manifest aim_clips) are also drawn at aims within the facing, every
 ## 22.5 degrees: play_clip shows <clip>_<F>_<tag> for the aim set by set_aim (or read from the
 ## parent's _shot_dir / aim), and anchor() reads that aim's drawings, so a projectile leaves from
-## the aimed arrow tip. A manifest with eight directions (stored 3/4 work) still plays them. Idle
+## the aimed arrow tip. Turns are smooth (Matt, 26 Oct, after Eastward's gameplay): a facing change
+## shows the stored three-quarter drawing between the two facings (manifest turn_inbetweens) for a
+## short beat, keeping the drawing index and clip time, and a weapon's aim steps through the aims
+## in between instead of jumping (see _turn_to, _ease_aim). A manifest with eight directions
+## (stored 3/4 work) still plays them. Idle
 ## fidgets: after idle has shown for a few seconds the sprite plays one of the manifest's
 ## idle_fidgets by itself and returns to idle (see _fidget_tick).
 
@@ -31,6 +35,11 @@ var finished := false
 var fidgets_enabled := true
 var aim_vector := Vector2.ZERO  ## the weapon's aim (screen space); zero = read it from the parent
 var aim_tag := ""               ## the aim drawn within the facing ("" when the clip has no aims)
+
+var turn_path: Array[String] = []   ## in-between facings still to show before `shown_facing`
+var _turn_t := 0.0
+var _turn_step := 0.07           ## the hold of each in-between of the current turn
+var _aim_t := 0.0
 
 var _idle_t := 0.0              ## seconds idle has shown without a break
 var _next_fidget := 0.0
@@ -157,16 +166,72 @@ func play_clip(name: String, fc: String, restart := false) -> void:
 	var keep_phase: bool = name == clip and playing == clip and bool(clip_info(name).loop) and not restart
 	if name != clip or restart or playing != clip:
 		_reset_idle_clock()
+	var before := shown_facing
+	var had_clip := clip != ""
 	clip = name
 	playing = name
 	facing = fc
 	shown_facing = resolve_facing(fc)
 	aim_tag = aim_tag_for(name, shown_facing, _aim_now())
-	animation = "%s_%s" % [name, shown_facing] if aim_tag == "" else "%s_%s_%s" % [name, shown_facing, aim_tag]
+	_aim_t = 0.0
+	turn_path.clear()
+	if had_clip and has_turns(name):
+		turn_path = turn_steps(before, shown_facing, _turn_hint())
+	_turn_step = _turn_hold()
+	_turn_t = _turn_step
 	if not keep_phase:          # turning while walking keeps the stride phase
 		clip_time = 0.0
 		finished = false
+	_show()
 	_sync()
+
+## The animation for the current state: an in-between facing while turning, else the facing (and
+## the weapon's aim within it).
+func _show() -> void:
+	if not turn_path.is_empty():
+		animation = "%s_%s" % [playing, turn_path[0]]
+	elif aim_tag != "":
+		animation = "%s_%s_%s" % [playing, shown_facing, aim_tag]
+	else:
+		animation = "%s_%s" % [playing, shown_facing]
+
+## True when the clip has the turn in-betweens (manifest turn_inbetweens; contract V2.9).
+func has_turns(name: String) -> bool:
+	return has_clip(name) and clip_info(name).has("turns")
+
+## The facings shown on the way from `from` to `to` (both of S N E W), not counting `to`: the
+## three-quarter drawing between them for a quarter turn; for a reversal the side the input `hint`
+## rotates toward (the S side when it gives none): diagonal, the cardinal between, diagonal.
+static func turn_steps(from: String, to: String, hint := Vector2.ZERO) -> Array[String]:
+	var out: Array[String] = []
+	if from == to or not FACINGS.has(from) or not FACINGS.has(to):
+		return out
+	var a := facing_vector(from)
+	var b := facing_vector(to)
+	if absf(a.dot(b)) < 0.5:                        # a quarter turn
+		out.append(_nearest((a + b).angle(), FACINGS8))
+		return out
+	var s := signf(a.cross(hint)) if hint.length() > 0.01 else 0.0
+	if s == 0.0:                                    # an exact reversal: through the S side (E, W) or E (N, S)
+		s = signf(a.cross(Vector2.DOWN)) if from == "E" or from == "W" else (1.0 if from == "N" else -1.0)
+	var mid := a.rotated(s * PI / 2.0)
+	out.append(_nearest((a + mid).angle(), FACINGS8))
+	out.append(_nearest(mid.angle(), FACINGS))
+	out.append(_nearest((mid + b).angle(), FACINGS8))
+	return out
+
+func _turn_hold() -> float:
+	var ti: Dictionary = manifest.get("turn_inbetweens", {})
+	return float(ti.get("hold_180" if turn_path.size() > 1 else "hold", 0.07))
+
+## Which way the input points when the facing changes (the parent's movement, else its aim).
+func _turn_hint() -> Vector2:
+	var p := get_parent()
+	if p != null and "velocity" in p:
+		var v: Vector2 = p.get("velocity")
+		if v.length() > 1.0:
+			return v
+	return _aim_now()
 
 ## Advances the clip; returns the drawings entered during this step (for release events).
 func advance(delta: float) -> Array[int]:
@@ -176,6 +241,8 @@ func advance(delta: float) -> Array[int]:
 	var before := frame_index
 	var wrapped := false
 	clip_time += delta
+	_turn_tick(delta)
+	_ease_aim(delta)
 	if info.loop:
 		wrapped = clip_time >= total
 		clip_time = fmod(clip_time, total)
@@ -192,6 +259,41 @@ func advance(delta: float) -> Array[int]:
 	_fidget_tick(delta, wrapped)
 	return entered
 
+func _turn_tick(delta: float) -> void:
+	if turn_path.is_empty():
+		return
+	_turn_t -= delta
+	while _turn_t <= 0.0 and not turn_path.is_empty():
+		turn_path.pop_front()
+		_turn_t += _turn_step
+	_show()
+
+## A weapon clip whose aim changes mid-clip steps one aim per manifest aim_step toward it.
+func _ease_aim(delta: float) -> void:
+	if aim_tag == "" or playing != clip:
+		return
+	var target := aim_tag_for(clip, shown_facing, _aim_now())
+	if target == aim_tag or target == "":
+		_aim_t = 0.0
+		return
+	_aim_t += delta
+	var step := float(manifest.get("turn_inbetweens", {}).get("aim_step", 0.04))
+	if _aim_t < step:
+		return
+	_aim_t = 0.0
+	var aims: Dictionary = clip_info().facings[shown_facing].get("aims", {})
+	var cur := float(aims[aim_tag].deg)
+	var goal := float(aims[target].deg)
+	var best := aim_tag
+	var bd := INF
+	for tag in aims:                                # the next aim from the current one toward the goal
+		var d := float(aims[tag].deg)
+		if (d - cur) * (goal - cur) > 0.0 and absf(d - cur) < bd:
+			bd = absf(d - cur)
+			best = tag
+	aim_tag = best
+	_show()
+
 ## Idle fidgets (CONTRACT V2.5): after `after` seconds of idle, at idle drawing 0, play one fidget
 ## (random, never the same twice running), then idle again; the next after a random `every` span.
 ## A fidget starts and ends on idle drawing 0, so neither cut pops. Any play_clip cancels it.
@@ -203,7 +305,7 @@ func _fidget_tick(delta: float, wrapped: bool) -> void:
 		if finished:
 			playing = "idle"
 			aim_tag = ""
-			animation = "idle_%s" % shown_facing
+			_show()
 			clip_time = 0.0
 			finished = false
 			_idle_t = 0.0
@@ -219,7 +321,8 @@ func _fidget_tick(delta: float, wrapped: bool) -> void:
 		_last_fidget = pick
 		playing = pick
 		aim_tag = ""
-		animation = "%s_%s" % [pick, shown_facing]
+		turn_path.clear()
+		_show()
 		clip_time = 0.0
 		finished = false
 		_sync()

@@ -10,7 +10,9 @@ game loads, in game/assets/characters/<id>/:
   sheets/<clip>_<F>.png   one horizontal strip per clip and facing (S, N, E, W), cells in order;
                           a weapon clip also has sheets/<clip>_<F>_<tag>.png per aim (contract v2)
   frames.tres             a SpriteFrames: animation <clip>_<F> = AtlasTexture regions of the
-                          strip, with the manifest's per-drawing durations (relative to 1 s)
+                          strip, with the manifest's per-drawing durations (relative to 1 s);
+                          <clip>_<D> for the turn in-betweens (SE, NE, SW, NW) of the clips
+                          the manifest lists in turn_inbetweens (contract v2.9)
   manifest.json           the castwork manifest, with each frame's sheet and region added
 
 The player reads timing, release frames, anchors and walk speed from manifest.json and drives
@@ -41,6 +43,8 @@ def import_char(src_root, cid):
             sets.append(('%s_%s' % (clip, fc), fe['frames'], None))
             for tag, ae in fe.get('aims', {}).items():      # weapon aims within the facing (contract v2)
                 sets.append(('%s_%s_%s' % (clip, fc, tag), ae['frames'], '%s_%s' % (clip, fc) if tag == '0' else None))
+        for d, te in ce.get('turns', {}).items():           # turn in-betweens (contract v2.9)
+            sets.append(('%s_%s' % (clip, d), te['frames'], None))
         for name, frames, same_as in sets:
             sheet_name = same_as or name                     # aim 0 is the facing's own drawings: no second strip
             if same_as is None:
