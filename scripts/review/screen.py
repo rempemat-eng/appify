@@ -41,7 +41,7 @@ def piece_of_ground(native, comp, g, H) -> bool:
     little hue).
     A thing stands out further: a prop, a boulder, a slab of Matt's terrazzo (U1) does."""
     ring = ndi.binary_dilation(comp, iterations=2) & ~comp
-    if not ring.any() or g[ring].mean() < 0.6:
+    if not ring.any() or g[ring].mean() < 0.5:          # as flats(): a ring at least half ground
         return False
     band = B.load_bands().get('groups', {}).get('ground')
     if not band:

@@ -46,6 +46,7 @@ INPUTS = ('undercroft.py', 'village.py', 'palette.py', 'ctx.py')
 STONES = ('stone', 'stone_warm', 'stone_cool')
 CAIRN = os.path.join(ROOT, 'game', 'assets', 'characters', 'cairn', 'sheets', 'defeat_S.png')
 TORCH_FRAMES = 4
+TORCH_LIFT = 14          # world px from the face's foot to the torch's cup: low on the face, in view over its pool
 
 
 def input_hash(plan_path: str, density: float) -> str:
@@ -1331,11 +1332,11 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
     lf_warm = np.zeros((H, W))
     for tx, ty in plan.get('torches', []):
         dfl = np.hypot((WX - tx) / 40, (WY - ty - 12) / 26)        # the floor below
-        dfa = np.hypot((WX - tx) / 18, (WY - ty + 26) / 16)        # the face round the bracket
+        dfa = np.hypot((WX - tx) / 18, (WY - ty + TORCH_LIFT + 2) / 16)    # the face round the bracket
         d = np.minimum(dfl, dfa) + nz
         lightv = np.maximum(lightv, np.where((dfa < 0.5) | (d < 0.5), 2, np.where(d < 0.95, 1, np.where(d < 1.4, 0, -1))))
         warm |= d < 1.1
-        dt = np.hypot((WX - tx) / 48, (WY - ty - 16) / 30) + nz * 0.15
+        dt = np.hypot((WX - tx) / 46, (WY - ty - 22) / 38) + nz * 0.15
         # the pool's heart (up to rung 4 to 5) and its wide spill (a rung over the room's shade)
         lt = 5.0 * np.clip(1 - dt, 0, 1) ** 1.6 + 1.1 * np.clip(1 - dt / 2.2, 0, 1) ** 0.9
         lf = np.maximum(lf, lt)
@@ -1395,7 +1396,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
     add_pic('torch', sheet)
     for i, (tx, ty) in enumerate(plan.get('torches', [])):
         objects.append(dict(id='torch_%d' % (i + 1), kind='torch', png='torch', foot=(q(tx), q(ty)),
-                            anchor=(frames[0].ax, frames[0].ay), lift=q(24), frames=TORCH_FRAMES, alpha=None, cond=None,
+                            anchor=(frames[0].ax, frames[0].ay), lift=q(TORCH_LIFT), frames=TORCH_FRAMES, alpha=None, cond=None,
                             solid=None))
     for wl in plan['walls']:
         if wl.get('alcove'):
@@ -1454,26 +1455,35 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
             e = ((XX - fx - q(2)) / (w / 2 + q(3))) ** 2 + ((YY - fy + q(1)) / q(4)) ** 2
             sel = (e < 1) & floor
             fshade[sel] += 1.2 * (1 - e[sel]) ** 0.5
-    # --- the floor painted: light minus shade, a rung per texel, soft edges as irregular clusters --------
+    # --- the floor painted: light minus shade, flag by flag ----------------------------------------
+    # Each flag takes the light at its middle (a little jitter, so the steps are few and irregular and
+    # follow the stones, as Eastward's 06); the joints stay dark, rising only slowly in a pool.
     level = FLOOR_AMBIENT + lf - fshade
     level -= 0.6 * np.clip(1 - lf / 0.9, 0, 1)            # far from every light the floor sinks towards the dark
-    thr = ndi.gaussian_filter(np.random.default_rng(91).random((H, W)), 1.2)
-    thr = (np.argsort(np.argsort(thr.ravel())).reshape(H, W) + 0.5) / thr.size     # uniform, in 3-5 px clusters
-    rung = np.floor(level + (thr - 0.5) * 0.35 + 0.5).astype(int)
-    rung = np.clip(rung, 0, 6)                      # rung 0 only in the occlusion at the walls' feet
-    # in the shade the light changes flag by flag (each flag takes its middle's light, a little jitter):
-    # no grain of dither across a dark floor, only the odd stone a tone darker or lighter
+    rung = np.clip(np.floor(level + 0.5).astype(int), 0, 6)
     if nflags:
         with np.errstate(invalid="ignore"):
             fl = np.nan_to_num(ndi.mean(level, labels=slab, index=np.arange(1, nflags + 1)), nan=1.0)
-        fj = np.random.default_rng(93).uniform(-0.15, 0.15, nflags)
-        fr = np.concatenate([[0], np.floor(fl + fj + 0.5).astype(int)])
-        shade_f = (slab > 0) & (lf < 1.2)
-        rung[shade_f] = np.clip(fr[slab[shade_f]], 0, 6)
-    # arrises catch the light only inside a pool: a flag's top and west edge a rung up, broken
+        fj = np.random.default_rng(93).uniform(-0.3, 0.3, nflags)
+        fr = np.concatenate([[0], np.clip(np.floor(fl + fj + 0.5).astype(int), 0, 6)])
+        rung[slab > 0] = fr[slab[slab > 0]]
+    jl = FLOOR_AMBIENT + 0.45 * lf - fshade - 0.6 * np.clip(1 - lf / 0.9, 0, 1)
+    jr = np.clip(np.floor(jl + 0.5).astype(int), 0, 4)
+    nb = ndi.grey_erosion(np.where(slab > 0, rung, 9), size=(3, 3))      # the darkest flag beside the joint
+    jt = (slab == 0) & floor
+    rung[jt] = np.minimum(jr[jt], np.maximum(0, nb[jt] - 1)) + 1          # +1: floor_codes takes the joint's -1
+    # arrises catch the light only inside a pool: a flag's top and west edge a rung up, here and there
     top_l = (slab > 0) & (np.roll(fjoint, 1, 0) | np.roll(fjoint, 1, 1)) & (foff == 0)
-    arris = top_l & (rung >= 4) & (np.random.default_rng(92).random((H, W)) < 0.6)
+    arris = top_l & (rung >= 4) & (np.random.default_rng(92).random((H, W)) < 0.35)
     off = foff + arris.astype(int)
+    # a lit flag shows its wear: worn patches on its sibling stone and a few more pits, so a pool's
+    # flags are lit stone, not flat tiles
+    lit_f = (slab > 0) & (rung >= 3)
+    wl = ndi.gaussian_filter(np.random.default_rng(94).random((H, W)), q(1.1))
+    fvar = np.where(lit_f & (wl > np.quantile(wl, 0.55)), 1 - fvar, fvar)
+    pit = lit_f & (np.random.default_rng(95).random((H, W)) < 0.006) & (foff == 0)
+    pit = ndi.binary_dilation(pit, structure=np.ones((2, 2))) & lit_f
+    off[pit] = -1
     paint = floor & ~outer & ~fixed
     fc = floor_codes(rung, off, fmat, fvar, fcool, fwarm)
     cv[paint] = fc[paint]

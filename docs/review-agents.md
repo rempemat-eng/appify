@@ -26,7 +26,7 @@ Before you hand art to Claude A or Matt:
 | --- | --- | --- |
 | `water.py` | scene, ground assets | `logic.water_staircase`, `logic.water_straight`, `detail.fall_flat`, `logic.fall_face`, `logic.water_source`, `logic.bridge_span` |
 | `screen.py` | scene, ground assets | `logic.stray_line`, `detail.repetition` (stamped tufts), `detail.flat` (one-tone areas and flat objects), `detail.flat_line`, `detail.no_falloff` (interiors), `detail.debug_overlay` |
-| `scene.py` | scene (Godot data) | `logic.occlusion`, `logic.intersect`, `logic.crown_cut`, `logic.reach`, `logic.shadow_orphan`, `logic.prop_row`, `logic.wiring` |
+| `scene.py` | scene (Godot data) | `logic.occlusion`, `logic.intersect`, `logic.crown_cut`, `logic.reach`, `logic.shadow_orphan`, `logic.light_source`, `logic.prop_row`, `logic.wiring` |
 | `detail.py` | asset | `detail.flat`, `detail.volume`, `detail.texture`, `detail.light`, `detail.mesh`, `detail.water_flat` |
 | `construct.py` | asset | `logic.floating_part`, `logic.stilts`, `logic.dotted_line`, `logic.scale` (size guide), mushrooms (`logic.scale`, `logic.prop_row`), `logic.biome`, `detail.mesh` (see-through crowns), `detail.water_flat` (half discs, flat troughs), `detail.light`, `detail.repetition`, `detail.glyph` (UI-like marks), `logic.construction` (a well needs a crank), `detail.volume` (cylinder shading) |
 | `cast.py` | characters | `cast.foot_slide`, `cast.walk_speed`, `cast.seam`, `cast.equipment`, `cast.end_pose`, `cast.light` (ported from the 25 Oct cast audits; `python3 -m scripts.review.cast [ids]`) |
@@ -52,6 +52,10 @@ So a **ground plane** (an area off the ground palette at least 1 H² and 0.5 H a
 A flat fill (2 to 3 tones, 4 to 5 shapes a patch) still trips, and so does a bright floor of contrasting slabs: Matt's terrazzo floor (U1) measures 28 to 33 L between its pieces against Eastward's 5 to 16. The round 4 Undercroft floor measures 9.5 to 11 tones, 27 to 29 shapes and 13 to 16 L. `npm run check:review` holds one picture of each (`GroundPlane`: a calm Eastward-like floor that passes, a flat one and a bright contrasting one that trip).
 
 The zone faults (W7, W8, W12 and the other woodland zone routes) are now pinned to the commit Matt saw (`woodland@2f88ca53` in `calibration_set.json`; `calibrate.pinned_game` extracts the zone's data and the files its scenes reach), as the asset routes already were. Before that, a fixed woodland made the calibration lose the faults it was built on (35 of 38 on 26 Oct). With the pin and the ground band: **38 of 38**; the false positives are in `calibration_results.json`.
+
+## Light sources (26 Oct)
+
+`logic.light_source` (`scene.check_light_sources`): on a dark ground (an interior or a night street, median luminance under 90), a pool of light is a patch at least 35 L over the ground's median (blurred at 0.2 H) and 0.25 H² large. Its brightest point must lie within 1.4 H of a source: a visible sprite named as a light (torch, brazier, lamp, lantern, candle, fire, hearth, forge, window, skylight) or the plan's skylight or stair hatch. Otherwise it is a light from nowhere. Claude A found two such pools in the Undercroft's seal room, where the torches hung above the frame. `check:review` holds a pool with and without a torch (`LightSource`). The Undercroft's pools all find their torches; with the torches removed, all eight are caught.
 
 ## Adding a detector
 

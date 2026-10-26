@@ -469,6 +469,68 @@ def check_shadows(z: Zone, H=GAME_H) -> list[Finding]:
     return fs
 
 
+LIGHT_SOURCES = ('torch', 'brazier', 'lamp', 'lantern', 'candle', 'fire', 'hearth', 'forge', 'window', 'skylight')
+POOL_RISE = 35.0          # L units: a pool stands this far over the ground's median (blurred at 0.2 H)
+POOL_MIN = 0.25           # H^2
+POOL_REACH = 1.4          # H: the pool's brightest point lies this near a source
+
+
+def light_sources(z: Zone) -> list[tuple]:
+    """Where light comes from: every visible sprite named as a light (torch, brazier, lamp, window,
+    ...) at its foot, and the plan's skylight and stair hatch (zone texels)."""
+    pts = []
+    for sp in z.sprites:
+        if sp.visible and any(k in (sp.name + ' ' + sp.path).lower() for k in LIGHT_SOURCES):
+            pts.append((float(sp.origin[0]), float(sp.origin[1])))
+    if z.plan and z.plan.get('box'):
+        d = z.size[0] / float(z.plan['box'][2])
+        sk = z.plan.get('skylight')
+        if sk:
+            pts.append((sk['at'][0] * d, sk['at'][1] * d))
+        st = z.plan.get('stair')
+        if st:
+            x, y, w, h = st['rect']
+            pts.append(((x + w) * d, (y + h / 2) * d))
+    return pts
+
+
+def check_light_sources(z: Zone, H=GAME_H) -> list[Finding]:
+    """A pool of light painted on a dark ground (an interior, a night street) needs its source: a
+    torch, brazier, lamp or window over it, or the opening it falls through. A bright patch at least
+    POOL_RISE over the ground's median and POOL_MIN large, with no source within POOL_REACH of its
+    brightest point, is a light from nowhere (Claude A's review of the Undercroft, 26 Oct)."""
+    if z.ground is None:
+        return []
+    L = lum(z.ground[..., :3])
+    floor = np.ones(L.shape, bool)
+    if z.plan and z.plan.get('walls') and z.plan.get('box'):
+        d = z.size[0] / float(z.plan['box'][2])
+        for w in z.plan['walls']:
+            x, y, ww, hh = (int(round(v * d)) for v in w['rect'])
+            floor[max(0, y):y + hh, max(0, x):x + ww] = False
+    if np.median(L[floor]) >= 90:
+        return []                      # a daylit ground: its light is the sun's
+    bl = ndi.gaussian_filter(L, 0.2 * H)
+    pool = floor & (bl >= np.median(bl[floor]) + POOL_RISE)
+    lab, regs = regions(pool, min_area=int(POOL_MIN * H * H))
+    src = light_sources(z)
+    fs = []
+    for lid, sl, area in regs:
+        comp = lab == lid
+        yy, xx = np.nonzero(comp)
+        k = int(np.argmax(bl[comp]))
+        px, py = float(xx[k]), float(yy[k])
+        near = min((np.hypot(px - sx, py - sy) for sx, sy in src), default=1e9)
+        if near > POOL_REACH * H:
+            fs.append(Finding('logic.light_source', 'fault', slice_box(sl),
+                              f'a pool of light {area / (H * H):.1f} H^2 with no source: the nearest torch, lamp or '
+                              f'opening is {near / H:.1f} H from its brightest point',
+                              'hang a torch or brazier on the wall over the pool (or make it the skylight\'s pool with '
+                              'its beam), or take the pool away; light never comes from nowhere (art-style.md)',
+                              score=near / H, threshold=POOL_REACH, subject='light'))
+    return fs
+
+
 def check_rows(z: Zone, H=GAME_H) -> list[Finding]:
     """The same drawing three or more times on one line at even spacing."""
     fs = []
@@ -568,6 +630,7 @@ def review_zone(zone_id: str, H=GAME_H, wiring=True) -> dict:
     fs += check_crowns(z, H)
     fs += check_reach(z, H)
     fs += check_shadows(z, H)
+    fs += check_light_sources(z, H)
     fs += check_rows(z, H)
     if wiring:
         fs += check_wiring([zone_id])

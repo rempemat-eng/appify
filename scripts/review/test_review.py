@@ -276,5 +276,27 @@ class GroundPlane(unittest.TestCase):
     def test_bright_contrasting_floor_trips(self):
         self.assertTrue(self.flat('bright'))
 
+
+class LightSource(unittest.TestCase):
+    """logic.light_source: a warm pool on a dark floor needs a torch (or an opening) over it."""
+
+    def zone(self, torch):
+        a = np.zeros((300, 400, 4), np.uint8)
+        a[..., :3] = (52, 48, 70)
+        a[..., 3] = 255
+        Y, X = np.mgrid[0:300, 0:400]
+        a[((X - 200) / 60.0) ** 2 + ((Y - 150) / 40.0) ** 2 < 1, :3] = (170, 150, 120)
+        sprites = []
+        if torch:
+            sprites.append(SN.Sprite('Torch_1', 'res://zones/x/art/torch.png', (200, 100), (190, 60, 210, 100), 0,
+                                     False, np.zeros((40, 20, 4), np.uint8), 'WallFx'))
+        return SN.Zone('x', (400, 300), a, sprites=sprites)
+
+    def test_pool_without_source(self):
+        self.assertTrue(SN.check_light_sources(self.zone(False), H))
+
+    def test_pool_under_a_torch(self):
+        self.assertEqual(SN.check_light_sources(self.zone(True), H), [])
+
 if __name__ == '__main__':
     unittest.main()
