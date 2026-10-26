@@ -1,26 +1,26 @@
 {
  "id": "woodland/hollow_tree",
  "file": "game/zones/woodland/art/hollow_tree.png",
- "sha256": "48b62f532ba3f5e43a9e5b41e217c799ef9aaebfa5454a9e7dbe44eb898bfdf5",
+ "sha256": "42591374f088b24a5c591fd9ed8209e7e7849de1de7d1bbebcc76f903c560fdf",
  "kind": "veteran_tree",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  235,
-  322
+  229,
+  316
  ],
- "status": "fail",
+ "status": "pass",
  "counts": {
   "blocker": 0,
-  "fault": 4,
-  "polish": 6
+  "fault": 0,
+  "polish": 1
  },
  "detail_bar": {
   "ours": {
-   "patches": 46,
-   "tones": 17.347826086956523,
-   "shapes": 25.565217391304348
+   "patches": 90,
+   "tones": 17.477777777777778,
+   "shapes": 33.93333333333333
   },
   "band": {
    "tones": 27.71,
@@ -28,132 +28,24 @@
    "boxes": 4,
    "patches": 107
   },
-  "ratio": 0.404,
-  "tones_ratio": 0.626,
-  "shapes_ratio": 0.404,
+  "ratio": 0.536,
+  "tones_ratio": 0.631,
+  "shapes_ratio": 0.536,
   "passed": false,
   "group": "foliage"
  },
  "findings": [
   {
-   "detector": "detail.light",
-   "severity": "polish",
-   "box": [
-    114,
-    113,
-    150,
-    146
-   ],
-   "message": "woodland/hollow_tree: the foliage is lit from the right (luminance rises 68 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
-   "detector": "detail.light",
-   "severity": "polish",
-   "box": [
-    56,
-    21,
-    98,
-    56
-   ],
-   "message": "woodland/hollow_tree: the foliage is lit from the right (luminance rises 53 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
-   "detector": "detail.light",
-   "severity": "polish",
-   "box": [
-    36,
-    116,
-    71,
-    142
-   ],
-   "message": "woodland/hollow_tree: the foliage is lit from the right (luminance rises 36 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
-   "detector": "detail.light",
-   "severity": "polish",
-   "box": [
-    117,
-    67,
-    165,
-    118
-   ],
-   "message": "woodland/hollow_tree: the foliage is lit from the right (luminance rises 24 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
-   "detector": "detail.light",
-   "severity": "polish",
-   "box": [
-    32,
-    95,
-    69,
-    112
-   ],
-   "message": "woodland/hollow_tree: the foliage is lit from the right (luminance rises 21 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    132,
-    159,
-    149,
-    307
-   ],
-   "message": "woodland/hollow_tree: the red reads 2D: 1 light planes, luminance spread 0",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
-  },
-  {
-   "detector": "detail.flat",
-   "severity": "fault",
-   "box": [
-    132,
-    159,
-    149,
-    307
-   ],
-   "message": "woodland/hollow_tree: a flat red area: one smooth patch covers 57% (0.091 H^2), 3 tones",
-   "fix": "draw the red as its material: break the fill with its own structure (staves and hoops, grain and nail heads, courses, bevels, leaf clusters) in 4 to 5 tones of its ramp"
-  },
-  {
-   "detector": "detail.glyph",
-   "severity": "fault",
-   "box": [
-    132,
-    159,
-    149,
-    307
-   ],
-   "message": "woodland/hollow_tree: a flat red mark of 3 tones on the body reads as an interface icon, not something carved, painted or worn into the material",
-   "fix": "cut or paint it into the surface: a carved groove with a lit lower lip and a dark upper edge, worn paint with chips, moss in the cut; tone it to the material and the light"
-  },
-  {
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    12,
-    13,
-    223,
+    10,
+    10,
+    221,
     309
    ],
-   "message": "woodland/hollow_tree: detail bar 0.40 of Eastward's foliage band (17.3 tones, 25.6 shapes a patch against 27.71, 63.32)",
+   "message": "woodland/hollow_tree: detail bar 0.54 of Eastward's foliage band (17.5 tones, 33.9 shapes a patch against 27.71, 63.32)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
-  },
-  {
-   "detector": "detail.mesh",
-   "severity": "fault",
-   "box": [
-    12,
-    13,
-    223,
-    307
-   ],
-   "message": "woodland/hollow_tree: the foliage is a see-through mesh: 39% of the crown is gaps between outlined blobs",
-   "fix": "paint the crown as one mass of leaf clusters (Eastward): lit clumps on top, a darker band under them, a dark interior showing through narrow gaps, no ground visible through the crown and no outline round every blob (art-style.md 4)"
   }
  ],
  "reviewed": "2026-10-25",

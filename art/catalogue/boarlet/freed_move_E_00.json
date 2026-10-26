@@ -1,0 +1,69 @@
+{
+ "id": "boarlet/freed_move_E_00",
+ "file": "art/cast/boarlet/freed_move_E_00.png",
+ "sha256": "5dcb6009169db7d0c38d81d424db6339024cdcd58b149183bcd54721bda72acb",
+ "kind": "freed_move_E",
+ "biome": "woodland",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  160,
+  144
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 2
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 3,
+   "tones": 18.333333333333332,
+   "shapes": 38.0
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.679,
+  "tones_ratio": 0.679,
+  "shapes_ratio": 0.755,
+  "passed": false,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    59,
+    99,
+    117,
+    127
+   ],
+   "message": "boarlet/freed_move_E_00: the wood is lit from the right (luminance rises 16 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    53,
+    98,
+    120,
+    136
+   ],
+   "message": "boarlet/freed_move_E_00: detail bar 0.68 of Eastward's prop band (18.3 tones, 38.0 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  }
+ ],
+ "reviewed": "2026-10-25",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}

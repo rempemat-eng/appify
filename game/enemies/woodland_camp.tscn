@@ -1,7 +1,11 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://enemies/woodland_camp.gd" id="1"]
+[ext_resource type="Script" path="res://enemies/creature_dresser.gd" id="2"]
 
 [node name="WoodlandSliceCamp" type="Node2D"]
 script = ExtResource("1")
 camp_id = "woodland_slice_c61"
+
+[node name="Dresser" type="Node" parent="."]
+script = ExtResource("2")

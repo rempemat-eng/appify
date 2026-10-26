@@ -1,0 +1,521 @@
+{
+  "schema_version": 1,
+  "status": "proposal (claude-a/progression, 25 Oct); every number is a placeholder until play-tests and Claude L's harness",
+  "id": "cairn",
+  "name": "Cairn",
+  "identity": "moss-covered granite golem from the woodland circle, about 90 px; great round fists, a sprout on the LEFT shoulder, two floating pebbles over the RIGHT shoulder",
+  "home_region": "valley",
+  "home_region_note": "Claude K's proposal on #149 (25 Oct), not yet decided by Matt; it only sets the tier material",
+  "abilities": {
+    "kit": "game/data/abilities/cairn.json (Codex, #261); base and powered form unchanged",
+    "base": {
+      "primary": "Stone fist",
+      "secondary": "Boulder",
+      "block": "Crossed arms",
+      "special": "Old Growth"
+    },
+    "skill_tree": {
+      "branches": [
+        {
+          "id": "stone",
+          "name": "Stone",
+          "covers": [
+            "block"
+          ],
+          "nodes": [
+            {
+              "id": "granite_skin",
+              "kind": "passive",
+              "name": "Granite Skin",
+              "effect": "Guard maximum +10 % (a modifier on the canonical guard).",
+              "numbers": {
+                "guard_max_pct": 10
+              },
+              "touches_canonical": true,
+              "note": "changes a count in Codex's powered form; needs C60's OK (#149)",
+              "level": 2,
+              "cost": 1,
+              "requires": []
+            },
+            {
+              "id": "bedrock",
+              "name": "Bedrock",
+              "binding": "passive on Crossed arms",
+              "effect": "Once every few seconds the guard takes a whole hit with no guard cost.",
+              "numbers": {
+                "cooldown_seconds": 6
+              },
+              "art": {
+                "new_clips": [],
+                "fx": [
+                  "stone flash on the forearms (2 drawings)"
+                ],
+                "reuses": [
+                  "guard"
+                ]
+              },
+              "touches_canonical": false,
+              "kind": "technique",
+              "level": 3,
+              "cost": 2,
+              "requires": [
+                "granite_skin"
+              ]
+            },
+            {
+              "id": "settled",
+              "kind": "passive",
+              "name": "Settled",
+              "effect": "Guard recovers 10 % faster.",
+              "numbers": {
+                "guard_recovery_pct": 10
+              },
+              "level": 6,
+              "cost": 1,
+              "requires": [
+                "bedrock"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "bedrock_2",
+              "kind": "technique upgrade",
+              "name": "Bedrock II",
+              "effect": "A Bedrock block shoves the attacker back.",
+              "numbers": {
+                "knockback": 22
+              },
+              "level": 12,
+              "cost": 3,
+              "requires": [
+                "settled"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "standing_stone",
+              "kind": "keystone",
+              "name": "Standing Stone",
+              "effect": "While guarding he cannot be knocked back.",
+              "numbers": {
+                "no_knockback": true
+              },
+              "level": 22,
+              "cost": 4,
+              "requires": [
+                "bedrock_2"
+              ],
+              "touches_canonical": false
+            }
+          ]
+        },
+        {
+          "id": "throw",
+          "name": "Throw",
+          "covers": [
+            "secondary"
+          ],
+          "nodes": [
+            {
+              "id": "strong_arm",
+              "kind": "passive",
+              "name": "Strong Arm",
+              "effect": "Boulders fly 8 % faster.",
+              "numbers": {
+                "boulder_speed_pct": 8
+              },
+              "level": 2,
+              "cost": 1,
+              "requires": [],
+              "touches_canonical": false
+            },
+            {
+              "id": "stonebreak",
+              "name": "Stonebreak",
+              "binding": "passive on Boulder",
+              "effect": "A boulder that hits a tank cracks its front armour for a few seconds.",
+              "numbers": {
+                "armour_break_seconds": 3
+              },
+              "art": {
+                "new_clips": [],
+                "fx": [
+                  "crack decal on the foe"
+                ],
+                "reuses": []
+              },
+              "touches_canonical": false,
+              "kind": "technique",
+              "level": 9,
+              "cost": 2,
+              "requires": [
+                "strong_arm"
+              ]
+            },
+            {
+              "id": "heavy_stone",
+              "kind": "passive",
+              "name": "Heavy Stone",
+              "effect": "Boulder knockback +20 %.",
+              "numbers": {
+                "knockback_pct": 20
+              },
+              "level": 11,
+              "cost": 1,
+              "requires": [
+                "stonebreak"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "stonebreak_2",
+              "kind": "technique upgrade",
+              "name": "Stonebreak II",
+              "effect": "A boulder that hits any foe slows its next wind-up.",
+              "numbers": {
+                "windup_delay_seconds": 0.3
+              },
+              "level": 20,
+              "cost": 3,
+              "requires": [
+                "heavy_stone"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "landslide",
+              "kind": "keystone",
+              "name": "Landslide",
+              "effect": "A boulder hitting a wall breaks into three small stones.",
+              "numbers": {
+                "stones": 3
+              },
+              "level": 24,
+              "cost": 4,
+              "requires": [
+                "stonebreak_2"
+              ],
+              "touches_canonical": false
+            }
+          ]
+        },
+        {
+          "id": "moss",
+          "name": "Moss",
+          "covers": [
+            "primary",
+            "special"
+          ],
+          "nodes": [
+            {
+              "id": "moss_fists",
+              "kind": "passive",
+              "name": "Moss Fists",
+              "effect": "Stone fist recovers 5 % faster.",
+              "numbers": {
+                "primary_cooldown_pct": -5
+              },
+              "level": 4,
+              "cost": 1,
+              "requires": [],
+              "touches_canonical": false
+            },
+            {
+              "id": "pebble_ward",
+              "name": "Pebble Ward",
+              "binding": "passive: the two pebbles over his right shoulder",
+              "effect": "Each pebble catches one projectile and re-forms after a while.",
+              "numbers": {
+                "pebbles": 2,
+                "reform_seconds": 8
+              },
+              "art": {
+                "new_clips": [],
+                "fx": [
+                  "pebble intercept (3 drawings)"
+                ],
+                "reuses": [
+                  "the existing pebbles part"
+                ]
+              },
+              "touches_canonical": false,
+              "kind": "technique",
+              "level": 16,
+              "cost": 2,
+              "requires": [
+                "moss_fists"
+              ]
+            },
+            {
+              "id": "deep_roots",
+              "kind": "passive",
+              "name": "Deep Roots",
+              "effect": "Old Growth shockwave +10 % radius.",
+              "numbers": {
+                "radius_pct": 10
+              },
+              "touches_canonical": true,
+              "note": "changes a count in Codex's powered form; needs C60's OK (#149)",
+              "level": 18,
+              "cost": 1,
+              "requires": [
+                "pebble_ward"
+              ]
+            },
+            {
+              "id": "pebble_ward_2",
+              "kind": "technique upgrade",
+              "name": "Pebble Ward II",
+              "effect": "A pebble that catches a shot flicks it back.",
+              "numbers": {
+                "return_damage_pct": 50
+              },
+              "level": 26,
+              "cost": 3,
+              "requires": [
+                "deep_roots"
+              ],
+              "touches_canonical": false
+            },
+            {
+              "id": "circle_s_blessing",
+              "kind": "keystone",
+              "name": "Circle's Blessing",
+              "effect": "Freed foes near Cairn heal him 1 %.",
+              "numbers": {
+                "heal_pct": 1
+              },
+              "level": 28,
+              "cost": 4,
+              "requires": [
+                "pebble_ward_2"
+              ],
+              "touches_canonical": false
+            }
+          ]
+        }
+      ],
+      "points_by_level_30": 29,
+      "tree_cost": 33
+    }
+  },
+  "weapon": {
+    "item": "fists",
+    "equipment_tag": "fist",
+    "tiers": [
+      {
+        "tier": 1,
+        "name": "Bare stone",
+        "art": {
+          "silhouette": "today's drawing: round granite fists with dark joint gaps",
+          "materials": [
+            "granite",
+            "crack"
+          ],
+          "glow": "none",
+          "size": "as drawn",
+          "read_check": "the current drawing"
+        },
+        "mechanics": {},
+        "requires": {
+          "level": 1
+        },
+        "sockets": 1
+      },
+      {
+        "tier": 2,
+        "name": "Banded fists",
+        "art": {
+          "silhouette": "two iron knuckle bands round each fist, raised 2 px from the stone",
+          "materials": [
+            "granite",
+            "steel"
+          ],
+          "glow": "none",
+          "size": "fists +1 px",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
+        },
+        "mechanics": {
+          "boulder_speed_pct": 8
+        },
+        "requires": {
+          "level": 8,
+          "forge_open": true
+        },
+        "sockets": 2,
+        "cost": {
+          "glint": 60,
+          "scrap": 5,
+          "home_material": {
+            "material": "timber",
+            "count": 2
+          }
+        }
+      },
+      {
+        "tier": 3,
+        "name": "Rooted fists",
+        "art": {
+          "silhouette": "roots wrap the bands and end in small moss cushions on the knuckles; a fern curl on the right wrist",
+          "materials": [
+            "granite",
+            "steel",
+            "bow (roots)",
+            "moss"
+          ],
+          "glow": "none",
+          "size": "fists +2 px over tier 1",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
+        },
+        "mechanics": {
+          "guard_cost_pct": -10
+        },
+        "requires": {
+          "level": 16,
+          "forge_open": true
+        },
+        "sockets": 2,
+        "cost": {
+          "glint": 150,
+          "scrap": 10,
+          "home_material": {
+            "material": "timber",
+            "count": 4
+          }
+        }
+      },
+      {
+        "tier": 4,
+        "name": "Moonvein fists",
+        "art": {
+          "silhouette": "seams of white-gold moonstone run through the fist cracks; a crescent shard set in each band",
+          "materials": [
+            "granite",
+            "amber",
+            "starlight (new)"
+          ],
+          "glow": "the veins glow one tone; one pulse on each hit (2 drawings)",
+          "size": "as tier 3",
+          "read_check": "at 74 px and 1x the tier differs from the one before by at least 3 px of silhouette or one new 2 x 2 px colour cluster"
+        },
+        "mechanics": {
+          "named": "Moonvein: Stone fist staggers swarmers",
+          "stagger_swarmers": true
+        },
+        "requires": {
+          "level": 24,
+          "great_forge": true
+        },
+        "sockets": 3,
+        "cost": {
+          "glint": 300,
+          "scrap": 20,
+          "home_material": {
+            "material": "timber",
+            "count": 6
+          },
+          "starshard": 1
+        }
+      }
+    ]
+  },
+  "outfits": [
+    {
+      "id": "bloom_moss",
+      "name": "Spring bloom",
+      "description": "his turf caps flower: white and pink blooms in the moss; the stone a shade warmer",
+      "parts": [
+        "turf (bloom variant)"
+      ],
+      "ramps": {
+        "granite": "warm granite (new)"
+      },
+      "unlock": {
+        "source": "village",
+        "event": "restore:greenhouse:1"
+      }
+    },
+    {
+      "id": "circle_runes",
+      "name": "Circle runes",
+      "description": "the stones of the circle's carving on his chest and shoulders, drawn as 1 px shallow grooves with a soft rim light",
+      "parts": [
+        "chest boulder (rune detail)"
+      ],
+      "ramps": {},
+      "unlock": {
+        "source": "story",
+        "event": "quest:folk_cairn:done"
+      }
+    },
+    {
+      "id": "basalt_ward",
+      "name": "Basalt",
+      "description": "dark basalt stone with sea thrift instead of moss",
+      "parts": [
+        "turf"
+      ],
+      "ramps": {
+        "granite": "basalt (new)",
+        "moss": "thrift (new)"
+      },
+      "unlock": {
+        "source": "arena",
+        "event": "arena:basalt_ring:silver"
+      }
+    }
+  ],
+  "accessories": [
+    {
+      "id": "daisy_crown",
+      "name": "Daisy crown",
+      "slot": "head",
+      "description": "a ring of daisies set into the turf on his head",
+      "unlock": {
+        "source": "bond",
+        "event": "bond:any:2"
+      },
+      "perk": null
+    },
+    {
+      "id": "nest",
+      "name": "Wren's nest",
+      "slot": "back",
+      "description": "a small nest in the turf between his shoulders with a wren sitting in it (idle: it hops once)",
+      "unlock": {
+        "source": "drop",
+        "event": "drop:valley"
+      },
+      "perk": null
+    },
+    {
+      "id": "ribbon",
+      "name": "Festival ribbon",
+      "slot": "neck",
+      "description": "a long cloth ribbon tied round the neck stone, two tails",
+      "unlock": {
+        "source": "glint",
+        "event": "buy:stall:ribbon",
+        "note": "200 Glint"
+      },
+      "perk": null
+    },
+    {
+      "id": "river_stone",
+      "name": "Smooth river stone",
+      "slot": "trinket",
+      "description": "a polished stone hung on a cord, 3 px",
+      "unlock": {
+        "source": "drop",
+        "event": "drop:lull"
+      },
+      "perk": {
+        "status": "proposal",
+        "text": "Tonics are drunk 15 % faster",
+        "numbers": {
+          "tonic_time_pct": -15
+        }
+      }
+    }
+  ]
+}
