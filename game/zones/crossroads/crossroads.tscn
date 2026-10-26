@@ -721,7 +721,7 @@ script = ExtResource("cond")
 only_if = "{\"restored\":[\"forge\"]}"
 
 [node name="SmithySmoke" type="Sprite2D" parent="Props/If_smithy_smoke"]
-position = Vector2(1577.5, 517)
+position = Vector2(1463.5, 517)
 texture = ExtResource("t11")
 centered = false
 offset = Vector2(-16, -56)

@@ -739,15 +739,64 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
     if hd:
         shade = np.zeros((H, W), bool)
         foots = []
+        # The lawn's scatter (blade marks, tufts, flowers, clods) is drawn from one random sequence
+        # that the shade steers, so redrawing a building would reshuffle the whole lawn, which is
+        # the terrain lead's. So the scatter is drawn twice from the same state: once with the
+        # buildings' shade as their density-2 drawing throws it (the lawn as it stands), once with
+        # their shade as drawn now; the second is kept only round the buildings (their footprints,
+        # sprites and shadows, either drawing), the first everywhere else.
+        legacy = []
+        for b in plan.get('buildings', []):
+            look = dict(looks.get(b['id'], {}))
+            x, y, w, h = b['rect']
+            look.setdefault('w', w)
+            look.setdefault('depth', h)
+            # `lawn_as`: what the silhouette was when the lawn was laid (a taller wall, a moved stack)
+            look.update(look.pop('lawn_as', {}))
+            old = V.building(look, seed=look.get('seed', sum(map(ord, b['id']))), hd=False).base
+            legacy.append((b['id'], old))
+        olds = {bid: pic for bid, pic in legacy}
+
+        def lawn_inputs(objs):
+            sh = np.zeros((H, W), bool)
+            ft = []
+            near = np.zeros((H, W), bool)
+            for o in objs:
+                if o.get('png') is None or o['kind'] in NOSHADE:
+                    continue
+                m, _core, contact = shade_masks(o)
+                sh |= m | contact
+                ft.append((o['foot'][0] / D, o['foot'][1] / D, o['kind']))
+                if o['kind'] == 'building':
+                    near |= m | contact
+                    ah, aw = o['alpha'].shape
+                    X0, Y0 = int(o['foot'][0] - o['anchor'][0]), int(o['foot'][1] - o['anchor'][1])
+                    near[max(0, Y0):max(0, Y0 + ah), max(0, X0):max(0, X0 + aw)] = True
+            return sh, ft, near
+
+        objs_old = []
         for o in objects:
-            if o.get('png') is None or o['kind'] in NOSHADE:
-                continue
-            m, _core, contact = shade_masks(o)
-            shade |= m | contact
-            foots.append((o['foot'][0] / D, o['foot'][1] / D, o['kind']))
-        drawn = lawn_detail_hd(cv, pathm | pave, shade, foots, rng, noise)
+            if o['kind'] == 'building' and o['id'] in olds:
+                pic = olds[o['id']]
+                key = '__legacy_' + o['id']
+                pics[key] = pic.rgba()
+                o = dict(o, png=key, alpha=pic.alpha(), anchor=(pic.ax, pic.ay))
+            objs_old.append(o)
+        shade_old, foots_old, near_old = lawn_inputs(objs_old)
+        shade, foots, near_new = lawn_inputs(objects)
+        for k in [k for k in pics if k.startswith('__legacy_')]:
+            del pics[k]
+        rng_new = np.random.default_rng()
+        rng_new.bit_generator.state = rng.bit_generator.state
+        cv_new = cv.copy()
+        drawn = lawn_detail_hd(cv, pathm | pave, shade_old, foots_old, rng, noise)
         # in shade the trodden earth shows its clods closer (the shade keeps them, two tones down)
-        SE.soil_marks(cv, pathm & ndi.binary_erosion(shade, iterations=2), rng, drawn, spacing=0.7, p=0.9)
+        SE.soil_marks(cv, pathm & ndi.binary_erosion(shade_old, iterations=2), rng, drawn, spacing=0.7, p=0.9)
+        drawn_new = lawn_detail_hd(cv_new, pathm | pave, shade, foots, rng_new, noise)
+        SE.soil_marks(cv_new, pathm & ndi.binary_erosion(shade, iterations=2), rng_new, drawn_new, spacing=0.7, p=0.9)
+        local = ndi.binary_dilation(near_old | near_new, iterations=q(2))
+        cv[local] = cv_new[local]
+        drawn = np.where(local, drawn_new, drawn)
     else:
         drawn = np.zeros((H, W), bool)
     for o in objects:

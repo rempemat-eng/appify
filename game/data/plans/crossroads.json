@@ -1222,7 +1222,10 @@
           ]
         ],
         "wall_h": 44,
-        "shutters": false
+        "shutters": false,
+        "lawn_as": {
+          "wall_h": 40
+        }
       },
       "herbalist": {
         "kind": "cottage",
@@ -1279,7 +1282,7 @@
         ],
         "shutters": false,
         "chimney": [
-          70
+          32
         ],
         "chimney_w": 14,
         "chimney_h": 20,
@@ -1300,7 +1303,7 @@
             30,
             28,
             32,
-            27
+            26
           ],
           [
             "scaffold",
@@ -1312,7 +1315,12 @@
             "slates",
             5
           ]
-        ]
+        ],
+        "lawn_as": {
+          "chimney": [
+            70
+          ]
+        }
       },
       "fern_cottage": {
         "kind": "cottage",

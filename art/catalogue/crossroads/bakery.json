@@ -51,7 +51,8 @@
  "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-10-26",
+  "note": "#298 review at 2e554c05: roof planes lit with thickness, fascia, gutter and stepped eave shadow; recessed openings; wall form and proud plinth; trade details read. Detail bar 0.86 to 0.94 (above the 0.8 gate, below the 1.0 in art-style)."
  }
 }

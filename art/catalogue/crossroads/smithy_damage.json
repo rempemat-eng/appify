@@ -1,7 +1,7 @@
 {
  "id": "crossroads/smithy_damage",
  "file": "game/zones/crossroads/art/smithy_damage.png",
- "sha256": "6aaf0979dc82eb2c6515814f3557dcac6f9270ed9bbdd71c1cf7d7d134c456d3",
+ "sha256": "453891c4243c77cd234458dc745236bb368ab443eaa2f5b4165ea8e352494ec3",
  "kind": "smithy",
  "biome": "valley",
  "H": 74.0,
@@ -14,13 +14,13 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 3
+  "polish": 2
  },
  "detail_bar": {
   "ours": {
-   "patches": 64,
-   "tones": 18.78125,
-   "shapes": 33.234375
+   "patches": 60,
+   "tones": 17.583333333333332,
+   "shapes": 31.416666666666668
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.66,
-  "tones_ratio": 0.696,
-  "shapes_ratio": 0.66,
+  "ratio": 0.624,
+  "tones_ratio": 0.651,
+  "shapes_ratio": 0.624,
   "passed": false,
   "group": "prop"
  },
@@ -39,36 +39,24 @@
    "detector": "detail.light",
    "severity": "polish",
    "box": [
-    207,
-    80,
-    230,
-    107
+    166,
+    100,
+    194,
+    170
    ],
-   "message": "crossroads/smithy_damage: the stone is lit from the right (luminance rises 9 L per H to the east)",
-   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
-  },
-  {
-   "detector": "detail.light",
-   "severity": "polish",
-   "box": [
-    212,
-    108,
-    236,
-    125
-   ],
-   "message": "crossroads/smithy_damage: the stone is lit from the right (luminance rises 7 L per H to the east)",
+   "message": "crossroads/smithy_damage: the wood is lit from the right (luminance rises 24 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    28,
+    42,
     73,
     276,
     327
    ],
-   "message": "crossroads/smithy_damage: detail bar 0.66 of Eastward's prop band (18.8 tones, 33.2 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/smithy_damage: detail bar 0.62 of Eastward's prop band (17.6 tones, 31.4 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
@@ -76,6 +64,6 @@
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "note": "redrawn after the #298 review (flue: the stack now rises over the forge hood); the agent checklist has not been run on this version"
  }
 }

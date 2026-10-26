@@ -1768,58 +1768,85 @@ def straw_heap(d, info, cx, rng):
 # ------------------------------------------------------------------------------------------------
 # the crater's smoke
 # ------------------------------------------------------------------------------------------------
+class SoftPic(V.Pic):
+    """A picture in codes with its own opacity per texel (smoke, steam), written with that alpha."""
+
+    def __init__(self, W, H, ax, ay):
+        super().__init__(W, H, ax, ay)
+        self.op = np.full((H, W), 255, np.uint8)
+
+    def rgba(self):
+        from PIL import Image
+        from .palette import to_rgba
+        px = to_rgba(self.a)
+        px[..., 3] = np.where(self.a >= 0, self.op, 0)
+        return Image.fromarray(px, 'RGBA')
+
+
 def smoke_column(p, rng):
-    """Smoke rising from the crater (village.p_smoke at density 3): a soft column of billows
-    leaning east as it climbs, each billow a cluster of round puffs shaded as volumes (lit on the
-    upper west, a sooty core shadow low on the east), the lower ones dark and dense with soot,
-    the upper ones paler and thinner; the puffs nearer the ground roll over the ones above them
-    with a lit crown against the darker smoke behind. Smoke has no ink outline: its edge is its
-    own shaded tone, and the column thins out at the top into small trailing puffs."""
-    a, cx, yb = p.a, p.ax, p.ay
+    """Smoke rising from the crater (village.p_smoke at density 3): a soft column that widens and
+    thins as it climbs. Billows of round puffs grow to about twice their size towards the top and
+    the upper third leans east on the air; each puff is lit on its upper west cap, with a darker
+    sooty core and underside, dense and dark low in the column, paler higher up. Smoke has no ink
+    outline and is not opaque: its rims and its upper part let the ground through (alpha, and a
+    checker of gaps at the very edge and the top), and torn wisps trail off east and fade. A still
+    picture: nothing in it moves, so there is nothing to stop for reduced motion."""
+    s = SoftPic(p.W, p.H, p.ax, p.ay)
+    a, cx, yb = s.a, s.ax, s.ay
+    op = np.zeros(a.shape, float)
     H_, W_ = a.shape
     Y, X = np.mgrid[0:H_, 0:W_] + 0.5
     puffs = []
-    n = 10
+    n = 11
     for k in range(n):
         f = k / (n - 1)
-        y = yb - q(2.5 + k * 4.4)
-        x = cx + q(0.13 * k * k + 0.5 * k) + rng.uniform(-2, 2)
-        R = q(3.2 + 2.6 * math.sin(f * math.pi * 0.85) + 0.6 * f)
-        if k == n - 1:
-            R = q(3.6)
-        for j in range(int(rng.integers(3, 5))):
-            px = x + rng.uniform(-0.5, 0.5) * R
-            py = y + rng.uniform(-0.3, 0.3) * R
-            r = R * rng.uniform(0.5, 0.78)
+        y = yb - q(2.2 + k * 3.7)
+        lean = q(0.6 * k) + q(14.0 * max(0.0, f - 0.6) ** 1.5)       # the upper third leans east
+        x = cx + lean + rng.uniform(-1.5, 1.5)
+        R = q(2.6 + 2.6 * f)                                             # twice as big at the top
+        for j in range(int(rng.integers(4, 7))):
+            px = x + rng.uniform(-0.75, 0.75) * R
+            py = y + rng.uniform(-0.35, 0.3) * R
+            r = R * rng.uniform(0.55, 0.85)
             puffs.append((k, f, px, py, r))
-    # the highest drawn first, so the lower (nearer the source) puffs roll over them
     for (k, f, px, py, r) in sorted(puffs, key=lambda t: t[3]):
-        dx, dy = (X - px) / r, (Y - py) / (r * 0.86)
+        dx, dy = (X - px) / r, (Y - py) / (r * 0.85)
         d2 = dx * dx + dy * dy
         m = d2 <= 1
         if not m.any():
             continue
         nz = np.sqrt(np.clip(1 - d2, 0, 1))
         I = V.lam(dx, dy, nz)
-        # tone: dense sooty smoke low down, paler ash high up
         v = np.clip(0.45 + 0.95 * (I - 0.4), 0, 1)
-        t = -0.2 + 4.4 * v + 0.9 * f
-        rim = (d2 > 0.62)
-        t = np.where(rim & (I > 0.25), t + 0.8, t)          # the lit rim on the upper west
-        t = np.where(rim & (I < -0.1), t - 0.8, t)          # the turned-away edge low on the east
-        # under its crown the puff behind is in this one's shade (where it overlaps smoke already drawn)
-        behind = m & (a >= 0) & (d2 > 0.7) & (dy < -0.3)
+        t = 0.2 + 3.8 * v + 1.0 * f
+        t = np.where((dy < -0.35) & (dx < 0.3) & (d2 > 0.35), t + 1.0, t)    # the lit cap, upper west
+        t = np.where((d2 < 0.3) & (dy > -0.1), t - 1.0, t)                   # the darker sooty core
+        t = np.where((dy > 0.55) & (d2 > 0.5), t - 0.8, t)                   # the underside
         tt = np.clip(np.round(t), 1, 5).astype(int)
-        # low in the column the smoke is thick with soot: its shade in the soot ramp, its light in ash
         sooty = (tt <= 3) if f < 0.3 else ((tt <= 2) if f < 0.65 else (tt <= 1))
         fam = np.where(sooty, FI['soot'], FI['ash'])
         tt = np.where(sooty, np.clip(tt + 2, 2, 5), tt)
         a[m] = (fam * 8 + tt)[m]
-        a[behind] = np.where(a[behind] % 8 > 1, a[behind] - 1, a[behind])
-        # curls inside the billow: short arcs a tone up on its lit side, a tone down in its shade
-        for _ in range(2):
-            ax_, ay_ = px + rng.uniform(-0.4, 0.2) * r, py + rng.uniform(-0.4, 0.2) * r
-            cr = r * rng.uniform(0.25, 0.4)
-            ring = m & (np.abs(np.hypot(X - ax_, (Y - ay_) / 0.86) - cr) < 0.9) & (Y < ay_ + cr * 0.2)
-            a[ring] = np.where(a[ring] % 8 < 5, a[ring] + 1, a[ring])
-    return V.finish(p, line=False)
+        # opacity: dense low down, thinning with height; the rim softer than the body
+        o = (1.0 - 0.6 * f) * np.where(d2 > 0.7, 0.72, 1.0)
+        op[m] = np.maximum(op[m], o[m])
+    # wisps torn off the upper billows, trailing east and fading
+    tops = [pf for pf in puffs if pf[1] >= 0.6]
+    for (k, f, px, py, r) in [tops[int(i)] for i in rng.choice(len(tops), size=min(2, len(tops)), replace=False)]:
+        x0_, y0_ = px + r * 0.8, py + rng.uniform(-r * 0.4, r * 0.2)
+        pts = V.curve(x0_, y0_, x0_ + q(rng.uniform(3, 6)), y0_ - q(rng.uniform(1, 3)), q(1.0), 6)
+        for i_, ((ax_, ay_), (bx_, by_)) in enumerate(zip(pts, pts[1:])):
+            wm = V.seg_mask(a.shape, ax_, ay_, bx_, by_, max(1.5, q(0.7) - i_ * 0.2)) & (a < 0)
+            a[wm] = code('ash', 4 if i_ < 3 else 3)
+            op[wm] = 0.45 * (1 - i_ / 7)
+    V.tidy(a)
+    alive = a >= 0
+    # a checker of gaps at the very edge and through the top, so the ground shows through
+    edge = alive & ~ndi.binary_erosion(alive, iterations=2)
+    top = alive & (Y < yb - q(2.2 + (n - 1) * 3.7 * 0.72))
+    chk = ((X.astype(int) + Y.astype(int)) % 2 == 0)
+    a[(edge | top) & chk & (op < 0.75)] = -1
+    alive = a >= 0
+    s.op[:] = np.clip(op * 255, 0, 255).astype(np.uint8)
+    s.op[alive & (s.op < 60)] = 60
+    return s

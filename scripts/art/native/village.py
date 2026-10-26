@@ -1923,42 +1923,6 @@ def p_smoke(w, h, seed, hd=False):
     if hd:
         from . import houses      # the building lead's redraw (houses.smoke_column)
         return houses.smoke_column(p, rng)
-    if hd:
-        # density 3 (fix queue 2): the column as billows, each a cluster of round puffs shaded as
-        # volumes (lit on the upper left, a darker sooty underside, a bright rim where the light
-        # catches the edge), thinning and paling as it rises and leans east, wisps torn off it
-        Y, X = np.mgrid[0:a.shape[0], 0:a.shape[1]] + 0.5
-        for k in range(7):
-            y = yb - q(3 + k * 5.2)
-            x = cx + q(k * 1.7 + 0.12 * k * k) + int(rng.integers(-2, 3))
-            R = q(3.4 + k * 0.85)
-            for j in range(int(rng.integers(3, 6))):
-                px_ = x + rng.uniform(-0.7, 0.7) * R
-                py_ = y + rng.uniform(-0.5, 0.4) * R
-                r_ = R * rng.uniform(0.45, 0.75)
-                dx, dy = (X - px_) / r_, (Y - py_) / (r_ * 0.85)
-                # where this puff rolls over the smoke below it, its lower edge is a soot crease
-                d2_ = dx * dx + dy * dy
-                crease = (d2_ > 0.78) & (d2_ <= 1) & (dy > 0.25) & (a >= 0) & ((a // 8 == FI['ash']) | (a // 8 == FI['soot']))
-                a[crease] = code('ash', 2)
-                mm = (dx * dx + dy * dy <= 1) & (a < 0) | ((dx * dx + dy * dy <= 1) & (a // 8 == FI['ash']) & (rng.random() < 0.5))
-                nz = np.sqrt(np.clip(1 - dx * dx - dy * dy, 0, 1))
-                I = lam(dx, dy, nz)
-                fade = k / 6.0
-                t = 2.6 + 2.4 * I + 0.8 * fade
-                t = np.where((dx * dx + dy * dy > 0.72) & (I > 0.2), t + 1, t)
-                tt = np.clip(np.round(t), 1, 5).astype(int)
-                fam_ = np.where(tt <= 2, FI['soot'], FI['ash'])
-                a[mm] = (fam_ * 8 + np.maximum(tt, 2))[mm]
-            if k >= 3:
-                # wisps: short curling strands drifting off the east side
-                for _ in range(2):
-                    wx0, wy0 = x + R * rng.uniform(0.5, 0.9), y + rng.uniform(-R * 0.4, R * 0.2)
-                    pts = curve(wx0, wy0, wx0 + q(rng.uniform(3, 5)), wy0 - q(rng.uniform(1, 3)), q(1.2), 6)
-                    for (ax_, ay_), (bx_, by_) in zip(pts, pts[1:]):
-                        wm = seg_mask(a.shape, ax_, ay_, bx_, by_, max(1.0, q(0.4))) & (a < 0)
-                        a[wm] = code('ash', 4)
-        return finish(p)
     for k in range(6):
         y = yb - q(4 + k * 6)
         x = cx + q(k * 1.6) + int(rng.integers(-2, 3))
