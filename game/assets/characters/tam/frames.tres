@@ -112,10 +112,10 @@
 [ext_resource type="Texture2D" path="res://assets/characters/tam/sheets/fidget_beads_N.png" id="fidget_beads_N"]
 [ext_resource type="Texture2D" path="res://assets/characters/tam/sheets/fidget_beads_E.png" id="fidget_beads_E"]
 [ext_resource type="Texture2D" path="res://assets/characters/tam/sheets/fidget_beads_W.png" id="fidget_beads_W"]
-[ext_resource type="Texture2D" path="res://assets/characters/tam/sheets/fidget_neck_S.png" id="fidget_neck_S"]
-[ext_resource type="Texture2D" path="res://assets/characters/tam/sheets/fidget_neck_N.png" id="fidget_neck_N"]
-[ext_resource type="Texture2D" path="res://assets/characters/tam/sheets/fidget_neck_E.png" id="fidget_neck_E"]
-[ext_resource type="Texture2D" path="res://assets/characters/tam/sheets/fidget_neck_W.png" id="fidget_neck_W"]
+[ext_resource type="Texture2D" path="res://assets/characters/tam/sheets/fidget_shoulders_S.png" id="fidget_shoulders_S"]
+[ext_resource type="Texture2D" path="res://assets/characters/tam/sheets/fidget_shoulders_N.png" id="fidget_shoulders_N"]
+[ext_resource type="Texture2D" path="res://assets/characters/tam/sheets/fidget_shoulders_E.png" id="fidget_shoulders_E"]
+[ext_resource type="Texture2D" path="res://assets/characters/tam/sheets/fidget_shoulders_W.png" id="fidget_shoulders_W"]
 
 [sub_resource type="AtlasTexture" id="a_idle_S_0"]
 atlas = ExtResource("idle_S")
@@ -4517,132 +4517,132 @@ region = Rect2(1280, 0, 160, 144)
 atlas = ExtResource("fidget_beads_W")
 region = Rect2(1440, 0, 160, 144)
 
-[sub_resource type="AtlasTexture" id="a_fidget_neck_S_0"]
-atlas = ExtResource("fidget_neck_S")
+[sub_resource type="AtlasTexture" id="a_fidget_shoulders_S_0"]
+atlas = ExtResource("fidget_shoulders_S")
 region = Rect2(0, 0, 160, 144)
 
-[sub_resource type="AtlasTexture" id="a_fidget_neck_S_1"]
-atlas = ExtResource("fidget_neck_S")
+[sub_resource type="AtlasTexture" id="a_fidget_shoulders_S_1"]
+atlas = ExtResource("fidget_shoulders_S")
 region = Rect2(160, 0, 160, 144)
 
-[sub_resource type="AtlasTexture" id="a_fidget_neck_S_2"]
-atlas = ExtResource("fidget_neck_S")
+[sub_resource type="AtlasTexture" id="a_fidget_shoulders_S_2"]
+atlas = ExtResource("fidget_shoulders_S")
 region = Rect2(320, 0, 160, 144)
 
-[sub_resource type="AtlasTexture" id="a_fidget_neck_S_3"]
-atlas = ExtResource("fidget_neck_S")
+[sub_resource type="AtlasTexture" id="a_fidget_shoulders_S_3"]
+atlas = ExtResource("fidget_shoulders_S")
 region = Rect2(480, 0, 160, 144)
 
-[sub_resource type="AtlasTexture" id="a_fidget_neck_S_4"]
-atlas = ExtResource("fidget_neck_S")
+[sub_resource type="AtlasTexture" id="a_fidget_shoulders_S_4"]
+atlas = ExtResource("fidget_shoulders_S")
 region = Rect2(640, 0, 160, 144)
 
-[sub_resource type="AtlasTexture" id="a_fidget_neck_S_5"]
-atlas = ExtResource("fidget_neck_S")
+[sub_resource type="AtlasTexture" id="a_fidget_shoulders_S_5"]
+atlas = ExtResource("fidget_shoulders_S")
 region = Rect2(800, 0, 160, 144)
 
-[sub_resource type="AtlasTexture" id="a_fidget_neck_S_6"]
-atlas = ExtResource("fidget_neck_S")
+[sub_resource type="AtlasTexture" id="a_fidget_shoulders_S_6"]
+atlas = ExtResource("fidget_shoulders_S")
 region = Rect2(960, 0, 160, 144)
 
-[sub_resource type="AtlasTexture" id="a_fidget_neck_S_7"]
-atlas = ExtResource("fidget_neck_S")
+[sub_resource type="AtlasTexture" id="a_fidget_shoulders_S_7"]
+atlas = ExtResource("fidget_shoulders_S")
 region = Rect2(1120, 0, 160, 144)
 
-[sub_resource type="AtlasTexture" id="a_fidget_neck_N_0"]
-atlas = ExtResource("fidget_neck_N")
+[sub_resource type="AtlasTexture" id="a_fidget_shoulders_N_0"]
+atlas = ExtResource("fidget_shoulders_N")
 region = Rect2(0, 0, 160, 144)
 
-[sub_resource type="AtlasTexture" id="a_fidget_neck_N_1"]
-atlas = ExtResource("fidget_neck_N")
+[sub_resource type="AtlasTexture" id="a_fidget_shoulders_N_1"]
+atlas = ExtResource("fidget_shoulders_N")
 region = Rect2(160, 0, 160, 144)
 
-[sub_resource type="AtlasTexture" id="a_fidget_neck_N_2"]
-atlas = ExtResource("fidget_neck_N")
+[sub_resource type="AtlasTexture" id="a_fidget_shoulders_N_2"]
+atlas = ExtResource("fidget_shoulders_N")
 region = Rect2(320, 0, 160, 144)
 
-[sub_resource type="AtlasTexture" id="a_fidget_neck_N_3"]
-atlas = ExtResource("fidget_neck_N")
+[sub_resource type="AtlasTexture" id="a_fidget_shoulders_N_3"]
+atlas = ExtResource("fidget_shoulders_N")
 region = Rect2(480, 0, 160, 144)
 
-[sub_resource type="AtlasTexture" id="a_fidget_neck_N_4"]
-atlas = ExtResource("fidget_neck_N")
+[sub_resource type="AtlasTexture" id="a_fidget_shoulders_N_4"]
+atlas = ExtResource("fidget_shoulders_N")
 region = Rect2(640, 0, 160, 144)
 
-[sub_resource type="AtlasTexture" id="a_fidget_neck_N_5"]
-atlas = ExtResource("fidget_neck_N")
+[sub_resource type="AtlasTexture" id="a_fidget_shoulders_N_5"]
+atlas = ExtResource("fidget_shoulders_N")
 region = Rect2(800, 0, 160, 144)
 
-[sub_resource type="AtlasTexture" id="a_fidget_neck_N_6"]
-atlas = ExtResource("fidget_neck_N")
+[sub_resource type="AtlasTexture" id="a_fidget_shoulders_N_6"]
+atlas = ExtResource("fidget_shoulders_N")
 region = Rect2(960, 0, 160, 144)
 
-[sub_resource type="AtlasTexture" id="a_fidget_neck_N_7"]
-atlas = ExtResource("fidget_neck_N")
+[sub_resource type="AtlasTexture" id="a_fidget_shoulders_N_7"]
+atlas = ExtResource("fidget_shoulders_N")
 region = Rect2(1120, 0, 160, 144)
 
-[sub_resource type="AtlasTexture" id="a_fidget_neck_E_0"]
-atlas = ExtResource("fidget_neck_E")
+[sub_resource type="AtlasTexture" id="a_fidget_shoulders_E_0"]
+atlas = ExtResource("fidget_shoulders_E")
 region = Rect2(0, 0, 160, 144)
 
-[sub_resource type="AtlasTexture" id="a_fidget_neck_E_1"]
-atlas = ExtResource("fidget_neck_E")
+[sub_resource type="AtlasTexture" id="a_fidget_shoulders_E_1"]
+atlas = ExtResource("fidget_shoulders_E")
 region = Rect2(160, 0, 160, 144)
 
-[sub_resource type="AtlasTexture" id="a_fidget_neck_E_2"]
-atlas = ExtResource("fidget_neck_E")
+[sub_resource type="AtlasTexture" id="a_fidget_shoulders_E_2"]
+atlas = ExtResource("fidget_shoulders_E")
 region = Rect2(320, 0, 160, 144)
 
-[sub_resource type="AtlasTexture" id="a_fidget_neck_E_3"]
-atlas = ExtResource("fidget_neck_E")
+[sub_resource type="AtlasTexture" id="a_fidget_shoulders_E_3"]
+atlas = ExtResource("fidget_shoulders_E")
 region = Rect2(480, 0, 160, 144)
 
-[sub_resource type="AtlasTexture" id="a_fidget_neck_E_4"]
-atlas = ExtResource("fidget_neck_E")
+[sub_resource type="AtlasTexture" id="a_fidget_shoulders_E_4"]
+atlas = ExtResource("fidget_shoulders_E")
 region = Rect2(640, 0, 160, 144)
 
-[sub_resource type="AtlasTexture" id="a_fidget_neck_E_5"]
-atlas = ExtResource("fidget_neck_E")
+[sub_resource type="AtlasTexture" id="a_fidget_shoulders_E_5"]
+atlas = ExtResource("fidget_shoulders_E")
 region = Rect2(800, 0, 160, 144)
 
-[sub_resource type="AtlasTexture" id="a_fidget_neck_E_6"]
-atlas = ExtResource("fidget_neck_E")
+[sub_resource type="AtlasTexture" id="a_fidget_shoulders_E_6"]
+atlas = ExtResource("fidget_shoulders_E")
 region = Rect2(960, 0, 160, 144)
 
-[sub_resource type="AtlasTexture" id="a_fidget_neck_E_7"]
-atlas = ExtResource("fidget_neck_E")
+[sub_resource type="AtlasTexture" id="a_fidget_shoulders_E_7"]
+atlas = ExtResource("fidget_shoulders_E")
 region = Rect2(1120, 0, 160, 144)
 
-[sub_resource type="AtlasTexture" id="a_fidget_neck_W_0"]
-atlas = ExtResource("fidget_neck_W")
+[sub_resource type="AtlasTexture" id="a_fidget_shoulders_W_0"]
+atlas = ExtResource("fidget_shoulders_W")
 region = Rect2(0, 0, 160, 144)
 
-[sub_resource type="AtlasTexture" id="a_fidget_neck_W_1"]
-atlas = ExtResource("fidget_neck_W")
+[sub_resource type="AtlasTexture" id="a_fidget_shoulders_W_1"]
+atlas = ExtResource("fidget_shoulders_W")
 region = Rect2(160, 0, 160, 144)
 
-[sub_resource type="AtlasTexture" id="a_fidget_neck_W_2"]
-atlas = ExtResource("fidget_neck_W")
+[sub_resource type="AtlasTexture" id="a_fidget_shoulders_W_2"]
+atlas = ExtResource("fidget_shoulders_W")
 region = Rect2(320, 0, 160, 144)
 
-[sub_resource type="AtlasTexture" id="a_fidget_neck_W_3"]
-atlas = ExtResource("fidget_neck_W")
+[sub_resource type="AtlasTexture" id="a_fidget_shoulders_W_3"]
+atlas = ExtResource("fidget_shoulders_W")
 region = Rect2(480, 0, 160, 144)
 
-[sub_resource type="AtlasTexture" id="a_fidget_neck_W_4"]
-atlas = ExtResource("fidget_neck_W")
+[sub_resource type="AtlasTexture" id="a_fidget_shoulders_W_4"]
+atlas = ExtResource("fidget_shoulders_W")
 region = Rect2(640, 0, 160, 144)
 
-[sub_resource type="AtlasTexture" id="a_fidget_neck_W_5"]
-atlas = ExtResource("fidget_neck_W")
+[sub_resource type="AtlasTexture" id="a_fidget_shoulders_W_5"]
+atlas = ExtResource("fidget_shoulders_W")
 region = Rect2(800, 0, 160, 144)
 
-[sub_resource type="AtlasTexture" id="a_fidget_neck_W_6"]
-atlas = ExtResource("fidget_neck_W")
+[sub_resource type="AtlasTexture" id="a_fidget_shoulders_W_6"]
+atlas = ExtResource("fidget_shoulders_W")
 region = Rect2(960, 0, 160, 144)
 
-[sub_resource type="AtlasTexture" id="a_fidget_neck_W_7"]
-atlas = ExtResource("fidget_neck_W")
+[sub_resource type="AtlasTexture" id="a_fidget_shoulders_W_7"]
+atlas = ExtResource("fidget_shoulders_W")
 region = Rect2(1120, 0, 160, 144)
 
 [resource]
@@ -4759,8 +4759,8 @@ animations = [
 {"frames": [{"duration": 0.1500, "texture": SubResource("a_fidget_beads_N_0")}, {"duration": 0.1167, "texture": SubResource("a_fidget_beads_N_1")}, {"duration": 0.1167, "texture": SubResource("a_fidget_beads_N_2")}, {"duration": 0.1667, "texture": SubResource("a_fidget_beads_N_3")}, {"duration": 0.1333, "texture": SubResource("a_fidget_beads_N_4")}, {"duration": 0.1667, "texture": SubResource("a_fidget_beads_N_5")}, {"duration": 0.1333, "texture": SubResource("a_fidget_beads_N_6")}, {"duration": 0.1167, "texture": SubResource("a_fidget_beads_N_7")}, {"duration": 0.1167, "texture": SubResource("a_fidget_beads_N_8")}, {"duration": 0.1667, "texture": SubResource("a_fidget_beads_N_9")}], "loop": false, "name": &"fidget_beads_N", "speed": 1.0},
 {"frames": [{"duration": 0.1500, "texture": SubResource("a_fidget_beads_E_0")}, {"duration": 0.1167, "texture": SubResource("a_fidget_beads_E_1")}, {"duration": 0.1167, "texture": SubResource("a_fidget_beads_E_2")}, {"duration": 0.1667, "texture": SubResource("a_fidget_beads_E_3")}, {"duration": 0.1333, "texture": SubResource("a_fidget_beads_E_4")}, {"duration": 0.1667, "texture": SubResource("a_fidget_beads_E_5")}, {"duration": 0.1333, "texture": SubResource("a_fidget_beads_E_6")}, {"duration": 0.1167, "texture": SubResource("a_fidget_beads_E_7")}, {"duration": 0.1167, "texture": SubResource("a_fidget_beads_E_8")}, {"duration": 0.1667, "texture": SubResource("a_fidget_beads_E_9")}], "loop": false, "name": &"fidget_beads_E", "speed": 1.0},
 {"frames": [{"duration": 0.1500, "texture": SubResource("a_fidget_beads_W_0")}, {"duration": 0.1167, "texture": SubResource("a_fidget_beads_W_1")}, {"duration": 0.1167, "texture": SubResource("a_fidget_beads_W_2")}, {"duration": 0.1667, "texture": SubResource("a_fidget_beads_W_3")}, {"duration": 0.1333, "texture": SubResource("a_fidget_beads_W_4")}, {"duration": 0.1667, "texture": SubResource("a_fidget_beads_W_5")}, {"duration": 0.1333, "texture": SubResource("a_fidget_beads_W_6")}, {"duration": 0.1167, "texture": SubResource("a_fidget_beads_W_7")}, {"duration": 0.1167, "texture": SubResource("a_fidget_beads_W_8")}, {"duration": 0.1667, "texture": SubResource("a_fidget_beads_W_9")}], "loop": false, "name": &"fidget_beads_W", "speed": 1.0},
-{"frames": [{"duration": 0.1500, "texture": SubResource("a_fidget_neck_S_0")}, {"duration": 0.1167, "texture": SubResource("a_fidget_neck_S_1")}, {"duration": 0.1667, "texture": SubResource("a_fidget_neck_S_2")}, {"duration": 0.1333, "texture": SubResource("a_fidget_neck_S_3")}, {"duration": 0.1333, "texture": SubResource("a_fidget_neck_S_4")}, {"duration": 0.1167, "texture": SubResource("a_fidget_neck_S_5")}, {"duration": 0.1167, "texture": SubResource("a_fidget_neck_S_6")}, {"duration": 0.1667, "texture": SubResource("a_fidget_neck_S_7")}], "loop": false, "name": &"fidget_neck_S", "speed": 1.0},
-{"frames": [{"duration": 0.1500, "texture": SubResource("a_fidget_neck_N_0")}, {"duration": 0.1167, "texture": SubResource("a_fidget_neck_N_1")}, {"duration": 0.1667, "texture": SubResource("a_fidget_neck_N_2")}, {"duration": 0.1333, "texture": SubResource("a_fidget_neck_N_3")}, {"duration": 0.1333, "texture": SubResource("a_fidget_neck_N_4")}, {"duration": 0.1167, "texture": SubResource("a_fidget_neck_N_5")}, {"duration": 0.1167, "texture": SubResource("a_fidget_neck_N_6")}, {"duration": 0.1667, "texture": SubResource("a_fidget_neck_N_7")}], "loop": false, "name": &"fidget_neck_N", "speed": 1.0},
-{"frames": [{"duration": 0.1500, "texture": SubResource("a_fidget_neck_E_0")}, {"duration": 0.1167, "texture": SubResource("a_fidget_neck_E_1")}, {"duration": 0.1667, "texture": SubResource("a_fidget_neck_E_2")}, {"duration": 0.1333, "texture": SubResource("a_fidget_neck_E_3")}, {"duration": 0.1333, "texture": SubResource("a_fidget_neck_E_4")}, {"duration": 0.1167, "texture": SubResource("a_fidget_neck_E_5")}, {"duration": 0.1167, "texture": SubResource("a_fidget_neck_E_6")}, {"duration": 0.1667, "texture": SubResource("a_fidget_neck_E_7")}], "loop": false, "name": &"fidget_neck_E", "speed": 1.0},
-{"frames": [{"duration": 0.1500, "texture": SubResource("a_fidget_neck_W_0")}, {"duration": 0.1167, "texture": SubResource("a_fidget_neck_W_1")}, {"duration": 0.1667, "texture": SubResource("a_fidget_neck_W_2")}, {"duration": 0.1333, "texture": SubResource("a_fidget_neck_W_3")}, {"duration": 0.1333, "texture": SubResource("a_fidget_neck_W_4")}, {"duration": 0.1167, "texture": SubResource("a_fidget_neck_W_5")}, {"duration": 0.1167, "texture": SubResource("a_fidget_neck_W_6")}, {"duration": 0.1667, "texture": SubResource("a_fidget_neck_W_7")}], "loop": false, "name": &"fidget_neck_W", "speed": 1.0}
+{"frames": [{"duration": 0.1500, "texture": SubResource("a_fidget_shoulders_S_0")}, {"duration": 0.1167, "texture": SubResource("a_fidget_shoulders_S_1")}, {"duration": 0.1333, "texture": SubResource("a_fidget_shoulders_S_2")}, {"duration": 0.1333, "texture": SubResource("a_fidget_shoulders_S_3")}, {"duration": 0.1500, "texture": SubResource("a_fidget_shoulders_S_4")}, {"duration": 0.1333, "texture": SubResource("a_fidget_shoulders_S_5")}, {"duration": 0.1167, "texture": SubResource("a_fidget_shoulders_S_6")}, {"duration": 0.1667, "texture": SubResource("a_fidget_shoulders_S_7")}], "loop": false, "name": &"fidget_shoulders_S", "speed": 1.0},
+{"frames": [{"duration": 0.1500, "texture": SubResource("a_fidget_shoulders_N_0")}, {"duration": 0.1167, "texture": SubResource("a_fidget_shoulders_N_1")}, {"duration": 0.1333, "texture": SubResource("a_fidget_shoulders_N_2")}, {"duration": 0.1333, "texture": SubResource("a_fidget_shoulders_N_3")}, {"duration": 0.1500, "texture": SubResource("a_fidget_shoulders_N_4")}, {"duration": 0.1333, "texture": SubResource("a_fidget_shoulders_N_5")}, {"duration": 0.1167, "texture": SubResource("a_fidget_shoulders_N_6")}, {"duration": 0.1667, "texture": SubResource("a_fidget_shoulders_N_7")}], "loop": false, "name": &"fidget_shoulders_N", "speed": 1.0},
+{"frames": [{"duration": 0.1500, "texture": SubResource("a_fidget_shoulders_E_0")}, {"duration": 0.1167, "texture": SubResource("a_fidget_shoulders_E_1")}, {"duration": 0.1333, "texture": SubResource("a_fidget_shoulders_E_2")}, {"duration": 0.1333, "texture": SubResource("a_fidget_shoulders_E_3")}, {"duration": 0.1500, "texture": SubResource("a_fidget_shoulders_E_4")}, {"duration": 0.1333, "texture": SubResource("a_fidget_shoulders_E_5")}, {"duration": 0.1167, "texture": SubResource("a_fidget_shoulders_E_6")}, {"duration": 0.1667, "texture": SubResource("a_fidget_shoulders_E_7")}], "loop": false, "name": &"fidget_shoulders_E", "speed": 1.0},
+{"frames": [{"duration": 0.1500, "texture": SubResource("a_fidget_shoulders_W_0")}, {"duration": 0.1167, "texture": SubResource("a_fidget_shoulders_W_1")}, {"duration": 0.1333, "texture": SubResource("a_fidget_shoulders_W_2")}, {"duration": 0.1333, "texture": SubResource("a_fidget_shoulders_W_3")}, {"duration": 0.1500, "texture": SubResource("a_fidget_shoulders_W_4")}, {"duration": 0.1333, "texture": SubResource("a_fidget_shoulders_W_5")}, {"duration": 0.1167, "texture": SubResource("a_fidget_shoulders_W_6")}, {"duration": 0.1667, "texture": SubResource("a_fidget_shoulders_W_7")}], "loop": false, "name": &"fidget_shoulders_W", "speed": 1.0}
 ]
