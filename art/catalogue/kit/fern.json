@@ -1,0 +1,69 @@
+{
+ "id": "kit/fern",
+ "file": "artifacts/review/kit/fern.png",
+ "sha256": "f40098fbb0b5d475334d7a84def330fa0fa0288d9b384ba4369becb2bc437490",
+ "kind": "fern",
+ "biome": "woodland",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  78,
+  60
+ ],
+ "status": "fail",
+ "counts": {
+  "blocker": 0,
+  "fault": 1,
+  "polish": 1
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 2,
+   "tones": 25.5,
+   "shapes": 37.5
+  },
+  "band": {
+   "tones": 27.71,
+   "shapes": 63.32,
+   "boxes": 4,
+   "patches": 107
+  },
+  "ratio": 0.592,
+  "tones_ratio": 0.92,
+  "shapes_ratio": 0.592,
+  "passed": false,
+  "group": "foliage"
+ },
+ "findings": [
+  {
+   "detector": "logic.biome",
+   "severity": "fault",
+   "box": [
+    14,
+    18,
+    63,
+    59
+   ],
+   "message": "kit/fern: a succulent rosette (5 thick pointed leaves from one base) in a woodland biome: a rosette of thick, straight, pointed leaves is an agave, aloe or yucca: a dry-country plant",
+   "fix": "in a temperate wood draw a fern (arching fronds of small leaflets, soft tips), foxgloves, bracken or a low bush; keep rosettes for the desert (world-rules.md 10)"
+  },
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    14,
+    18,
+    63,
+    59
+   ],
+   "message": "kit/fern: detail bar 0.59 of Eastward's foliage band (25.5 tones, 37.5 shapes a patch against 27.71, 63.32)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  }
+ ],
+ "reviewed": "2026-10-25",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}

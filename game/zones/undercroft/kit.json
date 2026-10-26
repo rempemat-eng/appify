@@ -1,0 +1,523 @@
+{
+ "zone": "undercroft",
+ "kit": "undercroft",
+ "density": 3.0,
+ "size": [
+  2304,
+  648
+ ],
+ "inputs": "d6829ac8e11a96cfff016c18f8f49895b22696f5e9cc642e98fff798cb5a492c",
+ "kit_drawn": [
+  "cairn_alcove.png",
+  "channel_lit.png",
+  "lever_down.png",
+  "lever_up.png",
+  "plate_down.png",
+  "plate_up.png",
+  "roots_corridor.png",
+  "roots_hall.png",
+  "rubble_chamber.png",
+  "rubble_corridor.png",
+  "rubble_hall.png",
+  "rubble_seal.png",
+  "seal_slab.png",
+  "seal_sunk.png",
+  "shard.png",
+  "stump_nw.png",
+  "stump_se.png",
+  "torch.png",
+  "urn_seal.png"
+ ],
+ "objects": [
+  {
+   "id": "rubble_hall",
+   "kind": "rubble",
+   "png": "rubble_hall.png",
+   "foot": [
+    132,
+    576
+   ],
+   "offset": [
+    -54,
+    -78
+   ],
+   "cond": null,
+   "solid": [
+    30.0,
+    180,
+    28,
+    12
+   ]
+  },
+  {
+   "id": "roots_hall",
+   "kind": "roots",
+   "png": "roots_hall.png",
+   "foot": [
+    360,
+    216
+   ],
+   "offset": [
+    -75,
+    -50
+   ],
+   "cond": null,
+   "solid": [
+    106.0,
+    62,
+    28,
+    10
+   ]
+  },
+  {
+   "id": "rubble_corridor",
+   "kind": "rubble",
+   "png": "rubble_corridor.png",
+   "foot": [
+    1032,
+    354
+   ],
+   "offset": [
+    -42,
+    -65
+   ],
+   "cond": null,
+   "solid": [
+    334.0,
+    108,
+    20,
+    10
+   ]
+  },
+  {
+   "id": "roots_corridor",
+   "kind": "roots",
+   "png": "roots_corridor.png",
+   "foot": [
+    816,
+    492
+   ],
+   "offset": [
+    -72,
+    -44
+   ],
+   "cond": null,
+   "solid": [
+    259.0,
+    156,
+    26,
+    8
+   ]
+  },
+  {
+   "id": "urn_seal",
+   "kind": "urn",
+   "png": "urn_seal.png",
+   "foot": [
+    1290,
+    222
+   ],
+   "offset": [
+    -24,
+    -55
+   ],
+   "cond": null,
+   "solid": [
+    425.0,
+    68,
+    10,
+    6
+   ]
+  },
+  {
+   "id": "rubble_seal",
+   "kind": "rubble",
+   "png": "rubble_seal.png",
+   "foot": [
+    1296,
+    582
+   ],
+   "offset": [
+    -36,
+    -40
+   ],
+   "cond": null,
+   "solid": [
+    424.0,
+    188,
+    16,
+    6
+   ]
+  },
+  {
+   "id": "stump_nw",
+   "kind": "stump",
+   "png": "stump_nw.png",
+   "foot": [
+    1776,
+    228
+   ],
+   "offset": [
+    -42,
+    -98
+   ],
+   "cond": null,
+   "solid": [
+    586.0,
+    68,
+    12,
+    8
+   ]
+  },
+  {
+   "id": "stump_se",
+   "kind": "stump",
+   "png": "stump_se.png",
+   "foot": [
+    2208,
+    582
+   ],
+   "offset": [
+    -42,
+    -98
+   ],
+   "cond": null,
+   "solid": [
+    730.0,
+    186,
+    12,
+    8
+   ]
+  },
+  {
+   "id": "rubble_chamber",
+   "kind": "rubble",
+   "png": "rubble_chamber.png",
+   "foot": [
+    2202,
+    234
+   ],
+   "offset": [
+    -42,
+    -65
+   ],
+   "cond": null,
+   "solid": [
+    724.0,
+    68,
+    20,
+    10
+   ]
+  },
+  {
+   "id": "shard",
+   "kind": "shard",
+   "png": "shard.png",
+   "foot": [
+    2100,
+    384
+   ],
+   "offset": [
+    -45,
+    -122
+   ],
+   "cond": {
+    "not_flags": [
+     "shard_taken:woodland"
+    ]
+   },
+   "solid": null
+  },
+  {
+   "id": "torch_1",
+   "kind": "torch",
+   "png": "torch.png",
+   "foot": [
+    168,
+    168
+   ],
+   "offset": [
+    -15,
+    -90
+   ],
+   "cond": null,
+   "solid": null,
+   "frames": 4
+  },
+  {
+   "id": "torch_2",
+   "kind": "torch",
+   "png": "torch.png",
+   "foot": [
+    480,
+    168
+   ],
+   "offset": [
+    -15,
+    -90
+   ],
+   "cond": null,
+   "solid": null,
+   "frames": 4
+  },
+  {
+   "id": "torch_3",
+   "kind": "torch",
+   "png": "torch.png",
+   "foot": [
+    744,
+    312
+   ],
+   "offset": [
+    -15,
+    -90
+   ],
+   "cond": null,
+   "solid": null,
+   "frames": 4
+  },
+  {
+   "id": "torch_4",
+   "kind": "torch",
+   "png": "torch.png",
+   "foot": [
+    1128,
+    312
+   ],
+   "offset": [
+    -15,
+    -90
+   ],
+   "cond": null,
+   "solid": null,
+   "frames": 4
+  },
+  {
+   "id": "torch_5",
+   "kind": "torch",
+   "png": "torch.png",
+   "foot": [
+    1320,
+    168
+   ],
+   "offset": [
+    -15,
+    -90
+   ],
+   "cond": null,
+   "solid": null,
+   "frames": 4
+  },
+  {
+   "id": "torch_6",
+   "kind": "torch",
+   "png": "torch.png",
+   "foot": [
+    1608,
+    168
+   ],
+   "offset": [
+    -15,
+    -90
+   ],
+   "cond": null,
+   "solid": null,
+   "frames": 4
+  },
+  {
+   "id": "torch_7",
+   "kind": "torch",
+   "png": "torch.png",
+   "foot": [
+    1824,
+    168
+   ],
+   "offset": [
+    -15,
+    -90
+   ],
+   "cond": null,
+   "solid": null,
+   "frames": 4
+  },
+  {
+   "id": "torch_8",
+   "kind": "torch",
+   "png": "torch.png",
+   "foot": [
+    2112,
+    168
+   ],
+   "offset": [
+    -15,
+    -90
+   ],
+   "cond": null,
+   "solid": null,
+   "frames": 4
+  },
+  {
+   "id": "cairn_alcove",
+   "kind": "cairn",
+   "png": "cairn_alcove.png",
+   "foot": [
+    2160,
+    165
+   ],
+   "offset": [
+    -54,
+    -99
+   ],
+   "cond": null,
+   "solid": null
+  },
+  {
+   "id": "plate_up",
+   "kind": "floor",
+   "png": "plate_up.png",
+   "foot": [
+    1416,
+    408
+   ],
+   "offset": [
+    -33,
+    -69
+   ],
+   "cond": {
+    "not_flags": [
+     "undercroft_plate"
+    ]
+   },
+   "solid": null
+  },
+  {
+   "id": "plate_down",
+   "kind": "floor",
+   "png": "plate_down.png",
+   "foot": [
+    1416,
+    408
+   ],
+   "offset": [
+    -33,
+    -63
+   ],
+   "cond": {
+    "flags": [
+     "undercroft_plate"
+    ]
+   },
+   "solid": null
+  },
+  {
+   "id": "channel_lit",
+   "kind": "floor",
+   "png": "channel_lit.png",
+   "foot": [
+    1440,
+    408
+   ],
+   "offset": [
+    -1,
+    -5
+   ],
+   "cond": {
+    "flags": [
+     "undercroft_plate"
+    ]
+   },
+   "solid": null
+  },
+  {
+   "id": "lever_up",
+   "kind": "lever",
+   "png": "lever_up.png",
+   "foot": [
+    1644,
+    288
+   ],
+   "offset": [
+    -27,
+    -69
+   ],
+   "cond": {
+    "not_flags": [
+     "undercroft_seal_open"
+    ]
+   },
+   "solid": [
+    545,
+    92,
+    6,
+    4
+   ]
+  },
+  {
+   "id": "lever_down",
+   "kind": "lever",
+   "png": "lever_down.png",
+   "foot": [
+    1644,
+    288
+   ],
+   "offset": [
+    -27,
+    -69
+   ],
+   "cond": {
+    "flags": [
+     "undercroft_seal_open"
+    ]
+   },
+   "solid": [
+    545,
+    92,
+    6,
+    4
+   ]
+  },
+  {
+   "id": "seal_slab",
+   "kind": "seal",
+   "png": "seal_slab.png",
+   "foot": [
+    1704,
+    480
+   ],
+   "offset": [
+    -27,
+    -266
+   ],
+   "cond": {
+    "not_flags": [
+     "undercroft_seal_open"
+    ]
+   },
+   "solid": [
+    560,
+    112,
+    16,
+    48
+   ]
+  },
+  {
+   "id": "seal_sunk",
+   "kind": "floor",
+   "png": "seal_sunk.png",
+   "foot": [
+    1704,
+    480
+   ],
+   "offset": [
+    -26,
+    -146
+   ],
+   "cond": {
+    "flags": [
+     "undercroft_seal_open"
+    ]
+   },
+   "solid": null
+  }
+ ]
+}

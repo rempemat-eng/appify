@@ -132,4 +132,10 @@ await writeFile(`${OUT}/REPORT.md`, lines.join('\n'));
 console.log(
   `\nPlay-test report: ${OUT}/REPORT.md (${results.filter((r) => r.ok).length}/${results.length} flows passed)`,
 );
-process.exitCode = tests || (failures.length ? 1 : 0);
+if (!results.length) {
+  // no flow ran at all (a missing browser, a failed export): never report that as a pass
+  console.error(
+    'Play-test: no flow ran. See the Playwright output above (is Chromium installed?).',
+  );
+  process.exitCode = 1;
+} else process.exitCode = tests || (failures.length ? 1 : 0);

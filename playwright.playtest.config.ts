@@ -1,4 +1,25 @@
-import { defineConfig } from '@playwright/test';
+import { existsSync, readdirSync } from 'node:fs';
+import { join } from 'node:path';
+import { chromium, defineConfig } from '@playwright/test';
+
+/** The browser to play in: PLAYTEST_BROWSER_PATH, else Playwright's own if it is installed,
+ *  else any Chromium under PLAYWRIGHT_BROWSERS_PATH (a container may carry an older build
+ *  than this Playwright expects). Undefined lets Playwright report what is missing. */
+function browserPath(): string | undefined {
+  if (process.env.PLAYTEST_BROWSER_PATH) return process.env.PLAYTEST_BROWSER_PATH;
+  if (existsSync(chromium.executablePath())) return undefined;
+  const root = process.env.PLAYWRIGHT_BROWSERS_PATH ?? '/opt/pw-browsers';
+  if (!existsSync(root)) return undefined;
+  for (const dir of readdirSync(root)
+    .filter((d) => d.startsWith('chromium'))
+    .sort()
+    .toReversed())
+    for (const sub of ['chrome-linux64/chrome', 'chrome-linux/chrome', ''])
+      if (existsSync(join(root, dir, sub)) && (sub || dir === 'chromium'))
+        return join(root, dir, sub);
+  return undefined;
+}
+const executablePath = browserPath();
 
 /**
  * The play-test harness (docs/playtest.md): three phone sizes at art densities 1 and 2.
@@ -23,9 +44,7 @@ export default defineConfig({
   reporter: [['line']],
   use: {
     browserName: 'chromium',
-    launchOptions: process.env.PLAYTEST_BROWSER_PATH
-      ? { executablePath: process.env.PLAYTEST_BROWSER_PATH }
-      : undefined,
+    launchOptions: executablePath ? { executablePath } : undefined,
     baseURL: 'http://127.0.0.1:4178',
     locale: 'en-GB',
     timezoneId: 'UTC',

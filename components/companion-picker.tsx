@@ -134,10 +134,11 @@ export function CompanionPicker({
                         outline={option.id === preview.id ? c.leafOutline : c.outline}
                       />
                       <View
+                        pointerEvents="none"
                         aria-hidden
                         accessibilityElementsHidden
                         importantForAccessibility="no-hide-descendants"
-                        style={{ alignItems: 'center', gap: 4, pointerEvents: 'none' }}
+                        style={{ alignItems: 'center', gap: 4 }}
                       >
                         <Pet
                           visitor={option.id}

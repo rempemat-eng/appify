@@ -1,0 +1,69 @@
+{
+ "id": "kit/fence",
+ "file": "artifacts/review/kit/fence.png",
+ "sha256": "f6c3ab44c7c6ec20d8721d05cd9e5df064827fa0ecf9a2aac090be82056bf717",
+ "kind": "fence",
+ "biome": "woodland",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  213,
+  66
+ ],
+ "status": "fail",
+ "counts": {
+  "blocker": 0,
+  "fault": 1,
+  "polish": 1
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 14,
+   "tones": 18.571428571428573,
+   "shapes": 31.714285714285715
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.63,
+  "tones_ratio": 0.688,
+  "shapes_ratio": 0.63,
+  "passed": false,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.volume",
+   "severity": "fault",
+   "box": [
+    10,
+    1,
+    30,
+    63
+   ],
+   "message": "kit/fence: the red reads 2D: 2 light planes, luminance spread 3",
+   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
+  },
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    8,
+    1,
+    210,
+    64
+   ],
+   "message": "kit/fence: detail bar 0.63 of Eastward's prop band (18.6 tones, 31.7 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  }
+ ],
+ "reviewed": "2026-10-25",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}

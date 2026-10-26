@@ -1,0 +1,69 @@
+{
+ "id": "thornback/telegraph_E_01",
+ "file": "art/cast/thornback/telegraph_E_01.png",
+ "sha256": "dcc657b018d4981d914ebd73fe618d0906965ebdfd3c04d727e94c47dd0b6f04",
+ "kind": "telegraph_E",
+ "biome": "woodland",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  160,
+  144
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 2
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 7,
+   "tones": 18.714285714285715,
+   "shapes": 35.714285714285715
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.693,
+  "tones_ratio": 0.693,
+  "shapes_ratio": 0.709,
+  "passed": false,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    51,
+    87,
+    137,
+    124
+   ],
+   "message": "thornback/telegraph_E_01: the wood is lit from the right (luminance rises 8 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    43,
+    78,
+    138,
+    136
+   ],
+   "message": "thornback/telegraph_E_01: detail bar 0.69 of Eastward's prop band (18.7 tones, 35.7 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  }
+ ],
+ "reviewed": "2026-10-25",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}
