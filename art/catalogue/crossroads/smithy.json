@@ -1,7 +1,7 @@
 {
  "id": "crossroads/smithy",
  "file": "game/zones/crossroads/art/smithy.png",
- "sha256": "85acfe226499443a27530485af566c457b7c1283e60960a7f91ef9acac260f62",
+ "sha256": "6cd71176b9b3492ac4560612cf1890e3df226db52683317dac37dc808b6dc68a",
  "kind": "smithy",
  "biome": "valley",
  "H": 74.0,
@@ -10,17 +10,17 @@
   288,
   327
  ],
- "status": "fail",
+ "status": "pass",
  "counts": {
-  "blocker": 1,
-  "fault": 8,
-  "polish": 1
+  "blocker": 0,
+  "fault": 0,
+  "polish": 3
  },
  "detail_bar": {
   "ours": {
    "patches": 220,
-   "tones": 15.39090909090909,
-   "shapes": 25.48181818181818
+   "tones": 25.177272727272726,
+   "shapes": 43.74545454545454
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.506,
-  "tones_ratio": 0.57,
-  "shapes_ratio": 0.506,
+  "ratio": 0.869,
+  "tones_ratio": 0.932,
+  "shapes_ratio": 0.869,
   "passed": false,
   "group": "prop"
  },
@@ -39,128 +39,43 @@
    "detector": "detail.light",
    "severity": "polish",
    "box": [
-    197,
-    6,
-    246,
-    14
+    243,
+    69,
+    279,
+    80
+   ],
+   "message": "crossroads/smithy: the red is lit from the right (luminance rises 37 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    84,
+    251,
+    133,
+    292
    ],
    "message": "crossroads/smithy: the stone is lit from the right (luminance rises 7 L per H to the east)",
    "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    196,
-    223,
-    246,
-    229
-   ],
-   "message": "crossroads/smithy: the wood reads 2D: 2 light planes, luminance spread 29",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    21,
-    113,
-    38,
-    120
-   ],
-   "message": "crossroads/smithy: the stone reads 2D: 2 light planes, luminance spread 23",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    62,
-    292,
-    81,
-    305
-   ],
-   "message": "crossroads/smithy: the wood reads 2D: 1 light planes, luminance spread 0",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
-  },
-  {
-   "detector": "detail.flat",
-   "severity": "fault",
-   "box": [
-    62,
-    292,
-    81,
-    305
-   ],
-   "message": "crossroads/smithy: a flat wood area: one smooth patch covers 68% (0.025 H^2), 2 tones",
-   "fix": "draw the wood as its material: break the fill with its own structure (staves and hoops, grain and nail heads, courses, bevels, leaf clusters) in 4 to 5 tones of its ramp"
-  },
-  {
-   "detector": "detail.flat",
-   "severity": "fault",
-   "box": [
-    21,
-    113,
-    38,
-    120
-   ],
-   "message": "crossroads/smithy: a flat stone area: one smooth patch covers 51% (0.011 H^2), 2 tones",
-   "fix": "draw the stone as its material: break the fill with its own structure (staves and hoops, grain and nail heads, courses, bevels, leaf clusters) in 4 to 5 tones of its ramp"
-  },
-  {
    "detector": "detail.bar",
-   "severity": "blocker",
+   "severity": "polish",
    "box": [
     2,
     0,
     286,
-    324
+    325
    ],
-   "message": "crossroads/smithy: detail bar 0.51 of Eastward's prop band (15.4 tones, 25.5 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/smithy: detail bar 0.87 of Eastward's prop band (25.2 tones, 43.7 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
-  },
-  {
-   "detector": "detail.flat",
-   "severity": "fault",
-   "box": [
-    196,
-    223,
-    246,
-    229
-   ],
-   "message": "crossroads/smithy: a flat wood area: one smooth patch covers 40% (0.022 H^2), 3 tones",
-   "fix": "draw the wood as its material: break the fill with its own structure (staves and hoops, grain and nail heads, courses, bevels, leaf clusters) in 4 to 5 tones of its ramp"
-  },
-  {
-   "detector": "detail.texture",
-   "severity": "fault",
-   "box": [
-    82,
-    290,
-    131,
-    318
-   ],
-   "message": "crossroads/smithy: the stone has no drawn material: only 19% of it shows structure",
-   "fix": "draw the material: planks with grain and a lit edge, staves and hoops, stone courses with chipped corners, a bevel on cut stone, a ring of rust on iron"
-  },
-  {
-   "detector": "detail.texture",
-   "severity": "fault",
-   "box": [
-    62,
-    292,
-    81,
-    305
-   ],
-   "message": "crossroads/smithy: the wood has no drawn material: only 5% of it shows structure",
-   "fix": "draw the material: planks with grain and a lit edge, staves and hoops, stone courses with chipped corners, a bevel on cut stone, a ring of rust on iron"
   }
  ],
  "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-10-26",
-  "note": "#296 review at 08474c76: below Eastward detail bar (0.61 to 0.70) and no 3D read: eave shadow at most a few texels, roof one flat field with no plane lighting, windows and doors without reveal shadow, no wall form shading, no contact at the foundation. See review B1."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

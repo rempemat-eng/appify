@@ -1120,7 +1120,10 @@
             "leaf_cool"
           ],
           "slates"
-        ]
+        ],
+        "win_w": 14,
+        "win_h": 15,
+        "win_top": 34
       },
       "north_cottages": {
         "kind": "terrace",
@@ -1179,7 +1182,8 @@
             "slates",
             5
           ]
-        ]
+        ],
+        "shutters": false
       },
       "bakery": {
         "kind": "cottage",
@@ -1188,8 +1192,8 @@
         "paint": "berry",
         "door": 60,
         "windows": [
-          16,
-          38
+          14,
+          36
         ],
         "chimney": [
           12
@@ -1216,7 +1220,9 @@
             "slates",
             4
           ]
-        ]
+        ],
+        "wall_h": 44,
+        "shutters": false
       },
       "herbalist": {
         "kind": "cottage",
@@ -1258,7 +1264,8 @@
           ]
         ],
         "wall_h": 40,
-        "roof_h": 31
+        "roof_h": 31,
+        "shutters": false
       },
       "smithy": {
         "kind": "forge",
@@ -1335,7 +1342,7 @@
           [
             "tarp",
             28,
-            64,
+            50,
             "sand"
           ],
           [

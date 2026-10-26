@@ -1,7 +1,7 @@
 {
  "id": "crossroads/anvil_shadow",
  "file": "game/zones/crossroads/art/anvil_shadow.png",
- "sha256": "f71ab1b095925b37d932402460eab8270d0565cd620b681a08f36cdd0ada19ec",
+ "sha256": "ea69311d0deee4c220adf6f8e4ff0af871f85dc2bb6de307f27ebc5d8ad653a4",
  "kind": "anvil_shadow",
  "biome": "valley",
  "H": 74.0,

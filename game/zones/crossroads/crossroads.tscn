@@ -690,13 +690,13 @@ offset = Vector2(-156, -273)
 position = Vector2(444, 864)
 texture = ExtResource("t6")
 centered = false
-offset = Vector2(-120, -284)
+offset = Vector2(-120, -296)
 
 [node name="BakeryDamage" type="Sprite2D" parent="Props"]
 position = Vector2(444, 865)
 texture = ExtResource("t7")
 centered = false
-offset = Vector2(-120, -285)
+offset = Vector2(-120, -297)
 
 [node name="Herbalist" type="Sprite2D" parent="Props"]
 position = Vector2(444, 1128)
@@ -721,7 +721,7 @@ script = ExtResource("cond")
 only_if = "{\"restored\":[\"forge\"]}"
 
 [node name="SmithySmoke" type="Sprite2D" parent="Props/If_smithy_smoke"]
-position = Vector2(1578, 517)
+position = Vector2(1577.5, 517)
 texture = ExtResource("t11")
 centered = false
 offset = Vector2(-16, -56)

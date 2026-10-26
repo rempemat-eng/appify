@@ -1,26 +1,26 @@
 {
  "id": "crossroads/bakery_damage",
  "file": "game/zones/crossroads/art/bakery_damage.png",
- "sha256": "dcbd7970536f48063848d456964dfc3604107f20e74499c7ee0d7d7d17fc5d6f",
+ "sha256": "b1287282261a5ecb931466599fd993df985eaedcdb669686b2da35a1f057c85d",
  "kind": "bakery",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
   240,
-  288
+  300
  ],
- "status": "fail",
+ "status": "pass",
  "counts": {
   "blocker": 0,
-  "fault": 1,
+  "fault": 0,
   "polish": 1
  },
  "detail_bar": {
   "ours": {
-   "patches": 21,
-   "tones": 15.714285714285714,
-   "shapes": 30.476190476190474
+   "patches": 30,
+   "tones": 19.666666666666668,
+   "shapes": 34.766666666666666
   },
   "band": {
    "tones": 27.0,
@@ -28,43 +28,30 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.582,
-  "tones_ratio": 0.582,
-  "shapes_ratio": 0.605,
+  "ratio": 0.69,
+  "tones_ratio": 0.728,
+  "shapes_ratio": 0.69,
   "passed": false,
   "group": "prop"
  },
  "findings": [
   {
-   "detector": "detail.repetition",
-   "severity": "fault",
-   "box": [
-    31,
-    92,
-    174,
-    155
-   ],
-   "message": "crossroads/bakery_damage: 3 pixel-identical copies of one part",
-   "fix": "vary every copy: size, lean, tone, a missing or extra detail; nature never stamps"
-  },
-  {
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
     14,
-    73,
-    196,
-    287
+    55,
+    214,
+    300
    ],
-   "message": "crossroads/bakery_damage: detail bar 0.58 of Eastward's prop band (15.7 tones, 30.5 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/bakery_damage: detail bar 0.69 of Eastward's prop band (19.7 tones, 34.8 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
  "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-10-26",
-  "note": "#296 review at 08474c76: roof holes read as barred windows, missing slates as black boxes and glyphs; thatch hole rimmed with slates. See S1."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }

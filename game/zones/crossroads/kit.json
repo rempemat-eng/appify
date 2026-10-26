@@ -5,7 +5,7 @@
   1920,
   1680
  ],
- "inputs": "84a500b53e8a6fe9bd83a615f602a79e35e11ee543251a32b2e8ba82243592a8",
+ "inputs": "7bfa27cb2b78b30c091ecaed34b2f1a95ff5909f34b7c7cce49292bb61868d10",
  "kit_drawn": [
   "anvil.png",
   "bakery.png",
@@ -174,7 +174,7 @@
    ],
    "offset": [
     -120,
-    -284
+    -296
    ],
    "cond": null,
    "solid": [
@@ -194,7 +194,7 @@
    ],
    "offset": [
     -120,
-    -285
+    -297
    ],
    "cond": null,
    "solid": null,

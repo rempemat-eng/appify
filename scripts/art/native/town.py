@@ -249,8 +249,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
     D = ctx.D
     q = V.q
     # fix queue 2: the props get their density-3 forms, passed explicitly (never a module switch);
-    # the ground and the buildings are drawn as on main (village.building and the ground painters
-    # default to hd=False; the buildings go to the building lead)
+    # the buildings too (houses.py, the building lead's redraw); the ground painters default to hd=False
     PROP_HD = D >= 2.5
     bx, by, bw, bh = plan['box']
     W, H = q(bw), q(bh)
@@ -644,7 +643,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         x, y, w, h = b['rect']
         look.setdefault('w', w)
         look.setdefault('depth', h)
-        built = V.building(look, seed=look.get('seed', sum(map(ord, b['id']))))
+        built = V.building(look, seed=look.get('seed', sum(map(ord, b['id']))), hd=PROP_HD)
         foot = (q(x + w / 2), q(y + h))
         objects.append(dict(id=b['id'], kind='building', png=add_pic(b['id'], built.base.rgba()),
                             foot=foot, anchor=(built.base.ax, built.base.ay), alpha=built.base.alpha(),

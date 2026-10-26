@@ -989,7 +989,14 @@ def building(spec: dict, seed: int = 0, hd=False) -> Built:
     (stone, frame, ashlar, boards), roof (slate, thatch, shingle), hip, paint (a house family), door
     (x from the west end, world px; 'open' for the forge mouth), windows ([x, ...]), lit, chimney
     ([x, ...]), sign ([x, kind]), units (a terrace: [[x0, x1, paint], ...]), damage (a list of
-    what the storm did: holes, tarp, boards, scaffold, slates, crack)."""
+    what the storm did: holes, tarp, boards, scaffold, slates, crack).
+
+    hd (density 3 and up): the buildings are drawn by `houses.building` to Eastward's level of
+    detail (the roof as a plane with thickness, the walls with material and form, recessed
+    openings, the trades' own things); the density 2 drawing below stays as the pilot golden has it."""
+    if hd:
+        from . import houses
+        return houses.building(spec, seed)
     rng = np.random.default_rng(seed)
     w, dep = spec['w'], spec['depth']
     wall_h = spec.get('wall_h', 40)
@@ -1913,6 +1920,9 @@ def p_smoke(w, h, seed, hd=False):
     rng = np.random.default_rng(seed)
     p = _pic(w, h, up=48 if hd else 34, side=26 if hd else 4)   # (hd: room for the billows rising and leaning east, never cut flat)
     a, cx, yb = p.a, p.ax, p.ay
+    if hd:
+        from . import houses      # the building lead's redraw (houses.smoke_column)
+        return houses.smoke_column(p, rng)
     if hd:
         # density 3 (fix queue 2): the column as billows, each a cluster of round puffs shaded as
         # volumes (lit on the upper left, a darker sooty underside, a bright rim where the light

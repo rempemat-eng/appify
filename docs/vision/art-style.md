@@ -136,12 +136,13 @@ And in every place, the drawing itself must make sense (Matt's 10:15 review of t
 
 ## Where the code lives
 
-| File                                            | What it draws                                                                                                       |
-| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| `scripts/art/style.py`                          | The rules above as functions: `leafy`, `trunk`, `facet_stone`, `cast_shadow`, `dither_dark`, `tuft`                 |
-| `scripts/art/garden.py`                         | The garden map, its objects and ground (192×384 native, plus a 32 px forest band above y = 0; 384×768 and 64 at 2x) |
-| `scripts/art/garden_meadow.py`                  | The stream, bridge, meadow beds, orchard and growth-stage sprites                                                   |
-| `scripts/art/pets.py`, `battle.py`, `worlds.py` | Companions, battle backdrops and mission worlds. **These still use the older style and need the same pass.**        |
+| File                                            | What it draws                                                                                                                                             |
+| ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `scripts/art/style.py`                          | The rules above as functions: `leafy`, `trunk`, `facet_stone`, `cast_shadow`, `dither_dark`, `tuft`                                                       |
+| `scripts/art/garden.py`                         | The garden map, its objects and ground (192×384 native, plus a 32 px forest band above y = 0; 384×768 and 64 at 2x)                                       |
+| `scripts/art/garden_meadow.py`                  | The stream, bridge, meadow beds, orchard and growth-stage sprites                                                                                         |
+| `scripts/art/native/houses.py`                  | The village buildings at density 3: lit roof planes with thickness and eave shadow, recessed openings, trades; their damage overlays and the crater smoke |
+| `scripts/art/pets.py`, `battle.py`, `worlds.py` | Companions, battle backdrops and mission worlds. **These still use the older style and need the same pass.**                                              |
 
 ## Review checklist
 

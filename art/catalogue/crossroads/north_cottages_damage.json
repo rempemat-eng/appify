@@ -1,7 +1,7 @@
 {
  "id": "crossroads/north_cottages_damage",
  "file": "game/zones/crossroads/art/north_cottages_damage.png",
- "sha256": "fff59d031e5588771abf325744216aad21f934fc5bd0531a77744a4beb90b189",
+ "sha256": "29afdc45e72b745db80ea50c6a7d9a98c932fbc1596c1e98aa5182e0958e1a87",
  "kind": "north_cottages",
  "biome": "valley",
  "H": 74.0,
@@ -10,17 +10,17 @@
   312,
   276
  ],
- "status": "fail",
+ "status": "pass",
  "counts": {
   "blocker": 0,
-  "fault": 1,
-  "polish": 1
+  "fault": 0,
+  "polish": 2
  },
  "detail_bar": {
   "ours": {
    "patches": 38,
-   "tones": 15.552631578947368,
-   "shapes": 23.31578947368421
+   "tones": 16.05263157894737,
+   "shapes": 25.263157894736842
   },
   "band": {
    "tones": 27.0,
@@ -28,24 +28,24 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.463,
-  "tones_ratio": 0.576,
-  "shapes_ratio": 0.463,
+  "ratio": 0.502,
+  "tones_ratio": 0.595,
+  "shapes_ratio": 0.502,
   "passed": false,
   "group": "prop"
  },
  "findings": [
   {
-   "detector": "detail.repetition",
-   "severity": "fault",
+   "detector": "detail.light",
+   "severity": "polish",
    "box": [
-    164,
-    83,
-    267,
-    140
+    100,
+    199,
+    145,
+    219
    ],
-   "message": "crossroads/north_cottages_damage: 3 pixel-identical copies of one part",
-   "fix": "vary every copy: size, lean, tone, a missing or extra detail; nature never stamps"
+   "message": "crossroads/north_cottages_damage: the red is lit from the right (luminance rises 11 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
    "detector": "detail.bar",
@@ -53,18 +53,17 @@
    "box": [
     23,
     60,
-    267,
-    225
+    292,
+    276
    ],
-   "message": "crossroads/north_cottages_damage: detail bar 0.46 of Eastward's prop band (15.6 tones, 23.3 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/north_cottages_damage: detail bar 0.50 of Eastward's prop band (16.1 tones, 25.3 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
  "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "fail",
-  "date": "2026-10-26",
-  "note": "#296 review at 08474c76: roof holes read as barred windows, missing slates as black boxes and glyphs; thatch hole rimmed with slates. See S1."
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
  }
 }
