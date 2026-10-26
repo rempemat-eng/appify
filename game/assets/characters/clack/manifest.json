@@ -21635,7 +21635,7 @@
          "anchor_gap": {
           "muzzle": 0.3
          },
-         "sha256": "177cf5dffd6aacedd8c25795b0bc12fcae6a28c629161d5ebdbc3b2705fc6e1e",
+         "sha256": "9c27089fdff5847fb37873e9eb62d9dd5c1985888729db9a2bb98dd5a8aeff52",
          "sheet": "sheets/primary_E_m45.png",
          "region": [
           160,
@@ -21648,15 +21648,15 @@
          "path": "res://assets/animated/clack/primary_E_m45_02.png",
          "file": "primary_E_m45_02.png",
          "packed_bounds": [
-          59,
+          60,
           62,
-          106,
+          107,
           136
          ],
          "anchors": {
           "hand_R": [
-           9.4,
-           -45.1
+           10.9,
+           -46.6
           ],
           "hand_L": [
            7.6,
@@ -21671,24 +21671,24 @@
            -3.5
           ],
           "muzzle": [
-           19.9,
-           -56.6
+           21.4,
+           -58.1
           ],
           "exhaust": [
-           -16.9,
-           -42.5
+           -15.4,
+           -44.0
           ]
          },
          "equipment": {
-          "loader": 15,
+          "loader": 21,
           "rack": 30,
-          "chamber": 89,
-          "launcher": 401
+          "chamber": 83,
+          "launcher": 405
          },
          "anchor_gap": {
           "muzzle": 0.4
          },
-         "sha256": "12532626505307f42cc389e023b17304e7c1ca51bcce75cedf9ef9dee81ebfdb",
+         "sha256": "4c2ef4ccaaca763dc3cc5dc40287a8f920fc655be7c48833a90c1f9993c9ece6",
          "sheet": "sheets/primary_E_m45.png",
          "region": [
           320,
@@ -21701,19 +21701,19 @@
          "path": "res://assets/animated/clack/primary_E_m45_03.png",
          "file": "primary_E_m45_03.png",
          "packed_bounds": [
-          65,
-          62,
-          102,
+          66,
+          60,
+          105,
           136
          ],
          "anchors": {
           "hand_R": [
-           11.9,
-           -53.1
+           14.7,
+           -55.9
           ],
           "hand_L": [
-           16.4,
-           -57.9
+           19.2,
+           -60.7
           ],
           "foot_R": [
            -0.7,
@@ -21724,24 +21724,24 @@
            -1.0
           ],
           "muzzle": [
-           16.6,
-           -67.8
+           19.5,
+           -70.6
           ],
           "exhaust": [
-           -9.4,
-           -40.6
+           -6.5,
+           -43.4
           ]
          },
          "equipment": {
-          "loader": 17,
+          "loader": 28,
           "rack": 29,
-          "chamber": 64,
-          "launcher": 329
+          "chamber": 49,
+          "launcher": 316
          },
          "anchor_gap": {
-          "muzzle": 0.3
+          "muzzle": 0.1
          },
-         "sha256": "bc1d237b97d4f37243fdf0d19589d96dbdd469bf4551b0f75d04a8e7dc6d74a8",
+         "sha256": "71f0588c447f76fa475167484bd5df7abf5ed6791ddf7daf1425cabf5f4992bd",
          "sheet": "sheets/primary_E_m45.png",
          "region": [
           480,
@@ -21754,19 +21754,19 @@
          "path": "res://assets/animated/clack/primary_E_m45_04.png",
          "file": "primary_E_m45_04.png",
          "packed_bounds": [
-          65,
-          63,
-          103,
+          66,
+          60,
+          106,
           136
          ],
          "anchors": {
           "hand_R": [
-           12.4,
-           -52.6
+           15.2,
+           -55.4
           ],
           "hand_L": [
-           16.9,
-           -57.4
+           19.7,
+           -60.2
           ],
           "foot_R": [
            -0.7,
@@ -21777,24 +21777,24 @@
            -1.0
           ],
           "muzzle": [
-           17.1,
-           -67.3
+           20.0,
+           -70.1
           ],
           "exhaust": [
-           -8.9,
-           -40.1
+           -6.0,
+           -42.9
           ]
          },
          "equipment": {
-          "loader": 15,
+          "loader": 24,
           "rack": 30,
-          "chamber": 63,
-          "launcher": 329
+          "chamber": 47,
+          "launcher": 321
          },
          "anchor_gap": {
-          "muzzle": 0.4
+          "muzzle": 0.6
          },
-         "sha256": "06e5dc18b65960bbcb5b5b8f5895a8247feba49bc6fafd48fe244dd40b7d338f",
+         "sha256": "d2fe4ea9b854b3aaef6ff5678c48698908412f386d7a6bce231f01e8659ee405",
          "sheet": "sheets/primary_E_m45.png",
          "region": [
           640,
@@ -21807,19 +21807,19 @@
          "path": "res://assets/animated/clack/primary_E_m45_05.png",
          "file": "primary_E_m45_05.png",
          "packed_bounds": [
-          65,
-          63,
-          103,
+          66,
+          60,
+          106,
           136
          ],
          "anchors": {
           "hand_R": [
-           12.4,
-           -52.6
+           15.2,
+           -55.4
           ],
           "hand_L": [
-           16.9,
-           -57.4
+           19.8,
+           -60.2
           ],
           "foot_R": [
            -0.7,
@@ -21830,24 +21830,24 @@
            -1.0
           ],
           "muzzle": [
-           17.2,
-           -67.3
+           20.0,
+           -70.1
           ],
           "exhaust": [
-           -8.8,
-           -40.1
+           -6.0,
+           -42.9
           ]
          },
          "equipment": {
-          "loader": 15,
+          "loader": 24,
           "rack": 30,
-          "chamber": 65,
-          "launcher": 329
+          "chamber": 47,
+          "launcher": 323
          },
          "anchor_gap": {
-          "muzzle": 0.4
+          "muzzle": 0.6
          },
-         "sha256": "836f1c49ef569b910847aa900259c57a41e9b18f82b67359c2f0e3336d9dd1e9",
+         "sha256": "2eeb02db417671e28e2df26743651ee7a83abc1774f62c253dc67a3fb6bc11c3",
          "sheet": "sheets/primary_E_m45.png",
          "region": [
           800,
@@ -21860,19 +21860,19 @@
          "path": "res://assets/animated/clack/primary_E_m45_06.png",
          "file": "primary_E_m45_06.png",
          "packed_bounds": [
-          65,
-          63,
-          103,
+          66,
+          60,
+          106,
           136
          ],
          "anchors": {
           "hand_R": [
-           12.5,
-           -52.6
+           15.3,
+           -55.4
           ],
           "hand_L": [
-           17.0,
-           -57.4
+           19.8,
+           -60.2
           ],
           "foot_R": [
            -0.7,
@@ -21883,24 +21883,24 @@
            -1.0
           ],
           "muzzle": [
-           17.2,
-           -67.3
+           20.1,
+           -70.1
           ],
           "exhaust": [
-           -8.8,
-           -40.1
+           -5.9,
+           -42.9
           ]
          },
          "equipment": {
-          "loader": 15,
+          "loader": 23,
           "rack": 30,
-          "chamber": 65,
-          "launcher": 329
+          "chamber": 48,
+          "launcher": 323
          },
          "anchor_gap": {
-          "muzzle": 0.4
+          "muzzle": 0.6
          },
-         "sha256": "6c954d84f1f3c5b057b7152593ec878d3765bc65f14a7514525339255939bed8",
+         "sha256": "68a2877ad3af17b133d10b4f0654eb1a2d8f15c4f03041019ffabeaf964b1961",
          "sheet": "sheets/primary_E_m45.png",
          "region": [
           960,
@@ -21913,19 +21913,19 @@
          "path": "res://assets/animated/clack/primary_E_m45_07.png",
          "file": "primary_E_m45_07.png",
          "packed_bounds": [
-          53,
-          63,
-          98,
+          56,
+          61,
+          100,
           136
          ],
          "anchors": {
           "hand_R": [
-           7.8,
-           -51.1
+           10.6,
+           -53.9
           ],
           "hand_L": [
-           12.1,
-           -56.1
+           14.9,
+           -59.0
           ],
           "foot_R": [
            -0.7,
@@ -21936,25 +21936,25 @@
            -1.0
           ],
           "muzzle": [
-           11.8,
-           -66.0
+           14.6,
+           -68.8
           ],
           "exhaust": [
-           -12.7,
-           -37.2
+           -9.8,
+           -40.0
           ]
          },
          "equipment": {
-          "loader": 4,
+          "loader": 1,
           "rack": 31,
-          "chamber": 76,
-          "launcher": 307,
-          "fx": 152
+          "chamber": 65,
+          "launcher": 293,
+          "fx": 151
          },
          "anchor_gap": {
-          "muzzle": 0.6
+          "muzzle": 0.4
          },
-         "sha256": "44247747207991e1382f820a6ff863a32ef34f32d52dae05f7ebc65463e75901",
+         "sha256": "4c64a32402c7e43a68b63caac6c93f6ab06c98abe684f90d665c14fff8dff1e1",
          "sheet": "sheets/primary_E_m45.png",
          "region": [
           1120,
@@ -21967,19 +21967,19 @@
          "path": "res://assets/animated/clack/primary_E_m45_08.png",
          "file": "primary_E_m45_08.png",
          "packed_bounds": [
-          54,
-          64,
-          98,
+          57,
+          62,
+          100,
           136
          ],
          "anchors": {
           "hand_R": [
-           7.7,
-           -51.0
+           10.5,
+           -53.8
           ],
           "hand_L": [
-           12.0,
-           -55.9
+           14.8,
+           -58.8
           ],
           "foot_R": [
            -0.7,
@@ -21990,25 +21990,25 @@
            -1.0
           ],
           "muzzle": [
-           11.8,
-           -65.8
+           14.6,
+           -68.7
           ],
           "exhaust": [
-           -12.9,
-           -37.3
+           -10.1,
+           -40.1
           ]
          },
          "equipment": {
-          "loader": 4,
+          "loader": 1,
           "rack": 34,
-          "chamber": 73,
-          "launcher": 307,
-          "fx": 129
+          "chamber": 59,
+          "launcher": 291,
+          "fx": 126
          },
          "anchor_gap": {
-          "muzzle": 0.4
+          "muzzle": 0.2
          },
-         "sha256": "f69fe2ca82e0f8d062cf1123f12b26651d739278378997f707c8575cd973b15f",
+         "sha256": "ef326243c03c718284fca8a0789d55d5b96a6c36ada4813ec6f106d32db75ba4",
          "sheet": "sheets/primary_E_m45.png",
          "region": [
           1280,
@@ -22021,19 +22021,19 @@
          "path": "res://assets/animated/clack/primary_E_m45_09.png",
          "file": "primary_E_m45_09.png",
          "packed_bounds": [
-          63,
-          63,
-          101,
+          65,
+          62,
+          104,
           136
          ],
          "anchors": {
           "hand_R": [
-           10.3,
-           -51.2
+           13.1,
+           -54.0
           ],
           "hand_L": [
-           14.9,
-           -56.0
+           17.7,
+           -58.8
           ],
           "foot_R": [
            -0.7,
@@ -22044,24 +22044,24 @@
            -1.0
           ],
           "muzzle": [
-           15.1,
-           -65.9
+           17.9,
+           -68.7
           ],
           "exhaust": [
-           -10.9,
-           -38.7
+           -8.1,
+           -41.5
           ]
          },
          "equipment": {
-          "loader": 15,
+          "loader": 24,
           "rack": 30,
-          "chamber": 69,
-          "launcher": 342
+          "chamber": 52,
+          "launcher": 329
          },
          "anchor_gap": {
           "muzzle": 0.5
          },
-         "sha256": "a771168c7541d609702d310707f7d0204ec427d71b8a33a3037649a4c9d7537f",
+         "sha256": "9298824c1b8e515ffc95e95e14880b325f9114ad1f2e1949befb05dd2196821d",
          "sheet": "sheets/primary_E_m45.png",
          "region": [
           1440,
@@ -22075,18 +22075,18 @@
          "file": "primary_E_m45_10.png",
          "packed_bounds": [
           66,
-          63,
-          104,
+          61,
+          107,
           136
          ],
          "anchors": {
           "hand_R": [
-           13.0,
-           -52.1
+           15.9,
+           -54.9
           ],
           "hand_L": [
-           17.7,
-           -56.7
+           20.5,
+           -59.5
           ],
           "foot_R": [
            -0.7,
@@ -22097,24 +22097,24 @@
            -1.0
           ],
           "muzzle": [
-           18.2,
-           -66.6
+           21.1,
+           -69.4
           ],
           "exhaust": [
-           -8.5,
-           -40.3
+           -5.7,
+           -43.1
           ]
          },
          "equipment": {
-          "loader": 16,
+          "loader": 21,
           "rack": 31,
-          "chamber": 64,
-          "launcher": 329
+          "chamber": 46,
+          "launcher": 318
          },
          "anchor_gap": {
-          "muzzle": 0.3
+          "muzzle": 0.4
          },
-         "sha256": "39bbe6aae7b9963197739bc7cf2d46363a5c57909e1667fafe6bd1e63b8ce3ea",
+         "sha256": "7aa878e24b0f8eb94ddef4aecdb95c5735f1019db92971da231b48f7e542b691",
          "sheet": "sheets/primary_E_m45.png",
          "region": [
           1600,
@@ -22127,15 +22127,15 @@
          "path": "res://assets/animated/clack/primary_E_m45_11.png",
          "file": "primary_E_m45_11.png",
          "packed_bounds": [
-          60,
           62,
-          108,
+          63,
+          109,
           136
          ],
          "anchors": {
           "hand_R": [
-           8.8,
-           -39.2
+           10.3,
+           -40.8
           ],
           "hand_L": [
            3.7,
@@ -22150,24 +22150,24 @@
            -1.0
           ],
           "muzzle": [
-           22.0,
-           -46.0
+           23.5,
+           -47.5
           ],
           "exhaust": [
-           -15.2,
-           -46.6
+           -13.7,
+           -48.1
           ]
          },
          "equipment": {
-          "loader": 6,
+          "loader": 19,
           "rack": 29,
-          "chamber": 92,
-          "launcher": 390
+          "chamber": 82,
+          "launcher": 391
          },
          "anchor_gap": {
-          "muzzle": 0.7
+          "muzzle": 0.0
          },
-         "sha256": "e02349979b1de1bc70410f8cd49d2bb05f946bab7be818877dcc443712ee06a4",
+         "sha256": "db4b72c94406b1000fd610ddefb8cd00d1a9a791ea9c999fd48184abecea54a7",
          "sheet": "sheets/primary_E_m45.png",
          "region": [
           1760,
@@ -22390,8 +22390,8 @@
         }
        ],
        "release_anchor": [
-        11.8,
-        -66.0
+        14.6,
+        -68.8
        ]
       },
       "m22": {
@@ -22498,7 +22498,7 @@
          "anchor_gap": {
           "muzzle": 0.3
          },
-         "sha256": "282c130d6ec606cb04c2437bf5a3549f49bca46e1ffe5f9dab282af7788b419b",
+         "sha256": "f37b1d4ec0a0f3b8b151afef0da157343c6b955b7588de7dd48aa9b7337e1f35",
          "sheet": "sheets/primary_E_m22.png",
          "region": [
           160,
@@ -22511,15 +22511,15 @@
          "path": "res://assets/animated/clack/primary_E_m22_02.png",
          "file": "primary_E_m22_02.png",
          "packed_bounds": [
-          56,
+          57,
           62,
-          104,
+          105,
           136
          ],
          "anchors": {
           "hand_R": [
-           6.1,
-           -42.8
+           6.9,
+           -43.6
           ],
           "hand_L": [
            7.6,
@@ -22534,24 +22534,24 @@
            -3.5
           ],
           "muzzle": [
-           18.5,
-           -52.3
+           19.3,
+           -53.2
           ],
           "exhaust": [
-           -20.5,
-           -44.8
+           -19.7,
+           -45.6
           ]
          },
          "equipment": {
-          "loader": 9,
+          "loader": 13,
           "rack": 30,
-          "chamber": 94,
-          "launcher": 407
+          "chamber": 90,
+          "launcher": 400
          },
          "anchor_gap": {
-          "muzzle": 0.2
+          "muzzle": 0.4
          },
-         "sha256": "ec9235a664c22e88044806d92c7bc07a5e69c1357b101f2f6553c302a01929f2",
+         "sha256": "90197cec63c372c5d0d3fe89329e925b3292fb00d067fe6336108a3e279014bf",
          "sheet": "sheets/primary_E_m22.png",
          "region": [
           320,
@@ -22564,19 +22564,19 @@
          "path": "res://assets/animated/clack/primary_E_m22_03.png",
          "file": "primary_E_m22_03.png",
          "packed_bounds": [
-          60,
           62,
-          106,
+          63,
+          108,
           136
          ],
          "anchors": {
           "hand_R": [
-           10.4,
-           -45.7
+           12.0,
+           -47.3
           ],
           "hand_L": [
-           16.6,
-           -48.5
+           18.2,
+           -50.1
           ],
           "foot_R": [
            -0.7,
@@ -22587,24 +22587,24 @@
            -1.0
           ],
           "muzzle": [
-           20.2,
-           -57.7
+           21.8,
+           -59.3
           ],
           "exhaust": [
-           -15.6,
-           -41.8
+           -14.0,
+           -43.4
           ]
          },
          "equipment": {
-          "loader": 16,
+          "loader": 18,
           "rack": 29,
-          "chamber": 74,
-          "launcher": 358
+          "chamber": 67,
+          "launcher": 362
          },
          "anchor_gap": {
-          "muzzle": 0.4
+          "muzzle": 0.3
          },
-         "sha256": "99ff6db673c478cd5ac136f0af6391a4a1e9f0c9912bc84dfe13f183fc6384bc",
+         "sha256": "f82fa424a2cc892585fd34f42105e010182460e5336ba50f44739720197d8311",
          "sheet": "sheets/primary_E_m22.png",
          "region": [
           480,
@@ -22617,19 +22617,19 @@
          "path": "res://assets/animated/clack/primary_E_m22_04.png",
          "file": "primary_E_m22_04.png",
          "packed_bounds": [
-          60,
+          62,
           63,
-          106,
+          108,
           136
          ],
          "anchors": {
           "hand_R": [
-           10.9,
-           -45.2
+           12.5,
+           -46.8
           ],
           "hand_L": [
-           17.1,
-           -48.0
+           18.7,
+           -49.6
           ],
           "foot_R": [
            -0.7,
@@ -22640,24 +22640,24 @@
            -1.0
           ],
           "muzzle": [
-           20.7,
-           -57.2
+           22.3,
+           -58.8
           ],
           "exhaust": [
-           -15.1,
-           -41.3
+           -13.5,
+           -42.9
           ]
          },
          "equipment": {
-          "loader": 12,
+          "loader": 13,
           "rack": 30,
-          "chamber": 76,
-          "launcher": 365
+          "chamber": 66,
+          "launcher": 360
          },
          "anchor_gap": {
-          "muzzle": 0.3
+          "muzzle": 0.4
          },
-         "sha256": "689b05b868072e234e8b456b6167f333547b2c3f6b3ab68a349720dae984cd67",
+         "sha256": "3bc10ceb9c69afc6a7c0bb5b5643c76c00bc8309ce76544f40ed4baaa85dd1cd",
          "sheet": "sheets/primary_E_m22.png",
          "region": [
           640,
@@ -22670,19 +22670,19 @@
          "path": "res://assets/animated/clack/primary_E_m22_05.png",
          "file": "primary_E_m22_05.png",
          "packed_bounds": [
-          61,
+          62,
           63,
-          107,
+          108,
           136
          ],
          "anchors": {
           "hand_R": [
-           10.9,
-           -45.2
+           12.5,
+           -46.8
           ],
           "hand_L": [
-           17.2,
-           -48.0
+           18.8,
+           -49.6
           ],
           "foot_R": [
            -0.7,
@@ -22693,24 +22693,24 @@
            -1.0
           ],
           "muzzle": [
-           20.7,
-           -57.2
+           22.3,
+           -58.8
           ],
           "exhaust": [
-           -15.1,
-           -41.3
+           -13.5,
+           -42.9
           ]
          },
          "equipment": {
-          "loader": 12,
+          "loader": 13,
           "rack": 30,
-          "chamber": 76,
-          "launcher": 362
+          "chamber": 66,
+          "launcher": 360
          },
          "anchor_gap": {
-          "muzzle": 0.4
+          "muzzle": 0.3
          },
-         "sha256": "53d67a037f193a6f4d25d0c19b65b755272ad7e6d7836f8dcb8d024aee0ff3cc",
+         "sha256": "50dce71e498ccc9e1123fc6090bf5fddebc1403e719c657c2e79ee72c473e885",
          "sheet": "sheets/primary_E_m22.png",
          "region": [
           800,
@@ -22723,19 +22723,19 @@
          "path": "res://assets/animated/clack/primary_E_m22_06.png",
          "file": "primary_E_m22_06.png",
          "packed_bounds": [
-          61,
+          62,
           63,
-          107,
+          108,
           136
          ],
          "anchors": {
           "hand_R": [
-           11.0,
-           -45.2
+           12.6,
+           -46.8
           ],
           "hand_L": [
-           17.2,
-           -48.0
+           18.8,
+           -49.6
           ],
           "foot_R": [
            -0.7,
@@ -22746,24 +22746,24 @@
            -1.0
           ],
           "muzzle": [
-           20.8,
-           -57.2
+           22.4,
+           -58.8
           ],
           "exhaust": [
-           -15.0,
-           -41.3
+           -13.4,
+           -42.9
           ]
          },
          "equipment": {
-          "loader": 12,
+          "loader": 13,
           "rack": 30,
-          "chamber": 76,
-          "launcher": 362
+          "chamber": 67,
+          "launcher": 360
          },
          "anchor_gap": {
-          "muzzle": 0.4
+          "muzzle": 0.3
          },
-         "sha256": "057f333a8ff12b92300a82ee137a70efebecb2c863f09ac80d013f71bf34d009",
+         "sha256": "32c0a90bb9e908ef4a86dfacc10a4f78898e6c58da036255296cae1c87135cf9",
          "sheet": "sheets/primary_E_m22.png",
          "region": [
           960,
@@ -22776,19 +22776,19 @@
          "path": "res://assets/animated/clack/primary_E_m22_07.png",
          "file": "primary_E_m22_07.png",
          "packed_bounds": [
-          42,
-          63,
-          101,
+          44,
+          64,
+          102,
           136
          ],
          "anchors": {
           "hand_R": [
-           5.7,
-           -44.6
+           7.3,
+           -46.1
           ],
           "hand_L": [
-           11.8,
-           -47.7
+           13.4,
+           -49.3
           ],
           "foot_R": [
            -0.7,
@@ -22799,25 +22799,25 @@
            -1.0
           ],
           "muzzle": [
-           14.8,
-           -57.1
+           16.4,
+           -58.7
           ],
           "exhaust": [
-           -20.0,
-           -39.1
+           -18.4,
+           -40.7
           ]
          },
          "equipment": {
-          "loader": 9,
+          "loader": 15,
           "rack": 31,
-          "chamber": 65,
-          "launcher": 357,
-          "fx": 147
+          "chamber": 64,
+          "launcher": 361,
+          "fx": 149
          },
          "anchor_gap": {
-          "muzzle": 0.5
+          "muzzle": 0.2
          },
-         "sha256": "f39fb3630dedab1b53c975d1b09bece500beb1c718a7fd0cfa10fb2efba6c0cd",
+         "sha256": "63dc1bee37a9effa36a5ec6e666800cdf2e751e466a01e089da0d36425243383",
          "sheet": "sheets/primary_E_m22.png",
          "region": [
           1120,
@@ -22830,19 +22830,19 @@
          "path": "res://assets/animated/clack/primary_E_m22_08.png",
          "file": "primary_E_m22_08.png",
          "packed_bounds": [
-          45,
+          47,
           64,
-          101,
+          102,
           136
          ],
          "anchors": {
           "hand_R": [
-           5.7,
-           -44.4
+           7.3,
+           -46.0
           ],
           "hand_L": [
-           11.8,
-           -47.5
+           13.4,
+           -49.1
           ],
           "foot_R": [
            -0.7,
@@ -22853,25 +22853,25 @@
            -1.0
           ],
           "muzzle": [
-           14.9,
-           -56.9
+           16.5,
+           -58.5
           ],
           "exhaust": [
-           -20.0,
-           -39.2
+           -18.5,
+           -40.8
           ]
          },
          "equipment": {
-          "loader": 9,
+          "loader": 14,
           "rack": 34,
-          "chamber": 63,
-          "launcher": 361,
-          "fx": 126
+          "chamber": 64,
+          "launcher": 359,
+          "fx": 125
          },
          "anchor_gap": {
-          "muzzle": 0.6
+          "muzzle": 0.0
          },
-         "sha256": "74871c8960ede1dacb8b906f37c0c7b31d9d121c671dac170fbb38e57d8dd6ce",
+         "sha256": "e0cd67991c7d6b6135ccf8564bd84b5ddb0c2ffe752c62e162af519f37c07f57",
          "sheet": "sheets/primary_E_m22.png",
          "region": [
           1280,
@@ -22884,19 +22884,19 @@
          "path": "res://assets/animated/clack/primary_E_m22_09.png",
          "file": "primary_E_m22_09.png",
          "packed_bounds": [
-          58,
-          63,
-          104,
+          60,
+          64,
+          106,
           136
          ],
          "anchors": {
           "hand_R": [
-           8.3,
-           -44.3
+           9.9,
+           -45.9
           ],
           "hand_L": [
-           14.6,
-           -47.1
+           16.2,
+           -48.7
           ],
           "foot_R": [
            -0.7,
@@ -22907,24 +22907,24 @@
            -1.0
           ],
           "muzzle": [
-           18.2,
-           -56.3
+           19.7,
+           -57.9
           ],
           "exhaust": [
-           -17.7,
-           -40.4
+           -16.1,
+           -42.0
           ]
          },
          "equipment": {
-          "loader": 15,
+          "loader": 19,
           "rack": 30,
-          "chamber": 63,
-          "launcher": 379
+          "chamber": 71,
+          "launcher": 362
          },
          "anchor_gap": {
-          "muzzle": 0.4
+          "muzzle": 0.5
          },
-         "sha256": "d3cdaf0e4f076ce0bb867abd804add3ddc39eeeded97b8b040877d729b60725c",
+         "sha256": "c33504d6648a88064e664c7c5f04712dd834cc4396bba216f8539d5cdbc39186",
          "sheet": "sheets/primary_E_m22.png",
          "region": [
           1440,
@@ -22937,19 +22937,19 @@
          "path": "res://assets/animated/clack/primary_E_m22_10.png",
          "file": "primary_E_m22_10.png",
          "packed_bounds": [
-          61,
+          62,
           63,
-          107,
+          109,
           136
          ],
          "anchors": {
           "hand_R": [
-           11.3,
-           -44.7
+           12.9,
+           -46.3
           ],
           "hand_L": [
-           17.6,
-           -47.3
+           19.2,
+           -48.8
           ],
           "foot_R": [
            -0.7,
@@ -22960,24 +22960,24 @@
            -1.0
           ],
           "muzzle": [
-           21.5,
-           -56.4
+           23.0,
+           -58.0
           ],
           "exhaust": [
-           -14.8,
-           -41.5
+           -13.2,
+           -43.1
           ]
          },
          "equipment": {
-          "loader": 12,
+          "loader": 13,
           "rack": 31,
-          "chamber": 72,
-          "launcher": 360
+          "chamber": 67,
+          "launcher": 362
          },
          "anchor_gap": {
-          "muzzle": 0.1
+          "muzzle": 0.6
          },
-         "sha256": "7f1ddfe7066a06cd9cce8661bbdb58e204c12152a4843217dd9f38a821f81e34",
+         "sha256": "4f2f37847a840fecab1766277cc3f64e19bd4c4aa4f3596739681242b99c0623",
          "sheet": "sheets/primary_E_m22.png",
          "region": [
           1600,
@@ -22990,15 +22990,15 @@
          "path": "res://assets/animated/clack/primary_E_m22_11.png",
          "file": "primary_E_m22_11.png",
          "packed_bounds": [
-          58,
+          59,
           62,
-          106,
+          107,
           136
          ],
          "anchors": {
           "hand_R": [
-           5.5,
-           -38.1
+           6.3,
+           -38.9
           ],
           "hand_L": [
            3.7,
@@ -23013,24 +23013,24 @@
            -1.0
           ],
           "muzzle": [
-           20.1,
-           -42.4
+           20.9,
+           -43.2
           ],
           "exhaust": [
-           -17.8,
-           -49.6
+           -17.0,
+           -50.4
           ]
          },
          "equipment": {
-          "loader": 12,
+          "loader": 15,
           "rack": 29,
           "chamber": 91,
-          "launcher": 395
+          "launcher": 393
          },
          "anchor_gap": {
-          "muzzle": 0.4
+          "muzzle": 0.5
          },
-         "sha256": "7ad78fce6ff2dbaa61d60f9847bcbb8f8303a12116911f5eb6f50f55081c5ed3",
+         "sha256": "92e5eaa65bbf7b1c3e2da7ff37e7c09255499b0beeed94c6b0bfe1c7e8c989a1",
          "sheet": "sheets/primary_E_m22.png",
          "region": [
           1760,
@@ -23253,8 +23253,8 @@
         }
        ],
        "release_anchor": [
-        14.8,
-        -57.1
+        16.4,
+        -58.7
        ]
       },
       "0": {
@@ -29400,7 +29400,7 @@
          "anchor_gap": {
           "muzzle": 0.3
          },
-         "sha256": "93528775ad26ef08e0fb7ba37bb590cb7e09bd591efcd6df2c082ef918bbbd51",
+         "sha256": "04453181d7f9b17e03be84deb137005b785254d51a1d8efc4732bc0aad3cd02f",
          "sheet": "sheets/primary_W_p22.png",
          "region": [
           160,
@@ -29415,13 +29415,13 @@
          "packed_bounds": [
           53,
           62,
-          102,
+          101,
           136
          ],
          "anchors": {
           "hand_R": [
-           -8.5,
-           -42.8
+           -9.3,
+           -43.6
           ],
           "hand_L": [
            -8.4,
@@ -29436,24 +29436,24 @@
            -3.5
           ],
           "muzzle": [
-           -20.9,
-           -52.3
+           -21.7,
+           -53.2
           ],
           "exhaust": [
-           18.1,
-           -44.8
+           17.3,
+           -45.6
           ]
          },
          "equipment": {
-          "loader": 1,
-          "chamber": 20,
-          "launcher": 347,
+          "loader": 3,
+          "chamber": 16,
+          "launcher": 353,
           "rack": 138
          },
          "anchor_gap": {
           "muzzle": 0.4
          },
-         "sha256": "d4fda2a3a412595ec09810821dcd0e3fe1dd922d3905d10f8d6ec020e1e85b54",
+         "sha256": "edab367d242751a7b6511c0c1ffef6a7b551af3035cc395423063aa3d91a2abf",
          "sheet": "sheets/primary_W_p22.png",
          "region": [
           320,
@@ -29466,19 +29466,19 @@
          "path": "res://assets/animated/clack/primary_W_p22_03.png",
          "file": "primary_W_p22_03.png",
          "packed_bounds": [
-          51,
-          62,
-          97,
+          49,
+          63,
+          96,
           136
          ],
          "anchors": {
           "hand_R": [
-           -13.3,
-           -45.7
+           -14.9,
+           -47.3
           ],
           "hand_L": [
-           -19.6,
-           -48.5
+           -21.2,
+           -50.1
           ],
           "foot_R": [
            -0.7,
@@ -29489,24 +29489,24 @@
            -1.0
           ],
           "muzzle": [
-           -23.2,
-           -57.7
+           -24.8,
+           -59.3
           ],
           "exhaust": [
-           13.1,
-           -41.8
+           11.5,
+           -43.4
           ]
          },
          "equipment": {
-          "loader": 1,
+          "loader": 9,
           "chamber": 0,
-          "launcher": 249,
+          "launcher": 259,
           "rack": 138
          },
          "anchor_gap": {
           "muzzle": 0.4
          },
-         "sha256": "2ac9ed629b7acb5c4c81c3d273e0ec63aaf9e24d9bd8da12c9ce496c2dd2a7eb",
+         "sha256": "858333aa3590d81f64d6cc895e1c45bd6eae20f73c4ef80c16260671d6e4b624",
          "sheet": "sheets/primary_W_p22.png",
          "region": [
           480,
@@ -29519,19 +29519,19 @@
          "path": "res://assets/animated/clack/primary_W_p22_04.png",
          "file": "primary_W_p22_04.png",
          "packed_bounds": [
-          51,
+          49,
           63,
-          97,
+          95,
           136
          ],
          "anchors": {
           "hand_R": [
-           -13.8,
-           -45.2
+           -15.4,
+           -46.8
           ],
           "hand_L": [
-           -20.1,
-           -48.0
+           -21.7,
+           -49.6
           ],
           "foot_R": [
            -0.7,
@@ -29542,24 +29542,24 @@
            -1.0
           ],
           "muzzle": [
-           -23.7,
-           -57.2
+           -25.3,
+           -58.8
           ],
           "exhaust": [
-           12.6,
-           -41.3
+           11.0,
+           -42.9
           ]
          },
          "equipment": {
-          "loader": 2,
+          "loader": 8,
           "chamber": 0,
-          "launcher": 255,
+          "launcher": 253,
           "rack": 138
          },
          "anchor_gap": {
           "muzzle": 0.4
          },
-         "sha256": "e18c96648dfdea3fb1e5ef2a20c97486de32830175f9e063d1a52773d67f5f74",
+         "sha256": "f96246494bf91b4586ba9a10090d09363a7cbe40c797d6d19988b0496cade290",
          "sheet": "sheets/primary_W_p22.png",
          "region": [
           640,
@@ -29572,19 +29572,19 @@
          "path": "res://assets/animated/clack/primary_W_p22_05.png",
          "file": "primary_W_p22_05.png",
          "packed_bounds": [
-          50,
+          49,
           63,
-          97,
+          95,
           136
          ],
          "anchors": {
           "hand_R": [
-           -13.8,
-           -45.2
+           -15.4,
+           -46.8
           ],
           "hand_L": [
-           -20.2,
-           -48.0
+           -21.7,
+           -49.6
           ],
           "foot_R": [
            -0.7,
@@ -29595,24 +29595,24 @@
            -1.0
           ],
           "muzzle": [
-           -23.8,
-           -57.2
+           -25.3,
+           -58.8
           ],
           "exhaust": [
-           12.6,
-           -41.3
+           11.0,
+           -42.9
           ]
          },
          "equipment": {
-          "loader": 3,
+          "loader": 9,
           "chamber": 0,
-          "launcher": 257,
+          "launcher": 254,
           "rack": 138
          },
          "anchor_gap": {
-          "muzzle": 0.4
+          "muzzle": 0.3
          },
-         "sha256": "9e405a61a3309781ecdf89639cc086b0a6aec43fdb9869642320444ceeba6794",
+         "sha256": "5ef75f17869660f620e3d97e56d17da055721b918904d8c2f9c6804a37b78af3",
          "sheet": "sheets/primary_W_p22.png",
          "region": [
           800,
@@ -29625,19 +29625,19 @@
          "path": "res://assets/animated/clack/primary_W_p22_06.png",
          "file": "primary_W_p22_06.png",
          "packed_bounds": [
-          50,
+          49,
           63,
-          97,
+          95,
           136
          ],
          "anchors": {
           "hand_R": [
-           -13.9,
-           -45.2
+           -15.5,
+           -46.8
           ],
           "hand_L": [
-           -20.2,
-           -48.0
+           -21.8,
+           -49.6
           ],
           "foot_R": [
            -0.7,
@@ -29648,24 +29648,24 @@
            -1.0
           ],
           "muzzle": [
-           -23.8,
-           -57.2
+           -25.4,
+           -58.8
           ],
           "exhaust": [
-           12.5,
-           -41.3
+           10.9,
+           -42.9
           ]
          },
          "equipment": {
-          "loader": 3,
+          "loader": 9,
           "chamber": 0,
-          "launcher": 255,
+          "launcher": 251,
           "rack": 138
          },
          "anchor_gap": {
-          "muzzle": 0.4
+          "muzzle": 0.3
          },
-         "sha256": "05bc8813ced78e87358ad0fa894a4b0c806c17f39780a7690ac54a9a1bd8541b",
+         "sha256": "23365517e9cf44789c66ff38ecdef970cdbbd742214bc89387e3381a2d3f83bd",
          "sheet": "sheets/primary_W_p22.png",
          "region": [
           960,
@@ -29678,19 +29678,19 @@
          "path": "res://assets/animated/clack/primary_W_p22_07.png",
          "file": "primary_W_p22_07.png",
          "packed_bounds": [
-          57,
-          63,
-          116,
+          55,
+          64,
+          114,
           136
          ],
          "anchors": {
           "hand_R": [
-           -8.3,
-           -44.6
+           -9.9,
+           -46.1
           ],
           "hand_L": [
-           -14.5,
-           -47.7
+           -16.1,
+           -49.3
           ],
           "foot_R": [
            -0.7,
@@ -29701,25 +29701,25 @@
            -1.0
           ],
           "muzzle": [
-           -17.5,
-           -57.1
+           -19.1,
+           -58.7
           ],
           "exhaust": [
-           17.8,
-           -39.1
+           16.2,
+           -40.7
           ]
          },
          "equipment": {
           "loader": 2,
-          "chamber": 3,
-          "launcher": 235,
+          "chamber": 0,
+          "launcher": 245,
           "rack": 138,
           "fx": 148
          },
          "anchor_gap": {
-          "muzzle": 0.4
+          "muzzle": 0.5
          },
-         "sha256": "5a59a64d2b5d594c7c7fd7f64cb306519a40ad068e3f3a8f6b85dfb5ebcd0f8e",
+         "sha256": "f45edbda4093f28f434d65f66f154edf03b3ae47bc444cc5b77ed3662986199f",
          "sheet": "sheets/primary_W_p22.png",
          "region": [
           1120,
@@ -29732,19 +29732,19 @@
          "path": "res://assets/animated/clack/primary_W_p22_08.png",
          "file": "primary_W_p22_08.png",
          "packed_bounds": [
-          57,
-          63,
-          113,
+          55,
+          64,
+          111,
           136
          ],
          "anchors": {
           "hand_R": [
-           -8.3,
-           -44.4
+           -9.9,
+           -46.0
           ],
           "hand_L": [
-           -14.5,
-           -47.5
+           -16.1,
+           -49.1
           ],
           "foot_R": [
            -0.7,
@@ -29755,25 +29755,25 @@
            -1.0
           ],
           "muzzle": [
-           -17.6,
-           -56.9
+           -19.2,
+           -58.5
           ],
           "exhaust": [
-           17.8,
-           -39.2
+           16.2,
+           -40.8
           ]
          },
          "equipment": {
-          "loader": 4,
+          "loader": 5,
           "chamber": 0,
-          "launcher": 254,
+          "launcher": 249,
           "rack": 143,
           "fx": 127
          },
          "anchor_gap": {
-          "muzzle": 0.4
+          "muzzle": 0.3
          },
-         "sha256": "00507a27c5ba95cfc6bc90468b9f3227355abc7e6910066cc5a328598e277162",
+         "sha256": "16a0d8dae4d039a169578fd3b14190005a4b918066c47ae762a5d8f33a30cf1f",
          "sheet": "sheets/primary_W_p22.png",
          "region": [
           1280,
@@ -29786,19 +29786,19 @@
          "path": "res://assets/animated/clack/primary_W_p22_09.png",
          "file": "primary_W_p22_09.png",
          "packed_bounds": [
-          53,
-          63,
-          100,
+          52,
+          64,
+          98,
           136
          ],
          "anchors": {
           "hand_R": [
-           -11.0,
-           -44.3
+           -12.6,
+           -45.9
           ],
           "hand_L": [
-           -17.4,
-           -47.1
+           -19.0,
+           -48.7
           ],
           "foot_R": [
            -0.7,
@@ -29809,24 +29809,24 @@
            -1.0
           ],
           "muzzle": [
-           -21.0,
-           -56.3
+           -22.6,
+           -57.9
           ],
           "exhaust": [
-           15.3,
-           -40.4
+           13.7,
+           -42.0
           ]
          },
          "equipment": {
-          "loader": 3,
+          "loader": 5,
           "chamber": 0,
-          "launcher": 268,
+          "launcher": 261,
           "rack": 138
          },
          "anchor_gap": {
-          "muzzle": 0.5
+          "muzzle": 0.4
          },
-         "sha256": "700e1b095e718e7be878774af759e032699185f9437a27caa2e135ee6f1a72ac",
+         "sha256": "0e00d1ec6c78fba53676838753a45680e7af580aab2926c35ed2850a654fcc79",
          "sheet": "sheets/primary_W_p22.png",
          "region": [
           1440,
@@ -29839,19 +29839,19 @@
          "path": "res://assets/animated/clack/primary_W_p22_10.png",
          "file": "primary_W_p22_10.png",
          "packed_bounds": [
-          50,
+          48,
           63,
-          97,
+          95,
           136
          ],
          "anchors": {
           "hand_R": [
-           -14.1,
-           -44.7
+           -15.7,
+           -46.3
           ],
           "hand_L": [
-           -20.5,
-           -47.2
+           -22.1,
+           -48.8
           ],
           "foot_R": [
            -0.7,
@@ -29862,24 +29862,24 @@
            -1.0
           ],
           "muzzle": [
-           -24.4,
-           -56.4
+           -26.0,
+           -58.0
           ],
           "exhaust": [
-           12.4,
-           -41.5
+           10.8,
+           -43.1
           ]
          },
          "equipment": {
-          "loader": 3,
+          "loader": 10,
           "chamber": 0,
-          "launcher": 256,
+          "launcher": 263,
           "rack": 143
          },
          "anchor_gap": {
-          "muzzle": 0.2
+          "muzzle": 0.7
          },
-         "sha256": "5a229a51e738859cbce219ab76c23d19ffb58ebce7359c4d609ec6ed978a920e",
+         "sha256": "d13e7a0927c520aec56c8fec0c0f46c863c9ad3938b36722c4e6b2c530257e83",
          "sheet": "sheets/primary_W_p22.png",
          "region": [
           1600,
@@ -29892,15 +29892,15 @@
          "path": "res://assets/animated/clack/primary_W_p22_11.png",
          "file": "primary_W_p22_11.png",
          "packed_bounds": [
-          52,
+          51,
           62,
-          99,
+          98,
           136
          ],
          "anchors": {
           "hand_R": [
-           -7.9,
-           -38.1
+           -8.7,
+           -38.9
           ],
           "hand_L": [
            -1.3,
@@ -29915,24 +29915,24 @@
            -1.0
           ],
           "muzzle": [
-           -22.6,
-           -42.4
+           -23.4,
+           -43.2
           ],
           "exhaust": [
-           15.5,
-           -49.6
+           14.6,
+           -50.4
           ]
          },
          "equipment": {
-          "loader": 6,
-          "chamber": 30,
-          "launcher": 307,
+          "loader": 8,
+          "chamber": 25,
+          "launcher": 322,
           "rack": 130
          },
          "anchor_gap": {
-          "muzzle": 0.1
+          "muzzle": 0.3
          },
-         "sha256": "3146df7c3ded05f323e42af1d0975d9af8afcbb422197a40f78dff54108bc86c",
+         "sha256": "92ad93e3efaa5059e930458c8907692ab1ebf68014d7c00ac9379d9db69341cf",
          "sheet": "sheets/primary_W_p22.png",
          "region": [
           1760,
@@ -30155,8 +30155,8 @@
         }
        ],
        "release_anchor": [
-        -17.5,
-        -57.1
+        -19.1,
+        -58.7
        ]
       },
       "p45": {
@@ -30263,7 +30263,7 @@
          "anchor_gap": {
           "muzzle": 0.3
          },
-         "sha256": "dcfa5ad14fde52fbad2bf0d4267c210aeb5a99511c83c6f12eb8db5e796e388b",
+         "sha256": "81bb0167e8517bd10b6f71aaec4e71026121e41a291cb1817ff2243406588eb4",
          "sheet": "sheets/primary_W_p45.png",
          "region": [
           160,
@@ -30276,15 +30276,15 @@
          "path": "res://assets/animated/clack/primary_W_p45_02.png",
          "file": "primary_W_p45_02.png",
          "packed_bounds": [
-          52,
+          51,
           62,
-          99,
+          97,
           136
          ],
          "anchors": {
           "hand_R": [
-           -11.5,
-           -45.1
+           -13.1,
+           -46.6
           ],
           "hand_L": [
            -8.4,
@@ -30299,24 +30299,24 @@
            -3.5
           ],
           "muzzle": [
-           -22.0,
-           -56.6
+           -23.5,
+           -58.1
           ],
           "exhaust": [
-           14.8,
-           -42.5
+           13.3,
+           -44.0
           ]
          },
          "equipment": {
-          "loader": 6,
+          "loader": 7,
           "chamber": 0,
-          "launcher": 324,
+          "launcher": 335,
           "rack": 138
          },
          "anchor_gap": {
-          "muzzle": 0.5
+          "muzzle": 0.4
          },
-         "sha256": "e904ee464c853823394cd20f63b7e3a4261bb01f134466dea710929c03c4d01b",
+         "sha256": "325533bd07fd4d4ac23a6d723092e6bbb1d46f75dd0e49c16221f238d0b1accb",
          "sheet": "sheets/primary_W_p45.png",
          "region": [
           320,
@@ -30329,19 +30329,19 @@
          "path": "res://assets/animated/clack/primary_W_p45_03.png",
          "file": "primary_W_p45_03.png",
          "packed_bounds": [
-          53,
-          62,
+          50,
+          60,
           94,
           136
          ],
          "anchors": {
           "hand_R": [
-           -16.3,
-           -53.1
+           -19.1,
+           -55.9
           ],
           "hand_L": [
-           -21.1,
-           -57.9
+           -23.9,
+           -60.7
           ],
           "foot_R": [
            -0.7,
@@ -30352,24 +30352,24 @@
            -1.0
           ],
           "muzzle": [
-           -21.4,
-           -67.8
+           -24.2,
+           -70.6
           ],
           "exhaust": [
-           6.3,
-           -40.6
+           3.5,
+           -43.4
           ]
          },
          "equipment": {
           "loader": 12,
           "chamber": 0,
-          "launcher": 164,
+          "launcher": 203,
           "rack": 138
          },
          "anchor_gap": {
           "muzzle": 0.3
          },
-         "sha256": "649150268ed4b2519d2735346db1b75c678f1f4c387481c347aaf708f20680be",
+         "sha256": "2093e79738a5352817aeba1ff0837da22fce50c4cc0080f35f75dd5c9b92630b",
          "sheet": "sheets/primary_W_p45.png",
          "region": [
           480,
@@ -30382,19 +30382,19 @@
          "path": "res://assets/animated/clack/primary_W_p45_04.png",
          "file": "primary_W_p45_04.png",
          "packed_bounds": [
-          52,
-          63,
+          50,
+          60,
           94,
           136
          ],
          "anchors": {
           "hand_R": [
-           -16.8,
-           -52.6
+           -19.6,
+           -55.4
           ],
           "hand_L": [
-           -21.6,
-           -57.4
+           -24.4,
+           -60.2
           ],
           "foot_R": [
            -0.7,
@@ -30405,24 +30405,24 @@
            -1.0
           ],
           "muzzle": [
-           -21.9,
-           -67.3
+           -24.7,
+           -70.1
           ],
           "exhaust": [
-           5.8,
-           -40.1
+           3.0,
+           -42.9
           ]
          },
          "equipment": {
           "loader": 13,
           "chamber": 0,
-          "launcher": 163,
+          "launcher": 195,
           "rack": 138
          },
          "anchor_gap": {
-          "muzzle": 0.4
+          "muzzle": 0.5
          },
-         "sha256": "44755a0d0146fbdc93b1e0188788fc5b75836320e79af7fe60796d8125f82228",
+         "sha256": "c2fb6fdb4705f8ab088e19c93ce33f490ef8b71776abaec61d1302d30255f1ef",
          "sheet": "sheets/primary_W_p45.png",
          "region": [
           640,
@@ -30435,19 +30435,19 @@
          "path": "res://assets/animated/clack/primary_W_p45_05.png",
          "file": "primary_W_p45_05.png",
          "packed_bounds": [
-          52,
-          63,
+          49,
+          60,
           94,
           136
          ],
          "anchors": {
           "hand_R": [
-           -16.8,
-           -52.6
+           -19.6,
+           -55.4
           ],
           "hand_L": [
-           -21.6,
-           -57.4
+           -24.5,
+           -60.2
           ],
           "foot_R": [
            -0.7,
@@ -30458,24 +30458,24 @@
            -1.0
           ],
           "muzzle": [
-           -21.9,
-           -67.3
+           -24.7,
+           -70.1
           ],
           "exhaust": [
-           5.8,
-           -40.1
+           3.0,
+           -42.9
           ]
          },
          "equipment": {
           "loader": 14,
           "chamber": 0,
-          "launcher": 164,
+          "launcher": 196,
           "rack": 138
          },
          "anchor_gap": {
           "muzzle": 0.5
          },
-         "sha256": "f569f868e54a79d9a782232adc8f388e9dda6df7acd572b1edcbba062703eb0d",
+         "sha256": "1903d8ae766820ddbd6f730787021f3ec5d25dbc919daa3b4dc400d8f100f65e",
          "sheet": "sheets/primary_W_p45.png",
          "region": [
           800,
@@ -30488,19 +30488,19 @@
          "path": "res://assets/animated/clack/primary_W_p45_06.png",
          "file": "primary_W_p45_06.png",
          "packed_bounds": [
-          52,
-          63,
+          49,
+          60,
           94,
           136
          ],
          "anchors": {
           "hand_R": [
-           -16.9,
-           -52.6
+           -19.7,
+           -55.4
           ],
           "hand_L": [
-           -21.7,
-           -57.4
+           -24.5,
+           -60.2
           ],
           "foot_R": [
            -0.7,
@@ -30511,24 +30511,24 @@
            -1.0
           ],
           "muzzle": [
-           -22.0,
-           -67.3
+           -24.8,
+           -70.1
           ],
           "exhaust": [
-           5.7,
-           -40.1
+           2.9,
+           -42.9
           ]
          },
          "equipment": {
           "loader": 14,
           "chamber": 0,
-          "launcher": 164,
+          "launcher": 196,
           "rack": 138
          },
          "anchor_gap": {
           "muzzle": 0.5
          },
-         "sha256": "7f64fc99e77df1a05b642ffbf2d68a68ec0f6401168e4f063338a7347ce6c7d7",
+         "sha256": "7788d98fc1a45051a15ad901dfd52cf27cfcf549d33009a339d0ad8983f184e9",
          "sheet": "sheets/primary_W_p45.png",
          "region": [
           960,
@@ -30541,19 +30541,19 @@
          "path": "res://assets/animated/clack/primary_W_p45_07.png",
          "file": "primary_W_p45_07.png",
          "packed_bounds": [
-          59,
-          63,
-          106,
+          56,
+          62,
+          103,
           136
          ],
          "anchors": {
           "hand_R": [
-           -11.1,
-           -51.1
+           -14.0,
+           -53.9
           ],
           "hand_L": [
-           -15.7,
-           -56.1
+           -18.5,
+           -58.9
           ],
           "foot_R": [
            -0.7,
@@ -30564,25 +30564,25 @@
            -1.0
           ],
           "muzzle": [
-           -15.4,
-           -66.0
+           -18.2,
+           -68.8
           ],
           "exhaust": [
-           10.7,
-           -37.2
+           7.9,
+           -40.0
           ]
          },
          "equipment": {
           "loader": 0,
           "chamber": 0,
-          "launcher": 146,
+          "launcher": 174,
           "rack": 138,
-          "fx": 150
+          "fx": 149
          },
          "anchor_gap": {
-          "muzzle": 0.5
+          "muzzle": 0.4
          },
-         "sha256": "83d4736c9fabe22f2ae665499ba3adb3bd8cef0bb25c2bacf20f172eebdb69ea",
+         "sha256": "65de0f08a20da36af0d17f5b0a768effb15e24b71adf15d7793ac8430dded6b5",
          "sheet": "sheets/primary_W_p45.png",
          "region": [
           1120,
@@ -30595,19 +30595,19 @@
          "path": "res://assets/animated/clack/primary_W_p45_08.png",
          "file": "primary_W_p45_08.png",
          "packed_bounds": [
-          59,
-          63,
-          104,
+          56,
+          62,
+          101,
           136
          ],
          "anchors": {
           "hand_R": [
-           -11.0,
-           -51.0
+           -13.8,
+           -53.8
           ],
           "hand_L": [
-           -15.6,
-           -55.9
+           -18.4,
+           -58.8
           ],
           "foot_R": [
            -0.7,
@@ -30618,25 +30618,25 @@
            -1.0
           ],
           "muzzle": [
-           -15.4,
-           -65.8
+           -18.2,
+           -68.7
           ],
           "exhaust": [
-           11.0,
-           -37.3
+           8.2,
+           -40.1
           ]
          },
          "equipment": {
           "loader": 0,
           "chamber": 0,
-          "launcher": 154,
+          "launcher": 178,
           "rack": 143,
           "fx": 129
          },
          "anchor_gap": {
-          "muzzle": 0.4
+          "muzzle": 0.3
          },
-         "sha256": "2fc0fa734cd52f696c6556fa7531efe39b7bda7c6ba9ff568c7892f96fd8dd14",
+         "sha256": "fe5f55437f282b8563d6d2915a66b3b0780ce4c9d91c8820d6ec7ba548a1e3a9",
          "sheet": "sheets/primary_W_p45.png",
          "region": [
           1280,
@@ -30649,19 +30649,19 @@
          "path": "res://assets/animated/clack/primary_W_p45_09.png",
          "file": "primary_W_p45_09.png",
          "packed_bounds": [
-          55,
-          63,
+          52,
+          62,
           95,
           136
          ],
          "anchors": {
           "hand_R": [
-           -14.0,
-           -51.2
+           -16.8,
+           -54.0
           ],
           "hand_L": [
-           -18.8,
-           -56.0
+           -21.7,
+           -58.8
           ],
           "foot_R": [
            -0.7,
@@ -30672,24 +30672,24 @@
            -1.0
           ],
           "muzzle": [
-           -19.1,
-           -65.9
+           -21.9,
+           -68.7
           ],
           "exhaust": [
-           8.6,
-           -38.7
+           5.8,
+           -41.5
           ]
          },
          "equipment": {
-          "loader": 9,
+          "loader": 11,
           "chamber": 0,
-          "launcher": 166,
+          "launcher": 192,
           "rack": 138
          },
          "anchor_gap": {
           "muzzle": 0.5
          },
-         "sha256": "8f37104097fdbf09415868dc1fc35febc3b98e6d3e5252a667c67eff56e023ff",
+         "sha256": "ace010b33a48b19f944086fc963809e552b9373b94ae085b6c24907eaca99bc7",
          "sheet": "sheets/primary_W_p45.png",
          "region": [
           1440,
@@ -30702,19 +30702,19 @@
          "path": "res://assets/animated/clack/primary_W_p45_10.png",
          "file": "primary_W_p45_10.png",
          "packed_bounds": [
-          51,
-          63,
+          49,
+          61,
           94,
           136
          ],
          "anchors": {
           "hand_R": [
-           -17.2,
-           -52.1
+           -20.0,
+           -54.9
           ],
           "hand_L": [
-           -22.2,
-           -56.7
+           -25.0,
+           -59.5
           ],
           "foot_R": [
            -0.7,
@@ -30725,24 +30725,24 @@
            -1.0
           ],
           "muzzle": [
-           -22.7,
-           -66.6
+           -25.5,
+           -69.4
           ],
           "exhaust": [
-           5.7,
-           -40.3
+           2.9,
+           -43.1
           ]
          },
          "equipment": {
           "loader": 12,
           "chamber": 0,
-          "launcher": 167,
+          "launcher": 200,
           "rack": 143
          },
          "anchor_gap": {
-          "muzzle": 0.2
+          "muzzle": 0.1
          },
-         "sha256": "7a638af05ea573973e6c67f3b18f77cf9d5c4be34e63f4650c7d815062fa716b",
+         "sha256": "931cbf928b2698441879104f7aa56acadc7094f7dd4688b9798f0dd69ae81320",
          "sheet": "sheets/primary_W_p45.png",
          "region": [
           1600,
@@ -30755,15 +30755,15 @@
          "path": "res://assets/animated/clack/primary_W_p45_11.png",
          "file": "primary_W_p45_11.png",
          "packed_bounds": [
-          48,
-          62,
-          97,
+          46,
+          63,
+          95,
           136
          ],
          "anchors": {
           "hand_R": [
-           -12.6,
-           -39.2
+           -14.1,
+           -40.8
           ],
           "hand_L": [
            -1.3,
@@ -30778,24 +30778,24 @@
            -1.0
           ],
           "muzzle": [
-           -26.6,
-           -46.0
+           -28.1,
+           -47.5
           ],
           "exhaust": [
-           12.9,
-           -46.6
+           11.4,
+           -48.1
           ]
          },
          "equipment": {
-          "loader": 11,
-          "chamber": 3,
-          "launcher": 319,
+          "loader": 15,
+          "chamber": 0,
+          "launcher": 343,
           "rack": 130
          },
          "anchor_gap": {
-          "muzzle": 0.5
+          "muzzle": 0.4
          },
-         "sha256": "1581078fd841212c28018cbf02c317a1bd191f5b4c31be3fc1c5db85bb415acc",
+         "sha256": "6cd8354d8fa4fbb01e225cbc4a06b0a0a3a8374eff89a8f8d3a642aeb7334209",
          "sheet": "sheets/primary_W_p45.png",
          "region": [
           1760,
@@ -31018,8 +31018,8 @@
         }
        ],
        "release_anchor": [
-        -15.4,
-        -66.0
+        -18.2,
+        -68.8
        ]
       }
      }
@@ -70525,15 +70525,15 @@
          "path": "res://assets/animated/clack/powered_primary_E_m45_00.png",
          "file": "powered_primary_E_m45_00.png",
          "packed_bounds": [
-          59,
-          61,
-          106,
+          60,
+          62,
+          107,
           136
          ],
          "anchors": {
           "hand_R": [
-           9.4,
-           -45.6
+           10.9,
+           -47.1
           ],
           "hand_L": [
            3.7,
@@ -70548,24 +70548,24 @@
            -1.0
           ],
           "muzzle": [
-           19.9,
-           -57.1
+           21.4,
+           -58.6
           ],
           "exhaust": [
-           -16.9,
-           -43.0
+           -15.4,
+           -44.5
           ]
          },
          "equipment": {
           "rack": 29,
-          "loader": 145,
+          "loader": 157,
           "chamber": 93,
-          "launcher": 404
+          "launcher": 401
          },
          "anchor_gap": {
-          "muzzle": 0.5
+          "muzzle": 0.2
          },
-         "sha256": "a9f62fdb512058641cd0530376da78a0c15d5ea0de1847eee141065516a2a648",
+         "sha256": "5cf62ec57a403d5ab1f7284de2ed2295771a69ac5ab11ae4902778c37f82c0ea",
          "sheet": "sheets/powered_primary_E_m45.png",
          "region": [
           0,
@@ -70579,18 +70579,18 @@
          "file": "powered_primary_E_m45_01.png",
          "packed_bounds": [
           61,
-          62,
-          102,
+          60,
+          105,
           136
          ],
          "anchors": {
           "hand_R": [
-           11.9,
-           -53.1
+           14.7,
+           -55.9
           ],
           "hand_L": [
-           16.4,
-           -57.9
+           19.2,
+           -60.7
           ],
           "foot_R": [
            -0.7,
@@ -70601,24 +70601,24 @@
            -3.5
           ],
           "muzzle": [
-           16.6,
-           -67.8
+           19.5,
+           -70.6
           ],
           "exhaust": [
-           -9.4,
-           -40.6
+           -6.5,
+           -43.4
           ]
          },
          "equipment": {
           "rack": 29,
-          "loader": 173,
-          "chamber": 64,
-          "launcher": 329
+          "loader": 219,
+          "chamber": 49,
+          "launcher": 316
          },
          "anchor_gap": {
-          "muzzle": 0.3
+          "muzzle": 0.1
          },
-         "sha256": "dd47f4799aad4e5f59d40d0b2bcea49732f6ad2769c4646c685b2286a04a495f",
+         "sha256": "e7d690201ba03b88e8745b8e0cd5a7af17154c700f3511f8f33c9356b2950be3",
          "sheet": "sheets/powered_primary_E_m45.png",
          "region": [
           160,
@@ -70632,18 +70632,18 @@
          "file": "powered_primary_E_m45_02.png",
          "packed_bounds": [
           62,
-          62,
-          103,
+          60,
+          106,
           136
          ],
          "anchors": {
           "hand_R": [
-           12.1,
-           -52.9
+           14.9,
+           -55.7
           ],
           "hand_L": [
-           16.6,
-           -57.6
+           19.5,
+           -60.4
           ],
           "foot_R": [
            -0.7,
@@ -70654,24 +70654,24 @@
            -1.0
           ],
           "muzzle": [
-           16.9,
-           -67.5
+           19.7,
+           -70.3
           ],
           "exhaust": [
-           -9.1,
-           -40.4
+           -6.3,
+           -43.2
           ]
          },
          "equipment": {
           "rack": 28,
-          "loader": 182,
-          "chamber": 64,
-          "launcher": 343
+          "loader": 227,
+          "chamber": 46,
+          "launcher": 322
          },
          "anchor_gap": {
-          "muzzle": 0.4
+          "muzzle": 0.3
          },
-         "sha256": "8a4f6dbab161e66a30a44772a311719b3415d6253cd86035c2e2d4e26b6652fa",
+         "sha256": "0973f4fa02cc500166c498899d58c080b056c255f185dffb20a3071418817d81",
          "sheet": "sheets/powered_primary_E_m45.png",
          "region": [
           320,
@@ -70685,18 +70685,18 @@
          "file": "powered_primary_E_m45_03.png",
          "packed_bounds": [
           62,
-          63,
-          103,
+          60,
+          106,
           136
          ],
          "anchors": {
           "hand_R": [
-           12.4,
-           -52.6
+           15.2,
+           -55.4
           ],
           "hand_L": [
-           16.9,
-           -57.4
+           19.7,
+           -60.2
           ],
           "foot_R": [
            -0.7,
@@ -70707,24 +70707,24 @@
            -1.0
           ],
           "muzzle": [
-           17.1,
-           -67.3
+           20.0,
+           -70.1
           ],
           "exhaust": [
-           -8.9,
-           -40.1
+           -6.0,
+           -42.9
           ]
          },
          "equipment": {
           "rack": 30,
-          "loader": 185,
-          "chamber": 63,
-          "launcher": 329
+          "loader": 228,
+          "chamber": 47,
+          "launcher": 321
          },
          "anchor_gap": {
-          "muzzle": 0.4
+          "muzzle": 0.6
          },
-         "sha256": "e081b410746b741b11d02a36f639ffcd6a15b0691118e52c016c8a482ece23bf",
+         "sha256": "c7957980c3766dd57b90676e158d99f1073fc99d28305fc4f54358c01e1a3ddb",
          "sheet": "sheets/powered_primary_E_m45.png",
          "region": [
           480,
@@ -70738,18 +70738,18 @@
          "file": "powered_primary_E_m45_04.png",
          "packed_bounds": [
           62,
-          63,
-          103,
+          60,
+          106,
           136
          ],
          "anchors": {
           "hand_R": [
-           12.4,
-           -52.6
+           15.2,
+           -55.4
           ],
           "hand_L": [
-           16.9,
-           -57.4
+           19.7,
+           -60.2
           ],
           "foot_R": [
            -0.7,
@@ -70760,24 +70760,24 @@
            -1.0
           ],
           "muzzle": [
-           17.1,
-           -67.3
+           20.0,
+           -70.1
           ],
           "exhaust": [
-           -8.9,
-           -40.1
+           -6.0,
+           -42.9
           ]
          },
          "equipment": {
           "rack": 30,
-          "loader": 185,
-          "chamber": 63,
-          "launcher": 329
+          "loader": 228,
+          "chamber": 47,
+          "launcher": 321
          },
          "anchor_gap": {
-          "muzzle": 0.4
+          "muzzle": 0.6
          },
-         "sha256": "e081b410746b741b11d02a36f639ffcd6a15b0691118e52c016c8a482ece23bf",
+         "sha256": "c7957980c3766dd57b90676e158d99f1073fc99d28305fc4f54358c01e1a3ddb",
          "sheet": "sheets/powered_primary_E_m45.png",
          "region": [
           640,
@@ -70790,19 +70790,19 @@
          "path": "res://assets/animated/clack/powered_primary_E_m45_05.png",
          "file": "powered_primary_E_m45_05.png",
          "packed_bounds": [
-          53,
-          63,
-          98,
+          56,
+          61,
+          100,
           136
          ],
          "anchors": {
           "hand_R": [
-           7.8,
-           -51.1
+           10.6,
+           -53.9
           ],
           "hand_L": [
-           12.1,
-           -56.1
+           14.9,
+           -59.0
           ],
           "foot_R": [
            -0.7,
@@ -70813,25 +70813,25 @@
            -1.0
           ],
           "muzzle": [
-           11.8,
-           -66.0
+           14.6,
+           -68.8
           ],
           "exhaust": [
-           -12.7,
-           -37.2
+           -9.8,
+           -40.0
           ]
          },
          "equipment": {
           "rack": 31,
-          "loader": 151,
-          "chamber": 76,
-          "launcher": 307,
-          "fx": 152
+          "loader": 166,
+          "chamber": 65,
+          "launcher": 293,
+          "fx": 151
          },
          "anchor_gap": {
-          "muzzle": 0.6
+          "muzzle": 0.4
          },
-         "sha256": "0f552f79ce0e3c0c77dd6378ab6f4bba24b783b0bd778434c651090fb19dae8a",
+         "sha256": "27770e0ed08fd7bbef6be0e1ebdf86406e0cbe0342ae36abd6092201cab114cd",
          "sheet": "sheets/powered_primary_E_m45.png",
          "region": [
           800,
@@ -70844,19 +70844,19 @@
          "path": "res://assets/animated/clack/powered_primary_E_m45_06.png",
          "file": "powered_primary_E_m45_06.png",
          "packed_bounds": [
-          56,
-          63,
-          100,
+          59,
+          61,
+          102,
           136
          ],
          "anchors": {
           "hand_R": [
-           9.3,
-           -51.8
+           12.2,
+           -54.7
           ],
           "hand_L": [
-           13.7,
-           -56.7
+           16.6,
+           -59.6
           ],
           "foot_R": [
            -0.7,
@@ -70867,25 +70867,25 @@
            -1.0
           ],
           "muzzle": [
-           13.7,
-           -66.6
+           16.5,
+           -69.5
           ],
           "exhaust": [
-           -11.5,
-           -38.6
+           -8.7,
+           -41.5
           ]
          },
          "equipment": {
           "rack": 31,
-          "loader": 155,
-          "chamber": 68,
-          "launcher": 307,
+          "loader": 174,
+          "chamber": 60,
+          "launcher": 293,
           "fx": 128
          },
          "anchor_gap": {
-          "muzzle": 0.3
+          "muzzle": 0.1
          },
-         "sha256": "50de47330d3442413fb9a785535d8378cce2f2709e90ed1f0e734f4ed3a5042a",
+         "sha256": "7a6294ed96c5485737ed3d22006940aa04a1e3ad4a7c5414450372c39d5d156e",
          "sheet": "sheets/powered_primary_E_m45.png",
          "region": [
           960,
@@ -70899,18 +70899,18 @@
          "file": "powered_primary_E_m45_07.png",
          "packed_bounds": [
           61,
-          63,
-          102,
+          60,
+          105,
           136
          ],
          "anchors": {
           "hand_R": [
-           11.9,
-           -52.6
+           14.7,
+           -55.4
           ],
           "hand_L": [
-           16.4,
-           -57.4
+           19.2,
+           -60.2
           ],
           "foot_R": [
            -0.7,
@@ -70921,24 +70921,24 @@
            -1.0
           ],
           "muzzle": [
-           16.6,
-           -67.3
+           19.5,
+           -70.1
           ],
           "exhaust": [
-           -9.4,
-           -40.1
+           -6.5,
+           -42.9
           ]
          },
          "equipment": {
           "rack": 30,
-          "loader": 181,
-          "chamber": 67,
-          "launcher": 330
+          "loader": 231,
+          "chamber": 44,
+          "launcher": 321
          },
          "anchor_gap": {
-          "muzzle": 0.3
+          "muzzle": 0.4
          },
-         "sha256": "517980401c84366df0f5bf88f6d0a1f1f4541882eba07bb8c1339912f3055607",
+         "sha256": "5cd111db5424c4c5be9b3df6a77a17fbb09949411f0eb743288d79df7749c847",
          "sheet": "sheets/powered_primary_E_m45.png",
          "region": [
           1120,
@@ -70951,15 +70951,15 @@
          "path": "res://assets/animated/clack/powered_primary_E_m45_08.png",
          "file": "powered_primary_E_m45_08.png",
          "packed_bounds": [
-          59,
+          60,
           62,
-          106,
+          107,
           136
          ],
          "anchors": {
           "hand_R": [
-           9.4,
-           -45.1
+           10.9,
+           -46.6
           ],
           "hand_L": [
            3.7,
@@ -70974,24 +70974,24 @@
            -3.5
           ],
           "muzzle": [
-           19.9,
-           -56.6
+           21.4,
+           -58.1
           ],
           "exhaust": [
-           -16.9,
-           -42.5
+           -15.4,
+           -44.0
           ]
          },
          "equipment": {
           "rack": 30,
-          "loader": 150,
-          "chamber": 93,
-          "launcher": 401
+          "loader": 156,
+          "chamber": 91,
+          "launcher": 405
          },
          "anchor_gap": {
           "muzzle": 0.4
          },
-         "sha256": "d89f02e2e5aa77307aa8504291f6cdc2bb70c30a5397207bcaeeb566623f112b",
+         "sha256": "dccb834ad00510ae8bf5eab7bdd6247e3bb98cbf035b6758f078f28bedf8ca3a",
          "sheet": "sheets/powered_primary_E_m45.png",
          "region": [
           1280,
@@ -71044,7 +71044,7 @@
          "anchor_gap": {
           "muzzle": 0.3
          },
-         "sha256": "4f4f0cffb097292e95af80510ce5e57682e966de9cc6de4b5d70f7ff5ceef7aa",
+         "sha256": "aa90b91a1bb157625d711044203367f383c84e02e2fa7b9735bfa583df7fbfb7",
          "sheet": "sheets/powered_primary_E_m45.png",
          "region": [
           1440,
@@ -71108,8 +71108,8 @@
         }
        ],
        "release_anchor": [
-        11.8,
-        -66.0
+        14.6,
+        -68.8
        ]
       },
       "m22": {
@@ -71123,15 +71123,15 @@
          "path": "res://assets/animated/clack/powered_primary_E_m22_00.png",
          "file": "powered_primary_E_m22_00.png",
          "packed_bounds": [
-          56,
+          57,
           61,
-          104,
+          105,
           136
          ],
          "anchors": {
           "hand_R": [
-           6.1,
-           -43.3
+           6.9,
+           -44.1
           ],
           "hand_L": [
            3.7,
@@ -71146,24 +71146,24 @@
            -1.0
           ],
           "muzzle": [
-           18.5,
-           -52.8
+           19.3,
+           -53.7
           ],
           "exhaust": [
-           -20.5,
-           -45.3
+           -19.7,
+           -46.1
           ]
          },
          "equipment": {
           "rack": 29,
-          "loader": 125,
-          "chamber": 90,
+          "loader": 124,
+          "chamber": 95,
           "launcher": 399
          },
          "anchor_gap": {
           "muzzle": 0.3
          },
-         "sha256": "a598ae99c4d3c45a64eeb724f04fb93c1fa6800f09974026074f10caa04613f1",
+         "sha256": "153c70a8c91093c079699669a957d4e14a8e6d1a178f17918a72c5849b5feae5",
          "sheet": "sheets/powered_primary_E_m22.png",
          "region": [
           0,
@@ -71176,19 +71176,19 @@
          "path": "res://assets/animated/clack/powered_primary_E_m22_01.png",
          "file": "powered_primary_E_m22_01.png",
          "packed_bounds": [
-          60,
-          62,
-          106,
+          61,
+          63,
+          108,
           136
          ],
          "anchors": {
           "hand_R": [
-           10.4,
-           -45.7
+           12.0,
+           -47.3
           ],
           "hand_L": [
-           16.6,
-           -48.5
+           18.2,
+           -50.1
           ],
           "foot_R": [
            -0.7,
@@ -71199,24 +71199,24 @@
            -3.5
           ],
           "muzzle": [
-           20.2,
-           -57.7
+           21.8,
+           -59.3
           ],
           "exhaust": [
-           -15.6,
-           -41.8
+           -14.0,
+           -43.4
           ]
          },
          "equipment": {
           "rack": 29,
-          "loader": 156,
-          "chamber": 74,
-          "launcher": 358
+          "loader": 168,
+          "chamber": 67,
+          "launcher": 362
          },
          "anchor_gap": {
-          "muzzle": 0.4
+          "muzzle": 0.3
          },
-         "sha256": "2181495699b6df69b1bd9b1f156d244b46e3430d4dcd41cea9a54c7be4d5beab",
+         "sha256": "a3f03f195947547f92322952ecb7d98edc06a9bd99d65f4aae6842437ef35a9c",
          "sheet": "sheets/powered_primary_E_m22.png",
          "region": [
           160,
@@ -71229,19 +71229,19 @@
          "path": "res://assets/animated/clack/powered_primary_E_m22_02.png",
          "file": "powered_primary_E_m22_02.png",
          "packed_bounds": [
-          60,
           62,
-          106,
+          63,
+          108,
           136
          ],
          "anchors": {
           "hand_R": [
-           10.6,
-           -45.4
+           12.2,
+           -47.0
           ],
           "hand_L": [
-           16.9,
-           -48.2
+           18.5,
+           -49.8
           ],
           "foot_R": [
            -0.7,
@@ -71252,24 +71252,24 @@
            -1.0
           ],
           "muzzle": [
-           20.4,
-           -57.5
+           22.0,
+           -59.0
           ],
           "exhaust": [
-           -15.4,
-           -41.5
+           -13.8,
+           -43.1
           ]
          },
          "equipment": {
           "rack": 28,
-          "loader": 156,
-          "chamber": 74,
-          "launcher": 362
+          "loader": 171,
+          "chamber": 65,
+          "launcher": 368
          },
          "anchor_gap": {
-          "muzzle": 0.1
+          "muzzle": 0.6
          },
-         "sha256": "957b6ed581f8f2c0408cb9b9aa74029cff87f8009abc87f07365e4fb44358c83",
+         "sha256": "485142950c854b9749674269933e7890756bfc0311860d47348683c9f5d42fe4",
          "sheet": "sheets/powered_primary_E_m22.png",
          "region": [
           320,
@@ -71282,19 +71282,19 @@
          "path": "res://assets/animated/clack/powered_primary_E_m22_03.png",
          "file": "powered_primary_E_m22_03.png",
          "packed_bounds": [
-          60,
+          62,
           63,
-          106,
+          108,
           136
          ],
          "anchors": {
           "hand_R": [
-           10.9,
-           -45.2
+           12.5,
+           -46.8
           ],
           "hand_L": [
-           17.1,
-           -48.0
+           18.7,
+           -49.6
           ],
           "foot_R": [
            -0.7,
@@ -71305,24 +71305,24 @@
            -1.0
           ],
           "muzzle": [
-           20.7,
-           -57.2
+           22.3,
+           -58.8
           ],
           "exhaust": [
-           -15.1,
-           -41.3
+           -13.5,
+           -42.9
           ]
          },
          "equipment": {
           "rack": 30,
-          "loader": 160,
-          "chamber": 76,
-          "launcher": 365
+          "loader": 171,
+          "chamber": 66,
+          "launcher": 360
          },
          "anchor_gap": {
-          "muzzle": 0.3
+          "muzzle": 0.4
          },
-         "sha256": "b761b9415cf8241fe37b85c39e386d145512029e0c3c41249e17c40e53b047c0",
+         "sha256": "27704098447dec573c5cabbc0dd2e67920867b4e00151d2ee496fccea1434022",
          "sheet": "sheets/powered_primary_E_m22.png",
          "region": [
           480,
@@ -71335,19 +71335,19 @@
          "path": "res://assets/animated/clack/powered_primary_E_m22_04.png",
          "file": "powered_primary_E_m22_04.png",
          "packed_bounds": [
-          60,
+          62,
           63,
-          106,
+          108,
           136
          ],
          "anchors": {
           "hand_R": [
-           10.9,
-           -45.2
+           12.5,
+           -46.8
           ],
           "hand_L": [
-           17.1,
-           -48.0
+           18.7,
+           -49.6
           ],
           "foot_R": [
            -0.7,
@@ -71358,24 +71358,24 @@
            -1.0
           ],
           "muzzle": [
-           20.7,
-           -57.2
+           22.3,
+           -58.8
           ],
           "exhaust": [
-           -15.1,
-           -41.3
+           -13.5,
+           -42.9
           ]
          },
          "equipment": {
           "rack": 30,
-          "loader": 160,
-          "chamber": 76,
-          "launcher": 365
+          "loader": 171,
+          "chamber": 66,
+          "launcher": 360
          },
          "anchor_gap": {
-          "muzzle": 0.3
+          "muzzle": 0.4
          },
-         "sha256": "b761b9415cf8241fe37b85c39e386d145512029e0c3c41249e17c40e53b047c0",
+         "sha256": "27704098447dec573c5cabbc0dd2e67920867b4e00151d2ee496fccea1434022",
          "sheet": "sheets/powered_primary_E_m22.png",
          "region": [
           640,
@@ -71388,19 +71388,19 @@
          "path": "res://assets/animated/clack/powered_primary_E_m22_05.png",
          "file": "powered_primary_E_m22_05.png",
          "packed_bounds": [
-          42,
-          63,
-          101,
+          44,
+          64,
+          102,
           136
          ],
          "anchors": {
           "hand_R": [
-           5.7,
-           -44.6
+           7.3,
+           -46.1
           ],
           "hand_L": [
-           11.8,
-           -47.7
+           13.4,
+           -49.3
           ],
           "foot_R": [
            -0.7,
@@ -71411,25 +71411,25 @@
            -1.0
           ],
           "muzzle": [
-           14.8,
-           -57.1
+           16.4,
+           -58.7
           ],
           "exhaust": [
-           -20.0,
-           -39.1
+           -18.4,
+           -40.7
           ]
          },
          "equipment": {
           "rack": 31,
-          "loader": 143,
-          "chamber": 65,
-          "launcher": 357,
-          "fx": 147
+          "loader": 141,
+          "chamber": 64,
+          "launcher": 361,
+          "fx": 149
          },
          "anchor_gap": {
-          "muzzle": 0.5
+          "muzzle": 0.2
          },
-         "sha256": "faf319f1f950255165e4301753d4f1ad723da0f722faf879cc6cecb89b0fcb60",
+         "sha256": "0f0fb028af5c7863b45cafd5114504341201df7cda577430aca456861b12c9d7",
          "sheet": "sheets/powered_primary_E_m22.png",
          "region": [
           800,
@@ -71442,19 +71442,19 @@
          "path": "res://assets/animated/clack/powered_primary_E_m22_06.png",
          "file": "powered_primary_E_m22_06.png",
          "packed_bounds": [
-          47,
-          63,
-          103,
+          48,
+          64,
+          104,
           136
          ],
          "anchors": {
           "hand_R": [
-           7.4,
-           -45.0
+           9.0,
+           -46.6
           ],
           "hand_L": [
-           13.6,
-           -48.0
+           15.2,
+           -49.6
           ],
           "foot_R": [
            -0.7,
@@ -71465,25 +71465,25 @@
            -1.0
           ],
           "muzzle": [
-           16.9,
-           -57.3
+           18.5,
+           -58.9
           ],
           "exhaust": [
-           -18.4,
-           -40.4
+           -16.8,
+           -42.0
           ]
          },
          "equipment": {
           "rack": 31,
-          "loader": 143,
-          "chamber": 62,
-          "launcher": 368,
-          "fx": 123
+          "loader": 152,
+          "chamber": 71,
+          "launcher": 343,
+          "fx": 128
          },
          "anchor_gap": {
           "muzzle": 0.4
          },
-         "sha256": "209f4db223416f2f96100967b3b4a9dc9485cf22282aa579532819bda48a4a8f",
+         "sha256": "ebff6a32a3064e611a09a1798e34d79e167eec5922708aaca76e97db36db8e24",
          "sheet": "sheets/powered_primary_E_m22.png",
          "region": [
           960,
@@ -71496,19 +71496,19 @@
          "path": "res://assets/animated/clack/powered_primary_E_m22_07.png",
          "file": "powered_primary_E_m22_07.png",
          "packed_bounds": [
-          60,
+          61,
           63,
-          106,
+          108,
           136
          ],
          "anchors": {
           "hand_R": [
-           10.4,
-           -45.2
+           12.0,
+           -46.8
           ],
           "hand_L": [
-           16.6,
-           -48.0
+           18.2,
+           -49.6
           ],
           "foot_R": [
            -0.7,
@@ -71519,24 +71519,24 @@
            -1.0
           ],
           "muzzle": [
-           20.2,
-           -57.2
+           21.8,
+           -58.8
           ],
           "exhaust": [
-           -15.6,
-           -41.3
+           -14.0,
+           -42.9
           ]
          },
          "equipment": {
           "rack": 30,
-          "loader": 159,
-          "chamber": 76,
-          "launcher": 363
+          "loader": 175,
+          "chamber": 64,
+          "launcher": 358
          },
          "anchor_gap": {
           "muzzle": 0.4
          },
-         "sha256": "44ec248ea5865359350999a4d3dcaf62fc71f9e0cd91c5352219c39d786d011f",
+         "sha256": "5a5f1ce077b28fe476ea2687620f81489b172b405909ec7fee4985b17f705c2b",
          "sheet": "sheets/powered_primary_E_m22.png",
          "region": [
           1120,
@@ -71549,15 +71549,15 @@
          "path": "res://assets/animated/clack/powered_primary_E_m22_08.png",
          "file": "powered_primary_E_m22_08.png",
          "packed_bounds": [
-          56,
+          57,
           62,
-          104,
+          105,
           136
          ],
          "anchors": {
           "hand_R": [
-           6.1,
-           -42.8
+           6.9,
+           -43.6
           ],
           "hand_L": [
            3.7,
@@ -71572,24 +71572,24 @@
            -3.5
           ],
           "muzzle": [
-           18.5,
-           -52.3
+           19.3,
+           -53.2
           ],
           "exhaust": [
-           -20.5,
-           -44.8
+           -19.7,
+           -45.6
           ]
          },
          "equipment": {
           "rack": 30,
-          "loader": 127,
-          "chamber": 94,
-          "launcher": 407
+          "loader": 125,
+          "chamber": 90,
+          "launcher": 400
          },
          "anchor_gap": {
-          "muzzle": 0.2
+          "muzzle": 0.4
          },
-         "sha256": "ffdac5463a161127868b972e70ab53e9a442fd0a1642ff14d4c8f6300355e5a9",
+         "sha256": "2386741eabd9feaa77e5369c6a25397c86b1f7c1e918168af7fc3fd3fe7743f0",
          "sheet": "sheets/powered_primary_E_m22.png",
          "region": [
           1280,
@@ -71642,7 +71642,7 @@
          "anchor_gap": {
           "muzzle": 0.3
          },
-         "sha256": "9488dcd15bbd384c7479423f161fb0fce1b2e234c54eeca475b6ebe015b7ff5b",
+         "sha256": "a2283892cc175eddc655b501ba236f02d64c902388e30c2df9043d26922e1099",
          "sheet": "sheets/powered_primary_E_m22.png",
          "region": [
           1440,
@@ -71706,8 +71706,8 @@
         }
        ],
        "release_anchor": [
-        14.8,
-        -57.1
+        16.4,
+        -58.7
        ]
       },
       "0": {
@@ -75907,13 +75907,13 @@
          "packed_bounds": [
           53,
           61,
-          102,
+          101,
           136
          ],
          "anchors": {
           "hand_R": [
-           -8.5,
-           -43.3
+           -9.3,
+           -44.1
           ],
           "hand_L": [
            -0.3,
@@ -75928,24 +75928,24 @@
            -1.0
           ],
           "muzzle": [
-           -20.9,
-           -52.8
+           -21.7,
+           -53.7
           ],
           "exhaust": [
-           18.1,
-           -45.3
+           17.3,
+           -46.1
           ]
          },
          "equipment": {
-          "loader": 124,
-          "chamber": 21,
-          "launcher": 345,
+          "loader": 127,
+          "chamber": 15,
+          "launcher": 356,
           "rack": 128
          },
          "anchor_gap": {
-          "muzzle": 0.5
+          "muzzle": 0.2
          },
-         "sha256": "6af7f79eb45a22d8154d79318c218391da55ef2ea6f811659ea86a1d5f9c900c",
+         "sha256": "d4ff11de8ea458558fdcd151b1ba378c665d7511b87c135cbc923e1c5b68abf5",
          "sheet": "sheets/powered_primary_W_p22.png",
          "region": [
           0,
@@ -75958,19 +75958,19 @@
          "path": "res://assets/animated/clack/powered_primary_W_p22_01.png",
          "file": "powered_primary_W_p22_01.png",
          "packed_bounds": [
-          51,
-          62,
-          97,
+          49,
+          63,
+          96,
           136
          ],
          "anchors": {
           "hand_R": [
-           -13.3,
-           -45.7
+           -14.9,
+           -47.3
           ],
           "hand_L": [
-           -19.6,
-           -48.5
+           -21.2,
+           -50.1
           ],
           "foot_R": [
            -0.7,
@@ -75981,24 +75981,24 @@
            -3.5
           ],
           "muzzle": [
-           -23.2,
-           -57.7
+           -24.8,
+           -59.3
           ],
           "exhaust": [
-           13.1,
-           -41.8
+           11.5,
+           -43.4
           ]
          },
          "equipment": {
-          "loader": 153,
+          "loader": 154,
           "chamber": 0,
-          "launcher": 249,
+          "launcher": 259,
           "rack": 138
          },
          "anchor_gap": {
           "muzzle": 0.4
          },
-         "sha256": "8e6af3220513413a6ada67749e833964d0f2b6dad19b3c569004e3501d55698a",
+         "sha256": "dcccd0336832504a92f58f2782848a4db2adf1ddcfb763da1497a0f63d692110",
          "sheet": "sheets/powered_primary_W_p22.png",
          "region": [
           160,
@@ -76011,19 +76011,19 @@
          "path": "res://assets/animated/clack/powered_primary_W_p22_02.png",
          "file": "powered_primary_W_p22_02.png",
          "packed_bounds": [
-          51,
-          62,
-          97,
+          49,
+          63,
+          96,
           136
          ],
          "anchors": {
           "hand_R": [
-           -13.5,
-           -45.4
+           -15.1,
+           -47.0
           ],
           "hand_L": [
-           -19.9,
-           -48.2
+           -21.4,
+           -49.8
           ],
           "foot_R": [
            -0.7,
@@ -76034,24 +76034,24 @@
            -1.0
           ],
           "muzzle": [
-           -23.5,
-           -57.4
+           -25.0,
+           -59.0
           ],
           "exhaust": [
-           12.9,
-           -41.5
+           11.3,
+           -43.1
           ]
          },
          "equipment": {
-          "loader": 156,
+          "loader": 151,
           "chamber": 0,
-          "launcher": 249,
+          "launcher": 257,
           "rack": 138
          },
          "anchor_gap": {
-          "muzzle": 0.1
+          "muzzle": 0.6
          },
-         "sha256": "1f54b67840726f21f70c94d6ebd2ce531cbd32d42cf88cdecec6d5896100d2da",
+         "sha256": "a40917f225ec1306cd954ba69e8a713fb1e000e262a28aaededb9fbe8529034f",
          "sheet": "sheets/powered_primary_W_p22.png",
          "region": [
           320,
@@ -76064,19 +76064,19 @@
          "path": "res://assets/animated/clack/powered_primary_W_p22_03.png",
          "file": "powered_primary_W_p22_03.png",
          "packed_bounds": [
-          51,
+          49,
           63,
-          97,
+          96,
           136
          ],
          "anchors": {
           "hand_R": [
-           -13.8,
-           -45.2
+           -15.4,
+           -46.8
           ],
           "hand_L": [
-           -20.1,
-           -48.0
+           -21.7,
+           -49.6
           ],
           "foot_R": [
            -0.7,
@@ -76087,24 +76087,24 @@
            -1.0
           ],
           "muzzle": [
-           -23.7,
-           -57.2
+           -25.3,
+           -58.8
           ],
           "exhaust": [
-           12.6,
-           -41.3
+           11.0,
+           -42.9
           ]
          },
          "equipment": {
-          "loader": 155,
+          "loader": 153,
           "chamber": 0,
-          "launcher": 255,
+          "launcher": 253,
           "rack": 138
          },
          "anchor_gap": {
           "muzzle": 0.4
          },
-         "sha256": "545e8a5406eea160542a28c2db077315befc1a2a12d7b45d31a668d3f2a90c91",
+         "sha256": "3803c37e74fb4a6940566c6f2b9434084c26586bdf8ac1410e32dc88e1a7aa28",
          "sheet": "sheets/powered_primary_W_p22.png",
          "region": [
           480,
@@ -76117,19 +76117,19 @@
          "path": "res://assets/animated/clack/powered_primary_W_p22_04.png",
          "file": "powered_primary_W_p22_04.png",
          "packed_bounds": [
-          51,
+          49,
           63,
-          97,
+          96,
           136
          ],
          "anchors": {
           "hand_R": [
-           -13.8,
-           -45.2
+           -15.4,
+           -46.8
           ],
           "hand_L": [
-           -20.1,
-           -48.0
+           -21.7,
+           -49.6
           ],
           "foot_R": [
            -0.7,
@@ -76140,24 +76140,24 @@
            -1.0
           ],
           "muzzle": [
-           -23.7,
-           -57.2
+           -25.3,
+           -58.8
           ],
           "exhaust": [
-           12.6,
-           -41.3
+           11.0,
+           -42.9
           ]
          },
          "equipment": {
-          "loader": 155,
+          "loader": 153,
           "chamber": 0,
-          "launcher": 255,
+          "launcher": 253,
           "rack": 138
          },
          "anchor_gap": {
           "muzzle": 0.4
          },
-         "sha256": "545e8a5406eea160542a28c2db077315befc1a2a12d7b45d31a668d3f2a90c91",
+         "sha256": "3803c37e74fb4a6940566c6f2b9434084c26586bdf8ac1410e32dc88e1a7aa28",
          "sheet": "sheets/powered_primary_W_p22.png",
          "region": [
           640,
@@ -76170,19 +76170,19 @@
          "path": "res://assets/animated/clack/powered_primary_W_p22_05.png",
          "file": "powered_primary_W_p22_05.png",
          "packed_bounds": [
-          57,
-          63,
-          116,
+          55,
+          64,
+          114,
           136
          ],
          "anchors": {
           "hand_R": [
-           -8.3,
-           -44.6
+           -9.9,
+           -46.1
           ],
           "hand_L": [
-           -14.5,
-           -47.7
+           -16.1,
+           -49.3
           ],
           "foot_R": [
            -0.7,
@@ -76193,25 +76193,25 @@
            -1.0
           ],
           "muzzle": [
-           -17.5,
-           -57.1
+           -19.1,
+           -58.7
           ],
           "exhaust": [
-           17.8,
-           -39.1
+           16.2,
+           -40.7
           ]
          },
          "equipment": {
-          "loader": 129,
-          "chamber": 3,
-          "launcher": 235,
+          "loader": 134,
+          "chamber": 0,
+          "launcher": 245,
           "rack": 138,
           "fx": 148
          },
          "anchor_gap": {
-          "muzzle": 0.4
+          "muzzle": 0.5
          },
-         "sha256": "86d4926d542aec9a7921ca9cb80fd2b86f510c8f1d7782e9b9b4bcaf4797c6f7",
+         "sha256": "247ebd962271f9347e87af733318f1123c29a3a1bf49d9c917ad71fe2452a832",
          "sheet": "sheets/powered_primary_W_p22.png",
          "region": [
           800,
@@ -76224,19 +76224,19 @@
          "path": "res://assets/animated/clack/powered_primary_W_p22_06.png",
          "file": "powered_primary_W_p22_06.png",
          "packed_bounds": [
-          55,
-          63,
-          111,
+          53,
+          64,
+          110,
           136
          ],
          "anchors": {
           "hand_R": [
-           -10.0,
-           -45.0
+           -11.6,
+           -46.6
           ],
           "hand_L": [
-           -16.3,
-           -48.0
+           -17.9,
+           -49.6
           ],
           "foot_R": [
            -0.7,
@@ -76247,25 +76247,25 @@
            -1.0
           ],
           "muzzle": [
-           -19.6,
-           -57.3
+           -21.2,
+           -58.9
           ],
           "exhaust": [
-           16.2,
-           -40.4
+           14.6,
+           -42.0
           ]
          },
          "equipment": {
-          "loader": 140,
+          "loader": 142,
           "chamber": 0,
-          "launcher": 252,
+          "launcher": 245,
           "rack": 138,
-          "fx": 125
+          "fx": 129
          },
          "anchor_gap": {
-          "muzzle": 0.2
+          "muzzle": 0.5
          },
-         "sha256": "4322836ff3fca8b27ea8447260819e47e9b9c1350fdbec558cc6b1ec7c3d9a82",
+         "sha256": "ea212864834076bda1558f76dea8cd508575daeb6a1c7376958f6d190e9b3471",
          "sheet": "sheets/powered_primary_W_p22.png",
          "region": [
           960,
@@ -76278,19 +76278,19 @@
          "path": "res://assets/animated/clack/powered_primary_W_p22_07.png",
          "file": "powered_primary_W_p22_07.png",
          "packed_bounds": [
-          51,
+          49,
           63,
-          97,
+          96,
           136
          ],
          "anchors": {
           "hand_R": [
-           -13.3,
-           -45.2
+           -14.9,
+           -46.8
           ],
           "hand_L": [
-           -19.6,
-           -48.0
+           -21.2,
+           -49.6
           ],
           "foot_R": [
            -0.7,
@@ -76301,16 +76301,16 @@
            -1.0
           ],
           "muzzle": [
-           -23.2,
-           -57.2
+           -24.8,
+           -58.8
           ],
           "exhaust": [
-           13.1,
-           -41.3
+           11.5,
+           -42.9
           ]
          },
          "equipment": {
-          "loader": 156,
+          "loader": 155,
           "chamber": 0,
           "launcher": 256,
           "rack": 138
@@ -76318,7 +76318,7 @@
          "anchor_gap": {
           "muzzle": 0.4
          },
-         "sha256": "264bdc25fb66759253f7f48f1bccd1a262793c65ddafd44092ad54d462e6b1c2",
+         "sha256": "7abc9d80886e0c937915d21a391b9de5e15e02926988822a7273e15e47f13077",
          "sheet": "sheets/powered_primary_W_p22.png",
          "region": [
           1120,
@@ -76333,13 +76333,13 @@
          "packed_bounds": [
           53,
           62,
-          102,
+          101,
           136
          ],
          "anchors": {
           "hand_R": [
-           -8.5,
-           -42.8
+           -9.3,
+           -43.6
           ],
           "hand_L": [
            -0.3,
@@ -76354,24 +76354,24 @@
            -3.5
           ],
           "muzzle": [
-           -20.9,
-           -52.3
+           -21.7,
+           -53.2
           ],
           "exhaust": [
-           18.1,
-           -44.8
+           17.3,
+           -45.6
           ]
          },
          "equipment": {
-          "loader": 121,
-          "chamber": 20,
-          "launcher": 352,
+          "loader": 122,
+          "chamber": 16,
+          "launcher": 358,
           "rack": 130
          },
          "anchor_gap": {
           "muzzle": 0.4
          },
-         "sha256": "0d11699f391173257df1405e4d7f9c2276cc71fdd343fc91eec08d8851ee57a8",
+         "sha256": "7a6c9866e3f882fa23142dea71f2fc5f5af18a50c1f5f51156aca0b2474c42d1",
          "sheet": "sheets/powered_primary_W_p22.png",
          "region": [
           1280,
@@ -76424,7 +76424,7 @@
          "anchor_gap": {
           "muzzle": 0.3
          },
-         "sha256": "ecab277a9abda4673cdae97f9cb987f7aa28926db334067e0e95e20a5755c8b2",
+         "sha256": "2778581dcd3b4b2cd5c6497cbe140fd887a075e38c16de4f70aec7a28f499732",
          "sheet": "sheets/powered_primary_W_p22.png",
          "region": [
           1440,
@@ -76488,8 +76488,8 @@
         }
        ],
        "release_anchor": [
-        -17.5,
-        -57.1
+        -19.1,
+        -58.7
        ]
       },
       "p45": {
@@ -76503,15 +76503,15 @@
          "path": "res://assets/animated/clack/powered_primary_W_p45_00.png",
          "file": "powered_primary_W_p45_00.png",
          "packed_bounds": [
-          52,
-          61,
-          99,
+          51,
+          62,
+          97,
           136
          ],
          "anchors": {
           "hand_R": [
-           -11.5,
-           -45.6
+           -13.1,
+           -47.1
           ],
           "hand_L": [
            -0.3,
@@ -76526,24 +76526,24 @@
            -1.0
           ],
           "muzzle": [
-           -22.0,
-           -57.1
+           -23.5,
+           -58.6
           ],
           "exhaust": [
-           14.8,
-           -43.0
+           13.3,
+           -44.5
           ]
          },
          "equipment": {
-          "loader": 145,
+          "loader": 146,
           "chamber": 0,
-          "launcher": 333,
+          "launcher": 330,
           "rack": 128
          },
          "anchor_gap": {
-          "muzzle": 0.6
+          "muzzle": 0.1
          },
-         "sha256": "e402787451163b0100a25f8e14128ce12c9601c3f4909eeb3e3e1364bf31b4c9",
+         "sha256": "94a210cb5bcf3e7d32db365f7532364605ff02efb1733120a24ac4cbbf5bb416",
          "sheet": "sheets/powered_primary_W_p45.png",
          "region": [
           0,
@@ -76556,19 +76556,19 @@
          "path": "res://assets/animated/clack/powered_primary_W_p45_01.png",
          "file": "powered_primary_W_p45_01.png",
          "packed_bounds": [
-          53,
-          62,
+          50,
+          60,
           96,
           136
          ],
          "anchors": {
           "hand_R": [
-           -16.3,
-           -53.1
+           -19.1,
+           -55.9
           ],
           "hand_L": [
-           -21.1,
-           -57.9
+           -23.9,
+           -60.7
           ],
           "foot_R": [
            -0.7,
@@ -76579,24 +76579,24 @@
            -3.5
           ],
           "muzzle": [
-           -21.4,
-           -67.8
+           -24.2,
+           -70.6
           ],
           "exhaust": [
-           6.3,
-           -40.6
+           3.5,
+           -43.4
           ]
          },
          "equipment": {
-          "loader": 190,
+          "loader": 128,
           "chamber": 0,
-          "launcher": 164,
+          "launcher": 203,
           "rack": 138
          },
          "anchor_gap": {
           "muzzle": 0.3
          },
-         "sha256": "79977b4557165f5284d81be3a76565c637ba3a547422286eff982b5d55d15fcc",
+         "sha256": "4dd711f53ee70a8dbd1f1cbdd426241ed9769af86b894537df93b23238968b29",
          "sheet": "sheets/powered_primary_W_p45.png",
          "region": [
           160,
@@ -76609,19 +76609,19 @@
          "path": "res://assets/animated/clack/powered_primary_W_p45_02.png",
          "file": "powered_primary_W_p45_02.png",
          "packed_bounds": [
-          53,
-          62,
+          50,
+          60,
           96,
           136
          ],
          "anchors": {
           "hand_R": [
-           -16.5,
-           -52.9
+           -19.3,
+           -55.7
           ],
           "hand_L": [
-           -21.3,
-           -57.6
+           -24.2,
+           -60.4
           ],
           "foot_R": [
            -0.7,
@@ -76632,24 +76632,24 @@
            -1.0
           ],
           "muzzle": [
-           -21.6,
-           -67.5
+           -24.4,
+           -70.3
           ],
           "exhaust": [
-           6.1,
-           -40.4
+           3.3,
+           -43.2
           ]
          },
          "equipment": {
-          "loader": 182,
+          "loader": 124,
           "chamber": 0,
-          "launcher": 164,
+          "launcher": 195,
           "rack": 138
          },
          "anchor_gap": {
-          "muzzle": 0.1
+          "muzzle": 0.2
          },
-         "sha256": "9239571b3bdd16bf227bf75d9d37a27a648c10768ff28bf70bfd02915eace1df",
+         "sha256": "d4b772b7a0e0bd31cb51842887a6ce6542c746300b21278a95c9f85c7d2b4883",
          "sheet": "sheets/powered_primary_W_p45.png",
          "region": [
           320,
@@ -76662,19 +76662,19 @@
          "path": "res://assets/animated/clack/powered_primary_W_p45_03.png",
          "file": "powered_primary_W_p45_03.png",
          "packed_bounds": [
-          52,
-          63,
+          50,
+          60,
           96,
           136
          ],
          "anchors": {
           "hand_R": [
-           -16.8,
-           -52.6
+           -19.6,
+           -55.4
           ],
           "hand_L": [
-           -21.6,
-           -57.4
+           -24.4,
+           -60.2
           ],
           "foot_R": [
            -0.7,
@@ -76685,24 +76685,24 @@
            -1.0
           ],
           "muzzle": [
-           -21.9,
-           -67.3
+           -24.7,
+           -70.1
           ],
           "exhaust": [
-           5.8,
-           -40.1
+           3.0,
+           -42.9
           ]
          },
          "equipment": {
-          "loader": 185,
+          "loader": 127,
           "chamber": 0,
-          "launcher": 163,
+          "launcher": 195,
           "rack": 138
          },
          "anchor_gap": {
-          "muzzle": 0.4
+          "muzzle": 0.5
          },
-         "sha256": "c08f7f793d74e8cd5c1f69acb0f0ea01c380cd8283342939b0acd8d4cf0ec3c5",
+         "sha256": "db4eca9db5d7642e71a5d67db74fa5c08d848b639f525bb7f88615a1182731f2",
          "sheet": "sheets/powered_primary_W_p45.png",
          "region": [
           480,
@@ -76715,19 +76715,19 @@
          "path": "res://assets/animated/clack/powered_primary_W_p45_04.png",
          "file": "powered_primary_W_p45_04.png",
          "packed_bounds": [
-          52,
-          63,
+          50,
+          60,
           96,
           136
          ],
          "anchors": {
           "hand_R": [
-           -16.8,
-           -52.6
+           -19.6,
+           -55.4
           ],
           "hand_L": [
-           -21.6,
-           -57.4
+           -24.4,
+           -60.2
           ],
           "foot_R": [
            -0.7,
@@ -76738,24 +76738,24 @@
            -1.0
           ],
           "muzzle": [
-           -21.9,
-           -67.3
+           -24.7,
+           -70.1
           ],
           "exhaust": [
-           5.8,
-           -40.1
+           3.0,
+           -42.9
           ]
          },
          "equipment": {
-          "loader": 185,
+          "loader": 127,
           "chamber": 0,
-          "launcher": 163,
+          "launcher": 195,
           "rack": 138
          },
          "anchor_gap": {
-          "muzzle": 0.4
+          "muzzle": 0.5
          },
-         "sha256": "c08f7f793d74e8cd5c1f69acb0f0ea01c380cd8283342939b0acd8d4cf0ec3c5",
+         "sha256": "db4eca9db5d7642e71a5d67db74fa5c08d848b639f525bb7f88615a1182731f2",
          "sheet": "sheets/powered_primary_W_p45.png",
          "region": [
           640,
@@ -76768,19 +76768,19 @@
          "path": "res://assets/animated/clack/powered_primary_W_p45_05.png",
          "file": "powered_primary_W_p45_05.png",
          "packed_bounds": [
-          59,
-          63,
-          106,
+          56,
+          61,
+          103,
           136
          ],
          "anchors": {
           "hand_R": [
-           -11.1,
-           -51.1
+           -14.0,
+           -53.9
           ],
           "hand_L": [
-           -15.7,
-           -56.1
+           -18.5,
+           -58.9
           ],
           "foot_R": [
            -0.7,
@@ -76791,25 +76791,25 @@
            -1.0
           ],
           "muzzle": [
-           -15.4,
-           -66.0
+           -18.2,
+           -68.8
           ],
           "exhaust": [
-           10.7,
-           -37.2
+           7.9,
+           -40.0
           ]
          },
          "equipment": {
-          "loader": 148,
+          "loader": 124,
           "chamber": 0,
-          "launcher": 146,
+          "launcher": 174,
           "rack": 138,
-          "fx": 150
+          "fx": 149
          },
          "anchor_gap": {
-          "muzzle": 0.5
+          "muzzle": 0.4
          },
-         "sha256": "b0de1716933221bfd6851660a84f0afcd160f03c9f4fe136374cd5d0baefaafa",
+         "sha256": "9e0d2e9a5598ad721208dff092ac270fe1ef3fe687d815085c899c03b3c90a35",
          "sheet": "sheets/powered_primary_W_p45.png",
          "region": [
           800,
@@ -76822,19 +76822,19 @@
          "path": "res://assets/animated/clack/powered_primary_W_p45_06.png",
          "file": "powered_primary_W_p45_06.png",
          "packed_bounds": [
-          57,
-          63,
-          103,
+          54,
+          61,
+          100,
           136
          ],
          "anchors": {
           "hand_R": [
-           -12.7,
-           -51.8
+           -15.5,
+           -54.7
           ],
           "hand_L": [
-           -17.4,
-           -56.7
+           -20.2,
+           -59.6
           ],
           "foot_R": [
            -0.7,
@@ -76845,25 +76845,25 @@
            -1.0
           ],
           "muzzle": [
-           -17.4,
-           -66.6
+           -20.2,
+           -69.5
           ],
           "exhaust": [
-           9.6,
-           -38.6
+           6.7,
+           -41.5
           ]
          },
          "equipment": {
-          "loader": 158,
+          "loader": 124,
           "chamber": 0,
-          "launcher": 150,
+          "launcher": 188,
           "rack": 138,
           "fx": 129
          },
          "anchor_gap": {
-          "muzzle": 0.2
+          "muzzle": 0.3
          },
-         "sha256": "0dbfc018e2b0b437065382a40e12a17d4894e18fc90fea1ccd488168a373e1df",
+         "sha256": "c26c6793cee4b9a23e56417b447c52e72effe22e26a288cc348375fdd4eb3681",
          "sheet": "sheets/powered_primary_W_p45.png",
          "region": [
           960,
@@ -76876,19 +76876,19 @@
          "path": "res://assets/animated/clack/powered_primary_W_p45_07.png",
          "file": "powered_primary_W_p45_07.png",
          "packed_bounds": [
-          53,
-          63,
+          50,
+          60,
           96,
           136
          ],
          "anchors": {
           "hand_R": [
-           -16.3,
-           -52.6
+           -19.1,
+           -55.4
           ],
           "hand_L": [
-           -21.1,
-           -57.4
+           -23.9,
+           -60.2
           ],
           "foot_R": [
            -0.7,
@@ -76899,24 +76899,24 @@
            -1.0
           ],
           "muzzle": [
-           -21.4,
-           -67.3
+           -24.2,
+           -70.1
           ],
           "exhaust": [
-           6.3,
-           -40.1
+           3.5,
+           -42.9
           ]
          },
          "equipment": {
-          "loader": 189,
+          "loader": 127,
           "chamber": 0,
-          "launcher": 167,
+          "launcher": 201,
           "rack": 138
          },
          "anchor_gap": {
-          "muzzle": 0.3
+          "muzzle": 0.5
          },
-         "sha256": "6a534ad2343ef613016b9573467b84f20af600f17ad56e205a632e5071a54624",
+         "sha256": "ff549d392b6dcdbb8fdfa8830fbfff54c7a031e6a66ccaa37e4d96eb93aa8e0a",
          "sheet": "sheets/powered_primary_W_p45.png",
          "region": [
           1120,
@@ -76929,15 +76929,15 @@
          "path": "res://assets/animated/clack/powered_primary_W_p45_08.png",
          "file": "powered_primary_W_p45_08.png",
          "packed_bounds": [
-          52,
+          51,
           62,
-          99,
+          97,
           136
          ],
          "anchors": {
           "hand_R": [
-           -11.5,
-           -45.1
+           -13.1,
+           -46.6
           ],
           "hand_L": [
            -0.3,
@@ -76952,24 +76952,24 @@
            -3.5
           ],
           "muzzle": [
-           -22.0,
-           -56.6
+           -23.5,
+           -58.1
           ],
           "exhaust": [
-           14.8,
-           -42.5
+           13.3,
+           -44.0
           ]
          },
          "equipment": {
-          "loader": 148,
+          "loader": 144,
           "chamber": 0,
-          "launcher": 329,
+          "launcher": 340,
           "rack": 130
          },
          "anchor_gap": {
-          "muzzle": 0.5
+          "muzzle": 0.4
          },
-         "sha256": "93347ea8b62cb5812b5c5833cfbb141740880ba536d6ffbf3161a13c022222e4",
+         "sha256": "b6fbd274e96511ea9dedceac239372a382bcfd5a0fa46c01f015c7bed969d817",
          "sheet": "sheets/powered_primary_W_p45.png",
          "region": [
           1280,
@@ -77022,7 +77022,7 @@
          "anchor_gap": {
           "muzzle": 0.3
          },
-         "sha256": "75c2a28a1c3863e3e89b0b49a8569aa8bf23131eb7f665eafc9adcde8cfac221",
+         "sha256": "dd83b2f49a157e2fd0e49ddb6a710c9e6b2c0b9338a0025fe8d094dc60912742",
          "sheet": "sheets/powered_primary_W_p45.png",
          "region": [
           1440,
@@ -77086,8 +77086,8 @@
         }
        ],
        "release_anchor": [
-        -15.4,
-        -66.0
+        -18.2,
+        -68.8
        ]
       }
      }
