@@ -5,6 +5,9 @@ extends Node
 ## behaviour (slice_enemy.gd) is untouched. The den is placed in the camp's parent, not in the camp,
 ## because a cleared camp frees its children on load; the den then shows calm.
 
+## The bramble den and its clumps belong to the woodland's camp; a camp elsewhere (the Undercroft's
+## rooms) takes only the creatures' looks.
+@export var with_den := true
 @export var den_offset := Vector2(0, -150)
 @export var clump_offsets: Array[Vector2] = [Vector2(-170, -60), Vector2(150, -100), Vector2(120, 90)]
 
@@ -17,7 +20,7 @@ func _exit_tree() -> void:
 
 func _ready() -> void:
 	var camp := get_parent() as Camp
-	if camp == null or camp.get_parent() == null:
+	if not with_den or camp == null or camp.get_parent() == null:
 		return
 	var props: Array[Node2D] = [_prop(CampDen.DEN, camp, den_offset)]
 	for off in clump_offsets:

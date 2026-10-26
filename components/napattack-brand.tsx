@@ -140,11 +140,11 @@ export function NapAttackSplash({ onFinish }: { onFinish: (done: boolean) => voi
   }, [ready, reduced, alpha, onFinish]);
   return (
     <Animated.View
+      pointerEvents="none"
       style={[
         StyleSheet.absoluteFill,
         { zIndex: 1000, alignItems: 'center', justifyContent: 'center', gap: 24 },
         motion,
-        { pointerEvents: 'none' },
       ]}
     >
       <CozyBackground />

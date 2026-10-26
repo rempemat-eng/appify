@@ -214,13 +214,13 @@ export function HomeScreen() {
           }}
         />
         <View
+          pointerEvents="box-none"
           style={{
             position: 'absolute',
             left: 0,
             right: 0,
             bottom: hotbarClearance(insets.bottom),
             height: 140,
-            pointerEvents: 'box-none',
           }}
         >
           <GardenVisitor active={gardenActive} />

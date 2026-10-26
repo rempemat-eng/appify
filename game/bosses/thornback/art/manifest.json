@@ -1,0 +1,165 @@
+{
+ "id": "thornback",
+ "name": "The Thornback",
+ "directions": [
+  "S",
+  "N",
+  "E",
+  "W"
+ ],
+ "frame_size": [
+  288,
+  208
+ ],
+ "foot_pivot": [
+  144,
+  196
+ ],
+ "density": 3.0,
+ "inputs": "b5045d87e919cac4c4d3163507a31ba257fc081d3b841f98cd334224daaeda80",
+ "clips": {
+  "idle": {
+   "frames": 4,
+   "durations": [
+    0.22,
+    0.22,
+    0.22,
+    0.22
+   ],
+   "loop": true,
+   "release_frame": null
+  },
+  "move": {
+   "frames": 6,
+   "durations": [
+    0.1,
+    0.1,
+    0.1,
+    0.1,
+    0.1,
+    0.1
+   ],
+   "loop": true,
+   "release_frame": null
+  },
+  "charge_windup": {
+   "frames": 4,
+   "durations": [
+    0.2,
+    0.2,
+    0.2,
+    0.2
+   ],
+   "loop": false,
+   "release_frame": null
+  },
+  "charge": {
+   "frames": 4,
+   "durations": [
+    0.07,
+    0.07,
+    0.07,
+    0.07
+   ],
+   "loop": true,
+   "release_frame": null
+  },
+  "volley_windup": {
+   "frames": 4,
+   "durations": [
+    0.22,
+    0.22,
+    0.22,
+    0.22
+   ],
+   "loop": false,
+   "release_frame": null
+  },
+  "volley": {
+   "frames": 3,
+   "durations": [
+    0.1,
+    0.1,
+    0.1
+   ],
+   "loop": false,
+   "release_frame": 0
+  },
+  "slam_windup": {
+   "frames": 4,
+   "durations": [
+    0.24,
+    0.24,
+    0.24,
+    0.24
+   ],
+   "loop": false,
+   "release_frame": null
+  },
+  "slam": {
+   "frames": 3,
+   "durations": [
+    0.1,
+    0.1,
+    0.1
+   ],
+   "loop": false,
+   "release_frame": 1
+  },
+  "recover": {
+   "frames": 2,
+   "durations": [
+    0.25,
+    0.25
+   ],
+   "loop": true,
+   "release_frame": null
+  },
+  "hurt": {
+   "frames": 2,
+   "durations": [
+    0.1,
+    0.1
+   ],
+   "loop": false,
+   "release_frame": null
+  },
+  "stagger": {
+   "frames": 4,
+   "durations": [
+    0.2,
+    0.2,
+    0.2,
+    0.2
+   ],
+   "loop": true,
+   "release_frame": null
+  },
+  "freed": {
+   "frames": 8,
+   "durations": [
+    0.16,
+    0.16,
+    0.16,
+    0.16,
+    0.16,
+    0.16,
+    0.16,
+    0.16
+   ],
+   "loop": false,
+   "release_frame": null
+  },
+  "calm": {
+   "frames": 4,
+   "durations": [
+    0.4,
+    0.4,
+    0.4,
+    0.4
+   ],
+   "loop": true,
+   "release_frame": null
+  }
+ }
+}

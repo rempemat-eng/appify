@@ -271,7 +271,8 @@ def crop_sheet(native: np.ndarray, findings: list[Finding], path: str, zoom: int
             cr.thumbnail((cell, cell), Image.NEAREST)
             z = cr.width / max(1, cx1 - cx0)
         dd = ImageDraw.Draw(cr)
-        dd.rectangle([(x0 - cx0) * z, (y0 - cy0) * z, (x1 - cx0) * z - 1, (y1 - cy0) * z - 1],
+        rx0, ry0 = (x0 - cx0) * z, (y0 - cy0) * z            # a thin box at a fractional zoom must not invert
+        dd.rectangle([rx0, ry0, max(rx0, (x1 - cx0) * z - 1), max(ry0, (y1 - cy0) * z - 1)],
                      outline=COLOURS.get(f.severity, (255, 255, 0)), width=2)
         gx, gy = (i % cols) * cell, (i // cols) * (cell + 26)
         sheet.paste(cr, (gx, gy + 26))
