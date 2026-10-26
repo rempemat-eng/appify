@@ -6,7 +6,7 @@
   2304,
   648
  ],
- "inputs": "444963a3aac47dfadba35a71158aeda953969ffbf852e6d3414c90ed8cec3bee",
+ "inputs": "2191ccf03f43371bcaab10d08c5681056a84ad678a1dbe9e91341d8421c3d94c",
  "kit_drawn": [
   "cairn_alcove.png",
   "channel_lit.png",
@@ -218,8 +218,8 @@
     384
    ],
    "offset": [
-    -39,
-    -116
+    -45,
+    -122
    ],
    "cond": {
     "not_flags": [

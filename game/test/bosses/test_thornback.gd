@@ -136,3 +136,27 @@ func test_freed_not_killed() -> void:
 	assert_bool(is_instance_valid(boss) and not boss.is_queued_for_deletion()).is_true()
 	boss.take_hit(5, Vector2.LEFT)
 	assert_array(freed).is_equal([true])
+
+class Nudged extends Node:
+	var count := 0
+	func nudge(_d: Vector2) -> void:
+		count += 1
+
+func test_charge_commit_glints_and_nudges_the_camera_once() -> void:
+	var boss := _boss()
+	var cam: Nudged = auto_free(Nudged.new())
+	cam.add_to_group("camera_nudge")
+	add_child(cam)
+	_target.position = Vector2(400, 0)
+	boss._next = 0
+	assert_str(_to_windup(boss)).is_equal("charge")
+	assert_float(boss.windup_time).is_greater_equal(Thornback.MIN_WINDUP)
+	boss.step(boss.windup_time - 0.01)
+	assert_float(boss._flash).is_equal(0.0)
+	assert_int(cam.count).is_equal(0)
+	boss.step(0.02)
+	assert_str(boss.state).is_equal("act")
+	assert_float(boss._flash).is_greater(0.0)
+	assert_int(cam.count).is_equal(1)
+	boss.step(Thornback.FLASH_TIME + 0.01)
+	assert_float(boss._flash).is_equal(0.0)

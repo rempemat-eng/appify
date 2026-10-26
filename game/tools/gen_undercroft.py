@@ -11,6 +11,7 @@ game/bosses/thornback/art/, then writes game/zones/undercroft/undercroft.tscn wi
 
   Ground       the ground picture (flagstones, the vault's tops and faces, the stair, light), z -10
   Floor        pictures that lie on the floor under everyone (the plate, the lit channel, the sunk slab), z -9
+  WallFx       the torches on the wall faces (world/torch.gd), z -8, behind everyone
   Walls        the box's edges, every wall block of the plan (its top and face) and the solid props
   Props        y-sorted with the actors: props, torches (world/torch.gd), the lever, the sealed slab (with its
                collision, in a Conditional until the lever is pulled), Cairn in his alcove
@@ -112,9 +113,15 @@ def build(plan: dict, kit: dict) -> str:
         if o.get('solid') and not o.get('cond'):
             s.solid('Solid_' + o['id'], 'Walls', o['solid'])
 
+    # torches hang on the wall faces, behind everyone who can stand in the room: drawn with the walls,
+    # not y-sorted (their feet would be the wall's foot, far below the bracket)
+    s.node('WallFx', 'Node2D', '.', {'z_index': -8})
+    for o in kit['objects']:
+        if o['kind'] == 'torch':
+            sprite(o, 'WallFx')
     s.node('Props', 'Node2D', '.', {'y_sort_enabled': 'true'})
     for o in kit['objects']:
-        if o['kind'] == 'floor':
+        if o['kind'] in ('floor', 'torch'):
             continue
         parent = wrap('Props', o.get('cond'), 'If_' + o['id'])
         sprite(o, parent)

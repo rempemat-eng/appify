@@ -1,0 +1,69 @@
+{
+ "id": "thornback/thornback_stagger_N",
+ "file": "artifacts/thornback/thornback_stagger_N.png",
+ "sha256": "f88e4d5be07162a1061c8f7d92a63375371231a2f203d9a2b6cfe725c1b7649d",
+ "kind": "creature",
+ "biome": "cellar",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  288,
+  208
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 2
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 37,
+   "tones": 19.0,
+   "shapes": 28.486486486486488
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.566,
+  "tones_ratio": 0.704,
+  "shapes_ratio": 0.566,
+  "passed": false,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    78,
+    69,
+    211,
+    136
+   ],
+   "message": "thornback/thornback_stagger_N: the foliage is lit from the right (luminance rises 6 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    77,
+    55,
+    213,
+    198
+   ],
+   "message": "thornback/thornback_stagger_N: detail bar 0.57 of Eastward's prop band (19.0 tones, 28.5 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  }
+ ],
+ "reviewed": "2026-10-26",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}

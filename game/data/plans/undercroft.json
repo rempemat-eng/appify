@@ -45,7 +45,7 @@
     { "id": "rubble_seal", "kind": "rubble", "at": [432, 194], "size": [16, 6], "solid": true },
     { "id": "stump_nw", "kind": "stump", "at": [592, 76], "size": [12, 8], "solid": true, "why": "a broken pillar of the old vault" },
     { "id": "stump_se", "kind": "stump", "at": [736, 194], "size": [12, 8], "solid": true },
-    { "id": "rubble_chamber", "kind": "rubble", "at": [734, 78], "size": [20, 10], "solid": true },
+    { "id": "rubble_chamber", "kind": "rubble", "at": [734, 78], "size": [20, 10], "solid": true, "seed": 7 },
     { "id": "shard", "kind": "shard", "at": [700, 128], "size": [12, 8], "solid": false, "if": { "not_flags": ["shard_taken:woodland"] }, "why": "the woodland's great shard" }
   ],
   "puzzle": {

@@ -1,0 +1,69 @@
+{
+ "id": "undercroft/rubble_corridor",
+ "file": "game/zones/undercroft/art/rubble_corridor.png",
+ "sha256": "fd30a49e48799f7c8b41256025246c73eaf594108163d65fba1a871051db781d",
+ "kind": "rubble_corridor",
+ "biome": "cellar",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  84,
+  69
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 2
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 1,
+   "tones": 16.0,
+   "shapes": 28.0
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.556,
+  "tones_ratio": 0.593,
+  "shapes_ratio": 0.556,
+  "passed": false,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    43,
+    42,
+    78,
+    63
+   ],
+   "message": "undercroft/rubble_corridor: the stone is lit from the right (luminance rises 83 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    2,
+    42,
+    80,
+    67
+   ],
+   "message": "undercroft/rubble_corridor: detail bar 0.56 of Eastward's prop band (16.0 tones, 28.0 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  }
+ ],
+ "reviewed": "2026-10-26",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}

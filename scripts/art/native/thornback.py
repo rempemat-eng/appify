@@ -180,7 +180,7 @@ def draw(facing: str, P: dict, d: float = 3.0) -> Image.Image:
     rear = P['rear']
     fl = P['flinch'] * 5
     head_dy = P['head'] + lie * 8
-    fur, fur_dark, mane = 'earth', 'earth_cool', 'earth_cool'
+    fur, fur_dark, mane = 'timber_warm', 'timber_warm', 'timber_warm'
     gait = P['gait']
 
     def leg_feet(n):
@@ -197,13 +197,13 @@ def draw(facing: str, P: dict, d: float = 3.0) -> Image.Image:
     feet = leg_feet(4)
     shell_on = P['shell'] < 1.0
     drop = P['shell'] * 34          # the shell's pieces fall and spread as it cracks
-    spread = P['shell'] * 18
+    spread = P['shell'] * 3            # the shell slips off whole, cracking as it goes
 
     if f == 'E':
         tilt = rear * 26             # the front rises when rearing
         by = -62 + bob + crouch * 6
         # legs: thigh to knee to hoof (far pair first, darker, behind the body)
-        legs = [('leg_hf', -34, 'earth_cool', 0.5, feet[1], False), ('leg_ff', 28, 'earth_cool', 0.6, feet[3], True),
+        legs = [('leg_hf', -34, fur_dark, 0.5, feet[1], False), ('leg_ff', 28, fur_dark, 0.6, feet[3], True),
                 ('leg_hn', -46, fur, 2.5, feet[0 if gait is not None else 2], False),
                 ('leg_fn', 40, fur, 2.6, feet[2 if gait is not None else 0], True)]
         for name, x, fam, z, (dx, lift), front in legs:
@@ -256,7 +256,7 @@ def draw(facing: str, P: dict, d: float = 3.0) -> Image.Image:
     elif f == 'S':
         by = -56 + bob + crouch * 4
         lift_front = rear * 22
-        for name, x, fam, z, (dx, lift) in (('leg_hl', -40, 'earth_cool', 0.5, feet[1]), ('leg_hr', 40, 'earth_cool', 0.5, feet[3]),
+        for name, x, fam, z, (dx, lift) in (('leg_hl', -40, fur_dark, 0.5, feet[1]), ('leg_hr', 40, fur_dark, 0.5, feet[3]),
                                             ('leg_fl', -26, fur, 2.6, feet[0]), ('leg_fr', 26, fur, 2.6, feet[2])):
             front = abs(x) < 30
             fy = -lift - (lift_front * 1.3 if front else 0)
@@ -288,7 +288,7 @@ def draw(facing: str, P: dict, d: float = 3.0) -> Image.Image:
     else:  # N
         by = -60 + bob + crouch * 4
         lift_front = rear * 22
-        for name, x, fam, z, (dx, lift) in (('leg_fl', -26, 'earth_cool', 0.5, feet[0]), ('leg_fr', 26, 'earth_cool', 0.5, feet[2]),
+        for name, x, fam, z, (dx, lift) in (('leg_fl', -26, fur_dark, 0.5, feet[0]), ('leg_fr', 26, fur_dark, 0.5, feet[2]),
                                             ('leg_hl', -36, fur, 2.6, feet[1]), ('leg_hr', 36, fur, 2.6, feet[3])):
             back = abs(x) < 30
             fy = -lift - (lift_front * 1.3 if back else 0)
@@ -362,30 +362,33 @@ def draw(facing: str, P: dict, d: float = 3.0) -> Image.Image:
         weave = np.zeros_like(shell_mask)
         for m in cane_masks[1:NA + 4]:
             weave |= m
-        cane_masks[0] = ndi_close(weave, 4) & ~weave
+        cane_masks[0] = ndi_close(weave, 6 if P['shell'] == 0 else 11) & ~weave
         # freed: the shell cracks; the tangle splits in three and every cane falls its own way
         if P['shell'] > 0:
             def shift(m, dx, dy):
                 return np.roll(np.roll(m, int(round(dy * g.s)), 0), int(round(dx * g.s * (-1 if mirror else 1))), 1)
-            parts = []
-            for t3 in range(3):
-                x0 = cx - rx * 1.2 + t3 * rx * 0.8 + math.sin(t3 * 2.3) * 4
-                sel = cane_masks[0] & (g.X >= x0) & (g.X < x0 + rx * 0.8 + (99 if t3 == 2 else 0))
-                parts.append(shift(sel, (t3 - 1) * spread, drop * (0.8 + 0.2 * t3)))
-            moved = [parts[0] | parts[1] | parts[2]]
-            for k, m in enumerate(cane_masks[1:]):
-                moved.append(shift(m, ((k % 3) - 1) * spread * 1.3, drop * (0.6 + 0.12 * k)))
-            cane_masks = moved
+            # the mass breaks in three clumps, each falling whole (canes, tangle and all)
+            def split3(m):
+                acc = np.zeros_like(m)
+                for t3 in range(3):
+                    x0 = cx - rx * 1.2 + t3 * rx * 0.8 + math.sin(t3 * 2.3) * 4
+                    sel = m & (g.X >= x0 - (99 if t3 == 0 else 0)) & (g.X < x0 + rx * 0.8 + (99 if t3 == 2 else 0))
+                    acc |= shift(sel, (t3 - 1) * spread, drop * (0.9 + 0.05 * t3))
+                return acc
+            cane_masks = [split3(m) for m in cane_masks[:NA + 4]]
+        else:
+            def split3(m):
+                return m
         canes = [c for c in canes if c is not None]
         zs = -1.35 if f == 'S' else 0.0          # seen from the front, the shell is behind the head
         live = P['shell'] < 0.5
         # the tangle's depths between the canes, in deep shade
-        sp.add('tangle', cane_masks[0], 'soot', base=1, z=2.9 + zs, k=0.9, lo=0, hi=1)
+        sp.add('tangle', cane_masks[0], 'leaf_cool', base=2, z=2.9 + zs, k=0.9, lo=2, hi=2, outline=False)
         arcs, cross, hang = cane_masks[1:NA + 1], cane_masks[NA + 1:NA + 4], cane_masks[NA + 4:]
         # woody canes: grey-brown bark, round in section; knots a tone darker
         for k, m in enumerate(arcs):
-            fam = ('berry_cool', 'leaf_cool')[k % 2]
-            sp.add('cane%d' % k, m, fam, base=2, z=3.0 + k * 0.02 + zs, line=True, k=0.7, hi=3)
+            fam = ('leaf', 'leaf_cool')[k % 2]
+            sp.add('cane%d' % k, m, fam, base=2, z=3.0 + k * 0.02 + zs, k=0.7, hi=3)
             if live:
                 kn = np.zeros_like(m)
                 for (x, y) in canes[k][2::3]:
@@ -393,21 +396,22 @@ def draw(facing: str, P: dict, d: float = 3.0) -> Image.Image:
                 sp.mark('cane%d' % k, kn, -1)
         # crossing canes woven through them: over one arc, under the next
         for j, m in enumerate(cross):
-            sp.add('cross%d' % j, m, 'berry_cool', base=2, z=3.3 + j * 0.01 + zs, line=True, k=0.7, hi=3)
+            sp.add('cross%d' % j, m, 'leaf_warm', base=2, z=3.3 + j * 0.01 + zs, k=0.7, hi=3)
             for k, am in enumerate(arcs):
                 if (k + j) % 2 == 0:
                     over = am & ndi_dilate(m, 3)
                     if over.any():
-                        sp.add('weave%d_%d' % (j, k), over, ('berry_cool', 'leaf_cool')[k % 2], base=2,
+                        sp.add('weave%d_%d' % (j, k), over, ('leaf', 'leaf_cool')[k % 2], base=2,
                                z=3.4 + zs + k * 0.001, k=0.7, hi=3)
         for j, m in enumerate(hang):
             sp.add('vine%d' % j, m, 'earth_warm', base=2, z=2.95 + zs, k=0.7)
-        if P['shell'] < 0.35:
+        if P['shell'] < 0.9:
             th = np.zeros((g.h, g.w), bool)
             for k, pts in enumerate(canes[:NA + 3]):
                 th |= _thorn_tris(g, pts, (cx, cy + 24), 4.5 * P['spines'] + (k % 3) * 0.6, every=7.5 + (k % 3), w=1.8)
             th &= ~shell_mask
-            sp.add('thorns', th, 'sand', base=4, z=2.95 + zs, k=0.5, lo=3, hi=5)
+            if P['shell'] < 0.35:
+                sp.add('thorns', th, 'sand', base=4, z=2.95 + zs, k=0.5, lo=3, hi=5)
             lv = np.zeros((g.h, g.w), bool)
             lv2 = np.zeros((g.h, g.w), bool)
             be = np.zeros((g.h, g.w), bool)
@@ -422,6 +426,7 @@ def draw(facing: str, P: dict, d: float = 3.0) -> Image.Image:
                         lv |= leaf
                     if (j + k) % 7 == 0:
                         be |= g.ellipse(x - 3, y + 1, 2.2, 2.2) | g.ellipse(x + 1, y + 2, 2.0, 2.0)
+            lv, lv2, be = split3(lv), split3(lv2), split3(be)
             sp.add('leaves', lv, 'leaf', base=3, z=3.5 + zs, k=0.6)
             sp.add('leaves2', lv2 & ~lv, 'leaf_cool', base=3, z=3.45 + zs, k=0.6)
             sp.add('berries', be, 'berry', base=3, z=3.55 + zs, k=0.6)
@@ -447,6 +452,32 @@ def draw(facing: str, P: dict, d: float = 3.0) -> Image.Image:
         sp.add('scrap2', sc2, 'leaf_cool', base=2, z=0.3, k=0.7)
         sp.add('splinter', g.poly([(84, -2), (96, -10), (99, -7), (87, 1)]), 'sky_cool', base=2, z=0.35, k=0.6)
 
+    if P['lie'] > 0.3:
+        # where the shell lay: flattened, parted fur, a few torn leaves still caught in it, old scratches
+        rng = np.random.default_rng(11)
+        body = None
+        for p in sp.parts:
+            if p.name == 'body':
+                body = p
+        if body is not None:
+            ys, xs = np.nonzero(body.mask)
+            top = body.mask & (np.mgrid[0:body.mask.shape[0], 0:body.mask.shape[1]][0] < ys.min() + (ys.max() - ys.min()) * 0.45)
+            ty, tx = np.nonzero(top)
+            caught = np.zeros_like(body.mask)
+            scr = np.zeros_like(body.mask)
+            for k in range(22):
+                i = int(rng.integers(0, len(ty)))
+                X, Y = (tx[i] - g.ox) / g.s, (ty[i] - g.oy) / g.s
+                if g.mirror:
+                    X = -X
+                if k % 2 == 0:
+                    caught |= g.ellipse(X, Y, 3.2, 1.6, rot=float(rng.uniform(-40, 40)))
+                else:
+                    scr |= g.capsule(X - 4, Y - 1, X + 4, Y + 2, 0.7)
+            sp.add('caught_leaves', caught & body.mask, 'leaf_cool', base=3, z=1.6, k=0.6)
+            sp.mark('body', scr, -1)
+            sp.mark('body', g.capsule(-30, ys.min() / 1.0 * 0 - 50, 20, -54, 1.0) & body.mask, 1)
+
     # the eyes: wild (glowing shard-blue), squinting, dazed or closed in calm sleep
     def eye(cx, cy):
         e = P['eyes']
@@ -471,6 +502,7 @@ def draw(facing: str, P: dict, d: float = 3.0) -> Image.Image:
             sx, sy = (hx if f != 'N' else 0) + math.cos(a) * 22, (hy if f != 'N' else by - 40) - 34 + math.sin(a) * 6
             sp.detail(g.ellipse(sx, sy, 2.4, 2.4) | g.rect(sx - 4, sy - 0.6, sx + 4, sy + 0.6) | g.rect(sx - 0.6, sy - 4, sx + 0.6, sy + 4),
                       _rgb('lamp', 5), inside=False)
+    _volume(sp)
     _fur(sp, g)
     img = sp.render()
     if P['dust'] > 0:
@@ -478,23 +510,51 @@ def draw(facing: str, P: dict, d: float = 3.0) -> Image.Image:
     return img
 
 
+def _volume(sp):
+    """Every coat part as a solid lit from the upper left: the kit's contour shading (a lit rim along
+    the upper left, shade and core shadow along the lower right) taken wide, plus the back a tone up
+    and the belly a tone down along curves that follow the part's own outline."""
+    from scipy import ndimage as _ndi
+    for p in sp.parts:
+        if p.fam not in ('earth', 'earth_cool', 'timber_warm') or p.name.endswith('hoof') or p.mask.sum() < 60:
+            continue
+        p.flat = False
+        p.k = 1.5
+        p.lo, p.hi = 1, 5            # the coat's deepest shade stays a colour, never the outline's near-black
+        d_top = _ndi.distance_transform_edt(p.mask)                    # depth inside the part
+        ys, xs = np.nonzero(p.mask)
+        y0, y1 = ys.min(), ys.max() + 1
+        Y = np.mgrid[0:p.mask.shape[0], 0:p.mask.shape[1]][0]
+        v = (Y - y0) / max(1, y1 - y0)
+        rel = np.zeros(p.mask.shape, int)
+        rel[(v < 0.32) & (d_top > 1)] += 1
+        rel[v > 0.66] -= 1
+        p.rel = rel if p.rel is None else p.rel + rel
+
+
 def _fur(sp, g):
     """Bristles: short strokes a tone darker over the coat, combed back and down (clusters of two or
     more texels, never specks)."""
     rng = np.random.default_rng(3)
     for p in sp.parts:
-        if p.fam not in ('earth', 'earth_cool') or p.name.endswith('hoof'):
+        if p.fam not in ('earth', 'earth_cool', 'timber_warm') or p.name.endswith('hoof'):
             continue
         ys, xs = np.nonzero(p.mask)
         if len(ys) < 40:
             continue
         m = np.zeros(p.mask.shape, bool)
-        for k in rng.choice(len(ys), size=max(2, len(ys) // 70), replace=False):
+        lit = np.zeros(p.mask.shape, bool)
+        for j, k in enumerate(rng.choice(len(ys), size=max(2, len(ys) // 17), replace=False)):
             x, y = (xs[k] - g.ox) / g.s, (ys[k] - g.oy) / g.s
             if g.mirror:
                 x = -x
-            m |= g.capsule(x, y, x - 4, y + 3, 0.7)
+            stroke = g.capsule(x, y, x - 4, y + 3, 0.7)
+            if j % 3 == 2:
+                lit |= stroke            # a lighter tip among the dark strokes, so the shade side has fur too
+            else:
+                m |= stroke
         sp.mark(p.name, m, -1)
+        sp.mark(p.name, lit & ~m, 1)
 
 
 def _rgb(fam, t):

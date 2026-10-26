@@ -60,6 +60,8 @@ var sprite: AnimatedSprite2D
 var slots: SliceAttackSlots
 var manifest := {}
 var marks: Node2D   ## the telegraphs, drawn on the floor under everyone
+var tells: Node2D   ## dust kicked from the hooves, the shard's pulse and the commit glint, over the boss
+var _flash := 0.0
 
 
 var _next := 0
@@ -90,6 +92,11 @@ func _ready() -> void:
 	marks.z_index = -5
 	marks.draw.connect(_draw_telegraph)
 	add_child(marks)
+	tells = Node2D.new()
+	tells.name = "Tells"
+	tells.z_index = 1
+	tells.draw.connect(_draw_tells)
+	add_child(tells)
 	_build_sprite()
 	hsm = LimboHSM.new()
 	hsm.update_mode = LimboHSM.MANUAL
@@ -181,10 +188,12 @@ func _physics_process(delta: float) -> void:
 			_end_charge(true)
 	_keep_in_arena()
 	marks.queue_redraw()
+	tells.queue_redraw()
 
 ## Deterministic advancement (the tests call it without physics).
 func step(delta: float) -> void:
 	_hurt_t = maxf(_hurt_t - delta, 0.0)
+	_flash = maxf(_flash - delta, 0.0)
 	var live: Array[Node] = []
 	for n in thorns:
 		if is_instance_valid(n) and not n.is_queued_for_deletion():
@@ -329,6 +338,8 @@ func _release() -> void:
 	match attack:
 		"charge":
 			_play("charge")
+			_flash = FLASH_TIME                      # one glint on the shard at the commit
+			get_tree().call_group("camera_nudge", "nudge", aim)
 		"volley":
 			_play("volley")
 			_throw_thorns(VOLLEY[phase - 1])
@@ -436,28 +447,20 @@ func _draw_telegraph() -> void:
 	var k := clampf(elapsed / maxf(windup_time, 0.01), 0.0, 1.0)
 	match attack:
 		"charge":
-			var length := _lane_length()
+			# no lane: a short run of scuffs and kicked pebbles just ahead of the snout, pointing the way,
+			# reaching further as the wind-up runs (its length, not a box, says when)
 			var side := aim.orthogonal()
-			var half := BODY_RADIUS * 0.9
-			# the whole lane, faint, so it reads from the first frame; scuffed furrows along both edges
-			var far := aim * length
-			marks.draw_colored_polygon(PackedVector2Array([side * half, far + side * half, far - side * half, -side * half]), Color(DUST, 0.14))
-			var d := 6.0
-			while d < length:
-				for sgn: float in [-1.0, 1.0]:
-					var p: Vector2 = aim * d + side * half * sgn
-					marks.draw_line(_px(p), _px(p + aim * 9.0), Color(SCUFF, 0.75), 3.0)
-				d += 15.0
-			# the dust kicked up so far, and the lit edge that runs ahead of it
-			var reach := length * k
+			var snout := aim * BODY_RADIUS * 1.25
+			var reach := (14.0 + 30.0 * k) * DENSITY * 0.5
+			var d := 0.0
 			var i := 0
-			d = 4.0
 			while d < reach:
-				var off := (float((i * 37) % 11) / 10.0 - 0.5) * half * 1.6
-				marks.draw_rect(Rect2(_px(aim * d + side * off) - Vector2(3, 3), Vector2(6, 3)), Color(DUST, 0.55))
+				var off := side * (float((i * 5) % 3) - 1.0) * 6.0
+				marks.draw_line(_px(snout + aim * d + off), _px(snout + aim * (d + 7.0) + off), Color(SCUFF, 0.85), 3.0)
+				if i % 2 == 1:
+					marks.draw_rect(Rect2(_px(snout + aim * (d + 3.0) - off * 1.6), Vector2(3, 3)), Color(DUST, 0.9))
+				d += 11.0
 				i += 1
-				d += 5.0
-			marks.draw_line(_px(aim * reach + side * half), _px(aim * reach - side * half), Color(LIT, 0.95), 3.0)
 		"volley":
 			var n: int = VOLLEY[phase - 1]
 			var full := 40.0 * DENSITY
@@ -484,6 +487,28 @@ func _draw_telegraph() -> void:
 				marks.draw_line(_px(v * SLAM_RADIUS * 0.55), _px(v * SLAM_RADIUS), Color(SCUFF, 0.6), 3.0)
 			marks.draw_circle(Vector2.ZERO, SLAM_RADIUS * k, Color(DUST, 0.3))
 			marks.draw_arc(Vector2.ZERO, SLAM_RADIUS * k, 0.0, TAU, 40, Color(LIT, 0.95), 3.0)
+
+const FLASH_TIME := 0.12
+const PULSE := Color("#927bb2")      ## house dusk 4: the shard's light
+
+## Over the boss: during a charge wind-up, dust kicked back from the pawing forefoot in two puffs a
+## stroke, and the splinter's light pulsing faster as the commit nears; at the commit, one glint.
+func _draw_tells() -> void:
+	var top := Vector2(0, -150)                      # the splinter in the shell, near enough in every facing
+	if state == "windup" and attack == "charge":
+		var k := clampf(elapsed / maxf(windup_time, 0.01), 0.0, 1.0)
+		var paw := int(elapsed / 0.2) % 2
+		var foot := -aim * BODY_RADIUS * 0.4 + Vector2(0, -6)
+		for j in 2:
+			var puff := foot - aim * (9.0 + 9.0 * j + 6.0 * paw) + Vector2(0, -3.0 * j)
+			tells.draw_rect(Rect2(_px(puff), Vector2(6 - 3 * j, 3)), Color(DUST, 0.8 - 0.3 * j))
+		var beat := absf(sin(elapsed * (8.0 + 14.0 * k)))
+		var r := 3.0 + 3.0 * beat * k
+		tells.draw_rect(Rect2(_px(top) - Vector2(r, r), Vector2(r * 2.0, r * 2.0)), Color(PULSE, 0.35 + 0.4 * beat))
+	if _flash > 0.0:
+		var a := _flash / FLASH_TIME
+		for v in [Vector2(12, 0), Vector2(0, 12)]:
+			tells.draw_line(_px(top - v), _px(top + v), Color(1, 0.97, 0.9, a), 3.0)
 
 ## Snaps a point to the 3-texel world pixel, so the marks sit on the art's grid.
 func _px(p: Vector2) -> Vector2:

@@ -44,6 +44,7 @@ func _ready() -> void:
 	Quests.completed.connect(func(_id: String) -> void: autosave())
 	Village.changed.connect(func(_id: String) -> void: autosave())
 	pcam.follow_target = player
+	add_to_group("camera_nudge")
 	if args.has("bossfight"):
 		BossFightDemo.prepare()
 		args.zone = "undercroft"
@@ -169,6 +170,10 @@ static func apply_stage(zone: String, stage: String) -> void:
 			SaveGame.data.village.restored[r] = 1
 		for fl in cond.get("flags", []):
 			SaveGame.set_flag(fl)
+
+## A short nudge of the camera (a boss committing to a charge); off under reduced motion like every shake.
+func nudge(_dir: Vector2) -> void:
+	_shake = maxf(_shake, 0.1)
 
 func select_character(id: String) -> void:
 	if player.set_character(id):
