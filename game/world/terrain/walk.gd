@@ -13,14 +13,19 @@ const BODY_OWNER_META := &"kit_walk_body_owner"
 const BODY_LAYER_META := &"kit_walk_body_original_layer"
 
 @export var ground_path: NodePath
+## Nested prop children may omit metadata overrides when PackedScene packs the
+## zone. Keep only scalar restore data on this owned node, never Node references.
+@export_storage var saved_collision_layers: Dictionary = {}
 
 var rows := PackedStringArray()
 var source: TerrainGround
 var _body: StaticBody2D
 var _replaced: Dictionary = {}
 var _queued := false
+var _loaded_layers: Dictionary = {}
 
 func _ready() -> void:
+	_loaded_layers = saved_collision_layers.duplicate()
 	if not ground_path.is_empty():
 		source = get_node_or_null(ground_path) as TerrainGround
 	elif get_parent() is TerrainGround:
@@ -58,20 +63,22 @@ func rebuild(ground: TerrainGround = null) -> bool:
 		ground = source
 	if ground == null or not ground.is_inside_tree():
 		return false
-	var owner = ground.get_meta(OWNER_META) if ground.has_meta(OWNER_META) else null
-	if is_instance_valid(owner) and owner != self:
+	var owner := _ground_owner(ground)
+	if owner != null and owner != self:
 		return false
 	var next := derive(ground)
 	if next.is_empty():
 		return false
 	if source != ground:
+		if source != null:
+			_loaded_layers = {}
 		_restore_legacy()
 		if is_instance_valid(_body):
 			_body.free()
 		_body = null
 		_disconnect_layers()
 		source = ground
-	source.set_meta(OWNER_META, self)
+	source.set_meta(OWNER_META, get_instance_id())
 	rows = next
 	for layer in [source.get_cells_layer(), source.get_tiers_layer()]:
 		if layer != null and not layer.changed.is_connected(_queue_rebuild):
@@ -99,6 +106,8 @@ func rebuild(ground: TerrainGround = null) -> bool:
 			_release_legacy(node)
 	for node in legacy:
 		_disable_legacy(node)
+	_snapshot_layers()
+	_loaded_layers = {}
 	return true
 
 func _disconnect_layers() -> void:
@@ -108,19 +117,43 @@ func _disconnect_layers() -> void:
 		if layer != null and layer.changed.is_connected(_queue_rebuild):
 			layer.changed.disconnect(_queue_rebuild)
 
+static func _ground_owner(ground: TerrainGround) -> KitWalk:
+	# Metadata is serialized by PackedScene: save only scalar runtime tokens.
+	# A token from a saved scene cannot reserve its newly loaded copy, even if
+	# the original owner is still alive, because the ground must also match.
+	var token = ground.get_meta(OWNER_META, 0)
+	if typeof(token) != TYPE_INT or token == 0 or not is_instance_id_valid(token):
+		return null
+	var candidate = instance_from_id(token)
+	if candidate is KitWalk and is_instance_valid(candidate.source) and candidate.source == ground:
+		return candidate
+	return null
+
 func _disable_legacy(node: Node) -> void:
 	if node is StaticBody2D and node != _body:
 		# A transferred body may already be disabled by another KitWalk. Keep its
 		# true original layer on the body, independent of either rebuild order.
 		if not node.has_meta(BODY_LAYER_META):
-			node.set_meta(BODY_LAYER_META, node.collision_layer)
+			var original = _loaded_layers.get(_layer_path(node), node.collision_layer)
+			node.set_meta(BODY_LAYER_META, original if typeof(original) == TYPE_INT else node.collision_layer)
 		_replaced[node] = node.get_meta(BODY_LAYER_META)
-		node.set_meta(BODY_OWNER_META, self)
+		node.set_meta(BODY_OWNER_META, get_instance_id())
 		node.collision_layer = 0
+
+func _layer_path(node: Node) -> String:
+	return str(get_path_to(node)) if is_inside_tree() and node.is_inside_tree() else ""
+
+func _snapshot_layers() -> void:
+	saved_collision_layers = {}
+	for node in _replaced:
+		if is_instance_valid(node) and node.get_meta(BODY_OWNER_META, 0) == get_instance_id():
+			var path := _layer_path(node)
+			if not path.is_empty():
+				saved_collision_layers[path] = _replaced[node]
 
 func _release_legacy(node) -> void:
 	# An earlier owner must not reactivate or overwrite the new owner's body.
-	if is_instance_valid(node) and node.get_meta(BODY_OWNER_META, null) == self:
+	if is_instance_valid(node) and node.get_meta(BODY_OWNER_META, 0) == get_instance_id():
 		node.collision_layer = _replaced[node]
 		node.remove_meta(BODY_OWNER_META)
 		node.remove_meta(BODY_LAYER_META)
@@ -129,7 +162,8 @@ func _release_legacy(node) -> void:
 func _restore_legacy() -> void:
 	for node in _replaced.keys():
 		_release_legacy(node)
-	if is_instance_valid(source) and source.has_meta(OWNER_META) and source.get_meta(OWNER_META) == self:
+	saved_collision_layers = {}
+	if is_instance_valid(source) and source.get_meta(OWNER_META, 0) == get_instance_id():
 		source.remove_meta(OWNER_META)
 
 ## Plain-text format consumed by gen_zone.py: rectangular . / # rows, final LF.

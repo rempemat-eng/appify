@@ -250,6 +250,72 @@ func test_deleted_owned_body_is_safe_to_release() -> void:
 	assert_str(walk.rows[0]).is_equal("......")
 	walk.free()
 
+func test_active_walk_disk_round_trip_preserves_original_collision_layer() -> void:
+	var fixture := await _fixture(Vector2i(8, 6))
+	var ground: TerrainGround = fixture.ground
+	ground.owner = fixture.root
+	ground.get_cells_layer().owner = fixture.root
+	ground.get_tiers_layer().owner = fixture.root
+	var piece := (load("res://kit/props/woodland_forest_bench.tscn") as PackedScene).instantiate() as KitPiece
+	piece.name = "SavedBench"
+	fixture.root.add_child(piece)
+	piece.owner = fixture.root
+	piece.global_position = ground.to_global(Vector2(96, 72))
+	var solid := piece.get_node("Solid") as StaticBody2D
+	solid.collision_layer = 5
+	var walk := _install(ground)
+	walk.name = "SavedWalk"
+	walk.owner = fixture.root
+	var expected := walk.rows.duplicate()
+	var packed := PackedScene.new()
+	assert_int(packed.pack(fixture.root)).is_equal(OK)
+	var path := "user://w4-active-walk-round-trip.tscn"
+	assert_int(ResourceSaver.save(packed, path)).is_equal(OK)
+	var saved := ResourceLoader.load(path, "PackedScene", ResourceLoader.CACHE_MODE_IGNORE) as PackedScene
+	assert_object(saved).is_not_null()
+	if saved == null:
+		DirAccess.remove_absolute(path)
+		return
+	# Keep the original scene/owner alive: a saved runtime token must not let it
+	# reserve the newly loaded ground or acquire the newly loaded solid body.
+	var restored := saved.instantiate()
+	add_child(auto_free(restored))
+	var restored_ground := restored.get_node("Ground") as TerrainGround
+	var restored_walk := restored_ground.get_node("SavedWalk") as KitWalk
+	var restored_solid := restored.get_node("SavedBench/Solid") as StaticBody2D
+	# Save the newly loaded scene before its first deferred rebuild. That must
+	# retain the nested body's original layer for a second reload as well.
+	var repacked := PackedScene.new()
+	assert_int(repacked.pack(restored)).is_equal(OK)
+	var second_path := "user://w4-active-walk-second-round-trip.tscn"
+	assert_int(ResourceSaver.save(repacked, second_path)).is_equal(OK)
+	var second_saved := ResourceLoader.load(second_path, "PackedScene", ResourceLoader.CACHE_MODE_IGNORE) as PackedScene
+	assert_object(second_saved).is_not_null()
+	if second_saved != null:
+		var second := second_saved.instantiate()
+		add_child(second)
+		var second_ground := second.get_node("Ground") as TerrainGround
+		var second_walk := second_ground.get_node("SavedWalk") as KitWalk
+		var second_solid := second.get_node("SavedBench/Solid") as StaticBody2D
+		assert_bool(second_walk.rebuild(second_ground)).is_true()
+		assert_that(second_walk.rows).is_equal(expected)
+		second_walk.free()
+		assert_int(second_solid.collision_layer).is_equal(5)
+		second.free()
+	DirAccess.remove_absolute(second_path)
+	assert_bool(restored_walk.rebuild(restored_ground)).is_true()
+	assert_that(restored_walk.rows).is_equal(expected)
+	assert_int(restored_solid.collision_layer).is_equal(0)
+	restored_walk.free()
+	assert_int(restored_solid.collision_layer).is_equal(5)
+	assert_bool(restored_ground.has_meta(Walk.OWNER_META)).is_false()
+	assert_bool(restored_solid.has_meta(Walk.BODY_OWNER_META)).is_false()
+	assert_bool(restored_solid.has_meta(Walk.BODY_LAYER_META)).is_false()
+	assert_int(solid.collision_layer).is_equal(0)
+	walk.free()
+	assert_int(solid.collision_layer).is_equal(5)
+	DirAccess.remove_absolute(path)
+
 func test_install_replaces_only_generated_bodies_and_restores_them() -> void:
 	var fixture := await _fixture(Vector2i(3, 2))
 	var ground: TerrainGround = fixture.ground
