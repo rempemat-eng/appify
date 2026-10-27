@@ -11,7 +11,7 @@ for(const [key,id,deps] of [['catalogue',3501,[]],['engine',3500,[3501]]]){
  let source=ref[key];
  if(key==='engine'){
   const end='},3500,[3501]);';if(!source.endsWith(end))throw Error('Boundary changed');
-  source=source.slice(0,-end.length)+'_e.__turrets=N;'+end;
+  source=source.slice(0,-end.length)+'_e.oracleTurrets=N;'+end;
  }
  let factory,mid,dependencies;
  vm.runInNewContext(source,{__d:(f,i,d)=>{factory=f;mid=i;dependencies=d;}},{timeout:1000});
@@ -21,7 +21,7 @@ for(const [key,id,deps] of [['catalogue',3501,[]],['engine',3500,[3501]]]){
 const engine=modules.get(3500),cases=[];
 function clean(state){const s=structuredClone(state);for(const f of [...s.fields,...s.effects,...s.projectiles,...s.turrets])delete f.color;return s;}
 function base(){const s=engine.createCombatState('rook',1,'encounter');s.time=7.5;s.player.specialRemaining=4;s.player.designatedId=1;s.enemies=s.enemies.map((e,n)=>({...e,x:120+20*n,y:98,hp:100,immortal:false}));s.turrets=[-1,1].map(sign=>({id:++s.serial,x:s.player.x+15*sign,y:s.player.y-14,radius:5,remaining:4,cooldown:.18,aimX:s.player.aimX,aimY:s.player.aimY,targetId:null}));return s;}
-function add(state,ticks=1){const initial=clean(state);for(let i=0;i<ticks;i++)engine.__turrets(state);cases.push({ticks,initial,expected:clean(state)});}
+function add(state,ticks=1){const initial=clean(state);for(let i=0;i<ticks;i++)engine.oracleTurrets(state);cases.push({ticks,initial,expected:clean(state)});}
 for(const target of [null,1,999])for(const hp of [0,100])for(const cooldown of [0,.18,.44])for(const ticks of [1,12,28,150]){
  const s=base();s.player.designatedId=target;s.enemies[0].hp=hp;for(const turret of s.turrets)turret.cooldown=cooldown;add(s,ticks);
 }

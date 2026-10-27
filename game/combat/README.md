@@ -1,58 +1,55 @@
-# C60 combat port: in progress
+# C60 combat port
 
-Authority: #149 assignment6396530638, Claude A unit/action-driver decision6402597915.
-Owner: economy, branch codex/godot-ability-kits. Base main86e525006099ebc894ccfda3627752518ddea884.
-This is an incremental checkpoint, not a working production combat port or a completed C60.
+Authority: #149 assignment 6396530638 and Claude A decisions 6402597915 and
+6403878182. Owner: economy, branch `codex/godot-ability-kits`, draft PR #261.
+Original base: `86e525006099ebc894ccfda3627752518ddea884`.
 
-Implemented:
-- All fourteen canonical JSON kits and shared rules split losslessly from #245@1820a07.
-  units.json records exact source SHA-256 and the overriding unit decision. Original unresolved
-  scale text is retained as historical source evidence, not the active scale contract.
-- AbilityCatalogue reads independent data copies. Explicit actor distance/speed factor3;
-  Cairn reach/hitbox factor additionally follows actual manifest body_height_target /74
-  (currently104/74), never canvas dimensions or a guessed1.2. Damage/time/angles/resources and
-  source-texel anchors are not multiplied. No recursive numeric conversion.
-- AbilityClock orders commitment/release/completion/cancellation/form events with instance tokens.
-  Cooldown starts on commit, form on release. Held primary, edge-triggered secondary/special,
-  one queued slot, special priority, guard queue clearing and inactive-time freeze. Time splits
-  at event boundaries so overshoot cannot lose a release or advance a form before release.
-  This is the timing component, not the complete original fixed-step simulation.
+## Current status
 
-Next executable steps (resume this branch/PR after inspecting exact remote head and current main):
-1. Build ability_runner.gd, checking ammo/heat/reload eligibility before committing the clock.
-   Preserve #245/port-regressions.md and #244's stateful rules, not animation summaries: Brine
-   untethered gun-butt, Morel patchless burst, Pendle rifle-stock, Nix stationary commitment-origin
-   decoy without cooling, airborne Rook primary, Velvet independent counter and Mote per-shot shards.
-2. Implement finite hit/projectile/field handlers against actual C61 APIs and terrain. Review HP
-   units: canonical raw damage and foundation low-integer HP are distinct existing models. Do not
-   silently rebalance or infer a new conversion; record any required decision with concrete evidence.
-3. Add the granted actors/player.gd action-driver hook. Player retains input/movement/facing;
-   legacy damage and Arrow spawning are suppressed only with an attached runner. Reject switching
-   at zero HP or during actions (#257). No other lane edits Player while C60 is open. Inputs outside
-   Player remain A's files; coordinate missing bindings rather than expand ownership.
-4. Coordinate contact presentation with Claude J/A: runner owns events; sprite exposes tested
-   presentation/ordered crossings without dispatching gameplay. Show contact frame before release
-   callbacks, even on coarse steps. Do not edit CastSprite or treat #257 retiming proposals as approved
-   art. Keep support/airborne separate, Brine empty state, powered transitions and single equipment.
-5. Per-kit stateful, world and Player-hook regressions, full check:godot/verify/art-repro on final
-   source, ready once, matching CI inspection. C60 remains IMPLEMENTING until these are complete.
+The canonical simulation and optional Player integration are implemented. Production
+world combat remains blocked; no scene attaches the driver by default.
 
-Validation: Godot4.7.2 import, main300 frames and78 GdUnit tests passed before the powered-case
-extension; final rerun is recorded on the draft PR. Includes26 new tests:14 per-kit release-boundary
-cases,9 shared clock cases,3 catalogue cases. Split exactly matches pinned source including all
-shared rules; a deliberately changed Pendle ammo capacity was rejected. Reproduce:
+| Area | Implemented | Remaining |
+| --- | --- | --- |
+| Data and simulation | Fourteen lossless canonical kits; action clocks, resources, primary/secondary/special, guards, projectiles, impacts, statuses, fields, turrets and ordered fixed-step settlement | Owner decision on the inherited Tam duplicate-defeat edge |
+| Player integration | Action-driver hook suppresses legacy attacks; Player alone resolves collision-aware movement; reset, detach, defeat and scene exit cancel callbacks | Live-world state factory, C61 health/status authority, terrain/projectile cover, guard binding and universal dodge agreement |
+| Presentation | Exact manifest frames and anchors; once-only ordered contacts; support/airborne offset; passive/powered/empty forms and terminal exit/defeat | Approved production schedules, powered boundary allocation and continuous-gait/terminal policy |
+| Facings | Form selection and playback resolve authored variants from each clip's manifest, including diagonal facings | Missing pose, boundary, exit or aim variants reject the entire plan; there is no cardinal fallback |
+| Validation | Per-kit, original-engine comparison and Player/presentation lifecycle suites | Final full verify/art reproduction, matching hosted CI, current-main integration and rendered play-test |
+
+`AbilityArenaDriver` is opt-in for canonical `encounter` and `practice` snapshots.
+`AbilitySimulation` does not execute live mode. It is not a world-health adapter:
+C61 enemies still apply damage through their own actor API. Attaching an isolated
+arena snapshot to a production zone would not establish world combat.
+
+The unresolved inputs are recorded on #261 in the production timing request
+6435630886 and HP decision reminder 6428999148. Keep canonical mechanics and art
+unchanged while those decisions remain open. A/J must supply manifest-pinned,
+full-precision schedules with exact release/end clocks, including powered boundaries,
+gait and terminal timing. The world bridge also needs agreed health/damage units,
+status ownership, terrain/cover, guard input and dodge behaviour.
+
+## Units and source fidelity
+
+`units.json` records the source SHA-256 and Claude A's overriding unit decision.
+Canonical distance/speed maps to actor texels by exactly 3. Cairn's reach/hitbox
+factor additionally follows the loaded manifest's `body_height_target / 74`.
+Damage, time, angles, resources and source-texel anchors are not multiplied.
+Original unresolved scale text is historical evidence, not the active contract.
+
+Reproduce the canonical split and Godot checks:
 
 ```sh
 git show 1820a07c5ae8b745e239aa2aaa25e0c5ef483d42:docs/codex/mygame-combat-handoff/canonical/abilities-v1.json > /tmp/c60-source.json
 python3 game/combat/check_canonical_split.py /tmp/c60-source.json
-GODOT=/path/to/verified/Godot_v4.7.2-stable_linux.x86_64 npm run check:godot
+GODOT=/path/to/verified/Godot_v4.7.2-stable npm run check:godot
 ```
 
-Not yet implemented: actual damage/projectiles/fields, guard/dodge/resource mechanics, animation
-binding or Player attachment. No Player/art/enemy/world/save/package/CI/reward changes. Full npm
-verify/art-repro, hosted CI and rendered gameplay not yet run. Keep draft, do not integrate.
-The PR checkpoint contains exact head/base, test results and reconstruction steps. C35's prior
-handoff evidence and C40's HOLD are preserved separately in the economy heartbeat on #149.
+## Implementation history
+
+The entries below preserve the incremental port decisions and oracle coverage.
+Their "next" and "not yet" statements describe that historical checkpoint. Use the
+current status above and the latest PR handoff for present readiness and dependencies.
 
 ## Resource checkpoint (continuation)
 

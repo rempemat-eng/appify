@@ -28,7 +28,7 @@ func configure(key: String, manifest: Dictionary, plan: Array, segment_durations
 			return false
 		if not segment.indices is Array or not segment.frames is Array or not durations is Array or segment.indices.is_empty() or segment.indices.size() != durations.size():
 			return false
-		if segment.role not in ["boundary", "pose", "exit"] or segment.facing not in ["S", "N", "E", "W"]:
+		if segment.role not in ["boundary", "pose", "exit"] or not segment.facing is String or segment.facing.is_empty():
 			return false
 		for index in segment.indices:
 			if not (index is int or index is float) or not is_finite(float(index)) or index < 0 or index != floor(float(index)):

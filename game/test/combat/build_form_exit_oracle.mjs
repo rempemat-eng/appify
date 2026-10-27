@@ -11,7 +11,7 @@ for(const [key,id,deps] of [['catalogue',3501,[]],['engine',3500,[3501]]]){
  let source=ref[key];
  if(key==='engine'){
   const end='},3500,[3501]);';if(!source.endsWith(end))throw Error('Boundary changed');
-  source=source.slice(0,-end.length)+'_e.__exit=X;'+end;
+  source=source.slice(0,-end.length)+'_e.oracleExit=X;'+end;
  }
  let factory,mid,dependencies;
  vm.runInNewContext(source,{__d:(f,i,d)=>{factory=f;mid=i;dependencies=d;}},{timeout:1000});
@@ -21,7 +21,7 @@ for(const [key,id,deps] of [['catalogue',3501,[]],['engine',3500,[3501]]]){
 const engine=modules.get(3500),cases=[];
 function clean(state){const s=structuredClone(state);for(const f of [...s.fields,...s.effects,...s.projectiles,...s.turrets])delete f.color;return s;}
 function base(id='bramble',powered=false){const s=engine.createCombatState(id,1,'encounter');s.time=7.5;s.player.specialRemaining=powered?4:0;s.enemies=s.enemies.map((e,n)=>({...e,x:120+20*n,y:98,hp:100,immortal:false}));return s;}
-function add(state, interrupted, label) {const initial=clean(state);engine.__exit(state,interrupted);cases.push({interrupted,label,initial,expected:clean(state)});}
+function add(state, interrupted, label) {const initial=clean(state);engine.oracleExit(state,interrupted);cases.push({interrupted,label,initial,expected:clean(state)});}
 for(const id of engine.ROSTER.map(x=>x.id))for(const interrupted of [false,true])for(const hp of [0,1,160]){
  const s=base(id,true);s.player.hp=hp;s.player.designatedId=2;s.turrets=[{id:70}];add(s,interrupted,'all-kit-exit');
 }

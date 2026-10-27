@@ -6,6 +6,7 @@ import { pathToFileURL } from 'node:url';
 const adapter = await import(pathToFileURL(resolve(process.argv[2])).href);
 if (adapter.canonicalProvenance.engineSha256 !== '21aa782577f3d2fc51389efdd80c4c61a1a7ddd48d128e01eb318daa75d6bc10') throw Error('Wrong oracle');
 const engine = adapter.loadCanonicalCombat({ referenceHelpers: true });
+const { __reference: reference } = engine;
 const cases = [];
 function sample(id, action, powered, rounds = 1, distance = 120, angle = 0, height = 0) {
   const state = engine.createCombatState(id);
@@ -13,8 +14,8 @@ function sample(id, action, powered, rounds = 1, distance = 120, angle = 0, heig
   const p = state.player;
   Object.assign(p, { x: 86, y: 98, actionDirX: Math.cos(angle), actionDirY: Math.sin(angle),
     aimX: 86 + distance, aimY: 98, vaultHeight: height, ammo: rounds });
-  if (powered) engine.__reference.activateForm(state);
-  engine.__reference.primary(state, action);
+  if (powered) reference.activateForm(state);
+  reference.primary(state, action);
   cases.push({ id, action, powered, rounds, distance, angle, height, expected: state.projectiles.map(x => ({
     kind: x.kind, owner: x.owner, source: x.source, position: [x.x, x.y], velocity: [x.vx, x.vy],
     radius: x.radius, remaining: x.remaining, damage: x.damage, pierce: x.pierce,

@@ -11,7 +11,7 @@ for(const [key,id,deps] of [['catalogue',3501,[]],['engine',3500,[3501]]]){
  let source=ref[key];
  if(key==='engine'){
   const end='},3500,[3501]);';if(!source.endsWith(end))throw Error('Boundary changed');
-  source=source.slice(0,-end.length)+'_e.__impact=T;_e.__damage=B;_e.__field=Y;_e.__react=G;'+end;
+  source=source.slice(0,-end.length)+'_e.oracleImpact=T;_e.oracleDamage=B;_e.oracleField=Y;_e.oracleReact=G;'+end;
  }
  let factory,mid,dependencies;
  vm.runInNewContext(source,{__d:(f,i,d)=>{factory=f;mid=i;dependencies=d;}},{timeout:1000});
@@ -22,7 +22,7 @@ const engine=modules.get(3500),cases=[];
 // Colour is a presentation responsibility. All gameplay fields, effect ordering/IDs and events remain.
 function clean(s){const c=structuredClone(s);for(const f of [...c.fields,...c.effects])delete f.color;return c;}
 function base(id,powered=false){const s=engine.createCombatState(id,1,'encounter');s.time=7.5;s.player.specialRemaining=powered?4:0;s.enemies=s.enemies.map((e,n)=>({...e,x:120+20*n,y:98,hp:100,immortal:false}));return s;}
-function add(operation,state,args){const initial=clean(state);if(operation==='impact')engine.__impact(state,args.shot,state.enemies.find(e=>e.id===args.target_id));if(operation==='damage')engine.__damage(state,state.enemies.find(e=>e.id===args.target_id),args.amount,args.knockback);if(operation==='field')engine.__field(state,...args);if(operation==='react')engine.__react(state,args.ids,args.chained);cases.push({operation,initial,args,expected:clean(state)});}
+function add(operation,state,args){const initial=clean(state);if(operation==='impact')engine.oracleImpact(state,args.shot,state.enemies.find(e=>e.id===args.target_id));if(operation==='damage')engine.oracleDamage(state,state.enemies.find(e=>e.id===args.target_id),args.amount,args.knockback);if(operation==='field')engine.oracleField(state,...args);if(operation==='react')engine.oracleReact(state,args.ids,args.chained);cases.push({operation,initial,args,expected:clean(state)});}
 const launches=JSON.parse(readFileSync(new URL('./projectile-oracle.json',import.meta.url))).cases;
 for(const sample of launches){for(const initial of sample.expected.slice(0,1)){
  const shot={...initial,x:120,y:98,hitIds:[2],blastRadius:initial.blast_radius};
@@ -32,13 +32,13 @@ for(const id of ['tam','iona','bramble'])for(const powered of [false,true])for(c
  const s=base(id,powered);s.enemies[0].hp=hp;s.enemies[0].kind=kind;s.enemies[0].frost=2;s.enemies[0].vulnerableRemaining=1;s.player.tetherId=1;add('damage',s,{target_id:1,amount:20,knockback:13});
 }
 for(const kind of ['reagent','seal','echo','hologram','other'])for(const powered of [false,true])for(const count of [0,1,3,4,5,10]){
- const s=base('mirra',powered);for(let n=0;n<count;n++)engine.__field(s,kind,90+n,100,10,5,3);add('field',s,[kind,-90,900,18,5,3]);
+ const s=base('mirra',powered);for(let n=0;n<count;n++)engine.oracleField(s,kind,90+n,100,10,5,3);add('field',s,[kind,-90,900,18,5,3]);
 }
 for(const chained of [false,true])for(const ids of [[4],[4,4,5,999],[999]]){
- const s=base('morel');for(const x of [115,155,195,241.001])engine.__field(s,'reagent',x,98,18,5,3);add('react',s,{ids,chained});
+ const s=base('morel');for(const x of [115,155,195,241.001])engine.oracleField(s,'reagent',x,98,18,5,3);add('react',s,{ids,chained});
 }
 for(const powered of [false,true]){
- const s=base('morel',powered);for(const x of [115,155,195])engine.__field(s,'reagent',x,98,18,5,3);
+ const s=base('morel',powered);for(const x of [115,155,195])engine.oracleField(s,'reagent',x,98,18,5,3);
  add('impact',s,{shot:{kind:'flask',x:120,y:98,damage:17,powered,blastRadius:0,source:'morel',hitIds:[]},target_id:null});
 }
 // Dead/zero damage, immortal clamp, coincident knockback, event cap, survivor-only statuses.

@@ -11,7 +11,7 @@ for(const [key,id,deps] of [['catalogue',3501,[]],['engine',3500,[3501]]]){
  let source=ref[key];
  if(key==='engine'){
   const end='},3500,[3501]);';if(!source.endsWith(end))throw Error('Boundary changed');
-  source=source.slice(0,-end.length)+'_e.__flight=F;'+end;
+  source=source.slice(0,-end.length)+'_e.oracleFlight=F;'+end;
  }
  let factory,mid,dependencies;
  vm.runInNewContext(source,{__d:(f,i,d)=>{factory=f;mid=i;dependencies=d;}},{timeout:1000});
@@ -22,7 +22,7 @@ const engine=modules.get(3500),cases=[];
 function clean(state){const s=structuredClone(state);for(const f of [...s.fields,...s.effects,...s.projectiles,...s.turrets])delete f.color;return s;}
 function base(id='bramble',powered=false){const s=engine.createCombatState(id,1,'encounter');s.time=7.5;s.player.specialRemaining=powered?4:0;s.enemies=s.enemies.map((e,n)=>({...e,x:120+20*n,y:98,hp:100,immortal:false}));return s;}
 function shot(sample,id=99){const s=structuredClone(sample);s.id=id;s.x=s.position[0];s.y=s.position[1];s.vx=s.velocity[0];s.vy=s.velocity[1];s.hitIds=s.hit_ids;s.blastRadius=s.blast_radius;s.launchHeight=s.launch_height;s.flightDuration=s.flight_duration;for(const k of ['position','velocity','hit_ids','blast_radius','launch_height','flight_duration'])delete s[k];return s;}
-function add(state,ticks=1,label='launch'){const initial=clean(state);for(let i=0;i<ticks;i++)engine.__flight(state);cases.push({ticks,label,initial,expected:clean(state)});}
+function add(state,ticks=1,label='launch'){const initial=clean(state);for(let i=0;i<ticks;i++)engine.oracleFlight(state);cases.push({ticks,label,initial,expected:clean(state)});}
 const launches=JSON.parse(readFileSync(new URL('./projectile-oracle.json',import.meta.url))).cases;
 for(const sample of launches)for(const ticks of [1,30]){
  const s=base(sample.id,sample.powered);s.projectiles=sample.expected.map((v,n)=>shot(v,100+n));s.serial=110;add(s,ticks);

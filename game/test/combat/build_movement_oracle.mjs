@@ -39,7 +39,7 @@ for(const remaining of [0,1e-10,1e-8,1.0001e-8,0.001,1/60,1/60+1e-9,0.27,0.55])f
 for(const powered of [false,true])for(const blocking of [false,true])for(const pos of [[0,0],[320,180],[100,98]]){
  const s=base('velvet',powered);Object.assign(s.player,{x:pos[0],y:pos[1],blocking});
  s.enemies=s.enemies.map((e,i)=>({...e,x:s.player.x+(i===0?0:4),y:s.player.y,hp:i===2?0:100}));
- s.echoIn=1/60;s.fields=Array.from({length:4},(_,i)=>({id:++s.serial,kind:'echo',remaining:1}));
+ s.echoIn=1/60;s.fields=Array.from({length:4},()=>({id:++s.serial,kind:'echo',remaining:1}));
  add(s,'movement',[{moveX:1,moveY:1}],'ordered-separation-echo-cap');
 }
 for(const mx of [0,1]){

@@ -11,7 +11,7 @@ for(const [key,id,deps] of [['catalogue',3501,[]],['engine',3500,[3501]]]){
  let source=ref[key];
  if(key==='engine'){
   const end='},3500,[3501]);';if(!source.endsWith(end))throw Error('Boundary changed');
-  source=source.slice(0,-end.length)+'_e.__flight=F;_e.__damage=P;'+end;
+  source=source.slice(0,-end.length)+'_e.oracleFlight=F;_e.oracleDamage=P;'+end;
  }
  let factory,mid,dependencies;
  vm.runInNewContext(source,{__d:(f,i,d)=>{factory=f;mid=i;dependencies=d;}},{timeout:1000});
@@ -21,7 +21,7 @@ for(const [key,id,deps] of [['catalogue',3501,[]],['engine',3500,[3501]]]){
 const engine=modules.get(3500),cases=[];
 function clean(state){const s=structuredClone(state);for(const f of [...s.fields,...s.effects,...s.projectiles,...s.turrets])delete f.color;return s;}
 function base(id='bramble',powered=false){const s=engine.createCombatState(id,1,'encounter');s.time=7.5;s.player.specialRemaining=powered?4:0;s.enemies=s.enemies.map((e,n)=>({...e,x:120+20*n,y:98,hp:100,immortal:false}));return s;}
-function add(state,op,args=[],ticks=1,label='damage') {const initial=clean(state);for(let i=0;i<ticks;i++)op==='damage'?engine.__damage(state,...args):engine.__flight(state);cases.push({op,args,ticks,label,initial,expected:clean(state)});}
+function add(state,op,args=[],ticks=1,label='damage') {const initial=clean(state);for(let i=0;i<ticks;i++){if(op==='damage')engine.oracleDamage(state,...args);else engine.oracleFlight(state);}cases.push({op,args,ticks,label,initial,expected:clean(state)});}
 for(const id of engine.ROSTER.map(x=>x.id))for(const powered of [false,true])for(const guard of [0,15,30,100])for(const amount of [10,20,200]){
  const s=base(id,powered);s.player.blocking=true;s.player.guard=guard;s.queuedAction='special';s.queueRemaining=0.5;add(s,'damage',[amount,130,98]);
 }

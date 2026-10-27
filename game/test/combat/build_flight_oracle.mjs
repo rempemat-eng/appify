@@ -13,8 +13,8 @@ for (const [key, id, deps] of [['catalogue', 3501, []], ['engine', 3500, [3501]]
   if (key === 'engine') {
     const ending = '},3500,[3501]);';
     if (!source.endsWith(ending)) throw Error('Boundary changed');
-    source = source.slice(0, -ending.length) + '_e.__flight=F;' + ending;
-    source = source.replace('function T(i,e,a){', 'function T(i,e,a){i.__impacts.push({target_id:a?.id??null,position:[e.x,e.y],damage:e.damage,pierce:e.pierce,hit_ids:[...e.hitIds]});');
+    source = source.slice(0, -ending.length) + '_e.oracleFlight=F;' + ending;
+    source = source.replace('function T(i,e,a){', 'function T(i,e,a){i.oracleImpacts.push({target_id:a?.id??null,position:[e.x,e.y],damage:e.damage,pierce:e.pierce,hit_ids:[...e.hitIds]});');
   }
   let factory, moduleId, dependencies;
   vm.runInNewContext(source, { __d: (f, i, d) => { factory = f; moduleId = i; dependencies = d; } }, { timeout: 1000 });
@@ -28,28 +28,28 @@ const launches = JSON.parse(readFileSync(new URL('./projectile-oracle.json', imp
 const cases = [];
 for (const sample of launches) for (const initial of sample.expected) for (const ticks of [1, 7, 120]) {
   const state = engine.createCombatState(sample.id);
-  state.enemies = []; state.__impacts = [];
+  state.enemies = []; state.oracleImpacts = [];
   const shot = { ...initial, x: initial.position[0], y: initial.position[1],
     vx: initial.velocity[0], vy: initial.velocity[1], hitIds: [...initial.hit_ids],
     blastRadius: initial.blast_radius, launchHeight: initial.launch_height, flightDuration: initial.flight_duration };
   state.projectiles = [shot];
-  for (let t = 0; t < ticks && state.projectiles.length; t++) engine.__flight(state);
+  for (let t = 0; t < ticks && state.projectiles.length; t++) engine.oracleFlight(state);
   cases.push({ initial, ticks, alive: state.projectiles.length > 0,
     position: [shot.x, shot.y], age: shot.age, remaining: shot.remaining });
 }
 const contacts = [];
 for (const id of ['bramble', 'morel', 'mirra', 'clack', 'rook', 'brine', 'pendle']) for (const powered of [false, true]) {
   const initial = launches.find(c => c.id === id && c.powered === powered && c.angle === 0 && c.action === 'primary').expected[0];
-  const state = engine.createCombatState(id); state.__impacts = [];
+  const state = engine.createCombatState(id); state.oracleImpacts = [];
   state.enemies = state.enemies.slice(0, 2).map((e, n) => ({ ...e, id: n + 1, x: 130 + n * 25, y: 98, hp: 500, radius: 1 }));
   const targets = state.enemies.map(e => ({ id: e.id, position: [e.x, e.y], hp: e.hp, radius: e.radius }));
   state.fields = [{id: 999, kind: 'seal', x: 110, y: 98, radius: 1, remaining: 1}];
   const shot = { ...initial, x: initial.position[0], y: initial.position[1], vx: 6000, vy: 0,
     hitIds: [], blastRadius: initial.blast_radius, launchHeight: initial.launch_height, flightDuration: initial.flight_duration };
-  state.projectiles = [shot]; engine.__flight(state);
+  state.projectiles = [shot]; engine.oracleFlight(state);
   contacts.push({ initial: {...initial, velocity: [6000, 0]}, targets,
     seals: [{position: [110,98],radius:1,remaining:1}], alive: state.projectiles.length > 0,
-    impacts: state.__impacts, position: [shot.x, shot.y], pierce: shot.pierce, hit_ids: shot.hitIds });
+    impacts: state.oracleImpacts, position: [shot.x, shot.y], pierce: shot.pierce, hit_ids: shot.hitIds });
 }
 writeFileSync(new URL('./flight-contacts-oracle.json', import.meta.url), JSON.stringify({contacts}, null, 2)+'\n');
 writeFileSync(new URL('./flight-oracle.json', import.meta.url), JSON.stringify({ engine_sha256: hash(reference.engine), cases }, null, 2) + '\n');

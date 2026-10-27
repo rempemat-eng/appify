@@ -10,7 +10,7 @@ const POSES := ["idle", "walk", "primary", "secondary", "special", "guard", "hit
 static func build(id: String, pose: String, powered: bool, harpoon_out: bool,
 		manifest: Dictionary, facing: String, aim: String = "") -> Array[Dictionary]:
 	var result: Array[Dictionary] = []
-	if id != manifest.get("id") or pose not in POSES or facing not in ["S", "N", "E", "W"]:
+	if id != manifest.get("id") or pose not in POSES or facing.is_empty():
 		return result
 	var empty := "_empty" if id == "brine" and harpoon_out else ""
 	var clip := pose + empty

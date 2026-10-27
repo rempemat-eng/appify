@@ -16,7 +16,7 @@ for(const [key,id,deps] of [['catalogue',3501,[]],['engine',3500,[3501]]]){
   const finish=source.indexOf('const k=o(d.moveX,d.moveY);',begin);
   if(begin<0||finish<0)throw Error('Player-phase boundary changed');
   const prefix=source.slice(begin,finish);
-  source=source.slice(0,-end.length)+'_e.__playerphase=function(i,d){'+prefix+'};_e.__duration=R;_e.__releaseTime=D;'+end;
+  source=source.slice(0,-end.length)+'_e.__playerphase=function(i,d){'+prefix+'};_e.oracleDuration=R;_e.oracleReleaseTime=D;'+end;
  }
  let factory,mid,dependencies;
  vm.runInNewContext(source,{__d:(f,i,d)=>{factory=f;mid=i;dependencies=d;}},{timeout:1000});
@@ -34,7 +34,7 @@ for(const id of engine.ROSTER.map(x=>x.id))for(const powered of [false,true])for
  tick(s,{primary:true,secondary:true,special:true,moveX:1,moveY:1},'all-kits-releases-commitment');
 }
 for(const id of engine.ROSTER.map(x=>x.id))for(const powered of [false,true])for(const action of ['primary','secondary','special'])for(const offset of [-1e-7,0,1e-7]){
- const s=base(id,powered);s.player.action=action;s.player.actionDuration=engine.__duration(s.player,action);s.player.actionElapsed=engine.__releaseTime(s.player)-1/60-1e-8+offset;s.player.actionReleased=false;
+ const s=base(id,powered);s.player.action=action;s.player.actionDuration=engine.oracleDuration(s.player,action);s.player.actionElapsed=engine.oracleReleaseTime(s.player)-1/60-1e-8+offset;s.player.actionReleased=false;
  tick(s,{},'exact-release-epsilon');
 }
 for(const power of [0,1e-12,1e-8,1.0001e-8])for(const id of ['pendle','clack']){
