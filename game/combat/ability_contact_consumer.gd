@@ -7,6 +7,8 @@ var _track := AbilityContactTrack.new()
 var _provider := Callable()
 var _passive_provider := Callable()
 var _passive := AbilityPoseTrack.new()
+var _forms := AbilityFormTrack.new()
+var _passive_mode := ""
 var _passive_key := ""
 var _draw := Callable()
 var _contact := Callable()
@@ -34,6 +36,8 @@ func cancel() -> void:
 	_generation += 1
 	_track.cancel()
 	_passive.cancel()
+	_forms.cancel()
+	_passive_mode = ""
 	_passive_key = ""
 	_action = ""
 
@@ -78,6 +82,8 @@ func observe(before: Dictionary, after: Dictionary, delta: float) -> void:
 
 func _begin(state: Dictionary, action: String) -> void:
 	_passive.cancel()
+	_forms.cancel()
+	_passive_mode = ""
 	_passive_key = ""
 	var generation := _generation
 	var supplied: Variant = _provider.call(state.duplicate(true), action)
@@ -145,6 +151,9 @@ func _observe_passive(state: Dictionary, delta: float) -> void:
 	var supplied: Variant = _passive_provider.call(state.duplicate(true), "")
 	if generation != _generation:
 		return
+	if supplied is Dictionary and supplied.has("plan"):
+		_observe_form(supplied, delta)
+		return
 	if not supplied is Dictionary or not supplied.has_all(["key", "manifest", "clip", "facing", "durations"]):
 		last_error = "missing explicit passive presentation contract"
 		return
@@ -153,11 +162,37 @@ func _observe_passive(state: Dictionary, delta: float) -> void:
 		return
 	var key: String = supplied.key
 	var same_state := key == _passive_key
+	if same_state and _passive_mode != "pose":
+		last_error = "passive mode change requires a new state key"
+		return
 	if not _passive.configure(key, supplied.manifest, str(supplied.clip), str(supplied.facing),
 			supplied.durations, _token + 1, str(supplied.get("aim", ""))):
 		last_error = "invalid passive variant or implicit retiming"
 		return
 	_token += 1
+	_forms.cancel()
+	_passive_mode = "pose"
 	_passive_key = key
 	last_error = ""
 	_draw.call(_passive.advance(delta if same_state else 0.0).duplicate(true))
+
+## Explicit finite form plans are passive presentation only. Active actions keep
+## their canonical contact timeline; living-actor cancellation still applies.
+func _observe_form(supplied: Dictionary, delta: float) -> void:
+	if not supplied.has_all(["key", "manifest", "plan", "segment_durations"]) or not supplied.key is String or not supplied.manifest is Dictionary or not supplied.plan is Array or not supplied.segment_durations is Array:
+		last_error = "missing explicit form schedule"
+		return
+	var key: String = supplied.key
+	var same_state := key == _passive_key
+	if same_state and _passive_mode != "form":
+		last_error = "passive mode change requires a new state key"
+		return
+	if not _forms.configure(key, supplied.manifest, supplied.plan, supplied.segment_durations, _token + 1):
+		last_error = "invalid form plan or implicit retiming"
+		return
+	_token += 1
+	_passive.cancel()
+	_passive_mode = "form"
+	_passive_key = key
+	last_error = ""
+	_draw.call(_forms.advance(delta if same_state else 0.0).duplicate(true))

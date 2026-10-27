@@ -769,3 +769,28 @@ the living-actor cancellation currently used by the contact consumer. That bindi
 powered-defeat playback, production state/provider/importer and world integration are still
 unfinished. No scene or default driver uses these plans. Headless source-frame equality is
 not rendered acceptance.
+
+### Optional finite form playback (C60)
+
+`AbilityFormTrack` now binds a plan to an explicitly injected array of per-segment,
+per-drawing durations. It validates every segment against the supplied manifest before
+replacing a valid timeline, preserves original drawing indices and anchors, and holds
+the final drawing. It never reads template durations or invents loops. A stable state key
+allows a facing/aim change at the same phase, but rejects changed segments or clocks;
+state/empty-variant transitions require a new key. Pause, invalid delta and cancellation
+cannot advance or revive the timeline. Returned samples own their copied frame data.
+
+The existing optional passive provider may return `key`, the loaded body's exact
+`manifest`, `plan` and `segment_durations` instead of the single-clip contract. The
+contact consumer displays these only during passive/guard observations. Active actions
+keep their canonical contact track and cancel the passive form timeline. Player
+reset/detach/scene exit/reconfiguration keep the existing cancellation boundary.
+No new Player API, scene attachment or default driver is added.
+
+Tests use synthetic injected clocks and real authored powered-walk/idle drawings;
+they are not approval of a production schedule. Finite walk/guard plans finish on their
+authored idle boundary rather than guessing a repeating gait. Continuous gait policy,
+production A/J schedules/provider/importer, active-action boundaries and powered-defeat
+playback through the existing living-actor cancellation gate remain unfinished. A pure
+track can sequence the exit drawings, but this does not claim the Player plays them
+after defeat. No combat/contact events, HP mapping, art or canonical rules change.
