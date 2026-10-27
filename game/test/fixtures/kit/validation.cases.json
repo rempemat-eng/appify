@@ -3133,6 +3133,1847 @@
       "expected_checks": []
     },
     {
+      "id": "bridge-cannot-connect-different-tiers",
+      "plan": {
+        "zone": "w6_fixture",
+        "coordinate_space": "cells",
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          "......",
+          "......",
+          "~.....",
+          "~.....",
+          "......",
+          "......"
+        ],
+        "lab": true,
+        "pieces": [
+          {
+            "id": "bridge",
+            "piece": "bridge",
+            "at": [
+              0.5,
+              5
+            ]
+          }
+        ],
+        "spawns": {
+          "start": [
+            0.5,
+            0.5
+          ]
+        },
+        "tiers": [
+          "111111",
+          "111111",
+          "000000",
+          "000000",
+          "000000",
+          "000000"
+        ]
+      },
+      "library": {
+        "box": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "structure",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        },
+        "hearth": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "hearth",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false
+          }
+        },
+        "fire": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "fire",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false
+          }
+        },
+        "rubble": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "debris",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false
+          }
+        },
+        "bridge": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "bridge",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false,
+            "deck": [
+              -4,
+              -32,
+              8,
+              32
+            ]
+          }
+        },
+        "stair": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "stair",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false,
+            "deck": [
+              -4,
+              -8,
+              8,
+              8
+            ]
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "walkable": true,
+          "surface": "turf",
+          "approval": "approved"
+        },
+        "path": {
+          "id": "path",
+          "walkable": true,
+          "surface": "earth",
+          "route": true,
+          "approval": "approved"
+        },
+        "water": {
+          "id": "water",
+          "walkable": false,
+          "surface": "water",
+          "water": {
+            "body": "river"
+          },
+          "approval": "approved"
+        },
+        "face": {
+          "id": "face",
+          "walkable": false,
+          "surface": "earth",
+          "face": {
+            "height_cells": 1
+          },
+          "approval": "approved"
+        }
+      },
+      "expected_checks": [
+        "rules.deck"
+      ]
+    },
+    {
+      "id": "bridge-cannot-land-on-derived-face",
+      "plan": {
+        "zone": "w6_fixture",
+        "coordinate_space": "cells",
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          "......",
+          "......",
+          "~.....",
+          "~.....",
+          "......",
+          "......"
+        ],
+        "lab": true,
+        "pieces": [
+          {
+            "id": "bridge",
+            "piece": "bridge",
+            "at": [
+              0.5,
+              5
+            ]
+          }
+        ],
+        "spawns": {
+          "start": [
+            0.5,
+            0.5
+          ]
+        },
+        "tiers": [
+          "111111",
+          "000000",
+          "000000",
+          "000000",
+          "000000",
+          "000000"
+        ]
+      },
+      "library": {
+        "box": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "structure",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        },
+        "hearth": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "hearth",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false
+          }
+        },
+        "fire": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "fire",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false
+          }
+        },
+        "rubble": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "debris",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false
+          }
+        },
+        "bridge": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "bridge",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false,
+            "deck": [
+              -4,
+              -32,
+              8,
+              32
+            ]
+          }
+        },
+        "stair": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "stair",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false,
+            "deck": [
+              -4,
+              -8,
+              8,
+              8
+            ]
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "walkable": true,
+          "surface": "turf",
+          "approval": "approved"
+        },
+        "path": {
+          "id": "path",
+          "walkable": true,
+          "surface": "earth",
+          "route": true,
+          "approval": "approved"
+        },
+        "water": {
+          "id": "water",
+          "walkable": false,
+          "surface": "water",
+          "water": {
+            "body": "river"
+          },
+          "approval": "approved"
+        },
+        "face": {
+          "id": "face",
+          "walkable": false,
+          "surface": "earth",
+          "face": {
+            "height_cells": 1
+          },
+          "approval": "approved"
+        }
+      },
+      "expected_checks": [
+        "rules.deck"
+      ]
+    },
+    {
+      "id": "bridge-between-equal-banks-over-lower-water",
+      "plan": {
+        "zone": "w6_fixture",
+        "coordinate_space": "cells",
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          "......",
+          "......",
+          "~.....",
+          "~.....",
+          "......",
+          "......"
+        ],
+        "lab": true,
+        "pieces": [
+          {
+            "id": "bridge",
+            "piece": "bridge",
+            "at": [
+              0.5,
+              5
+            ]
+          }
+        ],
+        "spawns": {
+          "start": [
+            0.5,
+            0.5
+          ]
+        },
+        "tiers": [
+          "111111",
+          "111111",
+          "000000",
+          "000000",
+          "111111",
+          "111111"
+        ]
+      },
+      "library": {
+        "box": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "structure",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        },
+        "hearth": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "hearth",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false
+          }
+        },
+        "fire": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "fire",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false
+          }
+        },
+        "rubble": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "debris",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false
+          }
+        },
+        "bridge": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "bridge",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false,
+            "deck": [
+              -4,
+              -32,
+              8,
+              32
+            ]
+          }
+        },
+        "stair": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "stair",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false,
+            "deck": [
+              -4,
+              -8,
+              8,
+              8
+            ]
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "walkable": true,
+          "surface": "turf",
+          "approval": "approved"
+        },
+        "path": {
+          "id": "path",
+          "walkable": true,
+          "surface": "earth",
+          "route": true,
+          "approval": "approved"
+        },
+        "water": {
+          "id": "water",
+          "walkable": false,
+          "surface": "water",
+          "water": {
+            "body": "river"
+          },
+          "approval": "approved"
+        },
+        "face": {
+          "id": "face",
+          "walkable": false,
+          "surface": "earth",
+          "face": {
+            "height_cells": 1
+          },
+          "approval": "approved"
+        }
+      },
+      "expected_checks": []
+    },
+    {
+      "id": "bridge-cannot-land-on-dry-blocked-material",
+      "plan": {
+        "zone": "w6_fixture",
+        "coordinate_space": "cells",
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water",
+          "X": "wall"
+        },
+        "rows": [
+          "......",
+          "X.....",
+          "~.....",
+          "~.....",
+          "......",
+          "......"
+        ],
+        "lab": true,
+        "pieces": [
+          {
+            "id": "bridge",
+            "piece": "bridge",
+            "at": [
+              0.5,
+              5
+            ]
+          }
+        ],
+        "spawns": {
+          "start": [
+            0.5,
+            0.5
+          ]
+        }
+      },
+      "library": {
+        "box": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "structure",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        },
+        "hearth": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "hearth",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false
+          }
+        },
+        "fire": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "fire",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false
+          }
+        },
+        "rubble": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "debris",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false
+          }
+        },
+        "bridge": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "bridge",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false,
+            "deck": [
+              -4,
+              -32,
+              8,
+              32
+            ]
+          }
+        },
+        "stair": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "stair",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false,
+            "deck": [
+              -4,
+              -8,
+              8,
+              8
+            ]
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "walkable": true,
+          "surface": "turf",
+          "approval": "approved"
+        },
+        "path": {
+          "id": "path",
+          "walkable": true,
+          "surface": "earth",
+          "route": true,
+          "approval": "approved"
+        },
+        "water": {
+          "id": "water",
+          "walkable": false,
+          "surface": "water",
+          "water": {
+            "body": "river"
+          },
+          "approval": "approved"
+        },
+        "face": {
+          "id": "face",
+          "walkable": false,
+          "surface": "earth",
+          "face": {
+            "height_cells": 1
+          },
+          "approval": "approved"
+        },
+        "wall": {
+          "id": "wall",
+          "walkable": false,
+          "surface": "rock",
+          "approval": "approved"
+        }
+      },
+      "expected_checks": [
+        "rules.deck"
+      ]
+    },
+    {
+      "id": "horizontal-bridge-with-level-landings",
+      "plan": {
+        "zone": "w6_fixture",
+        "coordinate_space": "cells",
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          "......",
+          "......",
+          "..~~..",
+          "..~~..",
+          "......",
+          "......"
+        ],
+        "lab": true,
+        "pieces": [
+          {
+            "id": "bridge",
+            "piece": "bridge",
+            "at": [
+              5,
+              2.5
+            ]
+          }
+        ],
+        "spawns": {
+          "start": [
+            0.5,
+            0.5
+          ]
+        }
+      },
+      "library": {
+        "box": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "structure",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        },
+        "hearth": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "hearth",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false
+          }
+        },
+        "fire": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "fire",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false
+          }
+        },
+        "rubble": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "debris",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false
+          }
+        },
+        "bridge": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "bridge",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false,
+            "deck": [
+              -32,
+              -4,
+              32,
+              8
+            ]
+          }
+        },
+        "stair": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "stair",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false,
+            "deck": [
+              -4,
+              -8,
+              8,
+              8
+            ]
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "walkable": true,
+          "surface": "turf",
+          "approval": "approved"
+        },
+        "path": {
+          "id": "path",
+          "walkable": true,
+          "surface": "earth",
+          "route": true,
+          "approval": "approved"
+        },
+        "water": {
+          "id": "water",
+          "walkable": false,
+          "surface": "water",
+          "water": {
+            "body": "river"
+          },
+          "approval": "approved"
+        },
+        "face": {
+          "id": "face",
+          "walkable": false,
+          "surface": "earth",
+          "face": {
+            "height_cells": 1
+          },
+          "approval": "approved"
+        }
+      },
+      "expected_checks": []
+    },
+    {
+      "id": "horizontal-bridge-cannot-connect-different-tiers",
+      "plan": {
+        "zone": "w6_fixture",
+        "coordinate_space": "cells",
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          "......",
+          "......",
+          "..~~..",
+          "..~~..",
+          "......",
+          "......"
+        ],
+        "lab": true,
+        "pieces": [
+          {
+            "id": "bridge",
+            "piece": "bridge",
+            "at": [
+              5,
+              2.5
+            ]
+          }
+        ],
+        "spawns": {
+          "start": [
+            0.5,
+            0.5
+          ]
+        },
+        "tiers": [
+          "110000",
+          "110000",
+          "110000",
+          "110000",
+          "110000",
+          "110000"
+        ]
+      },
+      "library": {
+        "box": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "structure",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        },
+        "hearth": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "hearth",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false
+          }
+        },
+        "fire": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "fire",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false
+          }
+        },
+        "rubble": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "debris",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false
+          }
+        },
+        "bridge": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "bridge",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false,
+            "deck": [
+              -32,
+              -4,
+              32,
+              8
+            ]
+          }
+        },
+        "stair": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "stair",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false,
+            "deck": [
+              -4,
+              -8,
+              8,
+              8
+            ]
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "walkable": true,
+          "surface": "turf",
+          "approval": "approved"
+        },
+        "path": {
+          "id": "path",
+          "walkable": true,
+          "surface": "earth",
+          "route": true,
+          "approval": "approved"
+        },
+        "water": {
+          "id": "water",
+          "walkable": false,
+          "surface": "water",
+          "water": {
+            "body": "river"
+          },
+          "approval": "approved"
+        },
+        "face": {
+          "id": "face",
+          "walkable": false,
+          "surface": "earth",
+          "face": {
+            "height_cells": 1
+          },
+          "approval": "approved"
+        }
+      },
+      "expected_checks": [
+        "rules.deck"
+      ]
+    },
+    {
+      "id": "wide-bridge-with-level-landings",
+      "plan": {
+        "zone": "w6_fixture",
+        "coordinate_space": "cells",
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          "......",
+          "......",
+          "~~....",
+          "~~....",
+          "......",
+          "......"
+        ],
+        "lab": true,
+        "pieces": [
+          {
+            "id": "bridge",
+            "piece": "bridge",
+            "at": [
+              1,
+              5
+            ]
+          }
+        ],
+        "spawns": {
+          "start": [
+            0.5,
+            0.5
+          ]
+        }
+      },
+      "library": {
+        "box": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "structure",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        },
+        "hearth": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "hearth",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false
+          }
+        },
+        "fire": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "fire",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false
+          }
+        },
+        "rubble": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "debris",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false
+          }
+        },
+        "bridge": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "bridge",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false,
+            "deck": [
+              -8,
+              -32,
+              16,
+              32
+            ]
+          }
+        },
+        "stair": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "stair",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false,
+            "deck": [
+              -4,
+              -8,
+              8,
+              8
+            ]
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "walkable": true,
+          "surface": "turf",
+          "approval": "approved"
+        },
+        "path": {
+          "id": "path",
+          "walkable": true,
+          "surface": "earth",
+          "route": true,
+          "approval": "approved"
+        },
+        "water": {
+          "id": "water",
+          "walkable": false,
+          "surface": "water",
+          "water": {
+            "body": "river"
+          },
+          "approval": "approved"
+        },
+        "face": {
+          "id": "face",
+          "walkable": false,
+          "surface": "earth",
+          "face": {
+            "height_cells": 1
+          },
+          "approval": "approved"
+        }
+      },
+      "expected_checks": []
+    },
+    {
+      "id": "wide-bridge-cannot-straddle-bank-tiers",
+      "plan": {
+        "zone": "w6_fixture",
+        "coordinate_space": "cells",
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          "......",
+          "......",
+          "~~....",
+          "~~....",
+          "......",
+          "......"
+        ],
+        "lab": true,
+        "pieces": [
+          {
+            "id": "bridge",
+            "piece": "bridge",
+            "at": [
+              1,
+              5
+            ]
+          }
+        ],
+        "spawns": {
+          "start": [
+            0.5,
+            0.5
+          ]
+        },
+        "tiers": [
+          "100000",
+          "100000",
+          "000000",
+          "000000",
+          "000000",
+          "000000"
+        ]
+      },
+      "library": {
+        "box": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "structure",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        },
+        "hearth": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "hearth",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false
+          }
+        },
+        "fire": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "fire",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false
+          }
+        },
+        "rubble": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "debris",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false
+          }
+        },
+        "bridge": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "bridge",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false,
+            "deck": [
+              -8,
+              -32,
+              16,
+              32
+            ]
+          }
+        },
+        "stair": {
+          "approval": {
+            "state": "approved"
+          },
+          "placement": {
+            "role": "stair",
+            "snap": "free"
+          },
+          "geometry": {
+            "collision": {
+              "shape": "rect",
+              "rect": [
+                -4,
+                -8,
+                8,
+                8
+              ]
+            }
+          },
+          "gameplay": {
+            "blocks_move": false,
+            "deck": [
+              -4,
+              -8,
+              8,
+              8
+            ]
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "walkable": true,
+          "surface": "turf",
+          "approval": "approved"
+        },
+        "path": {
+          "id": "path",
+          "walkable": true,
+          "surface": "earth",
+          "route": true,
+          "approval": "approved"
+        },
+        "water": {
+          "id": "water",
+          "walkable": false,
+          "surface": "water",
+          "water": {
+            "body": "river"
+          },
+          "approval": "approved"
+        },
+        "face": {
+          "id": "face",
+          "walkable": false,
+          "surface": "earth",
+          "face": {
+            "height_cells": 1
+          },
+          "approval": "approved"
+        }
+      },
+      "expected_checks": [
+        "rules.deck"
+      ]
+    },
+    {
       "id": "bridge-without-water",
       "plan": {
         "zone": "w6_fixture",

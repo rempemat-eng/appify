@@ -295,6 +295,14 @@ def _extra_checks(plan, library, materials, state, guide):
                 ends = ({(x, ys[0]) for x in xs}, {(x, ys[-1]) for x in xs}) if len(ys) >= len(xs) else ({(xs[0], y) for y in ys}, {(xs[-1], y) for y in ys})
                 if not deck & water or any(end & water for end in ends):
                     fs.append(_f('rules.deck', '%s: deck does not span water between dry landings' % name, at))
+                landings = ends[0] | ends[1]
+                # A bridge can span lower terrain, but its banks must agree.
+                # Deck cells are exempt from route-tier checks, so validate
+                # these ends explicitly rather than permitting a stair bypass.
+                if len({tiers.get(c) for c in landings}) != 1 or any(
+                        not grid.get(c) or not _material(materials.get(grid[c], {})).get('walkable', True)
+                        for c in landings):
+                    fs.append(_f('rules.deck', '%s: deck needs walkable landings on one shared tier' % name, at))
         elif role == 'stair':
             fs.append(_f('rules.stair', '%s: stair has no walkable flight' % name, at))
         if role == 'clutter' and relations._occupied(entry, piece, plan) & (route | water):
