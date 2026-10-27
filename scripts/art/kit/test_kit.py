@@ -195,8 +195,8 @@ class Surface(unittest.TestCase):
         ctx = {k: np.zeros((12, 16), bool) for k in ('tree', 'water', 'door', 'route', 'shore')}
         for kind in ('dirt', 'lawn', 'water'):
             v = SF.assign(kind, c, None, dict(ctx, cls=np.full((12, 16), 2)), 5)
-            self.assertFalse((v[:, 1:] == v[:, :-1]).any(), kind)
-            self.assertFalse((v[1:] == v[:-1]).any(), kind)
+            self.assertFalse(((v[:, 1:] == v[:, :-1]) & (v[:, 1:] != 'b')).any(), kind)
+            self.assertFalse(((v[1:] == v[:-1]) & (v[1:] != 'b')).any(), kind)
             given = np.full((12, 16), '.', '<U1')
             given[3, 4] = 's' if kind == 'dirt' else 'b'
             self.assertEqual(SF.assign(kind, c, given, dict(ctx, cls=np.full((12, 16), 2)), 5)[3, 4], given[3, 4])
@@ -208,7 +208,7 @@ class Surface(unittest.TestCase):
     def test_woodland_reaches_the_painted_bar(self):
         from scripts.art.kit import detail_bar as DB
         res = DB.compare('woodland_kit', os.path.join(S.ROOT, 'game', 'zones', 'woodland', 'art', 'ground.png'))
-        for name in ('water', 'path', 'shadow'):
+        for name in ('water', 'path', 'shadow', 'lawn'):
             self.assertTrue(res[name]['pass'], (name, res[name]))
 
 

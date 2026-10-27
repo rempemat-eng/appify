@@ -262,7 +262,7 @@
    ],
    "g": [
     "grassy verge",
-    1.0
+    0.6
    ],
    "s": [
     "stony",
@@ -284,19 +284,19 @@
   "lawn": {
    "b": [
     "calm field",
-    4.0
+    6.0
    ],
    "v": [
     "clover",
-    1.0
+    0.6
    ],
    "f": [
     "daisies",
-    1.0
+    0.5
    ],
    "n": [
     "long grass",
-    1.0
+    0.6
    ],
    "t": [
     "trampled",
@@ -365,7 +365,7 @@
     96
    ],
    "face": null,
-   "hash": "7bf346bab24c055e"
+   "hash": "73155a344dee7211"
   },
   {
    "id": "cobble_road",
@@ -437,7 +437,7 @@
     96
    ],
    "face": null,
-   "hash": "c4acd9a5045a01aa"
+   "hash": "9af4048bc54c7fc1"
   },
   {
    "id": "earth_face",
@@ -538,7 +538,7 @@
     ]
    },
    "approval": "candidate",
-   "hash": "1fb42b8ff57b6b7b"
+   "hash": "0c55ce2c10e2b23d"
   },
   {
    "id": "lawn_over_scree",
@@ -634,7 +634,7 @@
     ]
    },
    "approval": "candidate",
-   "hash": "f86b9a451152d20d"
+   "hash": "2c54d56a455a5a40"
   },
   {
    "id": "path_over_earth_face",
@@ -644,7 +644,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "3c9dbcc053b9506e"
+   "hash": "eff53004b7861166"
   },
   {
    "id": "path_over_lower_tier",
@@ -654,7 +654,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "b2e5b9e774122876"
+   "hash": "256efcf93480f5db"
   },
   {
    "id": "path_over_water",
@@ -677,7 +677,7 @@
     ]
    },
    "approval": "candidate",
-   "hash": "991aaa017542982e"
+   "hash": "f6d9427f828335c9"
   },
   {
    "id": "water_over_earth_face",
@@ -697,7 +697,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "f69f8760354110fa"
+   "hash": "01dc7b383ce1264f"
   }
  ]
 }

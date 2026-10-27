@@ -236,7 +236,7 @@ Matt, 27 Oct 17:00, on the woodland before and after: "i prefer the water, paths
 
 The bake writes `zones/<zone>/ground_baked.png` and a hash of its inputs (`bake --check` in `check:kit`). `TerrainGround.baked` shows it until a cell or tier is painted. From then on, the live tiles show until the zone is baked again.
 
-A narrow channel keeps its own, smaller rounding and gaussian easing (the woodland rill's). A wide body keeps the river's.
+A narrow channel keeps its own, smaller rounding and gaussian easing (the woodland rill's) and narrow bank walls (`side_w` 3). A wide body keeps the river's. Raised ground reads on every side: the plateau swatch's calmer, lighter top, `ledge`'s lip, face and side walls, and a back rim (a lit last row with a dark row of earth beyond it). Worn tracks and paths ease their cell staircases into curves (`shape.smooth`).
 
 ### Feature pieces, painted where they stand
 
@@ -244,7 +244,7 @@ Some pieces carry a `rendering.paint` block. The bake paints them into the groun
 
 | Piece | What the bake paints |
 | --- | --- |
-| `waterfall_1` to `_4` | The cascade's rock face (`rocks.face`) and the fall (`rocks.fall`). The foam and rings stay on the pool. The validator requires one wherever water crosses a south rim (`rules.water_fall`). |
+| `waterfall_1` to `_4` | The woodland's cascade: the rock face (`rocks.face`), the stepped slabs either side and the lip ledge (`rocks.rock`), the wet rock beside the sheet, the falling sheet with its streaks (`rocks.fall`), its foam and rings inside the pool. The validator requires one wherever water crosses a south rim (`rules.water_fall`). |
 | `log_steps_1`, `log_steps` (2), `log_steps_3` | `softground.log_steps`: the cheeks of earth either side, treads with depth and shade under each nose, the head flush with the rim. |
 | `footbridge_2`, `woodland_footbridge` (3), `footbridge_4` | `softground.footbridge` over the zone's own banks: an abutment in each bank, deck, kerbs, posts and rails. |
 | `stepping_stones_1`, `_2` | Flat stones a stride apart with their wet rings: a footpath's crossing of a rill or a stream. Its deck carries the route (`rules.route_water`, `rules.deck`). |
@@ -276,9 +276,10 @@ Bends, junctions, pool ends and widenings need no pieces of their own. Each is t
 - along routes: trampled lawn;
 - on footpaths: the verge creeping in;
 - in shallow streams: stones showing through;
+- in the trees' shade: long dark tufts (the woodland's rule);
 - on river and lake shores: reeds and lilies.
 
-The pick is never the same as the cell to the west or north. Each variant is drawn as a soft blob round its cells, never their square. A slow tone field shifts the body hue over about 200 texels, so a long path never looks stamped.
+The pick never repeats the variant of the cell to the west or north. The plain surface is exempt and may run on, which keeps the lawn as calm as the painted one (the `lawn` region below). Each variant is drawn as a soft blob round its cells, never their square. A slow tone field shifts the body hue over about 200 texels, so a long path never looks stamped.
 
 | Material | Variants |
 | --- | --- |
@@ -299,6 +300,7 @@ The pick is never the same as the cell to the west or north. Each variant is dra
 - **water:** the water cells and a cell of bank;
 - **path:** the routes and a cell of verge;
 - **shadow:** the trees' crown shadows;
+- **lawn:** the open lawn, held to the painted grain in both directions, so neither busier nor calmer;
 - **tiers:** the faces in `kitlab_tiers` against the plateau swatch Matt liked.
 
 The measures:
@@ -313,9 +315,10 @@ A region passes when its edges and tones reach 95 % of the painted, its flat sha
 
 | Region | Edges, painted / kit | Tones | Flat | Outline teeth / ruler | Result |
 | --- | --- | --- | --- | --- | --- |
-| water | 0.274 / 0.307 | 12.2 / 15.7 | 0.29 / 0.24 | 0.011 / 0.023, 0.13 / 0.11 | pass |
-| path | 0.306 / 0.321 | 14.3 / 15.5 | 0.062 / 0.079 | 0.102 / 0.105, 0.024 / 0.012 | pass |
-| tree shadows | 0.319 / 0.344 | 10.8 / 11.7 | 0.012 / 0.024 | | pass |
+| water | 0.274 / 0.282 | 12.2 / 14.8 | 0.29 / 0.28 | 0.011 / 0.023, 0.13 / 0.06 | pass |
+| path | 0.306 / 0.310 | 14.3 / 14.9 | 0.062 / 0.080 | 0.096 / 0.096, 0.024 / 0.013 | pass |
+| tree shadows | 0.319 / 0.364 | 10.8 / 10.5 | 0.012 / 0.023 | | pass |
+| open lawn (held both ways: as calm, not busier) | 0.277 / 0.274 | 8.3 / 8.7 | 0.031 / 0.049 | | pass |
 | tier faces (vs the plateau swatch) | 0.334 / 0.335 | 13.6 / 17.4 | 0.006 / 0.008 | | pass |
 
 **Not yet:**

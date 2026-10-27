@@ -8,6 +8,8 @@ regions from the kit plan's cells is measured on both:
   water     the water cells and one cell of bank round them
   path      the route cells and one cell of verge
   shadow    the tree pieces' crown shadows (screen.tree_shadow_hd at their feet)
+  lawn      the open lawn (lawn cells a cell from anything else, out of the shadows): held to
+            the painted grain both ways, edges within 8 % and tones at most 10 % over
   tiers     the face bands under raised ground (kit only: the painted woodland has none; it is
             measured against the plateau swatch that Matt liked, softgrid_swatches sw_plateau)
 
@@ -70,12 +72,35 @@ def texture(rgb: np.ndarray, m: np.ndarray) -> dict:
                 flat=round(float(flat[m].mean()), 4), px=int(m.sum()))
 
 
+def fam_mask(rgb, fams) -> np.ndarray:
+    """Pixels whose colour is a palette code of one of `fams` (both grounds are drawn in the house
+    palette, so a colour names its material family exactly)."""
+    from scripts.art.native.palette import LUT, FI
+    key = rgb[..., 0] * 65536 + rgb[..., 1] * 256 + rgb[..., 2]
+    want = []
+    for f in fams:
+        for t in range(8):
+            c = FI[f] * 8 + t
+            if c < len(LUT):
+                r, g, b = (int(v) for v in LUT[c][:3])
+                want.append(r * 65536 + g * 256 + b)
+    return np.isin(key, want)
+
+
 def blue(rgb):
+    return fam_mask(rgb, ('water', 'water_warm', 'water_cool'))
+
+
+def _blue_rgb(rgb):
     r, g, b = rgb[..., 0], rgb[..., 1], rgb[..., 2]
     return (b > r + 30) & (b > g + 5)
 
 
 def pathlike(rgb):
+    return fam_mask(rgb, ('path', 'path_warm', 'path_cool'))
+
+
+def _pathlike_rgb(rgb):
     r, g, b = rgb[..., 0], rgb[..., 1], rgb[..., 2]
     return (r > g + 12) & (r > b + 30)
 
@@ -135,6 +160,8 @@ def regions(plan: dict, H: int, W: int) -> dict:
             ex, _k = BK._tree_ex(p['piece'], img)
             sh |= SN.tree_shadow_hd(p['at'][0] / 3.0, p['at'][1] / 3.0, ex, W, H)
     out['shadow'] = sh & ~out['water'] & ~out['path']
+    lc = np.isin(mat, ['lawn'])
+    out['lawn'] = np.kron(lc & ~ndi.binary_dilation(~lc, iterations=1), np.ones((CELL, CELL), bool))[:H, :W] & ~sh
     falls = np.zeros((H, W), bool)
     for p in plan.get('pieces', []):
         if (((lib.get(p['piece']) or {}).get('rendering') or {}).get('paint') or {}).get('fn') == 'fall':
@@ -163,6 +190,9 @@ def compare(zone: str, painted: str, out_dir: str | None = None) -> dict:
             a.update(outline(f(A), mo))
             b.update(outline(f(B), mo))
         ok = (b['edges'] >= 0.95 * a['edges'] and b['tones'] >= 0.95 * a['tones'] and b['flat'] <= a['flat'] + 0.02)
+        if name == 'lawn':
+            # the open lawn is held to the painted grain both ways: as calm, not busier
+            ok = abs(b['edges'] - a['edges']) <= 0.08 * a['edges'] and b['tones'] <= 1.1 * a['tones'] and b['flat'] <= a['flat'] + 0.02
         if 'ruler' in a:
             ok = ok and b['teeth'] <= max(a['teeth'] + 0.01, 0.03) and b['jags'] <= max(a['jags'] + 0.01, 0.03) and b['ruler'] <= a['ruler'] + 0.05
         res[name] = {'painted': a, 'kit': b, 'pass': bool(ok)}
