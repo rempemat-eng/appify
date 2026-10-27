@@ -155,6 +155,8 @@ class Kit:
             self.ids[m['id']] = mid
             self.names[mid] = m['id']
             self.meta[mid] = m
+        self.noise = np.asarray(Image.open(os.path.join(out, self.man.get('noise', 'noise.png'))).convert('L')).astype(np.int32)
+        self.water = {m['material_id'] for m in self.man['materials'] if m.get('water')}
         self.strip = {m['material_id']: m['face']['strip_px'] for m in self.man['materials'] if m.get('face')}
         faces = [m for m in self.man['materials'] if m.get('face')]
         self.face_material = faces[0]['material_id'] if faces else None
@@ -285,6 +287,11 @@ def build(force: bool = False, check: bool = False) -> int:
     Image.fromarray(pal, 'RGBA').save(os.path.join(OUT, 'palette.png'))
     write_tileset(os.path.join(OUT, 'materials.tres'), mats)
     write_tiers(OUT)
+    # a smooth periodic noise (0..255) that breaks the water's depth bands off the cell grid
+    with F.periodic_noise(F.PERIOD):
+        from scripts.art.native import softground as _GD
+        nzv = 0.65 * _GD.nz(F.PERIOD, F.PERIOD, 22.0, 7) + 0.35 * _GD.nz(F.PERIOD, F.PERIOD, 9.0, 8)
+    Image.fromarray(np.clip(nzv * 255, 0, 255).astype(np.uint8), 'L').save(os.path.join(OUT, 'noise.png'))
     from scripts.art.kit import dressing as DR
     decals = {}
     for did, (dc, anchor) in DR.paint_decals().items():
@@ -298,7 +305,7 @@ def build(force: bool = False, check: bool = False) -> int:
     man = {'cell': E.CELL, 'period': F.PERIOD, 'variants': vs.pop(), 'profiles': E.NPROF,
            'curves': E.curve_table(), 'decals': decals,
            'atlas_cols': E.ATLAS_COLS, 'lut': 'lut.png', 'palette': 'palette.png',
-           'tileset': 'materials.tres', 'tiers_tileset': 'tiers.tres', 'ops': {'keep': E.OP_KEEP, 'upper': E.OP_UPPER, 'delta': E.OP_DELTA, 'abs': E.OP_ABS},
+           'tileset': 'materials.tres', 'tiers_tileset': 'tiers.tres', 'noise': 'noise.png', 'ops': {'keep': E.OP_KEEP, 'upper': E.OP_UPPER, 'delta': E.OP_DELTA, 'abs': E.OP_ABS},
            'materials': mats, 'transitions': trs}
     json.dump(man, open(mpath, 'w'), indent=1)
     print('kit: %d materials, %d transitions; repainted: %s' % (len(mats), len(trs), ', '.join(stale) or 'nothing'))

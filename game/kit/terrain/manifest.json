@@ -200,6 +200,48 @@
     8,
     8
    ]
+  },
+  "rushes_0": {
+   "png": "decal_rushes_0.png",
+   "anchor": [
+    10,
+    30
+   ]
+  },
+  "rushes_1": {
+   "png": "decal_rushes_1.png",
+   "anchor": [
+    10,
+    30
+   ]
+  },
+  "rushes_2": {
+   "png": "decal_rushes_2.png",
+   "anchor": [
+    10,
+    30
+   ]
+  },
+  "bankstone_0": {
+   "png": "decal_bankstone_0.png",
+   "anchor": [
+    16,
+    18
+   ]
+  },
+  "bankstone_1": {
+   "png": "decal_bankstone_1.png",
+   "anchor": [
+    19,
+    21
+   ]
+  },
+  "bankstone_2": {
+   "png": "decal_bankstone_2.png",
+   "anchor": [
+    21,
+    23
+   ]
   }
  },
  "atlas_cols": 64,
@@ -207,6 +249,7 @@
  "palette": "palette.png",
  "tileset": "materials.tres",
  "tiers_tileset": "tiers.tres",
+ "noise": "noise.png",
  "ops": {
   "keep": 0,
   "upper": 1,
@@ -284,7 +327,7 @@
     96
    ],
    "face": null,
-   "hash": "6df62520693718c2"
+   "hash": "b36564b9e6b5da2c"
   },
   {
    "id": "scree",
@@ -364,7 +407,7 @@
     ]
    },
    "approval": "candidate",
-   "hash": "a48eb7f3a3a1be15"
+   "hash": "bf68bbd05c0c41ab"
   },
   {
    "id": "lawn_over_earth_face",
@@ -374,7 +417,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "0ec3607c4ad6bbc0"
+   "hash": "1fc3caf95a18cb2a"
   },
   {
    "id": "lawn_over_lower_tier",
@@ -384,7 +427,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "48c57c4024040fde"
+   "hash": "ada4259c956a8934"
   },
   {
    "id": "lawn_over_path",
@@ -419,7 +462,7 @@
     ]
    },
    "approval": "candidate",
-   "hash": "64415e0ac8e25ee1"
+   "hash": "bf781a5bf6941a45"
   },
   {
    "id": "lawn_over_scree",
@@ -449,7 +492,7 @@
     ]
    },
    "approval": "candidate",
-   "hash": "f41f67b1c67c2f12"
+   "hash": "89acf2876b82df7d"
   },
   {
    "id": "lawn_over_water",
@@ -458,27 +501,29 @@
    "png": "over_lawn_over_water.png",
    "variants": 1,
    "dressing": {
-    "density": 0.45,
+    "density": 0.5,
     "south": [
+     "rushes_0",
+     "rushes_1",
+     "rushes_2",
      "tuft_0",
-     "tuft_3",
-     "tuft_5",
-     "pebble_2",
-     "pebble_3"
+     "tuft_3"
     ],
     "north": [
-     "pebble_1",
+     "bankstone_0",
+     "bankstone_1",
+     "bankstone_2",
      "pebble_2",
-     "pebble_3"
+     "tuft_1"
     ],
     "side": [
-     "pebble_2",
-     "pebble_3",
-     "tuft_1"
+     "tuft_1",
+     "rushes_1",
+     "tuft_0"
     ]
    },
    "approval": "candidate",
-   "hash": "455e1d43558e6ed7"
+   "hash": "53b3ea3583702ec4"
   },
   {
    "id": "lawn_over_worn",
@@ -513,7 +558,7 @@
     ]
    },
    "approval": "candidate",
-   "hash": "149d72a9350434d1"
+   "hash": "bba01f54fdedb547"
   },
   {
    "id": "path_over_earth_face",
@@ -523,7 +568,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "ad2917f61f6ef49d"
+   "hash": "1c04290fb0c5de83"
   },
   {
    "id": "path_over_lower_tier",
@@ -533,7 +578,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "ecd24119ca98231a"
+   "hash": "2429a557341e8e1d"
   },
   {
    "id": "path_over_water",
@@ -556,7 +601,17 @@
     ]
    },
    "approval": "candidate",
-   "hash": "38e026d9801c2c46"
+   "hash": "956a4f768e636738"
+  },
+  {
+   "id": "water_over_earth_face",
+   "upper": "water",
+   "lower": "earth_face",
+   "png": "over_water_over_earth_face.png",
+   "variants": 1,
+   "dressing": null,
+   "approval": "candidate",
+   "hash": "79c5626d113d9f5a"
   },
   {
    "id": "worn_over_path",
@@ -566,7 +621,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "ef9006fd501576f0"
+   "hash": "a4df63d5017d176c"
   }
  ]
 }

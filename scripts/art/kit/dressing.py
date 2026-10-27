@@ -76,6 +76,30 @@ def pebble(seed: int, big: bool):
     return cv, (DECAL // 2, DECAL // 2)
 
 
+def rushes(seed: int):
+    """softground.rush: a clump of rushes standing in the shallows; its anchor lies 6 texels below
+    the clump's foot, so seated on a south shore's outline it stands in the water off the bank."""
+    rng = np.random.default_rng(seed)
+    H, W = 26, 20
+    cv = np.full((H, W), -1, np.int32)
+    GD.rush(cv, H - 2, W // 2, rng, n=int(rng.integers(4, 7)))
+    return cv, (W // 2, H - 2 + 6)
+
+
+def bank_stone(seed: int, w: float):
+    """props.boulder4 small, as palette codes: a stone set in the bank, half in the water."""
+    from scripts.art.native import ctx
+    from scripts.art.native import props as P4
+    from scripts.art.native.palette import LUT
+    img, anc, _ = P4.boulder4(ctx.D, w, w * 0.62, seed=seed, moss='top' if seed % 2 else None)
+    a = np.asarray(img.convert('RGBA'))
+    rev = {tuple(int(v) for v in c): i for i, c in enumerate(LUT)}
+    cv = np.full(a.shape[:2], -1, np.int32)
+    for y, x in zip(*np.nonzero(a[..., 3] > 0)):
+        cv[y, x] = rev.get(tuple(int(v) for v in a[y, x, :3]), -1)
+    return cv, (int(anc[0]), int(anc[1]) - 3)
+
+
 def paint_decals() -> dict:
     """id -> (codes, anchor (x, y)): the decal set the dressing draws from."""
     out = {}
@@ -85,6 +109,10 @@ def paint_decals() -> dict:
         out['blades_%d' % i] = blades(800 + i)
     for i in range(4):
         out['pebble_%d' % i] = pebble(900 + i, big=i >= 2)
+    for i in range(3):
+        out['rushes_%d' % i] = rushes(1000 + i)
+    for i in range(3):
+        out['bankstone_%d' % i] = bank_stone(1100 + i, (5.0, 6.5, 8.0)[i])
     return out
 
 

@@ -21,6 +21,8 @@ scripts/review/ground_rules.py on painted plans):
     rules.walk            a spawn or a door that stands on a blocked cell
     rules.stair           a stair whose flight is not all face, whose head is not flush with the
                           rim above it or whose foot does not land on the lower ground
+    rules.water_fall      water crossing a south rim with no waterfall over the face under it, or a
+                          waterfall with no water above it (ground-rules 2)
     rules.tier_route      a route that changes tier with no stair between (faces are derived
                           under every south rim: compose.derive, as the game draws them)
 
@@ -199,6 +201,22 @@ def check_zone(plan) -> list:
                 if (route[Y, X] or (g[Y, X] and mats[g[Y, X]].get('face'))) and (X, Y) not in decks and (x, y) not in decks:
                     fs.append(_f('rules.tier_route', 'the route at cell %s changes tier with no stair' % ((x, y),), [x * CELL + 12, y * CELL + 12]))
                     break
+    # water crossing a south rim falls over a waterfall piece, and a waterfall has water above it
+    falls = set()
+    for p in plan.get('pieces', []):
+        e = idx.get(p['piece'])
+        if e and e.get('role') == 'waterfall':
+            cx, cy = int(p['at'][0] // CELL), int(p['at'][1] // CELL)
+            cells_ = [(cx + c[0], cy + c[1]) for c in e.get('footprint') or []]
+            falls |= set(cells_)
+            top = min(c[1] for c in cells_) if cells_ else 0
+            if not cells_ or not all(0 <= c[1] < H and 0 <= c[0] < W and g[c[1], c[0]] and mats[g[c[1], c[0]]].get('face') for c in cells_) \
+                    or not all(top - 1 >= 0 and water[top - 1, c[0]] for c in cells_):
+                fs.append(_f('rules.water_fall', '%s: not over a face with water above it, the width of the channel' % p.get('id'), p['at']))
+    for y in range(H - 1):
+        for x in range(W):
+            if water[y, x] and g[y + 1, x] and mats[g[y + 1, x]].get('face') and (x, y + 1) not in falls:
+                fs.append(_f('rules.water_fall', 'water at cell %s crosses a rim with no waterfall' % ((x, y),), [x * CELL + 12, y * CELL + 12]))
     # every body of water reaches the zone's edge or is a pool
     lab, n = ndi.label(water)
     for k in range(1, n + 1):

@@ -94,6 +94,53 @@ def strip_rows(cells: np.ndarray, kit) -> np.ndarray:
     return out
 
 
+WATER_REACH = 2   # cells a shore distance looks around (terrain.gdshader's water_delta loops)
+FAR = 1 << 20
+
+
+def _lt(d2, t, j):
+    """dist + j < t, from the squared distance (exact in integers: the shader does the same)."""
+    tj = t - j
+    return (tj > 0) & (d2 < tj * tj)
+
+
+def water_delta(cells: np.ndarray, Y: np.ndarray, X: np.ndarray, m: int, noise=None) -> np.ndarray:
+    """softground.water's depth, from the true distance (texels) to the shore cells around: darker in
+    a band under a north bank (stepping back to the body through a checker), darker again in the
+    middle of wide water, lit shallows along the other shores. m is the water material; its texels
+    that lie in a shore cell (under the bank's lumps) count as at the shore. The bands follow the shore's shape
+    (rounded at corners; the north band only under land straight above) and wander off it by up to 7 texels with a smooth periodic noise."""
+    rows, cols = cells.shape
+    cy, cx = Y // CELL, X // CELL
+    dN = np.full(Y.shape, FAR, np.int64)
+    dO = np.full(Y.shape, FAR, np.int64)
+    d = np.full(Y.shape, FAR, np.int64)
+    for oy in range(-WATER_REACH, WATER_REACH + 1):
+        for ox in range(-WATER_REACH, WATER_REACH + 1):
+            qy, qx = cy + oy, cx + ox
+            ok = (qy >= 0) & (qx >= 0) & (qy < rows) & (qx < cols)
+            land = ok & (cells[np.clip(qy, 0, rows - 1), np.clip(qx, 0, cols - 1)] != m)
+            ddx = np.maximum(np.maximum(qx * CELL - X, X - (qx * CELL + CELL - 1)), 0)
+            ddy = np.maximum(np.maximum(qy * CELL - Y, Y - (qy * CELL + CELL - 1)), 0)
+            d2 = np.where(land, ddx * ddx + ddy * ddy, FAR)
+            d = np.minimum(d, d2)
+            north = (ddx == 0) if oy < 0 else np.zeros(Y.shape, bool)   # land straight above
+            dN = np.minimum(dN, np.where(north, d2, FAR))
+            dO = np.minimum(dO, np.where(north, FAR, d2))
+    j = np.zeros(Y.shape, np.int64)
+    if noise is not None:
+        j = (noise[Y % noise.shape[0], X % noise.shape[1]].astype(np.int64) * 14) // 255 - 7
+    chk = ((X + Y) % 2) == 0
+    n16, n21 = _lt(dN, 16, j), _lt(dN, 21, j)
+    out = np.zeros(Y.shape, np.int32)
+    out = np.where(n16, -1, out)
+    out = np.where(~n16 & n21 & chk, -1, out)
+    out = np.where(~_lt(d, 30, j) & ~n16, -1, out)
+    out = np.where(~_lt(d, 26, j) & _lt(d, 30, j) & ~n21 & chk, -1, out)
+    out = np.where(~n21 & _lt(dO, 5, 0), 1, out)
+    return out
+
+
 def render(cells: np.ndarray, kit, dressing: bool = True, pieces=None, tiers=None) -> np.ndarray:
     """cells: (rows, cols) material ids (0 = nothing, outside the zone); tiers: the same shape, the
     height tier of each cell (faces are derived). Returns codes of (rows * CELL, cols * CELL); -1
@@ -114,6 +161,8 @@ def render(cells: np.ndarray, kit, dressing: bool = True, pieces=None, tiers=Non
             r = sr[Y // CELL, X // CELL]
             fy = np.where(r >= 0, r * CELL + Y % CELL, np.where(r == -1, 0, kit.strip[m] - 1))
             return kit.fills[m][np.clip(fy, 0, kit.strip[m] - 1), X % P]
+        if m in kit.water:
+            return step(kit.fills[m][Y % P, X % P], water_delta(cells, Y, X, m, kit.noise))
         return kit.fills[m][Y % P, X % P]
 
     for j in range(rows + 1):
@@ -183,6 +232,18 @@ def piece_index() -> dict:
     return _INDEX
 
 
+_MASKS = {}
+
+
+def _mask(res: str) -> np.ndarray:
+    if res not in _MASKS:
+        import os
+        from PIL import Image
+        from .schema import ROOT
+        _MASKS[res] = np.asarray(Image.open(os.path.join(ROOT, 'game', res[len('res://'):])).convert('L')).astype(np.int32)
+    return _MASKS[res]
+
+
 def shadows(pieces, H: int, W: int) -> np.ndarray:
     """The pieces' cast shadows as ramp steps per texel (TerrainGround.rebuild_shadows): an ellipse
     from the piece's foot, its core (6 texels in from the rim) two tones down, the rim one."""
@@ -191,6 +252,16 @@ def shadows(pieces, H: int, W: int) -> np.ndarray:
     for pc in pieces:
         e = idx.get(pc['piece'])
         if not e or not e.get('shadow'):
+            continue
+        if e['shadow'].get('mask'):
+            mk = e['shadow']['mask']
+            arr = _mask(mk['png'])
+            y0, x0 = pc['at'][1] + mk['offset'][1], pc['at'][0] + mk['offset'][0]
+            h, w = arr.shape
+            ys, xs = slice(max(0, y0), min(H, y0 + h)), slice(max(0, x0), min(W, x0 + w))
+            if ys.start < ys.stop and xs.start < xs.stop:
+                sub = arr[ys.start - y0:ys.stop - y0, xs.start - x0:xs.stop - x0]
+                out[ys, xs] = np.maximum(out[ys, xs], sub)
             continue
         cx = pc['at'][0] + e['shadow']['dir'][0]
         cy = pc['at'][1] + e['shadow']['dir'][1]

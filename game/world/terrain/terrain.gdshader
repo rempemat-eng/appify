@@ -14,6 +14,7 @@ uniform sampler2D fills_tex : filter_nearest, repeat_disable;  // fills in a gri
 uniform sampler2D over_tex : filter_nearest, repeat_disable;   // transitions, stacked by index
 uniform sampler2D lut_tex : filter_nearest, repeat_disable;    // palette code -> RGB
 uniform sampler2D meta_tex : filter_nearest, repeat_disable;   // row 0: priority, fill slot, present; row 1+u: pair table
+uniform sampler2D noise_tex : filter_nearest, repeat_disable;  // smooth periodic noise (L) for the water's depth bands
 uniform sampler2D shadow_tex : filter_nearest, repeat_disable; // R: cast shadow steps (0 to 2) per texel
 uniform ivec2 grid = ivec2(1, 1);
 uniform int period = 768;
@@ -59,6 +60,59 @@ bool is_strip(int m) {
 	return byte_at(texelFetch(meta_tex, ivec2(m, 0), 0), 2) == 2;
 }
 
+int step_code(int code, int d) {
+	if (code < 0) {
+		return code;
+	}
+	int t = code % 8;
+	if (t >= 6) {
+		return code;
+	}
+	return code - t + clamp(t + d, 0, 5);
+}
+
+bool lt2(int d2, int t, int j) {
+	int tj = t - j;
+	return tj > 0 && d2 < tj * tj;
+}
+
+// softground.water's depth from the true distance to the shore cells around (compose.water_delta)
+int water_delta(int m, ivec2 p) {
+	ivec2 c = p / cell;
+	int far = 1 << 20;
+	int dN = far;
+	int dO = far;
+	int d = far;
+	for (int oy = -2; oy <= 2; oy++) {
+		for (int ox = -2; ox <= 2; ox++) {
+			ivec2 q = c + ivec2(ox, oy);
+			if (q.x < 0 || q.y < 0 || q.x >= grid.x || q.y >= grid.y || material_at(q.x, q.y) == m) {
+				continue;
+			}
+			int ddx = max(max(q.x * cell - p.x, p.x - (q.x * cell + cell - 1)), 0);
+			int ddy = max(max(q.y * cell - p.y, p.y - (q.y * cell + cell - 1)), 0);
+			int d2 = ddx * ddx + ddy * ddy;
+			d = min(d, d2);
+			if (oy < 0 && ddx == 0) {
+				dN = min(dN, d2);
+			} else {
+				dO = min(dO, d2);
+			}
+		}
+	}
+	int j = (byte_at(texelFetch(noise_tex, ivec2(p.x % period, p.y % period), 0), 0) * 14) / 255 - 7;
+	bool chk = ((p.x + p.y) % 2) == 0;
+	bool n16 = lt2(dN, 16, j);
+	bool n21 = lt2(dN, 21, j);
+	int o = 0;
+	if (n16) { o = -1; }
+	if (!n16 && n21 && chk) { o = -1; }
+	if (!lt2(d, 30, j) && !n16) { o = -1; }
+	if (!lt2(d, 26, j) && lt2(d, 30, j) && !n21 && chk) { o = -1; }
+	if (!n21 && lt2(dO, 5, 0)) { o = 1; }
+	return o;
+}
+
 int fill_code(int m, ivec2 p) {
 	vec4 mt = texelFetch(meta_tex, ivec2(m, 0), 0);
 	int slot = byte_at(mt, 1);
@@ -85,19 +139,13 @@ int fill_code(int m, ivec2 p) {
 		fy = clamp(fy, 0, strip - 1);
 	}
 	vec4 c = texelFetch(fills_tex, o + ivec2(p.x % period, fy), 0);
-	return byte_at(c, 0) + 256 * byte_at(c, 1);
+	int code = byte_at(c, 0) + 256 * byte_at(c, 1);
+	if (byte_at(mt, 2) == 3) {
+		code = step_code(code, water_delta(m, p));
+	}
+	return code;
 }
 
-int step_code(int code, int d) {
-	if (code < 0) {
-		return code;
-	}
-	int t = code % 8;
-	if (t >= 6) {
-		return code;
-	}
-	return code - t + clamp(t + d, 0, 5);
-}
 
 // build.Kit.pair_for: a face's own pair, across tiers the upper's '^' pair (column 63), else the
 // exact pair, then the upper's '*' pair (column 0)

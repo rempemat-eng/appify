@@ -2,8 +2,8 @@
 
 Status: prototype (Claude A, 27 Oct). It holds:
 
-- the terrain kit (seven materials, eleven transitions, edge dressing, tiers with derived faces);
-- the piece library and its schema (87 pieces);
+- the terrain kit (seven materials, twelve transitions, edge dressing, tiers with derived faces);
+- the piece library and its schema (90 pieces);
 - props as scenes;
 - a JSON plan that turns into a zone scene and back;
 - a first dock in the editor;
@@ -91,7 +91,7 @@ The lawn-over-path tiles draw `softground.sunken_edge`'s bands along the outline
 
 **The outline.** Along every cell edge between two materials, the outline is displaced by a lump curve: one of four smooth profiles over the whole cell edge (24 texels, lumps 12 to 24 long and 1 to 3 deep, out, in, out-then-in, leaning), chosen by a hash of that cell edge's place. A cell edge is split between two display tiles at its middle, and both draw the same curve, so lumps run across tile borders with no seam and no flat stretch.
 
-The curves meet at zero at the grid vertex in a tile's middle, and the corners are rounded there with radius 8 texels outer and inner. That is a third of a cell, the largest that leaves the border strips untouched; eastward-edges.md asks for 0.4 and 0.25. A lane turning reads as a rounded bend, and a single lawn cell inside a path is a rounded turf patch.
+The curves meet at zero at the grid vertex in a tile's middle, and the corners are rounded there with radius 9 texels outer and 8 inner. That is the largest that leaves the border strips untouched (10 broke the seams); eastward-edges.md asks for 0.4 and 0.25 of a cell. With the turf's bands it reads as about 6 texels, which is Eastward's 4 to 5 px corner (`05-round-corner`) at the same character height. A lane turning reads as a rounded bend, and a single lawn cell inside a path is a rounded turf patch.
 
 A mask's tiles are its crossings' profile combinations: 16 per mask, 256 for the two diagonal saddles, 704 for a pair (`edges.layout`). Everything in a tile follows from its mask and its profiles, and `test_kit.py` checks the border strips of every tile against each other.
 
@@ -174,21 +174,34 @@ The lab is `kit/zones/kitlab_tiers.json` (`--zone=kitlab_tiers`): a plateau with
 
 ### Water
 
-`water` is terrain with a `water` block. Its fill is `softground.water`'s body made periodic: a calm tone, soft sky patches, ripples in drifts and glints.
+`water` is terrain with a `water` block. Its fill is `softground.water`'s body made periodic: a calm tone, soft sky patches, sparse ripple lines and glints.
 
-`bank` draws the shores:
+**Depth** is drawn per texel from the true distance to the shore cells within two cells (`compose.water_delta`, the shader's `water_delta`):
 
-- under a north lip: an earth face 3 px tall with clods hashed from the cell edge, the 1 px light waterline and two rows of shade;
-- on a south shore: the turf's lip lit and the shallows lit;
-- beside a north-south run: a narrow earth wall seen edge-on, lit facing west and in shade facing east, with the waterline at its foot.
+- a darker band under a north bank, stepping back through a checker;
+- darker again in the middle of wide water;
+- lit shallows along the other shores.
 
-Every band lies within 7 texels of the outline, so a tile below never needs to know. `path_over_water` uses the same painter, and stones and tufts come as dressing. A route crosses water only on a deck: `woodland_footbridge` is `softground.footbridge` as a structure (`rules.route_water`, `rules.deck`).
+The bands follow the shore's shape and wander off it by up to 7 texels with a smooth periodic noise (`kit/terrain/noise.png`), so they never show the cell grid.
+
+`bank` draws the shores, as the woodland's painted river had them:
+
+- **Under a north bank:** an earth face 6 rows tall (a lit top, two courses of clods hashed from the cell edge, a wet dark foot), the light waterline, and two rows of shade on the water.
+- **On a south shore:** the grass lip over the water, lit, and the shallows lit.
+- **Beside a north-south run:** a narrow earth wall seen edge-on, lit facing west and in shade facing east, with the waterline at its foot.
+
+`path_over_water` uses the same painter.
+
+The dressing adds clumps of rushes standing in the shallows off a south shore and the sides (`rushes_*`, `softground.rush`). It also adds bank stones (`bankstone_*`, `props.boulder4` small) set on the north banks only, so no stone stands in the water. A boulder stands in water only when placed as a stepping stone. A stream keeps its width through a meander (`woodland_kit.keep_width`), and one-cell notches and spurs are smoothed out of any body of water (`smooth_cells`).
+
+**Crossings.** A route crosses water only on a deck: `woodland_footbridge` is `softground.footbridge` as a structure (`rules.route_water`, `rules.deck`).
+
+**Falls.** Where water crosses a south rim, the face under it must be covered by a fall piece (`rules.water_fall`). `waterfall_2` and `waterfall_3` are the woodland's painted fall (`water.fall_hd`): the stone lip, the falling sheet with streaks, the plume and foam rings. Each covers a channel two or three cells wide over the two-cell face. Below a fall, `water_over_earth_face` carries the water down the face.
 
 **Not yet:**
 
-- flow per cell and its animation (static ripples for now);
-- reeds and rushes as decals;
-- falls as pieces on a tier edge (the woodland's cascade is missing from `woodland_kit` until then; its rill runs straight into the pool).
+- flow per cell and its animation (the ripples are static);
+- the fall's animated strip.
 
 ## The kit: pieces
 
@@ -200,7 +213,7 @@ Props and structures are built into a scene each by `python3 -m scripts.art.kit.
 - the picture as a `Sprite2D` offset so the foot is the origin (y-sorted by it), with `variant` choosing another picture;
 - the solid box as a `StaticBody2D` on the walls layer.
 
-The ground draws the pieces' cast shadows itself. An ellipse per piece, in ramp steps (core two tones down, the outer 2 world px one tone), is applied by the shader, and `compose.shadows` draws the same.
+The ground draws the pieces' cast shadows itself, in ramp steps (core two tones down, the outer 2 world px one tone), in the shader and in `compose.shadows` alike. A tree's shadow is its crown's silhouette squashed and sheared down-right (`props.crown_shadow`, saved as `art/shadow_<id>.png`). Other pieces cast an ellipse.
 
 **Not yet:** the `function` block wiring an `Interactable`, `Door`, `RestoreSite` or `Conditional`, and lights and looping effects from `rendering`.
 
@@ -258,7 +271,7 @@ Matt, 13:43: a piece "adheres to the standard before you apply it everywhere". A
 
 1. **`review:asset`** on its pictures: for terrain, the fill and every tile composed over its partners; for props, the sprite.
 2. **The ground rules on a test layout.** Terrain gets the kit lab (`game/kit/zones/kitlab.json`, every mask). A prop gets a lab with legal and illegal placements; the illegal ones must be refused.
-3. **A 3x sheet** next to Bramble and the bench and lamp style anchors (`scripts/art/kit/sheet.py`), with the Eastward side-by-side made locally.
+3. **A 3x sheet** per material (`python3 -m scripts.art.kit.approval OUT --eastward CROPS`). It shows the fill, every transition tile, the dressing, and a test layout from the lab next to Bramble. The matching Eastward crops sit beside them at the same character height. Those crops are local only, so the sheets are never committed. Props add the bench and lamp style anchors (`sheet.py`).
 4. A **detail-auditor** run from another chat.
 
 It becomes `approved` only with Matt's approval for every new material and every new prop design. A new variant of an approved piece needs the gate and a reviewer. The build marks unapproved pieces. The dock refuses to place them in any zone but a lab (`"lab": true`), and `kit_rules` faults them in a zone marked `"ship": true`. Today every kit zone is a lab.
@@ -332,6 +345,7 @@ The full dock (Codex W3) has:
 | `rules.walk` | a spawn on a blocked cell |
 | `rules.stair` | a stair's flight not on a face, or its head and foot not flush |
 | `rules.tier_route` | a route that changes tier with no stair |
+| `rules.water_fall` | water crossing a south rim with no fall piece over the face below it, or a fall with no water above |
 
 Faces are derived the way the game draws them. `test_kit.Rules` holds a plan that trips each rule and one that keeps it. It caught two faults while the prototype was built:
 
@@ -341,7 +355,7 @@ Faces are derived the way the game draws them. `test_kit.Rules` holds a plan tha
 **Still to come (Codex W5, W6):**
 
 - **Zone-level physics on the painted-plan checks.** An adapter turns an exported kit zone into the plan shape `ground_rules.check_plan` reads, so the same code checks both kinds of zone.
-- **More cell-native checks:** water flowing uphill, a fall on a rim, fire on a hearth, debris in the broken stage, scale against the size guide.
+- **More cell-native checks:** water flowing uphill, fire on a hearth, debris in the broken stage, scale against the size guide.
 - **One relation engine, twice.** The dock's refusals are a first GDScript version of it. Both the GDScript and Python versions run one shared fixture file (`game/kit/schema/relations.cases.json`) so they cannot drift.
 
 ## How a lane builds a zone in under an hour
@@ -526,8 +540,8 @@ Matt, 13:43: "consider how chatgpt can help here to conserve claude tokens".
 ### What Claude does next (in order)
 
 1. Matt's steer on the kit's look; then the library gate on the lawn, path, water and earth face (review:asset, the auditors, the 3x sheets), and Matt's approval.
-2. The rock cliff and the low ledge, falls, reeds and rushes, flowing water.
-3. The woodland's pieces: roles and relations filled in, real collision and crown-shaped shadows, the cascade.
+2. The rock cliff and the low ledge, flowing water, the falls' animation.
+3. The woodland's pieces: roles and relations filled in, real collision.
 4. The Crossroads (#301's plan, with a role and a relation on every prop, as the second seed) rebuilt with the editor.
 5. The first 30 relation cases for W5.
 6. Reviews and approvals of W1 to W7.
@@ -536,9 +550,9 @@ Matt, 13:43: "consider how chatgpt can help here to conserve claude tokens".
 
 **What exists:**
 
-- **Kit code** (`scripts/art/kit/`): `fills.py`, `edges.py`, `dressing.py`, `compose.py`, `build.py`, `sheet.py`, `schema.py`, `seed_props.py`, `structures.py`, `props.py`, `woodland_kit.py`, `walk.py`, `render_zone.py` and `test_kit.py`.
+- **Kit code** (`scripts/art/kit/`): `fills.py`, `edges.py`, `dressing.py`, `compose.py`, `build.py`, `sheet.py`, `approval.py`, `schema.py`, `seed_props.py`, `structures.py`, `props.py`, `woodland_kit.py`, `walk.py`, `render_zone.py` and `test_kit.py`.
 - **Validator:** `scripts/review/kit_rules.py`.
-- **Library and built kit** (`game/kit/`): the schema and invalid fixtures, 87 pieces, the built terrain and decals, 69 prop scenes, and zone plans for `kitlab`, `kitlab_tiers` and `woodland_kit`.
+- **Library and built kit** (`game/kit/`): the schema and invalid fixtures, 90 pieces, the built terrain and decals, 71 prop scenes, and zone plans for `kitlab`, `kitlab_tiers` and `woodland_kit`.
 - **Godot runtime** (`game/world/terrain/`): the shader, `TerrainKit`, `TerrainGround` (tiers, shadows, blocking), `TerrainDressing` and `KitPiece`.
 - **Tools:** `game/tools/kit_zone.gd` and the dock in `game/addons/world_editor/`.
 - **Zones:** `kitlab`, `kitlab_tiers` and `woodland_kit` in `data/zones.json`.

@@ -170,6 +170,7 @@ func _rebuild() -> void:
 		_mat.set_shader_parameter("over_tex", kit.over_tex)
 		_mat.set_shader_parameter("lut_tex", kit.lut_tex)
 		_mat.set_shader_parameter("meta_tex", kit.meta_tex)
+		_mat.set_shader_parameter("noise_tex", kit.noise_tex)
 		_mat.set_shader_parameter("period", kit.period)
 		_mat.set_shader_parameter("variants", kit.variants)
 		_mat.set_shader_parameter("fill_cols", TerrainKit.FILL_COLS)
@@ -213,6 +214,21 @@ func rebuild_shadows() -> void:
 	for p in pieces():
 		var sh: Dictionary = p.shadow()
 		if sh.is_empty():
+			continue
+		if sh.has("mask"):
+			var mk: Image = sh.mask
+			var at: Vector2i = sh.at
+			for my in mk.get_height():
+				var y: int = at.y + my
+				if y < 0 or y >= sz.y:
+					continue
+				for mx in mk.get_width():
+					var x: int = at.x + mx
+					if x < 0 or x >= sz.x:
+						continue
+					var v := mk.get_pixel(mx, my).r8
+					if v > 0 and v > _shadow_img.get_pixel(x, y).r8:
+						_shadow_img.set_pixel(x, y, Color8(v, 0, 0, 255))
 			continue
 		var c: Vector2 = sh.centre
 		var r: Vector2 = sh.radii

@@ -40,9 +40,21 @@ func _apply_variant() -> void:
 		sprite.texture = load(vs[variant].png)
 		sprite.offset = -Vector2(vs[variant].foot[0], vs[variant].foot[1])
 
-## The piece's cast shadow on the ground: centre and radii in texels (zone space), or {} for none.
+static var _masks := {}
+
+## The piece's cast shadow on the ground, or {} for none: an ellipse ("centre", "radii", texels in
+## zone space) or a mask from the crown ("mask": Image of ramp steps, "at": its top left).
 func shadow() -> Dictionary:
 	var s = data().get("shadow")
 	if s == null:
 		return {}
+	if s.has("mask"):
+		var png: String = s.mask.png
+		if not _masks.has(png):
+			var img := (load(png) as Texture2D).get_image()
+			if img.is_compressed():
+				img.decompress()
+			img.convert(Image.FORMAT_L8)
+			_masks[png] = img
+		return {"mask": _masks[png], "at": Vector2i(int(position.x) + int(s.mask.offset[0]), int(position.y) + int(s.mask.offset[1]))}
 	return {"centre": position + Vector2(s.dir[0], s.dir[1]), "radii": Vector2(s.size[0], s.size[1])}

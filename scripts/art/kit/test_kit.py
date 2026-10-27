@@ -105,9 +105,6 @@ class Kit(unittest.TestCase):
             self.assertIn(c, src)
 
 
-if __name__ == '__main__':
-    unittest.main()
-
 
 class Rules(unittest.TestCase):
     """The validator on kit zones (scripts/review/kit_rules.py): each rule trips on a plan that
@@ -156,3 +153,16 @@ class Rules(unittest.TestCase):
         self.assertFalse(self.faults(plan2, 'rules.stair'))
         wrong = dict(self.plan(rows, [dict(steps, at=[72, 144])]), tiers=tiers)    # a cell too low: half on the lawn
         self.assertTrue(self.faults(wrong, 'rules.stair'))
+
+    def test_water_fall(self):
+        rows = ['..~~..'] * 6
+        tiers = ['111111', '111111', '000000', '000000', '000000', '000000']   # the faces on rows 2 and 3
+        self.assertTrue(self.faults(dict(self.plan(rows), tiers=tiers), 'rules.water_fall'))
+        fall = {'id': 'f', 'piece': 'waterfall_2', 'at': [72, 96], 'variant': 'w2'}
+        self.assertFalse(self.faults(dict(self.plan(rows, [fall]), tiers=tiers), 'rules.water_fall'))
+        aside = dict(fall, at=[24, 96])                                         # off the channel
+        self.assertTrue(self.faults(dict(self.plan(rows, [aside]), tiers=tiers), 'rules.water_fall'))
+
+
+if __name__ == '__main__':
+    unittest.main()

@@ -50,9 +50,9 @@ T0, T1 = CELL + HALF, 3 * CELL - HALF     # the tile's texels in the canvas (36 
 MID = N / 2         # the tile's vertex in the canvas
 SIDES = ('n', 'e', 's', 'w')
 ATLAS_COLS = 64     # tiles across a transition's atlas block
-R_OUT = 8.0         # corner radii, texels (eastward-edges.md 1.5a: paths turn at 0.4 / 0.25 cell;
-R_IN = 8.0          # 8 of 24 is what fits a tile with its border strips left canonical)
-CORNER = 8          # corners are rounded within this many texels of the vertex
+R_OUT = 9.0         # corner radii, texels (eastward-edges.md 1.5a: paths turn at 0.4 / 0.25 cell;
+R_IN = 8.0          # 9 and 8 of 24 are what fit a tile with its border strips left canonical: test_kit)
+CORNER = 9          # corners are rounded within this many texels of the vertex
 
 
 def _curve(u: np.ndarray, k: int) -> np.ndarray:
@@ -253,25 +253,34 @@ def bank(k: int, fill_u: np.ndarray, fill_l: np.ndarray, prof=(0, 0, 0, 0), side
     for d in range(0, 6):
         col_bank |= GD.down(top_of_run, d) & m2
     yy_ = np.arange(N)[:, None] + 0.5
-    col_bank &= (rt <= 6) & nb_cfg & (yy_ > MID - 5) & (yy_ < MID + 10)     # only under the horizontal cell line
+    col_bank &= (rt <= 9) & nb_cfg & (yy_ > MID - 5) & (yy_ < MID + 10)     # only under the horizontal cell line
     xs = np.arange(N) + 0.5
     # which cell edge each column's bank belongs to, and t along it
     t = np.where(xs < MID, xs - T0, xs - T1).astype(int) + HALF
     t = np.clip(t, 0, CELL - 1)
     pw, pe = _bank_marks(prof[3]), _bank_marks(prof[1])
+    pw2, pe2 = _bank_marks(prof[3] + 8), _bank_marks(prof[1] + 8)
     marks = np.where(xs < MID, pw[t], pe[t])[None, :].repeat(N, 0)
-    face1 = col_bank & (rt == 1)
-    face2 = col_bank & (rt == 2)
-    face3 = col_bank & (rt == 3)
-    wline = col_bank & (rt == 4)
-    shade = col_bank & (rt >= 5) & (rt <= 6)
-    for sel, code in ((face1, C('earth', 3)), (face3, C('earth_cool', 1)), (wline, C('water', 5))):
+    marks2 = np.where(xs < MID, pw2[t], pe2[t])[None, :].repeat(N, 0)
+    # the bank's earth face, 6 texels (softground.water's bank_h): a lit top row, two courses of
+    # small clods (each lit where it begins, dark where it ends), a dark wet bottom row; then the
+    # light waterline and two rows of the bank's shade on the water (the depth layer carries on)
+    face_rows = {1: None, 2: marks, 3: marks, 4: marks2, 5: marks2, 6: 'wet'}
+    for r_, mk in face_rows.items():
+        sel = col_bank & (rt == r_)
         ops.own[sel] = 2
-        ops.ab[sel] = code
-    ops.own[face2] = 2
-    ops.ab[face2] = np.where(marks[face2] > 0, C('earth', 3), np.where(marks[face2] < 0, C('earth_cool', 1), C('earth', 2)))
-    ops.shift(shade & (rt == 5), -2)
-    ops.shift(shade & (rt == 6), -1)
+        if mk is None:
+            ops.ab[sel] = C('earth', 3)
+        elif isinstance(mk, str):
+            ops.ab[sel] = C('earth_cool', 0)
+        else:
+            body = C('earth', 2) if r_ % 2 == 0 else C('earth_cool', 2)
+            ops.ab[sel] = np.where(mk[sel] > 0, C('earth', 3), np.where(mk[sel] < 0, C('earth_cool', 1), body))
+    wline = col_bank & (rt == 7)
+    ops.own[wline] = 2
+    ops.ab[wline] = C('water', 5)
+    ops.shift(col_bank & (rt == 8), -2)
+    ops.shift(col_bank & (rt == 9), -2)
     # the turf's last row over the bank a tone down (its underside)
     ops.shift(land & GD.down(m2, -1), -1)
     nb = col_bank
@@ -377,21 +386,34 @@ def foot(k: int, fill_u: np.ndarray, fill_l: np.ndarray, prof=(0, 0, 0, 0), eart
     # the side bands at the face's ends, beside the vertical cell line
     east_end = np.where(top, q[0] and not q[1], q[2] and not q[3]).astype(bool)    # face west, ground east
     west_end = np.where(top, q[1] and not q[0], q[3] and not q[2]).astype(bool)    # face east, ground west
-    near = np.abs(xs[None, :] - MID) < 6
-    out_e = face & GD.right(m2, -1) & east_end & near & ~f1 & ~f2
-    band_e = face & (GD.right(m2, -2) | GD.right(m2, -3)) & ~GD.right(m2, -1) & east_end & near & ~f1 & ~f2
-    out_w = face & GD.right(m2, 1) & west_end & near & ~f1 & ~f2
-    band_w = face & (GD.right(m2, 2) | GD.right(m2, 3)) & ~GD.right(m2, 1) & west_end & near & ~f1 & ~f2
-    ops.shift(band_e, -1)
-    ops.shift(band_w, 1)
-    for sel in (out_e & _broken(), out_w & _broken()):
-        ops.own[sel] = 2
-        ops.ab[sel] = C(ec, 0)
+    near = np.abs(xs[None, :] - MID) < 8
+    ew = earth + '_warm' if earth + '_warm' in FI else earth
+    # from the ground inwards: the darkest line (broken), then a band of 3 texels seen edge-on,
+    # in shade at an east end, lit at a west end (the plateau's side walls above match it)
+    dist_e = np.zeros(face.shape, np.int32)
+    dist_w = np.zeros(face.shape, np.int32)
+    for kk in range(4, 0, -1):
+        dist_e[face & GD.right(m2, -kk)] = kk          # ground kk texels to the east
+        dist_w[face & GD.right(m2, kk)] = kk           # ground kk texels to the west
+    sel_e = face & east_end & near & (dist_e > 0) & ~f1 & ~f2
+    sel_w = face & west_end & near & (dist_w > 0) & ~f1 & ~f2
+    for sel, dist, band in ((sel_e, dist_e, (C(earth, 1), C(earth, 2), C(earth, 3))),
+                            (sel_w, dist_w, (C(ew, 3), C(ew, 4), C(ew, 4)))):
+        for kk, code in zip((2, 3, 4), band):
+            m_ = sel & (dist == kk)
+            ops.own[m_] = 2
+            ops.ab[m_] = code
+        m_ = sel & (dist == 1) & _broken()
+        ops.own[m_] = 2
+        ops.ab[m_] = C(ec, 0)
+        m_ = sel & (dist == 1) & ~_broken()
+        ops.own[m_] = 2
+        ops.ab[m_] = band[0]
     return ops.encode((slice(T0, T1), slice(T0, T1)))
 
 
 def tier_side(k: int, fill_u: np.ndarray, fill_l: np.ndarray, prof=(0, 0, 0, 0), earth: str = 'earth',
-              band: int = 3) -> np.ndarray:
+              band: int = 4) -> np.ndarray:
     """A raised tier's ground (upper) beside or behind ground of a lower tier (lower): on its west
     and east sides a wall seen edge-on, `band` texels on the lower side (lit facing west, in shade
     facing east, the darkest line broken on its outside) and the turf's edge a step darker; along
@@ -416,14 +438,17 @@ def tier_side(k: int, fill_u: np.ndarray, fill_l: np.ndarray, prof=(0, 0, 0, 0),
     wall_w = m2 & wl & raised_east & near      # lit
     wall_e = m2 & wr & raised_west & near      # in shade
     ops.own[wall_w] = 2
-    ops.ab[wall_w] = C(ew, 3)
+    ops.ab[wall_w] = C(ew, 4)
+    ops.ab[wall_w & ~GD.right(up, -(band - 2))] = C(ew, 3)
     ops.own[wall_e] = 2
-    ops.ab[wall_e] = C(earth, 1)
+    ops.ab[wall_e] = C(earth, 2)
+    ops.ab[wall_e & GD.right(up, 1)] = C(earth, 3)
+    ops.ab[wall_e & ~GD.right(up, band - 2)] = C(earth, 1)
     out_w = wall_w & ~GD.right(up, -(band - 1)) & ~GD.right(up, -1)
     out_e = wall_e & ~GD.right(up, band - 1) & ~GD.right(up, 1)
     for sel in (out_w & _broken(), out_e & _broken()):
         ops.ab[sel] = C(ec, 0)
-    ops.shift(up & (GD.right(m2, 1) | GD.right(m2, -1)) & near & (raised_east | raised_west), -1)
+    ops.shift(up & (GD.right(m2, 1) | GD.right(m2, -1)) & near & (raised_east | raised_west), 1)   # the lip turned down the side, lit
     # the back rim: raised ground south of a horizontal cell line, lower ground north of it
     yv = (np.arange(N) + 0.5)[:, None]
     back_cfg = np.where(left, q[2] and not q[0], q[3] and not q[1]).astype(bool) & (yv > MID - 6) & (yv < MID + 6)

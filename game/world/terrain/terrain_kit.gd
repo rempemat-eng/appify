@@ -23,6 +23,7 @@ var fills_tex: ImageTexture
 var over_tex: ImageTexture
 var lut_tex: Texture2D
 var meta_tex: ImageTexture
+var noise_tex: Texture2D
 var tileset: TileSet
 var tiers_tileset: TileSet
 var curves: Array = []         ## per profile, the outline's displacement at the 24 texels of a cell edge
@@ -99,7 +100,8 @@ func _load() -> void:
 			face_material = mid
 			face_cells = int(face.height_cells)
 			strip_px[mid] = int(face.strip_px)
-		meta.set_pixel(mid, 0, Color8(int(m.priority), slot, 2 if face != null else 1, int(face.strip_px) if face != null else 255))
+		var kind := 2 if face != null else (3 if m.get("water") != null else 1)
+		meta.set_pixel(mid, 0, Color8(int(m.priority), slot, kind, int(face.strip_px) if face != null else 255))
 	var trs: Array = manifest.transitions
 	for t in trs:
 		pair_rows = maxi(pair_rows, _image(t.png).get_height() / cell)
@@ -133,6 +135,7 @@ func _load() -> void:
 	over_tex = ImageTexture.create_from_image(over)
 	meta_tex = ImageTexture.create_from_image(meta)
 	lut_tex = ImageTexture.create_from_image(_image(manifest.lut))
+	noise_tex = ImageTexture.create_from_image(_image(str(manifest.get("noise", "noise.png"))))
 	tileset = load(DIR + str(manifest.tileset)) as TileSet
 	tiers_tileset = load(DIR + str(manifest.get("tiers_tileset", "tiers.tres"))) as TileSet
 

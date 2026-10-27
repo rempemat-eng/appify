@@ -24,7 +24,7 @@
       "fn": "water",
       "args": {
         "seed": 402,
-        "ripples": 0.5
+        "ripples": 0.3
       }
     },
     "walkable": false,

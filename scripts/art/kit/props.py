@@ -14,6 +14,8 @@ import json
 import os
 import sys
 
+import numpy as np
+
 from scripts.art.kit.schema import PIECES, ROOT, piece_files
 
 OUT = os.path.join(ROOT, 'game', 'kit', 'props')
@@ -22,6 +24,35 @@ D = 3
 
 def _res(path: str) -> str:
     return path if path.startswith('res://') else 'res://' + os.path.relpath(path, os.path.join(ROOT, 'game'))
+
+
+SQUASH, SHEAR, RIM = 0.3, 0.2, 6
+
+
+def crown_shadow(png_res: str, foot, out_name: str):
+    """A tree's cast shadow from its own silhouette (Claude A, 27 Oct: shaped from the crown, not
+    an ellipse): every opaque texel at height h above the foot lands on the ground squashed to
+    SQUASH of its height and pushed east by SHEAR of it (light from the upper left), its core two
+    ramp steps down and its outer RIM texels one (house-style 6). Written as an R8 mask with its
+    offset from the foot; TerrainGround and compose.shadows lay it like the ellipses."""
+    from PIL import Image
+    from scipy import ndimage as ndi
+    a = np.asarray(Image.open(os.path.join(ROOT, 'game', png_res[len('res://'):])).convert('RGBA'))[..., 3] > 0
+    H, W = a.shape
+    fx, fy = foot
+    ys, xs = np.nonzero(a)
+    h = fy - ys - 0.5
+    sx = np.round(xs + 0.5 + h * SHEAR - fx).astype(int)
+    sy = np.round(h * -SQUASH).astype(int)
+    x0, y0 = sx.min() - 2, sy.min() - 2
+    m = np.zeros((sy.max() - y0 + 3, sx.max() - x0 + 3), bool)
+    m[sy - y0, sx - x0] = True
+    m = ndi.binary_closing(m, iterations=2)
+    m = ndi.binary_fill_holes(m)
+    core = ndi.binary_erosion(m, iterations=RIM)
+    out = np.where(core, 2, np.where(m, 1, 0)).astype(np.uint8)
+    Image.fromarray(out, 'L').save(os.path.join(OUT, 'art', out_name))
+    return {'png': 'res://kit/props/art/' + out_name, 'offset': [int(x0), int(y0)]}
 
 
 def entry(p: dict) -> dict:
@@ -34,12 +65,15 @@ def entry(p: dict) -> dict:
     shadow = None
     if cs.get('shape') == 'ellipse' and cs.get('size'):
         shadow = {'size': [int(round(v * D)) for v in cs['size']], 'dir': [int(round(v * D)) for v in cs.get('dir', [0, 0])]}
+    if p.get('placement', {}).get('role') == 'tree' and p.get('variants'):
+        v0 = p['variants'][0]
+        shadow = {'mask': crown_shadow(v0['png'], v0.get('foot', foot), 'shadow_%s.png' % p['id'])}
     deck = p.get('gameplay', {}).get('deck')
     return {'kind': p['kind'], 'name': p['name'], 'foot': foot, 'collision': rect, 'shadow': shadow,
             'deck': [v * D for v in deck] if deck else None, 'z_sort': g.get('z_sort', 'foot'),
             'blocks_move': p.get('gameplay', {}).get('blocks_move', False),
             'requires': p.get('placement', {}).get('requires', []), 'forbids': p.get('placement', {}).get('forbids', []),
-            'size_cells': g.get('size_cells'), 'function': p.get('function', {}), 'story': p.get('story', {}),
+            'size_cells': g.get('size_cells'), 'footprint': g.get('footprint'), 'function': p.get('function', {}), 'story': p.get('story', {}),
             'role': p.get('placement', {}).get('role'), 'snap': p.get('placement', {}).get('snap', 'cell'),
             'approval': p['approval']['state'],
             'variants': {v['id']: {'png': v['png'], 'foot': v.get('foot', foot)} for v in p.get('variants', [])}}
