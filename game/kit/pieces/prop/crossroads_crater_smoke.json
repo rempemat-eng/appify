@@ -1,0 +1,87 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "crossroads_crater_smoke",
+ "name": "Crater smoke",
+ "kind": "prop",
+ "biomes": [
+  "village"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "crater_smoke",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/crater_smoke.png",
+   "foot": [
+    126,
+    206
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": null,
+  "note": "Source metadata only; seeded designs still require the library gate and Matt approval."
+ },
+ "geometry": {
+  "size_px": [
+   252,
+   210
+  ],
+  "size_cells": [
+   11,
+   9
+  ],
+  "z_sort": "above",
+  "collision": {
+   "shape": "none"
+  },
+  "foot": [
+   126,
+   206
+  ],
+  "footprint": []
+ },
+ "placement": {},
+ "rendering": {},
+ "function": {},
+ "story": {
+  "owner": null,
+  "gating": {
+   "if": {
+    "not_flags": [
+     "shard_home:woodland"
+    ]
+   }
+  }
+ },
+ "gameplay": {
+  "blocks_move": false,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": null,
+  "eastward_ref": null,
+  "seeded_from": "game/zones/crossroads/kit.json",
+  "sources": [
+   {
+    "zone": "crossroads",
+    "object": "crater_smoke",
+    "part": "body",
+    "condition": {
+     "not_flags": [
+      "shard_home:woodland"
+     ]
+    }
+   }
+  ],
+  "todo": [
+   "composition role and clearance",
+   "placement.role, requires and forbids (Claude design decision; ground-rules.md 6)",
+   "review size-guide class and Eastward comparison before the library gate",
+   "source effect: preserve its authored condition and attach lifecycle/reduced-motion policy before use"
+  ]
+ }
+}

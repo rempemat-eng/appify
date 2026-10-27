@@ -6,12 +6,16 @@
  "biomes": [
   "village"
  ],
- "version": 1,
+ "version": 2,
  "variants": [
   {
    "id": "trough_35",
    "weight": 1.0,
-   "png": "res://zones/crossroads/art/trough_35.png"
+   "png": "res://zones/crossroads/art/trough_35.png",
+   "foot": [
+    48,
+    53
+   ]
   }
  ],
  "approval": {
@@ -19,7 +23,7 @@
   "by": null,
   "at": null,
   "standard": null,
-  "note": "seeded from game/zones/crossroads (art/catalogue holds its asset-gate record)"
+  "note": "Source metadata only; seeded designs still require the library gate and Matt approval."
  },
  "geometry": {
   "size_px": [
@@ -28,29 +32,37 @@
   ],
   "size_cells": [
    4,
-   2
+   3
   ],
   "z_sort": "foot",
-  "foot": [
-   48.0,
-   53.0
-  ],
   "collision": {
-   "shape": "rect",
    "rect": [
     -10.0,
     -8.0,
-    20.0,
-    8.0
-   ]
+    20,
+    8
+   ],
+   "shape": "rect"
   },
+  "foot": [
+   48,
+   53
+  ],
   "footprint": [
+   [
+    -2,
+    -1
+   ],
    [
     -1,
     -1
    ],
    [
     0,
+    -1
+   ],
+   [
+    1,
     -1
    ]
   ]
@@ -70,15 +82,25 @@
  },
  "gameplay": {
   "blocks_move": true,
-  "blocks_shots": false
+  "blocks_shots": true
  },
  "audit": {
   "size_class": null,
   "eastward_ref": null,
   "seeded_from": "game/zones/crossroads/kit.json",
+  "sources": [
+   {
+    "zone": "crossroads",
+    "object": "trough_35",
+    "part": "body",
+    "condition": null
+   }
+  ],
   "todo": [
-   "placement.role, requires and forbids (ground-rules.md 6)",
-   "composition role and clearance"
+   "composition role and clearance",
+   "footprint is conservative positive-area coverage at a cell-aligned foot; W4 must derive exact runtime blocking from collision at the placed foot",
+   "placement.role, requires and forbids (Claude design decision; ground-rules.md 6)",
+   "review size-guide class and Eastward comparison before the library gate"
   ]
  }
 }

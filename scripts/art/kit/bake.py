@@ -134,6 +134,16 @@ def _tree_ex(pid: str, img: Image.Image):
     return dict(w=a.any(0).sum() / D, tw=6), kind
 
 
+def material_paints(materials, lib: dict) -> dict:
+    """Canonical default/tie order, independent of Python's randomized string hashes.
+
+    Descending ids retain the committed woodland's worn-ground-then-path layering. Explicit
+    paint.order still takes precedence in the dirt pass. The other passes inherit this stable
+    order too; no painter recipe or palette changes.
+    """
+    return {m: (lib[m]['terrain'].get('paint') or {}) for m in sorted(set(materials), reverse=True) if m in lib}
+
+
 def bake(plan: dict, lib: dict | None = None):
     """(ground RGBA image, low items drawn) for a kit plan."""
     lib = lib or _pieces_lib()
@@ -143,7 +153,7 @@ def bake(plan: dict, lib: dict | None = None):
     h, w = R * CELL, Cc * CELL
     mat = np.array([[plan['legend'].get(c, '') for c in r] for r in rows])
     tiers = np.array([[int(c) for c in r] for r in plan['tiers']]) if plan.get('tiers') else np.zeros((R, Cc), int)
-    paint = {m: (lib[m]['terrain'].get('paint') or {}) for m in set(mat.ravel()) if m in lib}
+    paint = material_paints(mat.ravel(), lib)
     lawn_p = (lib['lawn']['terrain'].get('paint') or {}).get('args', {})
     cv = GD.lawn(h, w, lawn_p.get('seed', 977))
     face_h = int((lib['earth_face']['terrain'].get('paint') or {}).get('args', {}).get('face_px', 48))
