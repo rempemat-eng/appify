@@ -327,8 +327,24 @@ def standing_stone(w: float, h: float, seed: int, lean: float = 0.0, broken: boo
     _paint(a, body, 'stone', tone)
     if broken:
         a[capm] = np.where((a[capm] % 8) >= 4, C('ashlar_warm', 4) if 'ashlar_warm' in FI else a[capm], a[capm])
-    _weather(a, body & ~capm, rng, 16, vertical=True)
-    _cracks(a, body & ~capm, rng, 2 + int(broken), base_cx - half0 * 0.6, base_cx + half0 * 0.5, yt + _P(4), yb - _P(4))
+    _weather(a, body & ~capm, rng, 11, vertical=True)
+    # deep weathering: hollows worn into the face (a tone or two down, their upper-left rim lit)
+    ys_, xs_ = np.nonzero(body & ~capm & (yy < yb - _P(3)))
+    for k_ in rng.permutation(len(ys_))[: 2 + int(w * h / 90)]:
+        y_, x_ = int(ys_[k_]), int(xs_[k_])
+        r_ = rng.uniform(1.2, 2.2)
+        hol = body & (((xx - x_) / (r_ * 1.3)) ** 2 + ((yy - y_) / r_) ** 2 <= 1.0)
+        a[hol] = step(a[hol], -2)
+        rim = body & ~hol & np.roll(np.roll(hol, 1, 0), 1, 1)
+        a[rim & (a % 8 < 5)] = step(a[rim & (a % 8 < 5)], 1)
+    _cracks(a, body & ~capm, rng, 3 + int(broken), base_cx - half0 * 0.6, base_cx + half0 * 0.5, yt + _P(4), yb - _P(4))
+    # the lit planes weather most: short upright grain a tone down all over them
+    lit_ = body & (a % 8 >= 4)
+    ly_, lx_ = np.nonzero(lit_)
+    for kk in rng.permutation(len(ly_))[: len(ly_) // 6]:
+        y_, x_ = int(ly_[kk]), int(lx_[kk])
+        if y_ + 1 < Ht and lit_[y_ + 1, x_]:
+            a[y_:y_ + 2, x_] = step(a[y_:y_ + 2, x_], -1 if rng.random() < 0.75 else 1)
     # carving: grooves dark, their lower lip lit (cut into a face lit from the upper left)
     if carved:
         ccx, ccy = base_cx - half0 * 0.1 + lean * _P(w) * 0.5, yt + (yb - yt) * 0.42
@@ -348,12 +364,34 @@ def standing_stone(w: float, h: float, seed: int, lean: float = 0.0, broken: boo
         for (py, px) in pts:
             Y, X = int(round(py)), int(round(px))
             if 0 <= Y < Ht - 1 and 0 <= X < Wt and body[Y, X] and body[Y + 1, X]:
-                a[Y, X] = C('stone_cool', 1)
-                if a[Y + 1, X] != C('stone_cool', 1):
-                    a[Y + 1, X] = C('stone_warm', 4)
+                a[Y, X] = C('stone_cool', 0)
+                if a[Y + 1, X] != C('stone_cool', 0):
+                    # the groove's lower lip catches the light, a cold moonlit gleam
+                    a[Y + 1, X] = C('sky', 5) if 'sky' in FI else C('stone_warm', 5)
     _lichen(a, body & (u < 0.3) & ~capm, rng, int(w * h / 38) + 2)
     _moss(a, body & (yy >= yb - _P(3) - 2 * f * _P(1)), seed + 3, share=0.4)
     _outline(a, a >= 0, u)
+    # the foot: no hard line where the stone meets the ground; grass grows up against it in blades
+    # of uneven height (lit and shaded), past its sides, and a few small flowers
+    bl = yb - 1
+    for X in range(max(0, int(base_cx - half0) - 3), min(Wt, int(base_cx + half0) + 4)):
+        if rng.random() < 0.18:
+            continue
+        L = int(rng.integers(2, _P(2.4) + 1))
+        lit = rng.random() < 0.45
+        for j in range(L):
+            Y = bl - j + 1
+            if 0 <= Y < Ht:
+                tt = (4 if lit else 3) if j >= L - 1 else (2 if j == 0 else 3)
+                a[Y, X] = C('grass_warm' if lit else 'grass', tt)
+    for _ in range(int(rng.integers(1, 3))):
+        fx = int(base_cx + rng.uniform(-half0 - 2, half0 + 2))
+        fy = bl - int(rng.integers(1, 3))
+        col = ('plaster', 5) if rng.random() < 0.6 else ('sand_warm', 5)
+        for dy, dx in ((0, 0), (-1, 0), (0, -1), (0, 1), (1, 0)):
+            Y, X = fy + dy, fx + dx
+            if 0 <= Y < Ht and 0 <= X < Wt:
+                a[Y, X] = C(*col) if (dy, dx) != (0, 0) else C('brass', 4)
     return a, (base_cx, yb)
 
 

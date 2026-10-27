@@ -1,7 +1,7 @@
 {
  "id": "woodland/standing_stone_lean",
  "file": "game/zones/woodland/art/standing_stone_lean.png",
- "sha256": "2a7f9fd32f9a7fbe25925c604cc685ce538cdd3ad6cef7f6c44a833c97fd5b30",
+ "sha256": "bc173d7d89755b6d2d04c882933b8b13792fedb5274a9c6c86f90f84f59d1754",
  "kind": "standing_stone_lean",
  "biome": "woodland",
  "H": 74.0,
@@ -14,13 +14,13 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 1
+  "polish": 2
  },
  "detail_bar": {
   "ours": {
    "patches": 5,
-   "tones": 22.0,
-   "shapes": 30.8
+   "tones": 27.6,
+   "shapes": 37.8
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.612,
-  "tones_ratio": 0.815,
-  "shapes_ratio": 0.612,
+  "ratio": 0.751,
+  "tones_ratio": 1.022,
+  "shapes_ratio": 0.751,
   "passed": false,
   "group": "prop"
  },
@@ -41,11 +41,23 @@
    "box": [
     14,
     15,
-    49,
+    53,
     88
    ],
-   "message": "woodland/standing_stone_lean: detail bar 0.61 of Eastward's prop band (22.0 tones, 30.8 shapes a patch against 27.0, 50.36)",
+   "message": "woodland/standing_stone_lean: detail bar 0.75 of Eastward's prop band (27.6 tones, 37.8 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  },
+  {
+   "detector": "detail.outline",
+   "severity": "polish",
+   "box": [
+    14,
+    15,
+    53,
+    88
+   ],
+   "message": "woodland/standing_stone_lean: only 37% of the silhouette is drawn in an edge tone",
+   "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)"
   }
  ],
  "reviewed": "2026-10-27",

@@ -247,8 +247,8 @@
   },
   "standing_stone": {
    "paint": "standing",
-   "size": [12, 30],
-   "lean": 0.14
+   "size": [9, 32],
+   "lean": 0.25
   },
   "standing_stone_b": {
    "paint": "standing",
@@ -257,7 +257,7 @@
   },
   "standing_stone_low": {
    "paint": "standing",
-   "size": [14, 20],
+   "size": [20, 20],
    "squat": true
   },
   "stump": {
@@ -346,6 +346,12 @@
    "paint": "lintel",
    "size": [26, 9],
    "seed": 931,
+   "own_seed": true
+  },
+  "stone_top": {
+   "paint": "lintel",
+   "size": [12, 7],
+   "seed": 935,
    "own_seed": true
   }
  },

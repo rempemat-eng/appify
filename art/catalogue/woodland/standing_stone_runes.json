@@ -1,7 +1,7 @@
 {
  "id": "woodland/standing_stone_runes",
  "file": "game/zones/woodland/art/standing_stone_runes.png",
- "sha256": "bd8da95f5d6e9295c56c92acf667936f2d7cd488510e50b6ffbbe2e2902ba09c",
+ "sha256": "c60a3de768170c7c5ea65c7e8f677ead6d0039a5f3b97e06a2399d78f200eed2",
  "kind": "standing_stone_runes",
  "biome": "woodland",
  "H": 74.0,
@@ -19,8 +19,8 @@
  "detail_bar": {
   "ours": {
    "patches": 3,
-   "tones": 27.666666666666668,
-   "shapes": 31.666666666666668
+   "tones": 32.0,
+   "shapes": 42.666666666666664
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.629,
-  "tones_ratio": 1.025,
-  "shapes_ratio": 0.629,
+  "ratio": 0.847,
+  "tones_ratio": 1.185,
+  "shapes_ratio": 0.847,
   "passed": false,
   "group": "prop"
  },
@@ -39,12 +39,12 @@
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    13,
+    9,
     14,
-    47,
+    48,
     79
    ],
-   "message": "woodland/standing_stone_runes: detail bar 0.63 of Eastward's prop band (27.7 tones, 31.7 shapes a patch against 27.0, 50.36)",
+   "message": "woodland/standing_stone_runes: detail bar 0.85 of Eastward's prop band (32.0 tones, 42.7 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

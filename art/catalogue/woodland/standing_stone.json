@@ -1,14 +1,14 @@
 {
  "id": "woodland/standing_stone",
  "file": "game/zones/woodland/art/standing_stone.png",
- "sha256": "ccfcf9ea641460aaa058a8fa8bb303cbbf598e0f75dc2bdd046d14f7e59d627a",
+ "sha256": "9ba1f4dce7449a67359480fbc877ca169ea58bc385628c4367e3ae66c617b2a5",
  "kind": "standing_stone",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  66,
-  108
+  61,
+  114
  ],
  "status": "pass",
  "counts": {
@@ -18,9 +18,9 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 8,
-   "tones": 17.75,
-   "shapes": 31.5
+   "patches": 4,
+   "tones": 26.75,
+   "shapes": 37.0
   },
   "band": {
    "tones": 26.25,
@@ -28,9 +28,9 @@
    "boxes": 3,
    "patches": 20
   },
-  "ratio": 0.516,
-  "tones_ratio": 0.676,
-  "shapes_ratio": 0.516,
+  "ratio": 0.607,
+  "tones_ratio": 1.019,
+  "shapes_ratio": 0.607,
   "passed": false,
   "group": "stone"
  },
@@ -39,12 +39,12 @@
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    15,
-    16,
-    53,
-    100
+    13,
+    17,
+    48,
+    106
    ],
-   "message": "woodland/standing_stone: detail bar 0.52 of Eastward's stone band (17.8 tones, 31.5 shapes a patch against 26.25, 61.0)",
+   "message": "woodland/standing_stone: detail bar 0.61 of Eastward's stone band (26.8 tones, 37.0 shapes a patch against 26.25, 61.0)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],

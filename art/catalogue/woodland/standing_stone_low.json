@@ -1,26 +1,26 @@
 {
  "id": "woodland/standing_stone_low",
  "file": "game/zones/woodland/art/standing_stone_low.png",
- "sha256": "82da3f2f5bea509535457033ebb2229df04cad227ef7532a5f9a908b76d6a7eb",
+ "sha256": "bc02332470da81fc37567daa8a599518bae97eac5fc45a05ebbb33546612c454",
  "kind": "standing_stone",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  62,
+  80,
   78
  ],
  "status": "pass",
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 2
+  "polish": 3
  },
  "detail_bar": {
   "ours": {
-   "patches": 6,
-   "tones": 24.0,
-   "shapes": 42.0
+   "patches": 8,
+   "tones": 27.125,
+   "shapes": 47.5
   },
   "band": {
    "tones": 26.25,
@@ -28,9 +28,9 @@
    "boxes": 3,
    "patches": 20
   },
-  "ratio": 0.689,
-  "tones_ratio": 0.914,
-  "shapes_ratio": 0.689,
+  "ratio": 0.779,
+  "tones_ratio": 1.033,
+  "shapes_ratio": 0.779,
   "passed": false,
   "group": "stone"
  },
@@ -39,9 +39,9 @@
    "detector": "logic.scale",
    "severity": "polish",
    "box": [
-    10,
+    7,
     14,
-    53,
+    74,
     70
    ],
    "message": "woodland/standing_stone_low: tall 56 art px (0.76 A) is too small for a standing stone: the size table gives 59 to 126 (0.80 to 1.70 A); Eastward at the same character height: none; scaled from real stones",
@@ -51,13 +51,25 @@
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    10,
+    7,
     14,
-    53,
+    74,
     70
    ],
-   "message": "woodland/standing_stone_low: detail bar 0.69 of Eastward's stone band (24.0 tones, 42.0 shapes a patch against 26.25, 61.0)",
+   "message": "woodland/standing_stone_low: detail bar 0.78 of Eastward's stone band (27.1 tones, 47.5 shapes a patch against 26.25, 61.0)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  },
+  {
+   "detector": "detail.outline",
+   "severity": "polish",
+   "box": [
+    7,
+    14,
+    74,
+    70
+   ],
+   "message": "woodland/standing_stone_low: only 33% of the silhouette is drawn in an edge tone",
+   "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)"
   }
  ],
  "reviewed": "2026-10-27",

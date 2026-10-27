@@ -1,7 +1,7 @@
 {
  "id": "woodland/standing_stone_broken",
  "file": "game/zones/woodland/art/standing_stone_broken.png",
- "sha256": "402d9d5ef0e4298cf696beea61b55db2eeb11bf95ed123f4bafc478d8bb9efe2",
+ "sha256": "e44959508ef6af1ba9f6de4b537a96679a4c68d6f95a8186b553a06aa1a09976",
  "kind": "standing_stone_broken",
  "biome": "woodland",
  "H": 74.0,
@@ -14,13 +14,13 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 2
+  "polish": 3
  },
  "detail_bar": {
   "ours": {
    "patches": 3,
-   "tones": 27.666666666666668,
-   "shapes": 35.0
+   "tones": 29.666666666666668,
+   "shapes": 39.333333333333336
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.695,
-  "tones_ratio": 1.025,
-  "shapes_ratio": 0.695,
+  "ratio": 0.781,
+  "tones_ratio": 1.099,
+  "shapes_ratio": 0.781,
   "passed": false,
   "group": "prop"
  },
@@ -39,9 +39,9 @@
    "detector": "logic.scale",
    "severity": "polish",
    "box": [
-    10,
+    7,
     17,
-    47,
+    50,
     73
    ],
    "message": "woodland/standing_stone_broken: tall 56 art px (0.76 A) is too small for a standing stone: the size table gives 59 to 126 (0.80 to 1.70 A); Eastward at the same character height: none; scaled from real stones",
@@ -51,13 +51,25 @@
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    10,
+    7,
     17,
-    47,
+    50,
     73
    ],
-   "message": "woodland/standing_stone_broken: detail bar 0.69 of Eastward's prop band (27.7 tones, 35.0 shapes a patch against 27.0, 50.36)",
+   "message": "woodland/standing_stone_broken: detail bar 0.78 of Eastward's prop band (29.7 tones, 39.3 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  },
+  {
+   "detector": "detail.outline",
+   "severity": "polish",
+   "box": [
+    7,
+    17,
+    50,
+    73
+   ],
+   "message": "woodland/standing_stone_broken: only 36% of the silhouette is drawn in an edge tone",
+   "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)"
   }
  ],
  "reviewed": "2026-10-27",

@@ -608,3 +608,74 @@ class Tiers(unittest.TestCase):
     def test_stair_across_a_turn_trips(self):
         from scripts.review import tiers as TI
         self.assertTrue(any('straddles' in f.message for f in TI.check(self.plan(x0=288, x1=336))))
+
+
+class GroundRules(unittest.TestCase):
+    """docs/vision/ground-rules.md: each rule has a plan that passes and one that trips it."""
+
+    def plan(self):
+        return {
+            'screen': {'w': 320, 'h': 320},
+            'stands': {'glade': [160, 40]},
+            'places': {'bridge': {'x0': 152, 'w': 16, 'y0': 184, 'y1': 216}},
+            'paths': [{'points': [[160, 320], [160, 40]], 'radius': 8}],
+            'water': {'fall': {'x0': 72, 'w': 16, 'y0': 96, 'y1': 136, 'face': [60, 96, 100, 132]},
+                      'soft': {'river': {'points': [[80, 200], [336, 200]], 'cells': 3},
+                               'pool': [[56, 128, 48, 80]],
+                               'rill': {'points': [[80, -8], [80, 96]], 'cells_plan': 2}}},
+            'rock': {'heap': [{'at': [50, 120], 'size': [16, 12]}, {'at': [110, 120], 'size': [16, 12]}]},
+            'objects': [['bench', 'forest_bench', 112, 157, 32, 11]],
+            'dressing': {'ferns': [[200, 100, 1, 1.0]]},
+        }
+
+    def names(self, p):
+        from scripts.review import ground_rules as GR
+        return {f['check'] for f in GR.check_plan(p)}
+
+    def test_good_plan_passes(self):
+        self.assertEqual(self.names(self.plan()), set())
+
+    def test_fall_off_centre_and_not_flush(self):
+        p = self.plan()
+        p['water']['fall']['x0'] = 76
+        p['water']['soft']['rill']['points'][-1] = [80, 104]
+        self.assertIn('rules.water_fall', self.names(p))
+
+    def test_dead_end_water(self):
+        p = self.plan()
+        p['water']['soft']['river']['points'] = [[80, 200], [240, 200]]
+        self.assertIn('rules.water_end', self.names(p))
+
+    def test_slanting_path_and_stair_steps(self):
+        p = self.plan()
+        p['paths'][0]['points'] = [[160, 320], [160, 240], [168, 240], [168, 40]]
+        self.assertIn('rules.route_grid', self.names(p))
+        p['paths'][0]['points'] = [[160, 320], [176, 40]]
+        self.assertIn('rules.route_grid', self.names(p))
+
+    def test_path_under_water_off_the_bridge(self):
+        p = self.plan()
+        p['places']['bridge']['x0'] = 200
+        self.assertIn('rules.ground_water', self.names(p))
+
+    def test_bench_on_the_path(self):
+        p = self.plan()
+        p['objects'][0] = ['bench', 'forest_bench', 144, 157, 32, 11]
+        n = self.names(p)
+        self.assertIn('rules.route_clear', n)
+        self.assertIn('rules.seating', n)
+
+    def test_rocks_overlapping(self):
+        p = self.plan()
+        p['rock']['heap'][1]['at'] = [58, 124]
+        self.assertIn('rules.rock_overlap', self.names(p))
+        p['rock']['heap'][1]['stacked'] = True
+        self.assertNotIn('rules.rock_overlap', self.names(p))
+
+    def test_route_to_nowhere_and_clutter_on_route(self):
+        p = self.plan()
+        p['paths'].append({'points': [[160, 240], [240, 240]], 'radius': 8})
+        p['dressing']['ferns'].append([160, 260, 2, 1.0])
+        n = self.names(p)
+        self.assertIn('rules.route_ends', n)
+        self.assertIn('rules.clutter', n)
