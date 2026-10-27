@@ -1,0 +1,90 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "nature_brackens_stone_ring",
+  "name": "Brackens ridge stone ring",
+  "kind": "structure",
+  "biomes": [
+    "brackens"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "weathered",
+      "note": "Low, uneven weathered stones in a broken arc, with heather at the outer feet and an unobstructed view through the opening."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 catalogue proposal for Claude review; not drawable approval, not placeable."
+  },
+  "geometry": {
+    "z_sort": "foot"
+  },
+  "placement": {
+    "role": "landmark",
+    "ground": {
+      "allow": [
+        "turf",
+        "earth"
+      ],
+      "deny": []
+    },
+    "requires": [
+      {
+        "rel": "facing",
+        "what": "view_anchor",
+        "note": "Proposed selector/relation for review; its exact matching contract must be added to W5 before promotion.",
+        "cells": 0
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "route"
+      },
+      {
+        "rel": "on",
+        "what": "water"
+      }
+    ],
+    "clearance": 2,
+    "orientations": [
+      "any"
+    ],
+    "snap": "cell",
+    "composition": "centre",
+    "stages": [],
+    "per_zone": {
+      "max": 1
+    }
+  },
+  "rendering": {
+    "contact_ao": true
+  },
+  "function": {
+    "interact": {
+      "verb": "look",
+      "triggers": []
+    }
+  },
+  "story": {
+    "lore": "The broad regional brief reserves a ridge stone ring as an egg spot. Keep its ground reachable and empty of new reward objects until the story owner uses it."
+  },
+  "audit": {
+    "size_class": "standing_stone",
+    "eastward_ref": null,
+    "todo": [
+      "Scope: custom. One authored site composition; repeated construction components remain shared.",
+      "Priority: P1.",
+      "Purpose: Keep the ridge archaeology distinct from the woodland's central story circle.",
+      "Visual brief: Low uneven weathered stones in heather with a broken arc and an open view across the drove road; use the shared standing-stone material but a unique placement, with no duplicate moon-beam centre or extra shard socket.",
+      "Source: docs/vision/regions/valley-plan.md; docs/vision/regions/home-valley-frostline-brackens.md",
+      "Geometry: proposed visual envelope only; Claude supplies exact foot, solid footprint, overhang, interaction anchors and any deck after review.",
+      "Implementation: concept only, outside the live piece library. Do not place, bake or grant gameplay until reviewed and approved.",
+      "Composite of reviewed stone variants 59-126 art px high and 33-81 wide, not a second copy of the woodland stone circle.",
+      "Per-zone maximum: 1; no invented quest, reward or progression gate.",
+      "Lighting: upper-left key light; shade each material and facing for that light. The lit-picture reference is deferred until art exists.",
+      "Size-class scope: standing_stone applies to each constituent stone, not to the circle composition or its clearing."
+    ]
+  }
+}

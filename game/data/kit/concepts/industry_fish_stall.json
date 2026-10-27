@@ -1,0 +1,106 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "industry_fish_stall",
+  "name": "Fish-market stall family",
+  "kind": "structure",
+  "version": 1,
+  "approval": {
+    "state": "concept",
+    "note": "W0 design proposal only; not drawn, gated, approved or available for placement."
+  },
+  "biomes": [
+    "gullwick",
+    "lullford",
+    "neon_harbour"
+  ],
+  "variants": [
+    {
+      "id": "covered",
+      "note": "Canvas canopy over a counter."
+    },
+    {
+      "id": "open",
+      "note": "Counter and slatted back only."
+    },
+    {
+      "id": "packed",
+      "note": "Closed awning and stacked empty trays."
+    }
+  ],
+  "placement": {
+    "role": "stall",
+    "ground": {
+      "allow": [
+        "paving",
+        "wood",
+        "earth"
+      ],
+      "deny": [
+        "water",
+        "route"
+      ]
+    },
+    "requires": [
+      {
+        "rel": "adjacent",
+        "what": "route_edge",
+        "cells": 1
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "route"
+      }
+    ],
+    "clearance": 2,
+    "orientations": [
+      "s",
+      "n",
+      "e",
+      "w"
+    ],
+    "snap": "cell",
+    "stages": [],
+    "composition": "row"
+  },
+  "rendering": {
+    "contact_ao": true,
+    "cast_shadow": {
+      "shape": "sprite"
+    }
+  },
+  "function": {
+    "interact": {
+      "verb": "look",
+      "triggers": []
+    }
+  },
+  "story": {
+    "lore": "Adapt the existing stall family for repeated waterfront markets; the market layout stays authored."
+  },
+  "audit": {
+    "size_class": "stall",
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared",
+      "Priority: P2",
+      "Purpose: Adapt the existing stall family for repeated waterfront markets; the market layout stays authored.",
+      "Visual brief: Weathered timber counter, grouped fish trays, damp slab and plain striped cloth; canopy and counter have separate depth, no new roof palette per vendor.",
+      "Source: docs/vision/regions/neon-harbour-delta.md",
+      "Implement after review: Claude selects the design, draws it, supplies exact anchors/collision and passes the library gate; no concept may ship.",
+      "Scale: density3 class stall; height [104, 163] art px, width [96, 178] art px; 74 art px adult. The class range is the target, not a measured drawing.",
+      "Geometry: proposed authoring envelope 6x4 cells; one cell is 8 world px / 24 art px. This is not an asserted solid footprint; collision, foot and overhang await the drawing.",
+      "Function: proposed look affordance; bind only existing owner-approved data refs, never infer a quest, fee, reward or transport unlock from this concept.",
+      "Reuse candidate: crossroads_stall; fish trays are variants/attachments, not three independent stall designs.",
+      "Rule proposal: every stall row retains a continuous 3-cell aisle and a clear counter interaction point; shop inventory is not created by this art."
+    ]
+  },
+  "geometry": {
+    "size_cells": [
+      6,
+      4
+    ],
+    "z_sort": "foot"
+  }
+}

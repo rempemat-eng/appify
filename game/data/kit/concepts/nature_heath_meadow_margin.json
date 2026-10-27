@@ -1,0 +1,95 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "nature_heath_meadow_margin",
+  "name": "Heath to meadow transition",
+  "kind": "transition",
+  "biomes": [
+    "brackens",
+    "valley"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "heather_sparse",
+      "note": "Short meadow turf interrupted by a few low heather islands, with the normal turf plane continuous between them."
+    },
+    {
+      "id": "gorse_margin",
+      "note": "Broader gorse masses with bent grass at their feet, increasing toward the moor side while leaving the route shoulder legible."
+    },
+    {
+      "id": "peat_tongue",
+      "note": "Dark exposed peat fingers extending into the turf, with damp edges and low heather rooted on the firmer ground."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 catalogue proposal for Claude review; not drawable approval, not placeable."
+  },
+  "geometry": {
+    "z_sort": "ground"
+  },
+  "placement": {
+    "role": "ground_edge",
+    "ground": {
+      "allow": [
+        "turf",
+        "earth"
+      ],
+      "deny": []
+    },
+    "requires": [
+      {
+        "rel": "adjacent",
+        "what": "heath_peat",
+        "note": "Proposed selector/relation for review; its exact matching contract must be added to W5 before promotion.",
+        "cells": 1
+      },
+      {
+        "rel": "adjacent",
+        "what": "meadow_sward",
+        "note": "Proposed selector/relation for review; its exact matching contract must be added to W5 before promotion.",
+        "cells": 1
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "route_centre"
+      }
+    ],
+    "clearance": 0,
+    "orientations": [
+      "n",
+      "s",
+      "e",
+      "w"
+    ],
+    "snap": "cell",
+    "composition": "edge",
+    "stages": []
+  },
+  "rendering": {
+    "contact_ao": false
+  },
+  "function": {},
+  "story": {
+    "lore": "Make the valley-to-moor mixing band gradual without generating special ground for each border."
+  },
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared. Reusable across the listed places; preserve site-specific assembly and state.",
+      "Priority: P1.",
+      "Purpose: Make the valley-to-moor mixing band gradual without generating special ground for each border.",
+      "Visual brief: Heather islands interrupt the short turf in broad masses; gorse and bent grass become more common toward the moor. Preserve the turf plane, with no black outline or invented cliff.",
+      "Source: docs/vision/regions/valley-plan.md; docs/vision/regions/home-valley-frostline-brackens.md",
+      "Geometry: proposed visual envelope only; Claude supplies exact foot, solid footprint, overhang, interaction anchors and any deck after review.",
+      "Implementation: concept only, outside the live piece library. Do not place, bake or grant gameplay until reviewed and approved.",
+      "Widths: 1-cell material seam plus authored 2-6-cell mixed patches; region thresholds use many pieces, not one strip.",
+      "Schema intake: defer the runtime material ID, palette priority and painter binding until the concept is approved; no runtime block is claimed here.",
+      "Lighting: upper-left key light; shade each material and facing for that light. The lit-picture reference is deferred until art exists."
+    ]
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "nature_leaf_litter",
+  "name": "Woodland litter and root-edge decals",
+  "kind": "decal",
+  "biomes": [
+    "woodland",
+    "valley"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "beech_leaves",
+      "note": "Small groups of smooth ochre beech leaves with shared lit planes and a dark seat under the pile."
+    },
+    {
+      "id": "oak_leaves",
+      "note": "Clusters of curled brown oak leaves with lobed silhouettes and a few thicker shaded overlaps."
+    },
+    {
+      "id": "root_chips",
+      "note": "Short broken twigs, bark chips and dry leaf fragments gathered beside exposed roots, with direction following the root mass."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 catalogue proposal for Claude review; not drawable approval, not placeable."
+  },
+  "geometry": {
+    "z_sort": "ground",
+    "size_px": [
+      36,
+      18
+    ]
+  },
+  "placement": {
+    "role": "clutter",
+    "ground": {
+      "allow": [
+        "earth",
+        "turf"
+      ],
+      "deny": []
+    },
+    "requires": [
+      {
+        "rel": "near",
+        "what": "tree_or_forest_margin",
+        "note": "Proposed selector/relation for review; its exact matching contract must be added to W5 before promotion.",
+        "cells": 2
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "route_centre"
+      },
+      {
+        "rel": "on",
+        "what": "water"
+      },
+      {
+        "rel": "on",
+        "what": "interaction_apron"
+      }
+    ],
+    "clearance": 0,
+    "orientations": [
+      "any"
+    ],
+    "snap": "free",
+    "composition": "cluster",
+    "stages": []
+  },
+  "rendering": {
+    "contact_ao": false
+  },
+  "function": {},
+  "story": {
+    "lore": "Break the fill without cluttering the route centre or stamping a repeated carpet."
+  },
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared. Reusable across the listed places; preserve site-specific assembly and state.",
+      "Priority: P0.",
+      "Purpose: Break the fill without cluttering the route centre or stamping a repeated carpet.",
+      "Visual brief: Three-to-five-leaf clusters with shared warm top planes and a dark seat under the pile; twigs point with the surrounding roots. Sparse broken cap shapes read at native size without single-pixel noise.",
+      "Source: docs/world-editor.md; docs/vision/eastward-edges.md; docs/vision/regions/valley-plan.md; docs/vision/regions/home-valley-frostline-brackens.md",
+      "Geometry: proposed visual envelope only; Claude supplies exact foot, solid footprint, overhang, interaction anchors and any deck after review.",
+      "Implementation: concept only, outside the live piece library. Do not place, bake or grant gameplay until reviewed and approved.",
+      "Ground detail has no collision or reward. Free placement is allowed for small clutter only; the parent tree foot remains snapped.",
+      "Lighting: upper-left key light; shade each material and facing for that light. The lit-picture reference is deferred until art exists."
+    ]
+  }
+}
