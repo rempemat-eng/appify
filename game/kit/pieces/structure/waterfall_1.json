@@ -21,7 +21,7 @@
   "by": null,
   "at": null,
   "standard": "ground-rules.md 2 (rules.water_fall), eastward-edges.md 5.3",
-  "note": "the woodland's painted fall (water.fall_hd) as a piece over a two-cell face"
+  "note": "the woodland's painted cascade as a piece over a face of 2 cells"
  },
  "geometry": {
   "size_px": [
@@ -77,7 +77,8 @@
    "module": "scripts.art.native.rocks",
    "fn": "fall",
    "args": {
-    "seed": 10
+    "seed": 10,
+    "face_px": 48
    }
   },
   "animations": [
