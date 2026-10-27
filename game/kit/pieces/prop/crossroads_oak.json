@@ -6,57 +6,97 @@
  "biomes": [
   "village"
  ],
- "version": 1,
+ "version": 2,
  "variants": [
   {
    "id": "oak_13",
    "weight": 1.0,
-   "png": "res://zones/crossroads/art/oak_13.png"
+   "png": "res://zones/crossroads/art/oak_13.png",
+   "foot": [
+    105,
+    243
+   ]
   },
   {
    "id": "oak_21",
    "weight": 1.0,
-   "png": "res://zones/crossroads/art/oak_21.png"
+   "png": "res://zones/crossroads/art/oak_21.png",
+   "foot": [
+    106,
+    243
+   ]
   },
   {
    "id": "oak_40",
    "weight": 1.0,
-   "png": "res://zones/crossroads/art/oak_40.png"
+   "png": "res://zones/crossroads/art/oak_40.png",
+   "foot": [
+    106,
+    243
+   ]
   },
   {
    "id": "oak_41",
    "weight": 1.0,
-   "png": "res://zones/crossroads/art/oak_41.png"
+   "png": "res://zones/crossroads/art/oak_41.png",
+   "foot": [
+    106,
+    243
+   ]
   },
   {
    "id": "oak_42",
    "weight": 1.0,
-   "png": "res://zones/crossroads/art/oak_42.png"
+   "png": "res://zones/crossroads/art/oak_42.png",
+   "foot": [
+    106,
+    243
+   ]
   },
   {
    "id": "oak_43",
    "weight": 1.0,
-   "png": "res://zones/crossroads/art/oak_43.png"
+   "png": "res://zones/crossroads/art/oak_43.png",
+   "foot": [
+    105,
+    243
+   ]
   },
   {
    "id": "oak_44",
    "weight": 1.0,
-   "png": "res://zones/crossroads/art/oak_44.png"
+   "png": "res://zones/crossroads/art/oak_44.png",
+   "foot": [
+    105,
+    243
+   ]
   },
   {
    "id": "oak_45",
    "weight": 1.0,
-   "png": "res://zones/crossroads/art/oak_45.png"
+   "png": "res://zones/crossroads/art/oak_45.png",
+   "foot": [
+    106,
+    243
+   ]
   },
   {
    "id": "oak_46",
    "weight": 1.0,
-   "png": "res://zones/crossroads/art/oak_46.png"
+   "png": "res://zones/crossroads/art/oak_46.png",
+   "foot": [
+    105,
+    243
+   ]
   },
   {
    "id": "oak_6",
    "weight": 1.0,
-   "png": "res://zones/crossroads/art/oak_6.png"
+   "png": "res://zones/crossroads/art/oak_6.png",
+   "foot": [
+    105,
+    243
+   ]
   }
  ],
  "approval": {
@@ -64,7 +104,7 @@
   "by": null,
   "at": null,
   "standard": null,
-  "note": "seeded from game/zones/crossroads (art/catalogue holds its asset-gate record)"
+  "note": "Source metadata only; seeded designs still require the library gate and Matt approval."
  },
  "geometry": {
   "size_px": [
@@ -73,23 +113,40 @@
   ],
   "size_cells": [
    9,
-   10
+   11
   ],
   "z_sort": "foot",
-  "foot": [
-   105.0,
-   243.0
-  ],
   "collision": {
-   "shape": "rect",
    "rect": [
     -4.0,
     -3.0,
-    8.0,
-    4.0
-   ]
+    8,
+    4
+   ],
+   "shape": "rect"
   },
-  "footprint": []
+  "foot": [
+   105,
+   243
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    -1,
+    0
+   ],
+   [
+    0,
+    0
+   ]
+  ]
  },
  "placement": {
   "snap": "cell",
@@ -117,14 +174,78 @@
  },
  "gameplay": {
   "blocks_move": true,
-  "blocks_shots": false
+  "blocks_shots": true
  },
  "audit": {
   "size_class": null,
   "eastward_ref": null,
   "seeded_from": "game/zones/crossroads/kit.json",
+  "sources": [
+   {
+    "zone": "crossroads",
+    "object": "oak_13",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "crossroads",
+    "object": "oak_21",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "crossroads",
+    "object": "oak_40",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "crossroads",
+    "object": "oak_41",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "crossroads",
+    "object": "oak_42",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "crossroads",
+    "object": "oak_43",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "crossroads",
+    "object": "oak_44",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "crossroads",
+    "object": "oak_45",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "crossroads",
+    "object": "oak_46",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "crossroads",
+    "object": "oak_6",
+    "part": "body",
+    "condition": null
+   }
+  ],
   "todo": [
-   "composition role and clearance"
+   "composition role and clearance",
+   "footprint is conservative positive-area coverage at a cell-aligned foot; W4 must derive exact runtime blocking from collision at the placed foot",
+   "review size-guide class and Eastward comparison before the library gate"
   ]
  }
 }

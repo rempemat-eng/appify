@@ -6,17 +6,25 @@
  "biomes": [
   "village"
  ],
- "version": 1,
+ "version": 2,
  "variants": [
   {
    "id": "kit_lantern_24",
    "weight": 1.0,
-   "png": "res://zones/crossroads/art/kit_lantern_24.png"
+   "png": "res://zones/crossroads/art/kit_lantern_24.png",
+   "foot": [
+    12,
+    118
+   ]
   },
   {
    "id": "kit_lantern_25",
    "weight": 1.0,
-   "png": "res://zones/crossroads/art/kit_lantern_25.png"
+   "png": "res://zones/crossroads/art/kit_lantern_25.png",
+   "foot": [
+    12,
+    118
+   ]
   }
  ],
  "approval": {
@@ -24,7 +32,7 @@
   "by": null,
   "at": null,
   "standard": null,
-  "note": "seeded from game/zones/crossroads (art/catalogue holds its asset-gate record)"
+  "note": "Source metadata only; seeded designs still require the library gate and Matt approval."
  },
  "geometry": {
   "size_px": [
@@ -32,24 +40,41 @@
    120
   ],
   "size_cells": [
-   2,
+   3,
    5
   ],
   "z_sort": "foot",
-  "foot": [
-   12.0,
-   118.0
-  ],
   "collision": {
-   "shape": "rect",
    "rect": [
     -2.0,
     -2.0,
-    4.0,
-    3.0
-   ]
+    4,
+    3
+   ],
+   "shape": "rect"
   },
-  "footprint": []
+  "foot": [
+   12,
+   118
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    -1,
+    0
+   ],
+   [
+    0,
+    0
+   ]
+  ]
  },
  "placement": {
   "snap": "cell",
@@ -86,14 +111,30 @@
  },
  "gameplay": {
   "blocks_move": true,
-  "blocks_shots": false
+  "blocks_shots": true
  },
  "audit": {
   "size_class": null,
   "eastward_ref": null,
   "seeded_from": "game/zones/crossroads/kit.json",
+  "sources": [
+   {
+    "zone": "crossroads",
+    "object": "kit_lantern_24",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "crossroads",
+    "object": "kit_lantern_25",
+    "part": "body",
+    "condition": null
+   }
+  ],
   "todo": [
-   "composition role and clearance"
+   "composition role and clearance",
+   "footprint is conservative positive-area coverage at a cell-aligned foot; W4 must derive exact runtime blocking from collision at the placed foot",
+   "review size-guide class and Eastward comparison before the library gate"
   ]
  }
 }

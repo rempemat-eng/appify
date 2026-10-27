@@ -6,12 +6,16 @@
  "biomes": [
   "village"
  ],
- "version": 1,
+ "version": 2,
  "variants": [
   {
    "id": "north_cottages",
    "weight": 1.0,
-   "png": "res://zones/crossroads/art/north_cottages.png"
+   "png": "res://zones/crossroads/art/north_cottages.png",
+   "foot": [
+    156,
+    272
+   ]
   }
  ],
  "approval": {
@@ -19,7 +23,7 @@
   "by": null,
   "at": null,
   "standard": null,
-  "note": "seeded from game/zones/crossroads (art/catalogue holds its asset-gate record)"
+  "note": "Source metadata only; seeded designs still require the library gate and Matt approval."
  },
  "geometry": {
   "size_px": [
@@ -31,19 +35,19 @@
    12
   ],
   "z_sort": "foot",
-  "foot": [
-   156.0,
-   272.0
-  ],
   "collision": {
-   "shape": "rect",
    "rect": [
     -48.0,
     -40.0,
-    96.0,
-    40.0
-   ]
+    96,
+    40
+   ],
+   "shape": "rect"
   },
+  "foot": [
+   156,
+   272
+  ],
   "footprint": [
    [
     -6,
@@ -285,6 +289,12 @@
     5,
     -1
    ]
+  ],
+  "door_cells": [
+   [
+    3,
+    0
+   ]
   ]
  },
  "placement": {
@@ -308,9 +318,27 @@
   "size_class": null,
   "eastward_ref": null,
   "seeded_from": "game/zones/crossroads/kit.json",
+  "sources": [
+   {
+    "zone": "crossroads",
+    "object": "north_cottages",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "crossroads",
+    "object": "north_cottages_damage",
+    "part": "overlay",
+    "condition": null
+   }
+  ],
   "todo": [
-   "placement.role, requires and forbids (ground-rules.md 6)",
-   "composition role and clearance"
+   "composition role and clearance",
+   "door_cells mark the authored doorway, not a working interior/scene transition",
+   "footprint is conservative positive-area coverage at a cell-aligned foot; W4 must derive exact runtime blocking from collision at the placed foot",
+   "placement.role, requires and forbids (Claude design decision; ground-rules.md 6)",
+   "retain overlay north_cottages_damage from source scene with its own condition and offset; not a standalone random variant",
+   "review size-guide class and Eastward comparison before the library gate"
   ]
  }
 }

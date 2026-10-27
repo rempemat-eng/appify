@@ -6,12 +6,16 @@
  "biomes": [
   "village"
  ],
- "version": 1,
+ "version": 2,
  "variants": [
   {
    "id": "smithy_rubble",
    "weight": 1.0,
-   "png": "res://zones/crossroads/art/smithy_rubble.png"
+   "png": "res://zones/crossroads/art/smithy_rubble.png",
+   "foot": [
+    63,
+    93
+   ]
   }
  ],
  "approval": {
@@ -19,7 +23,7 @@
   "by": null,
   "at": null,
   "standard": null,
-  "note": "seeded from game/zones/crossroads (art/catalogue holds its asset-gate record)"
+  "note": "Source metadata only; seeded designs still require the library gate and Matt approval."
  },
  "geometry": {
   "size_px": [
@@ -27,24 +31,32 @@
    97
   ],
   "size_cells": [
-   5,
-   4
+   6,
+   5
   ],
   "z_sort": "foot",
-  "foot": [
-   63.0,
-   93.0
-  ],
   "collision": {
-   "shape": "rect",
    "rect": [
     -18.0,
     -16.0,
-    36.0,
-    16.0
-   ]
+    36,
+    16
+   ],
+   "shape": "rect"
   },
+  "foot": [
+   63,
+   93
+  ],
   "footprint": [
+   [
+    -3,
+    -2
+   ],
+   [
+    -2,
+    -2
+   ],
    [
     -1,
     -2
@@ -60,6 +72,10 @@
    [
     2,
     -2
+   ],
+   [
+    -3,
+    -1
    ],
    [
     -2,
@@ -97,19 +113,51 @@
  },
  "function": {},
  "story": {
-  "owner": null
+  "owner": null,
+  "gating": {
+   "if": {
+    "not_restored": [
+     "forge"
+    ]
+   }
+  }
  },
  "gameplay": {
   "blocks_move": true,
-  "blocks_shots": false
+  "blocks_shots": true
  },
  "audit": {
   "size_class": null,
   "eastward_ref": null,
   "seeded_from": "game/zones/crossroads/kit.json",
+  "sources": [
+   {
+    "zone": "crossroads",
+    "object": "smithy_rubble",
+    "part": "body",
+    "condition": {
+     "not_restored": [
+      "forge"
+     ]
+    }
+   },
+   {
+    "zone": "crossroads",
+    "object": "smithy_rubble_shadow",
+    "part": "shadow",
+    "condition": {
+     "not_restored": [
+      "forge"
+     ]
+    }
+   }
+  ],
   "todo": [
-   "placement.role, requires and forbids (ground-rules.md 6)",
-   "composition role and clearance"
+   "composition role and clearance",
+   "footprint is conservative positive-area coverage at a cell-aligned foot; W4 must derive exact runtime blocking from collision at the placed foot",
+   "placement.role, requires and forbids (Claude design decision; ground-rules.md 6)",
+   "retain shadow smithy_rubble_shadow from source scene with its own condition and offset; not a standalone random variant",
+   "review size-guide class and Eastward comparison before the library gate"
   ]
  }
 }

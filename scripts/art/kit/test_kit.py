@@ -212,5 +212,405 @@ class Surface(unittest.TestCase):
             self.assertTrue(res[name]['pass'], (name, res[name]))
 
 
+
+
+class SchemaMigrationTooling(unittest.TestCase):
+    """Migrations follow declared schema ids and never guess from piece revision numbers."""
+
+    def piece(self, ident='fixture'):
+        return {'schema': S.load_schema()['$id'], 'id': ident, 'name': 'Fixture', 'kind': 'decal',
+                'version': 17, 'approval': {'state': 'candidate'}}
+
+    def steps(self):
+        target = S.load_schema()['$id']
+        return {'test.piece/old': (target, lambda p: dict(p, schema=target))}
+
+    def write_piece(self, directory, piece):
+        path = os.path.join(directory, piece['id'] + '.json')
+        with open(path, 'w') as handle:
+            json.dump(piece, handle)
+        return path
+
+    def test_concept_is_valid_but_not_approval(self):
+        piece = self.piece()
+        piece['approval']['state'] = 'concept'
+        self.assertEqual(S.errors(piece, S.load_schema()) + S.semantic(piece), [])
+        try:
+            import jsonschema
+        except ImportError:
+            jsonschema = None
+        if jsonschema is not None:
+            self.assertEqual(list(jsonschema.Draft202012Validator(S.load_schema()).iter_errors(piece)), [])
+        piece['approval']['state'] = 'approved'
+        self.assertTrue(S.semantic(piece))  # adding concept did not weaken the approved gate
+
+    def test_current_is_a_deep_copy_and_preserves_piece_revision(self):
+        original = self.piece()
+        result = S.migrate_piece(original)
+        self.assertEqual(result, original)
+        self.assertIsNot(result['approval'], original['approval'])
+        self.assertEqual(result['version'], 17)
+
+    def test_unknown_schema_is_refused_without_guessing(self):
+        piece = dict(self.piece(), schema='test.piece/unknown', version=1)
+        with self.assertRaisesRegex(ValueError, 'no migration'):
+            S.migrate_piece(piece)
+
+    def test_registered_chain_preserves_fields_and_input(self):
+        import copy
+        target = S.load_schema()['$id']
+        piece = dict(self.piece(), schema='test.piece/first', story={'owner': 'Hale'})
+        original = copy.deepcopy(piece)
+        steps = {'test.piece/first': ('test.piece/second', lambda p: dict(p, schema='test.piece/second')),
+                 'test.piece/second': (target, lambda p: dict(p, schema=target))}
+        result = S.migrate_piece(piece, migrations=steps)
+        self.assertEqual(piece, original)
+        self.assertEqual(result, dict(piece, schema=target))
+        self.assertEqual(result['version'], 17)
+
+    def test_broken_and_cyclic_migrations_are_refused(self):
+        piece = dict(self.piece(), schema='test.piece/old')
+        with self.assertRaisesRegex(ValueError, 'must produce schema'):
+            S.migrate_piece(piece, migrations={'test.piece/old': ('test.piece/next', lambda p: p)})
+        cycle = {'test.piece/old': ('test.piece/other', lambda p: dict(p, schema='test.piece/other')),
+                 'test.piece/other': ('test.piece/old', lambda p: dict(p, schema='test.piece/old'))}
+        with self.assertRaisesRegex(ValueError, 'cycle'):
+            S.migrate_piece(piece, migrations=cycle)
+        with self.assertRaisesRegex(ValueError, 'invalid'):
+            S.migrate_piece(piece, migrations={'test.piece/old': (S.load_schema()['$id'],
+                            lambda p: dict(p, schema=S.load_schema()['$id'], version=0))})
+
+    def test_current_file_is_byte_and_mtime_identical(self):
+        import pathlib
+        import tempfile
+        with tempfile.TemporaryDirectory() as directory:
+            path = self.write_piece(directory, self.piece())
+            before = pathlib.Path(path).read_bytes(), os.stat(path).st_mtime_ns
+            self.assertEqual(S.migrate_files([path]), {path: False})
+            self.assertEqual((pathlib.Path(path).read_bytes(), os.stat(path).st_mtime_ns), before)
+
+    def test_batch_refusal_leaves_all_originals(self):
+        import pathlib
+        import tempfile
+        with tempfile.TemporaryDirectory() as directory:
+            first = self.write_piece(directory, dict(self.piece('first'), schema='test.piece/old'))
+            second = self.write_piece(directory, dict(self.piece('second'), schema='test.piece/unknown'))
+            before = [pathlib.Path(p).read_bytes() for p in (first, second)]
+            with self.assertRaisesRegex(ValueError, 'no migration'):
+                S.migrate_files([first, second], migrations=self.steps())
+            self.assertEqual([pathlib.Path(p).read_bytes() for p in (first, second)], before)
+            self.assertFalse(any(f.startswith('.piece-migrate-') for f in os.listdir(directory)))
+
+    def test_conversion_dry_run_and_permissions(self):
+        import pathlib
+        import stat
+        import tempfile
+        with tempfile.TemporaryDirectory() as directory:
+            old = dict(self.piece(), schema='test.piece/old', story={'owner': 'Hale'})
+            path = self.write_piece(directory, old)
+            os.chmod(path, 0o640)
+            before = pathlib.Path(path).read_bytes()
+            self.assertEqual(S.migrate_files([path], migrations=self.steps(), dry_run=True), {path: True})
+            self.assertEqual(pathlib.Path(path).read_bytes(), before)
+            self.assertEqual(S.migrate_files([path], migrations=self.steps()), {path: True})
+            self.assertEqual(json.loads(pathlib.Path(path).read_text()), dict(old, schema=S.load_schema()['$id']))
+            self.assertEqual(stat.S_IMODE(os.stat(path).st_mode), 0o640)
+            self.assertFalse(any(f.startswith('.piece-migrate-') for f in os.listdir(directory)))
+
+    def test_later_replace_failure_rolls_back_the_batch(self):
+        import pathlib
+        import tempfile
+        from unittest import mock
+        with tempfile.TemporaryDirectory() as directory:
+            paths = [self.write_piece(directory, dict(self.piece(name), schema='test.piece/old'))
+                     for name in ('first', 'second')]
+            before = [pathlib.Path(p).read_bytes() for p in paths]
+            replace = os.replace
+            calls = []
+
+            def fail_second(source, target):
+                calls.append(target)
+                if len(calls) == 2:
+                    raise OSError('fixture replacement failure')
+                return replace(source, target)
+
+            with mock.patch.object(S.os, 'replace', side_effect=fail_second):
+                with self.assertRaisesRegex(OSError, 'fixture replacement failure'):
+                    S.migrate_files(paths, migrations=self.steps())
+            self.assertEqual([pathlib.Path(p).read_bytes() for p in paths], before)
+            self.assertFalse(any(f.startswith('.piece-migrate-') for f in os.listdir(directory)))
+
+    def test_filename_and_duplicate_identity_are_checked_before_writes(self):
+        import pathlib
+        import tempfile
+        with tempfile.TemporaryDirectory() as directory:
+            path = self.write_piece(directory, dict(self.piece(), schema='test.piece/old'))
+            before = pathlib.Path(path).read_bytes()
+            with self.assertRaisesRegex(ValueError, 'also in'):
+                S.migrate_files([path, path], migrations=self.steps())
+            self.assertEqual(pathlib.Path(path).read_bytes(), before)
+            renamed = os.path.join(directory, 'other.json')
+            os.rename(path, renamed)
+            with self.assertRaisesRegex(ValueError, 'differs from its file name'):
+                S.migrate_files([renamed], migrations=self.steps())
+            self.assertEqual(pathlib.Path(renamed).read_bytes(), before)
+
+    def test_concurrent_edit_is_preserved(self):
+        import pathlib
+        import tempfile
+        from unittest import mock
+        with tempfile.TemporaryDirectory() as directory:
+            path = self.write_piece(directory, dict(self.piece(), schema='test.piece/old'))
+            stage = S._stage_bytes
+            concurrent = b'{"authored": "concurrent change"}\n'
+
+            def edit_while_staging(*args):
+                tmp = stage(*args)
+                pathlib.Path(path).write_bytes(concurrent)
+                return tmp
+
+            with mock.patch.object(S, '_stage_bytes', side_effect=edit_while_staging):
+                with self.assertRaisesRegex(ValueError, 'changed while migration'):
+                    S.migrate_files([path], migrations=self.steps())
+            self.assertEqual(pathlib.Path(path).read_bytes(), concurrent)
+            self.assertFalse(any(f.startswith('.piece-migrate-') for f in os.listdir(directory)))
+
+    def test_failed_rollback_retains_original_for_recovery(self):
+        import pathlib
+        import tempfile
+        from unittest import mock
+        with tempfile.TemporaryDirectory() as directory:
+            paths = [self.write_piece(directory, dict(self.piece(name), schema='test.piece/old'))
+                     for name in ('first', 'second')]
+            original = pathlib.Path(paths[0]).read_bytes()
+            replace = os.replace
+            calls = []
+
+            def fail_after_first(source, target):
+                calls.append(target)
+                if len(calls) > 1:
+                    raise OSError('fixture disk failure')
+                return replace(source, target)
+
+            with mock.patch.object(S.os, 'replace', side_effect=fail_after_first):
+                with self.assertRaisesRegex(OSError, 'original retained at'):
+                    S.migrate_files(paths, migrations=self.steps())
+            retained = [os.path.join(directory, f) for f in os.listdir(directory)
+                        if f.startswith('.piece-migrate-')]
+            self.assertEqual(len(retained), 1)
+            self.assertEqual(pathlib.Path(retained[0]).read_bytes(), original)
+
+    def test_source_bindings_are_closed_and_match_jsonschema(self):
+        import copy
+        try:
+            import jsonschema
+        except ImportError:
+            self.skipTest('jsonschema not installed')
+        piece = self.piece()
+        piece['audit'] = {'sources': [{'zone': 'woodland', 'object': 'tree01', 'part': 'body',
+                                      'condition': {'flag': 'woodland_restored'}}]}
+        validator = jsonschema.Draft202012Validator(S.load_schema())
+        self.assertEqual(S.errors(piece, S.load_schema()), [])
+        self.assertEqual(list(validator.iter_errors(piece)), [])
+        for bad in ({'zone': 'woodland', 'object': 'tree01'},
+                    {'zone': 'woodland', 'object': 'tree01', 'part': 'unknown'},
+                    {'zone': 'woodland', 'object': 'tree01', 'part': 'body', 'typo': True}):
+            invalid = copy.deepcopy(piece)
+            invalid['audit']['sources'] = [bad]
+            self.assertTrue(S.errors(invalid, S.load_schema()))
+            self.assertTrue(list(validator.iter_errors(invalid)))
+
+
+class SeedCompleteness(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from scripts.art.kit import seed_props as seed
+        cls.seed = seed
+        cls.pieces = seed.seed()
+        cls.index = seed.source_index(cls.pieces)
+        cls.by_id = {p['id']: p for p in cls.pieces}
+
+    def test_every_source_id_including_attachments_is_mapped_once(self):
+        expected = set()
+        for zone in ('woodland', 'crossroads'):
+            kit = self.seed._read('game/zones/' + zone + '/kit.json')
+            expected.update((zone, o[0] if isinstance(o, list) else o['id']) for o in kit['objects'])
+        self.assertEqual(set(self.index), expected | {('woodland', 'StoneSign')})
+        self.assertEqual(len(expected), 183)
+        self.assertEqual(len(self.by_id), len(self.pieces))
+
+    def test_attachment_ids_are_on_their_owners_with_exact_conditions(self):
+        kit = self.seed._read('game/zones/crossroads/kit.json')
+        objects = {o['id']: o for o in kit['objects']}
+        for oid, owner in [('smithy_damage', 'smithy'), ('smithy_boards', 'smithy'),
+                           ('forge_fire', 'smithy'), ('fern_boards', 'fern_cottage'),
+                           ('well_shadow', 'well')]:
+            with self.subTest(object=oid):
+                pid = self.index['crossroads', oid]
+                self.assertEqual(pid, self.index['crossroads', owner])
+                p = self.by_id[pid]
+                source = next(s for s in p['audit']['sources'] if s['object'] == oid)
+                self.assertEqual(source['condition'], objects[oid]['cond'])
+                self.assertNotIn(oid, [v['id'] for v in p['variants']])
+
+    def test_blocking_and_nonblocking_bushes_cannot_share_collision(self):
+        solid = self.by_id[self.index['crossroads', 'bush_7']]
+        clear = self.by_id[self.index['crossroads', 'bush_14']]
+        self.assertNotEqual(solid['id'], clear['id'])
+        self.assertTrue(solid['gameplay']['blocks_move'])
+        self.assertFalse(clear['gameplay']['blocks_move'])
+        self.assertEqual(clear['geometry']['collision'], {'shape': 'none'})
+
+    def test_all_authored_boxes_recover_from_reusable_local_geometry(self):
+        kit = self.seed._read('game/zones/crossroads/kit.json')
+        for obj in kit['objects']:
+            if not obj.get('solid'):
+                continue
+            p = self.by_id[self.index['crossroads', obj['id']]]
+            r = p['geometry']['collision']['rect']
+            actual = [r[0] + obj['foot'][0] / 3, r[1] + obj['foot'][1] / 3, *r[2:]]
+            np.testing.assert_allclose(actual, obj['solid'], atol=0.00001, err_msg=obj['id'])
+
+    def test_per_variant_anchors_match_source_offsets(self):
+        kit = self.seed._read('game/zones/crossroads/kit.json')
+        for obj in kit['objects']:
+            if not obj.get('png') or obj['kind'] in ('shadow', 'damage', 'glow', 'smoke'):
+                continue
+            p = self.by_id[self.index['crossroads', obj['id']]]
+            v = next(v for v in p['variants'] if v['id'] == os.path.splitext(obj['png'])[0])
+            self.assertEqual(v['foot'], [-n for n in obj['offset']], obj['id'])
+
+    def test_unknown_woodland_collision_is_not_fabricated(self):
+        for p in self.pieces:
+            if p['id'].startswith('woodland_') and p['id'] != 'woodland_stone_sign':
+                self.assertIsNone(p['geometry']['collision'])
+                self.assertNotIn('blocks_move', p['gameplay'])
+                self.assertTrue(any('unknown' in t for t in p['audit']['todo']))
+
+    def test_thin_and_negative_local_collisions_keep_coverage(self):
+        self.assertEqual(self.seed.footprint([-1, -1, 2, 2]), [[-1, -1], [0, -1], [-1, 0], [0, 0]])
+        self.assertEqual(self.seed.footprint([-8, -8, 8, 8]), [[-1, -1]])
+        self.assertEqual(self.seed.footprint([0, 0, 0, 1]), [])
+
+    def test_restore_links_use_explicit_building_mapping(self):
+        smithy = self.by_id['crossroads_smithy']
+        self.assertEqual(smithy['story']['milestone'], 'forge')
+        self.assertIn('village.restored.forge', smithy['function']['saves'])
+        self.assertIn('res://data/quests/cold_forge.json', smithy['story']['quests'])
+        triggers = smithy['function']['interact']['triggers']
+        self.assertTrue(any(t['type'] == 'restore' and '#/restores/0' in t['ref'] for t in triggers))
+        self.assertNotIn('milestone', self.by_id['crossroads_library']['story'])
+        self.assertNotIn('interact', self.by_id['crossroads_library']['function'])
+
+    def test_authored_interactions_preserve_actual_speakers(self):
+        board = self.by_id['crossroads_notice_board']
+        self.assertEqual(board['function']['interact']['verb'], 'read')
+        self.assertEqual(board['geometry']['collision']['shape'], 'circle')
+        self.assertEqual(board['function']['interact']['triggers'],
+                         [{'type': 'dialogue', 'ref': 'res://data/dialogue/crossroads.json#/notice_board'}])
+        stone = self.by_id['crossroads_waystone']
+        self.assertEqual(stone['function']['interact']['verb'], 'use')
+        self.assertEqual(stone['geometry']['interaction_points'][0]['verb'], 'Touch')
+        self.assertNotIn('dialogue', self.by_id['crossroads_well']['story'])
+
+    def test_generated_batch_is_valid_and_deterministic(self):
+        self.assertEqual(self.seed.seed(), self.pieces)
+        for p in self.pieces:
+            self.assertEqual(S.errors(p, S.load_schema()) + S.semantic(p), [], p['id'])
+            with open(os.path.join(S.PIECES, p['kind'], p['id'] + '.json')) as f:
+                saved = json.load(f)
+            self.assertEqual(saved, p, p['id'])
+
+    def test_restore_interactions_keep_source_predicates_on_points(self):
+        smithy = self.by_id['crossroads_smithy']
+        fern = self.by_id['crossroads_fern_cottage']
+        self.assertEqual(smithy['geometry']['interaction_points'][0]['if'], {'not_restored': ['forge']})
+        self.assertEqual(fern['geometry']['interaction_points'][0]['if'],
+                         {'flags': ['shard_home:woodland'], 'not_restored': ['fern_cottage']})
+        self.assertNotIn('gating', smithy['story'])
+        self.assertNotIn('gating', fern['story'])
+
+    def test_source_order_cannot_change_piece_ids_or_provenance(self):
+        from unittest.mock import patch
+        read = self.seed._read
+        def reversed_kit(path):
+            data = read(path)
+            if path.endswith('/kit.json'):
+                data['objects'].reverse()
+            return data
+        with patch.object(self.seed, '_read', side_effect=reversed_kit):
+            self.assertEqual(self.seed.seed(), self.pieces)
+
+    def test_scene_only_quest_sign_is_seeded_with_real_source_behavior(self):
+        sign = self.by_id['woodland_stone_sign']
+        self.assertEqual(sign['audit']['seeded_from'], 'game/zones/woodland/woodland.tscn')
+        self.assertEqual(sign['geometry']['foot'], [16.0, 40.0])
+        self.assertEqual(sign['geometry']['collision'], {'shape': 'circle', 'radius': 5 / 3})
+        self.assertEqual(sign['function']['interact']['triggers'],
+                         [{'type': 'dialogue', 'ref': 'res://data/dialogue/woodland.json#/stone_sign'}])
+        self.assertIn('res://data/quests/woodland_stones.json', sign['story']['quests'])
+        self.assertTrue(any('placeholder' in t for t in sign['audit']['todo']))
+
+    def test_force_cannot_resurrect_or_overwrite_reviewed_pieces(self):
+        import copy
+        import tempfile
+        from pathlib import Path
+        from unittest.mock import patch
+        import contextlib
+        import io
+        for state in ('approved', 'gated', 'rejected', 'retired'):
+            with self.subTest(state=state), tempfile.TemporaryDirectory() as tmp:
+                p = copy.deepcopy(self.pieces[0])
+                old = copy.deepcopy(p)
+                old['approval'].update(state=state, by='reviewer', at='2026-10-27')
+                target = Path(tmp) / old['kind'] / (old['id'] + '.json')
+                target.parent.mkdir()
+                target.write_text(json.dumps(old))
+                before = target.read_bytes()
+                with patch.object(self.seed, 'PIECES', tmp), patch.object(self.seed, 'seed', return_value=[p]), contextlib.redirect_stdout(io.StringIO()):
+                    self.assertEqual(self.seed.main(['--force']), 1)
+                self.assertEqual(target.read_bytes(), before)
+
+    def test_refresh_preserves_authored_variants_and_nested_metadata(self):
+        import copy
+        from unittest.mock import patch
+        lookup = self.seed._existing
+        authored = copy.deepcopy(self.by_id['crossroads_notice_board'])
+        authored['variants'].append(dict(authored['variants'][0], id='curated_board', note='reviewed alternate'))
+        authored['function']['interact']['triggers'].append({'type': 'menu', 'ref': 'journal'})
+        authored['story'].update(lore='Authored lore', quests=['res://data/quests/home_again.json'])
+        authored['geometry']['overhang'] = [[0, -1]]
+        def existing(pid):
+            return copy.deepcopy(authored) if pid == authored['id'] else lookup(pid)
+        with patch.object(self.seed, '_existing', side_effect=existing):
+            refreshed = next(p for p in self.seed.seed() if p['id'] == authored['id'])
+        self.assertIn('curated_board', [v['id'] for v in refreshed['variants']])
+        self.assertIn({'type': 'menu', 'ref': 'journal'}, refreshed['function']['interact']['triggers'])
+        self.assertEqual(refreshed['story']['lore'], 'Authored lore')
+        self.assertIn('res://data/quests/home_again.json', refreshed['story']['quests'])
+        self.assertEqual(refreshed['geometry']['overhang'], [[0, -1]])
+
+    def test_concurrent_seed_edit_is_refused_before_writes(self):
+        import copy
+        import tempfile
+        from pathlib import Path
+        from unittest.mock import patch
+        import contextlib
+        import io
+        with tempfile.TemporaryDirectory() as tmp:
+            p = copy.deepcopy(self.pieces[0])
+            target = Path(tmp) / p['kind'] / (p['id'] + '.json')
+            target.parent.mkdir()
+            target.write_text(json.dumps(p))
+            authored = dict(p, name='Concurrent authored change')
+            edited = json.dumps(authored)
+            def prepare():
+                target.write_text(edited)
+                return [p]
+            with patch.object(self.seed, 'PIECES', tmp), patch.object(self.seed, 'seed', side_effect=prepare), contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(self.seed.main(['--force']), 1)
+            self.assertEqual(target.read_text(), edited)
+
+
 if __name__ == '__main__':
     unittest.main()

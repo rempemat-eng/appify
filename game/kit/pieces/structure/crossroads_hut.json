@@ -6,12 +6,16 @@
  "biomes": [
   "village"
  ],
- "version": 1,
+ "version": 2,
  "variants": [
   {
    "id": "hut",
    "weight": 1.0,
-   "png": "res://zones/crossroads/art/hut.png"
+   "png": "res://zones/crossroads/art/hut.png",
+   "foot": [
+    132,
+    188
+   ]
   }
  ],
  "approval": {
@@ -19,7 +23,7 @@
   "by": null,
   "at": null,
   "standard": null,
-  "note": "seeded from game/zones/crossroads (art/catalogue holds its asset-gate record)"
+  "note": "Source metadata only; seeded designs still require the library gate and Matt approval."
  },
  "geometry": {
   "size_px": [
@@ -31,19 +35,19 @@
    8
   ],
   "z_sort": "foot",
-  "foot": [
-   132.0,
-   188.0
-  ],
   "collision": {
-   "shape": "rect",
    "rect": [
     -40.0,
     -40.0,
-    80.0,
-    40.0
-   ]
+    80,
+    40
+   ],
+   "shape": "rect"
   },
+  "foot": [
+   132,
+   188
+  ],
   "footprint": [
    [
     -5,
@@ -245,6 +249,23 @@
     4,
     -1
    ]
+  ],
+  "interaction_points": [
+   {
+    "id": "hut_bed",
+    "at": [
+     0.0,
+     24.0
+    ],
+    "verb": "Enter",
+    "radius": 30.0
+   }
+  ],
+  "door_cells": [
+   [
+    0,
+    0
+   ]
   ]
  },
  "placement": {
@@ -256,9 +277,22 @@
   },
   "contact_ao": true
  },
- "function": {},
+ "function": {
+  "interact": {
+   "verb": "enter",
+   "triggers": [
+    {
+     "type": "dialogue",
+     "ref": "res://data/dialogue/crossroads.json#/hut_door"
+    }
+   ]
+  }
+ },
  "story": {
-  "owner": null
+  "owner": null,
+  "dialogue": [
+   "res://data/dialogue/crossroads.json#/hut_door"
+  ]
  },
  "gameplay": {
   "blocks_move": true,
@@ -268,9 +302,20 @@
   "size_class": null,
   "eastward_ref": null,
   "seeded_from": "game/zones/crossroads/kit.json",
+  "sources": [
+   {
+    "zone": "crossroads",
+    "object": "hut",
+    "part": "body",
+    "condition": null
+   }
+  ],
   "todo": [
-   "placement.role, requires and forbids (ground-rules.md 6)",
-   "composition role and clearance"
+   "composition role and clearance",
+   "door_cells mark the authored doorway, not a working interior/scene transition",
+   "footprint is conservative positive-area coverage at a cell-aligned foot; W4 must derive exact runtime blocking from collision at the placed foot",
+   "placement.role, requires and forbids (Claude design decision; ground-rules.md 6)",
+   "review size-guide class and Eastward comparison before the library gate"
   ]
  }
 }
