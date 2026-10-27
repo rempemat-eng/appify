@@ -1,4 +1,68 @@
-# The world plan's block-out (v5.2) and the overview map (v53)
+# The world plan's block-out (v5.2) and the overview map (v53, v54)
+
+## v54: the overview map, second pass (27 Oct)
+
+Matt, 27 Oct 18:23, on v53: "continue to make further improvements, especially the mountains to the north and the sandy desert. make the biomes a tiny touch more visually separated where it makes sense (not a huge amount but a bit here and there to better differentiate the biomes)".
+
+`geo54.py` (data) and `map54.py` (the map) sit on top of `geo53.py` and `map53.py`. **The geography and every place are v53's**: the tiers, routes, ground kinds, ways, craters, places and waystones are unchanged, so `blockout-v54.json`, `stats-v54.json` and `gates-v54.json` repeat v53's numbers and each adds a `v54` block (the range, the desert features, the edges, the label tiers, the inset's box). Anything in that block that is not ground in the block-out is a drawing addition or a proposal for the owning lane (D: the desert; F: the massif's edge; G: the edges). `continent-1x-v54.png` is the labelled map at 1920 x 1080 and `inset-home-valley-v54.png` the inset (both 256 colours).
+
+### The northern range
+
+- **A range, not scattered marks.** The massif's high ground is drawn as peaks in the map's oblique style, the same as the trees and v53's peak marks: each lit on its west face and shaded on its east, with a shadow cast to the south-east (upper-left light). Heights come from the height field (plus a rise toward the north edge, so the range closes the whole top of the map). Peaks stand only on ridges and shoulders (where the ground is higher than its surroundings), so the valleys between them stay open. They are drawn north to south, the nearer overlapping the farther, in three shapes (single summits, twin summits on one ridge, broad shouldered massifs) with a darker spur on the lit face.
+- **One snowline.** Snow caps every peak whose summit rises above `SNOWLINE` (0.90 in the height field's units; geo52's snowline runs 0.79 to 0.93 by aspect), down to the same height on every peak, with a ragged lower edge; lit snow on the west, blue-grey in shade.
+- **Glaciers in the high valleys.** No peak stands where its body would cover the block-out's glacier cells, so the ice lies between the ridges, with a darker edge and crevasse strokes across its flow. Two are named: **the Rime glacier** above the tarn (the ice caves are under its snout) and **the West ice**.
+- **Passes as notches.** No peak stands within 110 px of a pass, and the crest dips toward each over 450 px: **the ridge col** (the Col Path over the Frostline's lip, W2), **the Fells saddle** (the High Fells path) and **the Lode notch** (the mule track's top). Each is marked with a saddle sign (two facing brackets). Routes and rivers keep a clear corridor through the range, so the Rift's gorge and the Cog's valley read as cuts.
+- **Foothills** step down from the range into the Sunstone steppe, the Frostline and the forests as low rounded hills in the colour of the ground they rise from (none in forest, where the trees carry the slope).
+- **Named peaks**: the highest peak in each stretch of the range: **Whitepike**, **the Greyhorn**, **Rime Fell** (above the Frostline), **the Anvil** and **Old Cairn** (`stats-v54.json` v54.named_peaks).
+- **A cloud bank** along the top edge, so the range runs up into cloud instead of stopping at a hard line.
+
+### The desert
+
+- **One wind**: a dry north-north-westerly off the massif (`WIND_FROM_DEG` 340). Dunes run across it: a long lit stoss slope facing the wind, a bright crest line, and a short shaded slip face on the lee (south-south-east) side, consistent with every south face on the map. The crests wander and fade in and out (a slow warp and an amplitude field), so they read as dune fields, not stripes. **The dune sea** has tall dunes (150 px apart); the sand sheet and the interdune flats low ripples (70 px).
+- **Mesas and buttes**: the block-out's mesas, and five buttes proposed for lane D on open desert and scrub clear of routes (the Chimney, the Anvil butte, Table Rock, the Sentinels, the Ember butte), each with a lit flat top, a south face in strata bands, and a shadow cast to the south-east.
+- **Salt flats**: the salt lake with a crack pattern and a crust edge, and two small pans proposed on the dune sea's interdune flats (the bitter pans, the white pan).
+- **Dry riverbeds**: the block-out's Dry Fork and Brackens wash, and two washes proposed leading to the oasis at Palm Spring (the Thirst wash, the Long wash), drawn as pale sandy beds between dotted banks, widening downstream.
+- **A gradual edge**: sand, sand sheet, scrub and steppe blend over about 100 px instead of meeting at a line; the speckle that made v53's desert flat is gone (a few pebbles remain).
+
+### The biomes a little more separated (modest, where it is natural)
+
+| Edge | What v54 draws |
+| --- | --- |
+| forest | a darker rim on every forest edge (the ground and the edge trees) |
+| the valley and the moor | the Brackens' heath a touch more heather-coloured, its dots heather, with a thin darker edge against the valley's grass |
+| the fire country | the ash fields' dark rim, and a fall-off of ash flecks onto the ground beside them |
+| the moss fens | a marsh pattern (water lines with tufts) in place of the reeds |
+| the Lull's floodplain | the watermeadows a little cooler, with a dotted flood line at their edge |
+| sand to steppe | blended (above), the one edge made softer, not harder |
+
+### The frame, the labels and the inset
+
+- **A clean frame.** v53 stretched and blurred the outer columns into the margins. v54 carries the sea flat into the margins where the edge is sea, and closes the land's edges (and the top) with a cloud bank, lit on its upper left; the double frame line is kept.
+- **A label hierarchy** (`LABEL_TIERS`): tier 1 (region names, towns and villages, the stone circle) always; tier 2 (great craters, biome names, named peaks, gates with a way) where it fits, with a leader if needed; tier 3 (small places, other gates, passes, water and route names) only where there is space around it, with no leader. On the full map tier 3 is left out inside the inset's box, which the inset names in full: the home valley loses about twenty small labels and keeps every town, crater and way.
+- **The home valley inset** (`map54-inset-home-valley.png`, `inset-home-valley-v54.png`): world px 4800 to 8100 east and 1400 to 4400 south at 1 px to 2 world px (3.2 times the 1920 map), with every name, the built zones, the routes and lines, and a ruler (10, 50 and 100 cells at Bramble's walk). The full map marks its box with a dashed line.
+
+### Checks
+
+- The gate check: no leaks, nothing missing, no crossing without a way, at every step (`gates-v54.json`, the same as v53's).
+- The benchmark: **21 of 21 pass** (`stats-v54.json` benchmark; the ground is v53's).
+- Reachable from home with every way open: every crater, act 1 place, waystone and the circle (unchanged).
+- The labels: none overlaps another or an icon. Every tier 1 and tier 2 name is placed on the 1920 map, the 3840 map and the inset (the run prints any that are not).
+- Looked at: the rivers run downhill as in v53 (unchanged lines); the peaks, dunes, mesas, clouds and trees are lit from the upper left and shade or cast to the lower right.
+
+### The maps (written to `out/`, and to `$MAP54_OUT` if set)
+
+| File | What |
+| --- | --- |
+| `map54-1920.png`, `map54-3840.png` | the full map with every layer, at 1920 x 1080 and 2x |
+| `map54-inset-home-valley.png` | the home valley inset (1650 x 1500) |
+| `map54-v53-vs-v54.png` | v53's and v54's maps side by side at 1920 x 1080 |
+| `map54-labels-1920.png`, `map54-overlay-*-1920.png`, `map54-layer-*-1920.png`, `map54-realistic-1920.png`, `map54-base-1920.png` | as v53's |
+
+```
+python3 -I geo54.py                  # data and every map (about eight minutes)
+RENDER_ONLY=1 python3 -I geo54.py    # the maps again from out/state-v54.pkl (about a minute)
+QUICK=data python3 -I geo54.py       # the JSON and the state only
+```
 
 ## v53: the continent overview map (27 Oct)
 
@@ -83,6 +147,7 @@ It is a block-out, not art. Positions and tiers are the plan's; each lane's brie
 | `stats-v52.json`       | The plan's measurements: walk times, routes' lengths, why each place is where it is, bridges, every named thing, pocket, obstacle and marker with its position, the mixing at each threshold, vertical stats per region, and the benchmark's 21 checks (all pass).                                     |
 | `gates-v52.json`       | The gate check (world plan section 10): with each set of ways open, which places leak or go missing (none), and every place a route crosses a barrier with the way that opens it.                                                                                                                      |
 | `geo53.py`, `map53.py`, `blockout-v53.json`, `stats-v53.json`, `gates-v53.json`, `continent-1x-v53.png` | v53, above: the same three files plus `v53` (circle, craters, new routes, places, waystones, built zones, act 1's beats), and the overview map. |
+| `geo54.py`, `map54.py`, `blockout-v54.json`, `stats-v54.json`, `gates-v54.json`, `continent-1x-v54.png`, `inset-home-valley-v54.png` | v54, above: v53's three files plus `v54` (the range, the desert, the edges, the label tiers, the inset), the overview map and the home valley inset. |
 | `continent-1x-v52.png` | Our own render of the whole continent at 1 px per 8 px cell (1408 x 864), hill-shaded from the upper left. Reduced to 256 colours to keep it small (the script writes the full-colour one to `out/`). Nothing in this folder is an image of another game.                                              |
 
 ## Coordinates
