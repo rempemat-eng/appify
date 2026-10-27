@@ -38,9 +38,9 @@ unmodified dependency commits for combined-source acceptance:
 
 | Dependency | PR   | Pin                                        | Used interface                                                                    |
 | ---------- | ---- | ------------------------------------------ | --------------------------------------------------------------------------------- |
-| W2         | #305 | `d3d9492002e182383fa2fe9d35d36895f79eb69f` | Static `kit_zone.gd.plan_from_scene`, `kit_zone_plan` / `kit_zone_entry` metadata |
-| W4         | #304 | `03431f74e809ae4f04c96497fa5c3fa093c98494` | `KitWalk.rebuild` / `write_walk`                                                  |
-| W5/W6      | #311 | `9ace6bc8a80a92ba90438591dc6962d637a90eba` | `KitRelations.check_placement`, Python `kit_scene.check_zone`                     |
+| W2         | #305 | `ef4bd6234c36b0e5ce4e9595286c7bea424a7276` | Static `kit_zone.gd.plan_from_scene`, `kit_zone_plan` / `kit_zone_entry` metadata |
+| W4         | #304 | `2d637747ffe874f350045dfa2c5412f5723e8165` | `KitWalk.rebuild` / `write_walk`                                                  |
+| W5/W6      | #311 | `c8c1a1ed63a902bb85f729fe699bf377d1033a17` | `KitRelations.check_placement`, Python `kit_scene.check_zone`                     |
 
 Integrate/review those PRs before the W3 commit. W1/W7 and their artwork/runtime
 changes are not included. `rules_adapter.gd` transports findings; it does not
@@ -63,7 +63,11 @@ GODOT=/path/to/Godot_v4.7.2-stable npm run check:godot
 The three `test_world_editor*.gd` suites cover transaction rollback/redo, approval
 gates, coordinate/metadata preservation, geometry and actual shared-rule
 integration. The ordinary-node identity fixture guards against Godot renaming a
-placed node while its plan keeps a colliding id.
+placed node while its plan keeps a colliding id. The real Solid/KitWalk fixture
+also covers placement, collision rebuild, undo, redo, cleanup and an active-mask
+PackedScene disk save/reload preserving the original collision layer. The W4
+successor uses serialization-safe ownership; the W2 successor rejects malformed
+plans before node allocation; W6 preserves equal-tier bridge landings.
 
 For actual editor history and dock construction, run a disposable editor:
 
