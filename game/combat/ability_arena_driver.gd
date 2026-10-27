@@ -19,11 +19,11 @@ var _pose := Callable()
 
 ## Bind explicitly supplied art clocks and display callbacks to this driver only.
 ## A rejected replacement preserves the existing binding. No scene enables this.
-func bind_presentation(provider: Callable, draw: Callable, contact: Callable, pose: Callable = Callable()) -> bool:
+func bind_presentation(provider: Callable, draw: Callable, contact: Callable, pose: Callable = Callable(), passive_provider: Callable = Callable()) -> bool:
 	if not _enabled:
 		return false
 	var candidate := AbilityContactConsumer.new()
-	if not candidate.configure(provider, draw, contact):
+	if not candidate.configure(provider, draw, contact, passive_provider):
 		return false
 	clear_presentation()
 	_presentation = candidate

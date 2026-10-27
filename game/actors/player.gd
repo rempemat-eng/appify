@@ -109,13 +109,14 @@ func attach_action_driver(driver: AbilityActionDriver) -> bool:
 
 ## Explicit optional binding: the provider must use this loaded body's exact manifest
 ## and supply approved canonical drawing clocks. No production schedule is inferred.
-func bind_ability_presentation(provider: Callable, contact: Callable) -> bool:
+func bind_ability_presentation(provider: Callable, contact: Callable, passive_provider: Callable = Callable()) -> bool:
 	if not action_driver is AbilityArenaDriver or not provider.is_valid() or not contact.is_valid():
 		return false
 	var expected := action_driver
+	var passive := _ability_contract.bind(passive_provider, expected) if passive_provider.is_valid() else Callable()
 	var bound := (action_driver as AbilityArenaDriver).bind_presentation(
 		_ability_contract.bind(provider, expected), _present_ability_drawing.bind(expected),
-		_ability_contact.bind(contact, expected), _present_ability_pose.bind(expected))
+		_ability_contact.bind(contact, expected), _present_ability_pose.bind(expected), passive)
 	if bound:
 		_ability_ground_body = sprite.position
 		_ability_pose_driver = expected

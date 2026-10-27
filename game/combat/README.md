@@ -727,6 +727,21 @@ copies remain in authored screen texels, including west. Invalid replacement pre
 current valid state. The fixture suite also reads all fourteen published passive/form clip
 sets and Brine's empty variants; fixture template clocks are not production timing approval.
 
-This pure timeline is not yet bound to Player or the arena driver's action consumer. Production
-A/J provider/state selection, powered-idle start/end and powered-defeat exit rules still need
-that explicit binding. No default attachment, combat event, art/renderer or canonical rule change.
+The optional third argument of `Player.bind_ability_presentation(action_provider, contact,
+passive_provider)` now binds this timeline through the existing action consumer. The passive
+provider receives an isolated snapshot and an empty action string; it returns `key`, the loaded
+body's exact `manifest`, `clip`, `facing`, explicit `durations` and optional `aim`. It owns state
+selection, including whether a form/empty clip is appropriate. The consumer selects no production
+state and guesses no timing. A new key displays drawing zero; the same key advances at fixed ticks,
+and a facing/aim change keeps phase only if the clock is unchanged.
+
+Active action drawings/contact callbacks take priority. A passive pose may resume once the action
+finishes, after its ordered contact delivery; guard poses can advance without any contact event.
+Inactive time, duplicate ticks, detach/reset/reconfigure/scene exit and reentrant provider cancellation
+preserve the existing lifecycle guarantees. Invalid or foreign contracts show no new drawing and
+cannot deliver a contact. Existing two-argument Player bindings and driver callback APIs remain valid.
+The new suite covers real Player/body selection, action priority, simulation equality, guard/pause,
+explicit state/facing changes, foreign-contract rejection/recovery and lifecycle cancellation.
+
+Production A/J provider/state selection, powered-idle start/end and powered-defeat exit routing
+remain unfinished. No default attachment, combat event, art/renderer or canonical rule change.

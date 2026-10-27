@@ -5,6 +5,9 @@ extends RefCounted
 
 var _track := AbilityContactTrack.new()
 var _provider := Callable()
+var _passive_provider := Callable()
+var _passive := AbilityPoseTrack.new()
+var _passive_key := ""
 var _draw := Callable()
 var _contact := Callable()
 var _token := 0
@@ -15,11 +18,12 @@ var last_error := ""
 
 ## provider(after, action) returns manifest, clip, facing, durations and optional aim.
 ## It must supply the explicit owner-approved schedule, not the art's template clock.
-func configure(provider: Callable, draw: Callable, contact: Callable) -> bool:
+func configure(provider: Callable, draw: Callable, contact: Callable, passive_provider: Callable = Callable()) -> bool:
 	if not provider.is_valid() or not draw.is_valid() or not contact.is_valid():
 		return false
 	cancel()
 	_provider = provider
+	_passive_provider = passive_provider
 	_draw = draw
 	_contact = contact
 	_last_tick = -1
@@ -29,6 +33,8 @@ func configure(provider: Callable, draw: Callable, contact: Callable) -> bool:
 func cancel() -> void:
 	_generation += 1
 	_track.cancel()
+	_passive.cancel()
+	_passive_key = ""
 	_action = ""
 
 ## Connect this to the driver's fixed player-phase signal. Call cancel on actor
@@ -42,8 +48,12 @@ func observe(before: Dictionary, after: Dictionary, delta: float) -> void:
 		_last_tick = int(after.tick)
 	var old: Dictionary = before.player
 	var current: Dictionary = after.player
-	if current.hp <= 0 or current.blocking or before.player.id != current.id:
+	if current.hp <= 0 or before.player.id != current.id:
 		cancel()
+		return
+	if current.blocking:
+		if _action != "": cancel()
+		_observe_passive(after, delta)
 		return
 	var committed := ""
 	for action in ["primary", "secondary", "special"]:
@@ -63,8 +73,12 @@ func observe(before: Dictionary, after: Dictionary, delta: float) -> void:
 				cancel()
 	if committed != "":
 		_begin(after, committed)
+	if _action == "" and current.action in ["idle", "walk"]:
+		_observe_passive(after, delta)
 
 func _begin(state: Dictionary, action: String) -> void:
+	_passive.cancel()
+	_passive_key = ""
 	var generation := _generation
 	var supplied: Variant = _provider.call(state.duplicate(true), action)
 	if generation != _generation:
@@ -121,3 +135,29 @@ func _deliver(events: Array[Dictionary]) -> void:
 			_draw.call(event.sample.duplicate(true))
 		else:
 			_contact.call(event.sample.duplicate(true))
+
+## The optional provider selects state/clip and supplies approved durations explicitly.
+## No passive pose can cover an active action or generate a release/contact callback.
+func _observe_passive(state: Dictionary, delta: float) -> void:
+	if not _passive_provider.is_valid():
+		return
+	var generation := _generation
+	var supplied: Variant = _passive_provider.call(state.duplicate(true), "")
+	if generation != _generation:
+		return
+	if not supplied is Dictionary or not supplied.has_all(["key", "manifest", "clip", "facing", "durations"]):
+		last_error = "missing explicit passive presentation contract"
+		return
+	if not supplied.manifest is Dictionary or not supplied.durations is Array or not supplied.key is String:
+		last_error = "invalid passive presentation contract"
+		return
+	var key: String = supplied.key
+	var same_state := key == _passive_key
+	if not _passive.configure(key, supplied.manifest, str(supplied.clip), str(supplied.facing),
+			supplied.durations, _token + 1, str(supplied.get("aim", ""))):
+		last_error = "invalid passive variant or implicit retiming"
+		return
+	_token += 1
+	_passive_key = key
+	last_error = ""
+	_draw.call(_passive.advance(delta if same_state else 0.0).duplicate(true))
