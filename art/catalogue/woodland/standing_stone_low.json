@@ -1,14 +1,14 @@
 {
  "id": "woodland/standing_stone_low",
  "file": "game/zones/woodland/art/standing_stone_low.png",
- "sha256": "2669046eccb5e7b92bbbfbcd5ddd2f75a01e28905d2a662a5cb7af0871560c9b",
+ "sha256": "82da3f2f5bea509535457033ebb2229df04cad227ef7532a5f9a908b76d6a7eb",
  "kind": "standing_stone",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  45,
-  75
+  62,
+  78
  ],
  "status": "pass",
  "counts": {
@@ -18,8 +18,8 @@
  },
  "detail_bar": {
   "ours": {
-   "patches": 4,
-   "tones": 22.25,
+   "patches": 6,
+   "tones": 24.0,
    "shapes": 42.0
   },
   "band": {
@@ -29,7 +29,7 @@
    "patches": 20
   },
   "ratio": 0.689,
-  "tones_ratio": 0.848,
+  "tones_ratio": 0.914,
   "shapes_ratio": 0.689,
   "passed": false,
   "group": "stone"
@@ -39,9 +39,9 @@
    "detector": "logic.scale",
    "severity": "polish",
    "box": [
-    6,
+    10,
     14,
-    40,
+    53,
     70
    ],
    "message": "woodland/standing_stone_low: tall 56 art px (0.76 A) is too small for a standing stone: the size table gives 59 to 126 (0.80 to 1.70 A); Eastward at the same character height: none; scaled from real stones",
@@ -51,12 +51,12 @@
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    6,
+    10,
     14,
-    40,
+    53,
     70
    ],
-   "message": "woodland/standing_stone_low: detail bar 0.69 of Eastward's stone band (22.2 tones, 42.0 shapes a patch against 26.25, 61.0)",
+   "message": "woodland/standing_stone_low: detail bar 0.69 of Eastward's stone band (24.0 tones, 42.0 shapes a patch against 26.25, 61.0)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
