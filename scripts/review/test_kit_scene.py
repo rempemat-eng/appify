@@ -113,7 +113,19 @@ def cases():
     add('rim-without-fall', p, ['rules.water_fall'])
     lib = library(); lib['fall'] = dict(approval={'state': 'approved'}, geometry={'footprint': [[0, 0]]}, placement={'role': 'waterfall', 'snap': 'free'}, gameplay={'blocks_move': False})
     p = copy.deepcopy(p); p['pieces'] = [instance('fall', at=(.5, 1))]
-    add('rim-covered-by-fall', p, lib=lib)
+    add('rim-covered-fall-with-dry-landing', p, ['rules.water_fall'], lib=lib)
+    p = copy.deepcopy(p); _row(p, 2, '~~....'); _row(p, 3, '~~....')
+    add('rim-covered-fall-lands-in-pool', p, lib=lib)
+    p = copy.deepcopy(p); p['rows'][2:] = ['~.....'] * 4
+    add('fall-lands-in-channel-without-pool', p, ['rules.water_fall'], lib=lib)
+    p = plan(); p['rows'] = ['..~~..', '..~~..', '......', '..~~..', '..~~..', '......']; p['tiers'] = ['111111', '111111'] + ['000000'] * 4; p['pieces'] = [instance('fall', at=(2, 2))]
+    lib = copy.deepcopy(lib); lib['fall']['geometry']['footprint'] = [[0, 0], [1, 0]]
+    add('wide-fall-lands-across-pool', p, lib=lib)
+    p = copy.deepcopy(p); _row(p, 3, '.~~...'); _row(p, 4, '.~~...')
+    add('wide-fall-partly-misses-pool', p, ['rules.water_fall'], lib=lib)
+    p = plan(); p['rows'] = ['..~...', '..~...', '......', '......', '..~~..', '..~~..']; p['tiers'] = ['111111', '111111'] + ['000000'] * 4; p['pieces'] = [instance('fall', at=(2, 2))]
+    lib = copy.deepcopy(lib); lib['fall']['geometry']['footprint'] = [[0, 0], [0, 1]]; mats = materials(); mats['face']['face']['height_cells'] = 2
+    add('tall-fall-lands-below-full-face', p, lib=lib, mats=mats)
     p = plan(); _row(p, 2, '######'); _row(p, 3, '######')
     add('route-stays-on-one-tier', p)
     lib = library(); lib['bench'] = dict(approval={'state': 'approved'}, placement={'role': 'seat', 'snap': 'free', 'requires': [{'rel': 'adjacent', 'what': 'route_edge', 'cells': 2, 'facing': True}], 'forbids': [{'rel': 'on', 'what': 'route'}]}, geometry={'collision': {'shape': 'rect', 'rect': [-4, -8, 8, 8]}}, gameplay={'blocks_move': True})

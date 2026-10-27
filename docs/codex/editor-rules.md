@@ -55,6 +55,12 @@ rejected records are faults; candidate/gated records retain the prototype's
 advisory policy unless `ship` is true. This validator does not grant editor
 placement permission or promote approvals.
 
+Raster falls must land in water across their complete south boundary. A landing
+pool uses the existing cell-water heuristic: every landing cell belongs to a
+2 by 2 water area at one tier. A channel alone is not a pool. The boundary follows
+each footprint column, so tall falls land below the complete face. This closes
+the authored `water.fall` landing rule for plans without pool rectangles.
+
 Piece/spawn/anchor coordinates default to texels; `coordinate_space: cells`
 normalises them at ingress. One cell is 24 texels or 8 world pixels. Door
 rectangles always use cells. Source collision/deck metadata uses world pixels;

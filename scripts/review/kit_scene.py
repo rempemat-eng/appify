@@ -341,6 +341,13 @@ def _extra_checks(plan, library, materials, state, guide):
         if any((x + dx, y + dy) in grid and tiers[x, y] != tiers[x + dx, y + dy] and ((x + dx, y + dy) in route or _material(materials.get(grid[x + dx, y + dy], {})).get('face')) and (x, y) not in decks and (x + dx, y + dy) not in decks for dx, dy in DIRS):
             fs.append(_f('rules.tier_route', 'route changes tier without a stair', [(x + .5) * CELL, (y + .5) * CELL]))
     falls = set()
+    # Raster water has no authored pool rectangles. Use the same minimum 2x2
+    # water area as water_end, and require each landing cell to belong to one.
+    pool_cells = set()
+    for x, y in water:
+        square = {(x, y), (x + 1, y), (x, y + 1), (x + 1, y + 1)}
+        if square <= water and len({tiers[c] for c in square}) == 1:
+            pool_cells |= square
     for entry in plan.get('pieces', []):
         piece = library.get(entry['piece'], {})
         if _role(piece) != 'waterfall':
@@ -350,6 +357,9 @@ def _extra_checks(plan, library, materials, state, guide):
         top = min((y for x, y in cells), default=0)
         if not cells or any(not _material(materials.get(grid.get(c), {})).get('face') for c in cells) or any((x, top - 1) not in water for x, y in cells):
             fs.append(_f('rules.water_fall', '%s: fall must cover the face below its feeding channel' % entry.get('id', entry['piece']), _world_at(entry)))
+        landing = {(x, max(y for X, y in cells if X == x) + 1) for x, _y in cells}
+        if cells and not landing <= pool_cells:
+            fs.append(_f('rules.water_fall', '%s: fall must land across its width in a pool' % entry.get('id', entry['piece']), _world_at(entry)))
     for x, y in sorted(water):
         below = x, y + 1
         if _material(materials.get(grid.get(below), {})).get('face') and below not in falls:
