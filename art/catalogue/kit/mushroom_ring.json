@@ -1,26 +1,26 @@
 {
  "id": "kit/mushroom_ring",
  "file": "artifacts/review/kit/mushroom_ring.png",
- "sha256": "a01de3d6ba3ecbff88354bdbb0129dd2174bae251edcb0bba4090d70a364c7d0",
+ "sha256": "f76a5a8b83823a04abbc4afcfd8f0099618bd1cbfcc513b9b4dbb9f5c5ff7cd9",
  "kind": "mushroom_ring",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  138,
-  75
+  141,
+  65
  ],
- "status": "fail",
+ "status": "pass",
  "counts": {
   "blocker": 0,
-  "fault": 4,
-  "polish": 0
+  "fault": 0,
+  "polish": 1
  },
  "detail_bar": {
   "ours": {
-   "patches": 9,
-   "tones": 21.88888888888889,
-   "shapes": 22.555555555555557
+   "patches": 0,
+   "tones": 0.0,
+   "shapes": 0.0
   },
   "band": {
    "tones": 27.0,
@@ -28,66 +28,29 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.448,
-  "tones_ratio": 0.811,
-  "shapes_ratio": 0.448,
-  "passed": false,
+  "ratio": null,
+  "passed": null,
   "group": "prop"
  },
  "findings": [
   {
-   "detector": "detail.light",
-   "severity": "fault",
+   "detector": "detail.outline",
+   "severity": "polish",
    "box": [
-    11,
-    18,
-    126,
-    68
-   ],
-   "message": "kit/mushroom_ring: lit from the right: luminance rises 38 L per H to the east",
-   "fix": "relight from the upper left: lit faces west and up, shade east and down, the cast shadow east"
-  },
-  {
-   "detector": "logic.prop_row",
-   "severity": "fault",
-   "box": [
-    11,
-    18,
+    13,
+    7,
     125,
-    67
+    61
    ],
-   "message": "kit/mushroom_ring: 12 mushrooms from 11 cap stamps (one used 2 times), 3 on one baseline: copies set out in rows, not a ring that grew",
-   "fix": "grow them as a cluster or an irregular ring: varied sizes, ages and lean, some half hidden in grass, none on a shared baseline (world-rules.md 6.7)"
-  },
-  {
-   "detector": "detail.flat",
-   "severity": "fault",
-   "box": [
-    30,
-    39,
-    105,
-    66
-   ],
-   "message": "kit/mushroom_ring: a flat foliage area: one smooth patch covers 74% (0.162 H^2), 3 tones",
-   "fix": "draw the foliage as its material: break the fill with its own structure (staves and hoops, grain and nail heads, courses, bevels, leaf clusters) in 4 to 5 tones of its ramp"
-  },
-  {
-   "detector": "detail.bar",
-   "severity": "fault",
-   "box": [
-    11,
-    18,
-    126,
-    68
-   ],
-   "message": "kit/mushroom_ring: detail bar 0.45 of Eastward's prop band (21.9 tones, 22.6 shapes a patch against 27.0, 50.36)",
-   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+   "message": "kit/mushroom_ring: only 19% of the silhouette is drawn in an edge tone",
+   "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-10-26",
+  "note": "#296 review at 08474c76: checked at 4x beside Bramble and its siblings; passes."
  }
 }

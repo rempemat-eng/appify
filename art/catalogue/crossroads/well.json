@@ -1,7 +1,7 @@
 {
  "id": "crossroads/well",
  "file": "game/zones/crossroads/art/well.png",
- "sha256": "61b1deae465d5e2c0a0baf830924ea7c6b764d6dbf3b6515c0816c7ed6f2c2bd",
+ "sha256": "bdb8c77469a95e48aadc72db3f4b09704333962921113005dcd34be5cfcc55f7",
  "kind": "well",
  "biome": "valley",
  "H": 74.0,
@@ -14,13 +14,13 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 2
+  "polish": 1
  },
  "detail_bar": {
   "ours": {
-   "patches": 19,
-   "tones": 21.736842105263158,
-   "shapes": 34.89473684210526
+   "patches": 15,
+   "tones": 24.266666666666666,
+   "shapes": 37.53333333333333
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.693,
-  "tones_ratio": 0.805,
-  "shapes_ratio": 0.693,
+  "ratio": 0.745,
+  "tones_ratio": 0.899,
+  "shapes_ratio": 0.745,
   "passed": false,
   "group": "prop"
  },
@@ -40,30 +40,19 @@
    "severity": "polish",
    "box": [
     14,
-    19,
+    31,
     109,
     170
    ],
-   "message": "crossroads/well: detail bar 0.69 of Eastward's prop band (21.7 tones, 34.9 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/well: detail bar 0.74 of Eastward's prop band (24.3 tones, 37.5 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
-  },
-  {
-   "detector": "logic.scale",
-   "severity": "polish",
-   "box": [
-    14,
-    19,
-    109,
-    170
-   ],
-   "message": "crossroads/well: tall 151 art px (2.04 A) is too big for a well: the size table gives 89 to 141 (1.20 to 1.91 A); Eastward at the same character height: the bell frame in 13: 58 x 60 E (1.07 x 1.1 A)",
-   "fix": "redraw it 89 to 141 art px tall (target about 115), checked beside Bramble (74 art px) in the asset sheet"
   }
  ],
  "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-10-26",
+  "note": "#296 review at 08474c76: checked at 4x beside Bramble and its siblings; passes."
  }
 }

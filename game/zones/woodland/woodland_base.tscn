@@ -540,13 +540,13 @@ offset = Vector2(-37, -101)
 position = Vector2(336, 1200)
 texture = ExtResource("t_standing_stone_b")
 centered = false
-offset = Vector2(-40, -100)
+offset = Vector2(-37, -100)
 
 [node name="stone-3" type="Sprite2D" parent="Objects"]
 position = Vector2(360, 1272)
 texture = ExtResource("t_standing_stone_low")
 centered = false
-offset = Vector2(-35, -76)
+offset = Vector2(-36, -76)
 
 [node name="stone-4" type="Sprite2D" parent="Objects"]
 position = Vector2(324, 1320)
@@ -558,19 +558,19 @@ offset = Vector2(-37, -101)
 position = Vector2(156, 1320)
 texture = ExtResource("t_standing_stone_b")
 centered = false
-offset = Vector2(-40, -100)
+offset = Vector2(-37, -100)
 
 [node name="stone-6" type="Sprite2D" parent="Objects"]
 position = Vector2(108, 1248)
 texture = ExtResource("t_standing_stone_low")
 centered = false
-offset = Vector2(-35, -76)
+offset = Vector2(-36, -76)
 
 [node name="stone-7" type="Sprite2D" parent="Objects"]
 position = Vector2(144, 1200)
 texture = ExtResource("t_standing_stone_low")
 centered = false
-offset = Vector2(-35, -76)
+offset = Vector2(-36, -76)
 
 [node name="stump-1" type="Sprite2D" parent="Objects"]
 position = Vector2(528, 744)

@@ -1,7 +1,7 @@
 {
  "id": "crossroads/sacks_12",
  "file": "game/zones/crossroads/art/sacks_12.png",
- "sha256": "76989b2e94f794abb2705d878d600532b4eaac2143f2d43b858e256f0c738b77",
+ "sha256": "bd2e5e135d64ac9a0bc08eebd88cef494fbfd9ae97e50b89819212fbd0b56699",
  "kind": "sack",
  "biome": "valley",
  "H": 74.0,
@@ -14,13 +14,13 @@
  "counts": {
   "blocker": 0,
   "fault": 0,
-  "polish": 3
+  "polish": 2
  },
  "detail_bar": {
   "ours": {
    "patches": 4,
-   "tones": 14.75,
-   "shapes": 30.75
+   "tones": 13.75,
+   "shapes": 30.5
   },
   "band": {
    "tones": 27.0,
@@ -28,9 +28,9 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.546,
-  "tones_ratio": 0.546,
-  "shapes_ratio": 0.611,
+  "ratio": 0.509,
+  "tones_ratio": 0.509,
+  "shapes_ratio": 0.606,
   "passed": false,
   "group": "prop"
  },
@@ -40,11 +40,11 @@
    "severity": "polish",
    "box": [
     6,
-    15,
+    19,
     51,
     62
    ],
-   "message": "crossroads/sacks_12: detail bar 0.55 of Eastward's prop band (14.8 tones, 30.8 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/sacks_12: detail bar 0.51 of Eastward's prop band (13.8 tones, 30.5 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   },
   {
@@ -52,30 +52,19 @@
    "severity": "polish",
    "box": [
     6,
-    15,
+    19,
     51,
     62
    ],
-   "message": "crossroads/sacks_12: only 39% of the silhouette is drawn in an edge tone",
+   "message": "crossroads/sacks_12: only 40% of the silhouette is drawn in an edge tone",
    "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)"
-  },
-  {
-   "detector": "logic.scale",
-   "severity": "polish",
-   "box": [
-    6,
-    15,
-    51,
-    62
-   ],
-   "message": "crossroads/sacks_12: tall 47 art px (0.64 A) is too big for a sack: the size table gives 22 to 44 (0.30 to 0.59 A); Eastward at the same character height: sacks at the stalls 0.35 to 0.5 A (04)",
-   "fix": "redraw it 22 to 44 art px tall (target about 33), checked beside Bramble (74 art px) in the asset sheet"
   }
  ],
  "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-10-26",
+  "note": "#296 review at 08474c76: checked at 4x beside Bramble and its siblings; passes."
  }
 }

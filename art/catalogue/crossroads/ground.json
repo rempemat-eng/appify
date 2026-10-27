@@ -1,7 +1,7 @@
 {
  "id": "crossroads/ground",
  "file": "game/zones/crossroads/art/ground.png",
- "sha256": "11cfa07522897f2c67caa68d7f20fc8f8ffaa3ae45eecf546e0919dd9b688f48",
+ "sha256": "39e53f8e056964e8d9bccd2e84429617166f25c58d058460d64586f9185f9c0f",
  "kind": "ground",
  "biome": "valley",
  "H": 74.0,
@@ -10,14 +10,27 @@
   1920,
   1680
  ],
- "status": "pass",
+ "status": "fail",
  "counts": {
   "blocker": 0,
-  "fault": 0,
+  "fault": 1,
   "polish": 0
  },
  "detail_bar": null,
- "findings": [],
+ "findings": [
+  {
+   "detector": "logic.scale",
+   "severity": "fault",
+   "box": [
+    1628,
+    740,
+    1776,
+    888
+   ],
+   "message": "crossroads/ground: the grass fill is speckled at the wrong scale: its dark marks are 2.0 art px (0.027 H) and 74 to a H square in 87% of its tiles; Eastward's are 4.1 to 15.1 art px at the same character height, about 34 to a H square",
+   "fix": "draw fewer, larger marks: tufts 6 to 22 art px in loose clumps, soft blotches 26 to 57 across, and calm ground between them (eastward-edges.md 5.5)"
+  }
+ ],
  "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",

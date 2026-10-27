@@ -5,7 +5,7 @@
   1920,
   1680
  ],
- "inputs": "c292b4c4d03508fb3a65faa962155adc887c8be82309bf9de572472879859754",
+ "inputs": "2e01a94f9dc9e8b81f2dbfe8813b4a35281232b0a2faab65a701514d6ecd2c8b",
  "kit_drawn": [
   "anvil.png",
   "bakery.png",
@@ -174,7 +174,7 @@
    ],
    "offset": [
     -120,
-    -284
+    -296
    ],
    "cond": null,
    "solid": [
@@ -194,7 +194,7 @@
    ],
    "offset": [
     -120,
-    -285
+    -297
    ],
    "cond": null,
    "solid": null,
@@ -210,7 +210,7 @@
    ],
    "offset": [
     -120,
-    -188
+    -227
    ],
    "cond": null,
    "solid": [
@@ -230,7 +230,7 @@
    ],
    "offset": [
     -120,
-    -189
+    -228
    ],
    "cond": null,
    "solid": null,
@@ -582,8 +582,8 @@
     1320
    ],
    "offset": [
-    -60,
-    -164
+    -126,
+    -206
    ],
    "cond": {
     "not_flags": [
@@ -1314,7 +1314,7 @@
     912
    ],
    "offset": [
-    -39,
+    -48,
     -53
    ],
    "cond": null,
@@ -1654,7 +1654,7 @@
     1272
    ],
    "offset": [
-    -47,
+    -41,
     -52
    ],
    "cond": null,
@@ -2020,25 +2020,6 @@
    },
    "solid": null,
    "of": "beds_dug"
-  },
-  {
-   "id": "square_puddles",
-   "kind": "shadow",
-   "png": "square_puddles.png",
-   "foot": [
-    695,
-    723
-   ],
-   "offset": [
-    0,
-    0
-   ],
-   "cond": {
-    "not_restored": [
-     "forge"
-    ]
-   },
-   "solid": null
   }
  ]
 }

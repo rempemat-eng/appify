@@ -1,7 +1,7 @@
 {
  "id": "crossroads/notice_board",
  "file": "game/zones/crossroads/art/notice_board.png",
- "sha256": "b4f984b9ce38caaf66daf5f3cd81351100fa7ef2017b9b0eb0e9362dbc46e95d",
+ "sha256": "4fe2a53772c1f8903121d214d88577b00ccddfaeb613a5dea2a4b19a6fd4c1ee",
  "kind": "tall_sign",
  "biome": "valley",
  "H": 74.0,
@@ -19,7 +19,7 @@
  "detail_bar": {
   "ours": {
    "patches": 12,
-   "tones": 27.75,
+   "tones": 28.833333333333332,
    "shapes": 43.5
   },
   "band": {
@@ -29,7 +29,7 @@
    "patches": 83
   },
   "ratio": 0.864,
-  "tones_ratio": 1.028,
+  "tones_ratio": 1.068,
   "shapes_ratio": 0.864,
   "passed": false,
   "group": "prop"
@@ -44,14 +44,15 @@
     85,
     129
    ],
-   "message": "crossroads/notice_board: detail bar 0.86 of Eastward's prop band (27.8 tones, 43.5 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/notice_board: detail bar 0.86 of Eastward's prop band (28.8 tones, 43.5 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
  "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-10-26",
+  "note": "#296 review at 08474c76: checked at 4x beside Bramble and its siblings; passes."
  }
 }

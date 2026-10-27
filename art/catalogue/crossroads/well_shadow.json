@@ -1,14 +1,14 @@
 {
  "id": "crossroads/well_shadow",
  "file": "game/zones/crossroads/art/well_shadow.png",
- "sha256": "2cc489184d7e113b64ea8885f320cd3a2878e245f52358f097ed7540978236a8",
+ "sha256": "905c9c9325192b811683adea70622a45aabed235b7230b785140c686ab5ec37b",
  "kind": "well_shadow",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  138,
-  38
+  132,
+  36
  ],
  "status": "pass",
  "counts": {
