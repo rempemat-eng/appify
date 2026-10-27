@@ -159,14 +159,20 @@ def bake(plan: dict, lib: dict | None = None):
     face_h = int((lib['earth_face']['terrain'].get('paint') or {}).get('args', {}).get('face_px', 48))
     # the tiers' tops and the face bands under them (where nothing else is painted)
     tops, band = [], np.zeros((h, w), bool)
-    for t in range(1, int(tiers.max()) + 1):
+    # one ledge per level present, its face two cells for each tier it drops (a top two tiers over
+    # the ground beside it shows a face four cells high, as the woodland's cascade)
+    levels = sorted(int(v) for v in np.unique(tiers) if v > 0)
+    drops = []
+    for i, t in enumerate(levels):
         ea = (lib['earth_face']['terrain'].get('paint') or {}).get('args', {})
         tm = _shape(tiers >= t, h, w, dict(seed=ea.get('seed', 301) + t, r_out=ea.get('r_out', 0.65), r_in=ea.get('r_in', 0.4), amp=ea.get('amp', SG.AMP)))
         top = GD.lawn(h, w, 31 + t, base=3, lush=0.5, grain=0.6)      # the plateau swatch's calmer top
         cv[tm] = top[tm]
+        fh = face_h * (t - (levels[i - 1] if i else 0))
+        drops.append(fh)
         tops.append(tm)
         below = np.zeros_like(tm)
-        for k in range(1, face_h + 1):
+        for k in range(1, fh + 1):
             below[k:] |= tm[:-k]
         band |= below & ~tm
     # context per cell for the variants: trees, water, doors, routes
@@ -214,8 +220,8 @@ def bake(plan: dict, lib: dict | None = None):
             SN.scree(cv, [int(sc[:, x * int(D)].sum() / D) for x in range(w // int(D))], ~sc)
     # the ledges, lowest first
     rng = np.random.default_rng(301)
-    for t, tm in enumerate(tops, start=1):
-        _face, items, _lip = GD.ledge(cv, tm, face_h, rng, seed=301 + t, kind='earth', shadow_px=15)
+    for t, (tm, fh) in enumerate(zip(tops, drops), start=1):
+        _face, items, _lip = GD.ledge(cv, tm, fh, rng, seed=301 + t, kind='earth', shadow_px=15)
         # the back rim, so raised ground reads on every side: the top's last row lit, under it (to the
         # north, seen past the rim) a dark row of earth and a row of the lower turf in its shade
         back = tm & GD.down(~tm, 1)
@@ -225,6 +231,19 @@ def bake(plan: dict, lib: dict | None = None):
         cv[rim1 & (cv >= 0)] = C('earth_cool', 1)
         sel = rim2 & (cv >= 0) & (cv % 8 > 0) & (cv % 8 < 6)
         cv[sel] = cv[sel] - 1
+        # the side bands kept their width all the way back (ledge narrows them to 2 px there): along
+        # the top's west and east edges a wall 4 px across on the lower turf, the west one lit, the
+        # east one in shade, a dark line outside, the top's edge column a lit lip
+        turf_l = (is_fam(cv, 'grass') | is_fam(cv, 'leaf')) & ~tm & ~_face
+        for side, lit in ((-1, True), (1, False)):
+            for k in range(1, 5):
+                wall = turf_l & GD.right(tm, side * k)
+                if k == 4:
+                    cv[wall] = C('earth_cool', 0)
+                else:
+                    cv[wall] = C('earth_warm', 4 - k // 2) if lit else C('earth', 2 - k // 2)
+            lipc = tm & ~GD.right(tm, -side)
+            cv[lipc & (cv % 8 < 5)] = cv[lipc & (cv % 8 < 5)] + 1
         for img_, anc_, (fx_, fy_) in items:
             dec_ = SN.to_codes(img_)
             SN.DC.paste(cv, dec_, int(round(fx_ - anc_[0])), int(round(fy_ - anc_[1])), shadow=True, shadow_dx=SN.P(1), shadow_dy=SN.P(0.5))
@@ -299,7 +318,7 @@ def bake(plan: dict, lib: dict | None = None):
         if rp.get('fn') == 'fall':
             cw = lib[pc['piece']]['geometry']['size_cells'][0] * CELL / D
             cx, foot = pc['at'][0] / D, pc['at'][1] / D
-            rim = foot - face_h / D
+            rim = foot - rp.get('args', {}).get('face_px', face_h) / D
             seed = rp.get('args', {}).get('seed', 11)
             k = cw / 16.0                                   # the woodland's fall is a 16 world px channel
             # the cascade as the woodland painted it (screen.terrain): the rock face behind, then
@@ -314,7 +333,7 @@ def bake(plan: dict, lib: dict | None = None):
             chan[int(rim * D):] = False
             chan[:max(0, int((rim - 40) * D))] = False
             for (dx, dy, bw, bh, sd, slab) in sorted(heap, key=lambda b: b[1]):
-                sc = min(1.0, 0.55 + 0.45 * q)
+                sc = 1.0 if q >= 0.75 else min(1.0, 0.55 + 0.45 * q)
                 dec, anc = RK.rock(bw * sc * (k if dx == 0 else 1.0), bh * sc, sd, flat=slab, moss=0.6)
                 X, Y = int(round((cx + dx * k) * D - anc[0])), int(round((rim + dy * q) * D - anc[1]))
                 hh, ww = dec.shape

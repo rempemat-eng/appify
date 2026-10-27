@@ -195,44 +195,46 @@ def log_steps(force: bool, cells: int = 2) -> None:
     }, force)
 
 
-def waterfall(force: bool, cells_w: int) -> None:
+def waterfall(force: bool, cells_w: int, drop: int = 1) -> None:
     """A fall where water crosses a south rim (ground-rules 2: lip flush with the rim, centred on
     the channel and as wide as it, landing in a pool): the woodland's painted fall (water.fall_hd:
     the stone lip, the sheet with streaks, the plume, foam rings and spray), over a face of two
-    cells, for a channel `cells_w` cells wide."""
+    cells per tier it drops (`drop`: 1, or 2 for the woodland's own cascade, four cells high), for a
+    channel `cells_w` cells wide."""
     from scripts.art.native import water as WA
     from scripts.art.native.palette import C as CC
     wpx = cells_w * 24
-    W, H = wpx + 48, 12 + 48 + 34
+    face = 48 * drop
+    W, H = wpx + 48, 12 + face + 34
     # paint over two different pool fills (the rings need water to lie on) and keep only the
     # pixels the fall drew, which agree between the two
     runs = []
     for pool in (CC('water', 2), CC('water', 1)):
         cv = np.full((H, W), -1, np.int32)
-        cv[60:, :] = pool
+        cv[12 + face:, :] = pool
         # the sheet a few texels wider than the channel, so it covers the bank lumps either side
-        WA.fall_hd(cv, 20 / D, (wpx + 8) / D, 12 / D, 60 / D, seed=65 + cells_w)
+        WA.fall_hd(cv, 20 / D, (wpx + 8) / D, 12 / D, (12 + face) / D, seed=65 + cells_w)
         runs.append(cv)
     cv = np.where(runs[0] == runs[1], runs[0], -1)
     os.makedirs(ART, exist_ok=True)
-    name = 'waterfall_%d' % cells_w
+    name = 'waterfall_%d' % cells_w + ('' if drop == 1 else '_tall')
     Image.fromarray(to_rgba(cv), 'RGBA').save(os.path.join(ART, name + '.png'))
     cols = list(range(-(cells_w // 2), cells_w - cells_w // 2))
     _write({
-        'schema': 'napattack.piece/1', 'id': name, 'name': 'Waterfall, %d cells' % cells_w, 'kind': 'structure',
+        'schema': 'napattack.piece/1', 'id': name, 'name': 'Waterfall, %d cells%s' % (cells_w, '' if drop == 1 else ', a two-tier drop'), 'kind': 'structure',
         'biomes': ['woodland', 'valley', 'highland'], 'version': 1,
         'variants': [{'id': 'w%d' % cells_w, 'weight': 1.0, 'png': 'res://kit/props/art/%s.png' % name}],
         'approval': {'state': 'candidate', 'by': None, 'at': None, 'standard': 'ground-rules.md 2 (rules.water_fall), eastward-edges.md 5.3',
-                     'note': "the woodland's painted fall (water.fall_hd) as a piece over a two-cell face"},
-        'geometry': {'size_px': [W, H], 'size_cells': [cells_w, 2], 'foot': [W / 2.0, 60.0], 'z_sort': 'ground',
+                     'note': "the woodland's painted cascade as a piece over a face of %d cells" % (2 * drop)},
+        'geometry': {'size_px': [W, H], 'size_cells': [cells_w, 2 * drop], 'foot': [W / 2.0, float(12 + face)], 'z_sort': 'ground',
                      'collision': {'shape': 'none'},
-                     'footprint': [[c, r] for r in (-2, -1) for c in cols]},
+                     'footprint': [[c, -r] for r in range(2 * drop, 0, -1) for c in cols]},
         'placement': {'role': 'waterfall', 'snap': 'cell',
                       'requires': [{'rel': 'on', 'what': 'face', 'note': 'its footprint is the face under water crossing a south rim'},
                                    {'rel': 'under', 'what': 'water', 'note': 'water on the tier above, as wide as the fall'}],
                       'composition': 'axis'},
         'rendering': {'cast_shadow': {'shape': 'none'}, 'contact_ao': False,
-                      'paint': {'module': 'scripts.art.native.rocks', 'fn': 'fall', 'args': {'seed': 9 + cells_w}},
+                      'paint': {'module': 'scripts.art.native.rocks', 'fn': 'fall', 'args': {'seed': 9 + cells_w, 'face_px': face}},
                       'animations': [{'clip': 'fall', 'loop': True, 'reduced_motion': 'hold:0', 'on_screen_only': True}]},
         'function': {}, 'story': {'owner': None},
         'gameplay': {'blocks_move': True, 'blocks_shots': False},
@@ -252,7 +254,8 @@ def main(argv=None) -> int:
         log_steps(force, c)
     for c in (1, 2, 3, 4):
         waterfall(force, c)
-    print('structures: footbridges (2, 3, 4), stepping stones (1, 2), boulders, log steps (1, 2, 3), waterfalls (1 to 4)')
+        waterfall(force, c, drop=2)
+    print('structures: footbridges (2, 3, 4), stepping stones (1, 2), boulders, log steps (1, 2, 3), waterfalls (1 to 4, one and two tiers)')
     return 0
 
 

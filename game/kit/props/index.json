@@ -4550,6 +4550,71 @@
   },
   "z_sort": "ground"
  },
+ "waterfall_1_tall": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": null,
+  "deck": null,
+  "foot": [
+   36.0,
+   108.0
+  ],
+  "footprint": [
+   [
+    0,
+    -4
+   ],
+   [
+    0,
+    -3
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [],
+  "function": {},
+  "kind": "structure",
+  "name": "Waterfall, 1 cells, a two-tier drop",
+  "painted": true,
+  "requires": [
+   {
+    "note": "its footprint is the face under water crossing a south rim",
+    "rel": "on",
+    "what": "face"
+   },
+   {
+    "note": "water on the tier above, as wide as the fall",
+    "rel": "under",
+    "what": "water"
+   }
+  ],
+  "role": "waterfall",
+  "shadow": null,
+  "size_cells": [
+   1,
+   4
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "w1": {
+    "foot": [
+     36.0,
+     108.0
+    ],
+    "png": "res://kit/props/art/waterfall_1_tall.png"
+   }
+  },
+  "z_sort": "ground"
+ },
  "waterfall_2": {
   "approval": "candidate",
   "blocks_move": true,
@@ -4611,6 +4676,87 @@
      60.0
     ],
     "png": "res://kit/props/art/waterfall_2.png"
+   }
+  },
+  "z_sort": "ground"
+ },
+ "waterfall_2_tall": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": null,
+  "deck": null,
+  "foot": [
+   48.0,
+   108.0
+  ],
+  "footprint": [
+   [
+    -1,
+    -4
+   ],
+   [
+    0,
+    -4
+   ],
+   [
+    -1,
+    -3
+   ],
+   [
+    0,
+    -3
+   ],
+   [
+    -1,
+    -2
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [],
+  "function": {},
+  "kind": "structure",
+  "name": "Waterfall, 2 cells, a two-tier drop",
+  "painted": true,
+  "requires": [
+   {
+    "note": "its footprint is the face under water crossing a south rim",
+    "rel": "on",
+    "what": "face"
+   },
+   {
+    "note": "water on the tier above, as wide as the fall",
+    "rel": "under",
+    "what": "water"
+   }
+  ],
+  "role": "waterfall",
+  "shadow": null,
+  "size_cells": [
+   2,
+   4
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "w2": {
+    "foot": [
+     48.0,
+     108.0
+    ],
+    "png": "res://kit/props/art/waterfall_2_tall.png"
    }
   },
   "z_sort": "ground"
@@ -4684,6 +4830,103 @@
      60.0
     ],
     "png": "res://kit/props/art/waterfall_3.png"
+   }
+  },
+  "z_sort": "ground"
+ },
+ "waterfall_3_tall": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": null,
+  "deck": null,
+  "foot": [
+   60.0,
+   108.0
+  ],
+  "footprint": [
+   [
+    -1,
+    -4
+   ],
+   [
+    0,
+    -4
+   ],
+   [
+    1,
+    -4
+   ],
+   [
+    -1,
+    -3
+   ],
+   [
+    0,
+    -3
+   ],
+   [
+    1,
+    -3
+   ],
+   [
+    -1,
+    -2
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    1,
+    -2
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [],
+  "function": {},
+  "kind": "structure",
+  "name": "Waterfall, 3 cells, a two-tier drop",
+  "painted": true,
+  "requires": [
+   {
+    "note": "its footprint is the face under water crossing a south rim",
+    "rel": "on",
+    "what": "face"
+   },
+   {
+    "note": "water on the tier above, as wide as the fall",
+    "rel": "under",
+    "what": "water"
+   }
+  ],
+  "role": "waterfall",
+  "shadow": null,
+  "size_cells": [
+   3,
+   4
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "w3": {
+    "foot": [
+     60.0,
+     108.0
+    ],
+    "png": "res://kit/props/art/waterfall_3_tall.png"
    }
   },
   "z_sort": "ground"
@@ -4765,6 +5008,119 @@
      60.0
     ],
     "png": "res://kit/props/art/waterfall_4.png"
+   }
+  },
+  "z_sort": "ground"
+ },
+ "waterfall_4_tall": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": null,
+  "deck": null,
+  "foot": [
+   72.0,
+   108.0
+  ],
+  "footprint": [
+   [
+    -2,
+    -4
+   ],
+   [
+    -1,
+    -4
+   ],
+   [
+    0,
+    -4
+   ],
+   [
+    1,
+    -4
+   ],
+   [
+    -2,
+    -3
+   ],
+   [
+    -1,
+    -3
+   ],
+   [
+    0,
+    -3
+   ],
+   [
+    1,
+    -3
+   ],
+   [
+    -2,
+    -2
+   ],
+   [
+    -1,
+    -2
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    1,
+    -2
+   ],
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [],
+  "function": {},
+  "kind": "structure",
+  "name": "Waterfall, 4 cells, a two-tier drop",
+  "painted": true,
+  "requires": [
+   {
+    "note": "its footprint is the face under water crossing a south rim",
+    "rel": "on",
+    "what": "face"
+   },
+   {
+    "note": "water on the tier above, as wide as the fall",
+    "rel": "under",
+    "what": "water"
+   }
+  ],
+  "role": "waterfall",
+  "shadow": null,
+  "size_cells": [
+   4,
+   4
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "w4": {
+    "foot": [
+     72.0,
+     108.0
+    ],
+    "png": "res://kit/props/art/waterfall_4_tall.png"
    }
   },
   "z_sort": "ground"
