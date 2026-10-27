@@ -327,3 +327,232 @@ func test_canonical_json_sorts_nested_keys_and_preserves_array_order() -> void:
 	assert_str(Tool.canonical(a)).is_equal(Tool.canonical(b))
 	assert_that(JSON.parse_string(Tool.canonical(a)).a).is_equal([3.0, 2.0, 1.0])
 	assert_bool(Tool.canonical(a).ends_with("\n")).is_true()
+
+func _input_plan() -> Dictionary:
+	return {"zone": "w2_inputs", "legend": {".": "lawn"}, "rows": ["..", ".."]}
+
+func _assert_invalid_input(plan: Dictionary, field: String) -> void:
+	var diagnostic := Tool.plan_error(plan)
+	assert_bool(not diagnostic.is_empty() and diagnostic.contains(field)).override_failure_message(
+		"Expected a useful %s diagnostic; got '%s' for %s" % [field, diagnostic, plan]).is_true()
+	var root := Tool.scene_from_plan(plan)
+	assert_object(root).override_failure_message("Malformed %s input allocated a scene: %s" % [field, plan]).is_null()
+	if root != null:
+		root.free()
+
+func test_input_preflight_accepts_existing_plans_and_preserves_unknown_metadata() -> void:
+	for plan in [_fixture(), JSON.parse_string(FileAccess.get_file_as_string(LAB))]:
+		var before: Dictionary = plan.duplicate(true)
+		assert_str(Tool.plan_error(plan)).is_empty()
+		var root := _scene(plan)
+		if root != null:
+			_assert_plan(Tool.plan_from_scene(root), before)
+		_assert_plan(plan, before)
+	var future := _input_plan()
+	# Unused legend aliases are retained metadata, not malformed glyphs.
+	future.legend["future_material_alias"] = "lawn"
+	future["future"] = {"nested": [null, {"data": [true, "opaque", 4.25]}]}
+	future["pieces"] = [{"piece": "woodland_boulder", "at": [24, 24], "future": [null, {"anything": true}]}]
+	future["doors"] = [{"id": "return", "rect": [0, 0, 1, 1], "to": "woodland", "future": {"anything": [null]}}]
+	future["gameplay_removed"] = {"future": {"opaque": true}}
+	assert_str(Tool.plan_error(future)).is_empty()
+	var root := _scene(future)
+	if root != null:
+		_assert_plan(Tool.plan_from_scene(root), future)
+
+func test_input_preflight_rejects_wrong_optional_row_and_legend_types() -> void:
+	for value in [null, false, 1, [], {}, "", " "]:
+		var plan := _input_plan()
+		plan["zone"] = value
+		_assert_invalid_input(plan, "zone")
+	for value in [null, false, 1, {}, "..", [], [null], [1], ["..", "."]]:
+		var plan := _input_plan()
+		plan["rows"] = value
+		_assert_invalid_input(plan, "rows")
+	for field in ["tiers", "flow", "variants"]:
+		for value in [null, false, 1, {}, "00", [0, 0], [null, null]]:
+			var plan := _input_plan()
+			plan[field] = value
+			_assert_invalid_input(plan, field)
+	for value in [null, 0, 1, "true", [], {}]:
+		var plan := _input_plan()
+		plan["lab"] = value
+		_assert_invalid_input(plan, "lab")
+	for value in [null, [], "lawn", {".": null}, {".": 1}, {1: "lawn"}]:
+		var plan := _input_plan()
+		plan["legend"] = value
+		_assert_invalid_input(plan, "legend")
+
+func test_input_preflight_rejects_malformed_piece_instances() -> void:
+	for value in [null, {}, false, "piece", [null], [1], [[]], [{}], [{"piece": null}], [{"piece": 1}]]:
+		var plan := _input_plan()
+		plan["pieces"] = value
+		_assert_invalid_input(plan, "pieces")
+	for field in ["id", "variant", "facing", "stage"]:
+		for value in [null, [], {}, 1, false]:
+			var plan := _input_plan()
+			var entry := {"piece": "woodland_boulder", "at": [24, 24]}
+			entry[field] = value
+			plan["pieces"] = [entry]
+			_assert_invalid_input(plan, "pieces")
+	var empty_id := _input_plan()
+	empty_id["pieces"] = [{"id": "", "piece": "woodland_boulder", "at": [24, 24]}]
+	_assert_invalid_input(empty_id, "pieces")
+
+func test_input_preflight_rejects_bad_piece_and_spawn_positions() -> void:
+	for value in [null, {}, [], [24], [24, 24, 24], ["24", 24], [24, "24"], [true, 24], [24, null], [NAN, 24], [24, INF], [-INF, 24], [1.0e100, 24]]:
+		var piece_plan := _input_plan()
+		piece_plan["pieces"] = [{"piece": "woodland_boulder", "at": value}]
+		_assert_invalid_input(piece_plan, "pieces")
+		var spawn_plan := _input_plan()
+		spawn_plan["spawns"] = {"start": value}
+		_assert_invalid_input(spawn_plan, "spawns")
+	var missing_at := _input_plan()
+	missing_at["pieces"] = [{"piece": "woodland_boulder"}]
+	_assert_invalid_input(missing_at, "pieces")
+	for value in [null, [], "start", false, {1: [24, 24]}]:
+		var plan := _input_plan()
+		plan["spawns"] = value
+		_assert_invalid_input(plan, "spawns")
+
+func test_input_preflight_rejects_malformed_doors_before_allocating_nodes() -> void:
+	for value in [null, {}, false, "door", [null], [1], [[]], [{}], [{"id": null, "rect": [0, 0, 1, 1]}]]:
+		var plan := _input_plan()
+		plan["doors"] = value
+		_assert_invalid_input(plan, "doors")
+	for rect in [null, {}, [], [0, 0], [0, 0, 1], [0, 0, 1, 1, 1], ["0", 0, 1, 1], [0, false, 1, 1], [0, 0, NAN, 1], [0, INF, 1, 1], [0, 0, 0, 1], [0, 0, 1, -1]]:
+		var plan := _input_plan()
+		plan["doors"] = [{"id": "return", "rect": rect, "to": "woodland"}]
+		_assert_invalid_input(plan, "doors")
+	for field in ["id", "to", "target_zone", "spawn", "target_spawn"]:
+		var plan := _input_plan()
+		var door := {"id": "return", "rect": [0, 0, 1, 1]}
+		door[field] = 1
+		plan["doors"] = [door]
+		_assert_invalid_input(plan, "doors")
+
+func test_input_preflight_rejects_bad_gameplay_inheritance_containers() -> void:
+	for value in [null, false, [], {}, 1]:
+		var plan := _input_plan()
+		plan["gameplay_from"] = value
+		_assert_invalid_input(plan, "gameplay_from")
+	for value in [null, false, [], "removed", {"Spawns": null}, {"Doors": {}}, {"Spawns": [null]}, {"Doors": [1]}]:
+		var plan := _input_plan()
+		plan["gameplay_removed"] = value
+		_assert_invalid_input(plan, "gameplay_removed")
+
+func test_removal_ids_are_literal_children_and_cannot_address_scene_ancestors() -> void:
+	var plan := _input_plan()
+	plan["gameplay_from"] = "res://zones/woodland/woodland.tscn"
+	var baseline := _scene(plan)
+	plan["gameplay_removed"] = {"Spawns": [".", "..", "../Ground", "missing"], "Doors": [".", "..", "../Actors", "start:position"]}
+	var root := _scene(plan)
+	if baseline == null or root == null:
+		return
+	for name_ in ["Ground", "Actors", "Spawns", "Doors"]:
+		assert_object(root.get_node_or_null(NodePath(name_))).is_not_null()
+	for name_ in ["Spawns", "Doors"]:
+		var expected := []
+		var actual := []
+		for child in baseline.get_node(NodePath(name_)).get_children():
+			expected.append(String(child.name))
+		for child in root.get_node(NodePath(name_)).get_children():
+			actual.append(String(child.name))
+		assert_that(actual).is_equal(expected)
+
+# subprocess.run supplies a hard timeout even if a GDScript error prevents the
+# CLI's deferred _run from reaching quit. The wrapper uses only Python's stdlib.
+const BOUNDED_INPUT_CLI := """
+import json, os, pathlib, re, subprocess, sys, tempfile
+reports = []
+with tempfile.TemporaryDirectory(prefix='w2_input_cli_') as directory:
+    base = pathlib.Path(directory)
+    for index, case in enumerate(json.loads(pathlib.Path(sys.argv[3]).read_text(encoding='utf-8'))):
+        folder = base / str(index)
+        folder.mkdir()
+        source = folder / 'plan.json'
+        target = folder / 'scene.tscn'
+        source.write_text(json.dumps(case['plan']), encoding='utf-8')
+        sentinel = 'existing authored scene stays untouched\\n'
+        if case.get('preserve'):
+            target.write_text(sentinel, encoding='utf-8')
+        env = dict(os.environ)
+        for variable, child in [('XDG_DATA_HOME', 'data'), ('XDG_CONFIG_HOME', 'config'), ('XDG_CACHE_HOME', 'cache')]:
+            env[variable] = str(folder / child)
+        command = [sys.argv[1], '--headless', '--audio-driver', 'Dummy', '--path', sys.argv[2],
+                   '--script', 'res://tools/kit_zone.gd', '--', '--plan=' + str(source), '--out=' + str(target)]
+        timed_out = False
+        try:
+            result = subprocess.run(command, capture_output=True, text=True, timeout=20, env=env)
+            code, output = result.returncode, result.stdout + result.stderr
+        except subprocess.TimeoutExpired as error:
+            timed_out = True
+            code = 124
+            chunks = [error.stdout or b'', error.stderr or b'']
+            output = ''.join(chunk.decode(errors='replace') if isinstance(chunk, bytes) else chunk for chunk in chunks)
+        reports.append(dict(name=case['name'], field=case.get('field', ''), code=code, timed_out=timed_out,
+                            output=output, exists=target.exists(), preserve=case.get('preserve', False),
+                            preserved=target.is_file() and target.read_text(encoding='utf-8') == sentinel,
+                            clean=re.search(r'SCRIPT ERROR|^ERROR:|orphan|leak', output, re.I | re.M) is None))
+print(json.dumps(reports))
+"""
+
+func test_real_cli_rejects_nested_bad_input_cleanly_without_overwriting_output() -> void:
+	var bad_piece := _input_plan()
+	bad_piece["pieces"] = [null]
+	var bad_spawn := _input_plan()
+	bad_spawn["spawns"] = {"start": [24]}
+	var bad_door := _input_plan()
+	bad_door["doors"] = [{"id": "return", "rect": [0, 0, 1]}]
+	var blank_zone := _input_plan()
+	blank_zone["zone"] = " "
+	var empty_id := _input_plan()
+	empty_id["pieces"] = [{"id": "", "piece": "woodland_boulder", "at": [24, 24]}]
+	var literal_ids := _input_plan()
+	literal_ids["gameplay_from"] = "res://zones/woodland/woodland.tscn"
+	literal_ids["gameplay_removed"] = {"Spawns": [".."], "Doors": [".", "../Ground"]}
+	var cases := [
+		{"name": "null-piece", "field": "pieces", "plan": bad_piece},
+		{"name": "short-spawn", "field": "spawns", "plan": bad_spawn},
+		{"name": "short-door", "field": "doors", "plan": bad_door},
+		{"name": "existing-output", "field": "pieces", "plan": bad_piece, "preserve": true},
+		{"name": "blank-zone", "field": "zone", "plan": blank_zone},
+		{"name": "empty-piece-id", "field": "pieces", "plan": empty_id},
+		{"name": "literal-removal-ids", "plan": literal_ids},
+		{"name": "valid-control", "plan": _input_plan()},
+	]
+	var output := []
+	var python := OS.get_environment("PYTHON")
+	if python.is_empty():
+		python = "python3"
+	# Pass JSON through a file; OS.execute's argument quoting is platform-specific.
+	var case_path := ProjectSettings.globalize_path("user://w2_input_cli_cases.json")
+	var file := FileAccess.open(case_path, FileAccess.WRITE)
+	assert_object(file).is_not_null()
+	if file == null:
+		return
+	file.store_string(JSON.stringify(cases))
+	file.close()
+	var code := OS.execute(python, ["-c", BOUNDED_INPUT_CLI, OS.get_executable_path(),
+		ProjectSettings.globalize_path("res://"), case_path], output, true)
+	assert_int(DirAccess.remove_absolute(case_path)).is_equal(OK)
+	assert_int(code).override_failure_message("Bounded CLI wrapper failed: %s" % output).is_equal(0)
+	var reports = JSON.parse_string("".join(output))
+	assert_bool(reports is Array).override_failure_message("Bounded CLI wrapper did not return JSON: %s" % output).is_true()
+	if not reports is Array:
+		return
+	assert_int(reports.size()).is_equal(cases.size())
+	for report in reports:
+		var detail := "%s: %s" % [report.name, report.output]
+		assert_bool(report.timed_out).override_failure_message(detail).is_false()
+		assert_bool(report.clean).override_failure_message(detail).is_true()
+		if report.name in ["valid-control", "literal-removal-ids"]:
+			assert_int(int(report.code)).override_failure_message(detail).is_equal(0)
+			assert_bool(report.exists).override_failure_message(detail).is_true()
+		else:
+			assert_int(int(report.code)).override_failure_message(detail).is_equal(1)
+			assert_bool(String(report.output).contains("kit_zone:") and String(report.output).contains(report.field)).override_failure_message(detail).is_true()
+			if report.preserve:
+				assert_bool(report.preserved).override_failure_message(detail).is_true()
+			else:
+				assert_bool(report.exists).override_failure_message(detail).is_false()
