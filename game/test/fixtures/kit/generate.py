@@ -64,6 +64,8 @@ def expected():
         raise ValueError('the kit lab must visibly exercise both shadows and dressing')
     inputs = {'scripts/art/kit/' + name for name in ('compose.py', 'edges.py', 'dressing.py', 'build.py')}
     inputs.update(('scripts/art/native/palette.py', 'scripts/art/house_palette.py',
+                   'art/house-palette.json', 'scripts/art/native/accents.json',
+                   'game/test/fixtures/kit/generate.py',
                    'game/kit/terrain/manifest.json', 'game/kit/props/index.json'))
     man = kit.man
     textures = [man['lut'], man['palette'], man.get('noise', 'noise.png')]

@@ -38,6 +38,7 @@
  "scale": 1,
  "schema": "napattack.kit-render-fixtures/1",
  "source_sha256": {
+  "art/house-palette.json": "7fd8e8cfd481bc627b4ca6e8425ec3001f80103ae2309f6bc7249ef6326b03dd",
   "game/kit/props/art/shadow_woodland_oak.png": "46bc86fb8e2020a4a46ffec5ce53d5457733fb76045b57444b16f4c5c1779607",
   "game/kit/props/index.json": "b2cc9a8e6a8b194f32354a3bbf505fe9c9ff7544461d88c753734b2e56ffadf5",
   "game/kit/terrain/decal_bankstone_0.png": "8d1222c1b4221595ff5761db4c38310958c9ccb5fe23c44ac85184f73a204888",
@@ -82,11 +83,13 @@
   "game/kit/terrain/over_water_over_earth_face.png": "86c6750633795cf59094a8040bf9ae234f362e5f420a8d75bdd19c4a72493cb8",
   "game/kit/terrain/over_worn_over_path.png": "8c7e1e7248cb22ee0dd22ca728df3a2cae5eab834080d789b371545a8cf55473",
   "game/kit/terrain/palette.png": "40fe3fac4493230904ab432939eb097ae807f3478f643a6002dec7d0cc199dca",
+  "game/test/fixtures/kit/generate.py": "6c3af0912b17ef959a2ba2d7d8099dd2fe7ae2bf3977d88363b6a5cc980f92fa",
   "scripts/art/house_palette.py": "2b64312392fcdeda1c4164c881aa1e35c6c167a5cfaafd704b3a5abc707103ba",
   "scripts/art/kit/build.py": "7475535da6e8ffe5f3e7b230a072f232cae5f0518dd9a091235e42c4e0e63950",
   "scripts/art/kit/compose.py": "db385fa37f68d1e14247c8850d606f6ddff1279cffdbe20f1f20f85ab8fa6fb2",
   "scripts/art/kit/dressing.py": "2c3d80e0f06df646480803f92123512a239d629ba5737194de77c66251fffd3d",
   "scripts/art/kit/edges.py": "5babd36a237fb1da32e0e6f142f556c71eafc0a64d9f87a172e378ec54ab5048",
+  "scripts/art/native/accents.json": "4116ad6d7e32ef62efba5789a93b694d15b00db7dc8f23cf61b6f00c48a25b09",
   "scripts/art/native/palette.py": "ad8155d9b4d7f0c9afefc373e43f806ec502b7991b621b01453cc7697309d0b9"
  }
 }

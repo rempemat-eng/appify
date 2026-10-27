@@ -6,6 +6,7 @@ extends GdUnitTestSuite
 const LAB := "res://zones/kitlab/kitlab.tscn"
 const SHOT = preload("res://tools/kit_shot.gd")
 const REFERENCES := "res://test/fixtures/kit/"
+const PALETTE_INPUTS := ["art/house-palette.json", "scripts/art/native/accents.json"]
 
 ## check.sh runs GdUnit with the dummy headless driver. Launch a real offscreen GL process
 ## for image tests; never credit a dummy/blank viewport or a missing X server as a pixel pass.
@@ -97,8 +98,7 @@ func test_python_references_match_current_inputs_and_decoded_pixels() -> void:
 	assert_int(int(data.feature_pixels.shadows)).is_greater(0)
 	assert_int(int(data.feature_pixels.dressing)).is_greater(0)
 	var root := ProjectSettings.globalize_path("res://").path_join("..").simplify_path()
-	for path in data.source_sha256:
-		assert_str(FileAccess.get_sha256(root.path_join(path))).override_failure_message("Stale Python fixture input: " + path).is_equal(data.source_sha256[path])
+	assert_array(_fixture_input_errors(data.source_sha256, root)).is_empty()
 	for reference in data.cases:
 		assert_str(FileAccess.get_sha256(root.path_join(reference.plan))).is_equal(reference.plan_sha256)
 		var image := Image.new()
@@ -116,6 +116,45 @@ func _rgba_hash(image: Image) -> String:
 	context.start(HashingContext.HASH_SHA256)
 	context.update(image.get_data())
 	return context.finish().hex_encode()
+
+func _fixture_input_errors(sources: Dictionary, root: String) -> PackedStringArray:
+	var errors := PackedStringArray()
+	for path in PALETTE_INPUTS:
+		if not sources.has(path):
+			errors.append("Missing Python fixture input: " + path)
+	for path in sources:
+		if FileAccess.get_sha256(root.path_join(path)) != sources[path]:
+			errors.append("Stale Python fixture input: " + path)
+	return errors
+
+func test_palette_sources_cannot_be_omitted_or_changed_without_refreshing_references() -> void:
+	var data: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(REFERENCES + "references.json"))
+	var sources: Dictionary = data.source_sha256
+	var root := ProjectSettings.globalize_path("res://").path_join("..").simplify_path()
+	var copied_root := ProjectSettings.globalize_path("user://kit-parity/palette-inputs-%d" % Time.get_ticks_usec())
+	var copied_hashes := {}
+	for path in PALETTE_INPUTS:
+		assert_bool(sources.has(path)).override_failure_message("Palette source omitted from references: " + path).is_true()
+		copied_hashes[path] = sources.get(path, "")
+		var copy_path := copied_root.path_join(path)
+		assert_int(DirAccess.make_dir_recursive_absolute(copy_path.get_base_dir())).is_equal(OK)
+		assert_int(DirAccess.copy_absolute(root.path_join(path), copy_path)).is_equal(OK)
+	assert_array(_fixture_input_errors(copied_hashes, copied_root)).is_empty()
+	for path in PALETTE_INPUTS:
+		var omitted := copied_hashes.duplicate()
+		omitted.erase(path)
+		assert_array(_fixture_input_errors(omitted, copied_root)).is_equal(PackedStringArray(["Missing Python fixture input: " + path]))
+		# Change only the copy; valid JSON with extra whitespace still needs new provenance.
+		var copy_path := copied_root.path_join(path)
+		var file := FileAccess.open(copy_path, FileAccess.WRITE)
+		file.store_buffer(FileAccess.get_file_as_bytes(root.path_join(path)) + " ".to_utf8_buffer())
+		file.close()
+		assert_array(_fixture_input_errors(copied_hashes, copied_root)).is_equal(PackedStringArray(["Stale Python fixture input: " + path]))
+		assert_int(DirAccess.copy_absolute(root.path_join(path), copy_path)).is_equal(OK)
+	for path in PALETTE_INPUTS:
+		DirAccess.remove_absolute(copied_root.path_join(path))
+	for path in ["scripts/art/native", "scripts/art", "scripts", "art", ""]:
+		DirAccess.remove_absolute(copied_root.path_join(path))
 
 func test_kit_loads() -> void:
 	var kit := TerrainKit.shared()
