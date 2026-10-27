@@ -5,7 +5,7 @@
   1920,
   1680
  ],
- "inputs": "4dc81c28791a95d5805b9d1842f89bad222967eeb12edda938a2b79d2204ac30",
+ "inputs": "c6665f6c7c2e1437d85b0a0227206b73674ccd00c1f7d877abec833279181dd9",
  "kit_drawn": [
   "anvil.png",
   "bakery.png",
@@ -82,7 +82,9 @@
   "well.png",
   "well_choked.png",
   "woodpile_11.png",
-  "woodpile_33.png"
+  "woodpile_33.png",
+  "yard_fence_e.png",
+  "yard_fence_w.png"
  ],
  "objects": [
   {
@@ -928,7 +930,7 @@
    "png": "waystone.png",
    "foot": [
     960,
-    1152
+    1536
    ],
    "offset": [
     -45,
@@ -1032,8 +1034,8 @@
    "kind": "oak",
    "png": "oak_6.png",
    "foot": [
-    528,
-    288
+    1296,
+    336
    ],
    "offset": [
     -105,
@@ -1041,30 +1043,10 @@
    ],
    "cond": null,
    "solid": [
-    172,
-    93,
+    428,
+    109,
     8,
     4
-   ]
-  },
-  {
-   "id": "bush_7",
-   "kind": "bush",
-   "png": "bush_7.png",
-   "foot": [
-    720,
-    360
-   ],
-   "offset": [
-    -57,
-    -73
-   ],
-   "cond": null,
-   "solid": [
-    232,
-    115,
-    16,
-    6
    ]
   },
   {
@@ -2356,6 +2338,46 @@
     444,
     12,
     5
+   ]
+  },
+  {
+   "id": "yard_fence_w",
+   "kind": "fence",
+   "png": "yard_fence_w.png",
+   "foot": [
+    612,
+    264
+   ],
+   "offset": [
+    -54,
+    -59
+   ],
+   "cond": null,
+   "solid": [
+    188.0,
+    84,
+    32,
+    4
+   ]
+  },
+  {
+   "id": "yard_fence_e",
+   "kind": "fence",
+   "png": "yard_fence_e.png",
+   "foot": [
+    780,
+    264
+   ],
+   "offset": [
+    -54,
+    -59
+   ],
+   "cond": null,
+   "solid": [
+    244.0,
+    84,
+    32,
+    4
    ]
   },
   {

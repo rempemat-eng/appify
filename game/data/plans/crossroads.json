@@ -251,14 +251,56 @@
           72
         ],
         [
-          320,
+          160,
           72
+        ],
+        [
+          160,
+          104
+        ],
+        [
+          320,
+          104
         ],
         [
           320,
           152
         ]
-      ]
+      ],
+      "bend": 16,
+      "why_shape": "Matt, 27 Oct: \"the fenced beds and hut yard sit cramped against the road\": the walk drops a cell pair below the terrace so the hut and its beds keep a yard (28 px) in front; straight runs joined by rounded bends"
+    },
+    {
+      "id": "yard_path",
+      "kind": "path",
+      "width": 16,
+      "points": [
+        [
+          232,
+          64
+        ],
+        [
+          232,
+          104
+        ]
+      ],
+      "why": "the beds' own path through the gate in their fence, down to the walk"
+    },
+    {
+      "id": "hut_path",
+      "kind": "path",
+      "width": 16,
+      "points": [
+        [
+          320,
+          64
+        ],
+        [
+          320,
+          104
+        ]
+      ],
+      "why": "from the hut's door down to the walk"
     }
   ],
   "stairs": [
@@ -468,7 +510,12 @@
           "shard_home:woodland"
         ]
       },
-      "why": "the well choked with rubble"
+      "why": "the well choked with rubble",
+      "role": "damage",
+      "relation": {
+        "to": "square",
+        "how": "storm damage, broken stage only"
+      }
     },
     {
       "id": "well",
@@ -486,7 +533,12 @@
           "shard_home:woodland"
         ]
       },
-      "why": "Matt, 27 Oct (annotated Crossroads): \"well should either be in the centre or not on the square\": on the square's centre"
+      "why": "Matt, 27 Oct (annotated Crossroads): \"well should either be in the centre or not on the square\": on the square's centre",
+      "role": "landmark",
+      "relation": {
+        "to": "square",
+        "how": "centre"
+      }
     },
     {
       "id": "smithy_rubble",
@@ -504,7 +556,12 @@
           "forge"
         ]
       },
-      "why": "fallen slates across the smithy door"
+      "why": "fallen slates across the smithy door",
+      "role": "damage",
+      "relation": {
+        "to": "smithy",
+        "how": "storm damage, broken stage only"
+      }
     },
     {
       "id": "smithy_boards",
@@ -520,6 +577,11 @@
         "not_restored": [
           "forge"
         ]
+      },
+      "role": "damage",
+      "relation": {
+        "to": "smithy",
+        "how": "storm damage, broken stage only"
       }
     },
     {
@@ -537,7 +599,12 @@
           "forge"
         ]
       },
-      "why": "the forge lit"
+      "why": "the forge lit",
+      "role": "trade",
+      "relation": {
+        "to": "smithy",
+        "how": "in the forge / its yard"
+      }
     },
     {
       "id": "anvil",
@@ -554,6 +621,11 @@
         "restored": [
           "forge"
         ]
+      },
+      "role": "trade",
+      "relation": {
+        "to": "smithy",
+        "how": "in the forge / its yard"
       }
     },
     {
@@ -571,6 +643,11 @@
         "not_flags": [
           "shard_home:woodland"
         ]
+      },
+      "role": "damage",
+      "relation": {
+        "to": "square",
+        "how": "storm damage, broken stage only"
       }
     },
     {
@@ -588,6 +665,11 @@
         "not_flags": [
           "shard_home:woodland"
         ]
+      },
+      "role": "damage",
+      "relation": {
+        "to": "square",
+        "how": "storm damage, broken stage only"
       }
     },
     {
@@ -604,6 +686,11 @@
         "not_restored": [
           "fern_cottage"
         ]
+      },
+      "role": "damage",
+      "relation": {
+        "to": "fern_cottage",
+        "how": "storm damage, broken stage only"
       }
     },
     {
@@ -621,6 +708,11 @@
         "not_restored": [
           "fern_cottage"
         ]
+      },
+      "role": "damage",
+      "relation": {
+        "to": "fern_cottage",
+        "how": "storm damage, broken stage only"
       }
     },
     {
@@ -639,7 +731,12 @@
           "shard_home:woodland"
         ]
       },
-      "why": "Matt, 27 Oct (annotated Crossroads): \"lamp placed on well!!!\": the shard lantern stands on the axis north of the well, the first thing seen from the gate stair, touching nothing; the street lamps are at the corners"
+      "why": "Matt, 27 Oct (annotated Crossroads): \"lamp placed on well!!!\": the shard lantern stands on the axis north of the well, the first thing seen from the gate stair, touching nothing; the street lamps are at the corners",
+      "role": "landmark",
+      "relation": {
+        "to": "square",
+        "how": "on the axis between the gate stair and the well"
+      }
     },
     {
       "id": "lantern_lit",
@@ -657,7 +754,12 @@
           "shard_home:woodland"
         ]
       },
-      "why": "the shard lantern holding the woodland's shard"
+      "why": "the shard lantern holding the woodland's shard",
+      "role": "landmark",
+      "relation": {
+        "to": "square",
+        "how": "on the axis between the gate stair and the well"
+      }
     },
     {
       "id": "crater_smoke",
@@ -673,6 +775,11 @@
         "not_flags": [
           "shard_home:woodland"
         ]
+      },
+      "role": "effect",
+      "relation": {
+        "to": "crater",
+        "how": "rising from it"
       }
     },
     {
@@ -690,7 +797,12 @@
           "shard_home:woodland"
         ]
       },
-      "why": "Matt, 27 Oct (annotated Crossroads): \"why is this so close to the market and has no path\": your beds beside the hut on the terrace, the garden walk passing their front"
+      "why": "Matt, 27 Oct (annotated Crossroads): \"why is this so close to the market and has no path\": your beds beside the hut on the terrace, the garden walk passing their front",
+      "role": "garden",
+      "relation": {
+        "to": "hut",
+        "how": "west of it in its yard, path to the walk"
+      }
     },
     {
       "id": "beds_dug",
@@ -707,7 +819,12 @@
           "shard_home:woodland"
         ]
       },
-      "why": "four beds dug over; two planted with valley seeds after the homecoming"
+      "why": "four beds dug over; two planted with valley seeds after the homecoming",
+      "role": "garden",
+      "relation": {
+        "to": "hut",
+        "how": "west of it in its yard, path to the walk"
+      }
     },
     {
       "id": "stall",
@@ -720,7 +837,12 @@
       ],
       "solid": true,
       "colour": "#b08a4a",
-      "why": "Moss's stall, the one thing open"
+      "why": "Moss's stall, the one thing open",
+      "role": "market",
+      "relation": {
+        "to": "square",
+        "how": "north row of stalls, an aisle between"
+      }
     },
     {
       "id": "stall_bread",
@@ -738,7 +860,12 @@
           "shard_home:woodland"
         ]
       },
-      "why": "Matt, 27 Oct (annotated Crossroads): \"why only one market stall\": the market reopens when the first household comes home"
+      "why": "Matt, 27 Oct (annotated Crossroads): \"why only one market stall\": the market reopens when the first household comes home",
+      "role": "market",
+      "relation": {
+        "to": "square",
+        "how": "north row of stalls, an aisle between"
+      }
     },
     {
       "id": "stall_bread_shut",
@@ -756,7 +883,12 @@
           "shard_home:woodland"
         ]
       },
-      "why": "shut since the storm: goods under sacking, the awning furled"
+      "why": "shut since the storm: goods under sacking, the awning furled",
+      "role": "market",
+      "relation": {
+        "to": "square",
+        "how": "north row of stalls, an aisle between"
+      }
     },
     {
       "id": "stall_fish",
@@ -774,7 +906,12 @@
           "shard_home:woodland"
         ]
       },
-      "why": "Matt, 27 Oct (annotated Crossroads): \"why only one market stall\": the market reopens when the first household comes home"
+      "why": "Matt, 27 Oct (annotated Crossroads): \"why only one market stall\": the market reopens when the first household comes home",
+      "role": "market",
+      "relation": {
+        "to": "square",
+        "how": "north row of stalls, an aisle between"
+      }
     },
     {
       "id": "stall_fish_shut",
@@ -792,7 +929,12 @@
           "shard_home:woodland"
         ]
       },
-      "why": "shut since the storm: goods under sacking, the awning furled"
+      "why": "shut since the storm: goods under sacking, the awning furled",
+      "role": "market",
+      "relation": {
+        "to": "square",
+        "how": "north row of stalls, an aisle between"
+      }
     },
     {
       "id": "stall_cloth",
@@ -810,7 +952,12 @@
           "shard_home:woodland"
         ]
       },
-      "why": "Matt, 27 Oct (annotated Crossroads): \"why only one market stall\": the market reopens when the first household comes home"
+      "why": "Matt, 27 Oct (annotated Crossroads): \"why only one market stall\": the market reopens when the first household comes home",
+      "role": "market",
+      "relation": {
+        "to": "square",
+        "how": "north row of stalls, an aisle between"
+      }
     },
     {
       "id": "stall_cloth_shut",
@@ -828,7 +975,12 @@
           "shard_home:woodland"
         ]
       },
-      "why": "shut since the storm: goods under sacking, the awning furled"
+      "why": "shut since the storm: goods under sacking, the awning furled",
+      "role": "market",
+      "relation": {
+        "to": "square",
+        "how": "north row of stalls, an aisle between"
+      }
     },
     {
       "id": "stall_tools",
@@ -846,7 +998,12 @@
           "shard_home:woodland"
         ]
       },
-      "why": "Matt, 27 Oct (annotated Crossroads): \"why only one market stall\": the market reopens when the first household comes home"
+      "why": "Matt, 27 Oct (annotated Crossroads): \"why only one market stall\": the market reopens when the first household comes home",
+      "role": "market",
+      "relation": {
+        "to": "square",
+        "how": "south row of stalls, an aisle between"
+      }
     },
     {
       "id": "stall_tools_shut",
@@ -864,7 +1021,12 @@
           "shard_home:woodland"
         ]
       },
-      "why": "shut since the storm: goods under sacking, the awning furled"
+      "why": "shut since the storm: goods under sacking, the awning furled",
+      "role": "market",
+      "relation": {
+        "to": "square",
+        "how": "south row of stalls, an aisle between"
+      }
     },
     {
       "id": "stall_produce",
@@ -882,7 +1044,12 @@
           "shard_home:woodland"
         ]
       },
-      "why": "Matt, 27 Oct (annotated Crossroads): \"why only one market stall\": the market reopens when the first household comes home"
+      "why": "Matt, 27 Oct (annotated Crossroads): \"why only one market stall\": the market reopens when the first household comes home",
+      "role": "market",
+      "relation": {
+        "to": "square",
+        "how": "south row of stalls, an aisle between"
+      }
     },
     {
       "id": "stall_produce_shut",
@@ -900,7 +1067,12 @@
           "shard_home:woodland"
         ]
       },
-      "why": "shut since the storm: goods under sacking, the awning furled"
+      "why": "shut since the storm: goods under sacking, the awning furled",
+      "role": "market",
+      "relation": {
+        "to": "square",
+        "how": "south row of stalls, an aisle between"
+      }
     }
   ],
   "people": [
@@ -991,7 +1163,12 @@
         236,
         224
       ],
-      "colour": "#7a5a3a"
+      "colour": "#7a5a3a",
+      "role": "landmark",
+      "relation": {
+        "to": "library",
+        "how": "beside its door, facing the square"
+      }
     },
     {
       "id": "waystone",
@@ -999,10 +1176,16 @@
       "verb": "Touch",
       "at": [
         320,
-        384
+        512
       ],
       "colour": "#8a8aa0",
-      "why": "Matt, 27 Oct (annotated Crossroads): \"if this is a monument, why is it on the side?\": on the square's axis, at the head of the lane south to the ring"
+      "why": "Matt, 27 Oct (annotated Crossroads): \"if this is a monument, why is it on the side?\": on the square's axis, at the head of the lane south to the ring",
+      "why_place": "Matt, 27 Oct: \"the waystone stands mid-square in the aisle\": on the square's north-south axis where the lane turns west, closing the view down the lane and off every walking line",
+      "role": "landmark",
+      "relation": {
+        "to": "green_lane",
+        "how": "on the square's axis at the lane's turn, off the walking line"
+      }
     },
     {
       "id": "shard_lantern",
@@ -1013,7 +1196,12 @@
         256
       ],
       "colour": "#00000000",
-      "radius": 22
+      "radius": 22,
+      "role": "landmark",
+      "relation": {
+        "to": "square",
+        "how": "on the axis between the gate stair and the well"
+      }
     },
     {
       "id": "hut_bed",
@@ -1023,7 +1211,12 @@
         320,
         72
       ],
-      "colour": "#00000000"
+      "colour": "#00000000",
+      "role": "interaction",
+      "relation": {
+        "to": "hut",
+        "how": "at its door"
+      }
     }
   ],
   "restore_sites": [
@@ -1571,7 +1764,12 @@
         "solid": false,
         "why": "the terrace's rail above the square",
         "id": "fence_0",
-        "seed": 100
+        "seed": 100,
+        "role": "boundary",
+        "relation": {
+          "to": "terrace_face",
+          "how": "rail along the terrace edge"
+        }
       },
       {
         "kind": "fence",
@@ -1585,7 +1783,12 @@
         ],
         "solid": false,
         "id": "fence_1",
-        "seed": 101
+        "seed": 101,
+        "role": "boundary",
+        "relation": {
+          "to": "terrace_face",
+          "how": "rail along the terrace edge"
+        }
       },
       {
         "kind": "fence",
@@ -1599,7 +1802,12 @@
         ],
         "solid": false,
         "id": "fence_2",
-        "seed": 102
+        "seed": 102,
+        "role": "boundary",
+        "relation": {
+          "to": "terrace_face",
+          "how": "rail along the terrace edge"
+        }
       },
       {
         "kind": "fence",
@@ -1613,7 +1821,12 @@
         ],
         "solid": false,
         "id": "fence_3",
-        "seed": 103
+        "seed": 103,
+        "role": "boundary",
+        "relation": {
+          "to": "terrace_face",
+          "how": "rail along the terrace edge"
+        }
       },
       {
         "kind": "fence",
@@ -1627,7 +1840,12 @@
         ],
         "solid": false,
         "id": "fence_4",
-        "seed": 104
+        "seed": 104,
+        "role": "boundary",
+        "relation": {
+          "to": "terrace_face",
+          "how": "rail along the terrace edge"
+        }
       },
       {
         "kind": "fence",
@@ -1641,26 +1859,27 @@
         ],
         "solid": false,
         "id": "fence_5",
-        "seed": 105
+        "seed": 105,
+        "role": "boundary",
+        "relation": {
+          "to": "terrace_face",
+          "how": "rail along the terrace edge"
+        }
       },
       {
         "kind": "oak",
         "at": [
-          176,
-          96
+          432,
+          112
         ],
-        "why": "the old oak on your terrace, its crown inside the view (logic.crown_cut)",
+        "why": "the old oak east of your hut, past the woodpile, with the bush beside it (off the walk)",
         "id": "oak_6",
-        "seed": 106
-      },
-      {
-        "kind": "bush",
-        "at": [
-          240,
-          120
-        ],
-        "id": "bush_7",
-        "seed": 107
+        "seed": 106,
+        "role": "foliage",
+        "relation": {
+          "to": "lawn",
+          "how": "on open lawn, crown inside the view, off routes"
+        }
       },
       {
         "kind": "bush",
@@ -1669,7 +1888,12 @@
           120
         ],
         "id": "bush_8",
-        "seed": 108
+        "seed": 108,
+        "role": "foliage",
+        "relation": {
+          "to": "lawn",
+          "how": "on open lawn, crown inside the view, off routes"
+        }
       },
       {
         "kind": "flower_tub",
@@ -1683,7 +1907,12 @@
         ],
         "why": "your door's pots",
         "id": "flower_tub_9",
-        "seed": 109
+        "seed": 109,
+        "role": "dressing",
+        "relation": {
+          "to": "hut",
+          "how": "beside its door or wall"
+        }
       },
       {
         "kind": "flower_tub",
@@ -1696,7 +1925,12 @@
           6
         ],
         "id": "flower_tub_10",
-        "seed": 110
+        "seed": 110,
+        "role": "dressing",
+        "relation": {
+          "to": "hut",
+          "how": "beside its door or wall"
+        }
       },
       {
         "kind": "woodpile",
@@ -1709,7 +1943,12 @@
           8
         ],
         "id": "woodpile_11",
-        "seed": 111
+        "seed": 111,
+        "role": "dressing",
+        "relation": {
+          "to": "hut",
+          "how": "beside its door or wall"
+        }
       },
       {
         "kind": "sacks",
@@ -1723,7 +1962,12 @@
         ],
         "why": "seed sacks waiting by the beds",
         "id": "sacks_12",
-        "seed": 112
+        "seed": 112,
+        "role": "dressing",
+        "relation": {
+          "to": "hut",
+          "how": "beside its door or wall"
+        }
       },
       {
         "kind": "bush",
@@ -1734,7 +1978,12 @@
         "solid": false,
         "why": "the bank above the garden walk (an oak there showed only its trunk at the top edge)",
         "id": "bush_13",
-        "seed": 113
+        "seed": 113,
+        "role": "foliage",
+        "relation": {
+          "to": "lawn",
+          "how": "on open lawn, crown inside the view, off routes"
+        }
       },
       {
         "kind": "bush",
@@ -1744,7 +1993,12 @@
         ],
         "solid": false,
         "id": "bush_14",
-        "seed": 114
+        "seed": 114,
+        "role": "foliage",
+        "relation": {
+          "to": "lawn",
+          "how": "on open lawn, crown inside the view, off routes"
+        }
       },
       {
         "kind": "bush",
@@ -1754,7 +2008,12 @@
         ],
         "solid": false,
         "id": "bush_15",
-        "seed": 115
+        "seed": 115,
+        "role": "foliage",
+        "relation": {
+          "to": "lawn",
+          "how": "on open lawn, crown inside the view, off routes"
+        }
       },
       {
         "kind": "bush",
@@ -1765,7 +2024,12 @@
         "solid": false,
         "why": "the planted bank under the walk",
         "id": "bush_16",
-        "seed": 116
+        "seed": 116,
+        "role": "foliage",
+        "relation": {
+          "to": "lawn",
+          "how": "on open lawn, crown inside the view, off routes"
+        }
       },
       {
         "kind": "bush",
@@ -1775,7 +2039,12 @@
         ],
         "solid": false,
         "id": "bush_17",
-        "seed": 117
+        "seed": 117,
+        "role": "foliage",
+        "relation": {
+          "to": "lawn",
+          "how": "on open lawn, crown inside the view, off routes"
+        }
       },
       {
         "kind": "bush",
@@ -1785,7 +2054,12 @@
         ],
         "solid": false,
         "id": "bush_18",
-        "seed": 118
+        "seed": 118,
+        "role": "foliage",
+        "relation": {
+          "to": "lawn",
+          "how": "on open lawn, crown inside the view, off routes"
+        }
       },
       {
         "kind": "oak",
@@ -1796,7 +2070,12 @@
         "solid": false,
         "id": "oak_21",
         "seed": 121,
-        "why": "at the hay field's edge, its crown inside the view"
+        "why": "at the hay field's edge, its crown inside the view",
+        "role": "foliage",
+        "relation": {
+          "to": "lawn",
+          "how": "on open lawn, crown inside the view, off routes"
+        }
       },
       {
         "kind": "bush",
@@ -1806,7 +2085,12 @@
         ],
         "solid": false,
         "id": "bush_22",
-        "seed": 122
+        "seed": 122,
+        "role": "foliage",
+        "relation": {
+          "to": "lawn",
+          "how": "on open lawn, crown inside the view, off routes"
+        }
       },
       {
         "kind": "bush",
@@ -1816,7 +2100,12 @@
         ],
         "solid": false,
         "id": "bush_23",
-        "seed": 123
+        "seed": 123,
+        "role": "foliage",
+        "relation": {
+          "to": "lawn",
+          "how": "on open lawn, crown inside the view, off routes"
+        }
       },
       {
         "kind": "kit_lantern",
@@ -1826,7 +2115,12 @@
         ],
         "why": "the gate lane's lamps",
         "id": "kit_lantern_24",
-        "seed": 124
+        "seed": 124,
+        "role": "light",
+        "relation": {
+          "to": "square",
+          "how": "entrance (gate stair)"
+        }
       },
       {
         "kind": "kit_lantern",
@@ -1835,7 +2129,12 @@
           208
         ],
         "id": "kit_lantern_25",
-        "seed": 125
+        "seed": 125,
+        "role": "light",
+        "relation": {
+          "to": "square",
+          "how": "entrance (gate stair)"
+        }
       },
       {
         "kind": "flower_tub",
@@ -1848,7 +2147,12 @@
           6
         ],
         "id": "flower_tub_26",
-        "seed": 126
+        "seed": 126,
+        "role": "dressing",
+        "relation": {
+          "to": "library",
+          "how": "beside its door or wall"
+        }
       },
       {
         "kind": "flower_tub",
@@ -1861,7 +2165,12 @@
           6
         ],
         "id": "flower_tub_27",
-        "seed": 127
+        "seed": 127,
+        "role": "dressing",
+        "relation": {
+          "to": "library",
+          "how": "beside its door or wall"
+        }
       },
       {
         "kind": "barrel",
@@ -1874,7 +2183,12 @@
           8
         ],
         "id": "barrel_29",
-        "seed": 129
+        "seed": 129,
+        "role": "market",
+        "relation": {
+          "to": "square",
+          "how": "beside a stall"
+        }
       },
       {
         "kind": "crates",
@@ -1888,7 +2202,12 @@
         ],
         "why": "the bakery's flour crates",
         "id": "crates_30",
-        "seed": 130
+        "seed": 130,
+        "role": "market",
+        "relation": {
+          "to": "square",
+          "how": "beside a stall"
+        }
       },
       {
         "kind": "barrel",
@@ -1902,7 +2221,12 @@
         ],
         "why": "Moss's stock, beside her stall",
         "id": "barrel_31",
-        "seed": 131
+        "seed": 131,
+        "role": "market",
+        "relation": {
+          "to": "square",
+          "how": "beside a stall"
+        }
       },
       {
         "kind": "woodpile",
@@ -1916,7 +2240,12 @@
         ],
         "why": "the anvil yard: fuel",
         "id": "woodpile_33",
-        "seed": 133
+        "seed": 133,
+        "role": "trade",
+        "relation": {
+          "to": "smithy",
+          "how": "in the forge / its yard"
+        }
       },
       {
         "kind": "coal",
@@ -1929,7 +2258,12 @@
           8
         ],
         "id": "coal_34",
-        "seed": 134
+        "seed": 134,
+        "role": "trade",
+        "relation": {
+          "to": "smithy",
+          "how": "in the forge / its yard"
+        }
       },
       {
         "kind": "trough",
@@ -1943,7 +2277,12 @@
         ],
         "why": "the anvil yard: the quench trough",
         "id": "trough_35",
-        "seed": 135
+        "seed": 135,
+        "role": "trade",
+        "relation": {
+          "to": "smithy",
+          "how": "in the forge / its yard"
+        }
       },
       {
         "kind": "grindstone",
@@ -1956,7 +2295,12 @@
           6
         ],
         "id": "grindstone_36",
-        "seed": 136
+        "seed": 136,
+        "role": "trade",
+        "relation": {
+          "to": "smithy",
+          "how": "in the forge / its yard"
+        }
       },
       {
         "kind": "barrel",
@@ -1969,7 +2313,12 @@
           8
         ],
         "id": "barrel_37",
-        "seed": 137
+        "seed": 137,
+        "role": "market",
+        "relation": {
+          "to": "square",
+          "how": "beside a stall"
+        }
       },
       {
         "kind": "flower_tub",
@@ -1982,7 +2331,12 @@
           6
         ],
         "id": "flower_tub_38",
-        "seed": 138
+        "seed": 138,
+        "role": "dressing",
+        "relation": {
+          "to": "fern_cottage",
+          "how": "beside its door or wall"
+        }
       },
       {
         "kind": "barrel",
@@ -1996,7 +2350,12 @@
         ],
         "why": "the Ferns' rain barrel",
         "id": "barrel_39",
-        "seed": 139
+        "seed": 139,
+        "role": "dressing",
+        "relation": {
+          "to": "fern_cottage",
+          "how": "beside its door or wall"
+        }
       },
       {
         "kind": "oak",
@@ -2006,7 +2365,12 @@
         ],
         "why": "the park round the crater (moved off the green lane's bend, 27 Oct)",
         "id": "oak_40",
-        "seed": 140
+        "seed": 140,
+        "role": "foliage",
+        "relation": {
+          "to": "lawn",
+          "how": "on open lawn, crown inside the view, off routes"
+        }
       },
       {
         "kind": "oak",
@@ -2015,7 +2379,12 @@
           544
         ],
         "id": "oak_41",
-        "seed": 141
+        "seed": 141,
+        "role": "foliage",
+        "relation": {
+          "to": "lawn",
+          "how": "on open lawn, crown inside the view, off routes"
+        }
       },
       {
         "kind": "oak",
@@ -2024,7 +2393,12 @@
           512
         ],
         "id": "oak_42",
-        "seed": 142
+        "seed": 142,
+        "role": "foliage",
+        "relation": {
+          "to": "lawn",
+          "how": "on open lawn, crown inside the view, off routes"
+        }
       },
       {
         "kind": "oak",
@@ -2033,7 +2407,12 @@
           408
         ],
         "id": "oak_43",
-        "seed": 143
+        "seed": 143,
+        "role": "foliage",
+        "relation": {
+          "to": "lawn",
+          "how": "on open lawn, crown inside the view, off routes"
+        }
       },
       {
         "kind": "oak",
@@ -2042,7 +2421,12 @@
           552
         ],
         "id": "oak_44",
-        "seed": 144
+        "seed": 144,
+        "role": "foliage",
+        "relation": {
+          "to": "lawn",
+          "how": "on open lawn, crown inside the view, off routes"
+        }
       },
       {
         "kind": "oak",
@@ -2051,7 +2435,12 @@
           264
         ],
         "id": "oak_45",
-        "seed": 145
+        "seed": 145,
+        "role": "foliage",
+        "relation": {
+          "to": "lawn",
+          "how": "on open lawn, crown inside the view, off routes"
+        }
       },
       {
         "kind": "oak",
@@ -2060,7 +2449,12 @@
           248
         ],
         "id": "oak_46",
-        "seed": 146
+        "seed": 146,
+        "role": "foliage",
+        "relation": {
+          "to": "lawn",
+          "how": "on open lawn, crown inside the view, off routes"
+        }
       },
       {
         "kind": "bush",
@@ -2069,7 +2463,12 @@
           528
         ],
         "id": "bush_47",
-        "seed": 147
+        "seed": 147,
+        "role": "foliage",
+        "relation": {
+          "to": "lawn",
+          "how": "on open lawn, crown inside the view, off routes"
+        }
       },
       {
         "kind": "bush",
@@ -2078,7 +2477,12 @@
           480
         ],
         "id": "bush_48",
-        "seed": 148
+        "seed": 148,
+        "role": "foliage",
+        "relation": {
+          "to": "lawn",
+          "how": "on open lawn, crown inside the view, off routes"
+        }
       },
       {
         "kind": "bush",
@@ -2087,7 +2491,12 @@
           448
         ],
         "id": "bush_49",
-        "seed": 149
+        "seed": 149,
+        "role": "foliage",
+        "relation": {
+          "to": "lawn",
+          "how": "on open lawn, crown inside the view, off routes"
+        }
       },
       {
         "kind": "bush",
@@ -2096,7 +2505,12 @@
           232
         ],
         "id": "bush_50",
-        "seed": 150
+        "seed": 150,
+        "role": "foliage",
+        "relation": {
+          "to": "lawn",
+          "how": "on open lawn, crown inside the view, off routes"
+        }
       },
       {
         "kind": "bush",
@@ -2105,7 +2519,12 @@
           176
         ],
         "id": "bush_51",
-        "seed": 151
+        "seed": 151,
+        "role": "foliage",
+        "relation": {
+          "to": "lawn",
+          "how": "on open lawn, crown inside the view, off routes"
+        }
       },
       {
         "kind": "boulder",
@@ -2114,7 +2533,12 @@
           432
         ],
         "id": "boulder_52",
-        "seed": 152
+        "seed": 152,
+        "role": "dressing",
+        "relation": {
+          "to": "green_lane",
+          "how": "at the lane's edge"
+        }
       },
       {
         "kind": "debris",
@@ -2134,7 +2558,12 @@
         },
         "id": "debris_a",
         "why": "storm litter on the flags until the homecoming",
-        "seed": 153
+        "seed": 153,
+        "role": "damage",
+        "relation": {
+          "to": "square",
+          "how": "storm damage, broken stage only"
+        }
       },
       {
         "kind": "debris",
@@ -2153,7 +2582,12 @@
           ]
         },
         "id": "debris_b",
-        "seed": 154
+        "seed": 154,
+        "role": "damage",
+        "relation": {
+          "to": "square",
+          "how": "storm damage, broken stage only"
+        }
       },
       {
         "kind": "debris",
@@ -2172,7 +2606,12 @@
           ]
         },
         "id": "debris_c",
-        "seed": 155
+        "seed": 155,
+        "role": "damage",
+        "relation": {
+          "to": "square",
+          "how": "storm damage, broken stage only"
+        }
       },
       {
         "kind": "debris",
@@ -2191,7 +2630,12 @@
           ]
         },
         "id": "debris_d",
-        "seed": 156
+        "seed": 156,
+        "role": "damage",
+        "relation": {
+          "to": "smithy",
+          "how": "storm damage, broken stage only"
+        }
       },
       {
         "kind": "cart",
@@ -2205,7 +2649,12 @@
         ],
         "id": "handcart",
         "why": "a handcart left when the village ran to the halt farm",
-        "seed": 157
+        "seed": 157,
+        "role": "market",
+        "relation": {
+          "to": "square",
+          "how": "beside a stall"
+        }
       },
       {
         "kind": "flower_tub",
@@ -2218,7 +2667,12 @@
           6
         ],
         "id": "flower_tub_59",
-        "seed": 159
+        "seed": 159,
+        "role": "dressing",
+        "relation": {
+          "to": "north_cottages",
+          "how": "beside its door or wall"
+        }
       },
       {
         "kind": "flower_tub",
@@ -2231,7 +2685,12 @@
           6
         ],
         "id": "flower_tub_60",
-        "seed": 160
+        "seed": 160,
+        "role": "dressing",
+        "relation": {
+          "to": "north_cottages",
+          "how": "beside its door or wall"
+        }
       },
       {
         "kind": "kit_lantern",
@@ -2241,7 +2700,12 @@
         ],
         "why": "Matt, 27 Oct (annotated Crossroads): \"lamp should be placed on the corners\": a lamp at each corner of the square",
         "id": "kit_lantern_m0",
-        "seed": 300
+        "seed": 300,
+        "role": "light",
+        "relation": {
+          "to": "square",
+          "how": "corner"
+        }
       },
       {
         "kind": "kit_lantern",
@@ -2250,7 +2714,12 @@
           208
         ],
         "id": "kit_lantern_m1",
-        "seed": 301
+        "seed": 301,
+        "role": "light",
+        "relation": {
+          "to": "square",
+          "how": "corner"
+        }
       },
       {
         "kind": "kit_lantern",
@@ -2259,7 +2728,12 @@
           416
         ],
         "id": "kit_lantern_m2",
-        "seed": 302
+        "seed": 302,
+        "role": "light",
+        "relation": {
+          "to": "square",
+          "how": "corner"
+        }
       },
       {
         "kind": "kit_lantern",
@@ -2268,7 +2742,12 @@
           416
         ],
         "id": "kit_lantern_m3",
-        "seed": 303
+        "seed": 303,
+        "role": "light",
+        "relation": {
+          "to": "square",
+          "how": "corner"
+        }
       },
       {
         "kind": "bench_side_e",
@@ -2282,7 +2761,12 @@
         ],
         "id": "bench_side_w",
         "why": "Matt, 27 Oct (annotated Crossroads): \"benches are off centre\": a pair on the square's west and east edges, mirrored, turned to the well",
-        "seed": 304
+        "seed": 304,
+        "role": "seat",
+        "relation": {
+          "to": "well",
+          "how": "facing it across the square, mirrored"
+        }
       },
       {
         "kind": "bench_side_w",
@@ -2295,7 +2779,12 @@
           18
         ],
         "id": "bench_side_e",
-        "seed": 305
+        "seed": 305,
+        "role": "seat",
+        "relation": {
+          "to": "well",
+          "how": "facing it across the square, mirrored"
+        }
       },
       {
         "kind": "crate",
@@ -2309,7 +2798,12 @@
         ],
         "why": "the baker's crate between the bread and fish stalls",
         "id": "crate_m6",
-        "seed": 306
+        "seed": 306,
+        "role": "market",
+        "relation": {
+          "to": "square",
+          "how": "beside a stall"
+        }
       },
       {
         "kind": "basket",
@@ -2323,7 +2817,12 @@
         ],
         "id": "basket_w",
         "why": "baskets of apples at the stalls' ends on the central aisle",
-        "seed": 307
+        "seed": 307,
+        "role": "market",
+        "relation": {
+          "to": "square",
+          "how": "beside a stall"
+        }
       },
       {
         "kind": "basket",
@@ -2336,7 +2835,12 @@
           6
         ],
         "id": "basket_e",
-        "seed": 308
+        "seed": 308,
+        "role": "market",
+        "relation": {
+          "to": "square",
+          "how": "beside a stall"
+        }
       },
       {
         "kind": "mown_field",
@@ -2351,7 +2855,12 @@
         "solid": false,
         "id": "mown_field",
         "why": "Matt, 27 Oct (annotated Crossroads): \"if those are hay bales where is the hay field?\": the hay slope mown, stubble in rows, windrows raked, the bales standing on it",
-        "seed": 309
+        "seed": 309,
+        "role": "field",
+        "relation": {
+          "to": "hut_terrace",
+          "how": "the hay field on the terrace's east, bales on it"
+        }
       },
       {
         "kind": "crates",
@@ -2365,7 +2874,12 @@
         ],
         "id": "crates_m10",
         "seed": 310,
-        "why": "the tool stall's spare stock"
+        "why": "the tool stall's spare stock",
+        "role": "market",
+        "relation": {
+          "to": "square",
+          "how": "beside a stall"
+        }
       },
       {
         "kind": "basket",
@@ -2379,7 +2893,12 @@
         ],
         "id": "basket_s",
         "seed": 311,
-        "why": "the farm stall's apples"
+        "why": "the farm stall's apples",
+        "role": "market",
+        "relation": {
+          "to": "square",
+          "how": "beside a stall"
+        }
       },
       {
         "kind": "boulder",
@@ -2389,7 +2908,12 @@
         ],
         "id": "ring_stone_0",
         "seed": 330,
-        "why": "Matt, 27 Oct (annotated Crossroads): the ring on the green a ring of standing stones (as the woodland draws its stones) on its trodden path, open to the east where the lane comes in"
+        "why": "Matt, 27 Oct (annotated Crossroads): the ring on the green a ring of standing stones (as the woodland draws its stones) on its trodden path, open to the east where the lane comes in",
+        "role": "landmark",
+        "relation": {
+          "to": "green",
+          "how": "on the stone ring"
+        }
       },
       {
         "kind": "boulder",
@@ -2398,7 +2922,12 @@
           520
         ],
         "id": "ring_stone_1",
-        "seed": 331
+        "seed": 331,
+        "role": "landmark",
+        "relation": {
+          "to": "green",
+          "how": "on the stone ring"
+        }
       },
       {
         "kind": "boulder",
@@ -2407,7 +2936,12 @@
           504
         ],
         "id": "ring_stone_2",
-        "seed": 332
+        "seed": 332,
+        "role": "landmark",
+        "relation": {
+          "to": "green",
+          "how": "on the stone ring"
+        }
       },
       {
         "kind": "boulder",
@@ -2416,7 +2950,12 @@
           472
         ],
         "id": "ring_stone_3",
-        "seed": 333
+        "seed": 333,
+        "role": "landmark",
+        "relation": {
+          "to": "green",
+          "how": "on the stone ring"
+        }
       },
       {
         "kind": "boulder",
@@ -2425,7 +2964,12 @@
           448
         ],
         "id": "ring_stone_4",
-        "seed": 334
+        "seed": 334,
+        "role": "landmark",
+        "relation": {
+          "to": "green",
+          "how": "on the stone ring"
+        }
       },
       {
         "kind": "boulder",
@@ -2434,7 +2978,12 @@
           432
         ],
         "id": "ring_stone_5",
-        "seed": 335
+        "seed": 335,
+        "role": "landmark",
+        "relation": {
+          "to": "green",
+          "how": "on the stone ring"
+        }
       },
       {
         "kind": "boulder",
@@ -2443,7 +2992,51 @@
           448
         ],
         "id": "ring_stone_6",
-        "seed": 336
+        "seed": 336,
+        "role": "landmark",
+        "relation": {
+          "to": "green",
+          "how": "on the stone ring"
+        }
+      },
+      {
+        "kind": "fence",
+        "at": [
+          204,
+          88
+        ],
+        "size": [
+          32,
+          4
+        ],
+        "solid": true,
+        "id": "yard_fence_w",
+        "seed": 301,
+        "why": "the beds' fence along the yard, a gate gap at their path",
+        "role": "boundary",
+        "relation": {
+          "to": "beds",
+          "how": "fence along the yard, gate gap at yard_path"
+        }
+      },
+      {
+        "kind": "fence",
+        "at": [
+          260,
+          88
+        ],
+        "size": [
+          32,
+          4
+        ],
+        "solid": true,
+        "id": "yard_fence_e",
+        "seed": 302,
+        "role": "boundary",
+        "relation": {
+          "to": "beds",
+          "how": "fence along the yard, gate gap at yard_path"
+        }
       }
     ],
     "setts": [
@@ -2484,7 +3077,8 @@
         },
         "trunk_shade": true
       }
-    }
+    },
+    "_roles": "each prop, thing and dressing item carries `role` (what it is for) and `relation` (what it belongs to and how it stands to it) so the world editor can import the layout as rules, not only coordinates"
   },
   "structures": [
     {
@@ -2504,12 +3098,6 @@
           "y": 320,
           "w": 20,
           "centre": true
-        },
-        {
-          "kind": "waystone",
-          "x": 320,
-          "y": 384,
-          "w": 10
         },
         {
           "kind": "lantern",
@@ -2609,7 +3197,8 @@
         {
           "x": 320
         }
-      ]
+      ],
+      "why_waystone": "the waystone stands outside the square now, on its axis at the lane's turn (320, 512)"
     }
   ]
 }
