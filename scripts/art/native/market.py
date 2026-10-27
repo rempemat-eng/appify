@@ -21,7 +21,7 @@ from . import village as V
 from .palette import FI
 
 q, code, fill = V.q, V.code, V.fill
-AWNING = {'produce': 'berry', 'bread': 'brass', 'fish': 'sky', 'cloth': 'dusk', 'tools': 'leaf', 'closed': 'berry'}
+AWNING = {'produce': 'berry', 'bread': 'brass', 'fish': 'slate', 'cloth': 'dusk', 'tools': 'leaf', 'closed': 'berry'}
 
 
 def grid(a):
