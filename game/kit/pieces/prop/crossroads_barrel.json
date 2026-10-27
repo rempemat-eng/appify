@@ -1,0 +1,95 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "crossroads_barrel",
+ "name": "Barrel",
+ "kind": "prop",
+ "biomes": [
+  "village"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "barrel_29",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/barrel_29.png"
+  },
+  {
+   "id": "barrel_31",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/barrel_31.png"
+  },
+  {
+   "id": "barrel_37",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/barrel_37.png"
+  },
+  {
+   "id": "barrel_39",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/barrel_39.png"
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": null,
+  "note": "seeded from game/zones/crossroads (art/catalogue holds its asset-gate record)"
+ },
+ "geometry": {
+  "size_px": [
+   48,
+   75
+  ],
+  "size_cells": [
+   2,
+   3
+  ],
+  "z_sort": "foot",
+  "foot": [
+   24.0,
+   71.0
+  ],
+  "collision": {
+   "shape": "rect",
+   "rect": [
+    -5.0,
+    -8.0,
+    10.0,
+    8.0
+   ]
+  },
+  "footprint": [
+   [
+    0,
+    -1
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell"
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "baked"
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": null,
+  "eastward_ref": null,
+  "seeded_from": "game/zones/crossroads/kit.json",
+  "todo": [
+   "placement.role, requires and forbids (ground-rules.md 6)",
+   "composition role and clearance"
+  ]
+ }
+}

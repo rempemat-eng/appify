@@ -1,0 +1,114 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "crossroads_lantern_lit",
+ "name": "Lantern lit",
+ "kind": "prop",
+ "biomes": [
+  "village"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "lantern_lit",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/lantern_lit.png"
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": null,
+  "note": "seeded from game/zones/crossroads (art/catalogue holds its asset-gate record)"
+ },
+ "geometry": {
+  "size_px": [
+   84,
+   222
+  ],
+  "size_cells": [
+   4,
+   9
+  ],
+  "z_sort": "foot",
+  "foot": [
+   42.0,
+   218.0
+  ],
+  "collision": {
+   "shape": "rect",
+   "rect": [
+    -5.0,
+    -22.0,
+    10.0,
+    22.0
+   ]
+  },
+  "footprint": [
+   [
+    -1,
+    -2
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell",
+  "role": "light",
+  "requires": [
+   {
+    "rel": "at_edge",
+    "what": "route",
+    "cells": 1
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ],
+  "stages": [
+   "restored"
+  ]
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "baked"
+  },
+  "contact_ao": true,
+  "light": {
+   "radius": 40.0,
+   "colour": "lamp",
+   "flicker": 0.1,
+   "when": "night"
+  }
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": null,
+  "eastward_ref": null,
+  "seeded_from": "game/zones/crossroads/kit.json",
+  "todo": [
+   "composition role and clearance"
+  ]
+ }
+}

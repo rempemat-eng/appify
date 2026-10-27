@@ -1,0 +1,65 @@
+{
+ "cell": 24,
+ "period": 768,
+ "variants": 2,
+ "profiles": [
+  0.0,
+  -2.0,
+  2.0
+ ],
+ "atlas_cols": 64,
+ "lut": "lut.png",
+ "palette": "palette.png",
+ "tileset": "materials.tres",
+ "ops": {
+  "keep": 0,
+  "upper": 1,
+  "delta": 2,
+  "abs": 3
+ },
+ "materials": [
+  {
+   "id": "lawn",
+   "material_id": 1,
+   "priority": 30,
+   "fill": "fill_lawn.png",
+   "walkable": true,
+   "surface": "turf",
+   "route": false,
+   "water": null,
+   "approval": "candidate",
+   "swatch": [
+    96,
+    96
+   ],
+   "hash": "190399011de6e0e6"
+  },
+  {
+   "id": "path",
+   "material_id": 2,
+   "priority": 20,
+   "fill": "fill_path.png",
+   "walkable": true,
+   "surface": "earth",
+   "route": true,
+   "water": null,
+   "approval": "candidate",
+   "swatch": [
+    96,
+    96
+   ],
+   "hash": "ca3fcf47f5ef9f74"
+  }
+ ],
+ "transitions": [
+  {
+   "id": "lawn_over_path",
+   "upper": "lawn",
+   "lower": "path",
+   "png": "over_lawn_over_path.png",
+   "variants": 2,
+   "approval": "candidate",
+   "hash": "fba8d80a2285adca"
+  }
+ ]
+}

@@ -1,0 +1,119 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "crossroads_square_rubble_a",
+ "name": "Square rubble a",
+ "kind": "prop",
+ "biomes": [
+  "village"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "square_rubble_a",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/square_rubble_a.png"
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": null,
+  "note": "seeded from game/zones/crossroads (art/catalogue holds its asset-gate record)"
+ },
+ "geometry": {
+  "size_px": [
+   108,
+   109
+  ],
+  "size_cells": [
+   4,
+   5
+  ],
+  "z_sort": "foot",
+  "foot": [
+   54.0,
+   105.0
+  ],
+  "collision": {
+   "shape": "rect",
+   "rect": [
+    -15.0,
+    -18.0,
+    30.0,
+    18.0
+   ]
+  },
+  "footprint": [
+   [
+    -1,
+    -2
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    1,
+    -2
+   ],
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ],
+   [
+    -1,
+    0
+   ],
+   [
+    0,
+    0
+   ],
+   [
+    1,
+    0
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell",
+  "stages": [
+   "broken"
+  ]
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "baked"
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": null,
+  "eastward_ref": null,
+  "seeded_from": "game/zones/crossroads/kit.json",
+  "todo": [
+   "placement.role, requires and forbids (ground-rules.md 6)",
+   "composition role and clearance"
+  ]
+ }
+}

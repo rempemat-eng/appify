@@ -1,0 +1,68 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "woodland_stone_top",
+ "name": "Stone top",
+ "kind": "prop",
+ "biomes": [
+  "woodland"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "stone_top",
+   "weight": 1.0,
+   "png": "res://zones/woodland/art/stone_top.png"
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": null,
+  "note": "seeded from game/zones/woodland (art/catalogue holds its asset-gate record)"
+ },
+ "geometry": {
+  "size_px": [
+   48,
+   33
+  ],
+  "size_cells": [
+   2,
+   1
+  ],
+  "z_sort": "foot",
+  "foot": [
+   24.0,
+   33.0
+  ],
+  "collision": {
+   "shape": "none"
+  }
+ },
+ "placement": {
+  "snap": "cell"
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "baked"
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": false,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": null,
+  "eastward_ref": null,
+  "seeded_from": "game/zones/woodland/kit.json",
+  "todo": [
+   "placement.role, requires and forbids (ground-rules.md 6)",
+   "composition role and clearance"
+  ]
+ }
+}

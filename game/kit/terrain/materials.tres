@@ -1,0 +1,33 @@
+[gd_resource type="TileSet" load_steps=3 format=3]
+
+[ext_resource type="Texture2D" path="res://kit/terrain/palette.png" id="1"]
+
+[sub_resource type="TileSetAtlasSource" id="mats"]
+texture = ExtResource("1")
+texture_region_size = Vector2i(24, 24)
+0:0/0 = 0
+0:0/0/custom_data_0 = &"lawn"
+0:0/0/custom_data_1 = 1
+0:0/0/custom_data_2 = true
+0:0/0/custom_data_3 = &"turf"
+0:0/0/custom_data_4 = false
+1:0/0 = 0
+1:0/0/custom_data_0 = &"path"
+1:0/0/custom_data_1 = 2
+1:0/0/custom_data_2 = true
+1:0/0/custom_data_3 = &"earth"
+1:0/0/custom_data_4 = true
+
+[resource]
+tile_size = Vector2i(24, 24)
+custom_data_layer_0/name = "material"
+custom_data_layer_0/type = 21
+custom_data_layer_1/name = "material_id"
+custom_data_layer_1/type = 2
+custom_data_layer_2/name = "walkable"
+custom_data_layer_2/type = 1
+custom_data_layer_3/name = "surface"
+custom_data_layer_3/type = 21
+custom_data_layer_4/name = "route"
+custom_data_layer_4/type = 1
+sources/0 = SubResource("mats")

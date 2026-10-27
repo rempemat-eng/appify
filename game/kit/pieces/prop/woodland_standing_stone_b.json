@@ -1,0 +1,68 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "woodland_standing_stone_b",
+ "name": "Standing stone b",
+ "kind": "prop",
+ "biomes": [
+  "woodland"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "standing_stone_b",
+   "weight": 1.0,
+   "png": "res://zones/woodland/art/standing_stone_b.png"
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": null,
+  "note": "seeded from game/zones/woodland (art/catalogue holds its asset-gate record)"
+ },
+ "geometry": {
+  "size_px": [
+   56,
+   90
+  ],
+  "size_cells": [
+   2,
+   4
+  ],
+  "z_sort": "foot",
+  "foot": [
+   28.0,
+   90.0
+  ],
+  "collision": {
+   "shape": "none"
+  }
+ },
+ "placement": {
+  "snap": "cell"
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "baked"
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": false,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": null,
+  "eastward_ref": null,
+  "seeded_from": "game/zones/woodland/kit.json",
+  "todo": [
+   "placement.role, requires and forbids (ground-rules.md 6)",
+   "composition role and clearance"
+  ]
+ }
+}

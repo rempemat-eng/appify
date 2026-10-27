@@ -1,0 +1,68 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "woodland_sapling",
+ "name": "Sapling",
+ "kind": "prop",
+ "biomes": [
+  "woodland"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "sapling",
+   "weight": 1.0,
+   "png": "res://zones/woodland/art/sapling.png"
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": null,
+  "note": "seeded from game/zones/woodland (art/catalogue holds its asset-gate record)"
+ },
+ "geometry": {
+  "size_px": [
+   75,
+   90
+  ],
+  "size_cells": [
+   3,
+   4
+  ],
+  "z_sort": "foot",
+  "foot": [
+   37.5,
+   90.0
+  ],
+  "collision": {
+   "shape": "none"
+  }
+ },
+ "placement": {
+  "snap": "cell"
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "baked"
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": false,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": null,
+  "eastward_ref": null,
+  "seeded_from": "game/zones/woodland/kit.json",
+  "todo": [
+   "placement.role, requires and forbids (ground-rules.md 6)",
+   "composition role and clearance"
+  ]
+ }
+}

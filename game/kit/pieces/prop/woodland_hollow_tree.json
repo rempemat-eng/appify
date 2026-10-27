@@ -1,0 +1,68 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "woodland_hollow_tree",
+ "name": "Hollow tree",
+ "kind": "prop",
+ "biomes": [
+  "woodland"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "hollow_tree",
+   "weight": 1.0,
+   "png": "res://zones/woodland/art/hollow_tree.png"
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": null,
+  "note": "seeded from game/zones/woodland (art/catalogue holds its asset-gate record)"
+ },
+ "geometry": {
+  "size_px": [
+   231,
+   309
+  ],
+  "size_cells": [
+   10,
+   13
+  ],
+  "z_sort": "foot",
+  "foot": [
+   115.5,
+   309.0
+  ],
+  "collision": {
+   "shape": "none"
+  }
+ },
+ "placement": {
+  "snap": "cell"
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "baked"
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": false,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": null,
+  "eastward_ref": null,
+  "seeded_from": "game/zones/woodland/kit.json",
+  "todo": [
+   "placement.role, requires and forbids (ground-rules.md 6)",
+   "composition role and clearance"
+  ]
+ }
+}

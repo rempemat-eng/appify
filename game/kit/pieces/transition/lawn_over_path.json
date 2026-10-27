@@ -1,0 +1,17 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "lawn_over_path",
+  "name": "Turf over a sunken path",
+  "kind": "transition",
+  "biomes": ["valley", "woodland", "village"],
+  "version": 1,
+  "approval": {"state": "candidate", "by": null, "at": null, "standard": "eastward-edges.md 5.1, 1.5a (path turns 0.4 / 0.25 cell), review.edges ragged_edge and corner_radius", "note": "softground.sunken_edge on the dual grid"},
+  "transition": {
+    "upper": "lawn",
+    "lower": "path",
+    "painter": {"module": "scripts.art.kit.edges", "fn": "sunken", "args": {"lobes": 1.0, "tufts": 1.0, "stones": 1.0, "crumbs": true}},
+    "variants": 2,
+    "shape": "lower"
+  },
+  "audit": {"painter": {"module": "scripts.art.native.softground", "fn": "sunken_edge", "args": {}}, "eastward_ref": "Eastward 12 and 13, crops 10-grass-dirt"}
+}

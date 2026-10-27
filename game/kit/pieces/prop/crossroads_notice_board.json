@@ -1,0 +1,87 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "crossroads_notice_board",
+ "name": "Notice board",
+ "kind": "prop",
+ "biomes": [
+  "village"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "notice_board",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/notice_board.png"
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": null,
+  "note": "seeded from game/zones/crossroads (art/catalogue holds its asset-gate record)"
+ },
+ "geometry": {
+  "size_px": [
+   96,
+   132
+  ],
+  "size_cells": [
+   4,
+   6
+  ],
+  "z_sort": "foot",
+  "foot": [
+   48.0,
+   128.0
+  ],
+  "collision": {
+   "shape": "none"
+  }
+ },
+ "placement": {
+  "snap": "cell",
+  "role": "marker",
+  "requires": [
+   {
+    "rel": "at_edge",
+    "what": "route",
+    "cells": 1
+   }
+  ],
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ]
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "baked"
+  },
+  "contact_ao": true
+ },
+ "function": {
+  "interact": {
+   "verb": "read",
+   "triggers": []
+  }
+ },
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": false,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": null,
+  "eastward_ref": null,
+  "seeded_from": "game/zones/crossroads/kit.json",
+  "todo": [
+   "composition role and clearance",
+   "function.interact.triggers (what using it does)"
+  ]
+ }
+}

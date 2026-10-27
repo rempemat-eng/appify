@@ -1,0 +1,85 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "crossroads_boulder",
+ "name": "Boulder",
+ "kind": "prop",
+ "biomes": [
+  "village"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "boulder_52",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/boulder_52.png"
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": null,
+  "note": "seeded from game/zones/crossroads (art/catalogue holds its asset-gate record)"
+ },
+ "geometry": {
+  "size_px": [
+   87,
+   54
+  ],
+  "size_cells": [
+   4,
+   2
+  ],
+  "z_sort": "foot",
+  "foot": [
+   41.0,
+   52.0
+  ],
+  "collision": {
+   "shape": "rect",
+   "rect": [
+    -6.0,
+    -4.0,
+    12.0,
+    5.0
+   ]
+  },
+  "footprint": []
+ },
+ "placement": {
+  "snap": "cell",
+  "role": "rock",
+  "forbids": [
+   {
+    "rel": "not_overlap",
+    "what": "rock"
+   },
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ]
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "baked"
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": null,
+  "eastward_ref": null,
+  "seeded_from": "game/zones/crossroads/kit.json",
+  "todo": [
+   "composition role and clearance"
+  ]
+ }
+}

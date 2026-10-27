@@ -1,0 +1,25 @@
+{
+ "why": "approved anonymously",
+ "expect": "names who approved it",
+ "semantic": true,
+ "piece": {
+  "schema": "napattack.piece/1",
+  "id": "bench",
+  "name": "Bench",
+  "kind": "prop",
+  "version": 1,
+  "approval": {
+   "state": "approved"
+  },
+  "geometry": {
+   "size_cells": [
+    2,
+    1
+   ],
+   "foot": [
+    24,
+    30
+   ]
+  }
+ }
+}
