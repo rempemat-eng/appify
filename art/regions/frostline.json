@@ -964,7 +964,182 @@
     }
   ],
   "clusters": [
-    {"recipe": "moor_wayside", "at": [6424, 2152], "orient": "s", "mirror": false, "seed": 0},
-    {"recipe": "moor_wayside", "at": [6352, 1608], "orient": "s", "mirror": true, "seed": 0}
+    {
+      "recipe": "moor_wayside",
+      "at": [6424, 2152],
+      "orient": "s",
+      "mirror": false,
+      "seed": 0
+    },
+    {
+      "recipe": "moor_wayside",
+      "at": [6352, 1608],
+      "orient": "s",
+      "mirror": true,
+      "seed": 0
+    }
+  ],
+  "fights": {
+    "_about": "Fights for the Godot era, in the shape of Claude I's plans (see brackens.json). The High Fells' bench is the Frostline's widest flat and holds its biggest fight.",
+    "act": 1,
+    "story": "the Frostline: the shard fell on the glacier and slid into the ice caves under its snout; the ibex and the choughs went wild, and the hut warden has shut the Col hut's ring",
+    "weapons": {
+      "melee": "ice axes, staffs",
+      "ranged": "slings",
+      "idea": "footing: snow slows, ice slides"
+    },
+    "camps": [
+      {
+        "id": "fells_ibex",
+        "arena": [6560, 1600, 224, 96],
+        "enemies": [
+          [6600, 1640],
+          [6680, 1660],
+          [6744, 1684]
+        ],
+        "cover": [[6720, 1616]],
+        "why": "shardstruck ibex on the High Fells' bench, the boulder field for cover; the widest flat on the Frostline, so the fight has room to dodge",
+        "roles": ["grunt", "lunger", "grunt"],
+        "kind": "shardstruck ibex",
+        "at": [6600, 1640]
+      },
+      {
+        "id": "col_crows",
+        "arena": [6136, 1968, 112, 64],
+        "enemies": [
+          [6160, 1992],
+          [6216, 2008]
+        ],
+        "cover": [],
+        "why": "the crows at the head of the Col Path, where it tops out onto the cirque floor (Claude K's act 1: W2's fight, col_crows)",
+        "roles": ["swarmer", "swarmer"],
+        "kind": "choughs and crows gone wild at the col",
+        "at": [6160, 1992]
+      }
+    ],
+    "patrols": [
+      {
+        "id": "snow_hares",
+        "roles": ["swarmer", "swarmer"],
+        "kind": "snow hares, shardstruck",
+        "path": [
+          [6280, 1888],
+          [6280, 1720]
+        ],
+        "why": "up and down the High Fells' first leg above the lake"
+      }
+    ],
+    "cover": [
+      {
+        "kind": "high",
+        "what": "the boulder field",
+        "at": [6720, 1616]
+      },
+      {
+        "kind": "low",
+        "what": "a moraine boulder",
+        "at": [6640, 1680]
+      }
+    ],
+    "waystones": [
+      {
+        "id": "frostline_waystone",
+        "at": [6248, 2268],
+        "why": "by the Col hut on the cabin meadow, where the Col Path comes up from the valley"
+      }
+    ],
+    "shard": {
+      "in_dungeon": "ice_caves",
+      "why": "the shard slid into the caves under the glacier snout"
+    },
+    "dungeon": {
+      "id": "ice_caves",
+      "name": "the Ice Caves",
+      "entrance": [6424, 1648],
+      "by": "a blue mouth under the glacier snout, at the crevasse trod's end",
+      "rooms": [
+        {
+          "id": "blue_hall",
+          "what": "a blue ice hall, the floor slick",
+          "camp": ["grunt", "grunt", "swarmer"]
+        },
+        {
+          "id": "meltwater",
+          "what": "a meltwater channel with ice bridges",
+          "camp": ["lunger", "shooter"]
+        },
+        {
+          "id": "shard_chamber",
+          "what": "the chamber where the shard froze into the wall",
+          "camp": ["tank", "swarmer"]
+        }
+      ],
+      "keeper": "the Rime Wyrm (game-design v2 8.2), coiled round the shard in the end chamber; freed, it goes back under the glacier",
+      "plan": "a zone plan of its own, like game/data/plans/undercroft.json, after this PR",
+      "camp": "ice_caves_rooms",
+      "boss": "rime_wyrm"
+    },
+    "raiders_camp": {
+      "none": true,
+      "why": "raids come only to Crossroads (game-design v2, 7.6)"
+    },
+    "boss": {
+      "id": "rime_wyrm",
+      "name": "the Rime Wyrm",
+      "in_dungeon": "ice_caves",
+      "why": "game-design v2 8.2; Claude K's act 1"
+    }
+  },
+  "quest_spots": [
+    {
+      "id": "hut_warden",
+      "at": [6216, 2244],
+      "quest": "the hut warden at the Col hut: the ring is shut until the fells are safe (fells_ibex), then the ring fight"
+    },
+    {
+      "id": "forager",
+      "at": [5928, 2152],
+      "quest": "the forager in Fir Hollow, whose baskets the choughs scattered (cirque_choughs)"
+    },
+    {
+      "id": "ice_cutter",
+      "at": [6248, 1880],
+      "quest": "the ice-cutter by the tarn, who saw the shard slide under the snout (ice_caves)"
+    },
+    {
+      "id": "tam",
+      "at": [6232, 2252],
+      "quest": "Tam: met in the shard chamber, then waits at the Col hut (Claude K's act 1)"
+    }
+  ],
+  "windows": [
+    {
+      "id": "col_hut",
+      "rect": [6080, 2124, 320, 180],
+      "focal": [6216, 2244],
+      "clearing": [6248, 2268],
+      "why": "the Col Path's last switchback, the hut, the waystone and the lip above the valley"
+    },
+    {
+      "id": "snowmelt_lake",
+      "rect": [6040, 1720, 320, 180],
+      "focal": [6160, 1792],
+      "clearing": [6200, 1860],
+      "why": "the tarn in its cirque, the Sleepwater leaving it, the lookout trod's ford"
+    },
+    {
+      "id": "high_fells",
+      "rect": [6480, 1560, 320, 180],
+      "focal": [6640, 1640],
+      "clearing": [6560, 1700],
+      "why": "the fells' bench, the boulder field for cover, the ice caves' mouth at the left"
+    },
+    {
+      "id": "fir_hollow",
+      "rect": [5760, 2060, 320, 180],
+      "focal": [5904, 2160],
+      "clearing": [5960, 2140],
+      "why": "the hollow behind the rock rib, the forager's clearing and the stream"
+    }
   ]
 }
