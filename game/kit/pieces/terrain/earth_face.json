@@ -38,6 +38,16 @@
     "face": {
       "height_cells": 2,
       "strip_px": 48
+    },
+    "paint": {
+      "module": "scripts.art.native.softground",
+      "fn": "ledge",
+      "args": {
+        "seed": 301,
+        "face_px": 48,
+        "r_out": 0.65,
+        "r_in": 0.4
+      }
     }
   },
   "placement": {

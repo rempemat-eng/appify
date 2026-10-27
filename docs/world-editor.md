@@ -3,12 +3,13 @@
 Status: prototype (Claude A, 27 Oct). It holds:
 
 - the terrain kit (seven materials, twelve transitions, edge dressing, tiers with derived faces);
-- the piece library and its schema (90 pieces);
+- the piece library and its schema (98 pieces), with feature pieces per width (falls, steps, bridges, stepping stones);
 - props as scenes;
 - a JSON plan that turns into a zone scene and back;
 - a first dock in the editor;
 - the validator on kit zones;
-- the woodland rebuilt with the kit (`--zone=woodland_kit`) beside the current one.
+- the ground baked with the woodland's own painters (`bake.py`), with width classes and surface variants (`surface.py`), measured against the hand-painted woodland (`detail_bar.py`);
+- the woodland rebuilt with the kit (`--zone=woodland_kit`) beside the current one, and the labs `kitlab`, `kitlab_tiers` and `kitlab_widths`.
 
 Every material and piece is still a `candidate`: none is approved, so none ships. Codex tasks W1 to W7 below take the mechanical parts to completion.
 
@@ -40,7 +41,7 @@ validator: the ground rules (scripts/review/ground_rules.py) on the scene's cell
            live in the dock while placing, and in check:godot / review:scene before a PR
 ```
 
-The data is authoritative. A zone holds which material is in each cell and which piece stands where. It holds no pixels. The pictures come from the kit when the zone is drawn, so a fix to a piece reaches every zone without repainting any of them.
+The data is authoritative. A zone holds which material is in each cell and which piece stands where. Its pictures are derived from that data. The live tiles show while it is edited, and the baked ground (`bake.py`, kept current by `check:kit`) ships. So a fix to a piece or a painter reaches every zone at its next bake, without anyone repainting it by hand.
 
 ## The kit: terrain
 
@@ -202,6 +203,126 @@ The dressing adds clumps of rushes standing in the shallows off a south shore an
 
 - flow per cell and its animation (the ripples are static);
 - the fall's animated strip.
+
+## Baking the ground: the painted woodland is the bar
+
+Matt, 27 Oct 17:00, on the woodland before and after: "i prefer the water, paths, shadows of the trees before (left). can you not create elements in the editor that mirror that level of detail?" Yes, and the hand-painted woodland is the bar, not a target to approach.
+
+**Why the tiles alone could not.** Tiles cut from a painter's work must agree at every border, so whatever crosses a border has to be fixed per edge. The painters that drew the woodland work on a whole outline at once instead. That covers the bank's face of clods, the depth band that follows the shore, the ripples along the flow and the grass lip hanging in lumps. Forced into tiles, they became the simplified versions Matt rejected.
+
+**So the editor keeps two pictures of one zone.**
+
+- **The live tiles** (the shader above) are the preview while cells are painted.
+- **The baked ground ships.** `python3 -m scripts.art.kit.bake <zone>`, or the dock's **Bake ground** button, takes each material's whole outline from the zone's cells on the soft grid (`softgrid.shape`, lumped and rounded). It then runs the painters that drew the woodland with their own parameters, which each terrain piece's `terrain.paint` block holds:
+  - **Lawn:** `softground.lawn`.
+  - **Path and worn ground:** `softground.dirt`, the cobbled packed earth with its clods, then `sunken_edge`: turf lobes, the shadow under the north lip, the lit south lip, tufts and stones.
+  - **Water:** `softground.water`:
+    - the north bank's earth face under the grass lip;
+    - the light waterline;
+    - the depth band;
+    - ripples along the flow;
+    - lit shallows, rushes and bank stones.
+  - **Raised ground:** `softground.ledge`, the plateau and cliff swatches' painter:
+    - a lit band and the grass lip rounded over the face, with hanging tufts;
+    - the shadow under the lip;
+    - clods of varied size, darker towards the foot, with roots;
+    - a foot band with pebbles and weeds;
+    - side faces at the ends;
+    - the cast shadow on the ground below.
+  - **Scree:** `screen.scree`.
+  - **Trees:** the crown's shadow with sun flecks (`screen.tree_shadow_hd`).
+  - **Everything else:** the shadow of its own sprite.
+  - **Afterwards:** the woodland's ground detail and lawn dressing.
+
+The bake writes `zones/<zone>/ground_baked.png` and a hash of its inputs (`bake --check` in `check:kit`). `TerrainGround.baked` shows it until a cell or tier is painted. From then on, the live tiles show until the zone is baked again.
+
+A narrow channel keeps its own, smaller rounding and gaussian easing (the woodland rill's). A wide body keeps the river's.
+
+### Feature pieces, painted where they stand
+
+Some pieces carry a `rendering.paint` block. The bake paints them into the ground, and their sprite is only the preview:
+
+| Piece | What the bake paints |
+| --- | --- |
+| `waterfall_1` to `_4` | The cascade's rock face (`rocks.face`) and the fall (`rocks.fall`). The foam and rings stay on the pool. The validator requires one wherever water crosses a south rim (`rules.water_fall`). |
+| `log_steps_1`, `log_steps` (2), `log_steps_3` | `softground.log_steps`: the cheeks of earth either side, treads with depth and shade under each nose, the head flush with the rim. |
+| `footbridge_2`, `woodland_footbridge` (3), `footbridge_4` | `softground.footbridge` over the zone's own banks: an abutment in each bank, deck, kerbs, posts and rails. |
+| `stepping_stones_1`, `_2` | Flat stones a stride apart with their wet rings: a footpath's crossing of a rill or a stream. Its deck carries the route (`rules.route_water`, `rules.deck`). |
+
+Bends, junctions, pool ends and widenings need no pieces of their own. Each is the painted outline of the whole body, eased where its width changes (`surface.taper`), so a stream widens into a river rather than stepping.
+
+### Widths and variants (Matt, 17:05)
+
+`scripts/art/kit/surface.py` draws over a surface that its painter has already painted across its whole outline. The variants therefore share its palette, clods and edges, and any mix reads as one surface.
+
+**Width classes.** A cell's width is the largest square of the body that covers it, so a junction of two lanes stays a lane:
+
+- **Paths:**
+  - 1, a footpath: one worn, dry line down the middle, the turf close;
+  - 2, a lane;
+  - 3, a road: two wheel ruts, broken, and a grassy crown;
+  - 4 and over, a street's approach: compacted, more stones.
+- **Water:**
+  - 1, a rill: the narrow rounding;
+  - 2, a stream: stones standing in it with lit rings;
+  - 3 to 5, a river: a shingle bar on the inside of every real bend (not a meander's one-cell step) and a scoured channel on the outside;
+  - 6 and over, a wide river or a lake: broad lit shallows and swell lines along the shore.
+
+**Variants.** There is one per cell. A plan's `variants` rows hold them, and the dock's variant brush paints them. Where none is painted, the bake picks by weight and context:
+
+- under trees: leaf litter;
+- by water: damp ground and long grass;
+- by doors and spawns: compacted earth;
+- along routes: trampled lawn;
+- on footpaths: the verge creeping in;
+- in shallow streams: stones showing through;
+- on river and lake shores: reeds and lilies.
+
+The pick is never the same as the cell to the west or north. Each variant is drawn as a soft blob round its cells, never their square. A slow tone field shifts the body hue over about 200 texels, so a long path never looks stamped.
+
+| Material | Variants |
+| --- | --- |
+| dirt path | plain, worn centre, grassy verge, stony, damp with a puddle, leaf litter, compacted |
+| lawn | calm field, clover, daisies, long grass, trampled |
+| water | still, rippled, reedy, lilies, shallow over stones |
+
+`kitlab_widths` shows them all:
+
+- a path network of all four widths;
+- a stream with stepping stones, widening into a river under a footbridge;
+- the river's bends, then a wide river.
+
+### Measured against the painted woodland
+
+`python3 -m scripts.art.kit.detail_bar` measures `woodland_kit`'s baked ground and the hand-painted woodland's ground in the same regions, all taken from the kit plan:
+
+- **water:** the water cells and a cell of bank;
+- **path:** the routes and a cell of verge;
+- **shadow:** the trees' crown shadows;
+- **tiers:** the faces in `kitlab_tiers` against the plateau swatch Matt liked.
+
+The measures:
+
+- **edges:** MEASURE.md's edge share;
+- **tones:** distinct colours per 24 x 24 window;
+- **flat:** the share of pixels in a 7 x 7 window of one colour;
+- **lone:** single pixels unlike all four neighbours;
+- **outlines:** teeth, jags (`review/edges.py`) and `ruler`, the share of the outline in straight runs of a cell or more.
+
+A region passes when its edges and tones reach 95 % of the painted, its flat share is at most the painted's plus 0.02, and its outline stays within the painted's plus a small margin. `test_kit.Surface` holds it.
+
+| Region | Edges, painted / kit | Tones | Flat | Outline teeth / ruler | Result |
+| --- | --- | --- | --- | --- | --- |
+| water | 0.274 / 0.307 | 12.2 / 15.7 | 0.29 / 0.24 | 0.011 / 0.023, 0.13 / 0.11 | pass |
+| path | 0.306 / 0.321 | 14.3 / 15.5 | 0.062 / 0.079 | 0.102 / 0.105, 0.024 / 0.012 | pass |
+| tree shadows | 0.319 / 0.344 | 10.8 / 11.7 | 0.012 / 0.024 | | pass |
+| tier faces (vs the plateau swatch) | 0.334 / 0.335 | 13.6 / 17.4 | 0.006 / 0.008 | | pass |
+
+**Not yet:**
+
+- The painted woodland's stone slabs beside the fall (its heap) are not a piece yet.
+- Its pool is a union of rectangles plus the river's meander, where the kit's is whole cells.
+- The bake takes about two minutes for the woodland, so painting a cell shows the preview until the next bake.
 
 ## The kit: pieces
 
@@ -540,7 +661,7 @@ Matt, 13:43: "consider how chatgpt can help here to conserve claude tokens".
 ### What Claude does next (in order)
 
 1. Matt's steer on the kit's look; then the library gate on the lawn, path, water and earth face (review:asset, the auditors, the 3x sheets), and Matt's approval.
-2. The rock cliff and the low ledge, flowing water, the falls' animation.
+2. The rock cliff and the low ledge, flowing water (the woodland's flow strip over the baked water), the falls' animation, the fall's slabs as a piece.
 3. The woodland's pieces: roles and relations filled in, real collision.
 4. The Crossroads (#301's plan, with a role and a relation on every prop, as the second seed) rebuilt with the editor.
 5. The first 30 relation cases for W5.
@@ -550,12 +671,12 @@ Matt, 13:43: "consider how chatgpt can help here to conserve claude tokens".
 
 **What exists:**
 
-- **Kit code** (`scripts/art/kit/`): `fills.py`, `edges.py`, `dressing.py`, `compose.py`, `build.py`, `sheet.py`, `approval.py`, `schema.py`, `seed_props.py`, `structures.py`, `props.py`, `woodland_kit.py`, `walk.py`, `render_zone.py` and `test_kit.py`.
+- **Kit code** (`scripts/art/kit/`): `fills.py`, `edges.py`, `dressing.py`, `compose.py`, `build.py`, `bake.py`, `surface.py`, `detail_bar.py`, `sheet.py`, `approval.py`, `schema.py`, `seed_props.py`, `structures.py`, `props.py`, `woodland_kit.py`, `walk.py`, `render_zone.py` and `test_kit.py`.
 - **Validator:** `scripts/review/kit_rules.py`.
-- **Library and built kit** (`game/kit/`): the schema and invalid fixtures, 90 pieces, the built terrain and decals, 71 prop scenes, and zone plans for `kitlab`, `kitlab_tiers` and `woodland_kit`.
+- **Library and built kit** (`game/kit/`): the schema and invalid fixtures, 98 pieces, the built terrain and decals, 79 prop scenes, and zone plans for `kitlab`, `kitlab_tiers`, `kitlab_widths` and `woodland_kit`, each with its baked ground.
 - **Godot runtime** (`game/world/terrain/`): the shader, `TerrainKit`, `TerrainGround` (tiers, shadows, blocking), `TerrainDressing` and `KitPiece`.
 - **Tools:** `game/tools/kit_zone.gd` and the dock in `game/addons/world_editor/`.
-- **Zones:** `kitlab`, `kitlab_tiers` and `woodland_kit` in `data/zones.json`.
+- **Zones:** `kitlab`, `kitlab_tiers`, `kitlab_widths` and `woodland_kit` in `data/zones.json`.
 
 **Not yet:** what each section above lists as not yet; W1 to W7; and any approvals.
 

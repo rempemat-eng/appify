@@ -4,5 +4,6 @@
   "undercroft": "res://zones/undercroft/undercroft.tscn",
   "kitlab": "res://zones/kitlab/kitlab.tscn",
   "woodland_kit": "res://zones/woodland_kit/woodland_kit.tscn",
-  "kitlab_tiers": "res://zones/kitlab_tiers/kitlab_tiers.tscn"
+  "kitlab_tiers": "res://zones/kitlab_tiers/kitlab_tiers.tscn",
+  "kitlab_widths": "res://zones/kitlab_widths/kitlab_widths.tscn"
 }

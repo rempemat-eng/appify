@@ -40,7 +40,18 @@
     "swatch": [
       96,
       96
-    ]
+    ],
+    "paint": {
+      "module": "scripts.art.native.screen",
+      "fn": "scree",
+      "args": {
+        "shape": {
+          "seed": 1612,
+          "r_out": 0.5,
+          "r_in": 0.3
+        }
+      }
+    }
   },
   "placement": {
     "snap": "cell"

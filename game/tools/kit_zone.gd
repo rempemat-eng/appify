@@ -49,6 +49,11 @@ func _build(path: String, out: String) -> int:
 	ground.grid_size = size
 	ground.z_index = -10
 	ground.lab = bool(plan.get("lab", false))
+	var baked_png := "res://zones/%s/ground_baked.png" % zone_id
+	if ResourceLoader.exists(baked_png):
+		ground.baked = load(baked_png)
+	if plan.has("variants"):
+		ground.variant_rows = PackedStringArray(plan.variants)
 	root.add_child(ground)
 	ground.owner = root
 	var cells := TileMapLayer.new()
@@ -192,6 +197,8 @@ func _export(path: String, out: String) -> int:
 				tr += str(maxi(0, tl.get_cell_atlas_coords(Vector2i(x, y)).x))
 			trows.append(tr)
 		plan["tiers"] = trows
+	if not ground.variant_rows.is_empty():
+		plan["variants"] = Array(ground.variant_rows)
 	var props := root.get_node_or_null("Props")
 	if props != null:
 		var pieces := []

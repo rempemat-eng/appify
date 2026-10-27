@@ -40,7 +40,22 @@
     "swatch": [
       96,
       96
-    ]
+    ],
+    "paint": {
+      "module": "scripts.art.native.softground",
+      "fn": "dirt",
+      "args": {
+        "seed": 451,
+        "fam": "path",
+        "cell": 11,
+        "stones": 0.6,
+        "shape": {
+          "seed": 451,
+          "r_out": 0.6,
+          "r_in": 0.4
+        }
+      }
+    }
   },
   "placement": {
     "snap": "cell"

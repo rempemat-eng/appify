@@ -84,5 +84,6 @@
    ],
    "variant": "stump"
   }
- ]
+ ],
+ "bake": true
 }

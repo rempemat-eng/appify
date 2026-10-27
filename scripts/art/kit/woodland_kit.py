@@ -133,6 +133,20 @@ def boulder_variant(size) -> str:
     return 'b%d' % int(np.argmin([abs(b[0] - w) for b in BOULDERS]))
 
 
+def decor_of(plan) -> list:
+    """The woodland's low plants and litter as decals the bake lays into the ground (texels): its
+    ferns (every fourth a foxglove), the mushrooms at the feet of stumps and logs, fallen leaves."""
+    from scripts.art.native import screen as SN
+    out = []
+    for j, (x, y, seed, size) in enumerate(plan['dressing']['ferns']):
+        out.append({'kind': 'foxglove' if j % 4 == 3 else 'fern', 'at': [int(round(x * D)), int(round(y * D))], 'seed': seed, 'size': size})
+    for (x, y, seed, kind) in SN.mushrooms_at(plan):
+        out.append({'kind': 'mushrooms', 'at': [int(round(x * D)), int(round(y * D))], 'seed': seed, 'tint': kind})
+    for (x, y, _k) in plan['dressing']['leaves']:
+        out.append({'kind': 'leaf', 'at': [int(round(x * D)), int(round(y * D))]})
+    return out
+
+
 def pieces_of(plan) -> list:
     out = []
     for name, kind, x, y in base_objects():
@@ -141,8 +155,8 @@ def pieces_of(plan) -> list:
     x0, x1, y0, y1 = RAISED
     for i, b in enumerate(plan['rock']['talus']['boulders'] + plan['rock']['heap']):
         cx, cy = int(b['at'][0] // CELL_W), int((b['at'][1] - 0.5) // CELL_W)
-        if water[cy, cx]:
-            continue          # no boulder stands in the water unless it is placed as a stepping stone
+        if water[max(0, cy - 1):cy + 2, max(0, cx - 1):cx + 2].any():
+            continue          # no boulder stands in the water or on its bank's edge unless placed as a stepping stone
         if x0 <= cx < x1 and y1 <= cy < y1 + 2:
             continue          # nor on the face under the raised ground
         out.append({'id': 'boulder-%d' % (i + 1), 'piece': 'woodland_boulder',
@@ -175,8 +189,9 @@ def main(argv=None) -> int:
         'rows': [''.join(r) for r in grid],
         'tiers': tiers_of(grid),
         'pieces': pieces_of(plan),
+        'decor': decor_of(plan),
         'gameplay_from': 'res://zones/woodland/woodland.tscn',
-        'lab': True,
+        'lab': True, 'bake': True,
         'spawns': {k: v for k, v in st.items()},
     }
     for k in out['legend'].values():

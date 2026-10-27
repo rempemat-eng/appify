@@ -932,15 +932,6 @@
    "variant": "b0"
   },
   {
-   "id": "boulder-7",
-   "piece": "woodland_boulder",
-   "at": [
-    192,
-    27
-   ],
-   "variant": "b2"
-  },
-  {
    "id": "boulder-8",
    "piece": "woodland_boulder",
    "at": [
@@ -1148,24 +1139,6 @@
    "variant": "b5"
   },
   {
-   "id": "boulder-34",
-   "piece": "woodland_boulder",
-   "at": [
-    162,
-    852
-   ],
-   "variant": "b5"
-  },
-  {
-   "id": "boulder-35",
-   "piece": "woodland_boulder",
-   "at": [
-    318,
-    852
-   ],
-   "variant": "b4"
-  },
-  {
    "id": "boulder-36",
    "piece": "woodland_boulder",
    "at": [
@@ -1193,8 +1166,717 @@
    "variant": "river3"
   }
  ],
+ "decor": [
+  {
+   "kind": "fern",
+   "at": [
+    513,
+    102
+   ],
+   "seed": 1619,
+   "size": 0.9
+  },
+  {
+   "kind": "fern",
+   "at": [
+    789,
+    78
+   ],
+   "seed": 1620,
+   "size": 0.9
+  },
+  {
+   "kind": "fern",
+   "at": [
+    132,
+    816
+   ],
+   "seed": 580,
+   "size": 1.65
+  },
+  {
+   "kind": "foxglove",
+   "at": [
+    540,
+    1056
+   ],
+   "seed": 1612,
+   "size": 1.5
+  },
+  {
+   "kind": "fern",
+   "at": [
+    786,
+    1236
+   ],
+   "seed": 2246,
+   "size": 1.65
+  },
+  {
+   "kind": "fern",
+   "at": [
+    90,
+    1410
+   ],
+   "seed": 680,
+   "size": 1.8
+  },
+  {
+   "kind": "fern",
+   "at": [
+    684,
+    798
+   ],
+   "seed": 1862,
+   "size": 1.275
+  },
+  {
+   "kind": "foxglove",
+   "at": [
+    60,
+    990
+   ],
+   "seed": 470,
+   "size": 1.5
+  },
+  {
+   "kind": "fern",
+   "at": [
+    618,
+    1560
+   ],
+   "seed": 1962,
+   "size": 1.5
+  },
+  {
+   "kind": "fern",
+   "at": [
+    870,
+    1050
+   ],
+   "seed": 2380,
+   "size": 1.35
+  },
+  {
+   "kind": "fern",
+   "at": [
+    60,
+    1680
+   ],
+   "seed": 700,
+   "size": 1.65
+  },
+  {
+   "kind": "foxglove",
+   "at": [
+    330,
+    1572
+   ],
+   "seed": 1294,
+   "size": 1.35
+  },
+  {
+   "kind": "fern",
+   "at": [
+    810,
+    708
+   ],
+   "seed": 2126,
+   "size": 1.35
+  },
+  {
+   "kind": "fern",
+   "at": [
+    612,
+    528
+   ],
+   "seed": 1604,
+   "size": 1.2
+  },
+  {
+   "kind": "fern",
+   "at": [
+    48,
+    1212
+   ],
+   "seed": 516,
+   "size": 1.5
+  },
+  {
+   "kind": "foxglove",
+   "at": [
+    876,
+    1680
+   ],
+   "seed": 2604,
+   "size": 1.5
+  },
+  {
+   "kind": "fern",
+   "at": [
+    132,
+    816
+   ],
+   "seed": 3103,
+   "size": 1.0
+  },
+  {
+   "kind": "fern",
+   "at": [
+    72,
+    852
+   ],
+   "seed": 3101,
+   "size": 1.2
+  },
+  {
+   "kind": "fern",
+   "at": [
+    120,
+    906
+   ],
+   "seed": 3102,
+   "size": 1.1
+  },
+  {
+   "kind": "mushrooms",
+   "at": [
+    195,
+    1082
+   ],
+   "seed": 610,
+   "tint": "brown"
+  },
+  {
+   "kind": "mushrooms",
+   "at": [
+    748,
+    746
+   ],
+   "seed": 630,
+   "tint": "brown"
+  },
+  {
+   "kind": "mushrooms",
+   "at": [
+    99,
+    1082
+   ],
+   "seed": 654,
+   "tint": "brown"
+  },
+  {
+   "kind": "mushrooms",
+   "at": [
+    447,
+    1394
+   ],
+   "seed": 666,
+   "tint": "brown"
+  },
+  {
+   "kind": "mushrooms",
+   "at": [
+    261,
+    1610
+   ],
+   "seed": 672,
+   "tint": "red"
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    627,
+    423
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    213,
+    1491
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    681,
+    1563
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    147,
+    627
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    702,
+    978
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    600,
+    450
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    222,
+    1539
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    690,
+    1557
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    93,
+    660
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    732,
+    1062
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    600,
+    417
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    201,
+    1512
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    822,
+    1524
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    90,
+    696
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    636,
+    1017
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    537,
+    417
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    189,
+    1458
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    726,
+    1557
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    81,
+    696
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    630,
+    978
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    591,
+    477
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    198,
+    1482
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    702,
+    1569
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    78,
+    672
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    690,
+    1002
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    567,
+    477
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    186,
+    1464
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    783,
+    1521
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    66,
+    636
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    624,
+    1047
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    645,
+    480
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    126,
+    1542
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    804,
+    1587
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    105,
+    684
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    681,
+    978
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    666,
+    426
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    144,
+    1476
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    702,
+    1518
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    69,
+    666
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    645,
+    978
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    657,
+    450
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    108,
+    1470
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    681,
+    1536
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    30,
+    663
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    711,
+    1011
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    669,
+    417
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    174,
+    1539
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    744,
+    1590
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    105,
+    693
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    744,
+    1020
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    603,
+    456
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    159,
+    1527
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    696,
+    1572
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    129,
+    675
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    696,
+    1041
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    603,
+    486
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    147,
+    1479
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    711,
+    1548
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    105,
+    627
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    702,
+    1041
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    591,
+    468
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    249,
+    1536
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    819,
+    1560
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    60,
+    645
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    753,
+    993
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    639,
+    462
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    207,
+    1464
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    708,
+    1542
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    84,
+    627
+   ]
+  },
+  {
+   "kind": "leaf",
+   "at": [
+    756,
+    1020
+   ]
+  }
+ ],
  "gameplay_from": "res://zones/woodland/woodland.tscn",
  "lab": true,
+ "bake": true,
  "spawns": {
   "clearing": [
    330.0,

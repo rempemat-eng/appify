@@ -164,5 +164,53 @@ class Rules(unittest.TestCase):
         self.assertTrue(self.faults(dict(self.plan(rows, [aside]), tiers=tiers), 'rules.water_fall'))
 
 
+class Crossings(unittest.TestCase):
+    def test_stepping_stones_carry_a_footpath(self):
+        from scripts.review import kit_rules as KR
+        rows = ['..#...', '..#...', '~~~~~~', '~~~~~~', '..#...', '..#...']
+        plan = {'zone': 't', 'legend': {'.': 'lawn', '#': 'path', '~': 'water'}, 'rows': rows, 'pieces': []}
+        self.assertTrue([f for f in KR.check_zone(plan) if f['check'] == 'rules.route_water'])
+        plan['pieces'] = [{'id': 's', 'piece': 'stepping_stones_2', 'at': [60, 120], 'variant': 'w2'}]
+        self.assertFalse([f for f in KR.check_zone(plan) if f['check'] in ('rules.route_water', 'rules.deck')])
+
+
+class Surface(unittest.TestCase):
+    """Width classes and surface variants (scripts/art/kit/surface.py) and the baked grounds."""
+
+    def test_widths(self):
+        from scripts.art.kit import surface as SF
+        c = np.zeros((10, 12), bool)
+        c[4:6, :] = True            # a lane across
+        c[:, 3:5] = True            # a lane down: their junction stays a lane
+        c[0:3, 8:11] = True         # a road three cells across
+        w = SF.widths(c)
+        self.assertEqual(int(w[4, 0]), 2)
+        self.assertEqual(int(w[4, 3]), 2)
+        self.assertEqual(int(w[1, 9]), 3)
+        self.assertEqual(list(SF.water_class(np.array([1, 2, 3, 5, 6, 8]))), [1, 2, 3, 3, 6, 6])
+
+    def test_variants_never_repeat_a_neighbour(self):
+        from scripts.art.kit import surface as SF
+        c = np.ones((12, 16), bool)
+        ctx = {k: np.zeros((12, 16), bool) for k in ('tree', 'water', 'door', 'route', 'shore')}
+        for kind in ('dirt', 'lawn', 'water'):
+            v = SF.assign(kind, c, None, dict(ctx, cls=np.full((12, 16), 2)), 5)
+            self.assertFalse((v[:, 1:] == v[:, :-1]).any(), kind)
+            self.assertFalse((v[1:] == v[:-1]).any(), kind)
+            given = np.full((12, 16), '.', '<U1')
+            given[3, 4] = 's' if kind == 'dirt' else 'b'
+            self.assertEqual(SF.assign(kind, c, given, dict(ctx, cls=np.full((12, 16), 2)), 5)[3, 4], given[3, 4])
+
+    def test_baked_grounds_current(self):
+        from scripts.art.kit import bake as BK
+        self.assertEqual(BK.check(), 0)
+
+    def test_woodland_reaches_the_painted_bar(self):
+        from scripts.art.kit import detail_bar as DB
+        res = DB.compare('woodland_kit', os.path.join(S.ROOT, 'game', 'zones', 'woodland', 'art', 'ground.png'))
+        for name in ('water', 'path', 'shadow'):
+            self.assertTrue(res[name]['pass'], (name, res[name]))
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -35,9 +35,12 @@ def _write(piece: dict, force: bool) -> None:
     open(path, 'a').write('\n')
 
 
-def footbridge(force: bool) -> None:
-    """A plank footbridge over a river three cells wide, 20 world px wide (the woodland's)."""
-    river = 72
+def footbridge(force: bool, cells: int = 3) -> None:
+    """A plank footbridge over a channel `cells` wide (2: a stream, 3: the woodland's river, 4: a
+    river), 20 world px wide: abutments set in both banks, the deck, kerbs, posts and rails. The
+    bake paints it over the zone's own banks (rendering.paint), its picture is the preview."""
+    river = 24 * cells
+    pid = 'woodland_footbridge' if cells == 3 else 'footbridge_%d' % cells
     W, H = 60 + 40, river + 48
     x0, x1 = 20, 80
     cv = np.full((H, W), -1, np.int32)
@@ -46,31 +49,87 @@ def footbridge(force: bool) -> None:
     GD.footbridge(cv, x0, x1, water, np.random.default_rng(12))
     img = to_rgba(cv)
     os.makedirs(ART, exist_ok=True)
-    Image.fromarray(img, 'RGBA').save(os.path.join(ART, 'woodland_footbridge.png'))
+    Image.fromarray(img, 'RGBA').save(os.path.join(ART, pid + '.png'))
     # the foot: the middle of the deck's south end (where the path comes off it)
     ys = np.nonzero((cv >= 0).any(1))[0]
     foot = [(x0 + x1) / 2.0, float(ys.max() + 1)]
     deck_top = 24 - 10
     deck = [-(x1 - x0) / 2 / D, (deck_top - foot[1]) / D, (x1 - x0) / D, (foot[1] - deck_top) / D]
     _write({
-        'schema': 'napattack.piece/1', 'id': 'woodland_footbridge', 'name': 'Plank footbridge', 'kind': 'structure',
+        'schema': 'napattack.piece/1', 'id': pid, 'name': 'Plank footbridge, %d cells' % cells, 'kind': 'structure',
         'biomes': ['woodland', 'valley'], 'version': 1,
-        'variants': [{'id': 'river3', 'weight': 1.0, 'png': 'res://kit/props/art/woodland_footbridge.png'}],
+        'variants': [{'id': 'river%d' % cells, 'weight': 1.0, 'png': 'res://kit/props/art/%s.png' % pid}],
         'approval': {'state': 'candidate', 'by': None, 'at': None, 'standard': 'eastward-edges.md 5.3; ground-rules.md 3 (a route crosses water only on a span)',
                      'note': 'softground.footbridge painted as a piece: abutments, deck, kerbs, posts and rails'},
         'geometry': {'size_px': [W, H], 'size_cells': [round(W / 24), round(H / 24)], 'foot': foot, 'z_sort': 'ground',
                      'collision': {'shape': 'none'}, 'footprint': []},
         'placement': {'role': 'bridge', 'snap': 'cell',
-                      'requires': [{'rel': 'on', 'what': 'water', 'note': 'spans a channel three cells wide, north to south'},
+                      'requires': [{'rel': 'on', 'what': 'water', 'note': 'spans a channel %d cells wide, north to south' % cells},
                                    {'rel': 'adjacent', 'what': 'route', 'cells': 1, 'note': 'a route meets it at both ends'}],
                       'composition': 'axis'},
-        'rendering': {'cast_shadow': {'shape': 'baked'}, 'contact_ao': False},
+        'rendering': {'cast_shadow': {'shape': 'baked'}, 'contact_ao': False,
+                      'paint': {'module': 'scripts.art.native.softground', 'fn': 'footbridge', 'args': {'deck_px': x1 - x0}}},
         'function': {}, 'story': {'owner': None},
         'gameplay': {'blocks_move': False, 'blocks_shots': False, 'deck': [round(v, 2) for v in deck]},
         'audit': {'painter': {'module': 'scripts.art.native.softground', 'fn': 'footbridge', 'args': {}},
                   'seeded_from': 'scripts/art/kit/structures.py', 'eastward_ref': None,
-                  'todo': ['a variant for each channel width (2 and 4 cells)']},
+                  'todo': []},
     }, force)
+
+
+def stepping_stones(force: bool, cells: int) -> None:
+    """Flat stones across a rill (1 cell) or a stream (2 cells), a stride apart, each props.boulder4
+    low and flat with its wet ring: a footpath's crossing where a bridge would be too much."""
+    river = 24 * cells
+    W, H = 30, river + 48
+    pid = 'stepping_stones_%d' % cells
+    cv = np.full((H, W), -1, np.int32)
+    water = np.zeros((H, W), bool)
+    water[24:24 + river, :] = True
+    stones_into(cv, water, W // 2, np.random.default_rng(40 + cells))
+    os.makedirs(ART, exist_ok=True)
+    Image.fromarray(to_rgba(cv), 'RGBA').save(os.path.join(ART, pid + '.png'))
+    foot = [W / 2.0, float(H)]
+    deck = [-5.0, -H / D, 10.0, H / D]
+    _write({
+        'schema': 'napattack.piece/1', 'id': pid, 'name': 'Stepping stones, %d cell%s' % (cells, 's' if cells > 1 else ''), 'kind': 'structure',
+        'biomes': ['woodland', 'valley'], 'version': 1,
+        'variants': [{'id': 'w%d' % cells, 'weight': 1.0, 'png': 'res://kit/props/art/%s.png' % pid}],
+        'approval': {'state': 'candidate', 'by': None, 'at': None, 'standard': 'ground-rules.md 3 (a route crosses water only on a span or stones)',
+                     'note': 'a footpath crossing a rill or a stream'},
+        'geometry': {'size_px': [W, H], 'size_cells': [1, cells + 1], 'foot': foot, 'z_sort': 'ground', 'collision': {'shape': 'none'}, 'footprint': []},
+        'placement': {'role': 'bridge', 'snap': 'cell',
+                      'requires': [{'rel': 'on', 'what': 'water', 'note': 'across a channel %d cell%s wide' % (cells, 's' if cells > 1 else '')},
+                                   {'rel': 'adjacent', 'what': 'route', 'cells': 1, 'note': 'a footpath meets it at both banks'}],
+                      'composition': 'axis'},
+        'rendering': {'cast_shadow': {'shape': 'baked'}, 'contact_ao': False,
+                      'paint': {'module': 'scripts.art.kit.structures', 'fn': 'stepping_stones', 'args': {'seed': 40 + cells}}},
+        'function': {}, 'story': {'owner': None},
+        'gameplay': {'blocks_move': False, 'blocks_shots': False, 'deck': deck},
+        'audit': {'painter': {'module': 'scripts.art.kit.structures', 'fn': 'stones_into', 'args': {}}, 'seeded_from': 'scripts/art/kit/structures.py', 'todo': []},
+    }, force)
+
+
+def stones_into(cv: np.ndarray, water: np.ndarray, x: int, rng) -> None:
+    """Flat stepping stones down column x over `water`, a stride (9 to 11 texels) apart."""
+    from scripts.art.native import screen as SN
+    H, W = cv.shape
+    ys = np.nonzero(water[:, max(0, min(W - 1, x))])[0]
+    if not len(ys):
+        return
+    y = int(ys.min()) + 6
+    while y < ys.max() - 1:
+        w_ = rng.uniform(5.5, 7.0)
+        img, anc, _a = P4.boulder4(D, w_, w_ * 0.45, seed=int(rng.integers(0, 10 ** 6)), moss='top' if rng.random() < 0.4 else None)
+        dec = SN.to_codes(img)
+        ox = x + int(rng.integers(-2, 3))
+        ring = np.zeros_like(water)
+        ring[max(0, y - 2):y + 3, max(0, ox - int(w_ * D * 0.6)):ox + int(w_ * D * 0.6)] = True
+        ring &= water
+        from scripts.art.native.palette import step
+        cv[ring & (cv >= 0)] = step(cv[ring & (cv >= 0)], 1)
+        SN.DC.paste(cv, dec, int(round(ox - anc[0])), int(round(y - anc[1])), shadow=True, shadow_dx=2, shadow_dy=1)
+        y += int(rng.integers(9, 12))
 
 
 BOULDERS = [(10, 7, 1615, True), (11, 7, 1616, False), (13, 8, 1617, True), (15, 9, 1618, False),
@@ -106,30 +165,33 @@ def boulders(force: bool) -> None:
     }, force)
 
 
-def log_steps(force: bool) -> None:
-    """Four log treads cut into a two-cell earth face, a flight two cells wide (softground.log_steps:
-    the head flush with the rim, the foot on the lower ground; eastward-edges.md 6.1)."""
-    W, H = 48, 48
+def log_steps(force: bool, cells: int = 2) -> None:
+    """Four log treads cut into a two-cell earth face, a flight `cells` wide (1: a footpath's, 2: a
+    lane's, 3: a road's; softground.log_steps: the head flush with the rim, the foot on the lower
+    ground, earth cheeks either side; eastward-edges.md 6.1)."""
+    W, H = 24 * cells, 48
+    pid = 'log_steps' if cells == 2 else 'log_steps_%d' % cells
     cv = np.full((H, W), -1, np.int32)
     GD.log_steps(cv, 0, W, 0, H, 4, np.random.default_rng(21))
     os.makedirs(ART, exist_ok=True)
-    Image.fromarray(to_rgba(cv), 'RGBA').save(os.path.join(ART, 'log_steps.png'))
+    Image.fromarray(to_rgba(cv), 'RGBA').save(os.path.join(ART, pid + '.png'))
     _write({
-        'schema': 'napattack.piece/1', 'id': 'log_steps', 'name': 'Log steps', 'kind': 'structure',
+        'schema': 'napattack.piece/1', 'id': pid, 'name': 'Log steps, %d cell%s' % (cells, 's' if cells > 1 else ''), 'kind': 'structure',
         'biomes': ['woodland', 'valley'], 'version': 1,
-        'variants': [{'id': 'w2', 'weight': 1.0, 'png': 'res://kit/props/art/log_steps.png'}],
+        'variants': [{'id': 'w%d' % cells, 'weight': 1.0, 'png': 'res://kit/props/art/%s.png' % pid}],
         'approval': {'state': 'candidate', 'by': None, 'at': None, 'standard': 'eastward-edges.md 6.1, ground-rules.md 1 (a stair stands where the rim runs straight across its whole width, its head flush with the rim, its foot on the lower ground)',
                      'note': 'softground.log_steps as a piece, for a face of two cells'},
-        'geometry': {'size_px': [W, H], 'size_cells': [2, 2], 'foot': [W / 2.0, float(H)], 'z_sort': 'ground',
+        'geometry': {'size_px': [W, H], 'size_cells': [cells, 2], 'foot': [W / 2.0, float(H)], 'z_sort': 'ground',
                      'collision': {'shape': 'none'}, 'footprint': []},
         'placement': {'role': 'stair', 'snap': 'cell',
                       'requires': [{'rel': 'on', 'what': 'face', 'note': 'its whole flight on face cells, the rim straight above it'}],
                       'composition': 'axis'},
-        'rendering': {'cast_shadow': {'shape': 'baked'}, 'contact_ao': False},
+        'rendering': {'cast_shadow': {'shape': 'baked'}, 'contact_ao': False,
+                      'paint': {'module': 'scripts.art.native.softground', 'fn': 'log_steps', 'args': {'n': 4}}},
         'function': {}, 'story': {'owner': None},
-        'gameplay': {'blocks_move': False, 'blocks_shots': False, 'deck': [-8.0, -16.0, 16.0, 16.0]},
+        'gameplay': {'blocks_move': False, 'blocks_shots': False, 'deck': [-4.0 * cells, -16.0, 8.0 * cells, 16.0]},
         'audit': {'painter': {'module': 'scripts.art.native.softground', 'fn': 'log_steps', 'args': {'n': 4}},
-                  'seeded_from': 'scripts/art/kit/structures.py', 'todo': ['flights for faces of one and three cells']},
+                  'seeded_from': 'scripts/art/kit/structures.py', 'todo': []},
     }, force)
 
 
@@ -170,6 +232,7 @@ def waterfall(force: bool, cells_w: int) -> None:
                                    {'rel': 'under', 'what': 'water', 'note': 'water on the tier above, as wide as the fall'}],
                       'composition': 'axis'},
         'rendering': {'cast_shadow': {'shape': 'none'}, 'contact_ao': False,
+                      'paint': {'module': 'scripts.art.native.rocks', 'fn': 'fall', 'args': {'seed': 9 + cells_w}},
                       'animations': [{'clip': 'fall', 'loop': True, 'reduced_motion': 'hold:0', 'on_screen_only': True}]},
         'function': {}, 'story': {'owner': None},
         'gameplay': {'blocks_move': True, 'blocks_shots': False},
@@ -180,12 +243,16 @@ def waterfall(force: bool, cells_w: int) -> None:
 
 def main(argv=None) -> int:
     force = '--force' in (argv or sys.argv[1:])
-    footbridge(force)
+    for c in (2, 3, 4):
+        footbridge(force, c)
+    for c in (1, 2):
+        stepping_stones(force, c)
     boulders(force)
-    log_steps(force)
-    waterfall(force, 2)
-    waterfall(force, 3)
-    print('structures: footbridge, boulders, log steps, waterfalls')
+    for c in (1, 2, 3):
+        log_steps(force, c)
+    for c in (1, 2, 3, 4):
+        waterfall(force, c)
+    print('structures: footbridges (2, 3, 4), stepping stones (1, 2), boulders, log steps (1, 2, 3), waterfalls (1 to 4)')
     return 0
 
 

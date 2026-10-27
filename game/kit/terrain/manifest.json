@@ -250,6 +250,82 @@
  "tileset": "materials.tres",
  "tiers_tileset": "tiers.tres",
  "noise": "noise.png",
+ "surface_variants": {
+  "dirt": {
+   "b": [
+    "plain",
+    3.0
+   ],
+   "w": [
+    "worn centre",
+    1.4
+   ],
+   "g": [
+    "grassy verge",
+    1.0
+   ],
+   "s": [
+    "stony",
+    1.0
+   ],
+   "d": [
+    "damp, a puddle",
+    0.5
+   ],
+   "l": [
+    "leaf litter",
+    0.0
+   ],
+   "c": [
+    "compacted",
+    0.0
+   ]
+  },
+  "lawn": {
+   "b": [
+    "calm field",
+    4.0
+   ],
+   "v": [
+    "clover",
+    1.0
+   ],
+   "f": [
+    "daisies",
+    1.0
+   ],
+   "n": [
+    "long grass",
+    1.0
+   ],
+   "t": [
+    "trampled",
+    0.0
+   ]
+  },
+  "water": {
+   "b": [
+    "still",
+    3.0
+   ],
+   "r": [
+    "rippled",
+    1.2
+   ],
+   "e": [
+    "reedy",
+    0.0
+   ],
+   "y": [
+    "lilies",
+    0.0
+   ],
+   "o": [
+    "shallow over stones",
+    0.0
+   ]
+  }
+ },
  "ops": {
   "keep": 0,
   "upper": 1,
@@ -272,7 +348,7 @@
     96
    ],
    "face": null,
-   "hash": "d9da79f5b130cce1"
+   "hash": "3b4d59fbd6c270d2"
   },
   {
    "id": "path",
@@ -289,7 +365,7 @@
     96
    ],
    "face": null,
-   "hash": "1546de0806a6326c"
+   "hash": "7bf346bab24c055e"
   },
   {
    "id": "cobble_road",
@@ -306,7 +382,7 @@
     96
    ],
    "face": null,
-   "hash": "5a976ed687740551"
+   "hash": "ec7355f747c5af76"
   },
   {
    "id": "water",
@@ -327,7 +403,7 @@
     96
    ],
    "face": null,
-   "hash": "b36564b9e6b5da2c"
+   "hash": "3683766be75e663f"
   },
   {
    "id": "scree",
@@ -344,7 +420,7 @@
     96
    ],
    "face": null,
-   "hash": "2080420236e719d1"
+   "hash": "320d371688d37a53"
   },
   {
    "id": "worn",
@@ -361,7 +437,7 @@
     96
    ],
    "face": null,
-   "hash": "7e745542016e411e"
+   "hash": "c4acd9a5045a01aa"
   },
   {
    "id": "earth_face",
@@ -381,7 +457,7 @@
     "height_cells": 2,
     "strip_px": 48
    },
-   "hash": "fe18ca3041c3778e"
+   "hash": "1be46f837b7b339d"
   }
  ],
  "transitions": [
@@ -407,7 +483,7 @@
     ]
    },
    "approval": "candidate",
-   "hash": "bf68bbd05c0c41ab"
+   "hash": "7bdf2516029a04be"
   },
   {
    "id": "lawn_over_earth_face",
@@ -417,7 +493,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "1fc3caf95a18cb2a"
+   "hash": "d0f7f7063725acd2"
   },
   {
    "id": "lawn_over_lower_tier",
@@ -427,7 +503,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "ada4259c956a8934"
+   "hash": "692e588f0cbbfe35"
   },
   {
    "id": "lawn_over_path",
@@ -462,7 +538,7 @@
     ]
    },
    "approval": "candidate",
-   "hash": "bf781a5bf6941a45"
+   "hash": "1fb42b8ff57b6b7b"
   },
   {
    "id": "lawn_over_scree",
@@ -492,7 +568,7 @@
     ]
    },
    "approval": "candidate",
-   "hash": "89acf2876b82df7d"
+   "hash": "1930f4fcaa87b7e8"
   },
   {
    "id": "lawn_over_water",
@@ -523,7 +599,7 @@
     ]
    },
    "approval": "candidate",
-   "hash": "53b3ea3583702ec4"
+   "hash": "fb8a9e99f4f6c83e"
   },
   {
    "id": "lawn_over_worn",
@@ -558,7 +634,7 @@
     ]
    },
    "approval": "candidate",
-   "hash": "bba01f54fdedb547"
+   "hash": "f86b9a451152d20d"
   },
   {
    "id": "path_over_earth_face",
@@ -568,7 +644,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "1c04290fb0c5de83"
+   "hash": "3c9dbcc053b9506e"
   },
   {
    "id": "path_over_lower_tier",
@@ -578,7 +654,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "2429a557341e8e1d"
+   "hash": "b2e5b9e774122876"
   },
   {
    "id": "path_over_water",
@@ -601,7 +677,7 @@
     ]
    },
    "approval": "candidate",
-   "hash": "956a4f768e636738"
+   "hash": "991aaa017542982e"
   },
   {
    "id": "water_over_earth_face",
@@ -611,7 +687,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "79c5626d113d9f5a"
+   "hash": "0739ed4e542f2e3e"
   },
   {
    "id": "worn_over_path",
@@ -621,7 +697,7 @@
    "variants": 1,
    "dressing": null,
    "approval": "candidate",
-   "hash": "a4df63d5017d176c"
+   "hash": "f69f8760354110fa"
   }
  ]
 }

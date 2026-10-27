@@ -10,6 +10,17 @@ extends Node2D
 	set(v):
 		grid_size = v
 		_rebuild()
+## The zone's ground baked by scripts/art/kit/bake.py (the painters that drew the hand-painted
+## zones, over the cells' outlines). Shown in place of the live tiles until a cell or tier is
+## painted, when the tiles take over as the preview until the zone is baked again.
+@export var baked: Texture2D:
+	set(v):
+		baked = v
+		_baked_live = v != null
+		_rebuild()
+## Surface variants per cell (scripts/art/kit/surface.py: a letter per cell, '.' for the bake's own
+## choice by weight and context), painted with the dock's variant brush.
+@export var variant_rows := PackedStringArray()
 @export var lab := false  ## a lab or prototype zone: the dock may place pieces not yet through the library gate
 @export var show_cells := false:  ## show the logical layer's swatches over the picture (editing aid)
 	set(v):
@@ -25,6 +36,10 @@ var _ground := PackedInt32Array()   ## the derived ground: painted materials plu
 var _tiers := PackedInt32Array()    ## the painted tiers
 var _shadow_img: Image
 var _shadow_tex: ImageTexture
+var _baked_live := false   ## the baked ground matches the cells (nothing painted since)
+
+func showing_baked() -> bool:
+	return baked != null and _baked_live
 
 func _ready() -> void:
 	kit = TerrainKit.shared()
@@ -43,7 +58,10 @@ func _ready() -> void:
 		_picture = Node2D.new()
 		_picture.name = "Picture"
 		_picture.draw.connect(func() -> void:
-			_picture.draw_rect(Rect2(Vector2.ZERO, Vector2(size_px())), Color.WHITE))
+			if showing_baked():
+				_picture.draw_texture(baked, Vector2.ZERO)
+			else:
+				_picture.draw_rect(Rect2(Vector2.ZERO, Vector2(size_px())), Color.WHITE))
 		add_child(_picture, false, Node.INTERNAL_MODE_FRONT)
 	if _dressing() == null:
 		var d := TerrainDressing.new()
@@ -138,6 +156,26 @@ func cell_rows() -> Array:
 		rows.append(row)
 	return rows
 
+func variant_at(c: Vector2i) -> String:
+	if c.y < 0 or c.y >= variant_rows.size() or c.x < 0 or c.x >= variant_rows[c.y].length():
+		return "."
+	return variant_rows[c.y][c.x]
+
+## Paint a surface variant (a letter, "." for the bake's choice) on a cell; the bake draws it.
+func paint_variant(c: Vector2i, letter: String) -> void:
+	if c.x < 0 or c.y < 0 or c.x >= grid_size.x or c.y >= grid_size.y:
+		return
+	var rows := variant_rows.duplicate()
+	while rows.size() < grid_size.y:
+		rows.append(".".repeat(grid_size.x))
+	var r: String = rows[c.y]
+	if r.length() < grid_size.x:
+		r += ".".repeat(grid_size.x - r.length())
+	rows[c.y] = r.substr(0, c.x) + letter.left(1) + r.substr(c.x + 1)
+	variant_rows = rows
+	_baked_live = false
+	_rebuild()
+
 ## Paint a material on the logical layer by its piece id ("" erases).
 func paint_cell(c: Vector2i, piece_id: String) -> void:
 	var cells := get_cells_layer()
@@ -152,6 +190,13 @@ func size_px() -> Vector2i:
 func _rebuild() -> void:
 	if not is_inside_tree() or kit == null:
 		return
+	if _picture != null and _cells_img != null and _ground.size() > 0:
+		# a change to the cells after the bake: the live tiles show until the zone is baked again
+		var before := _ground.duplicate()
+		var tiers_before := _tiers.duplicate()
+		_derive()
+		if before != _ground or tiers_before != _tiers:
+			_baked_live = false
 	if _cells_img == null or _cells_img.get_size() != grid_size:
 		_cells_img = Image.create_empty(maxi(1, grid_size.x), maxi(1, grid_size.y), false, Image.FORMAT_RGBA8)
 		_cells_tex = null
@@ -178,18 +223,21 @@ func _rebuild() -> void:
 		_mat.set_shader_parameter("profiles", kit.profiles)
 		_mat.set_shader_parameter("atlas_cols", kit.atlas_cols)
 		_mat.set_shader_parameter("pair_rows", kit.pair_rows)
-		_picture.material = _mat
 	if _shadow_tex == null:
 		_shadow_img = Image.create_empty(maxi(1, size_px().x), maxi(1, size_px().y), false, Image.FORMAT_R8)
 		_shadow_tex = ImageTexture.create_from_image(_shadow_img)
 		_mat.set_shader_parameter("shadow_tex", _shadow_tex)
 	_mat.set_shader_parameter("cells_tex", _cells_tex)
 	_mat.set_shader_parameter("grid", grid_size)
+	_picture.material = null if showing_baked() else _mat
 	_picture.queue_redraw()
 	var dressing := _dressing() as TerrainDressing
 	if dressing != null:
 		dressing.ground = self
+		dressing.visible = not showing_baked()
 		dressing.queue_redraw()
+	for p in pieces():
+		(p as KitPiece).set_ground_baked(showing_baked())
 
 ## The pieces standing on this ground: every KitPiece under the zone (the ground's parent).
 func pieces() -> Array:

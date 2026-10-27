@@ -71,13 +71,13 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		var cell := Vector2i(floori(local.x / ground.kit.cell), floori(local.y / ground.kit.cell))
 		if event is InputEventMouseMotion:
 			dock.hover(cell, local)
-			if painting and brush.begins_with("material:"):
+			if painting and (brush.begins_with("material:") or brush.begins_with("variant:")):
 				_paint(cell)
 				return true
 		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 			painting = event.pressed
 			if event.pressed:
-				if brush.begins_with("material:"):
+				if brush.begins_with("material:") or brush.begins_with("variant:"):
 					_paint(cell)
 				else:
 					_place(local)
@@ -85,6 +85,15 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 	return false
 
 func _paint(cell: Vector2i) -> void:
+	if brush.begins_with("variant:"):
+		var letter := brush.substr(8)
+		var was := ground.variant_at(cell)
+		var vr := get_undo_redo()
+		vr.create_action("Paint variant %s" % letter, UndoRedo.MERGE_ENDS)
+		vr.add_do_method(ground, "paint_variant", cell, letter)
+		vr.add_undo_method(ground, "paint_variant", cell, was)
+		vr.commit_action()
+		return
 	var id := brush.substr(9)
 	var cells := ground.get_cells_layer()
 	var before := cells.get_cell_atlas_coords(cell)

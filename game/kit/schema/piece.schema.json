@@ -294,6 +294,10 @@
               "type": "integer"
             }
           }
+        },
+        "paint": {
+          "$ref": "#/$defs/painter",
+          "description": "What the zone bake (scripts/art/kit/bake.py) runs over the material's whole outline: fn is lawn, dirt, water, scree or ledge; args carry the painter's parameters and the outline's ('shape': seed, r_out, r_in, amp, lump)."
         }
       }
     },
@@ -707,6 +711,10 @@
         },
         "weather": {
           "type": "object"
+        },
+        "paint": {
+          "$ref": "#/$defs/painter",
+          "description": "A piece painted into the baked ground where it stands (fn fall or log_steps): its sprite is the live preview only."
         }
       }
     },

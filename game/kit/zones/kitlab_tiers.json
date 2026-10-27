@@ -100,5 +100,6 @@
    420
   ]
  },
- "lab": true
+ "lab": true,
+ "bake": true
 }

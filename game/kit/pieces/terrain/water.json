@@ -38,7 +38,32 @@
     "swatch": [
       96,
       96
-    ]
+    ],
+    "paint": {
+      "module": "scripts.art.native.softground",
+      "fn": "water",
+      "args": {
+        "seed": 402,
+        "bank_h": 3.4,
+        "stones": 0.7,
+        "reeds": 0.25,
+        "rush_clumps": 3,
+        "side_w": 8,
+        "shape": {
+          "seed": 402,
+          "r_out": 1.3,
+          "r_in": 0.6,
+          "amp": [
+            2.5,
+            5.0
+          ],
+          "lump": [
+            10,
+            26
+          ]
+        }
+      }
+    }
   },
   "placement": {
     "snap": "cell"

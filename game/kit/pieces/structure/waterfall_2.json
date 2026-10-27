@@ -81,6 +81,13 @@
    "shape": "none"
   },
   "contact_ao": false,
+  "paint": {
+   "module": "scripts.art.native.rocks",
+   "fn": "fall",
+   "args": {
+    "seed": 11
+   }
+  },
   "animations": [
    {
     "clip": "fall",

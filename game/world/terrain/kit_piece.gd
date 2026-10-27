@@ -40,6 +40,12 @@ func _apply_variant() -> void:
 		sprite.texture = load(vs[variant].png)
 		sprite.offset = -Vector2(vs[variant].foot[0], vs[variant].foot[1])
 
+## A piece painted into a baked ground (a fall, log steps) hides its picture there: the bake drew it.
+func set_ground_baked(on: bool) -> void:
+	var sprite := get_node_or_null("Sprite") as Sprite2D
+	if sprite != null and bool(data().get("painted", false)):
+		sprite.visible = not on
+
 static var _masks := {}
 
 ## The piece's cast shadow on the ground, or {} for none: an ellipse ("centre", "radii", texels in

@@ -37,6 +37,7 @@
   },
   "kind": "prop",
   "name": "Anvil",
+  "painted": false,
   "requires": [
    {
     "cells": 3,
@@ -301,6 +302,7 @@
   "function": {},
   "kind": "structure",
   "name": "Bakery",
+  "painted": false,
   "requires": [],
   "role": null,
   "shadow": null,
@@ -347,6 +349,7 @@
   "function": {},
   "kind": "prop",
   "name": "Barrel",
+  "painted": false,
   "requires": [],
   "role": null,
   "shadow": null,
@@ -404,6 +407,7 @@
   "function": {},
   "kind": "prop",
   "name": "Beds dug",
+  "painted": false,
   "requires": [],
   "role": null,
   "shadow": null,
@@ -440,6 +444,7 @@
   "function": {},
   "kind": "prop",
   "name": "Beds scorched",
+  "painted": false,
   "requires": [],
   "role": null,
   "shadow": null,
@@ -504,6 +509,7 @@
   },
   "kind": "prop",
   "name": "Bench",
+  "painted": false,
   "requires": [
    {
     "cells": 2,
@@ -568,6 +574,7 @@
   "function": {},
   "kind": "prop",
   "name": "Boulder",
+  "painted": false,
   "requires": [],
   "role": "rock",
   "shadow": null,
@@ -618,6 +625,7 @@
   "function": {},
   "kind": "prop",
   "name": "Bush",
+  "painted": false,
   "requires": [],
   "role": null,
   "shadow": null,
@@ -759,6 +767,7 @@
   "function": {},
   "kind": "prop",
   "name": "Coal",
+  "painted": false,
   "requires": [],
   "role": null,
   "shadow": null,
@@ -805,6 +814,7 @@
   "function": {},
   "kind": "prop",
   "name": "Crates",
+  "painted": false,
   "requires": [],
   "role": null,
   "shadow": null,
@@ -853,6 +863,7 @@
   "function": {},
   "kind": "prop",
   "name": "Debris a",
+  "painted": false,
   "requires": [],
   "role": "clutter",
   "shadow": null,
@@ -894,6 +905,7 @@
   "function": {},
   "kind": "prop",
   "name": "Debris b",
+  "painted": false,
   "requires": [],
   "role": "clutter",
   "shadow": null,
@@ -935,6 +947,7 @@
   "function": {},
   "kind": "prop",
   "name": "Debris c",
+  "painted": false,
   "requires": [],
   "role": "clutter",
   "shadow": null,
@@ -976,6 +989,7 @@
   "function": {},
   "kind": "prop",
   "name": "Debris d",
+  "painted": false,
   "requires": [],
   "role": "clutter",
   "shadow": null,
@@ -1012,6 +1026,7 @@
   "function": {},
   "kind": "prop",
   "name": "Fence",
+  "painted": false,
   "requires": [],
   "role": null,
   "shadow": null,
@@ -1309,6 +1324,7 @@
   },
   "kind": "structure",
   "name": "Fern cottage",
+  "painted": false,
   "requires": [],
   "role": null,
   "shadow": null,
@@ -1383,6 +1399,7 @@
   "function": {},
   "kind": "prop",
   "name": "Fern rubble",
+  "painted": false,
   "requires": [],
   "role": null,
   "shadow": null,
@@ -1429,6 +1446,7 @@
   "function": {},
   "kind": "prop",
   "name": "Flower tub",
+  "painted": false,
   "requires": [],
   "role": null,
   "shadow": null,
@@ -1521,6 +1539,7 @@
   "function": {},
   "kind": "prop",
   "name": "Grindstone",
+  "painted": false,
   "requires": [],
   "role": null,
   "shadow": null,
@@ -1575,6 +1594,7 @@
   "function": {},
   "kind": "prop",
   "name": "Handcart",
+  "painted": false,
   "requires": [],
   "role": null,
   "shadow": null,
@@ -1611,6 +1631,7 @@
   "function": {},
   "kind": "prop",
   "name": "Hay",
+  "painted": false,
   "requires": [],
   "role": null,
   "shadow": null,
@@ -1876,6 +1897,7 @@
   "function": {},
   "kind": "structure",
   "name": "Herbalist",
+  "painted": false,
   "requires": [],
   "role": null,
   "shadow": null,
@@ -2118,6 +2140,7 @@
   "function": {},
   "kind": "structure",
   "name": "Hut",
+  "painted": false,
   "requires": [],
   "role": null,
   "shadow": null,
@@ -2164,6 +2187,7 @@
   "function": {},
   "kind": "prop",
   "name": "Kit lantern",
+  "painted": false,
   "requires": [
    {
     "cells": 1,
@@ -2240,6 +2264,7 @@
   "function": {},
   "kind": "prop",
   "name": "Lantern dark",
+  "painted": false,
   "requires": [
    {
     "cells": 1,
@@ -2309,6 +2334,7 @@
   "function": {},
   "kind": "prop",
   "name": "Lantern lit",
+  "painted": false,
   "requires": [
    {
     "cells": 1,
@@ -2597,6 +2623,7 @@
   "function": {},
   "kind": "structure",
   "name": "Library",
+  "painted": false,
   "requires": [],
   "role": null,
   "shadow": null,
@@ -2879,6 +2906,7 @@
   "function": {},
   "kind": "structure",
   "name": "North cottages",
+  "painted": false,
   "requires": [],
   "role": null,
   "shadow": null,
@@ -2925,6 +2953,7 @@
   },
   "kind": "prop",
   "name": "Notice board",
+  "painted": false,
   "requires": [
    {
     "cells": 1,
@@ -2981,6 +3010,7 @@
   "function": {},
   "kind": "prop",
   "name": "Oak",
+  "painted": false,
   "requires": [],
   "role": "tree",
   "shadow": {
@@ -3098,6 +3128,7 @@
   "function": {},
   "kind": "prop",
   "name": "Sacks",
+  "painted": false,
   "requires": [],
   "role": null,
   "shadow": null,
@@ -3448,6 +3479,7 @@
   "function": {},
   "kind": "structure",
   "name": "Smithy",
+  "painted": false,
   "requires": [],
   "role": null,
   "shadow": null,
@@ -3526,6 +3558,7 @@
   "function": {},
   "kind": "prop",
   "name": "Smithy rubble",
+  "painted": false,
   "requires": [],
   "role": null,
   "shadow": null,
@@ -3608,6 +3641,7 @@
   "function": {},
   "kind": "prop",
   "name": "Square rubble a",
+  "painted": false,
   "requires": [],
   "role": null,
   "shadow": null,
@@ -3678,6 +3712,7 @@
   "function": {},
   "kind": "prop",
   "name": "Square rubble b",
+  "painted": false,
   "requires": [],
   "role": null,
   "shadow": null,
@@ -3752,6 +3787,7 @@
   "function": {},
   "kind": "prop",
   "name": "Stall",
+  "painted": false,
   "requires": [],
   "role": null,
   "shadow": null,
@@ -3802,6 +3838,7 @@
   "function": {},
   "kind": "prop",
   "name": "Trough",
+  "painted": false,
   "requires": [],
   "role": null,
   "shadow": null,
@@ -3843,6 +3880,7 @@
   },
   "kind": "prop",
   "name": "Waystone",
+  "painted": false,
   "requires": [
    {
     "cells": 2,
@@ -3917,6 +3955,7 @@
   },
   "kind": "prop",
   "name": "Well",
+  "painted": false,
   "requires": [],
   "role": "centrepiece",
   "shadow": null,
@@ -4009,6 +4048,7 @@
   },
   "kind": "prop",
   "name": "Well choked",
+  "painted": false,
   "requires": [],
   "role": "centrepiece",
   "shadow": null,
@@ -4063,6 +4103,7 @@
   "function": {},
   "kind": "prop",
   "name": "Woodpile",
+  "painted": false,
   "requires": [],
   "role": null,
   "shadow": null,
@@ -4092,6 +4133,114 @@
   },
   "z_sort": "foot"
  },
+ "footbridge_2": {
+  "approval": "candidate",
+  "blocks_move": false,
+  "collision": null,
+  "deck": [
+   -30.0,
+   -69.99,
+   60.0,
+   69.99
+  ],
+  "foot": [
+   50.0,
+   84.0
+  ],
+  "footprint": [],
+  "forbids": [],
+  "function": {},
+  "kind": "structure",
+  "name": "Plank footbridge, 2 cells",
+  "painted": true,
+  "requires": [
+   {
+    "note": "spans a channel 2 cells wide, north to south",
+    "rel": "on",
+    "what": "water"
+   },
+   {
+    "cells": 1,
+    "note": "a route meets it at both ends",
+    "rel": "adjacent",
+    "what": "route"
+   }
+  ],
+  "role": "bridge",
+  "shadow": null,
+  "size_cells": [
+   4,
+   4
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "river2": {
+    "foot": [
+     50.0,
+     84.0
+    ],
+    "png": "res://kit/props/art/footbridge_2.png"
+   }
+  },
+  "z_sort": "ground"
+ },
+ "footbridge_4": {
+  "approval": "candidate",
+  "blocks_move": false,
+  "collision": null,
+  "deck": [
+   -30.0,
+   -117.99,
+   60.0,
+   117.99
+  ],
+  "foot": [
+   50.0,
+   132.0
+  ],
+  "footprint": [],
+  "forbids": [],
+  "function": {},
+  "kind": "structure",
+  "name": "Plank footbridge, 4 cells",
+  "painted": true,
+  "requires": [
+   {
+    "note": "spans a channel 4 cells wide, north to south",
+    "rel": "on",
+    "what": "water"
+   },
+   {
+    "cells": 1,
+    "note": "a route meets it at both ends",
+    "rel": "adjacent",
+    "what": "route"
+   }
+  ],
+  "role": "bridge",
+  "shadow": null,
+  "size_cells": [
+   4,
+   6
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "river4": {
+    "foot": [
+     50.0,
+     132.0
+    ],
+    "png": "res://kit/props/art/footbridge_4.png"
+   }
+  },
+  "z_sort": "ground"
+ },
  "log_steps": {
   "approval": "candidate",
   "blocks_move": false,
@@ -4110,7 +4259,8 @@
   "forbids": [],
   "function": {},
   "kind": "structure",
-  "name": "Log steps",
+  "name": "Log steps, 2 cells",
+  "painted": true,
   "requires": [
    {
     "note": "its whole flight on face cells, the rim straight above it",
@@ -4135,6 +4285,267 @@
      48.0
     ],
     "png": "res://kit/props/art/log_steps.png"
+   }
+  },
+  "z_sort": "ground"
+ },
+ "log_steps_1": {
+  "approval": "candidate",
+  "blocks_move": false,
+  "collision": null,
+  "deck": [
+   -12.0,
+   -48.0,
+   24.0,
+   48.0
+  ],
+  "foot": [
+   12.0,
+   48.0
+  ],
+  "footprint": [],
+  "forbids": [],
+  "function": {},
+  "kind": "structure",
+  "name": "Log steps, 1 cell",
+  "painted": true,
+  "requires": [
+   {
+    "note": "its whole flight on face cells, the rim straight above it",
+    "rel": "on",
+    "what": "face"
+   }
+  ],
+  "role": "stair",
+  "shadow": null,
+  "size_cells": [
+   1,
+   2
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "w1": {
+    "foot": [
+     12.0,
+     48.0
+    ],
+    "png": "res://kit/props/art/log_steps_1.png"
+   }
+  },
+  "z_sort": "ground"
+ },
+ "log_steps_3": {
+  "approval": "candidate",
+  "blocks_move": false,
+  "collision": null,
+  "deck": [
+   -36.0,
+   -48.0,
+   72.0,
+   48.0
+  ],
+  "foot": [
+   36.0,
+   48.0
+  ],
+  "footprint": [],
+  "forbids": [],
+  "function": {},
+  "kind": "structure",
+  "name": "Log steps, 3 cells",
+  "painted": true,
+  "requires": [
+   {
+    "note": "its whole flight on face cells, the rim straight above it",
+    "rel": "on",
+    "what": "face"
+   }
+  ],
+  "role": "stair",
+  "shadow": null,
+  "size_cells": [
+   3,
+   2
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "w3": {
+    "foot": [
+     36.0,
+     48.0
+    ],
+    "png": "res://kit/props/art/log_steps_3.png"
+   }
+  },
+  "z_sort": "ground"
+ },
+ "stepping_stones_1": {
+  "approval": "candidate",
+  "blocks_move": false,
+  "collision": null,
+  "deck": [
+   -15.0,
+   -72.0,
+   30.0,
+   72.0
+  ],
+  "foot": [
+   15.0,
+   72.0
+  ],
+  "footprint": [],
+  "forbids": [],
+  "function": {},
+  "kind": "structure",
+  "name": "Stepping stones, 1 cell",
+  "painted": true,
+  "requires": [
+   {
+    "note": "across a channel 1 cell wide",
+    "rel": "on",
+    "what": "water"
+   },
+   {
+    "cells": 1,
+    "note": "a footpath meets it at both banks",
+    "rel": "adjacent",
+    "what": "route"
+   }
+  ],
+  "role": "bridge",
+  "shadow": null,
+  "size_cells": [
+   1,
+   2
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "w1": {
+    "foot": [
+     15.0,
+     72.0
+    ],
+    "png": "res://kit/props/art/stepping_stones_1.png"
+   }
+  },
+  "z_sort": "ground"
+ },
+ "stepping_stones_2": {
+  "approval": "candidate",
+  "blocks_move": false,
+  "collision": null,
+  "deck": [
+   -15.0,
+   -96.0,
+   30.0,
+   96.0
+  ],
+  "foot": [
+   15.0,
+   96.0
+  ],
+  "footprint": [],
+  "forbids": [],
+  "function": {},
+  "kind": "structure",
+  "name": "Stepping stones, 2 cells",
+  "painted": true,
+  "requires": [
+   {
+    "note": "across a channel 2 cells wide",
+    "rel": "on",
+    "what": "water"
+   },
+   {
+    "cells": 1,
+    "note": "a footpath meets it at both banks",
+    "rel": "adjacent",
+    "what": "route"
+   }
+  ],
+  "role": "bridge",
+  "shadow": null,
+  "size_cells": [
+   1,
+   3
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "w2": {
+    "foot": [
+     15.0,
+     96.0
+    ],
+    "png": "res://kit/props/art/stepping_stones_2.png"
+   }
+  },
+  "z_sort": "ground"
+ },
+ "waterfall_1": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": null,
+  "deck": null,
+  "foot": [
+   36.0,
+   60.0
+  ],
+  "footprint": [
+   [
+    0,
+    -2
+   ],
+   [
+    0,
+    -1
+   ]
+  ],
+  "forbids": [],
+  "function": {},
+  "kind": "structure",
+  "name": "Waterfall, 1 cells",
+  "painted": true,
+  "requires": [
+   {
+    "note": "its footprint is the face under water crossing a south rim",
+    "rel": "on",
+    "what": "face"
+   },
+   {
+    "note": "water on the tier above, as wide as the fall",
+    "rel": "under",
+    "what": "water"
+   }
+  ],
+  "role": "waterfall",
+  "shadow": null,
+  "size_cells": [
+   1,
+   2
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "w1": {
+    "foot": [
+     36.0,
+     60.0
+    ],
+    "png": "res://kit/props/art/waterfall_1.png"
    }
   },
   "z_sort": "ground"
@@ -4170,6 +4581,7 @@
   "function": {},
   "kind": "structure",
   "name": "Waterfall, 2 cells",
+  "painted": true,
   "requires": [
    {
     "note": "its footprint is the face under water crossing a south rim",
@@ -4242,6 +4654,7 @@
   "function": {},
   "kind": "structure",
   "name": "Waterfall, 3 cells",
+  "painted": true,
   "requires": [
    {
     "note": "its footprint is the face under water crossing a south rim",
@@ -4275,6 +4688,87 @@
   },
   "z_sort": "ground"
  },
+ "waterfall_4": {
+  "approval": "candidate",
+  "blocks_move": true,
+  "collision": null,
+  "deck": null,
+  "foot": [
+   72.0,
+   60.0
+  ],
+  "footprint": [
+   [
+    -2,
+    -2
+   ],
+   [
+    -1,
+    -2
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    1,
+    -2
+   ],
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ]
+  ],
+  "forbids": [],
+  "function": {},
+  "kind": "structure",
+  "name": "Waterfall, 4 cells",
+  "painted": true,
+  "requires": [
+   {
+    "note": "its footprint is the face under water crossing a south rim",
+    "rel": "on",
+    "what": "face"
+   },
+   {
+    "note": "water on the tier above, as wide as the fall",
+    "rel": "under",
+    "what": "water"
+   }
+  ],
+  "role": "waterfall",
+  "shadow": null,
+  "size_cells": [
+   4,
+   2
+  ],
+  "snap": "cell",
+  "story": {
+   "owner": null
+  },
+  "variants": {
+   "w4": {
+    "foot": [
+     72.0,
+     60.0
+    ],
+    "png": "res://kit/props/art/waterfall_4.png"
+   }
+  },
+  "z_sort": "ground"
+ },
  "woodland_beech": {
   "approval": "candidate",
   "blocks_move": true,
@@ -4294,6 +4788,7 @@
   "function": {},
   "kind": "prop",
   "name": "Beech",
+  "painted": false,
   "requires": [],
   "role": "tree",
   "shadow": {
@@ -4343,6 +4838,7 @@
   "function": {},
   "kind": "prop",
   "name": "Birch",
+  "painted": false,
   "requires": [],
   "role": "tree",
   "shadow": {
@@ -4401,6 +4897,7 @@
   "function": {},
   "kind": "prop",
   "name": "Talus boulder",
+  "painted": false,
   "requires": [],
   "role": "rock",
   "shadow": {
@@ -4486,6 +4983,7 @@
   "function": {},
   "kind": "prop",
   "name": "Bramble",
+  "painted": false,
   "requires": [],
   "role": null,
   "shadow": {
@@ -4536,6 +5034,7 @@
   "function": {},
   "kind": "prop",
   "name": "Bramble b",
+  "painted": false,
   "requires": [],
   "role": null,
   "shadow": {
@@ -4586,6 +5085,7 @@
   "function": {},
   "kind": "prop",
   "name": "Bush",
+  "painted": false,
   "requires": [],
   "role": null,
   "shadow": {
@@ -4636,6 +5136,7 @@
   "function": {},
   "kind": "prop",
   "name": "Bush b",
+  "painted": false,
   "requires": [],
   "role": null,
   "shadow": {
@@ -4686,6 +5187,7 @@
   "function": {},
   "kind": "prop",
   "name": "Bush c",
+  "painted": false,
   "requires": [],
   "role": null,
   "shadow": {
@@ -4735,10 +5237,11 @@
   "forbids": [],
   "function": {},
   "kind": "structure",
-  "name": "Plank footbridge",
+  "name": "Plank footbridge, 3 cells",
+  "painted": true,
   "requires": [
    {
-    "note": "spans a channel three cells wide, north to south",
+    "note": "spans a channel 3 cells wide, north to south",
     "rel": "on",
     "what": "water"
    },
@@ -4803,6 +5306,7 @@
   },
   "kind": "prop",
   "name": "Forest bench",
+  "painted": false,
   "requires": [
    {
     "cells": 2,
@@ -4860,6 +5364,7 @@
   "function": {},
   "kind": "prop",
   "name": "Hollow tree",
+  "painted": false,
   "requires": [],
   "role": "tree",
   "shadow": {
@@ -4909,6 +5414,7 @@
   "function": {},
   "kind": "prop",
   "name": "Holly",
+  "painted": false,
   "requires": [],
   "role": null,
   "shadow": {
@@ -4959,6 +5465,7 @@
   "function": {},
   "kind": "prop",
   "name": "Holly b",
+  "painted": false,
   "requires": [],
   "role": null,
   "shadow": {
@@ -5004,6 +5511,7 @@
   "function": {},
   "kind": "prop",
   "name": "Lintel",
+  "painted": false,
   "requires": [],
   "role": null,
   "shadow": {
@@ -5054,6 +5562,7 @@
   "function": {},
   "kind": "prop",
   "name": "Mossy log",
+  "painted": false,
   "requires": [],
   "role": null,
   "shadow": {
@@ -5113,6 +5622,7 @@
   "function": {},
   "kind": "prop",
   "name": "Oak",
+  "painted": false,
   "requires": [],
   "role": "tree",
   "shadow": {
@@ -5162,6 +5672,7 @@
   "function": {},
   "kind": "prop",
   "name": "Pine",
+  "painted": false,
   "requires": [],
   "role": "tree",
   "shadow": {
@@ -5206,6 +5717,7 @@
   "function": {},
   "kind": "prop",
   "name": "Sapling",
+  "painted": false,
   "requires": [],
   "role": null,
   "shadow": {
@@ -5261,6 +5773,7 @@
   "function": {},
   "kind": "prop",
   "name": "Standing stone",
+  "painted": false,
   "requires": [],
   "role": "marker",
   "shadow": {
@@ -5311,6 +5824,7 @@
   "function": {},
   "kind": "prop",
   "name": "Standing stone b",
+  "painted": false,
   "requires": [],
   "role": "marker",
   "shadow": {
@@ -5361,6 +5875,7 @@
   "function": {},
   "kind": "prop",
   "name": "Standing stone broken",
+  "painted": false,
   "requires": [],
   "role": "marker",
   "shadow": {
@@ -5411,6 +5926,7 @@
   "function": {},
   "kind": "prop",
   "name": "Standing stone lean",
+  "painted": false,
   "requires": [],
   "role": "marker",
   "shadow": {
@@ -5461,6 +5977,7 @@
   "function": {},
   "kind": "prop",
   "name": "Standing stone low",
+  "painted": false,
   "requires": [],
   "role": "marker",
   "shadow": {
@@ -5511,6 +6028,7 @@
   "function": {},
   "kind": "prop",
   "name": "Standing stone runes",
+  "painted": false,
   "requires": [],
   "role": "marker",
   "shadow": {
@@ -5556,6 +6074,7 @@
   "function": {},
   "kind": "prop",
   "name": "Stone top",
+  "painted": false,
   "requires": [],
   "role": null,
   "shadow": {
@@ -5606,6 +6125,7 @@
   "function": {},
   "kind": "prop",
   "name": "Stump",
+  "painted": false,
   "requires": [],
   "role": null,
   "shadow": {
@@ -5656,6 +6176,7 @@
   "function": {},
   "kind": "prop",
   "name": "Willow",
+  "painted": false,
   "requires": [],
   "role": "tree",
   "shadow": {

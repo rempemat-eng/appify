@@ -7,6 +7,7 @@ var zone: Node
 var ground: TerrainGround
 var mats: ItemList
 var pieces: ItemList
+var variants: ItemList
 var card: RichTextLabel
 var status: Label
 
@@ -30,6 +31,10 @@ func _ready() -> void:
 	mats.icon_mode = ItemList.ICON_MODE_TOP
 	mats.fixed_icon_size = Vector2i(48, 48)
 	add_child(mats)
+	add_child(_label("Surface variants (brush; the bake picks where none is painted)"))
+	variants = ItemList.new()
+	variants.custom_minimum_size = Vector2(0, 110)
+	add_child(variants)
 	add_child(_label("Pieces (place on the soft grid)"))
 	pieces = ItemList.new()
 	pieces.custom_minimum_size = Vector2(0, 260)
@@ -44,6 +49,10 @@ func _ready() -> void:
 	v.text = "Validate zone"
 	v.pressed.connect(_validate)
 	add_child(v)
+	var bk := Button.new()
+	bk.text = "Bake ground (the painters)"
+	bk.pressed.connect(_bake)
+	add_child(bk)
 	status = Label.new()
 	status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	add_child(status)
@@ -54,8 +63,14 @@ func _ready() -> void:
 		pieces.deselect_all()
 		plugin.brush = "material:" + String(mats.get_item_metadata(i))
 		_show_material(String(mats.get_item_metadata(i))))
+	variants.item_selected.connect(func(i: int) -> void:
+		mats.deselect_all()
+		pieces.deselect_all()
+		plugin.brush = "variant:" + String(variants.get_item_metadata(i))
+		say("Variant brush: %s" % variants.get_item_text(i)))
 	pieces.item_selected.connect(func(i: int) -> void:
 		mats.deselect_all()
+		variants.deselect_all()
 		plugin.brush = "piece:" + String(pieces.get_item_metadata(i))
 		show_piece(String(pieces.get_item_metadata(i))))
 	for a in OS.get_cmdline_user_args():
@@ -90,6 +105,14 @@ func _fill() -> void:
 		var idx := mats.add_item(String(ms[i].id), ImageTexture.create_from_image(img))
 		mats.set_item_metadata(idx, ms[i].id)
 		mats.set_item_tooltip(idx, "%s: %s, %s" % [ms[i].id, ms[i].surface, ms[i].approval])
+	variants.clear()
+	var vi := variants.add_item("auto (the bake's choice)")
+	variants.set_item_metadata(vi, ".")
+	var vs: Dictionary = kit.manifest.get("surface_variants", {})
+	for fam in vs:
+		for letter in vs[fam]:
+			var it := variants.add_item("%s: %s (%s)" % [fam, vs[fam][letter][0], letter])
+			variants.set_item_metadata(it, letter)
 	var ids := KitPiece.index().keys()
 	ids.sort()
 	for id in ids:
@@ -169,6 +192,29 @@ func refusal(id: String, at: Vector2) -> String:
 			if not found:
 				return "%s needs a route edge within %d cells (ground-rules 6)" % [id, n]
 	return ""
+
+## Bake the zone's ground with the painters (scripts/art/kit/bake.py): the scene is written back
+## to its plan, then the bake paints it; the editor desktop only (it runs Godot and python).
+func _bake() -> void:
+	if zone == null or not OS.has_feature("editor"):
+		return
+	var path := zone.scene_file_path
+	var zid: String = zone.get("zone_id")
+	EditorInterface.save_scene()
+	var out := []
+	var code := OS.execute(OS.get_executable_path(), ["--headless", "--path", ProjectSettings.globalize_path("res://"),
+		"-s", "res://tools/kit_zone.gd", "--", "--export=" + path], out, true)
+	if code != 0:
+		say("Bake: the export failed: " + "".join(out))
+		return
+	var repo := ProjectSettings.globalize_path("res://").get_base_dir().get_base_dir()
+	code = OS.execute("sh", ["-c", "cd '%s' && python3 -m scripts.art.kit.bake %s" % [repo, zid]], out, true)
+	if code != 0:
+		say("Bake failed: " + "".join(out))
+		return
+	EditorInterface.get_resource_filesystem().scan()
+	ground.baked = load("res://zones/%s/ground_baked.png" % zid)
+	say("Baked %s" % zid)
 
 func _validate() -> void:
 	if zone == null:

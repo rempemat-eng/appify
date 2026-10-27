@@ -45,6 +45,7 @@ if not ctx._configured:
 from scripts.art.kit import edges as E  # noqa: E402
 from scripts.art.kit import fills as F  # noqa: E402
 from scripts.art.kit import schema as S  # noqa: E402
+from scripts.art.kit import surface as SF  # noqa: E402
 from scripts.art.native import palette as PAL  # noqa: E402
 
 OUT = os.path.join(ROOT, 'game', 'kit', 'terrain')
@@ -305,7 +306,8 @@ def build(force: bool = False, check: bool = False) -> int:
     man = {'cell': E.CELL, 'period': F.PERIOD, 'variants': vs.pop(), 'profiles': E.NPROF,
            'curves': E.curve_table(), 'decals': decals,
            'atlas_cols': E.ATLAS_COLS, 'lut': 'lut.png', 'palette': 'palette.png',
-           'tileset': 'materials.tres', 'tiers_tileset': 'tiers.tres', 'noise': 'noise.png', 'ops': {'keep': E.OP_KEEP, 'upper': E.OP_UPPER, 'delta': E.OP_DELTA, 'abs': E.OP_ABS},
+           'tileset': 'materials.tres', 'tiers_tileset': 'tiers.tres', 'noise': 'noise.png',
+           'surface_variants': {fam: {k: list(v) for k, v in d.items()} for fam, d in SF.VARIANTS.items()}, 'ops': {'keep': E.OP_KEEP, 'upper': E.OP_UPPER, 'delta': E.OP_DELTA, 'abs': E.OP_ABS},
            'materials': mats, 'transitions': trs}
     json.dump(man, open(mpath, 'w'), indent=1)
     print('kit: %d materials, %d transitions; repainted: %s' % (len(mats), len(trs), ', '.join(stale) or 'nothing'))
