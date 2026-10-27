@@ -4,6 +4,118 @@ extends GdUnitTestSuite
 ## the cells match the zone's JSON plan (scripts/art/kit/test_kit.py holds the shader to compose.py).
 
 const LAB := "res://zones/kitlab/kitlab.tscn"
+const SHOT = preload("res://tools/kit_shot.gd")
+const REFERENCES := "res://test/fixtures/kit/"
+
+## check.sh runs GdUnit with the dummy headless driver. Launch a real offscreen GL process
+## for image tests; never credit a dummy/blank viewport or a missing X server as a pixel pass.
+func _shot(source: String, reference: String, label: String) -> Dictionary:
+	var output := "user://kit-parity/%s.png" % label
+	var args := PackedStringArray([
+		"--rendering-method", "gl_compatibility", "--rendering-driver", "opengl3",
+		"--audio-driver", "Dummy", "--path", ProjectSettings.globalize_path("res://"),
+		"--script", "res://tools/kit_shot.gd", "--",
+		("--plan=" if source.ends_with(".json") else "--scene=") + source,
+		"--out=" + output, "--compare=" + reference])
+	var executable := OS.get_executable_path()
+	if OS.get_name() == "Linux":
+		args = PackedStringArray(["--display-driver", "x11"]) + args
+		if OS.get_environment("DISPLAY").is_empty():
+			args = PackedStringArray(["-a", executable]) + args
+			executable = OS.get_environment("KIT_SHOT_XVFB")
+			if executable.is_empty():
+				executable = "xvfb-run"
+	var lines: Array = []
+	var code := OS.execute(executable, args, lines, true)
+	var log := "\n".join(lines)
+	var result: Dictionary = {"exit": code, "log": log, "comparison": {}}
+	for line in log.split("\n"):
+		if line.begins_with("KIT_SHOT_RESULT "):
+			var parsed: Variant = JSON.parse_string(line.trim_prefix("KIT_SHOT_RESULT "))
+			if parsed is Dictionary:
+				result.comparison = parsed
+	return result
+
+func _assert_parity(source: String, reference: String, label: String) -> void:
+	var result := _shot(source, reference, label)
+	assert_int(result.exit).override_failure_message(result.log).is_equal(0)
+	var comparison: Dictionary = result.comparison
+	assert_bool(comparison.get("ok", false)).override_failure_message(result.log).is_true()
+	assert_bool(comparison.get("equal", false)).override_failure_message(result.log).is_true()
+	assert_int(int(comparison.get("different_pixels", -1))).is_equal(0)
+
+func test_live_kitlab_matches_python_ground_shadows_and_dressing() -> void:
+	_assert_parity(LAB, REFERENCES + "kitlab.png", "kitlab-scene")
+
+func test_lab_plan_and_scene_both_match_the_python_reference() -> void:
+	_assert_parity("res://kit/zones/kitlab.json", REFERENCES + "kitlab.png", "kitlab-plan")
+
+func test_three_material_corner_matches_python() -> void:
+	_assert_parity(REFERENCES + "three_materials.json", REFERENCES + "three_materials.png", "three-materials")
+
+func test_shifted_profile_hash_is_rejected_by_real_render_comparison() -> void:
+	var result := _shot(REFERENCES + "three_materials.json",
+		REFERENCES + "three_materials_shifted_profile.png", "shifted-profile")
+	assert_int(result.exit).override_failure_message(result.log).is_equal(1)
+	var comparison: Dictionary = result.comparison
+	# A missing renderer/reference is an infrastructure failure, not proof of the negative test.
+	assert_bool(comparison.get("ok", false)).override_failure_message(result.log).is_true()
+	assert_bool(comparison.get("equal", true)).override_failure_message(result.log).is_false()
+	assert_int(int(comparison.get("different_pixels", 0))).is_greater(0)
+
+func test_exact_comparison_rejects_one_channel_one_pixel_and_size_changes() -> void:
+	var image := Image.create_empty(2, 2, false, Image.FORMAT_RGBA8)
+	image.fill(Color8(40, 50, 60, 255))
+	assert_bool(SHOT.compare(image, image).equal).is_true()
+	var changed := image.duplicate() as Image
+	changed.set_pixel(1, 0, Color8(41, 50, 60, 255))
+	var comparison: Dictionary = SHOT.compare(image, changed)
+	assert_bool(comparison.equal).is_false()
+	assert_int(comparison.different_pixels).is_equal(1)
+	assert_int(comparison.max_channel_delta).is_equal(1)
+	assert_that(comparison.first_difference).is_equal(Vector2i(1, 0))
+	assert_bool(SHOT.compare(image, Image.create_empty(1, 2, false, Image.FORMAT_RGBA8)).equal).is_false()
+
+func test_exact_comparison_checks_alpha_and_rgb_beneath_transparency() -> void:
+	var image := Image.create_empty(1, 1, false, Image.FORMAT_RGBA8)
+	image.set_pixel(0, 0, Color8(40, 50, 60, 0))
+	var changed := Image.create_empty(1, 1, false, Image.FORMAT_RGBA8)
+	changed.set_pixel(0, 0, Color8(41, 50, 60, 0))
+	assert_bool(SHOT.compare(image, changed).equal).is_false()
+	changed.set_pixel(0, 0, Color8(40, 50, 60, 1))
+	assert_bool(SHOT.compare(image, changed).equal).is_false()
+
+func test_empty_images_are_a_comparison_failure() -> void:
+	assert_bool(SHOT.compare(Image.new(), Image.new()).ok).is_false()
+
+## Detect changes in Python, the kit and shadow inputs even on CI hosts without Python's
+## scientific packages. Regenerate with fixtures/kit/generate.py and review both renderers.
+func test_python_references_match_current_inputs_and_decoded_pixels() -> void:
+	var data: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(REFERENCES + "references.json"))
+	assert_str(data.schema).is_equal("napattack.kit-render-fixtures/1")
+	assert_int(int(data.scale)).is_equal(1)
+	assert_int(int(data.feature_pixels.shadows)).is_greater(0)
+	assert_int(int(data.feature_pixels.dressing)).is_greater(0)
+	var root := ProjectSettings.globalize_path("res://").path_join("..").simplify_path()
+	for path in data.source_sha256:
+		assert_str(FileAccess.get_sha256(root.path_join(path))).override_failure_message("Stale Python fixture input: " + path).is_equal(data.source_sha256[path])
+	for reference in data.cases:
+		assert_str(FileAccess.get_sha256(root.path_join(reference.plan))).is_equal(reference.plan_sha256)
+		var image := Image.new()
+		assert_int(image.load_png_from_buffer(FileAccess.get_file_as_bytes(REFERENCES + reference.expected))).is_equal(OK)
+		image.convert(Image.FORMAT_RGBA8)
+		assert_that(image.get_size()).is_equal(Vector2i(reference.size[0], reference.size[1]))
+		assert_str(_rgba_hash(image)).is_equal(reference.rgba_sha256)
+	var negative := Image.new()
+	assert_int(negative.load_png_from_buffer(FileAccess.get_file_as_bytes(REFERENCES + data.negative.file))).is_equal(OK)
+	negative.convert(Image.FORMAT_RGBA8)
+	assert_str(_rgba_hash(negative)).is_equal(data.negative.rgba_sha256)
+
+func _rgba_hash(image: Image) -> String:
+	var context := HashingContext.new()
+	context.start(HashingContext.HASH_SHA256)
+	context.update(image.get_data())
+	return context.finish().hex_encode()
 
 func test_kit_loads() -> void:
 	var kit := TerrainKit.shared()
