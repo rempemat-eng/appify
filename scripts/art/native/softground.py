@@ -342,10 +342,21 @@ def dirt(cv: np.ndarray, m: np.ndarray, seed: int, fam: str = 'path', cell: floa
         rut = (np.abs(dist - ruts + wob) < 1.6) & (nz(H, W, 30.0, seed + 9) > 0.42) & m
         if rut_mask is not None:
             # wheel tracks only down the roads: wider, slightly sunken and damp (Matt, 26 Oct 23:09)
-            rut = (np.abs(dist - ruts + wob) < 2.6) & (nz(H, W, 40.0, seed + 9) > 0.2) & m & rut_mask
+            rut = (np.abs(dist - ruts + wob) < 2.6) & m & rut_mask
         famc[rut] = FI[fam + '_cool']
-        t[rut & (t >= 3) & (nz(H, W, 4.0, seed + 10) > 0.35)] = 2
-        t[down(rut, 1) & ~rut & m & (t >= 3)] = 4
+        if rut_mask is not None:
+            # worn smooth (no clods), a tone down all along, darker damp stretches; sunk a little:
+            # the wall on its north and west side in shade, the lip on its south and east side lit
+            t[rut] = 2
+            t[rut & (nz(H, W, 9.0, seed + 10) > 0.62)] = 1
+            sh_ = rut & (~down(rut, 1) | ~right(rut, 1))
+            t[sh_] = 1
+            lip = (down(rut, 1) | right(rut, 1)) & ~rut & m
+            t[lip] = np.maximum(t[lip], 4)
+            famc[lip] = FI[fam + '_warm']
+        else:
+            t[rut & (t >= 3) & (nz(H, W, 4.0, seed + 10) > 0.35)] = 2
+            t[down(rut, 1) & ~rut & m & (t >= 3)] = 4
     sel = m & (cv >= 0)
     cv[sel] = (famc * 8 + t)[sel]
     if ruts and crown and rut_mask is not None:

@@ -1,7 +1,7 @@
 {
  "id": "crossroads/ground",
  "file": "game/zones/crossroads/art/ground.png",
- "sha256": "a35c3f54adfc3bc02a55032de6d6420731967246aeacb28ec0c6adc0101609d6",
+ "sha256": "9d6ea1c745e3854fe1c623faafbf4e705a5637f81fd99488ed92784b29e12baa",
  "kind": "ground",
  "biome": "valley",
  "H": 74.0,
