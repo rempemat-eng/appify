@@ -945,7 +945,8 @@ def log_steps(cv: np.ndarray, x0: int, x1: int, y_top: int, y_foot: int, n: int,
 # water
 # ------------------------------------------------------------------------------------------------
 def water(cv: np.ndarray, m: np.ndarray, seed: int, bank_h: int = 7, flow=None, lilies: float = 0.0,
-          stones: float = 1.0, fam: str = 'water', reeds: float = 1.0, rush_clumps: int | None = None) -> list:
+          stones: float = 1.0, fam: str = 'water', reeds: float = 1.0, rush_clumps: int | None = None,
+          side_w: int = 5) -> list:
     """Water on a soft plan (eastward-edges.md 5.3, shots 13 and 37). The north bank: the grass
     lip hanging 1 to 3 px over an earth face `bank_h` px tall of small clods, darkest where it
     meets the water; then a 1 px very light waterline; the water under it dark in a band 4 to 14
@@ -1059,7 +1060,7 @@ def water(cv: np.ndarray, m: np.ndarray, seed: int, bank_h: int = 7, flow=None, 
     # bank face itself turns the corner, so the bend joins without a seam.
     westl = np.zeros((H, W), bool)
     eastl = np.zeros((H, W), bool)
-    for k in range(1, 6):
+    for k in range(1, side_w + 1):
         westl |= right(land, k)
         eastl |= right(land, -k)
     rbw = runs_from_top(wat)
@@ -1069,6 +1070,12 @@ def water(cv: np.ndarray, m: np.ndarray, seed: int, bank_h: int = 7, flow=None, 
     eb = vert & eastl
     out[wb] = C('earth', 2)
     out[wb & ~right(land, 4) & right(land, 3)] = C('earth', 1)
+    if side_w > 5:
+        # a wider face (a small stream's far bank seen from above): earth clods in shade, darkest
+        # where it meets the water, a few roots
+        clod = wb & (np.random.default_rng(seed + 77).random((H, W)) < 0.18)
+        out[clod] = C('earth_cool', 1)
+        out[wb & ~right(land, side_w - 1) & right(land, side_w - 2)] = C('earth_cool', 1)
     out[wb & right(land, 1)] = step(np.where(right(land, 1), np.roll(cv, 1, axis=1), C('grass', 2)), -1)[wb & right(land, 1)]
     out[eb] = C('earth_warm', 3)
     out[eb & right(land, -2)] = C('earth_warm', 4)
@@ -2123,3 +2130,29 @@ def tidy_codes(cv: np.ndarray, keep: np.ndarray | None = None) -> None:
     """No lone texels: one unlike all four neighbours takes their most common code."""
     from .village import tidy
     tidy(cv, passes=1, keep=keep)
+
+
+def tidy_bank(cv: np.ndarray, water: np.ndarray, near: int = 6) -> None:
+    """A clean bank line: where the bank (the water and the earth and dark texels along it) meets
+    the turf, a one-texel spur of bank into the turf takes the turf's code and a one-texel bite of
+    turf into the bank takes the bank's, so the line steps smoothly (the soft grid's edges)."""
+    H, W = cv.shape
+    wat = np.isin(cv // 8, [FI['water'], FI['water_warm'], FI['water_cool']])
+    turf = (is_fam(cv, 'grass') | is_fam(cv, 'leaf')) & (cv % 8 >= 2)
+    zone = ndi.binary_dilation(wat | water, iterations=near)
+    bank = (wat | (zone & ~turf)) & (cv >= 0)
+    for _ in range(2):
+        op = ndi.binary_opening(bank, structure=CROSS)
+        cl = ndi.binary_closing(bank, structure=CROSS)
+        spur = bank & ~op & zone & ~wat
+        bite = cl & ~bank & zone
+        P_ = np.pad(cv, 1, mode='edge')
+        Bp = np.pad(bank, 1, mode='edge')
+        for m_, want in ((spur, False), (bite, True)):
+            for y, x in zip(*np.nonzero(m_)):
+                vals = [P_[y + 1 + dy, x + 1 + dx] for dy, dx in ((-1, 0), (1, 0), (0, -1), (0, 1))
+                        if Bp[y + 1 + dy, x + 1 + dx] == want]
+                if vals:
+                    cv[y, x] = max(set(vals), key=vals.count)
+        bank = (np.isin(cv // 8, [FI['water'], FI['water_warm'], FI['water_cool']]) |
+                (zone & ~((is_fam(cv, 'grass') | is_fam(cv, 'leaf')) & (cv % 8 >= 2)))) & (cv >= 0)

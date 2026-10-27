@@ -56,7 +56,7 @@
  "water": {
   "_about": "the Hollow's brook comes in at the top edge, falls from the spring's boulder heap into the rock pool, and leaves east as the garden's stream on the garden's own rows; mask = today's water pixels",
   "soft": {
-   "_about": "the soft grid's water (Matt, 27 Oct; Eastward 37's pond and the Strange Forest stream): the river three cells wide on cells with a few rounded cell-steps (it widens and narrows by a cell), its banks lumped, stones breaking them, rushes in a few clumps; the fall's pool a rounded union of cells under a stone lip; the rill a small stream in straight runs with rounded bends, its width breathing, wider at the lip (screen.water_mask_soft); water_rle stays the 1x footprint for density 2",
+   "_about": "the soft grid's water (Matt, 27 Oct; Eastward 37's pond and the Strange Forest stream): the river three cells wide on cells with a few rounded cell-steps (it widens and narrows by a cell), its banks lumped, stones breaking them, rushes in a few clumps; the fall's pool a rounded union of cells under a stone lip; the rill the river at a smaller scale: one cell wide on cells, gentle one-cell offsets for its bends, lumped banks, stones, wider at the lip (screen.water_mask_soft); water_rle stays the 1x footprint for density 2",
    "river": {
     "points": [
      [96, 300],
@@ -78,24 +78,26 @@
    "rill": {
     "points": [
      [80, -8],
-     [80, 40],
-     [48, 40],
-     [48, 208],
-     [80, 208],
+     [80, 64],
+     [64, 64],
+     [64, 192],
+     [80, 192],
      [80, 262]
     ],
-    "cells": 1.25,
-    "bend": 16,
-    "share": 0.5,
-    "breathe": 0.15,
-    "amp": [0.8, 1.5],
-    "mouth": [72, 232, 16, 32]
+    "mouth": [72, 232, 16, 32],
+    "cells_plan": 2,
+    "amp": [2.0, 4.0],
+    "lump": [12, 28],
+    "r_out": 0.6,
+    "r_in": 0.6
    },
    "seed": 402,
    "amp": [2.5, 5.0],
    "lump": [10, 26],
    "stones": 0.7,
-   "rush_clumps": 3
+   "rush_clumps": 3,
+   "side_w": 8,
+   "reeds": 0.25
   },
   "water_rle": [
    [79, 86],
@@ -676,11 +678,12 @@
    []
   ],
   "fall": {
-   "x0": 79,
-   "w": 6,
-   "y0": 258,
+   "x0": 78,
+   "w": 8,
+   "y0": 256,
    "y1": 296,
-   "seed": 65
+   "seed": 65,
+   "face": [62, 254, 102, 292]
   },
   "still": [
    [60, 284, 116, 312]
@@ -1284,45 +1287,73 @@
   ],
   "heap": [
    {
-    "at": [78, 262],
-    "size": [22, 16],
-    "seed": 64,
+    "at": [40, 268],
+    "size": [14, 12],
+    "seed": 201,
+    "shape": "round",
     "moss": true
    },
    {
-    "at": [93, 274],
-    "size": [24, 22],
-    "seed": 71,
+    "at": [114, 259],
+    "size": [12, 10],
+    "seed": 202,
+    "shape": "round",
     "moss": true
    },
    {
-    "at": [66, 276],
-    "size": [26, 22],
-    "seed": 78,
+    "at": [82, 262],
+    "size": [22, 10],
+    "seed": 205,
+    "shape": "slab",
+    "moss": false
+   },
+   {
+    "at": [60, 266],
+    "size": [22, 13],
+    "seed": 203,
+    "shape": "slab",
     "moss": true
    },
    {
-    "at": [112, 278],
-    "size": [16, 12],
-    "seed": 85,
+    "at": [104, 266],
+    "size": [22, 13],
+    "seed": 204,
+    "shape": "slab",
     "moss": true
    },
    {
-    "at": [40, 278],
-    "size": [18, 13],
-    "seed": 92,
+    "at": [52, 281],
+    "size": [24, 15],
+    "seed": 206,
+    "shape": "slab",
     "moss": true
    },
    {
-    "at": [50, 289],
-    "size": [30, 22],
-    "seed": 99,
+    "at": [106, 281],
+    "size": [18, 14],
+    "seed": 207,
+    "shape": "slab",
     "moss": true
    },
    {
-    "at": [102, 289],
-    "size": [28, 20],
-    "seed": 106,
+    "at": [36, 290],
+    "size": [11, 8],
+    "seed": 208,
+    "shape": "round",
+    "moss": true
+   },
+   {
+    "at": [67, 293],
+    "size": [10, 7],
+    "seed": 210,
+    "shape": "round",
+    "moss": false
+   },
+   {
+    "at": [98, 293],
+    "size": [9, 6],
+    "seed": 211,
+    "shape": "round",
     "moss": true
    }
   ],
@@ -1562,15 +1593,16 @@
   },
   "circle_out": {
    "at": [80, 414],
-   "r": [28, 15],
+   "r": [38, 22],
    "seed": 68,
-   "rough": 0.03
+   "rough": 0.16,
+   "worn": true
   },
   "circle_in": {
    "at": [80, 414],
-   "r": [20, 9.5],
+   "r": [29, 15],
    "seed": 69,
-   "rough": 0.03
+   "rough": 0.12
   },
   "pool": {
    "at": [86, 299],
@@ -1621,7 +1653,10 @@
    [270, 236, 2126, 1.35],
    [204, 176, 1604, 1.2],
    [16, 404, 516, 1.5],
-   [292, 560, 2604, 1.5]
+   [292, 560, 2604, 1.5],
+   [60, 288, 3101, 1.2],
+   [106, 290, 3102, 1.1],
+   [44, 272, 3103, 1.0]
   ],
   "leaves": [
    [209, 141, 0],
@@ -1697,13 +1732,14 @@
   ]
  },
  "objects": [
-  ["stone-1", "standing_stone_low", 104.5, 411, 15, 21],
-  ["stone-2", "standing_stone_b", 72.5, 419, 15, 21],
-  ["stone-3", "standing_stone_low", 40.5, 411, 15, 21],
-  ["stone-4", "standing_stone_b", 28.5, 395, 15, 21],
-  ["stone-5", "standing_stone_low", 40.5, 379, 15, 21],
+  ["stone-1", "standing_stone_lean", 104.5, 411, 15, 21],
+  ["stone-2", "standing_stone_low", 72.5, 419, 15, 21],
+  ["stone-3", "standing_stone_runes", 40.5, 411, 15, 21],
+  ["stone-4", "standing_stone_broken", 28.5, 395, 15, 21],
+  ["stone-5", "standing_stone_b", 40.5, 379, 15, 21],
   ["stone-6", "standing_stone", 72, 363, 16, 29],
   ["stone-7", "standing_stone_low", 104.5, 379, 15, 21],
+  ["lintel-1", "lintel", 47, 415, 26, 9],
   ["stump-1", "stump", 165.5, 232, 21, 16],
   ["stump-2", "stump", 41.5, 344, 21, 16],
   ["stump-3", "stump", 237.5, 120, 21, 16],

@@ -276,36 +276,21 @@ def water_mask_soft(plan: dict, W: int, H: int) -> np.ndarray:
     lump = dict(amp=tuple(sw.get('amp', SG.AMP)), lump=tuple(sw.get('lump', SG.LUMP)))
     m = SG.shape(cells, h, w, sw.get('seed', 402), r_out=1.3, r_in=0.6, **lump)
     rl = sw['rill']
-    m |= SG.curve_texels(rl['points'], rl['cells'], h, w, rl['bend'], sw.get('seed', 402) + 1, rl.get('share', 0.95),
-                         rl.get('breathe', 0.0), amp=tuple(rl.get('amp', (0.0, 0.0))))
+    if rl.get('cells_plan'):
+        # (Matt, 27 Oct) the rill as the river at a smaller scale: one cell wide on cells, a few
+        # gentle one-cell offsets for its bends, rounded and lumped like the river's banks
+        rc = SG.cells_route(rl['points'], rl['cells_plan'], h, w)
+        mr = SG.shape(rc, h, w, sw.get('seed', 402) + 1, r_out=rl.get('r_out', 0.45), r_in=rl.get('r_in', 0.45), amp=tuple(rl.get('amp', SG.AMP)),
+                      lump=tuple(rl.get('lump', sw.get('lump', SG.LUMP))))
+        # a narrow channel's lumps step a few texels at a time, never a one-texel spur on its bank
+        m |= ndi.gaussian_filter(np.pad(mr, 8, mode='edge').astype(float), 2.2)[8:-8, 8:-8] > 0.5
+    else:
+        m |= SG.curve_texels(rl['points'], rl['cells'], h, w, rl['bend'], sw.get('seed', 402) + 1, rl.get('share', 0.95),
+                             rl.get('breathe', 0.0), amp=tuple(rl.get('amp', (0.0, 0.0))))
     if rl.get('mouth'):
         # wider where it meets the fall's lip
         m |= SG.shape(SG.cells_rects([rl['mouth']], h, w), h, w, sw.get('seed', 402) + 2, r_out=1.0, r_in=0.6, **lump)
     return m
-
-
-def ledge(cv: np.ndarray, x0: float, w: float, y: float) -> None:
-    """The fall's lip (world px): a flat stone ledge across the top of the rocks, its top lit, its
-    front a narrow face in shade, worn smooth and wet where the water spills over its middle."""
-    X0, X1 = P(x0 - 9, 0), P(x0 + w + 9, 0)
-    Y0 = P(y, 0)
-    th, fh = P(2.0), P(1.6)
-    for Y in range(Y0 - th, Y0 + fh):
-        for X in range(X0, X1):
-            if not (0 <= Y < cv.shape[0] and 0 <= X < cv.shape[1]):
-                continue
-            edge = X in (X0, X1 - 1)
-            if Y < Y0:
-                t = 5 if (Y == Y0 - th and X < (X0 + X1) // 2) else (4 if X < X1 - P(2) else 3)
-                fam = 'stone_warm' if t >= 4 else 'stone'
-            else:
-                t, fam = (2 if X < X1 - P(2) else 1), 'stone_cool'
-            if edge:
-                t, fam = (1, 'stone_cool')
-            cv[Y, X] = C(fam, t)
-    for X in range(X0, X1, P(4)):                                     # joints between the slabs
-        if 0 <= Y0 < cv.shape[0] and X0 < X < X1 - 1:
-            cv[Y0 - th:Y0 + fh, X] = C('stone_cool', 1)
 
 
 def water_mask_hd(plan: dict, W: int, H: int) -> np.ndarray:
@@ -982,6 +967,11 @@ def monolith(w: float, h: float, seed: int, fam: str = 'stone'):
     return img, ((x0 + x1) / 2.0, yb - 1), alpha
 
 
+def _wn(h: int, w: int, sigma: float, seed: int) -> np.ndarray:
+    v = ndi.gaussian_filter(np.random.default_rng(seed).random((h, w)), sigma)
+    return (v - v.min()) / max(1e-6, v.max() - v.min())
+
+
 def TN_noise(H: int, seed: int) -> np.ndarray:
     """A slow wander per row (0..1), the same for every column: the stone's worn outline."""
     rng = np.random.default_rng(seed + 9)
@@ -1018,6 +1008,17 @@ def sprite(kind: str, recipe: dict, seed: int):
     elif paint == 'monolith':
         img, anc, a = monolith(recipe['size'][0], recipe['size'][1], seed, fam=recipe.get('fam', 'stone'))
         return img, anc, a, None
+    elif paint in ('standing', 'lintel'):
+        # the moon circle's ancient stones and its fallen capstone (rocks.py, Matt 27 Oct 11:08)
+        from . import rocks as RK
+        from .palette import to_rgba
+        if paint == 'standing':
+            codes, anc = RK.standing_stone(recipe['size'][0], recipe['size'][1], seed, lean=recipe.get('lean', 0.0),
+                                           broken=recipe.get('broken', False), carved=recipe.get('carved'),
+                                           squat=recipe.get('squat', False))
+        else:
+            codes, anc = RK.lintel(recipe['size'][0], recipe['size'][1], seed)
+        return Image.fromarray(to_rgba(codes), 'RGBA'), anc, codes >= 0, None
     elif paint == 'stump':
         img, anc, a = P4.stump4(D, seed=seed)
     elif paint == 'log':
@@ -1083,7 +1084,20 @@ def terrain(plan: dict, layers: dict) -> tuple:
     co, ci = pl['circle_out'], pl['circle_in']
     ring = blob(*co['at'], *co['r'], seed=co['seed'], rough=co['rough'], w=w, h=h) & \
         ~blob(*ci['at'], *ci['r'], seed=ci['seed'], rough=ci['rough'], w=w, h=h)
-    trodden(cv, ring)
+    if D >= HD and co.get('worn'):
+        # (Matt, 27 Oct 11:08: the dirt ring "doesn't fit the path") the ring worn into the grass
+        # just inside the stones, the path's own packed earth and stones, its width uneven, grass
+        # growing back over it in places, meeting the spur from the path at the entrance
+        from . import softground as GD
+        turf_r = (is_fam(cv, 'grass') | is_fam(cv, 'leaf')) & ~ring
+        lawn0 = layers['lawn']
+        GD.dirt(cv, ring, 451, fam='path', cell=11, stones=0.6)
+        Yg, Xg = np.mgrid[0:h, 0:w]
+        regrow = ring & (_wn(h, w, 9.0, 452) > 0.66) & ((Xg / D) < co['at'][0] + co['r'][0] * 0.6)
+        cv[regrow] = lawn0[regrow]
+        GD.sunken_edge(cv, ring & ~regrow, turf_r | regrow, np.random.default_rng(453))
+    else:
+        trodden(cv, ring)
     layers['places'] = cv.copy()
     hd = D >= HD
     soft_w = hd and 'soft' in plan['water']
@@ -1105,7 +1119,14 @@ def terrain(plan: dict, layers: dict) -> tuple:
             # the river bank to bank at a straight crossing, on an abutment in each bank
             from . import softground as GD
             items = GD.water(cv, wm, 402, bank_h=P(3.4, 0), flow='auto', stones=plan['water']['soft'].get('stones', 0.0),
-                             reeds=0.8, rush_clumps=plan['water']['soft'].get('rush_clumps'))
+                             reeds=plan['water']['soft'].get('reeds', 0.8), rush_clumps=plan['water']['soft'].get('rush_clumps'),
+                             side_w=plan['water']['soft'].get('side_w', 5))
+            # the turf at the water's edge is short and even (no dark blades standing on the bank's
+            # line, which would fray it into spurs)
+            nearw = ndi.binary_dilation(wm, iterations=P(3)) & ~wm
+            grassy_ = (is_fam(cv, 'grass') | is_fam(cv, 'leaf')) & (cv % 8 <= 2) & nearw
+            cv[grassy_] = cv[grassy_] - cv[grassy_] % 8 + 3
+            GD.tidy_bank(cv, wm)
             for (img_, anc_, (fx_, fy_)) in sorted(items, key=lambda it: it[2][1]):
                 # stones breaking the banks, laid into the ground with their shade
                 dec_ = to_codes(img_)
@@ -1121,9 +1142,19 @@ def terrain(plan: dict, layers: dict) -> tuple:
         chan = wm.copy()
         chan[P(f['y0'], 0):] = False
         chan[:P(f['y0'] - 40, 0)] = False
+        if soft_w and f.get('face'):
+            from . import rocks as RK
+            RK.face(cv, *f['face'], seed=f.get('seed', 11) + 3)
         for b in sorted(plan['rock']['heap'], key=lambda b: b['at'][1]):
-            img, anc, _a = P4.boulder4(D, b['size'][0], b['size'][1], seed=b['seed'])
-            dec = to_codes(img)
+            if 'shape' in b:
+                # the cascade's rocks (rocks.py): slabs stepping down beside the fall, rounded
+                # boulders of different sizes at its edges and foot
+                from . import rocks as RK
+                dec, anc = RK.rock(b['size'][0], b['size'][1], b['seed'], flat=b['shape'] == 'slab',
+                                   moss=0.6 if b.get('moss') else 0.0)
+            else:
+                img, anc, _a = P4.boulder4(D, b['size'][0], b['size'][1], seed=b['seed'])
+                dec = to_codes(img)
             X, Y = int(round(b['at'][0] * D - anc[0])), int(round(b['at'][1] * D - anc[1]))
             hh, ww = dec.shape
             sub = chan[max(0, Y):Y + hh, max(0, X):X + ww]
@@ -1131,8 +1162,10 @@ def terrain(plan: dict, layers: dict) -> tuple:
             DC.paste(cv, dec, X, Y, shadow=True, shadow_dx=P(2), shadow_dy=P(1))
         WA.wet_rock(cv, f['x0'], f['w'], f['y0'] - 2, f['y1'])
         if soft_w:
-            ledge(cv, f['x0'], f['w'], f['y0'])          # the lip the water spills over
-        WA.fall_hd(cv, f['x0'], f['w'], f['y0'], f['y1'], seed=f.get('seed', 11))
+            from . import rocks as RK
+            RK.fall(cv, f['x0'], f['w'], f['y0'], f['y1'], seed=f.get('seed', 11))
+        else:
+            WA.fall_hd(cv, f['x0'], f['w'], f['y0'], f['y1'], seed=f.get('seed', 11))
     else:
         WA.paint(cv, wm)
         footbridge(cv, br['x0'], br['w'], br['y0'], br['y1'], wm)
@@ -1188,8 +1221,13 @@ def build() -> Zone:
     h, w = cv.shape
     recipes = biome['recipes']
     sprites, objects, things, casts, tcasts = {}, [], [], [], []
-    for k, kind in enumerate(sorted({o[1] for o in plan['objects']})):
+    # (a kind whose recipe is marked own_seed does not take a place in the count, so adding one
+    # never reshuffles the others' drawings)
+    k = 0
+    for kind in sorted({o[1] for o in plan['objects']}):
         sprites[kind] = sprite(kind, recipes[kind], 700 + k)
+        if not recipes[kind].get('own_seed'):
+            k += 1
         if D >= HD:
             sprites[kind] = foot_at_bottom_centre(*sprites[kind])
     for (oid, kind, x, y, ow, oh) in plan['objects']:

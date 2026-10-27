@@ -1,7 +1,7 @@
 {
  "zone": "woodland",
  "density": 3.0,
- "restricted": 14855,
+ "restricted": 19050,
  "kinds": [
   "beech",
   "birch",
@@ -14,72 +14,84 @@
   "hollow_tree",
   "holly",
   "holly_b",
+  "lintel",
   "mossy_log",
   "oak",
   "pine",
   "sapling",
   "standing_stone",
   "standing_stone_b",
+  "standing_stone_broken",
+  "standing_stone_lean",
   "standing_stone_low",
+  "standing_stone_runes",
   "stump",
   "willow"
  ],
  "objects": [
   [
    "stone-1",
-   "standing_stone_low",
-   104.5,
-   409.33,
-   15.0,
-   25.0
+   "standing_stone_lean",
+   101.07,
+   403.0,
+   22.0,
+   32.0
   ],
   [
    "stone-2",
-   "standing_stone_b",
-   72.0,
-   416.33,
-   16.0,
+   "standing_stone_low",
+   69.67,
+   417.0,
+   20.67,
    26.0
   ],
   [
    "stone-3",
-   "standing_stone_low",
-   40.5,
-   409.33,
-   15.0,
-   25.0
+   "standing_stone_runes",
+   38.27,
+   406.0,
+   19.67,
+   29.0
   ],
   [
    "stone-4",
-   "standing_stone_b",
-   28.0,
-   392.33,
-   16.0,
-   26.0
+   "standing_stone_broken",
+   26.67,
+   392.0,
+   18.67,
+   27.0
   ],
   [
    "stone-5",
-   "standing_stone_low",
-   40.5,
-   377.33,
-   15.0,
-   25.0
+   "standing_stone_b",
+   38.67,
+   373.0,
+   18.67,
+   30.0
   ],
   [
    "stone-6",
    "standing_stone",
-   72.0,
-   363.33,
-   16.0,
-   31.0
+   69.01,
+   359.0,
+   22.0,
+   36.0
   ],
   [
    "stone-7",
    "standing_stone_low",
-   104.5,
-   377.33,
-   15.0,
-   25.0
+   101.67,
+   377.0,
+   20.67,
+   26.0
+  ],
+  [
+   "lintel-1",
+   "lintel",
+   45.0,
+   413.0,
+   30.0,
+   13.0
   ],
   [
    "stump-1",
