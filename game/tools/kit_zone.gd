@@ -11,6 +11,7 @@ extends SceneTree
 const PLAN_META := &"kit_zone_plan"
 const ENTRY_META := &"kit_zone_entry"
 const EXPLICIT_META := &"kit_zone_explicit"
+const GAMEPLAY_IDS_META := &"kit_zone_gameplay_ids"
 
 func _initialize() -> void:
 	_run.call_deferred()
@@ -189,6 +190,7 @@ static func scene_from_plan(plan: Dictionary) -> Node2D:
 			root.free()
 			return null
 		var src := packed.instantiate()
+		var inherited_ids := {}
 		for name_ in ["Actors", "Spawns", "Doors"]:
 			var node := src.get_node_or_null(NodePath(name_))
 			if node != null:
@@ -202,15 +204,25 @@ static func scene_from_plan(plan: Dictionary) -> Node2D:
 						child.set_meta(&"kit_zone_inherited", child.position)
 					elif name_ == "Doors" and child is Area2D:
 						child.set_meta(&"kit_zone_inherited", _door_entry(child, {}, kit.cell))
+				if name_ in ["Spawns", "Doors"]:
+					inherited_ids[name_] = []
+					for child in node.get_children():
+						inherited_ids[name_].append(String(child.name))
+					for id in plan.get("gameplay_removed", {}).get(name_, []):
+						var removed := node.get_node_or_null(NodePath(String(id)))
+						if removed != null:
+							removed.free()
+		root.set_meta(GAMEPLAY_IDS_META, inherited_ids)
 		src.free()
 	_container(root, "Actors").y_sort_enabled = true
 	var spawns := _container(root, "Spawns")
 	var specified: Dictionary = plan.get("spawns", {})
-	if specified.is_empty() and spawns.get_child_count() == 0:
+	if specified.is_empty() and spawns.get_child_count() == 0 and not "start" in plan.get("gameplay_removed", {}).get("Spawns", []):
 		var fallback := Marker2D.new()
 		fallback.name = "start"
 		fallback.position = Vector2(size * kit.cell) / 2.0
 		fallback.set_meta(EXPLICIT_META, false)
+		fallback.set_meta(&"kit_zone_inherited", fallback.position)
 		spawns.add_child(fallback)
 		fallback.owner = root
 	for id in specified:
@@ -398,6 +410,21 @@ static func plan_from_scene(root: Node2D, fallback: Dictionary = {}) -> Dictiona
 		doors.append(entry)
 	if plan.has("doors") or not doors.is_empty():
 		plan["doors"] = doors
+	# A missing inherited node needs a tombstone; omission alone would copy it
+	# again from gameplay_from on the next build. Explicit overrides can revive it.
+	if root.has_meta(GAMEPLAY_IDS_META):
+		var removed: Dictionary = plan.get("gameplay_removed", {}).duplicate(true)
+		var inherited_ids: Dictionary = root.get_meta(GAMEPLAY_IDS_META)
+		for name_ in ["Spawns", "Doors"]:
+			var missing := []
+			var container := root.get_node_or_null(NodePath(name_))
+			for id in inherited_ids.get(name_, []):
+				if container == null or container.get_node_or_null(NodePath(id)) == null:
+					missing.append(id)
+			if removed.has(name_) or not missing.is_empty():
+				removed[name_] = missing
+		if plan.has("gameplay_removed") or not removed.is_empty():
+			plan["gameplay_removed"] = removed
 	return plan
 
 ## Retain unchanged JSON numbers before Vector2's float32 conversion can round them.

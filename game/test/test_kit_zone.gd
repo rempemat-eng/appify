@@ -183,6 +183,27 @@ func test_missing_optional_fields_stay_absent() -> void:
 	assert_object(root.get_node_or_null("Spawns/start")).is_not_null()
 	_assert_plan(Tool.plan_from_scene(root), original)
 
+func test_moved_generated_spawn_survives_saved_scene_and_plan_rebuild() -> void:
+	var original := {"zone": "w2_moved_fallback", "legend": {".": "lawn"}, "rows": ["....", "...."]}
+	var root := _scene(original)
+	if root == null:
+		return
+	var start := root.get_node("Spawns/start") as Marker2D
+	assert_that(start.position).is_equal(Vector2(48, 24))
+	start.position = Vector2(24, 12)
+	var saved := _persist(root, "moved_fallback")
+	if saved == null:
+		return
+	var expected := original.duplicate(true)
+	expected["spawns"] = {"start": [24, 12]}
+	var exported := Tool.plan_from_scene(saved)
+	_assert_plan(exported, expected)
+	var rebuilt := _scene(exported)
+	if rebuilt == null:
+		return
+	assert_that((rebuilt.get_node("Spawns/start") as Marker2D).position).is_equal(Vector2(24, 12))
+	_assert_plan(Tool.plan_from_scene(rebuilt), expected)
+
 func test_gameplay_from_is_persisted_and_explicit_spawn_override_wins() -> void:
 	var original := {
 		"zone": "w2_gameplay",
@@ -220,6 +241,56 @@ func test_inherited_gameplay_edits_export_as_overrides() -> void:
 	if rebuilt != null:
 		assert_that((rebuilt.get_node("Spawns/start") as Marker2D).position).is_equal(Vector2(24, 48))
 		assert_str((rebuilt.get_node("Doors/ToCrossroads") as Door).target_spawn).is_equal("new_return")
+
+func test_deleted_inherited_spawn_and_door_stay_removed_across_saved_round_trips() -> void:
+	var original := {"zone": "w2_inherited_removals", "legend": {".": "lawn"}, "rows": ["....", "...."], "gameplay_from": "res://zones/woodland/woodland.tscn"}
+	var root := _scene(original)
+	if root == null:
+		return
+	root.get_node("Spawns/start").free()
+	root.get_node("Doors/ToCrossroads").free()
+	var saved := _persist(root, "inherited_removals")
+	if saved == null:
+		return
+	var expected := original.duplicate(true)
+	expected["gameplay_removed"] = {"Spawns": ["start"], "Doors": ["ToCrossroads"]}
+	var exported := Tool.plan_from_scene(saved)
+	_assert_plan(exported, expected)
+	for pass_index in 2:
+		var rebuilt := _scene(exported)
+		if rebuilt == null:
+			return
+		assert_object(rebuilt.get_node_or_null("Spawns/start")).is_null()
+		assert_object(rebuilt.get_node_or_null("Doors/ToCrossroads")).is_null()
+		# Unremoved gameplay is preserved while the deleted entries stay absent.
+		assert_object(rebuilt.get_node_or_null("Spawns/crossroads")).is_not_null()
+		assert_object(rebuilt.get_node_or_null("Doors/ToUndercroft")).is_not_null()
+		assert_object(rebuilt.get_node_or_null("Actors/StoneSign")).is_not_null()
+		var reloaded := _persist(rebuilt, "inherited_removals_%s" % pass_index)
+		if reloaded == null:
+			return
+		exported = Tool.plan_from_scene(reloaded)
+		_assert_plan(exported, expected)
+
+func test_explicit_gameplay_overrides_revive_removed_inherited_ids() -> void:
+	var plan := {"zone": "w2_revived_gameplay", "legend": {".": "lawn"}, "rows": ["....", "...."], "gameplay_from": "res://zones/woodland/woodland.tscn"}
+	plan["gameplay_removed"] = {"Spawns": ["start"], "Doors": ["ToCrossroads"]}
+	plan["spawns"] = {"start": [24, 12]}
+	plan["doors"] = [{"id": "ToCrossroads", "rect": [3, 0, 1, 2], "to": "crossroads", "spawn": "new_return"}]
+	var root := _scene(plan)
+	if root == null:
+		return
+	var saved := _persist(root, "revived_gameplay")
+	if saved == null:
+		return
+	assert_that((saved.get_node("Spawns/start") as Marker2D).position).is_equal(Vector2(24, 12))
+	assert_str((saved.get_node("Doors/ToCrossroads") as Door).target_spawn).is_equal("new_return")
+	var exported := Tool.plan_from_scene(saved)
+	var rebuilt := _scene(exported)
+	if rebuilt != null:
+		assert_that((rebuilt.get_node("Spawns/start") as Marker2D).position).is_equal(Vector2(24, 12))
+		assert_str((rebuilt.get_node("Doors/ToCrossroads") as Door).target_spawn).is_equal("new_return")
+		_assert_plan(Tool.plan_from_scene(rebuilt), exported)
 
 func test_unchanged_fractional_positions_keep_json_precision() -> void:
 	var original := _fixture()
