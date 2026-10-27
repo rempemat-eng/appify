@@ -236,7 +236,7 @@ Matt, 27 Oct 17:00, on the woodland before and after: "i prefer the water, paths
 
 The bake writes `zones/<zone>/ground_baked.png` and a hash of its inputs (`bake --check` in `check:kit`). `TerrainGround.baked` shows it until a cell or tier is painted. From then on, the live tiles show until the zone is baked again.
 
-A narrow channel keeps its own, smaller rounding and gaussian easing (the woodland rill's) and narrow bank walls (`side_w` 3). A wide body keeps the river's. Raised ground reads on every side: the plateau swatch's calmer, lighter top, `ledge`'s lip, face and side walls, and a back rim (a lit last row with a dark row of earth beyond it). Worn tracks and paths ease their cell staircases into curves (`shape.smooth`).
+A narrow channel keeps its own, smaller rounding and gaussian easing (the woodland rill's) and narrow bank walls (`side_w` 3). A wide body keeps the river's. Raised ground reads on every side: the plateau swatch's calmer, lighter top, `ledge`'s lip, face and side walls, and a back rim (a lit last row with a dark row of earth beyond it). Side bands along the top's west and east edges keep 4 px all the way back. A top two tiers over the ground beside it shows a face four cells high. Worn tracks and paths ease their cell staircases into curves (`shape.smooth`).
 
 ### Feature pieces, painted where they stand
 
@@ -244,7 +244,7 @@ Some pieces carry a `rendering.paint` block. The bake paints them into the groun
 
 | Piece | What the bake paints |
 | --- | --- |
-| `waterfall_1` to `_4` | The woodland's cascade: the rock face (`rocks.face`), the stepped slabs either side and the lip ledge (`rocks.rock`), the wet rock beside the sheet, the falling sheet with its streaks (`rocks.fall`), its foam and rings inside the pool. The validator requires one wherever water crosses a south rim (`rules.water_fall`). |
+| `waterfall_1` to `_4`, and `_tall` for a two-tier drop (a face four cells high, the woodland's) | The woodland's cascade: the rock face (`rocks.face`), the stepped slabs either side and the lip ledge (`rocks.rock`), the wet rock beside the sheet, the falling sheet with its streaks (`rocks.fall`), its foam and rings inside the pool. The validator requires one wherever water crosses a south rim (`rules.water_fall`). |
 | `log_steps_1`, `log_steps` (2), `log_steps_3` | `softground.log_steps`: the cheeks of earth either side, treads with depth and shade under each nose, the head flush with the rim. |
 | `footbridge_2`, `woodland_footbridge` (3), `footbridge_4` | `softground.footbridge` over the zone's own banks: an abutment in each bank, deck, kerbs, posts and rails. |
 | `stepping_stones_1`, `_2` | Flat stones a stride apart with their wet rings: a footpath's crossing of a rill or a stream. Its deck carries the route (`rules.route_water`, `rules.deck`). |
