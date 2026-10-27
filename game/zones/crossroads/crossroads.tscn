@@ -1892,7 +1892,7 @@ z_index = -9
 y_sort_enabled = true
 
 [node name="Moss" type="Area2D" parent="Actors"]
-position = Vector2(1104, 732)
+position = Vector2(1104, 852)
 script = ExtResource("talk")
 speaker_id = "moss"
 marker_height = 82.0
