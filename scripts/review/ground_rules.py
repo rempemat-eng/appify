@@ -100,10 +100,42 @@ def _water(plan):
 
 
 def _on_water(p, plan, pad=0.0):
+    # Kit exports retain their exact raster geometry. Do not turn disconnected
+    # masks into invented rivers, or move cell centres onto a polyline grid.
+    if _in_rects(p, _cell_rects(plan, 'water'), pad):
+        return True
     rects, chans, _ = _water(plan)
     if _in_rects(p, rects, pad):
         return True
     return any(_line_dist(p, pts) <= hw + pad for _n, pts, hw in chans)
+
+
+def _cell_rects(plan, layer):
+    """Exact world-pixel cells supplied by the kit-plan adapter (W6)."""
+    regions = plan.get('cell_regions', {})
+    cell = float(regions.get('cell', CELL))
+    return [(float(x) * cell, float(y) * cell, cell, cell)
+            for x, y in regions.get(layer, [])]
+
+
+def _inside_cells(p, plan, layer, shrink=0.0):
+    rects = _cell_rects(plan, layer)
+    if not _in_rects(p, rects):
+        return False
+    if shrink <= 0:
+        return True
+    regions = plan.get('cell_regions', {})
+    cell = float(regions.get('cell', CELL))
+    cells = {tuple(v) for v in regions.get(layer, [])}
+    for x, y in cells:
+        for dx, dy, a, b in ((-1, 0, (x, y), (x, y + 1)),
+                              (1, 0, (x + 1, y), (x + 1, y + 1)),
+                              (0, -1, (x, y), (x + 1, y)),
+                              (0, 1, (x, y + 1), (x + 1, y + 1))):
+            if (x + dx, y + dy) not in cells:
+                if _seg_dist(p, (a[0] * cell, a[1] * cell), (b[0] * cell, b[1] * cell)) < shrink:
+                    return False
+    return True
 
 
 def _places(plan):
@@ -280,7 +312,12 @@ def route_ends(plan):
 
 
 def _on_route(p, plan, shrink=0.0):
-    return [rid for rid, pts, hw, _b, _s in _routes(plan) if _line_dist(p, pts) < hw - shrink]
+    out = [rid for rid, pts, hw, _b, _s in _routes(plan) if _line_dist(p, pts) < hw - shrink]
+    # A shared edge between two cells is inside their union. For centre-only
+    # checks, shrink the union's outside boundary, not each internal cell edge.
+    if _inside_cells(p, plan, 'route', shrink):
+        out.append('cell-route')
+    return out
 
 
 def route_clear(plan):
