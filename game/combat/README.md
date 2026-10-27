@@ -794,3 +794,21 @@ production A/J schedules/provider/importer, active-action boundaries and powered
 playback through the existing living-actor cancellation gate remain unfinished. A pure
 track can sequence the exit drawings, but this does not claim the Player plays them
 after defeat. No combat/contact events, HP mapping, art or canonical rules change.
+
+
+### Explicit powered-action boundary clocks (C60 continuation)
+
+The optional active provider may return `manifest`, an exact `AbilityFormPlan`
+for powered primary/secondary, and `segment_durations`. `AbilityContactTrack.configure_form`
+validates the whole authored boundary/pose/boundary sequence before replacement.
+Boundary durations are included inside the canonical action duration; the pose's
+release drawing must begin at the canonical release time. Mismatches reject the
+contract rather than adding time, changing contact clocks or guessing durations.
+All crossed drawings and the single contact sample remain ordered on coarse steps.
+Tokens, pause, callback cancellation and immutable samples retain their contracts.
+
+These injected fixture clocks do not approve production schedules. Specials,
+continuous gait, powered defeat lifecycle, production A/J provider/importer and
+world HP integration remain separate unfinished work. No default driver or
+CastSprite/art change. Full verify/art/hosted non-skipped/rendered/device validation
+remains required before readiness.

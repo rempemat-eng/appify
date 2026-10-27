@@ -73,6 +73,12 @@ func sample() -> Dictionary:
 	while index + 1 < _starts.size() and _elapsed >= _starts[index + 1]: index += 1
 	return _samples[index].duplicate(true)
 
+## Detached validated timeline for an ordered action-event adapter. Mutating it cannot
+## replace this track's schedule or anchors.
+func timeline() -> Dictionary:
+	if not _active: return {}
+	return {"samples": _samples.duplicate(true), "starts": _starts.duplicate(), "duration": _duration}
+
 func is_finished() -> bool:
 	return _active and _elapsed >= _duration
 

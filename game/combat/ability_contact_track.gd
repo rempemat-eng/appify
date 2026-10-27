@@ -8,6 +8,7 @@ var _clip := ""
 var _facing := ""
 var _aim := ""
 var _frames: Array = []
+var _form_samples: Array[Dictionary] = []
 var _starts: Array[float] = []
 var _duration := 0.0
 var _elapsed := 0.0
@@ -54,6 +55,7 @@ func configure(manifest: Dictionary, clip: String, facing: String, durations: Ar
 		total += float(seconds)
 		if not is_finite(total):
 			return false
+	_form_samples = []
 	_token = token
 	_clip = clip
 	_facing = facing
@@ -62,6 +64,46 @@ func configure(manifest: Dictionary, clip: String, facing: String, durations: Ar
 	_starts = starts
 	_duration = total
 	_release = int(release)
+	_elapsed = 0.0
+	_entered = -1
+	_cancelled = false
+	return true
+
+## Optional powered-action plans include real boundary durations inside the canonical
+## clock. Never append time, invent frame durations or delay the canonical contact.
+func configure_form(manifest: Dictionary, plan: Array, segment_durations: Array,
+		token: int, canonical_duration: float, canonical_release: float) -> bool:
+	if token <= _token or plan.size() != 3 or not plan[1] is Dictionary:
+		return false
+	var middle: Dictionary = plan[1]
+	if not middle.has_all(["clip", "facing", "aim"]) or not middle.clip is String:
+		return false
+	var clip: String = middle.clip
+	if not clip.begins_with("powered_"): return false
+	var pose := clip.trim_prefix("powered_").trim_suffix("_empty")
+	if pose not in ["primary", "secondary"]: return false
+	var expected := AbilityFormPlan.build(str(manifest.get("id", "")), pose, true,
+		clip.ends_with("_empty"), manifest, str(middle.facing), str(middle.aim))
+	if expected != plan: return false
+	var info: Variant = manifest.get("clips", {}).get(clip)
+	if not info is Dictionary or info.get("loop", true) != false: return false
+	var release: Variant = info.get("release_frame")
+	if not _number(release) or release != floor(float(release)) or release < 0 or release >= middle.indices.size():
+		return false
+	var forms := AbilityFormTrack.new()
+	if not forms.configure("action", manifest, plan, segment_durations, token): return false
+	var timeline := forms.timeline()
+	var offset: int = plan[0].indices.size()
+	var release_index: int = offset + int(release)
+	if not _number(canonical_duration) or not _number(canonical_release) or canonical_duration <= 0 or canonical_release < 0:
+		return false
+	if absf(timeline.duration - canonical_duration) > 1.0e-8 or absf(timeline.starts[release_index] - canonical_release) > 1.0e-8:
+		return false
+	_token = token
+	_form_samples = timeline.samples.duplicate(true)
+	_starts = timeline.starts.duplicate()
+	_duration = timeline.duration
+	_release = release_index
 	_elapsed = 0.0
 	_entered = -1
 	_cancelled = false
@@ -111,6 +153,7 @@ func _index_at(time: float) -> int:
 	return index
 
 func _sample(index: int) -> Dictionary:
+	if not _form_samples.is_empty(): return _form_samples[index].duplicate(true)
 	return {"token": _token, "clip": _clip, "facing": _facing, "aim": _aim,
 		"index": index, "starts_at": _starts[index], "frame": _frames[index].duplicate(true)}
 

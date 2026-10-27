@@ -89,6 +89,19 @@ func _begin(state: Dictionary, action: String) -> void:
 	var supplied: Variant = _provider.call(state.duplicate(true), action)
 	if generation != _generation:
 		return
+	if supplied is Dictionary and supplied.has("plan"):
+		if not supplied.has_all(["manifest", "plan", "segment_durations"]) or not supplied.manifest is Dictionary or not supplied.plan is Array or not supplied.segment_durations is Array:
+			last_error = "missing explicit action form contract"
+			return
+		if not _track.configure_form(supplied.manifest, supplied.plan, supplied.segment_durations,
+				_token + 1, float(state.player.actionDuration), AbilityPlayerPhase._release_time(state.player)):
+			last_error = "invalid action form or canonical clock mismatch"
+			return
+		_token += 1
+		_action = action
+		last_error = ""
+		_deliver(_track.advance(0.0))
+		return
 	if not supplied is Dictionary or not supplied.has_all(["manifest", "clip", "facing", "durations"]):
 		last_error = "missing explicit presentation contract"
 		return
