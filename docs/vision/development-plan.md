@@ -97,3 +97,49 @@ Each chat picks its own work with the hourly routine, in this priority:
 7. Its own proposal, posted as PROPOSE first.
 
 The files each chat may touch are set by its claim and by [coordination.md](../codex/coordination.md). Art, art direction and game rules stay with Claude A and Matt.
+
+## Side by side right now (27 Oct 23:45)
+
+Claude's critical path is narrow: the v55 map and town plans, drawing kit pieces, and reviews. Everything else that does not need new art or a decision from Matt goes to Codex now, so Claude's time goes only to work that needs judgement on art and direction.
+
+### Can start now (Codex)
+
+The game already has quests, dialogue, saving, doors, villagers, the HUD and the pause menu (`game/core`, `game/world`, `game/ui`). Y tasks extend these. They never rebuild them. Each Y task starts by auditing what exists and lists it in its PR. Values come from the docs. Where the docs give none, the task uses clearly marked placeholders in data and adds no new rules.
+
+| ID  | Task                                                                                                                           | Builds on                                  |
+| --- | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------ |
+| Y1  | Skill tree and weapon tiers at runtime: points per level, node unlocks, tiers at 8, 16 and 24, with tests                      | `game/data/progression`, progression.md    |
+| Y2  | Weapon lines and evolutions as data and runtime (bow to crossbow, revolver to twin), using the weapon table's current values   | world-and-cast.md, the weapon table Doc    |
+| Y3  | Glint economy: earning, shops, cosmetics and a 50 Glint respec, wired to the economy simulation                                | docs/codex/economy-sim.md                  |
+| Y4  | World map logic: discovery, markers, waystone fast travel and closed routes (the Highgarth pass), with placeholder art         | world-plan.md, the v55 data once approved  |
+| Y5  | Quest and dialogue tooling: a validator for every quest and dialogue file (missing speakers, dead branches, unreachable steps) | `game/core/quests.gd`, `dialogue.gd`       |
+| Y6  | Save versioning and migration, with tests for every save shape so far                                                          | `game/core/save_game.gd`                   |
+| Y7  | Menu, inventory and journal logic (Stardew-style tabs), without new art                                                        | interface.md, `pause_menu.gd`              |
+| Y8  | Day, night and weather clock as data, with hooks for routines (X3)                                                             | living-world-plan.md                       |
+| Y9  | Touch controls and camera on phone-sized viewports, with a 44-point target check                                               | `game/core/inputs.gd`, native-readiness.md |
+| Y10 | Kit concepts: the Crossroads town kit (W0 catalogue format, placement rules, metadata, variants and widths)                    | W0, ground-rules.md, the town plans        |
+| Y11 | Kit concepts: the coast and city kit, including Neon Harbour's retro-future paving                                             | W0, the v55 Neon Harbour notes             |
+| Y12 | Pre-review sheets: one script that renders a PR's changed art beside the gates' numbers, so Claude can review it at a glance   | review:asset, review:scene                 |
+| Y13 | CI and check speed: cache generators, run checks in parallel, keep results byte-identical                                      | C35's work                                 |
+
+Phase 1 (W0 to W7, X1, X6) still comes first for any chat that can take one. Y tasks are next.
+
+### Must wait
+
+| Waits                                            | For                                              | Why                                                    |
+| ------------------------------------------------ | ------------------------------------------------ | ------------------------------------------------------ |
+| X2 journeys, X3 settlement life, X4 region plans | Matt's approval of v55 and the town plans        | They are built on the town plan files                  |
+| X5 Crossroads conversion, building the slice     | W1 to W3 merged, and the Crossroads kit approved | Nothing is placed from unapproved pieces               |
+| Drawing any new biome's pieces                   | That biome's concepts (Y10, Y11) reviewed        | Concepts set the list before Claude draws              |
+| Region rollout                                   | The region's plan and kit approved               | Standards before content                               |
+| Balance numbers                                  | Y1 to Y3 running in the slice                    | Balance needs the systems to measure                   |
+| Phone testing                                    | The slice signed off, and a native build         | Desktop tests are not phone tests                      |
+| House decorating                                 | Y3 and the first interior kit                    | It needs cosmetics to sell and pieces to place         |
+| Acts 2 and 3                                     | Matt's direction on the story                    | Story is his call; Codex may draft outlines as PROPOSE |
+
+### Claude in the same period
+
+1. The v55 map and town plans, then Matt's review.
+2. Drawing the Crossroads town kit from Y10's concepts.
+3. Reviewing and merging Codex PRs with the Y12 sheets.
+4. Cairn, the woodland kit and other open art once Matt answers.
