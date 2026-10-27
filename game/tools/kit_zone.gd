@@ -77,30 +77,118 @@ static func _container(root: Node, name_: String) -> Node2D:
 		node.owner = root
 	return node
 
-static func _valid_rows(rows: Array, width: int, height: int) -> bool:
-	if rows.size() != height:
+static func _valid_rows(rows: Variant, width: int, height: int) -> bool:
+	if not rows is Array or rows.size() != height:
 		return false
 	for row in rows:
 		if not row is String or row.length() != width:
 			return false
 	return true
 
+static func _numbers(value: Variant, count: int, unit: float = 1.0) -> bool:
+	if not value is Array or value.size() != count:
+		return false
+	for number in value:
+		if typeof(number) not in [TYPE_INT, TYPE_FLOAT] or not is_finite(float(number)):
+			return false
+		# Vector2 stores float32 components, including when JSON numbers are doubles.
+		if absf(float(number) * unit) > 3.402823466e38:
+			return false
+	return true
+
+## Structural errors are rejected before constructing any scene nodes. Unknown
+## extension fields stay in the template; placement and approvals belong to W5/W6.
+static func plan_error(plan: Dictionary) -> String:
+	if not plan.get("zone") is String or plan.zone.is_empty():
+		return "zone must be a nonempty string"
+	if plan.zone.capitalize().replace(" ", "").is_empty():
+		return "zone must produce a nonempty scene name"
+	if not plan.get("legend") is Dictionary:
+		return "legend must be an object of string material IDs"
+	for key in plan.legend:
+		if not key is String or not plan.legend[key] is String:
+			return "legend keys and material IDs must be strings"
+	var rows = plan.get("rows")
+	if not rows is Array or rows.is_empty() or not rows[0] is String or rows[0].is_empty():
+		return "rows must be a nonempty array of nonempty equal-width strings"
+	var width: int = rows[0].length()
+	if not _valid_rows(rows, width, rows.size()):
+		return "rows must contain equal-width strings"
+	if plan.get("coordinate_space", "texels") not in ["texels", "cells"]:
+		return "coordinate_space must be texels or cells"
+	if plan.has("lab") and not plan.lab is bool:
+		return "lab must be a boolean"
+	for field in ["tiers", "flow", "variants"]:
+		if plan.has(field) and not _valid_rows(plan[field], width, rows.size()):
+			return "%s must be an array of strings matching rows" % field
+	if plan.has("tiers"):
+		for row in plan.tiers:
+			for glyph in row:
+				if glyph < "0" or glyph > "9":
+					return "tiers must contain digit glyphs"
+	if plan.has("flow"):
+		for row in plan.flow:
+			for glyph in row:
+				if glyph not in [".", " ", "^", ">", "v", "<", "↑", "→", "↓", "←", "↗", "↘", "↙", "↖"]:
+					return "flow contains an unsupported glyph"
+	var kit := TerrainKit.shared()
+	var unit := _units(plan, kit.cell)
+	for field in ["pieces", "doors"]:
+		if not plan.get(field, []) is Array:
+			return "%s must be an array" % field
+		for i in plan.get(field, []).size():
+			var entry = plan[field][i]
+			var path := "%s[%s]" % [field, i]
+			if not entry is Dictionary:
+				return "%s must be an object" % path
+			var name_field := "piece" if field == "pieces" else "id"
+			if not entry.get(name_field) is String or entry[name_field].is_empty():
+				return "%s.%s must be a nonempty string" % [path, name_field]
+			if field == "pieces":
+				if not _numbers(entry.get("at"), 2, unit):
+					return "%s.at must contain two finite coordinates" % path
+				for key in ["id", "variant", "facing", "stage"]:
+					if entry.has(key) and not entry[key] is String:
+						return "%s.%s must be a string" % [path, key]
+				if entry.has("id") and entry.id.is_empty():
+					return "%s.id must be a nonempty string" % path
+			else:
+				if not _numbers(entry.get("rect"), 4, kit.cell):
+					return "%s.rect must contain four finite coordinates" % path
+				if entry.rect[2] <= 0 or entry.rect[3] <= 0:
+					return "%s.rect width and height must be positive" % path
+				if not _numbers([entry.rect[0] + entry.rect[2] / 2.0, entry.rect[1] + entry.rect[3] / 2.0], 2, kit.cell):
+					return "%s.rect centre must contain finite coordinates" % path
+				for key in ["to", "target_zone", "spawn", "target_spawn"]:
+					if entry.has(key) and not entry[key] is String:
+						return "%s.%s must be a string" % [path, key]
+				if (entry.has("to") and entry.has("target_zone") and entry.to != entry.target_zone) or (entry.has("spawn") and entry.has("target_spawn") and entry.spawn != entry.target_spawn):
+					return "%s target aliases disagree" % path
+	if not plan.get("spawns", {}) is Dictionary:
+		return "spawns must be an object of coordinate pairs"
+	for id in plan.get("spawns", {}):
+		if not id is String or id.is_empty() or not _numbers(plan.spawns[id], 2, unit):
+			return "spawns must map nonempty string IDs to two finite coordinates"
+	if plan.has("gameplay_from") and not plan.gameplay_from is String:
+		return "gameplay_from must be a scene path string"
+	if not plan.get("gameplay_removed", {}) is Dictionary:
+		return "gameplay_removed must be an object"
+	for field in ["Spawns", "Doors"]:
+		var removed = plan.get("gameplay_removed", {}).get(field, [])
+		if not removed is Array:
+			return "gameplay_removed.%s must be an array of string IDs" % field
+		for id in removed:
+			if not id is String or id.is_empty():
+				return "gameplay_removed.%s must contain nonempty string IDs" % field
+	return ""
+
 ## Returns an unattached scene, suitable for PackedScene.pack without entering a tree.
 static func scene_from_plan(plan: Dictionary) -> Node2D:
+	if not plan_error(plan).is_empty():
+		return null
 	var kit := TerrainKit.shared()
-	if not plan.get("zone") is String or not plan.get("legend") is Dictionary or not plan.get("rows") is Array:
-		return null
 	var rows: Array = plan.get("rows", [])
-	if rows.is_empty() or not rows[0] is String or rows[0].is_empty():
-		return null
 	var size := Vector2i(rows[0].length(), rows.size())
-	if not _valid_rows(rows, size.x, size.y):
-		return null
-	if plan.get("coordinate_space", "texels") not in ["texels", "cells"]:
-		return null
-	for field in ["tiers", "flow", "variants"]:
-		if plan.has(field) and not _valid_rows(plan[field], size.x, size.y):
-			return null
 	var root := Node2D.new()
 	root.name = String(plan.zone).capitalize().replace(" ", "")
 	root.set_script(load("res://world/zone.gd"))
@@ -166,11 +254,17 @@ static func scene_from_plan(plan: Dictionary) -> Node2D:
 	props.y_sort_enabled = true
 	var unit := _units(plan, kit.cell)
 	for entry in plan.get("pieces", []):
-		var ps := load("res://kit/props/%s.tscn" % entry.piece) as PackedScene
+		var piece_path := "res://kit/props/%s.tscn" % entry.piece
+		var ps := load(piece_path) as PackedScene if ResourceLoader.exists(piece_path) else null
 		if ps == null:
 			root.free()
 			return null
-		var inst := ps.instantiate() as KitPiece
+		var node := ps.instantiate()
+		if not node is KitPiece:
+			node.free()
+			root.free()
+			return null
+		var inst := node as KitPiece
 		inst.name = String(entry.get("id", entry.piece)).validate_node_name()
 		inst.position = Vector2(entry.at[0], entry.at[1]) * unit
 		inst.set_meta(ENTRY_META, entry.duplicate(true))
@@ -185,7 +279,7 @@ static func scene_from_plan(plan: Dictionary) -> Node2D:
 		# Keep the library instance's children owned by that scene, not flattened copies.
 		inst.owner = root
 	if plan.has("gameplay_from"):
-		var packed := load(plan.gameplay_from) as PackedScene
+		var packed := load(plan.gameplay_from) as PackedScene if ResourceLoader.exists(plan.gameplay_from) else null
 		if packed == null:
 			root.free()
 			return null
@@ -209,9 +303,11 @@ static func scene_from_plan(plan: Dictionary) -> Node2D:
 					for child in node.get_children():
 						inherited_ids[name_].append(String(child.name))
 					for id in plan.get("gameplay_removed", {}).get(name_, []):
-						var removed := node.get_node_or_null(NodePath(String(id)))
-						if removed != null:
-							removed.free()
+						# These are literal inherited child IDs, never node paths.
+						for child in node.get_children():
+							if String(child.name) == id:
+								child.free()
+								break
 		root.set_meta(GAMEPLAY_IDS_META, inherited_ids)
 		src.free()
 	_container(root, "Actors").y_sort_enabled = true
@@ -460,7 +556,12 @@ static func _door_entry(door: Node2D, template: Dictionary, cell: int) -> Dictio
 	return entry
 
 func _build(path: String, out: String) -> int:
-	var root := scene_from_plan(_read(path))
+	var plan := _read(path)
+	var problem := plan_error(plan)
+	if not problem.is_empty():
+		printerr("kit_zone: invalid plan ", path, ": ", problem)
+		return 1
+	var root := scene_from_plan(plan)
 	if root == null:
 		printerr("kit_zone: invalid plan ", path)
 		return 1

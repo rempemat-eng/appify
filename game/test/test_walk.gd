@@ -169,6 +169,153 @@ func test_reparented_piece_regains_its_original_collision_layer() -> void:
 	assert_bool(walk.rebuild()).is_true()
 	assert_int(legacy.collision_layer).is_equal(5)
 
+func test_transfer_between_walk_owners_preserves_layer_in_both_rebuild_orders() -> void:
+	for destination_first in [false, true]:
+		var from := await _fixture(Vector2i(3, 2))
+		var to := await _fixture(Vector2i(3, 2))
+		var piece := _piece(from, Vector2(24, 0), {"blocks_move": true, "collision": [0, 0, 24, 24]})
+		var legacy := StaticBody2D.new()
+		legacy.name = "Solid"
+		legacy.collision_layer = 5
+		piece.add_child(legacy)
+		var source_walk := _install(from.ground)
+		var destination_walk := _install(to.ground)
+		piece.reparent(to.root)
+		piece.global_position = to.ground.to_global(Vector2(24, 0))
+		if destination_first:
+			assert_bool(destination_walk.rebuild()).is_true()
+			assert_int(legacy.collision_layer).is_equal(0)
+			assert_bool(source_walk.rebuild()).is_true()
+		else:
+			assert_bool(source_walk.rebuild()).is_true()
+			assert_int(legacy.collision_layer).is_equal(5)
+			assert_bool(destination_walk.rebuild()).is_true()
+		assert_int(legacy.collision_layer).is_equal(0)
+		assert_str(source_walk.rows[0]).is_equal("......")
+		assert_str(destination_walk.rows[0]).is_equal("..##..")
+		destination_walk.free()
+		assert_int(legacy.collision_layer).is_equal(5)
+		source_walk.free()
+		assert_int(legacy.collision_layer).is_equal(5)
+
+func test_destination_owns_transferred_body_when_source_exits_first() -> void:
+	var from := await _fixture(Vector2i(3, 2))
+	var to := await _fixture(Vector2i(3, 2))
+	var piece := _piece(from, Vector2(24, 0), {"blocks_move": true, "collision": [0, 0, 24, 24]})
+	var legacy := StaticBody2D.new()
+	legacy.name = "Solid"
+	legacy.collision_layer = 5
+	piece.add_child(legacy)
+	var source_walk := _install(from.ground)
+	var destination_walk := _install(to.ground)
+	piece.reparent(to.root)
+	piece.global_position = to.ground.to_global(Vector2(24, 0))
+	assert_bool(destination_walk.rebuild()).is_true()
+	source_walk.free()
+	assert_int(legacy.collision_layer).is_equal(0)
+	destination_walk.free()
+	assert_int(legacy.collision_layer).is_equal(5)
+
+func test_return_transfer_reclaims_body_before_old_owner_cleanup() -> void:
+	var from := await _fixture(Vector2i(3, 2))
+	var to := await _fixture(Vector2i(3, 2))
+	var piece := _piece(from, Vector2(24, 0), {"blocks_move": true, "collision": [0, 0, 24, 24]})
+	var legacy := StaticBody2D.new()
+	legacy.name = "Solid"
+	legacy.collision_layer = 5
+	piece.add_child(legacy)
+	var source_walk := _install(from.ground)
+	var destination_walk := _install(to.ground)
+	piece.reparent(to.root)
+	assert_bool(destination_walk.rebuild()).is_true()
+	# Return before either owner's previous tracking entry has been cleaned up.
+	piece.reparent(from.root)
+	assert_bool(source_walk.rebuild()).is_true()
+	destination_walk.free()
+	assert_int(legacy.collision_layer).is_equal(0)
+	source_walk.free()
+	assert_int(legacy.collision_layer).is_equal(5)
+	assert_bool(legacy.has_meta(Walk.BODY_OWNER_META)).is_false()
+	assert_bool(legacy.has_meta(Walk.BODY_LAYER_META)).is_false()
+
+func test_deleted_owned_body_is_safe_to_release() -> void:
+	var fixture := await _fixture(Vector2i(3, 2))
+	var piece := _piece(fixture, Vector2(24, 0), {"blocks_move": true, "collision": [0, 0, 24, 24]})
+	var legacy := StaticBody2D.new()
+	legacy.name = "Solid"
+	piece.add_child(legacy)
+	var walk := _install(fixture.ground)
+	piece.free()
+	assert_bool(walk.rebuild()).is_true()
+	assert_str(walk.rows[0]).is_equal("......")
+	walk.free()
+
+func test_active_walk_disk_round_trip_preserves_original_collision_layer() -> void:
+	var fixture := await _fixture(Vector2i(8, 6))
+	var ground: TerrainGround = fixture.ground
+	ground.owner = fixture.root
+	ground.get_cells_layer().owner = fixture.root
+	ground.get_tiers_layer().owner = fixture.root
+	var piece := (load("res://kit/props/woodland_forest_bench.tscn") as PackedScene).instantiate() as KitPiece
+	piece.name = "SavedBench"
+	fixture.root.add_child(piece)
+	piece.owner = fixture.root
+	piece.global_position = ground.to_global(Vector2(96, 72))
+	var solid := piece.get_node("Solid") as StaticBody2D
+	solid.collision_layer = 5
+	var walk := _install(ground)
+	walk.name = "SavedWalk"
+	walk.owner = fixture.root
+	var expected := walk.rows.duplicate()
+	var packed := PackedScene.new()
+	assert_int(packed.pack(fixture.root)).is_equal(OK)
+	var path := "user://w4-active-walk-round-trip.tscn"
+	assert_int(ResourceSaver.save(packed, path)).is_equal(OK)
+	var saved := ResourceLoader.load(path, "PackedScene", ResourceLoader.CACHE_MODE_IGNORE) as PackedScene
+	assert_object(saved).is_not_null()
+	if saved == null:
+		DirAccess.remove_absolute(path)
+		return
+	# Keep the original scene/owner alive: a saved runtime token must not let it
+	# reserve the newly loaded ground or acquire the newly loaded solid body.
+	var restored := saved.instantiate()
+	add_child(auto_free(restored))
+	var restored_ground := restored.get_node("Ground") as TerrainGround
+	var restored_walk := restored_ground.get_node("SavedWalk") as KitWalk
+	var restored_solid := restored.get_node("SavedBench/Solid") as StaticBody2D
+	# Save the newly loaded scene before its first deferred rebuild. That must
+	# retain the nested body's original layer for a second reload as well.
+	var repacked := PackedScene.new()
+	assert_int(repacked.pack(restored)).is_equal(OK)
+	var second_path := "user://w4-active-walk-second-round-trip.tscn"
+	assert_int(ResourceSaver.save(repacked, second_path)).is_equal(OK)
+	var second_saved := ResourceLoader.load(second_path, "PackedScene", ResourceLoader.CACHE_MODE_IGNORE) as PackedScene
+	assert_object(second_saved).is_not_null()
+	if second_saved != null:
+		var second := second_saved.instantiate()
+		add_child(second)
+		var second_ground := second.get_node("Ground") as TerrainGround
+		var second_walk := second_ground.get_node("SavedWalk") as KitWalk
+		var second_solid := second.get_node("SavedBench/Solid") as StaticBody2D
+		assert_bool(second_walk.rebuild(second_ground)).is_true()
+		assert_that(second_walk.rows).is_equal(expected)
+		second_walk.free()
+		assert_int(second_solid.collision_layer).is_equal(5)
+		second.free()
+	DirAccess.remove_absolute(second_path)
+	assert_bool(restored_walk.rebuild(restored_ground)).is_true()
+	assert_that(restored_walk.rows).is_equal(expected)
+	assert_int(restored_solid.collision_layer).is_equal(0)
+	restored_walk.free()
+	assert_int(restored_solid.collision_layer).is_equal(5)
+	assert_bool(restored_ground.has_meta(Walk.OWNER_META)).is_false()
+	assert_bool(restored_solid.has_meta(Walk.BODY_OWNER_META)).is_false()
+	assert_bool(restored_solid.has_meta(Walk.BODY_LAYER_META)).is_false()
+	assert_int(solid.collision_layer).is_equal(0)
+	walk.free()
+	assert_int(solid.collision_layer).is_equal(5)
+	DirAccess.remove_absolute(path)
+
 func test_install_replaces_only_generated_bodies_and_restores_them() -> void:
 	var fixture := await _fixture(Vector2i(3, 2))
 	var ground: TerrainGround = fixture.ground

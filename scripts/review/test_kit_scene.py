@@ -80,6 +80,22 @@ def cases():
     add('path-into-water', p, ['rules.route_water'])
     p = plan(); p['rows'] = ['......', '......', '~.....', '~.....', '......', '......']; p['pieces'] = [instance('bridge', at=(.5, 5))]; lib = library(); lib['bridge']['gameplay']['deck'] = [-4, -32, 8, 32]
     add('bridge-with-dry-landings', p, lib=lib)
+    p = copy.deepcopy(p); p['tiers'] = ['111111', '111111'] + ['000000'] * 4
+    add('bridge-cannot-connect-different-tiers', p, ['rules.deck'], lib=lib)
+    p = copy.deepcopy(p); p['tiers'] = ['111111'] + ['000000'] * 5
+    add('bridge-cannot-land-on-derived-face', p, ['rules.deck'], lib=lib)
+    p = copy.deepcopy(p); p['tiers'] = ['111111', '111111', '000000', '000000', '111111', '111111']
+    add('bridge-between-equal-banks-over-lower-water', p, lib=lib)
+    p = copy.deepcopy(p); p.pop('tiers'); p['legend']['X'] = 'wall'; _row(p, 1, 'X.....'); mats = materials(); mats['wall'] = dict(id='wall', walkable=False, surface='rock', approval='approved')
+    add('bridge-cannot-land-on-dry-blocked-material', p, ['rules.deck'], lib=lib, mats=mats)
+    p = plan(); _row(p, 2, '..~~..'); _row(p, 3, '..~~..'); p['pieces'] = [instance('bridge', at=(5, 2.5))]; lib = library(); lib['bridge']['gameplay']['deck'] = [-32, -4, 32, 8]
+    add('horizontal-bridge-with-level-landings', p, lib=lib)
+    p = copy.deepcopy(p); p['tiers'] = ['110000'] * 6
+    add('horizontal-bridge-cannot-connect-different-tiers', p, ['rules.deck'], lib=lib)
+    p = plan(); p['rows'] = ['......', '......', '~~....', '~~....', '......', '......']; p['pieces'] = [instance('bridge', at=(1, 5))]; lib = library(); lib['bridge']['gameplay']['deck'] = [-8, -32, 16, 32]
+    add('wide-bridge-with-level-landings', p, lib=lib)
+    p = copy.deepcopy(p); p['tiers'] = ['100000', '100000', '000000', '000000', '000000', '000000']
+    add('wide-bridge-cannot-straddle-bank-tiers', p, ['rules.deck'], lib=lib)
     p = plan(); p['pieces'] = [instance('bridge')]
     add('bridge-without-water', p, ['rules.deck'])
     p = plan(); _row(p, 0, '~.....')
