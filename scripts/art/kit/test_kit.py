@@ -612,5 +612,43 @@ class SeedCompleteness(unittest.TestCase):
             self.assertEqual(target.read_text(), edited)
 
 
+class ConceptIntake(unittest.TestCase):
+    def concept(self, kind):
+        return {'schema': 'napattack.piece/1', 'id': 'concept_fixture', 'name': 'Concept',
+                'kind': kind, 'version': 1, 'approval': {'state': 'concept'}}
+
+    def test_pre_art_concepts_can_defer_runtime_blocks(self):
+        for kind in ('terrain', 'transition', 'prop', 'structure'):
+            with self.subTest(kind=kind):
+                p = self.concept(kind)
+                self.assertEqual(S.errors(p, S.load_schema()) + S.semantic(p), [])
+                p['approval']['state'] = 'candidate'
+                self.assertTrue(S.semantic(p))
+
+    def test_supplied_concept_blocks_are_still_strict(self):
+        p = self.concept('terrain')
+        p['terrain'] = {'typo': True}
+        self.assertTrue(S.errors(p, S.load_schema()))
+
+    def test_concepts_are_valid_outside_and_refused_in_live_library(self):
+        from pathlib import Path
+        from unittest.mock import patch
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmp:
+            live = Path(tmp) / 'live'
+            live.mkdir()
+            outside = Path(tmp) / 'concept_fixture.json'
+            inside = live / 'concept_fixture.json'
+            data = json.dumps(self.concept('terrain'))
+            outside.write_text(data)
+            inside.write_text(data)
+            with patch.object(S, 'PIECES', str(live)):
+                self.assertEqual(S.check([str(outside)])[str(outside)], [])
+                self.assertEqual(S.migrate_files([str(outside)]), {str(outside): False})
+                with self.assertRaisesRegex(ValueError, 'non-buildable/non-placeable'):
+                    S.migrate_files([str(inside)])
+                self.assertTrue(any('non-buildable/non-placeable' in e for e in S.check([str(inside)])[str(inside)]))
+
+
 if __name__ == '__main__':
     unittest.main()

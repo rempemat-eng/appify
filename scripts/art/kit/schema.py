@@ -105,11 +105,13 @@ def semantic(piece: dict) -> list:
     """Rules a JSON Schema cannot say: the kind's own block is present, ids match file names."""
     out = []
     k = piece.get('kind')
-    if k == 'terrain' and 'terrain' not in piece:
+    concept = piece.get('approval', {}).get('state') == 'concept'
+    # Pre-art concepts may defer renderer/runtime blocks; supplied blocks still obey the schema.
+    if not concept and k == 'terrain' and 'terrain' not in piece:
         out.append('a terrain piece needs a "terrain" block')
-    if k == 'transition' and 'transition' not in piece:
+    if not concept and k == 'transition' and 'transition' not in piece:
         out.append('a transition piece needs a "transition" block')
-    if k in ('structure', 'prop') and 'geometry' not in piece:
+    if not concept and k in ('structure', 'prop') and 'geometry' not in piece:
         out.append('a %s needs a "geometry" block' % k)
     a = piece.get('approval', {})
     if a.get('state') == 'approved' and not (a.get('by') and a.get('at')):
@@ -124,6 +126,14 @@ def piece_files(base: str = PIECES) -> list:
     return sorted(out)
 
 
+def _location_errors(piece: dict, path: str) -> list:
+    # Concepts remain review documents even when every optional runtime field is supplied.
+    if piece.get('approval', {}).get('state') == 'concept' and os.path.commonpath(
+            [os.path.abspath(path), os.path.abspath(PIECES)]) == os.path.abspath(PIECES):
+        return ['a concept is non-buildable/non-placeable; keep it outside the live piece library (including labs)']
+    return []
+
+
 def check(paths=None) -> dict:
     schema = load_schema()
     res = {}
@@ -132,6 +142,7 @@ def check(paths=None) -> dict:
         with open(p) as handle:
             piece = json.load(handle)
         e = errors(piece, schema) + semantic(piece)
+        e += _location_errors(piece, p)
         stem = os.path.splitext(os.path.basename(p))[0]
         if piece.get('id') != stem:
             e.append('id %r differs from its file name %r' % (piece.get('id'), stem))
@@ -207,6 +218,9 @@ def migrate_files(paths=None, *, dry_run: bool = False, schema: dict | None = No
         piece = json.loads(original)
         try:
             migrated = migrate_piece(piece, schema, migrations)
+            location = _location_errors(migrated, path)
+            if location:
+                raise ValueError('; '.join(location))
             stem = os.path.splitext(os.path.basename(path))[0]
             if migrated.get('id') != stem:
                 raise ValueError('id %r differs from its file name %r' % (migrated.get('id'), stem))
