@@ -1,0 +1,16 @@
+{
+ "why": "terrain without block",
+ "expect": "needs a \"terrain\" block",
+ "semantic": true,
+ "piece": {
+  "schema": "napattack.piece/1",
+  "id": "bench",
+  "name": "Bench",
+  "kind": "terrain",
+  "version": 1,
+  "approval": {
+   "state": "candidate"
+  },
+  "geometry": {}
+ }
+}

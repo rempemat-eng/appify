@@ -1,0 +1,83 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "woodland_stump",
+ "name": "Stump",
+ "kind": "prop",
+ "biomes": [
+  "woodland"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "stump",
+   "weight": 1.0,
+   "png": "res://zones/woodland/art/stump.png"
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": null,
+  "note": "seeded from game/zones/woodland (art/catalogue holds its asset-gate record)"
+ },
+ "geometry": {
+  "size_px": [
+   87,
+   57
+  ],
+  "size_cells": [
+   4,
+   2
+  ],
+  "z_sort": "foot",
+  "foot": [
+   43.0,
+   57.0
+  ],
+  "collision": {
+   "shape": "rect",
+   "rect": [
+    -6.0,
+    -5.0,
+    12.0,
+    5.0
+   ]
+  }
+ },
+ "placement": {
+  "snap": "cell"
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "ellipse",
+   "size": [
+    8.0,
+    3.0
+   ],
+   "dir": [
+    2.0,
+    -1.0
+   ]
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": null,
+  "eastward_ref": null,
+  "seeded_from": "game/zones/woodland/kit.json",
+  "todo": [
+   "placement.role, requires and forbids (ground-rules.md 6)",
+   "composition role and clearance",
+   "collision and shadow are first guesses by kind (scripts/art/kit/seed_props.py _woodland_body)"
+  ]
+ }
+}

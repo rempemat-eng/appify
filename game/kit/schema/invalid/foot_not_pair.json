@@ -1,0 +1,20 @@
+{
+ "why": "foot not pair",
+ "expect": "fewer than 2 items",
+ "semantic": false,
+ "piece": {
+  "schema": "napattack.piece/1",
+  "id": "bench",
+  "name": "Bench",
+  "kind": "prop",
+  "version": 1,
+  "approval": {
+   "state": "candidate"
+  },
+  "geometry": {
+   "foot": [
+    24
+   ]
+  }
+ }
+}

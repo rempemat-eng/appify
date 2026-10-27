@@ -1,0 +1,22 @@
+{
+ "why": "missing approval",
+ "expect": "missing 'approval'",
+ "semantic": false,
+ "piece": {
+  "schema": "napattack.piece/1",
+  "id": "bench",
+  "name": "Bench",
+  "kind": "prop",
+  "version": 1,
+  "geometry": {
+   "size_cells": [
+    2,
+    1
+   ],
+   "foot": [
+    24,
+    30
+   ]
+  }
+ }
+}

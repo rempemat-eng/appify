@@ -1,0 +1,149 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "crossroads_bush",
+ "name": "Bush",
+ "kind": "prop",
+ "biomes": [
+  "village"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "bush_14",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/bush_14.png"
+  },
+  {
+   "id": "bush_15",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/bush_15.png"
+  },
+  {
+   "id": "bush_16",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/bush_16.png"
+  },
+  {
+   "id": "bush_17",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/bush_17.png"
+  },
+  {
+   "id": "bush_18",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/bush_18.png"
+  },
+  {
+   "id": "bush_22",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/bush_22.png"
+  },
+  {
+   "id": "bush_23",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/bush_23.png"
+  },
+  {
+   "id": "bush_47",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/bush_47.png"
+  },
+  {
+   "id": "bush_48",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/bush_48.png"
+  },
+  {
+   "id": "bush_49",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/bush_49.png"
+  },
+  {
+   "id": "bush_50",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/bush_50.png"
+  },
+  {
+   "id": "bush_51",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/bush_51.png"
+  },
+  {
+   "id": "bush_7",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/bush_7.png"
+  },
+  {
+   "id": "bush_8",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/bush_8.png"
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": null,
+  "note": "seeded from game/zones/crossroads (art/catalogue holds its asset-gate record)"
+ },
+ "geometry": {
+  "size_px": [
+   112,
+   91
+  ],
+  "size_cells": [
+   5,
+   4
+  ],
+  "z_sort": "foot",
+  "foot": [
+   57.0,
+   73.0
+  ],
+  "collision": {
+   "shape": "rect",
+   "rect": [
+    -8.0,
+    -5.0,
+    16.0,
+    6.0
+   ]
+  },
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell"
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "baked"
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": null,
+  "eastward_ref": null,
+  "seeded_from": "game/zones/crossroads/kit.json",
+  "todo": [
+   "placement.role, requires and forbids (ground-rules.md 6)",
+   "composition role and clearance"
+  ]
+ }
+}

@@ -1,0 +1,84 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "woodland_birch",
+ "name": "Birch",
+ "kind": "prop",
+ "biomes": [
+  "woodland"
+ ],
+ "version": 1,
+ "variants": [
+  {
+   "id": "birch",
+   "weight": 1.0,
+   "png": "res://zones/woodland/art/birch.png"
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": null,
+  "note": "seeded from game/zones/woodland (art/catalogue holds its asset-gate record)"
+ },
+ "geometry": {
+  "size_px": [
+   106,
+   204
+  ],
+  "size_cells": [
+   4,
+   8
+  ],
+  "z_sort": "foot",
+  "foot": [
+   53.0,
+   204.0
+  ],
+  "collision": {
+   "shape": "rect",
+   "rect": [
+    -5.0,
+    -5.0,
+    10.0,
+    5.0
+   ]
+  }
+ },
+ "placement": {
+  "snap": "cell",
+  "role": "tree"
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "ellipse",
+   "size": [
+    14.13,
+    5.3
+   ],
+   "dir": [
+    4.24,
+    -2.0
+   ]
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": null,
+  "eastward_ref": null,
+  "seeded_from": "game/zones/woodland/kit.json",
+  "todo": [
+   "placement.role, requires and forbids (ground-rules.md 6)",
+   "composition role and clearance",
+   "collision and shadow are first guesses by kind (scripts/art/kit/seed_props.py _woodland_body)"
+  ]
+ }
+}
