@@ -41,7 +41,7 @@ The logical layer (`Cells`, a Godot `TileMapLayer` with `kit/terrain/materials.t
 Why dual grid:
 
 - **It is the soft grid's own geometry.** `softgrid.py` already traces a plan as "the cell mask laid on the texel grid" (its dual-grid outline). Outlines run along cell lines through the middle of display tiles, so a rounded corner (0.4 cell outer, 0.25 inner) sits whole inside one tile.
-- **It is simpler.** With 16 masks, four variants of each are affordable, and so are many material pairs.
+- **It is simpler.** With 16 masks, lump profiles per crossing are affordable, and so are many material pairs.
 - **It handles several materials at a corner.** Materials are layered by priority (turf over a path, a path over sand). Each higher material is laid over the one below it with its pair's tiles, so three materials meeting at a corner need no special tiles.
 - **Painting is ordinary.** People paint cells, not edge tiles. The editor needs no peering bits.
 
@@ -68,25 +68,26 @@ A transition tile (`scripts/art/kit/edges.py`) does not store colours. Each texe
 | keep | show what is below |
 | upper + delta | the upper material's fill, stepped along its own ramp |
 | delta | what is below, stepped (the shadow under the turf's north lip, a lit row) |
-| absolute | a palette code (a tuft's blades, a pebble straddling the edge, a crumb) |
+| absolute | a palette code (kept for kerbs and banks) |
 
 So one tile fits any position of the fills and any lower material of its class, and light and shade stay on the house ramps (`palette.step`).
 
-The lawn-over-path tiles are `softground.sunken_edge` drawn into operations:
+The lawn-over-path tiles draw `softground.sunken_edge`'s bands along the outline:
 
-- turf lobes over the dirt;
-- the lobes' dark underside and two rows of shadow on the north edge;
-- the lit south lip with tufts leaning out;
-- blades hanging over the north edge;
-- stones straddling the edge;
-- the dirt's crumbs.
+- the turf's dark underside and a row of shadow on the dirt under a north lip;
+- the lit south lip;
+- the shade at a west edge and the lit east turf;
+- the turf thinning (a tone down) at the edge.
 
-**Seams.** Any tile must sit next to any neighbour, so each tile is canonical within 2 texels of its borders.
+**The outline.** Along every cell edge between two materials, the outline is displaced by a lump curve: one of four smooth profiles over the whole cell edge (24 texels, lumps 12 to 24 long and 1 to 3 deep, out, in, out-then-in, leaning), chosen by a hash of that cell edge's place. A cell edge is split between two display tiles at its middle, and both draw the same curve, so lumps run across tile borders with no seam and no flat stretch.
 
-- **The outline lies flat where it crosses a border.** It sits at one of three offsets from the cell line (0, -2 or +2 texels), chosen by a hash of the cell edge it crosses. Two neighbouring tiles share that crossing, so they agree. Because the offsets vary, the rim no longer pinches back to the cell line once a cell, which the first try (one fixed offset) showed as a regular scallop.
-- **Nothing random is placed near a border.** Lobes, tufts, pebbles and crumbs keep 7 texels away from it.
+The curves meet at zero at the grid vertex in a tile's middle, and the corners are rounded there with radius 8 texels outer and inner. That is a third of a cell, the largest that leaves the border strips untouched; eastward-edges.md asks for 0.4 and 0.25. A lane turning reads as a rounded bend, and a single lawn cell inside a path is a rounded turf patch.
 
-A mask's tiles are therefore its crossing profiles times its variants. That gives 9 x 2 tiles per mask, or 81 x 2 for the two diagonal saddles: 540 tiles for a pair (`edges.layout`). `test_kit.py` checks the border strips of every tile against each other.
+A mask's tiles are its crossings' profile combinations: 16 per mask, 256 for the two diagonal saddles, 704 for a pair (`edges.layout`). Everything in a tile follows from its mask and its profiles, and `test_kit.py` checks the border strips of every tile against each other.
+
+**Dressing.** What is random (tufts on the south lip, blades hanging from the north lip, pebbles across the edge) is not in the tiles. It is edge dressing (`scripts/art/kit/dressing.py`): small decals from softground's own tuft and pebble recipes. Each cell edge of a dressed pair gets at most one, chosen by a hash and seated on the lumped outline. The transition's piece sets the density and the decal lists. Godot (`world/terrain/terrain_dressing.gd`) and `compose.py` place them identically.
+
+**Fills per look.** The woodland path is calm packed earth. It uses `fills.dirt` with the clods' joints in the damp sibling at the body's tone, few lit rims and sparse stones. The cobbled look (most joints showing dark) is its own material, `cobble_road`. Ruts follow a route's direction, so they come with the route tool as decals, not with a fill.
 
 ### The renderer
 
@@ -95,12 +96,12 @@ A mask's tiles are therefore its crossing profiles times its variants. That give
 1. Read the four cells round the texel's display tile.
 2. Sort their materials by priority.
 3. Start from the lowest material's fill.
-4. Apply each higher material's tile operations, from the tile chosen by the pair (that material, the one below), the mask of cells at its priority or higher, the crossing profiles and a variant hash.
+4. Apply each higher material's tile operations, from the tile chosen by the pair (that material, the one below), the mask of cells at its priority or higher, and the crossing profiles.
 5. Look up the palette.
 
 `scripts/art/kit/compose.py` is the same algorithm in numpy, so Python sheets, `review:scene` and the tests see the pixels Godot draws. It is live in the editor (`@tool`): paint a cell and the edge redraws at once.
 
-The cost is a few texel fetches per texel, and one draw call. Memory per zone is a cells texture of a few KB, plus the shared kit: about 2.4 MB of fills per 4 materials, and about 1.3 MB per transition once its atlas is decoded.
+The cost is a few texel fetches per texel, and one draw call. Memory per zone is a cells texture of a few KB, plus the shared kit: about 2.4 MB of fills per 4 materials, and about 1.6 MB per transition once its atlas is decoded.
 
 ### What each tile carries (metadata)
 
@@ -174,7 +175,7 @@ A breaking change bumps the version (`napattack.piece/2`), and the build migrate
 | --- | --- |
 | identity | `id`, `name`, `kind`, `biomes`, `variants` (id, weight, png), `version`, `approval` (state candidate, gated, approved, rejected or retired; who, when, against which standard, from which sheet) |
 | `terrain` | `material_id`, `priority`, `fill` painter and args, `walkable`, `surface`, `route`, `water` (body, depth, flow), palette swatch |
-| `transition` | `upper`, `lower` (or `*`), painter and args, `variants`, whose plan is softened |
+| `transition` | `upper`, `lower` (or `*`), painter and args, `variants`, whose plan is softened, `dressing` (density, decals for south, north and side edges) |
 | `geometry` | size in cells and art px, foot anchor, footprint cells (solid), overhang cells (drawn over, walkable behind), height above ground, z-sort rule, collision shape, interaction points (with verb and radius), door cells |
 | `placement` | role (the ground-rules role), allowed and denied ground, tiers, `requires` and `forbids` relations (adjacent, within, on, facing, near, under, at_edge, at_corner, on_anchor, not_on, not_near, not_overlap, each with what, cells and facing), clearance, orientations, snap (cell, half, free), min and max per zone, stage tags (broken, restored, night, season:x, raid), composition role (centre, edge, corner, axis, row, cluster, free) |
 | `rendering` | lit picture, shadow picture, cast shadow (shape, direction, length), contact AO, light (radius, colour, flicker, when), animation clips (loop, frames, reduced-motion fallback, on-screen only), sound cues, day/night and weather variants |
@@ -454,7 +455,7 @@ Matt, 13:43: "consider how chatgpt can help here to conserve claude tokens".
 
 **Task:** render a kit zone headless to an image (a SubViewport at 1:1), then compare it with `compose.render` output written by Python into `game/test/fixtures/kit/`.
 
-**Acceptance:** the kit lab and a fixture with three materials at one corner (once a third material exists) match pixel for pixel, and a deliberately shifted variant hash fails.
+**Acceptance:** the kit lab and a fixture with three materials at one corner (once a third material exists) match pixel for pixel (ground and dressing), and a deliberately shifted profile hash fails.
 
 ### What Claude does next (stage 2 onward, in order)
 

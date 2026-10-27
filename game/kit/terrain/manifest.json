@@ -1,12 +1,207 @@
 {
  "cell": 24,
  "period": 768,
- "variants": 2,
- "profiles": [
-  0.0,
-  -2.0,
-  2.0
+ "variants": 1,
+ "profiles": 4,
+ "curves": [
+  [
+   0.0068,
+   0.0609,
+   0.1653,
+   0.313,
+   0.4939,
+   0.6956,
+   0.9044,
+   1.1061,
+   1.287,
+   1.4347,
+   1.5391,
+   1.5932,
+   1.5932,
+   1.5391,
+   1.4347,
+   1.287,
+   1.1061,
+   0.9044,
+   0.6956,
+   0.4939,
+   0.313,
+   0.1653,
+   0.0609,
+   0.0068
+  ],
+  [
+   -0.0111,
+   -0.099,
+   -0.2686,
+   -0.5086,
+   -0.8025,
+   -1.1303,
+   -1.4697,
+   -1.7975,
+   -2.0914,
+   -2.3314,
+   -2.501,
+   -2.5889,
+   -2.5889,
+   -2.501,
+   -2.3314,
+   -2.0914,
+   -1.7975,
+   -1.4697,
+   -1.1303,
+   -0.8025,
+   -0.5086,
+   -0.2686,
+   -0.099,
+   -0.0111
+  ],
+  [
+   0.0734,
+   0.3719,
+   0.7593,
+   1.1608,
+   1.515,
+   1.7711,
+   1.8913,
+   1.8534,
+   1.6529,
+   1.3033,
+   0.8338,
+   0.2869,
+   -0.2869,
+   -0.8338,
+   -1.3033,
+   -1.6529,
+   -1.8534,
+   -1.8913,
+   -1.7711,
+   -1.515,
+   -1.1608,
+   -0.7593,
+   -0.3719,
+   -0.0734
+  ],
+  [
+   0.0001,
+   0.0039,
+   0.0198,
+   0.0579,
+   0.1283,
+   0.2405,
+   0.4019,
+   0.6168,
+   0.8845,
+   1.1984,
+   1.5442,
+   1.9003,
+   2.2381,
+   2.5237,
+   2.7217,
+   2.7997,
+   2.734,
+   2.5154,
+   2.1547,
+   1.6854,
+   1.1629,
+   0.6601,
+   0.2577,
+   0.0302
+  ]
  ],
+ "decals": {
+  "tuft_0": {
+   "png": "decal_tuft_0.png",
+   "anchor": [
+    8,
+    15
+   ]
+  },
+  "tuft_1": {
+   "png": "decal_tuft_1.png",
+   "anchor": [
+    8,
+    15
+   ]
+  },
+  "tuft_2": {
+   "png": "decal_tuft_2.png",
+   "anchor": [
+    8,
+    15
+   ]
+  },
+  "tuft_3": {
+   "png": "decal_tuft_3.png",
+   "anchor": [
+    8,
+    15
+   ]
+  },
+  "tuft_4": {
+   "png": "decal_tuft_4.png",
+   "anchor": [
+    8,
+    15
+   ]
+  },
+  "tuft_5": {
+   "png": "decal_tuft_5.png",
+   "anchor": [
+    8,
+    15
+   ]
+  },
+  "blades_0": {
+   "png": "decal_blades_0.png",
+   "anchor": [
+    5,
+    0
+   ]
+  },
+  "blades_1": {
+   "png": "decal_blades_1.png",
+   "anchor": [
+    5,
+    0
+   ]
+  },
+  "blades_2": {
+   "png": "decal_blades_2.png",
+   "anchor": [
+    5,
+    0
+   ]
+  },
+  "pebble_0": {
+   "png": "decal_pebble_0.png",
+   "anchor": [
+    8,
+    8
+   ]
+  },
+  "pebble_1": {
+   "png": "decal_pebble_1.png",
+   "anchor": [
+    8,
+    8
+   ]
+  },
+  "pebble_2": {
+   "png": "decal_pebble_2.png",
+   "anchor": [
+    8,
+    8
+   ]
+  },
+  "pebble_3": {
+   "png": "decal_pebble_3.png",
+   "anchor": [
+    8,
+    8
+   ]
+  }
+ },
  "atlas_cols": 64,
  "lut": "lut.png",
  "palette": "palette.png",
@@ -32,7 +227,7 @@
     96,
     96
    ],
-   "hash": "190399011de6e0e6"
+   "hash": "bc014cca98972876"
   },
   {
    "id": "path",
@@ -48,7 +243,23 @@
     96,
     96
    ],
-   "hash": "ca3fcf47f5ef9f74"
+   "hash": "1e7fb0e754484593"
+  },
+  {
+   "id": "cobble_road",
+   "material_id": 3,
+   "priority": 20,
+   "fill": "fill_cobble_road.png",
+   "walkable": true,
+   "surface": "earth",
+   "route": true,
+   "water": null,
+   "approval": "candidate",
+   "swatch": [
+    96,
+    96
+   ],
+   "hash": "09140ca0415f8bfd"
   }
  ],
  "transitions": [
@@ -57,9 +268,35 @@
    "upper": "lawn",
    "lower": "path",
    "png": "over_lawn_over_path.png",
-   "variants": 2,
+   "variants": 1,
+   "dressing": {
+    "density": 0.6,
+    "south": [
+     "tuft_0",
+     "tuft_1",
+     "tuft_2",
+     "tuft_3",
+     "tuft_4",
+     "tuft_5",
+     "pebble_0"
+    ],
+    "north": [
+     "blades_0",
+     "blades_1",
+     "blades_2",
+     "pebble_1",
+     "pebble_2"
+    ],
+    "side": [
+     "pebble_0",
+     "pebble_1",
+     "pebble_3",
+     "tuft_2",
+     "tuft_4"
+    ]
+   },
    "approval": "candidate",
-   "hash": "fba8d80a2285adca"
+   "hash": "4966178f3138f6ee"
   }
  ]
 }

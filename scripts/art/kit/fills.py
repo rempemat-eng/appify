@@ -193,9 +193,13 @@ def lawn(seed: int = 977, P: int = PERIOD, fam: str = 'grass', base: int = 3, lu
 # packed earth (softground.dirt with the mask everywhere, periodic)
 # ------------------------------------------------------------------------------------------------
 def dirt(seed: int = 43, P: int = PERIOD, fam: str = 'path', cell: float = 12.0,
-         stones: float = 1.0) -> np.ndarray:
+         stones: float = 1.0, joints: float = 0.28, lit: float = 0.4, blades: float = 1.0,
+         soft_joints: bool = False) -> np.ndarray:
     """softground.dirt's clods, dry and damp patches, dry blades and pebble clusters on a torus.
-    The crumbs along an edge belong to the transition (edges.py), not to the fill."""
+    The crumbs along an edge belong to the transition (edges.py), not to the fill. `joints` is the
+    slow field's threshold above which the gaps between clods show (softground's 0.28 shows most:
+    a cobbled look, kept for the cobble road; 0.62 shows a few soft joints in drifts, the calm
+    packed earth of the swatches), `lit` the share of clods without a lit rim."""
     rng = np.random.default_rng(seed)
     with periodic_noise(P):
         yy, xx = np.mgrid[0:P, 0:P]
@@ -226,15 +230,22 @@ def dirt(seed: int = 43, P: int = PERIOD, fam: str = 'path', cell: float = 12.0,
         vy = (yy + 0.5 - pts[cid, 1] + P / 2) % P - P / 2
         rr = cell * 0.5 * (0.86 + 0.22 * nz(P, 5.0, seed + 11))
         gap = (d1 > rr) | ((d2 - d1) < 1.3)
-        show = nz(P, 26.0, seed + 7) > 0.28
+        show = nz(P, 26.0, seed + 7) > joints
         t[gap & show] = 2
-        hi = ~gap & ((vx * 0.6 + vy * 0.8) < -0.42 * rr) & (d1 > 0.42 * rr) & (h > 0.4)
+        if soft_joints:
+            # the hidden joints still part the clods, in the damp sibling at the body's tone: the
+            # clods read as packed earth, never as cobbles or as cracks breaking off in drifts
+            hid = gap & ~show
+            base_ = hid & (famc == FI[fam])
+            famc[hid & (famc == FI[fam + '_warm'])] = FI[fam]
+            famc[base_] = FI[fam + '_cool']
+        hi = ~gap & ((vx * 0.6 + vy * 0.8) < -0.42 * rr) & (d1 > 0.42 * rr) & (h > lit)
         t[hi] = 4
         cv = (famc * 8 + t).astype(np.int32)
     T = Torus(cv)
     c_ = T.cv
     # dry blades blown onto the dirt
-    for _ in range(P * P // 1800):
+    for _ in range(int(P * P / 1800 * blades)):
         y, x = int(rng.integers(0, P)), int(rng.integers(0, P))
         L = int(rng.integers(3, 7))
         d_ = 1 if rng.random() < 0.5 else -1

@@ -27,6 +27,10 @@ func _ready() -> void:
 		cells.tile_set = kit.tileset
 		if not cells.changed.is_connected(_rebuild):
 			cells.changed.connect(_rebuild)
+	if get_node_or_null("Dressing") == null:
+		var d := TerrainDressing.new()
+		d.name = "Dressing"
+		add_child(d)   # not owned: rebuilt from the cells on every load, never saved in the scene
 	_apply_cells_visibility()
 	_rebuild()
 
@@ -102,6 +106,10 @@ func _rebuild() -> void:
 	_mat.set_shader_parameter("cells_tex", _cells_tex)
 	_mat.set_shader_parameter("grid", grid_size)
 	queue_redraw()
+	var dressing := get_node_or_null("Dressing") as TerrainDressing
+	if dressing != null:
+		dressing.ground = self
+		dressing.queue_redraw()
 
 func _draw() -> void:
 	if kit != null:

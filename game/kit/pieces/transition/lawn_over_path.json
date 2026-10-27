@@ -3,15 +3,64 @@
   "id": "lawn_over_path",
   "name": "Turf over a sunken path",
   "kind": "transition",
-  "biomes": ["valley", "woodland", "village"],
+  "biomes": [
+    "valley",
+    "woodland",
+    "village"
+  ],
   "version": 1,
-  "approval": {"state": "candidate", "by": null, "at": null, "standard": "eastward-edges.md 5.1, 1.5a (path turns 0.4 / 0.25 cell), review.edges ragged_edge and corner_radius", "note": "softground.sunken_edge on the dual grid"},
+  "approval": {
+    "state": "candidate",
+    "by": null,
+    "at": null,
+    "standard": "eastward-edges.md 5.1, 1.5a (path turns 0.4 / 0.25 cell), review.edges ragged_edge and corner_radius",
+    "note": "softground.sunken_edge's bands on the dual grid; lumps per cell edge (edges.PROFILES), tufts and pebbles as dressing decals"
+  },
   "transition": {
     "upper": "lawn",
     "lower": "path",
-    "painter": {"module": "scripts.art.kit.edges", "fn": "sunken", "args": {"lobes": 1.0, "tufts": 1.0, "stones": 1.0, "crumbs": true}},
-    "variants": 2,
-    "shape": "lower"
+    "painter": {
+      "module": "scripts.art.kit.edges",
+      "fn": "sunken",
+      "args": {
+        "fray": true
+      }
+    },
+    "variants": 1,
+    "shape": "lower",
+    "dressing": {
+      "density": 0.6,
+      "south": [
+        "tuft_0",
+        "tuft_1",
+        "tuft_2",
+        "tuft_3",
+        "tuft_4",
+        "tuft_5",
+        "pebble_0"
+      ],
+      "north": [
+        "blades_0",
+        "blades_1",
+        "blades_2",
+        "pebble_1",
+        "pebble_2"
+      ],
+      "side": [
+        "pebble_0",
+        "pebble_1",
+        "pebble_3",
+        "tuft_2",
+        "tuft_4"
+      ]
+    }
   },
-  "audit": {"painter": {"module": "scripts.art.native.softground", "fn": "sunken_edge", "args": {}}, "eastward_ref": "Eastward 12 and 13, crops 10-grass-dirt"}
+  "audit": {
+    "painter": {
+      "module": "scripts.art.native.softground",
+      "fn": "sunken_edge",
+      "args": {}
+    },
+    "eastward_ref": "Eastward 12 and 13, crops 10-grass-dirt"
+  }
 }

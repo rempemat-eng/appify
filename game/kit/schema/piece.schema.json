@@ -4,242 +4,919 @@
   "title": "A world-editor piece (docs/world-editor.md, \"Piece schema\")",
   "description": "Everything the editor, the validator, the game and the review gates know about one placeable part of the world: a terrain material, a transition, a tier part, water, a structure, a prop, a decal, an effect, a spawn or a trigger. Version 1. Unknown keys are refused so a typo cannot pass silently; add a key here first.",
   "type": "object",
-  "required": ["schema", "id", "name", "kind", "version", "approval"],
+  "required": [
+    "schema",
+    "id",
+    "name",
+    "kind",
+    "version",
+    "approval"
+  ],
   "additionalProperties": false,
   "properties": {
-    "schema": {"const": "napattack.piece/1"},
-    "id": {"$ref": "#/$defs/ident"},
-    "name": {"type": "string", "minLength": 1},
-    "kind": {"enum": ["terrain", "transition", "tier", "water", "structure", "prop", "decal", "effect", "spawn", "trigger"]},
-    "biomes": {"type": "array", "items": {"type": "string"}},
-    "version": {"type": "integer", "minimum": 1},
+    "schema": {
+      "const": "napattack.piece/1"
+    },
+    "id": {
+      "$ref": "#/$defs/ident"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "kind": {
+      "enum": [
+        "terrain",
+        "transition",
+        "tier",
+        "water",
+        "structure",
+        "prop",
+        "decal",
+        "effect",
+        "spawn",
+        "trigger"
+      ]
+    },
+    "biomes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
     "variants": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["id"],
+        "required": [
+          "id"
+        ],
         "additionalProperties": false,
         "properties": {
-          "id": {"type": "string"},
-          "weight": {"type": "number", "minimum": 0},
-          "png": {"type": "string"},
-          "note": {"type": "string"}
+          "id": {
+            "type": "string"
+          },
+          "weight": {
+            "type": "number",
+            "minimum": 0
+          },
+          "png": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          }
         }
       }
     },
     "approval": {
       "type": "object",
-      "required": ["state"],
+      "required": [
+        "state"
+      ],
       "additionalProperties": false,
       "description": "The library gate (Matt, 27 Oct 13:43): only an approved piece can be placed by the editor. candidate = drawn, not yet through the gate; gated = review:asset, the ground rules on a test layout and the 3x sheet all pass, waiting for Matt; approved = Matt approved it (a new material needs Matt; a variant of an approved piece needs the gate and a reviewer); rejected; retired (kept for old zones, never placed again).",
       "properties": {
-        "state": {"enum": ["candidate", "gated", "approved", "rejected", "retired"]},
-        "by": {"type": ["string", "null"]},
-        "at": {"type": ["string", "null"]},
-        "standard": {"type": ["string", "null"], "description": "What it was judged against, e.g. eastward-edges.md and art-style.md at a commit."},
-        "sheet": {"type": ["string", "null"], "description": "The 3x approval sheet it was approved from."},
-        "note": {"type": "string"}
+        "state": {
+          "enum": [
+            "candidate",
+            "gated",
+            "approved",
+            "rejected",
+            "retired"
+          ]
+        },
+        "by": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "standard": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "What it was judged against, e.g. eastward-edges.md and art-style.md at a commit."
+        },
+        "sheet": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The 3x approval sheet it was approved from."
+        },
+        "note": {
+          "type": "string"
+        }
       }
     },
-    "terrain": {"$ref": "#/$defs/terrain"},
-    "transition": {"$ref": "#/$defs/transition"},
-    "geometry": {"$ref": "#/$defs/geometry"},
-    "placement": {"$ref": "#/$defs/placement"},
-    "rendering": {"$ref": "#/$defs/rendering"},
-    "function": {"$ref": "#/$defs/function"},
-    "story": {"$ref": "#/$defs/story"},
-    "gameplay": {"$ref": "#/$defs/gameplay"},
-    "audit": {"$ref": "#/$defs/audit"}
+    "terrain": {
+      "$ref": "#/$defs/terrain"
+    },
+    "transition": {
+      "$ref": "#/$defs/transition"
+    },
+    "geometry": {
+      "$ref": "#/$defs/geometry"
+    },
+    "placement": {
+      "$ref": "#/$defs/placement"
+    },
+    "rendering": {
+      "$ref": "#/$defs/rendering"
+    },
+    "function": {
+      "$ref": "#/$defs/function"
+    },
+    "story": {
+      "$ref": "#/$defs/story"
+    },
+    "gameplay": {
+      "$ref": "#/$defs/gameplay"
+    },
+    "audit": {
+      "$ref": "#/$defs/audit"
+    }
   },
   "$defs": {
-    "ident": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
-    "cellxy": {"type": "array", "items": {"type": "integer"}, "minItems": 2, "maxItems": 2},
-    "pxxy": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2},
-    "ref": {"type": "string", "description": "A data id elsewhere in the game (a quest, a dialogue speaker, an item, a scene path)."},
+    "ident": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$"
+    },
+    "cellxy": {
+      "type": "array",
+      "items": {
+        "type": "integer"
+      },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "pxxy": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "ref": {
+      "type": "string",
+      "description": "A data id elsewhere in the game (a quest, a dialogue speaker, an item, a scene path)."
+    },
     "painter": {
       "type": "object",
-      "required": ["module", "fn"],
+      "required": [
+        "module",
+        "fn"
+      ],
       "additionalProperties": false,
       "properties": {
-        "module": {"type": "string"},
-        "fn": {"type": "string"},
-        "args": {"type": "object"}
+        "module": {
+          "type": "string"
+        },
+        "fn": {
+          "type": "string"
+        },
+        "args": {
+          "type": "object"
+        }
       }
     },
     "terrain": {
       "type": "object",
       "description": "A ground material: one value per logical cell.",
-      "required": ["material_id", "priority", "fill", "walkable", "surface"],
+      "required": [
+        "material_id",
+        "priority",
+        "fill",
+        "walkable",
+        "surface"
+      ],
       "additionalProperties": false,
       "properties": {
-        "material_id": {"type": "integer", "minimum": 1, "maximum": 255, "description": "Stable: a zone's cells store it. Never reuse a retired id."},
-        "priority": {"type": "integer", "minimum": 0, "maximum": 255, "description": "Which material lies over which where they meet: higher is laid over lower (turf over a path, a path over water's bank never)."},
-        "fill": {"$ref": "#/$defs/painter"},
-        "walkable": {"type": "boolean"},
-        "surface": {"enum": ["turf", "earth", "stone", "paving", "sand", "snow", "rock", "water", "wood", "void"], "description": "Footsteps, routes and the ground rules read it."},
-        "route": {"type": "boolean", "description": "A route surface (path, road, paving): benches and lamps relate to its edge."},
-        "water": {"type": ["object", "null"], "additionalProperties": false, "properties": {
-          "body": {"enum": ["still", "stream", "river", "sea"]},
-          "depth": {"enum": ["shallow", "deep"]},
-          "flow": {"type": "boolean", "description": "Cells carry a flow direction (the validator checks it runs downhill)."}
-        }},
-        "swatch": {"$ref": "#/$defs/pxxy", "description": "Where in the fill the editor palette's swatch is cut (texels)."}
+        "material_id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 255,
+          "description": "Stable: a zone's cells store it. Never reuse a retired id."
+        },
+        "priority": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 255,
+          "description": "Which material lies over which where they meet: higher is laid over lower (turf over a path, a path over water's bank never)."
+        },
+        "fill": {
+          "$ref": "#/$defs/painter"
+        },
+        "walkable": {
+          "type": "boolean"
+        },
+        "surface": {
+          "enum": [
+            "turf",
+            "earth",
+            "stone",
+            "paving",
+            "sand",
+            "snow",
+            "rock",
+            "water",
+            "wood",
+            "void"
+          ],
+          "description": "Footsteps, routes and the ground rules read it."
+        },
+        "route": {
+          "type": "boolean",
+          "description": "A route surface (path, road, paving): benches and lamps relate to its edge."
+        },
+        "water": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "body": {
+              "enum": [
+                "still",
+                "stream",
+                "river",
+                "sea"
+              ]
+            },
+            "depth": {
+              "enum": [
+                "shallow",
+                "deep"
+              ]
+            },
+            "flow": {
+              "type": "boolean",
+              "description": "Cells carry a flow direction (the validator checks it runs downhill)."
+            }
+          }
+        },
+        "swatch": {
+          "$ref": "#/$defs/pxxy",
+          "description": "Where in the fill the editor palette's swatch is cut (texels)."
+        }
       }
     },
     "transition": {
       "type": "object",
       "description": "The dual-grid tiles where one material lies over another.",
-      "required": ["upper", "lower", "painter", "variants"],
+      "required": [
+        "upper",
+        "lower",
+        "painter",
+        "variants"
+      ],
       "additionalProperties": false,
       "properties": {
-        "upper": {"$ref": "#/$defs/ident"},
-        "lower": {"type": "string", "description": "A material id, or '*' for any lower material without its own pair."},
-        "painter": {"$ref": "#/$defs/painter"},
-        "variants": {"type": "integer", "minimum": 1, "maximum": 16},
-        "shape": {"enum": ["lower", "upper"], "description": "Whose plan is softened (a path network's turns are the path's)."}
+        "upper": {
+          "$ref": "#/$defs/ident"
+        },
+        "lower": {
+          "type": "string",
+          "description": "A material id, or '*' for any lower material without its own pair."
+        },
+        "painter": {
+          "$ref": "#/$defs/painter"
+        },
+        "variants": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 16
+        },
+        "shape": {
+          "enum": [
+            "lower",
+            "upper"
+          ],
+          "description": "Whose plan is softened (a path network's turns are the path's)."
+        },
+        "dressing": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "description": "Edge dressing (scripts/art/kit/dressing.py): at most one decal per cell edge, `density` the share of cell edges that get one, the decal ids to choose from where the upper material lies south of the edge, north of it, or beside it.",
+          "properties": {
+            "density": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "south": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "north": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "side": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
       }
     },
     "geometry": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "size_cells": {"$ref": "#/$defs/cellxy"},
-        "size_px": {"$ref": "#/$defs/pxxy"},
-        "foot": {"$ref": "#/$defs/pxxy", "description": "The foot anchor in the sprite, texels from its top left; it sits on the cell (snap)."},
-        "footprint": {"type": "array", "items": {"$ref": "#/$defs/cellxy"}, "description": "Solid cells, relative to the foot's cell."},
-        "overhang": {"type": "array", "items": {"$ref": "#/$defs/cellxy"}, "description": "Drawn over but walkable behind (a crown, an eave)."},
-        "height_px": {"type": "number", "minimum": 0, "description": "Height above the ground at the foot (art px at density 3)."},
-        "z_sort": {"enum": ["foot", "ground", "under", "above"]},
+        "size_cells": {
+          "$ref": "#/$defs/cellxy"
+        },
+        "size_px": {
+          "$ref": "#/$defs/pxxy"
+        },
+        "foot": {
+          "$ref": "#/$defs/pxxy",
+          "description": "The foot anchor in the sprite, texels from its top left; it sits on the cell (snap)."
+        },
+        "footprint": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/cellxy"
+          },
+          "description": "Solid cells, relative to the foot's cell."
+        },
+        "overhang": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/cellxy"
+          },
+          "description": "Drawn over but walkable behind (a crown, an eave)."
+        },
+        "height_px": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Height above the ground at the foot (art px at density 3)."
+        },
+        "z_sort": {
+          "enum": [
+            "foot",
+            "ground",
+            "under",
+            "above"
+          ]
+        },
         "collision": {
-          "type": ["object", "null"],
+          "type": [
+            "object",
+            "null"
+          ],
           "additionalProperties": false,
           "properties": {
-            "shape": {"enum": ["rect", "circle", "cells", "none"]},
-            "rect": {"type": "array", "items": {"type": "number"}, "minItems": 4, "maxItems": 4},
-            "radius": {"type": "number"}
+            "shape": {
+              "enum": [
+                "rect",
+                "circle",
+                "cells",
+                "none"
+              ]
+            },
+            "rect": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 4,
+              "maxItems": 4
+            },
+            "radius": {
+              "type": "number"
+            }
           }
         },
-        "interaction_points": {"type": "array", "items": {
-          "type": "object", "required": ["id", "at"], "additionalProperties": false,
-          "properties": {"id": {"type": "string"}, "at": {"$ref": "#/$defs/pxxy"}, "verb": {"type": "string"}, "radius": {"type": "number"}}
-        }},
-        "door_cells": {"type": "array", "items": {"$ref": "#/$defs/cellxy"}}
+        "interaction_points": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "at"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "at": {
+                "$ref": "#/$defs/pxxy"
+              },
+              "verb": {
+                "type": "string"
+              },
+              "radius": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "door_cells": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/cellxy"
+          }
+        }
       }
     },
     "relation": {
       "type": "object",
-      "required": ["rel"],
+      "required": [
+        "rel"
+      ],
       "additionalProperties": false,
       "properties": {
-        "rel": {"enum": ["adjacent", "within", "on", "facing", "near", "under", "at_edge", "at_corner", "on_anchor", "not_on", "not_near", "not_overlap"]},
-        "what": {"type": "string", "description": "A material, a surface, a route edge, a tier edge, a piece id, a role, an anchor kind (hearth)."},
-        "cells": {"type": "number", "minimum": 0},
-        "facing": {"type": "boolean"},
-        "note": {"type": "string"}
+        "rel": {
+          "enum": [
+            "adjacent",
+            "within",
+            "on",
+            "facing",
+            "near",
+            "under",
+            "at_edge",
+            "at_corner",
+            "on_anchor",
+            "not_on",
+            "not_near",
+            "not_overlap"
+          ]
+        },
+        "what": {
+          "type": "string",
+          "description": "A material, a surface, a route edge, a tier edge, a piece id, a role, an anchor kind (hearth)."
+        },
+        "cells": {
+          "type": "number",
+          "minimum": 0
+        },
+        "facing": {
+          "type": "boolean"
+        },
+        "note": {
+          "type": "string"
+        }
       }
     },
     "placement": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "role": {"type": "string", "description": "The ground-rules role (seat, light, hearth, marker, clutter, tree, structure ...)."},
-        "ground": {"type": "object", "additionalProperties": false, "properties": {
-          "allow": {"type": "array", "items": {"type": "string"}},
-          "deny": {"type": "array", "items": {"type": "string"}}
-        }},
-        "tiers": {"type": "array", "items": {"type": "integer"}},
-        "requires": {"type": "array", "items": {"$ref": "#/$defs/relation"}},
-        "forbids": {"type": "array", "items": {"$ref": "#/$defs/relation"}},
-        "clearance": {"type": "number", "minimum": 0, "description": "Cells kept free round the footprint."},
-        "orientations": {"type": "array", "items": {"enum": ["s", "n", "e", "w", "any"]}},
-        "snap": {"enum": ["cell", "half", "free"]},
-        "per_zone": {"type": "object", "additionalProperties": false, "properties": {"min": {"type": "integer"}, "max": {"type": "integer"}}},
-        "stages": {"type": "array", "items": {"type": "string", "description": "broken, restored, night, day, season:<name>, raid"}},
-        "composition": {"enum": ["centre", "edge", "corner", "axis", "free", "row", "cluster"]}
+        "role": {
+          "type": "string",
+          "description": "The ground-rules role (seat, light, hearth, marker, clutter, tree, structure ...)."
+        },
+        "ground": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "allow": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "deny": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "tiers": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "requires": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relation"
+          }
+        },
+        "forbids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relation"
+          }
+        },
+        "clearance": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Cells kept free round the footprint."
+        },
+        "orientations": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "s",
+              "n",
+              "e",
+              "w",
+              "any"
+            ]
+          }
+        },
+        "snap": {
+          "enum": [
+            "cell",
+            "half",
+            "free"
+          ]
+        },
+        "per_zone": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "min": {
+              "type": "integer"
+            },
+            "max": {
+              "type": "integer"
+            }
+          }
+        },
+        "stages": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "broken, restored, night, day, season:<name>, raid"
+          }
+        },
+        "composition": {
+          "enum": [
+            "centre",
+            "edge",
+            "corner",
+            "axis",
+            "free",
+            "row",
+            "cluster"
+          ]
+        }
       }
     },
     "rendering": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "lit": {"type": "string"},
-        "shadow_png": {"type": "string"},
-        "cast_shadow": {"type": ["object", "null"], "additionalProperties": false, "properties": {
-          "shape": {"enum": ["ellipse", "sprite", "baked", "none"]},
-          "dir": {"$ref": "#/$defs/pxxy"},
-          "length": {"type": "number"}
-        }},
-        "contact_ao": {"type": "boolean"},
-        "light": {"type": ["object", "null"], "additionalProperties": false, "properties": {
-          "radius": {"type": "number"}, "colour": {"type": "string"}, "flicker": {"type": "number"}, "when": {"type": "string"}
-        }},
-        "animations": {"type": "array", "items": {
-          "type": "object", "required": ["clip"], "additionalProperties": false,
-          "properties": {"clip": {"type": "string"}, "loop": {"type": "boolean"}, "frames": {"type": "integer"}, "reduced_motion": {"type": "string", "description": "hold:<frame> or off"}, "on_screen_only": {"type": "boolean"}}
-        }},
-        "sounds": {"type": "array", "items": {"type": "string"}},
-        "daynight": {"type": "object"},
-        "weather": {"type": "object"}
+        "lit": {
+          "type": "string"
+        },
+        "shadow_png": {
+          "type": "string"
+        },
+        "cast_shadow": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "shape": {
+              "enum": [
+                "ellipse",
+                "sprite",
+                "baked",
+                "none"
+              ]
+            },
+            "dir": {
+              "$ref": "#/$defs/pxxy"
+            },
+            "length": {
+              "type": "number"
+            }
+          }
+        },
+        "contact_ao": {
+          "type": "boolean"
+        },
+        "light": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "radius": {
+              "type": "number"
+            },
+            "colour": {
+              "type": "string"
+            },
+            "flicker": {
+              "type": "number"
+            },
+            "when": {
+              "type": "string"
+            }
+          }
+        },
+        "animations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "clip"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "clip": {
+                "type": "string"
+              },
+              "loop": {
+                "type": "boolean"
+              },
+              "frames": {
+                "type": "integer"
+              },
+              "reduced_motion": {
+                "type": "string",
+                "description": "hold:<frame> or off"
+              },
+              "on_screen_only": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "sounds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "daynight": {
+          "type": "object"
+        },
+        "weather": {
+          "type": "object"
+        }
       }
     },
     "function": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "interact": {"type": ["object", "null"], "additionalProperties": false, "properties": {
-          "verb": {"enum": ["enter", "use", "read", "sit", "open", "talk", "harvest", "forge", "rest", "restore", "look"]},
-          "triggers": {"type": "array", "items": {
-            "type": "object", "required": ["type"], "additionalProperties": false,
-            "properties": {"type": {"enum": ["scene", "menu", "quest", "shop", "dialogue", "flag", "restore"]}, "ref": {"$ref": "#/$defs/ref"}}
-          }}
-        }},
-        "saves": {"type": "array", "items": {"type": "string"}},
-        "costs": {"type": "array", "items": {"$ref": "#/$defs/ref"}},
-        "yields": {"type": "array", "items": {"$ref": "#/$defs/ref"}},
-        "raid": {"type": ["object", "null"], "additionalProperties": false, "properties": {
-          "destructible": {"type": "boolean"}, "defended": {"type": "boolean"}, "repairable": {"type": "boolean"}
-        }}
+        "interact": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "verb": {
+              "enum": [
+                "enter",
+                "use",
+                "read",
+                "sit",
+                "open",
+                "talk",
+                "harvest",
+                "forge",
+                "rest",
+                "restore",
+                "look"
+              ]
+            },
+            "triggers": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "type"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "scene",
+                      "menu",
+                      "quest",
+                      "shop",
+                      "dialogue",
+                      "flag",
+                      "restore"
+                    ]
+                  },
+                  "ref": {
+                    "$ref": "#/$defs/ref"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "saves": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "costs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          }
+        },
+        "yields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          }
+        },
+        "raid": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "destructible": {
+              "type": "boolean"
+            },
+            "defended": {
+              "type": "boolean"
+            },
+            "repairable": {
+              "type": "boolean"
+            }
+          }
+        }
       }
     },
     "story": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "quests": {"type": "array", "items": {"$ref": "#/$defs/ref"}},
-        "dialogue": {"type": "array", "items": {"$ref": "#/$defs/ref"}},
-        "owner": {"type": ["string", "null"]},
-        "lore": {"type": "string"},
-        "gating": {"type": ["object", "null"], "additionalProperties": false, "properties": {
-          "region": {"type": "string"}, "act": {"type": "integer"}, "if": {"type": "object"}
-        }},
-        "milestone": {"type": ["string", "null"]}
+        "quests": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          }
+        },
+        "dialogue": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ref"
+          }
+        },
+        "owner": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "lore": {
+          "type": "string"
+        },
+        "gating": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "region": {
+              "type": "string"
+            },
+            "act": {
+              "type": "integer"
+            },
+            "if": {
+              "type": "object"
+            }
+          }
+        },
+        "milestone": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
       }
     },
     "gameplay": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "blocks_move": {"type": "boolean"},
-        "blocks_shots": {"type": "boolean"},
-        "cover": {"type": "boolean"},
-        "hazard": {"type": ["string", "null"]},
-        "spawn": {"type": ["string", "null"]},
-        "nav_cost": {"type": "number", "minimum": 0}
+        "blocks_move": {
+          "type": "boolean"
+        },
+        "blocks_shots": {
+          "type": "boolean"
+        },
+        "cover": {
+          "type": "boolean"
+        },
+        "hazard": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "spawn": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "nav_cost": {
+          "type": "number",
+          "minimum": 0
+        }
       }
     },
     "audit": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "painter": {"$ref": "#/$defs/painter"},
-        "reviews": {"type": "array", "items": {
-          "type": "object", "required": ["gate", "result"], "additionalProperties": false,
-          "properties": {"gate": {"type": "string"}, "result": {"enum": ["pass", "fail", "queued"]}, "at": {"type": "string"}, "sha256": {"type": "string"}, "record": {"type": "string"}}
-        }},
-        "size_class": {"type": ["string", "null"]},
-        "eastward_ref": {"type": ["string", "null"]},
-        "seeded_from": {"type": "string"},
-        "todo": {"type": "array", "items": {"type": "string"}}
+        "painter": {
+          "$ref": "#/$defs/painter"
+        },
+        "reviews": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "gate",
+              "result"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "gate": {
+                "type": "string"
+              },
+              "result": {
+                "enum": [
+                  "pass",
+                  "fail",
+                  "queued"
+                ]
+              },
+              "at": {
+                "type": "string"
+              },
+              "sha256": {
+                "type": "string"
+              },
+              "record": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "size_class": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "eastward_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seeded_from": {
+          "type": "string"
+        },
+        "todo": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
       }
     }
   }

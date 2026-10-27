@@ -17,6 +17,12 @@ texture_region_size = Vector2i(24, 24)
 1:0/0/custom_data_2 = true
 1:0/0/custom_data_3 = &"earth"
 1:0/0/custom_data_4 = true
+2:0/0 = 0
+2:0/0/custom_data_0 = &"cobble_road"
+2:0/0/custom_data_1 = 3
+2:0/0/custom_data_2 = true
+2:0/0/custom_data_3 = &"earth"
+2:0/0/custom_data_4 = true
 
 [resource]
 tile_size = Vector2i(24, 24)

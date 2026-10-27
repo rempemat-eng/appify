@@ -3,20 +3,64 @@
   "id": "path",
   "name": "Packed-earth path",
   "kind": "terrain",
-  "biomes": ["valley", "woodland", "village"],
+  "biomes": [
+    "valley",
+    "woodland",
+    "village"
+  ],
   "version": 1,
-  "approval": {"state": "candidate", "by": null, "at": null, "standard": "eastward-edges.md 5.1 and \"What the soft grid governs\"; art-style.md density 3", "note": "softground.dirt (cell 12) made periodic; the woodland path's fill"},
+  "approval": {
+    "state": "candidate",
+    "by": null,
+    "at": null,
+    "standard": "eastward-edges.md 5.1 and \"What the soft grid governs\"; art-style.md density 3",
+    "note": "the swatches' calm packed earth: softground.dirt made periodic with few soft joints, sparse stones (the cobbled look is the cobble road)"
+  },
   "terrain": {
     "material_id": 2,
     "priority": 20,
-    "fill": {"module": "scripts.art.kit.fills", "fn": "dirt", "args": {"seed": 43, "fam": "path", "cell": 12.0}},
+    "fill": {
+      "module": "scripts.art.kit.fills",
+      "fn": "dirt",
+      "args": {
+        "seed": 43,
+        "fam": "path",
+        "cell": 14.0,
+        "joints": 1.1,
+        "lit": 0.8,
+        "stones": 0.45,
+        "blades": 0.6,
+        "soft_joints": true
+      }
+    },
     "walkable": true,
     "surface": "earth",
     "route": true,
     "water": null,
-    "swatch": [96, 96]
+    "swatch": [
+      96,
+      96
+    ]
   },
-  "placement": {"snap": "cell"},
-  "gameplay": {"blocks_move": false, "blocks_shots": false, "nav_cost": 0.8},
-  "audit": {"painter": {"module": "scripts.art.native.softground", "fn": "dirt", "args": {"seed": 43, "fam": "path", "cell": 12}}, "size_class": "ground", "eastward_ref": "Eastward 12, 13 (dirt paths); refs local only"}
+  "placement": {
+    "snap": "cell"
+  },
+  "gameplay": {
+    "blocks_move": false,
+    "blocks_shots": false,
+    "nav_cost": 0.8
+  },
+  "audit": {
+    "painter": {
+      "module": "scripts.art.native.softground",
+      "fn": "dirt",
+      "args": {
+        "seed": 43,
+        "fam": "path",
+        "cell": 12
+      }
+    },
+    "size_class": "ground",
+    "eastward_ref": "Eastward 12, 13 (dirt paths); refs local only"
+  }
 }

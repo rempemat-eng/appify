@@ -52,7 +52,7 @@ RES = 'res://kit/terrain/'
 COMMON = ['scripts/art/native/softground.py', 'scripts/art/native/softgrid.py', 'scripts/art/native/palette.py',
           'scripts/art/native/terrain/noise.py', 'art/house-palette.json', 'scripts/art/native/accents.json']
 SOURCES = {'terrain': COMMON + ['scripts/art/kit/fills.py'],
-           'transition': COMMON + ['scripts/art/kit/edges.py']}
+           'transition': COMMON + ['scripts/art/kit/edges.py', 'scripts/art/kit/dressing.py']}
 
 
 def _src_hash(kind: str) -> str:
@@ -101,12 +101,10 @@ def paint_transition(piece: dict, fills: dict, lib: dict) -> np.ndarray:
     fn = E.PAINTERS[t['painter']['fn']]
     out = np.zeros((rows * E.CELL, E.ATLAS_COLS * E.CELL, 2), np.int32)
     for idx, k, prof, v in tiles:
-        s = _seed(piece['id'], k, prof, v)
-        r = np.random.default_rng(s)
-        oy, ox = 2 * int(r.integers(0, P // 2)), 2 * int(r.integers(0, P // 2))
-        iy = (np.arange(E.N) + oy) % P
-        ix = (np.arange(E.N) + ox) % P
-        tile = fn(k, fu[np.ix_(iy, ix)], fl[np.ix_(iy, ix)], s % (2 ** 31), prof=prof, **t['painter'].get('args', {}))
+        # the tile's operations do not depend on the fills (only `abs` codes would); any window works
+        iy = (np.arange(E.N) + 96) % P
+        ix = (np.arange(E.N) + 96) % P
+        tile = fn(k, fu[np.ix_(iy, ix)], fl[np.ix_(iy, ix)], prof=prof, **t['painter'].get('args', {}))
         ty, tx = idx // E.ATLAS_COLS, idx % E.ATLAS_COLS
         out[ty * E.CELL:(ty + 1) * E.CELL, tx * E.CELL:(tx + 1) * E.CELL] = tile
     return out
@@ -165,6 +163,11 @@ class Kit:
                                       (i % E.ATLAS_COLS) * C:(i % E.ATLAS_COLS + 1) * C]
                                   for i, *_ in E.layout(t['variants'])]
             self.pairs[(self.ids[t['upper']], t['lower'])] = t['id']
+        self.dressing = {t['id']: t.get('dressing') for t in self.man['transitions']}
+        self.decals = {}
+        for did, d in self.man.get('decals', {}).items():
+            a = np.asarray(Image.open(os.path.join(out, d['png'])).convert('RGBA')).astype(np.int32)
+            self.decals[did] = (np.where(a[..., 3] > 0, a[..., 0] | (a[..., 1] << 8), -1), tuple(d['anchor']))
 
     def pair_for(self, upper: int, lower: int):
         return self.pairs.get((upper, self.names.get(lower))) or self.pairs.get((upper, '*'))
@@ -233,14 +236,14 @@ def build(force: bool = False, check: bool = False) -> int:
                 print('painting transition', p['id'])
                 save_ops(fp, paint_transition(p, fills, lib))
         trs.append({'id': p['id'], 'upper': t['upper'], 'lower': t['lower'], 'png': os.path.basename(fp),
-                    'variants': t['variants'], 'approval': p['approval']['state'], 'hash': h})
+                    'variants': t['variants'], 'dressing': t.get('dressing'), 'approval': p['approval']['state'], 'hash': h})
     if check:
         if stale:
             print('kit: stale or missing: %s (run python3 -m scripts.art.kit.build)' % ', '.join(stale))
             return 1
         print('kit: %d materials, %d transitions, up to date' % (len(mats), len(trs)))
         return 0
-    vs = {t['variants'] for t in trs} or {4}
+    vs = {t['variants'] for t in trs} or {1}
     assert len(vs) == 1, 'one variant count across the kit (the shader assumes it)'
     lut = np.zeros((1, 512, 4), np.uint8)
     lut[0, :len(PAL.LUT), :3] = PAL.LUT
@@ -252,7 +255,18 @@ def build(force: bool = False, check: bool = False) -> int:
         pal[:, i * E.CELL:(i + 1) * E.CELL] = PAL.to_rgba(fills[m['id']][sy:sy + E.CELL, sx:sx + E.CELL])
     Image.fromarray(pal, 'RGBA').save(os.path.join(OUT, 'palette.png'))
     write_tileset(os.path.join(OUT, 'materials.tres'), mats)
-    man = {'cell': E.CELL, 'period': F.PERIOD, 'variants': vs.pop(), 'profiles': list(E.OFFS),
+    from scripts.art.kit import dressing as DR
+    decals = {}
+    for did, (dc, anchor) in DR.paint_decals().items():
+        a = np.zeros(dc.shape + (4,), np.uint8)
+        ok = dc >= 0
+        a[..., 0] = np.where(ok, dc & 255, 0)
+        a[..., 1] = np.where(ok, dc >> 8, 0)
+        a[..., 3] = np.where(ok, 255, 0)
+        Image.fromarray(a, 'RGBA').save(os.path.join(OUT, 'decal_%s.png' % did))
+        decals[did] = {'png': 'decal_%s.png' % did, 'anchor': [int(anchor[0]), int(anchor[1])]}
+    man = {'cell': E.CELL, 'period': F.PERIOD, 'variants': vs.pop(), 'profiles': E.NPROF,
+           'curves': E.curve_table(), 'decals': decals,
            'atlas_cols': E.ATLAS_COLS, 'lut': 'lut.png', 'palette': 'palette.png',
            'tileset': 'materials.tres', 'ops': {'keep': E.OP_KEEP, 'upper': E.OP_UPPER, 'delta': E.OP_DELTA, 'abs': E.OP_ABS},
            'materials': mats, 'transitions': trs}

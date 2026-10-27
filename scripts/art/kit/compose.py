@@ -16,7 +16,7 @@ import numpy as np
 
 from scripts.art.native.palette import step
 
-from .edges import CELL, HALF, OFFS, OP_ABS, OP_DELTA, OP_UPPER, crossings, mask_base
+from .edges import CELL, HALF, NPROF, OP_ABS, OP_DELTA, OP_UPPER, crossings, mask_base
 
 
 def variant(i, j, m, n):
@@ -30,7 +30,7 @@ def variant(i, j, m, n):
     return h % n
 
 
-def profile(a, b, c, m, n=len(OFFS)):
+def profile(a, b, c, m, n=NPROF):
     """The profile of an outline's crossing of a tile border, keyed by the cell edge it lies on
     (a, b, c: column, row, 0 for a vertical cell edge, 1 for a horizontal one) and the material."""
     a, b, c, m, M = int(a), int(b), int(c), int(m), 0xFFFFFFFF
@@ -47,11 +47,11 @@ def tile_index(i, j, m, bits, variants):
     combo = 0
     for side, c in enumerate(crossings(bits)):
         if c:
-            combo = combo * len(OFFS) + profile(*keys[side], m)
+            combo = combo * NPROF + profile(*keys[side], m)
     return mask_base(variants)[bits] + combo * variants + variant(i, j, m, variants)
 
 
-def render(cells: np.ndarray, kit) -> np.ndarray:
+def render(cells: np.ndarray, kit, dressing: bool = True) -> np.ndarray:
     """cells: (rows, cols) material ids (0 = nothing, outside the zone). Returns codes of
     (rows * CELL, cols * CELL); -1 where no material is."""
     rows, cols = cells.shape
@@ -104,5 +104,8 @@ def render(cells: np.ndarray, kit) -> np.ndarray:
                         code = np.where(op == OP_ABS, val, code)
                 below = M
             out[ys, xs] = code
+    if dressing:
+        from .dressing import overlay
+        overlay(out, cells, kit)
     return out
 

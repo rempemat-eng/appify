@@ -98,13 +98,15 @@ class Kit(unittest.TestCase):
     def test_layout_matches_shader(self):
         # the shader computes each mask's base by the same rule
         base = E.mask_base(self.kit.variants)
-        n = len(E.OFFS)
+        n = E.NPROF
         b = 0
         for k in range(1, 15):
             self.assertEqual(base[k], b)
             b += n ** sum(E.crossings(k)) * self.kit.variants
         self.assertEqual(b, len(E.layout(self.kit.variants)))
         src = open(os.path.join(S.ROOT, 'game', 'world', 'terrain', 'terrain.gdshader')).read()
+        for c in ('0x1B873593', '0xCC9E2D51', '0x38B34AE5', '0xA1C9B2F7',):
+            self.assertIn(c, open(os.path.join(S.ROOT, 'game', 'world', 'terrain', 'terrain_dressing.gd')).read())
         for c in ('0x9E3779B1u', '0x85EBCA77u', '0xC2B2AE3Du', '0x27D4EB2Fu', '0x7FEB352Du',
                   '0x8DA6B343u', '0xD8163841u', '0xCB1AB31Fu', '0x2C1B3C6Du'):
             self.assertIn(c, src)
