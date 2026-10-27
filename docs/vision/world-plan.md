@@ -929,6 +929,8 @@ Matt sent two styles: a soft-grid map of stepped, outlined plateaus with paths, 
 
 The mock (`ingame-map-mock.png`) is drawn from the v5 block-out. Tiers step at 32 px, each with a darker face on its south edge and a thin outline. Water is deep blue, paths pale, settlements are house icons with their names, the ways are red dots, and the land beyond the walked corridors is hazier. A finished version would add the pixel frame and font from `interface.md`, the companion's marker, fog over places not yet walked, the journeys as dashed lines, and small pictures of each place's landmark, after Stardew's map.
 
+**v53 overview (27 Oct).** The continent's overview map now follows this style (`research/blockout/README.md`, v53): soft-grid tiers with south faces in the house palette, region, biome, place, water and route names, the gates and waystones, the stone circle at the centre with the ring of shard craters, overlays for the built zones and act 1's route, and a soft-grid scale ruler at Bramble's walk speed.
+
 ## 13. Critique: what still looks artificial
 
 Compared with Matt's four examples (the Final Falls city, the soft-grid tier map, the joined Pokémon regions, Stardew's map) and with v4.
