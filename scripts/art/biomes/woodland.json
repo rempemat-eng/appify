@@ -246,20 +246,20 @@
    }
   },
   "standing_stone": {
-   "paint": "boulder",
-   "size": [16, 29],
+   "paint": "monolith",
+   "size": [12, 27],
    "fam": "stone",
    "moss": "lichen"
   },
   "standing_stone_b": {
-   "paint": "boulder",
-   "size": [17, 29],
+   "paint": "monolith",
+   "size": [12, 22],
    "fam": "stone",
    "moss": "lichen"
   },
   "standing_stone_low": {
-   "paint": "boulder",
-   "size": [15, 21],
+   "paint": "monolith",
+   "size": [11, 21],
    "fam": "stone",
    "moss": "lichen"
   },

@@ -55,6 +55,35 @@
  },
  "water": {
   "_about": "the Hollow's brook comes in at the top edge, falls from the spring's boulder heap into the rock pool, and leaves east as the garden's stream on the garden's own rows; mask = today's water pixels",
+  "soft": {
+   "_about": "the soft grid's water (Matt, 27 Oct; Eastward 13 and 37): the river three cells wide on one row of cells, the fall's pool a rounded union of cells under the lip, the rill one cell wide in straight runs along the cells, each turn a rounded quarter bend, its width breathing a little, from the top edge to the lip (screen.water_mask_soft); water_rle stays the 1x footprint for density 2",
+   "river": {
+    "points": [
+     [96, 300],
+     [336, 300]
+    ],
+    "cells": 3
+   },
+   "pool": [
+    [56, 288, 56, 24],
+    [64, 280, 40, 8]
+   ],
+   "rill": {
+    "points": [
+     [80, -8],
+     [80, 56],
+     [56, 56],
+     [56, 200],
+     [80, 200],
+     [80, 262]
+    ],
+    "cells": 1,
+    "bend": 12,
+    "share": 0.5,
+    "breathe": 0.12
+   },
+   "seed": 402
+  },
   "water_rle": [
    [79, 86],
    [79, 85],
@@ -1468,51 +1497,15 @@
   {
    "points": [
     [336, 456],
-    [248, 456]
-   ],
-   "radius": 8
-  },
-  {
-   "points": [
-    [256, 456],
-    [176, 456],
-    [176, 368],
-    [128, 368],
-    [128, 328]
-   ],
-   "why_shape": "on the soft grid (Matt, 26 Oct): long straight runs and turns in whole cells, not a slant",
-   "radius": 8
-  },
-  {
-   "points": [
-    [128, 272],
+    [200, 456],
+    [128, 392],
     [128, 232],
-    [144, 232],
+    [144, 208],
     [144, 152]
    ],
-   "radius": 8
-  },
-  {
-   "points": [
-    [128, 336],
-    [128, 304]
-   ],
-   "radius": 8
-  },
-  {
-   "points": [
-    [128, 272],
-    [128, 296]
-   ],
-   "radius": 8
-  },
-  {
-   "points": [
-    [128, 368],
-    [128, 408],
-    [120, 408]
-   ],
-   "radius": 4
+   "radius": 8,
+   "bend": 40,
+   "why_shape": "a desire line on the soft grid (Matt, 27 Oct: no right-angle stair steps): straight runs, turns as wide rounded bends, the crossing straight over the bridge"
   },
   {
    "points": [
@@ -1521,6 +1514,15 @@
    ],
    "radius": 8,
    "spur": true
+  },
+  {
+   "points": [
+    [128, 408],
+    [112, 408]
+   ],
+   "radius": 4,
+   "spur": true,
+   "why": "to the stone ring's entrance, the gap in the ring facing east"
   }
  ],
  "brook_line": {
@@ -1547,16 +1549,16 @@
    "rough": 0.3
   },
   "circle_out": {
-   "at": [78, 410],
-   "r": [46, 26],
+   "at": [80, 414],
+   "r": [28, 15],
    "seed": 68,
-   "rough": 0.12
+   "rough": 0.03
   },
   "circle_in": {
-   "at": [78, 410],
-   "r": [30.799999999999997, 16.32],
+   "at": [80, 414],
+   "r": [20, 9.5],
    "seed": 69,
-   "rough": 0.14
+   "rough": 0.03
   },
   "pool": {
    "at": [86, 299],
@@ -1569,10 +1571,10 @@
    "r": [15, 8]
   },
   "bridge": {
-   "x0": 123,
-   "w": 14,
-   "y0": 292,
-   "y1": 306
+   "x0": 118,
+   "w": 20,
+   "y0": 288,
+   "y1": 312
   },
   "light_pools": [
    [150, 208, 10, 5],
@@ -1683,13 +1685,13 @@
   ]
  },
  "objects": [
-  ["stone-1", "standing_stone", 68, 363, 16, 29],
-  ["stone-2", "standing_stone_b", 103.5, 371, 17, 29],
-  ["stone-3", "standing_stone_low", 112.5, 403, 15, 21],
-  ["stone-4", "standing_stone", 100, 411, 16, 29],
-  ["stone-5", "standing_stone_b", 43.5, 411, 17, 29],
-  ["stone-6", "standing_stone_low", 28.5, 395, 15, 21],
-  ["stone-7", "standing_stone_low", 40.5, 379, 15, 21],
+  ["stone-1", "standing_stone_low", 104.5, 411, 15, 21],
+  ["stone-2", "standing_stone_b", 72.5, 419, 15, 21],
+  ["stone-3", "standing_stone_low", 40.5, 411, 15, 21],
+  ["stone-4", "standing_stone_b", 28.5, 395, 15, 21],
+  ["stone-5", "standing_stone_low", 40.5, 379, 15, 21],
+  ["stone-6", "standing_stone", 72, 363, 16, 29],
+  ["stone-7", "standing_stone_low", 104.5, 379, 15, 21],
   ["stump-1", "stump", 165.5, 232, 21, 16],
   ["stump-2", "stump", 41.5, 344, 21, 16],
   ["stump-3", "stump", 237.5, 120, 21, 16],
