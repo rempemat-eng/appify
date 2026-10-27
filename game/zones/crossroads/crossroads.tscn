@@ -329,7 +329,7 @@ shape = SubResource("s9")
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Building_herbalist"]
-position = Vector2(444, 1056)
+position = Vector2(444, 1080)
 shape = SubResource("s9")
 
 [node name="Building_smithy" type="StaticBody2D" parent="Walls"]
@@ -539,7 +539,7 @@ shape = SubResource("s20")
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Solid_oak_40"]
-position = Vector2(900, 1437)
+position = Vector2(1128, 1557)
 shape = SubResource("s13")
 
 [node name="Solid_oak_41" type="StaticBody2D" parent="Walls"]
@@ -623,7 +623,7 @@ shape = SubResource("s14")
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Solid_boulder_52"]
-position = Vector2(996, 1267.5)
+position = Vector2(1056, 1291.5)
 shape = SubResource("s25")
 
 [node name="Solid_handcart" type="StaticBody2D" parent="Walls"]
@@ -700,13 +700,13 @@ centered = false
 offset = Vector2(-120, -297)
 
 [node name="Herbalist" type="Sprite2D" parent="Props"]
-position = Vector2(444, 1128)
+position = Vector2(444, 1152)
 texture = ExtResource("t8")
 centered = false
 offset = Vector2(-120, -227)
 
 [node name="HerbalistDamage" type="Sprite2D" parent="Props"]
-position = Vector2(444, 1129)
+position = Vector2(444, 1153)
 texture = ExtResource("t9")
 centered = false
 offset = Vector2(-120, -228)
@@ -1209,7 +1209,7 @@ centered = false
 offset = Vector2(-24, -71)
 
 [node name="Oak40" type="Sprite2D" parent="Props"]
-position = Vector2(900, 1440)
+position = Vector2(1128, 1560)
 texture = ExtResource("t71")
 centered = false
 offset = Vector2(-106, -243)
@@ -1281,7 +1281,7 @@ centered = false
 offset = Vector2(-57, -73)
 
 [node name="Boulder52" type="Sprite2D" parent="Props"]
-position = Vector2(996, 1272)
+position = Vector2(1056, 1296)
 texture = ExtResource("t83")
 centered = false
 offset = Vector2(-41, -52)
@@ -1465,7 +1465,7 @@ script = ExtResource("cond")
 only_if = "{\"not_restored\":[\"forge\"]}"
 
 [node name="SquarePuddles" type="Sprite2D" parent="Props/If_square_puddles"]
-position = Vector2(695, 723)
+position = Vector2(674, 718)
 texture = ExtResource("t102")
 centered = false
 offset = Vector2(0, 0)
@@ -1698,7 +1698,7 @@ position = Vector2(516, 864)
 metadata/building = "bakery"
 
 [node name="Herbalist" type="Marker2D" parent="BuildingDoors"]
-position = Vector2(516, 1128)
+position = Vector2(516, 1152)
 metadata/building = "herbalist"
 
 [node name="Smithy" type="Marker2D" parent="BuildingDoors"]

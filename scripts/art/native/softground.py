@@ -352,7 +352,13 @@ def dirt(cv: np.ndarray, m: np.ndarray, seed: int, fam: str = 'path', cell: floa
             sh_ = rut & (~down(rut, 1) | ~right(rut, 1))
             t[sh_] = 1
             lip = (down(rut, 1) | right(rut, 1)) & ~rut & m
-            t[lip] = np.maximum(t[lip], 4)
+            # the village's packed earth is dry and light (Matt, 27 Oct: the roads read as
+            # trenches): the clods and the soft gaps between them a tone up off the ruts, so only
+            # the wheel tracks and the edge look sunken
+            up_ = m & ~rut & ~lip & (t <= 3) & (t >= 2)
+            t[up_] = t[up_] + 1
+            famc[up_ & (famc == FI[fam + '_cool'])] = FI[fam]
+            t[lip] = np.maximum(t[lip], 5)
             famc[lip] = FI[fam + '_warm']
         else:
             t[rut & (t >= 3) & (nz(H, W, 4.0, seed + 10) > 0.35)] = 2
@@ -2062,8 +2068,9 @@ def puddle(cv, cx, cy, rx, ry, seed=0):
     shade on its north edge, the sky's reflection in its middle. Texels. Returns the changed mask."""
     H, W = cv.shape
     yy, xx = np.mgrid[0:H, 0:W]
-    e = ((xx - cx) / rx) ** 2 + ((yy - cy) / ry) ** 2 + (nz(H, W, 5.0, seed) - 0.5) * 0.9
-    hollow = e < 1.0
+    # a smooth lobed outline (slow noise, small swing), never a jagged one
+    e = ((xx - cx) / rx) ** 2 + ((yy - cy) / ry) ** 2 + (nz(H, W, 14.0, seed) - 0.5) * 0.45
+    hollow = ndi.binary_opening(e < 1.0, structure=np.ones((5, 5), bool))
     from .softgrid import clean
     hollow = clean(hollow, min_area=1.0)
     halo = (e >= 1.0) & (e < 1.7)
@@ -2075,7 +2082,7 @@ def puddle(cv, cx, cy, rx, ry, seed=0):
     # the highest setts of the hollow stand dry out of the shallow water
     d0 = ndi.distance_transform_edt(wat)
     wat &= ~((nz(H, W, 3.0, seed + 5) > 0.72) & (d0 < 5))
-    wat = clean(wat, min_area=1.0)
+    wat = ndi.binary_opening(clean(wat, min_area=1.0), structure=np.ones((3, 3), bool))
     d_in = ndi.distance_transform_edt(wat)
     under = cv.copy()
     # the water: grey-blue and shallow, the ground showing through it (a tone down) over its outer

@@ -345,13 +345,22 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         from scripts.art.native import softgrid as SG
         cells_all = np.zeros(SG.grid_shape(H, W), bool)
         cells_road = np.zeros_like(cells_all)
+        curves = []
         for r in plan.get('routes', []):
             n = max(1, int(round((r.get('width', 24) - 8) / 8.0)))
+            if r.get('bend'):
+                # a desire line: one long smooth bend of `bend` world px (Matt, 27 Oct), drawn as a
+                # curve and joined to the network after its outline is made
+                curves.append(r)
+                continue
             c_ = SG.cells_route(r['points'], n, H, W)
             cells_all |= c_
             if r['kind'] == 'road':
                 cells_road |= c_
         net = SG.shape(cells_all, H, W, plan.get('seed', 7) + 41, r_out=SG.R_TURN_OUT, r_in=SG.R_TURN_IN)
+        for k_, r in enumerate(curves):
+            n = max(1, int(round((r.get('width', 24) - 8) / 8.0)))
+            net |= SG.curve_texels(r['points'], n, H, W, r['bend'], plan.get('seed', 7) + 61 + k_)
         road_zone = SG.texels(cells_road, H, W)
         turf0 = is_turf(cv) & ~net
         GD.dirt(cv, net, plan.get('seed', 7) + 43, fam='path', ruts=19, rut_mask=road_zone, crown=True)
@@ -880,7 +889,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         sc = cv.copy()
         changed = np.zeros((H, W), bool)
         for k_, (px, py, prx, pry) in enumerate(art['puddles'][:2]):
-            changed |= GD.puddle(sc, q(px), q(py), q(prx * 1.4), q(pry * 1.6), seed=120 + k_)
+            changed |= GD.puddle(sc, q(px), q(py), q(prx * 1.9), q(pry * 2.1), seed=120 + k_)
         if changed.any():
             ys, xs = np.nonzero(changed)
             bx0, by0, bx1, by1 = xs.min(), ys.min(), xs.max() + 1, ys.max() + 1

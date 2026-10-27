@@ -1,7 +1,7 @@
 {
  "id": "crossroads/smithy_rubble_shadow",
  "file": "game/zones/crossroads/art/smithy_rubble_shadow.png",
- "sha256": "83e5640501fed95b8689dd193ee7cbb519a81d8bc56e3579b8e4322f637f7232",
+ "sha256": "0ca2a2ea34ed7f549e38c6b5e1db045081ed1a4535ebe213f78df2654cdecbdf",
  "kind": "smithy_rubble_shadow",
  "biome": "valley",
  "H": 74.0,
