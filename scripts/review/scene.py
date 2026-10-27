@@ -134,6 +134,7 @@ def _walk_nodes(tscn: dict, prefix: str, offset=(0.0, 0.0), ysort_parent=False, 
     pos = {'.': offset}
     ys = {'.': ysort_parent}
     vis = {'.': not hidden}
+    cond = {'.': []}
     for n in tscn['nodes']:
         parent = n.get('parent')
         name = n['name']
@@ -145,20 +146,41 @@ def _walk_nodes(tscn: dict, prefix: str, offset=(0.0, 0.0), ysort_parent=False, 
         pos[key] = g
         ys[key] = bool(n['props'].get('y_sort_enabled', False))
         vis[key] = vis.get(pkey, True) and n['props'].get('visible', True) is not False
+        cond[key] = list(cond.get(pkey, []))
+        oi = n['props'].get('only_if')
+        if isinstance(oi, str):
+            try:                                       # a JSON object written as a Godot string ("{\"k\":...}")
+                v_ = json.loads(oi.replace('\\"', '"'))
+                cond[key].append(json.loads(v_) if isinstance(v_, str) else v_)
+            except ValueError:
+                pass
         full = prefix + ('' if key == '.' else key)
         inst = n.get('instance')
         if inst and inst[0] == 'ExtResource':
             sub = parse_tscn(res_path(tscn['ext'][inst[1]]['path']))
             _walk_nodes(sub, full + '/', g, ys.get(pkey, False), not vis[key], out)
-        out.append(dict(node=n, key=full, pos=g, parent_ysort=ys.get(pkey, False), visible=vis[key], ext=tscn['ext']))
+        out.append(dict(node=n, key=full, pos=g, parent_ysort=ys.get(pkey, False), visible=vis[key], ext=tscn['ext'],
+                        conds=cond[key]))
     return out
 
 
 def load_zone(zone_id: str, stage: str | None = None) -> Zone:
+    """The zone as placed. With `stage` (a stage id from the plan), only what that stage shows:
+    every node under a Conditional (world/conditional.gd, its `only_if`) whose condition does not
+    hold in the stage's state is hidden, as the game hides it."""
     zones = json.load(open(os.path.join(GAME, 'data', 'zones.json')))
     path = res_path(zones[zone_id])
     tscn = parse_tscn(path)
     nodes = _walk_nodes(tscn, '')
+    state = None
+    pp_ = os.path.join(GAME, 'data', 'plans', zone_id + '.json')
+    if stage and os.path.exists(pp_):
+        from scripts.art.native import town as TW
+        state = TW.stage_states(json.load(open(pp_))).get(stage)
+        if state is not None:
+            for e in nodes:
+                if not all(TW.holds(c, state) for c in e.get('conds', [])):
+                    e['visible'] = False
     z = Zone(zone_id, (0, 0), None)
     for e in nodes:
         n, props = e['node'], e['node']['props']
@@ -171,6 +193,9 @@ def load_zone(zone_id: str, stage: str | None = None) -> Zone:
             if not os.path.exists(p):
                 continue
             rgba = np.asarray(Image.open(p).convert('RGBA'))
+            hf = int(props.get('hframes', 1) or 1)
+            if hf > 1:                                     # an animation strip shows one frame at a time
+                rgba = rgba[:, :rgba.shape[1] // hf]
             off = props.get('offset', (0.0, 0.0))
             centered = props.get('centered', True)
             x0 = e['pos'][0] + off[0] - (rgba.shape[1] / 2 if centered else 0)
@@ -661,8 +686,8 @@ def check_grid(z: Zone, H=GAME_H, tol: float = 0.5) -> list[Finding]:
     return fs
 
 
-def review_zone(zone_id: str, H=GAME_H, wiring=True) -> dict:
-    z = load_zone(zone_id)
+def review_zone(zone_id: str, H=GAME_H, wiring=True, stage: str | None = None) -> dict:
+    z = load_zone(zone_id, stage)
     fs = []
     fs += check_occlusion(z, H)
     fs += check_intersect(z, H)

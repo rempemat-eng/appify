@@ -65,7 +65,7 @@ def stage_states(plan) -> dict:
 
 # ------------------------------------------------------------------------------------------------
 # what a drawn zone is made from (check.py compares it with kit.json's `inputs`)
-INPUTS = ('village.py', 'houses.py', 'town.py', 'palette.py', 'raster.py', 'props.py', 'foliage.py', 'compose.py', 'ctx.py',
+INPUTS = ('village.py', 'houses.py', 'market.py', 'town.py', 'palette.py', 'raster.py', 'props.py', 'foliage.py', 'compose.py', 'ctx.py',
           'terrain/sheets.py', 'masters/zones_props_oak.png', 'masters/zones_props_bush.png')
 
 
@@ -747,6 +747,9 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
                                 anchor=(pic.ax, pic.ay), alpha=pic.alpha(), cond=cond_of(t), solid=None, static=not cond_of(t)))
 
     tree_ex = dict(oak=dict(w=65, h=78, tw=11, ch=50), tree=dict(w=46, h=60, tw=8, ch=38))
+    for k_, v_ in art.get('tree_looks', {}).items():        # the plan's crown recipes (crossroads: layered crowns)
+        if k_ in tree_ex and not k_.startswith('_'):
+            tree_ex[k_].update(v_)
     for k, dr in enumerate(art.get('dressing', [])):
         kind = dr['kind']
         x, y = dr['at']

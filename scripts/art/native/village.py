@@ -3313,3 +3313,24 @@ PROPS_HD = {
     'bench_side_w': lambda w, h, s: p_bench_side_hd(w, h, s, facing='west'),
     'grindstone': p_grindstone_hd,
 }
+
+
+def _market(name, *args):
+    """The Crossroads market's props (market.py), imported when first drawn."""
+    from . import market
+
+    def fn(w, h, s):
+        return getattr(market, name)(w, h, s, *args)
+    return fn
+
+
+PROPS_HD.update({
+    'stall_produce': _market('stall', 'produce'),
+    'stall_bread': _market('stall', 'bread'),
+    'stall_fish': _market('stall', 'fish'),
+    'stall_cloth': _market('stall', 'cloth'),
+    'stall_tools': _market('stall', 'tools'),
+    'stall_closed': _market('stall', 'closed'),
+    'basket': _market('basket'),
+    'mown_field': _market('hayfield'),
+})

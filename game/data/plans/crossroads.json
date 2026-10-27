@@ -227,19 +227,19 @@
       "points": [
         [
           320,
-          376
+          424
         ],
         [
           320,
-          472
+          480
         ],
         [
           184,
-          472
+          480
         ]
       ],
-      "bend": 96,
-      "why_shape": "a desire line (Matt, 27 Oct): two cells wide, leaving the square on its axis, one long rounded bend of 96 px from the square's edge, arriving at the ring's east entrance"
+      "why_shape": "Matt, 27 Oct (annotated Crossroads): \"missing the soft grid\": the woodland's rule: straight runs on the cells (south out of the square on its axis, west to the stone ring's entrance) joined by one large rounded bend (40 px), never a right-angle step",
+      "bend": 40
     },
     {
       "id": "garden_walk",
@@ -280,12 +280,13 @@
       "id": "square",
       "kind": "square",
       "rect": [
+        192,
         200,
-        200,
-        240,
-        176
+        256,
+        224
       ],
-      "colour": "#a39b7c"
+      "colour": "#a39b7c",
+      "why": "Matt, 27 Oct (annotated Crossroads): \"this square could be a larger and a proper market\": 32 x 28 cells, a cell from the bakery, the herbalist, the smithy and the fern cottage, its centre (320, 312) on the gate stair's axis"
     },
     {
       "id": "green",
@@ -297,7 +298,7 @@
         136
       ],
       "colour": "#6f9a52",
-      "why": "the green and its ring (training yard, stage 1)"
+      "why": "the green and its ring of stones on the trodden ring (training yard, stage 1)"
     },
     {
       "id": "crater",
@@ -455,7 +456,7 @@
       "id": "well_choked",
       "kind": "rubble",
       "rect": [
-        276,
+        308,
         300,
         24,
         20
@@ -473,7 +474,7 @@
       "id": "well",
       "kind": "well",
       "rect": [
-        278,
+        310,
         304,
         20,
         16
@@ -484,7 +485,8 @@
         "flags": [
           "shard_home:woodland"
         ]
-      }
+      },
+      "why": "Matt, 27 Oct (annotated Crossroads): \"well should either be in the centre or not on the square\": on the square's centre"
     },
     {
       "id": "smithy_rubble",
@@ -558,10 +560,10 @@
       "id": "square_rubble_a",
       "kind": "rubble",
       "rect": [
-        220,
-        340,
-        30,
-        18
+        228,
+        316,
+        28,
+        16
       ],
       "solid": true,
       "colour": "#5b5249",
@@ -575,13 +577,18 @@
       "id": "square_rubble_b",
       "kind": "rubble",
       "rect": [
-        396,
-        214,
+        380,
+        300,
         26,
         16
       ],
       "solid": true,
-      "colour": "#5b5249"
+      "colour": "#5b5249",
+      "if": {
+        "not_flags": [
+          "shard_home:woodland"
+        ]
+      }
     },
     {
       "id": "fern_boards",
@@ -620,8 +627,8 @@
       "id": "lantern_dark",
       "kind": "lantern",
       "rect": [
-        307,
-        290,
+        315,
+        226,
         10,
         22
       ],
@@ -632,14 +639,14 @@
           "shard_home:woodland"
         ]
       },
-      "why": "the shard lantern, empty"
+      "why": "Matt, 27 Oct (annotated Crossroads): \"lamp placed on well!!!\": the shard lantern stands on the axis north of the well, the first thing seen from the gate stair, touching nothing; the street lamps are at the corners"
     },
     {
       "id": "lantern_lit",
       "kind": "lantern",
       "rect": [
-        307,
-        290,
+        315,
+        226,
         10,
         22
       ],
@@ -672,8 +679,8 @@
       "id": "beds_scorched",
       "kind": "beds",
       "rect": [
-        384,
-        80,
+        192,
+        24,
         80,
         40
       ],
@@ -683,14 +690,14 @@
           "shard_home:woodland"
         ]
       },
-      "why": "four crop beds, scorched"
+      "why": "Matt, 27 Oct (annotated Crossroads): \"why is this so close to the market and has no path\": your beds beside the hut on the terrace, the garden walk passing their front"
     },
     {
       "id": "beds_dug",
       "kind": "beds",
       "rect": [
-        384,
-        80,
+        192,
+        24,
         80,
         40
       ],
@@ -706,14 +713,194 @@
       "id": "stall",
       "kind": "stall",
       "rect": [
-        366,
-        240,
+        350,
+        248,
         36,
         16
       ],
       "solid": true,
       "colour": "#b08a4a",
       "why": "Moss's stall, the one thing open"
+    },
+    {
+      "id": "stall_bread",
+      "kind": "stall_bread",
+      "rect": [
+        206,
+        248,
+        36,
+        16
+      ],
+      "solid": true,
+      "colour": "#b08a4a",
+      "if": {
+        "flags": [
+          "shard_home:woodland"
+        ]
+      },
+      "why": "Matt, 27 Oct (annotated Crossroads): \"why only one market stall\": the market reopens when the first household comes home"
+    },
+    {
+      "id": "stall_bread_shut",
+      "kind": "stall_closed",
+      "rect": [
+        206,
+        248,
+        36,
+        16
+      ],
+      "solid": true,
+      "colour": "#8a7a5a",
+      "if": {
+        "not_flags": [
+          "shard_home:woodland"
+        ]
+      },
+      "why": "shut since the storm: goods under sacking, the awning furled"
+    },
+    {
+      "id": "stall_fish",
+      "kind": "stall_fish",
+      "rect": [
+        254,
+        248,
+        36,
+        16
+      ],
+      "solid": true,
+      "colour": "#b08a4a",
+      "if": {
+        "flags": [
+          "shard_home:woodland"
+        ]
+      },
+      "why": "Matt, 27 Oct (annotated Crossroads): \"why only one market stall\": the market reopens when the first household comes home"
+    },
+    {
+      "id": "stall_fish_shut",
+      "kind": "stall_closed",
+      "rect": [
+        254,
+        248,
+        36,
+        16
+      ],
+      "solid": true,
+      "colour": "#8a7a5a",
+      "if": {
+        "not_flags": [
+          "shard_home:woodland"
+        ]
+      },
+      "why": "shut since the storm: goods under sacking, the awning furled"
+    },
+    {
+      "id": "stall_cloth",
+      "kind": "stall_cloth",
+      "rect": [
+        398,
+        248,
+        36,
+        16
+      ],
+      "solid": true,
+      "colour": "#b08a4a",
+      "if": {
+        "flags": [
+          "shard_home:woodland"
+        ]
+      },
+      "why": "Matt, 27 Oct (annotated Crossroads): \"why only one market stall\": the market reopens when the first household comes home"
+    },
+    {
+      "id": "stall_cloth_shut",
+      "kind": "stall_closed",
+      "rect": [
+        398,
+        248,
+        36,
+        16
+      ],
+      "solid": true,
+      "colour": "#8a7a5a",
+      "if": {
+        "not_flags": [
+          "shard_home:woodland"
+        ]
+      },
+      "why": "shut since the storm: goods under sacking, the awning furled"
+    },
+    {
+      "id": "stall_tools",
+      "kind": "stall_tools",
+      "rect": [
+        206,
+        368,
+        36,
+        16
+      ],
+      "solid": true,
+      "colour": "#b08a4a",
+      "if": {
+        "flags": [
+          "shard_home:woodland"
+        ]
+      },
+      "why": "Matt, 27 Oct (annotated Crossroads): \"why only one market stall\": the market reopens when the first household comes home"
+    },
+    {
+      "id": "stall_tools_shut",
+      "kind": "stall_closed",
+      "rect": [
+        206,
+        368,
+        36,
+        16
+      ],
+      "solid": true,
+      "colour": "#8a7a5a",
+      "if": {
+        "not_flags": [
+          "shard_home:woodland"
+        ]
+      },
+      "why": "shut since the storm: goods under sacking, the awning furled"
+    },
+    {
+      "id": "stall_produce",
+      "kind": "stall_produce",
+      "rect": [
+        398,
+        368,
+        36,
+        16
+      ],
+      "solid": true,
+      "colour": "#b08a4a",
+      "if": {
+        "flags": [
+          "shard_home:woodland"
+        ]
+      },
+      "why": "Matt, 27 Oct (annotated Crossroads): \"why only one market stall\": the market reopens when the first household comes home"
+    },
+    {
+      "id": "stall_produce_shut",
+      "kind": "stall_closed",
+      "rect": [
+        398,
+        368,
+        36,
+        16
+      ],
+      "solid": true,
+      "colour": "#8a7a5a",
+      "if": {
+        "not_flags": [
+          "shard_home:woodland"
+        ]
+      },
+      "why": "shut since the storm: goods under sacking, the awning furled"
     }
   ],
   "people": [
@@ -724,10 +911,11 @@
       "speaker": "moss",
       "name": "Moss",
       "at": [
-        384,
-        262
+        368,
+        284
       ],
-      "colour": "#c9a050"
+      "colour": "#c9a050",
+      "why": "in front of her stall, the one open since the storm (behind its counter the awning hid her)"
     },
     {
       "id": "hale_square",
@@ -769,11 +957,11 @@
       "speaker": "morel",
       "name": "Morel",
       "at": [
-        200,
-        352
+        172,
+        392
       ],
       "colour": "#c09a40",
-      "why": "the alchemist outside his torn herbalist's (cast: Codex's fourteen); joins in act 1"
+      "why": "the alchemist at his torn herbalist's door (cast: Codex's fourteen); joins in act 1"
     },
     {
       "id": "ada",
@@ -810,18 +998,19 @@
       "speaker": "waystone",
       "verb": "Touch",
       "at": [
-        420,
-        360
+        320,
+        384
       ],
-      "colour": "#8a8aa0"
+      "colour": "#8a8aa0",
+      "why": "Matt, 27 Oct (annotated Crossroads): \"if this is a monument, why is it on the side?\": on the square's axis, at the head of the lane south to the ring"
     },
     {
       "id": "shard_lantern",
       "speaker": "shard_lantern",
       "verb": "Look",
       "at": [
-        312,
-        320
+        320,
+        256
       ],
       "colour": "#00000000",
       "radius": 22
@@ -1004,11 +1193,11 @@
           300
         ],
         [
-          200,
+          192,
           300
         ],
         [
-          306,
+          300,
           312
         ]
       ]
@@ -1022,12 +1211,12 @@
           330
         ],
         [
-          440,
+          448,
           330
         ],
         [
-          316,
-          312
+          340,
+          320
         ]
       ]
     }
@@ -1058,10 +1247,10 @@
     ],
     "paving": [
       [
+        192,
         200,
-        200,
-        240,
-        176
+        256,
+        224
       ],
       [
         296,
@@ -1380,7 +1569,9 @@
           4
         ],
         "solid": false,
-        "why": "the terrace's rail above the square"
+        "why": "the terrace's rail above the square",
+        "id": "fence_0",
+        "seed": 100
       },
       {
         "kind": "fence",
@@ -1392,7 +1583,9 @@
           48,
           4
         ],
-        "solid": false
+        "solid": false,
+        "id": "fence_1",
+        "seed": 101
       },
       {
         "kind": "fence",
@@ -1404,7 +1597,9 @@
           48,
           4
         ],
-        "solid": false
+        "solid": false,
+        "id": "fence_2",
+        "seed": 102
       },
       {
         "kind": "fence",
@@ -1416,7 +1611,9 @@
           48,
           4
         ],
-        "solid": false
+        "solid": false,
+        "id": "fence_3",
+        "seed": 103
       },
       {
         "kind": "fence",
@@ -1428,7 +1625,9 @@
           48,
           4
         ],
-        "solid": false
+        "solid": false,
+        "id": "fence_4",
+        "seed": 104
       },
       {
         "kind": "fence",
@@ -1440,29 +1639,37 @@
           48,
           4
         ],
-        "solid": false
+        "solid": false,
+        "id": "fence_5",
+        "seed": 105
       },
       {
         "kind": "oak",
         "at": [
-          184,
-          48
+          176,
+          96
         ],
-        "why": "the old oak on your terrace"
+        "why": "the old oak on your terrace, its crown inside the view (logic.crown_cut)",
+        "id": "oak_6",
+        "seed": 106
       },
       {
         "kind": "bush",
         "at": [
           240,
           120
-        ]
+        ],
+        "id": "bush_7",
+        "seed": 107
       },
       {
         "kind": "bush",
         "at": [
           480,
           120
-        ]
+        ],
+        "id": "bush_8",
+        "seed": 108
       },
       {
         "kind": "flower_tub",
@@ -1474,7 +1681,9 @@
           12,
           6
         ],
-        "why": "your door's pots"
+        "why": "your door's pots",
+        "id": "flower_tub_9",
+        "seed": 109
       },
       {
         "kind": "flower_tub",
@@ -1485,7 +1694,9 @@
         "size": [
           12,
           6
-        ]
+        ],
+        "id": "flower_tub_10",
+        "seed": 110
       },
       {
         "kind": "woodpile",
@@ -1496,28 +1707,34 @@
         "size": [
           22,
           8
-        ]
+        ],
+        "id": "woodpile_11",
+        "seed": 111
       },
       {
         "kind": "sacks",
         "at": [
-          268,
+          184,
           64
         ],
         "size": [
           14,
           8
         ],
-        "why": "seed sacks waiting for the beds"
+        "why": "seed sacks waiting by the beds",
+        "id": "sacks_12",
+        "seed": 112
       },
       {
-        "kind": "oak",
+        "kind": "bush",
         "at": [
           40,
           24
         ],
         "solid": false,
-        "why": "the bank above the garden walk"
+        "why": "the bank above the garden walk (an oak there showed only its trunk at the top edge)",
+        "id": "bush_13",
+        "seed": 113
       },
       {
         "kind": "bush",
@@ -1525,7 +1742,9 @@
           104,
           24
         ],
-        "solid": false
+        "solid": false,
+        "id": "bush_14",
+        "seed": 114
       },
       {
         "kind": "bush",
@@ -1533,7 +1752,9 @@
           136,
           24
         ],
-        "solid": false
+        "solid": false,
+        "id": "bush_15",
+        "seed": 115
       },
       {
         "kind": "bush",
@@ -1542,7 +1763,9 @@
           136
         ],
         "solid": false,
-        "why": "the planted bank under the walk"
+        "why": "the planted bank under the walk",
+        "id": "bush_16",
+        "seed": 116
       },
       {
         "kind": "bush",
@@ -1550,7 +1773,9 @@
           80,
           128
         ],
-        "solid": false
+        "solid": false,
+        "id": "bush_17",
+        "seed": 117
       },
       {
         "kind": "bush",
@@ -1558,40 +1783,20 @@
           128,
           136
         ],
-        "solid": false
-      },
-      {
-        "kind": "hay",
-        "at": [
-          540,
-          64
-        ],
-        "size": [
-          18,
-          10
-        ],
         "solid": false,
-        "why": "the hay slope"
-      },
-      {
-        "kind": "hay",
-        "at": [
-          592,
-          96
-        ],
-        "size": [
-          18,
-          10
-        ],
-        "solid": false
+        "id": "bush_18",
+        "seed": 118
       },
       {
         "kind": "oak",
         "at": [
           616,
-          40
+          96
         ],
-        "solid": false
+        "solid": false,
+        "id": "oak_21",
+        "seed": 121,
+        "why": "at the hay field's edge, its crown inside the view"
       },
       {
         "kind": "bush",
@@ -1599,7 +1804,9 @@
           520,
           136
         ],
-        "solid": false
+        "solid": false,
+        "id": "bush_22",
+        "seed": 122
       },
       {
         "kind": "bush",
@@ -1607,56 +1814,54 @@
           624,
           136
         ],
-        "solid": false
+        "solid": false,
+        "id": "bush_23",
+        "seed": 123
       },
       {
         "kind": "kit_lantern",
         "at": [
-          292,
-          200
+          288,
+          208
         ],
-        "why": "the gate lane's lamps"
+        "why": "the gate lane's lamps",
+        "id": "kit_lantern_24",
+        "seed": 124
       },
       {
         "kind": "kit_lantern",
         "at": [
           352,
-          200
-        ]
+          208
+        ],
+        "id": "kit_lantern_25",
+        "seed": 125
       },
       {
         "kind": "flower_tub",
         "at": [
           232,
-          200
+          208
         ],
         "size": [
           12,
           6
-        ]
+        ],
+        "id": "flower_tub_26",
+        "seed": 126
       },
       {
         "kind": "flower_tub",
         "at": [
           268,
-          200
+          208
         ],
         "size": [
           12,
           6
-        ]
-      },
-      {
-        "kind": "bench",
-        "at": [
-          352,
-          368
         ],
-        "size": [
-          24,
-          6
-        ],
-        "why": "a bench on the square's south side"
+        "id": "flower_tub_27",
+        "seed": 127
       },
       {
         "kind": "barrel",
@@ -1667,7 +1872,9 @@
         "size": [
           10,
           8
-        ]
+        ],
+        "id": "barrel_29",
+        "seed": 129
       },
       {
         "kind": "crates",
@@ -1679,30 +1886,23 @@
           12,
           10
         ],
-        "why": "the bakery's flour crates"
+        "why": "the bakery's flour crates",
+        "id": "crates_30",
+        "seed": 130
       },
       {
         "kind": "barrel",
         "at": [
-          360,
-          256
+          392,
+          264
         ],
         "size": [
           10,
           8
         ],
-        "why": "Moss's stock"
-      },
-      {
-        "kind": "crates",
-        "at": [
-          412,
-          256
-        ],
-        "size": [
-          12,
-          10
-        ]
+        "why": "Moss's stock, beside her stall",
+        "id": "barrel_31",
+        "seed": 131
       },
       {
         "kind": "woodpile",
@@ -1714,7 +1914,9 @@
           22,
           8
         ],
-        "why": "the anvil yard: fuel"
+        "why": "the anvil yard: fuel",
+        "id": "woodpile_33",
+        "seed": 133
       },
       {
         "kind": "coal",
@@ -1725,7 +1927,9 @@
         "size": [
           16,
           8
-        ]
+        ],
+        "id": "coal_34",
+        "seed": 134
       },
       {
         "kind": "trough",
@@ -1737,7 +1941,9 @@
           20,
           8
         ],
-        "why": "the anvil yard: the quench trough"
+        "why": "the anvil yard: the quench trough",
+        "id": "trough_35",
+        "seed": 135
       },
       {
         "kind": "grindstone",
@@ -1748,7 +1954,9 @@
         "size": [
           14,
           6
-        ]
+        ],
+        "id": "grindstone_36",
+        "seed": 136
       },
       {
         "kind": "barrel",
@@ -1759,18 +1967,22 @@
         "size": [
           10,
           8
-        ]
+        ],
+        "id": "barrel_37",
+        "seed": 137
       },
       {
         "kind": "flower_tub",
         "at": [
-          440,
-          416
+          500,
+          424
         ],
         "size": [
           12,
           6
-        ]
+        ],
+        "id": "flower_tub_38",
+        "seed": 138
       },
       {
         "kind": "barrel",
@@ -1782,7 +1994,9 @@
           10,
           8
         ],
-        "why": "the Ferns' rain barrel"
+        "why": "the Ferns' rain barrel",
+        "id": "barrel_39",
+        "seed": 139
       },
       {
         "kind": "oak",
@@ -1790,91 +2004,117 @@
           376,
           520
         ],
-        "why": "the park round the crater (moved off the green lane's bend, 27 Oct)"
+        "why": "the park round the crater (moved off the green lane's bend, 27 Oct)",
+        "id": "oak_40",
+        "seed": 140
       },
       {
         "kind": "oak",
         "at": [
           392,
           544
-        ]
+        ],
+        "id": "oak_41",
+        "seed": 141
       },
       {
         "kind": "oak",
         "at": [
           604,
           512
-        ]
+        ],
+        "id": "oak_42",
+        "seed": 142
       },
       {
         "kind": "oak",
         "at": [
           24,
           408
-        ]
+        ],
+        "id": "oak_43",
+        "seed": 143
       },
       {
         "kind": "oak",
         "at": [
           184,
           552
-        ]
+        ],
+        "id": "oak_44",
+        "seed": 144
       },
       {
         "kind": "oak",
         "at": [
           612,
           264
-        ]
+        ],
+        "id": "oak_45",
+        "seed": 145
       },
       {
         "kind": "oak",
         "at": [
           40,
           248
-        ]
+        ],
+        "id": "oak_46",
+        "seed": 146
       },
       {
         "kind": "bush",
         "at": [
           252,
           528
-        ]
+        ],
+        "id": "bush_47",
+        "seed": 147
       },
       {
         "kind": "bush",
         "at": [
           448,
           480
-        ]
+        ],
+        "id": "bush_48",
+        "seed": 148
       },
       {
         "kind": "bush",
         "at": [
           572,
           448
-        ]
+        ],
+        "id": "bush_49",
+        "seed": 149
       },
       {
         "kind": "bush",
         "at": [
           84,
           232
-        ]
+        ],
+        "id": "bush_50",
+        "seed": 150
       },
       {
         "kind": "bush",
         "at": [
           604,
           176
-        ]
+        ],
+        "id": "bush_51",
+        "seed": 151
       },
       {
         "kind": "boulder",
         "at": [
           352,
           432
-        ]
+        ],
+        "id": "boulder_52",
+        "seed": 152
       },
       {
         "kind": "debris",
@@ -1893,7 +2133,8 @@
           ]
         },
         "id": "debris_a",
-        "why": "storm litter on the flags until the homecoming"
+        "why": "storm litter on the flags until the homecoming",
+        "seed": 153
       },
       {
         "kind": "debris",
@@ -1911,7 +2152,8 @@
             "shard_home:woodland"
           ]
         },
-        "id": "debris_b"
+        "id": "debris_b",
+        "seed": 154
       },
       {
         "kind": "debris",
@@ -1929,7 +2171,8 @@
             "shard_home:woodland"
           ]
         },
-        "id": "debris_c"
+        "id": "debris_c",
+        "seed": 155
       },
       {
         "kind": "debris",
@@ -1947,58 +2190,265 @@
             "shard_home:woodland"
           ]
         },
-        "id": "debris_d"
+        "id": "debris_d",
+        "seed": 156
       },
       {
         "kind": "cart",
         "at": [
-          236,
-          264
+          428,
+          232
         ],
         "size": [
           22,
           8
         ],
         "id": "handcart",
-        "why": "a handcart left when the village ran to the halt farm"
-      },
-      {
-        "kind": "bench",
-        "at": [
-          272,
-          368
-        ],
-        "size": [
-          24,
-          6
-        ]
+        "why": "a handcart left when the village ran to the halt farm",
+        "seed": 157
       },
       {
         "kind": "flower_tub",
         "at": [
           380,
-          200
+          208
         ],
         "size": [
           12,
           6
-        ]
+        ],
+        "id": "flower_tub_59",
+        "seed": 159
       },
       {
         "kind": "flower_tub",
         "at": [
           404,
-          200
+          208
         ],
         "size": [
           12,
           6
-        ]
+        ],
+        "id": "flower_tub_60",
+        "seed": 160
+      },
+      {
+        "kind": "kit_lantern",
+        "at": [
+          200,
+          208
+        ],
+        "why": "Matt, 27 Oct (annotated Crossroads): \"lamp should be placed on the corners\": a lamp at each corner of the square",
+        "id": "kit_lantern_m0",
+        "seed": 300
+      },
+      {
+        "kind": "kit_lantern",
+        "at": [
+          440,
+          208
+        ],
+        "id": "kit_lantern_m1",
+        "seed": 301
+      },
+      {
+        "kind": "kit_lantern",
+        "at": [
+          200,
+          416
+        ],
+        "id": "kit_lantern_m2",
+        "seed": 302
+      },
+      {
+        "kind": "kit_lantern",
+        "at": [
+          440,
+          416
+        ],
+        "id": "kit_lantern_m3",
+        "seed": 303
+      },
+      {
+        "kind": "bench_side_e",
+        "at": [
+          204,
+          344
+        ],
+        "size": [
+          6,
+          18
+        ],
+        "id": "bench_side_w",
+        "why": "Matt, 27 Oct (annotated Crossroads): \"benches are off centre\": a pair on the square's west and east edges, mirrored, turned to the well",
+        "seed": 304
+      },
+      {
+        "kind": "bench_side_w",
+        "at": [
+          436,
+          344
+        ],
+        "size": [
+          6,
+          18
+        ],
+        "id": "bench_side_e",
+        "seed": 305
+      },
+      {
+        "kind": "crate",
+        "at": [
+          248,
+          264
+        ],
+        "size": [
+          10,
+          8
+        ],
+        "why": "the baker's crate between the bread and fish stalls",
+        "id": "crate_m6",
+        "seed": 306
+      },
+      {
+        "kind": "basket",
+        "at": [
+          296,
+          264
+        ],
+        "size": [
+          10,
+          6
+        ],
+        "id": "basket_w",
+        "why": "baskets of apples at the stalls' ends on the central aisle",
+        "seed": 307
+      },
+      {
+        "kind": "basket",
+        "at": [
+          344,
+          264
+        ],
+        "size": [
+          10,
+          6
+        ],
+        "id": "basket_e",
+        "seed": 308
+      },
+      {
+        "kind": "mown_field",
+        "at": [
+          556,
+          112
+        ],
+        "size": [
+          88,
+          88
+        ],
+        "solid": false,
+        "id": "mown_field",
+        "why": "Matt, 27 Oct (annotated Crossroads): \"if those are hay bales where is the hay field?\": the hay slope mown, stubble in rows, windrows raked, the bales standing on it",
+        "seed": 309
+      },
+      {
+        "kind": "crates",
+        "at": [
+          252,
+          384
+        ],
+        "size": [
+          12,
+          10
+        ],
+        "id": "crates_m10",
+        "seed": 310,
+        "why": "the tool stall's spare stock"
+      },
+      {
+        "kind": "basket",
+        "at": [
+          388,
+          384
+        ],
+        "size": [
+          10,
+          6
+        ],
+        "id": "basket_s",
+        "seed": 311,
+        "why": "the farm stall's apples"
+      },
+      {
+        "kind": "boulder",
+        "at": [
+          168,
+          504
+        ],
+        "id": "ring_stone_0",
+        "seed": 330,
+        "why": "Matt, 27 Oct (annotated Crossroads): the ring on the green a ring of standing stones (as the woodland draws its stones) on its trodden path, open to the east where the lane comes in"
+      },
+      {
+        "kind": "boulder",
+        "at": [
+          124,
+          520
+        ],
+        "id": "ring_stone_1",
+        "seed": 331
+      },
+      {
+        "kind": "boulder",
+        "at": [
+          80,
+          504
+        ],
+        "id": "ring_stone_2",
+        "seed": 332
+      },
+      {
+        "kind": "boulder",
+        "at": [
+          68,
+          472
+        ],
+        "id": "ring_stone_3",
+        "seed": 333
+      },
+      {
+        "kind": "boulder",
+        "at": [
+          80,
+          448
+        ],
+        "id": "ring_stone_4",
+        "seed": 334
+      },
+      {
+        "kind": "boulder",
+        "at": [
+          124,
+          432
+        ],
+        "id": "ring_stone_5",
+        "seed": 335
+      },
+      {
+        "kind": "boulder",
+        "at": [
+          168,
+          448
+        ],
+        "id": "ring_stone_6",
+        "seed": 336
       }
     ],
     "setts": [
       [
-        288,
+        320,
         316,
         14,
         23
@@ -2006,23 +2456,160 @@
     ],
     "puddles": [
       [
-        250,
-        250,
-        10,
-        4
+        292,
+        336,
+        8,
+        3
       ],
       [
         404,
-        330,
+        346,
         8,
         3
       ],
       [
         228,
-        318,
+        404,
         6,
         2.5
       ]
-    ]
-  }
+    ],
+    "tree_looks": {
+      "_about": "Matt, 27 Oct (annotated Crossroads): \"trees could be a touch more detailed\": the oaks' crowns in layers (back clumps darker, an under-shade crease between clusters, gaps with a branch) and the crown's shade on the trunk",
+      "oak": {
+        "crown": {
+          "clump": 11.0,
+          "layers": true,
+          "gaps": 3
+        },
+        "trunk_shade": true
+      }
+    }
+  },
+  "structures": [
+    {
+      "id": "square",
+      "units": "world",
+      "rect": [
+        192,
+        200,
+        448,
+        424
+      ],
+      "why": "the market square as one composition (scripts/review/composition.py): the well its centrepiece on the axis, everything else mirrored",
+      "props": [
+        {
+          "kind": "well",
+          "x": 320,
+          "y": 320,
+          "w": 20,
+          "centre": true
+        },
+        {
+          "kind": "waystone",
+          "x": 320,
+          "y": 384,
+          "w": 10
+        },
+        {
+          "kind": "lantern",
+          "x": 320,
+          "y": 248,
+          "w": 10
+        },
+        {
+          "kind": "stall",
+          "x": 224,
+          "y": 264,
+          "w": 36
+        },
+        {
+          "kind": "stall",
+          "x": 272,
+          "y": 264,
+          "w": 36
+        },
+        {
+          "kind": "stall",
+          "x": 368,
+          "y": 264,
+          "w": 36
+        },
+        {
+          "kind": "stall",
+          "x": 416,
+          "y": 264,
+          "w": 36
+        },
+        {
+          "kind": "stall",
+          "x": 224,
+          "y": 384,
+          "w": 36
+        },
+        {
+          "kind": "stall",
+          "x": 416,
+          "y": 384,
+          "w": 36
+        },
+        {
+          "kind": "basket",
+          "x": 296,
+          "y": 264,
+          "w": 10
+        },
+        {
+          "kind": "basket",
+          "x": 344,
+          "y": 264,
+          "w": 10
+        },
+        {
+          "kind": "lamp",
+          "x": 200,
+          "y": 208,
+          "w": 4
+        },
+        {
+          "kind": "lamp",
+          "x": 440,
+          "y": 208,
+          "w": 4
+        },
+        {
+          "kind": "lamp",
+          "x": 200,
+          "y": 416,
+          "w": 4
+        },
+        {
+          "kind": "lamp",
+          "x": 440,
+          "y": 416,
+          "w": 4
+        },
+        {
+          "kind": "bench",
+          "x": 204,
+          "y": 344,
+          "w": 6
+        },
+        {
+          "kind": "bench",
+          "x": 436,
+          "y": 344,
+          "w": 6
+        }
+      ],
+      "entries": [
+        {
+          "x": 320
+        },
+        {
+          "x": 320
+        }
+      ]
+    }
+  ]
 }
