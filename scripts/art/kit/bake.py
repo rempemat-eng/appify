@@ -107,6 +107,9 @@ def _shape(cells: np.ndarray, h: int, w: int, a: dict) -> np.ndarray:
             # a narrow channel's lumps step a few texels at a time (the woodland's rill, gaussian 2.2)
             small = ndi.gaussian_filter(np.pad(small, 8, mode='edge').astype(float), 2.2)[8:-8, 8:-8] > 0.5
             m = m | (small & zone)
+    if a.get('smooth'):
+        # a worn track or a desire line follows its cells loosely: their staircase eased into a curve
+        m = ndi.gaussian_filter(np.pad(m, 16, mode='edge').astype(float), float(a['smooth']))[16:-16, 16:-16] > 0.5
     return m
 
 
@@ -149,7 +152,7 @@ def bake(plan: dict, lib: dict | None = None):
     for t in range(1, int(tiers.max()) + 1):
         ea = (lib['earth_face']['terrain'].get('paint') or {}).get('args', {})
         tm = _shape(tiers >= t, h, w, dict(seed=ea.get('seed', 301) + t, r_out=ea.get('r_out', 0.65), r_in=ea.get('r_in', 0.4), amp=ea.get('amp', SG.AMP)))
-        top = GD.lawn(h, w, 31 + t)
+        top = GD.lawn(h, w, 31 + t, base=3, lush=0.5, grain=0.6)      # the plateau swatch's calmer top
         cv[tm] = top[tm]
         tops.append(tm)
         below = np.zeros_like(tm)
@@ -203,6 +206,15 @@ def bake(plan: dict, lib: dict | None = None):
     rng = np.random.default_rng(301)
     for t, tm in enumerate(tops, start=1):
         _face, items, _lip = GD.ledge(cv, tm, face_h, rng, seed=301 + t, kind='earth', shadow_px=15)
+        # the back rim, so raised ground reads on every side: the top's last row lit, under it (to the
+        # north, seen past the rim) a dark row of earth and a row of the lower turf in its shade
+        back = tm & GD.down(~tm, 1)
+        cv[back & (cv % 8 < 5)] = cv[back & (cv % 8 < 5)] + 1
+        rim1 = ~tm & GD.down(tm, -1) & ~_face
+        rim2 = ~tm & GD.down(tm, -2) & ~rim1 & ~_face
+        cv[rim1 & (cv >= 0)] = C('earth_cool', 1)
+        sel = rim2 & (cv >= 0) & (cv % 8 > 0) & (cv % 8 < 6)
+        cv[sel] = cv[sel] - 1
         for img_, anc_, (fx_, fy_) in items:
             dec_ = SN.to_codes(img_)
             SN.DC.paste(cv, dec_, int(round(fx_ - anc_[0])), int(round(fy_ - anc_[1])), shadow=True, shadow_dx=SN.P(1), shadow_dy=SN.P(0.5))
@@ -233,8 +245,18 @@ def bake(plan: dict, lib: dict | None = None):
         wcells = mat == m
         wcls = SF.water_class(SF.widths(wcells))
         wm |= SF.taper(_shape(wcells, h, w, a.get('shape', {})), wcells, wcls)
+        before = cv.copy()
         items = GD.water(cv, wm, a.get('seed', 402), bank_h=SN.P(a.get('bank_h', 3.4), 0), flow='auto', stones=a.get('stones', 0.0),
                          reeds=a.get('reeds', 0.8), rush_clumps=a.get('rush_clumps'), side_w=a.get('side_w', 5))
+        narrow = (wcls >= 1) & (wcls <= 2)
+        if narrow.any():
+            # a rill's or a stream's banks: the narrow walls of the woodland's rill (side_w 3), not the
+            # river's wide ones, which would eat a channel one or two cells across
+            nb = before.copy()
+            GD.water(nb, wm, a.get('seed', 402), bank_h=SN.P(a.get('bank_h', 3.4), 0), flow='auto', stones=0.0,
+                     reeds=a.get('reeds', 0.8), rush_clumps=a.get('rush_clumps'), side_w=a.get('narrow_side_w', 3))
+            zone = SF.texels(ndi.binary_dilation(narrow, iterations=1) & ~ndi.binary_dilation(wcls >= 3, iterations=1))[:h, :w]
+            cv[zone] = nb[zone]
         nearw = ndi.binary_dilation(wm, iterations=SN.P(3)) & ~wm
         grassy_ = (is_fam(cv, 'grass') | is_fam(cv, 'leaf')) & (cv % 8 <= 2) & nearw
         cv[grassy_] = cv[grassy_] - cv[grassy_] % 8 + 3
@@ -268,12 +290,33 @@ def bake(plan: dict, lib: dict | None = None):
             cw = lib[pc['piece']]['geometry']['size_cells'][0] * CELL / D
             cx, foot = pc['at'][0] / D, pc['at'][1] / D
             rim = foot - face_h / D
-            RK.face(cv, cx - cw / 2 - 5, rim - 1, cx + cw / 2 + 5, foot + 2, seed=rp.get('args', {}).get('seed', 14))
-            # the fall's foam and rings lie on the pool, never on the turf beside it
+            seed = rp.get('args', {}).get('seed', 11)
+            k = cw / 16.0                                   # the woodland's fall is a 16 world px channel
+            # the cascade as the woodland painted it (screen.terrain): the rock face behind, then
+            # the stepped slabs either side and the lip ledge, the rounded stones at their feet,
+            # back to front; the sheet and its foam over them; the face scaled to this face's height
+            RK.face(cv, cx - 18 * k, rim, cx + 18 * k, foot + 1, seed=seed + 3)
+            q = (foot - rim) / 40.0
+            heap = [(0, 6, 28, 10, 205, True), (-28, 10, 22, 13, 203, True), (28, 10, 22, 13, 204, True),
+                    (-26, 28, 22, 15, 206, True), (26, 28, 20, 14, 207, True), (-46, 16, 12, 10, 201, False),
+                    (-44, 34, 10, 8, 208, False), (-14, 38, 9, 6, 210, False), (15, 38, 8, 5, 211, False)]
+            chan = wm.copy()
+            chan[int(rim * D):] = False
+            chan[:max(0, int((rim - 40) * D))] = False
+            for (dx, dy, bw, bh, sd, slab) in sorted(heap, key=lambda b: b[1]):
+                sc = min(1.0, 0.55 + 0.45 * q)
+                dec, anc = RK.rock(bw * sc * (k if dx == 0 else 1.0), bh * sc, sd, flat=slab, moss=0.6)
+                X, Y = int(round((cx + dx * k) * D - anc[0])), int(round((rim + dy * q) * D - anc[1]))
+                hh, ww = dec.shape
+                sub = chan[max(0, Y):Y + hh, max(0, X):X + ww]
+                dec[max(0, -Y):max(0, -Y) + sub.shape[0], max(0, -X):max(0, -X) + sub.shape[1]][sub] = -1
+                SN.DC.paste(cv, dec, X, Y, shadow=True, shadow_dx=SN.P(2), shadow_dy=SN.P(1))
+            SN.WA.wet_rock(cv, cx - cw / 2, cw, rim - 2, foot)
+            # the falling sheet; its foam and rings inside the pool only (2 texels in from its bank)
             tmp = cv.copy()
-            RK.fall(tmp, cx - cw / 2, cw, rim, foot + 4, seed=rp.get('args', {}).get('seed', 11))
-            ok = wm.copy()
-            ok[int((rim - 2) * D):int((foot + 2) * D), max(0, int((cx - cw / 2 - 5) * D)):int((cx + cw / 2 + 5) * D)] = True
+            RK.fall(tmp, cx - cw / 2, cw, rim, foot + 4, seed=seed)
+            ok = ndi.binary_erosion(wm, iterations=2)
+            ok[int((rim - 2) * D):int(foot * D), max(0, int((cx - cw / 2 - 2) * D)):int((cx + cw / 2 + 2) * D)] = True
             cv[ok] = tmp[ok]
     # shadows and the lawn's detail (screen.build's order)
     casts, things, trees, objects = [], [], [], []
@@ -321,6 +364,13 @@ def bake(plan: dict, lib: dict | None = None):
     for m in casts:
         shade |= m
     SN.ground_detail_hd(cv, pl, trees, h, w, shade, soft=True)
+    # in the trees' shade the turf grows long and dark (screen.ground_detail_hd's rule): tufts
+    # stand closer there, so a crown's shadow is never a flat rug over the calm lawn
+    srng = np.random.default_rng(613)
+    turf_s = shade & ndi.binary_erosion(is_fam(cv, 'grass') | is_fam(cv, 'leaf'), iterations=3)
+    sy, sx = np.nonzero(turf_s)
+    for j in srng.permutation(len(sy))[: len(sy) // 140]:
+        GD.stamp(cv, int(sy[j]), int(sx[j]), GD.tuft_shape(srng, srng.uniform(0.8, 1.4)), C('grass_cool', 2), turf_s)
     G = CO.ground_from_codes(cv, D)
     CO.cast_shadows(G, casts, [], things + [(l[0], l[1], l[2], l[3]) for l in low if l[4]], D)
     ground = G.rgba()

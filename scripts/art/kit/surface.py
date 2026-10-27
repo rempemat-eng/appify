@@ -16,7 +16,7 @@ any mix reads as one surface:
   cells (`taper`), so a stream widens into a river rather than stepping.
 - **Variants**, one per cell (a plan's `variants` rows; '.' or none picks one): chosen by weight
   and context (near trees, water, doors, routes; a footpath's low traffic), never the same as the
-  cell to the west or north, and drawn as a soft blob round the cell, never its square. A slow
+  cell to the west or north (the plain surface may run on), and drawn as a soft blob round the cell, never its square. A slow
   tone field (about 200 texels across) shifts the hue over a whole area, so a long path is never
   stamped.
 """
@@ -32,9 +32,9 @@ CELL = 24
 
 # variant letter -> (name, weight); the context rules in `assign` raise or forbid them
 VARIANTS = {
-    'dirt': {'b': ('plain', 3.0), 'w': ('worn centre', 1.4), 'g': ('grassy verge', 1.0), 's': ('stony', 1.0),
+    'dirt': {'b': ('plain', 3.0), 'w': ('worn centre', 1.4), 'g': ('grassy verge', 0.6), 's': ('stony', 1.0),
              'd': ('damp, a puddle', 0.5), 'l': ('leaf litter', 0.0), 'c': ('compacted', 0.0)},
-    'lawn': {'b': ('calm field', 4.0), 'v': ('clover', 1.0), 'f': ('daisies', 1.0), 'n': ('long grass', 1.0),
+    'lawn': {'b': ('calm field', 6.0), 'v': ('clover', 0.6), 'f': ('daisies', 0.5), 'n': ('long grass', 0.6),
              't': ('trampled', 0.0)},
     'water': {'b': ('still', 3.0), 'r': ('rippled', 1.2), 'e': ('reedy', 0.0), 'y': ('lilies', 0.0),
               'o': ('shallow over stones', 0.0)},
@@ -124,8 +124,8 @@ def assign(kind: str, cells: np.ndarray, given: np.ndarray | None, ctx_: dict, s
                 if ctx_['cls'][y, x] >= 6 and ctx_['shore'][y, x]:
                     wts['y'] = 0.8
             for nb in ((y, x - 1), (y - 1, x)):
-                if nb[0] >= 0 and nb[1] >= 0 and out[nb]:
-                    wts[out[nb]] = 0.0
+                if nb[0] >= 0 and nb[1] >= 0 and out[nb] and out[nb] != 'b':
+                    wts[out[nb]] = 0.0          # the plain surface may run on; a variant never repeats
             ks = [k for k, v in wts.items() if v > 0]
             if not ks:                   # every weighted one is a neighbour's: the context-only ones
                 ban = {out[nb] for nb in ((y, x - 1), (y - 1, x)) if nb[0] >= 0 and nb[1] >= 0}
@@ -206,14 +206,14 @@ def path_variants(cv: np.ndarray, net: np.ndarray, var: np.ndarray, seed: int, f
         elif k == 'g':               # the verge creeps in: grass patches and tufts along the earth's edge
             dist_e = ndi.distance_transform_edt(net)
             gp = z & (dist_e < 7 + 3 * GD.nz(H, W, 9.0, seed + 44)) & (GD.nz(H, W, 7.0, seed + 42) > 0.5)
-            gp = ndi.binary_opening(gp, structure=np.ones((3, 3), bool))
+            gp = ndi.binary_opening(gp, structure=np.ones((5, 5), bool))
             cv[gp] = C('grass', 3)
             cv[gp & (GD.nz(H, W, 2.5, seed + 43) > 0.6)] = C('grass', 2)
-            ys, xs = np.nonzero(z & (dist_e < 10))
-            for j in rng.permutation(len(ys))[: len(ys) // 90]:
+            ys, xs = np.nonzero(z & (dist_e > 5) & (dist_e < 12))
+            for j in rng.permutation(len(ys))[: len(ys) // 220]:
                 GD.stamp(cv, int(ys[j]), int(xs[j]), GD.tuft_shape(rng, rng.uniform(0.7, 1.2)), C('grass', 3), net)
-        elif k == 's':               # stony: pebble clusters and a larger stone
-            ys, xs = np.nonzero(inner)
+        elif k == 's':               # stony: pebble clusters and a larger stone, off the edge
+            ys, xs = np.nonzero(z & ndi.binary_erosion(net, iterations=8))
             for _ in range(max(2, len(ys) // 260)):
                 j = int(rng.integers(0, len(ys)))
                 for _q in range(int(rng.integers(2, 5))):
@@ -251,7 +251,7 @@ def lawn_variants(cv: np.ndarray, turf: np.ndarray, var: np.ndarray, seed: int) 
         if not len(ys):
             continue
         if k == 'v':                 # clover: trefoils laid into the lawn in patches
-            for _ in range(len(ys) // 70):
+            for _ in range(len(ys) // 160):
                 j = int(rng.integers(0, len(ys)))
                 qy, qx = ys[j], xs[j]
                 for (dy, dx) in ((-1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (0, 0), (1, 0)):
@@ -259,7 +259,7 @@ def lawn_variants(cv: np.ndarray, turf: np.ndarray, var: np.ndarray, seed: int) 
                     if 0 <= yy_ < H and 0 <= xx_ < W and turf[yy_, xx_]:
                         cv[yy_, xx_] = C('leaf', 4) if (dy, dx) in ((-1, -1), (-1, 0)) else (C('leaf', 2) if (dy, dx) == (1, 0) else C('leaf', 3))
         elif k == 'f':               # daisies in small groups (laid in as pictures: the caller pastes them)
-            for _ in range(max(1, len(ys) // 900)):
+            for _ in range(max(1, len(ys) // 2500)):
                 j = int(rng.integers(0, len(ys)))
                 img = P4.flowers4(D, int(rng.integers(0, 10 ** 6)), kind='white', n=int(rng.integers(2, 5)))
                 a = np.asarray(img)[..., 3] > 0
@@ -270,7 +270,7 @@ def lawn_variants(cv: np.ndarray, turf: np.ndarray, var: np.ndarray, seed: int) 
         elif k == 'n':               # long grass: the cool sibling, dense tufts with dark roots
             sel = z & (cv % 8 < 6) & (GD.nz(H, W, 9.0, seed + 51) > 0.4)
             cv[sel] = sib(cv[sel], 'cool')
-            for j in rng.permutation(len(ys))[: len(ys) // 55]:
+            for j in rng.permutation(len(ys))[: len(ys) // 170]:
                 GD.stamp(cv, int(ys[j]), int(xs[j]), GD.tuft_shape(rng, rng.uniform(0.9, 1.5)), C('grass_cool', 2), turf)
         elif k == 't':               # trampled beside a route: short, lighter, a bare speck or two
             sel = z & (cv % 8 < 4) & (GD.nz(H, W, 6.0, seed + 52) > 0.45)

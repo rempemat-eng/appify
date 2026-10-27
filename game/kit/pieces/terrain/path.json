@@ -50,7 +50,8 @@
         "cell": 12,
         "stones": 1.0,
         "shape": {
-          "seed": 41
+          "seed": 41,
+          "smooth": 4
         }
       }
     }
