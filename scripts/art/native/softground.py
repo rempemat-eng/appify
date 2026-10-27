@@ -231,22 +231,25 @@ def lawn(H: int, W: int, seed: int, fam: str = 'grass', base: int = 3, lush: flo
     damp = ndi.gaussian_filter(dark.astype(float), 5.0)
     # a low mottle: small clumps (3 to 6 px) of the sibling hue at the same tone, about a third of
     # the field, so the turf is never one flat colour yet stays calm (its value hardly moves)
-    mot = fbm(H, W, mottle, seed + 21) > 0.53
+    mot = ndi.binary_opening(fbm(H, W, mottle, seed + 21) > 0.5, structure=np.ones((2, 2), bool))
     swap = np.where(dark, C(fam, base), np.where(lit, C(fam, base), C(cool, base)))
     sel = mot & ((cv == C(fam, base)) | (cv == C(cool, base)) | (cv == C(warm, base)))
     cv[sel] = swap[sel]
     # a calm grain (Matt, 26 Oct: the lawn too busy): short lit blades a texel or two long, sparse,
     # and a dark blade now and then, so no stretch is one flat tone but nothing reads as stipple
     # (the scale guide: dark marks of 3 px and up, about 34 to a H square in Eastward)
-    for _ in range(int(H * W / 95)):
+    # (each blade is two or three texels upright in one code, so none is a lone texel: the house
+    # no-speckle test, check.py)
+    for _ in range(int(H * W / 75)):
         y, x = int(rng.integers(2, H - 1)), int(rng.integers(1, W - 2))
-        cv[y, x] = step(cv[y, x], 1)
-        if rng.random() < 0.6:
-            cv[y - 1, x + (1 if rng.random() < 0.5 else 0)] = step(cv[y - 1, x], 1)
+        c = step(cv[y, x], 1)
+        cv[y, x] = c
+        cv[y - 1, x] = c
     for _ in range(int(H * W / 420 * grain)):
         y, x = int(rng.integers(3, H - 1)), int(rng.integers(1, W - 2))
+        c = step(cv[y, x], -1)
         for j in range(int(rng.integers(2, 4))):
-            cv[y - j, x + (j // 2)] = step(cv[y - j, x], -1)
+            cv[y - j, x] = c
     # tufts in loose clumps (tufts 7 to 14 px across, clumps 15 to 40), the clumps 35 to 60 px
     # apart, more in the damp patches, calm turf between them
     gather = fbm(H, W, 50.0, seed + 3) + 0.5 * damp
@@ -270,6 +273,9 @@ def lawn(H: int, W: int, seed: int, fam: str = 'grass', base: int = 3, lush: flo
     # no near-black in the turf: the darkest blade is a tone above the ramp's floor
     low = (cv % 8 == 0)
     cv[low] = cv[low] + 1
+    # no lone texels (the house no-speckle test): a gap between blades or a stray checker cell
+    # takes its neighbours' code
+    tidy_codes(cv)
     # flowers in small groups, few
     if flowers > 0:
         n = int(H * W / 16000 * flowers)
@@ -285,7 +291,8 @@ def lawn(H: int, W: int, seed: int, fam: str = 'grass', base: int = 3, lush: flo
 # packed earth
 # ------------------------------------------------------------------------------------------------
 def dirt(cv: np.ndarray, m: np.ndarray, seed: int, fam: str = 'path', cell: float = 13.0,
-         ruts: float | None = None, stones: float = 1.0) -> None:
+         ruts: float | None = None, stones: float = 1.0, rut_mask: np.ndarray | None = None,
+         crown: bool = False) -> None:
     """Packed earth (Eastward 13 and 17): clods 10 to 15 px in two close tones of the family and
     its siblings, each lit along its upper left with a joint a tone down along its lower right
     (joints broken, so the ground never reads as a mesh); large trodden and damp patches; two
@@ -333,11 +340,23 @@ def dirt(cv: np.ndarray, m: np.ndarray, seed: int, fam: str = 'path', cell: floa
         dist = ndi.distance_transform_edt(m)
         wob = (nz(H, W, 16.0, seed + 8) - 0.5) * 4.0
         rut = (np.abs(dist - ruts + wob) < 1.6) & (nz(H, W, 30.0, seed + 9) > 0.42) & m
+        if rut_mask is not None:
+            # wheel tracks only down the roads: wider, slightly sunken and damp (Matt, 26 Oct 23:09)
+            rut = (np.abs(dist - ruts + wob) < 2.6) & (nz(H, W, 40.0, seed + 9) > 0.2) & m & rut_mask
         famc[rut] = FI[fam + '_cool']
         t[rut & (t >= 3) & (nz(H, W, 4.0, seed + 10) > 0.35)] = 2
         t[down(rut, 1) & ~rut & m & (t >= 3)] = 4
     sel = m & (cv >= 0)
     cv[sel] = (famc * 8 + t)[sel]
+    if ruts and crown and rut_mask is not None:
+        # the crown between the wheel tracks: grass grows back in tufts and thin patches
+        dist = ndi.distance_transform_edt(m)
+        cr = m & rut_mask & (dist > ruts + 4)
+        gp = cr & (nz(H, W, 6.0, seed + 31) > 0.7) & (nz(H, W, 2.5, seed + 32) > 0.4)
+        cv[gp] = C('grass_warm', 2)
+        cy_, cx_ = np.nonzero(cr)
+        for k in rng.permutation(len(cy_))[: len(cy_) // 160]:
+            stamp(cv, int(cy_[k]), int(cx_[k]), tuft_shape(rng, rng.uniform(0.8, 1.3)), C('grass_warm', 2), m)
     # dry blades blown onto the dirt: short pale curves (Eastward 12)
     ys2, xs2 = np.nonzero(m & ndi.binary_erosion(m, iterations=6))
     for k in rng.permutation(len(ys2))[: len(ys2) // 1800]:
@@ -1579,6 +1598,10 @@ def paving(cv, pave, rng, kerb=12, course=(18, 23), length=(18, 30), fams=('ston
     # the worn line where feet go (the centre and the way in) a tone lighter on most slabs
     wear = blobs(H, W, 91, 70.0, 0.3) & (hsh > 0.25)
     t = np.where(wear & (t == 3), 4, t)
+    # weathering: soft damp clouds a tone down across part of a slab (never a whole one), so even a
+    # large flag shows its stone and no slab is one flat tone
+    stain = blobs(H, W, 93, 16.0, 0.24)
+    t = np.where(stain & (t >= 3) & (hsh < 0.8), t - 1, t)
     code = fam * 8 + t
     lit = (top_r | left_c) & ~joint
     code[lit] = fam[lit] * 8 + np.minimum(5, t[lit] + 1)
@@ -2016,6 +2039,47 @@ def seat_tree(img, anc, rng, crown=True):
                     if 0 <= xr + d < w and cd[y, xr + d] < 0:
                         cd[y, xr + d] = C('timber_cool', 1)
     return Image.fromarray(_rgba(cd), 'RGBA'), anc
+
+
+# ------------------------------------------------------------------------------------------------
+# a puddle after rain (Matt, 26 Oct 23:09: "why are there random holes with water in the square?")
+# ------------------------------------------------------------------------------------------------
+def puddle(cv, cx, cy, rx, ry, seed=0):
+    """Shallow water lying in a slight hollow of the ground it is on (setts or packed earth), never a
+    hole: the hollow's ground a tone down and damp in a soft halo round it, the water inside with the
+    ground still showing through its shallow edge, a light rim on its south and east, the bank's
+    shade on its north edge, the sky's reflection in its middle. Texels. Returns the changed mask."""
+    H, W = cv.shape
+    yy, xx = np.mgrid[0:H, 0:W]
+    e = ((xx - cx) / rx) ** 2 + ((yy - cy) / ry) ** 2 + (nz(H, W, 5.0, seed) - 0.5) * 0.9
+    hollow = e < 1.0
+    from .softgrid import clean
+    hollow = clean(hollow, min_area=1.0)
+    halo = (e >= 1.0) & (e < 1.7)
+    chk = ((xx + yy) % 2) == 0
+    before = cv.copy()
+    shift(cv, halo & ((e < 1.35) | chk), -1)                          # damp ground round it
+    shift(cv, hollow, -1)                                              # the hollow a little lower
+    wat = hollow & ndi.binary_erosion(hollow, iterations=3)
+    # the highest setts of the hollow stand dry out of the shallow water
+    d0 = ndi.distance_transform_edt(wat)
+    wat &= ~((nz(H, W, 3.0, seed + 5) > 0.72) & (d0 < 5))
+    wat = clean(wat, min_area=1.0)
+    d_in = ndi.distance_transform_edt(wat)
+    under = cv.copy()
+    # the water: grey-blue and shallow, the ground showing through it (a tone down) over its outer
+    # 4 px, deeper only in the middle; the sky's light in a soft streak across its north half
+    cv[wat] = C('water_cool', 4)
+    cv[wat & (d_in > 6)] = C('water_cool', 3)
+    shallow = wat & ((d_in <= 3) | ((d_in <= 5) & chk))
+    cv[shallow] = step(under[shallow], -2)                           # the wet setts under the shallow edge
+    sky_ = wat & (d_in > 2) & (np.abs((yy - cy) + 0.25 * (xx - cx) + ry * 0.25) < max(1.5, ry * 0.2))
+    cv[sky_] = C('sky', 5)
+    rim_s = wat & ~down(wat, -1)
+    rim_e = wat & ~right(wat, -1)
+    cv[rim_s | rim_e] = C('water', 5)
+    cv[wat & ~down(wat, 1)] = C('water_cool', 1)
+    return cv != before
 
 
 def tidy_codes(cv: np.ndarray, keep: np.ndarray | None = None) -> None:

@@ -2803,6 +2803,91 @@ def p_grindstone_hd(w, h, seed):
     return finish(p)
 
 
+def p_bench_side_hd(w, h, seed, facing='east'):
+    """The house bench turned side on (Matt, 26 Oct: benches face the well), its sitter looking
+    `facing` (east or west): in our oblique view a plane running north to south shows only its
+    top, so the seat is three planks seen from above running north to south, the back a narrow
+    rail standing up along the far side (its top arris lit), the posts rising above the seat at
+    each end, and only the south end shows its height: the seat's end grain, the two south legs
+    and the stretcher between them. Lit from the west whichever way it faces."""
+    rng = np.random.default_rng(seed)
+    L, dep = 18.0, 6.0                                                 # world px: length (north-south), depth
+    p = _pic(dep, L, up=13, side=1)
+    a, cx, yb = p.a, p.ax, p.ay
+    Y, X = grid(a)
+    tf = ('timber_cool', 'timber', 'timber_warm')
+    x0, x1 = cx - q(dep / 2), cx + q(dep / 2)
+    bw = q(1.4)                                                        # the back rail's width
+    back_w = facing == 'east'                                          # the back on the west side
+    bx0 = x0 if back_w else x1 - bw
+    sx0, sx1 = (x0 + bw - 1, x1) if back_w else (x0, x1 - bw + 1)     # the seat under the back's foot
+    yN = yb - q(L)
+    zs, zb = q(7), q(13)
+    ys0, ys1 = yN - zs, yb - zs                                        # the seat's top plane on screen
+    th = q(1.2)                                                        # the seat's thickness
+    lw = q(1.5)
+
+    def leg(px, top, base):
+        m = (X >= px) & (X < px + lw) & (Y >= top) & (Y < yb)
+        t = np.where(X < px + max(1, q(0.5)), base + 1.2, np.where(X >= px + lw - max(1, q(0.5)), base - 1.0, base))
+        paint(a, m, tf, t - 0.8 * (Y >= yb - q(0.6)))
+    # the far (north) post shows above the seat; the back rail runs along the seat's far side
+    post = (X >= bx0) & (X < bx0 + bw)
+    paint(a, post & (Y >= yN - zb) & (Y < ys0 + 1), tf, np.where(X < bx0 + 1, 4.0, 2.6))
+    # the seat: three planks from above, a dark gap between, the end grain lit at the south end
+    a[(X >= sx0) & (X < sx1) & (Y >= ys0) & (Y < ys1)] = code('timber', 0)
+    pw = (sx1 - sx0) / 3.0
+    for k in range(3):
+        px0 = int(round(sx0 + k * pw))
+        px1 = int(round(sx0 + (k + 1) * pw)) - (1 if k < 2 else 0)
+        m = (X >= px0) & (X < px1) & (Y >= ys0) & (Y < ys1)
+        base = (5.0, 4.4, 4.0)[k] if back_w else (4.6, 4.2, 3.6)[k]
+        t = np.full(a.shape, base)
+        t = np.where(X == px0, base + 0.6, t)                          # a lit west arris
+        t = np.where(X == px1 - 1, base - 1.2, t)
+        t = np.where(Y < ys0 + 2, base + 0.4, t)                       # the sawn north end
+        # grain: short runs along the plank
+        gr = (np.abs(X - (px0 + px1) / 2.0) < 0.6) & ((((Y - ys0) // max(4, q(3))) + k) % 3 == 0)
+        t = np.where(gr, t - 1.0, t)
+        paint(a, m, ('timber_warm', 'timber_warm', 'timber_warm') if k == (0 if back_w else 2) else tf, t)
+    # the seat's south end: its end grain (lit) and the shade under it
+    endm = (X >= sx0) & (X < sx1) & (Y >= ys1) & (Y < ys1 + th)
+    paint(a, endm, tf, np.where(Y < ys1 + 1, 3.8, 3.0) + 0.6 * (X < sx0 + q(1.0)))
+    # the back rail: its top seen from above along the far side, the rear post running down to the
+    # ground at the south end (the back stands in front of nothing: it shows as one upright band)
+    rail = post & (Y >= yN - zb) & (Y < ys1 - (zb - zs) + q(1.6))
+    paint(a, rail, tf, np.where(X < bx0 + 1, 4.4, np.where(X >= bx0 + bw - 1, 2.2, 3.4)))
+    a[rail & (Y >= yN - zb) & (Y < yN - zb + 1)] = code('timber_warm', 5)
+    for ry in (yN - zb + q(2.4), ys1 - (zb - zs) - q(1.2)):            # pegs where the rails meet the posts
+        fill(a, bx0 + bw // 2 - 1, int(ry), bx0 + bw // 2 + 1, int(ry) + 2, code('timber_cool', 2))
+    rpost = post & (Y >= ys1 - (zb - zs)) & (Y < yb)
+    paint(a, rpost, tf, np.where(X < bx0 + 1, 3.8, 2.4) - 0.8 * (Y >= yb - q(0.6)))
+    # the front south leg under the seat's outer edge, then the stretcher to the rear post
+    fx = sx1 - lw if back_w else sx0
+    leg(fx, ys1 + th, 2.8)
+    sy = yb - q(2.6)
+    lo, hi = (bx0 + bw, fx) if back_w else (fx + lw, bx0)
+    st = (X >= lo) & (X < hi) & (Y >= sy) & (Y < sy + q(1.0))
+    paint(a, st, tf, np.where(Y < sy + 1, 3.6, 2.4))
+    sh = (X >= sx0) & (X < sx1) & (Y >= ys1 + th) & (Y < ys1 + th + q(1.0)) & (a >= 0)
+    a[sh] = a[sh] - 2 * ((a[sh] % 8) > 1)
+    for px in (fx, bx0):                                               # contact shade at the south feet
+        foot = (X >= px - 1) & (X < px + lw + 1) & (Y >= yb) & (Y < yb + 1) & (a < 0)
+        a[foot] = code('earth_cool', 1)
+    # the story of use: nail heads where the planks cross the end bearers, a seat patch worn pale
+    for yk in (ys0 + q(1.6), ys1 - q(1.8)):
+        for k in range(3):
+            nx_ = int(sx0 + (k + 0.5) * pw)
+            fill(a, nx_, int(yk), nx_ + 2, int(yk) + 2, code('iron', 1))
+            fill(a, nx_, int(yk), nx_ + 1, int(yk) + 1, code('iron', 3))
+    sx_ = (sx0 + sx1) / 2.0
+    for sy_ in (ys0 + (ys1 - ys0) * 0.32, ys0 + (ys1 - ys0) * 0.68):
+        wm = ((X - sx_) / q(1.4)) ** 2 + ((Y - sy_) / q(2.6)) ** 2 <= 1
+        wm &= (a % 8 >= 3) & (a % 8 <= 4) & (rng.random(a.shape) < 0.55) & (Y >= ys0) & (Y < ys1)
+        a[wm] = a[wm] + 1
+    return finish(p)
+
+
 PROPS_HD = {
     'barrel': p_barrel_hd,
     'anvil': p_anvil_hd,
@@ -2812,5 +2897,7 @@ PROPS_HD = {
     'hay': p_hay_hd,
     'sacks': p_sacks_hd,
     'bench': p_bench_hd,
+    'bench_side_e': lambda w, h, s: p_bench_side_hd(w, h, s, facing='east'),
+    'bench_side_w': lambda w, h, s: p_bench_side_hd(w, h, s, facing='west'),
     'grindstone': p_grindstone_hd,
 }

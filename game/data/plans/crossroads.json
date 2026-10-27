@@ -228,14 +228,15 @@
           376
         ],
         [
-          200,
-          440
+          264,
+          456
         ],
         [
-          144,
-          472
+          192,
+          456
         ]
-      ]
+      ],
+      "why_shape": "on the soft grid (Matt, 26 Oct 23:09: the path 'not quite straight enough'): two straight runs and a turn in whole cells instead of a slant, meeting the green's ring at its east side"
     },
     {
       "id": "garden_walk",

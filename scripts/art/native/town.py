@@ -142,7 +142,7 @@ def crater_hd(cv, WX, WY, cx, cy, rx, ry, rng, noise, drawn=None):
     soil_texture_hd(cv, e < 1.6, rng, drawn)
 
 
-def lawn_detail_hd(cv, keep_out, shade, foots, rng, noise):
+def lawn_detail_hd(cv, keep_out, shade, foots, rng, noise, soft=False):
     """The village lawn at density 3 and up (26 Oct, fix queue: the sheet's tufts repeated as one
     stamp, the shade fell as one-tone rugs on a calm field). Drawn in codes before the shadows,
     which keep it: Eastward's blade texture (small V marks a tone down, staggered about 2.5 world
@@ -151,16 +151,18 @@ def lawn_detail_hd(cv, keep_out, shade, foots, rng, noise):
     stamp), denser at the feet of walls, fences and things and thin where people walk, and small
     flowers and clover in a few drifts."""
     from scripts.art.native import ctx as CX
-    from scripts.art.native import ground as GR
-    from scripts.art.native import props as P4
-    from scripts.art.native.palette import C, FI, step, sib, is_fam
-    from scripts.art.native.screen import to_codes
+    from scripts.art.native.palette import FI, step, sib, is_fam
     D = CX.D
     H, W = cv.shape
     drawn = np.zeros((H, W), bool)
     grass = (is_fam(cv, 'grass') | is_fam(cv, 'leaf')) & (cv % 8 < 6) & ~keep_out
     lawn = ndi.binary_erosion(grass, iterations=2)
     slow = noise(30.0, 301)
+    if soft:
+        # the soft grid's lawn already carries its field, mottle and tufts: only the clumps at the
+        # feet of things and along the edges below
+        slow = noise(30.0, 301)
+        return _clumps(cv, keep_out, foots, rng, slow, grass, lawn, drawn, D)
     # soft hue patches where the field is calm
     win = int(round(5 * D))
     calm = lawn & (ndi.maximum_filter(cv, size=win) == ndi.minimum_filter(cv, size=win))
@@ -191,8 +193,16 @@ def lawn_detail_hd(cv, keep_out, shade, foots, rng, noise):
             if lawn[yy, xx] and cv[yy, xx] % 8 > 0:
                 cv[yy, xx] = step(cv[yy, xx], -1)
                 drawn[yy, xx] = True
-    # tufts in clumps: round the feet of things and along the edges of paths and walls, a few
-    # drifts in the open lawn
+    return _clumps(cv, keep_out, foots, rng, slow, grass, lawn, drawn, D, drifts=True)
+
+
+def _clumps(cv, keep_out, foots, rng, slow, grass, lawn, drawn, D, drifts=False):
+    """Tufts in clumps round the feet of things and along the edges of paths and walls (and with
+    `drifts` a few drifts in the open lawn)."""
+    from scripts.art.native import ground as GR
+    from scripts.art.native import props as P4
+    from scripts.art.native.screen import to_codes
+    H, W = cv.shape
     edge = ndi.binary_dilation(keep_out, iterations=int(round(3 * D))) & ~ndi.binary_dilation(keep_out, iterations=int(round(1 * D)))
     centres = []
     for (fx, fy, kind) in foots:
@@ -203,7 +213,7 @@ def lawn_detail_hd(cv, keep_out, shade, foots, rng, noise):
     ys, xs = np.nonzero(edge & lawn)
     for k in rng.choice(len(ys), size=min(len(ys), int(len(ys) / (180 * D * D))), replace=False) if len(ys) else []:
         centres.append((xs[k] / D, ys[k] / D, int(rng.integers(1, 4))))
-    for cy in np.arange(0, H / D, 34.0):
+    for cy in (np.arange(0, H / D, 34.0) if drifts else []):
         for cx in np.arange(0, W / D, 34.0):
             if rng.random() < 0.4 + 0.25 * float(np.clip(slow[min(H - 1, int(cy * D)), min(W - 1, int(cx * D))], -1, 1)):
                 centres.append((cx + rng.uniform(0, 34), cy + rng.uniform(0, 34), int(rng.integers(2, 5))))
@@ -269,8 +279,17 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
 
     def is_turf(c):
         return np.isin(c // 8, [FI['grass'], FI['grass_warm'], FI['grass_cool'], FI['leaf'], FI['leaf_warm']]) & (c % 8 < 6)
+    is_turf_codes = is_turf
     keep_marks = np.zeros((H, W), bool)             # density 3: drawn marks the lone-pixel tidy keeps
-    cv = sheets.grass_field_d(bw, bh, seed=plan.get('lawn_seed', 3), tufts=not hd).astype(np.int32)
+    if hd:
+        # the soft grid's lawn (softground.lawn, Matt 26 Oct 23:09: "the grass ... doesn't look quite
+        # right"): a calm field of two sibling hues, a low mottle, loose clumps of tufts; its fine
+        # marks are kept by the lone-pixel tidy
+        from scripts.art.native import softground as GD
+        cv = GD.lawn(H, W, plan.get('lawn_seed', 3) + 900).astype(np.int32)
+        keep_marks |= is_turf_codes(cv)
+    else:
+        cv = sheets.grass_field_d(bw, bh, seed=plan.get('lawn_seed', 3), tufts=not hd).astype(np.int32)
     up = sheets.grass_field_d(bw, bh, seed=plan.get('lawn_seed', 3) + 1, base_tone=2, density=1.3,
                               tufts=not hd).astype(np.int32)
     art = plan.get('art', {})
@@ -313,7 +332,30 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         return d
 
     pathm = np.zeros((H, W), bool)
-    for k, r in enumerate(plan.get('routes', [])):
+    if hd:
+        # the soft grid (Matt, 26 Oct 15:36 and 23:09: the road "not quite straight enough", "doesn't
+        # fit the soft grid"): every route's plan in whole cells (a road three cells, a lane or path
+        # two), long straight runs, one rounded and lumped outline for the whole network; packed
+        # earth inside (softground.dirt: rounded clods, stones, dry blades), two worn wheel tracks
+        # down each road following it, the crown between them grown over; the turf frays over the
+        # edge (softground.sunken_edge). No dashed ruts, no dark blotches.
+        from scripts.art.native import softgrid as SG
+        cells_all = np.zeros(SG.grid_shape(H, W), bool)
+        cells_road = np.zeros_like(cells_all)
+        for r in plan.get('routes', []):
+            n = max(1, int(round((r.get('width', 24) - 8) / 8.0)))
+            c_ = SG.cells_route(r['points'], n, H, W)
+            cells_all |= c_
+            if r['kind'] == 'road':
+                cells_road |= c_
+        net = SG.shape(cells_all, H, W, plan.get('seed', 7) + 41, r_out=SG.R_TURN_OUT, r_in=SG.R_TURN_IN)
+        road_zone = SG.texels(cells_road, H, W)
+        turf0 = is_turf(cv) & ~net
+        GD.dirt(cv, net, plan.get('seed', 7) + 43, fam='path', ruts=19, rut_mask=road_zone, crown=True)
+        GD.sunken_edge(cv, net, turf0, np.random.default_rng(plan.get('seed', 7) + 45))
+        keep_marks |= net | ndi.binary_dilation(net, iterations=6)
+        pathm |= net
+    for k, r in enumerate(plan.get('routes', []) if not hd else []):
         hw = r.get('width', 24) / 2 - (3 if r['kind'] == 'road' else 4)
         d = polyline_dist(r['points'])
         wob = noise(3.0, 60 + k, 1.4) + noise(1.0, 80 + k, 0.5)
@@ -338,9 +380,6 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
                 rut = (np.abs(d - abs(off)) < (0.45 if hd else 0.9)) & m & (noise(1.5, 90 + k) > -0.4)
                 cv[rut] = step(cv[rut], -1)
         pathm |= m
-    if hd:
-        turf_ = is_turf(cv)
-        SE.rim(cv, pathm, turf_ & ~pathm)
 
     # --- places ------------------------------------------------------------------------------------
     # the paved square: rounded on the soft grid (cell 8 world px, corner radius one cell)
@@ -478,8 +517,9 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         cv[worn] = C('path_warm', 4)
         cv[worn & (out_d > 2.5)] = C('grass_warm', 3)
 
-    # puddles left by the storm: still water in a hollow, the sky in it, a dark north rim
-    for k_, (px, py, prx, pry) in enumerate(art.get('puddles', [])):
+    # puddles left by the storm: at density 3 they are drawn later, in the broken stage only, as
+    # shallow water lying in sunken setts (Matt, 26 Oct 23:09: "random holes with water")
+    for k_, (px, py, prx, pry) in enumerate(art.get('puddles', []) if not hd else []):
         e = ((WX - px) / prx) ** 2 + ((WY - py) / pry) ** 2 + noise(1.2, 120 + k_, 0.12)
         m = e < 1.0
         if hd:
@@ -727,6 +767,12 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
             # flecks), from the trunk's foot east, not the sprite's long silhouette thrown on the lawn
             from scripts.art.native import screen as SN
             m = SN.tree_shadow_hd(o['foot'][0] / D, o['foot'][1] / D, tree_ex['oak'], W, H)
+        elif hd and o['kind'] == 'waystone':
+            # (Matt, 26 Oct 23:09: the waystone's shadow a hard diagonal wedge) a short soft shade
+            # thrown east and a little down from its foot, an ellipse as wide as the stone
+            fx_, fy_ = o['foot']
+            wd_ = max(8, int((np.asarray(o['alpha']).any(0)).sum()))
+            m = ((XX - fx_ - wd_ * 0.45) / (wd_ * 0.9)) ** 2 + ((YY - fy_ + 2) / (wd_ * 0.32)) ** 2 <= 1.0
         else:
             m = CO.shadow_mask(o['alpha'], o['anchor'], D, W, H, o['foot'], kx, ky)
         contact = CO.foot_shadow(pics[o['png']], o['anchor'], W, H, o['foot'], D)
@@ -742,7 +788,7 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
             m, _core, contact = shade_masks(o)
             shade |= m | contact
             foots.append((o['foot'][0] / D, o['foot'][1] / D, o['kind']))
-        drawn = lawn_detail_hd(cv, pathm | pave, shade, foots, rng, noise)
+        drawn = lawn_detail_hd(cv, pathm | pave, shade, foots, rng, noise, soft=True)
         # in shade the trodden earth shows its clods closer (the shade keeps them, two tones down)
         SE.soil_marks(cv, pathm & ndi.binary_erosion(shade, iterations=2), rng, drawn, spacing=0.7, p=0.9)
     else:
@@ -775,6 +821,22 @@ def build(plan: dict, out_dir: str, preview: str | None = None) -> dict:
         pics[name] = Image.fromarray(to_rgba(crop), 'RGBA')
         objects.append(dict(id=name, kind='shadow', png=name, foot=(int(bx0), int(by0)), anchor=(0, 0), alpha=crop >= 0,
                             cond=o.get('cond'), solid=None, static=False, of=o['id']))
+    if hd and art.get('puddles'):
+        # puddles after the storm, the broken stage only (Matt, 26 Oct 23:09): at most two, shallow
+        # water in a hollow of the setts, a picture laid on the ground until the forge is restored
+        from scripts.art.native import softground as GD
+        sc = cv.copy()
+        changed = np.zeros((H, W), bool)
+        for k_, (px, py, prx, pry) in enumerate(art['puddles'][:2]):
+            changed |= GD.puddle(sc, q(px), q(py), q(prx * 1.4), q(pry * 1.6), seed=120 + k_)
+        if changed.any():
+            ys, xs = np.nonzero(changed)
+            bx0, by0, bx1, by1 = xs.min(), ys.min(), xs.max() + 1, ys.max() + 1
+            crop = np.where(changed[by0:by1, bx0:bx1], sc[by0:by1, bx0:bx1], -1)
+            pics['square_puddles'] = Image.fromarray(to_rgba(crop), 'RGBA')
+            objects.append(dict(id='square_puddles', kind='shadow', png='square_puddles', foot=(int(bx0), int(by0)),
+                                anchor=(0, 0), alpha=crop >= 0, cond={'not_restored': ['forge']}, solid=None,
+                                static=False))
     ground = Image.fromarray(to_rgba(cv), 'RGBA').convert('RGB')
 
     # --- write ---------------------------------------------------------------------------------------

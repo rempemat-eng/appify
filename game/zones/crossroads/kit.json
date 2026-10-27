@@ -5,7 +5,7 @@
   1920,
   1680
  ],
- "inputs": "53501af4432e033e2d2b4d8101f234b3270d3dae6310d2a085e56473949f3895",
+ "inputs": "c292b4c4d03508fb3a65faa962155adc887c8be82309bf9de572472879859754",
  "kit_drawn": [
   "anvil.png",
   "bakery.png",
@@ -2020,6 +2020,25 @@
    },
    "solid": null,
    "of": "beds_dug"
+  },
+  {
+   "id": "square_puddles",
+   "kind": "shadow",
+   "png": "square_puddles.png",
+   "foot": [
+    695,
+    723
+   ],
+   "offset": [
+    0,
+    0
+   ],
+   "cond": {
+    "not_restored": [
+     "forge"
+    ]
+   },
+   "solid": null
   }
  ]
 }

@@ -88,14 +88,25 @@ def blob(cx, cy, rx, ry, seed=0, rough=0.18, w=None, h=None) -> np.ndarray:
 # ------------------------------------------------------------------------------------------------
 # light: sun pools on the lawn
 # ------------------------------------------------------------------------------------------------
-def sun(cv: np.ndarray, m: np.ndarray, heart: float = 10.0, fade: float = 4.0) -> None:
+def sun(cv: np.ndarray, m: np.ndarray, heart: float = 10.0, fade: float = 4.0, soft: bool = False) -> None:
     """A sun pool: the lawn's warm sibling at its own tone, the heart (`heart` texels in) a tone
-    up, a 2 x 2 checker `fade` texels wide at the edge (the one place dither is used: light)."""
+    up, a 2 x 2 checker `fade` texels wide at the edge (the one place dither is used: light).
+    `soft` (the soft grid's two-hue lawn): every hue moves one step warmer (cool to body, body to
+    warm, warm a tone up), so the lawn's blobs and mottle still show in the sun."""
     lawn = m & (is_fam(cv, 'grass') | is_fam(cv, 'leaf')) & (cv % 8 < 6)
     dist = ndi.distance_transform_edt(np.pad(m, 1))[1:-1, 1:-1]
     yy, xx = np.mgrid[0:cv.shape[0], 0:cv.shape[1]]
     chk = ((xx // 2 + yy // 2) % 2) == 0
     sel = lawn & ((dist > fade) | chk)
+    if soft:
+        from .palette import FI
+        cool = np.isin(cv // 8, [i for n, i in FI.items() if n in ('grass_cool', 'leaf_cool')])
+        warm = np.isin(cv // 8, [i for n, i in FI.items() if n in ('grass_warm', 'leaf_warm')])
+        a, b, c = sel & cool, sel & warm, sel & ~cool & ~warm
+        cv[a] = sib(cv[a], 'body')
+        cv[b] = np.minimum(cv[b] + 1, cv[b] - cv[b] % 8 + 5)
+        cv[c] = sib(cv[c], 'warm')
+        return
     cv[sel] = sib(cv[sel], 'warm')
     up = lawn & (dist > heart)
     cv[up] = step(cv[up], 1)
@@ -628,7 +639,7 @@ def _wnoise(h, w, scale, seed):
     return z[:h, :w]
 
 
-def ground_detail_hd(cv: np.ndarray, plan: dict, trees: list, h: int, w: int, shade: np.ndarray) -> None:
+def ground_detail_hd(cv: np.ndarray, plan: dict, trees: list, h: int, w: int, shade: np.ndarray, soft: bool = False) -> None:
     """The lawn's ground detail at density 3 and up, drawn into the codes before the shadows so
     shade falls over it (26 Oct, fix queue: the scene gate found large flat stretches of lawn, the
     glade one tone and every crown's shadow a rug). Clustered where it would gather, calm between,
@@ -660,6 +671,8 @@ def ground_detail_hd(cv: np.ndarray, plan: dict, trees: list, h: int, w: int, sh
     cmin = ndi.minimum_filter(cv, size=win)
     calm = lawn & (cmax == cmin) & (same > 0.9)
     calm = ndi.binary_dilation(calm, iterations=P(2)) & lawn
+    if soft:
+        calm[:] = False            # the soft grid's lawn (softground.lawn) carries its own field and marks
     nA = _wnoise(h, w, 7.0, 41)
     nB = _wnoise(h, w, 30.0, 47)
     gather = nB + 1.2 * thin
@@ -695,6 +708,8 @@ def ground_detail_hd(cv: np.ndarray, plan: dict, trees: list, h: int, w: int, sh
     grid = [(gy, gx) for gy in range(0, h, sp_y) for gx in range((gy // sp_y) % 2 * (sp_x // 2), w, sp_x)]
     grid += [(gy, gx) for gy in range(sp_y // 2, h, sp_y) for gx in range(((gy // sp_y) % 2 * (sp_x // 2) + sp_x // 4), w, sp_x)
              if shade[gy, min(w - 1, gx)]]
+    if soft:
+        grid = []
     for (gy, gx) in grid:
         y0 = gy + int(rng.integers(-1, 2))
         x0 = gx + int(rng.integers(-2, 3))
@@ -858,25 +873,44 @@ def terrain(plan: dict, layers: dict) -> tuple:
     w, h = int(W * D), int(H * D)
     cv, _hp, _occ = SC.render()
     cv = cv[:h, :w].copy()
+    soft_lawn = np.zeros(cv.shape, bool)
+    if D >= HD:
+        # the soft grid's lawn (softground.lawn, 26 Oct): a calm field of two sibling hues, a low
+        # mottle and loose clumps of tufts in place of the tiles' lawn, wherever the tiles laid turf
+        from . import softground as GD
+        lawn_ = GD.lawn(h, w, 977)
+        soft_lawn = (is_fam(cv, 'grass') | is_fam(cv, 'leaf')) & (cv % 8 < 6)
+        cv[soft_lawn] = lawn_[soft_lawn]
     layers['lawn'] = cv.copy()
     pl = plan['places']
     g = pl['glade']
-    sun(cv, blob(*g['at'], *g['r'], seed=g['seed'], rough=g['rough'], w=w, h=h), heart=10 ** 6, fade=P(3))
+    sun(cv, blob(*g['at'], *g['r'], seed=g['seed'], rough=g['rough'], w=w, h=h), heart=10 ** 6, fade=P(3), soft=D >= HD)
     s = pl['sun']
-    sun(cv, blob(*s['at'], *s['r'], seed=s['seed'], rough=s['rough'], w=w, h=h), heart=P(4), fade=P(2))
+    sun(cv, blob(*s['at'], *s['r'], seed=s['seed'], rough=s['rough'], w=w, h=h), heart=P(4), fade=P(2), soft=D >= HD)
     for (lx, ly, rx, ry) in pl['light_pools']:
-        sun(cv, blob(lx, ly, rx, ry, seed=int(lx * 7 + ly), rough=0.3, w=w, h=h), heart=P(5), fade=P(2))
+        sun(cv, blob(lx, ly, rx, ry, seed=int(lx * 7 + ly), rough=0.3, w=w, h=h), heart=P(5), fade=P(2), soft=D >= HD)
     paths_m = np.zeros(cv.shape, bool)
-    for k, p in enumerate(plan['paths']):
+    if D >= HD:
+        # the path network on the soft grid (Matt, 26 Oct): each path's plan in whole cells (two
+        # for a path, one for a narrow spur), long straight runs, one rounded and lumped outline for
+        # the network, packed earth inside (softground.dirt), the turf fraying over its edge
+        from . import softgrid as SG
+        cells_ = np.zeros(SG.grid_shape(h, w), bool)
+        for p in plan['paths']:
+            cells_ |= SG.cells_route(p['points'], max(1, int(round(2 * p['radius'] / 8.0))), h, w)
+        net = SG.shape(cells_, h, w, 41, r_out=SG.R_TURN_OUT, r_in=SG.R_TURN_IN)
+        net &= is_fam(cv, 'grass') | is_fam(cv, 'leaf')
+        turf0 = (is_fam(cv, 'grass') | is_fam(cv, 'leaf')) & ~net
+        GD.dirt(cv, net, 43, fam='path', cell=12)
+        GD.sunken_edge(cv, net, turf0, np.random.default_rng(45))
+        soft_lawn |= ndi.binary_dilation(net, iterations=6)
+        paths_m |= net
+    for k, p in enumerate(plan['paths'] if D < HD else []):
         if D >= HD:
             paths_m |= path_hd(cv, [tuple(q) for q in p['points']], hw0=p['radius'] - 2.0, seed=k, spur=p.get('spur', False))
         else:
             SC.worn2(cv, [tuple(q) for q in p['points']], hw0=p['radius'] - 2.0)
-    if D >= HD and paths_m.any():
-        # the network's edge, once round its union: dark under the turf's north and west lip, the
-        # turf south of it lit (no rim line left inside where two pieces join)
-        from . import softedge as SE
-        SE.rim(cv, paths_m, (is_fam(cv, 'grass') | is_fam(cv, 'leaf')) & ~paths_m)
+
     co, ci = pl['circle_out'], pl['circle_in']
     ring = blob(*co['at'], *co['r'], seed=co['seed'], rough=co['rough'], w=w, h=h) & \
         ~blob(*ci['at'], *ci['r'], seed=ci['seed'], rough=ci['rough'], w=w, h=h)
@@ -919,7 +953,7 @@ def terrain(plan: dict, layers: dict) -> tuple:
         SC.reeds(cv)
     layers['water'] = cv.copy()
     # no speckle: a lone pixel takes its most common neighbour (outlines and water excepted)
-    keep = (cv % 8 >= 6) | np.isin(cv // 8, [FI['water'], FI['water_warm'], FI['water_cool']])
+    keep = (cv % 8 >= 6) | np.isin(cv // 8, [FI['water'], FI['water_warm'], FI['water_cool']]) | soft_lawn
     for _ in range(2):
         Pd = np.pad(cv, 1, mode='edge')
         nb = np.stack([Pd[:-2, 1:-1], Pd[2:, 1:-1], Pd[1:-1, :-2], Pd[1:-1, 2:]])
@@ -1050,7 +1084,7 @@ def build() -> Zone:
         shade = np.zeros((h, w), bool)
         for m in casts:
             shade |= m
-        ground_detail_hd(cv, plan, trees, h, w, shade)
+        ground_detail_hd(cv, plan, trees, h, w, shade, soft=True)
     G = CO.ground_from_codes(cv, D)
     CO.cast_shadows(G, casts, tcasts, things + [(l[0], l[1], l[2], l[3]) for l in low if l[4]], D)
     ground = G.rgba()

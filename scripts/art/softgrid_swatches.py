@@ -85,6 +85,13 @@ class Swatch:
         elif kind == 'bench':
             pic = V.prop('bench', 24, 6, seed=seed)
             self.add(pic.rgba(), (pic.ax, pic.ay), (x, y), 66, 0.32)
+        elif kind in ('bench_side_e', 'bench_side_w'):
+            # side on: the shade lies under the whole seat, north to south, thrown a little east
+            pic = V.prop(kind, 6, 18, seed=seed)
+            yy, xx = np.mgrid[0:self.cv.shape[0], 0:self.cv.shape[1]]
+            m = (xx >= x - 2.2 * D) & (xx < x + 4.6 * D) & (yy >= y - 17.5 * D) & (yy < y + 1.2 * D)
+            GD.shadow(self.cv, m, core=2, rim=2)
+            self.add(pic.rgba(), (pic.ax, pic.ay), (x, y))
         elif kind == 'rock':
             w = 9 + seed % 5
             img, anc, _ = P4.boulder4(D, w, 6 + seed % 3, seed=seed)
@@ -212,7 +219,7 @@ def sw_river():
     s.prop('bench', *g(14, 4), 43)
     s.prop('well', *g(3, 13), 6)
     s.prop('fern', *g(9, 13), 39)
-    s.prop('bush_c', int(146 * D), int(44 * D), 4)
+    s.prop('bush', int(146 * D), int(44 * D), 4)
     return s
 
 
@@ -259,8 +266,8 @@ def sw_beds():
 
 def sw_square():
     """A village square composed round its contents (Matt, 26 Oct 19:35 and 22:30): the well on
-    the centre axis with a clear cell all round its roof, a pair of benches set back near the north
-    edge facing it, lamps at the four corners, planters flanking the way in, the path meeting the
+    the centre axis with a clear cell all round its roof, a pair of benches side on to its west and
+    east, their seats facing it, lamps at the four corners, planters flanking the way in, the path meeting the
     square on its axis; the square 17 x 12 cells, raised a little on a kerb with a lip, a low face
     and its shadow (logic.composition checks centre, pairs, margins and the way in)."""
     rng = np.random.default_rng(5)
@@ -278,12 +285,14 @@ def sw_square():
     s = Swatch(cv, 'village square: well centred, benches facing it, lamps and planters at the way in')
     from scripts.art.native import village as VV
     well = (int(ax * D), int(76 * D))
-    benches = [(int((ax - 40) * D), int(40 * D)), (int((ax + 40) * D), int(40 * D))]
+    # benches side on, west and east of the well, both seats facing it (Matt, 26 Oct), a clear
+    # cell between each and the well's roof
+    benches = [(int((ax - 28) * D), int(80 * D)), (int((ax + 28) * D), int(80 * D))]
     lamps = [(int(28 * D), int(96 * D)), (int(140 * D), int(96 * D))]      # at the south corners, by the way in
     tubs = [(int((ax - 20) * D), int(100 * D)), (int((ax + 20) * D), int(100 * D))]
     s.prop('well', *well, 8)
     for i, b in enumerate(benches):
-        s.prop('bench', *b, 46 + i)
+        s.prop(('bench_side_e', 'bench_side_w')[i], *b, 46 + i)
     for i, (x, y) in enumerate(lamps):
         img, anc, _ = P4.lantern4(D, seed=60 + i)
         s.add(img, anc, (x, y), 18, 0.4)
@@ -294,7 +303,7 @@ def sw_square():
     s.structures.append(dict(id='square', rect=[int(sq[0] * D), int(sq[1] * D), int((sq[0] + sq[2]) * D),
                                                 int((sq[1] + sq[3]) * D)],
                              props=[dict(kind='well', x=well[0], y=well[1], w=54, centre=True)] +
-                             [dict(kind='bench', x=b[0], y=b[1], w=66) for b in benches] +
+                             [dict(kind='bench', x=b[0], y=b[1], w=18) for b in benches] +
                              [dict(kind='lamp', x=x, y=y, w=18) for x, y in lamps] +
                              [dict(kind='tub', x=x, y=y, w=30) for x, y in tubs],
                              entries=[dict(x=int(ax * D), w=int(24 * D))]))
