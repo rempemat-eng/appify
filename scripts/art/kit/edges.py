@@ -39,7 +39,7 @@ from scipy import ndimage as ndi
 
 from scripts.art.native import softgrid as SG
 from scripts.art.native import softground as GD
-from scripts.art.native.palette import step
+from scripts.art.native.palette import C, FI, step
 
 CELL = 24
 HALF = CELL // 2
@@ -210,4 +210,228 @@ def sunken(k: int, fill_u: np.ndarray, fill_l: np.ndarray, prof=(0, 0, 0, 0), fr
     return ops.encode((slice(T0, T1), slice(T0, T1)))
 
 
-PAINTERS = {'sunken': sunken}
+def _bank_marks(prof: int) -> np.ndarray:
+    """The bank face's clods along one cell edge, a function of its profile only (so the two tiles
+    sharing the cell edge agree): per texel along it (t = -12 .. 11), 1 where a clod begins (lit),
+    -1 where one ends (dark), 0 inside."""
+    rng = np.random.default_rng(4100 + prof)
+    out = np.zeros(CELL, np.int32)
+    x = int(rng.integers(0, 4))
+    while x < CELL:
+        L = int(rng.integers(4, 8))
+        out[x] = 1
+        if x + L - 1 < CELL:
+            out[x + L - 1] = -1
+        x += L
+    return out
+
+
+def bank(k: int, fill_u: np.ndarray, fill_l: np.ndarray, prof=(0, 0, 0, 0), side_w: int = 3) -> np.ndarray:
+    """Turf (upper) over water (lower), softground.water's banks on the dual grid. Under a north
+    lip: an earth face 3 px (lit top row, clods along it from the cell edge's profile, a dark wet
+    bottom row), the 1 px very light waterline, then two rows of shade on the water. On a south
+    shore: the turf's lip lit and the shallows lit, 2 tones at the edge and 1 for two more. On a
+    west or east shore of a north-south run: a narrow earth wall seen edge-on (in shade facing east,
+    lit facing west) with the waterline at its foot. All within 7 texels of the outline, so the
+    tile below never needs to know."""
+    m2 = soft_lower(k, prof)                      # the water
+    land = ~m2
+    ops = Ops(land, fill_u, fill_l)
+    rt = GD.runs_from_top(m2)                     # 1 on the water's first row under land
+    # which bank each texel may carry is read from the cells, not the texels (so a corner's bulge
+    # never turns into a bank that a neighbour would not draw): a north bank under a horizontal cell
+    # edge with land north and water south; a wall beside a vertical one
+    q = [bool((k >> b) & 1) for b in range(4)]    # nw, ne, sw, se (True = land)
+    xs_ = np.arange(N) + 0.5
+    left = (xs_ < MID)[None, :]
+    top = (xs_ < MID)[:, None]
+    nb_cfg = np.where(left, q[0] and not q[2], q[1] and not q[3]).astype(bool)
+    westwall_cfg = np.where(top, q[0] and not q[1], q[2] and not q[3]).astype(bool)     # land west, water east
+    eastwall_cfg = np.where(top, q[1] and not q[0], q[3] and not q[2]).astype(bool)     # land east, water west
+    top_of_run = m2 & GD.down(land, 1)
+    col_bank = np.zeros_like(m2)
+    for d in range(0, 6):
+        col_bank |= GD.down(top_of_run, d) & m2
+    yy_ = np.arange(N)[:, None] + 0.5
+    col_bank &= (rt <= 6) & nb_cfg & (yy_ > MID - 5) & (yy_ < MID + 10)     # only under the horizontal cell line
+    xs = np.arange(N) + 0.5
+    # which cell edge each column's bank belongs to, and t along it
+    t = np.where(xs < MID, xs - T0, xs - T1).astype(int) + HALF
+    t = np.clip(t, 0, CELL - 1)
+    pw, pe = _bank_marks(prof[3]), _bank_marks(prof[1])
+    marks = np.where(xs < MID, pw[t], pe[t])[None, :].repeat(N, 0)
+    face1 = col_bank & (rt == 1)
+    face2 = col_bank & (rt == 2)
+    face3 = col_bank & (rt == 3)
+    wline = col_bank & (rt == 4)
+    shade = col_bank & (rt >= 5) & (rt <= 6)
+    for sel, code in ((face1, C('earth', 3)), (face3, C('earth_cool', 1)), (wline, C('water', 5))):
+        ops.own[sel] = 2
+        ops.ab[sel] = code
+    ops.own[face2] = 2
+    ops.ab[face2] = np.where(marks[face2] > 0, C('earth', 3), np.where(marks[face2] < 0, C('earth_cool', 1), C('earth', 2)))
+    ops.shift(shade & (rt == 5), -2)
+    ops.shift(shade & (rt == 6), -1)
+    # the turf's last row over the bank a tone down (its underside)
+    ops.shift(land & GD.down(m2, -1), -1)
+    nb = col_bank
+    # east and west shores of north-south runs: a narrow wall seen edge-on
+    westl = np.zeros_like(m2)
+    eastl = np.zeros_like(m2)
+    for kk in range(1, side_w + 1):
+        westl |= GD.right(land, kk)
+        eastl |= GD.right(land, -kk)
+    vert = m2 & (westl ^ eastl) & ~nb & (np.abs(xs_[None, :] - MID) < side_w + 4)     # only beside the vertical cell line
+    wb, eb = vert & westl & westwall_cfg, vert & eastl & eastwall_cfg
+    vert = wb | eb
+    ops.own[wb] = 2
+    ops.ab[wb] = C('earth', 2)
+    ops.ab[wb & GD.right(land, 1)] = C('earth', 1)
+    ops.own[eb] = 2
+    ops.ab[eb] = C('earth_warm', 3)
+    ops.ab[eb & GD.right(land, -1)] = C('earth_warm', 4)
+    for b_, d_ in ((wb, 1), (eb, -1)):
+        wl_ = m2 & ~vert & ~nb & GD.right(b_, d_)
+        ops.own[wl_] = 2
+        ops.ab[wl_] = C('water', 5)
+    # south (and remaining) shores: the turf's lip lit, the shallows lit
+    walls = wb | eb | nb
+    dist = ndi.distance_transform_edt(m2)
+    shal = m2 & ~walls & ~ndi.binary_dilation(walls, iterations=1) & (ops.own == 1)
+    ops.shift(shal & (dist <= 1.5), 2)
+    ops.shift(shal & (dist > 1.5) & (dist <= 3.5), 1)
+    s_lip = land & GD.down(m2, 1)
+    ops.shift(s_lip, 1)
+    return ops.encode((slice(T0, T1), slice(T0, T1)))
+
+
+def plain(k: int, fill_u: np.ndarray, fill_l: np.ndarray, prof=(0, 0, 0, 0)) -> np.ndarray:
+    """One surface running into another of the same look (worn ground into a path): the lumped
+    outline and nothing else, so where the two fills are the same the join does not show."""
+    m2 = soft_lower(k, prof)
+    ops = Ops(~m2, fill_u, fill_l)
+    return ops.encode((slice(T0, T1), slice(T0, T1)))
+
+
+def _broken(n: int = N) -> np.ndarray:
+    """A side wall's darkest line is broken (eastward-edges.md 3.3): a fixed rhythm down the rows,
+    so it never depends on anything a neighbour could disagree on."""
+    return ((np.arange(n)[:, None] % 5) != 4) & np.ones((1, n), bool)
+
+
+def lip(k: int, fill_u: np.ndarray, fill_l: np.ndarray, prof=(0, 0, 0, 0), earth: str = 'earth') -> np.ndarray:
+    """A raised tier's turf (upper) over its own face (lower, a strip fill indexed by depth below
+    the rim): the turf's last row a step darker and a lit row two behind it; under the lumped
+    outline the rim line and the under-lip line (the face's darkest) follow it (eastward-edges.md
+    2.2, 3.1). Where the turf meets a face beside it (an inner corner), the face's side line."""
+    m2 = soft_lower(k, prof)                  # the face
+    turf = ~m2
+    ops = Ops(turf, fill_u, fill_l)
+    ec = earth + '_cool' if earth + '_cool' in FI else earth
+    # features keyed to the cells (so the border strips stay canonical): the rim along a
+    # horizontal cell line with turf north and face south, the side line along a vertical one
+    q = [bool((k >> b) & 1) for b in range(4)]          # True = turf
+    xs = np.arange(N) + 0.5
+    yv, xv = xs[:, None], xs[None, :]
+    rim_cfg = np.where(xv < MID, q[0] and not q[2], q[1] and not q[3]).astype(bool) & (yv > MID - 7) & (yv < MID + 6)
+    side_cfg = np.where(yv < MID, q[0] != q[1], q[2] != q[3]).astype(bool) & (np.abs(xv - MID) < 6)
+    lipr = turf & GD.down(m2, -1) & rim_cfg
+    ops.shift(lipr, -1)
+    lit = turf & GD.down(m2, -3) & ~GD.down(m2, -1) & ~GD.down(m2, -2) & rim_cfg
+    ops.shift(lit, 1)
+    rim = m2 & GD.down(turf, 1) & rim_cfg
+    under = m2 & GD.down(turf, 2) & ~rim & rim_cfg
+    for sel, code in ((rim, C(earth, 1)), (under, C(ec, 0))):
+        ops.own[sel] = 2
+        ops.ab[sel] = code
+    side = m2 & (GD.right(turf, 1) | GD.right(turf, -1)) & ~rim & ~under & side_cfg
+    ops.own[side] = 2
+    ops.ab[side] = C(ec, 0)
+    return ops.encode((slice(T0, T1), slice(T0, T1)))
+
+
+def foot(k: int, fill_u: np.ndarray, fill_l: np.ndarray, prof=(0, 0, 0, 0), earth: str = 'earth') -> np.ndarray:
+    """A face (upper) over the ground at its foot (lower): along the bottom, the face's dark foot
+    band follows the lumped outline and the ground's first row is in its shade; at the face's west
+    and east ends a side band seen edge-on, lit facing west and in shade facing east, with the
+    picture's darkest line, broken, on its outside (eastward-edges.md 3.2, 3.3)."""
+    m2 = soft_lower(k, prof)                  # the ground below
+    face = ~m2
+    ops = Ops(face, fill_u, fill_l)
+    ec = earth + '_cool' if earth + '_cool' in FI else earth
+    q = [bool((k >> b) & 1) for b in range(4)]          # nw, ne, sw, se (True = face)
+    xs = np.arange(N) + 0.5
+    top = (xs < MID)[:, None]
+    # the foot: along horizontal cell lines with the face north of the ground
+    left = (xs < MID)[None, :]
+    foot_cfg = np.where(left, q[0] and not q[2], q[1] and not q[3]).astype(bool)
+    yv = (np.arange(N) + 0.5)[:, None]
+    foot_cfg = foot_cfg & (yv > MID - 6) & (yv < MID + 4)     # only along the cell line, never up or down a side
+    f1 = face & GD.down(m2, -1) & foot_cfg
+    f2 = face & GD.down(m2, -2) & ~f1 & foot_cfg
+    f3 = face & GD.down(m2, -3) & ~f1 & ~f2 & foot_cfg
+    for sel, code in ((f1, C(ec, 0)), (f2, C(ec, 0)), (f3, C(earth, 1))):
+        ops.own[sel] = 2
+        ops.ab[sel] = code
+    ops.shift(m2 & GD.down(face, 1) & foot_cfg, -1)          # the ground's first row in the face's shade
+    # the side bands at the face's ends, beside the vertical cell line
+    east_end = np.where(top, q[0] and not q[1], q[2] and not q[3]).astype(bool)    # face west, ground east
+    west_end = np.where(top, q[1] and not q[0], q[3] and not q[2]).astype(bool)    # face east, ground west
+    near = np.abs(xs[None, :] - MID) < 6
+    out_e = face & GD.right(m2, -1) & east_end & near & ~f1 & ~f2
+    band_e = face & (GD.right(m2, -2) | GD.right(m2, -3)) & ~GD.right(m2, -1) & east_end & near & ~f1 & ~f2
+    out_w = face & GD.right(m2, 1) & west_end & near & ~f1 & ~f2
+    band_w = face & (GD.right(m2, 2) | GD.right(m2, 3)) & ~GD.right(m2, 1) & west_end & near & ~f1 & ~f2
+    ops.shift(band_e, -1)
+    ops.shift(band_w, 1)
+    for sel in (out_e & _broken(), out_w & _broken()):
+        ops.own[sel] = 2
+        ops.ab[sel] = C(ec, 0)
+    return ops.encode((slice(T0, T1), slice(T0, T1)))
+
+
+def tier_side(k: int, fill_u: np.ndarray, fill_l: np.ndarray, prof=(0, 0, 0, 0), earth: str = 'earth',
+              band: int = 3) -> np.ndarray:
+    """A raised tier's ground (upper) beside or behind ground of a lower tier (lower): on its west
+    and east sides a wall seen edge-on, `band` texels on the lower side (lit facing west, in shade
+    facing east, the darkest line broken on its outside) and the turf's edge a step darker; along
+    its back (north) edge the turf's first row lit and a dark crease on the lower ground."""
+    m2 = soft_lower(k, prof)                  # the lower tier
+    up = ~m2
+    ops = Ops(up, fill_u, fill_l)
+    ec = earth + '_cool' if earth + '_cool' in FI else earth
+    ew = earth + '_warm' if earth + '_warm' in FI else earth
+    q = [bool((k >> b) & 1) for b in range(4)]          # True = raised
+    xs = np.arange(N) + 0.5
+    top = (xs < MID)[:, None]
+    left = (xs < MID)[None, :]
+    raised_east = np.where(top, q[1] and not q[0], q[3] and not q[2]).astype(bool)   # wall faces west: lit
+    raised_west = np.where(top, q[0] and not q[1], q[2] and not q[3]).astype(bool)   # wall faces east: shade
+    near = np.abs(xs[None, :] - MID) < band + 5
+    wl = np.zeros_like(m2)
+    wr = np.zeros_like(m2)
+    for kk in range(1, band + 1):
+        wl |= GD.right(up, -kk)                # raised ground kk texels to the east
+        wr |= GD.right(up, kk)                 # raised ground kk texels to the west
+    wall_w = m2 & wl & raised_east & near      # lit
+    wall_e = m2 & wr & raised_west & near      # in shade
+    ops.own[wall_w] = 2
+    ops.ab[wall_w] = C(ew, 3)
+    ops.own[wall_e] = 2
+    ops.ab[wall_e] = C(earth, 1)
+    out_w = wall_w & ~GD.right(up, -(band - 1)) & ~GD.right(up, -1)
+    out_e = wall_e & ~GD.right(up, band - 1) & ~GD.right(up, 1)
+    for sel in (out_w & _broken(), out_e & _broken()):
+        ops.ab[sel] = C(ec, 0)
+    ops.shift(up & (GD.right(m2, 1) | GD.right(m2, -1)) & near & (raised_east | raised_west), -1)
+    # the back rim: raised ground south of a horizontal cell line, lower ground north of it
+    yv = (np.arange(N) + 0.5)[:, None]
+    back_cfg = np.where(left, q[2] and not q[0], q[3] and not q[1]).astype(bool) & (yv > MID - 6) & (yv < MID + 6)
+    ops.shift(up & GD.down(m2, 1) & back_cfg, 1)
+    crease = m2 & GD.down(up, -1) & back_cfg
+    ops.own[crease] = 2
+    ops.ab[crease] = C(ec, 1)
+    return ops.encode((slice(T0, T1), slice(T0, T1)))
+
+
+PAINTERS = {'sunken': sunken, 'bank': bank, 'plain': plain, 'lip': lip, 'foot': foot, 'tier_side': tier_side}

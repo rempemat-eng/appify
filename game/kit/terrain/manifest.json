@@ -206,6 +206,7 @@
  "lut": "lut.png",
  "palette": "palette.png",
  "tileset": "materials.tres",
+ "tiers_tileset": "tiers.tres",
  "ops": {
   "keep": 0,
   "upper": 1,
@@ -227,7 +228,8 @@
     96,
     96
    ],
-   "hash": "bc014cca98972876"
+   "face": null,
+   "hash": "d9da79f5b130cce1"
   },
   {
    "id": "path",
@@ -243,7 +245,8 @@
     96,
     96
    ],
-   "hash": "1e7fb0e754484593"
+   "face": null,
+   "hash": "1546de0806a6326c"
   },
   {
    "id": "cobble_road",
@@ -259,10 +262,130 @@
     96,
     96
    ],
-   "hash": "09140ca0415f8bfd"
+   "face": null,
+   "hash": "5a976ed687740551"
+  },
+  {
+   "id": "water",
+   "material_id": 4,
+   "priority": 10,
+   "fill": "fill_water.png",
+   "walkable": false,
+   "surface": "water",
+   "route": false,
+   "water": {
+    "body": "stream",
+    "depth": "shallow",
+    "flow": true
+   },
+   "approval": "candidate",
+   "swatch": [
+    96,
+    96
+   ],
+   "face": null,
+   "hash": "6df62520693718c2"
+  },
+  {
+   "id": "scree",
+   "material_id": 5,
+   "priority": 15,
+   "fill": "fill_scree.png",
+   "walkable": true,
+   "surface": "rock",
+   "route": false,
+   "water": null,
+   "approval": "candidate",
+   "swatch": [
+    96,
+    96
+   ],
+   "face": null,
+   "hash": "2080420236e719d1"
+  },
+  {
+   "id": "worn",
+   "material_id": 6,
+   "priority": 21,
+   "fill": "fill_worn.png",
+   "walkable": true,
+   "surface": "earth",
+   "route": false,
+   "water": null,
+   "approval": "candidate",
+   "swatch": [
+    96,
+    96
+   ],
+   "face": null,
+   "hash": "7e745542016e411e"
+  },
+  {
+   "id": "earth_face",
+   "material_id": 7,
+   "priority": 40,
+   "fill": "fill_earth_face.png",
+   "walkable": false,
+   "surface": "earth",
+   "route": false,
+   "water": null,
+   "approval": "candidate",
+   "swatch": [
+    0,
+    96
+   ],
+   "face": {
+    "height_cells": 2,
+    "strip_px": 48
+   },
+   "hash": "fe18ca3041c3778e"
   }
  ],
  "transitions": [
+  {
+   "id": "earth_face_over_any",
+   "upper": "earth_face",
+   "lower": "*",
+   "png": "over_earth_face_over_any.png",
+   "variants": 1,
+   "dressing": {
+    "density": 0.5,
+    "north": [
+     "tuft_0",
+     "tuft_2",
+     "tuft_3",
+     "tuft_5",
+     "pebble_0"
+    ],
+    "south": [],
+    "side": [
+     "tuft_1",
+     "pebble_2"
+    ]
+   },
+   "approval": "candidate",
+   "hash": "a48eb7f3a3a1be15"
+  },
+  {
+   "id": "lawn_over_earth_face",
+   "upper": "lawn",
+   "lower": "earth_face",
+   "png": "over_lawn_over_earth_face.png",
+   "variants": 1,
+   "dressing": null,
+   "approval": "candidate",
+   "hash": "0ec3607c4ad6bbc0"
+  },
+  {
+   "id": "lawn_over_lower_tier",
+   "upper": "lawn",
+   "lower": "^",
+   "png": "over_lawn_over_lower_tier.png",
+   "variants": 1,
+   "dressing": null,
+   "approval": "candidate",
+   "hash": "48c57c4024040fde"
+  },
   {
    "id": "lawn_over_path",
    "upper": "lawn",
@@ -296,7 +419,154 @@
     ]
    },
    "approval": "candidate",
-   "hash": "4966178f3138f6ee"
+   "hash": "64415e0ac8e25ee1"
+  },
+  {
+   "id": "lawn_over_scree",
+   "upper": "lawn",
+   "lower": "scree",
+   "png": "over_lawn_over_scree.png",
+   "variants": 1,
+   "dressing": {
+    "density": 0.6,
+    "south": [
+     "tuft_0",
+     "tuft_2",
+     "tuft_4",
+     "pebble_2",
+     "pebble_3"
+    ],
+    "north": [
+     "pebble_1",
+     "pebble_2",
+     "pebble_3",
+     "blades_1"
+    ],
+    "side": [
+     "pebble_2",
+     "pebble_3",
+     "tuft_1"
+    ]
+   },
+   "approval": "candidate",
+   "hash": "f41f67b1c67c2f12"
+  },
+  {
+   "id": "lawn_over_water",
+   "upper": "lawn",
+   "lower": "water",
+   "png": "over_lawn_over_water.png",
+   "variants": 1,
+   "dressing": {
+    "density": 0.45,
+    "south": [
+     "tuft_0",
+     "tuft_3",
+     "tuft_5",
+     "pebble_2",
+     "pebble_3"
+    ],
+    "north": [
+     "pebble_1",
+     "pebble_2",
+     "pebble_3"
+    ],
+    "side": [
+     "pebble_2",
+     "pebble_3",
+     "tuft_1"
+    ]
+   },
+   "approval": "candidate",
+   "hash": "455e1d43558e6ed7"
+  },
+  {
+   "id": "lawn_over_worn",
+   "upper": "lawn",
+   "lower": "worn",
+   "png": "over_lawn_over_worn.png",
+   "variants": 1,
+   "dressing": {
+    "density": 0.6,
+    "south": [
+     "tuft_0",
+     "tuft_1",
+     "tuft_2",
+     "tuft_3",
+     "tuft_4",
+     "tuft_5",
+     "pebble_0"
+    ],
+    "north": [
+     "blades_0",
+     "blades_1",
+     "blades_2",
+     "pebble_1",
+     "pebble_2"
+    ],
+    "side": [
+     "pebble_0",
+     "pebble_1",
+     "pebble_3",
+     "tuft_2",
+     "tuft_4"
+    ]
+   },
+   "approval": "candidate",
+   "hash": "149d72a9350434d1"
+  },
+  {
+   "id": "path_over_earth_face",
+   "upper": "path",
+   "lower": "earth_face",
+   "png": "over_path_over_earth_face.png",
+   "variants": 1,
+   "dressing": null,
+   "approval": "candidate",
+   "hash": "ad2917f61f6ef49d"
+  },
+  {
+   "id": "path_over_lower_tier",
+   "upper": "path",
+   "lower": "^",
+   "png": "over_path_over_lower_tier.png",
+   "variants": 1,
+   "dressing": null,
+   "approval": "candidate",
+   "hash": "ecd24119ca98231a"
+  },
+  {
+   "id": "path_over_water",
+   "upper": "path",
+   "lower": "water",
+   "png": "over_path_over_water.png",
+   "variants": 1,
+   "dressing": {
+    "density": 0.3,
+    "south": [
+     "pebble_0",
+     "pebble_2"
+    ],
+    "north": [
+     "pebble_1",
+     "pebble_3"
+    ],
+    "side": [
+     "pebble_2"
+    ]
+   },
+   "approval": "candidate",
+   "hash": "38e026d9801c2c46"
+  },
+  {
+   "id": "worn_over_path",
+   "upper": "worn",
+   "lower": "path",
+   "png": "over_worn_over_path.png",
+   "variants": 1,
+   "dressing": null,
+   "approval": "candidate",
+   "hash": "ef9006fd501576f0"
   }
  ]
 }

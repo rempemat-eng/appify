@@ -41,38 +41,44 @@ func placements() -> Array:
 	var gs := ground.grid_size
 	for cy in gs.y:
 		for cx in gs.x:
-			var a := ground.material_at(Vector2i(cx, cy))
+			var a := ground.ground_at(Vector2i(cx, cy))
+			var ta := ground.ground_tier(Vector2i(cx, cy))
 			for horiz in [true, false]:
 				var nb := Vector2i(cx, cy + 1) if horiz else Vector2i(cx + 1, cy)
 				if nb.x >= gs.x or nb.y >= gs.y:
 					continue
-				var b := ground.material_at(nb)
-				if a == b or a == 0 or b == 0:
+				var b := ground.ground_at(nb)
+				var tb := ground.ground_tier(nb)
+				if (a == b and ta == tb) or a == 0 or b == 0:
 					continue
-				var up := a if kit.priority(a) > kit.priority(b) else b
-				var lo := b if up == a else a
-				var pair := kit.pair_for(up, lo)
+				var ea := ta * 256 + kit.priority(a)
+				var eb := tb * 256 + kit.priority(b)
+				var up := a if ea > eb else b
+				var lo := b if ea > eb else a
+				var tu := ta if ea > eb else tb
+				var pair := kit.pair_for(up, lo, ta != tb)
 				if pair == "" or kit.dressing.get(pair) == null:
 					continue
 				var dr: Dictionary = kit.dressing[pair]
 				var key := Vector3i(cx, cy + 1, 1) if horiz else Vector3i(cx + 1, cy, 0)
-				var h := dress_hash(key.x, key.y, key.z, up)
+				var mk := up + 64 * tu
+				var h := dress_hash(key.x, key.y, key.z, mk)
 				if h % 1000 >= int(float(dr.density) * 1000.0):
 					continue
 				var t := ((h >> 10) % 17) - 8
-				var p := profile(key.x, key.y, key.z, up, kit.profiles)
+				var p := profile(key.x, key.y, key.z, mk, kit.profiles)
 				var disp := float(kit.curves[p][t + half])
 				var side := ""
 				var pos := Vector2i.ZERO
 				if horiz:
 					var line := (cy + 1) * cell
-					var south := b == up
+					var south := b == up and tb == tu
 					side = "south" if south else "north"
 					var bound := line + disp if south else line - disp
 					pos = Vector2i(cx * cell + half + t, int(floor(bound + 0.5)))
 				else:
 					var line := (cx + 1) * cell
-					var east := b == up
+					var east := b == up and tb == tu
 					side = "side"
 					var bound := line + disp if east else line - disp
 					pos = Vector2i(int(floor(bound + 0.5)), cy * cell + half + t)

@@ -82,18 +82,11 @@ class Kit(unittest.TestCase):
                 for i, side in enumerate(E.SIDES):
                     strip, cells = strips[side]
                     key = (side, cells, prof[i])
-                    sig = np.where(strip[..., 0] == E.OP_ABS, -1, strip[..., 0] * 1000 + strip[..., 1])
+                    sig = strip[..., 0] * 100000 + strip[..., 1]
                     if key in seen:
                         np.testing.assert_array_equal(sig, seen[key][0], '%s: tile %d (%s) differs from tile %d at its %s border' % (tid, idx, key, seen[key][1], side))
                     else:
                         seen[key] = (sig, idx)
-
-    def test_no_abs_feature_at_borders(self):
-        for tid, tiles in self.kit.over.items():
-            for t in tiles:
-                rim = np.ones(t.shape[:2], bool)
-                rim[E.CALM:-E.CALM, E.CALM:-E.CALM] = False
-                self.assertFalse(((t[..., 0] == E.OP_ABS) & rim).any(), tid)
 
     def test_layout_matches_shader(self):
         # the shader computes each mask's base by the same rule
@@ -114,3 +107,52 @@ class Kit(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class Rules(unittest.TestCase):
+    """The validator on kit zones (scripts/review/kit_rules.py): each rule trips on a plan that
+    breaks it and stays quiet on one that keeps it."""
+
+    def plan(self, rows, pieces=()):
+        return {'zone': 't', 'legend': {'.': 'lawn', '#': 'path', '~': 'water'}, 'rows': rows, 'pieces': list(pieces)}
+
+    def faults(self, plan, check):
+        from scripts.review import kit_rules as KR
+        return [f for f in KR.check_zone(plan) if f['check'] == check]
+
+    def test_lab_and_woodland_pass(self):
+        from scripts.review import kit_rules as KR
+        for z in ('kitlab', 'woodland_kit'):
+            plan = json.load(open(os.path.join(KR.ZONES, z + '.json')))
+            self.assertEqual([f for f in KR.check_zone(plan) if f['severity'] == 'fault'], [], z)
+
+    def test_bench(self):
+        rows = ['......', '......', '######', '......']
+        on = {'id': 'b', 'piece': 'woodland_forest_bench', 'at': [72, 72]}        # its foot in the path's row
+        beside = {'id': 'b', 'piece': 'woodland_forest_bench', 'at': [72, 48]}    # on the turf, the path south of it
+        far = {'id': 'b', 'piece': 'woodland_forest_bench', 'at': [72, 24]}
+        self.assertTrue(self.faults(self.plan(rows, [on]), 'rules.route_clear'))
+        self.assertFalse(self.faults(self.plan(rows, [beside]), 'rules.route_clear'))
+        self.assertFalse(self.faults(self.plan(rows, [beside]), 'rules.seating'))
+        self.assertTrue(self.faults(self.plan(['......', '......', '......', '######'], [far]), 'rules.seating'))
+
+    def test_route_into_water(self):
+        self.assertTrue(self.faults(self.plan(['..#...', '..#...', '~~~~~~', '......']), 'rules.route_water'))
+        self.assertFalse(self.faults(self.plan(['..#...', '......', '~~~~~~', '......']), 'rules.route_water'))
+
+    def test_water_ends(self):
+        self.assertTrue(self.faults(self.plan(['......', '.~~~..', '......', '......']), 'rules.water_end'))
+        self.assertFalse(self.faults(self.plan(['......', '.~~~..', '.~~~..', '......']), 'rules.water_end'))   # a pool
+        self.assertFalse(self.faults(self.plan(['~~~~~~', '......', '......', '......']), 'rules.water_end'))   # to the edge
+
+    def test_tiers(self):
+        rows = ['..##..', '..##..', '..##..', '..##..', '..##..', '..##..']
+        tiers = ['111111', '111111', '000000', '000000', '000000', '000000']    # faces fall on rows 2 and 3
+        plan = dict(self.plan(rows), tiers=tiers)
+        self.assertTrue(self.faults(plan, 'rules.tier_route'))
+        steps = {'id': 's', 'piece': 'log_steps', 'at': [72, 96], 'variant': 'w2'}   # the flight over the face, foot on row 4
+        plan2 = dict(self.plan(rows, [steps]), tiers=tiers)
+        self.assertFalse(self.faults(plan2, 'rules.tier_route'))
+        self.assertFalse(self.faults(plan2, 'rules.stair'))
+        wrong = dict(self.plan(rows, [dict(steps, at=[72, 144])]), tiers=tiers)    # a cell too low: half on the lawn
+        self.assertTrue(self.faults(wrong, 'rules.stair'))

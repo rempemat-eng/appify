@@ -126,7 +126,7 @@ The woodland's painters (`scripts/art/native/zone.py`, `screen.py`, `water.py`, 
 
 ## The world editor (27 Oct, first stage)
 
-Kit zones are built from a library of approved pieces rather than painted pictures: `docs/world-editor.md`. `python3 -m scripts.art.kit.build` builds the terrain kit into `kit/terrain/`, `world/terrain/terrain_ground.gd` draws a zone's `Cells` layer with `terrain.gdshader`, and `tools/kit_zone.gd` turns a JSON plan in `kit/zones/` into a zone scene and back. The kit lab is `--zone=kitlab`.
+Kit zones are built from a library of approved pieces rather than painted pictures: `docs/world-editor.md`. `python3 -m scripts.art.kit.build` builds the terrain kit into `kit/terrain/`, and `python3 -m scripts.art.kit.props` builds the pieces into scenes in `kit/props/`. `world/terrain/terrain_ground.gd` draws a zone's `Cells` and `Tiers` layers with `terrain.gdshader`. `tools/kit_zone.gd` turns a JSON plan in `kit/zones/` into a zone scene and back. The world editor dock is `addons/world_editor/`. The labs are `--zone=kitlab` and `--zone=kitlab_tiers`; the woodland rebuilt with the kit is `--zone=woodland_kit`.
 
 ## How lanes add a quest
 

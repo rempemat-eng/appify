@@ -137,6 +137,46 @@ def _piece(zone, kind, pngs, foot_px, solid_world, cond, plan, structure=False, 
     return piece
 
 
+def _woodland_feet() -> dict:
+    """Each woodland kind's foot in its picture (texels), from the base scene's sprite offsets."""
+    txt = open(os.path.join(ROOT, 'game', 'zones', 'woodland', 'woodland_base.tscn')).read()
+    out = {}
+    for m in re.finditer(r'texture = ExtResource\("t_([a-z_]+)"\)\ncentered = false\noffset = Vector2\((-?[\d.]+), (-?[\d.]+)\)', txt):
+        out.setdefault(m.group(1), (-float(m.group(2)), -float(m.group(3))))
+    return out
+
+
+TREES = ('beech', 'birch', 'oak', 'pine', 'willow', 'hollow_tree')
+
+
+def _woodland_body(piece: dict, base: str, w: float) -> None:
+    """The woodland's kinds had no solid boxes (their walk mask was hand-edited): a trunk, a
+    stone's or a bush's foot as the collision, and an ellipse shadow thrown east (world px)."""
+    g, r, pl = piece['geometry'], piece['rendering'], piece['placement']
+    if base in TREES:
+        rect, sh, d = [-5, -5, 10, 5], [max(10.0, w * 0.4), max(5.0, w * 0.15)], [w * 0.12, -2.0]
+        pl['role'] = 'tree'
+    elif base.startswith(('bush', 'bramble', 'holly')):
+        rect, sh, d = [-w * 0.35, -6, w * 0.7, 6], [w * 0.48, 5.0], [3.0, -1.0]
+    elif base.startswith('standing_stone'):
+        rect, sh, d = [-w * 0.35, -5, w * 0.7, 5], [w * 0.45, 4.0], [3.0, -1.0]
+        pl['role'] = 'marker'
+    elif base == 'stump':
+        rect, sh, d = [-6, -5, 12, 5], [8.0, 3.0], [2.0, -1.0]
+    elif base == 'mossy_log':
+        rect, sh, d = [-w * 0.45, -6, w * 0.9, 6], [w * 0.5, 4.0], [2.0, -1.0]
+    elif base == 'forest_bench':
+        rect, sh, d = [-w * 0.4, -4, w * 0.8, 4], [w * 0.45, 3.0], [2.0, -1.0]
+    else:
+        rect, sh, d = None, [max(3.0, w * 0.35), 2.0], [1.0, -1.0]
+    rect = [round(float(v), 2) for v in rect] if rect else None
+    g['collision'] = {'shape': 'rect', 'rect': rect} if rect else {'shape': 'none'}
+    piece['gameplay']['blocks_move'] = rect is not None
+    r['cast_shadow'] = {'shape': 'ellipse', 'size': [round(sh[0], 2), round(sh[1], 2)], 'dir': [round(d[0], 2), round(d[1], 2)]}
+    piece['audit']['todo'] = [t for t in piece['audit']['todo'] if 'footprint' not in t] + \
+        ['collision and shadow are first guesses by kind (scripts/art/kit/seed_props.py _woodland_body)']
+
+
 def seed() -> list:
     out = []
     # the woodland: [id, kind, foot x, foot y, w, h] in world px; sprites padded so the foot is the
@@ -149,10 +189,14 @@ def seed() -> list:
         if not os.path.exists(png):
             continue
         seen.setdefault(_base(kind), []).append(png)
+    feet = _woodland_feet()
     for base, pngs in seen.items():
         pngs = sorted(set(pngs))
         w, h = Image.open(pngs[0]).size
-        out.append(_piece('woodland', base, pngs, (w / 2.0, float(h)), None, None, None))
+        foot = feet.get(base, (w / 2.0, float(h)))
+        piece = _piece('woodland', base, pngs, foot, None, None, None)
+        _woodland_body(piece, base, w / D)
+        out.append(piece)
     # Crossroads: objects with png, foot and offset in texels, solid in world px
     ck = json.load(open(os.path.join(ROOT, 'game', 'zones', 'crossroads', 'kit.json')))
     plan = json.load(open(os.path.join(ROOT, 'game', 'data', 'plans', 'crossroads.json')))

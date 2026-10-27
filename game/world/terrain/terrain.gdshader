@@ -14,6 +14,7 @@ uniform sampler2D fills_tex : filter_nearest, repeat_disable;  // fills in a gri
 uniform sampler2D over_tex : filter_nearest, repeat_disable;   // transitions, stacked by index
 uniform sampler2D lut_tex : filter_nearest, repeat_disable;    // palette code -> RGB
 uniform sampler2D meta_tex : filter_nearest, repeat_disable;   // row 0: priority, fill slot, present; row 1+u: pair table
+uniform sampler2D shadow_tex : filter_nearest, repeat_disable; // R: cast shadow steps (0 to 2) per texel
 uniform ivec2 grid = ivec2(1, 1);
 uniform int period = 768;
 uniform int variants = 4;
@@ -38,14 +39,52 @@ int material_at(int cx, int cy) {
 	return byte_at(texelFetch(cells_tex, q, 0), 0);
 }
 
+// a cell's layer: its material and its tier (cells_tex G), as m + 64 * tier
+int layer_at(int cx, int cy) {
+	ivec2 q = clamp(ivec2(cx, cy), ivec2(0), grid - ivec2(1));
+	vec4 c = texelFetch(cells_tex, q, 0);
+	return byte_at(c, 0) + 64 * byte_at(c, 1);
+}
+
 int prio_of(int m) {
 	return byte_at(texelFetch(meta_tex, ivec2(m, 0), 0), 0);
 }
 
+// a layer's priority: higher tiers lie over lower ones, then the material's own priority
+int eprio(int L) {
+	return (L / 64) * 256 + prio_of(L % 64);
+}
+
+bool is_strip(int m) {
+	return byte_at(texelFetch(meta_tex, ivec2(m, 0), 0), 2) == 2;
+}
+
 int fill_code(int m, ivec2 p) {
-	int slot = byte_at(texelFetch(meta_tex, ivec2(m, 0), 0), 1);
+	vec4 mt = texelFetch(meta_tex, ivec2(m, 0), 0);
+	int slot = byte_at(mt, 1);
 	ivec2 o = ivec2((slot % fill_cols) * period, (slot / fill_cols) * period);
-	vec4 c = texelFetch(fills_tex, o + ivec2(p.x % period, p.y % period), 0);
+	int fy = p.y % period;
+	if (byte_at(mt, 2) == 2) {
+		// a face's strip, by depth below the rim (compose.strip_rows)
+		int strip = byte_at(mt, 3);
+		int cx = p.x / cell;
+		int cy = p.y / cell;
+		if (material_at(cx, cy) == m) {
+			int run = 0;
+			for (int k = 1; k <= 8; k++) {
+				if (cy - k >= 0 && material_at(cx, cy - k) == m && run == k - 1) {
+					run = k;
+				}
+			}
+			fy = run * cell + p.y % cell;
+		} else if (cy + 1 < grid.y && material_at(cx, cy + 1) == m) {
+			fy = 0;
+		} else {
+			fy = strip - 1;
+		}
+		fy = clamp(fy, 0, strip - 1);
+	}
+	vec4 c = texelFetch(fills_tex, o + ivec2(p.x % period, fy), 0);
 	return byte_at(c, 0) + 256 * byte_at(c, 1);
 }
 
@@ -60,7 +99,12 @@ int step_code(int code, int d) {
 	return code - t + clamp(t + d, 0, 5);
 }
 
-int pair_of(int upper, int lower) {
+// build.Kit.pair_for: a face's own pair, across tiers the upper's '^' pair (column 63), else the
+// exact pair, then the upper's '*' pair (column 0)
+int pair_of(int upper, int lower, bool tiers_differ) {
+	if (tiers_differ && !is_strip(lower)) {
+		return byte_at(texelFetch(meta_tex, ivec2(63, 1 + upper), 0), 0) - 1;
+	}
 	int v = byte_at(texelFetch(meta_tex, ivec2(lower, 1 + upper), 0), 0);
 	if (v == 0) {
 		v = byte_at(texelFetch(meta_tex, ivec2(0, 1 + upper), 0), 0);
@@ -128,16 +172,16 @@ void fragment() {
 	int j = (p.y + half_cell) / cell;
 	ivec2 l = ivec2(p.x + half_cell - i * cell, p.y + half_cell - j * cell);
 	int q[4];
-	q[0] = material_at(i - 1, j - 1);
-	q[1] = material_at(i, j - 1);
-	q[2] = material_at(i - 1, j);
-	q[3] = material_at(i, j);
-	// the distinct materials present, by priority (insertion sort of up to four)
+	q[0] = layer_at(i - 1, j - 1);
+	q[1] = layer_at(i, j - 1);
+	q[2] = layer_at(i - 1, j);
+	q[3] = layer_at(i, j);
+	// the distinct layers present, by priority (insertion sort of up to four)
 	int ms[4];
 	int n = 0;
 	for (int k = 0; k < 4; k++) {
 		int m = q[k];
-		if (m == 0) {
+		if (m % 64 == 0) {
 			continue;
 		}
 		bool seen = false;
@@ -150,7 +194,7 @@ void fragment() {
 			continue;
 		}
 		int at = n;
-		while (at > 0 && prio_of(ms[at - 1]) > prio_of(m)) {
+		while (at > 0 && eprio(ms[at - 1]) > eprio(m)) {
 			ms[at] = ms[at - 1];
 			at--;
 		}
@@ -160,22 +204,22 @@ void fragment() {
 	if (n == 0) {
 		discard;
 	}
-	int code = fill_code(ms[0], p);
+	int code = fill_code(ms[0] % 64, p);
 	int below = ms[0];
 	for (int s = 1; s < n; s++) {
 		int m = ms[s];
-		int pm = prio_of(m);
+		int pm = eprio(m);
 		int bits = 0;
 		for (int k = 0; k < 4; k++) {
-			if (q[k] > 0 && prio_of(q[k]) >= pm) {
+			if (q[k] % 64 > 0 && eprio(q[k]) >= pm) {
 				bits |= (1 << k);
 			}
 		}
-		int fu = fill_code(m, p);
+		int fu = fill_code(m % 64, p);
 		if (bits == 15) {
 			code = fu;
 		} else {
-			int pr = pair_of(m, below);
+			int pr = pair_of(m % 64, below % 64, m / 64 != below / 64);
 			if (pr < 0) {
 				// no transition drawn yet: a hard cell edge (the library gate refuses such a zone)
 				int qx = l.x < half_cell ? 0 : 1;
@@ -200,5 +244,6 @@ void fragment() {
 		}
 		below = m;
 	}
+	code = step_code(code, -byte_at(texelFetch(shadow_tex, p, 0), 0));
 	COLOR = vec4(texelFetch(lut_tex, ivec2(code, 0), 0).rgb, 1.0);
 }

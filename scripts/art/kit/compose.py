@@ -51,41 +51,97 @@ def tile_index(i, j, m, bits, variants):
     return mask_base(variants)[bits] + combo * variants + variant(i, j, m, variants)
 
 
-def render(cells: np.ndarray, kit, dressing: bool = True) -> np.ndarray:
-    """cells: (rows, cols) material ids (0 = nothing, outside the zone). Returns codes of
-    (rows * CELL, cols * CELL); -1 where no material is."""
+def derive(cells: np.ndarray, tiers, kit):
+    """Faces under raised ground (ground-rules.md 1): below every cell whose south neighbour lies on
+    a lower tier, the next `height_cells` x (the drop in tiers) cells of that column become the face
+    material, on the lower tier (TerrainGround.derive does the same). Returns (cells, tiers)."""
+    cells = cells.copy()
+    if tiers is None:
+        return cells, np.zeros_like(cells)
+    tiers = np.asarray(tiers).copy()
+    if kit.face_material is None or not tiers.any():
+        return cells, tiers
+    rows, cols = cells.shape
+    fm, fh = kit.face_material, kit.face_cells
+    t0 = tiers.copy()
+    for x in range(cols):
+        for y in range(rows - 1):
+            if t0[y, x] > t0[y + 1, x]:
+                for kk in range(1, fh * int(t0[y, x] - t0[y + 1, x]) + 1):
+                    if y + kk < rows and t0[y + kk, x] < t0[y, x]:
+                        cells[y + kk, x] = fm
+    return cells, tiers
+
+
+def strip_rows(cells: np.ndarray, kit) -> np.ndarray:
+    """Per cell, its row in a face strip: the number of face cells straight above it (faces only);
+    -1 for a cell with a face just below it, -2 elsewhere (the strip's top and last rows)."""
+    rows, cols = cells.shape
+    out = np.full((rows, cols), -2, np.int32)
+    fm = kit.face_material
+    if fm is None:
+        return out
+    for x in range(cols):
+        run = 0
+        for y in range(rows):
+            if cells[y, x] == fm:
+                out[y, x] = run
+                run += 1
+            else:
+                run = 0
+                if y + 1 < rows and cells[y + 1, x] == fm:
+                    out[y, x] = -1
+    return out
+
+
+def render(cells: np.ndarray, kit, dressing: bool = True, pieces=None, tiers=None) -> np.ndarray:
+    """cells: (rows, cols) material ids (0 = nothing, outside the zone); tiers: the same shape, the
+    height tier of each cell (faces are derived). Returns codes of (rows * CELL, cols * CELL); -1
+    where no material is."""
+    cells, tiers = derive(cells, tiers, kit)
     rows, cols = cells.shape
     H, W = rows * CELL, cols * CELL
     out = np.full((H, W), -1, np.int32)
     P = kit.period
+    sr = strip_rows(cells, kit)
     yy, xx = np.mgrid[0:CELL, 0:CELL]
+
+    def eprio(L):
+        return L[1] * 256 + kit.prio[L[0]]
+
+    def fill(m, Y, X):
+        if m in kit.strip:
+            r = sr[Y // CELL, X // CELL]
+            fy = np.where(r >= 0, r * CELL + Y % CELL, np.where(r == -1, 0, kit.strip[m] - 1))
+            return kit.fills[m][np.clip(fy, 0, kit.strip[m] - 1), X % P]
+        return kit.fills[m][Y % P, X % P]
+
     for j in range(rows + 1):
         for i in range(cols + 1):
-            q = [cells[min(max(j - 1, 0), rows - 1), min(max(i - 1, 0), cols - 1)],
-                 cells[min(max(j - 1, 0), rows - 1), min(i, cols - 1)],
-                 cells[min(j, rows - 1), min(max(i - 1, 0), cols - 1)],
-                 cells[min(j, rows - 1), min(i, cols - 1)]]
+            cc = [(min(max(j - 1, 0), rows - 1), min(max(i - 1, 0), cols - 1)), (min(max(j - 1, 0), rows - 1), min(i, cols - 1)),
+                  (min(j, rows - 1), min(max(i - 1, 0), cols - 1)), (min(j, rows - 1), min(i, cols - 1))]
+            q = [(int(cells[c]), int(tiers[c])) for c in cc]
             y0, x0 = j * CELL - HALF, i * CELL - HALF
             ys, xs = slice(max(0, y0), min(H, y0 + CELL)), slice(max(0, x0), min(W, x0 + CELL))
             if ys.start >= ys.stop or xs.start >= xs.stop:
                 continue
             ly, lx = ys.start - y0, xs.start - x0
             hh, ww = ys.stop - ys.start, xs.stop - xs.start
-            wy = (yy[ly:ly + hh, lx:lx + ww] + y0) % P
-            wx = (xx[ly:ly + hh, lx:lx + ww] + x0) % P
-            present = sorted({m for m in q if m > 0}, key=lambda m: kit.prio[m])
+            Y = yy[ly:ly + hh, lx:lx + ww] + y0
+            X = xx[ly:ly + hh, lx:lx + ww] + x0
+            present = sorted({L for L in q if L[0] > 0}, key=eprio)
             if not present:
                 continue
             base = present[0]
-            code = kit.fills[base][wy, wx].copy()
+            code = fill(base[0], Y, X).copy()
             below = base
             for M in present[1:]:
-                bits = sum(b for b, m in zip((1, 2, 4, 8), q) if m > 0 and kit.prio[m] >= kit.prio[M])
-                fu = kit.fills[M][wy, wx]
+                bits = sum(b for b, L in zip((1, 2, 4, 8), q) if L[0] > 0 and eprio(L) >= eprio(M))
+                fu = fill(M[0], Y, X)
                 if bits == 15:
                     code = fu.copy()
                 else:
-                    pair = kit.pair_for(M, below)
+                    pair = kit.pair_for(M[0], below[0], M[1] != below[1])
                     if pair is None:
                         # no transition drawn yet: a hard cell edge (shown, never shipped:
                         # the library gate refuses a zone that needs a missing pair)
@@ -96,7 +152,8 @@ def render(cells: np.ndarray, kit, dressing: bool = True) -> np.ndarray:
                         sub = sub[ly:ly + hh, lx:lx + ww]
                         code = np.where(sub, fu, code)
                     else:
-                        t = kit.over[pair][tile_index(i, j, M, bits, kit.variants)][ly:ly + hh, lx:lx + ww]
+                        mk = M[0] + 64 * M[1]
+                        t = kit.over[pair][tile_index(i, j, mk, bits, kit.variants)][ly:ly + hh, lx:lx + ww]
                         op, val = t[..., 0], t[..., 1]
                         d = val - 128
                         code = np.where(op == OP_UPPER, step(fu, d), code)
@@ -104,8 +161,50 @@ def render(cells: np.ndarray, kit, dressing: bool = True) -> np.ndarray:
                         code = np.where(op == OP_ABS, val, code)
                 below = M
             out[ys, xs] = code
+    if pieces:
+        sh = shadows(pieces, H, W)
+        out = np.where(sh > 0, step(out, -sh), out)
     if dressing:
         from .dressing import overlay
-        overlay(out, cells, kit)
+        overlay(out, cells, kit, tiers)
+    return out
+
+
+_INDEX = None
+
+
+def piece_index() -> dict:
+    global _INDEX
+    if _INDEX is None:
+        import json
+        import os
+        from .schema import ROOT
+        _INDEX = json.load(open(os.path.join(ROOT, 'game', 'kit', 'props', 'index.json')))
+    return _INDEX
+
+
+def shadows(pieces, H: int, W: int) -> np.ndarray:
+    """The pieces' cast shadows as ramp steps per texel (TerrainGround.rebuild_shadows): an ellipse
+    from the piece's foot, its core (6 texels in from the rim) two tones down, the rim one."""
+    idx = piece_index()
+    out = np.zeros((H, W), np.int32)
+    for pc in pieces:
+        e = idx.get(pc['piece'])
+        if not e or not e.get('shadow'):
+            continue
+        cx = pc['at'][0] + e['shadow']['dir'][0]
+        cy = pc['at'][1] + e['shadow']['dir'][1]
+        rx, ry = e['shadow']['size']
+        y0, y1 = max(0, int(np.floor(cy - ry))), min(H, int(np.ceil(cy + ry)) + 1)
+        x0, x1 = max(0, int(np.floor(cx - rx))), min(W, int(np.ceil(cx + rx)) + 1)
+        if y0 >= y1 or x0 >= x1:
+            continue
+        yy, xx = np.mgrid[y0:y1, x0:x1]
+        dx, dy = xx + 0.5 - cx, yy + 0.5 - cy
+        q = (dx / rx) ** 2 + (dy / ry) ** 2
+        v = np.where(q <= 1.0, 1, 0)
+        if rx > 6 and ry > 6:
+            v = np.where((dx / (rx - 6)) ** 2 + (dy / (ry - 6)) ** 2 <= 1.0, 2, v)
+        out[y0:y1, x0:x1] = np.maximum(out[y0:y1, x0:x1], v)
     return out
 

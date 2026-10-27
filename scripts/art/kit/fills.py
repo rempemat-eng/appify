@@ -266,7 +266,113 @@ def dirt(seed: int = 43, P: int = PERIOD, fam: str = 'path', cell: float = 12.0,
     return T.crop()
 
 
-PAINTERS = {'lawn': lawn, 'dirt': dirt}
+# ------------------------------------------------------------------------------------------------
+# water (softground.water's body, periodic; its banks are the transition's, edges.bank)
+# ------------------------------------------------------------------------------------------------
+def water(seed: int = 402, P: int = PERIOD, fam: str = 'water', ripples: float = 1.0) -> np.ndarray:
+    """softground.water's body: one calm tone, broad soft patches of the warm sibling (the sky),
+    ripple lines 4 to 12 px (a lit line over a darker texel) gathered in drifts, a few glints."""
+    rng = np.random.default_rng(seed)
+    with periodic_noise(P):
+        t = np.full((P, P), 2)
+        famw = np.full((P, P), FI[fam])
+        sky = blobs(P, seed + 2, 70.0, 0.25)
+        famw[sky] = FI[fam + '_warm'] if fam + '_warm' in FI else FI[fam]
+        dens = nz(P, 26.0, seed + 5)
+    cv = (famw * 8 + t).astype(np.int32)
+    T = Torus(cv)
+    c_ = T.cv
+    nr = int(P * P / 650 * ripples)
+    while nr > 0:
+        y, x = int(rng.integers(0, P)), int(rng.integers(0, P))
+        if dens[y, x] < 0.45 or rng.random() > dens[y, x]:
+            continue
+        nr -= 1
+        L = int(rng.integers(4, 13))
+        for Y, X in T.at(y, x):
+            for j in range(L):
+                if not (0 <= Y + 1 < c_.shape[0] and 0 <= X + j < c_.shape[1]):
+                    continue
+                d = 2 if 0 < j < L - 1 else 1
+                c_[Y, X + j] = c_[Y, X + j] - c_[Y, X + j] % 8 + min(5, c_[Y, X + j] % 8 + d)
+                c_[Y + 1, X + j] = c_[Y + 1, X + j] - c_[Y + 1, X + j] % 8 + max(0, c_[Y + 1, X + j] % 8 - 1)
+    for _ in range(P * P // 4000 + 1):
+        y, x = int(rng.integers(0, P)), int(rng.integers(0, P))
+        for Y, X in T.at(y, x):
+            for (dy, dx) in ((0, 0), (0, 1), (-1, 0), (0, -1), (1, 0)):
+                if 0 <= Y + dy < c_.shape[0] and 0 <= X + dx < c_.shape[1]:
+                    v = c_[Y + dy, X + dx]
+                    c_[Y + dy, X + dx] = v - v % 8 + (5 if (dy, dx) == (0, 0) else 4)
+    return T.crop()
+
+
+# ------------------------------------------------------------------------------------------------
+# a ledge's face (softground.ledge's earth face as a strip, periodic across)
+# ------------------------------------------------------------------------------------------------
+def face_strip(seed: int = 301, P: int = PERIOD, face_px: int = 48, earth: str = 'earth') -> np.ndarray:
+    """The face of raised ground as a strip `face_px` tall (rows below the rim; the rest of the
+    period unused), periodic across (eastward-edges.md 2.2): the under-lip shade (the rim line and
+    the under-lip line are the lip transition's, which follows the lumped outline), a body of
+    rounded clods wider than tall, each lit at its upper left with its lower right in shade and dark
+    crevices between them, a root now and then, and a dark foot band with pebbles. Indexed by the
+    texel's depth below the rim (terrain.gdshader's strip fills)."""
+    rng = np.random.default_rng(seed)
+    e0 = earth
+    ew = earth + '_warm' if earth + '_warm' in FI else earth
+    ec = earth + '_cool' if earth + '_cool' in FI else earth
+    cv = np.full((P, P), C(e0, 1), np.int32)
+    H = face_px
+    cv[:3, :] = C(e0, 1)
+    cv[3:5, :] = C(e0, 2)
+    body0, body1 = 5, H - 4
+    # clods on a jittered lattice that tiles across the period
+    sx = 12.0
+    ncol = int(round(P / sx))
+    sx = P / ncol
+    yy, xx = np.mgrid[0:H, 0:P] + 0.5
+    rows = np.arange(body0 + 3.0, body1 + 2.0, 7.5)
+    lumps_ = []
+    for j, gy in enumerate(rows):
+        for i in range(ncol):
+            cx = (i + 0.5 * (j % 2)) * sx + rng.uniform(-0.3, 0.3) * sx
+            cy = gy + rng.uniform(-1.2, 1.2)
+            lumps_.append((cy, cx % P, rng.uniform(5.0, 7.5), rng.uniform(3.4, 4.6)))
+    for (cy, cx, rw, rh) in sorted(lumps_):
+        for off in (-P, 0, P):
+            x0, x1 = max(0, int(cx + off - rw - 1)), min(P, int(cx + off + rw + 2))
+            if x0 >= x1:
+                continue
+            y0, y1 = max(body0, int(cy - rh - 1)), min(body1, int(cy + rh + 2))
+            dy = (yy[y0:y1, x0:x1] - cy) / rh
+            dx = (xx[y0:y1, x0:x1] - cx - off) / rw
+            r = (np.abs(dx) ** 2.4 + np.abs(dy) ** 2.4) ** (1 / 2.4)
+            inside = r <= 1.0
+            lam = -0.62 * dx - 0.78 * dy + 0.35 * (1 - r)
+            t = np.where(lam > 0.62, 4, np.where(lam > 0.05, 3, np.where(lam > -0.55, 2, 1)))
+            fam = np.where(lam > 0.62, FI[ew], np.where(lam < -0.55, FI[ec], FI[e0]))
+            sub = cv[y0:y1, x0:x1]
+            sub[inside] = (fam * 8 + t)[inside]
+    # roots from under the lip, a few
+    for _ in range(int(P / 90)):
+        x = int(rng.integers(0, P))
+        L = int(rng.integers(6, 14))
+        for j in range(L):
+            cv[3 + j, x % P] = C('timber_cool', 2 if j % 3 else 3)
+            if rng.random() < 0.3:
+                x += 1 if rng.random() < 0.5 else -1
+    # the foot: dark, a pebble now and then
+    cv[body1:H, :] = C(e0, 1)
+    cv[H - 2:H, :] = C(ec, 0)
+    for _ in range(int(P / 40)):
+        x = int(rng.integers(0, P))
+        w = int(rng.integers(3, 6))
+        for dx in range(w):
+            cv[body1 + 1, (x + dx) % P] = C('stone', 3 if dx < w - 1 else 2)
+            cv[body1 + 2, (x + dx) % P] = C('stone', 2)
+    return cv
+
+
+PAINTERS = {'lawn': lawn, 'dirt': dirt, 'water': water, 'face_strip': face_strip}
 
 
 def seam_error(f: np.ndarray) -> float:

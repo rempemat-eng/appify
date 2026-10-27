@@ -24,10 +24,14 @@ var over_tex: ImageTexture
 var lut_tex: Texture2D
 var meta_tex: ImageTexture
 var tileset: TileSet
+var tiers_tileset: TileSet
 var curves: Array = []         ## per profile, the outline's displacement at the 24 texels of a cell edge
 var decals := {}               ## decal id -> {"tex": ImageTexture, "anchor": Vector2i}
 var dressing := {}             ## transition id -> its dressing block
-var pairs := {}                ## Vector2i(upper material id, lower material id or 0 for any) -> transition id
+var pairs := {}                ## Vector2i(upper material id, lower material id; 0 any, 63 a lower tier) -> transition id
+var face_material := 0         ## the material faces under raised ground are drawn in (0: none)
+var face_cells := 2            ## a face's height in cells for one tier
+var strip_px := {}             ## face material id -> its strip's height in texels
 var by_id := {}          ## piece id -> material entry
 var by_material := {}    ## material id -> material entry
 
@@ -37,7 +41,27 @@ static func shared() -> TerrainKit:
 		_shared._load()
 	return _shared
 
-static func reload() -> TerrainKit:
+## Whether every picture the manifest names is imported (a fresh checkout or a rebuilt kit may
+## still be importing when an editor plugin starts).
+static func ready_to_load() -> bool:
+	if not FileAccess.file_exists(MANIFEST):
+		return false
+	var man = JSON.parse_string(FileAccess.get_file_as_string(MANIFEST))
+	if not (man is Dictionary):
+		return false
+	var files := [man.lut, man.palette]
+	for m in man.materials:
+		files.append(m.fill)
+	for t in man.transitions:
+		files.append(t.png)
+	for d in man.get("decals", {}).values():
+		files.append(d.png)
+	for f in files:
+		if not ResourceLoader.exists(DIR + str(f)):
+			return false
+	return true
+
+static func fresh() -> TerrainKit:   ## (not "reload": that is Script.reload on the class)
 	_shared = null
 	return shared()
 
@@ -65,12 +89,17 @@ func _load() -> void:
 	for slot in mats.size():
 		var m: Dictionary = mats[slot]
 		var mid := int(m.material_id)
-		assert(mid > 0 and mid < MAX_MATERIALS, "terrain kit: material id out of range")
+		assert(mid > 0 and mid < MAX_MATERIALS - 1, "terrain kit: material id out of range (63 is the lower-tier pair)")
 		by_id[m.id] = m
 		by_material[mid] = m
 		var f := _image(m.fill)
 		fills.blit_rect(f, Rect2i(Vector2i.ZERO, f.get_size()), Vector2i((slot % FILL_COLS) * period, (slot / FILL_COLS) * period))
-		meta.set_pixel(mid, 0, Color8(int(m.priority), slot, 1, 255))
+		var face = m.get("face")
+		if face != null:
+			face_material = mid
+			face_cells = int(face.height_cells)
+			strip_px[mid] = int(face.strip_px)
+		meta.set_pixel(mid, 0, Color8(int(m.priority), slot, 2 if face != null else 1, int(face.strip_px) if face != null else 255))
 	var trs: Array = manifest.transitions
 	for t in trs:
 		pair_rows = maxi(pair_rows, _image(t.png).get_height() / cell)
@@ -80,7 +109,7 @@ func _load() -> void:
 		var o := _image(t.png)
 		over.blit_rect(o, Rect2i(Vector2i.ZERO, o.get_size()), Vector2i(0, k * pair_rows * cell))
 		var upper := int(by_id[t.upper].material_id)
-		var lower := 0 if t.lower == "*" else int(by_id[t.lower].material_id)
+		var lower := 0 if t.lower == "*" else (63 if t.lower == "^" else int(by_id[t.lower].material_id))
 		meta.set_pixel(lower, 1 + upper, Color8(k + 1, 0, 0, 255))
 	curves = manifest.get("curves", [])
 	var lut_img := _image(manifest.lut)
@@ -98,13 +127,14 @@ func _load() -> void:
 		decals[did] = {"tex": ImageTexture.create_from_image(rgba), "anchor": Vector2i(int(d.anchor[0]), int(d.anchor[1]))}
 	for t in trs:
 		dressing[t.id] = t.get("dressing")
-		var lo := 0 if t.lower == "*" else int(by_id[t.lower].material_id)
+		var lo := 0 if t.lower == "*" else (63 if t.lower == "^" else int(by_id[t.lower].material_id))
 		pairs[Vector2i(int(by_id[t.upper].material_id), lo)] = t.id
 	fills_tex = ImageTexture.create_from_image(fills)
 	over_tex = ImageTexture.create_from_image(over)
 	meta_tex = ImageTexture.create_from_image(meta)
 	lut_tex = ImageTexture.create_from_image(_image(manifest.lut))
 	tileset = load(DIR + str(manifest.tileset)) as TileSet
+	tiers_tileset = load(DIR + str(manifest.get("tiers_tileset", "tiers.tres"))) as TileSet
 
 ## The atlas coordinates of a material's tile in materials.tres (for painting the Cells layer).
 func atlas_coords(piece_id: String) -> Vector2i:
@@ -114,8 +144,11 @@ func atlas_coords(piece_id: String) -> Vector2i:
 			return Vector2i(i, 0)
 	return Vector2i(-1, -1)
 
-## The transition laid where `upper` meets `lower` (material ids), or "" when none is drawn.
-func pair_for(upper: int, lower: int) -> String:
+## The transition laid where `upper` meets `lower` (material ids), or "" when none is drawn
+## (build.Kit.pair_for).
+func pair_for(upper: int, lower: int, tiers_differ := false) -> String:
+	if tiers_differ and not strip_px.has(lower):
+		return pairs.get(Vector2i(upper, 63), "")
 	return pairs.get(Vector2i(upper, lower), pairs.get(Vector2i(upper, 0), ""))
 
 func priority(mid: int) -> int:

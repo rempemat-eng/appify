@@ -155,6 +155,10 @@ class Kit:
             self.ids[m['id']] = mid
             self.names[mid] = m['id']
             self.meta[mid] = m
+        self.strip = {m['material_id']: m['face']['strip_px'] for m in self.man['materials'] if m.get('face')}
+        faces = [m for m in self.man['materials'] if m.get('face')]
+        self.face_material = faces[0]['material_id'] if faces else None
+        self.face_cells = faces[0]['face']['height_cells'] if faces else 0
         self.over, self.pairs = {}, {}
         for t in self.man['transitions']:
             ops = load_ops(os.path.join(out, t['png']))
@@ -169,7 +173,12 @@ class Kit:
             a = np.asarray(Image.open(os.path.join(out, d['png'])).convert('RGBA')).astype(np.int32)
             self.decals[did] = (np.where(a[..., 3] > 0, a[..., 0] | (a[..., 1] << 8), -1), tuple(d['anchor']))
 
-    def pair_for(self, upper: int, lower: int):
+    def pair_for(self, upper: int, lower: int, tiers_differ: bool = False):
+        """The transition where `upper` lies over `lower` (material ids): a face's own pair when the
+        lower is a face; across tiers the upper's lower-tier pair ('^'); else the exact pair, then
+        the upper's pair for any lower material ('*')."""
+        if tiers_differ and lower not in self.strip:
+            return self.pairs.get((upper, '^'))
         return self.pairs.get((upper, self.names.get(lower))) or self.pairs.get((upper, '*'))
 
 
@@ -200,6 +209,26 @@ def write_tileset(path: str, mats: list) -> None:
     open(path, 'w').write('\n'.join(lines))
 
 
+def write_tiers(out: str) -> None:
+    """The Tiers layer's tile set: tiles 0 to 3, a darker swatch per tier (shown with show_cells)."""
+    img = np.zeros((E.CELL, 4 * E.CELL, 4), np.uint8)
+    for t in range(4):
+        v = 60 + 50 * t
+        img[:, t * E.CELL:(t + 1) * E.CELL] = (v, v, 255 - v, 255)
+        img[:2, t * E.CELL:(t + 1) * E.CELL] = (255, 255, 255, 255)
+    Image.fromarray(img, 'RGBA').save(os.path.join(out, 'tiers.png'))
+    lines = ['[gd_resource type="TileSet" load_steps=3 format=3]', '',
+             '[ext_resource type="Texture2D" path="%stiers.png" id="1"]' % RES, '',
+             '[sub_resource type="TileSetAtlasSource" id="tiers"]', 'texture = ExtResource("1")',
+             'texture_region_size = Vector2i(24, 24)']
+    for t in range(4):
+        lines += ['%d:0/0 = 0' % t, '%d:0/0/custom_data_0 = %d' % (t, t)]
+    lines += ['', '[resource]', 'tile_size = Vector2i(24, 24)',
+              'custom_data_layer_0/name = "tier"', 'custom_data_layer_0/type = 2',
+              'sources/0 = SubResource("tiers")', '']
+    open(os.path.join(out, 'tiers.tres'), 'w').write('\n'.join(lines))
+
+
 def build(force: bool = False, check: bool = False) -> int:
     os.makedirs(OUT, exist_ok=True)
     lib = load_library()
@@ -224,7 +253,7 @@ def build(force: bool = False, check: bool = False) -> int:
         mats.append({'id': p['id'], 'material_id': t['material_id'], 'priority': t['priority'],
                      'fill': os.path.basename(fp), 'walkable': t['walkable'], 'surface': t['surface'],
                      'route': t.get('route', False), 'water': t.get('water'), 'approval': p['approval']['state'],
-                     'swatch': t.get('swatch', [0, 0]), 'hash': h})
+                     'swatch': t.get('swatch', [0, 0]), 'face': t.get('face'), 'hash': h})
     hashes = {m['id']: m['hash'] for m in mats}
     for p in trans:
         t = p['transition']
@@ -255,6 +284,7 @@ def build(force: bool = False, check: bool = False) -> int:
         pal[:, i * E.CELL:(i + 1) * E.CELL] = PAL.to_rgba(fills[m['id']][sy:sy + E.CELL, sx:sx + E.CELL])
     Image.fromarray(pal, 'RGBA').save(os.path.join(OUT, 'palette.png'))
     write_tileset(os.path.join(OUT, 'materials.tres'), mats)
+    write_tiers(OUT)
     from scripts.art.kit import dressing as DR
     decals = {}
     for did, (dc, anchor) in DR.paint_decals().items():
@@ -268,7 +298,7 @@ def build(force: bool = False, check: bool = False) -> int:
     man = {'cell': E.CELL, 'period': F.PERIOD, 'variants': vs.pop(), 'profiles': E.NPROF,
            'curves': E.curve_table(), 'decals': decals,
            'atlas_cols': E.ATLAS_COLS, 'lut': 'lut.png', 'palette': 'palette.png',
-           'tileset': 'materials.tres', 'ops': {'keep': E.OP_KEEP, 'upper': E.OP_UPPER, 'delta': E.OP_DELTA, 'abs': E.OP_ABS},
+           'tileset': 'materials.tres', 'tiers_tileset': 'tiers.tres', 'ops': {'keep': E.OP_KEEP, 'upper': E.OP_UPPER, 'delta': E.OP_DELTA, 'abs': E.OP_ABS},
            'materials': mats, 'transitions': trs}
     json.dump(man, open(mpath, 'w'), indent=1)
     print('kit: %d materials, %d transitions; repainted: %s' % (len(mats), len(trs), ', '.join(stale) or 'nothing'))

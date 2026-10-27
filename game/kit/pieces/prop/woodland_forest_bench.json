@@ -36,7 +36,13 @@
    51.0
   ],
   "collision": {
-   "shape": "none"
+   "shape": "rect",
+   "rect": [
+    -14.4,
+    -4.0,
+    28.8,
+    4.0
+   ]
   }
  },
  "placement": {
@@ -63,7 +69,15 @@
  },
  "rendering": {
   "cast_shadow": {
-   "shape": "baked"
+   "shape": "ellipse",
+   "size": [
+    16.2,
+    3.0
+   ],
+   "dir": [
+    2.0,
+    -1.0
+   ]
   },
   "contact_ao": true
  },
@@ -77,7 +91,7 @@
   "owner": null
  },
  "gameplay": {
-  "blocks_move": false,
+  "blocks_move": true,
   "blocks_shots": false
  },
  "audit": {
@@ -86,7 +100,8 @@
   "seeded_from": "game/zones/woodland/kit.json",
   "todo": [
    "composition role and clearance",
-   "function.interact.triggers (what using it does)"
+   "function.interact.triggers (what using it does)",
+   "collision and shadow are first guesses by kind (scripts/art/kit/seed_props.py _woodland_body)"
   ]
  }
 }

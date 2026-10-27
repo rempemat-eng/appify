@@ -1,0 +1,1178 @@
+{
+ "zone": "woodland_kit",
+ "note": "The woodland rebuilt with the kit (scripts/art/kit/woodland_kit.py): its plan as cells and pieces, its gameplay from zones/woodland/woodland.tscn. Regenerate, do not edit by hand; or paint the scene and export it back (game/tools/kit_zone.gd --export).",
+ "legend": {
+  ".": "lawn",
+  "#": "path",
+  "~": "water",
+  "s": "scree",
+  "w": "worn"
+ },
+ "rows": [
+  "sssssssss~~sssssssssssssssssssssssssssss",
+  "sssssssss~~sssssssssssssssssssssssssssss",
+  "sssssssss~~sssssssssssssssssssssssssssss",
+  "sssssssss~~sssssssssssssssssssssssssssss",
+  ".........~~.............................",
+  ".........~~.............................",
+  ".........~~.............................",
+  ".......~~~~.............................",
+  ".......~~~~.............................",
+  ".......~~...............................",
+  ".......~~...............................",
+  ".......~~...............................",
+  ".......~~...............................",
+  ".......~~...............................",
+  ".......~~...............................",
+  ".......~~...............................",
+  ".......~~...............................",
+  ".......~~...............................",
+  ".......~~...............................",
+  ".......~~......##.......................",
+  ".......~~......##.......................",
+  ".......~~......##.......................",
+  ".......~~......##.......................",
+  ".......~~~~....##.......................",
+  ".......~~~~....##.......................",
+  ".........~~....##.......................",
+  ".........~~....##.......................",
+  ".........~~....##.......................",
+  ".........~~....##.......................",
+  ".........~~....##.......................",
+  ".........~~....##.......................",
+  ".........~~....##.......................",
+  ".........~~....##.......................",
+  ".........~~....##.......................",
+  ".........~~....##.......................",
+  "........~~~~~..##...~~~~~~..............",
+  ".......~~~~~~~~~~~~~~~~~~~~~~~~.......~~",
+  ".......~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
+  ".......~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
+  "...............##.............~~~~~~~~..",
+  "...............##.......................",
+  "...............##.......................",
+  "...............##.......................",
+  "...............##.......................",
+  "...............##.......................",
+  "...............##.......................",
+  "...............##.......................",
+  "...............##.......................",
+  "...............##.......................",
+  "......wwwwwwww.##.......................",
+  ".....ww......ww##.......................",
+  ".....w........###.......................",
+  ".....ww......ww#######################..",
+  "......www..www.#######################..",
+  "....................................##..",
+  "....................................##..",
+  "....................................####",
+  "....................................####",
+  "........................................",
+  "........................................",
+  "........................................",
+  "........................................",
+  "........................................",
+  "........................................",
+  "........................................",
+  "........................................",
+  "........................................",
+  "........................................",
+  "........................................",
+  "........................................",
+  "........................................",
+  "........................................"
+ ],
+ "pieces": [
+  {
+   "id": "stone-1",
+   "piece": "woodland_standing_stone_lean",
+   "at": [
+    336,
+    1305
+   ],
+   "variant": "standing_stone_lean"
+  },
+  {
+   "id": "stone-2",
+   "piece": "woodland_standing_stone_low",
+   "at": [
+    240,
+    1329
+   ],
+   "variant": "standing_stone_low"
+  },
+  {
+   "id": "stone-3",
+   "piece": "woodland_standing_stone_runes",
+   "at": [
+    144,
+    1305
+   ],
+   "variant": "standing_stone_runes"
+  },
+  {
+   "id": "stone-4",
+   "piece": "woodland_standing_stone_broken",
+   "at": [
+    108,
+    1257
+   ],
+   "variant": "standing_stone_broken"
+  },
+  {
+   "id": "stone-5",
+   "piece": "woodland_standing_stone_b",
+   "at": [
+    144,
+    1209
+   ],
+   "variant": "standing_stone_b"
+  },
+  {
+   "id": "stone-6",
+   "piece": "woodland_standing_stone",
+   "at": [
+    240,
+    1185
+   ],
+   "variant": "standing_stone"
+  },
+  {
+   "id": "stone-7",
+   "piece": "woodland_standing_stone_low",
+   "at": [
+    336,
+    1209
+   ],
+   "variant": "standing_stone_low"
+  },
+  {
+   "id": "lintel-1",
+   "piece": "woodland_lintel",
+   "at": [
+    180,
+    1278
+   ],
+   "variant": "lintel"
+  },
+  {
+   "id": "stone-top",
+   "piece": "woodland_stone_top",
+   "at": [
+    72,
+    1326
+   ],
+   "variant": "stone_top"
+  },
+  {
+   "id": "stump-1",
+   "piece": "woodland_stump",
+   "at": [
+    528,
+    744
+   ],
+   "variant": "stump"
+  },
+  {
+   "id": "stump-2",
+   "piece": "woodland_stump",
+   "at": [
+    156,
+    1080
+   ],
+   "variant": "stump"
+  },
+  {
+   "id": "stump-3",
+   "piece": "woodland_stump",
+   "at": [
+    744,
+    408
+   ],
+   "variant": "stump"
+  },
+  {
+   "id": "pine-6",
+   "piece": "woodland_pine",
+   "at": [
+    60,
+    552
+   ],
+   "variant": "pine"
+  },
+  {
+   "id": "pine-7",
+   "piece": "woodland_pine",
+   "at": [
+    384,
+    192
+   ],
+   "variant": "pine"
+  },
+  {
+   "id": "tree-8",
+   "piece": "woodland_bush_c",
+   "at": [
+    60,
+    1344
+   ],
+   "variant": "bush_c"
+  },
+  {
+   "id": "bush-2",
+   "piece": "woodland_bush_b",
+   "at": [
+    60,
+    816
+   ],
+   "variant": "bush_b"
+  },
+  {
+   "id": "bush-3",
+   "piece": "woodland_bush_c",
+   "at": [
+    528,
+    192
+   ],
+   "variant": "bush_c"
+  },
+  {
+   "id": "tree-1",
+   "piece": "woodland_oak",
+   "at": [
+    84,
+    192
+   ],
+   "variant": "oak"
+  },
+  {
+   "id": "pine-1",
+   "piece": "woodland_pine",
+   "at": [
+    204,
+    192
+   ],
+   "variant": "pine"
+  },
+  {
+   "id": "tree-2",
+   "piece": "woodland_oak",
+   "at": [
+    696,
+    192
+   ],
+   "variant": "oak"
+  },
+  {
+   "id": "pine-2",
+   "piece": "woodland_pine",
+   "at": [
+    804,
+    168
+   ],
+   "variant": "pine"
+  },
+  {
+   "id": "tree-3",
+   "piece": "woodland_oak",
+   "at": [
+    84,
+    864
+   ],
+   "variant": "oak"
+  },
+  {
+   "id": "pine-3",
+   "piece": "woodland_pine",
+   "at": [
+    60,
+    1224
+   ],
+   "variant": "pine"
+  },
+  {
+   "id": "tree-4",
+   "piece": "woodland_oak",
+   "at": [
+    780,
+    744
+   ],
+   "variant": "oak"
+  },
+  {
+   "id": "tree-5",
+   "piece": "woodland_birch",
+   "at": [
+    660,
+    1128
+   ],
+   "variant": "birch"
+  },
+  {
+   "id": "pine-4",
+   "piece": "woodland_pine",
+   "at": [
+    120,
+    1632
+   ],
+   "variant": "pine"
+  },
+  {
+   "id": "tree-6",
+   "piece": "woodland_oak",
+   "at": [
+    276,
+    1704
+   ],
+   "variant": "oak"
+  },
+  {
+   "id": "pine-5",
+   "piece": "woodland_pine",
+   "at": [
+    504,
+    1704
+   ],
+   "variant": "pine"
+  },
+  {
+   "id": "tree-7",
+   "piece": "woodland_birch",
+   "at": [
+    816,
+    1704
+   ],
+   "variant": "birch"
+  },
+  {
+   "id": "oak",
+   "piece": "woodland_hollow_tree",
+   "at": [
+    324,
+    384
+   ],
+   "variant": "hollow_tree"
+  },
+  {
+   "id": "log-1",
+   "piece": "woodland_mossy_log",
+   "at": [
+    660,
+    744
+   ],
+   "variant": "mossy_log"
+  },
+  {
+   "id": "log-2",
+   "piece": "woodland_mossy_log",
+   "at": [
+    468,
+    1464
+   ],
+   "variant": "mossy_log"
+  },
+  {
+   "id": "bench",
+   "piece": "woodland_forest_bench",
+   "at": [
+    504,
+    1224
+   ],
+   "variant": "forest_bench"
+  },
+  {
+   "id": "willow",
+   "piece": "woodland_willow",
+   "at": [
+    780,
+    1320
+   ],
+   "variant": "willow"
+  },
+  {
+   "id": "bush-1",
+   "piece": "woodland_bush",
+   "at": [
+    912,
+    1200
+   ],
+   "variant": "bush"
+  },
+  {
+   "id": "wood-1",
+   "piece": "woodland_sapling",
+   "at": [
+    24,
+    216
+   ],
+   "variant": "sapling"
+  },
+  {
+   "id": "wood-2",
+   "piece": "woodland_birch",
+   "at": [
+    24,
+    288
+   ],
+   "variant": "birch"
+  },
+  {
+   "id": "wood-3",
+   "piece": "woodland_holly",
+   "at": [
+    96,
+    288
+   ],
+   "variant": "holly"
+  },
+  {
+   "id": "wood-4",
+   "piece": "woodland_oak",
+   "at": [
+    624,
+    288
+   ],
+   "variant": "oak"
+  },
+  {
+   "id": "wood-5",
+   "piece": "woodland_birch",
+   "at": [
+    504,
+    336
+   ],
+   "variant": "birch"
+  },
+  {
+   "id": "wood-6",
+   "piece": "woodland_beech",
+   "at": [
+    48,
+    360
+   ],
+   "variant": "beech"
+  },
+  {
+   "id": "wood-7",
+   "piece": "woodland_pine",
+   "at": [
+    24,
+    432
+   ],
+   "variant": "pine"
+  },
+  {
+   "id": "wood-8",
+   "piece": "woodland_holly_b",
+   "at": [
+    60,
+    480
+   ],
+   "variant": "holly_b"
+  },
+  {
+   "id": "wood-9",
+   "piece": "woodland_bramble",
+   "at": [
+    96,
+    576
+   ],
+   "variant": "bramble"
+  },
+  {
+   "id": "wood-10",
+   "piece": "woodland_oak",
+   "at": [
+    36,
+    624
+   ],
+   "variant": "oak"
+  },
+  {
+   "id": "wood-11",
+   "piece": "woodland_holly_b",
+   "at": [
+    108,
+    648
+   ],
+   "variant": "holly_b"
+  },
+  {
+   "id": "wood-12",
+   "piece": "woodland_holly",
+   "at": [
+    792,
+    648
+   ],
+   "variant": "holly"
+  },
+  {
+   "id": "wood-13",
+   "piece": "woodland_oak",
+   "at": [
+    852,
+    648
+   ],
+   "variant": "oak"
+  },
+  {
+   "id": "wood-14",
+   "piece": "woodland_sapling",
+   "at": [
+    924,
+    696
+   ],
+   "variant": "sapling"
+  },
+  {
+   "id": "wood-15",
+   "piece": "woodland_holly_b",
+   "at": [
+    24,
+    768
+   ],
+   "variant": "holly_b"
+  },
+  {
+   "id": "wood-16",
+   "piece": "woodland_oak",
+   "at": [
+    36,
+    840
+   ],
+   "variant": "oak"
+  },
+  {
+   "id": "wood-17",
+   "piece": "woodland_pine",
+   "at": [
+    36,
+    936
+   ],
+   "variant": "pine"
+  },
+  {
+   "id": "wood-18",
+   "piece": "woodland_bramble_b",
+   "at": [
+    108,
+    984
+   ],
+   "variant": "bramble_b"
+  },
+  {
+   "id": "wood-19",
+   "piece": "woodland_oak",
+   "at": [
+    48,
+    1008
+   ],
+   "variant": "oak"
+  },
+  {
+   "id": "wood-20",
+   "piece": "woodland_stump",
+   "at": [
+    60,
+    1080
+   ],
+   "variant": "stump"
+  },
+  {
+   "id": "wood-21",
+   "piece": "woodland_sapling",
+   "at": [
+    564,
+    1080
+   ],
+   "variant": "sapling"
+  },
+  {
+   "id": "wood-22",
+   "piece": "woodland_beech",
+   "at": [
+    36,
+    1152
+   ],
+   "variant": "beech"
+  },
+  {
+   "id": "wood-23",
+   "piece": "woodland_pine",
+   "at": [
+    108,
+    1152
+   ],
+   "variant": "pine"
+  },
+  {
+   "id": "wood-24",
+   "piece": "woodland_oak",
+   "at": [
+    732,
+    1152
+   ],
+   "variant": "oak"
+  },
+  {
+   "id": "wood-26",
+   "piece": "woodland_oak",
+   "at": [
+    612,
+    1224
+   ],
+   "variant": "oak"
+  },
+  {
+   "id": "wood-27",
+   "piece": "woodland_pine",
+   "at": [
+    24,
+    1296
+   ],
+   "variant": "pine"
+  },
+  {
+   "id": "wood-28",
+   "piece": "woodland_bramble",
+   "at": [
+    420,
+    1344
+   ],
+   "variant": "bramble"
+  },
+  {
+   "id": "wood-29",
+   "piece": "woodland_bramble_b",
+   "at": [
+    324,
+    1368
+   ],
+   "variant": "bramble_b"
+  },
+  {
+   "id": "wood-30",
+   "piece": "woodland_bramble",
+   "at": [
+    456,
+    1368
+   ],
+   "variant": "bramble"
+  },
+  {
+   "id": "wood-31",
+   "piece": "woodland_birch",
+   "at": [
+    36,
+    1416
+   ],
+   "variant": "birch"
+  },
+  {
+   "id": "wood-32",
+   "piece": "woodland_sapling",
+   "at": [
+    96,
+    1416
+   ],
+   "variant": "sapling"
+  },
+  {
+   "id": "wood-33",
+   "piece": "woodland_stump",
+   "at": [
+    408,
+    1392
+   ],
+   "variant": "stump"
+  },
+  {
+   "id": "wood-34",
+   "piece": "woodland_pine",
+   "at": [
+    24,
+    1464
+   ],
+   "variant": "pine"
+  },
+  {
+   "id": "wood-35",
+   "piece": "woodland_bramble_b",
+   "at": [
+    360,
+    1560
+   ],
+   "variant": "bramble_b"
+  },
+  {
+   "id": "wood-36",
+   "piece": "woodland_birch",
+   "at": [
+    468,
+    1560
+   ],
+   "variant": "birch"
+  },
+  {
+   "id": "wood-37",
+   "piece": "woodland_holly",
+   "at": [
+    564,
+    1560
+   ],
+   "variant": "holly"
+  },
+  {
+   "id": "wood-38",
+   "piece": "woodland_bramble",
+   "at": [
+    636,
+    1584
+   ],
+   "variant": "bramble"
+  },
+  {
+   "id": "wood-40",
+   "piece": "woodland_stump",
+   "at": [
+    300,
+    1608
+   ],
+   "variant": "stump"
+  },
+  {
+   "id": "wood-41",
+   "piece": "woodland_oak",
+   "at": [
+    444,
+    1632
+   ],
+   "variant": "oak"
+  },
+  {
+   "id": "wood-42",
+   "piece": "woodland_bramble_b",
+   "at": [
+    492,
+    1632
+   ],
+   "variant": "bramble_b"
+  },
+  {
+   "id": "wood-43",
+   "piece": "woodland_sapling",
+   "at": [
+    756,
+    1632
+   ],
+   "variant": "sapling"
+  },
+  {
+   "id": "wood-44",
+   "piece": "woodland_oak",
+   "at": [
+    240,
+    1656
+   ],
+   "variant": "oak"
+  },
+  {
+   "id": "wood-45",
+   "piece": "woodland_oak",
+   "at": [
+    360,
+    1656
+   ],
+   "variant": "oak"
+  },
+  {
+   "id": "wood-46",
+   "piece": "woodland_sapling",
+   "at": [
+    588,
+    1656
+   ],
+   "variant": "sapling"
+  },
+  {
+   "id": "wood-47",
+   "piece": "woodland_holly_b",
+   "at": [
+    732,
+    1656
+   ],
+   "variant": "holly_b"
+  },
+  {
+   "id": "boulder-1",
+   "piece": "woodland_boulder",
+   "at": [
+    27,
+    63
+   ],
+   "variant": "b0"
+  },
+  {
+   "id": "boulder-2",
+   "piece": "woodland_boulder",
+   "at": [
+    51,
+    42
+   ],
+   "variant": "b1"
+  },
+  {
+   "id": "boulder-3",
+   "piece": "woodland_boulder",
+   "at": [
+    87,
+    60
+   ],
+   "variant": "b3"
+  },
+  {
+   "id": "boulder-4",
+   "piece": "woodland_boulder",
+   "at": [
+    105,
+    63
+   ],
+   "variant": "b1"
+  },
+  {
+   "id": "boulder-5",
+   "piece": "woodland_boulder",
+   "at": [
+    144,
+    33
+   ],
+   "variant": "b1"
+  },
+  {
+   "id": "boulder-6",
+   "piece": "woodland_boulder",
+   "at": [
+    168,
+    90
+   ],
+   "variant": "b0"
+  },
+  {
+   "id": "boulder-7",
+   "piece": "woodland_boulder",
+   "at": [
+    192,
+    27
+   ],
+   "variant": "b2"
+  },
+  {
+   "id": "boulder-8",
+   "piece": "woodland_boulder",
+   "at": [
+    294,
+    24
+   ],
+   "variant": "b0"
+  },
+  {
+   "id": "boulder-9",
+   "piece": "woodland_boulder",
+   "at": [
+    324,
+    90
+   ],
+   "variant": "b0"
+  },
+  {
+   "id": "boulder-10",
+   "piece": "woodland_boulder",
+   "at": [
+    345,
+    54
+   ],
+   "variant": "b1"
+  },
+  {
+   "id": "boulder-11",
+   "piece": "woodland_boulder",
+   "at": [
+    372,
+    48
+   ],
+   "variant": "b4"
+  },
+  {
+   "id": "boulder-12",
+   "piece": "woodland_boulder",
+   "at": [
+    402,
+    51
+   ],
+   "variant": "b2"
+  },
+  {
+   "id": "boulder-13",
+   "piece": "woodland_boulder",
+   "at": [
+    444,
+    39
+   ],
+   "variant": "b2"
+  },
+  {
+   "id": "boulder-14",
+   "piece": "woodland_boulder",
+   "at": [
+    468,
+    66
+   ],
+   "variant": "b0"
+  },
+  {
+   "id": "boulder-15",
+   "piece": "woodland_boulder",
+   "at": [
+    501,
+    42
+   ],
+   "variant": "b2"
+  },
+  {
+   "id": "boulder-16",
+   "piece": "woodland_boulder",
+   "at": [
+    528,
+    69
+   ],
+   "variant": "b2"
+  },
+  {
+   "id": "boulder-17",
+   "piece": "woodland_boulder",
+   "at": [
+    555,
+    48
+   ],
+   "variant": "b0"
+  },
+  {
+   "id": "boulder-18",
+   "piece": "woodland_boulder",
+   "at": [
+    597,
+    45
+   ],
+   "variant": "b1"
+  },
+  {
+   "id": "boulder-19",
+   "piece": "woodland_boulder",
+   "at": [
+    621,
+    39
+   ],
+   "variant": "b1"
+  },
+  {
+   "id": "boulder-20",
+   "piece": "woodland_boulder",
+   "at": [
+    645,
+    45
+   ],
+   "variant": "b2"
+  },
+  {
+   "id": "boulder-21",
+   "piece": "woodland_boulder",
+   "at": [
+    687,
+    63
+   ],
+   "variant": "b3"
+  },
+  {
+   "id": "boulder-22",
+   "piece": "woodland_boulder",
+   "at": [
+    717,
+    39
+   ],
+   "variant": "b2"
+  },
+  {
+   "id": "boulder-23",
+   "piece": "woodland_boulder",
+   "at": [
+    747,
+    30
+   ],
+   "variant": "b0"
+  },
+  {
+   "id": "boulder-24",
+   "piece": "woodland_boulder",
+   "at": [
+    768,
+    54
+   ],
+   "variant": "b0"
+  },
+  {
+   "id": "boulder-25",
+   "piece": "woodland_boulder",
+   "at": [
+    795,
+    27
+   ],
+   "variant": "b4"
+  },
+  {
+   "id": "boulder-26",
+   "piece": "woodland_boulder",
+   "at": [
+    837,
+    18
+   ],
+   "variant": "b4"
+  },
+  {
+   "id": "boulder-27",
+   "piece": "woodland_boulder",
+   "at": [
+    867,
+    63
+   ],
+   "variant": "b2"
+  },
+  {
+   "id": "boulder-28",
+   "piece": "woodland_boulder",
+   "at": [
+    894,
+    51
+   ],
+   "variant": "b0"
+  },
+  {
+   "id": "boulder-29",
+   "piece": "woodland_boulder",
+   "at": [
+    927,
+    78
+   ],
+   "variant": "b0"
+  },
+  {
+   "id": "boulder-30",
+   "piece": "woodland_boulder",
+   "at": [
+    102,
+    816
+   ],
+   "variant": "b1"
+  },
+  {
+   "id": "boulder-31",
+   "piece": "woodland_boulder",
+   "at": [
+    240,
+    786
+   ],
+   "variant": "b5"
+  },
+  {
+   "id": "boulder-32",
+   "piece": "woodland_boulder",
+   "at": [
+    156,
+    798
+   ],
+   "variant": "b5"
+  },
+  {
+   "id": "boulder-33",
+   "piece": "woodland_boulder",
+   "at": [
+    324,
+    798
+   ],
+   "variant": "b5"
+  },
+  {
+   "id": "boulder-34",
+   "piece": "woodland_boulder",
+   "at": [
+    162,
+    852
+   ],
+   "variant": "b5"
+  },
+  {
+   "id": "boulder-35",
+   "piece": "woodland_boulder",
+   "at": [
+    318,
+    852
+   ],
+   "variant": "b4"
+  },
+  {
+   "id": "boulder-36",
+   "piece": "woodland_boulder",
+   "at": [
+    108,
+    870
+   ],
+   "variant": "b0"
+  },
+  {
+   "id": "boulder-37",
+   "piece": "woodland_boulder",
+   "at": [
+    198,
+    882
+   ],
+   "variant": "b0"
+  },
+  {
+   "id": "boulder-38",
+   "piece": "woodland_boulder",
+   "at": [
+    285,
+    882
+   ],
+   "variant": "b0"
+  },
+  {
+   "id": "footbridge",
+   "piece": "woodland_footbridge",
+   "at": [
+    384,
+    948
+   ],
+   "variant": "river3"
+  }
+ ],
+ "gameplay_from": "res://zones/woodland/woodland.tscn",
+ "lab": true,
+ "spawns": {
+  "clearing": [
+   330.0,
+   480.0
+  ],
+  "garden": [
+   912.0,
+   1368.0
+  ],
+  "spring": [
+   300.0,
+   948.0
+  ],
+  "stones": [
+   234.0,
+   1242.0
+  ]
+ }
+}

@@ -69,6 +69,10 @@
           },
           "note": {
             "type": "string"
+          },
+          "foot": {
+            "$ref": "#/$defs/pxxy",
+            "description": "This variant's foot anchor in its picture, texels (when it differs from geometry.foot)."
           }
         }
       }
@@ -272,6 +276,24 @@
         "swatch": {
           "$ref": "#/$defs/pxxy",
           "description": "Where in the fill the editor palette's swatch is cut (texels)."
+        },
+        "face": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "description": "A face of raised ground: cells derived below a tier's south rim (TerrainGround, compose.derive), its fill a strip indexed by depth below the rim.",
+          "properties": {
+            "height_cells": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4
+            },
+            "strip_px": {
+              "type": "integer"
+            }
+          }
         }
       }
     },
@@ -291,7 +313,7 @@
         },
         "lower": {
           "type": "string",
-          "description": "A material id, or '*' for any lower material without its own pair."
+          "description": "A material id, '*' for any lower material without its own pair, or '^' for any ground of a lower tier (a plateau's sides and back rim)."
         },
         "painter": {
           "$ref": "#/$defs/painter"
@@ -610,10 +632,15 @@
               ]
             },
             "dir": {
-              "$ref": "#/$defs/pxxy"
+              "$ref": "#/$defs/pxxy",
+              "description": "The shadow's centre from the foot, world px (east and down)."
             },
             "length": {
               "type": "number"
+            },
+            "size": {
+              "$ref": "#/$defs/pxxy",
+              "description": "An ellipse shadow's radii, world px (the house shadow: core two tones down, its outer 2 world px one tone down)."
             }
           }
         },
@@ -854,6 +881,18 @@
         "nav_cost": {
           "type": "number",
           "minimum": 0
+        },
+        "deck": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "number"
+          },
+          "minItems": 4,
+          "maxItems": 4,
+          "description": "A walkable deck [x, y, w, h] in world px from the foot (a bridge, a ford, a boardwalk): the cells it covers are walkable whatever lies under them."
         }
       }
     },

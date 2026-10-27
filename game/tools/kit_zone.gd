@@ -48,6 +48,7 @@ func _build(path: String, out: String) -> int:
 	ground.name = "Ground"
 	ground.grid_size = size
 	ground.z_index = -10
+	ground.lab = bool(plan.get("lab", false))
 	root.add_child(ground)
 	ground.owner = root
 	var cells := TileMapLayer.new()
@@ -66,20 +67,68 @@ func _build(path: String, out: String) -> int:
 				printerr("kit_zone: '%s' is not a kit material" % id)
 				return 1
 			cells.set_cell(Vector2i(x, y), 0, ac)
-	var actors := Node2D.new()
-	actors.name = "Actors"
-	actors.y_sort_enabled = true
-	root.add_child(actors)
-	actors.owner = root
-	var spawns := Node2D.new()
-	spawns.name = "Spawns"
-	root.add_child(spawns)
-	spawns.owner = root
-	var sp: Dictionary = plan.get("spawns", {"start": [size.x * kit.cell / 2, size.y * kit.cell / 2]})
-	for s in sp:
+	if plan.has("tiers"):
+		var tl := TileMapLayer.new()
+		tl.name = "Tiers"
+		tl.tile_set = kit.tiers_tileset
+		ground.add_child(tl)
+		tl.owner = root
+		var trows: Array = plan.tiers
+		for y in size.y:
+			var tr: String = trows[y]
+			for x in size.x:
+				var tv := int(tr[x]) if tr[x] >= "0" and tr[x] <= "9" else 0
+				if tv > 0:
+					tl.set_cell(Vector2i(x, y), 0, Vector2i(tv, 0))
+	# the pieces, each its library scene at its foot (the ground's shadow pass finds them)
+	var props := Node2D.new()
+	props.name = "Props"
+	props.y_sort_enabled = true
+	root.add_child(props)
+	props.owner = root
+	for pc in plan.get("pieces", []):
+		var ps := load("res://kit/props/%s.tscn" % pc.piece) as PackedScene
+		if ps == null:
+			printerr("kit_zone: no piece scene for '%s'" % pc.piece)
+			return 1
+		var inst := ps.instantiate() as KitPiece
+		inst.name = String(pc.get("id", pc.piece)).replace("/", "_")
+		inst.position = Vector2(pc.at[0], pc.at[1])
+		if pc.has("variant"):
+			inst.variant = pc.variant
+		if String(KitPiece.index().get(pc.piece, {}).get("z_sort", "foot")) == "ground":
+			inst.z_index = -5
+		props.add_child(inst)
+		inst.owner = root
+	# the gameplay: from another zone's scene (the same doors, spawns, people and camps), or empty
+	if plan.has("gameplay_from"):
+		var src := (load(plan.gameplay_from) as PackedScene).instantiate()
+		for n in ["Actors", "Spawns", "Doors"]:
+			var node := src.get_node_or_null(n)
+			if node == null:
+				continue
+			src.remove_child(node)
+			node.owner = null
+			root.add_child(node)
+			_own(node, root, src)
+		src.free()
+	for n in ["Actors", "Spawns"]:
+		if root.get_node_or_null(n) == null:
+			var nd := Node2D.new()
+			nd.name = n
+			nd.y_sort_enabled = n == "Actors"
+			root.add_child(nd)
+			nd.owner = root
+	var spawns := root.get_node("Spawns")
+	var sp: Dictionary = plan.get("spawns", {})
+	if sp.is_empty() and spawns.get_child_count() == 0:
+		sp = {"start": [size.x * kit.cell / 2, size.y * kit.cell / 2]}
+	for s_ in sp:
+		if spawns.get_node_or_null(NodePath(s_)) != null:
+			continue
 		var m := Marker2D.new()
-		m.name = s
-		m.position = Vector2(sp[s][0], sp[s][1])
+		m.name = s_
+		m.position = Vector2(sp[s_][0], sp[s_][1])
 		spawns.add_child(m)
 		m.owner = root
 	var scene := PackedScene.new()
@@ -91,6 +140,14 @@ func _build(path: String, out: String) -> int:
 	root.free()
 	print("kit_zone: wrote ", out, " (", size.x, " x ", size.y, " cells)")
 	return 0 if err == OK else 1
+
+## Give `node` and the nodes it brought from `src` to `root` (instanced sub-scenes keep their own).
+func _own(node: Node, root: Node, src: Node) -> void:
+	if node.owner == src or node.owner == null:
+		node.owner = root
+	for c in node.get_children():
+		if c.owner == src:
+			_own(c, root, src)
 
 func _export(path: String, out: String) -> int:
 	var scene := load(path) as PackedScene
@@ -108,8 +165,9 @@ func _export(path: String, out: String) -> int:
 	for y in ground.grid_size.y:
 		var row := ""
 		for x in ground.grid_size.x:
-			var td := cells.get_cell_tile_data(Vector2i(x, y))
-			var id := "" if td == null else String(td.get_custom_data("material"))
+			var ac := cells.get_cell_atlas_coords(Vector2i(x, y))
+			var mats: Array = TerrainKit.shared().manifest.materials
+			var id := "" if ac.x < 0 or ac.x >= mats.size() else String(mats[ac.x].id)
 			if id == "":
 				row += " "
 				continue
@@ -125,6 +183,25 @@ func _export(path: String, out: String) -> int:
 	plan["zone"] = zone_id
 	plan["legend"] = legend
 	plan["rows"] = rows
+	var tl := ground.get_node_or_null("Tiers") as TileMapLayer
+	if tl != null:
+		var trows := []
+		for y in ground.grid_size.y:
+			var tr := ""
+			for x in ground.grid_size.x:
+				tr += str(maxi(0, tl.get_cell_atlas_coords(Vector2i(x, y)).x))
+			trows.append(tr)
+		plan["tiers"] = trows
+	var props := root.get_node_or_null("Props")
+	if props != null:
+		var pieces := []
+		for c in props.get_children():
+			if c is KitPiece:
+				var e := {"id": String(c.name), "piece": c.piece_id, "at": [int(c.position.x), int(c.position.y)]}
+				if c.variant != "":
+					e["variant"] = c.variant
+				pieces.append(e)
+		plan["pieces"] = pieces
 	var f := FileAccess.open(plan_path, FileAccess.WRITE)
 	f.store_string(JSON.stringify(plan, " ", false) + "\n")
 	f.close()
