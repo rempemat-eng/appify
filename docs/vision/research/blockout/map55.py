@@ -88,6 +88,57 @@ def features(S, M):
 M54.features = features                               # base_hi and the range drawing read the spurs too
 
 
+# ------------------------------------------------------------------------------------------ the label font's B
+# PixelifySans draws its capital B with rounded left corners, the same shape as its G and 8, so at map sizes "TIDEBLOOM"
+# reads "TIDEGLOOM" and "HARBOUR" "HARGOUR". The map squares the B's left side (a full-height stem), drawing over the
+# glyph; the game's font file is not changed.
+def _stem(font):
+    """The left stem of the font's B: (x offset, width) in px, measured from the glyph."""
+    key = (getattr(font, 'path', ''), font.size)
+    if key not in _STEM:
+        m = font.getmask('B'); w, h = m.size
+        arr = np.array(m, dtype=np.uint8).reshape(h, w) > 127
+        cols = arr[h // 2 - 1:h // 2 + 2].any(0) if h > 4 else arr.any(0)
+        x0 = int(np.argmax(cols)); x1 = x0
+        while x1 < w and cols[x1]:
+            x1 += 1
+        _STEM[key] = (x0, max(1, x1 - x0))
+    return _STEM[key]
+
+
+_STEM = {}
+_draw_text = Placer.draw_text
+
+
+def _draw_text_b(self, xy, text, font, fill, stroke_fill, anchor='mm', stroke=2, spacing=0):
+    _draw_text(self, xy, text, font, fill, stroke_fill, anchor, stroke, spacing)
+    if 'B' not in text or 'Pixelify' not in getattr(font, 'path', ''):
+        return
+    # where each B sits: the same advance as the drawing above
+    if spacing:
+        w = sum(self.d.textlength(ch, font=font) for ch in text) + spacing * (len(text) - 1)
+        x = xy[0] - w / 2 if anchor[0] == 'm' else (xy[0] if anchor[0] == 'l' else xy[0] - w)
+        starts = []
+        for ch in text:
+            starts.append(x); x += self.d.textlength(ch, font=font) + spacing
+        anc = 'lm'; ys = [xy[1]] * len(text)
+    else:
+        bb = self.d.textbbox(xy, text, font=font, anchor=anchor)
+        starts = [bb[0] + self.d.textlength(text[:i], font=font) for i in range(len(text))]; anc = 'lm'; ys = [(bb[1] + bb[3]) / 2] * len(text)
+    sx, sw = _stem(font)
+    for ch, x0, y in zip(text, starts, ys):
+        if ch != 'B':
+            continue
+        gb = self.d.textbbox((x0, y), 'B', font=font, anchor=anc)
+        l = gb[0] + sx - (self.d.textbbox((x0, y), 'B', font=font, anchor=anc)[0] - gb[0])
+        self.d.rectangle([l - stroke, gb[1] - stroke, l + sw - 1 + stroke, gb[3] - 1 + stroke], fill=stroke_fill)
+        _draw_text(self, (x0, y), 'B', font, fill, stroke_fill, anc, stroke, 0)
+        self.d.rectangle([l, gb[1], l + sw - 1, gb[3] - 1], fill=fill)
+
+
+Placer.draw_text = _draw_text_b
+
+
 # ------------------------------------------------------------------------------------------ one treatment for marks
 def tones(c):
     """Lit, middle and shade from one base colour (the three tones every mark uses)."""
@@ -383,7 +434,7 @@ def names(M):
     region += [('THE NORTHERN RANGE', 4300, 520)]
     biome = [(t, *Pr((x, y))) for t, x, y in M54.BIOME_NAMES]
     biome = [b for b in biome if b[0] not in ('the Heights',)]
-    biome += [('the upper Cog', 8200, 1500), ('Launch Cape', 12230, 6560), ('the east coast', 12440, 4720)]
+    biome += [('the upper Cog', 8200, 1500), ('the east coast', 12440, 4720)]
     small = [(nm, *Pr((x, y)), kind) for nm, x, y, kind in M54.SMALL_PLACES if nm not in ('the old town', 'the docks', 'new town', 'the Skyport', 'Gull Strand')]
     small += [('the rockfall', M.ROCKFALL[0] + 40, M.ROCKFALL[1], 'gate'), ('the slate quarry', 8120, 1110, 'place'), ('the folds', 7915, 900, 'place'),
               ('the Skyport', 10030, 4905, 'place'), ('the pad', M.PAD[0], M.PAD[1] + 40, 'place'), ("the Company's yard", 11780, 4159, 'place'),
@@ -399,6 +450,9 @@ def names(M):
 
 
 MAJOR = {'Crossroads', 'Dust Gulch', 'Palm Spring', 'Fernhollow', 'Cogsworth', 'Hearthold', 'Cinderwick', 'Lagoon Landing', 'Highgarth', 'Neon Harbour'}
+QUIET = ['the old forest', 'the moss fens', 'the dune sea', 'the salt lake', 'the dead forest', 'the moor', 'Mount Ember', 'the Lull delta',
+         'the southern sea', 'the northern massif', 'the coal hills', 'the Narrows']          # the continent map's second tier: edges, landmarks
+VILLAGES = ['Driftwood', 'Lullford', 'Gullwick', 'Cinder Springs', 'Lane End', 'Glintside', 'Canalside', 'Halcyon Row']
 MINOR_TOWNS = {'Driftwood', 'Lullford', 'Gullwick', 'Cinder Springs', 'the Lode', 'Ember forge', 'Launch Cape', 'Halcyon Row', 'Glintside', 'Canalside'}
 PRINCIPAL = {"Drover's Road", 'Lull Road', 'Ash Coast', 'Canyon Road', 'Foothill Road', 'the Garth Road', 'Coast Path', 'High Fells', 'Towpath'}
 
@@ -409,6 +463,16 @@ def labels55(S, M, R, ink, s, k, ox, oy, Wc, Hc, F, lines, reserved, mode='conti
     lay = Image.new('RGBA', (Wc, Hc), (0, 0, 0, 0)); d = ImageDraw.Draw(lay)
     P = lambda x, y: (x * k + ox, y * k + oy)
     pl = Placer(d, Wc, Hc)
+    _put = pl.put; done = set()
+
+    def put_once(xy, text, *a, **kw):                                # one label per name
+        if text in done:
+            return None
+        b = _put(xy, text, *a, **kw)
+        if b is not None:
+            done.add(text)
+        return b
+    pl.put = put_once
     cream, inkc = R['plaster'][5], ink
     full = mode == 'full'
     for b in reserved:
@@ -423,6 +487,12 @@ def labels55(S, M, R, ink, s, k, ox, oy, Wc, Hc, F, lines, reserved, mode='conti
             icons.append((nm, x, y, 'city' if nm == 'Neon Harbour' else ('hilltown' if kind in ('hilltown', 'castle') else 'town'), 'town', 1))
         elif full or nm in ('Launch Cape',):
             icons.append((nm, x, y, 'cape' if nm == 'Launch Cape' else 'village', 'town2', 1))
+        elif nm in VILLAGES:
+            icons.append((nm, x, y, 'place', 'village', 2))
+    if not full:
+        for x, y, nm in M.FARMS:
+            if nm in VILLAGES:
+                icons.append((nm, x, y, 'place', 'village', 2))
     icons.append(('the stone circle', M.CIRCLE[0], M.CIRCLE[1], 'circle', 'circle', 1))
     for nm, (x, y, r, region_, story) in M.CRATERS.items():
         if nm != 'the Crossroads crater':
@@ -484,7 +554,7 @@ def labels55(S, M, R, ink, s, k, ox, oy, Wc, Hc, F, lines, reserved, mode='conti
         pl.put((X, Y), t, F['region'], cream, inkc, [(0, 0, 'mm'), (0, -18 * s, 'mm'), (0, 18 * s, 'mm'), (40 * s, 0, 'mm'), (-40 * s, 0, 'mm'),
                                                      (90 * s, 30 * s, 'mm'), (-90 * s, 30 * s, 'mm'), (0, 50 * s, 'mm'), (160 * s, 40 * s, 'mm'), (0, -50 * s, 'mm')],
                stroke=int(3 * s), spacing=3 * s, pad=2 * s, name=t if box is None else False)
-    order = sorted(placed_icons, key=lambda p: (p[6], {'circle': -1, 'town': 0, 'closed': 0, 'town2': 1, 'district': 1, 'crater': 2, 'peak': 3, 'gate': 4,
+    order = sorted(placed_icons, key=lambda p: (p[6], {'circle': -1, 'town': 0, 'closed': 0, 'town2': 1, 'village': 1, 'district': 1, 'crater': 2, 'peak': 3, 'gate': 4,
                                                          'pass': 5, 'gate3': 6, 'place': 7, 'none': 9}[p[4]]))
 
     def name_icon(p, pad, leader):
@@ -496,6 +566,8 @@ def labels55(S, M, R, ink, s, k, ox, oy, Wc, Hc, F, lines, reserved, mode='conti
             font, fill = F['town'], cream
         elif cat == 'town2':
             font = F['place']
+        elif cat == 'village':
+            font, fill, st = F['place'], mix(R['plaster'][5], R['stone'][3], 0.25), mix(ink, R['stone'][1], 0.35)
         elif cat == 'district':
             font, fill = F['place'], R['brass'][5]
         elif cat == 'circle':
@@ -513,6 +585,14 @@ def labels55(S, M, R, ink, s, k, ox, oy, Wc, Hc, F, lines, reserved, mode='conti
     for p in order:
         if p[6] == 1:
             name_icon(p, 1, [p[3] + 14 * s, p[3] + 24 * s, p[3] + 36 * s])
+    if not full:                                                     # the quieter second tier: edges and landmarks
+        qf = F['quiet']; qfill = mix(R['snow'][5], R['stone'][3], 0.3); qst = mix(ink, R['stone'][1], 0.45)
+        for t, x, y in biome:
+            if t in QUIET:
+                X, Y = P(x, y)
+                pl.put((X, Y), t, qf, qfill, qst, [(0, 0, 'mm'), (0, -12 * s, 'mm'), (0, 12 * s, 'mm'), (30 * s, 0, 'mm'), (-30 * s, 0, 'mm'),
+                                                   (0, -24 * s, 'mm'), (0, 24 * s, 'mm'), (60 * s, 0, 'mm'), (-60 * s, 0, 'mm')],
+                       stroke=max(1, int(1.5 * s)), spacing=1 * s, pad=1 * s, name=False)
     if full:
         for t, x, y in biome:
             X, Y = P(x, y)
@@ -595,6 +675,7 @@ def frame_fit(Wc, Hc, s):
 
 def compose(S, M, R, ink, s, base, k, ox, oy, Wc, Hc, paths, lines, mode, title, panels_on=True, box=None, act=True):
     F = M54.fonts54(M.ROOT, s)
+    F['quiet'] = ImageFont.truetype(os.path.join(M.ROOT, 'game', 'ui', 'fonts', 'PixelifySans-Regular.ttf'), int(round(13 * s)))
     canvas = Image.new('RGB', (Wc, Hc), R['snow'][3])
     px0, py0 = (0, 0) if box is not None else (int(round(ox)), int(round(oy)))     # an inset's base is already cut to its box
     canvas.paste(base, (px0, py0))

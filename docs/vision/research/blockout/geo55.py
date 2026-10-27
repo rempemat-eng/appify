@@ -739,7 +739,13 @@ def usable(T):
 
 def data_stage():
     V.SUF = SUF
-    T, obs, pocks = stage_old()
+    cache = os.environ.get('OLD_CACHE')                              # a development cache of v54's ground (deterministic)
+    if cache and os.path.exists(cache):
+        D = pickle.load(open(cache, 'rb')); T, obs, pocks = D['T'], D['obs'], D['pocks']; g.WAYS.clear(); g.WAYS.update(D['WAYS']); g.FRAME = T['FRAME']
+    else:
+        T, obs, pocks = stage_old()
+        if cache:
+            pickle.dump({'T': T, 'obs': obs, 'pocks': pocks, 'WAYS': g.WAYS}, open(cache, 'wb'), protocol=4)
     u54 = usable(T)
     T, obs, pocks = warp_T(T, obs, pocks)
     warp_tables(); set_dims(NEW_W, NEW_H)
