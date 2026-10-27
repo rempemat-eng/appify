@@ -173,3 +173,11 @@ The kits are on open PRs and land on `main` separately; until then, build agains
 | (none)     | new ground   | the Falls Rock, the Harbour Bridge and Chapel Islet, the canal basin, the Lull belt, the delta, Lullford and its bridge, Gullwick |
 
 Places keep their ids where the game uses them (mission places, stops, rings in `lib/world-places.ts`), so saves and missions carry over; their stands move with them.
+
+## v55 overview: proposals for lane I (27 Oct)
+
+The continent overview v55 (`../research/blockout/README.md`, "v55"; Matt's brief of 27 Oct) gives the city its room. These are proposals; this brief is unchanged until the lane adopts them.
+
+- **Coordinates**: east of x 9400 the land is widened by 1.58 and south of y 3900 by 1.125 (`geo55.P`); the canvas is 12544 x 7168. Lullford goes to (8858, 4350), the Neon terminus to (11574, 4519).
+- **The east coast**: the sea comes in along the city's east side and round Launch Cape, now a full headland with the Pad Road, the works and the pad at its tip (12085, 6455), and Halcyon Row (the staff's houses) at its neck, 770 px of heath from the pad.
+- **Neon Harbour in five districts (78 buildings)**: the old waterfront (16), the docks (14), the Lanes and the East Shore (18), the Company district round the terminus with the Company crater fenced in its yard (14), the Heights and the Skyport (16; the Skyport proposed onto the Heights' crown from the eastern flats). Inhabited outskirts: Canalside on the Lull Road, Glintside on the Glint. Lullford 11 buildings, Gullwick 8.

@@ -193,3 +193,11 @@ The kits are on open PRs and land on `main` separately; until then, build agains
 | (none)     | new ground    | the Brackens and their gap, the Col hut, Driftwood's cove as an estuary, the valley's frame of sea and old forest       |
 
 Places keep their ids where the game uses them (mission places, stops, rings in `lib/world-places.ts`), so saves and missions carry over; their stands move with them.
+
+## v55 overview: proposals for lanes E and F (27 Oct)
+
+The continent overview v55 (`../research/blockout/README.md`, "v55"; Matt's brief of 27 Oct) gives the towns room. These are proposals; this brief is unchanged until the lanes adopt them.
+
+- **The anchor does not move.** x 5400 to 7000 and y 1400 to 3900 keep their coordinates, so the woodland, Crossroads' square, the stone circle and the Frostline are where this brief has them. South of y 3900 the land is stretched by 1.125 (move a point with `geo55.P`): Driftwood goes to (6420, 5092), the halt to (5850, 4069).
+- **Crossroads becomes a large town (40 buildings)** round the built square (lane E): Mill End along the Sleepwater (the mill, Granary Row, Weir Lane), Halt Road down to the halt yard, Eastgate with the drovers' market and the inn, West Lane on the woodland's skirt; the mill farms and four farmsteads with Coombe mill in the valley's south.
+- **Highgarth (lane F)**: a medium mountain town (18 buildings) in a sheltered valley on the upper Cog north of Cogsworth, with the Northway to a rockfall that closes the north pass (closed for movement, navigation and travel; 1.3 km from the ridge col and the Fells saddle). The massif is deepened north by 1.2 and its top 220 px run off the canvas; its wall gains spurs.

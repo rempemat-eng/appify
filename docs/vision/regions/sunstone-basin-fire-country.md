@@ -202,3 +202,11 @@ The kits are on open PRs and land on `main` separately; until then, build agains
 | (none)     | new ground   | the steppe and the drove road west of the Brackens gap, the Rift and Drover's bridge, the Lode, the Amber canyon, the salt lake, Cinderwick, the dead forest and the Ash Coast; later the Launch Cape's pad, Halcyon and Lumen (P7) |
 
 Places keep their ids where the game uses them (mission places, stops, rings in `lib/world-places.ts`), so saves and missions carry over; their stands move with them.
+
+## v55 overview: proposals for lane D (27 Oct)
+
+The continent overview v55 (`../research/blockout/README.md`, "v55"; Matt's brief of 27 Oct). These are proposals; this brief is unchanged until the lane adopts them.
+
+- **Coordinates**: x 1500 to 4300 is widened by 1.14 and the south by 1.125 (`geo55.P`); the dune sea's outer 458 px run off the canvas's west edge. Dust Gulch goes to (2478, 2420), Palm Spring (3299, 2800), Hearthold (2159, 5272), Cinderwick (2478, 5857).
+- **Dust Gulch, large (38 buildings)**: Front Street, the depot and goods yard, Water Street, West Row, the corrals and ore yard, the river gardens on the Amber. **Palm Spring, medium (18)**: round the spring pool and its channels, the caravanserai on the Drover's Road, the date gardens and the north grove.
+- **Hearthold, large**: the castle's walls redrawn round the whole rock top with the keep at the crown, Smiths' Row, Gate Street, Ash Lane, Vine Lane and Potters' Lane below the gate, the vines and lower fields. **Cinderwick, medium**: the Strand, Kiln Lane, Ash Lane, the quay and the kilns, across the lower fields from Hearthold. The settled margins: scrub along the dry beds, green along the irrigated Amber and Willow Run.

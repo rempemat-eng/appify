@@ -150,3 +150,11 @@ The kits are on open PRs and land on `main` separately; until then, build agains
 | (none)     | new ground | Gasworks Hill with the airship mast, the maglev terminus and pump house, the Millrace through the mills, the coal hills, the Narrows and the viaduct, Fernhollow |
 
 Places keep their ids where the game uses them (mission places, stops, rings in `lib/world-places.ts`), so saves and missions carry over; their stands move with them.
+
+## v55 overview: proposals for lane H (27 Oct)
+
+The continent overview v55 (`../research/blockout/README.md`, "v55"; Matt's brief of 27 Oct) gives the towns room. These are proposals; this brief is unchanged until the lane adopts them.
+
+- **Coordinates**: x 7000 to 8400 is widened by 1.10 and x 8400 to 9400 by 1.06 (`geo55.P`): Cogsworth to (8078, 2450), Fernhollow to (7165, 3080), the Cog foot to (8678, 3060).
+- **Cogsworth, at least medium with room to grow (25 buildings)**: Foundry Row and the mills on the Millrace, Engine Street on the towpath road to the terminus, Pit Row and the brick terraces toward the pits, the station square; the railway yard and the allotments. It is the start of the Garth Road up the Cog to Highgarth (lane F).
+- **Fernhollow, medium (16 buildings)**: the green with the chapel and school, the sawmill and wood yards, Green Lane and Cooper Lane, the clearing fields; open woods between it and Crossroads' Eastgate.

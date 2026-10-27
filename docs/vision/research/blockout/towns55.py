@@ -1,0 +1,866 @@
+"""v55's settlement footprints (Matt's brief of 27 Oct, layout step 1), drawn at overview scale on the v55 canvas.
+
+Each town is laid out from a street skeleton (its routes, plus the side streets, back lanes, quays and squares written
+here per town) and filled with discrete buildings at the size guide's footprints (size-guide.md 4: a cottage stands on
+80 x 48, a two-storey house 64 to 96 wide, a shop 64 to 88, a workshop 80 to 112, a warehouse 112 to 160, a city
+building 64 to 96 on 48 to 64), each on one tier, set back from its street with a garden or yard behind. A building is
+counted as Matt defines it: homes, shops, workshops and public buildings, enterable or not; market stalls, sheds and the
+separate doors of one apartment building are not counted (they are not placed as buildings at all).
+
+What a town's surroundings are for (the fields, orchards, corrals, railyards, quays, kilns) is painted round it as its
+working outskirts, so the overview shows why the town is there. Steps 5 to 7 (gameplay-scale building, residents, animals
+and props, and the journey checks) are a plan in README.md, "v55", for the lanes and the world editor.
+
+Called by geo55.py (lay_all); not run on its own."""
+import math
+import numpy as np
+from scipy import ndimage as ndi
+import geo5 as g
+from geo5 import CELL
+
+H = W = None                      # set by geo55.set_dims
+PX = PY = None
+
+# footprints in world px (size-guide.md 4); (w range, d range): w along the street, d back from it
+BLD = {'cottage': ((72, 96), (48, 56)), 'house': ((64, 96), (48, 56)), 'farmhouse': ((104, 128), (56, 64)), 'shop': ((64, 88), (40, 48)),
+       'inn': ((104, 136), (56, 64)), 'workshop': ((80, 112), (56, 64)), 'public': ((96, 136), (56, 72)), 'warehouse': ((112, 160), (64, 88)),
+       'townhouse': ((56, 80), (40, 48)), 'tenement': ((88, 128), (48, 64)), 'office': ((96, 144), (72, 96)), 'stilt': ((64, 88), (48, 56)),
+       'boathouse': ((72, 104), (56, 64)), 'barn': ((96, 128), (56, 72)), 'mill': ((80, 104), (56, 64)), 'station': ((112, 160), (48, 56)),
+       'chapel': ((80, 104), (64, 80)), 'keep': ((128, 160), (96, 112)), 'hall': ((112, 160), (64, 80)), 'tower': ((64, 80), (64, 80)),
+       'hangar': ((128, 176), (80, 96)), 'lodge': ((88, 112), (56, 64))}
+KIND_OF = {'warehouse': 'warehouse', 'office': 'tower', 'tower': 'tower', 'hangar': 'hangar', 'keep': 'keep', 'station': 'terminal'}
+# ground a building, yard or street may be laid on (natural ground and v54's settlement paint, never water, rock or a barrier)
+BUILDABLE = {'meadow', 'watermeadow', 'steppe', 'scrub', 'desert', 'broadleaf', 'conifer', 'sand', 'alpine', 'barren', 'ash', 'blacksand',
+             'yard', 'lavastone', 'fireweed', 'basalt', 'deadwood', 'garden', 'badland', 'scroll', 'carr', 'heath', 'field', 'field2',
+             'orchard', 'hedge', 'fallow', 'plaza', 'clearing', 'lawn', 'gorse', 'wild', 'building', 'lane', 'airfield', 'apron', 'tor',
+             'boulders', 'thicket', 'felltree', 'bramble', 'scree', 'wash', 'reeds', 'trail', 'boulevard', 'arcade', 'quay', 'warehouse',
+             'tower', 'neon', 'retain', 'stall', 'fishmarket', 'hangar', 'terminal', 'pad', 'dock', 'crane'}
+STREETABLE = BUILDABLE | {'path', 'road', 'stair', 'bridge'}
+ROUTE = {'path', 'road', 'bridge', 'stair', 'bar', 'trail', 'viaduct'}
+
+
+def C(x, y):
+    return int(y // CELL), int(x // CELL)
+
+
+class Town:
+    """One settlement: its streets, squares, buildings, yards and working outskirts."""
+
+    def __init__(self, T, name, centre, size, target, purpose, setting, neighbourhoods=(), gathering=(), seed=0):
+        self.T = T; self.name = name; self.centre = centre; self.size = size; self.target = target
+        self.purpose = purpose; self.setting = setting; self.neighbourhoods = list(neighbourhoods); self.gathering = list(gathering)
+        self.buildings = []; self.streets = []; self.spaces = []; self.outskirts = []
+        self.rng = np.random.default_rng(seed or abs(hash(name)) % 2 ** 31)
+        self.level = 1; self.slope_max = 0.016
+        self.cap = target[1] if isinstance(target, (tuple, list)) else target
+
+    # -------------------------------------------------------------------------------------- the masks
+    def free(self, a, b, c, d, kinds=BUILDABLE):
+        T = self.T; K = T['K']
+        if a < 1 or b < 1 or c >= H - 1 or d >= W - 1:
+            return False
+        blk = K[a:c, b:d]
+        if not np.isin(blk, list(kinds)).all():
+            return False
+        if T['taken'][a - 1:c + 1, b - 1:d + 1].any() or T['street'][a:c, b:d].any() or T['barrier'][a:c, b:d].any():
+            return False
+        tt = T['tiers_pre'][a:c, b:d]
+        if tt.max() - tt.min() > self.level:                       # a footprint lies on one tier (size-guide.md 2): at most
+            return False                                           # `level` tiers are levelled under it (put() terraces it)
+        if T['slope'][a:c, b:d].max() > self.slope_max:
+            return False
+        if T['keepout'][a:c, b:d].any():
+            return False
+        return True
+
+    # -------------------------------------------------------------------------------------- streets and squares
+    def street(self, pts, width=24, kind='lane', name=None, smooth=2):
+        """A street (painted walkable, never over water or a barrier); existing route cells are left as they are."""
+        T = self.T; K = T['K']
+        pts = g.chaikin(pts, smooth) if smooth and len(pts) > 2 else pts
+        m = _lm(pts, width)
+        wet = m & np.isin(K, ['river', 'creek', 'channel', 'canal']) & ~T['hardbar']        # small water: a bridge (never a barrier)
+        ok = m & np.isin(K, list(STREETABLE)) & ~T['barrier'] & ~T['keepout']
+        paint = ok & ~np.isin(K, list(ROUTE))
+        K[paint] = kind; K[wet] = 'bridge'
+        T['street'] |= (m & ~T['barrier']) | wet
+        T['used'] |= ok | wet
+        self.streets.append({'name': name, 'kind': kind, 'width_px': width, 'pts': [[int(round(x)), int(round(y))] for x, y in pts]})
+        return pts
+
+    def square(self, cx, cy, rx, ry, kind='plaza', name=None, rough=0.15):
+        T = self.T; K = T['K']
+        m = g.shape(cx, cy, rx, ry, 3000 + 2 * (int(cx + cy) % 4), rough) & np.isin(K, list(STREETABLE)) & ~T['barrier'] & ~T['keepout']
+        m &= ~np.isin(K, ['bridge'])
+        K[m & ~np.isin(K, ['road', 'path', 'stair'])] = kind
+        T['street'] |= m; T['used'] |= m
+        self.spaces.append({'kind': 'square' if kind == 'plaza' else kind, 'name': name, 'x': int(cx), 'y': int(cy), 'rx': int(rx), 'ry': int(ry)})
+
+    # -------------------------------------------------------------------------------------- buildings
+    def put(self, x0, y0, w, d, use, counted=True, behind=None):
+        """One building at (x0, y0) of w x d world px (snapped to the 8 px grid); behind: (dx, dy, depth) of its plot."""
+        if counted and self.count() >= self.cap:
+            return False
+        x0 = int(round(x0 / CELL)) * CELL; y0 = int(round(y0 / CELL)) * CELL
+        w = max(CELL, int(round(w / CELL)) * CELL); d = max(CELL, int(round(d / CELL)) * CELL)
+        a, b = C(x0, y0); c, e = a + d // CELL, b + w // CELL
+        if not self.free(a, b, c, e):
+            return False
+        T = self.T; K = T['K']
+        tt = T['tiers_pre'][a:c, b:e]
+        if tt.max() != tt.min():                                   # levelled: the footprint's ground set to its middle tier
+            lo = int(np.median(tt)); T['tiers_pre'][a:c, b:e] = lo
+            T['h'][a:c, b:e] = (lo + 0.5) / 30.0
+            T.setdefault('levelled', []).append([int(x0), int(y0), int(w), int(d)])
+        K[a:c, b:e] = KIND_OF.get(use, 'building')
+        T['taken'][a:c, b:e] = True; T['used'][a - 1:c + 1, b - 1:e + 1] = True
+        self.buildings.append({'x': x0, 'y': y0, 'w': w, 'h': d, 'use': use, 'counted': bool(counted)})
+        if behind:                                                  # the plot: a garden or yard behind, where it is free
+            dx, dy, dep, kind = behind
+            if dy:
+                ya, yb = (c, c + dep // CELL) if dy > 0 else (a - dep // CELL, a)
+                xa, xb = b, e
+            else:
+                xa, xb = (e, e + dep // CELL) if dx > 0 else (b - dep // CELL, b)
+                ya, yb = a, c
+            ya, yb, xa, xb = max(1, ya), min(H - 1, yb), max(1, xa), min(W - 1, xb)
+            sub = K[ya:yb, xa:xb]
+            ok = np.isin(sub, list(BUILDABLE - {'building', 'warehouse', 'tower', 'keep', 'hangar', 'terminal'})) & ~T['taken'][ya:yb, xa:xb] \
+                & ~T['street'][ya:yb, xa:xb] & ~T['barrier'][ya:yb, xa:xb] & ~T['keepout'][ya:yb, xa:xb]
+            sub[ok] = kind; T['used'][ya:yb, xa:xb] |= ok
+        return True
+
+    def row(self, pts, uses, gap=(8, 24), setback=16, sides=(1, -1), plot=(40, 'garden'), counted=True, limit=None, jitter=8, start=20):
+        """Buildings along a street, on its sides, each fronting it (axis-aligned, as the game's buildings are)."""
+        x, y, al, tot = g.densify(pts, 4)
+        placed = 0
+        for side in sides:
+            a = start + self.rng.uniform(0, 12)
+            k = 0
+            while a < tot - 20:
+                if limit is not None and placed >= limit:
+                    return placed
+                i = int(np.argmin(np.abs(al - a)))
+                j, k_ = min(i + 3, len(x) - 1), max(i - 3, 0)
+                tx, ty = x[j] - x[k_], y[j] - y[k_]; L = math.hypot(tx, ty) or 1; tx, ty = tx / L, ty / L
+                use = uses[k % len(uses)] if isinstance(uses, (list, tuple)) else uses
+                (w0, w1), (d0, d1) = BLD[use]
+                w = self.rng.uniform(w0, w1); d = self.rng.uniform(d0, d1)
+                nx, ny = -ty * side, tx * side                       # the side's normal
+                ew = abs(tx) >= abs(ty)                              # the street runs east-west: the building's width along x
+                bw, bh = (w, d) if ew else (d, w)
+                off = setback + (bh if ew else bw) / 2 + self.rng.uniform(0, jitter)
+                cx_, cy_ = x[i] + nx * off, y[i] + ny * off
+                ok = False
+                for shift, slide in [(sh, 0) for sh in range(0, 88, 8)] + [(sh, sl) for sl in (-16, 16) for sh in range(0, 64, 16)]:
+                    sx_, sy_ = cx_ + nx * shift + tx * slide, cy_ + ny * shift + ty * slide
+                    beh = None
+                    if plot:
+                        dep, kind = plot
+                        beh = (0, int(np.sign(ny)) or 1, dep, kind) if ew else (int(np.sign(nx)) or 1, 0, dep, kind)
+                    if self.put(sx_ - bw / 2, sy_ - bh / 2, bw, bh, use, counted, beh):
+                        ok = True; break
+                if ok:
+                    placed += 1; k += 1
+                    a += w + self.rng.uniform(*gap)
+                else:
+                    a += 24
+        return placed
+
+    def cluster(self, cx, cy, r, uses, n, counted=True, plot=(32, 'yard')):
+        """Buildings scattered on free ground near a point (farmsteads, works, a hamlet's houses)."""
+        placed = 0
+        for t in range(n * 120):
+            if placed >= n:
+                break
+            ang = self.rng.uniform(0, 2 * math.pi); rr = r * math.sqrt(self.rng.uniform(0, 1))
+            use = uses[placed % len(uses)]
+            (w0, w1), (d0, d1) = BLD[use]
+            w = self.rng.uniform(w0, w1); d = self.rng.uniform(d0, d1)
+            if self.put(cx + rr * math.cos(ang) - w / 2, cy + rr * math.sin(ang) - d / 2, w, d, use, counted,
+                        (0, 1, plot[0], plot[1]) if plot else None):
+                placed += 1
+        return placed
+
+    def fill(self, target, r0, uses=('house', 'cottage', 'house', 'workshop'), reach=150, centre=None, plot=(32, 'yard'), box=None):
+        """Infill to the target count: buildings behind and between the streets (courtyards, workshops behind shops, homes in
+        the back lanes), each within reach px of a street or route so it can be reached, nearest the centre first."""
+        T = self.T; cx, cy = centre or self.centre
+        acc = ndi.distance_transform_edt(~(T['street'] | np.isin(T['K'], list(ROUTE)))) * CELL
+        cand = []
+        for k in range(1, 4):
+            r = r0 * (1 + 0.35 * (k - 1))
+            for t in range(900):
+                ang = self.rng.uniform(0, 2 * math.pi); rr = r * math.sqrt(self.rng.uniform(0, 1))
+                cand.append((rr, cx + rr * math.cos(ang), cy + rr * math.sin(ang)))
+        cand.sort()
+        n = 0
+        for rr, x, y in cand:
+            if self.count() >= target:
+                break
+            a, b = C(x, y)
+            if not (0 <= a < H and 0 <= b < W) or acc[a, b] > reach or acc[a, b] < 20:
+                continue
+            if box is not None and not (box[0] <= x <= box[2] and box[1] <= y <= box[3]):
+                continue
+            use = uses[n % len(uses)]
+            (w0, w1), (d0, d1) = BLD[use]
+            w = self.rng.uniform(w0, w1); d = self.rng.uniform(d0, d1)
+            if self.put(x - w / 2, y - d / 2, w, d, use, True, (0, 1, plot[0], plot[1]) if plot else None):
+                n += 1
+        return n
+
+    def fixed(self, rects, use='house'):
+        """Buildings already placed by a zone plan (Crossroads): counted, not redrawn on the ground."""
+        for (x0, y0, w, d, u) in rects:
+            self.buildings.append({'x': x0, 'y': y0, 'w': w, 'h': d, 'use': u, 'counted': True, 'plan': True})
+            a, b = C(x0, y0); self.T['taken'][a:a + d // CELL, b:b + w // CELL] = True
+            sub = self.T['K'][a:a + d // CELL, b:b + w // CELL]; sub[~np.isin(sub, list(ROUTE) + ['river', 'creek'])] = 'building'
+
+    # -------------------------------------------------------------------------------------- the working outskirts
+    def fields(self, x0, y0, x1, y1, kinds=('field', 'field2'), hedge=True, size=(96, 176), name=None, why=None, dry=False, p=0.85):
+        """A patchwork of fields (or orchards, or vegetable plots) with hedges on their edges, on free flat ground."""
+        T = self.T; K = T['K']; r = self.rng
+        land_ = ['meadow', 'steppe', 'watermeadow', 'scrub', 'garden', 'heath', 'clearing', 'alpine', 'fireweed', 'lavastone'] + (['desert', 'sand', 'ash'] if dry else [])
+        y = y0; n = 0
+        while y < y1:
+            rh = int(r.integers(size[0] // 2, size[1] // 2 + 1)) // CELL * CELL or CELL
+            x = x0
+            while x < x1:
+                rw = int(r.integers(size[0], size[1] + 1)) // CELL * CELL
+                a, b = C(x, y); c, e = a + rh // CELL, b + rw // CELL
+                if 1 < a and c < H - 1 and 1 < b and e < W - 1 and r.uniform() < p:
+                    blk = K[a:c, b:e]
+                    okm = np.isin(blk, land_) & ~T['taken'][a:c, b:e] & ~T['street'][a:c, b:e] & ~T['barrier'][a:c, b:e] & ~T['keepout'][a:c, b:e]
+                    if okm.mean() > 0.85 and T['slope'][a:c, b:e].max() < 0.014:
+                        blk[okm] = kinds[n % len(kinds)]
+                        if hedge:
+                            ed = np.zeros(blk.shape, bool); ed[[0, -1], :] = True; ed[:, [0, -1]] = True
+                            blk[ed & okm] = 'hedge'
+                        T['used'][a:c, b:e] |= okm; n += 1
+                x += rw
+            y += rh
+        if n:
+            self.outskirts.append({'kind': kinds[0], 'name': name, 'box': [int(x0), int(y0), int(x1), int(y1)], 'plots': n, 'why': why})
+        return n
+
+    def yard(self, x0, y0, x1, y1, kind='yard', name=None, why=None):
+        T = self.T; K = T['K']
+        a, b = C(x0, y0); c, e = C(x1, y1)
+        sub = K[a:c, b:e]
+        ok = np.isin(sub, list(BUILDABLE)) & ~T['taken'][a:c, b:e] & ~T['street'][a:c, b:e] & ~T['barrier'][a:c, b:e] & ~T['keepout'][a:c, b:e]
+        sub[ok & ~np.isin(sub, list(ROUTE))] = kind; T['used'][a:c, b:e] |= ok
+        self.outskirts.append({'kind': kind, 'name': name, 'box': [int(x0), int(y0), int(x1), int(y1)], 'why': why})
+
+    # -------------------------------------------------------------------------------------- the record
+    def count(self):
+        return sum(1 for b in self.buildings if b['counted'])
+
+    def record(self):
+        bs = [b for b in self.buildings]
+        if bs:
+            xs = [b['x'] for b in bs] + [b['x'] + b['w'] for b in bs]; ys = [b['y'] for b in bs] + [b['y'] + b['h'] for b in bs]
+            box = [min(xs), min(ys), max(xs), max(ys)]
+        else:
+            box = None
+        uses = {}
+        for b in bs:
+            if b['counted']:
+                uses[b['use']] = uses.get(b['use'], 0) + 1
+        homes = sum(v for k, v in uses.items() if k in ('cottage', 'house', 'townhouse', 'tenement', 'farmhouse', 'stilt'))
+        return {'size': self.size, 'target': self.target, 'buildings_counted': self.count(), 'by_use': uses, 'homes': homes,
+                'centre': [int(self.centre[0]), int(self.centre[1])], 'footprint_box': box, 'purpose': self.purpose, 'setting': self.setting,
+                'neighbourhoods': self.neighbourhoods, 'gathering_places': self.gathering, 'squares': self.spaces, 'outskirts': self.outskirts,
+                'streets': self.streets, 'buildings': [[b['x'], b['y'], b['w'], b['h'], b['use'], int(b['counted'])] for b in bs]}
+
+
+def _lm(pts, width):
+    """geo5's own line mask (geo52 swaps in a varied-width one for the routes)."""
+    import geo52 as G
+    return G._orig_line_mask(pts, width)
+
+
+# ------------------------------------------------------------------------------------------ helpers for skeletons
+def route_part(T, name, box):
+    """The part of a route's drawn line inside a box (the longest run), to use as a town's main street."""
+    x0, y0, x1, y1 = box
+    pts = T['route_px'][name]
+    runs, cur = [], []
+    for (x, y) in pts:
+        if x0 <= x <= x1 and y0 <= y <= y1:
+            cur.append((x, y))
+        elif cur:
+            runs.append(cur); cur = []
+    if cur:
+        runs.append(cur)
+    return max(runs, key=len) if runs else []
+
+
+def grid(x0, y0, x1, y1, step_x, step_y, rng, jitter=12):
+    """Street lines on a loose grid (jittered, each a separate polyline)."""
+    out = []
+    ys = np.arange(y0, y1 + 1, step_y); xs = np.arange(x0, x1 + 1, step_x)
+    for y in ys:
+        pts = [(x, y + rng.uniform(-jitter, jitter)) for x in np.linspace(x0, x1, max(2, int((x1 - x0) // 120) + 2))]
+        out.append(pts)
+    for x in xs:
+        pts = [(x + rng.uniform(-jitter, jitter), y) for y in np.linspace(y0, y1, max(2, int((y1 - y0) // 120) + 2))]
+        out.append(pts)
+    return out
+
+
+def prepare(T, keepout_boxes=(), keepout_discs=()):
+    """The masks the layout needs: taken (buildings), street, barrier (water and barriers, never built on or crossed),
+    the tiers before layout (one tier per footprint) and keep-outs (built zones, the garden, the parks, craters)."""
+    import geo52 as G
+    K = T['K']
+    T['taken'] = np.zeros((H, W), bool); T['street'] = np.zeros((H, W), bool)
+    bar = np.zeros((H, W), bool)
+    for m in T['barriers'].values():
+        bar |= m
+    bar |= np.isin(K, ['river', 'rapids', 'creek', 'canal', 'oxbow', 'tarn', 'mere', 'sea', 'surf', 'lava', 'aa', 'fissure', 'crater', 'falls',
+                       'channel', 'pool', 'cliff', 'crag', 'wall', 'castlewall', 'shardglass', 'craterrim', 'scorch', 'circle', 'spoil', 'rockfall',
+                       'closedroad', 'viaduct', 'viapier', 'mud', 'sandbar'])
+    T['barrier'] = ndi.binary_dilation(bar, iterations=1)
+    hb = np.zeros((H, W), bool)
+    for m in T['barriers'].values():
+        hb |= m
+    T['hardbar'] = ndi.binary_dilation(hb, iterations=1)
+    T['tiers_pre'] = G.tier_field(T)
+    ko = np.zeros((H, W), bool)
+    for (x0, y0, x1, y1) in keepout_boxes:
+        ko[int(y0 // CELL):int(y1 // CELL), int(x0 // CELL):int(x1 // CELL)] = True
+    for (x, y, r) in keepout_discs:
+        ko |= np.hypot(PX - x, PY - y) < r
+    ko |= T.get('crater_mask', np.zeros((H, W), bool))
+    T['keepout'] = ko
+
+
+def clear_paint(T, x0, y0, x1, y1, keep_box=None, kinds=('building', 'yard', 'garden', 'plaza', 'keep', 'lane', 'retain', 'stall', 'hut')):
+    """v54's generic houses lifted off a town's ground (back to the natural ground), so v55's layout replaces them."""
+    K = T['K']; K0 = T['K0']
+    a, b, c, d = int(y0 // CELL), int(x0 // CELL), int(y1 // CELL), int(x1 // CELL)
+    sub = K[a:c, b:d]; base = K0[a:c, b:d]
+    m = np.isin(sub, list(kinds)) & T['land'][a:c, b:d]
+    if keep_box is not None:
+        kx0, ky0, kx1, ky1 = keep_box
+        yy_, xx_ = np.mgrid[a:c, b:d]
+        m &= ~((xx_ * CELL >= kx0) & (xx_ * CELL < kx1) & (yy_ * CELL >= ky0) & (yy_ * CELL < ky1))
+    nat = np.where(np.isin(base, ['sea', 'river', 'canal', 'road', 'path', 'bridge', 'stair', 'creek']), 'meadow', base)
+    nat = np.where(np.isin(nat, ['wild', 'ancient', 'thicket', 'felltree']), 'broadleaf', nat)   # cleared once: open woods, walkable
+    sub[m] = nat[m]
+    return int(m.sum())
+
+
+# ------------------------------------------------------------------------------------------ the towns (v55 world px)
+def crossroads_plan(root):
+    import json, os
+    p = json.load(open(os.path.join(root, 'game', 'data', 'plans', 'crossroads.json')))
+    ox, oy = p['origin_on_canvas']
+    use = {'hut': 'cottage', 'library': 'public', 'north_cottages': 'house', 'bakery': 'shop', 'herbalist': 'shop', 'smithy': 'workshop',
+           'fern_cottage': 'cottage'}
+    return [(ox + b['rect'][0], oy + b['rect'][1], b['rect'][2], b['rect'][3], use.get(b['id'], 'house')) for b in p['buildings']], (ox, oy, ox + p['box'][2], oy + p['box'][3])
+
+
+def lay_all(T, X):
+    """Every settlement's footprint, in the order of Matt's allocation, then the smaller places. X: the geo55 module."""
+    towns = {}
+    rng = np.random.default_rng(55)
+
+    # ---------------------------------------------------------------- Crossroads (large): the market town at the routes' hub
+    plan, pbox = crossroads_plan(X.ROOT)
+    clear_paint(T, 5700, 3150, 7000, 4300)
+    t = Town(T, 'Crossroads', (6296, 3536), 'large', (30, 45),
+             'the market and meeting point of the valley: four lanes and two roads meet here; the farms round it bring grain, wool and '
+             'fruit to its market, and the halt, the mill and the smithy serve the whole valley',
+             'the valley floor either side of the Sleepwater, on its flat terraces; the woodland and the stone circle to the north-west',
+             neighbourhoods=[('the square (built)', 'the zone as built: the square, the well, the bakery, the herbalist, the smithy, the library', 6296, 3536),
+                             ('Mill End', 'south along the Sleepwater: the mill, the granary, millers\' and carters\' cottages', 6330, 3990),
+                             ('Halt Road', 'south-west down the lane to the halt: cottages with long gardens, the halt and its goods shed', 5930, 3900),
+                             ('Eastgate', 'east where the Foothill Road and the Lull Road leave: the drovers\' market, the inn, the farrier', 6740, 3560),
+                             ('West Lane', 'a short row on the woodland\'s skirt, foresters\' and hurdle-makers\' cottages', 5900, 3600)],
+             gathering=[('the square', 6296, 3536), ("the drovers' market", 6710, 3530), ('the mill green', 6360, 3900), ('the halt yard', 5880, 4075)],
+             seed=101)
+    t.cap = 40
+    t.fixed(plan)
+    mill = route_part(T, 'Valley lane south', (6100, 3800, 6500, 4300))
+    halt = route_part(T, 'Valley lane west', (5800, 3760, 6000, 4120))
+    east = route_part(T, 'Valley lane east', (6600, 3330, 6800, 3520)) + route_part(T, 'Foothill Road', (6760, 3300, 6880, 3420))
+    lull = route_part(T, 'Valley lane to the Lull Road', (6600, 3580, 6780, 3800)) + route_part(T, 'Lull Road', (6760, 3700, 6960, 3900))
+    t.street([(6300, 3975), (6420, 3972), (6540, 3985)], 24, name='Granary Row')
+    t.street([(6305, 4100), (6420, 4110), (6520, 4130)], 24, name='Weir Lane')
+    t.street([(5975, 3560), (5900, 3585), (5830, 3605)], 24, name='West Lane')
+    t.street([(6650, 3420), (6660, 3540), (6655, 3640)], 24, name='Market Lane')
+    t.square(6712, 3532, 56, 40, name="the drovers' market")
+    t.square(5880, 4078, 48, 30, name='the halt yard')
+    t.square(6365, 3905, 40, 28, kind='garden', name='the mill green')
+    t.cluster(6200, 3905, 40, ['mill'], 1)
+    t.cluster(5835, 4040, 60, ['station'], 1)
+    t.row(mill, ['cottage', 'house', 'cottage', 'shop'], limit=9, start=10)
+    t.row(t.streets[0]['pts'], ['cottage', 'house', 'barn'], limit=4)
+    t.row(t.streets[1]['pts'], ['cottage', 'house'], limit=3)
+    t.row(halt, ['cottage', 'house', 'cottage'], limit=6, plot=(56, 'garden'), start=10)
+    t.row(east, ['inn', 'house', 'workshop', 'shop', 'cottage'], limit=6, start=10)
+    t.row(lull, ['house', 'cottage', 'shop', 'cottage'], limit=6, start=10)
+    t.row(t.streets[3]['pts'], ['shop', 'house'], limit=3)
+    t.row(t.streets[2]['pts'], ['cottage'], limit=3, plot=(48, 'garden'))
+    for pts in (mill, lull, halt, east):
+        if t.count() < 38:
+            t.row(pts, ['cottage', 'house'], limit=38 - t.count(), start=60, setback=24)
+    t.fields(5700, 3950, 6150, 4350, ('field', 'field2', 'orchard'), name='the halt farms', why='grain, hay and apples for the market')
+    t.fields(6450, 3900, 6950, 4300, ('field', 'orchard', 'field2'), name='the mill farms', why='wheat for the mill, orchards on the river terrace')
+    towns['Crossroads'] = t
+
+    # ---------------------------------------------------------------- Dust Gulch (large): the railhead, the mine's town
+    clear_paint(T, 2050, 2150, 3000, 2800)
+    t = Town(T, 'Dust Gulch', (2478, 2420), 'large', (30, 45),
+             "the desert line's railhead and the Lode's ore yard: ore comes down the mule track to the depot, goods and water go out "
+             'along the line; repair shops, the assay office and the corrals for the caravans; the Amber gives it water',
+             'where the Amber leaves the mountains, on the gravel fan either side of the river; desert all round, the Glass field to the west',
+             neighbourhoods=[('Front Street', 'the frontier main street: the saloon, the store, the sheriff (Pendle), the assay office', 2600, 2455),
+                             ('the Depot', 'the platform, the goods yard and sheds, the repair shop and the water tower', 2720, 2335),
+                             ('Water Street', 'homes along the river and its gardens, behind the main street', 2470, 2570),
+                             ('West Row', 'homes and the chapel on the west bank', 2300, 2350),
+                             ('the corrals', 'pens and stables for the caravans and the mule trains, east of town', 2900, 2450)],
+             gathering=[('the depot square', 2640, 2395), ('the well square', 2380, 2445), ('the chapel yard', 2290, 2380)], seed=102)
+    front = route_part(T, "Drover's Road", (2560, 2380, 2960, 2560))
+    t.street([(2575, 2458), (2440, 2448), (2300, 2442), (2170, 2452)], 32, name='Front Street (west)')
+    t.street([(2560, 2335), (2700, 2338), (2880, 2340)], 24, name='Depot Street')
+    t.street([(2300, 2330), (2295, 2470), (2300, 2620)], 24, name='Chapel Street')
+    t.street([(2665, 2345), (2662, 2480), (2668, 2620)], 24, name='Mesa Street')
+    t.street([(2790, 2465), (2795, 2600)], 24, name='Corral Lane')
+    t.street([(2190, 2565), (2320, 2562), (2440, 2568)], 24, name='Water Street (west)')
+    t.street([(2540, 2575), (2670, 2578), (2800, 2580)], 24, name='Water Street')
+    t.street([(2180, 2338), (2300, 2334), (2420, 2338)], 24, name='West Row')
+    t.square(2640, 2392, 52, 30, name='the depot square')
+    t.square(2380, 2446, 36, 26, name='the well square')
+    t.row(front, ['shop', 'inn', 'shop', 'public', 'house', 'workshop'], limit=7, start=8)
+    t.row(t.streets[0]['pts'], ['shop', 'house', 'shop', 'public', 'house'], limit=8)
+    t.row(t.streets[1]['pts'], ['station', 'warehouse', 'workshop', 'house'], limit=5)
+    for k_, uses in ((2, ['house', 'chapel', 'house']), (3, ['house', 'workshop']), (5, ['house', 'cottage']), (6, ['house', 'cottage']),
+                     (7, ['house', 'cottage']), (4, ['workshop', 'barn'])):
+        t.row(t.streets[k_]['pts'], uses, limit=4)
+    for pts in (t.streets[5]['pts'], t.streets[6]['pts'], t.streets[2]['pts'], t.streets[3]['pts']):
+        if t.count() < 38:
+            t.row(pts, ['house', 'cottage'], limit=38 - t.count(), start=50, setback=24)
+    t.yard(2840, 2390, 2980, 2530, name='the corrals', why='pens and stables for the caravans and the mule trains')
+    t.yard(2580, 2235, 2880, 2312, name='the goods yard', why="the desert line's sidings and the ore bins")
+    t.yard(2600, 2120, 2700, 2210, name='the ore yard', why="the Lode's ore, down the mule track, waiting for the train")
+    t.fields(2330, 2600, 2580, 2780, ('orchard', 'field2'), name='the river gardens', why='irrigated from the Amber: vegetables, figs, fodder', dry=True, size=(64, 128))
+    t.fill(38, 260, ('house', 'cottage', 'workshop', 'house', 'shop'))
+    towns['Dust Gulch'] = t
+
+    # ---------------------------------------------------------------- Palm Spring (medium): the oasis
+    clear_paint(T, 2950, 2550, 3650, 3100)
+    pool = g.shape(3282, 2738, 48, 34, 3301, 0.2) & T['land'] & ~np.isin(T['K'], list(ROUTE))
+    T['K'][pool] = 'pool'; T['barrier'] |= ndi.binary_dilation(pool, iterations=1)
+    t = Town(T, 'Palm Spring', (3282, 2760), 'medium', (14, 22),
+             'the first water in the dry country: the Willow Run comes up again in the spring; irrigated gardens, date and fig orchards, '
+             "the caravans' rest on the Drover's Road, and the diviner (Mirra) who keeps the spring",
+             'round the spring pool and along its two channels, on the gravel where the Willow Run resurfaces; scrub and steppe round it',
+             neighbourhoods=[('Spring Row', 'houses round the pool under the palms', 3282, 2680),
+                             ('the caravanserai', "the inn, stables and stores on the Drover's Road", 3420, 2830),
+                             ('Channel Row', 'gardeners\' houses along the south-west channel', 3170, 2900),
+                             ('Palm Row', 'along the south-east channel to the orchards', 3400, 2900)],
+             gathering=[('the spring square', 3350, 2780), ('the pool steps', 3282, 2700)], seed=103)
+    t.street([(3180, 2770), (3200, 2680), (3282, 2640), (3365, 2680), (3385, 2765)], 24, name='Spring Row')
+    t.street([(3255, 2830), (3170, 2900), (3080, 2975)], 24, name='Channel Row')
+    t.street([(3320, 2835), (3400, 2890), (3470, 2950)], 24, name='Palm Row')
+    road = route_part(T, "Drover's Road", (3050, 2650, 3550, 2950))
+    t.square(3352, 2782, 38, 24, name='the spring square')
+    t.row(road, ['inn', 'shop', 'house', 'shop', 'workshop'], limit=6, start=8)
+    t.row(t.streets[0]['pts'], ['house', 'public', 'house', 'cottage'], limit=6, sides=(1,))
+    t.row(t.streets[1]['pts'], ['cottage', 'house'], limit=4)
+    t.row(t.streets[2]['pts'], ['cottage', 'house'], limit=4)
+    t.fields(3080, 2880, 3480, 3080, ('orchard', 'field2', 'orchard'), name='the date gardens', why='date palms, figs and vegetables on the channels', dry=True, size=(64, 128))
+    t.fields(3150, 2560, 3420, 2640, ('orchard',), name='the north grove', why='palms along the Willow Run', dry=True, size=(64, 112), hedge=False)
+    t.fill(18, 170, ('house', 'cottage', 'house'))
+    towns['Palm Spring'] = t
+
+    # ---------------------------------------------------------------- Fernhollow (medium): the timber town in the Fern hills
+    clear_paint(T, 6900, 2850, 7500, 3350)
+    t = Town(T, 'Fernhollow', (7180, 3080), 'medium', (14, 22),
+             "timber from the Fern hills' wet woods: the sawmill, the wood yards and the joiners; charcoal for Cogsworth; its own green, "
+             'school and chapel, on the Foothill Road halfway between Crossroads and Cogsworth',
+             'a clearing in the woods of the Fern hills, where the Foothill Road crosses Fern Lane',
+             neighbourhoods=[('the Green', 'houses round the village green, the chapel and the school', 7230, 3070),
+                             ('the Yards', 'the sawmill and the wood yards, joiners and coopers', 7380, 2980),
+                             ('Fern Lane', 'cottages down the lane to the Lull Road', 7200, 3200)],
+             gathering=[('the green', 7230, 3075), ('the sawmill yard', 7400, 2975)], seed=104)
+    foot = route_part(T, 'Foothill Road', (7030, 2900, 7470, 3200))
+    fern = route_part(T, 'Fern Lane', (7120, 3100, 7260, 3380))
+    t.street([(7090, 3040), (7200, 3015), (7320, 3000)], 24, name='Green Lane')
+    t.street([(7240, 3160), (7340, 3150), (7430, 3120)], 24, name='Cooper Lane')
+    t.square(7232, 3078, 46, 30, kind='garden', name='the green')
+    t.row(foot, ['house', 'shop', 'cottage', 'inn', 'cottage', 'workshop'], limit=8, start=8)
+    t.row(t.streets[0]['pts'], ['chapel', 'cottage', 'public', 'cottage'], limit=4)
+    t.row(fern, ['cottage', 'house'], limit=3, start=40)
+    t.row(t.streets[1]['pts'], ['workshop', 'cottage'], limit=3)
+    t.cluster(7400, 2975, 60, ['mill'], 1)
+    t.yard(7340, 2920, 7470, 2960, name='the wood yards', why="the Fern hills' timber, seasoning in stacks")
+    t.fields(7020, 3180, 7140, 3320, ('field2', 'field'), name='the clearing fields', why='oats and hay in the clearing', size=(64, 112))
+    t.fill(16, 200, ('cottage', 'house', 'workshop'), box=(7020, 2860, 7520, 3400))
+    towns['Fernhollow'] = t
+
+    # ---------------------------------------------------------------- Cogsworth (medium, room to grow): works and railway
+    clear_paint(T, 7850, 2250, 8520, 2900)
+    t = Town(T, 'Cogsworth', (8130, 2520), 'medium (room to become large)', (14, 45),
+             'coal and iron from the coal hills, the fast Cog for power (the Millrace), and the railway out: the foundry, the mills, '
+             'the engine works and the terminus; brick terraces for the workers between the works and the pits',
+             "the Cog's east bank where the valley opens, between the river and the coal hills; the pits and spoil heaps above it",
+             neighbourhoods=[('Foundry Row', 'the foundry, the mills on the Millrace, workshops by the river', 8130, 2560),
+                             ('Engine Street', 'shops and the works offices on the towpath road down to the terminus', 8260, 2680),
+                             ('the Terraces', "brick workers' terraces climbing toward the pits", 8300, 2520),
+                             ('the Platform', "the platform, the station square and the Garth Road's start", 8080, 2410)],
+             gathering=[('the station square', 8095, 2405), ('the works gate', 8230, 2610)], seed=105)
+    tow = route_part(T, 'Towpath', (8100, 2500, 8420, 2860))
+    garth = route_part(T, 'the Garth Road', (7990, 2280, 8070, 2400))
+    t.street([(8040, 2450), (8130, 2545), (8235, 2680), (8310, 2780)], 24, name='Foundry Row')
+    t.street([(8160, 2420), (8280, 2530), (8400, 2670)], 24, name='Pit Row')
+    t.street([(8070, 2410), (8160, 2405), (8240, 2400)], 24, name='Platform Street')
+    t.street([(8125, 2565), (8230, 2535), (8340, 2510)], 24, name='Engine Lane')
+    t.street([(8230, 2705), (8330, 2680), (8430, 2650)], 24, name='Terrace Lane')
+    t.square(8098, 2402, 36, 22, name='the station square')
+    t.row(tow, ['shop', 'townhouse', 'public', 'townhouse', 'shop'], limit=7, start=8)
+    t.row(t.streets[0]['pts'], ['workshop', 'mill', 'workshop', 'townhouse'], limit=6)
+    t.row(t.streets[1]['pts'], ['townhouse'], limit=6)
+    t.row(t.streets[2]['pts'], ['station', 'shop', 'inn'], limit=3)
+    t.row(t.streets[3]['pts'], ['townhouse'], limit=4)
+    t.row(t.streets[4]['pts'], ['townhouse'], limit=4)
+    t.yard(8300, 2770, 8470, 2860, name='the railway yard', why='the terminus sidings, the engine shed and the coal stage')
+    t.fields(8360, 2430, 8520, 2560, ('field2',), name='the allotments', why="the terraces' vegetable plots", size=(48, 80))
+    t.fill(26, 260, ('townhouse', 'workshop', 'townhouse', 'house'), box=(7900, 2250, 8560, 2900))
+    towns['Cogsworth'] = t
+
+    # ---------------------------------------------------------------- Hearthold (large): the walled town between the flows
+    clear_paint(T, 1900, 5000, 2600, 5700, kinds=('building', 'yard', 'garden', 'plaza', 'lane', 'retain', 'stall', 'hut'))
+    t = Town(T, 'Hearthold', (2160, 5270), 'large', (30, 45),
+             "the fire country's town of knights and crafts: the castle on its rock commands the only stable ground between the lava "
+             'flows; armourers, smiths, potters and vintners under the walls; the lower town on the flat ground below, toward the springs and the coast',
+             "a rock between two lava flows below the crater, the walls round its top; the old flow's weathered ground below it farmed",
+             neighbourhoods=[('the Castle', 'the keep, the hall, the chapel and the knights\' houses inside the walls', 2180, 5250),
+                             ('Smiths\' Row', 'armourers and smiths below the south gate', 2360, 5470),
+                             ('Gate Street', 'shops and houses down from the gate', 2250, 5560),
+                             ('Ash Lane', 'potters, vintners and homes at the lower town\'s foot', 2400, 5610)],
+             gathering=[('the castle yard', 2190, 5230), ('the gate market', 2235, 5440)], seed=106)
+    south = (PY > 5652) & (PX > 1980) & (PX < 2900) & ~T['keepout']   # Cinderwick's ground: kept for it, fields between the two
+    T['keepout'] |= south
+    # the walls redrawn round the rock's whole top (v52's ring was the old hill town's), the keep at its crown, gates where the
+    # Canyon Road, the Forge Stair and the Ember Way come in
+    K = T['K']
+    old = np.isin(K, ['castlewall', 'keep']) & (PX > 1850) & (PX < 2500) & (PY > 4950) & (PY < 5500)
+    K[old] = np.where(np.isin(T['K0'][old], ['sea', 'river']), 'steppe', T['K0'][old])
+    top = g.shape(2172, 5262, 215, 178, 3601, 0.18) & T['land'] & ~T['fire']
+    wall = top & ~ndi.binary_erosion(top, iterations=2)
+    rd = np.isin(K, list(ROUTE))
+    K[wall & ~rd] = 'castlewall'; T['barrier'] |= ndi.binary_dilation(wall & ~rd, iterations=1)
+    t.level, t.slope_max = 8, 0.05                                # the rock's top, terraced inside the walls
+    t.cluster(2190, 5250, 70, ['keep'], 1, plot=None)
+    for pts in ([(2000, 5195), (2170, 5190), (2340, 5200)], [(1995, 5310), (2170, 5315), (2345, 5305)], [(2095, 5120), (2100, 5260), (2105, 5400)],
+                [(2255, 5120), (2250, 5260), (2245, 5400)]):
+        t.street(pts, 24, name='a castle lane')
+    for s_ in t.streets[-4:]:
+        t.row(s_['pts'], ['townhouse', 'house', 'hall', 'townhouse', 'chapel', 'house'], limit=5, plot=(16, 'yard'), gap=(4, 12))
+    cbox = (1960, 5080, 2390, 5440)
+    for rn in ('Canyon Road', 'Ember Way', 'Forge Stair'):
+        t.row(route_part(T, rn, cbox), ['townhouse', 'house', 'chapel', 'townhouse', 'shop', 'house'], limit=6, start=4, plot=(16, 'yard'), gap=(4, 12))
+    t.cluster(2172, 5262, 175, ['hall', 'townhouse', 'townhouse', 'house', 'townhouse'], max(0, 17 - t.count()), plot=None)
+    t.level, t.slope_max = 2, 0.03                                # the lower town steps down the flank on low terraces
+    t.street([(2225, 5420), (2245, 5520), (2255, 5630)], 24, name='Gate Street')
+    t.street([(2240, 5470), (2370, 5468), (2500, 5480)], 24, name="Smiths' Row")
+    t.street([(2265, 5595), (2390, 5600), (2520, 5612)], 24, name='Ash Lane')
+    t.street([(2120, 5500), (2180, 5560), (2240, 5600)], 24, name='Well Lane')
+    t.street([(2400, 5390), (2500, 5420), (2580, 5500), (2600, 5600)], 24, name='Vine Lane')
+    t.street([(2050, 5430), (2120, 5470), (2200, 5480)], 24, name='Spring Lane')
+    t.street([(2440, 5470), (2460, 5540), (2470, 5610)], 24, name='Potters\' Lane')
+    t.square(2236, 5442, 40, 24, name='the gate market')
+    t.row(t.streets[4]['pts'], ['shop', 'townhouse', 'inn', 'townhouse'], limit=6, plot=(16, 'yard'), gap=(4, 12))
+    t.row(t.streets[5]['pts'], ['workshop', 'townhouse', 'townhouse', 'house'], limit=8, plot=(16, 'yard'), gap=(4, 12))
+    t.row(t.streets[6]['pts'], ['townhouse', 'workshop', 'townhouse'], limit=7, plot=(16, 'yard'), gap=(4, 12))
+    t.row(t.streets[7]['pts'], ['house', 'cottage'], limit=4)
+    t.row(t.streets[8]['pts'], ['house', 'workshop', 'cottage'], limit=5)
+    t.row(t.streets[9]['pts'], ['house', 'cottage'], limit=3)
+    t.row(t.streets[10]['pts'], ['workshop', 'house', 'cottage'], limit=4)
+    for pts in (t.streets[5]['pts'], t.streets[6]['pts'], t.streets[4]['pts']):
+        if t.count() < 40:
+            t.row(pts, ['house', 'cottage'], limit=40 - t.count(), start=40, setback=28)
+    t.fields(2380, 5060, 2560, 5320, ('orchard',), name='the vines', why='vines on the rock\'s warm east slope', size=(64, 112), hedge=False)
+    T['keepout'] &= ~south
+    t.fields(2080, 5650, 2580, 5718, ('field', 'field2'), name='the lower fields', why='barley and beans between the town and the cove', size=(80, 144))
+    t.fill(36, 340, ('townhouse', 'cottage', 'townhouse', 'workshop'), centre=(2250, 5450), box=(1940, 5000, 2640, 5640), reach=200, plot=(16, 'yard'))
+    towns['Hearthold'] = t
+
+    # ---------------------------------------------------------------- Cinderwick (medium): the black-sand cove
+    clear_paint(T, 2250, 5700, 2750, 5960)
+    t = Town(T, 'Cinderwick', (2478, 5860), 'medium', (14, 22),
+             "the fire country's harbour: fishing boats and the coaster that calls for Hearthold's goods; charcoal kilns and a "
+             "black-sand glassworks; the quay is the region's way to the sea",
+             'a black-sand cove between the flows, the young flow steaming to the east; the Ash Coast path and the Ember Way meet here',
+             neighbourhoods=[('the Strand', "fishers' houses and net lofts along the beach", 2450, 5885),
+                             ('Kiln Lane', 'the kilns, the glassworks and the coopers', 2520, 5795),
+                             ('the Quay', 'the stone quay, the chandler and the harbour office', 2470, 5920)],
+             gathering=[('the quay', 2470, 5915), ('the kiln yard', 2640, 5795)], seed=107)
+    t.level, t.slope_max = 2, 0.03                                # the cove's slope, terraced
+    north = (PY < 5724) & (PX > 1980) & (PX < 2900) & (PY > 5300) & ~T['keepout']   # the fields between it and Hearthold stay open
+    T['keepout'] |= north
+    t.street([(2290, 5872), (2450, 5868), (2610, 5878)], 24, name='the Strand')
+    t.street([(2370, 5790), (2500, 5798), (2620, 5806)], 24, name='Kiln Lane')
+    t.street([(2440, 5800), (2450, 5860)], 24, name='Quay Lane')
+    t.street([(2270, 5800), (2330, 5760), (2400, 5730)], 24, name='Back Lane')
+    t.street([(2420, 5752), (2530, 5745), (2640, 5758)], 24, name='Ash Lane')
+    t.row(t.streets[0]['pts'], ['cottage', 'townhouse', 'shop', 'cottage', 'workshop'], limit=9, plot=None, gap=(2, 8))
+    t.row(t.streets[1]['pts'], ['workshop', 'townhouse', 'cottage'], limit=7, plot=None, gap=(2, 8))
+    t.row(route_part(T, 'Ember Way', (2200, 5700, 2420, 5860)), ['cottage', 'house'], limit=3, start=10)
+    t.yard(2620, 5760, 2720, 5840, name='the kilns', why='charcoal from the dead forest; black-sand glass')
+    t.row(t.streets[3]['pts'], ['cottage', 'house'], limit=4)
+    t.row(t.streets[4]['pts'], ['cottage', 'house', 'workshop'], limit=4)
+    t.row(route_part(T, 'Ash Coast', (2480, 5760, 2760, 5900)), ['cottage', 'house'], limit=3, start=10)
+    t.fill(17, 380, ('cottage', 'townhouse', 'cottage'), box=(1990, 5725, 2880, 6040), reach=260, plot=None)
+    T['keepout'] &= ~north
+    towns['Cinderwick'] = t
+
+    # ---------------------------------------------------------------- Lagoon Landing (medium): the isles' town on its lagoon
+    clear_paint(T, 6350, 6350, 6900, 6620)
+    t = Town(T, 'Lagoon Landing', (6600, 6490), 'medium', (14, 22),
+             "the isles' town: boats, fishing and the diving trade off the reef wrecks (Brine), the naturalist's house, net and sail "
+             "lofts, the boatyard; the ferry to Driftwood and the boats to the other isles leave from here",
+             "the neck of the main isle between the ferry pier on the open north shore and the sheltered lagoon (a drowned crater)",
+             neighbourhoods=[('the Lagoon front', 'boathouses and stilt houses on the lagoon', 6620, 6560),
+                             ('Net Row', 'net and sail lofts, the chandler', 6620, 6460),
+                             ('the Pier', 'the ferry pier, the harbour office and the inn', 6500, 6420)],
+             gathering=[('the lagoon steps', 6600, 6555), ('the pier head', 6490, 6415)], seed=108)
+    t.street([(6488, 6420), (6522, 6480), (6560, 6545)], 24, name='Pier Lane')
+    t.street([(6440, 6552), (6600, 6560), (6800, 6570)], 24, name='Lagoon Front')
+    t.street([(6470, 6468), (6620, 6462), (6770, 6465)], 24, name='Net Row')
+    t.street([(6700, 6345), (6660, 6410), (6630, 6460)], 24, name='Bar Lane')
+    t.row(t.streets[1]['pts'], ['boathouse', 'stilt', 'cottage', 'boathouse', 'stilt'], limit=6, sides=(-1,))
+    t.row(t.streets[2]['pts'], ['cottage', 'shop', 'house', 'cottage'], limit=7)
+    t.row(t.streets[0]['pts'], ['inn', 'public'], limit=2)
+    t.row(t.streets[1]['pts'], ['cottage', 'house'], limit=3, sides=(1,))
+    t.yard(6760, 6500, 6860, 6545, name='the boatyard', why='hulls on the slip, the repair shed')
+    t.fill(16, 200, ('cottage', 'house', 'boathouse'), reach=180)
+    towns['Lagoon Landing'] = t
+
+    # ---------------------------------------------------------------- Highgarth (medium): the mountain valley town
+    t = Town(T, 'Highgarth', X.HIGHGARTH, 'medium', (14, 22),
+             "slate from its quarries and wool from the summer pastures, sawn timber from the valley's larches; the drovers' inn on the "
+             "Garth Road; it sends slate, timber and wool down to Cogsworth. Its old trade over the north pass stopped when the "
+             'Starfall brought the rockfall down; the road beyond waits for a later region',
+             "a sheltered valley on the upper Cog inside the range: stepped streets on the east bank, stone houses on retaining walls, "
+             'steep wooded slopes and snow on the peaks round it',
+             neighbourhoods=[('Garth Street', 'the stepped main street: the inn, the smithy, the store', 7905, 1200),
+                             ('Quarry Lane', "the slate works and the quarrymen's houses up the east slope", 8000, 1130),
+                             ('Low Street', 'houses over the river meadows, the sawmill by the Cog', 7820, 1290)],
+             gathering=[('the market cross', 7905, 1200), ('the sheep fair field', 7900, 1450)], seed=109)
+    t.level, t.slope_max = 2, 0.03                                # stepped streets on retaining walls
+    main = route_part(T, 'the Garth Road', (7820, 1150, 7980, 1420)) + route_part(T, 'the Northway', (7840, 1000, 7980, 1200))
+    t.street([(7910, 1140), (8000, 1128), (8090, 1112)], 24, name='Quarry Lane')
+    t.street([(7760, 1290), (7880, 1296), (7990, 1305)], 24, name='Low Street')
+    t.street([(7880, 1235), (7790, 1238), (7710, 1242)], 24, name='Mill Lane')
+    t.street([(7800, 1080), (7900, 1065), (7990, 1060)], 24, name='Kirk Lane')
+    t.square(7915, 1198, 36, 24, name='the market cross')
+    t.row(main, ['inn', 'house', 'shop', 'house', 'workshop', 'house'], limit=7, start=8)
+    t.row(t.streets[0]['pts'], ['house', 'workshop', 'house'], limit=4)
+    t.row(t.streets[1]['pts'], ['house', 'cottage'], limit=4)
+    t.row(t.streets[3]['pts'], ['chapel', 'house'], limit=3)
+    t.cluster(7705, 1250, 40, ['mill'], 1)
+    t.yard(8070, 1060, 8170, 1170, name='the slate quarry', why='slate for the roofs of Cogsworth and the valley')
+    t.fields(7740, 1380, 8060, 1600, ('field2', 'field'), name='the in-fields', why='hay for the winter and oats, walled', size=(80, 144))
+    t.yard(7840, 860, 7990, 950, name='the folds', why='sheepfolds below the summer pastures')
+    t.fill(18, 200, ('house', 'cottage', 'house', 'workshop'))
+    towns['Highgarth'] = t
+    towns.update(neon(T, X, rng))
+    towns.update(smaller(T, X))
+    return towns
+
+
+def arc(cx, cy, rx, ry, a0, a1, n=14):
+    return [(cx + rx * math.cos(a), cy + ry * math.sin(a)) for a in np.linspace(a0, a1, n)]
+
+
+def neon(T, X, rng):
+    """Neon Harbour, clearly the largest place in the world: five districts that blend into one another round the ria, the
+    east coast and the Heights, with inhabited outskirts on its approaches (provisional 60 to 90 buildings)."""
+    out = {}
+    K = T['K']
+    # ------------------------------------------------ 1. the old waterfront: the Falls Rock and the old quays round the ria's head
+    t = Town(T, 'Neon Harbour: the old waterfront', (10950, 4470), 'city district', (12, 18),
+             'the city\'s first streets, round the ria\'s head where the Glint falls gave the first crossing: narrow lanes, old houses, '
+             'small businesses (chandlers, cafes, pawn shops, a ferry office) and the Bridgefoot square',
+             'the rock between the Glint\'s falls and the old quays at the head of the ria', seed=201,
+             neighbourhoods=[('the Falls Rock', 'the oldest houses between the falls', 10760, 4430), ('the old quays', 'the first quays, now cafes and small trade', 11120, 4600)],
+             gathering=[('Bridgefoot', 11135, 4462), ('the falls steps', 10760, 4500)])
+    for pts in grid(10600, 4300, 11240, 4700, 105, 92, rng, 14):
+        t.street(pts, 24, name=None)
+    t.cap = 16
+    t.square(11135, 4462, 44, 30, name='Bridgefoot')
+    for s_ in list(t.streets):
+        t.row(s_['pts'], ['townhouse', 'shop', 'townhouse', 'workshop', 'townhouse', 'inn'], gap=(2, 10), plot=None, limit=4)
+    t.fill(16, 300, ('townhouse', 'shop', 'townhouse'), plot=None, box=(10560, 4280, 11260, 4720))
+    out['Neon Harbour: the old waterfront'] = t
+    # ------------------------------------------------ 2. the working docks: the ria's deep east side, quays, warehouses, yards
+    t = Town(T, 'Neon Harbour: the docks', (11320, 5050), 'city district', (12, 18),
+             'warehouses, boats, repair yards, workshops and cargo handling: the deep water of the ria\'s east side, the steamer pier, '
+             'the fish market, the cranes and the slip', 'the ria\'s east shore from the old quays down to its mouth', seed=202,
+             neighbourhoods=[('Quayside', 'the long quay, the cranes and the bonded warehouses', 11250, 4950), ('the slip', 'the repair yard and the boat slip near the mouth', 11380, 5420)],
+             gathering=[('the fish market', 11230, 5080), ('the dock gate', 11400, 4790)])
+    shore = T['land'] & ndi.binary_dilation(T['sea'], iterations=4) & ~ndi.binary_dilation(T['sea'], iterations=0) & (PX > 11120) & (PX < 11420) & (PY > 4700) & (PY < 5480)
+    shore &= np.isin(K, list(BUILDABLE)) & ~np.isin(K, list(ROUTE))
+    K[shore] = 'quay'; T['street'] |= shore; T['used'] |= shore
+    t.spaces.append({'kind': 'quay', 'name': 'the long quay', 'x': 11220, 'y': 5000, 'rx': 120, 'ry': 380})
+    for pts in ([(11330, 4760), (11370, 5000), (11390, 5250), (11400, 5470)], [(11220, 4860), (11330, 4865), (11460, 4870)],
+                [(11240, 5180), (11360, 5185), (11480, 5190)], [(11250, 5380), (11380, 5390), (11500, 5400)]):
+        t.street(pts, 32, name=None)
+    t.square(11228, 5078, 36, 26, name='the fish market')
+    qs = route_part(T, 'Quay Street', (11100, 4600, 11450, 5520))
+    t.row(qs, ['warehouse', 'warehouse', 'workshop', 'office', 'warehouse'], sides=(-1,), plot=None, gap=(4, 14), limit=8)
+    for s_ in t.streets:
+        t.row(s_['pts'], ['warehouse', 'workshop', 'warehouse'], plot=(24, 'yard'), gap=(4, 14), limit=4)
+    t.fill(14, 420, ('warehouse', 'workshop', 'office'), plot=(24, 'yard'), box=(11080, 4640, 11600, 5560), reach=200)
+    for qy in range(4760, 5440, 95):                                       # piers out into the deep water
+        ys = qy // CELL; row = K[ys]
+        xs_ = [x for x in range(11120 // CELL, 11320 // CELL) if row[x] == 'quay']
+        if xs_:
+            x0 = min(xs_) * CELL
+            m = _lm([(x0, qy), (x0 - 130, qy)], 12) & T['sea']; K[m] = 'pier'
+            K[ys, max(xs_) - 1:max(xs_) + 1] = 'crane'
+    t.yard(11420, 5380, 11540, 5480, name='the slip', why='boats hauled out for repair')
+    out['Neon Harbour: the docks'] = t
+    # ------------------------------------------------ 3. the residential lanes and the east shore
+    t = Town(T, 'Neon Harbour: the Lanes and the East Shore', (11480, 4480), 'city district', (14, 20),
+             'closely packed homes and flats with courtyards, washing over the lanes, pot plants, corner shops and a school; the East '
+             'Shore\'s terraces face the open sea', 'between the old waterfront and the Company district, and along the east coast',
+             seed=203,
+             neighbourhoods=[('the Lanes', 'flats round courtyards, corner shops', 11470, 4480), ('the East Shore', 'terraces along the sea front, the lido', 12100, 5150)],
+             gathering=[('Courtyard Square', 11470, 4470), ('the sea front', 12200, 5150)])
+    for pts in grid(11280, 4290, 11520, 4690, 120, 100, rng, 10) + grid(11900, 4920, 12280, 5380, 130, 115, rng, 10):
+        t.street(pts, 24, name=None)
+    t.cap = 18
+    t.square(11470, 4470, 30, 22, name='Courtyard Square')
+    for s_ in t.streets:
+        t.row(s_['pts'], ['tenement', 'townhouse', 'shop', 'tenement'], plot=(16, 'yard'), gap=(2, 8), limit=4)
+    t.fill(18, 300, ('tenement', 'townhouse', 'shop'), plot=(16, 'yard'), centre=(12100, 5150), box=(11880, 4880, 12340, 5420))
+    out['Neon Harbour: the Lanes and the East Shore'] = t
+    # ------------------------------------------------ 4. the Company district: the maglev terminus, offices, the Company's yard
+    t = Town(T, 'Neon Harbour: the Company district', (11850, 4560), 'city district', (12, 18),
+             'larger buildings, offices, the Company\'s tower and the maglev terminus; deliveries and concentrated street activity; the '
+             'Company crater fenced in its yard to the north, its light sold as neon', 'the flats east of the old town, round the terminus', seed=204,
+             neighbourhoods=[('Terminus Square', 'the maglev terminus and its square', 11640, 4560), ('Neon Row', 'offices, arcades and the neon boulevard', 11980, 4560),
+                             ("the Company's yard", 'the fenced crater and its works', 11780, 4170)],
+             gathering=[('Terminus Square', 11650, 4565), ('Neon Square', 12050, 4700)])
+    bl = t.street([(11570, 4528), (11800, 4535), (12050, 4550), (12320, 4565)], 40, kind='boulevard', name='Neon Row')
+    for pts in ([(11800, 4310), (11800, 4560), (11805, 4860)], [(12060, 4320), (12060, 4580), (12065, 4870)], [(11590, 4720), (11850, 4725), (12310, 4740)],
+                [(11620, 4380), (11850, 4385), (12300, 4390)]):
+        t.street(pts, 32, kind='boulevard', name=None)
+    t.square(11650, 4565, 60, 38, name='Terminus Square')
+    t.square(12050, 4700, 44, 30, name='Neon Square')
+    for s_ in t.streets:
+        t.row(s_['pts'], ['office', 'tower', 'office', 'hall'], plot=None, gap=(4, 16), limit=4, setback=24)
+    t.fill(14, 360, ('office', 'tower'), plot=None, box=(11540, 4300, 12330, 4880))
+    cx_, cy_ = X.V.CRATERS['the Company crater'][:2]
+    yard = g.shape(cx_, cy_, 190, 140, 3701, 0.15) & T['land'] & ~np.isin(K, list(ROUTE) + ['river', 'sea'])
+    K[yard] = 'yard'
+    bowl = g.shape(cx_, cy_, 85, 72, 3702, 0.2) & yard; rim = g.shape(cx_, cy_, 104, 90, 3702, 0.2) & yard & ~bowl
+    K[rim] = 'craterrim'; K[bowl] = 'shardglass'
+    fence = yard & ~ndi.binary_erosion(yard, iterations=1)
+    fence &= ~(np.hypot(PX - cx_, PY - (cy_ + 135)) < 48)              # the yard's gate, toward the district's streets
+    K[fence & ~np.isin(K, list(ROUTE))] = 'fence'
+    t.outskirts.append({'kind': 'yard', 'name': "the Company's yard", 'box': [int(cx_ - 190), int(cy_ - 140), int(cx_ + 190), int(cy_ + 140)],
+                        'why': 'the Company crater, fenced; its shard light pumped to the neon'})
+    out['Neon Harbour: the Company district'] = t
+    # ------------------------------------------------ 5. the Heights and the Skyport
+    t = Town(T, 'Neon Harbour: the Heights and the Skyport', (10050, 5050), 'city district', (12, 20),
+             'terraces, stairs and elevated walks over the city; the funicular up from the canal basin; the Skyport\'s mooring masts on '
+             'the crown, where the airships ride above the roofs; views over the ria, the docks and the sea',
+             'the headland west of the ria, over three knolls', seed=205,
+             neighbourhoods=[('the crown', 'the Skyport: its masts, the terminal and the hangar', 10040, 4900), ('the terraces', 'houses on the contours, stairs between', 10120, 5250),
+                             ('Funicular foot', 'the canal basin and the funicular station', 10074, 4935)],
+             gathering=[('the Skyport terminal', 10060, 4840), ('the belvedere', 10200, 5420)])
+    t.level, t.slope_max = 2, 0.03
+    ap = g.shape(10030, 4905, 120, 90, 3801, 0.12) & T['land'] & ~np.isin(K, list(ROUTE))
+    K[ap] = 'apron'; T['street'] |= ap
+    for (mx, my) in ((9960, 4880), (10040, 4950), (10110, 4870)):
+        a, b = C(mx, my); K[a - 1:a + 2, b - 1:b + 2] = 'tower'; T['taken'][a - 2:a + 3, b - 2:b + 3] = True
+    t.spaces.append({'kind': 'apron', 'name': 'the Skyport', 'x': 10030, 'y': 4905, 'rx': 120, 'ry': 90})
+    t.put(9990, 4770, 136, 56, 'station'); t.put(10150, 4930, 144, 88, 'hangar')
+    for (cx, cy, rr, a0, a1) in ((10040, 4920, 230, -0.3, 2.6), (10040, 4920, 320, -0.2, 2.4), (10170, 5380, 140, -2.6, 2.6), (10170, 5380, 230, -2.2, 2.4),
+                                 (10130, 5160, 150, -1.8, 1.8)):
+        t.street(arc(cx, cy, rr, rr * 0.75, a0, a1), 24, kind='lane', name=None)
+    for s_ in t.streets:
+        t.row(s_['pts'], ['townhouse', 'house', 'townhouse'], plot=(16, 'garden'), gap=(2, 10), limit=4)
+    t.fill(16, 420, ('townhouse', 'house'), plot=(16, 'garden'), centre=(10120, 5200), box=(9800, 4660, 10300, 5650))
+    out['Neon Harbour: the Heights and the Skyport'] = t
+    # ------------------------------------------------ the outskirts: Canalside, Glintside, Halcyon Row; Launch Cape
+    t = Town(T, 'Canalside', (10000, 4430), 'outskirts', (6, 12),
+             "market gardens and the carters' and bargees' houses on the Lull Road where it comes into the city beside the Lull Cut",
+             'the flat land between the Lull Road and the canal, west of the old town', seed=206)
+    lr = route_part(T, 'Lull Road', (9700, 4300, 10500, 4520))
+    t.row(lr, ['cottage', 'house', 'workshop', 'house'], limit=10, start=10, plot=(40, 'garden'))
+    t.fields(9700, 4470, 10350, 4660, ('field2', 'field', 'orchard'), name='the market gardens', why="vegetables and flowers for the city's markets", size=(64, 128))
+    out['Canalside'] = t
+    t = Town(T, 'Glintside', (11120, 4150), 'outskirts', (6, 12),
+             'a village of mill houses and laundries along the Glint above the falls, now the city\'s northern edge, where the maglev comes in',
+             'the Glint\'s banks north of the old town', seed=207)
+    for pts in ([(10900, 4250), (11050, 4180), (11200, 4120), (11350, 4060)], [(11000, 4300), (11150, 4250), (11300, 4200)]):
+        t.street(pts, 24, name=None)
+    for s_ in t.streets:
+        t.row(s_['pts'], ['house', 'cottage', 'mill', 'house'], limit=5, plot=(32, 'garden'))
+    t.fields(10950, 3980, 11400, 4120, ('field2', 'orchard'), name='the allotments', why="the city's allotments by the Glint", size=(64, 112))
+    out['Glintside'] = t
+    t = Town(T, 'Halcyon Row', (12020, 5590), 'outskirts', (8, 14),
+             "the launch staff's houses at the cape's neck, named for the Company's station overhead: the canteen, the store, the clinic; "
+             'a heath buffer of more than 800 px between it and the pad', 'the neck of Launch Cape, behind the dunes', seed=208)
+    cr = route_part(T, 'Cape Road', (11700, 5300, 12250, 5800))
+    t.row(cr, ['house', 'house', 'shop', 'house', 'public'], limit=10, start=10, plot=(32, 'garden'))
+    t.fill(10, 200, ('house',), box=(11850, 5420, 12300, 5760))
+    out['Halcyon Row'] = t
+    return out
+
+
+def launch_cape(T, X):
+    """Launch Cape's facility: the pad at the headland's tip with its service apron, the assembly hall, workshops and stores
+    near the cape's middle, a heath buffer round the pad, the road down the cape."""
+    K = T['K']
+    t = Town(T, 'Launch Cape', X.PAD, 'facility', (4, 8),
+             "the Company's launch site: rockets go up over open sea, away from people (W8); the assembly hall, the workshops and the "
+             "propellant stores in the cape's middle, the pad at its tip; a buffer of open heath between the pad and every house",
+             'the headland past the city, exposed to the sea on three sides', seed=209,
+             neighbourhoods=[('the pad', 'the launch pad, its tower and the service apron', X.PAD[0], X.PAD[1]),
+                             ('the works', 'the assembly hall, workshops, stores and the control bunker', 12060, 6080)],
+             gathering=[('the works gate', 12000, 5960)])
+    t.level, t.slope_max = 4, 0.04
+    pad = g.shape(X.PAD[0], X.PAD[1], 72, 60, 3901, 0.1) & T['land']
+    apron = g.shape(X.PAD[0] - 20, X.PAD[1] - 70, 130, 100, 3902, 0.15) & T['land'] & ~pad
+    K[apron & ~np.isin(K, list(ROUTE))] = 'apron'; K[pad] = 'pad'
+    a, b = C(X.PAD[0] + 40, X.PAD[1] - 30); K[a - 3:a + 1, b - 1:b + 1] = 'tower'
+    T['street'] |= pad | apron; T['used'] |= pad | apron
+    t.spaces.append({'kind': 'pad', 'name': 'the pad', 'x': X.PAD[0], 'y': X.PAD[1], 'rx': 72, 'ry': 60})
+    t.cluster(12060, 6090, 170, ['hangar', 'workshop', 'warehouse', 'workshop', 'public', 'warehouse'], 6, plot=(16, 'yard'))
+    t.yard(11960, 5960, 12250, 6000, name='the works yard', why='carts and the transporter road to the pad')
+    return {'Launch Cape': t}
+
+
+def smaller(T, X):
+    """The places that stay smaller (Driftwood, Lullford, Gullwick, Cinder Springs, the Lode, the Ember forge): enough houses
+    to read as what they are."""
+    out = {}
+    specs = [('Lullford', (8860, 4350), 'town', (10, 16), "the lowest bridging place of the Lull: the swing bridge, the toll house, bargees' "
+              'inns and the mill on the island', 'gravel terraces either side of the river', 'Lull Road', (8560, 4230, 9100, 4480), 14),
+             ('Driftwood', (6440, 5080), 'village', (8, 12), "the valley's landing place: fishers' cottages, the lighthouse keeper's house, the "
+              'ferry pier', "the cove at the Sleepwater's mouth under the Headland", 'Valley lane south', (6300, 4880, 6700, 5120), 10),
+             ('Gullwick', (8045, 5200), 'village', (6, 10), 'a fishing cove on the open coast: boats on the beach, net lofts', 'the cove west of the delta',
+              'Gull Lane', (7950, 4980, 8150, 5200), 8),
+             ('Cinder Springs', (1860, 5600), 'hamlet', (4, 8), 'hot springs where the sea seeps into the warm flank: the bath house and lodgings',
+              "the volcano's warm south-west flank", 'Ember Way', (1780, 5450, 2000, 5760), 6),
+             ('the Lode', (2820, 1690), 'hamlet', (3, 6), 'the iron and copper mine: the mine house, the smithy, the miners\' bunkhouse', 'the massif foothills above Dust Gulch',
+              'Lode Track', (2700, 1600, 2900, 1820), 4),
+             ('Ember forge', (2140, 4985), 'hamlet', (3, 5), "the forge at the caldera lip, using the crater's heat: the forge hall, the ore store",
+              "the caldera's lip above Hearthold", 'Forge Stair', (2040, 4900, 2260, 5100), 3)]
+    for i, (nm, c, size, tgt, purpose, setting, rn, box, n) in enumerate(specs):
+        t = Town(T, nm, c, size, tgt, purpose, setting, seed=300 + i)
+        if nm in ('Ember forge', 'the Lode'):
+            t.level, t.slope_max = 4, 0.04
+        t.row(route_part(T, rn, box), ['cottage', 'house', 'shop', 'cottage', 'workshop'], limit=n, start=8, plot=(32, 'garden'))
+        t.fill(n, 160, ('cottage', 'house', 'workshop'), reach=160, box=(box[0] - 60, box[1] - 60, box[2] + 60, box[3] + 60))
+        out[nm] = t
+    return out

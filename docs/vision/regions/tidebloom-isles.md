@@ -121,3 +121,10 @@ The kits are on open PRs and land on `main` separately; until then, build agains
 | (none)     | new ground | the Shell Bar and its islet, the seven other isles (drawn, mostly not walked)   |
 
 Places keep their ids where the game uses them (mission places, stops, rings in `lib/world-places.ts`), so saves and missions carry over; their stands move with them.
+
+## v55 overview: proposals for lane C (27 Oct)
+
+The continent overview v55 (`../research/blockout/README.md`, "v55"; Matt's brief of 27 Oct). These are proposals; this brief is unchanged until the lane adopts them.
+
+- **Coordinates**: the isles move 256 px south with the coast band's stretch (`geo55.P`): Lagoon Landing to (6560, 6456), the Lagoon pier to (6480, 6406).
+- **Lagoon Landing, medium (15 buildings)**, organised round the lagoon: boathouses and stilt houses on the lagoon front, Net Row with the net and sail lofts, Pier Lane to the ferry pier, Bar Lane to the Shell Bar, and the boatyard.

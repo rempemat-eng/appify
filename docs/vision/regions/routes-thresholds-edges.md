@@ -139,3 +139,11 @@ All 21 checks of `../research/world-benchmark.md`, above all 1 (density on every
 ## 9. Today's zones
 
 None of today's zones lie on the routes' land; the journeys (train, maglev, ferry, cart) become shortcuts beside the routes they run along (plan 6.2).
+
+## v55 overview: proposals for lane G (27 Oct)
+
+The continent overview v55 (`../research/blockout/README.md`, "v55"; Matt's brief of 27 Oct). These are proposals; this brief is unchanged until the lane adopts them.
+
+- **The canvas** grows to 12544 x 7168 by a warp that only widens; every route outside the anchor (x 5400 to 7000, y 1400 to 3900) moves with `geo55.P`, and `scripts/art/world_routes.py` would take v55's polylines from `blockout-v55.json` if v55 is adopted.
+- **New routes**: the Garth Road (Cogsworth to Highgarth), the Northway (Highgarth to the rockfall) and the Pad Road (down Launch Cape); the road beyond the rockfall is a closed route (C1: closed for movement, navigation and travel). Three obstacles with side paths where the stretch lengthened a route (the Canyon Road, the Delta Road, the Pad Road).
+- **Edges and the land between**: the east coast is a new edge of the world (the eastern sea, cliffs on the cape); the cloud bank stands only where the land runs off the canvas. The Lull plain's countryside gains farmsteads, three windmills, small woods and river terraces on the Lull's west bank.

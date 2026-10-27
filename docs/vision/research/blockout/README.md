@@ -1,4 +1,174 @@
-# The world plan's block-out (v5.2) and the overview map (v53, v54)
+# The world plan's block-out (v5.2) and the overview map (v53, v54, v55)
+
+## v55: room for the towns (27 Oct)
+
+Matt's brief of 27 Oct (in full in the PR): "keep v54's overall geography, enlarge the usable world by roughly 20%, and give its settlements substantially more space and everyday activity. The expansion should follow the places that need room, especially Neon Harbour, rather than stretch every distance equally." Medium towns hold 14 to 22 buildings, large towns 30 to 45 and Neon Harbour 60 to 90 (provisionally), counting homes, shops, workshops and public buildings, enterable or not, but not stalls, sheds or the separate doors of one building. His layout order has seven steps; v55 does steps 1 to 4 on the overview, the visual consistency pass and the label hierarchy, and writes steps 5 to 7 below as a plan for the lanes and the world editor.
+
+`geo55.py` (data), `towns55.py` (the settlement layouts) and `map55.py` (the maps) sit on top of geo54 and map54. `blockout-v55.json`, `stats-v55.json` and `gates-v55.json` are v55's own: the ground, the routes, the tiers and every check are measured on the v55 canvas. `continent-1x-v55.png` is the 1920 map, `inset-home-valley-v55.png` and `inset-neon-harbour-v55.png` the two insets (256 colours).
+
+### How the land was enlarged: a warp that only widens
+
+v54's ground is built exactly as before, then stretched onto a larger canvas, **12544 x 7168 world px** (v54: 11264 x 6912; 49 x 28 tiles of 256). The stretch is separable and piecewise linear (`STRETCH_X`, `STRETCH_Y`; the knots are in `stats-v55.json` v55.warp): every band of v54's x or y is widened by its own factor, and no band is narrowed, so no barrier, river or route is thinned or broken. The **anchor** (x 5400 to 7000, y 1400 to 3900) keeps its coordinates exactly: the home valley, the woodland, Crossroads, the stone circle and the Frostline are where every plan has them, and `game/data/plans/` needs no change.
+
+| Band of v54 | Widened by | Why |
+| --- | --- | --- |
+| x 9400 to 11264: Neon Harbour, the ria, Launch Cape, the fens | 1.58 | the city, its outskirts, its east coast and the cape: the most room |
+| x 7000 to 8400: Fernhollow, Cogsworth, the Lull plain | 1.10 | two town footprints and the plain's farms |
+| x 8400 to 9400: the Narrows, the meander belt, Lullford | 1.06 | a little: the river corridor and the delta |
+| x 1500 to 4300: the Sunstone basin, Dust Gulch, Palm Spring, Hearthold, Cinderwick | 1.14 | the desert and fire country towns and their settled margins |
+| x 4300 to 5400: the Rift, the steppe, the Brackens | 1.06 | a little: the steppe's transition and the Rift's bays |
+| y 3900 to 5950: the halt, Driftwood, Lullford, Hearthold, Gullwick, Cinderwick, Launch Cape | 1.125 | the coast band and its towns; the isles move 256 px south with it |
+| y 300 to 1400: the massif | 1.20 | the mountain valley town and the approach to the closed pass |
+
+The far west of the dune sea (its outer 458 px) and the top 220 px of the ice cap run off the canvas: both are past the walk. To move any v54 point onto v55: `geo55.P((x, y))` (np.interp over the knots in x and in y); a box by its corners (`geo55.Pbox`).
+
+**Usable land** (land outside the frame that is walkable or built on): v54 436837 cells, v55 547843 cells, **+25.4 %**. The stretch gives +21.1 %; Highgarth's valley, the cape's new land and their surroundings the rest. Matt's band was 15 to 25 % with 20 % as the first target, so this sits just above it (the stretch alone is +21 %); the uneven allocation puts most of it where he asked (the east coast and the town footprints).
+
+### Step 1: the settlement footprints
+
+Every settlement is laid out from a street skeleton (its routes, plus side streets, back lanes, quays and squares written per town in `towns55.py`) and filled with separate buildings at the size guide's footprints (`size-guide.md` 4: a cottage 80 x 48, a house 64 to 96 wide, a workshop 80 to 112, a warehouse 112 to 160, a city building 64 to 96), each on one tier (a footprint that crossed a tier is levelled to its middle tier: 145 of them, the terraces and retaining walls the lanes draw), each set back from its street with a garden or yard behind. Infill fills behind and between the streets, always within 150 px of a street or route, so the large towns get residential depth: back lanes, courtyards, workshops behind shops. The working outskirts are painted round each town, so the overview shows why it is there. Every building, street, square and outskirt is in `blockout-v55.json` v55.settlement_footprints (buildings as `[x, y, w, h, use, counted]`).
+
+| Town | Allocation | Buildings (target) | Neighbourhoods | Gathering places | Working outskirts | What it is for |
+| --- | --- | ---: | --- | --- | --- | --- |
+| Dust Gulch | large (desert) | **38** (30 to 45) | Front Street, the Depot, Water Street, West Row, the corrals | the depot square, the well square, the chapel yard | the corrals, the goods yard, the ore yard, the river gardens | the desert line's railhead and the Lode's ore yard |
+| Palm Spring | medium (oasis) | **18** (14 to 22) | Spring Row, the caravanserai, Channel Row, Palm Row | the spring square, the pool steps | the date gardens, the north grove | the first water in the dry country |
+| Crossroads | large (central meadow) | **40** (30 to 45) | the square (built), Mill End, Halt Road, Eastgate, West Lane | the square, the drovers' market, the mill green, the halt yard | the halt farms, the mill farms | the market and meeting point of the valley |
+| Fernhollow | medium (central meadow) | **16** (14 to 22) | the Green, the Yards, Fern Lane | the green, the sawmill yard | the wood yards | timber from the Fern hills' wet woods |
+| Hearthold | large (fire country) | **31** (30 to 45) | the Castle, Smiths' Row, Gate Street, Ash Lane | the castle yard, the gate market | the vines, the lower fields | the fire country's town of knights and crafts |
+| Cinderwick | medium (fire country) | **15** (14 to 22) | the Strand, Kiln Lane, the Quay | the quay, the kiln yard | the kilns | the fire country's harbour |
+| Cogsworth | at least medium (Cogsworth region) | **25** (14 to 45) | Foundry Row, Engine Street, the Terraces, the Platform | the station square, the works gate | the railway yard | coal and iron from the coal hills, the fast Cog for power (the Millrace), and the railway out |
+| Lagoon Landing | medium (Tidebloom Isles) | **15** (14 to 22) | the Lagoon front, Net Row, the Pier | the lagoon steps, the pier head | the boatyard | the isles' town |
+| Highgarth | medium (mountains; new) | **18** (14 to 22) | Garth Street, Quarry Lane, Low Street | the market cross, the sheep fair field | the slate quarry, the in-fields, the folds | slate from its quarries and wool from the summer pastures, sawn timber from the valley's larches; the drovers' inn on the Garth Road; it sends slate, timber and wool down to Cogsworth. Its old trade over the north pass stopped when the Starfall brought the rockfall down; the road beyond waits for a later region |
+
+**Neon Harbour, 78 buildings** in five districts (below). **Smaller places** stay smaller: Lullford 11, Driftwood 10, Gullwick 8, Cinder Springs 6, the Lode 4, Ember forge 3. **Farms of the central green**: ten farmsteads (a farmhouse and a barn each) and three windmills, not counted in any town.
+
+### Step 2: the east coast, Neon Harbour and Launch Cape
+
+- **The east coast.** The open sea now comes in along the city's east side (`EAST_SHORE`): the shore leaves the canvas edge at the fens' foot (y 4230), runs south past the East Shore's terraces and round Launch Cape, and back up its west side to the ria's mouth (`CAPE_WEST`). The east margin's clouds stand only north of it, where the land still runs on.
+- **Neon Harbour, clearly the largest place in the world**, round the ria, the east coast and the Heights; its districts blend into one another and each is a `towns55` layout with its own buildings:
+
+| District | Buildings | Character and activity (Matt's table) | Where |
+| --- | ---: | --- | --- |
+| the old waterfront | 16 | older buildings, narrow lanes, small businesses, Bridgefoot square and the falls steps | the Falls Rock and the old quays round the ria's head |
+| the docks | 14 | the long quay, warehouses, cranes, piers, the slip and repair yard, the fish market at the steamer pier | the ria's deep east side down to its mouth |
+| the Lanes and the East Shore | 18 | flats round courtyards, corner shops, washing over the lanes; terraces facing the open sea | between the old waterfront and the Company district; along the east coast |
+| the Company district | 14 | offices and towers on Neon Row and two avenues, Terminus Square at the maglev, Neon Square; the Company crater fenced in its yard to the north | the flats east of the old town |
+| the Heights and the Skyport | 16 | terraces on the contours, stairs and the funicular, the Skyport's three mooring masts, its terminal and hangar on the crown | the headland west of the ria |
+
+  The outskirts are inhabited: **Canalside** (10: carters' and bargees' houses and market gardens on the Lull Road where it comes in beside the Lull Cut), **Glintside** (5: mill houses and allotments on the Glint above the falls, where the maglev comes in) and **Halcyon Row** (10: the launch staff's houses at the cape's neck).
+- **Launch Cape** is a full headland (about 600 px wide and 1300 long; 4230 cells of new land), its shore continuing round the tip: cliffs on the exposed east side, a beach on the sheltered west. The **Pad Road** (a road) runs down it from Halcyon Row past the works (6 buildings: the assembly hangar, workshops, stores, the control house) to **the pad** at the tip (12085, 6455) with its service apron and tower. The nearest house is 770 px from the pad, across open heath. The rocket's way (W8) is now at the pad.
+
+### Step 3: Highgarth and the closed pass
+
+**Highgarth** (18 buildings, medium) sits in a sheltered valley on the upper Cog, inside the range north of Cogsworth (7905, 1190). Its purpose today: slate from its quarry, wool from the summer pastures and sawn larch from the valley floor, sent down the **Garth Road** to Cogsworth; the drovers' inn; a sheep fair. Stepped streets on the east bank (footprints levelled onto terraces), a sawmill by the river, walled in-fields below and the folds above, steep wooded slopes and snow on the peaks round it. It is reached through Cogsworth, behind W3 (the gate check holds it: not reached before the Millrace landslip opens, reached after). Its waystone is proposed at the market cross.
+
+**The closed pass (C1).** The **Northway** climbs from the town to the valley's head, where a rockfall lies across the whole valley (`ROCKFALL_LINE`, from the Cog to the east wall). Beyond it the road is drawn on to the col at the canvas's top edge, where a gap in the cloud bank shows hazy land beyond; that part is frame, not walkable, and listed under `closed_routes`, never `routes`. In the data it is closed for movement (the rockfall and everything beyond are not walkable ground; `gates-v55.json` "closed: the Highgarth pass": nothing beyond is reachable with every way open, the road up to the rockfall is), for navigation (no route, beat or path plan crosses it) and for travel (no waystone, station, shortcut or ferry beyond it). It is 1.3 km east of the act 1 crossings (the ridge col and the Fells saddle) and shares no ground with them. A later region joins over the col without moving a town or rescaling the continent. A sign and the townsfolk's talk explain the rockfall (step 6).
+
+### Step 4: roads, rivers and land fitted round them
+
+- **New routes**: the Garth Road (Cogsworth to Highgarth, a path up the Cog's east bank, crossing no barrier), the Northway (Highgarth to the rockfall) and the Pad Road (the cape). The regional loops are v53's and stay closed; the stretch lengthened some routes, so where a route ran more than 260 px with nothing to meet, an obstacle with a side path round it was added (2 of them), and the towns' buildings beside a route count as what it meets.
+- **Rivers** are v54's lines moved by the warp (each still runs downhill: the warp only widens, so no line changes its order). The Lull's west bank is stepped into **river terraces** (four flat steps above the floodplain, farmed).
+- **The central green**: ten farmsteads with orchards and hedged fields, three windmills on the rises and seven small woods in the Lull plain and the valley's south, leaving open meadow between; Crossroads and Fernhollow carry the population, the farms the land round them.
+- **Settled margins**: scrub along the desert's dry beds, green along the Amber and the Willow Run where they are irrigated (Dust Gulch's river gardens, Palm Spring's date gardens and north grove); in the fire country, Hearthold's vines and lower fields and Cinderwick's kilns on the stable ground between the flows.
+- **Open countryside between towns**: no two town footprints touch; between them run fields, woods, desert or coast (Hearthold and Cinderwick are the closest pair: the stable ground between the lava flows is narrow, so about 60 px of fields and the Ember Way lie between them).
+
+### One visual treatment
+
+The range, the forests, the dunes, the hills, the mesas and the buildings are drawn the same way: three tones from one ramp of the house palette (lit, middle, shade), a thin ink outline and a shadow cast to the south-east (`map55.tones`). The peaks' crests are softer (fewer jags, no extra spur facet), so the range reads as the same kind of mark as a tree. The northern wall has **spurs**: chains of hills stepping down the fall line from the range front (3 spurs, 8 hills), with valleys left between them, and its foothills vary in size. Forests have **clearings** and uneven density (a density field thins the trees in places; deep woods open into glades). The cloud edge is one **irregular bank** shaped by noise at three scales and lit from the upper left, in place of v54's rows of bubbles; it stands only where the land runs off the canvas, so the coast, the city and the cape stay clear.
+
+### Labels by zoom
+
+| View | Names |
+| --- | --- |
+| the continent (`map55-1920.png`, `map55-3840.png`) | the regions, the large and medium towns and the city, Launch Cape, the stone circle, the closed pass, the principal routes (the Drover's Road, the Lull Road, the Ash Coast, the Canyon Road, the Foothill Road, the Coast Path, the High Fells, the Towpath, the Garth Road) and the rail, cart and ferry lines; the craters, gates and waystones as icons only |
+| the insets (`map55-inset-home-valley.png`, `map55-inset-neon-harbour.png`) | every name inside the box: settlements, districts, squares, yards, farms, gates with their ways, craters, peaks, passes, water and routes |
+| the reference (`map55-reference.png`, 5760 x 3240) | every name on the continent |
+
+### Checks
+
+- The gate check: no leaks, nothing missing, no crossing without a way, at every step (`gates-v55.json`), with Highgarth behind W3 and Halcyon Row, Glintside and the cape's works behind W7.
+- The closed pass: nothing beyond the rockfall is reachable with every way open; the Northway up to it is (`gates-v55.json`, "closed: the Highgarth pass").
+- The benchmark on the v55 canvas: **21 of 21 pass** (`stats-v55.json` benchmark).
+- Reachable from home with every way open: every crater, act 1 place, waystone, the circle, Highgarth, Halcyon Row, Glintside, Canalside and the pad.
+- Walk times from the hut at Bramble's speed (`home_to_at_hero_speed`): Dust Gulch 165 s, Hearthold 218 s, Neon Harbour 209 s, Highgarth 127 s, Launch Cape 287 s, Lagoon Landing 135 s.
+- Looked at: the rivers run downhill as in v54; every town stands on flat or terraced ground beside water and on its routes; the labels overlap nothing.
+
+### The maps (written to `out/`, and to `$MAP55_OUT` if set)
+
+| File | What |
+| --- | --- |
+| `map55-1920.png`, `map55-3840.png` | the continent with every layer (the built zones, act 1's route and its beats, the crater ring, the ruler), labelled for the continent view |
+| `map55-reference.png` | the continent at 3x with every name (the development reference) |
+| `map55-inset-home-valley.png`, `map55-inset-neon-harbour.png` | the two insets, every name in the box, each with a ruler |
+| `map55-v54-vs-v55.png` | v54's and v55's maps side by side at 1920 x 1080 |
+
+The ruler: one soft-grid cell is still 8 world px; the 1920 map is now 1 px = 6.6 world px (v54: 6.4), and the ruler, its walk times and the screen box are drawn at that scale.
+
+```
+python3 -I geo55.py                  # data and every map (about twenty minutes)
+RENDER_ONLY=1 python3 -I geo55.py    # the maps again from out/state-v55.pkl
+QUICK=data python3 -I geo55.py       # the JSON and the state only (about ten minutes)
+```
+
+### Steps 5 to 7: the plan for the lanes and the world editor
+
+These are not built yet. Each lane builds its towns at gameplay scale from the footprint in `blockout-v55.json` (the buildings' positions and uses are a starting layout, to be adjusted to the kits), then peoples them, then the journeys are walked and measured.
+
+**Step 5: build one representative area at gameplay scale first**, to set the density before repeating it: per town, the area named below. A screen (320 x 576 world px) of a medium town's centre should hold 6 to 9 buildings' fronts; of a large town's back lanes 8 to 12 smaller fronts with yards; of Neon's lanes 10 to 14 frontages, taller (the size guide's city building, 3 to 6 storeys). Keep every walking route and door apron clear (the size guide's kept-clear bands).
+
+**Step 6: residents, animals and props by function.** A mix of named characters, recurring residents with simple routines (a worker carrying between two buildings, a resident returning to a bench, someone feeding hens) and ambient inhabitants. As a first camera test (Matt's numbers; starting points, not quotas):
+
+| Where | Visible people |
+| --- | ---: |
+| quiet outskirts, residential corners | 1 to 3 |
+| ordinary town streets | 4 to 8 |
+| busy markets, stations, city docks | 8 to 12, more where there is room |
+
+Some streets stay quiet; a market has a reason to be busy. Animals live where their habitat is: hens and grazing animals in the meadow towns, pack animals at the desert stopping places, cats and gulls at the docks, the fire country's goats and pigs on its settled ground. Props show the work: crates by the businesses that handle goods, tools by the work, water butts and troughs by homes and stopping places; busy places keep clear walking lines and entrances.
+
+| Town | Build first (step 5) | Who lives and works there (step 6) | Animals | Props by function |
+| --- | --- | --- | --- | --- |
+| Crossroads (large) | Eastgate and the drovers' market | market traders, the smith (Hale), drovers on market days, millers at Mill End, the halt's porter | hens in the yards, sheep and cattle penned at the market, a cat at the bakery | hurdles and pens, grain sacks at the mill, milk churns at the halt |
+| Dust Gulch (large) | Front Street and the depot square | the sheriff (Pendle), the store and saloon, assayers, rail and repair hands, mule drivers, the water carrier | mules and horses at the corrals, a dog, vultures overhead | ore carts and bins, water barrels, the water tower, crates on the platform |
+| Palm Spring (medium) | the spring square and the pool steps | the diviner (Mirra), gardeners on the channels, the caravanserai's keeper, caravan drivers resting | camels and donkeys, doves in the palms | water jars, shade awnings, irrigation sluices, date baskets |
+| Fernhollow (medium) | the green and the sawmill yard | sawyers and joiners, the schoolteacher, charcoal burners passing through | a cart horse, hens, jays in the woods | log stacks, sawhorses, a cart, charcoal sacks |
+| Cogsworth (medium, room to grow) | Foundry Row and the station square | foundry and mill hands at the shift change, railway staff, Clack's workshop, terrace families | pit ponies, pigeons, a cat on the terrace walls | coal carts, rails and sleepers, gears and boilers in yards, washing between the terraces |
+| Hearthold (large) | the gate market and Smiths' Row | knights and squires (Ashe), armourers and smiths, potters and vintners, the castle household | goats and pigs on the lower fields, a horse in the castle yard | anvils and quench tubs, wine barrels, banners, firewood |
+| Cinderwick (medium) | the Strand and the quay | fishers mending nets, the chandler, kiln workers, the coaster's crew when it calls | gulls, a cat at the quay, goats on the slopes | nets and fish racks, charcoal sacks, glass in crates, a slipway |
+| Lagoon Landing (medium) | the lagoon front and the pier head | boatbuilders, divers (Brine), the naturalist, the ferry hand | gulls, terns, a dog on the boats | boats on the slip, diving gear, net lofts, the ferry's crates |
+| Highgarth (medium) | Garth Street and the market cross | quarrymen, shepherds, the innkeeper and drovers, the sawyer, the townsfolk who talk of the rockfall | sheep and goats on the pastures, a sheepdog, choughs | slate stacks, wool bales, sledges, the rockfall's warning sign |
+| Neon: the old waterfront | Bridgefoot | cafe owners, pawnbrokers, ferry clerks, old residents on doorsteps | cats, pigeons | cafe tables, shop signs, mooring bollards |
+| Neon: the docks | the fish market and the long quay | stevedores, crane drivers, fishmongers, repair crews | gulls, cats | crates, nets, cranes, barrels, the slip's cradle |
+| Neon: the Lanes and the East Shore | Courtyard Square | families, corner-shop keepers, children, the lido's swimmers | cats, pigeons, a dog | washing lines, plant pots, bikes, a lido kiosk |
+| Neon: the Company district | Terminus Square | office workers, couriers (Nix), the Company's guards, delivery drivers | very few: pigeons | delivery carts, neon signs, the fence and the guard post |
+| Neon: the Heights and the Skyport | the Skyport terminal and the funicular foot | the rich residents, airship crews, the funicular's attendant | gulls on the masts | mooring lines, luggage, benches at the belvedere |
+| Launch Cape and Halcyon Row | the works gate | engineers and launch crews, the canteen, families at the Row | gulls; nothing near the pad | gas bottles, crates of parts, the transporter, warning signs at the buffer |
+
+**Step 7: walk the journeys** and check the town approaches (open country, then outskirts, then the town), the transitions, the route choices and the times. The baseline on the block-out (every way open, on foot, at Bramble's speed; trains and ferries not used):
+
+- **Crossroads - Fernhollow - Cogsworth**: Crossroads to Fernhollow 1060 px, 40.7 s; Fernhollow to Cogsworth 1159 px, 44.5 s (total 85 s on foot).
+- **Crossroads - Palm Spring - Dust Gulch**: Crossroads to Palm Spring 3305 px, 126.9 s; Palm Spring to Dust Gulch 988 px, 37.9 s (total 165 s on foot).
+- **Dust Gulch - Hearthold - Cinderwick**: Dust Gulch to Hearthold 3398 px, 130.5 s; Hearthold to Cinderwick 848 px, 32.6 s (total 163 s on foot).
+- **Lullford - Canalside - Neon Harbour - Halcyon Row - Launch Cape**: Lullford to Canalside 1184 px, 45.5 s; Canalside to Neon Harbour 1318 px, 50.6 s; Neon Harbour to Halcyon Row 1348 px, 51.8 s; Halcyon Row to Launch Cape 891 px, 34.2 s (total 182 s on foot).
+- **Cogsworth - Highgarth - the rockfall**: Cogsworth to Highgarth 1330 px, 51.1 s; Highgarth to the rockfall 616 px, 23.7 s (total 75 s on foot).
+
+For each, check that the approach shows the town's purpose before its centre (fields before Crossroads, corrals before Dust Gulch, the walls before Hearthold, the quarry before Highgarth, warehouses and outskirts before Neon), that a quiet stretch separates neighbouring towns, and that the closed pass is seen, signed and never walked.
+
+### Proposals for each lane (the region plans)
+
+Lanes own their plans, so v55 changes none of them; these are proposals. Every coordinate outside the anchor moves by the warp (`geo55.P`); the anchor's do not.
+
+| Lane | Proposed changes |
+| --- | --- |
+| A (Crossroads plan, the Undercroft) | none to `crossroads.json` or `undercroft.json` (in the anchor). Crossroads becomes a large town: the built square stays as it is, with four neighbourhoods outside its box for lane E (below) |
+| E (the home valley, Driftwood, the Headland) | Crossroads' neighbourhoods: Mill End (the mill, the granary, Granary Row, Weir Lane), Halt Road to the halt yard, Eastgate with the drovers' market and the inn, West Lane; the mill farms; farmsteads and Coombe mill in the valley's south; Driftwood moves 132 px south (to 6420, 5092) and grows to about 10 buildings round its cove |
+| F (the Frostline, the massif, the Brackens) | the Frostline does not move; Highgarth, its valley, the Northway, the rockfall and the closed pass (C1) in the massif north of Cogsworth; the massif deepened north (1.2) and its top 220 px past the canvas; the range's spurs |
+| G (routes, thresholds, edges) | three new routes (the Garth Road, the Northway to the rockfall, the Pad Road) and the closed road beyond the rockfall; three obstacles with side paths on stretched routes (the Canyon Road, the Delta Road, the Pad Road); the east coast as the world's new edge; the cloud edge; the Lull plain's countryside (farmsteads, windmills, small woods, river terraces); `scripts/art/world_routes.py` would take v55's polylines (or apply the warp) if v55 is adopted |
+| H (Cogsworth, the coal hills, the Narrows, Fernhollow) | Cogsworth at 25 buildings (Foundry Row, Engine Street, Pit Row, the Terraces, the station square, the railway yard, the allotments), with room to grow toward the pits; Fernhollow at 16 (the green, the sawmill and wood yards, Green Lane, Cooper Lane); both move east with the 1.10 stretch (Cogsworth to 8078, 2450) |
+| I (Neon Harbour, the delta, Lullford, Gullwick, the Skyport, the Cape Road) | Neon's five districts at 78 buildings; the Skyport onto the Heights' crown (from the eastern flats, now the East Shore); the east coast; Canalside and Glintside; Launch Cape as a headland with the Pad Road, the works, the pad at its tip and Halcyon Row; Lullford (11) and Gullwick (8) footprints; every point east of x 9400 moves by the 1.58 stretch |
+| C (the Tidebloom Isles) | Lagoon Landing at 15 buildings round the lagoon's north shore (the lagoon front's boathouses, Net Row, Pier Lane, Bar Lane, the boatyard); the isles move 256 px south |
+| D (the Sunstone basin, the fire country) | Dust Gulch large (38: Front Street, the depot, Water Street, West Row, the corrals, the goods and ore yards, the river gardens), Palm Spring medium (18: the spring pool, Spring Row, the caravanserai, the channels, the date gardens), Hearthold large (31: the castle with its walls redrawn round the whole rock top, Smiths' Row, Gate Street, Ash Lane, Vine Lane, Potters' Lane, the vines on the rock's east slope and the lower fields), Cinderwick medium (15: the Strand, Kiln Lane, Ash Lane, the quay and kilns); Cinder Springs, the Lode and the Ember forge stay small; the west widened by 1.14 and the dune sea's outer 458 px past the canvas; scrub along the dry beds |
+
 
 ## v54: the overview map, second pass (27 Oct)
 
@@ -148,6 +318,7 @@ It is a block-out, not art. Positions and tiers are the plan's; each lane's brie
 | `gates-v52.json`       | The gate check (world plan section 10): with each set of ways open, which places leak or go missing (none), and every place a route crosses a barrier with the way that opens it.                                                                                                                      |
 | `geo53.py`, `map53.py`, `blockout-v53.json`, `stats-v53.json`, `gates-v53.json`, `continent-1x-v53.png` | v53, above: the same three files plus `v53` (circle, craters, new routes, places, waystones, built zones, act 1's beats), and the overview map. |
 | `geo54.py`, `map54.py`, `blockout-v54.json`, `stats-v54.json`, `gates-v54.json`, `continent-1x-v54.png`, `inset-home-valley-v54.png` | v54, above: v53's three files plus `v54` (the range, the desert, the edges, the label tiers, the inset), the overview map and the home valley inset. |
+| `geo55.py`, `towns55.py`, `map55.py`, `blockout-v55.json`, `stats-v55.json`, `gates-v55.json`, `continent-1x-v55.png`, `inset-home-valley-v55.png`, `inset-neon-harbour-v55.png` | v55, above: the v55 canvas (v54's ground warped wider), the settlement footprints, the east coast and Launch Cape, Highgarth and the closed pass; its own three files, the overview map and two insets. |
 | `continent-1x-v52.png` | Our own render of the whole continent at 1 px per 8 px cell (1408 x 864), hill-shaded from the upper left. Reduced to 256 colours to keep it small (the script writes the full-colour one to `out/`). Nothing in this folder is an image of another game.                                              |
 
 ## Coordinates
