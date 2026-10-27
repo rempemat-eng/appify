@@ -650,5 +650,31 @@ class ConceptIntake(unittest.TestCase):
                 self.assertTrue(any('non-buildable/non-placeable' in e for e in S.check([str(inside)])[str(inside)]))
 
 
+class BakeMaterialOrder(unittest.TestCase):
+    def test_real_plan_order_is_stable_across_process_hash_seeds(self):
+        import subprocess
+        import sys
+        code = """import json,numpy as np
+from scripts.art.kit import bake as B
+plan=json.load(open('game/kit/zones/woodland_kit.json'))
+mat=np.array([[plan['legend'][c] for c in row] for row in plan['rows']])
+paint=B.material_paints(mat.ravel(),B._pieces_lib())
+print(json.dumps([m for m,p in sorted(paint.items(),key=lambda item:item[1].get('order',0)) if p.get('fn')=='dirt']))
+"""
+        results = []
+        for seed in ('0', '2', '7', '42'):
+            env = dict(os.environ, PYTHONHASHSEED=seed)
+            results.append(json.loads(subprocess.check_output([sys.executable, '-c', code], cwd=S.ROOT, env=env)))
+        self.assertEqual(results, [['worn', 'path']] * len(results))
+
+    def test_authored_paint_order_overrides_the_canonical_tie(self):
+        from scripts.art.kit import bake as B
+        lib = {'path': {'terrain': {'paint': {'fn': 'dirt', 'order': 0}}},
+               'worn': {'terrain': {'paint': {'fn': 'dirt', 'order': 2}}}}
+        paint = B.material_paints(['worn', 'path', 'worn'], lib)
+        self.assertEqual(list(paint), ['worn', 'path'])
+        self.assertEqual([m for m,p in sorted(paint.items(),key=lambda item:item[1].get('order',0))], ['path', 'worn'])
+
+
 if __name__ == '__main__':
     unittest.main()
