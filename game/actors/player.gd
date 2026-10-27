@@ -69,6 +69,11 @@ var _ability_drawing: Dictionary = {}
 var ability_support_height := 0.0
 var _ability_ground_body := Vector2.ZERO
 var _ability_pose_driver: AbilityActionDriver = null
+var _ability_defeat_provider := Callable()
+var _ability_defeat_driver: AbilityActionDriver = null
+var _ability_defeat: AbilityDefeatPlayback = null
+var _ability_defeat_generation := 0
+var _ability_downed := false
 
 @onready var sprite: CastSprite = $Sprite
 @onready var hitbox: Area2D = $Hitbox
@@ -80,6 +85,7 @@ func _ready() -> void:
 	set_character(character)
 
 func _exit_tree() -> void:
+	_clear_ability_defeat()
 	# Scene removal/reparenting must not leave presentation callbacks on a departed actor.
 	if action_driver != null:
 		action_driver.cancel("actor_exited_tree")
@@ -90,6 +96,7 @@ func set_character(id: String) -> bool:
 		return false
 	if not sprite.load_character(id):
 		return false
+	_clear_ability_defeat()
 	character = id
 	if action_driver != null:
 		action_driver.character_changed(id)
@@ -123,6 +130,55 @@ func bind_ability_presentation(provider: Callable, contact: Callable, passive_pr
 		_ability_drawing = {}
 		ability_presentation_error = ""
 	return bound
+
+## Separate explicit terminal contract: no production clocks or form flags are guessed.
+## The existing driver is cancelled before terminal playback; it can emit no contacts.
+func bind_ability_defeat(provider: Callable) -> bool:
+	if action_driver == null or not provider.is_valid() or hp <= 0 or is_defeated():
+		return false
+	_clear_ability_defeat()
+	_ability_defeat_provider = provider
+	_ability_defeat_driver = action_driver
+	return true
+
+func _clear_ability_defeat() -> void:
+	_ability_defeat_generation += 1
+	if _ability_defeat != null: _ability_defeat.cancel()
+	_ability_defeat = null
+	_ability_defeat_provider = Callable()
+	_ability_defeat_driver = null
+
+func _begin_ability_defeat() -> void:
+	if not _ability_defeat_provider.is_valid() or _ability_defeat_driver != action_driver:
+		return
+	var generation := _ability_defeat_generation
+	var supplied: Variant = _ability_defeat_provider.call()
+	if generation != _ability_defeat_generation or not is_inside_tree() or hp > 0 or not is_defeated():
+		return
+	if not supplied is Dictionary or supplied.get("manifest") != sprite.manifest or supplied.get("id") != character or supplied.get("facing") != facing:
+		ability_presentation_error = "terminal contract differs from defeated body"
+		return
+	var candidate := AbilityDefeatPlayback.new()
+	if not candidate.configure(supplied, generation + 1):
+		ability_presentation_error = "invalid explicit defeat schedule"
+		return
+	_ability_defeat = candidate
+	ability_presentation_error = ""
+	_advance_ability_defeat(0.0)
+
+func _advance_ability_defeat(delta: float) -> void:
+	var active := _ability_defeat
+	if active == null: return
+	for sample in active.advance(delta):
+		if _ability_defeat != active or hp > 0 or not is_inside_tree(): return
+		if not AbilitySpritePresenter.show_drawing(sprite, sample):
+			ability_presentation_error = "missing terminal drawing"
+			_clear_ability_defeat()
+			_set_state(&"defeat")
+			return
+	if active.finished() and active.held_for() >= DEFEAT_HOLD and not _ability_downed:
+		_ability_downed = true
+		downed.emit()
 
 ## Only the body moves above its ground pivot. Colliders, actor, anchors and any
 ## sibling ground shadow stay put; no authored frame or canonical value is changed.
@@ -173,6 +229,7 @@ func _ability_contact(sample: Dictionary, contact: Callable, expected: AbilityAc
 		contact.call(sample.duplicate(true)) # display callback only, never legacy _release
 
 func detach_action_driver() -> void:
+	_clear_ability_defeat()
 	if action_driver == null:
 		return
 	var old := action_driver
@@ -187,6 +244,8 @@ func _driver_request(action: String, direction: Vector2 = Vector2.ZERO) -> bool:
 	return action_driver.request(action, direction if direction.length() > 0.1 else aim)
 
 func reset_motion() -> void:
+	_clear_ability_defeat()
+	_ability_downed = false
 	if action_driver != null:
 		action_driver.cancel("reset_motion")
 		_ability_drawing = {}
@@ -273,11 +332,15 @@ func take_damage(amount: int, from_dir: Vector2 = Vector2.ZERO) -> bool:
 			action_driver.cancel("defeated")
 		_set_state(&"defeat")       # downed is emitted once the fall has played (_animate)
 		_defeat_t = 0.0
+		_ability_downed = false
+		_begin_ability_defeat()
 	elif not is_rolling():
 		_set_state(&"hit")
 	return true
 
 func heal_full() -> void:
+	_clear_ability_defeat()
+	_ability_downed = false
 	hp = max_hp
 
 func _physics_process(delta: float) -> void:
@@ -331,6 +394,17 @@ func _physics_process(delta: float) -> void:
 ## Default drivers tick after Player movement. Planned drivers bypass that pass
 ## and resolve ordered targets through Player, never moving a second body copy.
 func _driver_physics(delta: float) -> void:
+	if is_defeated():
+		velocity = Vector2.ZERO
+		if hp > 0:
+			_clear_ability_defeat()
+			_set_state(&"idle")
+		elif _ability_defeat != null:
+			_advance_ability_defeat(delta)
+		else:
+			_animate(Vector2.ZERO, delta)
+		queue_redraw()
+		return
 	var active := input_enabled and not Dialogue.busy and hp > 0 and not is_defeated()
 	var move := Vector2.ZERO
 	if active:
@@ -430,7 +504,8 @@ func _animate(move: Vector2, delta: float) -> void:
 			sprite.advance(delta)
 			if sprite.finished:
 				_defeat_t += delta
-				if _defeat_t >= DEFEAT_HOLD and hp == 0:
+				if _defeat_t >= DEFEAT_HOLD and hp == 0 and not _ability_downed:
+					_ability_downed = true
 					downed.emit()
 			if hp > 0:              # healed and moved to the zone's start by the game
 				_set_state(&"idle")

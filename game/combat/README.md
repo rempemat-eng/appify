@@ -812,3 +812,25 @@ continuous gait, powered defeat lifecycle, production A/J provider/importer and
 world HP integration remain separate unfinished work. No default driver or
 CastSprite/art change. Full verify/art/hosted non-skipped/rendered/device validation
 remains required before readiness.
+
+## Explicit terminal Player lifecycle (C60 continuation)
+
+`Player.bind_ability_defeat(provider)` is optional and scoped to the currently attached
+action driver. The zero-argument provider supplies `id`, the loaded `manifest`, current
+`facing`, explicit boolean `powered` and `harpoon_out`, and positive per-segment
+`segment_durations`. AbilityDefeatPlayback builds the exact authored defeat plan:
+powered_exit drawings 0..3 followed by ordinary defeat, using Brine's `_empty`
+variants when explicitly requested. No template timings or form flags are inferred.
+
+On existing Player defeat, combat is cancelled first (including pending contacts and
+airborne body offset). Explicit terminal drawings then run on their own finite clock;
+every crossed drawing is applied in order even across a coarse tick. The existing
+DEFEAT_HOLD precedes one `downed` signal. Without a valid terminal contract, the
+existing ordinary defeat animation still advances with a cancelled driver attached.
+Healing, reset, detach, character replacement and scene exit invalidate the terminal
+binding. A missing sheet fails back to ordinary defeat with a recorded error.
+
+This does not map world HP, apply canonical damage, or attach any default driver.
+Production state/timing providers, continuous gait policy, and current-main world
+integration remain unfinished. Fixture clocks in terminal tests are not production
+retiming approval. Full verify/art-repro/rendered/native/device coverage remains open.
