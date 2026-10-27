@@ -2,7 +2,56 @@
 
 Live assignments, acknowledgements, blockers and handoffs: [GitHub issue #149](https://github.com/rempemat-eng/appify/issues/149).
 
-This document coordinates the four Codex chats Matt opened on 20 October 2026. Read the latest `AGENTS.md`, `docs/vision/coherence-plan.md`, its Feedback, and the live issue before editing. The queue and existing explicit chat instructions retain authority. This document adds no mechanics, traversal rules, rewards or permission to change Claude's files.
+## Current routine (27 October 2026)
+
+Read this guide with current `AGENTS.md`, Matt's latest instructions and the live issue. Task assignments and ownership come from the latest applicable claims, releases and decisions on #149; a dated table in a document does not reopen a completed, cancelled or reassigned task. Read the Codex queue and Feedback in `docs/vision/coherence-plan.md`, but reconcile their older entries with those live decisions before selecting work.
+
+Claude A [cancelled C29–C31 on 21 October](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6322623299). Do not restart them because they remain in the old queue or the historical record below. A later task requires its own current claim and scope. The [27 October routine record](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6455025042) records Matt's replacement selection and scheduling instructions. Historical assignments are preserved below for provenance, not as current start conditions.
+
+### Sync and choose one task
+
+1. Fetch the real repository and read current main, `AGENTS.md`, this guide, the Codex queue and Feedback, open PRs and branch heads, and all new or edited #149 comments. Check feedback on your own PRs first. For W0–W7, also read `docs/world-editor.md` on the task's named base; [PR #302](https://github.com/rempemat-eng/appify/pull/302) supplies `claude-a/world-editor` while the editor work is stacked there. Use the named task base rather than assuming every task starts on main.
+2. Register one short, unused word as your slot on #149 and include `slot=` in every post. A renamed continuation retains its existing task, branch, PR and checkpoint; it is not a second worker. Read the latest claims before registering or selecting work.
+3. Continue an active claim before taking anything new. Keep at most one implementation claim active. Otherwise choose an unclaimed, unblocked task where you can add the most value: tooling, checks, data, editor engineering, bug fixes, tests or concepts. Prefer queued tasks and your existing area. A historical task title or an old "free" list is not evidence that a task is still available.
+4. If no queued task fits, a reproducible bug, failing check, missing regression or concrete documentation gap can justify `PROPOSE slot=<slot> task=<id> ...`. State the evidence, exact paths, base and acceptance checks. Start only if no other claim owns those paths and the change introduces no game rules or art direction.
+5. Before writing, post `ASSIGN slot=<slot> task=<id> branch=codex/<name>` with the file scope and base. Refresh #149 immediately: the first valid claim wins. If another worker already owns the task or files, release your competing claim and choose again. A quiet branch, elapsed timer or absent reply does not transfer ownership.
+
+### Gates that remain closed
+
+| Work | Required start condition |
+| --- | --- |
+| X2 journey checks, X3 settlement life data, X4 region plan proposals | Claude A posts an explicit **go** on #149 after the v55 map. A map PR number or a newer draft alone is insufficient. |
+| X5 Crossroads editor conversion | W1–W3 are actually merged, plus the explicit #149 go required by the task's existing instructions. |
+| Other blocked, waiting, parked or dependency-gated tasks | Their own current approval, ownership and integration conditions. No generic task-selection rule removes them. |
+
+Check actual ancestry and exported APIs on the required target. A merge into a stacked branch is not inclusion on main. Do not duplicate another owner's review follow-up or import an unfinished dependency as if it had passed.
+
+### Work, verify and hand off
+
+- Use an isolated branch and one draft PR for the task. Reuse the existing branch/PR for feedback while it remains open; check whether it already merged before updating it. Keep writes within the claimed paths. Shared package, lockfile, save-schema, fixture and CI paths have one writer at a time.
+- Follow `AGENTS.md` and the task's explicit file grants. Never edit `game/actors/player.gd`, force-push, merge, push main, enable auto-merge or change branch protection. Preserve player data and unknown save fields. No game-rule changes; new art or design direction requires Claude A's review. A narrow grant to one chat does not transfer to another.
+- Finish and test one step before pushing. Keep the PR draft while iterating and push once per finished step. Use the real remote history and an expected-head check; reject unexpected branch movement rather than overwriting it. Do not repeatedly merge main just to refresh CI.
+- Run `npm run verify` and `npm run check:art-repro` on the final exact source, plus `check:kit` or `check:godot` when relevant. Lint must have zero warnings. Retain useful logs and exit records; serialize heavy checks when resources are constrained. Skipped, interrupted, killed and partial runs are not passes.
+- Mark ready once after the required local checks pass, then inspect the matching hosted checks. Resolve actual failures before selecting new work. Use a complete label only after applicable matching CI passes. If documented path filters produce no workflow for a docs-only change, record that absence and the local evidence; do not describe it as a hosted pass.
+- Post `HANDOFF slot=<slot> task=<id> pr=<n> head=<sha>` with the exact tested head/tree/base, what ran, results, limitations, remaining blockers and the concrete request for Claude A. Keep the issue update short; technical detail belongs on the PR. A test against an old head or dependency stack does not validate its successor. Desktop or source checks do not establish native-device measurements or manual art approval.
+- Claude A reviews and merges and mirrors #149 posts to the crew board. Codex uses #149 and its task PR, preserving the current ownership boundaries for vision, art, renderer and generated data. A coordinator does not implement or push another worker's task.
+
+### Scheduled checks and blocked work
+
+Set up one hourly continuation per chat using this routine, reusing its existing automation where possible. If scheduling is unavailable, say so once on #149 and run the routine at every task boundary. Keep durable remote checkpoints so the next run can recover without scratch files or duplicate PRs. A scheduled run must inspect a manual owner's current checkpoint before writing or launching competing validation; an enabled schedule or heartbeat does not prove that another chat is alive.
+
+Check #149 at the start, after every push or handoff, at each task boundary, and at least every 15 minutes while working. Read every new or edited comment, including review feedback and changed claims. Paginate the comments or use a complete update cursor: counting only the first 100 comments cannot detect additions once that page is full. While a live continuation is idle, Matt's requested ten-minute polling can supplement the hourly schedule; it does not replace re-reading the thread before action.
+
+If blocked, post `BLOCKED slot=<slot> task=<id> reason=...` with the precise missing input. Safely checkpoint and explicitly park the implementation before choosing other unclaimed work; parking does not give another worker ownership of its branch. Preserve the original blocker and next step. If nothing useful is unclaimed and unblocked, post `IDLE slot=<slot>` once per idle episode and wait for the next scheduled run. Do not repeat unchanged idle or blocker notices every hour, or disable the continuation merely because a task finished. Report actual tool/check failures rather than suppressing them as successful no-action runs.
+
+## Historical record: 20 October 2026
+
+The remainder preserves the original four-chat assignment, interface questions and evidence snapshot. Its imperative wording describes the instructions at that date. It is **not an active assignment list, a new file grant or a current dependency-status report**. In particular, C29–C31 were later cancelled, and later task-specific grants and decisions must be read on #149. Apply the current routine above, not these obsolete start conditions.
+
+<details>
+<summary>Original coordination notes and evidence</summary>
+
+This record coordinated the four Codex chats Matt opened on 20 October 2026. It added no mechanics, traversal rules, rewards or permission to change Claude's files.
 
 ## Assigned work
 
@@ -115,3 +164,5 @@ No C29–C34 task PR or branch claim was found in the initial review. No externa
 
 Ran: latest main, AGENTS/queue/Feedback, open PR and branch review; existing continuation assignment lookup; read-only canvas/ways/audit review; documentation consistency checks.
 Did not test: full app verify/art regeneration, gameplay/browser, native build/runtime/device measurements or any new worker implementation. This change edits documentation and adds an AGENTS pointer only.
+
+</details>
