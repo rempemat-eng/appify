@@ -1,0 +1,94 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "industry_lullford_swing_bridge",
+  "name": "Lullford stone arches and swing span",
+  "kind": "structure",
+  "version": 1,
+  "approval": {
+    "state": "concept",
+    "note": "W0 design proposal only; not drawn, gated, approved or available for placement."
+  },
+  "biomes": [
+    "lullford"
+  ],
+  "variants": [
+    {
+      "id": "closed",
+      "note": "Through route aligned over the river."
+    },
+    {
+      "id": "open",
+      "note": "Span swung into its authored clearance area."
+    }
+  ],
+  "placement": {
+    "role": "landmark_bridge",
+    "ground": {
+      "allow": [
+        "stone",
+        "earth",
+        "water"
+      ],
+      "deny": []
+    },
+    "requires": [
+      {
+        "rel": "on_anchor",
+        "what": "bridge_abutments"
+      }
+    ],
+    "forbids": [],
+    "clearance": 3,
+    "orientations": [
+      "s",
+      "n",
+      "e",
+      "w"
+    ],
+    "snap": "cell",
+    "stages": [],
+    "composition": "axis",
+    "per_zone": {
+      "max": 1
+    }
+  },
+  "rendering": {
+    "contact_ao": true,
+    "cast_shadow": {
+      "shape": "sprite"
+    }
+  },
+  "function": {
+    "interact": {
+      "verb": "look",
+      "triggers": []
+    }
+  },
+  "story": {
+    "lore": "Keep the lowest bridgeable Lull crossing, its island and its moving iron span legible as one place."
+  },
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: custom",
+      "Priority: P2",
+      "Purpose: Keep the lowest bridgeable Lull crossing, its island and its moving iron span legible as one place.",
+      "Visual brief: Old stone arches land on the river island; a contrasting iron swing span, central bearing and dry keeper access explain the moving part. Towpath and barge clearance are distinct.",
+      "Source: docs/vision/regions/neon-harbour-delta.md",
+      "Implement after review: Claude selects the design, draws it, supplies exact anchors/collision and passes the library gate; no concept may ship.",
+      "Geometry: proposed authoring envelope 28x12 cells; one cell is 8 world px / 24 art px. This is not an asserted solid footprint; collision, foot and overhang await the drawing.",
+      "Function: proposed look affordance; bind only existing owner-approved data refs, never infer a quest, fee, reward or transport unlock from this concept.",
+      "Rule proposal: bridge route and boat channel cannot both be marked open across a moving span; navigation waits for the owning way-state adapter.",
+      "Uniqueness: one island/arch/swing-span arrangement; generic masonry and railing parts remain reusable.",
+      "Source status: W7 is the existing way label; this concept does not change its condition, price or transport rule."
+    ]
+  },
+  "geometry": {
+    "size_cells": [
+      28,
+      12
+    ],
+    "z_sort": "foot"
+  }
+}

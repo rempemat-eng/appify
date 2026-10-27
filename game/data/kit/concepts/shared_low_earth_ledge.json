@@ -1,0 +1,94 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "shared_low_earth_ledge",
+  "name": "Low earth ledge face",
+  "kind": "tier",
+  "version": 1,
+  "approval": {
+    "state": "concept",
+    "note": "W0 proposal for Claude review; no art, placement or shipping approval."
+  },
+  "biomes": [
+    "valley",
+    "woodland",
+    "brackens",
+    "tidebloom",
+    "coast"
+  ],
+  "variants": [
+    {
+      "id": "straight",
+      "note": "Cap, foot and side endpoints share one profile."
+    },
+    {
+      "id": "inside_corner",
+      "note": "Continuous lip and occlusion against the higher shelf."
+    },
+    {
+      "id": "outside_corner",
+      "note": "Rounded earth corner at the documented radius."
+    }
+  ],
+  "geometry": {
+    "z_sort": "foot"
+  },
+  "placement": {
+    "role": "tier_face",
+    "ground": {
+      "allow": [],
+      "deny": []
+    },
+    "requires": [
+      {
+        "rel": "on",
+        "what": "tier_edge",
+        "note": "Geometric rise must equal 12 world px; this requires explicit fractional-cell height support."
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "route",
+        "note": "A route crosses only through a stair opening."
+      }
+    ],
+    "clearance": 0,
+    "orientations": [
+      "s",
+      "n",
+      "e",
+      "w"
+    ],
+    "snap": "cell",
+    "stages": [],
+    "composition": "free"
+  },
+  "rendering": {
+    "contact_ao": true
+  },
+  "function": {
+    "interact": null,
+    "costs": [],
+    "yields": []
+  },
+  "story": {
+    "quests": [],
+    "owner": null,
+    "lore": ""
+  },
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared",
+      "Priority: P1",
+      "Purpose: A genuinely low shelf without inventing another stair-height tier.",
+      "Visual brief: Rounded turf cap over layered clods and roots; lit west end and shaded east end; never squeeze the existing high face vertically.",
+      "Size: 12 world px = 36 art px face; length in whole cells.",
+      "Source: docs/vision/eastward-edges.md 2.1 and What the soft grid governs; docs/world-editor.md Tiers",
+      "Implement after review: Claude supplies final art, material IDs, anchors, collision and runtime bindings; W0 assigns none.",
+      "Implementation dependency: present face height is whole cells; 12 world px is 1.5 cells and must not be rounded to 8 or 16.",
+      "Widths: 1-cell modular runs, authored corners and caps; stair apertures 2 or 3 cells."
+    ]
+  }
+}

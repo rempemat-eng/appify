@@ -1,0 +1,92 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "nature_heather_gorse",
+  "name": "Heather and gorse boundary clumps",
+  "kind": "prop",
+  "biomes": [
+    "brackens",
+    "frostline",
+    "valley"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "heather_low",
+      "note": "Low spreading purple heather pillow with several linked lobes and a dark rooted underside."
+    },
+    {
+      "id": "gorse_wide",
+      "note": "Broad gorse clump with a squat irregular crown, ochre flower masses and dense dark stems toward its base."
+    },
+    {
+      "id": "gorse_tall",
+      "note": "Taller asymmetric gorse with a few rising branches above the main mass and a grounded root seat; review its solid mask separately."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 catalogue proposal for Claude review; not drawable approval, not placeable."
+  },
+  "geometry": {
+    "z_sort": "foot",
+    "size_px": [
+      84,
+      60
+    ]
+  },
+  "placement": {
+    "role": "clutter",
+    "ground": {
+      "allow": [
+        "turf",
+        "earth"
+      ],
+      "deny": []
+    },
+    "requires": [],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "route"
+      },
+      {
+        "rel": "on",
+        "what": "door_apron"
+      },
+      {
+        "rel": "on",
+        "what": "water"
+      }
+    ],
+    "clearance": 0.5,
+    "orientations": [
+      "any"
+    ],
+    "snap": "cell",
+    "composition": "cluster",
+    "stages": []
+  },
+  "rendering": {
+    "contact_ao": true
+  },
+  "function": {},
+  "story": {
+    "lore": "Make a porous moor edge with real plant masses and reveal the drove road."
+  },
+  "audit": {
+    "size_class": "bush",
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared. Reusable across the listed places; preserve site-specific assembly and state.",
+      "Priority: P1.",
+      "Purpose: Make a porous moor edge with real plant masses and reveal the drove road.",
+      "Visual brief: Low purple heather pillows alternate with taller ochre-tipped gorse; irregular three-lobed silhouettes, darker root bases and many stems inside one mass rather than isolated spikes.",
+      "Source: docs/vision/regions/valley-plan.md; docs/vision/regions/home-valley-frostline-brackens.md",
+      "Geometry: proposed visual envelope only; Claude supplies exact foot, solid footprint, overhang, interaction anchors and any deck after review.",
+      "Implementation: concept only, outside the live piece library. Do not place, bake or grant gameplay until reviewed and approved.",
+      "Size: bush 41-81 art px high, 44-115 wide; small heather variants may use grass_tuft instead after review.",
+      "Dressing does not decide blockage: substantial gorse footprints require a separately reviewed solid mask.",
+      "Lighting: upper-left key light; shade each material and facing for that light. The lit-picture reference is deferred until art exists."
+    ]
+  }
+}

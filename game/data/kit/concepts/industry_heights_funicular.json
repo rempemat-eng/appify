@@ -1,0 +1,94 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "industry_heights_funicular",
+  "name": "Heights funicular station and track composition",
+  "kind": "structure",
+  "version": 1,
+  "approval": {
+    "state": "concept",
+    "note": "W0 design proposal only; not drawn, gated, approved or available for placement."
+  },
+  "biomes": [
+    "neon_harbour"
+  ],
+  "variants": [
+    {
+      "id": "lower",
+      "note": "Lower station with dry queue apron."
+    },
+    {
+      "id": "upper",
+      "note": "Upper station with cable wheel and route landing."
+    }
+  ],
+  "placement": {
+    "role": "transport_structure",
+    "ground": {
+      "allow": [
+        "stone",
+        "paving",
+        "rock"
+      ],
+      "deny": [
+        "water",
+        "route"
+      ]
+    },
+    "requires": [
+      {
+        "rel": "adjacent",
+        "what": "route",
+        "cells": 1
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "route"
+      }
+    ],
+    "clearance": 2,
+    "orientations": [
+      "s"
+    ],
+    "snap": "cell",
+    "stages": [],
+    "composition": "axis",
+    "per_zone": {
+      "max": 1
+    }
+  },
+  "rendering": {
+    "contact_ao": true,
+    "cast_shadow": {
+      "shape": "sprite"
+    }
+  },
+  "function": {},
+  "story": {
+    "lore": "Reserve the planned Heights shortcut as an engineered route with both stations, instead of dressing an unwalkable slope as stairs."
+  },
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: custom",
+      "Priority: P3",
+      "Purpose: Reserve the planned Heights shortcut as an engineered route with both stations, instead of dressing an unwalkable slope as stairs.",
+      "Visual brief: Two small stone/iron stations embedded in terraces, rails following the actual fall line, a cable sheave over the top and visible supporting base where the line crosses a face.",
+      "Source: docs/vision/regions/neon-harbour-delta.md",
+      "Implement after review: Claude selects the design, draws it, supplies exact anchors/collision and passes the library gate; no concept may ship.",
+      "Geometry: proposed authoring envelope 8x6 cells; one cell is 8 world px / 24 art px. This is not an asserted solid footprint; collision, foot and overhang await the drawing.",
+      "Proposal status: the regional brief calls this a shortcut; implementation requires the owner’s route/transport contract.",
+      "Rule proposal: upper and lower track connectors meet a declared same-system line and each station’s route landing is on that station’s tier; never imply walking on track.",
+      "Uniqueness: station pair and track profile belong to the Heights; shared building/railing pieces can form the shell."
+    ]
+  },
+  "geometry": {
+    "size_cells": [
+      8,
+      6
+    ],
+    "z_sort": "foot"
+  }
+}

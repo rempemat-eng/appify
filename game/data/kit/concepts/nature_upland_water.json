@@ -1,0 +1,101 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "nature_upland_water",
+  "name": "Upland water family",
+  "kind": "water",
+  "biomes": [
+    "woodland",
+    "valley",
+    "frostline",
+    "massif"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "rill",
+      "note": "Thin narrow flow with fine riffles and a shallow visible bed, enclosed by a scaled-down bank treatment."
+    },
+    {
+      "id": "stream",
+      "note": "Clear flowing channel with a dark north-bank body, sparse flow-aligned ripples and lit shallows along the other edges."
+    },
+    {
+      "id": "river",
+      "note": "Broader flowing body with a quiet deep centre, visible bank depth and wider low-frequency ripples."
+    },
+    {
+      "id": "spring_pool",
+      "note": "Sheltered pool with broad still reflections near its source, a visible inlet or spring anchor and a declared outlet."
+    },
+    {
+      "id": "tarn",
+      "note": "Broad cool tarn with a quiet reflective middle, darker deep water under the headwall and a clear snowmelt outlet."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 catalogue proposal for Claude review; not drawable approval, not placeable."
+  },
+  "geometry": {
+    "z_sort": "ground"
+  },
+  "placement": {
+    "role": "water",
+    "ground": {
+      "allow": [
+        "water"
+      ],
+      "deny": []
+    },
+    "requires": [
+      {
+        "rel": "on_anchor",
+        "what": "source_or_inlet",
+        "note": "Proposed selector/relation for review; its exact matching contract must be added to W5 before promotion.",
+        "cells": 0
+      },
+      {
+        "rel": "on_anchor",
+        "what": "outlet_or_closed_basin",
+        "note": "Proposed selector/relation for review; its exact matching contract must be added to W5 before promotion.",
+        "cells": 0
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "structure_footprint"
+      }
+    ],
+    "clearance": 0,
+    "orientations": [
+      "any"
+    ],
+    "snap": "cell",
+    "composition": "free",
+    "stages": []
+  },
+  "rendering": {
+    "contact_ao": false
+  },
+  "function": {},
+  "story": {
+    "lore": "Reuse stream water for the spring, Sleepwater and snowmelt with class-specific width and flow rather than repaint every pool."
+  },
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared. Reusable across the listed places; preserve site-specific assembly and state.",
+      "Priority: P0.",
+      "Purpose: Reuse stream water for the spring, Sleepwater and snowmelt with class-specific width and flow rather than repaint every pool.",
+      "Visual brief: Dark cool body under the north earth bank, a lit line at the water level, quiet deep middle and sparse ripples along declared flow. The spring pool has still patches; the rill has thin riffles; the tarn is broad and reflective.",
+      "Source: docs/world-editor.md; docs/vision/eastward-edges.md; docs/vision/regions/valley-plan.md; docs/vision/regions/home-valley-frostline-brackens.md",
+      "Geometry: proposed visual envelope only; Claude supplies exact foot, solid footprint, overhang, interaction anchors and any deck after review.",
+      "Implementation: concept only, outside the live piece library. Do not place, bake or grant gameplay until reviewed and approved.",
+      "Widths: Rill 1 cell; stream 2-3; river 4-6+; pool/tarn area. Falls must match the feeding channel width.",
+      "Reuse: water, waterfall_1, waterfall_2, waterfall_3, waterfall_4; validate source/end/tier logic before approving new visual variants.",
+      "Lighting: upper-left key light; shade each material and facing for that light. The lit-picture reference is deferred until art exists."
+    ]
+  }
+}

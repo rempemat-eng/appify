@@ -87,6 +87,7 @@
       "properties": {
         "state": {
           "enum": [
+            "concept",
             "candidate",
             "gated",
             "approved",
