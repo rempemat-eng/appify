@@ -128,16 +128,17 @@ def cells_route(points, n: int, H: int, W: int, run: float = 5.0) -> np.ndarray:
     return m
 
 
-def curve_line(points, radius: float) -> np.ndarray:
-    """The polyline (world px) with each corner filleted to a smooth arc of `radius` world px,
-    sampled every 2 px."""
+def curve_line(points, radius: float, share: float = 0.95) -> np.ndarray:
+    """The polyline (world px) with each corner filleted to a smooth arc of `radius` world px (a
+    fillet takes at most `share` of either leg; 0.5 lets the bends meet, a meander with no
+    straight reach), sampled every 2 px."""
     pts = [np.asarray(p, float) for p in points]
     samp = [pts[0]]
     for i in range(1, len(pts) - 1):
         a, b, c = pts[i - 1], pts[i], pts[i + 1]
         u, v = (a - b) / np.linalg.norm(a - b), (c - b) / np.linalg.norm(c - b)
         ang = np.arccos(np.clip(np.dot(u, v), -1, 1))
-        t = min(radius / np.tan(ang / 2), np.linalg.norm(a - b) * 0.95, np.linalg.norm(c - b) * 0.95)
+        t = min(radius / np.tan(ang / 2), np.linalg.norm(a - b) * share, np.linalg.norm(c - b) * share)
         p0, p1 = b + u * t, b + v * t
         for s_ in np.linspace(0, 1, 48):                           # a quadratic curve through the corner
             samp.append((1 - s_) ** 2 * p0 + 2 * (1 - s_) * s_ * b + s_ * s_ * p1)
@@ -161,16 +162,25 @@ def cells_curve(points, n: int, H: int, W: int, radius: float) -> np.ndarray:
     return join4(d.reshape(gh, gw) <= n * CELL / 2.0)
 
 
-def curve_texels(points, n: int, H: int, W: int, radius: float, seed: int) -> np.ndarray:
+def curve_texels(points, n: int, H: int, W: int, radius: float, seed: int, share: float = 0.95,
+                 breathe: float = 0.0, amp=AMP) -> np.ndarray:
     """A desire line (Matt, 27 Oct): a path n cells wide whose straight runs lie on the grid like any
     route and whose one long bend is a smooth arc (Eastward's paths bend smoothly where feet cut a
     corner), its edge lumped like the rest of the soft grid."""
     from scipy.spatial import cKDTree
     yy, xx = np.mgrid[0:H, 0:W]
     tq = np.stack([(xx.ravel() + 0.5) / ctx.D, (yy.ravel() + 0.5) / ctx.D], 1)
-    d, _ = cKDTree(curve_line(points, radius)).query(tq)
-    m = d.reshape(H, W) <= n * CELL / 2.0
-    return soften(m, seed, r_out=R_TURN_OUT, r_in=R_TURN_IN)
+    line = curve_line(points, radius, share)
+    d, i = cKDTree(line).query(tq)
+    hw = np.full(len(line), n * CELL / 2.0)
+    if breathe:
+        # a natural stream's width breathes (narrows over a shoal, widens in a slack): `breathe` of
+        # the half width, on two slow waves along its length (world px)
+        sl = np.concatenate([[0.0], np.cumsum(np.linalg.norm(np.diff(line, axis=0), axis=1))])
+        ph = (seed % 97) * 0.37
+        hw = hw * (1.0 + breathe * (0.6 * np.sin(sl / 7.0 + ph) + 0.4 * np.sin(sl / 3.3 + 1.0 + ph)))
+    m = d.reshape(H, W) <= hw[i].reshape(H, W)
+    return soften(m, seed, r_out=R_TURN_OUT, r_in=R_TURN_IN, amp=amp)
 
 
 def route_shape(points, n: int, H: int, W: int, seed: int, run: float = 5.0) -> np.ndarray:

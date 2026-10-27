@@ -1,7 +1,7 @@
 {
  "id": "woodland/ground",
  "file": "game/zones/woodland/art/ground.png",
- "sha256": "8644941d28cb544861d281d20c3ce0eb718505b060c59c3b55da4d724d0a5465",
+ "sha256": "562287de531ffeb449a25d693cdcb6e800badc3245d882f4e043fcc9e7be73d7",
  "kind": "ground",
  "biome": "woodland",
  "H": 74.0,
