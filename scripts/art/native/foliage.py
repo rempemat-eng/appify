@@ -679,6 +679,62 @@ def paint_masses(arr, d, seed=0, look=None, size=None):
     if hole.any():
         idx = ndi.distance_transform_edt(out_t < 0, return_distances=False, return_indices=True)
         out_t[hole] = out_t[idx[0][hole], idx[1][hole]]
+    # (look 'layers', off by default: the Crossroads' trees, Matt 27 Oct "trees could be a touch more
+    # detailed") the crown in layers: the clumps at the back a tone darker than those in front, a
+    # crease of under-shade where each clump tucks behind the one in front of it (below or east), so
+    # every cluster reads on its own; a few gaps deep in the crown's lower half where the dark inside
+    # shows and a branch crosses it
+    branch = np.zeros((Hp, Wp), bool)
+    branch_lit = np.zeros((Hp, Wp), bool)
+    if lk.get('layers') and len(clumps) > 2:
+        back = (owner >= 0) & (owner < max(1, int(len(clumps) * 0.4)))
+        out_t[painted & back & (out_t >= 2)] -= 1
+        crease = np.zeros((Hp, Wp), bool)
+        for dy, dx in ((1, 0), (0, 1), (2, 0)):
+            o2 = np.full_like(owner, -1)
+            o2[:Hp - dy, :Wp - dx] = owner[dy:, dx:]
+            crease |= painted & (owner >= 0) & (o2 > owner)
+        out_t[crease & (out_t >= 1)] = np.minimum(out_t[crease & (out_t >= 1)], 1)
+        # the front clump's crown lit just over the crease (its rim against the darker one behind)
+        lit = np.zeros((Hp, Wp), bool)
+        lit[:-1] = crease[1:] & ~crease[:-1]
+        lit &= painted & (out_t >= 2) & (out_t <= 3)
+        out_t[lit] += 1
+        ys_, xs_ = np.nonzero(S_in)
+        if len(ys_):
+            ylo, yhi = ys_.min(), ys_.max()
+            inner = ndi.binary_erosion(painted, iterations=max(2, int(3 * d)))
+            # gaps open where two clumps part (on a crease), in the crown's lower half
+            cand = np.nonzero(inner & crease & (yy > ylo + 0.45 * (yhi - ylo)) & (yy < ylo + 0.85 * (yhi - ylo)))
+            n_g = int(lk.get('gaps', 2))
+            tx_ = (xs_.min() + xs_.max()) / 2.0                    # the trunk's column: branches lead to it
+            used = []
+            if len(cand[0]):
+                for gi in rng.permutation(len(cand[0])):
+                    if len(used) >= n_g:
+                        break
+                    gy, gx = cand[0][gi], cand[1][gi]
+                    if any(abs(gx - ux) < 9 * d and abs(gy - uy) < 6 * d for ux, uy in used):
+                        continue
+                    used.append((gx, gy))
+                    hm = np.zeros((Hp, Wp), bool)
+                    for (ox_, oy_, r_) in ((0, 0, 2.2), (rng.uniform(-2.2, 2.2), rng.uniform(-0.8, 0.8), 1.7),
+                                           (rng.uniform(-2.0, 2.0), rng.uniform(0.3, 1.2), 1.4)):
+                        hm |= ((xx - gx - ox_ * d) / (r_ * d)) ** 2 + ((yy - gy - oy_ * d) / (r_ * 0.75 * d)) ** 2 <= 1
+                    hm &= painted
+                    out_t[hm] = 0
+                    rim_ = hm & ~ndi.binary_erosion(hm)
+                    out_t[rim_] = 1
+                    # a branch across the gap, leaning down towards the trunk
+                    sgn = 1 if gx < tx_ else -1
+                    for t_ in np.linspace(-3.6, 3.6, 56):
+                        bx, by = gx + t_ * d, gy - sgn * t_ * 0.45 * d
+                        for w_ in range(2):
+                            yb_, xb_ = int(round(by)) + w_, int(round(bx))
+                            if 0 <= yb_ < Hp and 0 <= xb_ < Wp and hm[yb_, xb_] and not rim_[yb_, xb_]:
+                                branch[yb_, xb_] = True
+                                if w_ == 0:
+                                    branch_lit[yb_, xb_] = True
     # a weeping crown's strands hang behind its leaf masses: ribbons lit on their left, a
     # leaf notch every few texels, the tips a tone down
     LAST_MASS['strands'] = None
@@ -798,6 +854,9 @@ def paint_masses(arr, d, seed=0, look=None, size=None):
                 out[y:y + k_, x:x + k_, :3] = pk.rgb(lk['berries'], 3)
                 out[y + k_ - 1, x + 1:x + k_, :3] = pk.rgb(lk['berries'], 1)
                 out[y, x, :3] = pk.rgb(lk['berries'], 5)
+    if branch.any():
+        out[branch, :3] = pk.rgb('timber_cool', 2)
+        out[branch_lit, :3] = pk.rgb('timber_cool', 3)
     anc = (pad + W1 * sx / 2.0, pad + H1 * sy)
     LAST_MASS['mass'] = S
     return out, anc, (pad, sx, sy)

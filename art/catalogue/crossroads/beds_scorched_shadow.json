@@ -1,7 +1,7 @@
 {
  "id": "crossroads/beds_scorched_shadow",
  "file": "game/zones/crossroads/art/beds_scorched_shadow.png",
- "sha256": "3f8ab58e4f50215ef0ac34bd32db9f1f7b3a2ec30146c7ca7a2439ab44db6310",
+ "sha256": "319f480f85d9179534687f5bf7b2738ab7a97a6c5a1850c0887ecc56f339a8e5",
  "kind": "beds_scorched_shadow",
  "biome": "valley",
  "H": 74.0,

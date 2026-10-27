@@ -1,0 +1,69 @@
+{
+ "id": "crossroads/kit_lantern_m3",
+ "file": "game/zones/crossroads/art/kit_lantern_m3.png",
+ "sha256": "37a1f91f27d111c6aba289fef6981232b617cefa936e3d2df9561b995de7c70a",
+ "kind": "kit_lantern_m3",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  54,
+  120
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 2
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 5,
+   "tones": 19.6,
+   "shapes": 30.2
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.6,
+  "tones_ratio": 0.726,
+  "shapes_ratio": 0.6,
+  "passed": false,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    20,
+    21,
+    34,
+    49
+   ],
+   "message": "crossroads/kit_lantern_m3: the wood is lit from the right (luminance rises 125 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    2,
+    5,
+    38,
+    118
+   ],
+   "message": "crossroads/kit_lantern_m3: detail bar 0.60 of Eastward's prop band (19.6 tones, 30.2 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  }
+ ],
+ "reviewed": "2026-10-27",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}

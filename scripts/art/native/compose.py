@@ -211,7 +211,39 @@ def foliage_sprite_hd(kind, old, d, seed, ex, look=None, bark='oak', scale=None)
     c = Image.new('RGBA', (W, H), (0, 0, 0, 0))
     c.alpha_composite(tr, (int(round(oxt)), int(round(oyt))))
     c.alpha_composite(Image.fromarray(out), (int(round(oxf)), int(round(oyf))))
+    if ex.get('trunk_shade'):
+        # (the Crossroads' trees, 27 Oct) the crown's shadow on its trunk: the bark just under the
+        # crown two tones down for 3 world px, one tone for 3 more, along its own ramp
+        c = _shade_trunk(c, d)
     return c, None, np.asarray(c)[..., 3] > 0
+
+
+def _shade_trunk(img, d):
+    """The bark under a crown in its shade: in each trunk column, the pixels for 4 world px below
+    the crown's lowest leaf a tone down along their own house ramp (the bark's texture kept)."""
+    from .palette import RAMPS
+    a = np.asarray(img).copy()
+    al = a[..., 3] > 0
+    rgbi = a[..., :3].astype(int)
+    green = al & (rgbi[..., 1] > rgbi[..., 0] + 4)
+    bark = al & ~green
+    look = {}
+    for f in RAMPS:
+        for t in range(6):
+            look[tuple(pk.rgb(f, t))] = (f, t)
+    for x in np.nonzero(bark.any(0))[0]:
+        gy = np.nonzero(green[:, x])[0]
+        by = np.nonzero(bark[:, x])[0]
+        if not len(gy) or not len(by):
+            continue
+        y0 = gy.max() + 1
+        for y in range(y0, min(a.shape[0], y0 + int(round(4 * d)))):
+            if not bark[y, x]:
+                continue
+            k = look.get(tuple(int(v) for v in a[y, x, :3]))
+            if k:
+                a[y, x, :3] = pk.rgb(k[0], max(1, k[1] - 1) if k[1] >= 1 else 0)
+    return Image.fromarray(a.astype(np.uint8), 'RGBA')
 
 
 def ctiles_bush(d, w, h, seed):

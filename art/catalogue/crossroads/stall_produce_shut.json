@@ -1,0 +1,69 @@
+{
+ "id": "crossroads/stall_produce_shut",
+ "file": "game/zones/crossroads/art/stall_produce_shut.png",
+ "sha256": "f4c6fbe084c3787dee3f42d99c5e642d41bcad8d610ef84a48c52e744fb2b336",
+ "kind": "stall_produce_shut",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  138,
+  162
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 2
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 24,
+   "tones": 17.5,
+   "shapes": 27.5
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.546,
+  "tones_ratio": 0.648,
+  "shapes_ratio": 0.546,
+  "passed": false,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    14,
+    119,
+    99,
+    159
+   ],
+   "message": "crossroads/stall_produce_shut: the red is lit from the right (luminance rises 8 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
+  },
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    8,
+    31,
+    130,
+    159
+   ],
+   "message": "crossroads/stall_produce_shut: detail bar 0.55 of Eastward's prop band (17.5 tones, 27.5 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  }
+ ],
+ "reviewed": "2026-10-27",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}

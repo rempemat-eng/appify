@@ -329,6 +329,33 @@
    "chunky": "seat and length a touch big, as Eastward's (its seat is 0.46 A, real 0.26 A)",
    "measure": "bbox"
   },
+  "bench_side": {
+   "group": "prop",
+   "names": [
+    "bench_side",
+    "side_bench"
+   ],
+   "h": [
+    70,
+    110
+   ],
+   "w": [
+    15,
+    40
+   ],
+   "h_A": [
+    0.95,
+    1.49
+   ],
+   "w_A": [
+    0.2,
+    0.54
+   ],
+   "real": "a bench turned side on: its 1.5 to 1.8 m length runs north to south (seen from above, not foreshortened), its back 0.85 m high along the far side, the seat 0.4 to 0.5 m deep",
+   "eastward": "as the bench (66 x 47 E with its back in 12 and 38), its length laid north to south",
+   "chunky": null,
+   "measure": "bbox"
+  },
   "chair": {
    "group": "prop",
    "names": [
@@ -1837,7 +1864,8 @@
  },
  "aliases": {
   "undercroft/stump": "pillar_stump",
-  "_about": "zone/name -> class where a name means something else in that zone (the Undercroft's stumps are broken columns)"
+  "_about": "zone/name -> class where a name means something else in that zone (the Undercroft's stumps are broken columns)",
+  "crossroads/bench_side": "bench_side"
  },
  "cast": {
   "creature_small": [

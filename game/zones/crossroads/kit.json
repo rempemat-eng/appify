@@ -5,7 +5,7 @@
   1920,
   1680
  ],
- "inputs": "47e2c00bacd17b88131922b7d718d42ff9a931228667fc17a8bc9b7f8e0153a7",
+ "inputs": "b994ba804587562e874d3b05ba30970220ba292bddc156714b96e9409fd2a9d0",
  "kit_drawn": [
   "anvil.png",
   "bakery.png",
@@ -14,14 +14,18 @@
   "barrel_31.png",
   "barrel_37.png",
   "barrel_39.png",
+  "basket_e.png",
+  "basket_s.png",
+  "basket_w.png",
   "beds_dug.png",
   "beds_scorched.png",
-  "bench_28.png",
-  "bench_58.png",
+  "bench_side_e.png",
+  "bench_side_w.png",
   "coal_34.png",
+  "crate_m6.png",
   "crater_smoke.png",
   "crates_30.png",
-  "crates_32.png",
+  "crates_m10.png",
   "debris_a.png",
   "debris_b.png",
   "debris_c.png",
@@ -45,8 +49,6 @@
   "forge_fire.png",
   "grindstone_36.png",
   "handcart.png",
-  "hay_19.png",
-  "hay_20.png",
   "herbalist.png",
   "herbalist_damage.png",
   "hut.png",
@@ -54,6 +56,7 @@
   "lantern_lit.png",
   "library.png",
   "library_damage.png",
+  "mown_field.png",
   "north_cottages.png",
   "north_cottages_damage.png",
   "notice_board.png",
@@ -64,6 +67,16 @@
   "square_rubble_a.png",
   "square_rubble_b.png",
   "stall.png",
+  "stall_bread.png",
+  "stall_bread_shut.png",
+  "stall_cloth.png",
+  "stall_cloth_shut.png",
+  "stall_fish.png",
+  "stall_fish_shut.png",
+  "stall_produce.png",
+  "stall_produce_shut.png",
+  "stall_tools.png",
+  "stall_tools_shut.png",
   "trough_35.png",
   "waystone.png",
   "well.png",
@@ -321,7 +334,7 @@
    "kind": "well_choked",
    "png": "well_choked.png",
    "foot": [
-    864,
+    960,
     960
    ],
    "offset": [
@@ -334,7 +347,7 @@
     ]
    },
    "solid": [
-    276,
+    308,
     300,
     24,
     20
@@ -345,7 +358,7 @@
    "kind": "well",
    "png": "well.png",
    "foot": [
-    864,
+    960,
     960
    ],
    "offset": [
@@ -358,7 +371,7 @@
     ]
    },
    "solid": [
-    278,
+    310,
     304,
     20,
     16
@@ -449,12 +462,12 @@
    "kind": "rubble",
    "png": "square_rubble_a.png",
    "foot": [
-    705,
-    1074
+    726,
+    996
    ],
    "offset": [
-    -54,
-    -105
+    -51,
+    -93
    ],
    "cond": {
     "not_flags": [
@@ -462,10 +475,10 @@
     ]
    },
    "solid": [
-    220,
-    340,
-    30,
-    18
+    228,
+    316,
+    28,
+    16
    ]
   },
   {
@@ -473,17 +486,21 @@
    "kind": "rubble",
    "png": "square_rubble_b.png",
    "foot": [
-    1227,
-    690
+    1179,
+    948
    ],
    "offset": [
     -48,
     -93
    ],
-   "cond": null,
+   "cond": {
+    "not_flags": [
+     "shard_home:woodland"
+    ]
+   },
    "solid": [
-    396,
-    214,
+    380,
+    300,
     26,
     16
    ]
@@ -530,8 +547,8 @@
    "kind": "lantern",
    "png": "lantern_dark.png",
    "foot": [
-    936,
-    936
+    960,
+    744
    ],
    "offset": [
     -42,
@@ -543,8 +560,8 @@
     ]
    },
    "solid": [
-    307,
-    290,
+    315,
+    226,
     10,
     22
    ]
@@ -554,8 +571,8 @@
    "kind": "lantern_lit",
    "png": "lantern_lit.png",
    "foot": [
-    936,
-    936
+    960,
+    744
    ],
    "offset": [
     -42,
@@ -567,8 +584,8 @@
     ]
    },
    "solid": [
-    307,
-    290,
+    315,
+    226,
     10,
     22
    ]
@@ -598,7 +615,7 @@
    "png": "beds_scorched.png",
    "foot": [
     1272,
-    360
+    192
    ],
    "offset": [
     -129,
@@ -617,7 +634,7 @@
    "png": "beds_dug.png",
    "foot": [
     1272,
-    360
+    192
    ],
    "offset": [
     -129,
@@ -635,8 +652,8 @@
    "kind": "stall",
    "png": "stall.png",
    "foot": [
-    1152,
-    768
+    1104,
+    792
    ],
    "offset": [
     -69,
@@ -644,8 +661,248 @@
    ],
    "cond": null,
    "solid": [
-    366,
-    240,
+    350,
+    248,
+    36,
+    16
+   ]
+  },
+  {
+   "id": "stall_bread",
+   "kind": "stall_bread",
+   "png": "stall_bread.png",
+   "foot": [
+    672,
+    792
+   ],
+   "offset": [
+    -69,
+    -158
+   ],
+   "cond": {
+    "flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": [
+    206,
+    248,
+    36,
+    16
+   ]
+  },
+  {
+   "id": "stall_bread_shut",
+   "kind": "stall_closed",
+   "png": "stall_bread_shut.png",
+   "foot": [
+    672,
+    792
+   ],
+   "offset": [
+    -69,
+    -158
+   ],
+   "cond": {
+    "not_flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": [
+    206,
+    248,
+    36,
+    16
+   ]
+  },
+  {
+   "id": "stall_fish",
+   "kind": "stall_fish",
+   "png": "stall_fish.png",
+   "foot": [
+    816,
+    792
+   ],
+   "offset": [
+    -69,
+    -158
+   ],
+   "cond": {
+    "flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": [
+    254,
+    248,
+    36,
+    16
+   ]
+  },
+  {
+   "id": "stall_fish_shut",
+   "kind": "stall_closed",
+   "png": "stall_fish_shut.png",
+   "foot": [
+    816,
+    792
+   ],
+   "offset": [
+    -69,
+    -158
+   ],
+   "cond": {
+    "not_flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": [
+    254,
+    248,
+    36,
+    16
+   ]
+  },
+  {
+   "id": "stall_cloth",
+   "kind": "stall_cloth",
+   "png": "stall_cloth.png",
+   "foot": [
+    1248,
+    792
+   ],
+   "offset": [
+    -69,
+    -158
+   ],
+   "cond": {
+    "flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": [
+    398,
+    248,
+    36,
+    16
+   ]
+  },
+  {
+   "id": "stall_cloth_shut",
+   "kind": "stall_closed",
+   "png": "stall_cloth_shut.png",
+   "foot": [
+    1248,
+    792
+   ],
+   "offset": [
+    -69,
+    -158
+   ],
+   "cond": {
+    "not_flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": [
+    398,
+    248,
+    36,
+    16
+   ]
+  },
+  {
+   "id": "stall_tools",
+   "kind": "stall_tools",
+   "png": "stall_tools.png",
+   "foot": [
+    672,
+    1152
+   ],
+   "offset": [
+    -69,
+    -158
+   ],
+   "cond": {
+    "flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": [
+    206,
+    368,
+    36,
+    16
+   ]
+  },
+  {
+   "id": "stall_tools_shut",
+   "kind": "stall_closed",
+   "png": "stall_tools_shut.png",
+   "foot": [
+    672,
+    1152
+   ],
+   "offset": [
+    -69,
+    -158
+   ],
+   "cond": {
+    "not_flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": [
+    206,
+    368,
+    36,
+    16
+   ]
+  },
+  {
+   "id": "stall_produce",
+   "kind": "stall_produce",
+   "png": "stall_produce.png",
+   "foot": [
+    1248,
+    1152
+   ],
+   "offset": [
+    -69,
+    -158
+   ],
+   "cond": {
+    "flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": [
+    398,
+    368,
+    36,
+    16
+   ]
+  },
+  {
+   "id": "stall_produce_shut",
+   "kind": "stall_closed",
+   "png": "stall_produce_shut.png",
+   "foot": [
+    1248,
+    1152
+   ],
+   "offset": [
+    -69,
+    -158
+   ],
+   "cond": {
+    "not_flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": [
+    398,
+    368,
     36,
     16
    ]
@@ -670,8 +927,8 @@
    "kind": "waystone",
    "png": "waystone.png",
    "foot": [
-    1260,
-    1080
+    960,
+    1152
    ],
    "offset": [
     -45,
@@ -775,8 +1032,8 @@
    "kind": "oak",
    "png": "oak_6.png",
    "foot": [
-    552,
-    144
+    528,
+    288
    ],
    "offset": [
     -105,
@@ -784,8 +1041,8 @@
    ],
    "cond": null,
    "solid": [
-    180,
-    45,
+    172,
+    93,
     8,
     4
    ]
@@ -875,7 +1132,7 @@
    "kind": "woodpile",
    "png": "woodpile_11.png",
    "foot": [
-    1140,
+    744,
     192
    ],
    "offset": [
@@ -884,7 +1141,7 @@
    ],
    "cond": null,
    "solid": [
-    369.0,
+    237.0,
     56,
     22,
     8
@@ -895,7 +1152,7 @@
    "kind": "sacks",
    "png": "sacks_12.png",
    "foot": [
-    804,
+    1116,
     192
    ],
    "offset": [
@@ -904,31 +1161,26 @@
    ],
    "cond": null,
    "solid": [
-    261.0,
+    365.0,
     56,
     14,
     8
    ]
   },
   {
-   "id": "oak_13",
-   "kind": "oak",
-   "png": "oak_13.png",
+   "id": "bush_13",
+   "kind": "bush",
+   "png": "bush_13.png",
    "foot": [
     120,
     72
    ],
    "offset": [
-    -105,
-    -243
+    -57,
+    -73
    ],
    "cond": null,
-   "solid": [
-    36,
-    21,
-    8,
-    4
-   ]
+   "solid": null
   },
   {
    "id": "bush_14",
@@ -1006,42 +1258,12 @@
    "solid": null
   },
   {
-   "id": "hay_19",
-   "kind": "hay",
-   "png": "hay_19.png",
-   "foot": [
-    1620,
-    192
-   ],
-   "offset": [
-    -33,
-    -62
-   ],
-   "cond": null,
-   "solid": null
-  },
-  {
-   "id": "hay_20",
-   "kind": "hay",
-   "png": "hay_20.png",
-   "foot": [
-    1776,
-    288
-   ],
-   "offset": [
-    -33,
-    -62
-   ],
-   "cond": null,
-   "solid": null
-  },
-  {
    "id": "oak_21",
    "kind": "oak",
    "png": "oak_21.png",
    "foot": [
     1848,
-    120
+    288
    ],
    "offset": [
     -106,
@@ -1050,7 +1272,7 @@
    "cond": null,
    "solid": [
     612,
-    37,
+    93,
     8,
     4
    ]
@@ -1090,8 +1312,8 @@
    "kind": "kit_lantern",
    "png": "kit_lantern_24.png",
    "foot": [
-    876,
-    600
+    864,
+    624
    ],
    "offset": [
     -12,
@@ -1099,8 +1321,8 @@
    ],
    "cond": null,
    "solid": [
-    290,
-    198,
+    286,
+    206,
     4,
     3
    ]
@@ -1111,7 +1333,7 @@
    "png": "kit_lantern_25.png",
    "foot": [
     1056,
-    600
+    624
    ],
    "offset": [
     -12,
@@ -1120,7 +1342,7 @@
    "cond": null,
    "solid": [
     350,
-    198,
+    206,
     4,
     3
    ]
@@ -1131,7 +1353,7 @@
    "png": "flower_tub_26.png",
    "foot": [
     696,
-    600
+    624
    ],
    "offset": [
     -27,
@@ -1140,7 +1362,7 @@
    "cond": null,
    "solid": [
     226.0,
-    194,
+    202,
     12,
     6
    ]
@@ -1151,7 +1373,7 @@
    "png": "flower_tub_27.png",
    "foot": [
     804,
-    600
+    624
    ],
    "offset": [
     -27,
@@ -1160,28 +1382,8 @@
    "cond": null,
    "solid": [
     262.0,
-    194,
+    202,
     12,
-    6
-   ]
-  },
-  {
-   "id": "bench_28",
-   "kind": "bench",
-   "png": "bench_28.png",
-   "foot": [
-    1056,
-    1104
-   ],
-   "offset": [
-    -45,
-    -59
-   ],
-   "cond": null,
-   "solid": [
-    340.0,
-    362,
-    24,
     6
    ]
   },
@@ -1230,8 +1432,8 @@
    "kind": "barrel",
    "png": "barrel_31.png",
    "foot": [
-    1080,
-    768
+    1176,
+    792
    ],
    "offset": [
     -24,
@@ -1239,30 +1441,10 @@
    ],
    "cond": null,
    "solid": [
-    355.0,
-    248,
+    387.0,
+    256,
     10,
     8
-   ]
-  },
-  {
-   "id": "crates_32",
-   "kind": "crates",
-   "png": "crates_32.png",
-   "foot": [
-    1236,
-    768
-   ],
-   "offset": [
-    -27,
-    -110
-   ],
-   "cond": null,
-   "solid": [
-    406.0,
-    246,
-    12,
-    10
    ]
   },
   {
@@ -1370,8 +1552,8 @@
    "kind": "flower_tub",
    "png": "flower_tub_38.png",
    "foot": [
-    1320,
-    1248
+    1500,
+    1272
    ],
    "offset": [
     -27,
@@ -1379,8 +1561,8 @@
    ],
    "cond": null,
    "solid": [
-    434.0,
-    410,
+    494.0,
+    418,
     12,
     6
    ]
@@ -1746,8 +1928,8 @@
    "kind": "cart",
    "png": "handcart.png",
    "foot": [
-    708,
-    792
+    1284,
+    696
    ],
    "offset": [
     -57,
@@ -1755,30 +1937,10 @@
    ],
    "cond": null,
    "solid": [
-    225.0,
-    256,
+    417.0,
+    224,
     22,
     8
-   ]
-  },
-  {
-   "id": "bench_58",
-   "kind": "bench",
-   "png": "bench_58.png",
-   "foot": [
-    816,
-    1104
-   ],
-   "offset": [
-    -45,
-    -59
-   ],
-   "cond": null,
-   "solid": [
-    260.0,
-    362,
-    24,
-    6
    ]
   },
   {
@@ -1787,7 +1949,7 @@
    "png": "flower_tub_59.png",
    "foot": [
     1140,
-    600
+    624
    ],
    "offset": [
     -27,
@@ -1796,7 +1958,7 @@
    "cond": null,
    "solid": [
     374.0,
-    194,
+    202,
     12,
     6
    ]
@@ -1807,7 +1969,7 @@
    "png": "flower_tub_60.png",
    "foot": [
     1212,
-    600
+    624
    ],
    "offset": [
     -27,
@@ -1816,8 +1978,243 @@
    "cond": null,
    "solid": [
     398.0,
-    194,
+    202,
     12,
+    6
+   ]
+  },
+  {
+   "id": "kit_lantern_m0",
+   "kind": "kit_lantern",
+   "png": "kit_lantern_m0.png",
+   "foot": [
+    600,
+    624
+   ],
+   "offset": [
+    -12,
+    -118
+   ],
+   "cond": null,
+   "solid": [
+    198,
+    206,
+    4,
+    3
+   ]
+  },
+  {
+   "id": "kit_lantern_m1",
+   "kind": "kit_lantern",
+   "png": "kit_lantern_m1.png",
+   "foot": [
+    1320,
+    624
+   ],
+   "offset": [
+    -12,
+    -118
+   ],
+   "cond": null,
+   "solid": [
+    438,
+    206,
+    4,
+    3
+   ]
+  },
+  {
+   "id": "kit_lantern_m2",
+   "kind": "kit_lantern",
+   "png": "kit_lantern_m2.png",
+   "foot": [
+    600,
+    1248
+   ],
+   "offset": [
+    -12,
+    -118
+   ],
+   "cond": null,
+   "solid": [
+    198,
+    414,
+    4,
+    3
+   ]
+  },
+  {
+   "id": "kit_lantern_m3",
+   "kind": "kit_lantern",
+   "png": "kit_lantern_m3.png",
+   "foot": [
+    1320,
+    1248
+   ],
+   "offset": [
+    -12,
+    -118
+   ],
+   "cond": null,
+   "solid": [
+    438,
+    414,
+    4,
+    3
+   ]
+  },
+  {
+   "id": "bench_side_w",
+   "kind": "bench_side_e",
+   "png": "bench_side_w.png",
+   "foot": [
+    612,
+    1032
+   ],
+   "offset": [
+    -15,
+    -95
+   ],
+   "cond": null,
+   "solid": [
+    201.0,
+    326,
+    6,
+    18
+   ]
+  },
+  {
+   "id": "bench_side_e",
+   "kind": "bench_side_w",
+   "png": "bench_side_e.png",
+   "foot": [
+    1308,
+    1032
+   ],
+   "offset": [
+    -15,
+    -95
+   ],
+   "cond": null,
+   "solid": [
+    433.0,
+    326,
+    6,
+    18
+   ]
+  },
+  {
+   "id": "crate_m6",
+   "kind": "crate",
+   "png": "crate_m6.png",
+   "foot": [
+    744,
+    792
+   ],
+   "offset": [
+    -24,
+    -65
+   ],
+   "cond": null,
+   "solid": [
+    243.0,
+    256,
+    10,
+    8
+   ]
+  },
+  {
+   "id": "basket_w",
+   "kind": "basket",
+   "png": "basket_w.png",
+   "foot": [
+    888,
+    792
+   ],
+   "offset": [
+    -21,
+    -41
+   ],
+   "cond": null,
+   "solid": [
+    291.0,
+    258,
+    10,
+    6
+   ]
+  },
+  {
+   "id": "basket_e",
+   "kind": "basket",
+   "png": "basket_e.png",
+   "foot": [
+    1032,
+    792
+   ],
+   "offset": [
+    -21,
+    -41
+   ],
+   "cond": null,
+   "solid": [
+    339.0,
+    258,
+    10,
+    6
+   ]
+  },
+  {
+   "id": "mown_field",
+   "kind": "mown_field",
+   "png": "mown_field.png",
+   "foot": [
+    1668,
+    336
+   ],
+   "offset": [
+    -138,
+    -302
+   ],
+   "cond": null,
+   "solid": null
+  },
+  {
+   "id": "crates_m10",
+   "kind": "crates",
+   "png": "crates_m10.png",
+   "foot": [
+    756,
+    1152
+   ],
+   "offset": [
+    -27,
+    -110
+   ],
+   "cond": null,
+   "solid": [
+    246.0,
+    374,
+    12,
+    10
+   ]
+  },
+  {
+   "id": "basket_s",
+   "kind": "basket",
+   "png": "basket_s.png",
+   "foot": [
+    1164,
+    1152
+   ],
+   "offset": [
+    -21,
+    -41
+   ],
+   "cond": null,
+   "solid": [
+    383.0,
+    378,
+    10,
     6
    ]
   },
@@ -1826,7 +2223,7 @@
    "kind": "shadow",
    "png": "well_choked_shadow.png",
    "foot": [
-    832,
+    928,
     956
    ],
    "offset": [
@@ -1846,7 +2243,7 @@
    "kind": "shadow",
    "png": "well_shadow.png",
    "foot": [
-    838,
+    934,
     956
    ],
    "offset": [
@@ -1906,8 +2303,8 @@
    "kind": "shadow",
    "png": "square_rubble_a_shadow.png",
    "foot": [
-    651,
-    1070
+    678,
+    992
    ],
    "offset": [
     0,
@@ -1920,6 +2317,26 @@
    },
    "solid": null,
    "of": "square_rubble_a"
+  },
+  {
+   "id": "square_rubble_b_shadow",
+   "kind": "shadow",
+   "png": "square_rubble_b_shadow.png",
+   "foot": [
+    1133,
+    944
+   ],
+   "offset": [
+    0,
+    0
+   ],
+   "cond": {
+    "not_flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": null,
+   "of": "square_rubble_b"
   },
   {
    "id": "fern_rubble_shadow",
@@ -1946,8 +2363,8 @@
    "kind": "shadow",
    "png": "lantern_dark_shadow.png",
    "foot": [
-    912,
-    932
+    936,
+    740
    ],
    "offset": [
     0,
@@ -1966,8 +2383,8 @@
    "kind": "shadow",
    "png": "lantern_lit_shadow.png",
    "foot": [
-    912,
-    932
+    936,
+    740
    ],
    "offset": [
     0,
@@ -1987,7 +2404,7 @@
    "png": "beds_scorched_shadow.png",
    "foot": [
     1148,
-    356
+    188
    ],
    "offset": [
     0,
@@ -2007,7 +2424,7 @@
    "png": "beds_dug_shadow.png",
    "foot": [
     1148,
-    356
+    188
    ],
    "offset": [
     0,
@@ -2022,12 +2439,212 @@
    "of": "beds_dug"
   },
   {
+   "id": "stall_bread_shadow",
+   "kind": "shadow",
+   "png": "stall_bread_shadow.png",
+   "foot": [
+    617,
+    788
+   ],
+   "offset": [
+    0,
+    0
+   ],
+   "cond": {
+    "flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": null,
+   "of": "stall_bread"
+  },
+  {
+   "id": "stall_bread_shut_shadow",
+   "kind": "shadow",
+   "png": "stall_bread_shut_shadow.png",
+   "foot": [
+    617,
+    788
+   ],
+   "offset": [
+    0,
+    0
+   ],
+   "cond": {
+    "not_flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": null,
+   "of": "stall_bread_shut"
+  },
+  {
+   "id": "stall_fish_shadow",
+   "kind": "shadow",
+   "png": "stall_fish_shadow.png",
+   "foot": [
+    761,
+    788
+   ],
+   "offset": [
+    0,
+    0
+   ],
+   "cond": {
+    "flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": null,
+   "of": "stall_fish"
+  },
+  {
+   "id": "stall_fish_shut_shadow",
+   "kind": "shadow",
+   "png": "stall_fish_shut_shadow.png",
+   "foot": [
+    761,
+    788
+   ],
+   "offset": [
+    0,
+    0
+   ],
+   "cond": {
+    "not_flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": null,
+   "of": "stall_fish_shut"
+  },
+  {
+   "id": "stall_cloth_shadow",
+   "kind": "shadow",
+   "png": "stall_cloth_shadow.png",
+   "foot": [
+    1193,
+    788
+   ],
+   "offset": [
+    0,
+    0
+   ],
+   "cond": {
+    "flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": null,
+   "of": "stall_cloth"
+  },
+  {
+   "id": "stall_cloth_shut_shadow",
+   "kind": "shadow",
+   "png": "stall_cloth_shut_shadow.png",
+   "foot": [
+    1193,
+    788
+   ],
+   "offset": [
+    0,
+    0
+   ],
+   "cond": {
+    "not_flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": null,
+   "of": "stall_cloth_shut"
+  },
+  {
+   "id": "stall_tools_shadow",
+   "kind": "shadow",
+   "png": "stall_tools_shadow.png",
+   "foot": [
+    617,
+    1148
+   ],
+   "offset": [
+    0,
+    0
+   ],
+   "cond": {
+    "flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": null,
+   "of": "stall_tools"
+  },
+  {
+   "id": "stall_tools_shut_shadow",
+   "kind": "shadow",
+   "png": "stall_tools_shut_shadow.png",
+   "foot": [
+    617,
+    1148
+   ],
+   "offset": [
+    0,
+    0
+   ],
+   "cond": {
+    "not_flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": null,
+   "of": "stall_tools_shut"
+  },
+  {
+   "id": "stall_produce_shadow",
+   "kind": "shadow",
+   "png": "stall_produce_shadow.png",
+   "foot": [
+    1193,
+    1148
+   ],
+   "offset": [
+    0,
+    0
+   ],
+   "cond": {
+    "flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": null,
+   "of": "stall_produce"
+  },
+  {
+   "id": "stall_produce_shut_shadow",
+   "kind": "shadow",
+   "png": "stall_produce_shut_shadow.png",
+   "foot": [
+    1193,
+    1148
+   ],
+   "offset": [
+    0,
+    0
+   ],
+   "cond": {
+    "not_flags": [
+     "shard_home:woodland"
+    ]
+   },
+   "solid": null,
+   "of": "stall_produce_shut"
+  },
+  {
    "id": "square_puddles",
    "kind": "shadow",
    "png": "square_puddles.png",
    "foot": [
-    674,
-    718
+    816,
+    984
    ],
    "offset": [
     0,

@@ -12,6 +12,10 @@
    zone's pictures are older than the kit or its plan.
 5. Every trunk shows its crown in the zones gen_zone writes (crowns()).
 6. No road under a building in the drawn villages (roads_clear()).
+7. No two placed things in one footprint, and the plan's structures composed (layout()): in each
+   drawn village no two buildings, props, dressing pieces or things that can be seen together
+   overlap at their feet (a lamp keeps 2 world px clear of everything; Matt, 27 Oct: "lamp placed on
+   well!!!"), and every structure in the plan's `structures` passes logic.composition.
 
     python3 -m scripts.art.native.check            all gates
     python3 -m scripts.art.native.check --no-cache rebuild even if verified
@@ -318,6 +322,72 @@ def roads_clear() -> list:
     return bad
 
 
+FOOT = {'oak': (8, 4), 'tree': (6, 3), 'bush': (16, 6), 'kit_lantern': (4, 3), 'boulder': (12, 5)}
+NO_FOOT = ('debris', 'glow', 'smoke', 'boards')            # clutter and pieces drawn into a building
+LAMPS = ('kit_lantern', 'lantern', 'lantern_lit')
+
+
+def footprints(plan: dict) -> list:
+    """(id, kind, [x0, y0, x1, y1] world px, condition) for everything placed in a plan that stands
+    on the ground: buildings, props, dressing and the drawn things."""
+    out = []
+    for b in plan.get('buildings', []):
+        x, y, w, h = b['rect']
+        out.append((b['id'], 'building', [x, y, x + w, y + h], None))
+    for pr in plan.get('props', []):
+        if pr['kind'] in NO_FOOT:
+            continue
+        x, y, w, h = pr['rect']
+        out.append((pr['id'], pr['kind'], [x, y, x + w, y + h], pr.get('if')))
+    for k, dr in enumerate((plan.get('art') or {}).get('dressing', [])):
+        kind = dr['kind']
+        if kind in NO_FOOT:
+            continue
+        x, y = dr['at']
+        w, h = FOOT.get(kind) or dr.get('size', [12, 8])
+        out.append((dr.get('id', f'{kind}_{k}'), kind, [x - w / 2, y - h, x + w / 2, y], dr.get('if')))
+    for t in plan.get('things', []):
+        if t.get('speaker') in ('notice_board', 'waystone'):
+            x, y = t['at']
+            out.append((t['id'], t['speaker'], [x - 5, y - 6, x + 5, y], t.get('if')))
+    return out
+
+
+def layout() -> list:
+    """7. Prop collision and composition in the drawn villages' plans."""
+    import glob
+    from scripts.art.native import town
+    from scripts.review import composition as CP
+    bad = []
+    for plan_path in sorted(glob.glob(os.path.join(ROOT, 'game', 'data', 'plans', '*.json'))):
+        plan = json.load(open(plan_path))
+        if 'art' not in plan or plan['art'].get('kit') == 'undercroft':
+            continue
+        states = list(town.stage_states(plan).values())
+        fps = footprints(plan)
+        for i, (ia, ka, ra, ca) in enumerate(fps):
+            for (ib, kb, rb, cb) in fps[i + 1:]:
+                if ka == 'building' and kb == 'building':
+                    continue
+                m = 2 if (ka in LAMPS or kb in LAMPS) else 0
+                if ra[0] - m >= rb[2] or rb[0] - m >= ra[2] or ra[1] - m >= rb[3] or rb[1] - m >= ra[3]:
+                    continue
+                if not any(town.holds(ca, st) and town.holds(cb, st) for st in states):
+                    continue                  # never seen together (a broken and a mended state)
+                bad.append(f'{plan["id"]}: {ia} ({ka}) and {ib} ({kb}) stand in one footprint'
+                           f'{" (a lamp keeps 2 px clear)" if m else ""}: move one clear of the other')
+        D = 3.0
+        sts = []
+        for st in plan.get('structures', []):
+            k = D if st.get('units') == 'world' else 1.0
+            sts.append(dict(st, rect=[v * k for v in st['rect']],
+                            props=[dict(p_, x=p_['x'] * k, y=p_['y'] * k, w=p_.get('w', 8) * k) for p_ in st.get('props', [])],
+                            entries=[dict(e, x=e['x'] * k) for e in st.get('entries', [])]))
+        for f in CP.check(sts):
+            bad.append(f'{plan["id"]}: {f.message}')
+    return bad
+
+
 def main(argv=None) -> int:
     argv = sys.argv[1:] if argv is None else argv
     use_cache = '--no-cache' not in argv
@@ -356,6 +426,9 @@ def main(argv=None) -> int:
     rbad = roads_clear()
     print(f'[kit] no road under a building (drawn villages): {"ok" if not rbad else str(len(rbad)) + " finding(s)"}')
     fails += rbad
+    lbad = layout()
+    print(f'[kit] no two things in one footprint, structures composed: {"ok" if not lbad else str(len(lbad)) + " finding(s)"}')
+    fails += lbad
     for f in fails:
         print('FAIL:', f)
     if not fails:

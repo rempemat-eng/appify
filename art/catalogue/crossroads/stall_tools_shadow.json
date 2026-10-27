@@ -1,0 +1,27 @@
+{
+ "id": "crossroads/stall_tools_shadow",
+ "file": "game/zones/crossroads/art/stall_tools_shadow.png",
+ "sha256": "080cf3bd5a1ea906ff89f1909944d4fd8ce6f2a012a86ff61bae07de21e83c17",
+ "kind": "stall_tools_shadow",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  174,
+  33
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 0
+ },
+ "detail_bar": null,
+ "findings": [],
+ "reviewed": "2026-10-27",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}

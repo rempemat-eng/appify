@@ -1,0 +1,27 @@
+{
+ "id": "crossroads/stall_fish_shut_shadow",
+ "file": "game/zones/crossroads/art/stall_fish_shut_shadow.png",
+ "sha256": "170d128214dd71674feabe495f37841a51ae2a83a54d39974f63a479b88790f2",
+ "kind": "stall_fish_shut_shadow",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  174,
+  33
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 0
+ },
+ "detail_bar": null,
+ "findings": [],
+ "reviewed": "2026-10-27",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}
