@@ -1,0 +1,95 @@
+{
+ "cases": [
+  {
+   "expected": "kitlab.png",
+   "id": "kitlab",
+   "plan": "game/kit/zones/kitlab.json",
+   "plan_sha256": "ebf5b020bd2e6364a60c96c81593e601e059bc30139301374ef32477156a7cac",
+   "rgba_sha256": "a0058ef657119cfa353f98c1a9406a2637160ee6eb05822b26f7a27bfe45113d",
+   "size": [
+    960,
+    552
+   ],
+   "source": "res://zones/kitlab/kitlab.tscn"
+  },
+  {
+   "expected": "three_materials.png",
+   "id": "three_materials",
+   "plan": "game/test/fixtures/kit/three_materials.json",
+   "plan_sha256": "28b5256ff793b9ad2919c3fcfd0ba6abd2d275deeac31f0822cd0911b683fb11",
+   "rgba_sha256": "f212af2ad33cb0589a0cbb5db21638c0174a74ca433558be5222780328fef368",
+   "size": [
+    192,
+    192
+   ],
+   "source": "res://test/fixtures/kit/three_materials.json"
+  }
+ ],
+ "cell_texels": 24,
+ "feature_pixels": {
+  "dressing": 6392,
+  "shadows": 11223
+ },
+ "negative": {
+  "file": "three_materials_shifted_profile.png",
+  "mutation": "compose.profile(a + 1, b, c, material, count)",
+  "rgba_sha256": "93c37e888633cc8ca043219a10ef78aae5d004d942730aeab21119edb63e357d"
+ },
+ "scale": 1,
+ "schema": "napattack.kit-render-fixtures/1",
+ "source_sha256": {
+  "art/house-palette.json": "7fd8e8cfd481bc627b4ca6e8425ec3001f80103ae2309f6bc7249ef6326b03dd",
+  "game/kit/props/art/shadow_woodland_oak.png": "46bc86fb8e2020a4a46ffec5ce53d5457733fb76045b57444b16f4c5c1779607",
+  "game/kit/props/index.json": "d0c8b6b607d5f761fa0e84838261c3e06350b4aa9d3e961db23b5e8cd581d55e",
+  "game/kit/terrain/decal_bankstone_0.png": "8d1222c1b4221595ff5761db4c38310958c9ccb5fe23c44ac85184f73a204888",
+  "game/kit/terrain/decal_bankstone_1.png": "ff6e6e4534c777c8d97798f24621fc0d84997f2a871006fdd5c82c35cf6facb8",
+  "game/kit/terrain/decal_bankstone_2.png": "e7c654f3980aeb16378897d9cc92e1274e784642a9bcf4da60db845da68ade6d",
+  "game/kit/terrain/decal_blades_0.png": "0086beb0339732fb3476af67fd63e8fa2d5517921f561fc5048c1c7b667935ab",
+  "game/kit/terrain/decal_blades_1.png": "bfb214d3701a519d272abd219c9ef1bde66d65cde447635eec46a1737fe08174",
+  "game/kit/terrain/decal_blades_2.png": "e65272fd417e2a15bc27529cbe5a79db7778374f87c9e62ba2b71d3ddbfbcdbf",
+  "game/kit/terrain/decal_pebble_0.png": "0091d5a476b5c7d0368ea162ac14480e100a7f28933885638835e84503112783",
+  "game/kit/terrain/decal_pebble_1.png": "2bff2705d7e7a5f31b25cc0a422eaab2106bda80027313073c1dd481fe59fae9",
+  "game/kit/terrain/decal_pebble_2.png": "169472017a3e64c68a67f536567138b1f1075d242dde4502462dfcbaa2481502",
+  "game/kit/terrain/decal_pebble_3.png": "1da48559969f20a0416b6c37844b86429b08956f823df2ad4484a75cac4e261f",
+  "game/kit/terrain/decal_rushes_0.png": "84a6dcc29f06bd4a15c0937d1e998bf830809e82eae0eefbc9fa10d0bce2c32c",
+  "game/kit/terrain/decal_rushes_1.png": "0dd52b853885498a55a0a003a339126a5282335b943bc387dcef54cf1f6e5e1b",
+  "game/kit/terrain/decal_rushes_2.png": "b93958af88d95d46d3b2814d9c63652c1f53e7572e19e922b4ae2239f572e0f7",
+  "game/kit/terrain/decal_tuft_0.png": "d3a01f19164d27bbec87220014052ce38e274ba8512277a5cb128fcd093bb6b8",
+  "game/kit/terrain/decal_tuft_1.png": "4890ba1a257425896ecbff95249bf749a2188c102101388ed3efcc23d89086b4",
+  "game/kit/terrain/decal_tuft_2.png": "c41cf535f3703a24409b5b6ca4c71e369adae94c19f9bbfe237d4a9fe5a9fcb3",
+  "game/kit/terrain/decal_tuft_3.png": "be269faacb809cd170175126669bcff3a4c739cdfc0989f8b466a317099d2099",
+  "game/kit/terrain/decal_tuft_4.png": "bbbfb2e024252482abcddb940e1990997988ca5c5b3b4909f0e31829a84ef452",
+  "game/kit/terrain/decal_tuft_5.png": "89092f8087e4bcae4a6e40a497ad89ab713dfddc2616ea3ee9d09658cb25f6be",
+  "game/kit/terrain/fill_cobble_road.png": "1a85b30b61b75271c43923ef6143abc945bfe399b67afabddfa24c18d3369a6d",
+  "game/kit/terrain/fill_earth_face.png": "86e662d06b3807649046b5ee4702de49a9ba411d92441e48c9a22dd0c93fc174",
+  "game/kit/terrain/fill_lawn.png": "6cab2d59cd53fbf41e7db91fa3aeeeb03d137e6f56cbca59aae867e506703597",
+  "game/kit/terrain/fill_path.png": "5135bbe8cc18991ba7a1cc5eac811726bcfb4efcc22f2f4300a294702ea86650",
+  "game/kit/terrain/fill_scree.png": "eb09fd7aee6f7eda27f600d1282811c4eae9f0d9a27b1a00c624877f1e6e5582",
+  "game/kit/terrain/fill_water.png": "159cacfd2b93669beab4c09b99df90b74d5eb1964f4f20ac7ef969eca9621a8e",
+  "game/kit/terrain/fill_worn.png": "5135bbe8cc18991ba7a1cc5eac811726bcfb4efcc22f2f4300a294702ea86650",
+  "game/kit/terrain/lut.png": "344679d392a978b080e5ec1960060a4f66cac656d0605898adbc3a74d3c36a4f",
+  "game/kit/terrain/manifest.json": "b2489d1f6414f74bb1d64f3c14d25712aae263b13a46e79a2a11b6658ee133f1",
+  "game/kit/terrain/noise.png": "84b514c82e834b2cfb1a2d4a9305e403d28550b7216323045dfb91f970ab1a0f",
+  "game/kit/terrain/over_earth_face_over_any.png": "ecce94c839017fa221f4b6c0209474e7b795ebc13ba4947b752785d1f1e38cc8",
+  "game/kit/terrain/over_lawn_over_earth_face.png": "86c6750633795cf59094a8040bf9ae234f362e5f420a8d75bdd19c4a72493cb8",
+  "game/kit/terrain/over_lawn_over_lower_tier.png": "79691b1e35159e7d376d4ca9b502c78d9a963fd355d3622f3e91fde6aed17944",
+  "game/kit/terrain/over_lawn_over_path.png": "2ebf7282b2723f6097fb16cde95c5a35e4b329b97fd771c3a6da2c14c2d5616f",
+  "game/kit/terrain/over_lawn_over_scree.png": "2ebf7282b2723f6097fb16cde95c5a35e4b329b97fd771c3a6da2c14c2d5616f",
+  "game/kit/terrain/over_lawn_over_water.png": "56e2248e495f9fed3c956da2fe56d9553bf427c29bbda91573a997be8af66b1f",
+  "game/kit/terrain/over_lawn_over_worn.png": "2ebf7282b2723f6097fb16cde95c5a35e4b329b97fd771c3a6da2c14c2d5616f",
+  "game/kit/terrain/over_path_over_earth_face.png": "86c6750633795cf59094a8040bf9ae234f362e5f420a8d75bdd19c4a72493cb8",
+  "game/kit/terrain/over_path_over_lower_tier.png": "79691b1e35159e7d376d4ca9b502c78d9a963fd355d3622f3e91fde6aed17944",
+  "game/kit/terrain/over_path_over_water.png": "56e2248e495f9fed3c956da2fe56d9553bf427c29bbda91573a997be8af66b1f",
+  "game/kit/terrain/over_water_over_earth_face.png": "86c6750633795cf59094a8040bf9ae234f362e5f420a8d75bdd19c4a72493cb8",
+  "game/kit/terrain/over_worn_over_path.png": "8c7e1e7248cb22ee0dd22ca728df3a2cae5eab834080d789b371545a8cf55473",
+  "game/kit/terrain/palette.png": "40fe3fac4493230904ab432939eb097ae807f3478f643a6002dec7d0cc199dca",
+  "game/test/fixtures/kit/generate.py": "6c3af0912b17ef959a2ba2d7d8099dd2fe7ae2bf3977d88363b6a5cc980f92fa",
+  "scripts/art/house_palette.py": "2b64312392fcdeda1c4164c881aa1e35c6c167a5cfaafd704b3a5abc707103ba",
+  "scripts/art/kit/build.py": "7475535da6e8ffe5f3e7b230a072f232cae5f0518dd9a091235e42c4e0e63950",
+  "scripts/art/kit/compose.py": "db385fa37f68d1e14247c8850d606f6ddff1279cffdbe20f1f20f85ab8fa6fb2",
+  "scripts/art/kit/dressing.py": "2c3d80e0f06df646480803f92123512a239d629ba5737194de77c66251fffd3d",
+  "scripts/art/kit/edges.py": "5babd36a237fb1da32e0e6f142f556c71eafc0a64d9f87a172e378ec54ab5048",
+  "scripts/art/native/accents.json": "4116ad6d7e32ef62efba5789a93b694d15b00db7dc8f23cf61b6f00c48a25b09",
+  "scripts/art/native/palette.py": "ad8155d9b4d7f0c9afefc373e43f806ec502b7991b621b01453cc7697309d0b9"
+ }
+}
