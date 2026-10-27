@@ -1,5 +1,8 @@
 extends GdUnitTestSuite
 
+# Keep only the baseline; the simulation suite still checks every oracle case.
+static var _source_baseline: Dictionary = {}
+
 class Mover extends RefCounted:
 	var position := Vector2.ZERO
 	var targets: Array[Vector2] = []
@@ -23,9 +26,11 @@ func _decode(value: Variant) -> Variant:
 	return value
 
 func _source(id: String = "bramble") -> Dictionary:
-	var bytes := FileAccess.get_file_as_bytes("res://test/combat/simulation-oracle.json.gz")
-	var data: Dictionary = _decode(JSON.parse_string(bytes.decompress_dynamic(128 * 1024 * 1024, FileAccess.COMPRESSION_GZIP).get_string_from_utf8()))
-	var source: Dictionary = data.baseline
+	if _source_baseline.is_empty():
+		var bytes := FileAccess.get_file_as_bytes("res://test/combat/simulation-oracle.json.gz")
+		var data: Dictionary = JSON.parse_string(bytes.decompress_dynamic(128 * 1024 * 1024, FileAccess.COMPRESSION_GZIP).get_string_from_utf8())
+		_source_baseline = _decode(data.baseline)
+	var source: Dictionary = _source_baseline.duplicate(true)
 	source.mode = "practice"
 	source.player.id = id
 	return source
@@ -212,3 +217,11 @@ func test_real_player_collision_clips_driver_targets_and_reports_actual_ground()
 	assert_float(p.position.x).is_less_equal(266.01) # wall's left face275 minus body radius9
 	assert_float(p.position.x).is_greater(258.0)
 	assert_float(d.snapshot().player.x * 3).is_equal_approx(p.position.x, 0.00003)
+
+func test_baseline_cache_keeps_character_overrides_and_nested_state_isolated() -> void:
+	var expected := _source().duplicate(true)
+	var changed := _source("pendle")
+	changed.player.hp = -999
+	changed.projectiles.append({"id": -1})
+	assert_dict(_source()).is_equal(expected)
+	assert_str(_source("pendle").player.id).is_equal("pendle")

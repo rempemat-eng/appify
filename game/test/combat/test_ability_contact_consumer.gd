@@ -1,5 +1,8 @@
 extends GdUnitTestSuite
 
+# Keep only the baseline; the simulation suite still checks every oracle case.
+static var _source_baseline: Dictionary = {}
+
 var events: Array = []
 var consumer: AbilityContactConsumer
 var bad_clock := false
@@ -93,10 +96,13 @@ func _decode(value: Variant) -> Variant:
 	return value
 
 func _source() -> Dictionary:
-	var bytes := FileAccess.get_file_as_bytes("res://test/combat/simulation-oracle.json.gz")
-	var data: Dictionary = _decode(JSON.parse_string(bytes.decompress_dynamic(128 * 1024 * 1024, FileAccess.COMPRESSION_GZIP).get_string_from_utf8()))
-	data.baseline.mode = "practice"
-	return data.baseline
+	if _source_baseline.is_empty():
+		var bytes := FileAccess.get_file_as_bytes("res://test/combat/simulation-oracle.json.gz")
+		var data: Dictionary = JSON.parse_string(bytes.decompress_dynamic(128 * 1024 * 1024, FileAccess.COMPRESSION_GZIP).get_string_from_utf8())
+		_source_baseline = _decode(data.baseline)
+	var source: Dictionary = _source_baseline.duplicate(true)
+	source.mode = "practice"
+	return source
 
 func _move(target: Vector2) -> Vector2:
 	return target

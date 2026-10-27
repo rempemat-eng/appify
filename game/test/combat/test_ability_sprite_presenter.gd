@@ -1,5 +1,8 @@
 extends GdUnitTestSuite
 
+# Keep only the baseline; the simulation suite still checks every oracle case.
+static var _source_baseline: Dictionary = {}
+
 var contacts: Array = []
 var actor: Player
 var driver: AbilityArenaDriver
@@ -74,10 +77,13 @@ func _decode(value: Variant) -> Variant:
 	return value
 
 func _source() -> Dictionary:
-	var bytes := FileAccess.get_file_as_bytes("res://test/combat/simulation-oracle.json.gz")
-	var data: Dictionary = _decode(JSON.parse_string(bytes.decompress_dynamic(128 * 1024 * 1024, FileAccess.COMPRESSION_GZIP).get_string_from_utf8()))
-	data.baseline.mode = "practice"
-	return data.baseline
+	if _source_baseline.is_empty():
+		var bytes := FileAccess.get_file_as_bytes("res://test/combat/simulation-oracle.json.gz")
+		var data: Dictionary = JSON.parse_string(bytes.decompress_dynamic(128 * 1024 * 1024, FileAccess.COMPRESSION_GZIP).get_string_from_utf8())
+		_source_baseline = _decode(data.baseline)
+	var source: Dictionary = _source_baseline.duplicate(true)
+	source.mode = "practice"
+	return source
 
 func _provide(snapshot: Dictionary, action: String) -> Dictionary:
 	var info: Dictionary = actor.sprite.manifest.clips[action]
@@ -181,3 +187,12 @@ func test_reset_restores_idle_even_when_legacy_state_was_already_idle() -> void:
 	assert_int(actor.sprite.frame).is_equal(0)
 	for i in 2: _tick()
 	assert_array(contacts).is_empty()
+
+func test_baseline_cache_does_not_share_nested_state_between_calls() -> void:
+	var expected := _source().duplicate(true)
+	var changed := _source()
+	changed.player.hp = -999
+	changed.previous.primary = true
+	changed.enemies.clear()
+	changed.statistics.actions.primary = -123
+	assert_dict(_source()).is_equal(expected)
