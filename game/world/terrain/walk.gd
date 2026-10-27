@@ -9,6 +9,8 @@ extends Node
 
 const STEP := 12
 const OWNER_META := &"kit_walk_owner"
+const BODY_OWNER_META := &"kit_walk_body_owner"
+const BODY_LAYER_META := &"kit_walk_body_original_layer"
 
 @export var ground_path: NodePath
 
@@ -94,9 +96,7 @@ func rebuild(ground: TerrainGround = null) -> bool:
 		legacy.append(piece.get_node_or_null("Solid"))
 	for node in _replaced.keys():
 		if not legacy.has(node):
-			if is_instance_valid(node):
-				node.collision_layer = _replaced[node]
-			_replaced.erase(node)
+			_release_legacy(node)
 	for node in legacy:
 		_disable_legacy(node)
 	return true
@@ -110,15 +110,25 @@ func _disconnect_layers() -> void:
 
 func _disable_legacy(node: Node) -> void:
 	if node is StaticBody2D and node != _body:
-		if not _replaced.has(node):
-			_replaced[node] = node.collision_layer
+		# A transferred body may already be disabled by another KitWalk. Keep its
+		# true original layer on the body, independent of either rebuild order.
+		if not node.has_meta(BODY_LAYER_META):
+			node.set_meta(BODY_LAYER_META, node.collision_layer)
+		_replaced[node] = node.get_meta(BODY_LAYER_META)
+		node.set_meta(BODY_OWNER_META, self)
 		node.collision_layer = 0
 
+func _release_legacy(node) -> void:
+	# An earlier owner must not reactivate or overwrite the new owner's body.
+	if is_instance_valid(node) and node.get_meta(BODY_OWNER_META, null) == self:
+		node.collision_layer = _replaced[node]
+		node.remove_meta(BODY_OWNER_META)
+		node.remove_meta(BODY_LAYER_META)
+	_replaced.erase(node)
+
 func _restore_legacy() -> void:
-	for node in _replaced:
-		if is_instance_valid(node):
-			node.collision_layer = _replaced[node]
-	_replaced.clear()
+	for node in _replaced.keys():
+		_release_legacy(node)
 	if is_instance_valid(source) and source.has_meta(OWNER_META) and source.get_meta(OWNER_META) == self:
 		source.remove_meta(OWNER_META)
 

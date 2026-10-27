@@ -169,6 +169,87 @@ func test_reparented_piece_regains_its_original_collision_layer() -> void:
 	assert_bool(walk.rebuild()).is_true()
 	assert_int(legacy.collision_layer).is_equal(5)
 
+func test_transfer_between_walk_owners_preserves_layer_in_both_rebuild_orders() -> void:
+	for destination_first in [false, true]:
+		var from := await _fixture(Vector2i(3, 2))
+		var to := await _fixture(Vector2i(3, 2))
+		var piece := _piece(from, Vector2(24, 0), {"blocks_move": true, "collision": [0, 0, 24, 24]})
+		var legacy := StaticBody2D.new()
+		legacy.name = "Solid"
+		legacy.collision_layer = 5
+		piece.add_child(legacy)
+		var source_walk := _install(from.ground)
+		var destination_walk := _install(to.ground)
+		piece.reparent(to.root)
+		piece.global_position = to.ground.to_global(Vector2(24, 0))
+		if destination_first:
+			assert_bool(destination_walk.rebuild()).is_true()
+			assert_int(legacy.collision_layer).is_equal(0)
+			assert_bool(source_walk.rebuild()).is_true()
+		else:
+			assert_bool(source_walk.rebuild()).is_true()
+			assert_int(legacy.collision_layer).is_equal(5)
+			assert_bool(destination_walk.rebuild()).is_true()
+		assert_int(legacy.collision_layer).is_equal(0)
+		assert_str(source_walk.rows[0]).is_equal("......")
+		assert_str(destination_walk.rows[0]).is_equal("..##..")
+		destination_walk.free()
+		assert_int(legacy.collision_layer).is_equal(5)
+		source_walk.free()
+		assert_int(legacy.collision_layer).is_equal(5)
+
+func test_destination_owns_transferred_body_when_source_exits_first() -> void:
+	var from := await _fixture(Vector2i(3, 2))
+	var to := await _fixture(Vector2i(3, 2))
+	var piece := _piece(from, Vector2(24, 0), {"blocks_move": true, "collision": [0, 0, 24, 24]})
+	var legacy := StaticBody2D.new()
+	legacy.name = "Solid"
+	legacy.collision_layer = 5
+	piece.add_child(legacy)
+	var source_walk := _install(from.ground)
+	var destination_walk := _install(to.ground)
+	piece.reparent(to.root)
+	piece.global_position = to.ground.to_global(Vector2(24, 0))
+	assert_bool(destination_walk.rebuild()).is_true()
+	source_walk.free()
+	assert_int(legacy.collision_layer).is_equal(0)
+	destination_walk.free()
+	assert_int(legacy.collision_layer).is_equal(5)
+
+func test_return_transfer_reclaims_body_before_old_owner_cleanup() -> void:
+	var from := await _fixture(Vector2i(3, 2))
+	var to := await _fixture(Vector2i(3, 2))
+	var piece := _piece(from, Vector2(24, 0), {"blocks_move": true, "collision": [0, 0, 24, 24]})
+	var legacy := StaticBody2D.new()
+	legacy.name = "Solid"
+	legacy.collision_layer = 5
+	piece.add_child(legacy)
+	var source_walk := _install(from.ground)
+	var destination_walk := _install(to.ground)
+	piece.reparent(to.root)
+	assert_bool(destination_walk.rebuild()).is_true()
+	# Return before either owner's previous tracking entry has been cleaned up.
+	piece.reparent(from.root)
+	assert_bool(source_walk.rebuild()).is_true()
+	destination_walk.free()
+	assert_int(legacy.collision_layer).is_equal(0)
+	source_walk.free()
+	assert_int(legacy.collision_layer).is_equal(5)
+	assert_bool(legacy.has_meta(Walk.BODY_OWNER_META)).is_false()
+	assert_bool(legacy.has_meta(Walk.BODY_LAYER_META)).is_false()
+
+func test_deleted_owned_body_is_safe_to_release() -> void:
+	var fixture := await _fixture(Vector2i(3, 2))
+	var piece := _piece(fixture, Vector2(24, 0), {"blocks_move": true, "collision": [0, 0, 24, 24]})
+	var legacy := StaticBody2D.new()
+	legacy.name = "Solid"
+	piece.add_child(legacy)
+	var walk := _install(fixture.ground)
+	piece.free()
+	assert_bool(walk.rebuild()).is_true()
+	assert_str(walk.rows[0]).is_equal("......")
+	walk.free()
+
 func test_install_replaces_only_generated_bodies_and_restores_them() -> void:
 	var fixture := await _fixture(Vector2i(3, 2))
 	var ground: TerrainGround = fixture.ground
