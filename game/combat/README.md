@@ -745,3 +745,27 @@ explicit state/facing changes, foreign-contract rejection/recovery and lifecycle
 
 Production A/J provider/state selection, powered-idle start/end and powered-defeat exit routing
 remain unfinished. No default attachment, combat event, art/renderer or canonical rule change.
+
+### Explicit form drawing plans (C60)
+
+`AbilityFormPlan.build` supplies the next selection layer without attaching a provider or
+changing simulation state. Its inputs name the character, requested pose, runner-supplied
+powered/harpoon-out flags, loaded manifest and exact facing/aim. Brine alone selects the
+authored `_empty` variants while the harpoon is out. Ammo, tether and template animation
+state are never used to guess that flag. Missing variants reject the whole plan, including
+an unavailable empty primary, rather than falling back to a drawing with the weapon present.
+
+Powered walk/action/guard/reaction/traversal plans start and end with `powered_idle` drawing zero
+(or Brine's empty equivalent). Powered idle selects its own looping form clip; special remains
+the activation clip. Powered defeat selects `powered_exit` drawings 0 to 3, then the ordinary
+defeat clip, retaining Brine's empty state. Segments preserve authored frame indices and source
+anchors, with independent copies. Invalid character/pose/facing/aim or a short exit rejects
+the entire sequence. The real-manifest suite covers all fourteen characters and four facings.
+
+This is a drawing plan, not an executable schedule. It supplies no durations, contact or damage
+events and does not stretch canonical action time to insert boundary poses. A/J must supply
+approved per-drawing clocks and the runner must bind the plan through its lifecycle, including
+the living-actor cancellation currently used by the contact consumer. That binding, actual
+powered-defeat playback, production state/provider/importer and world integration are still
+unfinished. No scene or default driver uses these plans. Headless source-frame equality is
+not rendered acceptance.
