@@ -16,6 +16,7 @@ from __future__ import annotations
 import math
 
 import numpy as np
+from scipy import ndimage as ndi
 
 from . import village as V
 from .palette import FI
@@ -276,67 +277,100 @@ def basket(w, h, seed):
 
 
 def hayfield(w, h, seed):
-    """A hay field, cut: the stubble in drilled rows across the slope (short pale stalks lit on
-    their tips, the soil between them darker), two raked windrows of drying hay curving along the
-    rows, the field's edge a soft rounded outline on whole cells, and the bales standing on it
-    (village.p_hay_hd), each with its contact shade."""
+    """A hay field, cut (Matt, 27 Oct: "if those are hay bales where is the hay field?"): its plan
+    whole cells with large rounded corners, its edge lumped and frayed into the turf (grass tufts
+    standing over the stubble's margin); the ground drilled in rows across the slope, each a low
+    ridge lit on its north face and shaded on its south, the cut stalks standing on the ridges;
+    two raked windrows of drying hay, a few loose wisps of straw blown off them; the bales standing
+    on the stubble (village.p_hay_hd), each with its contact shade and its shadow thrown down to
+    the east."""
     rng = np.random.default_rng(seed)
     p = V._pic(w, h, up=12, side=1)
     a, cx, yb = p.a, p.ax, p.ay
     Y, X = grid(a)
     x0, x1, y0 = cx - q(w / 2), cx + q(w / 2), yb - q(h)
-    # the field: whole cells, corners rounded (soft grid), the edge lumped a texel or two
-    r = q(10)
+    # the plan: rounded corners (about 1.5 cells), the edge lumped 2 to 4 texels
+    r = q(12)
     ccx = np.clip(X, x0 + r, x1 - r)
     ccy = np.clip(Y, y0 + r, yb - r)
-    wob = 1.2 * np.sin(X / q(3.1)) + 1.0 * np.sin(Y / q(2.7) + 1.3)
-    f = ((X - ccx) ** 2 + (Y - ccy) ** 2 <= (r + wob) ** 2) & (X >= x0) & (X < x1) & (Y >= y0) & (Y < yb)
-    # the cut ground: pale stubble, a tone lighter or darker in soft drifts where it dried
+    lump = 2.2 * np.sin(X / q(4.1) + 0.6) * np.sin(Y / q(3.7)) + 1.4 * np.sin((X + Y) / q(2.9))
+    dist = np.hypot(X - ccx, Y - ccy) - r
+    inside = (X >= x0) & (X < x1) & (Y >= y0) & (Y < yb)
+    f = inside & (dist + lump < -1)
+    edge_band = f & (dist + lump > -q(2.4))
+    # rows: a ridge every 3 world px; its north face lit, its crest pale, its south face in shade
     rowp = q(3.0)
-    drift = np.sin(X / q(5) + 0.7) + np.sin(Y / q(4) - X / q(7))
+    ph = ((Y - y0) % rowp) / rowp
     a[f] = code('sand_warm', 3)
-    a[f & (drift > 1.1)] = code('sand_warm', 2)
-    a[f & (drift < -1.1)] = code('sand_warm', 4)
-    # stubble: short clusters of cut stalks standing in drilled rows, lit at their tips, a dark
-    # foot where each tuft meets the ground; gaps between them
-    for yy in np.arange(y0 + q(2), yb - 2, rowp):
+    a[f & (ph < 0.25)] = code('sand_warm', 4)
+    a[f & (ph >= 0.68)] = code('sand_warm', 2)
+    # the whole field in the slope's light: the west lit, the east a step down in broad soft drifts
+    fx = (X - x0) / max(1, x1 - x0)
+    dr = np.sin(X / q(7) + 0.7) + np.sin(Y / q(6) - X / q(11))
+    step_dn = f & (fx > 0.72) & (dr > -0.2) & (a % 8 >= 3)
+    a[step_dn] = np.maximum((a[step_dn] // 8) * 8, a[step_dn] - 1)
+    # the cut stalks on the ridges: short clusters, lit tips
+    for yy in np.arange(y0 + q(1.2), yb - 2, rowp):
         x = x0 + int(rng.integers(0, 4))
         while x < x1 - 2:
-            yy_ = int(yy) + int(rng.integers(-1, 2))
-            if 0 <= yy_ + 2 < a.shape[0] and f[yy_ + 2, int(x)] and f[yy_ - 2, int(x)]:
-                n = int(rng.integers(2, 5))
+            yy_ = int(yy) + int(rng.integers(0, 2))
+            if 0 <= yy_ + 2 < a.shape[0] and f[yy_ + 1, int(x)] and not edge_band[yy_, int(x)]:
+                n = int(rng.integers(2, 4))
                 for k in range(n):
                     hgt = int(rng.integers(2, 4))
                     xx = int(x) + k
                     fill(a, xx, yy_ - hgt + 1, xx + 1, yy_ + 1, code('sand', 3 + (k == 0)))
                     fill(a, xx, yy_ - hgt + 1, xx + 1, yy_ - hgt + 2, code('sand', 5))
-                fill(a, int(x), yy_ + 1, int(x) + n, yy_ + 2, code('earth_warm', 2))
-            x += int(rng.integers(3, 6))
-    # windrows: raked hay lying in long soft ridges, lit on their north side, shade on the south
-    for k, fy in enumerate((0.35, 0.72)):
+            x += int(rng.integers(4, 8))
+    # the frayed margin: the turf's grass standing over the stubble's edge in tufts
+    inner_band = edge_band & ndi.binary_erosion(f, iterations=3)
+    ys, xs = np.nonzero(inner_band)
+    for k in rng.choice(len(ys), size=min(len(ys), int(len(ys) / 22)), replace=False):
+        gx, gy = int(xs[k]), int(ys[k])
+        hgt = int(rng.integers(4, 7))
+        tm = f & (np.abs(X - gx - 1.5) <= 1.6 - (gy - Y) * 0.12) & (Y <= gy) & (Y > gy - hgt)
+        a[tm] = code('grass', 3)
+        a[tm & (X < gx + 1.5)] = code('grass', 4)
+        a[tm & (Y > gy - 2)] = code('grass', 2)
+    # windrows: raked hay in long soft ridges, lit on the north, shade on the south, in lengths
+    for k, fy in enumerate((0.34, 0.7)):
         yc0 = y0 + (yb - y0) * fy
         amp = q(1.6)
-        rid = f & (np.abs(Y - yc0 - amp * np.sin((X - x0) / q(9) + k)) < q(1.2)) & (X > x0 + q(4)) & (X < x1 - q(4))
-        rid &= np.sin((X - x0) / q(5.5) + 2 * k) > -0.75                       # raked in lengths, gaps between
-        d = Y - yc0 - amp * np.sin((X - x0) / q(9) + k)
+        dd = Y - yc0 - amp * np.sin((X - x0) / q(9) + k)
+        rid = f & ~edge_band & (np.abs(dd) < q(1.3)) & (np.sin((X - x0) / q(6.5) + 2 * k) > -0.7)
         a[rid] = code('brass', 3)
-        a[rid & (d < -q(0.6))] = code('brass', 4)
-        a[rid & (d > q(0.8))] = code('brass', 2)
+        a[rid & (dd < -q(0.5))] = code('brass', 4)
+        a[rid & (dd < -q(1.0))] = code('brass_warm', 4)
+        a[rid & (dd > q(0.6))] = code('brass', 2)
         a[rid & (((X.astype(int) * 7 + Y.astype(int) * 3) % 9) < 2)] = code('sand', 4)
-        sh = f & ~rid & (d >= q(1.6)) & (d < q(2.4))
-        a[sh & (a >= 0)] = np.maximum((a[sh & (a >= 0)] // 8) * 8, a[sh & (a >= 0)] - 1)
-    # the field's edge: the stubble frays into the turf (a darker rim on its lower and east edges)
+        sh = f & ~rid & (dd >= q(1.3)) & (dd < q(2.2)) & (np.sin((X - x0) / q(6.5) + 2 * k) > -0.7)
+        a[sh] = np.maximum((a[sh] // 8) * 8, a[sh] - 1)
+    # loose wisps of straw blown off the windrows: short slanted strands in twos and threes
+    for _ in range(int((x1 - x0) * (yb - y0) / q(14) ** 2)):
+        sx, sy = int(rng.uniform(x0 + q(4), x1 - q(4))), int(rng.uniform(y0 + q(4), yb - q(4)))
+        if not f[sy, sx] or edge_band[sy, sx]:
+            continue
+        for j in range(int(rng.integers(2, 4))):
+            L = int(rng.integers(3, 6))
+            for t in range(L):
+                xx, yy_ = sx + j * 2 + t, sy - t // 2
+                if 0 <= yy_ < a.shape[0] and 0 <= xx < a.shape[1] and f[yy_, xx]:
+                    a[yy_, xx] = code('brass', 4 if t < L - 1 else 2)
+    # the field's own rim: a texel of darker earth on its lower and east edges where it meets the turf
     T_, L_, B_, R_ = V.edges(f)
-    a[B_ | R_] = code('earth_warm', 2)
-    # bales standing on the cut field: two, each from the kit's bale painter, with a contact shade
-    for (bxf, byf, s) in ((0.32, 0.55, 11), (0.7, 0.9, 13)):
+    a[(B_ | R_) & (a % 8 > 1)] = a[(B_ | R_) & (a % 8 > 1)] - 1
+    # bales standing on the stubble: each with its contact shade and its shadow down to the east
+    for (bxf, byf, s) in ((0.32, 0.56, 11), (0.68, 0.86, 13)):
         bp = V.prop('hay', 18, 10, seed=seed + s, hd=True)
         bx, by = int(x0 + (x1 - x0) * bxf), int(y0 + (yb - y0) * byf)
-        sh = (np.abs(X - bx - q(1.5)) < q(10)) & (Y >= by - q(1.2)) & (Y < by + q(1.0)) & f
-        a[sh & (a >= 0)] = np.maximum((a[sh & (a >= 0)] // 8) * 8, a[sh & (a >= 0)] - 1)
+        bw = q(9)
+        shm = f & (Y >= by - q(4)) & (Y < by + q(2.4)) & (X >= bx - bw + q(1) + (Y - by + q(4)) * 0.6) & \
+            (X < bx + bw + q(7) + (Y - by) * 0.6)
+        a[shm] = np.maximum((a[shm] // 8) * 8, a[shm] - 1)
+        core = shm & (Y >= by - q(0.6)) & (X < bx + bw + q(1))
+        a[core] = np.maximum((a[core] // 8) * 8, a[core] - 1)
         ox, oy = bx - bp.ax, by - bp.ay
         src = bp.a
-        hh, ww = src.shape
         Ys, Xs = np.nonzero(src >= 0)
         Yd, Xd = Ys + oy, Xs + ox
         ok = (Yd >= 0) & (Yd < a.shape[0]) & (Xd >= 0) & (Xd < a.shape[1])

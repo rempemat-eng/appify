@@ -376,6 +376,28 @@ def layout() -> list:
                     continue                  # never seen together (a broken and a mended state)
                 bad.append(f'{plan["id"]}: {ia} ({ka}) and {ib} ({kb}) stand in one footprint'
                            f'{" (a lamp keeps 2 px clear)" if m else ""}: move one clear of the other')
+        # fire burns only in a hearth, smoke rises only from a chimney or the crater (27 Oct review: a
+        # row of fire on the grass, puffs over a roof)
+        looks = (plan.get('art') or {}).get('looks', {})
+        hearths = [b['rect'] for b in plan.get('buildings', []) if looks.get(b['id'], {}).get('kind') == 'forge']
+        craters = [pl['rect'] for pl in plan.get('places', []) if pl.get('kind') == 'crater']
+
+        def within(r, rects, g):
+            x, y, w, h = r
+            return any(x >= rx - g and y >= ry - g and x + w <= rx + rw + g and y + h <= ry + rh + g for rx, ry, rw, rh in rects)
+        for pr in plan.get('props', []):
+            if pr['kind'] in ('glow', 'fire') and not within(pr['rect'], hearths, 4):
+                bad.append(f'{plan["id"]}: {pr["id"]} ({pr["kind"]}) burns outside a hearth: fire belongs in a forge\'s mouth')
+            if pr['kind'] == 'smoke' and not within(pr['rect'], craters, 24):
+                bad.append(f'{plan["id"]}: {pr["id"]} (smoke) rises from nothing: smoke comes from a chimney or the crater')
+        try:
+            sys.path.insert(0, os.path.join(ROOT, 'game', 'tools'))
+            import gen_village as GVL
+            for bid in GVL.SMOKE:
+                if any(b['id'] == bid for b in plan.get('buildings', [])) and not looks.get(bid, {}).get('chimney'):
+                    bad.append(f'{plan["id"]}: chimney smoke over {bid}, which has no chimney')
+        except ImportError:
+            pass
         D = 3.0
         sts = []
         for st in plan.get('structures', []):

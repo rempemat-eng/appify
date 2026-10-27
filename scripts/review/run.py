@@ -151,8 +151,8 @@ def main(argv=None):
     report = dict(target=t, generated=time.strftime('%Y-%m-%d %H:%M'), pictures=[], scene=None)
 
     if zone:
-        z = SN.load_zone(zone)
-        res = SN.review_zone(zone, a.H)
+        z = SN.load_zone(zone, a.stage)              # the stage asked for, as the game shows it
+        res = SN.review_zone(zone, a.H, stage=a.stage)
         comp = SN.composite(z)
         Image.fromarray(comp[..., :3]).save(os.path.join(out, f'{zone}_zone.png'))
         report['scene'] = dict(zone=zone, size=list(z.size), sprites=len(z.sprites), spawns=list(z.spawns),

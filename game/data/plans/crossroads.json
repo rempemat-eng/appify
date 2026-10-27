@@ -197,7 +197,7 @@
           296
         ],
         [
-          192,
+          200,
           296
         ]
       ],
@@ -210,7 +210,7 @@
       "width": 32,
       "points": [
         [
-          448,
+          440,
           312
         ],
         [
@@ -231,38 +231,15 @@
         ],
         [
           320,
-          448
-        ],
-        [
-          312,
-          448
-        ],
-        [
-          312,
-          456
-        ],
-        [
-          304,
-          456
-        ],
-        [
-          304,
-          464
-        ],
-        [
-          296,
-          464
-        ],
-        [
-          296,
-          472
+          480
         ],
         [
           184,
-          472
+          480
         ]
       ],
-      "why_shape": "Matt, 27 Oct (annotated Crossroads): \"missing the soft grid\": straight runs on the cells (south out of the square on its axis, west to the ring's east entrance) and a wide bend stepped one cell at a time, rounded by the soft outline; no free curve"
+      "why_shape": "Matt, 27 Oct (annotated Crossroads): \"missing the soft grid\": the woodland's rule: straight runs on the cells (south out of the square on its axis, west to the stone ring's entrance) joined by one large rounded bend (40 px), never a right-angle step",
+      "bend": 40
     },
     {
       "id": "garden_walk",
@@ -282,22 +259,6 @@
           152
         ]
       ]
-    },
-    {
-      "id": "beds_path",
-      "kind": "path",
-      "width": 24,
-      "points": [
-        [
-          320,
-          72
-        ],
-        [
-          424,
-          72
-        ]
-      ],
-      "why": "Matt, 27 Oct (annotated Crossroads): \"why is this so close to the market and has no path\": the garden walk carries on from your door to the beds' gate"
     }
   ],
   "stairs": [
@@ -337,7 +298,7 @@
         136
       ],
       "colour": "#6f9a52",
-      "why": "the green and its ring (training yard, stage 1)"
+      "why": "the green and its ring of stones on the trodden ring (training yard, stage 1)"
     },
     {
       "id": "crater",
@@ -718,7 +679,7 @@
       "id": "beds_scorched",
       "kind": "beds",
       "rect": [
-        384,
+        192,
         24,
         80,
         40
@@ -729,13 +690,13 @@
           "shard_home:woodland"
         ]
       },
-      "why": "Matt, 27 Oct (annotated Crossroads): \"why is this so close to the market and has no path\": your beds beside the hut on the terrace, the garden walk running to them"
+      "why": "Matt, 27 Oct (annotated Crossroads): \"why is this so close to the market and has no path\": your beds beside the hut on the terrace, the garden walk passing their front"
     },
     {
       "id": "beds_dug",
       "kind": "beds",
       "rect": [
-        384,
+        192,
         24,
         80,
         40
@@ -1740,7 +1701,7 @@
       {
         "kind": "woodpile",
         "at": [
-          248,
+          380,
           64
         ],
         "size": [
@@ -1753,7 +1714,7 @@
       {
         "kind": "sacks",
         "at": [
-          372,
+          184,
           64
         ],
         "size": [
@@ -2419,6 +2380,70 @@
         "id": "basket_s",
         "seed": 311,
         "why": "the farm stall's apples"
+      },
+      {
+        "kind": "boulder",
+        "at": [
+          168,
+          504
+        ],
+        "id": "ring_stone_0",
+        "seed": 330,
+        "why": "Matt, 27 Oct (annotated Crossroads): the ring on the green a ring of standing stones (as the woodland draws its stones) on its trodden path, open to the east where the lane comes in"
+      },
+      {
+        "kind": "boulder",
+        "at": [
+          124,
+          520
+        ],
+        "id": "ring_stone_1",
+        "seed": 331
+      },
+      {
+        "kind": "boulder",
+        "at": [
+          80,
+          504
+        ],
+        "id": "ring_stone_2",
+        "seed": 332
+      },
+      {
+        "kind": "boulder",
+        "at": [
+          68,
+          472
+        ],
+        "id": "ring_stone_3",
+        "seed": 333
+      },
+      {
+        "kind": "boulder",
+        "at": [
+          80,
+          448
+        ],
+        "id": "ring_stone_4",
+        "seed": 334
+      },
+      {
+        "kind": "boulder",
+        "at": [
+          124,
+          432
+        ],
+        "id": "ring_stone_5",
+        "seed": 335
+      },
+      {
+        "kind": "boulder",
+        "at": [
+          168,
+          448
+        ],
+        "id": "ring_stone_6",
+        "seed": 336
       }
     ],
     "setts": [

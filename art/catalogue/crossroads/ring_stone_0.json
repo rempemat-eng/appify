@@ -1,0 +1,57 @@
+{
+ "id": "crossroads/ring_stone_0",
+ "file": "game/zones/crossroads/art/ring_stone_0.png",
+ "sha256": "8a01eb78367c9f5fe0beb7ee84b146c2895236be688b2e61e636d9e355686dae",
+ "kind": "ring_stone",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  87,
+  54
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 1
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 4,
+   "tones": 20.25,
+   "shapes": 36.0
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.715,
+  "tones_ratio": 0.75,
+  "shapes_ratio": 0.715,
+  "passed": false,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    7,
+    9,
+    83,
+    52
+   ],
+   "message": "crossroads/ring_stone_0: detail bar 0.71 of Eastward's prop band (20.2 tones, 36.0 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
+  }
+ ],
+ "reviewed": "2026-10-27",
+ "reviewer": {
+  "agent": "detail-auditor",
+  "verdict": "pending",
+  "note": "detectors only; the agent checklist has not been run on this asset"
+ }
+}

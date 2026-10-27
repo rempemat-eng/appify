@@ -5,7 +5,7 @@
   1920,
   1680
  ],
- "inputs": "5d4433d43dfb9cf6165cb3a8fb727467d6e9c5d1fe250e15e12f0dee127267bf",
+ "inputs": "4dc81c28791a95d5805b9d1842f89bad222967eeb12edda938a2b79d2204ac30",
  "kit_drawn": [
   "anvil.png",
   "bakery.png",
@@ -614,7 +614,7 @@
    "kind": "beds",
    "png": "beds_scorched.png",
    "foot": [
-    1272,
+    696,
     192
    ],
    "offset": [
@@ -633,7 +633,7 @@
    "kind": "beds_dug",
    "png": "beds_dug.png",
    "foot": [
-    1272,
+    696,
     192
    ],
    "offset": [
@@ -1132,7 +1132,7 @@
    "kind": "woodpile",
    "png": "woodpile_11.png",
    "foot": [
-    744,
+    1140,
     192
    ],
    "offset": [
@@ -1141,7 +1141,7 @@
    ],
    "cond": null,
    "solid": [
-    237.0,
+    369.0,
     56,
     22,
     8
@@ -1152,7 +1152,7 @@
    "kind": "sacks",
    "png": "sacks_12.png",
    "foot": [
-    1116,
+    552,
     192
    ],
    "offset": [
@@ -1161,7 +1161,7 @@
    ],
    "cond": null,
    "solid": [
-    365.0,
+    177.0,
     56,
     14,
     8
@@ -2219,6 +2219,146 @@
    ]
   },
   {
+   "id": "ring_stone_0",
+   "kind": "boulder",
+   "png": "ring_stone_0.png",
+   "foot": [
+    504,
+    1512
+   ],
+   "offset": [
+    -45,
+    -52
+   ],
+   "cond": null,
+   "solid": [
+    162,
+    500,
+    12,
+    5
+   ]
+  },
+  {
+   "id": "ring_stone_1",
+   "kind": "boulder",
+   "png": "ring_stone_1.png",
+   "foot": [
+    372,
+    1560
+   ],
+   "offset": [
+    -43,
+    -52
+   ],
+   "cond": null,
+   "solid": [
+    118,
+    516,
+    12,
+    5
+   ]
+  },
+  {
+   "id": "ring_stone_2",
+   "kind": "boulder",
+   "png": "ring_stone_2.png",
+   "foot": [
+    240,
+    1512
+   ],
+   "offset": [
+    -42,
+    -52
+   ],
+   "cond": null,
+   "solid": [
+    74,
+    500,
+    12,
+    5
+   ]
+  },
+  {
+   "id": "ring_stone_3",
+   "kind": "boulder",
+   "png": "ring_stone_3.png",
+   "foot": [
+    204,
+    1416
+   ],
+   "offset": [
+    -43,
+    -52
+   ],
+   "cond": null,
+   "solid": [
+    62,
+    468,
+    12,
+    5
+   ]
+  },
+  {
+   "id": "ring_stone_4",
+   "kind": "boulder",
+   "png": "ring_stone_4.png",
+   "foot": [
+    240,
+    1344
+   ],
+   "offset": [
+    -44,
+    -52
+   ],
+   "cond": null,
+   "solid": [
+    74,
+    444,
+    12,
+    5
+   ]
+  },
+  {
+   "id": "ring_stone_5",
+   "kind": "boulder",
+   "png": "ring_stone_5.png",
+   "foot": [
+    372,
+    1296
+   ],
+   "offset": [
+    -43,
+    -52
+   ],
+   "cond": null,
+   "solid": [
+    118,
+    428,
+    12,
+    5
+   ]
+  },
+  {
+   "id": "ring_stone_6",
+   "kind": "boulder",
+   "png": "ring_stone_6.png",
+   "foot": [
+    504,
+    1344
+   ],
+   "offset": [
+    -44,
+    -52
+   ],
+   "cond": null,
+   "solid": [
+    162,
+    444,
+    12,
+    5
+   ]
+  },
+  {
    "id": "well_choked_shadow",
    "kind": "shadow",
    "png": "well_choked_shadow.png",
@@ -2403,7 +2543,7 @@
    "kind": "shadow",
    "png": "beds_scorched_shadow.png",
    "foot": [
-    1148,
+    572,
     188
    ],
    "offset": [
@@ -2423,7 +2563,7 @@
    "kind": "shadow",
    "png": "beds_dug_shadow.png",
    "foot": [
-    1148,
+    572,
     188
    ],
    "offset": [

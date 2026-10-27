@@ -116,28 +116,35 @@
 [ext_resource type="Texture2D" path="res://zones/crossroads/art/mown_field.png" id="t106"]
 [ext_resource type="Texture2D" path="res://zones/crossroads/art/crates_m10.png" id="t107"]
 [ext_resource type="Texture2D" path="res://zones/crossroads/art/basket_s.png" id="t108"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/well_choked_shadow.png" id="t109"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/well_shadow.png" id="t110"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/smithy_rubble_shadow.png" id="t111"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/anvil_shadow.png" id="t112"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/square_rubble_a_shadow.png" id="t113"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/square_rubble_b_shadow.png" id="t114"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/fern_rubble_shadow.png" id="t115"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/lantern_dark_shadow.png" id="t116"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/lantern_lit_shadow.png" id="t117"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/beds_scorched_shadow.png" id="t118"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/beds_dug_shadow.png" id="t119"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/stall_bread_shadow.png" id="t120"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/stall_bread_shut_shadow.png" id="t121"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/stall_fish_shadow.png" id="t122"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/stall_fish_shut_shadow.png" id="t123"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/stall_cloth_shadow.png" id="t124"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/stall_cloth_shut_shadow.png" id="t125"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/stall_tools_shadow.png" id="t126"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/stall_tools_shut_shadow.png" id="t127"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/stall_produce_shadow.png" id="t128"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/stall_produce_shut_shadow.png" id="t129"]
-[ext_resource type="Texture2D" path="res://zones/crossroads/art/square_puddles.png" id="t130"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/ring_stone_0.png" id="t109"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/ring_stone_1.png" id="t110"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/ring_stone_2.png" id="t111"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/ring_stone_3.png" id="t112"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/ring_stone_4.png" id="t113"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/ring_stone_5.png" id="t114"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/ring_stone_6.png" id="t115"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/well_choked_shadow.png" id="t116"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/well_shadow.png" id="t117"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/smithy_rubble_shadow.png" id="t118"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/anvil_shadow.png" id="t119"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/square_rubble_a_shadow.png" id="t120"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/square_rubble_b_shadow.png" id="t121"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/fern_rubble_shadow.png" id="t122"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/lantern_dark_shadow.png" id="t123"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/lantern_lit_shadow.png" id="t124"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/beds_scorched_shadow.png" id="t125"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/beds_dug_shadow.png" id="t126"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/stall_bread_shadow.png" id="t127"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/stall_bread_shut_shadow.png" id="t128"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/stall_fish_shadow.png" id="t129"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/stall_fish_shut_shadow.png" id="t130"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/stall_cloth_shadow.png" id="t131"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/stall_cloth_shut_shadow.png" id="t132"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/stall_tools_shadow.png" id="t133"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/stall_tools_shut_shadow.png" id="t134"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/stall_produce_shadow.png" id="t135"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/stall_produce_shut_shadow.png" id="t136"]
+[ext_resource type="Texture2D" path="res://zones/crossroads/art/square_puddles.png" id="t137"]
 [ext_resource type="Script" path="res://world/villager.gd" id="villager"]
 [ext_resource type="Script" path="res://world/loop_fx.gd" id="loopfx"]
 
@@ -423,14 +430,14 @@ shape = SubResource("s14")
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Solid_woodpile_11"]
-position = Vector2(744, 180)
+position = Vector2(1140, 180)
 shape = SubResource("s15")
 
 [node name="Solid_sacks_12" type="StaticBody2D" parent="Walls"]
 collision_mask = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Walls/Solid_sacks_12"]
-position = Vector2(1116, 180)
+position = Vector2(552, 180)
 shape = SubResource("s16")
 
 [node name="Solid_oak_21" type="StaticBody2D" parent="Walls"]
@@ -727,6 +734,55 @@ collision_mask = 0
 position = Vector2(1164, 1143)
 shape = SubResource("s25")
 
+[node name="Solid_ring_stone_0" type="StaticBody2D" parent="Walls"]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Solid_ring_stone_0"]
+position = Vector2(504, 1507.5)
+shape = SubResource("s23")
+
+[node name="Solid_ring_stone_1" type="StaticBody2D" parent="Walls"]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Solid_ring_stone_1"]
+position = Vector2(372, 1555.5)
+shape = SubResource("s23")
+
+[node name="Solid_ring_stone_2" type="StaticBody2D" parent="Walls"]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Solid_ring_stone_2"]
+position = Vector2(240, 1507.5)
+shape = SubResource("s23")
+
+[node name="Solid_ring_stone_3" type="StaticBody2D" parent="Walls"]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Solid_ring_stone_3"]
+position = Vector2(204, 1411.5)
+shape = SubResource("s23")
+
+[node name="Solid_ring_stone_4" type="StaticBody2D" parent="Walls"]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Solid_ring_stone_4"]
+position = Vector2(240, 1339.5)
+shape = SubResource("s23")
+
+[node name="Solid_ring_stone_5" type="StaticBody2D" parent="Walls"]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Solid_ring_stone_5"]
+position = Vector2(372, 1291.5)
+shape = SubResource("s23")
+
+[node name="Solid_ring_stone_6" type="StaticBody2D" parent="Walls"]
+collision_mask = 0
+
+[node name="Shape" type="CollisionShape2D" parent="Walls/Solid_ring_stone_6"]
+position = Vector2(504, 1339.5)
+shape = SubResource("s23")
+
 [node name="Props" type="Node2D" parent="."]
 y_sort_enabled = true
 
@@ -1019,7 +1075,7 @@ script = ExtResource("cond")
 only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
 
 [node name="BedsScorched" type="Sprite2D" parent="Props/If_beds_scorched"]
-position = Vector2(1272, 192)
+position = Vector2(696, 192)
 texture = ExtResource("t26")
 centered = false
 offset = Vector2(-129, -140)
@@ -1029,7 +1085,7 @@ script = ExtResource("cond")
 only_if = "{\"flags\":[\"shard_home:woodland\"]}"
 
 [node name="BedsDug" type="Sprite2D" parent="Props/If_beds_dug"]
-position = Vector2(1272, 192)
+position = Vector2(696, 192)
 texture = ExtResource("t27")
 centered = false
 offset = Vector2(-129, -140)
@@ -1289,13 +1345,13 @@ centered = false
 offset = Vector2(-27, -53)
 
 [node name="Woodpile11" type="Sprite2D" parent="Props"]
-position = Vector2(744, 192)
+position = Vector2(1140, 192)
 texture = ExtResource("t52")
 centered = false
 offset = Vector2(-39, -71)
 
 [node name="Sacks12" type="Sprite2D" parent="Props"]
-position = Vector2(1116, 192)
+position = Vector2(552, 192)
 texture = ExtResource("t53")
 centered = false
 offset = Vector2(-30, -62)
@@ -1646,13 +1702,55 @@ texture = ExtResource("t108")
 centered = false
 offset = Vector2(-21, -41)
 
+[node name="RingStone0" type="Sprite2D" parent="Props"]
+position = Vector2(504, 1512)
+texture = ExtResource("t109")
+centered = false
+offset = Vector2(-45, -52)
+
+[node name="RingStone1" type="Sprite2D" parent="Props"]
+position = Vector2(372, 1560)
+texture = ExtResource("t110")
+centered = false
+offset = Vector2(-43, -52)
+
+[node name="RingStone2" type="Sprite2D" parent="Props"]
+position = Vector2(240, 1512)
+texture = ExtResource("t111")
+centered = false
+offset = Vector2(-42, -52)
+
+[node name="RingStone3" type="Sprite2D" parent="Props"]
+position = Vector2(204, 1416)
+texture = ExtResource("t112")
+centered = false
+offset = Vector2(-43, -52)
+
+[node name="RingStone4" type="Sprite2D" parent="Props"]
+position = Vector2(240, 1344)
+texture = ExtResource("t113")
+centered = false
+offset = Vector2(-44, -52)
+
+[node name="RingStone5" type="Sprite2D" parent="Props"]
+position = Vector2(372, 1296)
+texture = ExtResource("t114")
+centered = false
+offset = Vector2(-43, -52)
+
+[node name="RingStone6" type="Sprite2D" parent="Props"]
+position = Vector2(504, 1344)
+texture = ExtResource("t115")
+centered = false
+offset = Vector2(-44, -52)
+
 [node name="If_well_choked_shadow" type="Node2D" parent="Props"]
 script = ExtResource("cond")
 only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
 
 [node name="WellChokedShadow" type="Sprite2D" parent="Props/If_well_choked_shadow"]
 position = Vector2(928, 956)
-texture = ExtResource("t109")
+texture = ExtResource("t116")
 centered = false
 offset = Vector2(0, 0)
 z_index = -9
@@ -1663,7 +1761,7 @@ only_if = "{\"flags\":[\"shard_home:woodland\"]}"
 
 [node name="WellShadow" type="Sprite2D" parent="Props/If_well_shadow"]
 position = Vector2(934, 956)
-texture = ExtResource("t110")
+texture = ExtResource("t117")
 centered = false
 offset = Vector2(0, 0)
 z_index = -9
@@ -1674,7 +1772,7 @@ only_if = "{\"not_restored\":[\"forge\"]}"
 
 [node name="SmithyRubbleShadow" type="Sprite2D" parent="Props/If_smithy_rubble_shadow"]
 position = Vector2(1347, 890)
-texture = ExtResource("t111")
+texture = ExtResource("t118")
 centered = false
 offset = Vector2(0, 0)
 z_index = -9
@@ -1685,7 +1783,7 @@ only_if = "{\"restored\":[\"forge\"]}"
 
 [node name="AnvilShadow" type="Sprite2D" parent="Props/If_anvil_shadow"]
 position = Vector2(1461, 908)
-texture = ExtResource("t112")
+texture = ExtResource("t119")
 centered = false
 offset = Vector2(0, 0)
 z_index = -9
@@ -1696,7 +1794,7 @@ only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
 
 [node name="SquareRubbleAShadow" type="Sprite2D" parent="Props/If_square_rubble_a_shadow"]
 position = Vector2(678, 992)
-texture = ExtResource("t113")
+texture = ExtResource("t120")
 centered = false
 offset = Vector2(0, 0)
 z_index = -9
@@ -1707,7 +1805,7 @@ only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
 
 [node name="SquareRubbleBShadow" type="Sprite2D" parent="Props/If_square_rubble_b_shadow"]
 position = Vector2(1133, 944)
-texture = ExtResource("t114")
+texture = ExtResource("t121")
 centered = false
 offset = Vector2(0, 0)
 z_index = -9
@@ -1718,7 +1816,7 @@ only_if = "{\"not_restored\":[\"fern_cottage\"]}"
 
 [node name="FernRubbleShadow" type="Sprite2D" parent="Props/If_fern_rubble_shadow"]
 position = Vector2(1366, 1286)
-texture = ExtResource("t115")
+texture = ExtResource("t122")
 centered = false
 offset = Vector2(0, 0)
 z_index = -9
@@ -1729,7 +1827,7 @@ only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
 
 [node name="LanternDarkShadow" type="Sprite2D" parent="Props/If_lantern_dark_shadow"]
 position = Vector2(936, 740)
-texture = ExtResource("t116")
+texture = ExtResource("t123")
 centered = false
 offset = Vector2(0, 0)
 z_index = -9
@@ -1740,7 +1838,7 @@ only_if = "{\"flags\":[\"shard_home:woodland\"]}"
 
 [node name="LanternLitShadow" type="Sprite2D" parent="Props/If_lantern_lit_shadow"]
 position = Vector2(936, 740)
-texture = ExtResource("t117")
+texture = ExtResource("t124")
 centered = false
 offset = Vector2(0, 0)
 z_index = -9
@@ -1750,8 +1848,8 @@ script = ExtResource("cond")
 only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
 
 [node name="BedsScorchedShadow" type="Sprite2D" parent="Props/If_beds_scorched_shadow"]
-position = Vector2(1148, 188)
-texture = ExtResource("t118")
+position = Vector2(572, 188)
+texture = ExtResource("t125")
 centered = false
 offset = Vector2(0, 0)
 z_index = -9
@@ -1761,8 +1859,8 @@ script = ExtResource("cond")
 only_if = "{\"flags\":[\"shard_home:woodland\"]}"
 
 [node name="BedsDugShadow" type="Sprite2D" parent="Props/If_beds_dug_shadow"]
-position = Vector2(1148, 188)
-texture = ExtResource("t119")
+position = Vector2(572, 188)
+texture = ExtResource("t126")
 centered = false
 offset = Vector2(0, 0)
 z_index = -9
@@ -1773,7 +1871,7 @@ only_if = "{\"flags\":[\"shard_home:woodland\"]}"
 
 [node name="StallBreadShadow" type="Sprite2D" parent="Props/If_stall_bread_shadow"]
 position = Vector2(617, 788)
-texture = ExtResource("t120")
+texture = ExtResource("t127")
 centered = false
 offset = Vector2(0, 0)
 z_index = -9
@@ -1784,7 +1882,7 @@ only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
 
 [node name="StallBreadShutShadow" type="Sprite2D" parent="Props/If_stall_bread_shut_shadow"]
 position = Vector2(617, 788)
-texture = ExtResource("t121")
+texture = ExtResource("t128")
 centered = false
 offset = Vector2(0, 0)
 z_index = -9
@@ -1795,7 +1893,7 @@ only_if = "{\"flags\":[\"shard_home:woodland\"]}"
 
 [node name="StallFishShadow" type="Sprite2D" parent="Props/If_stall_fish_shadow"]
 position = Vector2(761, 788)
-texture = ExtResource("t122")
+texture = ExtResource("t129")
 centered = false
 offset = Vector2(0, 0)
 z_index = -9
@@ -1806,7 +1904,7 @@ only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
 
 [node name="StallFishShutShadow" type="Sprite2D" parent="Props/If_stall_fish_shut_shadow"]
 position = Vector2(761, 788)
-texture = ExtResource("t123")
+texture = ExtResource("t130")
 centered = false
 offset = Vector2(0, 0)
 z_index = -9
@@ -1817,7 +1915,7 @@ only_if = "{\"flags\":[\"shard_home:woodland\"]}"
 
 [node name="StallClothShadow" type="Sprite2D" parent="Props/If_stall_cloth_shadow"]
 position = Vector2(1193, 788)
-texture = ExtResource("t124")
+texture = ExtResource("t131")
 centered = false
 offset = Vector2(0, 0)
 z_index = -9
@@ -1828,7 +1926,7 @@ only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
 
 [node name="StallClothShutShadow" type="Sprite2D" parent="Props/If_stall_cloth_shut_shadow"]
 position = Vector2(1193, 788)
-texture = ExtResource("t125")
+texture = ExtResource("t132")
 centered = false
 offset = Vector2(0, 0)
 z_index = -9
@@ -1839,7 +1937,7 @@ only_if = "{\"flags\":[\"shard_home:woodland\"]}"
 
 [node name="StallToolsShadow" type="Sprite2D" parent="Props/If_stall_tools_shadow"]
 position = Vector2(617, 1148)
-texture = ExtResource("t126")
+texture = ExtResource("t133")
 centered = false
 offset = Vector2(0, 0)
 z_index = -9
@@ -1850,7 +1948,7 @@ only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
 
 [node name="StallToolsShutShadow" type="Sprite2D" parent="Props/If_stall_tools_shut_shadow"]
 position = Vector2(617, 1148)
-texture = ExtResource("t127")
+texture = ExtResource("t134")
 centered = false
 offset = Vector2(0, 0)
 z_index = -9
@@ -1861,7 +1959,7 @@ only_if = "{\"flags\":[\"shard_home:woodland\"]}"
 
 [node name="StallProduceShadow" type="Sprite2D" parent="Props/If_stall_produce_shadow"]
 position = Vector2(1193, 1148)
-texture = ExtResource("t128")
+texture = ExtResource("t135")
 centered = false
 offset = Vector2(0, 0)
 z_index = -9
@@ -1872,7 +1970,7 @@ only_if = "{\"not_flags\":[\"shard_home:woodland\"]}"
 
 [node name="StallProduceShutShadow" type="Sprite2D" parent="Props/If_stall_produce_shut_shadow"]
 position = Vector2(1193, 1148)
-texture = ExtResource("t129")
+texture = ExtResource("t136")
 centered = false
 offset = Vector2(0, 0)
 z_index = -9
@@ -1883,7 +1981,7 @@ only_if = "{\"not_restored\":[\"forge\"]}"
 
 [node name="SquarePuddles" type="Sprite2D" parent="Props/If_square_puddles"]
 position = Vector2(816, 984)
-texture = ExtResource("t130")
+texture = ExtResource("t137")
 centered = false
 offset = Vector2(0, 0)
 z_index = -9
