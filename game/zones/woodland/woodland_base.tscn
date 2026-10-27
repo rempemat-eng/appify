@@ -1,4 +1,4 @@
-[gd_scene load_steps=201 format=3]
+[gd_scene load_steps=219 format=3]
 
 [ext_resource type="Texture2D" path="res://zones/woodland/art/ground.png" id="ground"]
 [ext_resource type="Texture2D" path="res://zones/woodland/art/flow.png" id="flow"]
@@ -70,7 +70,7 @@ size = Vector2(12, 12)
 size = Vector2(48, 12)
 
 [sub_resource type="RectangleShape2D" id="r15"]
-size = Vector2(24, 60)
+size = Vector2(24, 48)
 
 [sub_resource type="RectangleShape2D" id="r16"]
 size = Vector2(36, 12)
@@ -133,426 +133,480 @@ size = Vector2(60, 12)
 size = Vector2(96, 36)
 
 [sub_resource type="RectangleShape2D" id="r36"]
-size = Vector2(48, 12)
+size = Vector2(96, 12)
 
 [sub_resource type="RectangleShape2D" id="r37"]
 size = Vector2(48, 36)
 
 [sub_resource type="RectangleShape2D" id="r38"]
-size = Vector2(204, 12)
+size = Vector2(240, 12)
 
 [sub_resource type="RectangleShape2D" id="r39"]
-size = Vector2(36, 24)
+size = Vector2(228, 12)
 
 [sub_resource type="RectangleShape2D" id="r40"]
-size = Vector2(192, 36)
-
-[sub_resource type="RectangleShape2D" id="r41"]
 size = Vector2(228, 36)
 
+[sub_resource type="RectangleShape2D" id="r41"]
+size = Vector2(192, 24)
+
 [sub_resource type="RectangleShape2D" id="r42"]
-size = Vector2(48, 24)
-
-[sub_resource type="RectangleShape2D" id="r43"]
-size = Vector2(240, 12)
-
-[sub_resource type="RectangleShape2D" id="r44"]
-size = Vector2(48, 36)
-
-[sub_resource type="RectangleShape2D" id="r45"]
-size = Vector2(192, 36)
-
-[sub_resource type="RectangleShape2D" id="r46"]
-size = Vector2(228, 12)
-
-[sub_resource type="RectangleShape2D" id="r47"]
-size = Vector2(96, 24)
-
-[sub_resource type="RectangleShape2D" id="r48"]
-size = Vector2(48, 36)
-
-[sub_resource type="RectangleShape2D" id="r49"]
-size = Vector2(24, 96)
-
-[sub_resource type="RectangleShape2D" id="r50"]
-size = Vector2(12, 24)
-
-[sub_resource type="RectangleShape2D" id="r51"]
-size = Vector2(180, 72)
-
-[sub_resource type="RectangleShape2D" id="r52"]
-size = Vector2(60, 12)
-
-[sub_resource type="RectangleShape2D" id="r53"]
-size = Vector2(132, 12)
-
-[sub_resource type="RectangleShape2D" id="r54"]
-size = Vector2(36, 48)
-
-[sub_resource type="RectangleShape2D" id="r55"]
-size = Vector2(72, 12)
-
-[sub_resource type="RectangleShape2D" id="r56"]
-size = Vector2(84, 12)
-
-[sub_resource type="RectangleShape2D" id="r57"]
-size = Vector2(96, 24)
-
-[sub_resource type="RectangleShape2D" id="r58"]
-size = Vector2(24, 72)
-
-[sub_resource type="RectangleShape2D" id="r59"]
-size = Vector2(204, 72)
-
-[sub_resource type="RectangleShape2D" id="r60"]
-size = Vector2(48, 12)
-
-[sub_resource type="RectangleShape2D" id="r61"]
-size = Vector2(96, 24)
-
-[sub_resource type="RectangleShape2D" id="r62"]
-size = Vector2(72, 36)
-
-[sub_resource type="RectangleShape2D" id="r63"]
-size = Vector2(36, 48)
-
-[sub_resource type="RectangleShape2D" id="r64"]
-size = Vector2(60, 24)
-
-[sub_resource type="RectangleShape2D" id="r65"]
-size = Vector2(24, 72)
-
-[sub_resource type="RectangleShape2D" id="r66"]
-size = Vector2(72, 24)
-
-[sub_resource type="RectangleShape2D" id="r67"]
-size = Vector2(36, 36)
-
-[sub_resource type="RectangleShape2D" id="r68"]
-size = Vector2(108, 24)
-
-[sub_resource type="RectangleShape2D" id="r69"]
-size = Vector2(144, 24)
-
-[sub_resource type="RectangleShape2D" id="r70"]
-size = Vector2(24, 24)
-
-[sub_resource type="RectangleShape2D" id="r71"]
-size = Vector2(120, 48)
-
-[sub_resource type="RectangleShape2D" id="r72"]
-size = Vector2(36, 12)
-
-[sub_resource type="RectangleShape2D" id="r73"]
-size = Vector2(180, 72)
-
-[sub_resource type="RectangleShape2D" id="r74"]
-size = Vector2(60, 12)
-
-[sub_resource type="RectangleShape2D" id="r75"]
-size = Vector2(60, 12)
-
-[sub_resource type="RectangleShape2D" id="r76"]
-size = Vector2(84, 24)
-
-[sub_resource type="RectangleShape2D" id="r77"]
-size = Vector2(36, 12)
-
-[sub_resource type="RectangleShape2D" id="r78"]
-size = Vector2(84, 24)
-
-[sub_resource type="RectangleShape2D" id="r79"]
-size = Vector2(12, 24)
-
-[sub_resource type="RectangleShape2D" id="r80"]
-size = Vector2(12, 24)
-
-[sub_resource type="RectangleShape2D" id="r81"]
-size = Vector2(24, 60)
-
-[sub_resource type="RectangleShape2D" id="r82"]
-size = Vector2(72, 12)
-
-[sub_resource type="RectangleShape2D" id="r83"]
-size = Vector2(12, 12)
-
-[sub_resource type="RectangleShape2D" id="r84"]
-size = Vector2(12, 12)
-
-[sub_resource type="RectangleShape2D" id="r85"]
-size = Vector2(36, 24)
-
-[sub_resource type="RectangleShape2D" id="r86"]
-size = Vector2(36, 12)
-
-[sub_resource type="RectangleShape2D" id="r87"]
-size = Vector2(192, 12)
-
-[sub_resource type="RectangleShape2D" id="r88"]
-size = Vector2(12, 12)
-
-[sub_resource type="RectangleShape2D" id="r89"]
-size = Vector2(24, 36)
-
-[sub_resource type="RectangleShape2D" id="r90"]
-size = Vector2(180, 24)
-
-[sub_resource type="RectangleShape2D" id="r91"]
-size = Vector2(12, 12)
-
-[sub_resource type="RectangleShape2D" id="r92"]
-size = Vector2(300, 36)
-
-[sub_resource type="RectangleShape2D" id="r93"]
-size = Vector2(60, 24)
-
-[sub_resource type="RectangleShape2D" id="r94"]
-size = Vector2(48, 24)
-
-[sub_resource type="RectangleShape2D" id="r95"]
-size = Vector2(60, 24)
-
-[sub_resource type="RectangleShape2D" id="r96"]
-size = Vector2(144, 12)
-
-[sub_resource type="RectangleShape2D" id="r97"]
-size = Vector2(156, 12)
-
-[sub_resource type="RectangleShape2D" id="r98"]
-size = Vector2(96, 12)
-
-[sub_resource type="RectangleShape2D" id="r99"]
-size = Vector2(60, 12)
-
-[sub_resource type="RectangleShape2D" id="r100"]
-size = Vector2(240, 12)
-
-[sub_resource type="RectangleShape2D" id="r101"]
-size = Vector2(96, 12)
-
-[sub_resource type="RectangleShape2D" id="r102"]
-size = Vector2(372, 12)
-
-[sub_resource type="RectangleShape2D" id="r103"]
-size = Vector2(228, 12)
-
-[sub_resource type="RectangleShape2D" id="r104"]
-size = Vector2(96, 24)
-
-[sub_resource type="RectangleShape2D" id="r105"]
-size = Vector2(204, 12)
-
-[sub_resource type="RectangleShape2D" id="r106"]
-size = Vector2(360, 12)
-
-[sub_resource type="RectangleShape2D" id="r107"]
-size = Vector2(36, 12)
-
-[sub_resource type="RectangleShape2D" id="r108"]
-size = Vector2(348, 12)
-
-[sub_resource type="RectangleShape2D" id="r109"]
 size = Vector2(24, 12)
 
-[sub_resource type="RectangleShape2D" id="r110"]
+[sub_resource type="RectangleShape2D" id="r43"]
 size = Vector2(12, 12)
 
-[sub_resource type="RectangleShape2D" id="r111"]
-size = Vector2(360, 12)
+[sub_resource type="RectangleShape2D" id="r44"]
+size = Vector2(180, 24)
 
-[sub_resource type="RectangleShape2D" id="r112"]
-size = Vector2(552, 72)
+[sub_resource type="RectangleShape2D" id="r45"]
+size = Vector2(24, 12)
 
-[sub_resource type="RectangleShape2D" id="r113"]
-size = Vector2(192, 48)
-
-[sub_resource type="RectangleShape2D" id="r114"]
-size = Vector2(84, 36)
-
-[sub_resource type="RectangleShape2D" id="r115"]
-size = Vector2(180, 12)
-
-[sub_resource type="RectangleShape2D" id="r116"]
-size = Vector2(12, 12)
-
-[sub_resource type="RectangleShape2D" id="r117"]
-size = Vector2(12, 12)
-
-[sub_resource type="RectangleShape2D" id="r118"]
-size = Vector2(156, 24)
-
-[sub_resource type="RectangleShape2D" id="r119"]
-size = Vector2(120, 36)
-
-[sub_resource type="RectangleShape2D" id="r120"]
-size = Vector2(48, 24)
-
-[sub_resource type="RectangleShape2D" id="r121"]
-size = Vector2(60, 24)
-
-[sub_resource type="RectangleShape2D" id="r122"]
+[sub_resource type="RectangleShape2D" id="r46"]
 size = Vector2(48, 36)
 
-[sub_resource type="RectangleShape2D" id="r123"]
-size = Vector2(84, 24)
+[sub_resource type="RectangleShape2D" id="r47"]
+size = Vector2(192, 36)
 
-[sub_resource type="RectangleShape2D" id="r124"]
-size = Vector2(204, 12)
-
-[sub_resource type="RectangleShape2D" id="r125"]
-size = Vector2(180, 60)
-
-[sub_resource type="RectangleShape2D" id="r126"]
-size = Vector2(108, 24)
-
-[sub_resource type="RectangleShape2D" id="r127"]
-size = Vector2(156, 12)
-
-[sub_resource type="RectangleShape2D" id="r128"]
-size = Vector2(108, 12)
-
-[sub_resource type="RectangleShape2D" id="r129"]
-size = Vector2(48, 24)
-
-[sub_resource type="RectangleShape2D" id="r130"]
+[sub_resource type="RectangleShape2D" id="r48"]
 size = Vector2(36, 12)
 
-[sub_resource type="RectangleShape2D" id="r131"]
-size = Vector2(156, 24)
-
-[sub_resource type="RectangleShape2D" id="r132"]
-size = Vector2(48, 24)
-
-[sub_resource type="RectangleShape2D" id="r133"]
-size = Vector2(48, 24)
-
-[sub_resource type="RectangleShape2D" id="r134"]
-size = Vector2(108, 36)
-
-[sub_resource type="RectangleShape2D" id="r135"]
-size = Vector2(84, 24)
-
-[sub_resource type="RectangleShape2D" id="r136"]
-size = Vector2(180, 48)
-
-[sub_resource type="RectangleShape2D" id="r137"]
-size = Vector2(48, 24)
-
-[sub_resource type="RectangleShape2D" id="r138"]
-size = Vector2(36, 12)
-
-[sub_resource type="RectangleShape2D" id="r139"]
-size = Vector2(288, 24)
-
-[sub_resource type="RectangleShape2D" id="r140"]
-size = Vector2(72, 48)
-
-[sub_resource type="RectangleShape2D" id="r141"]
-size = Vector2(48, 12)
-
-[sub_resource type="RectangleShape2D" id="r142"]
-size = Vector2(48, 24)
-
-[sub_resource type="RectangleShape2D" id="r143"]
-size = Vector2(60, 12)
-
-[sub_resource type="RectangleShape2D" id="r144"]
-size = Vector2(192, 48)
-
-[sub_resource type="RectangleShape2D" id="r145"]
-size = Vector2(60, 12)
-
-[sub_resource type="RectangleShape2D" id="r146"]
-size = Vector2(48, 24)
-
-[sub_resource type="RectangleShape2D" id="r147"]
-size = Vector2(84, 36)
-
-[sub_resource type="RectangleShape2D" id="r148"]
-size = Vector2(108, 24)
-
-[sub_resource type="RectangleShape2D" id="r149"]
-size = Vector2(144, 12)
-
-[sub_resource type="RectangleShape2D" id="r150"]
-size = Vector2(108, 24)
-
-[sub_resource type="RectangleShape2D" id="r151"]
+[sub_resource type="RectangleShape2D" id="r49"]
 size = Vector2(96, 24)
 
-[sub_resource type="RectangleShape2D" id="r152"]
-size = Vector2(72, 12)
+[sub_resource type="RectangleShape2D" id="r50"]
+size = Vector2(48, 36)
 
-[sub_resource type="RectangleShape2D" id="r153"]
-size = Vector2(60, 24)
+[sub_resource type="RectangleShape2D" id="r51"]
+size = Vector2(24, 48)
 
-[sub_resource type="RectangleShape2D" id="r154"]
-size = Vector2(120, 12)
+[sub_resource type="RectangleShape2D" id="r52"]
+size = Vector2(12, 24)
 
-[sub_resource type="RectangleShape2D" id="r155"]
+[sub_resource type="RectangleShape2D" id="r53"]
+size = Vector2(12, 24)
+
+[sub_resource type="RectangleShape2D" id="r54"]
+size = Vector2(36, 12)
+
+[sub_resource type="RectangleShape2D" id="r55"]
+size = Vector2(180, 72)
+
+[sub_resource type="RectangleShape2D" id="r56"]
+size = Vector2(24, 36)
+
+[sub_resource type="RectangleShape2D" id="r57"]
+size = Vector2(60, 12)
+
+[sub_resource type="RectangleShape2D" id="r58"]
+size = Vector2(168, 12)
+
+[sub_resource type="RectangleShape2D" id="r59"]
+size = Vector2(12, 48)
+
+[sub_resource type="RectangleShape2D" id="r60"]
+size = Vector2(108, 12)
+
+[sub_resource type="RectangleShape2D" id="r61"]
+size = Vector2(36, 24)
+
+[sub_resource type="RectangleShape2D" id="r62"]
+size = Vector2(84, 12)
+
+[sub_resource type="RectangleShape2D" id="r63"]
+size = Vector2(96, 24)
+
+[sub_resource type="RectangleShape2D" id="r64"]
+size = Vector2(24, 24)
+
+[sub_resource type="RectangleShape2D" id="r65"]
+size = Vector2(204, 72)
+
+[sub_resource type="RectangleShape2D" id="r66"]
 size = Vector2(48, 12)
 
-[sub_resource type="RectangleShape2D" id="r156"]
-size = Vector2(72, 48)
+[sub_resource type="RectangleShape2D" id="r67"]
+size = Vector2(96, 24)
 
-[sub_resource type="RectangleShape2D" id="r157"]
-size = Vector2(144, 24)
+[sub_resource type="RectangleShape2D" id="r68"]
+size = Vector2(36, 24)
 
-[sub_resource type="RectangleShape2D" id="r158"]
-size = Vector2(108, 36)
+[sub_resource type="RectangleShape2D" id="r69"]
+size = Vector2(24, 120)
 
-[sub_resource type="RectangleShape2D" id="r159"]
+[sub_resource type="RectangleShape2D" id="r70"]
 size = Vector2(72, 36)
 
-[sub_resource type="RectangleShape2D" id="r160"]
-size = Vector2(84, 24)
+[sub_resource type="RectangleShape2D" id="r71"]
+size = Vector2(12, 60)
 
-[sub_resource type="RectangleShape2D" id="r161"]
-size = Vector2(180, 36)
+[sub_resource type="RectangleShape2D" id="r72"]
+size = Vector2(60, 24)
 
-[sub_resource type="RectangleShape2D" id="r162"]
-size = Vector2(96, 24)
-
-[sub_resource type="RectangleShape2D" id="r163"]
-size = Vector2(156, 12)
-
-[sub_resource type="RectangleShape2D" id="r164"]
-size = Vector2(264, 12)
-
-[sub_resource type="RectangleShape2D" id="r165"]
-size = Vector2(192, 12)
-
-[sub_resource type="RectangleShape2D" id="r166"]
-size = Vector2(276, 24)
-
-[sub_resource type="RectangleShape2D" id="r167"]
-size = Vector2(48, 24)
-
-[sub_resource type="RectangleShape2D" id="r168"]
-size = Vector2(108, 12)
-
-[sub_resource type="RectangleShape2D" id="r169"]
-size = Vector2(384, 12)
-
-[sub_resource type="RectangleShape2D" id="r170"]
+[sub_resource type="RectangleShape2D" id="r73"]
 size = Vector2(72, 24)
 
-[sub_resource type="RectangleShape2D" id="r171"]
-size = Vector2(276, 12)
+[sub_resource type="RectangleShape2D" id="r74"]
+size = Vector2(36, 12)
 
-[sub_resource type="RectangleShape2D" id="r172"]
+[sub_resource type="RectangleShape2D" id="r75"]
+size = Vector2(24, 12)
+
+[sub_resource type="RectangleShape2D" id="r76"]
+size = Vector2(36, 36)
+
+[sub_resource type="RectangleShape2D" id="r77"]
+size = Vector2(12, 36)
+
+[sub_resource type="RectangleShape2D" id="r78"]
+size = Vector2(108, 24)
+
+[sub_resource type="RectangleShape2D" id="r79"]
+size = Vector2(156, 24)
+
+[sub_resource type="RectangleShape2D" id="r80"]
+size = Vector2(120, 48)
+
+[sub_resource type="RectangleShape2D" id="r81"]
+size = Vector2(24, 12)
+
+[sub_resource type="RectangleShape2D" id="r82"]
+size = Vector2(180, 72)
+
+[sub_resource type="RectangleShape2D" id="r83"]
+size = Vector2(36, 12)
+
+[sub_resource type="RectangleShape2D" id="r84"]
+size = Vector2(48, 12)
+
+[sub_resource type="RectangleShape2D" id="r85"]
+size = Vector2(84, 24)
+
+[sub_resource type="RectangleShape2D" id="r86"]
+size = Vector2(84, 12)
+
+[sub_resource type="RectangleShape2D" id="r87"]
+size = Vector2(168, 12)
+
+[sub_resource type="RectangleShape2D" id="r88"]
+size = Vector2(84, 12)
+
+[sub_resource type="RectangleShape2D" id="r89"]
+size = Vector2(12, 12)
+
+[sub_resource type="RectangleShape2D" id="r90"]
+size = Vector2(12, 12)
+
+[sub_resource type="RectangleShape2D" id="r91"]
+size = Vector2(36, 12)
+
+[sub_resource type="RectangleShape2D" id="r92"]
+size = Vector2(24, 36)
+
+[sub_resource type="RectangleShape2D" id="r93"]
+size = Vector2(72, 12)
+
+[sub_resource type="RectangleShape2D" id="r94"]
+size = Vector2(12, 12)
+
+[sub_resource type="RectangleShape2D" id="r95"]
+size = Vector2(12, 12)
+
+[sub_resource type="RectangleShape2D" id="r96"]
+size = Vector2(36, 24)
+
+[sub_resource type="RectangleShape2D" id="r97"]
+size = Vector2(48, 12)
+
+[sub_resource type="RectangleShape2D" id="r98"]
+size = Vector2(192, 12)
+
+[sub_resource type="RectangleShape2D" id="r99"]
+size = Vector2(12, 12)
+
+[sub_resource type="RectangleShape2D" id="r100"]
+size = Vector2(24, 36)
+
+[sub_resource type="RectangleShape2D" id="r101"]
+size = Vector2(180, 24)
+
+[sub_resource type="RectangleShape2D" id="r102"]
+size = Vector2(12, 12)
+
+[sub_resource type="RectangleShape2D" id="r103"]
+size = Vector2(300, 36)
+
+[sub_resource type="RectangleShape2D" id="r104"]
+size = Vector2(60, 24)
+
+[sub_resource type="RectangleShape2D" id="r105"]
 size = Vector2(48, 24)
 
-[sub_resource type="RectangleShape2D" id="r173"]
-size = Vector2(264, 12)
+[sub_resource type="RectangleShape2D" id="r106"]
+size = Vector2(60, 24)
 
-[sub_resource type="RectangleShape2D" id="r174"]
+[sub_resource type="RectangleShape2D" id="r107"]
+size = Vector2(144, 12)
+
+[sub_resource type="RectangleShape2D" id="r108"]
+size = Vector2(156, 12)
+
+[sub_resource type="RectangleShape2D" id="r109"]
+size = Vector2(96, 12)
+
+[sub_resource type="RectangleShape2D" id="r110"]
+size = Vector2(60, 12)
+
+[sub_resource type="RectangleShape2D" id="r111"]
+size = Vector2(252, 12)
+
+[sub_resource type="RectangleShape2D" id="r112"]
+size = Vector2(96, 12)
+
+[sub_resource type="RectangleShape2D" id="r113"]
+size = Vector2(372, 12)
+
+[sub_resource type="RectangleShape2D" id="r114"]
+size = Vector2(228, 12)
+
+[sub_resource type="RectangleShape2D" id="r115"]
+size = Vector2(96, 24)
+
+[sub_resource type="RectangleShape2D" id="r116"]
+size = Vector2(204, 12)
+
+[sub_resource type="RectangleShape2D" id="r117"]
+size = Vector2(360, 12)
+
+[sub_resource type="RectangleShape2D" id="r118"]
+size = Vector2(144, 24)
+
+[sub_resource type="RectangleShape2D" id="r119"]
+size = Vector2(36, 12)
+
+[sub_resource type="RectangleShape2D" id="r120"]
+size = Vector2(348, 12)
+
+[sub_resource type="RectangleShape2D" id="r121"]
+size = Vector2(24, 12)
+
+[sub_resource type="RectangleShape2D" id="r122"]
+size = Vector2(12, 12)
+
+[sub_resource type="RectangleShape2D" id="r123"]
+size = Vector2(360, 12)
+
+[sub_resource type="RectangleShape2D" id="r124"]
+size = Vector2(336, 12)
+
+[sub_resource type="RectangleShape2D" id="r125"]
+size = Vector2(36, 12)
+
+[sub_resource type="RectangleShape2D" id="r126"]
 size = Vector2(192, 48)
 
+[sub_resource type="RectangleShape2D" id="r127"]
+size = Vector2(348, 12)
+
+[sub_resource type="RectangleShape2D" id="r128"]
+size = Vector2(48, 12)
+
+[sub_resource type="RectangleShape2D" id="r129"]
+size = Vector2(552, 48)
+
+[sub_resource type="RectangleShape2D" id="r130"]
+size = Vector2(84, 36)
+
+[sub_resource type="RectangleShape2D" id="r131"]
+size = Vector2(168, 12)
+
+[sub_resource type="RectangleShape2D" id="r132"]
+size = Vector2(12, 12)
+
+[sub_resource type="RectangleShape2D" id="r133"]
+size = Vector2(12, 12)
+
+[sub_resource type="RectangleShape2D" id="r134"]
+size = Vector2(192, 12)
+
+[sub_resource type="RectangleShape2D" id="r135"]
+size = Vector2(156, 24)
+
+[sub_resource type="RectangleShape2D" id="r136"]
+size = Vector2(180, 12)
+
+[sub_resource type="RectangleShape2D" id="r137"]
+size = Vector2(120, 36)
+
+[sub_resource type="RectangleShape2D" id="r138"]
+size = Vector2(48, 24)
+
+[sub_resource type="RectangleShape2D" id="r139"]
+size = Vector2(60, 24)
+
+[sub_resource type="RectangleShape2D" id="r140"]
+size = Vector2(48, 36)
+
+[sub_resource type="RectangleShape2D" id="r141"]
+size = Vector2(84, 24)
+
+[sub_resource type="RectangleShape2D" id="r142"]
+size = Vector2(204, 12)
+
+[sub_resource type="RectangleShape2D" id="r143"]
+size = Vector2(180, 60)
+
+[sub_resource type="RectangleShape2D" id="r144"]
+size = Vector2(108, 24)
+
+[sub_resource type="RectangleShape2D" id="r145"]
+size = Vector2(156, 12)
+
+[sub_resource type="RectangleShape2D" id="r146"]
+size = Vector2(108, 12)
+
+[sub_resource type="RectangleShape2D" id="r147"]
+size = Vector2(48, 24)
+
+[sub_resource type="RectangleShape2D" id="r148"]
+size = Vector2(36, 12)
+
+[sub_resource type="RectangleShape2D" id="r149"]
+size = Vector2(156, 24)
+
+[sub_resource type="RectangleShape2D" id="r150"]
+size = Vector2(48, 24)
+
+[sub_resource type="RectangleShape2D" id="r151"]
+size = Vector2(48, 24)
+
+[sub_resource type="RectangleShape2D" id="r152"]
+size = Vector2(108, 36)
+
+[sub_resource type="RectangleShape2D" id="r153"]
+size = Vector2(84, 24)
+
+[sub_resource type="RectangleShape2D" id="r154"]
+size = Vector2(180, 48)
+
+[sub_resource type="RectangleShape2D" id="r155"]
+size = Vector2(48, 24)
+
+[sub_resource type="RectangleShape2D" id="r156"]
+size = Vector2(36, 12)
+
+[sub_resource type="RectangleShape2D" id="r157"]
+size = Vector2(288, 24)
+
+[sub_resource type="RectangleShape2D" id="r158"]
+size = Vector2(72, 48)
+
+[sub_resource type="RectangleShape2D" id="r159"]
+size = Vector2(48, 12)
+
+[sub_resource type="RectangleShape2D" id="r160"]
+size = Vector2(48, 24)
+
+[sub_resource type="RectangleShape2D" id="r161"]
+size = Vector2(60, 12)
+
+[sub_resource type="RectangleShape2D" id="r162"]
+size = Vector2(192, 48)
+
+[sub_resource type="RectangleShape2D" id="r163"]
+size = Vector2(60, 12)
+
+[sub_resource type="RectangleShape2D" id="r164"]
+size = Vector2(48, 24)
+
+[sub_resource type="RectangleShape2D" id="r165"]
+size = Vector2(84, 36)
+
+[sub_resource type="RectangleShape2D" id="r166"]
+size = Vector2(108, 24)
+
+[sub_resource type="RectangleShape2D" id="r167"]
+size = Vector2(144, 12)
+
+[sub_resource type="RectangleShape2D" id="r168"]
+size = Vector2(108, 24)
+
+[sub_resource type="RectangleShape2D" id="r169"]
+size = Vector2(96, 24)
+
+[sub_resource type="RectangleShape2D" id="r170"]
+size = Vector2(72, 12)
+
+[sub_resource type="RectangleShape2D" id="r171"]
+size = Vector2(60, 24)
+
+[sub_resource type="RectangleShape2D" id="r172"]
+size = Vector2(120, 12)
+
+[sub_resource type="RectangleShape2D" id="r173"]
+size = Vector2(48, 12)
+
+[sub_resource type="RectangleShape2D" id="r174"]
+size = Vector2(72, 48)
+
 [sub_resource type="RectangleShape2D" id="r175"]
-size = Vector2(96, 36)
+size = Vector2(144, 24)
 
 [sub_resource type="RectangleShape2D" id="r176"]
+size = Vector2(108, 36)
+
+[sub_resource type="RectangleShape2D" id="r177"]
+size = Vector2(72, 36)
+
+[sub_resource type="RectangleShape2D" id="r178"]
+size = Vector2(84, 24)
+
+[sub_resource type="RectangleShape2D" id="r179"]
+size = Vector2(180, 36)
+
+[sub_resource type="RectangleShape2D" id="r180"]
+size = Vector2(96, 24)
+
+[sub_resource type="RectangleShape2D" id="r181"]
+size = Vector2(156, 12)
+
+[sub_resource type="RectangleShape2D" id="r182"]
+size = Vector2(264, 12)
+
+[sub_resource type="RectangleShape2D" id="r183"]
+size = Vector2(192, 12)
+
+[sub_resource type="RectangleShape2D" id="r184"]
+size = Vector2(276, 24)
+
+[sub_resource type="RectangleShape2D" id="r185"]
+size = Vector2(48, 24)
+
+[sub_resource type="RectangleShape2D" id="r186"]
+size = Vector2(108, 12)
+
+[sub_resource type="RectangleShape2D" id="r187"]
+size = Vector2(384, 12)
+
+[sub_resource type="RectangleShape2D" id="r188"]
+size = Vector2(72, 24)
+
+[sub_resource type="RectangleShape2D" id="r189"]
+size = Vector2(276, 12)
+
+[sub_resource type="RectangleShape2D" id="r190"]
+size = Vector2(48, 24)
+
+[sub_resource type="RectangleShape2D" id="r191"]
+size = Vector2(264, 12)
+
+[sub_resource type="RectangleShape2D" id="r192"]
+size = Vector2(192, 48)
+
+[sub_resource type="RectangleShape2D" id="r193"]
+size = Vector2(96, 36)
+
+[sub_resource type="RectangleShape2D" id="r194"]
 size = Vector2(84, 36)
 
 [node name="WoodlandBase" type="Node2D"]
@@ -565,7 +619,7 @@ centered = false
 
 [node name="Water" type="Sprite2D" parent="."]
 z_index = -9
-position = Vector2(166, 756)
+position = Vector2(168, 756)
 texture = ExtResource("flow")
 centered = false
 hframes = 2
@@ -1107,7 +1161,7 @@ position = Vector2(108, 54)
 shape = SubResource("r14")
 
 [node name="c15" type="CollisionShape2D" parent="Walls"]
-position = Vector2(240, 78)
+position = Vector2(240, 72)
 shape = SubResource("r15")
 
 [node name="c16" type="CollisionShape2D" parent="Walls"]
@@ -1191,7 +1245,7 @@ position = Vector2(804, 102)
 shape = SubResource("r35")
 
 [node name="c36" type="CollisionShape2D" parent="Walls"]
-position = Vector2(180, 102)
+position = Vector2(204, 102)
 shape = SubResource("r36")
 
 [node name="c37" type="CollisionShape2D" parent="Walls"]
@@ -1199,560 +1253,632 @@ position = Vector2(384, 114)
 shape = SubResource("r37")
 
 [node name="c38" type="CollisionShape2D" parent="Walls"]
-position = Vector2(102, 114)
+position = Vector2(120, 114)
 shape = SubResource("r38")
 
 [node name="c39" type="CollisionShape2D" parent="Walls"]
-position = Vector2(234, 120)
+position = Vector2(114, 126)
 shape = SubResource("r39")
 
 [node name="c40" type="CollisionShape2D" parent="Walls"]
-position = Vector2(96, 138)
+position = Vector2(714, 138)
 shape = SubResource("r40")
 
 [node name="c41" type="CollisionShape2D" parent="Walls"]
-position = Vector2(714, 138)
+position = Vector2(96, 144)
 shape = SubResource("r41")
 
 [node name="c42" type="CollisionShape2D" parent="Walls"]
-position = Vector2(228, 144)
+position = Vector2(216, 138)
 shape = SubResource("r42")
 
 [node name="c43" type="CollisionShape2D" parent="Walls"]
-position = Vector2(120, 162)
+position = Vector2(210, 150)
 shape = SubResource("r43")
 
 [node name="c44" type="CollisionShape2D" parent="Walls"]
-position = Vector2(384, 174)
+position = Vector2(90, 168)
 shape = SubResource("r44")
 
 [node name="c45" type="CollisionShape2D" parent="Walls"]
-position = Vector2(696, 174)
+position = Vector2(216, 162)
 shape = SubResource("r45")
 
 [node name="c46" type="CollisionShape2D" parent="Walls"]
-position = Vector2(114, 174)
+position = Vector2(384, 174)
 shape = SubResource("r46")
 
 [node name="c47" type="CollisionShape2D" parent="Walls"]
-position = Vector2(528, 180)
+position = Vector2(696, 174)
 shape = SubResource("r47")
 
 [node name="c48" type="CollisionShape2D" parent="Walls"]
-position = Vector2(24, 198)
+position = Vector2(210, 174)
 shape = SubResource("r48")
 
 [node name="c49" type="CollisionShape2D" parent="Walls"]
-position = Vector2(168, 228)
+position = Vector2(528, 180)
 shape = SubResource("r49")
 
 [node name="c50" type="CollisionShape2D" parent="Walls"]
-position = Vector2(198, 192)
+position = Vector2(24, 198)
 shape = SubResource("r50")
 
 [node name="c51" type="CollisionShape2D" parent="Walls"]
-position = Vector2(618, 264)
+position = Vector2(144, 204)
 shape = SubResource("r51")
 
 [node name="c52" type="CollisionShape2D" parent="Walls"]
-position = Vector2(30, 270)
+position = Vector2(174, 192)
 shape = SubResource("r52")
 
 [node name="c53" type="CollisionShape2D" parent="Walls"]
-position = Vector2(66, 282)
+position = Vector2(198, 192)
 shape = SubResource("r53")
 
 [node name="c54" type="CollisionShape2D" parent="Walls"]
-position = Vector2(174, 300)
+position = Vector2(150, 234)
 shape = SubResource("r54")
 
 [node name="c55" type="CollisionShape2D" parent="Walls"]
-position = Vector2(96, 294)
+position = Vector2(618, 264)
 shape = SubResource("r55")
 
 [node name="c56" type="CollisionShape2D" parent="Walls"]
-position = Vector2(546, 306)
+position = Vector2(144, 258)
 shape = SubResource("r56")
 
 [node name="c57" type="CollisionShape2D" parent="Walls"]
-position = Vector2(540, 324)
+position = Vector2(30, 270)
 shape = SubResource("r57")
 
 [node name="c58" type="CollisionShape2D" parent="Walls"]
-position = Vector2(168, 360)
+position = Vector2(84, 282)
 shape = SubResource("r58")
 
 [node name="c59" type="CollisionShape2D" parent="Walls"]
-position = Vector2(330, 360)
+position = Vector2(186, 300)
 shape = SubResource("r59")
 
 [node name="c60" type="CollisionShape2D" parent="Walls"]
-position = Vector2(48, 342)
+position = Vector2(114, 294)
 shape = SubResource("r60")
 
 [node name="c61" type="CollisionShape2D" parent="Walls"]
-position = Vector2(48, 360)
+position = Vector2(150, 312)
 shape = SubResource("r61")
 
 [node name="c62" type="CollisionShape2D" parent="Walls"]
-position = Vector2(36, 414)
+position = Vector2(546, 306)
 shape = SubResource("r62")
 
 [node name="c63" type="CollisionShape2D" parent="Walls"]
-position = Vector2(162, 420)
+position = Vector2(540, 324)
 shape = SubResource("r63")
 
 [node name="c64" type="CollisionShape2D" parent="Walls"]
-position = Vector2(738, 408)
+position = Vector2(144, 336)
 shape = SubResource("r64")
 
 [node name="c65" type="CollisionShape2D" parent="Walls"]
-position = Vector2(168, 480)
+position = Vector2(330, 360)
 shape = SubResource("r65")
 
 [node name="c66" type="CollisionShape2D" parent="Walls"]
-position = Vector2(60, 468)
+position = Vector2(48, 342)
 shape = SubResource("r66")
 
 [node name="c67" type="CollisionShape2D" parent="Walls"]
-position = Vector2(174, 534)
+position = Vector2(48, 360)
 shape = SubResource("r67")
 
 [node name="c68" type="CollisionShape2D" parent="Walls"]
-position = Vector2(54, 540)
+position = Vector2(150, 360)
 shape = SubResource("r68")
 
 [node name="c69" type="CollisionShape2D" parent="Walls"]
-position = Vector2(72, 564)
+position = Vector2(144, 432)
 shape = SubResource("r69")
 
 [node name="c70" type="CollisionShape2D" parent="Walls"]
-position = Vector2(168, 564)
+position = Vector2(36, 414)
 shape = SubResource("r70")
 
 [node name="c71" type="CollisionShape2D" parent="Walls"]
-position = Vector2(60, 600)
+position = Vector2(174, 426)
 shape = SubResource("r71")
 
 [node name="c72" type="CollisionShape2D" parent="Walls"]
-position = Vector2(174, 582)
+position = Vector2(738, 408)
 shape = SubResource("r72")
 
 [node name="c73" type="CollisionShape2D" parent="Walls"]
-position = Vector2(846, 612)
+position = Vector2(60, 468)
 shape = SubResource("r73")
 
 [node name="c74" type="CollisionShape2D" parent="Walls"]
-position = Vector2(198, 594)
+position = Vector2(138, 498)
 shape = SubResource("r74")
 
 [node name="c75" type="CollisionShape2D" parent="Walls"]
-position = Vector2(210, 606)
+position = Vector2(144, 510)
 shape = SubResource("r75")
 
 [node name="c76" type="CollisionShape2D" parent="Walls"]
-position = Vector2(510, 612)
+position = Vector2(150, 534)
 shape = SubResource("r76")
 
 [node name="c77" type="CollisionShape2D" parent="Walls"]
-position = Vector2(234, 618)
+position = Vector2(186, 534)
 shape = SubResource("r77")
 
 [node name="c78" type="CollisionShape2D" parent="Walls"]
-position = Vector2(114, 636)
+position = Vector2(54, 540)
 shape = SubResource("r78")
 
 [node name="c79" type="CollisionShape2D" parent="Walls"]
-position = Vector2(174, 636)
+position = Vector2(78, 564)
 shape = SubResource("r79")
 
 [node name="c80" type="CollisionShape2D" parent="Walls"]
-position = Vector2(198, 636)
+position = Vector2(60, 600)
 shape = SubResource("r80")
 
 [node name="c81" type="CollisionShape2D" parent="Walls"]
-position = Vector2(240, 654)
+position = Vector2(144, 582)
 shape = SubResource("r81")
 
 [node name="c82" type="CollisionShape2D" parent="Walls"]
-position = Vector2(792, 654)
+position = Vector2(846, 612)
 shape = SubResource("r82")
 
 [node name="c83" type="CollisionShape2D" parent="Walls"]
-position = Vector2(186, 666)
+position = Vector2(150, 594)
 shape = SubResource("r83")
 
 [node name="c84" type="CollisionShape2D" parent="Walls"]
-position = Vector2(210, 666)
+position = Vector2(156, 606)
 shape = SubResource("r84")
 
 [node name="c85" type="CollisionShape2D" parent="Walls"]
-position = Vector2(918, 684)
+position = Vector2(510, 612)
 shape = SubResource("r85")
 
 [node name="c86" type="CollisionShape2D" parent="Walls"]
-position = Vector2(234, 690)
+position = Vector2(186, 618)
 shape = SubResource("r86")
 
 [node name="c87" type="CollisionShape2D" parent="Walls"]
-position = Vector2(792, 690)
+position = Vector2(156, 630)
 shape = SubResource("r87")
 
 [node name="c88" type="CollisionShape2D" parent="Walls"]
-position = Vector2(198, 702)
+position = Vector2(114, 642)
 shape = SubResource("r88")
 
 [node name="c89" type="CollisionShape2D" parent="Walls"]
-position = Vector2(240, 714)
+position = Vector2(174, 642)
 shape = SubResource("r89")
 
 [node name="c90" type="CollisionShape2D" parent="Walls"]
-position = Vector2(786, 708)
+position = Vector2(198, 642)
 shape = SubResource("r90")
 
 [node name="c91" type="CollisionShape2D" parent="Walls"]
-position = Vector2(210, 726)
+position = Vector2(234, 642)
 shape = SubResource("r91")
 
 [node name="c92" type="CollisionShape2D" parent="Walls"]
-position = Vector2(726, 738)
+position = Vector2(240, 666)
 shape = SubResource("r92")
 
 [node name="c93" type="CollisionShape2D" parent="Walls"]
-position = Vector2(234, 744)
+position = Vector2(792, 654)
 shape = SubResource("r93")
 
 [node name="c94" type="CollisionShape2D" parent="Walls"]
-position = Vector2(528, 744)
+position = Vector2(186, 666)
 shape = SubResource("r94")
 
 [node name="c95" type="CollisionShape2D" parent="Walls"]
-position = Vector2(30, 756)
+position = Vector2(210, 666)
 shape = SubResource("r95")
 
 [node name="c96" type="CollisionShape2D" parent="Walls"]
-position = Vector2(240, 762)
+position = Vector2(918, 684)
 shape = SubResource("r96")
 
 [node name="c97" type="CollisionShape2D" parent="Walls"]
-position = Vector2(246, 774)
+position = Vector2(240, 690)
 shape = SubResource("r97")
 
 [node name="c98" type="CollisionShape2D" parent="Walls"]
-position = Vector2(204, 786)
+position = Vector2(792, 690)
 shape = SubResource("r98")
 
 [node name="c99" type="CollisionShape2D" parent="Walls"]
-position = Vector2(294, 786)
+position = Vector2(198, 702)
 shape = SubResource("r99")
 
 [node name="c100" type="CollisionShape2D" parent="Walls"]
-position = Vector2(120, 798)
+position = Vector2(240, 714)
 shape = SubResource("r100")
 
 [node name="c101" type="CollisionShape2D" parent="Walls"]
-position = Vector2(312, 798)
+position = Vector2(786, 708)
 shape = SubResource("r101")
 
 [node name="c102" type="CollisionShape2D" parent="Walls"]
-position = Vector2(186, 810)
+position = Vector2(210, 726)
 shape = SubResource("r102")
 
 [node name="c103" type="CollisionShape2D" parent="Walls"]
-position = Vector2(114, 822)
+position = Vector2(726, 738)
 shape = SubResource("r103")
 
 [node name="c104" type="CollisionShape2D" parent="Walls"]
-position = Vector2(312, 828)
+position = Vector2(234, 744)
 shape = SubResource("r104")
 
 [node name="c105" type="CollisionShape2D" parent="Walls"]
-position = Vector2(102, 834)
+position = Vector2(528, 744)
 shape = SubResource("r105")
 
 [node name="c106" type="CollisionShape2D" parent="Walls"]
-position = Vector2(180, 846)
+position = Vector2(30, 756)
 shape = SubResource("r106")
 
 [node name="c107" type="CollisionShape2D" parent="Walls"]
-position = Vector2(870, 846)
+position = Vector2(240, 762)
 shape = SubResource("r107")
 
 [node name="c108" type="CollisionShape2D" parent="Walls"]
-position = Vector2(174, 858)
+position = Vector2(246, 774)
 shape = SubResource("r108")
 
 [node name="c109" type="CollisionShape2D" parent="Walls"]
-position = Vector2(804, 858)
+position = Vector2(204, 786)
 shape = SubResource("r109")
 
 [node name="c110" type="CollisionShape2D" parent="Walls"]
-position = Vector2(918, 858)
+position = Vector2(294, 786)
 shape = SubResource("r110")
 
 [node name="c111" type="CollisionShape2D" parent="Walls"]
-position = Vector2(180, 870)
+position = Vector2(126, 798)
 shape = SubResource("r111")
 
 [node name="c112" type="CollisionShape2D" parent="Walls"]
-position = Vector2(684, 900)
+position = Vector2(312, 798)
 shape = SubResource("r112")
 
 [node name="c113" type="CollisionShape2D" parent="Walls"]
-position = Vector2(264, 900)
+position = Vector2(186, 810)
 shape = SubResource("r113")
 
 [node name="c114" type="CollisionShape2D" parent="Walls"]
-position = Vector2(42, 918)
+position = Vector2(114, 822)
 shape = SubResource("r114")
 
 [node name="c115" type="CollisionShape2D" parent="Walls"]
-position = Vector2(270, 930)
+position = Vector2(312, 828)
 shape = SubResource("r115")
 
 [node name="c116" type="CollisionShape2D" parent="Walls"]
-position = Vector2(498, 942)
+position = Vector2(102, 834)
 shape = SubResource("r116")
 
 [node name="c117" type="CollisionShape2D" parent="Walls"]
-position = Vector2(570, 942)
+position = Vector2(180, 846)
 shape = SubResource("r117")
 
 [node name="c118" type="CollisionShape2D" parent="Walls"]
-position = Vector2(78, 960)
+position = Vector2(552, 852)
 shape = SubResource("r118")
 
 [node name="c119" type="CollisionShape2D" parent="Walls"]
-position = Vector2(60, 990)
+position = Vector2(870, 846)
 shape = SubResource("r119")
 
 [node name="c120" type="CollisionShape2D" parent="Walls"]
-position = Vector2(60, 1068)
+position = Vector2(174, 858)
 shape = SubResource("r120")
 
 [node name="c121" type="CollisionShape2D" parent="Walls"]
-position = Vector2(150, 1068)
+position = Vector2(804, 858)
 shape = SubResource("r121")
 
 [node name="c122" type="CollisionShape2D" parent="Walls"]
-position = Vector2(564, 1074)
+position = Vector2(918, 858)
 shape = SubResource("r122")
 
 [node name="c123" type="CollisionShape2D" parent="Walls"]
-position = Vector2(654, 1080)
+position = Vector2(180, 870)
 shape = SubResource("r123")
 
 [node name="c124" type="CollisionShape2D" parent="Walls"]
-position = Vector2(714, 1098)
+position = Vector2(576, 870)
 shape = SubResource("r124")
 
 [node name="c125" type="CollisionShape2D" parent="Walls"]
-position = Vector2(726, 1134)
+position = Vector2(942, 870)
 shape = SubResource("r125")
 
 [node name="c126" type="CollisionShape2D" parent="Walls"]
-position = Vector2(102, 1128)
+position = Vector2(264, 900)
 shape = SubResource("r126")
 
 [node name="c127" type="CollisionShape2D" parent="Walls"]
-position = Vector2(78, 1146)
+position = Vector2(582, 882)
 shape = SubResource("r127")
 
 [node name="c128" type="CollisionShape2D" parent="Walls"]
-position = Vector2(54, 1158)
+position = Vector2(936, 882)
 shape = SubResource("r128")
 
 [node name="c129" type="CollisionShape2D" parent="Walls"]
-position = Vector2(240, 1164)
+position = Vector2(684, 912)
 shape = SubResource("r129")
 
 [node name="c130" type="CollisionShape2D" parent="Walls"]
-position = Vector2(138, 1170)
+position = Vector2(42, 918)
 shape = SubResource("r130")
 
 [node name="c131" type="CollisionShape2D" parent="Walls"]
-position = Vector2(678, 1176)
+position = Vector2(276, 930)
 shape = SubResource("r131")
 
 [node name="c132" type="CollisionShape2D" parent="Walls"]
-position = Vector2(144, 1188)
+position = Vector2(498, 942)
 shape = SubResource("r132")
 
 [node name="c133" type="CollisionShape2D" parent="Walls"]
-position = Vector2(336, 1188)
+position = Vector2(570, 942)
 shape = SubResource("r133")
 
 [node name="c134" type="CollisionShape2D" parent="Walls"]
-position = Vector2(54, 1206)
+position = Vector2(816, 942)
 shape = SubResource("r134")
 
 [node name="c135" type="CollisionShape2D" parent="Walls"]
-position = Vector2(906, 1200)
+position = Vector2(78, 960)
 shape = SubResource("r135")
 
 [node name="c136" type="CollisionShape2D" parent="Walls"]
-position = Vector2(738, 1224)
+position = Vector2(822, 954)
 shape = SubResource("r136")
 
 [node name="c137" type="CollisionShape2D" parent="Walls"]
-position = Vector2(108, 1236)
+position = Vector2(60, 990)
 shape = SubResource("r137")
 
 [node name="c138" type="CollisionShape2D" parent="Walls"]
-position = Vector2(114, 1254)
+position = Vector2(60, 1068)
 shape = SubResource("r138")
 
 [node name="c139" type="CollisionShape2D" parent="Walls"]
-position = Vector2(732, 1260)
+position = Vector2(150, 1068)
 shape = SubResource("r139")
 
 [node name="c140" type="CollisionShape2D" parent="Walls"]
-position = Vector2(36, 1284)
+position = Vector2(564, 1074)
 shape = SubResource("r140")
 
 [node name="c141" type="CollisionShape2D" parent="Walls"]
-position = Vector2(144, 1278)
+position = Vector2(654, 1080)
 shape = SubResource("r141")
 
 [node name="c142" type="CollisionShape2D" parent="Walls"]
-position = Vector2(336, 1284)
+position = Vector2(714, 1098)
 shape = SubResource("r142")
 
 [node name="c143" type="CollisionShape2D" parent="Walls"]
-position = Vector2(618, 1278)
+position = Vector2(726, 1134)
 shape = SubResource("r143")
 
 [node name="c144" type="CollisionShape2D" parent="Walls"]
-position = Vector2(780, 1296)
+position = Vector2(102, 1128)
 shape = SubResource("r144")
 
 [node name="c145" type="CollisionShape2D" parent="Walls"]
-position = Vector2(150, 1290)
+position = Vector2(78, 1146)
 shape = SubResource("r145")
 
 [node name="c146" type="CollisionShape2D" parent="Walls"]
-position = Vector2(240, 1308)
+position = Vector2(54, 1158)
 shape = SubResource("r146")
 
 [node name="c147" type="CollisionShape2D" parent="Walls"]
-position = Vector2(66, 1326)
+position = Vector2(240, 1164)
 shape = SubResource("r147")
 
 [node name="c148" type="CollisionShape2D" parent="Walls"]
-position = Vector2(414, 1320)
+position = Vector2(138, 1170)
 shape = SubResource("r148")
 
 [node name="c149" type="CollisionShape2D" parent="Walls"]
-position = Vector2(432, 1338)
+position = Vector2(678, 1176)
 shape = SubResource("r149")
 
 [node name="c150" type="CollisionShape2D" parent="Walls"]
-position = Vector2(318, 1356)
+position = Vector2(144, 1188)
 shape = SubResource("r150")
 
 [node name="c151" type="CollisionShape2D" parent="Walls"]
-position = Vector2(456, 1356)
+position = Vector2(336, 1188)
 shape = SubResource("r151")
 
 [node name="c152" type="CollisionShape2D" parent="Walls"]
-position = Vector2(36, 1386)
+position = Vector2(54, 1206)
 shape = SubResource("r152")
 
 [node name="c153" type="CollisionShape2D" parent="Walls"]
-position = Vector2(402, 1392)
+position = Vector2(906, 1200)
 shape = SubResource("r153")
 
 [node name="c154" type="CollisionShape2D" parent="Walls"]
-position = Vector2(60, 1398)
+position = Vector2(738, 1224)
 shape = SubResource("r154")
 
 [node name="c155" type="CollisionShape2D" parent="Walls"]
-position = Vector2(96, 1410)
+position = Vector2(108, 1236)
 shape = SubResource("r155")
 
 [node name="c156" type="CollisionShape2D" parent="Walls"]
-position = Vector2(36, 1452)
+position = Vector2(114, 1254)
 shape = SubResource("r156")
 
 [node name="c157" type="CollisionShape2D" parent="Walls"]
-position = Vector2(468, 1452)
+position = Vector2(732, 1260)
 shape = SubResource("r157")
 
 [node name="c158" type="CollisionShape2D" parent="Walls"]
-position = Vector2(354, 1542)
+position = Vector2(36, 1284)
 shape = SubResource("r158")
 
 [node name="c159" type="CollisionShape2D" parent="Walls"]
-position = Vector2(564, 1542)
+position = Vector2(144, 1278)
 shape = SubResource("r159")
 
 [node name="c160" type="CollisionShape2D" parent="Walls"]
-position = Vector2(462, 1548)
+position = Vector2(336, 1284)
 shape = SubResource("r160")
 
 [node name="c161" type="CollisionShape2D" parent="Walls"]
-position = Vector2(438, 1578)
+position = Vector2(618, 1278)
 shape = SubResource("r161")
 
 [node name="c162" type="CollisionShape2D" parent="Walls"]
-position = Vector2(636, 1584)
+position = Vector2(780, 1296)
 shape = SubResource("r162")
 
 [node name="c163" type="CollisionShape2D" parent="Walls"]
-position = Vector2(174, 1602)
+position = Vector2(150, 1290)
 shape = SubResource("r163")
 
 [node name="c164" type="CollisionShape2D" parent="Walls"]
-position = Vector2(396, 1602)
+position = Vector2(240, 1308)
 shape = SubResource("r164")
 
 [node name="c165" type="CollisionShape2D" parent="Walls"]
-position = Vector2(156, 1614)
+position = Vector2(66, 1326)
 shape = SubResource("r165")
 
 [node name="c166" type="CollisionShape2D" parent="Walls"]
-position = Vector2(402, 1620)
+position = Vector2(414, 1320)
 shape = SubResource("r166")
 
 [node name="c167" type="CollisionShape2D" parent="Walls"]
-position = Vector2(756, 1620)
+position = Vector2(432, 1338)
 shape = SubResource("r167")
 
 [node name="c168" type="CollisionShape2D" parent="Walls"]
-position = Vector2(114, 1626)
+position = Vector2(318, 1356)
 shape = SubResource("r168")
 
 [node name="c169" type="CollisionShape2D" parent="Walls"]
-position = Vector2(252, 1638)
+position = Vector2(456, 1356)
 shape = SubResource("r169")
 
 [node name="c170" type="CollisionShape2D" parent="Walls"]
-position = Vector2(732, 1644)
+position = Vector2(36, 1386)
 shape = SubResource("r170")
 
 [node name="c171" type="CollisionShape2D" parent="Walls"]
-position = Vector2(306, 1650)
+position = Vector2(402, 1392)
 shape = SubResource("r171")
 
 [node name="c172" type="CollisionShape2D" parent="Walls"]
-position = Vector2(588, 1656)
+position = Vector2(60, 1398)
 shape = SubResource("r172")
 
 [node name="c173" type="CollisionShape2D" parent="Walls"]
-position = Vector2(312, 1662)
+position = Vector2(96, 1410)
 shape = SubResource("r173")
 
 [node name="c174" type="CollisionShape2D" parent="Walls"]
-position = Vector2(276, 1692)
+position = Vector2(36, 1452)
 shape = SubResource("r174")
 
 [node name="c175" type="CollisionShape2D" parent="Walls"]
-position = Vector2(504, 1686)
+position = Vector2(468, 1452)
 shape = SubResource("r175")
 
 [node name="c176" type="CollisionShape2D" parent="Walls"]
-position = Vector2(822, 1698)
+position = Vector2(354, 1542)
 shape = SubResource("r176")
+
+[node name="c177" type="CollisionShape2D" parent="Walls"]
+position = Vector2(564, 1542)
+shape = SubResource("r177")
+
+[node name="c178" type="CollisionShape2D" parent="Walls"]
+position = Vector2(462, 1548)
+shape = SubResource("r178")
+
+[node name="c179" type="CollisionShape2D" parent="Walls"]
+position = Vector2(438, 1578)
+shape = SubResource("r179")
+
+[node name="c180" type="CollisionShape2D" parent="Walls"]
+position = Vector2(636, 1584)
+shape = SubResource("r180")
+
+[node name="c181" type="CollisionShape2D" parent="Walls"]
+position = Vector2(174, 1602)
+shape = SubResource("r181")
+
+[node name="c182" type="CollisionShape2D" parent="Walls"]
+position = Vector2(396, 1602)
+shape = SubResource("r182")
+
+[node name="c183" type="CollisionShape2D" parent="Walls"]
+position = Vector2(156, 1614)
+shape = SubResource("r183")
+
+[node name="c184" type="CollisionShape2D" parent="Walls"]
+position = Vector2(402, 1620)
+shape = SubResource("r184")
+
+[node name="c185" type="CollisionShape2D" parent="Walls"]
+position = Vector2(756, 1620)
+shape = SubResource("r185")
+
+[node name="c186" type="CollisionShape2D" parent="Walls"]
+position = Vector2(114, 1626)
+shape = SubResource("r186")
+
+[node name="c187" type="CollisionShape2D" parent="Walls"]
+position = Vector2(252, 1638)
+shape = SubResource("r187")
+
+[node name="c188" type="CollisionShape2D" parent="Walls"]
+position = Vector2(732, 1644)
+shape = SubResource("r188")
+
+[node name="c189" type="CollisionShape2D" parent="Walls"]
+position = Vector2(306, 1650)
+shape = SubResource("r189")
+
+[node name="c190" type="CollisionShape2D" parent="Walls"]
+position = Vector2(588, 1656)
+shape = SubResource("r190")
+
+[node name="c191" type="CollisionShape2D" parent="Walls"]
+position = Vector2(312, 1662)
+shape = SubResource("r191")
+
+[node name="c192" type="CollisionShape2D" parent="Walls"]
+position = Vector2(276, 1692)
+shape = SubResource("r192")
+
+[node name="c193" type="CollisionShape2D" parent="Walls"]
+position = Vector2(504, 1686)
+shape = SubResource("r193")
+
+[node name="c194" type="CollisionShape2D" parent="Walls"]
+position = Vector2(822, 1698)
+shape = SubResource("r194")
 
 [node name="Stands" type="Node2D" parent="."]
 

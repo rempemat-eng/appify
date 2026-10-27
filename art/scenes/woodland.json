@@ -56,13 +56,20 @@
  "water": {
   "_about": "the Hollow's brook comes in at the top edge, falls from the spring's boulder heap into the rock pool, and leaves east as the garden's stream on the garden's own rows; mask = today's water pixels",
   "soft": {
-   "_about": "the soft grid's water (Matt, 27 Oct; Eastward 13 and 37): the river three cells wide on one row of cells, the fall's pool a rounded union of cells under the lip, the rill one cell wide in straight runs along the cells, each turn a rounded quarter bend, its width breathing a little, from the top edge to the lip (screen.water_mask_soft); water_rle stays the 1x footprint for density 2",
+   "_about": "the soft grid's water (Matt, 27 Oct; Eastward 37's pond and the Strange Forest stream): the river three cells wide on cells with a few rounded cell-steps (it widens and narrows by a cell), its banks lumped, stones breaking them, rushes in a few clumps; the fall's pool a rounded union of cells under a stone lip; the rill a small stream in straight runs with rounded bends, its width breathing, wider at the lip (screen.water_mask_soft); water_rle stays the 1x footprint for density 2",
    "river": {
     "points": [
      [96, 300],
      [336, 300]
     ],
-    "cells": 3
+    "cells": 3,
+    "add": [
+     [160, 280, 48, 8],
+     [240, 312, 64, 8]
+    ],
+    "cut": [
+     [248, 288, 56, 8]
+    ]
    },
    "pool": [
     [56, 288, 56, 24],
@@ -71,18 +78,24 @@
    "rill": {
     "points": [
      [80, -8],
-     [80, 56],
-     [56, 56],
-     [56, 200],
-     [80, 200],
+     [80, 40],
+     [48, 40],
+     [48, 208],
+     [80, 208],
      [80, 262]
     ],
-    "cells": 1,
-    "bend": 12,
+    "cells": 1.25,
+    "bend": 16,
     "share": 0.5,
-    "breathe": 0.12
+    "breathe": 0.15,
+    "amp": [0.8, 1.5],
+    "mouth": [72, 232, 16, 32]
    },
-   "seed": 402
+   "seed": 402,
+   "amp": [2.5, 5.0],
+   "lump": [10, 26],
+   "stones": 0.7,
+   "rush_clumps": 3
   },
   "water_rle": [
    [79, 86],
@@ -1497,14 +1510,13 @@
   {
    "points": [
     [336, 456],
-    [200, 456],
-    [128, 392],
+    [128, 456],
     [128, 232],
     [144, 208],
     [144, 152]
    ],
    "radius": 8,
-   "bend": 40,
+   "bend": 96,
    "why_shape": "a desire line on the soft grid (Matt, 27 Oct: no right-angle stair steps): straight runs, turns as wide rounded bends, the crossing straight over the bridge"
   },
   {
@@ -1517,7 +1529,7 @@
   },
   {
    "points": [
-    [128, 408],
+    [136, 408],
     [112, 408]
    ],
    "radius": 4,

@@ -945,7 +945,7 @@ def log_steps(cv: np.ndarray, x0: int, x1: int, y_top: int, y_foot: int, n: int,
 # water
 # ------------------------------------------------------------------------------------------------
 def water(cv: np.ndarray, m: np.ndarray, seed: int, bank_h: int = 7, flow=None, lilies: float = 0.0,
-          stones: float = 1.0, fam: str = 'water', reeds: float = 1.0) -> list:
+          stones: float = 1.0, fam: str = 'water', reeds: float = 1.0, rush_clumps: int | None = None) -> list:
     """Water on a soft plan (eastward-edges.md 5.3, shots 13 and 37). The north bank: the grass
     lip hanging 1 to 3 px over an earth face `bank_h` px tall of small clods, darkest where it
     meets the water; then a 1 px very light waterline; the water under it dark in a band 4 to 14
@@ -1142,6 +1142,25 @@ def water(cv: np.ndarray, m: np.ndarray, seed: int, bank_h: int = 7, flow=None, 
     dsh = ndi.distance_transform_edt(m)
     ey, ex = np.nonzero(wat & (dsh >= 6) & (dsh <= 8) & ~under_n)
     placed = []
+    if rush_clumps and len(ey):
+        # (Matt, 27 Oct: not an even row) a few irregular clumps: 3 to 6 rushes each, crowded
+        # within 10 to 25 px of the clump's heart, the clumps far apart
+        hearts = []
+        for k in rng.permutation(len(ey)):
+            y, x = int(ey[k]), int(ex[k])
+            if all((x - a) ** 2 + (y - b) ** 2 > (W / (rush_clumps + 1)) ** 2 for a, b in hearts):
+                hearts.append((x, y))
+            if len(hearts) >= rush_clumps:
+                break
+        for (hx, hy) in hearts:
+            near = np.nonzero((ex - hx) ** 2 + (ey - hy) ** 2 < rng.uniform(10, 25) ** 2)[0]
+            for k in rng.permutation(near)[: int(rng.integers(3, 7))]:
+                y, x = int(ey[k]), int(ex[k])
+                if any((x - a) ** 2 + (y - b) ** 2 < 5 ** 2 for a, b in placed):
+                    continue
+                placed.append((x, y))
+                rush(cv, y, x, rng, ok=wat & (dsh >= 3))
+        ey = ey[:0]
     for k in rng.permutation(len(ey)):
         if len(placed) >= int(len(ey) / 55 * reeds) + (1 if reeds > 0 else 0):
             break

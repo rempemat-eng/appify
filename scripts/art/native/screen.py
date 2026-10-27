@@ -269,11 +269,43 @@ def water_mask_soft(plan: dict, W: int, H: int) -> np.ndarray:
     r = sw['river']
     cells |= SG.cells_route(r['points'], r['cells'], h, w)
     cells |= SG.cells_rects(sw['pool'], h, w)
-    m = SG.shape(cells, h, w, sw.get('seed', 402), r_out=1.3, r_in=0.6)
+    # (Matt, 27 Oct: "not a ruler") a few rounded cell-steps: the river widens and narrows by a
+    # cell and bends gently; the banks lumped 2 to 5 px over 10 to 26 px as natural water is
+    cells |= SG.cells_rects(r.get('add', []), h, w)
+    cells &= ~SG.cells_rects(r.get('cut', []), h, w)
+    lump = dict(amp=tuple(sw.get('amp', SG.AMP)), lump=tuple(sw.get('lump', SG.LUMP)))
+    m = SG.shape(cells, h, w, sw.get('seed', 402), r_out=1.3, r_in=0.6, **lump)
     rl = sw['rill']
     m |= SG.curve_texels(rl['points'], rl['cells'], h, w, rl['bend'], sw.get('seed', 402) + 1, rl.get('share', 0.95),
-                         rl.get('breathe', 0.0), amp=(0.0, 0.0))
+                         rl.get('breathe', 0.0), amp=tuple(rl.get('amp', (0.0, 0.0))))
+    if rl.get('mouth'):
+        # wider where it meets the fall's lip
+        m |= SG.shape(SG.cells_rects([rl['mouth']], h, w), h, w, sw.get('seed', 402) + 2, r_out=1.0, r_in=0.6, **lump)
     return m
+
+
+def ledge(cv: np.ndarray, x0: float, w: float, y: float) -> None:
+    """The fall's lip (world px): a flat stone ledge across the top of the rocks, its top lit, its
+    front a narrow face in shade, worn smooth and wet where the water spills over its middle."""
+    X0, X1 = P(x0 - 9, 0), P(x0 + w + 9, 0)
+    Y0 = P(y, 0)
+    th, fh = P(2.0), P(1.6)
+    for Y in range(Y0 - th, Y0 + fh):
+        for X in range(X0, X1):
+            if not (0 <= Y < cv.shape[0] and 0 <= X < cv.shape[1]):
+                continue
+            edge = X in (X0, X1 - 1)
+            if Y < Y0:
+                t = 5 if (Y == Y0 - th and X < (X0 + X1) // 2) else (4 if X < X1 - P(2) else 3)
+                fam = 'stone_warm' if t >= 4 else 'stone'
+            else:
+                t, fam = (2 if X < X1 - P(2) else 1), 'stone_cool'
+            if edge:
+                t, fam = (1, 'stone_cool')
+            cv[Y, X] = C(fam, t)
+    for X in range(X0, X1, P(4)):                                     # joints between the slabs
+        if 0 <= Y0 < cv.shape[0] and X0 < X < X1 - 1:
+            cv[Y0 - th:Y0 + fh, X] = C('stone_cool', 1)
 
 
 def water_mask_hd(plan: dict, W: int, H: int) -> np.ndarray:
@@ -1072,7 +1104,13 @@ def terrain(plan: dict, layers: dict) -> tuple:
             # sparse ripples along the flow, reeds and rushes at the edges; the footbridge spans
             # the river bank to bank at a straight crossing, on an abutment in each bank
             from . import softground as GD
-            GD.water(cv, wm, 402, bank_h=P(3.4, 0), flow='auto', stones=0.0, reeds=0.8)
+            items = GD.water(cv, wm, 402, bank_h=P(3.4, 0), flow='auto', stones=plan['water']['soft'].get('stones', 0.0),
+                             reeds=0.8, rush_clumps=plan['water']['soft'].get('rush_clumps'))
+            for (img_, anc_, (fx_, fy_)) in sorted(items, key=lambda it: it[2][1]):
+                # stones breaking the banks, laid into the ground with their shade
+                dec_ = to_codes(img_)
+                DC.paste(cv, dec_, int(round(fx_ - anc_[0])), int(round(fy_ - anc_[1])), shadow=True,
+                         shadow_dx=P(1), shadow_dy=P(0.5))
             GD.footbridge(cv, P(br['x0'], 0), P(br['x0'] + br['w'], 0), wm, np.random.default_rng(12))
         else:
             WA.paint_hd(cv, wm)            # (no reeds at density 3: their stalks bit stairs into the bank)
@@ -1092,6 +1130,8 @@ def terrain(plan: dict, layers: dict) -> tuple:
             dec[max(0, -Y):max(0, -Y) + sub.shape[0], max(0, -X):max(0, -X) + sub.shape[1]][sub] = -1
             DC.paste(cv, dec, X, Y, shadow=True, shadow_dx=P(2), shadow_dy=P(1))
         WA.wet_rock(cv, f['x0'], f['w'], f['y0'] - 2, f['y1'])
+        if soft_w:
+            ledge(cv, f['x0'], f['w'], f['y0'])          # the lip the water spills over
         WA.fall_hd(cv, f['x0'], f['w'], f['y0'], f['y1'], seed=f.get('seed', 11))
     else:
         WA.paint(cv, wm)
