@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 from pathlib import Path
 import sys
 from unittest.mock import patch
@@ -26,12 +27,34 @@ from scripts.art.native.palette import to_rgba  # noqa: E402
 HERE = Path(__file__).resolve().parent
 
 
+def pieces_in_texels(plan, cell):
+    """Normalize positions once; all piece geometry/shadow metadata already uses texels."""
+    units = plan.get('coordinate_space', 'texels')
+    if units not in ('texels', 'cells'):
+        raise ValueError('coordinate_space must be texels or cells')
+    unit = cell if units == 'cells' else 1
+    pieces = plan.get('pieces', [])
+    if not isinstance(pieces, list):
+        raise ValueError('pieces must be an array')
+    result = []
+    for piece in pieces:
+        at = piece.get('at') if isinstance(piece, dict) else None
+        if not isinstance(at, list) or len(at) != 2:
+            raise ValueError('piece foot must contain two finite coordinates')
+        for number in at:
+            if type(number) not in (int, float) or not math.isfinite(number) or abs(number * unit) > 3.402823466e38:
+                raise ValueError('piece foot must contain finite coordinates in range')
+        result.append({**piece, 'at': [number * unit for number in at]})
+    return result
+
+
 def render(plan, kit, *, shadows=True, dressing=True):
+    pieces = pieces_in_texels(plan, kit.man['cell'])
     legend = {symbol: kit.ids[name] for symbol, name in plan['legend'].items()}
     cells = np.array([[legend[symbol] for symbol in row] for row in plan['rows']], dtype=np.int32)
     tiers = np.array([[int(c) for c in row] for row in plan['tiers']]) if plan.get('tiers') else None
     return Image.fromarray(to_rgba(compose.render(cells, kit, dressing=dressing,
-                                                pieces=plan.get('pieces') if shadows else None, tiers=tiers)), 'RGBA')
+                                                pieces=pieces if shadows else None, tiers=tiers)), 'RGBA')
 
 
 def expected():
@@ -39,6 +62,8 @@ def expected():
     cases = (
         ('kitlab', ROOT / 'game/kit/zones/kitlab.json', 'res://zones/kitlab/kitlab.tscn'),
         ('three_materials', HERE / 'three_materials.json', 'res://test/fixtures/kit/three_materials.json'),
+        ('cell_positions', HERE / 'cell_positions.json', 'res://test/fixtures/kit/cell_positions.json'),
+        ('texel_positions', HERE / 'texel_positions.json', 'res://test/fixtures/kit/texel_positions.json'),
     )
     images, records = {}, []
     for name, path, source in cases:
@@ -52,6 +77,8 @@ def expected():
     # A real hash-coordinate mutation: both ground profiles and dressing look up the wrong
     # cell edge. The normal Godot renderer must reject this independently rendered image.
     normal_profile = compose.profile
+    if images['cell_positions.png'].tobytes() != images['texel_positions.png'].tobytes():
+        raise ValueError('equivalent cell and texel plans must render identically')
     with patch.object(compose, 'profile', lambda a, b, c, m, n=3: normal_profile(a + 1, b, c, m, n)):
         images['three_materials_shifted_profile.png'] = render(json.loads(cases[1][1].read_text()), kit)
     if images['three_materials.png'].tobytes() == images['three_materials_shifted_profile.png'].tobytes():
@@ -73,7 +100,7 @@ def expected():
     textures += [d['png'] for d in man.get('decals', {}).values()]
     inputs.update('game/kit/terrain/' + name for name in textures)
     pieces = json.loads((ROOT / 'game/kit/props/index.json').read_text())
-    for instance in lab.get('pieces', []):
+    for instance in [piece for _, path, _ in cases for piece in json.loads(path.read_text()).get('pieces', [])]:
         mask = (pieces[instance['piece']].get('shadow') or {}).get('mask')
         if mask:
             inputs.add('game/' + mask['png'].removeprefix('res://'))
@@ -109,7 +136,7 @@ def main():
             stale.append(manifest.name)
     else:
         manifest.write_bytes(metadata)
-    print('kit render fixtures: ' + ('stale: ' + ', '.join(stale) if stale else '3 images and source hashes current'))
+    print('kit render fixtures: ' + ('stale: ' + ', '.join(stale) if stale else f'{len(images)} images and source hashes current'))
     return int(bool(stale))
 
 

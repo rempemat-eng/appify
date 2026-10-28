@@ -5,6 +5,14 @@ These are Python reference renders at one pixel per terrain texel, using
 edge dressing), a lawn/path/water corner, and a deliberately wrong edge-profile hash.
 They are test fixtures, not baked ground or shipping art.
 
+The equivalent `cell_positions` and `texel_positions` plans include a visible bench
+shadow. Both must match the same image in Godot and Python. Explicit `cells` positions
+are multiplied once by the kit's cell size; missing units mean legacy texels.
+Fractional and negative positions remain valid; unknown units, nonnumeric/nonfinite
+or float32-overflowing coordinates are refused. Geometry metadata stays in texels.
+Run the intake regressions with
+`python3 -m unittest discover -s game/test/fixtures/kit -v`.
+
 Regenerate from the repository root, then review the resulting pixel changes:
 
 ```sh

@@ -26,6 +26,9 @@ static func _plan_stage(path: String) -> Dictionary:
 	if err != OK or not parser.data is Dictionary:
 		return _failure("cannot read plan %s: %s" % [path, parser.get_error_message()])
 	var plan: Dictionary = parser.data
+	var units: Variant = plan.get("coordinate_space", "texels")
+	if units not in ["texels", "cells"]:
+		return _failure("coordinate_space must be texels or cells: " + path)
 	var rows: Variant = plan.get("rows")
 	var legend: Variant = plan.get("legend")
 	if not rows is Array or rows.is_empty() or not rows[0] is String or rows[0].is_empty() or not legend is Dictionary:
@@ -81,14 +84,19 @@ static func _plan_stage(path: String) -> Dictionary:
 	if not entries is Array:
 		stage.free()
 		return _failure("plan pieces must be an array: " + path)
+	var unit := float(kit.cell) if units == "cells" else 1.0
 	for entry in entries:
 		if not entry is Dictionary or not entry.get("at") is Array or entry.at.size() != 2 or not KitPiece.index().has(str(entry.get("piece", ""))):
 			stage.free()
 			return _failure("plan has an invalid piece or foot: " + path)
+		for coordinate in entry.at:
+			if typeof(coordinate) not in [TYPE_INT, TYPE_FLOAT] or not is_finite(float(coordinate)) or absf(float(coordinate) * unit) > 3.402823466e38:
+				stage.free()
+				return _failure("piece foot must contain finite coordinates in range: " + path)
 		# Only a KitPiece's metadata and shadow are needed. No sprite or gameplay is instanced.
 		var piece := KitPiece.new()
 		piece.piece_id = str(entry.piece)
-		piece.position = Vector2(float(entry.at[0]), float(entry.at[1]))
+		piece.position = Vector2(float(entry.at[0]) * unit, float(entry.at[1]) * unit)
 		piece.variant = str(entry.get("variant", ""))
 		props.add_child(piece)
 	return {"ok": true, "stage": stage, "ground": ground}

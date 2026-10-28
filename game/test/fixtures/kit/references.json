@@ -23,6 +23,30 @@
     192
    ],
    "source": "res://test/fixtures/kit/three_materials.json"
+  },
+  {
+   "expected": "cell_positions.png",
+   "id": "cell_positions",
+   "plan": "game/test/fixtures/kit/cell_positions.json",
+   "plan_sha256": "2001634d282fdd998a974682938f66fa6f3b3e13aeeb6b782f2f38a3a61c196a",
+   "rgba_sha256": "183b2c28dbed2f7045ca0ecd819733203b257df268d8eb3eb16662bd8afba3fc",
+   "size": [
+    96,
+    96
+   ],
+   "source": "res://test/fixtures/kit/cell_positions.json"
+  },
+  {
+   "expected": "texel_positions.png",
+   "id": "texel_positions",
+   "plan": "game/test/fixtures/kit/texel_positions.json",
+   "plan_sha256": "a5327a6d0b84203e2d5cc52a229d5a9d22c252c1c88ca5b552a4f706f2b0dd83",
+   "rgba_sha256": "183b2c28dbed2f7045ca0ecd819733203b257df268d8eb3eb16662bd8afba3fc",
+   "size": [
+    96,
+    96
+   ],
+   "source": "res://test/fixtures/kit/texel_positions.json"
   }
  ],
  "cell_texels": 24,
@@ -83,7 +107,7 @@
   "game/kit/terrain/over_water_over_earth_face.png": "86c6750633795cf59094a8040bf9ae234f362e5f420a8d75bdd19c4a72493cb8",
   "game/kit/terrain/over_worn_over_path.png": "8c7e1e7248cb22ee0dd22ca728df3a2cae5eab834080d789b371545a8cf55473",
   "game/kit/terrain/palette.png": "40fe3fac4493230904ab432939eb097ae807f3478f643a6002dec7d0cc199dca",
-  "game/test/fixtures/kit/generate.py": "6c3af0912b17ef959a2ba2d7d8099dd2fe7ae2bf3977d88363b6a5cc980f92fa",
+  "game/test/fixtures/kit/generate.py": "06d57a3e5d1a18961611f86b6a4bfa4bf7e1e3c6105358dc79b18e77bb349a25",
   "scripts/art/house_palette.py": "2b64312392fcdeda1c4164c881aa1e35c6c167a5cfaafd704b3a5abc707103ba",
   "scripts/art/kit/build.py": "7475535da6e8ffe5f3e7b230a072f232cae5f0518dd9a091235e42c4e0e63950",
   "scripts/art/kit/compose.py": "db385fa37f68d1e14247c8850d606f6ddff1279cffdbe20f1f20f85ab8fa6fb2",
