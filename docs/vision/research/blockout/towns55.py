@@ -37,11 +37,13 @@ BLD = {'cottage': ((56, 80), (40, 48)), 'house': ((80, 104), (48, 64)), 'farmhou
        'row_tenement': ((24, 192), (24, 56)), 'row_house': ((24, 192), (24, 56)), 'row_shop': ((24, 192), (24, 64)),
        # Highgarth, an old post town on the pass road (Matt, 28 Oct): its own forms
        'machiya': ((24, 64), (40, 56)), 'honjin': ((56, 104), (48, 80)), 'temple_hall': ((96, 128), (64, 80)), 'pagoda': ((32, 40), (32, 40)),
-       'watchkeep': ((48, 64), (48, 64)), 'minka_thatched': ((56, 88), (48, 72)), 'kura': ((32, 48), (32, 40)), 'bathhouse': ((64, 96), (48, 64))}
+       'watchkeep': ((48, 64), (48, 64)), 'minka_thatched': ((56, 88), (48, 72)), 'kura': ((32, 48), (32, 40)), 'bathhouse': ((64, 96), (48, 64)),
+       'machiya_row': ((24, 144), (32, 56)), 'shed': ((32, 48), (24, 40))}
 TYPE_OF = {'oldhouse': 'townhouse', 'aptrow': 'tenement', 'longwarehouse': 'warehouse', 'slab': 'office', 'bigtower': 'tower', 'adobe': 'cottage',
            'depot': 'station', 'frontshop': 'shop', 'saloon': 'inn', 'terrace': 'townhouse', 'barracks': 'public', 'skyport': 'station',
            'forge': 'workshop', 'row_tenement': 'tenement', 'row_house': 'townhouse', 'row_shop': 'shop', 'machiya': 'townhouse', 'honjin': 'inn',
-           'temple_hall': 'public', 'pagoda': 'tower', 'watchkeep': 'keep', 'minka_thatched': 'farmhouse', 'kura': 'barn', 'bathhouse': 'public'}
+           'temple_hall': 'public', 'pagoda': 'tower', 'watchkeep': 'keep', 'minka_thatched': 'farmhouse', 'kura': 'barn', 'bathhouse': 'public',
+           'machiya_row': 'townhouse', 'shed': 'barn'}
 FALSE_FRONT = {'frontshop', 'saloon', 'depot'}
 KIND_OF = {'warehouse': 'warehouse', 'office': 'tower', 'tower': 'tower', 'hangar': 'hangar', 'keep': 'keep', 'station': 'terminal'}
 # ground a building, yard or street may be laid on (natural ground and v54's settlement paint, never water, rock or a barrier)
@@ -202,7 +204,7 @@ class Town:
         return None
 
     def frontage(self, pts, sides=(1, -1), form='row_house', block=(96, 176), depth=(32, 40), alley=(0, 0, 8), stair_every=0,
-                 roofs=('flat', 'tin', 'tile'), props=('sign', 'awning', 'potted plants'), false_front=False, limit=None, plot=None):
+                 roofs=('flat', 'tin', 'tile'), props=('sign', 'awning', 'potted plants'), false_front=False, limit=None, plot=None, why=None):
         """A continuous frontage along a street (Matt's Eastward street, 28 Oct): blocks of fronts sharing their walls, built to the
         street's edge with no setback, separated by an alley of one cell at most, or by a stair alley of two cells (a street) every
         stair_every blocks; each block's bays 3 to 8 cells wide with their own roofs and storeys; frontage props at the bays."""
@@ -211,6 +213,7 @@ class Town:
         hw = (rec['width_px'] if rec else 24) / 2
         if rec is not None:
             rec['frontage'] = 'continuous'; rec['max_gap_cells'] = 1; rec.setdefault('frontage_props', [])
+            rec['frontage_reason'] = why or FRONTAGE_WHY.get(self.name, 'a dense core where land on the street is dear')
         segs = []
         P_ = [tuple(map(float, q)) for q in (_rdp_pts([tuple(q) for q in pts], 6) if (rec and rec.get('route')) else pts)]
         for (ax, ay), (bx, by) in zip(P_, P_[1:]):
@@ -772,9 +775,8 @@ def lay_all(T, X):
     t.cluster(6200, 3905, 40, ['mill'], 1)
     t.cluster(5835, 4040, 60, ['station'], 1)
     cp = ('sign', 'bench', 'potted plants', 'planter tree', 'water butt')
-    t.frontage(mill, sides=(1, -1), form='row_house', block=(80, 144), depth=(40, 48), props=cp, roofs=('tile', 'thatch', 'tile'), limit=6)
     t.frontage(t.S('Granary Row'), sides=(-1,), form='row_house', block=(80, 144), depth=(40, 48), props=cp, roofs=('tile', 'thatch', 'tile'), limit=3)
-    t.row(mill, ['cottage', 'house', 'cottage', 'shop'], limit=9, start=10)
+    t.row(mill, ['cottage', 'house', 'cottage', 'shop'], limit=9, start=10, plot=(16, 'garden'))
     t.row(t.S('Granary Row'), ['cottage', 'house', 'barn'], limit=4)
     t.row(t.S('Weir Lane'), ['cottage', 'house'], limit=3)
     t.row(halt, ['cottage', 'house', 'cottage'], limit=6, plot=(56, 'garden'), start=10)
@@ -1077,8 +1079,9 @@ def hearthold(T, X):
         t.hand(fx, 5520, 104, 56, 'forge', plot=(0, 1, 8, 'yard'))
     # the home streets: continuous brick-and-basalt terraces stepping down the slope
     fp = ('sign', 'potted plants', 'woodpile', 'water butt', 'lamp')
-    t.frontage(t.S('Ash Lane'), sides=(1,), form='row_house', block=(96, 160), depth=(40, 40), props=fp, roofs=('tile', 'slate', 'tile'))
-    t.frontage(t.S("Potters' Lane"), sides=(-1, 1), form='row_house', block=(96, 160), depth=(40, 40), props=fp, roofs=('tile', 'slate', 'tile'))
+    # the lower town's home streets: detached houses with their yards (Matt, 28 Oct 11:26), not wall to wall
+    t.row(t.S('Ash Lane'), ['house', 'cottage', 'house', 'workshop', 'cottage'], limit=6, plot=(16, 'yard'), reach=32)
+    t.row(t.S("Potters' Lane"), ['cottage', 'house', 'workshop', 'house', 'cottage'], limit=7, plot=(16, 'yard'), reach=32)
     t.hand(2248, 5520, 40, 48, 'townhouse')                             # the gate market's corner house
     t.hand(2632, 5600, 120, 40, 'terrace')                               # Vine Lane's terrace above the lava
     # a calm ground: the lower town's leftover rough ground made plain yard, its terraces stepping down in three levels
@@ -1112,7 +1115,7 @@ def highgarth(T, X):
     timber gates climbing toward the closed pass; the lord's small black keep watching the pass behind its tarn; thatched
     farmhouses on the upper terraces, the terraced fields below, the quarry, the sawmill and a small hot spring bathhouse."""
     K = T['K']
-    t = Town(T, 'Highgarth', X.HIGHGARTH, 'medium', (14, 22),
+    t = Town(T, 'Highgarth', X.HIGHGARTH, 'medium', (24, 36),
              "an old post town on the pass road: lodgings, stores and the lord's watch on the north pass; slate from its quarry, wool from the "
              "summer pastures and timber from the valley's larches go down to Cogsworth. Its trade over the pass stopped when the Starfall "
              'brought the rockfall down, and the lord sealed the pass: the road beyond waits for a later region',
@@ -1124,21 +1127,23 @@ def highgarth(T, X):
                              ('Mill Lane', 'the sawmill by the Cog, the bathhouse and the moon-viewing terrace', 7750, 1260)],
              gathering=[('the post square', 7976, 1188), ('the temple court', 8060, 1040), ('the moon-viewing terrace', 7736, 1296)], seed=109)
     t.style = HIGHGARTH_STYLE
-    straighten(T, 'the Garth Road', (7800, 1000, 8000, 1440), 24, 'path')
-    # the streets
-    t.street([(7920, 1000), (7920, 1320)], 'main', kind='lane', name='Garth Street')
-    t.street([(7944, 1132), (8172, 1132)], 'lane', kind='lane', name='Quarry Lane')
-    t.street([(7896, 1252), (7704, 1252)], 'lane', kind='lane', name='Mill Lane')
-    t.street([(7944, 1004), (8000, 1004)], 'lane', kind='stair', name='Temple Steps')
+    t.cap = 40
+    # the post road through the town: the Garth Road and the Northway laid on the soft grid with one slight bend on the contour
+    set_route(T, 'the Garth Road', (7800, 996, 8000, 1344), [(7928, 1336), (7928, 1172), (7912, 1172)], 24, 'path')
+    set_route(T, 'the Northway', (7800, 996, 8000, 1344), [(7912, 1172), (7912, 1000)], 24, 'path')
+    t.street([(7912, 1000), (7912, 1172), (7928, 1172), (7928, 1336)], 'side', kind='lane', name='Garth Street')
+    t.street([(7928, 1132), (8320, 1132)], 'lane', kind='lane', name='Quarry Lane')
+    t.street([(7912, 1252), (7704, 1252)], 'lane', kind='lane', name='Mill Lane')
+    t.street([(7928, 1004), (8000, 1004)], 'lane', kind='stair', name='Temple Steps')
     t.street([(8124, 1132), (8124, 1336)], 'lane', kind='lane', name='High Lane')
     t.street([(7944, 1324), (8124, 1324)], 'lane', kind='lane', name='Terrace Lane')
     t.street([(8064, 920), (8064, 648)], 'close', kind='stair', name='the shrine path')
     t.street([(7868, 700), (7904, 700)], 'close', kind='stair', name='Keep Steps')
-    t.square(7976, 1188, 32, 28, name='the post square')
+    t.square(7972, 1172, 28, 28, name='the post square')
     # the temple on its stone plinth: the hall, the pagoda, the gravel court; the temple gate where the steps arrive
     plinth = np.zeros_like(T['taken']); plinth[928 // CELL:1072 // CELL, 8000 // CELL:8128 // CELL] = True
     ring = plinth & ~ndi.binary_erosion(plinth, iterations=1)
-    ring[992 // CELL:1016 // CELL, 8000 // CELL:8008 // CELL] = False                # the temple gate
+    ring[992 // CELL:1016 // CELL, 8000 // CELL:8008 // CELL] = False
     K[ring & np.isin(K, list(BUILDABLE))] = 'retain'; T['taken'] |= ring
     t.hand(8024, 944, 96, 64, 'temple_hall')
     t.hand(8088, 1024, 32, 32, 'pagoda')
@@ -1151,36 +1156,130 @@ def highgarth(T, X):
     tarn = np.zeros_like(T['taken']); tarn[744 // CELL:776 // CELL, 7904 // CELL:7976 // CELL] = True
     tarn &= np.isin(K, list(BUILDABLE)) & ~T['street'] & ~T['taken']
     K[tarn] = 'tarn'; T['barrier'] |= ndi.binary_dilation(tarn, iterations=1)
-    # the post inns, then Garth Street wall to wall with machiya
-    t.hand(7840, 1048, 56, 72, 'honjin')
-    t.hand(7944, 1232, 56, 80, 'honjin')
-    # the upper terraces: thatched farmhouses and storehouses on High Lane; the bathhouse and the sawmill on Mill Lane
-    t.hand(8136, 1148, 56, 72, 'minka_thatched')
-    t.hand(8136, 1228, 56, 72, 'minka_thatched')
-    t.hand(8072, 1148, 40, 32, 'kura')
-    t.hand(8072, 1196, 40, 32, 'kura')
+    # the post inns, the upper terraces' farmhouses and storehouses, the bathhouse and the sawmill
+    t.hand(7840, 1040, 56, 72, 'honjin', plot=(-1, 0, 16, 'yard'))
+    t.hand(7944, 1216, 56, 80, 'honjin', plot=(1, 0, 16, 'yard'))
+    for (hx, hy, hw, hd) in ((8144, 1060, 64, 64), (8224, 1060, 64, 64), (8136, 1148, 56, 72), (8136, 1228, 56, 72)):
+        t.hand(hx, hy, hw, hd, 'minka_thatched')
+    for (hx, hy) in ((8232, 1004), (8064, 1148), (8064, 1196)):
+        t.hand(hx, hy, 40, 40 if hx > 8200 else 32, 'kura')
+    # the upper terraces filled: more farmhouses and storehouses on every terrace above the post road (Matt, 28 Oct 11:26)
+    for (hx, hy, hw, hd, f) in ((8224, 1256, 56, 64, 'minka_thatched'), (8040, 1240, 56, 64, 'minka_thatched'),
+                                (8144, 1004, 64, 48, 'minka_thatched'), (8296, 1004, 32, 40, 'kura'),
+                                (7744, 1016, 64, 56, 'minka_thatched'), (7744, 1088, 40, 32, 'kura'), (7744, 1128, 56, 48, 'minka_thatched')):
+        t.hand(hx, hy, hw, hd, f)
     t.hand(7768, 1264, 72, 48, 'bathhouse')
     t.hand(7712, 1184, 88, 56, 'mill')
-    t.frontage(t.S('Garth Street'), sides=(-1, 1), form='machiya', block=(24, 48), depth=(40, 48), alley=(0,),
+    # Garth Street wall to wall on both sides: blocks of machiya fronts, each front 3 to 6 cells
+    t.frontage(t.S('Garth Street'), sides=(-1, 1), form='machiya_row', block=(72, 128), depth=(40, 48), alley=(0,),
                props=('hanging lantern', 'stone lantern', 'noren curtain', 'invented sign board', 'potted pine', 'water barrel'),
-               roofs=('tile', 'tile', 'tile'), limit=max(0, 22 - t.count() - 1))
+               roofs=('tile', 'tile', 'tile'), limit=None)
+    # the second machiya lane: Mill Lane down to the stream, its own short rows on both sides
+    t.frontage(t.S('Mill Lane'), sides=(-1, 1), form='machiya_row', block=(72, 112), depth=(40, 40), alley=(0,),
+               props=('hanging lantern', 'noren curtain', 'water barrel', 'potted pine'), roofs=('tile', 'tile', 'tile'), limit=4,
+               why="the lane from the post road down to the mill and the footbridge: craftsmen's machiya wall to wall")
+    t.frontage(t.S('High Lane'), sides=(-1,), form='machiya_row', block=(72, 112), depth=(40, 40), alley=(0,),
+               props=('hanging lantern', 'potted pine'), roofs=('tile', 'tile', 'tile'), limit=3,
+               why='the upper street along the terrace edge: a short row of machiya facing the farmhouses')
+    for b in t.buildings:
+        for q in b.get('bays', []):
+            q['w_cells'] = q['w_cells']                                # (fronts already 3 to 8 cells)
+    # the terraces: retaining walls of stone along the contours (the town steps up from the stream to the temple), the
+    # stream's stone embankment, and the ground stepped tier by tier
+    walls = [[(7832, 1000), (7832, 1236)], [(8016, 1076), (8016, 1300)], [(8104, 1140), (8104, 1340)]]
+    for wl in walls:
+        (x0_, y0_), (x1_, y1_) = wl
+        c_ = int(x0_ // CELL); seg = K[int(y0_ // CELL):int(y1_ // CELL), c_]
+        free_ = ~T['taken'][int(y0_ // CELL):int(y1_ // CELL), c_] & ~T['street'][int(y0_ // CELL):int(y1_ // CELL), c_] & np.isin(seg, list(BUILDABLE))
+        seg[free_] = 'retain'
+    box_ = (PX > 7600) & (PX < 8330) & (PY > 990) & (PY < 1350)
+    hv = T['h'][box_]; base_h = float(np.percentile(hv, 30))
+    step = 1.0 / 30
+    T['h'][box_ & (PX < 7832)] = base_h
+    T['h'][box_ & (PX >= 7832) & (PX < 8016)] = base_h + step
+    T['h'][box_ & (PX >= 8016) & (PX < 8104)] = base_h + 2 * step
+    T['h'][box_ & (PX >= 8104)] = base_h + 3 * step
+    T['h'][plinth] = base_h + 3 * step
+    T['tiers_pre'][box_] = np.round(T['h'][box_] * 30 - 0.5).astype(T['tiers_pre'].dtype)
+    river = np.isin(K, ['river', 'rapids'])
+    bank = ndi.binary_dilation(river, iterations=1) & ~river & (PY > 990) & (PY < 1350) & (PX > 7560) & (PX < 7800) & np.isin(K, list(BUILDABLE)) \
+        & ~T['taken'] & ~T['street']
+    K[bank] = 'retain'                                                # the stream's stone embankment
+    # the footbridge over the Cog on Mill Lane (a crossing for walkers: tried as a real bridge; see the plan's features)
+    fb_ = np.zeros_like(T['taken']); fb_[1248 // CELL:1264 // CELL, 7600 // CELL:7720 // CELL] = True
+    fb_ &= np.isin(K, ['river', 'rapids', 'creek'])
+    K[fb_] = 'bridge'
+    t.footbridge = {'name': 'the Mill Lane footbridge', 'xy_px': [7680, 1256], 'over': 'the Cog', 'foot_only': True, 'counts_as_way': False,
+                    'cells': int(fb_.sum())}
     # the ground and the details
     t.yard(7712, 1272, 7760, 1320, kind='plaza', name='the moon-viewing terrace', why="facing the beam over the valley; the bathhouse's pools hold the moon's light")
     grove = np.zeros_like(T['taken']); grove[864 // CELL:928 // CELL, 7968 // CELL:8056 // CELL] = True
     K[grove & np.isin(K, ['meadow', 'alpine', 'scree', 'boulders', 'bramble', 'thicket'])] = 'conifer'
     t.outskirts.append({'kind': 'conifer', 'name': 'the pine grove', 'box': [7968, 864, 8056, 928], 'why': "the shrine's pines on the slope"})
-    t.yard(8136, 1040, 8208, 1120, name='the slate quarry', why='slate for the roofs of Cogsworth and the valley')
+    t.yard(8208, 1148, 8304, 1236, name='the slate quarry', why='slate for the roofs of Cogsworth and the valley')
     t.yard(7840, 860, 7940, 950, name='the folds', why='sheepfolds below the summer pastures')
-    t.fields(7740, 1380, 8060, 1600, ('field2', 'field'), name='the terraced paddies and fields', why='rice and oats stepping down the valley on stone walls', size=(80, 144))
-    for y_ in (1428, 1476, 1524, 1572):                              # the terraces' stone retaining walls
-        r_ = y_ // CELL; seg = K[r_, 7740 // CELL:8060 // CELL]
-        seg[np.isin(seg, ['field', 'field2', 'hedge'])] = 'retain'
-    t.gates_on_path = [[8064, y_] for y_ in range(900, 650, -40)]  # the timber gates along the shrine path
+    # the terraced paddies: stepped strips on stone walls down the lower slope, every other one flooded
+    water = np.zeros_like(T['taken'])
+    for i, y_ in enumerate(range(1384, 1600, 40)):
+        a_, c_ = y_ // CELL, (y_ + 40) // CELL
+        sub = K[a_:c_, 7744 // CELL:8064 // CELL]
+        ok_ = np.isin(sub, ['meadow', 'alpine', 'field', 'field2', 'hedge', 'scrub', 'broadleaf', 'clearing']) & ~T['street'][a_:c_, 7744 // CELL:8064 // CELL] \
+            & ~T['FRAME'][a_:c_, 7744 // CELL:8064 // CELL]
+        sub[ok_] = 'field' if i % 2 == 0 else 'field2'
+        sub[0, ok_[0]] = 'retain'
+        if i % 2 == 0:
+            water[a_ + 1:c_, 7744 // CELL:8064 // CELL] |= ok_[1:]
+        hh = T['h'][a_:c_, 7744 // CELL:8064 // CELL]; hh[ok_] = base_h - (i + 1) * step / 2
+    T['paddy_water'] = water
+    t.outskirts.append({'kind': 'field', 'name': 'the terraced paddies', 'box': [7744, 1384, 8064, 1600], 'why': 'rice stepping down the valley on stone walls, every other terrace flooded'})
+    # the snow line just above the town
+    snow = (PY < 944) & (PX > 7600) & (PX < 8330) & (PY > 600) & np.isin(K, ['alpine', 'meadow', 'scree', 'scree2', 'boulders', 'bramble', 'thicket', 'felltree']) \
+        & ~T['taken'] & ~T['street'] & ~T['FRAME']
+    K[snow] = 'snow'
+    set_route(T, 'the Northway', (7800, 780, 8000, 999), [(7912, 992), (7880, 952), (7904, 904), (7876, 860), (7888, 800)], 24, 'path')
+    WK = list(g.WALK)
+    fr_ = T['FRAME'] & np.isin(K, WK) & ~np.isin(T['K0'], WK)
+    K[fr_] = T['K0'][fr_]                                             # nothing walkable-looking painted onto the frame
+    t.gates_on_path = [[8064, y_] for y_ in range(900, 650, -36)]  # the timber gates along the shrine path
+    t.shrine_path = [[8064, 928], [8064, 648]]
     return t
 
 
 def arc(cx, cy, rx, ry, a0, a1, n=14):
     return [(cx + rx * math.cos(a), cy + ry * math.sin(a)) for a in np.linspace(a0, a1, n)]
+
+
+FRONTAGE_WHY = {   # why a street is wall to wall (Matt, 28 Oct 11:26: only where a real town would build that way)
+    'Neon Harbour: the old waterfront': 'the old port town packed behind the quays: land by the water is dear, houses share walls',
+    'Neon Harbour: the Lanes': 'the crowded city core between the docks and the Heights: apartment rows wall to wall',
+    'Neon Harbour: the Heights': 'terraces cut into the steep slope: each contour street has room for one built row',
+    'Highgarth': 'the old post road: inns and merchants\' houses crowd the road the travellers walk, as in a post town',
+    'Crossroads': 'the market core: shops and granaries crowd the market street where the trade is',
+    'Dust Gulch': "the frontier main street: every business wants a front on the one street the wagons use"}
+
+
+def set_route(T, rn, box, pts, width=24, kind='path'):
+    """A regional route's part inside a box laid by hand (pts in its own direction): the old line's ground back to its
+    natural cover, the new one painted; it joins the route where it leaves the box."""
+    K = T['K']; K0 = T['K0']
+    old = [tuple(p) for p in T['route_px'][rn]]
+    x0, y0, x1, y1 = box
+    ins = [i for i, (x, y) in enumerate(old) if x0 <= x <= x1 and y0 <= y <= y1]
+    if not ins:
+        return 0
+    i0, i1 = ins[0], ins[-1]
+    new = ([old[i0 - 1]] if i0 > 0 else []) + [tuple(map(float, p)) for p in pts] + ([old[i1 + 1]] if i1 < len(old) - 1 else [])
+    om = _lm(old[max(0, i0 - 1):i1 + 2], width + 16)
+    wetk = ['river', 'creek', 'channel', 'canal', 'sea', 'bridge', 'pool', 'falls', 'rapids']
+    nm = _lm(new, width)
+    oldc = om & np.isin(K, ['road', 'path', 'trail']) & ~nm
+    nat = np.where(np.isin(K0, ['sea', 'river', 'canal', 'road', 'path', 'bridge', 'stair', 'creek', 'trail']), 'meadow', K0)
+    nat = np.where(np.isin(nat, ['wild', 'ancient', 'thicket', 'felltree']), 'broadleaf', nat)
+    K[oldc] = nat[oldc]
+    K[nm & ~np.isin(K, wetk)] = kind
+    xs, ys, al, tot = g.densify(new, 6)
+    T['route_px'][rn] = old[:max(0, i0 - 1)] + list(zip(xs.tolist(), ys.tolist())) + old[i1 + 2:]
+    return 1
 
 
 def straighten(T, rn, box, width=40, kind='road'):
@@ -1434,21 +1533,32 @@ def neon(T, X, rng):
 def charcoal_hollow(T, X):
     """The foresters' and charcoal burners' hamlet in its clearing in the old forest (Matt, 28 Oct): a lane off the Old Forest
     Trail, four huts and the kilns."""
-    t = Town(T, 'Charcoal Hollow', (8470, 2440), 'hamlet', (3, 5), "foresters and charcoal burners: charcoal for Cogsworth's forges, "
+    t = Town(T, 'Charcoal Hollow', (8470, 2440), 'hamlet', (6, 8), "foresters and charcoal burners: charcoal for Cogsworth's forges, "
              "timber the old way, by hand", 'a clearing in the old forest, on the trail from the Towpath', seed=310)
     rp = route_part(T, 'the Old Forest Trail', (8380, 2340, 8560, 2560))
     if len(rp) > 4:
         i0 = len(rp) // 2; x0_, y0_ = rp[i0]
         t.street([(x0_ + 12, y0_), (x0_ + 120, y0_)], 'lane', name='Kiln Lane')
-        t.row(t.streets[-1]['pts'], ['cottage', 'cottage', 'workshop', 'cottage'], limit=4, plot=(16, 'yard'), reach=32)
-    t.row(rp, ['cottage', 'workshop'], limit=max(0, 4 - t.count()), plot=(16, 'yard'), reach=32)
-    for (hx, hy) in ((8420, 2380), (8520, 2400), (8420, 2480), (8540, 2420), (8380, 2440), (8560, 2360)):
-        if t.count() >= 4:
-            break
-        a_, b_ = C(hx, hy)
-        if T['street'][max(0, a_ - 3):a_ + 8, max(0, b_ - 3):b_ + 11].any() or np.isin(T['K'][max(0, a_ - 3):a_ + 8, max(0, b_ - 3):b_ + 11], list(ROUTE)).any():
-            t.hand(hx, hy, 56, 40, 'cottage')
-    t.yard(8500, 2460, 8580, 2500, name='the kilns', why='charcoal burning in earth clamps')
+        t.row(t.streets[-1]['pts'], ['cottage', 'shed', 'workshop', 'cottage', 'shed', 'cottage'], limit=6, plot=(16, 'yard'), reach=32)
+    t.row(rp, ['cottage', 'shed', 'workshop', 'cottage'], limit=max(0, 8 - t.count()), plot=(16, 'yard'), reach=32)
+    # more huts and sheds on the open ground near the trail (6 to 8, Matt 28 Oct 11:26): free, buildable, within 40 px of the way
+    K = T['K']; way = np.isin(K, list(ROUTE)) | T['street']
+    near = ndi.binary_dilation(way, iterations=5)
+    kinds = ['cottage', 'shed', 'cottage', 'shed', 'cottage', 'shed']
+    for hy in range(2296, 2584, 16):
+        for hx in range(8320, 8600, 16):
+            if t.count() >= 7:
+                break
+            f = kinds[t.count() % len(kinds)]
+            w_, d_ = (48, 40) if f == 'cottage' else (32, 32)
+            a_, b_ = C(hx, hy); c_, e_ = a_ + d_ // CELL, b_ + w_ // CELL
+            win = (slice(a_ - 2, c_ + 2), slice(b_ - 2, e_ + 2))
+            if not near[a_:c_, b_:e_].any() or T['taken'][win].any() or T['street'][win].any() or T['barrier'][win].any() \
+                    or not np.isin(K[win], list(BUILDABLE)).all():
+                continue
+            t.hand(hx, hy, w_, d_, f, plot=None)
+    t.yard(8500, 2460, 8580, 2500, name='the kiln yard', why='charcoal burning in earth clamps, the charcoal bagged for Cogsworth')
+    t.yard(8440, 2340, 8500, 2370, name='the log stacks', why="cordwood seasoning by the lane before it goes into the clamps")
     return {'Charcoal Hollow': t}
 
 

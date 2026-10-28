@@ -364,17 +364,18 @@ def draw_bays(d, ink, P, x, y, w, h_, bays, k, kk):
         d.rectangle([X0, Y0, X1, Y1], outline=ink + (170,), width=1)
 
 
-OLD_JP = {'machiya', 'honjin', 'temple_hall', 'pagoda', 'watchkeep', 'minka_thatched', 'kura', 'bathhouse'}
+OLD_JP = {'machiya', 'machiya_row', 'honjin', 'temple_hall', 'pagoda', 'watchkeep', 'minka_thatched', 'kura', 'bathhouse'}
 VERMILION = (198, 62, 44)
 
 
-def draw_old_jp(d, ink, P, x, y, w, h_, form, k, kk, door):
+def draw_old_jp(d, ink, P, x, y, w, h_, form, k, kk, door, storeys=2):
     """Highgarth's old post town at map scale: dark tiled roofs with a white plaster line along the eave, the thatched farmhouses
     straw and steep, the storehouses white-walled, the temple hall's hipped roof, the pagoda as its own mark (stacked roofs, vermilion
     trim) and the watch keep black on its grey stone base, snow on its roof."""
     X0, Y0 = P(x, y); X1, Y1 = P(x + w, y + h_)
-    off = max(1.0, 1.2 * kk)
+    off = max(1.0, (0.6 + 0.4 * storeys) * kk)
     dark, darkl, white, straw = (52, 50, 54), (84, 84, 92), (236, 232, 222), (196, 168, 104)
+    snowy = y < 1100 and form in ('minka_thatched', 'watchkeep') and 600 < y and 7600 < x < 8400   # Highgarth's upper terraces under snow
     if form == 'watchkeep':
         B0, B1 = P(x - 8, y - 8), P(x + w + 8, y + h_ + 8)
         d.polygon([(B0[0] - 2 * kk, B1[1]), (B0[0], B0[1]), (B1[0], B0[1]), (B1[0] + 2 * kk, B1[1])], fill=(128, 124, 118), outline=ink)
@@ -386,12 +387,14 @@ def draw_old_jp(d, ink, P, x, y, w, h_, form, k, kk, door):
             d.rectangle([cx - q, cy - q, cx + q, cy + q], fill=dark if i % 2 == 0 else darkl, outline=VERMILION)
         d.line([(cx, cy - r_ * 1.25), (cx, cy - r_ * 0.2)], fill=(200, 170, 80), width=max(1, int(kk)))
         return
-    if form == 'minka_thatched':
-        d.rectangle([X0, Y0, X1, Y1], fill=tuple(int(v * 0.72) for v in straw))
-        if (X1 - X0) >= (Y1 - Y0):
-            d.polygon([(X0, (Y0 + Y1) / 2), (X0 + (Y1 - Y0) / 2, Y0), (X1 - (Y1 - Y0) / 2, Y0), (X1, (Y0 + Y1) / 2)], fill=straw)
-        else:
-            d.polygon([((X0 + X1) / 2, Y0), (X1, Y0 + (X1 - X0) / 2), (X1, Y1 - (X1 - X0) / 2), ((X0 + X1) / 2, Y1)], fill=straw)
+    if form == 'minka_thatched':                                       # a steep hipped thatch: four slopes to a short ridge
+        d.rectangle([X0, Y0, X1, Y1], fill=tuple(int(v * 0.68) for v in straw))
+        mx = min(X1 - X0, Y1 - Y0) / 2
+        d.polygon([(X0, Y0), (X1, Y0), (X1 - mx, (Y0 + Y1) / 2), (X0 + mx, (Y0 + Y1) / 2)], fill=straw)
+        d.polygon([(X0, Y0), (X0 + mx, (Y0 + Y1) / 2), (X0, Y1)], fill=tuple(int(v * 0.85) for v in straw))
+        d.line([(X0 + mx, (Y0 + Y1) / 2), (X1 - mx, (Y0 + Y1) / 2)], fill=(120, 96, 52), width=max(1, int(kk)))
+        if snowy:
+            d.polygon([(X0, Y0), (X1, Y0), (X1 - mx * 0.6, Y0 + (Y1 - Y0) * 0.3), (X0 + mx * 0.6, Y0 + (Y1 - Y0) * 0.3)], fill=(246, 248, 252))
         d.rectangle([X0, Y0, X1, Y1], outline=ink + (180,))
         return
     if form == 'kura':
@@ -459,6 +462,31 @@ def draw_forest(d, S, R, ink, P, k, s):
     d.arc([X - r_ * 0.55, Y - r_ * 0.55, X + r_ * 0.55, Y + r_ * 0.55], 180, 330, fill=R['stone'][4], width=max(1, int(round(3 * k))))
 
 
+def draw_shrines(d, S, R, ink, P, k, s, plans=None):
+    """A shrine path drawn as a stone stair (a light line with step ticks) and its repeated timber gates with vermilion
+    lintels; a footbridge where a plan has one."""
+    for P_ in (plans or (S.get('plans') or {}).values()):
+        fe = P_.get('features') or {}
+        pts = fe.get('shrine_path_px')
+        if pts:
+            polyline(d, pts, P, R['stone'][4] + (255,), max(2.0, 14 * k))
+            polyline(d, pts, P, ink + (150,), max(1.0, 1.0 * s))
+            (ax, ay), (bx, by) = pts[0], pts[-1]
+            L = math.hypot(bx - ax, by - ay); n = int(L // 12)
+            for i in range(1, n):
+                x, y = ax + (bx - ax) * i / n, ay + (by - ay) * i / n; X, Y = P(x, y); r_ = max(1.0, 7 * k)
+                d.line([(X - r_, Y), (X + r_, Y)], fill=ink + (110,), width=1)
+        for (gx, gy) in fe.get('shrine_gates_px', []):
+            X, Y = P(gx, gy); r_ = max(2.0, 10 * k)
+            d.line([(X - r_ * 0.6, Y - r_ * 0.5), (X - r_ * 0.6, Y + r_ * 0.6)], fill=(110, 72, 40), width=max(1, int(round(2.5 * k + 0.5))))
+            d.line([(X + r_ * 0.6, Y - r_ * 0.5), (X + r_ * 0.6, Y + r_ * 0.6)], fill=(110, 72, 40), width=max(1, int(round(2.5 * k + 0.5))))
+            d.line([(X - r_, Y - r_ * 0.55), (X + r_, Y - r_ * 0.55)], fill=VERMILION + (255,), width=max(1, int(round(3 * k + 0.5))))
+        fb = fe.get('footbridge')
+        if fb:
+            x, y = fb['xy_px']; X0, Y0 = P(x - 48, y - 8); X1, Y1 = P(x + 48, y + 8)
+            d.rectangle([X0, Y0, X1, Y1], fill=R['timber'][4], outline=R['timber'][1], width=max(1, int(round(1.5 * k + 0.5))))
+
+
 def draw_kerbs(d, S, R, P, k, plans=None):
     """Painted kerb lines along both edges of the streets with a continuous frontage."""
     for P_ in (plans or (S.get('plans') or {}).values()):
@@ -490,7 +518,16 @@ def draw_towns(d, S, R, ink, P, s, k, neon_lights=True):
             d.rectangle([X0, Y0, X0 + 1, Y0 + 1], fill=roof_colour(R, town, use))
             continue
         if form in OLD_JP:
-            draw_old_jp(d, ink, P, x, y, w, h_, form, k, kk, door)
+            if bays:                                                   # a block of machiya: each front its own dark roof and white eave line
+                along_x = abs(sum(q['w_cells'] for q in bays) * CELL - w) <= abs(sum(q['w_cells'] for q in bays) * CELL - h_)
+                at = 0
+                for q in bays:
+                    bw = q['w_cells'] * CELL
+                    bx, by, bww, bhh = (x + at, y, bw, h_) if along_x else (x, y + at, w, bw)
+                    draw_old_jp(d, ink, P, bx, by, bww, bhh, 'machiya', k, kk, door, storeys=q.get('storeys', 2))
+                    at += bw
+            else:
+                draw_old_jp(d, ink, P, x, y, w, h_, form, k, kk, door)
             continue
         if bays and X1 - X0 >= 2.5:
             draw_bays(d, ink, P, x, y, w, h_, bays, k, kk)
@@ -729,9 +766,10 @@ def names(M):
     region += [('THE NORTHERN RANGE', 4300, 520)]
     biome = [(t, *Pr((x, y))) for t, x, y in M54.BIOME_NAMES]
     biome = [b for b in biome if b[0] not in ('the Heights',)]
+    biome = [(t, 7860, 1880) if t == 'the coal hills' else (t, x, y) for t, x, y in biome]   # on the hills, off the old forest
     biome += [('the upper Cog', 8200, 1500), ('the east coast', 12440, 4720)]
     small = [(nm, *Pr((x, y)), kind) for nm, x, y, kind in M54.SMALL_PLACES if nm not in ('the old town', 'the docks', 'new town', 'the Skyport', 'Gull Strand')]
-    small += [('the rockfall', M.ROCKFALL[0] + 40, M.ROCKFALL[1], 'gate'), ('the slate quarry', 8120, 1110, 'place'), ('the folds', 7915, 900, 'place'),
+    small += [('the rockfall', M.ROCKFALL[0] + 40, M.ROCKFALL[1], 'gate'), ('the slate quarry', 8256, 1192, 'place'), ('the folds', 7915, 900, 'place'),
               ('the Skyport', 10030, 4905, 'place'), ('the pad', M.PAD[0], M.PAD[1] + 40, 'place'), ("the Company's yard", 11780, 4159, 'place'),
               ('Bridgefoot', 11135, 4462, 'place'), ('the fish market', 11228, 5078, 'place'), ('the slip', 11480, 5430, 'place'),
               ('Terminus Square', 11650, 4565, 'place'), ('the East Shore', 12150, 5150, 'place'), ('the Lanes', 11420, 4380, 'place'),
@@ -994,6 +1032,7 @@ def compose(S, M, R, ink, s, base, k, ox, oy, Wc, Hc, paths, lines, mode, title,
     d = ImageDraw.Draw(canvas, 'RGBA')
     draw_lines(d, lines, P, R, ink, s)
     draw_street_bridges(d, S, R, ink, P, k)
+    draw_shrines(d, S, R, ink, P, k, s)
     draw_forest(d, S, R, ink, P, k, s)
     draw_kerbs(d, S, R, P, k)
     draw_walls(d, S, R, ink, P, k)
@@ -1094,14 +1133,10 @@ def town_inset(S, M, R, ink, cg, cid, rgb, sea_rgb, P, ppc):
         if len(q) >= 2:
             d.line(q, fill=ink + (90 if st['class'] != 'close' else 60,), width=1)
     draw_street_bridges(d, S, R, ink, Pf, kb)
+    draw_shrines(d, S, R, ink, Pf, kb, max(1.0, ppc / 4), [P])
     draw_kerbs(d, S, R, Pf, kb, [P])
     draw_walls(d, S, R, ink, Pf, kb)
     draw_towns(d, S, R, ink, Pf, max(1.0, ppc / 4), kb)
-    for (gx, gy) in (P.get('features') or {}).get('shrine_gates_px', []):     # the shrine path's timber gates
-        X, Y = Pf(gx, gy); r_ = max(2.0, 3.5 * kb)
-        d.line([(X - r_, Y - r_ * 0.6), (X + r_, Y - r_ * 0.6)], fill=(150, 96, 52, 255), width=max(1, int(round(1.6 * kb))))
-        d.line([(X - r_ * 0.6, Y - r_ * 0.6), (X - r_ * 0.6, Y + r_)], fill=(150, 96, 52, 255), width=max(1, int(round(1.2 * kb))))
-        d.line([(X + r_ * 0.6, Y - r_ * 0.6), (X + r_ * 0.6, Y + r_)], fill=(150, 96, 52, 255), width=max(1, int(round(1.2 * kb))))
     TH = P.get('theme') or {}
     if TH:                                                           # the theme: waystone, the line to the beam, the crater, Moss, the Company
         sl_ = TH.get('sightline')

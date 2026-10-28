@@ -493,7 +493,8 @@
   ]
  },
  "fronts": 12,
- "counting_note": "buildings_counted counts a block of fronts sharing its walls (a terrace, an apartment row, a frontier block) once; fronts counts each front in it",
+ "landmarks": [],
+ "counting_note": "Matt's rule (28 Oct): buildings_counted counts a row of 3 to 5 joined houses as 1 (a longer row 1 for each 5), a larger house as 1, a small or medium free-standing house as 1 (each building counts_as); the big structures (keeps, temples, pagodas, towers, depots, stations, warehouses, halls) are landmarks, listed apart with their reason; fronts counts each front. The target is a guide: a little outside is a warning, beyond 25 % a fail",
  "buildings": [
   {
    "id": "lullford-b001",
@@ -526,7 +527,8 @@
     9,
     4
    ],
-   "plot": "garden"
+   "plot": "garden",
+   "counts_as": 1
   },
   {
    "id": "lullford-b002",
@@ -559,7 +561,8 @@
     12,
     4
    ],
-   "plot": "garden"
+   "plot": "garden",
+   "counts_as": 1
   },
   {
    "id": "lullford-b003",
@@ -592,7 +595,8 @@
     11,
     4
    ],
-   "plot": "garden"
+   "plot": "garden",
+   "counts_as": 1
   },
   {
    "id": "lullford-b004",
@@ -625,7 +629,8 @@
     9,
     4
    ],
-   "plot": "garden"
+   "plot": "garden",
+   "counts_as": 1
   },
   {
    "id": "lullford-b005",
@@ -658,7 +663,8 @@
     7,
     1
    ],
-   "plot": "garden"
+   "plot": "garden",
+   "counts_as": 1
   },
   {
    "id": "lullford-b006",
@@ -691,7 +697,8 @@
     11,
     4
    ],
-   "plot": "garden"
+   "plot": "garden",
+   "counts_as": 1
   },
   {
    "id": "lullford-b007",
@@ -724,7 +731,8 @@
     4,
     8
    ],
-   "plot": "garden"
+   "plot": "garden",
+   "counts_as": 1
   },
   {
    "id": "lullford-b008",
@@ -757,7 +765,8 @@
     4,
     9
    ],
-   "plot": "garden"
+   "plot": "garden",
+   "counts_as": 1
   },
   {
    "id": "lullford-b009",
@@ -790,7 +799,8 @@
     7,
     4
    ],
-   "plot": "garden"
+   "plot": "garden",
+   "counts_as": 1
   },
   {
    "id": "lullford-b010",
@@ -823,7 +833,8 @@
     11,
     4
    ],
-   "plot": "garden"
+   "plot": "garden",
+   "counts_as": 1
   },
   {
    "id": "lullford-b011",
@@ -856,7 +867,8 @@
     12,
     4
    ],
-   "plot": "garden"
+   "plot": "garden",
+   "counts_as": 1
   },
   {
    "id": "lullford-b012",
@@ -889,7 +901,8 @@
     7,
     4
    ],
-   "plot": "garden"
+   "plot": "garden",
+   "counts_as": 1
   }
  ],
  "lifted": [],

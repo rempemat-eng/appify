@@ -190,7 +190,8 @@
   ]
  },
  "fronts": 6,
- "counting_note": "buildings_counted counts a block of fronts sharing its walls (a terrace, an apartment row, a frontier block) once; fronts counts each front in it",
+ "landmarks": [],
+ "counting_note": "Matt's rule (28 Oct): buildings_counted counts a row of 3 to 5 joined houses as 1 (a longer row 1 for each 5), a larger house as 1, a small or medium free-standing house as 1 (each building counts_as); the big structures (keeps, temples, pagodas, towers, depots, stations, warehouses, halls) are landmarks, listed apart with their reason; fronts counts each front. The target is a guide: a little outside is a warning, beyond 25 % a fail",
  "buildings": [
   {
    "id": "cinder-springs-b001",
@@ -223,7 +224,8 @@
     4,
     8
    ],
-   "plot": "garden"
+   "plot": "garden",
+   "counts_as": 1
   },
   {
    "id": "cinder-springs-b002",
@@ -256,7 +258,8 @@
     4,
     10
    ],
-   "plot": "garden"
+   "plot": "garden",
+   "counts_as": 1
   },
   {
    "id": "cinder-springs-b003",
@@ -289,7 +292,8 @@
     4,
     9
    ],
-   "plot": "garden"
+   "plot": "garden",
+   "counts_as": 1
   },
   {
    "id": "cinder-springs-b004",
@@ -322,7 +326,8 @@
     9,
     4
    ],
-   "plot": "garden"
+   "plot": "garden",
+   "counts_as": 1
   },
   {
    "id": "cinder-springs-b005",
@@ -355,7 +360,8 @@
     4,
     8
    ],
-   "plot": "garden"
+   "plot": "garden",
+   "counts_as": 1
   },
   {
    "id": "cinder-springs-b006",
@@ -388,7 +394,8 @@
     4,
     11
    ],
-   "plot": "garden"
+   "plot": "garden",
+   "counts_as": 1
   }
  ],
  "lifted": [],
@@ -425,8 +432,8 @@
   "yards": "gardens",
   "edges": "fields",
   "materials_cells": {
-   "basalt setts": 711,
-   "ash yards": 733
+   "basalt setts": 665,
+   "ash yards": 792
   }
  },
  "terrain": {
@@ -509,21 +516,21 @@
    "3#g2.5g.4g.2g.g16.18r",
    "3#g.4g3.3g.g13.2g5.18r",
    "#3g.6g.8g.10g.g4.3r.14r",
-   "#10g.3g.3g2.11g.2g2.3rg2.12r",
-   "g4.g.4g.7g.11g2.2g2.3r3.3g.g.6r",
-   ".2g3.5g.21g4.3rg3.g3.2g5.",
-   ".2g3.5g.9g.2g.2g.5g4.3rg8.g5.",
+   "#10g.3g.3g2.11g.2g.g3rg2.12r",
+   "g4.g.4g.7g.11g2.3g.3r3.3g.g.6r",
+   ".2g3.5g.21g4.3rg3.g3.2g2.g2.",
+   ".2g3.5g.9g.2g.2g.5g4.3rg3.g3.2g2.g2.",
    "3g3.g2.2g.10g2.5g.g.g4.3rg14.",
-   "3g.g2.4g.12g.5g.4g2.3rg14.",
-   "#2.g4.g2.19g.4g2.3r2g13.",
-   "5#.5g.23g2.3r.g7.g5.",
-   "5#g.g.3g.22g2.3r2g7.g5.",
-   "5#.2g.23g.2g.4r9.g5.",
-   "5#g.g.2g.21g3.4rg2.3g.3g4.g",
-   "4#.g.25g4.3r8g.2g4.g",
-   "4#.g.25g4.r13.g4.",
-   "4#.2g.23g.g2.2r18.",
-   "5#.2g3.24g2r13.g4."
+   "3g.g2.4g.12g.5g.6g3rg3.g.3g3.g2.",
+   "#2.g4.g2.19g.4g2.3r3g8.3g.",
+   "5#.5g.25g3r.2g8.3g.",
+   "5#g.g.3g.24g3r3g9.g2.",
+   "5#.2g.23g.3g4r11.3g.",
+   "5#g.g.2g.21g3.4rg10.3g.",
+   "4#.g.25g4.3r8g.7g",
+   "4#.g.25g4.3r8g.7g",
+   "4#.2g.23g.g2.4r6g2.3g2.3g",
+   "5#.2g3.24g4r7.g8."
   ]
  },
  "residents": [],

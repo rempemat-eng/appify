@@ -8,7 +8,7 @@
   14,
   22
  ],
- "buildings_counted": 16,
+ "buildings_counted": 15,
  "grid": {
   "cell_px": 8,
   "screen_cells": [
@@ -693,7 +693,14 @@
   ]
  },
  "fronts": 16,
- "counting_note": "buildings_counted counts a block of fronts sharing its walls (a terrace, an apartment row, a frontier block) once; fronts counts each front in it",
+ "landmarks": [
+  {
+   "building": "fernhollow-b007",
+   "form": "chapel",
+   "reason": "high ground: above the town, seen from its streets"
+  }
+ ],
+ "counting_note": "Matt's rule (28 Oct): buildings_counted counts a row of 3 to 5 joined houses as 1 (a longer row 1 for each 5), a larger house as 1, a small or medium free-standing house as 1 (each building counts_as); the big structures (keeps, temples, pagodas, towers, depots, stations, warehouses, halls) are landmarks, listed apart with their reason; fronts counts each front. The target is a guide: a little outside is a warning, beyond 25 % a fail",
  "buildings": [
   {
    "id": "fernhollow-b001",
@@ -726,7 +733,8 @@
     12,
     5
    ],
-   "plot": "garden"
+   "plot": "garden",
+   "counts_as": 1
   },
   {
    "id": "fernhollow-b002",
@@ -759,7 +767,8 @@
     9,
     5
    ],
-   "plot": "garden"
+   "plot": "garden",
+   "counts_as": 1
   },
   {
    "id": "fernhollow-b003",
@@ -792,7 +801,8 @@
     5,
     5
    ],
-   "plot": "garden"
+   "plot": "garden",
+   "counts_as": 1
   },
   {
    "id": "fernhollow-b004",
@@ -825,7 +835,8 @@
     11,
     5
    ],
-   "plot": "garden"
+   "plot": "garden",
+   "counts_as": 1
   },
   {
    "id": "fernhollow-b005",
@@ -858,7 +869,8 @@
     9,
     5
    ],
-   "plot": "garden"
+   "plot": "garden",
+   "counts_as": 1
   },
   {
    "id": "fernhollow-b006",
@@ -891,7 +903,8 @@
     10,
     5
    ],
-   "plot": "garden"
+   "plot": "garden",
+   "counts_as": 1
   },
   {
    "id": "fernhollow-b007",
@@ -924,7 +937,9 @@
     10,
     5
    ],
-   "plot": "garden"
+   "plot": "garden",
+   "landmark": true,
+   "counts_as": 0
   },
   {
    "id": "fernhollow-b008",
@@ -957,7 +972,8 @@
     9,
     5
    ],
-   "plot": "garden"
+   "plot": "garden",
+   "counts_as": 1
   },
   {
    "id": "fernhollow-b009",
@@ -990,7 +1006,8 @@
     5,
     8
    ],
-   "plot": "garden"
+   "plot": "garden",
+   "counts_as": 1
   },
   {
    "id": "fernhollow-b010",
@@ -1023,7 +1040,8 @@
     5,
     7
    ],
-   "plot": "garden"
+   "plot": "garden",
+   "counts_as": 1
   },
   {
    "id": "fernhollow-b011",
@@ -1056,7 +1074,8 @@
     5,
     8
    ],
-   "plot": "garden"
+   "plot": "garden",
+   "counts_as": 1
   },
   {
    "id": "fernhollow-b012",
@@ -1089,7 +1108,8 @@
     11,
     5
    ],
-   "plot": "garden"
+   "plot": "garden",
+   "counts_as": 1
   },
   {
    "id": "fernhollow-b013",
@@ -1122,7 +1142,8 @@
     10,
     4
    ],
-   "plot": "yard"
+   "plot": "yard",
+   "counts_as": 1
   },
   {
    "id": "fernhollow-b014",
@@ -1155,7 +1176,8 @@
     7,
     1
    ],
-   "plot": "yard"
+   "plot": "yard",
+   "counts_as": 1
   },
   {
    "id": "fernhollow-b015",
@@ -1188,7 +1210,8 @@
     10,
     4
    ],
-   "plot": "yard"
+   "plot": "yard",
+   "counts_as": 1
   },
   {
    "id": "fernhollow-b016",
@@ -1222,6 +1245,7 @@
     4
    ],
    "plot": "yard",
+   "counts_as": 1,
    "company_foothold": "the Company's fenced timber yard"
   }
  ],
@@ -1406,11 +1430,11 @@
    "27g10r3g6r46g",
    "40g6r46g",
    "40g6r46g",
-   "6.34g6r46g",
-   "6.34g6r46g",
-   "6.34g7r45g",
-   "6.34g7r45g",
-   "6.35g6r45g"
+   "40g6r46g",
+   "40g6r46g",
+   "40g7r45g",
+   "40g7r45g",
+   "41g6r45g"
   ]
  },
  "residents": [],

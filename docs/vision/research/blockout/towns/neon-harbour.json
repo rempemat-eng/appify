@@ -8,7 +8,7 @@
   60,
   90
  ],
- "buildings_counted": 81,
+ "buildings_counted": 72,
  "grid": {
   "cell_px": 8,
   "screen_cells": [
@@ -287,6 +287,7 @@
      ]
     }
    ],
+   "frontage_reason": "the old port town packed behind the quays: land by the water is dear, houses share walls",
    "connects": [
     "neon-harbour-a3",
     "neon-harbour-s09",
@@ -365,6 +366,7 @@
      ]
     }
    ],
+   "frontage_reason": "the old port town packed behind the quays: land by the water is dear, houses share walls",
    "connects": [
     "neon-harbour-s10",
     "neon-harbour-s11"
@@ -452,6 +454,7 @@
      ]
     }
    ],
+   "frontage_reason": "the old port town packed behind the quays: land by the water is dear, houses share walls",
    "connects": [
     "neon-harbour-a4",
     "neon-harbour-q01",
@@ -743,6 +746,7 @@
      ]
     }
    ],
+   "frontage_reason": "a dense core where land on the street is dear",
    "connects": [
     "neon-harbour-s21",
     "neon-harbour-s22",
@@ -838,6 +842,7 @@
      ]
     }
    ],
+   "frontage_reason": "a dense core where land on the street is dear",
    "connects": [
     "neon-harbour-s21",
     "neon-harbour-s22",
@@ -898,6 +903,7 @@
      ]
     }
    ],
+   "frontage_reason": "a dense core where land on the street is dear",
    "connects": [
     "neon-harbour-q02",
     "neon-harbour-s21",
@@ -981,6 +987,7 @@
      ]
     }
    ],
+   "frontage_reason": "a dense core where land on the street is dear",
    "connects": [
     "neon-harbour-s21",
     "neon-harbour-s22",
@@ -1065,6 +1072,7 @@
      ]
     }
    ],
+   "frontage_reason": "a dense core where land on the street is dear",
    "connects": [
     "neon-harbour-a4",
     "neon-harbour-s21",
@@ -1583,6 +1591,7 @@
      ]
     }
    ],
+   "frontage_reason": "a dense core where land on the street is dear",
    "connects": [
     "neon-harbour-a1",
     "neon-harbour-s52",
@@ -1666,6 +1675,7 @@
      ]
     }
    ],
+   "frontage_reason": "a dense core where land on the street is dear",
    "connects": [
     "neon-harbour-a1",
     "neon-harbour-a2",
@@ -1779,6 +1789,7 @@
      ]
     }
    ],
+   "frontage_reason": "a dense core where land on the street is dear",
    "connects": [
     "neon-harbour-s52",
     "neon-harbour-s53",
@@ -1896,6 +1907,7 @@
      ]
     }
    ],
+   "frontage_reason": "a dense core where land on the street is dear",
    "connects": [
     "neon-harbour-s52",
     "neon-harbour-s53",
@@ -2892,7 +2904,54 @@
   ]
  },
  "fronts": 118,
- "counting_note": "buildings_counted counts a block of fronts sharing its walls (a terrace, an apartment row, a frontier block) once; fronts counts each front in it",
+ "landmarks": [
+  {
+   "building": "neon-harbour-b046",
+   "form": "longwarehouse",
+   "reason": "on the axis of neon-harbour-s32: closing the view along it"
+  },
+  {
+   "building": "neon-harbour-b047",
+   "form": "longwarehouse",
+   "reason": "on the axis of neon-harbour-s32: closing the view along it"
+  },
+  {
+   "building": "neon-harbour-b048",
+   "form": "longwarehouse",
+   "reason": "on the axis of neon-harbour-s32: closing the view along it"
+  },
+  {
+   "building": "neon-harbour-b050",
+   "form": "warehouse",
+   "reason": "high ground: above the town, seen from its streets"
+  },
+  {
+   "building": "neon-harbour-b051",
+   "form": "longwarehouse",
+   "reason": "high ground: above the town, seen from its streets"
+  },
+  {
+   "building": "neon-harbour-b053",
+   "form": "warehouse",
+   "reason": "high ground: above the town, seen from its streets"
+  },
+  {
+   "building": "neon-harbour-b055",
+   "form": "bigtower",
+   "reason": "high ground: above the town, seen from its streets"
+  },
+  {
+   "building": "neon-harbour-b062",
+   "form": "bigtower",
+   "reason": "high ground: above the town, seen from its streets"
+  },
+  {
+   "building": "neon-harbour-b064",
+   "form": "skyport",
+   "reason": "high ground: above the town, seen from its streets"
+  }
+ ],
+ "counting_note": "Matt's rule (28 Oct): buildings_counted counts a row of 3 to 5 joined houses as 1 (a longer row 1 for each 5), a larger house as 1, a small or medium free-standing house as 1 (each building counts_as); the big structures (keeps, temples, pagodas, towers, depots, stations, warehouses, halls) are landmarks, listed apart with their reason; fronts counts each front. The target is a guide: a little outside is a warning, beyond 25 % a fail",
  "buildings": [
   {
    "id": "neon-harbour-b001",
@@ -2936,7 +2995,8 @@
      "roof": "flat"
     }
    ],
-   "fronts": 3
+   "fronts": 3,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b002",
@@ -2975,7 +3035,8 @@
      "roof": "flat"
     }
    ],
-   "fronts": 2
+   "fronts": 2,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b003",
@@ -3014,7 +3075,8 @@
      "roof": "tin"
     }
    ],
-   "fronts": 2
+   "fronts": 2,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b004",
@@ -3058,7 +3120,8 @@
      "roof": "tile"
     }
    ],
-   "fronts": 3
+   "fronts": 3,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b005",
@@ -3097,7 +3160,8 @@
      "roof": "flat"
     }
    ],
-   "fronts": 2
+   "fronts": 2,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b006",
@@ -3131,7 +3195,8 @@
      "roof": "tin"
     }
    ],
-   "fronts": 1
+   "fronts": 1,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b007",
@@ -3170,7 +3235,8 @@
      "roof": "flat"
     }
    ],
-   "fronts": 2
+   "fronts": 2,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b008",
@@ -3204,7 +3270,8 @@
      "roof": "flat"
     }
    ],
-   "fronts": 1
+   "fronts": 1,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b009",
@@ -3238,7 +3305,8 @@
      "roof": "tile"
     }
    ],
-   "fronts": 1
+   "fronts": 1,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b010",
@@ -3277,7 +3345,8 @@
      "roof": "tin"
     }
    ],
-   "fronts": 2
+   "fronts": 2,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b011",
@@ -3311,7 +3380,8 @@
      "roof": "tile"
     }
    ],
-   "fronts": 1
+   "fronts": 1,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b012",
@@ -3350,7 +3420,8 @@
      "roof": "flat"
     }
    ],
-   "fronts": 2
+   "fronts": 2,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b013",
@@ -3394,7 +3465,8 @@
      "roof": "tin"
     }
    ],
-   "fronts": 3
+   "fronts": 3,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b014",
@@ -3428,7 +3500,8 @@
      "roof": "tin"
     }
    ],
-   "fronts": 1
+   "fronts": 1,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b015",
@@ -3467,7 +3540,8 @@
      "roof": "tile"
     }
    ],
-   "fronts": 2
+   "fronts": 2,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b016",
@@ -3501,7 +3575,8 @@
      "roof": "flat"
     }
    ],
-   "fronts": 1
+   "fronts": 1,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b017",
@@ -3535,7 +3610,8 @@
      "roof": "tile"
     }
    ],
-   "fronts": 1
+   "fronts": 1,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b018",
@@ -3569,7 +3645,8 @@
      "roof": "tile"
     }
    ],
-   "fronts": 1
+   "fronts": 1,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b019",
@@ -3608,7 +3685,8 @@
      "roof": "flat"
     }
    ],
-   "fronts": 2
+   "fronts": 2,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b020",
@@ -3642,7 +3720,8 @@
      "roof": "tile"
     }
    ],
-   "fronts": 1
+   "fronts": 1,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b021",
@@ -3676,7 +3755,8 @@
      "roof": "tile"
     }
    ],
-   "fronts": 1
+   "fronts": 1,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b022",
@@ -3710,7 +3790,8 @@
      "roof": "tin"
     }
    ],
-   "fronts": 1
+   "fronts": 1,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b023",
@@ -3744,7 +3825,8 @@
      "roof": "flat"
     }
    ],
-   "fronts": 1
+   "fronts": 1,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b024",
@@ -3778,7 +3860,8 @@
      "roof": "flat"
     }
    ],
-   "fronts": 1
+   "fronts": 1,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b025",
@@ -3812,7 +3895,8 @@
      "roof": "flat"
     }
    ],
-   "fronts": 1
+   "fronts": 1,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b026",
@@ -3846,7 +3930,8 @@
      "roof": "tile"
     }
    ],
-   "fronts": 1
+   "fronts": 1,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b027",
@@ -3890,7 +3975,8 @@
      "roof": "flat"
     }
    ],
-   "fronts": 3
+   "fronts": 3,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b028",
@@ -3934,7 +4020,8 @@
      "roof": "flat"
     }
    ],
-   "fronts": 3
+   "fronts": 3,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b029",
@@ -3978,7 +4065,8 @@
      "roof": "flat"
     }
    ],
-   "fronts": 3
+   "fronts": 3,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b030",
@@ -4022,7 +4110,8 @@
      "roof": "flat"
     }
    ],
-   "fronts": 3
+   "fronts": 3,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b031",
@@ -4061,7 +4150,8 @@
      "roof": "flat"
     }
    ],
-   "fronts": 2
+   "fronts": 2,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b032",
@@ -4095,7 +4185,8 @@
      "roof": "flat"
     }
    ],
-   "fronts": 1
+   "fronts": 1,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b033",
@@ -4134,7 +4225,8 @@
      "roof": "flat"
     }
    ],
-   "fronts": 2
+   "fronts": 2,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b034",
@@ -4183,7 +4275,8 @@
      "roof": "tin"
     }
    ],
-   "fronts": 4
+   "fronts": 4,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b035",
@@ -4227,7 +4320,8 @@
      "roof": "flat"
     }
    ],
-   "fronts": 3
+   "fronts": 3,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b036",
@@ -4266,7 +4360,8 @@
      "roof": "flat"
     }
    ],
-   "fronts": 2
+   "fronts": 2,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b037",
@@ -4299,7 +4394,8 @@
     1,
     19
    ],
-   "plot": "yard"
+   "plot": "yard",
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b038",
@@ -4332,7 +4428,8 @@
     1,
     13
    ],
-   "plot": "yard"
+   "plot": "yard",
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b039",
@@ -4365,7 +4462,8 @@
     1,
     15
    ],
-   "plot": "yard"
+   "plot": "yard",
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b040",
@@ -4398,7 +4496,8 @@
     1,
     18
    ],
-   "plot": "yard"
+   "plot": "yard",
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b041",
@@ -4431,7 +4530,8 @@
     13,
     1
    ],
-   "plot": "yard"
+   "plot": "yard",
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b042",
@@ -4464,7 +4564,8 @@
     13,
     1
    ],
-   "plot": "yard"
+   "plot": "yard",
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b043",
@@ -4497,7 +4598,8 @@
     16,
     1
    ],
-   "plot": "yard"
+   "plot": "yard",
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b044",
@@ -4530,7 +4632,8 @@
     13,
     1
    ],
-   "plot": "yard"
+   "plot": "yard",
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b045",
@@ -4563,7 +4666,8 @@
     13,
     1
    ],
-   "plot": "yard"
+   "plot": "yard",
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b046",
@@ -4596,7 +4700,9 @@
     28,
     3
    ],
-   "plot": "yard"
+   "plot": "yard",
+   "landmark": true,
+   "counts_as": 0
   },
   {
    "id": "neon-harbour-b047",
@@ -4629,7 +4735,9 @@
     28,
     3
    ],
-   "plot": "yard"
+   "plot": "yard",
+   "landmark": true,
+   "counts_as": 0
   },
   {
    "id": "neon-harbour-b048",
@@ -4662,7 +4770,9 @@
     23,
     3
    ],
-   "plot": "yard"
+   "plot": "yard",
+   "landmark": true,
+   "counts_as": 0
   },
   {
    "id": "neon-harbour-b049",
@@ -4695,7 +4805,8 @@
     15,
     3
    ],
-   "plot": "yard"
+   "plot": "yard",
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b050",
@@ -4728,7 +4839,9 @@
     3,
     3
    ],
-   "plot": "yard"
+   "plot": "yard",
+   "landmark": true,
+   "counts_as": 0
   },
   {
    "id": "neon-harbour-b051",
@@ -4761,7 +4874,9 @@
     19,
     3
    ],
-   "plot": "yard"
+   "plot": "yard",
+   "landmark": true,
+   "counts_as": 0
   },
   {
    "id": "neon-harbour-b052",
@@ -4794,7 +4909,8 @@
     13,
     3
    ],
-   "plot": "yard"
+   "plot": "yard",
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b053",
@@ -4827,7 +4943,9 @@
     16,
     3
    ],
-   "plot": "yard"
+   "plot": "yard",
+   "landmark": true,
+   "counts_as": 0
   },
   {
    "id": "neon-harbour-b054",
@@ -4853,7 +4971,8 @@
    "purpose": "a Company office",
    "occupants": "clerks by day",
    "district": "neon-harbour-d-the-company-district",
-   "counted": true
+   "counted": true,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b055",
@@ -4880,6 +4999,8 @@
    "occupants": "offices and the Company",
    "district": "neon-harbour-d-the-company-district",
    "counted": true,
+   "landmark": true,
+   "counts_as": 0,
    "company_foothold": "the Company's tower and its yard: the headquarters"
   },
   {
@@ -4906,7 +5027,8 @@
    "purpose": "a shipping office",
    "occupants": "clerks by day",
    "district": "neon-harbour-d-the-company-district",
-   "counted": true
+   "counted": true,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b057",
@@ -4932,7 +5054,8 @@
    "purpose": "a bank",
    "occupants": "clerks by day",
    "district": "neon-harbour-d-the-company-district",
-   "counted": true
+   "counted": true,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b058",
@@ -4958,7 +5081,8 @@
    "purpose": "a trading house",
    "occupants": "clerks by day",
    "district": "neon-harbour-d-the-company-district",
-   "counted": true
+   "counted": true,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b059",
@@ -4984,7 +5108,8 @@
    "purpose": "a Company office",
    "occupants": "clerks by day",
    "district": "neon-harbour-d-the-company-district",
-   "counted": true
+   "counted": true,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b060",
@@ -5010,7 +5135,8 @@
    "purpose": "a shipping office",
    "occupants": "clerks by day",
    "district": "neon-harbour-d-the-company-district",
-   "counted": true
+   "counted": true,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b061",
@@ -5036,7 +5162,8 @@
    "purpose": "a bank",
    "occupants": "clerks by day",
    "district": "neon-harbour-d-the-company-district",
-   "counted": true
+   "counted": true,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b062",
@@ -5062,7 +5189,9 @@
    "purpose": "a tower",
    "occupants": "offices and the Company",
    "district": "neon-harbour-d-the-company-district",
-   "counted": true
+   "counted": true,
+   "landmark": true,
+   "counts_as": 0
   },
   {
    "id": "neon-harbour-b063",
@@ -5088,7 +5217,8 @@
    "purpose": "a trading house",
    "occupants": "clerks by day",
    "district": "neon-harbour-d-the-company-district",
-   "counted": true
+   "counted": true,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b064",
@@ -5114,7 +5244,9 @@
    "purpose": "the station",
    "occupants": "the station staff",
    "district": "neon-harbour-d-the-heights-and-the-skyport",
-   "counted": true
+   "counted": true,
+   "landmark": true,
+   "counts_as": 0
   },
   {
    "id": "neon-harbour-b065",
@@ -5148,7 +5280,8 @@
      "roof": "flat"
     }
    ],
-   "fronts": 1
+   "fronts": 1,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b066",
@@ -5182,7 +5315,8 @@
      "roof": "flat"
     }
    ],
-   "fronts": 1
+   "fronts": 1,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b067",
@@ -5221,7 +5355,8 @@
      "roof": "tin"
     }
    ],
-   "fronts": 2
+   "fronts": 2,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b068",
@@ -5255,7 +5390,8 @@
      "roof": "tile"
     }
    ],
-   "fronts": 1
+   "fronts": 1,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b069",
@@ -5289,7 +5425,8 @@
      "roof": "tile"
     }
    ],
-   "fronts": 1
+   "fronts": 1,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b070",
@@ -5323,7 +5460,8 @@
      "roof": "tin"
     }
    ],
-   "fronts": 1
+   "fronts": 1,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b071",
@@ -5357,7 +5495,8 @@
      "roof": "tile"
     }
    ],
-   "fronts": 1
+   "fronts": 1,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b072",
@@ -5391,7 +5530,8 @@
      "roof": "flat"
     }
    ],
-   "fronts": 1
+   "fronts": 1,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b073",
@@ -5430,7 +5570,8 @@
      "roof": "flat"
     }
    ],
-   "fronts": 2
+   "fronts": 2,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b074",
@@ -5464,7 +5605,8 @@
      "roof": "tile"
     }
    ],
-   "fronts": 1
+   "fronts": 1,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b075",
@@ -5503,7 +5645,8 @@
      "roof": "tin"
     }
    ],
-   "fronts": 2
+   "fronts": 2,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b076",
@@ -5537,7 +5680,8 @@
      "roof": "tile"
     }
    ],
-   "fronts": 1
+   "fronts": 1,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b077",
@@ -5571,7 +5715,8 @@
      "roof": "tile"
     }
    ],
-   "fronts": 1
+   "fronts": 1,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b078",
@@ -5605,7 +5750,8 @@
      "roof": "flat"
     }
    ],
-   "fronts": 1
+   "fronts": 1,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b079",
@@ -5649,7 +5795,8 @@
      "roof": "flat"
     }
    ],
-   "fronts": 3
+   "fronts": 3,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b080",
@@ -5693,7 +5840,8 @@
      "roof": "flat"
     }
    ],
-   "fronts": 3
+   "fronts": 3,
+   "counts_as": 1
   },
   {
    "id": "neon-harbour-b081",
@@ -5727,7 +5875,8 @@
      "roof": "tile"
     }
    ],
-   "fronts": 1
+   "fronts": 1,
+   "counts_as": 1
   }
  ],
  "lifted": [],

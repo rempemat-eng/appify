@@ -13,7 +13,8 @@ What it checks, per plan (ground-rules.md 4 and 5, size-guide.md 0, Matt's brief
   off_streets no building on a street, square or arrival
   off_water   no building on water or a barrier; a street crosses water only on a bridge
   reach       every building has a door within three cells of the street it faces (a close two cells wide if it is set back)
-  count       the counted buildings within the town's range
+  count       the counted buildings (a row of 3 to 5 joined houses 1, any house 1, landmarks apart, each with a reason)
+              within the town's range: a little outside warns, beyond 25 % fails
   arrivals    every arrival lies on its regional route (blockout-v55.json) or at its station (a ferry)
   orphans     every street is joined to an arrival through the street network
   districts   a large town has three or more districts with two or more functions and two or more gathering places
@@ -217,7 +218,7 @@ def check_plan(P, blockout):
             fails.append(f"cells: building {b['id']} not on whole cells")
         m = rect_mask(c, r, cw, ch)
         if b.get('from_zone_plan'):                # the zone as built: its plan and rules (rules.route_clear) are the authority
-            occ |= m; counted += 1 if b['counted'] else 0
+            occ |= m; counted += b.get('counts_as', 1 if b['counted'] else 0)
             continue
         if (m & net).any():
             hit = [sid for sid, bm in bands.items() if (bm & m).any()]
@@ -230,7 +231,7 @@ def check_plan(P, blockout):
         if (occ & m).any():
             fails.append(f"cells: building {b['id']} overlaps another building")
         occ |= m
-        counted += 1 if b['counted'] else 0
+        counted += b.get('counts_as', 1 if b['counted'] else 0)
         # reach: the door within 3 cells of the faced street's band (a close's end: 1)
         dc, dr = b['door_cells']
         fm = bands.get(b['faces'])
@@ -268,9 +269,18 @@ def check_plan(P, blockout):
                 L = sum(abs(x1 - x0) + abs(y1 - y0) for (x0, y0), (x1, y1) in zip(fs['vertices_px'], fs['vertices_px'][1:])) / CELL
                 if L > 8:
                     fails.append(f"outskirts: building {b['id']} stands {L:.0f} cells up a close, off its street")
-    lo, hi = P['target']
+    lo, hi = P['target']                                   # a guide: a little outside warns, beyond 25 % fails (Matt, 28 Oct 11:26)
     if not (lo <= counted <= hi):
-        fails.append(f'count: {counted} counted buildings, outside {lo} to {hi}')
+        if lo * 0.75 <= counted <= hi * 1.25:
+            notes.append(f'count (warning): {counted} counted buildings, a little outside {lo} to {hi}')
+        else:
+            fails.append(f'count: {counted} counted buildings, more than 25 % outside {lo} to {hi}')
+    for b in P['buildings']:
+        if b.get('landmark') and not any(l['building'] == b['id'] and l.get('reason') for l in P.get('landmarks', [])):
+            fails.append(f"count: landmark {b['id']} ({b['form']}) has no placement reason in landmarks")
+    for q in P['streets']:
+        if q.get('frontage') == 'continuous' and not q.get('frontage_reason'):
+            fails.append(f"frontage: {q['id']} is continuous with no frontage_reason")
     if counted != P['buildings_counted']:
         fails.append(f"count: the plan says {P['buildings_counted']}, the list has {counted}")
     # arrivals

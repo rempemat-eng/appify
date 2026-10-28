@@ -410,7 +410,7 @@ def plan_one(T, name, ts, X, tp):
                     nmx = f'{nmx} ({k + 1})'
                 el = {'id': sid, 'kind': 'street', 'name': nmx, 'class': s['cls'], 'width_cells': s['width_cells'], 'vertices_px': [list(v) for v in line],
                       'follows_route': s['route'], 'district_town': t.name, 'frontage': s.get('frontage', 'detached'),
-                      'max_gap_cells': s.get('max_gap_cells'), 'alley': bool(s.get('alley'))}
+                      'max_gap_cells': s.get('max_gap_cells'), 'alley': bool(s.get('alley')), 'frontage_reason': s.get('frontage_reason')}
                 if s.get('frontage_props'):                              # the props along this piece of the street
                     xs_ = [v[0] for v in line]; ys_ = [v[1] for v in line]
                     el['frontage_props'] = [q for q in s['frontage_props'] if min(xs_) - 64 <= q['at_px'][0] <= max(xs_) + 64
@@ -926,6 +926,11 @@ def _district_fn(uses):
     return best + (' with homes' if sh['homes'] >= 0.3 else '')
 
 
+LANDMARK_FORMS = {'keep', 'watchkeep', 'temple_hall', 'pagoda', 'tower', 'bigtower', 'station', 'depot', 'skyport', 'warehouse', 'longwarehouse',
+                  'hall', 'hangar', 'barracks', 'chapel'}
+LANDMARK_TYPES = {'keep', 'tower', 'station', 'warehouse', 'hall', 'hangar'}
+
+
 def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
     K = T['K']; c0, r0, w, h = box
     tr = TRADES.get(pid, DEFAULT_TRADES)
@@ -1014,6 +1019,7 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
                 if s['frontage'] == 'continuous':
                     s['max_gap_cells'] = el.get('max_gap_cells') or 1
                     s['frontage_props'] = el.get('frontage_props', [])
+                    s['frontage_reason'] = el.get('frontage_reason') or TW.FRONTAGE_WHY.get(el.get('district_town'), 'a dense core where land on the street is dear')
                 if el.get('alley'):
                     s['stair_alley'] = True
             if el.get('follows_route'):
@@ -1056,8 +1062,34 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
     if entries:
         game['first_screen_cells'] = [[int(e[0] // CELL - 20), int(e[1] // CELL - 11), 40, 22.5] for e in entries[:1]]
     game['screens'] = [round((fb[2] - fb[0]) / CELL / 40, 1), round((fb[3] - fb[1]) / CELL / 22.5, 1)]
-    tiers = T['tiers_pre'][sl]
-    counted = sum(1 for b in bl if b['counted'])
+    tiers = T['tiers_pre'][sl]; K = T['K']
+    # Matt's counting rule (28 Oct 11:26): a row of 3 to 5 joined houses counts 1 (a longer row 1 for each 5), a larger house 1,
+    # a small or medium free-standing house 1; the big structures are landmarks, listed apart with why they stand where they do
+    landmarks = []
+    ar_xy = [a.get('xy_px') or a.get('at_px') for a in arrivals if isinstance(a, dict)]
+    ar_xy = [q for q in ar_xy if q]
+    for b in bl:
+        if b['counted'] and (b['form'] in LANDMARK_FORMS or b['type'] in LANDMARK_TYPES):
+            b['landmark'] = True; b['counts_as'] = 0
+            x, y, w_, h_ = b['rect_px']; cx, cy = x + w_ / 2, y + h_ / 2
+            a_, c_ = int(cy // CELL), int(cx // CELL)
+            near = K[max(0, a_ - 8):a_ + 9, max(0, c_ - 8):c_ + 9]
+            tr = T['tiers_pre'][a_, c_]
+            if np.isin(near, ['sea', 'river', 'canal', 'quay', 'dock', 'lagoon', 'tarn']).any():
+                why = "the water's edge: seen from the water and the quays"
+            elif tr >= np.percentile(tiers, 80):
+                why = 'high ground: above the town, seen from its streets'
+            elif ar_xy and min(math.hypot(cx - q[0], cy - q[1]) for q in ar_xy) < 400:
+                why = 'a view from the arrival: the first big building the traveller sees'
+            else:
+                why = f"on the axis of {b.get('faces') or 'its street'}: closing the view along it"
+            landmarks.append({'building': b['id'], 'form': b['form'], 'reason': why})
+        elif b['counted']:
+            n = b.get('fronts', 1)
+            b['counts_as'] = max(1, math.ceil(n / 5)) if n >= 3 else 1
+        else:
+            b['counts_as'] = 0
+    counted = sum(b['counts_as'] for b in bl)
     tgt = lead.target if len(ts) == 1 else (60, 90)
     size = lead.size if len(ts) == 1 else 'city'
     lv = [L for L in T.get('levelled', []) if fb[0] - 8 <= L[0] <= fb[2] and fb[1] - 8 <= L[1] <= fb[3]]
@@ -1073,11 +1105,17 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
         'footprint_px': fb,
         'fortification': next((t.fort for t in ts if getattr(t, 'fort', None)), None),
         'style': next((t.style for t in ts if getattr(t, 'style', None)), None),
-        'features': {k_: v_ for k_, v_ in (('shrine_gates_px', next((t.gates_on_path for t in ts if getattr(t, 'gates_on_path', None)), None)),) if v_},
+        'features': {k_: v_ for k_, v_ in (('shrine_gates_px', next((t.gates_on_path for t in ts if getattr(t, 'gates_on_path', None)), None)),
+                                           ('shrine_path_px', next((t.shrine_path for t in ts if getattr(t, 'shrine_path', None)), None)),
+                                           ('footbridge', next((t.footbridge for t in ts if getattr(t, 'footbridge', None)), None))) if v_},
         'arrivals': arrivals, 'streets': streets, 'squares': squares, 'districts': dists, 'gathering_places': gathering,
         'size_table_px': {f: [list(TW.BLD[f][0]), list(TW.BLD[f][1])] for f in sorted({b['form'] for b in bl if not b.get('from_zone_plan')})},
         'fronts': sum(b.get('fronts', 1) for b in bl),
-        'counting_note': 'buildings_counted counts a block of fronts sharing its walls (a terrace, an apartment row, a frontier block) once; fronts counts each front in it',
+        'landmarks': landmarks,
+        'counting_note': ("Matt's rule (28 Oct): buildings_counted counts a row of 3 to 5 joined houses as 1 (a longer row 1 for each 5), "
+                          'a larger house as 1, a small or medium free-standing house as 1 (each building counts_as); the big structures '
+                          '(keeps, temples, pagodas, towers, depots, stations, warehouses, halls) are landmarks, listed apart with their reason; '
+                          'fronts counts each front. The target is a guide: a little outside is a warning, beyond 25 % a fail'),
         'buildings': bl, 'lifted': [{'type': d['use'], 'rect_px': [d['x'], d['y'], d['w'], d['h']], 'why': 'no close could reach it'} for d in dropped],
         'outskirts': [o for t in ts for o in t.outskirts],
         'game_layout': game,
@@ -1107,11 +1145,11 @@ MATERIALS = {   # code: (name, rgb, how much of it is mixed into the ground's co
     19: ('brick setts', (150, 92, 72), 0.55), 20: ('cinder yards', (96, 86, 80), 0.5), 21: ('boardwalk', (170, 132, 92), 0.55),
     22: ('sand', (224, 206, 160), 0.5), 23: ('reef shallows', (96, 196, 190), 0.45), 24: ('worn paving', (168, 156, 132), 0.5),
     25: ('packed earth', (150, 122, 92), 0.45), 26: ('dry gravel', (196, 178, 140), 0.45), 27: ('raked gravel', (206, 202, 190), 0.6),
-    28: ('moss', (100, 124, 80), 0.45)}
+    28: ('moss', (86, 108, 70), 0.65), 29: ('flooded paddy', (118, 168, 176), 0.6)}
 TOWN_MAT = {   # plan id: (streets and squares, yards, open ground inside the town or None)
     'dust-gulch': (13, 14, 13), 'palm-spring': (13, 14, 26), 'the-lode': (13, 14, None), 'hearthold': (15, 16, 16), 'cinderwick': (15, 16, None),
     'cinder-springs': (15, 16, None), 'ember-forge': (15, 16, None), 'cogsworth': (19, 20, 20),
-    'lagoon-landing': (21, 22, 22), 'crossroads': (24, 25, None), 'highgarth': (17, 27, None), 'fernhollow': (25, 25, None), 'lullford': (24, 25, None),
+    'lagoon-landing': (21, 22, 22), 'crossroads': (24, 25, None), 'highgarth': (17, 27, 28), 'fernhollow': (25, 25, None), 'lullford': (24, 25, None),
     'driftwood': (22, 22, None), 'gullwick': (22, 22, None), 'canalside': (24, 25, None), 'glintside': (1, 25, None),
     'halcyon-row': (24, 22, None), 'launch-cape': (12, 12, None)}
 NEON_MAT = {'the old waterfront': 1, 'the docks': 4, 'the Lanes and the East Shore': 3, 'the Company district': 2, 'the Heights and the Skyport': 5}
@@ -1194,6 +1232,9 @@ def ground(T, plans, towns, X):
         cape = T['land'] & (g.PX > 11650) & (g.PY > 5800) & (mat == 0)
         mat[cape & np.isin(K, ['apron', 'pad'])] = 12
         mat[cape & ~np.isin(K, ['apron', 'pad', 'building', 'hangar', 'warehouse', 'tower']) & ~street] = 11
+    pw = T.get('paddy_water')
+    if isinstance(pw, np.ndarray):
+        mat[pw & np.isin(K, ['field', 'field2'])] = 29                # Highgarth's flooded paddies
     T['mat'] = mat
     for pid, P in plans.items():
         c0, r0, w, h = P['terrain']['box_cells']
