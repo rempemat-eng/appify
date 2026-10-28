@@ -429,6 +429,7 @@ class Town:
             if ok.any():
                 rr, cc = np.nonzero(ok)
                 self.buildings[-1]['plot'] = [int(xa + cc.min()), int(ya + rr.min()), int(cc.max() - cc.min() + 1), int(rr.max() - rr.min() + 1), kind]
+                T.setdefault('authored_protected_cells', []).append(self.buildings[-1]['plot'][:4])
         return True
 
     def place(self, cx, cy, use, w=None, d=None, r=96, plot=None, counted=True, within=None):
@@ -475,14 +476,25 @@ class Town:
         town_plans.validate_authored_packet(packet, town_plans.slug(self.name))
         if hasattr(self, 'authored_plan'):
             raise ValueError(f'{self.name}: duplicate authored packet')
+        protected = np.zeros(self.T['K'].shape, dtype=bool)
+        uses = list(self.T.get('authored_protected_cells', []))
+        uses += [b['plot'][:4] for b in self.buildings if b.get('plot')]
+        uses += [[o['box'][0] // CELL, o['box'][1] // CELL,
+                  (o['box'][2] - o['box'][0]) // CELL, (o['box'][3] - o['box'][1]) // CELL]
+                 for o in self.outskirts]
+        for c, r, w, h in uses:
+            protected[max(0, r):r + h, max(0, c):c + w] = True
         reserved = np.zeros(self.T['K'].shape, dtype=bool)
+        wc, wr, ww, wh = packet['terrain_box_cells']
         for rec in packet['buildings']:
             c, r, w, h = rec['footprint_cells']
             if r + h > H or c + w > W:
                 raise ValueError(f"{rec['id']}: authored footprint leaves the real terrain")
+            if not (wc <= c and wr <= r and c + w <= wc + ww and r + h <= wr + wh):
+                raise ValueError(f"{rec['id']}: authored footprint leaves its terrain window")
             sl = (slice(r, r + h), slice(c, c + w))
             if not np.isin(self.T['K'][sl], list(BUILDABLE)).all() or any(
-                    self.T[key][sl].any() for key in ('taken', 'street', 'barrier', 'keepout')) or reserved[sl].any():
+                    self.T[key][sl].any() for key in ('taken', 'street', 'barrier', 'keepout')) or reserved[sl].any() or protected[sl].any():
                 raise ValueError(f"{rec['id']}: authored footprint overlaps blocked ground or another use")
             tiers = self.T['tiers_pre'][sl]
             if tiers.max() != tiers.min():
@@ -491,8 +503,10 @@ class Town:
             if 'plot_cells' in rec:
                 pc, pr, pw, ph = rec['plot_cells']
                 ps = (slice(pr, pr + ph), slice(pc, pc + pw))
+                if not (wc <= pc and wr <= pr and pc + pw <= wc + ww and pr + ph <= wr + wh):
+                    raise ValueError(f"{rec['id']}: authored plot leaves its terrain window")
                 if pr + ph > H or pc + pw > W or not np.isin(self.T['K'][ps], list(BUILDABLE - ROUTE)).all() or any(
-                        self.T[key][ps].any() for key in ('taken', 'street', 'barrier', 'keepout')) or reserved[ps].any():
+                        self.T[key][ps].any() for key in ('taken', 'street', 'barrier', 'keepout')) or reserved[ps].any() or protected[ps].any():
                     raise ValueError(f"{rec['id']}: authored plot is clipped or overlaps another use")
                 reserved[ps] = True
         # The existing JSON convention excludes landmarks and groups joined fronts.
@@ -666,6 +680,7 @@ class Town:
             y += rh
         if n:
             self.outskirts.append({'kind': kinds[0], 'name': name, 'box': [int(x0), int(y0), int(x1), int(y1)], 'plots': n, 'why': why})
+            self.T.setdefault('authored_protected_cells', []).append([int(x0 // CELL), int(y0 // CELL), int((x1 - x0) // CELL), int((y1 - y0) // CELL)])
         return n
 
     def yard(self, x0, y0, x1, y1, kind='yard', name=None, why=None):
@@ -675,6 +690,7 @@ class Town:
         ok = np.isin(sub, list(BUILDABLE)) & ~T['taken'][a:c, b:e] & ~T['street'][a:c, b:e] & ~T['barrier'][a:c, b:e] & ~T['keepout'][a:c, b:e]
         sub[ok & ~np.isin(sub, list(ROUTE))] = kind; T['used'][a:c, b:e] |= ok
         self.outskirts.append({'kind': kind, 'name': name, 'box': [int(x0), int(y0), int(x1), int(y1)], 'why': why})
+        self.T.setdefault('authored_protected_cells', []).append([int(x0 // CELL), int(y0 // CELL), int((x1 - x0) // CELL), int((y1 - y0) // CELL)])
 
     # -------------------------------------------------------------------------------------- the record
     def count(self):

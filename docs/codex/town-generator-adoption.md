@@ -28,7 +28,10 @@ town JSON as an input. The committed JSON files are read only as test oracles.
 forms through `Town.hand`. Before placement it checks actual terrain kinds,
 existing uses, barriers, tier agreement, exact rear plots and mutual clearance.
 It keeps prescribed IDs, doors and street references as explicit authoring
-data. The old `put()` raw-record cap predates landmark exclusion: authored
+data. Existing plot rectangles and named field/yard uses are reserved explicitly,
+including previously laid towns; ordinary `used` padding is not a reservation.
+Rear plots must fit the selected terrain window, and authored door approaches
+honour the real off-street barrier mask. The old `put()` raw-record cap predates landmark exclusion: authored
 capacity uses the existing exported counting convention instead, followed by
 the unchanged town checker. This permits nine Launch Cape records with six
 counted buildings, without counting its landmarks as houses or changing a guide.
@@ -68,20 +71,32 @@ preservation checks; there is no silent refresh to a newer town document.
 
 Bounded local results so far:
 
-- Nine adoption methods and all six unchanged Highgarth methods pass. Coverage
+- Fourteen adoption methods and all six unchanged Highgarth methods pass. Coverage
   includes exact input blobs, all 21 unchanged default record exports, exact
   Hearthold/Cape additions on the stated synthetic-level fixture terrain, retained
   original record fields, duplicates/unmatched IDs, metadata/count fabrication,
-  actual door/street checks and tier/barrier/plot refusal controls.
+  actual door/street checks, tier/barrier/plot/window refusal controls, existing-use
+  preservation and nested metadata validation. Source pins cover district/open-use
+  descriptions as well as building records.
 - The Cinderwick three-cell fixture is a conservative `r`-as-`road` refusal
   control, not a proven raw-generator placement failure or placement approval.
 - Python compilation and `git diff --check` pass.
+- An independent source review identified missing existing-use, rear-plot-window,
+  barrier-approach and nested metadata guards. Those guards and regressions were
+  added before readiness; the original draft remains a partial checkpoint.
 - The initial fixture tuple-index failure, subsequent geometry/count-cap and
   metadata assertions were retained as development failures, then corrected.
   Initial missing `skimage` was an environment import failure, not a source pass.
 - Python 3.12 uses isolated scratch dependencies: scikit-image 0.26.0,
   networkx 3.7, imageio 2.38.1, tifffile 2026.10.15 and jsonschema 4.26.0.
   They are environment dependencies, not new project version policy.
+- The first image-free numeric oracle stopped itself with exit 85 during
+  `stage_old`, at its conservative 2.2 GB RSS ceiling. It produced no terrain
+  result; cgroup OOM counters stayed zero. A separately logged retry also stopped
+  in `stage_old` at its shared anonymous-memory guard (3.010 GB process peak RSS,
+  4.243 GB shared anonymous memory), before producing cell or `Town.hand` results.
+  It had a 3.2 GB RSS ceiling and 4 GB virtual allocation limit. Both logs are
+  retained, no result JSON was produced, and neither attempt is credited as a pass.
 
 Source-only Y12 packet: subject files are the two generator/exporter modules and
 their dedicated test/document; inputs are the exact table pins and the stored

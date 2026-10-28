@@ -10,6 +10,7 @@ from pathlib import Path
 import subprocess
 from types import ModuleType
 import unittest
+from unittest.mock import patch
 
 from scripts.review.test_highgarth_export import ROOT, inputs
 import town_plans as tp
@@ -44,6 +45,7 @@ def fixture(pid):
     T['street'] = np.zeros(T['K'].shape, dtype=bool)
     for e in args[4].elems:
         T['street'][args[7]] |= e['mask']
+    args[4].mask = T['street'][args[7]].copy()
     for b in t.buildings:
         x, y, w, h = [b[k] // tw.CELL for k in ('x', 'y', 'w', 'h')]
         T['taken'][y:y+h, x:x+w] = True
@@ -72,6 +74,33 @@ class TownGeneratorAdoption(unittest.TestCase):
             self.assertEqual(packet['buildings'], [b for b in expected['buildings'] if b['id'] not in ids])
             self.assertEqual(original['terrain'], expected['terrain'])
             self.assertEqual(packet['terrain_box_cells'], original['terrain']['box_cells'])
+            old_districts = {d['id'] for d in original['districts']}
+            expected_districts = {d['id']: d for d in expected['districts']}
+            original_districts = {d['id']: d for d in original['districts']}
+            self.assertEqual(packet['districts'], [{k: v for k, v in d.items() if k not in ('buildings', 'mix')}
+                                                   for d in expected['districts'] if d['id'] not in old_districts])
+            for ident, fields in packet['district_descriptions'].items():
+                for field, value in fields.items():
+                    self.assertEqual(value, expected_districts[ident][field])
+            for ident in original_districts:
+                for field in ('declared', 'function'):
+                    if original_districts[ident].get(field) != expected_districts[ident].get(field):
+                        self.assertEqual(packet['district_descriptions'].get(ident, {}).get(field),
+                                         expected_districts[ident][field])
+            self.assertEqual(packet['open_uses'], [o for o in expected['open_uses'] if o not in original['open_uses']])
+            if 'site_authored' in packet:
+                self.assertEqual(packet['site_authored'], expected['site']['authored'])
+            if original['site']['authored'] != expected['site']['authored']:
+                self.assertEqual(packet.get('site_authored'), expected['site']['authored'])
+
+    def test_required_source_metadata_cannot_be_silently_omitted(self):
+        for field in ('district_descriptions', 'site_authored'):
+            packet = copy.deepcopy(tw.PROPOSED_ADOPTIONS['cinderwick'])
+            if field == 'district_descriptions': packet[field] = {}
+            else: del packet[field]
+            with patch.dict(tw.PROPOSED_ADOPTIONS, {'cinderwick': packet}):
+                with self.assertRaises(AssertionError):
+                    self.test_every_static_packet_matches_exact_git_sources()
 
     def test_all_21_default_record_exports_are_byte_identical_to_331(self):
         paths = sorted((ROOT / 'docs/vision/research/blockout/towns').glob('*.json'))
@@ -171,6 +200,52 @@ class TownGeneratorAdoption(unittest.TestCase):
         town.buildings[-1]['faces'] = 'missing-street'
         with self.assertRaisesRegex(ValueError, 'street'):
             tp._authored_access([town], args[4], args[6], pas)
+
+    def test_existing_plots_and_named_uses_are_reserved_but_padding_is_not(self):
+        for kind in ('plot', 'named yard', 'padding'):
+            with self.subTest(kind=kind):
+                _, args, town = fixture('hearthold')
+                packet = tw.PROPOSED_ADOPTIONS['hearthold']; rec = packet['buildings'][0]
+                c, r, w, h = rec['footprint_cells']
+                if kind == 'plot':
+                    town.buildings[0]['plot'] = [c, r, w, h, 'yard']
+                elif kind == 'named yard':
+                    x, y, wpx, hpx = rec['rect_px']
+                    town.yard(x, y, x+wpx, y+hpx, name='an existing named yard', why='preserved source use')
+                else:
+                    args[0]['used'][r:r+h, c:c+w] = True
+                if kind == 'padding':
+                    town.adopt(packet)
+                else:
+                    with self.assertRaisesRegex(ValueError, 'blocked ground'):
+                        town.adopt(packet)
+
+    def test_authored_rear_plot_must_fit_the_selected_terrain_window(self):
+        _, args, town = fixture('hearthold')
+        packet = copy.deepcopy(tw.PROPOSED_ADOPTIONS['hearthold'])
+        packet['terrain_box_cells'] = list(packet['buildings'][0]['footprint_cells'])
+        with self.assertRaisesRegex(ValueError, 'plot.*terrain window'):
+            town.adopt(packet)
+
+    def test_barrier_only_door_approach_is_refused(self):
+        _, args, town = fixture('hearthold')
+        town.adopt(tw.PROPOSED_ADOPTIONS['hearthold'])
+        b = town.buildings[-3]; dc, dr = b['door']; c0, r0, _, _ = args[6]
+        self.assertFalse(args[4].mask[dr-r0, dc-c0])
+        pas = tp._passable(args[0], args[7], [town])
+        self.assertTrue(pas[dr-r0, dc-c0])
+        args[0]['barrier'][dr, dc] = True
+        with self.assertRaisesRegex(ValueError, 'real barrier'):
+            tp._authored_access([town], args[4], args[6], pas)
+
+    def test_unknown_nested_authoring_fields_are_refused(self):
+        for pid, field in [('launch-cape', 'districts'), ('cinderwick', 'open_uses')]:
+            packet = copy.deepcopy(tw.PROPOSED_ADOPTIONS[pid]); packet[field][0]['new_rule'] = True
+            with self.assertRaisesRegex(ValueError, 'unsupported authored'):
+                tp.validate_authored_packet(packet, pid)
+        packet = copy.deepcopy(tw.PROPOSED_ADOPTIONS['hearthold']); packet['site_authored'] = False
+        with self.assertRaisesRegex(ValueError, 'site description'):
+            tp.validate_authored_packet(packet, 'hearthold')
 
 
 if __name__ == '__main__':

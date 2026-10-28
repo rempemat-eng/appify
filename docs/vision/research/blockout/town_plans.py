@@ -422,7 +422,7 @@ def validate_authored_packet(packet, pid):
         if min(x, y) < 0 or min(w, h) <= 0 or any(v % CELL for v in rec['rect_px']) or rec['footprint_cells'] != [v // CELL for v in rec['rect_px']]:
             raise ValueError(f'{bid}: footprint disagrees with its soft-grid rectangle')
         form = rec['form']
-        if form not in TW.BLD or rec['type'] != TW.TYPE_OF.get(form, form):
+        if not isinstance(form, str) or form not in TW.BLD or rec['type'] != TW.TYPE_OF.get(form, form):
             raise ValueError(f'{bid}: unknown or mismatched existing form')
         (lo, hi), (dlo, dhi) = TW.BLD[form]
         if not (lo <= w <= hi and dlo <= h <= dhi):
@@ -442,6 +442,23 @@ def validate_authored_packet(packet, pid):
         rows = packet.get(key)
         if not isinstance(rows, list) or any(not isinstance(r, dict) or not isinstance(r.get('id'), str) for r in rows) or len({r['id'] for r in rows}) != len(rows):
             raise ValueError(f'{pid}: duplicate or malformed authored {key}')
+    for row in packet['districts']:
+        if set(row) != {'id', 'name', 'centre_px', 'declared', 'town', 'function'} or any(
+                not isinstance(row[k], str) or not row[k] for k in ('id', 'name', 'declared', 'town', 'function')):
+            raise ValueError(f'{pid}: unsupported authored district fields')
+        centre = row['centre_px']
+        if not isinstance(centre, list) or len(centre) != 2 or any(type(v) is not int for v in centre):
+            raise ValueError(f'{pid}: invalid authored district centre')
+    for row in packet['open_uses']:
+        if set(row) != {'id', 'name', 'kind', 'cells'} or any(not isinstance(row[k], str) or not row[k] for k in ('id', 'name', 'kind')):
+            raise ValueError(f'{pid}: unsupported authored open-use fields')
+        cells = row['cells']
+        if not isinstance(cells, list) or len(cells) != 4 or any(type(v) is not int for v in cells) or min(cells) < 0 or min(cells[2:]) < 1:
+            raise ValueError(f'{pid}: invalid authored open-use cells')
+        if not row['id'].startswith(pid + '-o') or row['kind'] not in TW.BUILDABLE:
+            raise ValueError(f'{pid}: unmatched authored open-use identity or kind')
+    if 'site_authored' in packet and (not isinstance(packet['site_authored'], str) or not packet['site_authored']):
+        raise ValueError(f'{pid}: invalid source-authored site description')
     if not isinstance(packet.get('district_descriptions'), dict):
         raise ValueError(f'{pid}: invalid district descriptions')
     for changes in packet['district_descriptions'].values():
@@ -481,6 +498,9 @@ def _authored_access(ts, net, box, pas):
             line = [(round(y + (ty - y) * k / n), round(x + (tx - x) * k / n)) for k in range(n + 1)]
             if any(occ[rr, cc] or not pas[rr, cc] and not net.mask[rr, cc] for rr, cc in line):
                 raise ValueError(f'{bid}: authored door access crosses blocked ground')
+            barrier = t.T.get('barrier')
+            if barrier is not None and any(barrier[rr + r0, cc + c0] and not net.mask[rr, cc] for rr, cc in line):
+                raise ValueError(f'{bid}: authored door access crosses a real barrier')
 
 
 def plan_one(T, name, ts, X, tp):
@@ -497,6 +517,12 @@ def plan_one(T, name, ts, X, tp):
         c0, r0, w, h = authored['terrain_box_cells']
         if c0 + w > W or r0 + h > H or not (c0 * CELL <= fb[0] <= fb[2] <= (c0 + w) * CELL and r0 * CELL <= fb[1] <= fb[3] <= (r0 + h) * CELL):
             raise ValueError(f'{pid}: authored terrain window clips the actual footprint')
+        for t in ts:
+            for b in t.buildings:
+                if b.get('plot'):
+                    pc, pr, pw, ph = b['plot'][:4]
+                    if not (c0 <= pc and r0 <= pr and pc + pw <= c0 + w and pr + ph <= r0 + h):
+                        raise ValueError(f'{pid}: authored terrain window clips an existing plot')
         c1, r1 = c0 + w, r0 + h
         box = (c0, r0, w, h)
     sl = (slice(r0, r1), slice(c0, c1))
