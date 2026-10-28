@@ -382,6 +382,107 @@ def _box(ts):
     return [int(min(xs)), int(min(ys)), int(max(xs)), int(max(ys))]
 
 
+def validate_authored_packet(packet, pid):
+    """Validate the explicit authoring channel; generated outputs are never inputs."""
+    import re
+    if not isinstance(packet, dict) or packet.get('status') != 'proposal':
+        raise ValueError(f'{pid}: authored input must remain a proposal')
+    fields = {'status', 'source', 'baseline', 'terrain_box_cells', 'buildings', 'districts',
+              'district_descriptions', 'open_uses', 'site_authored'}
+    if set(packet) - fields:
+        raise ValueError(f'{pid}: unsupported authored input field')
+    for key in ('source', 'baseline'):
+        pin = packet.get(key)
+        if not isinstance(pin, dict) or set(pin) != {'commit', 'blob', 'path'} or any(
+                not isinstance(pin[x], str) or not re.fullmatch('[0-9a-f]{40}', pin[x]) for x in ('commit', 'blob')):
+            raise ValueError(f'{pid}: missing exact {key} identity')
+        if pin['path'] != f'docs/vision/research/blockout/towns/{pid}.json':
+            raise ValueError(f'{pid}: authored source path mismatch')
+    box = packet.get('terrain_box_cells')
+    if not isinstance(box, list) or len(box) != 4 or any(type(x) is not int for x in box) or min(box) < 0 or min(box[2:]) < 1:
+        raise ValueError(f'{pid}: invalid authored terrain window')
+    records = packet.get('buildings')
+    if not isinstance(records, list) or not records:
+        raise ValueError(f'{pid}: authored buildings must be a nonempty array')
+    seen = set()
+    required = {'id', 'type', 'form', 'footprint_cells', 'rect_px', 'faces', 'door_cells',
+                'purpose', 'occupants', 'district', 'counted', 'counts_as'}
+    for rec in records:
+        if not isinstance(rec, dict) or not required <= set(rec) or set(rec) - required - {'plot_cells', 'plot'}:
+            raise ValueError(f'{pid}: unsupported or incomplete authored building')
+        bid = rec['id']
+        if not isinstance(bid, str) or not re.fullmatch(re.escape(pid) + '-b[0-9]{3}', bid) or bid in seen:
+            raise ValueError(f'{pid}: duplicate or invalid authored building ID')
+        seen.add(bid)
+        for field, length in [('rect_px', 4), ('footprint_cells', 4), ('door_cells', 2)]:
+            value = rec[field]
+            if not isinstance(value, list) or len(value) != length or any(type(x) is not int for x in value):
+                raise ValueError(f'{bid}: invalid {field}')
+        x, y, w, h = rec['rect_px']
+        if min(x, y) < 0 or min(w, h) <= 0 or any(v % CELL for v in rec['rect_px']) or rec['footprint_cells'] != [v // CELL for v in rec['rect_px']]:
+            raise ValueError(f'{bid}: footprint disagrees with its soft-grid rectangle')
+        form = rec['form']
+        if form not in TW.BLD or rec['type'] != TW.TYPE_OF.get(form, form):
+            raise ValueError(f'{bid}: unknown or mismatched existing form')
+        (lo, hi), (dlo, dhi) = TW.BLD[form]
+        if not (lo <= w <= hi and dlo <= h <= dhi):
+            raise ValueError(f'{bid}: dimensions outside its existing form')
+        if type(rec['counted']) is not bool or type(rec['counts_as']) is not int or rec['counts_as'] != int(rec['counted']):
+            raise ValueError(f'{bid}: authored contribution disagrees with its standalone building')
+        for key in ('faces', 'district', 'purpose', 'occupants'):
+            if not isinstance(rec[key], str) or not rec[key]:
+                raise ValueError(f'{bid}: missing authored {key}')
+        if ('plot_cells' in rec) != ('plot' in rec):
+            raise ValueError(f'{bid}: incomplete authored plot')
+        if 'plot_cells' in rec:
+            p = rec['plot_cells']
+            if not isinstance(p, list) or len(p) != 4 or any(type(v) is not int for v in p) or min(p) < 0 or min(p[2:]) < 1 or rec['plot'] not in ('yard', 'garden'):
+                raise ValueError(f'{bid}: invalid authored plot')
+    for key in ('districts', 'open_uses'):
+        rows = packet.get(key)
+        if not isinstance(rows, list) or any(not isinstance(r, dict) or not isinstance(r.get('id'), str) for r in rows) or len({r['id'] for r in rows}) != len(rows):
+            raise ValueError(f'{pid}: duplicate or malformed authored {key}')
+    if not isinstance(packet.get('district_descriptions'), dict):
+        raise ValueError(f'{pid}: invalid district descriptions')
+    for changes in packet['district_descriptions'].values():
+        if not isinstance(changes, dict) or set(changes) - {'declared', 'function'} or any(not isinstance(v, str) or not v for v in changes.values()):
+            raise ValueError(f'{pid}: unsupported district description')
+
+
+def _authored_packet(ts, pid):
+    packets = [t.authored_plan for t in ts if hasattr(t, 'authored_plan')]
+    if not packets:
+        return None
+    if len(packets) != 1 or len(ts) != 1:
+        raise ValueError(f'{pid}: ambiguous authored town input')
+    validate_authored_packet(packets[0], pid)
+    return packets[0]
+
+
+def _authored_access(ts, net, box, pas):
+    """Explicit doors still need a clear route to their declared existing street."""
+    c0, r0, w, h = box
+    occ = _bmask(ts, box)
+    for t in ts:
+        for b in t.buildings:
+            if not b.get('authored_id'):
+                continue
+            bid = b['authored_id']; dc, dr = b['door']; x, y = dc - c0, dr - r0
+            ring = {(rr, cc) for rr, cc, _ in _ring(b['x'] // CELL - c0, b['y'] // CELL - r0, b['w'] // CELL, b['h'] // CELL)}
+            if not (0 <= x < w and 0 <= y < h) or (y, x) not in ring:
+                raise ValueError(f'{bid}: authored door is not on its exterior ring')
+            faces = [e for e in net.elems if e['id'] == b['faces'] and e.get('alive', True)]
+            if len(faces) != 1 or not faces[0]['mask'].any():
+                raise ValueError(f'{bid}: missing or ambiguous authored street')
+            dt, (iy, ix) = ndi.distance_transform_edt(~faces[0]['mask'], return_indices=True)
+            if dt[y, x] > 3.01:
+                raise ValueError(f'{bid}: authored door cannot reach its declared street')
+            ty, tx = iy[y, x], ix[y, x]; n = max(abs(ty - y), abs(tx - x)) + 1
+            line = [(round(y + (ty - y) * k / n), round(x + (tx - x) * k / n)) for k in range(n + 1)]
+            if any(occ[rr, cc] or not pas[rr, cc] and not net.mask[rr, cc] for rr, cc in line):
+                raise ValueError(f'{bid}: authored door access crosses blocked ground')
+
+
 def plan_one(T, name, ts, X, tp):
     K = T['K']; H, W = K.shape
     pid = slug(name)
@@ -391,6 +492,13 @@ def plan_one(T, name, ts, X, tp):
     c0 = max(0, (fb[0] - PAD) // CELL); r0 = max(0, (fb[1] - PAD) // CELL)
     c1 = min(W, (fb[2] + PAD) // CELL + 1); r1 = min(H, (fb[3] + PAD) // CELL + 1)
     box = (c0, r0, c1 - c0, r1 - r0)
+    authored = _authored_packet(ts, pid)
+    if authored:
+        c0, r0, w, h = authored['terrain_box_cells']
+        if c0 + w > W or r0 + h > H or not (c0 * CELL <= fb[0] <= fb[2] <= (c0 + w) * CELL and r0 * CELL <= fb[1] <= fb[3] <= (r0 + h) * CELL):
+            raise ValueError(f'{pid}: authored terrain window clips the actual footprint')
+        c1, r1 = c0 + w, r0 + h
+        box = (c0, r0, w, h)
     sl = (slice(r0, r1), slice(c0, c1))
     net = Net(box, tp)
     streets_out = []
@@ -498,6 +606,8 @@ def plan_one(T, name, ts, X, tp):
                              'street': aid, 'entries_px': [[int(sx), int(sy)]], 'route_kind': 'ferry'})
     # 3. joined to an arrival: orphans get a lane, or are lifted
     pass_ = _passable(T, sl, ts)
+    if authored:
+        _authored_access(ts, net, box, pass_)
     _join(T, net, arrivals, pass_, sl, pid, box, ts)
     # 4. access: doors and closes
     dropped = _access(T, net, pass_, sl, pid, box, ts)
@@ -510,7 +620,23 @@ def plan_one(T, name, ts, X, tp):
     # 6. the record
     P = _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X)
     P['open_uses'] = opens
+    if authored:
+        ids = {o['id'] for o in opens}
+        for item in authored['open_uses']:
+            if item['id'] in ids:
+                raise ValueError(f'{pid}: duplicate authored open-use ID')
+            cells = item.get('cells')
+            if not isinstance(cells, list) or len(cells) != 4 or any(type(v) is not int for v in cells) or min(cells[2:]) < 1:
+                raise ValueError(f'{pid}: invalid authored open use')
+            if not (c0 <= cells[0] and r0 <= cells[1] and cells[0] + cells[2] <= c1 and cells[1] + cells[3] <= r1):
+                raise ValueError(f'{pid}: authored open use leaves its terrain window')
+            ids.add(item['id']); P['open_uses'].append(dict(item))
     P['theme'] = theme_block(T, pid, P, ts, X)
+    if authored:
+        blockout = {'routes': {rn: {'polyline': pts} for rn, pts in T['route_px'].items()}, 'stations': g.STATIONS}
+        fails, _, _ = tp.check_plan(P, blockout)
+        if fails:
+            raise ValueError(f'{pid}: authored plan fails existing checks: ' + '; '.join(fails))
     return P
 
 
@@ -947,6 +1073,11 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
     K = T['K']; c0, r0, w, h = box
     tr = TRADES.get(pid, DEFAULT_TRADES)
     lead = ts[0]
+    authored = _authored_packet(ts, pid)
+    authored_buildings = {b['id']: b for b in authored['buildings']} if authored else {}
+    actual_authored = [b['authored_id'] for t in ts for b in t.buildings if 'authored_id' in b]
+    if len(set(actual_authored)) != len(actual_authored) or set(actual_authored) != set(authored_buildings):
+        raise ValueError(f'{pid}: duplicate or unmatched authored building IDs')
     # districts
     dists = []
     if len(ts) > 1:
@@ -963,6 +1094,12 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
             dists.append({'name': lead.name, 'centre_px': list(map(int, lead.centre)), 'declared': lead.purpose, 'town': lead.name})
     for d in dists:
         d['id'] = f"{pid}-d-{slug(d['name'])}"; d['buildings'] = []
+    generic_districts = list(dists)
+    if authored:
+        for district in authored['districts']:
+            if district['id'] in {d['id'] for d in dists} or not district['id'].startswith(pid + '-d-') or district.get('town') != lead.name:
+                raise ValueError(f'{pid}: duplicate or unmatched authored district')
+            dists.append(dict(district, buildings=[]))
     # buildings
     bl = []
     cyc = {}
@@ -975,10 +1112,18 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
     for t in ts:
         for b in t.buildings:
             nb_ += 1
-            bid = f'{pid}-b{nb_:03d}'
+            bid = b.get('authored_id', f'{pid}-b{nb_:03d}')
+            if any(row['id'] == bid for row in bl):
+                raise ValueError(f'{pid}: duplicate exported building ID {bid}')
             cx, cy = b['x'] + b['w'] / 2, b['y'] + b['h'] / 2
-            cand = [d for d in dists if d['town'] == t.name] or dists
+            cand = [d for d in generic_districts if d['town'] == t.name] or generic_districts
             d = min(cand, key=lambda d: math.hypot(d['centre_px'][0] - cx, d['centre_px'][1] - cy))
+            explicit = authored_buildings.get(bid)
+            if explicit:
+                matches = [d for d in dists if d['id'] == explicit['district']]
+                if len(matches) != 1:
+                    raise ValueError(f'{bid}: missing or ambiguous authored district')
+                d = matches[0]
             u = b['use']
             if u in HOMES:
                 occ = f"a {nxt('home', DEFAULT_TRADES['home'])} household" + (' (several, one to a floor)' if u == 'tenement' else '')
@@ -1009,6 +1154,11 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
             if b.get('plot'):
                 px_, py_, pw_, ph_, kind = b['plot']
                 rec['plot_cells'] = [px_, py_, pw_, ph_]; rec['plot'] = kind
+            if explicit:
+                for field in ('type', 'form', 'rect_px', 'footprint_cells', 'faces', 'door_cells', 'counted', 'plot_cells', 'plot'):
+                    if rec.get(field) != explicit.get(field):
+                        raise ValueError(f'{bid}: authored {field} disagrees with derived geometry')
+                rec['purpose'] = explicit['purpose']; rec['occupants'] = explicit['occupants']
             bl.append(rec); d['buildings'].append(bid)
     for d in dists:
         uses = {}
@@ -1022,6 +1172,17 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
                 k in (o['name'] or '') for k in ('dock', 'slip', 'yard', 'quay', 'kiln', 'quarry')) else 'edge: yards and pens')
             dists.append({'id': f"{pid}-d-{slug(o['name'] or o['kind'])}", 'name': o['name'], 'function': fn, 'declared': o.get('why'), 'box_px': o['box'],
                           'buildings': [], 'town': t.name})
+    if authored:
+        new_ids = {d['id'] for d in authored['districts']}
+        dists = [d for d in dists if d['id'] not in new_ids] + [d for d in dists if d['id'] in new_ids]
+        ids = [d['id'] for d in dists]
+        if len(set(ids)) != len(ids):
+            raise ValueError(f'{pid}: ambiguous exported district IDs')
+        for ident, fields in authored['district_descriptions'].items():
+            matches = [d for d in dists if d['id'] == ident]
+            if len(matches) != 1:
+                raise ValueError(f'{pid}: unmatched district description {ident}')
+            matches[0].update(fields)
     # streets
     streets = []
     bm_all = _bmask(ts, box)
@@ -1107,6 +1268,10 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
         else:
             b['counts_as'] = 0
     counted = sum(b['counts_as'] for b in bl)
+    if authored:
+        for rec in bl:
+            if rec['id'] in authored_buildings and rec != authored_buildings[rec['id']]:
+                raise ValueError(f"{rec['id']}: authored record disagrees with computed count or metadata")
     tgt = lead.target if len(ts) == 1 else (60, 90)
     size = lead.size if len(ts) == 1 else 'city'
     lv = [L for L in T.get('levelled', []) if fb[0] - 8 <= L[0] <= fb[2] and fb[1] - 8 <= L[1] <= fb[3]]
@@ -1144,6 +1309,8 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
                     'of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and '
                     'workplaces to the ids here, and walk residents on the streets (ids) only.',
     }
+    if authored and 'site_authored' in authored:
+        plan['site']['authored'] = authored['site_authored']
     return plan
 
 
