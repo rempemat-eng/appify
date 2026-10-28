@@ -125,16 +125,6 @@
        192,
        412
       ]
-     ],
-     [
-      "asset kit/boulder",
-      "detail.bar",
-      [
-       5,
-       9,
-       87,
-       52
-      ]
      ]
     ]
    },
@@ -144,13 +134,13 @@
     "caught": true,
     "by": [
      [
-      "asset kit/mushroom_ring",
-      "logic.scale",
+      "asset scripts/review/calibration/kit/mushroom_ring.png",
+      "logic.prop_row",
       [
        11,
        18,
-       126,
-       68
+       125,
+       67
       ]
      ]
     ]
@@ -222,7 +212,7 @@
     "caught": true,
     "by": [
      [
-      "asset kit/fern",
+      "asset scripts/review/calibration/kit/fern.png",
       "logic.biome",
       [
        14,
@@ -385,9 +375,9 @@
       "logic.construction",
       [
        2,
-       34,
+       63,
        88,
-       54
+       83
       ]
      ]
     ]
@@ -865,7 +855,7 @@
   "screens": 6,
   "screen_findings": 5,
   "props": 22,
-  "prop_findings": 20,
+  "prop_findings": 29,
   "detail": {
    "golden screen": [
     "detail.flat [53, 626, 109, 634]",
@@ -878,11 +868,13 @@
     "detail.volume [7, 16, 113, 36]"
    ],
    "golden prop rocks": [
+    "logic.scale [0, 0, 80, 40]",
     "detail.volume [59, 1, 79, 9]",
     "detail.flat [59, 1, 79, 9]",
     "detail.glyph [59, 1, 79, 9]"
    ],
    "golden prop fence": [
+    "logic.scale [0, 0, 135, 115]",
     "detail.volume [115, 89, 129, 100]",
     "detail.volume [15, 58, 125, 64]",
     "detail.volume [15, 68, 125, 74]",
@@ -898,17 +890,20 @@
    ],
    "eastward 12 prop bench2": [],
    "eastward 12 prop postbox": [
-    "detail.volume [1, 1, 32, 47]"
+    "detail.volume [1, 1, 32, 47]",
+    "logic.scale [0, 0, 33, 48]"
    ],
    "eastward 12 prop redtree": [
     "detail.volume [11, 2, 38, 17]",
     "detail.flat [11, 2, 38, 17]"
    ],
    "eastward 12 prop pines": [],
-   "eastward 12 prop rocks3": [],
+   "eastward 12 prop rocks3": [
+    "logic.scale [0, 0, 58, 30]"
+   ],
    "eastward 13 screen": [],
    "eastward 13 prop lamp": [
-    "detail.volume [1, 1, 39, 104]"
+    "detail.volume [1, 4, 39, 103]"
    ],
    "eastward 13 prop pot": [],
    "eastward 13 prop tree": [],
@@ -917,17 +912,26 @@
     "detail.flat [45, 45, 54, 57]"
    ],
    "eastward 13 prop churns3": [
-    "detail.volume [1, 1, 34, 54]"
+    "detail.volume [1, 1, 34, 54]",
+    "logic.scale [0, 0, 35, 55]"
    ],
    "eastward 13 prop rocks2": [],
    "eastward 17 screen": [],
-   "eastward 17 prop churns": [],
-   "eastward 17 prop churns2": [],
-   "eastward 17 prop bench": [],
+   "eastward 17 prop churns": [
+    "logic.scale [0, 0, 27, 65]"
+   ],
+   "eastward 17 prop churns2": [
+    "logic.scale [0, 0, 52, 43]"
+   ],
+   "eastward 17 prop bench": [
+    "logic.scale [0, 0, 62, 40]"
+   ],
    "eastward 17 prop fence": [
     "detail.volume [100, 16, 117, 24]"
    ],
-   "eastward 17 prop rocks": [],
+   "eastward 17 prop rocks": [
+    "logic.scale [0, 1, 90, 85]"
+   ],
    "eastward 17 prop bale": [],
    "eastward 37 screen": [
     "detail.flat_line [297, 110, 450, 115]"

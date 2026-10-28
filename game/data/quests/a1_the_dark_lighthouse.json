@@ -1,0 +1,51 @@
+{
+  "id": "a1_the_dark_lighthouse",
+  "title": "The dark lighthouse",
+  "kind": "main",
+  "region": "valley",
+  "summary": "Velvet keeps the Driftwood light that guides boats past the shards in the bay. Since the storm the quay has been overrun and the lamp is dark.",
+  "start": {
+    "on": "talk:velvet",
+    "if": {
+      "done": [
+        "home_again"
+      ]
+    }
+  },
+  "steps": [
+    {
+      "id": "quay",
+      "text": "Go down to Driftwood",
+      "on": "enter:driftwood"
+    },
+    {
+      "id": "gulls",
+      "text": "Free the shardstruck on Driftwood's quay",
+      "on": "camp:driftwood_quay",
+      "done_if": {
+        "flags": [
+          "camp_cleared:driftwood_quay"
+        ]
+      }
+    },
+    {
+      "id": "lamp",
+      "text": "Light the lighthouse lamp",
+      "on": "talk:lighthouse_lamp",
+      "set_flags": [
+        "lighthouse_lit"
+      ]
+    },
+    {
+      "id": "velvet",
+      "text": "Tell Velvet her light is burning",
+      "on": "talk:velvet"
+    }
+  ],
+  "rewards": {
+    "glint": 30,
+    "flags": [
+      "folk:velvet"
+    ]
+  }
+}

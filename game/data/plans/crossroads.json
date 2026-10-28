@@ -194,11 +194,11 @@
       "points": [
         [
           0,
-          300
+          304
         ],
         [
           200,
-          300
+          304
         ]
       ],
       "why": "west to Valley Halt (closed in the slice)"
@@ -210,11 +210,11 @@
       "points": [
         [
           440,
-          330
+          328
         ],
         [
           640,
-          330
+          328
         ]
       ]
     },
@@ -224,7 +224,7 @@
       "width": 24,
       "points": [
         [
-          260,
+          264,
           376
         ],
         [
@@ -232,8 +232,8 @@
           440
         ],
         [
-          140,
-          470
+          144,
+          472
         ]
       ]
     },
@@ -244,15 +244,15 @@
       "points": [
         [
           0,
-          70
+          72
         ],
         [
           320,
-          70
+          72
         ],
         [
           320,
-          150
+          152
         ]
       ]
     }
@@ -288,9 +288,9 @@
       "kind": "green",
       "rect": [
         40,
-        410,
-        170,
-        130
+        408,
+        168,
+        136
       ],
       "colour": "#6f9a52",
       "why": "the green and its ring (training yard, stage 1)"
@@ -299,10 +299,10 @@
       "id": "crater",
       "kind": "crater",
       "rect": [
-        470,
+        472,
         440,
-        70,
-        50
+        72,
+        48
       ],
       "colour": "#4a4038",
       "why": "the shard crater in the park, smoking until the shard comes home"
@@ -314,9 +314,9 @@
       "name": "Your hut",
       "rect": [
         280,
-        20,
+        24,
         80,
-        44
+        40
       ],
       "door": [
         320,
@@ -330,13 +330,13 @@
       "name": "Library (roof torn)",
       "rect": [
         200,
-        156,
+        160,
         96,
         40
       ],
       "door": [
         248,
-        196
+        200
       ],
       "colour": "#7d6f88",
       "stage": 1
@@ -346,13 +346,13 @@
       "name": "North terrace cottages",
       "rect": [
         344,
-        156,
+        160,
         96,
         40
       ],
       "door": [
         416,
-        196
+        200
       ],
       "colour": "#8a7560",
       "stage": 1
@@ -361,13 +361,13 @@
       "id": "bakery",
       "name": "Bakery (cold)",
       "rect": [
-        110,
-        236,
-        76,
-        52
+        112,
+        240,
+        72,
+        48
       ],
       "door": [
-        170,
+        172,
         288
       ],
       "colour": "#a07850",
@@ -377,14 +377,14 @@
       "id": "herbalist",
       "name": "Herbalist's (apothecary, stage 1)",
       "rect": [
-        110,
-        330,
-        76,
-        44
+        112,
+        328,
+        72,
+        48
       ],
       "door": [
-        170,
-        374
+        172,
+        376
       ],
       "colour": "#6f8a6a",
       "stage": 1
@@ -394,12 +394,12 @@
       "name": "The old smithy",
       "rect": [
         456,
-        220,
-        84,
-        60
+        224,
+        88,
+        56
       ],
       "door": [
-        486,
+        488,
         280
       ],
       "colour": "#6a5a50",
@@ -411,13 +411,13 @@
       "name": "The Ferns' cottage",
       "rect": [
         456,
-        370,
-        70,
-        44
+        368,
+        72,
+        48
       ],
       "door": [
-        470,
-        414
+        472,
+        416
       ],
       "colour": "#8a7560",
       "stage": 1,
@@ -428,10 +428,10 @@
     {
       "id": "halt_lot",
       "rect": [
-        20,
+        24,
         320,
-        70,
-        60
+        64,
+        64
       ],
       "why": "burnt lot on the halt road: the workshop (stage 2)"
     },
@@ -439,9 +439,9 @@
       "id": "harbour_lot",
       "rect": [
         560,
-        350,
-        70,
-        70
+        352,
+        72,
+        72
       ],
       "why": "burnt lot on the harbour road: the glassworks (stage 3)"
     }
@@ -470,7 +470,7 @@
       "kind": "well",
       "rect": [
         278,
-        302,
+        304,
         20,
         16
       ],
@@ -537,8 +537,8 @@
       "id": "anvil",
       "kind": "anvil",
       "rect": [
-        490,
-        292,
+        489,
+        296,
         14,
         8
       ],
@@ -616,7 +616,7 @@
       "id": "lantern_dark",
       "kind": "lantern",
       "rect": [
-        306,
+        307,
         290,
         10,
         22
@@ -634,7 +634,7 @@
       "id": "lantern_lit",
       "kind": "lantern",
       "rect": [
-        306,
+        307,
         290,
         10,
         22
@@ -668,7 +668,7 @@
       "id": "beds_scorched",
       "kind": "beds",
       "rect": [
-        380,
+        384,
         80,
         80,
         40
@@ -685,7 +685,7 @@
       "id": "beds_dug",
       "kind": "beds",
       "rect": [
-        380,
+        384,
         80,
         80,
         40
@@ -703,7 +703,7 @@
       "kind": "stall",
       "rect": [
         366,
-        236,
+        240,
         36,
         16
       ],
@@ -797,7 +797,7 @@
       "verb": "Read",
       "at": [
         236,
-        222
+        224
       ],
       "colour": "#7a5a3a"
     },
@@ -807,7 +807,7 @@
       "verb": "Touch",
       "at": [
         420,
-        356
+        360
       ],
       "colour": "#8a8aa0"
     },
@@ -816,8 +816,8 @@
       "speaker": "shard_lantern",
       "verb": "Look",
       "at": [
-        311,
-        318
+        312,
+        320
       ],
       "colour": "#00000000",
       "radius": 22
@@ -828,7 +828,7 @@
       "verb": "Enter",
       "at": [
         320,
-        70
+        72
       ],
       "colour": "#00000000"
     }
@@ -1054,16 +1054,16 @@
     ],
     "paving": [
       [
-        198,
-        196,
-        244,
-        180
+        200,
+        200,
+        240,
+        176
       ],
       [
-        298,
-        150,
-        44,
-        50
+        296,
+        152,
+        48,
+        48
       ]
     ],
     "ring": [
@@ -1120,7 +1120,10 @@
             "leaf_cool"
           ],
           "slates"
-        ]
+        ],
+        "win_w": 14,
+        "win_h": 15,
+        "win_top": 34
       },
       "north_cottages": {
         "kind": "terrace",
@@ -1179,7 +1182,8 @@
             "slates",
             5
           ]
-        ]
+        ],
+        "shutters": false
       },
       "bakery": {
         "kind": "cottage",
@@ -1188,8 +1192,8 @@
         "paint": "berry",
         "door": 60,
         "windows": [
-          16,
-          38
+          14,
+          36
         ],
         "chimney": [
           12
@@ -1216,7 +1220,12 @@
             "slates",
             4
           ]
-        ]
+        ],
+        "wall_h": 44,
+        "shutters": false,
+        "lawn_as": {
+          "wall_h": 40
+        }
       },
       "herbalist": {
         "kind": "cottage",
@@ -1257,8 +1266,9 @@
             6
           ]
         ],
-        "wall_h": 36,
-        "roof_h": 22
+        "wall_h": 40,
+        "roof_h": 31,
+        "shutters": false
       },
       "smithy": {
         "kind": "forge",
@@ -1272,7 +1282,7 @@
         ],
         "shutters": false,
         "chimney": [
-          70
+          32
         ],
         "chimney_w": 14,
         "chimney_h": 20,
@@ -1293,7 +1303,7 @@
             30,
             28,
             32,
-            27
+            26
           ],
           [
             "scaffold",
@@ -1305,7 +1315,12 @@
             "slates",
             5
           ]
-        ]
+        ],
+        "lawn_as": {
+          "chimney": [
+            70
+          ]
+        }
       },
       "fern_cottage": {
         "kind": "cottage",
@@ -1335,7 +1350,7 @@
           [
             "tarp",
             28,
-            64,
+            50,
             "sand"
           ],
           [
@@ -1354,7 +1369,7 @@
         "kind": "fence",
         "at": [
           176,
-          139
+          136
         ],
         "size": [
           48,
@@ -1366,8 +1381,8 @@
       {
         "kind": "fence",
         "at": [
-          226,
-          139
+          228,
+          136
         ],
         "size": [
           48,
@@ -1378,8 +1393,8 @@
       {
         "kind": "fence",
         "at": [
-          274,
-          139
+          276,
+          136
         ],
         "size": [
           48,
@@ -1390,8 +1405,8 @@
       {
         "kind": "fence",
         "at": [
-          366,
-          139
+          368,
+          136
         ],
         "size": [
           48,
@@ -1403,7 +1418,7 @@
         "kind": "fence",
         "at": [
           416,
-          139
+          136
         ],
         "size": [
           48,
@@ -1414,8 +1429,8 @@
       {
         "kind": "fence",
         "at": [
-          466,
-          139
+          468,
+          136
         ],
         "size": [
           48,
@@ -1426,8 +1441,8 @@
       {
         "kind": "oak",
         "at": [
-          182,
-          44
+          184,
+          48
         ],
         "why": "the old oak on your terrace"
       },
@@ -1435,21 +1450,21 @@
         "kind": "bush",
         "at": [
           240,
-          116
+          120
         ]
       },
       {
         "kind": "bush",
         "at": [
-          478,
-          122
+          480,
+          120
         ]
       },
       {
         "kind": "flower_tub",
         "at": [
-          298,
-          70
+          300,
+          72
         ],
         "size": [
           12,
@@ -1461,7 +1476,7 @@
         "kind": "flower_tub",
         "at": [
           344,
-          70
+          72
         ],
         "size": [
           12,
@@ -1482,8 +1497,8 @@
       {
         "kind": "sacks",
         "at": [
-          266,
-          66
+          268,
+          64
         ],
         "size": [
           14,
@@ -1495,7 +1510,7 @@
         "kind": "oak",
         "at": [
           40,
-          22
+          24
         ],
         "solid": false,
         "why": "the bank above the garden walk"
@@ -1503,15 +1518,15 @@
       {
         "kind": "bush",
         "at": [
-          102,
-          22
+          104,
+          24
         ],
         "solid": false
       },
       {
         "kind": "bush",
         "at": [
-          134,
+          136,
           24
         ],
         "solid": false
@@ -1520,7 +1535,7 @@
         "kind": "bush",
         "at": [
           28,
-          134
+          136
         ],
         "solid": false,
         "why": "the planted bank under the walk"
@@ -1529,7 +1544,7 @@
         "kind": "bush",
         "at": [
           80,
-          130
+          128
         ],
         "solid": false
       },
@@ -1537,7 +1552,7 @@
         "kind": "bush",
         "at": [
           128,
-          135
+          136
         ],
         "solid": false
       },
@@ -1545,7 +1560,7 @@
         "kind": "hay",
         "at": [
           540,
-          62
+          64
         ],
         "size": [
           18,
@@ -1558,7 +1573,7 @@
         "kind": "hay",
         "at": [
           592,
-          98
+          96
         ],
         "size": [
           18,
@@ -1569,7 +1584,7 @@
       {
         "kind": "oak",
         "at": [
-          614,
+          616,
           40
         ],
         "solid": false
@@ -1578,22 +1593,22 @@
         "kind": "bush",
         "at": [
           520,
-          132
+          136
         ],
         "solid": false
       },
       {
         "kind": "bush",
         "at": [
-          622,
-          132
+          624,
+          136
         ],
         "solid": false
       },
       {
         "kind": "kit_lantern",
         "at": [
-          290,
+          292,
           200
         ],
         "why": "the gate lane's lamps"
@@ -1601,14 +1616,14 @@
       {
         "kind": "kit_lantern",
         "at": [
-          350,
+          352,
           200
         ]
       },
       {
         "kind": "flower_tub",
         "at": [
-          230,
+          232,
           200
         ],
         "size": [
@@ -1619,7 +1634,7 @@
       {
         "kind": "flower_tub",
         "at": [
-          266,
+          268,
           200
         ],
         "size": [
@@ -1630,8 +1645,8 @@
       {
         "kind": "bench",
         "at": [
-          350,
-          372
+          352,
+          368
         ],
         "size": [
           24,
@@ -1642,8 +1657,8 @@
       {
         "kind": "barrel",
         "at": [
-          194,
-          252
+          196,
+          256
         ],
         "size": [
           10,
@@ -1653,8 +1668,8 @@
       {
         "kind": "crates",
         "at": [
-          194,
-          276
+          196,
+          280
         ],
         "size": [
           12,
@@ -1665,8 +1680,8 @@
       {
         "kind": "barrel",
         "at": [
-          358,
-          252
+          360,
+          256
         ],
         "size": [
           10,
@@ -1677,8 +1692,8 @@
       {
         "kind": "crates",
         "at": [
-          410,
-          252
+          412,
+          256
         ],
         "size": [
           12,
@@ -1688,7 +1703,7 @@
       {
         "kind": "woodpile",
         "at": [
-          557,
+          556,
           240
         ],
         "size": [
@@ -1712,7 +1727,7 @@
         "kind": "trough",
         "at": [
           528,
-          302
+          304
         ],
         "size": [
           20,
@@ -1723,8 +1738,8 @@
       {
         "kind": "grindstone",
         "at": [
-          558,
-          294
+          560,
+          296
         ],
         "size": [
           14,
@@ -1734,7 +1749,7 @@
       {
         "kind": "barrel",
         "at": [
-          446,
+          448,
           264
         ],
         "size": [
@@ -1746,7 +1761,7 @@
         "kind": "flower_tub",
         "at": [
           440,
-          414
+          416
         ],
         "size": [
           12,
@@ -1756,7 +1771,7 @@
       {
         "kind": "barrel",
         "at": [
-          534,
+          536,
           408
         ],
         "size": [
@@ -1777,70 +1792,70 @@
         "kind": "oak",
         "at": [
           392,
-          542
+          544
         ]
       },
       {
         "kind": "oak",
         "at": [
           604,
-          508
+          512
         ]
       },
       {
         "kind": "oak",
         "at": [
-          22,
+          24,
           408
         ]
       },
       {
         "kind": "oak",
         "at": [
-          182,
-          548
+          184,
+          552
         ]
       },
       {
         "kind": "oak",
         "at": [
           612,
-          262
+          264
         ]
       },
       {
         "kind": "oak",
         "at": [
           40,
-          244
+          248
         ]
       },
       {
         "kind": "bush",
         "at": [
           252,
-          524
+          528
         ]
       },
       {
         "kind": "bush",
         "at": [
-          446,
-          476
+          448,
+          480
         ]
       },
       {
         "kind": "bush",
         "at": [
-          570,
-          446
+          572,
+          448
         ]
       },
       {
         "kind": "bush",
         "at": [
-          82,
-          228
+          84,
+          232
         ]
       },
       {
@@ -1934,7 +1949,7 @@
         "kind": "cart",
         "at": [
           236,
-          262
+          264
         ],
         "size": [
           22,
@@ -1946,8 +1961,8 @@
       {
         "kind": "bench",
         "at": [
-          270,
-          372
+          272,
+          368
         ],
         "size": [
           24,
@@ -1980,7 +1995,7 @@
     "setts": [
       [
         288,
-        314,
+        316,
         14,
         23
       ]

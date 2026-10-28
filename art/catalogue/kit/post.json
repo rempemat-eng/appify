@@ -1,14 +1,14 @@
 {
  "id": "kit/post",
  "file": "artifacts/review/kit/post.png",
- "sha256": "38e7ed7a18a0feb425ede2603a3ab2db57ac39881c29d6a903d78a4f624f7140",
+ "sha256": "3499e20fa960510141bc80b1f426c84d87999d8dbb1e4baadbb260e2c116ab9f",
  "kind": "post",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
   21,
-  45
+  63
  ],
  "status": "pass",
  "counts": {
@@ -33,10 +33,11 @@
   "group": "prop"
  },
  "findings": [],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-10-26",
+  "note": "#296 review at 08474c76: checked at 4x beside Bramble and its siblings; passes."
  }
 }

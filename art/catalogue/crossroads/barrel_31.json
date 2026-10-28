@@ -1,7 +1,7 @@
 {
  "id": "crossroads/barrel_31",
  "file": "game/zones/crossroads/art/barrel_31.png",
- "sha256": "2e2482951b90951289c5f5bd3dca7f8733c9cb21bb32385877f60b63f5a4f932",
+ "sha256": "0d6d45614d390cc5989ab8a2892086b9f9ae6bb9317c4bfab0c15fe28f464ffd",
  "kind": "barrel",
  "biome": "valley",
  "H": 74.0,
@@ -10,17 +10,17 @@
   48,
   75
  ],
- "status": "fail",
+ "status": "pass",
  "counts": {
   "blocker": 0,
-  "fault": 1,
-  "polish": 2
+  "fault": 0,
+  "polish": 0
  },
  "detail_bar": {
   "ours": {
-   "patches": 3,
-   "tones": 21.333333333333332,
-   "shapes": 45.333333333333336
+   "patches": 2,
+   "tones": 31.0,
+   "shapes": 62.0
   },
   "band": {
    "tones": 27.0,
@@ -28,54 +28,18 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.79,
-  "tones_ratio": 0.79,
-  "shapes_ratio": 0.9,
-  "passed": false,
+  "ratio": 1.148,
+  "tones_ratio": 1.148,
+  "shapes_ratio": 1.231,
+  "passed": true,
   "group": "prop"
  },
- "findings": [
-  {
-   "detector": "logic.scale",
-   "severity": "polish",
-   "box": [
-    8,
-    18,
-    40,
-    72
-   ],
-   "message": "crossroads/barrel_31: 18 world px tall (0.72 of an adult); the size guide gives 12 to 15 for a barrel (a barrel 14, waist high (scale table))",
-   "fix": "redraw it 12 to 15 world px tall (36 to 45 texels at density 3) and stand it next to Bramble to check"
-  },
-  {
-   "detector": "detail.volume",
-   "severity": "fault",
-   "box": [
-    30,
-    38,
-    40,
-    59
-   ],
-   "message": "crossroads/barrel_31: the red reads 2D: 3 light planes, luminance spread 0",
-   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts"
-  },
-  {
-   "detector": "detail.bar",
-   "severity": "polish",
-   "box": [
-    8,
-    18,
-    40,
-    72
-   ],
-   "message": "crossroads/barrel_31: detail bar 0.79 of Eastward's prop band (21.3 tones, 45.3 shapes a patch against 27.0, 50.36)",
-   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
-  }
- ],
- "reviewed": "2026-10-25",
+ "findings": [],
+ "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-10-26",
+  "note": "#296 review at 08474c76: checked at 4x beside Bramble and its siblings; passes."
  }
 }

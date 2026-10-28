@@ -1,26 +1,26 @@
 {
  "id": "crossroads/trough_35",
  "file": "game/zones/crossroads/art/trough_35.png",
- "sha256": "027bbbcfff9f8fe3f26dee2ce601d8ca46c6c82ac0e68d9599cbdd5cecee9e75",
+ "sha256": "69139c9ecfc7275020df46cef958bf42c3822b1f468a29552aa7bdf2c8848a98",
  "kind": "trough",
  "biome": "valley",
  "H": 74.0,
  "density": 3.0,
  "size": [
-  78,
+  96,
   57
  ],
- "status": "fail",
+ "status": "pass",
  "counts": {
   "blocker": 0,
-  "fault": 2,
+  "fault": 0,
   "polish": 1
  },
  "detail_bar": {
   "ours": {
-   "patches": 9,
-   "tones": 14.444444444444445,
-   "shapes": 19.77777777777778
+   "patches": 8,
+   "tones": 20.5,
+   "shapes": 28.875
   },
   "band": {
    "tones": 27.0,
@@ -28,54 +28,31 @@
    "boxes": 10,
    "patches": 83
   },
-  "ratio": 0.393,
-  "tones_ratio": 0.535,
-  "shapes_ratio": 0.393,
+  "ratio": 0.573,
+  "tones_ratio": 0.759,
+  "shapes_ratio": 0.573,
   "passed": false,
   "group": "prop"
  },
  "findings": [
   {
-   "detector": "logic.scale",
+   "detector": "detail.bar",
    "severity": "polish",
    "box": [
     8,
-    4,
-    70,
+    16,
+    88,
     54
    ],
-   "message": "crossroads/trough_35: 17 world px tall (0.67 of an adult); the size guide gives 8 to 14 for a trough (a trough at an animal's mouth height)",
-   "fix": "redraw it 8 to 14 world px tall (24 to 42 texels at density 3) and stand it next to Bramble to check"
-  },
-  {
-   "detector": "detail.water_flat",
-   "severity": "fault",
-   "box": [
-    14,
-    14,
-    59,
-    18
-   ],
-   "message": "crossroads/trough_35: the water is a flat rectangle of 3 tones with a ruler-straight edge",
-   "fix": "show depth: the opening as an ellipse from above with its inner wall (lit on the far side, shaded on the near), the water lower than the rim, darker under the near rim, a 1 px light line and a glint (eastward-edges.md 5.3)"
-  },
-  {
-   "detector": "detail.bar",
-   "severity": "fault",
-   "box": [
-    8,
-    4,
-    70,
-    54
-   ],
-   "message": "crossroads/trough_35: detail bar 0.39 of Eastward's prop band (14.4 tones, 19.8 shapes a patch against 27.0, 50.36)",
+   "message": "crossroads/trough_35: detail bar 0.57 of Eastward's prop band (20.5 tones, 28.9 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-10-26",
+  "note": "#296 review at 08474c76: checked at 4x beside Bramble and its siblings; passes."
  }
 }

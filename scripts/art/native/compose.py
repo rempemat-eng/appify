@@ -188,6 +188,13 @@ def foliage_sprite_hd(kind, old, d, seed, ex, look=None, bark='oak', scale=None)
     tw = ex.get('tw') or max(2.0, (cols.max() - cols.min() + 1) * 0.8)
     fx, fy = pad + tcx * sx, pad + (yb + 1) * sy                 # the trunk foot in the crown image
     crown = F5.LAST_MASS['mass']
+    sm_ = F5.LAST_MASS.get('strands')
+    if d >= 2.5 and sm_ is not None and sm_.shape == out.shape[:2]:
+        # a weeping crown's strands stop above the ground: none hangs past the trunk's foot
+        cut = np.zeros_like(sm_)
+        cut[max(0, int(fy - 2 * d)):] = True
+        out = out.copy()
+        out[sm_ & cut] = 0
     half = max(1, int(tw * d / 2))
     band = crown[:, max(0, int(fx) - half):int(fx) + half + 1]
     bots = [np.nonzero(band[:, j])[0].max() for j in range(band.shape[1]) if band[:, j].any()]
@@ -463,9 +470,16 @@ def cast_shadows(G, casts, tshadows, things, d):
     names = np.array(G.fams, dtype=object)[G.fam]
     body = np.where(np.isin(names, ['path', 'path_warm', 'path_cool', 'earth', 'earth_warm', 'earth_cool']), 4, 3)
     sel = inner & ground_px
-    G.tone[sel] = np.clip(np.minimum(G.tone[sel], body[sel]) - 2, 0, 5)
-    sel = core & ~inner & ground_px
-    G.tone[sel] = np.clip(np.minimum(G.tone[sel], body[sel]) - 1, 0, 5)
+    if d >= 2.5:
+        # density 3 and up (26 Oct): the shade keeps the ground's own variation (patches, worn
+        # earth, litter, tufts' roots) two tones down, so a shadow is never a one-tone rug
+        G.tone[sel] = np.clip(np.minimum(G.tone[sel] - 2, body[sel]), 0, 5)
+        sel = core & ~inner & ground_px
+        G.tone[sel] = np.clip(np.minimum(G.tone[sel] - 1, body[sel] + 1), 0, 5)
+    else:
+        G.tone[sel] = np.clip(np.minimum(G.tone[sel], body[sel]) - 2, 0, 5)
+        sel = core & ~inner & ground_px
+        G.tone[sel] = np.clip(np.minimum(G.tone[sel], body[sel]) - 1, 0, 5)
     # r3: a crown's shadow has a dappled rim, not a rug's edge: in a band about 3 world px
     # wide, blobs of full shade, half shade and sun at leaf scale (the same in world units at
     # every level), and a few sun flecks inside

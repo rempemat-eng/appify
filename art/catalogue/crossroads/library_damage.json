@@ -1,7 +1,7 @@
 {
  "id": "crossroads/library_damage",
  "file": "game/zones/crossroads/art/library_damage.png",
- "sha256": "e925043cf657e681db9017f5c0366f9ecce4840249f8761ace89a9930ab49b1e",
+ "sha256": "f83bc5a2367501a5eb8b02a09bb7d495503be9c840dc646ad3a6515029298c50",
  "kind": "library",
  "biome": "valley",
  "H": 74.0,
@@ -10,60 +10,61 @@
   312,
   234
  ],
- "status": "fail",
+ "status": "pass",
  "counts": {
   "blocker": 0,
-  "fault": 1,
-  "polish": 1
+  "fault": 0,
+  "polish": 2
  },
  "detail_bar": {
   "ours": {
-   "patches": 39,
-   "tones": 15.256410256410257,
-   "shapes": 30.615384615384617
+   "patches": 50,
+   "tones": 15.98,
+   "shapes": 28.08
   },
   "band": {
-   "tones": 27.71,
-   "shapes": 63.32,
-   "boxes": 4,
-   "patches": 107
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
   },
-  "ratio": 0.484,
-  "tones_ratio": 0.551,
-  "shapes_ratio": 0.484,
+  "ratio": 0.558,
+  "tones_ratio": 0.592,
+  "shapes_ratio": 0.558,
   "passed": false,
-  "group": "foliage"
+  "group": "prop"
  },
  "findings": [
   {
-   "detector": "logic.stilts",
-   "severity": "fault",
+   "detector": "detail.light",
+   "severity": "polish",
    "box": [
-    26,
-    105,
-    247,
-    127
+    24,
+    13,
+    71,
+    61
    ],
-   "message": "crossroads/library_damage: the mass stands on 2 separate thin legs (4 px of legs under a 180 px wide mass)",
-   "fix": "a bush grows from the ground: let the foliage come down to a dark, grassed base with only a stem or two glimpsed in the shade, and a contact shadow under it (no stilts)"
+   "message": "crossroads/library_damage: the red is lit from the right (luminance rises 39 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south"
   },
   {
    "detector": "detail.bar",
    "severity": "polish",
    "box": [
-    26,
-    18,
-    247,
-    127
+    24,
+    13,
+    303,
+    234
    ],
-   "message": "crossroads/library_damage: detail bar 0.48 of Eastward's foliage band (15.3 tones, 30.6 shapes a patch against 27.71, 63.32)",
+   "message": "crossroads/library_damage: detail bar 0.56 of Eastward's prop band (16.0 tones, 28.1 shapes a patch against 27.0, 50.36)",
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
-  "verdict": "pending",
-  "note": "detectors only; the agent checklist has not been run on this asset"
+  "verdict": "pass",
+  "date": "2026-10-26",
+  "note": "#298 review at 2e554c05: holes torn course by course with snapped rafters and hanging slates (thatch: straw fringe); no barred-window shapes."
  }
 }

@@ -16,6 +16,9 @@ import numpy as np
 from PIL import Image
 
 from scripts.review import core, water, screen, construct as C, detail as D, scene as SN, gate, assets as A
+from scripts.review import edges as E
+from scripts.review import scale as SZ
+from scipy import ndimage as ndi
 
 H = 74
 GRASS = (150, 166, 92)
@@ -111,6 +114,26 @@ class Asset(unittest.TestCase):
         s[100:158, 35:45] = (110, 70, 40, 255)
         self.assertTrue(C.floating_parts(s[..., 3] > 0, H, 'x/beech'))
 
+    def test_mesh_crown_and_green_paint(self):
+        # a crown of outlined blobs with gaps trips; the same green as door and shutter paint on a
+        # mostly stone building does not (fix queue 2: the hut's green woodwork)
+        s = sprite(160, 120)
+        for cy in range(10, 110, 22):
+            for cx in range(10, 150, 22):
+                yy, xx = np.mgrid[0:120, 0:160]
+                m = (xx - cx) ** 2 + (yy - cy) ** 2 <= 80
+                s[m] = (60, 120, 50, 255)
+                s[m & ((xx - cx) ** 2 + (yy - cy) ** 2 > 60)] = (20, 40, 20, 255)
+        self.assertTrue(C.crown_holes(s[..., :3], s[..., 3] > 0, H, 'x/oak'))
+        b = sprite(300, 200)
+        b[:, :] = (140, 130, 120, 255)
+        b[...] = (140, 130, 120, 255)
+        for x0 in (20, 120, 220):
+            for k in range(0, 50, 6):
+                b[100:190, x0 + k:x0 + k + 5] = (60, 120, 50, 255)
+        self.assertFalse(C.crown_holes(b[..., :3], b[..., 3] > 0, H, 'crossroads/hut'))
+        self.assertFalse(C.crown_holes(s[..., :3], s[..., 3] > 0, H, 'crossroads/library_damage'))
+
     def test_bush_on_stilts(self):
         s = sprite(100, 90)
         s[5:70, 5:95] = (70, 130, 60, 255)
@@ -154,6 +177,34 @@ class Asset(unittest.TestCase):
         s[disc] = (*BLUE, 255)
         self.assertTrue(C.water_shape(s[..., :3], s[..., 3] > 0, H, 'x/well'))
 
+    def test_well_hood_outline_is_not_the_beam(self):
+        # a slate hood's dark lower outline is wider than the windlass beam; the crank past the beam must count
+        s = sprite(100, 100)
+        s[4:10, 5:95] = (70, 90, 140, 255)          # slate hood
+        s[10, 5:95] = (20, 20, 24, 255)             # its dark outline
+        s[11:90, 30:34] = (130, 85, 45, 255)        # posts
+        s[11:90, 66:70] = (130, 85, 45, 255)
+        s[30:33, 30:70] = (150, 100, 55, 255)       # beam
+        s[33:35, 70:78] = (60, 60, 66, 255)         # iron crank arm, below the beam end
+        s[35:40, 76:78] = (60, 60, 66, 255)         # handle
+        s[60:90, 20:80] = (128, 128, 128, 255)      # well ring
+        fs = C.construction(s[..., :3], s[..., 3] > 0, 100, 'x/well', 'well')
+        self.assertEqual([], [f.detector for f in fs])
+
+    def test_building_detail_bar_is_a_blocker(self):
+        # a flat building (one fill, an outline) is held back as a blocker; a flat prop only a fault
+        from scripts.review import assets as A
+        s = sprite(120, 120)
+        s[10:110, 10:110] = (150, 140, 130, 255)
+        s[10, 10:110] = s[109, 10:110] = (30, 30, 30, 255)
+        self.assertTrue(A.is_building('crossroads/bakery'))
+        self.assertFalse(A.is_building('crossroads/bakery_damage'))
+        fs, sc = A.review_rgba(s, 'crossroads/bakery', 'bakery', 'valley')
+        bar = [f for f in fs if f.detector == 'detail.bar']
+        self.assertTrue(bar and bar[0].severity == 'blocker')
+        fs, sc = A.review_rgba(s, 'crossroads/crate', 'crate', 'valley')
+        self.assertNotIn('blocker', [f.severity for f in fs if f.detector == 'detail.bar'])
+
     def test_cylinder(self):
         s = sprite(40, 100)
         s[10:95, 8:32] = (150, 150, 150, 255)
@@ -167,6 +218,27 @@ class Asset(unittest.TestCase):
         s = sprite(60, 200)
         s[5:198, 10:50, 3] = 255
         self.assertTrue(C.scale(s[..., 3] > 0, H, 'barrel', 'x/barrel', 3.0))
+
+    def test_signpost_boards_are_not_a_shaft(self):
+        s = sprite(60, 120)
+        s[10:30, 5:55] = (150, 110, 70, 255)
+        s[10:30, 5:10] = (210, 170, 120, 255)
+        s[30:118, 27:33] = (120, 85, 55, 255)
+        self.assertFalse(C.cylinder(s[..., :3], s[..., 3] > 0, H, 'kit/signpost'))
+
+    def test_scale_of_spread_pieces_and_rubble(self):
+        # a ring of small mushrooms is judged by each mushroom's height, not by the ring's depth;
+        # one mushroom 17 px tall still trips. A building's rubble is a pile, not the building.
+        s = np.zeros((60, 140), bool)
+        for k in range(10):
+            a = 2 * np.pi * k / 10
+            x, y = int(70 + 55 * np.cos(a)), int(30 + 22 * np.sin(a))
+            s[y:y + 9, x:x + 6] = True
+        self.assertFalse(C.scale(s, H, 'mushroom_ring', 'kit/mushroom_ring', 3.0))
+        s[5:56, 60:66] = True
+        self.assertTrue(C.scale(s, H, 'mushroom_ring', 'kit/mushroom_ring', 3.0))
+        self.assertEqual(C.kind_of('smithy_rubble'), 'pile')
+        self.assertEqual(C.kind_of('smithy'), 'smithy')
 
 
 class Scene(unittest.TestCase):
@@ -297,6 +369,155 @@ class LightSource(unittest.TestCase):
 
     def test_pool_under_a_torch(self):
         self.assertEqual(SN.check_light_sources(self.zone(True), H), [])
+
+
+class RaggedEdge(unittest.TestCase):
+    """detail.ragged_edge (edges.py): a dirt path whose edge is per-pixel noise trips; the same path
+    on the soft grid passes (Matt, 26 Oct 10:19); a bench's thin legs are not teeth."""
+    DIRT = (150, 110, 80)
+
+    def path(self, ragged):
+        a = lawn(400, 300)[..., :3].copy()
+        Y, X = np.mgrid[0:300, 0:400]
+        hw = 40 + 6 * np.sin(Y / 23.0)                          # a slow wander: soft-grid runs
+        m = np.abs(X - 200 - 25 * np.sin(Y / 40.0)) < hw
+        if ragged:
+            rng = np.random.default_rng(5)
+            edge = m & ~ndi.binary_erosion(m, iterations=1)
+            near = ndi.binary_dilation(m, iterations=1) & ~m
+            m = (m & ~(edge & (rng.random(m.shape) < 0.35))) | (near & (rng.random(m.shape) < 0.35))
+        a[m] = self.DIRT
+        return a
+
+    def test_ragged_path_trips(self):
+        fs = E.ragged_ground(self.path(True), H, 'test')
+        self.assertTrue(any(f.detector == 'detail.ragged_edge' for f in fs))
+
+    def test_soft_grid_path_passes(self):
+        self.assertEqual(E.ragged_ground(self.path(False), H, 'test'), [])
+
+    def river(self, tips):
+        a = lawn(400, 300)[..., :3].copy()
+        Y, X = np.mgrid[0:300, 0:400]
+        c = 150 + 12 * np.sin(X / 37.0)
+        water = np.abs(Y - c) < 40
+        bank = (np.abs(Y - c) < 46) & ~water
+        a[water] = BLUE
+        a[bank] = (70, 45, 42)
+        if tips:                                                # one-texel grass tips every 3 texels
+            comb = bank & (X % 3 == 0) & (np.abs(Y - c) >= 46 - 1 - (X * 7) % 4)    # one-texel tips of turf
+            a[comb] = GRASS
+        return a
+
+    def test_bank_with_tips_trips(self):
+        self.assertTrue(any('bank' in f.message for f in E.ragged_ground(self.river(True), H, 'test')))
+
+    def test_soft_bank_passes(self):
+        self.assertEqual(E.ragged_ground(self.river(False), H, 'test'), [])
+
+    def test_sprite_thin_legs_pass(self):
+        al = np.zeros((60, 90), bool)
+        al[10:30, 5:85] = True                                  # a seat
+        for x in (10, 11, 78, 79):
+            al[30:55, x] = True                                 # legs one or two texels wide
+        self.assertEqual(E.ragged(al, H, 'bench', min_area=0.02, sprite=True), [])
+
+
+class OnGrid(unittest.TestCase):
+    """logic.off_grid: props and structures stand on the soft grid (8 world px, 24 texels at density
+    3); clutter may sit anywhere in a cell."""
+
+    def zone(self, x, y, name='Bench_1'):
+        sp = SN.Sprite(name, 'res://zones/x/art/bench.png', (x, y), (x - 30, y - 40, x + 30, y), 0, True,
+                       np.zeros((40, 60, 4), np.uint8), 'Props')
+        return SN.Zone('x', (960, 960), np.zeros((960, 960, 4), np.uint8), sprites=[sp])
+
+    def test_on_grid_passes(self):
+        self.assertEqual(SN.check_grid(self.zone(12 * 24 + 12, 10 * 24)), [])
+
+    def test_off_grid_trips(self):
+        self.assertTrue(SN.check_grid(self.zone(12 * 24 + 7, 10 * 24 + 5)))
+
+    def test_clutter_may_sit_anywhere(self):
+        self.assertEqual(SN.check_grid(self.zone(12 * 24 + 7, 10 * 24 + 5, 'DebrisA')), [])
+
+class SizeTable(unittest.TestCase):
+    """logic.scale (scale.py, sizes.json): sizes against a person, doors, stairs, grain, cast."""
+
+    def test_classes_from_names(self):
+        self.assertEqual(SZ.class_of('crossroads/smithy_rubble'), 'rubble')
+        self.assertEqual(SZ.class_of('crossroads/flower_tub_9'), 'flower_tub')
+        self.assertEqual(SZ.class_of('crossroads/kit_lantern_24'), 'lamp')
+        self.assertEqual(SZ.class_of('undercroft/stump_nw'), 'pillar_stump')
+        self.assertIsNone(SZ.class_of('woodland/flow'))
+        self.assertIsNone(SZ.class_of('crossroads/bakery_damage'))
+
+    def test_barrel_too_tall_trips_and_true_size_passes(self):
+        s = sprite(48, 80)
+        s[20:73, 8:40, 3] = 255                       # 53 art px: 0.72 A
+        fs = SZ.check_sprite(s[..., 3] > 0, 'x/barrel_1')
+        self.assertTrue(any(f.severity == 'fault' for f in fs))
+        s[:, :, 3] = 0
+        s[33:73, 10:38, 3] = 255                      # 40 art px: 0.54 A
+        self.assertEqual(SZ.check_sprite(s[..., 3] > 0, 'x/barrel_1'), [])
+
+    def test_specks_do_not_count(self):
+        s = sprite(48, 80)
+        s[33:73, 10:38, 3] = 255
+        s[2:4, 2:4, 3] = 255                          # a 4 px speck far above
+        self.assertEqual(SZ.check_sprite(s[..., 3] > 0, 'x/barrel_1'), [])
+
+    def _house(self, door_h):
+        stone, leaf = (142, 135, 130), (178, 70, 90)
+        a = np.zeros((200, 160, 4), np.uint8)
+        a[20:197, 12:148] = stone + (255,)
+        B = 196
+        cx = 12 + 60
+        a[B - door_h + 1:B + 1, cx - 22:cx + 22] = leaf + (255,)
+        return a, {'kind': 'cottage', 'door': 20, 'overhang': 3, 'wall_h': 40, 'roof_h': 40}
+
+    def test_door_opening_measured(self):
+        a, look = self._house(92)
+        m = SZ.measure_opening(a, 12 + 60, 196)
+        self.assertAlmostEqual(m['h'], 92, delta=2)
+        self.assertAlmostEqual(m['w'], 44, delta=2)
+        fs = SZ.check_building(a, 'x', 'cottage', look)
+        self.assertFalse([f for f in fs if 'door' in f.subject])
+
+    def test_small_door_trips(self):
+        a, look = self._house(52)
+        fs = SZ.check_building(a, 'x', 'cottage', look)
+        self.assertTrue(any('door' in f.subject and f.severity == 'fault' for f in fs))
+
+    def test_stair_pitch(self):
+        rgb = np.full((60, 120, 3), 150, np.uint8)
+        for y in range(0, 60, 16):
+            rgb[y + 4:y + 12] = 90                    # 8 px dark riser, 16 px pitch
+        m = SZ.stair_pitch(rgb, (0, 0, 120, 60))
+        self.assertEqual(m['pitch'], 16)
+
+    def test_speckled_ground_trips_and_clumped_passes(self):
+        rng = np.random.default_rng(3)
+        g = np.zeros((300, 600, 3), np.uint8)
+        g[:] = GRASS
+        speck = g.copy()
+        for _ in range(3000):                         # many 2 px dark ticks
+            y, x = rng.integers(0, 298), rng.integers(0, 598)
+            speck[y:y + 2, x] = (90, 110, 50)
+        self.assertTrue(any(f.severity == 'fault' for f in SZ.check_grain(speck, H, 'x/ground', jpeg=False)))
+        calm = g.copy()
+        for _ in range(140):                          # fewer 6 px tufts
+            y, x = rng.integers(0, 292), rng.integers(0, 592)
+            calm[y:y + 6, x:x + 5] = (100, 120, 60)
+        self.assertFalse(any(f.severity == 'fault' for f in SZ.check_grain(calm, H, 'x/ground', jpeg=False)))
+
+    def test_body_height_ignores_a_spear(self):
+        a = np.zeros((144, 160), bool)
+        a[62:137, 70:90] = True                       # a 75 px body
+        a[30:137, 95:97] = True                       # a spear, 2 px wide
+        a[60:62, 90:95] = True                        # the hand that holds it
+        self.assertEqual(SZ.body_height(a, 136), 75)
+
 
 if __name__ == '__main__':
     unittest.main()

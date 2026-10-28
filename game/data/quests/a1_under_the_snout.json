@@ -1,0 +1,79 @@
+{
+  "id": "a1_under_the_snout",
+  "title": "Under the snout",
+  "kind": "main",
+  "region": "frostline",
+  "summary": "The Frostline's great shard slid into the ice caves under the glacier's snout. Tam went in after it and has not come out.",
+  "start": {
+    "on": "talk:hut_warden",
+    "if": {
+      "done": [
+        "a1_the_ring_is_shut"
+      ]
+    }
+  },
+  "steps": [
+    {
+      "id": "cutter",
+      "text": "Ask the ice-cutter by the tarn what she saw",
+      "on": "talk:ice_cutter"
+    },
+    {
+      "id": "caves",
+      "text": "Go into the ice caves under the glacier",
+      "on": "enter:ice_caves"
+    },
+    {
+      "id": "rooms",
+      "text": "Free the shardstruck in the ice caves",
+      "on": "camp:ice_caves_rooms",
+      "done_if": {
+        "flags": [
+          "camp_cleared:ice_caves_rooms"
+        ]
+      }
+    },
+    {
+      "id": "wyrm",
+      "text": "Free the Rime Wyrm",
+      "on": "camp:rime_wyrm",
+      "done_if": {
+        "flags": [
+          "camp_cleared:rime_wyrm"
+        ]
+      }
+    },
+    {
+      "id": "tam",
+      "text": "Help Tam out of the shard chamber",
+      "on": "talk:tam"
+    },
+    {
+      "id": "shard",
+      "text": "Take the great shard",
+      "on": "talk:frost_shard",
+      "set_flags": [
+        "shard_taken:frostline"
+      ]
+    },
+    {
+      "id": "lantern",
+      "text": "Set the shard in the lantern on the square",
+      "on": "talk:shard_lantern",
+      "if": {
+        "flags": [
+          "shard_taken:frostline"
+        ]
+      },
+      "set_flags": [
+        "shard_home:frostline"
+      ]
+    }
+  ],
+  "rewards": {
+    "glint": 60,
+    "flags": [
+      "rime_wyrm_freed"
+    ]
+  }
+}

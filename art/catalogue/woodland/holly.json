@@ -1,14 +1,14 @@
 {
  "id": "woodland/holly",
  "file": "game/zones/woodland/art/holly.png",
- "sha256": "d3eefe84f3dc39c2dbe60878cbaa10a29fa9bbbedbac770a25e5232149db76c0",
+ "sha256": "d21820965001d9d04f305fd44433052abb2e59e54327e61884dd0a88bc3d9231",
  "kind": "bush",
  "biome": "woodland",
  "H": 74.0,
  "density": 3.0,
  "size": [
   97,
-  91
+  81
  ],
  "status": "pass",
  "counts": {
@@ -48,7 +48,7 @@
    "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)"
   }
  ],
- "reviewed": "2026-10-25",
+ "reviewed": "2026-10-26",
  "reviewer": {
   "agent": "detail-auditor",
   "verdict": "pending",

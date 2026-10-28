@@ -37,6 +37,7 @@ EXTRA = {
     'mushroom': ((1, 3.5), (1, 4), 'a woodland mushroom is 5 to 20 cm: ankle high at most (15 px a metre)'),
     'mushroom_ring': ((1, 4.5), (8, 60), 'a ring of mushrooms is ankle high'),
 }
+SPREAD = {'mushroom_ring'}          # kinds made of separate pieces standing about on the ground
 # forms that only grow in some biomes
 FORMS = {
     'succulent_rosette': ({'desert', 'arid', 'canyon', 'oasis', 'dry_coast'},
@@ -50,6 +51,8 @@ def kind_of(name: str) -> str:
     base = re.sub(r'_(damage|lit|dark|choked|rubble)$', lambda m: m.group(0) if base in ALIASES else '', base) or base
     if name in ALIASES:
         return ALIASES[name]
+    if re.sub(r'(_\d+|_[a-d])$', '', name).endswith('_rubble'):
+        return 'pile'        # what is left of a building is a heap on the ground (fix queue 2: smithy_rubble)
     if base in ALIASES:
         return ALIASES[base]
     if base in GUIDE['kinds'] or base in EXTRA:
@@ -72,7 +75,7 @@ def bbox(a):
 
 
 # ------------------------------------------------------------------------------------------
-SCATTER = ('debris', 'rubble', 'smoke', 'fx/', 'pile', 'coal', 'crater', '_damage')
+SCATTER = ('debris', 'rubble', 'smoke', 'fx/', 'pile', 'coal', 'crater', '_damage', 'mushroom_ring')
 
 
 def floating_parts(alpha, H, subject):
@@ -232,6 +235,12 @@ def scale(alpha, H, kind, subject, density=3.0):
     (h0, h1), (w0, w1), why = g
     x0, y0, x1, y1 = bbox(alpha)
     hw = (y1 - y0) / density
+    if kind in SPREAD:
+        # pieces spread out on the ground (a ring of mushrooms): the guide's height is each
+        # piece's, not the depth of the ground they stand round
+        lab, n = ndi.label(alpha, structure=np.ones((3, 3), bool))
+        if n > 1:
+            hw = max((sl[0].stop - sl[0].start) for sl in ndi.find_objects(lab)) / density
     ww = (x1 - x0) / density
     tol = GUIDE.get('tolerance', 2)
     fs = []
@@ -324,9 +333,15 @@ def biome_form(rgb, alpha, H, subject, biome):
 
 def crown_holes(rgb, alpha, H, subject):
     """A crown drawn as outlined blobs with the ground showing between them (contour mesh)."""
+    if subject.endswith('_damage'):
+        return []        # a storm-damage overlay (a tarp, a roof hole's dark loft): no crown in it
     fam = D.family_map(rgb)
     fol = alpha & np.isin(fam, (0, 1))
     if (alpha & (fam == 1)).sum() < 0.3 * H * H:
+        return []
+    if (alpha & (fam == 1)).sum() < 0.3 * alpha.sum():
+        # a crown is most of what it belongs to; green paint on a building's doors, shutters and
+        # flower boxes (fix queue 2: the hut) has no crown to see through
         return []
     r = max(2, int(0.05 * H))
     p = r + 1
@@ -379,7 +394,9 @@ def construction(rgb, alpha, H, subject, kind):
     fs = []
     if kind == 'well' and 'choked' not in subject:
         fam = D.family_map(rgb)
-        wood = alpha & np.isin(fam, (3, 0))
+        # wood and its own dark outline (not the outline under a slate hood, fix queue 2)
+        w3 = alpha & (fam == 3)
+        wood = w3 | (alpha & (fam == 0) & ndi.binary_dilation(w3, iterations=1))
         cols = wood.sum(0)
         x0, y0, x1, y1 = bbox(alpha)
         # the beam: the widest wooden row in the upper two thirds
@@ -433,10 +450,21 @@ def water_shape(rgb, alpha, H, subject):
     return fs
 
 
+def glow(rgb):
+    """A light source's own pixels (lit panes, a flame, a lamp's glass): bright warm yellows and
+    near-whites lit from inside, and the texel round them. They are not lit by the sun, so the
+    light-direction and cylinder checks leave them out (26 Oct: the green-capped lamp, Matt's style
+    anchor, failed both on its own glowing glass)."""
+    r, g, b = (rgb[..., i].astype(int) for i in range(3))
+    m = (r >= 200) & (g >= 135) & (r - b >= 40) & (r >= g)
+    m = ndi.binary_opening(m, structure=np.ones((2, 2)))
+    return ndi.binary_dilation(m, iterations=1) if m.any() else m
+
+
 def object_light(rgb, alpha, H, subject):
     L = lum(rgb)
     fam = D.family_map(rgb)
-    m = alpha & (fam != 0) & ndi.binary_erosion(alpha, iterations=1)
+    m = alpha & (fam != 0) & ndi.binary_erosion(alpha, iterations=1) & ~glow(rgb)
     if m.sum() < 0.04 * H * H:
         return []
     ys, xs = np.nonzero(m)
@@ -482,10 +510,10 @@ def cylinder(rgb, alpha, H, subject):
     across their width: a highlight band left of centre and a core shadow toward the right,
     spanning at least 25 L. A flat or banded profile reads as a cut-out."""
     base = subject.split('/')[-1]
-    if not any(k in base for k in ROUND):
-        return []
+    if not any(k in base for k in ROUND) or base.startswith('signpost'):
+        return []        # (a signpost's widest rows are its flat boards, not a round shaft: fix queue 2)
     fam = D.family_map(rgb)
-    body = alpha & (fam != 0) & ndi.binary_erosion(alpha, iterations=1)
+    body = alpha & (fam != 0) & ndi.binary_erosion(alpha, iterations=1) & ~glow(rgb)
     if body.sum() < 0.03 * H * H:
         return []
     L = lum(rgb)
@@ -493,6 +521,20 @@ def cylinder(rgb, alpha, H, subject):
     # the widest band of rows: the shaft
     widths = body.sum(1)
     rows = widths >= 0.7 * widths.max()
+    if any(k in base for k in ('lantern', 'lamp', 'post')):
+        # a post carrying a lamp: the shaft is the longest run of rows of one width (the post), not
+        # the lamp's box, the widest thing on it
+        best, cur, start = (0, 0), 0, 0
+        for y in range(len(widths)):
+            if widths[y] >= 3 and y > 0 and abs(int(widths[y]) - int(widths[y - 1])) <= 1:
+                cur += 1
+            else:
+                cur, start = (1 if widths[y] >= 3 else 0), y
+            if cur > best[0]:
+                best = (cur, start)
+        if best[0] >= 0.25 * len(ys):
+            rows = np.zeros_like(rows)
+            rows[best[1]:best[1] + best[0]] = True
     xs = np.nonzero(body[rows].any(0))[0]
     if len(xs) < 6:
         return []

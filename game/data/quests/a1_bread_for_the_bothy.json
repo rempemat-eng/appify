@@ -1,0 +1,50 @@
+{
+  "id": "a1_bread_for_the_bothy",
+  "title": "Bread for the Col hut",
+  "kind": "main",
+  "region": "frostline",
+  "chapter": [
+    "frostline",
+    1
+  ],
+  "summary": "The hut warden used to come down for bread every week. Nobody has seen her since the storm, and shard crows hold the ridge col.",
+  "start": {
+    "on": "talk:moss",
+    "if": {
+      "done": [
+        "home_again"
+      ]
+    }
+  },
+  "steps": [
+    {
+      "id": "col",
+      "text": "Free the shard crows at the ridge col",
+      "on": "camp:col_crows",
+      "done_if": {
+        "flags": [
+          "camp_cleared:col_crows"
+        ]
+      },
+      "set_flags": [
+        "way_open:W2"
+      ]
+    },
+    {
+      "id": "climb",
+      "text": "Climb the Col Path to the Frostline",
+      "on": "enter:frostline"
+    },
+    {
+      "id": "warden",
+      "text": "Take Moss's loaf to the hut warden at the Col hut",
+      "on": "talk:hut_warden"
+    }
+  ],
+  "rewards": {
+    "glint": 30,
+    "flags": [
+      "met_hut_warden"
+    ]
+  }
+}

@@ -274,7 +274,10 @@ def lantern4(d, seed=0):
 
 def signpost4(d, seed=91):
     """The 1x signpost (30 x 36 world px): two broad boards on a post, the top one pointing east,
-    the lower one west; grain, nail heads, carved marks; a tuft at the foot."""
+    the lower one west; grain, nail heads, carved marks; a tuft at the foot. At density 3 and up:
+    signpost_hd."""
+    if d >= 2.5:
+        return signpost_hd(d, seed=seed)
     sp = _sprite(d, 64, 76, 30, 3)
     g = sp.g
     rng = np.random.default_rng(seed)
@@ -307,6 +310,116 @@ def signpost4(d, seed=91):
     return _out(sp)
 
 
+def _board_hd(F, m, ang, rng, z, fam='timber', s=3.0, seam=True, letters=True):
+    """A sawn sign board as a form: its top arris lit, the face in the light with grain running
+    along it (broken dashes, a knot), a seam between its two planks, the lower arris and the
+    board's thickness in shade, nails with rust runs, carved letters (a dark groove with a lit
+    lower lip), a worn pale patch where hands touch it."""
+    Y, X = np.mgrid[0:F.h, 0:F.w] + 0.5
+    c_, s_ = math.cos(ang), math.sin(ang)
+    u = X * c_ + Y * s_
+    v = -X * s_ + Y * c_
+    um, vm = u[m], v[m]
+    u0, u1, v0, v1 = um.min(), um.max(), vm.min(), vm.max()
+    fv = (v - v0) / max(1.0, v1 - v0)
+    fu = (u - u0) / max(1.0, u1 - u0)
+    t = np.full(m.shape, 3.0)
+    t = np.where(fv < 0.3, 4, t)
+    t = np.where(v - v0 < 1.0, 5, t)
+    t = np.where(fv > 0.78, 2, t)
+    t = np.where(v1 - v < 1.0, 1, t)
+    t = np.where(fu < 0.04, t + 1, t)                                # the lit end grain
+    t = np.where(fu > 0.96, t - 1, t)
+    # grain along the board, broken
+    for k in range(5):
+        vg = v0 + (v1 - v0) * rng.uniform(0.18, 0.72)
+        wav = 0.6 * np.sin(u / (2.5 * s) + rng.uniform(0, 6))
+        run = np.sin(u / rng.uniform(2.0, 3.5) / s + rng.uniform(0, 6)) > -0.2
+        t = np.where((np.abs(v - vg - wav) < 0.5) & run & (fv > 0.12) & (fv < 0.75), t - 1, t)
+    if seam:
+        vs = v0 + (v1 - v0) * 0.5
+        t = np.where(np.abs(v - vs) < 0.5, 1, t)
+        t = np.where((v - vs >= 0.5) & (v - vs < 1.5), np.minimum(t + 1, 5), t)
+    ku = u0 + (u1 - u0) * rng.uniform(0.55, 0.8)
+    kv = v0 + (v1 - v0) * rng.uniform(0.25, 0.4)
+    kd = np.hypot((u - ku) / (1.3 * s), (v - kv) / (0.8 * s))
+    t = np.where(kd < 1, np.where(kd < 0.45, 1, 4), t)
+    wp = np.hypot((u - (u0 + (u1 - u0) * 0.3)) / (4 * s), (v - (v0 + (v1 - v0) * 0.55)) / (1.6 * s)) < 1
+    t = np.where(wp & (rng.random(m.shape) < 0.5) & (t == 3), 4, t)
+    if letters:
+        # carved letters: short strokes cut into the face, each a dark groove with a lit lip
+        cu = u0 + (u1 - u0) * 0.18
+        vl = v0 + (v1 - v0) * 0.38
+        for k in range(int(rng.integers(5, 8))):
+            w_ = rng.uniform(0.6, 1.6) * s
+            tall = rng.random() < 0.5
+            gm = (u >= cu) & (u < cu + (0.6 * s if tall else w_)) & (v >= vl) & (v < vl + (1.8 * s if tall else 0.7 * s))
+            lip = (u >= cu) & (u < cu + (0.6 * s if tall else w_) + 1) & (v >= vl + (1.8 * s if tall else 0.7 * s)) & \
+                  (v < vl + (1.8 * s if tall else 0.7 * s) + 1)
+            t = np.where(gm & m, 1, t)
+            t = np.where(lip & m, 5, t)
+            cu += (0.6 * s if tall else w_) + rng.uniform(0.6, 1.2) * s
+    tt = np.clip(np.round(t), 0, 5).astype(int)
+    F.put(m, np.where(tt >= 4, fam + '_warm' if fam == 'timber' else fam, np.where(tt <= 1, 'timber_cool', fam)), tt, z)
+    for fu_ in (0.07, 0.86):
+        nu = u0 + (u1 - u0) * fu_
+        nv = v0 + (v1 - v0) * 0.5
+        nm_ = (np.abs(u - nu) < 0.55 * s) & (np.abs(v - nv) < 0.55 * s) & m
+        F.put(nm_, 'iron', 2, z + 0.1)
+        F.put(nm_ & (u < nu) & (v < nv), 'iron', 4, z + 0.11)
+        rs = (np.abs(u - nu) < 0.3 * s) & (v > nv + 0.5 * s) & (v < nv + rng.uniform(1.2, 2.2) * s) & m
+        F.put(rs, 'fox', 2, z + 0.1)
+
+
+def signpost_hd(d, seed=91):
+    """The signpost at density 3 (fix queue 2): a squared post lit on its west face and shaded on
+    the east, its grain, a weathered dark foot set in a tuft and the boards' shadows across it;
+    two broad boards (east and west) and a short third arm slanting down to the south-west, each a
+    sawn two-plank board with its arrises, grain, a knot, carved names and rusting nails."""
+    rng = np.random.default_rng(seed)
+    s = d / 2                                     # px per unit (units are half world px)
+    W, Hh = int(math.ceil(64 * s)), int(math.ceil(76 * s))
+    ox, oy = round(30 * s), Hh - max(1, int(round(3 * s)))
+    F = _Form(Hh, W)
+    Y, X = np.mgrid[0:Hh, 0:W] + 0.5
+    ux, uy = (X - ox) / s, (Y - oy) / s
+    post = (np.abs(ux) <= 2.8) & (uy >= -62) & (uy <= 0)
+    u = ux / 2.8
+    tp = np.where(u < -0.75, 3, np.where(u < -0.1, 4, np.where(u < 0.4, 3, np.where(u < 0.8, 2, 1))))   # a round post
+    tp = np.where((uy < -60.5) & (u < 0.4), 5, tp)                   # its cut top catching the light
+    for k in range(6):
+        gx = rng.uniform(-2.0, 2.0)
+        g0 = rng.uniform(-58, -12)
+        tp = np.where((np.abs(ux - gx) < 0.45) & (uy > g0) & (uy < g0 + rng.uniform(6, 14)), tp - 1, tp)
+    tp = np.where(uy > -5, tp - 1, tp)                                # weathered foot
+    for (y0b, y1b) in ((-56, -52), (-33, -29)):
+        tp = np.where((uy > y0b) & (uy < y1b), tp - 1, tp)            # the boards' shadows on the post
+    tp = np.clip(tp, 0, 5)
+    F.put(post, np.where(tp >= 4, 'timber_warm', np.where(tp <= 1, 'timber_cool', 'timber')), tp, 1)
+    # (scale gate, 26 Oct: the arms span at most 81 art px, about 1.2 to 1.8 m: each a little shorter)
+    b1 = _poly_mask([(ox + x * s, oy + y * s) for x, y in [(-19, -68), (19, -68), (26, -62), (19, -56), (-19, -56)]], X, Y)
+    b2 = _poly_mask([(ox + x * s, oy + y * s) for x, y in [(19, -45), (-19, -45), (-26, -39), (-19, -33), (19, -33)]], X, Y)
+    b3 = _poly_mask([(ox + x * s, oy + y * s) for x, y in SIGN3], X, Y)
+    _board_hd(F, b1, 0.0, rng, 2, 'timber', s)
+    _board_hd(F, b2, 0.0, rng, 2, 'timber', s)
+    a3 = math.atan2(-19.6 + 28.0, -11.5 - 2.5)
+    _board_hd(F, b3, a3 + math.pi, rng, 2.5, 'timber', s, seam=False, letters=False)
+    # a tuft at the foot, blades lit on their tips
+    for k in range(9):
+        bx = ox + rng.uniform(-6, 6) * s
+        L = rng.uniform(3, 7) * s
+        lean = rng.uniform(-0.5, 0.5)
+        for j in range(int(L)):
+            yy_, xx_ = int(oy - j), int(bx + lean * j)
+            if 0 <= yy_ < Hh and 0 <= xx_ < W:
+                m1 = np.zeros((Hh, W), bool)
+                m1[yy_, xx_] = True
+                F.put(m1, 'leaf', 4 if j > L * 0.6 else (3 if lean < 0 else 2), 3)
+    F.tidy()
+    img = Image.fromarray(F.image())
+    return img, (ox, oy), np.asarray(img)[..., 3] > 0
+
+
 def fence4(d, length=66, posts=None, seed=101, gate_post=True, n_pickets=7):
     """The 1x palisade (20 world px tall): a tall gate post at the west end braced into the first
     bay, then slim pickets (3 world px) behind two rails that run across in front of them, nail
@@ -337,11 +450,22 @@ def fence4(d, length=66, posts=None, seed=101, gate_post=True, n_pickets=7):
             sp.detail(g.rect(x - 0.5, (y0 + y1) / 2 - 0.5, x + 0.5, (y0 + y1) / 2 + 0.5), pk.rgb('iron', 4))
     if gate_post:
         gp = g.rrect(0, -40, 12, 0, 1.4)
-        sp.add('gate', gp, 'timber', base=3, lo=1, hi=5, z=3, mode='cyl', k=0.8)
+        sp.add('gate', gp, 'timber', base=4 if d >= 2.5 else 3, lo=1, hi=5, z=3, mode='cyl', k=1.1 if d >= 2.5 else 0.8)
         sp.mark('gate', g.rect(0, -40, 13, -38.8), 1)
         for k in range(3):
             gy = rng.uniform(-34, -6)
             sp.mark('gate', g.rect(3 + k * 3.0, gy, 4 + k * 3.0, gy + rng.uniform(5, 9)), -1)
+        if d >= 2.5:
+            # density 3 (fix queue 2): the post's grain runs its whole height, in long checks and
+            # a lighter streak of sapwood, a knot with its dark heart, the foot weathered dark
+            rng2 = np.random.default_rng(seed + 7)
+            for k in range(7):
+                gx = rng2.uniform(2.5, 9.5)
+                gy = rng2.uniform(-38, -10)
+                sp.mark('gate', g.rect(gx, gy, gx + 0.7, gy + rng2.uniform(8, 16)), -1 if k % 3 else 1)
+            sp.mark('gate', g.ellipse(6.5, -22, 1.6, 1.2), -1)
+            sp.mark('gate', g.ellipse(6.3, -22.3, 0.7, 0.5), -2)
+            sp.mark('gate', g.rect(0, -4, 12, 0), -1)
         brace = g.stroke([(12, -12), (x0 + 2 + pitch - 3, -27)], 1.3)
         sp.add('brace', brace, 'timber_warm', base=3, lo=1, hi=4, z=2.5, flat=True)
         sp.mark('brace', g.stroke([(12, -13), (x0 + 2 + pitch - 3, -28)], 0.5), 1)
@@ -403,18 +527,28 @@ def gateleaf4(d, seed=105):
 
 
 def post4(d, seed=0):
-    """A short marker post with a cap (stair heads): 12 world px tall."""
-    sp = _sprite(d, 14, 30, 7, 2)
+    """A short marker post with a cap (stair heads): 12 world px tall (17 at density 3: the scale
+    gate, 26 Oct, a post reaches a person's chest, level with a fence's top rail)."""
+    t = 34.0 if d >= 2.5 else 22.0
+    sp = _sprite(d, 14, t + 8, 7, 2)
     g = sp.g
-    sp.add('post', g.rrect(-2.8, -22, 2.8, 0, 1.0), 'timber', base=3, lo=1, hi=5, z=1, mode='cyl')
-    sp.add('cap', g.rrect(-3.6, -25, 3.6, -21, 1.4), 'timber_warm', base=4, lo=2, hi=5, z=2)
-    sp.mark('post', g.rect(-4, -14, 4, -13), -1)
+    sp.add('post', g.rrect(-2.8, -t, 2.8, 0, 1.0), 'timber', base=3, lo=1, hi=5, z=1, mode='cyl')
+    sp.add('cap', g.rrect(-3.6, -t - 3, 3.6, -t + 1, 1.4), 'timber_warm', base=4, lo=2, hi=5, z=2)
+    sp.mark('post', g.rect(-4, -t + 8, 4, -t + 9), -1)
+    if d >= 2.5:
+        rng = np.random.default_rng(seed + 3)
+        for k in range(4):
+            gx, gy = rng.uniform(-1.6, 1.6), rng.uniform(-t + 4, -4)
+            sp.mark('post', g.rect(gx, gy, gx + 0.6, gy + rng.uniform(4, 9)), -1)
+        sp.mark('post', g.rect(-3, -3, 3, 0), -1)
     return _out(sp)
 
 
 def stump4(d, seed=61):
     """The 1x stump (21 x 16 world px): a lit cut top with rings and a crack, bark sides lit on
-    the left, root lobes flaring, a tuft at the base."""
+    the left, root lobes flaring, a tuft at the base. From density 3: stump_hd."""
+    if d >= 2.5:
+        return stump_hd(d, seed=seed)
     sp = _sprite(d, 50, 38, 25, 3)
     g = sp.g
     rng = np.random.default_rng(seed)
@@ -438,7 +572,9 @@ def stump4(d, seed=61):
 def log4(d, length=54, thick=15, seed=71):
     """The 1x mossy log (54 x 16 world px): a thick bark cylinder lying east-west, the sawn end
     (rings, a lit rim) facing west, diagonal grain, moss along the top in three greens drooping
-    over the side, a pale bracket fungus low on its flank."""
+    over the side, a pale bracket fungus low on its flank. From density 3: log_hd."""
+    if d >= 2.5:
+        return log_hd(d, length=length, thick=thick, seed=seed)
     Lu, Tu = length * 2, thick * 2
     sp = _sprite(d, Lu + 10, Tu + 12, Lu / 2 + 5, 3)
     g = sp.g
@@ -485,7 +621,10 @@ def log4(d, length=54, thick=15, seed=71):
 
 def mushroom_ring4(d, w=41, h=20, seed=85, n=10):
     """The 1x fairy ring: about ten mushrooms, red caps with white spots on the west half and tan
-    caps with a pale band on the east, in a ring on a slightly darker patch of grass."""
+    caps with a pale band on the east, in a ring on a slightly darker patch of grass. At density 3
+    and up: mushroom_ring_hd."""
+    if d >= 2.5:
+        return mushroom_ring_hd(d, w=w, seed=seed, n=n + 4)
     sp = _sprite(d, 2 * w + 10, 2 * h + 10, w + 5, 2)
     g = sp.g
     rng = np.random.default_rng(seed)
@@ -673,6 +812,52 @@ def boulder4(d, w=21, h=13, seed=31, fam='stone', moss='top'):
                 tt[hi] = 4
         near = ndi.binary_dilation(crack, iterations=2) & ~crack & m & top
         tt[near & (tt == 3)] = 4                    # r8: no worn dash crosses the crack (it read as a '+')
+        if d >= 2.5:
+            # density 3 (fix queue 2): the stone's own structure at Eastward's detail: a second
+            # plane on the front where the face turns (a lit arris then the darker flank), bedding
+            # lines across the side with a lit lip under each, a warm iron stain, pits with a lit
+            # rim, flecks of quartz on the lit top, lichen rosettes in two greens
+            ang_ = rng.uniform(-0.5, 0.5)
+            fac = side & ((rel + ang_ * (yy - c['base']) / max(1.0, c['ch'])) > rng.uniform(0.05, 0.25))
+            arr = fac & ~np.roll(fac, 1, 1)
+            tt[fac & (tt >= 2)] -= 1
+            tt[arr & (tt <= 3)] = np.minimum(4, tt[arr & (tt <= 3)] + 2)
+            blo, bhi = topline.mean() + 1.5 * d, c['base'] - 1.5 * d
+            for _ in range(int(rng.integers(1, 3)) if bhi > blo else 0):       # (a low chunk has no room for beds)
+                by_ = rng.uniform(blo, bhi)
+                wob = 0.6 * d * np.sin(xx / (2.3 * d) + rng.uniform(0, 6))
+                bed = side & (np.abs(yy - by_ - wob - (xx - c['cx']) * rng.uniform(-0.15, 0.15)) < 0.5)
+                lipb = side & np.roll(bed, 1, 0) & ~bed
+                tt[bed] = np.maximum(0, tt[bed] - 1)
+                tt[lipb & (tt <= 3)] += 1
+            st_ = m & (fm == 0) & ((xx - c['cx'] - rng.uniform(-0.3, 0.3) * c['cw'] / 2) ** 2 / (1.6 * d) ** 2
+                                   + (yy - c['base'] + c['ch'] * 0.35) ** 2 / (1.1 * d) ** 2 < 1)
+            fm[st_ & (rng.random(st_.shape) < 0.8)] = 3
+            wy2, wx2 = np.nonzero(m & (fm != 2))
+            for _ in range(int(len(wy2) / (2.2 * d * d))):
+                q2 = int(rng.integers(0, len(wy2)))
+                y_, x_ = wy2[q2], wx2[q2]
+                if crack[y_, x_]:
+                    continue
+                if top[y_, x_]:
+                    if x_ + 1 < Wp and m[y_, x_ + 1]:
+                        tt[y_, x_] = 5
+                        tt[y_, x_ + 1] = min(5, tt[y_, x_ + 1] + 1)
+                else:
+                    tt[y_, x_] = max(0, tt[y_, x_] - 2)
+                    if y_ + 1 < Hp and m[y_ + 1, x_]:
+                        tt[y_ + 1, x_] = min(4, tt[y_ + 1, x_] + 1)
+            ly_, lx_ = np.nonzero(m & (fm != 2) & ~crack)
+            for _ in range(int(rng.integers(3, 6))):
+                q2 = int(rng.integers(0, len(ly_)))
+                if rel[ly_[q2], lx_[q2]] > 0.5:
+                    continue
+                lr = rng.uniform(0.6, 1.0) * d
+                lm_ = m & ((yy - ly_[q2]) ** 2 / 0.5 + (xx - lx_[q2]) ** 2 <= lr * lr)
+                fm[lm_] = 4
+                tt[lm_] = 3
+                tt[lm_ & ~np.roll(lm_, 1, 0)] = 4
+                tt[lm_ & ~np.roll(lm_, -1, 0)] = 2
         tt[~m] = 0
         t[m] = tt[m]
         fm[m & (fm != 2)] = np.where(rel[m & (fm != 2)] > 0.15, 1, 0)
@@ -695,7 +880,7 @@ def boulder4(d, w=21, h=13, seed=31, fam='stone', moss='top'):
     P_ = np.pad(allm, 1)
     rb_ = allm & (~P_[2:, 1:-1] | ~P_[1:-1, 2:])
     out = np.zeros((Hp, Wp, 4), np.uint8)
-    names = [fam, fam + '_cool', 'grass_cool']
+    names = [fam, fam + '_cool', 'grass_cool', fam + '_warm' if d >= 2.5 else fam, 'leaf']
     for y, x in zip(*np.nonzero(allm)):
         if rb_[y, x] and fm[y, x] != 2:
             out[y, x, :3] = pk.rgb(fam + '_cool', 0)
@@ -718,7 +903,11 @@ def boulder4(d, w=21, h=13, seed=31, fam='stone', moss='top'):
 def fern4(d, seed=51, size=1.0):
     """The 1x fern: a broad, squat crown of pointed leaves (three rising in a V, the others
     spreading level to both sides) round a dark slot at the base; mid green, the east leaves a
-    tone down, short pale rib stripes across the leaves, outlined. size 1.23 is the 1x 27 x 17."""
+    tone down, short pale rib stripes across the leaves, outlined. size 1.23 is the 1x 27 x 17.
+    At density 3 and up the fern is drawn as fronds of paired leaflets (fern_hd; fix queue 2: the
+    pointed-leaf crown read as an agave)."""
+    if d >= 2.5:
+        return fern_hd(d, seed=seed, size=size)
     sp = _sprite(d, 52 * size, 40 * size, 26 * size, 2)
     g = sp.g
     rng = np.random.default_rng(seed)
@@ -846,12 +1035,82 @@ def mushrooms_hd(d, n=5, seed=0, kind='brown'):
     return _finish(a)
 
 
+def _mushroom(a, x, foot, h, cw, fam, red, rng):
+    """One mushroom at ankle height: a pale stem lit on its west side with a dark foot, a domed cap
+    lit at its upper left, its rim's underside (the gills) a dark line, white flecks on a red one."""
+    top = int(round(foot - h))
+    sw = max(2, int(round(0.55 * cw / 2.4 * 2)))
+    lean = rng.uniform(-0.15, 0.15)
+    for y in range(top, foot + 1):
+        xc = int(round(x + lean * (foot - y)))
+        for i in range(sw):
+            t = 5 if i == 0 else (4 if i < sw - 1 else 2)
+            if y >= foot - 1:
+                t = max(1, t - 2)
+            _put(a, y, xc - sw // 2 + i, 'plaster', t)
+    xc = x + lean * (foot - top)
+    ch = max(2, int(round(cw * 0.5)))
+    for yy in range(ch):
+        half = cw / 2 * np.sqrt(max(0.0, 1 - ((ch - 1 - yy) / ch) ** 2)) + 0.4
+        for xx in range(int(round(xc - half)), int(round(xc + half)) + 1):
+            u = (xx - (xc - half)) / max(1.0, 2 * half)
+            t = 5 if (yy < ch * 0.35 and 0.15 < u < 0.4) else (4 if (yy < ch * 0.6 and u < 0.5) else (3 if u < 0.78 else 2))
+            _put(a, top - ch + 1 + yy, xx, fam, t)
+    for xx in range(int(round(xc - cw / 2)), int(round(xc + cw / 2)) + 1):
+        _put(a, top + 1, xx, fam, 1)
+    if red:
+        for (fx, fy) in ((-0.22, 0.3), (0.18, 0.55), (-0.02, 0.75))[:int(rng.integers(2, 4))]:
+            _put(a, top - int(ch * fy), int(round(xc + fx * cw)), 'plaster', 5)
+
+
+def mushroom_ring_hd(d, w=41, seed=85, n=12):
+    """A fairy ring at density 3: ankle-high mushrooms (1.5 to 4 world px) standing round a ring
+    w world px across, seen at the view's slant, at uneven spacing: some alone, some in twos and
+    threes, the young ones small, each its own size and lean; red caps with white flecks on the
+    west side, tan caps on the east. No painted patch: the ring is the mushrooms."""
+    rng = np.random.default_rng(seed)
+    Wd = int((w + 6) * d)
+    ry = (w / 2 - 3) * 0.42
+    Hd = int((2 * ry + 7) * d)
+    a = _rgba(Hd, Wd)
+    rx = (w / 2 - 3) * d
+    cy = Hd - 1 - (ry + 1) * d
+    items = []
+    tops = []
+    ang = rng.uniform(0, 2 * np.pi)
+    tries = 0
+    while len(items) < n and tries < 400:
+        tries += 1
+        ang += rng.uniform(0.25, 0.8)
+        grp = int(rng.choice([1, 1, 2]))
+        for g_ in range(grp):
+            aa = ang + g_ * rng.uniform(0.16, 0.22)
+            rr = rng.uniform(0.9, 1.08)
+            x = Wd / 2 + np.cos(aa) * rx * rr
+            foot = int(cy + np.sin(aa) * ry * d * rr)
+            h = rng.uniform(1.1, 2.1) * d * (0.75 if g_ else 1.0)
+            cw = rng.uniform(1.8, 2.8) * d * (0.8 if g_ else 1.0)
+            top = int(round(foot - h)) - max(2, int(round(cw * 0.5))) + 1
+            # no three caps on one line (a grown ring, not a planted row) and none on another's spot
+            if any(abs(t - top) <= 2 for t in tops):
+                continue
+            if any(abs(it[1] - x) < (cw + it[3]) / 2 + 2 and abs(it[0] - foot) < 6.5 * d for it in items):
+                continue
+            tops.append(top)
+            items.append((foot, x, h, cw))
+    items.sort()
+    for (foot, x, h, cw) in items:
+        red = x < Wd * 0.48 or (x < Wd * 0.58 and rng.random() < 0.4)
+        _mushroom(a, x, foot, h, cw, 'berry' if red else 'clay', red, rng)
+    return _finish(a)
+
+
 def fern_hd(d, seed=0, size=1.0):
     """A fern (knee high, 8 to 16 world px across): fronds arching up out of one crown and
     bending down at their tips, each a midrib with leaflets in pairs that shorten to the tip and
     point out along it; the fronds at the back in shade, those facing the upper left lit."""
     rng = np.random.default_rng(seed)
-    Wd, Hd = int(22 * size * d), int(14 * size * d)
+    Wd, Hd = int(15 * size * d), int(10 * size * d)          # (scale gate: about 0.5 A across, Eastward 0.37 to 0.46)
     a = _rgba(Hd, Wd)
     bx, by = Wd / 2, Hd - 1.5
     n = int(rng.integers(7, 10))
@@ -860,7 +1119,7 @@ def fern_hd(d, seed=0, size=1.0):
         f = (k + rng.uniform(-0.25, 0.25)) / (n - 1)          # 0 west .. 1 east
         dirx = (f - 0.5) * 2
         el = np.radians(80 - 55 * abs(dirx) + rng.uniform(-6, 6))
-        L = rng.uniform(8.0, 10.5) * size * d * (0.85 if abs(dirx) < 0.3 else 1.0)
+        L = rng.uniform(5.2, 6.8) * size * d * (0.85 if abs(dirx) < 0.3 else 1.0)
         back = abs(dirx) < 0.35
         fronds.append((0 if back else 1, dirx, el, L))
     fronds.sort(key=lambda q: (q[0], -abs(q[1])))
@@ -931,3 +1190,378 @@ def foxglove_hd(d, seed=0, size=1.0):
             for j in range(w):
                 _put(a, int(y - j * 0.5), int(x), 'leaf', 3 if (k < 2 and j == w - 1) else 2)
     return _finish(a)
+
+
+# ------------------------------------------------------------------------------------------------
+# density 3 and up: the woodland's stump and fallen log drawn as forms (26 Oct, fix queue)
+# ------------------------------------------------------------------------------------------------
+# Matt, 26 Oct: "make sure you get the 3d effect right every time" (a lit top and face, a form
+# shadow, contact, thickness and depth overlap). These painters shade every pixel from the
+# form's own normal against the house light (upper left and above), then lay the material's
+# structure (bark plates and furrows, rings and checks, moss cushions) on top as tone steps,
+# and close the silhouette in each material's own edge tone. Density 2 keeps stump4 and log4
+# (the approved pilot golden).
+LIGHT3 = (-0.55, -0.30, 0.78)          # towards the light: west, north, up (east, south, up axes)
+
+
+class _Form:
+    """A small painter in (family, tone) per pixel with a z-buffer (larger z is nearer)."""
+
+    def __init__(self, h, w):
+        self.h, self.w = h, w
+        self.tone = np.full((h, w), -1, int)
+        self.fam = np.full((h, w), -1, int)
+        self.z = np.full((h, w), -1e9)
+        self.fams: list = []
+
+    def fi(self, f):
+        if f not in self.fams:
+            self.fams.append(f)
+        return self.fams.index(f)
+
+    def put(self, mask, fam, tone, z=0.0):
+        """Paint `mask` (bool array) in `fam` (a name, or a per-pixel array of names) at `tone`
+        (an int or an array) where nothing nearer is already drawn."""
+        sel = mask & (z >= self.z)
+        if not sel.any():
+            return
+        t = np.broadcast_to(np.asarray(tone), mask.shape)
+        self.tone[sel] = np.clip(t[sel], 0, 5)
+        if isinstance(fam, str):
+            self.fam[sel] = self.fi(fam)
+        else:
+            for f in np.unique(fam[sel]):
+                s2 = sel & (fam == f)
+                self.fam[s2] = self.fi(str(f))
+        self.z[sel] = z
+
+    def step(self, mask, dt, lo=0, hi=5):
+        sel = mask & (self.tone >= 0)
+        self.tone[sel] = np.clip(self.tone[sel] + dt, lo, hi)
+
+    def tidy(self, mc=2):
+        """No lone pixels: a tone patch smaller than mc takes its commonest neighbour."""
+        solid = self.tone >= 0
+        for _ in range(2):
+            for f in np.unique(self.fam[solid]):
+                part = solid & (self.fam == f)
+                for tv in np.unique(self.tone[part]):
+                    sel = part & (self.tone == tv)
+                    lab, n = ndi.label(sel)
+                    if not n:
+                        continue
+                    sizes = ndi.sum(sel, lab, range(1, n + 1))
+                    for k, sz in enumerate(sizes, 1):
+                        if sz >= mc:
+                            continue
+                        blob = lab == k
+                        ring = ndi.binary_dilation(blob) & ~blob & part
+                        if ring.any():
+                            v, c = np.unique(self.tone[ring], return_counts=True)
+                            self.tone[blob] = v[c.argmax()]
+
+    def image(self, outline=True):
+        H, W = self.h, self.w
+        out = np.zeros((H, W, 4), np.uint8)
+        solid = self.tone >= 0
+        for y, x in zip(*np.nonzero(solid)):
+            out[y, x, :3] = pk.rgb(self.fams[self.fam[y, x]], int(self.tone[y, x]))
+            out[y, x, 3] = 255
+        if outline:
+            ring = ndi.binary_dilation(solid, ndi.generate_binary_structure(2, 1)) & ~solid
+            for y, x in zip(*np.nonzero(ring)):
+                best = None
+                for dx, dy, lit in ((0, 1, True), (1, 0, True), (-1, 0, False), (0, -1, False)):
+                    yy, xx = y + dy, x + dx
+                    if 0 <= yy < H and 0 <= xx < W and solid[yy, xx]:
+                        best = (yy, xx, lit)
+                        break
+                yy, xx, lit = best
+                f = self.fams[self.fam[yy, xx]]
+                out[y, x, :3] = pk.rgb(f, 1) if (lit and self.tone[yy, xx] >= 4) else pk.rgb(f, 6)
+                out[y, x, 3] = 255
+        return out
+
+
+def _lambert(nx, ny, nz):
+    """Light on a normal (east, south, up) from the house light: -1 .. 1."""
+    lx, ly, lz = LIGHT3
+    return nx * lx + ny * ly + nz * lz
+
+
+def _bark_fam(t):
+    """Bark in three hues: warm where lit, the body, cool in shade (hue-shifted ramps)."""
+    return np.where(t >= 4, 'timber_warm', np.where(t <= 1, 'timber_cool', 'timber'))
+
+
+def _moss(F, cx, cy, r, z, rng, s):
+    """A moss cushion: a dome of short leaf clusters, lit cap upper left, a dark tuck under it."""
+    Y, X = np.mgrid[0:F.h, 0:F.w]
+    ang = np.arctan2(Y - cy, X - cx)
+    rr = r * (1 + 0.16 * np.sin(5 * ang + rng.uniform(0, 6)) + 0.08 * np.sin(9 * ang + rng.uniform(0, 6)))
+    dx, dy = (X - cx) / rr, (Y - cy) / (rr * 0.8)
+    m = dx * dx + dy * dy <= 1.0
+    if not m.any():
+        return m
+    nz = np.sqrt(np.clip(1 - dx * dx - dy * dy, 0, 1))
+    I = _lambert(dx, dy * 0.6, nz)
+    t = np.clip(np.round(1.6 + I * 2.6), 1, 5).astype(int)
+    # leaf-scale clusters: a lit tip in each small clump
+    q = max(2, int(round(0.9 * s)))
+    cl = ((X // q + (Y // q) * 3 + int(rng.integers(0, 5))) % 4 == 0) & (t >= 3)
+    t = np.where(cl, np.minimum(5, t + 1), t)
+    F.put(m, np.where(t >= 4, 'leaf_warm', 'leaf'), t, z)
+    tuck = ndi.binary_dilation(m, iterations=1) & ~m & (np.roll(m, 2, axis=0) | np.roll(m, 1, axis=0)) & (F.tone >= 0)
+    F.step(tuck & (F.z < z), -2, lo=0)
+    return m
+
+
+def stump_hd(d, seed=61):
+    """The woodland stump (21 x 16 world px) at density 3 and up: a cut top lit as a plane (rings,
+    a dark heart, radial checks, a pale sapwood band and the bark's rim showing its thickness), a
+    bark cylinder lit on the left with its core shadow right of centre and a faint bounce at the
+    right edge, furrowed plates that wrap round the form, roots flaring out with lit tops and
+    shaded undersides, a moss cushion at the shaded foot and ambient occlusion where it meets
+    the ground."""
+    s = d
+    rng = np.random.default_rng(seed)
+    R, ry, ht = 7.6 * s, 2.9 * s, 8.6 * s           # body radius, top ellipse half height, side height
+    W, Hh = int(round(2 * R + 13 * s)), int(round(ht + 2 * ry + 4.5 * s))
+    F = _Form(Hh, W)
+    cx = W / 2.0
+    base = Hh - 1.6 * s                              # the centre of the base ellipse
+    top = base - ht
+    Y, X = np.mgrid[0:Hh, 0:W] + 0.5
+    # the side: a cylinder flaring over its lowest 3 world px
+    hgt = np.clip((base - Y) / ht, -0.5, 1.5)
+    flare = 1.0 + 0.2 * np.clip(1 - (base - Y) / (3.2 * s), 0, 1) ** 2
+    r = R * flare
+    u = (X - cx) / r
+    inside = np.abs(u) <= 1
+    arc = ry * np.sqrt(np.clip(1 - u * u, 0, 1))
+    h_on = base + arc - Y                            # height on the surface above the ground line
+    side = inside & (h_on >= 0) & (h_on <= ht + arc)
+    nzs = np.sqrt(np.clip(1 - u * u, 0, 1))
+    I = _lambert(u, nzs, 0.12)
+    t = 2.8 + 2.6 * I
+    t = t + np.where(u > 0.82, 0.6, 0)               # bounce light on the far right rim
+    # furrows: grooves at fixed angles that wrap with the cylinder (narrow towards the rims)
+    phis = np.sort(rng.uniform(-1.45, 1.45, 9))
+    ang = np.arcsin(np.clip(u, -1, 1))
+    groove = np.zeros_like(side)
+    core = np.zeros_like(side)
+    litwall = np.zeros_like(side)
+    for k, ph in enumerate(phis):
+        wob = 0.05 * np.sin(h_on / (1.7 * s) + k * 1.7)
+        dist = (ang - ph - wob) * r
+        hw = 0.28 * s * np.cos(ph) + 0.3
+        top_k = ht * rng.uniform(0.55, 1.0)
+        run = side & (h_on < top_k + arc)
+        groove |= run & (np.abs(dist) < hw)
+        core |= run & (np.abs(dist) < 0.5)
+        litwall |= run & (dist >= hw) & (dist < hw + 1.2)
+    # plate breaks: short horizontal checks between furrows
+    breaks = np.zeros_like(side)
+    for _ in range(7):
+        ph = rng.uniform(-1.2, 1.2)
+        hh = rng.uniform(0.18, 0.8) * ht
+        breaks |= side & (np.abs(ang - ph) < 0.22) & (np.abs(h_on - arc - hh) < 0.5)
+    t = t - 1.2 * groove - 1.0 * core + 0.9 * (litwall & ~groove) - 1.0 * breaks
+    t = t - np.where(h_on < 0.9 * s, 1.0, 0) - np.where(h_on < 0.45 * s, 0.6, 0)   # occlusion at the foot
+    # in the core shadow the furrows read as dark seams between the plates
+    seam = (np.round(ang * r / max(2.0, 0.9 * s)) % 3 == 0) & (np.round(h_on) % 5 != 0)
+    t = np.where((t < 1.6) & seam, 0, t)
+    ts = np.clip(np.round(t), 0, 5).astype(int)
+    F.put(side, _bark_fam(ts), ts, z=1)
+    # roots: lobes that leave the base and taper into the ground, lit on top, dark below
+    for (sx, ln, dy0, rw) in ((-1, 3.4, 0.2, 2.3), (1, 3.0, 0.0, 2.1), (-0.35, 2.0, 1.0, 1.7), (0.55, 2.2, 0.9, 1.6)):
+        x0 = cx + sx * R * 0.92 if abs(sx) == 1 else cx + sx * R
+        y0 = base + dy0 * s + (0.6 * s if abs(sx) < 1 else -0.6 * s)
+        x1 = x0 + np.sign(sx) * ln * s
+        y1 = y0 + 0.9 * s + 0.6 * s * (abs(sx) < 1)
+        tt = np.clip(((X - x0) * (x1 - x0) + (Y - y0) * (y1 - y0)) / ((x1 - x0) ** 2 + (y1 - y0) ** 2), 0, 1)
+        px, py = x0 + tt * (x1 - x0), y0 + tt * (y1 - y0)
+        rad = rw * s * (1 - 0.6 * tt ** 1.5) + 0.4
+        dd = np.hypot(X - px, (Y - py) * 1.25)
+        m = dd <= rad
+        v = np.clip((Y - py) / np.maximum(rad, 1e-3), -1, 1)   # -1 top .. 1 underside
+        It = _lambert(np.sign(sx) * 0.25 * tt, 0.3 * v, np.sqrt(np.clip(1 - v * v, 0, 1)) * (v < 0.3))
+        tr = np.clip(np.round(2.2 + 2.3 * It - 1.2 * (v > 0.45) - 0.9 * (sx > 0)), 0, 5).astype(int)   # east roots in the stump's shade
+        F.put(m & (F.z < 1.5), _bark_fam(tr), tr, z=0.8 + 0.1 * (abs(sx) < 1))
+    # the cut top: a lit plane, rings round a dark heart, checks, the sapwood and the bark rim
+    tcx, tcy = cx - 0.15 * s, top
+    du, dv = (X - tcx) / R, (Y - tcy) / ry
+    rho = np.sqrt(du * du + dv * dv)
+    topm = rho <= 1.0
+    th = np.arctan2(dv, du)
+    rho_w = rho * (1 + 0.035 * np.sin(3 * th + 1.1) + 0.02 * np.sin(7 * th))
+    # a weathered top domes a little: lit to the upper left, a tone down to the lower right
+    tt = 4.0 + 0.7 * np.clip(-(du + dv * 0.5), 0, 1) - 1.3 * np.clip(du + dv * 0.5, 0, 1)
+    rings = np.zeros_like(topm)
+    for rk in (0.2, 0.36, 0.5, 0.63, 0.74):
+        rings |= np.abs(rho_w - rk) < 0.04 + 0.6 / R
+    tt = tt - 1.6 * rings
+    tt = np.where(rho_w < 0.1, 2.0, tt)                                     # the heart
+    sap = (rho_w > 0.8) & (rho_w <= 0.87)
+    tt = np.where(sap, 5.0, tt)
+    checks = np.zeros_like(topm)
+    for a0 in (rng.uniform(-0.6, 0.0), rng.uniform(2.2, 2.8), rng.uniform(0.8, 1.4)):
+        checks |= (np.abs(np.angle(np.exp(1j * (th - a0)))) < 0.05 + 0.4 / (rho * R + 1)) & (rho_w > 0.12) & (rho_w < 0.78)
+    tt = tt - 1.6 * checks
+    ttop = np.clip(np.round(tt), 1, 5).astype(int)
+    famt = np.where(ttop >= 5, 'plaster', np.where(ttop <= 1, 'plaster_cool', 'plaster_warm'))
+    F.put(topm & (rho_w <= 0.87), famt, ttop, z=3)
+    bark_rim = topm & (rho_w > 0.87)
+    rim_t = np.where(dv < 0, 4, np.where(du < -0.2, 3, 2))                  # the back rim lit, the near rim in shade
+    F.put(bark_rim, _bark_fam(rim_t), rim_t, z=3)
+    # moss: a cushion at the damp west foot and a smaller one on the east root
+    _moss(F, cx - 0.6 * R, base + 0.3 * s, 2.2 * s, 2.5, rng, s)
+    _moss(F, cx + 0.95 * R + 1.6 * s, base + 0.9 * s, 1.2 * s, 2.5, rng, s)
+    F.tidy(2)
+    return _finish(F.image())
+
+
+def log_hd(d, length=54, thick=15, seed=71):
+    """The woodland's fallen log (length x thick/2 world px) at density 3 and up: a bark cylinder
+    lying east-west, lit along its upper back, its core shadow on the near flank, a bounce of
+    light under it and occlusion at the ground; furrowed plates running along it with lit lips,
+    a knot and a branch stub; the sawn end facing west and lit (rings, checks, sapwood, the bark's
+    thickness round it); the east end broken off in splinters; moss in cushions along the top
+    with drips down the flank; a bracket fungus in two shelves on the shaded side."""
+    s = d
+    rng = np.random.default_rng(seed)
+    Lw, Dm = length * s, thick * s                   # the log's length and its drawn depth (world px)
+    R = Dm / 2.0
+    W, Hh = int(round(Lw + 6 * s)), int(round(Dm + 5 * s))
+    F = _Form(Hh, W)
+    x0, x1 = 3.0 * s, 3.0 * s + Lw                   # west and east ends
+    cy = Hh - 2.2 * s - R                            # the axis on screen
+    Y, X = np.mgrid[0:Hh, 0:W] + 0.5
+    yn = (Y - cy) / R                                # -1 top edge .. 1 bottom edge
+    th = np.radians(45) + np.arcsin(np.clip(yn, -1, 1))     # the surface angle: 0 straight up, 90 facing south
+    # the east end broken off in 3 to 5 splinters (#288 second review S1: four equal symmetric
+    # cones read as stakes): bands of unequal width, each splinter's point off its centre so it
+    # leans, lengths from stubby to long, and the roots at different depths so the break has a
+    # hollow among them
+    ns = int(rng.integers(3, 6))
+    bands = np.concatenate([[0.0], np.cumsum(rng.dirichlet(np.full(ns, 1.6)))])
+    bands[-1] = 1.0
+    lens = rng.permutation(np.linspace(1.0, 5.6, ns) * rng.uniform(0.85, 1.15, ns)) * s
+    pkv = rng.uniform(0.2, 0.8, ns)                     # where along its band each point sits
+    root = rng.uniform(-1.4, 0.4, ns) * s                # the depth each splinter breaks from
+    vv = np.clip((Y - (cy - R)) / (2 * R), 0, 1)
+    bi = np.clip(np.searchsorted(bands, vv, side='right') - 1, 0, ns - 1)
+    b0, b1 = bands[bi], bands[np.minimum(bi + 1, ns)]
+    fr_ = (vv - b0) / np.maximum(1e-3, b1 - b0)
+    pkb = pkv[bi]
+    tip = np.where(fr_ < pkb, fr_ / pkb, (1 - fr_) / (1 - pkb))         # 0 at a splinter's sides, 1 at its point
+    upper = fr_ < pkb                                                    # its upper facet (towards the light)
+    jag = x1 - 2.4 * s + root[bi] + lens[bi] * np.clip(tip, 0, 1) ** 0.7
+    body = (np.abs(yn) <= 1) & (X >= x0) & (X <= jag)
+    I = _lambert(-0.12 * (X - (x0 + x1) / 2) / Lw, np.sin(th), np.cos(th))
+    t = 2.3 + 2.4 * I
+    t = t + np.where((yn > 0.62) & (yn < 0.84), 0.7, 0)                  # bounce light under the flank
+    t = t - np.where(yn > 0.9, 1.0, 0)                                  # occlusion on the ground
+    t = t + np.where((yn > 0.86) & (np.sin(X / (1.9 * s)) + 0.6 * np.sin(X / (0.8 * s) + 1.0) > 0.7), 0.8, 0)  # bark lumps catch the bounce
+    # bark: furrows along the log, wavy, broken into plates; the lip below each lit
+    groove = np.zeros_like(body)
+    core = np.zeros_like(body)
+    lip = np.zeros_like(body)
+    for k, a in enumerate(np.linspace(-0.75, 0.82, 6)):
+        wv = 0.05 * np.sin(X / (6.0 * s) + k * 1.3) + 0.03 * np.sin(X / (2.1 * s) + k)
+        dd = (yn - a - wv) * R                                    # texels from the furrow's line
+        cut = np.sin(X / (rng.uniform(2.4, 3.6) * s) + rng.uniform(0, 6)) > -0.55
+        groove |= body & cut & (np.abs(dd) < 1.0)
+        core |= body & cut & (np.abs(dd) < 0.5)
+        lip |= body & cut & (dd >= 1.0) & (dd < 2.2)
+    t = t - 1.2 * groove - 1.2 * core + 0.8 * (lip & ~groove)
+    # the plates between the furrows vary a little in tone (weathered and fresh bark), long and thin
+    pn = ndi.gaussian_filter(rng.random((Hh, W)), (0.5 * s, 2.2 * s))
+    pn = (pn - pn.mean()) / max(1e-6, pn.std())
+    t = t + 0.55 * np.clip(pn, -1.5, 1.5) * ~groove
+    # in the core shadow the furrows read as dark seams between the plates
+    seam = (np.round(Y + 0.6 * np.sin(X / (2.3 * s))) % 3 == 0) & (np.sin(X / (1.7 * s) + Y) > -0.6)
+    t = np.where((t < 1.6) & seam & (yn < 0.9), 0, t)
+    # a knot (a ring with a dark heart) and a branch stub with a pale cut end
+    kx, ky = x0 + 0.62 * Lw, cy + 0.25 * R
+    kd = np.hypot((X - kx) / (1.6 * s), (Y - ky) / (1.15 * s))
+    t = np.where(body & (kd < 1.0), np.where(kd < 0.45, 0.5, np.where(kd < 0.75, 3.6, 1.6)), t)
+    ts = np.clip(np.round(t), 0, 5).astype(int)
+    F.put(body, _bark_fam(ts), ts, z=1)
+    # a broken branch stub rising from the top: a short cylinder lit on its left, its torn end pale
+    sx_, sw_, sh_ = x0 + 0.37 * Lw, 1.3 * s, 3.2 * s
+    sbase = cy - 0.72 * R
+    us = (X - sx_) / sw_
+    stub = (np.abs(us) <= 1) & (Y <= sbase) & (Y >= sbase - sh_)
+    tsb = np.clip(np.round(2.6 + 2.4 * _lambert(us, np.sqrt(np.clip(1 - us * us, 0, 1)), 0.1)), 1, 5).astype(int)
+    F.put(stub, _bark_fam(tsb), tsb, z=2)
+    sc = ((X - sx_) / sw_) ** 2 + ((Y - (sbase - sh_)) / (0.6 * s)) ** 2 <= 1
+    F.put(sc, 'plaster_warm', np.where(X < sx_, 4, 3), z=2.2)
+    F.step(body & (np.abs(X - sx_ - 0.6 * s) < 1.4 * s) & (Y > sbase) & (Y < sbase + 1.0 * s) & (F.z < 2), -1)
+    # the sawn end facing west: lit, rings round a dark heart, checks, sapwood, the bark rim
+    ex, erx = x0, 0.42 * R
+    eu, ev = (X - ex) / erx, (Y - cy) / R
+    er = np.sqrt(eu * eu + ev * ev)
+    endm = er <= 1.0
+    eth = np.arctan2(ev, eu)
+    erw = er * (1 + 0.04 * np.sin(3 * eth + 0.4))
+    # the face a tone lighter than the bark, lit to the upper left; three rings, a dark heart and
+    # one check crack (#288 review S1)
+    te = np.full(endm.shape, 4.0) - 0.8 * np.clip(ev, 0, 1) + 0.5 * np.clip(-ev - 0.3, 0, 1)
+    for rk in (0.3, 0.55, 0.76):
+        te = te - 1.0 * (np.abs(erw - rk) < 0.06 + 0.7 / R)
+    te = np.where(erw < 0.13, 2.0, te)
+    te = np.where((erw > 0.84) & (erw <= 0.88), 5.0, te)
+    te = te - 1.6 * ((np.abs(np.angle(np.exp(1j * (eth - 0.7)))) < 0.08 + 0.6 / (er * R + 1)) & (erw > 0.15) & (erw < 0.82))
+    tend = np.clip(np.round(te), 1, 5).astype(int)
+    F.put(endm & (erw <= 0.88), np.where(tend >= 5, 'plaster', np.where(tend <= 2, 'plaster_cool', 'plaster_warm')), tend, z=3)
+    rimt = np.where(ev < -0.2, 4, np.where(ev < 0.5, 3, 2))
+    F.put(endm & (erw > 0.88), _bark_fam(rimt), rimt, z=3)
+    # the broken east end: each splinter's pale wood in shade, its upper facet lit, its lower side
+    # dark, a dark hollow at the root of the break
+    # the splinters keep their bark on the outside; the torn wood shows only on the break face, a
+    # strip just inside each splinter's edge (lit on its upper facet, shaded on its lower), and
+    # where two splinters part the break goes dark into a hollow
+    rx_ = x1 - 2.4 * s + root[bi]                                       # this splinter's root
+    face_w = (0.7 + 0.6 * (1 - tip)) * s
+    spl = body & (X > jag - face_w) & (X > rx_ - 0.6 * s) & (F.z <= 1)
+    tsp = np.where(upper, 3, 2)
+    tsp = np.where(X >= jag - 0.9, tsp - 1, tsp)                         # the torn tip edge
+    tsp = np.where((tip < 0.3) & (X < rx_ + 1.2 * s), 0, tsp)          # the hollow where splinters part
+    F.put(spl, np.where(tsp >= 3, 'plaster_warm', 'plaster'), tsp, z=1.2)
+    # moss: one mantle along the top, uneven in width, draping over the near flank in two or
+    # three rounded lobes; leaf clusters lit on top, a dark tuck where it overhangs (no stems)
+    th_ = (0.9 + 0.8 * np.sin(X / (5.3 * s) + rng.uniform(0, 6)) + 0.5 * np.sin(X / (2.1 * s) + rng.uniform(0, 6))) * s
+    xa_, xb_ = x0 + 0.12 * Lw, x0 + 0.9 * Lw
+    edge_ = np.clip(np.minimum(X - xa_, xb_ - X) / (2.5 * s), 0, 1)
+    hump = (0.5 + 0.45 * np.sin(X / (1.7 * s) + rng.uniform(0, 6)) + 0.3 * np.sin(X / (0.9 * s))) * s   # a cushioned top
+    mant = (Y >= cy - R - hump * edge_) & (Y <= cy - R + 0.6 * s + th_ * edge_) & (X >= xa_) & (X <= xb_) & (edge_ > 0)
+    for _ in range(int(rng.integers(2, 4))):
+        dxp = rng.uniform(xa_ + 2 * s, xb_ - 2 * s)
+        mant |= (((X - dxp) / (1.6 * s)) ** 2 + ((Y - (cy - R + 1.8 * s)) / (2.2 * s)) ** 2 <= 1) & (Y >= cy - R)
+    mant = ndi.binary_opening(mant, iterations=1)
+    dmy = np.zeros_like(mant)
+    dmy[1:] = mant[:-1]
+    top_ = mant & ~np.roll(mant, 2, axis=0)
+    low_ = mant & ~np.roll(mant, -2, axis=0)
+    q = max(2, int(round(0.9 * s)))
+    cn = ndi.gaussian_filter(rng.random(mant.shape), 0.8 * s)
+    clump = cn > np.percentile(cn, 70)                                    # leaf clusters, not a grid
+    tm = np.where(top_, 4, np.where(low_, 2, 3)) + (clump & ~low_ & ~top_)
+    tm = np.where(X > x0 + 0.8 * Lw, tm - 1, tm)
+    F.put(mant, np.where(tm >= 4, 'leaf_warm', 'leaf'), tm, z=3.5)
+    tuck = ndi.binary_dilation(mant, iterations=1) & ~mant & (Y > cy - R) & body
+    F.step(tuck & (F.z < 3.5), -2, lo=0)
+    # a bracket fungus in two shelves on the shaded flank: each a half disc standing out from the
+    # bark, its top lit with growth bands, a dark rim of thickness under it and its shade below
+    for (fx, fy, fw) in ((x0 + 0.22 * Lw, cy + 0.42 * R, 2.6 * s), (x0 + 0.22 * Lw + 2.4 * s, cy + 0.68 * R, 2.0 * s)):
+        e = ((X - fx) / fw) ** 2 + ((Y - fy) / (1.1 * s)) ** 2
+        sh = (e <= 1) & (Y >= fy - 0.2 * s)
+        band = np.where(e > 0.55, 3, 4) - (X > fx + 0.45 * fw)
+        F.put(sh, np.where(band >= 4, 'plaster_warm', 'plaster'), band, z=4)
+        rim = ndi.binary_dilation(sh, iterations=1) & ~sh & (Y > fy + 0.5 * s)
+        F.put(rim, 'clay' if 'clay' in pk.RAMPS else 'plaster_cool', 1, z=4)
+        shade = ndi.binary_dilation(sh, iterations=int(round(1.1 * s))) & ~sh & ~rim & (Y > fy + 0.9 * s) & body
+        F.step(shade & (F.z < 4), -1)
+    F.tidy(2)
+    return _finish(F.image())

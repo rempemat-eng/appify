@@ -1,0 +1,248 @@
+{
+  "drover": {
+    "name": "Drover",
+    "entries": [
+      {
+        "if": {
+          "done": [
+            "a1_the_road_west"
+          ]
+        },
+        "lines": [
+          "West again when the grass says so. A drover who stops is just a man standing in a field, but I'm learning.",
+          "My niece wants to take our fleece down to your town. She has a loom and a great many opinions."
+        ]
+      },
+      {
+        "if": {
+          "step": [
+            "a1_the_road_west",
+            "iona"
+          ]
+        },
+        "lines": [
+          "The old ram's down? Then we're whole. Go and tell Iona at the gap. She won't leave it to come and find you."
+        ]
+      },
+      {
+        "if": {
+          "active": [
+            "a1_the_road_west"
+          ]
+        },
+        "lines": [
+          "The old ram's still up on the Heather spur, the one with the horns like a pair of handlebars.",
+          "Bring him down and we're whole. Iona's at the gap. She's been watching that road for me since the storm."
+        ]
+      },
+      {
+        "if": {
+          "done": [
+            "a1_the_cut_rope"
+          ],
+          "not_started": [
+            "a1_the_road_west"
+          ]
+        },
+        "lines": [
+          "Old Fang's lying quiet in the barrow? And the well's got its bucket back? Then the moor's ours again.",
+          "Only the old ram's still out. Free him and I can take the road west."
+        ]
+      },
+      {
+        "if": {
+          "active": [
+            "a1_the_cut_rope"
+          ]
+        },
+        "lines": [
+          "Old Fang. Biggest wolf on the moor. He used to follow the flock at a polite distance. Now he's not polite."
+        ]
+      },
+      {
+        "if": {
+          "step": [
+            "a1_the_scattered_flock",
+            "drover"
+          ]
+        },
+        "lines": [
+          "Forty-two. Forty-two, all counted. You're a good drover, for someone with no crook.",
+          "But the drove well's rope is cut through and the bucket's gone. Something dragged it off toward the barrow.",
+          "Take a look at the well. Whatever's in that barrow, it's where the light came down."
+        ]
+      },
+      {
+        "if": {
+          "active": [
+            "a1_the_scattered_flock"
+          ]
+        },
+        "lines": [
+          "The flock's in the thicket by the gap. Shardstruck, all of them. Go gently. They're my sheep."
+        ]
+      },
+      {
+        "lines": [
+          "The night of the starfall the whole flock went wild and ran into the thicket by the gap.",
+          "I can't take the road west without them. Free them for me? I'll owe you a fleece."
+        ]
+      }
+    ]
+  },
+  "shepherd": {
+    "name": "Shepherd",
+    "entries": [
+      {
+        "if": {
+          "done": [
+            "a1_the_shepherds_dog"
+          ]
+        },
+        "lines": [
+          "He's asleep in front of the hut with his paws in the air. Best dog on the moor, again."
+        ]
+      },
+      {
+        "if": {
+          "step": [
+            "a1_the_shepherds_dog",
+            "home"
+          ]
+        },
+        "lines": [
+          "Tell me straight. Is he all right?"
+        ]
+      },
+      {
+        "if": {
+          "active": [
+            "a1_the_shepherds_dog"
+          ]
+        },
+        "lines": [
+          "He runs the road above the gap, up and back. He doesn't know me. Bring him back to himself."
+        ]
+      },
+      {
+        "lines": [
+          "My dog went with the light the night of the storm. He's up on the road, running and running."
+        ]
+      }
+    ]
+  },
+  "iona": {
+    "name": "Iona",
+    "entries": [
+      {
+        "if": {
+          "done": [
+            "a1_the_road_west"
+          ]
+        },
+        "lines": [
+          "Point me at the next storm. I've had my fill of this one."
+        ]
+      },
+      {
+        "if": {
+          "step": [
+            "a1_the_road_west",
+            "iona"
+          ]
+        },
+        "lines": [
+          "The ram's down? Then the drover's whole, and I'm a lancer with no road to watch.",
+          "I came down off the tops when the sky cracked and held the gap so nothing went for the valley.",
+          "If you're going after the rest of that light, you'll want someone who can hold a line. Let me come."
+        ]
+      },
+      {
+        "if": {
+          "active": [
+            "a1_the_scattered_flock"
+          ]
+        },
+        "lines": [
+          "I'm holding the gap. You free the flock. Then we both get to sit down."
+        ]
+      },
+      {
+        "lines": [
+          "Iona. I mind this gap. Sheep, wolves and weather all get asked their business."
+        ]
+      }
+    ]
+  },
+  "drove_well": {
+    "name": "Drove well",
+    "entries": [
+      {
+        "if": {
+          "done": [
+            "a1_the_cut_rope"
+          ]
+        },
+        "lines": [
+          "The bucket's back on a new rope. The water tastes of peat and stone."
+        ]
+      },
+      {
+        "if": {
+          "step": [
+            "a1_the_cut_rope",
+            "well"
+          ]
+        },
+        "lines": [
+          "The rope's been bitten through. Paw prints, big ones, lead off across the heather toward the Fold spur's barrow."
+        ]
+      },
+      {
+        "lines": [
+          "An old stone well where the drove road stops to drink."
+        ]
+      }
+    ]
+  },
+  "barrow_shard": {
+    "name": "Great shard",
+    "entries": [
+      {
+        "if": {
+          "flags": [
+            "shard_home:brackens"
+          ]
+        },
+        "lines": [
+          "The hearth is cold and dark. The shard is home."
+        ]
+      },
+      {
+        "if": {
+          "flags": [
+            "shard_taken:brackens"
+          ]
+        },
+        "lines": [
+          "The hearth is cold and dark where the shard lay."
+        ]
+      },
+      {
+        "lines": [
+          "The great shard sits in the barrow's old hearth like a coal. The well's bucket lies beside it, chewed."
+        ]
+      }
+    ]
+  },
+  "hermit": {
+    "name": "Hermit",
+    "entries": [
+      {
+        "lines": [
+          "Stars falling, wolves howling, folk running about with lanterns. Busiest week I've had in forty years."
+        ]
+      }
+    ]
+  }
+}
