@@ -4,6 +4,127 @@ extends GdUnitTestSuite
 const Tool := preload("res://tools/kit_zone.gd")
 const LAB := "res://kit/zones/kitlab.json"
 
+func _literal_gameplay_source(suffix: String) -> String:
+	var source := Node2D.new()
+	var actors := Node2D.new()
+	actors.name = "Actors"
+	source.add_child(actors)
+	actors.owner = source
+	var actor := Marker2D.new()
+	actor.name = "ProtectedMarker"
+	actor.position = Vector2(10, 20)
+	actors.add_child(actor)
+	actor.owner = source
+	var spawns := Node2D.new()
+	spawns.name = "Spawns"
+	source.add_child(spawns)
+	spawns.owner = source
+	var marker := Marker2D.new()
+	marker.name = "StoredSpawn"
+	marker.position = Vector2(30, 40)
+	marker.set_meta(&"kit_zone_id", "logical/spawn")
+	spawns.add_child(marker)
+	marker.owner = source
+	var doors := Node2D.new()
+	doors.name = "Doors"
+	source.add_child(doors)
+	doors.owner = source
+	var door := Door.new()
+	door.name = "StoredDoor"
+	door.position = Vector2(12, 12)
+	door.target_zone = "woodland"
+	door.set_meta(&"kit_zone_entry", {"id": "logical/door", "rect": [0, 0, 1, 1], "to": "woodland"})
+	doors.add_child(door)
+	door.owner = source
+	var shape := CollisionShape2D.new()
+	shape.name = "Shape"
+	var rectangle := RectangleShape2D.new()
+	rectangle.size = Vector2(24, 24)
+	shape.shape = rectangle
+	door.add_child(shape)
+	shape.owner = source
+	var path := "user://w2_literal_gameplay_%s.tscn" % suffix
+	var packed := PackedScene.new()
+	assert_int(packed.pack(source)).is_equal(OK)
+	assert_int(ResourceSaver.save(packed, path)).is_equal(OK)
+	source.free()
+	return path
+
+func test_literal_spawn_id_cannot_move_an_inherited_actor() -> void:
+	var path := _literal_gameplay_source("actor")
+	var plan := _input_plan()
+	plan["gameplay_from"] = path
+	plan["spawns"] = {"../Actors/ProtectedMarker": [123, 456]}
+	var root := _scene(plan)
+	if root != null:
+		assert_that((root.get_node("Actors/ProtectedMarker") as Marker2D).position).is_equal(Vector2(10, 20))
+		assert_int(root.get_node("Spawns").get_child_count()).is_equal(2)
+		var saved := _persist(root, "literal_actor")
+		if saved != null:
+			assert_that((saved.get_node("Actors/ProtectedMarker") as Marker2D).position).is_equal(Vector2(10, 20))
+			_assert_plan(Tool.plan_from_scene(saved), plan)
+	assert_int(DirAccess.remove_absolute(path)).is_equal(OK)
+
+func test_distinct_logical_ids_survive_node_name_collisions_and_disk_round_trip() -> void:
+	var plan := _input_plan()
+	plan["spawns"] = {}
+	plan["doors"] = []
+	var ids := ["a/b", "a_b", ".", "..", "start:position"]
+	for i in ids.size():
+		plan.spawns[ids[i]] = [12 + i * 2, 24 + i * 3]
+		plan.doors.append({"id": ids[i], "rect": [i, 0, 1, 1], "to": "woodland", "future": {"ordinal": i}})
+	var root := _scene(plan)
+	if root == null:
+		return
+	assert_int(root.get_node("Spawns").get_child_count()).is_equal(ids.size())
+	assert_int(root.get_node("Doors").get_child_count()).is_equal(ids.size())
+	var saved := _persist(root, "colliding_ids")
+	if saved == null:
+		return
+	var exported := Tool.plan_from_scene(saved)
+	_assert_plan(exported, plan)
+	var rebuilt := _scene(exported)
+	if rebuilt != null:
+		var saved_again := _persist(rebuilt, "colliding_ids_again")
+		if saved_again != null:
+			_assert_plan(Tool.plan_from_scene(saved_again), plan)
+
+func test_inherited_logical_ids_are_overridden_without_duplicate_children() -> void:
+	var path := _literal_gameplay_source("override")
+	var plan := _input_plan()
+	plan["gameplay_from"] = path
+	plan["spawns"] = {"logical/spawn": [42, 84]}
+	plan["doors"] = [{"id": "logical/door", "rect": [1, 0, 1, 1], "to": "crossroads"}]
+	var root := _scene(plan)
+	if root != null:
+		assert_int(root.get_node("Spawns").get_child_count()).is_equal(1)
+		assert_int(root.get_node("Doors").get_child_count()).is_equal(1)
+		var saved := _persist(root, "logical_override")
+		if saved != null:
+			_assert_plan(Tool.plan_from_scene(saved), plan)
+	assert_int(DirAccess.remove_absolute(path)).is_equal(OK)
+
+func test_inherited_logical_id_removals_stay_removed_after_disk_and_rebuild() -> void:
+	var path := _literal_gameplay_source("removed")
+	var plan := _input_plan()
+	plan["gameplay_from"] = path
+	plan["spawns"] = {"explicit": [12, 24]}
+	plan["gameplay_removed"] = {"Spawns": ["logical/spawn"], "Doors": ["logical/door"]}
+	var root := _scene(plan)
+	if root != null:
+		assert_int(root.get_node("Spawns").get_child_count()).is_equal(1)
+		assert_int(root.get_node("Doors").get_child_count()).is_equal(0)
+		var saved := _persist(root, "logical_removed")
+		if saved != null:
+			var exported := Tool.plan_from_scene(saved)
+			_assert_plan(exported, plan)
+			var rebuilt := _scene(exported)
+			if rebuilt != null:
+				assert_int(rebuilt.get_node("Spawns").get_child_count()).is_equal(1)
+				assert_int(rebuilt.get_node("Doors").get_child_count()).is_equal(0)
+				_assert_plan(Tool.plan_from_scene(rebuilt), plan)
+	assert_int(DirAccess.remove_absolute(path)).is_equal(OK)
+
 func _fixture() -> Dictionary:
 	return {
 		"zone": "w2_fixture",
