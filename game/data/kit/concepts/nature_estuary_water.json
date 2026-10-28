@@ -1,0 +1,100 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "nature_estuary_water",
+  "name": "Estuary, brackish channel and sheltered lagoon water",
+  "kind": "water",
+  "biomes": [
+    "coast",
+    "delta",
+    "gullwick",
+    "lull",
+    "neon_harbour",
+    "tidebloom",
+    "valley"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "silty_estuary",
+      "note": "Muted brown-green shallows at the river mouth, deepening into a dark downstream channel with silt banks and directional ripples."
+    },
+    {
+      "id": "sheltered_lagoon",
+      "note": "Quiet turquoise lagoon shallows around a darker sheltered basin, with gentle reflections and a clear breach to the sea."
+    },
+    {
+      "id": "reed_backwater",
+      "note": "Still dark pocket behind an anchored reed margin; broad reflected sky patches replace directional channel ripples."
+    },
+    {
+      "id": "reed_channel",
+      "note": "Narrow brackish channel between rooted reed banks, with a visible flowing centre and dark wet soil at the reed feet."
+    },
+    {
+      "id": "ria_mix",
+      "note": "River-to-sea mixing reach with a broadening channel and gradual silt-to-marine colour change; preserve its declared network source and outlet."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 catalogue proposal for Claude review; not drawable approval, not placeable."
+  },
+  "geometry": {
+    "z_sort": "ground"
+  },
+  "placement": {
+    "role": "water",
+    "ground": {
+      "allow": [
+        "water"
+      ],
+      "deny": []
+    },
+    "requires": [
+      {
+        "rel": "within",
+        "what": "connected_water_network",
+        "note": "Proposed W5 selector: the connected reach has declared upstream source and coastal outlet. Each channel cell need not lie next to the sea."
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "route_without_deck"
+      }
+    ],
+    "clearance": 0,
+    "orientations": [
+      "any"
+    ],
+    "snap": "cell",
+    "composition": "free",
+    "stages": []
+  },
+  "rendering": {
+    "contact_ao": false
+  },
+  "function": {},
+  "story": {
+    "lore": "Connect river mouths, Driftwood cove and Lagoon Landing to the sea without a sudden colour cut."
+  },
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared. Reusable across the listed places; preserve site-specific assembly and state.",
+      "Priority: P2.",
+      "Purpose: Connect river mouths, Driftwood cove and Lagoon Landing to the sea without a sudden colour cut.",
+      "Visual brief: Muted silt or turquoise shallows over a dark shared sea body; deeper channels stay directional, with mud or sand banks and anchored reeds on the landward side. Reflect boats and quay shadows in finite local shapes.",
+      "Source: docs/vision/regions/tidebloom-isles.md; docs/vision/regions/valley-plan.md; docs/vision/regions/home-valley-frostline-brackens.md",
+      "Geometry: proposed visual envelope only; Claude supplies exact foot, solid footprint, overhang, interaction anchors and any deck after review.",
+      "Implementation: concept only, outside the live piece library. Do not place, bake or grant gameplay until reviewed and approved.",
+      "Widths: Channel 3-6+ cells; lagoon area; landward reed margins 1-2 cells.",
+      "No tidal navigation gate or new swimming is introduced; traversability follows the authored zone walk mask.",
+      "Lighting: upper-left key light; shade each material and facing for that light. The lit-picture reference is deferred until art exists.",
+      "Regional refinement: Lull/delta/Gullwick/Neon ria use the same estuarine construction, not a separately commissioned water fill. Existing inland water serves the river above the brackish reach.",
+      "Source: docs/vision/regions/neon-harbour-delta.md; former industry_brackish_channel brief consolidated here.",
+      "Widths: 2-cell backwater, 3–5-cell minor arm, 6+ navigable reach; banks and flow preserve connectivity between zones."
+    ]
+  }
+}

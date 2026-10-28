@@ -1,0 +1,102 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "frontier_seal_plate",
+  "name": "Undercroft seal pressure plate",
+  "kind": "prop",
+  "biomes": [
+    "undercroft"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "raised",
+      "note": "Unpressed plate, inlay quiet."
+    },
+    {
+      "id": "charged",
+      "note": "Plate depressed and its short channel lit by the existing puzzle flag."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 design proposal for Claude review; no art, material ID, painter or live placement approval."
+  },
+  "geometry": {
+    "size_cells": [
+      2,
+      2
+    ],
+    "z_sort": "foot"
+  },
+  "placement": {
+    "role": "mechanism",
+    "ground": {
+      "allow": [
+        "stone",
+        "paving"
+      ],
+      "deny": [
+        "water"
+      ]
+    },
+    "requires": [
+      {
+        "rel": "on_anchor",
+        "what": "puzzle_plate"
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "structure_footprint",
+        "note": " Refuse any intersection of the proposed solid footprint with this reserved envelope; final collision comes from approved art."
+      }
+    ],
+    "clearance": 1,
+    "orientations": [
+      "s"
+    ],
+    "snap": "cell",
+    "stages": [
+      "raised",
+      "charged"
+    ],
+    "composition": "axis"
+  },
+  "rendering": {
+    "cast_shadow": {
+      "shape": "sprite"
+    },
+    "contact_ao": true
+  },
+  "function": {
+    "interact": null,
+    "saves": [
+      "undercroft_plate"
+    ]
+  },
+  "story": {
+    "owner": null,
+    "quests": [
+      "under_the_stones"
+    ],
+    "lore": "The existing under_the_stones sequence uses a plate to charge the channel, then a lever to lower the sealed slab. This concept adds no new puzzle step."
+  },
+  "gameplay": {},
+  "audit": {
+    "size_class": "plate",
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared",
+      "Priority: P0",
+      "Purpose: Preserve the existing first step of the two-step seal puzzle as a small readable reusable mechanism.",
+      "Visual brief: A shallow square stone pad with a visible bevel, a darker socket and one moon-glass inlay that aligns with the floor channel; the depressed position shifts the pad itself, not only its colour.",
+      "Widths and size: Source pad 16×16 world px = 48×48 art px; plate class width44–74, visible top/depth envelope30–74 art px; retain the source collision/trigger envelope until scene review.",
+      "Source: game/data/plans/undercroft.json; docs/vision/vertical-slice.md beat 6",
+      "Implement after review: choose authored anchors, exact collision and approved variant art; these cell envelopes are layout proposals, not measured sprite bounds.",
+      "Plate activates by standing on it in the source plan. Do not silently replace that with an interact prompt or an inventory key.",
+      "Lighting: Upper left; material-specific ramps and directional planes; no mirror-only relighting.",
+      "Confirmed current reference: game/world/pressure_plate.gd declares flag=undercroft_plate; game/data/plans/undercroft.json puzzle.plate agrees."
+    ]
+  }
+}

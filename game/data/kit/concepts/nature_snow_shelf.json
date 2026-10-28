@@ -1,0 +1,75 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "nature_snow_shelf",
+  "name": "Settled snow and windpack",
+  "kind": "terrain",
+  "biomes": [
+    "frostline",
+    "massif"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "windpack",
+      "note": "Firm broad snow plane with low wind-compressed drift bands and cool blue-violet shading."
+    },
+    {
+      "id": "sheltered",
+      "note": "Softer snow in a protected hollow, with fuller broad mounds and a few buried rock tips at its edge."
+    },
+    {
+      "id": "trodden_edge",
+      "note": "Compressed darker snow beside an authored path, with broad wear marks that follow the route rather than scatter across the shelf."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 catalogue proposal for Claude review; not drawable approval, not placeable."
+  },
+  "geometry": {
+    "z_sort": "ground"
+  },
+  "placement": {
+    "role": "ground",
+    "ground": {
+      "allow": [
+        "rock",
+        "turf"
+      ],
+      "deny": []
+    },
+    "requires": [],
+    "forbids": [],
+    "clearance": 0,
+    "orientations": [
+      "any"
+    ],
+    "snap": "cell",
+    "composition": "free",
+    "stages": []
+  },
+  "rendering": {
+    "contact_ao": false
+  },
+  "function": {},
+  "story": {
+    "lore": "Fill the Frostline cirque and massif shelves while allowing clear rock and trodden-route boundaries."
+  },
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared. Reusable across the listed places; preserve site-specific assembly and state.",
+      "Priority: P1.",
+      "Purpose: Fill the Frostline cirque and massif shelves while allowing clear rock and trodden-route boundaries.",
+      "Visual brief: Cool blue-violet underside, warm upper-left snow caps, broad compressed drift bands; leave a quiet middle with no glitter grid. Break the rim with irregular whole-cell spurs, then soften only its drawn outline.",
+      "Source: docs/vision/regions/valley-plan.md; docs/vision/regions/home-valley-frostline-brackens.md",
+      "Geometry: proposed visual envelope only; Claude supplies exact foot, solid footprint, overhang, interaction anchors and any deck after review.",
+      "Implementation: concept only, outside the live piece library. Do not place, bake or grant gameplay until reviewed and approved.",
+      "Widths: Area fill; drifts 1-3 cells across with a 2-3-cell route kept clear.",
+      "Schema intake: defer the runtime material ID, palette priority and painter binding until the concept is approved; no runtime block is claimed here.",
+      "Proposed check: snow drifts cannot silently cover a route, doorway apron, tier edge or water outlet; snow is not slippery unless an approved mechanic says so.",
+      "Lighting: upper-left key light; shade each material and facing for that light. The lit-picture reference is deferred until art exists."
+    ]
+  }
+}

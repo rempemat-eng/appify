@@ -1,0 +1,83 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "shared_cracked_moon_sky",
+  "name": "Cracked moon sky layer",
+  "kind": "effect",
+  "version": 1,
+  "approval": {
+    "state": "concept",
+    "note": "W0 proposal for Claude review; no art, placement or shipping approval."
+  },
+  "biomes": [
+    "valley",
+    "frostline",
+    "brackens",
+    "sunstone",
+    "fire_country",
+    "tidebloom",
+    "cogsworth",
+    "lull",
+    "neon"
+  ],
+  "variants": [
+    {
+      "id": "full_crack",
+      "note": "Initial story sky silhouette."
+    },
+    {
+      "id": "mending",
+      "note": "Intermediate crack family, exact state count and event mapping pending approval."
+    },
+    {
+      "id": "mended",
+      "note": "Final state only when the story owner provides it."
+    }
+  ],
+  "geometry": {
+    "z_sort": "ground"
+  },
+  "placement": {
+    "role": "sky_layer",
+    "ground": {
+      "allow": [],
+      "deny": []
+    },
+    "requires": [],
+    "forbids": [],
+    "clearance": 0,
+    "orientations": [
+      "any"
+    ],
+    "snap": "free",
+    "stages": [],
+    "composition": "free"
+  },
+  "rendering": {
+    "contact_ao": false
+  },
+  "function": {
+    "interact": null,
+    "costs": [],
+    "yields": []
+  },
+  "story": {
+    "quests": [],
+    "owner": null,
+    "lore": ""
+  },
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared",
+      "Priority: P1",
+      "Purpose: Let the same distant moon anchor regional skies.",
+      "Visual brief: A consistent moon silhouette and crack geometry with region-specific haze and horizon occlusion; avoid rescaling it per camera or turning it into an interactive prop.",
+      "Size: Sky composition, not a ground-cell piece; angular scale and five proposed crack states need sky-owner approval.",
+      "Source: world-and-cast.md The device in full",
+      "Implement after review: Claude supplies final art, material IDs, anchors, collision and runtime bindings; W0 assigns none.",
+      "Schema dependency: background-layer semantics are not represented by an ordinary ground piece; do not attach collision or TileMap cells.",
+      "Proposal: five crack states in source are an art plan, not new save flags or a current implementation."
+    ]
+  }
+}

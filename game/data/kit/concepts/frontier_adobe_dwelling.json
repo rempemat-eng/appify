@@ -1,0 +1,113 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "frontier_adobe_dwelling",
+  "name": "Sunstone adobe dwelling kit",
+  "kind": "structure",
+  "biomes": [
+    "palm_spring",
+    "dust_gulch",
+    "lode"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "small",
+      "note": "Single-storey household with one doorway."
+    },
+    {
+      "id": "workshop",
+      "note": "Wider shaded opening and a separate work apron."
+    },
+    {
+      "id": "courtyard",
+      "note": "Short walls around a visible open court; no hidden road beneath the house."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 design proposal for Claude review; no art, material ID, painter or live placement approval."
+  },
+  "geometry": {
+    "size_cells": [
+      10,
+      6
+    ],
+    "z_sort": "foot"
+  },
+  "placement": {
+    "role": "structure",
+    "ground": {
+      "allow": [
+        "earth",
+        "sand",
+        "stone"
+      ],
+      "deny": [
+        "water",
+        "lava",
+        "route"
+      ]
+    },
+    "requires": [
+      {
+        "rel": "adjacent",
+        "what": "route",
+        "cells": 2,
+        "note": "The doorway’s apron joins a real route at the same tier."
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "route"
+      },
+      {
+        "rel": "on",
+        "what": "structure_footprint",
+        "note": " Refuse any intersection of the proposed solid footprint with this reserved envelope; final collision comes from approved art."
+      }
+    ],
+    "clearance": 2,
+    "orientations": [
+      "s",
+      "e",
+      "w"
+    ],
+    "snap": "cell",
+    "stages": [],
+    "composition": "row"
+  },
+  "rendering": {
+    "cast_shadow": {
+      "shape": "sprite"
+    },
+    "contact_ao": true
+  },
+  "function": {
+    "interact": {
+      "verb": "enter",
+      "triggers": []
+    }
+  },
+  "story": {
+    "owner": null,
+    "quests": [],
+    "lore": "Reuse walls, deep openings and roofs across the oasis, railhead back plots and mine settlement."
+  },
+  "gameplay": {},
+  "audit": {
+    "size_class": "cottage",
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared",
+      "Priority: P2",
+      "Purpose: Reuse walls, deep openings and roofs across the oasis, railhead back plots and mine settlement.",
+      "Visual brief: Thick warm adobe with inset dark openings, timber lintels and parapet thickness visible from above. A shade awning is attached to posts, not painted flat across the façade.",
+      "Widths and size: Cottage envelope 192–340 art px wide and 200–340 high; single door 33–53 wide, 70–96 high, clear 4×2-cell apron.",
+      "Source: docs/vision/regions/sunstone-basin-fire-country.md §§2,4,5",
+      "Implement after review: choose authored anchors, exact collision and approved variant art; these cell envelopes are layout proposals, not measured sprite bounds.",
+      "Entering requires a zone/spawn supplied by the scene owner; W0 does not invent interiors or residents.",
+      "Lighting: Upper left; material-specific ramps and directional planes; no mirror-only relighting."
+    ]
+  }
+}

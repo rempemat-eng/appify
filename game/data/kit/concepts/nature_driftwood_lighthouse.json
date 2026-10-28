@@ -1,0 +1,103 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "nature_driftwood_lighthouse",
+  "name": "Driftwood lighthouse and lantern room",
+  "kind": "structure",
+  "biomes": [
+    "coast",
+    "valley"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "dark",
+      "note": "Salt-stained pale tower with an unlit copper-and-glass lantern cage; the cage and cap remain readable against the sea."
+    },
+    {
+      "id": "relit",
+      "note": "The same tower and lantern room with light behind its glazing and a separately authored beam emerging from the lantern opening."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 catalogue proposal for Claude review; not drawable approval, not placeable."
+  },
+  "geometry": {
+    "z_sort": "foot"
+  },
+  "placement": {
+    "role": "landmark",
+    "ground": {
+      "allow": [
+        "rock",
+        "stone"
+      ],
+      "deny": []
+    },
+    "requires": [
+      {
+        "rel": "adjacent",
+        "what": "route",
+        "note": "Proposed selector/relation for review; its exact matching contract must be added to W5 before promotion.",
+        "cells": 1
+      },
+      {
+        "rel": "on_anchor",
+        "what": "cliff_anchor",
+        "note": "Proposed selector/relation for review; its exact matching contract must be added to W5 before promotion.",
+        "cells": 0
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "water"
+      },
+      {
+        "rel": "on",
+        "what": "other_footprint"
+      }
+    ],
+    "clearance": 2,
+    "orientations": [
+      "s"
+    ],
+    "snap": "cell",
+    "composition": "edge",
+    "stages": [
+      "dark",
+      "relit"
+    ],
+    "per_zone": {
+      "max": 1
+    }
+  },
+  "rendering": {
+    "contact_ao": true
+  },
+  "function": {
+    "interact": {
+      "verb": "enter",
+      "triggers": []
+    }
+  },
+  "story": {
+    "lore": "The Headland brief names the lighthouse. Velvet as keeper and relighting it are proposed in world-and-cast, not approved mechanics here."
+  },
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: custom. One authored site composition; repeated construction components remain shared.",
+      "Priority: P1.",
+      "Purpose: Make the one harbour light a recognisable threshold landmark and possible Velvet story site.",
+      "Visual brief: Tapered pale masonry tower on a dark rock base, narrow shaded stair recess, copper/glass lantern cage and a capped roof; the beam exits the lantern, not the entire wall. Keep salt staining and block courses at the current adult scale.",
+      "Source: docs/vision/regions/valley-plan.md; docs/vision/regions/home-valley-frostline-brackens.md",
+      "Geometry: proposed visual envelope only; Claude supplies exact foot, solid footprint, overhang, interaction anchors and any deck after review.",
+      "Implementation: concept only, outside the live piece library. Do not place, bake or grant gameplay until reviewed and approved.",
+      "No density-3 lighthouse class exists: review height/storey count using the 96-141-art-px storey and 70-96-art-px door benchmarks before drawing.",
+      "Per-zone maximum: 1; a light beam is a separate bounded effect with reduced-motion treatment.",
+      "Lighting: upper-left key light; shade each material and facing for that light. The lit-picture reference is deferred until art exists."
+    ]
+  }
+}

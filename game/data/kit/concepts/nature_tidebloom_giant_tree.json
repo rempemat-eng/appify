@@ -1,0 +1,95 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "nature_tidebloom_giant_tree",
+  "name": "Tidebloom giant tree landmark",
+  "kind": "structure",
+  "biomes": [
+    "tidebloom"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "day",
+      "note": "Buttressed split trunk on a dry root shelf beneath broad layered canopy masses, with warm upper-left light and a clear lagoon-facing bench pocket."
+    },
+    {
+      "id": "night",
+      "note": "The same trunk, roots and canopy silhouette under restrained cool ambient light; preserve the bench approach without adding an unapproved magical glow."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 catalogue proposal for Claude review; not drawable approval, not placeable."
+  },
+  "geometry": {
+    "z_sort": "foot"
+  },
+  "placement": {
+    "role": "landmark",
+    "ground": {
+      "allow": [
+        "turf",
+        "earth"
+      ],
+      "deny": []
+    },
+    "requires": [
+      {
+        "rel": "facing",
+        "what": "view_anchor",
+        "note": "Proposed selector/relation for review; its exact matching contract must be added to W5 before promotion.",
+        "cells": 0
+      },
+      {
+        "rel": "adjacent",
+        "what": "route_edge",
+        "note": "Proposed selector/relation for review; its exact matching contract must be added to W5 before promotion.",
+        "cells": 2
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "water"
+      },
+      {
+        "rel": "on",
+        "what": "door_apron"
+      }
+    ],
+    "clearance": 2,
+    "orientations": [
+      "any"
+    ],
+    "snap": "cell",
+    "composition": "centre",
+    "stages": [],
+    "per_zone": {
+      "max": 1
+    }
+  },
+  "rendering": {
+    "contact_ao": true
+  },
+  "function": {},
+  "story": {
+    "lore": "The main isle has a giant tree about twenty seconds from the pier in the regional brief; no travel time is encoded by this piece."
+  },
+  "audit": {
+    "size_class": "veteran_tree",
+    "eastward_ref": null,
+    "todo": [
+      "Scope: custom. One authored site composition; repeated construction components remain shared.",
+      "Priority: P2.",
+      "Purpose: Anchor the rainforest's named giant tree and its quiet bench viewpoint.",
+      "Visual brief: Broad buttressed trunk, large canopy masses beyond the screen, hanging lianas and a visible dry root shelf; the bench has a real gap between roots and faces the lagoon view. Distinctive split trunk keeps it recognisable among normal crowns.",
+      "Source: docs/vision/regions/tidebloom-isles.md",
+      "Geometry: proposed visual envelope only; Claude supplies exact foot, solid footprint, overhang, interaction anchors and any deck after review.",
+      "Implementation: concept only, outside the live piece library. Do not place, bake or grant gameplay until reviewed and approved.",
+      "Veteran-tree body target 222-340 art px high and 163-281 wide; any larger scene canopy is authored framing, with its own review rather than silently scaling this class.",
+      "Per-zone maximum: 1; crown/root overhang stays separate from collision and the reachable bench.",
+      "Lighting: upper-left key light; shade each material and facing for that light. The lit-picture reference is deferred until art exists.",
+      "Size-class scope: veteran_tree measures the reviewed tree body. Any separately authored canopy or scene framing has its own extent and must not hide out-of-range body scaling."
+    ]
+  }
+}
