@@ -931,6 +931,18 @@ LANDMARK_FORMS = {'keep', 'watchkeep', 'temple_hall', 'pagoda', 'tower', 'bigtow
 LANDMARK_TYPES = {'keep', 'tower', 'station', 'warehouse', 'hall', 'hangar'}
 
 
+# Published Highgarth semantic corrections (Y15/331). Apply after generic trade selection so
+# public-building cycles still advance; descriptions never select geometry or counting policy.
+FORM_DESCRIPTIONS = {
+    'highgarth': {
+        'temple_hall': {'purpose': 'the temple hall'},
+        'pagoda': {'purpose': 'the five-storey pagoda', 'occupants': 'unassigned; X3 roles and routines deferred'},
+        'bathhouse': {'purpose': 'the hot spring bathhouse'},
+        'watchkeep': {'landmark_reason': "on its stone base behind the tarn: the lord's watch faces the sealed north pass"},
+    },
+}
+
+
 def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
     K = T['K']; c0, r0, w, h = box
     tr = TRADES.get(pid, DEFAULT_TRADES)
@@ -983,6 +995,10 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
             rec = {'id': bid, 'type': u, 'form': b.get('form', u), 'footprint_cells': [b['x'] // CELL, b['y'] // CELL, b['w'] // CELL, b['h'] // CELL],
                    'rect_px': [b['x'], b['y'], b['w'], b['h']], 'faces': b.get('faces'), 'door_cells': b.get('door'), 'purpose': purpose,
                    'occupants': occ, 'district': d['id'], 'counted': bool(b['counted'])}
+            description = FORM_DESCRIPTIONS.get(pid, {}).get(rec['form'], {})
+            for field in ('purpose', 'occupants'):
+                if field in description:
+                    rec[field] = description[field]
             if b.get('plan'):
                 rec['from_zone_plan'] = True
             if b.get('bays'):
@@ -1083,6 +1099,7 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
                 why = 'a view from the arrival: the first big building the traveller sees'
             else:
                 why = f"on the axis of {b.get('faces') or 'its street'}: closing the view along it"
+            why = FORM_DESCRIPTIONS.get(pid, {}).get(b['form'], {}).get('landmark_reason', why)
             landmarks.append({'building': b['id'], 'form': b['form'], 'reason': why})
         elif b['counted']:
             n = b.get('fronts', 1)

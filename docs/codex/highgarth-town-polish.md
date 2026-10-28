@@ -32,6 +32,17 @@ python3 scripts/review/town_plan.py --town highgarth
 
 The baseline and final plan pass with 27 counted buildings (guide 24–36), 18 streets, two arrivals, two blocks, one reported dead end and 1.9 × 3.8 screens. An exact-base structural comparison verifies that reversing only the five semantic changes restores the entire original plan. Required full verify and art-repro gates apply to the final branch; these checks do not approve the plan, art, placement, live X3 or devices.
 
-The source plan is generated. This PR deliberately changes only Highgarth's exported JSON and this note, leaving shared generator/checker files to their owners. Claude A must preserve these town-specific semantic overrides when integrating or regenerating `towns55`/`town_plans`, rather than restore generic type labels. The stale generic labels are not a request to alter the drawing or building forms. Review/integration remains Claude A's responsibility.
+The source plan is generated. Revision r2 extends the existing `town_plans._record` exporter so the five semantic corrections survive export. `FORM_DESCRIPTIONS` is restricted to Highgarth and the existing named forms; it overrides only purpose, occupants and the watchkeep's landmark reason. Generic trade selection still runs first, so its cycle advances exactly as before. No building IDs, forms, geometry, counts, plot/terrain selection, theme or drawing policy are allocated by this table. Other towns keep the existing fallback unchanged.
+
+The first real `_record` probe on the published r1 data reproduced all five overwrites (30 building records, 27 counted). Initial environment imports and fixture-construction errors are retained separately from this product failure. Focused tests reconstruct the authored building, street and terrain inputs using the existing checker helpers and call the real exporter. They compare the entire record against its generic fallback: exactly the five intended values differ. Controls cover a real second town, Highgarth forms under another town ID, a following generic public building and reordered source IDs. These are exporter tests, not a full-continent rebuild or fresh render.
+
+Install the existing blockout dependencies (`numpy`, `scipy`, `Pillow`, `scikit-image`, and DejaVu Sans Condensed fonts), then run:
+
+```sh
+python3 -m unittest scripts.review.test_highgarth_export
+python3 scripts/review/town_plan.py --town highgarth
+```
+
+The dedicated Highgarth-export workflow runs the focused exporter tests and town check without changing a shared package script or workflow. Full verify and art-repro still apply to the exact final revision. Claude A reviews/integrates r2 and retains whole-town, art, placement and live-X3 approval.
 
 Y14 PR329 is a separate completed concept packet pinned to the earlier `911edac6` plan; its fixtures and explicit source limitations remain historical evidence and are untouched here. This pass does not retrospectively claim the newer 30-record/27-counted plan was tested by Y14's earlier checks.
