@@ -31,6 +31,70 @@ class SourcePin:
             raise ValueError("source path must be a repository town JSON path")
 
 
+@dataclass(frozen=True)
+class UsePin:
+    """Independent caller-selected identity for reviewed authoring input."""
+    commit: str
+    blob: str
+    path: str
+
+    def __post_init__(self):
+        if any(not isinstance(v, str) or not re.fullmatch(r"[0-9a-f]{40}", v)
+               for v in (self.commit, self.blob)):
+            raise ValueError("use identity requires full lowercase Git SHAs")
+        if not isinstance(self.path, str) or not re.fullmatch(
+                r"(?:[a-zA-Z0-9_-]+/)*[a-zA-Z0-9_-][a-zA-Z0-9_.-]*\.json", self.path):
+            raise ValueError("use path must be a safe repository-relative JSON path")
+
+
+def use_records(contract, source, pin):
+    """Validate trusted classifications, not infer them from quoted words.
+
+    Pure callers select this object independently; CLI verifies its pinned bytes.
+    Exact quotes bind evidence to source, not certify an author's interpretation.
+    """
+    def valid(ok, message):
+        if not ok:
+            raise ValueError("use contract: " + message)
+
+    valid(isinstance(contract, dict) and set(contract) ==
+          {"schema", "source", "buildings", "workplaces"}, "unexpected/missing fields")
+    valid(contract["schema"] == "mygame.settlement_use/1", "schema")
+    valid(contract["source"] == {"commit": pin.commit, "blob": pin.blob, "path": pin.path},
+          "town source identity mismatch")
+    buildings = source_records(source, "buildings")
+    uses = source_records(contract, "buildings")
+    valid(set(uses) == set(buildings), "building coverage differs from source")
+    for bid, use in uses.items():
+        valid(set(use) == {"id", "home", "work", "evidence"}, "building fields")
+        valid(all(use[k] is None or type(use[k]) is bool for k in ("home", "work")),
+              "home/work must be boolean or null")
+        evidence = records(use["evidence"], "use evidence")
+        valid(bool(evidence), "missing evidence")
+        seen = set()
+        for item in evidence:
+            valid(set(item) == {"field", "text"}, "evidence fields")
+            field, text = item["field"], item["text"]
+            valid(isinstance(field, str) and field in ("purpose", "occupants"), "evidence field")
+            valid(isinstance(text, str) and bool(text) and buildings[bid].get(field) == text,
+                  "evidence does not match source")
+            valid(field not in seen, "duplicate evidence field")
+            seen.add(field)
+    bindings = {}
+    for row in records(contract["workplaces"], "use workplaces"):
+        valid(set(row) == {"home", "workplace"}, "workplace fields")
+        home, work = row["home"], row["workplace"]
+        valid(isinstance(home, str) and home in uses and uses[home]["home"] is True,
+              "workplace binding has no explicit home")
+        valid(home not in bindings, "duplicate home binding")
+        valid(work is None or (isinstance(work, str) and work in uses and uses[work]["work"] is True),
+              "workplace binding has no explicit work use")
+        bindings[home] = work
+    valid(set(bindings) == {k for k, v in uses.items() if v["home"] is True},
+          "workplace bindings must cover explicit homes")
+    return uses, bindings
+
+
 def read_document(raw):
     """Reject duplicate keys and non-JSON constants rather than losing evidence."""
     def pairs(items):
@@ -74,7 +138,7 @@ def source_records(source, key):
     return {row["id"]: row for row in rows}
 
 
-def check(plan, source, *, source_pin=None):
+def check(plan, source, *, source_pin=None, use_contract=None):
     """Return findings against an independently selected source/pin.
 
     Pure API callers supply a trusted parsed source; CLI verifies raw bytes and Git.
@@ -119,7 +183,14 @@ def check(plan, source, *, source_pin=None):
         raise ValueError("residents: id must be a nonempty string")
     require(len(set(ids)) == len(ids),
             "residents: duplicate or missing id")
-    occupied = {b["id"] for b in source["buildings"] if b.get("occupants")}
+    uses, bindings = use_records(use_contract, source, pin) if use_contract is not None else (None, {})
+    if uses is None:
+        require(pin == SourcePin(), "coverage: explicit use contract required for nonlegacy source")
+        occupied = {b["id"] for b in source["buildings"] if b.get("occupants")}
+    else:
+        occupied = {bid for bid, use in uses.items() if use["home"] is True}
+        for bid, use in uses.items():
+            require(use["home"] is not None, f"incomplete: residence unknown for {bid}")
     homes = [r.get("home") for r in residents]
     require(set(homes) == occupied and len(homes) == len(occupied),
             "coverage: one provisional representative per occupied home")
@@ -133,8 +204,15 @@ def check(plan, source, *, source_pin=None):
             require(r.get("district") == b["district"], f"{tag}: district mismatch")
         require(isinstance(r.get("name"), str) and "(placeholder)" in r["name"]
                 and r.get("name_status") == "placeholder", f"{tag}: placeholder name")
-        require(r.get("workplace") is None and r.get("workplace_status") == "deferred",
-                f"{tag}: unsourced workplace")
+        if uses is None:
+            require(r.get("workplace") is None and r.get("workplace_status") == "deferred",
+                    f"{tag}: unsourced workplace")
+        else:
+            require(r.get("home") in occupied, f"{tag}: home use is not explicitly residential")
+            workplace = bindings.get(r.get("home"))
+            require(r.get("workplace") == workplace and r.get("workplace_status") ==
+                    ("deferred" if workplace is None else "source_explicit"),
+                    f"{tag}: workplace differs from authored binding")
         require(r.get("status") == "proposal", f"{tag}: resident approval")
     seen = set()
     for entry in records(plan.get("routines", []), "routines"):
@@ -164,6 +242,10 @@ def main():
     parser.add_argument("--source-commit")
     parser.add_argument("--source-blob")
     parser.add_argument("--source-path")
+    parser.add_argument("--uses", type=Path)
+    parser.add_argument("--uses-commit")
+    parser.add_argument("--uses-blob")
+    parser.add_argument("--uses-path")
     args = parser.parse_args()
     try:
         identity = (args.source_commit, args.source_blob, args.source_path)
@@ -173,8 +255,17 @@ def main():
         pin = SourcePin(*identity) if explicit else SourcePin()
         source_bytes = args.source.read_bytes()
         verify_source(source_bytes, pin)
+        use_identity = (args.uses, args.uses_commit, args.uses_blob, args.uses_path)
+        if any(x is not None for x in use_identity) and not all(x is not None for x in use_identity):
+            raise ValueError("supply uses file, commit, blob and path together")
+        contract = None
+        if args.uses is not None:
+            use_pin = UsePin(args.uses_commit, args.uses_blob, args.uses_path)
+            use_bytes = args.uses.read_bytes()
+            verify_source(use_bytes, use_pin)
+            contract = read_document(use_bytes)
         findings = check(read_document(args.plan.read_bytes()), read_document(source_bytes),
-                         source_pin=pin if explicit else None)
+                         source_pin=pin if explicit else None, use_contract=contract)
     except (ValueError, OSError, KeyError, TypeError, AttributeError, subprocess.TimeoutExpired) as exc:
         print(f"Invalid input: {exc}")
         return 2
