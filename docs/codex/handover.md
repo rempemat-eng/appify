@@ -88,11 +88,11 @@ W2#305 now has the literal logical-ID/gameplay-preservation repair at `64c212fc`
 
 X3-explicit-use #349 follows [ANSWER6477803442](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6477803442): every `home=null` row remains incomplete, including empty-occupant rows; absent occupants or `work=true` cannot imply nonresidential use. Its full final gates remain pending and inherited map ancestry remains approval-gated.
 
-## Current engineering evidence (28 Oct 20:13)
+## Current engineering evidence (28 Oct 21:14)
 
 Y12 classifier #346 is merged on main at `7f83ee03781752f6c4db068185142040c8a2c319`, tree `4ec9efb434c20f17faa62c4db165f7e73ada4a6d`. The guarded nonforce fast-forward used independently verified exact-source local verify/art exits, source guards and three matching hosted job logs. Its source-only and fixture classification is engineering tooling, not art or whole-Y12 approval. The existing separate report-only asset inventory still reports findings. See [MERGED6479481908](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6479481908).
 
-Validation capacity and ownership live on the canonical board. [Allocation6479432497](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6479432497) gives a validation-only delegate frozen Rill347 source, without transferring production custody or introducing its unapproved editor ancestry into main. A worker resumes the same active invocation; a capacity release is not permission for every queued owner to start. Paused owners retain their source and review duties.
+Validation capacity and ownership live on the canonical board. Rill #347's original22325 invocation is finished: verify/art exits0 with unchanged source guards. Independent readiness review6480851158 confirms the prescribed local chain; its optional JSON-schema comparison remains skipped, not passed. Matching hosted checks, inherited editor ancestry and Matt approval remain separate. [Allocation6480817568](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6480817568) now gives a validation-only delegate released Forge #343 source, without transferring production custody or introducing unapproved map ancestry into main. Historical town-terrain diagnostics are not repeated. A worker resumes the same active invocation; a capacity release is not permission for every queued owner to start. Paused owners retain their source and review duties.
 
 ## Complete Codex takeover and task order (28 Oct 17:24)
 
