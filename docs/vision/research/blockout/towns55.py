@@ -429,6 +429,7 @@ class Town:
             if ok.any():
                 rr, cc = np.nonzero(ok)
                 self.buildings[-1]['plot'] = [int(xa + cc.min()), int(ya + rr.min()), int(cc.max() - cc.min() + 1), int(rr.max() - rr.min() + 1), kind]
+                T.setdefault('authored_protected_cells', []).append(self.buildings[-1]['plot'][:4])
         return True
 
     def place(self, cx, cy, use, w=None, d=None, r=96, plot=None, counted=True, within=None):
@@ -463,6 +464,97 @@ class Town:
         if not ok:
             self.T.setdefault('hand_fail', []).append((self.name, form, x, y, w, d))
         return ok
+
+    def adopt(self, packet):
+        """Append source-authored proposals using the existing placement forms.
+
+        Metadata travels explicitly to town_plans; no generated JSON is read.
+        Authored terrain, access and identity failures stop regeneration.
+        """
+        import copy
+        import town_plans
+        town_plans.validate_authored_packet(packet, town_plans.slug(self.name))
+        if hasattr(self, 'authored_plan'):
+            raise ValueError(f'{self.name}: duplicate authored packet')
+        protected = np.zeros(self.T['K'].shape, dtype=bool)
+        uses = list(self.T.get('authored_protected_cells', []))
+        uses += [b['plot'][:4] for b in self.buildings if b.get('plot')]
+        uses += [[o['box'][0] // CELL, o['box'][1] // CELL,
+                  (o['box'][2] - o['box'][0]) // CELL, (o['box'][3] - o['box'][1]) // CELL]
+                 for o in self.outskirts]
+        for c, r, w, h in uses:
+            protected[max(0, r):r + h, max(0, c):c + w] = True
+        reserved = np.zeros(self.T['K'].shape, dtype=bool)
+        wc, wr, ww, wh = packet['terrain_box_cells']
+        for rec in packet['buildings']:
+            c, r, w, h = rec['footprint_cells']
+            if r + h > H or c + w > W:
+                raise ValueError(f"{rec['id']}: authored footprint leaves the real terrain")
+            if not (wc <= c and wr <= r and c + w <= wc + ww and r + h <= wr + wh):
+                raise ValueError(f"{rec['id']}: authored footprint leaves its terrain window")
+            sl = (slice(r, r + h), slice(c, c + w))
+            if not np.isin(self.T['K'][sl], list(BUILDABLE)).all() or any(
+                    self.T[key][sl].any() for key in ('taken', 'street', 'barrier', 'keepout')) or reserved[sl].any() or protected[sl].any():
+                raise ValueError(f"{rec['id']}: authored footprint overlaps blocked ground or another use")
+            tiers = self.T['tiers_pre'][sl]
+            if tiers.max() != tiers.min():
+                raise ValueError(f"{rec['id']}: authored footprint needs an unapproved terrain-tier change")
+            reserved[sl] = True
+            if 'plot_cells' in rec:
+                pc, pr, pw, ph = rec['plot_cells']
+                ps = (slice(pr, pr + ph), slice(pc, pc + pw))
+                if not (wc <= pc and wr <= pr and pc + pw <= wc + ww and pr + ph <= wr + wh):
+                    raise ValueError(f"{rec['id']}: authored plot leaves its terrain window")
+                if pr + ph > H or pc + pw > W or not np.isin(self.T['K'][ps], list(BUILDABLE - ROUTE)).all() or any(
+                        self.T[key][ps].any() for key in ('taken', 'street', 'barrier', 'keepout')) or reserved[ps].any() or protected[ps].any():
+                    raise ValueError(f"{rec['id']}: authored plot is clipped or overlaps another use")
+                reserved[ps] = True
+        # The existing JSON convention excludes landmarks and groups joined fronts.
+        # put() predates that convention and caps raw records instead; retain its
+        # geometry checks while checking authored capacity by the actual convention.
+        def contribution(raw):
+            if not raw['counted'] or raw.get('form') in town_plans.LANDMARK_FORMS or raw['use'] in town_plans.LANDMARK_TYPES:
+                return 0
+            n = len(raw.get('bays', [])) or 1
+            return (n + 4) // 5 if n >= 3 else 1
+        if sum(contribution(b) for b in self.buildings) + sum(b['counts_as'] for b in packet['buildings']) > self.cap:
+            raise ValueError(f'{self.name}: authored buildings exceed the existing count guide')
+        self.authored_plan = copy.deepcopy(packet)
+        for rec in packet['buildings']:
+            x, y, w, h = rec['rect_px']
+            a, b = C(x, y); c, d = a + h // CELL, b + w // CELL
+            tiers = self.T['tiers_pre'][a:c, b:d]
+            if tiers.size != w * h // (CELL * CELL) or tiers.max() != tiers.min():
+                raise ValueError(f"{rec['id']}: authored footprint needs an unapproved terrain-tier change")
+            if self.T['barrier'][a:c, b:d].any():
+                raise ValueError(f"{rec['id']}: authored footprint intersects a barrier")
+            behind = None
+            if 'plot_cells' in rec:
+                pc, pr, pw, ph = rec['plot_cells']
+                if pc + pw == x // CELL and pr == y // CELL and ph == h // CELL:
+                    behind = (-1, 0, pw * CELL, rec['plot'])
+                elif pc == (x + w) // CELL and pr == y // CELL and ph == h // CELL:
+                    behind = (1, 0, pw * CELL, rec['plot'])
+                elif pr + ph == y // CELL and pc == x // CELL and pw == w // CELL:
+                    behind = (0, -1, ph * CELL, rec['plot'])
+                elif pr == (y + h) // CELL and pc == x // CELL and pw == w // CELL:
+                    behind = (0, 1, ph * CELL, rec['plot'])
+                else:
+                    raise ValueError(f"{rec['id']}: plot is not an existing rectangular rear-plot form")
+            cap = self.cap
+            self.cap = max(cap, self.count() + int(rec['counted']))
+            try:
+                placed = self.hand(x, y, w, h, rec['form'], plot=behind, counted=rec['counted'])
+            finally:
+                self.cap = cap
+            if not placed:
+                raise ValueError(f"{rec['id']}: authored placement failed")
+            raw = self.buildings[-1]
+            if 'plot_cells' in rec and raw.get('plot') != rec['plot_cells'] + [rec['plot']]:
+                raise ValueError(f"{rec['id']}: authored plot was clipped")
+            raw['authored_id'] = rec['id']
+            raw['door'] = list(rec['door_cells'])
+            raw['faces'] = rec['faces']
 
     def row(self, pts, uses, gap=(8, 24), setback=None, sides=(1, -1), plot=(40, 'garden'), counted=True, limit=None, jitter=8, start=20, reach=88):
         """Buildings along a street, on its sides, each fronting it (axis-aligned, as the game's buildings are)."""
@@ -588,6 +680,7 @@ class Town:
             y += rh
         if n:
             self.outskirts.append({'kind': kinds[0], 'name': name, 'box': [int(x0), int(y0), int(x1), int(y1)], 'plots': n, 'why': why})
+            self.T.setdefault('authored_protected_cells', []).append([int(x0 // CELL), int(y0 // CELL), int((x1 - x0) // CELL), int((y1 - y0) // CELL)])
         return n
 
     def yard(self, x0, y0, x1, y1, kind='yard', name=None, why=None):
@@ -597,6 +690,7 @@ class Town:
         ok = np.isin(sub, list(BUILDABLE)) & ~T['taken'][a:c, b:e] & ~T['street'][a:c, b:e] & ~T['barrier'][a:c, b:e] & ~T['keepout'][a:c, b:e]
         sub[ok & ~np.isin(sub, list(ROUTE))] = kind; T['used'][a:c, b:e] |= ok
         self.outskirts.append({'kind': kind, 'name': name, 'box': [int(x0), int(y0), int(x1), int(y1)], 'why': why})
+        self.T.setdefault('authored_protected_cells', []).append([int(x0 // CELL), int(y0 // CELL), int((x1 - x0) // CELL), int((y1 - y0) // CELL)])
 
     # -------------------------------------------------------------------------------------- the record
     def count(self):
@@ -724,8 +818,34 @@ def crossroads_plan(root):
              (ox + b['door'][0], oy + b['door'][1]) if b.get('door') else None) for b in p['buildings']], (ox, oy, ox + p['box'][2], oy + p['box'][3])
 
 
-def lay_all(T, X):
+def _authored_inputs(authored, allowed):
+    """Check deliberate caller input; defaults never consult proposed authoring data."""
+    if authored is None:
+        return {}
+    if not isinstance(authored, dict) or set(authored) - allowed:
+        raise ValueError('unknown authored town key for this producer entrypoint')
+    if not authored:
+        return authored
+    import town_plans
+    for pid, packet in authored.items():
+        town_plans.validate_authored_packet(packet, pid)
+    return authored
+
+
+def _adopt_requested(town, authored, pid):
+    """Dispatch only a selected packet; Town.adopt verifies its actual target and ground."""
+    if not authored:
+        return
+    import town_plans
+    if town_plans.slug(town.name) != pid:
+        raise ValueError('authored dispatch target town mismatch')
+    if pid in authored:
+        town.adopt(authored[pid])
+
+
+def lay_all(T, X, *, authored=None):
     """Every settlement's footprint, in the order of Matt's allocation, then the smaller places. X: the geo55 module."""
+    authored = _authored_inputs(authored, {'cinderwick', 'hearthold'})
     towns = {}
     rng = np.random.default_rng(55)
 
@@ -932,7 +1052,7 @@ def lay_all(T, X):
     t.fill(26, 260, ('terrace', 'workshop', 'townhouse', 'house'), box=(7900, 2250, 8560, 2900))
     towns['Cogsworth'] = t
 
-    towns['Hearthold'] = hearthold(T, X)
+    towns['Hearthold'] = hearthold(T, X, authored={k: v for k, v in authored.items() if k == 'hearthold'})
 
     # ---------------------------------------------------------------- Cinderwick (medium): the black-sand cove
     clear_paint(T, 2250, 5700, 2750, 5960)
@@ -962,6 +1082,7 @@ def lay_all(T, X):
     t.row(route_part(T, 'Ash Coast', (2480, 5760, 2760, 5900)), ['cottage', 'house'], limit=3, start=10)
     t.fill(17, 380, ('cottage', 'boathouse', 'townhouse', 'workshop'), box=(1990, 5725, 2880, 6040), reach=260, plot=None)
     T['keepout'] &= ~north
+    _adopt_requested(t, authored, 'cinderwick')
     towns['Cinderwick'] = t
 
     # ---------------------------------------------------------------- Lagoon Landing (medium): the isles' town on its lagoon
@@ -1006,10 +1127,11 @@ HEARTHOLD_GATE = (2296, 2328)                                      # the main ga
 HEARTHOLD_POSTERN = (5224, 5240)                                   # the postern in the west wall (y): walled up, opens later
 
 
-def hearthold(T, X):
+def hearthold(T, X, *, authored=None):
     """Hearthold, authored by hand: the walled town on the rock between the lava flows, its gate, Gate Street down to the gate
     market, Smiths' Row against the cooled lava, and the home streets as terraces stepping down the slope (Matt's brief; Claude
     A's review of 28 Oct). Every coordinate is in world px on the soft grid."""
+    authored = _authored_inputs(authored, {'hearthold'})
     K = T['K']
     clear_paint(T, 1900, 5000, 2700, 5760, kinds=('building', 'yard', 'garden', 'plaza', 'lane', 'retain', 'stall', 'hut'))
     old = np.isin(K, ['castlewall', 'keep']) & (PX > 1850) & (PX < 2500) & (PY > 4950) & (PY < 5500)
@@ -1093,6 +1215,7 @@ def hearthold(T, X):
     # the edges: the vines on the cooled ash east of the wall, the lower fields between the town and Cinderwick
     t.fields(2480, 5120, 2620, 5400, ('orchard',), name='the vines', why="vines on the cooled ash of the rock's warm east side", size=(64, 112), hedge=False)
     t.fields(2140, 5744, 2600, 5800, ('field', 'field2'), name='the lower fields', why='barley and beans between the town and the cove', size=(80, 144))
+    _adopt_requested(t, authored, 'hearthold')
     return t
 
 
@@ -1562,9 +1685,10 @@ def charcoal_hollow(T, X):
     return {'Charcoal Hollow': t}
 
 
-def launch_cape(T, X):
+def launch_cape(T, X, *, authored=None):
     """Launch Cape's facility: the pad at the headland's tip with its service apron, the assembly hall, workshops and stores
     near the cape's middle, a heath buffer round the pad, the road down the cape."""
+    authored = _authored_inputs(authored, {'launch-cape'})
     K = T['K']
     t = Town(T, 'Launch Cape', X.PAD, 'facility', (4, 8),
              "the Company's launch site: rockets go up over open sea, away from people (W8); the assembly hall, the workshops and the "
@@ -1582,6 +1706,7 @@ def launch_cape(T, X):
     t.spaces.append({'kind': 'pad', 'name': 'the pad', 'x': X.PAD[0], 'y': X.PAD[1], 'rx': 72, 'ry': 60})
     t.cluster(12060, 6090, 170, ['hangar', 'workshop', 'warehouse', 'workshop', 'public', 'warehouse'], 6, plot=(16, 'yard'))
     t.yard(11960, 5960, 12250, 6000, name='the works yard', why='carts and the transporter road to the pad')
+    _adopt_requested(t, authored, 'launch-cape')
     return {'Launch Cape': t}
 
 
@@ -1625,3 +1750,194 @@ def smaller(T, X):
         t.fill(n, 160, ('cottage', 'house', 'workshop'), reach=160 if size in ('town', 'facility') else 48, box=(box[0] - 60, box[1] - 60, box[2] + 60, box[3] + 60), plot=pl)
         out[nm] = t
     return out
+
+
+# Exact, UNAPPROVED Y15 inputs. These source pins identify the separately reviewed proposals;
+# regeneration never reads its generated JSON as authoring input. Matt must approve placement.
+PROPOSED_ADOPTIONS = {'cinderwick': {'status': 'proposal',
+                'source': {'commit': '4669140421d7d8c69482fc90b78fea0a50d1d4bc',
+                           'blob': '9cacbd0833c090c5365d3a9afea84a15ac9c5977',
+                           'path': 'docs/vision/research/blockout/towns/cinderwick.json'},
+                'baseline': {'commit': '4984438d09b5fe1333d3e6ea6e6ee82be2bdc908',
+                             'blob': 'b1a6b82b71ba055bf6dc351f81a58766775bf1c4',
+                             'path': 'docs/vision/research/blockout/towns/cinderwick.json'},
+                'terrain_box_cells': [232, 701, 144, 70],
+                'buildings': [{'id': 'cinderwick-b014',
+                               'type': 'cottage',
+                               'form': 'cottage',
+                               'footprint_cells': [301, 719, 8, 6],
+                               'rect_px': [2408, 5752, 64, 48],
+                               'faces': 'cinderwick-s02',
+                               'door_cells': [305, 725],
+                               'purpose': 'a detached fishing cottage',
+                               'occupants': "a fisher's household",
+                               'district': 'cinderwick-d-the-quay',
+                               'counted': True,
+                               'counts_as': 1,
+                               'plot_cells': [301, 717, 8, 2],
+                               'plot': 'yard'},
+                              {'id': 'cinderwick-b015',
+                               'type': 'cottage',
+                               'form': 'cottage',
+                               'footprint_cells': [306, 727, 7, 5],
+                               'rect_px': [2448, 5816, 56, 40],
+                               'faces': 'cinderwick-s02',
+                               'door_cells': [305, 729],
+                               'purpose': 'a detached fishing cottage',
+                               'occupants': "a fisher's household",
+                               'district': 'cinderwick-d-the-quay',
+                               'counted': True,
+                               'counts_as': 1,
+                               'plot_cells': [306, 725, 7, 2],
+                               'plot': 'yard'},
+                              {'id': 'cinderwick-b016',
+                               'type': 'barn',
+                               'form': 'shed',
+                               'footprint_cells': [300, 736, 4, 3],
+                               'rect_px': [2400, 5888, 32, 24],
+                               'faces': 'cinderwick-s01',
+                               'door_cells': [302, 735],
+                               'purpose': 'a net shed by the boatyard',
+                               'occupants': 'work storage only; resident roles deferred to X3',
+                               'district': 'cinderwick-d-the-quay',
+                               'counted': False,
+                               'counts_as': 0},
+                              {'id': 'cinderwick-b017',
+                               'type': 'barn',
+                               'form': 'shed',
+                               'footprint_cells': [306, 736, 4, 3],
+                               'rect_px': [2448, 5888, 32, 24],
+                               'faces': 'cinderwick-s01',
+                               'door_cells': [308, 735],
+                               'purpose': 'a net shed by the boatyard',
+                               'occupants': 'work storage only; resident roles deferred to X3',
+                               'district': 'cinderwick-d-the-quay',
+                               'counted': False,
+                               'counts_as': 0}],
+                'districts': [],
+                'district_descriptions': {'cinderwick-d-the-quay': {'declared': 'the existing stone quay with '
+                                                                                'detached fishing cottages, net '
+                                                                                'sheds and a working boatyard',
+                                                                    'function': 'docks and transport with homes'}},
+                'open_uses': [{'id': 'cinderwick-o01',
+                               'name': 'the boatyard work apron',
+                               'kind': 'yard',
+                               'cells': [294, 736, 6, 5]},
+                              {'id': 'cinderwick-o02',
+                               'name': 'the boatyard net-shed frontage',
+                               'kind': 'yard',
+                               'cells': [300, 736, 11, 3]}],
+                'site_authored': 'existing generated layout with Y15 Cinderwick-only authored additions (issue149 '
+                                 'comment6471345306)'},
+ 'hearthold': {'status': 'proposal',
+               'source': {'commit': '59f3722d1b39050cc81709fa5933d4c9c093ee98',
+                          'blob': '51fad9db44e2a9be22d2bbb5b007249ae9ecebce',
+                          'path': 'docs/vision/research/blockout/towns/hearthold.json'},
+               'baseline': {'commit': '4984438d09b5fe1333d3e6ea6e6ee82be2bdc908',
+                            'blob': 'f19a9108cf07a3b8140ba136c04149a8c0ddd31d',
+                            'path': 'docs/vision/research/blockout/towns/hearthold.json'},
+               'terrain_box_cells': [234, 622, 129, 119],
+               'buildings': [{'id': 'hearthold-b033',
+                              'type': 'house',
+                              'form': 'house',
+                              'footprint_cells': [253, 706, 10, 6],
+                              'rect_px': [2024, 5648, 80, 48],
+                              'faces': 'hearthold-s09',
+                              'door_cells': [263, 708],
+                              'purpose': 'a detached lower-town house',
+                              'occupants': 'household; individual residents and routines not yet authored',
+                              'district': 'hearthold-d-ash-lane',
+                              'counted': True,
+                              'plot_cells': [251, 706, 2, 6],
+                              'plot': 'yard',
+                              'counts_as': 1},
+                             {'id': 'hearthold-b034',
+                              'type': 'cottage',
+                              'form': 'cottage',
+                              'footprint_cells': [254, 698, 9, 6],
+                              'rect_px': [2032, 5584, 72, 48],
+                              'faces': 'hearthold-s09',
+                              'door_cells': [263, 700],
+                              'purpose': 'a detached lower-town cottage',
+                              'occupants': 'household; individual residents and routines not yet authored',
+                              'district': 'hearthold-d-ash-lane',
+                              'counted': True,
+                              'plot_cells': [252, 698, 2, 6],
+                              'plot': 'yard',
+                              'counts_as': 1},
+                             {'id': 'hearthold-b035',
+                              'type': 'workshop',
+                              'form': 'workshop',
+                              'footprint_cells': [343, 690, 11, 7],
+                              'rect_px': [2744, 5520, 88, 56],
+                              'faces': 'hearthold-s06',
+                              'door_cells': [345, 689],
+                              'purpose': 'a craft workshop; specific trade not yet authored',
+                              'occupants': 'craft workers; individual workers and routines not yet authored',
+                              'district': 'hearthold-d-smiths-row',
+                              'counted': True,
+                              'plot_cells': [343, 697, 11, 2],
+                              'plot': 'yard',
+                              'counts_as': 1}],
+               'districts': [],
+               'district_descriptions': {},
+               'open_uses': []},
+ 'launch-cape': {'status': 'proposal',
+                 'source': {'commit': '9276174000e47858e92a25803e606fb9dea1fc87',
+                            'blob': '9aab428f54a898b2c19049857bc092fe39d6e009',
+                            'path': 'docs/vision/research/blockout/towns/launch-cape.json'},
+                 'baseline': {'commit': '4984438d09b5fe1333d3e6ea6e6ee82be2bdc908',
+                              'blob': '06faf55d311d78016966c977bedcc7598348b817',
+                              'path': 'docs/vision/research/blockout/towns/launch-cape.json'},
+                 'terrain_box_cells': [1467, 726, 79, 104],
+                 'buildings': [{'id': 'launch-cape-b007',
+                                'type': 'cottage',
+                                'form': 'cottage',
+                                'footprint_cells': [1494, 727, 8, 6],
+                                'rect_px': [11952, 5816, 64, 48],
+                                'faces': 'launch-cape-a1',
+                                'door_cells': [1502, 729],
+                                'purpose': 'a detached staff cottage',
+                                'occupants': 'staff; individual residents and routines not yet authored',
+                                'district': 'launch-cape-d-staff-homes',
+                                'counted': True,
+                                'plot_cells': [1492, 727, 2, 6],
+                                'plot': 'garden',
+                                'counts_as': 1},
+                               {'id': 'launch-cape-b008',
+                                'type': 'cottage',
+                                'form': 'cottage',
+                                'footprint_cells': [1510, 729, 8, 6],
+                                'rect_px': [12080, 5832, 64, 48],
+                                'faces': 'launch-cape-a1',
+                                'door_cells': [1509, 731],
+                                'purpose': 'a detached staff cottage',
+                                'occupants': 'staff; individual residents and routines not yet authored',
+                                'district': 'launch-cape-d-staff-homes',
+                                'counted': True,
+                                'plot_cells': [1518, 729, 2, 6],
+                                'plot': 'garden',
+                                'counts_as': 1},
+                               {'id': 'launch-cape-b009',
+                                'type': 'workshop',
+                                'form': 'workshop',
+                                'footprint_cells': [1509, 737, 13, 7],
+                                'rect_px': [12072, 5896, 104, 56],
+                                'faces': 'launch-cape-a1',
+                                'door_cells': [1508, 739],
+                                'purpose': 'a staff settlement workshop',
+                                'occupants': 'staff; individual workers and routines not yet authored',
+                                'district': 'launch-cape-d-the-works',
+                                'counted': True,
+                                'plot_cells': [1522, 737, 2, 7],
+                                'plot': 'yard',
+                                'counts_as': 1}],
+                 'districts': [{'id': 'launch-cape-d-staff-homes',
+                                'name': 'the staff homes',
+                                'centre_px': [12048, 5848],
+                                'declared': 'two detached staff cottages with gardens at the northern entrance, '
+                                            'away from the pad',
+                                'town': 'Launch Cape',
+                                'function': 'homes'}],
+                 'district_descriptions': {'launch-cape-d-the-works': {'function': 'docks and transport'}},
+                 'open_uses': []}}
