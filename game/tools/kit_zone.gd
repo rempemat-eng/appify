@@ -77,6 +77,37 @@ static func _container(root: Node, name_: String) -> Node2D:
 		node.owner = root
 	return node
 
+## Authored IDs are literal data. Node names are only collision-safe storage names;
+## never interpret an ID as a NodePath or discard its persisted logical identity.
+static func _logical_id(node: Node) -> String:
+	if node.has_meta(&"kit_zone_id"):
+		return String(node.get_meta(&"kit_zone_id"))
+	var entry = node.get_meta(ENTRY_META, {})
+	if entry is Dictionary and entry.get("id") is String and not entry.id.is_empty():
+		return entry.id
+	return String(node.name)
+
+static func _child_with_id(parent: Node, id: String) -> Node:
+	if parent != null:
+		for child in parent.get_children():
+			if _logical_id(child) == id:
+				return child
+	return null
+
+static func _storage_name(parent: Node, id: String) -> String:
+	var base := id.validate_node_name()
+	if base in ["", ".", ".."]:
+		base = "Entry"
+	var used := {}
+	for child in parent.get_children():
+		used[String(child.name)] = true
+	var candidate := base
+	var suffix := 1
+	while used.has(candidate):
+		candidate = "%s_%s" % [base, suffix]
+		suffix += 1
+	return candidate
+
 static func _valid_rows(rows: Variant, width: int, height: int) -> bool:
 	if not rows is Array or rows.size() != height:
 		return false
@@ -297,17 +328,15 @@ static func scene_from_plan(plan: Dictionary) -> Node2D:
 					if name_ == "Spawns" and child is Marker2D:
 						child.set_meta(&"kit_zone_inherited", child.position)
 					elif name_ == "Doors" and child is Area2D:
-						child.set_meta(&"kit_zone_inherited", _door_entry(child, {}, kit.cell))
+						child.set_meta(&"kit_zone_inherited", _door_entry(child, child.get_meta(ENTRY_META, {}), kit.cell))
 				if name_ in ["Spawns", "Doors"]:
 					inherited_ids[name_] = []
 					for child in node.get_children():
-						inherited_ids[name_].append(String(child.name))
+						inherited_ids[name_].append(_logical_id(child))
 					for id in plan.get("gameplay_removed", {}).get(name_, []):
-						# These are literal inherited child IDs, never node paths.
-						for child in node.get_children():
-							if String(child.name) == id:
-								child.free()
-								break
+						var removed := _child_with_id(node, id)
+						if removed != null:
+							removed.free()
 		root.set_meta(GAMEPLAY_IDS_META, inherited_ids)
 		src.free()
 	_container(root, "Actors").y_sort_enabled = true
@@ -322,10 +351,10 @@ static func scene_from_plan(plan: Dictionary) -> Node2D:
 		spawns.add_child(fallback)
 		fallback.owner = root
 	for id in specified:
-		var marker := spawns.get_node_or_null(NodePath(String(id))) as Marker2D
+		var marker := _child_with_id(spawns, id) as Marker2D
 		if marker == null:
 			marker = Marker2D.new()
-			marker.name = String(id).validate_node_name()
+			marker.name = _storage_name(spawns, id)
 			spawns.add_child(marker)
 			marker.owner = root
 		marker.set_meta(&"kit_zone_id", id)
@@ -336,11 +365,11 @@ static func scene_from_plan(plan: Dictionary) -> Node2D:
 		if (entry.has("to") and entry.has("target_zone") and entry.to != entry.target_zone) or (entry.has("spawn") and entry.has("target_spawn") and entry.spawn != entry.target_spawn):
 			root.free()
 			return null
-		var prior := doors.get_node_or_null(NodePath(String(entry.id).validate_node_name()))
+		var prior := _child_with_id(doors, entry.id)
 		if prior != null:
 			prior.free()
 		var door = load("res://world/door.gd").new()
-		door.name = String(entry.id).validate_node_name()
+		door.name = _storage_name(doors, entry.id)
 		var r: Array = entry.rect
 		door.position = Vector2(r[0] + r[2] / 2.0, r[1] + r[3] / 2.0) * kit.cell
 		door.target_zone = entry.get("to", entry.get("target_zone", ""))
@@ -491,7 +520,7 @@ static func plan_from_scene(root: Node2D, fallback: Dictionary = {}) -> Dictiona
 			continue
 		if not bool(marker.get_meta(EXPLICIT_META, true)) and marker.position == marker.get_meta(&"kit_zone_inherited", marker.position):
 			continue
-		var id = marker.get_meta(&"kit_zone_id", String(marker.name))
+		var id := _logical_id(marker)
 		spawns[id] = _position_value(marker.position, plan.get("spawns", {}).get(id, []), unit)
 	if plan.has("spawns") or not spawns.is_empty():
 		plan["spawns"] = spawns
@@ -515,7 +544,7 @@ static func plan_from_scene(root: Node2D, fallback: Dictionary = {}) -> Dictiona
 			var missing := []
 			var container := root.get_node_or_null(NodePath(name_))
 			for id in inherited_ids.get(name_, []):
-				if container == null or container.get_node_or_null(NodePath(id)) == null:
+				if _child_with_id(container, id) == null:
 					missing.append(id)
 			if removed.has(name_) or not missing.is_empty():
 				removed[name_] = missing
@@ -532,7 +561,7 @@ static func _position_value(position: Vector2, original: Array, unit: float) -> 
 static func _door_entry(door: Node2D, template: Dictionary, cell: int) -> Dictionary:
 	var entry := template.duplicate(true)
 	if entry.is_empty():
-		entry["id"] = String(door.name)
+		entry["id"] = _logical_id(door)
 	var shape := door.get_node_or_null("Shape") as CollisionShape2D
 	if shape == null or not shape.shape is RectangleShape2D:
 		return entry
