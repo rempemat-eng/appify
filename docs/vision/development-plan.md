@@ -1,6 +1,6 @@
 # Development plan: from here to a complete game (27 Oct)
 
-This plan replaces the "Now / Next / Later" lists in [roadmap.md](roadmap.md) as the order of work. It covers everything still needed for MyGame to be more or less complete, the order it should happen in, and which parts the Codex chats take. Claude A keeps it current; Codex claims tasks on [#149](https://github.com/rempemat-eng/appify/issues/149) as before.
+This plan replaces the "Now / Next / Later" lists in [roadmap.md](roadmap.md) as the order of work. It covers everything still needed for MyGame to be more or less complete, the order it should happen in, and which parts the Codex chats take. MyGame Codex · lead keeps it current under the [handover](../codex/handover.md); Codex claims tasks on [#149](https://github.com/rempemat-eng/appify/issues/149) as before.
 
 ## What the process so far taught us
 
@@ -90,13 +90,13 @@ Each chat picks its own work with the hourly routine, in this priority:
 
 1. Finish the task it holds.
 2. Phase 1 tasks (W0 to W7, X1, X6) until they are all done.
-3. Unblocked Phase 2 tasks (X2 to X4 once Claude A posts "go").
+3. Unblocked Phase 2 tasks when the lead verifies documented prerequisites and posts GO. X3 and Y15 were explicitly opened on 28 October; X2/X4 still require approved v55 inputs.
 4. Phase 3 concepts and validators for the next biome in the order above.
 5. Phase 5 systems whose data format is settled.
 6. Phase 4 and 6 data (residents, quests, dialogue) for regions whose plans are approved.
 7. Its own proposal, posted as PROPOSE first.
 
-The files each chat may touch are set by its claim and by [coordination.md](../codex/coordination.md). Art, art direction and game rules stay with Claude A and Matt.
+The files each chat may touch are set by its claim and by [coordination.md](../codex/coordination.md). Art direction and game rules stay with Matt and Claude A. The lead has standing non-art integration authority and performs coordination too; see the handover.
 
 ## Side by side right now (27 Oct 23:45)
 
@@ -128,7 +128,8 @@ Phase 1 (W0 to W7, X1, X6) still comes first for any chat that can take one. Y t
 
 | Waits                                            | For                                              | Why                                                    |
 | ------------------------------------------------ | ------------------------------------------------ | ------------------------------------------------------ |
-| X2 journeys, X3 settlement life, X4 region plans | Matt's approval of v55 and the town plans        | They are built on the town plan files                  |
+| X2 journeys, X4 region plans, Y4 map integration | Approved v55/town inputs and applicable GO | These consume the approved macro world |
+| Further X3 resident packets | Explicit residential/workplace source semantics | X3 was opened by Claude A6467789932; do not guess homes/jobs/routines |
 | X5 Crossroads conversion, building the slice     | W1 to W3 merged, and the Crossroads kit approved | Nothing is placed from unapproved pieces               |
 | Drawing any new biome's pieces                   | That biome's concepts (Y10, Y11) reviewed        | Concepts set the list before Claude draws              |
 | Region rollout                                   | The region's plan and kit approved               | Standards before content                               |
@@ -141,5 +142,16 @@ Phase 1 (W0 to W7, X1, X6) still comes first for any chat that can take one. Y t
 
 1. The v55 map and town plans, then Matt's review.
 2. Drawing the Crossroads town kit from Y10's concepts.
-3. Reviewing and merging Codex PRs with the Y12 sheets.
+3. Batched art/map/kit/cast review with Y12 sheets; the lead handles eligible non-art integration.
 4. Cairn, the woodland kit and other open art once Matt answers.
+
+
+## Lead coordination update (28 Oct)
+
+Matt appointed **MyGame Codex · lead** coordinator and integrator with non-art merge authority. The separate coordinator and crew board are retired. [Issue149's canonical board](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6475643125) is edited in place. The [handover](../codex/handover.md) specifies four-hour status requests, eight-hour active-claim release, art approval and exact-source merge checks. Delivered handoffs are review duties, not abandoned implementations.
+
+Claude A6467789932 opened X3 and Y15 on proposed source pins, without approving the map/art. Claude A6471345306 set the first Y15 batch on PR303@4984438d: Hearthold, Cinderwick and Launch Cape. Delivered proposals #335/#334/#336 await placement review and generator adoption. Further X3 packets need explicit home/work source semantics. X2/X4/Y4 and X5 retain their documented approval/dependency gates.
+
+Four free docs-only concept-requirements briefs are posted in [6475661201](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6475661201): Y10 Crossroads, Y11 coast/city, Y16 Sunstone and Y17 fire country. Each pins existing sources, reuses W0 families by reference and writes one new document only. No catalogue/schema/painter/town/package edits, new art direction, approval promotion or placement. Concept JSON is a separate follow-up after W0 semantic intake is settled.
+
+Current reviews do not mark whole Y systems complete: Y1/Y3/Y7/Y8 are isolated models; Y9 audits real control-size failures that still need fixing; Y12 is evidence tooling. W2#305 requires logical-ID/gameplay-preservation corrections. Pure engineering PRs must not carry unapproved editor/map ancestry into main.
