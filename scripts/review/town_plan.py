@@ -18,6 +18,14 @@ What it checks, per plan (ground-rules.md 4 and 5, size-guide.md 0, Matt's brief
   orphans     every street is joined to an arrival through the street network
   districts   a large town has three or more districts with two or more functions and two or more gathering places
   layout      a landmark within two screens (40 x 22.5 cells each) of every entry; a medium or large town has a loop
+  bridges     wherever a street (not a regional route) and water overlap, the cells are a bridge
+  blocks      each block between the streets is at least half plots, buildings or a named open use (park, yard, square)
+  sizes       each building within its form's footprint range (size_table_px); a medium or large town has four forms or more
+  outskirts   an outskirt, hamlet or village's houses stand on its streets (no close longer than eight cells)
+  planned     a city's regional roads inside it (within six cells of its buildings) run in x and y runs (75% of their length), curving
+              only at the water
+  dry         a desert town is green only along its water (green more than 8 cells from water at most 3%)
+The insets' labels are checked where they are drawn (map55.town_inset): no two label boxes overlap.
 It reports (not fails): dead ends, the town's size in screens and the number of street blocks (loops).
 
 The functions orth() and band() are the generator's own rules too (towns55.py imports them), so the plan and the check
@@ -183,11 +191,10 @@ def check_plan(P, blockout):
                     break
             if any((v[0] - off) % CELL or (v[1] - off) % CELL for v in line):
                 fails.append(f"cells: street {s['id']} has a vertex off its cell lines")
-        # water: the centre line over water only on a bridge
-        cl = band(line, 1, 'euclid' if s['class'] == 'arrival' or s.get('follows_route') else 'cheb', box)
-        wet = cl & np.isin(ter, list(WATER))
+        # bridges: wherever a street and water overlap, the cells are a bridge (code b), never open water
+        wet = m & np.isin(ter, list(WATER))
         if wet.sum() > 0 and s['class'] != 'arrival':
-            fails.append(f"off_water: street {s['id']} runs over water on {int(wet.sum())} cells (not a bridge)")
+            fails.append(f"bridges: street {s['id']} overlaps water on {int(wet.sum())} cells with no bridge")
     for q in P['squares']:
         c, r, cw, ch = q['cells']
         m = rect_mask(c, r, cw, ch) & ~np.isin(ter, list(WATER | BARRIER))
@@ -232,6 +239,29 @@ def check_plan(P, blockout):
         # the door next to the building
         if not (c - 1 <= dc <= c + cw and r - 1 <= dr <= r + ch):
             fails.append(f"reach: building {b['id']}'s door is not at its wall")
+    # sizes by type: each building within its form's footprint range (either way round), and a town of several forms
+    st = P.get('size_table_px', {})
+    forms = set()
+    for b in P['buildings']:
+        if b.get('from_zone_plan'):
+            continue
+        f = b.get('form', b['type']); forms.add(f)
+        if f not in st:
+            fails.append(f"sizes: building {b['id']}'s form {f} has no size range"); continue
+        (w0, w1), (d0, d1) = st[f]; bw, bh = b['rect_px'][2], b['rect_px'][3]
+        fit = lambda a, b_, lo_, hi_: lo_ - CELL <= a <= hi_ + CELL
+        if not ((fit(bw, 0, w0, w1) and fit(bh, 0, d0, d1)) or (fit(bh, 0, w0, w1) and fit(bw, 0, d0, d1))):
+            fails.append(f"sizes: building {b['id']} ({f}) is {bw} x {bh} px, outside {w0}-{w1} x {d0}-{d1}")
+    if P['size'] in ('large', 'medium', 'city') and len(forms) < 4:
+        fails.append(f'sizes: only {len(forms)} building forms ({sorted(forms)})')
+    # outskirts and villages: houses on their streets, not floating in the fields
+    if P['size'] in ('outskirts', 'hamlet', 'village'):
+        for b in P['buildings']:
+            fs = next((q for q in P['streets'] if q['id'] == b['faces']), None)
+            if fs and fs['class'] == 'close':
+                L = sum(abs(x1 - x0) + abs(y1 - y0) for (x0, y0), (x1, y1) in zip(fs['vertices_px'], fs['vertices_px'][1:])) / CELL
+                if L > 8:
+                    fails.append(f"outskirts: building {b['id']} stands {L:.0f} cells up a close, off its street")
     lo, hi = P['target']
     if not (lo <= counted <= hi):
         fails.append(f'count: {counted} counted buildings, outside {lo} to {hi}')
@@ -284,6 +314,69 @@ def check_plan(P, blockout):
     blocks = len(set(range(1, nb + 1)) - edge)
     if P['size'] in ('large', 'medium', 'city') and blocks < 1:
         fails.append('layout: no loop (no street block)')
+    # no empty blocks: each block between the streets at least half plots or a named open use
+    cov = np.zeros((h, w), bool)
+    for b in P['buildings']:
+        cov |= rect_mask(*b['footprint_cells'])
+        if b.get('plot_cells'):
+            cov |= rect_mask(*b['plot_cells'])
+    for q in P['squares'] + P.get('open_uses', []):
+        cov |= rect_mask(*q['cells'])
+    for o in P.get('outskirts', []):
+        x0, y0, x1, y1 = o['box']
+        cov |= rect_mask(x0 // CELL, y0 // CELL, (x1 - x0) // CELL, (y1 - y0) // CELL)
+    for s in P['streets']:
+        if s['class'] == 'close':
+            cov |= bands[s['id']]
+    sm = np.zeros((h, w), bool)
+    for s in P['streets']:
+        if s['class'] not in ('close', 'arrival'):
+            sm |= bands[s['id']]
+    for q in P['squares']:
+        sm |= bands[q['id']]
+    bad_t = np.isin(ter, list(WATER | BARRIER) + ['r', 'b'])
+    lab_b, nb_ = ndi.label(~sm)
+    edge_b = set(np.unique(np.concatenate([lab_b[0], lab_b[-1], lab_b[:, 0], lab_b[:, -1]])).tolist())
+    thin = 0
+    for i in range(1, nb_ + 1):
+        if i in edge_b:
+            continue
+        mb = (lab_b == i) & ~bad_t
+        area = int(mb.sum())
+        if 12 <= area <= 1200 and (cov & mb).sum() < 0.5 * area:
+            thin += 1
+            rr_, cc_ = np.nonzero(mb)
+            fails.append(f'blocks: the block at cells ({int(cc_.mean()) + c0}, {int(rr_.mean()) + r0}) is {100 * (cov & mb).sum() / area:.0f}% plots or open uses')
+    # a city's roads are planned: its arrivals inside the city run in x and y, curving only at the water
+    if P['size'] == 'city':
+        tot = ax_ = 0.0
+        citym = ndi.binary_dilation(occ, iterations=6)               # inside the city: within six cells of its buildings
+        for a in P['arrivals']:
+            if a.get('route_kind') == 'bridge':
+                continue                                           # a bridge's line is the crossing's
+            v = next((q['vertices_px'] for q in P['streets'] if q['id'] == a['street']), [])
+            for (x0, y0), (x1, y1) in zip(v, v[1:]):
+                mr, mc = int((y0 + y1) / 2 // CELL) - r0, int((x0 + x1) / 2 // CELL) - c0
+                if 0 <= mr < h and 0 <= mc < w and ter[mr, mc] in ('~', 'b'):
+                    continue                                       # a crossing of the water follows the water
+                if 0 <= mr < h and 0 <= mc < w and citym[mr, mc]:
+                    L = math.hypot(x1 - x0, y1 - y0); tot += L
+                    ax_ += L if (abs(x1 - x0) < 0.5 or abs(y1 - y0) < 0.5) else 0
+        if tot and ax_ / tot < 0.75:
+            fails.append(f'planned: only {100 * ax_ / tot:.0f}% of the regional roads inside the city run in x and y runs')
+        notes.append(f'{100 * ax_ / max(tot, 1):.0f}% of the city roads in x and y runs')
+    # a desert town is green only along its water
+    if P['site'].get('dry'):
+        fx0, fy0, fx1, fy1 = P['footprint_px']
+        win = rect_mask(fx0 // CELL, fy0 // CELL, (fx1 - fx0) // CELL, (fy1 - fy0) // CELL)
+        named = np.zeros((h, w), bool)
+        for o in P.get('outskirts', []):
+            x0, y0, x1, y1 = o['box']; named |= rect_mask(x0 // CELL, y0 // CELL, (x1 - x0) // CELL, (y1 - y0) // CELL)
+        dwet = ndi.distance_transform_edt(~np.isin(ter, list(WATER)))
+        far_green = win & (ter == 'g') & (dwet > 8) & ~named
+        landc = int((win & ~np.isin(ter, list(WATER))).sum()) or 1
+        if far_green.sum() > 0.03 * landc:
+            fails.append(f'dry: {100 * far_green.sum() / landc:.1f}% of the town is green more than 8 cells from water')
     # dead ends (reported)
     dead = 0
     for s in P['streets']:

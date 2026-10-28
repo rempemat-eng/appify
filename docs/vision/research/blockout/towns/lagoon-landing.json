@@ -8,7 +8,7 @@
   14,
   22
  ],
- "buildings_counted": 17,
+ "buildings_counted": 18,
  "grid": {
   "cell_px": 8,
   "screen_cells": [
@@ -28,6 +28,7 @@
   "reason": "the isles' town: boats, fishing and the diving trade off the reef wrecks (Brine), the naturalist's house, net and sail lofts, the boatyard; the ferry to Driftwood and the boats to the other isles leave from here",
   "terrain": "the neck of the main isle between the ferry pier on the open north shore and the sheltered lagoon (a drowned crater)",
   "fit": "wrapped round the sheltered lagoon: boathouses and stilt houses on its rim, the pier on the open north shore",
+  "dry": false,
   "tiers": [
    -1,
    2
@@ -35,10 +36,10 @@
   "levelled_footprints": 0
  },
  "footprint_px": [
-  6280,
-  6328,
+  6272,
+  6336,
   7124,
-  6888
+  6872
  ],
  "arrivals": [
   {
@@ -87,7 +88,7 @@
    ],
    "connects": [
     "lagoon-landing-a2",
-    "lagoon-landing-c02",
+    "lagoon-landing-c03",
     "lagoon-landing-s02"
    ]
   },
@@ -144,6 +145,7 @@
     ]
    ],
    "connects": [
+    "lagoon-landing-c01",
     "lagoon-landing-s02",
     "lagoon-landing-s06"
    ]
@@ -164,7 +166,7 @@
     ]
    ],
    "connects": [
-    "lagoon-landing-c01",
+    "lagoon-landing-c02",
     "lagoon-landing-s02",
     "lagoon-landing-s05",
     "lagoon-landing-s06",
@@ -354,11 +356,11 @@
      6548.0
     ],
     [
-     6780.0,
+     6772.0,
      6548.0
     ],
     [
-     6780.0,
+     6772.0,
      6484.0
     ]
    ],
@@ -375,16 +377,16 @@
    "width_cells": 2,
    "vertices_px": [
     [
-     6832.0,
-     6456.0
+     6480.0,
+     6608.0
     ],
     [
-     6784.0,
-     6456.0
+     6480.0,
+     6568.0
     ]
    ],
    "connects": [
-    "lagoon-landing-s04"
+    "lagoon-landing-s03"
    ]
   },
   {
@@ -394,12 +396,35 @@
    "width_cells": 2,
    "vertices_px": [
     [
-     6376.0,
-     6384.0
+     6824.0,
+     6464.0
+    ],
+    [
+     6784.0,
+     6464.0
+    ]
+   ],
+   "connects": [
+    "lagoon-landing-s04"
+   ]
+  },
+  {
+   "id": "lagoon-landing-c03",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     6352.0,
+     6392.0
+    ],
+    [
+     6352.0,
+     6376.0
     ],
     [
      6472.0,
-     6384.0
+     6376.0
     ]
    ],
    "connects": [
@@ -420,15 +445,18 @@
    "id": "lagoon-landing-d-the-lagoon-front",
    "buildings": [
     "lagoon-landing-b002",
-    "lagoon-landing-b006",
+    "lagoon-landing-b003",
+    "lagoon-landing-b007",
     "lagoon-landing-b009",
     "lagoon-landing-b010",
     "lagoon-landing-b011",
     "lagoon-landing-b012",
-    "lagoon-landing-b013"
+    "lagoon-landing-b013",
+    "lagoon-landing-b014"
    ],
    "mix": {
-    "cottage": 5,
+    "cottage": 6,
+    "shop": 1,
     "stilt": 1,
     "house": 1
    },
@@ -445,13 +473,15 @@
    "id": "lagoon-landing-d-net-row",
    "buildings": [
     "lagoon-landing-b001",
-    "lagoon-landing-b007",
+    "lagoon-landing-b005",
     "lagoon-landing-b008",
     "lagoon-landing-b015",
-    "lagoon-landing-b016"
+    "lagoon-landing-b016",
+    "lagoon-landing-b017"
    ],
    "mix": {
     "boathouse": 3,
+    "shop": 1,
     "cottage": 1,
     "house": 1
    },
@@ -467,15 +497,13 @@
    "town": "Lagoon Landing",
    "id": "lagoon-landing-d-the-pier",
    "buildings": [
-    "lagoon-landing-b003",
     "lagoon-landing-b004",
-    "lagoon-landing-b005",
-    "lagoon-landing-b014",
-    "lagoon-landing-b017"
+    "lagoon-landing-b006",
+    "lagoon-landing-b018"
    ],
    "mix": {
-    "cottage": 3,
-    "inn": 2
+    "cottage": 2,
+    "inn": 1
    },
    "function": "market and civic with homes"
   },
@@ -510,10 +538,73 @@
    ]
   }
  ],
+ "size_table_px": {
+  "boathouse": [
+   [
+    72,
+    104
+   ],
+   [
+    56,
+    64
+   ]
+  ],
+  "cottage": [
+   [
+    56,
+    80
+   ],
+   [
+    40,
+    48
+   ]
+  ],
+  "house": [
+   [
+    80,
+    104
+   ],
+   [
+    48,
+    64
+   ]
+  ],
+  "inn": [
+   [
+    112,
+    144
+   ],
+   [
+    64,
+    80
+   ]
+  ],
+  "shop": [
+   [
+    64,
+    88
+   ],
+   [
+    48,
+    56
+   ]
+  ],
+  "stilt": [
+   [
+    48,
+    64
+   ],
+   [
+    40,
+    48
+   ]
+  ]
+ },
  "buildings": [
   {
    "id": "lagoon-landing-b001",
    "type": "boathouse",
+   "form": "boathouse",
    "footprint_cells": [
     834,
     800,
@@ -546,16 +637,50 @@
   {
    "id": "lagoon-landing-b002",
    "type": "cottage",
+   "form": "cottage",
    "footprint_cells": [
-    827,
     811,
-    10,
+    821,
+    7,
+    5
+   ],
+   "rect_px": [
+    6488,
+    6568,
+    56,
+    40
+   ],
+   "faces": "lagoon-landing-s03",
+   "door_cells": [
+    814,
+    820
+   ],
+   "purpose": "a cottage",
+   "occupants": "a fisher's household",
+   "district": "lagoon-landing-d-the-lagoon-front",
+   "counted": true,
+   "plot_cells": [
+    811,
+    826,
+    7,
+    5
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "lagoon-landing-b003",
+   "type": "shop",
+   "form": "shop",
+   "footprint_cells": [
+    831,
+    811,
+    9,
     6
    ],
    "rect_px": [
-    6616,
+    6648,
     6488,
-    80,
+    72,
     48
    ],
    "faces": "lagoon-landing-s03",
@@ -563,37 +688,31 @@
     831,
     817
    ],
-   "purpose": "a cottage",
-   "occupants": "a fisher's household",
+   "purpose": "the chandler",
+   "occupants": "the shopkeeper, living above",
    "district": "lagoon-landing-d-the-lagoon-front",
-   "counted": true,
-   "plot_cells": [
-    827,
-    821,
-    1,
-    1
-   ],
-   "plot": "garden"
+   "counted": true
   },
   {
-   "id": "lagoon-landing-b003",
+   "id": "lagoon-landing-b004",
    "type": "cottage",
+   "form": "cottage",
    "footprint_cells": [
     813,
     799,
-    9,
-    6
+    8,
+    5
    ],
    "rect_px": [
     6504,
     6392,
-    72,
-    48
+    64,
+    40
    ],
-   "faces": "lagoon-landing-s02",
+   "faces": "lagoon-landing-s01",
    "door_cells": [
-    816,
-    805
+    812,
+    801
    ],
    "purpose": "a cottage",
    "occupants": "a diver's household",
@@ -602,121 +721,125 @@
    "plot_cells": [
     813,
     794,
-    9,
-    5
-   ],
-   "plot": "garden"
-  },
-  {
-   "id": "lagoon-landing-b004",
-   "type": "inn",
-   "footprint_cells": [
-    796,
-    810,
-    14,
-    7
-   ],
-   "rect_px": [
-    6368,
-    6480,
-    112,
-    56
-   ],
-   "faces": "lagoon-landing-s03",
-   "door_cells": [
-    803,
-    817
-   ],
-   "purpose": "the Driftwood Arms",
-   "occupants": "the innkeeper, staff and guests",
-   "district": "lagoon-landing-d-the-pier",
-   "counted": true,
-   "plot_cells": [
-    796,
-    817,
-    14,
+    8,
     5
    ],
    "plot": "garden"
   },
   {
    "id": "lagoon-landing-b005",
-   "type": "inn",
+   "type": "shop",
+   "form": "shop",
    "footprint_cells": [
-    814,
-    791,
-    16,
-    7
+    819,
+    792,
+    9,
+    6
    ],
    "rect_px": [
-    6512,
-    6328,
-    128,
-    56
+    6552,
+    6336,
+    72,
+    48
    ],
-   "faces": "lagoon-landing-s01",
+   "faces": "lagoon-landing-s05",
    "door_cells": [
-    813,
-    795
+    828,
+    796
+   ],
+   "purpose": "the fish market house",
+   "occupants": "the shopkeeper, living above",
+   "district": "lagoon-landing-d-net-row",
+   "counted": true,
+   "plot_cells": [
+    819,
+    788,
+    9,
+    4
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "lagoon-landing-b006",
+   "type": "inn",
+   "form": "inn",
+   "footprint_cells": [
+    799,
+    798,
+    8,
+    18
+   ],
+   "rect_px": [
+    6392,
+    6384,
+    64,
+    144
+   ],
+   "faces": "lagoon-landing-s04",
+   "door_cells": [
+    807,
+    807
    ],
    "purpose": "the Driftwood Arms",
    "occupants": "the innkeeper, staff and guests",
    "district": "lagoon-landing-d-the-pier",
    "counted": true,
    "plot_cells": [
-    816,
-    788,
-    14,
-    3
+    794,
+    798,
+    5,
+    18
    ],
    "plot": "garden"
   },
   {
-   "id": "lagoon-landing-b006",
+   "id": "lagoon-landing-b007",
    "type": "cottage",
+   "form": "cottage",
    "footprint_cells": [
-    805,
-    824,
-    10,
-    7
+    804,
+    827,
+    8,
+    5
    ],
    "rect_px": [
-    6440,
-    6592,
-    80,
-    56
+    6432,
+    6616,
+    64,
+    40
    ],
-   "faces": "lagoon-landing-s03",
+   "faces": "lagoon-landing-c01",
    "door_cells": [
-    810,
-    823
+    809,
+    826
    ],
    "purpose": "a cottage",
    "occupants": "a boatbuilder's household",
    "district": "lagoon-landing-d-the-lagoon-front",
    "counted": true,
    "plot_cells": [
-    805,
-    831,
-    9,
+    804,
+    832,
+    8,
     5
    ],
    "plot": "garden"
   },
   {
-   "id": "lagoon-landing-b007",
+   "id": "lagoon-landing-b008",
    "type": "boathouse",
+   "form": "boathouse",
    "footprint_cells": [
-    849,
-    809,
-    10,
-    8
+    848,
+    810,
+    9,
+    7
    ],
    "rect_px": [
-    6792,
-    6472,
-    80,
-    64
+    6784,
+    6480,
+    72,
+    56
    ],
    "faces": "lagoon-landing-s12",
    "door_cells": [
@@ -728,96 +851,99 @@
    "district": "lagoon-landing-d-net-row",
    "counted": true,
    "plot_cells": [
-    849,
-    804,
-    10,
-    5
-   ],
-   "plot": "garden"
-  },
-  {
-   "id": "lagoon-landing-b008",
-   "type": "cottage",
-   "footprint_cells": [
-    860,
-    810,
-    11,
-    6
-   ],
-   "rect_px": [
-    6880,
-    6480,
-    88,
-    48
-   ],
-   "faces": "lagoon-landing-s07",
-   "door_cells": [
-    865,
-    816
-   ],
-   "purpose": "a cottage",
-   "occupants": "a net maker's household",
-   "district": "lagoon-landing-d-net-row",
-   "counted": true,
-   "plot_cells": [
-    860,
+    848,
     805,
-    11,
+    9,
     5
    ],
    "plot": "garden"
   },
   {
    "id": "lagoon-landing-b009",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    860,
+    813,
+    8,
+    6
+   ],
+   "rect_px": [
+    6880,
+    6504,
+    64,
+    48
+   ],
+   "faces": "lagoon-landing-s07",
+   "door_cells": [
+    864,
+    819
+   ],
+   "purpose": "a cottage",
+   "occupants": "a net maker's household",
+   "district": "lagoon-landing-d-the-lagoon-front",
+   "counted": true,
+   "plot_cells": [
+    860,
+    808,
+    8,
+    5
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "lagoon-landing-b010",
    "type": "stilt",
+   "form": "stilt",
    "footprint_cells": [
     873,
-    824,
-    7,
-    11
+    821,
+    6,
+    8
    ],
    "rect_px": [
     6984,
-    6592,
-    56,
-    88
+    6568,
+    48,
+    64
    ],
-   "faces": "lagoon-landing-s09",
+   "faces": "lagoon-landing-s08",
    "door_cells": [
-    876,
-    835
+    872,
+    825
    ],
    "purpose": "a stilt house over the water",
    "occupants": "a ferryman's household",
    "district": "lagoon-landing-d-the-lagoon-front",
    "counted": true,
    "plot_cells": [
-    880,
-    824,
+    879,
+    821,
     5,
-    11
+    8
    ],
    "plot": "garden"
   },
   {
-   "id": "lagoon-landing-b010",
+   "id": "lagoon-landing-b011",
    "type": "house",
+   "form": "house",
    "footprint_cells": [
     873,
-    838,
+    839,
     6,
     10
    ],
    "rect_px": [
     6984,
-    6704,
+    6712,
     48,
     80
    ],
-   "faces": "lagoon-landing-s09",
+   "faces": "lagoon-landing-s08",
    "door_cells": [
-    876,
-    837
+    872,
+    844
    ],
    "purpose": "a family house",
    "occupants": "a fisher's household",
@@ -825,30 +951,31 @@
    "counted": true,
    "plot_cells": [
     879,
-    838,
+    839,
     5,
     10
    ],
    "plot": "garden"
   },
   {
-   "id": "lagoon-landing-b011",
+   "id": "lagoon-landing-b012",
    "type": "cottage",
+   "form": "cottage",
    "footprint_cells": [
-    859,
+    865,
     854,
-    11,
-    7
+    7,
+    5
    ],
    "rect_px": [
-    6872,
+    6920,
     6832,
-    88,
-    56
+    56,
+    40
    ],
    "faces": "lagoon-landing-s08",
    "door_cells": [
-    864,
+    868,
     853
    ],
    "purpose": "a cottage",
@@ -856,41 +983,9 @@
    "district": "lagoon-landing-d-the-lagoon-front",
    "counted": true,
    "plot_cells": [
+    865,
     859,
-    861,
-    11,
-    5
-   ],
-   "plot": "garden"
-  },
-  {
-   "id": "lagoon-landing-b012",
-   "type": "cottage",
-   "footprint_cells": [
-    873,
-    849,
-    10,
-    6
-   ],
-   "rect_px": [
-    6984,
-    6792,
-    80,
-    48
-   ],
-   "faces": "lagoon-landing-s08",
-   "door_cells": [
-    872,
-    852
-   ],
-   "purpose": "a cottage",
-   "occupants": "a boatbuilder's household",
-   "district": "lagoon-landing-d-the-lagoon-front",
-   "counted": true,
-   "plot_cells": [
-    873,
-    855,
-    10,
+    7,
     5
    ],
    "plot": "garden"
@@ -898,31 +993,32 @@
   {
    "id": "lagoon-landing-b013",
    "type": "cottage",
+   "form": "cottage",
    "footprint_cells": [
-    873,
-    817,
-    10,
-    6
+    880,
+    839,
+    9,
+    5
    ],
    "rect_px": [
-    6984,
-    6536,
-    80,
-    48
+    7040,
+    6712,
+    72,
+    40
    ],
-   "faces": "lagoon-landing-s08",
+   "faces": "lagoon-landing-s09",
    "door_cells": [
-    872,
-    821
+    884,
+    838
    ],
    "purpose": "a cottage",
-   "occupants": "a net maker's household",
+   "occupants": "a boatbuilder's household",
    "district": "lagoon-landing-d-the-lagoon-front",
    "counted": true,
    "plot_cells": [
-    873,
-    812,
-    10,
+    880,
+    844,
+    9,
     5
    ],
    "plot": "garden"
@@ -930,62 +1026,64 @@
   {
    "id": "lagoon-landing-b014",
    "type": "cottage",
+   "form": "cottage",
    "footprint_cells": [
-    798,
-    799,
-    11,
+    880,
+    828,
+    7,
     6
    ],
    "rect_px": [
-    6384,
-    6392,
-    88,
+    7040,
+    6624,
+    56,
     48
    ],
-   "faces": "lagoon-landing-s01",
+   "faces": "lagoon-landing-s09",
    "door_cells": [
-    809,
-    802
+    883,
+    834
    ],
    "purpose": "a cottage",
-   "occupants": "a ferryman's household",
-   "district": "lagoon-landing-d-the-pier",
+   "occupants": "a net maker's household",
+   "district": "lagoon-landing-d-the-lagoon-front",
    "counted": true,
    "plot_cells": [
-    798,
-    805,
-    11,
-    4
+    880,
+    823,
+    7,
+    5
    ],
-   "plot": "yard"
+   "plot": "garden"
   },
   {
    "id": "lagoon-landing-b015",
-   "type": "house",
+   "type": "cottage",
+   "form": "cottage",
    "footprint_cells": [
     845,
-    798,
+    801,
     8,
     6
    ],
    "rect_px": [
     6760,
-    6384,
+    6408,
     64,
     48
    ],
    "faces": "lagoon-landing-s04",
    "door_cells": [
     847,
-    804
+    807
    ],
-   "purpose": "a family house",
-   "occupants": "a fisher's household",
+   "purpose": "a cottage",
+   "occupants": "a ferryman's household",
    "district": "lagoon-landing-d-net-row",
    "counted": true,
    "plot_cells": [
     845,
-    804,
+    807,
     8,
     4
    ],
@@ -993,81 +1091,105 @@
   },
   {
    "id": "lagoon-landing-b016",
-   "type": "boathouse",
+   "type": "house",
+   "form": "house",
    "footprint_cells": [
-    855,
-    799,
-    10,
-    8
+    845,
+    792,
+    11,
+    7
    ],
    "rect_px": [
-    6840,
-    6392,
-    80,
-    64
+    6760,
+    6336,
+    88,
+    56
    ],
-   "faces": "lagoon-landing-c01",
+   "faces": "lagoon-landing-a1",
    "door_cells": [
-    854,
-    806
+    845,
+    791
    ],
-   "purpose": "a boathouse",
-   "occupants": "a boat owner",
+   "purpose": "a family house",
+   "occupants": "a fisher's household",
    "district": "lagoon-landing-d-net-row",
    "counted": true,
    "plot_cells": [
-    855,
-    807,
-    10,
+    845,
+    799,
+    11,
     4
    ],
    "plot": "yard"
   },
   {
    "id": "lagoon-landing-b017",
-   "type": "cottage",
+   "type": "boathouse",
+   "form": "boathouse",
    "footprint_cells": [
-    785,
-    798,
-    11,
-    6
+    854,
+    801,
+    13,
+    7
    ],
    "rect_px": [
-    6280,
-    6384,
-    88,
-    48
+    6832,
+    6408,
+    104,
+    56
    ],
    "faces": "lagoon-landing-c02",
    "door_cells": [
-    796,
-    798
+    853,
+    807
+   ],
+   "purpose": "a boathouse",
+   "occupants": "a boat owner",
+   "district": "lagoon-landing-d-net-row",
+   "counted": true,
+   "plot_cells": [
+    854,
+    808,
+    13,
+    4
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "lagoon-landing-b018",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    784,
+    800,
+    10,
+    6
+   ],
+   "rect_px": [
+    6272,
+    6400,
+    80,
+    48
+   ],
+   "faces": "lagoon-landing-c03",
+   "door_cells": [
+    793,
+    799
    ],
    "purpose": "a cottage",
    "occupants": "a diver's household",
    "district": "lagoon-landing-d-the-pier",
    "counted": true,
    "plot_cells": [
-    785,
-    804,
-    11,
+    784,
+    806,
+    10,
     4
    ],
    "plot": "yard"
   }
  ],
- "lifted": [
-  {
-   "type": "house",
-   "rect_px": [
-    6360,
-    6760,
-    88,
-    48
-   ],
-   "why": "no close could reach it"
-  }
- ],
+ "lifted": [],
  "outskirts": [
   {
    "kind": "yard",
@@ -1135,8 +1257,8 @@
    ]
   ],
   "screens": [
-   2.6,
-   3.1
+   2.7,
+   3.0
   ]
  },
  "ground": {
@@ -1144,130 +1266,154 @@
   "yards": "sand",
   "edges": "reef shallows in the lagoon",
   "materials_cells": {
-   "boardwalk": 836,
-   "sand": 3270,
-   "reef shallows": 1012
+   "boardwalk": 855,
+   "sand": 3356,
+   "reef shallows": 954
   }
  },
  "terrain": {
   "box_cells": [
-   770,
-   776,
-   136,
-   101
+   769,
+   777,
+   137,
+   98
   ],
   "codes": {
    ".": "land",
+   "g": "green ground (grass, gardens, woods, fields)",
    "r": "route",
    "~": "water",
    "#": "barrier (cliff, wall, lava)",
    "b": "bridge"
   },
   "rows": [
-   "78~15r2.41~",
-   "76~16r~.42~",
-   "75~15r46~",
-   "74~15r47~",
-   "73~15r48~",
-   "72~15r49~",
-   "71~15r50~",
-   "70~15r51~",
-   "69~15r52~",
-   "65~3.15r53~",
-   "61~6.14r55~",
-   "54~11.15r3~4.49~",
-   "50~14.15r9.48~",
-   "46~17.15r11.47~",
-   "44~19.14r12.47~",
-   "42~21.13r14.46~",
-   "41~22.12r17.44~",
-   "40~23.11r22.40~",
-   "39~24.10r28.35~",
-   "20~11.6~26.8r48.17~",
-   "19~43.2r.5r50.16~",
-   "10~51.2r60.13~",
-   "8~52.2r62.12~",
-   "8~51.2r68.7~",
-   "7~51.2r70.6~",
-   "7~50.2r72.5~",
-   "8~48.2r74.4~",
-   "9~46.2r58.2~18.~",
-   "9~45.2r58.2~20.",
-   "10~44.r58.2~21.",
-   "10~43.r58.2~22.",
-   "10~7.#33.2r57.3~23.",
-   "9~8.#33.r57.3~24.",
-   "8~8.3#31.r57.2~26.",
-   ".6~9.3#30.r57.2~27.",
-   "16.3#29.r57.2~28.",
-   "15.6#26.r57.2~29.",
-   "15.6#25.2r56.2~30.",
-   "15.6#24.r57.2~31.",
-   "16.5#23.r57.2~32.",
-   "15.7#21.2r56.2~33.",
-   "15.7#20.2r56.~35.",
-   "15.9#16.2r58.~35.",
-   "14.10#15.2r95.",
-   "15.9#14.2r30.9~57.",
-   "15.10#12.2r23.18~56.",
-   "15.10#10.2r21.22~56.",
-   "14.12#8.2r19.28~53.",
-   "14.13#6.2r17.33~51.",
-   "13.14#5.2r16.37~49.",
-   "13.14#3.2r17.39~48.",
-   "14.13#2.2r17.41~47.",
-   "14.14#2r17.43~46.",
-   "14.13#2r17.44~46.",
-   "13.16#17.45~45.",
-   "12.18#15.46~45.",
-   "12.19#13.47~45.",
-   "12.19#12.49~44.",
-   "12.18#12.51~43.",
-   "12.18#11.53~42.",
-   "12.19#10.54~41.",
-   "13.18#9.57~39.",
-   "14.17#8.57~40.",
-   "13.17#9.57~40.",
-   "14.13#12.57~40.",
-   "17.9#11.59~40.",
-   "17.8#11.60~40.",
-   "19.#16.59~41.",
-   "37.57~42.",
-   "37.56~43.",
-   "38.54~44.",
-   "38.47~2.3~46.",
-   "~39.44~52.",
-   "3~38.42~53.",
-   "5~36.41~54.",
-   "13~30.39~54.",
-   "14~32.17~5.15~53.",
-   "15~32.15~6.16~52.",
-   "16~32.6~.7~7.15~51.~",
-   "17~39.5~9.16~48.2~",
-   "17~53.16~45.5~",
-   "18~53.16~32.17~",
-   "18~54.15~30.19~",
-   "19~53.15~28.21~",
-   "21~52.14~26.23~",
-   "22~51.14~14.5~3.27~",
-   "22~52.14~12.36~",
-   "23~51.14~12.36~",
-   "23~51.14~11.37~",
-   "24~50.14~10.38~",
-   "25~49.14~9.39~",
-   "25~49.14~8.40~",
-   "26~48.15~7.40~",
-   "27~48.14~6.41~",
-   "28~47.14~6.41~",
-   "28~47.15~4.42~",
-   "29~46.15~3.43~",
-   "29~46.61~",
-   "30~45.61~",
-   "30~45.61~",
-   "32~3.5~35.61~"
+   "77~16r~g42~",
+   "76~15r46~",
+   "75~15r47~",
+   "74~15r48~",
+   "73~15r49~",
+   "72~15r50~",
+   "71~15r51~",
+   "70~15r52~",
+   "66~3.15r53~",
+   "62~4.g.14r55~",
+   "55~2g.g5.g.15r3~4.49~",
+   "51~2.g.4g6.15rg.g3.g2.48~",
+   "47~4.11g2.15r6.g.g2.47~",
+   "45~2.12g2.g2.14r.g10.47~",
+   "43~2g.g2.11g4.13r6.g7.46~",
+   "42~20.2g12r13.g3.44~",
+   "41~5.g12.5g11r18.2g.g40~",
+   "40~g3.6g9.5g10r2g11.g6.g.g5.35~",
+   "21~11.6~6.6g9.5g8r4g19.g3.2g.g5.2g.2g7.17~",
+   "20~24.6g9.3g.2r.5r5g11.g.2g.2g.3g2.g.2g2.g.g2.2g.g6.16~",
+   "11~33.6g9.3g2r6.6g11.g16.g.g6.g10.13~",
+   "9~17.4g14.17g2r7.6g11.2g.g2.2g30.12~",
+   "9~3.g13.4g22.8g2r3.10g12.5g.g4.g.g2.2g4.g3.g12.g2.g7~",
+   "8~17.5g22.7g2rg25.5g.g.g2.g4.g9.g12.g2.g.6~",
+   "8~17.5g8.2g12.6g2r2g39.2g15.g7.g5.5~",
+   "9~16.5g8.2g12.5g2r3g36.g.g3.g.11g7.g4.g3.4~",
+   "10~15.5g8.2g12.4g2r26.g13.18g2~g5.g6.g4.~",
+   "10~15.5g8.2g3.12g2rg17.g8.g13.17g2~3g7.g3.g5.",
+   "11~14.5g8.2g8.7gr2g17.g8.g13.16g2~11g10.",
+   "11~7.g6.5g8.2g8.6gr6.4g10.g8.g13.15g2~13g9.",
+   "11~6.g#g5.5g22.2r44.13g3~15g8.",
+   "10~7.g#g5.5g22.r45.12g3~17g.g4.g",
+   ".8~8.3#g4.5g21.r32.g13.11g2~21g5.",
+   "2.6~9.3#10g8.7g3.2gr4g3.18g22.10g2~23g4.",
+   "16.g3#10g8.7g3.gr5g3.4g9.5g22.9g2~24g3.g",
+   "15.g6#8g8.7g3.r6g3.4g9.5g12.18g2~27g2.",
+   "15.g6#8g8.7g2.2r4.2g3.4g9.5g12.3g8.6g2~28g2.",
+   "14.2g6#8g8.7g.r6.2g3.4g10.g15.3g8.5g2~29g2.",
+   "13.4g5#8g8.7gr7.2g3.2g28.3g8.4g2~30g2.",
+   "12.4g7#21g2r4g3.2g6.g26.3g8.3g2~32g.",
+   "10.6g7#11g9.2r44.2g8.2g~34g.",
+   "8.8g9#9g7.2r47.g8.2g~34g.",
+   "15g10#9g6.2r59.g.33g.",
+   "16g9#9g5.2r30.9~23.33g.",
+   "16g10#12g2r18.g4.18~g21.g6.26g.",
+   "16g10#10g2r2g10.g8.22~7.2g5.5g3.g6.26g.",
+   "15g12#8g2r3g15.g28~.g2.g.g.g3.4g3.g6.26g.",
+   "15g13#6g2r4g10.g2.33~10.4g3.g6.26g.",
+   "14g14#5g2r5g11.37~5.g3.3g3.g6.27g",
+   "14g14#3g2r7g2.8g39~9.2g3.g6.27g",
+   "15g13#2g2r3g8.5g.41~4.g3.2g3.g6.27g",
+   "15g14#2r4g8.4g.43~7.2g3.g6.g7.19g",
+   "15g13#2r5g8.3g.44~4.g2.2g3.8g7.19g",
+   "14g16#5g8.3g.45~4.2g.g3.8g7.19g",
+   "13g18#4g11.46~11.8g7.19g",
+   "13g19#11g2.47~11.8g7.19g",
+   "13g19#11g.49~10.8g7.19g",
+   "13g18#3g.7g.51~10.33g",
+   "13g18#3g.6g.53~28.14g",
+   "13g19#g2.6g.54~27.14g",
+   "14g18#9.57~25.14g",
+   "15g17#8.57~7.33g",
+   ".13g17#9.57~6.g6.g9.17g",
+   "2.13g13#2g10.57~6.g6.g9.17g",
+   "3.15g9#3g8.59~6.g6.g9.17g",
+   "4.14g8#4g7.60~6.g6.g9.17g",
+   "5.15g#9g7.59~.g5.g6.g9.17g",
+   "8.22g8.57~8.g6.27g",
+   "16.14g8.56~9.g6.26g.",
+   "18.12g9.54~10.g6.25g2.",
+   "~18.12g8.47~2.3~8.g3.g6.23g4.",
+   "2~18.11g10.44~13.2g3.g6.22g5.",
+   "4~18.9g11.42~13.3g3.28g6.",
+   "6~17.9g8.2g41~20.28g6.",
+   "14~10.8g7.5g39~20.15g6.6g7.",
+   "15~9.9g6.8g17~5.15~19.13g21.",
+   "16~9.9g4.10g15~6.16~7.22g23.",
+   "17~9.10g2.11g6~.7~7.15~7.4g7.8g25.~",
+   "18~9.9g3.10g8.5~9.16~6.3g39.2~",
+   "18~10.10g.9g23.16~7.2g36.5~",
+   "19~10.10g.6g26.16~6.2g24.17~",
+   "19~10.12g32.15~6.2g22.19~",
+   "20~9.15g21.2g6.15~8.7g13.21~",
+   "22~8.15g19.4g6.14~8.6g12.23~",
+   "23~7.17g2.8g.10g6.14~8.5g.5~3.27~",
+   "23~8.38g6.14~7.4g.36~",
+   "24~8.37g6.14~7.4g.36~",
+   "24~8.38g5.14~11.37~",
+   "25~8.37g5.14~10.38~",
+   "26~8.36g5.14~9.39~",
+   "26~8.36g5.14~8.40~",
+   "27~8.35g5.15~7.40~",
+   "28~7.35g6.14~6.41~",
+   "29~13.28g6.14~6.41~",
+   "29~15.26g6.15~4.42~",
+   "30~16.24g6.15~3.43~",
+   "30~18.22g6.61~",
+   "31~18.21g6.61~"
   ]
  },
  "residents": [],
  "routines": [],
- "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only."
+ "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only.",
+ "open_uses": [
+  {
+   "id": "lagoon-landing-o01",
+   "name": "allotments",
+   "kind": "garden",
+   "cells": [
+    817,
+    810,
+    7,
+    7
+   ],
+   "block_cells": 26
+  },
+  {
+   "id": "lagoon-landing-o02",
+   "name": "allotments",
+   "kind": "garden",
+   "cells": [
+    817,
+    810,
+    7,
+    7
+   ],
+   "block_cells": 26
+  }
+ ]
 }

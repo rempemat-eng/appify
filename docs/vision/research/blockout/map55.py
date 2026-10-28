@@ -311,33 +311,100 @@ def plan_buildings(S):
             dt = {d_['id']: d_.get('town', P['name']) for d_ in P['districts']}
             for b in P['buildings']:
                 x, y, w, h_ = b['rect_px']
-                out.append((dt.get(b['district'], P['name']), x, y, w, h_, b['type']))
+                out.append((dt.get(b['district'], P['name']), x, y, w, h_, b['type'], b.get('form', b['type']), b.get('door_cells')))
         return out
-    return [(town, x, y, w, h_, use) for town, r in S['towns'].items() for (x, y, w, h_, use, counted) in r['buildings']]
+    return [(town, x, y, w, h_, use, use, None) for town, r in S['towns'].items() for (x, y, w, h_, use, counted) in r['buildings']]
+
+
+FLAT = {'office', 'tower', 'hangar', 'warehouse', 'station', 'keep', 'hall'}
 
 
 def draw_towns(d, S, R, ink, P, s, k, neon_lights=True):
-    """Every building as a small roof: a shadow to the south-east, the roof (lit on its west half), a thin ink edge."""
+    """Every building as a small roof, drawn by its form: a shadow to the south-east, a ridge roof lit on its west slope (an
+    apartment row or a terrace split into its houses), flat roofs with a lit parapet (warehouses with roof lights, slabs and towers
+    with a core, adobes pale and flat), and a tall board front on the street side of a frontier shop, saloon or depot."""
     kk = s
-    if True:
-        for (town, x, y, w, h_, use) in plan_buildings(S):
-            X0, Y0 = P(x, y); X1, Y1 = P(x + w, y + h_)
-            if X1 - X0 < 1.0:
-                d.rectangle([X0, Y0, X0 + 1, Y0 + 1], fill=roof_colour(R, town, use))
-                continue
-            c = roof_colour(R, town, use); lt, md, sh = tones(c)
-            off = max(1.0, 0.9 * kk)
-            d.rectangle([X0 + off, Y0 + off, X1 + off, Y1 + off], fill=ink + (70,))
-            d.rectangle([X0, Y0, X1, Y1], fill=sh)
-            if use in ('office', 'tower', 'hangar', 'warehouse', 'station', 'keep', 'hall'):
-                d.rectangle([X0, Y0, X1, Y0 + (Y1 - Y0) * 0.55], fill=md)           # flat roofs: a lit parapet band
-                d.line([(X0, Y0), (X1, Y0)], fill=lt, width=max(1, int(kk)))
+    for (town, x, y, w, h_, use, form, door) in plan_buildings(S):
+        X0, Y0 = P(x, y); X1, Y1 = P(x + w, y + h_)
+        if X1 - X0 < 1.0:
+            d.rectangle([X0, Y0, X0 + 1, Y0 + 1], fill=roof_colour(R, town, use))
+            continue
+        c = roof_colour(R, town, use); lt, md, sh = tones(c)
+        if form == 'adobe':
+            lt, md, sh = tones(R['sand_warm'][3] if 'sand_warm' in R else c)
+        off = max(1.0, 0.9 * kk)
+        d.rectangle([X0 + off, Y0 + off, X1 + off, Y1 + off], fill=ink + (70,))
+        d.rectangle([X0, Y0, X1, Y1], fill=sh)
+        long_x = (X1 - X0) >= (Y1 - Y0)
+        if use in FLAT or form in ('adobe', 'slab', 'bigtower'):
+            d.rectangle([X0, Y0, X1, Y0 + (Y1 - Y0) * 0.55], fill=md)               # flat roofs: a lit parapet band
+            d.line([(X0, Y0), (X1, Y0)], fill=lt, width=max(1, int(kk)))
+            if form == 'longwarehouse' and X1 - X0 > 6:                            # roof lights across a long warehouse
+                n = max(2, int(w // 32))
+                for i in range(1, n):
+                    if long_x:
+                        xx = X0 + (X1 - X0) * i / n; d.line([(xx, Y0 + 1), (xx, Y1 - 1)], fill=lt + (200,), width=1)
+                    else:
+                        yy = Y0 + (Y1 - Y0) * i / n; d.line([(X0 + 1, yy), (X1 - 1, yy)], fill=lt + (200,), width=1)
+            if form in ('slab', 'bigtower') and X1 - X0 > 6:                         # the lift and stair core
+                cx_, cy_ = (X0 + X1) / 2, (Y0 + Y1) / 2; r_ = max(1.0, min(X1 - X0, Y1 - Y0) * 0.16)
+                d.rectangle([cx_ - r_, cy_ - r_, cx_ + r_, cy_ + r_], fill=sh, outline=lt)
+        elif form in ('aptrow', 'terrace') and X1 - X0 > 4:                            # a row: the ridge along it, one house a bay
+            if long_x:
+                d.rectangle([X0, Y0, X1, (Y0 + Y1) / 2], fill=lt)
+                n = max(2, int(w // 24))
+                for i in range(1, n):
+                    xx = X0 + (X1 - X0) * i / n; d.line([(xx, Y0), (xx, Y1)], fill=ink + (110,), width=1)
             else:
-                d.rectangle([X0, Y0, (X0 + X1) / 2, Y1], fill=lt)                    # a ridge roof: the west slope lit
-            if X1 - X0 > 3.5:
-                d.rectangle([X0, Y0, X1, Y1], outline=ink + (150,), width=1)
-            if neon_lights and town == 'Neon Harbour: the Company district' and use in ('office', 'tower') and (int(x) // 8) % 3 == 0:
-                d.line([(X0 + 1, Y1 - 1), (X1 - 1, Y1 - 1)], fill=R['berry'][4] + (230,), width=max(1, int(kk)))
+                d.rectangle([X0, Y0, (X0 + X1) / 2, Y1], fill=lt)
+                n = max(2, int(h_ // 24))
+                for i in range(1, n):
+                    yy = Y0 + (Y1 - Y0) * i / n; d.line([(X0, yy), (X1, yy)], fill=ink + (110,), width=1)
+        else:
+            d.rectangle([X0, Y0, (X0 + X1) / 2, Y1], fill=lt)                        # a ridge roof: the west slope lit
+        if form in ('frontshop', 'saloon', 'depot') and door and X1 - X0 > 3:          # the false front on the street side
+            dx, dy = door; fx, fy = P(dx * CELL + 4, dy * CELL + 4)
+            t_ = max(1.0, 6 * k)
+            front = R['plaster'][4]
+            if fy >= Y1 - 0.5:
+                d.rectangle([X0, Y1 - t_, X1, Y1], fill=front, outline=ink + (200,))
+            elif fy <= Y0 + 0.5:
+                d.rectangle([X0, Y0, X1, Y0 + t_], fill=front, outline=ink + (200,))
+            elif fx <= X0 + 0.5:
+                d.rectangle([X0, Y0, X0 + t_, Y1], fill=front, outline=ink + (200,))
+            else:
+                d.rectangle([X1 - t_, Y0, X1, Y1], fill=front, outline=ink + (200,))
+        if X1 - X0 > 3.5:
+            d.rectangle([X0, Y0, X1, Y1], outline=ink + (150,), width=1)
+        if neon_lights and town == 'Neon Harbour: the Company district' and use in ('office', 'tower') and (int(x) // 8) % 3 == 0:
+            d.line([(X0 + 1, Y1 - 1), (X1 - 1, Y1 - 1)], fill=R['berry'][4] + (230,), width=max(1, int(kk)))
+
+
+def draw_street_bridges(d, S, R, ink, P, k):
+    """Where a town street crosses water: a plank deck as wide as the street, with its side rails (the plans' bridge cells)."""
+    import sys as _s
+    rp = os.path.join(os.environ.get('REPO_ROOT', ''), 'scripts', 'review')
+    if rp not in _s.path:
+        _s.path.insert(0, rp)
+    import town_plan as tp
+    deck, rail = R['timber'][4], R['timber'][2]
+    for P_ in (S.get('plans') or {}).values():
+        c0, r0, w, h = P_['terrain']['box_cells']
+        ter = tp.rle_decode(P_['terrain']['rows'], w)
+        if not (ter == 'b').any():
+            continue
+        m = np.zeros((h, w), bool)
+        for st in P_['streets']:
+            if st['class'] != 'arrival':
+                m |= tp.band([tuple(v) for v in st['vertices_px']], st['width_cells'], 'euclid' if st.get('follows_route') else 'cheb', (c0, r0, w, h))
+        bm = m & (ter == 'b')
+        lab, n = ndi.label(bm)
+        for sl_ in ndi.find_objects(lab):                             # one deck a crossing, its rails along its edge
+            if sl_ is None:
+                continue
+            r0_, r1_, c0_, c1_ = sl_[0].start, sl_[0].stop, sl_[1].start, sl_[1].stop
+            X0, Y0 = P((c0_ + c0) * CELL, (r0_ + r0) * CELL); X1, Y1 = P((c1_ + c0) * CELL, (r1_ + r0) * CELL)
+            d.rectangle([X0, Y0, X1, Y1], fill=deck, outline=rail, width=max(1, int(round(1.5 * k))))
 
 
 def draw_closed_pass(d, S, M, R, ink, P, s):
@@ -706,6 +773,7 @@ def compose(S, M, R, ink, s, base, k, ox, oy, Wc, Hc, paths, lines, mode, title,
     M54.water_and_routes(canvas, S, R, ink, k, ox, oy, M)
     d = ImageDraw.Draw(canvas, 'RGBA')
     draw_lines(d, lines, P, R, ink, s)
+    draw_street_bridges(d, S, R, ink, P, k)
     draw_towns(d, S, R, ink, P, s, k)
     neon_accents(d, S, P, s, k, lines)
     draw_closed_pass(d, S, M, R, ink, P, s)
@@ -785,11 +853,12 @@ def town_inset(S, M, R, ink, cg, cid, rgb, sea_rgb, P, ppc):
     box = (c0, r0, w, h)
     # streets by class (their cells), centre lines
     ov = np.zeros((h, w, 4), np.uint8)
+    ter_ = tp.rle_decode(P['terrain']['rows'], w)
     for st in sorted(P['streets'], key=lambda q: ['close', 'lane', 'side', 'main', 'arrival'].index(q['class'])):
         if st['class'] == 'arrival':
             continue
         m = tp.band([tuple(v) for v in st['vertices_px']], st['width_cells'], 'euclid' if st.get('follows_route') else 'cheb', box)
-        ov[m] = CLASS_COL[st['class']] + (150,)
+        ov[m & ~np.isin(ter_, ['~', 'b'])] = CLASS_COL[st['class']] + (150,)
     ovi = Image.fromarray(ov, 'RGBA').resize((int(w * ppc), int(h * ppc)), Image.NEAREST)
     canvas.paste(ovi, (0, 0), ovi)
     d = ImageDraw.Draw(canvas, 'RGBA')
@@ -799,6 +868,7 @@ def town_inset(S, M, R, ink, cg, cid, rgb, sea_rgb, P, ppc):
         q = [Pf(*v) for v in st['vertices_px']]
         if len(q) >= 2:
             d.line(q, fill=ink + (90 if st['class'] != 'close' else 60,), width=1)
+    draw_street_bridges(d, S, R, ink, Pf, kb)
     draw_towns(d, S, R, ink, Pf, max(1.0, ppc / 4), kb)
     if P['id'] == 'neon-harbour':
         mat = S.get('mat')
@@ -821,6 +891,16 @@ def town_inset(S, M, R, ink, cg, cid, rgb, sea_rgb, P, ppc):
             d.rectangle([Xd - r_, Yd - r_, Xd + r_, Yd + r_], fill=ink + (230,))
     lay = Image.new('RGBA', canvas.size, (0, 0, 0, 0)); dl = ImageDraw.Draw(lay, 'RGBA')
     pl = Placer(dl, Wb, Hb)
+    texts = []                                                       # every label box, checked for overlaps at the end
+    _put = pl.put
+
+    def put_(*a, **kw):
+        kw.setdefault('pad', 4)
+        b = _put(*a, **kw)
+        if b:
+            texts.append((a[1], b))
+        return b
+    pl.put = put_
     F = M54.fonts54(M.ROOT, s_)
     paper = R['plaster'][5]
     # markers first (reserved), then names
@@ -878,9 +958,16 @@ def town_inset(S, M, R, ink, cg, cid, rgb, sea_rgb, P, ppc):
             bx = d_['box_px']; X, Y = Pf((bx[0] + bx[2]) / 2, (bx[1] + bx[3]) / 2)
         else:
             continue
+        if d_['name'] in seen:
+            continue
         if 0 <= X <= Wb and 0 <= Y <= Hb:
             pl.put((X, Y), d_['name'].upper() if d_.get('buildings') else d_['name'], F['legend'], _fn_col(d_['function']), paper + (235,),
                    [(0, 0, 'mm'), (0, -16 * s_, 'mm'), (0, 16 * s_, 'mm'), (30 * s_, 0, 'lm'), (-30 * s_, 0, 'rm')], stroke=3, leader=[40 * s_], name=False)
+    over = [(a, b) for i, (a, ba) in enumerate(texts) for (b, bb) in texts[i + 1:]
+            if not (ba[2] <= bb[0] or bb[2] <= ba[0] or ba[3] <= bb[1] or bb[3] <= ba[1])]
+    if over:
+        raise RuntimeError(f"{P['id']}: labels overlap: {over[:4]}")
+    P['_labels'] = len(texts)
     canvas = canvas.convert('RGBA'); canvas.alpha_composite(lay)
     d = ImageDraw.Draw(canvas, 'RGBA')
     # one phone screen, for scale (bottom left of the map)

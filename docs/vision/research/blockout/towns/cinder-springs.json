@@ -28,17 +28,18 @@
   "reason": "hot springs where the sea seeps into the warm flank: the bath house and lodgings",
   "terrain": "the volcano's warm south-west flank",
   "fit": "",
+  "dry": false,
   "tiers": [
    6,
-   16
+   15
   ],
-  "levelled_footprints": 2
+  "levelled_footprints": 6
  },
  "footprint_px": [
-  1720,
-  5368,
-  1992,
-  5784
+  1784,
+  5392,
+  2048,
+  5776
  ],
  "arrivals": [
   {
@@ -48,12 +49,8 @@
    "street": "cinder-springs-a1",
    "entries_px": [
     [
-     2111,
-     5306
-    ],
-    [
-     2111,
-     5777
+     2175,
+     5780
     ]
    ],
    "route_kind": "path"
@@ -67,12 +64,16 @@
    "width_cells": 3,
    "vertices_px": [
     [
-     2111.0,
-     5306.1
+     2147.8,
+     5272.4
     ],
     [
-     2069.4,
-     5334.4
+     2130.5,
+     5290.1
+    ],
+    [
+     2090.4,
+     5320.9
     ],
     [
      2025.9,
@@ -99,77 +100,36 @@
      5630.4
     ],
     [
-     1867.3,
-     5660.1
+     1880.3,
+     5679.8
     ],
     [
-     1894.9,
-     5697.6
+     1911.4,
+     5713.7
     ],
     [
-     1929.4,
-     5727.1
+     1948.7,
+     5739.5
     ],
     [
-     1969.3,
-     5750.0
+     1990.8,
+     5758.9
     ],
     [
-     2015.4,
-     5767.7
+     2039.2,
+     5772.4
     ],
     [
-     2064.7,
-     5775.4
-    ],
-    [
-     2110.8,
+     2089.4,
      5777.3
+    ],
+    [
+     2175.0,
+     5780.1
     ]
    ],
    "follows_route": "Ember Way",
-   "connects": [
-    "cinder-springs-c01",
-    "cinder-springs-c02"
-   ]
-  },
-  {
-   "id": "cinder-springs-c01",
-   "name": null,
-   "class": "close",
-   "width_cells": 2,
-   "vertices_px": [
-    [
-     1816.0,
-     5688.0
-    ],
-    [
-     1872.0,
-     5688.0
-    ]
-   ],
-   "connects": [
-    "cinder-springs-a1"
-   ]
-  },
-  {
-   "id": "cinder-springs-c02",
-   "name": null,
-   "class": "close",
-   "width_cells": 2,
-   "vertices_px": [
-    [
-     1872.0,
-     5424.0
-    ],
-    [
-     1944.0,
-     5424.0
-    ]
-   ],
-   "connects": [
-    "cinder-springs-a1"
-   ]
+   "connects": []
   }
  ],
  "squares": [],
@@ -192,92 +152,127 @@
     "cinder-springs-b006"
    ],
    "mix": {
-    "cottage": 4,
-    "house": 1,
+    "cottage": 3,
+    "house": 2,
     "shop": 1
    },
    "function": "homes"
   }
  ],
  "gathering_places": [],
+ "size_table_px": {
+  "cottage": [
+   [
+    56,
+    80
+   ],
+   [
+    40,
+    48
+   ]
+  ],
+  "house": [
+   [
+    80,
+    104
+   ],
+   [
+    48,
+    64
+   ]
+  ],
+  "shop": [
+   [
+    64,
+    88
+   ],
+   [
+    48,
+    56
+   ]
+  ]
+ },
  "buildings": [
   {
    "id": "cinder-springs-b001",
    "type": "cottage",
+   "form": "cottage",
    "footprint_cells": [
-    226,
-    671,
-    7,
-    10
+    233,
+    674,
+    6,
+    8
    ],
    "rect_px": [
-    1808,
-    5368,
-    56,
-    80
+    1864,
+    5392,
+    48,
+    64
    ],
-   "faces": "cinder-springs-c02",
+   "faces": "cinder-springs-a1",
    "door_cells": [
-    233,
-    677
+    239,
+    681
    ],
    "purpose": "a cottage",
    "occupants": "a farming household",
    "district": "cinder-springs-d-cinder-springs",
    "counted": true,
    "plot_cells": [
-    222,
-    671,
+    229,
+    674,
     4,
-    10
+    8
    ],
    "plot": "garden"
   },
   {
    "id": "cinder-springs-b002",
    "type": "house",
+   "form": "house",
    "footprint_cells": [
-    224,
-    687,
-    6,
-    8
+    225,
+    683,
+    7,
+    10
    ],
    "rect_px": [
-    1792,
-    5496,
-    48,
-    64
+    1800,
+    5464,
+    56,
+    80
    ],
    "faces": "cinder-springs-a1",
    "door_cells": [
-    230,
-    694
+    232,
+    691
    ],
    "purpose": "a family house",
    "occupants": "a fishing household",
    "district": "cinder-springs-d-cinder-springs",
    "counted": true,
    "plot_cells": [
-    220,
-    687,
+    221,
+    683,
     4,
-    8
+    10
    ],
    "plot": "garden"
   },
   {
    "id": "cinder-springs-b003",
    "type": "shop",
+   "form": "shop",
    "footprint_cells": [
-    224,
+    223,
     701,
-    5,
+    6,
     9
    ],
    "rect_px": [
-    1792,
+    1784,
     5608,
-    40,
+    48,
     72
    ],
    "faces": "cinder-springs-a1",
@@ -290,7 +285,7 @@
    "district": "cinder-springs-d-cinder-springs",
    "counted": true,
    "plot_cells": [
-    220,
+    219,
     701,
     4,
     9
@@ -300,17 +295,18 @@
   {
    "id": "cinder-springs-b004",
    "type": "cottage",
+   "form": "cottage",
    "footprint_cells": [
-    227,
+    229,
     716,
-    11,
-    7
+    9,
+    6
    ],
    "rect_px": [
-    1816,
+    1832,
     5728,
-    88,
-    56
+    72,
+    48
    ],
    "faces": "cinder-springs-a1",
    "door_cells": [
@@ -322,9 +318,9 @@
    "district": "cinder-springs-d-cinder-springs",
    "counted": true,
    "plot_cells": [
-    227,
-    723,
-    11,
+    229,
+    722,
+    9,
     4
    ],
    "plot": "garden"
@@ -332,86 +328,81 @@
   {
    "id": "cinder-springs-b005",
    "type": "cottage",
+   "form": "cottage",
    "footprint_cells": [
     239,
-    706,
-    10,
-    6
+    690,
+    5,
+    7
    ],
    "rect_px": [
     1912,
-    5648,
-    80,
-    48
+    5520,
+    40,
+    56
    ],
    "faces": "cinder-springs-a1",
    "door_cells": [
     239,
-    712
+    689
    ],
    "purpose": "a cottage",
    "occupants": "a craft household",
    "district": "cinder-springs-d-cinder-springs",
    "counted": true,
    "plot_cells": [
-    239,
-    702,
-    10,
-    4
+    244,
+    690,
+    4,
+    7
    ],
    "plot": "garden"
   },
   {
    "id": "cinder-springs-b006",
-   "type": "cottage",
+   "type": "house",
+   "form": "house",
    "footprint_cells": [
-    215,
-    711,
-    11,
-    6
+    246,
+    708,
+    10,
+    8
    ],
    "rect_px": [
-    1720,
-    5688,
-    88,
-    48
+    1968,
+    5664,
+    80,
+    64
    ],
-   "faces": "cinder-springs-c01",
+   "faces": "cinder-springs-a1",
    "door_cells": [
-    226,
-    711
+    246,
+    716
    ],
-   "purpose": "a cottage",
+   "purpose": "a family house",
    "occupants": "a farming household",
    "district": "cinder-springs-d-cinder-springs",
    "counted": true,
    "plot_cells": [
-    215,
-    717,
-    11,
+    246,
+    704,
+    10,
     4
    ],
-   "plot": "yard"
+   "plot": "garden"
   }
  ],
  "lifted": [],
  "outskirts": [],
  "game_layout": {
   "arrival": "Ember Way",
-  "first_view": "Cinder Springs from the Ember Way: a cottage, Cinder Springs's largest building ahead",
+  "first_view": "Cinder Springs from the Ember Way: a family house, Cinder Springs's largest building ahead",
   "landmarks": [
    {
-    "name": "a cottage, Cinder Springs's largest building",
+    "name": "a family house, Cinder Springs's largest building",
     "xy": [
-     1860,
-     5756
-    ]
-   },
-   {
-    "name": "a cottage at the edge, seen first from the Ember Way",
-    "xy": [
-     1836,
-     5408
+     2008,
+     5696
     ]
    }
   ],
@@ -419,15 +410,15 @@
   "quiet_corners": [],
   "first_screen_cells": [
    [
-    243,
-    652,
+    251,
+    711,
     40,
     22.5
    ]
   ],
   "screens": [
    0.8,
-   2.3
+   2.1
   ]
  },
  "ground": {
@@ -435,111 +426,109 @@
   "yards": "gardens",
   "edges": "fields",
   "materials_cells": {
-   "basalt setts": 782,
-   "ash yards": 813
+   "basalt setts": 940,
+   "ash yards": 763
   }
  },
  "terrain": {
   "box_cells": [
-   200,
-   656,
-   65,
-   83
+   208,
+   659,
+   64,
+   79
   ],
   "codes": {
    ".": "land",
+   "g": "green ground (grass, gardens, woods, fields)",
    "r": "route",
    "~": "water",
    "#": "barrier (cliff, wall, lava)",
    "b": "bridge"
   },
   "rows": [
-   "11.17#18.2#15.2r",
-   "9.18#19.2#17.",
-   "9.18#19.2#16.r",
-   "9.18#19.2#15.2r",
-   "8.19#19.2#14.3r",
-   "8.19#19.2#13.4r",
-   "8.19#19.2#10.7r",
-   "8.19#19.2#10.7r",
-   "8.19#20.2#8.8r",
-   "7.20#21.2#5.10r",
-   "7.18#23.2#3.12r",
-   "7.17#24.2#2.11r2.",
-   "6.17#26.2#11r3.",
-   "5.15#28.12r5.",
-   "5.15#27.10r8.",
-   "4.16#26.10r9.",
-   "4.16#26.10r9.",
-   "3.17#26.8r11.",
-   "3.17#25.8r2#10.",
-   "2.19#23.8r.3#9.",
-   "2.20#21.8r4.2#8.",
-   "22#21.8r5.3#6.",
-   "22#19.8r8.3#5.",
-   "21#19.8r11.6#",
-   "21#18.10r11.5#",
-   "21#18.10r16.",
-   "20#19.10r16.",
-   "20#19.10r16.",
-   "19#19.7r.5r14.",
-   "19#18.6r3.4r15.",
-   "19#18.6r4.3r15.",
-   "20#16.5r6.3r15.",
-   "21#14.5r8.2r15.",
-   "21#12.6r9.2r15.",
-   "21#12.6r9.2r15.",
-   "21#11.7r10.r15.",
-   "20#12.6r18.r8.",
-   "19#12.6r19.2r7.",
-   "19#11.6r16.9r4.",
-   "19#11.5r19.7r4.",
-   "17#13.5r20.6r4.",
-   "16#13.4r25.3r4.",
-   "15#14.4r32.",
-   "15#14.4r32.",
-   "14#15.4r32.",
-   "15#14.4r32.",
-   "15#14.4r32.",
-   "14#16.3r32.",
-   "14#16.5r30.",
-   "13#17.5r30.",
-   "14#16.6r29.",
-   "14#17.6r28.",
-   "14#17.6r28.",
-   "14#17.6r28.",
-   "13#19.6r27.",
-   "13#20.6r26.",
-   "12#23.5r25.",
-   "12#24.5r24.",
-   "12#24.8r21.",
-   "13#24.8r20.",
-   "13#26.8r18.",
-   "13#26.8r18.",
-   "12#28.13r12.",
-   "12#31.18r4.",
-   "11#34.20r",
-   "11#34.20r",
-   "9#36.3r.16r",
-   "9#36.3r3.14r",
-   "8#37.3r9.8r",
-   "8#37.3r17.",
-   "8#37.3r17.",
-   "8#37.3r17.",
-   "8#37.3r17.",
-   "9#36.3r17.",
-   "13#32.3r17.",
-   "13#32.3r17.",
-   "13#31.4r17.",
-   "13#31.4r17.",
-   "12#32.3r18.",
-   "12#32.3r18.",
-   "12#31.4r18.",
-   "13#30.4r18.",
-   "13#28.5r19."
+   ".18#19.2#15.8r.",
+   "19#19.2#14.9r.",
+   "19#19.2#13.9r2.",
+   "19#g18.2#10.11r3.",
+   "19#g18.2#10.11r3.",
+   "19#20.2#8.11r4.",
+   "19#21.2#5.11r6.",
+   "17#2.2g19.2#3.12r7.",
+   "16#3.g20.2#2.11r9.",
+   "15#26.2#11r10.",
+   "12#.g2.g23.12r12.",
+   "12#2g25.10r15.",
+   "12#.2g23.10r16.",
+   "12#.2g23.10r16.",
+   "12#2.g23.8r18.",
+   "12#9.4g12.8r2#17.",
+   "13#3.g4.4g11.8r.3#16.",
+   "14#.2g4.4g10.8r4.2#15.",
+   "14#g.g2.g.4g10.8r5.3#13.",
+   "14#2g5.4g8.8r8.3#5.4#3.",
+   "13#g3.2g2.4g7.8r11.13#",
+   "13#8.g9.10r11.5#4.3#",
+   "13#8.g9.10r23.",
+   "12#g2.2g14.10r23.",
+   "12#.4g14.10r23.",
+   "11#.5g13.7r.5rg20.",
+   "11#6g12.6r3.6r20.",
+   "11#6g12.6r4.5r20.",
+   "12#.4g11.5r6.5r20.",
+   "13#4g10.5r7.g4r20.",
+   "13#.3g8.6r8.g4r20.",
+   "13#.3g8.6r7.2g4r20.",
+   "13#.3g7.7r7.3g3r20.",
+   "12#5g7.6r6.g6.r20.",
+   "11#3.2g7.6r7.g6.g20.",
+   "11#3.2g6.6r8.g6.g7.2r11.",
+   "11#.2g.2g5.5r9.g9.7r11.",
+   "9#5.2g6.5r9.g15.r6.5g",
+   "8#g2.2g2.2g4.4r27.r6.5g",
+   "7#2g2.g.2g6.4r34.5g",
+   "7#2g2.g.2g6.4r34.5g",
+   "6#5.g9.4r34.5g",
+   "7#g3.4g6.4r34.5g",
+   "7#g3.3g7.4r32.6g.",
+   "6#g.g2.3g8.3r35.3g.",
+   "6#.g3.3g8.5r11.10g16.",
+   "5#g.7g8.5r11.10g14.g.",
+   "6#g4.3g8.6r10.10g4.11g.",
+   "6#2g3.4g8.6r9.10g4.11g.",
+   "6#2g3.4g8.6r23.11g.",
+   "6#.g3.4g8.6r23.11g.",
+   "5#.g17.6r22.12g",
+   "5#2.g17.6r21.12g",
+   "4#2.g20.5r20.12g",
+   "4#g23.5r19.12g",
+   "4#.g22.8r27.g",
+   "5#.g13.g.g6.8r27.",
+   "5#3.g4.2g2.2g12.8r22.g2.",
+   "5#3.g4.2g2.2g12.8r22.g2.",
+   "4#g2.g5.g6.g9.g.13r19.",
+   "4#.2g6.3g3.g11.g3.18r5.2g3.g",
+   "3#g2.5g.4g.2g.g16.25r2.",
+   "3#g.4g3.3g.g13.2g5.27r",
+   "#3g.6g.8g.10g.g4.3r.23r",
+   "#10g.3g.3g2.11g.2g.g3rg2.21r",
+   "g4.g.4g.7g.11g2.3g.3r3.3g.g.13r.g",
+   ".2g3.5g.21g4.3rg3.g3.2g2.g7.g2.g",
+   ".2g3.5g.9g.2g.2g.5g4.3rg23.",
+   "3g3.g2.2g.10g2.5g.g.g4.3rg23.",
+   "3g.g2.4g.12g.5g.6g3rg15.g7.",
+   "#2.g4.g2.19g.4g2.3rg15.g7.",
+   "5#.5g.25g3r16.g7.",
+   "5#g.g.3g.24g3rg15.g7.",
+   "5#.2g.23g.3g4r16.8g",
+   "5#g.g.2g.21g3.4rg15.8g",
+   "4#.g.25g4.3r2g8.15g",
+   "4#.g.25g4.3r2g20.3g",
+   "4#.2g.23g.g2.4r6g16.3g",
+   "5#.2g3.24g4r.7g14.3g"
   ]
  },
  "residents": [],
  "routines": [],
- "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only."
+ "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only.",
+ "open_uses": []
 }

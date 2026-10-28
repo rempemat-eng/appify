@@ -24,6 +24,8 @@ SCHEMA = 'mygame.town_plan/1'
 WATER_K = ['sea', 'surf', 'river', 'rapids', 'creek', 'canal', 'oxbow', 'tarn', 'mere', 'channel', 'pool', 'falls', 'lagoon', 'shallows']
 BARRIER_K = ['cliff', 'crag', 'wall', 'castlewall', 'lava', 'aa', 'fissure', 'crater', 'shardglass', 'craterrim', 'scorch', 'circle', 'spoil',
              'rockfall', 'closedroad', 'viaduct', 'viapier', 'fence']
+GREEN_K = ['meadow', 'watermeadow', 'broadleaf', 'conifer', 'clearing', 'lawn', 'garden', 'wild', 'thicket', 'felltree', 'bramble', 'heath', 'gorse',
+           'carr', 'reeds', 'fireweed', 'orchard', 'field', 'field2', 'hedge']
 ROUTE_W = {'road': 5, 'path': 3, 'bar': 5, 'bridge': 5, 'trail': 2}
 PAD = 120
 
@@ -133,7 +135,8 @@ GAME = {
     'neon-harbour': {'arrival': 'Lull Road', 'first_view': 'off the Lull Road at Canalside: the canal basin, the funicular up to the Skyport, the airships over the Heights and the neon of the Company district across the ria',
                      'landmarks': [('the Skyport masts and airships', (10040, 4900)), ("the Company's tower", (11850, 4560)), ('Bridgefoot and the falls', (11135, 4462)),
                                    ('the cranes on the long quay', (11250, 5000)), ('the lido on the East Shore', (12100, 5150)), ('the maglev terminus', (11650, 4565)),
-                                   ('the launch tower on the cape', (12125, 6425)), ('the Glintside mills', (11120, 4150))],
+                                   ('the launch tower on the cape', (12125, 6425)), ('the Glintside mills', (11120, 4150)),
+                                   ("Canalside's market gardens and the canal", (10000, 4560))],
                      'shortcuts_later': [('the funicular from the canal basin to the Skyport', (10074, 4935), 'when the funicular is repaired'),
                                          ('the skybridge from the Heights over the ria to the old waterfront', (10500, 4600), 'with the Skyport pass'),
                                          ('the maglev from Glintside to the terminus', (11400, 4300), 'with a Company ticket')],
@@ -320,6 +323,9 @@ def plan_one(T, name, ts, X, tp):
             line = [tuple(v) for v in _rdp([[float(a), float(b)] for a, b in seg], 2.0)]
             aid = f'{pid}-a{len(arrivals) + 1}'
             m = tp.band(line, wc, 'euclid', box)
+            bm_ = _bmask(ts, box)
+            while wc > 2 and (m & bm_).any():                          # never wider than the route is drawn beside a building
+                wc -= 1; m = tp.band(line, wc, 'euclid', box)
             el = net.add({'id': aid, 'kind': 'arrival', 'name': rn, 'class': 'arrival', 'width_cells': wc, 'vertices_px': [[round(a, 1), round(b, 1)] for a, b in line],
                           'follows_route': rn}, m)
             arrivals.append({'id': f'{pid}-arr{len(arrivals) + 1}', 'kind': 'road' if kind == 'road' else 'path', 'route': rn, 'street': aid,
@@ -345,8 +351,160 @@ def plan_one(T, name, ts, X, tp):
     _join(T, net, arrivals, pass_, sl, pid, box, ts)
     # 4. access: doors and closes
     dropped = _access(T, net, pass_, sl, pid, box, ts)
-    # 5. the record
-    return _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X)
+    # 5. no street that serves nothing, no empty block: unused unnamed streets lifted, thin blocks built up or given a named use
+    _prune(T, net, sl, ts)
+    opens = _blocks(T, net, sl, pid, box, ts)
+    dropped += _access(T, net, _passable(T, sl, ts), sl, pid, box, ts)
+    # 6. the record
+    P = _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X)
+    P['open_uses'] = opens
+    return P
+
+
+def _alive(net, kinds=('street', 'square', 'arrival')):
+    return [e for e in net.elems if e.get('alive', True) and e['kind'] in kinds]
+
+
+def _remove(T, net, sl, el):
+    others = np.zeros_like(el['mask'])
+    for e in _alive(net):
+        if e is not el:
+            others |= e['mask']
+    _unpaint(T, sl, el['mask'] & ~others)
+    el['alive'] = False
+    net.ids[net.ids == net.elems.index(el)] = -1
+    for e in _alive(net):                                           # cells the removed street shared go back to their owners
+        net.ids[e['mask'] & (net.ids < 0)] = net.elems.index(e)
+    el['mask'] = np.zeros_like(el['mask'])
+
+
+def _prune(T, net, sl, ts):
+    """Unnamed streets no building faces, no close joins and no other street needs to reach a way in: lifted."""
+    for it in range(60):
+        faced = {b.get('faces') for t in ts for b in t.buildings}
+        changed = False
+        for el in _alive(net, ('street',)):
+            if el.get('name') or el['class'] in ('close', 'arrival', 'main') or el.get('follows_route') or el['id'] in faced:
+                continue
+            dm = ndi.binary_dilation(el['mask'], iterations=1)
+            if any(e.get('class') == 'close' and (e['mask'] & dm).any() for e in _alive(net, ('street',)) if e is not el):
+                continue
+            rest = np.zeros_like(el['mask'])
+            for e in _alive(net):
+                if e is not el:
+                    rest |= e['mask']
+            lab, n = ndi.label(rest)
+            good = set()
+            for e in _alive(net, ('arrival',)):
+                good |= set(np.unique(lab[e['mask']]).tolist()) - {0}
+            ok = all(set(np.unique(lab[e['mask']]).tolist()) - {0} <= good for e in _alive(net, ('street', 'square')) if e is not el and e['mask'].any())
+            if ok:
+                _remove(T, net, sl, el); changed = True
+        if not changed:
+            return
+
+
+BLOCK_FORMS = {'neon-harbour': None, 'dust-gulch': ('adobe', 'adobe', 'workshop'), 'palm-spring': ('adobe', 'cottage'), 'hearthold': ('townhouse', 'workshop'),
+               'cinderwick': ('cottage', 'townhouse'), 'cogsworth': ('terrace', 'workshop'), 'highgarth': ('house', 'cottage'), 'lagoon-landing': ('cottage', 'boathouse')}
+NEON_FORMS = {'the old waterfront': ('oldhouse', 'oldhouse', 'shop'), 'the docks': ('longwarehouse', 'warehouse'), 'the Lanes and the East Shore': ('aptrow', 'terrace'),
+              'the Company district': ('slab', 'bigtower'), 'the Heights and the Skyport': ('townhouse', 'house')}
+OPEN_USE = {'the old waterfront': ('a pocket park', 'garden'), 'the docks': ('a stacking yard', 'yard'), 'the Lanes and the East Shore': ('a courtyard', 'yard'),
+            'the Company district': ('a planted plaza', 'plaza'), 'the Heights and the Skyport': ('a terrace garden', 'garden')}
+
+
+def block_masks(streets_m, ter_bad):
+    """The blocks between the streets: closed regions of the box not touching its edge (the checker's own rule)."""
+    lab, n = ndi.label(~streets_m)
+    edge = set(np.unique(np.concatenate([lab[0], lab[-1], lab[:, 0], lab[:, -1]])).tolist())
+    out = []
+    for i in range(1, n + 1):
+        if i in edge:
+            continue
+        m = lab == i
+        area = int((m & ~ter_bad).sum())
+        if 12 <= area <= 1200:
+            out.append(m)
+    return out
+
+
+def _covered(T, net, ts, box):
+    c0, r0, w, h = box
+    cov = np.zeros((h, w), bool)
+    for t in ts:
+        for b in t.buildings:
+            c, r = b['x'] // CELL - c0, b['y'] // CELL - r0
+            cov[max(0, r):max(0, r + b['h'] // CELL), max(0, c):max(0, c + b['w'] // CELL)] = True
+            if b.get('plot'):
+                px_, py_, pw_, ph_, kind = b['plot']
+                cov[max(0, py_ - r0):max(0, py_ - r0 + ph_), max(0, px_ - c0):max(0, px_ - c0 + pw_)] = True
+        for o in t.outskirts:
+            x0, y0, x1, y1 = o['box']
+            cov[max(0, y0 // CELL - r0):max(0, y1 // CELL - r0), max(0, x0 // CELL - c0):max(0, x1 // CELL - c0)] = True
+    for e in _alive(net):
+        if e['kind'] == 'square' or e.get('class') == 'close':
+            cov |= e['mask']
+    return cov
+
+
+def _blocks(T, net, sl, pid, box, ts):
+    c0, r0, w, h = box
+    K = T['K']
+    sub = K[sl]
+    ter_bad = np.isin(sub, WATER_K + BARRIER_K + list(TW.ROUTE))
+    opens = []
+    for it in range(3):
+        sm = np.zeros((h, w), bool)
+        for e in _alive(net, ('street', 'square')):
+            if e.get('class') != 'close':
+                sm |= e['mask']
+        blocks = block_masks(sm, ter_bad)
+        cov = _covered(T, net, ts, box)
+        thin = [m for m in blocks if (cov & m & ~ter_bad).sum() < 0.5 * (m & ~ter_bad).sum()]
+        if not thin:
+            break
+        for m in thin:
+            rr, cc = np.nonzero(m)
+            cy, cx = (rr.mean() + r0 + 0.5) * CELL, (cc.mean() + c0 + 0.5) * CELL
+            t = min(ts, key=lambda t: math.hypot(t.centre[0] - cx, t.centre[1] - cy))
+            dname = t.name.split(': ', 1)[1] if ': ' in t.name else None
+            forms = NEON_FORMS.get(dname) if dname else BLOCK_FORMS.get(pid) or ('house', 'cottage')
+            # 1. buildings: on the block's free ground next to its streets, while the town has room
+            if it < 2 and forms:
+                edge_d = ndi.distance_transform_edt(m)
+                order = sorted(zip(rr.tolist(), cc.tolist()), key=lambda q: (edge_d[q], q))
+                k = 0
+                for (r, c) in order[::2]:
+                    if (cov & m & ~ter_bad).sum() >= 0.5 * (m & ~ter_bad).sum() or t.count() >= t.cap:
+                        break
+                    form = forms[k % len(forms)]
+                    (w0, w1), (d0, d1) = TW.BLD[form]
+                    for ww, dd in (((w0 + w1) // 2, (d0 + d1) // 2), ((d0 + d1) // 2, (w0 + w1) // 2)):
+                        wc_, dc_ = int(round(ww / CELL)), int(round(dd / CELL))
+                        for (ra, ca) in ((r, c), (r - dc_ + 1, c), (r, c - wc_ + 1), (r - dc_ + 1, c - wc_ + 1)):
+                            if ra < 0 or ca < 0 or ra + dc_ > h or ca + wc_ > w or not m[ra:ra + dc_, ca:ca + wc_].all():
+                                continue
+                            if t.put((ca + c0) * CELL, (ra + r0) * CELL, wc_ * CELL, dc_ * CELL, form, True):
+                                cov[ra:ra + dc_, ca:ca + wc_] = True; k += 1
+                                break
+                        else:
+                            continue
+                        break
+            # 2. what is still open: a named use (a park, a yard, a courtyard, a corral, allotments)
+            if it == 2 or (cov & m & ~ter_bad).sum() < 0.5 * (m & ~ter_bad).sum():
+                if it < 1:
+                    continue
+                nm, kind = OPEN_USE.get(dname, (('a corral' if pid in ('dust-gulch', 'palm-spring', 'the-lode') else 'allotments'),
+                                                ('yard' if pid in ('dust-gulch', 'palm-spring', 'the-lode') else 'garden')))
+                free = m & ~cov & ~ter_bad & ~T['taken'][sl] & np.isin(sub, list(TW.BUILDABLE)) & ~np.isin(sub, ['building', 'warehouse', 'tower', 'keep', 'hangar', 'terminal'])
+                if free.any():
+                    sub[free] = kind
+                    fr, fc = np.nonzero(m)
+                    opens.append({'id': f'{pid}-o{len(opens) + 1:02d}', 'name': nm, 'kind': kind,
+                                  'cells': [int(fc.min() + c0), int(fr.min() + r0), int(fc.max() - fc.min() + 1), int(fr.max() - fr.min() + 1)],
+                                  'block_cells': int((m & ~ter_bad).sum())})
+                    cov |= m
+    return opens
+
 
 
 def _in(p, zb):
@@ -572,6 +730,7 @@ def _access(T, net, pas, sl, pid, box, ts):
 def terrain_rows(sub):
     """The box's ground as one character a cell, run-length coded per row."""
     code = np.full(sub.shape, '.', dtype='<U1')
+    code[np.isin(sub, GREEN_K)] = 'g'
     code[np.isin(sub, list(TW.ROUTE))] = 'r'
     code[np.isin(sub, WATER_K)] = '~'
     code[np.isin(sub, BARRIER_K)] = '#'
@@ -600,6 +759,10 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
     dists = []
     if len(ts) > 1:
         for t in ts:
+            if t.name.endswith('the Lanes and the East Shore'):        # two places, one district each
+                for nb in t.neighbourhoods:
+                    dists.append({'name': nb[0], 'centre_px': [int(nb[2]), int(nb[3])], 'declared': nb[1], 'town': t.name})
+                continue
             dists.append({'name': t.name.split(': ', 1)[1], 'centre_px': list(map(int, t.centre)), 'declared': t.purpose, 'town': t.name})
     else:
         for nb in lead.neighbourhoods:
@@ -637,11 +800,13 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
                 purpose = USE_TEXT.get(u, u)
                 occ = {'chapel': 'the priest, living beside it', 'mill': 'the miller and family', 'barn': 'the farm', 'station': 'the station staff',
                        'boathouse': 'a boat owner', 'tower': 'offices and the Company', 'hangar': 'ground crew', 'lodge': 'the keeper'}.get(u, 'its keepers')
-            rec = {'id': bid, 'type': u, 'footprint_cells': [b['x'] // CELL, b['y'] // CELL, b['w'] // CELL, b['h'] // CELL],
+            rec = {'id': bid, 'type': u, 'form': b.get('form', u), 'footprint_cells': [b['x'] // CELL, b['y'] // CELL, b['w'] // CELL, b['h'] // CELL],
                    'rect_px': [b['x'], b['y'], b['w'], b['h']], 'faces': b.get('faces'), 'door_cells': b.get('door'), 'purpose': purpose,
                    'occupants': occ, 'district': d['id'], 'counted': bool(b['counted'])}
             if b.get('plan'):
                 rec['from_zone_plan'] = True
+            if b.get('form') in TW.FALSE_FRONT:
+                rec['false_front'] = True                          # a tall board front on the street side (size-guide.md 4)
             if b.get('plot'):
                 px_, py_, pw_, ph_, kind = b['plot']
                 rec['plot_cells'] = [px_, py_, pw_, ph_]; rec['plot'] = kind
@@ -715,14 +880,15 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
                  'street_classes': {'arrival': "the regional route's own width", 'main': 6, 'side': 4, 'lane': 3, 'close': 2}},
         'site': {'reason': lead.purpose if len(ts) == 1 else 'the ria\'s deep water at the end of the Lull Road and the line: the continent\'s port, its trade and the Company',
                  'terrain': lead.setting if len(ts) == 1 else 'round the ria\'s head and east shore, on the flats east of it and up the Heights to the west',
-                 'fit': FIT.get(pid, ''), 'tiers': [int(tiers.min()), int(tiers.max())], 'levelled_footprints': len(lv)},
+                 'fit': FIT.get(pid, ''), 'dry': pid in ('dust-gulch', 'palm-spring', 'the-lode'), 'tiers': [int(tiers.min()), int(tiers.max())], 'levelled_footprints': len(lv)},
         'footprint_px': fb,
         'arrivals': arrivals, 'streets': streets, 'squares': squares, 'districts': dists, 'gathering_places': gathering,
+        'size_table_px': {f: [list(TW.BLD[f][0]), list(TW.BLD[f][1])] for f in sorted({b['form'] for b in bl if not b.get('from_zone_plan')})},
         'buildings': bl, 'lifted': [{'type': d['use'], 'rect_px': [d['x'], d['y'], d['w'], d['h']], 'why': 'no close could reach it'} for d in dropped],
         'outskirts': [o for t in ts for o in t.outskirts],
         'game_layout': game,
         'ground': GROUND.get(pid, {'centre': 'worn earth', 'yards': 'gardens', 'edges': 'fields'}),
-        'terrain': {'box_cells': [int(c0), int(r0), int(w), int(h)], 'codes': {'.': 'land', 'r': 'route', '~': 'water', '#': 'barrier (cliff, wall, lava)', 'b': 'bridge'},
+        'terrain': {'box_cells': [int(c0), int(r0), int(w), int(h)], 'codes': {'.': 'land', 'g': 'green ground (grass, gardens, woods, fields)', 'r': 'route', '~': 'water', '#': 'barrier (cliff, wall, lava)', 'b': 'bridge'},
                     'rows': terrain_rows(K[sl])},
         'residents': [], 'routines': [],
         'x3_notes': 'For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time '

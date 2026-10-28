@@ -28,16 +28,17 @@
   "reason": "a village of mill houses and laundries along the Glint above the falls, now the city's northern edge, where the maglev comes in",
   "terrain": "the Glint's banks north of the old town",
   "fit": "",
+  "dry": false,
   "tiers": [
    -1,
    7
   ],
-  "levelled_footprints": 1
+  "levelled_footprints": 0
  },
  "footprint_px": [
-  10840,
+  10948,
   4116,
-  11296,
+  11264,
   4420
  ],
  "arrivals": [
@@ -48,8 +49,8 @@
    "street": "glintside-a1",
    "entries_px": [
     [
-     10745,
-     4391
+     10826,
+     4388
     ]
    ],
    "route_kind": "road"
@@ -73,37 +74,18 @@
    ],
    "connects": [
     "glintside-a1",
+    "glintside-c01",
     "glintside-q01"
    ]
   },
   {
    "id": "glintside-s02",
-   "name": "Mill Street (1)",
+   "name": "Mill Street",
    "class": "side",
    "width_cells": 4,
    "vertices_px": [
     [
-     11000.0,
-     4320.0
-    ],
-    [
-     11024.0,
-     4320.0
-    ]
-   ],
-   "connects": [
-    "glintside-c02",
-    "glintside-s08"
-   ]
-  },
-  {
-   "id": "glintside-s03",
-   "name": "Mill Street (2)",
-   "class": "side",
-   "width_cells": 4,
-   "vertices_px": [
-    [
-     11128.0,
+     11176.0,
      4320.0
     ],
     [
@@ -112,20 +94,19 @@
     ]
    ],
    "connects": [
-    "glintside-s04",
-    "glintside-s05",
-    "glintside-s09"
+    "glintside-s03",
+    "glintside-s04"
    ]
   },
   {
-   "id": "glintside-s04",
+   "id": "glintside-s03",
    "name": "Weir Lane",
    "class": "lane",
    "width_cells": 3,
    "vertices_px": [
     [
      11156.0,
-     4324.0
+     4300.0
     ],
     [
      11156.0,
@@ -133,13 +114,11 @@
     ]
    ],
    "connects": [
-    "glintside-c01",
-    "glintside-s03",
-    "glintside-s09"
+    "glintside-s02"
    ]
   },
   {
-   "id": "glintside-s05",
+   "id": "glintside-s04",
    "name": "Laundry Lane",
    "class": "lane",
    "width_cells": 3,
@@ -154,7 +133,8 @@
     ]
    ],
    "connects": [
-    "glintside-s03"
+    "glintside-s02",
+    "glintside-s07"
    ]
   },
   {
@@ -164,20 +144,16 @@
    "width_cells": 5,
    "vertices_px": [
     [
-     10745.0,
-     4390.8
+     10826.0,
+     4388.0
     ],
     [
-     10837.5,
-     4390.4
+     10964.0,
+     4388.0
     ],
     [
-     10898.0,
-     4397.7
-    ],
-    [
-     10928.1,
-     4403.7
+     10964.0,
+     4452.0
     ],
     [
      11084.6,
@@ -187,53 +163,33 @@
    "follows_route": "Old Bridges",
    "connects": [
     "glintside-q01",
-    "glintside-s01"
+    "glintside-s01",
+    "glintside-s07"
    ]
   },
   {
-   "id": "glintside-s08",
+   "id": "glintside-s07",
    "name": null,
    "class": "lane",
    "width_cells": 3,
    "vertices_px": [
     [
-     11012.0,
-     4332.0
+     11260.0,
+     4412.0
     ],
     [
-     11012.0,
-     4348.0
+     11100.0,
+     4412.0
+    ],
+    [
+     11100.0,
+     4428.0
     ]
    ],
    "link": true,
    "connects": [
-    "glintside-q01",
-    "glintside-s02"
-   ]
-  },
-  {
-   "id": "glintside-s09",
-   "name": null,
-   "class": "lane",
-   "width_cells": 3,
-   "vertices_px": [
-    [
-     11140.0,
-     4332.0
-    ],
-    [
-     11140.0,
-     4380.0
-    ],
-    [
-     11044.0,
-     4380.0
-    ]
-   ],
-   "link": true,
-   "connects": [
-    "glintside-q01",
-    "glintside-s03"
+    "glintside-a1",
+    "glintside-s04"
    ]
   },
   {
@@ -243,43 +199,20 @@
    "width_cells": 2,
    "vertices_px": [
     [
-     11224.0,
-     4128.0
+     10968.0,
+     4288.0
     ],
     [
-     11168.0,
-     4128.0
+     10944.0,
+     4288.0
+    ],
+    [
+     10944.0,
+     4328.0
     ]
    ],
    "connects": [
-    "glintside-s04"
-   ]
-  },
-  {
-   "id": "glintside-c02",
-   "name": null,
-   "class": "close",
-   "width_cells": 2,
-   "vertices_px": [
-    [
-     10832.0,
-     4168.0
-    ],
-    [
-     10816.0,
-     4168.0
-    ],
-    [
-     10816.0,
-     4304.0
-    ],
-    [
-     10984.0,
-     4304.0
-    ]
-   ],
-   "connects": [
-    "glintside-s02"
+    "glintside-s01"
    ]
   }
  ],
@@ -290,9 +223,9 @@
    "type": "green",
    "cells": [
     1370,
-    544,
+    547,
     10,
-    5
+    2
    ]
   }
  ],
@@ -334,134 +267,160 @@
   }
  ],
  "gathering_places": [],
+ "size_table_px": {
+  "cottage": [
+   [
+    56,
+    80
+   ],
+   [
+    40,
+    48
+   ]
+  ],
+  "house": [
+   [
+    80,
+    104
+   ],
+   [
+    48,
+    64
+   ]
+  ]
+ },
  "buildings": [
   {
    "id": "glintside-b001",
    "type": "house",
+   "form": "house",
    "footprint_cells": [
-    1383,
-    523,
-    10,
+    1372,
+    530,
+    11,
     6
    ],
    "rect_px": [
-    11064,
-    4184,
-    80,
+    10976,
+    4240,
+    88,
     48
    ],
-   "faces": "glintside-s04",
+   "faces": "glintside-c01",
    "door_cells": [
-    1393,
-    526
+    1371,
+    535
    ],
    "purpose": "a family house",
    "occupants": "a farming household",
    "district": "glintside-d-glintside",
    "counted": true,
    "plot_cells": [
-    1383,
-    519,
-    10,
+    1374,
+    526,
+    9,
     4
    ],
    "plot": "garden"
   },
   {
    "id": "glintside-b002",
-   "type": "house",
+   "type": "cottage",
+   "form": "cottage",
    "footprint_cells": [
-    1397,
-    520,
-    6,
-    12
+    1396,
+    528,
+    10,
+    5
    ],
    "rect_px": [
-    11176,
-    4160,
-    48,
-    96
+    11168,
+    4224,
+    80,
+    40
    ],
-   "faces": "glintside-s04",
+   "faces": "glintside-s03",
    "door_cells": [
-    1396,
-    526
+    1395,
+    530
    ],
-   "purpose": "a family house",
+   "purpose": "a cottage",
    "occupants": "a fishing household",
    "district": "glintside-d-glintside",
    "counted": true,
    "plot_cells": [
-    1403,
-    520,
-    4,
-    12
+    1396,
+    524,
+    10,
+    4
    ],
    "plot": "garden"
   },
   {
    "id": "glintside-b003",
    "type": "house",
+   "form": "house",
    "footprint_cells": [
-    1404,
-    515,
+    1397,
+    516,
     8,
-    6
+    10
    ],
    "rect_px": [
-    11232,
-    4120,
+    11176,
+    4128,
     64,
-    48
+    80
    ],
-   "faces": "glintside-c01",
+   "faces": "glintside-s03",
    "door_cells": [
-    1403,
-    515
+    1396,
+    521
    ],
    "purpose": "a family house",
    "occupants": "a carting household",
    "district": "glintside-d-glintside",
    "counted": true,
    "plot_cells": [
-    1404,
-    521,
-    8,
-    4
+    1405,
+    516,
+    4,
+    10
    ],
-   "plot": "yard"
+   "plot": "garden"
   },
   {
    "id": "glintside-b004",
-   "type": "cottage",
+   "type": "house",
+   "form": "house",
    "footprint_cells": [
-    1355,
-    515,
-    9,
-    6
+    1386,
+    524,
+    6,
+    11
    ],
    "rect_px": [
-    10840,
-    4120,
-    72,
-    48
+    11088,
+    4192,
+    48,
+    88
    ],
-   "faces": "glintside-c02",
+   "faces": "glintside-s03",
    "door_cells": [
-    1354,
-    520
+    1392,
+    529
    ],
-   "purpose": "a cottage",
+   "purpose": "a family house",
    "occupants": "a craft household",
    "district": "glintside-d-glintside",
    "counted": true,
    "plot_cells": [
-    1355,
-    521,
-    9,
-    4
+    1382,
+    524,
+    4,
+    11
    ],
-   "plot": "yard"
+   "plot": "garden"
   }
  ],
  "lifted": [],
@@ -475,7 +434,7 @@
     11400,
     4120
    ],
-   "plots": 5,
+   "plots": 6,
    "why": "the city's allotments by the Glint"
   }
  ],
@@ -486,8 +445,8 @@
    {
     "name": "a family house, Glintside's largest building",
     "xy": [
-     11200,
-     4208
+     11208,
+     4168
     ]
    }
   ],
@@ -495,14 +454,14 @@
   "quiet_corners": [],
   "first_screen_cells": [
    [
-    1323,
+    1333,
     537,
     40,
     22.5
    ]
   ],
   "screens": [
-   1.4,
+   1.0,
    1.7
   ]
  },
@@ -511,100 +470,100 @@
   "yards": "gardens",
   "edges": "fields",
   "materials_cells": {
-   "worn cobbles": 2160,
-   "patched paving": 598,
-   "steel deck plates": 35,
-   "made land, paved": 82,
-   "packed earth": 47
+   "worn cobbles": 1491,
+   "patched paving": 490,
+   "made land, paved": 32
   }
  },
  "terrain": {
   "box_cells": [
-   1340,
+   1353,
    499,
-   88,
+   71,
    69
   ],
   "codes": {
    ".": "land",
+   "g": "green ground (grass, gardens, woods, fields)",
    "r": "route",
    "~": "water",
    "#": "barrier (cliff, wall, lava)",
    "b": "bridge"
   },
   "rows": [
-   "32.3~40.13~",
-   "29.5~38.16~",
-   "29.5~38.16~",
-   "26.5~39.17~.",
-   "24.3~40.17~4.",
-   "20.4~40.19~5.",
-   "16.5~40.19~8.",
-   "10.6~43.17~12.",
-   "7.5~42.19~13.2#",
-   "4.4~43.21~.2#3.10#",
-   ".3~46.18~4.16#",
-   ".3~46.18~4.16#",
-   "2~44.19~8.15#",
-   "43.21~11.13#",
-   "42.11~3b6~16.10#",
-   "38.15~3b3~21.8#",
-   "35.18~3b27.5#",
-   "34.19~33.2#",
-   "32.18~36.2#",
-   "31.17~40.",
-   "31.17~40.",
-   "29.16~43.",
-   "27.16~45.",
-   "26.16~46.",
-   "24.14~50.",
-   "23.14~51.",
-   "23.12~53.",
-   "21.13~54.",
-   "20.14~54.",
-   "20.14~54.",
-   "18.14~52.4r",
-   "16.15~47.8r2.",
-   "16.13~44.7r8.",
-   "15.12~61.",
-   "15.12~35.2r24.",
-   "13.13~31.2r2.r26.",
-   "13.11~27.5r32.",
-   "15.8~23.4r38.",
-   "15.8b23.4r38.",
-   "15.8b65.",
-   "18.2b18.2r48.",
-   "31.r56.",
-   "29.2r57.",
-   "23.r64.",
-   "16.2r70.",
-   "2.14r72.",
-   "24r64.",
-   "24r64.",
-   "26r62.",
-   "31r57.",
-   "34r54.",
-   "37r51.",
-   "42r46.",
-   "7r6.32r43.",
-   "26.24r38.",
-   "29.22r37.",
-   "29.22r37.",
-   "34.19r35.",
-   "37.17r34.",
-   "38.16r34.",
-   "38.16r34.",
-   "38.16r34.",
-   "38.16r34.",
-   "21.10~9.14r34.",
-   "21.10~9.16r32.",
-   "21.10~9.16r32.",
-   "21.10~9.16r32.",
-   "8.7~6.10~9.16r32.",
-   "4.16~.10~9.16r32."
+   "19g3~40g9~",
+   "16g5~38g12~",
+   "16g5~38g12~",
+   "13g5~39g14~",
+   "11g3~40g17~",
+   "7g4~40g19~g",
+   "3g5~40g19~4g",
+   "3~43g17~8g",
+   "41g19~11g",
+   "38g21~g2#3g6#",
+   "37g18~4g12#",
+   "37g18~4g12#",
+   "33g19~8g11#",
+   "30g21~11g9#",
+   "29g11~3b6~16g6#",
+   "25g15~3b3~21g4#",
+   "22g18~3b27g#",
+   "21g19~3.g8.19g",
+   "19g18~3g3.g8.19g",
+   "18g17~5g3.g8.19g",
+   "18g17~5g3.g8.19g",
+   "16g16~8g3.g8.19g",
+   "14g16~10g3.g8.19g",
+   "13g16~11g3.g8.19g",
+   "11g14~15g3.g8.19g",
+   "10g14~9g6.g3.g8.19g",
+   "10g12~11g6.g3.g8.19g",
+   "8g13~12g6.g3.28g",
+   "7g14~12g6.g3.28g",
+   "7g14~12g6.g13.18g",
+   "5g14~14g6.g13.18g",
+   "3g15~g11.3g6.g13.12g6r",
+   "3g13~3g11.3g6.g13.7g7r4g",
+   "2g12~5g11.3g6.g13.18g",
+   "2g12~5g11.3g6.g3.6g2r20g",
+   "13~6g11.3g6.g3.g2r2gr22g",
+   "11~3g16.8g5r28g",
+   "g.8b23.4r13g3.2g3.13g",
+   "2.8b23.4r13g3.2g3.13g",
+   "2.8b17.6g5.12g8.13g",
+   "4g.2b.2g8.7g2r2g29.13g",
+   "2g14.2gr3g36.13g",
+   "5g6.3g2.2r3g37.13g",
+   "10gr3g3.5g9.3g8.8g21.",
+   "3g2r9g3.5g9.3g8.8g21.",
+   "3r11g3.5g9.3g8.8g21.",
+   "5g6r3g3.5g9.3g15.g21.",
+   "19r3g9.3g3.5g7.g21.",
+   "20r7g4.3g3.5g7.g21.",
+   "20r7g4.3g3.5g7.g21.",
+   "20r51.",
+   "20r51.",
+   "15.5r51.",
+   "2r13g5r13g38.",
+   "6g6.3g5r13g.3r7g27.",
+   "6g6.3g19r.3r15.2g16.",
+   "6g6.3g20r.2r15.2g16.",
+   "6g6.3g20r.4r13.2g16.",
+   "6g6.3g20r2.4r12.2g16.",
+   "6g6.4g18r3.4r12.2g16.",
+   "25g4r4g.r2.4r12.2g16.",
+   "8.17g10r3.3r3.6g3.2g16.",
+   "11.7g3.4g10r3.3r3.6g3.2g3.13g",
+   "8.10~g.7g8r2.g3r9g3.2g3.13g",
+   "8.10~g.7g8r2.g5r7g3.2g3.g12.",
+   "8.10~g.7g8r2.g5r7g3.2g3.g12.",
+   "8.10~g2.6g8r2.2g4r7g3.2g3.g12.",
+   "2~6.10~3.6g8r2.2g4r7g3.2g3.g12.",
+   "7~.10~3.6g8r2.2g4r7g3.2g3.g12."
   ]
  },
  "residents": [],
  "routines": [],
- "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only."
+ "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only.",
+ "open_uses": []
 }

@@ -28,6 +28,7 @@
   "reason": "the iron and copper mine: the mine house, the smithy, the miners' bunkhouse",
   "terrain": "the massif foothills above Dust Gulch",
   "fit": "",
+  "dry": true,
   "tiers": [
    7,
    11
@@ -35,9 +36,9 @@
   "levelled_footprints": 2
  },
  "footprint_px": [
-  2688,
+  2696,
   1640,
-  2904,
+  2908,
   1864
  ],
  "arrivals": [
@@ -56,6 +57,33 @@
   }
  ],
  "streets": [
+  {
+   "id": "the-lode-s01",
+   "name": "the Lode Lane",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     2780.0,
+     1748.0
+    ],
+    [
+     2844.0,
+     1748.0
+    ],
+    [
+     2844.0,
+     1804.0
+    ],
+    [
+     2908.0,
+     1804.0
+    ]
+   ],
+   "connects": [
+    "the-lode-a1"
+   ]
+  },
   {
    "id": "the-lode-a1",
    "name": "Lode Track",
@@ -108,7 +136,9 @@
     ]
    ],
    "follows_route": "Lode Track",
-   "connects": []
+   "connects": [
+    "the-lode-s01"
+   ]
   }
  ],
  "squares": [],
@@ -136,21 +166,44 @@
   }
  ],
  "gathering_places": [],
+ "size_table_px": {
+  "cottage": [
+   [
+    56,
+    80
+   ],
+   [
+    40,
+    48
+   ]
+  ],
+  "house": [
+   [
+    80,
+    104
+   ],
+   [
+    48,
+    64
+   ]
+  ]
+ },
  "buildings": [
   {
    "id": "the-lode-b001",
    "type": "cottage",
+   "form": "cottage",
    "footprint_cells": [
     347,
-    221,
-    6,
-    12
+    222,
+    5,
+    10
    ],
    "rect_px": [
     2776,
-    1768,
-    48,
-    96
+    1776,
+    40,
+    80
    ],
    "faces": "the-lode-a1",
    "door_cells": [
@@ -162,27 +215,28 @@
    "district": "the-lode-d-the-lode",
    "counted": true,
    "plot_cells": [
-    353,
-    221,
-    4,
-    12
+    352,
+    222,
+    3,
+    10
    ],
-   "plot": "garden"
+   "plot": "yard"
   },
   {
    "id": "the-lode-b002",
    "type": "cottage",
+   "form": "cottage",
    "footprint_cells": [
-    336,
-    216,
-    6,
-    9
+    337,
+    217,
+    5,
+    7
    ],
    "rect_px": [
-    2688,
-    1728,
-    48,
-    72
+    2696,
+    1736,
+    40,
+    56
    ],
    "faces": "the-lode-a1",
    "door_cells": [
@@ -194,74 +248,76 @@
    "district": "the-lode-d-the-lode",
    "counted": true,
    "plot_cells": [
-    332,
-    216,
-    4,
-    9
+    334,
+    217,
+    3,
+    7
    ],
-   "plot": "garden"
+   "plot": "yard"
   },
   {
    "id": "the-lode-b003",
-   "type": "cottage",
+   "type": "house",
+   "form": "house",
    "footprint_cells": [
-    347,
+    339,
     205,
-    11,
-    6
+    6,
+    11
    ],
    "rect_px": [
-    2776,
+    2712,
     1640,
-    88,
-    48
+    48,
+    88
    ],
    "faces": "the-lode-a1",
    "door_cells": [
-    350,
-    211
+    345,
+    215
    ],
-   "purpose": "a cottage",
+   "purpose": "a family house",
    "occupants": "a carting household",
    "district": "the-lode-d-the-lode",
    "counted": true,
    "plot_cells": [
-    351,
-    211,
-    7,
-    4
+    336,
+    205,
+    3,
+    11
    ],
    "plot": "yard"
   },
   {
    "id": "the-lode-b004",
-   "type": "house",
+   "type": "cottage",
+   "form": "cottage",
    "footprint_cells": [
-    354,
-    212,
-    9,
-    6
+    356,
+    228,
+    7,
+    5
    ],
    "rect_px": [
-    2832,
-    1696,
-    72,
-    48
+    2848,
+    1824,
+    56,
+    40
    ],
-   "faces": "the-lode-a1",
+   "faces": "the-lode-s01",
    "door_cells": [
-    353,
-    213
+    359,
+    227
    ],
-   "purpose": "a family house",
+   "purpose": "a cottage",
    "occupants": "a craft household",
    "district": "the-lode-d-the-lode",
    "counted": true,
    "plot_cells": [
-    354,
-    218,
-    9,
-    4
+    356,
+    233,
+    7,
+    3
    ],
    "plot": "yard"
   }
@@ -270,13 +326,13 @@
  "outskirts": [],
  "game_layout": {
   "arrival": "Lode Track",
-  "first_view": "the Lode from the Lode Track: a cottage, the Lode's largest building ahead",
+  "first_view": "the Lode from the Lode Track: a family house, the Lode's largest building ahead",
   "landmarks": [
    {
-    "name": "a cottage, the Lode's largest building",
+    "name": "a family house, the Lode's largest building",
     "xy": [
-     2800,
-     1816
+     2736,
+     1684
     ]
    }
   ],
@@ -300,87 +356,89 @@
   "yards": "gardens",
   "edges": "fields",
   "materials_cells": {
-   "packed sand": 140,
-   "adobe yards": 68
+   "packed sand": 208,
+   "adobe yards": 104
   }
  },
  "terrain": {
   "box_cells": [
-   321,
+   322,
    190,
-   58,
+   57,
    59
   ],
   "codes": {
    ".": "land",
+   "g": "green ground (grass, gardens, woods, fields)",
    "r": "route",
    "~": "water",
    "#": "barrier (cliff, wall, lava)",
    "b": "bridge"
   },
   "rows": [
-   "58.",
-   "58.",
-   "58.",
-   "58.",
-   "58.",
-   "58.",
-   "58.",
-   "58.",
-   "58.",
-   "58.",
-   "58.",
-   "58.",
-   "58.",
-   "58.",
-   "58.",
-   "58.",
-   "58.",
-   "58.",
-   "58.",
-   "58.",
-   "58.",
-   "26.5r27.",
-   "26.5r27.",
-   "25.6r27.",
-   "25.5r28.",
-   "24.6r28.",
-   "24.5r29.",
-   "24.5r29.",
-   "23.5r30.",
-   "23.5r30.",
-   "23.5r30.",
-   "23.3r32.",
-   "22.4r32.",
-   "22.4r32.",
-   "21.5r32.",
-   "20.5r33.",
-   "18.7r33.",
-   "18.6r34.",
-   "17.6r35.",
-   "17.5r36.",
-   "17.5r36.",
-   "17.6r35.",
-   "18.5r35.",
-   "18.6r34.",
-   "20.5r33.",
-   "21.5r32.",
-   "21.5r32.",
-   "22.6r30.",
-   "23.5r30.",
-   "24.4r30.",
-   "24.4r30.",
-   "18.10r30.",
-   "6.22r30.",
-   "6.20r32.",
-   "6.15r37.",
-   "6.7r45.",
-   "6.7r45.",
-   "6.8r44.",
-   "7.8r43."
+   "10g47.",
+   "10g47.",
+   "9g48.",
+   "7g50.",
+   "4g53.",
+   "3g54.",
+   "3g54.",
+   "3g54.",
+   "3g54.",
+   "3g54.",
+   "3g54.",
+   "3g54.",
+   "3g54.",
+   "3g54.",
+   "3g54.",
+   "3g54.",
+   "3g54.",
+   "3g54.",
+   "3g54.",
+   "3g54.",
+   "3g54.",
+   "3g22.5r27.",
+   "3g22.5r27.",
+   "3g21.6r27.",
+   "24.5r28.",
+   "g22.6r28.",
+   "23.5r29.",
+   "23.5r29.",
+   "22.5r30.",
+   "22.5r30.",
+   "22.5r30.",
+   "22.3r32.",
+   "21.4r32.",
+   "21.4r32.",
+   "3g17.5r32.",
+   "g18.5r33.",
+   "17.7r33.",
+   "17.6r34.",
+   "g15.6r35.",
+   "3g13.5r36.",
+   "g15.5r36.",
+   "g15.6r35.",
+   "g16.5r35.",
+   "17.6r34.",
+   "19.5r33.",
+   "20.5r32.",
+   "20.5r32.",
+   "21.6r30.",
+   "22.5r30.",
+   "23.4r30.",
+   "23.4r30.",
+   "17.10r30.",
+   "5.22r30.",
+   "5.20r32.",
+   "5.15r37.",
+   "5.7r45.",
+   "5.7r45.",
+   "5.8r22.2g20.",
+   "6.8r18.6g.g17."
   ]
  },
  "residents": [],
  "routines": [],
- "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only."
+ "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only.",
+ "open_uses": []
 }
