@@ -702,8 +702,362 @@
    "16.~13.5g.3g33r"
   ]
  },
- "residents": [],
- "routines": [],
+ "residents": [
+  {
+   "id": "gullwick-resident-01",
+   "name": "Gullwick resident 1 (placeholder)",
+   "name_status": "placeholder",
+   "home": "gullwick-b001",
+   "workplace": null,
+   "workplace_status": "deferred",
+   "role": "a farming household",
+   "district": "gullwick-d-gullwick",
+   "source_occupants": "a farming household",
+   "status": "proposal"
+  },
+  {
+   "id": "gullwick-resident-02",
+   "name": "Gullwick resident 2 (placeholder)",
+   "name_status": "placeholder",
+   "home": "gullwick-b002",
+   "workplace": null,
+   "workplace_status": "deferred",
+   "role": "a fishing household",
+   "district": "gullwick-d-gullwick",
+   "source_occupants": "a fishing household",
+   "status": "proposal"
+  },
+  {
+   "id": "gullwick-resident-03",
+   "name": "Gullwick resident 3 (placeholder)",
+   "name_status": "placeholder",
+   "home": "gullwick-b003",
+   "workplace": null,
+   "workplace_status": "deferred",
+   "role": "a carting household",
+   "district": "gullwick-d-gullwick",
+   "source_occupants": "a carting household",
+   "status": "proposal"
+  },
+  {
+   "id": "gullwick-resident-04",
+   "name": "Gullwick resident 4 (placeholder)",
+   "name_status": "placeholder",
+   "home": "gullwick-b004",
+   "workplace": null,
+   "workplace_status": "deferred",
+   "role": "a craft household",
+   "district": "gullwick-d-gullwick",
+   "source_occupants": "a craft household",
+   "status": "proposal"
+  },
+  {
+   "id": "gullwick-resident-05",
+   "name": "Gullwick resident 5 (placeholder)",
+   "name_status": "placeholder",
+   "home": "gullwick-b005",
+   "workplace": null,
+   "workplace_status": "deferred",
+   "role": "a farming household",
+   "district": "gullwick-d-gullwick",
+   "source_occupants": "a farming household",
+   "status": "proposal"
+  },
+  {
+   "id": "gullwick-resident-06",
+   "name": "Gullwick resident 6 (placeholder)",
+   "name_status": "placeholder",
+   "home": "gullwick-b006",
+   "workplace": null,
+   "workplace_status": "deferred",
+   "role": "a fishing household",
+   "district": "gullwick-d-gullwick",
+   "source_occupants": "a fishing household",
+   "status": "proposal"
+  },
+  {
+   "id": "gullwick-resident-07",
+   "name": "Gullwick resident 7 (placeholder)",
+   "name_status": "placeholder",
+   "home": "gullwick-b007",
+   "workplace": null,
+   "workplace_status": "deferred",
+   "role": "a carting household",
+   "district": "gullwick-d-gullwick",
+   "source_occupants": "a carting household",
+   "status": "proposal"
+  },
+  {
+   "id": "gullwick-resident-08",
+   "name": "Gullwick resident 8 (placeholder)",
+   "name_status": "placeholder",
+   "home": "gullwick-b008",
+   "workplace": null,
+   "workplace_status": "deferred",
+   "role": "a craft household",
+   "district": "gullwick-d-gullwick",
+   "source_occupants": "a craft household",
+   "status": "proposal"
+  }
+ ],
+ "routines": [
+  {
+   "resident": "gullwick-resident-01",
+   "time_of_day": "morning",
+   "place": "gullwick-b001",
+   "activity": "at home",
+   "status": "proposal",
+   "timing": "placeholder"
+  },
+  {
+   "resident": "gullwick-resident-01",
+   "time_of_day": "day",
+   "place": "gullwick-a2",
+   "activity": "on home street",
+   "status": "proposal",
+   "timing": "placeholder"
+  },
+  {
+   "resident": "gullwick-resident-01",
+   "time_of_day": "evening",
+   "place": "gullwick-b001",
+   "activity": "at home",
+   "status": "proposal",
+   "timing": "placeholder"
+  },
+  {
+   "resident": "gullwick-resident-01",
+   "time_of_day": "night",
+   "place": "gullwick-b001",
+   "activity": "at home",
+   "status": "proposal",
+   "timing": "placeholder"
+  },
+  {
+   "resident": "gullwick-resident-02",
+   "time_of_day": "morning",
+   "place": "gullwick-b002",
+   "activity": "at home",
+   "status": "proposal",
+   "timing": "placeholder"
+  },
+  {
+   "resident": "gullwick-resident-02",
+   "time_of_day": "day",
+   "place": "gullwick-a2",
+   "activity": "on home street",
+   "status": "proposal",
+   "timing": "placeholder"
+  },
+  {
+   "resident": "gullwick-resident-02",
+   "time_of_day": "evening",
+   "place": "gullwick-b002",
+   "activity": "at home",
+   "status": "proposal",
+   "timing": "placeholder"
+  },
+  {
+   "resident": "gullwick-resident-02",
+   "time_of_day": "night",
+   "place": "gullwick-b002",
+   "activity": "at home",
+   "status": "proposal",
+   "timing": "placeholder"
+  },
+  {
+   "resident": "gullwick-resident-03",
+   "time_of_day": "morning",
+   "place": "gullwick-b003",
+   "activity": "at home",
+   "status": "proposal",
+   "timing": "placeholder"
+  },
+  {
+   "resident": "gullwick-resident-03",
+   "time_of_day": "day",
+   "place": "gullwick-a2",
+   "activity": "on home street",
+   "status": "proposal",
+   "timing": "placeholder"
+  },
+  {
+   "resident": "gullwick-resident-03",
+   "time_of_day": "evening",
+   "place": "gullwick-b003",
+   "activity": "at home",
+   "status": "proposal",
+   "timing": "placeholder"
+  },
+  {
+   "resident": "gullwick-resident-03",
+   "time_of_day": "night",
+   "place": "gullwick-b003",
+   "activity": "at home",
+   "status": "proposal",
+   "timing": "placeholder"
+  },
+  {
+   "resident": "gullwick-resident-04",
+   "time_of_day": "morning",
+   "place": "gullwick-b004",
+   "activity": "at home",
+   "status": "proposal",
+   "timing": "placeholder"
+  },
+  {
+   "resident": "gullwick-resident-04",
+   "time_of_day": "day",
+   "place": "gullwick-s02",
+   "activity": "on home street",
+   "status": "proposal",
+   "timing": "placeholder"
+  },
+  {
+   "resident": "gullwick-resident-04",
+   "time_of_day": "evening",
+   "place": "gullwick-b004",
+   "activity": "at home",
+   "status": "proposal",
+   "timing": "placeholder"
+  },
+  {
+   "resident": "gullwick-resident-04",
+   "time_of_day": "night",
+   "place": "gullwick-b004",
+   "activity": "at home",
+   "status": "proposal",
+   "timing": "placeholder"
+  },
+  {
+   "resident": "gullwick-resident-05",
+   "time_of_day": "morning",
+   "place": "gullwick-b005",
+   "activity": "at home",
+   "status": "proposal",
+   "timing": "placeholder"
+  },
+  {
+   "resident": "gullwick-resident-05",
+   "time_of_day": "day",
+   "place": "gullwick-s01",
+   "activity": "on home street",
+   "status": "proposal",
+   "timing": "placeholder"
+  },
+  {
+   "resident": "gullwick-resident-05",
+   "time_of_day": "evening",
+   "place": "gullwick-b005",
+   "activity": "at home",
+   "status": "proposal",
+   "timing": "placeholder"
+  },
+  {
+   "resident": "gullwick-resident-05",
+   "time_of_day": "night",
+   "place": "gullwick-b005",
+   "activity": "at home",
+   "status": "proposal",
+   "timing": "placeholder"
+  },
+  {
+   "resident": "gullwick-resident-06",
+   "time_of_day": "morning",
+   "place": "gullwick-b006",
+   "activity": "at home",
+   "status": "proposal",
+   "timing": "placeholder"
+  },
+  {
+   "resident": "gullwick-resident-06",
+   "time_of_day": "day",
+   "place": "gullwick-s06",
+   "activity": "on home street",
+   "status": "proposal",
+   "timing": "placeholder"
+  },
+  {
+   "resident": "gullwick-resident-06",
+   "time_of_day": "evening",
+   "place": "gullwick-b006",
+   "activity": "at home",
+   "status": "proposal",
+   "timing": "placeholder"
+  },
+  {
+   "resident": "gullwick-resident-06",
+   "time_of_day": "night",
+   "place": "gullwick-b006",
+   "activity": "at home",
+   "status": "proposal",
+   "timing": "placeholder"
+  },
+  {
+   "resident": "gullwick-resident-07",
+   "time_of_day": "morning",
+   "place": "gullwick-b007",
+   "activity": "at home",
+   "status": "proposal",
+   "timing": "placeholder"
+  },
+  {
+   "resident": "gullwick-resident-07",
+   "time_of_day": "day",
+   "place": "gullwick-a1",
+   "activity": "on home street",
+   "status": "proposal",
+   "timing": "placeholder"
+  },
+  {
+   "resident": "gullwick-resident-07",
+   "time_of_day": "evening",
+   "place": "gullwick-b007",
+   "activity": "at home",
+   "status": "proposal",
+   "timing": "placeholder"
+  },
+  {
+   "resident": "gullwick-resident-07",
+   "time_of_day": "night",
+   "place": "gullwick-b007",
+   "activity": "at home",
+   "status": "proposal",
+   "timing": "placeholder"
+  },
+  {
+   "resident": "gullwick-resident-08",
+   "time_of_day": "morning",
+   "place": "gullwick-b008",
+   "activity": "at home",
+   "status": "proposal",
+   "timing": "placeholder"
+  },
+  {
+   "resident": "gullwick-resident-08",
+   "time_of_day": "day",
+   "place": "gullwick-a2",
+   "activity": "on home street",
+   "status": "proposal",
+   "timing": "placeholder"
+  },
+  {
+   "resident": "gullwick-resident-08",
+   "time_of_day": "evening",
+   "place": "gullwick-b008",
+   "activity": "at home",
+   "status": "proposal",
+   "timing": "placeholder"
+  },
+  {
+   "resident": "gullwick-resident-08",
+   "time_of_day": "night",
+   "place": "gullwick-b008",
+   "activity": "at home",
+   "status": "proposal",
+   "timing": "placeholder"
+  }
+ ],
  "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only.",
  "open_uses": [],
  "theme": {
@@ -758,5 +1112,31 @@
   },
   "tech": "older-made: off the rail",
   "theme_line": "the circle keeps the moon's light for everyone; the Company sells it"
+ },
+ "life_planning": {
+  "schema": "mygame.settlement_life/1",
+  "status": "proposal",
+  "runtime_enabled": false,
+  "source_commit": "911edac6173ebf4398bcbf54b6171e4e68e62e13",
+  "source_blob": "3c238e470f2da19082227a0a56580b4d1ca2810c",
+  "population_count": null,
+  "coverage": "One provisional representative per authored occupied home, not a household size or simultaneous visible population.",
+  "phase_policy": "Morning/day/evening/night are provisional ordering labels, with no duration, clock mapping or production activation.",
+  "animals": {
+   "status": "deferred",
+   "instances": [],
+   "reason": "No Gullwick-specific species, numbers or placement approved in the town plan; habitat review needed."
+  },
+  "props": {
+   "status": "deferred",
+   "instances": [],
+   "reason": "Working props need approved kit identities and clear entrance/walking geometry."
+  },
+  "limits": [
+   "No named cast or new story identities.",
+   "Workplace building IDs absent; do not treat the home as a workshop.",
+   "Street references are planning destinations, not validated walking routes.",
+   "No instantiation, animation, density, population, timing, pathfinding or runtime acceptance."
+  ]
  }
 }
