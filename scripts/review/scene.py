@@ -17,9 +17,13 @@ whole zone, and the logic checks that need to know what each thing is.
 from __future__ import annotations
 
 import glob
+import base64
+import hashlib
 import json
+import math
 import os
 import re
+import struct
 from dataclasses import dataclass, field
 
 import numpy as np
@@ -47,7 +51,7 @@ _ATTR = re.compile(r'(\w+)=("[^"]*"|\S+)')
 
 def _val(v: str):
     v = v.strip()
-    m = re.match(r'Vector2\(([-\d.e]+),\s*([-\d.e]+)\)', v)
+    m = re.fullmatch(r'Vector2i?\(([-+\d.eE]+),\s*([-+\d.eE]+)\)', v)
     if m:
         return (float(m.group(1)), float(m.group(2)))
     m = re.match(r'(ExtResource|SubResource)\("([^"]+)"\)', v)
@@ -66,7 +70,9 @@ def _val(v: str):
 def parse_tscn(path: str) -> dict:
     ext, sub, nodes = {}, {}, []
     cur = None
-    for line in open(path):
+    with open(path) as f:
+        lines = f.readlines()
+    for line in lines:
         line = line.rstrip('\n')
         m = _SEC.match(line)
         if m:
@@ -128,6 +134,277 @@ class Zone:
     plan: dict | None = None
 
 
+class SceneIntakeError(ValueError):
+    """The source cannot supply a faithful scene picture; this is incomplete coverage."""
+
+    def __init__(self, zone: str, reason: str):
+        self.zone = zone
+        self.reason = reason
+        super().__init__(f'{zone}: incomplete scene intake: {reason}')
+
+
+def _json(path: str):
+    with open(path) as f:
+        return json.load(f)
+
+
+def _expanded(tscn: dict, prefix='', out=None, stack=()) -> dict:
+    """Resolve scene instances and overrides without losing each resource's source table."""
+    out = {} if out is None else out
+    for n in tscn['nodes']:
+        parent = n.get('parent')
+        local = '' if parent is None else n['name'] if parent == '.' else parent + '/' + n['name']
+        key = '/'.join(v for v in (prefix, local) if v) or '.'
+        inst = n.get('instance')
+        if inst:
+            if inst[0] != 'ExtResource':
+                raise ValueError('unsupported scene instance at ' + key)
+            path = res_path(tscn['ext'][inst[1]]['path'])
+            if path in stack:
+                raise ValueError('cyclic scene instance at ' + key)
+            _expanded(parse_tscn(path), '' if key == '.' else key, out, stack + (path,))
+        old = out.get(key, {})
+        props = dict(old.get('props', {}))
+        for k, v in n['props'].items():
+            if isinstance(v, tuple) and v[0] == 'ExtResource':
+                v = ('ExtResource', tscn['ext'][v[1]]['path'])
+            props[k] = v
+        out[key] = dict(old, **{k: v for k, v in n.items() if k not in ('props', 'instance')}, props=props)
+    return out
+
+
+def _transform(props: dict) -> np.ndarray:
+    if 'transform' in props or props.get('skew', 0) or props.get('top_level', False):
+        raise ValueError('unsupported explicit transform, skew or top_level')
+    x, y = props.get('position', (0, 0))
+    sx, sy = props.get('scale', (1, 1))
+    angle = props.get('rotation', math.radians(props.get('rotation_degrees', 0)))
+    c, s = math.cos(angle), math.sin(angle)
+    return np.array([[c * sx, -s * sy, x], [s * sx, c * sy, y], [0, 0, 1]], float)
+
+
+def _kit_nodes(tscn: dict) -> list[dict]:
+    flat, out, state = _expanded(tscn), [], {}
+    for key, n in flat.items():
+        parent = key.rpartition('/')[0] or '.'
+        if key != '.' and parent not in state:
+            raise ValueError('missing scene parent at ' + key)
+        p = state.get(parent) if key != '.' else None
+        props = n['props']
+        mat = (p['matrix'] if p else np.eye(3)) @ _transform(props)
+        pos = tuple(mat[:2, 2])
+        visible = (p['visible'] if p else True) and props.get('visible', True) is not False
+        parent_ysort = bool(p and p['ysort'])
+        sort_origin = pos if parent_ysort else p.get('sort_origin') if p else None
+        z = int(props.get('z_index', 0))
+        if props.get('z_as_relative', True) and p:
+            z += p['z']
+        e = dict(node=n, key=key, pos=pos, matrix=mat, parent_ysort=sort_origin is not None,
+                 sort_origin=sort_origin, visible=visible, z=z, ysort=bool(props.get('y_sort_enabled', False)))
+        state[key] = e
+        out.append(e)
+    return out
+
+
+def _script(e: dict, path: str) -> bool:
+    return e['node']['props'].get('script') == ('ExtResource', path)
+
+
+def _tile_cells(node: dict | None, size: tuple) -> dict:
+    """Godot 4 TileMapLayer format 0: uint16 header, then six 16-bit fields per cell."""
+    if node is None:
+        return {}
+    props = node['node']['props']
+    if not np.allclose(node['matrix'], np.eye(3)):
+        raise ValueError('transformed logical cell layer')
+    raw = props.get('tile_map_data', 'PackedByteArray()')
+    if raw == 'PackedByteArray()':
+        return {}
+    m = re.fullmatch(r'PackedByteArray\("([A-Za-z0-9+/=]*)"\)', raw)
+    if not m:
+        raise ValueError('unsupported tile_map_data representation')
+    data = base64.b64decode(m.group(1), validate=True)
+    if len(data) < 2 or data[:2] != b'\0\0' or (len(data) - 2) % 12:
+        raise ValueError('unsupported TileMapLayer packed format')
+    out = {}
+    for x, y, source, ax, ay, alt in struct.iter_unpack('<hhHHHH', data[2:]):
+        if source != 0 or ay != 0 or alt != 0 or not (0 <= x < size[0] and 0 <= y < size[1]):
+            raise ValueError('unsupported logical cell source, alternative or extent')
+        if (x, y) in out:
+            raise ValueError('duplicate logical cell')
+        out[x, y] = ax
+    return out
+
+
+def _bake_hash(plan: dict, lib: dict) -> str:
+    """The existing bake.input_hash contract, read-only and without importing painters."""
+    root = os.path.dirname(GAME)
+    h = hashlib.sha256()
+    for name in ('bake.py', 'surface.py', 'structures.py'):
+        with open(os.path.join(root, 'scripts', 'art', 'kit', name), 'rb') as f:
+            h.update(f.read())
+    keep = {k: plan.get(k) for k in ('legend', 'rows', 'tiers', 'pieces', 'variants', 'spawns', 'decor')}
+    h.update(json.dumps(keep, sort_keys=True).encode())
+    used = sorted(set(plan['legend'].values()) | {p['piece'] for p in plan.get('pieces', [])} | {'lawn', 'earth_face'})
+    for key in used:
+        if key in lib:
+            h.update(json.dumps(lib[key], sort_keys=True).encode())
+    return h.hexdigest()[:16]
+
+
+def _kit_ground(zone: str, nodes: list[dict]) -> tuple[np.ndarray, dict, dict]:
+    grounds = [e for e in nodes if _script(e, 'res://world/terrain/terrain_ground.gd')]
+    if len(grounds) != 1:
+        raise ValueError('expected exactly one TerrainGround')
+    ground = grounds[0]
+    props = ground['node']['props']
+    if any(k in props for k in ('material', 'modulate', 'self_modulate')):
+        raise ValueError('unsupported TerrainGround material or modulation')
+    if not ground['visible'] or not np.allclose(ground['matrix'], np.eye(3)) or props.get('show_cells', False):
+        raise ValueError('hidden, transformed or debug-overlay TerrainGround is unsupported')
+    # Omitted scene properties use the script's defaults, as all three labs do.
+    with open(res_path('res://world/terrain/terrain_ground.gd')) as f:
+        match = re.search(r'@export var grid_size\s*:=\s*(Vector2i\([^\n]+?\))', f.read())
+    if not match:
+        raise ValueError('cannot establish TerrainGround grid_size default')
+    size = props.get('grid_size', _val(match.group(1)))
+    if not isinstance(size, tuple) or len(size) != 2 or any(v <= 0 or int(v) != v for v in size):
+        raise ValueError('invalid TerrainGround grid_size')
+    size = tuple(map(int, size))
+    manifest = _json(os.path.join(GAME, 'kit', 'terrain', 'manifest.json'))
+    if manifest.get('cell') != 24:
+        raise ValueError('unsupported TerrainGround cell size (expected 24 texels)')
+    plan = _json(os.path.join(GAME, 'kit', 'zones', zone + '.json'))
+    rows = plan['rows']
+    if not plan.get('bake') or plan.get('zone') != zone:
+        raise ValueError('zone has no authored baked-ground plan')
+    if len(rows) != size[1] or any(len(r) != size[0] for r in rows):
+        raise ValueError('stale bake: scene/plan grid extent differs')
+    lookup = {e['key']: e for e in nodes}
+    cells = _tile_cells(lookup.get(ground['key'] + '/Cells'), size)
+    materials = manifest['materials']
+    for y, row in enumerate(rows):
+        for x, ch in enumerate(row):
+            ax = cells.get((x, y))
+            material = materials[ax]['id'] if ax is not None and ax < len(materials) else ''
+            if material != plan['legend'].get(ch, ''):
+                raise ValueError(f'stale bake: scene/plan material differs at {x},{y}')
+    tiers = _tile_cells(lookup.get(ground['key'] + '/Tiers'), size)
+    trows = plan.get('tiers') or ['0' * size[0]] * size[1]
+    if len(trows) != size[1] or any(len(r) != size[0] for r in trows):
+        raise ValueError('invalid plan tier extent')
+    if any(tiers.get((x, y), 0) != int(trows[y][x]) for y in range(size[1]) for x in range(size[0])):
+        raise ValueError('stale bake: scene/plan tiers differ')
+    variants = props.get('variant_rows', 'PackedStringArray()')
+    expected = plan.get('variants') or []
+    actual = re.fullmatch(r'PackedStringArray\((.*)\)', variants)
+    if not actual or json.loads('[' + actual.group(1) + ']') != expected:
+        raise ValueError('stale bake: scene/plan surface variants differ')
+    index = _json(os.path.join(GAME, 'kit', 'props', 'index.json'))
+    placed = [e for e in nodes if _script(e, 'res://world/terrain/kit_piece.gd')]
+    planned = {pc['id'].replace('/', '_'): pc for pc in plan.get('pieces', [])}
+    if len(planned) != len(plan.get('pieces', [])) or len(placed) != len(planned):
+        raise ValueError('stale bake: scene/plan piece inventory differs')
+    seen = set()
+    for e in placed:
+        n, pp = e['node'], e['node']['props']
+        pc = planned.get(n['name'])
+        if n['name'] in seen or pc is None or pc['piece'] != pp.get('piece_id'):
+            raise ValueError('stale bake: scene/plan piece identity differs at ' + e['key'])
+        seen.add(n['name'])
+        if not np.allclose(e['matrix'][:2, :2], np.eye(2)) or not np.allclose(e['pos'], pc['at']):
+            raise ValueError('stale bake: scene/plan piece transform differs at ' + e['key'])
+        if pp.get('variant', '') != pc.get('variant', ''):
+            raise ValueError('stale bake: scene/plan piece variant differs at ' + e['key'])
+        if pp['piece_id'] not in index:
+            raise ValueError('piece missing from KitPiece index: ' + pp['piece_id'])
+    spawns = {e['node']['name']: e['pos'] for e in nodes
+              if e['node'].get('type') == 'Marker2D' and e['key'].startswith('Spawns/')}
+    for name, at in (plan.get('spawns') or {}).items():
+        if name not in spawns or not np.allclose(spawns[name], at):
+            raise ValueError('stale bake: scene/plan spawn differs: ' + name)
+    lib = {}
+    for path in glob.glob(os.path.join(GAME, 'kit', 'pieces', '*', '*.json')):
+        piece = _json(path)
+        lib[piece['id']] = piece
+    baked = props.get('baked')
+    if not baked or baked[0] != 'ExtResource':
+        raise ValueError('unbaked TerrainGround; live shader preview is not a source composite')
+    path = res_path(baked[1])
+    meta = _json(os.path.splitext(path)[0] + '.json')
+    if meta.get('zone') != zone or meta.get('hash') != _bake_hash(plan, lib):
+        raise ValueError('stale baked-ground input hash')
+    with Image.open(path) as img:
+        rgba = np.asarray(img.convert('RGBA'))
+    if rgba.shape[:2] != (size[1] * 24, size[0] * 24):
+        raise ValueError('baked texture extent differs from TerrainGround grid_size × 24')
+    return rgba, index, {e['key']: e for e in placed}
+
+
+def _kit_sprite(e: dict, index: dict, pieces: dict) -> Sprite:
+    props = e['node']['props']
+    texture = props['texture']
+    offset = props.get('offset', (0, 0))
+    parent = e['key'].rpartition('/')[0]
+    piece = pieces.get(parent)
+    visible = e['visible']
+    if piece and e['node']['name'] == 'Sprite':
+        pp = piece['node']['props']
+        data = index[pp['piece_id']]
+        variant = pp.get('variant', '')
+        if variant:
+            if variant not in data.get('variants', {}):
+                raise ValueError('unknown KitPiece variant at ' + parent + ': ' + variant)
+            chosen = data['variants'][variant]
+            texture = ('ExtResource', chosen['png'])
+            offset = tuple(-v for v in chosen['foot'])
+        if data.get('painted', False):
+            # TerrainGround.set_ground_baked hides exactly this Sprite, not its siblings.
+            visible = False
+    if texture[0] != 'ExtResource':
+        raise ValueError('unsupported Sprite2D texture at ' + e['key'])
+    for k, default in (('region_enabled', False),
+                       ('material', None), ('modulate', None), ('self_modulate', None)):
+        if props.get(k, default) != default:
+            raise ValueError('unsupported Sprite2D ' + k + ' at ' + e['key'])
+    path = res_path(texture[1])
+    with Image.open(path) as img:
+        rgba = np.asarray(img.convert('RGBA'))
+    hf, vf, frame = (int(props.get(k, v)) for k, v in (('hframes', 1), ('vframes', 1), ('frame', 0)))
+    if hf < 1 or vf < 1 or not (0 <= frame < hf * vf) or rgba.shape[1] % hf or rgba.shape[0] % vf:
+        raise ValueError('invalid Sprite2D frame extent at ' + e['key'])
+    fw, fh = rgba.shape[1] // hf, rgba.shape[0] // vf
+    fx, fy = props.get('frame_coords', (frame % hf, frame // hf))
+    if int(fx) != fx or int(fy) != fy or not (0 <= fx < hf and 0 <= fy < vf):
+        raise ValueError('invalid Sprite2D frame coordinates at ' + e['key'])
+    rgba = rgba[int(fy) * fh:(int(fy) + 1) * fh, int(fx) * fw:(int(fx) + 1) * fw]
+    if props.get('flip_h', False):
+        rgba = rgba[:, ::-1]
+    if props.get('flip_v', False):
+        rgba = rgba[::-1]
+    h, w = rgba.shape[:2]
+    off = np.array(offset, float) - ((w / 2, h / 2) if props.get('centered', True) else (0, 0))
+    mat = e['matrix']
+    linear = np.rint(mat[:2, :2]).astype(int)
+    if not np.allclose(linear, mat[:2, :2]) or any(np.count_nonzero(linear, axis=i).tolist() != [1, 1] for i in (0, 1)):
+        raise ValueError('unsupported Sprite2D transform (needs integer axis-aligned scale/quarter-turn): ' + e['key'])
+    corners = np.array([[off[0], off[1], 1], [off[0] + w, off[1], 1],
+                        [off[0], off[1] + h, 1], [off[0] + w, off[1] + h, 1]]) @ mat.T
+    # The project snaps 2D vertices to pixels; unlike Python round, ties round upwards.
+    low = np.floor(corners[:, :2].min(0) + 0.5).astype(int)
+    high = np.floor(corners[:, :2].max(0) + 0.5).astype(int)
+    if linear[0, 0] == 0:
+        rgba = rgba.transpose(1, 0, 2)
+    if linear[0].sum() < 0:
+        rgba = rgba[:, ::-1]
+    if linear[1].sum() < 0:
+        rgba = rgba[::-1]
+    rgba = np.asarray(Image.fromarray(rgba).resize(tuple(high - low), Image.Resampling.NEAREST))
+    origin = e['sort_origin'] or e['pos']
+    return Sprite(e['node']['name'], os.path.relpath(path, REPO), origin, tuple(low) + tuple(high),
+                  e['z'], e['parent_ysort'], rgba, e['key'], C.kind_of(os.path.splitext(os.path.basename(path))[0]), visible)
+
+
 def _walk_nodes(tscn: dict, prefix: str, offset=(0.0, 0.0), ysort_parent=False, hidden=False, out=None):
     """Global positions for every node, following instanced scenes."""
     out = [] if out is None else out
@@ -160,10 +437,27 @@ def load_zone(zone_id: str, stage: str | None = None) -> Zone:
     tscn = parse_tscn(path)
     nodes = _walk_nodes(tscn, '')
     z = Zone(zone_id, (0, 0), None)
+    kit = any(e['node']['props'].get('script', (None,))[0] == 'ExtResource' and
+              e['ext'].get(e['node']['props']['script'][1], {}).get('path') ==
+              'res://world/terrain/terrain_ground.gd' for e in nodes)
+    index, pieces = {}, {}
+    if kit:
+        try:
+            nodes = _kit_nodes(tscn)
+            z.ground, index, pieces = _kit_ground(zone_id, nodes)
+            z.size = (z.ground.shape[1], z.ground.shape[0])
+        except (ValueError, KeyError, TypeError, OSError, IndexError) as err:
+            raise SceneIntakeError(zone_id, str(err)) from err
     for e in nodes:
         n, props = e['node'], e['node']['props']
         t = n.get('type')
         if t == 'Sprite2D' and 'texture' in props:
+            if kit:
+                try:
+                    z.sprites.append(_kit_sprite(e, index, pieces))
+                except (ValueError, KeyError, TypeError, OSError, IndexError) as err:
+                    raise SceneIntakeError(zone_id, str(err)) from err
+                continue
             tex = props['texture']
             if tex[0] != 'ExtResource':
                 continue
@@ -205,12 +499,16 @@ def load_zone(zone_id: str, stage: str | None = None) -> Zone:
     pp = os.path.join(GAME, 'data', 'plans', zone_id + '.json')
     if os.path.exists(pp):
         z.plan = json.load(open(pp))
+    if not z.size[0] or not z.size[1] or z.ground is None:
+        raise SceneIntakeError(zone_id, 'no supported ground picture; no empty composite is produced')
     return z
 
 
 def composite(z: Zone, actors: bool = False) -> np.ndarray:
     """The whole zone in one picture: ground, then sprites by z and y-sort (origin y)."""
     W, H = z.size
+    if W <= 0 or H <= 0 or z.ground is None or z.ground.shape[:2] != (H, W):
+        raise SceneIntakeError(z.id, 'missing ground or invalid composite extent')
     out = np.zeros((H, W, 3), float)
     if z.ground is not None:
         out[:] = z.ground[..., :3]

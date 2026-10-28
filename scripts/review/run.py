@@ -151,9 +151,16 @@ def main(argv=None):
     report = dict(target=t, generated=time.strftime('%Y-%m-%d %H:%M'), pictures=[], scene=None)
 
     if zone:
-        z = SN.load_zone(zone)
-        res = SN.review_zone(zone, a.H)
-        comp = SN.composite(z)
+        try:
+            z = SN.load_zone(zone)
+            res = SN.review_zone(zone, a.H)
+            comp = SN.composite(z)
+        except SN.SceneIntakeError as err:
+            report['scene'] = dict(zone=zone, complete=False, error=str(err))
+            report['complete'] = False
+            write_json(os.path.join(out, 'report.json'), report)
+            print(str(err), file=sys.stderr)
+            return 1
         Image.fromarray(comp[..., :3]).save(os.path.join(out, f'{zone}_zone.png'))
         report['scene'] = dict(zone=zone, size=list(z.size), sprites=len(z.sprites), spawns=list(z.spawns),
                                doors=[{k: d[k] for k in ('name', 'zone', 'spawn')} for d in z.doors],
