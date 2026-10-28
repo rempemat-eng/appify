@@ -41,10 +41,21 @@ steps and painted bridge details from being drawn twice.
 
 Integer axis-aligned scale, reflection, quarter-turn rotation, offsets and ordinary sprite
 frames are represented. Arbitrary rotation, skew, explicit transform matrices, `top_level`,
-custom materials/modulation, sprite region rendering and unknown textures are unsupported
+custom materials/modulation on a sprite or any ancestor, sprite region rendering and unknown textures are unsupported
 and produce an intake failure. A kit piece transform absent from its bake plan is stale,
 even when the sprite transform alone can be represented: its baked shadows cannot be
 assumed to match.
+
+The baked producer writes opaque RGB. Other image modes fail closed rather than losing
+their alpha. The ground must sort below every visible source sprite; a changed layer that
+would put it above a sprite is unsupported by this ground-first adapter. Missing scene
+instances and registry/parse errors also become explicit intake failures, including errors
+in the runner's initial registry read before it can select a zone.
+
+Kit sprites retain scene order when z and sort Y tie. Legacy sprites retain their existing
+X tiebreak, preserving both legacy hashes below. A synthetic overlap regression checks the
+kit contract separately. No dedicated Godot capture of a same-Y overlap was taken; the
+existing real-capture comparison below does not establish that additional tie case.
 
 `SceneIntakeError` marks these cases as incomplete coverage. The runner writes
 `complete: false`, the diagnostic, no source picture and exit status 1. It does not turn a

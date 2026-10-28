@@ -146,6 +146,7 @@ offset = Vector2(-1, -2)
 [node name="Example" type="Node2D"]
 y_sort_enabled = true
 [node name="Ground" type="Node2D" parent="."]
+z_index = -10
 script = ExtResource("ground")
 grid_size = Vector2i(3, 2)
 baked = ExtResource("bake")
@@ -255,6 +256,21 @@ position = Vector2(36, 24)
         self.assertTrue(sp.path.endswith('large.png'))
         self.assertTrue(sp.ysort)
 
+    def test_inherited_scene_and_descendant_sprite_override_preserve_resource_tables(self):
+        path = self.game / 'kit/props/test_piece.tscn'
+        (self.game / 'kit/props/base.tscn').write_text(path.read_text())
+        path.write_text('''[gd_scene format=3]
+[ext_resource type="PackedScene" path="res://kit/props/base.tscn" id="base"]
+[node name="TestPiece" instance=ExtResource("base")]
+[node name="Sprite" parent="."]
+flip_h = true
+''')
+        sp = SN.load_zone('example').sprites[0]
+        self.assertEqual(sp.box, (22, 20, 26, 24))
+        with Image.open(self.game / 'kit/props/large.png') as img:
+            expected = np.asarray(img.convert('RGBA'))[:, ::-1]
+        np.testing.assert_array_equal(sp.rgba, expected)
+
     def test_unknown_variant_or_missing_index_never_falls_back(self):
         self.plan['pieces'][0]['variant'] = 'unknown'
         self.text = self.text.replace('variant = "large"', 'variant = "unknown"')
@@ -302,6 +318,44 @@ position = Vector2(36, 24)
         self.assertFalse(z.sprites[0].visible)
         np.testing.assert_array_equal(SN.composite(z), z.ground)
 
+    def test_ancestor_modulation_and_unsupported_ground_layer_fail_closed(self):
+        original = self.text
+        for before, after, reason in [
+            ('[node name="Example" type="Node2D"]',
+             '[node name="Example" type="Node2D"]\nmodulate = Color(1, 0, 0, 1)', 'inherited material or modulation'),
+            ('[node name="Props" type="Node2D" parent="."]',
+             '[node name="Props" type="Node2D" parent="."]\nself_modulate = Color(1, 0, 0, 1)', 'inherited material or modulation'),
+            ('z_index = -10', 'z_index = 100', 'TerrainGround draw order'),
+            ('position = Vector2(24, 24)', 'position = Vector2(24, 24)\nz_index = -20', 'TerrainGround draw order'),
+        ]:
+            with self.subTest(reason=reason):
+                self.text = original.replace(before, after)
+                self.flush()
+                self.fails(reason)
+
+    def test_nonopaque_bake_is_not_silently_composited_as_opaque(self):
+        Image.new('RGBA', (72, 48), (10, 20, 30, 100)).save(self.game / 'zones/example/ground_baked.png')
+        self.fails('opaque RGB')
+
+    def test_missing_scene_instance_and_invalid_registry_are_intake_errors(self):
+        (self.game / 'kit/props/test_piece.tscn').unlink()
+        self.fails('test_piece.tscn')
+        (self.game / 'data/zones.json').write_text('{invalid')
+        self.fails('incomplete scene intake')
+
+    def test_equal_y_kit_overlap_retains_scene_order_without_changing_legacy_tie(self):
+        # The right-hand piece is authored first, then the left-hand one. X sorting
+        # would reverse the intended last draw at their shared overlap pixel.
+        ground = np.zeros((8, 8, 4), np.uint8)
+        red = np.full((3, 3, 4), (255, 0, 0, 255), np.uint8)
+        green = np.full((3, 3, 4), (0, 255, 0, 255), np.uint8)
+        right = SN.Sprite('right', 'right', (4, 6), (3, 3, 6, 6), 0, True, red, 'Props/right', draw_order=0)
+        left = SN.Sprite('left', 'left', (3, 6), (2, 3, 5, 6), 0, True, green, 'Props/left', draw_order=1)
+        z = SN.Zone('ties', (8, 8), ground, [right, left])
+        np.testing.assert_array_equal(SN.composite(z)[4, 4, :3], (0, 255, 0))
+        right.draw_order = left.draw_order = None
+        np.testing.assert_array_equal(SN.composite(z)[4, 4, :3], (255, 0, 0))
+
     def test_unsupported_ground_and_empty_composite_fail_closed(self):
         self.text = self.text.replace('terrain_ground.gd', 'another_ground.gd')
         self.flush()
@@ -321,6 +375,19 @@ position = Vector2(36, 24)
         self.assertIn('stale baked-ground', report['scene']['error'])
         self.assertEqual(report['pictures'], [])
         self.assertEqual(list(out.glob('*.png')), [])
+
+    def test_runner_registry_failure_writes_incomplete_report(self):
+        out = self.root / 'bad-registry-report'
+        for content in ('{invalid', '[]'):
+            with self.subTest(registry=content):
+                with mock.patch.object(run, 'REPO', str(self.root)), contextlib.redirect_stderr(io.StringIO()):
+                    (self.game / 'data/zones.json').write_text(content)
+                    code = run.main(['example', '--no-render', '--out', str(out)])
+                report = json.loads((out / 'report.json').read_text())
+                self.assertEqual(code, 1)
+                self.assertFalse(report['complete'])
+                self.assertIn('cannot read zone registry', report['scene']['error'])
+                self.assertEqual(report['pictures'], [])
 
 
 if __name__ == '__main__':

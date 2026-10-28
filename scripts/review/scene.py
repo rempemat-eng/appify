@@ -116,6 +116,7 @@ class Sprite:
     parent: str
     kind: str = ''
     visible: bool = True
+    draw_order: int | None = None  # kit-only scene-order tie; legacy composites keep their X tie
 
 
 @dataclass
@@ -185,12 +186,14 @@ def _transform(props: dict) -> np.ndarray:
 
 def _kit_nodes(tscn: dict) -> list[dict]:
     flat, out, state = _expanded(tscn), [], {}
-    for key, n in flat.items():
+    for draw_order, (key, n) in enumerate(flat.items()):
         parent = key.rpartition('/')[0] or '.'
         if key != '.' and parent not in state:
             raise ValueError('missing scene parent at ' + key)
         p = state.get(parent) if key != '.' else None
         props = n['props']
+        if any(k in props for k in ('material', 'modulate', 'self_modulate')):
+            raise ValueError('unsupported inherited material or modulation at ' + key)
         mat = (p['matrix'] if p else np.eye(3)) @ _transform(props)
         pos = tuple(mat[:2, 2])
         visible = (p['visible'] if p else True) and props.get('visible', True) is not False
@@ -200,7 +203,8 @@ def _kit_nodes(tscn: dict) -> list[dict]:
         if props.get('z_as_relative', True) and p:
             z += p['z']
         e = dict(node=n, key=key, pos=pos, matrix=mat, parent_ysort=sort_origin is not None,
-                 sort_origin=sort_origin, visible=visible, z=z, ysort=bool(props.get('y_sort_enabled', False)))
+                 sort_origin=sort_origin, visible=visible, z=z, draw_order=draw_order,
+                 ysort=bool(props.get('y_sort_enabled', False)))
         state[key] = e
         out.append(e)
     return out
@@ -262,6 +266,8 @@ def _kit_ground(zone: str, nodes: list[dict]) -> tuple[np.ndarray, dict, dict]:
         raise ValueError('unsupported TerrainGround material or modulation')
     if not ground['visible'] or not np.allclose(ground['matrix'], np.eye(3)) or props.get('show_cells', False):
         raise ValueError('hidden, transformed or debug-overlay TerrainGround is unsupported')
+    if any(e['visible'] and e['node'].get('type') == 'Sprite2D' and e['z'] <= ground['z'] for e in nodes):
+        raise ValueError('unsupported TerrainGround draw order: ground must be below every visible sprite')
     # Omitted scene properties use the script's defaults, as all three labs do.
     with open(res_path('res://world/terrain/terrain_ground.gd')) as f:
         match = re.search(r'@export var grid_size\s*:=\s*(Vector2i\([^\n]+?\))', f.read())
@@ -335,6 +341,8 @@ def _kit_ground(zone: str, nodes: list[dict]) -> tuple[np.ndarray, dict, dict]:
     if meta.get('zone') != zone or meta.get('hash') != _bake_hash(plan, lib):
         raise ValueError('stale baked-ground input hash')
     with Image.open(path) as img:
+        if img.mode != 'RGB':
+            raise ValueError('unsupported baked texture mode: producer ground must be opaque RGB')
         rgba = np.asarray(img.convert('RGBA'))
     if rgba.shape[:2] != (size[1] * 24, size[0] * 24):
         raise ValueError('baked texture extent differs from TerrainGround grid_size × 24')
@@ -402,7 +410,8 @@ def _kit_sprite(e: dict, index: dict, pieces: dict) -> Sprite:
     rgba = np.asarray(Image.fromarray(rgba).resize(tuple(high - low), Image.Resampling.NEAREST))
     origin = e['sort_origin'] or e['pos']
     return Sprite(e['node']['name'], os.path.relpath(path, REPO), origin, tuple(low) + tuple(high),
-                  e['z'], e['parent_ysort'], rgba, e['key'], C.kind_of(os.path.splitext(os.path.basename(path))[0]), visible)
+                  e['z'], e['parent_ysort'], rgba, e['key'], C.kind_of(os.path.splitext(os.path.basename(path))[0]),
+                  visible, e['draw_order'])
 
 
 def _walk_nodes(tscn: dict, prefix: str, offset=(0.0, 0.0), ysort_parent=False, hidden=False, out=None):
@@ -432,10 +441,13 @@ def _walk_nodes(tscn: dict, prefix: str, offset=(0.0, 0.0), ysort_parent=False, 
 
 
 def load_zone(zone_id: str, stage: str | None = None) -> Zone:
-    zones = json.load(open(os.path.join(GAME, 'data', 'zones.json')))
-    path = res_path(zones[zone_id])
-    tscn = parse_tscn(path)
-    nodes = _walk_nodes(tscn, '')
+    try:
+        zones = _json(os.path.join(GAME, 'data', 'zones.json'))
+        path = res_path(zones[zone_id])
+        tscn = parse_tscn(path)
+        nodes = _walk_nodes(tscn, '')
+    except (ValueError, KeyError, TypeError, OSError, IndexError) as err:
+        raise SceneIntakeError(zone_id, str(err)) from err
     z = Zone(zone_id, (0, 0), None)
     kit = any(e['node']['props'].get('script', (None,))[0] == 'ExtResource' and
               e['ext'].get(e['node']['props']['script'][1], {}).get('path') ==
@@ -513,7 +525,8 @@ def composite(z: Zone, actors: bool = False) -> np.ndarray:
     if z.ground is not None:
         out[:] = z.ground[..., :3]
     order = sorted([s for s in z.sprites if s.visible and (actors or not s.parent.startswith('Actors'))],
-                   key=lambda s: (s.z, s.origin[1] if s.ysort else -1e9, s.origin[0]))
+                   key=lambda s: (s.z, s.origin[1] if s.ysort else -1e9,
+                                  s.draw_order if s.draw_order is not None else s.origin[0]))
     for s in order:
         x0, y0 = int(round(s.box[0])), int(round(s.box[1]))
         h, w = s.rgba.shape[:2]
