@@ -431,6 +431,163 @@ class PRSheetContracts(unittest.TestCase):
             self.assertEqual(source['sha256'], hashlib.sha256(data).hexdigest())
             self.assertEqual((self.out / source['evidence']).read_bytes(), data)
 
+    def test_regional_kit_requirements_cannot_be_no_art(self):
+        paths = ['docs/codex/' + name + '-kit.md' for name in
+                 ('frostline', 'brackens', 'cogsworth', 'lull')]
+        for path in paths:
+            self.write(path, '# Unapproved regional requirements\n' + path + '\n')
+        self.commit('regional kit requirements')
+        result = self.cli()
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        manifest = self.read_bundle()
+        self.assertEqual(manifest['scope'], 'source_only')
+        self.assertFalse(manifest['complete'])
+        self.assertEqual(manifest['assets'], [])
+        rows = {row['path']: row for row in manifest['other_changes']}
+        self.assertEqual(set(rows), set(paths))
+        for path in paths:
+            row = rows[path]
+            self.assertEqual((row['status'], row['category']), ('source_only', 'kit_concept'))
+            self.assertEqual([v['side'] for v in row['inputs']], ['after'])
+            version = row['inputs'][0]
+            self.assertEqual(version['ref'], self.head)
+            self.assertEqual(version['blob'], self.git('rev-parse', self.head + ':' + path))
+            raw = (self.repo / path).read_bytes()
+            self.assertEqual(version['sha256'], hashlib.sha256(raw).hexdigest())
+            self.assertEqual((self.out / version['evidence']).read_bytes(), raw)
+            self.assertEqual(manifest['files'][version['evidence']], version['sha256'])
+
+    def test_future_regional_kit_keeps_raw_bytes_and_escaped_name(self):
+        path = 'docs/codex/<mist&isles>-kit.md'
+        raw = b'Unapproved requirements; raw bytes are evidence, not Markdown validation.\xff\n'
+        self.write(path, raw)
+        self.commit('future kit requirements with unusual source bytes')
+        result = self.cli()
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        manifest = self.read_bundle()
+        self.assertEqual(manifest['scope'], 'source_only')
+        self.assertFalse(manifest['complete'])
+        row = manifest['other_changes'][0]
+        self.assertEqual(row['category'], 'kit_concept')
+        self.assertEqual((self.out / row['inputs'][0]['evidence']).read_bytes(), raw)
+        page = (self.out / 'index.html').read_text()
+        self.assertIn('&lt;mist&amp;isles&gt;-kit.md', page)
+        self.assertNotIn('<mist&isles>', page)
+
+    def test_kit_requirement_namespace_does_not_capture_other_documentation(self):
+        paths = ['docs/codex/kit-notes.md', 'docs/codex/frostline-kit.md.backup',
+                 'docs/codex/notes/lull-kit.md', 'docs/reference/brackens-kit.md']
+        for path in paths:
+            self.write(path, 'Ordinary documentation outside the requirements-file namespace.\n')
+        self.commit('other documentation')
+        result = self.cli()
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        manifest = self.read_bundle()
+        self.assertEqual(manifest['scope'], 'no_art')
+        self.assertTrue(manifest['complete'])
+        self.assertEqual({row['path'] for row in manifest['other_changes']}, set(paths))
+        self.assertTrue(all(row['status'] == 'not_art' for row in manifest['other_changes']))
+
+    def test_regional_kit_source_keeps_passing_raster_bundle_incomplete(self):
+        path = 'docs/codex/brackens-kit.md'
+        self.write(path, '# Unapproved Brackens requirements\n')
+        image = self.change_asset()
+        result = self.cli()
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        manifest = self.read_bundle()
+        self.assertEqual(manifest['scope'], 'detector_evidence')
+        self.assertFalse(manifest['complete'])
+        self.assertEqual(manifest['assets'][0]['path'], image)
+        self.assertEqual(manifest['assets'][0]['status'], 'pass')
+        row = next(row for row in manifest['other_changes'] if row['path'] == path)
+        self.assertEqual((row['status'], row['category']), ('source_only', 'kit_concept'))
+        self.assertEqual((self.out / row['inputs'][0]['evidence']).read_bytes(),
+                         (self.repo / path).read_bytes())
+
+    def test_regional_kit_renamed_to_png_keeps_before_source_obligation(self):
+        old = 'docs/codex/frostline-kit.md'
+        new = 'game/zones/woodland/art/recovered-regional.png'
+        raw = png_bytes()
+        self.write(old, raw)  # Deliberately malformed requirements are still production source.
+        self.base = self.commit('regional source baseline')
+        self.git('branch', '-f', 'base', self.base)
+        self.git('mv', old, new)
+        self.commit('regional source moved to a PNG')
+        result = self.cli()
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        manifest = self.read_bundle()
+        self.assertEqual(manifest['scope'], 'detector_evidence')
+        self.assertFalse(manifest['complete'])
+        self.assertEqual(manifest['assets'][0]['status'], 'pass')
+        row = next(row for row in manifest['other_changes'] if row['status'] == 'source_only')
+        self.assertEqual(row['category'], 'kit_concept')
+        self.assertEqual(row['change']['old_path'], old)
+        self.assertEqual([v['side'] for v in row['inputs']], ['before', 'after'])
+        self.assertEqual([v['ref'] for v in row['inputs']], [self.base, self.head])
+        self.assertEqual([v['path'] for v in row['inputs']], [old, new])
+        for version in row['inputs']:
+            self.assertEqual(version['blob'], self.git('rev-parse', self.base + ':' + old))
+            self.assertEqual((self.out / version['evidence']).read_bytes(), raw)
+
+    def test_regional_kit_rename_and_delete_keep_exact_source_versions(self):
+        old = 'docs/codex/lull-kit.md'
+        removed = 'docs/codex/cogsworth-kit.md'
+        new = 'notes/retained-lull-proposal.txt'
+        self.write(old, 'Lull source content distinct from the removed requirements.\n')
+        self.write(removed, 'Cogsworth requirements source before deletion.\n')
+        self.base = self.commit('regional requirements baseline')
+        self.git('branch', '-f', 'base', self.base)
+        (self.repo / 'notes').mkdir()
+        self.git('mv', old, new)
+        (self.repo / removed).unlink()
+        self.commit('move and remove regional requirements')
+        result = self.cli()
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        manifest = self.read_bundle()
+        self.assertEqual(manifest['scope'], 'source_only')
+        self.assertFalse(manifest['complete'])
+        rows = {row['path']: row for row in manifest['other_changes']}
+        self.assertEqual(rows[new]['category'], 'kit_concept')
+        self.assertEqual([v['side'] for v in rows[new]['inputs']], ['before', 'after'])
+        self.assertEqual([v['path'] for v in rows[new]['inputs']], [old, new])
+        self.assertEqual([v['side'] for v in rows[removed]['inputs']], ['before'])
+        self.assertEqual(rows[removed]['inputs'][0]['path'], removed)
+        for row in rows.values():
+            for version in row['inputs']:
+                raw = subprocess.run(['git', 'show', version['ref'] + ':' + version['path']],
+                                     cwd=self.repo, env=self.env, check=True,
+                                     capture_output=True, timeout=15).stdout
+                self.assertEqual((self.out / version['evidence']).read_bytes(), raw)
+
+    def test_regional_kit_fixture_rename_into_production_loses_exemption(self):
+        old = 'tests/fixtures/frostline-kit.md'
+        new = 'docs/codex/frostline-kit.md'
+        self.write(old, 'Intentionally invalid requirements fixture.\n')
+        self.base = self.commit('regional fixture baseline')
+        self.git('branch', '-f', 'base', self.base)
+        (self.repo / new).parent.mkdir(parents=True)
+        self.git('mv', old, new)
+        self.commit('regional fixture moved into production requirements')
+        result = self.cli()
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        row = self.read_bundle()['other_changes'][0]
+        self.assertEqual((row['status'], row['category']), ('source_only', 'kit_concept'))
+        self.assertEqual([v['path'] for v in row['inputs']], [old, new])
+
+    def test_regional_kit_named_fixture_stays_test_evidence(self):
+        path = 'tests/fixtures/docs/codex/frostline-kit.md'
+        self.write(path, b'Intentionally invalid requirements fixture.\xff\n')
+        self.commit('nested kit-named fixture')
+        result = self.cli()
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        manifest = self.read_bundle()
+        self.assertEqual(manifest['scope'], 'test_evidence')
+        self.assertEqual(manifest['assets'], [])
+        row = manifest['other_changes'][0]
+        self.assertEqual((row['status'], row['category']), ('test_evidence', 'test_fixture'))
+        self.assertEqual((self.out / row['inputs'][0]['evidence']).read_bytes(),
+                         (self.repo / path).read_bytes())
+
     def test_malformed_production_source_and_fixture_named_subdirectory_stay_visible(self):
         path = 'game/data/kit/concepts/fixtures/invalid.json'
         self.write(path, b'not-json\xff')
