@@ -1,0 +1,74 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "nature_alpine_turf",
+  "name": "Alpine turf",
+  "kind": "terrain",
+  "biomes": [
+    "frostline",
+    "massif"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "sheltered",
+      "note": "Short olive turf in a sheltered shelf, with grouped low flowers and small exposed stone patches."
+    },
+    {
+      "id": "wind_cut",
+      "note": "Sparser turf combed in a consistent wind direction, exposing larger pale rock planes between low grass masses."
+    },
+    {
+      "id": "snow_margin",
+      "note": "Damp short turf thinning below a rounded snow tongue, with darker melt soil and very few flowers."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 catalogue proposal for Claude review; not drawable approval, not placeable."
+  },
+  "geometry": {
+    "z_sort": "ground"
+  },
+  "placement": {
+    "role": "ground",
+    "ground": {
+      "allow": [
+        "turf",
+        "rock"
+      ],
+      "deny": []
+    },
+    "requires": [],
+    "forbids": [],
+    "clearance": 0,
+    "orientations": [
+      "any"
+    ],
+    "snap": "cell",
+    "composition": "free",
+    "stages": []
+  },
+  "rendering": {
+    "contact_ao": false
+  },
+  "function": {},
+  "story": {
+    "lore": "Bridge hay slopes, scree and late snow in the col country."
+  },
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared. Reusable across the listed places; preserve site-specific assembly and state.",
+      "Priority: P1.",
+      "Purpose: Bridge hay slopes, scree and late snow in the col country.",
+      "Visual brief: Short wind-combed olive grass with pale broken rock exposed through the turf; chunky low flowers in sheltered pockets. Use the shared meadow recipe at a different clump density, not new random noise.",
+      "Source: docs/vision/regions/valley-plan.md; docs/vision/regions/home-valley-frostline-brackens.md",
+      "Geometry: proposed visual envelope only; Claude supplies exact foot, solid footprint, overhang, interaction anchors and any deck after review.",
+      "Implementation: concept only, outside the live piece library. Do not place, bake or grant gameplay until reviewed and approved.",
+      "Widths: 1-cell pockets through scree and 2+ cell walkable shelves; no sub-cell climbable ledges.",
+      "Schema intake: defer the runtime material ID, palette priority and painter binding until the concept is approved; no runtime block is claimed here.",
+      "Lighting: upper-left key light; shade each material and facing for that light. The lit-picture reference is deferred until art exists."
+    ]
+  }
+}

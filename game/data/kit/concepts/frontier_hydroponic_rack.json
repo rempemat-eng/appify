@@ -1,0 +1,106 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "frontier_hydroponic_rack",
+  "name": "Hydroponic rack",
+  "kind": "prop",
+  "biomes": [
+    "halcyon",
+    "lumen"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "leafy",
+      "note": "Broad calm foliage, few high-contrast leaf tips."
+    },
+    {
+      "id": "seedling",
+      "note": "Lower plants in the same tray geometry."
+    },
+    {
+      "id": "empty",
+      "note": "Unplanted tray for maintenance context, no new harvesting state."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 design proposal for Claude review; no art, material ID, painter or live placement approval."
+  },
+  "geometry": {
+    "size_cells": [
+      6,
+      2
+    ],
+    "z_sort": "foot"
+  },
+  "placement": {
+    "role": "cultivation",
+    "ground": {
+      "allow": [
+        "paving"
+      ],
+      "deny": [
+        "earth",
+        "sand",
+        "water",
+        "route"
+      ]
+    },
+    "requires": [
+      {
+        "rel": "within",
+        "what": "pressure_interior"
+      },
+      {
+        "rel": "adjacent",
+        "what": "service_wall",
+        "cells": 1
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "route"
+      }
+    ],
+    "clearance": 1,
+    "orientations": [
+      "s",
+      "e",
+      "w"
+    ],
+    "snap": "cell",
+    "stages": [],
+    "composition": "row"
+  },
+  "rendering": {
+    "cast_shadow": {
+      "shape": "sprite"
+    },
+    "contact_ao": true
+  },
+  "function": {
+    "interact": null
+  },
+  "story": {
+    "owner": null,
+    "quests": [],
+    "lore": "Repeat plants where the pressurised station or dome can support them."
+  },
+  "gameplay": {},
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared",
+      "Priority: P3",
+      "Purpose: Repeat plants where the pressurised station or dome can support them.",
+      "Visual brief: Metal tray rack with a visible nutrient trough, a small pipe returning to its tank and plants emerging from individual sockets. The light hood is a physical frame, not a floating glow bar.",
+      "Widths and size: Proposed grow-pod class from the older world table: 32–52 world px high, 40–64 wide, or 96–156×120–192 art px; needs density-3 size review.",
+      "Source: docs/vision/world-plan.md §§8.6,8.7,9; docs/vision/coherence-plan.md M1",
+      "Implement after review: choose authored anchors, exact collision and approved variant art; these cell envelopes are layout proposals, not measured sprite bounds.",
+      "No outdoor lunar vegetation or harvesting reward is introduced. Only an approved existing interaction may be attached.",
+      "Lighting: Upper left; material-specific ramps and directional planes; no mirror-only relighting."
+    ]
+  }
+}

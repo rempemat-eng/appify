@@ -1,0 +1,104 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "nature_valley_mill",
+  "name": "Sleepwater mill and wheel assembly",
+  "kind": "structure",
+  "biomes": [
+    "valley"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "working",
+      "note": "Stout stone mill beside a timber overshot wheel, with the race entering above and returning below; show the axle housing, wet wheel and supported bank."
+    },
+    {
+      "id": "storm_damaged",
+      "note": "The same mill, wheel and race geometry with local storm damage to boards and roof parts; damage does not invent a blocked or uphill water course."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 catalogue proposal for Claude review; not drawable approval, not placeable."
+  },
+  "geometry": {
+    "z_sort": "foot",
+    "size_px": [
+      360,
+      330
+    ]
+  },
+  "placement": {
+    "role": "structure",
+    "ground": {
+      "allow": [
+        "stone",
+        "earth"
+      ],
+      "deny": []
+    },
+    "requires": [
+      {
+        "rel": "on_anchor",
+        "what": "millrace_drop",
+        "note": "Proposed selector/relation for review; its exact matching contract must be added to W5 before promotion.",
+        "cells": 0
+      },
+      {
+        "rel": "adjacent",
+        "what": "route",
+        "note": "Proposed selector/relation for review; its exact matching contract must be added to W5 before promotion.",
+        "cells": 1
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "other_footprint"
+      }
+    ],
+    "clearance": 2,
+    "orientations": [
+      "s",
+      "e",
+      "w"
+    ],
+    "snap": "cell",
+    "composition": "axis",
+    "stages": [
+      "broken",
+      "restored"
+    ],
+    "per_zone": {
+      "max": 1
+    }
+  },
+  "rendering": {
+    "contact_ao": true
+  },
+  "function": {
+    "interact": {
+      "verb": "look",
+      "triggers": []
+    }
+  },
+  "story": {
+    "lore": "The Sleepwater turns the mill between the terrace and valley floor. A look/story detail is allowed; this concept adds no harvest loop."
+  },
+  "audit": {
+    "size_class": "civic",
+    "eastward_ref": null,
+    "todo": [
+      "Scope: custom. One authored site composition; repeated construction components remain shared.",
+      "Priority: P1.",
+      "Purpose: Make the river's energy and the valley's geography legible at the one mill drop.",
+      "Visual brief: A stout stone mill on dry ground beside a timber overshot wheel; the race enters above the wheel and returns below. Show the wheel thickness, axle housing, wet channel and stone abutment; do not put a decorative wheel in still water.",
+      "Source: docs/vision/regions/valley-plan.md; docs/vision/regions/home-valley-frostline-brackens.md",
+      "Geometry: proposed visual envelope only; Claude supplies exact foot, solid footprint, overhang, interaction anchors and any deck after review.",
+      "Implementation: concept only, outside the live piece library. Do not place, bake or grant gameplay until reviewed and approved.",
+      "Geometry.size_px is the proposed mill-building envelope only. The separate wheel/race assembly is measured as a composite after review; civic is a building-class proxy, not a bound on the entire site.",
+      "Per-zone maximum: 1; race inlet/outlet must be explicit and downhill.",
+      "Lighting: upper-left key light; shade each material and facing for that light. The lit-picture reference is deferred until art exists."
+    ]
+  }
+}

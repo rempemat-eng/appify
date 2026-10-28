@@ -1,0 +1,89 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "nature_snow_rock_margin",
+  "name": "Snow to exposed rock transition",
+  "kind": "transition",
+  "biomes": [
+    "frostline",
+    "massif"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "wind_scour",
+      "note": "Thin wind-cut snow edge exposing broad pale rock planes, with a shallow cool underside rather than a tall bank."
+    },
+    {
+      "id": "melt_margin",
+      "note": "Darker wet rock immediately below a retreating rounded snow tongue, with restrained melt stains."
+    },
+    {
+      "id": "deep_bank",
+      "note": "Thicker rounded snow bank with a visibly shaded underside; any actual change of support height must be declared as terrain."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 catalogue proposal for Claude review; not drawable approval, not placeable."
+  },
+  "geometry": {
+    "z_sort": "ground"
+  },
+  "placement": {
+    "role": "ground_edge",
+    "ground": {
+      "allow": [
+        "snow",
+        "rock"
+      ],
+      "deny": []
+    },
+    "requires": [
+      {
+        "rel": "adjacent",
+        "what": "snow_shelf",
+        "note": "Proposed selector/relation for review; its exact matching contract must be added to W5 before promotion.",
+        "cells": 1
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "route_centre"
+      }
+    ],
+    "clearance": 0,
+    "orientations": [
+      "n",
+      "s",
+      "e",
+      "w"
+    ],
+    "snap": "cell",
+    "composition": "edge",
+    "stages": []
+  },
+  "rendering": {
+    "contact_ao": false
+  },
+  "function": {},
+  "story": {
+    "lore": "Show wind-scoured ridges and melt margins as one reusable material boundary."
+  },
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared. Reusable across the listed places; preserve site-specific assembly and state.",
+      "Priority: P1.",
+      "Purpose: Show wind-scoured ridges and melt margins as one reusable material boundary.",
+      "Visual brief: A rounded snow cap sits above dark wet stone; the north lip has a shallow shadow and the south edge a warm rim. Ice is visible only at a declared glacier boundary, not at every snow edge.",
+      "Source: docs/world-editor.md; docs/vision/eastward-edges.md; docs/vision/regions/valley-plan.md; docs/vision/regions/home-valley-frostline-brackens.md",
+      "Geometry: proposed visual envelope only; Claude supplies exact foot, solid footprint, overhang, interaction anchors and any deck after review.",
+      "Implementation: concept only, outside the live piece library. Do not place, bake or grant gameplay until reviewed and approved.",
+      "Widths: 1-cell edge treatment; drift depth is decorative unless the zone supplies a tier change.",
+      "Schema intake: defer the runtime material ID, palette priority and painter binding until the concept is approved; no runtime block is claimed here.",
+      "Lighting: upper-left key light; shade each material and facing for that light. The lit-picture reference is deferred until art exists."
+    ]
+  }
+}
