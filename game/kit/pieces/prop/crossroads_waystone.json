@@ -6,12 +6,16 @@
  "biomes": [
   "village"
  ],
- "version": 1,
+ "version": 2,
  "variants": [
   {
    "id": "waystone",
    "weight": 1.0,
-   "png": "res://zones/crossroads/art/waystone.png"
+   "png": "res://zones/crossroads/art/waystone.png",
+   "foot": [
+    45,
+    134
+   ]
   }
  ],
  "approval": {
@@ -19,7 +23,7 @@
   "by": null,
   "at": null,
   "standard": null,
-  "note": "seeded from game/zones/crossroads (art/catalogue holds its asset-gate record)"
+  "note": "Source metadata only; seeded designs still require the library gate and Matt approval."
  },
  "geometry": {
   "size_px": [
@@ -31,13 +35,43 @@
    6
   ],
   "z_sort": "foot",
-  "foot": [
-   45.0,
-   134.0
-  ],
   "collision": {
-   "shape": "none"
-  }
+   "radius": 1.6666666666666667,
+   "shape": "circle"
+  },
+  "foot": [
+   45,
+   134
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    -1,
+    0
+   ],
+   [
+    0,
+    0
+   ]
+  ],
+  "interaction_points": [
+   {
+    "id": "waystone",
+    "at": [
+     0.0,
+     0.0
+    ],
+    "verb": "Touch",
+    "radius": 30.0
+   }
+  ]
  },
  "placement": {
   "snap": "cell",
@@ -58,24 +92,42 @@
  },
  "function": {
   "interact": {
-   "verb": "read",
-   "triggers": []
+   "verb": "use",
+   "triggers": [
+    {
+     "type": "dialogue",
+     "ref": "res://data/dialogue/crossroads.json#/waystone"
+    }
+   ]
   }
  },
  "story": {
-  "owner": null
+  "owner": null,
+  "dialogue": [
+   "res://data/dialogue/crossroads.json#/waystone"
+  ]
  },
  "gameplay": {
-  "blocks_move": false,
-  "blocks_shots": false
+  "blocks_move": true,
+  "blocks_shots": true
  },
  "audit": {
   "size_class": null,
   "eastward_ref": null,
   "seeded_from": "game/zones/crossroads/kit.json",
+  "sources": [
+   {
+    "zone": "crossroads",
+    "object": "waystone",
+    "part": "body",
+    "condition": null
+   }
+  ],
   "todo": [
    "composition role and clearance",
-   "function.interact.triggers (what using it does)"
+   "footprint is conservative positive-area coverage at a cell-aligned foot; W4 must derive exact runtime blocking from collision at the placed foot",
+   "review size-guide class and Eastward comparison before the library gate",
+   "source has a circle post; prop-scene generator currently emits rectangles only (W4/runtime support needed before placement)"
   ]
  }
 }

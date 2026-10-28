@@ -6,12 +6,16 @@
  "biomes": [
   "village"
  ],
- "version": 1,
+ "version": 2,
  "variants": [
   {
    "id": "debris_b",
    "weight": 1.0,
-   "png": "res://zones/crossroads/art/debris_b.png"
+   "png": "res://zones/crossroads/art/debris_b.png",
+   "foot": [
+    45,
+    41
+   ]
   }
  ],
  "approval": {
@@ -19,7 +23,7 @@
   "by": null,
   "at": null,
   "standard": null,
-  "note": "seeded from game/zones/crossroads (art/catalogue holds its asset-gate record)"
+  "note": "Source metadata only; seeded designs still require the library gate and Matt approval."
  },
  "geometry": {
   "size_px": [
@@ -31,13 +35,14 @@
    2
   ],
   "z_sort": "foot",
-  "foot": [
-   45.0,
-   41.0
-  ],
   "collision": {
    "shape": "none"
-  }
+  },
+  "foot": [
+   45,
+   41
+  ],
+  "footprint": []
  },
  "placement": {
   "snap": "free",
@@ -60,7 +65,14 @@
  },
  "function": {},
  "story": {
-  "owner": null
+  "owner": null,
+  "gating": {
+   "if": {
+    "not_flags": [
+     "shard_home:woodland"
+    ]
+   }
+  }
  },
  "gameplay": {
   "blocks_move": false,
@@ -70,8 +82,21 @@
   "size_class": null,
   "eastward_ref": null,
   "seeded_from": "game/zones/crossroads/kit.json",
+  "sources": [
+   {
+    "zone": "crossroads",
+    "object": "debris_b",
+    "part": "body",
+    "condition": {
+     "not_flags": [
+      "shard_home:woodland"
+     ]
+    }
+   }
+  ],
   "todo": [
-   "composition role and clearance"
+   "composition role and clearance",
+   "review size-guide class and Eastward comparison before the library gate"
   ]
  }
 }

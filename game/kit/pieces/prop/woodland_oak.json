@@ -6,12 +6,16 @@
  "biomes": [
   "woodland"
  ],
- "version": 1,
+ "version": 2,
  "variants": [
   {
    "id": "oak",
    "weight": 1.0,
-   "png": "res://zones/woodland/art/oak.png"
+   "png": "res://zones/woodland/art/oak.png",
+   "foot": [
+    106.0,
+    243.0
+   ]
   }
  ],
  "approval": {
@@ -19,7 +23,7 @@
   "by": null,
   "at": null,
   "standard": null,
-  "note": "seeded from game/zones/woodland (art/catalogue holds its asset-gate record)"
+  "note": "Source metadata only; seeded designs still require the library gate and Matt approval."
  },
  "geometry": {
   "size_px": [
@@ -28,22 +32,15 @@
   ],
   "size_cells": [
    9,
-   10
+   11
   ],
   "z_sort": "foot",
+  "collision": null,
   "foot": [
    106.0,
    243.0
   ],
-  "collision": {
-   "shape": "rect",
-   "rect": [
-    -5.0,
-    -5.0,
-    10.0,
-    5.0
-   ]
-  }
+  "footprint": []
  },
  "placement": {
   "snap": "cell",
@@ -77,17 +74,107 @@
  "story": {
   "owner": null
  },
- "gameplay": {
-  "blocks_move": true,
-  "blocks_shots": false
- },
+ "gameplay": {},
  "audit": {
   "size_class": null,
   "eastward_ref": null,
   "seeded_from": "game/zones/woodland/kit.json",
+  "sources": [
+   {
+    "zone": "woodland",
+    "object": "tree-1",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "woodland",
+    "object": "tree-2",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "woodland",
+    "object": "tree-3",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "woodland",
+    "object": "tree-4",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "woodland",
+    "object": "tree-6",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "woodland",
+    "object": "wood-10",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "woodland",
+    "object": "wood-13",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "woodland",
+    "object": "wood-16",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "woodland",
+    "object": "wood-19",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "woodland",
+    "object": "wood-24",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "woodland",
+    "object": "wood-26",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "woodland",
+    "object": "wood-4",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "woodland",
+    "object": "wood-41",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "woodland",
+    "object": "wood-44",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "woodland",
+    "object": "wood-45",
+    "part": "body",
+    "condition": null
+   }
+  ],
   "todo": [
    "composition role and clearance",
-   "collision and shadow are first guesses by kind (scripts/art/kit/seed_props.py _woodland_body)"
+   "object-local collision is unknown: woodland scene has only a merged terrain walk mask; Claude must author a solid box (no guessed tree/body collision)",
+   "review size-guide class and Eastward comparison before the library gate"
   ]
  }
 }

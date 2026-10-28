@@ -1,0 +1,84 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "industry_narrows_viaduct",
+  "name": "Narrows Viaduct composition",
+  "kind": "structure",
+  "version": 1,
+  "approval": {
+    "state": "concept",
+    "note": "W0 design proposal only; not drawn, gated, approved or available for placement."
+  },
+  "biomes": [
+    "narrows",
+    "coal_hills"
+  ],
+  "variants": [
+    {
+      "id": "main",
+      "note": "One authored gorge crossing, not randomly repeated arch modules."
+    }
+  ],
+  "placement": {
+    "role": "landmark_bridge",
+    "ground": {
+      "allow": [
+        "rock",
+        "stone"
+      ],
+      "deny": []
+    },
+    "requires": [
+      {
+        "rel": "on_anchor",
+        "what": "bridge_abutments"
+      }
+    ],
+    "forbids": [],
+    "clearance": 3,
+    "orientations": [
+      "s",
+      "n",
+      "e",
+      "w"
+    ],
+    "snap": "cell",
+    "stages": [],
+    "composition": "axis",
+    "per_zone": {
+      "max": 1
+    }
+  },
+  "rendering": {
+    "contact_ao": true,
+    "cast_shadow": {
+      "shape": "sprite"
+    }
+  },
+  "function": {},
+  "story": {
+    "lore": "Compose the maglev’s crossing over the Lull gorge as a unique long-range landmark."
+  },
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: custom",
+      "Priority: P2",
+      "Purpose: Compose the maglev’s crossing over the Lull gorge as a unique long-range landmark.",
+      "Visual brief: Three supported masonry/iron piers at the actual gorge section, high horizontal guideway, narrow dark undersides and a clear river opening; visible cliffs carry the bridge abutments.",
+      "Source: docs/vision/regions/cogsworth-plan.md",
+      "Implement after review: Claude selects the design, draws it, supplies exact anchors/collision and passes the library gate; no concept may ship.",
+      "Geometry: proposed authoring envelope 32x14 cells; one cell is 8 world px / 24 art px. This is not an asserted solid footprint; collision, foot and overhang await the drawing.",
+      "Scale: envelope only, not the viaduct’s canonical dimensions or a collision box; actual plan/section controls the span.",
+      "Rule proposal: piers sit on mapped support, abutments meet the correct transport tier, and river flow passes through an unobstructed opening.",
+      "Uniqueness: rail and pier details are shared but the three-pier gorge silhouette is not stamped elsewhere; W7 transport access remains owner-controlled."
+    ]
+  },
+  "geometry": {
+    "size_cells": [
+      32,
+      14
+    ],
+    "z_sort": "foot"
+  }
+}

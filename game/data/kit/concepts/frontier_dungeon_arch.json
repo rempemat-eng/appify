@@ -1,0 +1,103 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "frontier_dungeon_arch",
+  "name": "Ancient doorway and stair collar",
+  "kind": "structure",
+  "biomes": [
+    "undercroft",
+    "dungeon"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "passage",
+      "note": "Open floor-to-floor route."
+    },
+    {
+      "id": "stair",
+      "note": "Threshold flush with the upper or lower stair landing."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 design proposal for Claude review; no art, material ID, painter or live placement approval."
+  },
+  "geometry": {
+    "size_cells": [
+      6,
+      3
+    ],
+    "z_sort": "foot"
+  },
+  "placement": {
+    "role": "door",
+    "ground": {
+      "allow": [
+        "stone",
+        "paving"
+      ],
+      "deny": [
+        "water"
+      ]
+    },
+    "requires": [
+      {
+        "rel": "at_edge",
+        "what": "room_boundary"
+      },
+      {
+        "rel": "adjacent",
+        "what": "route",
+        "cells": 1
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "door_apron",
+        "note": " Refuse any intersection of the proposed solid footprint with this reserved envelope; final collision comes from approved art."
+      }
+    ],
+    "clearance": 1,
+    "orientations": [
+      "s",
+      "n",
+      "e",
+      "w"
+    ],
+    "snap": "cell",
+    "stages": [],
+    "composition": "free"
+  },
+  "rendering": {
+    "cast_shadow": {
+      "shape": "sprite"
+    },
+    "contact_ao": true
+  },
+  "function": {
+    "interact": null
+  },
+  "story": {
+    "owner": null,
+    "quests": [],
+    "lore": "Reuse the depth-correct opening around the hatch stair and room passages."
+  },
+  "gameplay": {},
+  "audit": {
+    "size_class": "wide_door",
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared",
+      "Priority: P0",
+      "Purpose: Reuse the depth-correct opening around the hatch stair and room passages.",
+      "Visual brief: A heavy stone lintel sits on two jambs, with dark inner returns and a visible worn threshold; top masonry bears on the jambs rather than floating.",
+      "Widths and size: Opening 59–111 art px wide, 74–130 high; keep the source 48-world-px room passage wherever wider, never narrow it just to fit the door class.",
+      "Source: game/data/plans/undercroft.json; docs/vision/vertical-slice.md beat 6",
+      "Implement after review: choose authored anchors, exact collision and approved variant art; these cell envelopes are layout proposals, not measured sprite bounds.",
+      "Plan doors and spawns remain authoritative. Interior passage arches do not create zone transitions by default.",
+      "Lighting: Upper left; material-specific ramps and directional planes; no mirror-only relighting.",
+      "Scale proxy: wide_door constrains the clear doorway opening only, not the complete frame, tube, slab or jamb image. No measured size_px or pass is claimed; retain authored source geometry and review any aperture outside that range explicitly."
+    ]
+  }
+}

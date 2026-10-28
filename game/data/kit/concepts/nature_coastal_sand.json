@@ -1,0 +1,73 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "nature_coastal_sand",
+  "name": "Coastal sand",
+  "kind": "terrain",
+  "biomes": [
+    "coast",
+    "tidebloom"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "dry_pale",
+      "note": "Pale warm upper-beach sand with shallow wind ripples and sparse broken-shell groups, kept quiet between the groups."
+    },
+    {
+      "id": "wet_pale",
+      "note": "Darker compact sand with fine shore-parallel runnels and restrained reflected light; no foam drawn on dry ground."
+    },
+    {
+      "id": "black_cove",
+      "note": "Cool charcoal volcanic sand broken by a few pale shells and broad damp patches; match the cove basalt rather than tinting pale sand."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 catalogue proposal for Claude review; not drawable approval, not placeable."
+  },
+  "geometry": {
+    "z_sort": "ground"
+  },
+  "placement": {
+    "role": "ground",
+    "ground": {
+      "allow": [
+        "sand"
+      ],
+      "deny": []
+    },
+    "requires": [],
+    "forbids": [],
+    "clearance": 0,
+    "orientations": [
+      "any"
+    ],
+    "snap": "cell",
+    "composition": "free",
+    "stages": []
+  },
+  "rendering": {
+    "contact_ao": false
+  },
+  "function": {},
+  "story": {
+    "lore": "Supply dry upper beach and wet shore without borrowing the desert floor unchanged."
+  },
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared. Reusable across the listed places; preserve site-specific assembly and state.",
+      "Priority: P2.",
+      "Purpose: Supply dry upper beach and wet shore without borrowing the desert floor unchanged.",
+      "Visual brief: Warm fine sand above a darker compact wet strip; broken shell clusters, shallow runnels and small low ripples. The beach becomes black volcanic sand at Black-sand Cove with a new approved ramp, not a global tint.",
+      "Source: docs/vision/regions/tidebloom-isles.md",
+      "Geometry: proposed visual envelope only; Claude supplies exact foot, solid footprint, overhang, interaction anchors and any deck after review.",
+      "Implementation: concept only, outside the live piece library. Do not place, bake or grant gameplay until reviewed and approved.",
+      "Widths: Upper beach 2+ cells; wet shore 1-3-cell band. The Shell Bar safe span is authored, not made by a tide animation.",
+      "Schema intake: defer the runtime material ID, palette priority and painter binding until the concept is approved; no runtime block is claimed here.",
+      "Lighting: upper-left key light; shade each material and facing for that light. The lit-picture reference is deferred until art exists."
+    ]
+  }
+}

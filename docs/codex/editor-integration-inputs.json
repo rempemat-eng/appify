@@ -1,0 +1,2164 @@
+{
+  "schema": "mygame.editor_integration_inputs/1",
+  "task": "E2/r1",
+  "slot": "mortar",
+  "status": "draft_unapproved_integration_proposal",
+  "claim": "https://github.com/rempemat-eng/appify/issues/149#issuecomment-6483540277",
+  "fixture_scope_extension": "https://github.com/rempemat-eng/appify/issues/149#issuecomment-6483718766",
+  "base_head": "04228475cbd9fb76e0a0a9af52240d7e40a5d858",
+  "main_head": "7f83ee03781752f6c4db068185142040c8a2c319",
+  "inputs": [
+    {
+      "id": "302",
+      "head": "04228475cbd9fb76e0a0a9af52240d7e40a5d858",
+      "tree": "0f1bbd356f4c4a20fffd2117a8d0f548063ec12f",
+      "role": "Unchanged editor/woodland proposal baseline"
+    },
+    {
+      "id": "main",
+      "head": "7f83ee03781752f6c4db068185142040c8a2c319",
+      "tree": "4ec9efb434c20f17faa62c4db165f7e73ada4a6d",
+      "role": "Current reviewed engineering, classifier and check commands"
+    },
+    {
+      "id": "341",
+      "head": "af563582b2f95e43f03dad0133754aa46b072186",
+      "tree": "7da03e7f2d3c2bfa229b55adc13e931955111696",
+      "role": "W0 catalogue + W1 source metadata + malformed concept intake"
+    },
+    {
+      "id": "312",
+      "head": "fb375325aa1641084a15e26c4a692bc42694afa8",
+      "tree": "806c2a2cf4a220dcdc91c7826f5c0be742c85056",
+      "role": "W3 dock; includes current W4 and W5/W6 predecessors"
+    },
+    {
+      "id": "305",
+      "head": "64c212fc91027020600297b5258de7301968d46d",
+      "tree": "2e1622f2d64409e93dccb0c341d7dcf8f7e03206",
+      "role": "Latest literal logical-ID and round-trip repair"
+    },
+    {
+      "id": "317",
+      "head": "47ac43542bd02d85b906b206faa0a41ec67855f4",
+      "tree": "a507e10c8633b1522c67f51bda261c01163d1469",
+      "role": "W7 cell-coordinate intake; includes W7 pixel fixtures"
+    },
+    {
+      "id": "315",
+      "head": "36af9a5b1cbb038f5c1515a93156b2a496f943ca",
+      "tree": "a397f19ec037e2e6a1601ea5c8608448f3a96d01",
+      "role": "Python walk cell-coordinate normalization"
+    },
+    {
+      "id": "347",
+      "head": "fd4cf36dbff7ff3c672678a559c885acbe0655e1",
+      "tree": "2ae2ad034a43df9398a62263d2b72e4b444ea924",
+      "role": "Baked scene/piece review intake and structured failures"
+    }
+  ],
+  "native_merge_order": ["312", "305", "341", "317", "315", "main", "347"],
+  "covered_dependencies": {
+    "341": [
+      "306@7e816ab09107424af3fc7b1d01689955de8b57c6",
+      "307@fd667dd1d5e778b03d96bcadd51a2fdb15372953"
+    ],
+    "312": [
+      "304@2d637747ffe874f350045dfa2c5412f5723e8165",
+      "311@c8c1a1ed63a902bb85f729fe699bf377d1033a17"
+    ],
+    "317": ["308@8ba1510b757971e8773610442739c8cb6c160ea4"]
+  },
+  "assembled_source_tree_before_review_documents": "a5f595262ea7bd1f1c574278f01b584ccd1fdcde",
+  "delta_from_editor_base": [
+    {
+      "path": ".github/workflows/godot.yml",
+      "mode": "100644",
+      "blob": "7ab1d4100e76e6f77859d9893ece6da414b33bd1",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": ".github/workflows/kit-concept-validation.yml",
+      "mode": "100644",
+      "blob": "f3bb9f832b67d6e71d77e314b6bf97deb6b88aec",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": ".github/workflows/kit-scene-intake.yml",
+      "mode": "100644",
+      "blob": "7941c98d9237e7f4ada6ce692cdc7dc4c7d9f607",
+      "matches_inputs": ["347"]
+    },
+    {
+      "path": "AGENTS.md",
+      "mode": "100644",
+      "blob": "f9905c917e1a0321928b4d9e4c7acfbe7dec828a",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "docs/codex/concept-validation.md",
+      "mode": "100644",
+      "blob": "a4c45230cec9148c2916bfa008212d729bf7e399",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "docs/codex/editor-rules.md",
+      "mode": "100644",
+      "blob": "936feb0d6d5633059177bba5d83091d60b314796",
+      "matches_inputs": ["312", "315"]
+    },
+    {
+      "path": "docs/codex/glint-economy.md",
+      "mode": "100644",
+      "blob": "8f59ded25889e51c725207c94c32b6a25aa144b7",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "docs/codex/godot-cache.md",
+      "mode": "100644",
+      "blob": "a663d20124d819f581b48e956c95b2721cd8b406",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "docs/codex/godot-import-cache.md",
+      "mode": "100644",
+      "blob": "ebc1ca5905aeb668c63dbd0dd6d234b942fa8efa",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "docs/codex/handover.md",
+      "mode": "100644",
+      "blob": "6d6268ec46e17c4eb9de4a22989de2fedf912650",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "docs/codex/kit-scene-intake.md",
+      "mode": "100644",
+      "blob": "0a165e647586ddcce32008a5187c8fdb1283af03",
+      "matches_inputs": ["347"]
+    },
+    {
+      "path": "docs/codex/menu-model.md",
+      "mode": "100644",
+      "blob": "998cdd420faa0cb476c148ae489c0a7ac79196cf",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "docs/codex/pr-triage.md",
+      "mode": "100644",
+      "blob": "c037be1dcd8e485d7a11ab6e607334024c3f3d0e",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "docs/codex/pre-review-sheets.md",
+      "mode": "100644",
+      "blob": "75c17e8612729f8f695927dd115f2c3d07213c6a",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "docs/codex/progression-runtime.md",
+      "mode": "100644",
+      "blob": "216418f558f711f2b863c3cd05a8410d184bbcc6",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "docs/codex/quest-data.md",
+      "mode": "100644",
+      "blob": "6ed3b4514c7eb86272ee89d964a5854979b62a81",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "docs/codex/save-migrations.md",
+      "mode": "100644",
+      "blob": "13ee19b01a21a09868f75cbb4e88e33b6ba3585e",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "docs/codex/touch-audit.md",
+      "mode": "100644",
+      "blob": "a2974569fca6a12e3e52292a1f07b3558a5aea39",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "docs/codex/world-clock.md",
+      "mode": "100644",
+      "blob": "2b24d198dfeb9401aa733fddef06b70cbb136f4e",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "docs/vision/development-plan.md",
+      "mode": "100644",
+      "blob": "8bda8a0c647cf8eca9031ac47ae2a4f3d03517d7",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "docs/vision/kit-catalogue.md",
+      "mode": "100644",
+      "blob": "70970a2cb1292943f7f0ce72a1cf964d64bc9815",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "docs/vision/roadmap.md",
+      "mode": "100644",
+      "blob": "1a571f85edbe64892661f5d936977d9963030cba",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "game/addons/world_editor/README.md",
+      "mode": "100644",
+      "blob": "813aa9b8b6a9a25ceee02cd34c14aa7ac6cd0fa8",
+      "matches_inputs": ["312"]
+    },
+    {
+      "path": "game/addons/world_editor/dock.gd",
+      "mode": "100644",
+      "blob": "cabf2180620553c424682b9acf1162de37cbdab9",
+      "matches_inputs": ["312"]
+    },
+    {
+      "path": "game/addons/world_editor/operations.gd",
+      "mode": "100644",
+      "blob": "15cc87842ada7b4c69dda17f67609e252fd5a033",
+      "matches_inputs": ["312"]
+    },
+    {
+      "path": "game/addons/world_editor/operations.gd.uid",
+      "mode": "100644",
+      "blob": "a1cb413add9f749b46b07f191a1e9844fbc546fb",
+      "matches_inputs": ["312"]
+    },
+    {
+      "path": "game/addons/world_editor/plugin.gd",
+      "mode": "100644",
+      "blob": "99e4e09ffb0b50739fc34615486a9c49242b4ea7",
+      "matches_inputs": ["312"]
+    },
+    {
+      "path": "game/addons/world_editor/rules_adapter.gd",
+      "mode": "100644",
+      "blob": "da525af8e9b59bb953b6693bb8a9c73ccaf086b4",
+      "matches_inputs": ["312"]
+    },
+    {
+      "path": "game/addons/world_editor/rules_adapter.gd.uid",
+      "mode": "100644",
+      "blob": "57288521f01242a1e08146cf0bf89941c566b94b",
+      "matches_inputs": ["312"]
+    },
+    {
+      "path": "game/addons/world_editor/smoke.gd",
+      "mode": "100644",
+      "blob": "95f4d08e1134cf5239e3e0d4102c2ac489602933",
+      "matches_inputs": ["312"]
+    },
+    {
+      "path": "game/addons/world_editor/smoke.gd.uid",
+      "mode": "100644",
+      "blob": "146ed3b8c068d4ec4bc458abacf2332e5aabe81b",
+      "matches_inputs": ["312"]
+    },
+    {
+      "path": "game/addons/world_editor/tools.gd",
+      "mode": "100644",
+      "blob": "c055d59e71ebac1828a0b7639c8b54d66a68bc26",
+      "matches_inputs": ["312"]
+    },
+    {
+      "path": "game/addons/world_editor/tools.gd.uid",
+      "mode": "100644",
+      "blob": "8acc526e038d4e4e974106805d5f7d770bcc0933",
+      "matches_inputs": ["312"]
+    },
+    {
+      "path": "game/core/folk_progression.gd",
+      "mode": "100644",
+      "blob": "4ee462efa788b92732f417045aeb76a0640d98e8",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "game/core/folk_progression.gd.uid",
+      "mode": "100644",
+      "blob": "6b1cb1efda6c64fba18bdbae09867e8b32f24a0a",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "game/core/glint_economy.gd",
+      "mode": "100644",
+      "blob": "9ada48985064560cb806e3b538fd5cba4339df2e",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "game/core/glint_economy.gd.uid",
+      "mode": "100644",
+      "blob": "ee939e8196cb3d338b1e99a444f84232ef718956",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "game/core/menu_model.gd",
+      "mode": "100644",
+      "blob": "312f7170048180404f973972c0a8b01e6ac2567c",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "game/core/menu_model.gd.uid",
+      "mode": "100644",
+      "blob": "e41eb4e07765974cf4d271fbcc5b11602db8f1ce",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "game/core/save_game.gd",
+      "mode": "100644",
+      "blob": "d8a998def1a2ea5cb3597d6e0a2cadd2e5da1dcc",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "game/core/world_clock.gd",
+      "mode": "100644",
+      "blob": "a84ca5a64cf57000537a20e294b2b6fe5d9a1120",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "game/core/world_clock.gd.uid",
+      "mode": "100644",
+      "blob": "163ac37cd28197ff1662d98edadfc4793cc6a723",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "game/data/kit/concepts/frontier_adobe_dwelling.json",
+      "mode": "100644",
+      "blob": "ee164b79e990f35c665af7ccca54179271bb0b69",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/frontier_airlock.json",
+      "mode": "100644",
+      "blob": "38bb728c50472dae43cbe24849cd152b4593af67",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/frontier_basalt_heat_rim.json",
+      "mode": "100644",
+      "blob": "711037b71d7adf6ff282817781a7e937c917cdb3",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/frontier_cairn_alcove.json",
+      "mode": "100644",
+      "blob": "9540b0a78bfa25358ab1d551686f4f1e69cb89a4",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/frontier_chasm_bridge.json",
+      "mode": "100644",
+      "blob": "f56fed8e9d7493922748cf3f6693f7bb55bdd7b1",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/frontier_company_drill.json",
+      "mode": "100644",
+      "blob": "b74b62816922dce838f790ce237073a3dc5f27d3",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/frontier_cooled_basalt.json",
+      "mode": "100644",
+      "blob": "4a9ecdc446632eb241fde885d65cfdb6d7268d5a",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/frontier_desert_cactus.json",
+      "mode": "100644",
+      "blob": "f5a540d38a66401828a4640ad973d6afe6aadc09",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/frontier_dry_sand.json",
+      "mode": "100644",
+      "blob": "5d608b2015ccb71634118452bed72381598ec0f6",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/frontier_dungeon_arch.json",
+      "mode": "100644",
+      "blob": "8b7bac27e1643ac1883871df5a73d16a89c34330",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/frontier_dungeon_floor.json",
+      "mode": "100644",
+      "blob": "d5545c038257f1e7e1da8ae164e8131547cbf0a8",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/frontier_dungeon_wall.json",
+      "mode": "100644",
+      "blob": "4f655de8dbac01ac68d561a97bd4e7c88b2c85f7",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/frontier_ember_forge.json",
+      "mode": "100644",
+      "blob": "7c2b574819058af7b2ec00e680f0254aef7db2e7",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/frontier_false_front.json",
+      "mode": "100644",
+      "blob": "302b3cb1872a75527abbd12f0454bc19eeb2ff58",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/frontier_hydroponic_rack.json",
+      "mode": "100644",
+      "blob": "186afeaf0102ebfd237111dbf5b7f0a154cd678c",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/frontier_ice_rig.json",
+      "mode": "100644",
+      "blob": "64620beb5a0a09559fc95853dddce8410d21fe62",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/frontier_lava_run.json",
+      "mode": "100644",
+      "blob": "9d6f04a3bb5935a4114e43d4fe9fd4c4d10aacc6",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/frontier_lumen_observatory.json",
+      "mode": "100644",
+      "blob": "4817fd9bb065162fd2686753dc4518a0ce65d31d",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/frontier_lunar_landing_pad.json",
+      "mode": "100644",
+      "blob": "1e1b04cc469fe741781c5c80a1c5d60a972ac66b",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/frontier_lunar_rim.json",
+      "mode": "100644",
+      "blob": "0312129872320f12429ce9cbf90441ba1e8464ed",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/frontier_mine_portal.json",
+      "mode": "100644",
+      "blob": "8249fcbe1daed8d2d7dde97d80d725795da97d2d",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/frontier_moon_tree.json",
+      "mode": "100644",
+      "blob": "69479671855e1f9166dcef650a470ea3d5506d11",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/frontier_oasis_channel.json",
+      "mode": "100644",
+      "blob": "d369e658d41c427217f2d38f149ab6f42cb3ee50",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/frontier_palm_spring_head.json",
+      "mode": "100644",
+      "blob": "45a8fa5093a76119d3ccfce8e7885e703f7c2f3b",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/frontier_pressure_bulkhead.json",
+      "mode": "100644",
+      "blob": "93a73ff055ca66ea3bc0873781fa26ad749dba86",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/frontier_pressure_tube.json",
+      "mode": "100644",
+      "blob": "d2dc6a95f7825438175c223f0cb9aaa0d7fd75f8",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/frontier_regolith.json",
+      "mode": "100644",
+      "blob": "07bea2cef498e032fad4501fe5a7a1b39ddbf6f6",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/frontier_regolith_habitat.json",
+      "mode": "100644",
+      "blob": "321108e688fee01ae51b02131081c01f65743ef6",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/frontier_salt_crust.json",
+      "mode": "100644",
+      "blob": "c56c31035a02c959bfb3c11177168571952a4c05",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/frontier_sand_scrub_edge.json",
+      "mode": "100644",
+      "blob": "441d2514fd5ad59ed29acbda780cd3e791cb995d",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/frontier_seal_lever.json",
+      "mode": "100644",
+      "blob": "43c9b608c3cdcfb2d6dfcaacf8c8618358b0f376",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/frontier_seal_plate.json",
+      "mode": "100644",
+      "blob": "87c00c94f5d82888cfc61f236e2188b73ade173f",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/frontier_sealed_slab.json",
+      "mode": "100644",
+      "blob": "9ac06291d1de37dc604567ff8f98584c36961aa7",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/frontier_solar_array.json",
+      "mode": "100644",
+      "blob": "8a2afc00b20b9cc48b3b69bc429d81924ee1258e",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/frontier_station_deck.json",
+      "mode": "100644",
+      "blob": "009102153cf1f416778aa2b382574b8bfdad69d2",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/frontier_thornback_chamber.json",
+      "mode": "100644",
+      "blob": "9607b429c1526af37552caca0fb8299641ff633b",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/frontier_vault_roots.json",
+      "mode": "100644",
+      "blob": "3f3f8923fa8ec126c9a157dfbd6f78a5623c2191",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/frontier_volcanic_ash.json",
+      "mode": "100644",
+      "blob": "928e0d67a3ef2246f5e2bb06ccfb1add3affbbef",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/frontier_windpump.json",
+      "mode": "100644",
+      "blob": "88a5f1520c8bcf1f6188fc89d810ae19403f4f2b",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/industry_boardwalk.json",
+      "mode": "100644",
+      "blob": "cd405d89fe3514ddb2f10e3e128d4c437508d195",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/industry_bollard.json",
+      "mode": "100644",
+      "blob": "6dd836eaba85492f2a5a10ee3f9790d43dc4c6ef",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/industry_canal_water.json",
+      "mode": "100644",
+      "blob": "97ce88eeb868bc9f1de20c1e5c3c16421b2024fd",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/industry_cargo_container.json",
+      "mode": "100644",
+      "blob": "0635ad32d06701fac88500291f8fff2d724e6a7c",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/industry_cargo_hoist.json",
+      "mode": "100644",
+      "blob": "d97a4f18578109e055a92905a7764cd4be008116",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/industry_coal_spoil.json",
+      "mode": "100644",
+      "blob": "92455d68c5d13ec4fba178f311f620a62174647f",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/industry_cogsworth_clock_tower.json",
+      "mode": "100644",
+      "blob": "c694e7ab4428d9850050ab54331664eb33ecc500",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/industry_cogsworth_gasholder.json",
+      "mode": "100644",
+      "blob": "91b2a495878016af8c9fd7f937a2aff8b24a6432",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/industry_concrete_apron.json",
+      "mode": "100644",
+      "blob": "01650f845e2410d436213f489c21d819c2522ff3",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/industry_deep_seam_headframe.json",
+      "mode": "100644",
+      "blob": "a610662e42227bab341cb9173017bfec78f4b6a6",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/industry_eel_trap.json",
+      "mode": "100644",
+      "blob": "26213df388d7d586f94b9b5bfa39f445c5ef80d1",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/industry_estuarine_silt.json",
+      "mode": "100644",
+      "blob": "3d8818e3602f1f2e9f5b04e0f860d431d0f71f62",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/industry_falls_rock.json",
+      "mode": "100644",
+      "blob": "17d69d9c63c0391005ff0cf85e95bc9fcfe04cbc",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/industry_fish_stall.json",
+      "mode": "100644",
+      "blob": "384589f3bd2ae635d8edca2265c6b47114fadcd6",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/industry_harbour_bridge.json",
+      "mode": "100644",
+      "blob": "f6d34357917246a166306890e73906964b60d870",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/industry_heights_funicular.json",
+      "mode": "100644",
+      "blob": "9bfcde12648c76172c0650b0bb41f7a677ef7372",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/industry_launch_cape_pad.json",
+      "mode": "100644",
+      "blob": "9f05d0c0cf57223367a050cba656e658f0169594",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/industry_lock_gate.json",
+      "mode": "100644",
+      "blob": "146774f9560f714e8afc3f443c0089322a3f7bcb",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/industry_lullford_swing_bridge.json",
+      "mode": "100644",
+      "blob": "f85e5ef378500648581e742204d7d98843b1149e",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/industry_masonry_retaining.json",
+      "mode": "100644",
+      "blob": "e806c7dba3edc1b1cabdc3abc3e1ac66f041c9ab",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/industry_millrace_wheel.json",
+      "mode": "100644",
+      "blob": "c1dadf7d47693975aaeeea8eaf5a92df1e9580c6",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/industry_mooring_mast.json",
+      "mode": "100644",
+      "blob": "d6f166a224c0d73631a3437ed2907d177a7a2b1b",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/industry_narrows_viaduct.json",
+      "mode": "100644",
+      "blob": "670085fd9fcf22345e64f8c3f03167f0623c2b40",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/industry_neon_sign.json",
+      "mode": "100644",
+      "blob": "56b92fd3d45f643964e6ad8da0a8906d063e6c48",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/industry_net_rack.json",
+      "mode": "100644",
+      "blob": "c31ce9bc9229f48a7756169bf885712ab2c595a8",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/industry_platform_kerb.json",
+      "mode": "100644",
+      "blob": "1d98a11c70d99a7b0a6d110e77beaa51a64152c1",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/industry_quay_edge.json",
+      "mode": "100644",
+      "blob": "da9b94a6e86e8bc5a20a27e9925c03a20bdc95ba",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/industry_quay_railing.json",
+      "mode": "100644",
+      "blob": "6b6d5a0cceb53e0b71a0f57238b5e3a7ba2c0924",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/industry_rail_bed.json",
+      "mode": "100644",
+      "blob": "81b8edd53e0b2bb6665f583b605412862725831b",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/industry_rail_crossing.json",
+      "mode": "100644",
+      "blob": "a73d219c3b9eebd5d316838a905a63d7ac44f36f",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/industry_rail_run.json",
+      "mode": "100644",
+      "blob": "1a5e72eb80bdfb34ed3d100a2f4238750e691a25",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/industry_sawpit.json",
+      "mode": "100644",
+      "blob": "e7a45fa1557c298bf131117d7dfc166fcc2a4870",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/industry_service_pipe.json",
+      "mode": "100644",
+      "blob": "91e2cc9166c2a96f590b7b64753de46a9cb0a9c9",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/industry_setts.json",
+      "mode": "100644",
+      "blob": "72e7ee7cc9d39488e7c4faaf8c8bce08a94ede07",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/industry_silt_shore.json",
+      "mode": "100644",
+      "blob": "405bb60aa5c740561c2c5a4a0f67b6df55447685",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/industry_skyport_terminal.json",
+      "mode": "100644",
+      "blob": "fdd5bc0657c2cd2a0126dd487974f5f9ece6ca0e",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/industry_soot_stain.json",
+      "mode": "100644",
+      "blob": "0f7918c2ec4aee35181a728a44564bc829c57efa",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/industry_terrace_frontage.json",
+      "mode": "100644",
+      "blob": "faa446298bc2705ff5103d299ff8489f0b157549",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/industry_workshop_frontage.json",
+      "mode": "100644",
+      "blob": "4680486e18f720624aa20f71a987f8e7c1216956",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/nature_alpine_conifers.json",
+      "mode": "100644",
+      "blob": "2fdb8ec15267dc014bf8b773bbaab0a578158036",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/nature_alpine_turf.json",
+      "mode": "100644",
+      "blob": "1af038e865698cd84a3dad431daf8fb6a0dce0f9",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/nature_beach_shingle.json",
+      "mode": "100644",
+      "blob": "398447dc0f9370471da0d2bae7cef850afb51221",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/nature_bothy_shell.json",
+      "mode": "100644",
+      "blob": "5423e0461471366ba99772c3dff0e16ff8407558",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/nature_brackens_stone_ring.json",
+      "mode": "100644",
+      "blob": "a71d623633f51d25c98503444cf982d394f786bb",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/nature_coastal_sand.json",
+      "mode": "100644",
+      "blob": "1901a06c37cc9027b4a13194698fc6ac6c2e3101",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/nature_crossroads_apothecary.json",
+      "mode": "100644",
+      "blob": "5126bb296639ab4982d4bd1a7f4b5df6d4fcde5c",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/nature_crossroads_smithy.json",
+      "mode": "100644",
+      "blob": "08c87c635fa201794f108eba092fa1328bc6a7dc",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/nature_driftwood_lighthouse.json",
+      "mode": "100644",
+      "blob": "8eaffeb4a702872db698b2fef50f3ef508b2aa2f",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/nature_estuary_water.json",
+      "mode": "100644",
+      "blob": "19fd0a121d4497e447e373986d189902fcd143b8",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/nature_field_border.json",
+      "mode": "100644",
+      "blob": "30042f9a4543b241fade0d96e370ed1bf459a15b",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/nature_field_dressing.json",
+      "mode": "100644",
+      "blob": "01e28c69ed5f1835e346fce9e6299e74df660ca4",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/nature_forest_floor.json",
+      "mode": "100644",
+      "blob": "b32c9bcec77d2cd4427561196c07f9aa00d74540",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/nature_frostline_tarn_headwall.json",
+      "mode": "100644",
+      "blob": "fc027b79967ae5a39204ef5e4bd4ecd643862292",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/nature_glacier_ice.json",
+      "mode": "100644",
+      "blob": "2f1ccff9c72fb34cda9d798a80603ed1ffcf4d06",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/nature_heath_meadow_margin.json",
+      "mode": "100644",
+      "blob": "fa3ea709dc6363bf7ca2d871b414ee4784ffb04c",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/nature_heath_peat.json",
+      "mode": "100644",
+      "blob": "6a270a7a9024e9ce19a1927943072ff4c9c49682",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/nature_heather_gorse.json",
+      "mode": "100644",
+      "blob": "63bae5e16c628640d33eb6ad0401f6a4fcbf5cf3",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/nature_island_pier.json",
+      "mode": "100644",
+      "blob": "1a207d8ba6b129dbf187805cb84889468d60526c",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/nature_leaf_litter.json",
+      "mode": "100644",
+      "blob": "4d4b9ef9429981bb04182a8b75ed360db1d7347f",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/nature_meadow_sward.json",
+      "mode": "100644",
+      "blob": "6a840ff8fefbaad6b31e4851537e15729ecf7b70",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/nature_rainforest_floor.json",
+      "mode": "100644",
+      "blob": "3185dd7d7a44841705e8983ffa5ecccf97b3dcc4",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/nature_rainforest_plants.json",
+      "mode": "100644",
+      "blob": "592622beeea32066bee70fca54f175195c9e157b",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/nature_saddle_house.json",
+      "mode": "100644",
+      "blob": "c4d0825b4ac6619b4c0cd6d59106485f9ab1eb39",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/nature_shell_bar_wreck.json",
+      "mode": "100644",
+      "blob": "1d1820722b0a53d75dfa0da828803ff942c5d1a8",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/nature_shore_wrack.json",
+      "mode": "100644",
+      "blob": "2c21132c4aa1cb0d9959a5f933cadb57721eda26",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/nature_snow_drift.json",
+      "mode": "100644",
+      "blob": "8cb4ac786710836c143cd52654fdd7381b8d9962",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/nature_snow_rock_margin.json",
+      "mode": "100644",
+      "blob": "956544666b0b94ee453df808364e5f5e113a6137",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/nature_snow_shelf.json",
+      "mode": "100644",
+      "blob": "7f067105b1e2b79a97af8cd04b61ab512fdd23dd",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/nature_temperate_trees.json",
+      "mode": "100644",
+      "blob": "1b48cfb7575db29881617ae4a2a3ccbd5ffc550b",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/nature_tidal_pool.json",
+      "mode": "100644",
+      "blob": "b5955cfa086b50c20dc5150598156c0dcce0b83b",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/nature_tidebloom_giant_tree.json",
+      "mode": "100644",
+      "blob": "3e48f863de977d50de1c2500c41b67dd06eb4fa2",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/nature_tilled_soil.json",
+      "mode": "100644",
+      "blob": "6c81150db908eb7fadb1fbb8339368bfb41820b8",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/nature_upland_water.json",
+      "mode": "100644",
+      "blob": "801773eeb0c05f77e237873339275ff9c6d1c676",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/nature_valley_mill.json",
+      "mode": "100644",
+      "blob": "69f4bc849cd0254b6746ca04b1c05ea2b449c271",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/nature_village_cottage.json",
+      "mode": "100644",
+      "blob": "857c01e2e8e0040804de09ad6bbaa84fc701e507",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/nature_wet_dry_beach.json",
+      "mode": "100644",
+      "blob": "a89acf3a7cfbfd6c407b5c86a175f42c0c17c991",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/nature_wood_margin.json",
+      "mode": "100644",
+      "blob": "c14a5a91323ee60b5cb93cb5f63d40d10fbe0e9f",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/shared_bridge_abutment.json",
+      "mode": "100644",
+      "blob": "79f0db12edc37213b7ad5c191f54d6c9ed552837",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/shared_building_damage.json",
+      "mode": "100644",
+      "blob": "74d7513b8aab515a561d77dca35414e2c80c02c7",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/shared_circle_beam_sky.json",
+      "mode": "100644",
+      "blob": "72dfae5a96b455ea4ff5e002626e7627a49542d7",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/shared_cracked_moon_sky.json",
+      "mode": "100644",
+      "blob": "7f90cd855d3eee1cacd82220839d19b676d847f3",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/shared_crater_scorch.json",
+      "mode": "100644",
+      "blob": "886d0b1414ed8c8f519ffa927a2c81f89da08a6d",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/shared_door_landing.json",
+      "mode": "100644",
+      "blob": "92d5c97faa9f735f67bc4af4f90b8ce49e46aef0",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/shared_hearth_socket.json",
+      "mode": "100644",
+      "blob": "d6dd337532021b3e7a5ded1744e9d76fab994e4e",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/shared_low_earth_ledge.json",
+      "mode": "100644",
+      "blob": "d8ea6b2726a43ba3b8148854ba89e7451e2f0e1f",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/shared_rock_cliff.json",
+      "mode": "100644",
+      "blob": "50c2c9fcad5648645a933b31dcfed0bf59e406c1",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/shared_shard_lantern.json",
+      "mode": "100644",
+      "blob": "8973b8ad7686eb912edb7bdd9e12d3301b0a88fe",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/shared_smoke_at_source.json",
+      "mode": "100644",
+      "blob": "1dc0a67e70ba093f09074db0e55005402e795981",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/shared_stone_circle.json",
+      "mode": "100644",
+      "blob": "e1d80f449e7fe89586b9100d7edf2ff42cc4e190",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/data/kit/concepts/shared_waystone.json",
+      "mode": "100644",
+      "blob": "fde25e1edd6e3458d3070a9a20920adc0c8fdc11",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/crossroads_anvil.json",
+      "mode": "100644",
+      "blob": "022b835f1fabe3cc5bfc6157a0a61053efebf008",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/crossroads_barrel.json",
+      "mode": "100644",
+      "blob": "0fd4460eb7bbda0d57aca82742cdfa4a995b3c3c",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/crossroads_beds_dug.json",
+      "mode": "100644",
+      "blob": "edf880450e298dc3a13b588ebe45354aad261e57",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/crossroads_beds_scorched.json",
+      "mode": "100644",
+      "blob": "a4396f000b6d5e30079e1280d77ccee561e9e702",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/crossroads_bench.json",
+      "mode": "100644",
+      "blob": "504f923baf48d61f0e561f65e46b9c7737eb7794",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/crossroads_boulder.json",
+      "mode": "100644",
+      "blob": "6406423095b2a9398c4998df2273b5065aab9860",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/crossroads_bush.json",
+      "mode": "100644",
+      "blob": "40dfc665fce744527536912620df9015a1910e2f",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/crossroads_bush_nonblocking.json",
+      "mode": "100644",
+      "blob": "9a08d52aef1e38de3f095d28c6028d96fa376e60",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/crossroads_coal.json",
+      "mode": "100644",
+      "blob": "6ceed37401ca97367b0bc907af3c9b1217abf52f",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/crossroads_crater_smoke.json",
+      "mode": "100644",
+      "blob": "2a6fb5fb1558d19ef593ec3732eb1e0de3dae1ad",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/crossroads_crates.json",
+      "mode": "100644",
+      "blob": "57f5de06fa86806e5b2c5d0f56a818e3fc18ab1b",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/crossroads_debris_a.json",
+      "mode": "100644",
+      "blob": "f9567e1682f82122410a374180d849ad413e3bfe",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/crossroads_debris_b.json",
+      "mode": "100644",
+      "blob": "0eff629e34127247cefe78aca7de783ce428967a",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/crossroads_debris_c.json",
+      "mode": "100644",
+      "blob": "4cdf7f6e549190a546eb610778563d72f7b9c05a",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/crossroads_debris_d.json",
+      "mode": "100644",
+      "blob": "084849a049e22423a57b0559264508f455d4e38b",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/crossroads_fence.json",
+      "mode": "100644",
+      "blob": "8725a30fe2ca94040a4ca504adb2ecdf0b5eb13e",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/crossroads_fern_rubble.json",
+      "mode": "100644",
+      "blob": "0897a8d43875ac6c555678479f43ba34db2de69e",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/crossroads_flower_tub.json",
+      "mode": "100644",
+      "blob": "a318d84045662dc5d6ed3240027f9e0f70378ced",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/crossroads_grindstone.json",
+      "mode": "100644",
+      "blob": "77d9c4dde9794e5cad0c0239b1a1f609e485da5d",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/crossroads_handcart.json",
+      "mode": "100644",
+      "blob": "d50ff1b2469e67333ecc47b4dd58a794a3a7c21d",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/crossroads_hay.json",
+      "mode": "100644",
+      "blob": "873e42ac9d54a9fcd6908b067476d0db420b38e5",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/crossroads_kit_lantern.json",
+      "mode": "100644",
+      "blob": "584af5392ad4c9f1210b10c5c289c85790bdb840",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/crossroads_lantern_dark.json",
+      "mode": "100644",
+      "blob": "fe2fbaa5f0d18d7f3698b72421ec80ffbeb5bb69",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/crossroads_lantern_lit.json",
+      "mode": "100644",
+      "blob": "955ec87f8bd101b63f2a382386f4c76a9fbf925b",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/crossroads_notice_board.json",
+      "mode": "100644",
+      "blob": "79cee565cd9efe5046bdc3864eb9fd2a48e96b35",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/crossroads_oak.json",
+      "mode": "100644",
+      "blob": "900c75a33ae96ed49f21cacc17d5d0bcdd485d23",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/crossroads_sacks.json",
+      "mode": "100644",
+      "blob": "ad8a77b6d5b63e9863cde3d2ba7980fc2d2c30e8",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/crossroads_smithy_rubble.json",
+      "mode": "100644",
+      "blob": "8b665d08da4fbfd028f2a590a10d22f0f37dd412",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/crossroads_square_puddles.json",
+      "mode": "100644",
+      "blob": "934a5f0523b70508d6a9ea42e200400e34c3bb6a",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/crossroads_square_rubble_a.json",
+      "mode": "100644",
+      "blob": "4b9f1cc78460931926452f98d50f29a544c0279e",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/crossroads_square_rubble_b.json",
+      "mode": "100644",
+      "blob": "0a629726faf9fb88c1ea158fe6017f1cfa733f2a",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/crossroads_stall.json",
+      "mode": "100644",
+      "blob": "2a6685d1c6f9fb231f0e8d3732413f86250f98d3",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/crossroads_trough.json",
+      "mode": "100644",
+      "blob": "031142b645e8288e1bca8e3e2f54593fb0ba0c28",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/crossroads_waystone.json",
+      "mode": "100644",
+      "blob": "3e5f0b46611d6145b39b7ebdfef7a9444e1b2791",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/crossroads_well.json",
+      "mode": "100644",
+      "blob": "1f654302980f475e22db5c8935b2719f532d0d36",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/crossroads_well_choked.json",
+      "mode": "100644",
+      "blob": "0fed9145ea594c630b2d991a35db76a0cd5c7c81",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/crossroads_woodpile.json",
+      "mode": "100644",
+      "blob": "45750ba3b9203ac5a0bc7d17a33d511deb202f08",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/woodland_beech.json",
+      "mode": "100644",
+      "blob": "11eb2772cd28d13d385a7c3e6acff684b4e1c536",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/woodland_birch.json",
+      "mode": "100644",
+      "blob": "1366a007628ffc40d79ff2681e6184c559d24ea6",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/woodland_bramble.json",
+      "mode": "100644",
+      "blob": "a3a0d355bc703ed4e8e5a7563861e904ae5f992d",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/woodland_bramble_b.json",
+      "mode": "100644",
+      "blob": "b1fc3dd3fd575d4a598acd5a71ed2e5804738c38",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/woodland_bush.json",
+      "mode": "100644",
+      "blob": "a6bd96e9e0abd53777578a35251fea1b8643cc63",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/woodland_bush_b.json",
+      "mode": "100644",
+      "blob": "11197e5d6e6283969e24f25a5e8d934ac094b083",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/woodland_bush_c.json",
+      "mode": "100644",
+      "blob": "6871d5e4fe8f11048ba220843e64baba1a9e7759",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/woodland_forest_bench.json",
+      "mode": "100644",
+      "blob": "fa62a3696f9ed3cfd2f7387eb01d9c31c9e8bc35",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/woodland_hollow_tree.json",
+      "mode": "100644",
+      "blob": "3a6952a9b2818b6f567e8801db4c6368512fc6f3",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/woodland_holly.json",
+      "mode": "100644",
+      "blob": "5002c14d3a3fe8db3582b07288732a5f7e903631",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/woodland_holly_b.json",
+      "mode": "100644",
+      "blob": "98060b0bf54b10805bc7fba1ccf0c98ae131b327",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/woodland_lintel.json",
+      "mode": "100644",
+      "blob": "3d8ca62b56911a9cd9df925849422df4b9f8108d",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/woodland_mossy_log.json",
+      "mode": "100644",
+      "blob": "3b0013e1190d74fac1f47f0b9626d6645a8ba6d4",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/woodland_oak.json",
+      "mode": "100644",
+      "blob": "fd252d98e9f5fd59e9233c250f922f84552a8082",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/woodland_pine.json",
+      "mode": "100644",
+      "blob": "8c9c50d0e86303d6c36b221fe5e46c2265ed8324",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/woodland_sapling.json",
+      "mode": "100644",
+      "blob": "8c434f3bfbd1effb120531e86ce968130242864d",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/woodland_standing_stone.json",
+      "mode": "100644",
+      "blob": "6655f039383d8b8eb938a6f3e11036ef9d34a617",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/woodland_standing_stone_b.json",
+      "mode": "100644",
+      "blob": "9da8bd73a88bef9449db787f610a3c6f50440e13",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/woodland_standing_stone_broken.json",
+      "mode": "100644",
+      "blob": "fe18759259ed580a78a00a807c897d96140c0a71",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/woodland_standing_stone_lean.json",
+      "mode": "100644",
+      "blob": "0ce640838c4a1ca2e91e924cd2443cf278ad2254",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/woodland_standing_stone_low.json",
+      "mode": "100644",
+      "blob": "801316925fa3a862743d5348e00a4acc1ea98f7f",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/woodland_standing_stone_runes.json",
+      "mode": "100644",
+      "blob": "1e5a75bf9b43a11b43fae0552502deb5d2ca4c90",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/woodland_stone_sign.json",
+      "mode": "100644",
+      "blob": "9b10d4e14a1c2f8a169968c03c631ea46a7f0992",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/woodland_stone_top.json",
+      "mode": "100644",
+      "blob": "e5dfc56064993e007aaf09ac8f90db6bde6a2881",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/woodland_stump.json",
+      "mode": "100644",
+      "blob": "01c1c5e4f9747f6d91aac60ae6ae45550476fa61",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/prop/woodland_willow.json",
+      "mode": "100644",
+      "blob": "87300d3855c808fda561c8537d4881f761071185",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/structure/crossroads_bakery.json",
+      "mode": "100644",
+      "blob": "e396f3d58c6f2115b44993522fffa65f948a2021",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/structure/crossroads_fern_cottage.json",
+      "mode": "100644",
+      "blob": "aae42330585b9ac096e7b7cae49813688ac87d81",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/structure/crossroads_herbalist.json",
+      "mode": "100644",
+      "blob": "51e3ce3b1519311de5b3da71f8e7edf957a62a85",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/structure/crossroads_hut.json",
+      "mode": "100644",
+      "blob": "ee636cacb677990ebd3f49b74dc8fa7d878ab64f",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/structure/crossroads_library.json",
+      "mode": "100644",
+      "blob": "96212cc8628389ab5f0fe26d95df867a8917e17e",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/structure/crossroads_north_cottages.json",
+      "mode": "100644",
+      "blob": "d95d6cb35cac6a7d71e66407621791d4c1e8cf83",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/pieces/structure/crossroads_smithy.json",
+      "mode": "100644",
+      "blob": "205e304b0a26e5f2cabff0d77526ec699b4bd668",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/schema/piece.schema.json",
+      "mode": "100644",
+      "blob": "fd61e5d29ca017e3f3796a013c86fc0afe58dc16",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/kit/schema/relations.cases.json",
+      "mode": "100644",
+      "blob": "1c9e06099cb8ce47702f6912f48cb89586132cd7",
+      "matches_inputs": ["312", "315"]
+    },
+    {
+      "path": "game/test/fixtures/kit/README.md",
+      "mode": "100644",
+      "blob": "ca498263c1affa74a941fa0ac01c8bc38f52e3e1",
+      "matches_inputs": ["317"]
+    },
+    {
+      "path": "game/test/fixtures/kit/cell_positions.json",
+      "mode": "100644",
+      "blob": "443a28778e5f14e5211762176b8a89f7300e4810",
+      "matches_inputs": ["317"]
+    },
+    {
+      "path": "game/test/fixtures/kit/cell_positions.png",
+      "mode": "100644",
+      "blob": "92e2e8a31cff14a961c8d822132cb761a14ee6db",
+      "matches_inputs": ["317"]
+    },
+    {
+      "path": "game/test/fixtures/kit/cell_positions.png.import",
+      "mode": "100644",
+      "blob": "bbd9f938acbff05adae120d93cf766efaf08a1e6",
+      "matches_inputs": ["317"]
+    },
+    {
+      "path": "game/test/fixtures/kit/generate.py",
+      "mode": "100644",
+      "blob": "22bbf0432af7abf8edab927ba2679b6c86541af3",
+      "matches_inputs": ["317"]
+    },
+    {
+      "path": "game/test/fixtures/kit/kitlab.png",
+      "mode": "100644",
+      "blob": "d74c484655286b9b8451333bc1f3f1be3031458f",
+      "matches_inputs": ["317"]
+    },
+    {
+      "path": "game/test/fixtures/kit/kitlab.png.import",
+      "mode": "100644",
+      "blob": "49ab2e2bcb2926a269ecdb4b0a9a67f5015c7cfc",
+      "matches_inputs": ["317"]
+    },
+    {
+      "path": "game/test/fixtures/kit/references.json",
+      "mode": "100644",
+      "blob": "90cf4f97f9ecb64b6e9eb8e8568372815e89b63e",
+      "matches_inputs": ["317"]
+    },
+    {
+      "path": "game/test/fixtures/kit/test_generate.py",
+      "mode": "100644",
+      "blob": "49e8f896a16123ee25645eadfa33499243205222",
+      "matches_inputs": ["317"]
+    },
+    {
+      "path": "game/test/fixtures/kit/texel_positions.json",
+      "mode": "100644",
+      "blob": "d0973f4661f063f1a5b50d1e9e9eabfd458ec043",
+      "matches_inputs": ["317"]
+    },
+    {
+      "path": "game/test/fixtures/kit/texel_positions.png",
+      "mode": "100644",
+      "blob": "92e2e8a31cff14a961c8d822132cb761a14ee6db",
+      "matches_inputs": ["317"]
+    },
+    {
+      "path": "game/test/fixtures/kit/texel_positions.png.import",
+      "mode": "100644",
+      "blob": "2d64c6aead818e863d9e0842f05fc2c503076e17",
+      "matches_inputs": ["317"]
+    },
+    {
+      "path": "game/test/fixtures/kit/three_materials.json",
+      "mode": "100644",
+      "blob": "a2ad3862df1f530594cef3c5c8539958d6ef880b",
+      "matches_inputs": ["317"]
+    },
+    {
+      "path": "game/test/fixtures/kit/three_materials.png",
+      "mode": "100644",
+      "blob": "30559639a03915c15179ae241c6fb3e682a2718b",
+      "matches_inputs": ["317"]
+    },
+    {
+      "path": "game/test/fixtures/kit/three_materials.png.import",
+      "mode": "100644",
+      "blob": "9c0564669abd6a7759ce1815d5c4ce5c2417ffd9",
+      "matches_inputs": ["317"]
+    },
+    {
+      "path": "game/test/fixtures/kit/three_materials_shifted_profile.png",
+      "mode": "100644",
+      "blob": "be7b49a119c6089a9f8a5baff7336446af47efc7",
+      "matches_inputs": ["317"]
+    },
+    {
+      "path": "game/test/fixtures/kit/three_materials_shifted_profile.png.import",
+      "mode": "100644",
+      "blob": "e1b37f5b288c30636140bc0402b911a9d1bc5f35",
+      "matches_inputs": ["317"]
+    },
+    {
+      "path": "game/test/fixtures/kit/validation.cases.json",
+      "mode": "100644",
+      "blob": "f4cbecae12bd1c985ac9f84fd6edbf207bd80b9f",
+      "matches_inputs": ["312", "315"]
+    },
+    {
+      "path": "game/test/fixtures/saves/legacy-unversioned.json",
+      "mode": "100644",
+      "blob": "f68051ae09d6ac68867a1a99730fa396c9e0ecd5",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "game/test/fixtures/saves/legacy-v0-partial.json",
+      "mode": "100644",
+      "blob": "c96941d2c24e47b40a96140f16a6a20229fbde83",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "game/test/fixtures/saves/v1-foundation.json",
+      "mode": "100644",
+      "blob": "997bac0cbfd4f0b6f456c441fcab2c12cbf1a816",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "game/test/fixtures/saves/v1-village.json",
+      "mode": "100644",
+      "blob": "ed27290a11d7d9f27467d8bf2899748e548d5196",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "game/test/test_folk_progression.gd",
+      "mode": "100644",
+      "blob": "a1fa40611cb05d3994e70d09fcaa2f2706500305",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "game/test/test_folk_progression.gd.uid",
+      "mode": "100644",
+      "blob": "c3cf796e08cac1d4a3ecc8e5d7a77b1fd3ec2f52",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "game/test/test_glint_economy.gd",
+      "mode": "100644",
+      "blob": "401c8f324f45d9703fb6ba5823a1ef0d4a3bee72",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "game/test/test_glint_economy.gd.uid",
+      "mode": "100644",
+      "blob": "163a62a4927386804d9d20849d222cede299bd7b",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "game/test/test_kit_relations.gd",
+      "mode": "100644",
+      "blob": "e8b2f7c55f5eb708287d535c07e4d3709d4ec6cd",
+      "matches_inputs": ["312", "315"]
+    },
+    {
+      "path": "game/test/test_kit_relations.gd.uid",
+      "mode": "100644",
+      "blob": "8d0d70e6baf794a2414db88903112a242886699c",
+      "matches_inputs": ["312", "315"]
+    },
+    {
+      "path": "game/test/test_kit_rules.gd",
+      "mode": "100644",
+      "blob": "caf8fa2101209f7e85024136c0e74101b67ca97b",
+      "matches_inputs": ["312", "315"]
+    },
+    {
+      "path": "game/test/test_kit_rules.gd.uid",
+      "mode": "100644",
+      "blob": "bca37895ceae81675f62541e911367c35f3ab125",
+      "matches_inputs": ["312", "315"]
+    },
+    {
+      "path": "game/test/test_kit_zone.gd",
+      "mode": "100644",
+      "blob": "8f22c2b41185e86c2ee39c482bab71ddd7eb6a1b",
+      "matches_inputs": ["305"]
+    },
+    {
+      "path": "game/test/test_kit_zone.gd.uid",
+      "mode": "100644",
+      "blob": "4568bc5276035630c181c6d2641ff9d32ce3fcf6",
+      "matches_inputs": ["312", "305", "317"]
+    },
+    {
+      "path": "game/test/test_menu_model.gd",
+      "mode": "100644",
+      "blob": "943424e1758fbe0740022962ca49934562819af6",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "game/test/test_menu_model.gd.uid",
+      "mode": "100644",
+      "blob": "524fa40ea1e66dd549878e698aa1a608fe98b2f1",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "game/test/test_save.gd",
+      "mode": "100644",
+      "blob": "2601124c5295768e83834f241038fe7ffec145c4",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "game/test/test_terrain.gd",
+      "mode": "100644",
+      "blob": "84027ff5f7203a5e4cfbf6ddc49de53ccd442a56",
+      "matches_inputs": ["317"]
+    },
+    {
+      "path": "game/test/test_touch_audit.gd",
+      "mode": "100644",
+      "blob": "e58f06a6754568e4abe2d0e06f983bd11059d5ab",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "game/test/test_touch_audit.gd.uid",
+      "mode": "100644",
+      "blob": "8a00ac8f517949e17d25bf6eb92b60decfbd8b0d",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "game/test/test_walk.gd",
+      "mode": "100644",
+      "blob": "b56c90aa6253382030585b6da310ff3dbde65357",
+      "matches_inputs": ["312"]
+    },
+    {
+      "path": "game/test/test_walk.gd.uid",
+      "mode": "100644",
+      "blob": "c36b1fc9d0d79660b88a73f51cbd288fd568af86",
+      "matches_inputs": ["312"]
+    },
+    {
+      "path": "game/test/test_world_clock.gd",
+      "mode": "100644",
+      "blob": "1a207417efaf821f4acefe939ccdd150aa9f7c20",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "game/test/test_world_clock.gd.uid",
+      "mode": "100644",
+      "blob": "25d5d9f15e06355b81e12d9edd015ed8e7068eca",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "game/test/test_world_editor.gd",
+      "mode": "100644",
+      "blob": "ff16ec3923bfdec374a3d41791e6a52220f32f3d",
+      "matches_inputs": ["312"]
+    },
+    {
+      "path": "game/test/test_world_editor.gd.uid",
+      "mode": "100644",
+      "blob": "0dd0b17ac94beaef87e458d07c4d9cf82bcfd53f",
+      "matches_inputs": ["312"]
+    },
+    {
+      "path": "game/test/test_world_editor_integration.gd",
+      "mode": "100644",
+      "blob": "75754a15231b32139d4cf2dcf3ea3c7b4c840eea",
+      "matches_inputs": ["312"]
+    },
+    {
+      "path": "game/test/test_world_editor_integration.gd.uid",
+      "mode": "100644",
+      "blob": "518f993ac604cc2ade08b5b9976f49817cfdfeaa",
+      "matches_inputs": ["312"]
+    },
+    {
+      "path": "game/test/test_world_editor_tools.gd",
+      "mode": "100644",
+      "blob": "f55215b9ec847e416c9cd25831308332af48d2e9",
+      "matches_inputs": ["312"]
+    },
+    {
+      "path": "game/test/test_world_editor_tools.gd.uid",
+      "mode": "100644",
+      "blob": "2ebf67848e86d19f988eb0d2cdce2b69aa9a6077",
+      "matches_inputs": ["312"]
+    },
+    {
+      "path": "game/tools/get_godot.sh",
+      "mode": "100755",
+      "blob": "8614f900d39d426cae1385450b0f215bbebd9a22",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "game/tools/kit_shot.gd",
+      "mode": "100644",
+      "blob": "583351aa57b4a50c9a0c7771cfb59398ee732948",
+      "matches_inputs": ["317"]
+    },
+    {
+      "path": "game/tools/kit_shot.gd.uid",
+      "mode": "100644",
+      "blob": "0598d7336456e33882ffa098c8c4ac44b718097c",
+      "matches_inputs": ["317"]
+    },
+    {
+      "path": "game/tools/kit_zone.gd",
+      "mode": "100644",
+      "blob": "c80fef7834c595b2dea2ecb45caa7c3a46789b52",
+      "matches_inputs": ["305"]
+    },
+    {
+      "path": "game/tools/sim_glint.gd",
+      "mode": "100644",
+      "blob": "8ec455ccf57ad49bbc9498f820cf45464834a072",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "game/tools/sim_glint.gd.uid",
+      "mode": "100644",
+      "blob": "25accb3793ba5cea38aca40fd7a00c7e9aebfcd3",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "game/tools/test_get_godot.py",
+      "mode": "100644",
+      "blob": "92257181edf38bb1432b69ad97d6861b6c96ad21",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "game/tools/touch_audit.gd",
+      "mode": "100644",
+      "blob": "84ccbfb415d7959b700be0a7ee2bcacaf1617c99",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "game/tools/touch_audit.gd.uid",
+      "mode": "100644",
+      "blob": "9cf06be768d9370ffd61d36839fb88c9f0d267c3",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "game/world/terrain/relations.gd",
+      "mode": "100644",
+      "blob": "408c43dfa079a72c2f1015993af3d023bfca47e5",
+      "matches_inputs": ["312", "315"]
+    },
+    {
+      "path": "game/world/terrain/relations.gd.uid",
+      "mode": "100644",
+      "blob": "9d81c5699a6d07dc8a5dfcf55b3241539689a6f6",
+      "matches_inputs": ["312", "315"]
+    },
+    {
+      "path": "game/world/terrain/walk.gd",
+      "mode": "100644",
+      "blob": "441823b776efa5820939e6fb86a146a345cacb2f",
+      "matches_inputs": ["312"]
+    },
+    {
+      "path": "game/world/terrain/walk.gd.uid",
+      "mode": "100644",
+      "blob": "05d1a7bffbd87c5cd9b5e00e80ae564007ac95bc",
+      "matches_inputs": ["312"]
+    },
+    {
+      "path": "game/zones/kitlab/ground_baked.json",
+      "mode": "100644",
+      "blob": "f68bcb1a22c9e9877a326f3c03232995e5b2112c",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/zones/kitlab_tiers/ground_baked.json",
+      "mode": "100644",
+      "blob": "3a0672f5b792342361ec21b05e919b658a242124",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/zones/kitlab_widths/ground_baked.json",
+      "mode": "100644",
+      "blob": "b1c688a7bd22d80332366cb69c3c44bf0e80a446",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "game/zones/woodland_kit/ground_baked.json",
+      "mode": "100644",
+      "blob": "9d39b09332821cf8db4ea075f569ffeff2c97bc9",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "lib/fixtures/game-native/async-storage.cjs",
+      "mode": "100644",
+      "blob": "fea99d9ada7031e58ae8a0a18f93e2c6ecb38121",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "lib/fixtures/game-native/expo-crypto.cjs",
+      "mode": "100644",
+      "blob": "ae2061a3a88ae7e45291a8701b1ed4b3aa8698dc",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "lib/fixtures/game-native/expo-haptics.cjs",
+      "mode": "100644",
+      "blob": "3cfe6923bc79dd84e22a7aa3972faf3a4f0b5382",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "lib/fixtures/game-native/react-native.cjs",
+      "mode": "100644",
+      "blob": "1bd95cd68556963ee7f252484dc3a8518d410cf7",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "lib/fixtures/world-map-layout.cjs",
+      "mode": "100644",
+      "blob": "79061951bfe26e222c129e228a35fd2db464689b",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "lib/game.integration.test.ts",
+      "mode": "100644",
+      "blob": "dbccef9e4ad914efddc218c2240b78ddca917684",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "lib/world-map.layout.test.ts",
+      "mode": "100644",
+      "blob": "0f686371d82b396ae6d852037ade1504df175786",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "package.json",
+      "mode": "100644",
+      "blob": "acfd5b1dcd5dab2d0672e174b20adb2767b0aa65",
+      "matches_inputs": []
+    },
+    {
+      "path": "scripts/art/kit/bake.py",
+      "mode": "100644",
+      "blob": "f881fbd63808b8e5c4f77cae6b53780550e9c7e6",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "scripts/art/kit/relations.py",
+      "mode": "100644",
+      "blob": "dd6b718b24f9f681cd5450ecbb0216e6a1ae8420",
+      "matches_inputs": ["312", "315"]
+    },
+    {
+      "path": "scripts/art/kit/schema.py",
+      "mode": "100644",
+      "blob": "056c1f9a30d49e203badd97624458130c79c81b2",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "scripts/art/kit/seed_props.py",
+      "mode": "100644",
+      "blob": "649e84b12690e763615e3b0ffcb46b6a0de815f7",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "scripts/art/kit/test_concept_schema.py",
+      "mode": "100644",
+      "blob": "39b9ec45365db713241f67b074ca29dc837bce47",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "scripts/art/kit/test_kit.py",
+      "mode": "100644",
+      "blob": "05e5a78b1ca87c0575969adf0c5311291a2b81c3",
+      "matches_inputs": ["341"]
+    },
+    {
+      "path": "scripts/art/kit/test_relations.py",
+      "mode": "100644",
+      "blob": "c257f0726bbd056d3fb2a1cf2c1e0f1016fe4b13",
+      "matches_inputs": ["312", "315"]
+    },
+    {
+      "path": "scripts/art/kit/test_walk_coordinates.py",
+      "mode": "100644",
+      "blob": "a3a4c279670b3f81db7210831af35496be56082b",
+      "matches_inputs": ["315"]
+    },
+    {
+      "path": "scripts/art/kit/walk.py",
+      "mode": "100644",
+      "blob": "d251cbdb17806565f362fe8c5cb960cab78fa0a0",
+      "matches_inputs": ["315"]
+    },
+    {
+      "path": "scripts/godot-import-cache.py",
+      "mode": "100644",
+      "blob": "a2c2d3a83dc67ca082b576f2d28ac19f8ee33f5a",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "scripts/godot-import-cache.test.py",
+      "mode": "100644",
+      "blob": "d5268cacca2cdb26b349e71ed8b8fdd5c8612ac3",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "scripts/narrative/conditions.py",
+      "mode": "100644",
+      "blob": "3259cfb0d0f2655a1b8d48d7b4efdc1e62645ece",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "scripts/narrative/test_validate.py",
+      "mode": "100644",
+      "blob": "a82feca3e39845262f73cc66251fd97ad4bb396c",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "scripts/narrative/validate.py",
+      "mode": "100644",
+      "blob": "70f20235b229e692aab4d7057423c2900bfa134c",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "scripts/review/ground_rules.py",
+      "mode": "100644",
+      "blob": "0bfe3fff9d74f3b1ecd07afe1ff27b0940143f68",
+      "matches_inputs": ["312", "315"]
+    },
+    {
+      "path": "scripts/review/kit_scene.py",
+      "mode": "100644",
+      "blob": "6c71732fb52cbe86e8fa723c4d09a0af4d553371",
+      "matches_inputs": ["312", "315"]
+    },
+    {
+      "path": "scripts/review/pr_sheet.py",
+      "mode": "100644",
+      "blob": "23d8816e3341325f45498e249008e491869389b4",
+      "matches_inputs": ["main"]
+    },
+    {
+      "path": "scripts/review/run.py",
+      "mode": "100644",
+      "blob": "3ceee26baf7ff296b7b58e50f25fa155407e7062",
+      "matches_inputs": []
+    },
+    {
+      "path": "scripts/review/scene.py",
+      "mode": "100644",
+      "blob": "6accbc7f127470cb652f28f0557c6e557df18718",
+      "matches_inputs": ["347"]
+    },
+    {
+      "path": "scripts/review/test_kit_scene.py",
+      "mode": "100644",
+      "blob": "95d84f97f859b06bf939f8901e876d5b966ff790",
+      "matches_inputs": []
+    },
+    {
+      "path": "scripts/review/test_kit_scene_intake.py",
+      "mode": "100644",
+      "blob": "01ecfed04a5469efc78c2bc3ea7cf054a7969192",
+      "matches_inputs": ["347"]
+    },
+    {
+      "path": "scripts/review/test_pr_sheet.py",
+      "mode": "100644",
+      "blob": "aaf77426ae4132e2dc7d2e17b46eaa0c649b1e1c",
+      "matches_inputs": ["main"]
+    }
+  ],
+  "manually_composed_paths": [
+    "package.json",
+    "scripts/review/run.py",
+    "scripts/review/test_kit_scene.py"
+  ],
+  "review_document_paths_excluded_from_source_delta": [
+    "docs/codex/editor-integration-review.md",
+    "docs/codex/editor-integration-inputs.json"
+  ],
+  "invariants": {
+    "player_blob": "0dd01672a14fda097b3db2e0da8643c5eca6307b",
+    "production_raster_changes": [],
+    "piece_approval_states": {
+      "candidate": 106
+    },
+    "concept_approval_states": {
+      "concept": 129
+    },
+    "all_piece_and_concept_blobs_identical_to_input341": true
+  },
+  "w7_freshness": {
+    "input_count": 53,
+    "mismatches": [],
+    "regeneration_performed": false,
+    "proof": "Each committed references.json source_sha256 compared with the exact assembled Git blob bytes; this is a freshness audit, not new render parity."
+  },
+  "focused_interface": {
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "scripts.review.test_kit_scene",
+      "scripts.review.test_kit_scene_intake",
+      "-v"
+    ],
+    "methods": 42,
+    "exit": 0,
+    "wall_s": 13.476,
+    "source_guard": true,
+    "source_tree": "a5f595262ea7bd1f1c574278f01b584ccd1fdcde",
+    "log_sha256": "434f4ba55af187c4e1102a3a06648e1029e21bc1848c00fc3c732a2446533429",
+    "initial_red": {
+      "methods": 42,
+      "failures": 1,
+      "exit": 1,
+      "source_guard": true,
+      "source_tree": "076a4a5519b3333386b705ff60257d34ec9c6392",
+      "log_sha256": "30fbe9d24269495dd3d1a014453b30fad9b876a8b9aa3ed16a2688c431b30435",
+      "reason": "W6 CLI test assumed the old guessed solid bench collider; W1 source metadata declares the lab bench non-solid."
+    }
+  },
+  "pending": [
+    "full_combined_godot",
+    "full_combined_kit",
+    "full_combined_verify_zero_lint",
+    "full_combined_art_repro",
+    "editor_smoke_and_rendered_dock",
+    "current_E2_scene_and_Y12_evidence",
+    "matching_hosted_CI",
+    "Matt_PR_specific_approval"
+  ]
+}

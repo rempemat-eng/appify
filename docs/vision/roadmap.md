@@ -1,5 +1,7 @@
 # Roadmap
 
+> The order of work now lives in [development-plan.md](development-plan.md) (27 Oct). The lists below are kept for history.
+
 ## Now: make it feel like one finished game
 
 The work in progress follows [coherence-plan.md](coherence-plan.md) (Matt's review of 17 Oct): layering and outline fixes (done), an interface system with symmetric insets and a type hierarchy, a detailed pixel icon set, a Stardew-style tabbed game menu, a denser pixel grid with the garden and worlds redrawn at proper proportions and cleaner shading, readable characters, and the mission map as a place.

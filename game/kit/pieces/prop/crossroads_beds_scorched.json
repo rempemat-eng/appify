@@ -6,12 +6,16 @@
  "biomes": [
   "village"
  ],
- "version": 1,
+ "version": 2,
  "variants": [
   {
    "id": "beds_scorched",
    "weight": 1.0,
-   "png": "res://zones/crossroads/art/beds_scorched.png"
+   "png": "res://zones/crossroads/art/beds_scorched.png",
+   "foot": [
+    129,
+    140
+   ]
   }
  ],
  "approval": {
@@ -19,7 +23,7 @@
   "by": null,
   "at": null,
   "standard": null,
-  "note": "seeded from game/zones/crossroads (art/catalogue holds its asset-gate record)"
+  "note": "Source metadata only; seeded designs still require the library gate and Matt approval."
  },
  "geometry": {
   "size_px": [
@@ -31,13 +35,14 @@
    6
   ],
   "z_sort": "foot",
-  "foot": [
-   129.0,
-   140.0
-  ],
   "collision": {
    "shape": "none"
-  }
+  },
+  "foot": [
+   129,
+   140
+  ],
+  "footprint": []
  },
  "placement": {
   "snap": "cell",
@@ -53,7 +58,14 @@
  },
  "function": {},
  "story": {
-  "owner": null
+  "owner": null,
+  "gating": {
+   "if": {
+    "not_flags": [
+     "shard_home:woodland"
+    ]
+   }
+  }
  },
  "gameplay": {
   "blocks_move": false,
@@ -63,9 +75,33 @@
   "size_class": null,
   "eastward_ref": null,
   "seeded_from": "game/zones/crossroads/kit.json",
+  "sources": [
+   {
+    "zone": "crossroads",
+    "object": "beds_scorched",
+    "part": "body",
+    "condition": {
+     "not_flags": [
+      "shard_home:woodland"
+     ]
+    }
+   },
+   {
+    "zone": "crossroads",
+    "object": "beds_scorched_shadow",
+    "part": "shadow",
+    "condition": {
+     "not_flags": [
+      "shard_home:woodland"
+     ]
+    }
+   }
+  ],
   "todo": [
-   "placement.role, requires and forbids (ground-rules.md 6)",
-   "composition role and clearance"
+   "composition role and clearance",
+   "placement.role, requires and forbids (Claude design decision; ground-rules.md 6)",
+   "retain shadow beds_scorched_shadow from source scene with its own condition and offset; not a standalone random variant",
+   "review size-guide class and Eastward comparison before the library gate"
   ]
  }
 }

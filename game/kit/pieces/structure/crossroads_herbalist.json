@@ -6,12 +6,16 @@
  "biomes": [
   "village"
  ],
- "version": 1,
+ "version": 2,
  "variants": [
   {
    "id": "herbalist",
    "weight": 1.0,
-   "png": "res://zones/crossroads/art/herbalist.png"
+   "png": "res://zones/crossroads/art/herbalist.png",
+   "foot": [
+    120,
+    227
+   ]
   }
  ],
  "approval": {
@@ -19,7 +23,7 @@
   "by": null,
   "at": null,
   "standard": null,
-  "note": "seeded from game/zones/crossroads (art/catalogue holds its asset-gate record)"
+  "note": "Source metadata only; seeded designs still require the library gate and Matt approval."
  },
  "geometry": {
   "size_px": [
@@ -31,21 +35,25 @@
    10
   ],
   "z_sort": "foot",
-  "foot": [
-   120.0,
-   227.0
-  ],
   "collision": {
-   "shape": "rect",
    "rect": [
     -36.0,
     -48.0,
-    72.0,
-    48.0
-   ]
+    72,
+    48
+   ],
+   "shape": "rect"
   },
+  "foot": [
+   120,
+   227
+  ],
   "footprint": [
    [
+    -5,
+    -6
+   ],
+   [
     -4,
     -6
    ],
@@ -82,6 +90,10 @@
     -6
    ],
    [
+    -5,
+    -5
+   ],
+   [
     -4,
     -5
    ],
@@ -118,6 +130,10 @@
     -5
    ],
    [
+    -5,
+    -4
+   ],
+   [
     -4,
     -4
    ],
@@ -154,6 +170,10 @@
     -4
    ],
    [
+    -5,
+    -3
+   ],
+   [
     -4,
     -3
    ],
@@ -190,6 +210,10 @@
     -3
    ],
    [
+    -5,
+    -2
+   ],
+   [
     -4,
     -2
    ],
@@ -226,6 +250,10 @@
     -2
    ],
    [
+    -5,
+    -1
+   ],
+   [
     -4,
     -1
    ],
@@ -260,6 +288,12 @@
    [
     4,
     -1
+   ]
+  ],
+  "door_cells": [
+   [
+    3,
+    0
    ]
   ]
  },
@@ -284,9 +318,27 @@
   "size_class": null,
   "eastward_ref": null,
   "seeded_from": "game/zones/crossroads/kit.json",
+  "sources": [
+   {
+    "zone": "crossroads",
+    "object": "herbalist",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "crossroads",
+    "object": "herbalist_damage",
+    "part": "overlay",
+    "condition": null
+   }
+  ],
   "todo": [
-   "placement.role, requires and forbids (ground-rules.md 6)",
-   "composition role and clearance"
+   "composition role and clearance",
+   "door_cells mark the authored doorway, not a working interior/scene transition",
+   "footprint is conservative positive-area coverage at a cell-aligned foot; W4 must derive exact runtime blocking from collision at the placed foot",
+   "placement.role, requires and forbids (Claude design decision; ground-rules.md 6)",
+   "retain overlay herbalist_damage from source scene with its own condition and offset; not a standalone random variant",
+   "review size-guide class and Eastward comparison before the library gate"
   ]
  }
 }

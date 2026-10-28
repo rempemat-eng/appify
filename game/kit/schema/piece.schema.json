@@ -83,10 +83,11 @@
         "state"
       ],
       "additionalProperties": false,
-      "description": "The library gate (Matt, 27 Oct 13:43): only an approved piece can be placed by the editor. candidate = drawn, not yet through the gate; gated = review:asset, the ground rules on a test layout and the 3x sheet all pass, waiting for Matt; approved = Matt approved it (a new material needs Matt; a variant of an approved piece needs the gate and a reviewer); rejected; retired (kept for old zones, never placed again).",
+      "description": "The library gate (Matt, 27 Oct 13:43): only an approved piece can be placed by the editor. concept = pre-art proposal, never placeable or shippable (kept outside the live library); candidate = drawn, not yet through the gate; gated = review:asset, the ground rules on a test layout and the 3x sheet all pass, waiting for Matt; approved = Matt approved it (a new material needs Matt; a variant of an approved piece needs the gate and a reviewer); rejected; retired (kept for old zones, never placed again).",
       "properties": {
         "state": {
           "enum": [
+            "concept",
             "candidate",
             "gated",
             "approved",
@@ -459,6 +460,10 @@
               },
               "radius": {
                 "type": "number"
+              },
+              "if": {
+                "type": "object",
+                "description": "Authored quest condition on this interaction only; does not hide the whole piece."
               }
             }
           }
@@ -962,6 +967,44 @@
           "type": "array",
           "items": {
             "type": "string"
+          }
+        },
+        "sources": {
+          "type": "array",
+          "description": "Source object bindings for seeded pieces. An overlay, shadow or effect stays a part of its owning piece rather than becoming another physical prop; conditions are copied from the authored zone/plan.",
+          "items": {
+            "type": "object",
+            "required": [
+              "zone",
+              "object",
+              "part"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "zone": {
+                "type": "string",
+                "minLength": 1
+              },
+              "object": {
+                "type": "string",
+                "minLength": 1
+              },
+              "part": {
+                "enum": [
+                  "body",
+                  "overlay",
+                  "shadow",
+                  "effect",
+                  "procedural"
+                ]
+              },
+              "condition": {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              }
+            }
           }
         }
       }

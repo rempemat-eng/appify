@@ -1,0 +1,73 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "nature_rainforest_floor",
+  "name": "Rainforest floor",
+  "kind": "terrain",
+  "biomes": [
+    "tidebloom"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "damp_leaf",
+      "note": "Broad fallen leaves over damp brown soil, with deep green canopy shade and a few orange leaf planes."
+    },
+    {
+      "id": "root_shelf",
+      "note": "Firm root shelf with dark soil between thick exposed roots and fern clumps confined to its outer edge."
+    },
+    {
+      "id": "volcanic_soil",
+      "note": "Orange-brown volcanic soil broken by dark leaf groups and basalt fragments, kept readable under the canopy."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 catalogue proposal for Claude review; not drawable approval, not placeable."
+  },
+  "geometry": {
+    "z_sort": "ground"
+  },
+  "placement": {
+    "role": "ground",
+    "ground": {
+      "allow": [
+        "earth",
+        "turf"
+      ],
+      "deny": []
+    },
+    "requires": [],
+    "forbids": [],
+    "clearance": 0,
+    "orientations": [
+      "any"
+    ],
+    "snap": "cell",
+    "composition": "free",
+    "stages": []
+  },
+  "rendering": {
+    "contact_ao": false
+  },
+  "function": {},
+  "story": {
+    "lore": "Make the main isle rainforest feel humid while sharing the forest-floor logic."
+  },
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared. Reusable across the listed places; preserve site-specific assembly and state.",
+      "Priority: P2.",
+      "Purpose: Make the main isle rainforest feel humid while sharing the forest-floor logic.",
+      "Visual brief: Broad fallen leaves, deep green root shade and patches of orange-brown soil; large fern clumps live at edges. Keep damp earth readable below the canopy and route edges free of noisy single pixels.",
+      "Source: docs/vision/regions/tidebloom-isles.md",
+      "Geometry: proposed visual envelope only; Claude supplies exact foot, solid footprint, overhang, interaction anchors and any deck after review.",
+      "Implementation: concept only, outside the live piece library. Do not place, bake or grant gameplay until reviewed and approved.",
+      "Widths: Whole-cell root shelves, 2-3-cell paths; undergrowth never changes the passage width after placement.",
+      "Schema intake: defer the runtime material ID, palette priority and painter binding until the concept is approved; no runtime block is claimed here.",
+      "Lighting: upper-left key light; shade each material and facing for that light. The lit-picture reference is deferred until art exists."
+    ]
+  }
+}

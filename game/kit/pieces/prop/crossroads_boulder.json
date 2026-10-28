@@ -6,12 +6,16 @@
  "biomes": [
   "village"
  ],
- "version": 1,
+ "version": 2,
  "variants": [
   {
    "id": "boulder_52",
    "weight": 1.0,
-   "png": "res://zones/crossroads/art/boulder_52.png"
+   "png": "res://zones/crossroads/art/boulder_52.png",
+   "foot": [
+    41,
+    52
+   ]
   }
  ],
  "approval": {
@@ -19,7 +23,7 @@
   "by": null,
   "at": null,
   "standard": null,
-  "note": "seeded from game/zones/crossroads (art/catalogue holds its asset-gate record)"
+  "note": "Source metadata only; seeded designs still require the library gate and Matt approval."
  },
  "geometry": {
   "size_px": [
@@ -28,23 +32,40 @@
   ],
   "size_cells": [
    4,
-   2
+   3
   ],
   "z_sort": "foot",
-  "foot": [
-   41.0,
-   52.0
-  ],
   "collision": {
-   "shape": "rect",
    "rect": [
     -6.0,
     -4.0,
-    12.0,
-    5.0
-   ]
+    12,
+    5
+   ],
+   "shape": "rect"
   },
-  "footprint": []
+  "foot": [
+   41,
+   52
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    -1,
+    0
+   ],
+   [
+    0,
+    0
+   ]
+  ]
  },
  "placement": {
   "snap": "cell",
@@ -72,14 +93,24 @@
  },
  "gameplay": {
   "blocks_move": true,
-  "blocks_shots": false
+  "blocks_shots": true
  },
  "audit": {
   "size_class": null,
   "eastward_ref": null,
   "seeded_from": "game/zones/crossroads/kit.json",
+  "sources": [
+   {
+    "zone": "crossroads",
+    "object": "boulder_52",
+    "part": "body",
+    "condition": null
+   }
+  ],
   "todo": [
-   "composition role and clearance"
+   "composition role and clearance",
+   "footprint is conservative positive-area coverage at a cell-aligned foot; W4 must derive exact runtime blocking from collision at the placed foot",
+   "review size-guide class and Eastward comparison before the library gate"
   ]
  }
 }

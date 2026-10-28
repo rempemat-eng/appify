@@ -1,0 +1,102 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "frontier_lunar_landing_pad",
+  "name": "Lumen’s lander pad",
+  "kind": "structure",
+  "biomes": [
+    "lumen"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "awaiting",
+      "note": "Empty marked pad."
+    },
+    {
+      "id": "docked",
+      "note": "Lander occupancy supplied by the transport scene; the pad does not bake the vehicle into the ground."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 design proposal for Claude review; no art, material ID, painter or live placement approval."
+  },
+  "geometry": {
+    "size_cells": [
+      16,
+      12
+    ],
+    "z_sort": "foot"
+  },
+  "placement": {
+    "role": "transport_pad",
+    "ground": {
+      "allow": [
+        "rock",
+        "earth"
+      ],
+      "deny": [
+        "water",
+        "turf"
+      ]
+    },
+    "requires": [
+      {
+        "rel": "on_anchor",
+        "what": "lander_arrival"
+      },
+      {
+        "rel": "adjacent",
+        "what": "route",
+        "cells": 1
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "structure_footprint",
+        "note": " Refuse any intersection of the proposed solid footprint with this reserved envelope; final collision comes from approved art."
+      }
+    ],
+    "clearance": 2,
+    "orientations": [
+      "any"
+    ],
+    "snap": "cell",
+    "stages": [],
+    "composition": "centre",
+    "per_zone": {
+      "max": 1
+    }
+  },
+  "rendering": {
+    "cast_shadow": {
+      "shape": "none"
+    },
+    "contact_ao": false
+  },
+  "function": {
+    "interact": null
+  },
+  "story": {
+    "owner": null,
+    "quests": [],
+    "lore": "Keep the one W9 arrival site custom while its surface, lamps and service boxes reuse the station kit."
+  },
+  "gameplay": {},
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: custom",
+      "Priority: P3",
+      "Purpose: Keep the one W9 arrival site custom while its surface, lamps and service boxes reuse the station kit.",
+      "Visual brief: A compact level pad seated on the crater rim, radial landing marks and a restrained light pattern; a clear pedestrian exit leads to the habitat rather than under the lander.",
+      "Widths and size: Initial envelope 16×12 cells = 128×96 world px; final lander clearance/scale must come from the authored W9 vehicle, not this estimate.",
+      "Source: docs/vision/world-plan.md §§8.6,8.7,9; docs/vision/coherence-plan.md M1",
+      "Implement after review: choose authored anchors, exact collision and approved variant art; these cell envelopes are layout proposals, not measured sprite bounds.",
+      "W9 alone controls arrival/departure; no new transport unlock or launch animation timing is specified.",
+      "Lighting: Upper left; material-specific ramps and directional planes; no mirror-only relighting."
+    ]
+  }
+}
