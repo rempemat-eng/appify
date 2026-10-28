@@ -69,7 +69,7 @@
     "check:economy-sim": "node --import tsx scripts/economy-model.test.ts && npm run sim:economy -- --check",
     "check:world-land": "node --import tsx lib/world-land.test.ts",
     "check:kit": "python3 -m scripts.art.native.check && python3 -m scripts.review.gate --check && python3 -m scripts.art.grid_snap --check",
-    "check:review": "python3 -m unittest scripts.review.test_review",
+    "check:review": "python3 -m unittest scripts.review.test_review scripts.review.test_pr_sheet",
     "review:scene": "python3 -m scripts.review.run",
     "review:asset": "python3 -m scripts.review.assets",
     "check:godot": "bash game/tools/check.sh",
