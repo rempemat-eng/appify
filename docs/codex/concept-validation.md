@@ -37,6 +37,7 @@ This does not change the concept-stage exception, required runtime blocks for la
 `scripts/art/kit/test_concept_schema.py` exercises the actual corpus, not a duplicate set of concept records:
 
 - All 129 records and the real CLI pass, while their approval states remain `concept`.
+- An independent Draft 2020-12 validator checks all 129 actual records and malformed controls. This optional test explicitly skips when `jsonschema` is absent; a skip is not independent structural proof.
 - Each of the 30 deferred records still needs its runtime block when changed in memory to candidate, gated, approved, rejected or retired.
 - Current-schema migration leaves all concept bytes and mtimes unchanged.
 - Malformed records are diagnosed through the checker and CLI, and refused by migration.
@@ -57,6 +58,8 @@ npm run check:art-repro
 ```
 
 The existing package command names `test_kit` explicitly; it does not auto-discover the new module. Until the lead registers the focused module in the shared check list, a green general workflow alone does not establish that these new regressions executed.
+
+Independent structural validation was also run with Python 3.12.14 and `jsonschema` 4.26.0 in an isolated scratch installation. All 129 actual records passed Draft 2020-12 validation, malformed controls were rejected, and the two previously skipped existing schema/source-binding parity tests passed. The isolated dependency versions were `jsonschema-specifications` 2025.9.1, `referencing` 0.37.0, `rpds-py` 2026.9.1, `attrs` 26.1.0 and `typing-extensions` 4.16.0. No shared runtime, repository dependency or lockfile was changed.
 
 ## Review boundary
 

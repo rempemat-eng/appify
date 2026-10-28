@@ -63,6 +63,26 @@ class ConceptCorpus(unittest.TestCase):
         self.assertEqual(S.errors(record, S.load_schema()) + S.semantic(record), [])
         self.assertEqual(runtime_allocations(record), ['$.variants[0].png'])
 
+    def test_actual_corpus_agrees_with_independent_jsonschema(self):
+        try:
+            from jsonschema import Draft202012Validator
+        except ImportError:
+            self.skipTest('jsonschema not installed; independent structural proof not supplied')
+        schema = S.load_schema()
+        Draft202012Validator.check_schema(schema)
+        validator = Draft202012Validator(schema)
+        for path, record in self.records.items():
+            with self.subTest(piece=path.stem):
+                self.assertEqual(list(validator.iter_errors(record)), [])
+                self.assertEqual(S.errors(record, schema), [])
+        original = next(iter(self.records.values()))
+        for key, value in [('approval', []), ('id', []), ('kind', 'unknown-kind'),
+                           ('terrain', {'typo': True}), ('unexpected_key', 'typo')]:
+            record = {**original, key: value}
+            with self.subTest(malformed=key):
+                self.assertTrue(list(validator.iter_errors(record)))
+                self.assertTrue(S.errors(record, schema))
+
     def test_every_deferred_runtime_block_remains_required_after_concept(self):
         deferred = [p for p in self.records.values() if p['kind'] in ('terrain', 'transition')]
         self.assertEqual(len(deferred), 30)
