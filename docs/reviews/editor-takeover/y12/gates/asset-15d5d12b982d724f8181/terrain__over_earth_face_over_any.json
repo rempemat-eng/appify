@@ -1,0 +1,88 @@
+{
+ "id": "terrain/over_earth_face_over_any",
+ "file": "game/kit/terrain/over_earth_face_over_any.png",
+ "sha256": "ecce94c839017fa221f4b6c0209474e7b795ebc13ba4947b752785d1f1e38cc8",
+ "kind": "over_earth_face_over_any",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  1536,
+  264
+ ],
+ "status": "fail",
+ "counts": {
+  "blocker": 1,
+  "fault": 2,
+  "polish": 0
+ },
+ "detail_bar": null,
+ "findings": [
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    984,
+    6,
+    1080,
+    15
+   ],
+   "message": "a thing drawn flat: 3 tones, two cover 77% (0.07 H^2)",
+   "fix": "give it form and material: a lit top plane, a mid front and a dark side (a cylinder: a highlight band and a core shadow), occlusion where it meets the floor, its texture in clusters",
+   "score": 0.7656675749318801,
+   "threshold": 0.75,
+   "subject": "flat object",
+   "extra": {},
+   "box_source": [
+    984,
+    6,
+    1080,
+    15
+   ]
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    792,
+    6,
+    936,
+    16
+   ],
+   "message": "a thing drawn flat: 3 tones, two cover 76% (0.10 H^2)",
+   "fix": "give it form and material: a lit top plane, a mid front and a dark side (a cylinder: a highlight band and a core shadow), occlusion where it meets the floor, its texture in clusters",
+   "score": 0.7561837455830389,
+   "threshold": 0.75,
+   "subject": "flat object",
+   "extra": {},
+   "box_source": [
+    792,
+    6,
+    936,
+    16
+   ]
+  },
+  {
+   "detector": "logic.void",
+   "severity": "blocker",
+   "box": [
+    0,
+    0,
+    1536,
+    72
+   ],
+   "message": "the screen shows 11% empty black outside the world",
+   "fix": "clamp the camera to the zone bounds from the first frame (snap it to the spawn before damping) and draw the world past every edge the camera can reach",
+   "score": 0.10537997159090909,
+   "threshold": 0.05,
+   "subject": "camera",
+   "extra": {},
+   "box_source": [
+    0,
+    0,
+    1536,
+    72
+   ]
+  }
+ ]
+}

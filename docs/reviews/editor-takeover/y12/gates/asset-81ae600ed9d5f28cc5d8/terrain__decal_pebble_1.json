@@ -1,0 +1,67 @@
+{
+ "id": "terrain/decal_pebble_1",
+ "file": "game/kit/terrain/decal_pebble_1.png",
+ "sha256": "2bff2705d7e7a5f31b25cc0a422eaab2106bda80027313073c1dd481fe59fae9",
+ "kind": "decal_pebble",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  16,
+  16
+ ],
+ "status": "fail",
+ "counts": {
+  "blocker": 0,
+  "fault": 1,
+  "polish": 0
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 0,
+   "tones": 0.0,
+   "shapes": 0.0
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": null,
+  "passed": null,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "logic.scale",
+   "severity": "fault",
+   "box": [
+    6,
+    7,
+    10,
+    10
+   ],
+   "message": "terrain/decal_pebble_1: wide 4 art px (0.05 A) is too small for a rock: the size table gives 11 to 33 (0.15 to 0.45 A); Eastward at the same character height: rocks 8 to 12 E tall, 12 to 23 E wide (0.15 to 0.42 A) in 12 and 13",
+   "fix": "redraw it 11 to 33 art px wide (target about 22), checked beside Bramble (74 art px) in the asset sheet",
+   "score": 4.0,
+   "threshold": 11.0,
+   "subject": "terrain/decal_pebble_1",
+   "extra": {
+    "class": "rock",
+    "measure": "wide",
+    "range": [
+     11,
+     33
+    ],
+    "value": 4.0
+   },
+   "box_source": [
+    6,
+    7,
+    10,
+    10
+   ]
+  }
+ ]
+}

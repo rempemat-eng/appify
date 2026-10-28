@@ -1,0 +1,61 @@
+{
+ "id": "crossroads/library",
+ "file": "game/zones/crossroads/art/library.png",
+ "sha256": "ecb658a8c9f7609070b12644d0de53f1157f180f12d470606838f713f37c0e2c",
+ "kind": "library",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  312,
+  234
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 1
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 186,
+   "tones": 25.768817204301076,
+   "shapes": 43.575268817204304
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.865,
+  "tones_ratio": 0.954,
+  "shapes_ratio": 0.865,
+  "passed": false,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    2,
+    13,
+    310,
+    232
+   ],
+   "message": "crossroads/library: detail bar 0.86 of Eastward's prop band (25.8 tones, 43.6 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)",
+   "score": 0.865,
+   "threshold": 0.9,
+   "subject": "crossroads/library",
+   "extra": {},
+   "box_source": [
+    2,
+    13,
+    310,
+    232
+   ]
+  }
+ ]
+}

@@ -1,0 +1,44 @@
+{
+ "id": "terrain/fill_water",
+ "file": "game/kit/terrain/fill_water.png",
+ "sha256": "159cacfd2b93669beab4c09b99df90b74d5eb1964f4f20ac7ef969eca9621a8e",
+ "kind": "fill_water",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  768,
+  768
+ ],
+ "status": "fail",
+ "counts": {
+  "blocker": 0,
+  "fault": 1,
+  "polish": 0
+ },
+ "detail_bar": null,
+ "findings": [
+  {
+   "detector": "detail.debug_overlay",
+   "severity": "fault",
+   "box": [
+    2,
+    2,
+    766,
+    766
+   ],
+   "message": "a flat red polygon (106.6 H^2, solidity 1.00) laid over the art: it reads as a debug shape, not part of the world",
+   "fix": "draw the telegraph in the world's language: cracks or glowing runes spreading on the floor, dust lifting, a ground shadow growing; finite, readable, and under reduced motion still clear",
+   "score": 1.0026229496933021,
+   "threshold": 0.95,
+   "subject": "overlay",
+   "extra": {},
+   "box_source": [
+    2,
+    2,
+    766,
+    766
+   ]
+  }
+ ]
+}

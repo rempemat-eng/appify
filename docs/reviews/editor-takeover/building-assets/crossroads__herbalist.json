@@ -1,0 +1,105 @@
+{
+ "id": "crossroads/herbalist",
+ "file": "game/zones/crossroads/art/herbalist.png",
+ "sha256": "c3000d1a0b6b6ed46ad0a50e85de238c224f38d33f4684fb48a177bb190e455c",
+ "kind": "herbalist",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  240,
+  231
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 2
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 133,
+   "tones": 25.30827067669173,
+   "shapes": 47.19548872180451
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.937,
+  "tones_ratio": 0.937,
+  "shapes_ratio": 0.937,
+  "passed": true,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    52,
+    140,
+    58,
+    171
+   ],
+   "message": "crossroads/herbalist: the red is lit from the right (luminance rises 48 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south",
+   "score": 47.704629354431766,
+   "threshold": 6.0,
+   "subject": "crossroads/herbalist",
+   "extra": {
+    "area": 182,
+    "area_h": 0.03323593864134405,
+    "flat": 0.0,
+    "flat_h": 0.0,
+    "tones": 4,
+    "planes": 2,
+    "lrange": 33.36100769042969,
+    "gx": 47.704629354431766,
+    "gy": -15.457702476094443,
+    "edges": 0.9821428571428571
+   },
+   "box_source": [
+    52,
+    140,
+    58,
+    171
+   ]
+  },
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    9,
+    166,
+    230,
+    229
+   ],
+   "message": "crossroads/herbalist: the stone is lit from the right (luminance rises 7 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south",
+   "score": 7.4016230381660675,
+   "threshold": 6.0,
+   "subject": "crossroads/herbalist",
+   "extra": {
+    "area": 6832,
+    "area_h": 1.2476260043827612,
+    "flat": 0.013466042154566744,
+    "flat_h": 0.016800584368151936,
+    "tones": 19,
+    "planes": 4,
+    "lrange": 102.33500671386719,
+    "gx": 7.4016230381660675,
+    "gy": -41.143523776215645,
+    "edges": 0.763283378746594
+   },
+   "box_source": [
+    9,
+    166,
+    230,
+    229
+   ]
+  }
+ ]
+}

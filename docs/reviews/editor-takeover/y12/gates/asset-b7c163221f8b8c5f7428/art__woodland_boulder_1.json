@@ -1,0 +1,94 @@
+{
+ "id": "art/woodland_boulder_1",
+ "file": "game/kit/props/art/woodland_boulder_1.png",
+ "sha256": "e9e20d3a12c487e0f81fafc2788655d78f363df7014018b12d1f7d2a92bb8a69",
+ "kind": "woodland_boulder",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  57,
+  36
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 2
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 1,
+   "tones": 25.0,
+   "shapes": 35.0
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.695,
+  "tones_ratio": 0.926,
+  "shapes_ratio": 0.695,
+  "passed": false,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    6,
+    10,
+    50,
+    34
+   ],
+   "message": "art/woodland_boulder_1: the stone is lit from the right (luminance rises 15 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south",
+   "score": 14.614478603885718,
+   "threshold": 6.0,
+   "subject": "art/woodland_boulder_1",
+   "extra": {
+    "area": 551,
+    "area_h": 0.1006208911614317,
+    "flat": 0.019963702359346643,
+    "flat_h": 0.0020087655222790356,
+    "tones": 11,
+    "planes": 7,
+    "lrange": 94.89399719238281,
+    "gx": 14.614478603885718,
+    "gy": -307.86429123852463,
+    "edges": 0.8081264108352144
+   },
+   "box_source": [
+    6,
+    10,
+    50,
+    34
+   ]
+  },
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    6,
+    10,
+    50,
+    34
+   ],
+   "message": "art/woodland_boulder_1: detail bar 0.69 of Eastward's prop band (25.0 tones, 35.0 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)",
+   "score": 0.695,
+   "threshold": 0.9,
+   "subject": "art/woodland_boulder_1",
+   "extra": {},
+   "box_source": [
+    6,
+    10,
+    50,
+    34
+   ]
+  }
+ ]
+}

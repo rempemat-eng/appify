@@ -1,0 +1,94 @@
+{
+ "id": "crossroads/north_cottages",
+ "file": "game/zones/crossroads/art/north_cottages.png",
+ "sha256": "9406156150c9fb969addc7a4637e67294b056ef4d3e00a2676b102e847c8d92f",
+ "kind": "north_cottages",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  312,
+  276
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 2
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 201,
+   "tones": 25.691542288557216,
+   "shapes": 43.656716417910445
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.867,
+  "tones_ratio": 0.952,
+  "shapes_ratio": 0.867,
+  "passed": false,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    170,
+    51,
+    303,
+    63
+   ],
+   "message": "crossroads/north_cottages: the red is lit from the right (luminance rises 6 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south",
+   "score": 6.389439141444881,
+   "threshold": 6.0,
+   "subject": "crossroads/north_cottages",
+   "extra": {
+    "area": 832,
+    "area_h": 0.15193571950328708,
+    "flat": 0.01201923076923077,
+    "flat_h": 0.0018261504747991235,
+    "tones": 8,
+    "planes": 4,
+    "lrange": 87.9520034790039,
+    "gx": 6.389439141444881,
+    "gy": -289.8505200098036,
+    "edges": 0.8346456692913385
+   },
+   "box_source": [
+    170,
+    51,
+    303,
+    63
+   ]
+  },
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    2,
+    0,
+    310,
+    274
+   ],
+   "message": "crossroads/north_cottages: detail bar 0.87 of Eastward's prop band (25.7 tones, 43.7 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)",
+   "score": 0.867,
+   "threshold": 0.9,
+   "subject": "crossroads/north_cottages",
+   "extra": {},
+   "box_source": [
+    2,
+    0,
+    310,
+    274
+   ]
+  }
+ ]
+}

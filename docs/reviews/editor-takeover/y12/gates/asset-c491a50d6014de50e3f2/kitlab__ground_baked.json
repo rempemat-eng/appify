@@ -1,0 +1,21 @@
+{
+ "id": "kitlab/ground_baked",
+ "file": "game/zones/kitlab/ground_baked.png",
+ "sha256": "0ea13931e9b30c8856d2ba9621f49dc93301eab8e9e7ef5b9af75bf6e285227b",
+ "kind": "ground_baked",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  960,
+  552
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 0
+ },
+ "detail_bar": null,
+ "findings": []
+}

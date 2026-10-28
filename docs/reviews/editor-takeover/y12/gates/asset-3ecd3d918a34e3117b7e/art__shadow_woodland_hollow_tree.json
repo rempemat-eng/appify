@@ -1,0 +1,44 @@
+{
+ "id": "art/shadow_woodland_hollow_tree",
+ "file": "game/kit/props/art/shadow_woodland_hollow_tree.png",
+ "sha256": "07f985c2a8a2a979ab12986eadf59c847fb2dca4c3d70ec0c7a9626977aac84d",
+ "kind": "shadow_woodland_hollow_tree",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  220,
+  95
+ ],
+ "status": "fail",
+ "counts": {
+  "blocker": 1,
+  "fault": 0,
+  "polish": 0
+ },
+ "detail_bar": null,
+ "findings": [
+  {
+   "detector": "logic.void",
+   "severity": "blocker",
+   "box": [
+    0,
+    0,
+    220,
+    95
+   ],
+   "message": "the screen shows 100% empty black outside the world",
+   "fix": "clamp the camera to the zone bounds from the first frame (snap it to the spawn before damping) and draw the world past every edge the camera can reach",
+   "score": 1.0,
+   "threshold": 0.05,
+   "subject": "camera",
+   "extra": {},
+   "box_source": [
+    0,
+    0,
+    220,
+    95
+   ]
+  }
+ ]
+}

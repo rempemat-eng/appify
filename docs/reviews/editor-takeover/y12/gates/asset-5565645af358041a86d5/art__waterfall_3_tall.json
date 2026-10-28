@@ -1,0 +1,140 @@
+{
+ "id": "art/waterfall_3_tall",
+ "file": "game/kit/props/art/waterfall_3_tall.png",
+ "sha256": "e474c4dfc4a95de8845a99d5cf795fed986d88e3faad283c25d9f979673fb892",
+ "kind": "waterfall_3_tall",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  120,
+  142
+ ],
+ "status": "fail",
+ "counts": {
+  "blocker": 1,
+  "fault": 2,
+  "polish": 1
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 28,
+   "tones": 9.285714285714286,
+   "shapes": 12.642857142857142
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.251,
+  "tones_ratio": 0.344,
+  "shapes_ratio": 0.251,
+  "passed": false,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "logic.floating_part",
+   "severity": "blocker",
+   "box": [
+    0,
+    4,
+    120,
+    119
+   ],
+   "message": "art/waterfall_3_tall: the upper 99% of the sprite hovers 4 px above the rest: nothing joins it to what should hold it up",
+   "fix": "join it to its support: a crown sits on its trunk and covers the trunk top, a roof on its posts, a bucket on a rope (world-rules.md 6.9)",
+   "score": 4.0,
+   "threshold": 2,
+   "subject": "art/waterfall_3_tall",
+   "extra": {
+    "needs_alpha": true
+   },
+   "box_source": [
+    0,
+    4,
+    120,
+    119
+   ]
+  },
+  {
+   "detector": "detail.water_flat",
+   "severity": "fault",
+   "box": [
+    21,
+    4,
+    99,
+    12
+   ],
+   "message": "art/waterfall_3_tall: the water is flat: 2 tones, one smooth patch covers 27%",
+   "fix": "give water depth: a dark band under the near rim, the inner wall lit or shaded as the opening curves, a 1 px light waterline and a few short highlights (eastward-edges.md 5.3)",
+   "score": 0.2704626334519573,
+   "threshold": 0.5,
+   "subject": "art/waterfall_3_tall",
+   "extra": {
+    "area": 562,
+    "area_h": 0.10262965668371074,
+    "flat": 0.2704626334519573,
+    "flat_h": 0.027757487216946677,
+    "tones": 2,
+    "planes": 2,
+    "lrange": 27.301002502441406,
+    "gx": -2.8883063015498513e-14,
+    "gy": -407.46652161022075,
+    "edges": 0.38190954773869346
+   },
+   "box_source": [
+    21,
+    4,
+    99,
+    12
+   ]
+  },
+  {
+   "detector": "detail.bar",
+   "severity": "fault",
+   "box": [
+    0,
+    4,
+    120,
+    123
+   ],
+   "message": "art/waterfall_3_tall: detail bar 0.25 of Eastward's prop band (9.3 tones, 12.6 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)",
+   "score": 0.251,
+   "threshold": 0.9,
+   "subject": "art/waterfall_3_tall",
+   "extra": {},
+   "box_source": [
+    0,
+    4,
+    120,
+    123
+   ]
+  },
+  {
+   "detector": "detail.outline",
+   "severity": "polish",
+   "box": [
+    0,
+    4,
+    120,
+    123
+   ],
+   "message": "art/waterfall_3_tall: only 14% of the silhouette is drawn in an edge tone",
+   "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)",
+   "score": 0.1414141414141414,
+   "threshold": 0.4,
+   "subject": "art/waterfall_3_tall",
+   "extra": {},
+   "box_source": [
+    0,
+    4,
+    120,
+    123
+   ]
+  }
+ ]
+}

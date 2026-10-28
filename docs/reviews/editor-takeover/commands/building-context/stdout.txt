@@ -1,0 +1,9 @@
+PASS crossroads/bakery                        {'blocker': 0, 'fault': 0, 'polish': 1}  
+PASS crossroads/fern_cottage                  {'blocker': 0, 'fault': 0, 'polish': 3}  
+PASS crossroads/herbalist                     {'blocker': 0, 'fault': 0, 'polish': 2}  
+PASS crossroads/hut                           {'blocker': 0, 'fault': 0, 'polish': 2}  
+PASS crossroads/library                       {'blocker': 0, 'fault': 0, 'polish': 1}  
+PASS crossroads/north_cottages                {'blocker': 0, 'fault': 0, 'polish': 2}  
+PASS crossroads/smithy                        {'blocker': 0, 'fault': 0, 'polish': 2}  
+
+7 assets, 0 fail, 7 pass. Reports and sheets in /workspace/scratch/13b98d2e0841/palette-editor-review/docs/reviews/editor-takeover/building-assets

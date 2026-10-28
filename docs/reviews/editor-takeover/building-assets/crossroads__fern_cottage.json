@@ -1,0 +1,124 @@
+{
+ "id": "crossroads/fern_cottage",
+ "file": "game/zones/crossroads/art/fern_cottage.png",
+ "sha256": "1b2df1137dc67fb6a086caad80363bad0dc32019bacb63398786c1244b945639",
+ "kind": "fern_cottage",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  240,
+  264
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 3
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 144,
+   "tones": 27.104166666666668,
+   "shapes": 44.09722222222222
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.876,
+  "tones_ratio": 1.004,
+  "shapes_ratio": 0.876,
+  "passed": false,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    194,
+    51,
+    231,
+    62
+   ],
+   "message": "crossroads/fern_cottage: the red is lit from the right (luminance rises 67 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south",
+   "score": 66.60710520590243,
+   "threshold": 6.0,
+   "subject": "crossroads/fern_cottage",
+   "extra": {
+    "area": 207,
+    "area_h": 0.037801314828341856,
+    "flat": 0.024154589371980676,
+    "flat_h": 0.0009130752373995618,
+    "tones": 9,
+    "planes": 4,
+    "lrange": 65.23015594482422,
+    "gx": 66.60710520590243,
+    "gy": -245.99508886136567,
+    "edges": 0.8739495798319328
+   },
+   "box_source": [
+    194,
+    51,
+    231,
+    62
+   ]
+  },
+  {
+   "detector": "logic.scale",
+   "severity": "polish",
+   "box": [
+    30,
+    182,
+    77,
+    261
+   ],
+   "message": "crossroads/fern_cottage door latch: across 8 art px (0.11 A) is too big for a door handle: the size table gives 3 to 7 (0.04 to 0.09 A); Eastward at the same character height: knob or latch 3 to 4 E (0.06 to 0.07 A) at 0.5 to 0.6 of the leaf (17, 12)",
+   "fix": "redraw it 3 to 7 art px across (target about 5), checked beside Bramble (74 art px) in the asset sheet",
+   "score": 8.0,
+   "threshold": 7.0,
+   "subject": "crossroads/fern_cottage door latch",
+   "extra": {
+    "class": "door_handle",
+    "measure": "across",
+    "range": [
+     3,
+     7
+    ],
+    "value": 8.0
+   },
+   "box_source": [
+    30,
+    182,
+    77,
+    261
+   ]
+  },
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    2,
+    0,
+    238,
+    262
+   ],
+   "message": "crossroads/fern_cottage: detail bar 0.88 of Eastward's prop band (27.1 tones, 44.1 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)",
+   "score": 0.876,
+   "threshold": 0.9,
+   "subject": "crossroads/fern_cottage",
+   "extra": {},
+   "box_source": [
+    2,
+    0,
+    238,
+    262
+   ]
+  }
+ ]
+}

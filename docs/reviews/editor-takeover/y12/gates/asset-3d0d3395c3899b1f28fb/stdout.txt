@@ -1,0 +1,3 @@
+PASS art/stepping_stones_1                    {'blocker': 0, 'fault': 0, 'polish': 0}  
+
+1 assets, 0 fail, 1 pass. Reports and sheets in /workspace/scratch/13b98d2e0841/palette-editor-review/docs/reviews/editor-takeover/y12/gates/asset-3d0d3395c3899b1f28fb

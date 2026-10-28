@@ -1,0 +1,146 @@
+{
+ "id": "terrain/over_lawn_over_water",
+ "file": "game/kit/terrain/over_lawn_over_water.png",
+ "sha256": "56e2248e495f9fed3c956da2fe56d9553bf427c29bbda91573a997be8af66b1f",
+ "kind": "over_lawn_over_water",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  1536,
+  264
+ ],
+ "status": "fail",
+ "counts": {
+  "blocker": 0,
+  "fault": 1,
+  "polish": 1
+ },
+ "detail_bar": null,
+ "findings": [
+  {
+   "detector": "detail.repetition",
+   "severity": "fault",
+   "box": [
+    0,
+    0,
+    1536,
+    264
+   ],
+   "message": "197 tuft blades repeat an exact stamp (21 stamps, the commonest 34 times): 2.7 repeats per H^2 (the pilot golden 0.0, Eastward 0.0 to 0.7); the grass reads as wallpaper",
+   "fix": "ground is a calm field with a few soft patches and clumped tufts of varied size, shape and tone, denser at edges and under things, sparse where people walk; draw tufts from several designs and vary each (eastward-edges.md 5.5)",
+   "score": 2.6603239425505047,
+   "threshold": 1.0,
+   "subject": "ground dressing",
+   "extra": {
+    "stamps": 21,
+    "repeats": 197,
+    "commonest": [
+     [
+      388,
+      48,
+      391,
+      60
+     ],
+     [
+      460,
+      48,
+      463,
+      60
+     ],
+     [
+      484,
+      48,
+      487,
+      60
+     ],
+     [
+      556,
+      48,
+      559,
+      60
+     ],
+     [
+      580,
+      48,
+      583,
+      60
+     ],
+     [
+      652,
+      48,
+      655,
+      60
+     ],
+     [
+      676,
+      48,
+      679,
+      60
+     ],
+     [
+      748,
+      48,
+      751,
+      60
+     ],
+     [
+      772,
+      48,
+      775,
+      60
+     ],
+     [
+      844,
+      48,
+      847,
+      60
+     ],
+     [
+      868,
+      48,
+      871,
+      60
+     ],
+     [
+      940,
+      48,
+      943,
+      60
+     ]
+    ]
+   },
+   "box_source": [
+    0,
+    0,
+    1536,
+    264
+   ]
+  },
+  {
+   "detector": "logic.scale",
+   "severity": "polish",
+   "box": [
+    444,
+    0,
+    592,
+    148
+   ],
+   "message": "terrain/over_lawn_over_water: the grass fill's blotches are 18 art px (0.24 H) across; Eastward's are 0.35 to 0.77 H",
+   "fix": "paint blotches 26 to 57 art px across",
+   "score": 0.24324324324324326,
+   "threshold": 0.25,
+   "subject": "terrain/over_lawn_over_water",
+   "extra": {
+    "class": "grain",
+    "measure": "blotch"
+   },
+   "box_source": [
+    444,
+    0,
+    592,
+    148
+   ]
+  }
+ ]
+}

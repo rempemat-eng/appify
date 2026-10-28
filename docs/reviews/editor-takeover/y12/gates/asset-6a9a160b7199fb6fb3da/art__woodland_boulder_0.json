@@ -1,0 +1,94 @@
+{
+ "id": "art/woodland_boulder_0",
+ "file": "game/kit/props/art/woodland_boulder_0.png",
+ "sha256": "0970534fc17d4a793ccbdf71c249b7a2fb3e9c98219fce3a04bb47ea67837651",
+ "kind": "woodland_boulder",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  54,
+  36
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 2
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 1,
+   "tones": 25.0,
+   "shapes": 40.0
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.794,
+  "tones_ratio": 0.926,
+  "shapes_ratio": 0.794,
+  "passed": false,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.light",
+   "severity": "polish",
+   "box": [
+    12,
+    11,
+    46,
+    34
+   ],
+   "message": "art/woodland_boulder_0: the stone is lit from the right (luminance rises 94 L per H to the east)",
+   "fix": "light from the upper left: lit faces west and north, dark faces east and south",
+   "score": 94.2515157941413,
+   "threshold": 6.0,
+   "subject": "art/woodland_boulder_0",
+   "extra": {
+    "area": 388,
+    "area_h": 0.07085463842220599,
+    "flat": 0.010309278350515464,
+    "flat_h": 0.0007304601899196494,
+    "tones": 11,
+    "planes": 6,
+    "lrange": 94.89399719238281,
+    "gx": 94.2515157941413,
+    "gy": -355.8985929917969,
+    "edges": 0.92
+   },
+   "box_source": [
+    12,
+    11,
+    46,
+    34
+   ]
+  },
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    5,
+    9,
+    46,
+    34
+   ],
+   "message": "art/woodland_boulder_0: detail bar 0.79 of Eastward's prop band (25.0 tones, 40.0 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)",
+   "score": 0.794,
+   "threshold": 0.9,
+   "subject": "art/woodland_boulder_0",
+   "extra": {},
+   "box_source": [
+    5,
+    9,
+    46,
+    34
+   ]
+  }
+ ]
+}

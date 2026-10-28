@@ -1,0 +1,2 @@
+PR sheet: detector_evidence, detector evidence complete=False; manual review not assessed.
+/workspace/scratch/13b98d2e0841/palette-editor-review/docs/reviews/editor-takeover/y12/index.html
