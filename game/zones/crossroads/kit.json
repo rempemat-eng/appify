@@ -5,7 +5,7 @@
   1920,
   1680
  ],
- "inputs": "2e01a94f9dc9e8b81f2dbfe8813b4a35281232b0a2faab65a701514d6ecd2c8b",
+ "inputs": "47e2c00bacd17b88131922b7d718d42ff9a931228667fc17a8bc9b7f8e0153a7",
  "kit_drawn": [
   "anvil.png",
   "bakery.png",
@@ -206,7 +206,7 @@
    "png": "herbalist.png",
    "foot": [
     444,
-    1128
+    1152
    ],
    "offset": [
     -120,
@@ -215,7 +215,7 @@
    "cond": null,
    "solid": [
     112,
-    328,
+    336,
     72,
     48
    ]
@@ -226,7 +226,7 @@
    "png": "herbalist_damage.png",
    "foot": [
     444,
-    1129
+    1153
    ],
    "offset": [
     -120,
@@ -1410,8 +1410,8 @@
    "kind": "oak",
    "png": "oak_40.png",
    "foot": [
-    900,
-    1440
+    1128,
+    1560
    ],
    "offset": [
     -106,
@@ -1419,8 +1419,8 @@
    ],
    "cond": null,
    "solid": [
-    296,
-    477,
+    372,
+    517,
     8,
     4
    ]
@@ -1650,8 +1650,8 @@
    "kind": "boulder",
    "png": "boulder_52.png",
    "foot": [
-    996,
-    1272
+    1056,
+    1296
    ],
    "offset": [
     -41,
@@ -1659,8 +1659,8 @@
    ],
    "cond": null,
    "solid": [
-    326,
-    420,
+    346,
+    428,
     12,
     5
    ]
@@ -2020,6 +2020,25 @@
    },
    "solid": null,
    "of": "beds_dug"
+  },
+  {
+   "id": "square_puddles",
+   "kind": "shadow",
+   "png": "square_puddles.png",
+   "foot": [
+    674,
+    718
+   ],
+   "offset": [
+    0,
+    0
+   ],
+   "cond": {
+    "not_restored": [
+     "forge"
+    ]
+   },
+   "solid": null
   }
  ]
 }

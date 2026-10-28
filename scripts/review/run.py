@@ -171,7 +171,15 @@ def main(argv=None):
         img, off = crop_nonblack(img)
         native, s, org = to_native(img, a.scale)
         org = (org[0] + off[0], org[1] + off[1])
-        report['pictures'].append(review_picture(native, a.H, name, out, s, org, biome=a.biome))
+        # structures that carry props, declared beside the picture (logic.composition)
+        from . import composition as CP
+        sts = CP.sidecar(t)
+        extra = CP.check(sts) if sts else []
+        from . import tiers as TI
+        tp = CP.sidecar_plan(t)
+        if tp and tp.get('tiers'):
+            extra += TI.check(tp)
+        report['pictures'].append(review_picture(native, a.H, name, out, s, org, extra=extra, biome=a.biome))
 
     allf = [f for p in report['pictures'] for f in p['findings']]
     if report['scene']:

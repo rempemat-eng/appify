@@ -423,6 +423,38 @@ class RaggedEdge(unittest.TestCase):
         self.assertEqual(E.ragged(al, H, 'bench', min_area=0.02, sprite=True), [])
 
 
+class CornerRadius(unittest.TestCase):
+    # Matt, 26 Oct 15:36: blocky plans, "not sharp like minecraft": a plan of whole cells drawn with
+    # square corners trips; the same plan rounded (outer 0.4, inner 0.25 of a cell) and lumped
+    # passes, as does an organic outline with no plan corners
+    def _plan(self):
+        c = 24
+        m = np.zeros((360, 480), bool)
+        for (x, y, w, h) in ((2, 2, 11, 5), (13, 2, 6, 3), (3, 7, 5, 3), (5, 10, 15, 2)):
+            m[y * c:(y + h) * c, x * c:(x + w) * c] = True
+        return m
+
+    def test_square_corners_trip(self):
+        self.assertTrue(E.corner_radius(self._plan(), H, 'x/ground (dirt)'))
+
+    def test_rounded_corners_pass(self):
+        m = self._plan()
+        p = 12
+        mp = np.pad(m, p)
+        dil = lambda a, r: ndi.distance_transform_edt(~a) <= r
+        ero = lambda a, r: ndi.distance_transform_edt(a) > r
+        mp = ero(dil(mp, 6), 6)
+        mp = dil(ero(mp, 9.6), 9.6)
+        self.assertFalse(E.corner_radius(mp[p:-p, p:-p], H, 'x/ground (dirt)'))
+
+    def test_organic_outline_passes(self):
+        yy, xx = np.mgrid[0:360, 0:480]
+        ang = np.arctan2(yy - 180, xx - 240)
+        r = 140 + 12 * np.sin(5 * ang) + 5 * np.sin(13 * ang)
+        m = np.hypot((xx - 240), (yy - 180) * 1.5) < r
+        self.assertFalse(E.corner_radius(m, H, 'x/ground (dirt)'))
+
+
 class OnGrid(unittest.TestCase):
     """logic.off_grid: props and structures stand on the soft grid (8 world px, 24 texels at density
     3); clutter may sit anywhere in a cell."""
@@ -521,3 +553,129 @@ class SizeTable(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class Composition(unittest.TestCase):
+    """logic.composition (Matt, 26 Oct 19:35: "the square needs better centring with the objects on
+    top of it")."""
+
+    def square(self, well_x=240, bench2=True, x1=384):
+        props = [dict(kind='well', x=well_x, y=170, w=54), dict(kind='bench', x=132, y=110, w=66)]
+        if bench2:
+            props.append(dict(kind='bench', x=348, y=110, w=66))
+        return dict(id='square', rect=[96, 48, x1, 264], props=props, entries=[dict(x=240, w=72)])
+
+    def test_composed_square_passes(self):
+        from scripts.review import composition as CP
+        self.assertEqual(CP.check([self.square()]), [])
+
+    def test_off_centre_well_trips(self):
+        from scripts.review import composition as CP
+        fs = CP.check([self.square(well_x=252)])
+        self.assertTrue(any('centrepiece' in f.message for f in fs))
+
+    def test_lone_bench_trips(self):
+        from scripts.review import composition as CP
+        fs = CP.check([self.square(bench2=False)])
+        self.assertTrue(any('twin' in f.message for f in fs))
+
+    def test_uneven_margins_trip(self):
+        from scripts.review import composition as CP
+        fs = CP.check([self.square(x1=432)])
+        self.assertTrue(any('margins' in f.message or 'centrepiece' in f.message for f in fs))
+
+
+class Tiers(unittest.TestCase):
+    """logic.tiers (Matt, 26 Oct 19:42: "make sure the logic is correct")."""
+
+    def plan(self, face=48, y_top=120, y_foot=168, x0=120, x1=192, below=0):
+        return dict(density=3, cell=8, tiers=[dict(id='plateau', level=16, below=below, face_px=face,
+                                                   rects=[[0, 0, 160, 40], [104, 40, 40, 16]])],
+                    stairs=[dict(tier='plateau', x0=x0, x1=x1, y_top=y_top, y_foot=y_foot)])
+
+    def test_consistent_plan_passes(self):
+        from scripts.review import tiers as TI
+        self.assertEqual(TI.check(self.plan()), [])
+
+    def test_face_of_another_height_trips(self):
+        from scripts.review import tiers as TI
+        self.assertTrue(TI.check(self.plan(face=36)))
+
+    def test_stair_head_off_the_rim_trips(self):
+        from scripts.review import tiers as TI
+        self.assertTrue(any('head' in f.message for f in TI.check(self.plan(y_top=100, y_foot=148))))
+
+    def test_stair_across_a_turn_trips(self):
+        from scripts.review import tiers as TI
+        self.assertTrue(any('straddles' in f.message for f in TI.check(self.plan(x0=288, x1=336))))
+
+
+class GroundRules(unittest.TestCase):
+    """docs/vision/ground-rules.md: each rule has a plan that passes and one that trips it."""
+
+    def plan(self):
+        return {
+            'screen': {'w': 320, 'h': 320},
+            'stands': {'glade': [160, 40]},
+            'places': {'bridge': {'x0': 152, 'w': 16, 'y0': 184, 'y1': 216}},
+            'paths': [{'points': [[160, 320], [160, 40]], 'radius': 8}],
+            'water': {'fall': {'x0': 72, 'w': 16, 'y0': 96, 'y1': 136, 'face': [60, 96, 100, 132]},
+                      'soft': {'river': {'points': [[80, 200], [336, 200]], 'cells': 3},
+                               'pool': [[56, 128, 48, 80]],
+                               'rill': {'points': [[80, -8], [80, 96]], 'cells_plan': 2}}},
+            'rock': {'heap': [{'at': [50, 120], 'size': [16, 12]}, {'at': [110, 120], 'size': [16, 12]}]},
+            'objects': [['bench', 'forest_bench', 112, 157, 32, 11]],
+            'dressing': {'ferns': [[200, 100, 1, 1.0]]},
+        }
+
+    def names(self, p):
+        from scripts.review import ground_rules as GR
+        return {f['check'] for f in GR.check_plan(p)}
+
+    def test_good_plan_passes(self):
+        self.assertEqual(self.names(self.plan()), set())
+
+    def test_fall_off_centre_and_not_flush(self):
+        p = self.plan()
+        p['water']['fall']['x0'] = 76
+        p['water']['soft']['rill']['points'][-1] = [80, 104]
+        self.assertIn('rules.water_fall', self.names(p))
+
+    def test_dead_end_water(self):
+        p = self.plan()
+        p['water']['soft']['river']['points'] = [[80, 200], [240, 200]]
+        self.assertIn('rules.water_end', self.names(p))
+
+    def test_slanting_path_and_stair_steps(self):
+        p = self.plan()
+        p['paths'][0]['points'] = [[160, 320], [160, 240], [168, 240], [168, 40]]
+        self.assertIn('rules.route_grid', self.names(p))
+        p['paths'][0]['points'] = [[160, 320], [176, 40]]
+        self.assertIn('rules.route_grid', self.names(p))
+
+    def test_path_under_water_off_the_bridge(self):
+        p = self.plan()
+        p['places']['bridge']['x0'] = 200
+        self.assertIn('rules.ground_water', self.names(p))
+
+    def test_bench_on_the_path(self):
+        p = self.plan()
+        p['objects'][0] = ['bench', 'forest_bench', 144, 157, 32, 11]
+        n = self.names(p)
+        self.assertIn('rules.route_clear', n)
+        self.assertIn('rules.seating', n)
+
+    def test_rocks_overlapping(self):
+        p = self.plan()
+        p['rock']['heap'][1]['at'] = [58, 124]
+        self.assertIn('rules.rock_overlap', self.names(p))
+        p['rock']['heap'][1]['stacked'] = True
+        self.assertNotIn('rules.rock_overlap', self.names(p))
+
+    def test_route_to_nowhere_and_clutter_on_route(self):
+        p = self.plan()
+        p['paths'].append({'points': [[160, 240], [240, 240]], 'radius': 8})
+        p['dressing']['ferns'].append([160, 260, 2, 1.0])
+        n = self.names(p)
+        self.assertIn('rules.route_ends', n)
+        self.assertIn('rules.clutter', n)
