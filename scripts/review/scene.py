@@ -414,7 +414,7 @@ def _kit_sprite(e: dict, index: dict, pieces: dict) -> Sprite:
                   visible, e['draw_order'])
 
 
-def _walk_nodes(tscn: dict, prefix: str, offset=(0.0, 0.0), ysort_parent=False, hidden=False, out=None):
+def _walk_nodes(tscn: dict, prefix: str, offset=(0.0, 0.0), ysort_parent=False, hidden=False, out=None, stack=()):
     """Global positions for every node, following instanced scenes."""
     out = [] if out is None else out
     pos = {'.': offset}
@@ -434,8 +434,11 @@ def _walk_nodes(tscn: dict, prefix: str, offset=(0.0, 0.0), ysort_parent=False, 
         full = prefix + ('' if key == '.' else key)
         inst = n.get('instance')
         if inst and inst[0] == 'ExtResource':
-            sub = parse_tscn(res_path(tscn['ext'][inst[1]]['path']))
-            _walk_nodes(sub, full + '/', g, ys.get(pkey, False), not vis[key], out)
+            path = res_path(tscn['ext'][inst[1]]['path'])
+            if path in stack:
+                raise ValueError('cyclic scene instance at ' + full)
+            sub = parse_tscn(path)
+            _walk_nodes(sub, full + '/', g, ys.get(pkey, False), not vis[key], out, stack + (path,))
         out.append(dict(node=n, key=full, pos=g, parent_ysort=ys.get(pkey, False), visible=vis[key], ext=tscn['ext']))
     return out
 
@@ -446,7 +449,7 @@ def load_zone(zone_id: str, stage: str | None = None) -> Zone:
         path = res_path(zones[zone_id])
         tscn = parse_tscn(path)
         nodes = _walk_nodes(tscn, '')
-    except (ValueError, KeyError, TypeError, OSError, IndexError) as err:
+    except (ValueError, KeyError, TypeError, OSError, IndexError, RecursionError) as err:
         raise SceneIntakeError(zone_id, str(err)) from err
     z = Zone(zone_id, (0, 0), None)
     kit = any(e['node']['props'].get('script', (None,))[0] == 'ExtResource' and

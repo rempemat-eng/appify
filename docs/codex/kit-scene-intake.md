@@ -49,7 +49,7 @@ assumed to match.
 The baked producer writes opaque RGB. Other image modes fail closed rather than losing
 their alpha. The ground must sort below every visible source sprite; a changed layer that
 would put it above a sprite is unsupported by this ground-first adapter. Missing scene
-instances and registry/parse errors also become explicit intake failures, including errors
+instances, cyclic instance graphs and registry/parse errors also become explicit intake failures, including errors
 in the runner's initial registry read before it can select a zone.
 
 Kit sprites retain scene order when z and sort Y tie. Legacy sprites retain their existing
@@ -108,6 +108,8 @@ Each 1920 × 1080 capture is sampled at every second pixel to recover the game's
 960 × 540 native viewport. The matching source crop has the following world origin.
 Whole-viewport numbers include HUD and dynamic characters, which the static source
 picture intentionally excludes.
+The crop origins were matched against the existing images. They are not new runtime
+camera telemetry; the camera's dynamic look-ahead cannot be inferred from spawn alone.
 
 | Capture | Crop origin | Whole viewport matching pixels / 518,400 | Match | Static pixels compared | Static mismatches |
 | --- | --- | --- | --- | --- | --- |

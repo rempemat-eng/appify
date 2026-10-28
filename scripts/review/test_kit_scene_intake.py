@@ -343,6 +343,22 @@ flip_h = true
         (self.game / 'data/zones.json').write_text('{invalid')
         self.fails('incomplete scene intake')
 
+    def test_cyclic_instance_is_incomplete_with_no_picture(self):
+        (self.game / 'kit/props/test_piece.tscn').write_text('''[gd_scene format=3]
+[ext_resource type="PackedScene" path="res://kit/props/test_piece.tscn" id="self"]
+[node name="Cycle" instance=ExtResource("self")]
+''')
+        self.fails('cyclic scene instance')
+        out = self.root / 'cyclic-report'
+        with mock.patch.object(run, 'REPO', str(self.root)), contextlib.redirect_stderr(io.StringIO()):
+            code = run.main(['example', '--no-render', '--out', str(out)])
+        report = json.loads((out / 'report.json').read_text())
+        self.assertEqual(code, 1)
+        self.assertFalse(report['complete'])
+        self.assertIn('cyclic scene instance', report['scene']['error'])
+        self.assertEqual(report['pictures'], [])
+        self.assertEqual(list(out.glob('*.png')), [])
+
     def test_equal_y_kit_overlap_retains_scene_order_without_changing_legacy_tie(self):
         # The right-hand piece is authored first, then the left-hand one. X sorting
         # would reverse the intended last draw at their shared overlap pixel.
