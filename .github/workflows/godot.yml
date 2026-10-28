@@ -28,7 +28,16 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Test the download cache and integrity failures
+        run: python3 -m unittest discover -s game/tools -p test_get_godot.py -v
+      - name: Cache the pinned Godot archive
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: ${{ runner.temp }}/godot-archives
+          key: godot-archive-v1-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('game/tools/get_godot.sh') }}
       - name: Get the pinned Godot 4.7.2 (checked against its SHA-512)
-        run: echo "GODOT=$(bash game/tools/get_godot.sh "$RUNNER_TEMP/godot")" >> "$GITHUB_ENV"
+        run: |
+          GODOT=$(bash game/tools/get_godot.sh "$RUNNER_TEMP/godot" "$RUNNER_TEMP/godot-archives")
+          echo "GODOT=$GODOT" >> "$GITHUB_ENV"
       - name: Import, run the main scene, run the GdUnit4 tests
         run: bash game/tools/check.sh
