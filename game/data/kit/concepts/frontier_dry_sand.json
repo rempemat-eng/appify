@@ -1,0 +1,99 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "frontier_dry_sand",
+  "name": "Dry sand and travelled desert ground",
+  "kind": "terrain",
+  "biomes": [
+    "sunstone",
+    "sunstone_basin"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "open",
+      "note": "Sparse wind-shaped ripple groups, no cell texture period."
+    },
+    {
+      "id": "trodden",
+      "note": "Compacted corridor; ruts are oriented decals, not stripes in the repeating fill."
+    },
+    {
+      "id": "gravelly",
+      "note": "Sparse pebble clusters where the Amber leaves the mountains."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 design proposal for Claude review; no art, material ID, painter or live placement approval."
+  },
+  "geometry": {
+    "size_cells": [
+      1,
+      1
+    ],
+    "z_sort": "ground"
+  },
+  "placement": {
+    "role": "ground",
+    "ground": {
+      "allow": [
+        "sand",
+        "earth"
+      ],
+      "deny": [
+        "water",
+        "lava"
+      ]
+    },
+    "requires": [],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "water"
+      },
+      {
+        "rel": "on",
+        "what": "structure_footprint"
+      }
+    ],
+    "clearance": 0,
+    "orientations": [
+      "any"
+    ],
+    "snap": "cell",
+    "stages": [],
+    "composition": "free"
+  },
+  "rendering": {
+    "cast_shadow": {
+      "shape": "none"
+    },
+    "contact_ao": false
+  },
+  "function": {
+    "interact": null
+  },
+  "story": {
+    "owner": null,
+    "quests": [],
+    "lore": "Cover the basin between scrub, the Canyon Road and settlements without a separate zone painting."
+  },
+  "gameplay": {},
+  "audit": {
+    "size_class": null,
+    "eastward_ref": "eastward-edges.md: shot 39 sand outline; size-guide.md density-3 ground grain",
+    "todo": [
+      "Scope: shared",
+      "Priority: P2",
+      "Purpose: Cover the basin between scrub, the Canyon Road and settlements without a separate zone painting.",
+      "Visual brief: Warm calm sand with broad sibling-tone drifts; route wear is flatter and darker, with quiet ripples away from feet. Sand is a shallow surface, not a stack of cubes.",
+      "Widths and size: 24 art px per logical cell; 2/3-cell footpath/lane and 4+ cell road classes (48/72/96+ art px), with explicit tapers.",
+      "Source: docs/vision/regions/sunstone-basin-fire-country.md §§2,4,5",
+      "Implement after review: choose authored anchors, exact collision and approved variant art; these cell envelopes are layout proposals, not measured sprite bounds.",
+      "Review desert river gravel as a context variant before adding a second material; moisture belongs to a wet-margin pair.",
+      "Implement after review: the schema owner supplies the runtime material/pair block and stable ID only after the design is accepted; no executable painter is asserted here.",
+      "Sizing basis: material/edge extent is specified in 24-art-px logical cells; no opaque-object scale class is assigned. Review grain, width class and derived face height instead.",
+      "Lighting: Upper left; material-specific ramps and directional planes; no mirror-only relighting."
+    ]
+  }
+}

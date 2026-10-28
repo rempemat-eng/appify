@@ -1,5 +1,7 @@
 # Working on NapAttack
 
+> **Codex runs the whole project for now (Matt, 28 Oct 17:24), until Matt says to switch back to Claude.** The Codex lead takes over every Claude lane's role, Claude A's included: coordination, integration and merging, art and map work, and the docs. Wherever this file or the docs say Claude A or a Claude lane does something, the Codex lead does it, or assigns it to a Codex chat. Art and map changes merge after Matt's OK. See docs/codex/handover.md.
+
 The source of truth is `rempemat-eng/appify` on GitHub. The Bilt editor and its preview are outdated. Real multiplayer is a later phase; finish the existing art, motion, HUD and local interactions before adding more content or mechanics.
 
 ## Read the vision first

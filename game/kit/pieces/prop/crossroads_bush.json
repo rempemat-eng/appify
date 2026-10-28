@@ -6,77 +6,70 @@
  "biomes": [
   "village"
  ],
- "version": 1,
+ "version": 2,
  "variants": [
-  {
-   "id": "bush_14",
-   "weight": 1.0,
-   "png": "res://zones/crossroads/art/bush_14.png"
-  },
-  {
-   "id": "bush_15",
-   "weight": 1.0,
-   "png": "res://zones/crossroads/art/bush_15.png"
-  },
-  {
-   "id": "bush_16",
-   "weight": 1.0,
-   "png": "res://zones/crossroads/art/bush_16.png"
-  },
-  {
-   "id": "bush_17",
-   "weight": 1.0,
-   "png": "res://zones/crossroads/art/bush_17.png"
-  },
-  {
-   "id": "bush_18",
-   "weight": 1.0,
-   "png": "res://zones/crossroads/art/bush_18.png"
-  },
-  {
-   "id": "bush_22",
-   "weight": 1.0,
-   "png": "res://zones/crossroads/art/bush_22.png"
-  },
-  {
-   "id": "bush_23",
-   "weight": 1.0,
-   "png": "res://zones/crossroads/art/bush_23.png"
-  },
   {
    "id": "bush_47",
    "weight": 1.0,
-   "png": "res://zones/crossroads/art/bush_47.png"
+   "png": "res://zones/crossroads/art/bush_47.png",
+   "foot": [
+    57,
+    73
+   ]
   },
   {
    "id": "bush_48",
    "weight": 1.0,
-   "png": "res://zones/crossroads/art/bush_48.png"
+   "png": "res://zones/crossroads/art/bush_48.png",
+   "foot": [
+    57,
+    73
+   ]
   },
   {
    "id": "bush_49",
    "weight": 1.0,
-   "png": "res://zones/crossroads/art/bush_49.png"
+   "png": "res://zones/crossroads/art/bush_49.png",
+   "foot": [
+    57,
+    73
+   ]
   },
   {
    "id": "bush_50",
    "weight": 1.0,
-   "png": "res://zones/crossroads/art/bush_50.png"
+   "png": "res://zones/crossroads/art/bush_50.png",
+   "foot": [
+    57,
+    73
+   ]
   },
   {
    "id": "bush_51",
    "weight": 1.0,
-   "png": "res://zones/crossroads/art/bush_51.png"
+   "png": "res://zones/crossroads/art/bush_51.png",
+   "foot": [
+    57,
+    73
+   ]
   },
   {
    "id": "bush_7",
    "weight": 1.0,
-   "png": "res://zones/crossroads/art/bush_7.png"
+   "png": "res://zones/crossroads/art/bush_7.png",
+   "foot": [
+    57,
+    73
+   ]
   },
   {
    "id": "bush_8",
    "weight": 1.0,
-   "png": "res://zones/crossroads/art/bush_8.png"
+   "png": "res://zones/crossroads/art/bush_8.png",
+   "foot": [
+    57,
+    73
+   ]
   }
  ],
  "approval": {
@@ -84,7 +77,7 @@
   "by": null,
   "at": null,
   "standard": null,
-  "note": "seeded from game/zones/crossroads (art/catalogue holds its asset-gate record)"
+  "note": "Source metadata only; seeded designs still require the library gate and Matt approval."
  },
  "geometry": {
   "size_px": [
@@ -96,19 +89,19 @@
    4
   ],
   "z_sort": "foot",
-  "foot": [
-   57.0,
-   73.0
-  ],
   "collision": {
-   "shape": "rect",
    "rect": [
     -8.0,
     -5.0,
-    16.0,
-    6.0
-   ]
+    16,
+    6
+   ],
+   "shape": "rect"
   },
+  "foot": [
+   57,
+   73
+  ],
   "footprint": [
    [
     -1,
@@ -117,6 +110,14 @@
    [
     0,
     -1
+   ],
+   [
+    -1,
+    0
+   ],
+   [
+    0,
+    0
    ]
   ]
  },
@@ -135,15 +136,61 @@
  },
  "gameplay": {
   "blocks_move": true,
-  "blocks_shots": false
+  "blocks_shots": true
  },
  "audit": {
   "size_class": null,
   "eastward_ref": null,
   "seeded_from": "game/zones/crossroads/kit.json",
+  "sources": [
+   {
+    "zone": "crossroads",
+    "object": "bush_47",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "crossroads",
+    "object": "bush_48",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "crossroads",
+    "object": "bush_49",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "crossroads",
+    "object": "bush_50",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "crossroads",
+    "object": "bush_51",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "crossroads",
+    "object": "bush_7",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "crossroads",
+    "object": "bush_8",
+    "part": "body",
+    "condition": null
+   }
+  ],
   "todo": [
-   "placement.role, requires and forbids (ground-rules.md 6)",
-   "composition role and clearance"
+   "composition role and clearance",
+   "footprint is conservative positive-area coverage at a cell-aligned foot; W4 must derive exact runtime blocking from collision at the placed foot",
+   "placement.role, requires and forbids (Claude design decision; ground-rules.md 6)",
+   "review size-guide class and Eastward comparison before the library gate"
   ]
  }
 }

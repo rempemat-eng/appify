@@ -6,37 +6,61 @@
  "biomes": [
   "village"
  ],
- "version": 1,
+ "version": 2,
  "variants": [
   {
    "id": "fence_0",
    "weight": 1.0,
-   "png": "res://zones/crossroads/art/fence_0.png"
+   "png": "res://zones/crossroads/art/fence_0.png",
+   "foot": [
+    78,
+    59
+   ]
   },
   {
    "id": "fence_1",
    "weight": 1.0,
-   "png": "res://zones/crossroads/art/fence_1.png"
+   "png": "res://zones/crossroads/art/fence_1.png",
+   "foot": [
+    78,
+    59
+   ]
   },
   {
    "id": "fence_2",
    "weight": 1.0,
-   "png": "res://zones/crossroads/art/fence_2.png"
+   "png": "res://zones/crossroads/art/fence_2.png",
+   "foot": [
+    78,
+    59
+   ]
   },
   {
    "id": "fence_3",
    "weight": 1.0,
-   "png": "res://zones/crossroads/art/fence_3.png"
+   "png": "res://zones/crossroads/art/fence_3.png",
+   "foot": [
+    78,
+    59
+   ]
   },
   {
    "id": "fence_4",
    "weight": 1.0,
-   "png": "res://zones/crossroads/art/fence_4.png"
+   "png": "res://zones/crossroads/art/fence_4.png",
+   "foot": [
+    78,
+    59
+   ]
   },
   {
    "id": "fence_5",
    "weight": 1.0,
-   "png": "res://zones/crossroads/art/fence_5.png"
+   "png": "res://zones/crossroads/art/fence_5.png",
+   "foot": [
+    78,
+    59
+   ]
   }
  ],
  "approval": {
@@ -44,7 +68,7 @@
   "by": null,
   "at": null,
   "standard": null,
-  "note": "seeded from game/zones/crossroads (art/catalogue holds its asset-gate record)"
+  "note": "Source metadata only; seeded designs still require the library gate and Matt approval."
  },
  "geometry": {
   "size_px": [
@@ -52,17 +76,18 @@
    63
   ],
   "size_cells": [
-   6,
+   7,
    3
   ],
   "z_sort": "foot",
-  "foot": [
-   78.0,
-   59.0
-  ],
   "collision": {
    "shape": "none"
-  }
+  },
+  "foot": [
+   78,
+   59
+  ],
+  "footprint": []
  },
  "placement": {
   "snap": "cell"
@@ -85,9 +110,48 @@
   "size_class": null,
   "eastward_ref": null,
   "seeded_from": "game/zones/crossroads/kit.json",
+  "sources": [
+   {
+    "zone": "crossroads",
+    "object": "fence_0",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "crossroads",
+    "object": "fence_1",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "crossroads",
+    "object": "fence_2",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "crossroads",
+    "object": "fence_3",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "crossroads",
+    "object": "fence_4",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "crossroads",
+    "object": "fence_5",
+    "part": "body",
+    "condition": null
+   }
+  ],
   "todo": [
-   "placement.role, requires and forbids (ground-rules.md 6)",
-   "composition role and clearance"
+   "composition role and clearance",
+   "placement.role, requires and forbids (Claude design decision; ground-rules.md 6)",
+   "review size-guide class and Eastward comparison before the library gate"
   ]
  }
 }

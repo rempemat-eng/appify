@@ -6,12 +6,16 @@
  "biomes": [
   "village"
  ],
- "version": 1,
+ "version": 2,
  "variants": [
   {
    "id": "well",
    "weight": 1.0,
-   "png": "res://zones/crossroads/art/well.png"
+   "png": "res://zones/crossroads/art/well.png",
+   "foot": [
+    57,
+    170
+   ]
   }
  ],
  "approval": {
@@ -19,7 +23,7 @@
   "by": null,
   "at": null,
   "standard": null,
-  "note": "seeded from game/zones/crossroads (art/catalogue holds its asset-gate record)"
+  "note": "Source metadata only; seeded designs still require the library gate and Matt approval."
  },
  "geometry": {
   "size_px": [
@@ -28,23 +32,27 @@
   ],
   "size_cells": [
    5,
-   7
+   8
   ],
   "z_sort": "foot",
-  "foot": [
-   57.0,
-   170.0
-  ],
   "collision": {
-   "shape": "rect",
    "rect": [
     -10.0,
     -16.0,
-    20.0,
-    16.0
-   ]
+    20,
+    16
+   ],
+   "shape": "rect"
   },
+  "foot": [
+   57,
+   170
+  ],
   "footprint": [
+   [
+    -2,
+    -2
+   ],
    [
     -1,
     -2
@@ -52,6 +60,14 @@
    [
     0,
     -2
+   ],
+   [
+    1,
+    -2
+   ],
+   [
+    -2,
+    -1
    ],
    [
     -1,
@@ -59,6 +75,10 @@
    ],
    [
     0,
+    -1
+   ],
+   [
+    1,
     -1
    ]
   ]
@@ -89,19 +109,50 @@
   }
  },
  "story": {
-  "owner": null
+  "owner": null,
+  "gating": {
+   "if": {
+    "flags": [
+     "shard_home:woodland"
+    ]
+   }
+  }
  },
  "gameplay": {
   "blocks_move": true,
-  "blocks_shots": false
+  "blocks_shots": true
  },
  "audit": {
   "size_class": null,
   "eastward_ref": null,
   "seeded_from": "game/zones/crossroads/kit.json",
+  "sources": [
+   {
+    "zone": "crossroads",
+    "object": "well",
+    "part": "body",
+    "condition": {
+     "flags": [
+      "shard_home:woodland"
+     ]
+    }
+   },
+   {
+    "zone": "crossroads",
+    "object": "well_shadow",
+    "part": "shadow",
+    "condition": {
+     "flags": [
+      "shard_home:woodland"
+     ]
+    }
+   }
+  ],
   "todo": [
    "composition role and clearance",
-   "function.interact.triggers (what using it does)"
+   "footprint is conservative positive-area coverage at a cell-aligned foot; W4 must derive exact runtime blocking from collision at the placed foot",
+   "retain shadow well_shadow from source scene with its own condition and offset; not a standalone random variant",
+   "review size-guide class and Eastward comparison before the library gate"
   ]
  }
 }

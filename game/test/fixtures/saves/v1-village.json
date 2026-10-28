@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "zone": "crossroads",
+  "spawn": "west",
+  "glint": 70,
+  "flags": {
+    "met_tam": true
+  },
+  "quests": {
+    "woodland_stones": {
+      "state": "done",
+      "step": 3
+    },
+    "retired_quest": {
+      "state": "done",
+      "step": 9,
+      "note": "retain"
+    }
+  },
+  "player": {
+    "hp": 3,
+    "max_hp": 5,
+    "extension": {
+      "name": "retained"
+    }
+  },
+  "village": {
+    "restored": {
+      "forge": 1
+    },
+    "extension": true
+  },
+  "settings": {
+    "reduced_motion": false,
+    "pixel_scale": "whole",
+    "future_setting": "retain"
+  },
+  "extension": {
+    "nested": [
+      1,
+      2,
+      {
+        "keep": true
+      }
+    ]
+  }
+}

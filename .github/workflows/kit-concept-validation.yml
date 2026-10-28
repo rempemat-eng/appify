@@ -1,0 +1,56 @@
+name: Kit concept validation
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - 'scripts/art/kit/**'
+      - 'game/kit/**'
+      - 'game/data/kit/concepts/**'
+      - '.github/workflows/kit-concept-validation.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/art/kit/**'
+      - 'game/kit/**'
+      - 'game/data/kit/concepts/**'
+      - '.github/workflows/kit-concept-validation.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  concepts:
+    if: github.event_name != 'pull_request' || !github.event.pull_request.draft
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.12'
+      - name: Install pinned validation dependencies
+        run: >-
+          python -m pip install
+          'Pillow==12.3.0' 'numpy==2.5.3' 'scipy==1.18.1'
+          'jsonschema==4.26.0' 'jsonschema-specifications==2025.9.1'
+          'referencing==0.37.0' 'rpds-py==2026.9.1'
+          'attrs==26.1.0' 'typing-extensions==4.16.0'
+      - name: Require the independent oracle before optional test imports
+        run: python -c 'from jsonschema import Draft202012Validator; print(Draft202012Validator.__name__)'
+      - name: Validate actual concepts and malformed-input controls
+        run: python -m unittest scripts.art.kit.test_concept_schema -v
+      - name: Verify existing independent schema and source-binding parity
+        run: >-
+          python -m unittest
+          scripts.art.kit.test_kit.Schema.test_agrees_with_jsonschema
+          scripts.art.kit.test_kit.SchemaMigrationTooling.test_source_bindings_are_closed_and_match_jsonschema
+          -v

@@ -1,0 +1,14 @@
+{
+  "zone": "woodland",
+  "spawn": "stones",
+  "glint": 7,
+  "flags": {
+    "a": true
+  },
+  "quests": {
+    "woodland_stones": {
+      "state": "active",
+      "step": 1
+    }
+  }
+}

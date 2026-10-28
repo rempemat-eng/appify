@@ -1,0 +1,96 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "nature_field_dressing",
+  "name": "Field and orchard edge dressing",
+  "kind": "decal",
+  "biomes": [
+    "valley",
+    "crossroads"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "straw_margin",
+      "note": "Loose straw fans grouped along the cut field margin, with a few stalk ends pointing along the harvested rows."
+    },
+    {
+      "id": "furrow_crumbs",
+      "note": "Broad crumbs and clods beside a furrow, shaded at their seat and aligned to the cultivation direction."
+    },
+    {
+      "id": "orchard_windfall",
+      "note": "Clusters of orchard leaves and a few dull windfall shapes under the canopy margin, without pickup glints or a scattered-item carpet."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 catalogue proposal for Claude review; not drawable approval, not placeable."
+  },
+  "geometry": {
+    "z_sort": "ground"
+  },
+  "placement": {
+    "role": "clutter",
+    "ground": {
+      "allow": [
+        "earth",
+        "turf"
+      ],
+      "deny": []
+    },
+    "requires": [
+      {
+        "rel": "at_edge",
+        "what": "field_or_orchard_edge",
+        "note": "Proposed selector/relation for review; its exact matching contract must be added to W5 before promotion.",
+        "cells": 0
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "route_centre"
+      },
+      {
+        "rel": "on",
+        "what": "water"
+      },
+      {
+        "rel": "on",
+        "what": "door_apron"
+      }
+    ],
+    "clearance": 0,
+    "orientations": [
+      "n",
+      "s",
+      "e",
+      "w"
+    ],
+    "snap": "free",
+    "composition": "row",
+    "stages": []
+  },
+  "rendering": {
+    "contact_ao": false
+  },
+  "function": {},
+  "story": {
+    "lore": "Tell working farms from wild meadow using margins and traces rather than adding new work mechanics."
+  },
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared. Reusable across the listed places; preserve site-specific assembly and state.",
+      "Priority: P1.",
+      "Purpose: Tell working farms from wild meadow using margins and traces rather than adding new work mechanics.",
+      "Visual brief: Short straw fans, broken furrow clods, windfall leaves and a few cut stalks; compress detail into edge clusters while leaving the row direction obvious and keeping the access aisle quiet.",
+      "Source: docs/vision/regions/valley-plan.md; docs/vision/regions/home-valley-frostline-brackens.md",
+      "Geometry: proposed visual envelope only; Claude supplies exact foot, solid footprint, overhang, interaction anchors and any deck after review.",
+      "Implementation: concept only, outside the live piece library. Do not place, bake or grant gameplay until reviewed and approved.",
+      "Crop and fruit states follow existing authored outings/stages only; decorations have no yield and never create an extra daily task.",
+      "Lighting: upper-left key light; shade each material and facing for that light. The lit-picture reference is deferred until art exists."
+    ]
+  }
+}

@@ -6,12 +6,16 @@
  "biomes": [
   "woodland"
  ],
- "version": 1,
+ "version": 2,
  "variants": [
   {
    "id": "stone_top",
    "weight": 1.0,
-   "png": "res://zones/woodland/art/stone_top.png"
+   "png": "res://zones/woodland/art/stone_top.png",
+   "foot": [
+    24.0,
+    33.0
+   ]
   }
  ],
  "approval": {
@@ -19,7 +23,7 @@
   "by": null,
   "at": null,
   "standard": null,
-  "note": "seeded from game/zones/woodland (art/catalogue holds its asset-gate record)"
+  "note": "Source metadata only; seeded designs still require the library gate and Matt approval."
  },
  "geometry": {
   "size_px": [
@@ -28,16 +32,15 @@
   ],
   "size_cells": [
    2,
-   1
+   2
   ],
   "z_sort": "foot",
+  "collision": null,
   "foot": [
    24.0,
    33.0
   ],
-  "collision": {
-   "shape": "none"
-  }
+  "footprint": []
  },
  "placement": {
   "snap": "cell"
@@ -60,18 +63,24 @@
  "story": {
   "owner": null
  },
- "gameplay": {
-  "blocks_move": false,
-  "blocks_shots": false
- },
+ "gameplay": {},
  "audit": {
   "size_class": null,
   "eastward_ref": null,
   "seeded_from": "game/zones/woodland/kit.json",
+  "sources": [
+   {
+    "zone": "woodland",
+    "object": "stone-top",
+    "part": "body",
+    "condition": null
+   }
+  ],
   "todo": [
-   "placement.role, requires and forbids (ground-rules.md 6)",
    "composition role and clearance",
-   "collision and shadow are first guesses by kind (scripts/art/kit/seed_props.py _woodland_body)"
+   "object-local collision is unknown: woodland scene has only a merged terrain walk mask; Claude must author a solid box (no guessed tree/body collision)",
+   "placement.role, requires and forbids (Claude design decision; ground-rules.md 6)",
+   "review size-guide class and Eastward comparison before the library gate"
   ]
  }
 }

@@ -1,0 +1,6631 @@
+{
+  "version": 1,
+  "provenance": "Engineering fixtures for documented/schema placement rules; Claude-authored first30 cases and art approval remain pending. Negative relations express constraints in either list; this is a proposed compatibility interpretation. Expected results were authored independently of the engine.",
+  "cases": [
+    {
+      "id": "bench_beside_path",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".#...",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ],
+            "facing": "s"
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "seat",
+            "snap": "cell",
+            "requires": [
+              {
+                "rel": "adjacent",
+                "what": "route_edge",
+                "cells": 2,
+                "facing": true
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": []
+    },
+    {
+      "id": "bench_on_path_refused",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".#...",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ],
+            "facing": "s"
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "seat",
+            "snap": "cell",
+            "forbids": [
+              {
+                "rel": "on",
+                "what": "route"
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.seating",
+          "message": "test: forbids on route",
+          "at": [
+            1.5,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bench_too_far_from_path",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....#"
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ],
+            "facing": "s"
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "seat",
+            "snap": "cell",
+            "requires": [
+              {
+                "rel": "adjacent",
+                "what": "route_edge",
+                "cells": 2,
+                "facing": true
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.seating",
+          "message": "test: requires adjacent route_edge",
+          "at": [
+            1.5,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bench_faces_away_from_path",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".#...",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ],
+            "facing": "n"
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "seat",
+            "snap": "cell",
+            "requires": [
+              {
+                "rel": "adjacent",
+                "what": "route_edge",
+                "cells": 2,
+                "facing": true
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.seating",
+          "message": "test: requires adjacent route_edge",
+          "at": [
+            1.5,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bench_facing_east_path",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          "..#..",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ],
+            "facing": "E"
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "seat",
+            "snap": "cell",
+            "requires": [
+              {
+                "rel": "adjacent",
+                "what": "route_edge",
+                "cells": 2,
+                "facing": true
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": []
+    },
+    {
+      "id": "lamp_at_route_edge",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          "..#..",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ],
+            "facing": "s"
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "light",
+            "snap": "cell",
+            "requires": [
+              {
+                "rel": "at_edge",
+                "what": "route"
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": []
+    },
+    {
+      "id": "lamp_not_at_route_edge",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....#"
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ],
+            "facing": "s"
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "light",
+            "snap": "cell",
+            "requires": [
+              {
+                "rel": "at_edge",
+                "what": "route"
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.requires",
+          "message": "test: requires at_edge route",
+          "at": [
+            1.5,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lamp_at_route_corner",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".#...",
+          "..#..",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ],
+            "facing": "s"
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "light",
+            "snap": "cell",
+            "requires": [
+              {
+                "rel": "at_corner",
+                "what": "route"
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": []
+    },
+    {
+      "id": "lamp_not_at_route_corner",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          "..#..",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ],
+            "facing": "s"
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "light",
+            "snap": "cell",
+            "requires": [
+              {
+                "rel": "at_corner",
+                "what": "route"
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.requires",
+          "message": "test: requires at_corner route",
+          "at": [
+            1.5,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fire_on_hearth",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ]
+          }
+        ],
+        "anchors": [
+          {
+            "id": "h1",
+            "kind": "hearth",
+            "at": [
+              1.5,
+              2
+            ]
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "fire",
+            "snap": "cell",
+            "requires": [
+              {
+                "rel": "on_anchor",
+                "what": "hearth"
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": []
+    },
+    {
+      "id": "fire_off_hearth",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ]
+          }
+        ],
+        "anchors": [
+          {
+            "id": "h1",
+            "kind": "hearth",
+            "at": [
+              3.5,
+              2
+            ]
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "fire",
+            "snap": "cell",
+            "requires": [
+              {
+                "rel": "on_anchor",
+                "what": "hearth"
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.requires",
+          "message": "test: requires on_anchor hearth",
+          "at": [
+            1.5,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "on_material_path",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".#...",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ],
+            "facing": "s"
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "clutter",
+            "snap": "cell",
+            "requires": [
+              {
+                "rel": "on",
+                "what": "path"
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": []
+    },
+    {
+      "id": "not_on_material_path",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ],
+            "facing": "s"
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "clutter",
+            "snap": "cell",
+            "requires": [
+              {
+                "rel": "on",
+                "what": "path"
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.requires",
+          "message": "test: requires on path",
+          "at": [
+            1.5,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "within_two_cells_inclusive",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          "...#.",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ],
+            "facing": "s"
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "clutter",
+            "snap": "cell",
+            "requires": [
+              {
+                "rel": "within",
+                "what": "path",
+                "cells": 2
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": []
+    },
+    {
+      "id": "beyond_two_cells",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          "....#",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ],
+            "facing": "s"
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "clutter",
+            "snap": "cell",
+            "requires": [
+              {
+                "rel": "within",
+                "what": "path",
+                "cells": 2
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.requires",
+          "message": "test: requires within path",
+          "at": [
+            1.5,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "near_can_include_same_cell",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".#...",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ],
+            "facing": "s"
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "clutter",
+            "snap": "cell",
+            "requires": [
+              {
+                "rel": "near",
+                "what": "path",
+                "cells": 0
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": []
+    },
+    {
+      "id": "facing_south_target",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".#...",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ],
+            "facing": "s"
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "clutter",
+            "snap": "cell",
+            "requires": [
+              {
+                "rel": "facing",
+                "what": "path"
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": []
+    },
+    {
+      "id": "facing_north_misses_target",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".#...",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ],
+            "facing": "n"
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "clutter",
+            "snap": "cell",
+            "requires": [
+              {
+                "rel": "facing",
+                "what": "path"
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.requires",
+          "message": "test: requires facing path",
+          "at": [
+            1.5,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "under_tree_canopy",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              3
+            ]
+          },
+          {
+            "id": "oak",
+            "piece": "tree",
+            "at": [
+              3.5,
+              4
+            ]
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "clutter",
+            "snap": "cell",
+            "requires": [
+              {
+                "rel": "under",
+                "what": "tree"
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        },
+        "tree": {
+          "id": "tree",
+          "placement": {
+            "role": "tree",
+            "snap": "cell"
+          },
+          "geometry": {
+            "footprint": [],
+            "overhang": [
+              [
+                -2,
+                -2
+              ]
+            ]
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": []
+    },
+    {
+      "id": "outside_tree_canopy",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ]
+          },
+          {
+            "id": "oak",
+            "piece": "tree",
+            "at": [
+              3.5,
+              4
+            ]
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "clutter",
+            "snap": "cell",
+            "requires": [
+              {
+                "rel": "under",
+                "what": "tree"
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        },
+        "tree": {
+          "id": "tree",
+          "placement": {
+            "role": "tree",
+            "snap": "cell"
+          },
+          "geometry": {
+            "footprint": [],
+            "overhang": [
+              [
+                -2,
+                -2
+              ]
+            ]
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.requires",
+          "message": "test: requires under tree",
+          "at": [
+            1.5,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "not_on_water_succeeds",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ],
+            "facing": "s"
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "clutter",
+            "snap": "cell",
+            "requires": [
+              {
+                "rel": "not_on",
+                "what": "water"
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": []
+    },
+    {
+      "id": "not_on_water_fails",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".~...",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ],
+            "facing": "s"
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "clutter",
+            "snap": "cell",
+            "requires": [
+              {
+                "rel": "not_on",
+                "what": "water"
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.requires",
+          "message": "test: requires not_on water",
+          "at": [
+            1.5,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "not_near_water_succeeds",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          "....~",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ],
+            "facing": "s"
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "clutter",
+            "snap": "cell",
+            "requires": [
+              {
+                "rel": "not_near",
+                "what": "water",
+                "cells": 2
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": []
+    },
+    {
+      "id": "not_near_water_fails",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          "..~..",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ],
+            "facing": "s"
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "clutter",
+            "snap": "cell",
+            "requires": [
+              {
+                "rel": "not_near",
+                "what": "water",
+                "cells": 2
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.requires",
+          "message": "test: requires not_near water",
+          "at": [
+            1.5,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "requires_not_overlap_passes",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ]
+          },
+          {
+            "id": "stone",
+            "piece": "rock",
+            "at": [
+              3.5,
+              2
+            ]
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "clutter",
+            "snap": "cell",
+            "requires": [
+              {
+                "rel": "not_overlap",
+                "what": "rock"
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        },
+        "rock": {
+          "id": "rock",
+          "placement": {
+            "role": "rock",
+            "snap": "cell"
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": []
+    },
+    {
+      "id": "requires_not_overlap_fails",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ]
+          },
+          {
+            "id": "stone",
+            "piece": "rock",
+            "at": [
+              1.5,
+              2
+            ]
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "clutter",
+            "snap": "cell",
+            "requires": [
+              {
+                "rel": "not_overlap",
+                "what": "rock"
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        },
+        "rock": {
+          "id": "rock",
+          "placement": {
+            "role": "rock",
+            "snap": "cell"
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.requires",
+          "message": "test: requires not_overlap rock",
+          "at": [
+            1.5,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "forbids_not_overlap_passes",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ]
+          },
+          {
+            "id": "stone",
+            "piece": "rock",
+            "at": [
+              3.5,
+              2
+            ]
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "clutter",
+            "snap": "cell",
+            "forbids": [
+              {
+                "rel": "not_overlap",
+                "what": "rock"
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        },
+        "rock": {
+          "id": "rock",
+          "placement": {
+            "role": "rock",
+            "snap": "cell"
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": []
+    },
+    {
+      "id": "forbids_not_overlap_fails",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ]
+          },
+          {
+            "id": "stone",
+            "piece": "rock",
+            "at": [
+              1.5,
+              2
+            ]
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "clutter",
+            "snap": "cell",
+            "forbids": [
+              {
+                "rel": "not_overlap",
+                "what": "rock"
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        },
+        "rock": {
+          "id": "rock",
+          "placement": {
+            "role": "rock",
+            "snap": "cell"
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.forbids",
+          "message": "test: violates not_overlap rock",
+          "at": [
+            1.5,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cell_snap_accepts_half_x",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ]
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "clutter",
+            "snap": "cell"
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": []
+    },
+    {
+      "id": "cell_snap_refuses_quarter_x",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.25,
+              2
+            ]
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "clutter",
+            "snap": "cell"
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.off_grid",
+          "message": "test: foot is off the soft grid",
+          "at": [
+            1.25,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cell_snap_refuses_half_y",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2.5
+            ]
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "clutter",
+            "snap": "cell"
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.off_grid",
+          "message": "test: foot is off the soft grid",
+          "at": [
+            1.5,
+            2.5
+          ]
+        }
+      ]
+    },
+    {
+      "id": "half_snap_accepts_half_xy",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2.5
+            ]
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "clutter",
+            "snap": "half"
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": []
+    },
+    {
+      "id": "half_snap_refuses_quarter_y",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2.25
+            ]
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "clutter",
+            "snap": "half"
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.off_grid",
+          "message": "test: foot is off the soft grid",
+          "at": [
+            1.5,
+            2.25
+          ]
+        }
+      ]
+    },
+    {
+      "id": "free_snap_accepts_fractional_foot",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.25,
+              2.25
+            ]
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "clutter",
+            "snap": "free"
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": []
+    },
+    {
+      "id": "orientation_case_normalised",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ],
+            "facing": "N"
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "clutter",
+            "snap": "cell",
+            "orientations": [
+              "n"
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": []
+    },
+    {
+      "id": "orientation_not_allowed",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ],
+            "facing": "s"
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "clutter",
+            "snap": "cell",
+            "orientations": [
+              "n"
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.orientation",
+          "message": "test: orientation is not allowed",
+          "at": [
+            1.5,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "broken_stage_allowed",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ],
+            "stage": "broken"
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "clutter",
+            "snap": "cell",
+            "stages": [
+              "broken"
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": []
+    },
+    {
+      "id": "restored_stage_refused",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ],
+            "stage": "restored"
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "clutter",
+            "snap": "cell",
+            "stages": [
+              "broken"
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.stage",
+          "message": "test: stage is not allowed",
+          "at": [
+            1.5,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "allowed_ground_by_surface",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ]
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "clutter",
+            "snap": "cell",
+            "ground": {
+              "allow": [
+                "turf"
+              ]
+            }
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": []
+    },
+    {
+      "id": "allowed_ground_missing",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ]
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "clutter",
+            "snap": "cell",
+            "ground": {
+              "allow": [
+                "stone"
+              ]
+            }
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        },
+        "stone": {
+          "id": "stone",
+          "surface": "stone",
+          "walkable": true
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.ground",
+          "message": "test: ground is not allowed",
+          "at": [
+            1.5,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "denied_ground_absent",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ]
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "clutter",
+            "snap": "cell",
+            "ground": {
+              "deny": [
+                "water"
+              ]
+            }
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": []
+    },
+    {
+      "id": "denied_ground_present",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ]
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "clutter",
+            "snap": "cell",
+            "ground": {
+              "deny": [
+                "lawn"
+              ]
+            }
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.ground",
+          "message": "test: ground is denied",
+          "at": [
+            1.5,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "whole_footprint_ground_checked",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          "..#..",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1,
+              1
+            ]
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "clutter",
+            "snap": "cell",
+            "ground": {
+              "allow": [
+                "lawn"
+              ]
+            }
+          },
+          "geometry": {
+            "footprint": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                0
+              ]
+            ]
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.ground",
+          "message": "test: ground is not allowed",
+          "at": [
+            1,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tier_allowed",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ]
+          }
+        ],
+        "tiers": [
+          "00000",
+          "01000",
+          "00000",
+          "00000",
+          "00000"
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "clutter",
+            "snap": "cell",
+            "tiers": [
+              1
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": []
+    },
+    {
+      "id": "tier_refused",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ]
+          }
+        ],
+        "tiers": [
+          "00000",
+          "00000",
+          "00000",
+          "00000",
+          "00000"
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "clutter",
+            "snap": "cell",
+            "tiers": [
+              1
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.tiers",
+          "message": "test: tier is not allowed",
+          "at": [
+            1.5,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "minimum_count_missing",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": []
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "clutter",
+            "snap": "cell",
+            "per_zone": {
+              "min": 1
+            }
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.count",
+          "message": "prop: fewer than per-zone minimum",
+          "at": []
+        }
+      ]
+    },
+    {
+      "id": "maximum_count_exceeded",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ]
+          },
+          {
+            "id": "second",
+            "piece": "prop",
+            "at": [
+              3.5,
+              2
+            ]
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "clutter",
+            "snap": "cell",
+            "per_zone": {
+              "max": 1
+            }
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.count",
+          "message": "prop: exceeds per-zone maximum",
+          "at": []
+        }
+      ]
+    },
+    {
+      "id": "unknown_piece_refused",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ]
+          }
+        ]
+      },
+      "library": {},
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.unknown_piece",
+          "message": "test: piece is not in the library",
+          "at": [
+            1.5,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "unknown_predicate_refused",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ],
+            "facing": "s"
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "clutter",
+            "snap": "cell",
+            "requires": [
+              {
+                "rel": "teleport",
+                "what": "route"
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.relation",
+          "message": "test: unknown relation or target teleport route",
+          "at": [
+            1.5,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "unknown_target_refused",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ],
+            "facing": "s"
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "clutter",
+            "snap": "cell",
+            "requires": [
+              {
+                "rel": "near",
+                "what": "missing-target"
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.relation",
+          "message": "test: unknown relation or target near missing-target",
+          "at": [
+            1.5,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "unknown_negative_target_refused",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ],
+            "facing": "s"
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "clutter",
+            "snap": "cell",
+            "forbids": [
+              {
+                "rel": "not_near",
+                "what": "missing-target"
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.relation",
+          "message": "test: unknown relation or target not_near missing-target",
+          "at": [
+            1.5,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "legacy_texel_coordinates",
+      "plan": {
+        "zone": "relation_fixture",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".#...",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              36,
+              48
+            ],
+            "facing": "s"
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "seat",
+            "snap": "cell",
+            "requires": [
+              {
+                "rel": "adjacent",
+                "what": "route_edge",
+                "cells": 2,
+                "facing": true
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": []
+    },
+    {
+      "id": "negative_boundary_refused",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              -0.5,
+              2
+            ]
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "clutter",
+            "snap": "cell"
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.bounds",
+          "message": "test: footprint is outside the zone",
+          "at": [
+            -0.5,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "upper_boundary_refused",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              5.5,
+              2
+            ]
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "clutter",
+            "snap": "cell"
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.bounds",
+          "message": "test: footprint is outside the zone",
+          "at": [
+            5.5,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "clearance_enough",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ]
+          },
+          {
+            "id": "stone",
+            "piece": "rock",
+            "at": [
+              3.5,
+              2
+            ]
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "clutter",
+            "snap": "cell",
+            "clearance": 1
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        },
+        "rock": {
+          "id": "rock",
+          "placement": {
+            "role": "rock",
+            "snap": "cell"
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": []
+    },
+    {
+      "id": "clearance_blocked",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ]
+          },
+          {
+            "id": "stone",
+            "piece": "rock",
+            "at": [
+              2.5,
+              2
+            ]
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "clutter",
+            "snap": "cell",
+            "clearance": 1
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        },
+        "rock": {
+          "id": "rock",
+          "placement": {
+            "role": "rock",
+            "snap": "cell"
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.clearance",
+          "message": "test: clearance overlaps stone",
+          "at": [
+            1.5,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "authored_note_preserved",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ],
+            "facing": "s"
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "role": "clutter",
+            "snap": "cell",
+            "requires": [
+              {
+                "rel": "on",
+                "what": "path",
+                "note": "Use the paved apron."
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.requires",
+          "message": "test: requires on path: Use the paved apron.",
+          "at": [
+            1.5,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fractional_at_edge",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          "..#..",
+          ".#...",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ],
+            "facing": "s"
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "snap": "cell",
+            "requires": [
+              {
+                "rel": "at_edge",
+                "what": "route",
+                "cells": 0.1
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.requires",
+          "message": "test: requires at_edge route",
+          "at": [
+            1.5,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fractional_at_corner",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          "..#..",
+          ".#...",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ],
+            "facing": "s"
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "snap": "cell",
+            "requires": [
+              {
+                "rel": "at_corner",
+                "what": "route",
+                "cells": 0.1
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.requires",
+          "message": "test: requires at_corner route",
+          "at": [
+            1.5,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "unknown_ground_allow",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ],
+            "facing": "s"
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "snap": "cell",
+            "ground": {
+              "allow": [
+                "typo_terrain"
+              ]
+            }
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.ground",
+          "message": "test: unknown ground target typo_terrain",
+          "at": [
+            1.5,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "unknown_ground_deny",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ],
+            "facing": "s"
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "snap": "cell",
+            "ground": {
+              "deny": [
+                "typo_terrain"
+              ]
+            }
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.ground",
+          "message": "test: unknown ground target typo_terrain",
+          "at": [
+            1.5,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "anchor_id_and_kind_both_known",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ],
+            "facing": "s"
+          }
+        ],
+        "anchors": [
+          {
+            "id": "hearth_id",
+            "kind": "hearth",
+            "at": [
+              1.5,
+              2
+            ]
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "snap": "cell",
+            "requires": [
+              {
+                "rel": "on_anchor",
+                "what": "anchor:hearth_id"
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": []
+    },
+    {
+      "id": "malformed_peer_does_not_crash",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ],
+            "facing": "s"
+          },
+          null
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "snap": "cell",
+            "requires": [
+              {
+                "rel": "on",
+                "what": "lawn"
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.plan",
+          "message": "zone: invalid piece instance",
+          "at": []
+        }
+      ]
+    },
+    {
+      "id": "malformed_piece_id_does_not_crash",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": [],
+            "at": [
+              1.5,
+              2
+            ],
+            "facing": "s"
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "snap": "cell"
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.plan",
+          "message": "zone: invalid piece id",
+          "at": [
+            1.5,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "malformed_legend_value_does_not_crash",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": [],
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ],
+            "facing": "s"
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "snap": "cell"
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.plan",
+          "message": "zone: invalid cells or tiers",
+          "at": []
+        }
+      ]
+    },
+    {
+      "id": "undefined_glyph_is_not_silently_empty",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          "..?..",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ],
+            "facing": "s"
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "snap": "cell"
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.plan",
+          "message": "zone: invalid cells or tiers",
+          "at": []
+        }
+      ]
+    },
+    {
+      "id": "negative_facing_ignores_target_behind",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".#...",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ],
+            "facing": "s"
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "snap": "cell",
+            "requires": [
+              {
+                "rel": "not_near",
+                "what": "route",
+                "cells": 2,
+                "facing": true
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": []
+    },
+    {
+      "id": "preview_ignores_unrelated_faults_and_minima",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "old",
+            "piece": "bad",
+            "at": [
+              1.5,
+              2
+            ]
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "snap": "cell"
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        },
+        "mandatory": {
+          "id": "mandatory",
+          "placement": {
+            "per_zone": {
+              "min": 1
+            }
+          }
+        },
+        "bad": {
+          "id": "bad",
+          "placement": {
+            "role": "seat",
+            "requires": [
+              {
+                "rel": "adjacent",
+                "what": "route_edge",
+                "cells": 1
+              }
+            ]
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [],
+      "mode": "placement",
+      "candidate": {
+        "id": "new",
+        "piece": "prop",
+        "at": [
+          3.5,
+          4
+        ]
+      }
+    },
+    {
+      "id": "zone_still_reports_faults_and_minima",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "old",
+            "piece": "bad",
+            "at": [
+              1.5,
+              2
+            ]
+          },
+          {
+            "id": "new",
+            "piece": "prop",
+            "at": [
+              3.5,
+              4
+            ]
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "snap": "cell"
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        },
+        "mandatory": {
+          "id": "mandatory",
+          "placement": {
+            "per_zone": {
+              "min": 1
+            }
+          }
+        },
+        "bad": {
+          "id": "bad",
+          "placement": {
+            "role": "seat",
+            "requires": [
+              {
+                "rel": "adjacent",
+                "what": "route_edge",
+                "cells": 1
+              }
+            ]
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.seating",
+          "message": "old: requires adjacent route_edge",
+          "at": [
+            1.5,
+            2
+          ]
+        },
+        {
+          "check": "rules.count",
+          "message": "mandatory: fewer than per-zone minimum",
+          "at": []
+        }
+      ]
+    },
+    {
+      "id": "preview_new_clearance_effect_is_refused",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "old",
+            "piece": "guarded",
+            "at": [
+              1.5,
+              2
+            ]
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "snap": "cell"
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        },
+        "guarded": {
+          "id": "guarded",
+          "placement": {
+            "clearance": 1
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.clearance",
+          "message": "old: clearance overlaps new",
+          "at": [
+            1.5,
+            2
+          ]
+        }
+      ],
+      "mode": "placement",
+      "candidate": {
+        "id": "new",
+        "piece": "prop",
+        "at": [
+          2.5,
+          2
+        ]
+      }
+    },
+    {
+      "id": "preview_increasing_already_exceeded_max_is_refused",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "one",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ]
+          },
+          {
+            "id": "two",
+            "piece": "prop",
+            "at": [
+              2.5,
+              2
+            ]
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "snap": "cell",
+            "per_zone": {
+              "max": 1
+            }
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.count",
+          "message": "prop: exceeds per-zone maximum",
+          "at": []
+        }
+      ],
+      "mode": "placement",
+      "candidate": {
+        "id": "new",
+        "piece": "prop",
+        "at": [
+          3.5,
+          4
+        ]
+      }
+    },
+    {
+      "id": "preview_relocation_does_not_increase_exceeded_max",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "one",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ]
+          },
+          {
+            "id": "two",
+            "piece": "prop",
+            "at": [
+              2.5,
+              2
+            ]
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "snap": "cell",
+            "per_zone": {
+              "max": 1
+            }
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [],
+      "mode": "placement",
+      "candidate": {
+        "id": "one",
+        "piece": "prop",
+        "at": [
+          3.5,
+          4
+        ]
+      }
+    },
+    {
+      "id": "preview_replacement_cannot_break_dependents",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "h",
+            "piece": "hearth",
+            "at": [
+              1.5,
+              2
+            ]
+          },
+          {
+            "id": "f",
+            "piece": "fire",
+            "at": [
+              1.5,
+              2
+            ]
+          }
+        ]
+      },
+      "library": {
+        "hearth": {
+          "id": "hearth",
+          "placement": {
+            "role": "hearth"
+          }
+        },
+        "fire": {
+          "id": "fire",
+          "placement": {
+            "requires": [
+              {
+                "rel": "on",
+                "what": "role:hearth"
+              }
+            ]
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.requires",
+          "message": "f: requires on role:hearth",
+          "at": [
+            1.5,
+            2
+          ]
+        }
+      ],
+      "mode": "placement",
+      "candidate": {
+        "id": "h",
+        "piece": "hearth",
+        "at": [
+          3.5,
+          2
+        ]
+      }
+    },
+    {
+      "id": "preview_valid_same_id_replacement",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              -0.5,
+              2
+            ],
+            "facing": "s"
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "snap": "cell"
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [],
+      "mode": "placement",
+      "candidate": {
+        "id": "test",
+        "piece": "prop",
+        "at": [
+          1.5,
+          2
+        ]
+      }
+    },
+    {
+      "id": "under_terrain_full_north_width",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".~~..",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              4
+            ],
+            "facing": "s"
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "requires": [
+              {
+                "rel": "under",
+                "what": "water"
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": [
+              [
+                0,
+                -2
+              ],
+              [
+                1,
+                -2
+              ],
+              [
+                0,
+                -1
+              ],
+              [
+                1,
+                -1
+              ]
+            ]
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": []
+    },
+    {
+      "id": "under_surface_full_north_width",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".~~..",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              4
+            ],
+            "facing": "s"
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "requires": [
+              {
+                "rel": "under",
+                "what": "surface:water"
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": [
+              [
+                0,
+                -2
+              ],
+              [
+                1,
+                -2
+              ],
+              [
+                0,
+                -1
+              ],
+              [
+                1,
+                -1
+              ]
+            ]
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": []
+    },
+    {
+      "id": "under_material_full_north_width",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".~~..",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              4
+            ],
+            "facing": "s"
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "requires": [
+              {
+                "rel": "under",
+                "what": "material:water"
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": [
+              [
+                0,
+                -2
+              ],
+              [
+                1,
+                -2
+              ],
+              [
+                0,
+                -1
+              ],
+              [
+                1,
+                -1
+              ]
+            ]
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": []
+    },
+    {
+      "id": "under_terrain_partial_width_refused",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".~...",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              4
+            ],
+            "facing": "s"
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "requires": [
+              {
+                "rel": "under",
+                "what": "water"
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": [
+              [
+                0,
+                -2
+              ],
+              [
+                1,
+                -2
+              ],
+              [
+                0,
+                -1
+              ],
+              [
+                1,
+                -1
+              ]
+            ]
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.requires",
+          "message": "test: requires under water",
+          "at": [
+            1.5,
+            4
+          ]
+        }
+      ]
+    },
+    {
+      "id": "under_terrain_no_rim_refused",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              4
+            ],
+            "facing": "s"
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "requires": [
+              {
+                "rel": "under",
+                "what": "water"
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": [
+              [
+                0,
+                -2
+              ],
+              [
+                1,
+                -2
+              ],
+              [
+                0,
+                -1
+              ],
+              [
+                1,
+                -1
+              ]
+            ]
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.requires",
+          "message": "test: requires under water",
+          "at": [
+            1.5,
+            4
+          ]
+        }
+      ]
+    },
+    {
+      "id": "under_terrain_above_zone_refused",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".~~..",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ],
+            "facing": "s"
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "requires": [
+              {
+                "rel": "under",
+                "what": "water"
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": [
+              [
+                0,
+                -2
+              ],
+              [
+                1,
+                -2
+              ],
+              [
+                0,
+                -1
+              ],
+              [
+                1,
+                -1
+              ]
+            ]
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.requires",
+          "message": "test: requires under water",
+          "at": [
+            1.5,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "id": "malformed_anchor_id_does_not_crash",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ],
+            "facing": "s"
+          }
+        ],
+        "anchors": [
+          {
+            "id": [],
+            "kind": "hearth",
+            "at": [
+              1.5,
+              2
+            ]
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "snap": "cell",
+            "requires": [
+              {
+                "rel": "on_anchor",
+                "what": "anchor:hearth_id"
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.plan",
+          "message": "zone: invalid cells or tiers",
+          "at": []
+        }
+      ]
+    },
+    {
+      "id": "malformed_anchor_kind_does_not_crash",
+      "plan": {
+        "zone": "relation_fixture",
+        "coordinate_space": "cells",
+        "lab": true,
+        "legend": {
+          ".": "lawn",
+          "#": "path",
+          "~": "water"
+        },
+        "rows": [
+          ".....",
+          ".....",
+          ".....",
+          ".....",
+          "....."
+        ],
+        "pieces": [
+          {
+            "id": "test",
+            "piece": "prop",
+            "at": [
+              1.5,
+              2
+            ],
+            "facing": "s"
+          }
+        ],
+        "anchors": [
+          {
+            "id": "hearth_id",
+            "kind": [],
+            "at": [
+              1.5,
+              2
+            ]
+          }
+        ]
+      },
+      "library": {
+        "prop": {
+          "id": "prop",
+          "placement": {
+            "snap": "cell",
+            "requires": [
+              {
+                "rel": "on_anchor",
+                "what": "anchor:hearth_id"
+              }
+            ]
+          },
+          "geometry": {
+            "footprint": []
+          },
+          "gameplay": {
+            "blocks_move": true
+          }
+        }
+      },
+      "materials": {
+        "lawn": {
+          "id": "lawn",
+          "surface": "turf",
+          "walkable": true
+        },
+        "path": {
+          "id": "path",
+          "surface": "earth",
+          "walkable": true,
+          "route": true
+        },
+        "water": {
+          "id": "water",
+          "surface": "water",
+          "walkable": false,
+          "water": {}
+        }
+      },
+      "expected": [
+        {
+          "check": "rules.plan",
+          "message": "zone: invalid cells or tiers",
+          "at": []
+        }
+      ]
+    }
+  ]
+}
