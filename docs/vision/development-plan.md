@@ -102,7 +102,7 @@ The files each chat may touch are set by its claim and by [coordination.md](../c
 
 ## Side by side right now (27 Oct 23:45)
 
-The former Claude critical path is now owned by the Codex lead and assigned workers: the v55 map and town plans, drawing kit pieces, and reviews. Everything else that does not need new art or a decision from Matt goes to Codex now, so Claude's time goes only to work that needs judgement on art and direction.
+The Codex lead and assigned workers own the v55 map and town plans, drawing kit pieces, reviews and engineering. All Claude lanes are off. Workers follow the written direction; the lead reviews and integrates engineering, and Matt approves art/map/kit/cast merges and any direction change.
 
 ### Can start now (Codex)
 
@@ -121,24 +121,24 @@ The game already has quests, dialogue, saving, doors, villagers, the HUD and the
 | Y9  | Touch controls and camera on phone-sized viewports, with a 44-point target check                                               | `game/core/inputs.gd`, native-readiness.md |
 | Y10 | Kit concepts: the Crossroads town kit (W0 catalogue format, placement rules, metadata, variants and widths)                    | W0, ground-rules.md, the town plans        |
 | Y11 | Kit concepts: the coast and city kit, including Neon Harbour's retro-future paving                                             | W0, the v55 Neon Harbour notes             |
-| Y12 | Pre-review sheets: one script that renders a PR's changed art beside the gates' numbers, so Claude can review it at a glance   | review:asset, review:scene                 |
+| Y12 | Pre-review sheets: one script that renders a PR's changed art beside the gates' numbers, so the lead can prepare Matt's review | review:asset, review:scene                 |
 | Y13 | CI and check speed: cache generators, run checks in parallel, keep results byte-identical                                      | C35's work                                 |
 
 Phase 1 (W0 to W7, X1, X6) still comes first for any chat that can take one. Y tasks are next.
 
 ### Must wait
 
-| Waits                                            | For                                              | Why                                                    |
-| ------------------------------------------------ | ------------------------------------------------ | ------------------------------------------------------ |
-| X2 journeys, X4 region plans, Y4 map integration | Approved v55/town inputs and applicable GO | These consume the approved macro world |
-| Further X3 resident packets | Explicit residential/workplace source semantics | X3 was opened by Claude A6467789932; do not guess homes/jobs/routines |
-| X5 Crossroads conversion, building the slice     | W1 to W3 merged, and the Crossroads kit approved | Nothing is placed from unapproved pieces               |
-| Drawing any new biome's pieces                   | That biome's concepts (Y10, Y11) reviewed        | Concepts set the list before Claude draws              |
-| Region rollout                                   | The region's plan and kit approved               | Standards before content                               |
-| Balance numbers                                  | Y1 to Y3 running in the slice                    | Balance needs the systems to measure                   |
-| Phone testing                                    | The slice signed off, and a native build         | Desktop tests are not phone tests                      |
-| House decorating                                 | Y3 and the first interior kit                    | It needs cosmetics to sell and pieces to place         |
-| Acts 2 and 3                                     | Matt's direction on the story                    | Story is his call; Codex may draft outlines as PROPOSE |
+| Waits                                            | For                                              | Why                                                                   |
+| ------------------------------------------------ | ------------------------------------------------ | --------------------------------------------------------------------- |
+| X2 journeys, X4 region plans, Y4 map integration | Approved v55/town inputs and applicable GO       | These consume the approved macro world                                |
+| Further X3 resident packets                      | Explicit residential/workplace source semantics  | X3 was opened by Claude A6467789932; do not guess homes/jobs/routines |
+| X5 Crossroads conversion, building the slice     | W1 to W3 merged, and the Crossroads kit approved | Nothing is placed from unapproved pieces                              |
+| Drawing any new biome's pieces                   | That biome's concepts (Y10, Y11) reviewed        | Concepts set the list before assigned workers draw                    |
+| Region rollout                                   | The region's plan and kit approved               | Standards before content                                              |
+| Balance numbers                                  | Y1 to Y3 running in the slice                    | Balance needs the systems to measure                                  |
+| Phone testing                                    | The slice signed off, and a native build         | Desktop tests are not phone tests                                     |
+| House decorating                                 | Y3 and the first interior kit                    | It needs cosmetics to sell and pieces to place                        |
+| Acts 2 and 3                                     | Matt's direction on the story                    | Story is his call; Codex may draft outlines as PROPOSE                |
 
 ### Former Claude work, now assigned by the Codex lead
 
@@ -147,17 +147,21 @@ Phase 1 (W0 to W7, X1, X6) still comes first for any chat that can take one. Y t
 3. Lead art/map/kit/cast review with Y12 sheets for Matt; only Matt approves those merges.
 4. Cairn, the woodland kit and other open art once Matt answers.
 
-
 ## Lead coordination update (28 Oct)
 
 Matt appointed **MyGame Codex · lead** coordinator and integrator with non-art merge authority. The separate coordinator and crew board are retired. [Issue149's canonical board](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6475643125) is edited in place. The [handover](../codex/handover.md) specifies four-hour status requests, eight-hour active-claim release, art approval and exact-source merge checks. Delivered handoffs are review duties, not abandoned implementations.
 
 Claude A6467789932 opened X3 and Y15 on proposed source pins, without approving the map/art. Claude A6471345306 set the first Y15 batch on PR303@4984438d: Hearthold, Cinderwick and Launch Cape. Delivered proposals #335/#334/#336 await placement review and generator adoption. Further X3 packets need explicit home/work source semantics. X2/X4/Y4 and X5 retain their documented approval/dependency gates.
 
-Four free docs-only concept-requirements briefs are posted in [6475661201](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6475661201): Y10 Crossroads, Y11 coast/city, Y16 Sunstone and Y17 fire country. Each pins existing sources, reuses W0 families by reference and writes one new document only. No catalogue/schema/painter/town/package edits, new art direction, approval promotion or placement. Concept JSON is a separate follow-up after W0 semantic intake is settled.
+The [canonical board](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6475643125) holds live claims and free briefs. Current reserve requirements are Y10 Crossroads, Y16 Sunstone, Y18 Tidebloom and [Y19 Frostline](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6479454631); Y11 coast/city and Y17 fire-country reports retain their owners/review duties. Each brief pins existing sources, reuses W0 families by reference and writes one new document only. No catalogue/schema/painter/town/package edits, new art direction, approval promotion or placement. Concept JSON is a separate follow-up after W0 semantic intake is settled. Reserve concepts do not override the core/editor priority.
 
-Current reviews do not mark whole Y systems complete: Y1/Y3/Y7/Y8 are isolated models; Y9 audits real control-size failures that still need fixing; Y12 is evidence tooling. W2#305 requires logical-ID/gameplay-preservation corrections. Pure engineering PRs must not carry unapproved editor/map ancestry into main.
+Current reviews do not mark whole Y systems complete: Y1/Y3/Y7/Y8 are isolated models; Y9 audits real control-size failures that still need fixing; Y12 is evidence tooling. W2#305's logical-ID/gameplay-preservation repair now has 28 focused passes at `64c212fc`; full exact-source final gates and ready CI remain pending. Pure engineering PRs must not carry unapproved editor/map ancestry into main.
 
+## Engineering update (28 Oct 20:13)
+
+Y12 classifier #346 is merged at main `7f83ee03` after independently reviewed final local verify/art evidence and three matching hosted checks. Known town/cast/concept/blockout sources remain incomplete source-only evidence; fixtures are inventory, not executed tests or production-art approval. This does not accept the editor, town plans or the whole Y12 system.
+
+Y13 actual-cache evidence is now owned by CI-map on draft #350, under [ASSIGN6478940444](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6478940444). Its matched-source jobs both missed caches, so no warm speedup is established. Full final gates remain queued. The board records the one serial validation allocation and retained owners; completed frozen suites are not restarted.
 
 ## Entire-project Codex ownership (28 Oct 17:24)
 

@@ -1,6 +1,6 @@
 # MyGame coordination and integration handover (28 Oct)
 
-> **Update, 28 Oct 17:24 (Matt):** Codex takes over the entire project until Matt says to switch back to Claude. Claude A is off: the Codex lead owns implementation, art/map work and merging under the existing written direction; changes in art direction require Matt. Art and map PRs merge after Matt's OK, not Claude's. Hyperagent is optional and not set up.
+> **Update, 28 Oct 17:24 (Matt):** Codex takes over the entire project until Matt says to switch back to Claude. Claude A is off: the Codex lead owns implementation, art/map work and merging under the existing written direction; changes in art direction require Matt. Art and map PRs merge after Matt's OK, not Claude's. The Codex lead also performs coordination; there is no separate Hyperagent role.
 
 Matt, 28 Oct 16:51: Claude is running out of tokens, so ChatGPT (Codex) takes over a lot of the work, coordinated by Hyperagent if that makes sense. This page sets out who does what from now on. [development-plan.md](../vision/development-plan.md) still gives the order of work.
 
@@ -20,15 +20,15 @@ The single source of truth is [issue149](https://github.com/rempemat-eng/appify/
 
 ## Roles
 
-| Who                                           | Does                                                                                                                                                                                                                                                                                    | Does not                                             |
-| --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
-| **Matt**                                      | Decides direction, approves art and maps, grants merge rights                                                                                                                                                                                                                           | Routine coordination                                 |
-| **Codex lead: MyGame Codex · lead** | Coordinates issue149 and integrates eligible non-art PRs under Matt's explicit 28 October authority; maintains the plan/handover, stocks the queue and posts daily summaries | Take worker tasks while reviews/claims need attention; merge art without explicit Matt OK on the PR |
-| **Codex workers: MyGame Codex · slot · task** | Take tasks from #149 by the routine below                                                                                                                                                                                                                                               | Hold two claims, start waiting tasks                 |
+| Who                                           | Does                                                                                                                                                                         | Does not                                                                                            |
+| --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| **Matt**                                      | Decides direction, approves art and maps, grants merge rights                                                                                                                | Routine coordination                                                                                |
+| **Codex lead: MyGame Codex · lead**           | Coordinates issue149 and integrates eligible non-art PRs under Matt's explicit 28 October authority; maintains the plan/handover, stocks the queue and posts daily summaries | Take worker tasks while reviews/claims need attention; merge art without explicit Matt OK on the PR |
+| **Codex workers: MyGame Codex · slot · task** | Take tasks from #149 by the routine below                                                                                                                                    | Hold two claims, start waiting tasks                                                                |
 
 ## What moves from Claude to Codex
 
-- **Coordination:** the crew board is retired. The single source of truth is #149 and its pinned task list.
+- **Coordination:** the crew board is retired. The single source of truth is #149 and its canonical task-board comment, edited in place. Pinning is unavailable; use its stable link.
 - **Merging** of non-art PRs: the Codex lead, using the merge procedure below.
 - **World data:** Claude A6467789932 opened X3 and Y15 on proposed source pins; Claude A6471345306 prioritised Hearthold, Cinderwick and Launch Cape, now delivered as #335/#334/#336. This does not approve the map/art. Further X3 packets still need explicit home/work source semantics. X2/X4/Y4 require approved v55 inputs; X5 retains main-inclusion and approved-kit gates.
 - **Concepts** for every kit (Y10, Y11, Y14 and the next biomes), the editor (W0 to W7) and every system (Y1 to Y9).
@@ -84,7 +84,15 @@ The lead maintains this handover and the development plan through small docs-onl
 
 ## Current review boundaries (28 Oct)
 
-W2#305 needs literal logical-ID lookup, inherited-gameplay preservation and sanitisation-collision round-trip regressions. W1#307 is an existing completed source offer needing allocation reconciliation, not a replacement implementation. Art foundations #302/#294 and map #303 remain approval-gated; #301 closes only after #302 actually merges. Town proposals #334–#336 still need terrain/placement review and generator adoption. Isolated Y-system models and the Y9 audit do not establish complete slice/runtime acceptance.
+W2#305 now has the literal logical-ID/gameplay-preservation repair at `64c212fc`, with four unchanged red regression methods now passing among 28 focused cases. Its full final Godot/kit/verify/art gates and matching ready CI remain pending; the limited source review is not whole-editor acceptance. W1#307 is an existing completed source offer needing allocation reconciliation, not a replacement implementation. Art foundations #302/#294 and map #303 remain approval-gated; #301 closes only after #302 actually merges. Town proposals #334–#336 still need terrain/placement review and generator adoption. Isolated Y-system models and the Y9 audit do not establish complete slice/runtime acceptance.
+
+X3-explicit-use #349 follows [ANSWER6477803442](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6477803442): every `home=null` row remains incomplete, including empty-occupant rows; absent occupants or `work=true` cannot imply nonresidential use. Its full final gates remain pending and inherited map ancestry remains approval-gated.
+
+## Current engineering evidence (28 Oct 20:13)
+
+Y12 classifier #346 is merged on main at `7f83ee03781752f6c4db068185142040c8a2c319`, tree `4ec9efb434c20f17faa62c4db165f7e73ada4a6d`. The guarded nonforce fast-forward used independently verified exact-source local verify/art exits, source guards and three matching hosted job logs. Its source-only and fixture classification is engineering tooling, not art or whole-Y12 approval. The existing separate report-only asset inventory still reports findings. See [MERGED6479481908](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6479481908).
+
+Validation capacity and ownership live on the canonical board. [Allocation6479432497](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6479432497) gives a validation-only delegate frozen Rill347 source, without transferring production custody or introducing its unapproved editor ancestry into main. A worker resumes the same active invocation; a capacity release is not permission for every queued owner to start. Paused owners retain their source and review duties.
 
 ## Complete Codex takeover and task order (28 Oct 17:24)
 
