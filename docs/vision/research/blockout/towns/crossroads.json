@@ -44,6 +44,8 @@
   4288
  ],
  "fortification": null,
+ "style": null,
+ "features": {},
  "arrivals": [
   {
    "id": "crossroads-arr1",

@@ -44,6 +44,8 @@
   2800
  ],
  "fortification": null,
+ "style": null,
+ "features": {},
  "arrivals": [
   {
    "id": "dust-gulch-arr1",

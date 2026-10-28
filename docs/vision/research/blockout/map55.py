@@ -364,6 +364,101 @@ def draw_bays(d, ink, P, x, y, w, h_, bays, k, kk):
         d.rectangle([X0, Y0, X1, Y1], outline=ink + (170,), width=1)
 
 
+OLD_JP = {'machiya', 'honjin', 'temple_hall', 'pagoda', 'watchkeep', 'minka_thatched', 'kura', 'bathhouse'}
+VERMILION = (198, 62, 44)
+
+
+def draw_old_jp(d, ink, P, x, y, w, h_, form, k, kk, door):
+    """Highgarth's old post town at map scale: dark tiled roofs with a white plaster line along the eave, the thatched farmhouses
+    straw and steep, the storehouses white-walled, the temple hall's hipped roof, the pagoda as its own mark (stacked roofs, vermilion
+    trim) and the watch keep black on its grey stone base, snow on its roof."""
+    X0, Y0 = P(x, y); X1, Y1 = P(x + w, y + h_)
+    off = max(1.0, 1.2 * kk)
+    dark, darkl, white, straw = (52, 50, 54), (84, 84, 92), (236, 232, 222), (196, 168, 104)
+    if form == 'watchkeep':
+        B0, B1 = P(x - 8, y - 8), P(x + w + 8, y + h_ + 8)
+        d.polygon([(B0[0] - 2 * kk, B1[1]), (B0[0], B0[1]), (B1[0], B0[1]), (B1[0] + 2 * kk, B1[1])], fill=(128, 124, 118), outline=ink)
+    d.rectangle([X0 + off, Y0 + off, X1 + off, Y1 + off], fill=ink + (80,))
+    if form == 'pagoda':
+        cx, cy = (X0 + X1) / 2, (Y0 + Y1) / 2; r_ = max(2.5, (X1 - X0) / 2)
+        for i in range(5):                                              # five stacked roofs, each smaller, vermilion trim
+            q = r_ * (1 - i * 0.17)
+            d.rectangle([cx - q, cy - q, cx + q, cy + q], fill=dark if i % 2 == 0 else darkl, outline=VERMILION)
+        d.line([(cx, cy - r_ * 1.25), (cx, cy - r_ * 0.2)], fill=(200, 170, 80), width=max(1, int(kk)))
+        return
+    if form == 'minka_thatched':
+        d.rectangle([X0, Y0, X1, Y1], fill=tuple(int(v * 0.72) for v in straw))
+        if (X1 - X0) >= (Y1 - Y0):
+            d.polygon([(X0, (Y0 + Y1) / 2), (X0 + (Y1 - Y0) / 2, Y0), (X1 - (Y1 - Y0) / 2, Y0), (X1, (Y0 + Y1) / 2)], fill=straw)
+        else:
+            d.polygon([((X0 + X1) / 2, Y0), (X1, Y0 + (X1 - X0) / 2), (X1, Y1 - (X1 - X0) / 2), ((X0 + X1) / 2, Y1)], fill=straw)
+        d.rectangle([X0, Y0, X1, Y1], outline=ink + (180,))
+        return
+    if form == 'kura':
+        d.rectangle([X0, Y0, X1, Y1], fill=white, outline=ink)
+        d.rectangle([X0, Y0, X1, Y0 + (Y1 - Y0) * 0.45], fill=dark)
+        return
+    d.rectangle([X0, Y0, X1, Y1], fill=dark)
+    if form in ('temple_hall', 'watchkeep'):                            # a hipped roof: the hips to a short ridge
+        mx = (Y1 - Y0) / 2
+        d.polygon([(X0, Y0), (X1, Y0), (X1 - mx, (Y0 + Y1) / 2), (X0 + mx, (Y0 + Y1) / 2)], fill=darkl)
+        d.line([(X0, Y0), (X0 + mx, (Y0 + Y1) / 2), (X1 - mx, (Y0 + Y1) / 2), (X1, Y0)], fill=ink, width=1)
+        d.line([(X0, Y1), (X0 + mx, (Y0 + Y1) / 2)], fill=ink, width=1); d.line([(X1, Y1), (X1 - mx, (Y0 + Y1) / 2)], fill=ink, width=1)
+        if form == 'watchkeep':
+            d.rectangle([X0, Y0, X1, Y0 + (Y1 - Y0) * 0.3], fill=(244, 246, 250))   # snow on its roof
+        d.rectangle([X0, Y0, X1, Y1], outline=white, width=max(1, int(round(1.2 * kk))))
+        return
+    # machiya, honjin, bathhouse: the ridge along the street, the front slope lit, a white plaster line under the eave
+    if (X1 - X0) >= (Y1 - Y0):
+        d.rectangle([X0, Y0, X1, (Y0 + Y1) / 2], fill=darkl)
+    else:
+        d.rectangle([X0, Y0, (X0 + X1) / 2, Y1], fill=darkl)
+    if door:
+        dx, dy = door; fx, fy = P(dx * CELL + 4, dy * CELL + 4); t_ = max(1.0, 2.5 * k)
+        if fy >= Y1 - 0.5:
+            d.line([(X0, Y1 - t_), (X1, Y1 - t_)], fill=white, width=max(1, int(round(t_))))
+        elif fy <= Y0 + 0.5:
+            d.line([(X0, Y0 + t_), (X1, Y0 + t_)], fill=white, width=max(1, int(round(t_))))
+        elif fx <= X0 + 0.5:
+            d.line([(X0 + t_, Y0), (X0 + t_, Y1)], fill=white, width=max(1, int(round(t_))))
+        else:
+            d.line([(X1 - t_, Y0), (X1 - t_, Y1)], fill=white, width=max(1, int(round(t_))))
+    d.rectangle([X0, Y0, X1, Y1], outline=ink + (200,))
+
+
+def draw_forest(d, S, R, ink, P, k, s):
+    """The old forest's places: the Elder Oak (a colossal crown) and its standing stones, the moon observatory's ruin, the log
+    flume and the rail spur of the Company's camp, the boardwalk into the fens and the reed hide."""
+    F = S.get('forest')
+    if not F:
+        return
+    fe, pl_ = F['features'], F['places']
+    w1 = max(1, int(round(1.4 * s)))
+    polyline(d, fe['log_flume_px'], P, R['timber'][2] + (230,), 2.4 * s)
+    polyline(d, fe['log_flume_px'], P, R['timber'][4] + (230,), 1.0 * s)
+    polyline(d, fe['rail_spur_px'], P, ink + (235,), 2.4 * s)
+    polyline(d, fe['rail_spur_px'], P, R['plaster'][5] + (220,), 1.0 * s, dash=(3 * s, 3 * s))
+    polyline(d, fe['boardwalk_px'], P, R['timber'][3] + (240,), 2.6 * s)
+    polyline(d, fe['boardwalk_px'], P, R['timber'][1] + (200,), 0.8 * s, dash=(2 * s, 2 * s))
+    hx, hy = P(*fe['reed_hide_px']); r_ = max(1.5, 4 * k)
+    d.rectangle([hx - r_, hy - r_, hx + r_, hy + r_], fill=R['timber'][2], outline=ink)
+    for (x, y) in fe['standing_stones_px']:
+        X, Y = P(x, y); r_ = max(1.0, 3.5 * k)
+        d.ellipse([X - r_, Y - r_ * 1.3, X + r_, Y + r_ * 1.3], fill=R['stone'][4], outline=ink + (200,))
+    ox, oy = pl_['the Elder Oak']['xy_px']; X, Y = P(ox, oy); r_ = max(4.0, 40 * k)
+    d.ellipse([X - r_ + 2 * k * 10, Y - r_ + 2 * k * 10, X + r_ + 2 * k * 10, Y + r_ + 2 * k * 10], fill=ink + (90,))
+    d.ellipse([X - r_, Y - r_, X + r_, Y + r_], fill=(46, 92, 52), outline=ink)
+    d.ellipse([X - r_ * 0.85, Y - r_ * 0.85, X + r_ * 0.2, Y + r_ * 0.2], fill=(84, 140, 76))
+    d.ellipse([X - r_ * 0.12, Y - r_ * 0.12, X + r_ * 0.12, Y + r_ * 0.12], fill=(110, 80, 50))
+    bx, by = pl_["the moon-watchers' observatory"]['xy_px']; X, Y = P(bx, by); r_ = max(3.0, 26 * k)
+    for a in np.linspace(0, 2 * math.pi, 12, endpoint=False):
+        if 0.6 < a < 1.6:
+            continue                                                   # the fallen part of the ring
+        sx_, sy_ = X + r_ * math.cos(a), Y + r_ * 0.8 * math.sin(a); q = max(1.0, 3 * k)
+        d.rectangle([sx_ - q, sy_ - q, sx_ + q, sy_ + q], fill=R['stone'][3], outline=ink + (200,))
+    d.arc([X - r_ * 0.55, Y - r_ * 0.55, X + r_ * 0.55, Y + r_ * 0.55], 180, 330, fill=R['stone'][4], width=max(1, int(round(3 * k))))
+
+
 def draw_kerbs(d, S, R, P, k, plans=None):
     """Painted kerb lines along both edges of the streets with a continuous frontage."""
     for P_ in (plans or (S.get('plans') or {}).values()):
@@ -394,6 +489,9 @@ def draw_towns(d, S, R, ink, P, s, k, neon_lights=True):
         if X1 - X0 < 1.0:
             d.rectangle([X0, Y0, X0 + 1, Y0 + 1], fill=roof_colour(R, town, use))
             continue
+        if form in OLD_JP:
+            draw_old_jp(d, ink, P, x, y, w, h_, form, k, kk, door)
+            continue
         if bays and X1 - X0 >= 2.5:
             draw_bays(d, ink, P, x, y, w, h_, bays, k, kk)
             if any(q.get('false_front') for q in bays) and door:
@@ -402,6 +500,9 @@ def draw_towns(d, S, R, ink, P, s, k, neon_lights=True):
                     d.rectangle([X0, Y1 - t_, X1, Y1], fill=front, outline=ink + (200,))
                 elif fy <= Y0 + 0.5:
                     d.rectangle([X0, Y0, X1, Y0 + t_], fill=front, outline=ink + (200,))
+            continue
+        if form in OLD_JP:
+            draw_old_jp(d, ink, P, x, y, w, h_, form, k, kk, door)
             continue
         c = roof_colour(R, town, use); lt, md, sh = tones(c)
         if form == 'adobe':
@@ -687,6 +788,9 @@ def labels55(S, M, R, ink, s, k, ox, oy, Wc, Hc, F, lines, reserved, mode='conti
         for x, y, nm in M.FARMS:
             if nm in VILLAGES:
                 icons.append((nm, x, y, 'place', 'village', 2))
+    for nm, q in ((S.get('forest') or {}).get('places') or {}).items():  # the old forest's places
+        if full or q['tier'] <= 2:
+            icons.append((nm, q['xy_px'][0], q['xy_px'][1], 'place', 'village' if not full else 'place', 2 if not full else 3))
     icons.append(('the stone circle', M.CIRCLE[0], M.CIRCLE[1], 'circle', 'circle', 1))
     for nm, (x, y, r, region_, story) in M.CRATERS.items():
         if nm != 'the Crossroads crater':
@@ -890,6 +994,7 @@ def compose(S, M, R, ink, s, base, k, ox, oy, Wc, Hc, paths, lines, mode, title,
     d = ImageDraw.Draw(canvas, 'RGBA')
     draw_lines(d, lines, P, R, ink, s)
     draw_street_bridges(d, S, R, ink, P, k)
+    draw_forest(d, S, R, ink, P, k, s)
     draw_kerbs(d, S, R, P, k)
     draw_walls(d, S, R, ink, P, k)
     draw_towns(d, S, R, ink, P, s, k)
@@ -930,7 +1035,7 @@ def compose(S, M, R, ink, s, base, k, ox, oy, Wc, Hc, paths, lines, mode, title,
 
 
 # ------------------------------------------------------------------------------------------ the town plans, one inset each
-TOWN_INSETS = (('crossroads', 8.0), ('dust-gulch', 8.0), ('hearthold', 8.0), ('neon-harbour', 4.5))
+TOWN_INSETS = (('crossroads', 8.0), ('dust-gulch', 8.0), ('hearthold', 8.0), ('neon-harbour', 4.5), ('highgarth', 8.0))
 CLASS_COL = {'main': (247, 236, 206), 'side': (236, 220, 186), 'lane': (222, 204, 168), 'close': (204, 184, 150)}
 FN_COL = {'market and civic': (178, 64, 74), 'homes': (196, 120, 74), 'crafts and work': (150, 112, 52), 'docks and transport': (54, 106, 150),
           'offices and trade': (112, 74, 150), 'edge': (88, 128, 64)}
@@ -992,6 +1097,11 @@ def town_inset(S, M, R, ink, cg, cid, rgb, sea_rgb, P, ppc):
     draw_kerbs(d, S, R, Pf, kb, [P])
     draw_walls(d, S, R, ink, Pf, kb)
     draw_towns(d, S, R, ink, Pf, max(1.0, ppc / 4), kb)
+    for (gx, gy) in (P.get('features') or {}).get('shrine_gates_px', []):     # the shrine path's timber gates
+        X, Y = Pf(gx, gy); r_ = max(2.0, 3.5 * kb)
+        d.line([(X - r_, Y - r_ * 0.6), (X + r_, Y - r_ * 0.6)], fill=(150, 96, 52, 255), width=max(1, int(round(1.6 * kb))))
+        d.line([(X - r_ * 0.6, Y - r_ * 0.6), (X - r_ * 0.6, Y + r_)], fill=(150, 96, 52, 255), width=max(1, int(round(1.2 * kb))))
+        d.line([(X + r_ * 0.6, Y - r_ * 0.6), (X + r_ * 0.6, Y + r_)], fill=(150, 96, 52, 255), width=max(1, int(round(1.2 * kb))))
     TH = P.get('theme') or {}
     if TH:                                                           # the theme: waystone, the line to the beam, the crater, Moss, the Company
         sl_ = TH.get('sightline')

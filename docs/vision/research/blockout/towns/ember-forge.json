@@ -44,6 +44,8 @@
   5080
  ],
  "fortification": null,
+ "style": null,
+ "features": {},
  "arrivals": [
   {
    "id": "ember-forge-arr1",

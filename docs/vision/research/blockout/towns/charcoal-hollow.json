@@ -1,0 +1,442 @@
+{
+ "schema": "mygame.town_plan/1",
+ "id": "charcoal-hollow",
+ "name": "Charcoal Hollow",
+ "size": "hamlet",
+ "size_note": "hamlet",
+ "target": [
+  3,
+  5
+ ],
+ "buildings_counted": 3,
+ "grid": {
+  "cell_px": 8,
+  "screen_cells": [
+   40,
+   22.5
+  ],
+  "origin": "world px, top-left of the continent (blockout-v55.json coords)",
+  "street_classes": {
+   "arrival": "the regional route's own width",
+   "main": 6,
+   "side": 4,
+   "lane": 3,
+   "close": 2
+  }
+ },
+ "site": {
+  "reason": "foresters and charcoal burners: charcoal for Cogsworth's forges, timber the old way, by hand",
+  "terrain": "a clearing in the old forest, on the trail from the Towpath",
+  "fit": "",
+  "dry": false,
+  "fortified": false,
+  "authored": "by the layout generator from hand-written streets",
+  "tiers": [
+   11,
+   17
+  ],
+  "levelled_footprints": 3
+ },
+ "footprint_px": [
+  8376,
+  2368,
+  8584,
+  2568
+ ],
+ "fortification": null,
+ "style": null,
+ "features": {},
+ "arrivals": [
+  {
+   "id": "charcoal-hollow-arr1",
+   "kind": "path",
+   "route": "the Old Forest Trail",
+   "street": "charcoal-hollow-a1",
+   "entries_px": [
+    [
+     8422,
+     2690
+    ],
+    [
+     8509,
+     2251
+    ]
+   ],
+   "route_kind": "path"
+  }
+ ],
+ "streets": [
+  {
+   "id": "charcoal-hollow-a1",
+   "name": "the Old Forest Trail",
+   "class": "arrival",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     8422.1,
+     2690.2
+    ],
+    [
+     8440.0,
+     2651.3
+    ],
+    [
+     8449.8,
+     2606.6
+    ],
+    [
+     8456.1,
+     2522.7
+    ],
+    [
+     8466.7,
+     2465.7
+    ],
+    [
+     8500.0,
+     2372.0
+    ],
+    [
+     8509.5,
+     2333.4
+    ],
+    [
+     8513.0,
+     2292.5
+    ],
+    [
+     8508.9,
+     2251.2
+    ]
+   ],
+   "follows_route": "the Old Forest Trail",
+   "connects": []
+  }
+ ],
+ "squares": [],
+ "districts": [
+  {
+   "name": "Charcoal Hollow",
+   "centre_px": [
+    8470,
+    2440
+   ],
+   "declared": "foresters and charcoal burners: charcoal for Cogsworth's forges, timber the old way, by hand",
+   "town": "Charcoal Hollow",
+   "id": "charcoal-hollow-d-charcoal-hollow",
+   "buildings": [
+    "charcoal-hollow-b001",
+    "charcoal-hollow-b002",
+    "charcoal-hollow-b003"
+   ],
+   "mix": {
+    "cottage": 3
+   },
+   "function": "homes"
+  },
+  {
+   "id": "charcoal-hollow-d-the-kilns",
+   "name": "the kilns",
+   "function": "docks and works yards",
+   "declared": "charcoal burning in earth clamps",
+   "box_px": [
+    8500,
+    2460,
+    8580,
+    2500
+   ],
+   "buildings": [],
+   "town": "Charcoal Hollow"
+  }
+ ],
+ "gathering_places": [],
+ "size_table_px": {
+  "cottage": [
+   [
+    56,
+    80
+   ],
+   [
+    40,
+    48
+   ]
+  ]
+ },
+ "fronts": 3,
+ "counting_note": "buildings_counted counts a block of fronts sharing its walls (a terrace, an apartment row, a frontier block) once; fronts counts each front in it",
+ "buildings": [
+  {
+   "id": "charcoal-hollow-b001",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    1066,
+    296,
+    7,
+    5
+   ],
+   "rect_px": [
+    8528,
+    2368,
+    56,
+    40
+   ],
+   "faces": "charcoal-hollow-a1",
+   "door_cells": [
+    1065,
+    297
+   ],
+   "purpose": "a cottage",
+   "occupants": "a farming household",
+   "district": "charcoal-hollow-d-charcoal-hollow",
+   "counted": true,
+   "plot_cells": [
+    1066,
+    294,
+    7,
+    2
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "charcoal-hollow-b002",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    1047,
+    311,
+    6,
+    10
+   ],
+   "rect_px": [
+    8376,
+    2488,
+    48,
+    80
+   ],
+   "faces": "charcoal-hollow-a1",
+   "door_cells": [
+    1053,
+    316
+   ],
+   "purpose": "a cottage",
+   "occupants": "a fishing household",
+   "district": "charcoal-hollow-d-charcoal-hollow",
+   "counted": true,
+   "plot_cells": [
+    1045,
+    311,
+    2,
+    10
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "charcoal-hollow-b003",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    1048,
+    305,
+    7,
+    5
+   ],
+   "rect_px": [
+    8384,
+    2440,
+    56,
+    40
+   ],
+   "faces": "charcoal-hollow-a1",
+   "door_cells": [
+    1055,
+    309
+   ],
+   "purpose": "a cottage",
+   "occupants": "a carting household",
+   "district": "charcoal-hollow-d-charcoal-hollow",
+   "counted": true
+  }
+ ],
+ "lifted": [],
+ "outskirts": [
+  {
+   "kind": "yard",
+   "name": "the kilns",
+   "box": [
+    8500,
+    2460,
+    8580,
+    2500
+   ],
+   "why": "charcoal burning in earth clamps"
+  }
+ ],
+ "game_layout": {
+  "arrival": "the Old Forest Trail",
+  "first_view": "Charcoal Hollow from the the Old Forest Trail: a cottage, Charcoal Hollow's largest building ahead",
+  "landmarks": [
+   {
+    "name": "a cottage, Charcoal Hollow's largest building",
+    "xy": [
+     8400,
+     2528
+    ]
+   }
+  ],
+  "shortcuts_later": [],
+  "quiet_corners": [],
+  "first_screen_cells": [
+   [
+    1032,
+    325,
+    40,
+    22.5
+   ]
+  ],
+  "screens": [
+   0.7,
+   1.1
+  ]
+ },
+ "ground": {
+  "centre": "worn earth",
+  "yards": "gardens",
+  "edges": "fields",
+  "materials_cells": {
+   "brick setts": 635,
+   "cinder yards": 1258
+  }
+ },
+ "terrain": {
+  "box_cells": [
+   1032,
+   281,
+   57,
+   56
+  ],
+  "codes": {
+   ".": "land",
+   "g": "green ground (grass, gardens, woods, fields)",
+   "r": "route",
+   "~": "water",
+   "#": "barrier (cliff, wall, lava)",
+   "b": "bridge"
+  },
+  "rows": [
+   "30g3r24g",
+   "30g3r24g",
+   "30g4r6#17g",
+   "8r12.9g#4r7#16g",
+   "8r12.9g#4r7#16g",
+   "8r12.8g3#3r8#15g",
+   "6g2r12.8g3#3r8#15g",
+   "8g12.8g2#4r8#15g",
+   "6#2g12.10g4r8#15g",
+   "7#g12.10g4r5#18g",
+   "7#g12.10g3r2g2#20g",
+   "7#4r9.10g3r24g",
+   "7#4r9.9g4r24g",
+   "5#5r10.9g4rg7.16g",
+   "4#6r10.9g4rg7.16g",
+   "2#7r3g6.11g3r2g7.16g",
+   "#7r.3g6.10g4r2g7.16g",
+   "7r2.3g6.10g4r2g7.16g",
+   "6r12.9g4r3g7.16g",
+   "5r13.9g4r3g7.16g",
+   "4r14.9g4r26g",
+   "9g9.8g4r2g6.19g",
+   "9g3.14g4r2g6.19g",
+   "9g3.14g4r14.13g",
+   "9g3.4g7.2g4r15.13g",
+   "9g3.4g7.2g4r15.13g",
+   "12.4g7.2g3r2g10.17g",
+   "12.4g7.g4r2g10.17g",
+   "12.4g7.g4r2g10.17g",
+   "12.12g4r2g10.17g",
+   "9g3.g8.3g3r2g13.15g",
+   "2g10.g8.3g3r2g13.15g",
+   "2g10.g8.3g3r2g13.15g",
+   "2g10.g8.2g4r2g13.15g",
+   "5.4g3.g8.2g4r2g13.15g",
+   "5.4g3.g8.2g4r2g13.15g",
+   "5.4g3.g8.2g3r3g13.15g",
+   "g3.5g3.g8.2g3r3g13.15g",
+   "g3.5g3.g8.2g3r3g13.15g",
+   "g3.5g3.g8.2g3r3g13.15g",
+   "g3.5g3.11g3r3g13.15g",
+   "g3.5g3.11g3r31g",
+   "g19.3g3r20g7.4g",
+   "g19.3g3r18g12.g",
+   "g19.3g3r17g14.",
+   "9g3.5g2.7r15g16.",
+   "9g.9g12r9g17.",
+   "10g9#17r3g18.",
+   "9g12#g18r17.",
+   "9g12#4r3g16r13.",
+   "9g12#4r8g15r9.",
+   "9g11#5r11g2.13r6.",
+   "g8.g10#4r12g6.9r6.",
+   "g9.g8#5r6.6g9.6r6.",
+   "11.8g4rg6.5g22.",
+   "2r2.5g3.5g6rg6.5g22."
+  ]
+ },
+ "residents": [],
+ "routines": [],
+ "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only.",
+ "open_uses": [],
+ "theme": {
+  "waystone": {
+   "xy_px": [
+    8476,
+    2460
+   ],
+   "at": "in the town",
+   "table_name": "Charcoal Hollow",
+   "status": "proposed"
+  },
+  "sightline": {
+   "kind": "viewpoint",
+   "from_px": [
+    8377,
+    2487
+   ],
+   "to_px": [
+    8221,
+    2518
+   ],
+   "toward": "the stone circle (the beam over the valley)",
+   "off_by_deg": 0,
+   "bearing_deg": 169
+  },
+  "crater": {
+   "name": "the Seam crater",
+   "xy_px": [
+    8386,
+    2130
+   ],
+   "distance_px": 350,
+   "effect": "the Seam crater lies 300 px away; its scorch points to the valley",
+   "road": "the Old Forest Trail",
+   "road_leaves_at_px": [
+    8509,
+    2251
+   ]
+  },
+  "moss": {
+   "where": "the market",
+   "xy_px": [
+    8476,
+    2460
+   ]
+  },
+  "company": {
+   "foothold": "a buyer who calls on market days",
+   "building": null,
+   "xy_px": null
+  },
+  "tech": "older-made: off the rail",
+  "theme_line": "the circle keeps the moon's light for everyone; the Company sells it"
+ }
+}

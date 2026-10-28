@@ -44,6 +44,8 @@
   4544
  ],
  "fortification": null,
+ "style": null,
+ "features": {},
  "arrivals": [
   {
    "id": "canalside-arr1",

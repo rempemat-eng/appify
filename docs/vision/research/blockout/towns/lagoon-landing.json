@@ -44,6 +44,8 @@
   6872
  ],
  "fortification": null,
+ "style": null,
+ "features": {},
  "arrivals": [
   {
    "id": "lagoon-landing-arr1",

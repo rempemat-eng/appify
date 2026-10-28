@@ -44,6 +44,8 @@
   1864
  ],
  "fortification": null,
+ "style": null,
+ "features": {},
  "arrivals": [
   {
    "id": "the-lode-arr1",

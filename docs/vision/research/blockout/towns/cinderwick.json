@@ -44,6 +44,8 @@
   6072
  ],
  "fortification": null,
+ "style": null,
+ "features": {},
  "arrivals": [
   {
    "id": "cinderwick-arr1",

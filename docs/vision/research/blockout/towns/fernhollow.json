@@ -44,6 +44,8 @@
   3336
  ],
  "fortification": null,
+ "style": null,
+ "features": {},
  "arrivals": [
   {
    "id": "fernhollow-arr1",

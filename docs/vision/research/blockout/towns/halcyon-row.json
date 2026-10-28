@@ -44,6 +44,8 @@
   5768
  ],
  "fortification": null,
+ "style": null,
+ "features": {},
  "arrivals": [
   {
    "id": "halcyon-row-arr1",

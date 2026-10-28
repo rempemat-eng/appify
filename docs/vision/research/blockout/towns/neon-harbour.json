@@ -44,6 +44,8 @@
   5568
  ],
  "fortification": null,
+ "style": null,
+ "features": {},
  "arrivals": [
   {
    "id": "neon-harbour-arr1",

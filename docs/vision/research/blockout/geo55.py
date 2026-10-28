@@ -380,6 +380,67 @@ def highgarth_valley(T):
     return floor
 
 
+# ------------------------------------------------------------------------------------------ the old forest (Matt, 28 Oct)
+FOREST_TRAIL = [(8300, 2744), (8420, 2620), (8470, 2470), (8500, 2330), (8560, 2150), (8660, 2010), (8720, 1960), (8800, 1830), (8830, 1760)]
+FOREST_LAKE_BRANCH = [(8560, 2150), (8700, 2190), (8830, 2230)]
+FOREST_CAMP_BRANCH = [(8420, 2620), (8540, 2660), (8650, 2670)]
+FOREST_PLACES = {   # name: (x, y, clearing radius px, what, tier on the overview: 2 named, 3 reference only)
+    'the Elder Oak': (8720, 1960, 96, "a colossal ancient oak in its clearing, ringed by mossy standing stones: kin of the circle, a waystone among them", 2),
+    "the moon-watchers' observatory": (8830, 1750, 72, "the circle-builders' overgrown moon observatory, half sunk in the trees: older than every town", 2),
+    "the Company's timber camp": (8660, 2680, 110, "the Company eating into the forest's south edge: felled ground, a log flume to the river, a rail spur to the Cogsworth line", 2),
+    'Charcoal Hollow': (8470, 2440, 70, "the foresters' and charcoal burners' hamlet in its clearing", 2),
+    'Fernmere': (8860, 2240, 60, 'the forest lake: a boardwalk runs from it into the moss fens; a reed hide on its shore', 3),
+    'the hidden glade': (8350, 2000, 40, 'a glade off the trail, through a gap in the trees, for those who look', 3),
+    'the fern glade': (8790, 2470, 36, 'a second hidden glade, deep in the wood', 3),
+}
+
+
+def old_forest(T):
+    """The old forest north-east of Cogsworth gets things to see (Matt, 28 Oct): uneven density (open woods and clearings in the
+    deep canopy), a trail from the Towpath to its places, the Elder Oak and its stones, the moon observatory, the Company's timber
+    camp on its south edge with its log flume and rail spur, Charcoal Hollow, the forest lake with its boardwalk and reed hide,
+    and two hidden glades. Returns the places for the plan, the labels and the map."""
+    K = T['K']
+    box = (g.PX > 8180) & (g.PX < 9000) & (g.PY > 1640) & (g.PY < 2900) & ~ndi.binary_dilation(T['FRAME'], iterations=3)
+    wild = box & np.isin(K, ['wild', 'ancient'])
+    nz = g.noise(140, 7101)
+    K[wild & (nz > 0.15)] = 'broadleaf'                              # uneven density: open woods through the deep canopy
+    K[wild & (nz > 0.62)] = 'clearing'
+    for nm, (x, y, r, what, tier) in FOREST_PLACES.items():
+        m = g.shape(x, y, r, r * 0.8, 7110 + len(nm), 0.18) & box & ~np.isin(K, ['river', 'creek', 'canal', 'road', 'path', 'bridge'])
+        K[m] = 'clearing' if nm != "the Company's timber camp" else 'fallow'
+    add_route(T, 'the Old Forest Trail', FOREST_TRAIL, 'path')
+    add_route(T, 'the Fernmere path', FOREST_LAKE_BRANCH, 'path')
+    add_route(T, 'the camp track', FOREST_CAMP_BRANCH, 'path')
+    for (x, y) in ((8350, 2000), (8790, 2470)):                     # the gaps in the trees to the hidden glades
+        p = np.asarray(T['route_px']['the Old Forest Trail'], float); i = int(np.argmin(np.hypot(p[:, 0] - x, p[:, 1] - y)))
+        gap = G._orig_line_mask([(p[i, 0], p[i, 1]), (x, y)], 16) & box & np.isin(K, ['wild', 'ancient', 'broadleaf', 'conifer', 'thicket'])
+        K[gap] = 'broadleaf'
+    # the Elder Oak's standing stones; the lake, its reeds and boardwalk
+    ox, oy = FOREST_PLACES['the Elder Oak'][:2]
+    stones = [(ox + 64 * math.cos(a), oy + 52 * math.sin(a)) for a in np.linspace(0, 2 * math.pi, 9)[:-1]]
+    for (x, y) in stones:
+        K[int(y // g.CELL), int(x // g.CELL)] = 'tor'
+    lx, ly = FOREST_PLACES['Fernmere'][:2]
+    lake = g.shape(lx, ly, 44, 32, 7120, 0.2) & box
+    reeds = ndi.binary_dilation(lake, iterations=2) & ~lake & box & ~np.isin(K, ['path', 'road', 'bridge'])
+    K[reeds] = 'reeds'; K[lake] = 'mere'
+    bw = G._orig_line_mask([(lx + 20, ly), (9000, ly + 10)], 12) & ~ndi.binary_dilation(T['FRAME'], iterations=3) & ~lake
+    K[bw & ~np.isin(K, ['path', 'road'])] = 'bridge'
+    places = {nm: {'xy_px': [x, y], 'what': what, 'tier': tier} for nm, (x, y, r, what, tier) in FOREST_PLACES.items()}
+    feats = {'standing_stones_px': [[int(x), int(y)] for x, y in stones],
+             'boardwalk_px': [[lx + 20, ly], [9000, ly + 10], [9380, ly + 40]], 'reed_hide_px': [lx + 52, ly - 30],
+             'log_flume_px': [[8640, 2660], [8480, 2650], [8300, 2630], [8210, 2620]],
+             'rail_spur_px': [[8680, 2720], [8600, 2780], [8460, 2810], [8380, 2810]],
+             'camp_sheds_px': [[8620, 2650, 56, 32], [8690, 2640, 48, 32], [8660, 2700, 64, 32]]}
+    for (x, y, w, h) in feats['camp_sheds_px']:
+        a, b = int(y // g.CELL), int(x // g.CELL)
+        sub = K[a:a + h // g.CELL, b:b + w // g.CELL]; sub[np.isin(sub, ['fallow', 'clearing', 'broadleaf', 'wild', 'conifer'])] = 'building'
+    V.WAYSTONES['the Elder Oak'] = (ox + 4, oy + 36, 'proposed')
+    T['forest'] = {'places': places, 'features': feats}
+    return T['forest']
+
+
 def add_route(T, name, pts, kind='path', feats=(), wiggle=True, seed=None):
     """A v55 route painted as geo5's routes are (a meandering line, bridges over small water); it may cross no barrier."""
     import zlib
@@ -624,6 +685,7 @@ def v55_paint(T):
     add_route(T, 'the Northway', [HIGHGARTH] + NORTHWAY_OPEN, 'path')
     closed_pass(T)
     add_route(T, 'the Pad Road', PAD_ROAD, 'road')
+    rec['forest'] = old_forest(T)                                    # the old forest's places, its trail and clearings
     # the new walked ground: the valley, its roads, the cape; the frame taken off and the borders drawn round them
     new_walk = T['highgarth_floor'] | G._orig_line_mask(T['route_px']['the Garth Road'], 120) | G._orig_line_mask(T['route_px']['the Northway'], 120)
     cape = T['land'] & (((g.PX > 11300) & (g.PY > 5300)) | ((g.PX > 11300) & (g.PX < 12420) & (g.PY > 4300)))
@@ -641,11 +703,12 @@ def v55_paint(T):
                keepout_discs=[(6296, 3088, 150), (6816, 3648, 110), (6484, 3712, 90), (V.CIRCLE[0], V.CIRCLE[1], 120)])
     towns = TW.lay_all(T, sys.modules[__name__])
     towns.update(TW.launch_cape(T, sys.modules[__name__]))
+    towns.update(TW.charcoal_hollow(T, sys.modules[__name__]))
     for t in towns.values():                                         # no impassable deep forest inside a town: open woods
         if t.buildings:
             x0, y0, x1, y1 = t.record()['footprint_box']
             a, b, c, d = int(max(0, y0 - 60) // g.CELL), int(max(0, x0 - 60) // g.CELL), int((y1 + 60) // g.CELL), int((x1 + 60) // g.CELL)
-            sub = T['K'][a:c, b:d]; sub[np.isin(sub, ['wild', 'ancient'])] = 'broadleaf'
+            sub = T['K'][a:c, b:d]; sub[np.isin(sub, ['wild', 'ancient']) & ~T['FRAME'][a:c, b:d]] = 'broadleaf'
     import town_plans as TP                                          # each town's plan: arrivals, access, the record (towns/<id>.json)
     rec['plans'] = TP.finish(T, towns, sys.modules[__name__])
     farms = central_green(T, TW)
@@ -781,6 +844,10 @@ def data_stage():
     pois, per = G.content(T)
     pois.append({'name': 'the rockfall sign', 'cat': 'view', 'biome': G.biome_of(*ROCKFALL) or '', 'x': ROCKFALL[0], 'y': ROCKFALL[1] + 40,
                  'route': 'the Northway', 'off_path': False})
+    for nm, cat, rn in (("the moon-watchers' observatory", 'story', 'the Old Forest Trail'), ('the Elder Oak', 'story', 'the Old Forest Trail'),
+                        ('Fernmere', 'view', 'the Fernmere path'), ("the Company's timber camp", 'story', 'the camp track')):
+        x_, y_ = FOREST_PLACES[nm][:2]                               # the old forest's places, where its trails end
+        pois.append({'name': nm, 'cat': cat, 'biome': G.biome_of(x_, y_) or '', 'x': x_, 'y': y_, 'route': rn, 'off_path': False})
     pois = G.fill_required(T, pois); marks = G.markers(T)
     gates = g.gate_check(K, T['crossings'])
     gates['closed: the Highgarth pass'] = closed_check(K)
@@ -868,6 +935,7 @@ def write_data(S):
                                          'size': r['size'], 'buildings_counted': r['buildings_counted']} for nm, r in town_rec.items()}
     v55['closed_routes'] = {'the Northway (closed)': {'polyline': [[int(round(x)), int(round(y))] for x, y in T['route_px']['the Northway (closed)']],
                                                       'closed': True, 'closed_for': ['movement', 'navigation', 'travel'], 'way': 'C1'}}
+    v55['old_forest'] = T.get('forest')
     bj['v55'] = v55
     with open(os.path.join(DATA, f'blockout{SUF}.json'), 'w') as f:
         json.dump(bj, f, separators=(',', ':'))
@@ -903,6 +971,7 @@ def map_state(S):
             'craters': T['craters'], 'stats_home': S['res'], 'hero': S['stats']['v53']['hero'], 'towns': S['town_rec'],
             'farms': S['stats']['v55']['farms'], 'closed': CLOSED, 'dims': (NEW_W, NEW_H), 'plans': S['plans'],
             'mat': T.get('mat'), 'materials': __import__('town_plans').MATERIALS,
+            'forest': T.get('forest'),
             'tables': {'SETTLE': dict(g.SETTLE), 'STATIONS': dict(g.STATIONS), 'SHORTCUTS': list(g.SHORTCUTS), 'BRIDGES': dict(g.BRIDGES),
                        'CIRCLE': V.CIRCLE, 'CROSSROADS': V.CROSSROADS, 'CRATERS': dict(V.CRATERS), 'POI53': dict(V.POI53),
                        'WAYSTONES': dict(V.WAYSTONES), 'BUILT': dict(V.BUILT), 'ACT1': list(V.ACT1), 'PEAK_NAMES': list(V54.PEAK_NAMES),

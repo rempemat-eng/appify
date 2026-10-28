@@ -44,6 +44,8 @@
   5192
  ],
  "fortification": null,
+ "style": null,
+ "features": {},
  "arrivals": [
   {
    "id": "gullwick-arr1",

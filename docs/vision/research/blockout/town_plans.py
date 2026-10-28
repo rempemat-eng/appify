@@ -127,11 +127,12 @@ GAME = {
                        'landmarks': [('the pier head and the inn', (6490, 6420)), ('the lagoon front', (6600, 6555)), ('the boatyard slip', (6810, 6520))],
                        'shortcuts_later': [('stepping stones across the lagoon\'s mouth to the boatyard', (6760, 6560), 'at low tide')],
                        'quiet_corners': [("the naturalist's garden on Net Row, beside the busy pier", (6560, 6470))]},
-    'highgarth': {'arrival': 'the Garth Road', 'first_view': 'up the last bend into Garth Street: stepped stone houses on their walls, the market cross, the snow peaks over the roofs',
-                  'landmarks': [('the market cross', (7915, 1198)), ('the chapel on Kirk Lane', (7900, 1060)), ('the slate quarry face', (8110, 1110)), ('the sawmill by the Cog', (7705, 1250))],
-                  'shortcuts_later': [('the quarry incline down to Low Street', (8040, 1220), 'when the quarry works again'),
-                                      ('the Northway past the rockfall', (7815, 545), 'later, with the region north of the range (closed now)')],
-                  'quiet_corners': [('the chapel yard above the busy market cross', (7900, 1060))]},
+    'highgarth': {'arrival': 'the Garth Road', 'first_view': 'up the last bend into Garth Street, the post road: dark machiya wall to wall under their deep eaves, lanterns hung out, the pagoda on its plinth above the roofs, snow on the peaks',
+                  'landmarks': [('the five-storey pagoda', (8104, 1040)), ("the lord's watch keep by its tarn", (7940, 700)), ('the post square and its gate', (7976, 1188)),
+                                ('the temple hall on its plinth', (8072, 976))],
+                  'shortcuts_later': [('the shrine path past its last gate, to the sealed pass', (8064, 660), 'later, with the region north of the range (closed now)'),
+                                      ('the quarry incline down to Terrace Lane', (8168, 1200), 'when the quarry works again')],
+                  'quiet_corners': [('the pine grove above the temple, beside the busy post road', (8010, 896)), ('the moon-viewing terrace by the bathhouse', (7736, 1296))]},
     'neon-harbour': {'arrival': 'Lull Road', 'first_view': 'off the Lull Road at Canalside: the canal basin, the funicular up to the Skyport, the airships over the Heights and the neon of the Company district across the ria',
                      'landmarks': [('the Skyport masts and airships', (10040, 4900)), ("the Company's tower", (11850, 4560)), ('Bridgefoot and the falls', (11135, 4462)),
                                    ('the cranes on the long quay', (11250, 5000)), ('the lido on the East Shore', (12100, 5150)), ('the maglev terminus', (11650, 4565)),
@@ -169,13 +170,14 @@ THEME = {
                        'tech': 'older-made: timber, tile and the springs\' heat'},
     'lagoon-landing': {'crater_effect': 'the shard drowned in the lagoon (a drowned crater): its light glows under the water at night', 'moss': 'the pier',
                        'company': ("an agent's office on the pier", 'public'), 'tech': "older-made: boats and sail; the isles' own ways"},
-    'highgarth': {'crater_effect': "the Starfall's tremor brought the rockfall down and closed the pass", 'moss': 'the market cross',
-                  'company': ("a buyer's room at the drovers' inn", 'inn'), 'tech': 'older-made: water mill, slate and wool; the Garth Road only'},
+    'highgarth': {'crater_effect': "the Starfall's tremor brought the rockfall down on the pass road; the lord sealed the pass, and the shrine "
+                                   "path's last timber gate stands below the fallen rock", 'moss': 'the post square',
+                  'company': ("a buyer's room at the post inn", 'inn'), 'tech': 'older-made: timber, tile, slate and the water mill; the Garth Road only'},
     'neon-harbour': {'crater_effect': "the Company crater lies fenced in the Company's yard: its shard light is pumped to the neon", 'moss': 'the market by Canalside',
                      'company': ("the Company's tower and its yard: the headquarters", 'tower'),
                      'tech': 'bought shard light: the neon, the maglev and the airships. The old waterfront is the town that was there before the Company'},
 }
-MAIN_SQUARE = {'hearthold': 'the gate market'}
+MAIN_SQUARE = {'hearthold': 'the gate market', 'highgarth': 'the post square'}
 
 
 def theme_block(T, pid, P, ts, X):
@@ -223,6 +225,8 @@ def theme_block(T, pid, P, ts, X):
     else:
         ws = list(old[:2]); at = 'on the square (the built zone)'
     th['waystone'] = {'xy_px': [int(ws[0]), int(ws[1])], 'at': at, 'table_name': key, 'status': (old[2] if old else 'proposed')}
+    if pid == 'highgarth':
+        th['waystone']['under'] = 'a gate of timber posts on the post square'
     # the sightline toward the beam: the street most nearly facing the stone circle, else a viewpoint at the town's edge
     ccx, ccy = V.CIRCLE
     bear = math.atan2(ccy - cy, ccx - cx)
@@ -239,8 +243,12 @@ def theme_block(T, pid, P, ts, X):
                 a = math.atan2(ey - sy, ex - sx); dev = abs((a - bear + math.pi) % (2 * math.pi) - math.pi)
                 if best is None or dev < best[0]:
                     best = (dev, q, (sx, sy), (ex, ey))
+    moon = next((o for t in ts for o in t.outskirts if 'moon-viewing' in (o.get('name') or '')), None)
+    if moon:                                                         # a moon-viewing terrace faces the beam
+        mx0, my0, mx1, my1 = moon['box']; mx, my = (mx0 + mx1) / 2, (my0 + my1) / 2
+        best = (0, {'id': None, 'name': moon['name']}, (mx, my), (mx + math.cos(bear) * 160, my + math.sin(bear) * 160))
     if best and best[0] <= math.radians(30):
-        th['sightline'] = {'kind': 'street', 'street': best[1]['id'], 'name': best[1].get('name'), 'from_px': [int(best[2][0]), int(best[2][1])],
+        th['sightline'] = {'kind': 'street' if best[1]['id'] else 'moon-viewing terrace', 'street': best[1]['id'], 'name': best[1].get('name'), 'from_px': [int(best[2][0]), int(best[2][1])],
                            'to_px': [int(best[3][0]), int(best[3][1])], 'toward': 'the stone circle (the beam over the valley)',
                            'off_by_deg': round(math.degrees(best[0]))}
     else:
@@ -282,7 +290,7 @@ def theme_block(T, pid, P, ts, X):
 
 # how each town sits on its ground (Matt's brief of 27 Oct, the fit to the terrain)
 FIT = {'palm-spring': 'the gardens follow the two channels from the spring; houses ring the pool on the dry gravel above them',
-       'highgarth': 'the town steps up its terraces on retaining walls: each street on one tier, a stair or a ramp between',
+       'highgarth': 'an old post town on the pass road: Garth Street along the valley floor, the temple on its stone plinth up the slope, the farmhouses on the upper terraces, the paddies stepping down on stone walls; the watch keep faces the sealed pass',
        'hearthold': 'on the one stable rock between the two lava flows; the walls follow the rock\'s rim, the lower town its flank',
        'cogsworth': "homes threaded between the works on the river and the railway: terraces in the strips the works leave",
        'lagoon-landing': 'wrapped round the sheltered lagoon: boathouses and stilt houses on its rim, the pier on the open north shore',
@@ -301,7 +309,7 @@ GROUND = {
     'palm-spring': {'centre': 'packed sand and stone round the pool', 'yards': 'adobe yards', 'edges': 'irrigated green only along the two channels'},
     'hearthold': {'centre': 'basalt setts', 'yards': 'ash and basalt yards', 'edges': 'vines and barley on the old flow\'s weathered ash'},
     'cinderwick': {'centre': 'basalt quay, cinder lanes', 'yards': 'black sand and ash', 'edges': 'the black-sand beach'},
-    'highgarth': {'centre': 'slate flags and stone steps', 'yards': 'stone-walled terraces', 'edges': 'walled in-fields and sheepfolds'},
+    'highgarth': {'centre': 'grey stone paving on Garth Street, stone steps', 'yards': 'raked gravel in the temple court, moss', 'edges': 'terraced paddies on stone walls, sheepfolds, snow above the town'},
     'cogsworth': {'centre': 'brick setts and cinder paths', 'yards': 'cinder yards', 'edges': 'allotments and spoil'},
     'lagoon-landing': {'centre': 'sand lanes and boardwalks', 'yards': 'sand', 'edges': 'reef shallows in the lagoon'},
     'crossroads': {'centre': 'the square\'s worn paving', 'yards': 'gardens', 'edges': 'fields and orchards on the river terrace'},
@@ -1064,6 +1072,8 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
                  'authored': 'by hand (towns55.hearthold)' if pid == 'hearthold' else 'by the layout generator from hand-written streets', 'tiers': [int(tiers.min()), int(tiers.max())], 'levelled_footprints': len(lv)},
         'footprint_px': fb,
         'fortification': next((t.fort for t in ts if getattr(t, 'fort', None)), None),
+        'style': next((t.style for t in ts if getattr(t, 'style', None)), None),
+        'features': {k_: v_ for k_, v_ in (('shrine_gates_px', next((t.gates_on_path for t in ts if getattr(t, 'gates_on_path', None)), None)),) if v_},
         'arrivals': arrivals, 'streets': streets, 'squares': squares, 'districts': dists, 'gathering_places': gathering,
         'size_table_px': {f: [list(TW.BLD[f][0]), list(TW.BLD[f][1])] for f in sorted({b['form'] for b in bl if not b.get('from_zone_plan')})},
         'fronts': sum(b.get('fronts', 1) for b in bl),
@@ -1096,11 +1106,12 @@ MATERIALS = {   # code: (name, rgb, how much of it is mixed into the ground's co
     16: ('ash yards', (128, 120, 112), 0.5), 17: ('slate flags', (112, 124, 136), 0.55), 18: ('stone terraces', (160, 150, 132), 0.5),
     19: ('brick setts', (150, 92, 72), 0.55), 20: ('cinder yards', (96, 86, 80), 0.5), 21: ('boardwalk', (170, 132, 92), 0.55),
     22: ('sand', (224, 206, 160), 0.5), 23: ('reef shallows', (96, 196, 190), 0.45), 24: ('worn paving', (168, 156, 132), 0.5),
-    25: ('packed earth', (150, 122, 92), 0.45), 26: ('dry gravel', (196, 178, 140), 0.45)}
+    25: ('packed earth', (150, 122, 92), 0.45), 26: ('dry gravel', (196, 178, 140), 0.45), 27: ('raked gravel', (206, 202, 190), 0.6),
+    28: ('moss', (100, 124, 80), 0.45)}
 TOWN_MAT = {   # plan id: (streets and squares, yards, open ground inside the town or None)
     'dust-gulch': (13, 14, 13), 'palm-spring': (13, 14, 26), 'the-lode': (13, 14, None), 'hearthold': (15, 16, 16), 'cinderwick': (15, 16, None),
-    'cinder-springs': (15, 16, None), 'ember-forge': (15, 16, None), 'highgarth': (17, 18, None), 'cogsworth': (19, 20, 20),
-    'lagoon-landing': (21, 22, 22), 'crossroads': (24, 25, None), 'fernhollow': (25, 25, None), 'lullford': (24, 25, None),
+    'cinder-springs': (15, 16, None), 'ember-forge': (15, 16, None), 'cogsworth': (19, 20, 20),
+    'lagoon-landing': (21, 22, 22), 'crossroads': (24, 25, None), 'highgarth': (17, 27, None), 'fernhollow': (25, 25, None), 'lullford': (24, 25, None),
     'driftwood': (22, 22, None), 'gullwick': (22, 22, None), 'canalside': (24, 25, None), 'glintside': (1, 25, None),
     'halcyon-row': (24, 22, None), 'launch-cape': (12, 12, None)}
 NEON_MAT = {'the old waterfront': 1, 'the docks': 4, 'the Lanes and the East Shore': 3, 'the Company district': 2, 'the Heights and the Skyport': 5}

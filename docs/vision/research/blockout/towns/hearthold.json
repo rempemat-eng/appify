@@ -131,6 +131,8 @@
    "opens": "after the knights accept you (a later shortcut to the Forge Stair)"
   }
  },
+ "style": null,
+ "features": {},
  "arrivals": [
   {
    "id": "hearthold-arr1",

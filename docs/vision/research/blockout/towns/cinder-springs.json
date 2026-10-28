@@ -44,6 +44,8 @@
   5776
  ],
  "fortification": null,
+ "style": null,
+ "features": {},
  "arrivals": [
   {
    "id": "cinder-springs-arr1",

@@ -44,6 +44,8 @@
   4420
  ],
  "fortification": null,
+ "style": null,
+ "features": {},
  "arrivals": [
   {
    "id": "glintside-arr1",

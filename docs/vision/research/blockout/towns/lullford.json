@@ -44,6 +44,8 @@
   4528
  ],
  "fortification": null,
+ "style": null,
+ "features": {},
  "arrivals": [
   {
    "id": "lullford-arr1",
