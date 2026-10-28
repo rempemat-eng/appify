@@ -6,11 +6,15 @@ on:
     paths:
       - 'game/**'
       - '.github/workflows/godot.yml'
+      - 'scripts/godot-import-cache.py'
+      - 'scripts/godot-import-cache.test.py'
   push:
     branches: [main]
     paths:
       - 'game/**'
       - '.github/workflows/godot.yml'
+      - 'scripts/godot-import-cache.py'
+      - 'scripts/godot-import-cache.test.py'
 
 permissions:
   contents: read
@@ -28,7 +32,35 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Test the download cache and integrity failures
+        run: python3 -m unittest discover -s game/tools -p test_get_godot.py -v
+      - name: Test exact import-cache keys and workflow guards
+        run: python3 scripts/godot-import-cache.test.py -v
+      - name: Cache the pinned Godot archive
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: ${{ runner.temp }}/godot-archives
+          key: godot-archive-v1-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('game/tools/get_godot.sh') }}
       - name: Get the pinned Godot 4.7.2 (checked against its SHA-512)
-        run: echo "GODOT=$(bash game/tools/get_godot.sh "$RUNNER_TEMP/godot")" >> "$GITHUB_ENV"
+        run: |
+          GODOT=$(bash game/tools/get_godot.sh "$RUNNER_TEMP/godot" "$RUNNER_TEMP/godot-archives")
+          echo "GODOT=$GODOT" >> "$GITHUB_ENV"
+      - name: Compute the exact import-cache key
+        id: import-key
+        run: |
+          KEY=$(python3 scripts/godot-import-cache.py --engine "$GODOT" --runner-os "$RUNNER_OS" --runner-arch "$RUNNER_ARCH")
+          echo "key=$KEY" >> "$GITHUB_OUTPUT"
+      - name: Restore derived imports for this exact source and engine
+        id: imports
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: game/.godot/imported
+          key: ${{ steps.import-key.outputs.key }}
       - name: Import, run the main scene, run the GdUnit4 tests
         run: bash game/tools/check.sh
+      - name: Save derived imports only after all Godot checks pass
+        if: success() && steps.imports.outputs.cache-hit != 'true'
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: game/.godot/imported
+          key: ${{ steps.import-key.outputs.key }}

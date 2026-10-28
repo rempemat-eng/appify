@@ -1,12 +1,12 @@
 # Development plan: from here to a complete game (27 Oct)
 
-This plan replaces the "Now / Next / Later" lists in [roadmap.md](roadmap.md) as the order of work. It covers everything still needed for MyGame to be more or less complete, the order it should happen in, and which parts the Codex chats take. Claude A keeps it current; Codex claims tasks on [#149](https://github.com/rempemat-eng/appify/issues/149) as before.
+This plan replaces the "Now / Next / Later" lists in [roadmap.md](roadmap.md) as the order of work. It covers everything still needed for MyGame to be more or less complete, the order it should happen in, and which parts the Codex chats take. MyGame Codex · lead keeps it current under the [handover](../codex/handover.md); Codex claims tasks on [#149](https://github.com/rempemat-eng/appify/issues/149) as before.
 
 ## What the process so far taught us
 
 - **Standards before content.** Every region built before the soft grid, the cast contract and the kits existed had to be redrawn. Nothing is placed in the world until its kit piece has passed the gates.
 - **Checks catch what reviews miss.** Agents repeatedly handed over faults (a double head, roads under buildings, debris in a finished stage, flat buildings). Each one now has a check. Any new kind of fault gets a check, not just a fix.
-- **Art is reviewed against Eastward by Claude A before Matt sees it.** Codex writes concepts, data, tools and checks. It does not set art direction.
+- **The Codex lead reviews art/maps against the written Eastward rules and gates before Matt sees them.** Assigned Codex workers also draw and compose existing direction. Matt approves art/map merges and any changes of direction.
 - **One claim per task.** Two chats on one task wastes both. The first ASSIGN on #149 wins.
 - **Commit often.** Containers restart. Push after each finished step, keep PRs as drafts while iterating, mark them ready once.
 
@@ -35,7 +35,7 @@ The editor and its checks are what make every later phase fast and consistent.
 Order: the home valley and woodland (nearly done, #302), then the Crossroads town kit, the coast and city kit (Neon Harbour's retro-future paving included), the desert, the fire country, the mountains (Highgarth's slate terraces), and the isles.
 
 - Codex: concepts with placement rules for each biome (W0 catalogue format), variant and width-class lists, metadata (size on the grid, where it can and cannot go, shadow, story tie-in, interaction), and the validators.
-- Claude: drawing every piece to the Eastward bar, review gates, Matt's approval.
+- Assigned Codex workers: drawing each piece to the written Eastward bar; lead review and Matt's approval.
 - **Gate:** the biome's pieces are approved in the catalogue, and a test zone built from them passes every check and Matt's look.
 
 ### Phase 4. The vertical slice for real
@@ -44,7 +44,7 @@ The first 60 to 90 minutes ([vertical-slice.md](vertical-slice.md)): the home va
 
 - X5: convert Crossroads to the editor.
 - Codex: quest chain wiring, NPC routines from X3, dialogue data, save and load, entering houses, the playtest harness and a scripted run of the whole slice.
-- Claude: composition, cast, motion and art review, and Matt's playtest.
+- Assigned Codex workers: composition, cast and motion under written direction; lead review and Matt's playtest.
 - **Gate:** Matt plays the slice start to finish and signs it off.
 
 ### Phase 5. Core systems complete
@@ -72,7 +72,7 @@ Each region follows the same steps:
 6. Review gates.
 7. Matt's review.
 
-Codex fills the data for steps 4 and 5 and runs the checks. Claude does steps 1 to 3 and the review.
+Assigned Codex workers own steps 1 to 7 and the data/checks. The lead reviews and integrates; Matt approves art/maps.
 
 ### Phase 7. Story and content
 
@@ -86,21 +86,23 @@ Acts 2 and 3, the bosses, side stories, visitors and cosmetic sets, written as q
 
 ## How the Codex chats work through this
 
-Each chat picks its own work with the hourly routine, in this priority:
+Each chat follows Matt's 28 October hourly priority:
 
-1. Finish the task it holds.
-2. Phase 1 tasks (W0 to W7, X1, X6) until they are all done.
-3. Unblocked Phase 2 tasks (X2 to X4 once Claude A posts "go").
-4. Phase 3 concepts and validators for the next biome in the order above.
-5. Phase 5 systems whose data format is settled.
-6. Phase 4 and 6 data (residents, quests, dialogue) for regions whose plans are approved.
-7. Its own proposal, posted as PROPOSE first.
+1. Finish its current claim.
+2. W0–W7, X1 and X6: the editor core.
+3. Y15 on PR303: Hearthold/Cinderwick/Launch Cape and Highgarth keep wording first; then remaining towns; then X3.
+4. Y12 pre-review sheets for Matt.
+5. Y5, Y6, Y1, Y2, Y3, Y4, Y7, Y8, Y9 and Y13, extending existing systems.
+6. Kit concepts Y10, Y11 and Y14.
+7. X2 and X4 only after Matt approves v55.
+8. X5 and the first playable hour only after W1–W3 merge and the Crossroads kit is approved.
+9. Former Claude PRs302/303/299/290 only when the lead assigns a continuation on a new codex/branch from the real head.
 
-The files each chat may touch are set by its claim and by [coordination.md](../codex/coordination.md). Art, art direction and game rules stay with Claude A and Matt.
+The files each chat may touch are set by its claim and by [coordination.md](../codex/coordination.md). New game rules and art direction changes require Matt. The lead has standing non-art integration authority and performs coordination too; see the handover.
 
 ## Side by side right now (27 Oct 23:45)
 
-Claude's critical path is narrow: the v55 map and town plans, drawing kit pieces, and reviews. Everything else that does not need new art or a decision from Matt goes to Codex now, so Claude's time goes only to work that needs judgement on art and direction.
+The former Claude critical path is now owned by the Codex lead and assigned workers: the v55 map and town plans, drawing kit pieces, and reviews. Everything else that does not need new art or a decision from Matt goes to Codex now, so Claude's time goes only to work that needs judgement on art and direction.
 
 ### Can start now (Codex)
 
@@ -128,7 +130,8 @@ Phase 1 (W0 to W7, X1, X6) still comes first for any chat that can take one. Y t
 
 | Waits                                            | For                                              | Why                                                    |
 | ------------------------------------------------ | ------------------------------------------------ | ------------------------------------------------------ |
-| X2 journeys, X3 settlement life, X4 region plans | Matt's approval of v55 and the town plans        | They are built on the town plan files                  |
+| X2 journeys, X4 region plans, Y4 map integration | Approved v55/town inputs and applicable GO | These consume the approved macro world |
+| Further X3 resident packets | Explicit residential/workplace source semantics | X3 was opened by Claude A6467789932; do not guess homes/jobs/routines |
 | X5 Crossroads conversion, building the slice     | W1 to W3 merged, and the Crossroads kit approved | Nothing is placed from unapproved pieces               |
 | Drawing any new biome's pieces                   | That biome's concepts (Y10, Y11) reviewed        | Concepts set the list before Claude draws              |
 | Region rollout                                   | The region's plan and kit approved               | Standards before content                               |
@@ -137,9 +140,25 @@ Phase 1 (W0 to W7, X1, X6) still comes first for any chat that can take one. Y t
 | House decorating                                 | Y3 and the first interior kit                    | It needs cosmetics to sell and pieces to place         |
 | Acts 2 and 3                                     | Matt's direction on the story                    | Story is his call; Codex may draft outlines as PROPOSE |
 
-### Claude in the same period
+### Former Claude work, now assigned by the Codex lead
 
 1. The v55 map and town plans, then Matt's review.
 2. Drawing the Crossroads town kit from Y10's concepts.
-3. Reviewing and merging Codex PRs with the Y12 sheets.
+3. Lead art/map/kit/cast review with Y12 sheets for Matt; only Matt approves those merges.
 4. Cairn, the woodland kit and other open art once Matt answers.
+
+
+## Lead coordination update (28 Oct)
+
+Matt appointed **MyGame Codex · lead** coordinator and integrator with non-art merge authority. The separate coordinator and crew board are retired. [Issue149's canonical board](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6475643125) is edited in place. The [handover](../codex/handover.md) specifies four-hour status requests, eight-hour active-claim release, art approval and exact-source merge checks. Delivered handoffs are review duties, not abandoned implementations.
+
+Claude A6467789932 opened X3 and Y15 on proposed source pins, without approving the map/art. Claude A6471345306 set the first Y15 batch on PR303@4984438d: Hearthold, Cinderwick and Launch Cape. Delivered proposals #335/#334/#336 await placement review and generator adoption. Further X3 packets need explicit home/work source semantics. X2/X4/Y4 and X5 retain their documented approval/dependency gates.
+
+Four free docs-only concept-requirements briefs are posted in [6475661201](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6475661201): Y10 Crossroads, Y11 coast/city, Y16 Sunstone and Y17 fire country. Each pins existing sources, reuses W0 families by reference and writes one new document only. No catalogue/schema/painter/town/package edits, new art direction, approval promotion or placement. Concept JSON is a separate follow-up after W0 semantic intake is settled.
+
+Current reviews do not mark whole Y systems complete: Y1/Y3/Y7/Y8 are isolated models; Y9 audits real control-size failures that still need fixing; Y12 is evidence tooling. W2#305 requires logical-ID/gameplay-preservation corrections. Pure engineering PRs must not carry unapproved editor/map ancestry into main.
+
+
+## Entire-project Codex ownership (28 Oct 17:24)
+
+All Claude lanes are off until Matt says to switch back. Wherever historical sections name Claude A or a Claude lane, the lead now performs that work or assigns it to a Codex worker. The lead may launch as many isolated agents as useful. Claims, own branches and non-overlapping files remain mandatory. Art/map PRs use needs-matt-review and merge only after Matt's OK; written direction remains unchanged. See the latest handover and canonical149 board for live states.
