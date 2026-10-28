@@ -425,6 +425,7 @@ def _source_category(path: str) -> str | None:
             'game/data/weapon_lines.json', 'game/actors/cast_sprite.gd'):
         return 'cast_source'
     if path.startswith(('scripts/art/', 'game/art/', 'game/kit/', 'game/data/plans/')) or (
+            path.startswith('docs/vision/research/blockout/') and Path(path).suffix.lower() == '.py') or (
             Path(path).suffix.lower() in ('.gdshader', '.ase')):
         return 'art_source'
     return None
@@ -541,6 +542,15 @@ def build_sheet(repo: Path, base: str, head: str, out: Path, *, scenes=(), pr=No
             manifest['other_changes'].append(_source_row(repo, out, pinned, change, 'test_evidence', 'test_fixture'))
         elif suffix in IMAGE_SUFFIXES or old_suffix in IMAGE_SUFFIXES:
             pending_assets.append(change)
+            # Raster evidence cannot discharge a non-image source obligation on
+            # either side of a rename, even when malformed source has PNG bytes.
+            source_paths = [value for value in (path, previous)
+                            if Path(value).suffix.lower() not in IMAGE_SUFFIXES]
+            category = next((_source_category(value) for value in source_paths
+                             if _source_category(value)), None)
+            if category:
+                manifest['other_changes'].append(_source_row(
+                    repo, out, pinned, change, 'source_only', category))
         elif '.tscn' in (suffix, old_suffix):
             zones = [zone for zone, scene in registry.items()
                      if isinstance(scene, str) and scene.startswith('res://')

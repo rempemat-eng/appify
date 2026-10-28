@@ -364,6 +364,73 @@ class PRSheetContracts(unittest.TestCase):
             self.assertEqual(manifest['files'][row['inputs'][0]['evidence']],
                              row['inputs'][0]['sha256'])
 
+    def test_blockout_generators_are_source_only_with_exact_bytes(self):
+        paths = ['docs/vision/research/blockout/' + name for name in
+                 ('towns55.py', 'town_plans.py', 'geo55.py')]
+        for path in paths:
+            self.write(path, b'# production map authoring source\nnot valid Python\xff')
+        self.commit('known map generators')
+        self.assertEqual(self.cli().returncode, 1)
+        manifest = self.read_bundle()
+        self.assertEqual(manifest['scope'], 'source_only')
+        self.assertFalse(manifest['complete'])
+        self.assertEqual(manifest['assets'], [])
+        self.assertEqual(len(manifest['other_changes']), 3)
+        for row in manifest['other_changes']:
+            self.assertEqual((row['status'], row['category']), ('source_only', 'art_source'))
+            source = row['inputs'][0]
+            data = (self.repo / row['path']).read_bytes()
+            self.assertEqual(source['ref'], self.head)
+            self.assertEqual(source['blob'], self.git('rev-parse', self.head + ':' + row['path']))
+            self.assertEqual(source['sha256'], hashlib.sha256(data).hexdigest())
+            self.assertEqual((self.out / source['evidence']).read_bytes(), data)
+
+    def test_blockout_generator_plus_passing_png_remains_incomplete(self):
+        path = 'docs/vision/research/blockout/towns55.py'
+        self.write(path, '# pinned generator source\n')
+        self.change_asset()
+        self.assertEqual(self.cli().returncode, 1)
+        manifest = self.read_bundle()
+        self.assertEqual(manifest['scope'], 'detector_evidence')
+        self.assertFalse(manifest['complete'])
+        self.assertEqual(manifest['assets'][0]['status'], 'pass')
+        row = manifest['other_changes'][0]
+        self.assertEqual((row['path'], row['status'], row['category']),
+                         (path, 'source_only', 'art_source'))
+        source = row['inputs'][0]
+        self.assertEqual(source['ref'], self.head)
+        self.assertEqual((self.out / source['evidence']).read_bytes(), (self.repo / path).read_bytes())
+        self.assertEqual(source['sha256'], hashlib.sha256((self.repo / path).read_bytes()).hexdigest())
+
+    def test_nonimage_source_renamed_to_png_keeps_source_and_raster_evidence(self):
+        old, new = 'game/data/kit/concepts/malformed-source.json', 'assets/recovered.png'
+        data = png_bytes()
+        self.write(old, data)
+        self.base = self.commit('malformed known production source with PNG bytes')
+        self.git('branch', '-f', 'base', self.base)
+        (self.repo / 'assets').mkdir()
+        self.git('mv', old, new)
+        self.commit('rename production source to PNG')
+        self.assertEqual(self.cli().returncode, 1)
+        manifest = self.read_bundle()
+        self.assertEqual(manifest['changes'][0]['status'], 'R100')
+        self.assertEqual(manifest['scope'], 'detector_evidence')
+        self.assertFalse(manifest['complete'])
+        self.assertEqual(manifest['manual_review'], 'not_assessed')
+        self.assertEqual(manifest['assets'][0]['status'], 'pass')
+        self.assertEqual(manifest['assets'][0]['path'], new)
+        self.assertEqual(len(manifest['other_changes']), 1)
+        row = manifest['other_changes'][0]
+        self.assertEqual((row['status'], row['category']), ('source_only', 'kit_concept'))
+        self.assertEqual([v['side'] for v in row['inputs']], ['before', 'after'])
+        self.assertEqual([v['path'] for v in row['inputs']], [old, new])
+        self.assertEqual([v['ref'] for v in row['inputs']], [self.base, self.head])
+        for source in row['inputs']:
+            self.assertEqual(source['mode'], '100644')
+            self.assertEqual(source['blob'], self.git('rev-parse', source['ref'] + ':' + source['path']))
+            self.assertEqual(source['sha256'], hashlib.sha256(data).hexdigest())
+            self.assertEqual((self.out / source['evidence']).read_bytes(), data)
+
     def test_malformed_production_source_and_fixture_named_subdirectory_stay_visible(self):
         path = 'game/data/kit/concepts/fixtures/invalid.json'
         self.write(path, b'not-json\xff')
