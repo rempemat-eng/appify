@@ -139,7 +139,21 @@ def main(argv=None):
     a = ap.parse_args(argv)
 
     t = a.target
-    zones = json.load(open(os.path.join(REPO, 'game', 'data', 'zones.json')))
+    try:
+        with open(os.path.join(REPO, 'game', 'data', 'zones.json')) as source:
+            zones = json.load(source)
+        if not isinstance(zones, dict):
+            raise ValueError('zone registry must be an object')
+    except (OSError, ValueError, TypeError) as err:
+        name = os.path.splitext(os.path.basename(t))[0]
+        out = a.out or os.path.join(REPO, 'artifacts', 'review', name)
+        os.makedirs(out, exist_ok=True)
+        failure = SN.SceneIntakeError(t, 'cannot read zone registry: ' + str(err))
+        write_json(os.path.join(out, 'report.json'),
+                   dict(target=t, generated=time.strftime('%Y-%m-%d %H:%M'), pictures=[], complete=False,
+                        scene=dict(zone=None, complete=False, error=str(failure))))
+        print(str(failure), file=sys.stderr)
+        return 1
     zone = None
     if t in zones:
         zone = t
@@ -151,9 +165,16 @@ def main(argv=None):
     report = dict(target=t, generated=time.strftime('%Y-%m-%d %H:%M'), pictures=[], scene=None)
 
     if zone:
-        z = SN.load_zone(zone)
-        res = SN.review_zone(zone, a.H)
-        comp = SN.composite(z)
+        try:
+            z = SN.load_zone(zone)
+            res = SN.review_zone(zone, a.H)
+            comp = SN.composite(z)
+        except SN.SceneIntakeError as err:
+            report['scene'] = dict(zone=zone, complete=False, error=str(err))
+            report['complete'] = False
+            write_json(os.path.join(out, 'report.json'), report)
+            print(str(err), file=sys.stderr)
+            return 1
         Image.fromarray(comp[..., :3]).save(os.path.join(out, f'{zone}_zone.png'))
         report['scene'] = dict(zone=zone, size=list(z.size), sprites=len(z.sprites), spawns=list(z.spawns),
                                doors=[{k: d[k] for k in ('name', 'zone', 'spawn')} for d in z.doors],
