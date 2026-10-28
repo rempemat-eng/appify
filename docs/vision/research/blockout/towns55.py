@@ -128,11 +128,11 @@ def C(x, y):
 class Town:
     """One settlement: its streets, squares, buildings, yards and working outskirts."""
 
-    def __init__(self, T, name, centre, size, target, purpose, setting, neighbourhoods=(), gathering=(), seed=0):
+    def __init__(self, T, name, centre, size, target, purpose, setting, neighbourhoods=(), gathering=(), seed=None):
         self.T = T; self.name = name; self.centre = centre; self.size = size; self.target = target
         self.purpose = purpose; self.setting = setting; self.neighbourhoods = list(neighbourhoods); self.gathering = list(gathering)
         self.buildings = []; self.streets = []; self.spaces = []; self.outskirts = []
-        self.rng = np.random.default_rng(seed or abs(hash(name)) % 2 ** 31)
+        self.rng = np.random.default_rng(g.stable_name_seed(name, 2 ** 31) if seed is None else seed)
         self.level = 1; self.slope_max = 0.016
         self.cap = target[1] if isinstance(target, (tuple, list)) else target
 
