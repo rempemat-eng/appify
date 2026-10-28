@@ -327,6 +327,191 @@ class PRSheetContracts(unittest.TestCase):
         self.assertEqual(manifest['scenes'], [])
         self.assertTrue(manifest['other_changes'])
 
+    def test_town_kit_and_cast_sources_cannot_be_no_art(self):
+        paths = [
+            'docs/vision/research/blockout/towns/cinderwick.json',
+            'game/data/kit/concepts/frontier_lava_run.json',
+            'art/characters/bodies/ashe.json',
+            'docs/vision/characters/designs/ashe.json',
+            'docs/characters/cast-retiming-60hz.json',
+            'scripts/characters/review_cast_v2.py',
+            'game/assets/characters/ashe/manifest.json',
+            'castwork/ashe/rig.py',
+            'game/data/progression/ashe.json',
+            'docs/codex/fire-country-kit.md',
+        ]
+        for path in paths:
+            self.write(path, '{"schema":"deliberately missing-or-wrong"}\n')
+        self.commit('production source categories')
+        result = self.cli()
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        manifest = self.read_bundle()
+        self.assertEqual(manifest['scope'], 'source_only')
+        self.assertFalse(manifest['complete'])
+        self.assertEqual(manifest['assets'], [])
+        rows = {row['path']: row for row in manifest['other_changes']}
+        self.assertEqual(set(rows), set(paths))
+        for path in paths:
+            row = rows[path]
+            self.assertEqual(row['status'], 'source_only')
+            self.assertIn(row['category'], ('town_plan', 'kit_concept', 'cast_source'))
+            self.assertEqual(row['inputs'][0]['side'], 'after')
+            self.assertEqual(row['inputs'][0]['ref'], self.head)
+            self.assertEqual(row['inputs'][0]['sha256'], hashlib.sha256(
+                (self.repo / path).read_bytes()).hexdigest())
+            source = self.out / row['inputs'][0]['evidence']
+            self.assertEqual(source.read_bytes(), (self.repo / path).read_bytes())
+            self.assertEqual(manifest['files'][row['inputs'][0]['evidence']],
+                             row['inputs'][0]['sha256'])
+
+    def test_malformed_production_source_and_fixture_named_subdirectory_stay_visible(self):
+        path = 'game/data/kit/concepts/fixtures/invalid.json'
+        self.write(path, b'not-json\xff')
+        self.commit('malformed source is still review source')
+        self.assertEqual(self.cli().returncode, 1)
+        row = self.read_bundle()['other_changes'][0]
+        self.assertEqual(row['status'], 'source_only')
+        self.assertEqual(row['category'], 'kit_concept')
+        self.assertEqual(row['inputs'][0]['sha256'], hashlib.sha256(b'not-json\xff').hexdigest())
+
+    def test_deliberately_invalid_fixture_images_are_test_evidence(self):
+        paths = ['game/test/fixtures/kit/bad.png',
+                 'game/kit/schema/invalid/bad.json',
+                 'scripts/review/fixtures/cast-invalid.svg']
+        for path in paths:
+            self.write(path, 'intentionally invalid test input\n')
+        self.commit('invalid fixtures')
+        result = self.cli()
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        manifest = self.read_bundle()
+        self.assertEqual(manifest['scope'], 'test_evidence')
+        self.assertEqual(manifest['assets'], [])
+        self.assertTrue(all(row['status'] == 'test_evidence'
+                            for row in manifest['other_changes']))
+        self.assertTrue(all(row['inputs'] for row in manifest['other_changes']))
+        self.assertIn('not a production art pass', (self.out / 'index.html').read_text())
+
+    def test_explicit_fixture_asset_cannot_be_reclassified_as_production_art(self):
+        path = 'game/test/fixtures/kit/bad.png'
+        self.write(path, 'not a PNG on purpose')
+        self.commit('fixture asset context')
+        result = self.cli('--asset', path)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        manifest = self.read_bundle()
+        self.assertEqual(manifest['scope'], 'test_evidence')
+        self.assertEqual(manifest['assets'], [])
+        self.assertEqual(len(manifest['other_changes']), 1)
+
+    def test_source_rename_and_delete_keep_before_and_after_provenance(self):
+        old = 'docs/vision/research/blockout/towns/example.json'
+        self.write(old, '{"original":true}\n')
+        self.base = self.commit('town baseline')
+        self.git('branch', '-f', 'base', self.base)
+        new = 'notes/moved source.txt'
+        (self.repo / 'notes').mkdir()
+        self.git('mv', old, new)
+        self.commit('move town outside bounded directory')
+        self.assertEqual(self.cli().returncode, 1)
+        row = self.read_bundle()['other_changes'][0]
+        self.assertEqual(row['category'], 'town_plan')
+        self.assertEqual([v['side'] for v in row['inputs']], ['before', 'after'])
+        self.assertEqual(row['inputs'][0]['ref'], self.base)
+        self.assertEqual(row['inputs'][1]['ref'], self.head)
+        self.assertEqual(row['inputs'][0]['blob'], row['inputs'][1]['blob'])
+        shutil.rmtree(self.out)
+        self.git('checkout', '-b', 'deleted-town', self.base)
+        (self.repo / old).unlink()
+        self.commit('remove production source')
+        self.assertEqual(self.cli().returncode, 1)
+        row = self.read_bundle()['other_changes'][0]
+        self.assertEqual(row['category'], 'town_plan')
+        self.assertEqual([v['side'] for v in row['inputs']], ['before'])
+
+    def test_fixture_rename_into_production_cannot_exempt_source(self):
+        old = 'game/test/fixtures/example.json'
+        new = 'game/data/kit/concepts/example.json'
+        self.write(old, '{"not_approved":true}\n')
+        self.base = self.commit('fixture baseline')
+        self.git('branch', '-f', 'base', self.base)
+        (self.repo / new).parent.mkdir(parents=True)
+        self.git('mv', old, new)
+        self.commit('fixture promoted without approval')
+        self.assertEqual(self.cli().returncode, 1)
+        row = self.read_bundle()['other_changes'][0]
+        self.assertEqual(row['status'], 'source_only')
+        self.assertEqual(row['category'], 'kit_concept')
+
+    def test_cast_png_still_runs_raster_gate(self):
+        path = self.change_asset('game/assets/characters/ashe/sheets/idle_S.png')
+        self.assertEqual(self.cli().returncode, 0)
+        manifest = self.read_bundle()
+        self.assertEqual(manifest['scope'], 'detector_evidence')
+        self.assertEqual(manifest['assets'][0]['path'], path)
+        self.assertEqual(manifest['assets'][0]['status'], 'pass')
+
+    def test_mixed_raster_and_source_cannot_hide_missing_source_coverage(self):
+        self.write('docs/vision/research/blockout/towns/example.json', '{}\n')
+        self.change_asset()
+        self.assertEqual(self.cli().returncode, 1)
+        manifest = self.read_bundle()
+        self.assertEqual(manifest['scope'], 'detector_evidence')
+        self.assertEqual(manifest['assets'][0]['status'], 'pass')
+        self.assertFalse(manifest['complete'])
+        self.assertEqual(manifest['other_changes'][0]['status'], 'source_only')
+
+    def test_source_classification_and_provenance_are_deterministic_and_escaped(self):
+        path = 'docs/vision/research/blockout/towns/<odd&town>.json'
+        self.write(path, '{}\n')
+        self.commit('unusual production name')
+        self.assertEqual(self.cli().returncode, 1)
+        first = self.read_bundle()
+        body = (self.out / 'index.html').read_text()
+        self.assertIn('&lt;odd&amp;town&gt;.json', body)
+        self.assertNotIn('<odd&town>', body)
+        shutil.rmtree(self.out)
+        self.assertEqual(self.cli().returncode, 1)
+        second = self.read_bundle()
+        self.assertEqual(first['other_changes'], second['other_changes'])
+        self.assertEqual(first['changes'], second['changes'])
+        self.assertEqual(first['head_tree'], second['head_tree'])
+
+    def test_source_and_fixture_symlinks_are_incomplete_without_external_reads(self):
+        target = self.root / 'external-secret.json'
+        target.write_text('external bytes must not become input evidence')
+        paths = ['game/test/fixtures/linked.json',
+                 'game/data/kit/concepts/linked.json']
+        for path in paths:
+            file = self.repo / path
+            file.parent.mkdir(parents=True, exist_ok=True)
+            file.symlink_to(target)
+        self.commit('nonregular source and fixture')
+        self.assertEqual(self.cli().returncode, 1)
+        manifest = self.read_bundle()
+        self.assertFalse(manifest['complete'])
+        for row in manifest['other_changes']:
+            self.assertTrue(row['errors'])
+            self.assertEqual(row['inputs'][0]['mode'], '120000')
+            self.assertEqual(row['inputs'][0]['sha256'], hashlib.sha256(
+                str(target).encode()).hexdigest())
+        self.assertNotIn('external bytes must not', (self.out / 'manifest.json').read_text())
+
+    def test_fixture_modification_attests_both_versions_and_nonfixture_png_is_not_exempt(self):
+        path = 'game/test/fixtures/town.json'
+        self.write(path, '{"old":true}\n')
+        self.base = self.commit('old fixture')
+        self.git('branch', '-f', 'base', self.base)
+        self.write(path, '{"new":true}\n')
+        self.write('game/assets/characters/fixtures/not-production.png', 'invalid PNG')
+        self.commit('fixture change and misleading production name')
+        self.assertEqual(self.cli().returncode, 1)
+        manifest = self.read_bundle()
+        self.assertEqual(manifest['scope'], 'detector_evidence')
+        self.assertEqual(manifest['assets'][0]['status'], 'incomplete')
+        row = manifest['other_changes'][0]
+        self.assertEqual(row['status'], 'test_evidence')
+        self.assertEqual([v['side'] for v in row['inputs']], ['before', 'after'])
+        self.assertNotEqual(row['inputs'][0]['blob'], row['inputs'][1]['blob'])
+
     def test_asset_cli_carries_real_hash_command_report_and_preserves_source(self):
         path = self.change_asset()
         before = {p.relative_to(self.repo).as_posix(): p.read_bytes()
@@ -472,7 +657,7 @@ class PRSheetContracts(unittest.TestCase):
         self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
         manifest = self.read_bundle()
         self.assertFalse(manifest['complete'])
-        self.assertEqual(manifest['scope'], 'detector_evidence')
+        self.assertEqual(manifest['scope'], 'source_only')
         self.assertEqual(manifest['changes'][0]['path'], new)
         self.assertEqual(manifest['changes'][0]['old_path'], old)
         self.assertTrue(any(row['path'] == new and row['status'] != 'not_art'
@@ -490,7 +675,7 @@ class PRSheetContracts(unittest.TestCase):
         self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
         manifest = self.read_bundle()
         self.assertFalse(manifest['complete'])
-        self.assertEqual(manifest['scope'], 'detector_evidence')
+        self.assertEqual(manifest['scope'], 'source_only')
         self.assertTrue(any(row['path'] == new and row['status'] == 'source_only'
                             and row['change']['old_path'] == old
                             for row in manifest['other_changes']))

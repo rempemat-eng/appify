@@ -1,7 +1,7 @@
 """Bundle pinned Git changes with the existing asset/scene detector evidence.
 
 This is an offline review aid. A PR label is descriptive; base/head Git objects
-are the provenance. Detector passes never constitute Claude A's art approval.
+are the provenance. Detector passes never constitute Matt's art approval.
 """
 from __future__ import annotations
 
@@ -26,6 +26,14 @@ from PIL import Image
 
 REPO = Path(__file__).resolve().parents[2]
 IMAGE_SUFFIXES = {'.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg', '.bmp', '.aseprite'}
+# These are repository namespaces, not guesses from a filename containing "test".
+# A fixture moved into production loses the exemption; either side of a rename
+# can still require production evidence.
+TEST_FIXTURE_ROOTS = ('game/test/fixtures/', 'game/kit/schema/invalid/',
+                      'scripts/review/fixtures/', 'scripts/art/kit/fixtures/',
+                      'scripts/art/native/fixtures/', 'tests/fixtures/')
+KIT_REQUIREMENTS = {'docs/codex/' + name + '-kit.md' for name in
+                    ('crossroads', 'coast-city', 'sunstone', 'fire-country', 'tidebloom', 'highgarth')}
 ENGINE_ERROR = re.compile(r'^\s*(?:SCRIPT ERROR|ERROR:|Parse Error|Failed loading resource|Cannot open file|godot errors at)', re.M)
 
 
@@ -399,6 +407,58 @@ def _escape(value) -> str:
     return html.escape(str(value), quote=True)
 
 
+def _fixture(path: str) -> bool:
+    return path.startswith(TEST_FIXTURE_ROOTS)
+
+
+def _source_category(path: str) -> str | None:
+    """Bounded production-source routing; not schema or art validation."""
+    if path.startswith('docs/vision/research/blockout/towns/') or (
+            path.startswith('docs/codex/') and path.endswith('-town-polish.md')):
+        return 'town_plan'
+    if path.startswith('game/data/kit/concepts/') or path in KIT_REQUIREMENTS:
+        return 'kit_concept'
+    if path.startswith(('art/characters/', 'art/cast/', 'castwork/', 'docs/vision/characters/',
+                        'docs/characters/', 'scripts/characters/',
+                        'game/assets/characters/', 'game/data/cast/', 'game/data/progression/')) or path in (
+            'docs/vision/cast.md', 'docs/vision/world-and-cast.md', 'docs/vision/progression.md',
+            'game/data/weapon_lines.json', 'game/actors/cast_sprite.gd'):
+        return 'cast_source'
+    if path.startswith(('scripts/art/', 'game/art/', 'game/kit/', 'game/data/plans/')) or (
+            Path(path).suffix.lower() in ('.gdshader', '.ase')):
+        return 'art_source'
+    return None
+
+
+def _source_row(repo: Path, out: Path, pinned: dict, change: dict, status: str, category: str,
+                *, zones=()) -> dict:
+    """Attest both sides without executing or interpreting source/fixture bytes."""
+    row = dict(path=change['path'], status=status, category=category, change=change,
+               inputs=[], errors=[])
+    if zones:
+        row['zones'] = list(zones)
+    versions = []
+    if change['status'][0] not in ('A', '?') and change['status'] != 'requested':
+        versions.append(('before', pinned['merge_base'], change.get('old_path') or change['path']))
+    if not change['status'].startswith('D'):
+        versions.append(('after', pinned['head'], change['path']))
+    try:
+        for side, ref, path in versions:
+            mode, blob, data = _blob(repo, ref, path)
+            row['inputs'].append(dict(side=side, ref=ref, path=path, mode=mode,
+                                      blob=blob, sha256=_sha(data)))
+            if mode not in ('100644', '100755'):
+                raise ReviewError('source/fixture evidence is not a regular committed file')
+            folder = out / 'sources'
+            folder.mkdir(exist_ok=True)
+            source = folder / (blob + '.txt')
+            source.write_bytes(data)
+            row['inputs'][-1]['evidence'] = _relative(out, source)
+    except (ReviewError, OSError, ValueError) as exc:
+        row['errors'].append(str(exc))
+    return row
+
+
 def _link(value: str | None, label: str) -> str:
     return f'<a href="{quote(value, safe="/")}">{_escape(label)}</a>' if value else ''
 
@@ -424,7 +484,12 @@ def _render(manifest: dict) -> str:
                      f'{_escape(json.dumps(row["command"], ensure_ascii=True))}</pre></details></div></article>')
     changed = ''.join(f'<li><code>{_escape(c["status"])} {_escape(c["path"])}</code>'
                       f'{" ← " + _escape(c["old_path"]) if c.get("old_path") else ""}</li>' for c in manifest['changes'])
-    others = ''.join(f'<li>{_escape(c["path"])}: {_escape(c["status"])}</li>' for c in manifest['other_changes'])
+    others = ''.join(f'<li>{_escape(c["path"])}: {_escape(c["status"])} '
+                     f'({_escape(c.get("category", "not_art"))})'
+                     + ' '.join(_link(v.get('evidence'), v['side'] + ' source bytes')
+                                for v in c.get('inputs', [])) +
+                     f'<pre>{_escape(json.dumps(c.get("inputs", []), ensure_ascii=True, sort_keys=True))}</pre>'
+                     f'{_escape("; ".join(c.get("errors", [])))}</li>' for c in manifest['other_changes'])
     errors = ''.join(f'<li>{_escape(value)}</li>' for value in manifest['errors'])
     return f'''<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width">
 <title>PR pre-review evidence</title><style>
@@ -437,7 +502,7 @@ pre,code{{overflow-wrap:anywhere;white-space:pre-wrap;font-size:13px}}a{{color:#
 <p>Scope: {_escape(manifest['scope'])}; requested detector evidence complete and passing: {_escape(manifest['complete'])}.</p>
 <p>Base <code>{manifest['base']}</code><br>Head <code>{manifest['head']}</code><br>Merge base <code>{manifest['merge_base']}</code><br>Head tree <code>{manifest['head_tree']}</code></p>
 <p>{_link('manifest.json', 'Exact provenance, commands, hashes and all changes')}</p><ul>{errors}</ul></header>
-{''.join(cards) if cards else '<p>No changed art or requested scene. No art detector pass is claimed.</p>'}
+{''.join(cards) if cards else '<p>No raster or scene detector row. Source-only changes need review; test evidence is not a production art pass.</p>'}
 <h2>Other changed files (not rated as art)</h2><ul>{others}</ul><details><summary>All Git changes</summary><ul>{changed}</ul></details></html>'''
 
 
@@ -472,21 +537,24 @@ def build_sheet(repo: Path, base: str, head: str, out: Path, *, scenes=(), pr=No
         suffix = Path(path).suffix.lower()
         previous = change.get('old_path') or path
         old_suffix = Path(previous).suffix.lower()
-        if suffix in IMAGE_SUFFIXES or old_suffix in IMAGE_SUFFIXES:
+        if all(_fixture(value) for value in (path, previous)):
+            manifest['other_changes'].append(_source_row(repo, out, pinned, change, 'test_evidence', 'test_fixture'))
+        elif suffix in IMAGE_SUFFIXES or old_suffix in IMAGE_SUFFIXES:
             pending_assets.append(change)
         elif '.tscn' in (suffix, old_suffix):
             zones = [zone for zone, scene in registry.items()
                      if isinstance(scene, str) and scene.startswith('res://')
                      and path == 'game/' + scene.removeprefix('res://')]
             requested.update(zones)
-            manifest['other_changes'].append(dict(path=path,
-                status='scene_source' if zones else 'source_only', zones=zones, change=change))
-        elif any(value.startswith(('scripts/art/', 'game/art/', 'game/kit/', 'game/data/plans/'))
-                 for value in (path, previous)) or any(value in ('.gdshader', '.ase') for value in (suffix, old_suffix)):
-            manifest['other_changes'].append(dict(path=path, status='source_only', change=change))
+            manifest['other_changes'].append(_source_row(repo, out, pinned, change,
+                'scene_source' if zones else 'source_only', 'scene_source', zones=zones))
+        elif any(_source_category(value) for value in (path, previous)):
+            category = _source_category(path) or _source_category(previous)
+            manifest['other_changes'].append(_source_row(repo, out, pinned, change, 'source_only', category))
         else:
             manifest['other_changes'].append(dict(path=path, status='not_art', change=change))
     selected = {change['path'] for change in pending_assets}
+    selected.update(row['path'] for row in manifest['other_changes'] if row['status'] == 'test_evidence')
     for asset in assets:
         path = Path(asset)
         if path.is_absolute():
@@ -496,7 +564,11 @@ def build_sheet(repo: Path, base: str, head: str, out: Path, *, scenes=(), pr=No
                 raise ReviewError('requested asset must be inside the subject repository') from exc
         name = path.as_posix()
         if name not in selected:
-            pending_assets.append(dict(status='requested', path=name, old_path=None))
+            change = dict(status='requested', path=name, old_path=None)
+            if _fixture(name):
+                manifest['other_changes'].append(_source_row(repo, out, pinned, change, 'test_evidence', 'test_fixture'))
+            else:
+                pending_assets.append(change)
             selected.add(name)
     fatal = False
     for change in pending_assets:
@@ -542,10 +614,26 @@ def build_sheet(repo: Path, base: str, head: str, out: Path, *, scenes=(), pr=No
         _guard(repo, pinned['head'])
     except ReviewError as exc:
         manifest['errors'].append(str(exc))
+    for row in manifest['other_changes']:
+        for value in row.get('inputs', []):
+            if 'evidence' not in value:
+                continue
+            try:
+                source = out / value['evidence']
+                _relative(out, source)
+                if _sha(source.read_bytes()) != value['sha256']:
+                    raise ReviewError('bundled source bytes changed after classification')
+            except (ReviewError, OSError) as exc:
+                row['errors'].append(str(exc))
     source_only = any(row['status'] == 'source_only' for row in manifest['other_changes'])
-    if manifest['assets'] or manifest['scenes'] or source_only:
+    if manifest['assets'] or manifest['scenes']:
         manifest['scope'] = 'detector_evidence'
-    manifest['complete'] = (not manifest['errors'] and not source_only
+    elif source_only:
+        manifest['scope'] = 'source_only'
+    elif any(row['status'] == 'test_evidence' for row in manifest['other_changes']):
+        manifest['scope'] = 'test_evidence'
+    source_errors = any(row.get('errors') for row in manifest['other_changes'])
+    manifest['complete'] = (not manifest['errors'] and not source_only and not source_errors
                             and all(row['status'] == 'pass' for row in manifest['assets'] + manifest['scenes']))
     manifest['exit_code'] = 0 if manifest['complete'] else 1
     (out / 'index.html').write_text(_render(manifest), encoding='utf-8', errors='backslashreplace')
