@@ -818,8 +818,34 @@ def crossroads_plan(root):
              (ox + b['door'][0], oy + b['door'][1]) if b.get('door') else None) for b in p['buildings']], (ox, oy, ox + p['box'][2], oy + p['box'][3])
 
 
-def lay_all(T, X):
+def _authored_inputs(authored, allowed):
+    """Check deliberate caller input; defaults never consult proposed authoring data."""
+    if authored is None:
+        return {}
+    if not isinstance(authored, dict) or set(authored) - allowed:
+        raise ValueError('unknown authored town key for this producer entrypoint')
+    if not authored:
+        return authored
+    import town_plans
+    for pid, packet in authored.items():
+        town_plans.validate_authored_packet(packet, pid)
+    return authored
+
+
+def _adopt_requested(town, authored, pid):
+    """Dispatch only a selected packet; Town.adopt verifies its actual target and ground."""
+    if not authored:
+        return
+    import town_plans
+    if town_plans.slug(town.name) != pid:
+        raise ValueError('authored dispatch target town mismatch')
+    if pid in authored:
+        town.adopt(authored[pid])
+
+
+def lay_all(T, X, *, authored=None):
     """Every settlement's footprint, in the order of Matt's allocation, then the smaller places. X: the geo55 module."""
+    authored = _authored_inputs(authored, {'cinderwick', 'hearthold'})
     towns = {}
     rng = np.random.default_rng(55)
 
@@ -1026,7 +1052,7 @@ def lay_all(T, X):
     t.fill(26, 260, ('terrace', 'workshop', 'townhouse', 'house'), box=(7900, 2250, 8560, 2900))
     towns['Cogsworth'] = t
 
-    towns['Hearthold'] = hearthold(T, X)
+    towns['Hearthold'] = hearthold(T, X, authored={k: v for k, v in authored.items() if k == 'hearthold'})
 
     # ---------------------------------------------------------------- Cinderwick (medium): the black-sand cove
     clear_paint(T, 2250, 5700, 2750, 5960)
@@ -1056,8 +1082,7 @@ def lay_all(T, X):
     t.row(route_part(T, 'Ash Coast', (2480, 5760, 2760, 5900)), ['cottage', 'house'], limit=3, start=10)
     t.fill(17, 380, ('cottage', 'boathouse', 'townhouse', 'workshop'), box=(1990, 5725, 2880, 6040), reach=260, plot=None)
     T['keepout'] &= ~north
-    if 'cinderwick' in PROPOSED_ADOPTIONS:
-        t.adopt(PROPOSED_ADOPTIONS['cinderwick'])
+    _adopt_requested(t, authored, 'cinderwick')
     towns['Cinderwick'] = t
 
     # ---------------------------------------------------------------- Lagoon Landing (medium): the isles' town on its lagoon
@@ -1102,10 +1127,11 @@ HEARTHOLD_GATE = (2296, 2328)                                      # the main ga
 HEARTHOLD_POSTERN = (5224, 5240)                                   # the postern in the west wall (y): walled up, opens later
 
 
-def hearthold(T, X):
+def hearthold(T, X, *, authored=None):
     """Hearthold, authored by hand: the walled town on the rock between the lava flows, its gate, Gate Street down to the gate
     market, Smiths' Row against the cooled lava, and the home streets as terraces stepping down the slope (Matt's brief; Claude
     A's review of 28 Oct). Every coordinate is in world px on the soft grid."""
+    authored = _authored_inputs(authored, {'hearthold'})
     K = T['K']
     clear_paint(T, 1900, 5000, 2700, 5760, kinds=('building', 'yard', 'garden', 'plaza', 'lane', 'retain', 'stall', 'hut'))
     old = np.isin(K, ['castlewall', 'keep']) & (PX > 1850) & (PX < 2500) & (PY > 4950) & (PY < 5500)
@@ -1189,8 +1215,7 @@ def hearthold(T, X):
     # the edges: the vines on the cooled ash east of the wall, the lower fields between the town and Cinderwick
     t.fields(2480, 5120, 2620, 5400, ('orchard',), name='the vines', why="vines on the cooled ash of the rock's warm east side", size=(64, 112), hedge=False)
     t.fields(2140, 5744, 2600, 5800, ('field', 'field2'), name='the lower fields', why='barley and beans between the town and the cove', size=(80, 144))
-    if 'hearthold' in PROPOSED_ADOPTIONS:
-        t.adopt(PROPOSED_ADOPTIONS['hearthold'])
+    _adopt_requested(t, authored, 'hearthold')
     return t
 
 
@@ -1660,9 +1685,10 @@ def charcoal_hollow(T, X):
     return {'Charcoal Hollow': t}
 
 
-def launch_cape(T, X):
+def launch_cape(T, X, *, authored=None):
     """Launch Cape's facility: the pad at the headland's tip with its service apron, the assembly hall, workshops and stores
     near the cape's middle, a heath buffer round the pad, the road down the cape."""
+    authored = _authored_inputs(authored, {'launch-cape'})
     K = T['K']
     t = Town(T, 'Launch Cape', X.PAD, 'facility', (4, 8),
              "the Company's launch site: rockets go up over open sea, away from people (W8); the assembly hall, the workshops and the "
@@ -1680,8 +1706,7 @@ def launch_cape(T, X):
     t.spaces.append({'kind': 'pad', 'name': 'the pad', 'x': X.PAD[0], 'y': X.PAD[1], 'rx': 72, 'ry': 60})
     t.cluster(12060, 6090, 170, ['hangar', 'workshop', 'warehouse', 'workshop', 'public', 'warehouse'], 6, plot=(16, 'yard'))
     t.yard(11960, 5960, 12250, 6000, name='the works yard', why='carts and the transporter road to the pad')
-    if 'launch-cape' in PROPOSED_ADOPTIONS:
-        t.adopt(PROPOSED_ADOPTIONS['launch-cape'])
+    _adopt_requested(t, authored, 'launch-cape')
     return {'Launch Cape': t}
 
 

@@ -3,14 +3,16 @@
 Committed JSON is a test oracle only. Production authoring lives in towns55.py.
 Fetch the pinned proposal commits before running this offline suite.
 """
+import ast
 import copy
 import hashlib
 import json
+import inspect
 from pathlib import Path
 import subprocess
 from types import ModuleType
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from scripts.review.test_highgarth_export import ROOT, inputs
 import town_plans as tp
@@ -111,6 +113,89 @@ class TownGeneratorAdoption(unittest.TestCase):
                 normal = tp._record(*args)
                 previous = self.legacy._record(*args)
                 self.assertEqual(json.dumps(normal, sort_keys=True), json.dumps(previous, sort_keys=True))
+
+    def test_factory_default_source_flow_is_unchanged_from_331(self):
+        """Source/wiring preservation, not a raw-world regeneration assertion."""
+        old = ast.parse(git_bytes(DEPENDENCY, 'docs/vision/research/blockout/towns55.py'))
+        current = ast.parse(Path(tw.__file__).read_text())
+        entrypoints = {'lay_all': ({'cinderwick', 'hearthold'}, 'cinderwick'),
+                       'hearthold': ({'hearthold'}, 'hearthold'),
+                       'launch_cape': ({'launch-cape'}, 'launch-cape')}
+        for name, (allowed, pid) in entrypoints.items():
+            with self.subTest(entrypoint=name):
+                param = inspect.signature(getattr(tw, name)).parameters['authored']
+                self.assertEqual(param.kind, inspect.Parameter.KEYWORD_ONLY)
+                self.assertIsNone(param.default)
+                node = copy.deepcopy(next(n for n in current.body if isinstance(n, ast.FunctionDef) and n.name == name))
+                baseline = next(n for n in old.body if isinstance(n, ast.FunctionDef) and n.name == name)
+                self.assertFalse(any(isinstance(n, ast.Name) and n.id == 'PROPOSED_ADOPTIONS' for n in ast.walk(node)))
+                setup = node.body.pop(1)
+                self.assertEqual(ast.unparse(setup.targets[0]), 'authored')
+                self.assertEqual(ast.unparse(setup.value.func), '_authored_inputs')
+                self.assertEqual(ast.unparse(setup.value.args[0]), 'authored')
+                self.assertEqual(ast.literal_eval(setup.value.args[1]), allowed)
+                dispatches = [n for n in node.body if isinstance(n, ast.Expr) and isinstance(n.value, ast.Call)
+                              and isinstance(n.value.func, ast.Name) and n.value.func.id == '_adopt_requested']
+                self.assertEqual(len(dispatches), 1)
+                self.assertEqual([ast.unparse(n) for n in dispatches[0].value.args[:2]], ['t', 'authored'])
+                self.assertEqual(ast.literal_eval(dispatches[0].value.args[2]), pid)
+                node.body.remove(dispatches[0])
+                node.args.kwonlyargs = []; node.args.kw_defaults = []
+                for call in [n for n in ast.walk(node) if isinstance(n, ast.Call)
+                             and isinstance(n.func, ast.Name) and n.func.id == 'hearthold']:
+                    self.assertEqual(len(call.keywords), 1)
+                    self.assertEqual(call.keywords[0].arg, 'authored')
+                    expected = ast.parse("{k: v for k, v in authored.items() if k == 'hearthold'}", mode='eval').body
+                    self.assertEqual(ast.dump(call.keywords[0].value), ast.dump(expected))
+                    call.keywords = []  # an empty selection forwarded to the child is its default
+                self.assertEqual(ast.dump(node), ast.dump(baseline))
+        self.assertEqual(git_bytes(DEPENDENCY, 'docs/vision/research/blockout/geo55.py'),
+                         (ROOT / 'docs/vision/research/blockout/geo55.py').read_bytes())
+
+    def test_default_selector_and_dispatch_never_read_or_adopt_proposals(self):
+        class UnreadableProposals:
+            def __getattribute__(self, key):
+                raise AssertionError('default flow read proposed authoring data')
+            def __contains__(self, key):
+                raise AssertionError('default flow read proposed authoring data')
+        with patch.object(tw, 'PROPOSED_ADOPTIONS', UnreadableProposals()):
+            for pid in ('cinderwick', 'hearthold', 'launch-cape'):
+                for empty in (None, {}):
+                    town = Mock()
+                    selected = tw._authored_inputs(empty, {pid})
+                    self.assertEqual(selected, {})
+                    tw._adopt_requested(town, selected, pid)
+                    town.adopt.assert_not_called()
+
+    def test_actual_factory_entrypoints_reject_unknown_keys_and_wrong_targets(self):
+        for name, pid in [('lay_all', 'cinderwick'), ('hearthold', 'hearthold'), ('launch_cape', 'launch-cape')]:
+            entrypoint = getattr(tw, name)
+            with self.subTest(entrypoint=name):
+                for value in ([], {'unknown-town': tw.PROPOSED_ADOPTIONS[pid]}):
+                    with self.assertRaisesRegex(ValueError, 'unknown authored town key'):
+                        entrypoint(None, None, authored=value)
+                other = 'hearthold' if pid != 'hearthold' else 'cinderwick'
+                with self.assertRaisesRegex(ValueError, 'source path mismatch'):
+                    entrypoint(None, None, authored={pid: tw.PROPOSED_ADOPTIONS[other]})
+
+    def test_explicit_opt_in_dispatch_keeps_geometry_and_target_refusals(self):
+        for blocked in (False, True):
+            with self.subTest(blocked=blocked):
+                _, args, town = fixture('hearthold')
+                packet = tw.PROPOSED_ADOPTIONS['hearthold']
+                selected = tw._authored_inputs({'hearthold': packet}, {'hearthold'})
+                before = len(town.buildings)
+                if blocked:
+                    c, r, _, _ = packet['buildings'][0]['footprint_cells']
+                    args[0]['barrier'][r, c] = True
+                    with self.assertRaisesRegex(ValueError, 'blocked ground'):
+                        tw._adopt_requested(town, selected, 'hearthold')
+                    self.assertEqual(len(town.buildings), before)
+                else:
+                    tw._adopt_requested(town, selected, 'hearthold')
+                    self.assertEqual(len(town.buildings), before + len(packet['buildings']))
+                with self.assertRaisesRegex(ValueError, 'target town mismatch'):
+                    tw._adopt_requested(town, selected, 'cinderwick')
 
     def test_real_hand_forms_and_export_reproduce_clear_hearthold_and_cape_records(self):
         for pid, packet in tw.PROPOSED_ADOPTIONS.items():
