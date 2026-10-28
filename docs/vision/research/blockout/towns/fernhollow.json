@@ -1,0 +1,1329 @@
+{
+ "schema": "mygame.town_plan/1",
+ "id": "fernhollow",
+ "name": "Fernhollow",
+ "size": "medium",
+ "size_note": "medium",
+ "target": [
+  14,
+  22
+ ],
+ "buildings_counted": 16,
+ "grid": {
+  "cell_px": 8,
+  "screen_cells": [
+   40,
+   22.5
+  ],
+  "origin": "world px, top-left of the continent (blockout-v55.json coords)",
+  "street_classes": {
+   "arrival": "the regional route's own width",
+   "main": 6,
+   "side": 4,
+   "lane": 3,
+   "close": 2
+  }
+ },
+ "site": {
+  "reason": "timber from the Fern hills' wet woods: the sawmill, the wood yards and the joiners; charcoal for Cogsworth; its own green, school and chapel, on the Foothill Road halfway between Crossroads and Cogsworth",
+  "terrain": "a clearing in the woods of the Fern hills, where the Foothill Road crosses Fern Lane",
+  "fit": "in a clearing where Fern Lane meets the Foothill Road: the green in the middle, the woods round it",
+  "tiers": [
+   3,
+   13
+  ],
+  "levelled_footprints": 15
+ },
+ "footprint_px": [
+  6984,
+  2856,
+  7512,
+  3352
+ ],
+ "arrivals": [
+  {
+   "id": "fernhollow-arr1",
+   "kind": "road",
+   "route": "Foothill Road",
+   "street": "fernhollow-a1",
+   "entries_px": [
+    [
+     6875,
+     3296
+    ],
+    [
+     7635,
+     2801
+    ]
+   ],
+   "route_kind": "road"
+  },
+  {
+   "id": "fernhollow-arr2",
+   "kind": "path",
+   "route": "Fern Lane",
+   "street": "fernhollow-a2",
+   "entries_px": [
+    [
+     7225,
+     3464
+    ]
+   ],
+   "route_kind": "path"
+  }
+ ],
+ "streets": [
+  {
+   "id": "fernhollow-s01",
+   "name": "Green Lane",
+   "class": "side",
+   "width_cells": 4,
+   "vertices_px": [
+    [
+     7088.0,
+     3040.0
+    ],
+    [
+     7144.0,
+     3040.0
+    ],
+    [
+     7144.0,
+     3016.0
+    ],
+    [
+     7320.0,
+     3016.0
+    ]
+   ],
+   "connects": [
+    "fernhollow-c01",
+    "fernhollow-c04",
+    "fernhollow-s03",
+    "fernhollow-s04",
+    "fernhollow-s07"
+   ]
+  },
+  {
+   "id": "fernhollow-s02",
+   "name": "Cooper Lane",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     7236.0,
+     3156.0
+    ],
+    [
+     7380.0,
+     3156.0
+    ],
+    [
+     7380.0,
+     3124.0
+    ],
+    [
+     7428.0,
+     3124.0
+    ]
+   ],
+   "connects": [
+    "fernhollow-s05",
+    "fernhollow-s06",
+    "fernhollow-s07"
+   ]
+  },
+  {
+   "id": "fernhollow-s03",
+   "name": "Chapel Lane",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     7092.0,
+     3044.0
+    ],
+    [
+     7092.0,
+     3164.0
+    ]
+   ],
+   "connects": [
+    "fernhollow-s01",
+    "fernhollow-s07"
+   ]
+  },
+  {
+   "id": "fernhollow-s04",
+   "name": "School Lane",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     7316.0,
+     2996.0
+    ],
+    [
+     7316.0,
+     3020.0
+    ],
+    [
+     7348.0,
+     3020.0
+    ],
+    [
+     7348.0,
+     3044.0
+    ]
+   ],
+   "connects": [
+    "fernhollow-s01",
+    "fernhollow-s05",
+    "fernhollow-s07"
+   ]
+  },
+  {
+   "id": "fernhollow-s05",
+   "name": "Cooper Lane (east end)",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     7428.0,
+     3124.0
+    ],
+    [
+     7428.0,
+     3076.0
+    ],
+    [
+     7364.0,
+     3076.0
+    ],
+    [
+     7364.0,
+     3036.0
+    ]
+   ],
+   "connects": [
+    "fernhollow-s02",
+    "fernhollow-s04",
+    "fernhollow-s07"
+   ]
+  },
+  {
+   "id": "fernhollow-s06",
+   "name": "Cooper Lane (west end)",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     7236.0,
+     3156.0
+    ],
+    [
+     7188.0,
+     3156.0
+    ]
+   ],
+   "connects": [
+    "fernhollow-s02",
+    "fernhollow-s07"
+   ]
+  },
+  {
+   "id": "fernhollow-s07",
+   "name": "Fernhollow Street (Foothill Road)",
+   "class": "main",
+   "width_cells": 6,
+   "vertices_px": [
+    [
+     7037.0,
+     3168.5
+    ],
+    [
+     7176.0,
+     3163.0
+    ],
+    [
+     7220.0,
+     3152.0
+    ],
+    [
+     7257.0,
+     3127.5
+    ],
+    [
+     7314.0,
+     3069.5
+    ],
+    [
+     7345.0,
+     3044.0
+    ],
+    [
+     7395.5,
+     3011.0
+    ],
+    [
+     7453.0,
+     2987.5
+    ]
+   ],
+   "follows_route": "Foothill Road",
+   "connects": [
+    "fernhollow-a1",
+    "fernhollow-a2",
+    "fernhollow-c03",
+    "fernhollow-q01",
+    "fernhollow-s01",
+    "fernhollow-s02",
+    "fernhollow-s03",
+    "fernhollow-s04",
+    "fernhollow-s05",
+    "fernhollow-s06"
+   ]
+  },
+  {
+   "id": "fernhollow-a1",
+   "name": "Foothill Road",
+   "class": "arrival",
+   "width_cells": 4,
+   "vertices_px": [
+    [
+     6874.9,
+     3296.2
+    ],
+    [
+     6933.6,
+     3218.1
+    ],
+    [
+     6962.0,
+     3192.8
+    ],
+    [
+     6978.7,
+     3183.2
+    ],
+    [
+     6995.8,
+     3176.4
+    ],
+    [
+     7036.9,
+     3168.7
+    ],
+    [
+     7175.8,
+     3163.1
+    ],
+    [
+     7220.0,
+     3151.8
+    ],
+    [
+     7257.2,
+     3127.4
+    ],
+    [
+     7329.3,
+     3056.3
+    ],
+    [
+     7378.1,
+     3021.1
+    ],
+    [
+     7433.0,
+     2994.5
+    ],
+    [
+     7518.9,
+     2966.6
+    ],
+    [
+     7541.8,
+     2955.4
+    ],
+    [
+     7577.1,
+     2928.0
+    ],
+    [
+     7590.9,
+     2910.5
+    ],
+    [
+     7612.5,
+     2869.9
+    ],
+    [
+     7635.5,
+     2801.0
+    ]
+   ],
+   "follows_route": "Foothill Road",
+   "connects": [
+    "fernhollow-s01",
+    "fernhollow-s02",
+    "fernhollow-s03",
+    "fernhollow-s04",
+    "fernhollow-s05",
+    "fernhollow-s06",
+    "fernhollow-s07"
+   ]
+  },
+  {
+   "id": "fernhollow-a2",
+   "name": "Fern Lane",
+   "class": "arrival",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     7165.0,
+     3130.0
+    ],
+    [
+     7186.4,
+     3171.9
+    ],
+    [
+     7201.8,
+     3211.3
+    ],
+    [
+     7211.7,
+     3252.2
+    ],
+    [
+     7214.2,
+     3272.7
+    ],
+    [
+     7211.3,
+     3353.9
+    ],
+    [
+     7213.0,
+     3409.1
+    ],
+    [
+     7218.6,
+     3443.9
+    ],
+    [
+     7225.3,
+     3463.7
+    ]
+   ],
+   "follows_route": "Fern Lane",
+   "connects": [
+    "fernhollow-s06",
+    "fernhollow-s07"
+   ]
+  },
+  {
+   "id": "fernhollow-c01",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     7192.0,
+     2944.0
+    ],
+    [
+     7192.0,
+     3000.0
+    ]
+   ],
+   "connects": [
+    "fernhollow-c02",
+    "fernhollow-s01"
+   ]
+  },
+  {
+   "id": "fernhollow-c02",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     7168.0,
+     2936.0
+    ],
+    [
+     7184.0,
+     2936.0
+    ]
+   ],
+   "connects": [
+    "fernhollow-c01"
+   ]
+  },
+  {
+   "id": "fernhollow-c03",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     7112.0,
+     3248.0
+    ],
+    [
+     7112.0,
+     3192.0
+    ]
+   ],
+   "connects": [
+    "fernhollow-s07"
+   ]
+  },
+  {
+   "id": "fernhollow-c04",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     7064.0,
+     2928.0
+    ],
+    [
+     7064.0,
+     3024.0
+    ],
+    [
+     7072.0,
+     3024.0
+    ]
+   ],
+   "connects": [
+    "fernhollow-s01"
+   ]
+  }
+ ],
+ "squares": [
+  {
+   "id": "fernhollow-q01",
+   "name": "the green",
+   "type": "green",
+   "cells": [
+    898,
+    381,
+    12,
+    7
+   ]
+  }
+ ],
+ "districts": [
+  {
+   "name": "the Green",
+   "centre_px": [
+    7230,
+    3070
+   ],
+   "declared": "houses round the village green, the chapel and the school",
+   "town": "Fernhollow",
+   "id": "fernhollow-d-the-green",
+   "buildings": [
+    "fernhollow-b005",
+    "fernhollow-b006",
+    "fernhollow-b008",
+    "fernhollow-b014",
+    "fernhollow-b015",
+    "fernhollow-b016"
+   ],
+   "mix": {
+    "shop": 1,
+    "cottage": 2,
+    "chapel": 1,
+    "house": 1,
+    "workshop": 1
+   },
+   "function": "market and civic with homes"
+  },
+  {
+   "name": "the Yards",
+   "centre_px": [
+    7380,
+    2980
+   ],
+   "declared": "the sawmill and the wood yards, joiners and coopers",
+   "town": "Fernhollow",
+   "id": "fernhollow-d-the-yards",
+   "buildings": [
+    "fernhollow-b003",
+    "fernhollow-b007",
+    "fernhollow-b009"
+   ],
+   "mix": {
+    "cottage": 2,
+    "inn": 1
+   },
+   "function": "market and civic with homes"
+  },
+  {
+   "name": "Fern Lane",
+   "centre_px": [
+    7200,
+    3200
+   ],
+   "declared": "cottages down the lane to the Lull Road",
+   "town": "Fernhollow",
+   "id": "fernhollow-d-fern-lane",
+   "buildings": [
+    "fernhollow-b001",
+    "fernhollow-b002",
+    "fernhollow-b004",
+    "fernhollow-b010",
+    "fernhollow-b011",
+    "fernhollow-b012",
+    "fernhollow-b013"
+   ],
+   "mix": {
+    "house": 3,
+    "shop": 1,
+    "cottage": 2,
+    "workshop": 1
+   },
+   "function": "homes"
+  },
+  {
+   "id": "fernhollow-d-the-wood-yards",
+   "name": "the wood yards",
+   "function": "docks and works yards",
+   "declared": "the Fern hills' timber, seasoning in stacks",
+   "box_px": [
+    7340,
+    2920,
+    7470,
+    2960
+   ],
+   "buildings": [],
+   "town": "Fernhollow"
+  }
+ ],
+ "gathering_places": [
+  {
+   "name": "the green",
+   "xy_px": [
+    7230,
+    3075
+   ]
+  },
+  {
+   "name": "the sawmill yard",
+   "xy_px": [
+    7400,
+    2975
+   ]
+  }
+ ],
+ "buildings": [
+  {
+   "id": "fernhollow-b001",
+   "type": "house",
+   "footprint_cells": [
+    877,
+    400,
+    11,
+    6
+   ],
+   "rect_px": [
+    7016,
+    3200,
+    88,
+    48
+   ],
+   "faces": "fernhollow-s07",
+   "door_cells": [
+    882,
+    399
+   ],
+   "purpose": "a family house",
+   "occupants": "a sawyer's household",
+   "district": "fernhollow-d-fern-lane",
+   "counted": true,
+   "plot_cells": [
+    877,
+    406,
+    11,
+    5
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "fernhollow-b002",
+   "type": "shop",
+   "footprint_cells": [
+    902,
+    398,
+    9,
+    5
+   ],
+   "rect_px": [
+    7216,
+    3184,
+    72,
+    40
+   ],
+   "faces": "fernhollow-a2",
+   "door_cells": [
+    901,
+    401
+   ],
+   "purpose": "the village shop",
+   "occupants": "the shopkeeper, living above",
+   "district": "fernhollow-d-fern-lane",
+   "counted": true,
+   "plot_cells": [
+    902,
+    403,
+    7,
+    5
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "fernhollow-b003",
+   "type": "cottage",
+   "footprint_cells": [
+    930,
+    387,
+    9,
+    6
+   ],
+   "rect_px": [
+    7440,
+    3096,
+    72,
+    48
+   ],
+   "faces": "fernhollow-s02",
+   "door_cells": [
+    929,
+    390
+   ],
+   "purpose": "a cottage",
+   "occupants": "a forester's household",
+   "district": "fernhollow-d-the-yards",
+   "counted": true,
+   "plot_cells": [
+    930,
+    393,
+    9,
+    5
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "fernhollow-b004",
+   "type": "house",
+   "footprint_cells": [
+    875,
+    386,
+    10,
+    6
+   ],
+   "rect_px": [
+    7000,
+    3088,
+    80,
+    48
+   ],
+   "faces": "fernhollow-s03",
+   "door_cells": [
+    885,
+    389
+   ],
+   "purpose": "a family house",
+   "occupants": "a joiner's household",
+   "district": "fernhollow-d-fern-lane",
+   "counted": true,
+   "plot_cells": [
+    875,
+    381,
+    10,
+    5
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "fernhollow-b005",
+   "type": "shop",
+   "footprint_cells": [
+    889,
+    385,
+    9,
+    5
+   ],
+   "rect_px": [
+    7112,
+    3080,
+    72,
+    40
+   ],
+   "faces": "fernhollow-a2",
+   "door_cells": [
+    894,
+    390
+   ],
+   "purpose": "the chandler",
+   "occupants": "the shopkeeper, living above",
+   "district": "fernhollow-d-the-green",
+   "counted": true,
+   "plot_cells": [
+    889,
+    380,
+    9,
+    5
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "fernhollow-b006",
+   "type": "cottage",
+   "footprint_cells": [
+    902,
+    368,
+    11,
+    7
+   ],
+   "rect_px": [
+    7216,
+    2944,
+    88,
+    56
+   ],
+   "faces": "fernhollow-s01",
+   "door_cells": [
+    907,
+    375
+   ],
+   "purpose": "a cottage",
+   "occupants": "a charcoal burner's household",
+   "district": "fernhollow-d-the-green",
+   "counted": true,
+   "plot_cells": [
+    902,
+    363,
+    11,
+    5
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "fernhollow-b007",
+   "type": "inn",
+   "footprint_cells": [
+    916,
+    361,
+    16,
+    7
+   ],
+   "rect_px": [
+    7328,
+    2888,
+    128,
+    56
+   ],
+   "faces": "fernhollow-s07",
+   "door_cells": [
+    931,
+    368
+   ],
+   "purpose": "the Fern and Axe inn",
+   "occupants": "the innkeeper, staff and guests",
+   "district": "fernhollow-d-the-yards",
+   "counted": true,
+   "plot_cells": [
+    916,
+    356,
+    16,
+    5
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "fernhollow-b008",
+   "type": "chapel",
+   "footprint_cells": [
+    884,
+    357,
+    11,
+    10
+   ],
+   "rect_px": [
+    7072,
+    2856,
+    88,
+    80
+   ],
+   "faces": "fernhollow-c02",
+   "door_cells": [
+    895,
+    366
+   ],
+   "purpose": "the chapel",
+   "occupants": "the priest, living beside it",
+   "district": "fernhollow-d-the-green",
+   "counted": true,
+   "plot_cells": [
+    884,
+    352,
+    11,
+    5
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "fernhollow-b009",
+   "type": "cottage",
+   "footprint_cells": [
+    899,
+    361,
+    12,
+    6
+   ],
+   "rect_px": [
+    7192,
+    2888,
+    96,
+    48
+   ],
+   "faces": "fernhollow-c01",
+   "door_cells": [
+    899,
+    367
+   ],
+   "purpose": "a cottage",
+   "occupants": "a carter's household",
+   "district": "fernhollow-d-the-yards",
+   "counted": true,
+   "plot_cells": [
+    899,
+    356,
+    12,
+    5
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "fernhollow-b010",
+   "type": "cottage",
+   "footprint_cells": [
+    890,
+    399,
+    7,
+    9
+   ],
+   "rect_px": [
+    7120,
+    3192,
+    56,
+    72
+   ],
+   "faces": "fernhollow-s07",
+   "door_cells": [
+    893,
+    398
+   ],
+   "purpose": "a cottage",
+   "occupants": "a teacher's household",
+   "district": "fernhollow-d-fern-lane",
+   "counted": true,
+   "plot_cells": [
+    885,
+    399,
+    5,
+    9
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "fernhollow-b011",
+   "type": "house",
+   "footprint_cells": [
+    883,
+    407,
+    6,
+    12
+   ],
+   "rect_px": [
+    7064,
+    3256,
+    48,
+    96
+   ],
+   "faces": "fernhollow-c03",
+   "door_cells": [
+    888,
+    406
+   ],
+   "purpose": "a family house",
+   "occupants": "a sawyer's household",
+   "district": "fernhollow-d-fern-lane",
+   "counted": true,
+   "plot_cells": [
+    878,
+    407,
+    5,
+    6
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "fernhollow-b012",
+   "type": "cottage",
+   "footprint_cells": [
+    912,
+    396,
+    6,
+    11
+   ],
+   "rect_px": [
+    7296,
+    3168,
+    48,
+    88
+   ],
+   "faces": "fernhollow-s02",
+   "door_cells": [
+    915,
+    395
+   ],
+   "purpose": "a cottage",
+   "occupants": "a forester's household",
+   "district": "fernhollow-d-fern-lane",
+   "counted": true,
+   "plot_cells": [
+    918,
+    396,
+    5,
+    11
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "fernhollow-b013",
+   "type": "workshop",
+   "footprint_cells": [
+    922,
+    396,
+    11,
+    8
+   ],
+   "rect_px": [
+    7376,
+    3168,
+    88,
+    64
+   ],
+   "faces": "fernhollow-s02",
+   "door_cells": [
+    923,
+    395
+   ],
+   "purpose": "the joiner",
+   "occupants": "the master and apprentices",
+   "district": "fernhollow-d-fern-lane",
+   "counted": true,
+   "plot_cells": [
+    922,
+    404,
+    11,
+    5
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "fernhollow-b014",
+   "type": "cottage",
+   "footprint_cells": [
+    885,
+    369,
+    11,
+    6
+   ],
+   "rect_px": [
+    7080,
+    2952,
+    88,
+    48
+   ],
+   "faces": "fernhollow-s01",
+   "door_cells": [
+    891,
+    375
+   ],
+   "purpose": "a cottage",
+   "occupants": "a joiner's household",
+   "district": "fernhollow-d-the-green",
+   "counted": true,
+   "plot_cells": [
+    885,
+    375,
+    6,
+    3
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "fernhollow-b015",
+   "type": "house",
+   "footprint_cells": [
+    874,
+    379,
+    9,
+    6
+   ],
+   "rect_px": [
+    6992,
+    3032,
+    72,
+    48
+   ],
+   "faces": "fernhollow-s01",
+   "door_cells": [
+    883,
+    381
+   ],
+   "purpose": "a family house",
+   "occupants": "a charcoal burner's household",
+   "district": "fernhollow-d-the-green",
+   "counted": true,
+   "plot_cells": [
+    874,
+    385,
+    9,
+    4
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "fernhollow-b016",
+   "type": "workshop",
+   "footprint_cells": [
+    873,
+    358,
+    10,
+    7
+   ],
+   "rect_px": [
+    6984,
+    2864,
+    80,
+    56
+   ],
+   "faces": "fernhollow-c04",
+   "door_cells": [
+    882,
+    365
+   ],
+   "purpose": "the cooper",
+   "occupants": "the master and apprentices",
+   "district": "fernhollow-d-the-green",
+   "counted": true,
+   "plot_cells": [
+    873,
+    365,
+    10,
+    4
+   ],
+   "plot": "yard"
+  }
+ ],
+ "lifted": [],
+ "outskirts": [
+  {
+   "kind": "yard",
+   "name": "the wood yards",
+   "box": [
+    7340,
+    2920,
+    7470,
+    2960
+   ],
+   "why": "the Fern hills' timber, seasoning in stacks"
+  }
+ ],
+ "game_layout": {
+  "arrival": "Foothill Road",
+  "first_view": "out of the trees onto the green: the chapel and the school across it, the sawmill shed and its smoke to the right",
+  "landmarks": [
+   {
+    "name": "the chapel on the green",
+    "xy": [
+     7230,
+     3040
+    ]
+   },
+   {
+    "name": "the sawmill",
+    "xy": [
+     7400,
+     2975
+    ]
+   },
+   {
+    "name": "the charcoal burners' cottages on Fern Lane",
+    "xy": [
+     7212,
+     3280
+    ]
+   }
+  ],
+  "shortcuts_later": [
+   {
+    "what": "the timber slide from the wood yards down to Cooper Lane",
+    "xy": [
+     7380,
+     3060
+    ],
+    "opens": "when the sawmill runs again"
+   }
+  ],
+  "quiet_corners": [
+   {
+    "what": "the green, beside the noisy sawmill yard",
+    "xy": [
+     7232,
+     3078
+    ]
+   }
+  ],
+  "first_screen_cells": [
+   [
+    839,
+    401,
+    40,
+    22.5
+   ]
+  ],
+  "screens": [
+   1.6,
+   2.8
+  ]
+ },
+ "ground": {
+  "centre": "packed earth and the green",
+  "yards": "wood yards and gardens",
+  "edges": "the clearing's fields, the woods"
+ },
+ "terrain": {
+  "box_cells": [
+   858,
+   342,
+   97,
+   93
+  ],
+  "codes": {
+   ".": "land",
+   "r": "route",
+   "~": "water",
+   "#": "barrier (cliff, wall, lava)",
+   "b": "bridge"
+  },
+  "rows": [
+   "91.5#r",
+   "90.5#2r",
+   "88.7#2r",
+   "86.9#2r",
+   "85.9#3r",
+   "84.9#.3r",
+   "83.9#2.3r",
+   "82.8#~3.3r",
+   "82.6#2~3.4r",
+   "81.6#3~2.5r",
+   "81.5#.~3.6r",
+   "81.5#~3.7r",
+   "81.5#~3.7r",
+   "81.6#.9r",
+   "82.6#9r",
+   "82.6#9r",
+   "83.4#10r",
+   "84.3#10r",
+   "84.~.11r",
+   "84.~.11r",
+   "84.~12r",
+   "84.b12r",
+   "83.r2b11r",
+   "81.4rb10r.",
+   "80.5rb11r",
+   "79.6rb11r",
+   "79.6rb11r",
+   "76.9rb7r3.r",
+   "73.12r2b5r5.",
+   "71.15rb4r6.",
+   "68.18rb3r7.",
+   "66.20rb10.",
+   "64.16r7.~9.",
+   "62.14r11.~9.",
+   "61.12r14.~9.",
+   "60.11r16.~9.",
+   "58.11r18.~9.",
+   "57.11r19.3~7.",
+   "55.11r22.2~7.",
+   "54.11r23.2~7.",
+   "53.12r23.2~7.",
+   "52.12r24.2~7.",
+   "50.14r24.2~7.",
+   "49.14r25.2~7.",
+   "48.10r.4r25.2~7.",
+   "48.15r25.2~7.",
+   "47.10r.4r26.2~7.",
+   "44.11r2.5r26.3~6.",
+   "36.4r3.11r3.4r29.~6.",
+   "36.18r3.4r29.~6.",
+   "21.32r2.5r30.2~5.",
+   "20.32r3.5r31.~5.",
+   "15.35r4.5r33.~4.",
+   "13.36r5.5r33.2~3.",
+   "11.37r45.~3.",
+   "10.36r7.r40.~2.",
+   "9.34r10.r40.2~.",
+   "7.11r2.5r14.4r10.r41.2~",
+   "6.9r25.4r9.r42.~",
+   "6.8r26.4r9.r43.",
+   "5.8r27.4r9.r43.",
+   "4.7r30.3r7.3r43.",
+   "3.7r31.5r4.4r43.",
+   "3.7r31.6r3.4r43.",
+   "2.7r32.6r2.4r44.",
+   ".11r29.6r2.4r44.",
+   ".15r25.6r.5r44.",
+   "19r22.6r.4r45.",
+   "21r20.6r.4r45.",
+   "7r4.11r19.10r46.",
+   "5r7.12r17.10r46.",
+   "4r10.11r16.9r47.",
+   "3r11.11r16.9r47.",
+   "2r13.10r16.8r48.",
+   "r15.9r16.8r48.",
+   "17.8r16.7r49.",
+   "17.8r16.6r50.",
+   "18.11r11.7r50.",
+   "19.9r11.8r50.",
+   "20.8r10.9r50.",
+   "21.10r5.11r50.",
+   "22.25r50.",
+   "25.22r50.",
+   "28.10r3.6r50.",
+   "41.6r50.",
+   "41.6r50.",
+   "41.6r50.",
+   "41.6r50.",
+   "41.7r49.",
+   "41.7r49.",
+   "42.6r49.",
+   "42.7r48.",
+   "42.7r48."
+  ]
+ },
+ "residents": [],
+ "routines": [],
+ "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only."
+}

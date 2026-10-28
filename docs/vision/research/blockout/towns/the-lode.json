@@ -1,0 +1,382 @@
+{
+ "schema": "mygame.town_plan/1",
+ "id": "the-lode",
+ "name": "the Lode",
+ "size": "hamlet",
+ "size_note": "hamlet",
+ "target": [
+  3,
+  6
+ ],
+ "buildings_counted": 4,
+ "grid": {
+  "cell_px": 8,
+  "screen_cells": [
+   40,
+   22.5
+  ],
+  "origin": "world px, top-left of the continent (blockout-v55.json coords)",
+  "street_classes": {
+   "arrival": "the regional route's own width",
+   "main": 6,
+   "side": 4,
+   "lane": 3,
+   "close": 2
+  }
+ },
+ "site": {
+  "reason": "the iron and copper mine: the mine house, the smithy, the miners' bunkhouse",
+  "terrain": "the massif foothills above Dust Gulch",
+  "fit": "",
+  "tiers": [
+   7,
+   11
+  ],
+  "levelled_footprints": 2
+ },
+ "footprint_px": [
+  2688,
+  1640,
+  2904,
+  1864
+ ],
+ "arrivals": [
+  {
+   "id": "the-lode-arr1",
+   "kind": "path",
+   "route": "Lode Track",
+   "street": "the-lode-a1",
+   "entries_px": [
+    [
+     2648,
+     1983
+    ]
+   ],
+   "route_kind": "path"
+  }
+ ],
+ "streets": [
+  {
+   "id": "the-lode-a1",
+   "name": "Lode Track",
+   "class": "arrival",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     2648.5,
+     1982.6
+    ],
+    [
+     2627.0,
+     1946.0
+    ],
+    [
+     2729.2,
+     1943.8
+    ],
+    [
+     2773.0,
+     1935.7
+    ],
+    [
+     2775.4,
+     1911.7
+    ],
+    [
+     2718.7,
+     1840.1
+    ],
+    [
+     2730.9,
+     1822.4
+    ],
+    [
+     2750.5,
+     1804.7
+    ],
+    [
+     2762.8,
+     1786.0
+    ],
+    [
+     2772.6,
+     1745.3
+    ],
+    [
+     2797.6,
+     1700.0
+    ]
+   ],
+   "follows_route": "Lode Track",
+   "connects": []
+  }
+ ],
+ "squares": [],
+ "districts": [
+  {
+   "name": "the Lode",
+   "centre_px": [
+    2820,
+    1690
+   ],
+   "declared": "the iron and copper mine: the mine house, the smithy, the miners' bunkhouse",
+   "town": "the Lode",
+   "id": "the-lode-d-the-lode",
+   "buildings": [
+    "the-lode-b001",
+    "the-lode-b002",
+    "the-lode-b003",
+    "the-lode-b004"
+   ],
+   "mix": {
+    "cottage": 3,
+    "house": 1
+   },
+   "function": "homes"
+  }
+ ],
+ "gathering_places": [],
+ "buildings": [
+  {
+   "id": "the-lode-b001",
+   "type": "cottage",
+   "footprint_cells": [
+    347,
+    221,
+    6,
+    12
+   ],
+   "rect_px": [
+    2776,
+    1768,
+    48,
+    96
+   ],
+   "faces": "the-lode-a1",
+   "door_cells": [
+    346,
+    223
+   ],
+   "purpose": "a cottage",
+   "occupants": "a farming household",
+   "district": "the-lode-d-the-lode",
+   "counted": true,
+   "plot_cells": [
+    353,
+    221,
+    4,
+    12
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "the-lode-b002",
+   "type": "cottage",
+   "footprint_cells": [
+    336,
+    216,
+    6,
+    9
+   ],
+   "rect_px": [
+    2688,
+    1728,
+    48,
+    72
+   ],
+   "faces": "the-lode-a1",
+   "door_cells": [
+    342,
+    223
+   ],
+   "purpose": "a cottage",
+   "occupants": "a fishing household",
+   "district": "the-lode-d-the-lode",
+   "counted": true,
+   "plot_cells": [
+    332,
+    216,
+    4,
+    9
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "the-lode-b003",
+   "type": "cottage",
+   "footprint_cells": [
+    347,
+    205,
+    11,
+    6
+   ],
+   "rect_px": [
+    2776,
+    1640,
+    88,
+    48
+   ],
+   "faces": "the-lode-a1",
+   "door_cells": [
+    350,
+    211
+   ],
+   "purpose": "a cottage",
+   "occupants": "a carting household",
+   "district": "the-lode-d-the-lode",
+   "counted": true,
+   "plot_cells": [
+    351,
+    211,
+    7,
+    4
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "the-lode-b004",
+   "type": "house",
+   "footprint_cells": [
+    354,
+    212,
+    9,
+    6
+   ],
+   "rect_px": [
+    2832,
+    1696,
+    72,
+    48
+   ],
+   "faces": "the-lode-a1",
+   "door_cells": [
+    353,
+    213
+   ],
+   "purpose": "a family house",
+   "occupants": "a craft household",
+   "district": "the-lode-d-the-lode",
+   "counted": true,
+   "plot_cells": [
+    354,
+    218,
+    9,
+    4
+   ],
+   "plot": "yard"
+  }
+ ],
+ "lifted": [],
+ "outskirts": [],
+ "game_layout": {
+  "arrival": "Lode Track",
+  "first_view": "the Lode from the Lode Track: the a cottage ahead",
+  "landmarks": [
+   {
+    "name": "the a cottage",
+    "xy": [
+     2800,
+     1816
+    ]
+   }
+  ],
+  "shortcuts_later": [],
+  "quiet_corners": [],
+  "first_screen_cells": [
+   [
+    311,
+    236,
+    40,
+    22.5
+   ]
+  ],
+  "screens": [
+   0.7,
+   1.2
+  ]
+ },
+ "ground": {
+  "centre": "worn earth",
+  "yards": "gardens",
+  "edges": "fields"
+ },
+ "terrain": {
+  "box_cells": [
+   321,
+   190,
+   58,
+   59
+  ],
+  "codes": {
+   ".": "land",
+   "r": "route",
+   "~": "water",
+   "#": "barrier (cliff, wall, lava)",
+   "b": "bridge"
+  },
+  "rows": [
+   "58.",
+   "58.",
+   "58.",
+   "58.",
+   "58.",
+   "58.",
+   "58.",
+   "58.",
+   "58.",
+   "58.",
+   "58.",
+   "58.",
+   "58.",
+   "58.",
+   "58.",
+   "58.",
+   "58.",
+   "58.",
+   "58.",
+   "58.",
+   "58.",
+   "26.5r27.",
+   "26.5r27.",
+   "25.6r27.",
+   "25.5r28.",
+   "24.6r28.",
+   "24.5r29.",
+   "24.5r29.",
+   "23.5r30.",
+   "23.5r30.",
+   "23.5r30.",
+   "23.3r32.",
+   "22.4r32.",
+   "22.4r32.",
+   "21.5r32.",
+   "20.5r33.",
+   "18.7r33.",
+   "18.6r34.",
+   "17.6r35.",
+   "17.5r36.",
+   "17.5r36.",
+   "17.6r35.",
+   "18.5r35.",
+   "18.6r34.",
+   "20.5r33.",
+   "21.5r32.",
+   "21.5r32.",
+   "22.6r30.",
+   "23.5r30.",
+   "24.4r30.",
+   "24.4r30.",
+   "18.10r30.",
+   "6.22r30.",
+   "6.20r32.",
+   "6.15r37.",
+   "6.7r45.",
+   "6.7r45.",
+   "6.8r44.",
+   "7.8r43."
+  ]
+ },
+ "residents": [],
+ "routines": [],
+ "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only."
+}

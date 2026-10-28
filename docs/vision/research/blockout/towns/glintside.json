@@ -1,0 +1,603 @@
+{
+ "schema": "mygame.town_plan/1",
+ "id": "glintside",
+ "name": "Glintside",
+ "size": "hamlet",
+ "size_note": "hamlet",
+ "target": [
+  4,
+  8
+ ],
+ "buildings_counted": 4,
+ "grid": {
+  "cell_px": 8,
+  "screen_cells": [
+   40,
+   22.5
+  ],
+  "origin": "world px, top-left of the continent (blockout-v55.json coords)",
+  "street_classes": {
+   "arrival": "the regional route's own width",
+   "main": 6,
+   "side": 4,
+   "lane": 3,
+   "close": 2
+  }
+ },
+ "site": {
+  "reason": "a village of mill houses and laundries along the Glint above the falls, now the city's northern edge, where the maglev comes in",
+  "terrain": "the Glint's banks north of the old town",
+  "fit": "",
+  "tiers": [
+   -1,
+   7
+  ],
+  "levelled_footprints": 1
+ },
+ "footprint_px": [
+  10840,
+  4116,
+  11296,
+  4420
+ ],
+ "arrivals": [
+  {
+   "id": "glintside-arr1",
+   "kind": "road",
+   "route": "Old Bridges",
+   "street": "glintside-a1",
+   "entries_px": [
+    [
+     10745,
+     4391
+    ]
+   ],
+   "route_kind": "road"
+  }
+ ],
+ "streets": [
+  {
+   "id": "glintside-s01",
+   "name": "Glint Steps",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     10948.0,
+     4404.0
+    ],
+    [
+     10948.0,
+     4340.0
+    ]
+   ],
+   "connects": [
+    "glintside-a1",
+    "glintside-q01"
+   ]
+  },
+  {
+   "id": "glintside-s02",
+   "name": "Mill Street (1)",
+   "class": "side",
+   "width_cells": 4,
+   "vertices_px": [
+    [
+     11000.0,
+     4320.0
+    ],
+    [
+     11024.0,
+     4320.0
+    ]
+   ],
+   "connects": [
+    "glintside-c02",
+    "glintside-s08"
+   ]
+  },
+  {
+   "id": "glintside-s03",
+   "name": "Mill Street (2)",
+   "class": "side",
+   "width_cells": 4,
+   "vertices_px": [
+    [
+     11128.0,
+     4320.0
+    ],
+    [
+     11264.0,
+     4320.0
+    ]
+   ],
+   "connects": [
+    "glintside-s04",
+    "glintside-s05",
+    "glintside-s09"
+   ]
+  },
+  {
+   "id": "glintside-s04",
+   "name": "Weir Lane",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     11156.0,
+     4324.0
+    ],
+    [
+     11156.0,
+     4116.0
+    ]
+   ],
+   "connects": [
+    "glintside-c01",
+    "glintside-s03",
+    "glintside-s09"
+   ]
+  },
+  {
+   "id": "glintside-s05",
+   "name": "Laundry Lane",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     11260.0,
+     4324.0
+    ],
+    [
+     11260.0,
+     4420.0
+    ]
+   ],
+   "connects": [
+    "glintside-s03"
+   ]
+  },
+  {
+   "id": "glintside-a1",
+   "name": "Old Bridges",
+   "class": "arrival",
+   "width_cells": 5,
+   "vertices_px": [
+    [
+     10745.0,
+     4390.8
+    ],
+    [
+     10837.5,
+     4390.4
+    ],
+    [
+     10898.0,
+     4397.7
+    ],
+    [
+     10928.1,
+     4403.7
+    ],
+    [
+     11084.6,
+     4451.2
+    ]
+   ],
+   "follows_route": "Old Bridges",
+   "connects": [
+    "glintside-q01",
+    "glintside-s01"
+   ]
+  },
+  {
+   "id": "glintside-s08",
+   "name": null,
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     11012.0,
+     4332.0
+    ],
+    [
+     11012.0,
+     4348.0
+    ]
+   ],
+   "link": true,
+   "connects": [
+    "glintside-q01",
+    "glintside-s02"
+   ]
+  },
+  {
+   "id": "glintside-s09",
+   "name": null,
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     11140.0,
+     4332.0
+    ],
+    [
+     11140.0,
+     4380.0
+    ],
+    [
+     11044.0,
+     4380.0
+    ]
+   ],
+   "link": true,
+   "connects": [
+    "glintside-q01",
+    "glintside-s03"
+   ]
+  },
+  {
+   "id": "glintside-c01",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     11224.0,
+     4128.0
+    ],
+    [
+     11168.0,
+     4128.0
+    ]
+   ],
+   "connects": [
+    "glintside-s04"
+   ]
+  },
+  {
+   "id": "glintside-c02",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     10832.0,
+     4168.0
+    ],
+    [
+     10816.0,
+     4168.0
+    ],
+    [
+     10816.0,
+     4304.0
+    ],
+    [
+     10984.0,
+     4304.0
+    ]
+   ],
+   "connects": [
+    "glintside-s02"
+   ]
+  }
+ ],
+ "squares": [
+  {
+   "id": "glintside-q01",
+   "name": "the mill green",
+   "type": "green",
+   "cells": [
+    1370,
+    544,
+    10,
+    5
+   ]
+  }
+ ],
+ "districts": [
+  {
+   "name": "Glintside",
+   "centre_px": [
+    11120,
+    4150
+   ],
+   "declared": "a village of mill houses and laundries along the Glint above the falls, now the city's northern edge, where the maglev comes in",
+   "town": "Glintside",
+   "id": "glintside-d-glintside",
+   "buildings": [
+    "glintside-b001",
+    "glintside-b002",
+    "glintside-b003",
+    "glintside-b004"
+   ],
+   "mix": {
+    "house": 3,
+    "cottage": 1
+   },
+   "function": "homes"
+  },
+  {
+   "id": "glintside-d-the-allotments",
+   "name": "the allotments",
+   "function": "edge: farms and gardens",
+   "declared": "the city's allotments by the Glint",
+   "box_px": [
+    10950,
+    3980,
+    11400,
+    4120
+   ],
+   "buildings": [],
+   "town": "Glintside"
+  }
+ ],
+ "gathering_places": [],
+ "buildings": [
+  {
+   "id": "glintside-b001",
+   "type": "house",
+   "footprint_cells": [
+    1383,
+    523,
+    10,
+    6
+   ],
+   "rect_px": [
+    11064,
+    4184,
+    80,
+    48
+   ],
+   "faces": "glintside-s04",
+   "door_cells": [
+    1393,
+    526
+   ],
+   "purpose": "a family house",
+   "occupants": "a farming household",
+   "district": "glintside-d-glintside",
+   "counted": true,
+   "plot_cells": [
+    1383,
+    519,
+    10,
+    4
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "glintside-b002",
+   "type": "house",
+   "footprint_cells": [
+    1397,
+    520,
+    6,
+    12
+   ],
+   "rect_px": [
+    11176,
+    4160,
+    48,
+    96
+   ],
+   "faces": "glintside-s04",
+   "door_cells": [
+    1396,
+    526
+   ],
+   "purpose": "a family house",
+   "occupants": "a fishing household",
+   "district": "glintside-d-glintside",
+   "counted": true,
+   "plot_cells": [
+    1403,
+    520,
+    4,
+    12
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "glintside-b003",
+   "type": "house",
+   "footprint_cells": [
+    1404,
+    515,
+    8,
+    6
+   ],
+   "rect_px": [
+    11232,
+    4120,
+    64,
+    48
+   ],
+   "faces": "glintside-c01",
+   "door_cells": [
+    1403,
+    515
+   ],
+   "purpose": "a family house",
+   "occupants": "a carting household",
+   "district": "glintside-d-glintside",
+   "counted": true,
+   "plot_cells": [
+    1404,
+    521,
+    8,
+    4
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "glintside-b004",
+   "type": "cottage",
+   "footprint_cells": [
+    1355,
+    515,
+    9,
+    6
+   ],
+   "rect_px": [
+    10840,
+    4120,
+    72,
+    48
+   ],
+   "faces": "glintside-c02",
+   "door_cells": [
+    1354,
+    520
+   ],
+   "purpose": "a cottage",
+   "occupants": "a craft household",
+   "district": "glintside-d-glintside",
+   "counted": true,
+   "plot_cells": [
+    1355,
+    521,
+    9,
+    4
+   ],
+   "plot": "yard"
+  }
+ ],
+ "lifted": [],
+ "outskirts": [
+  {
+   "kind": "field2",
+   "name": "the allotments",
+   "box": [
+    10950,
+    3980,
+    11400,
+    4120
+   ],
+   "plots": 5,
+   "why": "the city's allotments by the Glint"
+  }
+ ],
+ "game_layout": {
+  "arrival": "Old Bridges",
+  "first_view": "Glintside from the Old Bridges: the a family house ahead",
+  "landmarks": [
+   {
+    "name": "the a family house",
+    "xy": [
+     11200,
+     4208
+    ]
+   }
+  ],
+  "shortcuts_later": [],
+  "quiet_corners": [],
+  "first_screen_cells": [
+   [
+    1323,
+    537,
+    40,
+    22.5
+   ]
+  ],
+  "screens": [
+   1.4,
+   1.7
+  ]
+ },
+ "ground": {
+  "centre": "worn earth",
+  "yards": "gardens",
+  "edges": "fields"
+ },
+ "terrain": {
+  "box_cells": [
+   1340,
+   499,
+   88,
+   69
+  ],
+  "codes": {
+   ".": "land",
+   "r": "route",
+   "~": "water",
+   "#": "barrier (cliff, wall, lava)",
+   "b": "bridge"
+  },
+  "rows": [
+   "32.3~40.13~",
+   "29.5~38.16~",
+   "29.5~38.16~",
+   "26.5~39.17~.",
+   "24.3~40.17~4.",
+   "20.4~40.19~5.",
+   "16.5~40.19~8.",
+   "10.6~43.17~12.",
+   "7.5~42.19~13.2#",
+   "4.4~43.21~.2#3.10#",
+   ".3~46.18~4.16#",
+   ".3~46.18~4.16#",
+   "2~44.19~8.15#",
+   "43.21~11.13#",
+   "42.11~3b6~16.10#",
+   "38.15~3b3~21.8#",
+   "35.18~3b27.5#",
+   "34.19~33.2#",
+   "32.18~36.2#",
+   "31.17~40.",
+   "31.17~40.",
+   "29.16~43.",
+   "27.16~45.",
+   "26.16~46.",
+   "24.14~50.",
+   "23.14~51.",
+   "23.12~53.",
+   "21.13~54.",
+   "20.14~54.",
+   "20.14~54.",
+   "18.14~52.4r",
+   "16.15~47.8r2.",
+   "16.13~44.7r8.",
+   "15.12~61.",
+   "15.12~35.2r24.",
+   "13.13~31.2r2.r26.",
+   "13.11~27.5r32.",
+   "15.8~23.4r38.",
+   "15.8b23.4r38.",
+   "15.8b65.",
+   "18.2b18.2r48.",
+   "31.r56.",
+   "29.2r57.",
+   "23.r64.",
+   "16.2r70.",
+   "2.14r72.",
+   "24r64.",
+   "24r64.",
+   "26r62.",
+   "31r57.",
+   "34r54.",
+   "37r51.",
+   "42r46.",
+   "7r6.32r43.",
+   "26.24r38.",
+   "29.22r37.",
+   "29.22r37.",
+   "34.19r35.",
+   "37.17r34.",
+   "38.16r34.",
+   "38.16r34.",
+   "38.16r34.",
+   "38.16r34.",
+   "21.10~9.14r34.",
+   "21.10~9.16r32.",
+   "21.10~9.16r32.",
+   "21.10~9.16r32.",
+   "8.7~6.10~9.16r32.",
+   "4.16~.10~9.16r32."
+  ]
+ },
+ "residents": [],
+ "routines": [],
+ "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only."
+}

@@ -646,6 +646,8 @@ def v55_paint(T):
             x0, y0, x1, y1 = t.record()['footprint_box']
             a, b, c, d = int(max(0, y0 - 60) // g.CELL), int(max(0, x0 - 60) // g.CELL), int((y1 + 60) // g.CELL), int((x1 + 60) // g.CELL)
             sub = T['K'][a:c, b:d]; sub[np.isin(sub, ['wild', 'ancient'])] = 'broadleaf'
+    import town_plans as TP                                          # each town's plan: arrivals, access, the record (towns/<id>.json)
+    rec['plans'] = TP.finish(T, towns, sys.modules[__name__])
     farms = central_green(T, TW)
     settled_margins(T)
     rec['towns'] = towns; rec['farms'] = farms
@@ -737,15 +739,29 @@ def usable(T):
     return int((T['land'] & ~T['FRAME'] & (np.isin(K, list(g.WALK)) | np.isin(K, ['building', 'warehouse', 'tower', 'keep', 'hangar', 'terminal', 'neon']))).sum())
 
 
+def route_widths(T):
+    """geo52's varied route widths (line_mask_var's seeded draws), for a run from the development cache."""
+    out = []
+    for rn, pts in T['route_px'].items():
+        kind = g.ROUTES.get(rn, (0, 'path'))[1]
+        width = 40 if kind in ('road', 'bar', 'bridge') else 24
+        x, y, al, tot = densify(pts, 6)
+        r = np.random.default_rng(int(abs(x[0] * 7 + y[0] * 13)) % 2 ** 31)
+        n = max(1, int(tot // 120))
+        out += [int(min(64, width + r.choice([0, 0, 8, 16, 24]))) for _ in range(n)]
+    return out
+
+
 def data_stage():
     V.SUF = SUF
     cache = os.environ.get('OLD_CACHE')                              # a development cache of v54's ground (deterministic)
     if cache and os.path.exists(cache):
         D = pickle.load(open(cache, 'rb')); T, obs, pocks = D['T'], D['obs'], D['pocks']; g.WAYS.clear(); g.WAYS.update(D['WAYS']); g.FRAME = T['FRAME']
+        G.ROUTE_WIDTHS[:] = D.get('ROUTE_WIDTHS') or route_widths(T)               # the varied stroke widths the benchmark reads
     else:
         T, obs, pocks = stage_old()
         if cache:
-            pickle.dump({'T': T, 'obs': obs, 'pocks': pocks, 'WAYS': g.WAYS}, open(cache, 'wb'), protocol=4)
+            pickle.dump({'T': T, 'obs': obs, 'pocks': pocks, 'WAYS': g.WAYS, 'ROUTE_WIDTHS': list(G.ROUTE_WIDTHS)}, open(cache, 'wb'), protocol=4)
     u54 = usable(T)
     T, obs, pocks = warp_T(T, obs, pocks)
     warp_tables(); set_dims(NEW_W, NEW_H)
@@ -823,7 +839,7 @@ def data_stage():
     print('usable land', v55['usable_land'])
     um = T['land'] & ~T['FRAME'] & (np.isin(K, list(g.WALK)) | np.isin(K, ['building', 'warehouse', 'tower', 'keep', 'hangar', 'terminal']))
     print('usable: valley box', int(um[0:220, 900:1080].sum()), 'cape/east', int(um[500:, 1410:].sum()))
-    S = {'T': T, 'stats': stats, 'gates': gates, 't': t, 'steps': steps, 'vstats': vstats, 'town_rec': town_rec, 'res': res}
+    S = {'T': T, 'stats': stats, 'gates': gates, 't': t, 'steps': steps, 'vstats': vstats, 'town_rec': town_rec, 'res': res, 'plans': rec['plans']}
     return S
 
 
@@ -854,8 +870,24 @@ def write_data(S):
     bj['v55'] = v55
     with open(os.path.join(DATA, f'blockout{SUF}.json'), 'w') as f:
         json.dump(bj, f, separators=(',', ':'))
+    write_plans(S)
     pickle.dump(state, open(os.path.join(HERE, f'state{SUF}.pkl'), 'wb'), protocol=4)
     return state
+
+
+def write_plans(S):
+    """towns/<id>.json: each plan, its terrain grid taken from the finished ground (so the checker sees what the map shows)."""
+    import town_plans as TP
+    T = S['T']; K = T['K']
+    d = os.path.join(DATA, 'towns'); os.makedirs(d, exist_ok=True)
+    for f in os.listdir(d):
+        if f.endswith('.json'):
+            os.remove(os.path.join(d, f))
+    for pid, P in S['plans'].items():
+        c0, r0, w, h = P['terrain']['box_cells']
+        P['terrain']['rows'] = TP.terrain_rows(K[r0:r0 + h, c0:c0 + w])
+        with open(os.path.join(d, f'{pid}.json'), 'w') as f:
+            json.dump(P, f, indent=1)
 
 
 def map_state(S):
@@ -868,7 +900,7 @@ def map_state(S):
             'closed_px': T['route_px']['the Northway (closed)'], 'delta': T['delta'], 'real': real,
             'routes': {nm: (kind, feats) for nm, (pts, kind, feats) in g.ROUTES.items()}, 'crater_mask': T['crater_mask'],
             'craters': T['craters'], 'stats_home': S['res'], 'hero': S['stats']['v53']['hero'], 'towns': S['town_rec'],
-            'farms': S['stats']['v55']['farms'], 'closed': CLOSED, 'dims': (NEW_W, NEW_H),
+            'farms': S['stats']['v55']['farms'], 'closed': CLOSED, 'dims': (NEW_W, NEW_H), 'plans': S['plans'],
             'tables': {'SETTLE': dict(g.SETTLE), 'STATIONS': dict(g.STATIONS), 'SHORTCUTS': list(g.SHORTCUTS), 'BRIDGES': dict(g.BRIDGES),
                        'CIRCLE': V.CIRCLE, 'CROSSROADS': V.CROSSROADS, 'CRATERS': dict(V.CRATERS), 'POI53': dict(V.POI53),
                        'WAYSTONES': dict(V.WAYSTONES), 'BUILT': dict(V.BUILT), 'ACT1': list(V.ACT1), 'PEAK_NAMES': list(V54.PEAK_NAMES),

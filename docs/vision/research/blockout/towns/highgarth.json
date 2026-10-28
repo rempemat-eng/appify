@@ -1,0 +1,1369 @@
+{
+ "schema": "mygame.town_plan/1",
+ "id": "highgarth",
+ "name": "Highgarth",
+ "size": "medium",
+ "size_note": "medium",
+ "target": [
+  14,
+  22
+ ],
+ "buildings_counted": 18,
+ "grid": {
+  "cell_px": 8,
+  "screen_cells": [
+   40,
+   22.5
+  ],
+  "origin": "world px, top-left of the continent (blockout-v55.json coords)",
+  "street_classes": {
+   "arrival": "the regional route's own width",
+   "main": 6,
+   "side": 4,
+   "lane": 3,
+   "close": 2
+  }
+ },
+ "site": {
+  "reason": "slate from its quarries and wool from the summer pastures, sawn timber from the valley's larches; the drovers' inn on the Garth Road; it sends slate, timber and wool down to Cogsworth. Its old trade over the north pass stopped when the Starfall brought the rockfall down; the road beyond waits for a later region",
+  "terrain": "a sheltered valley on the upper Cog inside the range: stepped streets on the east bank, stone houses on retaining walls, steep wooded slopes and snow on the peaks round it",
+  "fit": "the town steps up its terraces on retaining walls: each street on one tier, a stair or a ramp between",
+  "tiers": [
+   10,
+   18
+  ],
+  "levelled_footprints": 9
+ },
+ "footprint_px": [
+  7696,
+  928,
+  8160,
+  1432
+ ],
+ "arrivals": [
+  {
+   "id": "highgarth-arr1",
+   "kind": "path",
+   "route": "the Garth Road",
+   "street": "highgarth-a1",
+   "entries_px": [
+    [
+     7872,
+     1543
+    ]
+   ],
+   "route_kind": "path"
+  },
+  {
+   "id": "highgarth-arr2",
+   "kind": "path",
+   "route": "the Northway",
+   "street": "highgarth-a2",
+   "entries_px": [
+    [
+     7886,
+     818
+    ]
+   ],
+   "route_kind": "path"
+  }
+ ],
+ "streets": [
+  {
+   "id": "highgarth-s01",
+   "name": "Quarry Lane",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     7908.0,
+     1140.0
+    ],
+    [
+     8052.0,
+     1140.0
+    ],
+    [
+     8052.0,
+     1108.0
+    ],
+    [
+     8092.0,
+     1108.0
+    ]
+   ],
+   "connects": [
+    "highgarth-c02",
+    "highgarth-c03",
+    "highgarth-s05",
+    "highgarth-s06",
+    "highgarth-s07"
+   ]
+  },
+  {
+   "id": "highgarth-s02",
+   "name": "Low Street",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     7764.0,
+     1292.0
+    ],
+    [
+     7988.0,
+     1292.0
+    ]
+   ],
+   "connects": [
+    "highgarth-s05",
+    "highgarth-s07"
+   ]
+  },
+  {
+   "id": "highgarth-s03",
+   "name": "Mill Lane",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     7876.0,
+     1236.0
+    ],
+    [
+     7716.0,
+     1236.0
+    ]
+   ],
+   "connects": [
+    "highgarth-s07"
+   ]
+  },
+  {
+   "id": "highgarth-s04",
+   "name": "Kirk Lane",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     7796.0,
+     1076.0
+    ],
+    [
+     7988.0,
+     1076.0
+    ]
+   ],
+   "connects": [
+    "highgarth-c01",
+    "highgarth-s06",
+    "highgarth-s07"
+   ]
+  },
+  {
+   "id": "highgarth-s05",
+   "name": "Back Street",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     8004.0,
+     1124.0
+    ],
+    [
+     8004.0,
+     1308.0
+    ]
+   ],
+   "connects": [
+    "highgarth-s01",
+    "highgarth-s02",
+    "highgarth-s06"
+   ]
+  },
+  {
+   "id": "highgarth-s06",
+   "name": "Chapel Steps",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     7988.0,
+     1060.0
+    ],
+    [
+     7988.0,
+     1124.0
+    ]
+   ],
+   "connects": [
+    "highgarth-s01",
+    "highgarth-s04",
+    "highgarth-s05"
+   ]
+  },
+  {
+   "id": "highgarth-s07",
+   "name": "Garth Street",
+   "class": "main",
+   "width_cells": 6,
+   "vertices_px": [
+    [
+     7832.0,
+     1405.0
+    ],
+    [
+     7826.0,
+     1386.0
+    ],
+    [
+     7823.0,
+     1361.5
+    ],
+    [
+     7829.0,
+     1339.5
+    ],
+    [
+     7843.0,
+     1321.0
+    ],
+    [
+     7894.0,
+     1269.5
+    ],
+    [
+     7905.0,
+     1250.0
+    ],
+    [
+     7905.0,
+     1190.0
+    ],
+    [
+     7928.5,
+     1114.5
+    ],
+    [
+     7934.5,
+     1071.5
+    ],
+    [
+     7923.0,
+     1014.5
+    ]
+   ],
+   "follows_route": "the Garth Road",
+   "connects": [
+    "highgarth-a1",
+    "highgarth-a2",
+    "highgarth-q01",
+    "highgarth-s01",
+    "highgarth-s02",
+    "highgarth-s03",
+    "highgarth-s04"
+   ]
+  },
+  {
+   "id": "highgarth-a1",
+   "name": "the Garth Road",
+   "class": "arrival",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     7872.2,
+     1542.8
+    ],
+    [
+     7862.7,
+     1487.6
+    ],
+    [
+     7825.8,
+     1385.8
+    ],
+    [
+     7822.8,
+     1361.5
+    ],
+    [
+     7828.8,
+     1339.3
+    ],
+    [
+     7894.2,
+     1269.4
+    ],
+    [
+     7905.0,
+     1250.0
+    ]
+   ],
+   "follows_route": "the Garth Road",
+   "connects": [
+    "highgarth-s02",
+    "highgarth-s07"
+   ]
+  },
+  {
+   "id": "highgarth-a2",
+   "name": "the Northway",
+   "class": "arrival",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     7905.0,
+     1190.0
+    ],
+    [
+     7928.7,
+     1114.6
+    ],
+    [
+     7934.3,
+     1071.5
+    ],
+    [
+     7928.7,
+     1033.6
+    ],
+    [
+     7895.9,
+     918.1
+    ],
+    [
+     7890.1,
+     878.8
+    ],
+    [
+     7886.4,
+     818.2
+    ]
+   ],
+   "follows_route": "the Northway",
+   "connects": [
+    "highgarth-s01",
+    "highgarth-s04",
+    "highgarth-s07"
+   ]
+  },
+  {
+   "id": "highgarth-c01",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     7768.0,
+     1032.0
+    ],
+    [
+     7768.0,
+     1064.0
+    ],
+    [
+     7784.0,
+     1064.0
+    ]
+   ],
+   "connects": [
+    "highgarth-s04"
+   ]
+  },
+  {
+   "id": "highgarth-c02",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     8064.0,
+     1192.0
+    ],
+    [
+     8064.0,
+     1152.0
+    ]
+   ],
+   "connects": [
+    "highgarth-s01"
+   ]
+  },
+  {
+   "id": "highgarth-c03",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     8160.0,
+     1256.0
+    ],
+    [
+     8160.0,
+     1112.0
+    ],
+    [
+     8104.0,
+     1112.0
+    ]
+   ],
+   "connects": [
+    "highgarth-s01"
+   ]
+  }
+ ],
+ "squares": [
+  {
+   "id": "highgarth-q01",
+   "name": "the market cross",
+   "type": "square",
+   "cells": [
+    985,
+    147,
+    9,
+    6
+   ]
+  }
+ ],
+ "districts": [
+  {
+   "name": "Garth Street",
+   "centre_px": [
+    7905,
+    1200
+   ],
+   "declared": "the stepped main street: the inn, the smithy, the store",
+   "town": "Highgarth",
+   "id": "highgarth-d-garth-street",
+   "buildings": [
+    "highgarth-b002",
+    "highgarth-b006",
+    "highgarth-b008",
+    "highgarth-b009",
+    "highgarth-b012",
+    "highgarth-b013",
+    "highgarth-b018"
+   ],
+   "mix": {
+    "house": 4,
+    "chapel": 1,
+    "workshop": 1,
+    "cottage": 1
+   },
+   "function": "homes"
+  },
+  {
+   "name": "Quarry Lane",
+   "centre_px": [
+    8000,
+    1130
+   ],
+   "declared": "the slate works and the quarrymen's houses up the east slope",
+   "town": "Highgarth",
+   "id": "highgarth-d-quarry-lane",
+   "buildings": [
+    "highgarth-b003",
+    "highgarth-b004",
+    "highgarth-b007",
+    "highgarth-b011",
+    "highgarth-b014",
+    "highgarth-b015",
+    "highgarth-b016",
+    "highgarth-b017"
+   ],
+   "mix": {
+    "shop": 1,
+    "house": 5,
+    "cottage": 1,
+    "workshop": 1
+   },
+   "function": "homes"
+  },
+  {
+   "name": "Low Street",
+   "centre_px": [
+    7820,
+    1290
+   ],
+   "declared": "houses over the river meadows, the sawmill by the Cog",
+   "town": "Highgarth",
+   "id": "highgarth-d-low-street",
+   "buildings": [
+    "highgarth-b001",
+    "highgarth-b005",
+    "highgarth-b010"
+   ],
+   "mix": {
+    "inn": 2,
+    "cottage": 1
+   },
+   "function": "market and civic with homes"
+  },
+  {
+   "id": "highgarth-d-the-slate-quarry",
+   "name": "the slate quarry",
+   "function": "docks and works yards",
+   "declared": "slate for the roofs of Cogsworth and the valley",
+   "box_px": [
+    8070,
+    1060,
+    8170,
+    1170
+   ],
+   "buildings": [],
+   "town": "Highgarth"
+  },
+  {
+   "id": "highgarth-d-the-in-fields",
+   "name": "the in-fields",
+   "function": "edge: farms and gardens",
+   "declared": "hay for the winter and oats, walled",
+   "box_px": [
+    7740,
+    1380,
+    8060,
+    1600
+   ],
+   "buildings": [],
+   "town": "Highgarth"
+  },
+  {
+   "id": "highgarth-d-the-folds",
+   "name": "the folds",
+   "function": "edge: yards and pens",
+   "declared": "sheepfolds below the summer pastures",
+   "box_px": [
+    7840,
+    860,
+    7990,
+    950
+   ],
+   "buildings": [],
+   "town": "Highgarth"
+  }
+ ],
+ "gathering_places": [
+  {
+   "name": "the market cross",
+   "xy_px": [
+    7905,
+    1200
+   ]
+  },
+  {
+   "name": "the sheep fair field",
+   "xy_px": [
+    7900,
+    1450
+   ]
+  }
+ ],
+ "buildings": [
+  {
+   "id": "highgarth-b001",
+   "type": "inn",
+   "footprint_cells": [
+    986,
+    163,
+    8,
+    16
+   ],
+   "rect_px": [
+    7888,
+    1304,
+    64,
+    128
+   ],
+   "faces": "highgarth-s02",
+   "door_cells": [
+    990,
+    162
+   ],
+   "purpose": "the Drovers' inn",
+   "occupants": "the innkeeper, staff and guests",
+   "district": "highgarth-d-low-street",
+   "counted": true,
+   "plot_cells": [
+    994,
+    163,
+    5,
+    16
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "highgarth-b002",
+   "type": "house",
+   "footprint_cells": [
+    1002,
+    157,
+    7,
+    10
+   ],
+   "rect_px": [
+    8016,
+    1256,
+    56,
+    80
+   ],
+   "faces": "highgarth-s05",
+   "door_cells": [
+    1001,
+    162
+   ],
+   "purpose": "a family house",
+   "occupants": "a quarryman's household",
+   "district": "highgarth-d-garth-street",
+   "counted": true,
+   "plot_cells": [
+    1009,
+    157,
+    5,
+    10
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "highgarth-b003",
+   "type": "shop",
+   "footprint_cells": [
+    1002,
+    144,
+    5,
+    10
+   ],
+   "rect_px": [
+    8016,
+    1152,
+    40,
+    80
+   ],
+   "faces": "highgarth-s05",
+   "door_cells": [
+    1001,
+    149
+   ],
+   "purpose": "the store",
+   "occupants": "the shopkeeper, living above",
+   "district": "highgarth-d-quarry-lane",
+   "counted": true,
+   "plot_cells": [
+    1007,
+    144,
+    5,
+    10
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "highgarth-b004",
+   "type": "house",
+   "footprint_cells": [
+    1000,
+    124,
+    6,
+    12
+   ],
+   "rect_px": [
+    8000,
+    992,
+    48,
+    96
+   ],
+   "faces": "highgarth-s06",
+   "door_cells": [
+    999,
+    131
+   ],
+   "purpose": "a family house",
+   "occupants": "a shepherd's household",
+   "district": "highgarth-d-quarry-lane",
+   "counted": true,
+   "plot_cells": [
+    1006,
+    124,
+    5,
+    12
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "highgarth-b005",
+   "type": "inn",
+   "footprint_cells": [
+    966,
+    145,
+    13,
+    8
+   ],
+   "rect_px": [
+    7728,
+    1160,
+    104,
+    64
+   ],
+   "faces": "highgarth-s03",
+   "door_cells": [
+    972,
+    153
+   ],
+   "purpose": "the Drovers' inn",
+   "occupants": "the innkeeper, staff and guests",
+   "district": "highgarth-d-low-street",
+   "counted": true,
+   "plot_cells": [
+    966,
+    140,
+    13,
+    5
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "highgarth-b006",
+   "type": "house",
+   "footprint_cells": [
+    980,
+    136,
+    6,
+    10
+   ],
+   "rect_px": [
+    7840,
+    1088,
+    48,
+    80
+   ],
+   "faces": "highgarth-s04",
+   "door_cells": [
+    983,
+    135
+   ],
+   "purpose": "a family house",
+   "occupants": "a sawyer's household",
+   "district": "highgarth-d-garth-street",
+   "counted": true,
+   "plot_cells": [
+    975,
+    136,
+    5,
+    10
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "highgarth-b007",
+   "type": "house",
+   "footprint_cells": [
+    1009,
+    140,
+    6,
+    9
+   ],
+   "rect_px": [
+    8072,
+    1120,
+    48,
+    72
+   ],
+   "faces": "highgarth-s01",
+   "door_cells": [
+    1012,
+    139
+   ],
+   "purpose": "a family house",
+   "occupants": "a weaver's household",
+   "district": "highgarth-d-quarry-lane",
+   "counted": true,
+   "plot_cells": [
+    1015,
+    140,
+    5,
+    9
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "highgarth-b008",
+   "type": "chapel",
+   "footprint_cells": [
+    972,
+    123,
+    10,
+    9
+   ],
+   "rect_px": [
+    7776,
+    984,
+    80,
+    72
+   ],
+   "faces": "highgarth-s04",
+   "door_cells": [
+    977,
+    132
+   ],
+   "purpose": "the chapel",
+   "occupants": "the priest, living beside it",
+   "district": "highgarth-d-garth-street",
+   "counted": true,
+   "plot_cells": [
+    972,
+    118,
+    10,
+    5
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "highgarth-b009",
+   "type": "house",
+   "footprint_cells": [
+    971,
+    136,
+    8,
+    6
+   ],
+   "rect_px": [
+    7768,
+    1088,
+    64,
+    48
+   ],
+   "faces": "highgarth-s04",
+   "door_cells": [
+    975,
+    135
+   ],
+   "purpose": "a family house",
+   "occupants": "a drover's household",
+   "district": "highgarth-d-garth-street",
+   "counted": true,
+   "plot_cells": [
+    971,
+    142,
+    8,
+    3
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "highgarth-b010",
+   "type": "cottage",
+   "footprint_cells": [
+    966,
+    163,
+    9,
+    6
+   ],
+   "rect_px": [
+    7728,
+    1304,
+    72,
+    48
+   ],
+   "faces": "highgarth-s02",
+   "door_cells": [
+    970,
+    162
+   ],
+   "purpose": "a cottage",
+   "occupants": "a quarryman's household",
+   "district": "highgarth-d-low-street",
+   "counted": true,
+   "plot_cells": [
+    966,
+    169,
+    9,
+    4
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "highgarth-b011",
+   "type": "house",
+   "footprint_cells": [
+    1008,
+    150,
+    11,
+    6
+   ],
+   "rect_px": [
+    8064,
+    1200,
+    88,
+    48
+   ],
+   "faces": "highgarth-c02",
+   "door_cells": [
+    1008,
+    149
+   ],
+   "purpose": "a family house",
+   "occupants": "a shepherd's household",
+   "district": "highgarth-d-quarry-lane",
+   "counted": true,
+   "plot_cells": [
+    1008,
+    156,
+    11,
+    4
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "highgarth-b012",
+   "type": "workshop",
+   "footprint_cells": [
+    995,
+    168,
+    11,
+    7
+   ],
+   "rect_px": [
+    7960,
+    1344,
+    88,
+    56
+   ],
+   "faces": "highgarth-s05",
+   "door_cells": [
+    1000,
+    167
+   ],
+   "purpose": "the smithy",
+   "occupants": "the master and apprentices",
+   "district": "highgarth-d-garth-street",
+   "counted": true,
+   "plot_cells": [
+    995,
+    175,
+    11,
+    4
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "highgarth-b013",
+   "type": "house",
+   "footprint_cells": [
+    962,
+    130,
+    8,
+    6
+   ],
+   "rect_px": [
+    7696,
+    1040,
+    64,
+    48
+   ],
+   "faces": "highgarth-s04",
+   "door_cells": [
+    970,
+    133
+   ],
+   "purpose": "a family house",
+   "occupants": "a sawyer's household",
+   "district": "highgarth-d-garth-street",
+   "counted": true,
+   "plot_cells": [
+    962,
+    136,
+    8,
+    4
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "highgarth-b014",
+   "type": "cottage",
+   "footprint_cells": [
+    1007,
+    130,
+    11,
+    7
+   ],
+   "rect_px": [
+    8056,
+    1040,
+    88,
+    56
+   ],
+   "faces": "highgarth-s01",
+   "door_cells": [
+    1012,
+    137
+   ],
+   "purpose": "a cottage",
+   "occupants": "a weaver's household",
+   "district": "highgarth-d-quarry-lane",
+   "counted": true,
+   "plot_cells": [
+    1008,
+    137,
+    10,
+    4
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "highgarth-b015",
+   "type": "house",
+   "footprint_cells": [
+    1010,
+    158,
+    10,
+    7
+   ],
+   "rect_px": [
+    8080,
+    1264,
+    80,
+    56
+   ],
+   "faces": "highgarth-c03",
+   "door_cells": [
+    1019,
+    157
+   ],
+   "purpose": "a family house",
+   "occupants": "a drover's household",
+   "district": "highgarth-d-quarry-lane",
+   "counted": true,
+   "plot_cells": [
+    1010,
+    165,
+    10,
+    4
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "highgarth-b016",
+   "type": "workshop",
+   "footprint_cells": [
+    993,
+    116,
+    13,
+    7
+   ],
+   "rect_px": [
+    7944,
+    928,
+    104,
+    56
+   ],
+   "faces": "highgarth-a2",
+   "door_cells": [
+    992,
+    122
+   ],
+   "purpose": "the slate dresser",
+   "occupants": "the master and apprentices",
+   "district": "highgarth-d-quarry-lane",
+   "counted": true,
+   "plot_cells": [
+    993,
+    123,
+    13,
+    4
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "highgarth-b017",
+   "type": "house",
+   "footprint_cells": [
+    975,
+    116,
+    10,
+    6
+   ],
+   "rect_px": [
+    7800,
+    928,
+    80,
+    48
+   ],
+   "faces": "highgarth-a2",
+   "door_cells": [
+    985,
+    118
+   ],
+   "purpose": "a family house",
+   "occupants": "a quarryman's household",
+   "district": "highgarth-d-quarry-lane",
+   "counted": true,
+   "plot_cells": [
+    975,
+    122,
+    10,
+    4
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "highgarth-b018",
+   "type": "cottage",
+   "footprint_cells": [
+    962,
+    122,
+    9,
+    6
+   ],
+   "rect_px": [
+    7696,
+    976,
+    72,
+    48
+   ],
+   "faces": "highgarth-c01",
+   "door_cells": [
+    970,
+    128
+   ],
+   "purpose": "a cottage",
+   "occupants": "a shepherd's household",
+   "district": "highgarth-d-garth-street",
+   "counted": true,
+   "plot_cells": [
+    962,
+    128,
+    9,
+    4
+   ],
+   "plot": "yard"
+  }
+ ],
+ "lifted": [],
+ "outskirts": [
+  {
+   "kind": "yard",
+   "name": "the slate quarry",
+   "box": [
+    8070,
+    1060,
+    8170,
+    1170
+   ],
+   "why": "slate for the roofs of Cogsworth and the valley"
+  },
+  {
+   "kind": "field2",
+   "name": "the in-fields",
+   "box": [
+    7740,
+    1380,
+    8060,
+    1600
+   ],
+   "plots": 2,
+   "why": "hay for the winter and oats, walled"
+  },
+  {
+   "kind": "yard",
+   "name": "the folds",
+   "box": [
+    7840,
+    860,
+    7990,
+    950
+   ],
+   "why": "sheepfolds below the summer pastures"
+  }
+ ],
+ "game_layout": {
+  "arrival": "the Garth Road",
+  "first_view": "up the last bend into Garth Street: stepped stone houses on their walls, the market cross, the snow peaks over the roofs",
+  "landmarks": [
+   {
+    "name": "the market cross",
+    "xy": [
+     7915,
+     1198
+    ]
+   },
+   {
+    "name": "the chapel on Kirk Lane",
+    "xy": [
+     7900,
+     1060
+    ]
+   },
+   {
+    "name": "the slate quarry face",
+    "xy": [
+     8110,
+     1110
+    ]
+   },
+   {
+    "name": "the sawmill by the Cog",
+    "xy": [
+     7705,
+     1250
+    ]
+   }
+  ],
+  "shortcuts_later": [
+   {
+    "what": "the quarry incline down to Low Street",
+    "xy": [
+     8040,
+     1220
+    ],
+    "opens": "when the quarry works again"
+   },
+   {
+    "what": "the Northway past the rockfall",
+    "xy": [
+     7815,
+     545
+    ],
+    "opens": "later, with the region north of the range (closed now)"
+   }
+  ],
+  "quiet_corners": [
+   {
+    "what": "the chapel yard above the busy market cross",
+    "xy": [
+     7900,
+     1060
+    ]
+   }
+  ],
+  "first_screen_cells": [
+   [
+    964,
+    181,
+    40,
+    22.5
+   ]
+  ],
+  "screens": [
+   1.4,
+   2.8
+  ]
+ },
+ "ground": {
+  "centre": "slate flags and stone steps",
+  "yards": "stone-walled terraces",
+  "edges": "walled in-fields and sheepfolds"
+ },
+ "terrain": {
+  "box_cells": [
+   947,
+   101,
+   89,
+   94
+  ],
+  "codes": {
+   ".": "land",
+   "r": "route",
+   "~": "water",
+   "#": "barrier (cliff, wall, lava)",
+   "b": "bridge"
+  },
+  "rows": [
+   "2.3~3.~28.3r49.",
+   "2.3~4.~27.3r49.",
+   "3.3~3.3~25.3r49.",
+   "3.3~4.2~25.3r49.",
+   "3.3~6.~24.4r48.",
+   "3.3~6.~24.4r48.",
+   "3.3~6.2~23.4r48.",
+   "3.3~7.2~23.3r48.",
+   "3.4~7.2~22.3r48.",
+   "4.3~8.~22.3r48.",
+   "4.3~31.3r48.",
+   "4.3~31.3r48.",
+   "4.3~31.3r48.",
+   "4.3~31.4r47.",
+   "4.3~31.4r47.",
+   "4.4~31.3r47.",
+   "5.3~31.4r46.",
+   "5.3~31.4r46.",
+   "5.3~31.4r46.",
+   "5.3~32.3r46.",
+   "5.3~32.4r45.",
+   "5.3~32.4r45.",
+   "6.3~32.3r45.",
+   "6.3~32.4r44.",
+   "6.3~32.4r44.",
+   "6.3~32.4r44.",
+   "6.3~33.3r44.",
+   "6.3~33.4r43.",
+   "6.3~33.4r43.",
+   "6.3~34.3r43.",
+   "7.3~33.3r43.",
+   "7.3~33.3r43.",
+   "7.3~33.3r43.",
+   "7.3~2.#30.3r43.",
+   "7.3~3#30.3r43.",
+   "7.3~3#30.3r43.",
+   "7.3~3#30.3r43.",
+   "#6.#4~30.4r43.",
+   "#5.2#4~30.4r43.",
+   "5.3#4~30.4r43.",
+   "4.4#4~29.4r44.",
+   "4.4#4~29.4r44.",
+   "3.4#.4~29.4r44.",
+   "3.4#2.4~27.4r45.",
+   "3.5#.4~27.4r45.",
+   "3.4#2.4~27.4r45.",
+   "3.3#3.4~27.3r46.",
+   "3.3#3.4~27.3r46.",
+   "3.3#3.5~26.3r46.",
+   "3.2#5.4~75.",
+   "2.2#6.4~75.",
+   "2.2#6.4~75.",
+   ".#8.4~75.",
+   ".#8.4~75.",
+   "10.5~24.4r46.",
+   "12.3~24.4r46.",
+   "12.3~23.5r46.",
+   "12.3~22.5r47.",
+   ".2#9.4~20.5r48.",
+   ".2#9.4~19.6r48.",
+   "2#11.3~18.6r49.",
+   "#12.3~17.6r50.",
+   "13.3~16.6r51.",
+   "13.4~14.6r52.",
+   "14.3~14.5r53.",
+   "14.3~13.5r54.",
+   "14.3~13.4r55.",
+   "14.3~12.4r56.",
+   "14.3~12.4r56.",
+   "15.3~11.4r56.",
+   "15.3~11.4r56.",
+   "15.3~11.4r56.",
+   "15.3~12.3r56.",
+   "15.3~12.4r55.",
+   "15.4~11.4r55.",
+   "16.3~11.4r55.",
+   "16.3~12.4r54.",
+   "16.3~12.4r54.",
+   "16.4~11.5r45.2~6.",
+   "17.3~12.4r40.6~3.2~2.",
+   "17.3~12.4r37.3~13.",
+   "17.3~13.4r34.3~15.",
+   "17.3~13.4r33.2~17.",
+   "17.3~13.4r31.3~18.",
+   "18.3~13.4r27.4~20.",
+   "18.3~13.4r24.5~22.",
+   "18.3~13.4r12.2~4.6~27.",
+   "18.3~14.3r51.",
+   "18.5~12.3r51.",
+   "18.5~12.3r51.",
+   "19.4~12.4r50.",
+   "19.4~12.4r50.",
+   "19.4~12.4r50.",
+   "19.4~13.3r50."
+  ]
+ },
+ "residents": [],
+ "routines": [],
+ "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only."
+}

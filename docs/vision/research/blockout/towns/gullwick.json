@@ -1,0 +1,590 @@
+{
+ "schema": "mygame.town_plan/1",
+ "id": "gullwick",
+ "name": "Gullwick",
+ "size": "village",
+ "size_note": "village",
+ "target": [
+  6,
+  10
+ ],
+ "buildings_counted": 8,
+ "grid": {
+  "cell_px": 8,
+  "screen_cells": [
+   40,
+   22.5
+  ],
+  "origin": "world px, top-left of the continent (blockout-v55.json coords)",
+  "street_classes": {
+   "arrival": "the regional route's own width",
+   "main": 6,
+   "side": 4,
+   "lane": 3,
+   "close": 2
+  }
+ },
+ "site": {
+  "reason": "a fishing cove on the open coast: boats on the beach, net lofts",
+  "terrain": "the cove west of the delta",
+  "fit": "",
+  "tiers": [
+   -1,
+   2
+  ],
+  "levelled_footprints": 0
+ },
+ "footprint_px": [
+  7880,
+  4952,
+  8224,
+  5272
+ ],
+ "arrivals": [
+  {
+   "id": "gullwick-arr1",
+   "kind": "path",
+   "route": "Coast Path",
+   "street": "gullwick-a1",
+   "entries_px": [
+    [
+     7762,
+     5180
+    ],
+    [
+     8339,
+     4937
+    ]
+   ],
+   "route_kind": "path"
+  },
+  {
+   "id": "gullwick-arr2",
+   "kind": "path",
+   "route": "Gull Lane",
+   "street": "gullwick-a2",
+   "entries_px": [
+    [
+     8035,
+     4838
+    ]
+   ],
+   "route_kind": "path"
+  }
+ ],
+ "streets": [
+  {
+   "id": "gullwick-a1",
+   "name": "Coast Path",
+   "class": "arrival",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     7762.0,
+     5179.8
+    ],
+    [
+     7826.2,
+     5183.5
+    ],
+    [
+     7977.9,
+     5226.7
+    ],
+    [
+     8024.0,
+     5228.2
+    ],
+    [
+     8051.8,
+     5221.5
+    ],
+    [
+     8079.1,
+     5208.8
+    ],
+    [
+     8100.6,
+     5192.2
+    ],
+    [
+     8132.3,
+     5149.0
+    ],
+    [
+     8173.3,
+     5079.7
+    ],
+    [
+     8202.9,
+     5043.3
+    ],
+    [
+     8233.2,
+     5015.6
+    ],
+    [
+     8303.3,
+     4967.3
+    ],
+    [
+     8339.1,
+     4937.3
+    ]
+   ],
+   "follows_route": "Coast Path",
+   "connects": []
+  },
+  {
+   "id": "gullwick-a2",
+   "name": "Gull Lane",
+   "class": "arrival",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     8035.2,
+     4838.2
+    ],
+    [
+     8021.9,
+     4887.6
+    ],
+    [
+     8018.0,
+     4936.2
+    ],
+    [
+     8024.1,
+     4983.7
+    ],
+    [
+     8042.7,
+     5054.0
+    ],
+    [
+     8046.0,
+     5077.8
+    ],
+    [
+     8045.0,
+     5126.1
+    ]
+   ],
+   "follows_route": "Gull Lane",
+   "connects": []
+  }
+ ],
+ "squares": [],
+ "districts": [
+  {
+   "name": "Gullwick",
+   "centre_px": [
+    8045,
+    5200
+   ],
+   "declared": "a fishing cove on the open coast: boats on the beach, net lofts",
+   "town": "Gullwick",
+   "id": "gullwick-d-gullwick",
+   "buildings": [
+    "gullwick-b001",
+    "gullwick-b002",
+    "gullwick-b003",
+    "gullwick-b004",
+    "gullwick-b005",
+    "gullwick-b006",
+    "gullwick-b007",
+    "gullwick-b008"
+   ],
+   "mix": {
+    "cottage": 4,
+    "house": 3,
+    "workshop": 1
+   },
+   "function": "homes"
+  }
+ ],
+ "gathering_places": [],
+ "buildings": [
+  {
+   "id": "gullwick-b001",
+   "type": "cottage",
+   "footprint_cells": [
+    993,
+    621,
+    7,
+    11
+   ],
+   "rect_px": [
+    7944,
+    4968,
+    56,
+    88
+   ],
+   "faces": "gullwick-a2",
+   "door_cells": [
+    1000,
+    622
+   ],
+   "purpose": "a cottage",
+   "occupants": "a farming household",
+   "district": "gullwick-d-gullwick",
+   "counted": true,
+   "plot_cells": [
+    989,
+    621,
+    4,
+    11
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "gullwick-b002",
+   "type": "house",
+   "footprint_cells": [
+    996,
+    633,
+    7,
+    9
+   ],
+   "rect_px": [
+    7968,
+    5064,
+    56,
+    72
+   ],
+   "faces": "gullwick-a2",
+   "door_cells": [
+    1003,
+    637
+   ],
+   "purpose": "a family house",
+   "occupants": "a fishing household",
+   "district": "gullwick-d-gullwick",
+   "counted": true,
+   "plot_cells": [
+    992,
+    633,
+    4,
+    9
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "gullwick-b003",
+   "type": "cottage",
+   "footprint_cells": [
+    1007,
+    619,
+    7,
+    9
+   ],
+   "rect_px": [
+    8056,
+    4952,
+    56,
+    72
+   ],
+   "faces": "gullwick-a2",
+   "door_cells": [
+    1006,
+    627
+   ],
+   "purpose": "a cottage",
+   "occupants": "a carting household",
+   "district": "gullwick-d-gullwick",
+   "counted": true,
+   "plot_cells": [
+    1014,
+    619,
+    4,
+    9
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "gullwick-b004",
+   "type": "house",
+   "footprint_cells": [
+    1008,
+    631,
+    6,
+    10
+   ],
+   "rect_px": [
+    8064,
+    5048,
+    48,
+    80
+   ],
+   "faces": "gullwick-a2",
+   "door_cells": [
+    1007,
+    636
+   ],
+   "purpose": "a family house",
+   "occupants": "a craft household",
+   "district": "gullwick-d-gullwick",
+   "counted": true,
+   "plot_cells": [
+    1014,
+    631,
+    4,
+    10
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "gullwick-b005",
+   "type": "cottage",
+   "footprint_cells": [
+    997,
+    643,
+    10,
+    6
+   ],
+   "rect_px": [
+    7976,
+    5144,
+    80,
+    48
+   ],
+   "faces": "gullwick-a2",
+   "door_cells": [
+    1004,
+    642
+   ],
+   "purpose": "a cottage",
+   "occupants": "a farming household",
+   "district": "gullwick-d-gullwick",
+   "counted": true,
+   "plot_cells": [
+    997,
+    649,
+    9,
+    2
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "gullwick-b006",
+   "type": "house",
+   "footprint_cells": [
+    1011,
+    653,
+    8,
+    6
+   ],
+   "rect_px": [
+    8088,
+    5224,
+    64,
+    48
+   ],
+   "faces": "gullwick-a1",
+   "door_cells": [
+    1011,
+    652
+   ],
+   "purpose": "a family house",
+   "occupants": "a fishing household",
+   "district": "gullwick-d-gullwick",
+   "counted": true,
+   "plot_cells": [
+    1011,
+    659,
+    8,
+    3
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "gullwick-b007",
+   "type": "workshop",
+   "footprint_cells": [
+    985,
+    638,
+    10,
+    7
+   ],
+   "rect_px": [
+    7880,
+    5104,
+    80,
+    56
+   ],
+   "faces": "gullwick-a1",
+   "door_cells": [
+    985,
+    645
+   ],
+   "purpose": "the workshop",
+   "occupants": "the master and apprentices",
+   "district": "gullwick-d-gullwick",
+   "counted": true,
+   "plot_cells": [
+    985,
+    645,
+    10,
+    4
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "gullwick-b008",
+   "type": "cottage",
+   "footprint_cells": [
+    1019,
+    645,
+    9,
+    7
+   ],
+   "rect_px": [
+    8152,
+    5160,
+    72,
+    56
+   ],
+   "faces": "gullwick-a1",
+   "door_cells": [
+    1018,
+    645
+   ],
+   "purpose": "a cottage",
+   "occupants": "a carting household",
+   "district": "gullwick-d-gullwick",
+   "counted": true,
+   "plot_cells": [
+    1019,
+    652,
+    9,
+    4
+   ],
+   "plot": "yard"
+  }
+ ],
+ "lifted": [],
+ "outskirts": [],
+ "game_layout": {
+  "arrival": "Coast Path",
+  "first_view": "Gullwick from the Coast Path: the a cottage ahead",
+  "landmarks": [
+   {
+    "name": "the a cottage",
+    "xy": [
+     7972,
+     5012
+    ]
+   }
+  ],
+  "shortcuts_later": [],
+  "quiet_corners": [],
+  "first_screen_cells": [
+   [
+    950,
+    636,
+    40,
+    22.5
+   ]
+  ],
+  "screens": [
+   1.1,
+   1.8
+  ]
+ },
+ "ground": {
+  "centre": "worn earth",
+  "yards": "gardens",
+  "edges": "fields"
+ },
+ "terrain": {
+  "box_cells": [
+   970,
+   604,
+   74,
+   71
+  ],
+  "codes": {
+   ".": "land",
+   "r": "route",
+   "~": "water",
+   "#": "barrier (cliff, wall, lava)",
+   "b": "bridge"
+  },
+  "rows": [
+   "33.4r37.",
+   "33.3r38.",
+   "31.5r38.",
+   "31.5r38.",
+   "31.4r39.",
+   "31.4r39.",
+   "31.4r38.r",
+   "30.5r38.r",
+   "30.5r37.2r",
+   "30.4r37.3r",
+   "30.4r37.3r",
+   "30.4r35.5r",
+   "30.4r34.6r",
+   "30.4r33.7r",
+   "30.4r33.7r",
+   "30.4r32.8r",
+   "30.5r29.10r",
+   "30.6r27.10r.",
+   "30.6r25.12r.",
+   "30.6r24.12r2.",
+   "30.7r21.9r2.3r2.",
+   "30.7r20.7r5.3r2.",
+   "31.6r19.7r6.3r2.",
+   "31.6r19.7r6.3r2.",
+   "31.7r17.6r8.3r2.",
+   "31.7r15.7r9.3r2.",
+   "31.7r14.7r10.3r2.",
+   "33.5r13.7r11.4r.",
+   "33.5r12.7r12.4r.",
+   "33.5r12.6r13.4r.",
+   "33.5r11.6r15.3r.",
+   "33.5r11.4r17.4r",
+   "33.5r11.4r17.4r",
+   "33.5r10.5r17.4r",
+   "33.5r9.5r19.3r",
+   "33.5r9.4r20.3r",
+   "33.5r8.5r20.3r",
+   "33.5r7.5r22.2r",
+   "34.3r8.4r23.2r",
+   "44.5r23.2r",
+   "42.6r25.r",
+   "42.6r25.r",
+   "8r33.7r25.r",
+   "17r23.7r26.r",
+   "20r18.9r27.",
+   "b5.19r11.10r28.",
+   ".2~5.21r2.15r28.",
+   "2.2~7.34r29.",
+   "3.2~7.30r32.",
+   "5.2~6.28r33.",
+   "5.2~6.28r33.",
+   "6.2~6.24r35.r",
+   "7.2~7.19r38.r",
+   "8.3~7.12r42.2r",
+   "9.3~8.14r38.2r",
+   "12.~11.14r33.3r",
+   "13.~13.15r29.3r",
+   "14.~16.16r22.5r",
+   "15.~19.17r15.7r",
+   "15.~19.17r15.7r",
+   "16.~22.34r.",
+   "16.2~26.28r2.",
+   "49.21r4.",
+   "74.",
+   "74.",
+   "28.5~8.3~30.",
+   "24.25~25.",
+   "18.32~24.",
+   "18.32~24.",
+   "13.39~22.",
+   ".58~15."
+  ]
+ },
+ "residents": [],
+ "routines": [],
+ "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only."
+}

@@ -1,0 +1,778 @@
+{
+ "schema": "mygame.town_plan/1",
+ "id": "driftwood",
+ "name": "Driftwood",
+ "size": "village",
+ "size_note": "village",
+ "target": [
+  8,
+  12
+ ],
+ "buildings_counted": 10,
+ "grid": {
+  "cell_px": 8,
+  "screen_cells": [
+   40,
+   22.5
+  ],
+  "origin": "world px, top-left of the continent (blockout-v55.json coords)",
+  "street_classes": {
+   "arrival": "the regional route's own width",
+   "main": 6,
+   "side": 4,
+   "lane": 3,
+   "close": 2
+  }
+ },
+ "site": {
+  "reason": "the valley's landing place: fishers' cottages, the lighthouse keeper's house, the ferry pier",
+  "terrain": "the cove at the Sleepwater's mouth under the Headland",
+  "fit": "",
+  "tiers": [
+   -1,
+   2
+  ],
+  "levelled_footprints": 0
+ },
+ "footprint_px": [
+  6200,
+  4824,
+  6696,
+  5120
+ ],
+ "arrivals": [
+  {
+   "id": "driftwood-arr1",
+   "kind": "path",
+   "route": "Coast Path",
+   "street": "driftwood-a1",
+   "entries_px": [
+    [
+     6809,
+     5221
+    ]
+   ],
+   "route_kind": "path"
+  },
+  {
+   "id": "driftwood-arr2",
+   "kind": "path",
+   "route": "Valley lane south",
+   "street": "driftwood-a2",
+   "entries_px": [
+    [
+     6399,
+     4725
+    ]
+   ],
+   "route_kind": "path"
+  }
+ ],
+ "streets": [
+  {
+   "id": "driftwood-a1",
+   "name": "Coast Path",
+   "class": "arrival",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     6660.0,
+     5058.6
+    ],
+    [
+     6676.4,
+     5080.9
+    ],
+    [
+     6717.3,
+     5165.9
+    ],
+    [
+     6730.5,
+     5184.8
+    ],
+    [
+     6767.7,
+     5205.9
+    ],
+    [
+     6808.6,
+     5220.6
+    ]
+   ],
+   "follows_route": "Coast Path",
+   "connects": [
+    "driftwood-a2"
+   ]
+  },
+  {
+   "id": "driftwood-a2",
+   "name": "Valley lane south",
+   "class": "arrival",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     6399.0,
+     4725.5
+    ],
+    [
+     6384.3,
+     4798.1
+    ],
+    [
+     6379.3,
+     4845.5
+    ],
+    [
+     6383.1,
+     4868.0
+    ],
+    [
+     6391.1,
+     4890.2
+    ],
+    [
+     6414.7,
+     4924.6
+    ],
+    [
+     6442.6,
+     4952.3
+    ],
+    [
+     6504.4,
+     4998.2
+    ],
+    [
+     6528.1,
+     5020.5
+    ],
+    [
+     6536.0,
+     5033.6
+    ],
+    [
+     6568.5,
+     5063.2
+    ],
+    [
+     6588.7,
+     5070.2
+    ],
+    [
+     6609.3,
+     5072.6
+    ],
+    [
+     6631.3,
+     5069.7
+    ],
+    [
+     6660.0,
+     5058.6
+    ]
+   ],
+   "follows_route": "Valley lane south",
+   "connects": [
+    "driftwood-a1",
+    "driftwood-c01",
+    "driftwood-c02"
+   ]
+  },
+  {
+   "id": "driftwood-c01",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     6480.0,
+     4912.0
+    ],
+    [
+     6480.0,
+     4960.0
+    ]
+   ],
+   "connects": [
+    "driftwood-a2",
+    "driftwood-c03"
+   ]
+  },
+  {
+   "id": "driftwood-c02",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     6400.0,
+     4984.0
+    ],
+    [
+     6400.0,
+     4928.0
+    ]
+   ],
+   "connects": [
+    "driftwood-a2",
+    "driftwood-c04",
+    "driftwood-c05"
+   ]
+  },
+  {
+   "id": "driftwood-c03",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     6576.0,
+     4920.0
+    ],
+    [
+     6488.0,
+     4920.0
+    ]
+   ],
+   "connects": [
+    "driftwood-c01"
+   ]
+  },
+  {
+   "id": "driftwood-c04",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     6408.0,
+     5040.0
+    ],
+    [
+     6408.0,
+     4992.0
+    ]
+   ],
+   "connects": [
+    "driftwood-c02"
+   ]
+  },
+  {
+   "id": "driftwood-c05",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     6288.0,
+     5016.0
+    ],
+    [
+     6288.0,
+     5104.0
+    ],
+    [
+     6328.0,
+     5104.0
+    ],
+    [
+     6328.0,
+     5048.0
+    ],
+    [
+     6320.0,
+     5048.0
+    ],
+    [
+     6320.0,
+     4984.0
+    ],
+    [
+     6392.0,
+     4984.0
+    ]
+   ],
+   "connects": [
+    "driftwood-c02"
+   ]
+  }
+ ],
+ "squares": [],
+ "districts": [
+  {
+   "name": "Driftwood",
+   "centre_px": [
+    6440,
+    5080
+   ],
+   "declared": "the valley's landing place: fishers' cottages, the lighthouse keeper's house, the ferry pier",
+   "town": "Driftwood",
+   "id": "driftwood-d-driftwood",
+   "buildings": [
+    "driftwood-b001",
+    "driftwood-b002",
+    "driftwood-b003",
+    "driftwood-b004",
+    "driftwood-b005",
+    "driftwood-b006",
+    "driftwood-b007",
+    "driftwood-b008",
+    "driftwood-b009",
+    "driftwood-b010"
+   ],
+   "mix": {
+    "cottage": 4,
+    "house": 4,
+    "shop": 1,
+    "workshop": 1
+   },
+   "function": "homes"
+  }
+ ],
+ "gathering_places": [],
+ "buildings": [
+  {
+   "id": "driftwood-b001",
+   "type": "cottage",
+   "footprint_cells": [
+    790,
+    612,
+    6,
+    10
+   ],
+   "rect_px": [
+    6320,
+    4896,
+    48,
+    80
+   ],
+   "faces": "driftwood-a2",
+   "door_cells": [
+    796,
+    612
+   ],
+   "purpose": "a cottage",
+   "occupants": "a farming household",
+   "district": "driftwood-d-driftwood",
+   "counted": true,
+   "plot_cells": [
+    786,
+    612,
+    4,
+    10
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "driftwood-b002",
+   "type": "house",
+   "footprint_cells": [
+    810,
+    634,
+    10,
+    6
+   ],
+   "rect_px": [
+    6480,
+    5072,
+    80,
+    48
+   ],
+   "faces": "driftwood-a2",
+   "door_cells": [
+    818,
+    633
+   ],
+   "purpose": "a family house",
+   "occupants": "a fishing household",
+   "district": "driftwood-d-driftwood",
+   "counted": true,
+   "plot_cells": [
+    810,
+    640,
+    5,
+    1
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "driftwood-b003",
+   "type": "cottage",
+   "footprint_cells": [
+    804,
+    603,
+    6,
+    10
+   ],
+   "rect_px": [
+    6432,
+    4824,
+    48,
+    80
+   ],
+   "faces": "driftwood-a2",
+   "door_cells": [
+    803,
+    612
+   ],
+   "purpose": "a cottage",
+   "occupants": "a carting household",
+   "district": "driftwood-d-driftwood",
+   "counted": true,
+   "plot_cells": [
+    810,
+    603,
+    4,
+    10
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "driftwood-b004",
+   "type": "house",
+   "footprint_cells": [
+    811,
+    608,
+    11,
+    6
+   ],
+   "rect_px": [
+    6488,
+    4864,
+    88,
+    48
+   ],
+   "faces": "driftwood-c01",
+   "door_cells": [
+    810,
+    613
+   ],
+   "purpose": "a family house",
+   "occupants": "a craft household",
+   "district": "driftwood-d-driftwood",
+   "counted": true,
+   "plot_cells": [
+    811,
+    604,
+    11,
+    4
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "driftwood-b005",
+   "type": "shop",
+   "footprint_cells": [
+    820,
+    621,
+    6,
+    9
+   ],
+   "rect_px": [
+    6560,
+    4968,
+    48,
+    72
+   ],
+   "faces": "driftwood-a2",
+   "door_cells": [
+    820,
+    630
+   ],
+   "purpose": "the shop",
+   "occupants": "the shopkeeper, living above",
+   "district": "driftwood-d-driftwood",
+   "counted": true,
+   "plot_cells": [
+    826,
+    621,
+    4,
+    9
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "driftwood-b006",
+   "type": "cottage",
+   "footprint_cells": [
+    792,
+    631,
+    11,
+    7
+   ],
+   "rect_px": [
+    6336,
+    5048,
+    88,
+    56
+   ],
+   "faces": "driftwood-c04",
+   "door_cells": [
+    800,
+    630
+   ],
+   "purpose": "a cottage",
+   "occupants": "a farming household",
+   "district": "driftwood-d-driftwood",
+   "counted": true,
+   "plot_cells": [
+    792,
+    638,
+    11,
+    4
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "driftwood-b007",
+   "type": "house",
+   "footprint_cells": [
+    791,
+    624,
+    9,
+    6
+   ],
+   "rect_px": [
+    6328,
+    4992,
+    72,
+    48
+   ],
+   "faces": "driftwood-c02",
+   "door_cells": [
+    799,
+    623
+   ],
+   "purpose": "a family house",
+   "occupants": "a fishing household",
+   "district": "driftwood-d-driftwood",
+   "counted": true,
+   "plot_cells": [
+    791,
+    630,
+    9,
+    4
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "driftwood-b008",
+   "type": "workshop",
+   "footprint_cells": [
+    775,
+    618,
+    11,
+    8
+   ],
+   "rect_px": [
+    6200,
+    4944,
+    88,
+    64
+   ],
+   "faces": "driftwood-c05",
+   "door_cells": [
+    785,
+    626
+   ],
+   "purpose": "the workshop",
+   "occupants": "the master and apprentices",
+   "district": "driftwood-d-driftwood",
+   "counted": true,
+   "plot_cells": [
+    775,
+    626,
+    11,
+    4
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "driftwood-b009",
+   "type": "cottage",
+   "footprint_cells": [
+    827,
+    621,
+    10,
+    7
+   ],
+   "rect_px": [
+    6616,
+    4968,
+    80,
+    56
+   ],
+   "faces": "driftwood-a1",
+   "door_cells": [
+    832,
+    628
+   ],
+   "purpose": "a cottage",
+   "occupants": "a carting household",
+   "district": "driftwood-d-driftwood",
+   "counted": true,
+   "plot_cells": [
+    827,
+    628,
+    10,
+    4
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "driftwood-b010",
+   "type": "house",
+   "footprint_cells": [
+    823,
+    614,
+    12,
+    6
+   ],
+   "rect_px": [
+    6584,
+    4912,
+    96,
+    48
+   ],
+   "faces": "driftwood-c03",
+   "door_cells": [
+    822,
+    614
+   ],
+   "purpose": "a family house",
+   "occupants": "a craft household",
+   "district": "driftwood-d-driftwood",
+   "counted": true,
+   "plot_cells": [
+    823,
+    620,
+    12,
+    4
+   ],
+   "plot": "yard"
+  }
+ ],
+ "lifted": [],
+ "outskirts": [],
+ "game_layout": {
+  "arrival": "Coast Path",
+  "first_view": "Driftwood from the Coast Path: the workshop ahead",
+  "landmarks": [
+   {
+    "name": "the workshop",
+    "xy": [
+     6244,
+     4976
+    ]
+   }
+  ],
+  "shortcuts_later": [],
+  "quiet_corners": [],
+  "first_screen_cells": [
+   [
+    831,
+    641,
+    40,
+    22.5
+   ]
+  ],
+  "screens": [
+   1.6,
+   1.6
+  ]
+ },
+ "ground": {
+  "centre": "worn earth",
+  "yards": "gardens",
+  "edges": "fields"
+ },
+ "terrain": {
+  "box_cells": [
+   760,
+   588,
+   93,
+   68
+  ],
+  "codes": {
+   ".": "land",
+   "r": "route",
+   "~": "water",
+   "#": "barrier (cliff, wall, lava)",
+   "b": "bridge"
+  },
+  "rows": [
+   "14.2~21.3b2r51.",
+   "15.~21.~2br52.",
+   "15.2~20.~2br52.",
+   "15.2~20.~2br52.",
+   "16.~20.~2br52.",
+   "17.~19.~2br52.",
+   "17.2~18.3br52.",
+   "18.~18.3br52.",
+   "19.~17.3br52.",
+   "19.2~16.3b53.",
+   "20.2~14.r3b53.",
+   "21.~14.r3b~52.",
+   "21.~14.r3b~52.",
+   "22.~13.r3b~52.",
+   "13.11~12.r2b2~52.",
+   "10.4~8.3~11.2rb2~52.",
+   "7.4~13.2~9.3r2b~52.",
+   "2.5~18.~9.3r2b2~51.",
+   "2~24.~8.3r2b2~51.",
+   "26.2~7.4r2b~51.",
+   "27.~7.4r2b~51.",
+   "27.~7.4r2b~51.",
+   "28.~6.4r3b~50.",
+   "28.~7.3r3b~50.",
+   "28.~7.4r3b50.",
+   "28.~8.3r3br49.",
+   "28.~9.2r4br48.",
+   "28.~9.2r4b2r47.",
+   "28.~10.2r3b3r46.",
+   "28.~11.r3b5r44.",
+   "28.~11.r3b5r44.",
+   "28.~12.4b6r42.",
+   "27.~13.~3b7r41.",
+   "27.~14.2~b8r40.",
+   "27.~14.3~10r38.",
+   "27.~14.4~10r37.",
+   "27.~14.4~2.9r36.",
+   "27.~14.4~3.9r35.",
+   "27.~15.3~5.8r34.",
+   "27.~15.3~5.8r34.",
+   "27.~15.3~6.8r33.",
+   "27.~15.4~7.6r33.",
+   "27.~15.4~7.8r9.4r18.",
+   "28.~15.3~8.8r6.7r17.",
+   "28.~15.3~9.20r17.",
+   "28.~15.3~12.18r16.",
+   "29.~14.4~12.18r15.",
+   "29.~14.4~24.6r15.",
+   "29.~14.4~24.6r15.",
+   "44.4~24.7r14.",
+   "45.3~25.6r14.",
+   "45.3~26.6r13.",
+   "45.3~26.6r13.",
+   "45.3~7.7~13.6r12.",
+   "33.7~5.3~.18~8.7r11.",
+   "30.12~3.25~6.6r11.",
+   "27.43~6.7r9.r",
+   "27.43~6.7r9.r",
+   "27.44~6.6r7.3r",
+   "26.46~5.7r2.7r",
+   "24.51~3.15r",
+   "23.53~4.13r",
+   "22.55~4.12r",
+   "20.57~6.10r",
+   "2.9~8.58~9.7r",
+   "13~5.60~11.4r",
+   "13~5.60~11.4r",
+   "14~4.60~14.r"
+  ]
+ },
+ "residents": [],
+ "routines": [],
+ "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only."
+}

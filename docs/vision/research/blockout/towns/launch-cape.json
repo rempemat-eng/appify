@@ -1,0 +1,578 @@
+{
+ "schema": "mygame.town_plan/1",
+ "id": "launch-cape",
+ "name": "Launch Cape",
+ "size": "facility",
+ "size_note": "facility",
+ "target": [
+  4,
+  8
+ ],
+ "buildings_counted": 6,
+ "grid": {
+  "cell_px": 8,
+  "screen_cells": [
+   40,
+   22.5
+  ],
+  "origin": "world px, top-left of the continent (blockout-v55.json coords)",
+  "street_classes": {
+   "arrival": "the regional route's own width",
+   "main": 6,
+   "side": 4,
+   "lane": 3,
+   "close": 2
+  }
+ },
+ "site": {
+  "reason": "the Company's launch site: rockets go up over open sea, away from people (W8); the assembly hall, the workshops and the propellant stores in the cape's middle, the pad at its tip; a buffer of open heath between the pad and every house",
+  "terrain": "the headland past the city, exposed to the sea on three sides",
+  "fit": "",
+  "tiers": [
+   -1,
+   7
+  ],
+  "levelled_footprints": 4
+ },
+ "footprint_px": [
+  11856,
+  5928,
+  12240,
+  6515
+ ],
+ "arrivals": [
+  {
+   "id": "launch-cape-arr1",
+   "kind": "road",
+   "route": "the Pad Road",
+   "street": "launch-cape-a1",
+   "entries_px": [
+    [
+     12052,
+     5813
+    ]
+   ],
+   "route_kind": "road"
+  }
+ ],
+ "streets": [
+  {
+   "id": "launch-cape-a1",
+   "name": "the Pad Road",
+   "class": "arrival",
+   "width_cells": 4,
+   "vertices_px": [
+    [
+     12052.3,
+     5813.4
+    ],
+    [
+     12040.7,
+     5852.9
+    ],
+    [
+     12035.0,
+     5893.9
+    ],
+    [
+     12033.3,
+     5993.7
+    ],
+    [
+     12023.9,
+     6173.2
+    ],
+    [
+     12027.2,
+     6211.4
+    ],
+    [
+     12060.4,
+     6323.2
+    ],
+    [
+     12070.0,
+     6380.0
+    ]
+   ],
+   "follows_route": "the Pad Road",
+   "connects": [
+    "launch-cape-c01",
+    "launch-cape-c02"
+   ]
+  },
+  {
+   "id": "launch-cape-c01",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     12088.0,
+     6088.0
+    ],
+    [
+     12048.0,
+     6088.0
+    ]
+   ],
+   "connects": [
+    "launch-cape-a1"
+   ]
+  },
+  {
+   "id": "launch-cape-c02",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     12096.0,
+     5960.0
+    ],
+    [
+     12048.0,
+     5960.0
+    ]
+   ],
+   "connects": [
+    "launch-cape-a1"
+   ]
+  }
+ ],
+ "squares": [],
+ "districts": [
+  {
+   "name": "the pad",
+   "centre_px": [
+    12085,
+    6455
+   ],
+   "declared": "the launch pad, its tower and the service apron",
+   "town": "Launch Cape",
+   "id": "launch-cape-d-the-pad",
+   "buildings": [],
+   "mix": {},
+   "function": "homes"
+  },
+  {
+   "name": "the works",
+   "centre_px": [
+    12060,
+    6080
+   ],
+   "declared": "the assembly hall, workshops, stores and the control bunker",
+   "town": "Launch Cape",
+   "id": "launch-cape-d-the-works",
+   "buildings": [
+    "launch-cape-b001",
+    "launch-cape-b002",
+    "launch-cape-b003",
+    "launch-cape-b004",
+    "launch-cape-b005",
+    "launch-cape-b006"
+   ],
+   "mix": {
+    "hangar": 1,
+    "workshop": 2,
+    "warehouse": 2,
+    "public": 1
+   },
+   "function": "docks and transport"
+  },
+  {
+   "id": "launch-cape-d-the-works-yard",
+   "name": "the works yard",
+   "function": "docks and works yards",
+   "declared": "carts and the transporter road to the pad",
+   "box_px": [
+    11960,
+    5960,
+    12250,
+    6000
+   ],
+   "buildings": [],
+   "town": "Launch Cape"
+  }
+ ],
+ "gathering_places": [
+  {
+   "name": "the works gate",
+   "xy_px": [
+    12000,
+    5960
+   ]
+  }
+ ],
+ "buildings": [
+  {
+   "id": "launch-cape-b001",
+   "type": "hangar",
+   "footprint_cells": [
+    1509,
+    770,
+    21,
+    11
+   ],
+   "rect_px": [
+    12072,
+    6160,
+    168,
+    88
+   ],
+   "faces": "launch-cape-a1",
+   "door_cells": [
+    1508,
+    780
+   ],
+   "purpose": "a hangar",
+   "occupants": "ground crew",
+   "district": "launch-cape-d-the-works",
+   "counted": true,
+   "plot_cells": [
+    1509,
+    781,
+    20,
+    2
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "launch-cape-b002",
+   "type": "workshop",
+   "footprint_cells": [
+    1512,
+    761,
+    14,
+    7
+   ],
+   "rect_px": [
+    12096,
+    6088,
+    112,
+    56
+   ],
+   "faces": "launch-cape-c01",
+   "door_cells": [
+    1511,
+    761
+   ],
+   "purpose": "the workshop",
+   "occupants": "the master and apprentices",
+   "district": "launch-cape-d-the-works",
+   "counted": true,
+   "plot_cells": [
+    1512,
+    768,
+    14,
+    2
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "launch-cape-b003",
+   "type": "warehouse",
+   "footprint_cells": [
+    1483,
+    760,
+    16,
+    10
+   ],
+   "rect_px": [
+    11864,
+    6080,
+    128,
+    80
+   ],
+   "faces": "launch-cape-a1",
+   "door_cells": [
+    1499,
+    765
+   ],
+   "purpose": "a warehouse",
+   "occupants": "porters by day, a night watch",
+   "district": "launch-cape-d-the-works",
+   "counted": true,
+   "plot_cells": [
+    1483,
+    770,
+    16,
+    2
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "launch-cape-b004",
+   "type": "workshop",
+   "footprint_cells": [
+    1513,
+    745,
+    12,
+    7
+   ],
+   "rect_px": [
+    12104,
+    5960,
+    96,
+    56
+   ],
+   "faces": "launch-cape-c02",
+   "door_cells": [
+    1512,
+    745
+   ],
+   "purpose": "the workshop",
+   "occupants": "the master and apprentices",
+   "district": "launch-cape-d-the-works",
+   "counted": true,
+   "plot_cells": [
+    1513,
+    752,
+    12,
+    2
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "launch-cape-b005",
+   "type": "public",
+   "footprint_cells": [
+    1488,
+    741,
+    12,
+    8
+   ],
+   "rect_px": [
+    11904,
+    5928,
+    96,
+    64
+   ],
+   "faces": "launch-cape-a1",
+   "door_cells": [
+    1500,
+    745
+   ],
+   "purpose": "the hall",
+   "occupants": "staff by day",
+   "district": "launch-cape-d-the-works",
+   "counted": true,
+   "plot_cells": [
+    1488,
+    749,
+    12,
+    2
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "launch-cape-b006",
+   "type": "warehouse",
+   "footprint_cells": [
+    1482,
+    750,
+    19,
+    9
+   ],
+   "rect_px": [
+    11856,
+    6000,
+    152,
+    72
+   ],
+   "faces": "launch-cape-a1",
+   "door_cells": [
+    1501,
+    754
+   ],
+   "purpose": "a warehouse",
+   "occupants": "porters by day, a night watch",
+   "district": "launch-cape-d-the-works",
+   "counted": true,
+   "plot_cells": [
+    1482,
+    759,
+    19,
+    2
+   ],
+   "plot": "yard"
+  }
+ ],
+ "lifted": [],
+ "outskirts": [
+  {
+   "kind": "yard",
+   "name": "the works yard",
+   "box": [
+    11960,
+    5960,
+    12250,
+    6000
+   ],
+   "why": "carts and the transporter road to the pad"
+  }
+ ],
+ "game_layout": {
+  "arrival": "the Pad Road",
+  "first_view": "Launch Cape from the the Pad Road: the a hangar ahead",
+  "landmarks": [
+   {
+    "name": "the a hangar",
+    "xy": [
+     12156,
+     6204
+    ]
+   },
+   {
+    "name": "the hall at the edge, seen first from the the Pad Road",
+    "xy": [
+     11952,
+     5960
+    ]
+   }
+  ],
+  "shortcuts_later": [],
+  "quiet_corners": [],
+  "first_screen_cells": [
+   [
+    1486,
+    715,
+    40,
+    22.5
+   ]
+  ],
+  "screens": [
+   1.2,
+   3.3
+  ]
+ },
+ "ground": {
+  "centre": "worn earth",
+  "yards": "gardens",
+  "edges": "fields"
+ },
+ "terrain": {
+  "box_cells": [
+   1467,
+   726,
+   79,
+   104
+  ],
+  "codes": {
+   ".": "land",
+   "r": "route",
+   "~": "water",
+   "#": "barrier (cliff, wall, lava)",
+   "b": "bridge"
+  },
+  "rows": [
+   "37.6r31.5#",
+   "36.6r32.5#",
+   "36.6r32.5#",
+   "36.6r32.5#",
+   "36.5r34.4#",
+   "35.6r34.4#",
+   "35.6r34.4#",
+   "35.6r34.4#",
+   "35.5r35.4#",
+   "35.5r35.4#",
+   "35.5r36.3#",
+   "35.5r36.3#",
+   "35.5r36.3#",
+   "35.5r36.3#",
+   "35.5r36.3#",
+   "35.5r35.4#",
+   "35.5r35.4#",
+   "35.5r34.5#",
+   "35.5r34.5#",
+   "35.5r34.5#",
+   "35.5r34.5#",
+   "35.5r33.6#",
+   "35.5r32.7#",
+   "2.~32.5r32.7#",
+   "2.~32.5r32.5#2~",
+   "2.3~30.5r32.5#2~",
+   "2.4~28.6r32.6#~",
+   "2.4~28.6r32.6#~",
+   "3.4~27.5r33.6#~",
+   "3.4~27.5r33.5#2~",
+   "3.5~26.5r33.5#2~",
+   "5.3~26.5r33.6#~",
+   "4.5~25.5r33.6#~",
+   "6.3~25.5r34.5#~",
+   "6.4~24.5r33.6#~",
+   "7.3~24.5r33.6#~",
+   "7.3~24.5r32.6#2~",
+   "7.4~23.5r31.6#3~",
+   "7.5~22.5r31.6#3~",
+   "7.5~22.5r30.7#3~",
+   "~7.4~22.5r30.6#4~",
+   "~7.5~21.5r30.6#4~",
+   "2~6.5~21.5r30.6#4~",
+   "4~5.4~21.5r30.6#4~",
+   "6~3.5~19.6r30.6#4~",
+   "7~4.2~20.6r30.5#5~",
+   "8~25.6r30.5#5~",
+   "8~5.~20.5r29.6#5~",
+   "8~26.5r29.6#5~",
+   "9~25.5r29.6#5~",
+   "8~26.5r29.5#6~",
+   "8~26.5r29.5#6~",
+   "9~25.6r28.5#6~",
+   "10~24.6r27.6#6~",
+   "10~25.5r25.8#6~",
+   "11~24.6r22.9#7~",
+   "12~23.6r21.10#7~",
+   "12~23.6r20.10#8~",
+   "12~24.6r19.8#10~",
+   "13~23.6r18.7#12~",
+   "13~23.6r17.8#12~",
+   "14~23.6r16.7#13~",
+   "14~4.3~16.6r15.7#14~",
+   "14~4.5~14.6r15.7#14~",
+   "16~3.4~15.5r15.6#15~",
+   "16~3.5~14.6r14.6#15~",
+   "16~3.5~14.6r14.6#15~",
+   "16~4.5~13.6r14.6#15~",
+   "16~4.6~13.5r14.6#15~",
+   "17~4.5~13.5r15.5#15~",
+   "18~4.5~12.5r15.5#15~",
+   "18~4.5~12.5r15.6#14~",
+   "18~5.5~11.5r15.6#14~",
+   "18~6.4~31.6#14~",
+   "19~5.5~31.5#14~",
+   "19~5.6~30.6#13~",
+   "20~4.6~30.5#14~",
+   "21~3.7~29.5#14~",
+   "22~3.6~28.6#14~",
+   "23~2.7~27.5#15~",
+   "23~3.6~27.5#15~",
+   "22~5.6~26.6#14~",
+   "23~3.7~26.6#14~",
+   "24~2.8~25.6#14~",
+   "25~.9~24.6#14~",
+   "25~2.8~24.6#14~",
+   "26~.9~23.6#14~",
+   "26~3.7~22.7#14~",
+   "26~4.7~5.3#12.7#15~",
+   "26~5.7~4.3#11.8#15~",
+   "27~4.8~2.5#9.9#15~",
+   "27~5.8~7#7.8#17~",
+   "27~6.7~8#5.9#17~",
+   "28~6.7~7#4.9#18~",
+   "28~9.4~8#.9#20~",
+   "29~8.5~16#21~",
+   "30~7.2#3~16#21~",
+   "30~6.3#4~14#22~",
+   "30~5.5#3~13#23~",
+   "31~3.6#3~12#24~",
+   "31~3.7#3~9#26~",
+   "32~.9#2~7#28~",
+   "33~11#~6#28~",
+   "33~17#29~"
+  ]
+ },
+ "residents": [],
+ "routines": [],
+ "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only."
+}

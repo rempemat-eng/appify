@@ -303,11 +303,24 @@ def roof_colour(R, town, use):
     return R[ramp][i] if ramp in R else R['clay'][3]
 
 
+def plan_buildings(S):
+    """Every building from the town plans (towns/<id>.json): (town, x, y, w, h, use); the old records when there are none."""
+    if S.get('plans'):
+        out = []
+        for P in S['plans'].values():
+            dt = {d_['id']: d_.get('town', P['name']) for d_ in P['districts']}
+            for b in P['buildings']:
+                x, y, w, h_ = b['rect_px']
+                out.append((dt.get(b['district'], P['name']), x, y, w, h_, b['type']))
+        return out
+    return [(town, x, y, w, h_, use) for town, r in S['towns'].items() for (x, y, w, h_, use, counted) in r['buildings']]
+
+
 def draw_towns(d, S, R, ink, P, s, k, neon_lights=True):
     """Every building as a small roof: a shadow to the south-east, the roof (lit on its west half), a thin ink edge."""
     kk = s
-    for town, r in S['towns'].items():
-        for (x, y, w, h_, use, counted) in r['buildings']:
+    if True:
+        for (town, x, y, w, h_, use) in plan_buildings(S):
             X0, Y0 = P(x, y); X1, Y1 = P(x + w, y + h_)
             if X1 - X0 < 1.0:
                 d.rectangle([X0, Y0, X0 + 1, Y0 + 1], fill=roof_colour(R, town, use))
@@ -325,8 +338,6 @@ def draw_towns(d, S, R, ink, P, s, k, neon_lights=True):
                 d.rectangle([X0, Y0, X1, Y1], outline=ink + (150,), width=1)
             if neon_lights and town == 'Neon Harbour: the Company district' and use in ('office', 'tower') and (int(x) // 8) % 3 == 0:
                 d.line([(X0 + 1, Y1 - 1), (X1 - 1, Y1 - 1)], fill=R['berry'][4] + (230,), width=max(1, int(kk)))
-    for f in S.get('farms', []):
-        pass
 
 
 def draw_closed_pass(d, S, M, R, ink, P, s):
@@ -729,6 +740,201 @@ def compose(S, M, R, ink, s, base, k, ox, oy, Wc, Hc, paths, lines, mode, title,
     return out, pl.missed, {'canvas': canvas, 'built': built, 'labels': lab}
 
 
+# ------------------------------------------------------------------------------------------ the town plans, one inset each
+TOWN_INSETS = (('crossroads', 8.0), ('dust-gulch', 8.0), ('hearthold', 8.0), ('neon-harbour', 4.5))
+CLASS_COL = {'main': (247, 236, 206), 'side': (236, 220, 186), 'lane': (222, 204, 168), 'close': (204, 184, 150)}
+FN_COL = {'market and civic': (178, 64, 74), 'homes': (196, 120, 74), 'crafts and work': (150, 112, 52), 'docks and transport': (54, 106, 150),
+          'offices and trade': (112, 74, 150), 'edge': (88, 128, 64)}
+
+
+def _fn_col(fn):
+    for k_, c in FN_COL.items():
+        if fn.startswith(k_):
+            return c
+    return FN_COL['edge'] if fn.startswith('edge') else (120, 120, 120)
+
+
+class _D:
+    def __init__(self, d):
+        self.d = d
+
+
+def town_inset(S, M, R, ink, cg, cid, rgb, sea_rgb, P, ppc):
+    """One town's plan over its ground: streets by class, buildings by district, doors, squares, landmarks, the ways in, later
+    shortcuts and quiet corners; one phone screen (40 x 22.5 cells) drawn for scale."""
+    import sys as _s
+    sys_path = os.path.join(M.ROOT, 'scripts', 'review')
+    if sys_path not in _s.path:
+        _s.path.insert(0, sys_path)
+    import town_plan as tp
+    c0, r0, w, h = P['terrain']['box_cells']
+    cbox = (c0, r0, c0 + w, r0 + h)
+    kb = ppc / CELL
+    img = M54.base_hi(S, R, ink, cg, cid, rgb, sea_rgb, M, cbox, ppc)
+    oxb, oyb = -c0 * CELL * kb, -r0 * CELL * kb
+    stamps55(img, S, R, cg, cid, kb, oxb, oyb, M, ink)
+    s_ = 1.4 if ppc >= 6 else 1.3
+    Wb, Hb = img.size
+    side = int(330 * s_)
+    Hc_ = max(Hb, int(720 * s_))                                    # tall enough for the side panel
+    canvas = Image.new('RGB', (Wb + side, Hc_), R['plaster'][5]); canvas.paste(img, (0, 0))
+    M54.water_and_routes(canvas, S, R, ink, kb, oxb, oyb, M)
+    Pf = lambda x, y: (x * kb + oxb, y * kb + oyb)
+    d = ImageDraw.Draw(canvas, 'RGBA')
+    box = (c0, r0, w, h)
+    # streets by class (their cells), centre lines
+    ov = np.zeros((h, w, 4), np.uint8)
+    for st in sorted(P['streets'], key=lambda q: ['close', 'lane', 'side', 'main', 'arrival'].index(q['class'])):
+        if st['class'] == 'arrival':
+            continue
+        m = tp.band([tuple(v) for v in st['vertices_px']], st['width_cells'], 'euclid' if st.get('follows_route') else 'cheb', box)
+        ov[m] = CLASS_COL[st['class']] + (150,)
+    ovi = Image.fromarray(ov, 'RGBA').resize((int(w * ppc), int(h * ppc)), Image.NEAREST)
+    canvas.paste(ovi, (0, 0), ovi)
+    d = ImageDraw.Draw(canvas, 'RGBA')
+    for st in P['streets']:
+        if st['class'] in ('arrival',):
+            continue
+        q = [Pf(*v) for v in st['vertices_px']]
+        if len(q) >= 2:
+            d.line(q, fill=ink + (90 if st['class'] != 'close' else 60,), width=1)
+    draw_towns(d, S, R, ink, Pf, max(1.0, ppc / 4), kb)
+    dfn = {d_['id']: d_['function'] for d_ in P['districts']}
+    for b in P['buildings']:
+        x, y, bw, bh = b['rect_px']; X0, Y0 = Pf(x, y); X1, Y1 = Pf(x + bw, y + bh)
+        d.rectangle([X0 - 1, Y0 - 1, X1, Y1], outline=_fn_col(dfn.get(b['district'], '')) + (255,), width=2 if ppc >= 6 else 1)
+        if b.get('door_cells'):
+            dx, dy = b['door_cells']; Xd, Yd = Pf(dx * CELL + 4, dy * CELL + 4)
+            r_ = max(1.5, ppc * 0.35)
+            d.rectangle([Xd - r_, Yd - r_, Xd + r_, Yd + r_], fill=ink + (230,))
+    lay = Image.new('RGBA', canvas.size, (0, 0, 0, 0)); dl = ImageDraw.Draw(lay, 'RGBA')
+    pl = Placer(dl, Wb, Hb)
+    F = M54.fonts54(M.ROOT, s_)
+    paper = R['plaster'][5]
+    # markers first (reserved), then names
+    for l in P['game_layout']['landmarks']:
+        X, Y = Pf(*l['xy']); r_ = 6 * s_
+        star = [(X + (r_ if i % 2 == 0 else r_ * 0.45) * math.cos(-math.pi / 2 + i * math.pi / 5), Y + (r_ if i % 2 == 0 else r_ * 0.45) * math.sin(-math.pi / 2 + i * math.pi / 5)) for i in range(10)]
+        dl.polygon(star, fill=(236, 196, 72, 255), outline=ink + (255,)); pl.reserve((X - r_, Y - r_, X + r_, Y + r_))
+    for a in P['arrivals']:
+        for e in a['entries_px']:
+            X, Y = Pf(*e); X = min(max(X, 10 * s_), Wb - 10 * s_); Y = min(max(Y, 10 * s_), Hb - 10 * s_)
+            r_ = 7 * s_
+            dl.ellipse([X - r_, Y - r_, X + r_, Y + r_], fill=(70, 130, 170, 235), outline=ink + (255,), width=2)
+            dl.text((X, Y), 'in', font=F['way'], fill=paper, anchor='mm')
+            pl.reserve((X - r_, Y - r_, X + r_, Y + r_))
+            pl.put((X, Y), a['route'] if a['kind'] != 'ferry' else 'the ferry from Driftwood', F['route'], ink, paper + (230,), around(r_, s_), stroke=2, name=False)
+    for q in P['game_layout'].get('shortcuts_later', []):
+        X, Y = Pf(*q['xy']); r_ = 7 * s_
+        if 0 <= X <= Wb and 0 <= Y <= Hb:
+            for a0 in range(0, 360, 40):
+                dl.arc([X - r_, Y - r_, X + r_, Y + r_], a0, a0 + 22, fill=(150, 70, 150, 255), width=2)
+            pl.reserve((X - r_, Y - r_, X + r_, Y + r_))
+    for q in P['game_layout'].get('quiet_corners', []):
+        X, Y = Pf(*q['xy']); r_ = 5 * s_
+        if 0 <= X <= Wb and 0 <= Y <= Hb:
+            dl.ellipse([X - r_, Y - r_, X + r_, Y + r_], fill=(120, 170, 110, 220), outline=ink + (200,))
+            pl.reserve((X - r_, Y - r_, X + r_, Y + r_))
+    for b in P['buildings']:
+        x, y, bw, bh = b['rect_px']; X0, Y0 = Pf(x, y); X1, Y1 = Pf(x + bw, y + bh)
+        pl.reserve((X0, Y0, X1, Y1))
+    for l in P['game_layout']['landmarks']:
+        X, Y = Pf(*l['xy'])
+        pl.put((X, Y), l['name'], F['small'], ink, paper + (235,), around(7 * s_, s_), stroke=2, leader=[22 * s_, 34 * s_], name=False)
+    for q in P['squares']:
+        cx, cy, cw, ch_ = q['cells']; X, Y = Pf((cx + cw / 2) * CELL, (cy + ch_ / 2) * CELL)
+        if q['name']:
+            pl.put((X, Y), q['name'], F['small'], (60, 50, 40), paper + (220,), [(0, 0, 'mm'), (0, -10 * s_, 'mm'), (0, 10 * s_, 'mm')], stroke=2, name=False)
+    seen = set()
+    for st in sorted(P['streets'], key=lambda q: -len(q['vertices_px'])):
+        nm = st.get('name')
+        if not nm or st['class'] in ('arrival', 'close') or nm in seen:
+            continue
+        nm_ = nm.split(' (')[0]
+        if nm_ in seen:
+            continue
+        v = st['vertices_px']
+        best = max(zip(v, v[1:]), key=lambda ab: math.hypot(ab[1][0] - ab[0][0], ab[1][1] - ab[0][1]))
+        X, Y = Pf((best[0][0] + best[1][0]) / 2, (best[0][1] + best[1][1]) / 2)
+        if pl.put((X, Y), nm_, F['route'], (70, 52, 36), paper + (220,), [(0, 0, 'mm'), (0, -9 * s_, 'mm'), (0, 9 * s_, 'mm'), (14 * s_, 0, 'lm'), (-14 * s_, 0, 'rm')], stroke=2, name=False):
+            seen.add(nm_)
+    for d_ in P['districts']:
+        if d_.get('buildings'):
+            bs = [b for b in P['buildings'] if b['district'] == d_['id']]
+            X, Y = Pf(np.mean([b['rect_px'][0] + b['rect_px'][2] / 2 for b in bs]), np.mean([b['rect_px'][1] + b['rect_px'][3] / 2 for b in bs]))
+        elif d_.get('box_px'):
+            bx = d_['box_px']; X, Y = Pf((bx[0] + bx[2]) / 2, (bx[1] + bx[3]) / 2)
+        else:
+            continue
+        if 0 <= X <= Wb and 0 <= Y <= Hb:
+            pl.put((X, Y), d_['name'].upper() if d_.get('buildings') else d_['name'], F['legend'], _fn_col(d_['function']), paper + (235,),
+                   [(0, 0, 'mm'), (0, -16 * s_, 'mm'), (0, 16 * s_, 'mm'), (30 * s_, 0, 'lm'), (-30 * s_, 0, 'rm')], stroke=3, leader=[40 * s_], name=False)
+    canvas = canvas.convert('RGBA'); canvas.alpha_composite(lay)
+    d = ImageDraw.Draw(canvas, 'RGBA')
+    # one phone screen, for scale (bottom left of the map)
+    sw, sh = 40 * CELL * kb, 22.5 * CELL * kb
+    sx0, sy0 = 14 * s_, Hb - sh - 14 * s_
+    d.rectangle([sx0, sy0, sx0 + sw, sy0 + sh], outline=ink + (230,), width=2)
+    d.rectangle([sx0 + 2, sy0 + 2, sx0 + sw - 2, sy0 + sh - 2], outline=paper + (200,), width=1)
+    _D_ = _D(d)
+    Placer.draw_text(_D_, (sx0, sy0 - 4 * s_), 'one screen: 40 x 22.5 cells', F['small'], ink, paper, 'lb', 2)
+    # the side panel: title, numbers, legend
+    d.rectangle([Wb, 0, Wb + side, Hc_], fill=paper)
+    if Hc_ > Hb:
+        d.rectangle([0, Hb, Wb, Hc_], fill=paper)
+    d.line([(Wb, 0), (Wb, Hc_)], fill=ink, width=2)
+    x0 = Wb + 14 * s_; y = 14 * s_
+    Placer.draw_text(_D_, (x0, y + 10 * s_), P['name'], F['title'], ink, paper, 'lm', 0); y += 30 * s_
+    Placer.draw_text(_D_, (x0, y + 6 * s_), 'town plan, v55 (towns/%s.json)' % P['id'], F['small'], R['timber'][2], paper, 'lm', 0); y += 22 * s_
+    nblk = P.get('_blocks')
+    lines_ = [f"{P['buildings_counted']} buildings (range {P['target'][0]} to {P['target'][1]})",
+              f"{sum(1 for q in P['streets'] if q['class'] not in ('arrival', 'close'))} streets, {sum(1 for q in P['streets'] if q['class'] == 'close')} closes, {len(P['squares'])} squares",
+              f"{len(P['arrivals'])} ways in; {len([d_ for d_ in P['districts'] if d_.get('buildings')])} districts",
+              f"{P['game_layout']['screens'][0]} x {P['game_layout']['screens'][1]} screens"]
+    for t_ in lines_:
+        Placer.draw_text(_D_, (x0, y + 6 * s_), t_, F['small'], ink, paper, 'lm', 0); y += 17 * s_
+    y += 10 * s_
+    Placer.draw_text(_D_, (x0, y + 6 * s_), 'Streets (width in cells)', F['legend'], ink, paper, 'lm', 0); y += 20 * s_
+    for cl, wc in (('main', 6), ('side', 4), ('lane', 3), ('close', 2)):
+        d.rectangle([x0, y, x0 + 26 * s_, y + 10 * s_], fill=CLASS_COL[cl] + (255,), outline=ink)
+        Placer.draw_text(_D_, (x0 + 34 * s_, y + 5 * s_), f'{cl} ({wc})', F['small'], ink, paper, 'lm', 0); y += 16 * s_
+    d.line([(x0, y + 5 * s_), (x0 + 26 * s_, y + 5 * s_)], fill=R['plaster'][2], width=int(4 * s_))
+    Placer.draw_text(_D_, (x0 + 34 * s_, y + 5 * s_), 'regional route (a way in)', F['small'], ink, paper, 'lm', 0); y += 22 * s_
+    Placer.draw_text(_D_, (x0, y + 6 * s_), 'Districts (outline colour)', F['legend'], ink, paper, 'lm', 0); y += 20 * s_
+    used = sorted({d_['function'] for d_ in P['districts']})
+    for fn in used:
+        d.rectangle([x0, y, x0 + 26 * s_, y + 10 * s_], outline=_fn_col(fn) + (255,), width=3)
+        Placer.draw_text(_D_, (x0 + 34 * s_, y + 5 * s_), fn, F['small'], ink, paper, 'lm', 0); y += 16 * s_
+    y += 8 * s_
+    Placer.draw_text(_D_, (x0, y + 6 * s_), 'Marks', F['legend'], ink, paper, 'lm', 0); y += 20 * s_
+    for what in ('landmark (seen from the ways in)', 'way in', 'door', 'shortcut that opens later', 'quiet corner'):
+        X, Y = x0 + 13 * s_, y + 5 * s_; r_ = 5 * s_
+        if what.startswith('landmark'):
+            star = [(X + (r_ if i % 2 == 0 else r_ * 0.45) * math.cos(-math.pi / 2 + i * math.pi / 5), Y + (r_ if i % 2 == 0 else r_ * 0.45) * math.sin(-math.pi / 2 + i * math.pi / 5)) for i in range(10)]
+            d.polygon(star, fill=(236, 196, 72, 255), outline=ink)
+        elif what == 'way in':
+            d.ellipse([X - r_, Y - r_, X + r_, Y + r_], fill=(70, 130, 170, 235), outline=ink)
+        elif what == 'door':
+            d.rectangle([X - 2, Y - 2, X + 2, Y + 2], fill=ink)
+        elif what.startswith('shortcut'):
+            for a0 in range(0, 360, 40):
+                d.arc([X - r_, Y - r_, X + r_, Y + r_], a0, a0 + 22, fill=(150, 70, 150, 255), width=2)
+        else:
+            d.ellipse([X - r_, Y - r_, X + r_, Y + r_], fill=(120, 170, 110, 220), outline=ink)
+        Placer.draw_text(_D_, (x0 + 34 * s_, y + 5 * s_), what, F['small'], ink, paper, 'lm', 0); y += 16 * s_
+    y += 10 * s_
+    Placer.draw_text(_D_, (x0, y + 6 * s_), 'First view', F['legend'], ink, paper, 'lm', 0); y += 18 * s_
+    words = P['game_layout']['first_view'].split(); line = ''
+    for wd in words:
+        if d.textlength(line + ' ' + wd, font=F['small']) > side - 28 * s_:
+            Placer.draw_text(_D_, (x0, y + 6 * s_), line.strip(), F['small'], ink, paper, 'lm', 0); y += 15 * s_; line = ''
+        line += ' ' + wd
+    Placer.draw_text(_D_, (x0, y + 6 * s_), line.strip(), F['small'], ink, paper, 'lm', 0); y += 15 * s_
+    Placer.draw_text(_D_, (x0, Hc_ - 12 * s_), f'1 px = {1 / kb:.2f} world px; cells of 8 px', F['small'], R['timber'][2], paper, 'lm', 0)
+    d.rectangle([2, 2, canvas.width - 3, canvas.height - 3], outline=ink, width=2)
+    return canvas
+
+
 def class_grid(S, R, M):
     """map54's classes; a land cell left without one (a route cell whose nearest ground was sea, at a bridge's end) takes
     the class of the nearest classed land cell."""
@@ -821,5 +1027,13 @@ def render_all(S, M):
         for o in outs:
             out.convert('RGB').save(os.path.join(o, f'map55-inset-{tag}.png'))
         out.convert('RGB').quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(os.path.join(M.DATA, f'inset-{tag}-v55.png'), optimize=True)
+    for pid, ppc in TOWN_INSETS:
+        P = (S.get('plans') or {}).get(pid)
+        if not P:
+            continue
+        out = town_inset(S, M, R, ink, cg, cid, rgb, sea_rgb, P, ppc)
+        for o in outs:
+            out.convert('RGB').save(os.path.join(o, f'map55-town-{pid}.png'))
+        out.convert('RGB').quantize(256, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(os.path.join(M.DATA, f'town-{pid}-v55.png'), optimize=True)
     print('labels not placed (tiers 1 and 2):', json.dumps(missed_all))
     return missed_all

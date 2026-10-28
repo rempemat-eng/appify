@@ -1,0 +1,541 @@
+{
+ "schema": "mygame.town_plan/1",
+ "id": "cinder-springs",
+ "name": "Cinder Springs",
+ "size": "hamlet",
+ "size_note": "hamlet",
+ "target": [
+  4,
+  8
+ ],
+ "buildings_counted": 6,
+ "grid": {
+  "cell_px": 8,
+  "screen_cells": [
+   40,
+   22.5
+  ],
+  "origin": "world px, top-left of the continent (blockout-v55.json coords)",
+  "street_classes": {
+   "arrival": "the regional route's own width",
+   "main": 6,
+   "side": 4,
+   "lane": 3,
+   "close": 2
+  }
+ },
+ "site": {
+  "reason": "hot springs where the sea seeps into the warm flank: the bath house and lodgings",
+  "terrain": "the volcano's warm south-west flank",
+  "fit": "",
+  "tiers": [
+   6,
+   16
+  ],
+  "levelled_footprints": 2
+ },
+ "footprint_px": [
+  1720,
+  5368,
+  1992,
+  5784
+ ],
+ "arrivals": [
+  {
+   "id": "cinder-springs-arr1",
+   "kind": "path",
+   "route": "Ember Way",
+   "street": "cinder-springs-a1",
+   "entries_px": [
+    [
+     2111,
+     5306
+    ],
+    [
+     2111,
+     5777
+    ]
+   ],
+   "route_kind": "path"
+  }
+ ],
+ "streets": [
+  {
+   "id": "cinder-springs-a1",
+   "name": "Ember Way",
+   "class": "arrival",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     2111.0,
+     5306.1
+    ],
+    [
+     2069.4,
+     5334.4
+    ],
+    [
+     2025.9,
+     5358.7
+    ],
+    [
+     1990.6,
+     5391.9
+    ],
+    [
+     1866.1,
+     5553.2
+    ],
+    [
+     1853.3,
+     5575.7
+    ],
+    [
+     1846.8,
+     5602.4
+    ],
+    [
+     1852.1,
+     5630.4
+    ],
+    [
+     1867.3,
+     5660.1
+    ],
+    [
+     1894.9,
+     5697.6
+    ],
+    [
+     1929.4,
+     5727.1
+    ],
+    [
+     1969.3,
+     5750.0
+    ],
+    [
+     2015.4,
+     5767.7
+    ],
+    [
+     2064.7,
+     5775.4
+    ],
+    [
+     2110.8,
+     5777.3
+    ]
+   ],
+   "follows_route": "Ember Way",
+   "connects": [
+    "cinder-springs-c01",
+    "cinder-springs-c02"
+   ]
+  },
+  {
+   "id": "cinder-springs-c01",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     1816.0,
+     5688.0
+    ],
+    [
+     1872.0,
+     5688.0
+    ]
+   ],
+   "connects": [
+    "cinder-springs-a1"
+   ]
+  },
+  {
+   "id": "cinder-springs-c02",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     1872.0,
+     5424.0
+    ],
+    [
+     1944.0,
+     5424.0
+    ]
+   ],
+   "connects": [
+    "cinder-springs-a1"
+   ]
+  }
+ ],
+ "squares": [],
+ "districts": [
+  {
+   "name": "Cinder Springs",
+   "centre_px": [
+    1860,
+    5600
+   ],
+   "declared": "hot springs where the sea seeps into the warm flank: the bath house and lodgings",
+   "town": "Cinder Springs",
+   "id": "cinder-springs-d-cinder-springs",
+   "buildings": [
+    "cinder-springs-b001",
+    "cinder-springs-b002",
+    "cinder-springs-b003",
+    "cinder-springs-b004",
+    "cinder-springs-b005",
+    "cinder-springs-b006"
+   ],
+   "mix": {
+    "cottage": 4,
+    "house": 1,
+    "shop": 1
+   },
+   "function": "homes"
+  }
+ ],
+ "gathering_places": [],
+ "buildings": [
+  {
+   "id": "cinder-springs-b001",
+   "type": "cottage",
+   "footprint_cells": [
+    226,
+    671,
+    7,
+    10
+   ],
+   "rect_px": [
+    1808,
+    5368,
+    56,
+    80
+   ],
+   "faces": "cinder-springs-c02",
+   "door_cells": [
+    233,
+    677
+   ],
+   "purpose": "a cottage",
+   "occupants": "a farming household",
+   "district": "cinder-springs-d-cinder-springs",
+   "counted": true,
+   "plot_cells": [
+    222,
+    671,
+    4,
+    10
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "cinder-springs-b002",
+   "type": "house",
+   "footprint_cells": [
+    224,
+    687,
+    6,
+    8
+   ],
+   "rect_px": [
+    1792,
+    5496,
+    48,
+    64
+   ],
+   "faces": "cinder-springs-a1",
+   "door_cells": [
+    230,
+    694
+   ],
+   "purpose": "a family house",
+   "occupants": "a fishing household",
+   "district": "cinder-springs-d-cinder-springs",
+   "counted": true,
+   "plot_cells": [
+    220,
+    687,
+    4,
+    8
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "cinder-springs-b003",
+   "type": "shop",
+   "footprint_cells": [
+    224,
+    701,
+    5,
+    9
+   ],
+   "rect_px": [
+    1792,
+    5608,
+    40,
+    72
+   ],
+   "faces": "cinder-springs-a1",
+   "door_cells": [
+    229,
+    704
+   ],
+   "purpose": "the shop",
+   "occupants": "the shopkeeper, living above",
+   "district": "cinder-springs-d-cinder-springs",
+   "counted": true,
+   "plot_cells": [
+    220,
+    701,
+    4,
+    9
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "cinder-springs-b004",
+   "type": "cottage",
+   "footprint_cells": [
+    227,
+    716,
+    11,
+    7
+   ],
+   "rect_px": [
+    1816,
+    5728,
+    88,
+    56
+   ],
+   "faces": "cinder-springs-a1",
+   "door_cells": [
+    237,
+    715
+   ],
+   "purpose": "a cottage",
+   "occupants": "a carting household",
+   "district": "cinder-springs-d-cinder-springs",
+   "counted": true,
+   "plot_cells": [
+    227,
+    723,
+    11,
+    4
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "cinder-springs-b005",
+   "type": "cottage",
+   "footprint_cells": [
+    239,
+    706,
+    10,
+    6
+   ],
+   "rect_px": [
+    1912,
+    5648,
+    80,
+    48
+   ],
+   "faces": "cinder-springs-a1",
+   "door_cells": [
+    239,
+    712
+   ],
+   "purpose": "a cottage",
+   "occupants": "a craft household",
+   "district": "cinder-springs-d-cinder-springs",
+   "counted": true,
+   "plot_cells": [
+    239,
+    702,
+    10,
+    4
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "cinder-springs-b006",
+   "type": "cottage",
+   "footprint_cells": [
+    215,
+    711,
+    11,
+    6
+   ],
+   "rect_px": [
+    1720,
+    5688,
+    88,
+    48
+   ],
+   "faces": "cinder-springs-c01",
+   "door_cells": [
+    226,
+    711
+   ],
+   "purpose": "a cottage",
+   "occupants": "a farming household",
+   "district": "cinder-springs-d-cinder-springs",
+   "counted": true,
+   "plot_cells": [
+    215,
+    717,
+    11,
+    4
+   ],
+   "plot": "yard"
+  }
+ ],
+ "lifted": [],
+ "outskirts": [],
+ "game_layout": {
+  "arrival": "Ember Way",
+  "first_view": "Cinder Springs from the Ember Way: the a cottage ahead",
+  "landmarks": [
+   {
+    "name": "the a cottage",
+    "xy": [
+     1860,
+     5756
+    ]
+   },
+   {
+    "name": "a cottage at the edge, seen first from the Ember Way",
+    "xy": [
+     1836,
+     5408
+    ]
+   }
+  ],
+  "shortcuts_later": [],
+  "quiet_corners": [],
+  "first_screen_cells": [
+   [
+    243,
+    652,
+    40,
+    22.5
+   ]
+  ],
+  "screens": [
+   0.8,
+   2.3
+  ]
+ },
+ "ground": {
+  "centre": "worn earth",
+  "yards": "gardens",
+  "edges": "fields"
+ },
+ "terrain": {
+  "box_cells": [
+   200,
+   656,
+   65,
+   83
+  ],
+  "codes": {
+   ".": "land",
+   "r": "route",
+   "~": "water",
+   "#": "barrier (cliff, wall, lava)",
+   "b": "bridge"
+  },
+  "rows": [
+   "11.17#18.2#15.2r",
+   "9.18#19.2#17.",
+   "9.18#19.2#16.r",
+   "9.18#19.2#15.2r",
+   "8.19#19.2#14.3r",
+   "8.19#19.2#13.4r",
+   "8.19#19.2#10.7r",
+   "8.19#19.2#10.7r",
+   "8.19#20.2#8.8r",
+   "7.20#21.2#5.10r",
+   "7.18#23.2#3.12r",
+   "7.17#24.2#2.11r2.",
+   "6.17#26.2#11r3.",
+   "5.15#28.12r5.",
+   "5.15#27.10r8.",
+   "4.16#26.10r9.",
+   "4.16#26.10r9.",
+   "3.17#26.8r11.",
+   "3.17#25.8r2#10.",
+   "2.19#23.8r.3#9.",
+   "2.20#21.8r4.2#8.",
+   "22#21.8r5.3#6.",
+   "22#19.8r8.3#5.",
+   "21#19.8r11.6#",
+   "21#18.10r11.5#",
+   "21#18.10r16.",
+   "20#19.10r16.",
+   "20#19.10r16.",
+   "19#19.7r.5r14.",
+   "19#18.6r3.4r15.",
+   "19#18.6r4.3r15.",
+   "20#16.5r6.3r15.",
+   "21#14.5r8.2r15.",
+   "21#12.6r9.2r15.",
+   "21#12.6r9.2r15.",
+   "21#11.7r10.r15.",
+   "20#12.6r18.r8.",
+   "19#12.6r19.2r7.",
+   "19#11.6r16.9r4.",
+   "19#11.5r19.7r4.",
+   "17#13.5r20.6r4.",
+   "16#13.4r25.3r4.",
+   "15#14.4r32.",
+   "15#14.4r32.",
+   "14#15.4r32.",
+   "15#14.4r32.",
+   "15#14.4r32.",
+   "14#16.3r32.",
+   "14#16.5r30.",
+   "13#17.5r30.",
+   "14#16.6r29.",
+   "14#17.6r28.",
+   "14#17.6r28.",
+   "14#17.6r28.",
+   "13#19.6r27.",
+   "13#20.6r26.",
+   "12#23.5r25.",
+   "12#24.5r24.",
+   "12#24.8r21.",
+   "13#24.8r20.",
+   "13#26.8r18.",
+   "13#26.8r18.",
+   "12#28.13r12.",
+   "12#31.18r4.",
+   "11#34.20r",
+   "11#34.20r",
+   "9#36.3r.16r",
+   "9#36.3r3.14r",
+   "8#37.3r9.8r",
+   "8#37.3r17.",
+   "8#37.3r17.",
+   "8#37.3r17.",
+   "8#37.3r17.",
+   "9#36.3r17.",
+   "13#32.3r17.",
+   "13#32.3r17.",
+   "13#31.4r17.",
+   "13#31.4r17.",
+   "12#32.3r18.",
+   "12#32.3r18.",
+   "12#31.4r18.",
+   "13#30.4r18.",
+   "13#28.5r19."
+  ]
+ },
+ "residents": [],
+ "routines": [],
+ "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only."
+}

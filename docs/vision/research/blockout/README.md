@@ -32,15 +32,38 @@ Every settlement is laid out from a street skeleton (its routes, plus side stree
 | --- | --- | ---: | --- | --- | --- | --- |
 | Dust Gulch | large (desert) | **38** (30 to 45) | Front Street, the Depot, Water Street, West Row, the corrals | the depot square, the well square, the chapel yard | the corrals, the goods yard, the ore yard, the river gardens | the desert line's railhead and the Lode's ore yard |
 | Palm Spring | medium (oasis) | **18** (14 to 22) | Spring Row, the caravanserai, Channel Row, Palm Row | the spring square, the pool steps | the date gardens, the north grove | the first water in the dry country |
-| Crossroads | large (central meadow) | **40** (30 to 45) | the square (built), Mill End, Halt Road, Eastgate, West Lane | the square, the drovers' market, the mill green, the halt yard | the halt farms, the mill farms | the market and meeting point of the valley |
+| Crossroads | large (central meadow) | **39** (30 to 45) | the square (built), Mill End, Halt Road, Eastgate, West Lane | the square, the drovers' market, the mill green, the halt yard | the halt farms, the mill farms | the market and meeting point of the valley |
 | Fernhollow | medium (central meadow) | **16** (14 to 22) | the Green, the Yards, Fern Lane | the green, the sawmill yard | the wood yards | timber from the Fern hills' wet woods |
-| Hearthold | large (fire country) | **31** (30 to 45) | the Castle, Smiths' Row, Gate Street, Ash Lane | the castle yard, the gate market | the vines, the lower fields | the fire country's town of knights and crafts |
-| Cinderwick | medium (fire country) | **15** (14 to 22) | the Strand, Kiln Lane, the Quay | the quay, the kiln yard | the kilns | the fire country's harbour |
-| Cogsworth | at least medium (Cogsworth region) | **25** (14 to 45) | Foundry Row, Engine Street, the Terraces, the Platform | the station square, the works gate | the railway yard | coal and iron from the coal hills, the fast Cog for power (the Millrace), and the railway out |
-| Lagoon Landing | medium (Tidebloom Isles) | **15** (14 to 22) | the Lagoon front, Net Row, the Pier | the lagoon steps, the pier head | the boatyard | the isles' town |
+| Hearthold | large (fire country) | **33** (30 to 45) | the Castle, Smiths' Row, Gate Street, Ash Lane | the castle yard, the gate market | the vines, the lower fields | the fire country's town of knights and crafts |
+| Cinderwick | medium (fire country) | **14** (14 to 22) | the Strand, Kiln Lane, the Quay | the quay, the kiln yard | the kilns | the fire country's harbour |
+| Cogsworth | at least medium (Cogsworth region) | **26** (14 to 45) | Foundry Row, Engine Street, the Terraces, the Platform | the station square, the works gate | the railway yard | coal and iron from the coal hills, the fast Cog for power (the Millrace), and the railway out |
+| Lagoon Landing | medium (Tidebloom Isles) | **17** (14 to 22) | the Lagoon front, the East Strand, Net Row, the Pier | the lagoon steps, the pier head | the boatyard | the isles' town |
 | Highgarth | medium (mountains; new) | **18** (14 to 22) | Garth Street, Quarry Lane, Low Street | the market cross, the sheep fair field | the slate quarry, the in-fields, the folds | slate from its quarries and wool from the summer pastures, sawn timber from the valley's larches; the drovers' inn on the Garth Road; it sends slate, timber and wool down to Cogsworth. Its old trade over the north pass stopped when the Starfall brought the rockfall down; the road beyond waits for a later region |
 
-**Neon Harbour, 78 buildings** in five districts (below). **Smaller places** stay smaller: Lullford 11, Driftwood 10, Gullwick 8, Cinder Springs 6, the Lode 4, Ember forge 3. **Farms of the central green**: ten farmsteads (a farmhouse and a barn each) and three windmills, not counted in any town.
+**Neon Harbour, 79 buildings** in five districts (below). **Smaller places** stay smaller: Lullford 10, Driftwood 10, Gullwick 8, Cinder Springs 6, the Lode 4, Ember forge 3. **Farms of the central green**: ten farmsteads (a farmhouse and a barn each) and three windmills, not counted in any town.
+
+### The town plans (`towns/<id>.json`, checked by `scripts/review/town_plan.py`)
+
+Every settlement now has a plan as data, one file a town (schema `mygame.town_plan/1`), written by `town_plans.py` after the layout and before the farms round it. The map draws its buildings from these files, and each large town has an inset drawn from its plan (`map55-town-<id>.png`, `town-<id>-v55.png`). A plan holds:
+
+- **site**: why the town is there, the ground it sits on, how it fits that ground (the oasis gardens on the channels, Highgarth's streets on one tier each with retaining walls, Hearthold on the one stable rock between the flows, Cogsworth's terraces in the strips the works leave, Lagoon Landing round its lagoon, Neon Harbour's districts from the docks to the Heights), and the tiers under it;
+- **arrivals**: each regional route's part that serves the town, with the points where it enters (a ferry for Lagoon Landing); Crossroads' valley lanes stop at the built zone's edge, where the zone's own roads (`game/data/plans/crossroads.json`) take over;
+- **streets** by class on the soft grid (ground-rules.md 4: x and y runs on cell lines, one width, turns at least two cells apart): main 6 cells, side 4, lane 3, close 2 (size-guide.md 0), an arrival at its route's width; a main street on a route keeps the route's line and is widened to 6 cells round it; what each street connects;
+- **squares**, **districts** (by function, worked out from what their buildings are: market and civic, homes, crafts and work, docks and transport, offices and trade, and the edge farms and yards) and **gathering places**;
+- **buildings**: type, footprint in cells, the street it faces, its door, its plot behind (garden or yard), purpose and occupants (as roles), district, and whether it counts;
+- **game layout**: the arrival, the first view, the landmarks seen from the ways in, the shortcuts that open later, the quiet corners next to busy ones and the town's size in screens (40 x 22.5 cells);
+- **ground**: what the centre, the yards and the edges are made of;
+- **terrain**: the box's ground, one character a cell (land, route, water, barrier, bridge), taken from the finished map;
+- **residents** and **routines**, empty, with `x3_notes` for Codex (X3): residents by building id, routines on street and square ids.
+
+The layout pass that finishes each plan: a street not joined to a way in gets a lane to the nearest joined street (or is lifted); a building that does not stand within three cells of a street gets a close two cells wide through its yard or garden (a building no close can reach is lifted with its plot); the parts of a street cut by water, a barrier or a building become separate streets. The checker reads only the plans and `blockout-v55.json`:
+
+```
+python3 scripts/review/town_plan.py                  # every plan: one line a town, the failures
+python3 scripts/review/town_plan.py --town hearthold # one plan, every finding
+```
+
+It fails a plan when a footprint is off the cells, a street is not in x and y runs on its cell lines, a building stands on a street, a square, water or a barrier, a street crosses water off a bridge, a door is more than three cells from the street its building faces, the count is outside the range, an arrival is not on its route, a street is not joined to a way in, a large town has fewer than three districts, two functions or two gathering places, a way in has no landmark within two screens, or a medium or large town has no loop. It reports the dead ends, the blocks (loops) and the size in screens. The seven buildings of the built Crossroads zone are taken from its own plan and checked there (`rules.route_clear`); the overview's Sleepwater still runs through that zone's box, which is a proposal for the home valley's lane (in `regions/home-valley-frostline-brackens.md`).
 
 ### Step 2: the east coast, Neon Harbour and Launch Cape
 
@@ -51,9 +74,9 @@ Every settlement is laid out from a street skeleton (its routes, plus side stree
 | --- | ---: | --- | --- |
 | the old waterfront | 16 | older buildings, narrow lanes, small businesses, Bridgefoot square and the falls steps | the Falls Rock and the old quays round the ria's head |
 | the docks | 14 | the long quay, warehouses, cranes, piers, the slip and repair yard, the fish market at the steamer pier | the ria's deep east side down to its mouth |
-| the Lanes and the East Shore | 18 | flats round courtyards, corner shops, washing over the lanes; terraces facing the open sea | between the old waterfront and the Company district; along the east coast |
-| the Company district | 14 | offices and towers on Neon Row and two avenues, Terminus Square at the maglev, Neon Square; the Company crater fenced in its yard to the north | the flats east of the old town |
-| the Heights and the Skyport | 16 | terraces on the contours, stairs and the funicular, the Skyport's three mooring masts, its terminal and hangar on the crown | the headland west of the ria |
+| the Lanes and the East Shore | 16 | flats round courtyards, corner shops, washing over the lanes; terraces facing the open sea | between the old waterfront and the Company district; along the east coast |
+| the Company district | 15 | offices and towers on Neon Row and two avenues, Terminus Square at the maglev, Neon Square; the Company crater fenced in its yard to the north | the flats east of the old town |
+| the Heights and the Skyport | 18 | terraces on the contours, stairs and the funicular, the Skyport's three mooring masts, its terminal and hangar on the crown | the headland west of the ria |
 
   The outskirts are inhabited: **Canalside** (10: carters' and bargees' houses and market gardens on the Lull Road where it comes in beside the Lull Cut), **Glintside** (5: mill houses and allotments on the Glint above the falls, where the maglev comes in) and **Halcyon Row** (10: the launch staff's houses at the cape's neck).
 - **Launch Cape** is a full headland (about 600 px wide and 1300 long; 4230 cells of new land), its shore continuing round the tip: cliffs on the exposed east side, a beach on the sheltered west. The **Pad Road** (a road) runs down it from Halcyon Row past the works (6 buildings: the assembly hangar, workshops, stores, the control house) to **the pad** at the tip (12085, 6455) with its service apron and tower. The nearest house is 770 px from the pad, across open heath. The rocket's way (W8) is now at the pad.
@@ -101,6 +124,7 @@ The range, the forests, the dunes, the hills, the mesas and the buildings are dr
 | `map55-reference.png` | the continent at 3x with every name (the development reference) |
 | `map55-inset-home-valley.png`, `map55-inset-neon-harbour.png` | the two insets, every name in the box, each with a ruler |
 | `map55-v54-vs-v55.png` | v54's and v55's maps side by side at 1920 x 1080 |
+| `map55-town-crossroads.png`, `map55-town-dust-gulch.png`, `map55-town-hearthold.png`, `map55-town-neon-harbour.png` | the large towns' plans, drawn from `towns/<id>.json` over their ground: streets by class, buildings outlined by district, doors, squares, landmarks, the ways in, later shortcuts, quiet corners and one phone screen for scale (committed at 256 colours as `town-<id>-v55.png`) |
 
 The ruler: one soft-grid cell is still 8 world px; the 1920 map is now 1 px = 6.6 world px (v54: 6.4), and the ruler, its walk times and the screen box are drawn at that scale.
 
@@ -164,8 +188,8 @@ Lanes own their plans, so v55 changes none of them; these are proposals. Every c
 | E (the home valley, Driftwood, the Headland) | Crossroads' neighbourhoods: Mill End (the mill, the granary, Granary Row, Weir Lane), Halt Road to the halt yard, Eastgate with the drovers' market and the inn, West Lane; the mill farms; farmsteads and Coombe mill in the valley's south; Driftwood moves 132 px south (to 6420, 5092) and grows to about 10 buildings round its cove |
 | F (the Frostline, the massif, the Brackens) | the Frostline does not move; Highgarth, its valley, the Northway, the rockfall and the closed pass (C1) in the massif north of Cogsworth; the massif deepened north (1.2) and its top 220 px past the canvas; the range's spurs |
 | G (routes, thresholds, edges) | three new routes (the Garth Road, the Northway to the rockfall, the Pad Road) and the closed road beyond the rockfall; three obstacles with side paths on stretched routes (the Canyon Road, the Delta Road, the Pad Road); the east coast as the world's new edge; the cloud edge; the Lull plain's countryside (farmsteads, windmills, small woods, river terraces); `scripts/art/world_routes.py` would take v55's polylines (or apply the warp) if v55 is adopted |
-| H (Cogsworth, the coal hills, the Narrows, Fernhollow) | Cogsworth at 25 buildings (Foundry Row, Engine Street, Pit Row, the Terraces, the station square, the railway yard, the allotments), with room to grow toward the pits; Fernhollow at 16 (the green, the sawmill and wood yards, Green Lane, Cooper Lane); both move east with the 1.10 stretch (Cogsworth to 8078, 2450) |
-| I (Neon Harbour, the delta, Lullford, Gullwick, the Skyport, the Cape Road) | Neon's five districts at 78 buildings; the Skyport onto the Heights' crown (from the eastern flats, now the East Shore); the east coast; Canalside and Glintside; Launch Cape as a headland with the Pad Road, the works, the pad at its tip and Halcyon Row; Lullford (11) and Gullwick (8) footprints; every point east of x 9400 moves by the 1.58 stretch |
+| H (Cogsworth, the coal hills, the Narrows, Fernhollow) | Cogsworth at 26 buildings (Foundry Row, Engine Street, Pit Row, the Terraces, the station square, the railway yard, the allotments), with room to grow toward the pits; Fernhollow at 16 (the green, the sawmill and wood yards, Green Lane, Cooper Lane); both move east with the 1.10 stretch (Cogsworth to 8078, 2450) |
+| I (Neon Harbour, the delta, Lullford, Gullwick, the Skyport, the Cape Road) | Neon's five districts at 79 buildings; the Skyport onto the Heights' crown (from the eastern flats, now the East Shore); the east coast; Canalside and Glintside; Launch Cape as a headland with the Pad Road, the works, the pad at its tip and Halcyon Row; Lullford (11) and Gullwick (8) footprints; every point east of x 9400 moves by the 1.58 stretch |
 | C (the Tidebloom Isles) | Lagoon Landing at 15 buildings round the lagoon's north shore (the lagoon front's boathouses, Net Row, Pier Lane, Bar Lane, the boatyard); the isles move 256 px south |
 | D (the Sunstone basin, the fire country) | Dust Gulch large (38: Front Street, the depot, Water Street, West Row, the corrals, the goods and ore yards, the river gardens), Palm Spring medium (18: the spring pool, Spring Row, the caravanserai, the channels, the date gardens), Hearthold large (31: the castle with its walls redrawn round the whole rock top, Smiths' Row, Gate Street, Ash Lane, Vine Lane, Potters' Lane, the vines on the rock's east slope and the lower fields), Cinderwick medium (15: the Strand, Kiln Lane, Ash Lane, the quay and kilns); Cinder Springs, the Lode and the Ember forge stay small; the west widened by 1.14 and the dune sea's outer 458 px past the canvas; scrub along the dry beds |
 

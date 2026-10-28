@@ -1,0 +1,2453 @@
+{
+ "schema": "mygame.town_plan/1",
+ "id": "dust-gulch",
+ "name": "Dust Gulch",
+ "size": "large",
+ "size_note": "large",
+ "target": [
+  30,
+  45
+ ],
+ "buildings_counted": 38,
+ "grid": {
+  "cell_px": 8,
+  "screen_cells": [
+   40,
+   22.5
+  ],
+  "origin": "world px, top-left of the continent (blockout-v55.json coords)",
+  "street_classes": {
+   "arrival": "the regional route's own width",
+   "main": 6,
+   "side": 4,
+   "lane": 3,
+   "close": 2
+  }
+ },
+ "site": {
+  "reason": "the desert line's railhead and the Lode's ore yard: ore comes down the mule track to the depot, goods and water go out along the line; repair shops, the assay office and the corrals for the caravans; the Amber gives it water",
+  "terrain": "where the Amber leaves the mountains, on the gravel fan either side of the river; desert all round, the Glass field to the west",
+  "fit": "on the gravel fan where the Amber leaves the hills: the line and the depot on the flat, homes along the river",
+  "tiers": [
+   5,
+   9
+  ],
+  "levelled_footprints": 18
+ },
+ "footprint_px": [
+  2056,
+  2096,
+  2952,
+  2840
+ ],
+ "arrivals": [
+  {
+   "id": "dust-gulch-arr1",
+   "kind": "road",
+   "route": "Drover's Road",
+   "street": "dust-gulch-a1",
+   "entries_px": [
+    [
+     3072,
+     2700
+    ]
+   ],
+   "route_kind": "road"
+  },
+  {
+   "id": "dust-gulch-arr2",
+   "kind": "path",
+   "route": "Lode Track",
+   "street": "dust-gulch-a2",
+   "entries_px": [
+    [
+     2648,
+     1983
+    ]
+   ],
+   "route_kind": "path"
+  },
+  {
+   "id": "dust-gulch-arr3",
+   "kind": "path",
+   "route": "Canyon Road",
+   "street": "dust-gulch-a3",
+   "entries_px": [
+    [
+     2445,
+     2965
+    ]
+   ],
+   "route_kind": "path"
+  },
+  {
+   "id": "dust-gulch-arr4",
+   "kind": "path",
+   "route": "Glass Road",
+   "street": "dust-gulch-a4",
+   "entries_px": [
+    [
+     2109,
+     2960
+    ]
+   ],
+   "route_kind": "path"
+  }
+ ],
+ "streets": [
+  {
+   "id": "dust-gulch-s01",
+   "name": "Front Street (west)",
+   "class": "main",
+   "width_cells": 6,
+   "vertices_px": [
+    [
+     2576.0,
+     2456.0
+    ],
+    [
+     2168.0,
+     2456.0
+    ]
+   ],
+   "connects": [
+    "dust-gulch-a4",
+    "dust-gulch-q02",
+    "dust-gulch-s03",
+    "dust-gulch-s11"
+   ]
+  },
+  {
+   "id": "dust-gulch-s02",
+   "name": "Depot Street",
+   "class": "side",
+   "width_cells": 4,
+   "vertices_px": [
+    [
+     2560.0,
+     2336.0
+    ],
+    [
+     2880.0,
+     2336.0
+    ]
+   ],
+   "connects": [
+    "dust-gulch-a2",
+    "dust-gulch-s04"
+   ]
+  },
+  {
+   "id": "dust-gulch-s03",
+   "name": "Chapel Street",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     2300.0,
+     2332.0
+    ],
+    [
+     2300.0,
+     2620.0
+    ]
+   ],
+   "connects": [
+    "dust-gulch-a4",
+    "dust-gulch-s01",
+    "dust-gulch-s06",
+    "dust-gulch-s07",
+    "dust-gulch-s10"
+   ]
+  },
+  {
+   "id": "dust-gulch-s04",
+   "name": "Mesa Street",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     2668.0,
+     2348.0
+    ],
+    [
+     2668.0,
+     2620.0
+    ]
+   ],
+   "connects": [
+    "dust-gulch-c01",
+    "dust-gulch-q01",
+    "dust-gulch-s02",
+    "dust-gulch-s11"
+   ]
+  },
+  {
+   "id": "dust-gulch-s05",
+   "name": "Corral Lane",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     2788.0,
+     2468.0
+    ],
+    [
+     2788.0,
+     2596.0
+    ]
+   ],
+   "connects": [
+    "dust-gulch-s09",
+    "dust-gulch-s11"
+   ]
+  },
+  {
+   "id": "dust-gulch-s06",
+   "name": "Water Street (west) (1)",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     2188.0,
+     2564.0
+    ],
+    [
+     2276.0,
+     2564.0
+    ]
+   ],
+   "connects": [
+    "dust-gulch-a4",
+    "dust-gulch-s03"
+   ]
+  },
+  {
+   "id": "dust-gulch-s07",
+   "name": "Water Street (west) (2)",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     2324.0,
+     2564.0
+    ],
+    [
+     2436.0,
+     2564.0
+    ]
+   ],
+   "connects": [
+    "dust-gulch-s03"
+   ]
+  },
+  {
+   "id": "dust-gulch-s08",
+   "name": "Water Street (1)",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     2540.0,
+     2572.0
+    ],
+    [
+     2636.0,
+     2572.0
+    ]
+   ],
+   "connects": [
+    "dust-gulch-a3"
+   ]
+  },
+  {
+   "id": "dust-gulch-s09",
+   "name": "Water Street (2)",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     2708.0,
+     2572.0
+    ],
+    [
+     2804.0,
+     2572.0
+    ]
+   ],
+   "connects": [
+    "dust-gulch-a1",
+    "dust-gulch-s05",
+    "dust-gulch-s11"
+   ]
+  },
+  {
+   "id": "dust-gulch-s10",
+   "name": "West Row",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     2180.0,
+     2340.0
+    ],
+    [
+     2420.0,
+     2340.0
+    ]
+   ],
+   "connects": [
+    "dust-gulch-c06",
+    "dust-gulch-s03"
+   ]
+  },
+  {
+   "id": "dust-gulch-s11",
+   "name": "Front Street (Drover's Road)",
+   "class": "main",
+   "width_cells": 6,
+   "vertices_px": [
+    [
+     2807.0,
+     2550.5
+    ],
+    [
+     2776.5,
+     2512.0
+    ],
+    [
+     2739.5,
+     2483.5
+    ],
+    [
+     2715.5,
+     2480.0
+    ],
+    [
+     2641.0,
+     2480.0
+    ],
+    [
+     2592.5,
+     2470.0
+    ]
+   ],
+   "follows_route": "Drover's Road",
+   "connects": [
+    "dust-gulch-a1",
+    "dust-gulch-s01",
+    "dust-gulch-s04",
+    "dust-gulch-s05",
+    "dust-gulch-s09"
+   ]
+  },
+  {
+   "id": "dust-gulch-a1",
+   "name": "Drover's Road",
+   "class": "arrival",
+   "width_cells": 4,
+   "vertices_px": [
+    [
+     3072.0,
+     2700.3
+    ],
+    [
+     2933.8,
+     2669.0
+    ],
+    [
+     2895.5,
+     2651.5
+    ],
+    [
+     2864.0,
+     2626.3
+    ],
+    [
+     2849.6,
+     2610.0
+    ],
+    [
+     2776.4,
+     2512.0
+    ],
+    [
+     2739.5,
+     2483.4
+    ],
+    [
+     2715.4,
+     2479.8
+    ],
+    [
+     2641.0,
+     2479.8
+    ],
+    [
+     2592.4,
+     2470.0
+    ]
+   ],
+   "follows_route": "Drover's Road",
+   "connects": [
+    "dust-gulch-c05",
+    "dust-gulch-s01",
+    "dust-gulch-s04",
+    "dust-gulch-s05",
+    "dust-gulch-s09",
+    "dust-gulch-s11"
+   ]
+  },
+  {
+   "id": "dust-gulch-a2",
+   "name": "Lode Track",
+   "class": "arrival",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     2558.2,
+     2330.0
+    ],
+    [
+     2588.4,
+     2271.4
+    ],
+    [
+     2594.1,
+     2253.7
+    ],
+    [
+     2605.2,
+     2238.2
+    ],
+    [
+     2650.7,
+     2202.5
+    ],
+    [
+     2643.5,
+     2183.2
+    ],
+    [
+     2627.3,
+     2163.2
+    ],
+    [
+     2573.3,
+     2109.0
+    ],
+    [
+     2611.5,
+     2094.0
+    ],
+    [
+     2707.3,
+     2073.0
+    ],
+    [
+     2712.1,
+     2054.1
+    ],
+    [
+     2679.0,
+     2020.1
+    ],
+    [
+     2648.5,
+     1982.6
+    ]
+   ],
+   "follows_route": "Lode Track",
+   "connects": [
+    "dust-gulch-s02"
+   ]
+  },
+  {
+   "id": "dust-gulch-a3",
+   "name": "Canyon Road",
+   "class": "arrival",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     2524.0,
+     2560.0
+    ],
+    [
+     2522.0,
+     2581.2
+    ],
+    [
+     2501.9,
+     2655.4
+    ],
+    [
+     2500.0,
+     2673.5
+    ],
+    [
+     2506.0,
+     2710.6
+    ],
+    [
+     2529.6,
+     2784.6
+    ],
+    [
+     2534.3,
+     2823.5
+    ],
+    [
+     2532.4,
+     2843.9
+    ],
+    [
+     2519.1,
+     2881.6
+    ],
+    [
+     2507.9,
+     2898.8
+    ],
+    [
+     2493.8,
+     2916.6
+    ],
+    [
+     2444.8,
+     2965.0
+    ]
+   ],
+   "follows_route": "Canyon Road",
+   "connects": [
+    "dust-gulch-c02",
+    "dust-gulch-c04",
+    "dust-gulch-s08"
+   ]
+  },
+  {
+   "id": "dust-gulch-a4",
+   "name": "Glass Road",
+   "class": "arrival",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     2410.0,
+     2470.0
+    ],
+    [
+     2358.5,
+     2481.8
+    ],
+    [
+     2264.9,
+     2491.9
+    ],
+    [
+     2246.5,
+     2501.7
+    ],
+    [
+     2213.3,
+     2530.3
+    ],
+    [
+     2173.9,
+     2585.1
+    ],
+    [
+     2144.5,
+     2617.4
+    ],
+    [
+     2089.3,
+     2653.1
+    ],
+    [
+     2053.8,
+     2680.7
+    ],
+    [
+     2009.5,
+     2727.6
+    ],
+    [
+     1990.2,
+     2764.3
+    ],
+    [
+     1988.0,
+     2789.9
+    ],
+    [
+     2002.4,
+     2833.9
+    ],
+    [
+     2027.0,
+     2873.4
+    ],
+    [
+     2109.0,
+     2959.5
+    ]
+   ],
+   "follows_route": "Glass Road",
+   "connects": [
+    "dust-gulch-s01",
+    "dust-gulch-s03",
+    "dust-gulch-s06"
+   ]
+  },
+  {
+   "id": "dust-gulch-c01",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     2664.0,
+     2656.0
+    ],
+    [
+     2664.0,
+     2632.0
+    ]
+   ],
+   "connects": [
+    "dust-gulch-c03",
+    "dust-gulch-s04"
+   ]
+  },
+  {
+   "id": "dust-gulch-c02",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     2464.0,
+     2648.0
+    ],
+    [
+     2488.0,
+     2648.0
+    ]
+   ],
+   "connects": [
+    "dust-gulch-a3"
+   ]
+  },
+  {
+   "id": "dust-gulch-c03",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     2704.0,
+     2656.0
+    ],
+    [
+     2672.0,
+     2656.0
+    ]
+   ],
+   "connects": [
+    "dust-gulch-c01"
+   ]
+  },
+  {
+   "id": "dust-gulch-c04",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     2472.0,
+     2784.0
+    ],
+    [
+     2512.0,
+     2784.0
+    ]
+   ],
+   "connects": [
+    "dust-gulch-a3"
+   ]
+  },
+  {
+   "id": "dust-gulch-c05",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     2888.0,
+     2552.0
+    ],
+    [
+     2888.0,
+     2624.0
+    ]
+   ],
+   "connects": [
+    "dust-gulch-a1"
+   ]
+  },
+  {
+   "id": "dust-gulch-c06",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     2408.0,
+     2256.0
+    ],
+    [
+     2240.0,
+     2256.0
+    ],
+    [
+     2240.0,
+     2328.0
+    ]
+   ],
+   "connects": [
+    "dust-gulch-c07",
+    "dust-gulch-s10"
+   ]
+  },
+  {
+   "id": "dust-gulch-c07",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     2408.0,
+     2152.0
+    ],
+    [
+     2408.0,
+     2248.0
+    ]
+   ],
+   "connects": [
+    "dust-gulch-c06"
+   ]
+  }
+ ],
+ "squares": [
+  {
+   "id": "dust-gulch-q01",
+   "name": "the depot square",
+   "type": "square",
+   "cells": [
+    324,
+    295,
+    12,
+    8
+   ]
+  },
+  {
+   "id": "dust-gulch-q02",
+   "name": "the well square",
+   "type": "square",
+   "cells": [
+    293,
+    302,
+    9,
+    7
+   ]
+  }
+ ],
+ "districts": [
+  {
+   "name": "Front Street",
+   "centre_px": [
+    2600,
+    2455
+   ],
+   "declared": "the frontier main street: the saloon, the store, the sheriff (Pendle), the assay office",
+   "town": "Dust Gulch",
+   "id": "dust-gulch-d-front-street",
+   "buildings": [
+    "dust-gulch-b003",
+    "dust-gulch-b019"
+   ],
+   "mix": {
+    "shop": 1,
+    "house": 1
+   },
+   "function": "market and civic with homes"
+  },
+  {
+   "name": "the Depot",
+   "centre_px": [
+    2720,
+    2335
+   ],
+   "declared": "the platform, the goods yard and sheds, the repair shop and the water tower",
+   "town": "Dust Gulch",
+   "id": "dust-gulch-d-the-depot",
+   "buildings": [
+    "dust-gulch-b002",
+    "dust-gulch-b007",
+    "dust-gulch-b008",
+    "dust-gulch-b027",
+    "dust-gulch-b032"
+   ],
+   "mix": {
+    "inn": 1,
+    "station": 1,
+    "warehouse": 1,
+    "workshop": 2
+   },
+   "function": "crafts and work"
+  },
+  {
+   "name": "Water Street",
+   "centre_px": [
+    2470,
+    2570
+   ],
+   "declared": "homes along the river and its gardens, behind the main street",
+   "town": "Dust Gulch",
+   "id": "dust-gulch-d-water-street",
+   "buildings": [
+    "dust-gulch-b004",
+    "dust-gulch-b009",
+    "dust-gulch-b010",
+    "dust-gulch-b011",
+    "dust-gulch-b017",
+    "dust-gulch-b028",
+    "dust-gulch-b035",
+    "dust-gulch-b037"
+   ],
+   "mix": {
+    "inn": 1,
+    "house": 5,
+    "cottage": 1,
+    "workshop": 1
+   },
+   "function": "homes"
+  },
+  {
+   "name": "West Row",
+   "centre_px": [
+    2300,
+    2350
+   ],
+   "declared": "homes and the chapel on the west bank",
+   "town": "Dust Gulch",
+   "id": "dust-gulch-d-west-row",
+   "buildings": [
+    "dust-gulch-b005",
+    "dust-gulch-b006",
+    "dust-gulch-b013",
+    "dust-gulch-b014",
+    "dust-gulch-b015",
+    "dust-gulch-b018",
+    "dust-gulch-b020",
+    "dust-gulch-b021",
+    "dust-gulch-b022",
+    "dust-gulch-b023",
+    "dust-gulch-b024",
+    "dust-gulch-b025",
+    "dust-gulch-b026",
+    "dust-gulch-b029",
+    "dust-gulch-b030",
+    "dust-gulch-b031",
+    "dust-gulch-b033",
+    "dust-gulch-b034",
+    "dust-gulch-b038"
+   ],
+   "mix": {
+    "shop": 4,
+    "house": 10,
+    "cottage": 4,
+    "workshop": 1
+   },
+   "function": "homes"
+  },
+  {
+   "name": "the corrals",
+   "centre_px": [
+    2900,
+    2450
+   ],
+   "declared": "pens and stables for the caravans and the mule trains, east of town",
+   "town": "Dust Gulch",
+   "id": "dust-gulch-d-the-corrals",
+   "buildings": [
+    "dust-gulch-b001",
+    "dust-gulch-b012",
+    "dust-gulch-b016",
+    "dust-gulch-b036"
+   ],
+   "mix": {
+    "shop": 1,
+    "house": 1,
+    "workshop": 1,
+    "cottage": 1
+   },
+   "function": "market and civic with homes"
+  },
+  {
+   "id": "dust-gulch-d-the-corrals",
+   "name": "the corrals",
+   "function": "edge: yards and pens",
+   "declared": "pens and stables for the caravans and the mule trains",
+   "box_px": [
+    2840,
+    2390,
+    2980,
+    2530
+   ],
+   "buildings": [],
+   "town": "Dust Gulch"
+  },
+  {
+   "id": "dust-gulch-d-the-goods-yard",
+   "name": "the goods yard",
+   "function": "docks and works yards",
+   "declared": "the desert line's sidings and the ore bins",
+   "box_px": [
+    2580,
+    2235,
+    2880,
+    2312
+   ],
+   "buildings": [],
+   "town": "Dust Gulch"
+  },
+  {
+   "id": "dust-gulch-d-the-ore-yard",
+   "name": "the ore yard",
+   "function": "docks and works yards",
+   "declared": "the Lode's ore, down the mule track, waiting for the train",
+   "box_px": [
+    2600,
+    2120,
+    2700,
+    2210
+   ],
+   "buildings": [],
+   "town": "Dust Gulch"
+  }
+ ],
+ "gathering_places": [
+  {
+   "name": "the depot square",
+   "xy_px": [
+    2640,
+    2395
+   ]
+  },
+  {
+   "name": "the well square",
+   "xy_px": [
+    2380,
+    2445
+   ]
+  },
+  {
+   "name": "the chapel yard",
+   "xy_px": [
+    2290,
+    2380
+   ]
+  }
+ ],
+ "buildings": [
+  {
+   "id": "dust-gulch-b001",
+   "type": "shop",
+   "footprint_cells": [
+    354,
+    309,
+    6,
+    10
+   ],
+   "rect_px": [
+    2832,
+    2472,
+    48,
+    80
+   ],
+   "faces": "dust-gulch-s11",
+   "door_cells": [
+    353,
+    317
+   ],
+   "purpose": "the general store",
+   "occupants": "the shopkeeper, living above",
+   "district": "dust-gulch-d-the-corrals",
+   "counted": true,
+   "plot_cells": [
+    360,
+    309,
+    5,
+    10
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "dust-gulch-b002",
+   "type": "inn",
+   "footprint_cells": [
+    337,
+    297,
+    15,
+    8
+   ],
+   "rect_px": [
+    2696,
+    2376,
+    120,
+    64
+   ],
+   "faces": "dust-gulch-q01",
+   "door_cells": [
+    336,
+    301
+   ],
+   "purpose": "the Railhead hotel",
+   "occupants": "the innkeeper, staff and guests",
+   "district": "dust-gulch-d-the-depot",
+   "counted": true,
+   "plot_cells": [
+    337,
+    294,
+    15,
+    3
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "dust-gulch-b003",
+   "type": "shop",
+   "footprint_cells": [
+    338,
+    323,
+    5,
+    8
+   ],
+   "rect_px": [
+    2704,
+    2584,
+    40,
+    64
+   ],
+   "faces": "dust-gulch-s09",
+   "door_cells": [
+    340,
+    322
+   ],
+   "purpose": "the saloon",
+   "occupants": "the shopkeeper, living above",
+   "district": "dust-gulch-d-front-street",
+   "counted": true,
+   "plot_cells": [
+    333,
+    323,
+    5,
+    8
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "dust-gulch-b004",
+   "type": "inn",
+   "footprint_cells": [
+    317,
+    324,
+    15,
+    8
+   ],
+   "rect_px": [
+    2536,
+    2592,
+    120,
+    64
+   ],
+   "faces": "dust-gulch-s04",
+   "door_cells": [
+    332,
+    328
+   ],
+   "purpose": "the Railhead hotel",
+   "occupants": "the innkeeper, staff and guests",
+   "district": "dust-gulch-d-water-street",
+   "counted": true,
+   "plot_cells": [
+    317,
+    332,
+    15,
+    5
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "dust-gulch-b005",
+   "type": "shop",
+   "footprint_cells": [
+    300,
+    295,
+    10,
+    6
+   ],
+   "rect_px": [
+    2400,
+    2360,
+    80,
+    48
+   ],
+   "faces": "dust-gulch-s10",
+   "door_cells": [
+    303,
+    294
+   ],
+   "purpose": "the outfitter",
+   "occupants": "the shopkeeper, living above",
+   "district": "dust-gulch-d-west-row",
+   "counted": true,
+   "plot_cells": [
+    300,
+    290,
+    10,
+    5
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "dust-gulch-b006",
+   "type": "house",
+   "footprint_cells": [
+    277,
+    297,
+    9,
+    7
+   ],
+   "rect_px": [
+    2216,
+    2376,
+    72,
+    56
+   ],
+   "faces": "dust-gulch-s01",
+   "door_cells": [
+    281,
+    304
+   ],
+   "purpose": "a family house",
+   "occupants": "a railwayman's household",
+   "district": "dust-gulch-d-west-row",
+   "counted": true,
+   "plot_cells": [
+    277,
+    294,
+    9,
+    3
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "dust-gulch-b007",
+   "type": "station",
+   "footprint_cells": [
+    328,
+    282,
+    19,
+    6
+   ],
+   "rect_px": [
+    2624,
+    2256,
+    152,
+    48
+   ],
+   "faces": "dust-gulch-s02",
+   "door_cells": [
+    337,
+    288
+   ],
+   "purpose": "the station",
+   "occupants": "the station staff",
+   "district": "dust-gulch-d-the-depot",
+   "counted": true,
+   "plot_cells": [
+    328,
+    277,
+    19,
+    5
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "dust-gulch-b008",
+   "type": "warehouse",
+   "footprint_cells": [
+    348,
+    278,
+    14,
+    11
+   ],
+   "rect_px": [
+    2784,
+    2224,
+    112,
+    88
+   ],
+   "faces": "dust-gulch-s02",
+   "door_cells": [
+    355,
+    289
+   ],
+   "purpose": "a warehouse",
+   "occupants": "porters by day, a night watch",
+   "district": "dust-gulch-d-the-depot",
+   "counted": true,
+   "plot_cells": [
+    348,
+    273,
+    14,
+    5
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "dust-gulch-b009",
+   "type": "house",
+   "footprint_cells": [
+    271,
+    329,
+    12,
+    7
+   ],
+   "rect_px": [
+    2168,
+    2632,
+    96,
+    56
+   ],
+   "faces": "dust-gulch-a4",
+   "door_cells": [
+    271,
+    328
+   ],
+   "purpose": "a family house",
+   "occupants": "a teamster's household",
+   "district": "dust-gulch-d-water-street",
+   "counted": true,
+   "plot_cells": [
+    271,
+    336,
+    12,
+    5
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "dust-gulch-b010",
+   "type": "house",
+   "footprint_cells": [
+    317,
+    333,
+    9,
+    6
+   ],
+   "rect_px": [
+    2536,
+    2664,
+    72,
+    48
+   ],
+   "faces": "dust-gulch-a3",
+   "door_cells": [
+    316,
+    337
+   ],
+   "purpose": "a family house",
+   "occupants": "a miner's household",
+   "district": "dust-gulch-d-water-street",
+   "counted": true,
+   "plot_cells": [
+    317,
+    339,
+    9,
+    4
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "dust-gulch-b011",
+   "type": "cottage",
+   "footprint_cells": [
+    328,
+    333,
+    10,
+    7
+   ],
+   "rect_px": [
+    2624,
+    2664,
+    80,
+    56
+   ],
+   "faces": "dust-gulch-c01",
+   "door_cells": [
+    332,
+    332
+   ],
+   "purpose": "a cottage",
+   "occupants": "a storekeeper's household",
+   "district": "dust-gulch-d-water-street",
+   "counted": true,
+   "plot_cells": [
+    328,
+    340,
+    9,
+    4
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "dust-gulch-b012",
+   "type": "house",
+   "footprint_cells": [
+    339,
+    332,
+    11,
+    7
+   ],
+   "rect_px": [
+    2712,
+    2656,
+    88,
+    56
+   ],
+   "faces": "dust-gulch-c03",
+   "door_cells": [
+    338,
+    332
+   ],
+   "purpose": "a family house",
+   "occupants": "a muleteer's household",
+   "district": "dust-gulch-d-the-corrals",
+   "counted": true,
+   "plot_cells": [
+    341,
+    339,
+    9,
+    5
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "dust-gulch-b013",
+   "type": "house",
+   "footprint_cells": [
+    271,
+    284,
+    8,
+    6
+   ],
+   "rect_px": [
+    2168,
+    2272,
+    64,
+    48
+   ],
+   "faces": "dust-gulch-s10",
+   "door_cells": [
+    275,
+    290
+   ],
+   "purpose": "a family house",
+   "occupants": "a gardener's household",
+   "district": "dust-gulch-d-west-row",
+   "counted": true,
+   "plot_cells": [
+    271,
+    279,
+    8,
+    5
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "dust-gulch-b014",
+   "type": "cottage",
+   "footprint_cells": [
+    281,
+    284,
+    9,
+    6
+   ],
+   "rect_px": [
+    2248,
+    2272,
+    72,
+    48
+   ],
+   "faces": "dust-gulch-s03",
+   "door_cells": [
+    286,
+    290
+   ],
+   "purpose": "a cottage",
+   "occupants": "a blacksmith's household",
+   "district": "dust-gulch-d-west-row",
+   "counted": true,
+   "plot_cells": [
+    281,
+    279,
+    9,
+    5
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "dust-gulch-b015",
+   "type": "house",
+   "footprint_cells": [
+    291,
+    283,
+    10,
+    7
+   ],
+   "rect_px": [
+    2328,
+    2264,
+    80,
+    56
+   ],
+   "faces": "dust-gulch-s10",
+   "door_cells": [
+    296,
+    290
+   ],
+   "purpose": "a family house",
+   "occupants": "a railwayman's household",
+   "district": "dust-gulch-d-west-row",
+   "counted": true,
+   "plot_cells": [
+    291,
+    278,
+    10,
+    5
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "dust-gulch-b016",
+   "type": "workshop",
+   "footprint_cells": [
+    361,
+    306,
+    8,
+    12
+   ],
+   "rect_px": [
+    2888,
+    2448,
+    64,
+    96
+   ],
+   "faces": "dust-gulch-c05",
+   "door_cells": [
+    361,
+    318
+   ],
+   "purpose": "the repair shop",
+   "occupants": "the master and apprentices",
+   "district": "dust-gulch-d-the-corrals",
+   "counted": true,
+   "plot_cells": [
+    369,
+    306,
+    5,
+    12
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "dust-gulch-b017",
+   "type": "house",
+   "footprint_cells": [
+    297,
+    331,
+    10,
+    7
+   ],
+   "rect_px": [
+    2376,
+    2648,
+    80,
+    56
+   ],
+   "faces": "dust-gulch-c02",
+   "door_cells": [
+    307,
+    331
+   ],
+   "purpose": "a family house",
+   "occupants": "a teamster's household",
+   "district": "dust-gulch-d-water-street",
+   "counted": true,
+   "plot_cells": [
+    297,
+    338,
+    10,
+    5
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "dust-gulch-b018",
+   "type": "house",
+   "footprint_cells": [
+    270,
+    294,
+    6,
+    9
+   ],
+   "rect_px": [
+    2160,
+    2352,
+    48,
+    72
+   ],
+   "faces": "dust-gulch-s10",
+   "door_cells": [
+    273,
+    293
+   ],
+   "purpose": "a family house",
+   "occupants": "a miner's household",
+   "district": "dust-gulch-d-west-row",
+   "counted": true,
+   "plot_cells": [
+    265,
+    294,
+    5,
+    9
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "dust-gulch-b019",
+   "type": "house",
+   "footprint_cells": [
+    317,
+    296,
+    7,
+    8
+   ],
+   "rect_px": [
+    2536,
+    2368,
+    56,
+    64
+   ],
+   "faces": "dust-gulch-q01",
+   "door_cells": [
+    324,
+    300
+   ],
+   "purpose": "a family house",
+   "occupants": "a storekeeper's household",
+   "district": "dust-gulch-d-front-street",
+   "counted": true,
+   "plot_cells": [
+    312,
+    297,
+    5,
+    7
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "dust-gulch-b020",
+   "type": "house",
+   "footprint_cells": [
+    302,
+    284,
+    10,
+    7
+   ],
+   "rect_px": [
+    2416,
+    2272,
+    80,
+    56
+   ],
+   "faces": "dust-gulch-s10",
+   "door_cells": [
+    303,
+    291
+   ],
+   "purpose": "a family house",
+   "occupants": "a muleteer's household",
+   "district": "dust-gulch-d-west-row",
+   "counted": true,
+   "plot_cells": [
+    302,
+    291,
+    10,
+    4
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "dust-gulch-b021",
+   "type": "cottage",
+   "footprint_cells": [
+    290,
+    296,
+    9,
+    6
+   ],
+   "rect_px": [
+    2320,
+    2368,
+    72,
+    48
+   ],
+   "faces": "dust-gulch-q02",
+   "door_cells": [
+    294,
+    302
+   ],
+   "purpose": "a cottage",
+   "occupants": "a gardener's household",
+   "district": "dust-gulch-d-west-row",
+   "counted": true,
+   "plot_cells": [
+    290,
+    302,
+    3,
+    2
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "dust-gulch-b022",
+   "type": "workshop",
+   "footprint_cells": [
+    302,
+    276,
+    11,
+    7
+   ],
+   "rect_px": [
+    2416,
+    2208,
+    88,
+    56
+   ],
+   "faces": "dust-gulch-c06",
+   "door_cells": [
+    301,
+    281
+   ],
+   "purpose": "the smithy",
+   "occupants": "the master and apprentices",
+   "district": "dust-gulch-d-west-row",
+   "counted": true,
+   "plot_cells": [
+    302,
+    283,
+    11,
+    1
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "dust-gulch-b023",
+   "type": "house",
+   "footprint_cells": [
+    292,
+    275,
+    8,
+    6
+   ],
+   "rect_px": [
+    2336,
+    2200,
+    64,
+    48
+   ],
+   "faces": "dust-gulch-c06",
+   "door_cells": [
+    296,
+    281
+   ],
+   "purpose": "a family house",
+   "occupants": "a blacksmith's household",
+   "district": "dust-gulch-d-west-row",
+   "counted": true,
+   "plot_cells": [
+    292,
+    281,
+    8,
+    2
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "dust-gulch-b024",
+   "type": "shop",
+   "footprint_cells": [
+    303,
+    269,
+    8,
+    6
+   ],
+   "rect_px": [
+    2424,
+    2152,
+    64,
+    48
+   ],
+   "faces": "dust-gulch-c07",
+   "door_cells": [
+    302,
+    272
+   ],
+   "purpose": "the barber",
+   "occupants": "the shopkeeper, living above",
+   "district": "dust-gulch-d-west-row",
+   "counted": true,
+   "plot_cells": [
+    303,
+    275,
+    8,
+    1
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "dust-gulch-b025",
+   "type": "house",
+   "footprint_cells": [
+    282,
+    275,
+    8,
+    6
+   ],
+   "rect_px": [
+    2256,
+    2200,
+    64,
+    48
+   ],
+   "faces": "dust-gulch-c06",
+   "door_cells": [
+    286,
+    281
+   ],
+   "purpose": "a family house",
+   "occupants": "a railwayman's household",
+   "district": "dust-gulch-d-west-row",
+   "counted": true,
+   "plot_cells": [
+    282,
+    281,
+    8,
+    3
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "dust-gulch-b026",
+   "type": "cottage",
+   "footprint_cells": [
+    299,
+    262,
+    11,
+    6
+   ],
+   "rect_px": [
+    2392,
+    2096,
+    88,
+    48
+   ],
+   "faces": "dust-gulch-c07",
+   "door_cells": [
+    300,
+    268
+   ],
+   "purpose": "a cottage",
+   "occupants": "a teamster's household",
+   "district": "dust-gulch-d-west-row",
+   "counted": true,
+   "plot_cells": [
+    299,
+    268,
+    11,
+    4
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "dust-gulch-b027",
+   "type": "workshop",
+   "footprint_cells": [
+    334,
+    272,
+    11,
+    8
+   ],
+   "rect_px": [
+    2672,
+    2176,
+    88,
+    64
+   ],
+   "faces": "dust-gulch-a2",
+   "door_cells": [
+    333,
+    275
+   ],
+   "purpose": "the harness maker",
+   "occupants": "the master and apprentices",
+   "district": "dust-gulch-d-the-depot",
+   "counted": true,
+   "plot_cells": [
+    334,
+    280,
+    11,
+    2
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "dust-gulch-b028",
+   "type": "house",
+   "footprint_cells": [
+    302,
+    339,
+    8,
+    7
+   ],
+   "rect_px": [
+    2416,
+    2712,
+    64,
+    56
+   ],
+   "faces": "dust-gulch-a3",
+   "door_cells": [
+    310,
+    340
+   ],
+   "purpose": "a family house",
+   "occupants": "a miner's household",
+   "district": "dust-gulch-d-water-street",
+   "counted": true,
+   "plot_cells": [
+    302,
+    346,
+    8,
+    4
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "dust-gulch-b029",
+   "type": "shop",
+   "footprint_cells": [
+    265,
+    310,
+    9,
+    6
+   ],
+   "rect_px": [
+    2120,
+    2480,
+    72,
+    48
+   ],
+   "faces": "dust-gulch-s01",
+   "door_cells": [
+    269,
+    309
+   ],
+   "purpose": "the feed store",
+   "occupants": "the shopkeeper, living above",
+   "district": "dust-gulch-d-west-row",
+   "counted": true,
+   "plot_cells": [
+    265,
+    316,
+    8,
+    4
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "dust-gulch-b030",
+   "type": "house",
+   "footprint_cells": [
+    272,
+    273,
+    9,
+    7
+   ],
+   "rect_px": [
+    2176,
+    2184,
+    72,
+    56
+   ],
+   "faces": "dust-gulch-c06",
+   "door_cells": [
+    279,
+    280
+   ],
+   "purpose": "a family house",
+   "occupants": "a storekeeper's household",
+   "district": "dust-gulch-d-west-row",
+   "counted": true,
+   "plot_cells": [
+    272,
+    280,
+    9,
+    4
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "dust-gulch-b031",
+   "type": "cottage",
+   "footprint_cells": [
+    258,
+    292,
+    11,
+    6
+   ],
+   "rect_px": [
+    2064,
+    2336,
+    88,
+    48
+   ],
+   "faces": "dust-gulch-s10",
+   "door_cells": [
+    269,
+    293
+   ],
+   "purpose": "a cottage",
+   "occupants": "a muleteer's household",
+   "district": "dust-gulch-d-west-row",
+   "counted": true,
+   "plot_cells": [
+    258,
+    298,
+    11,
+    4
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "dust-gulch-b032",
+   "type": "workshop",
+   "footprint_cells": [
+    333,
+    262,
+    13,
+    8
+   ],
+   "rect_px": [
+    2664,
+    2096,
+    104,
+    64
+   ],
+   "faces": "dust-gulch-a2",
+   "door_cells": [
+    334,
+    261
+   ],
+   "purpose": "the repair shop",
+   "occupants": "the master and apprentices",
+   "district": "dust-gulch-d-the-depot",
+   "counted": true,
+   "plot_cells": [
+    333,
+    270,
+    13,
+    4
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "dust-gulch-b033",
+   "type": "house",
+   "footprint_cells": [
+    257,
+    299,
+    11,
+    6
+   ],
+   "rect_px": [
+    2056,
+    2392,
+    88,
+    48
+   ],
+   "faces": "dust-gulch-s01",
+   "door_cells": [
+    268,
+    304
+   ],
+   "purpose": "a family house",
+   "occupants": "a gardener's household",
+   "district": "dust-gulch-d-west-row",
+   "counted": true,
+   "plot_cells": [
+    257,
+    305,
+    11,
+    4
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "dust-gulch-b034",
+   "type": "shop",
+   "footprint_cells": [
+    259,
+    284,
+    11,
+    5
+   ],
+   "rect_px": [
+    2072,
+    2272,
+    88,
+    40
+   ],
+   "faces": "dust-gulch-s10",
+   "door_cells": [
+    269,
+    289
+   ],
+   "purpose": "the general store",
+   "occupants": "the shopkeeper, living above",
+   "district": "dust-gulch-d-west-row",
+   "counted": true,
+   "plot_cells": [
+    259,
+    289,
+    11,
+    4
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "dust-gulch-b035",
+   "type": "house",
+   "footprint_cells": [
+    297,
+    348,
+    11,
+    7
+   ],
+   "rect_px": [
+    2376,
+    2784,
+    88,
+    56
+   ],
+   "faces": "dust-gulch-c04",
+   "door_cells": [
+    308,
+    348
+   ],
+   "purpose": "a family house",
+   "occupants": "a blacksmith's household",
+   "district": "dust-gulch-d-water-street",
+   "counted": true,
+   "plot_cells": [
+    297,
+    355,
+    11,
+    4
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "dust-gulch-b036",
+   "type": "cottage",
+   "footprint_cells": [
+    354,
+    296,
+    11,
+    7
+   ],
+   "rect_px": [
+    2832,
+    2368,
+    88,
+    56
+   ],
+   "faces": "dust-gulch-s02",
+   "door_cells": [
+    359,
+    295
+   ],
+   "purpose": "a cottage",
+   "occupants": "a railwayman's household",
+   "district": "dust-gulch-d-the-corrals",
+   "counted": true,
+   "plot_cells": [
+    354,
+    303,
+    11,
+    4
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "dust-gulch-b037",
+   "type": "workshop",
+   "footprint_cells": [
+    320,
+    346,
+    13,
+    7
+   ],
+   "rect_px": [
+    2560,
+    2768,
+    104,
+    56
+   ],
+   "faces": "dust-gulch-a3",
+   "door_cells": [
+    319,
+    349
+   ],
+   "purpose": "the smithy",
+   "occupants": "the master and apprentices",
+   "district": "dust-gulch-d-water-street",
+   "counted": true,
+   "plot_cells": [
+    320,
+    353,
+    13,
+    4
+   ],
+   "plot": "yard"
+  },
+  {
+   "id": "dust-gulch-b038",
+   "type": "house",
+   "footprint_cells": [
+    258,
+    317,
+    9,
+    7
+   ],
+   "rect_px": [
+    2064,
+    2536,
+    72,
+    56
+   ],
+   "faces": "dust-gulch-a4",
+   "door_cells": [
+    267,
+    323
+   ],
+   "purpose": "a family house",
+   "occupants": "a teamster's household",
+   "district": "dust-gulch-d-west-row",
+   "counted": true,
+   "plot_cells": [
+    258,
+    324,
+    8,
+    4
+   ],
+   "plot": "yard"
+  }
+ ],
+ "lifted": [],
+ "outskirts": [
+  {
+   "kind": "yard",
+   "name": "the corrals",
+   "box": [
+    2840,
+    2390,
+    2980,
+    2530
+   ],
+   "why": "pens and stables for the caravans and the mule trains"
+  },
+  {
+   "kind": "yard",
+   "name": "the goods yard",
+   "box": [
+    2580,
+    2235,
+    2880,
+    2312
+   ],
+   "why": "the desert line's sidings and the ore bins"
+  },
+  {
+   "kind": "yard",
+   "name": "the ore yard",
+   "box": [
+    2600,
+    2120,
+    2700,
+    2210
+   ],
+   "why": "the Lode's ore, down the mule track, waiting for the train"
+  }
+ ],
+ "game_layout": {
+  "arrival": "Drover's Road",
+  "first_view": "Front Street from the east end: the false fronts of the saloon and the store, the depot's water tower over the roofs, the mesa behind",
+  "landmarks": [
+   {
+    "name": "the depot's water tower",
+    "xy": [
+     2720,
+     2320
+    ]
+   },
+   {
+    "name": "the chapel on West Row",
+    "xy": [
+     2300,
+     2370
+    ]
+   },
+   {
+    "name": "the saloon on Front Street",
+    "xy": [
+     2600,
+     2455
+    ]
+   },
+   {
+    "name": "the ore bins on the Lode track",
+    "xy": [
+     2650,
+     2160
+    ]
+   },
+   {
+    "name": "the river gardens",
+    "xy": [
+     2450,
+     2650
+    ]
+   }
+  ],
+  "shortcuts_later": [
+   {
+    "what": "the dry wash under the line from Corral Lane to the goods yard",
+    "xy": [
+     2800,
+     2400
+    ],
+    "opens": "when the stationmaster opens the gate"
+   },
+   {
+    "what": "the plank bridge over the Amber from Water Street",
+    "xy": [
+     2470,
+     2570
+    ],
+    "opens": "after the flood (act 2)"
+   }
+  ],
+  "quiet_corners": [
+   {
+    "what": "the chapel yard behind the busy Front Street",
+    "xy": [
+     2290,
+     2380
+    ]
+   },
+   {
+    "what": "the river gardens below Water Street",
+    "xy": [
+     2450,
+     2650
+    ]
+   }
+  ],
+  "first_screen_cells": [
+   [
+    364,
+    326,
+    40,
+    22.5
+   ]
+  ],
+  "screens": [
+   2.8,
+   4.1
+  ]
+ },
+ "ground": {
+  "centre": "packed sand street, boardwalks",
+  "yards": "sand and adobe yards",
+  "edges": "irrigated gardens along the Amber; desert round it"
+ },
+ "terrain": {
+  "box_cells": [
+   242,
+   247,
+   143,
+   124
+  ],
+  "codes": {
+   ".": "land",
+   "r": "route",
+   "~": "water",
+   "#": "barrier (cliff, wall, lava)",
+   "b": "bridge"
+  },
+  "rows": [
+   "68.~6.~9.8r50.",
+   "68.~6.~10.8r49.",
+   "68.~6.~10.8r49.",
+   "69.~5.~11.8r48.",
+   "73.3~12.8r47.",
+   "73.2~14.8r46.",
+   "73.2~14.10r3.5r36.",
+   "73.2~16.17r35.",
+   "73.2~17.16r35.",
+   "73.2~18.12r38.",
+   "73.2~19.8r41.",
+   "73.2~16.9r43.",
+   "73.2~11.14r43.",
+   "73.2~8.16r44.",
+   "73.2~4.17r47.",
+   "73.2~3.13r52.",
+   "73.2~2.8r4.2r52.",
+   "73.2~2.8r3.3r52.",
+   "73.2~2.9r2.3r52.",
+   "73.2~3.13r52.",
+   "73.2~4.12r52.",
+   "73.2~5.11r52.",
+   "73.2~6.10r52.",
+   "72.3~8.8r52.",
+   "72.3~9.8r51.",
+   "72.3~9.8r51.",
+   "72.3~10.7r51.",
+   "72.3~11.6r51.",
+   "72.3~9.8r51.",
+   "72.3~8.9r51.",
+   "72.4~5.10r52.",
+   "72.~2.~4.9r54.",
+   "72.~2.~4.8r55.",
+   "72.~2.~3.8r56.",
+   "72.~2.~3.7r57.",
+   "72.~2.~3.7r57.",
+   "72.~2.~2.7r58.",
+   "71.~3.~2.7r58.",
+   "71.~3.~.7r59.",
+   "71.~3.~.7r59.",
+   "71.~3.~7r60.",
+   "71.~3.~7r60.",
+   "71.~3.b5r62.",
+   "71.~3.b5r62.",
+   "71.~3.b5r62.",
+   "70.~2.2~b4r63.",
+   "70.~2.2~.3r64.",
+   "70.~2.2~68.",
+   "70.~2.2~68.",
+   "70.~.~70.",
+   "69.2~.~70.",
+   "69.~.~71.",
+   "69.~.~71.",
+   "69.2~72.",
+   "68.3~72.",
+   "68.2~73.",
+   "68.~74.",
+   "67.2b10.7r57.",
+   "66.2b10.22r43.",
+   "56.5r2.5b9.24r42.",
+   "53.9rb.3b10.25r41.",
+   "44.18r7b8.26r40.",
+   "39.23r4b3.2b6.27r39.",
+   "38.23r2~.2~4.2~5.28r38.",
+   "37.23r2~.~8.3~3.29r36.",
+   "36.19r4.2~2.~9.4~2.29r35.",
+   "35.12r12.2~.2~12.2~2.29r34.",
+   "34.5r19.2~2.~24.23r33.",
+   "32.6r18.4~.2~39.8r33.",
+   "31.7r17.~2.~2.~41.8r32.",
+   "31.5r17.2~3.~2.~21.2~19.8r31.",
+   "30.6r17.~2.2~2.~23.~19.8r31.",
+   "29.6r16.2b2.3b2.b10.5r10.~18.8r30.",
+   "29.5r14.4b7.b11.5r11.2b18.6r30.",
+   "28.6r12.4b4.b4.b11.5r12.3b16.8r28.",
+   "27.5r22.~3.2~11.4r14.2b17.8r27.",
+   "26.6r21.~4.~12.4r17.b~15.7r27.",
+   "24.8r26.~12.4r18.~15.8r26.",
+   "23.8r25.2~12.5r19.~15.8r25.",
+   "22.9r21.~3.2~12.5r35.9r24.",
+   "20.10r25.~14.3r38.8r24.",
+   "19.10r21.2~3.~14.3r39.14r17.",
+   "18.10r22.~3.~14.4r40.16r14.",
+   "16.11r21.3~3.~14.4r42.18r10.",
+   "14.10r24.2~3.~15.3r43.23r5.",
+   "13.10r24.~5.~14.5r43.26r.",
+   "12.10r25.~4.~15.5r45.25r",
+   "12.8r26.~5.~15.5r45.25r",
+   "11.8r27.~4.~16.5r45.25r",
+   "#10.7r27.~5.~16.5r46.24r",
+   "3#7.6r29.~4.2~16.7r45.23r",
+   "3#6.5r36.~17.7r49.19r",
+   "6#.6r35.3~17.7r21.4r27.16r",
+   "7#5r36.2~19.6r20.7r31.10r",
+   "6#6r2#34.2~19.7r18.7r42.",
+   "6#5r9#28.2~19.8r15.8r43.",
+   "5#5r11#26.3~19.15r4.11r44.",
+   "5#5r16#21.~22.26r47.",
+   "5#5r20#17.~22.25r48.",
+   "5#4r23#15.~22.7r66.",
+   "2r2#6r22#15.~23.6r66.",
+   "4#6r22#15.~23.6r66.",
+   "4#6r20#18.2~22.5r66.",
+   "4#7r16#21.2~22.5r66.",
+   "4#7r12#25.2~22.5r66.",
+   "4#7r2#2.4#29.2~23.4r66.",
+   "5#7r38.~21.5r66.",
+   "5#7r38.~21.5r66.",
+   "#4.8r37.~21.5r66.",
+   "6.7r37.~21.4r67.",
+   "6.8r37.~19.5r67.",
+   "7.8r36.~19.5r67.",
+   "9.6r36.~18.6r67.",
+   "9.7r35.~17.6r68.",
+   "10.8r34.~15.7r58.10~",
+   "11.8r33.~15.7r58.~9.",
+   "11.8r33.~14.8r68.",
+   "12.8r32.~13.7r70.",
+   "13.8r31.2~10.8r71.",
+   "14.7r32.~9.9r71.",
+   "16.6r31.~8.9r72.",
+   "18.5r30.~7.9r71.2~",
+   "19.5r30.~6.8r71.2~.",
+   "19.5r30.~5.8r69.3~3."
+  ]
+ },
+ "residents": [],
+ "routines": [],
+ "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only."
+}
