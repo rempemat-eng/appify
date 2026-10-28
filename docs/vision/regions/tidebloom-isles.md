@@ -127,4 +127,4 @@ Places keep their ids where the game uses them (mission places, stops, rings in 
 The continent overview v55 (`../research/blockout/README.md`, "v55"; Matt's brief of 27 Oct). These are proposals; this brief is unchanged until the lane adopts them.
 
 - **Coordinates**: the isles move 256 px south with the coast band's stretch (`geo55.P`): Lagoon Landing to (6560, 6456), the Lagoon pier to (6480, 6406).
-- **Lagoon Landing, medium (17 buildings)**, organised round the lagoon (the East Strand added on its east shore): boathouses and stilt houses on the lagoon front, Net Row with the net and sail lofts, Pier Lane to the ferry pier, Bar Lane to the Shell Bar, and the boatyard.
+- **Lagoon Landing, medium (18 buildings)**, organised round the lagoon (the East Strand added on its east shore): boathouses and stilt houses on the lagoon front, Net Row with the net and sail lofts, Pier Lane to the ferry pier, Bar Lane to the Shell Bar, and the boatyard.
