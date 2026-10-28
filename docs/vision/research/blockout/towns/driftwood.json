@@ -685,7 +685,10 @@
  "ground": {
   "centre": "worn earth",
   "yards": "gardens",
-  "edges": "fields"
+  "edges": "fields",
+  "materials_cells": {
+   "sand": 597
+  }
  },
  "terrain": {
   "box_cells": [

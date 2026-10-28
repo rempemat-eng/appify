@@ -1211,7 +1211,11 @@
  "ground": {
   "centre": "packed earth and the green",
   "yards": "wood yards and gardens",
-  "edges": "the clearing's fields, the woods"
+  "edges": "the clearing's fields, the woods",
+  "materials_cells": {
+   "worn paving": 100,
+   "packed earth": 1454
+  }
  },
  "terrain": {
   "box_cells": [

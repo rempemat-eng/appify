@@ -712,7 +712,13 @@
  "ground": {
   "centre": "worn earth",
   "yards": "gardens",
-  "edges": "fields"
+  "edges": "fields",
+  "materials_cells": {
+   "mudflat": 77,
+   "salt marsh": 31,
+   "worn paving": 948,
+   "packed earth": 234
+  }
  },
  "terrain": {
   "box_cells": [

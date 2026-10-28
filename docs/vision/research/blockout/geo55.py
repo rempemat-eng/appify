@@ -650,6 +650,7 @@ def v55_paint(T):
     rec['plans'] = TP.finish(T, towns, sys.modules[__name__])
     farms = central_green(T, TW)
     settled_margins(T)
+    TP.ground(T, rec['plans'], towns, sys.modules[__name__])        # what each town's ground is made of (a tint, not a kind)
     rec['towns'] = towns; rec['farms'] = farms
     return rec
 
@@ -901,6 +902,7 @@ def map_state(S):
             'routes': {nm: (kind, feats) for nm, (pts, kind, feats) in g.ROUTES.items()}, 'crater_mask': T['crater_mask'],
             'craters': T['craters'], 'stats_home': S['res'], 'hero': S['stats']['v53']['hero'], 'towns': S['town_rec'],
             'farms': S['stats']['v55']['farms'], 'closed': CLOSED, 'dims': (NEW_W, NEW_H), 'plans': S['plans'],
+            'mat': T.get('mat'), 'materials': __import__('town_plans').MATERIALS,
             'tables': {'SETTLE': dict(g.SETTLE), 'STATIONS': dict(g.STATIONS), 'SHORTCUTS': list(g.SHORTCUTS), 'BRIDGES': dict(g.BRIDGES),
                        'CIRCLE': V.CIRCLE, 'CROSSROADS': V.CROSSROADS, 'CRATERS': dict(V.CRATERS), 'POI53': dict(V.POI53),
                        'WAYSTONES': dict(V.WAYSTONES), 'BUILT': dict(V.BUILT), 'ACT1': list(V.ACT1), 'PEAK_NAMES': list(V54.PEAK_NAMES),

@@ -2304,7 +2304,12 @@
  "ground": {
   "centre": "packed sand street, boardwalks",
   "yards": "sand and adobe yards",
-  "edges": "irrigated gardens along the Amber; desert round it"
+  "edges": "irrigated gardens along the Amber; desert round it",
+  "materials_cells": {
+   "packed sand": 7043,
+   "adobe yards": 627,
+   "dry gravel": 191
+  }
  },
  "terrain": {
   "box_cells": [

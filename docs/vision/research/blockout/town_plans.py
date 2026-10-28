@@ -738,8 +738,8 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
 # fields at the edges; Neon Harbour's ground layered by age, green only in its planned pockets, and its edges (the delta's
 # mud and salt marsh, Canalside's market gardens, the heath and dunes on the Cape Road, bare rock and concrete on the cape).
 MATERIALS = {   # code: (name, rgb, how much of it is mixed into the ground's colour)
-    1: ('worn cobbles', (150, 138, 120), 0.55), 2: ('composite slab', (172, 186, 198), 0.7), 3: ('patched paving', (140, 140, 146), 0.6),
-    4: ('steel deck plates', (98, 110, 124), 0.7), 5: ('terrace stone', (176, 168, 150), 0.55), 6: ('made land, paved', (150, 160, 170), 0.6),
+    1: ('worn cobbles', (140, 138, 140), 0.75), 2: ('composite slab', (176, 192, 206), 0.8), 3: ('patched paving', (128, 134, 146), 0.75),
+    4: ('steel deck plates', (96, 110, 128), 0.8), 5: ('terrace stone', (156, 160, 168), 0.75), 6: ('made land, paved', (146, 156, 170), 0.75),
     7: ('mudflat', (128, 118, 98), 0.6), 8: ('salt marsh', (120, 134, 104), 0.5), 9: ('heath and scrub', (150, 146, 104), 0.4),
     10: ('dunes', (214, 198, 150), 0.5), 11: ('bare rock', (138, 134, 128), 0.6), 12: ('concrete apron', (188, 188, 182), 0.65),
     13: ('packed sand', (212, 184, 136), 0.55), 14: ('adobe yards', (196, 146, 112), 0.5), 15: ('basalt setts', (92, 88, 90), 0.6),
@@ -790,34 +790,36 @@ def ground(T, plans, towns, X):
     P = plans.get('neon-harbour')
     if P:
         ts = {t.name.split(': ', 1)[1]: t for nm, t in towns.items() if nm.startswith('Neon Harbour')}
-        built = np.zeros((H, W), bool)
-        for t in ts.values():
+        lab = np.zeros((H, W), np.int8)                                 # each built cell labelled with its district's material
+        for n_, t in ts.items():
+            code = NEON_MAT[n_]
             for bd in t.buildings:
-                built[bd['y'] // CELL:(bd['y'] + bd['h']) // CELL, bd['x'] // CELL:(bd['x'] + bd['w']) // CELL] = True
-        for t in ts.values():
-            for s in t.streets:
-                for pc in s['pieces']:
+                lab[bd['y'] // CELL:(bd['y'] + bd['h']) // CELL, bd['x'] // CELL:(bd['x'] + bd['w']) // CELL] = code
+            for st in t.streets:
+                for pc in st['pieces']:
                     for (ax, ay), (bx, by) in zip(pc, pc[1:]):
-                        built[int(min(ay, by) // CELL):int(max(ay, by) // CELL) + 1, int(min(ax, bx) // CELL):int(max(ax, bx) // CELL) + 1] = True
-        city = (ndi.distance_transform_edt(~built) * CELL <= 96) & T['land']
-        names = list(ts); cx = np.array([ts[n].centre[0] for n in names], float); cy = np.array([ts[n].centre[1] for n in names], float)
-        rr, cc = np.nonzero(city)
-        px_, py_ = (cc + 0.5) * CELL, (rr + 0.5) * CELL
-        near = np.argmin((px_[:, None] - cx[None]) ** 2 + (py_[:, None] - cy[None]) ** 2, axis=1)
-        code = np.array([NEON_MAT[n] for n in names], np.int8)[near]
-        green = np.isin(K[rr, cc], ['garden', 'orchard', 'field', 'field2', 'hedge'])      # the planned pockets stay green
-        paved = street[rr, cc] | yard[rr, cc] | opn[rr, cc] | np.isin(K[rr, cc], ['apron', 'pier', 'crane'])
-        mat[rr[paved & ~green], cc[paved & ~green]] = code[paved & ~green]
-        mat[city & ~built & opn & (mat == 0)] = 6
+                        lab[int(min(ay, by) // CELL):int(max(ay, by) // CELL) + 1, int(min(ax, bx) // CELL):int(max(ax, bx) // CELL) + 1] = code
+            for q in t.spaces:
+                if 'cells' in q:
+                    cx_, cy_, cw_, ch_ = q['cells']; lab[cy_:cy_ + ch_, cx_:cx_ + cw_] = code
+        built = lab > 0
+        # the city: within 48 px of what is built, and the blocks the streets close round; its ground by its nearest district
+        city = ndi.binary_fill_holes(ndi.binary_closing(ndi.distance_transform_edt(~built) * CELL <= 48, iterations=6)) & T['land']
+        _, (iy, ix) = ndi.distance_transform_edt(~built, return_indices=True)
+        near = lab[iy, ix]
+        green = np.isin(K, ['garden', 'orchard', 'field', 'field2', 'hedge'])            # the planned pockets stay green
+        paved = city & ~green & (street | yard | opn | np.isin(K, ['apron', 'pier', 'crane', 'quay']))
+        mat[paved] = near[paved]
+        made = paved & (ndi.distance_transform_edt(~sea) * CELL <= 32) & (mat != 4)      # the made land along the waterfront
+        mat[made] = 6
         # the edges: the delta's mud and salt marsh, the Cape Road's heath and dunes, the cape's rock and apron
         dsea = ndi.distance_transform_edt(~(sea | np.isin(K, ['river', 'channel', 'creek']))) * CELL
         land_open = T['land'] & opn & ~city & (mat == 0)
-        delta = T.get('delta')
-        dm = np.zeros((H, W), bool)
-        if isinstance(delta, np.ndarray) and delta.shape == (H, W):
-            dm = ndi.binary_dilation(delta.astype(bool), iterations=8)
-        else:
-            dm[int(4200 // CELL):int(5400 // CELL), int(8900 // CELL):int(9900 // CELL)] = True
+        dm = np.zeros((H, W), bool)                                     # the delta: its arms and 12 cells round them
+        for arm in (T.get('delta') or []):
+            a_ = np.asarray(arm, float)
+            dm[np.clip((a_[:, 1] // CELL).astype(int), 0, H - 1), np.clip((a_[:, 0] // CELL).astype(int), 0, W - 1)] = True
+        dm = ndi.distance_transform_edt(~dm) <= 12
         mat[land_open & dm & (dsea <= 24)] = 7
         mat[land_open & dm & (dsea > 24) & (dsea <= 96)] = 8
         cr = np.asarray(T['route_px']['Cape Road'], float)

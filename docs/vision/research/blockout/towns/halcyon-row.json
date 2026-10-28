@@ -713,7 +713,16 @@
  "ground": {
   "centre": "worn earth",
   "yards": "gardens",
-  "edges": "fields"
+  "edges": "fields",
+  "materials_cells": {
+   "patched paving": 1720,
+   "steel deck plates": 205,
+   "heath and scrub": 1967,
+   "dunes": 78,
+   "bare rock": 717,
+   "sand": 61,
+   "worn paving": 738
+  }
  },
  "terrain": {
   "box_cells": [

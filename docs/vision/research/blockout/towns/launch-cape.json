@@ -449,7 +449,11 @@
  "ground": {
   "centre": "worn earth",
   "yards": "gardens",
-  "edges": "fields"
+  "edges": "fields",
+  "materials_cells": {
+   "bare rock": 3766,
+   "concrete apron": 1181
+  }
  },
  "terrain": {
   "box_cells": [

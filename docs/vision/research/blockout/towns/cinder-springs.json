@@ -433,7 +433,11 @@
  "ground": {
   "centre": "worn earth",
   "yards": "gardens",
-  "edges": "fields"
+  "edges": "fields",
+  "materials_cells": {
+   "basalt setts": 782,
+   "ash yards": 813
+  }
  },
  "terrain": {
   "box_cells": [

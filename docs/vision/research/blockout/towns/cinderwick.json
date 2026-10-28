@@ -946,7 +946,11 @@
  "ground": {
   "centre": "basalt quay, cinder lanes",
   "yards": "black sand and ash",
-  "edges": "the black-sand beach"
+  "edges": "the black-sand beach",
+  "materials_cells": {
+   "basalt setts": 1441,
+   "ash yards": 404
+  }
  },
  "terrain": {
   "box_cells": [

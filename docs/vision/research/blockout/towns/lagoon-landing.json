@@ -1142,7 +1142,12 @@
  "ground": {
   "centre": "sand lanes and boardwalks",
   "yards": "sand",
-  "edges": "reef shallows in the lagoon"
+  "edges": "reef shallows in the lagoon",
+  "materials_cells": {
+   "boardwalk": 836,
+   "sand": 3270,
+   "reef shallows": 1012
+  }
  },
  "terrain": {
   "box_cells": [

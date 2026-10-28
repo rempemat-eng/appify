@@ -1804,7 +1804,11 @@
  "ground": {
   "centre": "brick setts and cinder paths",
   "yards": "cinder yards",
-  "edges": "allotments and spoil"
+  "edges": "allotments and spoil",
+  "materials_cells": {
+   "brick setts": 1800,
+   "cinder yards": 4008
+  }
  },
  "terrain": {
   "box_cells": [

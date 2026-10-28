@@ -1346,7 +1346,12 @@
  "ground": {
   "centre": "packed sand and stone round the pool",
   "yards": "adobe yards",
-  "edges": "irrigated green only along the two channels"
+  "edges": "irrigated green only along the two channels",
+  "materials_cells": {
+   "packed sand": 1538,
+   "adobe yards": 109,
+   "dry gravel": 2178
+  }
  },
  "terrain": {
   "box_cells": [

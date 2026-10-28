@@ -298,7 +298,11 @@
  "ground": {
   "centre": "worn earth",
   "yards": "gardens",
-  "edges": "fields"
+  "edges": "fields",
+  "materials_cells": {
+   "packed sand": 140,
+   "adobe yards": 68
+  }
  },
  "terrain": {
   "box_cells": [

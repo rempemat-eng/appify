@@ -2665,7 +2665,11 @@
  "ground": {
   "centre": "the square's worn paving",
   "yards": "gardens",
-  "edges": "fields and orchards on the river terrace"
+  "edges": "fields and orchards on the river terrace",
+  "materials_cells": {
+   "worn paving": 3894,
+   "packed earth": 339
+  }
  },
  "terrain": {
   "box_cells": [

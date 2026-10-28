@@ -1250,7 +1250,11 @@
  "ground": {
   "centre": "slate flags and stone steps",
   "yards": "stone-walled terraces",
-  "edges": "walled in-fields and sheepfolds"
+  "edges": "walled in-fields and sheepfolds",
+  "materials_cells": {
+   "slate flags": 869,
+   "stone terraces": 400
+  }
  },
  "terrain": {
   "box_cells": [

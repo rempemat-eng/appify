@@ -4688,7 +4688,20 @@
   "docks": "steel deck plates, crane rails, painted loading bays",
   "Heights": "terraces, stairs and raised walks to the Skyport; the maglev on its viaduct",
   "green": "only in planned pockets: the park, square trees, courtyard plants, roof gardens",
-  "edges": "mudflats and salt marsh at the delta, allotments and market gardens at Canalside, heath, scrub and dunes on the Cape Road; bare rock and concrete apron at the cape"
+  "edges": "mudflats and salt marsh at the delta, allotments and market gardens at Canalside, heath, scrub and dunes on the Cape Road; bare rock and concrete apron at the cape",
+  "materials_cells": {
+   "worn cobbles": 4107,
+   "composite slab": 3679,
+   "patched paving": 5240,
+   "steel deck plates": 4360,
+   "terrace stone": 2961,
+   "made land, paved": 940,
+   "heath and scrub": 2117,
+   "dunes": 58,
+   "sand": 61,
+   "worn paving": 1657,
+   "packed earth": 47
+  }
  },
  "terrain": {
   "box_cells": [

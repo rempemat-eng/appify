@@ -707,6 +707,7 @@ def compose(S, M, R, ink, s, base, k, ox, oy, Wc, Hc, paths, lines, mode, title,
     d = ImageDraw.Draw(canvas, 'RGBA')
     draw_lines(d, lines, P, R, ink, s)
     draw_towns(d, S, R, ink, P, s, k)
+    neon_accents(d, S, P, s, k, lines)
     draw_closed_pass(d, S, M, R, ink, P, s)
     draw_cape(d, S, M, R, ink, P, s)
     if box is None:
@@ -799,6 +800,17 @@ def town_inset(S, M, R, ink, cg, cid, rgb, sea_rgb, P, ppc):
         if len(q) >= 2:
             d.line(q, fill=ink + (90 if st['class'] != 'close' else 60,), width=1)
     draw_towns(d, S, R, ink, Pf, max(1.0, ppc / 4), kb)
+    if P['id'] == 'neon-harbour':
+        mat = S.get('mat')
+        if mat is not None:                                          # the Company district's slab modules: light lines every 4 cells
+            sub = mat[r0:r0 + h, c0:c0 + w]
+            for rr in range(0, h, 4):
+                for cc in np.nonzero(sub[rr] == 2)[0]:
+                    d.line([(cc * ppc, rr * ppc), ((cc + 1) * ppc, rr * ppc)], fill=(210, 236, 250, 150), width=1)
+            for cc in range(0, w, 4):
+                for rr in np.nonzero(sub[:, cc] == 2)[0]:
+                    d.line([(cc * ppc, rr * ppc), (cc * ppc, (rr + 1) * ppc)], fill=(210, 236, 250, 150), width=1)
+        neon_accents(d, S, Pf, max(1.0, ppc / 3), kb, rail_lines(S))
     dfn = {d_['id']: d_['function'] for d_ in P['districts']}
     for b in P['buildings']:
         x, y, bw, bh = b['rect_px']; X0, Y0 = Pf(x, y); X1, Y1 = Pf(x + bw, y + bh)
@@ -937,19 +949,90 @@ def town_inset(S, M, R, ink, cg, cid, rgb, sea_rgb, P, ppc):
 
 def class_grid(S, R, M):
     """map54's classes; a land cell left without one (a route cell whose nearest ground was sea, at a bridge's end) takes
-    the class of the nearest classed land cell."""
+    the class of the nearest classed land cell. The city's paved ground (the town plans' materials 1 to 6, the cape's
+    apron) is paved, so no tree or tuft is stamped on it."""
     cg, names_, cid, cols = M54.class_grid(S, R, M)
     hole = S['land'] & (cg < 0)
     if hole.any():
         _, (iy, ix) = ndi.distance_transform_edt(~(S['land'] & (cg >= 0)), return_indices=True)
         cg = np.where(hole, cg[iy, ix], cg)
+    mat = S.get('mat')
+    if mat is not None and 'paved' in cid:
+        cg = np.where(S['land'] & np.isin(mat, [1, 2, 3, 4, 5, 6, 12]), cid['paved'], cg)
     return cg, names_, cid, cols
+
+
+def ground_tints(rgb, S):
+    """The towns' ground (town_plans.MATERIALS): each material mixed into the cell's colour, a subtle change on the same cells;
+    the reef shallows tint the sea instead."""
+    mat = S.get('mat')
+    if mat is None:
+        return rgb
+    rgb = rgb.copy()
+    import town_plans as TP                                          # the table as it is now (the state keeps the codes)
+    for code, (nm, col, a) in TP.MATERIALS.items():
+        m = (mat == code) & S['land']
+        if m.any():
+            rgb[m] = rgb[m] * (1 - a) + np.array(col, np.float32) * a
+    return rgb
+
+
+def sea_tints(sea_rgb, S):
+    mat = S.get('mat')
+    if mat is None:
+        return sea_rgb
+    sea_rgb = sea_rgb.copy()
+    m = (mat == 23) & ~S['land']
+    if m.any():
+        import town_plans as TP
+        nm, col, a = TP.MATERIALS[23]
+        sea_rgb[m] = sea_rgb[m] * (1 - a) + np.array(col, np.float32) * a
+    return sea_rgb
+
+
+NEON_CYAN, NEON_MAGENTA = (64, 232, 240), (236, 72, 196)
+
+
+def neon_accents(d, S, P, s, k, lines=()):
+    """Neon Harbour's retro-future ground on the overview: thin cyan and magenta light strips along both kerbs of its main and
+    side streets (on the cell lines), and a cyan strip beside the maglev into the terminus."""
+    plan = (S.get('plans') or {}).get('neon-harbour')
+    if not plan:
+        return
+    wpx = max(1, int(round(0.6 * s)))
+    for st in plan['streets']:
+        if st['class'] not in ('main', 'side'):
+            continue
+        hw = st['width_cells'] * CELL / 2 - 2
+        v = st['vertices_px']
+        for (ax, ay), (bx, by) in zip(v, v[1:]):
+            L = math.hypot(bx - ax, by - ay)
+            if L < 8:
+                continue
+            nx, ny = -(by - ay) / L, (bx - ax) / L
+            if nx + ny > 0:
+                nx, ny = -nx, -ny                                     # cyan on the north or west kerb, magenta on the other
+            d.line([P(ax + nx * hw, ay + ny * hw), P(bx + nx * hw, by + ny * hw)], fill=NEON_CYAN + (230,), width=wpx)
+            d.line([P(ax - nx * hw, ay - ny * hw), P(bx - nx * hw, by - ny * hw)], fill=NEON_MAGENTA + (220,), width=wpx)
+    x0, y0, x1, y1 = plan['footprint_px']
+    for nm, kind, pts, way in lines:
+        if 'maglev' not in nm:
+            continue
+        q = [(x, y) for x, y in pts if x0 - 600 <= x <= x1 and y0 - 600 <= y <= y1]
+        if len(q) >= 2:
+            off = 6
+            qq = []
+            for i, (x, y) in enumerate(q):
+                a_, b_ = q[max(0, i - 1)], q[min(len(q) - 1, i + 1)]
+                L = math.hypot(b_[0] - a_[0], b_[1] - a_[1]) or 1
+                qq.append(P(x - (b_[1] - a_[1]) / L * off, y + (b_[0] - a_[0]) / L * off))
+            d.line(qq, fill=NEON_CYAN + (235,), width=wpx)
 
 
 def render_all(S, M):
     R, ink = load_palette(M.ROOT)
     cg, names_, cid, cols = class_grid(S, R, M)
-    rgb = M54.cell_colours(S, R, cg, cid, cols); sea_rgb = M54.sea_colours(S, R)
+    rgb = ground_tints(M54.cell_colours(S, R, cg, cid, cols), S); sea_rgb = sea_tints(M54.sea_colours(S, R), S)
     paths = act1_path(S, M); lines = rail_lines(S)
     outs = [os.environ.get('MAP55_OUT')] if os.environ.get('MAP55_OUT') else []
     outs.append(M.HERE)

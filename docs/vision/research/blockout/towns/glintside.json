@@ -509,7 +509,14 @@
  "ground": {
   "centre": "worn earth",
   "yards": "gardens",
-  "edges": "fields"
+  "edges": "fields",
+  "materials_cells": {
+   "worn cobbles": 2160,
+   "patched paving": 598,
+   "steel deck plates": 35,
+   "made land, paved": 82,
+   "packed earth": 47
+  }
  },
  "terrain": {
   "box_cells": [

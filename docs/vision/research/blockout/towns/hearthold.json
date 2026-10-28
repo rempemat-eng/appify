@@ -2167,7 +2167,11 @@
  "ground": {
   "centre": "basalt setts",
   "yards": "ash and basalt yards",
-  "edges": "vines and barley on the old flow's weathered ash"
+  "edges": "vines and barley on the old flow's weathered ash",
+  "materials_cells": {
+   "basalt setts": 2631,
+   "ash yards": 2975
+  }
  },
  "terrain": {
   "box_cells": [
