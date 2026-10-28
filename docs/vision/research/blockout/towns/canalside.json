@@ -684,10 +684,10 @@
  ],
  "game_layout": {
   "arrival": "Lull Road",
-  "first_view": "Canalside from the Lull Road: the workshop ahead",
+  "first_view": "Canalside from the Lull Road: the workshop, Canalside's largest building ahead",
   "landmarks": [
    {
-    "name": "the workshop",
+    "name": "the workshop, Canalside's largest building",
     "xy": [
      10404,
      4552

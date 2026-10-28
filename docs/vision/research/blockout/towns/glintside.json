@@ -481,10 +481,10 @@
  ],
  "game_layout": {
   "arrival": "Old Bridges",
-  "first_view": "Glintside from the Old Bridges: the a family house ahead",
+  "first_view": "Glintside from the Old Bridges: a family house, Glintside's largest building ahead",
   "landmarks": [
    {
-    "name": "the a family house",
+    "name": "a family house, Glintside's largest building",
     "xy": [
      11200,
      4208

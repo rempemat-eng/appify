@@ -398,10 +398,10 @@
  "outskirts": [],
  "game_layout": {
   "arrival": "Ember Way",
-  "first_view": "Cinder Springs from the Ember Way: the a cottage ahead",
+  "first_view": "Cinder Springs from the Ember Way: a cottage, Cinder Springs's largest building ahead",
   "landmarks": [
    {
-    "name": "the a cottage",
+    "name": "a cottage, Cinder Springs's largest building",
     "xy": [
      1860,
      5756

@@ -270,10 +270,10 @@
  "outskirts": [],
  "game_layout": {
   "arrival": "Lode Track",
-  "first_view": "the Lode from the Lode Track: the a cottage ahead",
+  "first_view": "the Lode from the Lode Track: a cottage, the Lode's largest building ahead",
   "landmarks": [
    {
-    "name": "the a cottage",
+    "name": "a cottage, the Lode's largest building",
     "xy": [
      2800,
      1816

@@ -414,10 +414,10 @@
  ],
  "game_layout": {
   "arrival": "the Pad Road",
-  "first_view": "Launch Cape from the the Pad Road: the a hangar ahead",
+  "first_view": "Launch Cape from the the Pad Road: a hangar, Launch Cape's largest building ahead",
   "landmarks": [
    {
-    "name": "the a hangar",
+    "name": "a hangar, Launch Cape's largest building",
     "xy": [
      12156,
      6204

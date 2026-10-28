@@ -690,7 +690,7 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
                 'quiet_corners': [{'what': a, 'xy': list(b)} for a, b in GL['quiet_corners']]}
     else:
         big = max(bl, key=lambda b: b['rect_px'][2] * b['rect_px'][3]) if bl else None
-        lm = {'name': f"the {big['purpose'].replace('the ', '')}" if big else name, 'xy': [big['rect_px'][0] + big['rect_px'][2] // 2, big['rect_px'][1] + big['rect_px'][3] // 2] if big else list(lead.centre)}
+        lm = {'name': f"{big['purpose']}, {name}'s largest building" if big else name, 'xy': [big['rect_px'][0] + big['rect_px'][2] // 2, big['rect_px'][1] + big['rect_px'][3] // 2] if big else list(lead.centre)}
         lms = [lm]
         for e in entries:                                          # a small place: the first building seen from each way in
             sd = lambda xy: max(abs(e[0] - xy[0]) / CELL / 40, abs(e[1] - xy[1]) / CELL / 22.5)

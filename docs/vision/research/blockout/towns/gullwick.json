@@ -466,10 +466,10 @@
  "outskirts": [],
  "game_layout": {
   "arrival": "Coast Path",
-  "first_view": "Gullwick from the Coast Path: the a cottage ahead",
+  "first_view": "Gullwick from the Coast Path: a cottage, Gullwick's largest building ahead",
   "landmarks": [
    {
-    "name": "the a cottage",
+    "name": "a cottage, Gullwick's largest building",
     "xy": [
      7972,
      5012

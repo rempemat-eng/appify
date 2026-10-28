@@ -678,10 +678,10 @@
  "outskirts": [],
  "game_layout": {
   "arrival": "Cape Road",
-  "first_view": "Halcyon Row from the Cape Road: the hall ahead",
+  "first_view": "Halcyon Row from the Cape Road: the hall, Halcyon Row's largest building ahead",
   "landmarks": [
    {
-    "name": "the hall",
+    "name": "the hall, Halcyon Row's largest building",
     "xy": [
      11948,
      5696
