@@ -1,0 +1,44 @@
+{
+  "commit": "601849dc38485b033335eeeae9e95c1bb5241476",
+  "purpose": "Latest reviewed source layout, not the legacy migration input. Newer shapes must be reviewed explicitly.",
+  "layout": {
+    "valley": {
+      "ridge": [0, -1],
+      "woodland": [-1, 0],
+      "garden": [0, 0],
+      "riverside": [1, 0],
+      "town": [0, 1],
+      "park": [1, 1],
+      "harbour": [0, 2],
+      "headland": [1, 2],
+      "halt": [-1, 1]
+    },
+    "steam": {
+      "junction": [0, 0],
+      "canal": [0, 1]
+    },
+    "west": {
+      "gulch": [0, 0],
+      "oasis": [-1, 0]
+    },
+    "lava": {
+      "caldera": [0, -1],
+      "springs": [1, -1],
+      "hearthold": [0, 0],
+      "scorch": [0, 1]
+    },
+    "neon": {
+      "neon": [0, 0],
+      "skyport": [1, 0]
+    },
+    "space": {
+      "station": [0, 0]
+    },
+    "moon": {
+      "lumen": [0, 0]
+    },
+    "home": {
+      "home": [0, 0]
+    }
+  }
+}
