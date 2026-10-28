@@ -1,0 +1,3 @@
+FAIL art/footbridge_4                         {'blocker': 0, 'fault': 1, 'polish': 2}  detail.volume
+
+1 assets, 1 fail, 0 pass. Reports and sheets in /workspace/scratch/13b98d2e0841/palette-editor-review/docs/reviews/editor-takeover/y12/gates/asset-8f8bc219e452edf651df

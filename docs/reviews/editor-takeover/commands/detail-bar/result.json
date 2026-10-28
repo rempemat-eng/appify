@@ -1,0 +1,28 @@
+{
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-m",
+    "scripts.art.kit.detail_bar",
+    "--out",
+    "/workspace/scratch/13b98d2e0841/palette-editor-review/docs/reviews/editor-takeover/detail",
+    "--swatch",
+    "/workspace/scratch/13b98d2e0841/palette-editor-review/docs/reviews/editor-takeover/swatches/swatch_0_plateau.png"
+  ],
+  "started_at": "2026-10-28T17:47:28Z",
+  "duration_seconds": 20.618,
+  "exit_code": 0,
+  "source_before": {
+    "head": "04228475cbd9fb76e0a0a9af52240d7e40a5d858",
+    "tree": "0f1bbd356f4c4a20fffd2117a8d0f548063ec12f",
+    "tracked_changes": "",
+    "pass": true
+  },
+  "source_after": {
+    "head": "04228475cbd9fb76e0a0a9af52240d7e40a5d858",
+    "tree": "0f1bbd356f4c4a20fffd2117a8d0f548063ec12f",
+    "tracked_changes": "",
+    "pass": true
+  },
+  "stdout_sha256": "af4ac9b568a026e7ad50dec92b99b1c89a8b06adb6e806374cb5567d07a82a76",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

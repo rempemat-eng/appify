@@ -1,0 +1,110 @@
+{
+ "id": "kitlab_tiers/ground_baked",
+ "file": "game/zones/kitlab_tiers/ground_baked.png",
+ "sha256": "8cbfe7837c7fb473fc976b61d3a4cf2830ed784dd5adbcb4a127ea4084962f19",
+ "kind": "ground_baked",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  960,
+  552
+ ],
+ "status": "fail",
+ "counts": {
+  "blocker": 0,
+  "fault": 4,
+  "polish": 0
+ },
+ "detail_bar": null,
+ "findings": [
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    168,
+    96,
+    336,
+    145
+   ],
+   "message": "a flat foliage area of one tone, 5003 px (0.91 H^2)",
+   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side",
+   "score": 0.9136230825420014,
+   "threshold": 0.14,
+   "subject": "foliage",
+   "extra": {},
+   "box_source": [
+    168,
+    96,
+    336,
+    145
+   ]
+  },
+  {
+   "detector": "logic.stray_line",
+   "severity": "fault",
+   "box": [
+    190,
+    271,
+    261,
+    288
+   ],
+   "message": "a broken wood line 65 px long and 11 px wide that belongs to nothing: a stray dotted line",
+   "fix": "find the sprite that draws it (a trunk, a rope, a post?) and draw it as one solid shaded form, or remove it",
+   "score": 0.8783783783783784,
+   "threshold": 0.7,
+   "subject": "artefact",
+   "extra": {},
+   "box_source": [
+    190,
+    271,
+    261,
+    288
+   ]
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    505,
+    174,
+    567,
+    236
+   ],
+   "message": "a flat foliage area of one tone, 1645 px (0.30 H^2)",
+   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side",
+   "score": 0.3004017531044558,
+   "threshold": 0.14,
+   "subject": "foliage",
+   "extra": {},
+   "box_source": [
+    505,
+    174,
+    567,
+    236
+   ]
+  },
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    140,
+    73,
+    184,
+    155
+   ],
+   "message": "a flat foliage area of one tone, 892 px (0.16 H^2)",
+   "fix": "draw the material and its form: 4 to 5 tones of its ramp in clusters (planks, staves, courses, ripples), a lit top plane and a shaded side",
+   "score": 0.16289262235208182,
+   "threshold": 0.14,
+   "subject": "foliage",
+   "extra": {},
+   "box_source": [
+    140,
+    73,
+    184,
+    155
+   ]
+  }
+ ]
+}

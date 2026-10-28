@@ -1,0 +1,3 @@
+FAIL terrain/over_path_over_earth_face        {'blocker': 1, 'fault': 12, 'polish': 0}  detail.flat, logic.void
+
+1 assets, 1 fail, 0 pass. Reports and sheets in /workspace/scratch/13b98d2e0841/palette-editor-review/docs/reviews/editor-takeover/y12/gates/asset-322a0f5ac42fce90f233

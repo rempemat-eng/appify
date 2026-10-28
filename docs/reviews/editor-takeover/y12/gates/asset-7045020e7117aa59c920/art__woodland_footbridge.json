@@ -1,0 +1,116 @@
+{
+ "id": "art/woodland_footbridge",
+ "file": "game/kit/props/art/woodland_footbridge.png",
+ "sha256": "a977c909a46a156c3afe035da0d9af1ecaa834c464c0e251ed40278633453d7f",
+ "kind": "woodland_footbridge",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  100,
+  120
+ ],
+ "status": "fail",
+ "counts": {
+  "blocker": 0,
+  "fault": 1,
+  "polish": 2
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 17,
+   "tones": 13.411764705882353,
+   "shapes": 26.058823529411764
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.497,
+  "tones_ratio": 0.497,
+  "shapes_ratio": 0.517,
+  "passed": false,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.volume",
+   "severity": "fault",
+   "box": [
+    18,
+    8,
+    82,
+    106
+   ],
+   "message": "art/woodland_footbridge: the red reads 2D: 2 light planes, luminance spread 3",
+   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts",
+   "score": 2.0,
+   "threshold": 3,
+   "subject": "art/woodland_footbridge",
+   "extra": {
+    "area": 437,
+    "area_h": 0.07980277574872169,
+    "flat": 0.13272311212814644,
+    "flat_h": 0.010591672753834916,
+    "tones": 4,
+    "planes": 2,
+    "lrange": 2.903003692626953,
+    "gx": -9.014909561748928,
+    "gy": -3.899783946367078,
+    "edges": 0.14615384615384616
+   },
+   "box_source": [
+    18,
+    8,
+    82,
+    106
+   ]
+  },
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    11,
+    6,
+    89,
+    108
+   ],
+   "message": "art/woodland_footbridge: detail bar 0.50 of Eastward's prop band (13.4 tones, 26.1 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)",
+   "score": 0.497,
+   "threshold": 0.9,
+   "subject": "art/woodland_footbridge",
+   "extra": {},
+   "box_source": [
+    11,
+    6,
+    89,
+    108
+   ]
+  },
+  {
+   "detector": "detail.outline",
+   "severity": "polish",
+   "box": [
+    11,
+    6,
+    89,
+    108
+   ],
+   "message": "art/woodland_footbridge: only 17% of the silhouette is drawn in an edge tone",
+   "fix": "close the silhouette in the material's own dark edge tone (the house outline), broken only where the light hits (art-style.md 1)",
+   "score": 0.17232375979112272,
+   "threshold": 0.4,
+   "subject": "art/woodland_footbridge",
+   "extra": {},
+   "box_source": [
+    11,
+    6,
+    89,
+    108
+   ]
+  }
+ ]
+}

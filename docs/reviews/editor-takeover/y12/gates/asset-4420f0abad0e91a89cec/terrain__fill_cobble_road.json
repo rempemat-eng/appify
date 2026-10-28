@@ -1,0 +1,47 @@
+{
+ "id": "terrain/fill_cobble_road",
+ "file": "game/kit/terrain/fill_cobble_road.png",
+ "sha256": "1a85b30b61b75271c43923ef6143abc945bfe399b67afabddfa24c18d3369a6d",
+ "kind": "fill_cobble_road",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  768,
+  768
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 1
+ },
+ "detail_bar": null,
+ "findings": [
+  {
+   "detector": "logic.scale",
+   "severity": "polish",
+   "box": [
+    0,
+    0,
+    148,
+    148
+   ],
+   "message": "terrain/fill_cobble_road: the bare fill's blotches are 13 art px (0.18 H) across; Eastward's are 0.35 to 0.77 H",
+   "fix": "paint blotches 26 to 57 art px across",
+   "score": 0.17567567567567569,
+   "threshold": 0.25,
+   "subject": "terrain/fill_cobble_road",
+   "extra": {
+    "class": "grain",
+    "measure": "blotch"
+   },
+   "box_source": [
+    0,
+    0,
+    148,
+    148
+   ]
+  }
+ ]
+}

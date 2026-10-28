@@ -1,0 +1,70 @@
+{
+ "id": "terrain/decal_bankstone_0",
+ "file": "game/kit/terrain/decal_bankstone_0.png",
+ "sha256": "8d1222c1b4221595ff5761db4c38310958c9ccb5fe23c44ac85184f73a204888",
+ "kind": "decal_bankstone",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  39,
+  25
+ ],
+ "status": "fail",
+ "counts": {
+  "blocker": 0,
+  "fault": 1,
+  "polish": 0
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 0,
+   "tones": 0.0,
+   "shapes": 0.0
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": null,
+  "passed": null,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.volume",
+   "severity": "fault",
+   "box": [
+    6,
+    13,
+    28,
+    23
+   ],
+   "message": "terrain/decal_bankstone_0: the red reads 2D: 1 light planes, luminance spread 4",
+   "fix": "give it volume: a lit top plane, a mid front and a dark side (or a cylinder: a highlight band left of centre and a core shadow right), occlusion where parts meet, and thickness on thin parts",
+   "score": 1.0,
+   "threshold": 3,
+   "subject": "terrain/decal_bankstone_0",
+   "extra": {
+    "area": 140,
+    "area_h": 0.02556610664718773,
+    "flat": 0.25,
+    "flat_h": 0.006391526661796932,
+    "tones": 2,
+    "planes": 1,
+    "lrange": 4.4850006103515625,
+    "gx": -0.5141119981209467,
+    "gy": -17.760764364276397,
+    "edges": 0.4175824175824176
+   },
+   "box_source": [
+    6,
+    13,
+    28,
+    23
+   ]
+  }
+ ]
+}

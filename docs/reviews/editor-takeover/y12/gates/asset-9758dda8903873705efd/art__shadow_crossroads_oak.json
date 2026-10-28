@@ -1,0 +1,44 @@
+{
+ "id": "art/shadow_crossroads_oak",
+ "file": "game/kit/props/art/shadow_crossroads_oak.png",
+ "sha256": "591e13a20b06eb87a8347f179b636618c844a1a3e9e064301cdce921cff114e3",
+ "kind": "shadow_crossroads_oak",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  209,
+  75
+ ],
+ "status": "fail",
+ "counts": {
+  "blocker": 1,
+  "fault": 0,
+  "polish": 0
+ },
+ "detail_bar": null,
+ "findings": [
+  {
+   "detector": "logic.void",
+   "severity": "blocker",
+   "box": [
+    0,
+    0,
+    209,
+    75
+   ],
+   "message": "the screen shows 100% empty black outside the world",
+   "fix": "clamp the camera to the zone bounds from the first frame (snap it to the spawn before damping) and draw the world past every edge the camera can reach",
+   "score": 1.0,
+   "threshold": 0.05,
+   "subject": "camera",
+   "extra": {},
+   "box_source": [
+    0,
+    0,
+    209,
+    75
+   ]
+  }
+ ]
+}

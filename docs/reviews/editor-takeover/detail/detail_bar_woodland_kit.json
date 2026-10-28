@@ -1,0 +1,99 @@
+{
+ "water": {
+  "painted": {
+   "edges": 0.2743,
+   "tones": 12.19,
+   "lone": 0.0571,
+   "flat": 0.2915,
+   "px": 184896,
+   "teeth": 0.0106,
+   "jags": 0.0023,
+   "ruler": 0.1251
+  },
+  "kit": {
+   "edges": 0.2812,
+   "tones": 14.26,
+   "lone": 0.061,
+   "flat": 0.2771,
+   "px": 184896,
+   "teeth": 0.0269,
+   "jags": 0.0047,
+   "ruler": 0.0791
+  },
+  "pass": true
+ },
+ "path": {
+  "painted": {
+   "edges": 0.3061,
+   "tones": 14.33,
+   "lone": 0.0378,
+   "flat": 0.0619,
+   "px": 161856,
+   "teeth": 0.0963,
+   "jags": 0.0434,
+   "ruler": 0.0237
+  },
+  "kit": {
+   "edges": 0.3126,
+   "tones": 14.85,
+   "lone": 0.0397,
+   "flat": 0.0758,
+   "px": 161856,
+   "teeth": 0.0969,
+   "jags": 0.0496,
+   "ruler": 0.0133
+  },
+  "pass": true
+ },
+ "shadow": {
+  "painted": {
+   "edges": 0.3192,
+   "tones": 10.77,
+   "lone": 0.0233,
+   "flat": 0.0119,
+   "px": 152391
+  },
+  "kit": {
+   "edges": 0.3677,
+   "tones": 11.16,
+   "lone": 0.0453,
+   "flat": 0.0134,
+   "px": 152391
+  },
+  "pass": true
+ },
+ "lawn": {
+  "painted": {
+   "edges": 0.2771,
+   "tones": 8.3,
+   "lone": 0.0097,
+   "flat": 0.0312,
+   "px": 1056057
+  },
+  "kit": {
+   "edges": 0.2771,
+   "tones": 8.73,
+   "lone": 0.0121,
+   "flat": 0.046,
+   "px": 1056057
+  },
+  "pass": true
+ },
+ "tiers": {
+  "painted": {
+   "edges": 0.3337,
+   "tones": 13.6,
+   "lone": 0.0417,
+   "flat": 0.0061,
+   "px": 9120
+  },
+  "kit": {
+   "edges": 0.3442,
+   "tones": 17.77,
+   "lone": 0.0403,
+   "flat": 0.0083,
+   "px": 23136
+  },
+  "pass": true
+ }
+}

@@ -1,0 +1,44 @@
+{
+ "id": "terrain/tiers",
+ "file": "game/kit/terrain/tiers.png",
+ "sha256": "6e7cfa3273b320023a2ff1a892739942042261b3488eadf1151b7cbb6d853b5e",
+ "kind": "tiers",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  96,
+  24
+ ],
+ "status": "fail",
+ "counts": {
+  "blocker": 0,
+  "fault": 1,
+  "polish": 0
+ },
+ "detail_bar": null,
+ "findings": [
+  {
+   "detector": "detail.flat",
+   "severity": "fault",
+   "box": [
+    72,
+    5,
+    96,
+    24
+   ],
+   "message": "a thing drawn flat: 1 tones, two cover 100% (0.08 H^2)",
+   "fix": "give it form and material: a lit top plane, a mid front and a dark side (a cylinder: a highlight band and a core shadow), occlusion where it meets the floor, its texture in clusters",
+   "score": 1.0,
+   "threshold": 0.75,
+   "subject": "flat object",
+   "extra": {},
+   "box_source": [
+    72,
+    5,
+    96,
+    24
+   ]
+  }
+ ]
+}

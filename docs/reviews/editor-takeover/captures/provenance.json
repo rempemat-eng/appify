@@ -1,0 +1,161 @@
+{
+  "subject_before": {
+    "head": "04228475cbd9fb76e0a0a9af52240d7e40a5d858",
+    "tree": "0f1bbd356f4c4a20fffd2117a8d0f548063ec12f",
+    "tracked_changes": "",
+    "pass": true
+  },
+  "private_packages": {
+    "libxkbfile1_1.1.0-1build4_amd64.deb": "22ac5b7dca740e606261cebdfaf1a07738e92ad3d123570694374ddb4d5afea2",
+    "xvfb_21.1.12-1ubuntu1.9_amd64.deb": "2011271eabcc2eb460e99995c5ef26e46633e87d04f570e305b62f178f7b452c",
+    "x11-xkb-utils_7.7+5build4_amd64.deb": "ba308c745aaeaeb844cc5e3f61442197b54a7c7dcc3046a2737f7e03003b7e08",
+    "libxfont2_2.0.6-1build1_amd64.deb": "1d5653c395f17f48473fce56cdab30eed16aac017359e6d2c34bc402d85197a0"
+  },
+  "temporary_symlink": {
+    "path": "/usr/bin/xkbcomp",
+    "target": "/workspace/scratch/13b98d2e0841/lead-state/palette-xvfb/root/usr/bin/xkbcomp"
+  },
+  "xvfb_command": [
+    "/workspace/scratch/13b98d2e0841/lead-state/palette-xvfb/root/usr/bin/Xvfb",
+    ":97",
+    "-screen",
+    "0",
+    "1920x1080x24",
+    "-listen",
+    "tcp",
+    "-nolisten",
+    "unix",
+    "-nolisten",
+    "local",
+    "-ac"
+  ],
+  "symlink_cleanup": true,
+  "subject_after": {
+    "head": "04228475cbd9fb76e0a0a9af52240d7e40a5d858",
+    "tree": "0f1bbd356f4c4a20fffd2117a8d0f548063ec12f",
+    "tracked_changes": "",
+    "pass": true
+  },
+  "captures": [
+    {
+      "zone": "woodland_kit",
+      "spawn": "start",
+      "command": [
+        "/workspace/scratch/5f1a1f97c637/prism-verified-engine/Godot_v4.7.2-stable_linux.x86_64",
+        "--path",
+        "/workspace/scratch/13b98d2e0841/palette-editor-review/game",
+        "--rendering-method",
+        "gl_compatibility",
+        "--audio-driver",
+        "Dummy",
+        "--resolution",
+        "1920x1080",
+        "--position",
+        "0,0",
+        "--",
+        "--fresh",
+        "--zone=woodland_kit",
+        "--spawn=start",
+        "--wait=4",
+        "--shot=/workspace/scratch/13b98d2e0841/palette-editor-review/docs/reviews/editor-takeover/captures/woodland_kit-start.png"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 5.995,
+      "source_before": {
+        "head": "04228475cbd9fb76e0a0a9af52240d7e40a5d858",
+        "tree": "0f1bbd356f4c4a20fffd2117a8d0f548063ec12f",
+        "tracked_changes": "",
+        "pass": true
+      },
+      "source_after": {
+        "head": "04228475cbd9fb76e0a0a9af52240d7e40a5d858",
+        "tree": "0f1bbd356f4c4a20fffd2117a8d0f548063ec12f",
+        "tracked_changes": "",
+        "pass": true
+      },
+      "engine_errors": [],
+      "png_present": true,
+      "png_sha256": "973325b0ad5c8bb12ecd6471e9a837545381c15f9c5f3080687c4faa356a58ab"
+    },
+    {
+      "zone": "woodland_kit",
+      "spawn": "undercroft",
+      "command": [
+        "/workspace/scratch/5f1a1f97c637/prism-verified-engine/Godot_v4.7.2-stable_linux.x86_64",
+        "--path",
+        "/workspace/scratch/13b98d2e0841/palette-editor-review/game",
+        "--rendering-method",
+        "gl_compatibility",
+        "--audio-driver",
+        "Dummy",
+        "--resolution",
+        "1920x1080",
+        "--position",
+        "0,0",
+        "--",
+        "--fresh",
+        "--zone=woodland_kit",
+        "--spawn=undercroft",
+        "--wait=4",
+        "--shot=/workspace/scratch/13b98d2e0841/palette-editor-review/docs/reviews/editor-takeover/captures/woodland_kit-undercroft.png"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 5.35,
+      "source_before": {
+        "head": "04228475cbd9fb76e0a0a9af52240d7e40a5d858",
+        "tree": "0f1bbd356f4c4a20fffd2117a8d0f548063ec12f",
+        "tracked_changes": "",
+        "pass": true
+      },
+      "source_after": {
+        "head": "04228475cbd9fb76e0a0a9af52240d7e40a5d858",
+        "tree": "0f1bbd356f4c4a20fffd2117a8d0f548063ec12f",
+        "tracked_changes": "",
+        "pass": true
+      },
+      "engine_errors": [],
+      "png_present": true,
+      "png_sha256": "20d68684fe986a1d319de06601a526067afb6ee11a278a07db8df74c31343e49"
+    },
+    {
+      "zone": "kitlab_tiers",
+      "spawn": "start",
+      "command": [
+        "/workspace/scratch/5f1a1f97c637/prism-verified-engine/Godot_v4.7.2-stable_linux.x86_64",
+        "--path",
+        "/workspace/scratch/13b98d2e0841/palette-editor-review/game",
+        "--rendering-method",
+        "gl_compatibility",
+        "--audio-driver",
+        "Dummy",
+        "--resolution",
+        "1920x1080",
+        "--position",
+        "0,0",
+        "--",
+        "--fresh",
+        "--zone=kitlab_tiers",
+        "--spawn=start",
+        "--wait=4",
+        "--shot=/workspace/scratch/13b98d2e0841/palette-editor-review/docs/reviews/editor-takeover/captures/kitlab_tiers-start.png"
+      ],
+      "exit_code": 0,
+      "duration_seconds": 4.99,
+      "source_before": {
+        "head": "04228475cbd9fb76e0a0a9af52240d7e40a5d858",
+        "tree": "0f1bbd356f4c4a20fffd2117a8d0f548063ec12f",
+        "tracked_changes": "",
+        "pass": true
+      },
+      "source_after": {
+        "head": "04228475cbd9fb76e0a0a9af52240d7e40a5d858",
+        "tree": "0f1bbd356f4c4a20fffd2117a8d0f548063ec12f",
+        "tracked_changes": "",
+        "pass": true
+      },
+      "engine_errors": [],
+      "png_present": true,
+      "png_sha256": "123c5c38c65455ac3f7164736d5f04d7e21528fa0a47e40d47ffcff8359f51d1"
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+ "id": "art/woodland_boulder_5",
+ "file": "game/kit/props/art/woodland_boulder_5.png",
+ "sha256": "8aa61f7e6bf8e765e29731e98dbc6e58bf748968386971c8ee300ce4e87998be",
+ "kind": "woodland_boulder",
+ "biome": "valley",
+ "H": 74.0,
+ "density": 3.0,
+ "size": [
+  90,
+  54
+ ],
+ "status": "pass",
+ "counts": {
+  "blocker": 0,
+  "fault": 0,
+  "polish": 1
+ },
+ "detail_bar": {
+  "ours": {
+   "patches": 6,
+   "tones": 19.333333333333332,
+   "shapes": 32.166666666666664
+  },
+  "band": {
+   "tones": 27.0,
+   "shapes": 50.36,
+   "boxes": 10,
+   "patches": 83
+  },
+  "ratio": 0.639,
+  "tones_ratio": 0.716,
+  "shapes_ratio": 0.639,
+  "passed": false,
+  "group": "prop"
+ },
+ "findings": [
+  {
+   "detector": "detail.bar",
+   "severity": "polish",
+   "box": [
+    4,
+    6,
+    88,
+    52
+   ],
+   "message": "art/woodland_boulder_5: detail bar 0.64 of Eastward's prop band (19.3 tones, 32.2 shapes a patch against 27.0, 50.36)",
+   "fix": "add drawn structure in clusters of two or more pixels: parts, joints, wear, texture of the material, small story details (art-style.md, Eastward's level of detail is required)",
+   "score": 0.639,
+   "threshold": 0.9,
+   "subject": "art/woodland_boulder_5",
+   "extra": {},
+   "box_source": [
+    4,
+    6,
+    88,
+    52
+   ]
+  }
+ ]
+}
