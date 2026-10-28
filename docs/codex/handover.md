@@ -1,5 +1,7 @@
 # Handover: ChatGPT and Hyperagent take over most of the work (28 Oct)
 
+> **Update, 28 Oct 17:24 (Matt):** Codex takes over the entire project until Matt says to switch back to Claude. Claude A is off: the Codex lead also owns art direction, art and map work, and merging. Art and map PRs merge after Matt's OK, not Claude's. Hyperagent is optional and not set up.
+
 Matt, 28 Oct 16:51: Claude is running out of tokens, so ChatGPT (Codex) takes over a lot of the work, coordinated by Hyperagent if that makes sense. This page sets out who does what from now on. [development-plan.md](../vision/development-plan.md) still gives the order of work.
 
 ## Roles
