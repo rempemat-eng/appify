@@ -42,7 +42,8 @@ A quest step completes through its event and `if` condition **or** its separate
 start event may be started by the existing public `start_quest` API. Dialogue
 speaker IDs may occur in multiple files: files merge alphabetically, then
 entries sort by descending integer priority, retaining their original order on
-ties. A missing fallback or empty lines is valid. `talk` still sends its event
+ties. A missing fallback, empty lines array, or blank/whitespace strings is valid.
+`talk` still sends its event
 when no lines match.
 
 ## What reachability establishes

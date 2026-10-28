@@ -329,6 +329,16 @@ class NarrativeValidationTests(unittest.TestCase):
                 self.write('dialogue/speakers.json', value)
                 self.assert_fault('speakers.json')
 
+    def test_blank_dialogue_strings_remain_valid_runtime_data(self):
+        path = self.write('dialogue/speakers.json', speaker([
+            {'lines': ['', '  ', '\t', 'A spoken line.']},
+        ]))
+        before = path.read_bytes()
+        self.assertEqual(self.findings(), [])
+        result = self.cli()
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual(path.read_bytes(), before)
+
     def test_unconditional_dialogue_branch_shadows_later_entries(self):
         self.write('dialogue/speakers.json', speaker([
             {'lines': ['Always first.']},

@@ -229,7 +229,9 @@ class _Validator:
                 if 'priority' in entry and (not _integer(entry['priority']) or entry['priority'] == -2**63):
                     self.fault(file, location + '.priority', 'dialogue.priority',
                                'expected an exact JSON integer whose negated sort key fits Godot int64')
-                self.strings(entry.get('lines', []), file, location + '.lines')
+                lines = entry.get('lines', [])
+                if not isinstance(lines, list) or any(not isinstance(line, str) for line in lines):
+                    self.fault(file, location + '.lines', 'dialogue.lines', 'expected an array of strings')
                 self.condition(entry.get('if'), file, location + '.if')
                 self.speakers[identifier].append((file, location, entry))
 
