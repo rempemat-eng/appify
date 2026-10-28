@@ -1,0 +1,67 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "highgarth_retaining_wall",
+  "name": "Stone terrace retaining walls",
+  "kind": "tier",
+  "biomes": ["highgarth"],
+  "version": 1,
+  "variants": [
+    {
+      "id": "straight_run",
+      "note": "Source construction: Stone walls support the authored terraces. Reuse the W0 shared_rock_cliff physical vocabulary; do not round tier heights or infer collision from a drawn face. Concept variant for review; exact drawing, dimensions and anchors are not approved."
+    },
+    {
+      "id": "stair_return",
+      "note": "Source construction: Stone walls support the authored terraces. Reuse the W0 shared_rock_cliff physical vocabulary; do not round tier heights or infer collision from a drawn face. Concept variant for review; exact drawing, dimensions and anchors are not approved."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "Y14 proposal for Claude A review; no drawing, build, placement or gameplay approval."
+  },
+  "geometry": {
+    "z_sort": "foot"
+  },
+  "placement": {
+    "role": "tier",
+    "ground": {
+      "allow": ["rock", "stone", "paving"],
+      "deny": []
+    },
+    "requires": [],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "other_footprint"
+      }
+    ],
+    "clearance": 0,
+    "orientations": ["any"],
+    "snap": "cell",
+    "composition": "edge",
+    "stages": []
+  },
+  "rendering": {
+    "contact_ao": true
+  },
+  "function": {},
+  "story": {
+    "lore": "Stone walls support the authored terraces. Reuse the W0 shared_rock_cliff physical vocabulary; do not round tier heights or infer collision from a drawn face."
+  },
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Authority: issue149 comment6464788488 and Highgarth town911edac6173ebf4398bcbf54b6171e4e68e62e13; source hashes and exact references are in scripts/highgarth/manifest.json.",
+      "Construction: Stone walls support the authored terraces. Reuse the W0 shared_rock_cliff physical vocabulary; do not round tier heights or infer collision from a drawn face.",
+      "Use and placement: Stone walls support the authored terraces. Reuse the W0 shared_rock_cliff physical vocabulary; do not round tier heights or infer collision from a drawn face.",
+      "Widths: {\"status\":\"deferred; no exact family width in the brief\",\"classes\":[]}",
+      "Status: concept only, outside the live piece library; not approved, drawn, buildable or placeable, including labs.",
+      "Deferred geometry: Claude supplies sprite extents, foot, footprint, overhang, collision, support/deck heights and interaction anchors after review. Planning width/depth are not image bounds.",
+      "Provisional placement: clearance=0 is an unallocated placeholder, NOT permission to obstruct access or omit front landings; relations/orientations/composition require review before promotion. Wall-to-wall fronts must keep route access and deep eaves separate from solids.",
+      "Constraints: older-made, no modern elements, invented signs only/no real script; vermilion scope=none (only the temple gate and pagoda trim in this kit).",
+      "Compatibility: preserve the existing W0 schema identifier and field layout; do not allocate painter/material/runtime/gameplay blocks. Terrain/tier semantics remain deferred under the retained schema-owner decision.",
+      "Size class is provisional review routing only; opaque art dimensions must be measured against the current size guide after drawing. Do not stretch a sprite to match the plan footprint."
+    ]
+  }
+}

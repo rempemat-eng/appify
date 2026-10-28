@@ -1,0 +1,500 @@
+{
+  "schema": "mygame.highgarth_concepts/1",
+  "status": "concept review only",
+  "approved": false,
+  "buildable": false,
+  "placeable": false,
+  "sources": {
+    "source_highgarth.json": {
+      "commit": "911edac6173ebf4398bcbf54b6171e4e68e62e13",
+      "path": "docs/vision/research/blockout/towns/highgarth.json",
+      "blob": "bb6e79e619497d53b96155bce364c3675a7b9f8e",
+      "sha256": "77d250737dd0ef39b23951cabf817a286dda7f430cfeea76824b3c89d36edccb",
+      "fixture": "fixtures/source_highgarth.json"
+    },
+    "piece.schema.json": {
+      "commit": "7e816ab09107424af3fc7b1d01689955de8b57c6",
+      "path": "game/kit/schema/piece.schema.json",
+      "blob": "da824ba6eac1a9110f7ecaddbff7a416adc6a69b",
+      "sha256": "baf021fc840e85c3874497fb9211e9ef2934824559eef601c1066c134f43ad3a",
+      "fixture": "fixtures/piece.schema.json"
+    },
+    "brief.txt": {
+      "fixture": "fixtures/brief.txt",
+      "issue": 149,
+      "comment": 6464788488,
+      "updated_at": "2026-10-28T08:56:07Z",
+      "sha256": "8622c30f820e605348306bea26c977c1daa678c9c4d774da67404663e2b66ed9",
+      "normalization": "comment body with one final LF"
+    }
+  },
+  "units": {
+    "world_px_per_cell": 8,
+    "art_px_per_cell": 24,
+    "density": 3,
+    "plan_dimensions": "world-pixel ground footprints, never image or collision bounds"
+  },
+  "constraints": {
+    "modern_elements": false,
+    "real_script": false,
+    "vermilion_scope": {
+      "highgarth_temple_gate": "gate",
+      "highgarth_pagoda": "trim"
+    }
+  },
+  "source_limits": {
+    "legacy_purpose_labels": ["highgarth-b001"],
+    "machiya_bay_storeys": [
+      {
+        "id": "highgarth-b012",
+        "storeys": 3
+      },
+      {
+        "id": "highgarth-b013",
+        "storeys": 3
+      },
+      {
+        "id": "highgarth-b016",
+        "storeys": 1
+      },
+      {
+        "id": "highgarth-b017",
+        "storeys": 1
+      },
+      {
+        "id": "highgarth-b018",
+        "storeys": 1
+      },
+      {
+        "id": "highgarth-b019",
+        "storeys": 3
+      }
+    ],
+    "building_records": 20,
+    "counted_buildings": 20,
+    "declared_buildings_counted": 20
+  },
+  "concepts": [
+    {
+      "id": "highgarth_machiya",
+      "kind": "structure",
+      "source_form": "machiya",
+      "variants": ["narrow_frontage", "wide_frontage"],
+      "widths": {
+        "status": "source planning range; not approved drawing geometry",
+        "plan_width_world_px": [24, 64],
+        "plan_depth_world_px": [40, 56],
+        "classes": [
+          {
+            "id": "source_min",
+            "width_cells": 3
+          },
+          {
+            "id": "source_max",
+            "width_cells": 8
+          }
+        ]
+      },
+      "references": {
+        "building_ids": [
+          "highgarth-b012",
+          "highgarth-b013",
+          "highgarth-b014",
+          "highgarth-b015",
+          "highgarth-b016",
+          "highgarth-b017",
+          "highgarth-b018",
+          "highgarth-b019"
+        ],
+        "district_ids": [],
+        "street_ids": [],
+        "feature_keys": []
+      },
+      "vermilion_scope": "none"
+    },
+    {
+      "id": "highgarth_post_inn",
+      "kind": "structure",
+      "source_form": "honjin",
+      "variants": ["narrow_envelope", "wide_envelope"],
+      "widths": {
+        "status": "source planning range; not approved drawing geometry",
+        "plan_width_world_px": [56, 104],
+        "plan_depth_world_px": [48, 80],
+        "classes": [
+          {
+            "id": "source_min",
+            "width_cells": 7
+          },
+          {
+            "id": "source_max",
+            "width_cells": 13
+          }
+        ]
+      },
+      "references": {
+        "building_ids": ["highgarth-b004", "highgarth-b005"],
+        "district_ids": [],
+        "street_ids": [],
+        "feature_keys": []
+      },
+      "vermilion_scope": "none"
+    },
+    {
+      "id": "highgarth_kura",
+      "kind": "structure",
+      "source_form": "kura",
+      "variants": ["compact", "wide_envelope"],
+      "widths": {
+        "status": "source planning range; not approved drawing geometry",
+        "plan_width_world_px": [32, 48],
+        "plan_depth_world_px": [32, 40],
+        "classes": [
+          {
+            "id": "source_min",
+            "width_cells": 4
+          },
+          {
+            "id": "source_max",
+            "width_cells": 6
+          }
+        ]
+      },
+      "references": {
+        "building_ids": ["highgarth-b008", "highgarth-b009"],
+        "district_ids": [],
+        "street_ids": [],
+        "feature_keys": []
+      },
+      "vermilion_scope": "none"
+    },
+    {
+      "id": "highgarth_minka",
+      "kind": "structure",
+      "source_form": "minka_thatched",
+      "variants": ["compact", "wide_envelope"],
+      "widths": {
+        "status": "source planning range; not approved drawing geometry",
+        "plan_width_world_px": [56, 88],
+        "plan_depth_world_px": [48, 72],
+        "classes": [
+          {
+            "id": "source_min",
+            "width_cells": 7
+          },
+          {
+            "id": "source_max",
+            "width_cells": 11
+          }
+        ]
+      },
+      "references": {
+        "building_ids": ["highgarth-b006", "highgarth-b007"],
+        "district_ids": [],
+        "street_ids": [],
+        "feature_keys": []
+      },
+      "vermilion_scope": "none"
+    },
+    {
+      "id": "highgarth_temple_hall",
+      "kind": "structure",
+      "source_form": "temple_hall",
+      "variants": ["plinth_hall"],
+      "widths": {
+        "status": "source planning range; not approved drawing geometry",
+        "plan_width_world_px": [96, 128],
+        "plan_depth_world_px": [64, 80],
+        "classes": [
+          {
+            "id": "source_min",
+            "width_cells": 12
+          },
+          {
+            "id": "source_max",
+            "width_cells": 16
+          }
+        ]
+      },
+      "references": {
+        "building_ids": ["highgarth-b001"],
+        "district_ids": [],
+        "street_ids": [],
+        "feature_keys": []
+      },
+      "vermilion_scope": "none"
+    },
+    {
+      "id": "highgarth_pagoda",
+      "kind": "structure",
+      "source_form": "pagoda",
+      "variants": ["five_storey"],
+      "widths": {
+        "status": "source planning range; not approved drawing geometry",
+        "plan_width_world_px": [32, 40],
+        "plan_depth_world_px": [32, 40],
+        "classes": [
+          {
+            "id": "source_min",
+            "width_cells": 4
+          },
+          {
+            "id": "source_max",
+            "width_cells": 5
+          }
+        ]
+      },
+      "references": {
+        "building_ids": ["highgarth-b002"],
+        "district_ids": [],
+        "street_ids": [],
+        "feature_keys": []
+      },
+      "vermilion_scope": "trim"
+    },
+    {
+      "id": "highgarth_temple_gate",
+      "kind": "structure",
+      "source_form": null,
+      "variants": ["court_gate"],
+      "widths": {
+        "status": "deferred; no exact family width in the brief",
+        "classes": []
+      },
+      "references": {
+        "building_ids": [],
+        "district_ids": ["highgarth-d-the-temple"],
+        "street_ids": [],
+        "feature_keys": []
+      },
+      "vermilion_scope": "gate"
+    },
+    {
+      "id": "highgarth_shrine_gate",
+      "kind": "structure",
+      "source_form": null,
+      "variants": ["timber_run"],
+      "widths": {
+        "status": "deferred; no exact family width in the brief",
+        "classes": []
+      },
+      "references": {
+        "building_ids": [],
+        "district_ids": [],
+        "street_ids": [],
+        "feature_keys": ["shrine_gates_px"]
+      },
+      "vermilion_scope": "none"
+    },
+    {
+      "id": "highgarth_stone_lantern",
+      "kind": "prop",
+      "source_form": null,
+      "variants": ["court_edge", "stair_landing"],
+      "widths": {
+        "status": "deferred; no exact family width in the brief",
+        "classes": []
+      },
+      "references": {
+        "building_ids": [],
+        "district_ids": ["highgarth-d-the-temple-court"],
+        "street_ids": [],
+        "feature_keys": []
+      },
+      "vermilion_scope": "none"
+    },
+    {
+      "id": "highgarth_bell_frame",
+      "kind": "prop",
+      "source_form": null,
+      "variants": ["court_frame"],
+      "widths": {
+        "status": "deferred; no exact family width in the brief",
+        "classes": []
+      },
+      "references": {
+        "building_ids": [],
+        "district_ids": ["highgarth-d-the-temple-court"],
+        "street_ids": [],
+        "feature_keys": []
+      },
+      "vermilion_scope": "none"
+    },
+    {
+      "id": "highgarth_footbridge",
+      "kind": "structure",
+      "source_form": null,
+      "variants": ["single_span", "abutment_fit"],
+      "widths": {
+        "status": "deferred; no exact family width in the brief",
+        "classes": []
+      },
+      "references": {
+        "building_ids": [],
+        "district_ids": [],
+        "street_ids": [],
+        "feature_keys": []
+      },
+      "vermilion_scope": "none"
+    },
+    {
+      "id": "highgarth_terraced_field",
+      "kind": "terrain",
+      "source_form": null,
+      "variants": ["paddy", "oats"],
+      "widths": {
+        "status": "deferred; no exact family width in the brief",
+        "classes": []
+      },
+      "references": {
+        "building_ids": [],
+        "district_ids": ["highgarth-d-the-terraced-paddies-and-fields"],
+        "street_ids": [],
+        "feature_keys": []
+      },
+      "vermilion_scope": "none"
+    },
+    {
+      "id": "highgarth_retaining_wall",
+      "kind": "tier",
+      "source_form": null,
+      "variants": ["straight_run", "stair_return"],
+      "widths": {
+        "status": "deferred; no exact family width in the brief",
+        "classes": []
+      },
+      "references": {
+        "building_ids": [],
+        "district_ids": [
+          "highgarth-d-the-terraced-paddies-and-fields",
+          "highgarth-d-the-upper-terraces"
+        ],
+        "street_ids": [],
+        "feature_keys": []
+      },
+      "vermilion_scope": "none"
+    },
+    {
+      "id": "highgarth_watch_keep",
+      "kind": "structure",
+      "source_form": "watchkeep",
+      "variants": ["tarn_front"],
+      "widths": {
+        "status": "source planning range; not approved drawing geometry",
+        "plan_width_world_px": [48, 64],
+        "plan_depth_world_px": [48, 64],
+        "classes": [
+          {
+            "id": "source_min",
+            "width_cells": 6
+          },
+          {
+            "id": "source_max",
+            "width_cells": 8
+          }
+        ]
+      },
+      "references": {
+        "building_ids": ["highgarth-b003"],
+        "district_ids": [],
+        "street_ids": [],
+        "feature_keys": []
+      },
+      "vermilion_scope": "none"
+    },
+    {
+      "id": "highgarth_grey_paving",
+      "kind": "terrain",
+      "source_form": null,
+      "variants": ["street_fill", "street_margin"],
+      "widths": {
+        "status": "deferred; no exact family width in the brief",
+        "classes": []
+      },
+      "references": {
+        "building_ids": [],
+        "district_ids": [],
+        "street_ids": [],
+        "feature_keys": []
+      },
+      "vermilion_scope": "none"
+    },
+    {
+      "id": "highgarth_raked_gravel",
+      "kind": "terrain",
+      "source_form": null,
+      "variants": ["court_fill", "court_margin"],
+      "widths": {
+        "status": "deferred; no exact family width in the brief",
+        "classes": []
+      },
+      "references": {
+        "building_ids": [],
+        "district_ids": ["highgarth-d-the-temple-court"],
+        "street_ids": [],
+        "feature_keys": []
+      },
+      "vermilion_scope": "none"
+    },
+    {
+      "id": "highgarth_moss",
+      "kind": "decal",
+      "source_form": null,
+      "variants": ["stone_edge", "step_margin"],
+      "widths": {
+        "status": "deferred; no exact family width in the brief",
+        "classes": []
+      },
+      "references": {
+        "building_ids": [],
+        "district_ids": [],
+        "street_ids": [],
+        "feature_keys": []
+      },
+      "vermilion_scope": "none"
+    },
+    {
+      "id": "highgarth_stone_steps",
+      "kind": "tier",
+      "source_form": null,
+      "variants": ["temple_flight", "keep_flight"],
+      "widths": {
+        "status": "source route widths; not tread, rise or image dimensions",
+        "classes": [
+          {
+            "id": "temple_flight",
+            "width_cells": 3
+          },
+          {
+            "id": "keep_flight",
+            "width_cells": 2
+          }
+        ]
+      },
+      "references": {
+        "building_ids": [],
+        "district_ids": [],
+        "street_ids": ["highgarth-s04", "highgarth-s08"],
+        "feature_keys": []
+      },
+      "vermilion_scope": "none"
+    },
+    {
+      "id": "highgarth_snow",
+      "kind": "terrain",
+      "source_form": null,
+      "variants": ["upper_slope", "path_margin"],
+      "widths": {
+        "status": "deferred; no exact family width in the brief",
+        "classes": []
+      },
+      "references": {
+        "building_ids": [],
+        "district_ids": [],
+        "street_ids": [],
+        "feature_keys": []
+      },
+      "vermilion_scope": "none"
+    }
+  ]
+}
