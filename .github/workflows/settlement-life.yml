@@ -1,0 +1,44 @@
+name: Settlement life references
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - 'scripts/settlement_life/**'
+      - 'docs/vision/research/blockout/towns/**'
+      - '.github/workflows/settlement-life.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/settlement_life/**'
+      - 'docs/vision/research/blockout/towns/**'
+      - '.github/workflows/settlement-life.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  settlement-life:
+    if: github.event_name != 'pull_request' || !github.event.pull_request.draft
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository and pinned historical source objects
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Fetch the two exact authored source snapshots
+        run: >-
+          git fetch --no-tags --depth=1 origin
+          911edac6173ebf4398bcbf54b6171e4e68e62e13
+          4984438d09b5fe1333d3e6ea6e6ee82be2bdc908
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.12'
+      - name: Check MyGame planning references and refusal controls
+        run: python -m unittest scripts.settlement_life.test_check -v
