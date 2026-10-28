@@ -29,6 +29,8 @@
   "terrain": "the neck of the main isle between the ferry pier on the open north shore and the sheltered lagoon (a drowned crater)",
   "fit": "wrapped round the sheltered lagoon: boathouses and stilt houses on its rim, the pier on the open north shore",
   "dry": false,
+  "fortified": false,
+  "authored": "by the layout generator from hand-written streets",
   "tiers": [
    -1,
    2
@@ -41,6 +43,7 @@
   7124,
   6872
  ],
+ "fortification": null,
  "arrivals": [
   {
    "id": "lagoon-landing-arr1",

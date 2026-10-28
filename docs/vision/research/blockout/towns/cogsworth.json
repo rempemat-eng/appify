@@ -29,6 +29,8 @@
   "terrain": "the Cog's east bank where the valley opens, between the river and the coal hills; the pits and spoil heaps above it",
   "fit": "homes threaded between the works on the river and the railway: terraces in the strips the works leave",
   "dry": false,
+  "fortified": false,
+  "authored": "by the layout generator from hand-written streets",
   "tiers": [
    6,
    17
@@ -41,6 +43,7 @@
   8560,
   2880
  ],
+ "fortification": null,
  "arrivals": [
   {
    "id": "cogsworth-arr1",

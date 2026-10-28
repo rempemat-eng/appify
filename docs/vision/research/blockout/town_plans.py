@@ -114,11 +114,11 @@ GAME = {
                   'shortcuts_later': [('the footbridge over the line from Terrace Lane to the pits', (8400, 2620), 'when the works open the gate'),
                                       ('the Millrace culvert from Foundry Row to the river', (8100, 2600), 'once the race is drained')],
                   'quiet_corners': [('the allotments above the terraces, beside the works', (8440, 2500))]},
-    'hearthold': {'arrival': 'Canyon Road', 'first_view': "the gate in the walls on the rock, the keep above it, smoke from Smiths' Row below",
-                  'landmarks': [('the keep on the rock', (2190, 5250)), ('the gate and the gate market', (2236, 5442)), ("the smiths' chimneys", (2370, 5470))],
-                  'shortcuts_later': [('a postern in the west wall to Spring Lane', (1985, 5330), 'after the knights accept you'),
-                                      ('the vine stair from the castle to Vine Lane', (2390, 5300), 'when the vintner opens her terrace')],
-                  'quiet_corners': [('the vines on the warm east slope, next to the busy gate', (2470, 5200)), ('the chapel close inside the walls', (2100, 5300))]},
+    'hearthold': {'arrival': 'Ember Way', 'first_view': "up Gate Street from the gate market: the wall on its rock with the gate between two towers, the keep above it, smoke from Smiths' Row to the right",
+                  'landmarks': [('the keep on the rock', (2312, 5136)), ('the gate and its towers', (2312, 5416)), ("the smiths' chimneys", (2540, 5470)), ('the gate market', (2312, 5492))],
+                  'shortcuts_later': [('the west postern from the castle yard to the Forge Stair', (2184, 5232), 'after the knights accept you'),
+                                      ('the vine stair from Smiths\' Row up to the vines', (2560, 5420), 'when the vintner opens her terrace')],
+                  'quiet_corners': [('the chapel close inside the wall, beside the drill yard', (2224, 5330)), ('the vines on the cooled ash, above the forges', (2550, 5260))]},
     'cinderwick': {'arrival': 'Ember Way', 'first_view': 'over the roofs to the black-sand cove: the stone quay, boats on the beach, steam from the young flow to the east',
                    'landmarks': [('the stone quay', (2470, 5915)), ('the kilns and their smoke', (2660, 5800))],
                    'shortcuts_later': [('the beach path under the kilns to the Ash Coast', (2680, 5880), 'at low tide')],
@@ -136,7 +136,7 @@ GAME = {
                      'landmarks': [('the Skyport masts and airships', (10040, 4900)), ("the Company's tower", (11850, 4560)), ('Bridgefoot and the falls', (11135, 4462)),
                                    ('the cranes on the long quay', (11250, 5000)), ('the lido on the East Shore', (12100, 5150)), ('the maglev terminus', (11650, 4565)),
                                    ('the launch tower on the cape', (12125, 6425)), ('the Glintside mills', (11120, 4150)),
-                                   ("Canalside's market gardens and the canal", (10000, 4560))],
+                                   ("Canalside's market gardens and the canal", (10000, 4560)), ('Halcyon Row and its canteen', (12020, 5560))],
                      'shortcuts_later': [('the funicular from the canal basin to the Skyport', (10074, 4935), 'when the funicular is repaired'),
                                          ('the skybridge from the Heights over the ria to the old waterfront', (10500, 4600), 'with the Skyport pass'),
                                          ('the maglev from Glintside to the terminus', (11400, 4300), 'with a Company ticket')],
@@ -355,10 +355,29 @@ def plan_one(T, name, ts, X, tp):
     _prune(T, net, sl, ts)
     opens = _blocks(T, net, sl, pid, box, ts)
     dropped += _access(T, net, _passable(T, sl, ts), sl, pid, box, ts)
+    if len(ts) > 1:
+        _city_paving(T, net, sl, box, ts)
     # 6. the record
     P = _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X)
     P['open_uses'] = opens
     return P
+
+
+WILD_GREEN = ['meadow', 'watermeadow', 'broadleaf', 'conifer', 'clearing', 'lawn', 'wild', 'thicket', 'felltree', 'bramble', 'heath', 'gorse', 'carr',
+              'reeds', 'fireweed', 'scrub', 'steppe']
+
+
+def _city_paving(T, net, sl, box, ts):
+    """Inside a city, grass and trees only where they are planned (plots, parks, squares, allotments): the rest of the open
+    ground within the built envelope becomes paved yards."""
+    built = _bmask(ts, box).copy()
+    for e in _alive(net, ('street', 'square')):
+        built |= e['mask']
+    env = ndi.binary_fill_holes(ndi.binary_closing(ndi.distance_transform_edt(~built) <= 8, iterations=6)) & T['land'][sl]
+    K = T['K'][sl]
+    m = env & np.isin(K, WILD_GREEN) & ~T['taken'][sl]
+    K[m] = 'yard'
+    return int(m.sum())
 
 
 def _alive(net, kinds=('street', 'square', 'arrival')):
@@ -471,7 +490,7 @@ def _blocks(T, net, sl, pid, box, ts):
             # 1. buildings: on the block's free ground next to its streets, while the town has room
             if it < 2 and forms:
                 edge_d = ndi.distance_transform_edt(m)
-                order = sorted(zip(rr.tolist(), cc.tolist()), key=lambda q: (edge_d[q], q))
+                order = sorted(((r_, c_) for r_, c_ in zip(rr.tolist(), cc.tolist()) if edge_d[r_, c_] <= 2), key=lambda q: (edge_d[q], q))
                 k = 0
                 for (r, c) in order[::2]:
                     if (cov & m & ~ter_bad).sum() >= 0.5 * (m & ~ter_bad).sum() or t.count() >= t.cap:
@@ -880,8 +899,10 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
                  'street_classes': {'arrival': "the regional route's own width", 'main': 6, 'side': 4, 'lane': 3, 'close': 2}},
         'site': {'reason': lead.purpose if len(ts) == 1 else 'the ria\'s deep water at the end of the Lull Road and the line: the continent\'s port, its trade and the Company',
                  'terrain': lead.setting if len(ts) == 1 else 'round the ria\'s head and east shore, on the flats east of it and up the Heights to the west',
-                 'fit': FIT.get(pid, ''), 'dry': pid in ('dust-gulch', 'palm-spring', 'the-lode'), 'tiers': [int(tiers.min()), int(tiers.max())], 'levelled_footprints': len(lv)},
+                 'fit': FIT.get(pid, ''), 'dry': pid in ('dust-gulch', 'palm-spring', 'the-lode'), 'fortified': any(getattr(t, 'fort', None) for t in ts),
+                 'authored': 'by hand (towns55.hearthold)' if pid == 'hearthold' else 'by the layout generator from hand-written streets', 'tiers': [int(tiers.min()), int(tiers.max())], 'levelled_footprints': len(lv)},
         'footprint_px': fb,
+        'fortification': next((t.fort for t in ts if getattr(t, 'fort', None)), None),
         'arrivals': arrivals, 'streets': streets, 'squares': squares, 'districts': dists, 'gathering_places': gathering,
         'size_table_px': {f: [list(TW.BLD[f][0]), list(TW.BLD[f][1])] for f in sorted({b['form'] for b in bl if not b.get('from_zone_plan')})},
         'buildings': bl, 'lifted': [{'type': d['use'], 'rect_px': [d['x'], d['y'], d['w'], d['h']], 'why': 'no close could reach it'} for d in dropped],

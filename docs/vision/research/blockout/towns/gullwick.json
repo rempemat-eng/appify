@@ -29,6 +29,8 @@
   "terrain": "the cove west of the delta",
   "fit": "",
   "dry": false,
+  "fortified": false,
+  "authored": "by the layout generator from hand-written streets",
   "tiers": [
    2,
    2
@@ -41,6 +43,7 @@
   8208,
   5192
  ],
+ "fortification": null,
  "arrivals": [
   {
    "id": "gullwick-arr1",

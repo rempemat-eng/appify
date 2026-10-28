@@ -29,6 +29,8 @@
   "terrain": "the headland past the city, exposed to the sea on three sides",
   "fit": "",
   "dry": false,
+  "fortified": false,
+  "authored": "by the layout generator from hand-written streets",
   "tiers": [
    -1,
    7
@@ -41,6 +43,7 @@
   12240,
   6515
  ],
+ "fortification": null,
  "arrivals": [
   {
    "id": "launch-cape-arr1",

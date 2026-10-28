@@ -29,6 +29,8 @@
   "terrain": "round the spring pool and along its two channels, on the gravel where the Willow Run resurfaces; scrub and steppe round it",
   "fit": "the gardens follow the two channels from the spring; houses ring the pool on the dry gravel above them",
   "dry": true,
+  "fortified": false,
+  "authored": "by the layout generator from hand-written streets",
   "tiers": [
    6,
    10
@@ -41,6 +43,7 @@
   3648,
   3072
  ],
+ "fortification": null,
  "arrivals": [
   {
    "id": "palm-spring-arr1",

@@ -29,6 +29,8 @@
   "terrain": "the cove at the Sleepwater's mouth under the Headland",
   "fit": "",
   "dry": false,
+  "fortified": false,
+  "authored": "by the layout generator from hand-written streets",
   "tiers": [
    -1,
    2
@@ -41,6 +43,7 @@
   6752,
   5120
  ],
+ "fortification": null,
  "arrivals": [
   {
    "id": "driftwood-arr1",

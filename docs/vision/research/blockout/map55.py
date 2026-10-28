@@ -380,6 +380,48 @@ def draw_towns(d, S, R, ink, P, s, k, neon_lights=True):
             d.line([(X0 + 1, Y1 - 1), (X1 - 1, Y1 - 1)], fill=R['berry'][4] + (230,), width=max(1, int(kk)))
 
 
+def draw_walls(d, S, R, ink, P, k):
+    """A fortified town's wall from its plan: dark stone two cells thick with a lit top edge, square towers, the gate open."""
+    for P_ in (S.get('plans') or {}).values():
+        F = P_.get('fortification')
+        if not F:
+            continue
+        xs = [v[0] for v in F['wall_px']]; ys = [v[1] for v in F['wall_px']]
+        x0, y0, x1, y1 = min(xs), min(ys), max(xs), max(ys); t_ = F.get('thick_cells', 2) * CELL
+        gates = [g_ for g_ in F['gates'] if g_.get('open', True)]
+        stone, lit = R['stone'][1], R['stone'][4]
+        segs = [(x0, y0, x1, y0 + t_), (x0, y1 - t_, x1, y1), (x0, y0, x0 + t_, y1), (x1 - t_, y0, x1, y1)]
+        out = []
+        for (a, b, c, e) in segs:                                   # cut the gates out of their wall
+            pieces = [(a, b, c, e)]
+            for g_ in gates:
+                gx0, gx1 = g_['x_px']; gy0, gy1 = g_['y_px']
+                nxt = []
+                for (pa, pb, pc, pe) in pieces:
+                    if gy0 < pe and gy1 > pb and gx0 < pc and gx1 > pa:
+                        if pc - pa >= pe - pb:
+                            nxt += [(pa, pb, gx0, pe), (gx1, pb, pc, pe)]
+                        else:
+                            nxt += [(pa, pb, pc, gy0), (pa, gy1, pc, pe)]
+                    else:
+                        nxt.append((pa, pb, pc, pe))
+                pieces = nxt
+            out += [q for q in pieces if q[2] > q[0] and q[3] > q[1]]
+        off = max(1.0, 3 * k)
+        for (a, b, c, e) in out:
+            X0, Y0 = P(a, b); X1, Y1 = P(c, e)
+            d.rectangle([X0 + off, Y0 + off, X1 + off, Y1 + off], fill=ink + (90,))
+        for (a, b, c, e) in out:
+            X0, Y0 = P(a, b); X1, Y1 = P(c, e)
+            d.rectangle([X0, Y0, X1, Y1], fill=stone, outline=ink)
+            d.line([(X0, Y0), (X1, Y0)], fill=lit, width=max(1, int(round(2 * k))))
+        for (tx, ty) in F.get('towers_px', []):
+            X0, Y0 = P(tx - 2 * CELL, ty - 2 * CELL); X1, Y1 = P(tx + 2 * CELL, ty + 2 * CELL)
+            d.rectangle([X0 + off, Y0 + off, X1 + off, Y1 + off], fill=ink + (90,))
+            d.rectangle([X0, Y0, X1, Y1], fill=stone, outline=ink)
+            d.rectangle([X0, Y0, X1, Y0 + (Y1 - Y0) * 0.3], fill=lit)
+
+
 def draw_street_bridges(d, S, R, ink, P, k):
     """Where a town street crosses water: a plank deck as wide as the street, with its side rails (the plans' bridge cells)."""
     import sys as _s
@@ -774,6 +816,7 @@ def compose(S, M, R, ink, s, base, k, ox, oy, Wc, Hc, paths, lines, mode, title,
     d = ImageDraw.Draw(canvas, 'RGBA')
     draw_lines(d, lines, P, R, ink, s)
     draw_street_bridges(d, S, R, ink, P, k)
+    draw_walls(d, S, R, ink, P, k)
     draw_towns(d, S, R, ink, P, s, k)
     neon_accents(d, S, P, s, k, lines)
     draw_closed_pass(d, S, M, R, ink, P, s)
@@ -845,7 +888,7 @@ def town_inset(S, M, R, ink, cg, cid, rgb, sea_rgb, P, ppc):
     s_ = 1.4 if ppc >= 6 else 1.3
     Wb, Hb = img.size
     side = int(330 * s_)
-    Hc_ = max(Hb, int(720 * s_))                                    # tall enough for the side panel
+    Hc_ = Hb                                                         # cropped to the map: the side panel scales to fit it
     canvas = Image.new('RGB', (Wb + side, Hc_), R['plaster'][5]); canvas.paste(img, (0, 0))
     M54.water_and_routes(canvas, S, R, ink, kb, oxb, oyb, M)
     Pf = lambda x, y: (x * kb + oxb, y * kb + oyb)
@@ -869,6 +912,7 @@ def town_inset(S, M, R, ink, cg, cid, rgb, sea_rgb, P, ppc):
         if len(q) >= 2:
             d.line(q, fill=ink + (90 if st['class'] != 'close' else 60,), width=1)
     draw_street_bridges(d, S, R, ink, Pf, kb)
+    draw_walls(d, S, R, ink, Pf, kb)
     draw_towns(d, S, R, ink, Pf, max(1.0, ppc / 4), kb)
     if P['id'] == 'neon-harbour':
         mat = S.get('mat')
@@ -977,7 +1021,9 @@ def town_inset(S, M, R, ink, cg, cid, rgb, sea_rgb, P, ppc):
     d.rectangle([sx0 + 2, sy0 + 2, sx0 + sw - 2, sy0 + sh - 2], outline=paper + (200,), width=1)
     _D_ = _D(d)
     Placer.draw_text(_D_, (sx0, sy0 - 4 * s_), 'one screen: 40 x 22.5 cells', F['small'], ink, paper, 'lb', 2)
-    # the side panel: title, numbers, legend
+    # the side panel: title, numbers, legend (scaled down when the map is short)
+    s_ = s_ * min(1.0, Hb / (720 * s_))
+    F = M54.fonts54(M.ROOT, s_)
     d.rectangle([Wb, 0, Wb + side, Hc_], fill=paper)
     if Hc_ > Hb:
         d.rectangle([0, Hb, Wb, Hc_], fill=paper)

@@ -29,6 +29,8 @@
   "terrain": "the massif foothills above Dust Gulch",
   "fit": "",
   "dry": true,
+  "fortified": false,
+  "authored": "by the layout generator from hand-written streets",
   "tiers": [
    7,
    11
@@ -41,6 +43,7 @@
   2908,
   1864
  ],
+ "fortification": null,
  "arrivals": [
   {
    "id": "the-lode-arr1",

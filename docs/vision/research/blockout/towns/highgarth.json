@@ -29,6 +29,8 @@
   "terrain": "a sheltered valley on the upper Cog inside the range: stepped streets on the east bank, stone houses on retaining walls, steep wooded slopes and snow on the peaks round it",
   "fit": "the town steps up its terraces on retaining walls: each street on one tier, a stair or a ramp between",
   "dry": false,
+  "fortified": false,
+  "authored": "by the layout generator from hand-written streets",
   "tiers": [
    9,
    18
@@ -41,6 +43,7 @@
   8192,
   1448
  ],
+ "fortification": null,
  "arrivals": [
   {
    "id": "highgarth-arr1",

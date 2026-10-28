@@ -25,6 +25,8 @@ What it checks, per plan (ground-rules.md 4 and 5, size-guide.md 0, Matt's brief
   planned     a city's regional roads inside it (within six cells of its buildings) run in x and y runs (75% of their length), curving
               only at the water
   dry         a desert town is green only along its water (green more than 8 cells from water at most 3%)
+  fortified   a town flagged fortified has a closed wall ring (at least 85% barrier on the ground) and at least one open gate
+  city_green  inside a city, grass and trees only as named parks, planted plazas, plots or squares (at most 3% otherwise)
 The insets' labels are checked where they are drawn (map55.town_inset): no two label boxes overlap.
 It reports (not fails): dead ends, the town's size in screens and the number of street blocks (loops).
 
@@ -377,6 +379,41 @@ def check_plan(P, blockout):
         landc = int((win & ~np.isin(ter, list(WATER))).sum()) or 1
         if far_green.sum() > 0.03 * landc:
             fails.append(f'dry: {100 * far_green.sum() / landc:.1f}% of the town is green more than 8 cells from water')
+    # a city: grass and trees only as named parks, planted plazas, plots, squares or allotments
+    if P['size'] == 'city':
+        env = ndi.binary_fill_holes(ndi.binary_closing(ndi.binary_dilation(occ, iterations=8), iterations=6))
+        ok_g = cov.copy()
+        wild = env & (ter == 'g') & ~ok_g
+        envl = int((env & ~np.isin(ter, list(WATER))).sum()) or 1
+        if wild.sum() > 0.03 * envl:
+            fails.append(f'city_green: {100 * wild.sum() / envl:.1f}% of the city is unplanned green')
+    # a fortified town: a closed wall ring (barrier cells on the ground) with at least one open gate
+    if P['site'].get('fortified'):
+        F = P.get('fortification')
+        if not F or not F.get('gates'):
+            fails.append('fortified: no wall or no gate in the plan')
+        else:
+            th = F.get('thick_cells', 2)
+            outline = band([tuple(v) for v in F['wall_px']], 2 * th, 'cheb', box)
+            filled = ndi.binary_fill_holes(outline)
+            interior = filled & ~outline
+            ring = outline & ndi.binary_dilation(interior, iterations=th)          # the wall's inner half: the cells it stands on
+            gate = np.zeros((h, w), bool)
+            for gt in F['gates']:
+                if gt.get('open', True):
+                    gx0, gx1 = gt['x_px']; gy0, gy1 = gt['y_px']
+                    gate |= rect_mask(gx0 // CELL, gy0 // CELL, max(1, (gx1 - gx0) // CELL), max(1, (gy1 - gy0) // CELL))
+            wall = ring & ~gate
+            onbar = (np.isin(ter[wall], list(BARRIER))).mean() if wall.any() else 0
+            if onbar < 0.85:
+                fails.append(f'fortified: only {100 * onbar:.0f}% of the wall ring is wall on the ground')
+            if not interior.any() or (ndi.binary_fill_holes(wall | gate) & ~(wall | gate)).sum() < 100:
+                fails.append('fortified: the wall ring is not closed')
+            if (ndi.binary_fill_holes(wall) & ~wall).sum() >= interior.sum() * 0.5:
+                fails.append('fortified: the ring has no open gate')
+            if np.isin(ter[gate & ring], list(BARRIER)).any():
+                fails.append('fortified: a gate is walled up')
+            notes.append(f"walled: {len(F['gates'])} gate, {len(F.get('towers_px', []))} towers")
     # dead ends (reported)
     dead = 0
     for s in P['streets']:

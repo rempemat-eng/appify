@@ -29,6 +29,8 @@
   "terrain": "the flat land between the Lull Road and the canal, west of the old town",
   "fit": "",
   "dry": false,
+  "fortified": false,
+  "authored": "by the layout generator from hand-written streets",
   "tiers": [
    4,
    7
@@ -37,10 +39,11 @@
  },
  "footprint_px": [
   9688,
-  4320,
-  10498,
+  4312,
+  10520,
   4544
  ],
+ "fortification": null,
  "arrivals": [
   {
    "id": "canalside-arr1",
@@ -62,7 +65,7 @@
    "street": "canalside-a2",
    "entries_px": [
     [
-     10621,
+     10645,
      4420
     ]
    ],
@@ -95,7 +98,8 @@
    ],
    "follows_route": "Lull Road",
    "connects": [
-    "canalside-a1"
+    "canalside-a1",
+    "canalside-c01"
    ]
   },
   {
@@ -184,6 +188,7 @@
    "follows_route": "Lull Road",
    "connects": [
     "canalside-a2",
+    "canalside-c01",
     "canalside-s01",
     "canalside-s02"
    ]
@@ -203,7 +208,7 @@
      4420.0
     ],
     [
-     10620.6,
+     10645.2,
      4420.0
     ]
    ],
@@ -211,6 +216,25 @@
    "connects": [
     "canalside-a1",
     "canalside-s02"
+   ]
+  },
+  {
+   "id": "canalside-c01",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     9944.0,
+     4384.0
+    ],
+    [
+     9944.0,
+     4400.0
+    ]
+   ],
+   "connects": [
+    "canalside-s01"
    ]
   }
  ],
@@ -238,8 +262,8 @@
     "canalside-b010"
    ],
    "mix": {
-    "cottage": 4,
-    "house": 4,
+    "cottage": 3,
+    "house": 5,
     "workshop": 2
    },
    "function": "homes"
@@ -460,65 +484,65 @@
   },
   {
    "id": "canalside-b006",
-   "type": "cottage",
-   "form": "cottage",
+   "type": "house",
+   "form": "house",
    "footprint_cells": [
-    1220,
-    548,
-    8,
-    5
+    1303,
+    557,
+    12,
+    7
    ],
    "rect_px": [
-    9760,
-    4384,
-    64,
-    40
+    10424,
+    4456,
+    96,
+    56
    ],
-   "faces": "canalside-s01",
+   "faces": "canalside-s02",
    "door_cells": [
-    1224,
-    553
+    1309,
+    556
    ],
-   "purpose": "a cottage",
+   "purpose": "a family house",
    "occupants": "a farming household",
    "district": "canalside-d-canalside",
    "counted": true,
    "plot_cells": [
-    1220,
-    543,
-    8,
+    1303,
+    564,
+    12,
     5
    ],
    "plot": "garden"
   },
   {
    "id": "canalside-b007",
-   "type": "house",
-   "form": "house",
+   "type": "cottage",
+   "form": "cottage",
    "footprint_cells": [
-    1225,
-    540,
-    10,
-    7
+    1219,
+    547,
+    8,
+    6
    ],
    "rect_px": [
-    9800,
-    4320,
-    80,
-    56
+    9752,
+    4376,
+    64,
+    48
    ],
    "faces": "canalside-s01",
    "door_cells": [
-    1230,
-    547
+    1223,
+    553
    ],
-   "purpose": "a family house",
+   "purpose": "a cottage",
    "occupants": "a fishing household",
    "district": "canalside-d-canalside",
    "counted": true,
    "plot_cells": [
-    1228,
-    535,
+    1220,
+    542,
     7,
     5
    ],
@@ -526,99 +550,99 @@
   },
   {
    "id": "canalside-b008",
-   "type": "workshop",
-   "form": "workshop",
-   "footprint_cells": [
-    1237,
-    543,
-    14,
-    7
-   ],
-   "rect_px": [
-    9896,
-    4344,
-    112,
-    56
-   ],
-   "faces": "canalside-s01",
-   "door_cells": [
-    1242,
-    550
-   ],
-   "purpose": "the workshop",
-   "occupants": "the master and apprentices",
-   "district": "canalside-d-canalside",
-   "counted": true,
-   "plot_cells": [
-    1237,
-    538,
-    14,
-    5
-   ],
-   "plot": "garden"
-  },
-  {
-   "id": "canalside-b009",
    "type": "house",
    "form": "house",
    "footprint_cells": [
-    1264,
+    1229,
     544,
     12,
-    8
+    6
    ],
    "rect_px": [
-    10112,
+    9832,
     4352,
     96,
-    64
+    48
    ],
-   "faces": "canalside-s02",
+   "faces": "canalside-s01",
    "door_cells": [
-    1270,
-    552
+    1235,
+    550
    ],
    "purpose": "a family house",
    "occupants": "a carting household",
    "district": "canalside-d-canalside",
    "counted": true,
    "plot_cells": [
-    1264,
+    1232,
     539,
-    12,
+    9,
+    5
+   ],
+   "plot": "garden"
+  },
+  {
+   "id": "canalside-b009",
+   "type": "workshop",
+   "form": "workshop",
+   "footprint_cells": [
+    1243,
+    539,
+    14,
+    8
+   ],
+   "rect_px": [
+    9944,
+    4312,
+    112,
+    64
+   ],
+   "faces": "canalside-c01",
+   "door_cells": [
+    1243,
+    547
+   ],
+   "purpose": "the workshop",
+   "occupants": "the master and apprentices",
+   "district": "canalside-d-canalside",
+   "counted": true,
+   "plot_cells": [
+    1243,
+    534,
+    14,
     5
    ],
    "plot": "garden"
   },
   {
    "id": "canalside-b010",
-   "type": "cottage",
-   "form": "cottage",
+   "type": "house",
+   "form": "house",
    "footprint_cells": [
-    1278,
+    1265,
     545,
-    8,
-    5
+    13,
+    7
    ],
    "rect_px": [
-    10224,
+    10120,
     4360,
-    64,
-    40
+    104,
+    56
    ],
    "faces": "canalside-s02",
    "door_cells": [
-    1284,
-    550
+    1271,
+    552
    ],
-   "purpose": "a cottage",
+   "purpose": "a family house",
    "occupants": "a craft household",
    "district": "canalside-d-canalside",
    "counted": true,
    "plot_cells": [
-    1278,
+    1265,
     540,
-    8,
+    13,
     5
    ],
    "plot": "garden"
@@ -635,7 +659,7 @@
     10350,
     4660
    ],
-   "plots": 8,
+   "plots": 5,
    "why": "vegetables and flowers for the city's markets"
   }
  ],
@@ -646,15 +670,15 @@
    {
     "name": "the workshop, Canalside's largest building",
     "xy": [
-     10156,
-     4512
+     10000,
+     4344
     ]
    },
    {
-    "name": "a cottage at the edge, seen first from the Lull Road",
+    "name": "a family house at the edge, seen first from the Old Bridges",
     "xy": [
-     9720,
-     4504
+     10472,
+     4484
     ]
    }
   ],
@@ -669,8 +693,8 @@
    ]
   ],
   "screens": [
-   2.5,
-   1.2
+   2.6,
+   1.3
   ]
  },
  "ground": {
@@ -678,16 +702,19 @@
   "yards": "gardens",
   "edges": "fields",
   "materials_cells": {
-   "worn cobbles": 890,
-   "worn paving": 792
+   "worn cobbles": 696,
+   "terrace stone": 24,
+   "made land, paved": 12,
+   "worn paving": 878,
+   "packed earth": 41
   }
  },
  "terrain": {
   "box_cells": [
    1196,
-   525,
-   132,
-   59
+   524,
+   135,
+   60
   ],
   "codes": {
    ".": "land",
@@ -698,65 +725,66 @@
    "b": "bridge"
   },
   "rows": [
-   "17r19g12~84g",
-   "20r19g12~81g",
-   "9g12r22g12~77g",
-   "9g12r22g12~77g",
-   "12g11r24g9~73g3.",
-   "15g11r24g9~70g3.",
-   "18g10r25g8~68g3.",
-   "20g9r27g6~19g7r41g3.",
-   "21g8r29g4~19g7r41g3.",
-   "2~21g8r28g5~17g7r41g3.",
-   "3~22g7r29g5~17g5r44g",
-   "4~22g8r27g5~17g5r39g5.",
-   "4~22g8r27g5~17g5r32g12.",
-   "10~16g8r28g5~16g5r32g12.",
-   "20~8g8r26g5~16g5r32g10.2g",
-   "20~9g10.23g5~16g5r24g18.g.",
-   "23~6g10.23g5~14g7r24g18.g.",
-   "25~4g10.r22g5~14g7r24g18.g.",
-   "26~3g10.2r14.7g5~14g5r26g8.7g3.g.",
-   "25~4g10.2r14.7g5~g12.6r26g8.7g3.g.",
-   "23~6g10.2r14.7g5~g12.2r8.22g8.7g3.g.",
-   "23~6g10.2r14.7g5~g12.2r8.22g8.7g3.2g",
-   "21~20g14.7g5~g12.2r8.22g8.7g3.2g",
-   "9g11~4g8.9g14.6g6~g12.2r8.22g8.7g3.2g",
-   "10g8~6g8.9g14.6g5~2g12.2r34.11g2.3g",
-   "12g5~7g8.2g22.3g7~2g12.3r5g.31rg11r",
-   "24g9.24r.3b3~4g12.r7g33rg10r",
-   "24g8.26r4b2g6.10r8.33rg10r",
-   "10gr6g15.24r6b59rg10r",
-   "10rg44r6b59rg11r",
-   "9rg45r6b32r10.r12.3g6.2g3.g.",
-   "r2b6rg27r13.g2~6b.33r5gr15g2.3g6.2g3.g.",
-   "4b5rg27r13g6~2br.32r.2gr2g7.9g2.3g6.2g3.g.",
-   "r3b6rg25r.11g7~4grg30.7g7.9g2.3g6.2g3.g.",
-   "r3b7r6g18.10g8~45g7.9g2.3g6.2g3.g.",
-   "g3~11g8.20g8~16g13.4g12.2g7.8g12.2g3.g.",
-   "2g4~9g8.19g6~4g13.2g13.4g12.2g7.8g7.7g3.2g",
-   "2g5~8g8.17g7~5g13.2g13.4g12.2g7.8g7.7g4.g",
-   "3g4~8g8.14g8~7g13.2g13.4g12.17g7.7g4.g",
-   "3g4~8g8.14g8~7g13.2g13.4g12.17g7.7g4.g",
-   "3g6~6g8.13g7~9g13.2g13.4g12.17g7.7g3.2g",
-   "4g6~24g6~12g13.2g13.4g12.31g3.2g",
-   "3r3g7~16g10~28g13.37g9.g5.",
-   "3g4r11~7g11~81g9.g5.",
-   "2~5g3r24~83g9.g5.",
-   "6~6g19~86g9.g5.",
-   "12~6g8~91g9.g5.",
-   "18~99g9.g5.",
-   "18~99g9.g5.",
-   "3g20~94g9.g5.",
-   "r6g21~89g9.g5.",
-   "2r11g21~83g9.g5.",
-   "3r15g21~78g9.g5.",
-   "4r21g18~74g9.g5.",
-   "4r25g19~69g9.g5.",
-   "6r30g17~73g6.",
-   "6r34g16~44g2.2g6.3g9.4g6.",
-   "6r34g16~44g2.2g6.3g9.4g6.",
-   "7r36g18~28g7.3g14.2g17."
+   "13r18g12~82g10.",
+   "17r19g12~75g12.",
+   "20r19g12~71g13.",
+   "9g12r22g12~66g14.",
+   "9g12r22g12~65g15.",
+   "12g11r24g9~63g16.",
+   "15g11r24g9~59g17.",
+   "18g10r25g8~56g18.",
+   "20g9r27g6~19g7r28g19.",
+   "21g8r29g4~19g7r28g19.",
+   "2~21g8r28g5~17g7r27g20.",
+   "3~22g7r29g5~17g5r27g20.",
+   "4~22g8r27g5~17g5r27g20.",
+   "4~22g8r27g5~17g5r26g21.",
+   "10~16g8r28g5~16g5r26g21.",
+   "20~8g8r11g14.g5~16g5r26g16.5g",
+   "20~9g8r10g14.g5~16g5r26g21.",
+   "23~8g8r8g14.g5~14g7r26g21.",
+   "25~6g9r7g14.g5~14g7r26g21.",
+   "26~6g10r5g14.g5~14g5r29g20.",
+   "25~8g12.2g14.g5~13g6r28g21.",
+   "23~10g12.2g14.g5~2g13.4r28g21.",
+   "23~10g12.2g14.g5~2g13.4r28g16.5g",
+   "21~2g8.2g12.g2r14g5~2g13.4r28g16.5g",
+   "9g11~3g8.2g12.g2.13g6~2g13.3r29g16.5g",
+   "10g8~5g8.2g12.g2.13g5~3g13.r7g45.",
+   "12g5~6g8.3g22.3g7~3g13.r5g.31r.14r",
+   "23g8.g.24r.3b3~5g13.6g33r.13r",
+   "23g8.g26r4b2g6.10r8.33r.13r",
+   "10gr6g15.24r6b59r.13r",
+   "10rg44r6b59r.14r",
+   "9rg45r6b32r10.r31.",
+   "r2b6rg27r13.g2~6b.33r5gr13g23.",
+   "4b5rg27r13g6~2br.32r.2gr2g7.2g28.",
+   "r3b6rg25r.11g7~4grg30.7g7.2g28.",
+   "r3b7r6g18.10g8~45g7.2g28.",
+   "g3~11g8.20g8~16g13.4g12.2g7.2g28.",
+   "2g4~9g8.19g6~4g13.2g13.4g12.2g7.2g25.3~",
+   "2g5~8g8.17g7~5g13.2g13.4g12.2g7.2g25.3~",
+   "3g4~8g8.14g8~7g13.2g13.4g12.11g25.3~",
+   "3g4~8g8.14g8~7g13.2g13.4g12.23g13.3~",
+   "3g6~6g8.13g7~9g13.2g13.4g12.23g13.3~",
+   "4g6~24g6~12g13.2g13.4g12.23g13.3~",
+   "3r3g7~16g10~28g13.39g16.",
+   "3g4r11~7g11~83g16.",
+   "2~5g3r24~80g21.",
+   "6~6g19~83g21.",
+   "12~6g8~89g20.",
+   "18~97g20.",
+   "18~96g21.",
+   "3g20~91g21.",
+   "r6g21~86g21.",
+   "2r11g21~80g21.",
+   "3r15g21~75g21.",
+   "4r21g18~71g21.",
+   "4r25g19~67g20.",
+   "6r29g.17~8.54g20.",
+   "6r26g8.16~8.36g2.2g6.3g22.",
+   "6r24g10.16~10.34g2.2g6.3g22.",
+   "7r22g14.18~6.22g7.3g14.2g20."
   ]
  },
  "residents": [],

@@ -29,6 +29,8 @@
   "terrain": "the valley floor either side of the Sleepwater, on its flat terraces; the woodland and the stone circle to the north-west",
   "fit": "on the flat terraces either side of the Sleepwater where the valley lanes meet; fields on the river terrace",
   "dry": false,
+  "fortified": false,
+  "authored": "by the layout generator from hand-written streets",
   "tiers": [
    2,
    11
@@ -41,6 +43,7 @@
   6960,
   4344
  ],
+ "fortification": null,
  "arrivals": [
   {
    "id": "crossroads-arr1",

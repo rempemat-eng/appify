@@ -29,6 +29,8 @@
   "terrain": "where the Amber leaves the mountains, on the gravel fan either side of the river; desert all round, the Glass field to the west",
   "fit": "on the gravel fan where the Amber leaves the hills: the line and the depot on the flat, homes along the river",
   "dry": true,
+  "fortified": false,
+  "authored": "by the layout generator from hand-written streets",
   "tiers": [
    5,
    9
@@ -41,6 +43,7 @@
   2904,
   2784
  ],
+ "fortification": null,
  "arrivals": [
   {
    "id": "dust-gulch-arr1",

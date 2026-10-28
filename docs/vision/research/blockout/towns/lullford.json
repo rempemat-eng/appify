@@ -29,6 +29,8 @@
   "terrain": "gravel terraces either side of the river",
   "fit": "",
   "dry": false,
+  "fortified": false,
+  "authored": "by the layout generator from hand-written streets",
   "tiers": [
    2,
    3
@@ -41,6 +43,7 @@
   9016,
   4528
  ],
+ "fortification": null,
  "arrivals": [
   {
    "id": "lullford-arr1",

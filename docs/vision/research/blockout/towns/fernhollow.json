@@ -29,6 +29,8 @@
   "terrain": "a clearing in the woods of the Fern hills, where the Foothill Road crosses Fern Lane",
   "fit": "in a clearing where Fern Lane meets the Foothill Road: the green in the middle, the woods round it",
   "dry": false,
+  "fortified": false,
+  "authored": "by the layout generator from hand-written streets",
   "tiers": [
    3,
    13
@@ -41,6 +43,7 @@
   7480,
   3336
  ],
+ "fortification": null,
  "arrivals": [
   {
    "id": "fernhollow-arr1",
