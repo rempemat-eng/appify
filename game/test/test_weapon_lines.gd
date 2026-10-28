@@ -153,6 +153,19 @@ func test_offline_cli_rejects_stale_fingerprints_without_writing_input() -> void
 	assert_str(result.output).contains("fingerprint mismatch")
 	assert_bool(FileAccess.get_file_as_bytes(TEMP) == before).is_true()
 
+func test_offline_cli_refuses_numeric_approval_flags() -> void:
+	var original := FileAccess.get_file_as_string(DATA)
+	for field in ["approved", "mechanics_applied"]:
+		var bad := original.replace('"%s": false' % field, '"%s": 0' % field)
+		assert_bool(bad != original).is_true()
+		var file := FileAccess.open(TEMP, FileAccess.WRITE)
+		file.store_string(bad)
+		file.close()
+		var result := _check_stored(ProjectSettings.globalize_path(TEMP))
+		assert_int(result.code).is_equal(1)
+		assert_str(result.output).contains("proposal/approval status changed")
+		assert_str(FileAccess.get_file_as_string(TEMP)).is_equal(bad)
+
 func test_offline_cli_rejects_missing_malformed_or_approved_documents() -> void:
 	assert_int(_check_stored(ProjectSettings.globalize_path(TEMP)).code).is_equal(1)
 	for value in [null, [], {"schema_version": 2}, {"schema_version": 1, "approved": true}]:

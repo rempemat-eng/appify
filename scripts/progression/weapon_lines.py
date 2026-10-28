@@ -102,7 +102,9 @@ def main():
             expected = extract()
             validate(expected)
             if args.check:
-                if json.loads(args.path.read_text()) != expected:
+                stored = json.loads(args.path.read_text())
+                validate(stored)
+                if stored != expected:
                     raise ValueError("stored table differs from pinned source")
             else:
                 args.path.parent.mkdir(parents=True, exist_ok=True)
