@@ -89,6 +89,7 @@
      6416.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
     "lagoon-landing-a2",
     "lagoon-landing-c03",
@@ -126,6 +127,7 @@
      6548.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
     "lagoon-landing-s01",
     "lagoon-landing-s03",
@@ -147,6 +149,7 @@
      6552.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
     "lagoon-landing-c01",
     "lagoon-landing-s02",
@@ -168,6 +171,7 @@
      6468.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
     "lagoon-landing-c02",
     "lagoon-landing-s02",
@@ -207,6 +211,7 @@
      6460.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
     "lagoon-landing-a1",
     "lagoon-landing-s04",
@@ -228,6 +233,7 @@
      6556.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
     "lagoon-landing-s03",
     "lagoon-landing-s04",
@@ -249,6 +255,7 @@
      6564.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
     "lagoon-landing-s08",
     "lagoon-landing-s12"
@@ -273,6 +280,7 @@
      6812.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
     "lagoon-landing-s07",
     "lagoon-landing-s09"
@@ -293,6 +301,7 @@
      6692.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
     "lagoon-landing-s08"
    ]
@@ -367,6 +376,7 @@
      6484.0
     ]
    ],
+   "frontage": "detached",
    "link": true,
    "connects": [
     "lagoon-landing-s04",
@@ -388,6 +398,7 @@
      6568.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
     "lagoon-landing-s03"
    ]
@@ -407,6 +418,7 @@
      6464.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
     "lagoon-landing-s04"
    ]
@@ -430,6 +442,7 @@
      6376.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
     "lagoon-landing-s01"
    ]
@@ -603,6 +616,8 @@
    ]
   ]
  },
+ "fronts": 18,
+ "counting_note": "buildings_counted counts a block of fronts sharing its walls (a terrace, an apartment row, a frontier block) once; fronts counts each front in it",
  "buildings": [
   {
    "id": "lagoon-landing-b001",
@@ -1418,5 +1433,60 @@
    ],
    "block_cells": 26
   }
- ]
+ ],
+ "theme": {
+  "tech": "older-made: boats and sail; the isles' own ways",
+  "waystone": {
+   "xy_px": [
+    6516,
+    6508
+   ],
+   "at": "beside Pier Lane",
+   "table_name": "Lagoon Landing",
+   "status": "proposed"
+  },
+  "sightline": {
+   "kind": "street",
+   "street": "lagoon-landing-s02",
+   "name": "Pier Lane",
+   "from_px": [
+    6524,
+    6516
+   ],
+   "to_px": [
+    6524,
+    6452
+   ],
+   "toward": "the stone circle (the beam over the valley)",
+   "off_by_deg": 14,
+   "bearing_deg": -104
+  },
+  "crater": {
+   "name": "the Lagoon crater",
+   "xy_px": [
+    6330,
+    6676
+   ],
+   "distance_px": 374,
+   "effect": "the shard drowned in the lagoon (a drowned crater): its light glows under the water at night",
+   "road": "the Driftwood ferry",
+   "road_leaves_at_px": [
+    6488,
+    6352
+   ]
+  },
+  "moss": {
+   "where": "the pier",
+   "xy_px": [
+    6600,
+    6555
+   ]
+  },
+  "company": {
+   "foothold": "an agent's office on the pier",
+   "building": null,
+   "xy_px": null
+  },
+  "theme_line": "the circle keeps the moon's light for everyone; the Company sells it"
+ }
 }

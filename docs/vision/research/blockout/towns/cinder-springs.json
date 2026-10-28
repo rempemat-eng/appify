@@ -187,6 +187,8 @@
    ]
   ]
  },
+ "fronts": 6,
+ "counting_note": "buildings_counted counts a block of fronts sharing its walls (a terrace, an apartment row, a frontier block) once; fronts counts each front in it",
  "buildings": [
   {
    "id": "cinder-springs-b001",
@@ -421,8 +423,8 @@
   "yards": "gardens",
   "edges": "fields",
   "materials_cells": {
-   "basalt setts": 690,
-   "ash yards": 696
+   "basalt setts": 711,
+   "ash yards": 733
   }
  },
  "terrain": {
@@ -505,25 +507,78 @@
    "3#g2.5g.4g.2g.g16.18r",
    "3#g.4g3.3g.g13.2g5.18r",
    "#3g.6g.8g.10g.g4.3r.14r",
-   "#10g.3g.3g2.11g.2g.g3rg2.12r",
-   "g4.g.4g.7g.11g2.3g.3r3.3g.g.6r",
-   ".2g3.5g.21g4.3rg3.g3.2g2.g2.",
-   ".2g3.5g.9g.2g.2g.5g4.3rg7.2g2.g2.",
-   "3g3.g2.2g.10g2.5g.g.g4.3rg12.g.",
-   "3g.g2.4g.12g.5g.6g3rg7.g3.g.g",
-   "#2.g4.g2.19g.4g2.3r3g5.g.5g",
-   "5#.5g.25g3r.2g5.7g",
-   "5#g.g.3g.24g3r3g6.g2.g2.",
-   "5#.2g.23g.3g4r4.11g",
-   "5#g.g.2g.21g3.4rg2.3g.8g",
-   "4#.g.25g4.3r8g.7g",
-   "4#.g.25g4.3r8g.7g",
-   "4#.2g.23g.g2.4r6g2.3g2.3g",
-   "5#.2g3.24g4r.15g"
+   "#10g.3g.3g2.11g.2g2.3rg2.12r",
+   "g4.g.4g.7g.11g2.2g2.3r3.3g.g.6r",
+   ".2g3.5g.21g4.3rg3.g3.2g5.",
+   ".2g3.5g.9g.2g.2g.5g4.3rg8.g5.",
+   "3g3.g2.2g.10g2.5g.g.g4.3rg14.",
+   "3g.g2.4g.12g.5g.4g2.3rg14.",
+   "#2.g4.g2.19g.4g2.3r2g13.",
+   "5#.5g.23g2.3r.g7.g5.",
+   "5#g.g.3g.22g2.3r2g7.g5.",
+   "5#.2g.23g.2g.4r9.g5.",
+   "5#g.g.2g.21g3.4rg2.3g.3g4.g",
+   "4#.g.25g4.3r8g.2g4.g",
+   "4#.g.25g4.r13.g4.",
+   "4#.2g.23g.g2.2r18.",
+   "5#.2g3.24g2r13.g4."
   ]
  },
  "residents": [],
  "routines": [],
  "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only.",
- "open_uses": []
+ "open_uses": [],
+ "theme": {
+  "tech": "older-made: timber, tile and the springs' heat",
+  "waystone": {
+   "xy_px": [
+    1876,
+    5580
+   ],
+   "at": "in the town",
+   "table_name": "Cinder Springs",
+   "status": "proposed"
+  },
+  "sightline": {
+   "kind": "viewpoint",
+   "from_px": [
+    1960,
+    5478
+   ],
+   "to_px": [
+    2093,
+    5390
+   ],
+   "toward": "the stone circle (the beam over the valley)",
+   "off_by_deg": 0,
+   "bearing_deg": -33
+  },
+  "crater": {
+   "name": "the Ember crater",
+   "xy_px": [
+    3550,
+    4991
+   ],
+   "distance_px": 1772,
+   "effect": "the Ember shard's heat warms the springs under the town; the pools hold the moon's light",
+   "road": "Ember Way",
+   "road_leaves_at_px": [
+    2090,
+    5321
+   ]
+  },
+  "moss": {
+   "where": "the inn street",
+   "xy_px": [
+    1876,
+    5580
+   ]
+  },
+  "company": {
+   "foothold": "the Company's offer to bottle the springs was refused; its buyer stays at the inn",
+   "building": null,
+   "xy_px": null
+  },
+  "theme_line": "the circle keeps the moon's light for everyone; the Company sells it"
+ }
 }

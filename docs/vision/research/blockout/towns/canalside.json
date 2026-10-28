@@ -96,6 +96,7 @@
      4428.0
     ]
    ],
+   "frontage": "detached",
    "follows_route": "Lull Road",
    "connects": [
     "canalside-a1",
@@ -125,6 +126,7 @@
      4420.0
     ]
    ],
+   "frontage": "detached",
    "follows_route": "Lull Road",
    "connects": [
     "canalside-a1"
@@ -233,6 +235,7 @@
      4400.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
     "canalside-s01"
    ]
@@ -316,6 +319,8 @@
    ]
   ]
  },
+ "fronts": 10,
+ "counting_note": "buildings_counted counts a block of fronts sharing its walls (a terrace, an apartment row, a frontier block) once; fronts counts each front in it",
  "buildings": [
   {
    "id": "canalside-b001",
@@ -702,11 +707,11 @@
   "yards": "gardens",
   "edges": "fields",
   "materials_cells": {
-   "worn cobbles": 696,
+   "worn cobbles": 599,
    "terrace stone": 24,
-   "made land, paved": 12,
-   "worn paving": 878,
-   "packed earth": 41
+   "made land, paved": 20,
+   "worn paving": 907,
+   "packed earth": 108
   }
  },
  "terrain": {
@@ -725,39 +730,39 @@
    "b": "bridge"
   },
   "rows": [
-   "13r18g12~82g10.",
-   "17r19g12~75g12.",
-   "20r19g12~71g13.",
-   "9g12r22g12~66g14.",
-   "9g12r22g12~65g15.",
-   "12g11r24g9~63g16.",
-   "15g11r24g9~59g17.",
-   "18g10r25g8~56g18.",
-   "20g9r27g6~19g7r28g19.",
-   "21g8r29g4~19g7r28g19.",
-   "2~21g8r28g5~17g7r27g20.",
-   "3~22g7r29g5~17g5r27g20.",
-   "4~22g8r27g5~17g5r27g20.",
-   "4~22g8r27g5~17g5r26g21.",
-   "10~16g8r28g5~16g5r26g21.",
-   "20~8g8r11g14.g5~16g5r26g16.5g",
-   "20~9g8r10g14.g5~16g5r26g21.",
-   "23~8g8r8g14.g5~14g7r26g21.",
-   "25~6g9r7g14.g5~14g7r26g21.",
-   "26~6g10r5g14.g5~14g5r29g20.",
-   "25~8g12.2g14.g5~13g6r28g21.",
-   "23~10g12.2g14.g5~2g13.4r28g21.",
-   "23~10g12.2g14.g5~2g13.4r28g16.5g",
-   "21~2g8.2g12.g2r14g5~2g13.4r28g16.5g",
-   "9g11~3g8.2g12.g2.13g6~2g13.3r29g16.5g",
-   "10g8~5g8.2g12.g2.13g5~3g13.r7g45.",
+   "13r18g12~84g8.",
+   "17r19g12~77g10.",
+   "20r19g12~73g11.",
+   "9g12r22g12~69g11.",
+   "9g12r22g12~68g12.",
+   "12g11r24g9~67g12.",
+   "15g11r24g9~63g13.",
+   "18g10r25g8~60g14.",
+   "20g9r27g6~19g7r33g14.",
+   "21g8r29g4~19g7r32g15.",
+   "2~21g8r28g5~17g7r32g15.",
+   "3~22g7r29g5~17g5r32g15.",
+   "4~22g8r27g5~17g5r31g16.",
+   "4~22g8r27g5~17g5r31g16.",
+   "10~16g8r28g5~16g5r31g16.",
+   "20~8g8r11g14.g5~16g5r31g16.",
+   "20~9g8r10g14.g5~16g5r31g16.",
+   "23~8g8r8g14.g5~14g7r31g16.",
+   "25~6g9r7g14.g5~14g7r31g16.",
+   "26~6g10r5g14.g5~14g5r33g16.",
+   "25~8g12.2g14.g5~13g6r33g16.",
+   "23~10g12.2g14.g5~2g13.4r33g16.",
+   "23~10g12.2g14.g5~2g13.4r33g16.",
+   "21~2g8.2g12.g2r14g5~2g13.4r33g16.",
+   "9g11~3g8.2g12.g2.13g6~2g13.3r34g16.",
+   "10g8~5g8.2g12.g2.13g5~3g13.r7g26.3g16.",
    "12g5~6g8.3g22.3g7~3g13.r5g.31r.14r",
    "23g8.g.24r.3b3~5g13.6g33r.13r",
    "23g8.g26r4b2g6.10r8.33r.13r",
    "10gr6g15.24r6b59r.13r",
    "10rg44r6b59r.14r",
-   "9rg45r6b32r10.r31.",
-   "r2b6rg27r13.g2~6b.33r5gr13g23.",
+   "9rg45r6b32r10.r12.3g16.",
+   "r2b6rg27r13.g2~6b.33r5gr20g16.",
    "4b5rg27r13g6~2br.32r.2gr2g7.2g28.",
    "r3b6rg25r.11g7~4grg30.7g7.2g28.",
    "r3b7r6g18.10g8~45g7.2g28.",
@@ -770,18 +775,18 @@
    "4g6~24g6~12g13.2g13.4g12.23g13.3~",
    "3r3g7~16g10~28g13.39g16.",
    "3g4r11~7g11~83g16.",
-   "2~5g3r24~80g21.",
-   "6~6g19~83g21.",
-   "12~6g8~89g20.",
-   "18~97g20.",
-   "18~96g21.",
-   "3g20~91g21.",
-   "r6g21~86g21.",
-   "2r11g21~80g21.",
-   "3r15g21~75g21.",
-   "4r21g18~71g21.",
-   "4r25g19~67g20.",
-   "6r29g.17~8.54g20.",
+   "2~5g3r24~85g16.",
+   "6~6g19~88g16.",
+   "12~6g8~93g16.",
+   "18~101g16.",
+   "18~101g16.",
+   "3g20~96g16.",
+   "r6g21~91g16.",
+   "2r11g21~85g16.",
+   "3r15g21~80g16.",
+   "4r21g18~76g16.",
+   "4r25g19~71g16.",
+   "6r29g.17~8.58g16.",
    "6r26g8.16~8.36g2.2g6.3g22.",
    "6r24g10.16~10.34g2.2g6.3g22.",
    "7r22g14.18~6.22g7.3g14.2g20."
@@ -790,5 +795,60 @@
  "residents": [],
  "routines": [],
  "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only.",
- "open_uses": []
+ "open_uses": [],
+ "theme": {
+  "waystone": {
+   "xy_px": [
+    9844,
+    4428
+   ],
+   "at": "beside Canal Road (Lull Road) (1)",
+   "table_name": "Canalside",
+   "status": "proposed"
+  },
+  "sightline": {
+   "kind": "street",
+   "street": "canalside-s01",
+   "name": "Canal Road (Lull Road) (1)",
+   "from_px": [
+    9844,
+    4452
+   ],
+   "to_px": [
+    9704,
+    4452
+   ],
+   "toward": "the stone circle (the beam over the valley)",
+   "off_by_deg": 18,
+   "bearing_deg": -162
+  },
+  "crater": {
+   "name": "the Company crater",
+   "xy_px": [
+    11780,
+    4159
+   ],
+   "distance_px": 1697,
+   "effect": "the Company crater lies 1600 px away; its scorch points to the valley",
+   "road": "Old Bridges",
+   "road_leaves_at_px": [
+    10645,
+    4420
+   ]
+  },
+  "moss": {
+   "where": "the market",
+   "xy_px": [
+    9844,
+    4428
+   ]
+  },
+  "company": {
+   "foothold": "a buyer who calls on market days",
+   "building": null,
+   "xy_px": null
+  },
+  "tech": "older-made: off the rail",
+  "theme_line": "the circle keeps the moon's light for everyone; the Company sells it"
+ }
 }

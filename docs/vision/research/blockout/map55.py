@@ -311,9 +311,74 @@ def plan_buildings(S):
             dt = {d_['id']: d_.get('town', P['name']) for d_ in P['districts']}
             for b in P['buildings']:
                 x, y, w, h_ = b['rect_px']
-                out.append((dt.get(b['district'], P['name']), x, y, w, h_, b['type'], b.get('form', b['type']), b.get('door_cells')))
+                out.append((dt.get(b['district'], P['name']), x, y, w, h_, b['type'], b.get('form', b['type']), b.get('door_cells'), b.get('bays')))
         return out
-    return [(town, x, y, w, h_, use, use, None) for town, r in S['towns'].items() for (x, y, w, h_, use, counted) in r['buildings']]
+    return [(town, x, y, w, h_, use, use, None, None) for town, r in S['towns'].items() for (x, y, w, h_, use, counted) in r['buildings']]
+
+
+ROOF_RGB = {'flat': (150, 150, 146), 'tin': (112, 130, 146), 'tile': (172, 92, 64), 'slate': (88, 96, 112), 'thatch': (190, 160, 96), 'stone': (140, 132, 120)}
+
+
+def draw_bays(d, ink, P, x, y, w, h_, bays, k, kk):
+    """A block of fronts sharing walls: each bay its own roof (flat with clutter, pitched tin, tiles, slate, thatch), the taller
+    ones casting a longer shadow, a dark line on each party wall."""
+    along_x = abs(sum(q['w_cells'] for q in bays) * CELL - w) <= abs(sum(q['w_cells'] for q in bays) * CELL - h_)
+    at = 0
+    for q in bays:
+        bw = q['w_cells'] * CELL
+        bx, by, bww, bhh = (x + at, y, bw, h_) if along_x else (x, y + at, w, bw)
+        X0, Y0 = P(bx, by); X1, Y1 = P(bx + bww, by + bhh)
+        off = max(1.0, (0.6 + 0.5 * q.get('storeys', 1)) * kk)
+        d.rectangle([X0 + off, Y0 + off, X1 + off, Y1 + off], fill=ink + (60,))
+        at += bw
+    at = 0
+    for i, q in enumerate(bays):
+        bw = q['w_cells'] * CELL
+        bx, by, bww, bhh = (x + at, y, bw, h_) if along_x else (x, y + at, w, bw)
+        X0, Y0 = P(bx, by); X1, Y1 = P(bx + bww, by + bhh)
+        lt, md, sh = tones(ROOF_RGB.get(q.get('roof'), (150, 140, 130)))
+        d.rectangle([X0, Y0, X1, Y1], fill=sh)
+        if q.get('roof') == 'flat':
+            d.rectangle([X0, Y0, X1, Y0 + (Y1 - Y0) * 0.5], fill=md)
+            if X1 - X0 > 5 and Y1 - Y0 > 5:                              # roof clutter: a tank, a vent
+                cx_, cy_ = X0 + (X1 - X0) * (0.3 + 0.4 * (i % 2)), Y0 + (Y1 - Y0) * 0.55
+                d.rectangle([cx_ - 1.2 * kk, cy_ - 1.2 * kk, cx_ + 1.2 * kk, cy_ + 1.2 * kk], fill=lt, outline=ink + (160,))
+        elif along_x:
+            d.rectangle([X0, Y0, X1, (Y0 + Y1) / 2], fill=lt)                # the ridge along the street, the front slope lit
+            if q.get('roof') == 'tin' and X1 - X0 > 4:
+                for j in range(1, max(2, int((X1 - X0) // max(2, 2 * kk)))):
+                    xx = X0 + j * 2 * kk; d.line([(xx, Y0), (xx, Y1)], fill=sh + (160,), width=1)
+        else:
+            d.rectangle([X0, Y0, (X0 + X1) / 2, Y1], fill=lt)
+            if q.get('roof') == 'tin' and Y1 - Y0 > 4:
+                for j in range(1, max(2, int((Y1 - Y0) // max(2, 2 * kk)))):
+                    yy = Y0 + j * 2 * kk; d.line([(X0, yy), (X1, yy)], fill=sh + (160,), width=1)
+        if i:
+            if along_x:
+                d.line([(X0, Y0), (X0, Y1)], fill=ink + (200,), width=1)
+            else:
+                d.line([(X0, Y0), (X1, Y0)], fill=ink + (200,), width=1)
+        at += bw
+    X0, Y0 = P(x, y); X1, Y1 = P(x + w, y + h_)
+    if X1 - X0 > 3.5:
+        d.rectangle([X0, Y0, X1, Y1], outline=ink + (170,), width=1)
+
+
+def draw_kerbs(d, S, R, P, k, plans=None):
+    """Painted kerb lines along both edges of the streets with a continuous frontage."""
+    for P_ in (plans or (S.get('plans') or {}).values()):
+        for st in P_['streets']:
+            if st.get('frontage') != 'continuous':
+                continue
+            hw = st['width_cells'] * CELL / 2 - 1.5
+            v = st['vertices_px']
+            for (ax, ay), (bx, by) in zip(v, v[1:]):
+                L = math.hypot(bx - ax, by - ay)
+                if L < 8:
+                    continue
+                nx, ny = -(by - ay) / L, (bx - ax) / L
+                for sg in (1, -1):
+                    d.line([P(ax + nx * hw * sg, ay + ny * hw * sg), P(bx + nx * hw * sg, by + ny * hw * sg)], fill=R['plaster'][5] + (200,), width=max(1, int(round(1.2 * k))))
 
 
 FLAT = {'office', 'tower', 'hangar', 'warehouse', 'station', 'keep', 'hall'}
@@ -324,10 +389,19 @@ def draw_towns(d, S, R, ink, P, s, k, neon_lights=True):
     apartment row or a terrace split into its houses), flat roofs with a lit parapet (warehouses with roof lights, slabs and towers
     with a core, adobes pale and flat), and a tall board front on the street side of a frontier shop, saloon or depot."""
     kk = s
-    for (town, x, y, w, h_, use, form, door) in plan_buildings(S):
+    for (town, x, y, w, h_, use, form, door, bays) in plan_buildings(S):
         X0, Y0 = P(x, y); X1, Y1 = P(x + w, y + h_)
         if X1 - X0 < 1.0:
             d.rectangle([X0, Y0, X0 + 1, Y0 + 1], fill=roof_colour(R, town, use))
+            continue
+        if bays and X1 - X0 >= 2.5:
+            draw_bays(d, ink, P, x, y, w, h_, bays, k, kk)
+            if any(q.get('false_front') for q in bays) and door:
+                dx, dy = door; fx, fy = P(dx * CELL + 4, dy * CELL + 4); t_ = max(1.0, 6 * k); front = R['plaster'][4]
+                if fy >= Y1 - 0.5:
+                    d.rectangle([X0, Y1 - t_, X1, Y1], fill=front, outline=ink + (200,))
+                elif fy <= Y0 + 0.5:
+                    d.rectangle([X0, Y0, X1, Y0 + t_], fill=front, outline=ink + (200,))
             continue
         c = roof_colour(R, town, use); lt, md, sh = tones(c)
         if form == 'adobe':
@@ -816,11 +890,14 @@ def compose(S, M, R, ink, s, base, k, ox, oy, Wc, Hc, paths, lines, mode, title,
     d = ImageDraw.Draw(canvas, 'RGBA')
     draw_lines(d, lines, P, R, ink, s)
     draw_street_bridges(d, S, R, ink, P, k)
+    draw_kerbs(d, S, R, P, k)
     draw_walls(d, S, R, ink, P, k)
     draw_towns(d, S, R, ink, P, s, k)
     neon_accents(d, S, P, s, k, lines)
     draw_closed_pass(d, S, M, R, ink, P, s)
     draw_cape(d, S, M, R, ink, P, s)
+    canvas = neon_glow(canvas, S, P, s, k, M)
+    d = ImageDraw.Draw(canvas, 'RGBA')
     if box is None:
         canvas = cloud_bank(canvas, S, M, R, s, k, ox, oy, window=P(*M.HIGHGARTH_PASS))
         far_land(canvas, M, R, s, P)
@@ -912,8 +989,29 @@ def town_inset(S, M, R, ink, cg, cid, rgb, sea_rgb, P, ppc):
         if len(q) >= 2:
             d.line(q, fill=ink + (90 if st['class'] != 'close' else 60,), width=1)
     draw_street_bridges(d, S, R, ink, Pf, kb)
+    draw_kerbs(d, S, R, Pf, kb, [P])
     draw_walls(d, S, R, ink, Pf, kb)
     draw_towns(d, S, R, ink, Pf, max(1.0, ppc / 4), kb)
+    TH = P.get('theme') or {}
+    if TH:                                                           # the theme: waystone, the line to the beam, the crater, Moss, the Company
+        sl_ = TH.get('sightline')
+        if sl_:
+            (fx_, fy_), (tx_, ty_) = sl_['from_px'], sl_['to_px']
+            br = math.radians(sl_['bearing_deg'])
+            ex_, ey_ = tx_ + math.cos(br) * 400, ty_ + math.sin(br) * 400
+            polyline(d, [(fx_, fy_), (ex_, ey_)], Pf, (250, 240, 190, 230), max(2.0, 3 * kb), dash=(10 * kb + 4, 8 * kb + 3))
+        ws_ = TH.get('waystone')
+        if ws_:
+            X, Y = Pf(*ws_['xy_px']); r_ = max(3.0, 5 * kb)
+            d.polygon([(X - r_ * 0.6, Y + r_), (X - r_ * 0.45, Y - r_ * 1.2), (X, Y - r_ * 1.8), (X + r_ * 0.45, Y - r_ * 1.2), (X + r_ * 0.6, Y + r_)],
+                      fill=(150, 170, 200, 255), outline=ink + (255,))
+            d.line([(X - r_ * 0.3, Y - r_ * 0.6), (X + r_ * 0.3, Y - r_ * 0.6)], fill=(200, 230, 255, 255), width=max(1, int(kb * 2)))
+    PROP_RGB = {'sign': (236, 196, 72), 'awning': (196, 70, 80), 'AC unit': (200, 210, 220), 'pipes': (120, 120, 130), 'gas tank': (230, 230, 220),
+                'potted plants': (90, 150, 70), 'planter tree': (60, 120, 60), 'washing line': (240, 240, 240)}
+    for st in P['streets']:                                          # the frontage props, a dot each
+        for q in st.get('frontage_props', []):
+            X, Y = Pf(*q['at_px']); r_ = max(1.0, ppc * 0.22)
+            d.rectangle([X - r_, Y - r_, X + r_, Y + r_], fill=PROP_RGB.get(q['kind'], (180, 160, 120)) + (255,), outline=ink + (160,))
     if P['id'] == 'neon-harbour':
         mat = S.get('mat')
         if mat is not None:                                          # the Company district's slab modules: light lines every 4 cells
@@ -971,9 +1069,34 @@ def town_inset(S, M, R, ink, cg, cid, rgb, sea_rgb, P, ppc):
         if 0 <= X <= Wb and 0 <= Y <= Hb:
             dl.ellipse([X - r_, Y - r_, X + r_, Y + r_], fill=(120, 170, 110, 220), outline=ink + (200,))
             pl.reserve((X - r_, Y - r_, X + r_, Y + r_))
+    TH = P.get('theme') or {}
+    for key_, col_, lab_ in (('moss', (90, 150, 90), 'M'), ('company', (150, 70, 150), 'C')):
+        q = TH.get(key_) or {}
+        if q.get('xy_px'):
+            X, Y = Pf(*q['xy_px']); r_ = 7 * s_
+            dl.ellipse([X - r_, Y - r_, X + r_, Y + r_], fill=col_ + (240,), outline=ink + (255,), width=2)
+            dl.text((X, Y), lab_, font=F['way'], fill=(255, 255, 255), anchor='mm')
+            pl.reserve((X - r_, Y - r_, X + r_, Y + r_))
     for b in P['buildings']:
         x, y, bw, bh = b['rect_px']; X0, Y0 = Pf(x, y); X1, Y1 = Pf(x + bw, y + bh)
         pl.reserve((X0, Y0, X1, Y1))
+    if TH.get('waystone'):
+        X, Y = Pf(*TH['waystone']['xy_px'])
+        pl.put((X, Y), 'waystone', F['small'], (40, 60, 100), paper + (235,), around(9 * s_, s_), stroke=2, leader=[26 * s_, 40 * s_], name=False)
+    if TH.get('sightline'):
+        X, Y = Pf(*TH['sightline']['to_px'])
+        pl.put((X, Y), 'toward the beam', F['small'], (120, 100, 40), paper + (235,), around(6 * s_, s_), stroke=2, leader=[24 * s_], name=False)
+    if TH.get('crater'):                                               # an arrow at the inset's edge toward the region's crater
+        cxp, cyp = TH['crater']['xy_px']
+        mx_, my_ = Pf((P['footprint_px'][0] + P['footprint_px'][2]) / 2, (P['footprint_px'][1] + P['footprint_px'][3]) / 2)
+        tx_, ty_ = Pf(cxp, cyp); ang = math.atan2(ty_ - my_, tx_ - mx_)
+        t_ = min((Wb / 2 - 30 * s_) / max(1e-6, abs(math.cos(ang))), (Hb / 2 - 30 * s_) / max(1e-6, abs(math.sin(ang))))
+        ax_, ay_ = Wb / 2 + math.cos(ang) * t_, Hb / 2 + math.sin(ang) * t_
+        r_ = 9 * s_
+        dl.polygon([(ax_ + math.cos(ang) * r_, ay_ + math.sin(ang) * r_), (ax_ + math.cos(ang + 2.5) * r_, ay_ + math.sin(ang + 2.5) * r_),
+                    (ax_ + math.cos(ang - 2.5) * r_, ay_ + math.sin(ang - 2.5) * r_)], fill=(120, 80, 170, 240), outline=ink + (255,))
+        pl.reserve((ax_ - r_, ay_ - r_, ax_ + r_, ay_ + r_))
+        pl.put((ax_, ay_), f"to {TH['crater']['name']}", F['small'], (90, 50, 130), paper + (235,), around(r_, s_), stroke=2, name=False)
     for l in P['game_layout']['landmarks']:
         X, Y = Pf(*l['xy'])
         pl.put((X, Y), l['name'], F['small'], ink, paper + (235,), around(7 * s_, s_), stroke=2, leader=[22 * s_, 34 * s_], name=False)
@@ -1052,7 +1175,8 @@ def town_inset(S, M, R, ink, cg, cid, rgb, sea_rgb, P, ppc):
         Placer.draw_text(_D_, (x0 + 34 * s_, y + 5 * s_), fn, F['small'], ink, paper, 'lm', 0); y += 16 * s_
     y += 8 * s_
     Placer.draw_text(_D_, (x0, y + 6 * s_), 'Marks', F['legend'], ink, paper, 'lm', 0); y += 20 * s_
-    for what in ('landmark (seen from the ways in)', 'way in', 'door', 'shortcut that opens later', 'quiet corner'):
+    for what in ('landmark (seen from the ways in)', 'way in', 'door', 'shortcut that opens later', 'quiet corner', 'frontage prop (sign, awning, plants...)',
+                 'waystone (a chip of the circle)', 'M: where Moss trades', "C: the Company's foothold", 'toward the beam / the crater'):
         X, Y = x0 + 13 * s_, y + 5 * s_; r_ = 5 * s_
         if what.startswith('landmark'):
             star = [(X + (r_ if i % 2 == 0 else r_ * 0.45) * math.cos(-math.pi / 2 + i * math.pi / 5), Y + (r_ if i % 2 == 0 else r_ * 0.45) * math.sin(-math.pi / 2 + i * math.pi / 5)) for i in range(10)]
@@ -1061,6 +1185,14 @@ def town_inset(S, M, R, ink, cg, cid, rgb, sea_rgb, P, ppc):
             d.ellipse([X - r_, Y - r_, X + r_, Y + r_], fill=(70, 130, 170, 235), outline=ink)
         elif what == 'door':
             d.rectangle([X - 2, Y - 2, X + 2, Y + 2], fill=ink)
+        elif what.startswith('waystone'):
+            d.polygon([(X - 3, Y + 5), (X - 2, Y - 4), (X, Y - 7), (X + 2, Y - 4), (X + 3, Y + 5)], fill=(150, 170, 200), outline=ink)
+        elif what.startswith('M:') or what.startswith('C:'):
+            d.ellipse([X - r_, Y - r_, X + r_, Y + r_], fill=(90, 150, 90) if what.startswith('M') else (150, 70, 150), outline=ink)
+        elif what.startswith('toward'):
+            d.line([(X - 8, Y), (X + 8, Y)], fill=(200, 180, 90), width=2)
+        elif what.startswith('frontage'):
+            d.rectangle([X - 2, Y - 2, X + 2, Y + 2], fill=(236, 196, 72), outline=ink)
         elif what.startswith('shortcut'):
             for a0 in range(0, 360, 40):
                 d.arc([X - r_, Y - r_, X + r_, Y + r_], a0, a0 + 22, fill=(150, 70, 150, 255), width=2)
@@ -1124,6 +1256,26 @@ def sea_tints(sea_rgb, S):
 
 
 NEON_CYAN, NEON_MAGENTA = (64, 232, 240), (236, 72, 196)
+
+
+def neon_glow(canvas, S, P, s, k, M):
+    """Neon Harbour on bought shard light: a glow round the Company's tower and district and over its yard's crater, the
+    brightest things on the map."""
+    plan = (S.get('plans') or {}).get('neon-harbour')
+    if not plan:
+        return canvas
+    lay = Image.new('RGBA', canvas.size, (0, 0, 0, 0)); dg = ImageDraw.Draw(lay)
+    dt = {d_['id']: d_.get('town', '') for d_ in plan['districts']}
+    for b in plan['buildings']:
+        if dt.get(b['district'], '').endswith('the Company district'):
+            x, y, w, h_ = b['rect_px']; X0, Y0 = P(x - 16, y - 16); X1, Y1 = P(x + w + 16, y + h_ + 16)
+            dg.rectangle([X0, Y0, X1, Y1], fill=(170, 250, 255, 150 if b['type'] == 'tower' else 95))
+    cx, cy = M.V.CRATERS['the Company crater'][:2] if hasattr(M, 'V') else (11780, 4159)
+    X, Y = P(cx, cy); r_ = 110 * k
+    dg.ellipse([X - r_, Y - r_, X + r_, Y + r_], fill=(220, 160, 255, 140))
+    lay = lay.filter(ImageFilter.GaussianBlur(max(2, 8 * s)))
+    out = canvas.convert('RGBA'); out.alpha_composite(lay)
+    return out.convert('RGB')
 
 
 def neon_accents(d, S, P, s, k, lines=()):

@@ -26,6 +26,10 @@ What it checks, per plan (ground-rules.md 4 and 5, size-guide.md 0, Matt's brief
               only at the water
   dry         a desert town is green only along its water (green more than 8 cells from water at most 3%)
   fortified   a town flagged fortified has a closed wall ring (at least 85% barrier on the ground) and at least one open gate
+  frontage    along a street marked continuous, buildings stand at its edge, their gaps at most max_gap_cells (1) unless a street,
+              stair alley or square passes through; its fronts vary in width
+  theme       every town has a theme block: its waystone on open walkable ground in the town, a sightline toward the beam, its
+              crater, where Moss trades, the Company's foothold and its technology
   city_green  inside a city, grass and trees only as named parks, planted plazas, plots or squares (at most 3% otherwise)
 The insets' labels are checked where they are drawn (map55.town_inset): no two label boxes overlap.
 It reports (not fails): dead ends, the town's size in screens and the number of street blocks (loops).
@@ -363,7 +367,7 @@ def check_plan(P, blockout):
                     continue                                       # a crossing of the water follows the water
                 if 0 <= mr < h and 0 <= mc < w and citym[mr, mc]:
                     L = math.hypot(x1 - x0, y1 - y0); tot += L
-                    ax_ += L if (abs(x1 - x0) < 0.5 or abs(y1 - y0) < 0.5) else 0
+                    ax_ += L if (abs(x1 - x0) <= 4 or abs(y1 - y0) <= 4) else 0     # within half a cell of a run
         if tot and ax_ / tot < 0.75:
             fails.append(f'planned: only {100 * ax_ / tot:.0f}% of the regional roads inside the city run in x and y runs')
         notes.append(f'{100 * ax_ / max(tot, 1):.0f}% of the city roads in x and y runs')
@@ -379,6 +383,90 @@ def check_plan(P, blockout):
         landc = int((win & ~np.isin(ter, list(WATER))).sum()) or 1
         if far_green.sum() > 0.03 * landc:
             fails.append(f'dry: {100 * far_green.sum() / landc:.1f}% of the town is green more than 8 cells from water')
+    # the theme: every town has its waystone (on its main square, at its gate or beside its main street, on walkable ground), a
+    # sightline toward the beam, its crater, where Moss trades, the Company's foothold and its technology
+    th = P.get('theme')
+    if not th:
+        fails.append('theme: no theme block')
+    else:
+        for k_ in ('waystone', 'sightline', 'crater', 'moss', 'company', 'tech'):
+            if k_ not in th:
+                fails.append(f'theme: no {k_}')
+        if 'waystone' in th:
+            wx, wy = th['waystone']['xy_px']; wc_, wr_ = int(wx // CELL) - c0, int(wy // CELL) - r0
+            if not (0 <= wc_ < w and 0 <= wr_ < h):
+                fails.append('theme: the waystone is outside the town')
+            elif ter[wr_, wc_] in ('~', '#') or occ[wr_, wc_]:
+                fails.append(f'theme: the waystone at {[wx, wy]} is not on open walkable ground')
+    # continuous frontage: along a street marked continuous, its buildings stand at its edge with gaps of max_gap_cells at most
+    # (a gap that a street, a stair alley or a square crosses is a way through, not a gap); its fronts vary in width
+    for st in P['streets']:
+        if st.get('frontage') != 'continuous':
+            continue
+        mg = st.get('max_gap_cells', 1); hwp = st['width_cells'] * CELL / 2
+        v = st['vertices_px']; sides_ok = 0; bays_w = []
+        others = np.zeros((h, w), bool)
+        for sid, m in bands.items():
+            if sid != st['id']:
+                others |= m
+        for (ax, ay), (bx, by) in zip(v, v[1:]):
+            L = math.hypot(bx - ax, by - ay)
+            if L < 48:
+                continue
+            if abs(by - ay) <= 0.36 * abs(bx - ax):
+                axis, a0, a1, c = 'x', min(ax, bx), max(ax, bx), (ay + by) / 2
+            elif abs(bx - ax) <= 0.36 * abs(by - ay):
+                axis, a0, a1, c = 'y', min(ay, by), max(ay, by), (ax + bx) / 2
+            else:
+                continue
+            for side in (1, -1):
+                # the frontage line: the cells just off the street's edge on this side, along the stretch
+                fr = c + side * (hwp + CELL / 2)
+                if axis == 'x':
+                    rr_ = int(fr // CELL) - r0; ca, cb = int(a0 // CELL) - c0, int(a1 // CELL) - c0
+                    if not (0 <= rr_ < h):
+                        continue
+                    ln_occ = occ[rr_, max(0, ca):max(0, cb)]
+                    blk_ = others | np.isin(ter, ['~', 'b', 'r', '#'])     # a gap where the ground just behind is a way, water or wall is blocked
+                    rows_ = [q for q in (rr_, rr_ + side, rr_ + 2 * side) if 0 <= q < h]
+                    ln_ok = np.any([blk_[q, max(0, ca):max(0, cb)] for q in rows_], axis=0)
+                else:
+                    cc_ = int(fr // CELL) - c0; ra, rb = int(a0 // CELL) - r0, int(a1 // CELL) - r0
+                    if not (0 <= cc_ < w):
+                        continue
+                    ln_occ = occ[max(0, ra):max(0, rb), cc_]
+                    blk_ = others | np.isin(ter, ['~', 'b', 'r', '#'])
+                    cols_ = [q for q in (cc_, cc_ + side, cc_ + 2 * side) if 0 <= q < w]
+                    ln_ok = np.any([blk_[max(0, ra):max(0, rb), q] for q in cols_], axis=0)
+                idx = np.nonzero(ln_occ)[0]
+                if len(idx) < 2 * 3:
+                    continue
+                sides_ok += 1
+                run, left_b = 0, True                              # a gap counts only between two fronts (not at a corner)
+                for i_ in range(idx[0], idx[-1] + 1):
+                    if ln_occ[i_] or ln_ok[i_]:
+                        if run > mg and left_b and ln_occ[i_]:
+                            fails.append(f"frontage: {st['id']} ({st.get('name') or 'a street'}) has a gap of {run} cells between two fronts (continuous allows {mg})")
+                        if run == 0:
+                            left_b = bool(ln_occ[i_])
+                        elif ln_occ[i_]:
+                            left_b = True
+                        else:
+                            left_b = False
+                        run = 0
+                    else:
+                        run += 1
+                for b in P['buildings']:
+                    x, y, bw, bh = b['rect_px']
+                    if axis == 'x' and x < a1 and x + bw > a0 and abs((y if side > 0 else y + bh) - (c + side * hwp)) <= 12:
+                        bays_w += [q['w_cells'] for q in b.get('bays', [])]
+                    if axis == 'y' and y < a1 and y + bh > a0 and abs((x if side > 0 else x + bw) - (c + side * hwp)) <= 12:
+                        bays_w += [q['w_cells'] for q in b.get('bays', [])]
+        tot_len = sum(math.hypot(bx - ax, by - ay) for (ax, ay), (bx, by) in zip(v, v[1:]))
+        if sides_ok == 0 and tot_len >= 96:
+            fails.append(f"frontage: {st['id']} ({st.get('name') or 'a street'}) is marked continuous with no row of buildings along it")
+        if len(bays_w) >= 4 and len(set(bays_w)) < 3:
+            fails.append(f"frontage: {st['id']}'s fronts are all one width")
     # a city: grass and trees only as named parks, planted plazas, plots, squares or allotments
     if P['size'] == 'city':
         env = ndi.binary_fill_holes(ndi.binary_closing(ndi.binary_dilation(occ, iterations=8), iterations=6))

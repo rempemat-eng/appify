@@ -8,7 +8,7 @@
   30,
   45
  ],
- "buildings_counted": 31,
+ "buildings_counted": 36,
  "grid": {
   "cell_px": 8,
   "screen_cells": [
@@ -139,9 +139,86 @@
    "street": "hearthold-a1",
    "entries_px": [],
    "route_kind": "path"
+  },
+  {
+   "id": "hearthold-arr2",
+   "kind": "path",
+   "route": "Ember Way",
+   "street": "hearthold-a2",
+   "entries_px": [
+    [
+     1880,
+     5680
+    ]
+   ],
+   "route_kind": "path"
   }
  ],
  "streets": [
+  {
+   "id": "hearthold-s01",
+   "name": "Castle Street",
+   "class": "side",
+   "width_cells": 4,
+   "vertices_px": [
+    [
+     2312.0,
+     5328.0
+    ],
+    [
+     2312.0,
+     5232.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "hearthold-c02",
+    "hearthold-s02",
+    "hearthold-s15",
+    "hearthold-s16"
+   ]
+  },
+  {
+   "id": "hearthold-s02",
+   "name": "Chapel Row (1)",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     2212.0,
+     5284.0
+    ],
+    [
+     2316.0,
+     5284.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "hearthold-s01",
+    "hearthold-s16"
+   ]
+  },
+  {
+   "id": "hearthold-s03",
+   "name": "Chapel Row (2)",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     2388.0,
+     5284.0
+    ],
+    [
+     2420.0,
+     5284.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "hearthold-s16"
+   ]
+  },
   {
    "id": "hearthold-s04",
    "name": "Gate Street",
@@ -157,6 +234,7 @@
      5712.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
     "hearthold-q02",
     "hearthold-s07",
@@ -179,10 +257,10 @@
      5492.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
     "hearthold-q02",
-    "hearthold-s09",
-    "hearthold-s14"
+    "hearthold-s09"
    ]
   },
   {
@@ -200,6 +278,7 @@
      5504.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
     "hearthold-q02",
     "hearthold-s10"
@@ -219,6 +298,101 @@
      2604.0,
      5596.0
     ]
+   ],
+   "frontage": "continuous",
+   "max_gap_cells": 1,
+   "frontage_props": [
+    {
+     "kind": "sign",
+     "at_px": [
+      2152,
+      5612
+     ]
+    },
+    {
+     "kind": "potted plants",
+     "at_px": [
+      2208,
+      5612
+     ]
+    },
+    {
+     "kind": "sign",
+     "at_px": [
+      2240,
+      5612
+     ]
+    },
+    {
+     "kind": "water butt",
+     "at_px": [
+      2344,
+      5612
+     ]
+    },
+    {
+     "kind": "sign",
+     "at_px": [
+      2360,
+      5612
+     ]
+    },
+    {
+     "kind": "potted plants",
+     "at_px": [
+      2376,
+      5612
+     ]
+    },
+    {
+     "kind": "sign",
+     "at_px": [
+      2414,
+      5612
+     ]
+    },
+    {
+     "kind": "woodpile",
+     "at_px": [
+      2466,
+      5612
+     ]
+    },
+    {
+     "kind": "sign",
+     "at_px": [
+      2502,
+      5612
+     ]
+    },
+    {
+     "kind": "potted plants",
+     "at_px": [
+      2526,
+      5612
+     ]
+    },
+    {
+     "kind": "sign",
+     "at_px": [
+      2538,
+      5612
+     ]
+    },
+    {
+     "kind": "potted plants",
+     "at_px": [
+      2556,
+      5612
+     ]
+    },
+    {
+     "kind": "sign",
+     "at_px": [
+      2580,
+      5612
+     ]
+    }
    ],
    "connects": [
     "hearthold-s04",
@@ -241,6 +415,269 @@
      5716.0
     ]
    ],
+   "frontage": "continuous",
+   "max_gap_cells": 1,
+   "frontage_props": [
+    {
+     "kind": "potted plants",
+     "at_px": [
+      2150,
+      5700
+     ]
+    },
+    {
+     "kind": "water butt",
+     "at_px": [
+      2178,
+      5700
+     ]
+    },
+    {
+     "kind": "potted plants",
+     "at_px": [
+      2206,
+      5700
+     ]
+    },
+    {
+     "kind": "potted plants",
+     "at_px": [
+      2234,
+      5700
+     ]
+    },
+    {
+     "kind": "woodpile",
+     "at_px": [
+      2264,
+      5700
+     ]
+    },
+    {
+     "kind": "sign",
+     "at_px": [
+      2280,
+      5700
+     ]
+    },
+    {
+     "kind": "lamp",
+     "at_px": [
+      2342,
+      5700
+     ]
+    },
+    {
+     "kind": "potted plants",
+     "at_px": [
+      2354,
+      5700
+     ]
+    },
+    {
+     "kind": "sign",
+     "at_px": [
+      2370,
+      5700
+     ]
+    },
+    {
+     "kind": "water butt",
+     "at_px": [
+      2416,
+      5700
+     ]
+    },
+    {
+     "kind": "potted plants",
+     "at_px": [
+      2448,
+      5700
+     ]
+    },
+    {
+     "kind": "woodpile",
+     "at_px": [
+      2470,
+      5700
+     ]
+    },
+    {
+     "kind": "sign",
+     "at_px": [
+      2482,
+      5700
+     ]
+    },
+    {
+     "kind": "lamp",
+     "at_px": [
+      2502,
+      5700
+     ]
+    },
+    {
+     "kind": "lamp",
+     "at_px": [
+      2554,
+      5700
+     ]
+    },
+    {
+     "kind": "lamp",
+     "at_px": [
+      2574,
+      5700
+     ]
+    },
+    {
+     "kind": "water butt",
+     "at_px": [
+      2630,
+      5700
+     ]
+    },
+    {
+     "kind": "potted plants",
+     "at_px": [
+      2658,
+      5700
+     ]
+    },
+    {
+     "kind": "sign",
+     "at_px": [
+      2690,
+      5700
+     ]
+    },
+    {
+     "kind": "lamp",
+     "at_px": [
+      2148,
+      5732
+     ]
+    },
+    {
+     "kind": "woodpile",
+     "at_px": [
+      2192,
+      5732
+     ]
+    },
+    {
+     "kind": "water butt",
+     "at_px": [
+      2208,
+      5732
+     ]
+    },
+    {
+     "kind": "sign",
+     "at_px": [
+      2222,
+      5732
+     ]
+    },
+    {
+     "kind": "lamp",
+     "at_px": [
+      2234,
+      5732
+     ]
+    },
+    {
+     "kind": "water butt",
+     "at_px": [
+      2258,
+      5732
+     ]
+    },
+    {
+     "kind": "woodpile",
+     "at_px": [
+      2344,
+      5732
+     ]
+    },
+    {
+     "kind": "water butt",
+     "at_px": [
+      2378,
+      5732
+     ]
+    },
+    {
+     "kind": "sign",
+     "at_px": [
+      2398,
+      5732
+     ]
+    },
+    {
+     "kind": "potted plants",
+     "at_px": [
+      2414,
+      5732
+     ]
+    },
+    {
+     "kind": "lamp",
+     "at_px": [
+      2444,
+      5732
+     ]
+    },
+    {
+     "kind": "water butt",
+     "at_px": [
+      2468,
+      5732
+     ]
+    },
+    {
+     "kind": "potted plants",
+     "at_px": [
+      2504,
+      5732
+     ]
+    },
+    {
+     "kind": "water butt",
+     "at_px": [
+      2558,
+      5732
+     ]
+    },
+    {
+     "kind": "lamp",
+     "at_px": [
+      2570,
+      5732
+     ]
+    },
+    {
+     "kind": "potted plants",
+     "at_px": [
+      2586,
+      5732
+     ]
+    },
+    {
+     "kind": "sign",
+     "at_px": [
+      2640,
+      5732
+     ]
+    },
+    {
+     "kind": "potted plants",
+     "at_px": [
+      2702,
+      5732
+     ]
+    }
+   ],
    "connects": [
     "hearthold-s04",
     "hearthold-s09",
@@ -262,6 +699,7 @@
      5716.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
     "hearthold-s05",
     "hearthold-s07",
@@ -283,6 +721,7 @@
      5716.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
     "hearthold-s06",
     "hearthold-s07",
@@ -305,33 +744,62 @@
     ]
    ],
    "follows_route": "Forge Stair",
-   "connects": [
-    "hearthold-s14"
-   ]
+   "connects": []
   },
   {
-   "id": "hearthold-s14",
-   "name": null,
-   "class": "lane",
+   "id": "hearthold-a2",
+   "name": "Ember Way",
+   "class": "arrival",
    "width_cells": 3,
    "vertices_px": [
     [
-     2004.0,
-     5484.0
+     1880.3,
+     5679.8
     ],
     [
-     2004.0,
-     5196.0
+     1911.4,
+     5713.7
     ],
     [
-     2132.0,
-     5196.0
+     1929.4,
+     5727.1
+    ],
+    [
+     1969.3,
+     5750.0
+    ],
+    [
+     2015.4,
+     5767.7
+    ],
+    [
+     2064.7,
+     5775.4
+    ],
+    [
+     2153.1,
+     5778.2
+    ],
+    [
+     2196.4,
+     5783.3
+    ],
+    [
+     2322.6,
+     5823.4
+    ],
+    [
+     2368.9,
+     5831.5
+    ],
+    [
+     2410.0,
+     5834.8
     ]
    ],
-   "link": true,
+   "follows_route": "Ember Way",
    "connects": [
-    "hearthold-a1",
-    "hearthold-s05"
+    "hearthold-s15"
    ]
   },
   {
@@ -341,23 +809,66 @@
    "width_cells": 3,
    "vertices_px": [
     [
+     2308.0,
+     5332.0
+    ],
+    [
+     2308.0,
+     5796.0
+    ]
+   ],
+   "frontage": "detached",
+   "link": true,
+   "connects": [
+    "hearthold-a2",
+    "hearthold-s01",
+    "hearthold-s04"
+   ]
+  },
+  {
+   "id": "hearthold-s16",
+   "name": null,
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     2380.0,
+     5276.0
+    ],
+    [
+     2332.0,
+     5276.0
+    ]
+   ],
+   "frontage": "detached",
+   "link": true,
+   "connects": [
+    "hearthold-s01",
+    "hearthold-s03",
+    "hearthold-s17"
+   ]
+  },
+  {
+   "id": "hearthold-s17",
+   "name": null,
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
      2372.0,
      5252.0
     ],
     [
-     2316.0,
-     5252.0
-    ],
-    [
-     2316.0,
-     5444.0
+     2372.0,
+     5260.0
     ]
    ],
+   "frontage": "detached",
    "link": true,
    "connects": [
-    "hearthold-c03",
     "hearthold-q01",
-    "hearthold-s04"
+    "hearthold-s03",
+    "hearthold-s16"
    ]
   },
   {
@@ -379,8 +890,8 @@
      5192.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
-    "hearthold-c02",
     "hearthold-q01"
    ]
   },
@@ -395,32 +906,17 @@
      5184.0
     ],
     [
-     2376.0,
+     2304.0,
      5184.0
-    ]
-   ],
-   "connects": [
-    "hearthold-c01",
-    "hearthold-q01"
-   ]
-  },
-  {
-   "id": "hearthold-c03",
-   "name": null,
-   "class": "close",
-   "width_cells": 2,
-   "vertices_px": [
-    [
-     2256.0,
-     5296.0
     ],
     [
      2304.0,
-     5296.0
+     5216.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
-    "hearthold-s15"
+    "hearthold-s01"
    ]
   }
  ],
@@ -494,15 +990,16 @@
     "hearthold-b018",
     "hearthold-b019",
     "hearthold-b020",
-    "hearthold-b025",
-    "hearthold-b026",
-    "hearthold-b027",
-    "hearthold-b031"
+    "hearthold-b023",
+    "hearthold-b028",
+    "hearthold-b029",
+    "hearthold-b034",
+    "hearthold-b036"
    ],
    "mix": {
     "shop": 1,
     "workshop": 5,
-    "townhouse": 4
+    "townhouse": 5
    },
    "function": "crafts and work with homes"
   },
@@ -521,7 +1018,7 @@
     "hearthold-b012",
     "hearthold-b013",
     "hearthold-b014",
-    "hearthold-b030"
+    "hearthold-b035"
    ],
    "mix": {
     "townhouse": 2,
@@ -542,13 +1039,17 @@
    "buildings": [
     "hearthold-b021",
     "hearthold-b022",
-    "hearthold-b023",
     "hearthold-b024",
-    "hearthold-b028",
-    "hearthold-b029"
+    "hearthold-b025",
+    "hearthold-b026",
+    "hearthold-b027",
+    "hearthold-b030",
+    "hearthold-b031",
+    "hearthold-b032",
+    "hearthold-b033"
    ],
    "mix": {
-    "townhouse": 6
+    "townhouse": 10
    },
    "function": "homes"
   },
@@ -693,6 +1194,16 @@
     112
    ]
   ],
+  "row_house": [
+   [
+    24,
+    192
+   ],
+   [
+    24,
+    56
+   ]
+  ],
   "shop": [
    [
     64,
@@ -724,6 +1235,8 @@
    ]
   ]
  },
+ "fronts": 57,
+ "counting_note": "buildings_counted counts a block of fronts sharing its walls (a terrace, an apartment row, a frontier block) once; fronts counts each front in it",
  "buildings": [
   {
    "id": "hearthold-b001",
@@ -767,10 +1280,10 @@
     104,
     56
    ],
-   "faces": "hearthold-s15",
+   "faces": "hearthold-s01",
    "door_cells": [
     287,
-    655
+    652
    ],
    "purpose": "the knights' hall",
    "occupants": "its order or guild",
@@ -793,9 +1306,9 @@
     64,
     56
    ],
-   "faces": "hearthold-c03",
+   "faces": "hearthold-s02",
    "door_cells": [
-    281,
+    278,
     662
    ],
    "purpose": "the chapel",
@@ -819,10 +1332,10 @@
     104,
     48
    ],
-   "faces": "hearthold-s15",
+   "faces": "hearthold-s03",
    "door_cells": [
-    291,
-    666
+    298,
+    662
    ],
    "purpose": "the guildhall",
    "occupants": "staff by day",
@@ -949,7 +1462,7 @@
     40,
     48
    ],
-   "faces": "hearthold-s15",
+   "faces": "hearthold-s01",
    "door_cells": [
     287,
     666
@@ -1009,7 +1522,8 @@
    "purpose": "the Gate inn",
    "occupants": "the innkeeper, staff and guests",
    "district": "hearthold-d-gate-street",
-   "counted": true
+   "counted": true,
+   "company_foothold": "no office: the knights refused the Company; its buyer waits at the inn"
   },
   {
    "id": "hearthold-b012",
@@ -1276,274 +1790,586 @@
   {
    "id": "hearthold-b021",
    "type": "townhouse",
-   "form": "terrace",
+   "form": "row_house",
    "footprint_cells": [
     267,
-    702,
-    18,
+    701,
+    16,
     5
    ],
    "rect_px": [
     2136,
-    5616,
-    144,
+    5608,
+    128,
     40
    ],
-   "faces": "hearthold-s09",
+   "faces": "hearthold-s07",
    "door_cells": [
-    266,
-    704
+    275,
+    700
    ],
    "purpose": "a terraced townhouse",
    "occupants": "a farmer's household",
    "district": "hearthold-d-ash-lane",
    "counted": true,
-   "plot_cells": [
-    267,
-    707,
-    18,
-    1
+   "bays": [
+    {
+     "w_cells": 8,
+     "storeys": 2,
+     "roof": "tile"
+    },
+    {
+     "w_cells": 4,
+     "storeys": 1,
+     "roof": "tile"
+    },
+    {
+     "w_cells": 4,
+     "storeys": 1,
+     "roof": "tile"
+    }
    ],
-   "plot": "yard"
+   "fronts": 3
   },
   {
    "id": "hearthold-b022",
    "type": "townhouse",
-   "form": "terrace",
+   "form": "row_house",
+   "footprint_cells": [
+    292,
+    701,
+    20,
+    5
+   ],
+   "rect_px": [
+    2336,
+    5608,
+    160,
+    40
+   ],
+   "faces": "hearthold-s07",
+   "door_cells": [
+    302,
+    700
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a knight's household",
+   "district": "hearthold-d-ash-lane",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 4,
+     "storeys": 1,
+     "roof": "tile"
+    },
+    {
+     "w_cells": 4,
+     "storeys": 2,
+     "roof": "tile"
+    },
+    {
+     "w_cells": 7,
+     "storeys": 3,
+     "roof": "tile"
+    },
+    {
+     "w_cells": 5,
+     "storeys": 1,
+     "roof": "slate"
+    }
+   ],
+   "fronts": 4
+  },
+  {
+   "id": "hearthold-b023",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    312,
+    701,
+    12,
+    5
+   ],
+   "rect_px": [
+    2496,
+    5608,
+    96,
+    40
+   ],
+   "faces": "hearthold-s07",
+   "door_cells": [
+    318,
+    700
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a armourer's household",
+   "district": "hearthold-d-smiths-row",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 3,
+     "storeys": 3,
+     "roof": "tile"
+    },
+    {
+     "w_cells": 3,
+     "storeys": 3,
+     "roof": "tile"
+    },
+    {
+     "w_cells": 6,
+     "storeys": 3,
+     "roof": "tile"
+    }
+   ],
+   "fronts": 3
+  },
+  {
+   "id": "hearthold-b024",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    283,
+    701,
+    3,
+    5
+   ],
+   "rect_px": [
+    2264,
+    5608,
+    24,
+    40
+   ],
+   "faces": "hearthold-s04",
+   "door_cells": [
+    286,
+    703
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a smith's household",
+   "district": "hearthold-d-ash-lane",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 3,
+     "storeys": 1,
+     "roof": "flat"
+    }
+   ],
+   "fronts": 1
+  },
+  {
+   "id": "hearthold-b025",
+   "type": "townhouse",
+   "form": "row_house",
    "footprint_cells": [
     267,
     708,
-    18,
+    14,
     5
    ],
    "rect_px": [
     2136,
     5664,
-    144,
+    112,
     40
    ],
    "faces": "hearthold-s08",
    "door_cells": [
-    276,
+    274,
+    713
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a potter's household",
+   "district": "hearthold-d-ash-lane",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 7,
+     "storeys": 3,
+     "roof": "slate"
+    },
+    {
+     "w_cells": 7,
+     "storeys": 1,
+     "roof": "tile"
+    }
+   ],
+   "fronts": 2
+  },
+  {
+   "id": "hearthold-b026",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    282,
+    708,
+    4,
+    5
+   ],
+   "rect_px": [
+    2256,
+    5664,
+    32,
+    40
+   ],
+   "faces": "hearthold-s08",
+   "door_cells": [
+    284,
+    713
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a vintner's household",
+   "district": "hearthold-d-ash-lane",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 4,
+     "storeys": 3,
+     "roof": "tile"
+    }
+   ],
+   "fronts": 1
+  },
+  {
+   "id": "hearthold-b027",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    292,
+    708,
+    19,
+    5
+   ],
+   "rect_px": [
+    2336,
+    5664,
+    152,
+    40
+   ],
+   "faces": "hearthold-s08",
+   "door_cells": [
+    301,
+    713
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a guard's household",
+   "district": "hearthold-d-ash-lane",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 3,
+     "storeys": 1,
+     "roof": "tile"
+    },
+    {
+     "w_cells": 5,
+     "storeys": 3,
+     "roof": "slate"
+    },
+    {
+     "w_cells": 8,
+     "storeys": 2,
+     "roof": "tile"
+    },
+    {
+     "w_cells": 3,
+     "storeys": 1,
+     "roof": "tile"
+    }
+   ],
+   "fronts": 4
+  },
+  {
+   "id": "hearthold-b028",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    311,
+    708,
+    12,
+    5
+   ],
+   "rect_px": [
+    2488,
+    5664,
+    96,
+    40
+   ],
+   "faces": "hearthold-s08",
+   "door_cells": [
+    317,
+    713
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a farmer's household",
+   "district": "hearthold-d-smiths-row",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 7,
+     "storeys": 1,
+     "roof": "tile"
+    },
+    {
+     "w_cells": 5,
+     "storeys": 3,
+     "roof": "tile"
+    }
+   ],
+   "fronts": 2
+  },
+  {
+   "id": "hearthold-b029",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    327,
+    708,
+    16,
+    5
+   ],
+   "rect_px": [
+    2616,
+    5664,
+    128,
+    40
+   ],
+   "faces": "hearthold-s08",
+   "door_cells": [
+    335,
     713
    ],
    "purpose": "a terraced townhouse",
    "occupants": "a knight's household",
-   "district": "hearthold-d-ash-lane",
-   "counted": true
+   "district": "hearthold-d-smiths-row",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 7,
+     "storeys": 3,
+     "roof": "tile"
+    },
+    {
+     "w_cells": 9,
+     "storeys": 3,
+     "roof": "tile"
+    }
+   ],
+   "fronts": 2
   },
   {
-   "id": "hearthold-b023",
+   "id": "hearthold-b030",
    "type": "townhouse",
-   "form": "terrace",
+   "form": "row_house",
    "footprint_cells": [
-    293,
-    702,
-    15,
-    5
+    267,
+    716,
+    13,
+    4
    ],
    "rect_px": [
-    2344,
-    5616,
-    120,
-    40
+    2136,
+    5728,
+    104,
+    32
    ],
-   "faces": "hearthold-s07",
+   "faces": "hearthold-s08",
    "door_cells": [
-    300,
-    701
+    273,
+    715
    ],
    "purpose": "a terraced townhouse",
    "occupants": "a armourer's household",
    "district": "hearthold-d-ash-lane",
    "counted": true,
-   "plot_cells": [
-    293,
-    707,
-    15,
-    1
+   "bays": [
+    {
+     "w_cells": 6,
+     "storeys": 2,
+     "roof": "slate"
+    },
+    {
+     "w_cells": 4,
+     "storeys": 1,
+     "roof": "tile"
+    },
+    {
+     "w_cells": 3,
+     "storeys": 2,
+     "roof": "tile"
+    }
    ],
-   "plot": "yard"
+   "fronts": 3
   },
   {
-   "id": "hearthold-b024",
+   "id": "hearthold-b031",
    "type": "townhouse",
-   "form": "terrace",
+   "form": "row_house",
    "footprint_cells": [
-    293,
-    708,
-    15,
+    281,
+    716,
+    5,
     5
    ],
    "rect_px": [
-    2344,
-    5664,
-    120,
+    2248,
+    5728,
+    40,
     40
    ],
    "faces": "hearthold-s08",
    "door_cells": [
-    300,
-    713
+    283,
+    715
    ],
    "purpose": "a terraced townhouse",
    "occupants": "a smith's household",
    "district": "hearthold-d-ash-lane",
-   "counted": true
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 5,
+     "storeys": 1,
+     "roof": "tile"
+    }
+   ],
+   "fronts": 1
   },
   {
-   "id": "hearthold-b025",
+   "id": "hearthold-b032",
    "type": "townhouse",
-   "form": "terrace",
+   "form": "row_house",
    "footprint_cells": [
-    309,
-    702,
-    15,
+    292,
+    716,
+    18,
     5
    ],
    "rect_px": [
-    2472,
-    5616,
-    120,
+    2336,
+    5728,
+    144,
     40
    ],
-   "faces": "hearthold-s10",
+   "faces": "hearthold-s08",
    "door_cells": [
-    324,
-    704
+    301,
+    715
    ],
    "purpose": "a terraced townhouse",
    "occupants": "a potter's household",
-   "district": "hearthold-d-smiths-row",
+   "district": "hearthold-d-ash-lane",
    "counted": true,
-   "plot_cells": [
-    309,
-    707,
-    15,
-    1
+   "bays": [
+    {
+     "w_cells": 4,
+     "storeys": 1,
+     "roof": "tile"
+    },
+    {
+     "w_cells": 5,
+     "storeys": 3,
+     "roof": "tile"
+    },
+    {
+     "w_cells": 3,
+     "storeys": 1,
+     "roof": "slate"
+    },
+    {
+     "w_cells": 6,
+     "storeys": 2,
+     "roof": "tile"
+    }
    ],
-   "plot": "yard"
+   "fronts": 4
   },
   {
-   "id": "hearthold-b026",
+   "id": "hearthold-b033",
    "type": "townhouse",
-   "form": "terrace",
+   "form": "row_house",
    "footprint_cells": [
-    309,
-    708,
-    15,
+    311,
+    716,
+    16,
     5
    ],
    "rect_px": [
-    2472,
-    5664,
-    120,
+    2488,
+    5728,
+    128,
     40
    ],
    "faces": "hearthold-s08",
    "door_cells": [
-    316,
-    713
+    319,
+    715
    ],
    "purpose": "a terraced townhouse",
    "occupants": "a vintner's household",
-   "district": "hearthold-d-smiths-row",
-   "counted": true
+   "district": "hearthold-d-ash-lane",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 8,
+     "storeys": 1,
+     "roof": "slate"
+    },
+    {
+     "w_cells": 3,
+     "storeys": 3,
+     "roof": "tile"
+    },
+    {
+     "w_cells": 5,
+     "storeys": 1,
+     "roof": "slate"
+    }
+   ],
+   "fronts": 3
   },
   {
-   "id": "hearthold-b027",
+   "id": "hearthold-b034",
    "type": "townhouse",
-   "form": "terrace",
+   "form": "row_house",
    "footprint_cells": [
-    329,
-    708,
+    328,
+    716,
     15,
     5
    ],
    "rect_px": [
-    2632,
-    5664,
+    2624,
+    5728,
     120,
     40
    ],
    "faces": "hearthold-s08",
    "door_cells": [
-    336,
-    713
+    335,
+    715
    ],
    "purpose": "a terraced townhouse",
    "occupants": "a guard's household",
    "district": "hearthold-d-smiths-row",
-   "counted": true
-  },
-  {
-   "id": "hearthold-b028",
-   "type": "townhouse",
-   "form": "terrace",
-   "footprint_cells": [
-    293,
-    716,
-    15,
-    5
-   ],
-   "rect_px": [
-    2344,
-    5728,
-    120,
-    40
-   ],
-   "faces": "hearthold-s08",
-   "door_cells": [
-    300,
-    715
-   ],
-   "purpose": "a terraced townhouse",
-   "occupants": "a farmer's household",
-   "district": "hearthold-d-ash-lane",
    "counted": true,
-   "plot_cells": [
-    293,
-    721,
-    15,
-    2
+   "bays": [
+    {
+     "w_cells": 8,
+     "storeys": 2,
+     "roof": "slate"
+    },
+    {
+     "w_cells": 7,
+     "storeys": 2,
+     "roof": "tile"
+    }
    ],
-   "plot": "yard"
+   "fronts": 2
   },
   {
-   "id": "hearthold-b029",
-   "type": "townhouse",
-   "form": "terrace",
-   "footprint_cells": [
-    309,
-    716,
-    15,
-    5
-   ],
-   "rect_px": [
-    2472,
-    5728,
-    120,
-    40
-   ],
-   "faces": "hearthold-s08",
-   "door_cells": [
-    316,
-    715
-   ],
-   "purpose": "a terraced townhouse",
-   "occupants": "a knight's household",
-   "district": "hearthold-d-ash-lane",
-   "counted": true,
-   "plot_cells": [
-    309,
-    721,
-    15,
-    2
-   ],
-   "plot": "yard"
-  },
-  {
-   "id": "hearthold-b030",
+   "id": "hearthold-b035",
    "type": "townhouse",
    "form": "townhouse",
    "footprint_cells": [
@@ -1564,12 +2390,12 @@
     693
    ],
    "purpose": "a terraced townhouse",
-   "occupants": "a armourer's household",
+   "occupants": "a farmer's household",
    "district": "hearthold-d-gate-street",
    "counted": true
   },
   {
-   "id": "hearthold-b031",
+   "id": "hearthold-b036",
    "type": "townhouse",
    "form": "terrace",
    "footprint_cells": [
@@ -1590,7 +2416,7 @@
     702
    ],
    "purpose": "a terraced townhouse",
-   "occupants": "a smith's household",
+   "occupants": "a knight's household",
    "district": "hearthold-d-smiths-row",
    "counted": true
   }
@@ -1628,7 +2454,7 @@
     2620,
     5400
    ],
-   "plots": 6,
+   "plots": 4,
    "why": "vines on the cooled ash of the rock's warm east side"
   },
   {
@@ -1640,7 +2466,7 @@
     2600,
     5800
    ],
-   "plots": 2,
+   "plots": 3,
    "why": "barley and beans between the town and the cove"
   }
  ],
@@ -1711,6 +2537,14 @@
     ]
    }
   ],
+  "first_screen_cells": [
+   [
+    215,
+    699,
+    40,
+    22.5
+   ]
+  ],
   "screens": [
    2.4,
    3.7
@@ -1721,8 +2555,8 @@
   "yards": "ash and basalt yards",
   "edges": "vines and barley on the old flow's weathered ash",
   "materials_cells": {
-   "basalt setts": 3310,
-   "ash yards": 3408
+   "basalt setts": 3331,
+   "ash yards": 3431
   }
  },
  "terrain": {
@@ -1768,32 +2602,32 @@
    "13r18.6r.2#32.2#17.g.g.23#9.",
    ".22r8.6r.2#32.2#15.2g.g.g.23#8.",
    ".g25r4.6r.2#32.2#18.g.g2.23#7.",
-   ".g2.25r2.6r.2#32.2#12.7g7.21#6.",
-   "6.25r.4r2.2#32.2#11.8g7.23#4.",
-   "g10.21r6.2#32.2#5.g5.8g7.g23#3.",
-   "20.14r4.2#32.2#11.2g.5g8.24#2.",
-   "23.11r2.4#32.4#9.8g8.24#2.",
-   "23.11r2.4#32.4#9.8g8.24#2.",
-   "27.7r2.4#32.4#10.7g7.g24#2.",
-   "29.3r4.4#32.4#9.8g9.25#",
-   "31.5r2.2#32.2#4.g8.6g10.24#",
-   "30.7r.2#32.2#3.g5.g3.6g10.2g22#",
-   "29.8r.2#32.2#4.2g3.g3.2g2.2g10.4g20#",
-   "28.9r.2#2.g2.2g25.2#2.g.g.g2.g4.5g8.7g19#",
-   "27.9r2.2#5.g26.2#.g.g9.6g9.5g2.18#",
-   "24.11r3.2#32.2#3.g.g7.6g7.5g4.18#",
-   "24.11r3.2#32.2#3.g.g7.6g7.5g4.18#",
-   "23.11r4.2#32.2#6.g6.6g2.2g2.6g4.g17#",
-   "21.11r6.2#32.2#2.8g9.g.12g.3g16#",
-   "19.12r7.2#32.2#3.7g7.g2.g2.14g16#",
-   "18.11r9.2#32.2#2.8g8.11g.g2.4g16#",
-   "17.11r10.2#32.2#2.8g7.g.17g.g15#",
-   "14.12r12.2#32.2#3.7g5.13g.9g15#",
-   "13.10r15.2#32.2#2.8g2.16g.10g14#",
-   "12.10r16.2#32.2#2.8g2.8g.4g5.9g2.12#",
-   "12.10r16.2#32.2#2.8g2.8g.4g5.9g2.12#",
-   "12.8r18.2#32.2#2.8g.3g3.6g7.11g12#",
-   "11.8r19.2#32.2#2.10g2.g2.g.3g11.3g.4g12#",
+   ".g2.25r2.6r.2#32.2#13.6g7.21#6.",
+   "6.25r.4r2.2#32.2#13.6g7.23#4.",
+   "g10.21r6.2#32.2#5.g7.6g7.g23#3.",
+   "20.14r4.2#32.2#14.5g8.24#2.",
+   "23.11r2.4#32.4#11.6g8.24#2.",
+   "23.11r2.4#32.4#12.5g8.24#2.",
+   "27.7r2.4#32.4#12.5g7.g24#2.",
+   "29.3r4.4#32.4#12.5g9.25#",
+   "31.5r2.2#32.2#4.g9.5g10.24#",
+   "30.7r.2#32.2#3.g5.g4.5g10.2g22#",
+   "29.8r.2#32.2#4.2g3.g4.g2.2g10.4g20#",
+   "28.9r.2#32.2#2.g.g.g2.g17.7g19#",
+   "27.9r2.2#32.2#.g.g24.5g2.18#",
+   "24.11r3.2#32.2#3.g.g20.5g4.18#",
+   "24.11r3.2#32.2#3.g.g20.5g4.18#",
+   "23.11r4.2#32.2#6.g8.4g2.2g2.6g4.g17#",
+   "21.11r6.2#32.2#4.3g12.g.12g.3g16#",
+   "19.12r7.2#32.2#3.9g.2g2.g2.g2.14g16#",
+   "18.11r9.2#32.2#2.11g.g3.11g.g2.4g16#",
+   "17.11r10.2#32.2#2.13g2.g.17g.g15#",
+   "14.12r12.2#32.2#3.11g.13g.9g15#",
+   "13.10r15.2#32.2#2.26g.10g14#",
+   "12.10r16.2#32.2#2.18g.4g5.9g2.12#",
+   "12.10r16.2#32.2#2.18g.4g5.9g2.12#",
+   "12.8r18.2#32.2#2.12g3.6g7.11g12#",
+   "11.8r19.2#32.2#2.13g2.g.3g11.3g.4g12#",
    "10.8r20.2#22.g9.2#7.2g.g.8g.g.2g6.3g.6g12#",
    "9.8r19.17#4.19#4.5g.10g7.g.10g12#",
    "9.8r19.17#4.19#3.g.14g9.g2.8g.11#",
@@ -1820,46 +2654,102 @@
    "7.4g18.2r92.4#",
    "7.4g18.2r92.4#",
    "7.4g112.4#",
-   "7.4g22.15g70.g4.4#",
+   "7.4g107.g4.4#",
    "7.4g110.2g.3#",
-   "7.4g40.g67.g4.3#",
-   "r6.4g40.g72.3#",
-   "r6.4g40.g72.3#",
-   "2r49.g72.3#",
-   "3r48.g64.g7.3#",
-   "3r48.g64.g7.3#",
-   "3r48.g66.g6.2#",
-   "4r47.g66.g6.2#",
-   "5r46.g72.3#",
-   ".5r42.2g.g.28g8.13g11.2g8.4#",
-   "2.5r41.56g3.2g3.g7.g2.4#",
-   "2.8r41.58g3.4g.g5.4#",
-   "3.8r36.3g.10g7.24g.16g3.11g4#",
-   "5.8r27.5g.43g3.g.3g2.10g3.3g.7g.3#",
-   "5.8r27.5g.28g.14g10.16g.7g.3#",
-   "4.g.13r20.6g.28g.13g10.15g7.4g3#",
-   "5.g3.18r19.6g7.15g.13g10.15g7.4g3#",
-   "11.25r11.5g7.34g11.9g7.4g3#",
-   "4.2g5.32r5.4g12.29g11.9g7.4g3#",
-   "5g.g4.3r.32r3g.g3.6g51.g7.g2.2g2#",
-   "6g.2g.g3rg2.37r.5g52.g9.4g#",
-   "5g2.3g.3r3.3g.g.13r.g2.16r5g32.3r16.8g2.4g#",
-   "7g4.3rg3.g3.2g2.g7.g2.2g5.18r7g11.9g14r9.8g3.2g.g",
-   "g.5g4.3rg7.2g2.g11.g5.18r7g11.9g14r9.8g3.2g.g",
-   "3g.g.g4.3rg12.g10.6g.2g22r11.7g21rg.5g.g.2g2.3g2r",
-   "4g.6g3rg7.g3.g.g9.g9.22r10.5g28r2.2g.g.7r",
-   "4g.4g2.3r3g5.g.5g9.g9.3g19r10.g46r",
-   "11g3r.2g5.7g9.g9.6g16r2.6g49r",
-   "11g3r3g6.g2.g11.g9.12g9r3.5g16r3.4g27r",
-   "6g.3g4r4.11g9.g37.15r5.3g.4g23r",
-   "7g3.4rg2.3g.8g9.10g28.11r9.6g8.g12r4g",
-   "6g4.3r8g.26g28.9r25.9g.6g.",
-   "6g4.3r8g.9g45.9r25.3g12.g.",
-   "5g.g2.4r6g2.3g2.5g20.8g18.4r30.2g12.2g"
+   "7.4g108.g4.3#",
+   "r6.4g113.3#",
+   "r6.4g113.3#",
+   "2r40.5g3.2g72.3#",
+   "3r39.4g4.2g64.g7.3#",
+   "3r113.g7.3#",
+   "3r115.g6.2#",
+   "4r114.g6.2#",
+   "5r119.3#",
+   ".5r42.2g.g4.25g8.13g11.2g8.4#",
+   "2.5r41.5g3.48g3.2g3.g7.g2.4#",
+   "2.8r41.2g3.53g3.4g.g5.4#",
+   "3.8r36.3g.2g3.5g7.24g.16g3.11g4#",
+   "5.8r33.2g2.3g3.33g3.g.15g3.3g.7g.3#",
+   "5.8r33.2g2.3g3.20g.12g3.g.21g.7g.3#",
+   "4.g.13r27.7g3.20g.11g4.g.23g.g.4g3#",
+   "5.g3.18r19.2g3.g6.18g.11g3.2g.30g3#",
+   "11.25r11.3g.g6.35g.30g3#",
+   "4.2g5.32r5.4g12.16g.12g11.9g10.g3#",
+   "5g.g4.3r.32r3g.g4.5g51.g10.2g2#",
+   "6g.2g2.3rg2.37r2.4g52.g10.3g#",
+   "5g2.2g2.3r3.3g.g.13r.g2.16r5g32.3r16.g10.3g#",
+   "7g4.3rg3.g3.2g13.2g5.18r7g11.9g14r9.g10.2g.g",
+   "g.5g4.3rg8.g13.2g5.18r7g11.9g14r9.g10.2g.g",
+   "3g.g.g4.3rg22.7g.2g22r11.7g21rg.3g10.2g2r",
+   "4g.4g2.3rg23.g9.22r10.5g28r2.2g.g.7r",
+   "4g.4g2.3r2g21.2g9.3g19r10.g46r",
+   "9g2.3r.g7.g13.2g9.6g16r2.6g49r",
+   "9g2.3r2g7.g13.2g9.12g9r3.5g16r3.4g27r",
+   "6g.2g.4r9.g13.2g37.15r5.3g.4g23r",
+   "7g3.4rg2.3g.3g4.20g28.11r9.6g8.g12r4g",
+   "6g4.3r8g.2g4.10g38.9r25.6g7.3g.",
+   "6g4.r13.g11.2g38.9r25.6g7.3g.",
+   "5g.g2.2r25.2g12.9g18.4r30.5g8.3g"
   ]
  },
  "residents": [],
  "routines": [],
  "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only.",
- "open_uses": []
+ "open_uses": [],
+ "theme": {
+  "tech": "older-made: forge, hand and the caldera's heat; the rail never crossed the lava",
+  "waystone": {
+   "xy_px": [
+    2284,
+    5476
+   ],
+   "at": "on the gate market",
+   "table_name": "Hearthold",
+   "status": "proposed"
+  },
+  "sightline": {
+   "kind": "viewpoint",
+   "from_px": [
+    2689,
+    5237
+   ],
+   "to_px": [
+    2819,
+    5144
+   ],
+   "toward": "the stone circle (the beam over the valley)",
+   "off_by_deg": 0,
+   "bearing_deg": -35
+  },
+  "crater": {
+   "name": "the Ember crater",
+   "xy_px": [
+    3550,
+    4991
+   ],
+   "distance_px": 1252,
+   "effect": "the shard's fall cracked the caldera; the forges took its heat",
+   "road": "Ember Way",
+   "road_leaves_at_px": [
+    1880,
+    5680
+   ]
+  },
+  "moss": {
+   "where": "the gate market",
+   "xy_px": [
+    2388,
+    5224
+   ]
+  },
+  "company": {
+   "foothold": "no office: the knights refused the Company; its buyer waits at the inn",
+   "building": "hearthold-b011",
+   "xy_px": [
+    2192,
+    5544
+   ]
+  },
+  "theme_line": "the circle keeps the moon's light for everyone; the Company sells it"
+ }
 }

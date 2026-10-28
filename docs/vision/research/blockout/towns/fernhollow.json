@@ -100,6 +100,7 @@
      3016.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
     "fernhollow-c01",
     "fernhollow-c04",
@@ -131,6 +132,7 @@
      3124.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
     "fernhollow-s05",
     "fernhollow-s06",
@@ -152,6 +154,7 @@
      3164.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
     "fernhollow-s01",
     "fernhollow-s07"
@@ -180,6 +183,7 @@
      3044.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
     "fernhollow-s01",
     "fernhollow-s05",
@@ -209,6 +213,7 @@
      3036.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
     "fernhollow-s02",
     "fernhollow-s04",
@@ -230,6 +235,7 @@
      3156.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
     "fernhollow-s02",
     "fernhollow-s07"
@@ -274,6 +280,7 @@
      2987.5
     ]
    ],
+   "frontage": "detached",
    "follows_route": "Foothill Road",
    "connects": [
     "fernhollow-a1",
@@ -435,6 +442,7 @@
      3000.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
     "fernhollow-s01"
    ]
@@ -454,6 +462,7 @@
      3192.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
     "fernhollow-s07"
    ]
@@ -473,6 +482,7 @@
      3304.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
     "fernhollow-a2"
    ]
@@ -496,6 +506,7 @@
      3024.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
     "fernhollow-s01"
    ]
@@ -679,6 +690,8 @@
    ]
   ]
  },
+ "fronts": 16,
+ "counting_note": "buildings_counted counts a block of fronts sharing its walls (a terrace, an apartment row, a frontier block) once; fronts counts each front in it",
  "buildings": [
   {
    "id": "fernhollow-b001",
@@ -1206,7 +1219,8 @@
     12,
     4
    ],
-   "plot": "yard"
+   "plot": "yard",
+   "company_foothold": "the Company's fenced timber yard"
   }
  ],
  "lifted": [],
@@ -1390,11 +1404,11 @@
    "27g10r3g6r46g",
    "40g6r46g",
    "40g6r46g",
-   "40g6r46g",
-   "40g6r46g",
-   "40g7r45g",
-   "40g7r45g",
-   "41g6r45g"
+   "6.34g6r46g",
+   "6.34g6r46g",
+   "6.34g7r45g",
+   "6.34g7r45g",
+   "6.35g6r45g"
   ]
  },
  "residents": [],
@@ -1425,5 +1439,63 @@
    ],
    "block_cells": 39
   }
- ]
+ ],
+ "theme": {
+  "tech": "water-driven saws on the Foothill Road; charcoal for Cogsworth",
+  "waystone": {
+   "xy_px": [
+    7212,
+    3060
+   ],
+   "at": "on the green",
+   "table_name": "Fernhollow",
+   "status": "plan"
+  },
+  "sightline": {
+   "kind": "street",
+   "street": "fernhollow-s01",
+   "name": "Green Lane",
+   "from_px": [
+    7320,
+    3016
+   ],
+   "to_px": [
+    7144,
+    3016
+   ],
+   "toward": "the stone circle (the beam over the valley)",
+   "off_by_deg": 4,
+   "bearing_deg": -176
+  },
+  "crater": {
+   "name": "the Crossroads crater",
+   "xy_px": [
+    6484,
+    3712
+   ],
+   "distance_px": 967,
+   "effect": "the shard felled a swath of the wet woods: the sawmill took the timber",
+   "road": "Foothill Road",
+   "road_leaves_at_px": [
+    6875,
+    3296
+   ]
+  },
+  "moss": {
+   "where": "the green",
+   "xy_px": [
+    7230,
+    3075
+   ]
+  },
+  "company": {
+   "foothold": "the Company's fenced timber yard",
+   "building": "fernhollow-b016",
+   "xy_px": [
+    7360,
+    3196
+   ]
+  },
+  "theme_line": "the circle keeps the moon's light for everyone; the Company sells it"
+ }
 }

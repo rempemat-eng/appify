@@ -96,6 +96,7 @@
      5116.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
     "driftwood-a2",
     "driftwood-s07"
@@ -120,6 +121,7 @@
      4900.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
     "driftwood-c01",
     "driftwood-s06"
@@ -140,6 +142,7 @@
      5028.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
     "driftwood-s07"
    ]
@@ -281,6 +284,7 @@
      4972.0
     ]
    ],
+   "frontage": "detached",
    "link": true,
    "connects": [
     "driftwood-a2",
@@ -302,6 +306,7 @@
      5044.0
     ]
    ],
+   "frontage": "detached",
    "link": true,
    "connects": [
     "driftwood-s01",
@@ -323,6 +328,7 @@
      4888.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
     "driftwood-s02"
    ]
@@ -392,6 +398,8 @@
    ]
   ]
  },
+ "fronts": 10,
+ "counting_note": "buildings_counted counts a block of fronts sharing its walls (a terrace, an apartment row, a frontier block) once; fronts counts each front in it",
  "buildings": [
   {
    "id": "driftwood-b001",
@@ -849,5 +857,58 @@
  "residents": [],
  "routines": [],
  "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only.",
- "open_uses": []
+ "open_uses": [],
+ "theme": {
+  "waystone": {
+   "xy_px": [
+    6412,
+    5060
+   ],
+   "at": "beside Driftwood Lane",
+   "table_name": "Driftwood",
+   "status": "proposed"
+  },
+  "sightline": {
+   "kind": "viewpoint",
+   "from_px": [
+    6465,
+    4841
+   ],
+   "to_px": [
+    6409,
+    4691
+   ],
+   "toward": "the stone circle (the beam over the valley)",
+   "off_by_deg": 0,
+   "bearing_deg": -111
+  },
+  "crater": {
+   "name": "the Crossroads crater",
+   "xy_px": [
+    6484,
+    3712
+   ],
+   "distance_px": 1265,
+   "effect": "the Crossroads crater lies 1200 px away; its scorch points to the valley",
+   "road": "Valley lane south",
+   "road_leaves_at_px": [
+    6399,
+    4725
+   ]
+  },
+  "moss": {
+   "where": "the market",
+   "xy_px": [
+    6412,
+    5060
+   ]
+  },
+  "company": {
+   "foothold": "a buyer who calls on market days",
+   "building": null,
+   "xy_px": null
+  },
+  "tech": "older-made: off the rail",
+  "theme_line": "the circle keeps the moon's light for everyone; the Company sells it"
+ }
 }

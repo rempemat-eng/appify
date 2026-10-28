@@ -87,6 +87,7 @@
      2804.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
     "palm-spring-c01",
     "palm-spring-c03",
@@ -110,6 +111,7 @@
      2876.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
     "palm-spring-a1",
     "palm-spring-q01",
@@ -132,6 +134,7 @@
      2900.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
     "palm-spring-s04",
     "palm-spring-s12"
@@ -152,6 +155,7 @@
      2948.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
     "palm-spring-c02",
     "palm-spring-s03"
@@ -180,6 +184,7 @@
      2892.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
     "palm-spring-a1",
     "palm-spring-s02",
@@ -205,6 +210,7 @@
      2948.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
     "palm-spring-a1",
     "palm-spring-s07"
@@ -233,6 +239,7 @@
      2879.0
     ]
    ],
+   "frontage": "detached",
    "follows_route": "Drover's Road",
    "connects": [
     "palm-spring-a1",
@@ -254,6 +261,7 @@
      2873.5
     ]
    ],
+   "frontage": "detached",
    "follows_route": "Drover's Road",
    "connects": [
     "palm-spring-a1",
@@ -292,6 +300,7 @@
      2700.5
     ]
    ],
+   "frontage": "detached",
    "follows_route": "Drover's Road",
    "connects": [
     "palm-spring-a1",
@@ -418,6 +427,7 @@
      2876.0
     ]
    ],
+   "frontage": "detached",
    "link": true,
    "connects": [
     "palm-spring-s03",
@@ -443,6 +453,7 @@
      2656.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
     "palm-spring-s01"
    ]
@@ -466,6 +477,7 @@
      2960.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
     "palm-spring-c04",
     "palm-spring-s04"
@@ -486,6 +498,7 @@
      2656.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
     "palm-spring-s01"
    ]
@@ -517,6 +530,7 @@
      3008.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
     "palm-spring-c02",
     "palm-spring-c05"
@@ -541,6 +555,7 @@
      3048.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
     "palm-spring-c04"
    ]
@@ -560,6 +575,7 @@
      2728.0
     ]
    ],
+   "frontage": "detached",
    "connects": [
     "palm-spring-s09"
    ]
@@ -744,6 +760,8 @@
    ]
   ]
  },
+ "fronts": 20,
+ "counting_note": "buildings_counted counts a block of fronts sharing its walls (a terrace, an apartment row, a frontier block) once; fronts counts each front in it",
  "buildings": [
   {
    "id": "palm-spring-b001",
@@ -776,7 +794,8 @@
     15,
     3
    ],
-   "plot": "yard"
+   "plot": "yard",
+   "company_foothold": "an agent's room at the caravanserai"
   },
   {
    "id": "palm-spring-b002",
@@ -1456,8 +1475,8 @@
   "yards": "adobe yards",
   "edges": "irrigated green only along the two channels",
   "materials_cells": {
-   "packed sand": 1514,
-   "adobe yards": 552,
+   "packed sand": 1555,
+   "adobe yards": 567,
    "dry gravel": 2470
   }
  },
@@ -1603,5 +1622,63 @@
    ],
    "block_cells": 264
   }
- ]
+ ],
+ "theme": {
+  "tech": "older-made: water, wind and caravans; off the rail",
+  "waystone": {
+   "xy_px": [
+    3332,
+    2772
+   ],
+   "at": "on the spring square",
+   "table_name": "Palm Spring",
+   "status": "proposed"
+  },
+  "sightline": {
+   "kind": "street",
+   "street": "palm-spring-s01",
+   "name": "Spring Row",
+   "from_px": [
+    3172,
+    2668
+   ],
+   "to_px": [
+    3388,
+    2668
+   ],
+   "toward": "the stone circle (the beam over the valley)",
+   "off_by_deg": 4,
+   "bearing_deg": 4
+  },
+  "crater": {
+   "name": "the Glass field",
+   "xy_px": [
+    1794,
+    2760
+   ],
+   "distance_px": 1542,
+   "effect": "the shard's heat dried the old wells; only the spring came back",
+   "road": "Drover's Road",
+   "road_leaves_at_px": [
+    2913,
+    2661
+   ]
+  },
+  "moss": {
+   "where": "the spring square",
+   "xy_px": [
+    3350,
+    2780
+   ]
+  },
+  "company": {
+   "foothold": "an agent's room at the caravanserai",
+   "building": "palm-spring-b001",
+   "xy_px": [
+    3588,
+    2832
+   ]
+  },
+  "theme_line": "the circle keeps the moon's light for everyone; the Company sells it"
+ }
 }

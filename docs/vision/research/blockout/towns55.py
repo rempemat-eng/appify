@@ -32,10 +32,12 @@ BLD = {'cottage': ((56, 80), (40, 48)), 'house': ((80, 104), (48, 64)), 'farmhou
        'oldhouse': ((40, 56), (32, 40)), 'aptrow': ((96, 144), (32, 40)), 'longwarehouse': ((176, 224), (64, 88)), 'slab': ((144, 208), (88, 120)),
        'bigtower': ((96, 128), (96, 128)), 'adobe': ((40, 56), (32, 40)), 'depot': ((176, 224), (56, 72)), 'frontshop': ((80, 104), (48, 64)),
        'saloon': ((104, 136), (64, 72)), 'terrace': ((96, 160), (32, 40)), 'barracks': ((96, 128), (48, 64)),
-       'skyport': ((176, 224), (88, 112)), 'forge': ((88, 112), (48, 64))}
+       'skyport': ((176, 224), (88, 112)), 'forge': ((88, 112), (48, 64)),
+       # a continuous frontage (Matt's Eastward street, 28 Oct): one record a block of fronts sharing walls, its bays 3 to 8 cells
+       'row_tenement': ((24, 192), (24, 56)), 'row_house': ((24, 192), (24, 56)), 'row_shop': ((24, 192), (24, 64))}
 TYPE_OF = {'oldhouse': 'townhouse', 'aptrow': 'tenement', 'longwarehouse': 'warehouse', 'slab': 'office', 'bigtower': 'tower', 'adobe': 'cottage',
            'depot': 'station', 'frontshop': 'shop', 'saloon': 'inn', 'terrace': 'townhouse', 'barracks': 'public', 'skyport': 'station',
-           'forge': 'workshop'}
+           'forge': 'workshop', 'row_tenement': 'tenement', 'row_house': 'townhouse', 'row_shop': 'shop'}
 FALSE_FRONT = {'frontshop', 'saloon', 'depot'}
 KIND_OF = {'warehouse': 'warehouse', 'office': 'tower', 'tower': 'tower', 'hangar': 'hangar', 'keep': 'keep', 'station': 'terminal'}
 # ground a building, yard or street may be laid on (natural ground and v54's settlement paint, never water, rock or a barrier)
@@ -187,6 +189,161 @@ class Town:
         self.streets.append({'name': name, 'kind': kind, 'cls': cls, 'width_cells': wc, 'width_px': wc * CELL, 'route': route, 'metric': metric,
                              'pts': [[int(round(x)), int(round(y))] for x, y in line], 'pieces': pieces})
         return line
+
+    def street_rec(self, pts):
+        p0 = [int(round(pts[0][0])), int(round(pts[0][1]))]
+        for s_ in self.streets:
+            if s_['pts'] and (s_['pts'][0] == p0 or (s_['route'] and abs(s_['pts'][0][0] - p0[0]) + abs(s_['pts'][0][1] - p0[1]) < 24)):
+                return s_
+        return None
+
+    def frontage(self, pts, sides=(1, -1), form='row_house', block=(96, 176), depth=(32, 40), alley=(0, 0, 8), stair_every=0,
+                 roofs=('flat', 'tin', 'tile'), props=('sign', 'awning', 'potted plants'), false_front=False, limit=None, plot=None):
+        """A continuous frontage along a street (Matt's Eastward street, 28 Oct): blocks of fronts sharing their walls, built to the
+        street's edge with no setback, separated by an alley of one cell at most, or by a stair alley of two cells (a street) every
+        stair_every blocks; each block's bays 3 to 8 cells wide with their own roofs and storeys; frontage props at the bays."""
+        T = self.T; K = T['K']; r = self.rng
+        rec = self.street_rec(pts)
+        hw = (rec['width_px'] if rec else 24) / 2
+        if rec is not None:
+            rec['frontage'] = 'continuous'; rec['max_gap_cells'] = 1; rec.setdefault('frontage_props', [])
+        segs = []
+        P_ = [tuple(map(float, q)) for q in (_rdp_pts([tuple(q) for q in pts], 6) if (rec and rec.get('route')) else pts)]
+        for (ax, ay), (bx, by) in zip(P_, P_[1:]):
+            L = math.hypot(bx - ax, by - ay)
+            if L < 48:
+                continue
+            if abs(by - ay) <= 0.36 * abs(bx - ax):                  # an east-west stretch (a route's gentle curve taken as straight)
+                segs.append(('x', min(ax, bx), max(ax, bx), (ay + by) / 2))
+            elif abs(bx - ax) <= 0.36 * abs(by - ay):
+                segs.append(('y', min(ay, by), max(ay, by), (ax + bx) / 2))
+        placed = 0; nblock = 0
+        for side in sides:
+            for (ax_, a0, a1, c) in segs:
+                pos = math.ceil((a0 + 8) / CELL) * CELL
+                while pos < a1 - 24:
+                    if limit is not None and placed >= limit:
+                        return placed
+                    L = min(int(r.integers(block[0] // CELL, block[1] // CELL + 1)) * CELL, int((a1 - 8 - pos) // CELL) * CELL)
+                    if L < 24:
+                        break
+                    d = int(r.integers(depth[0] // CELL, depth[1] // CELL + 1)) * CELL
+                    edge = math.ceil((c + hw) / CELL) * CELL if side > 0 else math.floor((c - hw) / CELL) * CELL   # the street's edge, on a cell line
+                    if ax_ == 'x':
+                        x, y, w, h = pos, (edge if side > 0 else edge - d), L, d
+                    else:
+                        x, y, w, h = (edge if side > 0 else edge - d), pos, d, L
+                    ok = False
+                    for dd in range(d, 23, -8):                          # shallower first, then narrower: the row stays unbroken
+                        for shrink in range(0, L - 16, 8):
+                            if L - shrink < 24:
+                                break
+                            if ax_ == 'x':
+                                xx, yy, ww, hh = x, (edge if side > 0 else edge - dd), L - shrink, dd
+                            else:
+                                xx, yy, ww, hh = (edge if side > 0 else edge - dd), y, dd, L - shrink
+                            if self.hand(xx, yy, ww, hh, form, plot=plot):
+                                ok = True; L -= shrink; d = dd; break
+                            self.T.get('hand_fail', []) and self.T['hand_fail'].pop()
+                        if ok:
+                            break
+                    if not ok:
+                        pos += CELL; continue
+                    b = self.buildings[-1]
+                    bays, left = [], L
+                    while left >= 24:
+                        bw = min(left, int(r.integers(3, 9)) * CELL)
+                        if 0 < left - bw < 24:
+                            bw = left
+                        bays.append({'w_cells': bw // CELL, 'storeys': int(r.integers(1, 4)), 'roof': roofs[int(r.integers(0, len(roofs)))],
+                                     **({'false_front': True} if false_front else {})})
+                        left -= bw
+                    b['bays'] = bays; b['frontage'] = rec['name'] if rec else None
+                    at = pos
+                    for bay in bays:                                     # one or two frontage props at each bay's front
+                        for k in range(int(r.integers(1, 3))):
+                            kind = props[int(r.integers(0, len(props)))]
+                            u = at + (k + 0.5) * bay['w_cells'] * CELL / 2
+                            xy = (u, edge + side * 4) if ax_ == 'x' else (edge + side * 4, u)
+                            if rec is not None:
+                                rec['frontage_props'].append({'kind': kind, 'at_px': [int(xy[0]), int(xy[1])]})
+                        at += bay['w_cells'] * CELL
+                    placed += 1; nblock += 1
+                    pos += L
+                    if stair_every and nblock % stair_every == 0:      # a stair alley two cells wide climbs between the blocks
+                        ca = pos + CELL
+                        far = edge + side * (d + 24)
+                        line = [(ca, edge - side * 2), (ca, far)] if ax_ == 'x' else [(edge - side * 2, ca), (far, ca)]
+                        self.street(line, 'close', kind='stair', name=None)
+                        self.streets[-1]['alley'] = True
+                        pos += 2 * CELL
+                    else:
+                        pos += int(alley[int(r.integers(0, len(alley)))])
+        self._close_gaps(segs, sides, hw, form)
+        if rec is not None and placed < 2:                           # not a row after all: the street stays detached
+            rec['frontage'] = 'detached'; rec.pop('max_gap_cells', None); rec['frontage_props'] = []
+        return placed
+
+    def _close_gaps(self, segs, sides, hw, form):
+        """Gaps left in a continuous frontage (two to six cells, between two fronts or a front and a cross street): filled with a
+        narrow front where it stands, else the neighbouring front is widened over it."""
+        T = self.T; K = T['K']
+        for side in sides:
+            for (ax_, a0, a1, c) in segs:
+                edge = math.ceil((c + hw) / CELL) * CELL if side > 0 else math.floor((c - hw) / CELL) * CELL
+                line_rc = int(edge // CELL) if side > 0 else int(edge // CELL) - 1
+                lo, hi = int(a0 // CELL) + 1, int(a1 // CELL) - 1
+                for it in range(3):
+                    cells = T['taken'][line_rc, lo:hi] if ax_ == 'x' else T['taken'][lo:hi, line_rc]
+                    stops = (T['street'][line_rc, lo:hi] if ax_ == 'x' else T['street'][lo:hi, line_rc]) & ~cells
+                    idx = np.nonzero(cells)[0]
+                    if len(idx) < 2:
+                        break
+                    i = idx[0]; changed = False
+                    while i < idx[-1]:
+                        if cells[i]:
+                            i += 1; continue
+                        j = i
+                        while j < len(cells) and not cells[j] and not stops[j]:
+                            j += 1
+                        n = int(j - i)
+                        if 2 <= n <= 6:
+                            g0 = (lo + i) * CELL
+                            for dd in (40, 32, 24):
+                                if ax_ == 'x':
+                                    xx, yy, ww, hh = g0, (edge if side > 0 else edge - dd), n * CELL, dd
+                                else:
+                                    xx, yy, ww, hh = (edge if side > 0 else edge - dd), g0, dd, n * CELL
+                                if n >= 3 and self.hand(xx, yy, ww, hh, form):
+                                    self.buildings[-1]['bays'] = [{'w_cells': n, 'storeys': 1 + n % 3, 'roof': 'flat'}]
+                                    changed = True; break
+                                if T.get('hand_fail'):
+                                    T['hand_fail'].pop()
+                                # widen the front before the gap over it
+                                prev = next((b for b in self.buildings[::-1] if b.get('bays') and
+                                             ((ax_ == 'x' and b['x'] + b['w'] == g0 and b['y'] < line_rc * CELL + CELL and b['y'] + b['h'] > line_rc * CELL) or
+                                              (ax_ == 'y' and b['y'] + b['h'] == g0 and b['x'] < line_rc * CELL + CELL and b['x'] + b['w'] > line_rc * CELL))), None)
+                                if prev is not None:
+                                    if ax_ == 'x':
+                                        a_, b_, c_, e_ = prev['y'] // CELL, (prev['x'] + prev['w']) // CELL, (prev['y'] + prev['h']) // CELL, (prev['x'] + prev['w']) // CELL + n
+                                    else:
+                                        a_, b_, c_, e_ = (prev['y'] + prev['h']) // CELL, prev['x'] // CELL, (prev['y'] + prev['h']) // CELL + n, (prev['x'] + prev['w']) // CELL
+                                    blk = K[a_:c_, b_:e_]
+                                    if blk.size and np.isin(blk, list(BUILDABLE)).all() and not T['taken'][a_:c_, b_:e_].any() and not T['street'][a_:c_, b_:e_].any():
+                                        K[a_:c_, b_:e_] = KIND_OF.get(prev['use'], 'building'); T['taken'][a_:c_, b_:e_] = True
+                                        if ax_ == 'x':
+                                            prev['w'] += n * CELL
+                                        else:
+                                            prev['h'] += n * CELL
+                                        if n >= 3:
+                                            prev['bays'].append({'w_cells': n, 'storeys': 1 + n % 3, 'roof': prev['bays'][-1]['roof']})
+                                        else:
+                                            prev['bays'][-1]['w_cells'] += n
+                                        changed = True
+                                break
+                        i = max(j, i + 1)
+                    if not changed:
+                        break
 
     def S(self, name):
         """A street's laid line, by name."""
@@ -592,6 +749,7 @@ def lay_all(T, X):
             x_, y_, w_, h_ = q['rect']
             t.square(zx + x_ + w_ / 2, zy + y_ + h_ / 2, w_ / 2, h_ / 2, kind='plaza' if q['kind'] == 'square' else 'garden',
                      name=f"the {q['id']} (the zone as built)")
+    straighten(T, 'Valley lane south', (6100, 3780, 6500, 4300), 24, 'path')   # Mill Street: a planned street through the old core
     mill = route_part(T, 'Valley lane south', (6100, 3800, 6500, 4300))
     halt = route_part(T, 'Valley lane west', (5800, 3760, 6000, 4120))
     east = route_part(T, 'Valley lane east', (6600, 3330, 6800, 3520)) + route_part(T, 'Foothill Road', (6760, 3300, 6880, 3420))
@@ -609,6 +767,9 @@ def lay_all(T, X):
     t.square(6365, 3905, 40, 28, kind='garden', name='the mill green')
     t.cluster(6200, 3905, 40, ['mill'], 1)
     t.cluster(5835, 4040, 60, ['station'], 1)
+    cp = ('sign', 'bench', 'potted plants', 'planter tree', 'water butt')
+    t.frontage(mill, sides=(1, -1), form='row_house', block=(80, 144), depth=(40, 48), props=cp, roofs=('tile', 'thatch', 'tile'), limit=6)
+    t.frontage(t.S('Granary Row'), sides=(-1,), form='row_house', block=(80, 144), depth=(40, 48), props=cp, roofs=('tile', 'thatch', 'tile'), limit=3)
     t.row(mill, ['cottage', 'house', 'cottage', 'shop'], limit=9, start=10)
     t.row(t.S('Granary Row'), ['cottage', 'house', 'barn'], limit=4)
     t.row(t.S('Weir Lane'), ['cottage', 'house'], limit=3)
@@ -653,11 +814,8 @@ def lay_all(T, X):
     t.level, t.slope_max = 2, 0.03                                  # the gravel fan, in low terraces
     # the frontier main street: the saloon, the store and the false-fronted shops face Front Street from both sides
     fs = t.S('Front Street (west)'); fy = fs[0][1]
-    for i, cx in enumerate(range(2216, 2580, 92)):
-        for sgn in (-1, 1):
-            form = 'saloon' if (i, sgn) == (3, -1) else 'frontshop'
-            (w0, w1), (d0, d1) = BLD[form]; dd = (d0 + d1) / 2
-            t.place(cx, fy + sgn * (28 + dd / 2), form, w=(w0 + w1) / 2, d=dd, r=24, plot=(0, sgn, 24, 'yard'))
+    t.frontage(fs, sides=(-1, 1), form='row_shop', block=(96, 176), depth=(48, 56), false_front=True, plot=None,
+               props=('sign', 'awning', 'hitching rail', 'water barrel', 'bench'), roofs=('flat', 'tin', 'flat'))
     t.row(front, ['saloon', 'frontshop', 'frontshop', 'public', 'frontshop', 'frontshop'], limit=8, start=8, plot=yd, gap=(4, 10))
     t.row(t.streets[0]['pts'], ['frontshop', 'public', 'frontshop', 'frontshop', 'house'], limit=8, plot=yd, gap=(4, 10))
     t.row(t.S('Depot Street'), ['depot', 'warehouse', 'workshop', 'adobe'], limit=4, plot=yd)
@@ -843,6 +1001,7 @@ def lay_all(T, X):
                              ('Low Street', 'houses over the river meadows, the sawmill by the Cog', 7820, 1290)],
              gathering=[('the market cross', 7905, 1200), ('the sheep fair field', 7900, 1450)], seed=109)
     t.level, t.slope_max = 2, 0.03                                # stepped streets on retaining walls
+    straighten(T, 'the Garth Road', (7800, 1120, 8000, 1440), 24, 'path')     # Garth Street: straight runs stepping down the terraces
     main = route_part(T, 'the Garth Road', (7820, 1150, 7980, 1420)) + route_part(T, 'the Northway', (7840, 1000, 7980, 1200))
     t.street([(7910, 1140), (8000, 1128), (8090, 1112)], 24, name='Quarry Lane')
     t.street([(7760, 1290), (7880, 1296), (7990, 1305)], 24, name='Low Street')
@@ -852,6 +1011,8 @@ def lay_all(T, X):
     t.street([(7992, 1060), (7992, 1128)], 'lane', name='Chapel Steps')
     t.street(main, 'main', name='Garth Street', route='the Garth Road')
     t.square(7915, 1198, 36, 24, name='the market cross')
+    t.frontage(main, sides=(1, -1), form='row_house', block=(80, 144), depth=(40, 48), props=('sign', 'woodpile', 'bench', 'lamp'),
+               roofs=('slate', 'slate', 'stone'), limit=8)
     t.row(main, ['inn', 'house', 'shop', 'house', 'workshop', 'house'], limit=7, start=8)
     t.row(t.streets[0]['pts'], ['house', 'workshop', 'house'], limit=4)
     t.row(t.streets[1]['pts'], ['house', 'cottage'], limit=4)
@@ -944,12 +1105,9 @@ def hearthold(T, X):
     for fx in (2376, 2488, 2632):
         t.hand(fx, 5520, 104, 56, 'forge', plot=(0, 1, 8, 'yard'))
     # the home streets: continuous brick-and-basalt terraces stepping down the slope
-    for (hx, hw) in ((2136, 144), (2344, 120), (2472, 120)):
-        t.hand(hx, 5612, hw, 40, 'terrace', plot=(0, 1, 8, 'yard'))         # Ash Lane, south side
-        t.hand(hx, 5664, hw, 40, 'terrace', plot=None)                        # Potters' Lane, north side, back to back
-    t.hand(2632, 5664, 120, 40, 'terrace')
-    for hx in (2344, 2472):
-        t.hand(hx, 5732, 120, 40, 'terrace', plot=(0, 1, 16, 'yard'))       # Potters' Lane, south side
+    fp = ('sign', 'potted plants', 'woodpile', 'water butt', 'lamp')
+    t.frontage(t.S('Ash Lane'), sides=(1,), form='row_house', block=(96, 160), depth=(40, 40), props=fp, roofs=('tile', 'slate', 'tile'))
+    t.frontage(t.S("Potters' Lane"), sides=(-1, 1), form='row_house', block=(96, 160), depth=(40, 40), props=fp, roofs=('tile', 'slate', 'tile'))
     t.hand(2248, 5520, 40, 48, 'townhouse')                             # the gate market's corner house
     t.hand(2632, 5600, 120, 40, 'terrace')                               # Vine Lane's terrace above the lava
     # a calm ground: the lower town's leftover rough ground made plain yard, its terraces stepping down in three levels
@@ -1051,9 +1209,10 @@ def neon(T, X, rng):
     t.cap = 22
     t.square(11135, 4462, 44, 30, name='Bridgefoot')
     t.cap = 26
-    for s_ in list(t.streets):                                       # continuous rows of old houses along every street, a shop or two
-        t.row(s_['pts'], ['oldhouse', 'oldhouse', 'shop', 'oldhouse', 'oldhouse', 'oldhouse', 'workshop', 'oldhouse', 'inn'], gap=(0, 1),
-              plot=(16, 'yard'), limit=9, jitter=0, start=12, reach=24)
+    for s_ in list(t.streets):                                       # wall-to-wall old houses along every street (Matt's Eastward street)
+        if s_['name'] is None:
+            t.frontage(s_['pts'], sides=(-1, 1), form='row_house', block=(64, 160), depth=(32, 40), alley=(0, 0, 8),
+                       props=('sign', 'awning', 'potted plants', 'planter tree', 'pipes', 'AC unit'), roofs=('tile', 'tin', 'flat'))
     out['Neon Harbour: the old waterfront'] = t
     # ------------------------------------------------ 3. the residential lanes and the east shore
     t = Town(T, 'Neon Harbour: the Lanes and the East Shore', (11480, 4480), 'city district', (14, 20),
@@ -1074,10 +1233,12 @@ def neon(T, X, rng):
     t.street([(11980, 5260), (12196, 5260)], 'lane', name='Terrace Lane')
     t.cap = 22
     t.square(11470, 4470, 30, 22, name='Courtyard Square')
-    for s_ in t.streets:
-        t.row(s_['pts'], ['aptrow', 'aptrow', 'shop', 'aptrow'] if s_['name'] is None else ['terrace', 'aptrow', 'terrace'], plot=(8, 'yard'), gap=(0, 4),
-              limit=4, sides=(1,) if s_['name'] is None else (1, -1))
-    t.fill(22, 300, ('aptrow', 'terrace', 'shop'), plot=(8, 'yard'), centre=(11416, 4500), box=(11260, 4290, 11570, 4710))
+    for s_ in list(t.streets):
+        if s_['name'] is None and s_['pts'][0][1] == s_['pts'][-1][1]:   # the Lanes: wall-to-wall apartment fronts, stair alleys between
+            t.frontage(s_['pts'], sides=(-1,), form='row_tenement', block=(96, 144), depth=(32, 40), stair_every=2, alley=(0, 8),
+                       props=('sign', 'awning', 'AC unit', 'pipes', 'gas tank', 'potted plants', 'planter tree'), roofs=('flat', 'tin', 'flat'))
+        elif s_['name'] is not None:
+            t.row(s_['pts'], ['terrace', 'aptrow', 'terrace'], plot=(8, 'yard'), gap=(0, 4), limit=4, sides=(1, -1))
     out['Neon Harbour: the Lanes and the East Shore'] = t
     # ------------------------------------------------ 2. the working docks: the ria's deep east side, quays, warehouses, yards
     t = Town(T, 'Neon Harbour: the docks', (11320, 5050), 'city district', (12, 18),
@@ -1157,9 +1318,10 @@ def neon(T, X, rng):
         t.street([(9852, y + 4), (10268, y + 4)], 'lane', kind='lane', name=None)
     for x in (9940, 10164):
         t.street([(x + 4, 5000), (x + 4, 5520)], 'lane', kind='stair', name=None)
-    for s_ in t.streets:
+    for s_ in list(t.streets):
         if s_['pts'][0][1] == s_['pts'][-1][1]:                       # the contour streets: houses on their uphill (north) side
-            t.row(s_['pts'], ['terrace', 'terrace', 'house'], sides=(-1,), plot=None, gap=(0, 2), limit=4, jitter=0, start=12, reach=16)
+            t.frontage(s_['pts'], sides=(-1,), form='row_house', block=(96, 176), depth=(32, 40), stair_every=2, alley=(0, 8),
+                       props=('potted plants', 'planter tree', 'AC unit', 'sign', 'washing line'), roofs=('tile', 'flat', 'tin'))
     ret = np.zeros_like(T['taken'])                                    # the retaining wall at each terrace's foot (its street's south kerb)
     for y in contours:
         r = int((y + 4 + 16) // CELL)
@@ -1176,7 +1338,7 @@ def neon(T, X, rng):
     t.row(lr, ['cottage', 'house', 'workshop', 'house'], limit=10, start=10, plot=(40, 'garden'), reach=32)
     t.fields(9700, 4470, 10350, 4660, ('field2', 'field', 'orchard'), name='the market gardens', why="vegetables and flowers for the city's markets", size=(64, 128))
     out['Canalside'] = t
-    t = Town(T, 'Glintside', (11120, 4150), 'hamlet', (4, 8),
+    t = Town(T, 'Glintside', (11120, 4150), 'hamlet', (3, 6),
              'a village of mill houses and laundries along the Glint above the falls, now the city\'s northern edge, where the maglev comes in',
              'the Glint\'s banks north of the old town', seed=207)
     t.level, t.slope_max = 2, 0.03
@@ -1189,10 +1351,14 @@ def neon(T, X, rng):
     for s_ in t.streets:
         t.row(s_['pts'], ['house', 'cottage', 'mill', 'house'], limit=5, plot=(32, 'garden'), reach=32)
     cands = [(x_, 4240) for x_ in range(10968, 11140, 72)] + [(x_, 4312) for x_ in range(10968, 11140, 72)] + \
-            [(11168, y_) for y_ in range(4128, 4280, 48)] + [(11072, y_) for y_ in range(4128, 4280, 48)]
+            [(11168, y_) for y_ in range(4128, 4280, 48)] + [(11072, y_) for y_ in range(4128, 4280, 48)] + \
+            [(x_, y_) for y_ in range(4112, 4272, 40) for x_ in range(10904, 11280, 48)]
     for (cx_, cy_) in cands:                                         # cottages on Mill Row and Weir Lane, by hand, up to five
         if t.count() >= 5:
             break
+        a_, b_ = C(cx_, cy_)
+        if not T['street'][max(0, a_ - 3):a_ + 8, max(0, b_ - 3):b_ + 11].any():
+            continue                                                  # only beside a street
         t.hand(cx_, cy_, 64, 40, 'cottage', plot=None)
     t.fields(10950, 3980, 11400, 4120, ('field2', 'orchard'), name='the allotments', why="the city's allotments by the Glint", size=(64, 112))
     out['Glintside'] = t

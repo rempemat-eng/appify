@@ -143,6 +143,143 @@ GAME = {
                      'quiet_corners': [('Courtyard Square in the Lanes, between the old waterfront and the Company district', (11470, 4470)),
                                        ('the belvedere on the Heights, over the busy docks', (10200, 5420)), ('the allotments at Glintside', (11170, 4050))]},
 }
+# the game's theme in every town (Matt, 28 Oct; docs/vision/world-and-cast.md on PR #290): the waystone (a chip of the circle), a
+# sightline to the valley's beam, the town's crater and what its shard did, where Moss trades and where the Company's buyer has a
+# foothold, and the town's technology (it follows the rail and the shards; only the Company leapt ahead on bought shard light)
+THEME = {
+    'crossroads': {'crater_effect': "the Starfall's shard fell by the mill road: its crater smokes in the park until the shard comes home",
+                   'moss': 'the square (Moss\'s stall)', 'company': ('a counting room above the bakery', 'shop'),
+                   'tech': 'the valley halt and the mill: rail and water, no bought shard light'},
+    'dust-gulch': {'crater_effect': "the shard glassed the gravel west of town (the Glass field); the Glass Road runs out to it",
+                   'moss': 'the depot', 'company': ("the Company's assay agent and its fenced ore yard by the depot", 'public'),
+                   'tech': "the desert line's railhead: steam and Pendle, the works' marshal; shard lamps only on the depot"},
+    'palm-spring': {'crater_effect': "the shard's heat dried the old wells; only the spring came back", 'moss': 'the spring square',
+                    'company': ("an agent's room at the caravanserai", 'inn'), 'tech': 'older-made: water, wind and caravans; off the rail'},
+    'fernhollow': {'crater_effect': 'the shard felled a swath of the wet woods: the sawmill took the timber', 'moss': 'the green',
+                   'company': ("the Company's fenced timber yard", 'workshop'), 'tech': 'water-driven saws on the Foothill Road; charcoal for Cogsworth'},
+    'cogsworth': {'crater_effect': 'the shard opened the coal seam (the Seam crater): the pits now dig shard glass with the coal', 'moss': 'the station',
+                  'company': ("the Company's counting house by the works gate", 'public'), 'tech': 'rail, steam and the first shard engines: where the railway began'},
+    'hearthold': {'crater_effect': "the shard's fall cracked the caldera; the forges took its heat", 'moss': 'the gate market',
+                  'company': ("no office: the knights refused the Company; its buyer waits at the inn", 'inn'),
+                  'tech': 'older-made: forge, hand and the caldera\'s heat; the rail never crossed the lava'},
+    'cinderwick': {'crater_effect': 'the young flow the shard set loose steams at the cove; the kilns burn its dead forest', 'moss': 'the quay',
+                   'company': ("an agent at the harbour office", 'public'), 'tech': 'older-made: kilns, sail and the coaster'},
+    'cinder-springs': {'crater_effect': "the Ember shard's heat warms the springs under the town; the pools hold the moon's light", 'moss': 'the inn street',
+                       'company': ("the Company's offer to bottle the springs was refused; its buyer stays at the inn", 'inn'),
+                       'tech': 'older-made: timber, tile and the springs\' heat'},
+    'lagoon-landing': {'crater_effect': 'the shard drowned in the lagoon (a drowned crater): its light glows under the water at night', 'moss': 'the pier',
+                       'company': ("an agent's office on the pier", 'public'), 'tech': "older-made: boats and sail; the isles' own ways"},
+    'highgarth': {'crater_effect': "the Starfall's tremor brought the rockfall down and closed the pass", 'moss': 'the market cross',
+                  'company': ("a buyer's room at the drovers' inn", 'inn'), 'tech': 'older-made: water mill, slate and wool; the Garth Road only'},
+    'neon-harbour': {'crater_effect': "the Company crater lies fenced in the Company's yard: its shard light is pumped to the neon", 'moss': 'the market by Canalside',
+                     'company': ("the Company's tower and its yard: the headquarters", 'tower'),
+                     'tech': 'bought shard light: the neon, the maglev and the airships. The old waterfront is the town that was there before the Company'},
+}
+MAIN_SQUARE = {'hearthold': 'the gate market'}
+
+
+def theme_block(T, pid, P, ts, X):
+    """The plan's theme: the waystone on the main square or at the gate, the sightline toward the beam, the crater, Moss, the
+    Company's buyer and the technology. Moves (or adds) the town's waystone in the content table."""
+    V = X.V
+    th = dict(THEME.get(pid, {}))
+    fb = P['footprint_px']; cx, cy = (fb[0] + fb[2]) / 2, (fb[1] + fb[3]) / 2
+    # the waystone: the named main square, else the first square, else beside the main street
+    sq = None
+    want = MAIN_SQUARE.get(pid)
+    for q in P['squares']:
+        if (want and q['name'] == want) or (not want and sq is None and q['type'] in ('square', 'plaza')):
+            sq = q
+    if sq is None and P['squares']:
+        sq = P['squares'][0]
+    if sq is not None:
+        c0_, r0_, cw, ch = sq['cells']
+        ws = [int((c0_ + max(1, cw // 4)) * CELL + 4), int((r0_ + max(1, ch // 4)) * CELL + 4)]; at = f"on {sq['name']}"
+    else:
+        st = max((q for q in P['streets'] if q['class'] not in ('arrival', 'close')), key=lambda q: len(q['vertices_px']), default=None)
+        v = st['vertices_px'][len(st['vertices_px']) // 2] if st else [cx, cy]
+        ws = [int(v[0] // CELL * CELL + 4), int(v[1] // CELL * CELL + 4)]; at = f"beside {st.get('name') or 'the main street'}" if st else 'in the town'
+    K = T['K']                                                       # on open walkable ground: the nearest free street or square cell
+    r_, c_ = int(ws[1] // CELL), int(ws[0] // CELL)
+    good = None
+    for rad in range(0, 12):
+        for dr in range(-rad, rad + 1):
+            for dc in range(-rad, rad + 1):
+                if max(abs(dr), abs(dc)) != rad:
+                    continue
+                rr, cc = r_ + dr, c_ + dc
+                if K[rr, cc] in ('plaza', 'lane', 'yard', 'garden', 'path', 'road', 'boulevard', 'quay', 'stair') and not T['taken'][rr, cc]:
+                    good = (rr, cc); break
+            if good:
+                break
+        if good:
+            break
+    if good:
+        ws = [good[1] * CELL + 4, good[0] * CELL + 4]
+    key = 'the market (Neon)' if pid == 'neon-harbour' else P['name']
+    old = V.WAYSTONES.get(key)
+    if pid != 'crossroads':                                       # Crossroads keeps the built zone's own waystone
+        V.WAYSTONES[key] = (ws[0], ws[1], old[2] if old else 'proposed')
+    else:
+        ws = list(old[:2]); at = 'on the square (the built zone)'
+    th['waystone'] = {'xy_px': [int(ws[0]), int(ws[1])], 'at': at, 'table_name': key, 'status': (old[2] if old else 'proposed')}
+    # the sightline toward the beam: the street most nearly facing the stone circle, else a viewpoint at the town's edge
+    ccx, ccy = V.CIRCLE
+    bear = math.atan2(ccy - cy, ccx - cx)
+    best = None
+    for q in P['streets']:
+        if q['class'] in ('arrival', 'close'):
+            continue
+        v = q['vertices_px']
+        for (ax, ay), (bx, by) in zip(v, v[1:]):
+            L = math.hypot(bx - ax, by - ay)
+            if L < 64:
+                continue
+            for (sx, sy, ex, ey) in ((ax, ay, bx, by), (bx, by, ax, ay)):
+                a = math.atan2(ey - sy, ex - sx); dev = abs((a - bear + math.pi) % (2 * math.pi) - math.pi)
+                if best is None or dev < best[0]:
+                    best = (dev, q, (sx, sy), (ex, ey))
+    if best and best[0] <= math.radians(30):
+        th['sightline'] = {'kind': 'street', 'street': best[1]['id'], 'name': best[1].get('name'), 'from_px': [int(best[2][0]), int(best[2][1])],
+                           'to_px': [int(best[3][0]), int(best[3][1])], 'toward': 'the stone circle (the beam over the valley)',
+                           'off_by_deg': round(math.degrees(best[0]))}
+    else:
+        ex, ey = cx + math.cos(bear) * (fb[2] - fb[0]) / 2, cy + math.sin(bear) * (fb[3] - fb[1]) / 2
+        th['sightline'] = {'kind': 'viewpoint', 'from_px': [int(ex), int(ey)], 'to_px': [int(ex + math.cos(bear) * 160), int(ey + math.sin(bear) * 160)],
+                           'toward': 'the stone circle (the beam over the valley)', 'off_by_deg': 0}
+    th['sightline']['bearing_deg'] = round(math.degrees(bear))
+    # the crater: the nearest great crater, and the road or track toward it
+    cr = min(V.CRATERS.items(), key=lambda kv: math.hypot(kv[1][0] - cx, kv[1][1] - cy))
+    cb = math.atan2(cr[1][1] - cy, cr[1][0] - cx)
+    road = None
+    for a in P['arrivals']:
+        for e in a['entries_px']:
+            dev = abs((math.atan2(e[1] - cy, e[0] - cx) - cb + math.pi) % (2 * math.pi) - math.pi)
+            if road is None or dev < road[0]:
+                road = (dev, a['route'], e)
+    th['crater'] = {'name': cr[0], 'xy_px': [int(cr[1][0]), int(cr[1][1])], 'distance_px': int(math.hypot(cr[1][0] - cx, cr[1][1] - cy)),
+                    'effect': th.pop('crater_effect', f"{cr[0]} lies {int(math.hypot(cr[1][0] - cx, cr[1][1] - cy)) // 100 * 100} px away; its scorch points to the valley"),
+                    'road': road[1] if road else None, 'road_leaves_at_px': list(road[2]) if road else None}
+    # Moss and the Company's buyer
+    stn = [q for q in P['buildings'] if q['type'] == 'station']
+    gp = P['gathering_places'][0]['xy_px'] if P['gathering_places'] else ws
+    mname = th.pop('moss', 'the market')
+    th['moss'] = {'where': mname, 'xy_px': (stn[0]['rect_px'][:2] if stn and ('station' in mname or 'depot' in mname) else gp)}
+    cname, ctype = th.pop('company', ('a buyer who calls on market days', None))
+    cb_ = None
+    if ctype:
+        cands = [q for q in P['buildings'] if q['type'] == ctype and not q.get('from_zone_plan')]
+        if cands:
+            cb_ = min(cands, key=lambda q: math.hypot(q['rect_px'][0] - th['moss']['xy_px'][0], q['rect_px'][1] - th['moss']['xy_px'][1]))
+            cb_['company_foothold'] = cname
+    th['company'] = {'foothold': cname, 'building': cb_['id'] if cb_ else None,
+                     'xy_px': ([cb_['rect_px'][0] + cb_['rect_px'][2] // 2, cb_['rect_px'][1] + cb_['rect_px'][3] // 2] if cb_ else None)}
+    rail = any(q['type'] == 'station' for q in P['buildings'])
+    th['tech'] = th.get('tech') or ('on the rail: lamps and steam' if rail else 'older-made: off the rail')
+    th['theme_line'] = 'the circle keeps the moon\'s light for everyone; the Company sells it'
+    return th
+
+
 # how each town sits on its ground (Matt's brief of 27 Oct, the fit to the terrain)
 FIT = {'palm-spring': 'the gardens follow the two channels from the spring; houses ring the pool on the dry gravel above them',
        'highgarth': 'the town steps up its terraces on retaining walls: each street on one tier, a stair or a ramp between',
@@ -264,7 +401,12 @@ def plan_one(T, name, ts, X, tp):
                 if nmx and len(s['pieces']) > 1:
                     nmx = f'{nmx} ({k + 1})'
                 el = {'id': sid, 'kind': 'street', 'name': nmx, 'class': s['cls'], 'width_cells': s['width_cells'], 'vertices_px': [list(v) for v in line],
-                      'follows_route': s['route'], 'district_town': t.name}
+                      'follows_route': s['route'], 'district_town': t.name, 'frontage': s.get('frontage', 'detached'),
+                      'max_gap_cells': s.get('max_gap_cells'), 'alley': bool(s.get('alley'))}
+                if s.get('frontage_props'):                              # the props along this piece of the street
+                    xs_ = [v[0] for v in line]; ys_ = [v[1] for v in line]
+                    el['frontage_props'] = [q for q in s['frontage_props'] if min(xs_) - 64 <= q['at_px'][0] <= max(xs_) + 64
+                                            and min(ys_) - 64 <= q['at_px'][1] <= max(ys_) + 64]
                 net.add(el, m)
     for t in ts:
         for j, q in enumerate(t.spaces):
@@ -360,6 +502,7 @@ def plan_one(T, name, ts, X, tp):
     # 6. the record
     P = _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X)
     P['open_uses'] = opens
+    P['theme'] = theme_block(T, pid, P, ts, X)
     return P
 
 
@@ -405,6 +548,11 @@ def _prune(T, net, sl, ts):
         for el in _alive(net, ('street',)):
             if el.get('name') or el['class'] in ('close', 'arrival', 'main') or el.get('follows_route') or el['id'] in faced:
                 continue
+            if el.get('frontage') == 'continuous':
+                continue
+            dmk = ndi.binary_dilation(el['mask'], iterations=1)
+            if any(e.get('frontage') == 'continuous' and (e['mask'] & dmk).any() for e in _alive(net, ('street',)) if e is not el):
+                continue                                               # a lane through a continuous row is its way through
             dm = ndi.binary_dilation(el['mask'], iterations=1)
             if any(e.get('class') == 'close' and (e['mask'] & dm).any() for e in _alive(net, ('street',)) if e is not el):
                 continue
@@ -824,7 +972,10 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
                    'occupants': occ, 'district': d['id'], 'counted': bool(b['counted'])}
             if b.get('plan'):
                 rec['from_zone_plan'] = True
-            if b.get('form') in TW.FALSE_FRONT:
+            if b.get('bays'):
+                rec['bays'] = b['bays']                               # the fronts sharing this block's walls, each its own width and roof
+                rec['fronts'] = len(b['bays'])
+            if b.get('form') in TW.FALSE_FRONT or any(q.get('false_front') for q in b.get('bays', [])):
                 rec['false_front'] = True                          # a tall board front on the street side (size-guide.md 4)
             if b.get('plot'):
                 px_, py_, pw_, ph_, kind = b['plot']
@@ -844,9 +995,19 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
                           'buildings': [], 'town': t.name})
     # streets
     streets = []
+    bm_all = _bmask(ts, box)
     for el in net.elems:
         if el['kind'] in ('street', 'arrival') and el.get('alive', True):
             s = {k: el[k] for k in ('id', 'name', 'class', 'width_cells', 'vertices_px') if k in el}
+            if el['kind'] == 'street':
+                s['frontage'] = el.get('frontage', 'detached')
+                if s['frontage'] == 'continuous' and (ndi.binary_dilation(el['mask'], iterations=1) & ~el['mask'] & bm_all).sum() < 12:
+                    s['frontage'] = 'detached'                         # a piece of the street with no row along it
+                if s['frontage'] == 'continuous':
+                    s['max_gap_cells'] = el.get('max_gap_cells') or 1
+                    s['frontage_props'] = el.get('frontage_props', [])
+                if el.get('alley'):
+                    s['stair_alley'] = True
             if el.get('follows_route'):
                 s['follows_route'] = el['follows_route']
             if el.get('link'):
@@ -905,6 +1066,8 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
         'fortification': next((t.fort for t in ts if getattr(t, 'fort', None)), None),
         'arrivals': arrivals, 'streets': streets, 'squares': squares, 'districts': dists, 'gathering_places': gathering,
         'size_table_px': {f: [list(TW.BLD[f][0]), list(TW.BLD[f][1])] for f in sorted({b['form'] for b in bl if not b.get('from_zone_plan')})},
+        'fronts': sum(b.get('fronts', 1) for b in bl),
+        'counting_note': 'buildings_counted counts a block of fronts sharing its walls (a terrace, an apartment row, a frontier block) once; fronts counts each front in it',
         'buildings': bl, 'lifted': [{'type': d['use'], 'rect_px': [d['x'], d['y'], d['w'], d['h']], 'why': 'no close could reach it'} for d in dropped],
         'outskirts': [o for t in ts for o in t.outskirts],
         'game_layout': game,
