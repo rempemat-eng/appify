@@ -164,6 +164,44 @@ def _dist_to_poly(x, y, pts):
     return best
 
 
+def count_buildings(plan):
+    """Check explicit counting metadata; retain the older counted-only fallback.
+
+    Contributions follow town_plans.py's existing convention, not new geometry
+    or art classification: marked landmarks/uncounted records contribute zero;
+    other explicit records contribute one per five fronts (at least one).
+    """
+    total, findings = 0, []
+    for building in plan['buildings']:
+        tag = building.get('id', '?')
+        counted = building.get('counted')
+        if type(counted) is not bool:
+            findings.append(f'count: building {tag} counted must be a boolean')
+            continue
+        if 'counts_as' not in building:
+            total += int(counted)             # compatibility with counted-only plans
+            continue
+        value = building['counts_as']
+        if type(value) is not int or value < 0:
+            findings.append(f'count: building {tag} counts_as must be a nonnegative integer (not boolean)')
+            continue
+        total += value
+        if not counted or building.get('landmark'):
+            expected = 0
+        else:
+            fronts = building.get('fronts', 1)
+            if type(fronts) is not int or fronts < 1:
+                findings.append(f'count: building {tag} fronts must be a positive integer (not boolean)')
+                continue
+            expected = (fronts + 4) // 5 if fronts >= 3 else 1
+        if value != expected:
+            findings.append(f'count: building {tag} counts_as is {value}, existing convention requires {expected}')
+    summary = plan.get('buildings_counted')
+    if type(summary) is not int or summary < 0:
+        findings.append('count: buildings_counted must be a nonnegative integer (not boolean)')
+    return total, findings
+
+
 def check_plan(P, blockout):
     from scipy import ndimage as ndi
     fails, notes = [], []
@@ -208,7 +246,8 @@ def check_plan(P, blockout):
         bands[q['id']] = m; net |= m; net_noclose |= m
     # buildings
     occ = np.zeros((h, w), bool)
-    counted = 0
+    counted, count_findings = count_buildings(P)
+    fails.extend(count_findings)
     zone = sum(1 for b in P['buildings'] if b.get('from_zone_plan'))
     if zone:
         notes.append(f'{zone} buildings from the built zone\'s own plan (checked there)')
@@ -218,7 +257,7 @@ def check_plan(P, blockout):
             fails.append(f"cells: building {b['id']} not on whole cells")
         m = rect_mask(c, r, cw, ch)
         if b.get('from_zone_plan'):                # the zone as built: its plan and rules (rules.route_clear) are the authority
-            occ |= m; counted += b.get('counts_as', 1 if b['counted'] else 0)
+            occ |= m
             continue
         if (m & net).any():
             hit = [sid for sid, bm in bands.items() if (bm & m).any()]
@@ -231,7 +270,6 @@ def check_plan(P, blockout):
         if (occ & m).any():
             fails.append(f"cells: building {b['id']} overlaps another building")
         occ |= m
-        counted += b.get('counts_as', 1 if b['counted'] else 0)
         # reach: the door within 3 cells of the faced street's band (a close's end: 1)
         dc, dr = b['door_cells']
         fm = bands.get(b['faces'])
