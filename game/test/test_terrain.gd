@@ -54,6 +54,41 @@ func test_lab_plan_and_scene_both_match_the_python_reference() -> void:
 func test_three_material_corner_matches_python() -> void:
 	_assert_parity(REFERENCES + "three_materials.json", REFERENCES + "three_materials.png", "three-materials")
 
+func test_cell_and_texel_plans_match_the_same_python_reference() -> void:
+	_assert_parity(REFERENCES + "cell_positions.json", REFERENCES + "texel_positions.png", "cell-positions")
+	_assert_parity(REFERENCES + "texel_positions.json", REFERENCES + "cell_positions.png", "texel-positions")
+
+func test_plan_positions_preserve_units_and_refuse_invalid_coordinates() -> void:
+	var plan: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(REFERENCES + "cell_positions.json"))
+	var path := "user://capture-position-probe.json"
+	for units in ["cells", "texels", "legacy"]:
+		plan.erase("coordinate_space")
+		if units != "legacy":
+			plan.coordinate_space = units
+		plan.pieces[0].at = [-0.5, 1.25]
+		var file := FileAccess.open(path, FileAccess.WRITE)
+		file.store_string(JSON.stringify(plan))
+		file.close()
+		var built := SHOT._plan_stage(path)
+		assert_bool(built.ok).is_true()
+		if built.ok:
+			var foot: Vector2 = built.stage.get_node("Props").get_child(0).position
+			assert_that(foot).is_equal(Vector2(-12, 30) if units == "cells" else Vector2(-0.5, 1.25))
+			built.stage.free()
+	for bad in [null, true, "1", 1e100]:
+		plan.pieces[0].at = [bad, 1]
+		var file := FileAccess.open(path, FileAccess.WRITE)
+		file.store_string(JSON.stringify(plan))
+		file.close()
+		assert_bool(SHOT._plan_stage(path).ok).is_false()
+	plan.pieces[0].at = [1, 1]
+	plan.coordinate_space = "meters"
+	var file := FileAccess.open(path, FileAccess.WRITE)
+	file.store_string(JSON.stringify(plan))
+	file.close()
+	assert_bool(SHOT._plan_stage(path).ok).is_false()
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
+
 func test_shifted_profile_hash_is_rejected_by_real_render_comparison() -> void:
 	var result := _shot(REFERENCES + "three_materials.json",
 		REFERENCES + "three_materials_shifted_profile.png", "shifted-profile")
