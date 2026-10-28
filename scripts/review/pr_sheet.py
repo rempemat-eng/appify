@@ -32,8 +32,9 @@ IMAGE_SUFFIXES = {'.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg', '.bmp', '.as
 TEST_FIXTURE_ROOTS = ('game/test/fixtures/', 'game/kit/schema/invalid/',
                       'scripts/review/fixtures/', 'scripts/art/kit/fixtures/',
                       'scripts/art/native/fixtures/', 'tests/fixtures/')
-KIT_REQUIREMENTS = {'docs/codex/' + name + '-kit.md' for name in
-                    ('crossroads', 'coast-city', 'sunstone', 'fire-country', 'tidebloom', 'highgarth')}
+# Requirements documents use one basename directly under docs/codex. New regions
+# retain source-review obligations without changing the routing of other docs.
+KIT_REQUIREMENTS = re.compile(r'docs/codex/[^/]+-kit\.md')
 ENGINE_ERROR = re.compile(r'^\s*(?:SCRIPT ERROR|ERROR:|Parse Error|Failed loading resource|Cannot open file|godot errors at)', re.M)
 
 
@@ -416,7 +417,7 @@ def _source_category(path: str) -> str | None:
     if path.startswith('docs/vision/research/blockout/towns/') or (
             path.startswith('docs/codex/') and path.endswith('-town-polish.md')):
         return 'town_plan'
-    if path.startswith('game/data/kit/concepts/') or path in KIT_REQUIREMENTS:
+    if path.startswith('game/data/kit/concepts/') or KIT_REQUIREMENTS.fullmatch(path):
         return 'kit_concept'
     if path.startswith(('art/characters/', 'art/cast/', 'castwork/', 'docs/vision/characters/',
                         'docs/characters/', 'scripts/characters/',
