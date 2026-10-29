@@ -25,10 +25,12 @@ The manifest is the one file Godot (world/terrain/terrain_kit.gd) and Python (Ki
 from __future__ import annotations
 
 import argparse
+import filecmp
 import hashlib
 import json
 import os
 import sys
+import tempfile
 
 import numpy as np
 from PIL import Image
@@ -233,7 +235,12 @@ def write_tiers(out: str) -> None:
 
 
 def build(force: bool = False, check: bool = False) -> int:
-    os.makedirs(OUT, exist_ok=True)
+    if check:
+        if not os.path.isdir(OUT):
+            print("kit: missing output directory: %s" % OUT)
+            return 1
+    else:
+        os.makedirs(OUT, exist_ok=True)
     lib = load_library()
     mpath = os.path.join(OUT, 'manifest.json')
     old = json.load(open(mpath)) if os.path.exists(mpath) else {'materials': [], 'transitions': []}
@@ -273,26 +280,43 @@ def build(force: bool = False, check: bool = False) -> int:
         if stale:
             print('kit: stale or missing: %s (run python3 -m scripts.art.kit.build)' % ', '.join(stale))
             return 1
+        # Use the same auxiliary writer as normal builds, but never target the subject.
+        # The produced file set includes dynamic decals and the manifest itself.
+        with tempfile.TemporaryDirectory(prefix='kit-check-') as expected:
+            _write_auxiliary(expected, mats, trs, fills)
+            stale = [name for name in sorted(os.listdir(expected))
+                     if not os.path.isfile(os.path.join(OUT, name))
+                     or not filecmp.cmp(os.path.join(expected, name), os.path.join(OUT, name), shallow=False)]
+        if stale:
+            print('kit: stale or missing: %s (run python3 -m scripts.art.kit.build)' % ', '.join(stale))
+            return 1
         print('kit: %d materials, %d transitions, up to date' % (len(mats), len(trs)))
         return 0
+    _write_auxiliary(OUT, mats, trs, fills)
+    print('kit: %d materials, %d transitions; repainted: %s' % (len(mats), len(trs), ', '.join(stale) or 'nothing'))
+    return 0
+
+
+def _write_auxiliary(out: str, mats: list, trs: list, fills: dict) -> None:
+    """Unchanged auxiliary recipes, shared by normal generation and isolated checking."""
     vs = {t['variants'] for t in trs} or {1}
     assert len(vs) == 1, 'one variant count across the kit (the shader assumes it)'
     lut = np.zeros((1, 512, 4), np.uint8)
     lut[0, :len(PAL.LUT), :3] = PAL.LUT
     lut[0, :, 3] = 255
-    Image.fromarray(lut, 'RGBA').save(os.path.join(OUT, 'lut.png'))
+    Image.fromarray(lut, 'RGBA').save(os.path.join(out, 'lut.png'))
     pal = np.zeros((E.CELL, E.CELL * max(1, len(mats)), 4), np.uint8)
     for i, m in enumerate(mats):
         sy, sx = m['swatch']
         pal[:, i * E.CELL:(i + 1) * E.CELL] = PAL.to_rgba(fills[m['id']][sy:sy + E.CELL, sx:sx + E.CELL])
-    Image.fromarray(pal, 'RGBA').save(os.path.join(OUT, 'palette.png'))
-    write_tileset(os.path.join(OUT, 'materials.tres'), mats)
-    write_tiers(OUT)
+    Image.fromarray(pal, 'RGBA').save(os.path.join(out, 'palette.png'))
+    write_tileset(os.path.join(out, 'materials.tres'), mats)
+    write_tiers(out)
     # a smooth periodic noise (0..255) that breaks the water's depth bands off the cell grid
     with F.periodic_noise(F.PERIOD):
         from scripts.art.native import softground as _GD
         nzv = 0.65 * _GD.nz(F.PERIOD, F.PERIOD, 22.0, 7) + 0.35 * _GD.nz(F.PERIOD, F.PERIOD, 9.0, 8)
-    Image.fromarray(np.clip(nzv * 255, 0, 255).astype(np.uint8), 'L').save(os.path.join(OUT, 'noise.png'))
+    Image.fromarray(np.clip(nzv * 255, 0, 255).astype(np.uint8), 'L').save(os.path.join(out, 'noise.png'))
     from scripts.art.kit import dressing as DR
     decals = {}
     for did, (dc, anchor) in DR.paint_decals().items():
@@ -301,7 +325,7 @@ def build(force: bool = False, check: bool = False) -> int:
         a[..., 0] = np.where(ok, dc & 255, 0)
         a[..., 1] = np.where(ok, dc >> 8, 0)
         a[..., 3] = np.where(ok, 255, 0)
-        Image.fromarray(a, 'RGBA').save(os.path.join(OUT, 'decal_%s.png' % did))
+        Image.fromarray(a, 'RGBA').save(os.path.join(out, 'decal_%s.png' % did))
         decals[did] = {'png': 'decal_%s.png' % did, 'anchor': [int(anchor[0]), int(anchor[1])]}
     man = {'cell': E.CELL, 'period': F.PERIOD, 'variants': vs.pop(), 'profiles': E.NPROF,
            'curves': E.curve_table(), 'decals': decals,
@@ -309,9 +333,7 @@ def build(force: bool = False, check: bool = False) -> int:
            'tileset': 'materials.tres', 'tiers_tileset': 'tiers.tres', 'noise': 'noise.png',
            'surface_variants': {fam: {k: list(v) for k, v in d.items()} for fam, d in SF.VARIANTS.items()}, 'ops': {'keep': E.OP_KEEP, 'upper': E.OP_UPPER, 'delta': E.OP_DELTA, 'abs': E.OP_ABS},
            'materials': mats, 'transitions': trs}
-    json.dump(man, open(mpath, 'w'), indent=1)
-    print('kit: %d materials, %d transitions; repainted: %s' % (len(mats), len(trs), ', '.join(stale) or 'nothing'))
-    return 0
+    json.dump(man, open(os.path.join(out, 'manifest.json'), 'w'), indent=1)
 
 
 def main(argv=None) -> int:
