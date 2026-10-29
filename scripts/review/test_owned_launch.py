@@ -276,6 +276,23 @@ class OwnedLaunchControls(unittest.TestCase):
                 _ServiceBroker(self.root / 'no-authority').__enter__()
             spawn.assert_not_called()
 
+    def test_pending_parent_registration_refuses_before_any_actual_wait(self):
+        broker = _ServiceBroker(self.root / 'unstarted-service')
+        pending_process = mock.Mock(pid=123)
+        broker.jobs['pending-parent'] = dict(pidfd=None, process=pending_process, gate=None)
+        request = dict(request_id='premature-child', parent='pending-parent',
+                       args=[sys.executable, '-c', 'raise SystemExit(99)'],
+                       env=self.env, cwd=str(self.root), timeout=1)
+        with mock.patch('scripts.review.owned_broker._actual_wait') as actual_wait, \
+                mock.patch('os.waitpid') as kernel_wait:
+            with self.assertRaisesRegex(client.OwnedLaunchError, 'registration incomplete'):
+                broker._validate(request)
+            actual_wait.assert_not_called()
+            kernel_wait.assert_not_called()
+        self.assertNotIn('premature-child', broker.seen)
+        self.assertIs(broker.jobs['pending-parent']['process'], pending_process)
+        self.assertIsNone(broker.jobs['pending-parent']['pidfd'])
+
     def test_lost_kernel_wait_never_becomes_synthetic_success(self):
         process = mock.Mock(pid=123, returncode=None, args=['unrun-control'])
         process._waitpid_lock = threading.Lock()

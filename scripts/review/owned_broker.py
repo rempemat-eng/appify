@@ -279,8 +279,15 @@ class _ServiceBroker:
                 raise client.OwnedLaunchError('allocation cancelled; late launch refused')
             if request_id in self.seen or len(self.seen) >= MAX_REQUEST_IDS:
                 raise client.OwnedLaunchError('duplicate/exhausted logical request identity')
-            if parent and (parent not in self.jobs or _actual_wait(self.jobs[parent]['process']) is not None):
-                raise client.OwnedLaunchError('nested launch lacks an active registered parent')
+            if parent:
+                parent_job = self.jobs.get(parent)
+                # A pending helper must remain unreaped until pidfd_open binds
+                # its identity, even if that trusted helper exited before exec.
+                if (parent_job is None or parent_job['pidfd'] is None
+                        or parent_job['process'] is None):
+                    raise client.OwnedLaunchError('nested launch parent registration incomplete')
+                if _actual_wait(parent_job['process']) is not None:
+                    raise client.OwnedLaunchError('nested launch lacks an active registered parent')
             self.seen.add(request_id)
         return request_id, parent, args, dict(env), cwd, timeout
 

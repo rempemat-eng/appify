@@ -210,7 +210,7 @@ Require a reviewed outer collector with actual exits, logs, source hashes and
 owned-child collection before execution. Exact final file hashes belong in the
 source handoff; this document does not embed a circular self-hash.
 
-First authorisation would cover exactly21 methods in
+First authorisation would cover exactly22 methods in
 `OwnedLaunchControls`, then separately approved import prerequisites and six
 methods in `OwnedAdapterControls`. The adapter module imports the existing
 review/Pillow/NumPy stack; that private import layout and available dependencies
@@ -227,11 +227,12 @@ and reviewed-tool routing with subject-derived scene/asset paths and fake-engine
 cwd despite hostile subject modules (tiny tool fixtures, not detector coverage). One waited native
 grandchild deliberately demonstrates the unregistered-descendant limit.
 
-All27 controls are **UNRUN** (21 broker/client plus six adapter methods).
+All28 controls are **UNRUN** (22 broker/client plus six adapter methods).
 The superseded nineteen-method source-only plan remains historical, not executed.
 Additional controls cover ignored SIGCHLD, SA_NOCLDWAIT, unsupported ABI, forbidden
 in-process service authority, lost actual wait, slow frame absolute deadline and
-partial-frame cancellation and repeated-cancel control replies. Test-only isolated service bootstraps inject faults; the
+partial-frame cancellation, repeated-cancel control replies and rejection of a
+pending logical parent before any actual/kernel wait. Test-only isolated service bootstraps inject faults; the
 production facade accepts no injection or callback parameter. AST parsing, a static review or later fake-process
 success cannot establish real Godot/display containment, memory measurement,
 render freshness, visual quality, source-sheet completeness, device behavior or

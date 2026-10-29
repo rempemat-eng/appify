@@ -1729,7 +1729,7 @@ class OwnedAdapterControls(unittest.TestCase):
                 with mock.patch.dict(os.environ, env, clear=True):
                     value = json.loads(pr_sheet._git(root, 'for-each-ref'))
                 self.assertEqual(value['argv'], ['--literal-pathspecs', '-C', str(root), 'for-each-ref'])
-                self.assertEqual(value['parent'], os.getpid())
+                self.assertEqual(value['parent'], broker.service_pid)
                 self.assertEqual(value['literal'], '1')
 
     def test_managed_detector_exit_one_keeps_logs_hashes_and_wait_receipt(self):
@@ -1786,7 +1786,7 @@ class OwnedAdapterControls(unittest.TestCase):
                         self.assertEqual(value['repo'], str(subject))
                         self.assertEqual(value['game'], str(subject / 'game'))
                         self.assertEqual(value['catalogue'], str(subject / 'art' / 'catalogue'))
-                        self.assertEqual(value['engine'], dict(cwd=str(subject), parent=os.getpid()))
+                        self.assertEqual(value['engine'], dict(cwd=str(subject), parent=broker.service_pid))
                         self.assertEqual(value['argv'], ['literal space'])
                         self.assertEqual(result['command'][1:3], ['-I', '-B'])
                         self.assertIn(str(subject), result['command'])
