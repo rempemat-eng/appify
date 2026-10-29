@@ -194,14 +194,15 @@
       "points": [
         [
           0,
-          304
+          296
         ],
         [
           200,
-          304
+          296
         ]
       ],
-      "why": "west to Valley Halt (closed in the slice)"
+      "why": "west to Valley Halt (closed in the slice)",
+      "why_place": "three cells, 288 to 312: in front of the bakery's door and clear of the herbalist's roof (no road under a building, scripts/art/native/check.py)"
     },
     {
       "id": "harbour_road",
@@ -210,13 +211,14 @@
       "points": [
         [
           440,
-          328
+          312
         ],
         [
           640,
-          328
+          312
         ]
-      ]
+      ],
+      "why_place": "three cells, 304 to 328: below the smithy's door and clear of the fern cottage's roof (no road under a building)"
     },
     {
       "id": "green_lane",
@@ -224,18 +226,20 @@
       "width": 24,
       "points": [
         [
-          264,
+          320,
           376
         ],
         [
-          200,
-          440
+          320,
+          472
         ],
         [
-          144,
+          184,
           472
         ]
-      ]
+      ],
+      "bend": 96,
+      "why_shape": "a desire line (Matt, 27 Oct): two cells wide, leaving the square on its axis, one long rounded bend of 96 px from the square's edge, arriving at the ring's east entrance"
     },
     {
       "id": "garden_walk",
@@ -378,13 +382,13 @@
       "name": "Herbalist's (apothecary, stage 1)",
       "rect": [
         112,
-        328,
+        336,
         72,
         48
       ],
       "door": [
         172,
-        376
+        384
       ],
       "colour": "#6f8a6a",
       "stage": 1
@@ -1029,7 +1033,7 @@
     }
   ],
   "art": {
-    "_about": "The drawing (scripts/art/native/village.py and town.py, game/tools/gen_village.py; Claude A, 25 Oct): how each building looks (one design; its storm damage an overlay the restore removes), the dry-stone walls drawn on the faces, the paving, the uplands, the green's ring and the dressing with its reasons. Doors face south: the oblique view shows no east walls, so the bakery's and the herbalist's doors moved to their south fronts. The herbalist's moved 14 px south so its roof clears the halt road.",
+    "_about": "The drawing (scripts/art/native/village.py and town.py, game/tools/gen_village.py; Claude A, 25 Oct): how each building looks (one design; its storm damage an overlay the restore removes), the dry-stone walls drawn on the faces, the paving, the uplands, the green's ring and the dressing with its reasons. Doors face south: the oblique view shows no east walls, so the bakery's and the herbalist's doors moved to their south fronts. The herbalist's moved 22 px south so its roof clears the three-cell halt road.",
     "biome": "meadow",
     "uplands": [],
     "walls": [
@@ -1783,10 +1787,10 @@
       {
         "kind": "oak",
         "at": [
-          300,
-          480
+          376,
+          520
         ],
-        "why": "the park round the crater"
+        "why": "the park round the crater (moved off the green lane's bend, 27 Oct)"
       },
       {
         "kind": "oak",
@@ -1868,8 +1872,8 @@
       {
         "kind": "boulder",
         "at": [
-          332,
-          424
+          352,
+          432
         ]
       },
       {

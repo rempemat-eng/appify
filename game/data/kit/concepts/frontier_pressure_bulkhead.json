@@ -1,0 +1,102 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "frontier_pressure_bulkhead",
+  "name": "Station pressure bulkhead and window bay",
+  "kind": "structure",
+  "biomes": [
+    "halcyon",
+    "lumen"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "solid",
+      "note": "Insulated metal panel with a small service inset."
+    },
+    {
+      "id": "window",
+      "note": "A recessed viewport with pressure frame, never an unframed hole."
+    },
+    {
+      "id": "corner",
+      "note": "A depth-correct return, lit on west and dark on east."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 design proposal for Claude review; no art, material ID, painter or live placement approval."
+  },
+  "geometry": {
+    "size_cells": [
+      4,
+      2
+    ],
+    "z_sort": "foot"
+  },
+  "placement": {
+    "role": "wall",
+    "ground": {
+      "allow": [
+        "paving",
+        "stone"
+      ],
+      "deny": [
+        "water",
+        "turf",
+        "route"
+      ]
+    },
+    "requires": [
+      {
+        "rel": "at_edge",
+        "what": "pressure_interior"
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "route"
+      }
+    ],
+    "clearance": 0,
+    "orientations": [
+      "s",
+      "n",
+      "e",
+      "w"
+    ],
+    "snap": "cell",
+    "stages": [],
+    "composition": "row"
+  },
+  "rendering": {
+    "cast_shadow": {
+      "shape": "sprite"
+    },
+    "contact_ao": true
+  },
+  "function": {
+    "interact": null
+  },
+  "story": {
+    "owner": null,
+    "quests": [],
+    "lore": "Reuse sealed wall bays around station rooms and lunar habitat interiors."
+  },
+  "gameplay": {},
+  "audit": {
+    "size_class": "storey",
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared",
+      "Priority: P3",
+      "Purpose: Reuse sealed wall bays around station rooms and lunar habitat interiors.",
+      "Visual brief: Thick frames have visible top/side planes, recessed fasteners and a dark gasket; windows sit inside the frame and show a separate distant-space layer.",
+      "Widths and size: One storey 96–141 art px high; module 4 cells wide; doorway/apron is a separate fitted piece.",
+      "Source: docs/vision/world-plan.md §§8.6,8.7,9; docs/vision/coherence-plan.md M1",
+      "Implement after review: choose authored anchors, exact collision and approved variant art; these cell envelopes are layout proposals, not measured sprite bounds.",
+      "Window reflection respects the local light while space backdrop remains outside the shell. Pressure classification must come from zone data, not wall colour.",
+      "Lighting: Upper left; material-specific ramps and directional planes; no mirror-only relighting."
+    ]
+  }
+}

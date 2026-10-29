@@ -1,0 +1,80 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "shared_smoke_at_source",
+  "name": "Source-bound smoke",
+  "kind": "effect",
+  "version": 1,
+  "approval": {
+    "state": "concept",
+    "note": "W0 proposal for Claude review; no art, placement or shipping approval."
+  },
+  "biomes": [
+    "village",
+    "frostline",
+    "cogsworth",
+    "hearthold"
+  ],
+  "variants": [
+    {
+      "id": "chimney",
+      "note": "Small repeatable puff only while the parent fire is active."
+    },
+    {
+      "id": "extinguishing",
+      "note": "Finite final puff on existing state change."
+    }
+  ],
+  "geometry": {
+    "z_sort": "ground"
+  },
+  "placement": {
+    "role": "smoke",
+    "ground": {
+      "allow": [],
+      "deny": []
+    },
+    "requires": [
+      {
+        "rel": "on_anchor",
+        "what": "chimney_or_fire",
+        "note": "Resolve a real mouth or fire anchor; do not use the sprite centre."
+      }
+    ],
+    "forbids": [],
+    "clearance": 0,
+    "orientations": [
+      "any"
+    ],
+    "snap": "free",
+    "stages": [],
+    "composition": "free"
+  },
+  "rendering": {
+    "contact_ao": false
+  },
+  "function": {
+    "interact": null,
+    "costs": [],
+    "yields": []
+  },
+  "story": {
+    "quests": [],
+    "owner": null,
+    "lore": ""
+  },
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared",
+      "Priority: P0",
+      "Purpose: Reuse smoke motion without arbitrary emitters around a settlement.",
+      "Visual brief: Short clumps grow from a chimney mouth or fire source, rise and fade; warm underside near fire becomes cool at the top.",
+      "Size: Emitter is a point on the authored chimney mouth; plume envelope must not hide doors or combat tells.",
+      "Source: ground-rules.md Fire and smoke; AGENTS.md Motion",
+      "Implement after review: Claude supplies final art, material IDs, anchors, collision and runtime bindings; W0 assigns none.",
+      "Motion: on-screen only; reduced motion holds a small static smoke shape or disables the emitter; no gameplay effect.",
+      "Parent state controls emission; paused scenes stop all queued particles."
+    ]
+  }
+}

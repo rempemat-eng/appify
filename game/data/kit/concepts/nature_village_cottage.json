@@ -1,0 +1,104 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "nature_village_cottage",
+  "name": "Village and coastal cottage construction family",
+  "kind": "structure",
+  "biomes": [
+    "crossroads",
+    "valley",
+    "coast",
+    "tidebloom"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "valley_plaster",
+      "note": "Warm plaster facade with thick recessed door/window frames and a layered slate or thatched roof over short eaves."
+    },
+    {
+      "id": "valley_timber",
+      "note": "Weathered timber facade with visible structural posts, lighter infill and a roof volume distinct from the wall plane."
+    },
+    {
+      "id": "coastal_limewash",
+      "note": "Limewashed coastal walls, practical shutters and salt-darkened lower masonry; use coastal materials rather than a global blue tint."
+    },
+    {
+      "id": "isle_packing_shed",
+      "note": "Working island packing shed with a broader goods opening and open loading apron; review its civic/wide-door envelope separately from cottage parts."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 catalogue proposal for Claude review; not drawable approval, not placeable."
+  },
+  "geometry": {
+    "z_sort": "foot",
+    "size_px": [
+      264,
+      276
+    ]
+  },
+  "placement": {
+    "role": "structure",
+    "ground": {
+      "allow": [
+        "earth",
+        "paving",
+        "turf"
+      ],
+      "deny": []
+    },
+    "requires": [
+      {
+        "rel": "adjacent",
+        "what": "route",
+        "note": "Proposed selector/relation for review; its exact matching contract must be added to W5 before promotion.",
+        "cells": 1
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "water"
+      },
+      {
+        "rel": "on",
+        "what": "other_footprint"
+      }
+    ],
+    "clearance": 2,
+    "orientations": [
+      "s",
+      "e",
+      "w"
+    ],
+    "snap": "cell",
+    "composition": "row",
+    "stages": []
+  },
+  "rendering": {
+    "contact_ao": true
+  },
+  "function": {},
+  "story": {
+    "lore": "Share roof, door and wall construction while preserving each household facade as its own assembly."
+  },
+  "audit": {
+    "size_class": "cottage",
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared. Reusable across the listed places; preserve site-specific assembly and state.",
+      "Priority: P1.",
+      "Purpose: Share roof, door and wall construction while preserving each household facade as its own assembly.",
+      "Visual brief: Thick plaster or timber walls, clear door recess, layered slate/thatched roof and short eaves; coastal versions have limewash and shutters, not a universal blue recolour. Window light sits behind the frame.",
+      "Source: docs/vision/regions/valley-plan.md; docs/vision/regions/home-valley-frostline-brackens.md; docs/vision/regions/tidebloom-isles.md; game/kit/pieces/structure/crossroads_fern_cottage.json",
+      "Geometry: proposed visual envelope only; Claude supplies exact foot, solid footprint, overhang, interaction anchors and any deck after review.",
+      "Implementation: concept only, outside the live piece library. Do not place, bake or grant gameplay until reviewed and approved.",
+      "Size: cottage 200-340 art px high, 192-340 wide; the packing shed must be reviewed against civic/wide_door rather than stretched from a cottage.",
+      "Reuse crossroads_north_cottages, crossroads_fern_cottage, crossroads_bakery and crossroads_hut for their named sites; do not flatten household differences.",
+      "Lighting: upper-left key light; shade each material and facing for that light. The lit-picture reference is deferred until art exists.",
+      "Size-class scope: cottage and the nominal geometry apply to a cottage body only. The packing-shed variant requires its own civic/wide_door approval before promotion."
+    ]
+  }
+}

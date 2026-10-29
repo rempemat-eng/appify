@@ -1,0 +1,93 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "industry_millrace_wheel",
+  "name": "Cogsworth Millrace wheel composition",
+  "kind": "structure",
+  "version": 1,
+  "approval": {
+    "state": "concept",
+    "note": "W0 design proposal only; not drawn, gated, approved or available for placement."
+  },
+  "biomes": [
+    "cogsworth"
+  ],
+  "variants": [
+    {
+      "id": "main",
+      "note": "Wheel, axle mount and lower splash zone as one authored assembly."
+    }
+  ],
+  "placement": {
+    "role": "landmark",
+    "ground": {
+      "allow": [
+        "stone",
+        "paving",
+        "water"
+      ],
+      "deny": [
+        "route"
+      ]
+    },
+    "requires": [
+      {
+        "rel": "at_edge",
+        "what": "water"
+      },
+      {
+        "rel": "on_anchor",
+        "what": "mill_axle"
+      }
+    ],
+    "forbids": [],
+    "clearance": 2,
+    "orientations": [
+      "s"
+    ],
+    "snap": "cell",
+    "stages": [],
+    "composition": "axis",
+    "per_zone": {
+      "max": 1
+    }
+  },
+  "rendering": {
+    "contact_ao": true,
+    "cast_shadow": {
+      "shape": "sprite"
+    }
+  },
+  "function": {
+    "interact": {
+      "verb": "look",
+      "triggers": []
+    }
+  },
+  "story": {
+    "lore": "Show why the mills are built on the fast Cog and tie the watercourse to actual machinery."
+  },
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: custom",
+      "Priority: P2",
+      "Purpose: Show why the mills are built on the fast Cog and tie the watercourse to actual machinery.",
+      "Visual brief: Broad timber wheel with iron rim, visible paddles entering the lower water and axle entering a real mill wall; wet lower paddles and a dry upper rim show depth.",
+      "Source: docs/vision/regions/cogsworth-plan.md",
+      "Implement after review: Claude selects the design, draws it, supplies exact anchors/collision and passes the library gate; no concept may ship.",
+      "Geometry: proposed authoring envelope 10x8 cells; one cell is 8 world px / 24 art px. This is not an asserted solid footprint; collision, foot and overhang await the drawing.",
+      "Function: proposed look affordance; bind only existing owner-approved data refs, never infer a quest, fee, reward or transport unlock from this concept.",
+      "Rule proposal: upstream/downstream water and axle height agree; splash stays where paddles meet the stream. Wheel collision cannot block the dry public route.",
+      "Animation is deferred until finite/on-screen/reduced-motion and timing policy are supplied; do not assume a 24/7 loop.",
+      "Uniqueness: one site composition; a small wheel family can later be extracted only if another actual mill needs it."
+    ]
+  },
+  "geometry": {
+    "size_cells": [
+      10,
+      8
+    ],
+    "z_sort": "foot"
+  }
+}

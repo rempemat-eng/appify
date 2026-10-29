@@ -1,0 +1,53 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "earth_face_over_any",
+  "name": "Ledge foot and ends",
+  "kind": "transition",
+  "biomes": [
+    "valley",
+    "woodland",
+    "village"
+  ],
+  "version": 1,
+  "approval": {
+    "state": "candidate",
+    "by": null,
+    "at": null,
+    "standard": "eastward-edges.md 2.2, 3.1 to 3.3, ground-rules.md 1",
+    "note": "the face's dark foot band and the ground's shade under it; side bands at the face's ends; weeds over the foot as dressing"
+  },
+  "transition": {
+    "upper": "earth_face",
+    "lower": "*",
+    "painter": {
+      "module": "scripts.art.kit.edges",
+      "fn": "foot",
+      "args": {}
+    },
+    "variants": 1,
+    "shape": "lower",
+    "dressing": {
+      "density": 0.5,
+      "north": [
+        "tuft_0",
+        "tuft_2",
+        "tuft_3",
+        "tuft_5",
+        "pebble_0"
+      ],
+      "south": [],
+      "side": [
+        "tuft_1",
+        "pebble_2"
+      ]
+    }
+  },
+  "audit": {
+    "painter": {
+      "module": "scripts.art.native.softground",
+      "fn": "sunken_edge",
+      "args": {}
+    },
+    "eastward_ref": "Eastward 12 and 13, crops 10-grass-dirt"
+  }
+}

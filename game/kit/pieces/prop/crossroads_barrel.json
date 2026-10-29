@@ -1,0 +1,143 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "crossroads_barrel",
+ "name": "Barrel",
+ "kind": "prop",
+ "biomes": [
+  "village"
+ ],
+ "version": 2,
+ "variants": [
+  {
+   "id": "barrel_29",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/barrel_29.png",
+   "foot": [
+    24,
+    71
+   ]
+  },
+  {
+   "id": "barrel_31",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/barrel_31.png",
+   "foot": [
+    24,
+    71
+   ]
+  },
+  {
+   "id": "barrel_37",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/barrel_37.png",
+   "foot": [
+    24,
+    71
+   ]
+  },
+  {
+   "id": "barrel_39",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/barrel_39.png",
+   "foot": [
+    24,
+    71
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": null,
+  "note": "Source metadata only; seeded designs still require the library gate and Matt approval."
+ },
+ "geometry": {
+  "size_px": [
+   48,
+   75
+  ],
+  "size_cells": [
+   2,
+   4
+  ],
+  "z_sort": "foot",
+  "collision": {
+   "rect": [
+    -5.0,
+    -8.0,
+    10,
+    8
+   ],
+   "shape": "rect"
+  },
+  "foot": [
+   24,
+   71
+  ],
+  "footprint": [
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell"
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "baked"
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": true
+ },
+ "audit": {
+  "size_class": null,
+  "eastward_ref": null,
+  "seeded_from": "game/zones/crossroads/kit.json",
+  "sources": [
+   {
+    "zone": "crossroads",
+    "object": "barrel_29",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "crossroads",
+    "object": "barrel_31",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "crossroads",
+    "object": "barrel_37",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "crossroads",
+    "object": "barrel_39",
+    "part": "body",
+    "condition": null
+   }
+  ],
+  "todo": [
+   "composition role and clearance",
+   "footprint is conservative positive-area coverage at a cell-aligned foot; W4 must derive exact runtime blocking from collision at the placed foot",
+   "placement.role, requires and forbids (Claude design decision; ground-rules.md 6)",
+   "review size-guide class and Eastward comparison before the library gate"
+  ]
+ }
+}

@@ -1,0 +1,25 @@
+{
+ "why": "bad id",
+ "expect": "does not match",
+ "semantic": false,
+ "piece": {
+  "schema": "napattack.piece/1",
+  "id": "Bench-1",
+  "name": "Bench",
+  "kind": "prop",
+  "version": 1,
+  "approval": {
+   "state": "candidate"
+  },
+  "geometry": {
+   "size_cells": [
+    2,
+    1
+   ],
+   "foot": [
+    24,
+    30
+   ]
+  }
+ }
+}

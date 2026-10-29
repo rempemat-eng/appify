@@ -1,0 +1,108 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "shared_door_landing",
+  "name": "Door landing and route socket",
+  "kind": "structure",
+  "version": 1,
+  "approval": {
+    "state": "concept",
+    "note": "W0 proposal for Claude review; no art, placement or shipping approval."
+  },
+  "biomes": [
+    "village",
+    "valley",
+    "cogsworth",
+    "neon",
+    "sunstone",
+    "hearthold",
+    "halcyon"
+  ],
+  "variants": [
+    {
+      "id": "stone",
+      "note": "Stone sill with distinct lit tread and dark riser."
+    },
+    {
+      "id": "timber",
+      "note": "Worn boards with beam ends visible."
+    },
+    {
+      "id": "metal",
+      "note": "Ribbed sill and a visibly openable door seam."
+    }
+  ],
+  "geometry": {
+    "z_sort": "foot",
+    "size_cells": [
+      4,
+      2
+    ]
+  },
+  "placement": {
+    "role": "door_landing",
+    "ground": {
+      "allow": [],
+      "deny": []
+    },
+    "requires": [
+      {
+        "rel": "adjacent",
+        "what": "door",
+        "note": "Landing sits flush on the door tier."
+      },
+      {
+        "rel": "adjacent",
+        "what": "route",
+        "note": "A continuous 2-cell or wider access connects the apron."
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "water"
+      },
+      {
+        "rel": "on",
+        "what": "solid_footprint"
+      }
+    ],
+    "clearance": 0,
+    "orientations": [
+      "s",
+      "n",
+      "e",
+      "w"
+    ],
+    "snap": "cell",
+    "stages": [],
+    "composition": "free"
+  },
+  "rendering": {
+    "contact_ao": true
+  },
+  "function": {
+    "interact": null,
+    "costs": [],
+    "yields": []
+  },
+  "story": {
+    "quests": [],
+    "owner": null,
+    "lore": ""
+  },
+  "audit": {
+    "size_class": "door",
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared",
+      "Priority: P0",
+      "Purpose: Keep every reusable door visibly and physically connected to its route.",
+      "Visual brief: A recessed sill above a shallow top plane; stone, timber and metal material variants share an apron contract but retain thickness and drainage.",
+      "Size: 4 by 2 cells clear in front; door leaf 70–96 art px high and 33–53 wide.",
+      "Source: docs/vision/size-guide.md door apron; docs/vision/ground-rules.md Structures",
+      "Implement after review: Claude supplies final art, material IDs, anchors, collision and runtime bindings; W0 assigns none.",
+      "The named size class measures the attached door; landing geometry is measured as a footprint, not as an opaque door sprite.",
+      "The apron is reserved clearance, not a solid collision rectangle; W1/W5 must distinguish them."
+    ]
+  }
+}

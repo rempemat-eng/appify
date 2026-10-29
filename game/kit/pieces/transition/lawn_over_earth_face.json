@@ -1,0 +1,39 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "lawn_over_earth_face",
+  "name": "Turf lip over a ledge face",
+  "kind": "transition",
+  "biomes": [
+    "valley",
+    "woodland",
+    "village"
+  ],
+  "version": 1,
+  "approval": {
+    "state": "candidate",
+    "by": null,
+    "at": null,
+    "standard": "eastward-edges.md 2.2, 3.1 to 3.3, ground-rules.md 1",
+    "note": "the raised turf's lip, the rim line and the under-lip line along the lumped rim"
+  },
+  "transition": {
+    "upper": "lawn",
+    "lower": "earth_face",
+    "painter": {
+      "module": "scripts.art.kit.edges",
+      "fn": "lip",
+      "args": {}
+    },
+    "variants": 1,
+    "shape": "lower",
+    "dressing": null
+  },
+  "audit": {
+    "painter": {
+      "module": "scripts.art.native.softground",
+      "fn": "sunken_edge",
+      "args": {}
+    },
+    "eastward_ref": "Eastward 12 and 13, crops 10-grass-dirt"
+  }
+}

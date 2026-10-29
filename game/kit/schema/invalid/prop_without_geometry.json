@@ -1,0 +1,15 @@
+{
+ "why": "prop without geometry",
+ "expect": "needs a \"geometry\" block",
+ "semantic": true,
+ "piece": {
+  "schema": "napattack.piece/1",
+  "id": "bench",
+  "name": "Bench",
+  "kind": "prop",
+  "version": 1,
+  "approval": {
+   "state": "candidate"
+  }
+ }
+}

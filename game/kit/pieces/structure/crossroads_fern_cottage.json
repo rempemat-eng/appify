@@ -1,0 +1,398 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "crossroads_fern_cottage",
+ "name": "Fern cottage",
+ "kind": "structure",
+ "biomes": [
+  "village"
+ ],
+ "version": 2,
+ "variants": [
+  {
+   "id": "fern_cottage",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/fern_cottage.png",
+   "foot": [
+    120,
+    260
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": null,
+  "note": "Source metadata only; seeded designs still require the library gate and Matt approval."
+ },
+ "geometry": {
+  "size_px": [
+   240,
+   264
+  ],
+  "size_cells": [
+   10,
+   11
+  ],
+  "z_sort": "foot",
+  "collision": {
+   "rect": [
+    -36.0,
+    -48.0,
+    72,
+    48
+   ],
+   "shape": "rect"
+  },
+  "foot": [
+   120,
+   260
+  ],
+  "footprint": [
+   [
+    -5,
+    -6
+   ],
+   [
+    -4,
+    -6
+   ],
+   [
+    -3,
+    -6
+   ],
+   [
+    -2,
+    -6
+   ],
+   [
+    -1,
+    -6
+   ],
+   [
+    0,
+    -6
+   ],
+   [
+    1,
+    -6
+   ],
+   [
+    2,
+    -6
+   ],
+   [
+    3,
+    -6
+   ],
+   [
+    4,
+    -6
+   ],
+   [
+    -5,
+    -5
+   ],
+   [
+    -4,
+    -5
+   ],
+   [
+    -3,
+    -5
+   ],
+   [
+    -2,
+    -5
+   ],
+   [
+    -1,
+    -5
+   ],
+   [
+    0,
+    -5
+   ],
+   [
+    1,
+    -5
+   ],
+   [
+    2,
+    -5
+   ],
+   [
+    3,
+    -5
+   ],
+   [
+    4,
+    -5
+   ],
+   [
+    -5,
+    -4
+   ],
+   [
+    -4,
+    -4
+   ],
+   [
+    -3,
+    -4
+   ],
+   [
+    -2,
+    -4
+   ],
+   [
+    -1,
+    -4
+   ],
+   [
+    0,
+    -4
+   ],
+   [
+    1,
+    -4
+   ],
+   [
+    2,
+    -4
+   ],
+   [
+    3,
+    -4
+   ],
+   [
+    4,
+    -4
+   ],
+   [
+    -5,
+    -3
+   ],
+   [
+    -4,
+    -3
+   ],
+   [
+    -3,
+    -3
+   ],
+   [
+    -2,
+    -3
+   ],
+   [
+    -1,
+    -3
+   ],
+   [
+    0,
+    -3
+   ],
+   [
+    1,
+    -3
+   ],
+   [
+    2,
+    -3
+   ],
+   [
+    3,
+    -3
+   ],
+   [
+    4,
+    -3
+   ],
+   [
+    -5,
+    -2
+   ],
+   [
+    -4,
+    -2
+   ],
+   [
+    -3,
+    -2
+   ],
+   [
+    -2,
+    -2
+   ],
+   [
+    -1,
+    -2
+   ],
+   [
+    0,
+    -2
+   ],
+   [
+    1,
+    -2
+   ],
+   [
+    2,
+    -2
+   ],
+   [
+    3,
+    -2
+   ],
+   [
+    4,
+    -2
+   ],
+   [
+    -5,
+    -1
+   ],
+   [
+    -4,
+    -1
+   ],
+   [
+    -3,
+    -1
+   ],
+   [
+    -2,
+    -1
+   ],
+   [
+    -1,
+    -1
+   ],
+   [
+    0,
+    -1
+   ],
+   [
+    1,
+    -1
+   ],
+   [
+    2,
+    -1
+   ],
+   [
+    3,
+    -1
+   ],
+   [
+    4,
+    -1
+   ]
+  ],
+  "interaction_points": [
+   {
+    "id": "fern_site",
+    "at": [
+     -36.0,
+     60.0
+    ],
+    "verb": "Restore",
+    "if": {
+     "flags": [
+      "shard_home:woodland"
+     ],
+     "not_restored": [
+      "fern_cottage"
+     ]
+    },
+    "radius": 30.0
+   }
+  ],
+  "door_cells": [
+   [
+    -3,
+    0
+   ]
+  ]
+ },
+ "placement": {
+  "snap": "cell"
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "baked"
+  },
+  "contact_ao": true
+ },
+ "function": {
+  "saves": [
+   "village.restored.fern_cottage"
+  ],
+  "costs": [
+   "res://data/plans/crossroads.json#/restores/1/cost"
+  ],
+  "interact": {
+   "verb": "restore",
+   "triggers": [
+    {
+     "type": "restore",
+     "ref": "res://data/plans/crossroads.json#/restores/1"
+    }
+   ]
+  }
+ },
+ "story": {
+  "owner": null,
+  "milestone": "fern_cottage",
+  "quests": [
+   "res://data/quests/home_again.json"
+  ]
+ },
+ "gameplay": {
+  "blocks_move": true,
+  "blocks_shots": true
+ },
+ "audit": {
+  "size_class": null,
+  "eastward_ref": null,
+  "seeded_from": "game/zones/crossroads/kit.json",
+  "sources": [
+   {
+    "zone": "crossroads",
+    "object": "fern_boards",
+    "part": "procedural",
+    "condition": {
+     "not_restored": [
+      "fern_cottage"
+     ]
+    }
+   },
+   {
+    "zone": "crossroads",
+    "object": "fern_cottage",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "crossroads",
+    "object": "fern_cottage_damage",
+    "part": "overlay",
+    "condition": {
+     "not_restored": [
+      "fern_cottage"
+     ]
+    }
+   }
+  ],
+  "todo": [
+   "composition role and clearance",
+   "door_cells mark the authored doorway, not a working interior/scene transition",
+   "footprint is conservative positive-area coverage at a cell-aligned foot; W4 must derive exact runtime blocking from collision at the placed foot",
+   "placement.role, requires and forbids (Claude design decision; ground-rules.md 6)",
+   "retain overlay fern_cottage_damage from source scene with its own condition and offset; not a standalone random variant",
+   "retain procedural fern_boards from source scene with its own condition and offset; not a standalone random variant",
+   "review size-guide class and Eastward comparison before the library gate"
+  ]
+ }
+}

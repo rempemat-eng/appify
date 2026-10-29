@@ -1,0 +1,89 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "frontier_station_deck",
+  "name": "Pressure-station deck and service grating",
+  "kind": "terrain",
+  "biomes": [
+    "halcyon"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "crew",
+      "note": "Warm off-white deck with sparse scuff clusters."
+    },
+    {
+      "id": "service",
+      "note": "Dark recessed grid panels framed by structural metal."
+    },
+    {
+      "id": "airlock",
+      "note": "Short hazard strips only by the pressure threshold."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 design proposal for Claude review; no art, material ID, painter or live placement approval."
+  },
+  "geometry": {
+    "size_cells": [
+      1,
+      1
+    ],
+    "z_sort": "ground"
+  },
+  "placement": {
+    "role": "ground",
+    "ground": {
+      "allow": [
+        "paving",
+        "stone"
+      ],
+      "deny": [
+        "water",
+        "turf"
+      ]
+    },
+    "requires": [],
+    "forbids": [],
+    "clearance": 0,
+    "orientations": [
+      "any"
+    ],
+    "snap": "cell",
+    "stages": [],
+    "composition": "free"
+  },
+  "rendering": {
+    "cast_shadow": {
+      "shape": "none"
+    },
+    "contact_ao": false
+  },
+  "function": {
+    "interact": null
+  },
+  "story": {
+    "owner": null,
+    "quests": [],
+    "lore": "Repeat the walkable floor inside Halcyon without repeating whole station rooms."
+  },
+  "gameplay": {},
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared",
+      "Priority: P3",
+      "Purpose: Repeat the walkable floor inside Halcyon without repeating whole station rooms.",
+      "Visual brief: Broad painted metal plates with recessed seams, worn strips near hatches and a few bolted service panels. The grate variant reveals a dark recess, not open space under every tile.",
+      "Widths and size: 24-art-px cells; corridors at least 3 cells clear, hatch and turning aprons authored to the chosen doors.",
+      "Source: docs/vision/world-plan.md §§8.6,8.7,9; docs/vision/coherence-plan.md M1",
+      "Implement after review: choose authored anchors, exact collision and approved variant art; these cell envelopes are layout proposals, not measured sprite bounds.",
+      "No atmospheric rain puddles, free smoke or falling-leaf dressing inside the closed hull; worn floor does not imply a vacuum breach.",
+      "Implement after review: the schema owner supplies the runtime material/pair block and stable ID only after the design is accepted; no executable painter is asserted here.",
+      "Sizing basis: material/edge extent is specified in 24-art-px logical cells; no opaque-object scale class is assigned. Review grain, width class and derived face height instead.",
+      "Lighting: Upper left; material-specific ramps and directional planes; no mirror-only relighting."
+    ]
+  }
+}

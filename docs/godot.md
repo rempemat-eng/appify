@@ -144,6 +144,10 @@ Screenshot options: `--stage=<id>` puts the save in a plan stage (`--zone=crossr
 
 The woodland's painters (`scripts/art/native/zone.py`, `screen.py`, `water.py`, its plan `art/scenes/woodland.json` and masters in `art/masters/`) came over from `claude-a/woodland-2x` and are now in this repository, so `python3 game/tools/gen_zone.py woodland --render .` redraws it from this checkout (the pictures go to a temporary folder, never `assets/`). From density 3 the kit draws its own way (25 Oct, Matt on the woodland at density 3): crowns and bushes as leaf masses (`foliage.paint_masses`), trunks with bark (`props.trunk4`), water with natural banks and a fall with volume (`water.paint_hd`, `fall_hd`), a footbridge on abutments, the pilot's boulders, ferns, foxgloves and mushrooms at stumps; density 2 is unchanged (`npm run check:kit`). Its walk mask and stands are the 1x zone's own (from that branch's `lib/zone-maps.ts`), edited by hand in `walk.txt` where an object moved (the log and three pines, 25 Oct); do not pass `--walk` again without carrying those edits. Zones from the world canvas (256 px tiles) or from Tiled with YATI will need their own importer writing the same base-scene shape.
 
+## The world editor (27 Oct, first stage)
+
+Kit zones are built from a library of approved pieces rather than painted pictures: `docs/world-editor.md`. `python3 -m scripts.art.kit.build` builds the terrain kit into `kit/terrain/`, and `python3 -m scripts.art.kit.props` builds the pieces into scenes in `kit/props/`. `world/terrain/terrain_ground.gd` draws a zone's `Cells` and `Tiers` layers with `terrain.gdshader`. `tools/kit_zone.gd` turns a JSON plan in `kit/zones/` into a zone scene and back. The world editor dock is `addons/world_editor/`. The labs are `--zone=kitlab` and `--zone=kitlab_tiers`; the woodland rebuilt with the kit is `--zone=woodland_kit`.
+
 ## How lanes add a quest
 
 1. Write `data/quests/<id>.json` (copy `woodland_stones.json`): `start.on`, the `steps` with their `on` events and optional `if` and `done_if` conditions, `rewards` in Glint and flags.

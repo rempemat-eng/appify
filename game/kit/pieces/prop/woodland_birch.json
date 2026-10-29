@@ -1,0 +1,116 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "woodland_birch",
+ "name": "Birch",
+ "kind": "prop",
+ "biomes": [
+  "woodland"
+ ],
+ "version": 2,
+ "variants": [
+  {
+   "id": "birch",
+   "weight": 1.0,
+   "png": "res://zones/woodland/art/birch.png",
+   "foot": [
+    53.0,
+    204.0
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": null,
+  "note": "Source metadata only; seeded designs still require the library gate and Matt approval."
+ },
+ "geometry": {
+  "size_px": [
+   106,
+   204
+  ],
+  "size_cells": [
+   5,
+   9
+  ],
+  "z_sort": "foot",
+  "collision": null,
+  "foot": [
+   53.0,
+   204.0
+  ],
+  "footprint": []
+ },
+ "placement": {
+  "snap": "cell",
+  "role": "tree"
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "ellipse",
+   "size": [
+    14.13,
+    5.3
+   ],
+   "dir": [
+    4.24,
+    -2.0
+   ]
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {},
+ "audit": {
+  "size_class": null,
+  "eastward_ref": null,
+  "seeded_from": "game/zones/woodland/kit.json",
+  "sources": [
+   {
+    "zone": "woodland",
+    "object": "tree-5",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "woodland",
+    "object": "tree-7",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "woodland",
+    "object": "wood-2",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "woodland",
+    "object": "wood-31",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "woodland",
+    "object": "wood-36",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "woodland",
+    "object": "wood-5",
+    "part": "body",
+    "condition": null
+   }
+  ],
+  "todo": [
+   "composition role and clearance",
+   "object-local collision is unknown: woodland scene has only a merged terrain walk mask; Claude must author a solid box (no guessed tree/body collision)",
+   "review size-guide class and Eastward comparison before the library gate"
+  ]
+ }
+}

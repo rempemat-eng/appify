@@ -1,0 +1,98 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "frontier_desert_cactus",
+  "name": "Desert cactus family",
+  "kind": "prop",
+  "biomes": [
+    "sunstone_basin"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "young",
+      "note": "One low pad group."
+    },
+    {
+      "id": "forked",
+      "note": "Two unequal branches with a readable gap."
+    },
+    {
+      "id": "old",
+      "note": "Heavier trunk and one scar, no extra collectible state."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 design proposal for Claude review; no art, material ID, painter or live placement approval."
+  },
+  "geometry": {
+    "size_cells": [
+      2,
+      2
+    ],
+    "z_sort": "foot"
+  },
+  "placement": {
+    "role": "plant",
+    "ground": {
+      "allow": [
+        "sand",
+        "earth"
+      ],
+      "deny": [
+        "water",
+        "lava",
+        "route"
+      ]
+    },
+    "requires": [],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "route"
+      },
+      {
+        "rel": "on",
+        "what": "structure_footprint",
+        "note": " Refuse any intersection of the proposed solid footprint with this reserved envelope; final collision comes from approved art."
+      }
+    ],
+    "clearance": 1,
+    "orientations": [
+      "any"
+    ],
+    "snap": "cell",
+    "stages": [],
+    "composition": "free"
+  },
+  "rendering": {
+    "cast_shadow": {
+      "shape": "sprite"
+    },
+    "contact_ao": true
+  },
+  "function": {
+    "interact": null
+  },
+  "story": {
+    "owner": null,
+    "quests": [],
+    "lore": "Repeat small clusters through the scrub without repeating the unique oasis landmarks."
+  },
+  "gameplay": {},
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared",
+      "Priority: P2",
+      "Purpose: Repeat small clusters through the scrub without repeating the unique oasis landmarks.",
+      "Visual brief: Round fleshy arms attach to a shaded cylindrical stem; broad silhouette gaps between arms and a flared seated foot. Thorn marks are sparse clusters, not noise.",
+      "Widths and size: Use size-guide cactus class, world height 36–72 and width 16–40; density-3 art target 108–216 high, 48–120 wide. A new density-3 scale class needs review before use.",
+      "Source: docs/vision/regions/sunstone-basin-fire-country.md §§2,4,5",
+      "Implement after review: choose authored anchors, exact collision and approved variant art; these cell envelopes are layout proposals, not measured sprite bounds.",
+      "Cactus is only in the older world-px size table; do not silently treat it as a current density-3 bush class.",
+      "Lighting: Upper left; material-specific ramps and directional planes; no mirror-only relighting."
+    ]
+  }
+}

@@ -1,7 +1,7 @@
 {
  "zone": "woodland",
  "density": 3.0,
- "restricted": 1326,
+ "restricted": 19127,
  "kinds": [
   "beech",
   "birch",
@@ -14,72 +14,93 @@
   "hollow_tree",
   "holly",
   "holly_b",
+  "lintel",
   "mossy_log",
   "oak",
   "pine",
   "sapling",
   "standing_stone",
   "standing_stone_b",
+  "standing_stone_broken",
+  "standing_stone_lean",
   "standing_stone_low",
+  "standing_stone_runes",
+  "stone_top",
   "stump",
   "willow"
  ],
  "objects": [
   [
    "stone-1",
-   "standing_stone",
-   63.67,
-   358.33,
-   24.67,
-   33.67
+   "standing_stone_lean",
+   101.07,
+   403.0,
+   22.0,
+   32.0
   ],
   [
    "stone-2",
-   "standing_stone_b",
-   99.5,
-   366.67,
-   25.0,
-   33.33
+   "standing_stone_low",
+   66.67,
+   417.0,
+   26.67,
+   26.0
   ],
   [
    "stone-3",
-   "standing_stone_low",
-   108.0,
-   398.67,
-   24.0,
-   25.33
+   "standing_stone_runes",
+   38.27,
+   406.0,
+   19.67,
+   29.0
   ],
   [
    "stone-4",
-   "standing_stone",
-   95.67,
-   406.33,
-   24.67,
-   33.67
+   "standing_stone_broken",
+   26.67,
+   392.0,
+   18.67,
+   27.0
   ],
   [
    "stone-5",
    "standing_stone_b",
-   39.5,
-   406.67,
-   25.0,
-   33.33
+   38.67,
+   373.0,
+   18.67,
+   30.0
   ],
   [
    "stone-6",
-   "standing_stone_low",
-   24.0,
-   390.67,
-   24.0,
-   25.33
+   "standing_stone",
+   69.96,
+   357.0,
+   20.33,
+   38.0
   ],
   [
    "stone-7",
    "standing_stone_low",
-   36.0,
-   374.67,
-   24.0,
-   25.33
+   98.67,
+   377.0,
+   26.67,
+   26.0
+  ],
+  [
+   "lintel-1",
+   "lintel",
+   45.0,
+   413.0,
+   30.0,
+   13.0
+  ],
+  [
+   "stone-top",
+   "stone_top",
+   16.0,
+   431.0,
+   16.0,
+   11.0
   ],
   [
    "stump-1",
@@ -268,8 +289,8 @@
   [
    "bench",
    "forest_bench",
-   154.0,
-   191.0,
+   150.0,
+   391.0,
    36.0,
    17.0
   ],
@@ -652,10 +673,10 @@
  ],
  "flow": {
   "rect": [
-   58.666666666666664,
+   56.0,
    252.0,
-   261.3333333333333,
-   64.66666666666667
+   264.0,
+   69.33333333333333
   ],
   "cols": 2
  },

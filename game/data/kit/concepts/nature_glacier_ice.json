@@ -1,0 +1,75 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "nature_glacier_ice",
+  "name": "Glacier and lake ice family",
+  "kind": "terrain",
+  "biomes": [
+    "frostline",
+    "massif"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "glacier_body",
+      "note": "Dense pale-blue glacier mass with long pressure seams, broad planes and a darker seated lower rim."
+    },
+    {
+      "id": "compressed_blue",
+      "note": "Deeper translucent blue ice exposed beneath compressed snow, with sparse internal fractures and a strongly shaded cut edge."
+    },
+    {
+      "id": "lake_skin",
+      "note": "Thin lake-skin study showing long restrained cracks and subdued reflections; its visible surface never implies walkability without an explicit support state."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 catalogue proposal for Claude review; not drawable approval, not placeable."
+  },
+  "geometry": {
+    "z_sort": "ground"
+  },
+  "placement": {
+    "role": "ground",
+    "ground": {
+      "allow": [
+        "rock",
+        "water"
+      ],
+      "deny": []
+    },
+    "requires": [],
+    "forbids": [],
+    "clearance": 0,
+    "orientations": [
+      "any"
+    ],
+    "snap": "cell",
+    "composition": "free",
+    "stages": []
+  },
+  "rendering": {
+    "contact_ao": false
+  },
+  "function": {},
+  "story": {
+    "lore": "Differentiate compressed glacier ice from snow and mark the tarn as a specific water body."
+  },
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Scope: shared. Reusable across the listed places; preserve site-specific assembly and state.",
+      "Priority: P2.",
+      "Purpose: Differentiate compressed glacier ice from snow and mark the tarn as a specific water body.",
+      "Visual brief: Dense blue translucent slabs with long pressure seams and a dark lower rim; cracks are sparse continuous strokes with depth, never a glowing hexagon pattern.",
+      "Source: docs/vision/regions/valley-plan.md; docs/vision/regions/home-valley-frostline-brackens.md",
+      "Geometry: proposed visual envelope only; Claude supplies exact foot, solid footprint, overhang, interaction anchors and any deck after review.",
+      "Implementation: concept only, outside the live piece library. Do not place, bake or grant gameplay until reviewed and approved.",
+      "Widths: Glacier area fill; fracture bands 1-2 cells. Frozen-lake walkability is an explicit zone state, never inferred from colour.",
+      "Schema intake: defer the runtime material ID, palette priority and painter binding until the concept is approved; no runtime block is claimed here.",
+      "Do not ship until the owner defines frozen-lake collision/support state; use the ice family as visual concept only.",
+      "Lighting: upper-left key light; shade each material and facing for that light. The lit-picture reference is deferred until art exists."
+    ]
+  }
+}

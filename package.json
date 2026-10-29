@@ -68,13 +68,14 @@
     "sim:economy": "node --import tsx scripts/sim-economy.ts",
     "check:economy-sim": "node --import tsx scripts/economy-model.test.ts && npm run sim:economy -- --check",
     "check:world-land": "node --import tsx lib/world-land.test.ts",
-    "check:kit": "python3 -m scripts.art.native.check && python3 -m scripts.review.gate --check && python3 -m scripts.art.grid_snap --check",
-    "check:review": "python3 -m unittest scripts.review.test_review scripts.review.test_pr_sheet",
+    "check:kit": "python3 -m scripts.art.native.check && python3 -m scripts.review.gate --check && python3 -m scripts.art.grid_snap --check && python3 -m scripts.review.ground_rules --check && python3 -m scripts.art.kit.schema && python3 -m scripts.art.kit.build --check && python3 -m scripts.art.kit.bake --check && python3 -m scripts.review.kit_rules --check",
+    "check:review": "python3 -m unittest scripts.review.test_review scripts.review.test_pr_sheet scripts.art.kit.test_kit scripts.art.kit.test_relations scripts.review.test_kit_scene scripts.art.kit.test_walk_coordinates",
     "check:quests": "python3 -m unittest scripts.narrative.test_validate && python3 -m scripts.narrative.validate",
     "review:scene": "python3 -m scripts.review.run",
     "review:asset": "python3 -m scripts.review.assets",
     "check:godot": "bash game/tools/check.sh",
-    "check:pointer-events": "node scripts/check-pointer-events.cjs"
+    "check:pointer-events": "node scripts/check-pointer-events.cjs",
+    "check:kit-scene": "python3 -m scripts.review.kit_scene --check"
   },
   "dependencies": {
     "@biltme/backend": "^0.7.0",

@@ -1,0 +1,97 @@
+{
+ "schema": "napattack.piece/1",
+ "id": "crossroads_hay",
+ "name": "Hay",
+ "kind": "prop",
+ "biomes": [
+  "village"
+ ],
+ "version": 2,
+ "variants": [
+  {
+   "id": "hay_19",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/hay_19.png",
+   "foot": [
+    33,
+    62
+   ]
+  },
+  {
+   "id": "hay_20",
+   "weight": 1.0,
+   "png": "res://zones/crossroads/art/hay_20.png",
+   "foot": [
+    33,
+    62
+   ]
+  }
+ ],
+ "approval": {
+  "state": "candidate",
+  "by": null,
+  "at": null,
+  "standard": null,
+  "note": "Source metadata only; seeded designs still require the library gate and Matt approval."
+ },
+ "geometry": {
+  "size_px": [
+   66,
+   66
+  ],
+  "size_cells": [
+   3,
+   3
+  ],
+  "z_sort": "foot",
+  "collision": {
+   "shape": "none"
+  },
+  "foot": [
+   33,
+   62
+  ],
+  "footprint": []
+ },
+ "placement": {
+  "snap": "cell"
+ },
+ "rendering": {
+  "cast_shadow": {
+   "shape": "baked"
+  },
+  "contact_ao": true
+ },
+ "function": {},
+ "story": {
+  "owner": null
+ },
+ "gameplay": {
+  "blocks_move": false,
+  "blocks_shots": false
+ },
+ "audit": {
+  "size_class": null,
+  "eastward_ref": null,
+  "seeded_from": "game/zones/crossroads/kit.json",
+  "sources": [
+   {
+    "zone": "crossroads",
+    "object": "hay_19",
+    "part": "body",
+    "condition": null
+   },
+   {
+    "zone": "crossroads",
+    "object": "hay_20",
+    "part": "body",
+    "condition": null
+   }
+  ],
+  "todo": [
+   "composition role and clearance",
+   "placement.role, requires and forbids (Claude design decision; ground-rules.md 6)",
+   "review size-guide class and Eastward comparison before the library gate"
+  ]
+ }
+}

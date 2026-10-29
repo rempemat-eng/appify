@@ -1,0 +1,75 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "nature_forest_floor",
+  "name": "Temperate forest floor",
+  "kind": "terrain",
+  "biomes": [
+    "woodland",
+    "valley"
+  ],
+  "version": 1,
+  "variants": [
+    {
+      "id": "beech_litter",
+      "note": "Warm beech leaves grouped over brown earth, with broad canopy shade and occasional exposed smooth roots."
+    },
+    {
+      "id": "oak_litter",
+      "note": "Deeper olive-brown oak litter, thicker curled leaf groups and rough root flares emerging from calm dark soil."
+    },
+    {
+      "id": "damp_root",
+      "note": "Damp dark earth at a root shelf, with compressed litter, muted moss and restrained reflected light in shallow hollows."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "W0 catalogue proposal for Claude review; not drawable approval, not placeable."
+  },
+  "geometry": {
+    "z_sort": "ground"
+  },
+  "placement": {
+    "role": "ground",
+    "ground": {
+      "allow": [
+        "earth",
+        "turf"
+      ],
+      "deny": []
+    },
+    "requires": [],
+    "forbids": [],
+    "clearance": 0,
+    "orientations": [
+      "any"
+    ],
+    "snap": "cell",
+    "composition": "free",
+    "stages": []
+  },
+  "rendering": {
+    "contact_ao": false
+  },
+  "function": {},
+  "story": {
+    "lore": "Make closed-canopy floor distinct from a sunny lawn while keeping its route and root margins reusable."
+  },
+  "audit": {
+    "size_class": null,
+    "eastward_ref": "docs/vision/eastward-edges.md, references 02 and 22 (trunks on cells; organic crowns and undergrowth)",
+    "todo": [
+      "Scope: shared. Reusable across the listed places; preserve site-specific assembly and state.",
+      "Priority: P0.",
+      "Purpose: Make closed-canopy floor distinct from a sunny lawn while keeping its route and root margins reusable.",
+      "Visual brief: Dappled olive-brown litter with exposed dark earth round trunks; small ochre leaf clusters, broad shadow pockets and visible root flares, not repeated leaf confetti.",
+      "Source: docs/vision/regions/valley-plan.md; docs/vision/regions/home-valley-frostline-brackens.md; docs/world-editor.md; docs/vision/eastward-edges.md",
+      "Geometry: proposed visual envelope only; Claude supplies exact foot, solid footprint, overhang, interaction anchors and any deck after review.",
+      "Implementation: concept only, outside the live piece library. Do not place, bake or grant gameplay until reviewed and approved.",
+      "Widths: Whole-cell patches of 2+ cells; route shoulders remain open and use existing path/worn materials.",
+      "Schema intake: defer the runtime material ID, palette priority and painter binding until the concept is approved; no runtime block is claimed here.",
+      "Reuse: path, worn, woodland_oak, woodland_beech, woodland_birch; crowns remain organic.",
+      "Lighting: upper-left key light; shade each material and facing for that light. The lit-picture reference is deferred until art exists."
+    ]
+  }
+}
