@@ -15,6 +15,8 @@ The original batch begins at editor PR375 commit
 `0bdea46338655dcb3c9922ad5cbcdd023310b87d`. The metadata correction described
 below descends from actual published batch head
 `fd28f3c47571d74f77eca9791a331da55a23d395`, preserving its four sprite bytes.
+The later shadow-radius correction descends from actual phase-corrected head
+`d333913cb2d22ec64b5d45b23e71b822c041face` and changes no geometry or pictures.
 
 ## Pictures for review
 
@@ -65,10 +67,12 @@ recorded separately. Both designs sort at the foot and use
 the existing ellipse cast-shadow metadata, displaced down and right. Their base
 and material undersides provide the drawn contact seam. No unsupported
 sprite-shaped shadow, multiple collider, rotation or light implementation is
-claimed. Shadow `size` stores radii: the bollard's [18,5] means a 36 x 10-world-px
-ellipse and the rack's [54,7] means a 108 x 14-world-px ellipse. These are candidate
-shadow choices, including the wide rack ellipse, and still need a composed-scene
-visual review; the transparent contact sheet does not establish their quality.
+claimed. Shadow `size` stores radii. The first values [18,5] and [54,7] produced
+oversized 36 x 10 and 108 x 14-world-px ellipses in the actual live diagnostic
+described below. The corrected values [8,3] and [28,3] describe 16 x 6 and
+56 x 6-world-px ellipses, calibrated to the unchanged 16/55-world-px bases.
+Their new composed preview remains pending; the transparent contact sheet does
+not establish shadow quality, and no shadow choice is approved by this text.
 
 Only the south-facing designs are supplied; the placement definitions refuse
 other facings rather than mirroring their lighting. Both use the existing
@@ -176,6 +180,53 @@ The first attempted phase controller stopped before checks because the own
 sparse checkout had omitted the tracked lab; the exact scoped paths were
 restored from `fd28f3c` without generation, then RED and GREEN ran as recorded.
 
+### Observed live shadows and bounded radius correction
+
+Lead allocation [6498595352](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6498595352)
+produced one actual live reference-renderer composition in session92372,
+terminal exit0. Its controller took14.287seconds and renderer wrapper13.135seconds.
+The wrapper staged physical input copies and a private two-candidate index;
+the unmodified `render_zone.render` API rendered the actual576x384 unbaked lab
+once. All2,455input byte/size/mode and source/terrain HEAD/tree/raw-index/status
+guards matched before/after. No sprite painter, engine, bake, shared index
+writer or source change ran in that allocation.
+
+The original bollard shadow occupied2,560texels with bounds[72,108,180,138];
+the rack occupied10,696 with bounds[180,174,504,216], in art pixels. These
+are observed bounds from the actual shadow API. The actual plate bounds were
+[94.5,109.5,142.5,120] and[253.5,183,418.5,192]. Both large ellipses extended
+well beyond their bases. Root viewed the actual image and confirmed this
+concrete mismatch. The source relation check still had zero findings and
+five cells between nearest declared cell centres; that did not clear the
+visual shadow defect.
+
+The original actual packet is retained under
+`waterfront-props-evidence/composition-r1/`, together with its exact wrapper,
+manifest, controller and collection. Result SHA256:
+`09de002744cecf4a31c8f3e9b1464a1a032a6ff23a3a4ad33a4ab1a352f93dbf`.
+The actual2xreviewcard hash is
+`f70478a18281dd9676d60b3c7c85292fdfc2379c840cb9ad595ede66abc3bb30`.
+
+Root's narrow [GO6498692063](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6498692063)
+sets only bollard `rendering.cast_shadow.size` to[8,3] and rack to[28,3]
+world-pixel radii. Their direction/offset, palette-ramp stepping, all geometry,
+phase-corrected footprints, snap, collisions, clearances, candidate state,
+painter and four PNGs remain unchanged. The two existing schemas and exact
+field-only diff are checked; completed phase tests and sprite generation are
+not replayed for this scalar correction.
+
+A new corrected-preview wrapper and frozen input manifest are prepared
+separately. Its captions derive the full ellipse widths/heights from the actual
+compiled index values, rather than retaining the old hardcoded labels.
+Corrected composition is NOT RUN pending a separate one-shot lead allocation;
+these radius changes are not retrospectively shown in the retained92372image.
+
+The live renderer's ellipse is not the shipping bake's non-tree sprite-silhouette
+shadow. Neither baked shadows nor engine placement/occlusion were exercised.
+The existing lab lacks `scree` over `water` and `worn` over `scree` transition
+pairs: the actual diagnostic retains their visible hard-cell fallback. No
+invented bank, quay, softened mock join or approved terrain hides those gaps.
+
 ## Remaining acceptance
 
 The official Eastward reference register is
@@ -187,8 +238,8 @@ workspace. **No new side-by-side official crop, matched surface-detail counts
 or independent detail-auditor approval is claimed.** `eastward_ref` remains null.
 
 Full `npm run verify`, ordinary `npm run check:art-repro`, Godot/kit checks,
-composed shadows/occlusion, the current Y12 pre-review packet and actual editor
-placement are NOT RUN for this source. The shared index has not been refreshed,
+corrected composed shadows, engine occlusion, the current Y12 pre-review packet
+and actual editor placement are NOT RUN for this source. The shared index has not been refreshed,
 so the new pieces are not available through that index yet. The inherited
 editor and map foundations retain their own holds. Keep the PR a draft and
 label it `needs-matt-review`; Matt's explicit OK on the applicable PR is still

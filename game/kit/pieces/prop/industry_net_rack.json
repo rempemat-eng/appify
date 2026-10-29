@@ -275,8 +275,8 @@
     "cast_shadow": {
       "shape": "ellipse",
       "size": [
-        54,
-        7
+        28,
+        3
       ],
       "dir": [
         2,
