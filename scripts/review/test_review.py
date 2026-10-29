@@ -587,6 +587,7 @@ class RenderHarness(unittest.TestCase):
         self.xv = Mock()
         self.enterContext(patch.dict(os.environ, {'DISPLAY': 'localhost:96.0', 'XAUTHORITY': '/caller/auth'}))
         self.godot = self.enterContext(patch.object(R, 'godot_bin', return_value='/fake/godot'))
+        self.xvfb_fallback = R.start_xvfb
         self.display = self.enterContext(patch.object(R, 'start_xvfb', return_value=(self.xv, ':97')))
         self.process = self.enterContext(patch.object(R.subprocess, 'run', side_effect=self.engine))
 
@@ -741,6 +742,39 @@ class RenderHarness(unittest.TestCase):
         self.assertTrue(report['incomplete'])
         self.assertTrue(report['errors'])
         self.assertEqual(report['scene']['findings'], [finding.to_json()])
+        self.assertEqual(report['counts']['fault'], 2)
+
+    def test_exhausted_fallback_writes_incomplete_cli_report_and_keeps_findings(self):
+        finding = core.Finding('test.scene', 'fault', (1, 1, 3, 3), 'fault remains', 'fix')
+        zone = SimpleNamespace(size=(8, 8), sprites=[], spawns={'stones': (1, 1)}, doors=[])
+        picture = dict(picture='woodland_zone', findings=[finding.to_json()], grid=[])
+        exists = os.path.exists
+        temporary = tempfile.TemporaryDirectory
+        user_folders = []
+        def disposable(**kwargs):
+            folder = temporary(**kwargs)
+            user_folders.append(folder.name)
+            return folder
+        self.display.side_effect = self.xvfb_fallback
+        with patch.dict(os.environ, {'DISPLAY': ''}), \
+                patch.object(R.os.path, 'exists', side_effect=lambda p: str(p).startswith('/tmp/.X11-unix/X') or exists(p)), \
+                patch.object(R.subprocess, 'Popen') as xvfb, \
+                patch.object(R.tempfile, 'TemporaryDirectory', side_effect=disposable), \
+                patch.object(R.SN, 'load_zone', return_value=zone), \
+                patch.object(R.SN, 'review_zone', return_value={'findings': [finding]}), \
+                patch.object(R.SN, 'composite', return_value=np.zeros((8, 8, 3), np.uint8)), \
+                patch.object(R, 'review_picture', return_value=picture):
+            self.assertEqual(R.main(['woodland', '--out', self.out]), 2)
+        xvfb.assert_not_called()
+        self.process.assert_not_called()
+        self.xv.terminate.assert_not_called()
+        self.assertTrue(user_folders)
+        self.assertTrue(all(not exists(path) for path in user_folders))
+        report = json.loads(Path(self.out, 'report.json').read_text())
+        self.assertTrue(report['incomplete'])
+        self.assertIn('no free X display', report['errors'][0])
+        self.assertEqual(report['scene']['findings'], [finding.to_json()])
+        self.assertEqual(report['pictures'], [picture])
         self.assertEqual(report['counts']['fault'], 2)
 
 

@@ -91,7 +91,7 @@ def start_xvfb(w=1920, h=1080):
         time.sleep(1.0)
         if p.poll() is None:
             return p, f':{n}'
-    raise RuntimeError('no free X display for Xvfb')
+    raise RenderError('no free X display for Xvfb')
 
 
 def render(zone: str, spawns: list[str], out: str, stage: str | None = None, at: str | None = None,
