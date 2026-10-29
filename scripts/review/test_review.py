@@ -8,9 +8,14 @@ that loses a calibration fault, or starts flagging clean art, fails here first.
 from __future__ import annotations
 
 import json
+import hashlib
 import os
+import subprocess
 import tempfile
 import unittest
+from types import SimpleNamespace
+from pathlib import Path
+from unittest.mock import Mock, patch
 
 import numpy as np
 from PIL import Image
@@ -18,6 +23,7 @@ from PIL import Image
 from scripts.review import core, water, screen, construct as C, detail as D, scene as SN, gate, assets as A
 from scripts.review import edges as E
 from scripts.review import scale as SZ
+from scripts.review import run as R
 from scipy import ndimage as ndi
 
 H = 74
@@ -517,6 +523,241 @@ class SizeTable(unittest.TestCase):
         a[30:137, 95:97] = True                       # a spear, 2 px wide
         a[60:62, 90:95] = True                        # the hand that holds it
         self.assertEqual(SZ.body_height(a, 136), 75)
+
+
+class CropSheet(unittest.TestCase):
+    def setUp(self):
+        self.native = np.arange(32 * 40 * 3, dtype=np.uint8).reshape(32, 40, 3)
+
+    def finding(self, box):
+        return core.Finding('test.crop', 'fault', box, 'message', 'fix', subject='piece')
+
+    def test_integer_output_is_unchanged(self):
+        with tempfile.TemporaryDirectory() as out:
+            path = os.path.join(out, 'crops.png')
+            core.crop_sheet(self.native, [self.finding((8, 7, 15, 14))], path, cell=80, cols=1)
+            with Image.open(path) as image:
+                self.assertEqual(hashlib.sha256(image.tobytes()).hexdigest(),
+                                 '54f240ac50e0e537f63be3d726d076e1e65e1fa5e0e1a4dba1a627fcad9373ff')
+
+    def test_fractional_crop_covers_padded_box_without_mutating_finding(self):
+        finding = self.finding((8.25, 7.5, 15.75, 14.25))
+        before = finding.to_json(scale=2.5, origin=(1.5, 3.25))
+        original = Image.fromarray
+        with tempfile.TemporaryDirectory() as out, patch.object(core.Image, 'fromarray', wraps=original) as capture:
+            core.crop_sheet(self.native, [finding], os.path.join(out, 'crops.png'), cell=80, cols=1)
+            np.testing.assert_array_equal(capture.call_args.args[0], self.native[3:19, 4:20])
+        self.assertEqual(finding.box, (8.25, 7.5, 15.75, 14.25))
+        self.assertEqual(finding.to_json(scale=2.5, origin=(1.5, 3.25)), before)
+
+    def test_fractional_edges_clip_to_image(self):
+        original = Image.fromarray
+        for box, expected in [((-2.5, -1.25, 1.5, 2.25), self.native[:7, :6]),
+                              ((38.5, 30.5, 42.25, 35.75), self.native[26:, 34:])]:
+            with self.subTest(box=box), tempfile.TemporaryDirectory() as out:
+                with patch.object(core.Image, 'fromarray', wraps=original) as capture:
+                    core.crop_sheet(self.native, [self.finding(box)], os.path.join(out, 'crops.png'))
+                    np.testing.assert_array_equal(capture.call_args.args[0], expected)
+
+    def test_invalid_empty_and_outside_boxes_have_labelled_placeholders(self):
+        boxes = [(float('nan'), 1, 3, 4), (1, 1, float('inf'), 4), (8, 8, 2, 2),
+                 (1, 1, 1, 4), (-2, 1, -1, 4), (40, 1, 41, 4), (1, 32, 4, 33)]
+        for box in boxes:
+            with self.subTest(box=box), tempfile.TemporaryDirectory() as out:
+                with patch.object(core.Image, 'fromarray') as crop, patch.object(core.ImageDraw.ImageDraw, 'text') as text:
+                    path = os.path.join(out, 'crops.png')
+                    core.crop_sheet(self.native, [self.finding(box)], path)
+                    crop.assert_not_called()
+                    self.assertTrue(any('No crop:' in str(call) for call in text.call_args_list))
+                    self.assertTrue(os.path.isfile(path))
+
+    def test_extreme_finite_box_remains_bounded(self):
+        with tempfile.TemporaryDirectory() as out:
+            core.crop_sheet(self.native, [self.finding((-1e308, -1e308, 1e308, 1e308))],
+                            os.path.join(out, 'crops.png'))
+
+
+class RenderHarness(unittest.TestCase):
+    def setUp(self):
+        self.folder = tempfile.TemporaryDirectory()
+        self.addCleanup(self.folder.cleanup)
+        self.out = self.folder.name
+        self.calls = []
+        self.mode = 'ok'
+        self.xv = Mock()
+        self.enterContext(patch.dict(os.environ, {'DISPLAY': 'localhost:96.0', 'XAUTHORITY': '/caller/auth'}))
+        self.godot = self.enterContext(patch.object(R, 'godot_bin', return_value='/fake/godot'))
+        self.display = self.enterContext(patch.object(R, 'start_xvfb', return_value=(self.xv, ':97')))
+        self.process = self.enterContext(patch.object(R.subprocess, 'run', side_effect=self.engine))
+
+    def engine(self, args, **kwargs):
+        self.calls.append((args, kwargs))
+        self.assertEqual(kwargs['env'].get('XAUTHORITY'), os.environ.get('XAUTHORITY'))
+        self.assertEqual('XAUTHORITY' in kwargs['env'], 'XAUTHORITY' in os.environ)
+        self.assertNotEqual(kwargs['env']['XDG_CONFIG_HOME'], os.environ.get('XDG_CONFIG_HOME'))
+        self.assertNotEqual(kwargs['env']['XDG_DATA_HOME'], os.environ.get('XDG_DATA_HOME'))
+        is_import = '--import' in args
+        failed = self.mode.endswith('import') == is_import and self.mode != 'ok'
+        if failed and self.mode.startswith('timeout'):
+            raise subprocess.TimeoutExpired(args, 180, output=b'partial stdout', stderr=b'partial stderr')
+        if failed and self.mode.startswith('oserror'):
+            raise OSError('engine unavailable')
+        shot = next((arg.removeprefix('--shot=') for arg in args if arg.startswith('--shot=')), None)
+        if shot and self.mode not in ('missing-render', 'prior-render'):
+            if self.mode == 'invalid-render':
+                with open(shot, 'w') as handle:
+                    handle.write('not a PNG')
+            else:
+                Image.new('RGB', (12, 8), (30, 60, 90)).save(shot)
+            if self.mode == 'stale-render':
+                os.utime(shot, (1, 1))
+        return subprocess.CompletedProcess(args, 9 if failed and self.mode.startswith('exit') else 0,
+                                           'stdout diagnostic\n', '  ERROR: render broken\n' if failed and
+                                           self.mode.startswith('error') else 'stderr diagnostic\n')
+
+    def render(self):
+        return R.render('woodland', ['stones'], self.out, stage='homecoming', at='1,2', wait=1.5)
+
+    def assert_user_cleanup(self):
+        for _, kwargs in self.calls:
+            for key in ('XDG_CONFIG_HOME', 'XDG_DATA_HOME'):
+                self.assertFalse(os.path.exists(os.path.dirname(kwargs['env'][key])))
+
+    def test_external_display_and_auth_are_preserved_without_ownership(self):
+        self.assertEqual(self.render(), [os.path.join(self.out, 'woodland_stones.png')])
+        self.display.assert_not_called()
+        self.xv.terminate.assert_not_called()
+        self.assertTrue(all(kwargs['env']['DISPLAY'] == 'localhost:96.0' for _, kwargs in self.calls))
+        args = self.calls[-1][0]
+        for argument in ['--fresh', '--resolution', '1920x1080', '--stage=homecoming', '--at=1,2', '--wait=1.5']:
+            self.assertIn(argument, args)
+        self.assertEqual(os.environ['DISPLAY'], 'localhost:96.0')
+        self.assertEqual(os.environ['XAUTHORITY'], '/caller/auth')
+        self.assert_user_cleanup()
+
+    def test_fallback_display_is_owned_and_reaped(self):
+        with patch.dict(os.environ, {'DISPLAY': ''}):
+            self.render()
+        self.display.assert_called_once_with()
+        self.assertTrue(all(kwargs['env']['DISPLAY'] == ':97' for _, kwargs in self.calls))
+        self.xv.terminate.assert_called_once_with()
+        self.xv.wait.assert_called_once()
+        self.assert_user_cleanup()
+
+    def test_borrowed_display_preserves_empty_and_absent_authority(self):
+        for authority in ('', None):
+            with self.subTest(authority=authority), patch.dict(os.environ):
+                if authority is None:
+                    os.environ.pop('XAUTHORITY', None)
+                else:
+                    os.environ['XAUTHORITY'] = authority
+                self.render()
+        self.display.assert_not_called()
+        self.xv.terminate.assert_not_called()
+
+    def test_failures_keep_diagnostics_and_never_return_evidence(self):
+        for mode in ('exit-import', 'error-import', 'exit-render', 'error-render', 'missing-render',
+                     'stale-render', 'invalid-render', 'timeout-import', 'timeout-render', 'oserror-render'):
+            with self.subTest(mode=mode):
+                self.mode = mode
+                self.calls.clear()
+                with self.assertRaisesRegex(RuntimeError, 'Godot|capture'):
+                    self.render()
+                self.assert_user_cleanup()
+                self.xv.terminate.assert_not_called()
+                if mode.endswith('import'):
+                    self.assertEqual(len(self.calls), 1)
+                logs = ''.join(Path(self.out, name).read_text() for name in os.listdir(self.out)
+                               if name.endswith('.log'))
+                self.assertIn('partial stdout' if mode.startswith('timeout') else 'diagnostic', logs)
+
+    def test_prior_capture_is_removed_before_render_and_not_accepted(self):
+        path = os.path.join(self.out, 'woodland_stones.png')
+        Image.new('RGB', (12, 8)).save(path)
+        self.mode = 'prior-render'
+        with self.assertRaisesRegex(RuntimeError, 'capture'):
+            self.render()
+        self.assertFalse(os.path.exists(path))
+
+    def test_owned_display_cleanup_on_render_exception(self):
+        self.mode = 'timeout-render'
+        with patch.dict(os.environ, {'DISPLAY': ''}), self.assertRaises(RuntimeError):
+            self.render()
+        self.xv.terminate.assert_called_once_with()
+        self.xv.wait.assert_called_once()
+        self.assert_user_cleanup()
+
+    def test_setup_failure_does_not_allocate_or_leak_display(self):
+        with patch.dict(os.environ, {'DISPLAY': ''}), \
+                patch.object(R.tempfile, 'TemporaryDirectory', side_effect=OSError('temp unavailable')):
+            with self.assertRaisesRegex(RuntimeError, 'temp unavailable'):
+                self.render()
+        self.display.assert_not_called()
+        self.process.assert_not_called()
+
+    def test_engine_error_variants_fail_before_capture(self):
+        for error in ('SCRIPT ERROR: bad', ' ERROR: bad', ' Parse Error: bad',
+                      ' Failed loading resource: bad', ' Cannot open file: bad'):
+            with self.subTest(error=error):
+                self.process.side_effect = None
+                self.process.return_value = subprocess.CompletedProcess([], 0, error, '')
+                self.process.reset_mock()
+                with self.assertRaisesRegex(RuntimeError, 'Godot'):
+                    self.render()
+                self.assertEqual(self.process.call_count, 1)
+
+    def test_partial_multiple_spawns_never_return_success(self):
+        def partial(args, **kwargs):
+            self.mode = 'missing-render' if '--spawn=second' in args else 'ok'
+            return self.engine(args, **kwargs)
+        self.process.side_effect = partial
+        with self.assertRaisesRegex(RuntimeError, 'capture'):
+            R.render('woodland', ['stones', 'second'], self.out)
+        self.assertTrue(os.path.isfile(os.path.join(self.out, 'woodland_stones.png')))
+        self.assert_user_cleanup()
+
+    def test_prior_success_report_is_invalidated_before_producer_failure(self):
+        for producer, name in ((R.SN, 'load_zone'), (R.json, 'load')):
+            with self.subTest(producer=name):
+                report = Path(self.out, 'report.json')
+                report.write_text('{"counts":{"blocker":0,"fault":0,"polish":0}}')
+                with patch.object(producer, name, side_effect=ValueError('source unavailable')):
+                    with self.assertRaisesRegex(ValueError, 'source unavailable'):
+                        R.main(['woodland', '--out', self.out])
+                self.assertFalse(report.exists())
+
+    def test_cli_keeps_findings_but_reports_incomplete_on_render_failure(self):
+        finding = core.Finding('test.scene', 'fault', (1, 1, 3, 3), 'fault remains', 'fix')
+        zone = SimpleNamespace(size=(8, 8), sprites=[], spawns={'stones': (1, 1)}, doors=[])
+        picture = dict(picture='woodland_zone', findings=[finding.to_json()], grid=[])
+        self.mode = 'exit-import'
+        with patch.object(R.SN, 'load_zone', return_value=zone), \
+                patch.object(R.SN, 'review_zone', return_value={'findings': [finding]}), \
+                patch.object(R.SN, 'composite', return_value=np.zeros((8, 8, 3), np.uint8)), \
+                patch.object(R, 'review_picture', return_value=picture):
+            self.assertEqual(R.main(['woodland', '--out', self.out]), 2)
+        with open(os.path.join(self.out, 'report.json')) as handle:
+            report = json.load(handle)
+        self.assertTrue(report['incomplete'])
+        self.assertTrue(report['errors'])
+        self.assertEqual(report['scene']['findings'], [finding.to_json()])
+        self.assertEqual(report['counts']['fault'], 2)
+
+
+class GodotAcquisition(unittest.TestCase):
+    def test_failed_empty_and_missing_engine_results_are_explicit(self):
+        with patch.dict(os.environ, {'GODOT': ''}), patch.object(R.subprocess, 'run') as command:
+            for result in (subprocess.CompletedProcess([], 1, '', 'download failed'),
+                           subprocess.CompletedProcess([], 0, '', ''),
+                           subprocess.CompletedProcess([], 0, '/missing/godot\n', '')):
+                with self.subTest(result=result):
+                    command.return_value = result
+                    with self.assertRaisesRegex(RuntimeError, 'Godot'):
+                        R.godot_bin()
+        with patch.dict(os.environ, {'GODOT': '/missing/godot'}), patch.object(R.subprocess, 'run') as command:
+            with self.assertRaisesRegex(RuntimeError, 'Godot'):
+                R.godot_bin()
+            command.assert_not_called()
 
 
 if __name__ == '__main__':

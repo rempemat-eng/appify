@@ -6,7 +6,7 @@
     npm run review:scene -- crossroads --spawn square --stage homecoming
     npm run review:scene -- woodland --no-render              # scene data and the zone composite only
 
-For a zone it renders the game headless at 1920 x 1080 under Xvfb (docs/godot.md) at each
+For a zone it renders the game at 1920 x 1080 on DISPLAY or its own Xvfb (docs/godot.md) at each
 spawn (or the one asked for), brings every shot to its 960 x 540 art grid, composes the whole
 zone from its scene, and runs the screen detectors (water, artefacts, repetition, flats) on
 each picture and the scene detectors (occlusion, intersections, crowns at the edge, reach and
@@ -19,14 +19,14 @@ artifacts/review/<name>/):
     grid/<picture>/r<row>c<col>.png
                            the fixed grid of 3x crops the auditors must visit, every one
 
-Exit status 1 when any blocker or fault is found.
+Exit status 1 when any blocker or fault is found; 2 when rendering is incomplete.
 """
 from __future__ import annotations
 
 import argparse
 import json
 import os
-import shutil
+import re
 import subprocess
 import sys
 import tempfile
@@ -39,15 +39,47 @@ from .core import REPO, GAME_H, to_native, crop_nonblack, annotate, crop_sheet, 
 from . import screen as SC, scene as SN
 
 GRID = (6, 4)          # columns x rows of the audit grid on a 960 x 540 screen (160 x 135 art px a cell)
+ENGINE_ERROR = re.compile(r'^\s*(?:SCRIPT ERROR|ERROR:|Parse Error|Failed loading resource|Cannot open file|godot errors at)', re.M)
+
+
+class RenderError(RuntimeError):
+    """A failed producer must never be mistaken for current capture evidence."""
+
+
+def _log_text(value) -> str:
+    return value.decode('utf-8', errors='replace') if isinstance(value, bytes) else (value or '')
+
+
+def _godot_command(args: list[str], env: dict, log_path: str, timeout: int) -> None:
+    try:
+        result = subprocess.run(args, cwd=REPO, env=env, capture_output=True, text=True, timeout=timeout)
+        log = _log_text(result.stdout) + '\n' + _log_text(result.stderr)
+    except (OSError, subprocess.SubprocessError) as exc:
+        log = _log_text(getattr(exc, 'stdout', '')) + '\n' + _log_text(getattr(exc, 'stderr', '')) + '\n' + str(exc)
+        with open(log_path, 'w') as handle:
+            handle.write(log)
+        raise RenderError(f'Godot command failed: {exc}; see {log_path}') from exc
+    with open(log_path, 'w') as handle:
+        handle.write(log)
+    if result.returncode or ENGINE_ERROR.search(log):
+        raise RenderError(f'Godot command failed (exit {result.returncode}); see {log_path}')
 
 
 def godot_bin() -> str:
     env = os.environ.get('GODOT')
-    if env and os.path.exists(env):
-        return env
+    if env:
+        if os.path.isfile(env) and os.access(env, os.X_OK):
+            return env
+        raise RenderError(f'Godot executable is unavailable: {env}')
     out = subprocess.run(['bash', os.path.join(REPO, 'game', 'tools', 'get_godot.sh')], capture_output=True,
                          text=True, cwd=REPO)
-    return out.stdout.strip().splitlines()[-1]
+    lines = out.stdout.strip().splitlines()
+    if out.returncode or ENGINE_ERROR.search(out.stdout + '\n' + out.stderr) or not lines:
+        raise RenderError(f'Godot acquisition failed (exit {out.returncode}): {out.stdout}\n{out.stderr}')
+    path = lines[-1]
+    if not os.path.isfile(path) or not os.access(path, os.X_OK):
+        raise RenderError(f'Godot acquisition returned no executable: {path}')
+    return path
 
 
 def start_xvfb(w=1920, h=1080):
@@ -68,32 +100,60 @@ def render(zone: str, spawns: list[str], out: str, stage: str | None = None, at:
     shot waits `wait` seconds so the damped camera has settled (a 2 s shot of a fresh start
     catches the camera still travelling in from the world's corner: render with --wait 1 to
     review the zone entry itself)."""
-    g = godot_bin()
-    xv, disp = start_xvfb()
+    xv = None
     shots = []
-    tmp = tempfile.mkdtemp(prefix='review-godot-')
-    env = dict(os.environ, DISPLAY=disp, XDG_CONFIG_HOME=os.path.join(tmp, 'cfg'), XDG_DATA_HOME=os.path.join(tmp, 'data'))
     try:
-        subprocess.run([g, '--headless', '--path', 'game', '--import'], cwd=REPO, env=env, capture_output=True,
-                       timeout=600)
-        for sp in spawns:
-            shot = os.path.join(out, f'{zone}_{sp}.png')
-            args = [g, '--path', 'game', '--audio-driver', 'Dummy', '--resolution', '1920x1080', '--position', '0,0',
-                    '--', '--fresh', f'--zone={zone}', f'--spawn={sp}', f'--wait={wait}', f'--shot={shot}']
-            if stage:
-                args.append(f'--stage={stage}')
-            if at:
-                args.append(f'--at={at}')
-            r = subprocess.run(args, cwd=REPO, env=env, capture_output=True, text=True, timeout=180)
-            log = r.stdout + r.stderr
-            errs = [l for l in log.splitlines() if 'SCRIPT ERROR' in l or l.startswith('ERROR:')]
-            if errs:
-                print(f'  godot errors at {sp}: {errs[:3]}', file=sys.stderr)
-            if os.path.exists(shot):
-                shots.append(shot)
-    finally:
-        xv.terminate()
-        shutil.rmtree(tmp, ignore_errors=True)
+        if not spawns:
+            raise RenderError('capture coverage is empty: no requested spawns')
+        if any(not value or '/' in value or '\\' in value for value in [zone, *spawns]):
+            raise RenderError('capture identifiers must be single path components')
+        if 'zone' in spawns:
+            raise RenderError("capture spawn 'zone' collides with the zone composite")
+        g = godot_bin()
+        with tempfile.TemporaryDirectory(prefix='review-godot-') as tmp:
+            env = dict(os.environ, XDG_CONFIG_HOME=os.path.join(tmp, 'cfg'), XDG_DATA_HOME=os.path.join(tmp, 'data'))
+            if not env.get('DISPLAY', '').strip():
+                xv, env['DISPLAY'] = start_xvfb()
+            try:
+                # Remove prior outputs before import/render: an existing PNG is not proof of a new capture.
+                for sp in spawns:
+                    shot = os.path.join(out, f'{zone}_{sp}.png')
+                    if os.path.lexists(shot):
+                        os.unlink(shot)
+                _godot_command([g, '--headless', '--path', 'game', '--import'], env,
+                               os.path.join(out, 'render-import.log'), 600)
+                for sp in spawns:
+                    shot = os.path.join(out, f'{zone}_{sp}.png')
+                    if os.path.lexists(shot):
+                        os.unlink(shot)
+                    args = [g, '--path', 'game', '--audio-driver', 'Dummy', '--resolution', '1920x1080', '--position', '0,0',
+                            '--', '--fresh', f'--zone={zone}', f'--spawn={sp}', f'--wait={wait}', f'--shot={shot}']
+                    if stage:
+                        args.append(f'--stage={stage}')
+                    if at:
+                        args.append(f'--at={at}')
+                    started = time.time()
+                    _godot_command(args, env, os.path.join(out, f'{zone}_{sp}.log'), 180)
+                    if os.path.islink(shot) or not os.path.isfile(shot) or os.stat(shot).st_mtime < started - 2:
+                        raise RenderError(f'capture missing or stale: {shot}')
+                    try:
+                        with Image.open(shot) as image:
+                            if image.format != 'PNG':
+                                raise ValueError('not a PNG')
+                            image.verify()
+                    except (OSError, ValueError, SyntaxError, Image.DecompressionBombError) as exc:
+                        raise RenderError(f'capture is not a valid PNG: {shot}: {exc}') from exc
+                    shots.append(shot)
+            finally:
+                if xv is not None:
+                    xv.terminate()
+                    try:
+                        xv.wait(timeout=5)
+                    except subprocess.TimeoutExpired:
+                        xv.kill()
+                        xv.wait(timeout=5)
+    except (OSError, subprocess.SubprocessError) as exc:
+        raise RenderError(f'Godot render failed: {exc}') from exc
     return shots
 
 
@@ -139,7 +199,14 @@ def main(argv=None):
     a = ap.parse_args(argv)
 
     t = a.target
-    zones = json.load(open(os.path.join(REPO, 'game', 'data', 'zones.json')))
+    # Invalidate an explicitly reused output even if registry loading fails before target resolution.
+    if a.out:
+        os.makedirs(a.out, exist_ok=True)
+        prior_report = os.path.join(a.out, 'report.json')
+        if os.path.lexists(prior_report):
+            os.unlink(prior_report)
+    with open(os.path.join(REPO, 'game', 'data', 'zones.json')) as handle:
+        zones = json.load(handle)
     zone = None
     if t in zones:
         zone = t
@@ -148,6 +215,9 @@ def main(argv=None):
     name = zone or os.path.splitext(os.path.basename(t))[0]
     out = a.out or os.path.join(REPO, 'artifacts', 'review', name)
     os.makedirs(out, exist_ok=True)
+    report_path = os.path.join(out, 'report.json')
+    if os.path.lexists(report_path):
+        os.unlink(report_path)
     report = dict(target=t, generated=time.strftime('%Y-%m-%d %H:%M'), pictures=[], scene=None)
 
     if zone:
@@ -161,11 +231,15 @@ def main(argv=None):
         report['pictures'].append(review_picture(comp, a.H, f'{zone}_zone', out, extra=res['findings'], biome=a.biome))
         if not a.no_render:
             spawns = a.spawn or list(z.spawns)
-            for shot in render(zone, spawns, out, a.stage, a.at, a.wait):
-                img = Image.open(shot)
-                native, s, org = to_native(img, 2.0)
-                report['pictures'].append(review_picture(native, a.H, os.path.splitext(os.path.basename(shot))[0], out,
-                                                         s, org, biome=a.biome))
+            try:
+                for shot in render(zone, spawns, out, a.stage, a.at, a.wait):
+                    with Image.open(shot) as img:
+                        native, s, org = to_native(img, 2.0)
+                    report['pictures'].append(review_picture(native, a.H, os.path.splitext(os.path.basename(shot))[0], out,
+                                                             s, org, biome=a.biome))
+            except RenderError as exc:
+                report.update(incomplete=True, errors=[str(exc)])
+                print(str(exc), file=sys.stderr)
     else:
         img = Image.open(t)
         img, off = crop_nonblack(img)
@@ -178,12 +252,12 @@ def main(argv=None):
         allf += report['scene']['findings']
     counts = {k: sum(1 for f in allf if f['severity'] == k) for k in ('blocker', 'fault', 'polish')}
     report['counts'] = counts
-    write_json(os.path.join(out, 'report.json'), report)
+    write_json(report_path, report)
     print(f'{name}: {counts} -> {os.path.relpath(out, REPO)}/report.json')
     for p in report['pictures']:
         for i, f in enumerate(p['findings']):
             print(f'  [{p["picture"]} #{i + 1}] {f["severity"]:7s} {f["detector"]:24s} {f["box"]} {f["message"][:110]}')
-    return 1 if counts['blocker'] or counts['fault'] else 0
+    return 2 if report.get('incomplete') else (1 if counts['blocker'] or counts['fault'] else 0)
 
 
 if __name__ == '__main__':
