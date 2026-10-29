@@ -1,0 +1,1826 @@
+{
+ "schema": "mygame.town_plan/1",
+ "id": "cogsworth",
+ "name": "Cogsworth",
+ "size": "medium",
+ "size_note": "medium (room to become large)",
+ "target": [
+  14,
+  45
+ ],
+ "buildings_counted": 15,
+ "grid": {
+  "cell_px": 8,
+  "screen_cells": [
+   40,
+   22.5
+  ],
+  "origin": "world px, top-left of the continent (blockout-v55.json coords)",
+  "street_classes": {
+   "arrival": "the regional route's own width",
+   "main": 6,
+   "side": 4,
+   "lane": 3,
+   "close": 2
+  }
+ },
+ "site": {
+  "reason": "coal and iron from the coal hills, the fast Cog for power (the Millrace), and the railway out: the foundry, the mills, the engine works and the terminus; brick terraces for the workers between the works and the pits",
+  "terrain": "the Cog's east bank where the valley opens, between the river and the coal hills; the pits and spoil heaps above it",
+  "fit": "homes threaded between the works on the river and the railway: terraces in the strips the works leave",
+  "dry": false,
+  "fortified": false,
+  "authored": "by the layout generator from hand-written streets",
+  "tiers": [
+   6,
+   17
+  ],
+  "levelled_footprints": 14
+ },
+ "footprint_px": [
+  7880,
+  2272,
+  8592,
+  2872
+ ],
+ "fortification": null,
+ "style": null,
+ "features": {},
+ "arrivals": [
+  {
+   "id": "cogsworth-arr1",
+   "kind": "path",
+   "route": "High Fells",
+   "street": "cogsworth-a1",
+   "entries_px": [
+    [
+     7808,
+     2159
+    ]
+   ],
+   "route_kind": "path"
+  },
+  {
+   "id": "cogsworth-arr2",
+   "kind": "road",
+   "route": "Foothill Road",
+   "street": "cogsworth-a2",
+   "entries_px": [
+    [
+     7779,
+     2656
+    ]
+   ],
+   "route_kind": "road"
+  },
+  {
+   "id": "cogsworth-arr3",
+   "kind": "path",
+   "route": "Towpath",
+   "street": "cogsworth-a3",
+   "entries_px": [
+    [
+     8635,
+     2999
+    ]
+   ],
+   "route_kind": "path"
+  },
+  {
+   "id": "cogsworth-arr4",
+   "kind": "path",
+   "route": "the Garth Road",
+   "street": "cogsworth-a4",
+   "entries_px": [
+    [
+     8029,
+     2157
+    ]
+   ],
+   "route_kind": "path"
+  },
+  {
+   "id": "cogsworth-arr5",
+   "kind": "path",
+   "route": "the Old Forest Trail",
+   "street": "cogsworth-a5",
+   "entries_px": [
+    [
+     8500,
+     2162
+    ]
+   ],
+   "route_kind": "path"
+  },
+  {
+   "id": "cogsworth-arr6",
+   "kind": "path",
+   "route": "the camp track",
+   "street": "cogsworth-a6",
+   "entries_px": [],
+   "route_kind": "path"
+  }
+ ],
+ "streets": [
+  {
+   "id": "cogsworth-s01",
+   "name": "Foundry Row",
+   "class": "side",
+   "width_cells": 4,
+   "vertices_px": [
+    [
+     8040.0,
+     2448.0
+    ],
+    [
+     8040.0,
+     2496.0
+    ],
+    [
+     8128.0,
+     2496.0
+    ],
+    [
+     8128.0,
+     2608.0
+    ],
+    [
+     8232.0,
+     2608.0
+    ],
+    [
+     8232.0,
+     2736.0
+    ],
+    [
+     8312.0,
+     2736.0
+    ],
+    [
+     8312.0,
+     2784.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "cogsworth-s04",
+    "cogsworth-s05",
+    "cogsworth-s08"
+   ]
+  },
+  {
+   "id": "cogsworth-s02",
+   "name": "Pit Row",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     8164.0,
+     2420.0
+    ],
+    [
+     8220.0,
+     2420.0
+    ],
+    [
+     8220.0,
+     2532.0
+    ],
+    [
+     8276.0,
+     2532.0
+    ],
+    [
+     8276.0,
+     2596.0
+    ],
+    [
+     8404.0,
+     2596.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "cogsworth-a6",
+    "cogsworth-s03",
+    "cogsworth-s04",
+    "cogsworth-s07"
+   ]
+  },
+  {
+   "id": "cogsworth-s03",
+   "name": "Platform Street",
+   "class": "side",
+   "width_cells": 4,
+   "vertices_px": [
+    [
+     8088.0,
+     2408.0
+    ],
+    [
+     8240.0,
+     2408.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "cogsworth-q01",
+    "cogsworth-s02",
+    "cogsworth-s06"
+   ]
+  },
+  {
+   "id": "cogsworth-s04",
+   "name": "Engine Lane",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     8124.0,
+     2564.0
+    ],
+    [
+     8180.0,
+     2564.0
+    ],
+    [
+     8180.0,
+     2532.0
+    ],
+    [
+     8284.0,
+     2532.0
+    ],
+    [
+     8284.0,
+     2508.0
+    ],
+    [
+     8340.0,
+     2508.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "cogsworth-s01",
+    "cogsworth-s02",
+    "cogsworth-s06",
+    "cogsworth-s08"
+   ]
+  },
+  {
+   "id": "cogsworth-s05",
+   "name": "Terrace Lane",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     8228.0,
+     2708.0
+    ],
+    [
+     8276.0,
+     2708.0
+    ],
+    [
+     8276.0,
+     2676.0
+    ],
+    [
+     8308.0,
+     2676.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "cogsworth-s01",
+    "cogsworth-s08"
+   ]
+  },
+  {
+   "id": "cogsworth-s06",
+   "name": "Station Lane",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     8244.0,
+     2404.0
+    ],
+    [
+     8340.0,
+     2404.0
+    ],
+    [
+     8340.0,
+     2516.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "cogsworth-c02",
+    "cogsworth-s02",
+    "cogsworth-s03",
+    "cogsworth-s04",
+    "cogsworth-s07"
+   ]
+  },
+  {
+   "id": "cogsworth-s07",
+   "name": "Chapel Street",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     8340.0,
+     2516.0
+    ],
+    [
+     8340.0,
+     2596.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "cogsworth-s02",
+    "cogsworth-s04",
+    "cogsworth-s06"
+   ]
+  },
+  {
+   "id": "cogsworth-s08",
+   "name": "Engine Street (Towpath)",
+   "class": "main",
+   "width_cells": 6,
+   "vertices_px": [
+    [
+     8152.5,
+     2569.0
+    ],
+    [
+     8172.0,
+     2593.5
+    ],
+    [
+     8208.0,
+     2666.5
+    ],
+    [
+     8223.0,
+     2681.5
+    ],
+    [
+     8241.5,
+     2694.0
+    ],
+    [
+     8304.0,
+     2725.5
+    ],
+    [
+     8339.0,
+     2750.0
+    ],
+    [
+     8364.0,
+     2780.0
+    ],
+    [
+     8393.5,
+     2841.5
+    ]
+   ],
+   "frontage": "detached",
+   "follows_route": "Towpath",
+   "connects": [
+    "cogsworth-a3",
+    "cogsworth-a5",
+    "cogsworth-s01",
+    "cogsworth-s04",
+    "cogsworth-s05"
+   ]
+  },
+  {
+   "id": "cogsworth-a1",
+   "name": "High Fells",
+   "class": "arrival",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     7808.1,
+     2159.4
+    ],
+    [
+     7819.7,
+     2224.6
+    ],
+    [
+     7827.4,
+     2244.8
+    ],
+    [
+     7839.7,
+     2263.8
+    ],
+    [
+     7854.8,
+     2280.8
+    ],
+    [
+     7888.0,
+     2305.9
+    ],
+    [
+     7963.4,
+     2343.7
+    ],
+    [
+     8012.0,
+     2390.0
+    ]
+   ],
+   "follows_route": "High Fells",
+   "connects": []
+  },
+  {
+   "id": "cogsworth-a2",
+   "name": "Foothill Road",
+   "class": "arrival",
+   "width_cells": 4,
+   "vertices_px": [
+    [
+     7778.5,
+     2655.8
+    ],
+    [
+     7837.3,
+     2618.5
+    ],
+    [
+     7867.6,
+     2593.5
+    ],
+    [
+     7880.8,
+     2579.2
+    ],
+    [
+     7903.2,
+     2544.5
+    ],
+    [
+     7929.2,
+     2516.1
+    ],
+    [
+     7945.7,
+     2503.7
+    ],
+    [
+     7990.0,
+     2480.0
+    ]
+   ],
+   "follows_route": "Foothill Road",
+   "connects": [
+    "cogsworth-c01"
+   ]
+  },
+  {
+   "id": "cogsworth-a3",
+   "name": "Towpath",
+   "class": "arrival",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     8144.0,
+     2560.0
+    ],
+    [
+     8172.2,
+     2593.3
+    ],
+    [
+     8207.9,
+     2666.6
+    ],
+    [
+     8241.5,
+     2694.0
+    ],
+    [
+     8322.7,
+     2737.0
+    ],
+    [
+     8352.6,
+     2764.2
+    ],
+    [
+     8375.1,
+     2799.7
+    ],
+    [
+     8420.7,
+     2902.3
+    ],
+    [
+     8442.9,
+     2937.4
+    ],
+    [
+     8456.6,
+     2951.9
+    ],
+    [
+     8472.6,
+     2964.1
+    ],
+    [
+     8512.8,
+     2981.8
+    ],
+    [
+     8635.4,
+     2999.4
+    ]
+   ],
+   "follows_route": "Towpath",
+   "connects": [
+    "cogsworth-s01",
+    "cogsworth-s04",
+    "cogsworth-s05",
+    "cogsworth-s08"
+   ]
+  },
+  {
+   "id": "cogsworth-a4",
+   "name": "the Garth Road",
+   "class": "arrival",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     8045.0,
+     2372.0
+    ],
+    [
+     8044.9,
+     2346.2
+    ],
+    [
+     8048.5,
+     2325.2
+    ],
+    [
+     8065.1,
+     2265.6
+    ],
+    [
+     8066.7,
+     2246.5
+    ],
+    [
+     8053.9,
+     2210.3
+    ],
+    [
+     8029.3,
+     2157.2
+    ]
+   ],
+   "follows_route": "the Garth Road",
+   "connects": []
+  },
+  {
+   "id": "cogsworth-a5",
+   "name": "the Old Forest Trail",
+   "class": "arrival",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     8300.0,
+     2744.0
+    ],
+    [
+     8323.4,
+     2731.7
+    ],
+    [
+     8403.8,
+     2704.9
+    ],
+    [
+     8422.1,
+     2690.2
+    ],
+    [
+     8440.0,
+     2651.3
+    ],
+    [
+     8449.8,
+     2606.6
+    ],
+    [
+     8456.1,
+     2522.7
+    ],
+    [
+     8462.4,
+     2484.3
+    ],
+    [
+     8472.2,
+     2448.0
+    ],
+    [
+     8500.0,
+     2372.0
+    ],
+    [
+     8512.2,
+     2312.6
+    ],
+    [
+     8511.6,
+     2272.4
+    ],
+    [
+     8501.2,
+     2205.5
+    ],
+    [
+     8500.5,
+     2161.8
+    ]
+   ],
+   "follows_route": "the Old Forest Trail",
+   "connects": [
+    "cogsworth-a6",
+    "cogsworth-s01",
+    "cogsworth-s08"
+   ]
+  },
+  {
+   "id": "cogsworth-a6",
+   "name": "the camp track",
+   "class": "arrival",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     8420.0,
+     2620.0
+    ],
+    [
+     8541.9,
+     2642.0
+    ],
+    [
+     8650.0,
+     2670.0
+    ]
+   ],
+   "follows_route": "the camp track",
+   "connects": [
+    "cogsworth-a5",
+    "cogsworth-s02"
+   ]
+  },
+  {
+   "id": "cogsworth-c01",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     7912.0,
+     2624.0
+    ],
+    [
+     7912.0,
+     2568.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "cogsworth-a2",
+    "cogsworth-c03"
+   ]
+  },
+  {
+   "id": "cogsworth-c02",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     8320.0,
+     2344.0
+    ],
+    [
+     8320.0,
+     2392.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "cogsworth-s06"
+   ]
+  },
+  {
+   "id": "cogsworth-c03",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     7912.0,
+     2696.0
+    ],
+    [
+     7912.0,
+     2632.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "cogsworth-c01",
+    "cogsworth-c04"
+   ]
+  },
+  {
+   "id": "cogsworth-c04",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     8032.0,
+     2768.0
+    ],
+    [
+     7872.0,
+     2768.0
+    ],
+    [
+     7872.0,
+     2696.0
+    ],
+    [
+     7904.0,
+     2696.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "cogsworth-c03",
+    "cogsworth-c05"
+   ]
+  },
+  {
+   "id": "cogsworth-c05",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     8040.0,
+     2832.0
+    ],
+    [
+     8032.0,
+     2832.0
+    ],
+    [
+     8032.0,
+     2776.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "cogsworth-c04"
+   ]
+  }
+ ],
+ "squares": [
+  {
+   "id": "cogsworth-q01",
+   "name": "the station square",
+   "type": "square",
+   "cells": [
+    1008,
+    298,
+    9,
+    5
+   ]
+  }
+ ],
+ "districts": [
+  {
+   "name": "Foundry Row",
+   "centre_px": [
+    8130,
+    2560
+   ],
+   "declared": "the foundry, the mills on the Millrace, workshops by the river",
+   "town": "Cogsworth",
+   "id": "cogsworth-d-foundry-row",
+   "buildings": [
+    "cogsworth-b004",
+    "cogsworth-b005",
+    "cogsworth-b006",
+    "cogsworth-b008"
+   ],
+   "mix": {
+    "townhouse": 3,
+    "workshop": 1
+   },
+   "function": "homes"
+  },
+  {
+   "name": "Engine Street",
+   "centre_px": [
+    8260,
+    2680
+   ],
+   "declared": "shops and the works offices on the towpath road down to the terminus",
+   "town": "Cogsworth",
+   "id": "cogsworth-d-engine-street",
+   "buildings": [
+    "cogsworth-b001",
+    "cogsworth-b009",
+    "cogsworth-b012",
+    "cogsworth-b015"
+   ],
+   "mix": {
+    "shop": 1,
+    "workshop": 1,
+    "townhouse": 1,
+    "house": 1
+   },
+   "function": "market and civic with homes"
+  },
+  {
+   "name": "the Terraces",
+   "centre_px": [
+    8300,
+    2520
+   ],
+   "declared": "brick workers' terraces climbing toward the pits",
+   "town": "Cogsworth",
+   "id": "cogsworth-d-the-terraces",
+   "buildings": [
+    "cogsworth-b002",
+    "cogsworth-b010",
+    "cogsworth-b011",
+    "cogsworth-b013",
+    "cogsworth-b014"
+   ],
+   "mix": {
+    "townhouse": 3,
+    "house": 1,
+    "workshop": 1
+   },
+   "function": "homes"
+  },
+  {
+   "name": "the Platform",
+   "centre_px": [
+    8080,
+    2410
+   ],
+   "declared": "the platform, the station square and the Garth Road's start",
+   "town": "Cogsworth",
+   "id": "cogsworth-d-the-platform",
+   "buildings": [
+    "cogsworth-b003",
+    "cogsworth-b007"
+   ],
+   "mix": {
+    "townhouse": 1,
+    "house": 1
+   },
+   "function": "homes"
+  },
+  {
+   "id": "cogsworth-d-the-railway-yard",
+   "name": "the railway yard",
+   "function": "docks and works yards",
+   "declared": "the terminus sidings, the engine shed and the coal stage",
+   "box_px": [
+    8300,
+    2770,
+    8470,
+    2860
+   ],
+   "buildings": [],
+   "town": "Cogsworth"
+  },
+  {
+   "id": "cogsworth-d-the-allotments",
+   "name": "the allotments",
+   "function": "edge: farms and gardens",
+   "declared": "the terraces' vegetable plots",
+   "box_px": [
+    8360,
+    2430,
+    8520,
+    2560
+   ],
+   "buildings": [],
+   "town": "Cogsworth"
+  }
+ ],
+ "gathering_places": [
+  {
+   "name": "the station square",
+   "xy_px": [
+    8095,
+    2405
+   ]
+  },
+  {
+   "name": "the works gate",
+   "xy_px": [
+    8230,
+    2610
+   ]
+  }
+ ],
+ "size_table_px": {
+  "house": [
+   [
+    80,
+    104
+   ],
+   [
+    48,
+    64
+   ]
+  ],
+  "shop": [
+   [
+    64,
+    88
+   ],
+   [
+    48,
+    56
+   ]
+  ],
+  "terrace": [
+   [
+    96,
+    160
+   ],
+   [
+    32,
+    40
+   ]
+  ],
+  "townhouse": [
+   [
+    40,
+    56
+   ],
+   [
+    48,
+    56
+   ]
+  ],
+  "workshop": [
+   [
+    88,
+    120
+   ],
+   [
+    56,
+    72
+   ]
+  ]
+ },
+ "fronts": 15,
+ "landmarks": [],
+ "counting_note": "Matt's rule (28 Oct): buildings_counted counts a row of 3 to 5 joined houses as 1 (a longer row 1 for each 5), a larger house as 1, a small or medium free-standing house as 1 (each building counts_as); the big structures (keeps, temples, pagodas, towers, depots, stations, warehouses, halls) are landmarks, listed apart with their reason; fronts counts each front. The target is a guide: a little outside is a warning, beyond 25 % a fail",
+ "buildings": [
+  {
+   "id": "cogsworth-b001",
+   "type": "shop",
+   "form": "shop",
+   "footprint_cells": [
+    1056,
+    334,
+    6,
+    10
+   ],
+   "rect_px": [
+    8448,
+    2672,
+    48,
+    80
+   ],
+   "faces": "cogsworth-a5",
+   "door_cells": [
+    1055,
+    335
+   ],
+   "purpose": "the co-op store",
+   "occupants": "the shopkeeper, living above",
+   "district": "cogsworth-d-engine-street",
+   "counted": true,
+   "plot_cells": [
+    1062,
+    334,
+    5,
+    10
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "cogsworth-b002",
+   "type": "townhouse",
+   "form": "terrace",
+   "footprint_cells": [
+    1029,
+    307,
+    12,
+    4
+   ],
+   "rect_px": [
+    8232,
+    2456,
+    96,
+    32
+   ],
+   "faces": "cogsworth-s06",
+   "door_cells": [
+    1041,
+    309
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a collier's household",
+   "district": "cogsworth-d-the-terraces",
+   "counted": true,
+   "plot_cells": [
+    1029,
+    302,
+    12,
+    5
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "cogsworth-b003",
+   "type": "townhouse",
+   "form": "terrace",
+   "footprint_cells": [
+    1013,
+    304,
+    12,
+    4
+   ],
+   "rect_px": [
+    8104,
+    2432,
+    96,
+    32
+   ],
+   "faces": "cogsworth-s02",
+   "door_cells": [
+    1019,
+    303
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a foundryman's household",
+   "district": "cogsworth-d-the-platform",
+   "counted": true,
+   "plot_cells": [
+    1013,
+    303,
+    6,
+    1
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "cogsworth-b004",
+   "type": "townhouse",
+   "form": "terrace",
+   "footprint_cells": [
+    1001,
+    315,
+    12,
+    5
+   ],
+   "rect_px": [
+    8008,
+    2520,
+    96,
+    40
+   ],
+   "faces": "cogsworth-s01",
+   "door_cells": [
+    1007,
+    314
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a engine fitter's household",
+   "district": "cogsworth-d-foundry-row",
+   "counted": true,
+   "plot_cells": [
+    1003,
+    320,
+    10,
+    4
+   ],
+   "plot": "yard",
+   "counts_as": 1
+  },
+  {
+   "id": "cogsworth-b005",
+   "type": "workshop",
+   "form": "workshop",
+   "footprint_cells": [
+    990,
+    328,
+    12,
+    9
+   ],
+   "rect_px": [
+    7920,
+    2624,
+    96,
+    72
+   ],
+   "faces": "cogsworth-c01",
+   "door_cells": [
+    989,
+    328
+   ],
+   "purpose": "the foundry pattern shop",
+   "occupants": "the master and apprentices",
+   "district": "cogsworth-d-foundry-row",
+   "counted": true,
+   "plot_cells": [
+    990,
+    337,
+    12,
+    4
+   ],
+   "plot": "yard",
+   "counts_as": 1
+  },
+  {
+   "id": "cogsworth-b006",
+   "type": "townhouse",
+   "form": "townhouse",
+   "footprint_cells": [
+    1005,
+    338,
+    5,
+    7
+   ],
+   "rect_px": [
+    8040,
+    2704,
+    40,
+    56
+   ],
+   "faces": "cogsworth-c04",
+   "door_cells": [
+    1005,
+    345
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a millhand's household",
+   "district": "cogsworth-d-foundry-row",
+   "counted": true,
+   "plot_cells": [
+    1005,
+    345,
+    5,
+    4
+   ],
+   "plot": "yard",
+   "counts_as": 1
+  },
+  {
+   "id": "cogsworth-b007",
+   "type": "house",
+   "form": "house",
+   "footprint_cells": [
+    994,
+    284,
+    11,
+    6
+   ],
+   "rect_px": [
+    7952,
+    2272,
+    88,
+    48
+   ],
+   "faces": "cogsworth-a4",
+   "door_cells": [
+    1005,
+    287
+   ],
+   "purpose": "a family house",
+   "occupants": "a railwayman's household",
+   "district": "cogsworth-d-the-platform",
+   "counted": true,
+   "plot_cells": [
+    995,
+    290,
+    9,
+    4
+   ],
+   "plot": "yard",
+   "counts_as": 1
+  },
+  {
+   "id": "cogsworth-b008",
+   "type": "townhouse",
+   "form": "terrace",
+   "footprint_cells": [
+    985,
+    338,
+    16,
+    4
+   ],
+   "rect_px": [
+    7880,
+    2704,
+    128,
+    32
+   ],
+   "faces": "cogsworth-c03",
+   "door_cells": [
+    988,
+    337
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a puddler's household",
+   "district": "cogsworth-d-foundry-row",
+   "counted": true,
+   "plot_cells": [
+    985,
+    342,
+    16,
+    4
+   ],
+   "plot": "yard",
+   "counts_as": 1
+  },
+  {
+   "id": "cogsworth-b009",
+   "type": "workshop",
+   "form": "workshop",
+   "footprint_cells": [
+    1005,
+    346,
+    12,
+    7
+   ],
+   "rect_px": [
+    8040,
+    2768,
+    96,
+    56
+   ],
+   "faces": "cogsworth-c04",
+   "door_cells": [
+    1004,
+    346
+   ],
+   "purpose": "the boiler shop",
+   "occupants": "the master and apprentices",
+   "district": "cogsworth-d-engine-street",
+   "counted": true,
+   "plot_cells": [
+    1005,
+    353,
+    12,
+    4
+   ],
+   "plot": "yard",
+   "counts_as": 1
+  },
+  {
+   "id": "cogsworth-b010",
+   "type": "townhouse",
+   "form": "townhouse",
+   "footprint_cells": [
+    1044,
+    293,
+    6,
+    6
+   ],
+   "rect_px": [
+    8352,
+    2344,
+    48,
+    48
+   ],
+   "faces": "cogsworth-s06",
+   "door_cells": [
+    1044,
+    299
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a collier's household",
+   "district": "cogsworth-d-the-terraces",
+   "counted": true,
+   "plot_cells": [
+    1044,
+    299,
+    6,
+    4
+   ],
+   "plot": "yard",
+   "counts_as": 1
+  },
+  {
+   "id": "cogsworth-b011",
+   "type": "house",
+   "form": "house",
+   "footprint_cells": [
+    1040,
+    284,
+    12,
+    8
+   ],
+   "rect_px": [
+    8320,
+    2272,
+    96,
+    64
+   ],
+   "faces": "cogsworth-c02",
+   "door_cells": [
+    1040,
+    292
+   ],
+   "purpose": "a family house",
+   "occupants": "a foundryman's household",
+   "district": "cogsworth-d-the-terraces",
+   "counted": true,
+   "plot_cells": [
+    1042,
+    292,
+    10,
+    4
+   ],
+   "plot": "yard",
+   "counts_as": 1
+  },
+  {
+   "id": "cogsworth-b012",
+   "type": "townhouse",
+   "form": "terrace",
+   "footprint_cells": [
+    1006,
+    354,
+    17,
+    5
+   ],
+   "rect_px": [
+    8048,
+    2832,
+    136,
+    40
+   ],
+   "faces": "cogsworth-c05",
+   "door_cells": [
+    1005,
+    354
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a engine fitter's household",
+   "district": "cogsworth-d-engine-street",
+   "counted": true,
+   "plot_cells": [
+    1006,
+    359,
+    17,
+    4
+   ],
+   "plot": "yard",
+   "counts_as": 1
+  },
+  {
+   "id": "cogsworth-b013",
+   "type": "workshop",
+   "form": "workshop",
+   "footprint_cells": [
+    1061,
+    311,
+    13,
+    7
+   ],
+   "rect_px": [
+    8488,
+    2488,
+    104,
+    56
+   ],
+   "faces": "cogsworth-a5",
+   "door_cells": [
+    1060,
+    314
+   ],
+   "purpose": "the engine works",
+   "occupants": "the master and apprentices",
+   "district": "cogsworth-d-the-terraces",
+   "counted": true,
+   "plot_cells": [
+    1061,
+    318,
+    13,
+    4
+   ],
+   "plot": "yard",
+   "counts_as": 1
+  },
+  {
+   "id": "cogsworth-b014",
+   "type": "townhouse",
+   "form": "townhouse",
+   "footprint_cells": [
+    1064,
+    302,
+    6,
+    6
+   ],
+   "rect_px": [
+    8512,
+    2416,
+    48,
+    48
+   ],
+   "faces": "cogsworth-a5",
+   "door_cells": [
+    1063,
+    303
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a millhand's household",
+   "district": "cogsworth-d-the-terraces",
+   "counted": true,
+   "plot_cells": [
+    1064,
+    308,
+    6,
+    3
+   ],
+   "plot": "yard",
+   "counts_as": 1
+  },
+  {
+   "id": "cogsworth-b015",
+   "type": "house",
+   "form": "house",
+   "footprint_cells": [
+    1052,
+    346,
+    11,
+    6
+   ],
+   "rect_px": [
+    8416,
+    2768,
+    88,
+    48
+   ],
+   "faces": "cogsworth-s08",
+   "door_cells": [
+    1051,
+    351
+   ],
+   "purpose": "a family house",
+   "occupants": "a railwayman's household",
+   "district": "cogsworth-d-engine-street",
+   "counted": true,
+   "plot_cells": [
+    1052,
+    352,
+    11,
+    4
+   ],
+   "plot": "yard",
+   "counts_as": 1
+  }
+ ],
+ "lifted": [],
+ "outskirts": [
+  {
+   "kind": "yard",
+   "name": "the railway yard",
+   "box": [
+    8300,
+    2770,
+    8470,
+    2860
+   ],
+   "why": "the terminus sidings, the engine shed and the coal stage"
+  },
+  {
+   "kind": "field2",
+   "name": "the allotments",
+   "box": [
+    8360,
+    2430,
+    8520,
+    2560
+   ],
+   "plots": 2,
+   "why": "the terraces' vegetable plots"
+  }
+ ],
+ "game_layout": {
+  "arrival": "Towpath",
+  "first_view": "up the towpath road into Engine Street: the foundry's stacks over the brick terraces, the Millrace beside you",
+  "landmarks": [
+   {
+    "name": "the foundry's stacks",
+    "xy": [
+     8150,
+     2560
+    ]
+   },
+   {
+    "name": "the station and its clock",
+    "xy": [
+     8098,
+     2402
+    ]
+   },
+   {
+    "name": "the engine shed",
+    "xy": [
+     8380,
+     2800
+    ]
+   }
+  ],
+  "shortcuts_later": [
+   {
+    "what": "the footbridge over the line from Terrace Lane to the pits",
+    "xy": [
+     8400,
+     2620
+    ],
+    "opens": "when the works open the gate"
+   },
+   {
+    "what": "the Millrace culvert from Foundry Row to the river",
+    "xy": [
+     8100,
+     2600
+    ],
+    "opens": "once the race is drained"
+   }
+  ],
+  "quiet_corners": [
+   {
+    "what": "the allotments above the terraces, beside the works",
+    "xy": [
+     8440,
+     2500
+    ]
+   }
+  ],
+  "first_screen_cells": [
+   [
+    956,
+    258,
+    40,
+    22.5
+   ]
+  ],
+  "screens": [
+   2.2,
+   3.3
+  ]
+ },
+ "ground": {
+  "centre": "brick setts and cinder paths",
+  "yards": "cinder yards",
+  "edges": "allotments and spoil",
+  "materials_cells": {
+   "brick setts": 1989,
+   "cinder yards": 4137
+  }
+ },
+ "terrain": {
+  "box_cells": [
+   970,
+   269,
+   120,
+   106
+  ],
+  "codes": {
+   ".": "land",
+   "g": "green ground (grass, gardens, woods, fields)",
+   "r": "route",
+   "~": "water",
+   "#": "barrier (cliff, wall, lava)",
+   "b": "bridge"
+  },
+  "rows": [
+   "3#5r5g4~14g5r15g40#4r4g18r3g",
+   "3#6r5g3~15g4r2.13g40#3r7g19r",
+   "3#6r5g3~15g5r3.8g20#r22#3r15g11r",
+   "g2#6r5g3~16g4r.9g20#r23#3r20g6r",
+   "4g5r5g3~16g5r8g20#r23#g3r24g2r",
+   "4g5r5g4~16g4r6g19#r25#2g3r26g",
+   "4g5r5g4~16g4r6g17#r24#5g3r26g",
+   "4g7r3g4~15g2.4rg20#r23#7g3r26g",
+   "4g7r4g3~13g4.4rg18#r20#12g4r25g",
+   "4g7r4g3~13g4.g3r17#2r6#7g2#g#16g4r25g",
+   "5g7r3g3~12g4.2g4r2#11g3r36g3r25g",
+   "5g7r3g3~11g5.2g4r12g3r37g3r25g",
+   "5g7r3g4~10g4.4g3r11g2r39g3r25g",
+   "6g6r2g5~9g5.4g3r10g2r40g3r25g",
+   "7g6rg5~9g5.3g4r9g2r41g4r6#18g",
+   "7#g6rg4~5g11.g4r8gr4g17r12.9g#4r7#17g",
+   "7#2g6rb3~5g11.g3r7g2r4g18r12.9g#4r7#17g",
+   "8#3g5rb2~5g11.4r6g2r4g19r12.8g3#3r8#16g",
+   "9#3g4r3b~4g11.4r6gr5g6r11g2r12.8g3#3r8#16g",
+   "8#5g3r4b3~g11.3r4g3r5g5r15g12.8g2#4r8#16g",
+   "8#6g2r4b4r11.3r3g3r6g5r3g10#2g12.10g4r8#16g",
+   "8#8g4b5r9.4r2g2r8g5r2g12#g12.10g4r5#19g",
+   "g6#10g~2b7r7.4rg2r9g5r2g12#g12.2g4.4g3r2g2#21g",
+   "17g3~8r6.3rg2r10g5rg13#4r9.2g8.3r25g",
+   "17g3~3g6r5.5r9g7rg13#4r9.2g7.4r25g",
+   "15g.g5~2g6r4g4r9g2r2g4rg11#5r10.2g7.4rg7.17g",
+   "14g2.g5~3g6r3g3r8g2r4g5rg9#6r10.3g6.4rg7.17g",
+   "14g2.g5~4g24rg5r2g6#7r3g6.11g3r2g7.17g",
+   "13g3.g5~5g10r12g8rg5#7r.3g6.10g4r2g7.17g",
+   "12g3.g~g4~6g6r~3g9.5g6rg3#7r2.3g6.3g5.2g4r2g7.17g",
+   "12g2.g2~g4~7g5r~2g15.16r12.3g5.g4r3g7.17g",
+   "12g3.~2g4~13g~g16.14r13.3g5.g4r3g7.17g",
+   "11g2.g~3g5~13g~g18.10r16.g5.g4r27g",
+   "11g.g2~3g5~13g2~g23.9g11.g5.4r2g6.20g",
+   "9g4.~5g4~14g2~10g10.12g3.2g6.g5.4r2g6.20g",
+   "9g2.g~6g4~10g4.g~4g12.g3.12g3.2g6.6g4r14.14g",
+   "8g3.g~6g4~10g4.2g~3g12.g3.12g3.2g11.4r15.14g",
+   "8g.2g~7g4~10g4.2g2~2g12.g3.12g3.8g5.4r15.14g",
+   "7g2.2g~7g5~9g4.3g2~g12.g18.13g3r2g10.18g",
+   "6g3.2g~7g5~g5r3g4.4g~14g18.12g4r2g10.18g",
+   "6g2.g3~7g5~7r2g4.5g2~12g18.12g4r2g10.18g",
+   "6g2.g2~9g2~3b6r2g9.3b3.8g18.12g4r2g10.18g",
+   "5g3.g2~9g5b6r2g11.b3.8g3.12g3.g8.3g3r2g13.16g",
+   "7g.g2~8gr6b4r3g11.2b2.8g3.5g10.g8.3g3r2g13.16g",
+   "7g.g2~7g4r4b2r5g12.b2.8g3.5g10.g8.3g3r2g13.16g",
+   "9g2~6g5r4b~17g.2b.8g3.5g10.g8.2g4r2g13.16g",
+   "8g3~5g7r2b2~4g12.g2.b.3g16.4g3.g8.2g4r2g13.16g",
+   "8g~6g8rb4~3g12.g3.b3g16.4g3.g8.2g4r2g13.16g",
+   "8g~6g8rg5~2g12.g3.bg.g16.4g3.g8.2g3r3g13.16g",
+   "7g2~5g8r3g5~g12.g3.3r4.9g3.5g3.g8.2g3r3g13.16g",
+   "7g~5g7r6g4~g12.g2.5r3.9g3.5g3.g8.2g3r3g13.16g",
+   "6g7#7r6g5~2g10.g2.6r2.9g3.5g3.g8.2g3r3g13.16g",
+   "4g8#7r.7g6~g9.g2.7r.9g3.5g3.11g3r2g14.16g",
+   "3g8#7r2.8g6~g8.g2.7r.9g3.5g3.11g3r2g4.2g6.18g",
+   "2g7#9r2.9g6~g7.g3.8r8g19.3g3r2g4.2g6.6g7.5g",
+   "g7#9rg2.9g6~9g2.b.8r5.2g19.3g3r2g4.2g6.4g12.2g",
+   "7#9r2#2.10g6~8g.2b2.7r5.2g19.3g3r8g6.3g15.",
+   "6#9r3#2.11g6~7g.b3.7r5.10g3.5g2.7r15g17.",
+   "4#10r4#2.13g5~6g2b4.7r4.10g.9g12r9g18.",
+   "3#10r5#14.g5~6g~5g7r4.11g9#17r3g19.",
+   "#11r6#14.2g5~3g2~7g6r4.10g12#g18r18.",
+   "11r6#g14.3g5~g3~7g7r3.10g12#4r3g16r14.",
+   "8rg8#g14.4g6~9g7r3.10g12#4r8g15r10.",
+   "7rg8#2g14.5g4~11g6r3.10g11#5r11g2.13r7.",
+   "5r2g8#3g14.5g5~10g7r2.2g8.g10#4r12g6.9r7.",
+   "4r2g8#4g14.4g8~9g8r.g9.g8#5r6.6g9.6r7.",
+   "2r3g8#5g14.3g2~2g6~9g2.6r11.8g4rg6.5g23.",
+   "r4g7#g19.2g2~4g6~9g.8r2.5g3.5g6rg6.5g23.",
+   "4g7#2g19.g~7g6~9g2.9r.3g3.3g7r2g6.5g23.",
+   "3g6#4g19.3g5.g7~9g2.9r2.3g10r3g6.5g23.",
+   "2g7#4g19.3g5.2g6~9g4.21r4g6.6g22.",
+   "g7#5g19.3g5.4g5~8g6.16r7g6.7g21.",
+   "7#6g18.4g5.5g5~7g7.12r10g6.8g20.",
+   "6#7g18.4g5.5g6~6g9.9r11g6.11g17.",
+   "5#8g18.4g5.6g6~5g9.11r9g6.12g16.",
+   "4#9g18.4g5.7g5~14g11r28g15.",
+   "3#10g27.8g5~14g3.8r31g11.",
+   "2#11g34.2g6~12g4.8r14.17g8.2g",
+   "#32g14.3g6~11g5.7r14.27g",
+   "33g14.3g7~10g5.8r13.27g",
+   "33g14.4g7~9g6.7r13.27g",
+   "33g14.5g7~8g6.7r13.27g",
+   "33g14.6g7~7g7.7r12.27g",
+   "33g14.8g6~6g7.7r12.27g",
+   "33g14.9g6~5g8.6r12.27g",
+   "33g20.4g6~4g8.6r12.27g",
+   "35g18.5g8~g10.5r11.27g",
+   "35g18.6g8~2g9.4r6.32g",
+   "36g17.7g9~8g.4r38g",
+   "36g17.8g10~8g4r37g",
+   "36g17.10g11~5g4r37g",
+   "36g17.11g13~2g5r36g",
+   "36g17.14g11~2g4r36g",
+   "36g17.16g11~5r35g",
+   "71g10~b3r35g",
+   "73g8~3b2r34g",
+   "75g7~4b2r32g",
+   "78g4~7b31g",
+   "80g2~8b~29g",
+   "82g10b28g",
+   "83g10b~26g",
+   "84gr11br23g",
+   "85g3r9b4r19g",
+   "86g4r11b3r16g",
+   "89g3r10b9r9g",
+   "91g3r10b8r8g"
+  ]
+ },
+ "residents": [],
+ "routines": [],
+ "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only.",
+ "open_uses": [
+  {
+   "id": "cogsworth-o01",
+   "name": "allotments",
+   "kind": "garden",
+   "cells": [
+    1036,
+    315,
+    5,
+    8
+   ],
+   "block_cells": 37
+  },
+  {
+   "id": "cogsworth-o02",
+   "name": "allotments",
+   "kind": "garden",
+   "cells": [
+    1036,
+    315,
+    5,
+    8
+   ],
+   "block_cells": 37
+  }
+ ],
+ "theme": {
+  "tech": "rail, steam and the first shard engines: where the railway began",
+  "waystone": {
+   "xy_px": [
+    8084,
+    2396
+   ],
+   "at": "on the station square",
+   "table_name": "Cogsworth",
+   "status": "plan"
+  },
+  "sightline": {
+   "kind": "street",
+   "street": "cogsworth-s01",
+   "name": "Foundry Row",
+   "from_px": [
+    8128,
+    2496
+   ],
+   "to_px": [
+    8040,
+    2496
+   ],
+   "toward": "the stone circle (the beam over the valley)",
+   "off_by_deg": 10,
+   "bearing_deg": 170
+  },
+  "crater": {
+   "name": "the Seam crater",
+   "xy_px": [
+    8386,
+    2130
+   ],
+   "distance_px": 466,
+   "effect": "the shard opened the coal seam (the Seam crater): the pits now dig shard glass with the coal",
+   "road": "the Old Forest Trail",
+   "road_leaves_at_px": [
+    8500,
+    2162
+   ]
+  },
+  "moss": {
+   "where": "the station",
+   "xy_px": [
+    8095,
+    2405
+   ]
+  },
+  "company": {
+   "foothold": "the Company's counting house by the works gate",
+   "building": null,
+   "xy_px": null
+  },
+  "theme_line": "the circle keeps the moon's light for everyone; the Company sells it"
+ }
+}

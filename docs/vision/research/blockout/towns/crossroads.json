@@ -1,0 +1,3084 @@
+{
+ "schema": "mygame.town_plan/1",
+ "id": "crossroads",
+ "name": "Crossroads",
+ "size": "large",
+ "size_note": "large",
+ "target": [
+  30,
+  45
+ ],
+ "buildings_counted": 40,
+ "grid": {
+  "cell_px": 8,
+  "screen_cells": [
+   40,
+   22.5
+  ],
+  "origin": "world px, top-left of the continent (blockout-v55.json coords)",
+  "street_classes": {
+   "arrival": "the regional route's own width",
+   "main": 6,
+   "side": 4,
+   "lane": 3,
+   "close": 2
+  }
+ },
+ "site": {
+  "reason": "the market and meeting point of the valley: four lanes and two roads meet here; the farms round it bring grain, wool and fruit to its market, and the halt, the mill and the smithy serve the whole valley",
+  "terrain": "the valley floor either side of the Sleepwater, on its flat terraces; the woodland and the stone circle to the north-west",
+  "fit": "on the flat terraces either side of the Sleepwater where the valley lanes meet; fields on the river terrace",
+  "dry": false,
+  "fortified": false,
+  "authored": "by the layout generator from hand-written streets",
+  "tiers": [
+   2,
+   11
+  ],
+  "levelled_footprints": 9
+ },
+ "footprint_px": [
+  5792,
+  3272,
+  6960,
+  4296
+ ],
+ "fortification": null,
+ "style": null,
+ "features": {},
+ "arrivals": [
+  {
+   "id": "crossroads-arr1",
+   "kind": "road",
+   "route": "Foothill Road",
+   "street": "crossroads-a1",
+   "entries_px": [
+    [
+     7082,
+     3167
+    ]
+   ],
+   "route_kind": "road"
+  },
+  {
+   "id": "crossroads-arr2",
+   "kind": "road",
+   "route": "Lull Road",
+   "street": "crossroads-a2",
+   "entries_px": [
+    [
+     7068,
+     3841
+    ]
+   ],
+   "route_kind": "road"
+  },
+  {
+   "id": "crossroads-arr3",
+   "kind": "road",
+   "route": "Drover's Road",
+   "street": "crossroads-a3",
+   "entries_px": [
+    [
+     5674,
+     3978
+    ]
+   ],
+   "route_kind": "road"
+  },
+  {
+   "id": "crossroads-arr4",
+   "kind": "path",
+   "route": "Valley lane east",
+   "street": "crossroads-a4",
+   "entries_px": [],
+   "route_kind": "path"
+  },
+  {
+   "id": "crossroads-arr5",
+   "kind": "path",
+   "route": "Valley lane south",
+   "street": "crossroads-a5",
+   "entries_px": [
+    [
+     6255,
+     4405
+    ]
+   ],
+   "route_kind": "path"
+  },
+  {
+   "id": "crossroads-arr6",
+   "kind": "path",
+   "route": "Valley lane west",
+   "street": "crossroads-a6",
+   "entries_px": [],
+   "route_kind": "path"
+  },
+  {
+   "id": "crossroads-arr7",
+   "kind": "path",
+   "route": "Valley lane to the Lull Road",
+   "street": "crossroads-a7",
+   "entries_px": [],
+   "route_kind": "path"
+  },
+  {
+   "id": "crossroads-arr8",
+   "kind": "path",
+   "route": "Valley lane north",
+   "street": "crossroads-a8",
+   "entries_px": [
+    [
+     6279,
+     3162
+    ]
+   ],
+   "route_kind": "path"
+  }
+ ],
+ "streets": [
+  {
+   "id": "crossroads-s01",
+   "name": "halt road",
+   "class": "side",
+   "width_cells": 4,
+   "vertices_px": [
+    [
+     5976.0,
+     3552.0
+    ],
+    [
+     6176.0,
+     3552.0
+    ]
+   ],
+   "frontage": "detached",
+   "follows_route": "the Crossroads zone plan",
+   "connects": [
+    "crossroads-q01",
+    "crossroads-s09"
+   ]
+  },
+  {
+   "id": "crossroads-s02",
+   "name": "harbour road",
+   "class": "side",
+   "width_cells": 4,
+   "vertices_px": [
+    [
+     6416.0,
+     3576.0
+    ],
+    [
+     6616.0,
+     3576.0
+    ]
+   ],
+   "frontage": "detached",
+   "follows_route": "the Crossroads zone plan",
+   "connects": [
+    "crossroads-q01",
+    "crossroads-s10"
+   ]
+  },
+  {
+   "id": "crossroads-s03",
+   "name": "green lane",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     6240.0,
+     3624.0
+    ],
+    [
+     6176.0,
+     3688.0
+    ],
+    [
+     6120.0,
+     3720.0
+    ]
+   ],
+   "frontage": "detached",
+   "follows_route": "the Crossroads zone plan",
+   "connects": [
+    "crossroads-q01",
+    "crossroads-q02"
+   ]
+  },
+  {
+   "id": "crossroads-s05",
+   "name": "garden walk (2)",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     6136.0,
+     3320.0
+    ],
+    [
+     6236.0,
+     3320.0
+    ]
+   ],
+   "frontage": "detached",
+   "follows_route": "the Crossroads zone plan",
+   "connects": [
+    "crossroads-s30",
+    "crossroads-s31"
+   ]
+  },
+  {
+   "id": "crossroads-s06",
+   "name": "garden walk (3)",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     6296.0,
+     3328.0
+    ],
+    [
+     6296.0,
+     3400.0
+    ]
+   ],
+   "frontage": "detached",
+   "follows_route": "the Crossroads zone plan",
+   "connects": [
+    "crossroads-s31"
+   ]
+  },
+  {
+   "id": "crossroads-s07",
+   "name": "Granary Row",
+   "class": "side",
+   "width_cells": 4,
+   "vertices_px": [
+    [
+     6312.0,
+     3976.0
+    ],
+    [
+     6544.0,
+     3976.0
+    ]
+   ],
+   "frontage": "continuous",
+   "max_gap_cells": 1,
+   "frontage_props": [
+    {
+     "kind": "potted plants",
+     "at_px": [
+      6324,
+      3956
+     ]
+    },
+    {
+     "kind": "planter tree",
+     "at_px": [
+      6368,
+      3956
+     ]
+    },
+    {
+     "kind": "sign",
+     "at_px": [
+      6440,
+      3956
+     ]
+    },
+    {
+     "kind": "potted plants",
+     "at_px": [
+      6500,
+      3956
+     ]
+    }
+   ],
+   "frontage_reason": "the market core: shops and granaries crowd the market street where the trade is",
+   "connects": [
+    "crossroads-s14"
+   ]
+  },
+  {
+   "id": "crossroads-s08",
+   "name": "Weir Lane",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     6308.0,
+     4100.0
+    ],
+    [
+     6468.0,
+     4100.0
+    ],
+    [
+     6468.0,
+     4132.0
+    ],
+    [
+     6516.0,
+     4132.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "crossroads-c06",
+    "crossroads-c09",
+    "crossroads-s15"
+   ]
+  },
+  {
+   "id": "crossroads-s09",
+   "name": "West Lane",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     5972.0,
+     3556.0
+    ],
+    [
+     5940.0,
+     3556.0
+    ],
+    [
+     5940.0,
+     3588.0
+    ],
+    [
+     5828.0,
+     3588.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "crossroads-s01"
+   ]
+  },
+  {
+   "id": "crossroads-s10",
+   "name": "Market Lane",
+   "class": "side",
+   "width_cells": 4,
+   "vertices_px": [
+    [
+     6648.0,
+     3424.0
+    ],
+    [
+     6648.0,
+     3640.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "crossroads-q03",
+    "crossroads-s02",
+    "crossroads-s13"
+   ]
+  },
+  {
+   "id": "crossroads-s11",
+   "name": "Mill Street (Valley lane south) (1)",
+   "class": "main",
+   "width_cells": 6,
+   "vertices_px": [
+    [
+     6275.5,
+     3868.0
+    ],
+    [
+     6262.5,
+     3894.0
+    ]
+   ],
+   "frontage": "detached",
+   "follows_route": "Valley lane south",
+   "connects": [
+    "crossroads-a5",
+    "crossroads-s14"
+   ]
+  },
+  {
+   "id": "crossroads-s12",
+   "name": "Mill Street (Valley lane south) (2)",
+   "class": "main",
+   "width_cells": 6,
+   "vertices_px": [
+    [
+     6244.0,
+     4085.5
+    ],
+    [
+     6244.0,
+     4116.0
+    ]
+   ],
+   "frontage": "detached",
+   "follows_route": "Valley lane south",
+   "connects": [
+    "crossroads-a5",
+    "crossroads-c10"
+   ]
+  },
+  {
+   "id": "crossroads-s13",
+   "name": "Eastgate (Valley lane east)",
+   "class": "side",
+   "width_cells": 4,
+   "vertices_px": [
+    [
+     6618.0,
+     3439.0
+    ],
+    [
+     6657.5,
+     3426.0
+    ],
+    [
+     6760.0,
+     3400.0
+    ],
+    [
+     6791.5,
+     3367.0
+    ],
+    [
+     6836.0,
+     3335.0
+    ],
+    [
+     6863.0,
+     3310.5
+    ]
+   ],
+   "frontage": "detached",
+   "follows_route": "Valley lane east",
+   "connects": [
+    "crossroads-a1",
+    "crossroads-s10"
+   ]
+  },
+  {
+   "id": "crossroads-s14",
+   "name": "Granary Row (east end)",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     6540.0,
+     3988.0
+    ],
+    [
+     6412.0,
+     3988.0
+    ],
+    [
+     6412.0,
+     3852.0
+    ],
+    [
+     6284.0,
+     3852.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "crossroads-a5",
+    "crossroads-q05",
+    "crossroads-s07",
+    "crossroads-s11",
+    "crossroads-s15"
+   ]
+  },
+  {
+   "id": "crossroads-s15",
+   "name": "Orchard Lane",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     6516.0,
+     4132.0
+    ],
+    [
+     6516.0,
+     4060.0
+    ],
+    [
+     6540.0,
+     4060.0
+    ],
+    [
+     6540.0,
+     3988.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "crossroads-s07",
+    "crossroads-s08",
+    "crossroads-s14"
+   ]
+  },
+  {
+   "id": "crossroads-a1",
+   "name": "Foothill Road",
+   "class": "arrival",
+   "width_cells": 4,
+   "vertices_px": [
+    [
+     6760.0,
+     3400.0
+    ],
+    [
+     6791.4,
+     3366.8
+    ],
+    [
+     6835.9,
+     3334.9
+    ],
+    [
+     6862.8,
+     3310.4
+    ],
+    [
+     6933.6,
+     3218.1
+    ],
+    [
+     6962.0,
+     3192.8
+    ],
+    [
+     6995.8,
+     3176.4
+    ],
+    [
+     7015.6,
+     3171.6
+    ],
+    [
+     7082.3,
+     3166.6
+    ]
+   ],
+   "follows_route": "Foothill Road",
+   "connects": [
+    "crossroads-s13"
+   ]
+  },
+  {
+   "id": "crossroads-a2",
+   "name": "Lull Road",
+   "class": "arrival",
+   "width_cells": 4,
+   "vertices_px": [
+    [
+     6760.0,
+     3760.0
+    ],
+    [
+     6781.4,
+     3762.2
+    ],
+    [
+     6802.8,
+     3768.8
+    ],
+    [
+     6860.4,
+     3800.4
+    ],
+    [
+     6879.0,
+     3807.0
+    ],
+    [
+     6983.3,
+     3812.0
+    ],
+    [
+     7026.6,
+     3822.3
+    ],
+    [
+     7068.4,
+     3841.4
+    ]
+   ],
+   "follows_route": "Lull Road",
+   "connects": [
+    "crossroads-a7",
+    "crossroads-c01",
+    "crossroads-c03",
+    "crossroads-c07"
+   ]
+  },
+  {
+   "id": "crossroads-a3",
+   "name": "Drover's Road",
+   "class": "arrival",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     5800.0,
+     4080.0
+    ],
+    [
+     5711.4,
+     3987.6
+    ],
+    [
+     5674.5,
+     3978.0
+    ]
+   ],
+   "follows_route": "Drover's Road",
+   "connects": [
+    "crossroads-a6"
+   ]
+  },
+  {
+   "id": "crossroads-a4",
+   "name": "Valley lane east",
+   "class": "arrival",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     6618.0,
+     3439.0
+    ],
+    [
+     6760.0,
+     3400.0
+    ]
+   ],
+   "follows_route": "Valley lane east",
+   "connects": [
+    "crossroads-s10",
+    "crossroads-s13"
+   ]
+  },
+  {
+   "id": "crossroads-a5",
+   "name": "Valley lane south",
+   "class": "arrival",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     6306.0,
+     3810.6
+    ],
+    [
+     6262.4,
+     3894.2
+    ],
+    [
+     6244.0,
+     3940.0
+    ],
+    [
+     6244.0,
+     4116.0
+    ],
+    [
+     6276.0,
+     4116.0
+    ],
+    [
+     6276.0,
+     4300.0
+    ],
+    [
+     6258.2,
+     4363.4
+    ],
+    [
+     6254.8,
+     4405.5
+    ]
+   ],
+   "follows_route": "Valley lane south",
+   "connects": [
+    "crossroads-c05",
+    "crossroads-c08",
+    "crossroads-s11",
+    "crossroads-s12",
+    "crossroads-s14"
+   ]
+  },
+  {
+   "id": "crossroads-a6",
+   "name": "Valley lane west",
+   "class": "arrival",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     5975.0,
+     3759.2
+    ],
+    [
+     5939.3,
+     3808.0
+    ],
+    [
+     5909.9,
+     3861.6
+    ],
+    [
+     5865.6,
+     3980.2
+    ],
+    [
+     5833.4,
+     4034.1
+    ],
+    [
+     5814.8,
+     4073.5
+    ],
+    [
+     5800.0,
+     4125.0
+    ]
+   ],
+   "follows_route": "Valley lane west",
+   "connects": [
+    "crossroads-a3",
+    "crossroads-c04",
+    "crossroads-q04"
+   ]
+  },
+  {
+   "id": "crossroads-a7",
+   "name": "Valley lane to the Lull Road",
+   "class": "arrival",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     6632.3,
+     3716.0
+    ],
+    [
+     6672.7,
+     3736.3
+    ],
+    [
+     6760.0,
+     3760.0
+    ]
+   ],
+   "follows_route": "Valley lane to the Lull Road",
+   "connects": [
+    "crossroads-a2",
+    "crossroads-c01"
+   ]
+  },
+  {
+   "id": "crossroads-a8",
+   "name": "Valley lane north",
+   "class": "arrival",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     6298.3,
+     3233.9
+    ],
+    [
+     6278.8,
+     3162.0
+    ]
+   ],
+   "follows_route": "Valley lane north",
+   "connects": []
+  },
+  {
+   "id": "crossroads-s29",
+   "name": null,
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     6356.0,
+     3468.0
+    ],
+    [
+     6396.0,
+     3468.0
+    ]
+   ],
+   "frontage": "detached",
+   "link": true,
+   "connects": [
+    "crossroads-q01"
+   ]
+  },
+  {
+   "id": "crossroads-s30",
+   "name": null,
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     6156.0,
+     3332.0
+    ],
+    [
+     6156.0,
+     3460.0
+    ],
+    [
+     6172.0,
+     3460.0
+    ]
+   ],
+   "frontage": "detached",
+   "link": true,
+   "connects": [
+    "crossroads-q01",
+    "crossroads-s05"
+   ]
+  },
+  {
+   "id": "crossroads-s31",
+   "name": null,
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     6292.0,
+     3324.0
+    ],
+    [
+     6252.0,
+     3324.0
+    ]
+   ],
+   "frontage": "detached",
+   "link": true,
+   "connects": [
+    "crossroads-s05",
+    "crossroads-s06"
+   ]
+  },
+  {
+   "id": "crossroads-c01",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     6656.0,
+     3776.0
+    ],
+    [
+     6752.0,
+     3776.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "crossroads-a2",
+    "crossroads-a7"
+   ]
+  },
+  {
+   "id": "crossroads-c02",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     6032.0,
+     3816.0
+    ],
+    [
+     6032.0,
+     3792.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "crossroads-q02"
+   ]
+  },
+  {
+   "id": "crossroads-c03",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     6880.0,
+     3848.0
+    ],
+    [
+     6880.0,
+     3824.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "crossroads-a2"
+   ]
+  },
+  {
+   "id": "crossroads-c04",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     5880.0,
+     3824.0
+    ],
+    [
+     5912.0,
+     3824.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "crossroads-a6"
+   ]
+  },
+  {
+   "id": "crossroads-c05",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     6192.0,
+     4032.0
+    ],
+    [
+     6232.0,
+     4032.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "crossroads-a5"
+   ]
+  },
+  {
+   "id": "crossroads-c06",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     6480.0,
+     4192.0
+    ],
+    [
+     6480.0,
+     4144.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "crossroads-s08"
+   ]
+  },
+  {
+   "id": "crossroads-c07",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     6808.0,
+     3848.0
+    ],
+    [
+     6808.0,
+     3792.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "crossroads-a2"
+   ]
+  },
+  {
+   "id": "crossroads-c08",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     6176.0,
+     4192.0
+    ],
+    [
+     6264.0,
+     4192.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "crossroads-a5"
+   ]
+  },
+  {
+   "id": "crossroads-c09",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     6400.0,
+     4224.0
+    ],
+    [
+     6400.0,
+     4112.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "crossroads-s08"
+   ]
+  },
+  {
+   "id": "crossroads-c10",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     6136.0,
+     4088.0
+    ],
+    [
+     6216.0,
+     4088.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "crossroads-s12"
+   ]
+  }
+ ],
+ "squares": [
+  {
+   "id": "crossroads-q01",
+   "name": "the square (the zone as built)",
+   "type": "square",
+   "cells": [
+    772,
+    431,
+    30,
+    22
+   ]
+  },
+  {
+   "id": "crossroads-q02",
+   "name": "the green (the zone as built)",
+   "type": "green",
+   "cells": [
+    752,
+    457,
+    21,
+    17
+   ]
+  },
+  {
+   "id": "crossroads-q03",
+   "name": "the drovers' market",
+   "type": "square",
+   "cells": [
+    832,
+    436,
+    14,
+    10
+   ]
+  },
+  {
+   "id": "crossroads-q04",
+   "name": "the halt yard",
+   "type": "square",
+   "cells": [
+    729,
+    506,
+    12,
+    8
+   ]
+  },
+  {
+   "id": "crossroads-q05",
+   "name": "the mill green",
+   "type": "green",
+   "cells": [
+    791,
+    485,
+    10,
+    7
+   ]
+  }
+ ],
+ "districts": [
+  {
+   "name": "the square (built)",
+   "centre_px": [
+    6296,
+    3536
+   ],
+   "declared": "the zone as built: the square, the well, the bakery, the herbalist, the smithy, the library",
+   "town": "Crossroads",
+   "id": "crossroads-d-the-square-built",
+   "buildings": [
+    "crossroads-b001",
+    "crossroads-b002",
+    "crossroads-b003",
+    "crossroads-b004",
+    "crossroads-b005",
+    "crossroads-b006",
+    "crossroads-b007"
+   ],
+   "mix": {
+    "cottage": 2,
+    "public": 1,
+    "house": 1,
+    "shop": 2,
+    "workshop": 1
+   },
+   "function": "market and civic with homes"
+  },
+  {
+   "name": "Mill End",
+   "centre_px": [
+    6330,
+    3990
+   ],
+   "declared": "south along the Sleepwater: the mill, the granary, millers' and carters' cottages",
+   "town": "Crossroads",
+   "id": "crossroads-d-mill-end",
+   "buildings": [
+    "crossroads-b008",
+    "crossroads-b009",
+    "crossroads-b010",
+    "crossroads-b011",
+    "crossroads-b012",
+    "crossroads-b013",
+    "crossroads-b014",
+    "crossroads-b015",
+    "crossroads-b016",
+    "crossroads-b017",
+    "crossroads-b018",
+    "crossroads-b019",
+    "crossroads-b020",
+    "crossroads-b021",
+    "crossroads-b022",
+    "crossroads-b023"
+   ],
+   "mix": {
+    "townhouse": 2,
+    "cottage": 9,
+    "house": 4,
+    "shop": 1
+   },
+   "function": "homes"
+  },
+  {
+   "name": "Halt Road",
+   "centre_px": [
+    5930,
+    3900
+   ],
+   "declared": "south-west down the lane to the halt: cottages with long gardens, the halt and its goods shed",
+   "town": "Crossroads",
+   "id": "crossroads-d-halt-road",
+   "buildings": [
+    "crossroads-b024",
+    "crossroads-b025",
+    "crossroads-b026",
+    "crossroads-b027",
+    "crossroads-b028",
+    "crossroads-b029"
+   ],
+   "mix": {
+    "cottage": 4,
+    "house": 2
+   },
+   "function": "homes"
+  },
+  {
+   "name": "Eastgate",
+   "centre_px": [
+    6740,
+    3560
+   ],
+   "declared": "east where the Foothill Road and the Lull Road leave: the drovers' market, the inn, the farrier",
+   "town": "Crossroads",
+   "id": "crossroads-d-eastgate",
+   "buildings": [
+    "crossroads-b030",
+    "crossroads-b031",
+    "crossroads-b032",
+    "crossroads-b033",
+    "crossroads-b034",
+    "crossroads-b035",
+    "crossroads-b036",
+    "crossroads-b037"
+   ],
+   "mix": {
+    "inn": 2,
+    "house": 2,
+    "cottage": 2,
+    "shop": 2
+   },
+   "function": "market and civic with homes"
+  },
+  {
+   "name": "West Lane",
+   "centre_px": [
+    5900,
+    3600
+   ],
+   "declared": "a short row on the woodland's skirt, foresters' and hurdle-makers' cottages",
+   "town": "Crossroads",
+   "id": "crossroads-d-west-lane",
+   "buildings": [
+    "crossroads-b038",
+    "crossroads-b039",
+    "crossroads-b040"
+   ],
+   "mix": {
+    "cottage": 3
+   },
+   "function": "homes"
+  },
+  {
+   "id": "crossroads-d-the-halt-farms",
+   "name": "the halt farms",
+   "function": "edge: farms and gardens",
+   "declared": "grain, hay and apples for the market",
+   "box_px": [
+    5700,
+    3950,
+    6150,
+    4350
+   ],
+   "buildings": [],
+   "town": "Crossroads"
+  },
+  {
+   "id": "crossroads-d-the-mill-farms",
+   "name": "the mill farms",
+   "function": "edge: farms and gardens",
+   "declared": "wheat for the mill, orchards on the river terrace",
+   "box_px": [
+    6450,
+    3900,
+    6950,
+    4300
+   ],
+   "buildings": [],
+   "town": "Crossroads"
+  }
+ ],
+ "gathering_places": [
+  {
+   "name": "the square",
+   "xy_px": [
+    6296,
+    3536
+   ]
+  },
+  {
+   "name": "the drovers' market",
+   "xy_px": [
+    6710,
+    3530
+   ]
+  },
+  {
+   "name": "the mill green",
+   "xy_px": [
+    6360,
+    3900
+   ]
+  },
+  {
+   "name": "the halt yard",
+   "xy_px": [
+    5880,
+    4075
+   ]
+  }
+ ],
+ "size_table_px": {
+  "cottage": [
+   [
+    56,
+    80
+   ],
+   [
+    40,
+    48
+   ]
+  ],
+  "house": [
+   [
+    80,
+    104
+   ],
+   [
+    48,
+    64
+   ]
+  ],
+  "inn": [
+   [
+    112,
+    144
+   ],
+   [
+    64,
+    80
+   ]
+  ],
+  "row_house": [
+   [
+    24,
+    192
+   ],
+   [
+    24,
+    56
+   ]
+  ],
+  "shop": [
+   [
+    64,
+    88
+   ],
+   [
+    48,
+    56
+   ]
+  ]
+ },
+ "fronts": 42,
+ "landmarks": [],
+ "counting_note": "Matt's rule (28 Oct): buildings_counted counts a row of 3 to 5 joined houses as 1 (a longer row 1 for each 5), a larger house as 1, a small or medium free-standing house as 1 (each building counts_as); the big structures (keeps, temples, pagodas, towers, depots, stations, warehouses, halls) are landmarks, listed apart with their reason; fronts counts each front. The target is a guide: a little outside is a warning, beyond 25 % a fail",
+ "buildings": [
+  {
+   "id": "crossroads-b001",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    782,
+    409,
+    10,
+    5
+   ],
+   "rect_px": [
+    6256,
+    3272,
+    80,
+    40
+   ],
+   "faces": "crossroads-s31",
+   "door_cells": [
+    787,
+    414
+   ],
+   "purpose": "a cottage",
+   "occupants": "a farmhand household",
+   "district": "crossroads-d-the-square-built",
+   "counted": true,
+   "from_zone_plan": true,
+   "counts_as": 1
+  },
+  {
+   "id": "crossroads-b002",
+   "type": "public",
+   "form": "public",
+   "footprint_cells": [
+    772,
+    426,
+    12,
+    5
+   ],
+   "rect_px": [
+    6176,
+    3408,
+    96,
+    40
+   ],
+   "faces": "crossroads-q01",
+   "door_cells": [
+    778,
+    431
+   ],
+   "purpose": "the library",
+   "occupants": "staff by day",
+   "district": "crossroads-d-the-square-built",
+   "counted": true,
+   "from_zone_plan": true,
+   "counts_as": 1
+  },
+  {
+   "id": "crossroads-b003",
+   "type": "house",
+   "form": "house",
+   "footprint_cells": [
+    790,
+    426,
+    12,
+    5
+   ],
+   "rect_px": [
+    6320,
+    3408,
+    96,
+    40
+   ],
+   "faces": "crossroads-q01",
+   "door_cells": [
+    799,
+    431
+   ],
+   "purpose": "a family house",
+   "occupants": "a miller's household",
+   "district": "crossroads-d-the-square-built",
+   "counted": true,
+   "from_zone_plan": true,
+   "counts_as": 1
+  },
+  {
+   "id": "crossroads-b004",
+   "type": "shop",
+   "form": "shop",
+   "footprint_cells": [
+    761,
+    436,
+    9,
+    6
+   ],
+   "rect_px": [
+    6088,
+    3488,
+    72,
+    48
+   ],
+   "faces": "crossroads-s01",
+   "door_cells": [
+    768,
+    442
+   ],
+   "purpose": "the bakery",
+   "occupants": "the shopkeeper, living above",
+   "district": "crossroads-d-the-square-built",
+   "counted": true,
+   "from_zone_plan": true,
+   "counts_as": 1
+  },
+  {
+   "id": "crossroads-b005",
+   "type": "shop",
+   "form": "shop",
+   "footprint_cells": [
+    761,
+    447,
+    9,
+    6
+   ],
+   "rect_px": [
+    6088,
+    3576,
+    72,
+    48
+   ],
+   "faces": "crossroads-q01",
+   "door_cells": [
+    768,
+    453
+   ],
+   "purpose": "the herbalist",
+   "occupants": "the shopkeeper, living above",
+   "district": "crossroads-d-the-square-built",
+   "counted": true,
+   "from_zone_plan": true,
+   "counts_as": 1
+  },
+  {
+   "id": "crossroads-b006",
+   "type": "workshop",
+   "form": "workshop",
+   "footprint_cells": [
+    804,
+    434,
+    11,
+    7
+   ],
+   "rect_px": [
+    6432,
+    3472,
+    88,
+    56
+   ],
+   "faces": "crossroads-s02",
+   "door_cells": [
+    808,
+    441
+   ],
+   "purpose": "the smithy",
+   "occupants": "the master and apprentices",
+   "district": "crossroads-d-the-square-built",
+   "counted": true,
+   "from_zone_plan": true,
+   "counts_as": 1
+  },
+  {
+   "id": "crossroads-b007",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    804,
+    452,
+    9,
+    6
+   ],
+   "rect_px": [
+    6432,
+    3616,
+    72,
+    48
+   ],
+   "faces": "crossroads-q01",
+   "door_cells": [
+    806,
+    458
+   ],
+   "purpose": "a cottage",
+   "occupants": "a carter's household",
+   "district": "crossroads-d-the-square-built",
+   "counted": true,
+   "from_zone_plan": true,
+   "counts_as": 1
+  },
+  {
+   "id": "crossroads-b008",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    789,
+    492,
+    10,
+    3
+   ],
+   "rect_px": [
+    6312,
+    3936,
+    80,
+    24
+   ],
+   "faces": "crossroads-s07",
+   "door_cells": [
+    794,
+    495
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a shepherd's household",
+   "district": "crossroads-d-mill-end",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 6,
+     "storeys": 2,
+     "roof": "tile"
+    },
+    {
+     "w_cells": 4,
+     "storeys": 2,
+     "roof": "thatch"
+    }
+   ],
+   "fronts": 2,
+   "counts_as": 1
+  },
+  {
+   "id": "crossroads-b009",
+   "type": "townhouse",
+   "form": "row_house",
+   "footprint_cells": [
+    803,
+    489,
+    14,
+    6
+   ],
+   "rect_px": [
+    6424,
+    3912,
+    112,
+    48
+   ],
+   "faces": "crossroads-s07",
+   "door_cells": [
+    810,
+    495
+   ],
+   "purpose": "a terraced townhouse",
+   "occupants": "a weaver's household",
+   "district": "crossroads-d-mill-end",
+   "counted": true,
+   "bays": [
+    {
+     "w_cells": 8,
+     "storeys": 1,
+     "roof": "thatch"
+    },
+    {
+     "w_cells": 6,
+     "storeys": 1,
+     "roof": "tile"
+    }
+   ],
+   "fronts": 2,
+   "counts_as": 1
+  },
+  {
+   "id": "crossroads-b010",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    776,
+    469,
+    6,
+    9
+   ],
+   "rect_px": [
+    6208,
+    3752,
+    48,
+    72
+   ],
+   "faces": "crossroads-q02",
+   "door_cells": [
+    775,
+    473
+   ],
+   "purpose": "a cottage",
+   "occupants": "a baker's household",
+   "district": "crossroads-d-mill-end",
+   "counted": true,
+   "plot_cells": [
+    774,
+    469,
+    2,
+    9
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "crossroads-b011",
+   "type": "house",
+   "form": "house",
+   "footprint_cells": [
+    766,
+    477,
+    7,
+    11
+   ],
+   "rect_px": [
+    6128,
+    3816,
+    56,
+    88
+   ],
+   "faces": "crossroads-q02",
+   "door_cells": [
+    769,
+    476
+   ],
+   "purpose": "a family house",
+   "occupants": "a drover's household",
+   "district": "crossroads-d-mill-end",
+   "counted": true,
+   "plot_cells": [
+    764,
+    477,
+    2,
+    11
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "crossroads-b012",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    767,
+    497,
+    6,
+    8
+   ],
+   "rect_px": [
+    6136,
+    3976,
+    48,
+    64
+   ],
+   "faces": "crossroads-c05",
+   "door_cells": [
+    773,
+    503
+   ],
+   "purpose": "a cottage",
+   "occupants": "a hurdle-maker's household",
+   "district": "crossroads-d-mill-end",
+   "counted": true,
+   "plot_cells": [
+    765,
+    497,
+    2,
+    8
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "crossroads-b013",
+   "type": "shop",
+   "form": "shop",
+   "footprint_cells": [
+    760,
+    505,
+    6,
+    11
+   ],
+   "rect_px": [
+    6080,
+    4040,
+    48,
+    88
+   ],
+   "faces": "crossroads-c10",
+   "door_cells": [
+    766,
+    510
+   ],
+   "purpose": "the grocer",
+   "occupants": "the shopkeeper, living above",
+   "district": "crossroads-d-mill-end",
+   "counted": true,
+   "plot_cells": [
+    758,
+    505,
+    2,
+    11
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "crossroads-b014",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    772,
+    514,
+    5,
+    9
+   ],
+   "rect_px": [
+    6176,
+    4112,
+    40,
+    72
+   ],
+   "faces": "crossroads-s12",
+   "door_cells": [
+    777,
+    514
+   ],
+   "purpose": "a cottage",
+   "occupants": "a retired household",
+   "district": "crossroads-d-mill-end",
+   "counted": true,
+   "plot_cells": [
+    770,
+    514,
+    2,
+    9
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "crossroads-b015",
+   "type": "house",
+   "form": "house",
+   "footprint_cells": [
+    763,
+    523,
+    8,
+    12
+   ],
+   "rect_px": [
+    6104,
+    4184,
+    64,
+    96
+   ],
+   "faces": "crossroads-c08",
+   "door_cells": [
+    771,
+    523
+   ],
+   "purpose": "a family house",
+   "occupants": "a farmhand household",
+   "district": "crossroads-d-mill-end",
+   "counted": true,
+   "plot_cells": [
+    761,
+    523,
+    2,
+    12
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "crossroads-b016",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    790,
+    499,
+    6,
+    7
+   ],
+   "rect_px": [
+    6320,
+    3992,
+    48,
+    56
+   ],
+   "faces": "crossroads-s07",
+   "door_cells": [
+    793,
+    498
+   ],
+   "purpose": "a cottage",
+   "occupants": "a miller's household",
+   "district": "crossroads-d-mill-end",
+   "counted": true,
+   "plot_cells": [
+    796,
+    499,
+    2,
+    7
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "crossroads-b017",
+   "type": "house",
+   "form": "house",
+   "footprint_cells": [
+    792,
+    514,
+    7,
+    11
+   ],
+   "rect_px": [
+    6336,
+    4112,
+    56,
+    88
+   ],
+   "faces": "crossroads-s08",
+   "door_cells": [
+    795,
+    513
+   ],
+   "purpose": "a family house",
+   "occupants": "a carter's household",
+   "district": "crossroads-d-mill-end",
+   "counted": true,
+   "plot_cells": [
+    799,
+    514,
+    2,
+    11
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "crossroads-b018",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    796,
+    529,
+    5,
+    8
+   ],
+   "rect_px": [
+    6368,
+    4232,
+    40,
+    64
+   ],
+   "faces": "crossroads-c09",
+   "door_cells": [
+    799,
+    528
+   ],
+   "purpose": "a cottage",
+   "occupants": "a shepherd's household",
+   "district": "crossroads-d-mill-end",
+   "counted": true,
+   "plot_cells": [
+    801,
+    529,
+    2,
+    8
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "crossroads-b019",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    798,
+    500,
+    8,
+    5
+   ],
+   "rect_px": [
+    6384,
+    4000,
+    64,
+    40
+   ],
+   "faces": "crossroads-s14",
+   "door_cells": [
+    802,
+    499
+   ],
+   "purpose": "a cottage",
+   "occupants": "a weaver's household",
+   "district": "crossroads-d-mill-end",
+   "counted": true,
+   "plot_cells": [
+    798,
+    505,
+    8,
+    5
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "crossroads-b020",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    804,
+    482,
+    8,
+    6
+   ],
+   "rect_px": [
+    6432,
+    3856,
+    64,
+    48
+   ],
+   "faces": "crossroads-s14",
+   "door_cells": [
+    803,
+    485
+   ],
+   "purpose": "a cottage",
+   "occupants": "a baker's household",
+   "district": "crossroads-d-mill-end",
+   "counted": true,
+   "plot_cells": [
+    804,
+    477,
+    8,
+    5
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "crossroads-b021",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    801,
+    519,
+    8,
+    5
+   ],
+   "rect_px": [
+    6408,
+    4152,
+    64,
+    40
+   ],
+   "faces": "crossroads-s08",
+   "door_cells": [
+    807,
+    518
+   ],
+   "purpose": "a cottage",
+   "occupants": "a drover's household",
+   "district": "crossroads-d-mill-end",
+   "counted": true,
+   "plot_cells": [
+    801,
+    524,
+    8,
+    5
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "crossroads-b022",
+   "type": "house",
+   "form": "house",
+   "footprint_cells": [
+    806,
+    525,
+    11,
+    6
+   ],
+   "rect_px": [
+    6448,
+    4200,
+    88,
+    48
+   ],
+   "faces": "crossroads-c06",
+   "door_cells": [
+    809,
+    524
+   ],
+   "purpose": "a family house",
+   "occupants": "a hurdle-maker's household",
+   "district": "crossroads-d-mill-end",
+   "counted": true,
+   "plot_cells": [
+    806,
+    531,
+    11,
+    5
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "crossroads-b023",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    807,
+    501,
+    9,
+    5
+   ],
+   "rect_px": [
+    6456,
+    4008,
+    72,
+    40
+   ],
+   "faces": "crossroads-s15",
+   "door_cells": [
+    813,
+    506
+   ],
+   "purpose": "a cottage",
+   "occupants": "a retired household",
+   "district": "crossroads-d-mill-end",
+   "counted": true,
+   "plot_cells": [
+    807,
+    500,
+    9,
+    1
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "crossroads-b024",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    729,
+    469,
+    5,
+    9
+   ],
+   "rect_px": [
+    5832,
+    3752,
+    40,
+    72
+   ],
+   "faces": "crossroads-c04",
+   "door_cells": [
+    734,
+    477
+   ],
+   "purpose": "a cottage",
+   "occupants": "a farmhand household",
+   "district": "crossroads-d-halt-road",
+   "counted": true,
+   "plot_cells": [
+    722,
+    469,
+    7,
+    9
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "crossroads-b025",
+   "type": "house",
+   "form": "house",
+   "footprint_cells": [
+    726,
+    479,
+    7,
+    12
+   ],
+   "rect_px": [
+    5808,
+    3832,
+    56,
+    96
+   ],
+   "faces": "crossroads-a6",
+   "door_cells": [
+    733,
+    490
+   ],
+   "purpose": "a family house",
+   "occupants": "a miller's household",
+   "district": "crossroads-d-halt-road",
+   "counted": true,
+   "plot_cells": [
+    719,
+    479,
+    7,
+    12
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "crossroads-b026",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    724,
+    494,
+    5,
+    7
+   ],
+   "rect_px": [
+    5792,
+    3952,
+    40,
+    56
+   ],
+   "faces": "crossroads-a6",
+   "door_cells": [
+    729,
+    499
+   ],
+   "purpose": "a cottage",
+   "occupants": "a carter's household",
+   "district": "crossroads-d-halt-road",
+   "counted": true,
+   "plot_cells": [
+    717,
+    494,
+    7,
+    7
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "crossroads-b027",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    754,
+    478,
+    5,
+    8
+   ],
+   "rect_px": [
+    6032,
+    3824,
+    40,
+    64
+   ],
+   "faces": "crossroads-c02",
+   "door_cells": [
+    754,
+    477
+   ],
+   "purpose": "a cottage",
+   "occupants": "a shepherd's household",
+   "district": "crossroads-d-halt-road",
+   "counted": true,
+   "plot_cells": [
+    759,
+    478,
+    7,
+    8
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "crossroads-b028",
+   "type": "house",
+   "form": "house",
+   "footprint_cells": [
+    741,
+    484,
+    7,
+    12
+   ],
+   "rect_px": [
+    5928,
+    3872,
+    56,
+    96
+   ],
+   "faces": "crossroads-a6",
+   "door_cells": [
+    740,
+    484
+   ],
+   "purpose": "a family house",
+   "occupants": "a weaver's household",
+   "district": "crossroads-d-halt-road",
+   "counted": true,
+   "plot_cells": [
+    748,
+    484,
+    7,
+    12
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "crossroads-b029",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    737,
+    497,
+    6,
+    9
+   ],
+   "rect_px": [
+    5896,
+    3976,
+    48,
+    72
+   ],
+   "faces": "crossroads-q04",
+   "door_cells": [
+    740,
+    506
+   ],
+   "purpose": "a cottage",
+   "occupants": "a baker's household",
+   "district": "crossroads-d-halt-road",
+   "counted": true,
+   "plot_cells": [
+    743,
+    497,
+    7,
+    9
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "crossroads-b030",
+   "type": "inn",
+   "form": "inn",
+   "footprint_cells": [
+    850,
+    423,
+    9,
+    16
+   ],
+   "rect_px": [
+    6800,
+    3384,
+    72,
+    128
+   ],
+   "faces": "crossroads-s13",
+   "door_cells": [
+    850,
+    422
+   ],
+   "purpose": "the Crossed Keys inn",
+   "occupants": "the innkeeper, staff and guests",
+   "district": "crossroads-d-eastgate",
+   "counted": true,
+   "plot_cells": [
+    859,
+    423,
+    5,
+    16
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "crossroads-b031",
+   "type": "inn",
+   "form": "inn",
+   "footprint_cells": [
+    818,
+    416,
+    16,
+    9
+   ],
+   "rect_px": [
+    6544,
+    3328,
+    128,
+    72
+   ],
+   "faces": "crossroads-s10",
+   "door_cells": [
+    829,
+    425
+   ],
+   "purpose": "the Crossed Keys inn",
+   "occupants": "the innkeeper, staff and guests",
+   "district": "crossroads-d-eastgate",
+   "counted": true,
+   "plot_cells": [
+    818,
+    411,
+    16,
+    5
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "crossroads-b032",
+   "type": "house",
+   "form": "house",
+   "footprint_cells": [
+    836,
+    411,
+    6,
+    11
+   ],
+   "rect_px": [
+    6688,
+    3288,
+    48,
+    88
+   ],
+   "faces": "crossroads-s13",
+   "door_cells": [
+    839,
+    422
+   ],
+   "purpose": "a family house",
+   "occupants": "a drover's household",
+   "district": "crossroads-d-eastgate",
+   "counted": true,
+   "plot_cells": [
+    831,
+    411,
+    5,
+    11
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "crossroads-b033",
+   "type": "house",
+   "form": "house",
+   "footprint_cells": [
+    819,
+    471,
+    12,
+    7
+   ],
+   "rect_px": [
+    6552,
+    3768,
+    96,
+    56
+   ],
+   "faces": "crossroads-c01",
+   "door_cells": [
+    831,
+    471
+   ],
+   "purpose": "a family house",
+   "occupants": "a hurdle-maker's household",
+   "district": "crossroads-d-eastgate",
+   "counted": true,
+   "plot_cells": [
+    819,
+    478,
+    12,
+    5
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "crossroads-b034",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    838,
+    473,
+    9,
+    6
+   ],
+   "rect_px": [
+    6704,
+    3784,
+    72,
+    48
+   ],
+   "faces": "crossroads-a2",
+   "door_cells": [
+    844,
+    472
+   ],
+   "purpose": "a cottage",
+   "occupants": "a retired household",
+   "district": "crossroads-d-eastgate",
+   "counted": true,
+   "plot_cells": [
+    838,
+    479,
+    9,
+    5
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "crossroads-b035",
+   "type": "shop",
+   "form": "shop",
+   "footprint_cells": [
+    843,
+    482,
+    8,
+    7
+   ],
+   "rect_px": [
+    6744,
+    3856,
+    64,
+    56
+   ],
+   "faces": "crossroads-c07",
+   "door_cells": [
+    850,
+    481
+   ],
+   "purpose": "the saddler",
+   "occupants": "the shopkeeper, living above",
+   "district": "crossroads-d-eastgate",
+   "counted": true,
+   "plot_cells": [
+    843,
+    489,
+    8,
+    5
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "crossroads-b036",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    860,
+    482,
+    10,
+    6
+   ],
+   "rect_px": [
+    6880,
+    3856,
+    80,
+    48
+   ],
+   "faces": "crossroads-c03",
+   "door_cells": [
+    860,
+    481
+   ],
+   "purpose": "a cottage",
+   "occupants": "a farmhand household",
+   "district": "crossroads-d-eastgate",
+   "counted": true,
+   "plot_cells": [
+    860,
+    488,
+    10,
+    5
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "crossroads-b037",
+   "type": "shop",
+   "form": "shop",
+   "footprint_cells": [
+    816,
+    436,
+    6,
+    8
+   ],
+   "rect_px": [
+    6528,
+    3488,
+    48,
+    64
+   ],
+   "faces": "crossroads-s02",
+   "door_cells": [
+    819,
+    444
+   ],
+   "purpose": "the draper",
+   "occupants": "the shopkeeper, living above",
+   "district": "crossroads-d-eastgate",
+   "counted": true,
+   "plot_cells": [
+    811,
+    436,
+    5,
+    8
+   ],
+   "plot": "garden",
+   "counts_as": 1,
+   "company_foothold": "a counting room above the bakery"
+  },
+  {
+   "id": "crossroads-b038",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    739,
+    436,
+    7,
+    6
+   ],
+   "rect_px": [
+    5912,
+    3488,
+    56,
+    48
+   ],
+   "faces": "crossroads-s09",
+   "door_cells": [
+    742,
+    442
+   ],
+   "purpose": "a cottage",
+   "occupants": "a miller's household",
+   "district": "crossroads-d-west-lane",
+   "counted": true,
+   "plot_cells": [
+    739,
+    430,
+    7,
+    6
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "crossroads-b039",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    730,
+    440,
+    8,
+    6
+   ],
+   "rect_px": [
+    5840,
+    3520,
+    64,
+    48
+   ],
+   "faces": "crossroads-s09",
+   "door_cells": [
+    734,
+    446
+   ],
+   "purpose": "a cottage",
+   "occupants": "a carter's household",
+   "district": "crossroads-d-west-lane",
+   "counted": true,
+   "plot_cells": [
+    730,
+    434,
+    8,
+    6
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "crossroads-b040",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    742,
+    450,
+    7,
+    5
+   ],
+   "rect_px": [
+    5936,
+    3600,
+    56,
+    40
+   ],
+   "faces": "crossroads-s09",
+   "door_cells": [
+    743,
+    449
+   ],
+   "purpose": "a cottage",
+   "occupants": "a shepherd's household",
+   "district": "crossroads-d-west-lane",
+   "counted": true,
+   "plot_cells": [
+    742,
+    455,
+    7,
+    6
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  }
+ ],
+ "lifted": [],
+ "outskirts": [
+  {
+   "kind": "field",
+   "name": "the halt farms",
+   "box": [
+    5700,
+    3950,
+    6150,
+    4350
+   ],
+   "plots": 2,
+   "why": "grain, hay and apples for the market"
+  },
+  {
+   "kind": "field",
+   "name": "the mill farms",
+   "box": [
+    6450,
+    3900,
+    6950,
+    4300
+   ],
+   "plots": 13,
+   "why": "wheat for the mill, orchards on the river terrace"
+  }
+ ],
+ "game_layout": {
+  "arrival": "Valley lane north",
+  "first_view": "down the lane from the stone circle into the square: the well in the middle, the bakery and the library either side, the woodland on the right",
+  "landmarks": [
+   {
+    "name": "the well and the library on the square",
+    "xy": [
+     6296,
+     3536
+    ]
+   },
+   {
+    "name": "the mill on the Sleepwater",
+    "xy": [
+     6200,
+     3905
+    ]
+   },
+   {
+    "name": "the halt and its water tank",
+    "xy": [
+     5835,
+     4040
+    ]
+   },
+   {
+    "name": "the inn at the drovers' market",
+    "xy": [
+     6712,
+     3532
+    ]
+   },
+   {
+    "name": "your hut and the garden gate",
+    "xy": [
+     6316,
+     3290
+    ]
+   },
+   {
+    "name": "the farrier's forge at Eastgate",
+    "xy": [
+     6780,
+     3420
+    ]
+   },
+   {
+    "name": "the weir on Weir Lane",
+    "xy": [
+     6400,
+     4110
+    ]
+   }
+  ],
+  "shortcuts_later": [
+   {
+    "what": "the weir footbridge from Weir Lane to the halt farms",
+    "xy": [
+     6300,
+     4100
+    ],
+    "opens": "when the miller trusts you (act 2)"
+   },
+   {
+    "what": "the woodland stile from West Lane to the circle",
+    "xy": [
+     5900,
+     3560
+    ],
+    "opens": "after the woodland is cleared"
+   }
+  ],
+  "quiet_corners": [
+   {
+    "what": "the mill green, beside the busy mill yard",
+    "xy": [
+     6365,
+     3905
+    ]
+   },
+   {
+    "what": "the library's reading garden off the square",
+    "xy": [
+     6250,
+     3500
+    ]
+   }
+  ],
+  "first_screen_cells": [
+   [
+    865,
+    384,
+    40,
+    22.5
+   ]
+  ],
+  "screens": [
+   3.6,
+   5.7
+  ]
+ },
+ "ground": {
+  "centre": "the square's worn paving",
+  "yards": "gardens",
+  "edges": "fields and orchards on the river terrace",
+  "materials_cells": {
+   "worn paving": 3776,
+   "packed earth": 273
+  }
+ },
+ "terrain": {
+  "box_cells": [
+   709,
+   394,
+   177,
+   159
+  ],
+  "codes": {
+   ".": "land",
+   "g": "green ground (grass, gardens, woods, fields)",
+   "r": "route",
+   "~": "water",
+   "#": "barrier (cliff, wall, lava)",
+   "b": "bridge"
+  },
+  "rows": [
+   "24g14r24g2~7g2~2b3r86g13r",
+   "28g11r24g2~7g~2b4r83g15r",
+   "22g.7g9r25g2~6g~3b3r81g17r",
+   "23g.9g7r25g2~6g~2b3r80g18r",
+   "22g3.10g7r24g2~5g~3b3r78g19r",
+   "22g3.11g7r24g2~5g3b3r76g11r2g5r3g",
+   "21g3.14g6r24g2~4gr3b2r75g9r3g10.",
+   "21g3.14g6r26g~4g3b2r75g8r4g10.",
+   "19g4.15g6r27g2~3g3br74g8r5g10.",
+   "20g2.17g5r28g2~2g4b73g7r7g10.",
+   "19g3.17g6r28g2~gr3b72g7r8g10.",
+   "19g3.15g.g6r29g2~g4b71g7r8g10.",
+   "18g4.4g2.6g3.2g6r30g2~r3b70g7r19g",
+   "18g5.2g12.3g5r31g~br2b~68g11r14g2.",
+   "17g20.3g5r32g~3b~68g15r10g2.",
+   "16g12.7g.4g5r28g5.4b~66g19r7g2.",
+   "16g3.21g5r28g5.r3b~65g22r5g2.",
+   "15g3.22g5r28g5.2r2b2~43g6.14g9r4g11r4g2.",
+   "15g4.21g5r28g6.2rb2~43g6.13g8r7g12r2g2.",
+   "14g3.23g6r12g21.2rb3~42g6.12g8r10g11rg2.",
+   "14g3.23g6r12g21.3r3~42g6.11g8r11g12r2.",
+   "13g3.25g5r12g21.3r4~41g6.9g9r13g11r2.",
+   "12g3.26g5r12g21.3rg3~23g16.2g6.8g9r15g10r2.",
+   "11g4.26g5r13g3.14g3.3rg3~23g16.2g6.7g9r17g11r",
+   "12g2.28g3r14g3.14g3.3r2g3~22g16.2g6.5g10r18g11r",
+   "11g3.45g3.14g3.3r2g3~22g16.2g6.4g10r20g10r",
+   "59g3.14g3.3r2g4~21g16.2g6.3g9r23g9r",
+   "59g3.14g3.3r3g3~21g16.2g6.2g9r25g8r",
+   "59g3.14g2.4r3g3~21g16.9g8r28g7r",
+   "g.57g3.14g2.4r4g3~20g16.6g10r9.21g6r",
+   "4g.54g3.14g2.3r5g3~20g16.2g13rg9.24g3r",
+   "59g3.15g.3r5g3~34g16r2g9.27g",
+   "59g3.g12.3g3r6.3~3.26g20r2g9.27g",
+   "59g3.g12.2g4r6.3~3.24g21r3g9.27g",
+   "59g3.g12.2g4r6.3~3.22g19r7g9.27g",
+   "59g3.g12.2g3rg6.4~2.21g16r11g9.27g",
+   "59g3.g12.g8r4.3~2.19g14r15g9.27g",
+   "59g16.13r2b~g.15g14r2.17g9.27g",
+   "59g15.14r3b28rg4.17g9.27g",
+   "59g13.16r3b24r5g5.g.14g9.27g",
+   "5g.57g8.15r.r3b20r9g7.14g9.27g",
+   "63g6.7r.3r.6rg3~g.2g11.14g8.13g9.27g",
+   "30g7.15g9.2g4.8r2.3r2.6r3~g.2g11.g6.7g17.4g9.27g",
+   "g.28g7.15g9.2g2.8r4.3r3.5rb2~g.2g11.g6.7g17.4g9.27g",
+   "30g7.15g9.2g.8r5.3r4.3r3b~g.2g11.g6.7g17.4g9.27g",
+   "30g7.15g9.2g7r6.4r6.r3b2r.2g11.g6.7g17.40g",
+   "21g8.g7.15g9.2g5r8.4r6.g3b3r2g11.g6.7g17.40g",
+   "21g8.g7.15g9.g5r9.4r5.g2~2b5r12g6.7g17.40g",
+   "8g.12g8.8g24.5r10.3r6.g3~7r11g6.2g3~2g17.40g",
+   "21g8.3g29.4r11.3r6.g3~g7r10g6.g~5g17.40g",
+   "21g8.3g28.5r11.3r5.g4~g2.7r21g15.42g",
+   "2g.18g8.3g28.4r12.3r5.g3~g4.7r19.g14.43g",
+   "32g3.24g5r12.3r5.g3~g6.6r23.3g2.48g",
+   "18g17.17g6.5r13.3r4.g3~g8.7r2.b18.4g2.47g",
+   "g.16g17.17g6.4rg13.3r4.g3~g9.7r2b13.g4.4g2.47g",
+   "11g.6g17.17g5.5rg13.4r2.g4~g5.6g4r2b15g4.5g.47g",
+   "32g8.12g3.6r2g13.4r2.g3~g6.7g2r2b4r12g4.53g",
+   "3g.28g8.12g2.6r.2g14.3r2.g3~g3.g2.7g~b7r11g4.53g",
+   "33g7.12g2.6r.2g14.3r.g3~g3.g#g.2g4.2~.8r10g4.53g",
+   "8g.24g7.13g6r9g4.5g4rg3~5g2#3g3.2~3.8r9g4.53g",
+   "33g7.12g7r8g5.5g4r4~7g2#g2.2~5.9r7g4.53g",
+   "51g8r7g5.6g4r3~8g3#9.g9r6g4.53g",
+   "4g.45g8r7g5.8g2rb3~8g3#9.2g9r5g4.53g",
+   "40g.8g8r7g5.9g2r2b2~8g3#9.3g9r61g",
+   "3g.36g2.5g9r8g4.10g2r2b2~8g~4#12g8r60g",
+   "14g2.24g2.4g9r9g3.11gr3bg~7g2~g3#6g4#3g8r59g",
+   "15g.24g2.3g8r11g2.13g3b~7g2~2g3#6g4#4g8r58g",
+   "40g.2g9r12g.13g5b6g~5g13#4g9r56g",
+   "42g9r27g3brbr3g2~5g14#5g9r55g",
+   "3g.37g9r28g3brbr2g2~7g14#2.3g10r53g",
+   "39g10r28g2~2brbrg2~8g14#3.4g10r51g",
+   "38g9r30g2~b2rbr~11g10#r2#2.6g13r47g",
+   "12g.10~14g9r31g2~br3b12g10#3r.8g16r43g",
+   "4g.g.2g2.11g3~11g9r31g3~br2br12g11#2.3r8g17r40g",
+   "3g.5g4.12g2~8g8r33g3~r2b2r13g9#2.4g3r6g21r35g",
+   "10g3.7g5.g2~7g7r25g6.3g3~rb3r15g4#4.7g3r7g21r32g",
+   "11g2.7g5.3g~5g7r26g6.3g2~3b3r18g4.10g31r30g",
+   "20g5.4g~3g7r27g6.2g3~2b4r17g4.5g21.17r29g",
+   "20g5.5g~2g6r28g6.2g3~2b4r16g4.6g25.15r27g",
+   "7g.12g5.6g~g6r5g2.21g6.2g2~2b4r16g4.7g12.7g9.2g14r23g",
+   "20g5.7gb5r6g2.21g6.g3~b5r15g4.8g12.7g9.3g.26r9g",
+   "7g.12g7.4g2rb2r8g2.21g6.g3~6r14g5.8g12.7g9.3g2.g27r6g",
+   "3g.16g8.3g2r2b9g2.21g6.g2~b5r15g3.10g12.7g9.3g2.3g28r3g",
+   "8g.11g10.4rb~8g2.11g7.3g6.g~2b5r28g12.7g9.3g2.4g29rg",
+   "23g.g5.4r2g~8g5.7g7.9g2~2b4r.47g9.3g2.7g.26r",
+   "17g7.5g5r2g2~7g5.7g7.8g3~b5r60g2.7g2.13g12r",
+   "17g7.5g4r4g2~6g5.7g7.7g3~2b4r14.47g2.7g2.16g9r",
+   "17g7.4g5r5g2~5g5.7g7.7g~g3b4r14.47g2.7g2.18g7r",
+   "17g7.4g4r7g2~4g5.7g7.5g2~2g3b3r15.g8.31g8.9g10.12g4r",
+   "5g.11g7.3g4r9g2~3g5.7g7.5g~2gr3b3r12g3.g8.31g8.9g10.14g2r",
+   "17g7.2g5rg7.2g2~2g5.7g7.8g4b2r13g3.g8.25g3.3g8.9g10.15gr",
+   "17g7.2g5rg7.3g2~g5.7g7.2g2~3gr3b3r14g2.g8.25g3.3g8.9g10.16g",
+   "17g7.g6rg7.4g2~12g7.2g~4gr3b2r15g2.g8.25g2.4g8.9g10.16g",
+   "17g7.g6rg7.5g2~11g7.g~4g2r3b2r15g2.g8.25g2.4g8.9g10.16g",
+   "17g7.g5r2g7.6g2~17g2~4g2r3br16g2.33g3.4g8.35g",
+   "17g7.6r2g7.8g2~15g~5g2r3br16g16.19g3.47g",
+   "17g7.6r2g7.9g2~14g~4gr3.2b~16g16.18g3.48g",
+   "3g.19g6r3g7.10g3~12g~4g.3r2b~16g16.18g3.48g",
+   "3g.19g6r3g7.10g3~12g~3g2.3r2b~4g10.g17.18g3.48g",
+   "5g.17g6r3g7.12g3~10g~3g2.3rb2~4g10.g17.17g5.47g",
+   "15g5.2g7r3g7.8g.6g3~7g~3g2.3r3~4g10.g17.18g.50g",
+   "6r9g5.2g6r4g7.7g3.2g.3g.g5~2g~3g2.3r3~g34.66g",
+   "7r.7g5.g7r15g14.3g.4g~2g2.3rg3~g33.66g",
+   "9r6g5.g6rg6.11g11.2g6.g2~g2.3rg3~g33.66g",
+   "10r5g5.7rg6.19g.g.2g6.2g~g2.3rg3~g33.66g",
+   "11r4g5.6r2g6.24g6.2g2~g.3rg3~4g6.4g19.67g",
+   "3g9r3g5.6r2g6.24g6.3g2~g3rg4~3g6.2g8.10g3.67g",
+   "3g9r8g6r2g6.24g6.3g2~g3rg4~3g6.2g8.g12.67g",
+   "5g7r7g6r3g6.24g6.4g~b3r.g3~3g6.2g8.g12.67g",
+   "3g.2g8r4g6r4g6.24g11.b3r.g3~3g6.2g8.g12.67g",
+   "7g8r3g5r5g6.24g12.b2r.g3~3g6.2g8.g12.67g",
+   "4g.3g7r2g5r6g6.17g6.11g2.2br.g4~2g6.11g12.67g",
+   "3g3.3g12r11.19g6.11g2.r2b.g4~25g6.67g",
+   "2g4.4g11r11.19g6.11g2.2r2b.g3~25g6.67g",
+   "g4.g.4g9r12.19g6.11g2.3r2bg3~25g6.67g",
+   "4.8g8r12.19g6.11g2.3r.b4~25g3.70g",
+   "4.8g8r12.19g19.3r.b4~25g3.70g",
+   "3.10g6rg12.19g19.3r2.b2~2b21.3g3.70g",
+   "2.12g5rg12.g.17g6.11g2.3r2.g2~2b21.3g3.70g",
+   ".14g3r2g16.15g6.11g2.7r~2b21.3g3.70g",
+   "15g3r13g6.14g6.6g7.7r3~3g9.6g3.3g3.70g",
+   "15g3r14g7.12g6.6g5.g.7rb3~2g9.6g9.70g",
+   "15g3r16g6.23g5.g5.3rb3~2g9.6g9.70g",
+   "36g4.23g5.3g3.3r.b2~2g9.6g9.70g",
+   "36g3.24g5.4g2.3r.b2~2g9.8g2.75g",
+   "36g3.24g5.4g2.3r.b2~2g19.75g",
+   "9g.27g.25g5.4g.4r.b2~2g19.75g",
+   "g.12g4r45g5.g5.3r.b3~g19.75g",
+   "12g6r45g11.3r.2b2~g19.75g",
+   "9g9r36g20.3r2.b2~g19.75g",
+   "6g11r37g20.3r2.b2~g9.8g2.75g",
+   "3g11r40g13.5g2.3r.g4~7g2.5g11.69g",
+   "g11r42g10.8g2.3r.g4~7g2.5g11.69g",
+   "9r45g9.9g2.3r2.g3~7g2.5g11.69g",
+   "9r45g9.9g2.3r2.g3~7g2.5g11.69g",
+   "6r48g8.10g2.3r2.g3~4g5.5g11.41g15.13g",
+   "3r51g8.10g2.3r2.g4~3g5.5g11.41g15.13g",
+   "2r52g8.10g2.3r2.g4~3g5.57g15.13g",
+   "r53g8.10g2.3r2.g4~3g5.57g15.13g",
+   "r53g8.10g2.3r.g6~2g5.57g15.13g",
+   "54g8.10g2.3r.g~g4~2g5.57g15.13g",
+   "72g2.3r.g~g4~2g5.57g15.13g",
+   "72g2.3r.g~2g4~g5.57g15.13g",
+   "72g2.3r.g~2g4~63g15.13g",
+   "73g.3rg2~2g4~63g15.13g",
+   "72g2r3.g~3g4~33g8r20g17.13g",
+   "72g5rg~4g4~30g13r17g17.13g",
+   "71g6r~5g4~29g16r15g17.13g",
+   "71g5rb~5g4~29g6r2g9r14g16.14g",
+   "71g5r~7g3~29g4r7g8r12g16.14g",
+   "71g4rb~7g3~29g3r10g8r10g16.14g",
+   "70g5rb8g4~28g3r2g5~5g7r9g16.14g",
+   "70g5rb8g4~28g3r2g5~5g7r9g16.14g",
+   "70g4r2b8g4~28g4r8~4g6r9g16.14g",
+   "70g3r2br8g4~28g4r9~5g5r8g16.14g",
+   "70g2r2br10g3~28g4rg10~4g4r8g16.14g",
+   "70g2rb2r10g3~29g3rg12~2g4r8g16.14g",
+   "70grb4r9g3~29g4r12~2g4r38g",
+   "70gb5r9g3~29g5r11~6r38g"
+  ]
+ },
+ "residents": [],
+ "routines": [],
+ "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only.",
+ "open_uses": [],
+ "theme": {
+  "tech": "the valley halt and the mill: rail and water, no bought shard light",
+  "waystone": {
+   "xy_px": [
+    6396,
+    3608
+   ],
+   "at": "on the square (the built zone)",
+   "table_name": "Crossroads",
+   "status": "plan"
+  },
+  "sightline": {
+   "kind": "viewpoint",
+   "from_px": [
+    6030,
+    3371
+   ],
+   "to_px": [
+    5935,
+    3242
+   ],
+   "toward": "the stone circle (the beam over the valley)",
+   "off_by_deg": 0,
+   "bearing_deg": -126
+  },
+  "crater": {
+   "name": "the Crossroads crater",
+   "xy_px": [
+    6484,
+    3712
+   ],
+   "distance_px": 129,
+   "effect": "the Starfall's shard fell by the mill road: its crater smokes in the park until the shard comes home",
+   "road": "Foothill Road",
+   "road_leaves_at_px": [
+    7082,
+    3167
+   ]
+  },
+  "moss": {
+   "where": "the square (Moss's stall)",
+   "xy_px": [
+    6296,
+    3536
+   ]
+  },
+  "company": {
+   "foothold": "a counting room above the bakery",
+   "building": "crossroads-b037",
+   "xy_px": [
+    6552,
+    3520
+   ]
+  },
+  "theme_line": "the circle keeps the moon's light for everyone; the Company sells it"
+ }
+}

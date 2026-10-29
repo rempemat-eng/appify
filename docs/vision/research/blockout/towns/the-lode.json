@@ -1,0 +1,512 @@
+{
+ "schema": "mygame.town_plan/1",
+ "id": "the-lode",
+ "name": "the Lode",
+ "size": "hamlet",
+ "size_note": "hamlet",
+ "target": [
+  3,
+  6
+ ],
+ "buildings_counted": 4,
+ "grid": {
+  "cell_px": 8,
+  "screen_cells": [
+   40,
+   22.5
+  ],
+  "origin": "world px, top-left of the continent (blockout-v55.json coords)",
+  "street_classes": {
+   "arrival": "the regional route's own width",
+   "main": 6,
+   "side": 4,
+   "lane": 3,
+   "close": 2
+  }
+ },
+ "site": {
+  "reason": "the iron and copper mine: the mine house, the smithy, the miners' bunkhouse",
+  "terrain": "the massif foothills above Dust Gulch",
+  "fit": "",
+  "dry": true,
+  "fortified": false,
+  "authored": "by the layout generator from hand-written streets",
+  "tiers": [
+   7,
+   11
+  ],
+  "levelled_footprints": 2
+ },
+ "footprint_px": [
+  2696,
+  1640,
+  2908,
+  1864
+ ],
+ "fortification": null,
+ "style": null,
+ "features": {},
+ "arrivals": [
+  {
+   "id": "the-lode-arr1",
+   "kind": "path",
+   "route": "Lode Track",
+   "street": "the-lode-a1",
+   "entries_px": [
+    [
+     2648,
+     1983
+    ]
+   ],
+   "route_kind": "path"
+  }
+ ],
+ "streets": [
+  {
+   "id": "the-lode-s01",
+   "name": "the Lode Lane",
+   "class": "lane",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     2780.0,
+     1748.0
+    ],
+    [
+     2844.0,
+     1748.0
+    ],
+    [
+     2844.0,
+     1804.0
+    ],
+    [
+     2908.0,
+     1804.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "the-lode-a1"
+   ]
+  },
+  {
+   "id": "the-lode-a1",
+   "name": "Lode Track",
+   "class": "arrival",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     2648.5,
+     1982.6
+    ],
+    [
+     2627.0,
+     1946.0
+    ],
+    [
+     2729.2,
+     1943.8
+    ],
+    [
+     2773.0,
+     1935.7
+    ],
+    [
+     2775.4,
+     1911.7
+    ],
+    [
+     2718.7,
+     1840.1
+    ],
+    [
+     2730.9,
+     1822.4
+    ],
+    [
+     2750.5,
+     1804.7
+    ],
+    [
+     2762.8,
+     1786.0
+    ],
+    [
+     2772.6,
+     1745.3
+    ],
+    [
+     2797.6,
+     1700.0
+    ]
+   ],
+   "follows_route": "Lode Track",
+   "connects": [
+    "the-lode-s01"
+   ]
+  }
+ ],
+ "squares": [],
+ "districts": [
+  {
+   "name": "the Lode",
+   "centre_px": [
+    2820,
+    1690
+   ],
+   "declared": "the iron and copper mine: the mine house, the smithy, the miners' bunkhouse",
+   "town": "the Lode",
+   "id": "the-lode-d-the-lode",
+   "buildings": [
+    "the-lode-b001",
+    "the-lode-b002",
+    "the-lode-b003",
+    "the-lode-b004"
+   ],
+   "mix": {
+    "cottage": 3,
+    "house": 1
+   },
+   "function": "homes"
+  }
+ ],
+ "gathering_places": [],
+ "size_table_px": {
+  "cottage": [
+   [
+    56,
+    80
+   ],
+   [
+    40,
+    48
+   ]
+  ],
+  "house": [
+   [
+    80,
+    104
+   ],
+   [
+    48,
+    64
+   ]
+  ]
+ },
+ "fronts": 4,
+ "landmarks": [],
+ "counting_note": "Matt's rule (28 Oct): buildings_counted counts a row of 3 to 5 joined houses as 1 (a longer row 1 for each 5), a larger house as 1, a small or medium free-standing house as 1 (each building counts_as); the big structures (keeps, temples, pagodas, towers, depots, stations, warehouses, halls) are landmarks, listed apart with their reason; fronts counts each front. The target is a guide: a little outside is a warning, beyond 25 % a fail",
+ "buildings": [
+  {
+   "id": "the-lode-b001",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    347,
+    222,
+    5,
+    10
+   ],
+   "rect_px": [
+    2776,
+    1776,
+    40,
+    80
+   ],
+   "faces": "the-lode-a1",
+   "door_cells": [
+    346,
+    223
+   ],
+   "purpose": "a cottage",
+   "occupants": "a farming household",
+   "district": "the-lode-d-the-lode",
+   "counted": true,
+   "plot_cells": [
+    352,
+    222,
+    3,
+    10
+   ],
+   "plot": "yard",
+   "counts_as": 1
+  },
+  {
+   "id": "the-lode-b002",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    337,
+    217,
+    5,
+    7
+   ],
+   "rect_px": [
+    2696,
+    1736,
+    40,
+    56
+   ],
+   "faces": "the-lode-a1",
+   "door_cells": [
+    342,
+    223
+   ],
+   "purpose": "a cottage",
+   "occupants": "a fishing household",
+   "district": "the-lode-d-the-lode",
+   "counted": true,
+   "plot_cells": [
+    334,
+    217,
+    3,
+    7
+   ],
+   "plot": "yard",
+   "counts_as": 1
+  },
+  {
+   "id": "the-lode-b003",
+   "type": "house",
+   "form": "house",
+   "footprint_cells": [
+    339,
+    205,
+    6,
+    11
+   ],
+   "rect_px": [
+    2712,
+    1640,
+    48,
+    88
+   ],
+   "faces": "the-lode-a1",
+   "door_cells": [
+    345,
+    215
+   ],
+   "purpose": "a family house",
+   "occupants": "a carting household",
+   "district": "the-lode-d-the-lode",
+   "counted": true,
+   "plot_cells": [
+    336,
+    205,
+    3,
+    11
+   ],
+   "plot": "yard",
+   "counts_as": 1
+  },
+  {
+   "id": "the-lode-b004",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    356,
+    228,
+    7,
+    5
+   ],
+   "rect_px": [
+    2848,
+    1824,
+    56,
+    40
+   ],
+   "faces": "the-lode-s01",
+   "door_cells": [
+    359,
+    227
+   ],
+   "purpose": "a cottage",
+   "occupants": "a craft household",
+   "district": "the-lode-d-the-lode",
+   "counted": true,
+   "plot_cells": [
+    356,
+    233,
+    7,
+    3
+   ],
+   "plot": "yard",
+   "counts_as": 1
+  }
+ ],
+ "lifted": [],
+ "outskirts": [],
+ "game_layout": {
+  "arrival": "Lode Track",
+  "first_view": "the Lode from the Lode Track: a family house, the Lode's largest building ahead",
+  "landmarks": [
+   {
+    "name": "a family house, the Lode's largest building",
+    "xy": [
+     2736,
+     1684
+    ]
+   }
+  ],
+  "shortcuts_later": [],
+  "quiet_corners": [],
+  "first_screen_cells": [
+   [
+    311,
+    236,
+    40,
+    22.5
+   ]
+  ],
+  "screens": [
+   0.7,
+   1.2
+  ]
+ },
+ "ground": {
+  "centre": "worn earth",
+  "yards": "gardens",
+  "edges": "fields",
+  "materials_cells": {
+   "packed sand": 208,
+   "adobe yards": 104
+  }
+ },
+ "terrain": {
+  "box_cells": [
+   322,
+   190,
+   57,
+   59
+  ],
+  "codes": {
+   ".": "land",
+   "g": "green ground (grass, gardens, woods, fields)",
+   "r": "route",
+   "~": "water",
+   "#": "barrier (cliff, wall, lava)",
+   "b": "bridge"
+  },
+  "rows": [
+   "10g47.",
+   "10g47.",
+   "9g48.",
+   "7g50.",
+   "4g53.",
+   "3g54.",
+   "3g54.",
+   "3g54.",
+   "3g54.",
+   "3g54.",
+   "3g54.",
+   "3g54.",
+   "3g54.",
+   "3g54.",
+   "3g54.",
+   "3g54.",
+   "3g54.",
+   "3g54.",
+   "3g54.",
+   "3g54.",
+   "3g54.",
+   "3g22.5r27.",
+   "3g22.5r27.",
+   "3g21.6r27.",
+   "24.5r28.",
+   "g22.6r28.",
+   "23.5r29.",
+   "23.5r29.",
+   "22.5r30.",
+   "22.5r30.",
+   "22.5r30.",
+   "22.3r32.",
+   "21.4r32.",
+   "21.4r32.",
+   "3g17.5r32.",
+   "g18.5r33.",
+   "17.7r33.",
+   "17.6r34.",
+   "g15.6r35.",
+   "3g13.5r36.",
+   "g15.5r36.",
+   "g15.6r35.",
+   "g16.5r35.",
+   "17.6r34.",
+   "19.5r33.",
+   "20.5r32.",
+   "20.5r32.",
+   "21.6r30.",
+   "22.5r30.",
+   "23.4r30.",
+   "23.4r30.",
+   "17.10r30.",
+   "5.22r30.",
+   "5.20r32.",
+   "5.15r37.",
+   "5.7r45.",
+   "5.7r45.",
+   "5.8r22.2g20.",
+   "6.8r18.6g.g17."
+  ]
+ },
+ "residents": [],
+ "routines": [],
+ "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only.",
+ "open_uses": [],
+ "theme": {
+  "waystone": {
+   "xy_px": [
+    2844,
+    1804
+   ],
+   "at": "beside the Lode Lane",
+   "table_name": "the Lode",
+   "status": "proposed"
+  },
+  "sightline": {
+   "kind": "street",
+   "street": "the-lode-s01",
+   "name": "the Lode Lane",
+   "from_px": [
+    2780,
+    1748
+   ],
+   "to_px": [
+    2844,
+    1748
+   ],
+   "toward": "the stone circle (the beam over the valley)",
+   "off_by_deg": 23,
+   "bearing_deg": 23
+  },
+  "crater": {
+   "name": "the Glass field",
+   "xy_px": [
+    1794,
+    2760
+   ],
+   "distance_px": 1425,
+   "effect": "the Glass field lies 1400 px away; its scorch points to the valley",
+   "road": "Lode Track",
+   "road_leaves_at_px": [
+    2648,
+    1983
+   ]
+  },
+  "moss": {
+   "where": "the market",
+   "xy_px": [
+    2844,
+    1804
+   ]
+  },
+  "company": {
+   "foothold": "a buyer who calls on market days",
+   "building": null,
+   "xy_px": null
+  },
+  "tech": "older-made: off the rail",
+  "theme_line": "the circle keeps the moon's light for everyone; the Company sells it"
+ }
+}

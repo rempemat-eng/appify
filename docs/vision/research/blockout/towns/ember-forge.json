@@ -1,0 +1,435 @@
+{
+ "schema": "mygame.town_plan/1",
+ "id": "ember-forge",
+ "name": "Ember forge",
+ "size": "facility",
+ "size_note": "facility",
+ "target": [
+  3,
+  5
+ ],
+ "buildings_counted": 3,
+ "grid": {
+  "cell_px": 8,
+  "screen_cells": [
+   40,
+   22.5
+  ],
+  "origin": "world px, top-left of the continent (blockout-v55.json coords)",
+  "street_classes": {
+   "arrival": "the regional route's own width",
+   "main": 6,
+   "side": 4,
+   "lane": 3,
+   "close": 2
+  }
+ },
+ "site": {
+  "reason": "the forge at the caldera lip, using the crater's heat: the forge hall, the ore store",
+  "terrain": "the caldera's lip above Hearthold",
+  "fit": "",
+  "dry": false,
+  "fortified": false,
+  "authored": "by the layout generator from hand-written streets",
+  "tiers": [
+   13,
+   27
+  ],
+  "levelled_footprints": 3
+ },
+ "footprint_px": [
+  2008,
+  4896,
+  2184,
+  5080
+ ],
+ "fortification": null,
+ "style": null,
+ "features": {},
+ "arrivals": [
+  {
+   "id": "ember-forge-arr1",
+   "kind": "path",
+   "route": "Forge Stair",
+   "street": "ember-forge-a1",
+   "entries_px": [],
+   "route_kind": "path"
+  }
+ ],
+ "streets": [
+  {
+   "id": "ember-forge-a1",
+   "name": "Forge Stair",
+   "class": "arrival",
+   "width_cells": 3,
+   "vertices_px": [
+    [
+     2147.8,
+     5182.4
+    ],
+    [
+     2142.1,
+     5024.9
+    ]
+   ],
+   "follows_route": "Forge Stair",
+   "connects": [
+    "ember-forge-c01"
+   ]
+  },
+  {
+   "id": "ember-forge-c01",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     2064.0,
+     5024.0
+    ],
+    [
+     2128.0,
+     5024.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "ember-forge-a1",
+    "ember-forge-c02"
+   ]
+  },
+  {
+   "id": "ember-forge-c02",
+   "name": null,
+   "class": "close",
+   "width_cells": 2,
+   "vertices_px": [
+    [
+     2096.0,
+     4944.0
+    ],
+    [
+     2088.0,
+     4944.0
+    ],
+    [
+     2088.0,
+     5016.0
+    ]
+   ],
+   "frontage": "detached",
+   "connects": [
+    "ember-forge-c01"
+   ]
+  }
+ ],
+ "squares": [],
+ "districts": [
+  {
+   "name": "Ember forge",
+   "centre_px": [
+    2140,
+    4985
+   ],
+   "declared": "the forge at the caldera lip, using the crater's heat: the forge hall, the ore store",
+   "town": "Ember forge",
+   "id": "ember-forge-d-ember-forge",
+   "buildings": [
+    "ember-forge-b001",
+    "ember-forge-b002",
+    "ember-forge-b003"
+   ],
+   "mix": {
+    "cottage": 2,
+    "house": 1
+   },
+   "function": "homes"
+  }
+ ],
+ "gathering_places": [],
+ "size_table_px": {
+  "cottage": [
+   [
+    56,
+    80
+   ],
+   [
+    40,
+    48
+   ]
+  ],
+  "house": [
+   [
+    80,
+    104
+   ],
+   [
+    48,
+    64
+   ]
+  ]
+ },
+ "fronts": 3,
+ "landmarks": [],
+ "counting_note": "Matt's rule (28 Oct): buildings_counted counts a row of 3 to 5 joined houses as 1 (a longer row 1 for each 5), a larger house as 1, a small or medium free-standing house as 1 (each building counts_as); the big structures (keeps, temples, pagodas, towers, depots, stations, warehouses, halls) are landmarks, listed apart with their reason; fronts counts each front. The target is a guide: a little outside is a warning, beyond 25 % a fail",
+ "buildings": [
+  {
+   "id": "ember-forge-b001",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    251,
+    628,
+    6,
+    7
+   ],
+   "rect_px": [
+    2008,
+    5024,
+    48,
+    56
+   ],
+   "faces": "ember-forge-c01",
+   "door_cells": [
+    257,
+    628
+   ],
+   "purpose": "a cottage",
+   "occupants": "a farming household",
+   "district": "ember-forge-d-ember-forge",
+   "counted": true,
+   "plot_cells": [
+    247,
+    628,
+    4,
+    7
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "ember-forge-b002",
+   "type": "cottage",
+   "form": "cottage",
+   "footprint_cells": [
+    263,
+    619,
+    9,
+    5
+   ],
+   "rect_px": [
+    2104,
+    4952,
+    72,
+    40
+   ],
+   "faces": "ember-forge-a1",
+   "door_cells": [
+    267,
+    624
+   ],
+   "purpose": "a cottage",
+   "occupants": "a fishing household",
+   "district": "ember-forge-d-ember-forge",
+   "counted": true,
+   "plot_cells": [
+    263,
+    624,
+    9,
+    4
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  },
+  {
+   "id": "ember-forge-b003",
+   "type": "house",
+   "form": "house",
+   "footprint_cells": [
+    263,
+    612,
+    10,
+    6
+   ],
+   "rect_px": [
+    2104,
+    4896,
+    80,
+    48
+   ],
+   "faces": "ember-forge-c02",
+   "door_cells": [
+    262,
+    617
+   ],
+   "purpose": "a family house",
+   "occupants": "a carting household",
+   "district": "ember-forge-d-ember-forge",
+   "counted": true,
+   "plot_cells": [
+    263,
+    618,
+    10,
+    4
+   ],
+   "plot": "garden",
+   "counts_as": 1
+  }
+ ],
+ "lifted": [],
+ "outskirts": [],
+ "game_layout": {
+  "arrival": "Forge Stair",
+  "first_view": "Ember forge from the Forge Stair: a family house, Ember forge's largest building ahead",
+  "landmarks": [
+   {
+    "name": "a family house, Ember forge's largest building",
+    "xy": [
+     2144,
+     4920
+    ]
+   }
+  ],
+  "shortcuts_later": [],
+  "quiet_corners": [],
+  "screens": [
+   0.6,
+   1.0
+  ]
+ },
+ "ground": {
+  "centre": "worn earth",
+  "yards": "gardens",
+  "edges": "fields",
+  "materials_cells": {
+   "basalt setts": 329,
+   "ash yards": 214
+  }
+ },
+ "terrain": {
+  "box_cells": [
+   236,
+   597,
+   53,
+   54
+  ],
+  "codes": {
+   ".": "land",
+   "g": "green ground (grass, gardens, woods, fields)",
+   "r": "route",
+   "~": "water",
+   "#": "barrier (cliff, wall, lava)",
+   "b": "bridge"
+  },
+  "rows": [
+   "8#45.",
+   "5#48.",
+   "3#50.",
+   "3#50.",
+   "3#50.",
+   "2#51.",
+   "2#g50.",
+   "#3g49.",
+   "#.g50.",
+   "#52.",
+   "#2g50.",
+   ".g51.",
+   ".g51.",
+   "g52.",
+   "g52.",
+   "53.",
+   "53.",
+   "53.",
+   "53.",
+   "53.",
+   "53.",
+   "27.10g16.",
+   "36.g16.",
+   "36.g16.",
+   "36.g16.",
+   "53.",
+   "53.",
+   "35.g17.",
+   "27.3g4r2g17.",
+   "27.2g6rg17.",
+   "29.6rg17.",
+   "11.4g14.6r18.",
+   "11.4g14.6r18.",
+   "11.4g14.6r18.",
+   "11.4g14.6r3#15.",
+   "11.4g14.6r3#15.",
+   "11.4g14.6r18#",
+   "11.4g14.6r18#",
+   "29.6r.2#15.",
+   "29.6r.2#15.",
+   "29.6r.2#15.",
+   "29.6r.2#15.",
+   "29.6r.2#15.",
+   "r28.6r.2#15.",
+   "2r27.6r.2#15.",
+   "3r26.6r.2#15.",
+   "5r24.6r.2#15.",
+   "8r21.6r.2#15.",
+   "8r21.6r.2#15.",
+   "11r18.6r.2#15.",
+   "21r8.6r.2#15.",
+   "25r4.6r.2#15.",
+   "2.25r2.6r.2#15.",
+   "4.25r.4r2.2#15."
+  ]
+ },
+ "residents": [],
+ "routines": [],
+ "x3_notes": "For Codex (X3): fill residents (name, building id as home, workplace building id, role) and routines (resident, time of day, place: a building id, square id or street id). Each building lists its occupants as a role; keep homes and workplaces to the ids here, and walk residents on the streets (ids) only.",
+ "open_uses": [],
+ "theme": {
+  "waystone": {
+   "xy_px": [
+    2092,
+    4980
+   ],
+   "at": "in the town",
+   "table_name": "Ember forge",
+   "status": "proposed"
+  },
+  "sightline": {
+   "kind": "viewpoint",
+   "from_px": [
+    2173,
+    4944
+   ],
+   "to_px": [
+    2314,
+    4868
+   ],
+   "toward": "the stone circle (the beam over the valley)",
+   "off_by_deg": 0,
+   "bearing_deg": -28
+  },
+  "crater": {
+   "name": "the Ember crater",
+   "xy_px": [
+    3550,
+    4991
+   ],
+   "distance_px": 1454,
+   "effect": "the Ember crater lies 1400 px away; its scorch points to the valley",
+   "road": null,
+   "road_leaves_at_px": null
+  },
+  "moss": {
+   "where": "the market",
+   "xy_px": [
+    2092,
+    4980
+   ]
+  },
+  "company": {
+   "foothold": "a buyer who calls on market days",
+   "building": null,
+   "xy_px": null
+  },
+  "tech": "older-made: off the rail",
+  "theme_line": "the circle keeps the moon's light for everyone; the Company sells it"
+ }
+}
