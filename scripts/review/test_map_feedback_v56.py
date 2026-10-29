@@ -123,6 +123,22 @@ class MapFeedbackV56(unittest.TestCase):
             self.assertTrue(any('literal water/barrier' in f for f in out[pid]['failures']))
         self.assertIn('retained_count: 71 != 72',out['neon-harbour']['failures'])
 
+    def test_map_state_reads_only_the_selected_revision_stats(self):
+        T=terrain((8,8));T.update(sea=~T['land'],FRAME=np.zeros((8,8),bool),
+            crater_mask=np.zeros((8,8),bool),craters={},river_px={},delta=[])
+        T['route_px']={'the Northway (closed)':[]}
+        for revision in ('v55','v56'):
+            with self.subTest(revision=revision), patch.multiple(world,REVISION=revision,
+                    PLAN_DIRECTORY='towns-v56' if revision=='v56' else 'towns'), patch.object(
+                    g,'colour',return_value=np.zeros((8,8,3),np.uint8)):
+                marker=[{'id':'retained-farm'}]
+                S={'T':T,'t':np.zeros((8,8),int),'res':{},'town_rec':{},'plans':{},
+                   'stats':{'v53':{'hero':{}},revision:{'farms':marker,'physical_checks':{'fixture':{'pass':False}}}}}
+                out=world.map_state(S)
+                self.assertEqual(out['farms'],marker)
+                self.assertEqual(out['revision'],revision)
+                self.assertEqual(out['physical_checks'],{'fixture':{'pass':False}} if revision=='v56' else None)
+
     def test_v56_plan_writer_preserves_historical_town_files(self):
         T=terrain((8,8));P={'terrain':{'box_cells':[0,0,4,4],'rows':[]}}
         with tempfile.TemporaryDirectory() as tmp:

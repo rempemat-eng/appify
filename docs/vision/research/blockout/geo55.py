@@ -1111,7 +1111,7 @@ def map_state(S):
             'closed_px': T['route_px']['the Northway (closed)'], 'delta': T['delta'], 'real': real,
             'routes': {nm: (kind, feats) for nm, (pts, kind, feats) in g.ROUTES.items()}, 'crater_mask': T['crater_mask'],
             'craters': T['craters'], 'stats_home': S['res'], 'hero': S['stats']['v53']['hero'], 'towns': S['town_rec'],
-            'farms': S['stats']['v55']['farms'], 'closed': CLOSED, 'dims': (NEW_W, NEW_H), 'plans': S['plans'],
+            'farms': S['stats'][REVISION]['farms'], 'closed': CLOSED, 'dims': (NEW_W, NEW_H), 'plans': S['plans'],
             'mat': T.get('mat'), 'materials': __import__('town_plans').MATERIALS,
             'forest': T.get('forest'),
             'revision': REVISION, 'plan_directory': PLAN_DIRECTORY,
