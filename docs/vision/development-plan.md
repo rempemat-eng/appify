@@ -2,6 +2,12 @@
 
 This plan replaces the "Now / Next / Later" lists in [roadmap.md](roadmap.md) as the order of work. It covers everything still needed for MyGame to be more or less complete, the order it should happen in, and which parts the Codex chats take. MyGame Codex · lead keeps it current under the [handover](../codex/handover.md); Codex claims tasks on [#149](https://github.com/rempemat-eng/appify/issues/149) as before.
 
+## Milestone update (29 Oct)
+
+Main `c4c135e4` includes [E3's five reviewed changes](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6484421908) after shared exact-tree local validation and four actual matching hosted checks. Phase 1 remains open: combined editor draft #357 passed its four local gates on tree `941059e2` (280 clean Godot cases, kit checks with advisories, zero lint warnings, 215 review and 46 narrative tests, and art reproduction), while current-main composition, current visual evidence, hosted checks and Matt's approval remain pending. The [handover](../codex/handover.md) records the preserved infrastructure failure and exact coverage; neither milestone admits unapproved foundations into main.
+
+[Y25](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6484410205) extends existing Y12 routing so manifest-bound encoded material data requires composed-material/scene context and stays incomplete; raw PNG results and recipe hashes do not establish rendered quality or output freshness. [Prospective seed proposal #355](https://github.com/rempemat-eng/appify/pull/355) awaits final validation and makes no raw-map regeneration or historical-terrain equivalence claim. [Retained Caliper's #314 correction](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6484410457) is limited to AGENTS/coordination; live claims and allocations stay on the [canonical board](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6475643125). X3 still requires explicit home/work semantics; X2/X4/Y4 still require approved v55 inputs; X5 still requires W1–W3 in main and an approved Crossroads kit. Matt's PR-specific art/map/kit/cast approval remains required.
+
 ## What the process so far taught us
 
 - **Standards before content.** Every region built before the soft grid, the cast contract and the kits existed had to be redrawn. Nothing is placed in the world until its kit piece has passed the gates.

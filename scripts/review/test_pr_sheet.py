@@ -148,6 +148,9 @@ if mode == 'checkout':
                    check=True, capture_output=True)
 if mode == 'dirty_source':
     Path('README.md').write_text('fixture gate changed tracked source\n', encoding='utf-8')
+if mode == 'metadata_tamper':
+    for evidence in (out.parents[1] / 'sources').glob('*.txt'):
+        evidence.write_bytes(b'fixture changed bundled context evidence')
 raise SystemExit(1 if mode in ('fail', 'scene_double', 'blank_finding_text') else 0)
 '''
 
@@ -202,6 +205,9 @@ class PRSheetContracts(unittest.TestCase):
         godot.chmod(0o755)
         self.env['GODOT'] = str(godot)
         shutil.copyfile(Path(pr_sheet.__file__), self.repo / 'scripts/review/pr_sheet.py')
+        representation = Path(pr_sheet.__file__).with_name('kit_representation.py')
+        if representation.exists():
+            shutil.copyfile(representation, self.repo / 'scripts/review/kit_representation.py')
         self.write('README.md', 'fixture repository\n')
         self.write('art/catalogue/sentinel.json', '{"reviewer":"unchanged"}\n')
         self.write('game/data/zones.json', json.dumps({
@@ -239,6 +245,307 @@ class PRSheetContracts(unittest.TestCase):
         self.write(path, png_bytes(130))
         self.commit('changed art')
         return path
+
+    def kit_metadata(self):
+        """Tiny authored metadata, never production artwork or a material acceptance fixture."""
+        terrain = {'materials': [{'id': 'lawn', 'fill': 'encoded.png'}],
+                   'transitions': [{'id': 'edge', 'png': 'ops.png', 'upper': 'lawn', 'lower': '*'}],
+                   'decals': {'tuft': {'png': 'decal.png', 'anchor': [0, 1]}},
+                   'lut': 'lut.png', 'noise': 'noise.png', 'palette': 'palette.png'}
+        props = {'tree': {'kind': 'prop', 'role': 'tree',
+                         'variants': {'v': {'png': 'res://kit/props/art/visible.png', 'foot': [0, 1]}},
+                         'shadow': {'mask': {'png': 'res://kit/props/art/operation.png', 'offset': [-1, 0]}}}}
+        self.write('game/kit/terrain/manifest.json', json.dumps(terrain))
+        self.write('game/kit/props/index.json', json.dumps(props))
+        return terrain, props
+
+    def test_bound_kit_fill_requires_context_despite_raw_gate_pass(self):
+        self.kit_metadata()
+        path = self.change_asset('game/kit/terrain/encoded.png')
+        result = self.cli()
+        manifest = self.read_bundle()
+        row = next(r for r in manifest['assets'] if r['path'] == path)
+        self.assertEqual(result.returncode, 1)
+        self.assertFalse(manifest['complete'])
+        self.assertEqual(row['status'], 'incomplete')
+        self.assertIsNone(row['counts'])
+        self.assertEqual(row['command'], [])
+        context = row['representation_inputs'][0]
+        self.assertEqual(context['side'], 'after')
+        self.assertEqual(context['classification'], 'context_required')
+        self.assertEqual(context['representation'], 'palette_codes')
+        self.assertEqual(context['owners'], ['lawn'])
+        self.assertEqual(context['freshness'], 'not_assessed')
+        self.assertTrue(context['obligations'])
+        helper = Path(pr_sheet.__file__).with_name('kit_representation.py')
+        self.assertEqual(manifest['representation_tool_sha256'], hashlib.sha256(helper.read_bytes()).hexdigest())
+        metadata = context['metadata_inputs'][0]
+        self.assertEqual(metadata['ref'], self.head)
+        self.assertEqual((self.out / metadata['evidence']).read_bytes(),
+                         (self.repo / metadata['path']).read_bytes())
+        self.assertIn('context', (self.out / 'index.html').read_text().lower())
+
+    def test_all_direct_terrain_bindings_are_incomplete_context(self):
+        self.kit_metadata()
+        for name in ('encoded', 'ops', 'decal', 'lut', 'noise', 'palette'):
+            self.write('game/kit/terrain/' + name + '.png', png_bytes())
+        self.commit('encoded terrain inputs')
+        self.assertEqual(self.cli().returncode, 1)
+        rows = self.read_bundle()['assets']
+        self.assertEqual(len(rows), 6)
+        self.assertTrue(all(r['status'] == 'incomplete' and not r['command'] for r in rows))
+        self.assertEqual({r['representation_inputs'][0]['representation'] for r in rows},
+                         {'palette_codes', 'transition_operations', 'decal_codes', 'palette_lut',
+                          'noise_data', 'editor_palette'})
+
+    def test_indexed_shadow_mask_is_context_and_physical_sprite_keeps_detector(self):
+        self.kit_metadata()
+        for name in ('operation', 'visible'):
+            self.write('game/kit/props/art/' + name + '.png', png_bytes())
+        self.commit('mask and physical sprite')
+        self.assertEqual(self.cli().returncode, 1)
+        rows = {r['path']: r for r in self.read_bundle()['assets']}
+        mask = rows['game/kit/props/art/operation.png']
+        physical = rows['game/kit/props/art/visible.png']
+        self.assertEqual(mask['status'], 'incomplete')
+        self.assertEqual(mask['representation_inputs'][0]['owners'], ['tree'])
+        self.assertEqual(physical['status'], 'pass')
+        self.assertTrue(physical['command'])
+        self.assert_report_link(physical)
+
+    def test_unbound_kit_png_and_indirect_tier_stay_incomplete(self):
+        self.kit_metadata()
+        for name in ('unbound', 'tiers'):
+            self.write('game/kit/terrain/' + name + '.png', png_bytes())
+        self.commit('unknown kit inputs')
+        self.assertEqual(self.cli().returncode, 1)
+        for row in self.read_bundle()['assets']:
+            self.assertEqual(row['status'], 'incomplete')
+            self.assertEqual(row['representation_inputs'][0]['classification'], 'unresolved')
+            self.assertTrue(row['representation_inputs'][0]['errors'])
+
+    def test_missing_malformed_and_duplicate_metadata_cannot_pass(self):
+        for metadata in (None, b'[]', b'{broken',
+                         b'{"materials":[],"materials":[],"transitions":[],"decals":{}}'):
+            with self.subTest(metadata=metadata):
+                if self.out.exists():
+                    shutil.rmtree(self.out)
+                path = self.repo / 'game/kit/terrain/manifest.json'
+                if metadata is None:
+                    path.unlink(missing_ok=True)
+                else:
+                    self.write('game/kit/terrain/manifest.json', metadata)
+                self.change_asset('game/kit/terrain/encoded.png')
+                self.assertEqual(self.cli().returncode, 1)
+                row = self.read_bundle()['assets'][0]
+                self.assertEqual(row['status'], 'incomplete')
+                self.assertTrue(row['representation_inputs'][-1]['errors'])
+
+    def test_bad_metadata_paths_types_and_ownership_are_fail_closed(self):
+        for bad in ('../encoded.png', '/encoded.png', 'sub/encoded.png', 'bad\\encoded.png', True):
+            with self.subTest(bad=bad):
+                if self.out.exists():
+                    shutil.rmtree(self.out)
+                terrain, _ = self.kit_metadata()
+                terrain['materials'][0]['fill'] = bad
+                self.write('game/kit/terrain/manifest.json', json.dumps(terrain))
+                self.change_asset('game/kit/terrain/encoded.png')
+                self.assertEqual(self.cli().returncode, 1)
+                self.assertEqual(self.read_bundle()['assets'][0]['status'], 'incomplete')
+        shutil.rmtree(self.out)
+        terrain, _ = self.kit_metadata()
+        terrain['materials'].append({'id': 'other', 'fill': 'encoded.png'})
+        self.write('game/kit/terrain/manifest.json', json.dumps(terrain))
+        self.change_asset('game/kit/terrain/encoded.png')
+        self.assertEqual(self.cli().returncode, 1)
+        self.assertIn('ambiguous', str(self.read_bundle()['assets'][0]['representation_inputs']))
+
+    def test_physical_and_operation_ownership_conflict_is_not_exempt(self):
+        _, props = self.kit_metadata()
+        props['tree']['shadow']['mask']['png'] = 'res://kit/props/art/visible.png'
+        self.write('game/kit/props/index.json', json.dumps(props))
+        self.change_asset('game/kit/props/art/visible.png')
+        self.assertEqual(self.cli().returncode, 1)
+        row = self.read_bundle()['assets'][0]
+        self.assertEqual(row['status'], 'incomplete')
+        self.assertIn('ambiguous', str(row['representation_inputs']))
+
+    def test_metadata_symlink_is_recorded_without_reading_external_target(self):
+        external = self.root / 'outside-metadata.json'
+        external.write_text('do not read or bundle this sentinel')
+        path = self.repo / 'game/kit/terrain/manifest.json'
+        path.parent.mkdir(parents=True)
+        path.symlink_to(external)
+        self.change_asset('game/kit/terrain/encoded.png')
+        self.assertEqual(self.cli().returncode, 1)
+        context = self.read_bundle()['assets'][0]['representation_inputs'][0]
+        self.assertTrue(context['errors'])
+        self.assertEqual(context['metadata_inputs'][0]['mode'], '120000')
+        self.assertEqual((self.out / context['metadata_inputs'][0]['evidence']).read_text(), str(external))
+        self.assertNotIn('do not read or bundle', (self.out / 'index.html').read_text())
+
+    def test_metadata_anchor_types_are_not_silently_coerced(self):
+        _, props = self.kit_metadata()
+        props['tree']['shadow']['mask']['offset'] = [True, 0]
+        self.write('game/kit/props/index.json', json.dumps(props))
+        self.change_asset('game/kit/props/art/operation.png')
+        self.assertEqual(self.cli().returncode, 1)
+        self.assertTrue(self.read_bundle()['assets'][0]['representation_inputs'][0]['errors'])
+
+    def test_data_rename_outside_kit_retains_before_metadata_obligation(self):
+        self.kit_metadata()
+        self.change_asset('game/kit/terrain/encoded.png')
+        self.base = self.head
+        self.git('branch', '-f', 'base', self.base)
+        self.git('mv', 'game/kit/terrain/encoded.png', 'game/zones/woodland/art/renamed.png')
+        self.commit('data renamed to ordinary artwork path')
+        self.assertEqual(self.cli().returncode, 1)
+        row = self.read_bundle()['assets'][0]
+        self.assertEqual(row['status'], 'incomplete')
+        self.assertEqual(row['representation_inputs'][0]['side'], 'before')
+        self.assertEqual(row['representation_inputs'][0]['ref'], self.base)
+        self.assertEqual(row['representation_inputs'][0]['path'], 'game/kit/terrain/encoded.png')
+        self.assertEqual(row['representation_inputs'][0]['metadata_inputs'][0]['ref'], self.base)
+        self.assertEqual(row['detector_status'], 'pass')
+        self.assertTrue(row['command'])
+
+    def test_data_rename_to_nonimage_retains_before_metadata(self):
+        self.kit_metadata()
+        self.change_asset('game/kit/terrain/encoded.png')
+        self.base = self.head
+        self.git('branch', '-f', 'base', self.base)
+        self.git('mv', 'game/kit/terrain/encoded.png', 'README-art.txt')
+        self.commit('data renamed to nonimage suffix')
+        self.assertEqual(self.cli().returncode, 1)
+        row = self.read_bundle()['assets'][0]
+        self.assertEqual(row['status'], 'unsupported')
+        self.assertEqual(row['representation_inputs'][0]['ref'], self.base)
+        self.assertEqual(row['representation_inputs'][0]['representation'], 'palette_codes')
+
+    def test_removed_data_retains_old_blob_and_metadata(self):
+        self.kit_metadata()
+        self.change_asset('game/kit/terrain/encoded.png')
+        self.base = self.head
+        self.git('branch', '-f', 'base', self.base)
+        self.git('rm', 'game/kit/terrain/encoded.png')
+        self.commit('remove encoded input')
+        self.assertEqual(self.cli().returncode, 1)
+        row = self.read_bundle()['assets'][0]
+        self.assertEqual(row['status'], 'removed')
+        self.assertTrue((self.out / row['evidence']['preview']).is_file())
+        self.assertEqual(row['representation_inputs'][0]['ref'], self.base)
+
+    def test_encoded_file_replaced_by_symlink_retains_both_context_sides(self):
+        self.kit_metadata()
+        self.change_asset('game/kit/terrain/encoded.png')
+        self.base = self.head
+        self.git('branch', '-f', 'base', self.base)
+        target = self.root / 'external-target.png'
+        target.write_bytes(b'never read external image bytes')
+        path = self.repo / 'game/kit/terrain/encoded.png'
+        path.unlink()
+        path.symlink_to(target)
+        self.commit('encoded regular file becomes symlink')
+        self.assertEqual(self.cli().returncode, 1)
+        row = self.read_bundle()['assets'][0]
+        self.assertEqual(row['status'], 'unsupported')
+        contexts = row['representation_inputs']
+        self.assertEqual([c['side'] for c in contexts], ['before', 'after'])
+        self.assertEqual([c['metadata_inputs'][0]['ref'] for c in contexts], [self.base, self.head])
+        self.assertEqual(contexts[0]['image_inputs'][0]['mode'], '100644')
+        image = contexts[1]['image_inputs'][0]
+        self.assertEqual(image['mode'], '120000')
+        self.assertEqual((self.out / image['evidence']).read_bytes(), str(target).encode())
+        self.assertNotIn(b'never read external image bytes', b''.join(p.read_bytes() for p in self.out.rglob('*') if p.is_file()))
+
+    def test_metadata_versions_are_pinned_separately_after_binding_changes(self):
+        terrain, _ = self.kit_metadata()
+        self.change_asset('game/kit/terrain/encoded.png')
+        self.base = self.head
+        self.git('branch', '-f', 'base', self.base)
+        terrain['materials'][0]['id'] = 'changed_owner'
+        terrain['transitions'][0]['upper'] = 'changed_owner'
+        self.write('game/kit/terrain/manifest.json', json.dumps(terrain))
+        self.write('game/kit/terrain/encoded.png', png_bytes(140))
+        self.commit('change metadata and image')
+        self.assertEqual(self.cli().returncode, 1)
+        row = self.read_bundle()['assets'][0]
+        contexts = row['representation_inputs']
+        self.assertEqual([c['owners'] for c in contexts], [['lawn'], ['changed_owner']])
+        self.assertNotEqual(contexts[0]['metadata_inputs'][0]['blob'], contexts[1]['metadata_inputs'][0]['blob'])
+
+    def test_stale_owner_binding_remains_unresolved_not_a_freshness_pass(self):
+        terrain, _ = self.kit_metadata()
+        terrain['transitions'][0]['upper'] = 'removed_owner'
+        self.write('game/kit/terrain/manifest.json', json.dumps(terrain))
+        self.change_asset('game/kit/terrain/encoded.png')
+        self.assertEqual(self.cli().returncode, 1)
+        context = self.read_bundle()['assets'][0]['representation_inputs'][0]
+        self.assertEqual(context['classification'], 'unresolved')
+        self.assertEqual(context['freshness'], 'not_assessed')
+        self.assertTrue(context['errors'])
+
+    def test_context_ownership_is_escaped_in_html_and_retained_in_manifest(self):
+        terrain, _ = self.kit_metadata()
+        owner = '<owner&"fixture">'
+        terrain['materials'][0]['id'] = owner
+        terrain['transitions'][0]['upper'] = owner
+        self.write('game/kit/terrain/manifest.json', json.dumps(terrain))
+        self.change_asset('game/kit/terrain/encoded.png')
+        self.assertEqual(self.cli().returncode, 1)
+        self.assertEqual(self.read_bundle()['assets'][0]['representation_inputs'][0]['owners'], [owner])
+        html = (self.out / 'index.html').read_text()
+        self.assertNotIn(owner, html)
+        self.assertIn('&lt;owner&amp;', html)
+
+    def test_context_evidence_link_label_escapes_committed_filename(self):
+        terrain, _ = self.kit_metadata()
+        name = '<img onerror="fixture()">.png'
+        terrain['materials'][0]['fill'] = name
+        self.write('game/kit/terrain/manifest.json', json.dumps(terrain))
+        self.change_asset('game/kit/terrain/' + name)
+        self.assertEqual(self.cli().returncode, 1)
+        manifest = self.read_bundle()
+        self.assertEqual(manifest['assets'][0]['path'], 'game/kit/terrain/' + name)
+        html = (self.out / 'index.html').read_text()
+        self.assertNotIn(name, html)
+        self.assertIn('&lt;img onerror=', html)
+
+    def test_tampered_pinned_context_evidence_is_not_rewritten_or_accepted(self):
+        self.kit_metadata()
+        self.write('game/kit/terrain/encoded.png', png_bytes())
+        self.commit('existing committed metadata and image')
+        self.base = self.head
+        self.git('branch', '-f', 'base', self.base)
+        self.write('game/kit/terrain/encoded.png', png_bytes(140))
+        self.write('game/zones/woodland/art/later.png', png_bytes())
+        self.commit('changed data then ordinary gate')
+        self.assertEqual(self.cli(mode='metadata_tamper').returncode, 1)
+        row = next(r for r in self.read_bundle()['assets'] if r['path'].startswith('game/kit/'))
+        self.assertTrue(any('changed' in e for e in row['errors']))
+        evidence = row['representation_inputs'][0]['metadata_inputs'][0]['evidence']
+        self.assertEqual((self.out / evidence).read_bytes(), b'fixture changed bundled context evidence')
+
+    def test_misleading_external_names_still_run_ordinary_gate(self):
+        for name in ('fill_lawn', 'shadow_tree', 'decal_tuft'):
+            self.write('game/zones/woodland/art/' + name + '.png', png_bytes())
+        self.commit('ordinary artwork with data-like names')
+        self.assertEqual(self.cli().returncode, 0)
+        self.assertTrue(all(r['status'] == 'pass' and r['command'] for r in self.read_bundle()['assets']))
+
+    def test_kit_named_fixture_stays_fixture_but_move_into_production_does_not(self):
+        self.write('game/test/fixtures/kit/fill_lawn.png', png_bytes())
+        self.commit('test evidence')
+        self.assertEqual(self.cli().returncode, 0)
+        self.assertEqual(self.read_bundle()['scope'], 'test_evidence')
+        shutil.rmtree(self.out)
+        self.base = self.head
+        self.git('branch', '-f', 'base', self.base)
+        self.write('game/kit/terrain/.keep', '')
+        self.git('mv', 'game/test/fixtures/kit/fill_lawn.png', 'game/kit/terrain/fill_lawn.png')
+        self.commit('fixture moved into production')
+        self.assertEqual(self.cli().returncode, 1)
+        self.assertEqual(self.read_bundle()['assets'][0]['status'], 'incomplete')
 
     def cli(self, *args: str, mode: str | None = None,
             scene_mode: str | None = None, import_mode: str | None = None,
