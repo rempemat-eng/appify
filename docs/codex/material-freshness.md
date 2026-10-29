@@ -69,5 +69,23 @@ that hash by hand: freeze the final source, then wait for a separate proof
 allocation to run the documented fixture generator in an external checkout.
 Only if all five PNG bytes and decoded RGBA, all other52 input hashes and all
 other reference metadata agree may the owner import the generated build.py hash.
-No PNG rebaseline or waived freshness assertion is authorised. That proof and
-new-source full Godot/kit/verify/ordinary-art validation are still pending.
+No PNG rebaseline or waived freshness assertion is authorised.
+
+## Completed fixture proof and generated provenance import
+
+[Root-reviewed proof6486996581](https://github.com/rempemat-eng/appify/pull/362#issuecomment-6486996581)
+ran the unmodified fixture generator once on frozen source
+`1b64b351b519bfe3f664aabce62b5b85be336433`, with exit0 on 29 October 2026.
+All five PNG files and decoded RGBA, the other52 source hashes and all remaining
+reference metadata were identical. The only generated field change was build.py's
+whole-file hash, from `7475535da6e8ffe5f3e7b230a072f232cae5f0518dd9a091235e42c4e0e63950`
+to `617fd76854e4bb4787dbd3142458d3bd0bf9077e1ec6527b4e65b18fab89419a`.
+
+[ImportGO6486996859](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6486996859)
+releases only the actual generated references.json bytes, SHA256
+`10d5aff4a1e91ba87fcc411a09693a50f64583af920ca88917c7fab0585e744d`,
+and this proof record. No generator rerun, PNG rebaseline or other metadata change
+is part of the import. This is deterministic fixture-equivalence evidence, not a
+full-suite, visual, editor or Matt approval. New-source full Godot/kit/verify with
+zero lint/ordinary-art validation and actual hosted disposition remain pending
+separate allocation; keep the PR draft with its inherited approval holds.
