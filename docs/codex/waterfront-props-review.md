@@ -10,9 +10,11 @@ Matt authorised parallel prop creation before the map is finished. The bounded
 lead allocation is [Y36 GO6496183343](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6496183343),
 claim [6496206914](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6496206914),
 and lab grant [6496223684](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6496223684).
-The genuine source parent is editor PR375 commit
+The original batch begins at editor PR375 commit
 `45ed3cad029c106977e6c0c833913dcb1c614fbd`, tree
-`0bdea46338655dcb3c9922ad5cbcdd023310b87d`.
+`0bdea46338655dcb3c9922ad5cbcdd023310b87d`. The metadata correction described
+below descends from actual published batch head
+`fd28f3c47571d74f77eca9791a331da55a23d395`, preserving its four sprite bytes.
 
 ## Pictures for review
 
@@ -51,22 +53,28 @@ continuous blocking rectangle.
 
 | Design | Canvas, art px | Foot, art px | Height above foot | Rectangular blocker, world px | Conservative footprint |
 | --- | --- | --- | --- | --- | --- |
-| Bollard, both variants | 96 x 72 | [48, 60] | 42 art px / 14 world px | [-8.5, -3.5, 16, 3.5] | 3 x 1 cells |
+| Bollard, both variants | 96 x 72 | [48, 60] | 42 art px / 14 world px | [-8.5, -3.5, 16, 3.5] | 4 x 1 cells across both legal X phases |
 | Net rack, both variants | 192 x 132 | [96, 120] | 105 art px / 35 world px | [-27.5, -3, 55, 3] | 8 x 1 cells |
 
 Canvas dimensions include transparent padding and are not solid footprints.
 One soft-grid cell is 24 art pixels / 8 world pixels. The footprint lists retain
-every cell with positive-area intersection with the authored rectangle. Drawn
-overhang cells are recorded separately. Both designs sort at the foot and use
+every cell with positive-area intersection with the authored rectangle at every
+admitted anchor phase; a conservative union can include a cell the actual
+collider does not occupy at one particular phase. Drawn overhang cells are
+recorded separately. Both designs sort at the foot and use
 the existing ellipse cast-shadow metadata, displaced down and right. Their base
 and material undersides provide the drawn contact seam. No unsupported
 sprite-shaped shadow, multiple collider, rotation or light implementation is
-claimed. The recorded ellipses still need a composed-scene visual review.
+claimed. Shadow `size` stores radii: the bollard's [18,5] means a 36 x 10-world-px
+ellipse and the rack's [54,7] means a 108 x 14-world-px ellipse. These are candidate
+shadow choices, including the wide rack ellipse, and still need a composed-scene
+visual review; the transparent contact sheet does not establish their quality.
 
 Only the south-facing designs are supplied; the placement definitions refuse
-other facings rather than mirroring their lighting. The bollard snaps to a half
-cell and requires water adjacent to its dry rock base. The rack snaps to the
-existing cell grid and requires water within four cells of its dry earth base.
+other facings rather than mirroring their lighting. Both use the existing
+`cell` snap, which permits **half-cell X and whole-cell Y**, not whole cells in
+both directions. The bollard requires water adjacent to its dry rock base. The
+rack requires water within four cells of its dry earth base.
 Both deny water and route ground, retain one-cell piece clearance and use tier 0
 for this lab. Actual settlement placement also needs a clear walking/loading
 corridor and the appropriate ground construction. Paved quay, timber deck and
@@ -122,6 +130,51 @@ Generation logs, exact regenerated files and comparison-source hashes are kept
 with that packet. The first contact-sheet-only attempt stopped because Moss
 frame 0 is 72 pixels tall; the final sheet uses frame 3's measured 74 pixels.
 That correction did not execute the prop painter again.
+
+### Corrected anchor-phase blocker
+
+Independent peer review found a real physical defect in the first metadata:
+the bollard allowed half-cell X/Y positions but its fixed three-cell footprint
+only covered the actual plate at whole-cell anchors. At [132,120] art pixels,
+the collider reaches X cells 4,5,6 while the old metadata covered 3,4,5. At
+[120,132], the collider reaches row 5 while the old metadata remained on row 4.
+The original eight controls did not cover these phases and therefore did not
+clear this defect. Their recorded result and the original `fd28f3c` source are
+retained as historical evidence.
+
+The correction keeps the plate and every PNG unchanged, selects `cell` snap to
+refuse half-cell Y, and declares X offsets [-2,-1,0,1] on Y offset -1. That union
+covers the actual collider at both admitted X phases. Selecting `cell` alone
+would still miss half-cell X, so the wider conservative footprint is necessary.
+The net rack's existing eight-cell footprint already covers its actual base at
+both admitted X phases and needs no metadata change.
+
+The external `snap-regression.py` computes actual positive-area collider/cell
+intersections independently of the declared footprint. Its before run on the
+original metadata exits 1: 208 of 289 admitted bollard anchors have uncovered
+cells; half-Y and half-XY anchors are wrongly admitted, and the real relation
+engine wrongly accepts the formerly omitted right-edge cell when it contains
+water or a route. The existing rack has zero uncovered cells in 153 samples.
+These RED results are preserved in `snap-r2/before.json`.
+
+The corrected source is checked at 153 bollard and 153 rack anchors covering
+negative, zero and positive whole-cell translations and both admitted X phases.
+Whole-cell translation preserves both sets, so these phase checks cover the
+periodic grid contract. The real relation engine also checks legal whole/half-X
+positions, forbidden half-Y/half-XY/quarter-X positions, the right-edge water and
+route cases, and the existing water/route/distance refusals. These are source
+metadata controls, not an engine invocation or rendered scene acceptance.
+No prop generator is executed again for this metadata-only correction.
+
+The actual corrected run exits 0 with 14 controls passing and zero uncovered
+collider cells across all 306 sampled anchors. Two existing schema checks pass
+and all input metadata stays unchanged during the controls. The before/after
+report SHA256 values are, respectively,
+`10a931d2cc2a7854aa41978280936c2a2c3e59e4fad10339e1b5de4f9a43fdf0`
+and `03f4c3b2f038688e5fbe929ce858f7a7388078c04adbd50d8202f1737a96dcb8`.
+The first attempted phase controller stopped before checks because the own
+sparse checkout had omitted the tracked lab; the exact scoped paths were
+restored from `fd28f3c` without generation, then RED and GREEN ran as recorded.
 
 ## Remaining acceptance
 

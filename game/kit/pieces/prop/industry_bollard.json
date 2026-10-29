@@ -67,6 +67,10 @@
       [
         0,
         -1
+      ],
+      [
+        1,
+        -1
       ]
     ],
     "overhang": [
@@ -130,7 +134,7 @@
     "orientations": [
       "s"
     ],
-    "snap": "half",
+    "snap": "cell",
     "composition": "edge",
     "stages": []
   },
@@ -162,6 +166,7 @@
     "seeded_from": "game/data/kit/concepts/industry_bollard.json; docs/codex/coast-city-kit.md (PR345)",
     "reviews": [],
     "todo": [
+      "Cell snap admits half-cell X and whole-cell Y. Footprint is the conservative union across both X phases; the unchanged actual plate collider may occupy fewer cells at a particular phase. Half-cell Y is refused.",
       "Rectangular iron base plate is the blocker; loose rope is decorative and has no interaction.",
       "Current lab binds only existing rock surface. Paving, stone-quay and timber-deck material IDs are not yet bound; no unknown surface is silently accepted.",
       "Single/rope develop two existing W0 variants; double-horn design is deferred.",
