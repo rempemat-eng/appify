@@ -66,6 +66,39 @@ class MapFeedbackV56(unittest.TestCase):
             if not b.get('plan'):
                 self.assertFalse(T['street'][y:y+h,x:x+w].any(),b['layout_id'])
 
+    def test_actual_crossroads_fronts_fit_authored_sleepwater_corridor(self):
+        # Synthetic inherited reach + actual authored v56 diversion, not real world terrain.
+        from types import SimpleNamespace
+        shape=(560,920);T=terrain(shape);yy,xx=np.mgrid[:shape[0],:shape[1]]
+        T['route_px']={'Valley lane south':[(6256,3808),(6256,4320)],
+                       'Foothill Road':[(7240,3320),(7240,3480)]}
+        inherited=[(6256,3040),(6256,3120),(6280,3320),(6336,3540),(6352,3740),
+                   (6384,3928),(6400,4056),(6384,4240),(6352,4448)]
+        zone=json.loads((ROOT/'game/data/plans/crossroads.json').read_text())
+        ox,oy=zone['origin_on_canvas'];_,_,zw,zh=zone['box']
+        with patch.multiple(g,H=shape[0],W=shape[1],PX=xx*8+4,PY=yy*8+4), patch.multiple(towns,H=shape[0],W=shape[1]):
+            # Match the authored 24px channel; assert the synthetic source is connected first.
+            old=world.G._orig_line_mask(inherited,24);self.assertEqual(ndi.label(old)[1],1)
+            T['K'][old]='river';T['water'][old]=True
+            T['barriers']['river']=old.copy();T['river_masks']={'the Sleepwater':old.copy()}
+            T['river_px']={'the Sleepwater':inherited}
+            rec=world.feedback_river(T,world.CROSSROADS_RIVER,(ox,oy,ox+zw,oy+zh))
+            self.assertEqual(ndi.label(T['river_masks']['the Sleepwater'])[1],1)
+            town=towns._feedback_crossroads(T,SimpleNamespace(ROOT=str(ROOT)))
+        self.assertEqual(rec['zone_water_cells'],0)
+        self.assertEqual(len(town.buildings),40)
+        self.assertEqual({b['layout_id'] for b in town.buildings},{f'crossroads-b{i:03d}' for i in range(1,41)})
+        self.assertEqual(ndi.label(T['river_masks']['the Sleepwater'])[1],1)
+        occupied=np.zeros(shape,bool)
+        for b in town.buildings:
+            x,y,w,h=(b[k]//8 for k in ('x','y','w','h'))
+            self.assertFalse(np.isin(T['K'][y:y+h,x:x+w],plans.WATER_K+plans.BARRIER_K).any(),b['layout_id'])
+            self.assertFalse(occupied[y:y+h,x:x+w].any(),b['layout_id']);occupied[y:y+h,x:x+w]=True
+            if not b.get('plan'):self.assertFalse(T['street'][y:y+h,x:x+w].any(),b['layout_id'])
+        # Street bridges are allowed; buildings cannot consume the actual channel.
+        self.assertFalse(occupied[T['river_masks']['the Sleepwater']].any())
+        self.assertTrue(np.isin(T['K'][T['river_masks']['the Sleepwater']],plans.WATER_K+['bridge']).all())
+
     def test_channel_moves_ground_polyline_and_masks_together(self):
         T=terrain((48,48));yy,xx=np.mgrid[:48,:48]
         old=np.abs(xx*8+4-128)<12
