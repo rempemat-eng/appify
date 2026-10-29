@@ -23,7 +23,7 @@ from urllib.parse import quote
 
 from PIL import Image
 
-from . import kit_representation
+from . import kit_representation, owned_launch
 
 
 REPO = Path(__file__).resolve().parents[2]
@@ -49,7 +49,8 @@ def _decode(value: bytes) -> str:
 
 
 def _git(repo: Path, *args: str) -> bytes:
-    result = subprocess.run(['git', '--literal-pathspecs', '-C', str(repo), *args],
+    runner = owned_launch.run if owned_launch.requested() else subprocess.run
+    result = runner(['git', '--literal-pathspecs', '-C', str(repo), *args],
                             capture_output=True, timeout=30,
                             env=dict(os.environ, GIT_NO_REPLACE_OBJECTS='1'))
     if result.returncode:
@@ -137,35 +138,55 @@ def _command(repo: Path, out: Path, folder: Path, args: list[str], *, timeout=90
     environment = dict(os.environ, PYTHONDONTWRITEBYTECODE='1')
     if env:
         environment.update(env)
+    if (owned_launch.requested(environment) and len(args) >= 3 and args[0] == sys.executable
+            and args[1] == '-m' and args[2] in ('scripts.review.assets', 'scripts.review.run')):
+        # The subject can be frozen375, whose runner lacks these adapters. Never
+        # import its older launch code merely because it is the producer cwd.
+        # Bind core.REPO before scene/assets capture derived subject paths.
+        args = [args[0], '-I', '-B', str(Path(owned_launch.__file__).resolve()),
+                '--module', str(REPO), str(repo.resolve()), *args[2:]]
     stdout, stderr, code = b'', b'', 127
     error = None
+    receipt = None
     try:
-        process = subprocess.Popen(args, cwd=repo, env=environment, stdout=subprocess.PIPE,
-                                   stderr=subprocess.PIPE, start_new_session=os.name == 'posix')
-        try:
-            stdout, stderr = process.communicate(timeout=timeout)
-            code = process.returncode
-        except subprocess.TimeoutExpired:
+        if owned_launch.requested(environment):
             try:
-                if os.name == 'posix':
-                    os.killpg(process.pid, signal.SIGKILL)
-                else:
-                    process.kill()
-            except ProcessLookupError:
-                pass
-            stdout, stderr = process.communicate()
-            code, error = 124, 'producer timed out; its owned process group was stopped'
+                result = owned_launch.run(args, cwd=repo, env=environment, timeout=timeout)
+                stdout, stderr, code = result.stdout, result.stderr, result.returncode
+                receipt = result.owned_receipt
+            except subprocess.TimeoutExpired as exc:
+                stdout, stderr = exc.output or b'', exc.stderr or b''
+                code, error = 124, 'producer timed out; registered broker launches were cancelled'
+        else:
+            process = subprocess.Popen(args, cwd=repo, env=environment, stdout=subprocess.PIPE,
+                                       stderr=subprocess.PIPE, start_new_session=os.name == 'posix')
+            try:
+                stdout, stderr = process.communicate(timeout=timeout)
+                code = process.returncode
+            except subprocess.TimeoutExpired:
+                try:
+                    if os.name == 'posix':
+                        os.killpg(process.pid, signal.SIGKILL)
+                    else:
+                        process.kill()
+                except ProcessLookupError:
+                    pass
+                stdout, stderr = process.communicate()
+                code, error = 124, 'producer timed out; its owned process group was stopped'
     except OSError as exc:
         error = str(exc)
         stderr = str(exc).encode('utf-8', errors='backslashreplace')
     stdout_path, stderr_path = folder / 'stdout.txt', folder / 'stderr.txt'
     stdout_path.write_bytes(stdout)
     stderr_path.write_bytes(stderr)
-    return dict(command=args, returncode=code, started=started, duration_seconds=round(time.time() - started, 3),
+    record = dict(command=args, returncode=code, started=started, duration_seconds=round(time.time() - started, 3),
                 stdout=_relative(out, stdout_path), stderr=_relative(out, stderr_path),
                 stdout_sha256=_sha(stdout), stderr_sha256=_sha(stderr), error=error,
                 stdout_text=stdout.decode('utf-8', errors='replace'),
                 stderr_text=stderr.decode('utf-8', errors='replace'))
+    if receipt is not None:
+        record['owned_receipt'] = receipt
+    return record
 
 
 def _attach(row: dict, result: dict):
@@ -357,9 +378,13 @@ def _zones(repo: Path) -> dict:
 
 def _import_project(repo: Path, out: Path) -> dict:
     folder = out / 'gates' / 'godot-import'
+    if owned_launch.requested() and not os.environ.get('DISPLAY', '').strip():
+        raise ReviewError('owned mode requires supplied DISPLAY; display acquisition is forbidden')
     engine = os.environ.get('GODOT')
     if engine and not Path(engine).is_file():
         engine = shutil.which(engine)
+    if owned_launch.requested() and not engine:
+        raise ReviewError('owned mode requires supplied GODOT; acquisition is forbidden')
     if not engine:
         resolve = _command(repo, out, folder / 'resolve', ['bash', str(repo / 'game/tools/get_godot.sh')])
         lines = resolve['stdout_text'].strip().splitlines()

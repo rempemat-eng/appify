@@ -113,3 +113,102 @@ npm run check:art-repro
 ```
 
 The PR-sheet tests use real temporary Git histories and fixture command producers to exercise orchestration, provenance and failure handling. They do not substitute for the existing detectors' tests or a real supported producer smoke. Run `npm run check:godot` when scene/runtime work is relevant, and retain exact tested-head results and practical limitations in the PR handoff.
+
+## Optional managed launch mode (Y47, source preparation only)
+
+GO6503275523 / ASSIGN6503377386 adds a controller-owned broker and adapters for
+the existing Y12 launch graph. This section and the new controls are **source
+preparation, not observed process isolation or successful Y12 evidence**. No
+helper import, pidfd probe, fake producer, engine, display or project test has
+run under this source-only allocation.
+
+An external controller can explicitly create one `owned_broker.Broker` in a
+new private directory and use its `environment()` with `owned_launch.run()`.
+The top-level PR-sheet Python must itself be launched through that client; an
+independently started producer is not retrospectively registered. Supply an
+absolute, reviewed tool-source import root in `PYTHONPATH`, invoke Python with
+`-P -B -m scripts.review.pr_sheet`, and supply the already allocated `GODOT`
+and authenticated `DISPLAY`. Creating the broker, importing these helpers or
+running that command requires a separate exact runtime allocation.
+
+The explicit mode is requested by any `MYGAME_OWNED_SOCKET`,
+`MYGAME_OWNED_TOKEN` or `MYGAME_OWNED_PARENT` key. Incomplete credentials,
+unavailable pidfd operations, a broken channel or a cancelled allocation fail
+closed. There is no local subprocess fallback. Ordinary mode keeps its existing
+launch and error behavior. No automatic acquisition or Xvfb startup is permitted
+in managed mode. The controller remains responsible for the approved copied
+engine, private roots, source guards, display and external resource policy.
+
+Audited registered edges are the top producer, PR-sheet `_git`, asset/import
+and scene `_command` producers, and the scene runner's `_godot_command`.
+Managed child Python producers use `-I -B` and the reviewed absolute client
+bootstrap. It binds `core.REPO` to the subject before importing assets/run and
+their scene/construct/scale dependencies; derived scene/game/catalogue paths
+and Godot cwd therefore refer to that subject. Actual rewritten argv remains
+in each command record. The subject working directory must not silently load
+an older, unadapted runner from frozen375. Static inspection found no additional
+process-launch site. Detector reference `eastward_bands.json` and the imported
+`scripts.art.native.palette` code still belong to the reviewed TOOL tree; they
+are not relocated by `core.REPO`. Any later real-sheet allocation must attest
+those tool-reference bytes separately alongside the subject paths. The tiny
+routing controls do not establish actual detector reference parity.
+Git helpers, engine/native forks and arbitrary other
+subprocess calls are **unregistered descendants**, not contained or measured
+by this change. A caller supplying the authentication token is trusted; this is
+an accounting protocol, not a sandbox against malicious authenticated clients.
+
+For each registered launch the broker is the actual parent. A trusted Python
+gate receives only a minimal trusted bootstrap environment. Target argv and
+environment, including dynamic-loader variables, are read as bounded JSON and
+applied only at target exec after the broker opens and records the child's
+pidfd. Registration refusal closes the gate and waits for the trusted helper;
+no target code should run. Cancellation closes unreleased gates, signals only
+retained pidfds and refuses later launches. No numeric PID/PGID signalling or
+`/proc` discovery fallback is present in the managed helpers. Actual wait
+results and logical parent links remain in the controller's broker receipts;
+a JSON numeric PID alone is not proof. A failed wait/signal or surviving handler
+keeps collection failed, rather than declaring cleanup complete.
+
+One allocation is bounded to32 concurrent channels,4096 accepted connections
+and4096 logical request identities; duplicate IDs are refused. Requests are at
+most512KiB, captured stdout plus stderr at most4MiB per job, replies at most9MiB
+and each target timeout at most3600s. Output overflow cancels and fails. Timeout
+uses a bounded3s post-cancel drain and5s direct-child wait; inherited pipes held
+by an unregistered descendant can therefore yield explicit incomplete-output
+failure. The client allows10s protocol/collection overhead. These are channel
+and per-job bounds, **not global RSS, descendant cleanup or full-Y12 proof**.
+Native-descendant cancellation requires a separately reviewed execution boundary.
+
+### Prepared focused-control allocation request (NOT allocated)
+
+The proposed first run uses one CPU,180s outer wall time,512MiB observed memory,
+8MiB outer text and64MiB total new private output. Refuse an unsupported pidfd
+environment rather than skipping methods. Use only a new controller/test/temp
+root; no original editor/source/index/profile mutation or cleanup, real engine,
+display, art, project assets, Node, dependency installation/copy or full gates.
+Require a reviewed outer collector with actual exits, logs, source hashes and
+owned-child collection before execution. Exact final file hashes belong in the
+source handoff; this document does not embed a circular self-hash.
+
+First authorisation would cover exactly13 methods in
+`OwnedLaunchControls`, then separately approved import prerequisites and six
+methods in `OwnedAdapterControls`. The adapter module imports the existing
+review/Pillow/NumPy stack; that private import layout and available dependencies
+must be explicitly approved before invocation. No full-source hydration is
+implied. The existing PR-sheet suite and all ordinary full gates remain separate.
+
+The controls exercise real fake producer -> scene runner -> engine nesting,
+actual parent/wait/argv/environment/streams/status, simulated unavailable Python
+`/proc` reads (not a kernel namespace proof), immediate exit, failed exec,
+registration refusal before target execution, gate/nested cancellation, timeout,
+broken channel, duplicate/late requests, output overflow, ordinary detector
+exit1, engine-error text at exit0, acquisition/display/stripped-credential refusal,
+and reviewed-tool routing with subject-derived scene/asset paths and fake-engine
+cwd despite hostile subject modules (tiny tool fixtures, not detector coverage). One waited native
+grandchild deliberately demonstrates the unregistered-descendant limit.
+
+All19 controls are **UNRUN**. AST parsing, a static review or later fake-process
+success cannot establish real Godot/display containment, memory measurement,
+render freshness, visual quality, source-sheet completeness, device behavior or
+Matt's approval. Source379/E9/E10 and editor375 retain their separate validation
+and inherited acceptance holds; no Ready or merge follows this preparation.
