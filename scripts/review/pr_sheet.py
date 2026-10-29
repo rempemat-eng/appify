@@ -23,6 +23,8 @@ from urllib.parse import quote
 
 from PIL import Image
 
+from . import kit_representation
+
 
 REPO = Path(__file__).resolve().parents[2]
 IMAGE_SUFFIXES = {'.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg', '.bmp', '.aseprite'}
@@ -225,7 +227,52 @@ def _row(path: str, change=None) -> dict:
                 evidence=dict(report=None, preview=None, gate_sheet=None, stdout=None, stderr=None, pictures=[]))
 
 
-def _asset(repo: Path, out: Path, pinned: dict, change: dict) -> dict:
+def _representation_inputs(repo: Path, out: Path, pinned: dict, change: dict, cache: dict) -> list[dict]:
+    """Attest each relevant side using that side's own committed metadata and image."""
+    versions = []
+    if change['status'][0] not in ('A', '?') and change['status'] != 'requested':
+        versions.append(('before', pinned['merge_base'], change.get('old_path') or change['path']))
+    if not change['status'].startswith('D'):
+        versions.append(('after', pinned['head'], change['path']))
+    contexts = []
+    for side, ref, path in versions:
+        if not path.startswith((kit_representation.TERRAIN, kit_representation.PROPS)):
+            continue
+        inputs = []
+
+        def read(source):
+            key = (ref, source)
+            if key not in cache:
+                cache[key] = _blob(repo, ref, source)
+            mode, blob, data = cache[key]
+            item = dict(ref=ref, path=source, mode=mode, blob=blob, sha256=_sha(data))
+            folder = out / 'sources'
+            folder.mkdir(exist_ok=True)
+            evidence = folder / (blob + '.txt')
+            # Shared evidence is written once; a later reader must not repair tampering.
+            if not evidence.exists():
+                evidence.write_bytes(data)
+            item['evidence'] = _relative(out, evidence)
+            inputs.append(item)
+            if mode not in ('100644', '100755'):
+                raise ReviewError('kit context input is not a regular committed file')
+            return data
+
+        context = kit_representation.inspect(path, read)
+        context.update(side=side, ref=ref, path=path, metadata_inputs=inputs)
+        # Preserve the old as well as the new image bytes, even on a rename/delete.
+        image_inputs = []
+        try:
+            read(path)
+            image_inputs.append(inputs.pop())
+        except (ReviewError, OSError, ValueError) as exc:
+            context['errors'].append(str(exc))
+        context['image_inputs'] = image_inputs
+        contexts.append(context)
+    return contexts
+
+
+def _asset(repo: Path, out: Path, pinned: dict, change: dict, context_cache=None) -> dict:
     path = change['path']
     row = _row(path, change)
     removed = change['status'].startswith('D')
@@ -238,6 +285,10 @@ def _asset(repo: Path, out: Path, pinned: dict, change: dict) -> dict:
         if mode not in ('100644', '100755'):
             row['status'] = 'unsupported'
             raise ReviewError('linked or nonregular art is not committed image evidence')
+        contexts = _representation_inputs(repo, out, pinned, change,
+                                           context_cache if context_cache is not None else {})
+        if contexts:
+            row['representation_inputs'] = contexts
         if Path(path).suffix.lower() != '.png':
             row['status'] = 'unsupported'
             raise ReviewError('image category is not supported by this PNG review bundle')
@@ -249,6 +300,10 @@ def _asset(repo: Path, out: Path, pinned: dict, change: dict) -> dict:
         if removed:
             row['status'] = 'removed'
             row['errors'].append('removed art has a base preview, not a head detector pass')
+            return row
+        needs_context = any(c['classification'] != 'ordinary' or c['errors'] for c in contexts)
+        if any(c['side'] == 'after' and (c['classification'] != 'ordinary' or c['errors']) for c in contexts):
+            row['errors'].append('Kit representation context required; raw PNG bytes are not a rendered-art verdict.')
             return row
         _guard(repo, pinned['head'])
         if _sha((repo / path).read_bytes()) != row['input_sha256']:
@@ -280,6 +335,9 @@ def _asset(repo: Path, out: Path, pinned: dict, change: dict) -> dict:
         # The byte-identical pinned preview is already beside these numbers.
         row.update(status=status, counts=counts, metrics={k: report.get(k) for k in
                    ('id', 'kind', 'biome', 'H', 'density', 'detail_bar')})
+        if needs_context:
+            row['detector_status'], row['status'] = status, 'incomplete'
+            row['errors'].append('Before-side kit context is unresolved; the current physical-image detector cannot discharge it.')
     except (ReviewError, OSError, ValueError, TypeError, Image.DecompressionBombError) as exc:
         row['errors'].append(str(exc))
     return row
@@ -476,12 +534,18 @@ def _render(manifest: dict) -> str:
         counts = json.dumps(row['counts'], ensure_ascii=True) if row['counts'] is not None else 'Unavailable'
         errors = ''.join(f'<li>{_escape(value)}</li>' for value in row['errors'])
         metrics = json.dumps(row.get('metrics', {}), ensure_ascii=True, indent=2)
+        contexts = row.get('representation_inputs', [])
+        context_links = ' '.join(_link(v.get('evidence'), _escape(c['side'] + ' ' + v['path']))
+                                 for c in contexts for key in ('metadata_inputs', 'image_inputs') for v in c[key])
+        context_html = (f'<p>Kit representation context: freshness not assessed. {context_links}</p>'
+                        f'<pre>{_escape(json.dumps(contexts, ensure_ascii=True, sort_keys=True, indent=2))}</pre>') if contexts else ''
         cards.append(f'<article><div>{image}</div><div><h2>{_escape(row["path"])}</h2>'
                      f'<p>Selection: {_escape((row.get("change") or {}).get("status", "requested scene"))}</p>'
                      f'<p><strong>{_escape(row["status"])}</strong> · reported gate counts: {_escape(counts)}</p>'
                      f'<p>{_escape(row.get("counts_note", ""))}</p><ul>{errors}</ul>'
                      f'<p>Input SHA256: <code>{_escape(row["input_sha256"])}</code></p>'
                      f'<p>Command exit: {_escape(row["returncode"])}</p><p>{links}</p>'
+                     f'{context_html}'
                      f'<details><summary>Existing gate metrics and command</summary><pre>{_escape(metrics)}\n'
                      f'{_escape(json.dumps(row["command"], ensure_ascii=True))}</pre></details></div></article>')
     changed = ''.join(f'<li><code>{_escape(c["status"])} {_escape(c["path"])}</code>'
@@ -526,6 +590,7 @@ def build_sheet(repo: Path, base: str, head: str, out: Path, *, scenes=(), pr=No
     manifest = dict(**pinned, pr=pr, manual_review='not_assessed', scope='no_art', complete=False,
                     exit_code=1, assets=[], scenes=[], other_changes=[], errors=[], preflight=None,
                     tool_sha256=_sha(Path(__file__).read_bytes()), python_version=sys.version.split()[0],
+                    representation_tool_sha256=_sha(Path(kit_representation.__file__).read_bytes()),
                     generated_at=time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()))
     try:
         registry = _zones(repo)
@@ -582,12 +647,13 @@ def build_sheet(repo: Path, base: str, head: str, out: Path, *, scenes=(), pr=No
                 pending_assets.append(change)
             selected.add(name)
     fatal = False
+    context_cache = {}
     for change in pending_assets:
         if fatal:
             row = _row(change['path'], change)
             row['errors'].append('source changed; remaining checks were not run')
         else:
-            row = _asset(repo, out, pinned, change)
+            row = _asset(repo, out, pinned, change, context_cache)
             try:
                 _guard(repo, pinned['head'])
             except ReviewError as exc:
@@ -625,8 +691,11 @@ def build_sheet(repo: Path, base: str, head: str, out: Path, *, scenes=(), pr=No
         _guard(repo, pinned['head'])
     except ReviewError as exc:
         manifest['errors'].append(str(exc))
-    for row in manifest['other_changes']:
-        for value in row.get('inputs', []):
+    for row in manifest['other_changes'] + manifest['assets']:
+        inputs = list(row.get('inputs', []))
+        for context in row.get('representation_inputs', []):
+            inputs.extend(context['metadata_inputs'] + context['image_inputs'])
+        for value in inputs:
             if 'evidence' not in value:
                 continue
             try:
@@ -643,7 +712,7 @@ def build_sheet(repo: Path, base: str, head: str, out: Path, *, scenes=(), pr=No
         manifest['scope'] = 'source_only'
     elif any(row['status'] == 'test_evidence' for row in manifest['other_changes']):
         manifest['scope'] = 'test_evidence'
-    source_errors = any(row.get('errors') for row in manifest['other_changes'])
+    source_errors = any(row.get('errors') for row in manifest['other_changes'] + manifest['assets'] + manifest['scenes'])
     manifest['complete'] = (not manifest['errors'] and not source_only and not source_errors
                             and all(row['status'] == 'pass' for row in manifest['assets'] + manifest['scenes']))
     manifest['exit_code'] = 0 if manifest['complete'] else 1
