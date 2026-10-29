@@ -1,8 +1,48 @@
-# Codex chat coordination
+# MyGame Codex coordination
 
-Live assignments, acknowledgements, blockers and handoffs: [GitHub issue #149](https://github.com/rempemat-eng/appify/issues/149).
+## Current authority and routine (Matt, 28 October 2026)
 
-This document coordinates the four Codex chats Matt opened on 20 October 2026. Read the latest `AGENTS.md`, `docs/vision/coherence-plan.md`, its Feedback, and the live issue before editing. The queue and existing explicit chat instructions retain authority. This document adds no mechanics, traversal rules, rewards or permission to change Claude's files.
+Codex runs the entire project until Matt switches back; all Claude lanes are off. The existing Codex lead coordinates, reviews and integrates, including the former Claude roles. Workers retain their task branches and review duties. [AGENTS.md](../../AGENTS.md), [handover.md](handover.md) and [development-plan.md](../vision/development-plan.md) give the current authority, exact-source merge procedure and task order. Matt decides new game rules/art direction and approves art/map/kit/cast merges explicitly ON THE PR with `needs-matt-review`; routine ownership questions go to the lead.
+
+[Issue149](https://github.com/rempemat-eng/appify/issues/149) and its [single canonical lead task board](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6475643125) are authoritative. Update that board in place; never create a competing board/lead or claim unavailable pinning. The crew board is retired. Read current main and real task heads, all new OR edited comments across every page newest first, and owned discussion/formal/inline feedback before writes. Repeat after pushes/handoffs, at boundaries and every 15 minutes during implementation. Later relevant decisions override older snapshots; Matt's explicit instructions take precedence.
+
+The lead resolves first-claim collisions and answers blockers from authoritative docs, keeps at least four suitable free briefs with scope/files/start conditions/acceptance, and takes no worker task while claims or reviews need attention. It maintains the same board, one Europe/London daily SUMMARY for Matt and small checked handover/development-plan PRs. Unresolved art direction or values go into Matt's summary.
+
+### One claim and explicit file ownership
+
+- Retain the existing slot and continuation; include `slot=<slot>` in GitHub posts. Names use `MyGame Codex · <slot> · <task id> <short title>` where supported. No duplicate worker/supervisor/schedule or unsupported rename claim.
+- Finish the active claim first. Otherwise select suitable unclaimed, unblocked, non-overlapping work in the development plan's order: W0–W7/X1/X6; Y15 first towns/Highgarth wording then remaining towns/X3; Y12; existing systems; kit concepts; approval-gated journeys/regions/slice. Audit and extend existing implementation; use documented values or labelled placeholders, no invented rules.
+- Post `ASSIGN slot=<slot> task=<id> branch=codex/<name>` with exact paths/scope/base before writes; immediately recheck live claims. First valid claim wins; release a duplicate before editing. For an independently reproduced unqueued problem, post PROPOSE with bounded acceptance/paths first. A worker holds one active implementation; parked blockers and delivered review duties are not new implementations.
+- Use isolated checkouts and preserve real remote history, uncommitted work, guarded original checkouts and other owners' files. Shared save/schema/fixture/package/lock/check paths have one writer. Continue former Claude PRs302/303/299/290 only via explicit lead assignment on NEW codex branches from actual heads; never overwrite their originals.
+- For ACTIVE implementation only, the lead requests status after >4h of no meaningful activity and after 8 hours marks the task free, preserving the old source/checkpoint and recording explicit new ownership before writes. Review waits, delivered handoffs and decisions do not expire; silence/heartbeats/schedules alone do not transfer ownership.
+
+### Dependency gates
+
+The lead posts GO after the actual documented start condition; a general free-list or task-selection instruction removes no gate. X2/X4/Y4 require approved v55/town inputs and applicable GO. Further X3 resident packets require explicit home/work source semantics: missing occupants or `work=true` do not establish nonresidential use or a home. An absent home remains incomplete even if occupants are empty or work is true. X5 requires actual W1–W3 inclusion on main, an approved Crossroads kit and applicable GO. Check real ancestry/exported APIs; a stacked merge or closed PR is insufficient. Preserve all other current task-specific approval/input waits.
+
+C29–C31 were [cancelled on 21 October](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6322623299); historical tables and queue rows do not reopen them. Later work requires its own live claim. The [27 October replacement routine](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6455025042) remains provenance, subject to Matt's newer takeover and current gates.
+
+### Work, validation and integration
+
+- Workers use one task branch and one draft PR, reusing their existing open PR for corrections. Push one finished tested step with expected-head/force=false; stop on unexpected movement. Never push reconstructed history or merge main merely to trigger CI. Keep draft while iterating, then ReadyONCE after required final checks. A newer explicit exception, such as preserving an already-ready historical PR without cycling, does not credit old results to corrected source.
+- Run final exact-source `npm run verify` with zero lint warnings, ordinary `npm run check:art-repro` and relevant kit/Godot checks. Use bounded serial heavy allocations and durable logs/exits/source guards; collect the SAME invocation. Failed, interrupted, killed, partial, skipped, filtered and absent results are not passes. Do not repeat a finished suite without a new correction/failure reason. Shared validation must name the exact combined tree, retaining real source heads and distinguishing their separate coverage.
+- Post `HANDOFF slot=<slot> task=<id> pr=<n> head=<sha>` with exact head/tree/base, actual validation/hosted disposition, limitations and concrete next action for the lead. Keep source-only, rendered, art and device evidence distinct. Applicable Y12/gate numbers and Matt's PR-specific OK remain separate approval holds.
+- Workers never merge, push main or enable auto-merge. The lead has standing non-art merge authority only under the handover's exact-source checklist/procedure; engineering PRs must not import unapproved editor/map/art ancestry. Art/map/town-plan/kit/cast changes merge only after Matt's explicit OK ON THE PR and applicable gates. Never force-push, edit Player, reset player data or change branch protection; preserve unknown save fields. Existing historical interface contracts below remain provenance, not new file grants.
+
+### Resumption and quiet checks
+
+Reuse each existing continuation and automation; preserve it after idle/completion and honour explicit PAUSED/CANCELLED/REASSIGNED/stop instructions. Do not create replacement chains or competing validations. Inspect a manual owner's current remote checkpoint before writes. Scratch files, enabled schedules and heartbeats do not establish durability, delivery or external-chat liveness.
+
+Update the SAME health/checkpoint record with actual UTC start/finish, state, assignment and observed remote branch/head/base/tree, blocker and next executable action. Preserve progress timestamps/evidence except on real source/result/assignment/handoff/dependency changes. Save useful remote checkpoints at safe boundaries. Post changed BLOCKED once; safely park/release before another first claim while preserving the old branch/review duties. IDLE once per episode, no unchanged hourly reminders. Retry a transient read/check once, retain errors and report unresolved tool failures; suppress only successful unchanged/no-action checks.
+
+## Historical record: 20 October 2026
+
+The remainder preserves the original four-chat assignment, interface questions and evidence snapshot. Its imperative wording describes the instructions at that date. It is **not an active assignment list, a new file grant or a current dependency-status report**. In particular, C29–C31 were later cancelled, and later task-specific grants and decisions must be read on #149. Apply the current routine above, not these obsolete start conditions.
+
+<details>
+<summary>Original coordination notes and evidence</summary>
+
+This record coordinated the four Codex chats Matt opened on 20 October 2026. It added no mechanics, traversal rules, rewards or permission to change Claude's files.
 
 ## Assigned work
 
@@ -115,3 +155,5 @@ No C29–C34 task PR or branch claim was found in the initial review. No externa
 
 Ran: latest main, AGENTS/queue/Feedback, open PR and branch review; existing continuation assignment lookup; read-only canvas/ways/audit review; documentation consistency checks.
 Did not test: full app verify/art regeneration, gameplay/browser, native build/runtime/device measurements or any new worker implementation. This change edits documentation and adds an AGENTS pointer only.
+
+</details>
