@@ -1,0 +1,189 @@
+{
+  "status": "passed",
+  "checks": 759,
+  "package_files": 35,
+  "package_bytes": 627433,
+  "inventory_sha256": "79757217924450b34c3d87d79a080304c92d355f5405efa3274778dbe94d9a64",
+  "scope": "Independent final-package text inventory, exact source/module hashes, exported catalogue descriptions, IDs, time ordering, legacy attachment structure and contract shape. Canonical combat behaviour probes, formal JSON schema validation and new Godot/art validation are separate.",
+  "inventory": [
+    {
+      "path": "README.md",
+      "bytes": 6756,
+      "sha256": "17bb5f59c75546d6e6f0f32ae2b375c52d5e15253a096b0869cee898459b51b3"
+    },
+    {
+      "path": "ability-timing-summary.md",
+      "bytes": 2482,
+      "sha256": "98f6ba8785222c2745171ac7fb12164e98f39b55ea4c13d688ddb6b838dc9382"
+    },
+    {
+      "path": "animation/build_legacy_reference.py",
+      "bytes": 4411,
+      "sha256": "fd615e21e485af947ee9ac8c5fbe46143fc41d38334af0a672ba68607054d9a7"
+    },
+    {
+      "path": "animation/issue-149-shortlist.json",
+      "bytes": 2048,
+      "sha256": "27d5df8019999091b051dc5ebb9ca950b5a1f59db62c95825b350201da59e283"
+    },
+    {
+      "path": "animation/issue-149-summary.md",
+      "bytes": 1925,
+      "sha256": "6b40dfab9b66eb9083aa4bd46d7649fe8078b7b96cee6de50402a95cd095aa48"
+    },
+    {
+      "path": "animation/legacy-east-animation-reference.json",
+      "bytes": 117323,
+      "sha256": "c14177009d4385202193809321bdc19307fb23b3da36b8f574ef3007f2862961"
+    },
+    {
+      "path": "animation/manifest-proposal.schema.json",
+      "bytes": 7899,
+      "sha256": "879a1f210452bb758511c14ecd653b5f70f7e208edb68817c1f0a99f9a18b4c6"
+    },
+    {
+      "path": "animation/runtime-contract.md",
+      "bytes": 13154,
+      "sha256": "ef852d9a059efde552dbd54ed756c07216635e7d0a84647c31be29b905eac10d"
+    },
+    {
+      "path": "animation/source/ART_DIRECTION.md",
+      "bytes": 11878,
+      "sha256": "5ea55d2b6d7c0ba9c4dfae0a5281ba8e7641652d6c6abfc44849a9723cce3aa6"
+    },
+    {
+      "path": "animation/source/WORLD_ANIMATION_CONTEXT.md",
+      "bytes": 6643,
+      "sha256": "a9e6490c64298897899f82bf18843701a4f96ee9ff31738075e07b5b9ad7fc1a"
+    },
+    {
+      "path": "animation/source/art-source/animated/v3/elements-anchors.json",
+      "bytes": 36641,
+      "sha256": "8f75cadd5510d51a47fd3996f9595aebb72bfb3f3e284814346d058a844b8da2"
+    },
+    {
+      "path": "animation/source/art-source/animated/v3/ranger-anchors.json",
+      "bytes": 1502,
+      "sha256": "fd6a9eba56992a71c7bba0369a2de2b7c390dd7ec157c8f1a525fece46ac5536"
+    },
+    {
+      "path": "animation/source/art-source/animated/v3/ranger-other-anchors.json",
+      "bytes": 1656,
+      "sha256": "d2326173c6aba926ba6a2d6274b1e2e65fc594b70f0b8f18327a275526800c91"
+    },
+    {
+      "path": "animation/source/art-source/animated/v3/rook-thrusters.json",
+      "bytes": 558,
+      "sha256": "20338e86a397abfcc3d16fc97513136ad955059da8623e35949974531343c0d0"
+    },
+    {
+      "path": "animation/source/art-source/animated/v3/tech-anchors.json",
+      "bytes": 1449,
+      "sha256": "f683926becea8faa182506366a618ca5a0b3a3ba280349f3cdbfdc70468948e6"
+    },
+    {
+      "path": "animation/source/scripts/animation_yard.gd",
+      "bytes": 59772,
+      "sha256": "cafe41e2f5d57639e9d72c253c3a9b55a91a07154021ad28441a611912f58d82"
+    },
+    {
+      "path": "animation/source/scripts/roster_actor.gd",
+      "bytes": 21904,
+      "sha256": "a21758618952be57b3442af69c41208dfeaebe6e2ca3da203c1cdbbf0216561b"
+    },
+    {
+      "path": "animation/source/tests/roster_animation_test.gd",
+      "bytes": 24129,
+      "sha256": "de0d5ed9a920f07e2271b6401648e9465514ec783a711cc8065f72f654f5f25c"
+    },
+    {
+      "path": "animation/source/tools/build_animation_roster.py",
+      "bytes": 31006,
+      "sha256": "9cb26791d7c8e3d8ac2ad698eff835f1c5b6c5e9fc69454bc3794cff1d5d7a53"
+    },
+    {
+      "path": "animation/source-provenance.json",
+      "bytes": 5866,
+      "sha256": "1bccde7b08e1f6c2ba994c9423006859c45d7f24c28c1ed511609a812caedddc"
+    },
+    {
+      "path": "animation/validate_reference.py",
+      "bytes": 4522,
+      "sha256": "8b835786ee4d0298cdb0023878bf73771431f882ccaa6096ed1be6b0d1b167f1"
+    },
+    {
+      "path": "animation/validation-negative-controls.json",
+      "bytes": 401,
+      "sha256": "8777790f73c61769a3137f6a6afbe2532ec881c9e37a8d149fc59a56a4de0b1c"
+    },
+    {
+      "path": "animation/validation-source-only.json",
+      "bytes": 731,
+      "sha256": "12d7ce5db863d89ff0cd471637d292413538973c0f12ff1a362f8ca1a3111ba4"
+    },
+    {
+      "path": "animation/validation.json",
+      "bytes": 904,
+      "sha256": "bebb3210669f2d0b2952ae2665c77dc54aeb5199dabfec52467617b2d3812049"
+    },
+    {
+      "path": "canonical/abilities-v1.json",
+      "bytes": 72076,
+      "sha256": "ab9028dc55991b55478c0edf90a7347ba19b8ae3a6386ee50b2888889ee9fb4d"
+    },
+    {
+      "path": "canonical/build-ability-data.mjs",
+      "bytes": 19002,
+      "sha256": "a71b88cd9ad8e9d8a60f0acce841ee6017e21fd22850408ca018ea367ec0acfa"
+    },
+    {
+      "path": "canonical/data-audit.json",
+      "bytes": 8642,
+      "sha256": "50390e69990d6543d1467979a9716b165cca03ab9f14eb0c2c8d1d1b2383db04"
+    },
+    {
+      "path": "canonical/reference/adapter.mjs",
+      "bytes": 1943,
+      "sha256": "b0cb4cc7cb81da37e7dafdd9a73256f265a889fafb5ccc3f33539a0bbc4fe76e"
+    },
+    {
+      "path": "canonical/reference/catalogue.json",
+      "bytes": 7732,
+      "sha256": "7b837058fcd84ca31edf8a21e200f3bc5c5b4eb04a88885181afd8b85eaca965"
+    },
+    {
+      "path": "canonical/reference/original-modules.json",
+      "bytes": 35044,
+      "sha256": "09352bcafc498e347dfe1885c3f5966546cc13d07f053183b0a05a3aa7e33187"
+    },
+    {
+      "path": "canonical/reference/runtime-constants.json",
+      "bytes": 59344,
+      "sha256": "680140575339fb9ca427937fc9e01015cbe63b3a0ee0fcc9c6912768ead0893e"
+    },
+    {
+      "path": "canonical/stateful-audit.json",
+      "bytes": 24730,
+      "sha256": "d9ee2720b186a653e064a20e25c3afe58baffefde1499d45872ef2bba96f3474"
+    },
+    {
+      "path": "canonical/validate-ability-data.mjs",
+      "bytes": 14296,
+      "sha256": "03987c8fb1940d30a6ae831032f6ff7bbd6983da0a7d41eb43c06f792377335a"
+    },
+    {
+      "path": "canonical/validation.json",
+      "bytes": 12738,
+      "sha256": "9a54aceb5c8e6b14b71c3d83f3894aef8df18112c178f619d42bcd8026f2d57e"
+    },
+    {
+      "path": "port-regressions.md",
+      "bytes": 6326,
+      "sha256": "7d7e5a55d4a4d705f50bdfe855ac06c110cae6f656eb61d996d1146902d1ede1"
+    }
+  ],
+  "notes": [
+    "No inspected package file was modified.",
+    "The report is deliberately written outside the inspected package."
+  ]
+}

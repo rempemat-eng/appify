@@ -1,0 +1,160 @@
+{
+  "CHARACTER_IDS": [
+    "bramble",
+    "morel",
+    "velvet",
+    "cairn",
+    "iona",
+    "tam",
+    "brine",
+    "pendle",
+    "mirra",
+    "ashe",
+    "clack",
+    "nix",
+    "rook",
+    "mote"
+  ],
+  "ROSTER": [
+    {
+      "id": "bramble",
+      "name": "Bramble",
+      "role": "Grassland ranger · precise arrows and a billhook",
+      "color": "#91bd69",
+      "primary": "Quickdraw — loose a fast aimed arrow.",
+      "secondary": "Billhook — sweep nearby enemies away.",
+      "block": "Briar buckler — hold the folding forearm shield toward danger.",
+      "special": "Briarshot — branches brace the bow; arrows pierce and briefly root their last target."
+    },
+    {
+      "id": "morel",
+      "name": "Morel",
+      "role": "Grassland alchemist · prepare and react",
+      "color": "#d9b570",
+      "primary": "Reagent flask — throw a flask that leaves a short-lived reagent patch.",
+      "secondary": "Catalyst — send a spark through prepared patches, or burst at close range.",
+      "block": "Mineral ward — hold an alchemical shield.",
+      "special": "Catalyst mask — apparatus opens; flasks ignite nearby patches in a finite chain reaction."
+    },
+    {
+      "id": "velvet",
+      "name": "Velvet",
+      "role": "Coastal duellist · sabre and black lantern",
+      "color": "#b1a8db",
+      "primary": "Sabre — cut in a quick frontal arc.",
+      "secondary": "Lantern flare — dazzle nearby enemies and expose them to a follow-up.",
+      "block": "Sabre parry — hold the blade across incoming blows.",
+      "special": "Black Lantern — movement leaves finite pale echoes; a successful guard primes a long counter-thrust."
+    },
+    {
+      "id": "cairn",
+      "name": "Cairn",
+      "role": "Grassland stone golem · committed strength",
+      "color": "#a4ad81",
+      "primary": "Stone fist — a heavy close-range punch.",
+      "secondary": "Boulder — throw a stone that stops at its first impact.",
+      "block": "Crossed arms — brace stone forearms.",
+      "special": "Old Growth — roots brace the arms; punches launch a ground shockwave and boulders slam on impact."
+    },
+    {
+      "id": "iona",
+      "name": "Iona",
+      "role": "Grassland storm-lancer · reach and commitment",
+      "color": "#c4ce88",
+      "primary": "Spearpoint — thrust along a narrow lane.",
+      "secondary": "Wind lunge — commit to a forward surge and spear strike.",
+      "block": "Gust guard — brace the spear in a frontal wind screen.",
+      "special": "Storm Mantle — spear impacts arc to one nearby foe; lunges leave a gust wake."
+    },
+    {
+      "id": "tam",
+      "name": "Tam",
+      "role": "Frostline ice monk · disciplined close control",
+      "color": "#91d5de",
+      "primary": "Frost palms — palm and elbow strikes build frost.",
+      "secondary": "Ice ridge — send a narrow ridge along the ground.",
+      "block": "Ice guard — cross the forearms behind a frost plate.",
+      "special": "Glacier Form — ice coats the limbs; movement glides, repeated strikes briefly bind then shatter frost."
+    },
+    {
+      "id": "brine",
+      "name": "Brine",
+      "role": "Coastal diver · harpoon gun and integral winch",
+      "color": "#8dc6c0",
+      "primary": "Harpoon gun — fire one tethered harpoon, then reload the integral reel.",
+      "secondary": "Reel — pull a light target or winch toward an anchored heavy target; untethered, sweep the gun butt.",
+      "block": "Dive brace — lower the gun and hold the reinforced forearm guard.",
+      "special": "Abyssal Drive — the winch overdrives; heavy piercing shots and stronger controlled reeling."
+    },
+    {
+      "id": "pendle",
+      "name": "Pendle",
+      "role": "Sunstone robot gunslinger · deliberate marksmanship",
+      "color": "#d5ad77",
+      "primary": "Revolver — one accurate shot; six rounds before a full reload.",
+      "secondary": "Fan fire — fan up to three remaining revolver rounds in a narrow spread, then reload. During Longshot, strike nearby enemies with the rifle stock instead.",
+      "block": "Steel plate — fold out the forearm plate.",
+      "special": "Longshot — holster the revolver and draw a western marksman rifle; slow, penetrating shots replace the primary."
+    },
+    {
+      "id": "mirra",
+      "name": "Mirra",
+      "role": "Oasis water diviner · shaped currents",
+      "color": "#76ccd6",
+      "primary": "Water bolt — an aimed current; firing through a spring seal widens it.",
+      "secondary": "Spring seal — place a finite pool at the aimed point, within reach.",
+      "block": "Water curtain — hold a frontal flowing shield.",
+      "special": "Oasis Unbound — seals connect in damaging currents; new seals redirect the network."
+    },
+    {
+      "id": "ashe",
+      "name": "Ashe",
+      "role": "Sunstone ember knight · sword and cinder armour",
+      "color": "#ed9866",
+      "primary": "Ember blade — sweep the sword in a close arc.",
+      "secondary": "Ember thrust — a committed, longer thrust.",
+      "block": "Armoured guard — brace the sword and shoulder plate.",
+      "special": "Cinderhelm — put on the closed helmet; sword blows cast flame crescents and the form ends in an aimed fire finisher."
+    },
+    {
+      "id": "clack",
+      "name": "Clack",
+      "role": "Coastal launcher gunner · carried rockets",
+      "color": "#d7b888",
+      "primary": "Shoulder rocket — fire a visible rocket with a bounded blast radius; reload between shots.",
+      "secondary": "Concussive vent — release a short-range space-clearing blast from the launcher’s separate pressure chamber, including while its rocket loader reloads.",
+      "block": "Blast guard — unfold the launcher shield.",
+      "special": "Siegebreaker — the loader and shoulder brace unfold; three-rocket salvos replace single shots while the gunner remains mobile."
+    },
+    {
+      "id": "nix",
+      "name": "Nix",
+      "role": "Neon Harbour cyborg · laser arm, heat and misdirection",
+      "color": "#69d3d0",
+      "primary": "Laser arm — emit a narrow, aimable pulse; sustained use builds heat and the arm cools passively.",
+      "secondary": "Afterimage — leave one stationary hologram at the activation origin while moving freely; it attracts enemy attacks and breaks at the first hit or after three seconds.",
+      "block": "Arm shield — hold a compact energy guard.",
+      "special": "Limit Release — arm casing opens; narrow beams pierce multiple targets until the finite form ends."
+    },
+    {
+      "id": "rook",
+      "name": "Rook",
+      "role": "Orbital salvager · pulse carbine, thruster vault and paired space turrets",
+      "color": "#f0be79",
+      "primary": "Pulse carbine — discrete aimed amber bolts, with no disc or tether.",
+      "secondary": "Thruster Vault — make a short directional jetpack vault, keeping aim and carbine available; airborne height avoids ground melee, while projectiles and explosions still hit.",
+      "block": "Energy guard — hold a rectangular amber shield.",
+      "special": "Orbital Rig — deploy exactly two finite space turrets; carbine hits designate their target, and both require the operator nearby."
+    },
+    {
+      "id": "mote",
+      "name": "Mote",
+      "role": "Genderless observatory keeper · glass and gravity",
+      "color": "#b8b4e6",
+      "primary": "Glass volley — three precise converging shards.",
+      "secondary": "Gravity anchor — briefly draw nearby foes into a marked point.",
+      "block": "Glass crescent — hold overlapping panes toward the threat.",
+      "special": "Aphelion — the core opens; orbiting glass releases directed shard storms with each volley."
+    }
+  ]
+}
