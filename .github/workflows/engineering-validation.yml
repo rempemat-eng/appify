@@ -1,0 +1,277 @@
+name: Engineering exact-source validation
+
+# Source review uses codex/engineering-validation-source. Only a later explicit
+# lead GO may create/update this separate execution ref at a frozen exact commit.
+on:
+  push:
+    branches: [codex/engineering-validation-run]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: engineering-exact-source-validation
+  cancel-in-progress: false
+
+jobs:
+  canonical:
+    if: github.repository == 'rempemat-eng/appify' && github.ref == 'refs/heads/codex/engineering-validation-run'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      CI: 'true'
+      TZ: UTC
+      PYTHONDONTWRITEBYTECODE: '1'
+      GIT_OPTIONAL_LOCKS: '0'
+      EXPO_OFFLINE: '1'
+      EXPECTED_SOURCE_SHA: ${{ github.sha }}
+      ENGINEERING_EVIDENCE: ${{ runner.temp }}/engineering-validation-evidence
+    steps:
+      - name: Check out the immutable execution-event commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Set up the existing pinned Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24.19.0'
+          cache: npm
+
+      - name: Set up the existing Python version
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.12'
+
+      - name: Prepare exact-source evidence and command recorder
+        id: evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$ENGINEERING_EVIDENCE"
+          cat > "$RUNNER_TEMP/engineering-source-snapshot.py" <<'PY'
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+          import re
+          import stat
+          import subprocess
+          import sys
+
+          def git(*args):
+              try:
+                  result = subprocess.run(['git', *args], stdout=subprocess.PIPE,
+                                          stderr=subprocess.PIPE, timeout=120)
+                  if result.returncode:
+                      errors.append('git ' + args[0] + ' failed: ' + result.stderr.decode(errors='replace'))
+                  return result.stdout
+              except (OSError, subprocess.TimeoutExpired) as error:
+                  errors.append('git ' + args[0] + ' unavailable: ' + repr(error))
+                  return b''
+
+          def sha(data):
+              return hashlib.sha256(data).hexdigest()
+
+          errors = []
+          expected = os.environ['EXPECTED_SOURCE_SHA']
+          if not re.fullmatch(r'[0-9a-f]{40}', expected):
+              errors.append('Invalid expected event SHA')
+          actual = git('rev-parse', 'HEAD').decode().strip()
+          if actual != expected:
+              errors.append('HEAD differs from immutable event SHA')
+          tree = git('rev-parse', 'HEAD^{tree}').decode().strip()
+          commit = git('cat-file', 'commit', actual).decode().split('\n\n', 1)[0]
+          parents = [x.split()[1] for x in commit.splitlines() if x.startswith('parent ')]
+          index = Path(git('rev-parse', '--git-path', 'index').decode().strip())
+          rows = []
+          for raw in git('ls-files', '--stage', '-z').split(b'\0'):
+              if not raw:
+                  continue
+              info, name = raw.split(b'\t', 1)
+              mode, blob, stage = info.decode().split()
+              path = Path(os.fsdecode(name))
+              try:
+                  if stage != '0':
+                      errors.append('Unmerged index entry: ' + str(path))
+                  metadata = path.lstat()
+                  if path.is_symlink():
+                      data = os.fsencode(os.readlink(path))
+                      kind = 'symlink'
+                  else:
+                      if not path.is_file():
+                          raise ValueError('Tracked path is not a regular file or symlink')
+                      data = path.read_bytes()
+                      kind = 'file'
+                  actual_blob = hashlib.sha1(('blob ' + str(len(data)) + '\0').encode() + data).hexdigest()
+                  if actual_blob != blob:
+                      errors.append('Worktree blob differs from index: ' + str(path))
+                  rows.append([str(path), mode, blob, kind, stat.S_IMODE(metadata.st_mode), sha(data), actual_blob])
+              except (OSError, ValueError) as error:
+                  rows.append([str(path), mode, blob, 'READ ERROR', repr(error)])
+                  errors.append('Tracked path read failed: ' + str(path))
+          status = git('status', '--porcelain=v1', '--untracked-files=all').decode()
+          if status:
+              errors.append('Source/status is not clean')
+          try:
+              raw_index = sha(index.read_bytes())
+          except OSError as error:
+              raw_index = None
+              errors.append('Index read failed: ' + repr(error))
+          value = dict(expected_event_sha=expected, sha=actual, tree=tree, ordered_parents=parents,
+                       raw_index_sha256=raw_index, tracked=rows, status=status, guard_errors=errors)
+          target = Path(os.environ['ENGINEERING_EVIDENCE']) / ('source-' + sys.argv[1] + '.json')
+          target.write_text(json.dumps(value, sort_keys=True, indent=2) + '\n')
+          if sys.argv[1] == 'after':
+              baseline = json.loads((target.parent / 'source-before.json').read_text())
+              if value != baseline:
+                  errors.append('Tracked source/index/status changed during validation')
+                  target.write_text(json.dumps(value, sort_keys=True, indent=2) + '\n')
+          print(json.dumps(dict(source_sha=actual, source_tree=tree,
+                                ordered_parents=parents, tracked_entries=len(rows))))
+          assert not errors, errors
+          PY
+          cat > "$RUNNER_TEMP/engineering-run-phase" <<'SH'
+          #!/usr/bin/env bash
+          set -uo pipefail
+          phase=$1
+          shift
+          "$@" 2>&1 | tee "$ENGINEERING_EVIDENCE/$phase.log"
+          codes=("${PIPESTATUS[@]}")
+          printf '%s\n' "${codes[0]}" > "$ENGINEERING_EVIDENCE/$phase.exit"
+          printf '%s\n' "${codes[1]}" > "$ENGINEERING_EVIDENCE/$phase.tee-exit"
+          if [ "${codes[0]}" -ne 0 ]; then exit "${codes[0]}"; fi
+          if [ "${codes[1]}" -ne 0 ]; then exit "${codes[1]}"; fi
+          SH
+          chmod u+x "$RUNNER_TEMP/engineering-run-phase"
+          python "$RUNNER_TEMP/engineering-source-snapshot.py" before
+
+      - name: Install the unchanged locked dependencies once
+        id: install
+        timeout-minutes: 15
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$RUNNER_TEMP/engineering-run-phase" npm-ci npm ci
+          "$RUNNER_TEMP/engineering-run-phase" pip-install python -m pip install 'Pillow==12.3.0' 'numpy==2.5.3' 'scipy==1.18.1'
+
+      - name: Get the existing SHA-512-verified Godot 4.7.2
+        id: engine
+        timeout-minutes: 10
+        shell: bash
+        run: |
+          set -uo pipefail
+          set +e
+          bash game/tools/get_godot.sh "$RUNNER_TEMP/godot" "$RUNNER_TEMP/godot-archives" > "$ENGINEERING_EVIDENCE/get-godot.log" 2>&1
+          code=$?
+          printf '%s\n' "$code" > "$ENGINEERING_EVIDENCE/get-godot.exit"
+          set -e
+          cat "$ENGINEERING_EVIDENCE/get-godot.log"
+          if [ "$code" -ne 0 ]; then exit "$code"; fi
+          GODOT=$(tail -n 1 "$ENGINEERING_EVIDENCE/get-godot.log")
+          test -f "$GODOT" && test -x "$GODOT" || exit 2
+          printf 'GODOT=%s\n' "$GODOT" >> "$GITHUB_ENV"
+
+      - name: Canonical Godot import, main scene and GdUnit suites
+        id: godot
+        timeout-minutes: 15
+        shell: bash
+        run: '"$RUNNER_TEMP/engineering-run-phase" godot npm run check:godot'
+
+      - name: Canonical kit checks
+        id: kit
+        timeout-minutes: 15
+        shell: bash
+        run: '"$RUNNER_TEMP/engineering-run-phase" kit npm run check:kit'
+
+      - name: Canonical verify, including web and iOS exports
+        id: verify
+        timeout-minutes: 30
+        env:
+          # Existing Verify CI runs the complete audit/gate without preview images.
+          WORLD_AUDIT_NO_IMAGES: '1'
+        shell: bash
+        run: |
+          set -euo pipefail
+          "$RUNNER_TEMP/engineering-run-phase" verify npm run verify
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          import re
+          evidence = Path(os.environ['ENGINEERING_EVIDENCE'])
+          text = (evidence / 'verify.log').read_text(errors='replace')
+          summaries = re.findall(r'Found (\d+) warnings and (\d+) errors', text)
+          result = dict(lint_summaries=summaries,
+                        zero_project_lint=bool(summaries) and all(x == ('0', '0') for x in summaries),
+                        qualification='Host/Python warnings remain separate; this is not globally warning-free.')
+          (evidence / 'verify-lint.json').write_text(json.dumps(result, indent=2) + '\n')
+          assert result['zero_project_lint'], result
+          PY
+
+      - name: Canonical ordinary art reproduction
+        id: art
+        timeout-minutes: 30
+        shell: bash
+        run: '"$RUNNER_TEMP/engineering-run-phase" art npm run check:art-repro'
+
+      - name: Check exact source and index after success or failure
+        id: source_after
+        if: always() && steps.evidence.outcome == 'success'
+        shell: bash
+        run: python "$RUNNER_TEMP/engineering-source-snapshot.py" after
+
+      - name: Retain canonical reports and actual outcome summary
+        if: always()
+        env:
+          GODOT_OUTCOME: ${{ steps.godot.outcome }}
+          KIT_OUTCOME: ${{ steps.kit.outcome }}
+          VERIFY_OUTCOME: ${{ steps.verify.outcome }}
+          ART_OUTCOME: ${{ steps.art.outcome }}
+          SOURCE_OUTCOME: ${{ steps.source_after.outcome }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$ENGINEERING_EVIDENCE"
+          if [ -d game/reports ]; then cp -a game/reports "$ENGINEERING_EVIDENCE/godot-reports"; fi
+          python - <<'PY'
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+          evidence = Path(os.environ['ENGINEERING_EVIDENCE'])
+          phases = {}
+          for phase in ['godot', 'kit', 'verify', 'art']:
+              path = evidence / (phase + '.exit')
+              log = evidence / (phase + '.log')
+              tee = evidence / (phase + '.tee-exit')
+              phases[phase] = dict(step_outcome=os.environ[phase.upper() + '_OUTCOME'],
+                                  command_exit=int(path.read_text()) if path.exists() else 'NOT RUN',
+                                  log_write_exit=int(tee.read_text()) if tee.exists() else 'NOT RUN',
+                                  log_sha256=hashlib.sha256(log.read_bytes()).hexdigest() if log.exists() else None)
+          passed = (os.environ['SOURCE_OUTCOME'] == 'success' and all(
+              x['step_outcome'] == 'success' and x['command_exit'] == 0 and x['log_write_exit'] == 0
+              for x in phases.values()))
+          value = dict(event_source_sha=os.environ['EXPECTED_SOURCE_SHA'], phases=phases,
+                       final_source_guard=os.environ['SOURCE_OUTCOME'], all_four_passed=passed,
+                       limits='Exact hosted tree only; not a local pass, screenshot/native-device/Y12/art-quality/Matt approval. Existing report-only224asset findings are not cleared.')
+          (evidence / 'summary.json').write_text(json.dumps(value, sort_keys=True, indent=2) + '\n')
+          lines = ['## Engineering exact-source validation',
+                   'Source: `' + value['event_source_sha'] + '`', '',
+                   '| Phase | Step outcome | Command exit |', '| --- | --- | --- |']
+          lines += ['| ' + k + ' | ' + str(v['step_outcome']) + ' | ' + str(v['command_exit']) + ' |' for k, v in phases.items()]
+          lines += ['', 'Exact source guard: ' + value['final_source_guard'], '', value['limits']]
+          with Path(os.environ['GITHUB_STEP_SUMMARY']).open('a') as handle:
+              handle.write('\n'.join(lines) + '\n')
+          raise SystemExit(0 if passed else 1)
+          PY
+
+      - name: Upload complete evidence even after a failed command
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: mygame-engineering-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/engineering-validation-evidence/
+          if-no-files-found: error
+          retention-days: 7
