@@ -2133,25 +2133,28 @@ def _feedback_crossroads(T, X):
             t.square(zx + x + w / 2, zy + y + h / 2, w / 2, h / 2,
                      kind='plaza' if q['kind'] == 'square' else 'garden', name=f"the {q['id']} (the zone as built)")
     # Main routes join the existing zone at its boundary; the river goes round it.
-    set_route(T, 'Valley lane south', (6100, 3780, 6500, 4352), [(6256, 3808), (6256, 4320)], 24, 'path')
-    t.street([(6256, 3808), (6256, 4320)], 'main', name='Mill Street')
+    set_route(T, 'Valley lane south', (6100, 3780, 6500, 4416), [(6256, 3808), (6256, 4384)], 24, 'path')
+    t.street([(6256, 3808), (6256, 4384)], 'main', name='Mill Street')
     t.street([(5968, 3808), (5968, 4320)], 'side', name='Halt Road')
-    t.street([(5808, 4048), (6256, 4048)], 'side', name='the halt link')
+    t.street([(5808, 3936), (6256, 3936)], 'side', name='the halt link')
     t.street([(6120, 3936), (6768, 3936)], 'side', name='Granary Row')
     t.street([(6120, 4160), (6768, 4160)], 'lane', name='Weir Lane')
-    t.street([(6528, 3832), (6528, 4320)], 'side', name='Orchard Lane')
+    t.street([(6528, 3832), (6528, 4384)], 'side', name='Orchard Lane')
     t.street([(5984, 3440), (5984, 3808)], 'lane', name='West Lane')
-    t.street([(6744, 3416), (7184, 3416)], 'side', name='Market Lane')
+    t.street([(6608, 3416), (7184, 3416)], 'side', name='Market Lane')
     t.to_route(6992, 3416, 'Foothill Road', 'side', name='the east road')
+    # Join the halt to Granary Row instead of bisecting a second short block;
+    # the mill/orchard fronts reach the same lower junction with enough room
+    # for the retained long row houses between the real crossing streets.
     inventory = FEEDBACK_BUILDINGS['crossroads']
-    _feedback_rows(t, inventory[7:23], [('y', 6256, 3832, 4328, -1, 'Mill Street west'),
-                                      ('y', 6256, 3832, 4328, 1, 'Mill Street east'),
-                                      ('y', 6528, 3832, 4328, 1, 'Orchard Lane east'),
-                                      ('y', 6528, 3832, 4328, -1, 'Orchard Lane west')])
+    _feedback_rows(t, inventory[7:23], [('y', 6256, 3832, 4384, -1, 'Mill Street west'),
+                                      ('y', 6256, 3832, 4384, 1, 'Mill Street east'),
+                                      ('y', 6528, 3832, 4384, 1, 'Orchard Lane east'),
+                                      ('y', 6528, 3832, 4384, -1, 'Orchard Lane west')])
     _feedback_rows(t, inventory[23:29], [('y', 5968, 3832, 4288, -1, 'Halt Road west'),
                                        ('y', 5968, 3832, 4288, 1, 'Halt Road east')])
-    _feedback_rows(t, inventory[29:37], [('x', 3416, 6744, 7184, -1, 'Market Lane north'),
-                                       ('x', 3416, 6744, 7184, 1, 'Market Lane south')])
+    _feedback_rows(t, inventory[29:37], [('x', 3416, 6608, 7184, -1, 'Market Lane north'),
+                                       ('x', 3416, 6608, 7184, 1, 'Market Lane south')])
     _feedback_rows(t, inventory[37:], [('y', 5984, 3440, 3808, -1, 'West Lane gardens')])
     t.square(6400, 3864, 48, 32, kind='garden', name='the mill green')
     t.yard(5840, 4304, 6080, 4368, name='the halt yard', why='loading carts, animal tethering and the water tank beside the halt approach')

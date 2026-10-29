@@ -44,6 +44,28 @@ class MapFeedbackV56(unittest.TestCase):
             count=sum(0 if f in plans.LANDMARK_FORMS or towns.TYPE_OF.get(f,f) in plans.LANDMARK_TYPES else max(1,(len(b)+4)//5) for _,f,_,_,b in inventory)
             self.assertEqual(count,expected)
 
+    def test_actual_crossroads_authoring_retains_all_fixed_and_street_front_buildings(self):
+        # Actual authoring/physics on a bounded dry fixture; no world/noise/render.
+        from types import SimpleNamespace
+        shape=(560,920);T=terrain(shape)
+        T['route_px']={'Valley lane south':[(6256,3808),(6256,4320)],
+                       'Foothill Road':[(7240,3320),(7240,3480)]}
+        fixed,_=towns.crossroads_plan(str(ROOT))
+        with patch.multiple(g,H=shape[0],W=shape[1]), patch.multiple(towns,H=shape[0],W=shape[1]):
+            town=towns._feedback_crossroads(T,SimpleNamespace(ROOT=str(ROOT)))
+        self.assertEqual(len(town.buildings),40)
+        self.assertEqual({b['layout_id'] for b in town.buildings},{f'crossroads-b{i:03d}' for i in range(1,41)})
+        self.assertEqual([(b['x'],b['y'],b['w'],b['h']) for b in town.buildings[:7]],
+                         [tuple(b[:4]) for b in fixed])
+        occupied=np.zeros(shape,bool)
+        for b in town.buildings:
+            x,y,w,h=(b[k]//8 for k in ('x','y','w','h'))
+            self.assertFalse(occupied[y:y+h,x:x+w].any(),b['layout_id'])
+            occupied[y:y+h,x:x+w]=True
+            self.assertFalse(np.isin(T['K'][y:y+h,x:x+w],plans.WATER_K+plans.BARRIER_K).any(),b['layout_id'])
+            if not b.get('plan'):
+                self.assertFalse(T['street'][y:y+h,x:x+w].any(),b['layout_id'])
+
     def test_channel_moves_ground_polyline_and_masks_together(self):
         T=terrain((48,48));yy,xx=np.mgrid[:48,:48]
         old=np.abs(xx*8+4-128)<12
@@ -85,6 +107,23 @@ class MapFeedbackV56(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,'cannot place'):
                 towns._feedback_rows(t,[(1,'row_house',64,32,[])],[('x',160,64,448,-1,'frontage')])
             self.assertEqual(t.buildings,[]);self.assertTrue(T.get('hand_fail'))
+
+    def test_actual_frontage_refuses_impassable_or_reserved_ground(self):
+        # These are real Town.hand/free refusals, with no checker or method stub.
+        for kind in ('river','cliff','road','taken','keepout'):
+            with self.subTest(kind=kind), patch.multiple(towns,H=48,W=64):
+                T=terrain();t=towns.Town(T,'Crossroads',(200,200),'large',(30,45),'fixture','fixture',seed=101)
+                if kind in ('taken','keepout'):
+                    T[kind][:20,:]=True
+                else:
+                    T['K'][:20,:]=kind
+                with self.assertRaisesRegex(ValueError,'cannot place'):
+                    towns._feedback_rows(t,[(8,'row_house',80,24,[])],[('x',160,64,448,-1,'reserved frontage')])
+                self.assertEqual(t.buildings,[])
+        with patch.multiple(towns,H=48,W=64):
+            T=terrain();t=towns.Town(T,'Crossroads',(200,200),'large',(30,45),'fixture','fixture',seed=101)
+            self.assertFalse(t.hand(-8,64,48,48,'house'))
+            self.assertEqual(t.buildings,[])
 
     def test_target_restore_preserves_unrelated_ground_and_routes(self):
         T=terrain();boxes=[(64,64,160,160)]
