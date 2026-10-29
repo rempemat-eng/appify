@@ -27,6 +27,26 @@ DISPLAY=:96 $GODOT --path game --audio-driver Dummy --resolution 1920x1080 --pos
 
 Use `--resolution 3840x2160` (on a matching Xvfb screen) for 4x, and an odd size such as `1600x900` to see the sharp-bilinear fallback.
 
+`npm run review:scene -- <zone>` uses the caller's nonempty `DISPLAY` and preserves
+`XAUTHORITY` for both import and capture. This also supports an authenticated local
+TCP display such as `DISPLAY=localhost:96.0` when Unix X sockets are unavailable;
+the caller must start the server, configure its authentication and transport, and
+stop it afterwards. The runner never stops a caller-managed display. With no
+`DISPLAY`, it starts its existing local Xvfb fallback and terminates and reaps only
+that process. In both cases its XDG configuration and data directories are
+disposable; it does not change the parent environment.
+
+The scene runner keeps import and per-spawn stdout/stderr in `render-import.log`
+and `<zone>_<spawn>.log` under `--out`. It removes prior capture outputs before
+rendering and rejects failed commands, engine-error logs, missing or stale shots,
+and invalid PNGs. Render failure writes an `incomplete` report with the existing
+detector findings and diagnostics, and exits 2; exit 1 still means blocker/fault
+findings and exit 0 means no such findings. A composite alone does not establish
+requested capture coverage. A previous report is removed before new work, so an
+earlier success cannot stand in for a failed producer. Crop sheets round only the
+pixel slice bounds outwards for fractional findings, keeping the finding boxes;
+invalid, empty or wholly outside boxes get a labelled unavailable cell.
+
 ## Traps (from the evaluation slice)
 
 - **A `SCRIPT ERROR` does not stop a run.** Godot logs it and carries on, and still exits 0. Always scan the log (check.sh does). `--quit-after <frames>` ends a run; `get_tree().quit()` from a script is the other way out.
