@@ -205,6 +205,7 @@ class PRSheetContracts(unittest.TestCase):
         godot.chmod(0o755)
         self.env['GODOT'] = str(godot)
         shutil.copyfile(Path(pr_sheet.__file__), self.repo / 'scripts/review/pr_sheet.py')
+        shutil.copyfile(Path(pr_sheet.owned_launch.__file__), self.repo / 'scripts/review/owned_launch.py')
         representation = Path(pr_sheet.__file__).with_name('kit_representation.py')
         if representation.exists():
             shutil.copyfile(representation, self.repo / 'scripts/review/kit_representation.py')
@@ -1708,6 +1709,137 @@ class PRSheetContracts(unittest.TestCase):
                 self.assertNotIn('Traceback', result.stdout + result.stderr)
                 self.assertFalse(output.exists())
                 self.assertEqual(self.git('rev-parse', 'HEAD'), self.head)
+
+
+class OwnedAdapterControls(unittest.TestCase):
+    """Y47 tiny adapter controls: SOURCE PREPARED, NOT EXECUTED."""
+
+    def test_managed_git_keeps_binary_argv_environment_and_parent(self):
+        from unittest import mock
+        from .owned_broker import Broker
+        with tempfile.TemporaryDirectory(prefix='owned-git-') as temporary:
+            root = Path(temporary)
+            fake = root / 'git'
+            fake.write_text('#!' + sys.executable + '\nimport os,sys,json\n'
+                            "sys.stdout.buffer.write(json.dumps({'argv':sys.argv[1:],'parent':os.getppid(),"
+                            "'literal':os.environ['GIT_NO_REPLACE_OBJECTS']}).encode())\n")
+            fake.chmod(0o700)
+            with Broker(root / 'broker') as broker:
+                env = broker.environment(dict(os.environ, PATH=str(root)))
+                with mock.patch.dict(os.environ, env, clear=True):
+                    value = json.loads(pr_sheet._git(root, 'for-each-ref'))
+                self.assertEqual(value['argv'], ['--literal-pathspecs', '-C', str(root), 'for-each-ref'])
+                self.assertEqual(value['parent'], broker.service_pid)
+                self.assertEqual(value['literal'], '1')
+
+    def test_managed_detector_exit_one_keeps_logs_hashes_and_wait_receipt(self):
+        from unittest import mock
+        from .owned_broker import Broker
+        with tempfile.TemporaryDirectory(prefix='owned-command-') as temporary:
+            root = Path(temporary)
+            with Broker(root / 'broker') as broker:
+                with mock.patch.dict(os.environ, broker.environment(), clear=True):
+                    result = pr_sheet._command(root, root, root / 'logs',
+                                               [sys.executable, '-c', "import sys;print('finding');print('detail',file=sys.stderr);sys.exit(1)"],
+                                               timeout=3)
+                self.assertEqual(result['returncode'], 1)
+                self.assertIsNone(result['error'])
+                self.assertEqual((root / result['stdout']).read_bytes(), b'finding\n')
+                self.assertEqual(result['stdout_sha256'], hashlib.sha256(b'finding\n').hexdigest())
+                self.assertTrue(result['owned_receipt']['waited'])
+
+    def test_managed_python_runner_binds_subject_paths_not_subject_code(self):
+        from unittest import mock
+        from . import owned_launch
+        from .owned_broker import Broker
+        with tempfile.TemporaryDirectory(prefix='owned-tool-routing-') as temporary:
+            root = Path(temporary)
+            subject, tools = root / 'subject', root / 'reviewed-tools'
+            marker = root / 'wrong-runner'
+            for base in (subject, tools):
+                package = base / 'scripts' / 'review'
+                package.mkdir(parents=True)
+                (base / 'scripts' / '__init__.py').write_text('')
+                (package / '__init__.py').write_text('')
+            package = tools / 'scripts' / 'review'
+            helper = package / 'owned_launch.py'
+            helper.write_text(Path(owned_launch.__file__).read_text())
+            (package / 'core.py').write_text("REPO = 'WRONG_TOOL_DATA_ROOT'\n")
+            (package / 'scene.py').write_text("from .core import REPO\nfrom pathlib import Path\nGAME = str(Path(REPO) / 'game')\n")
+            producer = ("from .core import REPO\nfrom .scene import GAME\nfrom . import owned_launch\n"
+                        "import json,os,sys\nfrom pathlib import Path\n"
+                        "engine = owned_launch.run([sys.executable, '-c', 'import os,json;print(json.dumps(dict(cwd=os.getcwd(),parent=os.getppid())))'], cwd=REPO, text=True, timeout=3)\n"
+                        "print(json.dumps(dict(repo=REPO,game=GAME,catalogue=str(Path(REPO)/'art'/'catalogue'),engine=json.loads(engine.stdout),argv=sys.argv[1:])))\n")
+            for module in ('run', 'assets'):
+                (package / (module + '.py')).write_text(producer)
+                (subject / 'scripts' / 'review' / (module + '.py')).write_text(
+                    f"from pathlib import Path;Path({str(marker)!r}).touch()")
+            with Broker(root / 'broker') as broker:
+                with mock.patch.dict(os.environ, broker.environment(), clear=True), \
+                        mock.patch.object(pr_sheet, 'REPO', tools), \
+                        mock.patch.object(owned_launch, '__file__', str(helper)):
+                    for module in ('run', 'assets'):
+                        result = pr_sheet._command(subject, root, root / module,
+                                                   [sys.executable, '-m', 'scripts.review.' + module, 'literal space'], timeout=5)
+                        self.assertEqual(result['returncode'], 0, result['stderr_text'])
+                        value = json.loads(result['stdout_text'])
+                        self.assertEqual(value['repo'], str(subject))
+                        self.assertEqual(value['game'], str(subject / 'game'))
+                        self.assertEqual(value['catalogue'], str(subject / 'art' / 'catalogue'))
+                        self.assertEqual(value['engine'], dict(cwd=str(subject), parent=broker.service_pid))
+                        self.assertEqual(value['argv'], ['literal space'])
+                        self.assertEqual(result['command'][1:3], ['-I', '-B'])
+                        self.assertIn(str(subject), result['command'])
+            self.assertFalse(marker.exists())
+
+    def test_managed_timeout_remains_124_and_partial_logs_are_retained(self):
+        from unittest import mock
+        from .owned_broker import Broker
+        with tempfile.TemporaryDirectory(prefix='owned-timeout-') as temporary:
+            root = Path(temporary)
+            with Broker(root / 'broker') as broker:
+                with mock.patch.dict(os.environ, broker.environment(), clear=True):
+                    result = pr_sheet._command(root, root, root / 'logs',
+                                               [sys.executable, '-c', "import time;print('prefix',flush=True);time.sleep(10)"],
+                                               timeout=0.3)
+                self.assertEqual(result['returncode'], 124)
+                self.assertIn('timed out', result['error'])
+                self.assertIn('prefix', result['stdout_text'])
+
+    def test_managed_engine_error_at_zero_exit_is_still_rejected(self):
+        from unittest import mock
+        from .owned_broker import Broker
+        from . import run
+        with tempfile.TemporaryDirectory(prefix='owned-engine-log-') as temporary:
+            root = Path(temporary)
+            with Broker(root / 'broker') as broker:
+                env = broker.environment(dict(os.environ, GODOT=sys.executable, DISPLAY=':CONTROL_ONLY'))
+                with mock.patch.object(run, 'REPO', root):
+                    with self.assertRaises(run.RenderError):
+                        run._godot_command([sys.executable, '-c', "print('SCRIPT ERROR: fake engine')"],
+                                           env, str(root / 'engine.log'), 3)
+                self.assertIn('SCRIPT ERROR', (root / 'engine.log').read_text())
+
+    def test_managed_missing_inputs_and_stripped_credentials_never_launch_locally(self):
+        from unittest import mock
+        from . import run
+        from .owned_launch import SOCKET_ENV, TOKEN_ENV
+        env = {SOCKET_ENV: '/absent/socket', TOKEN_ENV: 'control-only'}
+        with tempfile.TemporaryDirectory(prefix='owned-refusal-') as temporary:
+            root = Path(temporary)
+            with mock.patch.dict(os.environ, env, clear=True), \
+                    mock.patch('subprocess.run') as local_run, mock.patch('subprocess.Popen') as local_popen:
+                with self.assertRaises(pr_sheet.ReviewError):
+                    pr_sheet._import_project(root, root)
+                with self.assertRaises(run.RenderError):
+                    run.godot_bin()
+                with self.assertRaises(run.RenderError):
+                    run.start_xvfb()
+                with self.assertRaises(run.RenderError):
+                    run._godot_command(['no-local-engine'], {'GODOT': 'fake', 'DISPLAY': ':CONTROL_ONLY'},
+                                       str(root / 'refusal.log'), 1)
+                local_run.assert_not_called()
+                local_popen.assert_not_called()
 
 
 if __name__ == '__main__':

@@ -37,6 +37,7 @@ from PIL import Image
 
 from .core import REPO, GAME_H, to_native, crop_nonblack, annotate, crop_sheet, write_json, Finding
 from . import screen as SC, scene as SN
+from . import owned_launch
 
 GRID = (6, 4)          # columns x rows of the audit grid on a 960 x 540 screen (160 x 135 art px a cell)
 ENGINE_ERROR = re.compile(r'^\s*(?:SCRIPT ERROR|ERROR:|Parse Error|Failed loading resource|Cannot open file|godot errors at)', re.M)
@@ -52,7 +53,11 @@ def _log_text(value) -> str:
 
 def _godot_command(args: list[str], env: dict, log_path: str, timeout: int) -> None:
     try:
-        result = subprocess.run(args, cwd=REPO, env=env, capture_output=True, text=True, timeout=timeout)
+        managed = owned_launch.requested() or owned_launch.requested(env)
+        if managed and (not env.get('GODOT') or not env.get('DISPLAY', '').strip()):
+            raise owned_launch.OwnedLaunchError('owned Godot command requires supplied GODOT and DISPLAY')
+        runner = owned_launch.run if managed else subprocess.run
+        result = runner(args, cwd=REPO, env=env, capture_output=True, text=True, timeout=timeout)
         log = _log_text(result.stdout) + '\n' + _log_text(result.stderr)
     except (OSError, subprocess.SubprocessError) as exc:
         log = _log_text(getattr(exc, 'stdout', '')) + '\n' + _log_text(getattr(exc, 'stderr', '')) + '\n' + str(exc)
@@ -71,6 +76,8 @@ def godot_bin() -> str:
         if os.path.isfile(env) and os.access(env, os.X_OK):
             return env
         raise RenderError(f'Godot executable is unavailable: {env}')
+    if owned_launch.requested():
+        raise RenderError('owned mode requires supplied GODOT; acquisition is forbidden')
     out = subprocess.run(['bash', os.path.join(REPO, 'game', 'tools', 'get_godot.sh')], capture_output=True,
                          text=True, cwd=REPO)
     lines = out.stdout.strip().splitlines()
@@ -83,6 +90,8 @@ def godot_bin() -> str:
 
 
 def start_xvfb(w=1920, h=1080):
+    if owned_launch.requested():
+        raise RenderError('owned mode requires supplied DISPLAY; Xvfb fallback is forbidden')
     for n in range(91, 99):
         if os.path.exists(f'/tmp/.X11-unix/X{n}') or os.path.exists(f'/tmp/.X{n}-lock'):
             continue
@@ -113,6 +122,8 @@ def render(zone: str, spawns: list[str], out: str, stage: str | None = None, at:
         with tempfile.TemporaryDirectory(prefix='review-godot-') as tmp:
             env = dict(os.environ, XDG_CONFIG_HOME=os.path.join(tmp, 'cfg'), XDG_DATA_HOME=os.path.join(tmp, 'data'))
             if not env.get('DISPLAY', '').strip():
+                if owned_launch.requested(env):
+                    raise RenderError('owned mode requires supplied DISPLAY; Xvfb fallback is forbidden')
                 xv, env['DISPLAY'] = start_xvfb()
             try:
                 # Remove prior outputs before import/render: an existing PNG is not proof of a new capture.
