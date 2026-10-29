@@ -238,9 +238,9 @@ def _representation_inputs(repo: Path, out: Path, pinned: dict, change: dict, ca
     for side, ref, path in versions:
         if not path.startswith((kit_representation.TERRAIN, kit_representation.PROPS)):
             continue
-        inputs = []
+        inputs, image_inputs = [], []
 
-        def read(source):
+        def read(source, *, image=False):
             key = (ref, source)
             if key not in cache:
                 cache[key] = _blob(repo, ref, source)
@@ -253,7 +253,7 @@ def _representation_inputs(repo: Path, out: Path, pinned: dict, change: dict, ca
             if not evidence.exists():
                 evidence.write_bytes(data)
             item['evidence'] = _relative(out, evidence)
-            inputs.append(item)
+            (image_inputs if image else inputs).append(item)
             if mode not in ('100644', '100755'):
                 raise ReviewError('kit context input is not a regular committed file')
             return data
@@ -261,10 +261,8 @@ def _representation_inputs(repo: Path, out: Path, pinned: dict, change: dict, ca
         context = kit_representation.inspect(path, read)
         context.update(side=side, ref=ref, path=path, metadata_inputs=inputs)
         # Preserve the old as well as the new image bytes, even on a rename/delete.
-        image_inputs = []
         try:
-            read(path)
-            image_inputs.append(inputs.pop())
+            read(path, image=True)
         except (ReviewError, OSError, ValueError) as exc:
             context['errors'].append(str(exc))
         context['image_inputs'] = image_inputs
@@ -282,13 +280,13 @@ def _asset(repo: Path, out: Path, pinned: dict, change: dict, context_cache=None
     try:
         mode, blob, data = _blob(repo, source_ref, source_path)
         row.update(input_blob=blob, input_sha256=_sha(data))
-        if mode not in ('100644', '100755'):
-            row['status'] = 'unsupported'
-            raise ReviewError('linked or nonregular art is not committed image evidence')
         contexts = _representation_inputs(repo, out, pinned, change,
                                            context_cache if context_cache is not None else {})
         if contexts:
             row['representation_inputs'] = contexts
+        if mode not in ('100644', '100755'):
+            row['status'] = 'unsupported'
+            raise ReviewError('linked or nonregular art is not committed image evidence')
         if Path(path).suffix.lower() != '.png':
             row['status'] = 'unsupported'
             raise ReviewError('image category is not supported by this PNG review bundle')

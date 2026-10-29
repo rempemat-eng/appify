@@ -435,6 +435,29 @@ class PRSheetContracts(unittest.TestCase):
         self.assertTrue((self.out / row['evidence']['preview']).is_file())
         self.assertEqual(row['representation_inputs'][0]['ref'], self.base)
 
+    def test_encoded_file_replaced_by_symlink_retains_both_context_sides(self):
+        self.kit_metadata()
+        self.change_asset('game/kit/terrain/encoded.png')
+        self.base = self.head
+        self.git('branch', '-f', 'base', self.base)
+        target = self.root / 'external-target.png'
+        target.write_bytes(b'never read external image bytes')
+        path = self.repo / 'game/kit/terrain/encoded.png'
+        path.unlink()
+        path.symlink_to(target)
+        self.commit('encoded regular file becomes symlink')
+        self.assertEqual(self.cli().returncode, 1)
+        row = self.read_bundle()['assets'][0]
+        self.assertEqual(row['status'], 'unsupported')
+        contexts = row['representation_inputs']
+        self.assertEqual([c['side'] for c in contexts], ['before', 'after'])
+        self.assertEqual([c['metadata_inputs'][0]['ref'] for c in contexts], [self.base, self.head])
+        self.assertEqual(contexts[0]['image_inputs'][0]['mode'], '100644')
+        image = contexts[1]['image_inputs'][0]
+        self.assertEqual(image['mode'], '120000')
+        self.assertEqual((self.out / image['evidence']).read_bytes(), str(target).encode())
+        self.assertNotIn(b'never read external image bytes', b''.join(p.read_bytes() for p in self.out.rglob('*') if p.is_file()))
+
     def test_metadata_versions_are_pinned_separately_after_binding_changes(self):
         terrain, _ = self.kit_metadata()
         self.change_asset('game/kit/terrain/encoded.png')
