@@ -681,6 +681,11 @@ def gap_obstacles(T, obs):
 
 
 # ------------------------------------------------------------------------------------------ v56: fit ground to the authored places
+# Complete retained303 plan inventory, including small/empty first-town proposals.
+EXPECTED_TOWN_PLANS = frozenset(('canalside', 'charcoal-hollow', 'cinder-springs', 'cinderwick',
+    'cogsworth', 'crossroads', 'driftwood', 'dust-gulch', 'ember-forge', 'fernhollow', 'glintside',
+    'gullwick', 'halcyon-row', 'hearthold', 'highgarth', 'lagoon-landing', 'launch-cape', 'lullford',
+    'neon-harbour', 'palm-spring', 'the-lode'))
 CROSSROADS_RIVER_BOX = (6120, 3096, 6736, 3968)
 CROSSROADS_RIVER = [(6256, 3120), (6400, 3176), (6656, 3216), (6680, 3376),
                     (6680, 3760), (6616, 3864), (6384, 3928)]
@@ -783,6 +788,9 @@ def feedback_plan_checks(T, plans):
         c, r, w, h = P['terrain']['box_cells']
         P['terrain']['rows'] = TP.terrain_rows(T['K'][r:r + h, c:c + w])
         failures, notes, metrics = checker.check_plan(P, blockout)
+        failures = list(failures)
+        if pid not in EXPECTED_TOWN_PLANS:
+            failures.append(f'unexpected_plan: {pid} is not in the retained303 town inventory')
         occupied = np.zeros(T['K'].shape, bool)
         for b in P['buildings']:
             bc, br, bw, bh = b['footprint_cells']
@@ -801,6 +809,11 @@ def feedback_plan_checks(T, plans):
         reports[pid] = {'pass': not failures, 'failures': failures, 'notes': notes,
                         'metrics': metrics, 'actual_count': P['buildings_counted'], 'retained_count': expected}
         print(('PASS' if not failures else 'FAIL'), 'v56 town', pid, json.dumps(reports[pid]))
+    for pid in sorted(EXPECTED_TOWN_PLANS - set(plans)):
+        reports[pid] = {'pass': False, 'failures': [f'missing_plan: {pid} has no exported town plan'],
+                        'notes': [], 'metrics': None, 'actual_count': None,
+                        'retained_count': {'crossroads': 40, 'neon-harbour': 72}.get(pid)}
+        print('FAIL v56 town', pid, json.dumps(reports[pid]))
     return reports
 
 
@@ -1166,6 +1179,6 @@ if __name__ == '__main__':
         map55.render_all(state, sys.modules[__name__])
     if REVISION == 'v56':
         checks = state.get('physical_checks') or {}
-        if not checks or any(not q['pass'] for q in checks.values()):
+        if set(checks) != EXPECTED_TOWN_PLANS or any(not q['pass'] for q in checks.values()):
             print('FAIL v56: physical checks incomplete or failing; see town-checks-v56.json')
             sys.exit(1)

@@ -116,12 +116,38 @@ class MapFeedbackV56(unittest.TestCase):
         checker=plans.TW._review()
         with patch.object(checker,'check_plan',side_effect=[(['original-one'],[],40),(['original-two'],[],71),(['original-three'],[],3)]), patch('builtins.print'):
             out=world.feedback_plan_checks(T,P)
-        self.assertEqual(set(out),set(P))
+        self.assertTrue(set(P).issubset(out))
         self.assertTrue(all(not q['pass'] for q in out.values()))
         for pid,n in [('crossroads','one'),('neon-harbour','two'),('other-town','three')]:
             self.assertIn('original-'+n,out[pid]['failures'])
             self.assertTrue(any('literal water/barrier' in f for f in out[pid]['failures']))
         self.assertIn('retained_count: 71 != 72',out['neon-harbour']['failures'])
+
+    def test_report_refuses_missing_target_missing_other_and_all_pass_subset(self):
+        all_ids={p.stem for p in (BLOCKOUT/'towns').glob('*.json')}
+        self.assertEqual(len(all_ids),21)
+        checker=plans.TW._review()
+        for missing in ({'crossroads'},{'canalside'},all_ids-{'crossroads','neon-harbour'}):
+            with self.subTest(missing=sorted(missing)):
+                T=terrain((8,8));T['route_px']={}
+                provided={pid:{'terrain':{'box_cells':[0,0,8,8],'rows':[]},
+                           'buildings_counted':{'crossroads':40,'neon-harbour':72}.get(pid,3),'buildings':[]}
+                          for pid in all_ids-missing}
+                with patch.object(checker,'check_plan',return_value=([],[],3)),patch('builtins.print'):
+                    out=world.feedback_plan_checks(T,provided)
+                self.assertEqual(set(out),all_ids)
+                for pid in missing:
+                    self.assertFalse(out[pid]['pass'])
+                    self.assertTrue(any('missing_plan' in f for f in out[pid]['failures']))
+                self.assertTrue(any(not q['pass'] for q in out.values()))
+
+    def test_report_refuses_unexpected_town_identity(self):
+        T=terrain((8,8));T['route_px']={}
+        P={'invented-town':{'terrain':{'box_cells':[0,0,8,8],'rows':[]},'buildings_counted':3,'buildings':[]}}
+        with patch.object(plans.TW._review(),'check_plan',return_value=([],[],3)),patch('builtins.print'):
+            out=world.feedback_plan_checks(T,P)
+        self.assertFalse(out['invented-town']['pass'])
+        self.assertTrue(any('unexpected_plan' in f for f in out['invented-town']['failures']))
 
     def test_map_state_reads_only_the_selected_revision_stats(self):
         T=terrain((8,8));T.update(sea=~T['land'],FRAME=np.zeros((8,8),bool),
