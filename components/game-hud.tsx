@@ -1,5 +1,5 @@
 import { Platform, Pressable, Text, View, useWindowDimensions } from 'react-native';
-import type { ComponentProps, ReactNode } from 'react';
+import { useState, type ComponentProps, type ReactNode } from 'react';
 import type { Tabs } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { cozy as c } from '@/lib/cozy';
@@ -130,8 +130,12 @@ export function GameHud() {
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
   const u = usePixelUnit();
+  // the name's room in the bar; a name that would not fit at 12 px steps down to 10 px (a
+  // 2x iPhone SE at 375 px showed DOZEB… at 12), and only then is it cut
+  const [nameRoom, setNameRoom] = useState(0);
   if (!p) return null;
   const guardian = guardianPlayer(p);
+  const nameFits = !nameRoom || guardian.pet_name.length * 7.5 <= nameRoom;
   const state = status(p, now);
   const left = remainingPlay(budget, now);
   const mood = p.mood < 30 ? 'GRUMPY' : 'HAPPY';
@@ -195,8 +199,14 @@ export function GameHud() {
               decorative
             />
           </View>
-          <View style={{ flex: 1, minWidth: 0, gap: u }}>
-            <Text numberOfLines={1} style={[type.label, { color: c.ink }]}>
+          <View
+            onLayout={(event) => setNameRoom(event.nativeEvent.layout.width)}
+            style={{ flex: 1, minWidth: 0, gap: u }}
+          >
+            <Text
+              numberOfLines={1}
+              style={[type.label, { color: c.ink }, nameFits ? null : { fontSize: 10 }]}
+            >
               {guardian.pet_name}
             </Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: u }}>

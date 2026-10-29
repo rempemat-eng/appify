@@ -2,6 +2,8 @@ import { defineConfig } from '@playwright/test';
 
 const viewports = [
   { width: 320, height: 640 },
+  // the 2x iPhone SE's height: short screens clipped the nap chip and the spar hand (lane R, 21 Oct)
+  { width: 375, height: 667 },
   { width: 402, height: 874 },
   { width: 768, height: 1024 },
 ];
