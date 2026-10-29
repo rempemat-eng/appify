@@ -157,3 +157,70 @@ current Y12, official Eastward matched crops/detail counts, actual regional
 ground/shadow/clearance/biome bindings, editor placement/occlusion, device evidence
 and Matt's explicit OK remain outstanding. Keep this PR Draft and
 `needs-matt-review`; no Ready, merge or production placement is requested.
+
+## Y46: preserve the admitted phases through a forced metadata refresh
+
+Caliper's [GO6500931589](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6500931589)
+and [ASSIGN6501044730](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6501044730)
+authorise this bounded continuation on `codex/caliper-prop-seed-phases`, from
+the genuine Y45 head `d6c9beeb8d473bef519c936f06fea37b444eb29d`, tree
+`c77e772cb54244b68310e79d87167a3be5638c59`. Y40 remains in lead review custody.
+The preceding Y45 report and its historical seeder warning are preserved above.
+
+The rectangular-footprint derivation now uses the existing piece's retained
+`placement.snap`. For `cell`, it unions positive-area rectangle intersections
+at world-X phases zero and four, with whole-cell Y. These are exactly the
+relation engine's existing half-X/full-Y placements, measured from the floor
+of the foot. No margin, collider, rendering foot, snap permission or relation
+rule changes. Both crate variants retain six cells; the trough retains four.
+Source ordering stays deterministic. Variant feet remain source-backed and
+placement/rendering decisions and existing reviewed-state guards are preserved.
+
+Other snap modes, absent snap, circles and unknown/procedural collisions keep
+their previous derivation. Their coverage is not newly established: the existing
+cell-aligned approximation and open runtime notes remain explicit. This change
+does not implement continuous free-snap coverage, half-Y coverage or circle
+physics. Existing candidate audit notes, including historical warnings, are
+retained rather than silently deleted. New cell-snap rectangle output records
+the two-phase qualification; exact runtime blocking still needs its receiver.
+
+`python -B -m unittest scripts.review.test_seed_prop_phases -v` passes all
+11 focused tests. The real `_assemble`, `main`, schema validator and relation
+engine are exercised with tiny new temporary metadata destinations. Only source
+discovery is substituted by a bounded batch, and image dimensions are injected
+from the pinned metadata. The batch retains `seed()`'s final source/TODO
+normalisation. No full-world `seed()`, PNG intake, painter, drawing or original
+destination write is claimed.
+
+The final tests on the unchanged parent seeder produce 22 assertion failures
+and zero errors: the crate footprint regression, 18 uncovered half-X samples
+across both variants, the boundary case and two missed water/route refusals.
+The corrected seeder passes the same tests, including 54 independent
+continuous-rectangle coverage samples across all three variants and signed
+whole/half-X translations. Boundaries use positive-area intersections, excluding
+mere touching and empty rectangles. Real relation checks retain quarter-X and
+half-Y refusals. Default skip preserves file bytes; force preserves authored
+fields and is idempotent after normalisation. All four reviewed approval states
+refuse the whole batch before writes, and a concurrent destination edit is
+refused. Source piece bytes remain unchanged throughout.
+
+Earlier test-development failures are retained: an unsupported synthetic audit
+key caused schema refusal, then omitting `seed()`'s final normalisation in the
+bounded batch caused an idempotence failure. The fixtures were corrected; those
+failures are not production fixes or passing evidence. The first patch run
+still exposed that normalisation fixture error before the final green run.
+An independent disjoint code/test review found no source blocker and ran no
+additional controls.
+
+| Final retained log | SHA256 |
+| --- | --- |
+| Parent RED, 11 tests / 22 assertion failures / 0 errors | `fb934d92b9b1835a3f6832ed8bfddf4d0ebb4402191ed8292033fc112ea76c1e` |
+| Corrected GREEN, 11 tests / 0 failures / 0 errors | `734c3469ae16186ba3be117f68a332244424a771b6093c5a798e90aa41ddd15e` |
+
+Only the seeder, the new focused test and this appended continuation change.
+All existing piece JSONs, PNGs, painters, shared index/scenes, schemas and
+other source remain unchanged. No broad refresh has run. A later integration
+owner must separately validate the receiving pipeline. Full verify/zero-warning
+lint, ordinary art reproduction, full kit/Godot, Y12, rendering, regional
+bindings, runtime/device evidence and Matt's PR-specific approval remain
+NOT RUN or outstanding. Keep Draft and `needs-matt-review`.

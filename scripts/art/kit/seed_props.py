@@ -130,19 +130,24 @@ def _post_collision(scene, actor):
     return None
 
 
-def footprint(rect):
-    """Conservative intersected 8-world-px cells at a cell-aligned foot.
+def footprint(rect, snap=None):
+    """Intersected 8-world-px cells, unioned over existing cell-snap phases.
 
     The exact collision stays continuous. A one-texel post must not vanish through a half-area
-    threshold. W4 must recompute at half/free snapped feet; these are reusable local cells,
-    independent of the first source instance's old grid phase.
+    threshold. The relation engine's cell snap admits half-X/full-Y feet, so
+    its reusable offsets must cover both X phases relative to floor(foot).
+    Other snap modes retain the legacy cell-aligned approximation, not a
+    claim of phase coverage. Runtime blocking still uses continuous collision.
     """
     x, y, w, h = rect
     if w <= 0 or h <= 0:
         return []
     import math
-    return [[cx, cy] for cy in range(math.floor(y / CELL_W), math.ceil((y + h) / CELL_W))
-            for cx in range(math.floor(x / CELL_W), math.ceil((x + w) / CELL_W))]
+    phases = (0.0, CELL_W / 2) if snap == 'cell' else (0.0,)
+    cells = {(cx, cy) for phase in phases
+             for cy in range(math.floor(y / CELL_W), math.ceil((y + h) / CELL_W))
+             for cx in range(math.floor((x + phase) / CELL_W), math.ceil((x + w + phase) / CELL_W))}
+    return [[cx, cy] for cx, cy in sorted(cells, key=lambda c: (c[1], c[0]))]
 
 
 def _source(zone, obj, part='body'):
@@ -227,8 +232,9 @@ def _assemble(zone, base, objects, collision, pid=None, interactions=(), buildin
     if variants:
         g['foot'] = variants[0]['foot']
     todo_circle = bool(collision and collision['shape'] == 'circle')
+    snap = old.get('placement', {}).get('snap') if old else None
     if collision and collision['shape'] == 'rect':
-        g['footprint'] = footprint(collision['rect'])
+        g['footprint'] = footprint(collision['rect'], snap)
     elif collision and collision['shape'] == 'circle':
         r = collision['radius']
         g['footprint'] = footprint([-r, -r, 2 * r, 2 * r])
@@ -240,7 +246,10 @@ def _assemble(zone, base, objects, collision, pid=None, interactions=(), buildin
     if collision is None:
         todo.append('object-local collision is unknown: woodland scene has only a merged terrain walk mask; Claude must author a solid box (no guessed tree/body collision)')
     if g['footprint']:
-        todo.append('footprint is conservative positive-area coverage at a cell-aligned foot; W4 must derive exact runtime blocking from collision at the placed foot')
+        if collision['shape'] == 'rect' and snap == 'cell':
+            todo.append('footprint conservatively unions both admitted half-X/full-Y cell-snap phases; exact runtime blocking still uses collision at the placed foot')
+        else:
+            todo.append('footprint is conservative positive-area coverage at a cell-aligned foot; W4 must derive exact runtime blocking from collision at the placed foot')
     if todo_circle:
         todo.append('source has a circle post; prop-scene generator currently emits rectangles only (W4/runtime support needed before placement)')
     if not variants:
