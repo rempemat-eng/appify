@@ -1,0 +1,174 @@
+{
+  "schema": "napattack.piece/1",
+  "kind": "prop",
+  "version": 1,
+  "approval": {
+    "state": "candidate",
+    "by": null,
+    "at": null,
+    "standard": "docs/vision/art-style.md; eastward-edges.md; size-guide.md; ground-rules.md",
+    "note": "Y36 authored candidate art only. Not gated, approved, registered or placed in a shipping zone."
+  },
+  "function": {},
+  "gameplay": {
+    "blocks_move": true,
+    "blocks_shots": false
+  },
+  "id": "industry_bollard",
+  "name": "Mooring bollard",
+  "biomes": [
+    "neon_harbour",
+    "gullwick",
+    "lullford",
+    "cogsworth"
+  ],
+  "variants": [
+    {
+      "id": "single",
+      "weight": 1.0,
+      "png": "res://kit/props/art/industry_bollard_single.png",
+      "foot": [
+        48,
+        60
+      ]
+    },
+    {
+      "id": "rope",
+      "weight": 1.0,
+      "png": "res://kit/props/art/industry_bollard_rope.png",
+      "foot": [
+        48,
+        60
+      ]
+    }
+  ],
+  "geometry": {
+    "size_px": [
+      96,
+      72
+    ],
+    "size_cells": [
+      4,
+      3
+    ],
+    "foot": [
+      48,
+      60
+    ],
+    "footprint": [
+      [
+        -2,
+        -1
+      ],
+      [
+        -1,
+        -1
+      ],
+      [
+        0,
+        -1
+      ]
+    ],
+    "overhang": [
+      [
+        -2,
+        -2
+      ],
+      [
+        -1,
+        -2
+      ],
+      [
+        0,
+        -2
+      ]
+    ],
+    "height_px": 42,
+    "z_sort": "foot",
+    "collision": {
+      "shape": "rect",
+      "rect": [
+        -8.5,
+        -3.5,
+        16,
+        3.5
+      ]
+    }
+  },
+  "placement": {
+    "role": "mooring",
+    "ground": {
+      "allow": [
+        "rock"
+      ],
+      "deny": [
+        "water",
+        "route"
+      ]
+    },
+    "tiers": [
+      0
+    ],
+    "requires": [
+      {
+        "rel": "at_edge",
+        "what": "water",
+        "cells": 1
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "water"
+      },
+      {
+        "rel": "on",
+        "what": "route"
+      }
+    ],
+    "clearance": 1,
+    "orientations": [
+      "s"
+    ],
+    "snap": "half",
+    "composition": "edge",
+    "stages": []
+  },
+  "rendering": {
+    "contact_ao": true,
+    "cast_shadow": {
+      "shape": "ellipse",
+      "size": [
+        18,
+        5
+      ],
+      "dir": [
+        2,
+        1
+      ]
+    }
+  },
+  "story": {
+    "lore": "Ordinary waterfront work equipment; repeated parts support authored places rather than creating a new service or game system."
+  },
+  "audit": {
+    "painter": {
+      "module": "scripts.art.kit.settlement_props",
+      "fn": "bollard",
+      "args": {}
+    },
+    "size_class": null,
+    "eastward_ref": null,
+    "seeded_from": "game/data/kit/concepts/industry_bollard.json; docs/codex/coast-city-kit.md (PR345)",
+    "reviews": [],
+    "todo": [
+      "Rectangular iron base plate is the blocker; loose rope is decorative and has no interaction.",
+      "Current lab binds only existing rock surface. Paving, stone-quay and timber-deck material IDs are not yet bound; no unknown surface is silently accepted.",
+      "Single/rope develop two existing W0 variants; double-horn design is deferred.",
+      "Final settlement placement must keep rope and quay access out of public walking bands.",
+      "Official Eastward same-character-height visual comparison, independent detail audit and Matt approval are outstanding.",
+      "Per-piece shadow ellipse, silhouette, scale and rectangular base collision remain candidate authored choices for visual review.",
+      "Shared props index/scenes are deliberately not regenerated in this step; do not claim editor placement is available."
+    ]
+  }
+}

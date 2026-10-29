@@ -1,0 +1,310 @@
+{
+  "schema": "napattack.piece/1",
+  "kind": "prop",
+  "version": 1,
+  "approval": {
+    "state": "candidate",
+    "by": null,
+    "at": null,
+    "standard": "docs/vision/art-style.md; eastward-edges.md; size-guide.md; ground-rules.md",
+    "note": "Y36 authored candidate art only. Not gated, approved, registered or placed in a shipping zone."
+  },
+  "function": {},
+  "gameplay": {
+    "blocks_move": true,
+    "blocks_shots": false
+  },
+  "id": "industry_net_rack",
+  "name": "Waterfront net rack",
+  "biomes": [
+    "neon_harbour",
+    "gullwick",
+    "lullford",
+    "cogsworth"
+  ],
+  "variants": [
+    {
+      "id": "working",
+      "weight": 1.0,
+      "png": "res://kit/props/art/industry_net_rack_working.png",
+      "foot": [
+        96,
+        120
+      ]
+    },
+    {
+      "id": "repair",
+      "weight": 1.0,
+      "png": "res://kit/props/art/industry_net_rack_repair.png",
+      "foot": [
+        96,
+        120
+      ]
+    }
+  ],
+  "geometry": {
+    "size_px": [
+      192,
+      132
+    ],
+    "size_cells": [
+      8,
+      6
+    ],
+    "foot": [
+      96,
+      120
+    ],
+    "footprint": [
+      [
+        -4,
+        -1
+      ],
+      [
+        -3,
+        -1
+      ],
+      [
+        -2,
+        -1
+      ],
+      [
+        -1,
+        -1
+      ],
+      [
+        0,
+        -1
+      ],
+      [
+        1,
+        -1
+      ],
+      [
+        2,
+        -1
+      ],
+      [
+        3,
+        -1
+      ]
+    ],
+    "overhang": [
+      [
+        -4,
+        -5
+      ],
+      [
+        -3,
+        -5
+      ],
+      [
+        -2,
+        -5
+      ],
+      [
+        -1,
+        -5
+      ],
+      [
+        0,
+        -5
+      ],
+      [
+        1,
+        -5
+      ],
+      [
+        2,
+        -5
+      ],
+      [
+        3,
+        -5
+      ],
+      [
+        -4,
+        -4
+      ],
+      [
+        -3,
+        -4
+      ],
+      [
+        -2,
+        -4
+      ],
+      [
+        -1,
+        -4
+      ],
+      [
+        0,
+        -4
+      ],
+      [
+        1,
+        -4
+      ],
+      [
+        2,
+        -4
+      ],
+      [
+        3,
+        -4
+      ],
+      [
+        -4,
+        -3
+      ],
+      [
+        -3,
+        -3
+      ],
+      [
+        -2,
+        -3
+      ],
+      [
+        -1,
+        -3
+      ],
+      [
+        0,
+        -3
+      ],
+      [
+        1,
+        -3
+      ],
+      [
+        2,
+        -3
+      ],
+      [
+        3,
+        -3
+      ],
+      [
+        -4,
+        -2
+      ],
+      [
+        -3,
+        -2
+      ],
+      [
+        -2,
+        -2
+      ],
+      [
+        -1,
+        -2
+      ],
+      [
+        0,
+        -2
+      ],
+      [
+        1,
+        -2
+      ],
+      [
+        2,
+        -2
+      ],
+      [
+        3,
+        -2
+      ]
+    ],
+    "height_px": 105,
+    "z_sort": "foot",
+    "collision": {
+      "shape": "rect",
+      "rect": [
+        -27.5,
+        -3,
+        55,
+        3
+      ]
+    }
+  },
+  "placement": {
+    "role": "workplace",
+    "ground": {
+      "allow": [
+        "earth"
+      ],
+      "deny": [
+        "water",
+        "route"
+      ]
+    },
+    "tiers": [
+      0
+    ],
+    "requires": [
+      {
+        "rel": "near",
+        "what": "water",
+        "cells": 4
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "water"
+      },
+      {
+        "rel": "on",
+        "what": "route"
+      }
+    ],
+    "clearance": 1,
+    "orientations": [
+      "s"
+    ],
+    "snap": "cell",
+    "composition": "row",
+    "stages": []
+  },
+  "rendering": {
+    "contact_ao": true,
+    "cast_shadow": {
+      "shape": "ellipse",
+      "size": [
+        54,
+        7
+      ],
+      "dir": [
+        2,
+        1
+      ]
+    }
+  },
+  "story": {
+    "lore": "Ordinary waterfront work equipment; repeated parts support authored places rather than creating a new service or game system."
+  },
+  "audit": {
+    "painter": {
+      "module": "scripts.art.kit.settlement_props",
+      "fn": "net_rack",
+      "args": {}
+    },
+    "size_class": null,
+    "eastward_ref": null,
+    "seeded_from": "game/data/kit/concepts/industry_net_rack.json; docs/codex/coast-city-kit.md (PR345)",
+    "reviews": [],
+    "todo": [
+      "Low timber ground tie intentionally blocks the entire rectangle between the posts; no unsupported multiple colliders are implied.",
+      "Working corresponds to W0 drying; repair corresponds to W0 mending. Repair is an ordinary work configuration, with no restoration flag, resident routine or reward.",
+      "Current lab binds existing worn-earth surface; timber deck, sand and paving bindings remain deferred.",
+      "The mesh is transparent above the blocker; its knots and floats do not create interactions.",
+      "Official Eastward same-character-height visual comparison, independent detail audit and Matt approval are outstanding.",
+      "Per-piece shadow ellipse, silhouette, scale and rectangular base collision remain candidate authored choices for visual review.",
+      "Shared props index/scenes are deliberately not regenerated in this step; do not claim editor placement is available."
+    ]
+  }
+}
