@@ -7,10 +7,13 @@ No engine, display, project assets or /proc namespace setup is used here.
 from __future__ import annotations
 
 import builtins
+import contextlib
 import json
 import os
 from pathlib import Path
 import socket
+import signal
+import struct
 import subprocess
 import sys
 import tempfile
@@ -20,7 +23,30 @@ import unittest
 from unittest import mock
 
 from . import owned_launch as client
-from .owned_broker import Broker
+from .owned_broker import Broker, _ServiceBroker, _actual_wait, _child_policy
+
+
+@contextlib.contextmanager
+def fixture_broker(root, setup):
+    """Only test source can substitute a tiny dedicated service bootstrap.
+
+    Production Broker has no fixture/callback/module-injection parameter.
+    """
+    fixture = root / 'fixture_service.py'
+    tools = str(Path(__file__).resolve().parents[2])
+    fixture.write_text(
+        "import sys\nfrom pathlib import Path\nsys.path.insert(0," + repr(tools) + ")\n"
+        "from scripts.review import owned_broker as b\n" + setup + "\n"
+        "raise SystemExit(b._service_main(sys.argv[2],sys.argv[3],int(sys.argv[4]),int(sys.argv[5])))\n")
+    original = subprocess.Popen
+    def launch(argv, **kwargs):
+        argv = list(argv)
+        if '--service' in argv:
+            argv[4] = str(fixture)
+        return original(argv, **kwargs)
+    with mock.patch('subprocess.Popen', side_effect=launch):
+        with Broker(root / 'fixture-broker') as broker:
+            yield broker
 
 
 class OwnedLaunchControls(unittest.TestCase):
@@ -48,6 +74,12 @@ class OwnedLaunchControls(unittest.TestCase):
         while not path.exists() and time.monotonic() < deadline:
             time.sleep(0.01)
         self.assertTrue(path.exists(), 'bounded fake producer did not reach its marker')
+
+    def wait_collected(self, broker, seconds=6):
+        deadline = time.monotonic() + seconds
+        while broker.jobs and time.monotonic() < deadline:
+            time.sleep(.01)
+        self.assertFalse(broker.jobs, 'actual service waits did not finish in bound')
 
     def test_nested_real_fake_producers_have_broker_parent_without_proc_reads(self):
         engine = self.root / 'fake-engine.py'
@@ -81,7 +113,7 @@ class OwnedLaunchControls(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         value = json.loads(result.stdout)
         for parent in [value['parent'], value['scene']['parent'], value['scene']['engine']['parent']]:
-            self.assertEqual(parent, os.getpid())
+            self.assertEqual(parent, self.broker.service_pid)
         self.assertEqual(value['scene']['engine']['arg'], 'space and unicode λ')
         self.assertEqual(value['scene']['engine']['value'], 'kept')
         self.assertEqual(result.stderr, b'engine stderr\n')
@@ -103,41 +135,45 @@ class OwnedLaunchControls(unittest.TestCase):
 
     def test_registration_refusal_never_runs_target_and_waits_for_closed_gate(self):
         marker = self.root / 'must-not-exist'
-        self.env['LD_PRELOAD'] = str(self.root / 'untrusted-target-only.so')
-        original_popen = subprocess.Popen
-        with mock.patch('os.pidfd_open', side_effect=OSError('registration refused')), \
-                mock.patch('subprocess.Popen', wraps=original_popen) as bootstrap:
+        setup = "def refuse(*a,**k): raise OSError('registration refused')\nb.os.pidfd_open=refuse"
+        with fixture_broker(self.root, setup) as broker:
+            env = broker.environment(dict(os.environ, LD_PRELOAD=str(self.root / 'untrusted.so')))
             with self.assertRaises(client.OwnedLaunchError):
-                self.run_fake(f"from pathlib import Path;Path({str(marker)!r}).touch()")
-            self.assertNotIn('LD_PRELOAD', bootstrap.call_args.kwargs['env'])
-        self.assertFalse(marker.exists())
-        self.assertFalse(self.broker.jobs)
-        self.assertTrue(self.broker.receipts[-1]['waited'])
-        self.assertFalse(self.broker.receipts[-1]['pidfd_registered'])
-        self.assertFalse(self.broker.receipts[-1]['gate_released'])
+                client.run([sys.executable, '-c', f"from pathlib import Path;Path({str(marker)!r}).touch()"],
+                           env=env, timeout=3)
+            self.assertFalse(marker.exists())
+            self.assertFalse(broker.jobs)
+            self.assertTrue(broker.receipts[-1]['waited'])
+            self.assertFalse(broker.receipts[-1]['pidfd_registered'])
+            self.assertFalse(broker.receipts[-1]['gate_released'])
 
     def test_cancel_while_gate_closed_refuses_target_exec(self):
-        entered, release = threading.Event(), threading.Event()
-        self.broker._before_release = lambda _identity: (entered.set(), release.wait(2))
-        marker = self.root / 'gate-target-must-not-exist'
-        results = []
-
-        def request():
-            try:
-                results.append(self.run_fake(f"from pathlib import Path;Path({str(marker)!r}).touch()"))
-            except OSError as exc:
-                results.append(exc)
-
-        worker = threading.Thread(target=request)
-        worker.start()
-        self.assertTrue(entered.wait(2))
-        self.broker.cancel()
-        release.set()
-        worker.join(6)
-        self.assertFalse(worker.is_alive())
-        self.assertFalse(marker.exists())
-        self.assertFalse(self.broker.jobs)
-        self.assertFalse(self.broker.receipts[-1]['gate_released'])
+        marker, entered, release = (self.root / n for n in ('no-target', 'at-gate', 'release-gate'))
+        setup = ("import time\n"
+                 "def hold(self,identity):\n"
+                 f" Path({str(entered)!r}).touch()\n"
+                 " deadline=time.monotonic()+3\n"
+                 f" while not Path({str(release)!r}).exists() and time.monotonic()<deadline: time.sleep(.01)\n"
+                 "b._ServiceBroker._before_release=hold")
+        with fixture_broker(self.root, setup) as broker:
+            errors = []
+            def request():
+                try:
+                    client.run([sys.executable,'-c',f"from pathlib import Path;Path({str(marker)!r}).touch()"],
+                               env=broker.environment(), timeout=4)
+                except OSError as exc:
+                    errors.append(exc)
+            worker = threading.Thread(target=request)
+            worker.start()
+            self.wait_file(entered)
+            broker.cancel()
+            release.touch()
+            worker.join(6)
+            self.assertFalse(worker.is_alive())
+            self.assertTrue(errors)
+            self.assertFalse(marker.exists())
+            self.wait_collected(broker)
+            self.assertFalse(broker.receipts[-1]['gate_released'])
 
     def test_nested_cancellation_collects_all_registered_children(self):
         marker = self.root / 'nested-active'
@@ -158,7 +194,7 @@ class OwnedLaunchControls(unittest.TestCase):
         self.broker.cancel()
         worker.join(6)
         self.assertFalse(worker.is_alive())
-        self.assertFalse(self.broker.jobs)
+        self.wait_collected(self.broker)
         self.assertEqual(len(self.broker.receipts), 2)
         self.assertTrue(all(r['waited'] and r['returncode'] != 0 for r in self.broker.receipts))
 
@@ -209,12 +245,102 @@ class OwnedLaunchControls(unittest.TestCase):
                 local.assert_not_called()
 
     def test_stdout_stderr_text_and_checked_status_match_capture_contract(self):
-        result = self.run_fake("import sys;print('stdout λ');print('stderr',file=sys.stderr);sys.exit(3)", text=True)
-        self.assertEqual((result.stdout, result.stderr, result.returncode), ('stdout λ\n', 'stderr\n', 3))
+        code = "import os;os.write(1,b'a\\r\\nb\\rc\\n');os.write(2,b'e\\r\\nf\\r');raise SystemExit(3)"
+        for options in ({'text': True}, {'errors': 'replace'}, {'encoding': 'utf-8'}):
+            expected = subprocess.run([sys.executable, '-c', code], capture_output=True, **options)
+            result = self.run_fake(code, **options)
+            self.assertEqual((result.stdout, result.stderr, result.returncode),
+                             (expected.stdout, expected.stderr, expected.returncode))
+            self.assertEqual((result.stdout, result.stderr), ('a\nb\nc\n', 'e\nf\n'))
         with self.assertRaises(subprocess.CalledProcessError) as caught:
-            self.run_fake("import sys;print('kept');sys.exit(4)", check=True)
-        self.assertEqual(caught.exception.returncode, 4)
+            self.run_fake("print('kept');raise SystemExit(4)", check=True)
         self.assertEqual(caught.exception.output, b'kept\n')
+
+    def test_ignored_sigchld_refuses_before_any_service_spawn(self):
+        with mock.patch('signal.getsignal', return_value=signal.SIG_IGN), \
+                mock.patch('subprocess.Popen') as spawn:
+            with self.assertRaises(client.OwnedLaunchError):
+                Broker(self.root / 'ignored').__enter__()
+            spawn.assert_not_called()
+
+    def test_unsupported_reaper_abi_refuses_before_spawn(self):
+        with mock.patch('platform.machine', return_value='unsupported'), \
+                mock.patch('subprocess.Popen') as spawn:
+            with self.assertRaises(client.OwnedLaunchError):
+                Broker(self.root / 'unsupported').__enter__()
+            spawn.assert_not_called()
+
+    def test_inprocess_service_without_exclusive_authority_refuses(self):
+        with mock.patch('subprocess.Popen') as spawn:
+            with self.assertRaises(client.OwnedLaunchError):
+                _ServiceBroker(self.root / 'no-authority').__enter__()
+            spawn.assert_not_called()
+
+    def test_lost_kernel_wait_never_becomes_synthetic_success(self):
+        process = mock.Mock(pid=123, returncode=None, args=['unrun-control'])
+        process._waitpid_lock = threading.Lock()
+        process._owned_wait_lost = False
+        with mock.patch('os.waitpid', side_effect=ChildProcessError()):
+            with self.assertRaisesRegex(client.OwnedLaunchError, 'ECHILD'):
+                _actual_wait(process)
+        self.assertIsNone(process.returncode)
+        self.assertTrue(process._owned_wait_lost)
+
+    def test_nocldwait_refuses_before_any_service_spawn(self):
+        def query(_sig, _new, old):
+            old._obj.handler = None
+            old._obj.flags = 2  # Linux x86_64 SA_NOCLDWAIT
+            return 0
+        libc = mock.Mock()
+        libc.sigaction = query
+        with mock.patch('ctypes.CDLL', return_value=libc), \
+                mock.patch('signal.getsignal', return_value=signal.SIG_DFL), \
+                mock.patch('subprocess.Popen') as spawn:
+            with self.assertRaises(client.OwnedLaunchError):
+                Broker(self.root / 'auto-reap').__enter__()
+            spawn.assert_not_called()
+
+    def test_partial_frame_absolute_deadline_ignores_drip_progress(self):
+        left, right = socket.socketpair()
+        stop = threading.Event()
+        def drip():
+            try:
+                right.sendall(struct.pack('!I', 200))
+                while not stop.wait(.025):
+                    right.sendall(b' ')
+            except OSError:
+                pass
+        worker = threading.Thread(target=drip)
+        worker.start()
+        try:
+            started = time.monotonic()
+            with self.assertRaises((client.OwnedLaunchError, socket.timeout)):
+                client._receive(left, client.MAX_REQUEST, deadline=started + .15)
+            self.assertLess(time.monotonic() - started, .8)
+        finally:
+            stop.set()
+            left.close()
+            right.close()
+            worker.join(1)
+            self.assertFalse(worker.is_alive())
+
+    def test_partial_frame_cancellation_collects_prelaunch_handler(self):
+        with Broker(self.root / 'partial-frame-broker') as broker:
+            with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as channel:
+                channel.connect(str(broker.socket_path))
+                channel.sendall(struct.pack('!I', 200) + b'{')
+                started = time.monotonic()
+                broker.cancel()
+        self.assertLess(time.monotonic() - started, 4)
+        self.assertFalse(broker.jobs)
+        self.assertEqual(broker.receipts, [])
+
+    def test_repeated_cancel_preserves_control_reply_and_raw_collection(self):
+        for _ in range(3):
+            self.assertTrue(self.broker.cancel()['cancelled'])
+        self.assertTrue(self.broker.cancelled)
+        self.assertFalse(self.broker.jobs)
+        self.assertEqual(self.broker.receipts, [])
 
     def test_output_limit_fails_instead_of_returning_success(self):
         with self.assertRaises(client.OwnedLaunchError):
@@ -229,7 +355,7 @@ class OwnedLaunchControls(unittest.TestCase):
         result = self.run_fake(code)
         value = json.loads(result.stdout)
         self.assertEqual(value['child_parent'], value['pid'])
-        self.assertNotEqual(value['child_parent'], os.getpid())
+        self.assertNotEqual(value['child_parent'], self.broker.service_pid)
         self.assertEqual(len(self.broker.receipts), 1)
         self.assertIn('native descendants/RSS unmeasured', result.owned_receipt['coverage'])
 

@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import base64
 import json
+import locale
 import math
 import os
 from pathlib import Path
@@ -15,6 +16,7 @@ import socket
 import struct
 import subprocess
 import sys
+import time
 import uuid
 
 SOCKET_ENV = 'MYGAME_OWNED_SOCKET'
@@ -35,10 +37,15 @@ def requested(env=None) -> bool:
     return SOCKET_ENV in source or TOKEN_ENV in source or PARENT_ENV in source
 
 
-def _receive(sock, limit):
+def _receive(sock, limit, *, deadline=None):
     def exact(size):
         result = bytearray()
         while len(result) < size:
+            if deadline is not None:
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    raise OwnedLaunchError('owned channel frame deadline exceeded')
+                sock.settimeout(remaining)
             chunk = sock.recv(min(65536, size - len(result)))
             if not chunk:
                 raise OwnedLaunchError('owned broker channel closed before a complete reply')
@@ -110,9 +117,12 @@ def run(args, *, cwd=None, env=None, capture_output=True, timeout=900,
         raise OwnedLaunchError('malformed broker result') from exc
     if reply.get('timed_out'):
         raise subprocess.TimeoutExpired(args, timeout, output=stdout, stderr=stderr)
-    if text or encoding is not None:
-        stdout = stdout.decode(encoding or 'utf-8', errors or 'strict')
-        stderr = stderr.decode(encoding or 'utf-8', errors or 'strict')
+    if text or encoding is not None or errors is not None:
+        # Match subprocess text capture: UTF-8 mode or locale default, then
+        # universal-newline translation independently on both decoded streams.
+        codec = encoding or ('utf-8' if sys.flags.utf8_mode else locale.getencoding())
+        stdout = stdout.decode(codec, errors or 'strict').replace('\r\n', '\n').replace('\r', '\n')
+        stderr = stderr.decode(codec, errors or 'strict').replace('\r\n', '\n').replace('\r', '\n')
     result = subprocess.CompletedProcess(args, code, stdout, stderr)
     result.owned_receipt = receipt
     if check:

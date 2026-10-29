@@ -122,7 +122,7 @@ preparation, not observed process isolation or successful Y12 evidence**. No
 helper import, pidfd probe, fake producer, engine, display or project test has
 run under this source-only allocation.
 
-An external controller can explicitly create one `owned_broker.Broker` in a
+An external controller can explicitly create one `owned_broker.Broker` facade in a
 new private directory and use its `environment()` with `owned_launch.run()`.
 The top-level PR-sheet Python must itself be launched through that client; an
 independently started producer is not retrospectively registered. Supply an
@@ -157,7 +157,21 @@ subprocess calls are **unregistered descendants**, not contained or measured
 by this change. A caller supplying the authentication token is trusted; this is
 an accounting protocol, not a sandbox against malicious authenticated clients.
 
-For each registered launch the broker is the actual parent. A trusted Python
+The facade starts only a fixed reviewed `-I -S -B` service interpreter, with a minimal
+bootstrap environment. Controllers cannot pass callbacks or modules to that service.
+The service is the actual parent of managed targets; the facade is their grandparent.
+An owner pipe cancels and collects targets on controller exit. Before even the service
+spawn, the facade refuses ignored SIGCHLD, SA_NOCLDWAIT and unsupported signal ABIs.
+The supported policy is deliberately limited to Linux x86_64 glibc (152-byte sigaction,
+flags at offset136); other platforms refuse before spawning. The fresh service installs
+and verifies default/non-auto-reaping SIGCHLD before its threads or target creation,
+then rechecks it before every target spawn. Only its reviewed per-PID raw wait routine
+reaps targets, under a per-process wait lock. No controller/native waiter can reap these
+grandchildren. Popen poll/wait is never used as kernel-wait evidence; ECHILD records
+failed accounting and retains the job instead of synthesising success. This is a trusted
+accounting boundary, not protection against malicious same-user process interference.
+
+For each registered launch the service broker is the actual parent. A trusted Python
 gate receives only a minimal trusted bootstrap environment. Target argv and
 environment, including dynamic-loader variables, are read as bounded JSON and
 applied only at target exec after the broker opens and records the child's
@@ -168,6 +182,12 @@ retained pidfds and refuses later launches. No numeric PID/PGID signalling or
 results and logical parent links remain in the controller's broker receipts;
 a JSON numeric PID alone is not proof. A failed wait/signal or surviving handler
 keeps collection failed, rather than declaring cleanup complete.
+
+Request frames have an absolute2s deadline including header and payload; progress does
+not reset it. Accepted channels are tracked before handlers start and shutdown on
+cancellation, including incomplete prelaunch frames. Exit shares one8s collection
+deadline across all handlers. Captured text follows subprocess default encoding,
+errors-only text selection and CRLF/CR universal-newline translation.
 
 One allocation is bounded to32 concurrent channels,4096 accepted connections
 and4096 logical request identities; duplicate IDs are refused. Requests are at
@@ -190,7 +210,7 @@ Require a reviewed outer collector with actual exits, logs, source hashes and
 owned-child collection before execution. Exact final file hashes belong in the
 source handoff; this document does not embed a circular self-hash.
 
-First authorisation would cover exactly13 methods in
+First authorisation would cover exactly21 methods in
 `OwnedLaunchControls`, then separately approved import prerequisites and six
 methods in `OwnedAdapterControls`. The adapter module imports the existing
 review/Pillow/NumPy stack; that private import layout and available dependencies
@@ -207,7 +227,12 @@ and reviewed-tool routing with subject-derived scene/asset paths and fake-engine
 cwd despite hostile subject modules (tiny tool fixtures, not detector coverage). One waited native
 grandchild deliberately demonstrates the unregistered-descendant limit.
 
-All19 controls are **UNRUN**. AST parsing, a static review or later fake-process
+All27 controls are **UNRUN** (21 broker/client plus six adapter methods).
+The superseded nineteen-method source-only plan remains historical, not executed.
+Additional controls cover ignored SIGCHLD, SA_NOCLDWAIT, unsupported ABI, forbidden
+in-process service authority, lost actual wait, slow frame absolute deadline and
+partial-frame cancellation and repeated-cancel control replies. Test-only isolated service bootstraps inject faults; the
+production facade accepts no injection or callback parameter. AST parsing, a static review or later fake-process
 success cannot establish real Godot/display containment, memory measurement,
 render freshness, visual quality, source-sheet completeness, device behavior or
 Matt's approval. Source379/E9/E10 and editor375 retain their separate validation
