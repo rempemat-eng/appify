@@ -149,8 +149,47 @@ class TownGeneratorAdoption(unittest.TestCase):
                     self.assertEqual(ast.dump(call.keywords[0].value), ast.dump(expected))
                     call.keywords = []  # an empty selection forwarded to the child is its default
                 self.assertEqual(ast.dump(node), ast.dump(baseline))
-        self.assertEqual(git_bytes(DEPENDENCY, 'docs/vision/research/blockout/geo55.py'),
-                         (ROOT / 'docs/vision/research/blockout/geo55.py').read_bytes())
+        # Y35 adds an explicit prospective v56 path to this module. Pin the
+        # actual default v55 producer pipeline instead of forbidding all new
+        # functions in the file. The historical blob remains the comparison.
+        legacy_geo = ast.parse(git_bytes(DEPENDENCY, 'docs/vision/research/blockout/geo55.py'))
+        current_geo = ast.parse((ROOT / 'docs/vision/research/blockout/geo55.py').read_text())
+        revision = next(n for n in current_geo.body if isinstance(n, ast.Assign)
+                        and any(isinstance(t, ast.Name) and t.id == 'REVISION' for t in n.targets))
+        self.assertEqual(ast.unparse(revision.value), "os.environ.get('MYGAME_MAP_REVISION', 'v55')")
+
+        class DefaultV55(ast.NodeTransformer):
+            def branch(self, test):
+                if (isinstance(test, ast.Compare) and isinstance(test.left, ast.Name)
+                        and test.left.id == 'REVISION' and len(test.ops) == 1
+                        and isinstance(test.ops[0], ast.Eq) and len(test.comparators) == 1
+                        and isinstance(test.comparators[0], ast.Constant)):
+                    return test.comparators[0].value == 'v55'
+                return None
+
+            def visit_If(self, node):
+                choice = self.branch(node.test)
+                if choice is not None:
+                    out = []
+                    for child in node.body if choice else node.orelse:
+                        value = self.visit(child)
+                        out.extend(value if isinstance(value, list) else [value])
+                    return out
+                return self.generic_visit(node)
+
+            def visit_IfExp(self, node):
+                choice = self.branch(node.test)
+                if choice is not None:
+                    return self.visit(node.body if choice else node.orelse)
+                return self.generic_visit(node)
+
+            def visit_Name(self, node):
+                return ast.Constant(value='v55') if node.id == 'REVISION' and isinstance(node.ctx, ast.Load) else node
+
+        for name in ('v55_paint', 'data_stage'):
+            baseline = next(n for n in legacy_geo.body if isinstance(n, ast.FunctionDef) and n.name == name)
+            candidate = next(n for n in current_geo.body if isinstance(n, ast.FunctionDef) and n.name == name)
+            self.assertEqual(ast.dump(DefaultV55().visit(copy.deepcopy(candidate))), ast.dump(baseline))
 
     def test_default_selector_and_dispatch_never_read_or_adopt_proposals(self):
         class UnreadableProposals:

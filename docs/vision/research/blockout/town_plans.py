@@ -1138,7 +1138,9 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
     for t in ts:
         for b in t.buildings:
             nb_ += 1
-            bid = b.get('authored_id', f'{pid}-b{nb_:03d}')
+            bid = b.get('layout_id', b.get('authored_id', f'{pid}-b{nb_:03d}'))
+            if b.get('layout_id') and (not re.fullmatch(re.escape(pid) + r'-b[0-9]{3}', bid)):
+                raise ValueError(f'{pid}: invalid explicit layout identity {bid}')
             if any(row['id'] == bid for row in bl):
                 raise ValueError(f'{pid}: duplicate exported building ID {bid}')
             cx, cy = b['x'] + b['w'] / 2, b['y'] + b['h'] / 2
@@ -1337,6 +1339,10 @@ def _record(T, name, pid, ts, net, arrivals, box, sl, fb, dropped, X):
     }
     if authored and 'site_authored' in authored:
         plan['site']['authored'] = authored['site_authored']
+    if getattr(X, 'REVISION', 'v55') == 'v56':
+        plan['grid']['origin'] = 'world px, top-left of the prospective v56 continent (blockout-v56.json coords)'
+        if pid in ('crossroads', 'neon-harbour'):
+            plan['site']['authored'] = 'v56 source-authored street blocks, retained303 inventory; new real-ground checks required'
     return plan
 
 
