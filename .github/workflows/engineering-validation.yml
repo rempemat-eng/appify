@@ -25,8 +25,11 @@ jobs:
       GIT_OPTIONAL_LOCKS: '0'
       EXPO_OFFLINE: '1'
       EXPECTED_SOURCE_SHA: ${{ github.sha }}
-      ENGINEERING_EVIDENCE: ${{ runner.temp }}/engineering-validation-evidence
     steps:
+      - name: Select the runner-local evidence directory
+        shell: bash
+        run: printf 'ENGINEERING_EVIDENCE=%s/engineering-validation-evidence\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+
       - name: Check out the immutable execution-event commit
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
