@@ -5,7 +5,7 @@
 #   2. run the main scene for $FRAMES frames with a fresh save (-- --fresh)
 #   3. run the GdUnit4 suites in game/test (reports in game/reports, git-ignored)
 # GODOT must point at a Godot 4.7.2 binary (docs/godot.md); user data and editor settings go to a
-# temporary folder, so the check never touches ~/.config or ~/.local.
+# private executable-only copy with fresh per-child roots, including version probing.
 set -uo pipefail
 GAME=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 GODOT=${GODOT:-godot}
@@ -14,14 +14,43 @@ if ! command -v "$GODOT" >/dev/null 2>&1; then
   echo "check:godot: no Godot binary. Set GODOT=/path/to/Godot_v4.7.2-stable (see docs/godot.md)." >&2
   exit 2
 fi
-VERSION=$("$GODOT" --version 2>/dev/null | head -n1)
+# Resolve without invoking the original: portable markers beside it override XDG.
+SELECTED=$(command -v "$GODOT")
+isolation_error() {
+  echo "check:godot: cannot isolate Godot executable" >&2
+  exit 2
+}
+[ -f "$SELECTED" ] && [ -x "$SELECTED" ] || isolation_error
+umask 077
+TMP=$(mktemp -d) || isolation_error
+trap 'rm -rf "$TMP"' EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
+mkdir "$TMP/engine" || isolation_error
+GODOT="$TMP/engine/godot"
+# Copy only executable bytes, never sibling _sc_/editor_data/settings/profiles.
+cp "$SELECTED" "$GODOT" && chmod u+x "$GODOT" || isolation_error
+[ -f "$GODOT" ] && [ -x "$GODOT" ] && cmp -s "$SELECTED" "$GODOT" || isolation_error
+
+run_engine() {
+  local root
+  root=$(mktemp -d "$TMP/phase.XXXXXX") || isolation_error
+  mkdir "$root/home" "$root/data" "$root/config" "$root/cache" "$root/tmp" || isolation_error
+  HOME="$root/home" XDG_DATA_HOME="$root/data" XDG_CONFIG_HOME="$root/config" \
+    XDG_CACHE_HOME="$root/cache" TMPDIR="$root/tmp" "$GODOT" "$@"
+}
+# Version probing is an engine invocation too; establish containment first.
+run_engine --version >"$TMP/version.log" 2>/dev/null
+CODE=$?
+VERSION=$(head -n1 "$TMP/version.log")
+if [ "$CODE" -ne 0 ]; then
+  echo "check:godot: could not read Godot version (exit $CODE)" >&2
+  exit 2
+fi
 case "$VERSION" in
   4.7.2.*) ;;
   *) echo "check:godot: expected Godot 4.7.2, got '$VERSION'" >&2; exit 2 ;;
 esac
-TMP=$(mktemp -d)
-trap 'rm -rf "$TMP"' EXIT
-export XDG_DATA_HOME="$TMP/data" XDG_CONFIG_HOME="$TMP/config" XDG_CACHE_HOME="$TMP/cache"
 FAILED=0
 
 # Engine lines that are environment noise, not project errors (no sound card on CI and containers).
@@ -40,14 +69,14 @@ scan() { # $1 step name, $2 log file, $3 exit code
   fi
 }
 
-"$GODOT" --headless --path "$GAME" --import >"$TMP/import.log" 2>&1
+run_engine --headless --path "$GAME" --import >"$TMP/import.log" 2>&1
 scan "import" "$TMP/import.log" $?
 
-"$GODOT" --headless --audio-driver Dummy --path "$GAME" --quit-after "$FRAMES" -- --fresh >"$TMP/run.log" 2>&1
+run_engine --headless --audio-driver Dummy --path "$GAME" --quit-after "$FRAMES" -- --fresh >"$TMP/run.log" 2>&1
 scan "run main scene for $FRAMES frames" "$TMP/run.log" $?
 
 # no -d: with the debugger on, a parse error drops into Godot's interactive "debug>" prompt and hangs
-"$GODOT" --headless --audio-driver Dummy --path "$GAME" -s \
+run_engine --headless --audio-driver Dummy --path "$GAME" -s \
   res://addons/gdUnit4/bin/GdUnitCmdTool.gd --ignoreHeadlessMode -a res://test -rd reports -c >"$TMP/test.log" 2>&1
 CODE=$?
 grep -E 'Statistics|tests cases|failures|errors|Overall|PASSED|FAILED' "$TMP/test.log" | sed 's/\x1b\[[0-9;]*m//g' | tail -8
