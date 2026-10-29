@@ -5,6 +5,7 @@ Each lane runs it on its own sprites to see how far they sit from the house styl
     python3 scripts/art/style_lint.py castle_props western_props   # prop modules
     python3 scripts/art/style_lint.py castle_props --sprites        # every sprite, not just the worst
     python3 scripts/art/style_lint.py --png path/to/ground.png      # a ground or any PNG (1x)
+    python3 scripts/art/style_lint.py --png exported.png --scale 4 # image px per world px
 
 What it measures, per sprite (finalized as the zones finalize it):
 
@@ -36,6 +37,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import house_palette as hp  # noqa: E402
+from texel import native_image  # noqa: E402
 
 MAX_COLOURS = 64         # a prop
 MAX_COLOURS_BIG = 128    # a building (over 2,500 px)
@@ -86,9 +88,13 @@ def on_house(c) -> bool:
     return house_match(c) is not None
 
 
-def measure(img) -> dict:
-    """The numbers for one RGBA image (a sprite on transparency, or an opaque ground)."""
-    img = img.convert('RGBA')
+def measure(img, scale: float = 1) -> dict:
+    """Numbers at one pixel per measured texel; scale is image px per world px.
+
+    Existing callers pass native texels (scale 1). Exported PNG callers must pass
+    their export scale so a finer outline or lone texel cannot be decimated away.
+    """
+    img, _density = native_image(img, scale)
     px = img.load()
     w, h = img.size
     solid = {(x, y) for y in range(h) for x in range(w) if px[x, y][3] == 255}
@@ -201,7 +207,7 @@ def lint_module(mod: str, every: bool = False, worst: int = 6) -> dict:
             fin = style.finalize(sp, name=key)
         except ValueError:
             continue
-        m = measure(fin.img)
+        m = measure(fin.img, fin.density)
         if m:
             rows[key] = m
     print(f'\n== {mod}: {len(rows)} sprites')
@@ -230,7 +236,10 @@ def main(argv) -> int:
     if '--png' in argv:
         from PIL import Image
         path = argv[argv.index('--png') + 1]
-        m = measure(Image.open(path))
+        # --png historically accepts native 1x input; preserve that default.
+        # Exported pictures can state the export scale, never the drawing density.
+        scale = float(argv[argv.index('--scale') + 1]) if '--scale' in argv else 1
+        m = measure(Image.open(path), scale)
         print(HEAD)
         print(line(os.path.basename(path)[:28], m))
         return 0
