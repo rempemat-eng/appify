@@ -1,0 +1,44 @@
+name: Kit build check controls
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - 'scripts/art/**'
+      - 'art/**'
+      - '.github/workflows/kit-build-check.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/art/**'
+      - 'art/**'
+      - '.github/workflows/kit-build-check.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  controls:
+    if: github.event_name != 'pull_request' || !github.event.pull_request.draft
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.12'
+      - name: Install pinned producer dependencies
+        run: python -m pip install 'Pillow==12.3.0' 'numpy==2.5.3' 'scipy==1.18.1'
+      - name: Run temporary-output entry-point controls
+        run: python -m unittest scripts.art.kit.test_build_check
