@@ -473,7 +473,8 @@ def _source_category(path: str) -> str | None:
     if path.startswith('docs/vision/research/blockout/towns/') or (
             path.startswith('docs/codex/') and path.endswith('-town-polish.md')):
         return 'town_plan'
-    if path.startswith('game/data/kit/concepts/') or KIT_REQUIREMENTS.fullmatch(path):
+    if (path.startswith('game/data/kit/concepts/') or KIT_REQUIREMENTS.fullmatch(path)
+            or path == 'docs/codex/painted-structure-context-plan.md'):
         return 'kit_concept'
     if path.startswith(('art/characters/', 'art/cast/', 'castwork/', 'docs/vision/characters/',
                         'docs/characters/', 'scripts/characters/',
