@@ -30,6 +30,12 @@ func _init(output: RichTextLabel) -> void:
 	_report_formatter = GdUnitReportPanel.new()
 
 
+func _notification(what: int) -> void:
+	# The detached formatter is owned here; the output belongs to the caller.
+	if what == NOTIFICATION_PREDELETE and is_instance_valid(_report_formatter):
+		_report_formatter.free()
+
+
 ## Applies text style flags by wrapping text in BBCode tags.[br]
 ## [br]
 ## Available styles:[br]
