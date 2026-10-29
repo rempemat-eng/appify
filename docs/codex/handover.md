@@ -4,6 +4,12 @@
 
 Matt, 28 Oct 16:51: Claude is running out of tokens, so ChatGPT (Codex) takes over a lot of the work, coordinated by Hyperagent if that makes sense. This page sets out who does what from now on. [development-plan.md](../vision/development-plan.md) still gives the order of work.
 
+## Milestone update (29 Oct)
+
+[E3 integration #356](https://github.com/rempemat-eng/appify/pull/356) is merged at main `c4c135e4`, retaining all five reviewed source heads (#348/#350/#351/#340/#354) and exact tree `f1eecee92a647ca569bfa4d7c8822c5e4c13a194`. Its shared local Godot/kit/verify/art gates and all four matching hosted jobs passed: 187 clean Godot cases, zero lint warnings, 114 review and 46 narrative tests, 16-generator reproduction and 192 screenshots. These attest the combined tree, not separate full-suite runs on each source head. [MERGED6484421908](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6484421908) records the nonforce fast-forward and all six merged PR states; the separate report-only asset inventory still has 224 findings.
+
+Combined editor draft [#357](https://github.com/rempemat-eng/appify/pull/357), head `b1b066d9` / tree `941059e27edbade97c0a484d5c9a8cc2da9ac508`, passed all four local gates in attempt2/original55924 with final source guards true: 280 clean Godot cases, kit checks with retained advisories, zero lint warnings, 215 review and 46 narrative tests, and 16-generator reproduction. Genuine authenticated Xvfb restored the rendering environment; the original43580 failure and reports remain preserved. Current-main composition, the current visual packet, matching hosted checks and Matt's approval remain pending. These results do not accept the editor, its kit or map foundations. Later reservations and owners remain on the [canonical board](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6475643125).
+
 ## Lead authority and hourly routine
 
 Matt appointed **MyGame Codex · lead** coordinator AND integrator on 28 October, with standing non-art merge authority. Codex now runs the entire project until Matt switches back; all Claude lanes are off. The lead performs their work or explicitly assigns it on isolated Codex branches, and also performs the former separate coordinator role. Newer explicit instructions from Matt override historical role restrictions.
