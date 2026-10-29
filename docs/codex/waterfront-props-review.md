@@ -1,0 +1,246 @@
+# MyGame waterfront props: first candidate batch
+
+Two reusable designs now have four source-native pictures: a mooring bollard
+with an optional coiled rope, and a net rack in drying and mending configurations.
+They give Neon's working waterfront recognisable equipment without filling its
+streets with unrelated clutter. The rack can later serve the fishing settlements;
+neither design is placed in a production map in this change.
+
+Matt authorised parallel prop creation before the map is finished. The bounded
+lead allocation is [Y36 GO6496183343](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6496183343),
+claim [6496206914](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6496206914),
+and lab grant [6496223684](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6496223684).
+The original batch begins at editor PR375 commit
+`45ed3cad029c106977e6c0c833913dcb1c614fbd`, tree
+`0bdea46338655dcb3c9922ad5cbcdd023310b87d`. The metadata correction described
+below descends from actual published batch head
+`fd28f3c47571d74f77eca9791a331da55a23d395`, preserving its four sprite bytes.
+The later shadow-radius correction descends from actual phase-corrected head
+`d333913cb2d22ec64b5d45b23e71b822c041face` and changes no geometry or pictures.
+
+## Pictures for review
+
+| Single bollard | Bollard and rope |
+| --- | --- |
+| ![Single iron bollard](../../game/kit/props/art/industry_bollard_single.png) | ![Bollard and grounded rope coil](../../game/kit/props/art/industry_bollard_rope.png) |
+
+| Working net rack | Net rack being repaired |
+| --- | --- |
+| ![Working net rack](../../game/kit/props/art/industry_net_rack_working.png) | ![Net rack being repaired](../../game/kit/props/art/industry_net_rack_repair.png) |
+
+The external contact sheet shows these at their native density-3 scale beside
+the existing Crossroads bench, stall and crates, and the unchanged Moss idle-S
+frame 3. That frame's opaque feet-to-crown height is exactly 74 art pixels;
+no individual comparison sprite was rescaled. A second presentation enlarges
+the entire sheet 2x by nearest neighbour. These comparison sources are from the
+same parent tree. They are not newly drawn or newly approved by this batch.
+
+## Construction and measured metadata
+
+The designs develop existing W0 `industry_bollard` and `industry_net_rack`
+concepts and the requirements in PR345's `coast-city-kit.md`. The original
+concept records remain unchanged and non-placeable. The new live-library
+definitions remain **candidate**, without an approver or approval date.
+Legacy `bollard`, `city_quay_bollard` and `net_rack` pictures have ledger
+REWORK verdicts; their pictures are not copied into this batch.
+
+The bollard has an iron mushroom head, broad lit top and west arris, a dark
+underside and east plane, a worn groove and a four-bolt rectangular base plate.
+Its optional rope is seated on the same ground envelope. The rack has timber
+posts with lit edges and grain, iron straps, a continuous crossbeam, transparent
+diamond mesh, cork floats and weighted corners. The mending configuration has a
+partly rolled net and a stitched patch. It introduces no broken/restored quest
+condition. A low timber tie physically joins its feet and accounts for its
+continuous blocking rectangle.
+
+| Design | Canvas, art px | Foot, art px | Height above foot | Rectangular blocker, world px | Conservative footprint |
+| --- | --- | --- | --- | --- | --- |
+| Bollard, both variants | 96 x 72 | [48, 60] | 42 art px / 14 world px | [-8.5, -3.5, 16, 3.5] | 4 x 1 cells across both legal X phases |
+| Net rack, both variants | 192 x 132 | [96, 120] | 105 art px / 35 world px | [-27.5, -3, 55, 3] | 8 x 1 cells |
+
+Canvas dimensions include transparent padding and are not solid footprints.
+One soft-grid cell is 24 art pixels / 8 world pixels. The footprint lists retain
+every cell with positive-area intersection with the authored rectangle at every
+admitted anchor phase; a conservative union can include a cell the actual
+collider does not occupy at one particular phase. Drawn overhang cells are
+recorded separately. Both designs sort at the foot and use
+the existing ellipse cast-shadow metadata, displaced down and right. Their base
+and material undersides provide the drawn contact seam. No unsupported
+sprite-shaped shadow, multiple collider, rotation or light implementation is
+claimed. Shadow `size` stores radii. The first values [18,5] and [54,7] produced
+oversized 36 x 10 and 108 x 14-world-px ellipses in the actual live diagnostic
+described below. The corrected values [8,3] and [28,3] describe 16 x 6 and
+56 x 6-world-px ellipses, calibrated to the unchanged 16/55-world-px bases.
+Their new composed preview remains pending; the transparent contact sheet does
+not establish shadow quality, and no shadow choice is approved by this text.
+
+Only the south-facing designs are supplied; the placement definitions refuse
+other facings rather than mirroring their lighting. Both use the existing
+`cell` snap, which permits **half-cell X and whole-cell Y**, not whole cells in
+both directions. The bollard requires water adjacent to its dry rock base. The
+rack requires water within four cells of its dry earth base.
+Both deny water and route ground, retain one-cell piece clearance and use tier 0
+for this lab. Actual settlement placement also needs a clear walking/loading
+corridor and the appropriate ground construction. Paved quay, timber deck and
+sand material bindings are deferred: these definitions do not pretend those
+materials already exist in the seven-material library.
+
+`function` is empty. The designs have no shop, reward, travel action, harvest,
+resident assignment, work routine or new mechanic. Movement blocking follows
+the declared bases; `blocks_shots` is false and no combat cover is introduced.
+
+## Reproduction and focused checks
+
+`scripts/art/kit/settlement_props.py` uses existing house-palette ramps and
+integer texels. It writes exactly the four pictures and does not update the
+shared index, generated scenes, schemas, package files or other art.
+
+```sh
+python3 -m scripts.art.kit.settlement_props --out game/kit/props/art
+```
+
+The allocated initial generation exited 0 in 0.131 seconds. The one separately
+allocated regeneration wrote to a fresh external directory and exited 0 in
+0.150 seconds; all four PNG byte strings matched exactly. This standalone
+generator is not on the ordinary sixteen-generator art-repro list. Its separate
+result must not be described as coverage from that unrelated list.
+
+| Picture | SHA256 |
+| --- | --- |
+| `industry_bollard_single.png` | `215fcd64679cad9fd002cf7d2acc750851b6999ac7108871c3c82a6eda3bdcb4` |
+| `industry_bollard_rope.png` | `98081005e9d4a1fabdaf873e1012b5a4ee188e9ec66c102e9190cddee20a6b36` |
+| `industry_net_rack_working.png` | `6a9d1f89b351b9bf504c7426e8e203a5c68cce014578fed7fe195400a2e88ded` |
+| `industry_net_rack_repair.png` | `6947447d2377797fbad0a5846e15500cd83f29246f23eb2bbdc1474cd6278b5d` |
+
+The two definitions pass the existing piece schema, semantic and location
+checks. All opaque sprite colours belong to existing house ramps; alpha values
+are only 0 and 255. The single/rope bollards contain 6/10 colours; the working
+and mending racks each contain 14. Those palette counts do not establish the
+detail or Eastward gates.
+
+The new `game/kit/zones/waterfront_props_lab.json` is a small texel-coordinate,
+same-tier metadata lab using existing water, scree, worn earth and path. Its two
+positions have zero findings from the existing relation engine against the
+actual piece/terrain definitions. Eight external negative controls detect:
+bollard on water, bollard on a route, rack on a route, rack too far from water,
+off-grid rack, overlapping rack, out-of-bounds rack, and wrong tier. The checks
+leave the input metadata unchanged. This is focused source-metadata evidence,
+not a rendered kit-rule or editor-placement pass. The lab is not baked and no
+shared compiled index or scene has been generated for it.
+
+The external result is `waterfront-props-evidence/focused-result.json`, SHA256
+`450527776e8f828b028b2454d239f79f97890043505c2015354ea20662eb3aba`.
+Generation logs, exact regenerated files and comparison-source hashes are kept
+with that packet. The first contact-sheet-only attempt stopped because Moss
+frame 0 is 72 pixels tall; the final sheet uses frame 3's measured 74 pixels.
+That correction did not execute the prop painter again.
+
+### Corrected anchor-phase blocker
+
+Independent peer review found a real physical defect in the first metadata:
+the bollard allowed half-cell X/Y positions but its fixed three-cell footprint
+only covered the actual plate at whole-cell anchors. At [132,120] art pixels,
+the collider reaches X cells 4,5,6 while the old metadata covered 3,4,5. At
+[120,132], the collider reaches row 5 while the old metadata remained on row 4.
+The original eight controls did not cover these phases and therefore did not
+clear this defect. Their recorded result and the original `fd28f3c` source are
+retained as historical evidence.
+
+The correction keeps the plate and every PNG unchanged, selects `cell` snap to
+refuse half-cell Y, and declares X offsets [-2,-1,0,1] on Y offset -1. That union
+covers the actual collider at both admitted X phases. Selecting `cell` alone
+would still miss half-cell X, so the wider conservative footprint is necessary.
+The net rack's existing eight-cell footprint already covers its actual base at
+both admitted X phases and needs no metadata change.
+
+The external `snap-regression.py` computes actual positive-area collider/cell
+intersections independently of the declared footprint. Its before run on the
+original metadata exits 1: 208 of 289 admitted bollard anchors have uncovered
+cells; half-Y and half-XY anchors are wrongly admitted, and the real relation
+engine wrongly accepts the formerly omitted right-edge cell when it contains
+water or a route. The existing rack has zero uncovered cells in 153 samples.
+These RED results are preserved in `snap-r2/before.json`.
+
+The corrected source is checked at 153 bollard and 153 rack anchors covering
+negative, zero and positive whole-cell translations and both admitted X phases.
+Whole-cell translation preserves both sets, so these phase checks cover the
+periodic grid contract. The real relation engine also checks legal whole/half-X
+positions, forbidden half-Y/half-XY/quarter-X positions, the right-edge water and
+route cases, and the existing water/route/distance refusals. These are source
+metadata controls, not an engine invocation or rendered scene acceptance.
+No prop generator is executed again for this metadata-only correction.
+
+The actual corrected run exits 0 with 14 controls passing and zero uncovered
+collider cells across all 306 sampled anchors. Two existing schema checks pass
+and all input metadata stays unchanged during the controls. The before/after
+report SHA256 values are, respectively,
+`10a931d2cc2a7854aa41978280936c2a2c3e59e4fad10339e1b5de4f9a43fdf0`
+and `03f4c3b2f038688e5fbe929ce858f7a7388078c04adbd50d8202f1737a96dcb8`.
+The first attempted phase controller stopped before checks because the own
+sparse checkout had omitted the tracked lab; the exact scoped paths were
+restored from `fd28f3c` without generation, then RED and GREEN ran as recorded.
+
+### Observed live shadows and bounded radius correction
+
+Lead allocation [6498595352](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6498595352)
+produced one actual live reference-renderer composition in session92372,
+terminal exit0. Its controller took14.287seconds and renderer wrapper13.135seconds.
+The wrapper staged physical input copies and a private two-candidate index;
+the unmodified `render_zone.render` API rendered the actual576x384 unbaked lab
+once. All2,455input byte/size/mode and source/terrain HEAD/tree/raw-index/status
+guards matched before/after. No sprite painter, engine, bake, shared index
+writer or source change ran in that allocation.
+
+The original bollard shadow occupied2,560texels with bounds[72,108,180,138];
+the rack occupied10,696 with bounds[180,174,504,216], in art pixels. These
+are observed bounds from the actual shadow API. The actual plate bounds were
+[94.5,109.5,142.5,120] and[253.5,183,418.5,192]. Both large ellipses extended
+well beyond their bases. Root viewed the actual image and confirmed this
+concrete mismatch. The source relation check still had zero findings and
+five cells between nearest declared cell centres; that did not clear the
+visual shadow defect.
+
+The original actual packet is retained under
+`waterfront-props-evidence/composition-r1/`, together with its exact wrapper,
+manifest, controller and collection. Result SHA256:
+`09de002744cecf4a31c8f3e9b1464a1a032a6ff23a3a4ad33a4ab1a352f93dbf`.
+The actual2xreviewcard hash is
+`f70478a18281dd9676d60b3c7c85292fdfc2379c840cb9ad595ede66abc3bb30`.
+
+Root's narrow [GO6498692063](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6498692063)
+sets only bollard `rendering.cast_shadow.size` to[8,3] and rack to[28,3]
+world-pixel radii. Their direction/offset, palette-ramp stepping, all geometry,
+phase-corrected footprints, snap, collisions, clearances, candidate state,
+painter and four PNGs remain unchanged. The two existing schemas and exact
+field-only diff are checked; completed phase tests and sprite generation are
+not replayed for this scalar correction.
+
+A new corrected-preview wrapper and frozen input manifest are prepared
+separately. Its captions derive the full ellipse widths/heights from the actual
+compiled index values, rather than retaining the old hardcoded labels.
+Corrected composition is NOT RUN pending a separate one-shot lead allocation;
+these radius changes are not retrospectively shown in the retained92372image.
+
+The live renderer's ellipse is not the shipping bake's non-tree sprite-silhouette
+shadow. Neither baked shadows nor engine placement/occlusion were exercised.
+The existing lab lacks `scree` over `water` and `worn` over `scree` transition
+pairs: the actual diagnostic retains their visible hard-cell fallback. No
+invented bank, quay, softened mock join or approved terrain hides those gaps.
+
+## Remaining acceptance
+
+The official Eastward reference register is
+`scripts/art/eastward_study.py`: Steam apps 977880 and 2305370 and the official
+Eastward media stills. Its measured adult is 54 native pixels; the current size
+guide uses 74 art pixels, a 74/54 comparison factor. Those source measurements
+inform this work, but the official image crops are not available in this
+workspace. **No new side-by-side official crop, matched surface-detail counts
+or independent detail-auditor approval is claimed.** `eastward_ref` remains null.
+
+Full `npm run verify`, ordinary `npm run check:art-repro`, Godot/kit checks,
+corrected composed shadows, engine occlusion, the current Y12 pre-review packet
+and actual editor placement are NOT RUN for this source. The shared index has not been refreshed,
+so the new pieces are not available through that index yet. The inherited
+editor and map foundations retain their own holds. Keep the PR a draft and
+label it `needs-matt-review`; Matt's explicit OK on the applicable PR is still
+required before an art merge or production use.

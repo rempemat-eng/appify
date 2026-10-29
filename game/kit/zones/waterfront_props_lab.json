@@ -1,0 +1,59 @@
+{
+  "zone": "waterfront_props_lab",
+  "note": "Y36 candidate-only metadata lab, texel coordinates. Existing scree/rock and worn-earth bindings only; not rendered, baked, registered or approved. Negative placements are external controls.",
+  "coordinate_space": "texels",
+  "legend": {
+    "~": "water",
+    "s": "scree",
+    ",": "worn",
+    "#": "path"
+  },
+  "rows": [
+    "~~~~~~~~~~~~~~~~~~~~~~~~",
+    "~~~~~~~~~~~~~~~~~~~~~~~~",
+    "~~~~~~~~~~~~~~~~~~~~~~~~",
+    "~~~~~~~~~~~~~~~~~~~~~~~~",
+    "ssssssssssssssssssssssss",
+    "ssssssssssssssssssssssss",
+    "ssssssssssssssssssssssss",
+    ",,,,,,,,,,,,,,,,,,,,,,,,",
+    ",,,,,,,,,,,,,,,,,,,,,,,,",
+    ",,,,,,,,,,,,,,,,,,,,,,,,",
+    ",,,,,,,,,,,,,,,,,,,,,,,,",
+    ",,,,,,,,,,,,,,,,,,,,,,,,",
+    "########################",
+    "########################",
+    ",,,,,,,,,,,,,,,,,,,,,,,,",
+    ",,,,,,,,,,,,,,,,,,,,,,,,"
+  ],
+  "lab": true,
+  "bake": false,
+  "pieces": [
+    {
+      "id": "mooring",
+      "piece": "industry_bollard",
+      "variant": "rope",
+      "at": [
+        120,
+        120
+      ],
+      "facing": "s"
+    },
+    {
+      "id": "drying",
+      "piece": "industry_net_rack",
+      "variant": "working",
+      "at": [
+        336,
+        192
+      ],
+      "facing": "s"
+    }
+  ],
+  "spawns": {
+    "start": [
+      72,
+      360
+    ]
+  }
+}
