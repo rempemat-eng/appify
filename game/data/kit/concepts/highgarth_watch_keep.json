@@ -1,0 +1,80 @@
+{
+  "schema": "napattack.piece/1",
+  "id": "highgarth_watch_keep",
+  "name": "Small black pass-watch keep",
+  "kind": "structure",
+  "biomes": ["highgarth"],
+  "version": 1,
+  "variants": [
+    {
+      "id": "tarn_front",
+      "note": "Source construction: a small black keep on a battered stone base with a tarn in front, snow on its roofs: the lord's watch on the pass, smaller than Hearthold's keep Concept variant for review; exact drawing, dimensions and anchors are not approved."
+    }
+  ],
+  "approval": {
+    "state": "concept",
+    "note": "Y14 proposal for Claude A review; no drawing, build, placement or gameplay approval."
+  },
+  "geometry": {
+    "z_sort": "foot"
+  },
+  "placement": {
+    "role": "structure",
+    "ground": {
+      "allow": ["rock", "stone", "paving"],
+      "deny": []
+    },
+    "requires": [
+      {
+        "rel": "adjacent",
+        "what": "route",
+        "cells": 1,
+        "note": "Concept relation only; exact selector and anchor need W5/Claude review before promotion."
+      },
+      {
+        "rel": "adjacent",
+        "what": "tarn",
+        "cells": 1,
+        "note": "Site relationship from the brief; distance and support are deferred, not a runtime rule."
+      }
+    ],
+    "forbids": [
+      {
+        "rel": "on",
+        "what": "other_footprint"
+      },
+      {
+        "rel": "on",
+        "what": "water"
+      }
+    ],
+    "clearance": 0,
+    "orientations": ["any"],
+    "snap": "cell",
+    "composition": "axis",
+    "stages": []
+  },
+  "rendering": {
+    "contact_ao": true
+  },
+  "function": {},
+  "story": {
+    "lore": "A small black keep on a battered stone base beside the tarn, with snow on its roofs, watching the sealed pass; smaller than Hearthold. No new opening or fast-travel rule."
+  },
+  "audit": {
+    "size_class": null,
+    "eastward_ref": null,
+    "todo": [
+      "Authority: issue149 comment6464788488 and Highgarth town911edac6173ebf4398bcbf54b6171e4e68e62e13; source hashes and exact references are in scripts/highgarth/manifest.json.",
+      "Construction: a small black keep on a battered stone base with a tarn in front, snow on its roofs: the lord's watch on the pass, smaller than Hearthold's keep",
+      "Use and placement: A small black keep on a battered stone base beside the tarn, with snow on its roofs, watching the sealed pass; smaller than Hearthold. No new opening or fast-travel rule.",
+      "Widths: {\"status\":\"source planning range; not approved drawing geometry\",\"plan_width_world_px\":[48,64],\"plan_depth_world_px\":[48,64],\"classes\":[{\"id\":\"source_min\",\"width_cells\":6},{\"id\":\"source_max\",\"width_cells\":8}]}",
+      "Status: concept only, outside the live piece library; not approved, drawn, buildable or placeable, including labs.",
+      "Deferred geometry: Claude supplies sprite extents, foot, footprint, overhang, collision, support/deck heights and interaction anchors after review. Planning width/depth are not image bounds.",
+      "Provisional placement: clearance=0 is an unallocated placeholder, NOT permission to obstruct access or omit front landings; relations/orientations/composition require review before promotion. Wall-to-wall fronts must keep route access and deep eaves separate from solids.",
+      "Constraints: older-made, no modern elements, invented signs only/no real script; vermilion scope=none (only the temple gate and pagoda trim in this kit).",
+      "Compatibility: preserve the existing W0 schema identifier and field layout; do not allocate painter/material/runtime/gameplay blocks. Terrain/tier semantics remain deferred under the retained schema-owner decision.",
+      "Size class is provisional review routing only; opaque art dimensions must be measured against the current size guide after drawing. Do not stretch a sprite to match the plan footprint."
+    ]
+  }
+}
