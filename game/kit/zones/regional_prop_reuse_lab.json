@@ -1,0 +1,58 @@
+{
+  "zone": "regional_prop_reuse_lab",
+  "note": "Y45 diagnostic qualification only: unchanged quench trough and packing-crate pictures on existing worn earth. Not a receiving fire/island town, approved ground binding, workplace or clearance decision.",
+  "coordinate_space": "texels",
+  "legend": {
+    "~": "water",
+    ".": "worn",
+    "#": "path"
+  },
+  "rows": [
+    "~~~~~~~~~~~~~~~~~~~~",
+    "~~~~~~~~~~~~~~~~~~~~",
+    "....................",
+    "....................",
+    "....................",
+    "....................",
+    "....................",
+    "....................",
+    "....................",
+    "....................",
+    "....................",
+    "....................",
+    "####################",
+    "####################",
+    "....................",
+    "...................."
+  ],
+  "lab": true,
+  "bake": false,
+  "pieces": [
+    {
+      "id": "quench_reference",
+      "piece": "crossroads_trough",
+      "variant": "trough_35",
+      "at": [
+        120,
+        120
+      ],
+      "facing": "s"
+    },
+    {
+      "id": "packing_reference",
+      "piece": "crossroads_crates",
+      "variant": "crates_30",
+      "at": [
+        288,
+        192
+      ],
+      "facing": "s"
+    }
+  ],
+  "spawns": {
+    "start": [
+      72,
+      360
+    ]
+  }
+}

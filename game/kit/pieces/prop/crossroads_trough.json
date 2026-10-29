@@ -68,7 +68,17 @@
   ]
  },
  "placement": {
-  "snap": "cell"
+  "snap": "cell",
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "water"
+   },
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ]
  },
  "rendering": {
   "cast_shadow": {
@@ -100,7 +110,13 @@
    "composition role and clearance",
    "footprint is conservative positive-area coverage at a cell-aligned foot; W4 must derive exact runtime blocking from collision at the placed foot",
    "placement.role, requires and forbids (Claude design decision; ground-rules.md 6)",
-   "review size-guide class and Eastward comparison before the library gate"
+   "review size-guide class and Eastward comparison before the library gate",
+   "Y45 qualification adds existing ground-rules dry-foot/route refusals only; positive receiving ground, role and numeric clearance are unresolved, not zero/default approval.",
+   "The original village biome, owner:null and empty function stay unchanged; this is a reusable source design, not an authored regional building, job, service or actor.",
+   "Source cast_shadow.shape=baked refers to the original Crossroads ground. No standalone live shadow or receiving-region shadow coverage is established.",
+   "Keep candidate state until size/reference/detail/scene/library and Matt approval requirements are satisfied.",
+   "Existing four-cell footprint already covers both half-X/full-Y phases; no collision, anchor, snap or footprint correction is needed.",
+   "Stone quench-tank form follows native.village.p_trough and PR338 ordinary-smithy context; this does not supply the custom Ember great-forge geometry or Sunstone windpump well/receiver."
   ]
  }
 }

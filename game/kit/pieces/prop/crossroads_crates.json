@@ -67,17 +67,35 @@
     -2
    ],
    [
+    1,
+    -2
+   ],
+   [
     -1,
     -1
    ],
    [
     0,
     -1
+   ],
+   [
+    1,
+    -1
    ]
   ]
  },
  "placement": {
-  "snap": "cell"
+  "snap": "cell",
+  "forbids": [
+   {
+    "rel": "on",
+    "what": "water"
+   },
+   {
+    "rel": "on",
+    "what": "route"
+   }
+  ]
  },
  "rendering": {
   "cast_shadow": {
@@ -115,7 +133,14 @@
    "composition role and clearance",
    "footprint is conservative positive-area coverage at a cell-aligned foot; W4 must derive exact runtime blocking from collision at the placed foot",
    "placement.role, requires and forbids (Claude design decision; ground-rules.md 6)",
-   "review size-guide class and Eastward comparison before the library gate"
+   "review size-guide class and Eastward comparison before the library gate",
+   "Y45 qualification adds existing ground-rules dry-foot/route refusals only; positive receiving ground, role and numeric clearance are unresolved, not zero/default approval.",
+   "The original village biome, owner:null and empty function stay unchanged; this is a reusable source design, not an authored regional building, job, service or actor.",
+   "Source cast_shadow.shape=baked refers to the original Crossroads ground. No standalone live shadow or receiving-region shadow coverage is established.",
+   "Keep candidate state until size/reference/detail/scene/library and Matt approval requirements are satisfied.",
+   "Conservative footprint is the union of actual collider intersections at both half-X/full-Y cell-snap phases; unchanged collider/anchor/variants can occupy fewer cells at one phase.",
+   "Tidebloom packing-area reuse is a requirement lead only (PR386); receiving packing-shed identity, contents, door/working bands and ground/biome bindings remain unbound.",
+   "Shared seed_props --force rebuilds geometry at cell-aligned phase and can restore the old four-cell footprint on a candidate. Default seeding skips existing files; future integration must preserve phase coverage before a forced refresh."
   ]
  }
 }
