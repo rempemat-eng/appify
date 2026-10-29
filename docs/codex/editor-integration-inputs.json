@@ -1,4 +1,5 @@
 {
+  "record_role": "Preserved E2/r1 source manifest at the top level; current_composition is the authoritative E5/r1 continuation record. Historical pending/results are not E5 evidence.",
   "schema": "mygame.editor_integration_inputs/1",
   "task": "E2/r1",
   "slot": "mortar",
@@ -2160,5 +2161,189 @@
     "current_E2_scene_and_Y12_evidence",
     "matching_hosted_CI",
     "Matt_PR_specific_approval"
-  ]
+  ],
+  "current_composition": {
+    "task": "E5/r1",
+    "slot": "mortar-current",
+    "status": "draft_unapproved_current_editor_composition",
+    "claim": "https://github.com/rempemat-eng/appify/issues/149#issuecomment-6485387199",
+    "ack": "https://github.com/rempemat-eng/appify/issues/149#issuecomment-6485427518",
+    "base_head": "b1b066d979146fb0f0a435bfeca01f8c3faebcac",
+    "main_head": "b352108041fdd58113fd35779381d9c63564c196",
+    "inputs": [
+      {
+        "id": "357",
+        "head": "b1b066d979146fb0f0a435bfeca01f8c3faebcac",
+        "tree": "941059e27edbade97c0a484d5c9a8cc2da9ac508",
+        "role": "Frozen E2 editor proposal; retains its eight genuine original input parents"
+      },
+      {
+        "id": "main",
+        "head": "b352108041fdd58113fd35779381d9c63564c196",
+        "tree": "5d21434e9ba4fdae00758491662043ec6d3e8abd",
+        "role": "Reviewed pause projection/layout, source-only and encoded-material context routing, and dated milestone documents"
+      }
+    ],
+    "native_merge_before_review_document_updates": "98edf22afc8e6db66bf4b45262abe28215188326",
+    "assembled_source_tree_before_review_document_updates": "e9c709b5d572482943e3fed1515b05a7026f9578",
+    "merge_conflicts": [],
+    "manual_source_resolutions": [],
+    "delta_from_frozen_editor_before_review_document_updates": [
+      {
+        "path": "docs/codex/godot-cache-evidence.md",
+        "mode": "100644",
+        "type": "blob",
+        "blob": "25b7a7acbf0528da388f6ac9463c59343cd55c87",
+        "source": "main@b352108041fdd58113fd35779381d9c63564c196"
+      },
+      {
+        "path": "docs/codex/handover.md",
+        "mode": "100644",
+        "type": "blob",
+        "blob": "ea3c7497e447b9628a5f1fdc76b27dee069dcafe",
+        "source": "main@b352108041fdd58113fd35779381d9c63564c196"
+      },
+      {
+        "path": "docs/codex/history/health-20261028.md",
+        "mode": "100644",
+        "type": "blob",
+        "blob": "e6e355cae156d9c975e40862df39aea792f62b95",
+        "source": "main@b352108041fdd58113fd35779381d9c63564c196"
+      },
+      {
+        "path": "docs/codex/pause-touch-layout.md",
+        "mode": "100644",
+        "type": "blob",
+        "blob": "b7620039f75d3aefe055e15da2c2fd8bcdc6eb95",
+        "source": "main@b352108041fdd58113fd35779381d9c63564c196"
+      },
+      {
+        "path": "docs/codex/pre-review-sheets.md",
+        "mode": "100644",
+        "type": "blob",
+        "blob": "2f78225861da42962497b3950cd56170b66d6f5f",
+        "source": "main@b352108041fdd58113fd35779381d9c63564c196"
+      },
+      {
+        "path": "docs/codex/settlement-building-use-audit.md",
+        "mode": "100644",
+        "type": "blob",
+        "blob": "701daefb434547aaa34bc91d278ad993d0d1bfb4",
+        "source": "main@b352108041fdd58113fd35779381d9c63564c196"
+      },
+      {
+        "path": "docs/vision/development-plan.md",
+        "mode": "100644",
+        "type": "blob",
+        "blob": "506ab683398fd1d8be809cc8fe04c3152ad55b5e",
+        "source": "main@b352108041fdd58113fd35779381d9c63564c196"
+      },
+      {
+        "path": "game/main/pixel_screen.gd",
+        "mode": "100644",
+        "type": "blob",
+        "blob": "c704cadd1900a1805a7066c7dc2ad1ff204393e6",
+        "source": "main@b352108041fdd58113fd35779381d9c63564c196"
+      },
+      {
+        "path": "game/test/test_pause_touch_layout.gd",
+        "mode": "100644",
+        "type": "blob",
+        "blob": "5330362660e950ccf0838e997d1fb7a7c97a5330",
+        "source": "main@b352108041fdd58113fd35779381d9c63564c196"
+      },
+      {
+        "path": "game/test/test_pause_touch_layout.gd.uid",
+        "mode": "100644",
+        "type": "blob",
+        "blob": "fd14e4e9db5c22ed0d4130e506f96fcc1d449ff2",
+        "source": "main@b352108041fdd58113fd35779381d9c63564c196"
+      },
+      {
+        "path": "game/ui/pause_menu.gd",
+        "mode": "100644",
+        "type": "blob",
+        "blob": "ebf6080f52bd5e5107e2158a67ca7e8c7e21b0db",
+        "source": "main@b352108041fdd58113fd35779381d9c63564c196"
+      },
+      {
+        "path": "scripts/review/kit_representation.py",
+        "mode": "100644",
+        "type": "blob",
+        "blob": "f1b33f1a5b3e814d0cc466bc84490a9b66083614",
+        "source": "main@b352108041fdd58113fd35779381d9c63564c196"
+      },
+      {
+        "path": "scripts/review/pr_sheet.py",
+        "mode": "100644",
+        "type": "blob",
+        "blob": "e6719730447ff7d153b880e8b66585a66a7eb939",
+        "source": "main@b352108041fdd58113fd35779381d9c63564c196"
+      },
+      {
+        "path": "scripts/review/test_pr_sheet.py",
+        "mode": "100644",
+        "type": "blob",
+        "blob": "4c5721bfc29ed43a6dec2f74c2f49b50fae2d786",
+        "source": "main@b352108041fdd58113fd35779381d9c63564c196"
+      }
+    ],
+    "authored_paths": [
+      "docs/codex/editor-integration-review.md",
+      "docs/codex/editor-integration-inputs.json"
+    ],
+    "historical_review_document_blobs": {
+      "docs/codex/editor-integration-review.md": "40bfa2ecf8b1b7805ddc5f7e0770098004dc8b74",
+      "docs/codex/editor-integration-inputs.json": "f763dd3224af9f3bcd6fd0367dcdba6e77cb5ea1"
+    },
+    "source_invariants": {
+      "player_blob": "0dd01672a14fda097b3db2e0da8643c5eca6307b",
+      "piece_approval_states": {
+        "candidate": 106
+      },
+      "concept_approval_states": {
+        "concept": 129
+      },
+      "piece_concept_blob_mismatches_vs357_and341": [],
+      "production_raster_changes_vs357": [],
+      "w7_fixture_pngs_unchanged": 5,
+      "all_main_delta_blobs_preserved": true,
+      "all_other357_source_blobs_preserved": true,
+      "build_check_source": "Unchanged from357; active Y26 changes are not included",
+      "map303_is_ancestor": false
+    },
+    "w7_freshness": {
+      "manifest": "game/test/fixtures/kit/references.json",
+      "manifest_blob": "90cf4f97f9ecb64b6e9eb8e8568372815e89b63e",
+      "input_count": 53,
+      "mismatches": [],
+      "regeneration_performed": false,
+      "proof": "Committed source_sha256 values compared directly with merged Git blob bytes; no new render parity execution."
+    },
+    "historical357_validation": {
+      "head": "b1b066d979146fb0f0a435bfeca01f8c3faebcac",
+      "tree": "941059e27edbade97c0a484d5c9a8cc2da9ac508",
+      "result": "All four local gates passed in original55924; Godot280, review215, narrative46, zero lint, art16/22/122. This is not E5 validation.",
+      "evidence": "https://github.com/rempemat-eng/appify/pull/357#issuecomment-6484565030",
+      "original_failed43580": "Preserved Xvfb/environment failure, not rewritten or rerun here"
+    },
+    "residual_image_review": {
+      "evidence": "https://github.com/rempemat-eng/appify/pull/357#pullrequestreview-5691820654",
+      "unresolved_raw_failures": 14,
+      "painted_preview_variants_without_current_legal_lab_context": 8,
+      "bank_cases_requiring_authoritative_mask_diagnosis": 2,
+      "art_repair_or_detector_waiver_authorized": false,
+      "note": "Raised-lawn/profile context is unresolved; no new confirmed art defect or acceptance is inferred from old measurements."
+    },
+    "pending": [
+      "new_tree_full_godot",
+      "new_tree_full_kit",
+      "new_tree_full_verify_zero_lint",
+      "new_tree_ordinary_art_repro",
+      "current_editor_smoke_and_rendered_dock",
+      "current_scene_material_Y12_evidence",
+      "matching_hosted_CI",
+      "Matt_PR_specific_approval"
+    ]
+  }
 }
