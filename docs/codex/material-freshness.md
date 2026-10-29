@@ -1,4 +1,4 @@
-# Material producer freshness (Y26/r1)
+# Material producer freshness (Y26/r2)
 
 The existing `python3 -m scripts.art.kit.build --check` now checks the outputs
 that its early return previously omitted. Claim: [6484771364](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6484771364),
@@ -40,3 +40,34 @@ lead allocation. Do not rerun completed editor validation or dispatch a benchmar
 Freshness does not discharge decoded/composed-material, scene, dock, visual,
 placement or device obligations. Applicable editor/kit merges still require
 `needs-matt-review` and Matt's explicit OK on the PR.
+
+## External temporary parent (r2)
+
+[Lead source scope6486164458](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6486164458)
+requires check mode to refuse a temporary directory inside the subject. Before
+loading recipes or asking `tempfile` to create anything, the checker resolves the
+first nonempty `TMPDIR`, `TEMP` or `TMP`, otherwise the cached `tempfile.tempdir`.
+A parent equal to or below the checkout root or output root, including a symlink
+alias, is refused with exit1. A configured but missing parent is refused without
+fallback or directory creation. With no configured/cached parent, the checker
+uses the first existing `/tmp`, `/var/tmp` or `/usr/tmp`; it never falls back to
+the working directory. Platforms without those defaults must configure an
+existing external parent. This selection is specific to check mode; ordinary and
+force generation are unchanged. The validated parent is passed explicitly to
+`TemporaryDirectory`, so its default write-probing selector is never called.
+
+Controls invoke the real `main(["--check"])` with temporary subject data and
+copied source bytes: all three environment variables at the checkout root,
+output root and a nonexistent output descendant; an unsafe cached parent; a
+symlink alias; a valid external sibling sharing the subject's name prefix; a
+missing external parent; and unavailable defaults. They assert subject inventory,
+bytes, modes and modification times, plus refusal before temporary creation and
+no default selector calls. Existing13 producer controls remain configured.
+
+Changing build.py invalidates its whole-file W7 fixture provenance. Do not patch
+that hash by hand: freeze the final source, then wait for a separate proof
+allocation to run the documented fixture generator in an external checkout.
+Only if all five PNG bytes and decoded RGBA, all other52 input hashes and all
+other reference metadata agree may the owner import the generated build.py hash.
+No PNG rebaseline or waived freshness assertion is authorised. That proof and
+new-source full Godot/kit/verify/ordinary-art validation are still pending.

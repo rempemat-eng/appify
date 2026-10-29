@@ -234,10 +234,36 @@ def write_tiers(out: str) -> None:
     open(os.path.join(out, 'tiers.tres'), 'w').write('\n'.join(lines))
 
 
+def _check_temp_parent() -> str:
+    """Choose without tempfile's write-probing or its fallback to the checkout."""
+    configured = next((os.environ[name] for name in ('TMPDIR', 'TEMP', 'TMP')
+                       if os.environ.get(name)), None)
+    chosen = configured if configured is not None else tempfile.tempdir
+    candidates = [os.fsdecode(chosen)] if chosen is not None else ['/tmp', '/var/tmp', '/usr/tmp']
+    for candidate in candidates:
+        parent = os.path.realpath(candidate)
+        for subject in (ROOT, OUT):
+            subject = os.path.realpath(subject)
+            try:
+                inside = os.path.commonpath([subject, parent]) == subject
+            except ValueError:  # Different Windows drives cannot contain each other.
+                inside = False
+            if inside:
+                raise ValueError('temporary parent is inside subject: %s' % candidate)
+        if os.path.isdir(parent):
+            return parent
+    raise ValueError('no external temporary directory; configure TMPDIR outside the subject')
+
+
 def build(force: bool = False, check: bool = False) -> int:
     if check:
         if not os.path.isdir(OUT):
             print("kit: missing output directory: %s" % OUT)
+            return 1
+        try:
+            temporary_parent = _check_temp_parent()
+        except (OSError, ValueError) as error:
+            print('kit: cannot check without external temporary space: %s' % error)
             return 1
     else:
         os.makedirs(OUT, exist_ok=True)
@@ -282,7 +308,7 @@ def build(force: bool = False, check: bool = False) -> int:
             return 1
         # Use the same auxiliary writer as normal builds, but never target the subject.
         # The produced file set includes dynamic decals and the manifest itself.
-        with tempfile.TemporaryDirectory(prefix='kit-check-') as expected:
+        with tempfile.TemporaryDirectory(prefix='kit-check-', dir=temporary_parent) as expected:
             _write_auxiliary(expected, mats, trs, fills)
             stale = [name for name in sorted(os.listdir(expected))
                      if not os.path.isfile(os.path.join(OUT, name))

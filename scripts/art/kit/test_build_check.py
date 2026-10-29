@@ -5,6 +5,7 @@ import contextlib
 import copy
 import hashlib
 import io
+import os
 from pathlib import Path
 import tempfile
 import unittest
@@ -22,6 +23,11 @@ class BuildCheckTests(unittest.TestCase):
         self.addCleanup(self.stack.close)
         self.root = Path(self.stack.enter_context(tempfile.TemporaryDirectory(prefix="kit-check-fixture-")))
         self.out = self.root / "outputs"
+        # Real source bytes keep recipe hashes stable when this fixture is the checkout.
+        for rel in set().union(*B.SOURCES.values()):
+            target = self.root / rel
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes((Path(B.ROOT) / rel).read_bytes())
         self.terrain = {
             "id": "fixture_ground", "kind": "terrain", "approval": {"state": "candidate"},
             "terrain": {"material_id": 1, "priority": 1, "walkable": True,
@@ -133,6 +139,59 @@ class BuildCheckTests(unittest.TestCase):
         modified[2, 0] ^= 1
         with patch.object(B.PAL, "LUT", modified):
             self.check_unchanged(1)
+
+    def test_configured_temporary_parent_inside_subject_is_refused_before_probe(self):
+        for name in ["TMPDIR", "TEMP", "TMP"]:
+            for parent in [self.root, self.out, self.out / "not-created"]:
+                with self.subTest(variable=name, parent=parent):
+                    with patch.dict(os.environ, {"TMPDIR": "", "TEMP": "", "TMP": "", name: str(parent)}):
+                        with patch.object(B, "ROOT", str(self.root)), patch.object(B.tempfile, "tempdir", None):
+                            with patch.object(B.tempfile, "gettempdir", wraps=tempfile.gettempdir) as selector:
+                                with patch.object(B.tempfile, "TemporaryDirectory", wraps=tempfile.TemporaryDirectory) as creator:
+                                    self.check_unchanged(1)
+                                    selector.assert_not_called()
+                                    creator.assert_not_called()
+
+    def test_cached_temporary_parent_inside_subject_is_refused_before_probe(self):
+        with patch.dict(os.environ, {"TMPDIR": "", "TEMP": "", "TMP": ""}):
+            with patch.object(B.tempfile, "tempdir", str(self.out)):
+                with patch.object(B.tempfile, "TemporaryDirectory", wraps=tempfile.TemporaryDirectory) as creator:
+                    self.check_unchanged(1)
+                    creator.assert_not_called()
+
+    def test_symlink_temporary_parent_into_output_is_refused(self):
+        with tempfile.TemporaryDirectory(prefix="kit-temp-alias-") as elsewhere:
+            alias = Path(elsewhere) / "alias"
+            alias.symlink_to(self.out, target_is_directory=True)
+            with patch.dict(os.environ, {"TMPDIR": str(alias)}):
+                self.check_unchanged(1)
+
+    def test_explicit_external_temporary_parent_is_used_without_default_probe(self):
+        with tempfile.TemporaryDirectory(prefix=self.root.name + "-sibling-", dir=self.root.parent) as elsewhere:
+            # Prefix similarity is not containment; this sibling remains external.
+            parent = Path(elsewhere) / "subject-sibling"
+            parent.mkdir()
+            before = list(parent.iterdir())
+            with patch.dict(os.environ, {"TMPDIR": str(parent)}), patch.object(B, "ROOT", str(self.root)):
+                with patch.object(B.tempfile, "gettempdir", side_effect=AssertionError("default probe")):
+                    self.check_unchanged(0)
+            self.assertEqual(list(parent.iterdir()), before)
+
+    def test_missing_external_parent_is_refused_without_fallback_or_creation(self):
+        with tempfile.TemporaryDirectory(prefix="kit-temp-missing-") as elsewhere:
+            missing = Path(elsewhere) / "not-created"
+            with patch.dict(os.environ, {"TMPDIR": str(missing)}):
+                with patch.object(B.tempfile, "TemporaryDirectory", wraps=tempfile.TemporaryDirectory) as creator:
+                    self.check_unchanged(1)
+                    creator.assert_not_called()
+            self.assertEqual(list(Path(elsewhere).iterdir()), [])
+
+    def test_no_known_external_parent_never_falls_back_to_working_directory(self):
+        with patch.dict(os.environ, {"TMPDIR": "", "TEMP": "", "TMP": ""}):
+            with patch.object(B.tempfile, "tempdir", None):
+                with patch.object(B.os.path, "isdir", side_effect=lambda p: p == str(self.out)):
+                    with patch.object(B.tempfile, "gettempdir", side_effect=AssertionError("default probe")):
+                        self.check_unchanged(1)
 
     def test_normal_generation_stays_incremental_and_byte_identical(self):
         before = self.snapshot(metadata=False)
