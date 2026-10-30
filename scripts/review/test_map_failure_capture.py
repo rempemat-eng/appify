@@ -389,10 +389,13 @@ class OwnedSampling(unittest.TestCase):
                         M['write_json'](marker, {'complete': True})
                 self.assertEqual(marker.read_bytes(), previous)
             with self.subTest(refusal='owned dangling symlink'):
-                (folder / 'link').symlink_to(folder / 'missing-owned-target')
-                with self.assertRaises(M['CaptureError']):
-                    M['write_json'](marker, {'complete': True})
-                self.assertEqual(marker.read_bytes(), previous)
+                link = folder / 'link'; link.symlink_to(folder / 'missing-owned-target')
+                try:
+                    with self.assertRaises(M['CaptureError']):
+                        M['write_json'](marker, {'complete': True})
+                    self.assertEqual(marker.read_bytes(), previous)
+                finally:
+                    link.unlink()  # The refusal is asserted before ordinary fixture retention/cleanup.
             self.assertFalse(marker.with_name('capture.json.tmp').exists())
 
 
@@ -464,7 +467,7 @@ class CaptureWorkflowContract(unittest.TestCase):
         code = compile(expression, str(path) + ':expected-baseline', 'eval')
         keys = ('trial125', 'records19', 'queue20_23', 'original_error')
         def evaluate(flags):
-            return eval(code, {'__builtins__': {'all': all}}, {'core': {'comparison_target': flags}})
+            return eval(code, {'__builtins__': {'all': all}, 'core': {'comparison_target': flags}}, {})
         self.assertTrue(evaluate(dict.fromkeys(keys, True)))
         for key in keys:
             for value in (False, 1, None):
