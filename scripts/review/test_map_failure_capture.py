@@ -10,6 +10,7 @@ import copy
 import ast
 import hashlib
 import json
+import os
 import runpy
 import sys
 import struct
@@ -329,6 +330,69 @@ class ReviewRegressions(unittest.TestCase):
             self.assertTrue(artifact.is_file())
             self.assertTrue(M['verify_bundle'](artifact, M['sha'](artifact))['retrieved_bytes_verified'])
             self.assertFalse(json.loads((out / 'capture.json').read_text())['complete'])
+
+class OwnedSampling(unittest.TestCase):
+    """Real owned filesystem regressions; no world, numeric import or child."""
+    def test_owned_usage_temp_disappears_at_real_metadata_boundary(self):
+        with tempfile.TemporaryDirectory(prefix='R6-owned-disappearance-') as name:
+            folder = Path(name); marker = folder / 'capture.json'; transient = folder / 'usage.json.tmp'
+            M['write_json'](marker, {'complete': False, 'stage': 'before'})
+            transient.write_bytes(b'actual owned usage temp\n')
+            original_stat = Path.stat
+            observed = []
+            def actual_stat(path, *args, **kwargs):
+                if path == transient:
+                    observed.append(kwargs.get('follow_symlinks', True))
+                    # Old two-probe sampler: is_file has observed the real file,
+                    # then it vanishes before stat. A single lstat sampler sees
+                    # the same actual disappearance before its only observation.
+                    if kwargs.get('follow_symlinks', True) is False or len(observed) == 2:
+                        transient.unlink()
+                return original_stat(path, *args, **kwargs)
+            with patch.object(Path, 'stat', actual_stat):
+                M['write_json'](marker, {'complete': False, 'stage': 'after'})
+            self.assertTrue(observed)
+            self.assertFalse(transient.exists())
+            self.assertEqual(json.loads(marker.read_text())['stage'], 'after')
+            self.assertFalse(marker.with_name('capture.json.tmp').exists())
+
+    def test_real_unreadable_owned_directory_remains_permission_refusal(self):
+        # A supported nonroot receiver is required; no fabricated PermissionError
+        # or skipped success stands in for a real filesystem denial.
+        self.assertNotEqual(os.geteuid(), 0, 'permission control requires an unprivileged receiver')
+        with tempfile.TemporaryDirectory(prefix='R6-owned-permission-') as name:
+            folder = Path(name); marker = folder / 'capture.json'; blocked = folder / 'unreadable'
+            M['write_json'](marker, {'complete': False, 'stage': 'before'})
+            previous = marker.read_bytes()
+            blocked.mkdir(); (blocked / 'actual.bin').write_bytes(b'owned unreadable input\n')
+            blocked.chmod(0)
+            try:
+                with self.assertRaises(PermissionError):
+                    M['write_json'](marker, {'complete': False, 'stage': 'must refuse'})
+            finally:
+                blocked.chmod(0o700)
+            self.assertEqual(marker.read_bytes(), previous)
+            self.assertFalse(marker.with_name('capture.json.tmp').exists())
+
+    def test_real_allocated_budget_and_dangling_symlink_remain_refusals(self):
+        with tempfile.TemporaryDirectory(prefix='R6-owned-budget-') as name:
+            folder = Path(name); marker = folder / 'capture.json'
+            M['write_json'](marker, {'complete': False})
+            previous = marker.read_bytes()
+            actual = folder / 'allocated.bin'; actual.write_bytes(b'x' * 8192)
+            self.assertGreater(actual.stat().st_blocks * 512, 1024)
+            with self.subTest(refusal='real allocated budget'):
+                with patch.dict(M['write_json'].__globals__, MAX_PACKET=1024):
+                    with self.assertRaises(M['CaptureError']):
+                        M['write_json'](marker, {'complete': True})
+                self.assertEqual(marker.read_bytes(), previous)
+            with self.subTest(refusal='owned dangling symlink'):
+                (folder / 'link').symlink_to(folder / 'missing-owned-target')
+                with self.assertRaises(M['CaptureError']):
+                    M['write_json'](marker, {'complete': True})
+                self.assertEqual(marker.read_bytes(), previous)
+            self.assertFalse(marker.with_name('capture.json.tmp').exists())
+
 
 class LifetimeSourceContract(unittest.TestCase):
     def test_unreaped_anchor_signal_reap_and_acceptance_source_contract(self):
