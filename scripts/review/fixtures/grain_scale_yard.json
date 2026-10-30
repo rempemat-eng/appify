@@ -1,0 +1,145 @@
+{
+  "qualification": "grain-scale candidate / synthetic CANDIDATE receiving context / NOT Crossroads layout acceptance / Matt review required",
+  "proposal": "Unapproved synthetic smithy frontage and working yard; smithy remains smithy, not mill. Coordinates are proposed receiving positions, not measured Crossroads terrain.",
+  "plan": {
+    "zone": "grain_scale_diagnostic",
+    "lab": true,
+    "ship": false,
+    "bake": false,
+    "coordinate_space": "texels",
+    "legend": {
+      ".": "lawn",
+      "y": "worn",
+      "=": "path"
+    },
+    "rows": [
+      "........................................",
+      "........................................",
+      "........................................",
+      "........................................",
+      "........................................",
+      "........................................",
+      "........................................",
+      "........................................",
+      "....yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy....",
+      "....yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy....",
+      "....yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy....",
+      "....yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy....",
+      "....yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy....",
+      "....yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy",
+      "....yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy",
+      "....yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy",
+      "....yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy",
+      "....yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy",
+      "....yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy....",
+      "========================================",
+      "========================================",
+      "========================================"
+    ],
+    "tiers": [
+      "0000000000000000000000000000000000000000",
+      "0000000000000000000000000000000000000000",
+      "0000000000000000000000000000000000000000",
+      "0000000000000000000000000000000000000000",
+      "0000000000000000000000000000000000000000",
+      "0000000000000000000000000000000000000000",
+      "0000000000000000000000000000000000000000",
+      "0000000000000000000000000000000000000000",
+      "0000000000000000000000000000000000000000",
+      "0000000000000000000000000000000000000000",
+      "0000000000000000000000000000000000000000",
+      "0000000000000000000000000000000000000000",
+      "0000000000000000000000000000000000000000",
+      "0000000000000000000000000000000000000000",
+      "0000000000000000000000000000000000000000",
+      "0000000000000000000000000000000000000000",
+      "0000000000000000000000000000000000000000",
+      "0000000000000000000000000000000000000000",
+      "0000000000000000000000000000000000000000",
+      "0000000000000000000000000000000000000000",
+      "0000000000000000000000000000000000000000",
+      "0000000000000000000000000000000000000000"
+    ],
+    "pieces": [
+      {
+        "id": "existing_smithy",
+        "piece": "crossroads_smithy",
+        "variant": "smithy",
+        "at": [
+          240,
+          360
+        ],
+        "facing": "s"
+      },
+      {
+        "id": "grain_candidate",
+        "piece": "crossroads_grain_scale",
+        "variant": "loaded",
+        "at": [
+          552,
+          384
+        ],
+        "facing": "s"
+      }
+    ]
+  },
+  "approaches": {
+    "public_route": "Three bottom rows continue west/east; existing path material.",
+    "worker_south": {
+      "foot_art": [
+        552,
+        432
+      ],
+      "via": "worn yard to southern route; proposed receiving access, no new numeric clearance rule"
+    },
+    "loading_east": "Worn yard rows13\u201317 continues to east edge; no loading mechanic or physical acceptance claimed"
+  },
+  "moss": {
+    "manifest": "game/assets/characters/moss/manifest.json",
+    "sheet": "game/assets/characters/moss/sheets/idle_S.png",
+    "clip": "idle",
+    "facing": "S",
+    "frame": 3,
+    "region": [
+      480,
+      0,
+      160,
+      144
+    ],
+    "pivot": [
+      80,
+      136
+    ],
+    "packed_bounds": [
+      62,
+      63,
+      100,
+      137
+    ],
+    "packed_height": 74,
+    "manifest_body_height_target": 72,
+    "foot_art": [
+      552,
+      432
+    ]
+  },
+  "presentation": {
+    "ground_size": [
+      960,
+      528
+    ],
+    "native_size": [
+      960,
+      540
+    ],
+    "whole_image_scale": 2,
+    "footer_height": 12,
+    "note": "One unchanged render_zone composition plus exact Moss frame overlay and candidate caption; nearest-neighbour whole-image presentation. No independent character shadow or contact-AO pass is invented."
+  },
+  "source_gaps": [
+    "All ground and pieces remain candidates; this is not KEEP, library approval, shipping, Crossroads terrain or layout acceptance.",
+    "Unmodified build imports native terrain sheet painters (face/snow/grass/path sheets) in memory before Kit loads39PNG resources. Future exact GO must include these known initialisers within composition120s/512MiB; no module execution now.",
+    "Actual new grain cast shadow is produced by compose.shadows from props.entry. Smithy baked-shadow metadata yields no added live shadow. contact_ao is not a separate pass in this renderer.",
+    "Official Eastward reference remains selection only; native period, matching adult height, detail counts and Y12/art/Matt approval are not established by this diagnostic."
+  ]
+}
