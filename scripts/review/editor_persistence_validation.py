@@ -34,8 +34,10 @@ import zipfile
 GAME_SHA = "6903f8d5d729f5eb9d4beef20d33869465308c66"
 GAME_TREE = "e4dfae3eb183426e3a44fd004436eb1ed18b53d7"
 GAME_PARENT = "45ed3cad029c106977e6c0c833913dcb1c614fbd"
-RECEIVER_PARENT = "5de271d77f26dbbc5641bac0ef6635aef021c34b"
-RECEIVER_PARENT_TREE = "62b470d5934699bed72660f5a011e66b3f3da854"
+RECEIVER_PARENT = "63273684792073573c571148c4bbc07c4486267b"
+RECEIVER_PARENT_TREE = "0305ff7b941f8f92c211da625511ff2abe42a021"
+ORIGINAL_RECEIVER = "5de271d77f26dbbc5641bac0ef6635aef021c34b"
+ORIGINAL_RECEIVER_TREE = "62b470d5934699bed72660f5a011e66b3f3da854"
 TEST_BLOB = "a61671b648277d1c2ba290de51cdff74b475a1c9"
 PRODUCTION_BLOB = "effd244781b1e71c5d990b14df82258280e93811"
 GAME_COUNT = 6688
@@ -114,7 +116,7 @@ ENGINE_BYTES = 146414384
 ARCHIVE_SHA512 = "9aa00f7a605200940bce3027a567b782f49bd8e940dd06ae9e987bd65aee1b1467edd56ed84fcdcbdd44354bf613bdbb4e5d2913e925850368e150c59ed54c65"
 ENGINE_NAME = "Godot_v4.7.2-stable_linux.x86_64"
 ENGINE_URL = "https://github.com/godotengine/godot/releases/download/4.7.2-stable/" + ENGINE_NAME + ".zip"
-OWNED_LIMIT = 512 * 1024**2
+OWNED_LIMIT = 768 * 1024**2
 FREE_RESERVE = 256 * 1024**2
 RSS_LIMIT = 2048 * 1024**2
 LOG_LIMIT = 4 * 1024**2
@@ -448,11 +450,16 @@ class Controller:
         headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         parents = [line.removeprefix("parent ") for line in headers.splitlines() if line.startswith("parent ")]
         if parents != [RECEIVER_PARENT]:
-            raise RuntimeError("Corrected receiver must be a genuine sole child of frozen4055de")
+            raise RuntimeError("Profile-corrected receiver must be a genuine sole child of frozen405632")
         prior_headers = git(self.candidate, "cat-file", "commit", RECEIVER_PARENT).decode().split("\n\n", 1)[0]
         if ([line.removeprefix("parent ") for line in prior_headers.splitlines() if line.startswith("parent ")]
-                != [GAME_SHA] or git(self.candidate, "rev-parse", RECEIVER_PARENT + "^{tree}").decode().strip()
+                != [ORIGINAL_RECEIVER] or git(self.candidate, "rev-parse", RECEIVER_PARENT + "^{tree}").decode().strip()
                 != RECEIVER_PARENT_TREE):
+            raise RuntimeError("Corrected405 receiver ancestry/tree changed")
+        original_headers = git(self.candidate, "cat-file", "commit", ORIGINAL_RECEIVER).decode().split("\n\n", 1)[0]
+        if ([line.removeprefix("parent ") for line in original_headers.splitlines() if line.startswith("parent ")]
+                != [GAME_SHA] or git(self.candidate, "rev-parse", ORIGINAL_RECEIVER + "^{tree}").decode().strip()
+                != ORIGINAL_RECEIVER_TREE):
             raise RuntimeError("Original405 receiver ancestry/tree changed")
         source_headers = git(self.source, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         if [line.removeprefix("parent ") for line in source_headers.splitlines()
@@ -481,6 +488,7 @@ class Controller:
                    "tree": git(self.candidate, "rev-parse", "HEAD^{tree}").decode().strip(),
                    "commit_headers": headers, "tested_game_sha": GAME_SHA,
                    "receiver_parent": RECEIVER_PARENT, "receiver_parent_headers": prior_headers,
+                   "original_receiver": ORIGINAL_RECEIVER, "original_receiver_headers": original_headers,
                    "tested_game_tree": GAME_TREE, "tested_game_headers": source_headers,
                    "delta": sorted(delta), "receiving_source": candidate_rows})
         # Retain full actual game AND actual Python inputs before engine setup.
@@ -514,8 +522,16 @@ class Controller:
                    "affinity": sorted(os.sched_getaffinity(0)),
                    "validator_python": self.env["PYTHON"],
                    "closure_qualification": "48 pinned Python/config inputs + full game; lawn-only pieces=[] probe. No master-raster load, original paint execution or new generation is granted.",
-                   "scientific_stage": "Fresh private target; exact versions, all package byte hashes before/after. Counted inside512MiB duty, not hidden staging; fit UNMEASURED.",
-                   "fit": "UNMEASURED; no automatic budget increase",
+                   "scientific_stage": "Fresh private target; exact versions, all package byte hashes before/after. Counted inside reviewed768MiB duty, not hidden staging; full import/test/packaging fit UNMEASURED.",
+                   "fit": "Full import/test/packaging fit at768MiB UNMEASURED; no automatic budget increase",
+                   "owned_profile_provenance": {
+                       "source_only_go": 6532961903, "h1_result": 6532930623,
+                       "independent_receipt": 6532962554,
+                       "prior_owned_limit_bytes": 512 * 1024**2,
+                       "h1_refused_owned_bytes": 537354240,
+                       "complete_extraction_projection_bytes": 608271152,
+                       "after_verified_zip_retirement_projection_bytes": 530410728,
+                       "qualification": "H1 stopped during extraction before canary/import/all eight methods. Projections hold other H1 footprint fixed; they are not measured complete extraction or import/test/packaging fit. Original partials retained; no guard waived."},
                    "limits": {
                        "rss_group_bytes": RSS_LIMIT, "owned_bytes": OWNED_LIMIT,
                        "address_space_per_process": 4 * 1024**3,

@@ -50,7 +50,7 @@ jobs:
         with:
           ref: ${{ github.sha }}
           path: runner
-          fetch-depth: 3 # exact398 -> original4055de -> this genuine corrective child
+          fetch-depth: 4 # exact398 -> original4055de -> corrected405632 -> this profile child
           persist-credentials: false
           sparse-checkout-cone-mode: false
           sparse-checkout: |
