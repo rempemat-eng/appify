@@ -1,4 +1,4 @@
-name: EDITOR_PERSISTENCE exact eight-method receiving
+name: EDITOR_COMBINED exact sixteen-control receiving
 
 # SOURCE PREPARATION ONLY. The lead must review an exact commit and allocate it
 # before creating/updating this distinct execution ref. No PR/manual/schedule trigger.
@@ -23,7 +23,7 @@ jobs:
       TZ: UTC
       PYTHONDONTWRITEBYTECODE: '1'
       GIT_OPTIONAL_LOCKS: '0'
-      EDITOR_PERSISTENCE_GAME_SHA: 52caf926c92337a7a6b0c36dfe73184ec4712e8c
+      EDITOR_PERSISTENCE_GAME_SHA: feb37c31d6de71e20df096df4df4d32ed1fa93ed
     steps:
       - name: Open failure evidence before any checkout or setup
         shell: bash
@@ -50,7 +50,7 @@ jobs:
         with:
           ref: ${{ github.sha }}
           path: runner
-          fetch-depth: 6 # original3986903 ->5de ->632 ->597 ->6c76 ->this rebound child
+          fetch-depth: 7 # original6903 ->5de ->632 ->597 ->6c76 ->7c14 ->this combined child
           persist-credentials: false
           sparse-checkout-cone-mode: false
           sparse-checkout: |
@@ -61,9 +61,9 @@ jobs:
         id: source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: 52caf926c92337a7a6b0c36dfe73184ec4712e8c
+          ref: feb37c31d6de71e20df096df4df4d32ed1fa93ed
           path: source
-          fetch-depth: 4 # corrected39852 ->b9 ->original3986903 ->375; separate from receiver history
+          fetch-depth: 5 # combined407feb ->52 ->b9 ->original6903 ->375; separate from receiver history
           persist-credentials: false
           sparse-checkout-cone-mode: false
           sparse-checkout: |
@@ -130,7 +130,7 @@ jobs:
           set -euo pipefail
           printf 'PYTHON=%s\n' "$(command -v python)" >> "$GITHUB_ENV"
 
-      - name: Preflight pins, private scientific stage, paths, one import, canaries, eight methods
+      - name: Preflight pins, private scientific stage, paths, one import, sixteen controls
         id: focused
         shell: bash
         run: |
@@ -195,7 +195,7 @@ jobs:
               outcomes={k: os.environ.get(k, 'NOT RUN') for k in
                         ('RUNNER_OUTCOME', 'SOURCE_OUTCOME', 'PYTHON_OUTCOME', 'PYTHON_PATH_OUTCOME', 'FOCUSED_OUTCOME')},
               controller_result_present=(evidence / 'result.json').is_file(),
-              qualification='No displayed GUI/whole-editor/full-suite/Ready acceptance. Eight methods only; all inputs remain candidates. Missing result is failure, never PASS.')
+              qualification='No displayed GUI/whole-editor/full-suite/Ready acceptance. Sixteen combined controls only; all inputs remain candidates. Missing result is failure, never PASS.')
           (evidence / 'workflow-disposition.json').write_text(json.dumps(value, indent=2) + '\n')
           with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as handle:
               handle.write('## EDITOR_PERSISTENCE focused reproduction\n\n```json\n' + json.dumps(value, indent=2) + '\n```\n')
@@ -215,6 +215,7 @@ jobs:
             ${{ runner.temp }}/editor-persistence/data/
             ${{ github.workspace }}/source/game/reports-editor-persistence/
             ${{ github.workspace }}/source/game/test/test_kit_zone_persistence.gd.uid
+            ${{ github.workspace }}/source/game/test/test_world_editor_dependent_edits.gd.uid
           if-no-files-found: error
           retention-days: 7
 

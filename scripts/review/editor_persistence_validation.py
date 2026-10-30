@@ -2,8 +2,8 @@
 """Bounded EDITOR-PERSISTENCE receiver; SOURCE ONLY until exact lead allocation.
 
 Adapted from reviewed #402 c2cd7baa (controller blob f40ef659), originally #401.
-Reuse #402 c2cd7baa private-engine/actual-wait collection. Corrected #398 source,
-six Python and two GdUnit persistence methods; no displayed GUI, complete editor,
+Reuse #402 c2cd7baa private-engine/actual-wait collection. Combined #407 source,
+six Python and ten frozen GdUnit methods; no displayed GUI, complete editor,
 nonempty-piece/cell-coordinate, full-suite or acceptance inference.
 No imports, engine or tests are authorised by publishing this candidate.
 """
@@ -31,26 +31,33 @@ import urllib.request
 import xml.etree.ElementTree as ET
 import zipfile
 
-GAME_SHA = "52caf926c92337a7a6b0c36dfe73184ec4712e8c"
-GAME_TREE = "04fb2a163594a0e4bb345181b5ee43d2a9ebe19c"
-GAME_PARENT = "b9a37cbbe5aefdfe5b0e9fbdb43bda335e793008"
-GAME_PARENT_TREE = "b0aa3feb0c48afd8d819ca902cebaae6da19adcf"
+GAME_SHA = "feb37c31d6de71e20df096df4df4d32ed1fa93ed"
+GAME_TREE = "d902afb2c331cc4067d4c4804abc29eb5ae3d6d2"
+GAME_PARENT = "52caf926c92337a7a6b0c36dfe73184ec4712e8c"
+GAME_PARENT_TREE = "04fb2a163594a0e4bb345181b5ee43d2a9ebe19c"
+GAME_GRANDPARENT = "b9a37cbbe5aefdfe5b0e9fbdb43bda335e793008"
+GAME_GRANDPARENT_TREE = "b0aa3feb0c48afd8d819ca902cebaae6da19adcf"
 ORIGINAL_GAME_SHA = "6903f8d5d729f5eb9d4beef20d33869465308c66"
 ORIGINAL_GAME_TREE = "e4dfae3eb183426e3a44fd004436eb1ed18b53d7"
 ORIGINAL_GAME_PARENT = "45ed3cad029c106977e6c0c833913dcb1c614fbd"
-RECEIVER_PARENT = "6c76f5290b18fe2367624ca6fb41177a0dbe42b5"
-RECEIVER_PARENT_TREE = "0064acc7b4f1a47da156bb1492c1a07837536afc"
-PRIOR_RECEIVER = "597ce2e0fd68a872a7b4b31535033ddde702746a"
-PRIOR_RECEIVER_TREE = "5ff44f05022c66089167f40150075c265851eb30"
-EARLIER_RECEIVER = "63273684792073573c571148c4bbc07c4486267b"
-EARLIER_RECEIVER_TREE = "0305ff7b941f8f92c211da625511ff2abe42a021"
+RECEIVER_PARENT = "7c14adf06ada859205552b02b340769f7a6f9c99"
+RECEIVER_PARENT_TREE = "5832aba48dbdc25b48ca402efe6fb81bff0b27a5"
+PRIOR_RECEIVER = "6c76f5290b18fe2367624ca6fb41177a0dbe42b5"
+PRIOR_RECEIVER_TREE = "0064acc7b4f1a47da156bb1492c1a07837536afc"
+EARLIER_RECEIVER = "597ce2e0fd68a872a7b4b31535033ddde702746a"
+EARLIER_RECEIVER_TREE = "5ff44f05022c66089167f40150075c265851eb30"
+OLDER_RECEIVER = "63273684792073573c571148c4bbc07c4486267b"
+OLDER_RECEIVER_TREE = "0305ff7b941f8f92c211da625511ff2abe42a021"
 ORIGINAL_RECEIVER = "5de271d77f26dbbc5641bac0ef6635aef021c34b"
 ORIGINAL_RECEIVER_TREE = "62b470d5934699bed72660f5a011e66b3f3da854"
 TEST_BLOB = "a61671b648277d1c2ba290de51cdff74b475a1c9"
 PRODUCTION_BLOB = "effd244781b1e71c5d990b14df82258280e93811"
 EXPORT_BLOB = "f34b6960393dbbcb8724140810509cae090c46c7"
-GAME_COUNT = 6688
-GAME_BYTES = 87858698
+DEPENDENT_TEST_BLOB = "af4bc24645ed06d69d987070f866d5e774246465"
+KIT_PIECE_BLOB = "c9098c7e79a5eb7e336683e195d37d6bd283501a"
+GROUND_BLOB = "d25d92c7f6c257be724cd7e1a86b7353e44e2e78"
+GAME_COUNT = 6689
+GAME_BYTES = 87869357
 # Static import/data closure of corrected bake, unchanged validator and tiny fixture.
 # Full game supplies library/schema/terrain/index/fixtures. No master raster is
 # reached by this pieces=[] lawn-only probe. scripts/art are namespace packages.
@@ -105,6 +112,9 @@ PYTHON_INPUTS = {'.github/workflows/verify.yml': ('97a2d95b8b5d6c801ad0258cf44cb
 PYTHON_COUNT = 48
 PYTHON_BYTES = 1229249
 TEST_PATH = "game/test/test_kit_zone_persistence.gd"
+DEPENDENT_TEST_PATH = "game/test/test_world_editor_dependent_edits.gd"
+TEST_PATHS = (TEST_PATH, DEPENDENT_TEST_PATH)
+GENERATED_UID_PATHS = tuple(path + ".uid" for path in TEST_PATHS)
 REPORT_DIR = "reports-editor-persistence"
 DEPENDENCIES = {"Pillow": "12.3.0", "numpy": "2.5.3", "scipy": "1.18.1"}
 PY_MODULE = "scripts.art.kit.test_bake_publication"
@@ -131,10 +141,25 @@ RSS_LIMIT = 2048 * 1024**2
 LOG_LIMIT = 4 * 1024**2
 OWNED_PATHS = {".github/workflows/editor-persistence-validation.yml",
                "scripts/review/editor_persistence_validation.py"}
-METHODS = (
+PERSISTENCE_METHODS = (
     "test_minimal_authored_zone_survives_disk_export_and_rebuild",
     "test_native_deletions_and_literal_ids_survive_two_saved_generations",
 )
+DEPENDENT_METHODS = (
+    "test_startup_canary_real_intake_and_adapter",
+    "test_paint_beneath_existing_footprint_refreshes_rules_and_undo_redo",
+    "test_route_relation_distance_boundary_and_interacting_water_prohibition",
+    "test_tier_change_breaks_stair_deck_route_and_import_is_unshippable",
+    "test_moving_stair_support_immediately_refreshes_validation_and_bake",
+    "test_deleting_stair_support_exposes_route_without_stale_bake",
+    "test_moving_related_seat_revalidates_instead_of_reusing_green",
+    "test_rejections_preserve_document_and_existing_redo_branch",
+)
+METHODS = PERSISTENCE_METHODS + DEPENDENT_METHODS
+GD_SUITES = {
+    "test_kit_zone_persistence": (TEST_PATH, TEST_BLOB, PERSISTENCE_METHODS),
+    "test_world_editor_dependent_edits": (DEPENDENT_TEST_PATH, DEPENDENT_TEST_BLOB, DEPENDENT_METHODS),
+}
 ERROR_PATTERN = re.compile(r"SCRIPT ERROR:|^ERROR:|Parse Error|Failed loading resource|Cannot open file", re.M)
 PYTHON_ERROR_PATTERN = re.compile(
     r"Traceback \(most recent call last\):|ModuleNotFoundError:|ImportError:|FileNotFoundError:"
@@ -290,10 +315,11 @@ class Controller:
         self.output = {"state": "SETUP_FAILED", "workflow_sha": self.event_sha,
                        "tested_game_sha": GAME_SHA, "tested_game_tree": GAME_TREE,
                        "phases": self.phases, "guards": self.guards,
-                       "qualification": "Eight unexecuted controls until this exact allocated invocation. No displayed GUI/full-suite/Ready/whole-editor acceptance."}
+                       "qualification": "Sixteen unexecuted combined controls until this exact allocated invocation. No displayed GUI/full-suite/Ready/whole-editor acceptance."}
         self.output["methods"] = {m: "NOTRUN" for m in
                                   PY_CANARIES + METHODS + PY_FAULTS}
         self.dependencies_initial = None
+        self.generated_uids_initial = None
         self.transaction_started = None
         self.collection_used = 0.0
         self.budget_failure = None
@@ -303,7 +329,7 @@ class Controller:
     def budget_remaining(self) -> float:
         if self.transaction_started is None:
             # Setup/import are separate phases. Their failed terminal retention
-            # gets at most30s, never a fresh successful eight-method transaction.
+            # gets at most30s, never a fresh successful sixteen-control transaction.
             return 30 - (time.monotonic() - self.terminal_started)
         return min(240 - (time.monotonic() - self.transaction_started - self.collection_used),
                    270 - (time.monotonic() - self.transaction_started))
@@ -410,11 +436,16 @@ class Controller:
         for absent in ("scripts/__init__.py", "scripts/art/__init__.py"):
             if absent in expected or (self.source / absent).exists():
                 raise RuntimeError("Namespace package unexpectedly replaced by an initializer")
-        if game_rows[TEST_PATH]["blob"] != TEST_BLOB or game_rows["game/game.gd"]["blob"] != PRODUCTION_BLOB:
+        if game_rows["game/game.gd"]["blob"] != PRODUCTION_BLOB:
             raise RuntimeError("Frozen test/production pin differs")
-        test_text = (self.source / TEST_PATH).read_text()
-        if tuple(re.findall(r"^func (test_\w+)\(", test_text, re.M)) != METHODS:
-            raise RuntimeError("Two authored GdUnit methods differ")
+        for path, expected_blob, methods in GD_SUITES.values():
+            if game_rows[path]["blob"] != expected_blob:
+                raise RuntimeError("Frozen GdUnit suite pin differs")
+            test_text = (self.source / path).read_text()
+            if tuple(re.findall(r"^func (test_\w+)\(", test_text, re.M)) != methods:
+                raise RuntimeError("Frozen ten-method GdUnit inventory differs")
+        if len(METHODS) != 10 or len(set(METHODS)) != 10:
+            raise RuntimeError("Combined GdUnit identities are not ten distinct methods")
         python_text = (self.source / "scripts/art/kit/test_bake_publication.py").read_text()
         expected_python = [name.rsplit(".", 1)[-1] for name in PY_CANARIES + PY_FAULTS]
         if sorted(re.findall(r"^    def (test_\w+)\(", python_text, re.M)) != sorted(expected_python):
@@ -425,6 +456,39 @@ class Controller:
         index = git_dir / "index"
         return {"head": GAME_SHA, "tree": GAME_TREE, "game": game_rows,
                 "python_closure": python_rows, "index_sha256": digest(index)}
+
+    def generated_uids(self) -> dict:
+        """Guard only the two importer-generated test UIDs; other source stays strict."""
+        expected = tree(self.source)
+        rows = {}
+        for raw in git(self.source, "ls-files", "--others", "-z").split(b"\0"):
+            if not raw:
+                continue
+            name = os.fsdecode(raw)
+            if name.startswith(("game/.godot/", "game/" + REPORT_DIR + "/")):
+                continue
+            if name not in GENERATED_UID_PATHS:
+                raise RuntimeError(f"Unexpected untracked source output: {name}")
+        for name in GENERATED_UID_PATHS:
+            p = self.source / name
+            if name in expected or p.is_symlink():
+                raise RuntimeError("Generated UID is tracked or a symlink")
+            if not p.exists():
+                continue
+            info = p.lstat()
+            if (not stat.S_ISREG(info.st_mode) or info.st_nlink != 1
+                    or not p.resolve(strict=True).is_relative_to(self.game)
+                    or info.st_mode & 0o111 or not 1 <= info.st_size <= 64):
+                raise RuntimeError("Generated UID is not a bounded private physical file")
+            data = p.read_bytes()
+            if not re.fullmatch(rb"uid://[a-z0-9]+\n?", data):
+                raise RuntimeError("Generated UID content is not an engine UID")
+            rows[name] = {"bytes": len(data), "sha256": digest(p), "mode": stat.S_IMODE(info.st_mode)}
+        if self.generated_uids_initial is not None:
+            for name, row in self.generated_uids_initial.items():
+                if rows.get(name) != row:
+                    raise RuntimeError("An observed post-import UID changed or disappeared")
+        return rows
 
     def setup(self) -> None:
         if os.environ.get("GITHUB_REPOSITORY") != "rempemat-eng/appify":
@@ -449,7 +513,9 @@ class Controller:
             raise RuntimeError("Workflow/controller checkout differs from event")
         if Path(os.environ.get("PYTHON", "")).resolve(strict=True) != Path(sys.executable).resolve(strict=True):
             raise RuntimeError("Hosted PYTHON must explicitly select this CPython executable")
-        if any((self.game / name).exists() for name in (".godot", REPORT_DIR, TEST_PATH.removeprefix("game/") + ".uid")):
+        if (any((self.game / name).exists() for name in (".godot", REPORT_DIR))
+                or any((self.source / name).exists() or (self.source / name).is_symlink()
+                       for name in GENERATED_UID_PATHS)):
             raise RuntimeError("Project has prior import/report/UID state; requires fresh physical checkout")
         # The workflow opens controller.log before spawning this process.
         if set(self.root.iterdir()) != {self.evidence} or set(self.evidence.iterdir()) != {
@@ -459,7 +525,7 @@ class Controller:
         headers = git(self.candidate, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         parents = [line.removeprefix("parent ") for line in headers.splitlines() if line.startswith("parent ")]
         if parents != [RECEIVER_PARENT]:
-            raise RuntimeError("Rebound receiver must be a genuine sole child of frozen4056c76")
+            raise RuntimeError("Combined receiver must be a genuine sole child of frozen4057c14")
         prior_headers = git(self.candidate, "cat-file", "commit", RECEIVER_PARENT).decode().split("\n\n", 1)[0]
         if ([line.removeprefix("parent ") for line in prior_headers.splitlines() if line.startswith("parent ")]
                 != [PRIOR_RECEIVER] or git(self.candidate, "rev-parse", RECEIVER_PARENT + "^{tree}").decode().strip()
@@ -472,8 +538,13 @@ class Controller:
             raise RuntimeError("Profile405 receiver ancestry/tree changed")
         earlier_headers = git(self.candidate, "cat-file", "commit", EARLIER_RECEIVER).decode().split("\n\n", 1)[0]
         if ([line.removeprefix("parent ") for line in earlier_headers.splitlines() if line.startswith("parent ")]
-                != [ORIGINAL_RECEIVER] or git(self.candidate, "rev-parse", EARLIER_RECEIVER + "^{tree}").decode().strip()
+                != [OLDER_RECEIVER] or git(self.candidate, "rev-parse", EARLIER_RECEIVER + "^{tree}").decode().strip()
                 != EARLIER_RECEIVER_TREE):
+            raise RuntimeError("Profile405 receiver ancestry/tree changed")
+        older_headers = git(self.candidate, "cat-file", "commit", OLDER_RECEIVER).decode().split("\n\n", 1)[0]
+        if ([line.removeprefix("parent ") for line in older_headers.splitlines() if line.startswith("parent ")]
+                != [ORIGINAL_RECEIVER] or git(self.candidate, "rev-parse", OLDER_RECEIVER + "^{tree}").decode().strip()
+                != OLDER_RECEIVER_TREE):
             raise RuntimeError("Corrected405 receiver ancestry/tree changed")
         original_headers = git(self.candidate, "cat-file", "commit", ORIGINAL_RECEIVER).decode().split("\n\n", 1)[0]
         if ([line.removeprefix("parent ") for line in original_headers.splitlines() if line.startswith("parent ")]
@@ -483,11 +554,16 @@ class Controller:
         source_headers = git(self.source, "cat-file", "commit", "HEAD").decode().split("\n\n", 1)[0]
         if [line.removeprefix("parent ") for line in source_headers.splitlines()
                 if line.startswith("parent ")] != [GAME_PARENT]:
-            raise RuntimeError("Corrected398 export must retain genuineb9 sole parent")
+            raise RuntimeError("Combined407 must retain genuine52 sole parent")
         source_parent_headers = git(self.source, "cat-file", "commit", GAME_PARENT).decode().split("\n\n", 1)[0]
         if ([line.removeprefix("parent ") for line in source_parent_headers.splitlines() if line.startswith("parent ")]
-                != [ORIGINAL_GAME_SHA] or git(self.source, "rev-parse", GAME_PARENT + "^{tree}").decode().strip()
+                != [GAME_GRANDPARENT] or git(self.source, "rev-parse", GAME_PARENT + "^{tree}").decode().strip()
                 != GAME_PARENT_TREE):
+            raise RuntimeError("Corrected398 export parent ancestry/tree changed")
+        source_grandparent_headers = git(self.source, "cat-file", "commit", GAME_GRANDPARENT).decode().split("\n\n", 1)[0]
+        if ([line.removeprefix("parent ") for line in source_grandparent_headers.splitlines() if line.startswith("parent ")]
+                != [ORIGINAL_GAME_SHA] or git(self.source, "rev-parse", GAME_GRANDPARENT + "^{tree}").decode().strip()
+                != GAME_GRANDPARENT_TREE):
             raise RuntimeError("Corrected398 bake parent ancestry/tree changed")
         baseline_headers = git(self.source, "cat-file", "commit", ORIGINAL_GAME_SHA).decode().split("\n\n", 1)[0]
         if [line.removeprefix("parent ") for line in baseline_headers.splitlines()
@@ -505,10 +581,14 @@ class Controller:
             raise RuntimeError(f"Two NEW receiving paths only: {sorted(delta)}")
         production_delta = {name for name in baseline_tree.keys() | source_tree.keys()
                             if baseline_tree.get(name) != source_tree.get(name)}
-        if (production_delta != {"scripts/art/kit/bake.py", "game/tools/kit_zone.gd"}
+        if (production_delta != {"scripts/art/kit/bake.py", "game/tools/kit_zone.gd", DEPENDENT_TEST_PATH,
+                                  "game/world/terrain/kit_piece.gd", "game/world/terrain/terrain_ground.gd"}
                 or source_tree.get("scripts/art/kit/bake.py") != ("100644", PYTHON_INPUTS["scripts/art/kit/bake.py"][0])
-                or source_tree.get("game/tools/kit_zone.gd") != ("100644", EXPORT_BLOB)):
-            raise RuntimeError(f"Corrected398 must change only pinned bake/export files: {sorted(production_delta)}")
+                or source_tree.get("game/tools/kit_zone.gd") != ("100644", EXPORT_BLOB)
+                or source_tree.get(DEPENDENT_TEST_PATH) != ("100644", DEPENDENT_TEST_BLOB)
+                or source_tree.get("game/world/terrain/kit_piece.gd") != ("100644", KIT_PIECE_BLOB)
+                or source_tree.get("game/world/terrain/terrain_ground.gd") != ("100644", GROUND_BLOB)):
+            raise RuntimeError(f"Combined407 must change only five pinned production paths: {sorted(production_delta)}")
         candidate_rows = {}
         for name in sorted(OWNED_PATHS):
             p = self.candidate / name
@@ -520,6 +600,7 @@ class Controller:
         self.candidate_initial = candidate_rows
         # Project checkout is the new physical project, NOT a link/copy of any donor.
         self.initial = self.snapshot()
+        write_json(self.evidence / "generated-uids-before.json", self.generated_uids())
         write_json(self.evidence / "source-before.json", self.initial)
         write_json(self.evidence / "candidate.json", {"event_sha": self.event_sha,
                    "tree": git(self.candidate, "rev-parse", "HEAD^{tree}").decode().strip(),
@@ -527,11 +608,13 @@ class Controller:
                    "receiver_parent": RECEIVER_PARENT, "receiver_parent_headers": prior_headers,
                    "prior_receiver": PRIOR_RECEIVER, "prior_receiver_headers": middle_headers,
                    "earlier_receiver": EARLIER_RECEIVER, "earlier_receiver_headers": earlier_headers,
+                   "older_receiver": OLDER_RECEIVER, "older_receiver_headers": older_headers,
                    "original_receiver": ORIGINAL_RECEIVER, "original_receiver_headers": original_headers,
                    "original_game_sha": ORIGINAL_GAME_SHA, "original_game_tree": ORIGINAL_GAME_TREE,
                    "original_game_headers": baseline_headers, "production_delta": sorted(production_delta),
                    "tested_game_tree": GAME_TREE, "tested_game_headers": source_headers,
                    "tested_game_parent": GAME_PARENT, "tested_game_parent_headers": source_parent_headers,
+                   "tested_game_grandparent": GAME_GRANDPARENT, "tested_game_grandparent_headers": source_grandparent_headers,
                    "delta": sorted(delta), "receiving_source": candidate_rows})
         # Retain full actual game AND actual Python inputs before engine setup.
         # The snapshot describes these bytes, never an invented successful import.
@@ -573,12 +656,12 @@ class Controller:
                        "h1_refused_owned_bytes": 537354240,
                        "complete_extraction_projection_bytes": 608271152,
                        "after_verified_zip_retirement_projection_bytes": 530410728,
-                       "qualification": "H1 stopped during extraction before canary/import/all eight methods. Projections hold other H1 footprint fixed; they are not measured complete extraction or import/test/packaging fit. Original partials retained; no guard waived."},
+                       "qualification": "H1 stopped during extraction before canary/import/the original eight persistence controls. Projections hold other H1 footprint fixed; they are not measured complete extraction or import/test/packaging fit. Original partials retained; no guard waived."},
                    "limits": {
                        "rss_group_bytes": RSS_LIMIT, "owned_bytes": OWNED_LIMIT,
                        "address_space_per_process": 4 * 1024**3,
                        "test_output_bytes": 64 * 1024**2, "import_active_s": 180,
-                       "whole_eight_active_s": 240, "whole_eight_collection_s": 30,
+                       "whole_sixteen_active_s": 240, "whole_sixteen_collection_s": 30,
                        "setup_dependency_active_s": 120, "job_outer_minutes": 15,
                        "reserve_bytes": FREE_RESERVE, "log_phase_bytes": LOG_LIMIT},
                    "rss_qualification": "Linux /proc aggregate group RSS sampled in the monitor loop (50ms select interval; IO can extend it). Actual maximum monitor gap is recorded; observed overshoot fails."})
@@ -789,7 +872,7 @@ class Controller:
         if self.transaction_started is not None:
             remaining = 240 - (time.monotonic() - self.transaction_started - self.collection_used)
             if remaining <= 0 or self.collection_used >= 30:
-                raise RuntimeError("Whole-eight active/collection aggregate budget exhausted")
+                raise RuntimeError("Whole-sixteen active/collection aggregate budget exhausted")
             seconds = min(seconds, remaining)
         result = {"state": "STARTING", "command": command, "timeout_seconds": seconds,
                   "started_at": time.time(), "wait4": [], "limits": [], "peak_sampled_group_rss": 0}
@@ -964,7 +1047,7 @@ class Controller:
             if self.transaction_started is not None:
                 self.collection_used += time.monotonic() - collection_start
                 if self.collection_used > 30:
-                    reason = reason or "Whole-eight collection exceeded30s"
+                    reason = reason or "Whole-sixteen collection exceeded30s"
                 result["aggregate_active_s"] = time.monotonic() - self.transaction_started - self.collection_used
                 result["aggregate_collection_s"] = self.collection_used
             result.update(state="FAILED" if reason else "COLLECTED", controller_error=reason,
@@ -1016,82 +1099,101 @@ class Controller:
         self.guards["actual_engine_containment"] = {"state": "PASS", "settings_sha256": digest(settings)}
 
     def reconcile(self, result: dict) -> None:
-        """Read this vendored writer's actual XML; fail-fast omissions are NOTRUN."""
+        """Read both vendored suites; actual case children establish execution."""
         self.output["state"] = "FOCUSED_RESULTS_UNCLASSIFIED"
         reports = self.game / REPORT_DIR
         files = sorted(reports.rglob("results.xml")) if reports.exists() else []
         text = diagnostic_text(self.evidence / "focused.log")
         findings = {
             "expected": list(METHODS), "observed": [], "methods": {m: "NOTRUN" for m in METHODS},
+            "expected_suites": {name: list(spec[2]) for name, spec in GD_SUITES.items()},
+            "expected_discovered": len(METHODS),
             "raw_error_headers": [line for line in text.splitlines() if ERROR_PATTERN.search(line)],
             "python_validator_errors": [line for line in text.splitlines() if PYTHON_ERROR_PATTERN.search(line)],
             "orphan_diagnostics": orphan_diagnostics(text), "totals": [],
             "xml_files": [str(p.relative_to(self.game)) for p in files], "case_evidence": [],
         }
-        # Write an inventory even if XML is absent, malformed or only partial.
         try:
             if len(files) != 1:
                 raise RuntimeError("Need exactly one fresh vendored JUnit results.xml")
             root = ET.parse(files[0]).getroot()
             suites = list(root.findall("testsuite"))
-            suite_name = "test_kit_zone_persistence"
-            if (root.tag != "testsuites" or len(suites) != 1
-                    or suites[0].get("package") != "test"
-                    or suites[0].get("name") != suite_name):
-                raise RuntimeError("JUnit does not identify the sole requested editor suite")
-            suite = suites[0]
-            # The pinned writer emits declared/discovered tests=2 even when
-            # fail-fast stops after the first failing case. Actual testcase
-            # children, not that total, determine which methods ran.
-            for element in (root, suite):
-                values = {key: int(element.get(key, "0"))
+            suite_names = [suite.get("name", "") for suite in suites]
+            if (root.tag != "testsuites" or not suites
+                    or suite_names != list(GD_SUITES)[:len(suites)]):
+                raise RuntimeError("JUnit suites are not the requested ordered pair/prefix")
+            root_values = {key: int(root.get(key, "0"))
+                           for key in ("tests", "failures", "errors", "skipped", "flaky")}
+            findings["totals"].append(dict(suite="ALL", **root_values))
+            findings["reported_discovered"] = root_values["tests"]
+            if any(root_values[k] for k in ("errors", "skipped", "flaky")):
+                raise RuntimeError("XML errors/skips/flaky cannot qualify as combined GREEN")
+            cases_all, names_all, failed = [], [], []
+            failure_count = declared_count = 0
+            for suite in suites:
+                suite_name = suite.get("name")
+                expected_methods = GD_SUITES[suite_name][2]
+                values = {key: int(suite.get(key, "0"))
                           for key in ("tests", "failures", "errors", "skipped", "flaky")}
-                findings["totals"].append(values)
-                if values["tests"] != len(METHODS) or any(values[k] for k in ("errors", "skipped", "flaky")):
-                    raise RuntimeError("Wrong discovery totals or XML errors/skips/flaky")
-            cases = list(suite.findall("testcase"))
-            names = [case.get("name", "") for case in cases]
-            findings["observed"] = names
-            if not names or names != list(METHODS[:len(names)]):
-                raise RuntimeError("Unexpected/duplicate/non-prefix methods; not fail-fast evidence")
-            if list(root.iter("testcase")) != cases:
-                raise RuntimeError("Unexpected testcase outside the sole requested suite")
-            failed = []
-            failure_count = 0
-            for case in cases:
-                name = case.get("name")
-                failures = case.findall("failure")
-                errors, skipped = case.findall("error"), case.findall("skipped")
-                evidence = {
-                    "method": name, "classname": case.get("classname"),
-                    "failures": [dict(node.attrib, text=node.text or "") for node in failures],
-                    "errors": [dict(node.attrib, text=node.text or "") for node in errors],
-                    "skipped": [dict(node.attrib, text=node.text or "") for node in skipped],
-                }
-                findings["case_evidence"].append(evidence)
-                if case.get("classname") != suite_name or errors or skipped:
-                    raise RuntimeError("Case identity/error/skip is not editor assertion evidence")
-                if any(node.get("type") != "FAILURE" for node in failures):
-                    raise RuntimeError("Orphan/termination/interruption is not a target assertion")
-                findings["methods"][name] = "FAIL" if failures else "PASS"
-                if failures:
-                    failed.append(name)
-                failure_count += len(failures)
-            # GdUnit counts failed assertions, not necessarily failed methods.
-            if any(total["failures"] != failure_count for total in findings["totals"]):
-                raise RuntimeError("XML aggregate failures disagree with actual failure elements")
+                findings["totals"].append(dict(suite=suite_name, **values))
+                if (suite.get("package") != "test" or values["tests"] != len(expected_methods)
+                        or any(values[k] for k in ("errors", "skipped", "flaky"))):
+                    raise RuntimeError("Wrong per-suite identity/discovery/error counts")
+                declared_count += values["tests"]
+                cases = list(suite.findall("testcase"))
+                names = [case.get("name", "") for case in cases]
+                if not names or names != list(expected_methods[:len(names)]):
+                    raise RuntimeError("Unexpected/duplicate/non-prefix methods in requested suite")
+                cases_all.extend(cases)
+                names_all.extend(names)
+                findings["observed"] = names_all
+                suite_failures = 0
+                suite_failed = []
+                for case in cases:
+                    name = case.get("name")
+                    failures = case.findall("failure")
+                    errors, skipped = case.findall("error"), case.findall("skipped")
+                    evidence = {
+                        "method": name, "classname": case.get("classname"),
+                        "failures": [dict(node.attrib, text=node.text or "") for node in failures],
+                        "errors": [dict(node.attrib, text=node.text or "") for node in errors],
+                        "skipped": [dict(node.attrib, text=node.text or "") for node in skipped],
+                    }
+                    findings["case_evidence"].append(evidence)
+                    if case.get("classname") != suite_name or errors or skipped:
+                        raise RuntimeError("Case identity/error/skip is not editor assertion evidence")
+                    if any(node.get("type") != "FAILURE" for node in failures):
+                        raise RuntimeError("Orphan/termination/interruption is not a target assertion")
+                    findings["methods"][name] = "FAIL" if failures else "PASS"
+                    if failures:
+                        failed.append(name)
+                        suite_failed.append(name)
+                    suite_failures += len(failures)
+                if values["failures"] != suite_failures:
+                    raise RuntimeError("Per-suite failure totals disagree with failure elements")
+                if suite_failed and suite_failed != [names[-1]]:
+                    raise RuntimeError("Suite cases do not match vendored fail-fast semantics")
+                if not suite_failed and names != list(expected_methods):
+                    raise RuntimeError("Suite stopped without a target assertion")
+                failure_count += suite_failures
+            # Fail-fast breaks the inner case loop, not the executor's suite
+            # loop. Each suite has its own execution prefix; absent cases stay
+            # NOTRUN even though the writer declares that suite's full size.
+            if list(root.iter("testcase")) != cases_all:
+                raise RuntimeError("Unexpected testcase outside the requested suites")
+            if root_values["tests"] != declared_count or root_values["failures"] != failure_count:
+                raise RuntimeError("Root counters disagree with actual suite/case evidence")
             if (result["state"] != "COLLECTED" or result.get("exit") is None
                     or findings["raw_error_headers"] or findings["python_validator_errors"]
                     or findings["orphan_diagnostics"]):
                 raise RuntimeError("Controller/raw engine/Python/orphan errors are not target editor RED")
             if not failed:
-                if names != list(METHODS) or result["exit"] != 0:
-                    raise RuntimeError("Incomplete success/exit is not two passing GdUnit methods")
-                self.output["state"] = "TWO_GDUNIT_PASS"
+                if suite_names != list(GD_SUITES) or names_all != list(METHODS) or result["exit"] != 0:
+                    raise RuntimeError("Incomplete success/exit is not ten passing GdUnit methods")
+                self.output["state"] = "TEN_GDUNIT_PASS"
                 self.output["focused_suite_pass"] = True
-            elif failed == [names[-1]] and result["exit"] == 100:
-                # Exact unchanged test assertion is evidence, not GUI acceptance.
-                self.output["state"] = "PERSISTENCE_GDUNIT_ASSERTION_FAIL_REQUIRES_LEAD_REVIEW"
+            elif result["exit"] == 100:
+                self.output["state"] = "COMBINED_GDUNIT_ASSERTION_FAIL_REQUIRES_LEAD_REVIEW"
             else:
                 raise RuntimeError("Failure/exit does not match actual fail-fast assertion semantics")
         finally:
@@ -1108,11 +1210,13 @@ class Controller:
             self.canary()
             self.require_clean("import", self.phase("import", [str(self.engine), "--headless", "--audio-driver", "Dummy",
                                                              "--path", str(self.game), "--import"], 180))
+            self.generated_uids_initial = self.generated_uids()
+            write_json(self.evidence / "generated-uids-after-import.json", self.generated_uids_initial)
             self.transaction_started = time.monotonic()
             self.arm_budget()
             write_json(self.evidence / "result.json", {"state": "TRANSACTION_INCOMPLETE_FAILURE",
                        "workflow_sha": self.event_sha, "tested_game_sha": GAME_SHA,
-                       "qualification": "Provisional failure until all eight methods, terminal guards and packaging finish within budget."})
+                       "qualification": "Provisional failure until all sixteen controls, terminal guards and packaging finish within budget."})
             self.require_clean("check-only", self.phase("check-only", [
                 str(self.engine), "--headless", "--audio-driver", "Dummy",
                 "--path", str(self.game), "--check-only", "--script",
@@ -1120,17 +1224,18 @@ class Controller:
             self.python_stage("python-canaries", PY_CANARIES)
             self.reconcile(self.phase("focused", [str(self.engine), "--headless", "--audio-driver", "Dummy",
                 "--path", str(self.game), "-s", "res://addons/gdUnit4/bin/GdUnitCmdTool.gd",
-                "--ignoreHeadlessMode", "-a", "res://" + TEST_PATH.removeprefix("game/"), "-rd", REPORT_DIR], 90))
-            if self.output["state"] != "TWO_GDUNIT_PASS":
+                "--ignoreHeadlessMode", "-a", "res://" + TEST_PATH.removeprefix("game/"),
+                "-a", "res://" + DEPENDENT_TEST_PATH.removeprefix("game/"), "-rd", REPORT_DIR], 90))
+            if self.output["state"] != "TEN_GDUNIT_PASS":
                 raise RuntimeError("GdUnit stage did not pass; fault methods remain NOTRUN")
             self.python_stage("python-faults", PY_FAULTS)
             if any(state != "PASS" for state in self.output["methods"].values()):
-                raise RuntimeError("Not all eight persistence controls passed")
-            self.output["state"] = "EIGHT_PERSISTENCE_PENDING_TERMINAL_GUARDS"
+                raise RuntimeError("Not all sixteen combined controls passed")
+            self.output["state"] = "SIXTEEN_COMBINED_PENDING_TERMINAL_GUARDS"
         except BaseException as error:
             failure = {"type": type(error).__name__, "message": str(error), "traceback": traceback.format_exc()}
             if self.output["state"] not in ("PERSISTENCE_ASSERTION_RED_REQUIRES_LEAD_REVIEW",
-                                           "PERSISTENCE_GDUNIT_ASSERTION_FAIL_REQUIRES_LEAD_REVIEW"):
+                                           "COMBINED_GDUNIT_ASSERTION_FAIL_REQUIRES_LEAD_REVIEW"):
                 self.output["state"] = "PREREQUISITE_OR_NON_TARGET_FAILURE"
         finally:
             self.terminal_started = time.monotonic()
@@ -1166,6 +1271,15 @@ class Controller:
                     self.guards["frozen_game"] = "PASS"
                 except BaseException as error:
                     final_errors.append(repr(error))
+            if self.initial is not None:
+                try:
+                    self.arm_budget()
+                    uid_rows = self.generated_uids()
+                    write_json(self.evidence / "generated-uids-final.json", uid_rows)
+                    self.guards["generated_uids"] = {"state": "PASS", "allowed": list(GENERATED_UID_PATHS),
+                                                     "observed": uid_rows}
+                except BaseException as error:
+                    final_errors.append("generated-uids-guard: " + repr(error))
             try:
                 self.arm_budget()
                 if self.engine.exists():
@@ -1222,13 +1336,18 @@ class Controller:
                     shutil.copytree(reports, self.evidence / "gdunit-reports")
             except BaseException as error:
                 final_errors.append("gdunit-reports: " + repr(error))
-            try:
-                self.arm_budget()
-                uid = self.source / (TEST_PATH + ".uid")
-                if uid.exists():
-                    shutil.copyfile(uid, self.evidence / uid.name)
-            except BaseException as error:
-                final_errors.append("generated-uid: " + repr(error))
+            for name in GENERATED_UID_PATHS:
+                try:
+                    self.arm_budget()
+                    uid = self.source / name
+                    if uid.exists() or uid.is_symlink():
+                        info = uid.lstat()
+                        if (uid.is_symlink() or not stat.S_ISREG(info.st_mode) or info.st_nlink != 1
+                                or not uid.resolve(strict=True).is_relative_to(self.game) or info.st_size > 64):
+                            raise RuntimeError("Cannot safely retain nonphysical/oversized generated UID")
+                        shutil.copyfile(uid, self.evidence / uid.name)
+                except BaseException as error:
+                    final_errors.append("generated-uid " + name + ": " + repr(error))
             try:
                 self.arm_budget()
                 self.output["final_capacity"] = self.capacity()
@@ -1266,8 +1385,8 @@ class Controller:
             write_json(self.evidence / "terminal-budget.json", self.budget_receipt())
             if final_errors:
                 self.output["state"] = "FINAL_GUARD_OR_COLLECTION_FAILURE"
-            elif self.output["state"] == "EIGHT_PERSISTENCE_PENDING_TERMINAL_GUARDS":
-                self.output["state"] = "EIGHT_PERSISTENCE_PASS"
+            elif self.output["state"] == "SIXTEEN_COMBINED_PENDING_TERMINAL_GUARDS":
+                self.output["state"] = "SIXTEEN_COMBINED_PASS"
             # Charge the small final result write too. Overrun replaces even a
             # just-written PASS with failure before any successful return.
             try:
@@ -1281,9 +1400,9 @@ class Controller:
                            "workflow_sha": self.event_sha, "tested_game_sha": GAME_SHA,
                            "budget": self.budget_receipt(), "failure": repr(error),
                            "qualification": "Emergency failure receipt only; original private outputs remain available independently of incomplete archives. Expiry is not proof of runtime release."})
-        # Only actual eight-method green with all final guards can succeed.
+        # Only actual sixteen-control green with all final guards can succeed.
         # A RED, partial fail-fast, setup or collection failure remains nonzero.
-        return 0 if self.output["state"] == "EIGHT_PERSISTENCE_PASS" else 1
+        return 0 if self.output["state"] == "SIXTEEN_COMBINED_PASS" else 1
 
 
 def main() -> int:
