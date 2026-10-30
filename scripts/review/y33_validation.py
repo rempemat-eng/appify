@@ -212,8 +212,23 @@ class Controller:
             # Only mutable duty outputs may vanish. Tracked/candidate source,
             # permission failures and every other I/O error still fail closed.
             if isinstance(error, FileNotFoundError) and error.filename is not None:
-                if any(Path(error.filename).is_relative_to(p) for p in mutable_roots):
+                path = Path(error.filename)
+                if any(path.is_relative_to(p) for p in mutable_roots):
                     return
+                # Godot's observed asset-side atomic .import-XXXXXX sibling.
+                # Only the established exact-source snapshot grants ownership;
+                # canonical assets/sidecars and tracked lookalikes stay strict.
+                initial = getattr(self, "initial", None)
+                if (self.game == self.source / "game" and path.is_relative_to(self.game)
+                        and isinstance(initial, dict) and initial.get("head") == GAME_SHA
+                        and initial.get("tree") == GAME_TREE):
+                    tracked = initial.get("game")
+                    relative = path.relative_to(self.source).as_posix()
+                    temporary = re.fullmatch(r"(.+\.import)-[A-Za-z0-9]{6}", relative)
+                    if (isinstance(tracked, dict) and temporary and relative not in tracked
+                            and temporary[1] in tracked
+                            and temporary[1].removesuffix(".import") in tracked):
+                        return
             raise error
 
         for root in self.owned_roots:
