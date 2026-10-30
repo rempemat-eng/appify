@@ -43,7 +43,8 @@ OWNED_LIMIT = 512 * 1024**2
 FREE_RESERVE = 256 * 1024**2
 RSS_LIMIT = 1536 * 1024**2
 LOG_LIMIT = 4 * 1024**2
-OWNED_PATHS = {".github/workflows/y33-focused-validation.yml", "scripts/review/y33_validation.py"}
+OWNED_PATHS = {".github/workflows/y33-focused-validation.yml", "scripts/review/y33_validation.py",
+               "scripts/review/test_y33_validation.py"}
 METHODS = (
     "test_parser_preserves_bare_camp_as_boolean_true",
     "test_parser_preserves_explicit_camp_text",
@@ -117,10 +118,14 @@ def orphan_diagnostics(text: str) -> list[str]:
     for line in text.splitlines():
         if re.search(r"ObjectDB instances leaked|resources? still in use|RID.*leak", line, re.I):
             found.append(line)
-        elif re.search(r"orphan", line, re.I) and not re.search(
-            r"\borphan(?:s| nodes?)?\s*[:=]\s*0\b|\b0\s+orphan", line, re.I
-        ):
-            found.append(line)
+        elif re.search(r"\borphans?\b", line, re.I):
+            # Diagnostic words/counts, not GdUnitOrphan* class registration.
+            counts = re.findall(
+                r"\borphans?(?:\s+nodes?)?\s*[:=]\s*(\d+)\b|\b(\d+)\s+orphans?(?:\s+nodes?)?\b",
+                line, re.I
+            )
+            if not counts or any(int(first or second) > 0 for first, second in counts):
+                found.append(line)
     return found
 
 
@@ -201,11 +206,25 @@ class Controller:
 
     def capacity(self) -> dict:
         used = 0
+        mutable_roots = (self.root, self.game / ".godot", self.game / "reports-y33-red")
+
+        def scan_error(error: OSError) -> None:
+            # Only mutable duty outputs may vanish. Tracked/candidate source,
+            # permission failures and every other I/O error still fail closed.
+            if isinstance(error, FileNotFoundError) and error.filename is not None:
+                if any(Path(error.filename).is_relative_to(p) for p in mutable_roots):
+                    return
+            raise error
+
         for root in self.owned_roots:
-            for base, dirs, files in os.walk(root, followlinks=False):
+            for base, dirs, files in os.walk(root, followlinks=False, onerror=scan_error):
                 for name in dirs + files:
                     p = Path(base) / name
-                    info = p.lstat()
+                    try:
+                        info = p.lstat()
+                    except FileNotFoundError as error:
+                        scan_error(error)
+                        continue
                     if stat.S_ISLNK(info.st_mode):
                         raise RuntimeError(f"Unexpected writable/source symlink: {p}")
                     used += info.st_blocks * 512

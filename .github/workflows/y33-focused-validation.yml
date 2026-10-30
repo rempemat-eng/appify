@@ -56,6 +56,7 @@ jobs:
           sparse-checkout: |
             /.github/workflows/y33-focused-validation.yml
             /scripts/review/y33_validation.py
+            /scripts/review/test_y33_validation.py
 
       - name: Check out the separately pinned physical game project
         id: source
