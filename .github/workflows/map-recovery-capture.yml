@@ -225,14 +225,16 @@ jobs:
           owned = sum(p.stat().st_blocks * 512 for p in evidence.rglob('*') if p.is_file())
           expected_failure = core.get('comparison_target', {}).get('original_error') is True
           world_failed = core.get('world_state') == 'FAILED' and core.get('producer_outcome', {}).get('kind') == 'EXCEPTION'
-          complete = (not errors and controller_exit == result.get('raw_exit') == 1 and world_failed
+          complete = (not errors and controller_exit == 1
               and result.get('world_success') is False and result.get('capture_complete') is True and core.get('complete') is True
               and result.get('stop_reason') is None and result.get('child_reaped') is True and result.get('owned_group_absent') is True
               and result.get('source_unchanged') is True and os.environ['SOURCE_GUARD_OUTCOME'] == 'success'
               and canary.get('ran') == 17 and canary.get('passed') is True
               and receipt.get('retrieved_bytes_verified') is True and owned <= 128*1024**2)
           value = dict(kind='NEW_R6_REPLACEMENT', event_source_sha=os.environ['EXPECTED_SOURCE_SHA'],
-              diagnostic_complete=complete, expected_original_failure=expected_failure, world_success=False,
+              diagnostic_complete=complete, expected_original_failure=expected_failure,
+              expected_world_failure_observed=world_failed and result.get('raw_exit') == 1 and expected_failure,
+              world_success=False, actual_world_state=core.get('world_state', 'UNKNOWN'),
               producer_outcome=core.get('producer_outcome'), comparison_target=core.get('comparison_target'),
               actual_controller_exit=controller_exit, actual_result=result, portable_byte_receipt=receipt, errors=errors,
               receiving_canary=canary, receiving_canary_reason='Mandatory17 in new full-producer environment; not additional test coverage. Prior4/historical suites not repeated.',
@@ -247,7 +249,7 @@ jobs:
               complete_handoff=False, independent_byte_retrieval_required=True), sort_keys=True, indent=2)+'\n')
           with Path(os.environ['GITHUB_STEP_SUMMARY']).open('a') as output:
               output.write(state+'\n\nWorld success: false\n\nExpected original failure: '+str(expected_failure)+'\n\n'+value['next']+'\n')
-          raise SystemExit(0 if complete and expected_failure else 1)
+          raise SystemExit(0 if complete and value['expected_world_failure_observed'] else 1)
           PY
 
       - name: Upload portable actual inputs and all early/partial evidence, including hidden source
