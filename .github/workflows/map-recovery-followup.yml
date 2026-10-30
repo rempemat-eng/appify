@@ -1,0 +1,441 @@
+name: Map recovery unchanged replay and diagnostic preview
+
+# Publication on PR381 does not execute this. Only the lead's separate public
+# runtime GO may create this exact execution ref after source/receipt review.
+on:
+  push:
+    branches: [codex/map-recovery-followup-run]
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: map-recovery-followup
+  cancel-in-progress: false
+
+jobs:
+  unchanged-replay-preview:
+    if: github.run_attempt == 1 && github.repository == 'rempemat-eng/appify' && github.ref == 'refs/heads/codex/map-recovery-followup-run'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      TZ: UTC
+      PYTHONDONTWRITEBYTECODE: '1'
+      GIT_OPTIONAL_LOCKS: '0'
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+      NUMEXPR_NUM_THREADS: '1'
+      MYGAME_MAP_REVISION: v56
+      EXPECTED_SOURCE_SHA: ${{ github.sha }}
+    steps:
+      - name: Reserve fresh private evidence and refuse reruns
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_RUN_ATTEMPT" = '1'
+          test "$GITHUB_REPOSITORY" = 'rempemat-eng/appify'
+          test "$GITHUB_REF" = 'refs/heads/codex/map-recovery-followup-run'
+          followup_evidence="$RUNNER_TEMP/map-followup-evidence"
+          mkdir -m 700 "$followup_evidence"
+          date +%s > "$followup_evidence/job-start.epoch"
+          printf 'MAP_EVIDENCE=%s\n' "$followup_evidence" >> "$GITHUB_ENV"
+          for name in tmp blockout config data cache runtime; do mkdir -p -m 700 "$followup_evidence/bootstrap/$name"; done
+          for name in TMPDIR TMP TEMP; do printf '%s=%s/bootstrap/tmp\n' "$name" "$followup_evidence" >> "$GITHUB_ENV"; done
+          printf 'BLOCKOUT_OUT=%s/bootstrap/blockout\n' "$followup_evidence" >> "$GITHUB_ENV"
+          printf 'XDG_CONFIG_HOME=%s/bootstrap/config\nXDG_DATA_HOME=%s/bootstrap/data\nXDG_CACHE_HOME=%s/bootstrap/cache\nXDG_RUNTIME_DIR=%s/bootstrap/runtime\n' \
+            "$followup_evidence" "$followup_evidence" "$followup_evidence" "$followup_evidence" >> "$GITHUB_ENV"
+          printf '%s\n' 'UNCHANGED REPLAY NOT RUN; original world FAILED; no correction/art approval' > "$followup_evidence/status.txt"
+
+      - name: Check out exact execution-event source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Set up verified Python environment
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.12'
+
+      - name: Reuse the verified native-source and exact-font canary
+        id: source_before
+        timeout-minutes: 1
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Reuse the reviewed source/font guard with current helper/test pins;
+          # no alternate supervisor, dependency source, font or project shim.
+          python -I -B - <<'PY'
+          import ast, os
+          from pathlib import Path
+          root = Path(os.environ['GITHUB_WORKSPACE'])
+          evidence = Path(os.environ['MAP_EVIDENCE'])
+          lines = (root / '.github/workflows/map-recovery-contracts.yml').read_text().splitlines()
+          matches = [i for i, line in enumerate(lines) if line == '          cat > "$RUNNER_TEMP/map-source-guard.py" <<\'PY\'']
+          assert len(matches) == 1
+          start = matches[0] + 1
+          end = lines.index('          PY', start)
+          assert all(not line or line.startswith('          ') for line in lines[start:end])
+          source = '\n'.join(line[10:] for line in lines[start:end]) + '\n'
+          ast.parse(source)
+          (Path(os.environ['RUNNER_TEMP']) / 'map-source-guard.py').write_text(source)
+          (evidence / 'map-source-guard.py').write_text(source)
+          target = evidence / 'source/.github/workflows/map-recovery-followup.yml'
+          target.parent.mkdir(parents=True)
+          target.write_bytes((root / '.github/workflows/map-recovery-followup.yml').read_bytes())
+          PY
+          python -I -B "$RUNNER_TEMP/map-source-guard.py" before > "$MAP_EVIDENCE/source-before-canary.log" 2>&1
+          python -I -B - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          evidence = Path(os.environ['MAP_EVIDENCE'])
+          fonts = json.loads((evidence / 'font-paths.json').read_text())
+          for item in fonts:
+              path = Path(item['path'])
+              data = path.read_bytes()
+              assert hashlib.sha256(data).hexdigest() == item['sha256']
+              target = evidence / 'font-bytes' / path.name
+              target.parent.mkdir(exist_ok=True)
+              target.write_bytes(data)
+          PY
+
+      - name: Download only the verified capture artifact as its original archive
+        id: actual_input
+        timeout-minutes: 2
+        # Official v8.0.2 tag and action.yml/README verified at this commit.
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          artifact-ids: '12980870909'
+          run-id: '41060808209'
+          repository: rempemat-eng/appify
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/map-followup-evidence/download
+          skip-decompress: true
+          digest-mismatch: error
+
+      - name: Verify portable bytes, safe members and captured-to-current consumer identity
+        id: verified_input
+        timeout-minutes: 1
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -I -B - <<'PYCODE' > "$MAP_EVIDENCE/input-verification.log" 2>&1
+          import hashlib, json, os, runpy, stat, zipfile
+          from pathlib import Path, PurePosixPath
+          root = Path(os.environ['GITHUB_WORKSPACE']).resolve()
+          evidence = Path(os.environ['MAP_EVIDENCE']).resolve()
+          control = runpy.run_path(str(root / 'scripts/review/map_failure_capture.py'), run_name='R6_input_definitions_only')
+          def safe_members(archive):
+              rows = archive.infolist()
+              assert len(rows) <= 256 and len({row.filename for row in rows}) == len(rows), 'duplicate/oversized ZIP inventory'
+              assert sum(row.file_size for row in rows) <= control['MAX_OWNED'], 'unpacked ZIP bound'
+              for row in rows:
+                  name = row.filename
+                  normalized = name[:-1] if row.is_dir() else name
+                  path = PurePosixPath(normalized)
+                  assert normalized and chr(92) not in name and chr(0) not in name and not path.is_absolute() and '..' not in path.parts
+                  assert normalized == path.as_posix(), 'only normalized members are accepted'
+                  mode = row.external_attr >> 16
+                  expected_mode = stat.S_IFDIR if row.is_dir() else stat.S_IFREG
+                  assert not stat.S_ISLNK(mode) and stat.S_IFMT(mode) in (0, expected_mode), 'nonregular ZIP member'
+                  assert not row.flag_bits & 1 and row.file_size <= control['MAX_RAW'], 'encrypted/oversized ZIP member'
+              return rows
+          downloaded = list((evidence / 'download').rglob('*'))
+          assert all(not path.is_symlink() for path in downloaded)
+          files = [path for path in downloaded if path.is_file()]
+          assert len(files) == 1, 'exactly one raw artifact required; no decompressed substitute'
+          original = files[0]
+          assert original.stat().st_size == 11202411 and control['sha'](original) == '760d6148ece1b734f0b55e8942476eaffa6921b0c6c43c0951ba48de167aea24'
+          reference = evidence / 'reference'; reference.mkdir(mode=0o700)
+          portable = reference / 'actual.zip'
+          with zipfile.ZipFile(original) as archive:
+              outer_rows = safe_members(archive)
+              assert 'actual.zip' in archive.namelist()
+              with portable.open('xb') as handle:
+                  handle.write(archive.read('actual.zip'))
+          assert portable.stat().st_size == 4488608 and control['sha'](portable) == '866f04ab0eac8331701c0efed266290df9391180b4f58b8711e685902e9e5565'
+          receipt = control['verify_bundle'](portable, '866f04ab0eac8331701c0efed266290df9391180b4f58b8711e685902e9e5565')
+          actual = reference / 'actual'; actual.mkdir(mode=0o700)
+          with zipfile.ZipFile(portable) as archive:
+              inner_rows = safe_members(archive)
+              manifest = json.loads(archive.read('PORTABLE-MANIFEST.json'))
+              assert manifest['schema'] == control['SCHEMA'] and manifest['kind'] == 'NEW_R6_REPLACEMENT'
+              assert len(manifest['files']) == receipt['files'] == 44
+              for row in inner_rows:
+                  assert not row.is_dir(), 'portable manifest contains files only'
+                  target = actual / row.filename
+                  target.parent.mkdir(parents=True, exist_ok=True)
+                  with target.open('xb') as handle:
+                      handle.write(archive.read(row.filename))
+          captured = control['json_read'](actual / 'source-before.json')
+          current = control['source_guard']()
+          assert captured == control['json_read'](actual / 'source-after.json')
+          assert captured['head'] == '87ea22a4be342e3b8009b1c9b922c2fb7db56711' and captured['tree'] == 'cc91d6bc8e449ee134b8cf8a32f00ca98d4b99cf' and captured['status'] == ''
+          assert current['head'] == os.environ['EXPECTED_SOURCE_SHA'] and current['status'] == ''
+          assert len(captured['source_sha256']) == 14 and captured['source_sha256'] == current['source_sha256'], 'captured and current consumer bytes differ'
+          for name, digest in captured['source_sha256'].items():
+              assert control['sha'](actual / 'source' / name) == digest == control['sha'](root / name)
+          core = control['json_read'](actual / 'capture.json')
+          assert core['schema'] == control['SCHEMA'] and core['complete'] is True and not core['errors']
+          assert core['world_state'] == 'FAILED' and core['producer_outcome'] == {'kind': 'EXCEPTION', 'type': 'ValueError', 'message': control['EXPECTED_ERROR']}
+          assert all(core['comparison_target'].get(key) is True for key in ('trial125', 'records19', 'queue20_23', 'original_error'))
+          assert len(core['before']['arrays']) == len(core['after']['arrays']) == 49 and len(core['supports']) == 168
+          inventory = {str(path.relative_to(actual)): {'bytes': path.stat().st_size, 'sha256': control['sha'](path)} for path in actual.rglob('*') if path.is_file()}
+          for path in actual.rglob('*'):
+              if path.is_file(): path.chmod(0o444)
+          for path in sorted((p for p in actual.rglob('*') if p.is_dir()), key=lambda p: len(p.parts), reverse=True): path.chmod(0o555)
+          actual.chmod(0o555); portable.chmod(0o444); original.chmod(0o444)
+          assert control['owned_blocks'](evidence) <= control['MAX_OWNED']
+          value = dict(verified=True, source_run=41060808209, source_artifact=12980870909,
+              raw_archive=dict(path=str(original.relative_to(evidence)), bytes=11202411, sha256=control['sha'](original)),
+              portable=dict(path=str(portable.relative_to(evidence)), bytes=4488608, sha256=control['sha'](portable), receipt=receipt),
+              captured_source=captured, recipe_source=current, captured_consumer_bytes_equal=True,
+              original_input_inventory=inventory, original_input=str(actual), original_producer_outcome=core['producer_outcome'],
+              outer_inventory=[dict(path=row.filename, bytes=row.file_size, crc=row.CRC) for row in outer_rows],
+              qualification='Original archive and extracted portable input retained read-only. Recipe head differs; all14 consumer bytes are identical. No producer/replay/preview has run.')
+          (evidence / 'input-receipt.json').write_text(json.dumps(value, sort_keys=True, indent=2)+'\n')
+          PYCODE
+
+      - name: Prepare the exact previously verified numeric wheel pins
+        timeout-minutes: 3
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Main885b pins and immutable scikit-image release/wheel identity are
+          # unchanged from the actual Contracts17 hosted pass on f214.
+          python -m pip install --disable-pip-version-check --no-cache-dir --only-binary=:all: --force-reinstall \
+            --timeout 20 --retries 1 --report "$MAP_EVIDENCE/install-report.json" \
+            'Pillow==12.3.0' 'numpy==2.5.3' 'scipy==1.18.1' 'scikit-image==0.26.0' \
+            > "$MAP_EVIDENCE/install.log" 2>&1
+
+      - name: Bind following-phase allocations and retain the exact acceptance gate
+        id: allocation
+        timeout-minutes: 1
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -I -B - <<'PY' > "$MAP_EVIDENCE/allocation-canary.log" 2>&1
+          import importlib.metadata, json, os, runpy, sys, time
+          from pathlib import Path
+          from urllib.parse import unquote, urlparse
+          root = Path(os.environ['GITHUB_WORKSPACE']).resolve()
+          evidence = Path(os.environ['MAP_EVIDENCE']).resolve()
+          assert time.time() - float((evidence / 'job-start.epoch').read_text()) <= 180, 'setup reserve exhausted; no replay'
+          report = json.loads((evidence / 'install-report.json').read_text())
+          item = next(x for x in report['install'] if x['metadata']['name'].lower().replace('_', '-') == 'scikit-image')
+          info = item['download_info']
+          assert unquote(Path(urlparse(info['url']).path).name) == 'scikit_image-0.26.0-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl'
+          assert info['archive_info']['hashes']['sha256'] == '7df650e79031634ac90b11e64a9eedaf5a5e06fcd09bcd03a34be01745744466'
+          packages = {name: importlib.metadata.version(name) for name in ('Pillow', 'numpy', 'scipy', 'scikit-image')}
+          assert packages == {'Pillow': '12.3.0', 'numpy': '2.5.3', 'scipy': '1.18.1', 'scikit-image': '0.26.0'}
+          from PIL import ImageFont
+          for suffix in ('', '-Bold'):
+              ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSansCondensed' + suffix + '.ttf', 13)
+          control = runpy.run_path(str(root / 'scripts/review/map_failure_capture.py'), run_name='R6_following_allocation_definitions_only')
+          guard = control['source_guard']()
+          receipt = control['json_read'](evidence / 'input-receipt.json')
+          assert receipt['verified'] is True and guard['head'] == os.environ['EXPECTED_SOURCE_SHA'] and guard['status'] == ''
+          assert receipt['captured_source']['source_sha256'] == guard['source_sha256']
+          following = control['plan']()['replay_crop_following_bound_proposal']
+          assert following == dict(seconds=180, cpus=1, rss_gib=1, address_gib=1.5)
+          assert control['owned_blocks'](evidence) <= control['MAX_OWNED']
+          commands = {}
+          for phase in ('replay', 'preview'):
+              out = evidence / phase
+              assert not out.exists() and not out.with_suffix('.zip').exists()
+              allocation = dict(schema=control['SCHEMA'], phase=phase, kind='UNCHANGED_ACTUAL_INPUT_FOLLOWUP',
+                  go_id='Y35-R6-FOLLOWUP-R1:'+guard['head']+':'+os.environ['GITHUB_RUN_ID']+':attempt1:'+phase,
+                  authorization_kind='lead-only exact execution-ref creation AFTER separate source review and public runtime GO; go_id identifies this event, not an approval comment',
+                  head=guard['head'], source_sha256=guard['source_sha256'], out=str(out), input=receipt['original_input'], python_paths=[],
+                  versions=packages, captured_source_head=receipt['captured_source']['head'],
+                  original_portable_sha256=receipt['portable']['sha256'], production_overrides={},
+                  bounds=dict(**following, log_mib=16, packet_mib=32, raw_snapshot_mib=24, owned_with_portable_mib=128,
+                      start_free_mib=256, emergency_free_mib=64, shared_anon_gib=4.2),
+                  qualification='Existing controller per-phase limits unchanged. Whole evidence is strictly counted before/after each phase and at collection; no test suite or producer is invoked.')
+              path = evidence / (phase+'-allocation.json')
+              with path.open('x') as handle:
+                  json.dump(allocation, handle, sort_keys=True, indent=2); handle.write('\n')
+              commands[phase] = [sys.executable, '-I', '-B', str(root / 'scripts/review/map_failure_capture.py'),
+                  'capture', '--allocation', str(path), '--out', str(out)]
+          (evidence / 'orchestration-command.json').write_text(json.dumps(dict(commands=commands, cwd=str(root), python=sys.version,
+              packages=packages, original_input=receipt['original_input'], original_input_read_only=True,
+              captured_head=receipt['captured_source']['head'], recipe_head=guard['head'], consumer_source_bytes_identical=True,
+              environment={key: os.environ[key] for key in ('TMPDIR', 'TMP', 'TEMP', 'BLOCKOUT_OUT', 'MYGAME_MAP_REVISION',
+                  'OPENBLAS_NUM_THREADS', 'OMP_NUM_THREADS', 'MKL_NUM_THREADS', 'NUMEXPR_NUM_THREADS')},
+              producer_run=False, geometry_correction=False, world_success=False, art_approval=False), sort_keys=True, indent=2)+'\n')
+          PY
+          cat > "$MAP_EVIDENCE/phase-gate.py" <<'PY'
+          import json, os, runpy, sys
+          from pathlib import Path
+          root = Path(os.environ['GITHUB_WORKSPACE']).resolve()
+          evidence = Path(os.environ['MAP_EVIDENCE']).resolve()
+          phase = sys.argv[1]
+          assert phase in ('replay', 'preview')
+          checks, errors, details = {}, [], {}
+          try:
+              control = runpy.run_path(str(root / 'scripts/review/map_failure_capture.py'), run_name='R6_following_gate_definitions_only')
+              receipt = control['json_read'](evidence / 'input-receipt.json')
+              original = Path(receipt['original_input'])
+              inventory = {str(path.relative_to(original)): {'bytes': path.stat().st_size, 'sha256': control['sha'](path)} for path in original.rglob('*') if path.is_file()}
+              checks['original_input_unchanged'] = inventory == receipt['original_input_inventory']
+              core = control['json_read'](original / 'capture.json')
+              input_sha = control['sha'](original / 'capture.json')
+              out = evidence / phase
+              result = control['json_read'](out / 'result.json')
+              controller_exit = int((evidence / (phase+'-controller.exit')).read_text())
+              checks['controller_accepted'] = (controller_exit == 0 and result.get('phase') == phase and result.get('raw_exit') == 0
+                  and result.get('capture_complete') is True and result.get('stop_reason') is None and result.get('world_success') is False
+                  and result.get('source_unchanged') is True and result.get('child_reaped') is True and result.get('owned_group_absent') is True
+                  and result.get('child_identity_lost') is False and result.get('group_signalled_before_reap') is True
+                  and type(result.get('peak_child_rss_bytes')) is int and 0 < result['peak_child_rss_bytes'] <= 1024**3)
+              current = control['source_guard']()
+              checks['consumer_sources_identical'] = current['head'] == os.environ['EXPECTED_SOURCE_SHA'] and current['status'] == '' and current['source_sha256'] == receipt['captured_source']['source_sha256']
+              checks['portable_verified'] = control['verify_bundle'](out.with_suffix('.zip'), control['sha'](out.with_suffix('.zip')))['retrieved_bytes_verified'] is True
+              checks['owned_evidence_within_bound'] = control['owned_blocks'](evidence) <= control['MAX_OWNED']
+              checks['original_failure_retained'] = core['world_state'] == 'FAILED' and core['producer_outcome'] == {'kind': 'EXCEPTION', 'type': 'ValueError', 'message': control['EXPECTED_ERROR']}
+              if phase == 'replay':
+                  replay = control['json_read'](out / 'replay-result.json')
+                  observed = control['json_read'](out / 'capture.json')
+                  expected = {'producer_outcome', 'queued_ids', 'buildings', 'streets', 'spaces', 'outskirts', 'after_routes', 'after_rivers', 'after_metadata',
+                      'all_original_trials', 'all_original_groups', 'all_literal_after_arrays', 'all_active_support_captured', 'zero_outside_changed_cells', 'capture_complete'}
+                  checks['all_named_comparisons'] = set(replay.get('comparison', {})) == expected and all(value is True for value in replay['comparison'].values()) and replay.get('all_equal') is True
+                  keys = {row['container']+'/'+row['source_key'] for row in core['after']['arrays']}
+                  checks['all49_array_comparisons'] = len(keys) == 49 and set(replay.get('array_parity', {})) == keys and all(value is True for value in replay['array_parity'].values())
+                  checks['zero49_outside_changes'] = set(replay.get('outside_changed_cells', {})) == keys and all(type(value) is int and value == 0 for value in replay['outside_changed_cells'].values())
+                  checks['all168_support_records_equal'] = len(core['supports']) == 168 and observed.get('supports') == core['supports']
+                  checks['exact_input_digest'] = replay.get('input_capture_sha256') == input_sha
+                  details.update(replay=replay, actual_support_records=len(observed.get('supports', [])))
+              else:
+                  prior = control['json_read'](evidence / 'replay-gate.json')
+                  checks['replay_gate_accepted'] = prior.get('passed') is True and all(value is True for value in prior.get('checks', {}).values())
+                  preview = control['json_read'](out / 'preview-result.json')
+                  checks['exact_input_digest'] = preview.get('input_sha256') == input_sha
+                  image = out / 'crossroads-diagnostic.png'
+                  checks['failed_state_image_verified'] = (preview.get('file') == image.name and preview.get('label') == 'DIAGNOSTIC'
+                      and preview.get('art_approval') is False and preview.get('world_success') is False and control['sha'](image) == preview.get('sha256')
+                      and image.read_bytes().startswith(b'\x89PNG\r\n\x1a\n'))
+                  if checks['failed_state_image_verified']:
+                      (evidence / 'FAILED-STATE-crossroads-diagnostic.png').write_bytes(image.read_bytes())
+                  details['preview'] = preview
+              details.update(result=result, input_capture_sha256=input_sha, original_producer_outcome=core['producer_outcome'])
+          except Exception as error:
+              errors.append(dict(type=type(error).__name__, message=str(error)))
+          passed = bool(checks) and all(value is True for value in checks.values()) and not errors
+          value = dict(phase=phase, passed=passed, checks=checks, errors=errors, details=details,
+              label='FAILED-STATE DIAGNOSTIC', producer_run=False, geometry_correction=False, world_success=False, art_approval=False)
+          (evidence / (phase+'-gate.json')).write_text(json.dumps(value, sort_keys=True, indent=2)+'\n')
+          raise SystemExit(0 if passed else 1)
+          PY
+
+      - name: Run the unchanged actual-input consumer replay once
+        id: replay
+        timeout-minutes: 4
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +e
+          python -I -B scripts/review/map_failure_capture.py capture --allocation "$MAP_EVIDENCE/replay-allocation.json" --out "$MAP_EVIDENCE/replay" > "$MAP_EVIDENCE/replay-controller.log" 2>&1
+          controller_exit=$?
+          set -e
+          printf '%s\n' "$controller_exit" > "$MAP_EVIDENCE/replay-controller.exit"
+
+      - name: Require every unchanged replay comparison before any preview
+        id: replay_verified
+        timeout-minutes: 1
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -I -B "$MAP_EVIDENCE/phase-gate.py" replay > "$MAP_EVIDENCE/replay-gate.log" 2>&1
+
+      - name: Preview only the original captured failed AFTER state
+        id: preview
+        if: success() && steps.replay_verified.outcome == 'success'
+        timeout-minutes: 4
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +e
+          python -I -B scripts/review/map_failure_capture.py capture --allocation "$MAP_EVIDENCE/preview-allocation.json" --out "$MAP_EVIDENCE/preview" > "$MAP_EVIDENCE/preview-controller.log" 2>&1
+          controller_exit=$?
+          set -e
+          printf '%s\n' "$controller_exit" > "$MAP_EVIDENCE/preview-controller.exit"
+
+      - name: Verify the failed-state diagnostic image and original input digest
+        id: preview_verified
+        if: success() && steps.replay_verified.outcome == 'success'
+        timeout-minutes: 1
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -I -B "$MAP_EVIDENCE/phase-gate.py" preview > "$MAP_EVIDENCE/preview-gate.log" 2>&1
+
+      - name: Preserve the native-event source guard on every outcome
+        id: source_after
+        if: always()
+        timeout-minutes: 1
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f "$RUNNER_TEMP/map-source-guard.py"
+          python -I -B "$RUNNER_TEMP/map-source-guard.py" after > "$MAP_EVIDENCE/source-after-canary.log" 2>&1
+
+      - name: Retain first failure, immutable input receipt and all partial results
+        if: always()
+        timeout-minutes: 1
+        env:
+          SOURCE_GUARD_OUTCOME: ${{ steps.source_after.outcome }}
+        shell: bash
+        run: |
+          python -I -B - <<'PY'
+          import hashlib, json, os, runpy, stat
+          from pathlib import Path
+          root = Path(os.environ['GITHUB_WORKSPACE'])
+          evidence = Path(os.environ['MAP_EVIDENCE'])
+          errors, results, files = [], {}, {}
+          def read(path):
+              try:
+                  return json.loads(path.read_text())
+              except Exception as error:
+                  errors.append(dict(file=str(path.relative_to(evidence)), error=repr(error)))
+                  return {}
+          for phase in ('replay', 'preview'):
+              results[phase] = read(evidence / (phase+'-gate.json'))
+          receipt = read(evidence / 'input-receipt.json')
+          input_unchanged, owned = False, None
+          try:
+              control = runpy.run_path(str(root / 'scripts/review/map_failure_capture.py'), run_name='R6_final_collection_definitions_only')
+              actual = Path(receipt['original_input'])
+              inventory = {str(path.relative_to(actual)): {'bytes': path.stat().st_size, 'sha256': control['sha'](path)} for path in actual.rglob('*') if path.is_file()}
+              input_unchanged = inventory == receipt['original_input_inventory']
+              owned = control['owned_blocks'](evidence)
+              for path in evidence.rglob('*'):
+                  metadata = path.lstat()
+                  assert not stat.S_ISLNK(metadata.st_mode), 'evidence symlink refused'
+                  if stat.S_ISREG(metadata.st_mode):
+                      files[str(path.relative_to(evidence))] = dict(bytes=metadata.st_size, sha256=control['sha'](path))
+          except Exception as error:
+              errors.append(dict(file='final-guards', error=repr(error)))
+          passed = (not errors and receipt.get('verified') is True and input_unchanged and type(owned) is int and owned <= 128*1024**2
+              and os.environ['SOURCE_GUARD_OUTCOME'] == 'success' and all(result.get('passed') is True for result in results.values()))
+          value = dict(event_source_sha=os.environ['EXPECTED_SOURCE_SHA'], captured_source_sha='87ea22a4be342e3b8009b1c9b922c2fb7db56711',
+              passed=passed, results=results, original_input_unchanged=input_unchanged, original_input_receipt=receipt,
+              owned_bytes=owned, errors=errors, files=files, label='FAILED-STATE DIAGNOSTIC', world_success=False, art_approval=False,
+              qualification='Unchanged actual-input replay, then original captured AFTER preview only after all comparisons. Original producer failure retained. No new tests, correction, full world, literal-colour/art validation or map approval. Existing per-phase controller limits unchanged; whole evidence counted before/after phases. Independent actual-byte retrieval and full Actions logs still required.')
+          (evidence / 'artifact-manifest.json').write_text(json.dumps(value, sort_keys=True, indent=2)+'\n')
+          (evidence / 'status.txt').write_text(('FAILED-STATE DIAGNOSTIC READY' if passed else 'FOLLOWUP FAILED/PARTIAL; no preview acceptance')+'; original world FAILED; no correction/art approval\n')
+          with Path(os.environ['GITHUB_STEP_SUMMARY']).open('a') as output:
+              output.write(value['label']+'\n\nReplay and preview accepted: '+str(passed)+'\n\nOriginal world: FAILED\n\nNo corrected town or art approval. Upload and independently retrieve the actual artifact before the next step.\n')
+          raise SystemExit(0 if passed else 1)
+          PY
+
+      - name: Upload the original input and every partial log, guard, result and PNG
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: mygame-map-followup-R1-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/map-followup-evidence/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 7
