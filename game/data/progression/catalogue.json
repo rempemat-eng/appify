@@ -1,6 +1,6 @@
 {
-  "schema_version": 1,
-  "status": "proposal (claude-a/progression, 25 Oct); every number is a placeholder until play-tests and Claude L's harness",
+  "schema_version": 2,
+  "status": "proposal (claude-a/progression-2, 26 Oct); every number is a placeholder until play-tests and Claude L's harness",
   "design": "docs/vision/progression.md",
   "builds_on": {
     "abilities": "game/data/abilities/<id>.json (Codex C60, PR #261, branch codex/godot-ability-kits): the base kit and the powered form are canonical and unchanged here",
@@ -18,11 +18,11 @@
     "inputs": "no new buttons: every technique binds to primary, secondary, block, special, dodge, a timing window or a passive condition. None uses a hold on primary (Codex's primary repeats while held)"
   },
   "skill_tree": {
-    "shape": "three branches per folk, each matching part of its kit; five nodes a branch, fifteen in all",
+    "shape": "three branches per folk, five nodes a branch, fifteen in all. Branch 1 is the folk's loadout kinds (bolt heads, rounds, reagents, lights...), branch 2 its weapon form (multi-shot, spreads, twin barrels, chains), branch 3 its craft (the rest of the kit: guard, secondary, special)",
+    "loadout_kind": "one kind is loaded at a time, chosen at a waystone, the hut or the tree screen, never in a fight; no new button. The first kind is free; kinds unlocked in branch 1 are the alternatives",
     "branch_nodes": [
       {
-        "slot": "minor_a",
-        "kind": "passive",
+        "slot": 1,
         "cost": 1,
         "levels": [
           2,
@@ -31,8 +31,7 @@
         ]
       },
       {
-        "slot": "technique",
-        "kind": "technique",
+        "slot": 2,
         "cost": 2,
         "levels": [
           3,
@@ -41,8 +40,7 @@
         ]
       },
       {
-        "slot": "minor_b",
-        "kind": "passive",
+        "slot": 3,
         "cost": 1,
         "levels": [
           6,
@@ -51,8 +49,7 @@
         ]
       },
       {
-        "slot": "upgrade",
-        "kind": "technique upgrade",
+        "slot": 4,
         "cost": 3,
         "levels": [
           12,
@@ -61,8 +58,7 @@
         ]
       },
       {
-        "slot": "keystone",
-        "kind": "keystone",
+        "slot": 5,
         "cost": 4,
         "levels": [
           22,
@@ -71,7 +67,14 @@
         ]
       }
     ],
-    "levels_note": "levels[i] is the level a node unlocks in branch i (branch 1, 2, 3); a node also needs the node before it in its branch",
+    "levels_note": "levels[i] is the level a slot unlocks in branch i (branch 1, 2, 3); a node also needs the node before it in its branch",
+    "node_kinds": {
+      "kind": "a loadout kind",
+      "minor": "a small passive",
+      "technique": "a new move or behaviour",
+      "upgrade": "a technique's stronger form",
+      "keystone": "a branch-defining change"
+    },
     "budget": "the whole tree costs 33 points and a folk earns 29 by level 30, so a finished folk has everything except one keystone: the build choice is which keystone to leave out, and the order you take nodes in",
     "modifiers": "every node is a modifier layered over the canonical kit at run time; game/data/abilities/*.json is never edited",
     "respec": {
@@ -105,7 +108,8 @@
       "Starfall"
     ],
     "rules": [
-      "Each folk keeps one signature weapon, the item its kit is built on (Matt, 25 Oct). Tiers change its drawing and add one small handling change each.",
+      "Each folk keeps one signature weapon line (Matt, 25 Oct). Each tier is a real step in that line (Matt, 26 Oct: Bramble's bow becomes a crossbow, then a repeater): a new form with its own handling, not a reskin. One tier per folk is a form change that needs new clip tables; the others are new or swapped rig parts on existing clips (each tier's 'rig' says which).",
+      "A form change keeps the kit's four actions, their roles and their inputs; it changes the primary's projectile or hit parameters through the modifier layer, so the kit files stay canonical (raised on #149).",
       "Tiers are level milestones: a tier opens at its level, then Hale forges it cheaply, per folk (Matt, 25 Oct).",
       "No tier multiplies damage. Power comes from gear level and the forge (game-design.md 5.6 and appendix B).",
       "Loot is fittings: weapon drops are fittings with game-design's rarity and affixes, set into the signature weapon's sockets at the forge (moved freely, a small Glint fee). Sockets grow with the tier.",
@@ -266,5 +270,13 @@
     "nix",
     "rook",
     "mote"
-  ]
+  ],
+  "decisions": {
+    "26 Oct (#290)": [
+      "unifying device: the stone circle and the ring of falls",
+      "kinds: a loadout, one at a time, chosen at a waystone or the hut",
+      "Rook stays an astronaut, redesigned to fit; his weapon names are provisional",
+      "weapon lines: not yet approved (Matt is reading them)"
+    ]
+  }
 }
